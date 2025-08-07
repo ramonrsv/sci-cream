@@ -1,0 +1,18 @@
+[
+    {
+        "name": "Locust Bean Gum",
+        "stabilizer": 100,
+        "solids": 100
+    },
+    {
+        "name": "Soy Lecithin",
+        "emulsifier": 100,
+        "solids": 100
+    },
+    {
+        "name": "Arabic Gum",
+        "emulsifier": 25,
+        "stabilizer": 75,
+        "solids": 100
+    }
+]

@@ -1,0 +1,24 @@
+[
+    {
+        "name": "2% Milk",
+        "milkFat": 2
+    },
+    {
+        "name": "3.25% Milk",
+        "milkFat": 3.25
+    },
+    {
+        "name": "3.5% Milk",
+        "milkFat": 3.5
+    },
+    {
+        "name": "Skimmed Milk Powder",
+        "milkFat": 0,
+        "msnf": 97
+    },
+    {
+        "name": "Whole Milk Powder",
+        "milkFat": 27,
+        "msnf": 73
+    }
+]
