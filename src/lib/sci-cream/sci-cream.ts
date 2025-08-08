@@ -158,7 +158,7 @@ export class Ingredient {
   public static readonly COCOA_SOLIDS_HF = 1.8;
   public static readonly NUT_FAT_HF = 1.4;
 
-  public static readonly STANDARD_MSNF_IN_MILK_SERUM = 0.9;
+  public static readonly STANDARD_MSNF_IN_MILK_SERUM = 0.09;
   public static readonly STANDARD_LACTOSE_IN_MSNF = 0.545;
 
   public static readonly FPD_MSNF_FACTOR_FOR_CELSIUS = 2.37;

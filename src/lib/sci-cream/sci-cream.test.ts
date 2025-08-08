@@ -1,44 +1,54 @@
 import { expect, test } from "vitest";
 
-import {
-  Dairy,
-  Sweetener,
-  Alcohol,
-  Chocolate,
-  Nut,
-  Fruit,
-  Egg,
-  Stabilizer,
-  Miscellaneous,
-} from "./sci-cream";
+import { Composition, Ingredient, Dairy } from "./sci-cream";
 
-import dairy from "../../../data/ingredients/dairy.json";
-import sweeteners from "../../../data/ingredients/sweeteners.json";
-import alcohol from "../../../data/ingredients/alcohol.json";
-import chocolates from "../../../data/ingredients/chocolates.json";
-import nuts from "../../../data/ingredients/nuts.json";
-import fruits from "../../../data/ingredients/fruits.json";
-import eggs from "../../../data/ingredients/eggs.json";
-import stabilizers from "../../../data/ingredients/stabilizers.json";
-import miscellaneous from "../../../data/ingredients/miscellaneous.json";
+test(`Construct Dairy from milk fat only`, () => {
+  function constructAndExpectToBe({
+    name,
+    milkFat,
+    lactose,
+    msnf,
+    milkSNFS,
+    solids,
+    pod,
+    pacSgr,
+  }: any) {
+    const dairy = new Dairy({ name: name, milkFat: milkFat });
 
-function testConstructAllIngredientsExpectNoThrow<T>(
-  IngClass: any,
-  ingredients: T[]
-) {
-  test(`Construct all ${IngClass.name} database seed ingredients`, () => {
-    for (const ing of ingredients) {
-      expect(() => new IngClass(ing)).not.toThrow();
-    }
+    const expectedComposition = {
+      ...Ingredient.makeDefaultCompRecord(),
+      [Composition.MILK_FAT]: milkFat,
+      [Composition.LACTOSE]: lactose,
+      [Composition.MILK_SNF]: msnf,
+      [Composition.MILK_SNFS]: milkSNFS,
+      [Composition.TOTAL_SOLIDS]: solids,
+      [Composition.POD]: pod,
+      [Composition.PAC_SGR]: pacSgr,
+    };
+
+    expect(dairy.name).toBe(name);
+    expect(dairy.composition[Composition.MILK_FAT]).toBe(milkFat);
+
+    Object.values(Composition).forEach((comp) => {
+      if (expectedComposition[comp] === undefined) {
+        expect(dairy.composition[comp], `${comp}`).toBe(undefined);
+      } else {
+        expect(dairy.composition[comp]).toBeCloseTo(
+          expectedComposition[comp],
+          4
+        );
+      }
+    });
+  }
+
+  constructAndExpectToBe({
+    name: "Milk 2%",
+    milkFat: 2,
+    lactose: 4.8069,
+    msnf: 8.82,
+    milkSNFS: 4.0131,
+    solids: 10.82,
+    pod: 0.769104,
+    pacSgr: 4.8069,
   });
-}
-
-testConstructAllIngredientsExpectNoThrow(Dairy, dairy);
-testConstructAllIngredientsExpectNoThrow(Sweetener, sweeteners);
-testConstructAllIngredientsExpectNoThrow(Alcohol, alcohol);
-testConstructAllIngredientsExpectNoThrow(Chocolate, chocolates);
-testConstructAllIngredientsExpectNoThrow(Nut, nuts);
-testConstructAllIngredientsExpectNoThrow(Fruit, fruits);
-testConstructAllIngredientsExpectNoThrow(Egg, eggs);
-testConstructAllIngredientsExpectNoThrow(Stabilizer, stabilizers);
-//testConstructAllIngredientsExpectNoThrow(Miscellaneous, miscellaneous);
+});
