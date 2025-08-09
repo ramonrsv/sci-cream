@@ -12,15 +12,17 @@ import {
   Miscellaneous,
 } from "../../src/lib/sci-cream/sci-cream";
 
-import dairy from "./dairy.json";
-import sweeteners from "./sweeteners.json";
-import alcohol from "./alcohol.json";
-import chocolates from "./chocolates.json";
-import nuts from "./nuts.json";
-import fruits from "./fruits.json";
-import eggs from "./eggs.json";
-import stabilizers from "./stabilizers.json";
-import miscellaneous from "./miscellaneous.json";
+import {
+  dairy,
+  sweeteners,
+  alcohol,
+  chocolates,
+  nuts,
+  fruits,
+  eggs,
+  stabilizers,
+  miscellaneous,
+} from "./ingredients";
 
 function testConstructAllIngredientsExpectNoThrow<T>(
   IngClass: any,

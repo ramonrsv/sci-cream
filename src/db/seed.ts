@@ -1,38 +1,67 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
-import { ingredientsTable, usersTable } from "./schema";
+
+import { usersTable, ingredientsTable } from "./schema";
 import * as schema from "./schema";
 
-import dairy from "../../data/ingredients/dairy.json";
+import { Dairy } from "@/lib/sci-cream/sci-cream";
+
+import {
+  dairy,
+  sweeteners,
+  alcohol,
+  chocolates,
+  nuts,
+  fruits,
+  eggs,
+  stabilizers,
+  miscellaneous,
+  allIngredients,
+} from "@/../data/ingredients/ingredients";
+
+type User = typeof usersTable.$inferInsert;
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
 
-async function main() {
-  const serverUser: typeof usersTable.$inferInsert = {
-    name: process.env.SERVER_USER_NAME!,
-    email: process.env.SERVER_USER_EMAIL!,
-  };
+const app: User = {
+  name: process.env.APP_USER_NAME!,
+  email: process.env.APP_USER_EMAIL!,
+};
 
-  await db
-    .insert(usersTable)
-    .values(serverUser)
-    .onConflictDoNothing({ target: usersTable.email });
+const ramon: User = {
+  name: "Ramon Sibello",
+  email: "ramon@sibello.ca",
+};
 
-  const [{ field1: serverUserId }] = await db
-    .select({ field1: usersTable.id })
-    .from(usersTable)
-    .where(eq(usersTable.email, serverUser.email));
+async function seedUsers() {
+  console.log("==========");
+  console.log("Seeding users");
 
-  console.log("Server user ID:", serverUserId);
+  for (const user of [app, ramon]) {
+    await db
+      .insert(usersTable)
+      .values(user)
+      .onConflictDoNothing({ target: usersTable.email });
+  }
 
   const users = await db.select().from(usersTable);
   console.log("Getting all users from the database:", users);
+}
 
-  for (const dataIngredient of dairy) {
+async function seedUserIngredients(user: User, ingredients: any[]) {
+  const [foundUser] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, user.email));
+
+  console.log("==========");
+  console.log("Seeding user ingredients for user:", foundUser);
+
+  for (const ing of ingredients) {
     const ingredient: typeof ingredientsTable.$inferInsert = {
-      name: dataIngredient.name,
-      user: serverUserId,
+      name: ing.name,
+      user: foundUser.id,
     };
 
     console.log("---");
@@ -64,6 +93,17 @@ async function main() {
     console.log("Inserting ingredient");
     await db.insert(ingredientsTable).values(ingredient);
   }
+}
+
+async function main() {
+  await seedUsers();
+
+  for (const ingredients of allIngredients) {
+    await seedUserIngredients(app, ingredients);
+  }
+  await seedUserIngredients(ramon, [
+    new Dairy({ name: "2% Milk", milkFat: 4 }),
+  ]);
 }
 
 main();
