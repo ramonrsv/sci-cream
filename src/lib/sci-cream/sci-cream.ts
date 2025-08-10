@@ -138,7 +138,7 @@ const CompositionAllPercent = [
 
 type CompRecord = Record<Composition, number | undefined>;
 
-export class Ingredient {
+export abstract class Ingredient {
   public static readonly ABV_TO_ABW_RATIO = 0.789;
 
   public static readonly SUCROSE_POD = 100;
@@ -172,6 +172,8 @@ export class Ingredient {
     this.name = name;
     this.composition = composition;
   }
+
+  public abstract category(): Category;
 
   static makeDefaultCompRecord(): CompRecord {
     let defaultComp: CompRecord = {} as CompRecord;
@@ -226,6 +228,10 @@ export class Ingredient {
 }
 
 export class Dairy extends Ingredient {
+  public category(): Category {
+    return Category.DAIRY;
+  }
+
   constructor({
     name,
     milkFat,
@@ -254,6 +260,10 @@ export class Dairy extends Ingredient {
 }
 
 export class Sweetener extends Ingredient {
+  public category(): Category {
+    return Category.SWEETENER;
+  }
+
   constructor({
     name,
     pod,
@@ -280,6 +290,10 @@ export class Sweetener extends Ingredient {
 }
 
 export class Alcohol extends Ingredient {
+  public category(): Category {
+    return Category.ALCOHOL;
+  }
+
   constructor({
     name,
     abv,
@@ -342,6 +356,10 @@ export class Alcohol extends Ingredient {
 }
 
 export class Chocolate extends Ingredient {
+  public category(): Category {
+    return Category.CHOCOLATE;
+  }
+
   constructor({
     name,
     cacaoFat,
@@ -379,6 +397,10 @@ export class Chocolate extends Ingredient {
 }
 
 export class Nut extends Ingredient {
+  public category(): Category {
+    return Category.NUT;
+  }
+
   constructor({
     name,
     nutFat,
@@ -414,6 +436,10 @@ export class Nut extends Ingredient {
 }
 
 export class Fruit extends Ingredient {
+  public category(): Category {
+    return Category.FRUIT;
+  }
+
   sucrose?: number;
   glucose?: number;
   fructose?: number;
@@ -460,6 +486,10 @@ export class Fruit extends Ingredient {
 }
 
 export class Egg extends Ingredient {
+  public category(): Category {
+    return Category.EGG;
+  }
+
   constructor({
     name,
     eggFat,
@@ -490,6 +520,10 @@ export class Egg extends Ingredient {
 }
 
 export class Stabilizer extends Ingredient {
+  public category(): Category {
+    return Category.STABILIZER;
+  }
+
   constructor({
     name,
     emulsifiers,
@@ -510,4 +544,14 @@ export class Stabilizer extends Ingredient {
   }
 }
 
-export class Miscellaneous extends Ingredient {}
+export class Miscellaneous extends Ingredient {
+  public category(): Category {
+    return Category.MISCELLANEOUS;
+  }
+
+  constructor({ name }: { name: string }) {
+    super(name, {
+      ...Ingredient.makeDefaultCompRecord(),
+    });
+  }
+}

@@ -1,6 +1,7 @@
 import { expect, test } from "vitest";
 
 import {
+  Category,
   Dairy,
   Sweetener,
   Alcohol,
@@ -10,7 +11,7 @@ import {
   Egg,
   Stabilizer,
   Miscellaneous,
-} from "../../src/lib/sci-cream/sci-cream";
+} from "@/../src/lib/sci-cream/sci-cream";
 
 import {
   dairy,
@@ -24,23 +25,29 @@ import {
   miscellaneous,
 } from "./ingredients";
 
-function testConstructAllIngredientsExpectNoThrow<T>(
+function testConstructedAndCategory(
   IngClass: any,
-  ingredients: T[]
+  category: Category,
+  ingredients: any[]
 ) {
-  test(`Construct database seed ingredients: ${IngClass.name}`, () => {
+  test(`Constructed and categories of seed ingredients: ${IngClass.name}, ${category}`, () => {
     for (const ing of ingredients) {
-      expect(() => new IngClass(ing)).not.toThrow();
+      expect(ing instanceof IngClass).toBe(true);
+      expect(ing.category()).toBe(category);
     }
   });
 }
 
-testConstructAllIngredientsExpectNoThrow(Dairy, dairy);
-testConstructAllIngredientsExpectNoThrow(Sweetener, sweeteners);
-testConstructAllIngredientsExpectNoThrow(Alcohol, alcohol);
-testConstructAllIngredientsExpectNoThrow(Chocolate, chocolates);
-testConstructAllIngredientsExpectNoThrow(Nut, nuts);
-testConstructAllIngredientsExpectNoThrow(Fruit, fruits);
-testConstructAllIngredientsExpectNoThrow(Egg, eggs);
-testConstructAllIngredientsExpectNoThrow(Stabilizer, stabilizers);
-//testConstructAllIngredientsExpectNoThrow(Miscellaneous, miscellaneous);
+testConstructedAndCategory(Dairy, Category.DAIRY, dairy);
+testConstructedAndCategory(Sweetener, Category.SWEETENER, sweeteners);
+testConstructedAndCategory(Alcohol, Category.ALCOHOL, alcohol);
+testConstructedAndCategory(Chocolate, Category.CHOCOLATE, chocolates);
+testConstructedAndCategory(Nut, Category.NUT, nuts);
+testConstructedAndCategory(Fruit, Category.FRUIT, fruits);
+testConstructedAndCategory(Egg, Category.EGG, eggs);
+testConstructedAndCategory(Stabilizer, Category.STABILIZER, stabilizers);
+testConstructedAndCategory(
+  Miscellaneous,
+  Category.MISCELLANEOUS,
+  miscellaneous
+);
