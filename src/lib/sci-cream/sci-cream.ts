@@ -162,13 +162,13 @@ const CompositionAllPercent = [
   Composition.STABILIZERS,
 ] as const;
 
-type CompRecord = Record<Composition, number | undefined>;
+export type CompositionRecord = Partial<Record<Composition, number>>;
 
 export abstract class Ingredient {
   name: string;
-  composition: CompRecord; // Percentage composition by weight
+  composition: CompositionRecord; // Percentage composition by weight
 
-  constructor(name: string, composition: CompRecord) {
+  constructor(name: string, composition: CompositionRecord) {
     Ingredient.validateComposition(composition);
 
     this.name = name;
@@ -177,15 +177,7 @@ export abstract class Ingredient {
 
   public abstract category(): Category;
 
-  static makeDefaultCompRecord(): CompRecord {
-    let defaultComp: CompRecord = {} as CompRecord;
-    Object.values(Composition).forEach((comp) => {
-      defaultComp[comp as Composition] = undefined;
-    });
-    return defaultComp;
-  }
-
-  static validateComposition(composition: CompRecord) {
+  static validateComposition(composition: CompositionRecord) {
     let reduceComps = (comps: readonly Composition[]) =>
       comps.reduce((sum, comp) => sum + (composition[comp] ?? 0), 0);
 
@@ -272,7 +264,6 @@ export class Sweetener extends Ingredient {
     solids: number;
   }) {
     super(name, {
-      ...Ingredient.makeDefaultCompRecord(),
       [Composition.SUGAR]: sugar,
       [Composition.OTHER_SNF]: solids,
       [Composition.OTHER_SNFS]: solids - sugar,
@@ -328,7 +319,6 @@ export class Alcohol extends Ingredient {
     }
 
     super(name, {
-      ...Ingredient.makeDefaultCompRecord(),
       [Composition.OTHER_FAT]: fat,
       [Composition.SUGAR]: sugar,
       [Composition.OTHER_SNF]: otherSNF,
@@ -370,7 +360,6 @@ export class Chocolate extends Ingredient {
     }
 
     super(name, {
-      ...Ingredient.makeDefaultCompRecord(),
       [Composition.CACAO_FAT]: cacaoFat,
       [Composition.SUGAR]: sugar,
       [Composition.COCOA_SNF]: solids - cacaoFat,
@@ -407,7 +396,6 @@ export class Nut extends Ingredient {
     }
 
     super(name, {
-      ...Ingredient.makeDefaultCompRecord(),
       [Composition.NUT_FAT]: nutFat,
       [Composition.SUGAR]: sugar,
       [Composition.NUT_SNF]: solids - nutFat,
@@ -448,7 +436,6 @@ export class Fruit extends Ingredient {
     const solids = 100 - water;
 
     super(name, {
-      ...Ingredient.makeDefaultCompRecord(),
       [Composition.OTHER_FAT]: fat,
       [Composition.SUGAR]: sugar,
       [Composition.OTHER_SNF]: solids - fat,
@@ -494,7 +481,6 @@ export class Egg extends Ingredient {
     }
 
     super(name, {
-      ...Ingredient.makeDefaultCompRecord(),
       [Composition.EGG_FAT]: eggFat,
       [Composition.EGG_SNF]: solids - eggFat,
       [Composition.EGG_SNFS]: solids - eggFat,
@@ -519,7 +505,6 @@ export class Stabilizer extends Ingredient {
     stabilizers: number;
   }) {
     super(name, {
-      ...Ingredient.makeDefaultCompRecord(),
       [Composition.OTHER_SNF]: 100,
       [Composition.OTHER_SNFS]: 100,
       [Composition.TOTAL_SOLIDS]: 100,
@@ -535,8 +520,6 @@ export class Miscellaneous extends Ingredient {
   }
 
   constructor({ name }: { name: string }) {
-    super(name, {
-      ...Ingredient.makeDefaultCompRecord(),
-    });
+    super(name, {});
   }
 }

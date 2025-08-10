@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { Composition, Ingredient, Dairy } from "./sci-cream";
+import { Composition, CompositionRecord, Dairy } from "./sci-cream";
 
 test(`Construct Dairy from milk fat only`, () => {
   function constructAndExpectToBe({
@@ -15,8 +15,7 @@ test(`Construct Dairy from milk fat only`, () => {
   }: any) {
     const dairy = new Dairy({ name: name, milkFat: milkFat });
 
-    const expectedComposition = {
-      ...Ingredient.makeDefaultCompRecord(),
+    const expectedComposition: CompositionRecord = {
       [Composition.MILK_FAT]: milkFat,
       [Composition.LACTOSE]: lactose,
       [Composition.MILK_SNF]: msnf,
