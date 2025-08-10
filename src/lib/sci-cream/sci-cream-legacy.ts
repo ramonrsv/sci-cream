@@ -2252,21 +2252,21 @@ const fruitMedleyQuants_ = [
 /// --------------- TEST Functions ---------------
 /// ==============================================
 
-function test_getFpdFromPacInterpolation_() {
+export function test_getFpdFromPacInterpolation_() {
   return getFpdFromPacInterpolationExpected_.reduce(
     (result, pac_fpd) => result && assertEq_(getFpdFromPacInterpolation(pac_fpd[0]), pac_fpd[1]),
     true
   );
 }
 
-function test_getFpdFromPacPolynomial_() {
+export function test_getFpdFromPacPolynomial_() {
   return getFpdFromPacPolynomialExpected_.reduce(
     (result, pac_fpd) => result && assertEq_(getFpdFromPacPolynomial(pac_fpd[0]), pac_fpd[1]),
     true
   );
 }
 
-function test_computeFpd_() {
+export function test_computeFpd_() {
   return computeFpdExpected_.reduce(
     (result, input_fpd: any) =>
       result && assertEq_((<any>computeFpd)(...input_fpd[0]), input_fpd[1]),
@@ -2274,7 +2274,7 @@ function test_computeFpd_() {
   );
 }
 
-function test_computeHardnessAtTemp_() {
+export function test_computeHardnessAtTemp_() {
   return computeHardnessAtTempExpected_.reduce(
     (result, [fpd_properties, temp, hardness]: any) =>
       result && assertEq_((<any>computeHardnessAtTemp)(...fpd_properties, temp), hardness),
@@ -2282,7 +2282,7 @@ function test_computeHardnessAtTemp_() {
   );
 }
 
-function test_flattenToAndDecompFromRow_() {
+export function test_flattenToAndDecompFromRow_() {
   var ret = [];
   ret[C.NAME] = "name";
   ret[C.SUGAR] = "sugar";
@@ -2303,38 +2303,38 @@ function test_flattenToAndDecompFromRow_() {
   return didAllSucceed_(results);
 }
 
-function test_expandDairyRange_() {
+export function test_expandDairyRange_() {
   return assertEq_(expandDairyRange(dairyRange_), expDairyRange_);
 }
-function test_expandSweetnersRange_() {
+export function test_expandSweetnersRange_() {
   return assertEq_(expandSweetnersRange(sweetnersRange_), expSweetnersRange_);
 }
-function test_expandAloholicRange_() {
+export function test_expandAloholicRange_() {
   return assertEq_(expandAlcoholicRange(alcoholicRange_), expAlcoholicRange_);
 }
-function test_expandChocolatesRange_() {
+export function test_expandChocolatesRange_() {
   return assertEq_(expandChocolatesRange(chocolatesRange_), expChocolatesRange_);
 }
-function test_expandNutsRange_() {
+export function test_expandNutsRange_() {
   return assertEq_(expandNutsRange(nutsRange_), expNutsRange_);
 }
-function test_expandFruitsAndVeggiesRange_() {
+export function test_expandFruitsAndVeggiesRange_() {
   return assertEq_(expandFruitsAndVeggiesRange(fruitsAndVeggiesRange_), expFruitsAndVeggiesRange_);
 }
-function test_expandEggsRange_() {
+export function test_expandEggsRange_() {
   return assertEq_(expandEggsRange(eggsRange_), expEggsRange_);
 }
-function test_expandEmulsifiersAndStabilizersRange_() {
+export function test_expandEmulsifiersAndStabilizersRange_() {
   return assertEq_(
     expandEmulsifiersAndStabilizersRange(emulsifiersAndStabilizersRange_),
     expEmulsifiersAndStabilizersRange_
   );
 }
-function test_expandMiscellaneousRange_() {
+export function test_expandMiscellaneousRange_() {
   return assertEq_(expandMiscellaneousRange(miscellaneousRange_), expMiscellaneousRange_);
 }
 
-function test_isError_() {
+export function test_isError_() {
   return didAllSucceed_(
     [
       [0, false],
@@ -2345,7 +2345,7 @@ function test_isError_() {
   );
 }
 
-function test_isCompositionQuantField_() {
+export function test_isCompositionQuantField_() {
   return didAllSucceed_(
     [
       [C.NAME, false],
@@ -2357,7 +2357,7 @@ function test_isCompositionQuantField_() {
   );
 }
 
-function test_linearFindIngredient_() {
+export function test_linearFindIngredient_() {
   return nameIngredientPairsExpected_.reduce(
     (result, [name, ingredient]) =>
       result && assertEq_(linearFindIngredient_(name, ingredients_), ingredient),
@@ -2365,7 +2365,7 @@ function test_linearFindIngredient_() {
   );
 }
 
-function test_binaryFindIngredient_() {
+export function test_binaryFindIngredient_() {
   return nameIngredientPairsExpected_.reduce(
     (result, [name, ingredient]) =>
       result && assertEq_(binaryFindIngredient_(name, ingredients_), ingredient),
@@ -2373,7 +2373,7 @@ function test_binaryFindIngredient_() {
   );
 }
 
-function test_getIngredientParameters_() {
+export function test_getIngredientParameters_() {
   return didAllSucceed_([
     assertEq_(
       strawberryNewBrix_
@@ -2402,7 +2402,7 @@ function test_getIngredientParameters_() {
   ]);
 }
 
-function test_processIngredient_() {
+export function test_processIngredient_() {
   return didAllSucceed_([
     // Parametric ingredients, Brix
     assertEq_(
@@ -2426,14 +2426,14 @@ function test_processIngredient_() {
   ]);
 }
 
-function test_computeIngredientQuantities_() {
+export function test_computeIngredientQuantities_() {
   return assertEq_(
     expDairyRange_.map((row: any) => computeIngredientQuantities(quantityExpected_, row)),
     expDairyRangeQuants_
   );
 }
 
-function test_computeRecipeQuantities_() {
+export function test_computeRecipeQuantities_() {
   var results = [
     assertEq_(
       computeRecipeQuantities(
@@ -2460,22 +2460,22 @@ function test_computeRecipeQuantities_() {
   return didAllSucceed_(results);
 }
 
-function test_computeRecipeQuantityTotals_() {
+export function test_computeRecipeQuantityTotals_() {
   return assertEq_(computeRecipeQuantityTotals(processed_recipe_), recipeQuantitiesRangeFull_[1]);
 }
 
-function test_computeRecipeProperties_() {
+export function test_computeRecipeProperties_() {
   return assertEq_(computeRecipeProperties(recipe_, ingredients_), recipeProperties_);
 }
 
-function test_computeAndDisplayQuantitiesFull_() {
+export function test_computeAndDisplayQuantitiesFull_() {
   return assertEq_(
     computeAndDisplayQuantitiesFull(recipe_, ingredients_),
     recipeQuantitiesRangeFull_
   );
 }
 
-function test_computeAndDisplayQuantitiesFullError_() {
+export function test_computeAndDisplayQuantitiesFullError_() {
   var quantities = computeAndDisplayQuantitiesFull(
     [["2% Milk", 200], ["unknown"], ["35% Cream", 200], ["unknown", 10]],
     ingredients_
@@ -2496,14 +2496,14 @@ function test_computeAndDisplayQuantitiesFullError_() {
   ]);
 }
 
-function test_computeAndDisplayPropertiesSummary_() {
+export function test_computeAndDisplayPropertiesSummary_() {
   return assertEq_(
     computeAndDisplayPropertiesSummary(recipe_, ingredients_),
     recipePropertiesRangeSummary
   );
 }
 
-function test_computeAndDisplayPropertiesSummaryEmpty_() {
+export function test_computeAndDisplayPropertiesSummaryEmpty_() {
   var properties = computeAndDisplayPropertiesSummary([], ingredients_);
   var results = [];
 
@@ -2527,7 +2527,7 @@ function test_computeAndDisplayPropertiesSummaryEmpty_() {
   return didAllSucceed_(results);
 }
 
-function test_computeAndDisplayPropertiesSummaryError_() {
+export function test_computeAndDisplayPropertiesSummaryError_() {
   var properties = computeAndDisplayPropertiesSummary(
     [
       ["2% Milk", 200],
@@ -2539,7 +2539,7 @@ function test_computeAndDisplayPropertiesSummaryError_() {
   return assertEq_(properties[0][1], ERROR_UNKNOWN_INGREDIENT);
 }
 
-function test_computeAndDisplayFpdCurves_() {
+export function test_computeAndDisplayFpdCurves_() {
   return didAllSucceed_([
     assertEq_(computeAndDisplayFpdCurves(recipe_, ingredients_), recipeFpdCurvesRange_),
     assertEq_(computeAndDisplayFpdCurves([], ingredients_), [
@@ -2549,7 +2549,7 @@ function test_computeAndDisplayFpdCurves_() {
   ]);
 }
 
-function test_computeAndDisplayNewBrixFruits_() {
+export function test_computeAndDisplayNewBrixFruits_() {
   return didAllSucceed_([
     assertEq_(
       computeAndDisplayNewBrixFruits(
@@ -2570,11 +2570,11 @@ function test_computeAndDisplayNewBrixFruits_() {
   ]);
 }
 
-function test_computeAndDisplayNewBrixFruitsEmpty_() {
+export function test_computeAndDisplayNewBrixFruitsEmpty_() {
   return assertEq_(computeAndDisplayNewBrixFruits("", [], fruitsAndVeggiesRange_), []);
 }
 
-function test_computeAndDisplayNewBrixFruitsErrors_() {
+export function test_computeAndDisplayNewBrixFruitsErrors_() {
   return didAllSucceed_([
     assertEq_(computeAndDisplayNewBrixFruits("Strawberry", [[100]], fruitsAndVeggiesRange_), [
       fruitsAndVeggiesRange_[2],
@@ -2586,63 +2586,9 @@ function test_computeAndDisplayNewBrixFruitsErrors_() {
   ]);
 }
 
-function test_computeFruitMedley_() {
+export function test_computeFruitMedley_() {
   return assertEq_(
     computeFruitMedley(fruitMedleyRecipe_, fruitsAndVeggiesRange_),
     fruitMedleyQuants_
   );
-}
-
-export function test_ALL() {
-  var test_functions = [
-    test_getFpdFromPacInterpolation_,
-    test_getFpdFromPacPolynomial_,
-    test_computeFpd_,
-    test_computeHardnessAtTemp_,
-
-    test_flattenToAndDecompFromRow_,
-
-    test_expandDairyRange_,
-    test_expandSweetnersRange_,
-    test_expandAloholicRange_,
-    test_expandChocolatesRange_,
-    test_expandNutsRange_,
-    test_expandFruitsAndVeggiesRange_,
-    test_expandEggsRange_,
-    test_expandEmulsifiersAndStabilizersRange_,
-    test_expandMiscellaneousRange_,
-
-    test_isError_,
-    test_isCompositionQuantField_,
-    test_linearFindIngredient_,
-    test_binaryFindIngredient_,
-    test_getIngredientParameters_,
-    test_processIngredient_,
-
-    test_computeIngredientQuantities_,
-    test_computeRecipeQuantities_,
-    test_computeRecipeQuantityTotals_,
-    test_computeRecipeProperties_,
-
-    test_computeAndDisplayQuantitiesFull_,
-    test_computeAndDisplayQuantitiesFullError_,
-    test_computeAndDisplayPropertiesSummary_,
-    test_computeAndDisplayPropertiesSummaryEmpty_,
-    test_computeAndDisplayPropertiesSummaryError_,
-    test_computeAndDisplayFpdCurves_,
-
-    test_computeAndDisplayNewBrixFruits_,
-    test_computeAndDisplayNewBrixFruitsEmpty_,
-    test_computeAndDisplayNewBrixFruitsErrors_,
-
-    test_computeFruitMedley_,
-  ];
-
-  var success = test_functions.reduce((success, test_fn) => {
-    console.log(`Runnin ${test_fn.name}`);
-    return test_fn() && success;
-  }, true);
-
-  success ? console.log("SUCCESS") : console.log("FAILURE");
-  return success;
 }
