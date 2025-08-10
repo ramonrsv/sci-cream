@@ -99,6 +99,32 @@ export enum Property {
   HARDNESS_AT_14 = "Hardness at 14°C",
 }
 
+namespace constants {
+  export const ABV_TO_ABW_RATIO = 0.789;
+
+  export const SUCROSE_POD = 100;
+  export const GLUCOSE_POD = 70;
+  export const FRUCTOSE_POD = 170;
+  export const LACTOSE_POD = 16;
+
+  export const SUCROSE_PAC = 100;
+  export const GLUCOSE_PAC = 190;
+  export const FRUCTOSE_PAC = 190;
+  export const LACTOSE_PAC = 100;
+
+  export const SALT_PAC = 585;
+  export const ALCOHOL_PAC = 740;
+
+  export const CACAO_FAT_HF = 0.9;
+  export const COCOA_SOLIDS_HF = 1.8;
+  export const NUT_FAT_HF = 1.4;
+
+  export const STANDARD_MSNF_IN_MILK_SERUM = 0.09;
+  export const STANDARD_LACTOSE_IN_MSNF = 0.545;
+
+  export const FPD_MSNF_FACTOR_FOR_CELSIUS = 2.37;
+}
+
 const CompositionFats = [
   Composition.MILK_FAT,
   Composition.EGG_FAT,
@@ -139,30 +165,6 @@ const CompositionAllPercent = [
 type CompRecord = Record<Composition, number | undefined>;
 
 export abstract class Ingredient {
-  public static readonly ABV_TO_ABW_RATIO = 0.789;
-
-  public static readonly SUCROSE_POD = 100;
-  public static readonly GLUCOSE_POD = 70;
-  public static readonly FRUCTOSE_POD = 170;
-  public static readonly LACTOSE_POD = 16;
-
-  public static readonly SUCROSE_PAC = 100;
-  public static readonly GLUCOSE_PAC = 190;
-  public static readonly FRUCTOSE_PAC = 190;
-  public static readonly LACTOSE_PAC = 100;
-
-  public static readonly SALT_PAC = 585;
-  public static readonly ALCOHOL_PAC = 740;
-
-  public static readonly CACAO_FAT_HF = 0.9;
-  public static readonly COCOA_SOLIDS_HF = 1.8;
-  public static readonly NUT_FAT_HF = 1.4;
-
-  public static readonly STANDARD_MSNF_IN_MILK_SERUM = 0.09;
-  public static readonly STANDARD_LACTOSE_IN_MSNF = 0.545;
-
-  public static readonly FPD_MSNF_FACTOR_FOR_CELSIUS = 2.37;
-
   name: string;
   composition: CompRecord; // Percentage composition by weight
 
@@ -236,18 +238,17 @@ export class Dairy extends Ingredient {
     msnf?: number;
     lactose?: number;
   }) {
-    msnf = msnf ?? (100 - milkFat) * Ingredient.STANDARD_MSNF_IN_MILK_SERUM;
-    lactose = lactose ?? msnf * Ingredient.STANDARD_LACTOSE_IN_MSNF;
+    msnf = msnf ?? (100 - milkFat) * constants.STANDARD_MSNF_IN_MILK_SERUM;
+    lactose = lactose ?? msnf * constants.STANDARD_LACTOSE_IN_MSNF;
 
     super(name, {
-      ...Ingredient.makeDefaultCompRecord(),
       [Composition.MILK_FAT]: milkFat,
       [Composition.LACTOSE]: lactose,
       [Composition.MILK_SNF]: msnf,
       [Composition.MILK_SNFS]: msnf - lactose,
       [Composition.TOTAL_SOLIDS]: milkFat + msnf,
-      [Composition.POD]: (Ingredient.LACTOSE_POD * lactose) / 100,
-      [Composition.PAC_SGR]: (Ingredient.LACTOSE_PAC * lactose) / 100,
+      [Composition.POD]: (constants.LACTOSE_POD * lactose) / 100,
+      [Composition.PAC_SGR]: (constants.LACTOSE_PAC * lactose) / 100,
     });
   }
 }
@@ -303,7 +304,7 @@ export class Alcohol extends Ingredient {
     salt?: number;
   }) {
     salt = salt ? salt / 10 : undefined; // Convert from ‰ -> %
-    const alcohol = abv * Ingredient.ABV_TO_ABW_RATIO;
+    const alcohol = abv * constants.ABV_TO_ABW_RATIO;
 
     let otherSNF = undefined;
     let otherSNFS = undefined;
@@ -337,8 +338,8 @@ export class Alcohol extends Ingredient {
       [Composition.ALCOHOL]: alcohol,
       [Composition.POD]: sugar,
       [Composition.PAC_SGR]: sugar,
-      [Composition.PAC_SLT]: salt ? (salt * Ingredient.SALT_PAC) / 100 : undefined,
-      [Composition.PAC_ALC]: (alcohol * Ingredient.ALCOHOL_PAC) / 100,
+      [Composition.PAC_SLT]: salt ? (salt * constants.SALT_PAC) / 100 : undefined,
+      [Composition.PAC_ALC]: (alcohol * constants.ALCOHOL_PAC) / 100,
     });
   }
 }
@@ -377,8 +378,7 @@ export class Chocolate extends Ingredient {
       [Composition.TOTAL_SOLIDS]: solids,
       [Composition.POD]: sugar,
       [Composition.PAC_SGR]: sugar,
-      [Composition.HF]:
-        cacaoFat * Ingredient.CACAO_FAT_HF + cocoaSolids * Ingredient.COCOA_SOLIDS_HF,
+      [Composition.HF]: cacaoFat * constants.CACAO_FAT_HF + cocoaSolids * constants.COCOA_SOLIDS_HF,
     });
   }
 }
@@ -415,7 +415,7 @@ export class Nut extends Ingredient {
       [Composition.TOTAL_SOLIDS]: solids,
       [Composition.POD]: sugar,
       [Composition.PAC_SGR]: sugar,
-      [Composition.HF]: nutFat * Ingredient.NUT_FAT_HF,
+      [Composition.HF]: nutFat * constants.NUT_FAT_HF,
     });
   }
 }
@@ -455,13 +455,13 @@ export class Fruit extends Ingredient {
       [Composition.OTHER_SNFS]: solids - fat - sugar,
       [Composition.TOTAL_SOLIDS]: solids,
       [Composition.POD]:
-        (sucrose ?? 0) * Ingredient.SUCROSE_POD +
-        (glucose ?? 0) * Ingredient.GLUCOSE_POD +
-        (fructose ?? 0) * Ingredient.FRUCTOSE_POD,
+        (sucrose ?? 0) * constants.SUCROSE_POD +
+        (glucose ?? 0) * constants.GLUCOSE_POD +
+        (fructose ?? 0) * constants.FRUCTOSE_POD,
       [Composition.PAC_SGR]:
-        (sucrose ?? 0) * Ingredient.SUCROSE_PAC +
-        (glucose ?? 0) * Ingredient.GLUCOSE_PAC +
-        (fructose ?? 0) * Ingredient.FRUCTOSE_PAC,
+        (sucrose ?? 0) * constants.SUCROSE_PAC +
+        (glucose ?? 0) * constants.GLUCOSE_PAC +
+        (fructose ?? 0) * constants.FRUCTOSE_PAC,
     });
 
     this.sucrose = sucrose;
