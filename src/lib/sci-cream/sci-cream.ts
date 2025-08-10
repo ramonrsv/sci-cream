@@ -168,14 +168,21 @@ export abstract class Ingredient {
   name: string;
   composition: CompositionRecord; // Percentage composition by weight
 
-  constructor(name: string, composition: CompositionRecord) {
+  private dbValue: {};
+
+  constructor(name: string, composition: CompositionRecord, dbValue: {}) {
     Ingredient.validateComposition(composition);
 
     this.name = name;
     this.composition = composition;
+    this.dbValue = dbValue;
   }
 
   public abstract category(): Category;
+
+  public toDbValue(): {} {
+    return this.dbValue;
+  }
 
   static validateComposition(composition: CompositionRecord) {
     let reduceComps = (comps: readonly Composition[]) =>
@@ -233,15 +240,24 @@ export class Dairy extends Ingredient {
     msnf = msnf ?? (100 - milkFat) * constants.STANDARD_MSNF_IN_MILK_SERUM;
     lactose = lactose ?? msnf * constants.STANDARD_LACTOSE_IN_MSNF;
 
-    super(name, {
-      [Composition.MILK_FAT]: milkFat,
-      [Composition.LACTOSE]: lactose,
-      [Composition.MILK_SNF]: msnf,
-      [Composition.MILK_SNFS]: msnf - lactose,
-      [Composition.TOTAL_SOLIDS]: milkFat + msnf,
-      [Composition.POD]: (constants.LACTOSE_POD * lactose) / 100,
-      [Composition.PAC_SGR]: (constants.LACTOSE_PAC * lactose) / 100,
-    });
+    super(
+      name,
+      {
+        [Composition.MILK_FAT]: milkFat,
+        [Composition.LACTOSE]: lactose,
+        [Composition.MILK_SNF]: msnf,
+        [Composition.MILK_SNFS]: msnf - lactose,
+        [Composition.TOTAL_SOLIDS]: milkFat + msnf,
+        [Composition.POD]: (constants.LACTOSE_POD * lactose) / 100,
+        [Composition.PAC_SGR]: (constants.LACTOSE_PAC * lactose) / 100,
+      },
+      {
+        name,
+        milkFat,
+        msnf,
+        lactose,
+      }
+    );
   }
 }
 
@@ -263,14 +279,24 @@ export class Sweetener extends Ingredient {
     sugar: number;
     solids: number;
   }) {
-    super(name, {
-      [Composition.SUGAR]: sugar,
-      [Composition.OTHER_SNF]: solids,
-      [Composition.OTHER_SNFS]: solids - sugar,
-      [Composition.TOTAL_SOLIDS]: solids,
-      [Composition.POD]: pod,
-      [Composition.PAC_SGR]: pac,
-    });
+    super(
+      name,
+      {
+        [Composition.SUGAR]: sugar,
+        [Composition.OTHER_SNF]: solids,
+        [Composition.OTHER_SNFS]: solids - sugar,
+        [Composition.TOTAL_SOLIDS]: solids,
+        [Composition.POD]: pod,
+        [Composition.PAC_SGR]: pac,
+      },
+      {
+        name,
+        pod,
+        pac,
+        sugar,
+        solids,
+      }
+    );
   }
 }
 
@@ -307,9 +333,8 @@ export class Alcohol extends Ingredient {
       if (solids === undefined || solids < (sugar ?? 0) + (fat ?? 0) + (salt ?? 0)) {
         throw new Error(
           `Invalid composition: Solids (${solids}%) must be at least the sum of ` +
-            `Sugar (${sugar ?? 0}%), Fat (${fat ?? 0}%), and Salt (${
-              salt ?? 0
-            }%) for Alcohol ingredient`
+            `Sugar (${sugar ?? 0}%), Fat (${fat ?? 0}%), and Salt (${salt ?? 0}%) ` +
+            `for Alcohol ingredient`
         );
       }
 
@@ -317,19 +342,30 @@ export class Alcohol extends Ingredient {
       otherSNFS = solids - (fat ?? 0) - (sugar ?? 0);
     }
 
-    super(name, {
-      [Composition.OTHER_FAT]: fat,
-      [Composition.SUGAR]: sugar,
-      [Composition.OTHER_SNF]: otherSNF,
-      [Composition.OTHER_SNFS]: otherSNFS,
-      [Composition.TOTAL_SOLIDS]: solids,
-      [Composition.SALT]: salt,
-      [Composition.ALCOHOL]: alcohol,
-      [Composition.POD]: sugar,
-      [Composition.PAC_SGR]: sugar,
-      [Composition.PAC_SLT]: salt ? (salt * constants.SALT_PAC) / 100 : undefined,
-      [Composition.PAC_ALC]: (alcohol * constants.ALCOHOL_PAC) / 100,
-    });
+    super(
+      name,
+      {
+        [Composition.OTHER_FAT]: fat,
+        [Composition.SUGAR]: sugar,
+        [Composition.OTHER_SNF]: otherSNF,
+        [Composition.OTHER_SNFS]: otherSNFS,
+        [Composition.TOTAL_SOLIDS]: solids,
+        [Composition.SALT]: salt,
+        [Composition.ALCOHOL]: alcohol,
+        [Composition.POD]: sugar,
+        [Composition.PAC_SGR]: sugar,
+        [Composition.PAC_SLT]: salt ? (salt * constants.SALT_PAC) / 100 : undefined,
+        [Composition.PAC_ALC]: (alcohol * constants.ALCOHOL_PAC) / 100,
+      },
+      {
+        name,
+        abv,
+        sugar,
+        fat,
+        solids,
+        salt,
+      }
+    );
   }
 }
 
@@ -358,16 +394,26 @@ export class Chocolate extends Ingredient {
       );
     }
 
-    super(name, {
-      [Composition.CACAO_FAT]: cacaoFat,
-      [Composition.SUGAR]: sugar,
-      [Composition.COCOA_SNF]: solids - cacaoFat,
-      [Composition.COCOA_SNFS]: cocoaSolids,
-      [Composition.TOTAL_SOLIDS]: solids,
-      [Composition.POD]: sugar,
-      [Composition.PAC_SGR]: sugar,
-      [Composition.HF]: cacaoFat * constants.CACAO_FAT_HF + cocoaSolids * constants.COCOA_SOLIDS_HF,
-    });
+    super(
+      name,
+      {
+        [Composition.CACAO_FAT]: cacaoFat,
+        [Composition.SUGAR]: sugar,
+        [Composition.COCOA_SNF]: solids - cacaoFat,
+        [Composition.COCOA_SNFS]: cocoaSolids,
+        [Composition.TOTAL_SOLIDS]: solids,
+        [Composition.POD]: sugar,
+        [Composition.PAC_SGR]: sugar,
+        [Composition.HF]:
+          cacaoFat * constants.CACAO_FAT_HF + cocoaSolids * constants.COCOA_SOLIDS_HF,
+      },
+      {
+        name,
+        cacaoFat,
+        sugar,
+        water,
+      }
+    );
   }
 }
 
@@ -394,16 +440,25 @@ export class Nut extends Ingredient {
       throw new Error(`Invalid composition: Nut Solids cannot be negative for Nut ingredient`);
     }
 
-    super(name, {
-      [Composition.NUT_FAT]: nutFat,
-      [Composition.SUGAR]: sugar,
-      [Composition.NUT_SNF]: solids - nutFat,
-      [Composition.NUT_SNFS]: nutSolids,
-      [Composition.TOTAL_SOLIDS]: solids,
-      [Composition.POD]: sugar,
-      [Composition.PAC_SGR]: sugar,
-      [Composition.HF]: nutFat * constants.NUT_FAT_HF,
-    });
+    super(
+      name,
+      {
+        [Composition.NUT_FAT]: nutFat,
+        [Composition.SUGAR]: sugar,
+        [Composition.NUT_SNF]: solids - nutFat,
+        [Composition.NUT_SNFS]: nutSolids,
+        [Composition.TOTAL_SOLIDS]: solids,
+        [Composition.POD]: sugar,
+        [Composition.PAC_SGR]: sugar,
+        [Composition.HF]: nutFat * constants.NUT_FAT_HF,
+      },
+      {
+        name,
+        nutFat,
+        sugar,
+        water,
+      }
+    );
   }
 }
 
@@ -434,21 +489,32 @@ export class Fruit extends Ingredient {
     const sugar = (sucrose ?? 0) + (glucose ?? 0) + (fructose ?? 0);
     const solids = 100 - water;
 
-    super(name, {
-      [Composition.OTHER_FAT]: fat,
-      [Composition.SUGAR]: sugar,
-      [Composition.OTHER_SNF]: solids - fat,
-      [Composition.OTHER_SNFS]: solids - fat - sugar,
-      [Composition.TOTAL_SOLIDS]: solids,
-      [Composition.POD]:
-        (sucrose ?? 0) * constants.SUCROSE_POD +
-        (glucose ?? 0) * constants.GLUCOSE_POD +
-        (fructose ?? 0) * constants.FRUCTOSE_POD,
-      [Composition.PAC_SGR]:
-        (sucrose ?? 0) * constants.SUCROSE_PAC +
-        (glucose ?? 0) * constants.GLUCOSE_PAC +
-        (fructose ?? 0) * constants.FRUCTOSE_PAC,
-    });
+    super(
+      name,
+      {
+        [Composition.OTHER_FAT]: fat,
+        [Composition.SUGAR]: sugar,
+        [Composition.OTHER_SNF]: solids - fat,
+        [Composition.OTHER_SNFS]: solids - fat - sugar,
+        [Composition.TOTAL_SOLIDS]: solids,
+        [Composition.POD]:
+          (sucrose ?? 0) * constants.SUCROSE_POD +
+          (glucose ?? 0) * constants.GLUCOSE_POD +
+          (fructose ?? 0) * constants.FRUCTOSE_POD,
+        [Composition.PAC_SGR]:
+          (sucrose ?? 0) * constants.SUCROSE_PAC +
+          (glucose ?? 0) * constants.GLUCOSE_PAC +
+          (fructose ?? 0) * constants.FRUCTOSE_PAC,
+      },
+      {
+        name,
+        water,
+        sucrose,
+        glucose,
+        fructose,
+        fat,
+      }
+    );
 
     this.sucrose = sucrose;
     this.glucose = glucose;
@@ -479,13 +545,22 @@ export class Egg extends Ingredient {
       );
     }
 
-    super(name, {
-      [Composition.EGG_FAT]: eggFat,
-      [Composition.EGG_SNF]: solids - eggFat,
-      [Composition.EGG_SNFS]: solids - eggFat,
-      [Composition.TOTAL_SOLIDS]: solids,
-      [Composition.EMULSIFIERS]: lecithin,
-    });
+    super(
+      name,
+      {
+        [Composition.EGG_FAT]: eggFat,
+        [Composition.EGG_SNF]: solids - eggFat,
+        [Composition.EGG_SNFS]: solids - eggFat,
+        [Composition.TOTAL_SOLIDS]: solids,
+        [Composition.EMULSIFIERS]: lecithin,
+      },
+      {
+        name,
+        eggFat,
+        solids,
+        lecithin,
+      }
+    );
   }
 }
 
@@ -503,13 +578,21 @@ export class Stabilizer extends Ingredient {
     emulsifiers: number;
     stabilizers: number;
   }) {
-    super(name, {
-      [Composition.OTHER_SNF]: 100,
-      [Composition.OTHER_SNFS]: 100,
-      [Composition.TOTAL_SOLIDS]: 100,
-      [Composition.EMULSIFIERS]: emulsifiers,
-      [Composition.STABILIZERS]: stabilizers,
-    });
+    super(
+      name,
+      {
+        [Composition.OTHER_SNF]: 100,
+        [Composition.OTHER_SNFS]: 100,
+        [Composition.TOTAL_SOLIDS]: 100,
+        [Composition.EMULSIFIERS]: emulsifiers,
+        [Composition.STABILIZERS]: stabilizers,
+      },
+      {
+        name,
+        emulsifiers,
+        stabilizers,
+      }
+    );
   }
 }
 
@@ -519,6 +602,6 @@ export class Miscellaneous extends Ingredient {
   }
 
   constructor({ name }: { name: string }) {
-    super(name, {});
+    super(name, {}, { name });
   }
 }

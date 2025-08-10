@@ -5,7 +5,7 @@ import { eq, and } from "drizzle-orm";
 import { usersTable, ingredientsTable } from "./schema";
 import * as schema from "./schema";
 
-import { Dairy } from "@/lib/sci-cream/sci-cream";
+import { Ingredient, Dairy } from "@/lib/sci-cream/sci-cream";
 
 import { allIngredients } from "@/../data/ingredients/ingredients";
 
@@ -35,7 +35,7 @@ async function seedUsers() {
   console.log("Getting all users from the database:", users);
 }
 
-async function seedUserIngredients(user: User, ingredients: any[]) {
+async function seedUserIngredients(user: User, ingredients: Ingredient[]) {
   const [foundUser] = await db.select().from(usersTable).where(eq(usersTable.email, user.email));
 
   console.log("==========");
@@ -46,7 +46,7 @@ async function seedUserIngredients(user: User, ingredients: any[]) {
       name: ing.name,
       user: foundUser.id,
       category: ing.category(),
-      value: JSON.stringify(ing),
+      value: JSON.stringify(ing.toDbValue()),
     };
 
     console.log("---");
