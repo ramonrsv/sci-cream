@@ -294,7 +294,6 @@ export class Alcohol extends Ingredient {
     solids?: number;
     salt?: number;
   }) {
-    salt = salt ? salt / 10 : undefined; // Convert from ‰ -> %
     const alcohol = abv * constants.ABV_TO_ABW_RATIO;
 
     let otherSNF = undefined;
