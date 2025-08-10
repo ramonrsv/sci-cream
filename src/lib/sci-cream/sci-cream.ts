@@ -168,20 +168,20 @@ export abstract class Ingredient {
   name: string;
   composition: CompositionRecord; // Percentage composition by weight
 
-  private dbValue: {};
+  private ctorArgs: {};
 
-  constructor(name: string, composition: CompositionRecord, dbValue: {}) {
+  constructor(name: string, ctorArgs: {}, composition: CompositionRecord) {
     Ingredient.validateComposition(composition);
 
     this.name = name;
     this.composition = composition;
-    this.dbValue = dbValue;
+    this.ctorArgs = ctorArgs;
   }
 
   public abstract category(): Category;
 
-  public toDbValue(): {} {
-    return this.dbValue;
+  public getConstructorArgs(): {} {
+    return this.ctorArgs;
   }
 
   static validateComposition(composition: CompositionRecord) {
@@ -221,44 +221,42 @@ export abstract class Ingredient {
   }
 }
 
+interface DairyParams {
+  name: string;
+  milkFat: number;
+  msnf?: number;
+  lactose?: number;
+}
+
 export class Dairy extends Ingredient {
   public category(): Category {
     return Category.DAIRY;
   }
 
-  constructor({
-    name,
-    milkFat,
-    msnf,
-    lactose,
-  }: {
-    name: string;
-    milkFat: number;
-    msnf?: number;
-    lactose?: number;
-  }) {
+  constructor(args: DairyParams) {
+    let { name, milkFat, msnf, lactose } = args;
+
     msnf = msnf ?? (100 - milkFat) * constants.STANDARD_MSNF_IN_MILK_SERUM;
     lactose = lactose ?? msnf * constants.STANDARD_LACTOSE_IN_MSNF;
 
-    super(
-      name,
-      {
-        [Composition.MILK_FAT]: milkFat,
-        [Composition.LACTOSE]: lactose,
-        [Composition.MILK_SNF]: msnf,
-        [Composition.MILK_SNFS]: msnf - lactose,
-        [Composition.TOTAL_SOLIDS]: milkFat + msnf,
-        [Composition.POD]: (constants.LACTOSE_POD * lactose) / 100,
-        [Composition.PAC_SGR]: (constants.LACTOSE_PAC * lactose) / 100,
-      },
-      {
-        name,
-        milkFat,
-        msnf,
-        lactose,
-      }
-    );
+    super(name, args, {
+      [Composition.MILK_FAT]: milkFat,
+      [Composition.LACTOSE]: lactose,
+      [Composition.MILK_SNF]: msnf,
+      [Composition.MILK_SNFS]: msnf - lactose,
+      [Composition.TOTAL_SOLIDS]: milkFat + msnf,
+      [Composition.POD]: (constants.LACTOSE_POD * lactose) / 100,
+      [Composition.PAC_SGR]: (constants.LACTOSE_PAC * lactose) / 100,
+    });
   }
+}
+
+interface SweetenerParams {
+  name: string;
+  pod: number;
+  pac: number;
+  sugar: number;
+  solids: number;
 }
 
 export class Sweetener extends Ingredient {
@@ -266,38 +264,27 @@ export class Sweetener extends Ingredient {
     return Category.SWEETENER;
   }
 
-  constructor({
-    name,
-    pod,
-    pac,
-    sugar,
-    solids,
-  }: {
-    name: string;
-    pod: number;
-    pac: number;
-    sugar: number;
-    solids: number;
-  }) {
-    super(
-      name,
-      {
-        [Composition.SUGAR]: sugar,
-        [Composition.OTHER_SNF]: solids,
-        [Composition.OTHER_SNFS]: solids - sugar,
-        [Composition.TOTAL_SOLIDS]: solids,
-        [Composition.POD]: pod,
-        [Composition.PAC_SGR]: pac,
-      },
-      {
-        name,
-        pod,
-        pac,
-        sugar,
-        solids,
-      }
-    );
+  constructor(args: SweetenerParams) {
+    const { name, pod, pac, sugar, solids } = args;
+
+    super(name, args, {
+      [Composition.SUGAR]: sugar,
+      [Composition.OTHER_SNF]: solids,
+      [Composition.OTHER_SNFS]: solids - sugar,
+      [Composition.TOTAL_SOLIDS]: solids,
+      [Composition.POD]: pod,
+      [Composition.PAC_SGR]: pac,
+    });
   }
+}
+
+interface AlcoholParams {
+  name: string;
+  abv: number;
+  sugar?: number;
+  fat?: number;
+  solids?: number;
+  salt?: number;
 }
 
 export class Alcohol extends Ingredient {
@@ -305,21 +292,9 @@ export class Alcohol extends Ingredient {
     return Category.ALCOHOL;
   }
 
-  constructor({
-    name,
-    abv,
-    sugar,
-    fat,
-    solids,
-    salt,
-  }: {
-    name: string;
-    abv: number;
-    sugar?: number;
-    fat?: number;
-    solids?: number;
-    salt?: number;
-  }) {
+  constructor(args: AlcoholParams) {
+    const { name, abv, sugar, fat, solids, salt } = args;
+
     const alcohol = abv * constants.ABV_TO_ABW_RATIO;
 
     let otherSNF = undefined;
@@ -342,31 +317,27 @@ export class Alcohol extends Ingredient {
       otherSNFS = solids - (fat ?? 0) - (sugar ?? 0);
     }
 
-    super(
-      name,
-      {
-        [Composition.OTHER_FAT]: fat,
-        [Composition.SUGAR]: sugar,
-        [Composition.OTHER_SNF]: otherSNF,
-        [Composition.OTHER_SNFS]: otherSNFS,
-        [Composition.TOTAL_SOLIDS]: solids,
-        [Composition.SALT]: salt,
-        [Composition.ALCOHOL]: alcohol,
-        [Composition.POD]: sugar,
-        [Composition.PAC_SGR]: sugar,
-        [Composition.PAC_SLT]: salt ? (salt * constants.SALT_PAC) / 100 : undefined,
-        [Composition.PAC_ALC]: (alcohol * constants.ALCOHOL_PAC) / 100,
-      },
-      {
-        name,
-        abv,
-        sugar,
-        fat,
-        solids,
-        salt,
-      }
-    );
+    super(name, args, {
+      [Composition.OTHER_FAT]: fat,
+      [Composition.SUGAR]: sugar,
+      [Composition.OTHER_SNF]: otherSNF,
+      [Composition.OTHER_SNFS]: otherSNFS,
+      [Composition.TOTAL_SOLIDS]: solids,
+      [Composition.SALT]: salt,
+      [Composition.ALCOHOL]: alcohol,
+      [Composition.POD]: sugar,
+      [Composition.PAC_SGR]: sugar,
+      [Composition.PAC_SLT]: salt ? (salt * constants.SALT_PAC) / 100 : undefined,
+      [Composition.PAC_ALC]: (alcohol * constants.ALCOHOL_PAC) / 100,
+    });
   }
+}
+
+interface ChocolateParms {
+  name: string;
+  cacaoFat: number;
+  sugar?: number;
+  water?: number;
 }
 
 export class Chocolate extends Ingredient {
@@ -374,17 +345,9 @@ export class Chocolate extends Ingredient {
     return Category.CHOCOLATE;
   }
 
-  constructor({
-    name,
-    cacaoFat,
-    sugar,
-    water,
-  }: {
-    name: string;
-    cacaoFat: number;
-    sugar?: number;
-    water?: number;
-  }) {
+  constructor(args: ChocolateParms) {
+    const { name, cacaoFat, sugar, water } = args;
+
     const solids = 100 - (water ?? 0);
     const cocoaSolids = solids - cacaoFat - (sugar ?? 0);
 
@@ -394,27 +357,24 @@ export class Chocolate extends Ingredient {
       );
     }
 
-    super(
-      name,
-      {
-        [Composition.CACAO_FAT]: cacaoFat,
-        [Composition.SUGAR]: sugar,
-        [Composition.COCOA_SNF]: solids - cacaoFat,
-        [Composition.COCOA_SNFS]: cocoaSolids,
-        [Composition.TOTAL_SOLIDS]: solids,
-        [Composition.POD]: sugar,
-        [Composition.PAC_SGR]: sugar,
-        [Composition.HF]:
-          cacaoFat * constants.CACAO_FAT_HF + cocoaSolids * constants.COCOA_SOLIDS_HF,
-      },
-      {
-        name,
-        cacaoFat,
-        sugar,
-        water,
-      }
-    );
+    super(name, args, {
+      [Composition.CACAO_FAT]: cacaoFat,
+      [Composition.SUGAR]: sugar,
+      [Composition.COCOA_SNF]: solids - cacaoFat,
+      [Composition.COCOA_SNFS]: cocoaSolids,
+      [Composition.TOTAL_SOLIDS]: solids,
+      [Composition.POD]: sugar,
+      [Composition.PAC_SGR]: sugar,
+      [Composition.HF]: cacaoFat * constants.CACAO_FAT_HF + cocoaSolids * constants.COCOA_SOLIDS_HF,
+    });
   }
+}
+
+interface NutParams {
+  name: string;
+  nutFat: number;
+  sugar: number;
+  water: number;
 }
 
 export class Nut extends Ingredient {
@@ -422,17 +382,9 @@ export class Nut extends Ingredient {
     return Category.NUT;
   }
 
-  constructor({
-    name,
-    nutFat,
-    sugar,
-    water,
-  }: {
-    name: string;
-    nutFat: number;
-    sugar: number;
-    water: number;
-  }) {
+  constructor(args: NutParams) {
+    const { name, nutFat, sugar, water } = args;
+
     const solids = 100 - water;
     const nutSolids = solids - nutFat - sugar;
 
@@ -440,26 +392,26 @@ export class Nut extends Ingredient {
       throw new Error(`Invalid composition: Nut Solids cannot be negative for Nut ingredient`);
     }
 
-    super(
-      name,
-      {
-        [Composition.NUT_FAT]: nutFat,
-        [Composition.SUGAR]: sugar,
-        [Composition.NUT_SNF]: solids - nutFat,
-        [Composition.NUT_SNFS]: nutSolids,
-        [Composition.TOTAL_SOLIDS]: solids,
-        [Composition.POD]: sugar,
-        [Composition.PAC_SGR]: sugar,
-        [Composition.HF]: nutFat * constants.NUT_FAT_HF,
-      },
-      {
-        name,
-        nutFat,
-        sugar,
-        water,
-      }
-    );
+    super(name, args, {
+      [Composition.NUT_FAT]: nutFat,
+      [Composition.SUGAR]: sugar,
+      [Composition.NUT_SNF]: solids - nutFat,
+      [Composition.NUT_SNFS]: nutSolids,
+      [Composition.TOTAL_SOLIDS]: solids,
+      [Composition.POD]: sugar,
+      [Composition.PAC_SGR]: sugar,
+      [Composition.HF]: nutFat * constants.NUT_FAT_HF,
+    });
   }
+}
+
+interface FruitParams {
+  name: string;
+  water: number;
+  sucrose?: number;
+  glucose?: number;
+  fructose?: number;
+  fat?: number;
 }
 
 export class Fruit extends Ingredient {
@@ -471,50 +423,27 @@ export class Fruit extends Ingredient {
   glucose?: number;
   fructose?: number;
 
-  constructor({
-    name,
-    water,
-    sucrose,
-    glucose,
-    fructose,
-    fat = 0,
-  }: {
-    name: string;
-    water: number;
-    sucrose?: number;
-    glucose?: number;
-    fructose?: number;
-    fat?: number;
-  }) {
+  constructor(args: FruitParams) {
+    const { name, water, sucrose, glucose, fructose, fat = 0 } = args;
+
     const sugar = (sucrose ?? 0) + (glucose ?? 0) + (fructose ?? 0);
     const solids = 100 - water;
 
-    super(
-      name,
-      {
-        [Composition.OTHER_FAT]: fat,
-        [Composition.SUGAR]: sugar,
-        [Composition.OTHER_SNF]: solids - fat,
-        [Composition.OTHER_SNFS]: solids - fat - sugar,
-        [Composition.TOTAL_SOLIDS]: solids,
-        [Composition.POD]:
-          (sucrose ?? 0) * constants.SUCROSE_POD +
-          (glucose ?? 0) * constants.GLUCOSE_POD +
-          (fructose ?? 0) * constants.FRUCTOSE_POD,
-        [Composition.PAC_SGR]:
-          (sucrose ?? 0) * constants.SUCROSE_PAC +
-          (glucose ?? 0) * constants.GLUCOSE_PAC +
-          (fructose ?? 0) * constants.FRUCTOSE_PAC,
-      },
-      {
-        name,
-        water,
-        sucrose,
-        glucose,
-        fructose,
-        fat,
-      }
-    );
+    super(name, args, {
+      [Composition.OTHER_FAT]: fat,
+      [Composition.SUGAR]: sugar,
+      [Composition.OTHER_SNF]: solids - fat,
+      [Composition.OTHER_SNFS]: solids - fat - sugar,
+      [Composition.TOTAL_SOLIDS]: solids,
+      [Composition.POD]:
+        (sucrose ?? 0) * constants.SUCROSE_POD +
+        (glucose ?? 0) * constants.GLUCOSE_POD +
+        (fructose ?? 0) * constants.FRUCTOSE_POD,
+      [Composition.PAC_SGR]:
+        (sucrose ?? 0) * constants.SUCROSE_PAC +
+        (glucose ?? 0) * constants.GLUCOSE_PAC +
+        (fructose ?? 0) * constants.FRUCTOSE_PAC,
+    });
 
     this.sucrose = sucrose;
     this.glucose = glucose;
@@ -522,22 +451,21 @@ export class Fruit extends Ingredient {
   }
 }
 
+interface EggParams {
+  name: string;
+  eggFat: number;
+  solids: number;
+  lecithin: number;
+}
+
 export class Egg extends Ingredient {
   public category(): Category {
     return Category.EGG;
   }
 
-  constructor({
-    name,
-    eggFat,
-    solids,
-    lecithin,
-  }: {
-    name: string;
-    eggFat: number;
-    solids: number;
-    lecithin: number;
-  }) {
+  constructor(args: EggParams) {
+    const { name, eggFat, solids, lecithin } = args;
+
     if (solids < eggFat + lecithin) {
       throw new Error(
         `Invalid composition: Solids (${solids}%) must be at least the sum of ` +
@@ -545,23 +473,20 @@ export class Egg extends Ingredient {
       );
     }
 
-    super(
-      name,
-      {
-        [Composition.EGG_FAT]: eggFat,
-        [Composition.EGG_SNF]: solids - eggFat,
-        [Composition.EGG_SNFS]: solids - eggFat,
-        [Composition.TOTAL_SOLIDS]: solids,
-        [Composition.EMULSIFIERS]: lecithin,
-      },
-      {
-        name,
-        eggFat,
-        solids,
-        lecithin,
-      }
-    );
+    super(name, args, {
+      [Composition.EGG_FAT]: eggFat,
+      [Composition.EGG_SNF]: solids - eggFat,
+      [Composition.EGG_SNFS]: solids - eggFat,
+      [Composition.TOTAL_SOLIDS]: solids,
+      [Composition.EMULSIFIERS]: lecithin,
+    });
   }
+}
+
+interface StabilizerParams {
+  name: string;
+  emulsifiers: number;
+  stabilizers: number;
 }
 
 export class Stabilizer extends Ingredient {
@@ -569,31 +494,21 @@ export class Stabilizer extends Ingredient {
     return Category.STABILIZER;
   }
 
-  constructor({
-    name,
-    emulsifiers,
-    stabilizers,
-  }: {
-    name: string;
-    emulsifiers: number;
-    stabilizers: number;
-  }) {
-    super(
-      name,
-      {
-        [Composition.OTHER_SNF]: 100,
-        [Composition.OTHER_SNFS]: 100,
-        [Composition.TOTAL_SOLIDS]: 100,
-        [Composition.EMULSIFIERS]: emulsifiers,
-        [Composition.STABILIZERS]: stabilizers,
-      },
-      {
-        name,
-        emulsifiers,
-        stabilizers,
-      }
-    );
+  constructor(args: StabilizerParams) {
+    const { name, emulsifiers, stabilizers } = args;
+
+    super(name, args, {
+      [Composition.OTHER_SNF]: 100,
+      [Composition.OTHER_SNFS]: 100,
+      [Composition.TOTAL_SOLIDS]: 100,
+      [Composition.EMULSIFIERS]: emulsifiers,
+      [Composition.STABILIZERS]: stabilizers,
+    });
   }
+}
+
+interface MiscellaneousParams {
+  name: string;
 }
 
 export class Miscellaneous extends Ingredient {
@@ -601,7 +516,9 @@ export class Miscellaneous extends Ingredient {
     return Category.MISCELLANEOUS;
   }
 
-  constructor({ name }: { name: string }) {
-    super(name, {}, { name });
+  constructor(args: MiscellaneousParams) {
+    const { name } = args;
+
+    super(name, args, {});
   }
 }

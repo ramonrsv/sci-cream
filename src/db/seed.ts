@@ -46,7 +46,7 @@ async function seedUserIngredients(user: User, ingredients: Ingredient[]) {
       name: ing.name,
       user: foundUser.id,
       category: ing.category(),
-      value: JSON.stringify(ing.toDbValue()),
+      value: JSON.stringify(ing.getConstructorArgs()),
     };
 
     console.log("---");
