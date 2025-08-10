@@ -12,6 +12,26 @@
             "type": "node-terminal",
             "request": "launch",
             "command": "npm run dev"
+        },
+        {
+            "name": "Vitest",
+            "type": "node",
+            "request": "launch",
+            "runtimeExecutable": "npm",
+            "runtimeArgs": [
+                "run",
+                "test"
+            ],
+            "args": [
+                "--inspect-brk",
+                "--threads",
+                "false"
+            ],
+            "console": "integratedTerminal",
+            "internalConsoleOptions": "neverOpen",
+            "skipFiles": [
+                "<node_internals>/**"
+            ]
         }
     ]
 }
