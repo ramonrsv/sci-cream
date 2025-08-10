@@ -13,21 +13,21 @@ type User = typeof usersTable.$inferInsert;
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
 
-const app: User = {
+const appUser: User = {
   name: process.env.APP_USER_NAME!,
   email: process.env.APP_USER_EMAIL!,
 };
 
-const ramon: User = {
-  name: "Ramon Sibello",
-  email: "ramon@sibello.ca",
+const testUser: User = {
+  name: process.env.TEST_USER_NAME!,
+  email: process.env.TEST_USER_EMAIL!,
 };
 
 async function seedUsers() {
   console.log("==========");
   console.log("Seeding users");
 
-  for (const user of [app, ramon]) {
+  for (const user of [appUser, testUser]) {
     await db.insert(usersTable).values(user).onConflictDoNothing({ target: usersTable.email });
   }
 
@@ -81,10 +81,10 @@ async function main() {
   await seedUsers();
 
   for (const ingredients of allIngredients) {
-    await seedUserIngredients(app, ingredients);
+    await seedUserIngredients(appUser, ingredients);
   }
 
-  await seedUserIngredients(ramon, [new Dairy({ name: "2% Milk", milkFat: 4 })]);
+  await seedUserIngredients(testUser, [new Dairy({ name: "2% Milk", milkFat: 4 })]);
 }
 
 main();
