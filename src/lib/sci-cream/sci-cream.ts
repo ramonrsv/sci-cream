@@ -195,20 +195,13 @@ export abstract class Ingredient {
     const totalSolids = composition[Composition.TOTAL_SOLIDS] ?? 0;
 
     CompositionAllPercent.forEach((comp) => {
-      if (
-        composition[comp] != undefined &&
-        (composition[comp] < 0 || composition[comp] > 100)
-      ) {
-        throw new Error(
-          `Invalid composition: ${comp} must be between 0% and 100%`
-        );
+      if (composition[comp] != undefined && (composition[comp] < 0 || composition[comp] > 100)) {
+        throw new Error(`Invalid composition: ${comp} must be between 0% and 100%`);
       }
     });
 
     if (totalFat > 100 || totalSNF > 100 || totalSNFS > 100) {
-      throw new Error(
-        `Invalid composition: Total Fats, SNF, or SNFS exceeds 100%`
-      );
+      throw new Error(`Invalid composition: Total Fats, SNF, or SNFS exceeds 100%`);
     }
 
     if (totalSNFS + totalFat + lactose + sugar != totalSolids) {
@@ -320,10 +313,7 @@ export class Alcohol extends Ingredient {
     }
 
     if (sugar != undefined || fat != undefined || salt != undefined) {
-      if (
-        solids === undefined ||
-        solids < (sugar ?? 0) + (fat ?? 0) + (salt ?? 0)
-      ) {
+      if (solids === undefined || solids < (sugar ?? 0) + (fat ?? 0) + (salt ?? 0)) {
         throw new Error(
           `Invalid composition: Solids (${solids}%) must be at least the sum of ` +
             `Sugar (${sugar ?? 0}%), Fat (${fat ?? 0}%), and Salt (${
@@ -347,9 +337,7 @@ export class Alcohol extends Ingredient {
       [Composition.ALCOHOL]: alcohol,
       [Composition.POD]: sugar,
       [Composition.PAC_SGR]: sugar,
-      [Composition.PAC_SLT]: salt
-        ? (salt * Ingredient.SALT_PAC) / 100
-        : undefined,
+      [Composition.PAC_SLT]: salt ? (salt * Ingredient.SALT_PAC) / 100 : undefined,
       [Composition.PAC_ALC]: (alcohol * Ingredient.ALCOHOL_PAC) / 100,
     });
   }
@@ -390,8 +378,7 @@ export class Chocolate extends Ingredient {
       [Composition.POD]: sugar,
       [Composition.PAC_SGR]: sugar,
       [Composition.HF]:
-        cacaoFat * Ingredient.CACAO_FAT_HF +
-        cocoaSolids * Ingredient.COCOA_SOLIDS_HF,
+        cacaoFat * Ingredient.CACAO_FAT_HF + cocoaSolids * Ingredient.COCOA_SOLIDS_HF,
     });
   }
 }
@@ -416,9 +403,7 @@ export class Nut extends Ingredient {
     const nutSolids = solids - nutFat - sugar;
 
     if (nutSolids < 0) {
-      throw new Error(
-        `Invalid composition: Nut Solids cannot be negative for Nut ingredient`
-      );
+      throw new Error(`Invalid composition: Nut Solids cannot be negative for Nut ingredient`);
     }
 
     super(name, {

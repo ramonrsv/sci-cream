@@ -33,10 +33,7 @@ test(`Construct Dairy from milk fat only`, () => {
       if (expectedComposition[comp] === undefined) {
         expect(dairy.composition[comp], `${comp}`).toBe(undefined);
       } else {
-        expect(dairy.composition[comp]).toBeCloseTo(
-          expectedComposition[comp],
-          4
-        );
+        expect(dairy.composition[comp]).toBeCloseTo(expectedComposition[comp], 4);
       }
     });
   }

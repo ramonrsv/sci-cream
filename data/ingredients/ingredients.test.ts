@@ -25,11 +25,7 @@ import {
   miscellaneous,
 } from "./ingredients";
 
-function testConstructedAndCategory(
-  IngClass: any,
-  category: Category,
-  ingredients: any[]
-) {
+function testConstructedAndCategory(IngClass: any, category: Category, ingredients: any[]) {
   test(`Constructed and categories of seed ingredients: ${IngClass.name}, ${category}`, () => {
     for (const ing of ingredients) {
       expect(ing instanceof IngClass).toBe(true);
@@ -46,8 +42,4 @@ testConstructedAndCategory(Nut, Category.NUT, nuts);
 testConstructedAndCategory(Fruit, Category.FRUIT, fruits);
 testConstructedAndCategory(Egg, Category.EGG, eggs);
 testConstructedAndCategory(Stabilizer, Category.STABILIZER, stabilizers);
-testConstructedAndCategory(
-  Miscellaneous,
-  Category.MISCELLANEOUS,
-  miscellaneous
-);
+testConstructedAndCategory(Miscellaneous, Category.MISCELLANEOUS, miscellaneous);

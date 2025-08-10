@@ -217,11 +217,7 @@ const ERROR_INVALID_ARGUMENT = "ERROR: INV ARG";
 const ERROR_UNKNOWN_INGREDIENT = "ERROR: UNK ING";
 const ERROR_INVALID_PARAMETER = "ERROR: INV PAR";
 
-const ERRORS = [
-  ERROR_INVALID_ARGUMENT,
-  ERROR_UNKNOWN_INGREDIENT,
-  ERROR_INVALID_PARAMETER,
-];
+const ERRORS = [ERROR_INVALID_ARGUMENT, ERROR_UNKNOWN_INGREDIENT, ERROR_INVALID_PARAMETER];
 
 /// --------------- Public Functions ---------------
 /// ================================================
@@ -328,9 +324,7 @@ function decompNutsRow(row: any) {
 }
 
 function decompFruitsAndVeggiesRow(row: any) {
-  var [name, water, sucrose, glucose, fructose, other_fat] = [...row].map(
-    nullIfEmpty_
-  );
+  var [name, water, sucrose, glucose, fructose, other_fat] = [...row].map(nullIfEmpty_);
 
   var sugar = sucrose + glucose + fructose;
   var solids = 100 - water;
@@ -342,12 +336,8 @@ function decompFruitsAndVeggiesRow(row: any) {
   ret[C.OTHER_SNF] = solids - other_fat;
   ret[C.OTHER_SNFS] = solids - other_fat - sugar;
   ret[C.TOTAL_SOLIDS] = solids;
-  ret[C.POD] =
-    (SUCROSE_POD * sucrose + GLUCOSE_POD * glucose + FRUCTOSE_POD * fructose) /
-    100;
-  ret[C.PAC_SGR] =
-    (SUCROSE_PAC * sucrose + GLUCOSE_PAC * glucose + FRUCTOSE_PAC * fructose) /
-    100;
+  ret[C.POD] = (SUCROSE_POD * sucrose + GLUCOSE_POD * glucose + FRUCTOSE_POD * fructose) / 100;
+  ret[C.PAC_SGR] = (SUCROSE_PAC * sucrose + GLUCOSE_PAC * glucose + FRUCTOSE_PAC * fructose) / 100;
   ret[C.CATEGORY] = CAT.FRUIT;
   ret[C.EXTENSION] = JSON.stringify(row);
 
@@ -532,10 +522,7 @@ function getFpdFromPacPolynomial(pac: any) {
     return null;
   }
 
-  return FPD_POLYNOMIAL_FACTORS.reduce(
-    (fpd, coeff, deg) => fpd + coeff * pac ** deg,
-    0
-  );
+  return FPD_POLYNOMIAL_FACTORS.reduce((fpd, coeff, deg) => fpd + coeff * pac ** deg, 0);
 }
 
 function getFpdFromPacSpline(pac: any) {
@@ -555,18 +542,12 @@ function computeFpd(
   frozen_water: any,
   getFpdFromPac = getFpdFromPacInterpolation
 ) {
-  [alcohol, pac_sgr, pac_slt, pac_alc, hf] = [
-    alcohol,
-    pac_sgr,
-    pac_slt,
-    pac_alc,
-    hf,
-  ].map((val) => defaultIfEmpty_(val, 0));
+  [alcohol, pac_sgr, pac_slt, pac_alc, hf] = [alcohol, pac_sgr, pac_slt, pac_alc, hf].map((val) =>
+    defaultIfEmpty_(val, 0)
+  );
 
   var water = (100 - solids - alcohol) * ((100 - frozen_water) / 100);
-  var fpd_pac = getFpdFromPac(
-    ((pac_sgr + pac_slt + pac_alc - hf) * 100) / water
-  );
+  var fpd_pac = getFpdFromPac(((pac_sgr + pac_slt + pac_alc - hf) * 100) / water);
   var fpd_slt = (msnf * FPD_MSNF_FACTOR_FOR_CELSIUS) / water;
   return fpd_pac == null ? 0 : -(fpd_pac + fpd_slt);
   //return -(fpd_pac + fpd_slt);
@@ -583,26 +564,8 @@ function computeFpdAndHfAvg(
   frozen_water: any
 ) {
   return (
-    (computeFpd(
-      msnf,
-      solids,
-      alcohol,
-      pac_sgr,
-      pac_slt,
-      pac_alc,
-      0,
-      frozen_water
-    ) +
-      computeFpd(
-        msnf,
-        solids,
-        alcohol,
-        pac_sgr,
-        pac_slt,
-        pac_alc,
-        hf,
-        frozen_water
-      )) /
+    (computeFpd(msnf, solids, alcohol, pac_sgr, pac_slt, pac_alc, 0, frozen_water) +
+      computeFpd(msnf, solids, alcohol, pac_sgr, pac_slt, pac_alc, hf, frozen_water)) /
     2
   );
 }
@@ -658,20 +621,14 @@ function computeHardnessAtTemp(
 
 function processParametricIngredient(ingredient: any, param: any, val: any) {
   if (param == "Brix") {
-    if (
-      ingredient[C.CATEGORY] != CAT.FRUIT ||
-      isEmpty_(ingredient[C.EXTENSION])
-    ) {
+    if (ingredient[C.CATEGORY] != CAT.FRUIT || isEmpty_(ingredient[C.EXTENSION])) {
       return ERROR_INVALID_PARAMETER;
     }
 
     const fruit_row = JSON.parse(ingredient[C.EXTENSION]);
     const new_brix_fruit_row = computeNewBrixFruitFromReference(fruit_row, val);
 
-    return flattenToRow_(
-      decompFruitsAndVeggiesRow(new_brix_fruit_row),
-      Composition
-    ).slice(0, -1);
+    return flattenToRow_(decompFruitsAndVeggiesRow(new_brix_fruit_row), Composition).slice(0, -1);
   } else {
     return ERROR_INVALID_PARAMETER;
   }
@@ -694,9 +651,7 @@ function processIngredient(name: any, ingredients: any) {
     return ERROR_UNKNOWN_INGREDIENT;
   }
 
-  return isEmpty_(param)
-    ? ingredient
-    : processParametricIngredient(ingredient, param, val);
+  return isEmpty_(param) ? ingredient : processParametricIngredient(ingredient, param, val);
 }
 
 function processRecipe(recipe: any, ingredients: any) {
@@ -709,23 +664,19 @@ function processRecipe(recipe: any, ingredients: any) {
 function computeIngredientQuantities(quantity: any, ingredient: any) {
   return Object.values(Composition)
     .filter((key) => isCompositionQuantField_(key))
-    .map((key) =>
-      isEmpty_(ingredient[key]) ? null : (ingredient[key] * quantity) / 100
-    );
+    .map((key) => (isEmpty_(ingredient[key]) ? null : (ingredient[key] * quantity) / 100));
 }
 
 function computeRecipeQuantities(processed_recipe: any) {
-  return processed_recipe.map(
-    ([[name, quantity], ingredient]: [[any, any], any]) => {
-      if (isError_(ingredient)) {
-        return ingredient;
-      } else if (isEmpty_(name) || isEmpty_(quantity)) {
-        return [];
-      }
-
-      return computeIngredientQuantities(quantity, ingredient);
+  return processed_recipe.map(([[name, quantity], ingredient]: [[any, any], any]) => {
+    if (isError_(ingredient)) {
+      return ingredient;
+    } else if (isEmpty_(name) || isEmpty_(quantity)) {
+      return [];
     }
-  );
+
+    return computeIngredientQuantities(quantity, ingredient);
+  });
 }
 
 function computeTotalsFromQuantities(quantities: any) {
@@ -751,10 +702,7 @@ function computeRecipeQuantityTotals(processed_recipe: any) {
 function computeMixTotal(processed_recipe: any) {
   return processed_recipe.reduce(
     (total: any, [[name, quant], ingredient]: [[any, any], any]) =>
-      isEmpty_(name) ||
-      isEmpty_(quant) ||
-      isEmpty_(ingredient) ||
-      isError_(ingredient)
+      isEmpty_(name) || isEmpty_(quant) || isEmpty_(ingredient) || isError_(ingredient)
         ? total
         : total + quant,
     0
@@ -763,9 +711,7 @@ function computeMixTotal(processed_recipe: any) {
 
 function computeRecipeProperties(recipe: any, ingredients: any) {
   const processed_recipe = processRecipe(recipe, ingredients);
-  const totals: any[] = ["name"].concat(
-    computeRecipeQuantityTotals(processed_recipe)
-  );
+  const totals: any[] = ["name"].concat(computeRecipeQuantityTotals(processed_recipe));
   const mix_total = computeMixTotal(processed_recipe);
 
   const possible_error = processed_recipe.reduce(
@@ -792,38 +738,17 @@ function computeRecipeProperties(recipe: any, ingredients: any) {
   const percent = (quant: any) => (quant * 100) / mix_total;
   const quant_percent = (quant: any) => [quant, percent(quant)];
   const single_val = (val: any) => [null, val];
-  const set_p_from_c = (p: any, c: any) =>
-    (properties[p] = quant_percent(totals[c]));
-  const sum_totals = (cs: any[]) =>
-    cs.reduce((sum: any, c: any) => sum + totals[c], 0);
+  const set_p_from_c = (p: any, c: any) => (properties[p] = quant_percent(totals[c]));
+  const sum_totals = (cs: any[]) => cs.reduce((sum: any, c: any) => sum + totals[c], 0);
 
-  const total_fat = sum_totals([
-    C.MILK_FAT,
-    C.EGG_FAT,
-    C.CACAO_FAT,
-    C.NUT_FAT,
-    C.OTHER_FAT,
-  ]);
-  const total_snf = sum_totals([
-    C.MILK_SNF,
-    C.EGG_SNF,
-    C.COCOA_SNF,
-    C.NUT_SNF,
-    C.OTHER_SNF,
-  ]);
-  const total_snfs = sum_totals([
-    C.MILK_SNFS,
-    C.EGG_SNFS,
-    C.COCOA_SNFS,
-    C.NUT_SNFS,
-    C.OTHER_SNFS,
-  ]);
+  const total_fat = sum_totals([C.MILK_FAT, C.EGG_FAT, C.CACAO_FAT, C.NUT_FAT, C.OTHER_FAT]);
+  const total_snf = sum_totals([C.MILK_SNF, C.EGG_SNF, C.COCOA_SNF, C.NUT_SNF, C.OTHER_SNF]);
+  const total_snfs = sum_totals([C.MILK_SNFS, C.EGG_SNFS, C.COCOA_SNFS, C.NUT_SNFS, C.OTHER_SNFS]);
   const water = mix_total - totals[C.TOTAL_SOLIDS] - totals[C.ALCOHOL];
 
   const abv = percent(totals[C.ALCOHOL]) / ABV_TO_ABW_RATIO;
 
-  const emuls_per_fat =
-    total_fat > 0 ? (totals[C.EMULSIFIERS] / total_fat) * 100 : null;
+  const emuls_per_fat = total_fat > 0 ? (totals[C.EMULSIFIERS] / total_fat) * 100 : null;
   const stabs_per_water = (totals[C.STABILIZERS] / water) * 100;
 
   const pac_tot = totals[C.PAC_SGR] + totals[C.PAC_SLT] + totals[C.PAC_ALC];
@@ -841,16 +766,8 @@ function computeRecipeProperties(recipe: any, ingredients: any) {
   const hf_p = percent(totals[C.HF]);
 
   const fpd = (<any>computeFpd)(...fpd_properties, 0, 0);
-  const serving_temp = (<any>computeFpdAndHfAvg)(
-    ...fpd_properties,
-    hf_p,
-    SERVING_TEMP_X_AXIS
-  );
-  const hardness_at_14 = (<any>computeHardnessAtTemp)(
-    ...fpd_properties,
-    hf_p,
-    -14
-  );
+  const serving_temp = (<any>computeFpdAndHfAvg)(...fpd_properties, hf_p, SERVING_TEMP_X_AXIS);
+  const hardness_at_14 = (<any>computeHardnessAtTemp)(...fpd_properties, hf_p, -14);
 
   [
     [P.MILK_FAT, C.MILK_FAT],
@@ -941,9 +858,7 @@ function computeFpdCurves(recipe: any, ingredients: any) {
 }
 
 function computeNewBrixFruitFromReference(reference: any, new_brix: any) {
-  const [name, water, sucrose, glucose, fructorse, fat] = [...reference].map(
-    nullIfEmpty_
-  );
+  const [name, water, sucrose, glucose, fructorse, fat] = [...reference].map(nullIfEmpty_);
 
   const old_brix = sucrose + glucose + fructorse;
   const non_sugar_solids = 100 - water - old_brix;
@@ -958,15 +873,10 @@ function computeNewBrixFruitFromReference(reference: any, new_brix: any) {
     return [];
   } else if (new_brix < 0 || new_brix > 100 - non_sugar_solids) {
     return ERROR_INVALID_ARGUMENT;
-  } else
-    return [new_name, new_water, new_sucrose, new_glucose, new_fructose, fat];
+  } else return [new_name, new_water, new_sucrose, new_glucose, new_fructose, fat];
 }
 
-function computeNewBrixFruits(
-  ref_name: any,
-  new_brixes: any,
-  fruits: any
-): any[] | any {
+function computeNewBrixFruits(ref_name: any, new_brixes: any, fruits: any): any[] | any {
   const reference = linearFindIngredient_(ref_name, fruits);
 
   if (isEmpty_(ref_name)) {
@@ -976,9 +886,7 @@ function computeNewBrixFruits(
   }
 
   return [reference].concat(
-    new_brixes.map((new_brix: any) =>
-      computeNewBrixFruitFromReference(reference, new_brix)
-    )
+    new_brixes.map((new_brix: any) => computeNewBrixFruitFromReference(reference, new_brix))
   );
 }
 
@@ -997,8 +905,7 @@ function processMedleyRecipe(recipe: any, fruits: any) {
 function computeFruitMedley(recipe: any, fruits: any) {
   const processed_recipe = processMedleyRecipe(recipe, fruits);
   const total_ratio = recipe.reduce(
-    (total: any, [ratio, _]: [any, any]) =>
-      isEmpty_(ratio) ? total : total + ratio,
+    (total: any, [ratio, _]: [any, any]) => (isEmpty_(ratio) ? total : total + ratio),
     0
   );
 
@@ -1011,16 +918,11 @@ function computeFruitMedley(recipe: any, fruits: any) {
   var medley_quants = new Array(5).fill(null);
 
   processed_recipe
-    .filter(
-      ([[_], fruit]: [[any], any]) => !isEmpty_(fruit) && !isError_(fruit)
-    )
+    .filter(([[_], fruit]: [[any], any]) => !isEmpty_(fruit) && !isError_(fruit))
     .forEach(([[ratio, _], fruit]: [[any, any], any]) =>
       fruit
         .slice(1)
-        .forEach(
-          (quant: any, idx: any) =>
-            (medley_quants[idx] += (quant * ratio) / total_ratio)
-        )
+        .forEach((quant: any, idx: any) => (medley_quants[idx] += (quant * ratio) / total_ratio))
     );
 
   return [isError_(possible_error) ? possible_error : medley_quants].concat(
@@ -1131,11 +1033,7 @@ function computeAndDisplayPropertiesSummary(recipe: any, ingredients: any) {
   const properties = computeRecipeProperties(recipe, ingredients);
 
   const quantRows = (ps: any) =>
-    ps.map((p: any) => [
-      properties[p][QUANT],
-      PROPERTY_NAMES_[p],
-      properties[p][PRCNT],
-    ]);
+    ps.map((p: any) => [properties[p][QUANT], PROPERTY_NAMES_[p], properties[p][PRCNT]]);
   const prcntRows = (ps: any) =>
     ps.map((p: any) => [null, PROPERTY_NAMES_[p], properties[p][PRCNT]]);
 
@@ -1179,11 +1077,7 @@ function computeAndDisplayPropertiesComposition(recipe: any, ingredients: any) {
   const properties = computeRecipeProperties(recipe, ingredients);
 
   const quantRows = (ps: any) =>
-    ps.map((p: any) => [
-      properties[p][QUANT],
-      PROPERTY_NAMES_[p],
-      properties[p][PRCNT],
-    ]);
+    ps.map((p: any) => [properties[p][QUANT], PROPERTY_NAMES_[p], properties[p][PRCNT]]);
 
   return [["Qty (g)", null, "Qty (%)"]].concat(
     quantRows([
@@ -1238,11 +1132,7 @@ function computeAndDisplayFpdCurves(recipe: any, ingredients: any) {
   return range;
 }
 
-function computeAndDisplayNewBrixFruits(
-  ref_name: any,
-  new_brixes: any,
-  fruits: any
-) {
+function computeAndDisplayNewBrixFruits(ref_name: any, new_brixes: any, fruits: any) {
   const new_fruits = computeNewBrixFruits(
     ref_name,
     new_brixes.map((row: any) => row[0]),
@@ -1252,9 +1142,7 @@ function computeAndDisplayNewBrixFruits(
   if (isError_(new_fruits)) {
     return [new_fruits];
   } else {
-    return new_fruits.map((row_or_err: any) =>
-      isError_(row_or_err) ? [row_or_err] : row_or_err
-    );
+    return new_fruits.map((row_or_err: any) => (isError_(row_or_err) ? [row_or_err] : row_or_err));
   }
 }
 
@@ -1300,9 +1188,7 @@ function nullIfEmpty_(val: any) {
 }
 
 function flattenToRow_(dict: any, key_t: any) {
-  return Object.values(key_t).map((key: any) =>
-    defaultIfEmpty_(dict[key], null)
-  );
+  return Object.values(key_t).map((key: any) => defaultIfEmpty_(dict[key], null));
 }
 
 function flattenListToRow_(list: any, key_t: any) {
@@ -1443,9 +1329,7 @@ function anyEq_(lhs: any, rhs: any) {
     if (isArray_(lhs) && isArray_(rhs)) {
       return arrEq_(lhs, rhs);
     } else {
-      console.log(
-        `Mismatch Array types: lhs ${isArray_(lhs)}, rhs ${isArray_(rhs)}`
-      );
+      console.log(`Mismatch Array types: lhs ${isArray_(lhs)}, rhs ${isArray_(rhs)}`);
       console.log(`${JSON.stringify(lhs)} != ${JSON.stringify(rhs)}`);
       return false;
     }
@@ -1475,9 +1359,7 @@ function expandCompListsIntoCompRange_(lists: any) {
 
 function expandQuantListsIntoQuantRange_(lists: any) {
   return lists.map((list: any) =>
-    flattenListToRow_(list, Composition).slice(
-      ...COMPOSITION_QUANT_FIELDS_SLICE
-    )
+    flattenListToRow_(list, Composition).slice(...COMPOSITION_QUANT_FIELDS_SLICE)
   );
 }
 
@@ -1904,21 +1786,7 @@ const miscellaneousRange_ = [
   ["Water", "", "", "", "", "", "", "", "", "", "", "", ""],
   ["Salt", "", "", "", "", 100, 1000, "", "", "", "", "", ""],
   ["Micau Liquid Caramel", "", "", "", 42, 78, 0.3, "", "", "", 34, 67, ""],
-  [
-    "Hot-Kid Milk Flavored Drink",
-    2.3,
-    "",
-    6.5,
-    5,
-    13.94,
-    0.9,
-    "",
-    0.05,
-    "",
-    5,
-    5,
-    "",
-  ],
+  ["Hot-Kid Milk Flavored Drink", 2.3, "", 6.5, 5, 13.94, 0.9, "", 0.05, "", 5, 5, ""],
   ["Citric Acid", "", "", "", "", 100, "", "", "", "", "", "", ""],
 ];
 
@@ -2386,16 +2254,14 @@ const fruitMedleyQuants_ = [
 
 function test_getFpdFromPacInterpolation_() {
   return getFpdFromPacInterpolationExpected_.reduce(
-    (result, pac_fpd) =>
-      result && assertEq_(getFpdFromPacInterpolation(pac_fpd[0]), pac_fpd[1]),
+    (result, pac_fpd) => result && assertEq_(getFpdFromPacInterpolation(pac_fpd[0]), pac_fpd[1]),
     true
   );
 }
 
 function test_getFpdFromPacPolynomial_() {
   return getFpdFromPacPolynomialExpected_.reduce(
-    (result, pac_fpd) =>
-      result && assertEq_(getFpdFromPacPolynomial(pac_fpd[0]), pac_fpd[1]),
+    (result, pac_fpd) => result && assertEq_(getFpdFromPacPolynomial(pac_fpd[0]), pac_fpd[1]),
     true
   );
 }
@@ -2411,11 +2277,7 @@ function test_computeFpd_() {
 function test_computeHardnessAtTemp_() {
   return computeHardnessAtTempExpected_.reduce(
     (result, [fpd_properties, temp, hardness]: any) =>
-      result &&
-      assertEq_(
-        (<any>computeHardnessAtTemp)(...fpd_properties, temp),
-        hardness
-      ),
+      result && assertEq_((<any>computeHardnessAtTemp)(...fpd_properties, temp), hardness),
     true
   );
 }
@@ -2451,19 +2313,13 @@ function test_expandAloholicRange_() {
   return assertEq_(expandAlcoholicRange(alcoholicRange_), expAlcoholicRange_);
 }
 function test_expandChocolatesRange_() {
-  return assertEq_(
-    expandChocolatesRange(chocolatesRange_),
-    expChocolatesRange_
-  );
+  return assertEq_(expandChocolatesRange(chocolatesRange_), expChocolatesRange_);
 }
 function test_expandNutsRange_() {
   return assertEq_(expandNutsRange(nutsRange_), expNutsRange_);
 }
 function test_expandFruitsAndVeggiesRange_() {
-  return assertEq_(
-    expandFruitsAndVeggiesRange(fruitsAndVeggiesRange_),
-    expFruitsAndVeggiesRange_
-  );
+  return assertEq_(expandFruitsAndVeggiesRange(fruitsAndVeggiesRange_), expFruitsAndVeggiesRange_);
 }
 function test_expandEggsRange_() {
   return assertEq_(expandEggsRange(eggsRange_), expEggsRange_);
@@ -2475,10 +2331,7 @@ function test_expandEmulsifiersAndStabilizersRange_() {
   );
 }
 function test_expandMiscellaneousRange_() {
-  return assertEq_(
-    expandMiscellaneousRange(miscellaneousRange_),
-    expMiscellaneousRange_
-  );
+  return assertEq_(expandMiscellaneousRange(miscellaneousRange_), expMiscellaneousRange_);
 }
 
 function test_isError_() {
@@ -2507,8 +2360,7 @@ function test_isCompositionQuantField_() {
 function test_linearFindIngredient_() {
   return nameIngredientPairsExpected_.reduce(
     (result, [name, ingredient]) =>
-      result &&
-      assertEq_(linearFindIngredient_(name, ingredients_), ingredient),
+      result && assertEq_(linearFindIngredient_(name, ingredients_), ingredient),
     true
   );
 }
@@ -2516,8 +2368,7 @@ function test_linearFindIngredient_() {
 function test_binaryFindIngredient_() {
   return nameIngredientPairsExpected_.reduce(
     (result, [name, ingredient]) =>
-      result &&
-      assertEq_(binaryFindIngredient_(name, ingredients_), ingredient),
+      result && assertEq_(binaryFindIngredient_(name, ingredients_), ingredient),
     true
   );
 }
@@ -2540,9 +2391,7 @@ function test_getIngredientParameters_() {
       ]
     ),
     assertEq_(
-      passionFruitNewBrix_.map((ingredient) =>
-        getIngredientParameters_(ingredient[0])
-      ),
+      passionFruitNewBrix_.map((ingredient) => getIngredientParameters_(ingredient[0])),
       [
         ["Passion Fruit", "Brix", 7],
         ["Passion Fruit", "Brix", 7.5],
@@ -2560,34 +2409,26 @@ function test_processIngredient_() {
       strawberryNewBrix_
         .slice(0, 3)
         .map((ingredient) => processIngredient(ingredient[0], ingredients_)),
-      expandFruitsAndVeggiesRange(strawberryNewBrix_.slice(0, 3)).map(
-        (row: any) => row.slice(0, -1)
+      expandFruitsAndVeggiesRange(strawberryNewBrix_.slice(0, 3)).map((row: any) =>
+        row.slice(0, -1)
       )
     ),
     assertEq_(
       strawberryNewBrix_
         .slice(4)
         .map((ingredient) => processIngredient(ingredient[0], ingredients_)),
-      expandFruitsAndVeggiesRange(strawberryNewBrix_.slice(4)).map((row: any) =>
-        row.slice(0, -1)
-      )
+      expandFruitsAndVeggiesRange(strawberryNewBrix_.slice(4)).map((row: any) => row.slice(0, -1))
     ),
     assertEq_(
-      passionFruitNewBrix_.map((ingredient) =>
-        processIngredient(ingredient[0], ingredients_)
-      ),
-      expandFruitsAndVeggiesRange(passionFruitNewBrix_).map((row: any) =>
-        row.slice(0, -1)
-      )
+      passionFruitNewBrix_.map((ingredient) => processIngredient(ingredient[0], ingredients_)),
+      expandFruitsAndVeggiesRange(passionFruitNewBrix_).map((row: any) => row.slice(0, -1))
     ),
   ]);
 }
 
 function test_computeIngredientQuantities_() {
   return assertEq_(
-    expDairyRange_.map((row: any) =>
-      computeIngredientQuantities(quantityExpected_, row)
-    ),
+    expDairyRange_.map((row: any) => computeIngredientQuantities(quantityExpected_, row)),
     expDairyRangeQuants_
   );
 }
@@ -2613,27 +2454,18 @@ function test_computeRecipeQuantities_() {
       ),
       expDairyRangeQuants_.concat([[], [], [], ERROR_UNKNOWN_INGREDIENT])
     ),
-    assertEq_(
-      computeRecipeQuantities(processed_recipe_),
-      recipeQuantitiesRangeFull_.slice(2)
-    ),
+    assertEq_(computeRecipeQuantities(processed_recipe_), recipeQuantitiesRangeFull_.slice(2)),
   ];
 
   return didAllSucceed_(results);
 }
 
 function test_computeRecipeQuantityTotals_() {
-  return assertEq_(
-    computeRecipeQuantityTotals(processed_recipe_),
-    recipeQuantitiesRangeFull_[1]
-  );
+  return assertEq_(computeRecipeQuantityTotals(processed_recipe_), recipeQuantitiesRangeFull_[1]);
 }
 
 function test_computeRecipeProperties_() {
-  return assertEq_(
-    computeRecipeProperties(recipe_, ingredients_),
-    recipeProperties_
-  );
+  return assertEq_(computeRecipeProperties(recipe_, ingredients_), recipeProperties_);
 }
 
 function test_computeAndDisplayQuantitiesFull_() {
@@ -2651,9 +2483,7 @@ function test_computeAndDisplayQuantitiesFullError_() {
 
   var milk_line_quants = expDairyRangeQuants_[0];
   var cream_line_quants = expDairyRangeQuants_[1];
-  var totals = milk_line_quants.map(
-    (val: any, idx: any) => val + cream_line_quants[idx]
-  );
+  var totals = milk_line_quants.map((val: any, idx: any) => val + cream_line_quants[idx]);
   var header = recipeQuantitiesRangeFull_[0];
 
   return assertEq_(quantities, [
@@ -2711,10 +2541,7 @@ function test_computeAndDisplayPropertiesSummaryError_() {
 
 function test_computeAndDisplayFpdCurves_() {
   return didAllSucceed_([
-    assertEq_(
-      computeAndDisplayFpdCurves(recipe_, ingredients_),
-      recipeFpdCurvesRange_
-    ),
+    assertEq_(computeAndDisplayFpdCurves(recipe_, ingredients_), recipeFpdCurvesRange_),
     assertEq_(computeAndDisplayFpdCurves([], ingredients_), [
       ["Hardness", null, "Frozen Water", "HF"],
       [100, 100, 100, 100],
@@ -2744,26 +2571,18 @@ function test_computeAndDisplayNewBrixFruits_() {
 }
 
 function test_computeAndDisplayNewBrixFruitsEmpty_() {
-  return assertEq_(
-    computeAndDisplayNewBrixFruits("", [], fruitsAndVeggiesRange_),
-    []
-  );
+  return assertEq_(computeAndDisplayNewBrixFruits("", [], fruitsAndVeggiesRange_), []);
 }
 
 function test_computeAndDisplayNewBrixFruitsErrors_() {
   return didAllSucceed_([
-    assertEq_(
-      computeAndDisplayNewBrixFruits(
-        "Strawberry",
-        [[100]],
-        fruitsAndVeggiesRange_
-      ),
-      [fruitsAndVeggiesRange_[2], [ERROR_INVALID_ARGUMENT]]
-    ),
-    assertEq_(
-      computeAndDisplayNewBrixFruits("unknown", [], fruitsAndVeggiesRange_),
-      [ERROR_UNKNOWN_INGREDIENT]
-    ),
+    assertEq_(computeAndDisplayNewBrixFruits("Strawberry", [[100]], fruitsAndVeggiesRange_), [
+      fruitsAndVeggiesRange_[2],
+      [ERROR_INVALID_ARGUMENT],
+    ]),
+    assertEq_(computeAndDisplayNewBrixFruits("unknown", [], fruitsAndVeggiesRange_), [
+      ERROR_UNKNOWN_INGREDIENT,
+    ]),
   ]);
 }
 
