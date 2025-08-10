@@ -2,6 +2,7 @@ import { expect, test } from "vitest";
 
 import {
   Category,
+  Ingredient,
   Dairy,
   Sweetener,
   Alcohol,
@@ -25,10 +26,16 @@ import {
   miscellaneous,
 } from "./ingredients";
 
-function testConstructedAndCategory(IngClass: any, category: Category, ingredients: any[]) {
-  test(`Constructed and categories of seed ingredients: ${IngClass.name}, ${category}`, () => {
+function testConstructedAndCategory<T extends Ingredient>(
+  ctor: new (...args: any) => T,
+  category: Category,
+  ingredients: any[]
+) {
+  test(`Constructed and categories of seed ingredients: ${ctor.name}`, () => {
     for (const ing of ingredients) {
-      expect(ing instanceof IngClass).toBe(true);
+      expect(ctor.name).toBe(category);
+      expect(ing instanceof Ingredient).toBe(true);
+      expect(ing instanceof ctor).toBe(true);
       expect(ing.category()).toBe(category);
     }
   });
