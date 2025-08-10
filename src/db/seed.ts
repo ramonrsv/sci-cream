@@ -7,18 +7,7 @@ import * as schema from "./schema";
 
 import { Dairy } from "@/lib/sci-cream/sci-cream";
 
-import {
-  dairy,
-  sweeteners,
-  alcohol,
-  chocolates,
-  nuts,
-  fruits,
-  eggs,
-  stabilizers,
-  miscellaneous,
-  allIngredients,
-} from "@/../data/ingredients/ingredients";
+import { allIngredients } from "@/../data/ingredients/ingredients";
 
 type User = typeof usersTable.$inferInsert;
 
@@ -62,6 +51,8 @@ async function seedUserIngredients(user: User, ingredients: any[]) {
     const ingredient: typeof ingredientsTable.$inferInsert = {
       name: ing.name,
       user: foundUser.id,
+      category: ing.category(),
+      value: JSON.stringify(ing),
     };
 
     console.log("---");
@@ -101,6 +92,7 @@ async function main() {
   for (const ingredients of allIngredients) {
     await seedUserIngredients(app, ingredients);
   }
+
   await seedUserIngredients(ramon, [
     new Dairy({ name: "2% Milk", milkFat: 4 }),
   ]);
