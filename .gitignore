@@ -42,3 +42,6 @@ next-env.d.ts
 
 # Local notes
 .notes
+
+# Copilot instructions
+.github/copilot-instructions.md
