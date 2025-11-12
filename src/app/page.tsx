@@ -80,8 +80,8 @@ function RecipeGrid() {
 
 export default function Home() {
   return (
-    <main className="min-h-screen p-8 bg-gray-100">
-      <h1 className="text-2xl font-bold mb-4 text-gray-900">Ice Cream Recipe Calculator</h1>
+    <main className="min-h-screen pt-3 pl-8 bg-gray-100">
+      <h1 className="text-2xl font-bold pl-8 mb-3 text-gray-900">Ice Cream Recipe Calculator</h1>
       <RecipeGrid />
     </main>
   );
