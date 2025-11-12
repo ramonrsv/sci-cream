@@ -4,31 +4,33 @@ import { useState } from "react";
 
 interface IngredientRow {
   ingredientName: string;
-  quantity: string;
+  quantity: number | null;
 }
 
 const TOTAL_ROWS = 22;
 
 function RecipeGrid() {
   const [rows, setRows] = useState<IngredientRow[]>(
-    Array.from({ length: TOTAL_ROWS }, () => ({ ingredientName: "", quantity: "" }))
+    Array.from({ length: TOTAL_ROWS }, () => ({ ingredientName: "", quantity: null }))
   );
 
   const updateRow = (index: number, field: "ingredientName" | "quantity", value: string) => {
     const newRows = [...rows];
-    newRows[index] = { ...newRows[index], [field]: value };
+    newRows[index] = { ...newRows[index], [field]: field === "quantity" ? parseFloat(value) || null : value };
     setRows(newRows);
   };
 
-  const mixTotal = rows.reduce((sum, row) => sum + (parseFloat(row.quantity) || 0), 0);
+  const mixTotal = () => rows.reduce((sum, row) => sum + (row.quantity || 0), 0);
 
   return (
     <table className="border-collapse border-2 border-gray-400">
       <thead>
         <tr className="table-header-footer text-center">
-          <th className="py-0.5 w-[300px] border-b-1 border-gray-400 border-r border-gray-300">
+          <th className="py-0.5 w-[325px] border-b-1 border-gray-400 border-r border-gray-300">
             Ingredient</th>
-          <th className="py-0.5 w-[60px] border-b-1 border-gray-400">Qty (g)</th>
+          <th className="py-0.5 w-[60px] border-b-1 border-gray-400 border-r border-gray-300">
+            Qty (g)</th>
+          <th className="py-0.5 w-[55px] border-b-1 border-gray-400">Qty (%)</th>
         </tr>
       </thead>
       <tbody>
@@ -43,14 +45,19 @@ function RecipeGrid() {
                 placeholder=""
               />
             </td>
-            <td className="">
+            <td className="border-r border-gray-400">
               <input
                 type="number"
-                value={row.quantity}
+                value={row.quantity?.toString() || ""}
                 onChange={(e) => updateRow(index, "quantity", e.target.value)}
                 placeholder=""
                 className="table-fillable-input text-right"
               />
+            </td>
+            <td className="text-sm text-gray-900 text-right px-1">
+              {rows[index].quantity && mixTotal() > 0
+                ? (rows[index].quantity / mixTotal() * 100).toFixed(1)
+                : ""}
             </td>
           </tr>
         ))}
@@ -59,7 +66,10 @@ function RecipeGrid() {
         <tr className="table-header-footer">
           <td className="py-0.5 text-right px-1 border-t border-gray-400 border-r border-gray-300">
             Total Weight:</td>
-          <td className="py-0.5 text-right border-t border-gray-400">{mixTotal.toFixed(1)} g</td>
+          <td className="py-0.5 text-right px-1 border-t border-gray-400 border-r border-gray-300">
+            {mixTotal().toFixed(1)} g</td>
+          <td className="py-0.5 text-right px-1 border-t border-gray-400">
+            {mixTotal() > 0 ? 100 : ""}</td>
         </tr>
       </tbody>
     </table>
