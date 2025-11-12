@@ -24,6 +24,7 @@ function RecipeGrid() {
 
   return (
     <table className="border-collapse border-2 border-gray-400">
+      {/* Header */}
       <thead>
         <tr className="table-header-footer text-center">
           <th className="py-0.5 w-[325px] border-b-1 border-gray-400 border-r border-gray-300">
@@ -32,8 +33,18 @@ function RecipeGrid() {
             Qty (g)</th>
           <th className="py-0.5 w-[55px] border-b-1 border-gray-400">Qty (%)</th>
         </tr>
+        {/* Total Row */}
+        <tr className="table-header-footer">
+          <td className="py-0.5 text-center px-1 border-b border-gray-400 border-r border-gray-300">
+            Total</td>
+          <td className="py-0.5 text-right px-3.75 border-b border-gray-400 border-r border-gray-300">
+            {mixTotal().toFixed(0)}</td>
+          <td className="py-0.5 text-right px-1 border-b border-gray-400">
+            {mixTotal() > 0 ? "100.0" : ""}</td>
+        </tr>
       </thead>
       <tbody>
+        {/* Ingredient Rows */}
         {rows.map((row, index) => (
           <tr key={index} className="border-b border-gray-300 hover:bg-blue-50 transition-colors">
             <td className="border-r border-gray-300">
@@ -51,6 +62,7 @@ function RecipeGrid() {
                 value={row.quantity?.toString() || ""}
                 onChange={(e) => updateRow(index, "quantity", e.target.value)}
                 placeholder=""
+                step={1}
                 className="table-fillable-input text-right"
               />
             </td>
@@ -61,24 +73,12 @@ function RecipeGrid() {
             </td>
           </tr>
         ))}
-
-        {/* Total Row */}
-        <tr className="table-header-footer">
-          <td className="py-0.5 text-right px-1 border-t border-gray-400 border-r border-gray-300">
-            Total Weight:</td>
-          <td className="py-0.5 text-right px-1 border-t border-gray-400 border-r border-gray-300">
-            {mixTotal().toFixed(1)} g</td>
-          <td className="py-0.5 text-right px-1 border-t border-gray-400">
-            {mixTotal() > 0 ? 100 : ""}</td>
-        </tr>
       </tbody>
     </table>
   )
 }
 
 export default function Home() {
-
-
   return (
     <main className="min-h-screen p-8 bg-gray-100">
       <h1 className="text-2xl font-bold mb-4 text-gray-900">Ice Cream Recipe Calculator</h1>
