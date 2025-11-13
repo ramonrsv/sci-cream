@@ -27,11 +27,11 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
       {/* Header */}
       <thead>
         <tr className="h-6 table-header-footer text-center">
-          <th className="w-[325px] border-b-1 border-gray-400 border-r border-gray-300">
+          <th className="w-[325px] min-w-[250px] border-b-1 border-gray-400 border-r border-gray-300">
             Ingredient</th>
-          <th className="w-[60px] border-b-1 border-gray-400 border-r border-gray-300">
+          <th className="w-[60px] min-w-[60px] border-b-1 border-gray-400 border-r border-gray-300">
             Qty (g)</th>
-          <th className="w-[55px] border-b-1 border-gray-400">Qty (%)</th>
+          <th className="w-[55px] min-w-[55px] border-b-1 border-gray-400">Qty (%)</th>
         </tr>
         {/* Total Row */}
         <tr className="h-6 table-header-footer">

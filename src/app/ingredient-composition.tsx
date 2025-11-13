@@ -5,7 +5,7 @@ export function IngredientCompositionGrid({ recipe }: { recipe: Recipe }) {
   const mixTotal = () => recipe.reduce((sum, row) => sum + (row.quantity || 0), 0);
 
   return (
-    <div className="w-full overflow-x-auto whitespace-nowrap border-2 border-gray-400">
+    <div className="w-full min-w-[400px] overflow-x-auto whitespace-nowrap border-2 border-gray-400">
       <table className="border-collapse">
         {/* Header */}
         <thead>
