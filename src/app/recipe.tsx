@@ -26,27 +26,27 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
     <table className="border-collapse border-2 border-gray-400">
       {/* Header */}
       <thead>
-        <tr className="table-header-footer text-center">
-          <th className="py-0.5 w-[325px] border-b-1 border-gray-400 border-r border-gray-300">
+        <tr className="h-6 table-header-footer text-center">
+          <th className="w-[325px] border-b-1 border-gray-400 border-r border-gray-300">
             Ingredient</th>
-          <th className="py-0.5 w-[60px] border-b-1 border-gray-400 border-r border-gray-300">
+          <th className="w-[60px] border-b-1 border-gray-400 border-r border-gray-300">
             Qty (g)</th>
-          <th className="py-0.5 w-[55px] border-b-1 border-gray-400">Qty (%)</th>
+          <th className="w-[55px] border-b-1 border-gray-400">Qty (%)</th>
         </tr>
         {/* Total Row */}
-        <tr className="table-header-footer">
-          <td className="py-0.5 text-center px-1 border-b border-gray-400 border-r border-gray-300">
+        <tr className="h-6 table-header-footer">
+          <td className="text-center px-1 border-b border-gray-400 border-r border-gray-300">
             Total</td>
-          <td className="py-0.5 text-right px-3.75 border-b border-gray-400 border-r border-gray-300">
+          <td className="text-right px-3.75 border-b border-gray-400 border-r border-gray-300">
             {mixTotal().toFixed(0)}</td>
-          <td className="py-0.5 text-right px-1 border-b border-gray-400">
+          <td className="text-right px-1 border-b border-gray-400">
             {mixTotal() > 0 ? "100.0" : ""}</td>
         </tr>
       </thead>
       <tbody>
         {/* Ingredient Rows */}
         {recipe.map((row, index) => (
-          <tr key={index} className="border-b border-gray-300 hover:bg-blue-50 transition-colors">
+          <tr key={index} className="h-6 border-b border-gray-300 hover:bg-blue-50 transition-colors">
             <td className="border-r border-gray-300">
               <input
                 type="text"
