@@ -1,31 +1,34 @@
 import { Ingredient } from "@/lib/sci-cream/sci-cream";
+import { STATE_VAL } from "@/lib/util";
 
 export const RECIPE_TOTAL_ROWS = 22;
 
-interface IngredientRow {
+export interface IngredientRow {
   name: string;
   quantity: number | undefined;
+  ingredient: Ingredient | undefined;
 }
 
-export type Recipe = Array<IngredientRow>;
-export type RecipeState = [Recipe, React.Dispatch<React.SetStateAction<Recipe>>];
+export type IngredientRowState = [IngredientRow, React.Dispatch<React.SetStateAction<IngredientRow>>];
+export type RecipeState = Array<IngredientRowState>;
 
-export function makeEmptyRecipe(): Recipe {
-  return Array.from({ length: RECIPE_TOTAL_ROWS }, () => ({ name: "", quantity: undefined }));
+export function makeEmptyIngredientRow(): IngredientRow {
+  return { name: "", quantity: undefined, ingredient: undefined };
 }
+
 export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
-  const [recipe, setRecipe] = recipeState;
+  const updateIngredientRowName = (index: number, name: string) => {
+    const [row, setRow] = recipeState[index];
+    setRow({ ...row, name: name });
+  }
 
-  const updateRecipeRow = (index: number, field: "name" | "quantity", value: string) => {
-    const newRecipe = [...recipe];
-    newRecipe[index] = {
-      ...newRecipe[index],
-      [field]: (field === "quantity") ? (parseFloat(value) || undefined) : value
-    };
-    setRecipe(newRecipe);
-  };
+  const updateIngredientRowQuantity = (index: number, quantityStr: string) => {
+    const [row, setRow] = recipeState[index];
+    const quantity = quantityStr === "" ? undefined : parseFloat(quantityStr);
+    setRow({ ...row, quantity: quantity });
+  }
 
-  const mixTotal = () => recipe.reduce((sum, row) => sum + (row.quantity || 0), 0);
+  const mixTotal = () => recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);
 
   return (
     <table className="border-collapse border-2 border-gray-400">
@@ -51,13 +54,13 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
       <tbody>
         {/* Ingredient Rows */}
         {/* @todo The ingredient/input rows are not respecting the h-6 class; not sure why yet */}
-        {recipe.map((row, index) => (
+        {recipeState.map(([row, _], index) => (
           <tr key={index} className="h-6 border-b border-gray-300 hover:bg-blue-50 transition-colors">
             <td className="border-r border-gray-300">
               <input
                 type="text"
                 value={row.name}
-                onChange={(e) => updateRecipeRow(index, "name", e.target.value)}
+                onChange={(e) => updateIngredientRowName(index, e.target.value)}
                 className="table-fillable-input px-2"
                 placeholder=""
               />
@@ -66,15 +69,15 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
               <input
                 type="number"
                 value={row.quantity?.toString() || ""}
-                onChange={(e) => updateRecipeRow(index, "quantity", e.target.value)}
+                onChange={(e) => updateIngredientRowQuantity(index, e.target.value)}
                 placeholder=""
                 step={1}
                 className="table-fillable-input text-right"
               />
             </td>
             <td className="text-sm text-gray-900 text-right px-1">
-              {recipe[index].quantity && mixTotal() > 0
-                ? (recipe[index].quantity / mixTotal() * 100).toFixed(1)
+              {recipeState[index][STATE_VAL].quantity && mixTotal() > 0
+                ? (recipeState[index][STATE_VAL].quantity / mixTotal() * 100).toFixed(1)
                 : ""}
             </td>
           </tr>

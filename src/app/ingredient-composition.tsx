@@ -1,18 +1,14 @@
-import { Recipe } from "./recipe";
+import { RecipeState } from "./recipe";
 import { Composition, Ingredient } from "../lib/sci-cream/sci-cream";
+import { STATE_VAL } from "@/lib/util";
 
-export function IngredientCompositionGrid({
-  recipe,
-  ingredients
-}: {
-  recipe: Recipe;
-  ingredients: (Ingredient | undefined)[];
-}) {
-  const mixTotal = () => recipe.reduce((sum, row) => sum + (row.quantity || 0), 0);
+export function IngredientCompositionGrid({ recipeState }: { recipeState: RecipeState }) {
+  const mixTotal = () => recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);
 
   const formattedCompCell = (index: number, comp: Composition) => {
-    return (ingredients[index] && ingredients[index].composition[comp]) ?
-      Number(ingredients[index].composition[comp].toFixed(2)) : "";
+    const ingredient = recipeState[index][STATE_VAL].ingredient;
+    return (ingredient && ingredient.composition[comp]) ?
+      Number(ingredient.composition[comp].toFixed(2)) : "";
   }
 
   return (
@@ -39,7 +35,7 @@ export function IngredientCompositionGrid({
           {/* Composition Rows */}
           {/* @todo Using h-6.25 instead of h-6 because I can't make RecipeGrid ingredient rows
           respect the h-* value. This value makes the rows between the two grids line up */}
-          {recipe.map((_, index) => (
+          {recipeState.map((_, index) => (
             <tr key={index} className="h-6.25 border-b border-gray-300">
               {Object.values(Composition).map((comp: Composition) => (
                 <td key={comp} className="text-sm text-gray-900 text-center border-r border-gray-300">

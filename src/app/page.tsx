@@ -1,40 +1,50 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, use } from "react";
 
-import { Recipe, makeEmptyRecipe, RecipeGrid, RECIPE_TOTAL_ROWS } from "./recipe";
+import { IngredientRow, makeEmptyIngredientRow, RecipeGrid, RECIPE_TOTAL_ROWS } from "./recipe";
 import { IngredientCompositionGrid } from "./ingredient-composition";
-import { fetchRecipeIngredients } from "@/lib/data";
+import { fetchValidIngredientNames, fetchIngredient } from "@/lib/data";
 import { constructIngredientFromTransfer } from "@/lib/transfer";
-import { Ingredient } from "@/lib/sci-cream/sci-cream";
+import { STATE_VAL, STATE_SET } from "@/lib/util";
 
-const VAL = 0;
-const SET = 1;
-
-const MAX_RECIPES = 3;
+const MAX_RECIPES = 2;
 
 export default function Home() {
-  const recipes = Array.from({ length: MAX_RECIPES }, () => useState<Recipe>(makeEmptyRecipe()));
-  const ingredients = Array.from({ length: MAX_RECIPES },
-    () => useState<(Ingredient | undefined)[]>(Array.from({ length: RECIPE_TOTAL_ROWS }, () => undefined)));
+  const validIngredients = useState<string[]>([]);
 
-  for (let i = 0; i < MAX_RECIPES; i++) {
-    useEffect(() => {
-      const ingredientNames = recipes[i][VAL].map(row => row.name);
+  const recipes = Array.from({ length: MAX_RECIPES },
+    () => Array.from({ length: RECIPE_TOTAL_ROWS }, () => useState<IngredientRow>(makeEmptyIngredientRow())));
 
-      fetchRecipeIngredients(ingredientNames).then(result =>
-        ingredients[i][SET](result.map((ing) => ing ? constructIngredientFromTransfer(ing) : undefined)))
-    }, recipes[i][VAL]);
-  }
+  useEffect(() => {
+    fetchValidIngredientNames().then(names => validIngredients[STATE_SET](names));
+  }, []);
+
+  recipes.forEach((recipeRows, _) => {
+    recipeRows.forEach((rowState, _) => {
+      const [row, setRow] = rowState;
+
+      useEffect(() => {
+        if (row.name !== "" && validIngredients[STATE_VAL].includes(row.name)) {
+          fetchIngredient(row.name)
+            .then(ing => ing ? constructIngredientFromTransfer(ing) : undefined)
+            .then(ing => setRow({ ...row, ingredient: ing }));
+        } else {
+          setRow({ ...row, ingredient: undefined });
+        }
+      }, [row.name, validIngredients[STATE_VAL]]);
+
+    })
+  });
 
   return (
     <main className="min-h-screen pt-3 pl-8 pr-8 bg-gray-100">
       <h1 className="text-2xl font-bold pl-8 mb-2 text-gray-900">Ice Cream Recipe Calculator</h1>
       <div className="main-page-grid">
         <RecipeGrid recipeState={recipes[0]} />
-        <IngredientCompositionGrid recipe={recipes[0][VAL]} ingredients={ingredients[0][VAL]} />
+        <IngredientCompositionGrid recipeState={recipes[0]} />
         <RecipeGrid recipeState={recipes[1]} />
-        <IngredientCompositionGrid recipe={recipes[1][VAL]} ingredients={ingredients[1][VAL]} />
+        <IngredientCompositionGrid recipeState={recipes[1]} />
       </div>
     </main>
   );
