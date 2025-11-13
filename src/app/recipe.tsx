@@ -45,6 +45,7 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
       </thead>
       <tbody>
         {/* Ingredient Rows */}
+        {/* @todo The ingredient/input rows are not respecting the h-6 class; not sure why yet */}
         {recipe.map((row, index) => (
           <tr key={index} className="h-6 border-b border-gray-300 hover:bg-blue-50 transition-colors">
             <td className="border-r border-gray-300">

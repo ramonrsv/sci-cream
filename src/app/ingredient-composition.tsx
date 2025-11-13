@@ -26,8 +26,10 @@ export function IngredientCompositionGrid({ recipe }: { recipe: Recipe }) {
         </thead>
         <tbody>
           {/* Composition Rows */}
+          {/* @todo Using h-6.25 instead of h-6 because I can't make RecipeGrid ingredient rows
+          respect the h-* value. This value makes the rows between the two grids line up */}
           {recipe.map((row, index) => (
-            <tr key={index} className="h-6 border-b border-gray-300">
+            <tr key={index} className="h-6.25 border-b border-gray-300">
               {Object.values(Composition).map((comp: Composition) => (
                 <td key={comp} className="text-sm text-gray-900 text-center border-r border-gray-300">
                 </td>
