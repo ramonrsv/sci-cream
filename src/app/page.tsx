@@ -2,15 +2,12 @@
 
 import { useState } from "react";
 
-import { IngredientRow, RecipeGrid } from "./recipe";
+import { Recipe, makeEmptyRecipe, RecipeGrid } from "./recipe";
 
-const TOTAL_ROWS = 22;
 const MAX_RECIPES = 3;
 
 export default function Home() {
-  const recipes = Array.from({ length: MAX_RECIPES }, () => useState<IngredientRow[]>(
-    Array.from({ length: TOTAL_ROWS }, () => ({ name: "", quantity: null }))
-  ));
+  const recipes = Array.from({ length: MAX_RECIPES }, () => useState<Recipe>(makeEmptyRecipe()));
 
   return (
     <main className="min-h-screen pt-3 pl-8 bg-gray-100">

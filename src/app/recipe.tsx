@@ -1,11 +1,17 @@
-export interface IngredientRow {
+const RECIPE_TOTAL_ROWS = 22;
+
+interface IngredientRow {
   name: string;
   quantity: number | null;
 }
 
-export function RecipeGrid(
-  { recipeState }:
-    { recipeState: [Array<IngredientRow>, React.Dispatch<React.SetStateAction<IngredientRow[]>>] }) {
+export type Recipe = Array<IngredientRow>;
+export type RecipeState = [Recipe, React.Dispatch<React.SetStateAction<Recipe>>];
+
+export function makeEmptyRecipe(): Recipe {
+  return Array.from({ length: RECIPE_TOTAL_ROWS }, () => ({ name: "", quantity: null }));
+}
+export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
   const [recipe, setRecipe] = recipeState;
 
   const updateRecipeRow = (index: number, field: "name" | "quantity", value: string) => {
