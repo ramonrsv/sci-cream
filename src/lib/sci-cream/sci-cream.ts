@@ -333,7 +333,7 @@ export class Alcohol extends Ingredient {
   }
 }
 
-interface ChocolateParms {
+interface ChocolateParams {
   name: string;
   cacaoFat: number;
   sugar?: number;
@@ -345,7 +345,7 @@ export class Chocolate extends Ingredient {
     return Category.CHOCOLATE;
   }
 
-  constructor(args: ChocolateParms) {
+  constructor(args: ChocolateParams) {
     const { name, cacaoFat, sugar, water } = args;
 
     const solids = 100 - (water ?? 0);

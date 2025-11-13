@@ -1,22 +1,27 @@
-const RECIPE_TOTAL_ROWS = 22;
+import { Ingredient } from "@/lib/sci-cream/sci-cream";
+
+export const RECIPE_TOTAL_ROWS = 22;
 
 interface IngredientRow {
   name: string;
-  quantity: number | null;
+  quantity: number | undefined;
 }
 
 export type Recipe = Array<IngredientRow>;
 export type RecipeState = [Recipe, React.Dispatch<React.SetStateAction<Recipe>>];
 
 export function makeEmptyRecipe(): Recipe {
-  return Array.from({ length: RECIPE_TOTAL_ROWS }, () => ({ name: "", quantity: null }));
+  return Array.from({ length: RECIPE_TOTAL_ROWS }, () => ({ name: "", quantity: undefined }));
 }
 export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
   const [recipe, setRecipe] = recipeState;
 
   const updateRecipeRow = (index: number, field: "name" | "quantity", value: string) => {
     const newRecipe = [...recipe];
-    newRecipe[index] = { ...newRecipe[index], [field]: field === "quantity" ? parseFloat(value) || null : value };
+    newRecipe[index] = {
+      ...newRecipe[index],
+      [field]: (field === "quantity") ? (parseFloat(value) || undefined) : value
+    };
     setRecipe(newRecipe);
   };
 

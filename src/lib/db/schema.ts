@@ -22,3 +22,6 @@ export const ingredientsTable = pgTable(
   },
   (table) => [primaryKey({ columns: [table.name, table.user] })]
 );
+
+export type User = typeof usersTable.$inferInsert;
+export type Ingredient = typeof ingredientsTable.$inferSelect;
