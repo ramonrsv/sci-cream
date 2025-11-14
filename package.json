@@ -4,17 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "pnpm --filter sci-cream-app dev",
-    "build": "pnpm run build:wasm && pnpm run build:sci-cream && pnpm run build:app",
-    "build:wasm": "wasm-pack build ./packages/sci-cream --out-dir wasm --out-name index",
-    "build:sci-cream": "pnpm --filter sci-cream build",
-    "build:app": "pnpm --filter sci-cream-app build",
+    "build": "pnpm run -r build",
     "start": "pnpm --filter sci-cream-app start",
-    "lint": "pnpm run lint:sci-cream && pnpm run lint:app",
-    "lint:sci-cream": "pnpm --filter sci-cream lint",
-    "lint:app": "pnpm --filter sci-cream-app lint",
-    "test": "pnpm run test:sci-cream && pnpm run test:app",
-    "test:sci-cream": "pnpm --filter sci-cream test",
-    "test:app": "pnpm --filter sci-cream-app test",
+    "lint": "pnpm run -r lint",
+    "test": "pnpm run -r test",
     "coverage": "pnpm --filter sci-cream-app coverage"
   }
 }

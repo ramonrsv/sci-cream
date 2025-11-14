@@ -9,7 +9,10 @@
     "dist"
   ],
   "scripts": {
-    "build": "vite build",
+    "build": "pnpm run build:rust && pnpm run build:wasm && pnpm run build:js",
+    "build:rust": "cargo build --target wasm32-unknown-unknown --release",
+    "build:wasm": "wasm-pack build --out-dir wasm --out-name index",
+    "build:js": "vite build",
     "test": "pnpm run test:rust && pnpm run test:js",
     "test:rust": "cargo test",
     "test:js": "vitest run",
