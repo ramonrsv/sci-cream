@@ -18,7 +18,7 @@ import {
   Egg,
   Stabilizer,
   Miscellaneous,
-} from "@/../src/lib/sci-cream/sci-cream";
+} from "@/lib/deprecated/sci-cream";
 
 function mapTo<T>(jsonList: T[], IngClass: any) {
   return jsonList.map((json) => new IngClass(json));

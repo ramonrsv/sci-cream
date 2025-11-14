@@ -1,5 +1,5 @@
 import { RecipeState } from "./recipe";
-import { Composition, Ingredient } from "../lib/sci-cream/sci-cream";
+import { Composition, Ingredient } from "../lib/deprecated/sci-cream";
 import { STATE_VAL } from "@/lib/util";
 
 export function IngredientCompositionGrid({ recipeState }: { recipeState: RecipeState }) {

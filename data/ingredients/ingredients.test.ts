@@ -12,7 +12,7 @@ import {
   Egg,
   Stabilizer,
   Miscellaneous,
-} from "@/../src/lib/sci-cream/sci-cream";
+} from "@/lib/deprecated/sci-cream";
 
 import {
   dairy,
