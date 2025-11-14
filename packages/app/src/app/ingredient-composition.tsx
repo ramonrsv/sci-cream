@@ -1,6 +1,6 @@
 import { RecipeState } from "./recipe";
 import { Composition, Ingredient } from "../lib/deprecated/sci-cream";
-import { STATE_VAL } from "@/lib/util";
+import { STATE_VAL } from "../lib/util";
 
 export function IngredientCompositionGrid({ recipeState }: { recipeState: RecipeState }) {
   const mixTotal = () => recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);

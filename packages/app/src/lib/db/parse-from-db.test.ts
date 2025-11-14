@@ -26,7 +26,7 @@ import {
   Egg,
   Stabilizer,
   Miscellaneous,
-} from "@/lib/deprecated/sci-cream";
+} from "../deprecated/sci-cream";
 
 import {
   dairy,
@@ -38,7 +38,7 @@ import {
   eggs,
   stabilizers,
   miscellaneous,
-} from "@/../data/ingredients/ingredients";
+} from "../data/ingredients";
 
 async function getAppUserId() {
   const [foundUser] = await db.select().from(usersTable).where(eq(usersTable.email, app.email));

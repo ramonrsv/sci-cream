@@ -1,5 +1,5 @@
-import { Ingredient } from "@/lib/deprecated/sci-cream";
-import { STATE_VAL } from "@/lib/util";
+import { Ingredient } from "../lib/deprecated/sci-cream";
+import { STATE_VAL } from "../lib/util";
 
 export const RECIPE_TOTAL_ROWS = 22;
 

@@ -5,9 +5,9 @@ import { eq, and } from "drizzle-orm";
 import { usersTable, ingredientsTable } from "./schema";
 import * as schema from "./schema";
 
-import { Ingredient, Dairy } from "@/lib/deprecated/sci-cream";
+import { Ingredient, Dairy } from "../deprecated/sci-cream";
 
-import { allIngredients } from "@/../data/ingredients/ingredients";
+import { allIngredients } from "../data/ingredients";
 
 type User = typeof usersTable.$inferInsert;
 

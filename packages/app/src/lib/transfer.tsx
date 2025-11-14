@@ -1,4 +1,4 @@
-import { IngredientTransfer } from "@/lib/data";
+import { IngredientTransfer } from "./data";
 
 import {
   Category,
@@ -12,7 +12,7 @@ import {
   Egg,
   Stabilizer,
   Miscellaneous,
-} from "@/lib/deprecated/sci-cream";
+} from "./deprecated/sci-cream";
 
 export function constructIngredientFromTransfer(ingredient: IngredientTransfer): Ingredient {
   switch (ingredient.category) {

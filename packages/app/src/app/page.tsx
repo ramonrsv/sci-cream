@@ -4,9 +4,9 @@ import { useState, useEffect } from "react";
 
 import { IngredientRow, makeEmptyIngredientRow, RecipeGrid, RECIPE_TOTAL_ROWS } from "./recipe";
 import { IngredientCompositionGrid } from "./ingredient-composition";
-import { fetchValidIngredientNames, fetchIngredient } from "@/lib/data";
-import { constructIngredientFromTransfer } from "@/lib/transfer";
-import { STATE_VAL, STATE_SET } from "@/lib/util";
+import { fetchValidIngredientNames, fetchIngredient } from "../lib/data";
+import { constructIngredientFromTransfer } from "../lib/transfer";
+import { STATE_VAL, STATE_SET } from "../lib/util";
 
 import { test, wasm_test } from "@workspace/sci-cream";
 

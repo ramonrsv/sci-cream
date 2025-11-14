@@ -1,12 +1,12 @@
-import dairyJson from "./dairy.json";
-import sweetenersJson from "./sweeteners.json";
-import alcoholJson from "./alcohol.json";
-import chocolatesJson from "./chocolates.json";
-import nutsJson from "./nuts.json";
-import fruitsJson from "./fruits.json";
-import eggsJson from "./eggs.json";
-import stabilizersJson from "./stabilizers.json";
-import miscellaneousJson from "./miscellaneous.json";
+import dairyJson from "../../../../../data/ingredients/dairy.json";
+import sweetenersJson from "../../../../../data/ingredients/sweeteners.json";
+import alcoholJson from "../../../../../data/ingredients/alcohol.json";
+import chocolatesJson from "../../../../../data/ingredients/chocolates.json";
+import nutsJson from "../../../../../data/ingredients/nuts.json";
+import fruitsJson from "../../../../../data/ingredients/fruits.json";
+import eggsJson from "../../../../../data/ingredients/eggs.json";
+import stabilizersJson from "../../../../../data/ingredients/stabilizers.json";
+import miscellaneousJson from "../../../../../data/ingredients/miscellaneous.json";
 
 import {
   Dairy,
@@ -18,7 +18,7 @@ import {
   Egg,
   Stabilizer,
   Miscellaneous,
-} from "@/lib/deprecated/sci-cream";
+} from "../deprecated/sci-cream";
 
 function mapTo<T>(jsonList: T[], IngClass: any) {
   return jsonList.map((json) => new IngClass(json));

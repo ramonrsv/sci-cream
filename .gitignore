@@ -2,6 +2,7 @@
 
 # dependencies
 /node_modules
+/packages/*/node_modules
 /.pnp
 .pnp.*
 .yarn/*
@@ -12,13 +13,19 @@
 
 # testing
 /coverage
+/packages/*/coverage
 
 # next.js
-/.next/
-/out/
+/packages/*/.next/
+/packages/*/out/
 
 # production
 /build
+
+# Rust artifacts
+/packages/sci-cream/target
+/packages/sci-cream/dist
+/packages/sci-cream/wasm
 
 # misc
 .DS_Store
@@ -46,8 +53,8 @@ next-env.d.ts
 # Copilot instructions
 .github/copilot-instructions.md
 
-/packages/sci-cream/node_modules
-/packages/sci-cream/target
-/packages/sci-cream/wasm
-/packages/sci-cream/dist
+# @todo decide if we want to ignore these
+# https://doc.rust-lang.org/cargo/guide/cargo-toml-vs-cargo-lock.html
 /packages/sci-cream/Cargo.lock
+*package-lock.json
+*pnpm-lock.yaml
