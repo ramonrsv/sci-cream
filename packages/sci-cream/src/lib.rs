@@ -1,6 +1,11 @@
 use wasm_bindgen::prelude::*;
 
 #[wasm_bindgen]
-pub fn wasm_test() -> String {
+pub fn hello_wasm() -> String {
     "Hello, wasm!".to_string()
+}
+
+#[wasm_bindgen]
+pub fn add(a: u32, b: u32) -> u32 {
+    a + b
 }

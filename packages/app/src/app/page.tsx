@@ -8,7 +8,7 @@ import { fetchValidIngredientNames, fetchIngredient } from "../lib/data";
 import { constructIngredientFromTransfer } from "../lib/transfer";
 import { STATE_VAL, STATE_SET } from "../lib/util";
 
-import { test, wasm_test } from "@workspace/sci-cream";
+import { hello_wasm, add } from "@workspace/sci-cream";
 
 const MAX_RECIPES = 2;
 
@@ -39,8 +39,8 @@ export default function Home() {
     })
   });
 
-  console.log(test());
-  console.log(wasm_test());
+  console.log(hello_wasm());
+  console.log("2 + 3 = %d", add(2, 3));
 
   return (
     <main className="min-h-screen pt-3 pl-8 pr-8 bg-gray-100">

@@ -1,10 +1,6 @@
-import { wasm_test } from '../wasm/index'
-
-const test = (): string => {
-  return 'Hello from JS!'
-}
+import { hello_wasm, add } from '../wasm/index'
 
 export {
- wasm_test,
- test
+ hello_wasm,
+ add,
 }

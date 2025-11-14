@@ -9,7 +9,7 @@ export default defineConfig({
     environment: "jsdom",
     reporters: "verbose",
     coverage: {
-      exclude: [...coverageConfigDefaults.exclude, "*.config.ts", "*.config.mjs", "src/db/seed.ts"],
+      exclude: [...coverageConfigDefaults.exclude, "*.config.ts", "*.config.mjs"],
     },
   },
 });
