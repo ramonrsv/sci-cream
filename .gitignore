@@ -45,3 +45,9 @@ next-env.d.ts
 
 # Copilot instructions
 .github/copilot-instructions.md
+
+/packages/sci-cream/node_modules
+/packages/sci-cream/target
+/packages/sci-cream/wasm
+/packages/sci-cream/dist
+/packages/sci-cream/Cargo.lock

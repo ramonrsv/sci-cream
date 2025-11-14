@@ -10,5 +10,8 @@
   "files.associations": {
     "*.js": "javascriptreact"
   },
-  "editor.formatOnSave": true
+  "editor.formatOnSave": true,
+  "rust-analyzer.linkedProjects": [
+    "./packages/sci-cream/Cargo.toml"
+  ]
 }

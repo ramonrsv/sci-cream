@@ -8,6 +8,8 @@ import { fetchValidIngredientNames, fetchIngredient } from "@/lib/data";
 import { constructIngredientFromTransfer } from "@/lib/transfer";
 import { STATE_VAL, STATE_SET } from "@/lib/util";
 
+import { test, wasm_test } from "@workspace/sci-cream";
+
 const MAX_RECIPES = 2;
 
 export default function Home() {
@@ -36,6 +38,9 @@ export default function Home() {
 
     })
   });
+
+  console.log(test());
+  console.log(wasm_test());
 
   return (
     <main className="min-h-screen pt-3 pl-8 pr-8 bg-gray-100">
