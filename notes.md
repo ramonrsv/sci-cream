@@ -54,8 +54,9 @@ $ pnpm test
 $ pnpm dev
 ```
 
-Run server:
+Rust `sci-cream` crate feature builds:
 
 ```console
-$ npm run dev
+$ cargo rustc --features wasm --crate-type=cdylib
+$ cargo rustc --features backend --crate-type=rlib
 ```

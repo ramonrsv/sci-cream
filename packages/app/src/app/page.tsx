@@ -8,7 +8,7 @@ import { fetchValidIngredientNames, fetchIngredient } from "../lib/data";
 import { constructIngredientFromTransfer } from "../lib/transfer";
 import { STATE_VAL, STATE_SET } from "../lib/util";
 
-import { hello_wasm, add } from "@workspace/sci-cream";
+import { getIngredientExample } from "@workspace/sci-cream";
 
 const MAX_RECIPES = 2;
 
@@ -28,6 +28,9 @@ export default function Home() {
 
       useEffect(() => {
         if (row.name !== "" && validIngredients[STATE_VAL].includes(row.name)) {
+          const ingredient = getIngredientExample();
+          console.log(`Fetched example ingredient from WASM: ${ingredient.name}, ${ingredient.category}`);
+
           fetchIngredient(row.name)
             .then(ing => ing ? constructIngredientFromTransfer(ing) : undefined)
             .then(ing => setRow({ ...row, ingredient: ing }));
@@ -38,9 +41,6 @@ export default function Home() {
 
     })
   });
-
-  console.log(hello_wasm());
-  console.log("2 + 3 = %d", add(2, 3));
 
   return (
     <main className="min-h-screen pt-3 pl-8 pr-8 bg-gray-100">

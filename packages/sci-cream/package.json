@@ -10,11 +10,12 @@
   ],
   "scripts": {
     "build": "pnpm run build:rust && pnpm run build:wasm && pnpm run build:js",
-    "build:rust": "cargo build --target wasm32-unknown-unknown --release",
-    "build:wasm": "wasm-pack build --out-dir wasm --out-name index",
+    "build:rust": "cargo rustc --features wasm --crate-type=cdylib",
+    "build:wasm": "wasm-pack build --out-dir wasm --out-name index -- --features wasm",
     "build:js": "vite build",
-    "test": "pnpm run test:rust && pnpm run test:js",
+    "test": "pnpm run test:rust && pnpm run test:rust:wasm && pnpm run test:js",
     "test:rust": "cargo test",
+    "test:rust:wasm": "cargo test --features wasm",
     "test:js": "vitest run",
     "lint": "cargo clippy"
   },

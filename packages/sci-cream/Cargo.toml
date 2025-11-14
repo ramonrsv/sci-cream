@@ -3,8 +3,20 @@ name = "sci-cream"
 version = "0.1.0"
 edition = "2024"
 
+[features]
+wasm = ["dep:wasm-bindgen"]
+backend = ["dep:diesel"]
+
+# Note that this requires that we use `cargo rustc --features backend --crate-type=rlib`
+# Ideally we would not specify this year, and would instead use `--crate-type=<rlib|cdylib>` as
+# needed based on the feature being built, but wasm-pack does not currently support `--crate-type`.
+# As such, we need to specify it here, and specify `--crate-type=rlib` when building for 'backend'.
+# See: https://github.com/drager/wasm-pack/issues/1297, https://github.com/trunk-rs/trunk
+#
+# There is no way to run `cargo test --features backend ...` without modifying `Cargo.toml`
 [lib]
 crate-type = ["cdylib"]
 
 [dependencies]
-wasm-bindgen = "0.2"
+wasm-bindgen = { version = "0.2", optional = true }
+diesel = { version = "2.3.3", features = ["postgres"], optional = true }
