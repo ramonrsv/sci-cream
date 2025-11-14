@@ -4,7 +4,7 @@ Install requirements and dependencies:
 $ sudo apt update
 $ sudo apt install nodejs npm
 $ sudo npm install -g pnpm
-$ npm install
+$ pnpm install
 ```
 
 Install postgresql:
@@ -37,7 +37,7 @@ Using [DBeaver](https://dbeaver.io/), create database connection with:
 - Username: `postgres`
 - Password: `<password>`
 
-If developing on WSL and using DBeaver on Windows, then need to forward port `5432` in VS Code.
+If developing on WSL and using DBeaver on Windows, then port `5432` may need to be forwarded in VSC.
 
 Push schema to database and seed:
 
@@ -46,10 +46,12 @@ $ npx drizzle-kit push
 $ pnpm tsx ./src/db/seed.ts
 ```
 
-Run tests:
+Build, run tests, run dev server:
 
 ```console
-$ pnpm run test
+$ pnpm build
+$ pnpm test
+$ pnpm dev
 ```
 
 Run server:
