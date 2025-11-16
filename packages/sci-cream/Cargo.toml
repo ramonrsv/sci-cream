@@ -4,7 +4,7 @@ version = "0.1.0"
 edition = "2024"
 
 [features]
-wasm = ["dep:wasm-bindgen"]
+wasm = ["dep:wasm-bindgen", "dep:serde-wasm-bindgen"]
 backend = ["dep:diesel"]
 
 # Note that this requires that we use `cargo rustc --features backend --crate-type=rlib`
@@ -18,5 +18,10 @@ backend = ["dep:diesel"]
 crate-type = ["cdylib"]
 
 [dependencies]
+serde = { version = "1.0.228", features = ["derive"] }
+strum = "0.27.2"
+strum_macros = "0.27.2"
+# Optional dependencies for features
 wasm-bindgen = { version = "0.2", optional = true }
+serde-wasm-bindgen = { version = "0.6.5", optional = true }
 diesel = { version = "2.3.3", features = ["postgres"], optional = true }

@@ -8,7 +8,7 @@ export default defineConfig({
   plugins: [wasm()], // include wasm plugin
   build: {
     lib: {
-      entry: path.resolve(__dirname, 'src/index.ts'),
+      entry: path.resolve(__dirname, 'src/ts/index.ts'),
       name: 'MyLibrary',
       fileName: 'index',
       formats: ['es'], // this is important

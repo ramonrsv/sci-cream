@@ -1,23 +1,52 @@
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
+use serde::{Deserialize, Serialize};
+
 #[cfg(feature = "backend")]
 use diesel::{Queryable, Selectable};
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-pub fn hello_wasm() -> String {
-    "Hello, wasm!".to_string()
-}
+pub mod ingredients;
+#[cfg(feature = "wasm")]
+pub mod wasm;
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-pub fn add(a: u32, b: u32) -> u32 {
-    a + b
+pub use ingredients::{Category, Composition, CompositionMap, Ingredient};
+
+#[cfg(feature = "wasm")]
+pub use wasm::{add, hello_wasm, log, log_many, log_u32};
+
+#[cfg(feature = "wasm")]
+#[wasm_bindgen]
+pub fn categoryAsStr(category: Category) -> String {
+    category.to_string()
 }
 
 #[cfg(feature = "wasm")]
 #[wasm_bindgen]
-pub fn getIngredientExample() -> Ingredient {
-    Ingredient::new("2% Milk".to_string(), "Dairy".to_string())
+pub fn getIngredientExample() -> Result<JsValue, JsValue> {
+    use std::collections::HashMap;
+
+    let ingredient = ingredients::Ingredient {
+        name: "2% Milk".to_string(),
+        category: Category::Dairy,
+        composition: CompositionMap::from([
+            (Composition::Milk_Fat, Some(2.0)),
+            (Composition::Lactose, Some(4.81)),
+            (Composition::Milk_SNF, Some(8.82)),
+        ]),
+    };
+
+    let ingredient = ingredients::Ingredient::<HashMap<usize, Option<f64>>> {
+        name: ingredient.name,
+        category: ingredient.category,
+        composition: ingredient
+            .composition
+            .into_iter()
+            .map(|(comp, value)| (comp as usize, value))
+            .collect(),
+    };
+
+    Ok(serde_wasm_bindgen::to_value(&ingredient)?)
 }
 
 #[cfg(feature = "backend")]
@@ -26,32 +55,5 @@ diesel::table! {
         id -> Int4,
         name -> Varchar,
         category -> Varchar,
-    }
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[cfg_attr(feature = "backend", derive(Queryable, Selectable))]
-#[cfg_attr(feature = "backend", diesel(table_name = ingredients))]
-pub struct Ingredient {
-    name: String,
-    category: String,
-}
-
-#[cfg(feature = "wasm")]
-#[wasm_bindgen]
-impl Ingredient {
-    #[wasm_bindgen(constructor)]
-    pub fn new(name: String, category: String) -> Ingredient {
-        Ingredient { name, category }
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn name(&self) -> String {
-        self.name.clone()
-    }
-
-    #[wasm_bindgen(getter)]
-    pub fn category(&self) -> String {
-        self.category.clone()
     }
 }
