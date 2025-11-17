@@ -1,12 +1,12 @@
-import dairyJson from "../../../../../data/ingredients/dairy.json";
-import sweetenersJson from "../../../../../data/ingredients/sweeteners.json";
-import alcoholJson from "../../../../../data/ingredients/alcohol.json";
-import chocolatesJson from "../../../../../data/ingredients/chocolates.json";
-import nutsJson from "../../../../../data/ingredients/nuts.json";
-import fruitsJson from "../../../../../data/ingredients/fruits.json";
-import eggsJson from "../../../../../data/ingredients/eggs.json";
-import stabilizersJson from "../../../../../data/ingredients/stabilizers.json";
-import miscellaneousJson from "../../../../../data/ingredients/miscellaneous.json";
+import dairyJson from "../../../../../data/ingredients/deprecated/dairy.json";
+import sweetenersJson from "../../../../../data/ingredients/deprecated/sweeteners.json";
+import alcoholJson from "../../../../../data/ingredients/deprecated/alcohol.json";
+import chocolatesJson from "../../../../../data/ingredients/deprecated/chocolates.json";
+import nutsJson from "../../../../../data/ingredients/deprecated/nuts.json";
+import fruitsJson from "../../../../../data/ingredients/deprecated/fruits.json";
+import eggsJson from "../../../../../data/ingredients/deprecated/eggs.json";
+import stabilizersJson from "../../../../../data/ingredients/deprecated/stabilizers.json";
+import miscellaneousJson from "../../../../../data/ingredients/deprecated/miscellaneous.json";
 
 import {
   Dairy,
