@@ -1,16 +1,17 @@
-use approx::{AbsDiffEq, RelativeEq};
+use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
+use struct_iterable::Iterable;
 
 use crate::{
     constants,
-    util::{abs_diff_eq_option, add_option},
+    util::{abs_diff_eq_option, add_option, iter_all_abs_diff_eq_option},
 };
 
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Sugar {
     pub glucose: Option<f64>,
     pub fructose: Option<f64>,
@@ -22,7 +23,7 @@ pub struct Sugar {
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Sweeteners {
     pub sugar: Option<Sugar>,
     pub polysaccharide: Option<f64>,
@@ -30,7 +31,7 @@ pub struct Sweeteners {
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct SolidsBreakdown {
     pub fats: Option<f64>,
     /// Non-Fat Solids
@@ -43,7 +44,7 @@ pub struct SolidsBreakdown {
 
 /// Non-Fat Solids
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Solids {
     pub milk: Option<SolidsBreakdown>,
     pub egg: Option<SolidsBreakdown>,
@@ -53,7 +54,7 @@ pub struct Solids {
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Micro {
     pub salt: Option<f64>,
     pub emulsifiers: Option<f64>,
@@ -61,7 +62,7 @@ pub struct Micro {
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct PAC {
     pub sugar: Option<f64>,
     pub salt: Option<f64>,
@@ -70,7 +71,7 @@ pub struct PAC {
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Composition {
     pub solids: Option<Solids>,
     pub sweeteners: Option<Sweeteners>,
@@ -452,13 +453,16 @@ impl AbsDiffEq for Sugar {
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        abs_diff_eq_option(&self.glucose, &other.glucose, epsilon)
-            && abs_diff_eq_option(&self.fructose, &other.fructose, epsilon)
-            && abs_diff_eq_option(&self.galactose, &other.galactose, epsilon)
-            && abs_diff_eq_option(&self.sucrose, &other.sucrose, epsilon)
-            && abs_diff_eq_option(&self.lactose, &other.lactose, epsilon)
-            && abs_diff_eq_option(&self.maltose, &other.maltose, epsilon)
-            && abs_diff_eq_option(&self.unspecified, &other.unspecified, epsilon)
+        iter_all_abs_diff_eq_option::<f64, f64, Self>(self, other, epsilon)
+        // self.iter()
+        //     .zip(other.iter())
+        //     .all(|((_, a_val), (_, b_val))| {
+        //         abs_diff_eq_option(
+        //             a_val.downcast_ref::<Option<f64>>().unwrap(),
+        //             b_val.downcast_ref::<Option<f64>>().unwrap(),
+        //             epsilon,
+        //         )
+        //     })
     }
 }
 
@@ -484,9 +488,7 @@ impl AbsDiffEq for SolidsBreakdown {
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        abs_diff_eq_option(&self.fats, &other.fats, epsilon)
-            && abs_diff_eq_option(&self.sugars, &other.sugars, epsilon)
-            && abs_diff_eq_option(&self.snfs, &other.snfs, epsilon)
+        iter_all_abs_diff_eq_option::<f64, f64, Self>(self, other, epsilon)
     }
 }
 
@@ -498,11 +500,7 @@ impl AbsDiffEq for Solids {
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        abs_diff_eq_option(&self.milk, &other.milk, epsilon)
-            && abs_diff_eq_option(&self.egg, &other.egg, epsilon)
-            && abs_diff_eq_option(&self.cocoa, &other.cocoa, epsilon)
-            && abs_diff_eq_option(&self.nut, &other.nut, epsilon)
-            && abs_diff_eq_option(&self.other, &other.other, epsilon)
+        iter_all_abs_diff_eq_option::<f64, SolidsBreakdown, Self>(self, other, epsilon)
     }
 }
 
@@ -514,9 +512,7 @@ impl AbsDiffEq for Micro {
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        abs_diff_eq_option(&self.salt, &other.salt, epsilon)
-            && abs_diff_eq_option(&self.emulsifiers, &other.emulsifiers, epsilon)
-            && abs_diff_eq_option(&self.stabilizers, &other.stabilizers, epsilon)
+        iter_all_abs_diff_eq_option::<f64, f64, Self>(self, other, epsilon)
     }
 }
 
@@ -528,10 +524,7 @@ impl AbsDiffEq for PAC {
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        abs_diff_eq_option(&self.sugar, &other.sugar, epsilon)
-            && abs_diff_eq_option(&self.salt, &other.salt, epsilon)
-            && abs_diff_eq_option(&self.alcohol, &other.alcohol, epsilon)
-            && abs_diff_eq_option(&self.hardness_factor, &other.hardness_factor, epsilon)
+        iter_all_abs_diff_eq_option::<f64, f64, Self>(self, other, epsilon)
     }
 }
 
