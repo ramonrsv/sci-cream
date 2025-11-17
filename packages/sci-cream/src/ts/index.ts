@@ -1,7 +1,8 @@
 import {
   hello_wasm,
   add,
-  getIngredientExample,
+  getIngredientExampleJs,
+  getIngredientExampleWasm,
   Category,
   Composition,
   categoryAsStr,
@@ -12,7 +13,8 @@ import { getTsEnumNumbers, getTsEnumStrings } from './util';
 export {
  hello_wasm,
  add,
- getIngredientExample,
+ getIngredientExampleJs,
+ getIngredientExampleWasm,
  Category,
  Composition,
  getTsEnumNumbers,

@@ -19,9 +19,17 @@ crate-type = ["cdylib"]
 
 [dependencies]
 serde = { version = "1.0.228", features = ["derive"] }
+serde_with = "3.16.0"
 strum = "0.27.2"
 strum_macros = "0.27.2"
+approx = "0.5.1"
+
 # Optional dependencies for features
 wasm-bindgen = { version = "0.2", optional = true }
 serde-wasm-bindgen = { version = "0.6.5", optional = true }
 diesel = { version = "2.3.3", features = ["postgres"], optional = true }
+
+[dev-dependencies]
+all_asserts = "2.3.3"
+more-asserts = "0.3.1"
+pretty_assertions = "1.4.1"

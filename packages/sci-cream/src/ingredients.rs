@@ -9,6 +9,8 @@ use wasm_bindgen::prelude::*;
 #[cfg(feature = "backend")]
 use diesel::{Queryable, Selectable};
 
+use crate::composition::Composition;
+
 /// Ingredient categories
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Display, Hash, Eq, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
@@ -28,7 +30,7 @@ pub enum Category {
 #[allow(nonstandard_style)]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Hash, Eq, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-pub enum Composition {
+pub enum CompositionEnum {
     Milk_Fat,
     Egg_Fat,
     Cacao_Fat,
@@ -64,12 +66,12 @@ pub enum Composition {
     Hardness_Factor,
 }
 
-pub type CompositionMap = HashMap<Composition, Option<f64>>;
-
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[cfg_attr(feature = "backend", derive(Queryable, Selectable), diesel(table_name = ingredients))]
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct Ingredient<T = CompositionMap> {
+pub struct Ingredient {
+    #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
     pub name: String,
     pub category: Category,
-    pub composition: T,
+    pub composition: Composition,
 }

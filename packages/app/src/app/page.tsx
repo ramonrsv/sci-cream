@@ -14,7 +14,8 @@ import {
   categoryAsStr,
   getTsEnumNumbers,
   getTsEnumStrings,
-  getIngredientExample
+  getIngredientExampleJs,
+  getIngredientExampleWasm,
 } from "@workspace/sci-cream";
 
 const MAX_RECIPES = 2;
@@ -35,32 +36,11 @@ export default function Home() {
 
       useEffect(() => {
         if (row.name !== "" && validIngredients[STATE_VAL].includes(row.name)) {
-          const ingredient = getIngredientExample();
-          console.log(`Fetched example ingredient from WASM: ${JSON.stringify(ingredient)}`);
+          const ing1 = getIngredientExampleWasm();
+          console.log(`(WASM) .sugars.total(): ${ing1.composition?.solids?.sweeteners?.sugar?.total()}`);
 
-          console.log(`Composition: ${JSON.stringify(Composition)}`);
-          console.log(`Composition.Milk_SNF: ${Composition.Milk_SNF}`);
-
-          console.log(`categoryAsStr(Category.Dairy): ${categoryAsStr(Category.Dairy)}`);
-
-          console.log("-----------------------------------");
-          getTsEnumNumbers(Composition).forEach((val) => {
-            const comp = ingredient.composition.get(val);
-            if (comp !== undefined) {
-              console.log(`${val}: ${comp}`);
-            }
-          });
-
-          console.log("-----------------------------------");
-          ingredient.composition.forEach((value: number, key: number) => {
-            console.log(`${key}: ${value}`);
-          });
-
-          // console.log(`composition.get(Composition.Milk_SNF): ${ingredient.composition.get(Composition.Milk_SNF.toString())}`);
-
-          // Object.values(Composition).forEach((val) => {
-          //   console.log(`${val.toString()}: ${ingredient.composition.get(val.toString())}`);
-          // });
+          const ing2 = getIngredientExampleJs();
+          console.log(`(JS) composition: ${JSON.stringify(ing2.composition)}`);
 
           fetchIngredient(row.name)
             .then(ing => ing ? constructIngredientFromTransfer(ing) : undefined)
