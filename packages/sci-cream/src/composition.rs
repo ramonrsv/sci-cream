@@ -39,10 +39,21 @@ pub struct Sweeteners {
     pub artificial: Option<f64>,
 }
 
+/// Non-Fat Solids
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+pub struct SolidsNF {
+    pub milk: Option<f64>,
+    pub egg: Option<f64>,
+    pub cocoa: Option<f64>,
+    pub nut: Option<f64>,
+    pub other: Option<f64>,
+}
+
 /// Non-Fat, Non-Sweetener Solids
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-pub struct SolidsNFNS {
+pub struct SolidsNFS {
     pub milk: Option<f64>,
     pub egg: Option<f64>,
     pub cocoa: Option<f64>,
@@ -54,8 +65,9 @@ pub struct SolidsNFNS {
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Solids {
     pub fats: Option<Fats>,
+    pub snf: Option<SolidsNF>,
     pub sweeteners: Option<Sweeteners>,
-    pub snfs: Option<SolidsNFNS>,
+    pub snfs: Option<SolidsNFS>,
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
@@ -86,8 +98,12 @@ pub struct Composition {
 }
 
 impl Fats {
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
     pub fn empty() -> Self {
-        Fats {
+        Self {
             milk: None,
             egg: None,
             cacao: None,
@@ -95,11 +111,50 @@ impl Fats {
             other: None,
         }
     }
+
+    pub fn milk(self, milk: f64) -> Self {
+        Self {
+            milk: Some(milk),
+            ..self
+        }
+    }
+
+    pub fn egg(self, egg: f64) -> Self {
+        Self {
+            egg: Some(egg),
+            ..self
+        }
+    }
+
+    pub fn cacao(self, cacao: f64) -> Self {
+        Self {
+            cacao: Some(cacao),
+            ..self
+        }
+    }
+
+    pub fn nut(self, nut: f64) -> Self {
+        Self {
+            nut: Some(nut),
+            ..self
+        }
+    }
+
+    pub fn other(self, other: f64) -> Self {
+        Self {
+            other: Some(other),
+            ..self
+        }
+    }
 }
 
 impl Sugar {
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
     pub fn empty() -> Self {
-        Sugar {
+        Self {
             glucose: None,
             fructose: None,
             galactose: None,
@@ -107,6 +162,55 @@ impl Sugar {
             lactose: None,
             maltose: None,
             unspecified: None,
+        }
+    }
+
+    pub fn glucose(self, glucose: f64) -> Self {
+        Self {
+            glucose: Some(glucose),
+            ..self
+        }
+    }
+
+    pub fn fructose(self, fructose: f64) -> Self {
+        Self {
+            fructose: Some(fructose),
+            ..self
+        }
+    }
+
+    pub fn galactose(self, galactose: f64) -> Self {
+        Self {
+            galactose: Some(galactose),
+            ..self
+        }
+    }
+
+    pub fn sucrose(self, sucrose: f64) -> Self {
+        Self {
+            sucrose: Some(sucrose),
+            ..self
+        }
+    }
+
+    pub fn lactose(self, lactose: f64) -> Self {
+        Self {
+            lactose: Some(lactose),
+            ..self
+        }
+    }
+
+    pub fn maltose(self, maltose: f64) -> Self {
+        Self {
+            maltose: Some(maltose),
+            ..self
+        }
+    }
+
+    pub fn unspecified(self, unspecified: f64) -> Self {
+        Self {
+            unspecified: Some(unspecified),
+            ..self
         }
     }
 
@@ -166,11 +270,36 @@ impl Sugar {
 }
 
 impl Sweeteners {
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
     pub fn empty() -> Self {
-        Sweeteners {
+        Self {
             sugar: None,
             polysaccharide: None,
             artificial: None,
+        }
+    }
+
+    pub fn sugar(self, sugar: Sugar) -> Self {
+        Self {
+            sugar: Some(sugar),
+            ..self
+        }
+    }
+
+    pub fn polysaccharide(self, polysaccharide: f64) -> Self {
+        Self {
+            polysaccharide: Some(polysaccharide),
+            ..self
+        }
+    }
+
+    pub fn artificial(self, artificial: f64) -> Self {
+        Self {
+            artificial: Some(artificial),
+            ..self
         }
     }
 
@@ -191,9 +320,13 @@ impl Sweeteners {
     }
 }
 
-impl SolidsNFNS {
+impl SolidsNF {
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
     pub fn empty() -> Self {
-        SolidsNFNS {
+        Self {
             milk: None,
             egg: None,
             cocoa: None,
@@ -201,27 +334,227 @@ impl SolidsNFNS {
             other: None,
         }
     }
+
+    pub fn milk(self, milk: f64) -> Self {
+        Self {
+            milk: Some(milk),
+            ..self
+        }
+    }
+
+    pub fn egg(self, egg: f64) -> Self {
+        Self {
+            egg: Some(egg),
+            ..self
+        }
+    }
+
+    pub fn cocoa(self, cocoa: f64) -> Self {
+        Self {
+            cocoa: Some(cocoa),
+            ..self
+        }
+    }
+
+    pub fn nut(self, nut: f64) -> Self {
+        Self {
+            nut: Some(nut),
+            ..self
+        }
+    }
+
+    pub fn other(self, other: f64) -> Self {
+        Self {
+            other: Some(other),
+            ..self
+        }
+    }
+}
+
+impl SolidsNFS {
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
+    pub fn empty() -> Self {
+        Self {
+            milk: None,
+            egg: None,
+            cocoa: None,
+            nut: None,
+            other: None,
+        }
+    }
+
+    pub fn milk(self, milk: f64) -> Self {
+        Self {
+            milk: Some(milk),
+            ..self
+        }
+    }
+
+    pub fn egg(self, egg: f64) -> Self {
+        Self {
+            egg: Some(egg),
+            ..self
+        }
+    }
+
+    pub fn cocoa(self, cocoa: f64) -> Self {
+        Self {
+            cocoa: Some(cocoa),
+            ..self
+        }
+    }
+
+    pub fn nut(self, nut: f64) -> Self {
+        Self {
+            nut: Some(nut),
+            ..self
+        }
+    }
+
+    pub fn other(self, other: f64) -> Self {
+        Self {
+            other: Some(other),
+            ..self
+        }
+    }
+}
+
+impl Solids {
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
+    pub fn empty() -> Self {
+        Self {
+            fats: None,
+            snf: None,
+            sweeteners: None,
+            snfs: None,
+        }
+    }
+
+    pub fn fats(self, fats: Fats) -> Self {
+        Self {
+            fats: Some(fats),
+            ..self
+        }
+    }
+
+    pub fn snf(self, snf: SolidsNF) -> Self {
+        Self {
+            snf: Some(snf),
+            ..self
+        }
+    }
+
+    pub fn sweeteners(self, sweeteners: Sweeteners) -> Self {
+        Self {
+            sweeteners: Some(sweeteners),
+            ..self
+        }
+    }
+
+    pub fn snfs(self, snfs: SolidsNFS) -> Self {
+        Self {
+            snfs: Some(snfs),
+            ..self
+        }
+    }
 }
 
 impl PAC {
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
     pub fn empty() -> Self {
-        PAC {
+        Self {
             sugar: None,
             salt: None,
             alcohol: None,
             hardness_factor: None,
         }
     }
+
+    pub fn sugar(self, sugar: f64) -> Self {
+        Self {
+            sugar: Some(sugar),
+            ..self
+        }
+    }
+
+    pub fn salt(self, salt: f64) -> Self {
+        Self {
+            salt: Some(salt),
+            ..self
+        }
+    }
+
+    pub fn alcohol(self, alcohol: f64) -> Self {
+        Self {
+            alcohol: Some(alcohol),
+            ..self
+        }
+    }
+
+    pub fn hardness_factor(self, hardness_factor: f64) -> Self {
+        Self {
+            hardness_factor: Some(hardness_factor),
+            ..self
+        }
+    }
 }
 
 impl Composition {
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
     pub fn empty() -> Self {
-        Composition {
+        Self {
             solids: None,
             micro: None,
             alcohol: None,
             pod: None,
             pac: None,
+        }
+    }
+
+    pub fn solids(self, solids: Solids) -> Self {
+        Self {
+            solids: Some(solids),
+            ..self
+        }
+    }
+
+    pub fn micro(self, micro: Micro) -> Self {
+        Self {
+            micro: Some(micro),
+            ..self
+        }
+    }
+
+    pub fn alcohol(self, alcohol: f64) -> Self {
+        Self {
+            alcohol: Some(alcohol),
+            ..self
+        }
+    }
+
+    pub fn pod(self, pod: f64) -> Self {
+        Self {
+            pod: Some(pod),
+            ..self
+        }
+    }
+
+    pub fn pac(self, pac: PAC) -> Self {
+        Self {
+            pac: Some(pac),
+            ..self
         }
     }
 }
@@ -274,7 +607,7 @@ impl AbsDiffEq for Sweeteners {
     }
 }
 
-impl AbsDiffEq for SolidsNFNS {
+impl AbsDiffEq for SolidsNFS {
     type Epsilon = f64;
 
     fn default_epsilon() -> Self::Epsilon {

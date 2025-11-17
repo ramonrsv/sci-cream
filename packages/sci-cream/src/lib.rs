@@ -21,7 +21,7 @@ pub mod wasm;
 
 pub use {
     comp_specs::{DairySpec, expand_dairy_spec},
-    composition::{Composition, Fats, PAC, Solids, SolidsNFNS, Sugar, Sweeteners},
+    composition::{Composition, Fats, PAC, Solids, SolidsNF, SolidsNFS, Sugar, Sweeteners},
     ingredients::{Category, Ingredient},
 };
 
@@ -34,31 +34,17 @@ pub fn categoryAsStr(category: Category) -> String {
     category.to_string()
 }
 
-static COMP_MILK_2_PERCENT: LazyLock<Composition> = LazyLock::new(|| Composition {
-    solids: Some(Solids {
-        fats: Some(Fats {
-            milk: Some(2f64.into()),
-            ..Fats::empty()
-        }),
-        sweeteners: Some(Sweeteners {
-            sugar: Some(Sugar {
-                lactose: Some(4.8069f64.into()),
-                ..Sugar::empty()
-            }),
-            ..Sweeteners::empty()
-        }),
-        snfs: Some(SolidsNFNS {
-            milk: Some(8.82f64.into()),
-            ..SolidsNFNS::empty()
-        }),
-    }),
-    micro: None,
-    alcohol: None,
-    pod: Some(0.769104f64.into()),
-    pac: Some(PAC {
-        sugar: Some(4.8069f64.into()),
-        ..PAC::empty()
-    }),
+static COMP_MILK_2_PERCENT: LazyLock<Composition> = LazyLock::new(|| {
+    Composition::new()
+        .solids(
+            Solids::new()
+                .fats(Fats::new().milk(2f64))
+                .snf(SolidsNF::new().milk(8.82f64))
+                .sweeteners(Sweeteners::new().sugar(Sugar::new().lactose(4.8069f64)))
+                .snfs(SolidsNFS::new().milk(4.0131f64)),
+        )
+        .pod(0.769104f64)
+        .pac(PAC::new().sugar(4.8069f64))
 });
 
 #[cfg(feature = "wasm")]
