@@ -353,6 +353,27 @@ impl Solids {
     }
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+impl Solids {
+    pub fn total(&self) -> f64 {
+        self.iter()
+            .filter_map(|(_, comp)| comp.downcast_ref::<Option<SolidsBreakdown>>())
+            .map(|breakdown| breakdown.map_or(0f64, |b| b.total()))
+            .sum::<f64>()
+    }
+
+    pub fn snf(&self) -> f64 {
+        self.iter()
+            .filter_map(|(_, comp)| comp.downcast_ref::<Option<SolidsBreakdown>>())
+            .map(|breakdown| breakdown.map_or(0f64, |b| b.snf()))
+            .sum::<f64>()
+    }
+
+    pub fn water(&self) -> f64 {
+        100f64 - self.total()
+    }
+}
+
 impl PAC {
     pub fn new() -> Self {
         Self::empty()
@@ -393,6 +414,16 @@ impl PAC {
             hardness_factor: Some(hardness_factor),
             ..self
         }
+    }
+}
+
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+impl PAC {
+    pub fn total(&self) -> f64 {
+        self.iter()
+            .filter_map(|(_, comp)| comp.downcast_ref::<Option<f64>>())
+            .map(|value| value.unwrap_or(0f64))
+            .sum::<f64>()
     }
 }
 

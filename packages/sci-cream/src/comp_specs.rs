@@ -98,10 +98,20 @@ mod test {
     use crate::tests::{assets::*, util::TESTS_EPSILON};
 
     #[test]
+    fn pac_total() {
+        let pac = COMP_MILK_2_PERCENT.pac.unwrap();
+        assert_eq!(pac.sugars.unwrap(), 4.8069f64);
+        assert_eq!(pac.total(), 4.8069f64);
+    }
+
+    #[test]
     fn expand_dairy_spec() {
         let Composition {
             solids, sweeteners, ..
         } = COMP_MILK_2_PERCENT.clone();
+
+        assert_eq!(solids.unwrap().total(), 10.82f64);
+        assert_eq!(solids.unwrap().water(), 89.18f64);
 
         let Solids { milk, .. } = solids.unwrap();
         let milk = milk.unwrap();
@@ -116,6 +126,10 @@ mod test {
         assert_eq!(sweeteners.unwrap().sugars.unwrap().lactose.unwrap(), 4.8069);
         assert_eq!(sweeteners.unwrap().sugars.unwrap().total(), 4.8069);
 
+        let pac = COMP_MILK_2_PERCENT.pac.unwrap();
+        assert_eq!(pac.sugars.unwrap(), 4.8069f64);
+        assert_eq!(pac.total(), 4.8069f64);
+
         assert_abs_diff_eq!(
             super::expand_dairy_spec(*SPEC_DAIRY_2_PERCENT),
             *COMP_MILK_2_PERCENT,
@@ -128,6 +142,9 @@ mod test {
         let Composition {
             solids, sweeteners, ..
         } = COMP_DEXTROSE.clone();
+
+        assert_eq!(solids.unwrap().total(), 100f64);
+        assert_eq!(solids.unwrap().water(), 0f64);
 
         let Solids { other, .. } = solids.unwrap();
         let other = other.unwrap();
@@ -142,6 +159,10 @@ mod test {
         assert_eq!(sweeteners.unwrap().sugars.unwrap().glucose.unwrap(), 100f64);
         assert_eq!(sweeteners.unwrap().sugars.unwrap().total(), 100f64);
 
+        let pac = COMP_DEXTROSE.pac.unwrap();
+        assert_eq!(pac.sugars.unwrap(), 190f64);
+        assert_eq!(pac.total(), 190f64);
+
         assert_abs_diff_eq!(
             super::expand_auto_sweetener_spec(*SPEC_SUGARS_DEXTROSE),
             *COMP_DEXTROSE,
@@ -154,6 +175,9 @@ mod test {
         let Composition {
             solids, sweeteners, ..
         } = COMP_DEXTROSE_50_PERCENT.clone();
+
+        assert_eq!(solids.unwrap().total(), 50f64);
+        assert_eq!(solids.unwrap().water(), 50f64);
 
         let Solids { other, .. } = solids.unwrap();
         let other = other.unwrap();
@@ -168,10 +192,9 @@ mod test {
         assert_eq!(sweeteners.unwrap().sugars.unwrap().glucose.unwrap(), 50f64);
         assert_eq!(sweeteners.unwrap().sugars.unwrap().total(), 50f64);
 
-        assert_eq!(
-            super::expand_auto_sweetener_spec(*SPEC_SUGARS_DEXTROSE_50_PERCENT),
-            *COMP_DEXTROSE_50_PERCENT
-        );
+        let pac = COMP_DEXTROSE_50_PERCENT.pac.unwrap();
+        assert_eq!(pac.sugars.unwrap(), 95f64);
+        assert_eq!(pac.total(), 95f64);
 
         assert_abs_diff_eq!(
             super::expand_auto_sweetener_spec(*SPEC_SUGARS_DEXTROSE_50_PERCENT),
