@@ -43,7 +43,7 @@ Push schema to database and seed:
 
 ```console
 $ npx drizzle-kit push
-$ pnpm tsx ./src/db/seed.ts
+$ pnpm tsx ./src/lib/db/seed.ts
 ```
 
 Build, run tests, run dev server:

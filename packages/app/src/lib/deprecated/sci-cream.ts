@@ -223,7 +223,7 @@ export abstract class Ingredient {
 
 interface DairyParams {
   name: string;
-  milkFat: number;
+  fat: number;
   msnf?: number;
   lactose?: number;
 }
@@ -234,17 +234,17 @@ export class Dairy extends Ingredient {
   }
 
   constructor(args: DairyParams) {
-    let { name, milkFat, msnf, lactose } = args;
+    let { name, fat, msnf, lactose } = args;
 
-    msnf = msnf ?? (100 - milkFat) * constants.STANDARD_MSNF_IN_MILK_SERUM;
+    msnf = msnf ?? (100 - fat) * constants.STANDARD_MSNF_IN_MILK_SERUM;
     lactose = lactose ?? msnf * constants.STANDARD_LACTOSE_IN_MSNF;
 
     super(name, args, {
-      [Composition.MILK_FAT]: milkFat,
+      [Composition.MILK_FAT]: fat,
       [Composition.LACTOSE]: lactose,
       [Composition.MILK_SNF]: msnf,
       [Composition.MILK_SNFS]: msnf - lactose,
-      [Composition.TOTAL_SOLIDS]: milkFat + msnf,
+      [Composition.TOTAL_SOLIDS]: fat + msnf,
       [Composition.POD]: (constants.LACTOSE_POD * lactose) / 100,
       [Composition.PAC_SGR]: (constants.LACTOSE_PAC * lactose) / 100,
     });
@@ -335,7 +335,7 @@ export class Alcohol extends Ingredient {
 
 interface ChocolateParams {
   name: string;
-  cacaoFat: number;
+  fat: number;
   sugar?: number;
   water?: number;
 }
@@ -346,10 +346,10 @@ export class Chocolate extends Ingredient {
   }
 
   constructor(args: ChocolateParams) {
-    const { name, cacaoFat, sugar, water } = args;
+    const { name, fat, sugar, water } = args;
 
     const solids = 100 - (water ?? 0);
-    const cocoaSolids = solids - cacaoFat - (sugar ?? 0);
+    const cocoaSolids = solids - fat - (sugar ?? 0);
 
     if (cocoaSolids < 0) {
       throw new Error(
@@ -358,21 +358,21 @@ export class Chocolate extends Ingredient {
     }
 
     super(name, args, {
-      [Composition.CACAO_FAT]: cacaoFat,
+      [Composition.CACAO_FAT]: fat,
       [Composition.SUGAR]: sugar,
-      [Composition.COCOA_SNF]: solids - cacaoFat,
+      [Composition.COCOA_SNF]: solids - fat,
       [Composition.COCOA_SNFS]: cocoaSolids,
       [Composition.TOTAL_SOLIDS]: solids,
       [Composition.POD]: sugar,
       [Composition.PAC_SGR]: sugar,
-      [Composition.HF]: cacaoFat * constants.CACAO_FAT_HF + cocoaSolids * constants.COCOA_SOLIDS_HF,
+      [Composition.HF]: fat * constants.CACAO_FAT_HF + cocoaSolids * constants.COCOA_SOLIDS_HF,
     });
   }
 }
 
 interface NutParams {
   name: string;
-  nutFat: number;
+  fat: number;
   sugar: number;
   water: number;
 }
@@ -383,24 +383,24 @@ export class Nut extends Ingredient {
   }
 
   constructor(args: NutParams) {
-    const { name, nutFat, sugar, water } = args;
+    const { name, fat, sugar, water } = args;
 
     const solids = 100 - water;
-    const nutSolids = solids - nutFat - sugar;
+    const nutSolids = solids - fat - sugar;
 
     if (nutSolids < 0) {
       throw new Error(`Invalid composition: Nut Solids cannot be negative for Nut ingredient`);
     }
 
     super(name, args, {
-      [Composition.NUT_FAT]: nutFat,
+      [Composition.NUT_FAT]: fat,
       [Composition.SUGAR]: sugar,
-      [Composition.NUT_SNF]: solids - nutFat,
+      [Composition.NUT_SNF]: solids - fat,
       [Composition.NUT_SNFS]: nutSolids,
       [Composition.TOTAL_SOLIDS]: solids,
       [Composition.POD]: sugar,
       [Composition.PAC_SGR]: sugar,
-      [Composition.HF]: nutFat * constants.NUT_FAT_HF,
+      [Composition.HF]: fat * constants.NUT_FAT_HF,
     });
   }
 }
@@ -453,7 +453,7 @@ export class Fruit extends Ingredient {
 
 interface EggParams {
   name: string;
-  eggFat: number;
+  fat: number;
   solids: number;
   lecithin: number;
 }
@@ -464,19 +464,19 @@ export class Egg extends Ingredient {
   }
 
   constructor(args: EggParams) {
-    const { name, eggFat, solids, lecithin } = args;
+    const { name, fat, solids, lecithin } = args;
 
-    if (solids < eggFat + lecithin) {
+    if (solids < fat + lecithin) {
       throw new Error(
         `Invalid composition: Solids (${solids}%) must be at least the sum of ` +
-          `Egg Fat (${eggFat}%) and Lecithin (${lecithin}%) for Egg ingredient`
+          `Egg Fat (${fat}%) and Lecithin (${lecithin}%) for Egg ingredient`
       );
     }
 
     super(name, args, {
-      [Composition.EGG_FAT]: eggFat,
-      [Composition.EGG_SNF]: solids - eggFat,
-      [Composition.EGG_SNFS]: solids - eggFat,
+      [Composition.EGG_FAT]: fat,
+      [Composition.EGG_SNF]: solids - fat,
+      [Composition.EGG_SNFS]: solids - fat,
       [Composition.TOTAL_SOLIDS]: solids,
       [Composition.EMULSIFIERS]: lecithin,
     });

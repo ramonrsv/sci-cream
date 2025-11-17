@@ -1,7 +1,7 @@
 [
     {
         "name": "Egg Yolk",
-        "eggFat": 29,
+        "fat": 29,
         "solids": 48,
         "lecithin": 8.33
     }

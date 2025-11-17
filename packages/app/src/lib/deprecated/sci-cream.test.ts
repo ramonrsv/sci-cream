@@ -5,7 +5,7 @@ import { Composition, CompositionRecord, Dairy } from "./sci-cream";
 test(`Construct Dairy from milk fat only`, () => {
   function constructAndExpectToBe({
     name,
-    milkFat,
+    fat,
     lactose,
     msnf,
     milkSNFS,
@@ -13,10 +13,10 @@ test(`Construct Dairy from milk fat only`, () => {
     pod,
     pacSgr,
   }: any) {
-    const dairy = new Dairy({ name: name, milkFat: milkFat });
+    const dairy = new Dairy({ name: name, fat });
 
     const expectedComposition: CompositionRecord = {
-      [Composition.MILK_FAT]: milkFat,
+      [Composition.MILK_FAT]: fat,
       [Composition.LACTOSE]: lactose,
       [Composition.MILK_SNF]: msnf,
       [Composition.MILK_SNFS]: milkSNFS,
@@ -26,7 +26,7 @@ test(`Construct Dairy from milk fat only`, () => {
     };
 
     expect(dairy.name).toBe(name);
-    expect(dairy.composition[Composition.MILK_FAT]).toBe(milkFat);
+    expect(dairy.composition[Composition.MILK_FAT]).toBe(fat);
 
     Object.values(Composition).forEach((comp) => {
       if (expectedComposition[comp] === undefined) {
@@ -39,7 +39,7 @@ test(`Construct Dairy from milk fat only`, () => {
 
   constructAndExpectToBe({
     name: "Milk 2%",
-    milkFat: 2,
+    fat: 2,
     lactose: 4.8069,
     msnf: 8.82,
     milkSNFS: 4.0131,

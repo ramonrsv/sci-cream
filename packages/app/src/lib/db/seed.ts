@@ -84,7 +84,7 @@ async function main() {
     await seedUserIngredients(appUser, ingredients);
   }
 
-  await seedUserIngredients(testUser, [new Dairy({ name: "2% Milk", milkFat: 4 })]);
+  await seedUserIngredients(testUser, [new Dairy({ name: "2% Milk", fat: 4 })]);
 }
 
 main();

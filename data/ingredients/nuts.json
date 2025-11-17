@@ -1,7 +1,7 @@
 [
     {
         "name": "Almond",
-        "nutFat": 50,
+        "fat": 50,
         "sugar": 4.4,
         "water": 4.4
     }
