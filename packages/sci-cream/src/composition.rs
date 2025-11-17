@@ -11,16 +11,6 @@ use wasm_bindgen::prelude::*;
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-pub struct Fats {
-    pub milk: Option<f64>,
-    pub egg: Option<f64>,
-    pub cacao: Option<f64>,
-    pub nut: Option<f64>,
-    pub other: Option<f64>,
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Sugar {
     pub glucose: Option<f64>,
     pub fructose: Option<f64>,
@@ -39,35 +29,27 @@ pub struct Sweeteners {
     pub artificial: Option<f64>,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+pub struct SolidsBreakdown {
+    pub fats: Option<f64>,
+    /// Non-Fat Solids
+    pub snf: Option<f64>,
+    /// Sugars, excluding polysaccharides and artificial sweeteners
+    pub sugars: Option<f64>,
+    /// Non-Fat, Non-Sweetener Solids
+    pub snfs: Option<f64>,
+}
+
 /// Non-Fat Solids
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-pub struct SolidsNF {
-    pub milk: Option<f64>,
-    pub egg: Option<f64>,
-    pub cocoa: Option<f64>,
-    pub nut: Option<f64>,
-    pub other: Option<f64>,
-}
-
-/// Non-Fat, Non-Sweetener Solids
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-pub struct SolidsNFS {
-    pub milk: Option<f64>,
-    pub egg: Option<f64>,
-    pub cocoa: Option<f64>,
-    pub nut: Option<f64>,
-    pub other: Option<f64>,
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Solids {
-    pub fats: Option<Fats>,
-    pub snf: Option<SolidsNF>,
-    pub sweeteners: Option<Sweeteners>,
-    pub snfs: Option<SolidsNFS>,
+    pub milk: Option<SolidsBreakdown>,
+    pub egg: Option<SolidsBreakdown>,
+    pub cocoa: Option<SolidsBreakdown>,
+    pub nut: Option<SolidsBreakdown>,
+    pub other: Option<SolidsBreakdown>,
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
@@ -91,61 +73,11 @@ pub struct PAC {
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Composition {
     pub solids: Option<Solids>,
+    pub sweeteners: Option<Sweeteners>,
     pub micro: Option<Micro>,
     pub alcohol: Option<f64>,
     pub pod: Option<f64>,
     pub pac: Option<PAC>,
-}
-
-impl Fats {
-    pub fn new() -> Self {
-        Self::empty()
-    }
-
-    pub fn empty() -> Self {
-        Self {
-            milk: None,
-            egg: None,
-            cacao: None,
-            nut: None,
-            other: None,
-        }
-    }
-
-    pub fn milk(self, milk: f64) -> Self {
-        Self {
-            milk: Some(milk),
-            ..self
-        }
-    }
-
-    pub fn egg(self, egg: f64) -> Self {
-        Self {
-            egg: Some(egg),
-            ..self
-        }
-    }
-
-    pub fn cacao(self, cacao: f64) -> Self {
-        Self {
-            cacao: Some(cacao),
-            ..self
-        }
-    }
-
-    pub fn nut(self, nut: f64) -> Self {
-        Self {
-            nut: Some(nut),
-            ..self
-        }
-    }
-
-    pub fn other(self, other: f64) -> Self {
-        Self {
-            other: Some(other),
-            ..self
-        }
-    }
 }
 
 impl Sugar {
@@ -320,103 +252,40 @@ impl Sweeteners {
     }
 }
 
-impl SolidsNF {
+impl SolidsBreakdown {
     pub fn new() -> Self {
         Self::empty()
     }
 
     pub fn empty() -> Self {
         Self {
-            milk: None,
-            egg: None,
-            cocoa: None,
-            nut: None,
-            other: None,
+            fats: None,
+            snf: None,
+            sugars: None,
+            snfs: None,
         }
     }
-
-    pub fn milk(self, milk: f64) -> Self {
+    pub fn fats(self, fats: f64) -> Self {
         Self {
-            milk: Some(milk),
+            fats: Some(fats),
             ..self
         }
     }
-
-    pub fn egg(self, egg: f64) -> Self {
+    pub fn snf(self, snf: f64) -> Self {
         Self {
-            egg: Some(egg),
+            snf: Some(snf),
             ..self
         }
     }
-
-    pub fn cocoa(self, cocoa: f64) -> Self {
+    pub fn sugars(self, sugars: f64) -> Self {
         Self {
-            cocoa: Some(cocoa),
+            sugars: Some(sugars),
             ..self
         }
     }
-
-    pub fn nut(self, nut: f64) -> Self {
+    pub fn snfs(self, snfs: f64) -> Self {
         Self {
-            nut: Some(nut),
-            ..self
-        }
-    }
-
-    pub fn other(self, other: f64) -> Self {
-        Self {
-            other: Some(other),
-            ..self
-        }
-    }
-}
-
-impl SolidsNFS {
-    pub fn new() -> Self {
-        Self::empty()
-    }
-
-    pub fn empty() -> Self {
-        Self {
-            milk: None,
-            egg: None,
-            cocoa: None,
-            nut: None,
-            other: None,
-        }
-    }
-
-    pub fn milk(self, milk: f64) -> Self {
-        Self {
-            milk: Some(milk),
-            ..self
-        }
-    }
-
-    pub fn egg(self, egg: f64) -> Self {
-        Self {
-            egg: Some(egg),
-            ..self
-        }
-    }
-
-    pub fn cocoa(self, cocoa: f64) -> Self {
-        Self {
-            cocoa: Some(cocoa),
-            ..self
-        }
-    }
-
-    pub fn nut(self, nut: f64) -> Self {
-        Self {
-            nut: Some(nut),
-            ..self
-        }
-    }
-
-    pub fn other(self, other: f64) -> Self {
-        Self {
-            other: Some(other),
+            snfs: Some(snfs),
             ..self
         }
     }
@@ -429,37 +298,45 @@ impl Solids {
 
     pub fn empty() -> Self {
         Self {
-            fats: None,
-            snf: None,
-            sweeteners: None,
-            snfs: None,
+            milk: None,
+            egg: None,
+            cocoa: None,
+            nut: None,
+            other: None,
         }
     }
 
-    pub fn fats(self, fats: Fats) -> Self {
+    pub fn milk(self, milk: SolidsBreakdown) -> Self {
         Self {
-            fats: Some(fats),
+            milk: Some(milk),
             ..self
         }
     }
 
-    pub fn snf(self, snf: SolidsNF) -> Self {
+    pub fn egg(self, egg: SolidsBreakdown) -> Self {
         Self {
-            snf: Some(snf),
+            egg: Some(egg),
             ..self
         }
     }
 
-    pub fn sweeteners(self, sweeteners: Sweeteners) -> Self {
+    pub fn cocoa(self, cocoa: SolidsBreakdown) -> Self {
         Self {
-            sweeteners: Some(sweeteners),
+            cocoa: Some(cocoa),
             ..self
         }
     }
 
-    pub fn snfs(self, snfs: SolidsNFS) -> Self {
+    pub fn nut(self, nut: SolidsBreakdown) -> Self {
         Self {
-            snfs: Some(snfs),
+            nut: Some(nut),
+            ..self
+        }
+    }
+
+    pub fn other(self, other: SolidsBreakdown) -> Self {
+        Self {
+            other: Some(other),
             ..self
         }
     }
@@ -516,6 +393,7 @@ impl Composition {
     pub fn empty() -> Self {
         Self {
             solids: None,
+            sweeteners: None,
             micro: None,
             alcohol: None,
             pod: None,
@@ -526,6 +404,13 @@ impl Composition {
     pub fn solids(self, solids: Solids) -> Self {
         Self {
             solids: Some(solids),
+            ..self
+        }
+    }
+
+    pub fn sweeteners(self, sweeteners: Sweeteners) -> Self {
+        Self {
+            sweeteners: Some(sweeteners),
             ..self
         }
     }
@@ -556,22 +441,6 @@ impl Composition {
             pac: Some(pac),
             ..self
         }
-    }
-}
-
-impl AbsDiffEq for Fats {
-    type Epsilon = f64;
-
-    fn default_epsilon() -> Self::Epsilon {
-        f64::default_epsilon()
-    }
-
-    fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        abs_diff_eq_option(&self.milk, &other.milk, epsilon)
-            && abs_diff_eq_option(&self.egg, &other.egg, epsilon)
-            && abs_diff_eq_option(&self.cacao, &other.cacao, epsilon)
-            && abs_diff_eq_option(&self.nut, &other.nut, epsilon)
-            && abs_diff_eq_option(&self.other, &other.other, epsilon)
     }
 }
 
@@ -607,7 +476,21 @@ impl AbsDiffEq for Sweeteners {
     }
 }
 
-impl AbsDiffEq for SolidsNFS {
+impl AbsDiffEq for SolidsBreakdown {
+    type Epsilon = f64;
+
+    fn default_epsilon() -> Self::Epsilon {
+        f64::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
+        abs_diff_eq_option(&self.fats, &other.fats, epsilon)
+            && abs_diff_eq_option(&self.sugars, &other.sugars, epsilon)
+            && abs_diff_eq_option(&self.snfs, &other.snfs, epsilon)
+    }
+}
+
+impl AbsDiffEq for Solids {
     type Epsilon = f64;
 
     fn default_epsilon() -> Self::Epsilon {
@@ -620,20 +503,6 @@ impl AbsDiffEq for SolidsNFS {
             && abs_diff_eq_option(&self.cocoa, &other.cocoa, epsilon)
             && abs_diff_eq_option(&self.nut, &other.nut, epsilon)
             && abs_diff_eq_option(&self.other, &other.other, epsilon)
-    }
-}
-
-impl AbsDiffEq for Solids {
-    type Epsilon = f64;
-
-    fn default_epsilon() -> Self::Epsilon {
-        f64::default_epsilon()
-    }
-
-    fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        abs_diff_eq_option(&self.fats, &other.fats, epsilon)
-            && abs_diff_eq_option(&self.sweeteners, &other.sweeteners, epsilon)
-            && abs_diff_eq_option(&self.snfs, &other.snfs, epsilon)
     }
 }
 
@@ -675,6 +544,7 @@ impl AbsDiffEq for Composition {
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
         abs_diff_eq_option(&self.solids, &other.solids, epsilon)
+            && abs_diff_eq_option(&self.sweeteners, &other.sweeteners, epsilon)
             && abs_diff_eq_option(&self.micro, &other.micro, epsilon)
             && abs_diff_eq_option(&self.alcohol, &other.alcohol, epsilon)
             && abs_diff_eq_option(&self.pod, &other.pod, epsilon)

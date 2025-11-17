@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    composition::{Composition, Fats, Micro, PAC, Solids, SolidsNF, SolidsNFS, Sugar, Sweeteners},
+    composition::{Composition, Micro, PAC, Solids, SolidsBreakdown, Sugar, Sweeteners},
     constants,
 };
 
@@ -33,12 +33,15 @@ pub fn expand_dairy_spec(spec: DairySpec) -> Composition {
 
     Composition::new()
         .solids(
-            Solids::new()
-                .fats(Fats::new().milk(fat))
-                .snf(SolidsNF::new().milk(msnf))
-                .sweeteners(sweeteners)
-                .snfs(SolidsNFS::new().milk(snfs)),
+            Solids::new().milk(
+                SolidsBreakdown::new()
+                    .fats(fat)
+                    .sugars(lactose)
+                    .snf(msnf)
+                    .snfs(snfs),
+            ),
         )
+        .sweeteners(sweeteners)
         .pod(pod)
         .pac(pad)
 }
@@ -72,17 +75,18 @@ mod test {
             epsilon = TESTS_EPSILON
         );
 
-        let Solids {
-            fats,
-            snf,
-            sweeteners,
-            snfs,
-        } = COMP_MILK_2_PERCENT.solids.unwrap();
+        let Composition {
+            solids, sweeteners, ..
+        } = COMP_MILK_2_PERCENT.clone();
+        let Solids { milk, .. } = solids.unwrap();
+        let milk = milk.unwrap();
 
-        assert_eq!(fats.unwrap().milk.unwrap(), 2f64);
-        assert_eq!(snf.unwrap().milk.unwrap(), 8.82);
+        assert_eq!(milk.fats.unwrap(), 2f64);
+        assert_eq!(milk.snf.unwrap(), 8.82);
+        assert_eq!(milk.sugars.unwrap(), 4.8069);
+        assert_eq!(milk.snfs.unwrap(), 4.0131);
+
         assert_eq!(sweeteners.unwrap().sugar.unwrap().lactose.unwrap(), 4.8069);
         assert_eq!(sweeteners.unwrap().sugar.unwrap().total(), 4.8069);
-        assert_eq!(snfs.unwrap().milk.unwrap(), 4.0131);
     }
 }

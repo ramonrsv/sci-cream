@@ -21,7 +21,7 @@ pub mod wasm;
 
 pub use {
     comp_specs::{DairySpec, expand_dairy_spec},
-    composition::{Composition, Fats, PAC, Solids, SolidsNF, SolidsNFS, Sugar, Sweeteners},
+    composition::{Composition, PAC, Solids, SolidsBreakdown, Sugar, Sweeteners},
     ingredients::{Category, Ingredient},
 };
 
@@ -37,12 +37,15 @@ pub fn categoryAsStr(category: Category) -> String {
 static COMP_MILK_2_PERCENT: LazyLock<Composition> = LazyLock::new(|| {
     Composition::new()
         .solids(
-            Solids::new()
-                .fats(Fats::new().milk(2f64))
-                .snf(SolidsNF::new().milk(8.82f64))
-                .sweeteners(Sweeteners::new().sugar(Sugar::new().lactose(4.8069f64)))
-                .snfs(SolidsNFS::new().milk(4.0131f64)),
+            Solids::new().milk(
+                SolidsBreakdown::new()
+                    .fats(2f64)
+                    .snf(8.82f64)
+                    .sugars(4.8069f64)
+                    .snfs(4.0131f64),
+            ),
         )
+        .sweeteners(Sweeteners::new().sugar(Sugar::new().lactose(4.8069f64)))
         .pod(0.769104f64)
         .pac(PAC::new().sugar(4.8069f64))
 });
