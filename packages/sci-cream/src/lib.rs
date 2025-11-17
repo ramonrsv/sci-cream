@@ -15,6 +15,7 @@ use diesel::{Queryable, Selectable};
 pub mod comp_specs;
 pub mod composition;
 pub mod constants;
+pub mod display;
 pub mod ingredients;
 pub mod util;
 #[cfg(feature = "wasm")]
