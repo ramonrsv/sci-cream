@@ -6,7 +6,7 @@ import { IngredientRow, makeEmptyIngredientRow, RecipeGrid, RECIPE_TOTAL_ROWS } 
 import { IngredientCompositionGrid } from "./ingredient-composition";
 import { fetchValidIngredientNames, fetchIngredient } from "../lib/data";
 import { constructIngredientFromTransfer } from "../lib/transfer";
-import { STATE_VAL, STATE_SET } from "../lib/util";
+import { STATE_VAL, STATE_SET, getTsEnumStringKeys } from "../lib/util";
 
 import {
   Category,

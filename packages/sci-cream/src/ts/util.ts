@@ -12,7 +12,7 @@ export function tsEnumToStr<E extends object, K extends keyof E>(enumObj: E, key
 
 export function makeStrEnumFromTsEnum<E extends object>(enumObj: E): { [key: string]: string } {
   let result = {} as { [key: string]: string };
-  getTsEnumStrings(enumObj).forEach((key) => { result[key] = key; });
+  getTsEnumStrings(enumObj).forEach((key) => { result[key as unknown as string] = key; });
   return Object.freeze(result);
 }
 
@@ -20,4 +20,15 @@ export function makeTsEnumToStrConverter<E extends object>(enumObj: E) {
   return function <K extends keyof E>(key: K): string {
     return enumObj[enumObj[key] as unknown as keyof E] as unknown as string;
   }
+}
+
+// @todo When these are exported they lose the type information for E, not sure why. Need find a
+// way to preserve the type info. For now, these implementations are duplicated at the app source.
+
+export function getTsEnumNumberKeys<E extends object>(enumObj: E): (keyof E)[] {
+  return getTsEnumNumbers(enumObj).map(num => num as unknown as keyof E);
+}
+
+export function getTsEnumStringKeys<E extends object>(enumObj: E): (keyof E)[] {
+  return getTsEnumStrings(enumObj).map(str => str as unknown as keyof E);
 }
