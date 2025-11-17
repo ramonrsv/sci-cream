@@ -24,6 +24,23 @@ pub fn abs_diff_eq_option<E: AbsDiffEq, T: AbsDiffEq<Epsilon = E>>(
     }
 }
 
+pub fn iter_all_abs_diff_eq<
+    E: AbsDiffEq + Copy,
+    T: AbsDiffEq<Epsilon = E> + 'static,
+    I: Iterable,
+>(
+    lhs: &I,
+    rhs: &I,
+    epsilon: E,
+) -> bool {
+    lhs.iter().zip(rhs.iter()).all(|((_, a_val), (_, b_val))| {
+        a_val
+            .downcast_ref::<T>()
+            .unwrap()
+            .abs_diff_eq(b_val.downcast_ref::<T>().unwrap(), epsilon)
+    })
+}
+
 pub fn iter_all_abs_diff_eq_option<
     E: AbsDiffEq + Copy,
     T: AbsDiffEq<Epsilon = E> + 'static,
