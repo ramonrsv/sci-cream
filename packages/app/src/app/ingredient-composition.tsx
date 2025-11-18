@@ -27,7 +27,7 @@ export function IngredientCompositionGrid({
         {/* Header */}
         <thead>
           {/* Composition Header */}
-          <tr key={0} className="h-6 table-header-footer text-center">
+          <tr key={0} className="h-[24px] table-header-footer text-center">
             {getTsEnumStringKeys(FlatHeader).map((header) => (
               <th
                 key={header}
@@ -38,7 +38,7 @@ export function IngredientCompositionGrid({
             ))}
           </tr>
           {/* Totals Row */}
-          <tr className="h-6 table-header-footer">
+          <tr className="h-[25px] table-header-footer">
             {getTsEnumStringKeys(FlatHeader).map((header) => (
               <td
                 key={header}
@@ -49,14 +49,13 @@ export function IngredientCompositionGrid({
         </thead>
         <tbody>
           {/* Composition Rows */}
-          {/* @todo Using h-6.25 instead of h-6 because I can't make RecipeGrid ingredient rows
-          respect the h-* value. This value makes the rows between the two grids line up */}
+          {/* @todo The very last row is a little taller than the rest; not sure why */}
           {recipeState.map((_, index) => (
-            <tr key={index} className="h-6.25 border-b border-gray-300">
+            <tr key={index} className="h-[25px] border-b border-gray-300">
               {getTsEnumStringKeys(FlatHeader).map((header) => (
                 <td
                   key={header}
-                  className="text-sm text-gray-900 text-center border-r border-gray-300"
+                  className="border-r border-gray-300 text-sm text-gray-900 text-center"
                 >
                   {formattedCompCell(index, header)}
                 </td>

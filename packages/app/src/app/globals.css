@@ -30,7 +30,7 @@ body {
 }
 
 .table-fillable-input {
-  @apply border-0 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-400 text-sm text-gray-900 w-full;
+  @apply focus:outline-none focus:ring-2 focus:ring-inset focus:ring-blue-400 text-sm text-gray-900 w-full;
 }
 
 .main-page-grid {

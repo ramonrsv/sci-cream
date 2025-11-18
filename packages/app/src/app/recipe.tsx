@@ -38,7 +38,7 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
     <table className="border-collapse border-2 border-gray-400">
       {/* Header */}
       <thead>
-        <tr className="h-6 table-header-footer text-center">
+        <tr className="h-[25px] table-header-footer text-center">
           <th className="w-[325px] min-w-[250px] border-b-1 border-gray-400 border-r border-gray-300">
             Ingredient
           </th>
@@ -50,7 +50,7 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
           </th>
         </tr>
         {/* Total Row */}
-        <tr className="h-6 table-header-footer">
+        <tr className="h-[25px] table-header-footer">
           <td className="text-center px-1 border-b border-gray-400 border-r border-gray-300">
             Total
           </td>
@@ -64,11 +64,11 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
       </thead>
       <tbody>
         {/* Ingredient Rows */}
-        {/* @todo The ingredient/input rows are not respecting the h-6 class; not sure why yet */}
+        {/* @todo The ingredient/input rows are not respecting < h-6/[25px]; not sure why yet */}
         {recipeState.map(([row, _], index) => (
           <tr
             key={index}
-            className="h-6 border-b border-gray-300 hover:bg-blue-50 transition-colors"
+            className="h-[25px] border-b border-gray-300 hover:bg-blue-50 transition-colors"
           >
             <td className="border-r border-gray-300">
               <input
