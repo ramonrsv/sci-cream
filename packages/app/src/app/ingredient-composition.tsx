@@ -10,7 +10,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
     if (ingredient && ingredient.composition)  {
       const flatRep = ingredient.composition.to_flat_representation_js();
       if (flatRep.has(header)) {
-        return Number(flatRep.get(header)!.toFixed(2));
+        return Number(flatRep.get(header)!.toFixed(1));
       }
     }
     return "";
