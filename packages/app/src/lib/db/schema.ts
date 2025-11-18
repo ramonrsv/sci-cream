@@ -18,7 +18,7 @@ export const ingredientsTable = pgTable(
       .notNull()
       .references(() => usersTable.id),
     category: categoryEnum(),
-    value: json(),
+    spec: json(),
   },
   (table) => [primaryKey({ columns: [table.name, table.user] })]
 );

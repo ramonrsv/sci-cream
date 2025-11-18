@@ -6,16 +6,15 @@ use wasm_bindgen::prelude::*;
 use crate::{
     composition::{Composition, PAC, Solids, SolidsBreakdown, Sugars, Sweeteners},
     constants,
+    ingredients::{Category, Ingredient},
 };
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct DairySpec {
     pub fat: f64,
     pub msnf: Option<f64>,
 }
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct SugarsSpec {
     pub sugars: Sugars,
@@ -24,8 +23,35 @@ pub struct SugarsSpec {
 
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum Spec {
-    Dairy(DairySpec),
+    DairySpec(DairySpec),
     SugarSpec(SugarsSpec),
+}
+
+#[derive(PartialEq, Serialize, Deserialize, Clone, Debug)]
+pub struct IngredientSpec {
+    pub name: String,
+    pub category: Category,
+    #[serde(flatten)]
+    pub spec: Spec,
+}
+
+impl Spec {
+    pub fn into_composition(self) -> Composition {
+        match self {
+            Spec::DairySpec(spec) => expand_dairy_spec(spec),
+            Spec::SugarSpec(spec) => expand_sugars_spec(spec),
+        }
+    }
+}
+
+impl IngredientSpec {
+    pub fn into_ingredient(self) -> Ingredient {
+        Ingredient {
+            name: self.name,
+            category: self.category,
+            composition: self.spec.into_composition(),
+        }
+    }
 }
 
 pub fn expand_dairy_spec(spec: DairySpec) -> Composition {
@@ -54,7 +80,7 @@ pub fn expand_dairy_spec(spec: DairySpec) -> Composition {
         .pac(pad)
 }
 
-pub fn expand_auto_sweetener_spec(spec: SugarsSpec) -> Composition {
+pub fn expand_sugars_spec(spec: SugarsSpec) -> Composition {
     let SugarsSpec { mut sugars, solids } = spec;
 
     [
@@ -80,29 +106,23 @@ pub fn expand_auto_sweetener_spec(spec: SugarsSpec) -> Composition {
         .pac(PAC::new().sugars(sugars.to_pac()))
 }
 
-impl Spec {
-    pub fn into_composition(self) -> Composition {
-        match self {
-            Spec::Dairy(spec) => expand_dairy_spec(spec),
-            Spec::SugarSpec(spec) => expand_auto_sweetener_spec(spec),
-        }
-    }
+#[cfg(feature = "wasm")]
+#[wasm_bindgen]
+pub fn into_ingredient_from_spec_js(spec: JsValue) -> Ingredient {
+    serde_wasm_bindgen::from_value::<IngredientSpec>(spec)
+        .unwrap()
+        .into_ingredient()
 }
 
 #[cfg(test)]
 mod test {
+    use serde_json;
+
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
     use super::*;
     use crate::tests::{assets::*, util::TESTS_EPSILON};
-
-    #[test]
-    fn pac_total() {
-        let pac = COMP_MILK_2_PERCENT.pac.unwrap();
-        assert_eq!(pac.sugars.unwrap(), 4.8069f64);
-        assert_eq!(pac.total(), 4.8069f64);
-    }
 
     #[test]
     fn expand_dairy_spec() {
@@ -164,7 +184,7 @@ mod test {
         assert_eq!(pac.total(), 190f64);
 
         assert_abs_diff_eq!(
-            super::expand_auto_sweetener_spec(*SPEC_SUGARS_DEXTROSE),
+            super::expand_sugars_spec(*SPEC_SUGARS_DEXTROSE),
             *COMP_DEXTROSE,
             epsilon = TESTS_EPSILON
         );
@@ -197,8 +217,25 @@ mod test {
         assert_eq!(pac.total(), 95f64);
 
         assert_abs_diff_eq!(
-            super::expand_auto_sweetener_spec(*SPEC_SUGARS_DEXTROSE_50_PERCENT),
+            super::expand_sugars_spec(*SPEC_SUGARS_DEXTROSE_50_PERCENT),
             *COMP_DEXTROSE_50_PERCENT,
+            epsilon = TESTS_EPSILON
+        );
+    }
+
+    #[test]
+    fn deserialize_ingredient_spec() {
+        assert_eq!(
+            serde_json::from_str::<IngredientSpec>(ING_SPEC_MILK_2_PERCENT_STR).unwrap(),
+            *ING_SPEC_MILK_2_PERCENT
+        );
+    }
+
+    #[test]
+    fn ingredient_spec_into_ingredient() {
+        assert_abs_diff_eq!(
+            ING_SPEC_MILK_2_PERCENT.clone().into_ingredient(),
+            *ING_MILK_2_PERCENT,
             epsilon = TESTS_EPSILON
         );
     }

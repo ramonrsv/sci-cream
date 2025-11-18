@@ -19,6 +19,7 @@ crate-type = ["cdylib"]
 
 [dependencies]
 serde = { version = "1.0.228", features = ["derive"] }
+serde_json = "1.0.145"
 serde_with = "3.16.0"
 strum = "0.27.2"
 strum_macros = "0.27.2"
@@ -34,3 +35,4 @@ diesel = { version = "2.3.3", features = ["postgres"], optional = true }
 all_asserts = "2.3.3"
 more-asserts = "0.3.1"
 pretty_assertions = "1.4.1"
+const_format = "0.2.35"

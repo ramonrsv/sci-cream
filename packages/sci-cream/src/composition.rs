@@ -576,3 +576,19 @@ impl AbsDiffEq for Composition {
             && abs_diff_eq_option(&self.pac, &other.pac, epsilon)
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    use crate::tests::asserts::*;
+
+    use super::*;
+    use crate::tests::{assets::*, util::TESTS_EPSILON};
+
+    #[test]
+    fn pac_total() {
+        let pac = COMP_MILK_2_PERCENT.pac.unwrap();
+        assert_eq!(pac.sugars.unwrap(), 4.8069f64);
+        assert_eq!(pac.total(), 4.8069f64);
+    }
+}

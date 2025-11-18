@@ -4,19 +4,10 @@ import { useState, useEffect } from "react";
 
 import { IngredientRow, makeEmptyIngredientRow, RecipeGrid, RECIPE_TOTAL_ROWS } from "./recipe";
 import { IngredientCompositionGrid } from "./ingredient-composition";
-import { fetchValidIngredientNames, fetchIngredient } from "../lib/data";
-import { constructIngredientFromTransfer } from "../lib/transfer";
-import { STATE_VAL, STATE_SET, getTsEnumStringKeys } from "../lib/util";
+import { fetchValidIngredientNames, fetchIngredientSpec } from "../lib/data";
+import { STATE_VAL, STATE_SET } from "../lib/util";
 
-import {
-  Category,
-  Composition,
-  categoryAsStr,
-  getTsEnumNumbers,
-  getTsEnumStrings,
-  getIngredientExampleJs,
-  getIngredientExampleWasm,
-} from "@workspace/sci-cream";
+import { into_ingredient_from_spec_js } from "@workspace/sci-cream";
 
 const MAX_RECIPES = 2;
 
@@ -36,14 +27,8 @@ export default function Home() {
 
       useEffect(() => {
         if (row.name !== "" && validIngredients[STATE_VAL].includes(row.name)) {
-          const ing1 = getIngredientExampleWasm();
-          console.log(`(WASM) .sugars.total(): ${ing1.composition?.solids?.sweeteners?.sugar?.total()}`);
-
-          const ing2 = getIngredientExampleJs();
-          console.log(`(JS) composition: ${JSON.stringify(ing2.composition)}`);
-
-          fetchIngredient(row.name)
-            .then(ing => ing ? constructIngredientFromTransfer(ing) : undefined)
+          fetchIngredientSpec(row.name)
+            .then(spec => spec ? into_ingredient_from_spec_js(spec.spec) : undefined)
             .then(ing => setRow({ ...row, ingredient: ing }));
         } else {
           setRow({ ...row, ingredient: undefined });

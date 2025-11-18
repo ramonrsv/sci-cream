@@ -1,14 +1,19 @@
 import { RecipeState } from "./recipe";
-import { Composition, Ingredient } from "../lib/deprecated/sci-cream";
-import { STATE_VAL } from "../lib/util";
+import { FlatHeader, flat_header_as_med_str_js } from "@workspace/sci-cream";
+import { STATE_VAL, getTsEnumStringKeys } from "../lib/util";
 
 export function IngredientCompositionGrid({ recipeState }: { recipeState: RecipeState }) {
   const mixTotal = () => recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);
 
-  const formattedCompCell = (index: number, comp: Composition) => {
+  const formattedCompCell = (index: number, header: any) => {
     const ingredient = recipeState[index][STATE_VAL].ingredient;
-    return (ingredient && ingredient.composition[comp]) ?
-      Number(ingredient.composition[comp].toFixed(2)) : "";
+    if (ingredient && ingredient.composition)  {
+      const flatRep = ingredient.composition.to_flat_representation_js();
+      if (flatRep.has(header)) {
+        return Number(flatRep.get(header)!.toFixed(2));
+      }
+    }
+    return "";
   }
 
   return (
@@ -18,15 +23,15 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
         <thead>
           {/* Composition Header */}
           <tr key={0} className="h-6 table-header-footer text-center">
-            {Object.values(Composition).map((comp: Composition) => (
-              <th key={comp} className="px-1 w-fit border-b-1 border-gray-400 border-r border-gray-300">
-                {comp}</th>
+            {getTsEnumStringKeys(FlatHeader).map(header => (
+              <th key={header} className="px-1 w-fit border-b-1 border-gray-400 border-r border-gray-300">
+                {flat_header_as_med_str_js(header)}</th>
             ))}
           </tr>
           {/* Totals Row */}
           <tr className="h-6 table-header-footer">
-            {Object.values(Composition).map((comp: Composition) => (
-              <td key={comp} className="text-center border-b border-gray-400 border-r border-gray-300">
+            {getTsEnumStringKeys(FlatHeader).map(header => (
+              <td key={header} className="text-center border-b border-gray-400 border-r border-gray-300">
               </td>
             ))}
           </tr>
@@ -37,9 +42,9 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
           respect the h-* value. This value makes the rows between the two grids line up */}
           {recipeState.map((_, index) => (
             <tr key={index} className="h-6.25 border-b border-gray-300">
-              {Object.values(Composition).map((comp: Composition) => (
-                <td key={comp} className="text-sm text-gray-900 text-center border-r border-gray-300">
-                  {formattedCompCell(index, comp)}
+              {getTsEnumStringKeys(FlatHeader).map(header => (
+                <td key={header} className="text-sm text-gray-900 text-center border-r border-gray-300">
+                  {formattedCompCell(index, header)}
                 </td>
               ))}
             </tr>

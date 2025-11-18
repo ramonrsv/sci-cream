@@ -12,23 +12,28 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "backend")]
 use diesel::{Queryable, Selectable};
 
-pub mod comp_specs;
 pub mod composition;
 pub mod constants;
 pub mod display;
 pub mod ingredients;
+pub mod specs;
 pub mod util;
 #[cfg(feature = "wasm")]
 pub mod wasm;
 
 pub use {
-    comp_specs::{DairySpec, expand_dairy_spec},
     composition::{Composition, PAC, Solids, SolidsBreakdown, Sugars, Sweeteners},
+    display::FlatHeader,
     ingredients::{Category, Ingredient},
+    specs::{DairySpec, SugarsSpec, expand_dairy_spec, expand_sugars_spec},
 };
 
 #[cfg(feature = "wasm")]
-pub use wasm::{add, hello_wasm, log, log_many, log_u32};
+pub use crate::{
+    display::flat_header_as_med_str_js,
+    specs::into_ingredient_from_spec_js,
+    wasm::{add, hello_wasm, log, log_many, log_u32},
+};
 
 #[cfg(feature = "wasm")]
 #[wasm_bindgen]

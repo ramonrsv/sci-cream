@@ -5,8 +5,6 @@ import { eq, and } from "drizzle-orm";
 import { usersTable, ingredientsTable } from "./schema";
 import * as schema from "./schema";
 
-import { Ingredient, Dairy } from "../deprecated/sci-cream";
-
 import { allIngredients } from "../data/ingredients";
 
 type User = typeof usersTable.$inferInsert;
@@ -28,15 +26,21 @@ async function seedUsers() {
   console.log("Seeding users");
 
   for (const user of [appUser, testUser]) {
-    await db.insert(usersTable).values(user).onConflictDoNothing({ target: usersTable.email });
+    await db
+      .insert(usersTable)
+      .values(user)
+      .onConflictDoNothing({ target: usersTable.email });
   }
 
   const users = await db.select().from(usersTable);
   console.log("Getting all users from the database:", users);
 }
 
-async function seedUserIngredients(user: User, ingredients: Ingredient[]) {
-  const [foundUser] = await db.select().from(usersTable).where(eq(usersTable.email, user.email));
+async function seedUserIngredients(user: User, ingredients: any[]) {
+  const [foundUser] = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, user.email));
 
   console.log("==========");
   console.log("Seeding user ingredients for user:", foundUser);
@@ -45,8 +49,8 @@ async function seedUserIngredients(user: User, ingredients: Ingredient[]) {
     const ingredient: typeof ingredientsTable.$inferInsert = {
       name: ing.name,
       user: foundUser.id,
-      category: ing.category(),
-      value: JSON.stringify(ing.getConstructorArgs()),
+      category: ing.category,
+      spec: JSON.stringify(ing),
     };
 
     console.log("---");
@@ -56,7 +60,10 @@ async function seedUserIngredients(user: User, ingredients: Ingredient[]) {
       .select()
       .from(ingredientsTable)
       .where(
-        and(eq(ingredientsTable.name, ingredient.name), eq(ingredientsTable.user, ingredient.user))
+        and(
+          eq(ingredientsTable.name, ingredient.name),
+          eq(ingredientsTable.user, ingredient.user)
+        )
       );
 
     if (existing != undefined) {
@@ -80,11 +87,10 @@ async function seedUserIngredients(user: User, ingredients: Ingredient[]) {
 async function main() {
   await seedUsers();
 
-  for (const ingredients of allIngredients) {
-    await seedUserIngredients(appUser, ingredients);
-  }
-
-  await seedUserIngredients(testUser, [new Dairy({ name: "2% Milk", fat: 4 })]);
+  await seedUserIngredients(appUser, allIngredients);
+  await seedUserIngredients(testUser, [
+    { name: "2% Milk", category: "Dairy", DairySpec: { fat: 4 } },
+  ]);
 }
 
 main();

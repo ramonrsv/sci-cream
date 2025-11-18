@@ -45,8 +45,8 @@ export async function fetchValidIngredientNames() {
   return ingredients.map(ing => ing.name);
 }
 
-export async function fetchIngredient(name: string): Promise<IngredientTransfer | undefined> {
-  console.log(`[${await FetchCounter.get()}] fetchIngredient("${name}")`);
+export async function fetchIngredientSpec(name: string): Promise<IngredientTransfer | undefined> {
+  console.log(`[${await FetchCounter.get()}] fetchIngredientSpec("${name}")`);
 
   const ingredients = await db
     .select()

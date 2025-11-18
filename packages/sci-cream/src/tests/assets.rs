@@ -1,8 +1,11 @@
 use std::sync::LazyLock;
 
+use const_format::formatcp;
+
 use crate::{
-    comp_specs::{DairySpec, SugarsSpec},
     composition::{Composition, PAC, Solids, SolidsBreakdown, Sugars, Sweeteners},
+    ingredients::{Category, Ingredient},
+    specs::{DairySpec, IngredientSpec, Spec, SugarsSpec},
 };
 
 // Comp Specs
@@ -55,4 +58,30 @@ pub static COMP_DEXTROSE_50_PERCENT: LazyLock<Composition> = LazyLock::new(|| {
         .sweeteners(Sweeteners::new().sugars(Sugars::new().glucose(50f64)))
         .pod(35f64)
         .pac(PAC::new().sugars(95f64))
+});
+
+// Ingredient specs
+// --------------------------------------------
+
+pub const ING_SPEC_MILK_2_PERCENT_STR: &str = r#"{
+  "name": "2% Milk",
+  "category": "Dairy",
+  "DairySpec": {
+    "fat": 2
+  }
+}"#;
+
+pub static ING_SPEC_MILK_2_PERCENT: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    name: "2% Milk".to_string(),
+    category: Category::Dairy,
+    spec: Spec::DairySpec(*SPEC_DAIRY_2_PERCENT),
+});
+
+// Ingredients
+// --------------------------------------------
+
+pub static ING_MILK_2_PERCENT: LazyLock<Ingredient> = LazyLock::new(|| Ingredient {
+    name: "2% Milk".to_string(),
+    category: Category::Dairy,
+    composition: COMP_MILK_2_PERCENT.clone(),
 });
