@@ -1,7 +1,7 @@
 import { Ingredient } from "@workspace/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
-export const RECIPE_TOTAL_ROWS = 22;
+export const RECIPE_TOTAL_ROWS = 21;
 
 export interface IngredientRow {
   name: string;
@@ -31,11 +31,11 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
     setRow({ ...row, quantity: quantity });
   };
 
-  const mixTotal = () =>
+  const getMixTotal = () =>
     recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);
 
   return (
-    <table className="border-collapse border-2 border-gray-400">
+    <table className="border-collapse border-2 border-gray-400 mt-6">
       {/* Header */}
       <thead>
         <tr className="h-[25px] table-header-footer text-center">
@@ -55,10 +55,10 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
             Total
           </td>
           <td className="text-right px-3.75 border-b border-gray-400 border-r border-gray-300">
-            {mixTotal().toFixed(0)}
+            {getMixTotal().toFixed(0)}
           </td>
           <td className="text-right px-1 border-b border-gray-400">
-            {mixTotal() > 0 ? "100.0" : ""}
+            {getMixTotal() > 0 ? "100.0" : ""}
           </td>
         </tr>
       </thead>
@@ -92,9 +92,9 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
               />
             </td>
             <td className="text-sm text-gray-900 text-right px-1">
-              {recipeState[index][STATE_VAL].quantity && mixTotal() > 0
+              {recipeState[index][STATE_VAL].quantity && getMixTotal() > 0
                 ? (
-                    (recipeState[index][STATE_VAL].quantity / mixTotal()) *
+                    (recipeState[index][STATE_VAL].quantity / getMixTotal()) *
                     100
                   ).toFixed(1)
                 : ""}
