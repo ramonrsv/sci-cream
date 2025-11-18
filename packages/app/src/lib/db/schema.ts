@@ -1,6 +1,18 @@
-import { pgTable, primaryKey, integer, text, pgEnum, json } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  primaryKey,
+  integer,
+  text,
+  pgEnum,
+  json,
+} from "drizzle-orm/pg-core";
 
-import { Category } from "../deprecated/sci-cream";
+import {
+  Category as TsCategory,
+  makeStrEnumFromTsEnum,
+} from "@workspace/sci-cream";
+
+const Category = makeStrEnumFromTsEnum(TsCategory);
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),

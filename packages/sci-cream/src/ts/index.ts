@@ -12,6 +12,7 @@ import {
   getTsEnumStrings,
   getTsEnumNumberKeys,
   getTsEnumStringKeys,
+  makeStrEnumFromTsEnum,
 } from "./util";
 
 export {
@@ -25,4 +26,5 @@ export {
   getTsEnumStrings,
   getTsEnumNumberKeys,
   getTsEnumStringKeys,
+  makeStrEnumFromTsEnum,
 };
