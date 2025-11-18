@@ -1,1 +1,22 @@
-[]
+[
+  {
+    "name": "Sucrose",
+    "category": "Sweetener",
+    "SugarsSpec": {
+      "sugars": {
+        "sucrose": 100
+      },
+      "solids": 100
+    }
+  },
+  {
+    "name": "Dextrose",
+    "category": "Sweetener",
+    "SugarsSpec": {
+      "sugars": {
+        "glucose": 100
+      },
+      "solids": 100
+    }
+  }
+]

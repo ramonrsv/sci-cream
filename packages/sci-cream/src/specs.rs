@@ -24,7 +24,7 @@ pub struct SugarsSpec {
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum Spec {
     DairySpec(DairySpec),
-    SugarSpec(SugarsSpec),
+    SugarsSpec(SugarsSpec),
 }
 
 #[derive(PartialEq, Serialize, Deserialize, Clone, Debug)]
@@ -39,7 +39,7 @@ impl Spec {
     pub fn into_composition(self) -> Composition {
         match self {
             Spec::DairySpec(spec) => expand_dairy_spec(spec),
-            Spec::SugarSpec(spec) => expand_sugars_spec(spec),
+            Spec::SugarsSpec(spec) => expand_sugars_spec(spec),
         }
     }
 }
@@ -171,6 +171,39 @@ mod test {
     }
 
     #[test]
+    fn expand_auto_sweetener_spec_sucrose() {
+        let Composition {
+            solids, sweeteners, ..
+        } = COMP_SUCROSE.clone();
+
+        assert_eq!(solids.unwrap().total(), 100f64);
+        assert_eq!(solids.unwrap().water(), 0f64);
+
+        let Solids { other, .. } = solids.unwrap();
+        let other = other.unwrap();
+
+        assert_eq!(other.fats, 0f64);
+        assert_eq!(other.sweeteners, 100f64);
+        assert_eq!(other.snf(), 100f64);
+        assert_eq!(other.snfs, 0f64);
+        assert_eq!(other.total(), 100f64);
+        assert_eq!(other.water(), 0f64);
+
+        assert_eq!(sweeteners.unwrap().sugars.unwrap().sucrose.unwrap(), 100f64);
+        assert_eq!(sweeteners.unwrap().sugars.unwrap().total(), 100f64);
+
+        let pac = COMP_SUCROSE.pac.unwrap();
+        assert_eq!(pac.sugars.unwrap(), 100f64);
+        assert_eq!(pac.total(), 100f64);
+
+        assert_abs_diff_eq!(
+            super::expand_sugars_spec(*SPEC_SUGARS_DEXTROSE),
+            *COMP_DEXTROSE,
+            epsilon = TESTS_EPSILON
+        );
+    }
+
+    #[test]
     fn expand_auto_sweetener_spec_dextrose() {
         let Composition {
             solids, sweeteners, ..
@@ -238,18 +271,37 @@ mod test {
 
     #[test]
     fn deserialize_ingredient_spec() {
-        assert_eq!(
-            serde_json::from_str::<IngredientSpec>(ING_SPEC_MILK_2_PERCENT_STR).unwrap(),
-            *ING_SPEC_MILK_2_PERCENT
-        );
+        [
+            (ING_SPEC_MILK_2_PERCENT_STR, ING_SPEC_MILK_2_PERCENT.clone()),
+            (ING_SPEC_SUGARS_SUCROSE_STR, ING_SPEC_SUGARS_SUCROSE.clone()),
+            (
+                ING_SPEC_SUGARS_DEXTROSE_STR,
+                ING_SPEC_SUGARS_DEXTROSE.clone(),
+            ),
+        ]
+        .iter()
+        .for_each(|(spec_str, spec)| {
+            assert_eq!(
+                serde_json::from_str::<IngredientSpec>(spec_str).unwrap(),
+                *spec
+            );
+        });
     }
 
     #[test]
     fn ingredient_spec_into_ingredient() {
-        assert_abs_diff_eq!(
-            ING_SPEC_MILK_2_PERCENT.clone().into_ingredient(),
-            *ING_MILK_2_PERCENT,
-            epsilon = TESTS_EPSILON
-        );
+        [
+            (ING_SPEC_MILK_2_PERCENT.clone(), ING_MILK_2_PERCENT.clone()),
+            (ING_SPEC_SUGARS_SUCROSE.clone(), ING_SUCROSE.clone()),
+            (ING_SPEC_SUGARS_DEXTROSE.clone(), ING_DEXTROSE.clone()),
+        ]
+        .iter()
+        .for_each(|(spec, ingredient)| {
+            assert_abs_diff_eq!(
+                spec.clone().into_ingredient(),
+                *ingredient,
+                epsilon = TESTS_EPSILON
+            );
+        });
     }
 }
