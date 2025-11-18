@@ -7,14 +7,6 @@ import {
   json,
 } from "drizzle-orm/pg-core";
 
-// import {
-//   Category as TsCategory,
-//   makeStrEnumFromTsEnum,
-// } from "@workspace/sci-cream";
-
-// const Category = makeStrEnumFromTsEnum(TsCategory);
-
-// @todo Remove deprecated sci-cream import when possible
 import { Category } from "../deprecated/sci-cream";
 
 export const usersTable = pgTable("users", {
