@@ -35,7 +35,7 @@ body {
 
 .main-page-grid {
   display: inline-grid;
-  column-gap: 10px;
+  column-gap: 35px;
   row-gap: 10px;
   grid-template-columns: auto auto;
   grid-template-rows: auto auto;
