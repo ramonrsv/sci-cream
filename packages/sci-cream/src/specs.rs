@@ -107,11 +107,15 @@ pub fn expand_sugars_spec(spec: SugarsSpec) -> Composition {
 }
 
 #[cfg(feature = "wasm")]
-#[wasm_bindgen]
-pub fn into_ingredient_from_spec_js(spec: JsValue) -> Ingredient {
-    serde_wasm_bindgen::from_value::<IngredientSpec>(spec)
-        .unwrap()
-        .into_ingredient()
+pub mod js {
+    use super::*;
+
+    #[wasm_bindgen]
+    pub fn into_ingredient_from_spec_js(spec: JsValue) -> Ingredient {
+        serde_wasm_bindgen::from_value::<IngredientSpec>(spec)
+            .unwrap()
+            .into_ingredient()
+    }
 }
 
 #[cfg(test)]
@@ -127,11 +131,20 @@ mod test {
     #[test]
     fn expand_dairy_spec() {
         let Composition {
-            solids, sweeteners, ..
+            solids,
+            sweeteners,
+            micro,
+            alcohol,
+            pod,
+            pac,
         } = COMP_MILK_2_PERCENT.clone();
 
         assert_eq!(solids.unwrap().total(), 10.82f64);
         assert_eq!(solids.unwrap().water(), 89.18f64);
+
+        assert_true!(micro.is_none());
+        assert_true!(alcohol.is_none());
+        assert_eq!(pod.unwrap(), 0.769104f64);
 
         let Solids { milk, .. } = solids.unwrap();
         let milk = milk.unwrap();
@@ -146,7 +159,7 @@ mod test {
         assert_eq!(sweeteners.unwrap().sugars.unwrap().lactose.unwrap(), 4.8069);
         assert_eq!(sweeteners.unwrap().sugars.unwrap().total(), 4.8069);
 
-        let pac = COMP_MILK_2_PERCENT.pac.unwrap();
+        let pac = pac.unwrap();
         assert_eq!(pac.sugars.unwrap(), 4.8069f64);
         assert_eq!(pac.total(), 4.8069f64);
 

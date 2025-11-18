@@ -6,8 +6,10 @@
 //! `use shadow_asserts::{assert_eq, assert_ne};` to shadow the prelude's `assert_eq/ne` macros.
 
 // @todo Investigating using `all_asserts::{assert_range, assert_nrange}` for range checks.
+#[allow(unused_imports)] // @todo Remove when used.
 pub(crate) use all_asserts::{assert_false, assert_true};
 
+#[allow(unused_imports)] // @todo Remove when used.
 pub(crate) use more_asserts::{assert_ge, assert_gt, assert_le, assert_lt};
 
 /// These `assert_eq` and `assert_ne` re-exports are actually never used, since glob imports are not
@@ -19,5 +21,6 @@ pub(crate) use more_asserts::{assert_ge, assert_gt, assert_le, assert_lt};
 pub(crate) use pretty_assertions::{assert_eq, assert_ne};
 
 pub(crate) mod shadow_asserts {
+    #[allow(unused_imports)] // @todo Remove when used.
     pub(crate) use pretty_assertions::{assert_eq, assert_ne};
 }

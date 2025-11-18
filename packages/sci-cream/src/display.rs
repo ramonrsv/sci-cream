@@ -7,10 +7,7 @@ use strum_macros::EnumIter;
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
-use crate::{
-    Sweeteners,
-    composition::{Composition, Solids, Sugars},
-};
+use crate::{Sweeteners, composition::Composition};
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(EnumIter, Hash, PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
@@ -44,15 +41,6 @@ impl FlatHeader {
             FlatHeader::PAC => "PAC",
         }
     }
-}
-
-#[cfg(feature = "wasm")]
-#[wasm_bindgen]
-pub fn flat_header_as_med_str_js(header: JsValue) -> String {
-    serde_wasm_bindgen::from_value::<FlatHeader>(header)
-        .unwrap()
-        .as_med_str()
-        .to_string()
 }
 
 impl Composition {
@@ -94,37 +82,31 @@ impl Composition {
     }
 }
 
-pub fn flat_rep_to_vec(comp_rep: &HashMap<FlatHeader, f64>) -> Vec<(String, Option<f64>)> {
-    FlatHeader::headers()
-        .into_iter()
-        .map(|h| (h.as_med_str().to_string(), comp_rep.get(&h).copied()))
-        .collect()
-}
+#[cfg(feature = "wasm")]
+pub mod js {
+    use super::*;
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-impl Composition {
-    #[cfg(feature = "wasm")]
     #[wasm_bindgen]
-    pub fn to_flat_representation_js(&self) -> JsValue {
-        serde_wasm_bindgen::to_value(&self.to_flat_representation()).unwrap()
+    pub fn flat_header_as_med_str_js(header: JsValue) -> String {
+        serde_wasm_bindgen::from_value::<FlatHeader>(header)
+            .unwrap()
+            .as_med_str()
+            .to_string()
     }
 
-    #[cfg(feature = "wasm")]
     #[wasm_bindgen]
-    pub fn to_flat_representation_wasm(&self) -> JsValue {
-        serde_wasm_bindgen::to_value(&self.to_flat_representation()).unwrap()
-    }
-
-    #[cfg(feature = "wasm")]
-    #[wasm_bindgen]
-    pub fn to_flat_representation_vec_js(&self) -> JsValue {
-        serde_wasm_bindgen::to_value(&flat_rep_to_vec(&self.to_flat_representation())).unwrap()
+    impl Composition {
+        #[wasm_bindgen]
+        pub fn to_flat_representation_js(&self) -> JsValue {
+            serde_wasm_bindgen::to_value(&self.to_flat_representation()).unwrap()
+        }
     }
 }
 
 #[cfg(test)]
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
+    #[allow(unused_imports)] // @todo Remove when used.
     use crate::tests::asserts::*;
 
     use crate::tests::assets::*;

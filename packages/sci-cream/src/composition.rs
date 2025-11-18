@@ -580,10 +580,10 @@ impl AbsDiffEq for Composition {
 #[cfg(test)]
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
+    #[allow(unused_imports)] // @todo Remove when used.
     use crate::tests::asserts::*;
 
-    use super::*;
-    use crate::tests::{assets::*, util::TESTS_EPSILON};
+    use crate::tests::assets::*;
 
     #[test]
     fn pac_total() {

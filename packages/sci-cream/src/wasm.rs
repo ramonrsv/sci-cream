@@ -19,13 +19,3 @@ extern "C" {
     #[wasm_bindgen(js_namespace = console, js_name = log)]
     pub fn log_many(a: &str, b: &str);
 }
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-pub fn hello_wasm() -> String {
-    "Hello, wasm!".to_string()
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-pub fn add(a: u32, b: u32) -> u32 {
-    a + b
-}

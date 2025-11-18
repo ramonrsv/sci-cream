@@ -1,8 +1,9 @@
 import { expect, test } from "vitest";
 
-import { hello_wasm, add } from "../../dist/index";
+import { FlatHeader, flat_header_as_med_str_js } from "../../dist/index";
 
-test("Import from sci-cream wasm package, at sci-cream", () => {
-  expect(hello_wasm()).toBe("Hello, wasm!");
-  expect(add(2, 3)).toBe(5);
+test("Import from sci-cream wasm package, at app", () => {
+  expect(flat_header_as_med_str_js(FlatHeader[FlatHeader.MilkFats])).toBe(
+    "Milk Fats"
+  );
 });

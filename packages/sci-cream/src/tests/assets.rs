@@ -1,7 +1,5 @@
 use std::sync::LazyLock;
 
-use const_format::formatcp;
-
 use crate::{
     composition::{Composition, PAC, Solids, SolidsBreakdown, Sugars, Sweeteners},
     ingredients::{Category, Ingredient},

@@ -8,7 +8,7 @@ use wasm_bindgen::prelude::*;
 #[cfg(feature = "backend")]
 use diesel::{Queryable, Selectable};
 
-use crate::{composition::Composition, util::abs_diff_eq_option};
+use crate::composition::Composition;
 
 /// Ingredient categories
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
@@ -23,46 +23,6 @@ pub enum Category {
     Egg,
     Stabilizer,
     Miscellaneous,
-}
-
-/// Composition component of ingredients, usually as a percentage by weight
-#[allow(nonstandard_style)]
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(Hash, Eq, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-pub enum CompositionEnum {
-    Milk_Fat,
-    Egg_Fat,
-    Cacao_Fat,
-    Nut_Fat,
-    Other_Fats,
-
-    Lactose,
-    Sugar,
-
-    Milk_SNF,
-    Egg_SNF,
-    Cocoa_SNF,
-    Nut_SNF,
-    Other_SNF,
-
-    Milk_SNFS,
-    Egg_SNFS,
-    Cocoa_SNFS,
-    Nut_SNFS,
-    Other_SNFS,
-
-    Total_Solids,
-
-    Salt,
-    Alcohol,
-    Emulsifiers,
-    Stabilizers,
-
-    POD,
-    PAC_sgr,
-    PAC_slt,
-    PAC_alc,
-    Hardness_Factor,
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
