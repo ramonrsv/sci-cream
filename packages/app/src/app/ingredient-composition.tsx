@@ -4,7 +4,11 @@ import { useState } from "react";
 
 import { RecipeState } from "./recipe";
 import { FlatHeader, flat_header_as_med_str_js } from "@workspace/sci-cream";
-import { STATE_VAL, getTsEnumStringKeys } from "../lib/util";
+import {
+  STATE_VAL,
+  getTsEnumNumberKeys,
+  getTsEnumStringKeys,
+} from "../lib/util";
 
 enum QtyToggle {
   /// The raw composition value as stored in the Ingredient, independent of quantity
@@ -25,17 +29,15 @@ export function IngredientCompositionGrid({
   const getMixTotal = () =>
     recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);
 
-  const formattedCompCell = (index: number, header: any) => {
+  const formattedCompCell = (index: number, header: FlatHeader) => {
     const ingredient = recipeState[index][STATE_VAL].ingredient;
     const ingQty = recipeState[index][STATE_VAL].quantity || undefined;
     const mixTotal = getMixTotal();
 
     if (ingredient && ingredient.composition) {
-      const flatRep = ingredient.composition.to_flat_representation_js();
+      const comp = ingredient.composition.get_flat_header_value(header);
 
-      if (flatRep.has(header)) {
-        let comp = flatRep.get(header)!;
-
+      if (comp !== undefined) {
         switch (qtyToggle) {
           case QtyToggle.Composition:
             return Number(comp.toFixed(1));
@@ -92,12 +94,12 @@ export function IngredientCompositionGrid({
             {/* @todo The very last row is a little taller than the rest; not sure why */}
             {recipeState.map((_, index) => (
               <tr key={index} className="h-[25px] border-b border-gray-300">
-                {getTsEnumStringKeys(FlatHeader).map((header) => (
+                {getTsEnumNumberKeys(FlatHeader).map((header) => (
                   <td
                     key={header}
                     className="border-r border-gray-300 text-sm text-gray-900 text-center"
                   >
-                    {formattedCompCell(index, header)}
+                    {formattedCompCell(index, header as unknown as FlatHeader)}
                   </td>
                 ))}
               </tr>

@@ -1,13 +1,12 @@
-use std::collections::HashMap;
-
 use serde::{Deserialize, Serialize};
+#[allow(unused_imports)] // false positive
 use strum::IntoEnumIterator;
 use strum_macros::EnumIter;
 
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
-use crate::{Sweeteners, composition::Composition};
+use crate::composition::Composition;
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(EnumIter, Hash, PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
@@ -24,10 +23,6 @@ pub enum FlatHeader {
 }
 
 impl FlatHeader {
-    pub fn headers() -> Vec<FlatHeader> {
-        Self::iter().collect()
-    }
-
     pub fn as_med_str(&self) -> &'static str {
         match self {
             FlatHeader::MilkFats => "Milk Fats",
@@ -43,42 +38,43 @@ impl FlatHeader {
     }
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Composition {
-    pub fn to_flat_representation(&self) -> HashMap<FlatHeader, f64> {
-        let mut ret = HashMap::new();
-
-        if let Some(solids) = self.solids {
-            ret.insert(FlatHeader::TotalSolids, solids.total());
-
-            if let Some(milk) = solids.milk {
-                ret.insert(FlatHeader::MilkFats, milk.fats);
-                ret.insert(FlatHeader::MSNF, milk.snf());
-                ret.insert(FlatHeader::MilkSNFS, milk.snfs);
+    pub fn contains_flat_header_key(&self, header: FlatHeader) -> bool {
+        match header {
+            FlatHeader::MilkFats => self.solids.and_then(|s| s.milk).is_some(),
+            FlatHeader::MSNF => self.solids.and_then(|s| s.milk).is_some(),
+            FlatHeader::MilkSNFS => self.solids.and_then(|s| s.milk).is_some(),
+            FlatHeader::Lactose => self
+                .sweeteners
+                .and_then(|sw| sw.sugars)
+                .and_then(|s| s.lactose)
+                .is_some(),
+            FlatHeader::Sugars => self.sweeteners.and_then(|sw| sw.sugars).is_some(),
+            FlatHeader::ArtificialSweeteners => {
+                self.sweeteners.and_then(|sw| sw.artificial).is_some()
             }
-        };
+            FlatHeader::TotalSolids => self.solids.is_some(),
+            FlatHeader::POD => self.sweeteners.is_some(),
+            FlatHeader::PAC => self.pac.is_some(),
+        }
+    }
 
-        if let Some(sweeteners) = self.sweeteners {
-            ret.insert(FlatHeader::POD, sweeteners.to_pod());
-            ret.insert(FlatHeader::PAC, self.pac.unwrap().total());
-
-            let Sweeteners {
-                sugars, artificial, ..
-            } = sweeteners;
-
-            if let Some(sugars) = sugars {
-                ret.insert(FlatHeader::Sugars, sugars.total());
-
-                if let Some(lactose) = sugars.lactose {
-                    ret.insert(FlatHeader::Lactose, lactose);
-                }
-            }
-
-            if let Some(artificial) = artificial {
-                ret.insert(FlatHeader::ArtificialSweeteners, artificial);
-            }
-        };
-
-        ret
+    pub fn get_flat_header_value(&self, header: FlatHeader) -> Option<f64> {
+        match header {
+            FlatHeader::MilkFats => self.solids.and_then(|s| s.milk).map(|m| m.fats),
+            FlatHeader::MSNF => self.solids.and_then(|s| s.milk).map(|m| m.snf()),
+            FlatHeader::MilkSNFS => self.solids.and_then(|s| s.milk).map(|m| m.snfs),
+            FlatHeader::Lactose => self
+                .sweeteners
+                .and_then(|sw| sw.sugars)
+                .and_then(|s| s.lactose),
+            FlatHeader::Sugars => self.sweeteners.and_then(|sw| sw.sugars).map(|s| s.total()),
+            FlatHeader::ArtificialSweeteners => self.sweeteners.and_then(|sw| sw.artificial),
+            FlatHeader::TotalSolids => self.solids.map(|s| s.total()),
+            FlatHeader::POD => self.sweeteners.map(|sw| sw.to_pod()),
+            FlatHeader::PAC => self.pac.map(|p| p.total()),
+        }
     }
 }
 
@@ -93,14 +89,6 @@ pub mod js {
             .as_med_str()
             .to_string()
     }
-
-    #[wasm_bindgen]
-    impl Composition {
-        #[wasm_bindgen]
-        pub fn to_flat_representation_js(&self) -> JsValue {
-            serde_wasm_bindgen::to_value(&self.to_flat_representation()).unwrap()
-        }
-    }
 }
 
 #[cfg(test)]
@@ -114,23 +102,40 @@ mod tests {
     use super::*;
 
     #[test]
-    fn test_flat_headers() {
+    fn flat_headers_as_med_str() {
         let expected_vec = vec![
-            ("Milk Fats", Some(2f64)),
-            ("MSNF", Some(8.82f64)),
-            ("Milk SNFS", Some(4.0131)),
-            ("Lactose", Some(4.8069f64)),
-            ("Sugars", Some(4.8069f64)),
-            ("Artificial", None),
-            ("T. Solids", Some(10.82f64)),
-            ("POD", Some(0.769104f64)),
-            ("PAC", Some(4.8069f64)),
+            "Milk Fats",
+            "MSNF",
+            "Milk SNFS",
+            "Lactose",
+            "Sugars",
+            "Artificial",
+            "T. Solids",
+            "POD",
+            "PAC",
         ];
 
-        let actual_map = COMP_MILK_2_PERCENT.to_flat_representation();
-        let actual_vec: Vec<(&'static str, Option<f64>)> = FlatHeader::headers()
-            .into_iter()
-            .map(|h| (h.as_med_str(), actual_map.get(&h).copied()))
+        let actual_vec: Vec<&'static str> = FlatHeader::iter().map(|h| h.as_med_str()).collect();
+
+        assert_eq!(actual_vec, expected_vec);
+    }
+
+    #[test]
+    fn composition_get_flat_header_value() {
+        let expected_vec = vec![
+            (FlatHeader::MilkFats, Some(2f64)),
+            (FlatHeader::MSNF, Some(8.82f64)),
+            (FlatHeader::MilkSNFS, Some(4.0131)),
+            (FlatHeader::Lactose, Some(4.8069f64)),
+            (FlatHeader::Sugars, Some(4.8069f64)),
+            (FlatHeader::ArtificialSweeteners, None),
+            (FlatHeader::TotalSolids, Some(10.82f64)),
+            (FlatHeader::POD, Some(0.769104f64)),
+            (FlatHeader::PAC, Some(4.8069f64)),
+        ];
+
+        let actual_vec: Vec<(FlatHeader, Option<f64>)> = FlatHeader::iter()
+            .map(|h| (h, COMP_MILK_2_PERCENT.get_flat_header_value(h)))
             .collect();
 
         assert_eq!(actual_vec, expected_vec);
