@@ -31,8 +31,7 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
     setRow({ ...row, quantity: quantity });
   };
 
-  const getMixTotal = () =>
-    recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);
+  const getMixTotal = () => recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);
 
   return (
     <table className="border-collapse border-2 border-gray-400 mt-6">
@@ -45,9 +44,7 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
           <th className="w-[60px] min-w-[60px] border-b-1 border-gray-400 border-r border-gray-300">
             Qty (g)
           </th>
-          <th className="w-[55px] min-w-[55px] border-b-1 border-gray-400">
-            Qty (%)
-          </th>
+          <th className="w-[55px] min-w-[55px] border-b-1 border-gray-400">Qty (%)</th>
         </tr>
         {/* Total Row */}
         <tr className="h-[25px] table-header-footer">
@@ -83,9 +80,7 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
               <input
                 type="number"
                 value={row.quantity?.toString() || ""}
-                onChange={(e) =>
-                  updateIngredientRowQuantity(index, e.target.value)
-                }
+                onChange={(e) => updateIngredientRowQuantity(index, e.target.value)}
                 placeholder=""
                 step={1}
                 className="table-fillable-input text-right"
@@ -93,10 +88,7 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
             </td>
             <td className="text-sm text-gray-900 text-right px-1">
               {recipeState[index][STATE_VAL].quantity && getMixTotal() > 0
-                ? (
-                    (recipeState[index][STATE_VAL].quantity / getMixTotal()) *
-                    100
-                  ).toFixed(1)
+                ? ((recipeState[index][STATE_VAL].quantity / getMixTotal()) * 100).toFixed(1)
                 : ""}
             </td>
           </tr>

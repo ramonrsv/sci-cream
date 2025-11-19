@@ -4,12 +4,7 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
 
-import {
-  usersTable,
-  User,
-  ingredientsTable,
-  Ingredient as IngredientDb,
-} from "./db/schema";
+import { usersTable, User, ingredientsTable, Ingredient as IngredientDb } from "./db/schema";
 import * as schema from "./db/schema";
 import { sleep_ms } from "./util";
 
@@ -23,10 +18,7 @@ const app: User = {
 };
 
 async function getAppUserId() {
-  const [foundUser] = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.email, app.email));
+  const [foundUser] = await db.select().from(usersTable).where(eq(usersTable.email, app.email));
   return foundUser.id;
 }
 
@@ -53,19 +45,13 @@ export async function fetchValidIngredientNames() {
   return ingredients.map((ing) => ing.name);
 }
 
-export async function fetchIngredientSpec(
-  name: string
-): Promise<IngredientTransfer | undefined> {
+export async function fetchIngredientSpec(name: string): Promise<IngredientTransfer | undefined> {
   console.log(`[${await FetchCounter.get()}] fetchIngredientSpec("${name}")`);
 
   const ingredients = await db
     .select()
     .from(ingredientsTable)
-    .where(
-      and(eq(ingredientsTable.name, name), eq(ingredientsTable.user, appUserId))
-    );
+    .where(and(eq(ingredientsTable.name, name), eq(ingredientsTable.user, appUserId)));
 
-  return ingredients.length === 0 || ingredients[0] === undefined
-    ? undefined
-    : ingredients[0];
+  return ingredients.length === 0 || ingredients[0] === undefined ? undefined : ingredients[0];
 }

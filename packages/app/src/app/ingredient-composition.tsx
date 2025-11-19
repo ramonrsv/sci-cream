@@ -4,11 +4,7 @@ import { useState } from "react";
 
 import { RecipeState } from "./recipe";
 import { FlatHeader, flat_header_as_med_str_js } from "@workspace/sci-cream";
-import {
-  STATE_VAL,
-  getTsEnumNumberKeys,
-  getTsEnumStringKeys,
-} from "../lib/util";
+import { STATE_VAL, getTsEnumNumberKeys, getTsEnumStringKeys } from "../lib/util";
 
 enum QtyToggle {
   /// The raw composition value as stored in the Ingredient, independent of quantity
@@ -19,15 +15,10 @@ enum QtyToggle {
   Percentage = "Quantity (%)",
 }
 
-export function IngredientCompositionGrid({
-  recipeState,
-}: {
-  recipeState: RecipeState;
-}) {
+export function IngredientCompositionGrid({ recipeState }: { recipeState: RecipeState }) {
   const [qtyToggle, setQtyToggle] = useState<QtyToggle>(QtyToggle.Quantity);
 
-  const getMixTotal = () =>
-    recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);
+  const getMixTotal = () => recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);
 
   const formattedCompCell = (index: number, header: FlatHeader) => {
     const ingredient = recipeState[index][STATE_VAL].ingredient;
@@ -44,9 +35,7 @@ export function IngredientCompositionGrid({
           case QtyToggle.Quantity:
             return ingQty ? Number(((comp * ingQty) / 100).toFixed(1)) : "";
           case QtyToggle.Percentage:
-            return mixTotal > 0 && ingQty
-              ? Number(((comp * ingQty) / mixTotal).toFixed(1))
-              : "";
+            return mixTotal > 0 && ingQty ? Number(((comp * ingQty) / mixTotal).toFixed(1)) : "";
         }
       }
     }

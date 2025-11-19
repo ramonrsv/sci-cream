@@ -24,10 +24,7 @@ const app: User = {
 import { allIngredients } from "../data/ingredients";
 
 async function getAppUserId() {
-  const [foundUser] = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.email, app.email));
+  const [foundUser] = await db.select().from(usersTable).where(eq(usersTable.email, app.email));
 
   return foundUser.id;
 }

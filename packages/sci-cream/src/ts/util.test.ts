@@ -3,13 +3,15 @@ import { expect, test } from "vitest";
 import { getTsEnumStrings, getTsEnumNumbers, makeStrEnumFromTsEnum } from "./util";
 
 enum AlphaTs {
-    First,
-    Second,
+  First,
+  Second,
 }
 
 const BetaTs = Object.freeze({
-    First: 0, "0": "First",
-    Second: 1, "1": "Second",
+  First: 0,
+  "0": "First",
+  Second: 1,
+  "1": "Second",
 });
 
 test("getTsEnumNumbers", () => {

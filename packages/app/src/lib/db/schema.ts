@@ -1,11 +1,4 @@
-import {
-  pgTable,
-  primaryKey,
-  integer,
-  text,
-  pgEnum,
-  json,
-} from "drizzle-orm/pg-core";
+import { pgTable, primaryKey, integer, text, pgEnum, json } from "drizzle-orm/pg-core";
 
 import { Category } from "../deprecated/sci-cream";
 

@@ -26,10 +26,7 @@ async function seedUsers() {
   console.log("Seeding users");
 
   for (const user of [appUser, testUser]) {
-    await db
-      .insert(usersTable)
-      .values(user)
-      .onConflictDoNothing({ target: usersTable.email });
+    await db.insert(usersTable).values(user).onConflictDoNothing({ target: usersTable.email });
   }
 
   const users = await db.select().from(usersTable);
@@ -37,10 +34,7 @@ async function seedUsers() {
 }
 
 async function seedUserIngredients(user: User, ingredients: any[]) {
-  const [foundUser] = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.email, user.email));
+  const [foundUser] = await db.select().from(usersTable).where(eq(usersTable.email, user.email));
 
   console.log("==========");
   console.log("Seeding user ingredients for user:", foundUser);
@@ -60,10 +54,7 @@ async function seedUserIngredients(user: User, ingredients: any[]) {
       .select()
       .from(ingredientsTable)
       .where(
-        and(
-          eq(ingredientsTable.name, ingredient.name),
-          eq(ingredientsTable.user, ingredient.user)
-        )
+        and(eq(ingredientsTable.name, ingredient.name), eq(ingredientsTable.user, ingredient.user))
       );
 
     if (existing != undefined) {
