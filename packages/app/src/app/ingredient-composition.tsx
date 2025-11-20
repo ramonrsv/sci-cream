@@ -20,6 +20,12 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
 
   const getMixTotal = () => recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);
 
+  const enabledHeaderNumberKeys = () => getTsEnumNumberKeys(FlatHeader);
+  const enabledHeaderStringKeys = () => getTsEnumStringKeys(FlatHeader);
+
+  const enabledHeaderStringKeysIndexed = () =>
+    Array.from(getTsEnumStringKeys(FlatHeader).entries());
+
   const formattedCompCell = (index: number, header: FlatHeader) => {
     const ingredient = recipeState[index][STATE_VAL].ingredient;
     const ingQty = recipeState[index][STATE_VAL].quantity || undefined;
@@ -53,22 +59,30 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
         <option value={QtyToggle.Quantity}>{QtyToggle.Quantity}</option>
         <option value={QtyToggle.Percentage}>{QtyToggle.Percentage}</option>
       </select>
-      <div className="border-collapse border-gray-400 border-2 overflow-x-auto whitespace-nowrap">
-        <table>
+      <div className="border-gray-400 border-2 overflow-x-auto whitespace-nowrap">
+        <table className="border-collapse">
           {/* Header */}
           <thead>
             {/* Composition Header */}
-            <tr key={0} className="table-header-footer h-[24px] text-center">
-              {getTsEnumStringKeys(FlatHeader).map((header) => (
-                <th key={header} className="table-header-footer px-1 w-fit">
+            {/* @todo The left-most and right-most borders of the table are still not right */}
+            <tr className="h-[24px]">
+              {enabledHeaderStringKeys().map((header) => (
+                <th
+                  key={header}
+                  className="table-header-no-border px-1 border-gray-400 border-b border-r w-fit text-center"
+                >
                   {flat_header_as_med_str_js(header)}
                 </th>
               ))}
             </tr>
             {/* Totals Row */}
-            <tr className="table-header-footer h-[25px]">
-              {getTsEnumStringKeys(FlatHeader).map((header) => (
-                <td key={header} className="table-header-footer text-center"></td>
+            {/* @todo The left-most and right-most borders of the table are still not right */}
+            <tr className="h-[25px]">
+              {enabledHeaderStringKeys().map((header) => (
+                <td
+                  key={header}
+                  className="table-header-no-border px-1 border-gray-400 border-b border-r text-center"
+                ></td>
               ))}
             </tr>
           </thead>
@@ -77,7 +91,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
             {/* @todo The very last row is a little taller than the rest; not sure why */}
             {recipeState.map((_, index) => (
               <tr key={index} className="table-inner-cell h-[25px]">
-                {getTsEnumNumberKeys(FlatHeader).map((header) => (
+                {enabledHeaderNumberKeys().map((header) => (
                   <td key={header} className="table-inner-cell text-center">
                     {formattedCompCell(index, header as unknown as FlatHeader)}
                   </td>

@@ -25,7 +25,11 @@ body {
   font-family: Arial, Helvetica, sans-serif;
 }
 
-.table-header-footer {
+.table-header-no-border {
+  @apply bg-gray-200 text-gray-900 text-sm font-semibold;
+}
+
+.table-header {
   @apply border-gray-400 border-1 bg-gray-200 text-gray-900 text-sm font-semibold;
 }
 

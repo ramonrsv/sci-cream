@@ -37,13 +37,13 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
     <table className="mt-6 border-collapse border-gray-400 border-2">
       {/* Header */}
       <thead>
-        <tr className="table-header-footer h-[25px] text-center">
+        <tr className="table-header h-[25px] text-center">
           <th className="border-gray-400 border-r w-[325px] min-w-[250px]">Ingredient</th>
           <th className="border-gray-400 border-r w-[60px] min-w-[60px]">Qty (g)</th>
           <th className="w-[55px] min-w-[55px]">Qty (%)</th>
         </tr>
         {/* Total Row */}
-        <tr className="table-header-footer h-[25px]">
+        <tr className="table-header h-[25px]">
           <td className="px-1 border-gray-400 border-r text-center">Total</td>
           <td className="px-3.75 border-gray-400 border-r text-right">
             {getMixTotal().toFixed(0)}
