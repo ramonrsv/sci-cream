@@ -362,10 +362,31 @@ impl Solids {
             .sum::<f64>()
     }
 
+    pub fn fats(&self) -> f64 {
+        self.iter()
+            .filter_map(|(_, comp)| comp.downcast_ref::<Option<SolidsBreakdown>>())
+            .map(|breakdown| breakdown.map_or(0f64, |b| b.fats))
+            .sum::<f64>()
+    }
+
     pub fn snf(&self) -> f64 {
         self.iter()
             .filter_map(|(_, comp)| comp.downcast_ref::<Option<SolidsBreakdown>>())
             .map(|breakdown| breakdown.map_or(0f64, |b| b.snf()))
+            .sum::<f64>()
+    }
+
+    pub fn sweeteners(&self) -> f64 {
+        self.iter()
+            .filter_map(|(_, comp)| comp.downcast_ref::<Option<SolidsBreakdown>>())
+            .map(|breakdown| breakdown.map_or(0f64, |b| b.sweeteners))
+            .sum::<f64>()
+    }
+
+    pub fn snfs(&self) -> f64 {
+        self.iter()
+            .filter_map(|(_, comp)| comp.downcast_ref::<Option<SolidsBreakdown>>())
+            .map(|breakdown| breakdown.map_or(0f64, |b| b.snfs))
             .sum::<f64>()
     }
 
