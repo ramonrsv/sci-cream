@@ -43,7 +43,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
   };
 
   return (
-    <div>
+    <div className="w-full min-w-[200px]">
       <select
         className="border-gray-400 border text-gray-900 text-sm"
         value={qtyToggle}
@@ -53,8 +53,8 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
         <option value={QtyToggle.Quantity}>{QtyToggle.Quantity}</option>
         <option value={QtyToggle.Percentage}>{QtyToggle.Percentage}</option>
       </select>
-      <div className="w-full min-w-[200px] overflow-x-auto whitespace-nowrap">
-        <table className="border-collapse border-gray-400 border-2">
+      <div className="border-collapse border-gray-400 border-2 overflow-x-auto whitespace-nowrap">
+        <table>
           {/* Header */}
           <thead>
             {/* Composition Header */}
