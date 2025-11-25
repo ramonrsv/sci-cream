@@ -74,41 +74,34 @@ impl FlatHeader {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Composition {
-    pub fn contains_flat_header_key(&self, header: FlatHeader) -> bool {
-        self.get_flat_header_value(header).is_some()
-    }
-
-    pub fn get_flat_header_value(&self, header: FlatHeader) -> Option<f64> {
+    pub fn get_flat_header_value(&self, header: FlatHeader) -> f64 {
         match header {
-            FlatHeader::MilkFat => self.solids.and_then(|s| s.milk).map(|m| m.fats),
-            FlatHeader::CacaoFat => self.solids.and_then(|s| s.cocoa).map(|c| c.fats),
-            FlatHeader::NutFat => self.solids.and_then(|s| s.nut).map(|n| n.fats),
-            FlatHeader::EggFat => self.solids.and_then(|s| s.egg).map(|e| e.fats),
-            FlatHeader::OtherFat => self.solids.and_then(|s| s.other).map(|o| o.fats),
-            FlatHeader::TotalFat => self.solids.map(|s| s.fats()),
-            FlatHeader::Lactose => self
-                .sweeteners
-                .and_then(|sw| sw.sugars)
-                .and_then(|s| s.lactose),
-            FlatHeader::Sugars => self.sweeteners.and_then(|sw| sw.sugars).map(|s| s.total()),
-            FlatHeader::ArtificialSweeteners => self.sweeteners.and_then(|sw| sw.artificial),
-            FlatHeader::MSNF => self.solids.and_then(|s| s.milk).map(|m| m.snf()),
-            FlatHeader::MilkSNFS => self.solids.and_then(|s| s.milk).map(|m| m.snfs),
-            FlatHeader::CocoaSNFS => self.solids.and_then(|s| s.cocoa).map(|c| c.snfs),
-            FlatHeader::NutSNFS => self.solids.and_then(|s| s.nut).map(|n| n.snfs),
-            FlatHeader::EggSNFS => self.solids.and_then(|s| s.egg).map(|e| e.snfs),
-            FlatHeader::OtherSNFS => self.solids.and_then(|s| s.other).map(|o| o.snfs),
-            FlatHeader::TotalSolids => self.solids.map(|s| s.total()),
-            FlatHeader::Salt => self.micro.and_then(|m| m.salt),
+            FlatHeader::MilkFat => self.solids.milk.fats,
+            FlatHeader::CacaoFat => self.solids.cocoa.fats,
+            FlatHeader::NutFat => self.solids.nut.fats,
+            FlatHeader::EggFat => self.solids.egg.fats,
+            FlatHeader::OtherFat => self.solids.other.fats,
+            FlatHeader::TotalFat => self.solids.fats(),
+            FlatHeader::Lactose => self.sweeteners.sugars.lactose,
+            FlatHeader::Sugars => self.sweeteners.sugars.total(),
+            FlatHeader::ArtificialSweeteners => self.sweeteners.artificial,
+            FlatHeader::MSNF => self.solids.milk.snf(),
+            FlatHeader::MilkSNFS => self.solids.milk.snfs,
+            FlatHeader::CocoaSNFS => self.solids.cocoa.snfs,
+            FlatHeader::NutSNFS => self.solids.nut.snfs,
+            FlatHeader::EggSNFS => self.solids.egg.snfs,
+            FlatHeader::OtherSNFS => self.solids.other.snfs,
+            FlatHeader::TotalSolids => self.solids.total(),
+            FlatHeader::Salt => self.micro.salt,
             FlatHeader::Alcohol => self.alcohol,
-            FlatHeader::Emulsifiers => self.micro.and_then(|m| m.emulsifiers),
-            FlatHeader::Stabilizers => self.micro.and_then(|m| m.stabilizers),
+            FlatHeader::Emulsifiers => self.micro.emulsifiers,
+            FlatHeader::Stabilizers => self.micro.stabilizers,
             FlatHeader::POD => self.pod,
-            FlatHeader::PACsgr => self.pac.and_then(|p| p.sugars),
-            FlatHeader::PACslt => self.pac.and_then(|p| p.salt),
-            FlatHeader::PACalc => self.pac.and_then(|p| p.alcohol),
-            FlatHeader::PACtotal => self.pac.map(|p| p.total()),
-            FlatHeader::HF => self.pac.and_then(|p| p.hardness_factor),
+            FlatHeader::PACsgr => self.pac.sugars,
+            FlatHeader::PACslt => self.pac.salt,
+            FlatHeader::PACalc => self.pac.alcohol,
+            FlatHeader::PACtotal => self.pac.total(),
+            FlatHeader::HF => self.pac.hardness_factor,
         }
     }
 }
@@ -128,6 +121,8 @@ pub mod js {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
+
     use crate::tests::asserts::shadow_asserts::assert_eq;
     #[allow(unused_imports)] // @todo Remove when used.
     use crate::tests::asserts::*;
@@ -139,15 +134,32 @@ mod tests {
     #[test]
     fn flat_headers_as_med_str() {
         let expected_vec = vec![
-            "Milk Fats",
-            "MSNF",
-            "Milk SNFS",
+            "Milk Fat",
+            "Cacao Fat",
+            "Nut Fat",
+            "Egg Fat",
+            "Other Fat",
+            "T. Fat",
             "Lactose",
             "Sugars",
             "Artificial",
+            "MSNF",
+            "Milk SNFS",
+            "Cocoa SNFS",
+            "Nut SNFS",
+            "Egg SNFS",
+            "Other SNFS",
             "T. Solids",
+            "Salt",
+            "Alcohol",
+            "Emulsifiers",
+            "Stabilizers",
             "POD",
+            "PAC sgr",
+            "PAC slt",
+            "PAC alc",
             "PAC",
+            "HF",
         ];
 
         let actual_vec: Vec<&'static str> = FlatHeader::iter().map(|h| h.as_med_str()).collect();
@@ -157,22 +169,27 @@ mod tests {
 
     #[test]
     fn composition_get_flat_header_value() {
-        let expected_vec = vec![
-            (FlatHeader::MilkFat, Some(2f64)),
-            (FlatHeader::MSNF, Some(8.82f64)),
-            (FlatHeader::MilkSNFS, Some(4.0131)),
-            (FlatHeader::Lactose, Some(4.8069f64)),
-            (FlatHeader::Sugars, Some(4.8069f64)),
-            (FlatHeader::ArtificialSweeteners, None),
-            (FlatHeader::TotalSolids, Some(10.82f64)),
-            (FlatHeader::POD, Some(0.769104f64)),
-            (FlatHeader::PACsgr, Some(4.8069f64)),
-        ];
+        let expected = HashMap::from([
+            (FlatHeader::MilkFat, 2f64),
+            (FlatHeader::TotalFat, 2f64),
+            (FlatHeader::MSNF, 8.82f64),
+            (FlatHeader::MilkSNFS, 4.0131),
+            (FlatHeader::Lactose, 4.8069f64),
+            (FlatHeader::Sugars, 4.8069f64),
+            (FlatHeader::ArtificialSweeteners, 0f64),
+            (FlatHeader::TotalSolids, 10.82f64),
+            (FlatHeader::POD, 0.769104f64),
+            (FlatHeader::PACsgr, 4.8069f64),
+            (FlatHeader::PACtotal, 4.8069f64),
+        ]);
 
-        let actual_vec: Vec<(FlatHeader, Option<f64>)> = FlatHeader::iter()
-            .map(|h| (h, COMP_MILK_2_PERCENT.get_flat_header_value(h)))
-            .collect();
-
-        assert_eq!(actual_vec, expected_vec);
+        FlatHeader::iter().for_each(|header| {
+            assert_eq!(
+                COMP_MILK_2_PERCENT.get_flat_header_value(header),
+                *expected.get(&header).unwrap_or(&0f64),
+                "Unexpected for FlatHeader::{:?}",
+                header
+            )
+        });
     }
 }

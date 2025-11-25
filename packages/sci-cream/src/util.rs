@@ -4,12 +4,27 @@ use approx::AbsDiffEq;
 use struct_iterable::Iterable;
 
 pub fn add_option<T: Add<Output = T>>(a: Option<T>, b: Option<T>) -> Option<T> {
-    return match (a, b) {
+    match (a, b) {
         (Some(x), Some(y)) => Some(x + y),
         (Some(x), None) => Some(x),
         (None, Some(y)) => Some(y),
         (None, None) => None,
-    };
+    }
+}
+
+pub fn iter_fields_as<'a, T: 'a + 'static, I: Iterable>(
+    iterable: &'a I,
+) -> impl Iterator<Item = &'a T> {
+    iterable.iter().map(|(field_name, field_val)| {
+        field_val.downcast_ref::<T>().unwrap_or_else(|| {
+            panic!(
+                "Field '{}' should be of type '{}', but is '{:?}",
+                field_name,
+                std::any::type_name::<T>(),
+                field_val.type_id()
+            )
+        })
+    })
 }
 
 pub fn abs_diff_eq_option<E: AbsDiffEq, T: AbsDiffEq<Epsilon = E>>(
@@ -33,12 +48,9 @@ pub fn iter_all_abs_diff_eq<
     rhs: &I,
     epsilon: E,
 ) -> bool {
-    lhs.iter().zip(rhs.iter()).all(|((_, a_val), (_, b_val))| {
-        a_val
-            .downcast_ref::<T>()
-            .unwrap()
-            .abs_diff_eq(b_val.downcast_ref::<T>().unwrap(), epsilon)
-    })
+    iter_fields_as::<T, _>(lhs)
+        .zip(iter_fields_as::<T, _>(rhs))
+        .all(|(lhs, rhs)| lhs.abs_diff_eq(rhs, epsilon))
 }
 
 pub fn iter_all_abs_diff_eq_option<
@@ -50,11 +62,7 @@ pub fn iter_all_abs_diff_eq_option<
     rhs: &I,
     epsilon: E,
 ) -> bool {
-    lhs.iter().zip(rhs.iter()).all(|((_, a_val), (_, b_val))| {
-        abs_diff_eq_option(
-            a_val.downcast_ref::<Option<T>>().unwrap(),
-            b_val.downcast_ref::<Option<T>>().unwrap(),
-            epsilon,
-        )
-    })
+    iter_fields_as::<Option<T>, _>(lhs)
+        .zip(iter_fields_as::<Option<T>, _>(rhs))
+        .all(|(lhs, rhs)| abs_diff_eq_option(lhs, rhs, epsilon))
 }

@@ -4,7 +4,7 @@ use struct_iterable::Iterable;
 
 use crate::{
     constants,
-    util::{abs_diff_eq_option, add_option, iter_all_abs_diff_eq, iter_all_abs_diff_eq_option},
+    util::{iter_all_abs_diff_eq, iter_fields_as},
 };
 
 #[cfg(feature = "wasm")]
@@ -13,21 +13,28 @@ use wasm_bindgen::prelude::*;
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Sugars {
-    pub glucose: Option<f64>,
-    pub fructose: Option<f64>,
-    pub galactose: Option<f64>,
-    pub sucrose: Option<f64>,
-    pub lactose: Option<f64>,
-    pub maltose: Option<f64>,
-    pub unspecified: Option<f64>,
+    #[serde(default)]
+    pub glucose: f64,
+    #[serde(default)]
+    pub fructose: f64,
+    #[serde(default)]
+    pub galactose: f64,
+    #[serde(default)]
+    pub sucrose: f64,
+    #[serde(default)]
+    pub lactose: f64,
+    #[serde(default)]
+    pub maltose: f64,
+    #[serde(default)]
+    pub unspecified: f64,
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Sweeteners {
-    pub sugars: Option<Sugars>,
-    pub polysaccharides: Option<f64>,
-    pub artificial: Option<f64>,
+    pub sugars: Sugars,
+    pub polysaccharides: f64,
+    pub artificial: f64,
 }
 
 /// Breakdown of Solid Components, per 100g of an ingredient
@@ -51,39 +58,39 @@ pub struct SolidsBreakdown {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Solids {
-    pub milk: Option<SolidsBreakdown>,
-    pub egg: Option<SolidsBreakdown>,
-    pub cocoa: Option<SolidsBreakdown>,
-    pub nut: Option<SolidsBreakdown>,
-    pub other: Option<SolidsBreakdown>,
+    pub milk: SolidsBreakdown,
+    pub egg: SolidsBreakdown,
+    pub cocoa: SolidsBreakdown,
+    pub nut: SolidsBreakdown,
+    pub other: SolidsBreakdown,
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Micro {
-    pub salt: Option<f64>,
-    pub emulsifiers: Option<f64>,
-    pub stabilizers: Option<f64>,
+    pub salt: f64,
+    pub emulsifiers: f64,
+    pub stabilizers: f64,
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct PAC {
-    pub sugars: Option<f64>,
-    pub salt: Option<f64>,
-    pub alcohol: Option<f64>,
-    pub hardness_factor: Option<f64>,
+    pub sugars: f64,
+    pub salt: f64,
+    pub alcohol: f64,
+    pub hardness_factor: f64,
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Composition {
-    pub solids: Option<Solids>,
-    pub sweeteners: Option<Sweeteners>,
-    pub micro: Option<Micro>,
-    pub alcohol: Option<f64>,
-    pub pod: Option<f64>,
-    pub pac: Option<PAC>,
+    pub solids: Solids,
+    pub sweeteners: Sweeteners,
+    pub micro: Micro,
+    pub alcohol: f64,
+    pub pod: f64,
+    pub pac: PAC,
 }
 
 impl Sugars {
@@ -93,76 +100,58 @@ impl Sugars {
 
     pub fn empty() -> Self {
         Self {
-            glucose: None,
-            fructose: None,
-            galactose: None,
-            sucrose: None,
-            lactose: None,
-            maltose: None,
-            unspecified: None,
+            glucose: 0f64,
+            fructose: 0f64,
+            galactose: 0f64,
+            sucrose: 0f64,
+            lactose: 0f64,
+            maltose: 0f64,
+            unspecified: 0f64,
         }
     }
 
     pub fn glucose(self, glucose: f64) -> Self {
-        Self {
-            glucose: Some(glucose),
-            ..self
-        }
+        Self { glucose, ..self }
     }
 
     pub fn fructose(self, fructose: f64) -> Self {
-        Self {
-            fructose: Some(fructose),
-            ..self
-        }
+        Self { fructose, ..self }
     }
 
     pub fn galactose(self, galactose: f64) -> Self {
-        Self {
-            galactose: Some(galactose),
-            ..self
-        }
+        Self { galactose, ..self }
     }
 
     pub fn sucrose(self, sucrose: f64) -> Self {
-        Self {
-            sucrose: Some(sucrose),
-            ..self
-        }
+        Self { sucrose, ..self }
     }
 
     pub fn lactose(self, lactose: f64) -> Self {
-        Self {
-            lactose: Some(lactose),
-            ..self
-        }
+        Self { lactose, ..self }
     }
 
     pub fn maltose(self, maltose: f64) -> Self {
-        Self {
-            maltose: Some(maltose),
-            ..self
-        }
+        Self { maltose, ..self }
     }
 
     pub fn unspecified(self, unspecified: f64) -> Self {
         Self {
-            unspecified: Some(unspecified),
+            unspecified,
             ..self
         }
     }
 
     pub fn to_pod(&self) -> f64 {
         // @todo Not allowed, need to return Result<f64, Error>
-        assert!(self.unspecified.is_none());
+        assert!(self.unspecified == 0f64);
 
         [
-            self.glucose.unwrap_or(0f64) * constants::GLUCOSE_POD as f64,
-            self.fructose.unwrap_or(0f64) * constants::FRUCTOSE_POD as f64,
-            self.galactose.unwrap_or(0f64) * 0f64,
-            self.sucrose.unwrap_or(0f64) * constants::SUCROSE_POD as f64,
-            self.lactose.unwrap_or(0f64) * constants::LACTOSE_POD as f64,
-            self.maltose.unwrap_or(0f64) * 0f64,
+            self.glucose * constants::GLUCOSE_POD as f64,
+            self.fructose * constants::FRUCTOSE_POD as f64,
+            self.galactose * constants::GALACTOSE_POD as f64,
+            self.sucrose * constants::SUCROSE_POD as f64,
+            self.lactose * constants::LACTOSE_POD as f64,
+            self.maltose * constants::MALTOSE_POD as f64,
         ]
         .into_iter()
         .sum::<f64>()
@@ -171,15 +160,15 @@ impl Sugars {
 
     pub fn to_pac(&self) -> f64 {
         // @todo Not allowed, need to return Result<f64, Error>
-        assert!(self.unspecified.is_none());
+        assert!(self.unspecified == 0f64);
 
         [
-            self.glucose.unwrap_or(0f64) * constants::GLUCOSE_PAC as f64,
-            self.fructose.unwrap_or(0f64) * constants::FRUCTOSE_PAC as f64,
-            self.galactose.unwrap_or(0f64) * 0f64,
-            self.sucrose.unwrap_or(0f64) * constants::SUCROSE_PAC as f64,
-            self.lactose.unwrap_or(0f64) * constants::LACTOSE_PAC as f64,
-            self.maltose.unwrap_or(0f64) * 0f64,
+            self.glucose * constants::GLUCOSE_PAC as f64,
+            self.fructose * constants::FRUCTOSE_PAC as f64,
+            self.galactose * constants::GALACTOSE_PAC as f64,
+            self.sucrose * constants::SUCROSE_PAC as f64,
+            self.lactose * constants::LACTOSE_PAC as f64,
+            self.maltose * constants::MALTOSE_PAC as f64,
         ]
         .into_iter()
         .sum::<f64>()
@@ -200,10 +189,7 @@ impl Sugars {
             self.unspecified,
         ]
         .into_iter()
-        .reduce(|acc, x| add_option(acc, x))
-        .unwrap_or_else(|| unreachable!())
-        // @todo Consider returning a Result<f64, Error> instead, as users may set these manually
-        .unwrap_or_else(|| unreachable!("At least one of the elements must be Some(_)"))
+        .sum()
     }
 }
 
@@ -214,47 +200,41 @@ impl Sweeteners {
 
     pub fn empty() -> Self {
         Self {
-            sugars: None,
-            polysaccharides: None,
-            artificial: None,
+            sugars: Sugars::empty(),
+            polysaccharides: 0f64,
+            artificial: 0f64,
         }
     }
 
     pub fn sugars(self, sugars: Sugars) -> Self {
-        Self {
-            sugars: Some(sugars),
-            ..self
-        }
+        Self { sugars, ..self }
     }
 
-    pub fn polysaccharide(self, polysaccharide: f64) -> Self {
+    pub fn polysaccharide(self, polysaccharides: f64) -> Self {
         Self {
-            polysaccharides: Some(polysaccharide),
+            polysaccharides,
             ..self
         }
     }
 
     pub fn artificial(self, artificial: f64) -> Self {
-        Self {
-            artificial: Some(artificial),
-            ..self
-        }
+        Self { artificial, ..self }
     }
 
     pub fn to_pod(&self) -> f64 {
         // @todo Not allowed, need to return Result<f64, Error>
-        assert!(self.polysaccharides.is_none());
-        assert!(self.artificial.is_none());
+        assert!(self.polysaccharides == 0f64);
+        assert!(self.artificial == 0f64);
 
-        self.sugars.unwrap().to_pod()
+        self.sugars.to_pod()
     }
 
     pub fn to_pac(&self) -> f64 {
         // @todo Not allowed, need to return Result<f64, Error>
-        assert!(self.polysaccharides.is_none());
-        assert!(self.artificial.is_none());
+        assert!(self.polysaccharides == 0f64);
+        assert!(self.artificial == 0f64);
 
-        self.sugars.unwrap().to_pac()
+        self.sugars.to_pac()
     }
 }
 
@@ -272,18 +252,15 @@ impl SolidsBreakdown {
     }
 
     pub fn fats(self, fats: f64) -> Self {
-        Self { fats: fats, ..self }
+        Self { fats, ..self }
     }
 
     pub fn sweeteners(self, sweeteners: f64) -> Self {
-        Self {
-            sweeteners: sweeteners,
-            ..self
-        }
+        Self { sweeteners, ..self }
     }
 
     pub fn snfs(self, snfs: f64) -> Self {
-        Self { snfs: snfs, ..self }
+        Self { snfs, ..self }
     }
 }
 
@@ -309,89 +286,87 @@ impl Solids {
 
     pub fn empty() -> Self {
         Self {
-            milk: None,
-            egg: None,
-            cocoa: None,
-            nut: None,
-            other: None,
+            milk: SolidsBreakdown::empty(),
+            egg: SolidsBreakdown::empty(),
+            cocoa: SolidsBreakdown::empty(),
+            nut: SolidsBreakdown::empty(),
+            other: SolidsBreakdown::empty(),
         }
     }
 
     pub fn milk(self, milk: SolidsBreakdown) -> Self {
-        Self {
-            milk: Some(milk),
-            ..self
-        }
+        Self { milk, ..self }
     }
 
     pub fn egg(self, egg: SolidsBreakdown) -> Self {
-        Self {
-            egg: Some(egg),
-            ..self
-        }
+        Self { egg, ..self }
     }
 
     pub fn cocoa(self, cocoa: SolidsBreakdown) -> Self {
-        Self {
-            cocoa: Some(cocoa),
-            ..self
-        }
+        Self { cocoa, ..self }
     }
 
     pub fn nut(self, nut: SolidsBreakdown) -> Self {
-        Self {
-            nut: Some(nut),
-            ..self
-        }
+        Self { nut, ..self }
     }
 
     pub fn other(self, other: SolidsBreakdown) -> Self {
-        Self {
-            other: Some(other),
-            ..self
-        }
+        Self { other, ..self }
     }
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Solids {
+    fn iter_fields_as_solids_breakdown(&self) -> impl Iterator<Item = &SolidsBreakdown> {
+        iter_fields_as::<SolidsBreakdown, _>(self)
+    }
+
     pub fn total(&self) -> f64 {
-        self.iter()
-            .filter_map(|(_, comp)| comp.downcast_ref::<Option<SolidsBreakdown>>())
-            .map(|breakdown| breakdown.map_or(0f64, |b| b.total()))
+        self.iter_fields_as_solids_breakdown()
+            .map(|b| b.total())
             .sum::<f64>()
     }
 
     pub fn fats(&self) -> f64 {
-        self.iter()
-            .filter_map(|(_, comp)| comp.downcast_ref::<Option<SolidsBreakdown>>())
-            .map(|breakdown| breakdown.map_or(0f64, |b| b.fats))
+        self.iter_fields_as_solids_breakdown()
+            .map(|b| b.fats)
             .sum::<f64>()
     }
 
     pub fn snf(&self) -> f64 {
-        self.iter()
-            .filter_map(|(_, comp)| comp.downcast_ref::<Option<SolidsBreakdown>>())
-            .map(|breakdown| breakdown.map_or(0f64, |b| b.snf()))
+        self.iter_fields_as_solids_breakdown()
+            .map(|b| b.snf())
             .sum::<f64>()
     }
 
     pub fn sweeteners(&self) -> f64 {
-        self.iter()
-            .filter_map(|(_, comp)| comp.downcast_ref::<Option<SolidsBreakdown>>())
-            .map(|breakdown| breakdown.map_or(0f64, |b| b.sweeteners))
+        self.iter_fields_as_solids_breakdown()
+            .map(|b| b.sweeteners)
             .sum::<f64>()
     }
 
     pub fn snfs(&self) -> f64 {
-        self.iter()
-            .filter_map(|(_, comp)| comp.downcast_ref::<Option<SolidsBreakdown>>())
-            .map(|breakdown| breakdown.map_or(0f64, |b| b.snfs))
+        self.iter_fields_as_solids_breakdown()
+            .map(|b| b.snfs)
             .sum::<f64>()
     }
 
     pub fn water(&self) -> f64 {
         100f64 - self.total()
+    }
+}
+
+impl Micro {
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
+    pub fn empty() -> Self {
+        Self {
+            salt: 0f64,
+            emulsifiers: 0f64,
+            stabilizers: 0f64,
+        }
     }
 }
 
@@ -402,37 +377,28 @@ impl PAC {
 
     pub fn empty() -> Self {
         Self {
-            sugars: None,
-            salt: None,
-            alcohol: None,
-            hardness_factor: None,
+            sugars: 0f64,
+            salt: 0f64,
+            alcohol: 0f64,
+            hardness_factor: 0f64,
         }
     }
 
     pub fn sugars(self, sugars: f64) -> Self {
-        Self {
-            sugars: Some(sugars),
-            ..self
-        }
+        Self { sugars, ..self }
     }
 
     pub fn salt(self, salt: f64) -> Self {
-        Self {
-            salt: Some(salt),
-            ..self
-        }
+        Self { salt, ..self }
     }
 
     pub fn alcohol(self, alcohol: f64) -> Self {
-        Self {
-            alcohol: Some(alcohol),
-            ..self
-        }
+        Self { alcohol, ..self }
     }
 
     pub fn hardness_factor(self, hardness_factor: f64) -> Self {
         Self {
-            hardness_factor: Some(hardness_factor),
+            hardness_factor,
             ..self
         }
     }
@@ -441,10 +407,7 @@ impl PAC {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl PAC {
     pub fn total(&self) -> f64 {
-        self.iter()
-            .filter_map(|(_, comp)| comp.downcast_ref::<Option<f64>>())
-            .map(|value| value.unwrap_or(0f64))
-            .sum::<f64>()
+        iter_fields_as::<f64, _>(self).sum()
     }
 }
 
@@ -455,55 +418,37 @@ impl Composition {
 
     pub fn empty() -> Self {
         Self {
-            solids: None,
-            sweeteners: None,
-            micro: None,
-            alcohol: None,
-            pod: None,
-            pac: None,
+            solids: Solids::empty(),
+            sweeteners: Sweeteners::empty(),
+            micro: Micro::empty(),
+            alcohol: 0f64,
+            pod: 0f64,
+            pac: PAC::empty(),
         }
     }
 
     pub fn solids(self, solids: Solids) -> Self {
-        Self {
-            solids: Some(solids),
-            ..self
-        }
+        Self { solids, ..self }
     }
 
     pub fn sweeteners(self, sweeteners: Sweeteners) -> Self {
-        Self {
-            sweeteners: Some(sweeteners),
-            ..self
-        }
+        Self { sweeteners, ..self }
     }
 
     pub fn micro(self, micro: Micro) -> Self {
-        Self {
-            micro: Some(micro),
-            ..self
-        }
+        Self { micro, ..self }
     }
 
     pub fn alcohol(self, alcohol: f64) -> Self {
-        Self {
-            alcohol: Some(alcohol),
-            ..self
-        }
+        Self { alcohol, ..self }
     }
 
     pub fn pod(self, pod: f64) -> Self {
-        Self {
-            pod: Some(pod),
-            ..self
-        }
+        Self { pod, ..self }
     }
 
     pub fn pac(self, pac: PAC) -> Self {
-        Self {
-            pac: Some(pac),
-            ..self
-        }
+        Self { pac, ..self }
     }
 }
 
@@ -515,7 +460,7 @@ impl AbsDiffEq for Sugars {
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        iter_all_abs_diff_eq_option::<f64, f64, Self>(self, other, epsilon)
+        iter_all_abs_diff_eq::<f64, f64, Self>(self, other, epsilon)
     }
 }
 
@@ -527,9 +472,11 @@ impl AbsDiffEq for Sweeteners {
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        abs_diff_eq_option(&self.sugars, &other.sugars, epsilon)
-            && abs_diff_eq_option(&self.polysaccharides, &other.polysaccharides, epsilon)
-            && abs_diff_eq_option(&self.artificial, &other.artificial, epsilon)
+        self.sugars.abs_diff_eq(&other.sugars, epsilon)
+            && self
+                .polysaccharides
+                .abs_diff_eq(&other.polysaccharides, epsilon)
+            && self.artificial.abs_diff_eq(&other.artificial, epsilon)
     }
 }
 
@@ -553,7 +500,7 @@ impl AbsDiffEq for Solids {
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        iter_all_abs_diff_eq_option::<f64, SolidsBreakdown, Self>(self, other, epsilon)
+        iter_all_abs_diff_eq::<f64, SolidsBreakdown, Self>(self, other, epsilon)
     }
 }
 
@@ -565,7 +512,7 @@ impl AbsDiffEq for Micro {
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        iter_all_abs_diff_eq_option::<f64, f64, Self>(self, other, epsilon)
+        iter_all_abs_diff_eq::<f64, f64, Self>(self, other, epsilon)
     }
 }
 
@@ -577,7 +524,7 @@ impl AbsDiffEq for PAC {
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        iter_all_abs_diff_eq_option::<f64, f64, Self>(self, other, epsilon)
+        iter_all_abs_diff_eq::<f64, f64, Self>(self, other, epsilon)
     }
 }
 
@@ -589,12 +536,12 @@ impl AbsDiffEq for Composition {
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        abs_diff_eq_option(&self.solids, &other.solids, epsilon)
-            && abs_diff_eq_option(&self.sweeteners, &other.sweeteners, epsilon)
-            && abs_diff_eq_option(&self.micro, &other.micro, epsilon)
-            && abs_diff_eq_option(&self.alcohol, &other.alcohol, epsilon)
-            && abs_diff_eq_option(&self.pod, &other.pod, epsilon)
-            && abs_diff_eq_option(&self.pac, &other.pac, epsilon)
+        self.solids.abs_diff_eq(&other.solids, epsilon)
+            && self.sweeteners.abs_diff_eq(&other.sweeteners, epsilon)
+            && self.micro.abs_diff_eq(&other.micro, epsilon)
+            && self.alcohol.abs_diff_eq(&other.alcohol, epsilon)
+            && self.pod.abs_diff_eq(&other.pod, epsilon)
+            && self.pac.abs_diff_eq(&other.pac, epsilon)
     }
 }
 
@@ -608,8 +555,8 @@ mod tests {
 
     #[test]
     fn pac_total() {
-        let pac = COMP_MILK_2_PERCENT.pac.unwrap();
-        assert_eq!(pac.sugars.unwrap(), 4.8069f64);
+        let pac = COMP_MILK_2_PERCENT.pac;
+        assert_eq!(pac.sugars, 4.8069f64);
         assert_eq!(pac.total(), 4.8069f64);
     }
 }
