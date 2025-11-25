@@ -34,7 +34,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
     if (ingredient && ingredient.composition) {
       const comp = ingredient.composition.get_flat_header_value(header);
 
-      if (comp !== undefined) {
+      if (comp !== 0.0) {
         switch (qtyToggle) {
           case QtyToggle.Composition:
             return Number(comp.toFixed(1));
