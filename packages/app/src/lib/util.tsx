@@ -14,3 +14,7 @@ export function getTsEnumNumberKeys<E extends object>(enumObj: E): (keyof E)[] {
 export function getTsEnumStringKeys<E extends object>(enumObj: E): (keyof E)[] {
   return getTsEnumStrings(enumObj).map((str) => str as unknown as keyof E);
 }
+
+export function getWasmEnums<E extends object>(enumObj: E): E[] {
+  return getTsEnumNumbers(enumObj).map((num) => num as unknown as E);
+}

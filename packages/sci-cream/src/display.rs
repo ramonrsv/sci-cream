@@ -111,11 +111,8 @@ pub mod js {
     use super::*;
 
     #[wasm_bindgen]
-    pub fn flat_header_as_med_str_js(header: JsValue) -> String {
-        serde_wasm_bindgen::from_value::<FlatHeader>(header)
-            .unwrap()
-            .as_med_str()
-            .to_string()
+    pub fn flat_header_as_med_str_js(header: FlatHeader) -> String {
+        header.as_med_str().to_string()
     }
 }
 
