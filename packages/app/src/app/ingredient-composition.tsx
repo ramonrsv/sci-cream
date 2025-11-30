@@ -15,8 +15,16 @@ enum QtyToggle {
   Percentage = "Quantity (%)",
 }
 
+enum ColumnFilter {
+  Auto = "Auto",
+  All = "All",
+  Custom = "Custom",
+}
+
 export function IngredientCompositionGrid({ recipeState }: { recipeState: RecipeState }) {
   const [qtyToggle, setQtyToggle] = useState<QtyToggle>(QtyToggle.Quantity);
+  const [columnFilter, setColumnFilter] = useState<ColumnFilter>(ColumnFilter.Auto);
+  const [columnSelectVisible, setColumnSelectVisible] = useState<boolean>(false);
 
   const getMixTotal = () => recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);
 
@@ -49,7 +57,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
   };
 
   return (
-    <div className="w-full min-w-[200px]">
+    <div className="relative w-full min-w-[200px]">
       <select
         className="border-gray-400 border text-gray-900 text-sm"
         value={qtyToggle}
@@ -59,6 +67,33 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
         <option value={QtyToggle.Quantity}>{QtyToggle.Quantity}</option>
         <option value={QtyToggle.Percentage}>{QtyToggle.Percentage}</option>
       </select>
+      <select
+        className="ml-2 border-gray-400 border text-gray-900 text-sm"
+        value={columnFilter}
+        onChange={(e) => {
+          setColumnFilter(e.target.value as ColumnFilter);
+          if (e.target.value === ColumnFilter.Custom) {
+            setColumnSelectVisible(true);
+          }
+        }}
+      >
+        <option value={ColumnFilter.Auto}>{ColumnFilter.Auto}</option>
+        <option value={ColumnFilter.All}>{ColumnFilter.All}</option>
+        <option value={ColumnFilter.Custom}>{ColumnFilter.Custom}</option>
+      </select>
+      {columnSelectVisible && (
+        <div className="popup top-0 left-47 w-fit pl-1 pr-2">
+          <button onClick={() => setColumnSelectVisible(false)}>Done</button>
+          <ul>
+            {getTsEnumStringKeys(FlatHeader).map((header) => (
+              <li key={header}>
+                <input type="checkbox" />
+                {" " + flat_header_as_med_str_js(header)}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <div className="border-gray-400 border-2 overflow-x-auto whitespace-nowrap">
         <table className="border-collapse">
           {/* Header */}
