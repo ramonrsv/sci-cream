@@ -22,14 +22,58 @@ enum ColumnFilter {
   Custom = "Custom",
 }
 
+const defaultSelectedColumns: FlatHeader[] = [
+  FlatHeader.MilkFat,
+  FlatHeader.TotalFat,
+  FlatHeader.MSNF,
+  FlatHeader.Sugars,
+  FlatHeader.TotalSolids,
+];
+
 export function IngredientCompositionGrid({ recipeState }: { recipeState: RecipeState }) {
   const [qtyToggle, setQtyToggle] = useState<QtyToggle>(QtyToggle.Quantity);
   const [columnFilter, setColumnFilter] = useState<ColumnFilter>(ColumnFilter.Auto);
   const [columnSelectVisible, setColumnSelectVisible] = useState<boolean>(false);
+  const [selectedColumns, setSelectedColumns] = useState<Set<FlatHeader>>(
+    new Set(defaultSelectedColumns)
+  );
 
   const getMixTotal = () => recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);
 
-  const enabledHeaders = () => getFlatHeaders();
+  const isCompColumnEmpty = (header: FlatHeader) => {
+    return recipeState.every(([row, _]) => {
+      return (
+        row.ingredient === undefined ||
+        row.ingredient.composition?.get_flat_header_value(header) === 0.0
+      );
+    });
+  };
+
+  const isCompColumnSelected = (header: FlatHeader) => {
+    return selectedColumns.has(header);
+  };
+
+  const updateSelectedColumn = (header: FlatHeader) => {
+    const newSet = new Set(selectedColumns);
+    if (newSet.has(header)) {
+      newSet.delete(header);
+    } else {
+      newSet.add(header);
+    }
+    setSelectedColumns(newSet);
+  };
+
+  const enabledHeaders = () => {
+    switch (columnFilter) {
+      case ColumnFilter.All:
+        return getFlatHeaders();
+      case ColumnFilter.Auto:
+        return getFlatHeaders().filter((header) => !isCompColumnEmpty(header));
+      case ColumnFilter.Custom:
+        return getFlatHeaders().filter((header) => isCompColumnSelected(header));
+    }
+  };
+
   const enabledHeadersIndexed = () => Array.from(enabledHeaders().entries());
 
   const formattedCompCell = (index: number, header: FlatHeader) => {
@@ -80,12 +124,16 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
         <option value={ColumnFilter.Custom}>{ColumnFilter.Custom}</option>
       </select>
       {columnSelectVisible && (
-        <div className="popup top-0 left-47 w-fit pl-1 pr-2">
+        <div className="popup top-0 left-47 w-fit pl-1 pr-2 whitespace-nowrap">
           <button onClick={() => setColumnSelectVisible(false)}>Done</button>
           <ul>
             {getFlatHeaders().map((header) => (
               <li key={header}>
-                <input type="checkbox" />
+                <input
+                  type="checkbox"
+                  checked={isCompColumnSelected(header)}
+                  onChange={() => updateSelectedColumn(header)}
+                />
                 {" " + flat_header_as_med_str_js(header)}
               </li>
             ))}
