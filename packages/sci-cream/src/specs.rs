@@ -9,6 +9,10 @@ use crate::{
     ingredients::{Category, Ingredient},
 };
 
+pub trait IntoComposition {
+    fn into_composition(self) -> Composition;
+}
+
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct DairySpec {
     pub fat: f64,
@@ -35,11 +39,11 @@ pub struct IngredientSpec {
     pub spec: Spec,
 }
 
-impl Spec {
-    pub fn into_composition(self) -> Composition {
+impl IntoComposition for Spec {
+    fn into_composition(self) -> Composition {
         match self {
-            Spec::DairySpec(spec) => expand_dairy_spec(spec),
-            Spec::SugarsSpec(spec) => expand_sugars_spec(spec),
+            Spec::DairySpec(spec) => spec.into_composition(),
+            Spec::SugarsSpec(spec) => spec.into_composition(),
         }
     }
 }
@@ -54,52 +58,56 @@ impl IngredientSpec {
     }
 }
 
-pub fn expand_dairy_spec(spec: DairySpec) -> Composition {
-    let DairySpec { fat, msnf } = spec;
+impl IntoComposition for DairySpec {
+    fn into_composition(self) -> Composition {
+        let Self { fat, msnf } = self;
 
-    let calculated_msnf = (100f64 - fat) * constants::STD_MSNF_IN_MILK_SERUM;
-    let msnf = msnf.unwrap_or(calculated_msnf);
-    let lactose = msnf * constants::STD_LACTOSE_IN_MSNF;
-    let snfs = msnf - lactose;
+        let calculated_msnf = (100f64 - fat) * constants::STD_MSNF_IN_MILK_SERUM;
+        let msnf = msnf.unwrap_or(calculated_msnf);
+        let lactose = msnf * constants::STD_LACTOSE_IN_MSNF;
+        let snfs = msnf - lactose;
 
-    let sweeteners = Sweeteners::new().sugars(Sugars::new().lactose(lactose));
-    let pod = sweeteners.to_pod();
-    let pad = PAC::new().sugars(sweeteners.to_pac());
+        let sweeteners = Sweeteners::new().sugars(Sugars::new().lactose(lactose));
+        let pod = sweeteners.to_pod();
+        let pad = PAC::new().sugars(sweeteners.to_pac());
 
-    Composition::new()
-        .solids(
-            Solids::new().milk(
-                SolidsBreakdown::new()
-                    .fats(fat)
-                    .sweeteners(lactose)
-                    .snfs(snfs),
-            ),
-        )
-        .sweeteners(sweeteners)
-        .pod(pod)
-        .pac(pad)
+        Composition::new()
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(fat)
+                        .sweeteners(lactose)
+                        .snfs(snfs),
+                ),
+            )
+            .sweeteners(sweeteners)
+            .pod(pod)
+            .pac(pad)
+    }
 }
 
-pub fn expand_sugars_spec(spec: SugarsSpec) -> Composition {
-    let SugarsSpec { mut sugars, solids } = spec;
+impl IntoComposition for SugarsSpec {
+    fn into_composition(self) -> Composition {
+        let Self { mut sugars, solids } = self;
 
-    [
-        &mut sugars.glucose,
-        &mut sugars.fructose,
-        &mut sugars.galactose,
-        &mut sugars.sucrose,
-        &mut sugars.lactose,
-        &mut sugars.maltose,
-        &mut sugars.unspecified,
-    ]
-    .iter_mut()
-    .for_each(|sugar| **sugar *= solids / 100f64);
+        [
+            &mut sugars.glucose,
+            &mut sugars.fructose,
+            &mut sugars.galactose,
+            &mut sugars.sucrose,
+            &mut sugars.lactose,
+            &mut sugars.maltose,
+            &mut sugars.unspecified,
+        ]
+        .iter_mut()
+        .for_each(|sugar| **sugar *= solids / 100f64);
 
-    Composition::new()
-        .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(sugars.total())))
-        .sweeteners(Sweeteners::new().sugars(sugars))
-        .pod(sugars.to_pod())
-        .pac(PAC::new().sugars(sugars.to_pac()))
+        Composition::new()
+            .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(sugars.total())))
+            .sweeteners(Sweeteners::new().sugars(sugars))
+            .pod(sugars.to_pod())
+            .pac(PAC::new().sugars(sugars.to_pac()))
+    }
 }
 
 #[cfg(feature = "wasm")]
@@ -126,7 +134,7 @@ mod test {
     use crate::tests::{assets::*, util::TESTS_EPSILON};
 
     #[test]
-    fn expand_dairy_spec() {
+    fn into_composition_dairy_spec() {
         let Composition {
             solids,
             sweeteners,
@@ -161,14 +169,14 @@ mod test {
         assert_eq!(pac.total(), 4.8069f64);
 
         assert_abs_diff_eq!(
-            super::expand_dairy_spec(*SPEC_DAIRY_2_PERCENT),
+            SPEC_DAIRY_2_PERCENT.into_composition(),
             *COMP_MILK_2_PERCENT,
             epsilon = TESTS_EPSILON
         );
     }
 
     #[test]
-    fn expand_auto_sweetener_spec_sucrose() {
+    fn into_composition_sugars_spec_sucrose() {
         let Composition {
             solids, sweeteners, ..
         } = COMP_SUCROSE.clone();
@@ -193,14 +201,14 @@ mod test {
         assert_eq!(pac.total(), 100f64);
 
         assert_abs_diff_eq!(
-            super::expand_sugars_spec(*SPEC_SUGARS_DEXTROSE),
+            SPEC_SUGARS_DEXTROSE.into_composition(),
             *COMP_DEXTROSE,
             epsilon = TESTS_EPSILON
         );
     }
 
     #[test]
-    fn expand_auto_sweetener_spec_dextrose() {
+    fn into_composition_sugars_spec_dextrose() {
         let Composition {
             solids, sweeteners, ..
         } = COMP_DEXTROSE.clone();
@@ -225,14 +233,14 @@ mod test {
         assert_eq!(pac.total(), 190f64);
 
         assert_abs_diff_eq!(
-            super::expand_sugars_spec(*SPEC_SUGARS_DEXTROSE),
+            SPEC_SUGARS_DEXTROSE.into_composition(),
             *COMP_DEXTROSE,
             epsilon = TESTS_EPSILON
         );
     }
 
     #[test]
-    fn expand_auto_sweetener_spec_dextrose_50_percent() {
+    fn into_composition_sugars_spec_dextrose_50_percent() {
         let Composition {
             solids, sweeteners, ..
         } = COMP_DEXTROSE_50_PERCENT.clone();
@@ -257,7 +265,7 @@ mod test {
         assert_eq!(pac.total(), 95f64);
 
         assert_abs_diff_eq!(
-            super::expand_sugars_spec(*SPEC_SUGARS_DEXTROSE_50_PERCENT),
+            SPEC_SUGARS_DEXTROSE_50_PERCENT.into_composition(),
             *COMP_DEXTROSE_50_PERCENT,
             epsilon = TESTS_EPSILON
         );
