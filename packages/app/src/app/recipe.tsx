@@ -34,55 +34,60 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
   const getMixTotal = () => recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);
 
   return (
-    <table className="mt-6 border-collapse border-gray-400 border-2">
-      {/* Header */}
-      <thead>
-        <tr className="table-header h-[25px] text-center">
-          <th className="border-gray-400 border-r w-[325px] min-w-[250px]">Ingredient</th>
-          <th className="border-gray-400 border-r w-[60px] min-w-[60px]">Qty (g)</th>
-          <th className="w-[55px] min-w-[55px]">Qty (%)</th>
-        </tr>
-        {/* Total Row */}
-        <tr className="table-header h-[25px]">
-          <td className="px-1 border-gray-400 border-r text-center">Total</td>
-          <td className="px-3.75 border-gray-400 border-r text-right">
-            {getMixTotal().toFixed(0)}
-          </td>
-          <td className="px-1 text-right">{getMixTotal() > 0 ? "100.0" : ""}</td>
-        </tr>
-      </thead>
-      <tbody>
-        {/* Ingredient Rows */}
-        {/* @todo The ingredient/input rows are not respecting < h-6/[25px]; not sure why yet */}
-        {recipeState.map(([row, _], index) => (
-          <tr key={index} className="table-inner-cell h-[25px] hover:bg-blue-50 transition-colors">
-            <td className="border-gray-300 border-r">
-              <input
-                type="text"
-                value={row.name}
-                onChange={(e) => updateIngredientRowName(index, e.target.value)}
-                className="table-fillable-input px-2"
-                placeholder=""
-              />
-            </td>
-            <td className="border-gray-300 border-r">
-              <input
-                type="number"
-                value={row.quantity?.toString() || ""}
-                onChange={(e) => updateIngredientRowQuantity(index, e.target.value)}
-                placeholder=""
-                step={1}
-                className="table-fillable-input text-right"
-              />
-            </td>
-            <td className="px-1 text-gray-900 text-sm text-right ">
-              {recipeState[index][STATE_VAL].quantity && getMixTotal() > 0
-                ? ((recipeState[index][STATE_VAL].quantity / getMixTotal()) * 100).toFixed(1)
-                : ""}
-            </td>
+    <div>
+      <table className="mt-6 border-collapse border-gray-400 border-2">
+        {/* Header */}
+        <thead>
+          <tr className="table-header h-[25px] text-center">
+            <th className="border-gray-400 border-r w-[325px] min-w-[250px]">Ingredient</th>
+            <th className="border-gray-400 border-r w-[60px] min-w-[60px]">Qty (g)</th>
+            <th className="w-[55px] min-w-[55px]">Qty (%)</th>
           </tr>
-        ))}
-      </tbody>
-    </table>
+          {/* Total Row */}
+          <tr className="table-header h-[25px]">
+            <td className="px-1 border-gray-400 border-r text-center">Total</td>
+            <td className="px-3.75 border-gray-400 border-r text-right">
+              {getMixTotal().toFixed(0)}
+            </td>
+            <td className="px-1 text-right">{getMixTotal() > 0 ? "100.0" : ""}</td>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Ingredient Rows */}
+          {/* @todo The ingredient/input rows are not respecting < h-6/[25px]; not sure why yet */}
+          {recipeState.map(([row, _], index) => (
+            <tr
+              key={index}
+              className="table-inner-cell h-[25px] hover:bg-blue-50 transition-colors"
+            >
+              <td className="border-gray-300 border-r">
+                <input
+                  type="text"
+                  value={row.name}
+                  onChange={(e) => updateIngredientRowName(index, e.target.value)}
+                  className="table-fillable-input px-2"
+                  placeholder=""
+                />
+              </td>
+              <td className="border-gray-300 border-r">
+                <input
+                  type="number"
+                  value={row.quantity?.toString() || ""}
+                  onChange={(e) => updateIngredientRowQuantity(index, e.target.value)}
+                  placeholder=""
+                  step={1}
+                  className="table-fillable-input text-right"
+                />
+              </td>
+              <td className="px-1 text-gray-900 text-sm text-right ">
+                {recipeState[index][STATE_VAL].quantity && getMixTotal() > 0
+                  ? ((recipeState[index][STATE_VAL].quantity / getMixTotal()) * 100).toFixed(1)
+                  : ""}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
