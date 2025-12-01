@@ -19,7 +19,13 @@ export function makeEmptyIngredientRow(): IngredientRow {
   return { name: "", quantity: undefined, ingredient: undefined };
 }
 
-export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
+export function RecipeGrid({
+  recipeState,
+  validIngredients,
+}: {
+  recipeState: RecipeState;
+  validIngredients: string[];
+}) {
   const updateIngredientRowName = (index: number, name: string) => {
     const [row, setRow] = recipeState[index];
     setRow({ ...row, name: name });
@@ -35,6 +41,11 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
 
   return (
     <div>
+      <datalist id="valid-ingredients">
+        {validIngredients.map((name) => (
+          <option key={name} value={name} />
+        ))}
+      </datalist>
       <table className="mt-6 border-collapse border-gray-400 border-2">
         {/* Header */}
         <thead>
@@ -62,11 +73,12 @@ export function RecipeGrid({ recipeState }: { recipeState: RecipeState }) {
             >
               <td className="border-gray-300 border-r">
                 <input
-                  type="text"
+                  type="search"
                   value={row.name}
                   onChange={(e) => updateIngredientRowName(index, e.target.value)}
                   className="table-fillable-input px-2"
                   placeholder=""
+                  list="valid-ingredients"
                 />
               </td>
               <td className="border-gray-300 border-r">
