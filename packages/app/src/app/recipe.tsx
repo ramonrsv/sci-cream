@@ -76,7 +76,11 @@ export function RecipeGrid({
                   type="search"
                   value={row.name}
                   onChange={(e) => updateIngredientRowName(index, e.target.value)}
-                  className="table-fillable-input px-2"
+                  className={`table-fillable-input ${
+                    row.name === "" || validIngredients.includes(row.name)
+                      ? "focus:ring-blue-400"
+                      : "focus:ring-red-400 outline-solid outline-red-400"
+                  } px-2`}
                   placeholder=""
                   list="valid-ingredients"
                 />
