@@ -106,6 +106,16 @@ impl Composition {
     }
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+pub fn composition_value_as_quantity(comp: f64, qty: f64) -> f64 {
+    (comp * qty) / 100f64
+}
+
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+pub fn composition_value_as_percentage(comp: f64, qty: f64, mix_total: f64) -> f64 {
+    (comp * qty) / mix_total
+}
+
 #[cfg(feature = "wasm")]
 pub mod js {
     use super::*;

@@ -2,10 +2,16 @@
 
 import { useState } from "react";
 
-import { RecipeState } from "./recipe";
-import { FlatHeader, flat_header_as_med_str_js } from "@workspace/sci-cream";
+import { RecipeState, getMixTotal } from "./recipe";
 import { getFlatHeaders } from "../lib/deprecated/sci-cream";
 import { STATE_VAL } from "../lib/util";
+
+import {
+  FlatHeader,
+  flat_header_as_med_str_js,
+  composition_value_as_quantity as comp_val_as_qty,
+  composition_value_as_percentage as comp_val_as_percent,
+} from "@workspace/sci-cream";
 
 enum QtyToggle {
   /// The raw composition value as stored in the Ingredient, independent of quantity
@@ -22,23 +28,19 @@ enum ColumnFilter {
   Custom = "Custom",
 }
 
-const defaultSelectedColumns: FlatHeader[] = [
+const defaultSelectedColumns: Set<FlatHeader> = new Set([
   FlatHeader.MilkFat,
   FlatHeader.TotalFat,
   FlatHeader.MSNF,
   FlatHeader.Sugars,
   FlatHeader.TotalSolids,
-];
+]);
 
 export function IngredientCompositionGrid({ recipeState }: { recipeState: RecipeState }) {
   const [qtyToggle, setQtyToggle] = useState<QtyToggle>(QtyToggle.Quantity);
   const [columnFilter, setColumnFilter] = useState<ColumnFilter>(ColumnFilter.Auto);
   const [columnSelectVisible, setColumnSelectVisible] = useState<boolean>(false);
-  const [selectedColumns, setSelectedColumns] = useState<Set<FlatHeader>>(
-    new Set(defaultSelectedColumns)
-  );
-
-  const getMixTotal = () => recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);
+  const [selectedColumns, setSelectedColumns] = useState<Set<FlatHeader>>(defaultSelectedColumns);
 
   const isCompColumnEmpty = (header: FlatHeader) => {
     return recipeState.every(([row, _]) => {
@@ -79,24 +81,29 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
   const formattedCompCell = (index: number, header: FlatHeader) => {
     const ingredient = recipeState[index][STATE_VAL].ingredient;
     const ingQty = recipeState[index][STATE_VAL].quantity || undefined;
-    const mixTotal = getMixTotal();
 
     if (ingredient && ingredient.composition) {
       const comp = ingredient.composition.get_flat_header_value(header);
 
+      const fmtF = (num: number) => {
+        return Number(num.toFixed(1));
+      };
+
       if (comp !== 0.0) {
         switch (qtyToggle) {
           case QtyToggle.Composition:
-            return Number(comp.toFixed(1));
+            return fmtF(comp);
           case QtyToggle.Quantity:
-            return ingQty ? Number(((comp * ingQty) / 100).toFixed(1)) : "";
+            return ingQty ? fmtF(comp_val_as_qty(comp, ingQty)) : "";
           case QtyToggle.Percentage:
-            return mixTotal > 0 && ingQty ? Number(((comp * ingQty) / mixTotal).toFixed(1)) : "";
+            return ingQty && mixTotal ? fmtF(comp_val_as_percent(comp, ingQty, mixTotal)) : "";
         }
       }
     }
     return "";
   };
+
+  const mixTotal = getMixTotal(recipeState);
 
   return (
     <div className="relative w-full min-w-[200px]">

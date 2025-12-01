@@ -13,7 +13,7 @@ pub mod wasm;
 
 pub use {
     composition::{Composition, PAC, Solids, SolidsBreakdown, Sugars, Sweeteners},
-    display::FlatHeader,
+    display::{FlatHeader, composition_value_as_percentage, composition_value_as_quantity},
     ingredients::{Category, Ingredient},
     specs::{DairySpec, SugarsSpec},
 };

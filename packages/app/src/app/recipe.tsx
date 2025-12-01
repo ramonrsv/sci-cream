@@ -19,6 +19,14 @@ export function makeEmptyIngredientRow(): IngredientRow {
   return { name: "", quantity: undefined, ingredient: undefined };
 }
 
+export function getMixTotal(recipeState: RecipeState) {
+  return recipeState.reduce(
+    (sum: number | undefined, [row, _]) =>
+      sum === undefined && row.quantity == undefined ? undefined : (sum || 0) + (row.quantity || 0),
+    undefined
+  );
+}
+
 export function RecipeGrid({
   recipeState,
   validIngredients,
@@ -37,7 +45,7 @@ export function RecipeGrid({
     setRow({ ...row, quantity: quantity });
   };
 
-  const getMixTotal = () => recipeState.reduce((sum, [row, _]) => sum + (row.quantity || 0), 0);
+  const mixTotal = getMixTotal(recipeState);
 
   return (
     <div>
@@ -58,9 +66,9 @@ export function RecipeGrid({
           <tr className="table-header h-[25px]">
             <td className="px-1 border-gray-400 border-r text-center">Total</td>
             <td className="px-3.75 border-gray-400 border-r text-right">
-              {getMixTotal().toFixed(0)}
+              {mixTotal ? mixTotal.toFixed(0) : ""}
             </td>
-            <td className="px-1 text-right">{getMixTotal() > 0 ? "100.0" : ""}</td>
+            <td className="px-1 text-right">{mixTotal ? "100.0" : ""}</td>
           </tr>
         </thead>
         <tbody>
@@ -96,8 +104,8 @@ export function RecipeGrid({
                 />
               </td>
               <td className="px-1 text-gray-900 text-sm text-right ">
-                {recipeState[index][STATE_VAL].quantity && getMixTotal() > 0
-                  ? ((recipeState[index][STATE_VAL].quantity / getMixTotal()) * 100).toFixed(1)
+                {recipeState[index][STATE_VAL].quantity && mixTotal
+                  ? ((recipeState[index][STATE_VAL].quantity / mixTotal) * 100).toFixed(1)
                   : ""}
               </td>
             </tr>
