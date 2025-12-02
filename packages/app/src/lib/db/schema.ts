@@ -1,6 +1,6 @@
 import { pgTable, primaryKey, integer, text, pgEnum, json } from "drizzle-orm/pg-core";
 
-import { Category } from "../deprecated/sci-cream";
+import { Category } from "../deprecated/category";
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
