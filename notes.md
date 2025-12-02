@@ -48,6 +48,11 @@ $ pg_ctlcluster 16 main stop
 $ pg_ctlcluster 16 main start
 ```
 
+When running CI workflows locally via `act`, the postgres service may fail to start if the above
+service is already running on port `5432`. To fix this, either stop the local postgres service, or
+change the port that it's running on by modifying `port` in `postgresql.conf`, then restart the
+service/system, e.g. via `sudo service postgresql restart`.
+
 Push schema to database and seed:
 
 ```console

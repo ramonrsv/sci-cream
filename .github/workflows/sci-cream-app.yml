@@ -7,6 +7,10 @@
 #
 # This workflow can be run locally using `act`, e.g. by running the following from the root:
 #   `act --reuse --workflows ./.github/workflows/sci-cream-app.yml`
+#
+# When running locally via `act`, the postgres service may fail to start if a service is already
+# running on port 5432. To fix this, either stop the local postgres service, or change the port
+# that it's running on by modifying `port` in `postgresql.conf`, then restart the service/system.
 name: sci-cream app CI
 
 on:
@@ -23,7 +27,7 @@ env:
   TEST_USER_EMAIL: test@scicream.ca
 
 jobs:
-  build_and_test:
+  setup_db_seed_build_and_test:
     runs-on: ubuntu-latest
     services:
       postgres:
