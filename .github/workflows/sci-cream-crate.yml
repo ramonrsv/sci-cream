@@ -1,0 +1,64 @@
+# This workflow will install Rust toolchain dependencies, build the `packages/sci-cream` crate, run
+# tests, build docs, run clippy, run rustfmt, run benchmarks, and generate code coverage reports and
+# upload them to Codecov. The "wasm" and "diesel" features are also tested independently, since they
+# are mutually exclusive. This workflow runs on push and pull requests to the `main` branch.
+#
+# This workflow can be run locally using `act`, e.g. by simply running `act --reuse` from the root.
+name: sci-cream crate CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  CARGO_TERM_COLOR: always
+
+  RUSTFLAGS: -D warnings
+  RUSTDOCFLAGS: -D warnings
+
+defaults:
+  run:
+    working-directory: ./packages/sci-cream
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+      - run: cargo build --all-features
+      - run: cargo test --all-features
+
+  build_docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+      - run: cargo doc --all-features --no-deps --document-private-items
+      - run: cargo doc --examples --no-deps
+
+  clippy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+          components: clippy
+      - run: cargo clippy --all-features --no-deps
+
+  rustfmt:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+          components: rustfmt
+      - run: cargo fmt --all -- --check
