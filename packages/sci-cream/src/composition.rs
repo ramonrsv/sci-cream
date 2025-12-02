@@ -452,6 +452,48 @@ impl Composition {
     }
 }
 
+impl Default for Sugars {
+    fn default() -> Self {
+        Self::empty()
+    }
+}
+
+impl Default for Sweeteners {
+    fn default() -> Self {
+        Self::empty()
+    }
+}
+
+impl Default for SolidsBreakdown {
+    fn default() -> Self {
+        Self::empty()
+    }
+}
+
+impl Default for Solids {
+    fn default() -> Self {
+        Self::empty()
+    }
+}
+
+impl Default for Micro {
+    fn default() -> Self {
+        Self::empty()
+    }
+}
+
+impl Default for PAC {
+    fn default() -> Self {
+        Self::empty()
+    }
+}
+
+impl Default for Composition {
+    fn default() -> Self {
+        Self::empty()
+    }
+}
+
 impl AbsDiffEq for Sugars {
     type Epsilon = f64;
 
