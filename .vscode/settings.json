@@ -21,7 +21,7 @@
     "wasm"
   ],
   "rust-analyzer.check.features": [
-    "wasm"
+    "wasm", "diesel"
   ],
   "prettier.printWidth": 100
 }

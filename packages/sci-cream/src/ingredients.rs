@@ -5,9 +5,6 @@ use strum_macros::Display;
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
-#[cfg(feature = "backend")]
-use diesel::{Queryable, Selectable};
-
 use crate::composition::Composition;
 
 /// Ingredient categories
@@ -26,7 +23,6 @@ pub enum Category {
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[cfg_attr(feature = "backend", derive(Queryable, Selectable), diesel(table_name = ingredients))]
 #[derive(PartialEq, Serialize, Deserialize, Clone, Debug)]
 pub struct Ingredient {
     #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]

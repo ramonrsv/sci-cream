@@ -13,11 +13,10 @@
     "build:rust": "cargo rustc --features wasm --crate-type=cdylib",
     "build:wasm": "wasm-pack build --out-dir wasm --out-name index -- --features wasm",
     "build:js": "vite build",
-    "test": "pnpm run test:rust && pnpm run test:rust:wasm && pnpm run test:js",
-    "test:rust": "cargo test",
+    "test": "pnpm run test:rust:wasm && pnpm run test:js",
     "test:rust:wasm": "cargo test --features wasm",
     "test:js": "vitest run",
-    "lint": "cargo clippy"
+    "lint": "cargo clippy --features wasm"
   },
   "dependencies": {
     "typescript": "5.7.3",

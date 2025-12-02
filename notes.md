@@ -29,6 +29,7 @@ Database URL should be:
 In `.env` set `DATABASE_URL="postgres://postgres:password@localhost:5432/sci_cream"`
 
 Using [DBeaver](https://dbeaver.io/), create database connection with:
+
 - Connected by: `Host`
 - Host: `localhost`
 - Port: `5432`
@@ -54,9 +55,22 @@ $ pnpm test
 $ pnpm dev
 ```
 
-Rust `sci-cream` crate feature builds:
+To build the `"diesel"` feature of the rust `sci-cream` crate, need to:
+
+```console
+$ sudo apt install libpq-dev
+```
+
+Then we can:
+
+```console
+$ cargo build --all-features
+$ cargo test --all-features
+```
+
+Or to build individual features, specifying different crate-types:
 
 ```console
 $ cargo rustc --features wasm --crate-type=cdylib
-$ cargo rustc --features backend --crate-type=rlib
+$ cargo rustc --features diesel --crate-type=rlib
 ```

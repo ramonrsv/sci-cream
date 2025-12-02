@@ -3,6 +3,11 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
+#[cfg(feature = "diesel")]
+use crate::diesel::ingredients;
+#[cfg(feature = "diesel")]
+use diesel::{Queryable, Selectable};
+
 use crate::{
     composition::{Composition, PAC, Solids, SolidsBreakdown, Sugars, Sweeteners},
     constants,
@@ -31,6 +36,7 @@ pub enum Spec {
     SugarsSpec(SugarsSpec),
 }
 
+#[cfg_attr(feature = "diesel", derive(Queryable, Selectable), diesel(table_name = ingredients))]
 #[derive(PartialEq, Serialize, Deserialize, Clone, Debug)]
 pub struct IngredientSpec {
     pub name: String,
