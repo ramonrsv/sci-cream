@@ -3,7 +3,8 @@
 # upload them to Codecov. The "wasm" and "diesel" features are also tested independently, since they
 # are mutually exclusive. This workflow runs on push and pull requests to the `main` branch.
 #
-# This workflow can be run locally using `act`, e.g. by simply running `act --reuse` from the root.
+# This workflow can be run locally using `act`, e.g. by running the following from the root:
+#   `act --reuse --workflows ./.github/workflows/sci-cream-crate.yml`
 name: sci-cream crate CI
 
 on:

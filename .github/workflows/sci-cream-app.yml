@@ -1,0 +1,68 @@
+# This workflow will setup a postgres database, install Node.js, install the Rust toolchain, install
+# `pnpm`, install all workspace dependencies, seed the database, build the entire workspace,
+# including the underlying `sci-cream` Rust crate at `packages/sci-cream` and the `sci-cream`
+# next.js app at `packages/app`, and then it runs all workspace tests via `pnpm test` at the root,
+# which recursively runs tests at `packages/*`, including `cargo test ...` for the Rust crate and
+# `vitest run` for JS apps. This workflow runs on push and pull requests to the main branch.
+#
+# This workflow can be run locally using `act`, e.g. by running the following from the root:
+#   `act --reuse --workflows ./.github/workflows/sci-cream-app.yml`
+name: sci-cream app CI
+
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["main"]
+
+env:
+  DATABASE_URL: postgres://postgres:password@localhost:5432/sci_cream
+  APP_USER_NAME: SciCream App
+  APP_USER_EMAIL: app@scicream.ca
+  TEST_USER_NAME: SciCream Test
+  TEST_USER_EMAIL: test@scicream.ca
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: sci_cream
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "18"
+      - name: Installing pnpm
+        run: npm install -g pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Installing wasm-pack
+        run: cargo install wasm-pack
+      - name: Building sci-cream crate
+        run: |
+          cd ./packages/sci-cream
+          pnpm build
+      - name: Seeding database
+        run: |
+          cd ./packages/app
+          npx drizzle-kit push
+          pnpm tsx ./src/lib/db/seed.ts
+      - name: Building workspace
+        run: pnpm build
+      - name: Running workspace tests
+        run: pnpm test

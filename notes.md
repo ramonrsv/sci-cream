@@ -40,9 +40,18 @@ Using [DBeaver](https://dbeaver.io/), create database connection with:
 
 If developing on WSL and using DBeaver on Windows, then port `5432` may need to be forwarded in VSC.
 
+To list and start/stop running database servers:
+
+```console
+$ pg_lscluster
+$ pg_ctlcluster 16 main stop
+$ pg_ctlcluster 16 main start
+```
+
 Push schema to database and seed:
 
 ```console
+$ cd ./packages/app
 $ npx drizzle-kit push
 $ pnpm tsx ./src/lib/db/seed.ts
 ```
