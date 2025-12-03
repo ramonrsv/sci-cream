@@ -1,36 +1,24 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Sci-Cream
 
-## Getting Started
+[![Crate CI](https://github.com/ramonrsv/sci-cream/actions/workflows/crate.yml/badge.svg)](https://github.com/ramonrsv/sci-cream/actions)
+[![App CI](https://github.com/ramonrsv/sci-cream/actions/workflows/app.yml/badge.svg)](https://github.com/ramonrsv/sci-cream/actions)
 
-First, run the development server:
+A collection of resources about the science and technology of ice cream and related frozen products.
+Namely, this repo contains the [`sci-cream` Rust crate](#sci-cream-crate), a library to facilitate
+the mathematical analysis of ice cream mixes and their properties, as well as the
+[`sci-cream` app](#sci-cream-app), a web app that provides user-friendly utilities to facilitate the
+development and study of ice cream recipes. There is also
+[documentation](https://github.com/ramonrsv/sci-cream/tree/main/docs) about ice cream science, and
+an [ingredient database](https://github.com/ramonrsv/sci-cream/tree/main/data/ingredients) that can
+be imported with the library.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## `sci-cream` crate
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+The [`sci-cream` crate](https://github.com/ramonrsv/sci-cream/tree/main/packages/sci-cream) is a
+Rust library that facilitates the mathematical analysis of ice cream mixes and their properties.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## `sci-cream` app
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
-
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+The [`sci-cream` app](https://github.com/ramonrsv/sci-cream/tree/main/packages/app) is a web app
+that utilizes the [`sci-cream` crate](#sci-cream-crate) to provide user-friendly utilities, most
+notably an ice cream calculator, to facilitate the development and study of ice cream recipes.

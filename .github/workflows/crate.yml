@@ -4,8 +4,8 @@
 # are mutually exclusive. This workflow runs on push and pull requests to the `main` branch.
 #
 # This workflow can be run locally using `act`, e.g. by running the following from the root:
-#   `act --reuse --workflows ./.github/workflows/sci-cream-crate.yml`
-name: sci-cream crate CI
+#   `act --reuse --workflows ./.github/workflows/crate.yml`
+name: Crate CI
 
 on:
   push:
