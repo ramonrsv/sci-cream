@@ -7,6 +7,7 @@ pub mod constants;
 #[cfg(feature = "diesel")]
 pub mod diesel;
 pub mod display;
+pub mod error;
 pub mod ingredients;
 pub mod specs;
 pub mod util;

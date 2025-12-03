@@ -4,6 +4,7 @@ use struct_iterable::Iterable;
 
 use crate::{
     constants,
+    error::{Error, Result},
     util::{iter_all_abs_diff_eq, iter_fields_as},
 };
 
@@ -141,11 +142,14 @@ impl Sugars {
         }
     }
 
-    pub fn to_pod(&self) -> f64 {
-        // @todo Not allowed, need to return Result<f64, Error>
-        assert!(self.unspecified == 0f64);
+    pub fn to_pod(&self) -> Result<f64> {
+        if self.unspecified != 0f64 {
+            return Err(Error::CannotComputePOD(
+                "Unspecified sugars should be zero".to_string(),
+            ));
+        }
 
-        [
+        Ok([
             self.glucose * constants::GLUCOSE_POD as f64,
             self.fructose * constants::FRUCTOSE_POD as f64,
             self.galactose * constants::GALACTOSE_POD as f64,
@@ -155,14 +159,17 @@ impl Sugars {
         ]
         .into_iter()
         .sum::<f64>()
-            / 100f64
+            / 100f64)
     }
 
-    pub fn to_pac(&self) -> f64 {
-        // @todo Not allowed, need to return Result<f64, Error>
-        assert!(self.unspecified == 0f64);
+    pub fn to_pac(&self) -> Result<f64> {
+        if self.unspecified != 0f64 {
+            return Err(Error::CannotComputePAC(
+                "Unspecified sugars should be zero".to_string(),
+            ));
+        }
 
-        [
+        Ok([
             self.glucose * constants::GLUCOSE_PAC as f64,
             self.fructose * constants::FRUCTOSE_PAC as f64,
             self.galactose * constants::GALACTOSE_PAC as f64,
@@ -172,7 +179,7 @@ impl Sugars {
         ]
         .into_iter()
         .sum::<f64>()
-            / 100f64
+            / 100f64)
     }
 }
 
@@ -221,18 +228,32 @@ impl Sweeteners {
         Self { artificial, ..self }
     }
 
-    pub fn to_pod(&self) -> f64 {
-        // @todo Not allowed, need to return Result<f64, Error>
-        assert!(self.polysaccharides == 0f64);
-        assert!(self.artificial == 0f64);
+    pub fn to_pod(&self) -> Result<f64> {
+        if self.polysaccharides != 0f64 {
+            return Err(Error::CannotComputePOD(
+                "Polysaccharides should be zero".to_string(),
+            ));
+        }
+        if self.artificial != 0f64 {
+            return Err(Error::CannotComputePOD(
+                "Artificial sweeteners should be zero".to_string(),
+            ));
+        }
 
         self.sugars.to_pod()
     }
 
-    pub fn to_pac(&self) -> f64 {
-        // @todo Not allowed, need to return Result<f64, Error>
-        assert!(self.polysaccharides == 0f64);
-        assert!(self.artificial == 0f64);
+    pub fn to_pac(&self) -> Result<f64> {
+        if self.polysaccharides != 0f64 {
+            return Err(Error::CannotComputePAC(
+                "Polysaccharides should be zero".to_string(),
+            ));
+        }
+        if self.artificial != 0f64 {
+            return Err(Error::CannotComputePAC(
+                "Artificial sweeteners should be zero".to_string(),
+            ));
+        }
 
         self.sugars.to_pac()
     }
@@ -267,7 +288,7 @@ impl SolidsBreakdown {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl SolidsBreakdown {
     pub fn total(&self) -> f64 {
-        self.fats + self.sweeteners + self.snfs
+        iter_fields_as::<f64, _>(self).sum()
     }
 
     pub fn snf(&self) -> f64 {
@@ -321,34 +342,28 @@ impl Solids {
         iter_fields_as::<SolidsBreakdown, _>(self)
     }
 
+    fn sum_solid_breakdowns_field(&self, f: fn(&SolidsBreakdown) -> f64) -> f64 {
+        self.iter_fields_as_solids_breakdown().map(f).sum::<f64>()
+    }
+
     pub fn total(&self) -> f64 {
-        self.iter_fields_as_solids_breakdown()
-            .map(|b| b.total())
-            .sum::<f64>()
+        self.sum_solid_breakdowns_field(|b| b.total())
     }
 
     pub fn fats(&self) -> f64 {
-        self.iter_fields_as_solids_breakdown()
-            .map(|b| b.fats)
-            .sum::<f64>()
+        self.sum_solid_breakdowns_field(|b| b.fats)
     }
 
     pub fn snf(&self) -> f64 {
-        self.iter_fields_as_solids_breakdown()
-            .map(|b| b.snf())
-            .sum::<f64>()
+        self.sum_solid_breakdowns_field(|b| b.snf())
     }
 
     pub fn sweeteners(&self) -> f64 {
-        self.iter_fields_as_solids_breakdown()
-            .map(|b| b.sweeteners)
-            .sum::<f64>()
+        self.sum_solid_breakdowns_field(|b| b.sweeteners)
     }
 
     pub fn snfs(&self) -> f64 {
-        self.iter_fields_as_solids_breakdown()
-            .map(|b| b.snfs)
-            .sum::<f64>()
+        self.sum_solid_breakdowns_field(|b| b.snfs)
     }
 
     pub fn water(&self) -> f64 {

@@ -74,8 +74,8 @@ impl IntoComposition for DairySpec {
         let snfs = msnf - lactose;
 
         let sweeteners = Sweeteners::new().sugars(Sugars::new().lactose(lactose));
-        let pod = sweeteners.to_pod();
-        let pad = PAC::new().sugars(sweeteners.to_pac());
+        let pod = sweeteners.to_pod().unwrap();
+        let pad = PAC::new().sugars(sweeteners.to_pac().unwrap());
 
         Composition::new()
             .solids(
@@ -111,8 +111,8 @@ impl IntoComposition for SugarsSpec {
         Composition::new()
             .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(sugars.total())))
             .sweeteners(Sweeteners::new().sugars(sugars))
-            .pod(sugars.to_pod())
-            .pac(PAC::new().sugars(sugars.to_pac()))
+            .pod(sugars.to_pod().unwrap())
+            .pac(PAC::new().sugars(sugars.to_pac().unwrap()))
     }
 }
 
