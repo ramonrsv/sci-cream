@@ -95,10 +95,6 @@ pub struct Composition {
 }
 
 impl Sugars {
-    pub fn new() -> Self {
-        Self::empty()
-    }
-
     pub fn empty() -> Self {
         Self {
             glucose: 0f64,
@@ -185,18 +181,23 @@ impl Sugars {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Sugars {
+    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
     pub fn total(&self) -> f64 {
-        [
-            self.glucose,
-            self.fructose,
-            self.galactose,
-            self.sucrose,
-            self.lactose,
-            self.maltose,
-            self.unspecified,
-        ]
-        .into_iter()
-        .sum()
+        iter_fields_as::<f64, _>(self).sum()
+    }
+
+    #[cfg(feature = "wasm")]
+    pub fn to_pod_js(&self) -> Option<f64> {
+        self.to_pod().ok()
+    }
+
+    #[cfg(feature = "wasm")]
+    pub fn to_pac_js(&self) -> Option<f64> {
+        self.to_pac().ok()
     }
 }
 
