@@ -10,23 +10,23 @@ use crate::{
 // --------------------------------------------
 
 pub static SPEC_DAIRY_2_PERCENT: LazyLock<DairySpec> = LazyLock::new(|| DairySpec {
-    fat: 2f64,
+    fat: 2.0,
     msnf: None,
 });
 
 pub static SPEC_SUGARS_SUCROSE: LazyLock<SugarsSpec> = LazyLock::new(|| SugarsSpec {
-    sugars: Sugars::new().sucrose(100f64),
-    solids: 100f64,
+    sugars: Sugars::new().sucrose(100.0),
+    solids: 100.0,
 });
 
 pub static SPEC_SUGARS_DEXTROSE: LazyLock<SugarsSpec> = LazyLock::new(|| SugarsSpec {
-    sugars: Sugars::new().glucose(100f64),
-    solids: 100f64,
+    sugars: Sugars::new().glucose(100.0),
+    solids: 100.0,
 });
 
 pub static SPEC_SUGARS_DEXTROSE_50_PERCENT: LazyLock<SugarsSpec> = LazyLock::new(|| SugarsSpec {
-    sugars: Sugars::new().glucose(100f64),
-    solids: 50f64,
+    sugars: Sugars::new().glucose(100.0),
+    solids: 50.0,
 });
 
 // Compositions
@@ -37,38 +37,38 @@ pub static COMP_MILK_2_PERCENT: LazyLock<Composition> = LazyLock::new(|| {
         .solids(
             Solids::new().milk(
                 SolidsBreakdown::new()
-                    .fats(2f64)
-                    .sweeteners(4.8069f64)
-                    .snfs(4.0131f64),
+                    .fats(2.0)
+                    .sweeteners(4.8069)
+                    .snfs(4.0131),
             ),
         )
-        .sweeteners(Sweeteners::new().sugars(Sugars::new().lactose(4.8069f64)))
-        .pod(0.769104f64)
-        .pac(PAC::new().sugars(4.8069f64))
+        .sweeteners(Sweeteners::new().sugars(Sugars::new().lactose(4.8069)))
+        .pod(0.769104)
+        .pac(PAC::new().sugars(4.8069))
 });
 
 pub static COMP_SUCROSE: LazyLock<Composition> = LazyLock::new(|| {
     Composition::new()
-        .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(100f64)))
-        .sweeteners(Sweeteners::new().sugars(Sugars::new().sucrose(100f64)))
-        .pod(100f64)
-        .pac(PAC::new().sugars(100f64))
+        .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(100.0)))
+        .sweeteners(Sweeteners::new().sugars(Sugars::new().sucrose(100.0)))
+        .pod(100.0)
+        .pac(PAC::new().sugars(100.0))
 });
 
 pub static COMP_DEXTROSE: LazyLock<Composition> = LazyLock::new(|| {
     Composition::new()
-        .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(100f64)))
-        .sweeteners(Sweeteners::new().sugars(Sugars::new().glucose(100f64)))
-        .pod(70f64)
-        .pac(PAC::new().sugars(190f64))
+        .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(100.0)))
+        .sweeteners(Sweeteners::new().sugars(Sugars::new().glucose(100.0)))
+        .pod(70.0)
+        .pac(PAC::new().sugars(190.0))
 });
 
 pub static COMP_DEXTROSE_50_PERCENT: LazyLock<Composition> = LazyLock::new(|| {
     Composition::new()
-        .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(50f64)))
-        .sweeteners(Sweeteners::new().sugars(Sugars::new().glucose(50f64)))
-        .pod(35f64)
-        .pac(PAC::new().sugars(95f64))
+        .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(50.0)))
+        .sweeteners(Sweeteners::new().sugars(Sugars::new().glucose(50.0)))
+        .pod(35.0)
+        .pac(PAC::new().sugars(95.0))
 });
 
 // Ingredient specs

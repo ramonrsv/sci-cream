@@ -108,7 +108,7 @@ impl Composition {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 pub fn composition_value_as_quantity(comp: f64, qty: f64) -> f64 {
-    (comp * qty) / 100f64
+    (comp * qty) / 100.0
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
@@ -177,23 +177,23 @@ mod tests {
     #[test]
     fn composition_get_flat_header_value() {
         let expected = HashMap::from([
-            (FlatHeader::MilkFat, 2f64),
-            (FlatHeader::TotalFat, 2f64),
-            (FlatHeader::MSNF, 8.82f64),
+            (FlatHeader::MilkFat, 2.0),
+            (FlatHeader::TotalFat, 2.0),
+            (FlatHeader::MSNF, 8.82),
             (FlatHeader::MilkSNFS, 4.0131),
-            (FlatHeader::Lactose, 4.8069f64),
-            (FlatHeader::Sugars, 4.8069f64),
-            (FlatHeader::ArtificialSweeteners, 0f64),
-            (FlatHeader::TotalSolids, 10.82f64),
-            (FlatHeader::POD, 0.769104f64),
-            (FlatHeader::PACsgr, 4.8069f64),
-            (FlatHeader::PACtotal, 4.8069f64),
+            (FlatHeader::Lactose, 4.8069),
+            (FlatHeader::Sugars, 4.8069),
+            (FlatHeader::ArtificialSweeteners, 0.0),
+            (FlatHeader::TotalSolids, 10.82),
+            (FlatHeader::POD, 0.769104),
+            (FlatHeader::PACsgr, 4.8069),
+            (FlatHeader::PACtotal, 4.8069),
         ]);
 
         FlatHeader::iter().for_each(|header| {
             assert_eq!(
                 COMP_MILK_2_PERCENT.get_flat_header_value(header),
-                *expected.get(&header).unwrap_or(&0f64),
+                *expected.get(&header).unwrap_or(&0.0),
                 "Unexpected for FlatHeader::{:?}",
                 header
             )

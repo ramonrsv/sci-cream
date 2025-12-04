@@ -214,8 +214,8 @@ mod test {
     #[test]
     fn calculate_mix_composition() {
         let mix_comp = super::calculate_mix_composition(&vec![
-            CompositionLine::new(COMP_MILK_2_PERCENT.clone(), 50f64),
-            CompositionLine::new(COMP_SUCROSE.clone(), 50f64),
+            CompositionLine::new(COMP_MILK_2_PERCENT.clone(), 50.0),
+            CompositionLine::new(COMP_SUCROSE.clone(), 50.0),
         ]);
 
         assert_eq!(mix_comp.sweeteners.sugars.lactose, 4.8069 / 2.0);
