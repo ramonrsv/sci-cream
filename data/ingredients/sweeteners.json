@@ -18,5 +18,15 @@
       },
       "solids": 100
     }
+  },
+  {
+    "name": "Fructose",
+    "category": "Sweetener",
+    "SugarsSpec": {
+      "sugars": {
+        "fructose": 100
+      },
+      "solids": 100
+    }
   }
 ]

@@ -21,6 +21,13 @@
     }
   },
   {
+    "name": "Whipping Cream",
+    "category": "Dairy",
+    "DairySpec": {
+      "fat": 35
+    }
+  },
+  {
     "name": "Skimmed Milk Powder",
     "category": "Dairy",
     "DairySpec": {
