@@ -12,6 +12,7 @@ use crate::{
     composition::{Composition, PAC, Solids, SolidsBreakdown, Sugars, Sweeteners},
     constants,
     ingredients::{Category, Ingredient},
+    recipe::ScaleComponents,
 };
 
 pub trait IntoComposition {
@@ -94,19 +95,8 @@ impl IntoComposition for DairySpec {
 
 impl IntoComposition for SugarsSpec {
     fn into_composition(self) -> Composition {
-        let Self { mut sugars, solids } = self;
-
-        [
-            &mut sugars.glucose,
-            &mut sugars.fructose,
-            &mut sugars.galactose,
-            &mut sugars.sucrose,
-            &mut sugars.lactose,
-            &mut sugars.maltose,
-            &mut sugars.unspecified,
-        ]
-        .iter_mut()
-        .for_each(|sugar| **sugar *= solids / 100f64);
+        let Self { sugars, solids } = self;
+        let sugars = sugars.scale(solids / 100f64);
 
         Composition::new()
             .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(sugars.total())))
