@@ -151,7 +151,7 @@ mod test {
         } = COMP_MILK_2_PERCENT.clone();
 
         assert_eq!(solids.total(), 10.82f64);
-        assert_eq!(solids.water(), 89.18f64);
+        assert_eq!(COMP_MILK_2_PERCENT.water(), 89.18f64);
 
         assert_eq!(micro.salt, 0f64);
         assert_eq!(micro.emulsifiers, 0f64);
@@ -166,7 +166,6 @@ mod test {
         assert_eq!(milk.snf(), 8.82);
         assert_eq!(milk.snfs, 4.0131);
         assert_eq!(milk.total(), 10.82);
-        assert_eq!(milk.water(), 89.18);
 
         assert_eq!(sweeteners.sugars.lactose, 4.8069);
         assert_eq!(sweeteners.sugars.total(), 4.8069);
@@ -188,7 +187,7 @@ mod test {
         } = COMP_SUCROSE.clone();
 
         assert_eq!(solids.total(), 100f64);
-        assert_eq!(solids.water(), 0f64);
+        assert_eq!(COMP_SUCROSE.water(), 0f64);
 
         let Solids { other, .. } = solids;
 
@@ -197,7 +196,6 @@ mod test {
         assert_eq!(other.snf(), 100f64);
         assert_eq!(other.snfs, 0f64);
         assert_eq!(other.total(), 100f64);
-        assert_eq!(other.water(), 0f64);
 
         assert_eq!(sweeteners.sugars.sucrose, 100f64);
         assert_eq!(sweeteners.sugars.total(), 100f64);
@@ -220,7 +218,7 @@ mod test {
         } = COMP_DEXTROSE.clone();
 
         assert_eq!(solids.total(), 100f64);
-        assert_eq!(solids.water(), 0f64);
+        assert_eq!(COMP_DEXTROSE.water(), 0f64);
 
         let Solids { other, .. } = solids;
 
@@ -229,7 +227,6 @@ mod test {
         assert_eq!(other.snf(), 100f64);
         assert_eq!(other.snfs, 0f64);
         assert_eq!(other.total(), 100f64);
-        assert_eq!(other.water(), 0f64);
 
         assert_eq!(sweeteners.sugars.glucose, 100f64);
         assert_eq!(sweeteners.sugars.total(), 100f64);
@@ -252,7 +249,7 @@ mod test {
         } = COMP_DEXTROSE_50_PERCENT.clone();
 
         assert_eq!(solids.total(), 50f64);
-        assert_eq!(solids.water(), 50f64);
+        assert_eq!(COMP_DEXTROSE_50_PERCENT.water(), 50f64);
 
         let Solids { other, .. } = solids;
 
@@ -261,7 +258,6 @@ mod test {
         assert_eq!(other.snf(), 50f64);
         assert_eq!(other.snfs, 0f64);
         assert_eq!(other.total(), 50f64);
-        assert_eq!(other.water(), 50f64);
 
         assert_eq!(sweeteners.sugars.glucose, 50f64);
         assert_eq!(sweeteners.sugars.total(), 50f64);

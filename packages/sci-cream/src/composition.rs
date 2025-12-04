@@ -11,6 +11,44 @@ use crate::{
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
+/// Breakdown of solid components, as grams of component per 100g of ingredient/mix
+///
+/// Note that the values here are expressed as grams per 100g of _total_ ingredient/mix, not as a
+/// percentage of a particular ingredient's solids, i.e. it describes this ingredient's contribution
+/// to the total mix, taking into account its proportion in the mix. For example, a 50g:50g
+/// 2% milk:water mix would have `milk.fats == 1`, in spite of the milk ingredient being 2% fat.
+///
+/// `total == fats + sweeteners + SNFS`
+/// `SNF == total - fats`
+/// `SNFS == SNF - sweeteners`
+///
+/// **Note**: Polysaccharides are not counted as sweeteners here; they are part of the SNFS.
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+pub struct SolidsBreakdown {
+    /// Fats
+    pub fats: f64,
+    /// Sugars and artificial sweeteners
+    pub sweeteners: f64,
+    /// Non-Fat, Non-Sweetener solids, but including Polysaccharides
+    pub snfs: f64,
+}
+
+/// Solid Components of an ingredient or mix, as grams of component per 100g of ingredient/mix
+///
+/// Note that the values here are expressed as grams per 100g of _total_ ingredient/mix, not as a
+/// percentage of total solids, e.g. a 10g:90g sucrose:water mix would have `solids.total() == 10`
+/// and `solids.other.sweeteners == 10`, in spite of sucrose being 100% of the solids.
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+pub struct Solids {
+    pub milk: SolidsBreakdown,
+    pub egg: SolidsBreakdown,
+    pub cocoa: SolidsBreakdown,
+    pub nut: SolidsBreakdown,
+    pub other: SolidsBreakdown,
+}
+
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Sugars {
@@ -38,34 +76,6 @@ pub struct Sweeteners {
     pub artificial: f64,
 }
 
-/// Breakdown of Solid Components, per 100g of an ingredient
-///
-/// `snf == 100 - fats - water`
-/// `snfs == snf - sweeteners(.sugars + .artificial)`
-///
-/// `total == snf + fats == snfs + sweeteners + fats`
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-pub struct SolidsBreakdown {
-    /// Fats
-    pub fats: f64,
-    /// Sugars and artificial sweeteners
-    pub sweeteners: f64,
-    /// Non-Fat, Non-Sweetener Solids, but including Polysaccharides
-    pub snfs: f64,
-}
-
-/// Solid Components, where the breakdown is per 100g of an ingredient
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-pub struct Solids {
-    pub milk: SolidsBreakdown,
-    pub egg: SolidsBreakdown,
-    pub cocoa: SolidsBreakdown,
-    pub nut: SolidsBreakdown,
-    pub other: SolidsBreakdown,
-}
-
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Micro {
@@ -83,6 +93,19 @@ pub struct PAC {
     pub hardness_factor: f64,
 }
 
+/// Composition of an ingredient or mix, as grams of component per 100g of ingredient/mix
+///
+/// In a hypothetical 100g of ingredient/mix: `solids.total() + alcohol + water() == 100`.
+///
+/// `sweeteners` and `micro` components are both accounted for in `solids`, and should not be
+/// double-counted. They are provided separately to facilitate the analysis of key components.
+///
+/// POD and
+/// [PAC](https://github.com/ramonrsv/sci-cream/blob/main/docs/freezing-point-depression.md#pac-afp-fpdf-se)
+/// are expressed as a sucrose equivalence and do not necessarily represent real weights of
+/// components. While some underlying components may have utilities to calculate their contributions
+/// to POD and PAC, the overall POD and PAC of a composition are independent values and are set
+/// during composition construction, taking all underlying contributions into account.
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Composition {
@@ -92,6 +115,110 @@ pub struct Composition {
     pub alcohol: f64,
     pub pod: f64,
     pub pac: PAC,
+}
+
+impl SolidsBreakdown {
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
+    pub fn empty() -> Self {
+        Self {
+            fats: 0f64,
+            sweeteners: 0f64,
+            snfs: 0f64,
+        }
+    }
+
+    pub fn fats(self, fats: f64) -> Self {
+        Self { fats, ..self }
+    }
+
+    pub fn sweeteners(self, sweeteners: f64) -> Self {
+        Self { sweeteners, ..self }
+    }
+
+    pub fn snfs(self, snfs: f64) -> Self {
+        Self { snfs, ..self }
+    }
+}
+
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+impl SolidsBreakdown {
+    pub fn total(&self) -> f64 {
+        iter_fields_as::<f64, _>(self).sum()
+    }
+
+    pub fn snf(&self) -> f64 {
+        self.total() - self.fats
+    }
+}
+
+impl Solids {
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
+    pub fn empty() -> Self {
+        Self {
+            milk: SolidsBreakdown::empty(),
+            egg: SolidsBreakdown::empty(),
+            cocoa: SolidsBreakdown::empty(),
+            nut: SolidsBreakdown::empty(),
+            other: SolidsBreakdown::empty(),
+        }
+    }
+
+    pub fn milk(self, milk: SolidsBreakdown) -> Self {
+        Self { milk, ..self }
+    }
+
+    pub fn egg(self, egg: SolidsBreakdown) -> Self {
+        Self { egg, ..self }
+    }
+
+    pub fn cocoa(self, cocoa: SolidsBreakdown) -> Self {
+        Self { cocoa, ..self }
+    }
+
+    pub fn nut(self, nut: SolidsBreakdown) -> Self {
+        Self { nut, ..self }
+    }
+
+    pub fn other(self, other: SolidsBreakdown) -> Self {
+        Self { other, ..self }
+    }
+}
+
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+impl Solids {
+    fn iter_fields_as_solids_breakdown(&self) -> impl Iterator<Item = &SolidsBreakdown> {
+        iter_fields_as::<SolidsBreakdown, _>(self)
+    }
+
+    fn sum_solid_breakdowns_field(&self, f: fn(&SolidsBreakdown) -> f64) -> f64 {
+        self.iter_fields_as_solids_breakdown().map(f).sum::<f64>()
+    }
+
+    pub fn total(&self) -> f64 {
+        self.sum_solid_breakdowns_field(|b| b.total())
+    }
+
+    pub fn fats(&self) -> f64 {
+        self.sum_solid_breakdowns_field(|b| b.fats)
+    }
+
+    pub fn snf(&self) -> f64 {
+        self.sum_solid_breakdowns_field(|b| b.snf())
+    }
+
+    pub fn sweeteners(&self) -> f64 {
+        self.sum_solid_breakdowns_field(|b| b.sweeteners)
+    }
+
+    pub fn snfs(&self) -> f64 {
+        self.sum_solid_breakdowns_field(|b| b.snfs)
+    }
 }
 
 impl Sugars {
@@ -260,118 +387,6 @@ impl Sweeteners {
     }
 }
 
-impl SolidsBreakdown {
-    pub fn new() -> Self {
-        Self::empty()
-    }
-
-    pub fn empty() -> Self {
-        Self {
-            fats: 0f64,
-            sweeteners: 0f64,
-            snfs: 0f64,
-        }
-    }
-
-    pub fn fats(self, fats: f64) -> Self {
-        Self { fats, ..self }
-    }
-
-    pub fn sweeteners(self, sweeteners: f64) -> Self {
-        Self { sweeteners, ..self }
-    }
-
-    pub fn snfs(self, snfs: f64) -> Self {
-        Self { snfs, ..self }
-    }
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-impl SolidsBreakdown {
-    pub fn total(&self) -> f64 {
-        iter_fields_as::<f64, _>(self).sum()
-    }
-
-    pub fn snf(&self) -> f64 {
-        self.total() - self.fats
-    }
-
-    pub fn water(&self) -> f64 {
-        100f64 - self.total()
-    }
-}
-
-impl Solids {
-    pub fn new() -> Self {
-        Self::empty()
-    }
-
-    pub fn empty() -> Self {
-        Self {
-            milk: SolidsBreakdown::empty(),
-            egg: SolidsBreakdown::empty(),
-            cocoa: SolidsBreakdown::empty(),
-            nut: SolidsBreakdown::empty(),
-            other: SolidsBreakdown::empty(),
-        }
-    }
-
-    pub fn milk(self, milk: SolidsBreakdown) -> Self {
-        Self { milk, ..self }
-    }
-
-    pub fn egg(self, egg: SolidsBreakdown) -> Self {
-        Self { egg, ..self }
-    }
-
-    pub fn cocoa(self, cocoa: SolidsBreakdown) -> Self {
-        Self { cocoa, ..self }
-    }
-
-    pub fn nut(self, nut: SolidsBreakdown) -> Self {
-        Self { nut, ..self }
-    }
-
-    pub fn other(self, other: SolidsBreakdown) -> Self {
-        Self { other, ..self }
-    }
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-impl Solids {
-    fn iter_fields_as_solids_breakdown(&self) -> impl Iterator<Item = &SolidsBreakdown> {
-        iter_fields_as::<SolidsBreakdown, _>(self)
-    }
-
-    fn sum_solid_breakdowns_field(&self, f: fn(&SolidsBreakdown) -> f64) -> f64 {
-        self.iter_fields_as_solids_breakdown().map(f).sum::<f64>()
-    }
-
-    pub fn total(&self) -> f64 {
-        self.sum_solid_breakdowns_field(|b| b.total())
-    }
-
-    pub fn fats(&self) -> f64 {
-        self.sum_solid_breakdowns_field(|b| b.fats)
-    }
-
-    pub fn snf(&self) -> f64 {
-        self.sum_solid_breakdowns_field(|b| b.snf())
-    }
-
-    pub fn sweeteners(&self) -> f64 {
-        self.sum_solid_breakdowns_field(|b| b.sweeteners)
-    }
-
-    pub fn snfs(&self) -> f64 {
-        self.sum_solid_breakdowns_field(|b| b.snfs)
-    }
-
-    pub fn water(&self) -> f64 {
-        100f64 - self.total()
-    }
-}
-
 impl Micro {
     pub fn new() -> Self {
         Self::empty()
@@ -468,15 +483,10 @@ impl Composition {
     }
 }
 
-impl Default for Sugars {
-    fn default() -> Self {
-        Self::empty()
-    }
-}
-
-impl Default for Sweeteners {
-    fn default() -> Self {
-        Self::empty()
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+impl Composition {
+    pub fn water(&self) -> f64 {
+        100f64 - self.solids.total() - self.alcohol
     }
 }
 
@@ -487,6 +497,18 @@ impl Default for SolidsBreakdown {
 }
 
 impl Default for Solids {
+    fn default() -> Self {
+        Self::empty()
+    }
+}
+
+impl Default for Sugars {
+    fn default() -> Self {
+        Self::empty()
+    }
+}
+
+impl Default for Sweeteners {
     fn default() -> Self {
         Self::empty()
     }
@@ -507,6 +529,30 @@ impl Default for PAC {
 impl Default for Composition {
     fn default() -> Self {
         Self::empty()
+    }
+}
+
+impl AbsDiffEq for SolidsBreakdown {
+    type Epsilon = f64;
+
+    fn default_epsilon() -> Self::Epsilon {
+        f64::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
+        iter_all_abs_diff_eq::<f64, f64, Self>(self, other, epsilon)
+    }
+}
+
+impl AbsDiffEq for Solids {
+    type Epsilon = f64;
+
+    fn default_epsilon() -> Self::Epsilon {
+        f64::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
+        iter_all_abs_diff_eq::<f64, SolidsBreakdown, Self>(self, other, epsilon)
     }
 }
 
@@ -535,30 +581,6 @@ impl AbsDiffEq for Sweeteners {
                 .polysaccharides
                 .abs_diff_eq(&other.polysaccharides, epsilon)
             && self.artificial.abs_diff_eq(&other.artificial, epsilon)
-    }
-}
-
-impl AbsDiffEq for SolidsBreakdown {
-    type Epsilon = f64;
-
-    fn default_epsilon() -> Self::Epsilon {
-        f64::default_epsilon()
-    }
-
-    fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        iter_all_abs_diff_eq::<f64, f64, Self>(self, other, epsilon)
-    }
-}
-
-impl AbsDiffEq for Solids {
-    type Epsilon = f64;
-
-    fn default_epsilon() -> Self::Epsilon {
-        f64::default_epsilon()
-    }
-
-    fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        iter_all_abs_diff_eq::<f64, SolidsBreakdown, Self>(self, other, epsilon)
     }
 }
 
