@@ -1,6 +1,6 @@
-#[allow(unused_imports)]
-#[macro_use]
-extern crate approx;
+/*! `sci-cream` is a Rust library that facilitates the mathematical analysis of ice cream mixes and
+their properties.
+*/
 
 pub mod composition;
 pub mod constants;

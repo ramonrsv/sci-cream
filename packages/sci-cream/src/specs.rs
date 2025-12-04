@@ -120,7 +120,7 @@ pub mod js {
 
 #[cfg(test)]
 mod test {
-    use serde_json;
+    use approx::assert_abs_diff_eq;
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
     #[allow(unused_imports)] // @todo Remove when used.
