@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { RecipeState, getMixTotal } from "./recipe";
+import { RecipeState, getMixTotal, calculateMixComposition } from "./recipe";
 import { getFlatHeaders } from "../lib/deprecated/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
@@ -78,32 +78,38 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
 
   const enabledHeadersIndexed = () => Array.from(enabledHeaders().entries());
 
-  const formattedCompCell = (index: number, header: FlatHeader) => {
-    const ingredient = recipeState[index][STATE_VAL].ingredient;
-    const ingQty = recipeState[index][STATE_VAL].quantity || undefined;
+  const formatCompValue = (comp: number, ingQty: number | undefined) => {
+    const fmtF = (num: number) => {
+      return Number(num.toFixed(1));
+    };
 
-    if (ingredient && ingredient.composition) {
-      const comp = ingredient.composition.get_flat_header_value(header);
-
-      const fmtF = (num: number) => {
-        return Number(num.toFixed(1));
-      };
-
-      if (comp !== 0.0) {
-        switch (qtyToggle) {
-          case QtyToggle.Composition:
-            return fmtF(comp);
-          case QtyToggle.Quantity:
-            return ingQty ? fmtF(comp_val_as_qty(comp, ingQty)) : "";
-          case QtyToggle.Percentage:
-            return ingQty && mixTotal ? fmtF(comp_val_as_percent(comp, ingQty, mixTotal)) : "";
-        }
+    if (comp !== 0.0) {
+      switch (qtyToggle) {
+        case QtyToggle.Composition:
+          return fmtF(comp);
+        case QtyToggle.Quantity:
+          return ingQty ? fmtF(comp_val_as_qty(comp, ingQty)) : "";
+        case QtyToggle.Percentage:
+          return ingQty && mixTotal ? fmtF(comp_val_as_percent(comp, ingQty, mixTotal)) : "";
       }
     }
-    return "";
+  };
+
+  const formattedTotalCell = (header: FlatHeader) => {
+    return formatCompValue(mixComposition.get_flat_header_value(header), mixTotal);
+  };
+
+  const formattedCompCell = (index: number, header: FlatHeader) => {
+    const ingredient = recipeState[index][STATE_VAL].ingredient;
+    const ingQty = recipeState[index][STATE_VAL].quantity;
+
+    return ingredient && ingredient.composition
+      ? formatCompValue(ingredient.composition.get_flat_header_value(header), ingQty)
+      : "";
   };
 
   const mixTotal = getMixTotal(recipeState);
+  const mixComposition = calculateMixComposition(recipeState);
 
   return (
     <div className="relative w-full min-w-[200px]">
@@ -170,7 +176,9 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
                 <td
                   key={header}
                   className="table-header-no-border px-1 border-gray-400 border-b border-r text-center"
-                ></td>
+                >
+                  {formattedTotalCell(header)}
+                </td>
               ))}
             </tr>
           </thead>
