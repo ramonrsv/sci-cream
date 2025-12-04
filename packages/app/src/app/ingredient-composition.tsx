@@ -3,12 +3,12 @@
 import { useState } from "react";
 
 import { RecipeState, getMixTotal, calculateMixComposition } from "./recipe";
-import { getFlatHeaders } from "../lib/deprecated/sci-cream";
+import { getCompKeys } from "../lib/deprecated/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
 import {
-  FlatHeader,
-  flat_header_as_med_str_js,
+  CompKey,
+  comp_key_as_med_str_js,
   composition_value_as_quantity as comp_val_as_qty,
   composition_value_as_percentage as comp_val_as_percent,
 } from "@workspace/sci-cream";
@@ -28,39 +28,36 @@ enum ColumnFilter {
   Custom = "Custom",
 }
 
-const defaultSelectedColumns: Set<FlatHeader> = new Set([
-  FlatHeader.MilkFat,
-  FlatHeader.TotalFat,
-  FlatHeader.MSNF,
-  FlatHeader.Sugars,
-  FlatHeader.TotalSolids,
+const defaultSelectedColumns: Set<CompKey> = new Set([
+  CompKey.MilkFat,
+  CompKey.TotalFat,
+  CompKey.MSNF,
+  CompKey.Sugars,
+  CompKey.TotalSolids,
 ]);
 
 export function IngredientCompositionGrid({ recipeState }: { recipeState: RecipeState }) {
   const [qtyToggle, setQtyToggle] = useState<QtyToggle>(QtyToggle.Quantity);
   const [columnFilter, setColumnFilter] = useState<ColumnFilter>(ColumnFilter.Auto);
   const [columnSelectVisible, setColumnSelectVisible] = useState<boolean>(false);
-  const [selectedColumns, setSelectedColumns] = useState<Set<FlatHeader>>(defaultSelectedColumns);
+  const [selectedColumns, setSelectedColumns] = useState<Set<CompKey>>(defaultSelectedColumns);
 
-  const isCompColumnEmpty = (header: FlatHeader) => {
+  const isCompColumnEmpty = (comp_key: CompKey) => {
     return recipeState.every(([row, _]) => {
-      return (
-        row.ingredient === undefined ||
-        row.ingredient.composition?.get_flat_header_value(header) === 0.0
-      );
+      return row.ingredient === undefined || row.ingredient.composition?.get(comp_key) === 0.0;
     });
   };
 
-  const isCompColumnSelected = (header: FlatHeader) => {
-    return selectedColumns.has(header);
+  const isCompColumnSelected = (comp_key: CompKey) => {
+    return selectedColumns.has(comp_key);
   };
 
-  const updateSelectedColumn = (header: FlatHeader) => {
+  const updateSelectedColumn = (comp_key: CompKey) => {
     const newSet = new Set(selectedColumns);
-    if (newSet.has(header)) {
-      newSet.delete(header);
+    if (newSet.has(comp_key)) {
+      newSet.delete(comp_key);
     } else {
-      newSet.add(header);
+      newSet.add(comp_key);
     }
     setSelectedColumns(newSet);
   };
@@ -68,11 +65,11 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
   const enabledHeaders = () => {
     switch (columnFilter) {
       case ColumnFilter.All:
-        return getFlatHeaders();
+        return getCompKeys();
       case ColumnFilter.Auto:
-        return getFlatHeaders().filter((header) => !isCompColumnEmpty(header));
+        return getCompKeys().filter((comp_key) => !isCompColumnEmpty(comp_key));
       case ColumnFilter.Custom:
-        return getFlatHeaders().filter((header) => isCompColumnSelected(header));
+        return getCompKeys().filter((comp_key) => isCompColumnSelected(comp_key));
     }
   };
 
@@ -95,16 +92,16 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
     }
   };
 
-  const formattedTotalCell = (header: FlatHeader) => {
-    return formatCompValue(mixComposition.get_flat_header_value(header), mixTotal);
+  const formattedTotalCell = (comp_key: CompKey) => {
+    return formatCompValue(mixComposition.get(comp_key), mixTotal);
   };
 
-  const formattedCompCell = (index: number, header: FlatHeader) => {
+  const formattedCompCell = (index: number, comp_key: CompKey) => {
     const ingredient = recipeState[index][STATE_VAL].ingredient;
     const ingQty = recipeState[index][STATE_VAL].quantity;
 
     return ingredient && ingredient.composition
-      ? formatCompValue(ingredient.composition.get_flat_header_value(header), ingQty)
+      ? formatCompValue(ingredient.composition.get(comp_key), ingQty)
       : "";
   };
 
@@ -140,14 +137,14 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
         <div className="popup top-0 left-47 w-fit pl-1 pr-2 whitespace-nowrap">
           <button onClick={() => setColumnSelectVisible(false)}>Done</button>
           <ul>
-            {getFlatHeaders().map((header) => (
-              <li key={header}>
+            {getCompKeys().map((comp_key) => (
+              <li key={comp_key}>
                 <input
                   type="checkbox"
-                  checked={isCompColumnSelected(header)}
-                  onChange={() => updateSelectedColumn(header)}
+                  checked={isCompColumnSelected(comp_key)}
+                  onChange={() => updateSelectedColumn(comp_key)}
                 />
-                {" " + flat_header_as_med_str_js(header)}
+                {" " + comp_key_as_med_str_js(comp_key)}
               </li>
             ))}
           </ul>
@@ -160,24 +157,24 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
             {/* Composition Header */}
             {/* @todo The left-most and right-most borders of the table are still not right */}
             <tr className="h-[24px]">
-              {enabledHeaders().map((header) => (
+              {enabledHeaders().map((comp_key) => (
                 <th
-                  key={header}
+                  key={comp_key}
                   className="table-header-no-border px-1 border-gray-400 border-b border-r w-fit text-center"
                 >
-                  {flat_header_as_med_str_js(header)}
+                  {comp_key_as_med_str_js(comp_key)}
                 </th>
               ))}
             </tr>
             {/* Totals Row */}
             {/* @todo The left-most and right-most borders of the table are still not right */}
             <tr className="h-[25px]">
-              {enabledHeaders().map((header) => (
+              {enabledHeaders().map((comp_key) => (
                 <td
-                  key={header}
+                  key={comp_key}
                   className="table-header-no-border px-1 border-gray-400 border-b border-r text-center"
                 >
-                  {formattedTotalCell(header)}
+                  {formattedTotalCell(comp_key)}
                 </td>
               ))}
             </tr>
@@ -187,9 +184,9 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
             {/* @todo The very last row is a little taller than the rest; not sure why */}
             {recipeState.map((_, index) => (
               <tr key={index} className="table-inner-cell h-[25px]">
-                {enabledHeaders().map((header) => (
-                  <td key={header} className="table-inner-cell text-center">
-                    {formattedCompCell(index, header)}
+                {enabledHeaders().map((comp_key) => (
+                  <td key={comp_key} className="table-inner-cell text-center">
+                    {formattedCompCell(index, comp_key)}
                   </td>
                 ))}
               </tr>

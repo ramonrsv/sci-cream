@@ -1,18 +1,18 @@
 import { expect, test } from "vitest";
 
-import { FlatHeader, flat_header_as_med_str_js } from "@workspace/sci-cream";
-import { getFlatHeaders } from "../lib/deprecated/sci-cream";
+import { CompKey, comp_key_as_med_str_js } from "@workspace/sci-cream";
+import { getCompKeys } from "../lib/deprecated/sci-cream";
 
 test("Import from sci-cream wasm package, at app", () => {
-  expect(flat_header_as_med_str_js(FlatHeader.MilkFat)).toBe("Milk Fat");
+  expect(comp_key_as_med_str_js(CompKey.MilkFat)).toBe("Milk Fat");
 });
 
 test("getFlatHeaders returns values usable with wasm package", () => {
-  const headers = getFlatHeaders();
+  const comp_keys = getCompKeys();
 
-  expect(headers[0]).toBe(FlatHeader.MilkFat);
-  expect(headers[1]).toBe(FlatHeader.CacaoFat);
+  expect(comp_keys[0]).toBe(CompKey.MilkFat);
+  expect(comp_keys[1]).toBe(CompKey.CacaoFat);
 
-  expect(flat_header_as_med_str_js(headers[0])).toBe("Milk Fat");
-  expect(flat_header_as_med_str_js(headers[1])).toBe("Cacao Fat");
+  expect(comp_key_as_med_str_js(comp_keys[0])).toBe("Milk Fat");
+  expect(comp_key_as_med_str_js(comp_keys[1])).toBe("Cacao Fat");
 });

@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 
-import { FlatHeader, flat_header_as_med_str_js } from "../../dist/index";
+import { CompKey, comp_key_as_med_str_js } from "../../dist/index";
 
 test("Import from sci-cream wasm package, at sci-cream", () => {
-  expect(flat_header_as_med_str_js(FlatHeader.MilkFat)).toBe("Milk Fat");
+  expect(comp_key_as_med_str_js(CompKey.MilkFat)).toBe("Milk Fat");
 });

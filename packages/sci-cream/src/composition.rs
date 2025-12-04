@@ -1,6 +1,7 @@
 use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
+use strum_macros::EnumIter;
 
 use crate::{
     constants,
@@ -115,6 +116,42 @@ pub struct Composition {
     pub alcohol: f64,
     pub pod: f64,
     pub pac: PAC,
+}
+
+/// Keys for accessing specific composition values from a [`Composition`] via [`Composition::get()`]
+///
+/// [`Composition`] is a complex struct with several levels of nesting, and may continuously evolve
+/// to include more components, which makes direct field access cumbersome and error-prone. This
+/// enum provides a more stable and convenient interface for accessing specific composition values.
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[derive(EnumIter, Hash, PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
+pub enum CompKey {
+    MilkFat,
+    CacaoFat,
+    NutFat,
+    EggFat,
+    OtherFat,
+    TotalFat,
+    Lactose,
+    Sugars,
+    ArtificialSweeteners,
+    MSNF,
+    MilkSNFS,
+    CocoaSNFS,
+    NutSNFS,
+    EggSNFS,
+    OtherSNFS,
+    TotalSolids,
+    Salt,
+    Alcohol,
+    Emulsifiers,
+    Stabilizers,
+    POD,
+    PACsgr,
+    PACslt,
+    PACalc,
+    PACtotal,
+    HF,
 }
 
 impl SolidsBreakdown {
@@ -512,6 +549,40 @@ impl Composition {
     }
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+impl Composition {
+    pub fn get(&self, key: CompKey) -> f64 {
+        match key {
+            CompKey::MilkFat => self.solids.milk.fats,
+            CompKey::CacaoFat => self.solids.cocoa.fats,
+            CompKey::NutFat => self.solids.nut.fats,
+            CompKey::EggFat => self.solids.egg.fats,
+            CompKey::OtherFat => self.solids.other.fats,
+            CompKey::TotalFat => self.solids.fats(),
+            CompKey::Lactose => self.sweeteners.sugars.lactose,
+            CompKey::Sugars => self.sweeteners.sugars.total(),
+            CompKey::ArtificialSweeteners => self.sweeteners.artificial,
+            CompKey::MSNF => self.solids.milk.snf(),
+            CompKey::MilkSNFS => self.solids.milk.snfs,
+            CompKey::CocoaSNFS => self.solids.cocoa.snfs,
+            CompKey::NutSNFS => self.solids.nut.snfs,
+            CompKey::EggSNFS => self.solids.egg.snfs,
+            CompKey::OtherSNFS => self.solids.other.snfs,
+            CompKey::TotalSolids => self.solids.total(),
+            CompKey::Salt => self.micro.salt,
+            CompKey::Alcohol => self.alcohol,
+            CompKey::Emulsifiers => self.micro.emulsifiers,
+            CompKey::Stabilizers => self.micro.stabilizers,
+            CompKey::POD => self.pod,
+            CompKey::PACsgr => self.pac.sugars,
+            CompKey::PACslt => self.pac.salt,
+            CompKey::PACalc => self.pac.alcohol,
+            CompKey::PACtotal => self.pac.total(),
+            CompKey::HF => self.pac.hardness_factor,
+        }
+    }
+}
+
 impl Default for SolidsBreakdown {
     fn default() -> Self {
         Self::empty()
@@ -649,6 +720,10 @@ impl AbsDiffEq for Composition {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashMap;
+
+    use strum::IntoEnumIterator;
+
     use crate::tests::asserts::shadow_asserts::assert_eq;
     #[allow(unused_imports)] // @todo Remove when used.
     use crate::tests::asserts::*;
@@ -723,5 +798,31 @@ mod tests {
         let pac = COMP_MILK_2_PERCENT.pac;
         assert_eq!(pac.sugars, 4.8069);
         assert_eq!(pac.total(), 4.8069);
+    }
+
+    #[test]
+    fn composition_get() {
+        let expected = HashMap::from([
+            (CompKey::MilkFat, 2.0),
+            (CompKey::TotalFat, 2.0),
+            (CompKey::MSNF, 8.82),
+            (CompKey::MilkSNFS, 4.0131),
+            (CompKey::Lactose, 4.8069),
+            (CompKey::Sugars, 4.8069),
+            (CompKey::ArtificialSweeteners, 0.0),
+            (CompKey::TotalSolids, 10.82),
+            (CompKey::POD, 0.769104),
+            (CompKey::PACsgr, 4.8069),
+            (CompKey::PACtotal, 4.8069),
+        ]);
+
+        CompKey::iter().for_each(|key| {
+            assert_eq!(
+                COMP_MILK_2_PERCENT.get(key),
+                *expected.get(&key).unwrap_or(&0.0),
+                "Unexpected for CompKey::{:?}",
+                key
+            )
+        });
     }
 }
