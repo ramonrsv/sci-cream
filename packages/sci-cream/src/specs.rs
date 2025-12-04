@@ -138,7 +138,7 @@ mod test {
             alcohol,
             pod,
             pac,
-        } = COMP_MILK_2_PERCENT.clone();
+        } = *COMP_MILK_2_PERCENT;
 
         assert_eq!(solids.total(), 10.82);
         assert_eq!(COMP_MILK_2_PERCENT.water(), 89.18);
@@ -174,7 +174,7 @@ mod test {
     fn into_composition_sugars_spec_sucrose() {
         let Composition {
             solids, sweeteners, ..
-        } = COMP_SUCROSE.clone();
+        } = *COMP_SUCROSE;
 
         assert_eq!(solids.total(), 100.0);
         assert_eq!(COMP_SUCROSE.water(), 0.0);
@@ -205,7 +205,7 @@ mod test {
     fn into_composition_sugars_spec_dextrose() {
         let Composition {
             solids, sweeteners, ..
-        } = COMP_DEXTROSE.clone();
+        } = *COMP_DEXTROSE;
 
         assert_eq!(solids.total(), 100.0);
         assert_eq!(COMP_DEXTROSE.water(), 0.0);
@@ -236,7 +236,7 @@ mod test {
     fn into_composition_sugars_spec_dextrose_50_percent() {
         let Composition {
             solids, sweeteners, ..
-        } = COMP_DEXTROSE_50_PERCENT.clone();
+        } = *COMP_DEXTROSE_50_PERCENT;
 
         assert_eq!(solids.total(), 50.0);
         assert_eq!(COMP_DEXTROSE_50_PERCENT.water(), 50.0);

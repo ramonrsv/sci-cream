@@ -9,30 +9,31 @@ use crate::{
 // Comp Specs
 // --------------------------------------------
 
-pub static SPEC_DAIRY_2_PERCENT: LazyLock<DairySpec> = LazyLock::new(|| DairySpec {
+pub(crate) static SPEC_DAIRY_2_PERCENT: LazyLock<DairySpec> = LazyLock::new(|| DairySpec {
     fat: 2.0,
     msnf: None,
 });
 
-pub static SPEC_SUGARS_SUCROSE: LazyLock<SugarsSpec> = LazyLock::new(|| SugarsSpec {
+pub(crate) static SPEC_SUGARS_SUCROSE: LazyLock<SugarsSpec> = LazyLock::new(|| SugarsSpec {
     sugars: Sugars::new().sucrose(100.0),
     solids: 100.0,
 });
 
-pub static SPEC_SUGARS_DEXTROSE: LazyLock<SugarsSpec> = LazyLock::new(|| SugarsSpec {
+pub(crate) static SPEC_SUGARS_DEXTROSE: LazyLock<SugarsSpec> = LazyLock::new(|| SugarsSpec {
     sugars: Sugars::new().glucose(100.0),
     solids: 100.0,
 });
 
-pub static SPEC_SUGARS_DEXTROSE_50_PERCENT: LazyLock<SugarsSpec> = LazyLock::new(|| SugarsSpec {
-    sugars: Sugars::new().glucose(100.0),
-    solids: 50.0,
-});
+pub(crate) static SPEC_SUGARS_DEXTROSE_50_PERCENT: LazyLock<SugarsSpec> =
+    LazyLock::new(|| SugarsSpec {
+        sugars: Sugars::new().glucose(100.0),
+        solids: 50.0,
+    });
 
 // Compositions
 // --------------------------------------------
 
-pub static COMP_MILK_2_PERCENT: LazyLock<Composition> = LazyLock::new(|| {
+pub(crate) static COMP_MILK_2_PERCENT: LazyLock<Composition> = LazyLock::new(|| {
     Composition::new()
         .solids(
             Solids::new().milk(
@@ -47,7 +48,7 @@ pub static COMP_MILK_2_PERCENT: LazyLock<Composition> = LazyLock::new(|| {
         .pac(PAC::new().sugars(4.8069))
 });
 
-pub static COMP_SUCROSE: LazyLock<Composition> = LazyLock::new(|| {
+pub(crate) static COMP_SUCROSE: LazyLock<Composition> = LazyLock::new(|| {
     Composition::new()
         .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(100.0)))
         .sweeteners(Sweeteners::new().sugars(Sugars::new().sucrose(100.0)))
@@ -55,7 +56,7 @@ pub static COMP_SUCROSE: LazyLock<Composition> = LazyLock::new(|| {
         .pac(PAC::new().sugars(100.0))
 });
 
-pub static COMP_DEXTROSE: LazyLock<Composition> = LazyLock::new(|| {
+pub(crate) static COMP_DEXTROSE: LazyLock<Composition> = LazyLock::new(|| {
     Composition::new()
         .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(100.0)))
         .sweeteners(Sweeteners::new().sugars(Sugars::new().glucose(100.0)))
@@ -63,7 +64,7 @@ pub static COMP_DEXTROSE: LazyLock<Composition> = LazyLock::new(|| {
         .pac(PAC::new().sugars(190.0))
 });
 
-pub static COMP_DEXTROSE_50_PERCENT: LazyLock<Composition> = LazyLock::new(|| {
+pub(crate) static COMP_DEXTROSE_50_PERCENT: LazyLock<Composition> = LazyLock::new(|| {
     Composition::new()
         .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(50.0)))
         .sweeteners(Sweeteners::new().sugars(Sugars::new().glucose(50.0)))
@@ -74,7 +75,7 @@ pub static COMP_DEXTROSE_50_PERCENT: LazyLock<Composition> = LazyLock::new(|| {
 // Ingredient specs
 // --------------------------------------------
 
-pub const ING_SPEC_MILK_2_PERCENT_STR: &str = r#"{
+pub(crate) const ING_SPEC_MILK_2_PERCENT_STR: &str = r#"{
   "name": "2% Milk",
   "category": "Dairy",
   "DairySpec": {
@@ -82,7 +83,7 @@ pub const ING_SPEC_MILK_2_PERCENT_STR: &str = r#"{
   }
 }"#;
 
-pub const ING_SPEC_SUGARS_SUCROSE_STR: &str = r#"{
+pub(crate) const ING_SPEC_SUGARS_SUCROSE_STR: &str = r#"{
   "name": "Sucrose",
   "category": "Sweetener",
   "SugarsSpec": {
@@ -93,7 +94,7 @@ pub const ING_SPEC_SUGARS_SUCROSE_STR: &str = r#"{
   }
 }"#;
 
-pub const ING_SPEC_SUGARS_DEXTROSE_STR: &str = r#"{
+pub(crate) const ING_SPEC_SUGARS_DEXTROSE_STR: &str = r#"{
   "name": "Dextrose",
   "category": "Sweetener",
   "SugarsSpec": {
@@ -104,41 +105,44 @@ pub const ING_SPEC_SUGARS_DEXTROSE_STR: &str = r#"{
   }
 }"#;
 
-pub static ING_SPEC_MILK_2_PERCENT: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-    name: "2% Milk".to_string(),
-    category: Category::Dairy,
-    spec: Spec::DairySpec(*SPEC_DAIRY_2_PERCENT),
-});
+pub(crate) static ING_SPEC_MILK_2_PERCENT: LazyLock<IngredientSpec> =
+    LazyLock::new(|| IngredientSpec {
+        name: "2% Milk".to_string(),
+        category: Category::Dairy,
+        spec: Spec::DairySpec(*SPEC_DAIRY_2_PERCENT),
+    });
 
-pub static ING_SPEC_SUGARS_SUCROSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-    name: "Sucrose".to_string(),
-    category: Category::Sweetener,
-    spec: Spec::SugarsSpec(*SPEC_SUGARS_SUCROSE),
-});
+pub(crate) static ING_SPEC_SUGARS_SUCROSE: LazyLock<IngredientSpec> =
+    LazyLock::new(|| IngredientSpec {
+        name: "Sucrose".to_string(),
+        category: Category::Sweetener,
+        spec: Spec::SugarsSpec(*SPEC_SUGARS_SUCROSE),
+    });
 
-pub static ING_SPEC_SUGARS_DEXTROSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-    name: "Dextrose".to_string(),
-    category: Category::Sweetener,
-    spec: Spec::SugarsSpec(*SPEC_SUGARS_DEXTROSE),
-});
+pub(crate) static ING_SPEC_SUGARS_DEXTROSE: LazyLock<IngredientSpec> =
+    LazyLock::new(|| IngredientSpec {
+        name: "Dextrose".to_string(),
+        category: Category::Sweetener,
+        spec: Spec::SugarsSpec(*SPEC_SUGARS_DEXTROSE),
+    });
 
 // Ingredients
 // --------------------------------------------
 
-pub static ING_MILK_2_PERCENT: LazyLock<Ingredient> = LazyLock::new(|| Ingredient {
+pub(crate) static ING_MILK_2_PERCENT: LazyLock<Ingredient> = LazyLock::new(|| Ingredient {
     name: "2% Milk".to_string(),
     category: Category::Dairy,
-    composition: COMP_MILK_2_PERCENT.clone(),
+    composition: *COMP_MILK_2_PERCENT,
 });
 
-pub static ING_SUCROSE: LazyLock<Ingredient> = LazyLock::new(|| Ingredient {
+pub(crate) static ING_SUCROSE: LazyLock<Ingredient> = LazyLock::new(|| Ingredient {
     name: "Sucrose".to_string(),
     category: Category::Sweetener,
-    composition: COMP_SUCROSE.clone(),
+    composition: *COMP_SUCROSE,
 });
 
-pub static ING_DEXTROSE: LazyLock<Ingredient> = LazyLock::new(|| Ingredient {
+pub(crate) static ING_DEXTROSE: LazyLock<Ingredient> = LazyLock::new(|| Ingredient {
     name: "Dextrose".to_string(),
     category: Category::Sweetener,
-    composition: COMP_DEXTROSE.clone(),
+    composition: *COMP_DEXTROSE,
 });
