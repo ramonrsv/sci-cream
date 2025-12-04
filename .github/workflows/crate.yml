@@ -31,8 +31,8 @@ jobs:
       - uses: dtolnay/rust-toolchain@master
         with:
           toolchain: stable
-      - run: cargo build --all-features
-      - run: cargo test --all-features
+      - run: cargo build --all-features --all-targets
+      - run: cargo test --all-features --all-targets
 
   build_docs:
     runs-on: ubuntu-latest
@@ -52,7 +52,7 @@ jobs:
         with:
           toolchain: stable
           components: clippy
-      - run: cargo clippy --all-features --no-deps
+      - run: cargo clippy --all-features --all-targets --no-deps
 
   rustfmt:
     runs-on: ubuntu-latest

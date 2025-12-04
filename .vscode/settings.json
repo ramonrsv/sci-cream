@@ -17,11 +17,10 @@
   "rust-analyzer.linkedProjects": [
     "./packages/sci-cream/Cargo.toml"
   ],
-  "rust-analyzer.cargo.features": [
-    "wasm"
-  ],
-  "rust-analyzer.check.features": [
-    "wasm", "diesel"
-  ],
+  "rust-analyzer.cargo.features": "all",
+  "rust-analyzer.check.features": "all",
+  "rust-analyzer.cargo.allTargets": true,
+  "rust-analyzer.check.allTargets": true,
+  "rust-analyzer.check.command": "clippy",
   "prettier.printWidth": 100
 }
