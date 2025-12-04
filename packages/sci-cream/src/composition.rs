@@ -118,10 +118,6 @@ pub struct Composition {
 }
 
 impl SolidsBreakdown {
-    pub fn new() -> Self {
-        Self::empty()
-    }
-
     pub fn empty() -> Self {
         Self {
             fats: 0f64,
@@ -145,6 +141,11 @@ impl SolidsBreakdown {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl SolidsBreakdown {
+    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
     pub fn total(&self) -> f64 {
         iter_fields_as::<f64, _>(self).sum()
     }
@@ -155,10 +156,6 @@ impl SolidsBreakdown {
 }
 
 impl Solids {
-    pub fn new() -> Self {
-        Self::empty()
-    }
-
     pub fn empty() -> Self {
         Self {
             milk: SolidsBreakdown::empty(),
@@ -192,6 +189,11 @@ impl Solids {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Solids {
+    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
     fn iter_fields_as_solids_breakdown(&self) -> impl Iterator<Item = &SolidsBreakdown> {
         iter_fields_as::<SolidsBreakdown, _>(self)
     }
@@ -329,10 +331,6 @@ impl Sugars {
 }
 
 impl Sweeteners {
-    pub fn new() -> Self {
-        Self::empty()
-    }
-
     pub fn empty() -> Self {
         Self {
             sugars: Sugars::empty(),
@@ -387,11 +385,25 @@ impl Sweeteners {
     }
 }
 
-impl Micro {
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+impl Sweeteners {
+    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    #[cfg(feature = "wasm")]
+    pub fn to_pod_js(&self) -> Option<f64> {
+        self.to_pod().ok()
+    }
+
+    #[cfg(feature = "wasm")]
+    pub fn to_pac_js(&self) -> Option<f64> {
+        self.to_pac().ok()
+    }
+}
+
+impl Micro {
     pub fn empty() -> Self {
         Self {
             salt: 0f64,
@@ -401,11 +413,15 @@ impl Micro {
     }
 }
 
-impl PAC {
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+impl Micro {
+    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     pub fn new() -> Self {
         Self::empty()
     }
+}
 
+impl PAC {
     pub fn empty() -> Self {
         Self {
             sugars: 0f64,
@@ -437,16 +453,17 @@ impl PAC {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl PAC {
+    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
     pub fn total(&self) -> f64 {
         iter_fields_as::<f64, _>(self).sum()
     }
 }
 
 impl Composition {
-    pub fn new() -> Self {
-        Self::empty()
-    }
-
     pub fn empty() -> Self {
         Self {
             solids: Solids::empty(),
@@ -485,6 +502,11 @@ impl Composition {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Composition {
+    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
     pub fn water(&self) -> f64 {
         100f64 - self.solids.total() - self.alcohol
     }
@@ -631,7 +653,70 @@ mod tests {
     #[allow(unused_imports)] // @todo Remove when used.
     use crate::tests::asserts::*;
 
+    use super::*;
     use crate::tests::assets::*;
+
+    #[test]
+    fn sugars_to_pod() {
+        assert_eq!(Sugars::new().sucrose(10f64).to_pod().unwrap(), 10f64);
+    }
+
+    #[test]
+    fn sugars_to_pod_error() {
+        assert!(matches!(
+            Sugars::new().unspecified(10f64).to_pod(),
+            Err(Error::CannotComputePOD(_))
+        ));
+    }
+
+    #[test]
+    fn sugars_to_pac() {
+        assert_eq!(Sugars::new().sucrose(10f64).to_pac().unwrap(), 10f64);
+    }
+
+    #[test]
+    fn sugars_to_pac_error() {
+        assert!(matches!(
+            Sugars::new().unspecified(10f64).to_pac(),
+            Err(Error::CannotComputePAC(_))
+        ));
+    }
+
+    #[test]
+    fn sweeteners_to_poc() {
+        let sweeteners = Sweeteners::new().sugars(Sugars::new().sucrose(10f64));
+        assert_eq!(sweeteners.to_pod().unwrap(), 10f64);
+    }
+
+    #[test]
+    fn sweeteners_to_pod_error() {
+        assert!(matches!(
+            Sweeteners::new().polysaccharide(10f64).to_pod(),
+            Err(Error::CannotComputePOD(_))
+        ));
+        assert!(matches!(
+            Sweeteners::new().artificial(10f64).to_pod(),
+            Err(Error::CannotComputePOD(_))
+        ));
+    }
+
+    #[test]
+    fn sweeteners_to_pac() {
+        let sweeteners = Sweeteners::new().sugars(Sugars::new().sucrose(10f64));
+        assert_eq!(sweeteners.to_pac().unwrap(), 10f64);
+    }
+
+    #[test]
+    fn sweeteners_to_pac_error() {
+        assert!(matches!(
+            Sweeteners::new().polysaccharide(10f64).to_pac(),
+            Err(Error::CannotComputePAC(_))
+        ));
+        assert!(matches!(
+            Sweeteners::new().artificial(10f64).to_pac(),
+            Err(Error::CannotComputePAC(_))
+        ));
+    }
 
     #[test]
     fn pac_total() {
