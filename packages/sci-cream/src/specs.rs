@@ -9,10 +9,9 @@ use crate::diesel::ingredients;
 use diesel::{Queryable, Selectable};
 
 use crate::{
-    composition::{Composition, PAC, Solids, SolidsBreakdown, Sugars, Sweeteners},
+    composition::{Composition, PAC, ScaleComponents, Solids, SolidsBreakdown, Sugars, Sweeteners},
     constants,
     ingredients::{Category, Ingredient},
-    recipe::ScaleComponents,
 };
 
 #[cfg(doc)]
