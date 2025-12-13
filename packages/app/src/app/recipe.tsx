@@ -1,4 +1,11 @@
-import { Ingredient, Composition, calculate_mix_composition_js } from "@workspace/sci-cream";
+import {
+  Ingredient,
+  Composition,
+  CompositionLine,
+  MixProperties,
+  calculate_mix_composition_js,
+  calculate_mix_properties_js,
+} from "@workspace/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
 export const RECIPE_TOTAL_ROWS = 21;
@@ -27,19 +34,22 @@ export function getMixTotal(recipeState: RecipeState) {
   );
 }
 
-export function calculateMixComposition(recipeState: RecipeState): Composition {
-  const compositionLines = recipeState
+export function getCompositionLines(recipeState: RecipeState): CompositionLine[] {
+  return recipeState
     .filter(([row, _]) => {
       return row.ingredient !== undefined && row.quantity !== undefined;
     })
     .map(([row, _]) => {
-      return {
-        composition: row.ingredient!.composition!,
-        amount: row.quantity!,
-      };
+      return new CompositionLine(row.ingredient!.composition!, row.quantity!);
     });
+}
 
-  return calculate_mix_composition_js(compositionLines);
+export function calculateMixComposition(recipeState: RecipeState): Composition {
+  return calculate_mix_composition_js(getCompositionLines(recipeState));
+}
+
+export function calculateMixProperties(recipeState: RecipeState): MixProperties {
+  return calculate_mix_properties_js(getCompositionLines(recipeState));
 }
 
 export function RecipeGrid({

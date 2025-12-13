@@ -7,6 +7,7 @@ import { IngredientCompositionGrid } from "./composition";
 import { fetchValidIngredientNames, fetchIngredientSpec } from "../lib/data";
 
 import { into_ingredient_from_spec_js } from "@workspace/sci-cream";
+import { MixPropertiesGrid } from "./properties";
 
 const MAX_RECIPES = 2;
 
@@ -44,8 +45,10 @@ export default function Home() {
       <h1 className="text-2xl font-bold pl-8 mb-2 text-gray-900">Ice Cream Recipe Calculator</h1>
       <div className="main-page-grid">
         <RecipeGrid recipeState={recipes[0]} validIngredients={validIngredients} />
+        <MixPropertiesGrid recipeState={recipes[0]} />
         <IngredientCompositionGrid recipeState={recipes[0]} />
         <RecipeGrid recipeState={recipes[1]} validIngredients={validIngredients} />
+        <MixPropertiesGrid recipeState={recipes[1]} />
         <IngredientCompositionGrid recipeState={recipes[1]} />
       </div>
     </main>

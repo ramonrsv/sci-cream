@@ -3,7 +3,10 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
-use crate::composition::{Composition, ScaleComponents};
+use crate::{
+    composition::{CompKey, Composition, ScaleComponents},
+    fpd::FPD,
+};
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Serialize, Deserialize, Copy, Clone, Debug)]
@@ -39,6 +42,100 @@ pub fn calculate_mix_composition(composition_lines: &[CompositionLine]) -> Compo
         })
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[derive(Hash, PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
+pub enum PropKey {
+    MilkFat,
+    CacaoFat,
+    NutFat,
+    EggFat,
+    OtherFat,
+    TotalFat,
+    Lactose,
+    Sugars,
+    ArtificialSweeteners,
+    MSNF,
+    MilkSNFS,
+    CocoaSNFS,
+    NutSNFS,
+    EggSNFS,
+    OtherSNFS,
+    TotalSolids,
+    Salt,
+    Alcohol,
+    Emulsifiers,
+    Stabilizers,
+    EmulsifiersPerFat,
+    StabilizersPerWater,
+    POD,
+    PACsgr,
+    PACslt,
+    PACalc,
+    PACtotal,
+    AbsPAC,
+    HF,
+    FPD,
+    ServingTemp,
+    HardnessAt14C,
+}
+
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[derive(Copy, Clone, Debug)]
+pub struct MixProperties {
+    pub composition: Composition,
+    pub fpd: FPD,
+}
+
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+impl MixProperties {
+    pub fn get(&self, key: PropKey) -> f64 {
+        match key {
+            PropKey::MilkFat => self.composition.get(CompKey::MilkFat),
+            PropKey::CacaoFat => self.composition.get(CompKey::CacaoFat),
+            PropKey::NutFat => self.composition.get(CompKey::NutFat),
+            PropKey::EggFat => self.composition.get(CompKey::EggFat),
+            PropKey::OtherFat => self.composition.get(CompKey::OtherFat),
+            PropKey::TotalFat => self.composition.get(CompKey::TotalFat),
+            PropKey::Lactose => self.composition.get(CompKey::Lactose),
+            PropKey::Sugars => self.composition.get(CompKey::Sugars),
+            PropKey::ArtificialSweeteners => self.composition.get(CompKey::ArtificialSweeteners),
+            PropKey::MSNF => self.composition.get(CompKey::MSNF),
+            PropKey::MilkSNFS => self.composition.get(CompKey::MilkSNFS),
+            PropKey::CocoaSNFS => self.composition.get(CompKey::CocoaSNFS),
+            PropKey::NutSNFS => self.composition.get(CompKey::NutSNFS),
+            PropKey::EggSNFS => self.composition.get(CompKey::EggSNFS),
+            PropKey::OtherSNFS => self.composition.get(CompKey::OtherSNFS),
+            PropKey::TotalSolids => self.composition.get(CompKey::TotalSolids),
+            PropKey::Salt => self.composition.get(CompKey::Salt),
+            PropKey::Alcohol => self.composition.get(CompKey::Alcohol),
+            PropKey::Emulsifiers => self.composition.get(CompKey::Emulsifiers),
+            PropKey::Stabilizers => self.composition.get(CompKey::Stabilizers),
+            PropKey::EmulsifiersPerFat => self.composition.get(CompKey::EmulsifiersPerFat),
+            PropKey::StabilizersPerWater => self.composition.get(CompKey::StabilizersPerWater),
+            PropKey::POD => self.composition.get(CompKey::POD),
+            PropKey::PACsgr => self.composition.get(CompKey::PACsgr),
+            PropKey::PACslt => self.composition.get(CompKey::PACslt),
+            PropKey::PACalc => self.composition.get(CompKey::PACalc),
+            PropKey::PACtotal => self.composition.get(CompKey::PACtotal),
+            PropKey::AbsPAC => self.composition.get(CompKey::AbsPAC),
+            PropKey::HF => self.composition.get(CompKey::HF),
+            PropKey::FPD => self.fpd.fpd,
+            PropKey::ServingTemp => self.fpd.serving_temp,
+            PropKey::HardnessAt14C => self.fpd.hardness_at_14c,
+        }
+    }
+}
+
+pub fn calculate_mix_properties(composition_lines: &[CompositionLine]) -> MixProperties {
+    MixProperties {
+        composition: calculate_mix_composition(composition_lines),
+        fpd: FPD {
+            fpd: -3.0,
+            serving_temp: -14.0,
+            hardness_at_14c: 75.0,
+        },
+    }
+}
 #[cfg(feature = "wasm")]
 pub mod js {
     use super::*;
@@ -46,6 +143,13 @@ pub mod js {
     #[wasm_bindgen]
     pub fn calculate_mix_composition_js(composition_lines: JsValue) -> Composition {
         calculate_mix_composition(
+            &serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(composition_lines).unwrap(),
+        )
+    }
+
+    #[wasm_bindgen]
+    pub fn calculate_mix_properties_js(composition_lines: JsValue) -> MixProperties {
+        calculate_mix_properties(
             &serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(composition_lines).unwrap(),
         )
     }

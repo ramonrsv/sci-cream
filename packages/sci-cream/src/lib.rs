@@ -6,6 +6,7 @@ pub mod composition;
 pub mod constants;
 pub mod display;
 pub mod error;
+pub mod fpd;
 pub mod ingredients;
 pub mod recipe;
 pub mod specs;
@@ -20,13 +21,14 @@ pub use {
     composition::{CompKey, Composition, PAC, Solids, SolidsBreakdown, Sugars, Sweeteners},
     display::{composition_value_as_percentage, composition_value_as_quantity},
     ingredients::{Category, Ingredient},
+    recipe::{MixProperties, PropKey},
     specs::{DairySpec, SugarsSpec},
 };
 
 #[cfg(feature = "wasm")]
 pub use crate::{
-    display::js::comp_key_as_med_str_js,
-    recipe::js::calculate_mix_composition_js,
+    display::js::{comp_key_as_med_str_js, prop_key_as_med_str_js},
+    recipe::js::{calculate_mix_composition_js, calculate_mix_properties_js},
     specs::js::into_ingredient_from_spec_js,
     wasm::{log, log_many, log_u32},
 };
