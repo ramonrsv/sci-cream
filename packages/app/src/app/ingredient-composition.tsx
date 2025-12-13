@@ -77,7 +77,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
 
   const formatCompValue = (comp: number, ingQty: number | undefined) => {
     const fmtF = (num: number) => {
-      return Number(num.toFixed(1));
+      return Number.isNaN(num) ? "-" : Number(num.toFixed(1));
     };
 
     if (comp !== 0.0) {

@@ -139,11 +139,14 @@ pub enum CompKey {
     Alcohol,
     Emulsifiers,
     Stabilizers,
+    EmulsifiersPerFat,
+    StabilizersPerWater,
     POD,
     PACsgr,
     PACslt,
     PACalc,
     PACtotal,
+    AbsPAC,
     HF,
 }
 
@@ -461,6 +464,15 @@ impl PAC {
     pub fn total(&self) -> f64 {
         iter_fields_as::<f64, _>(self).sum()
     }
+
+    /// Note that [`f64::NAN`] is a valid result, if there is no water
+    pub fn absolute(&self, water: f64) -> f64 {
+        if water > 0.0 {
+            (self.total() / water) * 100.0
+        } else {
+            f64::NAN
+        }
+    }
 }
 
 impl Composition {
@@ -510,6 +522,29 @@ impl Composition {
     pub fn water(&self) -> f64 {
         100.0 - self.solids.total() - self.alcohol
     }
+
+    /// Note that [`f64::NAN`] is a valid result, if there are no fats
+    pub fn emulsifiers_per_fat(&self) -> f64 {
+        if self.solids.fats() > 0.0 {
+            self.micro.emulsifiers / self.solids.fats()
+        } else {
+            f64::NAN
+        }
+    }
+
+    /// Note that [`f64::NAN`] is a valid result, if there is no water
+    pub fn stabilizers_per_water(&self) -> f64 {
+        if self.water() > 0.0 {
+            self.micro.stabilizers / self.water()
+        } else {
+            f64::NAN
+        }
+    }
+
+    /// Note that [`f64::NAN`] is a valid result, if there is no water
+    pub fn absolute_pac(&self) -> f64 {
+        self.pac.absolute(self.water())
+    }
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
@@ -536,11 +571,14 @@ impl Composition {
             CompKey::Alcohol => self.alcohol,
             CompKey::Emulsifiers => self.micro.emulsifiers,
             CompKey::Stabilizers => self.micro.stabilizers,
+            CompKey::EmulsifiersPerFat => self.emulsifiers_per_fat(),
+            CompKey::StabilizersPerWater => self.stabilizers_per_water(),
             CompKey::POD => self.pod,
             CompKey::PACsgr => self.pac.sugars,
             CompKey::PACslt => self.pac.salt,
             CompKey::PACalc => self.pac.alcohol,
             CompKey::PACtotal => self.pac.total(),
+            CompKey::AbsPAC => self.absolute_pac(),
             CompKey::HF => self.pac.hardness_factor,
         }
     }
@@ -910,6 +948,7 @@ mod tests {
             (CompKey::POD, 0.769104),
             (CompKey::PACsgr, 4.8069),
             (CompKey::PACtotal, 4.8069),
+            (CompKey::AbsPAC, 5.390109890109889),
         ]);
 
         CompKey::iter().for_each(|key| {
