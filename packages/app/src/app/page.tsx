@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 
 import { IngredientRow, makeEmptyIngredientRow, RecipeGrid, RECIPE_TOTAL_ROWS } from "./recipe";
-import { IngredientCompositionGrid } from "./ingredient-composition";
+import { IngredientCompositionGrid } from "./composition";
 import { fetchValidIngredientNames, fetchIngredientSpec } from "../lib/data";
 
 import { into_ingredient_from_spec_js } from "@workspace/sci-cream";
