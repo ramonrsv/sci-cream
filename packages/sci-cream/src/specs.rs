@@ -15,22 +15,41 @@ use crate::{
     recipe::ScaleComponents,
 };
 
+#[cfg(doc)]
+use crate::constants::{STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM};
+
 pub trait IntoComposition {
     fn into_composition(self) -> Composition;
 }
 
+/// Spec for trivial dairy ingredients, e.g. Milk, Cream, Milk Powder, etc.
+///
+/// For most ingredients it is sufficient to specify the fat content; the rest of the components are
+/// calculated from standard values, notably [`STD_MSNF_IN_MILK_SERUM`] and [`STD_LACTOSE_IN_MSNF`].
+/// For milk powder ingredients it's necessary to specify the `msnf`, e.g. 97 for Skimmed MIlk
+/// Powder - 3% water, no fat, the rest is `msnf`, or 73 for Whole Milk Powder - total less 27% fat.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct DairySpec {
     pub fat: f64,
     pub msnf: Option<f64>,
 }
 
+/// Spec for sweeteners composed of mono and disaccharides, for which POD and PAC are known.
+///
+/// The values in [`sugars`](Self::sugars) represent the compositions of the sugars, i.e. the
+/// solids, as percentages, adding up to 100. The [`solids`](Self::solids) value represents how much
+/// of the ingredient as a whole is sugars. For example, granulated sugar would have
+/// `sugars.sucrose` and `solids` both be 100, i.e. all solids and all of them sucrose. Invert Syrup
+/// might be `sugars.sucrose = 10`, `.glucose = 45`, `.fructose = 45`, and `solids = 80`, meaning
+/// that 90% of the sucrose was split into glucose/fructose, and the final syrup is 20% water. The
+/// POD and PAC values for the ingredient as a whole are automatically calculated internally.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct SugarsSpec {
     pub sugars: Sugars,
     pub solids: f64,
 }
 
+/// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum Spec {
     DairySpec(DairySpec),
