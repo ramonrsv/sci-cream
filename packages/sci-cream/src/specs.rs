@@ -101,8 +101,8 @@ impl IntoComposition for SugarsSpec {
         Composition::new()
             .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(sugars.total())))
             .sweeteners(Sweeteners::new().sugars(sugars))
-            .pod(sugars.to_pod().unwrap())
-            .pac(PAC::new().sugars(sugars.to_pac().unwrap()))
+            .pod(sugars.to_pod())
+            .pac(PAC::new().sugars(sugars.to_pac()))
     }
 }
 

@@ -65,7 +65,6 @@ impl ScaleComponents for Sugars {
             lactose: self.lactose * factor,
             maltose: self.maltose * factor,
             galactose: self.galactose * factor,
-            unspecified: self.unspecified * factor,
         }
     }
 
@@ -77,7 +76,6 @@ impl ScaleComponents for Sugars {
             lactose: self.lactose + other.lactose,
             maltose: self.maltose + other.maltose,
             galactose: self.galactose + other.galactose,
-            unspecified: self.unspecified + other.unspecified,
         }
     }
 }
