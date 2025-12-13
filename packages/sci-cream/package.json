@@ -15,7 +15,7 @@
     "build:js": "vite build",
     "test": "pnpm run test:rust:wasm && pnpm run test:js",
     "test:rust:wasm": "cargo test --features wasm",
-    "test:js": "vitest run",
+    "test:js": "pnpm run build:wasm && pnpm run build:js && vitest run",
     "lint": "cargo clippy --features wasm"
   },
   "dependencies": {
