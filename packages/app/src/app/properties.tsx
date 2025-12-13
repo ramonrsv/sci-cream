@@ -4,7 +4,6 @@ import { useState } from "react";
 
 import { RecipeState, getMixTotal, calculateMixProperties } from "./recipe";
 import { getPropKeys } from "../lib/deprecated/sci-cream";
-import { STATE_VAL } from "../lib/util";
 
 import {
   PropKey,
@@ -38,6 +37,14 @@ const defaultSelectedProperties: Set<PropKey> = new Set([
   PropKey.ServingTemp,
   PropKey.HardnessAt14C,
 ]);
+
+function isPropKeyQuantity(prop_key: PropKey) {
+  return !(
+    prop_key === PropKey.FPD ||
+    prop_key === PropKey.ServingTemp ||
+    prop_key == PropKey.HardnessAt14C
+  );
+}
 
 export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState }) {
   const [qtyToggle, setQtyToggle] = useState<QtyToggle>(QtyToggle.Quantity);
@@ -76,23 +83,27 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
     }
   };
 
-  const formatCompValue = (comp: number, ingQty: number | undefined) => {
+  const formatPropertyValue = (prop: number, ingQty: number | undefined, isQty: boolean) => {
     const fmtF = (num: number) => {
       return Number.isNaN(num) ? "-" : Number(num.toFixed(1));
     };
 
-    if (comp !== 0.0) {
+    if (prop !== 0.0) {
+      if (!isQty) {
+        return fmtF(prop);
+      }
+
       switch (qtyToggle) {
         case QtyToggle.Quantity:
-          return ingQty ? fmtF(comp_val_as_qty(comp, ingQty)) : "";
+          return ingQty ? fmtF(comp_val_as_qty(prop, ingQty)) : "";
         case QtyToggle.Percentage:
-          return ingQty && mixTotal ? fmtF(comp_val_as_percent(comp, ingQty, mixTotal)) : "";
+          return ingQty && mixTotal ? fmtF(comp_val_as_percent(prop, ingQty, mixTotal)) : "";
       }
     }
   };
 
   const formattedPropertyCell = (prop_key: PropKey) => {
-    return formatCompValue(mixProperties.get(prop_key), mixTotal);
+    return formatPropertyValue(mixProperties.get(prop_key), mixTotal, isPropKeyQuantity(prop_key));
   };
 
   const mixTotal = getMixTotal(recipeState);
