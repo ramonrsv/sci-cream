@@ -36,7 +36,7 @@ function isPropKeyQuantity(prop_key: PropKey) {
 }
 
 export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState }) {
-  const qtyToggleState = useState<QtyToggle>(QtyToggle.Quantity);
+  const qtyToggleState = useState<QtyToggle>(QtyToggle.Percentage);
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(defaultSelectedProperties);
 
