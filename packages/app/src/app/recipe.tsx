@@ -150,10 +150,10 @@ export function RecipeGrid({
   return (
     <div id="recipe-grid">
       <div>
-        <button onClick={copyRecipe} className="table-inner-cell px-1">
+        <button onClick={copyRecipe} className="button px-1">
           Copy Recipe
         </button>
-        <button onClick={pasteRecipe} className="table-inner-cell ml-2 px-1 ">
+        <button onClick={pasteRecipe} className="button ml-2 px-1">
           Paste Recipe
         </button>
       </div>

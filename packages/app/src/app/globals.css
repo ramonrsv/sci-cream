@@ -54,3 +54,7 @@ body {
   /* Ensure it's on top of other content */
   @apply z-1000 absolute border-gray-400 border bg-gray-100 text-gray-900 text-sm;
 }
+
+.button {
+  @apply bg-gray-200 text-gray-900 text-sm border-1 border-gray-400 hover:bg-gray-300 active:bg-gray-400;
+}

@@ -108,7 +108,9 @@ export function KeySelection<Key>({
       </select>
       {keySelectVisible && (
         <div className="popup top-0 left-47 w-fit pl-1 pr-2 whitespace-nowrap">
-          <button onClick={() => setKeySelectVisible(false)}>Done</button>
+          <button className="button" onClick={() => setKeySelectVisible(false)}>
+            Done
+          </button>
           <ul>
             {getKeys().map((key) => (
               <li key={String(key)}>
