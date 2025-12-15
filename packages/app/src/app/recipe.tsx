@@ -79,27 +79,90 @@ export function RecipeGrid({
     }, [row.name, validIngredients]);
   });
 
-  const updateIngredientRowName = (index: number, name: string) => {
+  const updateIngredientRow = (
+    index: number,
+    _name: string | undefined,
+    quantityStr: string | undefined
+  ) => {
     const [row, setRow] = recipeState[index];
-    setRow({ ...row, name });
+
+    const name = _name === undefined ? row.name : _name;
+    const quantity =
+      quantityStr === undefined
+        ? row.quantity
+        : quantityStr === ""
+        ? undefined
+        : parseFloat(quantityStr);
+
+    setRow({ ...row, name, quantity });
+  };
+
+  const updateIngredientRowName = (index: number, name: string) => {
+    updateIngredientRow(index, name, undefined);
   };
 
   const updateIngredientRowQuantity = (index: number, quantityStr: string) => {
-    const [row, setRow] = recipeState[index];
-    const quantity = quantityStr === "" ? undefined : parseFloat(quantityStr);
-    setRow({ ...row, quantity });
+    updateIngredientRow(index, undefined, quantityStr);
+  };
+
+  const copyRecipe = async () => {
+    const recipeData = recipeState
+      .map(([row, _]) => row)
+      .filter((row) => row.name !== "" || row.quantity !== undefined)
+      .map((row) => `${row.name}\t${row.quantity ?? ""}`)
+      .join("\n");
+
+    if (recipeData) {
+      await navigator.clipboard.writeText(`Ingredient\tQty(g)\n${recipeData}`);
+    }
+  };
+
+  const pasteRecipe = async () => {
+    try {
+      const lines = (await navigator.clipboard.readText()).trim().split("\n");
+      const lineOffset = lines[0]?.includes("Ingredient") ? 1 : 0;
+
+      if (lines.length - lineOffset > recipeState.length) {
+        console.error("Pasted recipe has more rows than available in the recipe grid.");
+        return;
+      }
+
+      for (let idx = 0; idx < recipeState.length; idx++) {
+        const line = lines[idx + lineOffset]?.trim();
+        if (!line) {
+          updateIngredientRow(idx, "", "");
+          continue;
+        }
+
+        const parts = line.split("\t");
+        const name = parts[0]?.trim() || "";
+        const quantityStr = parts[1]?.trim() || "";
+
+        updateIngredientRow(idx, name, quantityStr);
+      }
+    } catch (err) {
+      console.error("Failed to paste recipe:", err);
+    }
   };
 
   const mixTotal = getMixTotal(recipeState);
 
   return (
     <div id="recipe-grid">
+      <div>
+        <button onClick={copyRecipe} className="table-inner-cell px-1">
+          Copy Recipe
+        </button>
+        <button onClick={pasteRecipe} className="table-inner-cell ml-2 px-1 ">
+          Paste Recipe
+        </button>
+      </div>
       <datalist id="valid-ingredients">
         {validIngredients.map((name) => (
           <option key={name} value={name} />
         ))}
       </datalist>
-      <table className="mt-6 border-collapse border-gray-400 border-2">
+      <table className="border-collapse border-gray-400 border-2">
         {/* Header */}
         <thead>
           <tr className="table-header h-[25px] text-center">
