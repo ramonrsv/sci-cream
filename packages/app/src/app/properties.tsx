@@ -85,12 +85,13 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
         getKeys={getPropKeys}
         key_as_med_str_js={prop_key_as_med_str_js}
       />
-      <div className="border-gray-400 border-2 overflow-x-auto whitespace-nowrap">
+      <div className="border-gray-400 border-2 max-h-[580px] overflow-y-auto whitespace-nowrap">
         <table className="border-collapse">
           <tbody>
             {getEnabledProps().map((prop_key) => (
               <tr key={prop_key} className="h-[25px]">
-                <td className="table-header w-full px-2 text-center">
+                {/* @todo The top-most border for the header column is not right, shows double */}
+                <td className="table-header-no-border border-gray-400 border-t border-r w-full px-2 text-center">
                   {prop_key_as_med_str_js(prop_key)}
                 </td>
                 <td className="table-inner-cell min-w-[50px] px-2 text-center">
