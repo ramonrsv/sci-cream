@@ -78,8 +78,10 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
   return (
     <div className="relative w-full">
       <KeySelection
-        supportedQtyToggles={[QtyToggle.Quantity, QtyToggle.Percentage]}
-        qtyToggleState={qtyToggleState}
+        qtyToggleComponent={{
+          supportedQtyToggles: [QtyToggle.Quantity, QtyToggle.Percentage],
+          qtyToggleState: qtyToggleState,
+        }}
         keyFilterState={propsFilterState}
         selectedKeysState={selectedPropsState}
         getKeys={getPropKeys}

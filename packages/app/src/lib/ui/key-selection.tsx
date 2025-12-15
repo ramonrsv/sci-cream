@@ -39,21 +39,25 @@ export function getEnabledKeys<Key>(
 }
 
 export function KeySelection<Key>({
-  supportedQtyToggles,
-  qtyToggleState,
+  qtyToggleComponent,
   keyFilterState,
   selectedKeysState,
   getKeys,
   key_as_med_str_js,
 }: {
-  supportedQtyToggles: QtyToggle[];
-  qtyToggleState: [QtyToggle, React.Dispatch<React.SetStateAction<QtyToggle>>];
+  qtyToggleComponent?: {
+    supportedQtyToggles: QtyToggle[];
+    qtyToggleState: [QtyToggle, React.Dispatch<React.SetStateAction<QtyToggle>>];
+  };
   keyFilterState: [KeyFilter, React.Dispatch<React.SetStateAction<KeyFilter>>];
   selectedKeysState: [Set<Key>, React.Dispatch<React.SetStateAction<Set<Key>>>];
   getKeys: () => Key[];
   key_as_med_str_js: (key: Key) => string;
 }) {
-  const [qtyToggle, setQtyToggle] = qtyToggleState;
+  const supportedQtyToggles = qtyToggleComponent?.supportedQtyToggles;
+  const [qtyToggle, setQtyToggle] = qtyToggleComponent?.qtyToggleState ?? [undefined, undefined];
+  const hasQtyToggle = supportedQtyToggles !== undefined && qtyToggle !== undefined;
+
   const [keyFilter, setKeyFilter] = keyFilterState;
   const [selectedKeys, setSelectedKeys] = selectedKeysState;
 
@@ -75,19 +79,21 @@ export function KeySelection<Key>({
 
   return (
     <div>
+      {hasQtyToggle && (
+        <select
+          className="border-gray-400 border text-gray-900 text-sm"
+          value={qtyToggle}
+          onChange={(e) => setQtyToggle(e.target.value as QtyToggle)}
+        >
+          {supportedQtyToggles.map((qt) => (
+            <option key={qt} value={qt}>
+              {qt}
+            </option>
+          ))}
+        </select>
+      )}
       <select
-        className="border-gray-400 border text-gray-900 text-sm"
-        value={qtyToggle}
-        onChange={(e) => setQtyToggle(e.target.value as QtyToggle)}
-      >
-        {supportedQtyToggles.map((qt) => (
-          <option key={qt} value={qt}>
-            {qt}
-          </option>
-        ))}
-      </select>
-      <select
-        className="ml-2 border-gray-400 border text-gray-900 text-sm"
+        className={`${hasQtyToggle ? "ml-2" : ""} border-gray-400 border text-gray-900 text-sm`}
         value={keyFilter}
         onChange={(e) => {
           setKeyFilter(e.target.value as KeyFilter);

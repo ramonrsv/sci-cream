@@ -73,8 +73,10 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
   return (
     <div className="relative w-full min-w-[200px]">
       <KeySelection
-        supportedQtyToggles={[QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage]}
-        qtyToggleState={qtyToggleState}
+        qtyToggleComponent={{
+          supportedQtyToggles: [QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage],
+          qtyToggleState: qtyToggleState,
+        }}
         keyFilterState={compsFilterState}
         selectedKeysState={selectedCompsState}
         getKeys={getCompKeys}
