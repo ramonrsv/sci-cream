@@ -154,8 +154,8 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
         <table className="border-collapse">
           <tbody>
             {enabledProperties().map((prop_key) => (
-              <tr key={prop_key} className="table-inner-cell h-[25px]">
-                <td className="table-inner-cell w-full px-2 text-center">
+              <tr key={prop_key} className="h-[25px]">
+                <td className="table-header w-full px-2 text-center">
                   {prop_key_as_med_str_js(prop_key)}
                 </td>
                 <td className="table-inner-cell min-w-[50px] px-2 text-center">

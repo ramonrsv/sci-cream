@@ -183,7 +183,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
             {/* Composition Rows */}
             {/* @todo The very last row is a little taller than the rest; not sure why */}
             {recipeState.map((_, index) => (
-              <tr key={index} className="table-inner-cell h-[25px]">
+              <tr key={index} className="h-[25px]">
                 {enabledHeaders().map((comp_key) => (
                   <td key={comp_key} className="table-inner-cell text-center">
                     {formattedCompCell(index, comp_key)}

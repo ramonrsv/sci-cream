@@ -73,7 +73,7 @@ impl PropKey {
             PropKey::HF => CompKey::HF.as_med_str(),
             PropKey::FPD => "FPD",
             PropKey::ServingTemp => "Serving Temp",
-            PropKey::HardnessAt14C => "Hardness @14C",
+            PropKey::HardnessAt14C => "Hardness @14°C",
         }
     }
 }
