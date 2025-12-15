@@ -60,6 +60,7 @@ pub struct Sugars {
     pub sucrose: f64,
     pub lactose: f64,
     pub maltose: f64,
+    pub unspecified: f64,
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
@@ -265,6 +266,7 @@ impl Sugars {
             sucrose: 0.0,
             lactose: 0.0,
             maltose: 0.0,
+            unspecified: 0.0,
         }
     }
 
@@ -291,6 +293,53 @@ impl Sugars {
     pub fn maltose(self, maltose: f64) -> Self {
         Self { maltose, ..self }
     }
+
+    pub fn unspecified(self, unspecified: f64) -> Self {
+        Self {
+            unspecified,
+            ..self
+        }
+    }
+
+    pub fn to_pod(&self) -> Result<f64> {
+        if self.unspecified != 0.0 {
+            return Err(Error::CannotComputePOD(
+                "Unspecified sugars should be zero".to_string(),
+            ));
+        }
+
+        Ok([
+            self.glucose * constants::GLUCOSE_POD,
+            self.fructose * constants::FRUCTOSE_POD,
+            self.galactose * constants::GALACTOSE_POD,
+            self.sucrose * constants::SUCROSE_POD,
+            self.lactose * constants::LACTOSE_POD,
+            self.maltose * constants::MALTOSE_POD,
+        ]
+        .into_iter()
+        .sum::<f64>()
+            / 100.0)
+    }
+
+    pub fn to_pac(&self) -> Result<f64> {
+        if self.unspecified != 0.0 {
+            return Err(Error::CannotComputePAC(
+                "Unspecified sugars should be zero".to_string(),
+            ));
+        }
+
+        Ok([
+            self.glucose * constants::GLUCOSE_PAC,
+            self.fructose * constants::FRUCTOSE_PAC,
+            self.galactose * constants::GALACTOSE_PAC,
+            self.sucrose * constants::SUCROSE_PAC,
+            self.lactose * constants::LACTOSE_PAC,
+            self.maltose * constants::MALTOSE_PAC,
+        ]
+        .into_iter()
+        .sum::<f64>()
+            / 100.0)
+    }
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
@@ -304,32 +353,14 @@ impl Sugars {
         iter_fields_as::<f64, _>(self).sum()
     }
 
-    pub fn to_pod(&self) -> f64 {
-        [
-            self.glucose * constants::GLUCOSE_POD,
-            self.fructose * constants::FRUCTOSE_POD,
-            self.galactose * constants::GALACTOSE_POD,
-            self.sucrose * constants::SUCROSE_POD,
-            self.lactose * constants::LACTOSE_POD,
-            self.maltose * constants::MALTOSE_POD,
-        ]
-        .into_iter()
-        .sum::<f64>()
-            / 100.0
+    #[cfg(feature = "wasm")]
+    pub fn to_pod_js(&self) -> Option<f64> {
+        self.to_pod().ok()
     }
 
-    pub fn to_pac(&self) -> f64 {
-        [
-            self.glucose * constants::GLUCOSE_PAC,
-            self.fructose * constants::FRUCTOSE_PAC,
-            self.galactose * constants::GALACTOSE_PAC,
-            self.sucrose * constants::SUCROSE_PAC,
-            self.lactose * constants::LACTOSE_PAC,
-            self.maltose * constants::MALTOSE_PAC,
-        ]
-        .into_iter()
-        .sum::<f64>()
-            / 100.0
+    #[cfg(feature = "wasm")]
+    pub fn to_pac_js(&self) -> Option<f64> {
+        self.to_pac().ok()
     }
 }
 
@@ -369,7 +400,7 @@ impl Sweeteners {
             ));
         }
 
-        Ok(self.sugars.to_pod())
+        self.sugars.to_pod()
     }
 
     pub fn to_pac(&self) -> Result<f64> {
@@ -384,7 +415,7 @@ impl Sweeteners {
             ));
         }
 
-        Ok(self.sugars.to_pac())
+        self.sugars.to_pac()
     }
 }
 
@@ -598,6 +629,7 @@ impl ScaleComponents for Sugars {
             lactose: self.lactose * factor,
             maltose: self.maltose * factor,
             galactose: self.galactose * factor,
+            unspecified: self.unspecified * factor,
         }
     }
 
@@ -609,6 +641,7 @@ impl ScaleComponents for Sugars {
             lactose: self.lactose + other.lactose,
             maltose: self.maltose + other.maltose,
             galactose: self.galactose + other.galactose,
+            unspecified: self.unspecified + other.unspecified,
         }
     }
 }
@@ -883,12 +916,28 @@ mod tests {
 
     #[test]
     fn sugars_to_pod() {
-        assert_eq!(Sugars::new().sucrose(10.0).to_pod(), 10.0);
+        assert_eq!(Sugars::new().sucrose(10.0).to_pod().unwrap(), 10.0);
+    }
+
+    #[test]
+    fn sugars_to_pod_error() {
+        assert!(matches!(
+            Sugars::new().unspecified(10.0).to_pod(),
+            Err(Error::CannotComputePOD(_))
+        ));
     }
 
     #[test]
     fn sugars_to_pac() {
-        assert_eq!(Sugars::new().sucrose(10.0).to_pac(), 10.0);
+        assert_eq!(Sugars::new().sucrose(10.0).to_pac().unwrap(), 10.0);
+    }
+
+    #[test]
+    fn sugars_to_pac_error() {
+        assert!(matches!(
+            Sugars::new().unspecified(10.0).to_pac(),
+            Err(Error::CannotComputePAC(_))
+        ));
     }
 
     #[test]
