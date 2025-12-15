@@ -3,6 +3,7 @@
 import { useState } from "react";
 
 import { RecipeState, getMixTotal, calculateMixComposition } from "./recipe";
+import { KeyFilter, QtyToggle, KeySelection } from "../lib/ui/key-selection";
 import { getCompKeys } from "../lib/deprecated/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
@@ -13,21 +14,6 @@ import {
   composition_value_as_percentage as comp_val_as_percent,
 } from "@workspace/sci-cream";
 
-enum QtyToggle {
-  /// The raw composition value as stored in the Ingredient, independent of quantity
-  Composition = "Composition",
-  /// The quantity in grams based on the ingredient quantity in the recipe
-  Quantity = "Quantity (g)",
-  /// The percentage of the mix based on the ingredient quantity and total mix quantity
-  Percentage = "Quantity (%)",
-}
-
-enum ColumnFilter {
-  Auto = "Auto",
-  All = "All",
-  Custom = "Custom",
-}
-
 const defaultSelectedColumns: Set<CompKey> = new Set([
   CompKey.MilkFat,
   CompKey.TotalFat,
@@ -37,10 +23,9 @@ const defaultSelectedColumns: Set<CompKey> = new Set([
 ]);
 
 export function IngredientCompositionGrid({ recipeState }: { recipeState: RecipeState }) {
-  const [qtyToggle, setQtyToggle] = useState<QtyToggle>(QtyToggle.Quantity);
-  const [columnFilter, setColumnFilter] = useState<ColumnFilter>(ColumnFilter.Auto);
-  const [columnSelectVisible, setColumnSelectVisible] = useState<boolean>(false);
-  const [selectedColumns, setSelectedColumns] = useState<Set<CompKey>>(defaultSelectedColumns);
+  const qtyToggleState = useState<QtyToggle>(QtyToggle.Quantity);
+  const columnFilterState = useState<KeyFilter>(KeyFilter.Auto);
+  const selectedColumnsState = useState<Set<CompKey>>(defaultSelectedColumns);
 
   const isCompColumnEmpty = (comp_key: CompKey) => {
     return recipeState.every(([row, _]) => {
@@ -49,31 +34,19 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
   };
 
   const isCompColumnSelected = (comp_key: CompKey) => {
-    return selectedColumns.has(comp_key);
-  };
-
-  const updateSelectedColumn = (comp_key: CompKey) => {
-    const newSet = new Set(selectedColumns);
-    if (newSet.has(comp_key)) {
-      newSet.delete(comp_key);
-    } else {
-      newSet.add(comp_key);
-    }
-    setSelectedColumns(newSet);
+    return selectedColumnsState[STATE_VAL].has(comp_key);
   };
 
   const enabledHeaders = () => {
-    switch (columnFilter) {
-      case ColumnFilter.All:
+    switch (columnFilterState[STATE_VAL]) {
+      case KeyFilter.All:
         return getCompKeys();
-      case ColumnFilter.Auto:
+      case KeyFilter.Auto:
         return getCompKeys().filter((comp_key) => !isCompColumnEmpty(comp_key));
-      case ColumnFilter.Custom:
+      case KeyFilter.Custom:
         return getCompKeys().filter((comp_key) => isCompColumnSelected(comp_key));
     }
   };
-
-  const enabledHeadersIndexed = () => Array.from(enabledHeaders().entries());
 
   const formatCompValue = (comp: number, ingQty: number | undefined) => {
     const fmtF = (num: number) => {
@@ -81,7 +54,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
     };
 
     if (comp !== 0.0) {
-      switch (qtyToggle) {
+      switch (qtyToggleState[STATE_VAL]) {
         case QtyToggle.Composition:
           return fmtF(comp);
         case QtyToggle.Quantity:
@@ -110,48 +83,14 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
 
   return (
     <div className="relative w-full min-w-[200px]">
-      <div>
-        <select
-          className="border-gray-400 border text-gray-900 text-sm"
-          value={qtyToggle}
-          onChange={(e) => setQtyToggle(e.target.value as QtyToggle)}
-        >
-          <option value={QtyToggle.Composition}>{QtyToggle.Composition}</option>
-          <option value={QtyToggle.Quantity}>{QtyToggle.Quantity}</option>
-          <option value={QtyToggle.Percentage}>{QtyToggle.Percentage}</option>
-        </select>
-        <select
-          className="ml-2 border-gray-400 border text-gray-900 text-sm"
-          value={columnFilter}
-          onChange={(e) => {
-            setColumnFilter(e.target.value as ColumnFilter);
-            if (e.target.value === ColumnFilter.Custom) {
-              setColumnSelectVisible(true);
-            }
-          }}
-        >
-          <option value={ColumnFilter.Auto}>{ColumnFilter.Auto}</option>
-          <option value={ColumnFilter.All}>{ColumnFilter.All}</option>
-          <option value={ColumnFilter.Custom}>{ColumnFilter.Custom}</option>
-        </select>
-        {columnSelectVisible && (
-          <div className="popup top-0 left-47 w-fit pl-1 pr-2 whitespace-nowrap">
-            <button onClick={() => setColumnSelectVisible(false)}>Done</button>
-            <ul>
-              {getCompKeys().map((comp_key) => (
-                <li key={comp_key}>
-                  <input
-                    type="checkbox"
-                    checked={isCompColumnSelected(comp_key)}
-                    onChange={() => updateSelectedColumn(comp_key)}
-                  />
-                  {" " + comp_key_as_med_str_js(comp_key)}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
+      <KeySelection
+        supportedQtyToggles={[QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage]}
+        qtyToggleState={qtyToggleState}
+        keyFilterState={columnFilterState}
+        selectedKeysState={selectedColumnsState}
+        getKeys={getCompKeys}
+        key_as_med_str_js={comp_key_as_med_str_js}
+      />
       <div className="border-gray-400 border-2 overflow-x-auto whitespace-nowrap">
         <table className="border-collapse">
           {/* Header */}

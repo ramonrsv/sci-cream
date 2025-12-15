@@ -3,7 +3,9 @@
 import { useState } from "react";
 
 import { RecipeState, getMixTotal, calculateMixProperties } from "./recipe";
+import { KeyFilter, QtyToggle, KeySelection } from "../lib/ui/key-selection";
 import { getPropKeys } from "../lib/deprecated/sci-cream";
+import { STATE_VAL } from "../lib/util";
 
 import {
   PropKey,
@@ -11,19 +13,6 @@ import {
   composition_value_as_quantity as comp_val_as_qty,
   composition_value_as_percentage as comp_val_as_percent,
 } from "@workspace/sci-cream";
-
-enum QtyToggle {
-  /// The quantity in grams based on the ingredient quantity in the recipe
-  Quantity = "Quantity (g)",
-  /// The percentage of the mix based on the ingredient quantity and total mix quantity
-  Percentage = "Quantity (%)",
-}
-
-enum PropertyFilter {
-  Auto = "Auto",
-  All = "All",
-  Custom = "Custom",
-}
 
 const defaultSelectedProperties: Set<PropKey> = new Set([
   PropKey.MilkFat,
@@ -47,11 +36,9 @@ function isPropKeyQuantity(prop_key: PropKey) {
 }
 
 export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState }) {
-  const [qtyToggle, setQtyToggle] = useState<QtyToggle>(QtyToggle.Quantity);
-  const [propertyFilter, setPropertyFilter] = useState<PropertyFilter>(PropertyFilter.Auto);
-  const [propertySelectVisible, setPropertySelectVisible] = useState<boolean>(false);
-  const [selectedProperties, setSelectedProperties] =
-    useState<Set<PropKey>>(defaultSelectedProperties);
+  const qtyToggleState = useState<QtyToggle>(QtyToggle.Quantity);
+  const propertyFilterState = useState<KeyFilter>(KeyFilter.Auto);
+  const selectedPropertiesState = useState<Set<PropKey>>(defaultSelectedProperties);
 
   const isPropertyEmpty = (prop_key: PropKey) => {
     const prop_val = mixProperties.get(prop_key);
@@ -59,26 +46,16 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
   };
 
   const isPropertySelected = (prop_key: PropKey) => {
-    return selectedProperties.has(prop_key);
-  };
-
-  const updateSelectedProperty = (prop_key: PropKey) => {
-    const newSet = new Set(selectedProperties);
-    if (newSet.has(prop_key)) {
-      newSet.delete(prop_key);
-    } else {
-      newSet.add(prop_key);
-    }
-    setSelectedProperties(newSet);
+    return selectedPropertiesState[STATE_VAL].has(prop_key);
   };
 
   const enabledProperties = () => {
-    switch (propertyFilter) {
-      case PropertyFilter.All:
+    switch (propertyFilterState[STATE_VAL]) {
+      case KeyFilter.All:
         return getPropKeys();
-      case PropertyFilter.Auto:
+      case KeyFilter.Auto:
         return getPropKeys().filter((prop_key) => !isPropertyEmpty(prop_key));
-      case PropertyFilter.Custom:
+      case KeyFilter.Custom:
         return getPropKeys().filter((prop_key) => isPropertySelected(prop_key));
     }
   };
@@ -93,7 +70,7 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
         return fmtF(prop);
       }
 
-      switch (qtyToggle) {
+      switch (qtyToggleState[STATE_VAL]) {
         case QtyToggle.Quantity:
           return ingQty ? fmtF(comp_val_as_qty(prop, ingQty)) : "";
         case QtyToggle.Percentage:
@@ -111,47 +88,14 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
 
   return (
     <div className="relative w-full">
-      <div>
-        <select
-          className="border-gray-400 border text-gray-900 text-sm"
-          value={qtyToggle}
-          onChange={(e) => setQtyToggle(e.target.value as QtyToggle)}
-        >
-          <option value={QtyToggle.Quantity}>{QtyToggle.Quantity}</option>
-          <option value={QtyToggle.Percentage}>{QtyToggle.Percentage}</option>
-        </select>
-        <select
-          className="ml-2 border-gray-400 border text-gray-900 text-sm"
-          value={propertyFilter}
-          onChange={(e) => {
-            setPropertyFilter(e.target.value as PropertyFilter);
-            if (e.target.value === PropertyFilter.Custom) {
-              setPropertySelectVisible(true);
-            }
-          }}
-        >
-          <option value={PropertyFilter.Auto}>{PropertyFilter.Auto}</option>
-          <option value={PropertyFilter.All}>{PropertyFilter.All}</option>
-          <option value={PropertyFilter.Custom}>{PropertyFilter.Custom}</option>
-        </select>
-        {propertySelectVisible && (
-          <div className="popup top-0 left-47 w-fit pl-1 pr-2 whitespace-nowrap">
-            <button onClick={() => setPropertySelectVisible(false)}>Done</button>
-            <ul>
-              {getPropKeys().map((prop_key) => (
-                <li key={prop_key}>
-                  <input
-                    type="checkbox"
-                    checked={isPropertySelected(prop_key)}
-                    onChange={() => updateSelectedProperty(prop_key)}
-                  />
-                  {" " + prop_key_as_med_str_js(prop_key)}
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
+      <KeySelection
+        supportedQtyToggles={[QtyToggle.Quantity, QtyToggle.Percentage]}
+        qtyToggleState={qtyToggleState}
+        keyFilterState={propertyFilterState}
+        selectedKeysState={selectedPropertiesState}
+        getKeys={getPropKeys}
+        key_as_med_str_js={prop_key_as_med_str_js}
+      />
       <div className="border-gray-400 border-2 overflow-x-auto whitespace-nowrap">
         <table className="border-collapse">
           <tbody>
