@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { RecipeState, getMixTotal, calculateMixComposition } from "./recipe";
-import { KeyFilter, QtyToggle, KeySelection } from "../lib/ui/key-selection";
+import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { getCompKeys } from "../lib/deprecated/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
@@ -14,7 +14,7 @@ import {
   composition_value_as_percentage as comp_val_as_percent,
 } from "@workspace/sci-cream";
 
-const defaultSelectedColumns: Set<CompKey> = new Set([
+const defaultSelectedComps: Set<CompKey> = new Set([
   CompKey.MilkFat,
   CompKey.TotalFat,
   CompKey.MSNF,
@@ -24,28 +24,17 @@ const defaultSelectedColumns: Set<CompKey> = new Set([
 
 export function IngredientCompositionGrid({ recipeState }: { recipeState: RecipeState }) {
   const qtyToggleState = useState<QtyToggle>(QtyToggle.Quantity);
-  const columnFilterState = useState<KeyFilter>(KeyFilter.Auto);
-  const selectedColumnsState = useState<Set<CompKey>>(defaultSelectedColumns);
+  const compsFilterState = useState<KeyFilter>(KeyFilter.Auto);
+  const selectedCompsState = useState<Set<CompKey>>(defaultSelectedComps);
 
-  const isCompColumnEmpty = (comp_key: CompKey) => {
+  const isPropEmpty = (comp_key: CompKey) => {
     return recipeState.every(([row, _]) => {
       return row.ingredient === undefined || row.ingredient.composition?.get(comp_key) === 0.0;
     });
   };
 
-  const isCompColumnSelected = (comp_key: CompKey) => {
-    return selectedColumnsState[STATE_VAL].has(comp_key);
-  };
-
-  const enabledHeaders = () => {
-    switch (columnFilterState[STATE_VAL]) {
-      case KeyFilter.All:
-        return getCompKeys();
-      case KeyFilter.Auto:
-        return getCompKeys().filter((comp_key) => !isCompColumnEmpty(comp_key));
-      case KeyFilter.Custom:
-        return getCompKeys().filter((comp_key) => isCompColumnSelected(comp_key));
-    }
+  const getEnabledComps = () => {
+    return getEnabledKeys(compsFilterState, selectedCompsState, getCompKeys, isPropEmpty);
   };
 
   const formatCompValue = (comp: number, ingQty: number | undefined) => {
@@ -86,8 +75,8 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
       <KeySelection
         supportedQtyToggles={[QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage]}
         qtyToggleState={qtyToggleState}
-        keyFilterState={columnFilterState}
-        selectedKeysState={selectedColumnsState}
+        keyFilterState={compsFilterState}
+        selectedKeysState={selectedCompsState}
         getKeys={getCompKeys}
         key_as_med_str_js={comp_key_as_med_str_js}
       />
@@ -98,7 +87,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
             {/* Composition Header */}
             {/* @todo The left-most and right-most borders of the table are still not right */}
             <tr className="h-[24px]">
-              {enabledHeaders().map((comp_key) => (
+              {getEnabledComps().map((comp_key) => (
                 <th
                   key={comp_key}
                   className="table-header-no-border px-1 border-gray-400 border-b border-r w-fit text-center"
@@ -110,7 +99,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
             {/* Totals Row */}
             {/* @todo The left-most and right-most borders of the table are still not right */}
             <tr className="h-[25px]">
-              {enabledHeaders().map((comp_key) => (
+              {getEnabledComps().map((comp_key) => (
                 <td
                   key={comp_key}
                   className="table-header-no-border px-1 border-gray-400 border-b border-r text-center"
@@ -125,7 +114,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
             {/* @todo The very last row is a little taller than the rest; not sure why */}
             {recipeState.map((_, index) => (
               <tr key={index} className="h-[25px]">
-                {enabledHeaders().map((comp_key) => (
+                {getEnabledComps().map((comp_key) => (
                   <td key={comp_key} className="table-inner-cell text-center">
                     {formattedCompCell(index, comp_key)}
                   </td>

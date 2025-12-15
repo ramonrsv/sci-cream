@@ -3,7 +3,7 @@
 import { useState } from "react";
 
 import { RecipeState, getMixTotal, calculateMixProperties } from "./recipe";
-import { KeyFilter, QtyToggle, KeySelection } from "../lib/ui/key-selection";
+import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { getPropKeys } from "../lib/deprecated/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
@@ -37,30 +37,19 @@ function isPropKeyQuantity(prop_key: PropKey) {
 
 export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState }) {
   const qtyToggleState = useState<QtyToggle>(QtyToggle.Quantity);
-  const propertyFilterState = useState<KeyFilter>(KeyFilter.Auto);
-  const selectedPropertiesState = useState<Set<PropKey>>(defaultSelectedProperties);
+  const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
+  const selectedPropsState = useState<Set<PropKey>>(defaultSelectedProperties);
 
-  const isPropertyEmpty = (prop_key: PropKey) => {
+  const isPropEmpty = (prop_key: PropKey) => {
     const prop_val = mixProperties.get(prop_key);
     return prop_val === 0 || Number.isNaN(prop_val);
   };
 
-  const isPropertySelected = (prop_key: PropKey) => {
-    return selectedPropertiesState[STATE_VAL].has(prop_key);
+  const getEnabledProps = () => {
+    return getEnabledKeys(propsFilterState, selectedPropsState, getPropKeys, isPropEmpty);
   };
 
-  const enabledProperties = () => {
-    switch (propertyFilterState[STATE_VAL]) {
-      case KeyFilter.All:
-        return getPropKeys();
-      case KeyFilter.Auto:
-        return getPropKeys().filter((prop_key) => !isPropertyEmpty(prop_key));
-      case KeyFilter.Custom:
-        return getPropKeys().filter((prop_key) => isPropertySelected(prop_key));
-    }
-  };
-
-  const formatPropertyValue = (prop: number, ingQty: number | undefined, isQty: boolean) => {
+  const formatPropValue = (prop: number, ingQty: number | undefined, isQty: boolean) => {
     const fmtF = (num: number) => {
       return Number.isNaN(num) ? "-" : Number(num.toFixed(1));
     };
@@ -79,8 +68,8 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
     }
   };
 
-  const formattedPropertyCell = (prop_key: PropKey) => {
-    return formatPropertyValue(mixProperties.get(prop_key), mixTotal, isPropKeyQuantity(prop_key));
+  const formattedPropCell = (prop_key: PropKey) => {
+    return formatPropValue(mixProperties.get(prop_key), mixTotal, isPropKeyQuantity(prop_key));
   };
 
   const mixTotal = getMixTotal(recipeState);
@@ -91,21 +80,21 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
       <KeySelection
         supportedQtyToggles={[QtyToggle.Quantity, QtyToggle.Percentage]}
         qtyToggleState={qtyToggleState}
-        keyFilterState={propertyFilterState}
-        selectedKeysState={selectedPropertiesState}
+        keyFilterState={propsFilterState}
+        selectedKeysState={selectedPropsState}
         getKeys={getPropKeys}
         key_as_med_str_js={prop_key_as_med_str_js}
       />
       <div className="border-gray-400 border-2 overflow-x-auto whitespace-nowrap">
         <table className="border-collapse">
           <tbody>
-            {enabledProperties().map((prop_key) => (
+            {getEnabledProps().map((prop_key) => (
               <tr key={prop_key} className="h-[25px]">
                 <td className="table-header w-full px-2 text-center">
                   {prop_key_as_med_str_js(prop_key)}
                 </td>
                 <td className="table-inner-cell min-w-[50px] px-2 text-center">
-                  {formattedPropertyCell(prop_key)}
+                  {formattedPropCell(prop_key)}
                 </td>
               </tr>
             ))}

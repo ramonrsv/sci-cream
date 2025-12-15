@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { STATE_VAL } from "../util";
 
 export enum QtyToggle {
   /// The raw composition value as stored in the Ingredient, independent of quantity
@@ -15,6 +16,26 @@ export enum KeyFilter {
   Auto = "Auto",
   All = "All",
   Custom = "Custom",
+}
+
+export function getEnabledKeys<Key>(
+  keyFilterState: [KeyFilter, React.Dispatch<React.SetStateAction<KeyFilter>>],
+  selectedKeysState: [Set<Key>, React.Dispatch<React.SetStateAction<Set<Key>>>],
+  getKeys: () => Key[],
+  isKeyEmpty: (key: Key) => boolean
+): Key[] {
+  const isKeySelected = (key: Key) => {
+    return selectedKeysState[STATE_VAL].has(key);
+  };
+
+  switch (keyFilterState[STATE_VAL]) {
+    case KeyFilter.All:
+      return getKeys();
+    case KeyFilter.Auto:
+      return getKeys().filter((key) => !isKeyEmpty(key));
+    case KeyFilter.Custom:
+      return getKeys().filter((key) => isKeySelected(key));
+  }
 }
 
 export function KeySelection<Key>({
