@@ -5,7 +5,7 @@
 #
 # This workflow can be run locally using `act`, e.g. by running the following from the root:
 #   `act --reuse --workflows ./.github/workflows/crate.yml`
-name: Crate CI
+name: CI
 
 on:
   push:
