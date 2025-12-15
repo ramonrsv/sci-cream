@@ -110,46 +110,48 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
 
   return (
     <div className="relative w-full min-w-[200px]">
-      <select
-        className="border-gray-400 border text-gray-900 text-sm"
-        value={qtyToggle}
-        onChange={(e) => setQtyToggle(e.target.value as QtyToggle)}
-      >
-        <option value={QtyToggle.Composition}>{QtyToggle.Composition}</option>
-        <option value={QtyToggle.Quantity}>{QtyToggle.Quantity}</option>
-        <option value={QtyToggle.Percentage}>{QtyToggle.Percentage}</option>
-      </select>
-      <select
-        className="ml-2 border-gray-400 border text-gray-900 text-sm"
-        value={columnFilter}
-        onChange={(e) => {
-          setColumnFilter(e.target.value as ColumnFilter);
-          if (e.target.value === ColumnFilter.Custom) {
-            setColumnSelectVisible(true);
-          }
-        }}
-      >
-        <option value={ColumnFilter.Auto}>{ColumnFilter.Auto}</option>
-        <option value={ColumnFilter.All}>{ColumnFilter.All}</option>
-        <option value={ColumnFilter.Custom}>{ColumnFilter.Custom}</option>
-      </select>
-      {columnSelectVisible && (
-        <div className="popup top-0 left-47 w-fit pl-1 pr-2 whitespace-nowrap">
-          <button onClick={() => setColumnSelectVisible(false)}>Done</button>
-          <ul>
-            {getCompKeys().map((comp_key) => (
-              <li key={comp_key}>
-                <input
-                  type="checkbox"
-                  checked={isCompColumnSelected(comp_key)}
-                  onChange={() => updateSelectedColumn(comp_key)}
-                />
-                {" " + comp_key_as_med_str_js(comp_key)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <div>
+        <select
+          className="border-gray-400 border text-gray-900 text-sm"
+          value={qtyToggle}
+          onChange={(e) => setQtyToggle(e.target.value as QtyToggle)}
+        >
+          <option value={QtyToggle.Composition}>{QtyToggle.Composition}</option>
+          <option value={QtyToggle.Quantity}>{QtyToggle.Quantity}</option>
+          <option value={QtyToggle.Percentage}>{QtyToggle.Percentage}</option>
+        </select>
+        <select
+          className="ml-2 border-gray-400 border text-gray-900 text-sm"
+          value={columnFilter}
+          onChange={(e) => {
+            setColumnFilter(e.target.value as ColumnFilter);
+            if (e.target.value === ColumnFilter.Custom) {
+              setColumnSelectVisible(true);
+            }
+          }}
+        >
+          <option value={ColumnFilter.Auto}>{ColumnFilter.Auto}</option>
+          <option value={ColumnFilter.All}>{ColumnFilter.All}</option>
+          <option value={ColumnFilter.Custom}>{ColumnFilter.Custom}</option>
+        </select>
+        {columnSelectVisible && (
+          <div className="popup top-0 left-47 w-fit pl-1 pr-2 whitespace-nowrap">
+            <button onClick={() => setColumnSelectVisible(false)}>Done</button>
+            <ul>
+              {getCompKeys().map((comp_key) => (
+                <li key={comp_key}>
+                  <input
+                    type="checkbox"
+                    checked={isCompColumnSelected(comp_key)}
+                    onChange={() => updateSelectedColumn(comp_key)}
+                  />
+                  {" " + comp_key_as_med_str_js(comp_key)}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
       <div className="border-gray-400 border-2 overflow-x-auto whitespace-nowrap">
         <table className="border-collapse">
           {/* Header */}

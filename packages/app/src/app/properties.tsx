@@ -111,45 +111,47 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
 
   return (
     <div className="relative w-full">
-      <select
-        className="border-gray-400 border text-gray-900 text-sm"
-        value={qtyToggle}
-        onChange={(e) => setQtyToggle(e.target.value as QtyToggle)}
-      >
-        <option value={QtyToggle.Quantity}>{QtyToggle.Quantity}</option>
-        <option value={QtyToggle.Percentage}>{QtyToggle.Percentage}</option>
-      </select>
-      <select
-        className="ml-2 border-gray-400 border text-gray-900 text-sm"
-        value={propertyFilter}
-        onChange={(e) => {
-          setPropertyFilter(e.target.value as PropertyFilter);
-          if (e.target.value === PropertyFilter.Custom) {
-            setPropertySelectVisible(true);
-          }
-        }}
-      >
-        <option value={PropertyFilter.Auto}>{PropertyFilter.Auto}</option>
-        <option value={PropertyFilter.All}>{PropertyFilter.All}</option>
-        <option value={PropertyFilter.Custom}>{PropertyFilter.Custom}</option>
-      </select>
-      {propertySelectVisible && (
-        <div className="popup top-0 left-47 w-fit pl-1 pr-2 whitespace-nowrap">
-          <button onClick={() => setPropertySelectVisible(false)}>Done</button>
-          <ul>
-            {getPropKeys().map((prop_key) => (
-              <li key={prop_key}>
-                <input
-                  type="checkbox"
-                  checked={isPropertySelected(prop_key)}
-                  onChange={() => updateSelectedProperty(prop_key)}
-                />
-                {" " + prop_key_as_med_str_js(prop_key)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      <div>
+        <select
+          className="border-gray-400 border text-gray-900 text-sm"
+          value={qtyToggle}
+          onChange={(e) => setQtyToggle(e.target.value as QtyToggle)}
+        >
+          <option value={QtyToggle.Quantity}>{QtyToggle.Quantity}</option>
+          <option value={QtyToggle.Percentage}>{QtyToggle.Percentage}</option>
+        </select>
+        <select
+          className="ml-2 border-gray-400 border text-gray-900 text-sm"
+          value={propertyFilter}
+          onChange={(e) => {
+            setPropertyFilter(e.target.value as PropertyFilter);
+            if (e.target.value === PropertyFilter.Custom) {
+              setPropertySelectVisible(true);
+            }
+          }}
+        >
+          <option value={PropertyFilter.Auto}>{PropertyFilter.Auto}</option>
+          <option value={PropertyFilter.All}>{PropertyFilter.All}</option>
+          <option value={PropertyFilter.Custom}>{PropertyFilter.Custom}</option>
+        </select>
+        {propertySelectVisible && (
+          <div className="popup top-0 left-47 w-fit pl-1 pr-2 whitespace-nowrap">
+            <button onClick={() => setPropertySelectVisible(false)}>Done</button>
+            <ul>
+              {getPropKeys().map((prop_key) => (
+                <li key={prop_key}>
+                  <input
+                    type="checkbox"
+                    checked={isPropertySelected(prop_key)}
+                    onChange={() => updateSelectedProperty(prop_key)}
+                  />
+                  {" " + prop_key_as_med_str_js(prop_key)}
+                </li>
+              ))}
+            </ul>
+          </div>
+        )}
+      </div>
       <div className="border-gray-400 border-2 overflow-x-auto whitespace-nowrap">
         <table className="border-collapse">
           <tbody>
