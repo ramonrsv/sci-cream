@@ -73,7 +73,7 @@ export function RecipeGrid({
   const mixTotal = getMixTotal(recipeState);
 
   return (
-    <div>
+    <div id="recipe-grid">
       <datalist id="valid-ingredients">
         {validIngredients.map((name) => (
           <option key={name} value={name} />
