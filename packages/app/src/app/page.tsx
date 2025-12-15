@@ -3,10 +3,9 @@
 import { useState, useEffect } from "react";
 
 import { IngredientRow, makeEmptyIngredientRow, RecipeGrid, RECIPE_TOTAL_ROWS } from "./recipe";
-import { IngredientCompositionGrid } from "./composition";
-import { fetchValidIngredientNames, fetchIngredientSpec } from "../lib/data";
+import { fetchValidIngredientNames } from "../lib/data";
 
-import { into_ingredient_from_spec_js } from "@workspace/sci-cream";
+import { IngredientCompositionGrid } from "./composition";
 import { MixPropertiesGrid } from "./properties";
 
 const MAX_RECIPES = 2;
@@ -23,22 +22,6 @@ export default function Home() {
   useEffect(() => {
     fetchValidIngredientNames().then((names) => setValidIngredients(names));
   }, []);
-
-  recipes.forEach((recipeRows, _) => {
-    recipeRows.forEach((rowState, _) => {
-      const [row, setRow] = rowState;
-
-      useEffect(() => {
-        if (row.name !== "" && validIngredients.includes(row.name)) {
-          fetchIngredientSpec(row.name)
-            .then((spec) => (spec ? into_ingredient_from_spec_js(spec.spec) : undefined))
-            .then((ing) => setRow({ ...row, ingredient: ing }));
-        } else {
-          setRow({ ...row, ingredient: undefined });
-        }
-      }, [row.name, validIngredients]);
-    });
-  });
 
   return (
     <main className="min-h-screen pt-3 pl-8 pr-8 bg-gray-100">

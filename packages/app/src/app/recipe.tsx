@@ -1,5 +1,11 @@
+"use client";
+
+import { useEffect } from "react";
+
+import { fetchIngredientSpec } from "../lib/data";
 import {
   Ingredient,
+  into_ingredient_from_spec_js,
   Composition,
   CompositionLine,
   MixProperties,
@@ -59,15 +65,29 @@ export function RecipeGrid({
   recipeState: RecipeState;
   validIngredients: string[];
 }) {
+  recipeState.forEach((rowState, idx) => {
+    const [row, setRow] = rowState;
+
+    useEffect(() => {
+      if (row.name !== "" && validIngredients.includes(row.name)) {
+        fetchIngredientSpec(row.name)
+          .then((spec) => (spec ? into_ingredient_from_spec_js(spec.spec) : undefined))
+          .then((ing) => setRow({ ...row, ingredient: ing }));
+      } else {
+        setRow({ ...row, ingredient: undefined });
+      }
+    }, [row.name, validIngredients]);
+  });
+
   const updateIngredientRowName = (index: number, name: string) => {
     const [row, setRow] = recipeState[index];
-    setRow({ ...row, name: name });
+    setRow({ ...row, name });
   };
 
   const updateIngredientRowQuantity = (index: number, quantityStr: string) => {
     const [row, setRow] = recipeState[index];
     const quantity = quantityStr === "" ? undefined : parseFloat(quantityStr);
-    setRow({ ...row, quantity: quantity });
+    setRow({ ...row, quantity });
   };
 
   const mixTotal = getMixTotal(recipeState);
