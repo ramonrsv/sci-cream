@@ -54,7 +54,7 @@ pub struct SweetenersSpec {
     pub sweeteners: Sweeteners,
     pub solids: f64,
     pub pod: f64,
-    pub pac: PAC,
+    pub pac: f64,
 }
 
 /// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
@@ -127,7 +127,11 @@ impl IntoComposition for SugarsSpec {
         let Self { sugars, solids } = self;
 
         if sugars.total() != 100.0 {
-            return Err(Error::SugarsNot100Percent(sugars.total()));
+            return Err(Error::CompositionNot100Percent(sugars.total()));
+        }
+
+        if !(0.0..=100.0).contains(&solids) {
+            return Err(Error::CompositionNotWithin100Percent(solids));
         }
 
         let sugars = sugars.scale(solids / 100.0);
@@ -159,7 +163,7 @@ impl IntoComposition for SweetenersSpec {
             )
             .sweeteners(sweeteners)
             .pod(pod)
-            .pac(pac))
+            .pac(PAC::new().sugars(pac)))
     }
 }
 
