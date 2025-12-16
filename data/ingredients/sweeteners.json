@@ -17,7 +17,8 @@
         "glucose": 100
       },
       "solids": 92
-    }
+    },
+    "comments": "Dextrose Powder (Monohydrate), typically with a moisture content of around 8%."
   },
   {
     "name": "Fructose",
@@ -34,24 +35,28 @@
     "category": "Sweetener",
     "SugarsSpec": {
       "sugars": {
-        "glucose": 42,
-        "fructose": 52,
-        "sucrose": 6
+        "glucose": 42.5,
+        "fructose": 42.5,
+        "sucrose": 15
       },
-      "solids": 77
-    }
+      "solids": 80
+    },
+    "comments": "Sources differ significantly on the exact composition and POD/PAC values. This is a middle ground between various sources, including Underbelly's sugars chart (https://under-belly.org/wp-content/uploads/2016/05/sugars11.png), Ice Cream 7th Edition (Table 3.4, page 67), and Ice Cream Calculator (https://icecreamcalc.com/)."
   },
   {
     "name": "Honey",
     "category": "Sweetener",
     "SugarsSpec": {
       "sugars": {
-        "glucose": 41.5,
-        "fructose": 55.5,
-        "sucrose": 3.0
+        "glucose": 44,
+        "fructose": 50,
+        "sucrose": 2,
+        "galactose": 2,
+        "maltose": 2
       },
-      "solids": 74
-    }
+      "solids": 82
+    },
+    "comments": "Composition values were taken from the sugar profile in Wikipedia (https://en.wikipedia.org/wiki/Honey#Nutrition). The resulting POD/PAC values roughly align with those in Underbelly's sugars chart (https://under-belly.org/wp-content/uploads/2016/05/sugars11.png), Ice Cream 7th Edition (Table 3.4, page 67), and Ice Cream Calculator (https://icecreamcalc.com/), which differ slightly among themselves."
   },
   {
     "name": "HFCS 90%",

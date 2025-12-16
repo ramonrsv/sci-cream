@@ -322,6 +322,43 @@ mod test {
     }
 
     #[test]
+    fn into_composition_sugars_spec_invert_sugar() {
+        let Composition {
+            solids, pod, pac, ..
+        } = SugarsSpec {
+            sugars: Sugars::new().glucose(42.5).fructose(42.5).sucrose(15.0),
+            solids: 80.0,
+        }
+        .into_composition()
+        .unwrap();
+
+        assert_eq!(solids.total(), 80.0);
+        assert_eq!(pod, 98.156);
+        assert_eq!(pac.sugars, 141.2);
+    }
+
+    #[test]
+    fn into_composition_sugars_spec_honey() {
+        let Composition {
+            solids, pod, pac, ..
+        } = SugarsSpec {
+            sugars: Sugars::new()
+                .glucose(44.0)
+                .fructose(50.0)
+                .sucrose(2.0)
+                .galactose(2.0)
+                .maltose(2.0),
+            solids: 82.0,
+        }
+        .into_composition()
+        .unwrap();
+
+        assert_eq!(solids.total(), 82.0);
+        assert_eq!(pod, 102.10312);
+        assert_eq!(pac.sugars, 152.848);
+    }
+
+    #[test]
     fn deserialize_ingredient_spec() {
         [
             (ING_SPEC_MILK_2_PERCENT_STR, ING_SPEC_MILK_2_PERCENT.clone()),
