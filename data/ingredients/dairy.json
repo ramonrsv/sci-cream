@@ -1,5 +1,12 @@
 [
   {
+    "name": "1% Milk",
+    "category": "Dairy",
+    "DairySpec": {
+      "fat": 1
+    }
+  },
+  {
     "name": "2% Milk",
     "category": "Dairy",
     "DairySpec": {
@@ -21,10 +28,38 @@
     }
   },
   {
+    "name": "35% Cream",
+    "category": "Dairy",
+    "DairySpec": {
+      "fat": 35
+    }
+  },
+  {
+    "name": "40% Cream",
+    "category": "Dairy",
+    "DairySpec": {
+      "fat": 40
+    }
+  },
+  {
+    "name": "Whole Milk",
+    "category": "Dairy",
+    "DairySpec": {
+      "fat": 3.25
+    }
+  },
+  {
     "name": "Whipping Cream",
     "category": "Dairy",
     "DairySpec": {
       "fat": 35
+    }
+  },
+  {
+    "name": "Heavy Cream",
+    "category": "Dairy",
+    "DairySpec": {
+      "fat": 36
     }
   },
   {

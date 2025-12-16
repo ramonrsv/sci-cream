@@ -60,7 +60,7 @@ pub(crate) static COMP_DEXTROSE: LazyLock<Composition> = LazyLock::new(|| {
     Composition::new()
         .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(100.0)))
         .sweeteners(Sweeteners::new().sugars(Sugars::new().glucose(100.0)))
-        .pod(70.0)
+        .pod(80.4)
         .pac(PAC::new().sugars(190.0))
 });
 
@@ -68,7 +68,7 @@ pub(crate) static COMP_DEXTROSE_50_PERCENT: LazyLock<Composition> = LazyLock::ne
     Composition::new()
         .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(50.0)))
         .sweeteners(Sweeteners::new().sugars(Sugars::new().glucose(50.0)))
-        .pod(35.0)
+        .pod(40.2)
         .pac(PAC::new().sugars(95.0))
 });
 

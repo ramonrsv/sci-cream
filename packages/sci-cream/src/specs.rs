@@ -11,6 +11,7 @@ use diesel::{Queryable, Selectable};
 use crate::{
     composition::{Composition, PAC, ScaleComponents, Solids, SolidsBreakdown, Sugars, Sweeteners},
     constants,
+    error::{Error, Result},
     ingredients::{Category, Ingredient},
 };
 
@@ -18,7 +19,7 @@ use crate::{
 use crate::constants::{STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM};
 
 pub trait IntoComposition {
-    fn into_composition(self) -> Composition;
+    fn into_composition(self) -> Result<Composition>;
 }
 
 /// Spec for trivial dairy ingredients, e.g. Milk, Cream, Milk Powder, etc.
@@ -48,11 +49,20 @@ pub struct SugarsSpec {
     pub solids: f64,
 }
 
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+pub struct SweetenersSpec {
+    pub sweeteners: Sweeteners,
+    pub solids: f64,
+    pub pod: f64,
+    pub pac: PAC,
+}
+
 /// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum Spec {
     DairySpec(DairySpec),
     SugarsSpec(SugarsSpec),
+    SweetenersSpec(SweetenersSpec),
 }
 
 #[cfg_attr(feature = "diesel", derive(Queryable, Selectable), diesel(table_name = ingredients))]
@@ -65,10 +75,11 @@ pub struct IngredientSpec {
 }
 
 impl IntoComposition for Spec {
-    fn into_composition(self) -> Composition {
+    fn into_composition(self) -> Result<Composition> {
         match self {
             Spec::DairySpec(spec) => spec.into_composition(),
             Spec::SugarsSpec(spec) => spec.into_composition(),
+            Spec::SweetenersSpec(spec) => spec.into_composition(),
         }
     }
 }
@@ -78,13 +89,13 @@ impl IngredientSpec {
         Ingredient {
             name: self.name,
             category: self.category,
-            composition: self.spec.into_composition(),
+            composition: self.spec.into_composition().unwrap(),
         }
     }
 }
 
 impl IntoComposition for DairySpec {
-    fn into_composition(self) -> Composition {
+    fn into_composition(self) -> Result<Composition> {
         let Self { fat, msnf } = self;
 
         let calculated_msnf = (100.0 - fat) * constants::STD_MSNF_IN_MILK_SERUM;
@@ -96,7 +107,7 @@ impl IntoComposition for DairySpec {
         let pod = sweeteners.to_pod().unwrap();
         let pad = PAC::new().sugars(sweeteners.to_pac().unwrap());
 
-        Composition::new()
+        Ok(Composition::new()
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
@@ -107,20 +118,48 @@ impl IntoComposition for DairySpec {
             )
             .sweeteners(sweeteners)
             .pod(pod)
-            .pac(pad)
+            .pac(pad))
     }
 }
 
 impl IntoComposition for SugarsSpec {
-    fn into_composition(self) -> Composition {
+    fn into_composition(self) -> Result<Composition> {
         let Self { sugars, solids } = self;
+
+        if sugars.total() != 100.0 {
+            return Err(Error::SugarsNot100Percent(sugars.total()));
+        }
+
         let sugars = sugars.scale(solids / 100.0);
 
-        Composition::new()
+        Ok(Composition::new()
             .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(sugars.total())))
             .sweeteners(Sweeteners::new().sugars(sugars))
             .pod(sugars.to_pod().unwrap())
-            .pac(PAC::new().sugars(sugars.to_pac().unwrap()))
+            .pac(PAC::new().sugars(sugars.to_pac().unwrap())))
+    }
+}
+
+impl IntoComposition for SweetenersSpec {
+    fn into_composition(self) -> Result<Composition> {
+        let Self {
+            sweeteners,
+            solids,
+            pod,
+            pac,
+        } = self;
+
+        Ok(Composition::new()
+            .solids(
+                Solids::new().other(
+                    SolidsBreakdown::new()
+                        .sweeteners(sweeteners.sugars.total() + sweeteners.artificial)
+                        .snfs(solids - (sweeteners.sugars.total() + sweeteners.artificial)),
+                ),
+            )
+            .sweeteners(sweeteners)
+            .pod(pod)
+            .pac(pac))
     }
 }
 
@@ -182,7 +221,7 @@ mod test {
         assert_eq!(pac.total(), 4.8069);
 
         assert_abs_diff_eq!(
-            SPEC_DAIRY_2_PERCENT.into_composition(),
+            SPEC_DAIRY_2_PERCENT.into_composition().unwrap(),
             *COMP_MILK_2_PERCENT,
             epsilon = TESTS_EPSILON
         );
@@ -212,10 +251,9 @@ mod test {
         assert_eq!(pac.sugars, 100.0);
         assert_eq!(pac.total(), 100.0);
 
-        assert_abs_diff_eq!(
-            SPEC_SUGARS_DEXTROSE.into_composition(),
-            *COMP_DEXTROSE,
-            epsilon = TESTS_EPSILON
+        assert_eq!(
+            SPEC_SUGARS_SUCROSE.into_composition().unwrap(),
+            *COMP_SUCROSE
         );
     }
 
@@ -243,10 +281,9 @@ mod test {
         assert_eq!(pac.sugars, 190.0);
         assert_eq!(pac.total(), 190.0);
 
-        assert_abs_diff_eq!(
-            SPEC_SUGARS_DEXTROSE.into_composition(),
-            *COMP_DEXTROSE,
-            epsilon = TESTS_EPSILON
+        assert_eq!(
+            SPEC_SUGARS_DEXTROSE.into_composition().unwrap(),
+            *COMP_DEXTROSE
         );
     }
 
@@ -274,10 +311,9 @@ mod test {
         assert_eq!(pac.sugars, 95.0);
         assert_eq!(pac.total(), 95.0);
 
-        assert_abs_diff_eq!(
-            SPEC_SUGARS_DEXTROSE_50_PERCENT.into_composition(),
-            *COMP_DEXTROSE_50_PERCENT,
-            epsilon = TESTS_EPSILON
+        assert_eq!(
+            SPEC_SUGARS_DEXTROSE_50_PERCENT.into_composition().unwrap(),
+            *COMP_DEXTROSE_50_PERCENT
         );
     }
 

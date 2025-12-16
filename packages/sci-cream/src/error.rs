@@ -6,6 +6,8 @@ pub enum Error {
     CannotComputePOD(String),
     #[error("Preconditions for computing PAC not met: {0}")]
     CannotComputePAC(String),
+    #[error("Sugars composition does not sum to 100%: {0}")]
+    SugarsNot100Percent(f64),
 }
 
 /// Convenience type alias for [`Result<T, sci_cream::error::Error>`].

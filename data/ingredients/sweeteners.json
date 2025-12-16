@@ -16,7 +16,7 @@
       "sugars": {
         "glucose": 100
       },
-      "solids": 100
+      "solids": 92
     }
   },
   {
@@ -27,6 +27,78 @@
         "fructose": 100
       },
       "solids": 100
+    }
+  },
+  {
+    "name": "Invert Sugar",
+    "category": "Sweetener",
+    "SugarsSpec": {
+      "sugars": {
+        "glucose": 42,
+        "fructose": 52,
+        "sucrose": 6
+      },
+      "solids": 77
+    }
+  },
+  {
+    "name": "Honey",
+    "category": "Sweetener",
+    "SugarsSpec": {
+      "sugars": {
+        "glucose": 41.5,
+        "fructose": 55.5,
+        "sucrose": 3.0
+      },
+      "solids": 74
+    }
+  },
+  {
+    "name": "HFCS 90%",
+    "category": "Sweetener",
+    "SweetenersSpec": {
+      "sweeteners": {
+        "sugars": {
+          "unspecified": 77
+        }
+      },
+      "solids": 77,
+      "pod": 125,
+      "pac": {
+        "sugars": 188
+      }
+    }
+  },
+  {
+    "name": "HFCS 55%",
+    "category": "Sweetener",
+    "SweetenersSpec": {
+      "sweeteners": {
+        "sugars": {
+          "unspecified": 77
+        }
+      },
+      "solids": 77,
+      "pod": 98,
+      "pac": {
+        "sugars": 185
+      }
+    }
+  },
+  {
+    "name": "HFCS 42%",
+    "category": "Sweetener",
+    "SweetenersSpec": {
+      "sweeteners": {
+        "sugars": {
+          "unspecified": 71
+        }
+      },
+      "solids": 71,
+      "pod": 86,
+      "pac": {
+        "sugars": 180
+      }
     }
   }
 ]

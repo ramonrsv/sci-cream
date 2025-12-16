@@ -65,6 +65,7 @@ pub struct Sugars {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(default)]
 pub struct Sweeteners {
     pub sugars: Sugars,
     pub polysaccharides: f64,
@@ -81,6 +82,7 @@ pub struct Micro {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(default)]
 pub struct PAC {
     pub sugars: f64,
     pub salt: f64,
