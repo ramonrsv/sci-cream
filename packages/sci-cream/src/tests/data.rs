@@ -19,12 +19,12 @@ pub(crate) mod test {
     }
 
     #[test]
-    fn parse_dairy_ingredient_specs() {
+    fn parse_ingredient_specs_dairy() {
         let _unused = parse_ingredient_specs_from_file("dairy.json");
     }
 
     #[test]
-    fn parse_sweeteners_ingredient_specs() {
+    fn parse_ingredient_specs_sweeteners() {
         let _unused = parse_ingredient_specs_from_file("sweeteners.json");
     }
 }

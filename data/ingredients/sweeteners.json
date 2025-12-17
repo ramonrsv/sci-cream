@@ -2,102 +2,98 @@
   {
     "name": "Sucrose",
     "category": "Sweetener",
-    "SugarsSpec": {
-      "sugars": {
-        "sucrose": 100
+    "SweetenersSpec": {
+      "sweeteners": {
+        "sugars": {
+          "sucrose": 100
+        }
       },
-      "solids": 100
+      "ByDryWeight": {
+        "solids": 100
+      }
     }
   },
   {
     "name": "Dextrose",
     "category": "Sweetener",
-    "SugarsSpec": {
-      "sugars": {
-        "glucose": 100
+    "SweetenersSpec": {
+      "sweeteners": {
+        "sugars": {
+          "glucose": 100
+        }
       },
-      "solids": 92
+      "ByDryWeight": {
+        "solids": 92
+      }
     },
     "comments": "Dextrose Powder (Monohydrate), typically with a moisture content of around 8%."
   },
   {
     "name": "Fructose",
     "category": "Sweetener",
-    "SugarsSpec": {
-      "sugars": {
-        "fructose": 100
+    "SweetenersSpec": {
+      "sweeteners": {
+        "sugars": {
+          "fructose": 100
+        }
       },
-      "solids": 100
+      "ByDryWeight": {
+        "solids": 100
+      }
     }
   },
   {
     "name": "Invert Sugar",
     "category": "Sweetener",
-    "SugarsSpec": {
-      "sugars": {
-        "glucose": 42.5,
-        "fructose": 42.5,
-        "sucrose": 15
+    "SweetenersSpec": {
+      "sweeteners": {
+        "sugars": {
+          "glucose": 42.5,
+          "fructose": 42.5,
+          "sucrose": 15
+        }
       },
-      "solids": 80
+      "ByDryWeight": {
+        "solids": 80
+      }
     },
     "comments": "Sources differ significantly on the exact composition and POD/PAC values. This is a middle ground between various sources, including Underbelly's sugars chart (https://under-belly.org/wp-content/uploads/2016/05/sugars11.png), Ice Cream 7th Edition (Table 3.4, page 67), and Ice Cream Calculator (https://icecreamcalc.com/)."
   },
   {
     "name": "Honey",
     "category": "Sweetener",
-    "SugarsSpec": {
-      "sugars": {
-        "glucose": 44,
-        "fructose": 50,
-        "sucrose": 2,
-        "galactose": 2,
-        "maltose": 2
+    "SweetenersSpec": {
+      "sweeteners": {
+        "sugars": {
+          "glucose": 36,
+          "fructose": 41,
+          "sucrose": 2,
+          "galactose": 1.5,
+          "maltose": 1.5
+        },
+        "polysaccharide": 1
       },
-      "solids": 82
+      "ByTotalWeight": {
+        "water": 17
+      }
     },
     "comments": "Composition values were taken from the sugar profile in Wikipedia (https://en.wikipedia.org/wiki/Honey#Nutrition). The resulting POD/PAC values roughly align with those in Underbelly's sugars chart (https://under-belly.org/wp-content/uploads/2016/05/sugars11.png), Ice Cream 7th Edition (Table 3.4, page 67), and Ice Cream Calculator (https://icecreamcalc.com/), which differ slightly among themselves."
   },
   {
-    "name": "HFCS 90%",
+    "name": "HFCS 42",
     "category": "Sweetener",
     "SweetenersSpec": {
       "sweeteners": {
         "sugars": {
-          "unspecified": 77
-        }
+          "fructose": 42,
+          "glucose": 53
+        },
+        "polysaccharide": 5
       },
-      "solids": 77,
-      "pod": 125,
-      "pac": 188
-    }
-  },
-  {
-    "name": "HFCS 55%",
-    "category": "Sweetener",
-    "SweetenersSpec": {
-      "sweeteners": {
-        "sugars": {
-          "unspecified": 77
-        }
-      },
-      "solids": 77,
-      "pod": 98,
-      "pac": 185
-    }
-  },
-  {
-    "name": "HFCS 42%",
-    "category": "Sweetener",
-    "SweetenersSpec": {
-      "sweeteners": {
-        "sugars": {
-          "unspecified": 71
-        }
-      },
-      "solids": 71,
-      "pod": 86,
-      "pac": 180
-    }
+      "ByDryWeight": {
+        "solids": 76
+      }
+    },
+    "comments": "High Fructose Corn Syrup 42 (HFCS 42) composition values were taken from Wikipedia (https://en.wikipedia.org/wiki/High-fructose_corn_syrup#Production). The resulting POD/PAC values match those in Ice Cream 7th Edition (Table 3.4, page 67) and Ice Cream Calculator (https://icecreamcalc.com/)."
   }
 ]

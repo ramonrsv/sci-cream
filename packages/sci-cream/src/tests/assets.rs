@@ -3,7 +3,7 @@ use std::sync::LazyLock;
 use crate::{
     composition::{Composition, PAC, Solids, SolidsBreakdown, Sugars, Sweeteners},
     ingredients::{Category, Ingredient},
-    specs::{DairySpec, IngredientSpec, Spec, SugarsSpec},
+    specs::{CompositionBasis, DairySpec, IngredientSpec, Spec, SweetenersSpec},
 };
 
 // Comp Specs
@@ -14,20 +14,28 @@ pub(crate) static SPEC_DAIRY_2_PERCENT: LazyLock<DairySpec> = LazyLock::new(|| D
     msnf: None,
 });
 
-pub(crate) static SPEC_SUGARS_SUCROSE: LazyLock<SugarsSpec> = LazyLock::new(|| SugarsSpec {
-    sugars: Sugars::new().sucrose(100.0),
-    solids: 100.0,
-});
+pub(crate) static SPEC_SWEETENERS_SUCROSE: LazyLock<SweetenersSpec> =
+    LazyLock::new(|| SweetenersSpec {
+        sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
+        basis: CompositionBasis::ByDryWeight { solids: 100.0 },
+        pod: None,
+        pac: None,
+    });
 
-pub(crate) static SPEC_SUGARS_DEXTROSE: LazyLock<SugarsSpec> = LazyLock::new(|| SugarsSpec {
-    sugars: Sugars::new().glucose(100.0),
-    solids: 100.0,
-});
+pub(crate) static SPEC_SWEETENERS_DEXTROSE: LazyLock<SweetenersSpec> =
+    LazyLock::new(|| SweetenersSpec {
+        sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(100.0)),
+        basis: CompositionBasis::ByDryWeight { solids: 92.0 },
+        pod: None,
+        pac: None,
+    });
 
-pub(crate) static SPEC_SUGARS_DEXTROSE_50_PERCENT: LazyLock<SugarsSpec> =
-    LazyLock::new(|| SugarsSpec {
-        sugars: Sugars::new().glucose(100.0),
-        solids: 50.0,
+pub(crate) static SPEC_SWEETENERS_FRUCTOSE: LazyLock<SweetenersSpec> =
+    LazyLock::new(|| SweetenersSpec {
+        sweeteners: Sweeteners::new().sugars(Sugars::new().fructose(100.0)),
+        basis: CompositionBasis::ByDryWeight { solids: 100.0 },
+        pod: None,
+        pac: None,
     });
 
 // Compositions
@@ -58,18 +66,18 @@ pub(crate) static COMP_SUCROSE: LazyLock<Composition> = LazyLock::new(|| {
 
 pub(crate) static COMP_DEXTROSE: LazyLock<Composition> = LazyLock::new(|| {
     Composition::new()
-        .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(100.0)))
-        .sweeteners(Sweeteners::new().sugars(Sugars::new().glucose(100.0)))
-        .pod(80.4)
-        .pac(PAC::new().sugars(190.0))
+        .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(92.0)))
+        .sweeteners(Sweeteners::new().sugars(Sugars::new().glucose(92.0)))
+        .pod(73.968)
+        .pac(PAC::new().sugars(174.8))
 });
 
-pub(crate) static COMP_DEXTROSE_50_PERCENT: LazyLock<Composition> = LazyLock::new(|| {
+pub(crate) static COMP_FRUCTOSE: LazyLock<Composition> = LazyLock::new(|| {
     Composition::new()
-        .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(50.0)))
-        .sweeteners(Sweeteners::new().sugars(Sugars::new().glucose(50.0)))
-        .pod(40.2)
-        .pac(PAC::new().sugars(95.0))
+        .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(100.0)))
+        .sweeteners(Sweeteners::new().sugars(Sugars::new().fructose(100.0)))
+        .pod(173.0)
+        .pac(PAC::new().sugars(190.0))
 });
 
 // Ingredient specs
@@ -83,25 +91,48 @@ pub(crate) const ING_SPEC_MILK_2_PERCENT_STR: &str = r#"{
   }
 }"#;
 
-pub(crate) const ING_SPEC_SUGARS_SUCROSE_STR: &str = r#"{
+pub(crate) const ING_SPEC_SUCROSE_STR: &str = r#"{
   "name": "Sucrose",
   "category": "Sweetener",
-  "SugarsSpec": {
-    "sugars": {
-      "sucrose": 100
+  "SweetenersSpec": {
+    "sweeteners": {
+      "sugars": {
+        "sucrose": 100
+      }
     },
-    "solids": 100
+    "ByDryWeight": {
+      "solids": 100
+    }
   }
 }"#;
 
-pub(crate) const ING_SPEC_SUGARS_DEXTROSE_STR: &str = r#"{
+pub(crate) const ING_SPEC_DEXTROSE_STR: &str = r#"{
   "name": "Dextrose",
   "category": "Sweetener",
-  "SugarsSpec": {
-    "sugars": {
-      "glucose": 100
+  "SweetenersSpec": {
+    "sweeteners": {
+      "sugars": {
+        "glucose": 100
+      }
     },
-    "solids": 100
+    "ByDryWeight": {
+      "solids": 92
+    }
+  }
+}"#;
+
+pub(crate) const ING_SPEC_FRUCTOSE_STR: &str = r#"{
+  "name": "Fructose",
+  "category": "Sweetener",
+  "SweetenersSpec": {
+    "sweeteners": {
+      "sugars": {
+        "fructose": 100
+      }
+    },
+    "ByDryWeight": {
+      "solids": 100
+    }
   }
 }"#;
 
@@ -112,19 +143,23 @@ pub(crate) static ING_SPEC_MILK_2_PERCENT: LazyLock<IngredientSpec> =
         spec: Spec::DairySpec(*SPEC_DAIRY_2_PERCENT),
     });
 
-pub(crate) static ING_SPEC_SUGARS_SUCROSE: LazyLock<IngredientSpec> =
-    LazyLock::new(|| IngredientSpec {
-        name: "Sucrose".to_string(),
-        category: Category::Sweetener,
-        spec: Spec::SugarsSpec(*SPEC_SUGARS_SUCROSE),
-    });
+pub(crate) static ING_SPEC_SUCROSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    name: "Sucrose".to_string(),
+    category: Category::Sweetener,
+    spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_SUCROSE),
+});
 
-pub(crate) static ING_SPEC_SUGARS_DEXTROSE: LazyLock<IngredientSpec> =
-    LazyLock::new(|| IngredientSpec {
-        name: "Dextrose".to_string(),
-        category: Category::Sweetener,
-        spec: Spec::SugarsSpec(*SPEC_SUGARS_DEXTROSE),
-    });
+pub(crate) static ING_SPEC_DEXTROSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    name: "Dextrose".to_string(),
+    category: Category::Sweetener,
+    spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_DEXTROSE),
+});
+
+pub(crate) static ING_SPEC_FRUCTOSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    name: "Fructose".to_string(),
+    category: Category::Sweetener,
+    spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_FRUCTOSE),
+});
 
 // Ingredients
 // --------------------------------------------
@@ -145,4 +180,10 @@ pub(crate) static ING_DEXTROSE: LazyLock<Ingredient> = LazyLock::new(|| Ingredie
     name: "Dextrose".to_string(),
     category: Category::Sweetener,
     composition: *COMP_DEXTROSE,
+});
+
+pub(crate) static ING_FRUCTOSE: LazyLock<Ingredient> = LazyLock::new(|| Ingredient {
+    name: "Fructose".to_string(),
+    category: Category::Sweetener,
+    composition: *COMP_FRUCTOSE,
 });

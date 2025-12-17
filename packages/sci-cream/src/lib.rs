@@ -22,7 +22,7 @@ pub use {
     display::{composition_value_as_percentage, composition_value_as_quantity},
     ingredients::{Category, Ingredient},
     recipe::{MixProperties, PropKey},
-    specs::{DairySpec, SugarsSpec},
+    specs::{DairySpec, SweetenersSpec},
 };
 
 #[cfg(feature = "wasm")]

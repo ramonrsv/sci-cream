@@ -428,6 +428,10 @@ impl Sweeteners {
         Self::empty()
     }
 
+    pub fn total(&self) -> f64 {
+        self.sugars.total() + self.polysaccharides + self.artificial
+    }
+
     #[cfg(feature = "wasm")]
     pub fn to_pod_js(&self) -> Option<f64> {
         self.to_pod().ok()
