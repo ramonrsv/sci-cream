@@ -67,6 +67,9 @@ pub(crate) mod test {
             ("Sucrose", ING_SPEC_SUCROSE.clone()),
             ("Dextrose", ING_SPEC_DEXTROSE.clone()),
             ("Fructose", ING_SPEC_FRUCTOSE.clone()),
+            ("Invert Sugar", ING_SPEC_INVERT_SUGAR.clone()),
+            ("Honey", ING_SPEC_HONEY.clone()),
+            ("HFCS 42", ING_SPEC_HFCS42.clone()),
         ] {
             assert_eq!(get_ingredient_spec_by_name(name).unwrap(), asset_spec);
         }

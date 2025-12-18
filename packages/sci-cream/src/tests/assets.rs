@@ -38,6 +38,43 @@ pub(crate) static SPEC_SWEETENERS_FRUCTOSE: LazyLock<SweetenersSpec> =
         pac: None,
     });
 
+pub(crate) static SPEC_SWEETENERS_INVERT_SUGAR: LazyLock<SweetenersSpec> =
+    LazyLock::new(|| SweetenersSpec {
+        sweeteners: Sweeteners::new()
+            .sugars(Sugars::new().glucose(42.5).fructose(42.5).sucrose(15.0)),
+        basis: CompositionBasis::ByDryWeight { solids: 80.0 },
+        pod: None,
+        pac: None,
+    });
+
+pub(crate) static SPEC_SWEETENERS_HONEY: LazyLock<SweetenersSpec> =
+    LazyLock::new(|| SweetenersSpec {
+        sweeteners: Sweeteners::new()
+            .sugars(
+                Sugars::new()
+                    .glucose(36.0)
+                    .fructose(41.0)
+                    .sucrose(2.0)
+                    .galactose(1.5)
+                    .maltose(1.5),
+            )
+            // Should be other solids (fiber, proteins, etc.), but that would require FullSpec
+            .polysaccharide(1.0),
+        basis: CompositionBasis::ByTotalWeight { water: 17.0 },
+        pod: None,
+        pac: None,
+    });
+
+pub(crate) static SPEC_SWEETENERS_HFCS42: LazyLock<SweetenersSpec> =
+    LazyLock::new(|| SweetenersSpec {
+        sweeteners: Sweeteners::new()
+            .sugars(Sugars::new().fructose(42.0).glucose(53.0))
+            .polysaccharide(5.0),
+        basis: CompositionBasis::ByDryWeight { solids: 76.0 },
+        pod: None,
+        pac: None,
+    });
+
 // Compositions
 // --------------------------------------------
 
@@ -159,6 +196,25 @@ pub(crate) static ING_SPEC_FRUCTOSE: LazyLock<IngredientSpec> = LazyLock::new(||
     name: "Fructose".to_string(),
     category: Category::Sweetener,
     spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_FRUCTOSE),
+});
+
+pub(crate) static ING_SPEC_INVERT_SUGAR: LazyLock<IngredientSpec> =
+    LazyLock::new(|| IngredientSpec {
+        name: "Invert Sugar".to_string(),
+        category: Category::Sweetener,
+        spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_INVERT_SUGAR),
+    });
+
+pub(crate) static ING_SPEC_HONEY: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    name: "Honey".to_string(),
+    category: Category::Sweetener,
+    spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_HONEY),
+});
+
+pub(crate) static ING_SPEC_HFCS42: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    name: "HFCS 42".to_string(),
+    category: Category::Sweetener,
+    spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_HFCS42),
 });
 
 // Ingredients
