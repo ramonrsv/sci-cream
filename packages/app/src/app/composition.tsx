@@ -5,10 +5,20 @@ import { useState } from "react";
 import { RecipeState, getMixTotal, calculateMixComposition } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { formatCompositionValue } from "../lib/ui/fmt-comp-values";
-import { getCompKeys } from "../lib/deprecated/sci-cream";
+import { getCompKeys as getCompKeysAll } from "../lib/deprecated/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
 import { CompKey, comp_key_as_med_str_js } from "@workspace/sci-cream";
+
+function getCompKeys(): CompKey[] {
+  return getCompKeysAll().filter(
+    (key) =>
+      // These values aren't very meaningful in a per-ingredient breakdown
+      key !== CompKey.AbsPAC &&
+      key !== CompKey.EmulsifiersPerFat &&
+      key !== CompKey.StabilizersPerWater
+  );
+}
 
 const defaultSelectedComps: Set<CompKey> = new Set([
   CompKey.MilkFat,
