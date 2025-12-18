@@ -7,11 +7,11 @@ edition = "2024"
 wasm = ["dep:wasm-bindgen", "dep:serde-wasm-bindgen"]
 diesel = ["dep:diesel"]
 
-# Need to force `crate-type = ["cdylib"]` here because, for the "wasm" feature, `wasm-pack` does
-# not currently support a `--crate-type` flag. It can be overridden when building other features.
+# For the "wasm" feature, this needs to be changed to `cdylib` to work with `wasm-pack`, since it
+# does not currently support a `--crate-type` flag. See `scripts/set-crate-type.sh`.
 # See: https://github.com/drager/wasm-pack/issues/1297, https://github.com/trunk-rs/trunk
 [lib]
-crate-type = ["cdylib"]
+crate-type = ["rlib"]
 
 [dependencies]
 serde = { version = "1.0.228", features = ["derive"] }

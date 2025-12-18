@@ -33,6 +33,7 @@ jobs:
           toolchain: stable
       - run: cargo build --all-features --all-targets
       - run: cargo test --all-features --all-targets
+      - run: cargo test --all-features --doc
 
   build_docs:
     runs-on: ubuntu-latest
