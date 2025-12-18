@@ -4,15 +4,11 @@ import { useState } from "react";
 
 import { RecipeState, getMixTotal, calculateMixComposition } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
+import { formatCompositionValue } from "../lib/ui/fmt-comp-values";
 import { getCompKeys } from "../lib/deprecated/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
-import {
-  CompKey,
-  comp_key_as_med_str_js,
-  composition_value_as_quantity as comp_val_as_qty,
-  composition_value_as_percentage as comp_val_as_percent,
-} from "@workspace/sci-cream";
+import { CompKey, comp_key_as_med_str_js } from "@workspace/sci-cream";
 
 const defaultSelectedComps: Set<CompKey> = new Set([
   CompKey.MilkFat,
@@ -37,25 +33,22 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
     return getEnabledKeys(compsFilterState, selectedCompsState, getCompKeys, isPropEmpty);
   };
 
-  const formatCompValue = (comp: number, ingQty: number | undefined) => {
-    const fmtF = (num: number) => {
-      return Number.isNaN(num) ? "-" : Number(num.toFixed(1));
-    };
-
-    if (comp !== 0.0) {
-      switch (qtyToggleState[STATE_VAL]) {
-        case QtyToggle.Composition:
-          return fmtF(comp);
-        case QtyToggle.Quantity:
-          return ingQty ? fmtF(comp_val_as_qty(comp, ingQty)) : "";
-        case QtyToggle.Percentage:
-          return ingQty && mixTotal ? fmtF(comp_val_as_percent(comp, ingQty, mixTotal)) : "";
-      }
-    }
+  const isQuantity = (prop_key: CompKey): boolean => {
+    return (
+      prop_key !== CompKey.AbsPAC &&
+      prop_key !== CompKey.EmulsifiersPerFat &&
+      prop_key !== CompKey.StabilizersPerWater
+    );
   };
 
   const formattedTotalCell = (comp_key: CompKey) => {
-    return formatCompValue(mixComposition.get(comp_key), mixTotal);
+    return formatCompositionValue(
+      mixComposition.get(comp_key),
+      mixTotal,
+      mixTotal,
+      qtyToggleState[STATE_VAL],
+      isQuantity(comp_key)
+    );
   };
 
   const formattedCompCell = (index: number, comp_key: CompKey) => {
@@ -63,7 +56,13 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
     const ingQty = recipeState[index][STATE_VAL].quantity;
 
     return ingredient && ingredient.composition
-      ? formatCompValue(ingredient.composition.get(comp_key), ingQty)
+      ? formatCompositionValue(
+          ingredient.composition.get(comp_key),
+          ingQty,
+          mixTotal,
+          qtyToggleState[STATE_VAL],
+          isQuantity(comp_key)
+        )
       : "";
   };
 

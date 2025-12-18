@@ -4,6 +4,7 @@ import { useState } from "react";
 
 import { RecipeState, getMixTotal, calculateMixProperties } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
+import { formatCompositionValue } from "../lib/ui/fmt-comp-values";
 import { STATE_VAL } from "../lib/util";
 
 import {
@@ -12,8 +13,6 @@ import {
   isCompKey,
   getMixProperty,
   prop_key_as_med_str_js,
-  composition_value_as_quantity as comp_val_as_qty,
-  composition_value_as_percentage as comp_val_as_percent,
 } from "@workspace/sci-cream";
 
 import { PropKey, getPropKeys } from "../lib/deprecated/sci-cream";
@@ -54,27 +53,14 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
     );
   };
 
-  const formatPropValue = (prop: number, ingQty: number | undefined, isQty: boolean) => {
-    const fmtF = (num: number) => {
-      return Number.isNaN(num) ? "-" : Number(num.toFixed(1));
-    };
-
-    if (prop !== 0.0) {
-      if (!isQty) {
-        return fmtF(prop);
-      }
-
-      switch (qtyToggleState[STATE_VAL]) {
-        case QtyToggle.Quantity:
-          return ingQty ? fmtF(comp_val_as_qty(prop, ingQty)) : "";
-        case QtyToggle.Percentage:
-          return ingQty && mixTotal ? fmtF(comp_val_as_percent(prop, ingQty, mixTotal)) : "";
-      }
-    }
-  };
-
   const formattedPropCell = (prop_key: PropKey) => {
-    return formatPropValue(getMixProperty(mixProperties, prop_key), mixTotal, isQuantity(prop_key));
+    return formatCompositionValue(
+      getMixProperty(mixProperties, prop_key),
+      mixTotal,
+      mixTotal,
+      qtyToggleState[STATE_VAL],
+      isQuantity(prop_key)
+    );
   };
 
   const mixTotal = getMixTotal(recipeState);
