@@ -49,7 +49,7 @@ pub struct DairySpec {
     pub msnf: Option<f64>,
 }
 
-/// Spec for sweeteners, with a specified [`Sweeteners`] composition and optional POD/PAC values
+/// Spec for sweeteners, with a specified [`Sweeteners`] composition and optional POD/PAC
 ///
 /// If [`basis`](Self::basis) is [`ByDryWeight`](CompositionBasis::ByDryWeight), the values in
 /// [`sweeteners`](Self::sweeteners) represent the composition of the sweeteners as a percentage of
@@ -86,11 +86,58 @@ pub struct SweetenersSpec {
     pub pac: Option<f64>,
 }
 
+/// Spec for fruit ingredients, with a specified [`Sugars`] composition and water content
+///
+/// Fruits are specified by their sugar content (glucose, fructose, sucrose, etc.), water content,
+/// and optional fat content. The remaining portion up to 100% is assumed to be non-sugar, non-fat
+/// solids (snfs).
+///
+/// The composition for fruit ingredients can usually be found in food composition databases, like
+/// USDA FoodData Central (<https://fdc.nal.usda.gov/food-search>).
+///
+/// # Examples
+///
+/// Based on: SR Legacy - 9316 (<https://fdc.nal.usda.gov/food-details/167762/nutrients>)
+///
+///   - Strawberries, raw, per 100g:
+///     - Water: 91g
+///     - Total lipid (fat): 0.3g
+///     - Sucrose: 0.47g
+///     - Glucose: 1.99g
+///     - Fructose: 2.44g
+///
+/// ```
+/// use sci_cream::{
+///     composition::{Sugars, Sweeteners},
+///     specs::{FruitsSpec, IntoComposition}
+/// };
+///
+/// let comp = FruitsSpec {
+///     sugars: Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47),
+///     water: 91.0,
+///     fat: Some(0.3),
+/// }.into_composition().unwrap();
+///
+/// assert_eq!(comp.sweeteners, Sweeteners::new().sugars(
+///    Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47)));
+///
+/// assert_eq!(comp.pod, 6.29116);
+/// assert_eq!(comp.pac.sugars, 8.887);
+/// ```
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct FruitsSpec {
+    pub sugars: Sugars,
+    pub water: f64,
+    pub fat: Option<f64>,
+}
+
 /// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum Spec {
     DairySpec(DairySpec),
     SweetenersSpec(SweetenersSpec),
+    FruitsSpec(FruitsSpec),
 }
 
 #[cfg_attr(feature = "diesel", derive(Queryable, Selectable), diesel(table_name = ingredients))]
@@ -107,6 +154,7 @@ impl IntoComposition for Spec {
         match self {
             Spec::DairySpec(spec) => spec.into_composition(),
             Spec::SweetenersSpec(spec) => spec.into_composition(),
+            Spec::FruitsSpec(spec) => spec.into_composition(),
         }
     }
 }
@@ -211,6 +259,35 @@ impl IntoComposition for SweetenersSpec {
             .sweeteners(sweeteners)
             .pod(pod)
             .pac(PAC::new().sugars(pac)))
+    }
+}
+
+impl IntoComposition for FruitsSpec {
+    fn into_composition(self) -> Result<Composition> {
+        let Self { sugars, water, fat } = self;
+        let fat = fat.unwrap_or(0.0);
+
+        if sugars.total() + water + fat > 100.0 {
+            return Err(Error::CompositionNotWithin100Percent(
+                sugars.total() + water + fat,
+            ));
+        }
+
+        let snfs = 100.0 - (sugars.total() + water + fat);
+        let sweeteners = Sweeteners::new().sugars(sugars);
+
+        Ok(Composition::new()
+            .solids(
+                Solids::new().other(
+                    SolidsBreakdown::new()
+                        .sweeteners(sugars.total())
+                        .fats(fat)
+                        .snfs(snfs),
+                ),
+            )
+            .sweeteners(sweeteners)
+            .pod(sweeteners.to_pod().unwrap())
+            .pac(PAC::new().sugars(sweeteners.to_pac().unwrap())))
     }
 }
 
@@ -459,6 +536,35 @@ mod test {
         assert_eq!(solids.total(), 76.0);
         assert_eq!(pod, 87.60672000000001);
         assert_eq!(pac.sugars, 137.18);
+    }
+
+    #[test]
+    fn into_composition_fruits_spec_strawberry() {
+        let Composition {
+            solids,
+            sweeteners,
+            pod,
+            pac,
+            ..
+        } = FruitsSpec {
+            sugars: Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47),
+            water: 91.0,
+            fat: Some(0.3),
+        }
+        .into_composition()
+        .unwrap();
+
+        assert_eq!(
+            sweeteners,
+            Sweeteners::new().sugars(Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47))
+        );
+
+        assert_abs_diff_eq!(solids.sweeteners(), 4.90, epsilon = TESTS_EPSILON);
+        assert_eq!(solids.fats(), 0.3);
+        assert_abs_diff_eq!(solids.snfs(), 3.8, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(solids.total(), 9.0, epsilon = TESTS_EPSILON);
+        assert_eq!(pod, 6.29116);
+        assert_eq!(pac.sugars, 8.887);
     }
 
     #[test]

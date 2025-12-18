@@ -22,7 +22,7 @@ pub(crate) fn parse_ingredient_specs_from_file(filename: &str) -> HashMap<String
 pub(crate) fn get_ingredient_spec_by_name(name: &str) -> Option<IngredientSpec> {
     static ALL_INGREDIENT_SPECS: LazyLock<HashMap<String, IngredientSpec>> = LazyLock::new(|| {
         let mut specs = HashMap::new();
-        for filename in &["dairy.json", "sweeteners.json"] {
+        for filename in &["dairy.json", "sweeteners.json", "fruits.json"] {
             specs.extend(parse_ingredient_specs_from_file(filename));
         }
         specs
@@ -48,6 +48,12 @@ pub(crate) mod test {
     #[test]
     fn parse_ingredient_specs_sweeteners() {
         let specs = parse_ingredient_specs_from_file("sweeteners.json");
+        assert_false!(specs.is_empty());
+    }
+
+    #[test]
+    fn parse_ingredient_specs_fruits() {
+        let specs = parse_ingredient_specs_from_file("fruits.json");
         assert_false!(specs.is_empty());
     }
 
