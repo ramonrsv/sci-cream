@@ -52,7 +52,7 @@ pub struct Solids {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-#[serde(default)]
+#[serde(default, deny_unknown_fields)]
 pub struct Sugars {
     pub glucose: f64,
     pub fructose: f64,
@@ -65,7 +65,7 @@ pub struct Sugars {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-#[serde(default)]
+#[serde(default, deny_unknown_fields)]
 pub struct Sweeteners {
     pub sugars: Sugars,
     pub polysaccharides: f64,
@@ -74,6 +74,7 @@ pub struct Sweeteners {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(default, deny_unknown_fields)]
 pub struct Micro {
     pub salt: f64,
     pub emulsifiers: f64,
@@ -82,7 +83,7 @@ pub struct Micro {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-#[serde(default)]
+#[serde(default, deny_unknown_fields)]
 pub struct PAC {
     pub sugars: f64,
     pub salt: f64,

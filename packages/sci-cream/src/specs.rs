@@ -43,6 +43,7 @@ pub enum CompositionBasis {
 /// For milk powder ingredients it's necessary to specify the `msnf`, e.g. 97 for Skimmed MIlk
 /// Powder - 3% water, no fat, the rest is `msnf`, or 73 for Whole Milk Powder - total less 27% fat.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct DairySpec {
     pub fat: f64,
     pub msnf: Option<f64>,
@@ -69,6 +70,7 @@ pub struct DairySpec {
 /// calculations the polysaccharide component is ignored, and it is an error if `sugars.unspecified`
 /// or `sweeteners.artificial` are non-zero.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
 pub struct SweetenersSpec {
     pub sweeteners: Sweeteners,
     #[serde(flatten)]
