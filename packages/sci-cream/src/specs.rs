@@ -53,15 +53,21 @@ pub struct DairySpec {
 ///
 /// If [`basis`](Self::basis) is [`ByDryWeight`](CompositionBasis::ByDryWeight), the values in
 /// [`sweeteners`](Self::sweeteners) represent the composition of the sweeteners as a percentage of
-/// the dry weight (solids), adding up to 100. For example, Invert Sugar might be composed of
-/// `sugars.glucose = 42.5`, `sugars.fructose = 42.5`, and `sugars.sucrose = 15`, with
-/// `ByDryWeight { solids: 80 }`, meaning that 85% of the sucrose was split into glucose/fructose,
-/// with 15% sucrose remaining, and the syrup containing 20% water. If [`basis`](Self::basis) is
-/// [`ByTotalWeight`](CompositionBasis::ByTotalWeight), then the values in
-/// [`sweeteners`](Self::sweeteners) represent the composition of the sweeteners as a percentage of
-/// the total weight of the ingredient, their total plus water adding up to 100. For example, Honey
-/// might be composed of `sugars.glucose = 36`, `sugars.fructose = 41`, and `sugars.sucrose = 3`,
-/// with `ByTotalWeight { water = 20 }`.
+/// the dry weight (solids), its total and [`other_solids`](Self::other_solids) adding up to 100.
+/// For example, Invert Sugar might be composed of `sugars.glucose = 42.5`, `sugars.fructose =
+/// 42.5`, and `sugars.sucrose = 15`, with `ByDryWeight { solids: 80 }`, meaning that 85% of the
+/// sucrose was split into glucose/fructose,  with 15% sucrose remaining, and the syrup containing
+/// 20% water. If [`basis`](Self::basis) is [`ByTotalWeight`](CompositionBasis::ByTotalWeight), then
+/// the values in [`sweeteners`](Self::sweeteners) represent the composition of the sweeteners as a
+/// percentage of the total weight of the ingredient, their total plus `other_solids` and `water`
+/// adding up to 100. For example, Honey might be composed of `sugars.glucose = 36`,
+/// `sugars.fructose = 41`, `sugars.sucrose = 2`, and `other_solids = 1`, with `ByTotalWeight {
+/// water = 20 }`.
+///
+/// [`other_solids`](Self::other_solids) represents any non-sweetener impurities that may be in the
+/// ingredient, e.g. minerals, pollen, etc., for example 1% in Honey. This value should rarely be
+/// needed, and is assumed to be zero if not specified. This field is also scaled depending on the
+/// chosen [`basis`](Self::basis).
 ///
 /// If the POD or PAC value is not specified, then it is automatically calculated based on the
 /// composition of known mono- and disaccharides, and in the case of `ByDryWeight` basis it's scaled
@@ -73,6 +79,7 @@ pub struct DairySpec {
 #[serde(deny_unknown_fields)]
 pub struct SweetenersSpec {
     pub sweeteners: Sweeteners,
+    pub other_solids: Option<f64>,
     #[serde(flatten)]
     pub basis: CompositionBasis,
     pub pod: Option<f64>,
@@ -146,50 +153,64 @@ impl IntoComposition for SweetenersSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self {
             sweeteners,
+            other_solids,
             basis,
             pod,
             pac,
         } = self;
 
-        let ignore_polysaccharides = |s: Sweeteners| Sweeteners {
-            polysaccharides: 0.0,
-            ..s
-        };
+        let other_solids = other_solids.unwrap_or(0.0);
 
-        let into_composition_by_total_weight =
-            |sweeteners: Sweeteners, pod: Option<f64>, pac: Option<f64>| {
-                let pod = pod.unwrap_or(ignore_polysaccharides(sweeteners).to_pod().unwrap());
-                let pac = pac.unwrap_or(ignore_polysaccharides(sweeteners).to_pac().unwrap());
-
-                Ok(Composition::new()
-                    .solids(
-                        Solids::new().other(SolidsBreakdown::new().sweeteners(sweeteners.total())),
-                    )
-                    .sweeteners(sweeteners)
-                    .pod(pod)
-                    .pac(PAC::new().sugars(pac)))
-            };
+        let mut factor = None;
 
         match basis {
             CompositionBasis::ByDryWeight { solids } => {
-                if sweeteners.total() != 100.0 {
-                    return Err(Error::CompositionNot100Percent(sweeteners.total()));
+                if sweeteners.total() + other_solids != 100.0 {
+                    return Err(Error::CompositionNot100Percent(
+                        sweeteners.total() + other_solids,
+                    ));
                 }
 
                 if !(0.0..=100.0).contains(&solids) {
                     return Err(Error::CompositionNotWithin100Percent(solids));
                 }
 
-                into_composition_by_total_weight(sweeteners.scale(solids / 100.0), pod, pac)
+                factor = Some(solids / 100.0);
             }
             CompositionBasis::ByTotalWeight { water } => {
-                if sweeteners.total() + water != 100.0 {
-                    return Err(Error::CompositionNot100Percent(sweeteners.total() + water));
+                if sweeteners.total() + other_solids + water != 100.0 {
+                    return Err(Error::CompositionNot100Percent(
+                        sweeteners.total() + other_solids + water,
+                    ));
                 }
-
-                into_composition_by_total_weight(sweeteners, pod, pac)
             }
-        }
+        };
+
+        let (sweeteners, other_solids) = if let Some(factor) = factor {
+            (sweeteners.scale(factor), other_solids * factor)
+        } else {
+            (sweeteners, other_solids)
+        };
+
+        let ignore_polysaccharides = |s: Sweeteners| Sweeteners {
+            polysaccharides: 0.0,
+            ..s
+        };
+
+        let pod = pod.unwrap_or(ignore_polysaccharides(sweeteners).to_pod().unwrap());
+        let pac = pac.unwrap_or(ignore_polysaccharides(sweeteners).to_pac().unwrap());
+
+        Ok(Composition::new()
+            .solids(
+                Solids::new().other(
+                    SolidsBreakdown::new()
+                        .sweeteners(sweeteners.total() - sweeteners.polysaccharides)
+                        .snfs(sweeteners.polysaccharides + other_solids),
+                ),
+            )
+            .sweeteners(sweeteners)
+            .pod(pod)
+            .pac(PAC::new().sugars(pac)))
     }
 }
 
@@ -267,6 +288,7 @@ mod test {
             ..
         } = SweetenersSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
+            other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
             pod: None,
             pac: None,
@@ -291,6 +313,7 @@ mod test {
             ..
         } = SweetenersSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(100.0)),
+            other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 92.0 },
             pod: None,
             pac: None,
@@ -315,6 +338,7 @@ mod test {
             ..
         } = SweetenersSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().fructose(100.0)),
+            other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
             pod: None,
             pac: None,
@@ -340,6 +364,7 @@ mod test {
         } = SweetenersSpec {
             sweeteners: Sweeteners::new()
                 .sugars(Sugars::new().glucose(42.5).fructose(42.5).sucrose(15.0)),
+            other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 80.0 },
             pod: None,
             pac: None,
@@ -367,17 +392,15 @@ mod test {
             pac,
             ..
         } = SweetenersSpec {
-            sweeteners: Sweeteners::new()
-                .sugars(
-                    Sugars::new()
-                        .glucose(36.0)
-                        .fructose(41.0)
-                        .sucrose(2.0)
-                        .galactose(1.5)
-                        .maltose(1.5),
-                )
-                // Should be other solids (fiber, proteins, etc.), but that would require FullSpec
-                .polysaccharide(1.0),
+            sweeteners: Sweeteners::new().sugars(
+                Sugars::new()
+                    .glucose(36.0)
+                    .fructose(41.0)
+                    .sucrose(2.0)
+                    .galactose(1.5)
+                    .maltose(1.5),
+            ),
+            other_solids: Some(1.0),
             basis: CompositionBasis::ByTotalWeight { water: 17.0 },
             pod: None,
             pac: None,
@@ -387,19 +410,18 @@ mod test {
 
         assert_eq!(
             sweeteners,
-            Sweeteners::new()
-                .sugars(
-                    Sugars::new()
-                        .glucose(36.0)
-                        .fructose(41.0)
-                        .sucrose(2.0)
-                        .galactose(1.5)
-                        .maltose(1.5)
-                )
-                .polysaccharide(1.0)
+            Sweeteners::new().sugars(
+                Sugars::new()
+                    .glucose(36.0)
+                    .fructose(41.0)
+                    .sucrose(2.0)
+                    .galactose(1.5)
+                    .maltose(1.5)
+            )
         );
 
-        assert_eq!(solids.sweeteners(), 83.0);
+        assert_eq!(solids.sweeteners(), 82.0);
+        assert_eq!(solids.snfs(), 1.0);
         assert_eq!(solids.total(), 83.0);
         assert_eq!(pod, 102.354);
         assert_eq!(pac.sugars, 152.65);
@@ -417,6 +439,7 @@ mod test {
             sweeteners: Sweeteners::new()
                 .sugars(Sugars::new().fructose(42.0).glucose(53.0))
                 .polysaccharide(5.0),
+            other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 76.0 },
             pod: None,
             pac: None,
@@ -431,7 +454,8 @@ mod test {
                 .polysaccharide(3.8)
         );
 
-        assert_eq!(solids.sweeteners(), 76.0);
+        assert_eq!(solids.sweeteners(), 72.2);
+        assert_eq!(solids.snfs(), 3.8);
         assert_eq!(solids.total(), 76.0);
         assert_eq!(pod, 87.60672000000001);
         assert_eq!(pac.sugars, 137.18);

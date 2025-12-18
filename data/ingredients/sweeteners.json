@@ -70,9 +70,9 @@
           "sucrose": 2,
           "galactose": 1.5,
           "maltose": 1.5
-        },
-        "polysaccharides": 1
+        }
       },
+      "other_solids": 1,
       "ByTotalWeight": {
         "water": 17
       }

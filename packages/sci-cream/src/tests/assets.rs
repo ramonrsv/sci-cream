@@ -17,6 +17,7 @@ pub(crate) static SPEC_DAIRY_2_PERCENT: LazyLock<DairySpec> = LazyLock::new(|| D
 pub(crate) static SPEC_SWEETENERS_SUCROSE: LazyLock<SweetenersSpec> =
     LazyLock::new(|| SweetenersSpec {
         sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
+        other_solids: None,
         basis: CompositionBasis::ByDryWeight { solids: 100.0 },
         pod: None,
         pac: None,
@@ -25,6 +26,7 @@ pub(crate) static SPEC_SWEETENERS_SUCROSE: LazyLock<SweetenersSpec> =
 pub(crate) static SPEC_SWEETENERS_DEXTROSE: LazyLock<SweetenersSpec> =
     LazyLock::new(|| SweetenersSpec {
         sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(100.0)),
+        other_solids: None,
         basis: CompositionBasis::ByDryWeight { solids: 92.0 },
         pod: None,
         pac: None,
@@ -33,6 +35,7 @@ pub(crate) static SPEC_SWEETENERS_DEXTROSE: LazyLock<SweetenersSpec> =
 pub(crate) static SPEC_SWEETENERS_FRUCTOSE: LazyLock<SweetenersSpec> =
     LazyLock::new(|| SweetenersSpec {
         sweeteners: Sweeteners::new().sugars(Sugars::new().fructose(100.0)),
+        other_solids: None,
         basis: CompositionBasis::ByDryWeight { solids: 100.0 },
         pod: None,
         pac: None,
@@ -42,6 +45,7 @@ pub(crate) static SPEC_SWEETENERS_INVERT_SUGAR: LazyLock<SweetenersSpec> =
     LazyLock::new(|| SweetenersSpec {
         sweeteners: Sweeteners::new()
             .sugars(Sugars::new().glucose(42.5).fructose(42.5).sucrose(15.0)),
+        other_solids: None,
         basis: CompositionBasis::ByDryWeight { solids: 80.0 },
         pod: None,
         pac: None,
@@ -49,17 +53,15 @@ pub(crate) static SPEC_SWEETENERS_INVERT_SUGAR: LazyLock<SweetenersSpec> =
 
 pub(crate) static SPEC_SWEETENERS_HONEY: LazyLock<SweetenersSpec> =
     LazyLock::new(|| SweetenersSpec {
-        sweeteners: Sweeteners::new()
-            .sugars(
-                Sugars::new()
-                    .glucose(36.0)
-                    .fructose(41.0)
-                    .sucrose(2.0)
-                    .galactose(1.5)
-                    .maltose(1.5),
-            )
-            // Should be other solids (fiber, proteins, etc.), but that would require FullSpec
-            .polysaccharide(1.0),
+        sweeteners: Sweeteners::new().sugars(
+            Sugars::new()
+                .glucose(36.0)
+                .fructose(41.0)
+                .sucrose(2.0)
+                .galactose(1.5)
+                .maltose(1.5),
+        ),
+        other_solids: Some(1.0),
         basis: CompositionBasis::ByTotalWeight { water: 17.0 },
         pod: None,
         pac: None,
@@ -70,6 +72,7 @@ pub(crate) static SPEC_SWEETENERS_HFCS42: LazyLock<SweetenersSpec> =
         sweeteners: Sweeteners::new()
             .sugars(Sugars::new().fructose(42.0).glucose(53.0))
             .polysaccharide(5.0),
+        other_solids: None,
         basis: CompositionBasis::ByDryWeight { solids: 76.0 },
         pod: None,
         pac: None,
