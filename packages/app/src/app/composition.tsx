@@ -5,7 +5,7 @@ import { useState } from "react";
 import { RecipeState, getMixTotal, calculateMixComposition } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { formatCompositionValue } from "../lib/ui/fmt-comp-values";
-import { getCompKeys as getCompKeysAll } from "../lib/deprecated/sci-cream";
+import { getCompKeys as getCompKeysAll } from "../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
 import { CompKey, comp_key_as_med_str_js } from "@workspace/sci-cream";

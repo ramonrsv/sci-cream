@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 
 import { CompKey, comp_key_as_med_str_js } from "@workspace/sci-cream";
-import { getCompKeys } from "../lib/deprecated/sci-cream";
+import { getCompKeys } from "../lib/sci-cream/sci-cream";
 
 test("Import from sci-cream wasm package, at app", () => {
   expect(comp_key_as_med_str_js(CompKey.MilkFat)).toBe("Milk Fat");

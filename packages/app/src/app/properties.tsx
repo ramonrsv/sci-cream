@@ -5,6 +5,7 @@ import { useState } from "react";
 import { RecipeState, getMixTotal, calculateMixProperties } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { formatCompositionValue } from "../lib/ui/fmt-comp-values";
+import { PropKey, getPropKeys } from "../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
 import {
@@ -14,8 +15,6 @@ import {
   getMixProperty,
   prop_key_as_med_str_js,
 } from "@workspace/sci-cream";
-
-import { PropKey, getPropKeys } from "../lib/deprecated/sci-cream";
 
 const defaultSelectedProperties: Set<PropKey> = new Set([
   CompKey[CompKey.MilkFat],
