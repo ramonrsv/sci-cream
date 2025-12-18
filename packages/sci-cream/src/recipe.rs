@@ -5,7 +5,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     composition::{CompKey, Composition, ScaleComponents},
-    fpd::FPD,
+    fpd::{FPD, FpdKey},
 };
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
@@ -42,41 +42,10 @@ pub fn calculate_mix_composition(composition_lines: &[CompositionLine]) -> Compo
         })
 }
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Hash, PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum PropKey {
-    MilkFat,
-    CacaoFat,
-    NutFat,
-    EggFat,
-    OtherFat,
-    TotalFat,
-    Lactose,
-    Sugars,
-    ArtificialSweeteners,
-    MSNF,
-    MilkSNFS,
-    CocoaSNFS,
-    NutSNFS,
-    EggSNFS,
-    OtherSNFS,
-    TotalSolids,
-    Salt,
-    Alcohol,
-    Emulsifiers,
-    Stabilizers,
-    EmulsifiersPerFat,
-    StabilizersPerWater,
-    POD,
-    PACsgr,
-    PACslt,
-    PACalc,
-    PACtotal,
-    AbsPAC,
-    HF,
-    FPD,
-    ServingTemp,
-    HardnessAt14C,
+    CompKey(CompKey),
+    FpdKey(FpdKey),
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
@@ -86,42 +55,11 @@ pub struct MixProperties {
     pub fpd: FPD,
 }
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl MixProperties {
     pub fn get(&self, key: PropKey) -> f64 {
         match key {
-            PropKey::MilkFat => self.composition.get(CompKey::MilkFat),
-            PropKey::CacaoFat => self.composition.get(CompKey::CacaoFat),
-            PropKey::NutFat => self.composition.get(CompKey::NutFat),
-            PropKey::EggFat => self.composition.get(CompKey::EggFat),
-            PropKey::OtherFat => self.composition.get(CompKey::OtherFat),
-            PropKey::TotalFat => self.composition.get(CompKey::TotalFat),
-            PropKey::Lactose => self.composition.get(CompKey::Lactose),
-            PropKey::Sugars => self.composition.get(CompKey::Sugars),
-            PropKey::ArtificialSweeteners => self.composition.get(CompKey::ArtificialSweeteners),
-            PropKey::MSNF => self.composition.get(CompKey::MSNF),
-            PropKey::MilkSNFS => self.composition.get(CompKey::MilkSNFS),
-            PropKey::CocoaSNFS => self.composition.get(CompKey::CocoaSNFS),
-            PropKey::NutSNFS => self.composition.get(CompKey::NutSNFS),
-            PropKey::EggSNFS => self.composition.get(CompKey::EggSNFS),
-            PropKey::OtherSNFS => self.composition.get(CompKey::OtherSNFS),
-            PropKey::TotalSolids => self.composition.get(CompKey::TotalSolids),
-            PropKey::Salt => self.composition.get(CompKey::Salt),
-            PropKey::Alcohol => self.composition.get(CompKey::Alcohol),
-            PropKey::Emulsifiers => self.composition.get(CompKey::Emulsifiers),
-            PropKey::Stabilizers => self.composition.get(CompKey::Stabilizers),
-            PropKey::EmulsifiersPerFat => self.composition.get(CompKey::EmulsifiersPerFat),
-            PropKey::StabilizersPerWater => self.composition.get(CompKey::StabilizersPerWater),
-            PropKey::POD => self.composition.get(CompKey::POD),
-            PropKey::PACsgr => self.composition.get(CompKey::PACsgr),
-            PropKey::PACslt => self.composition.get(CompKey::PACslt),
-            PropKey::PACalc => self.composition.get(CompKey::PACalc),
-            PropKey::PACtotal => self.composition.get(CompKey::PACtotal),
-            PropKey::AbsPAC => self.composition.get(CompKey::AbsPAC),
-            PropKey::HF => self.composition.get(CompKey::HF),
-            PropKey::FPD => self.fpd.fpd,
-            PropKey::ServingTemp => self.fpd.serving_temp,
-            PropKey::HardnessAt14C => self.fpd.hardness_at_14c,
+            PropKey::CompKey(comp_key) => self.composition.get(comp_key),
+            PropKey::FpdKey(fpd_key) => self.fpd.get(fpd_key),
         }
     }
 }

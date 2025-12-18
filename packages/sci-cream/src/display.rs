@@ -1,10 +1,14 @@
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
-use crate::{composition::CompKey, recipe::PropKey};
+use crate::{composition::CompKey, fpd::FpdKey, recipe::PropKey};
 
-impl CompKey {
-    pub fn as_med_str(&self) -> &'static str {
+trait KeyAsStrings {
+    fn as_med_str(&self) -> &'static str;
+}
+
+impl KeyAsStrings for CompKey {
+    fn as_med_str(&self) -> &'static str {
         match self {
             CompKey::MilkFat => "Milk Fat",
             CompKey::CacaoFat => "Cacao Fat",
@@ -39,41 +43,21 @@ impl CompKey {
     }
 }
 
-impl PropKey {
-    pub fn as_med_str(&self) -> &'static str {
+impl KeyAsStrings for FpdKey {
+    fn as_med_str(&self) -> &'static str {
         match self {
-            PropKey::MilkFat => CompKey::MilkFat.as_med_str(),
-            PropKey::CacaoFat => CompKey::CacaoFat.as_med_str(),
-            PropKey::NutFat => CompKey::NutFat.as_med_str(),
-            PropKey::EggFat => CompKey::EggFat.as_med_str(),
-            PropKey::OtherFat => CompKey::OtherFat.as_med_str(),
-            PropKey::TotalFat => CompKey::TotalFat.as_med_str(),
-            PropKey::Lactose => CompKey::Lactose.as_med_str(),
-            PropKey::Sugars => CompKey::Sugars.as_med_str(),
-            PropKey::ArtificialSweeteners => CompKey::ArtificialSweeteners.as_med_str(),
-            PropKey::MSNF => CompKey::MSNF.as_med_str(),
-            PropKey::MilkSNFS => CompKey::MilkSNFS.as_med_str(),
-            PropKey::CocoaSNFS => CompKey::CocoaSNFS.as_med_str(),
-            PropKey::NutSNFS => CompKey::NutSNFS.as_med_str(),
-            PropKey::EggSNFS => CompKey::EggSNFS.as_med_str(),
-            PropKey::OtherSNFS => CompKey::OtherSNFS.as_med_str(),
-            PropKey::TotalSolids => CompKey::TotalSolids.as_med_str(),
-            PropKey::Salt => CompKey::Salt.as_med_str(),
-            PropKey::Alcohol => CompKey::Alcohol.as_med_str(),
-            PropKey::Emulsifiers => CompKey::Emulsifiers.as_med_str(),
-            PropKey::Stabilizers => CompKey::Stabilizers.as_med_str(),
-            PropKey::EmulsifiersPerFat => CompKey::EmulsifiersPerFat.as_med_str(),
-            PropKey::StabilizersPerWater => CompKey::StabilizersPerWater.as_med_str(),
-            PropKey::POD => CompKey::POD.as_med_str(),
-            PropKey::PACsgr => CompKey::PACsgr.as_med_str(),
-            PropKey::PACslt => CompKey::PACslt.as_med_str(),
-            PropKey::PACalc => CompKey::PACalc.as_med_str(),
-            PropKey::PACtotal => CompKey::PACtotal.as_med_str(),
-            PropKey::AbsPAC => CompKey::AbsPAC.as_med_str(),
-            PropKey::HF => CompKey::HF.as_med_str(),
-            PropKey::FPD => "FPD",
-            PropKey::ServingTemp => "Serving Temp",
-            PropKey::HardnessAt14C => "Hardness @14°C",
+            FpdKey::FPD => "FPD",
+            FpdKey::ServingTemp => "Serving Temp",
+            FpdKey::HardnessAt14C => "Hardness @14°C",
+        }
+    }
+}
+
+impl KeyAsStrings for PropKey {
+    fn as_med_str(&self) -> &'static str {
+        match self {
+            PropKey::CompKey(comp_key) => comp_key.as_med_str(),
+            PropKey::FpdKey(fpd_key) => fpd_key.as_med_str(),
         }
     }
 }
@@ -98,7 +82,7 @@ pub mod js {
     }
 
     #[wasm_bindgen]
-    pub fn prop_key_as_med_str_js(key: PropKey) -> String {
+    pub fn fpd_key_as_med_str_js(key: FpdKey) -> String {
         key.as_med_str().to_string()
     }
 }
@@ -148,7 +132,20 @@ mod tests {
         ];
 
         let actual_vec: Vec<&'static str> = CompKey::iter().map(|h| h.as_med_str()).collect();
-
         assert_eq!(actual_vec, expected_vec);
+    }
+
+    #[test]
+    fn fpd_keys_as_med_str() {
+        let expected_vec = vec!["FPD", "Serving Temp", "Hardness @14°C"];
+
+        let actual_vec: Vec<&'static str> = FpdKey::iter().map(|h| h.as_med_str()).collect();
+        assert_eq!(actual_vec, expected_vec);
+    }
+
+    #[test]
+    fn prop_keys_as_med_str() {
+        assert_eq!(PropKey::CompKey(CompKey::MilkFat).as_med_str(), "Milk Fat");
+        assert_eq!(PropKey::FpdKey(FpdKey::FPD).as_med_str(), "FPD");
     }
 }

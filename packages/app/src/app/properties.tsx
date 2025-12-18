@@ -4,36 +4,32 @@ import { useState } from "react";
 
 import { RecipeState, getMixTotal, calculateMixProperties } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
-import { getPropKeys } from "../lib/deprecated/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
 import {
-  PropKey,
+  CompKey,
+  FpdKey,
+  isCompKey,
+  getMixProperty,
   prop_key_as_med_str_js,
   composition_value_as_quantity as comp_val_as_qty,
   composition_value_as_percentage as comp_val_as_percent,
 } from "@workspace/sci-cream";
 
-const defaultSelectedProperties: Set<PropKey> = new Set([
-  PropKey.MilkFat,
-  PropKey.TotalFat,
-  PropKey.MSNF,
-  PropKey.Sugars,
-  PropKey.TotalSolids,
-  PropKey.PACtotal,
-  PropKey.AbsPAC,
-  PropKey.FPD,
-  PropKey.ServingTemp,
-  PropKey.HardnessAt14C,
-]);
+import { PropKey, getPropKeys } from "../lib/deprecated/sci-cream";
 
-function isPropKeyQuantity(prop_key: PropKey) {
-  return !(
-    prop_key === PropKey.FPD ||
-    prop_key === PropKey.ServingTemp ||
-    prop_key == PropKey.HardnessAt14C
-  );
-}
+const defaultSelectedProperties: Set<PropKey> = new Set([
+  CompKey[CompKey.MilkFat],
+  CompKey[CompKey.TotalFat],
+  CompKey[CompKey.MSNF],
+  CompKey[CompKey.Sugars],
+  CompKey[CompKey.TotalSolids],
+  CompKey[CompKey.PACtotal],
+  CompKey[CompKey.AbsPAC],
+  FpdKey[FpdKey.FPD],
+  FpdKey[FpdKey.ServingTemp],
+  FpdKey[FpdKey.HardnessAt14C],
+]);
 
 export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState }) {
   const qtyToggleState = useState<QtyToggle>(QtyToggle.Percentage);
@@ -41,12 +37,21 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
   const selectedPropsState = useState<Set<PropKey>>(defaultSelectedProperties);
 
   const isPropEmpty = (prop_key: PropKey) => {
-    const prop_val = mixProperties.get(prop_key);
+    const prop_val = getMixProperty(mixProperties, prop_key);
     return prop_val === 0 || Number.isNaN(prop_val);
   };
 
   const getEnabledProps = () => {
     return getEnabledKeys(propsFilterState, selectedPropsState, getPropKeys, isPropEmpty);
+  };
+
+  const isQuantity = (prop_key: PropKey): boolean => {
+    return (
+      isCompKey(prop_key) &&
+      prop_key !== CompKey[CompKey.AbsPAC] &&
+      prop_key !== CompKey[CompKey.EmulsifiersPerFat] &&
+      prop_key !== CompKey[CompKey.StabilizersPerWater]
+    );
   };
 
   const formatPropValue = (prop: number, ingQty: number | undefined, isQty: boolean) => {
@@ -69,7 +74,7 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
   };
 
   const formattedPropCell = (prop_key: PropKey) => {
-    return formatPropValue(mixProperties.get(prop_key), mixTotal, isPropKeyQuantity(prop_key));
+    return formatPropValue(getMixProperty(mixProperties, prop_key), mixTotal, isQuantity(prop_key));
   };
 
   const mixTotal = getMixTotal(recipeState);
@@ -91,7 +96,7 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
         <table className="border-collapse">
           <tbody>
             {getEnabledProps().map((prop_key) => (
-              <tr key={prop_key} className="h-[25px]">
+              <tr key={String(prop_key)} className="h-[25px]">
                 {/* @todo The top-most border for the header column is not right, shows double */}
                 <td className="table-header-no-border border-gray-400 border-t border-r w-full px-2 text-center">
                   {prop_key_as_med_str_js(prop_key)}
