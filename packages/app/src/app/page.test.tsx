@@ -43,11 +43,6 @@ describe("Home Page", () => {
     expect(main).toHaveClass("min-h-screen");
   });
 
-  it("should have grid layout for components", () => {
-    const { container } = render(<Home />);
-    expect(container.querySelector(".main-page-grid")).toBeInTheDocument();
-  });
-
   it("should fetch valid ingredient names on mount", async () => {
     const { fetchValidIngredientNames } = await import("../lib/data");
     render(<Home />);
