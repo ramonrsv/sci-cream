@@ -10,6 +10,8 @@ pub enum Error {
     CompositionNotWithin100Percent(f64),
     #[error("Composition does not sum to 100%: {0}")]
     CompositionNot100Percent(f64),
+    #[error("Invalid composition: {0}")]
+    InvalidComposition(String),
 }
 
 /// Convenience type alias for [`Result<T, sci_cream::error::Error>`].

@@ -24,10 +24,11 @@
   "rust-analyzer.check.command": "clippy",
   "prettier.printWidth": 100,
   "cSpell.words": [
+    "demerara",
     "MSNF",
-    "SNF",
-    "SNFS",
     "sgr",
     "slt",
+    "SNF",
+    "SNFS"
   ]
 }

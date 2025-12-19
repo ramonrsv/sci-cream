@@ -20,7 +20,7 @@ pub const MALTOSE_PAC: f64 = 100.0;
 pub const SALT_PAC: f64 = 585.0;
 pub const ALCOHOL_PAC: f64 = 740.0;
 
-pub const CACAO_FAT_HF: f64 = 0.9;
+pub const CACAO_BUTTER_HF: f64 = 0.9;
 pub const COCOA_SOLIDS_HF: f64 = 1.8;
 pub const NUT_FAT_HF: f64 = 1.4;
 

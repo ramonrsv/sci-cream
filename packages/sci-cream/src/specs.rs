@@ -132,12 +132,86 @@ pub struct FruitsSpec {
     pub fat: Option<f64>,
 }
 
+/// Spec for chocolate ingredients, with cacao solids, cocoa butter, and optional sugar
+///
+/// The terminology around chocolate ingredients can be confusing and used inconsistently across
+/// different industries and stages of processing. For clarity, within this library we define:
+///   - _Cacao_ solids: the total dry matter content derived from the cacao bean (sometimes referred
+///     to as "chocolate liquor", "cocoa mass", etc.) including both cocoa butter (fat) and cocoa
+///     solids (non-fat solids). This is the percentage advertised on chocolate packaging, e.g. 70%
+///     dark chocolate has 70% cacao solids. Corresponds to [`cacao_solids`](Self::cacao_solids).
+///   - Cocoa butter: the fat component extracted from cacao solids (sometimes referred to as "cocoa
+///     fat"). This is rarely advertised on packaging, but can usually be inferred from the
+///     nutrition table. Corresponds to [`cocoa_butter`](Self::cocoa_butter).
+///   - _Cocoa_ solids: the non-fat component of cacao solids (sometimes referred to as "cocoa
+///     powder" or "cocoa fiber"), i.e. cacao solids minus cocoa butter. In ice cream mixes, this
+///     generally determines how "chocolatey" the flavor is. This value is specified in
+///     [`Solids::cocoa`](Solids::cocoa)`.`[`snf`](SolidsBreakdown::snf).
+///
+/// The relation of the above components is `cacao solids = cocoa butter + cocoa solids`. The sugar
+/// content of chocolate ingredients is optional, assumed to be zero if not specified, as some
+/// chocolates (e.g. Unsweetened Chocolate) may not contain any sugar at all. The total solids
+/// content of chocolate ingredients is assumed to be 100% (i.e. no water content). If
+/// [`sugar`](Self::sugar) and [`cacao_solids`](Self::cacao_solids) do not add up to 100%, then the
+/// remaining portion is assumed to be other non-sugar, non-fat solids, specified in
+/// [`Solids::other`](Solids::other)`.`[`snfs`](SolidsBreakdown::snfs), e.g. emulsifiers, impurities
+/// in demerara sugar, etc. Cocoa Powder products are typically 100% cacao solids, with no sugar,
+/// and cocoa butter content ranging from ~10-24%.
+///
+/// # Examples
+///
+/// ```
+/// use sci_cream::{
+///     composition::{Sugars, Sweeteners},
+///     specs::{ChocolatesSpec, IntoComposition}
+/// };
+///
+/// // 70% Cacao Dark Chocolate
+/// // https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g
+/// // 16g/40g fat in nutrition table => 40%% cocoa butter
+/// // 12g/40g sugars in nutrition table => 30% sugar
+/// let comp = ChocolatesSpec {
+///     cacao_solids: 70.0,
+///     cocoa_butter: 40.0,
+///     sugar: Some(30.0),
+/// }.into_composition().unwrap();
+///
+/// assert_eq!(comp.sweeteners.sugars.sucrose, 30.0);
+/// assert_eq!(comp.solids.cocoa.total(), 70.0);
+/// assert_eq!(comp.solids.cocoa.fats, 40.0);
+/// assert_eq!(comp.solids.cocoa.snf(), 30.0);
+///
+/// // 100% Unsweetened Cocoa Powder
+/// // https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs
+/// // 1g/6g fat in nutrition table => 16.67% cocoa butter
+///
+/// let comp = ChocolatesSpec {
+///     cacao_solids: 100.0,
+///     cocoa_butter: 16.67,
+///     sugar: None,
+/// }.into_composition().unwrap();
+///
+/// assert_eq!(comp.sweeteners.total(), 0.0);
+/// assert_eq!(comp.solids.cocoa.total(), 100.0);
+/// assert_eq!(comp.solids.cocoa.fats, 16.67);
+/// assert_eq!(comp.solids.cocoa.snf(), 83.33);
+/// ```
+// @todo Add a `msnf` field to support milk chocolate products (some professional chocolatier use)
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct ChocolatesSpec {
+    pub cacao_solids: f64,
+    pub cocoa_butter: f64,
+    pub sugar: Option<f64>,
+}
+
 /// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum Spec {
     DairySpec(DairySpec),
     SweetenersSpec(SweetenersSpec),
     FruitsSpec(FruitsSpec),
+    ChocolatesSpec(ChocolatesSpec),
 }
 
 #[cfg_attr(feature = "diesel", derive(Queryable, Selectable), diesel(table_name = ingredients))]
@@ -155,6 +229,7 @@ impl IntoComposition for Spec {
             Spec::DairySpec(spec) => spec.into_composition(),
             Spec::SweetenersSpec(spec) => spec.into_composition(),
             Spec::FruitsSpec(spec) => spec.into_composition(),
+            Spec::ChocolatesSpec(spec) => spec.into_composition(),
         }
     }
 }
@@ -167,6 +242,10 @@ impl IngredientSpec {
             composition: self.spec.into_composition().unwrap(),
         }
     }
+}
+
+fn is_within_100_percent(value: f64) -> bool {
+    (0.0..=100.0).contains(&value)
 }
 
 impl IntoComposition for DairySpec {
@@ -219,7 +298,7 @@ impl IntoComposition for SweetenersSpec {
                     ));
                 }
 
-                if !(0.0..=100.0).contains(&solids) {
+                if !is_within_100_percent(solids) {
                     return Err(Error::CompositionNotWithin100Percent(solids));
                 }
 
@@ -267,7 +346,7 @@ impl IntoComposition for FruitsSpec {
         let Self { sugars, water, fat } = self;
         let fat = fat.unwrap_or(0.0);
 
-        if sugars.total() + water + fat > 100.0 {
+        if !is_within_100_percent(sugars.total() + water + fat) {
             return Err(Error::CompositionNotWithin100Percent(
                 sugars.total() + water + fat,
             ));
@@ -288,6 +367,50 @@ impl IntoComposition for FruitsSpec {
             .sweeteners(sweeteners)
             .pod(sweeteners.to_pod().unwrap())
             .pac(PAC::new().sugars(sweeteners.to_pac().unwrap())))
+    }
+}
+
+impl IntoComposition for ChocolatesSpec {
+    fn into_composition(self) -> Result<Composition> {
+        let Self {
+            cacao_solids,
+            cocoa_butter,
+            sugar,
+        } = self;
+
+        let sugar = sugar.unwrap_or(0.0);
+
+        if cocoa_butter > cacao_solids {
+            return Err(Error::InvalidComposition(format!(
+                "Cocoa butter ({cocoa_butter}) is a subset of and cannot be greater than cacao solids ({cacao_solids})"
+            )));
+        }
+
+        if !is_within_100_percent(cacao_solids + sugar) {
+            return Err(Error::CompositionNotWithin100Percent(cacao_solids + sugar));
+        }
+
+        let cocoa_snfs = cacao_solids - cocoa_butter;
+        let other_snfs = 100.0 - (cacao_solids + sugar);
+
+        let sweeteners = Sweeteners::new().sugars(Sugars::new().sucrose(sugar));
+
+        Ok(Composition::new()
+            .solids(
+                Solids::new()
+                    .cocoa(SolidsBreakdown::new().fats(cocoa_butter).snfs(cocoa_snfs))
+                    .other(SolidsBreakdown::new().sweeteners(sugar).snfs(other_snfs)),
+            )
+            .sweeteners(sweeteners)
+            .pod(sweeteners.to_pod().unwrap())
+            .pac(
+                PAC::new()
+                    .sugars(sweeteners.to_pac().unwrap())
+                    .hardness_factor(
+                        cocoa_butter * constants::CACAO_BUTTER_HF
+                            + cocoa_snfs * constants::COCOA_SOLIDS_HF,
+                    ),
+            ))
     }
 }
 
@@ -565,6 +688,65 @@ mod test {
         assert_abs_diff_eq!(solids.total(), 9.0, epsilon = TESTS_EPSILON);
         assert_eq!(pod, 6.29116);
         assert_eq!(pac.sugars, 8.887);
+    }
+
+    #[test]
+    fn into_composition_chocolates_spec_70_dark_chocolate() {
+        let Composition {
+            solids,
+            sweeteners,
+            pod,
+            pac,
+            ..
+        } = ChocolatesSpec {
+            cacao_solids: 70.0,
+            cocoa_butter: 40.0,
+            sugar: Some(30.0),
+        }
+        .into_composition()
+        .unwrap();
+
+        assert_eq!(
+            sweeteners,
+            Sweeteners::new().sugars(Sugars::new().sucrose(30.0))
+        );
+
+        assert_eq!(solids.cocoa.total(), 70.0);
+        assert_eq!(solids.cocoa.fats, 40.0);
+        assert_eq!(solids.cocoa.snf(), 30.0);
+        assert_eq!(solids.other.sweeteners, 30.0);
+        assert_eq!(solids.other.snfs, 0.0);
+        assert_eq!(solids.total(), 100.0);
+        assert_eq!(pod, 30.0);
+        assert_eq!(pac.sugars, 30.0);
+    }
+
+    #[test]
+    fn into_composition_chocolates_spec_100_unsweetened_cocoa_powder() {
+        let Composition {
+            solids,
+            sweeteners,
+            pod,
+            pac,
+            ..
+        } = ChocolatesSpec {
+            cacao_solids: 100.0,
+            cocoa_butter: 16.67,
+            sugar: None,
+        }
+        .into_composition()
+        .unwrap();
+
+        assert_eq!(sweeteners.total(), 0.0);
+
+        assert_eq!(solids.cocoa.total(), 100.0);
+        assert_eq!(solids.cocoa.fats, 16.67);
+        assert_eq!(solids.cocoa.snf(), 83.33);
+        assert_eq!(solids.other.sweeteners, 0.0);
+        assert_eq!(solids.other.snfs, 0.0);
+        assert_eq!(solids.total(), 100.0);
+        assert_eq!(pod, 0.0);
+        assert_eq!(pac.sugars, 0.0);
     }
 
     #[test]

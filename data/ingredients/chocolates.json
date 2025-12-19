@@ -1,0 +1,21 @@
+[
+  {
+    "name": "70% Dark Chocolate",
+    "category": "Chocolate",
+    "ChocolatesSpec": {
+      "cacao_solids": 70,
+      "cocoa_butter": 40,
+      "sugar": 30
+    },
+    "comments": "From the nutrition table: 16g/40g fat => 40% cocoa butter, 12g/40g sugars => 30% sugar"
+  },
+  {
+    "name": "Cocoa Powder (17% Fat)",
+    "category": "Chocolate",
+    "ChocolatesSpec": {
+      "cacao_solids": 100,
+      "cocoa_butter": 16.67
+    },
+    "comments": "From the nutrition table: 1g/6g fat => 16.67% cocoa butter"
+  }
+]
