@@ -582,7 +582,7 @@ impl Composition {
     /// Note that [`f64::NAN`] is a valid result, if there are no fats
     pub fn emulsifiers_per_fat(&self) -> f64 {
         if self.solids.fats() > 0.0 {
-            self.micro.emulsifiers / self.solids.fats()
+            (self.micro.emulsifiers / self.solids.fats()) * 100.0
         } else {
             f64::NAN
         }
@@ -591,7 +591,7 @@ impl Composition {
     /// Note that [`f64::NAN`] is a valid result, if there is no water
     pub fn stabilizers_per_water(&self) -> f64 {
         if self.water() > 0.0 {
-            self.micro.stabilizers / self.water()
+            (self.micro.stabilizers / self.water()) * 100.0
         } else {
             f64::NAN
         }
