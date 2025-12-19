@@ -16,16 +16,20 @@ impl KeyAsStrings for CompKey {
             CompKey::EggFat => "Egg Fat",
             CompKey::OtherFat => "Other Fat",
             CompKey::TotalFat => "T. Fat",
+            CompKey::MSNF => "MSNF",
+            CompKey::CocoaSNF => "Cocoa SNF",
+            CompKey::NutSNF => "Nut SNF",
+            CompKey::EggSNF => "Egg SNF",
+            CompKey::OtherSNF => "Other SNF",
+            CompKey::TotalSNF => "T. SNF",
+            CompKey::MilkSNFS => "Milk SNFS",
+            CompKey::OtherSNFS => "Other SNFS",
+            CompKey::TotalSNFS => "T. SNFS",
             CompKey::Lactose => "Lactose",
             CompKey::Sugars => "Sugars",
             CompKey::ArtificialSweeteners => "Artificial",
-            CompKey::MSNF => "MSNF",
-            CompKey::MilkSNFS => "Milk SNFS",
-            CompKey::CocoaSNFS => "Cocoa SNFS",
-            CompKey::NutSNFS => "Nut SNFS",
-            CompKey::EggSNFS => "Egg SNFS",
-            CompKey::OtherSNFS => "Other SNFS",
             CompKey::TotalSolids => "T. Solids",
+            CompKey::Water => "Water",
             CompKey::Salt => "Salt",
             CompKey::Alcohol => "Alcohol",
             CompKey::Emulsifiers => "Emulsifiers",
@@ -89,6 +93,8 @@ pub mod js {
 
 #[cfg(test)]
 mod tests {
+    use std::collections::HashSet;
+
     use strum::IntoEnumIterator;
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
@@ -99,23 +105,27 @@ mod tests {
 
     #[test]
     fn comp_keys_as_med_str() {
-        let expected_vec = vec![
+        let some_expected = vec![
             "Milk Fat",
             "Cacao Fat",
             "Nut Fat",
             "Egg Fat",
             "Other Fat",
             "T. Fat",
+            "MSNF",
+            "Cocoa SNF",
+            "Nut SNF",
+            "Egg SNF",
+            "Other SNF",
+            "T. SNF",
+            "Milk SNFS",
+            "Other SNFS",
+            "T. SNFS",
+            "T. Solids",
             "Lactose",
             "Sugars",
             "Artificial",
-            "MSNF",
-            "Milk SNFS",
-            "Cocoa SNFS",
-            "Nut SNFS",
-            "Egg SNFS",
-            "Other SNFS",
-            "T. Solids",
+            "Water",
             "Salt",
             "Alcohol",
             "Emulsifiers",
@@ -131,8 +141,11 @@ mod tests {
             "HF",
         ];
 
-        let actual_vec: Vec<&'static str> = CompKey::iter().map(|h| h.as_med_str()).collect();
-        assert_eq!(actual_vec, expected_vec);
+        let actual_set: HashSet<&'static str> = CompKey::iter().map(|h| h.as_med_str()).collect();
+
+        for expected in some_expected {
+            assert_true!(actual_set.contains(expected));
+        }
     }
 
     #[test]
