@@ -452,6 +452,24 @@ impl Micro {
             stabilizers: 0.0,
         }
     }
+
+    pub fn salt(self, salt: f64) -> Self {
+        Self { salt, ..self }
+    }
+
+    pub fn emulsifiers(self, emulsifiers: f64) -> Self {
+        Self {
+            emulsifiers,
+            ..self
+        }
+    }
+
+    pub fn stabilizers(self, stabilizers: f64) -> Self {
+        Self {
+            stabilizers,
+            ..self
+        }
+    }
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]

@@ -9,7 +9,9 @@ use crate::diesel::ingredients;
 use diesel::{Queryable, Selectable};
 
 use crate::{
-    composition::{Composition, PAC, ScaleComponents, Solids, SolidsBreakdown, Sugars, Sweeteners},
+    composition::{
+        Composition, Micro, PAC, ScaleComponents, Solids, SolidsBreakdown, Sugars, Sweeteners,
+    },
     constants,
     error::{Error, Result},
     ingredients::{Category, Ingredient},
@@ -205,6 +207,14 @@ pub struct ChocolatesSpec {
     pub sugar: Option<f64>,
 }
 
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct EggsSpec {
+    pub fat: f64,
+    pub solids: f64,
+    pub lecithin: f64,
+}
+
 /// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum Spec {
@@ -212,6 +222,7 @@ pub enum Spec {
     SweetenersSpec(SweetenersSpec),
     FruitsSpec(FruitsSpec),
     ChocolatesSpec(ChocolatesSpec),
+    EggsSpec(EggsSpec),
 }
 
 #[cfg_attr(feature = "diesel", derive(Queryable, Selectable), diesel(table_name = ingredients))]
@@ -230,6 +241,7 @@ impl IntoComposition for Spec {
             Spec::SweetenersSpec(spec) => spec.into_composition(),
             Spec::FruitsSpec(spec) => spec.into_composition(),
             Spec::ChocolatesSpec(spec) => spec.into_composition(),
+            Spec::EggsSpec(spec) => spec.into_composition(),
         }
     }
 }
@@ -411,6 +423,26 @@ impl IntoComposition for ChocolatesSpec {
                             + cocoa_snfs * constants::COCOA_SOLIDS_HF,
                     ),
             ))
+    }
+}
+
+impl IntoComposition for EggsSpec {
+    fn into_composition(self) -> Result<Composition> {
+        let Self {
+            fat,
+            solids,
+            lecithin,
+        } = self;
+
+        if fat > solids {
+            return Err(Error::InvalidComposition(format!(
+                "Fat ({fat}) cannot be greater than total solids ({solids})"
+            )));
+        }
+
+        Ok(Composition::new()
+            .solids(Solids::new().egg(SolidsBreakdown::new().fats(fat).snfs(solids - fat)))
+            .micro(Micro::new().emulsifiers(lecithin)))
     }
 }
 
@@ -747,6 +779,22 @@ mod test {
         assert_eq!(solids.total(), 100.0);
         assert_eq!(pod, 0.0);
         assert_eq!(pac.sugars, 0.0);
+    }
+
+    #[test]
+    fn into_composition_eggs_spec_egg_yolk() {
+        let Composition { solids, micro, .. } = EggsSpec {
+            fat: 29.0,
+            solids: 48.0,
+            lecithin: 8.33,
+        }
+        .into_composition()
+        .unwrap();
+
+        assert_eq!(solids.egg.fats, 29.0);
+        assert_eq!(solids.egg.snfs, 19.0);
+        assert_eq!(solids.total(), 48.0);
+        assert_eq!(micro.emulsifiers, 8.33);
     }
 
     #[test]

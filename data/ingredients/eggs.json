@@ -1,0 +1,11 @@
+[
+  {
+    "name": "Egg Yolk",
+    "category": "Egg",
+    "EggsSpec": {
+      "fat": 29,
+      "solids": 48,
+      "lecithin": 8.33
+    }
+  }
+]
