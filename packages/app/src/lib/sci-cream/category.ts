@@ -16,6 +16,6 @@ export enum Category {
   Nut = "Nut",
   Fruit = "Fruit",
   Egg = "Egg",
-  Stabilizer = "Stabilizer",
+  EmulsifierStabilizer = "EmulsifierStabilizer",
   Miscellaneous = "Miscellaneous",
 }

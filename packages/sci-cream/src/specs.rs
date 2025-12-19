@@ -215,6 +215,18 @@ pub struct EggsSpec {
     pub lecithin: f64,
 }
 
+/// Spec for emulsifier and stabilizer ingredients
+///
+/// These ingredients are assumed to be 100% solids non-fat non-sugar, with the
+/// [`emulsifiers`](Self::emulsifiers) and [`stabilizers`](Self::stabilizers) fields representing
+/// their relative strengths with a maximum of 100 combined.
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct EmulsifiersStabilizersSpec {
+    pub emulsifiers: Option<f64>,
+    pub stabilizers: Option<f64>,
+}
+
 /// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum Spec {
@@ -223,6 +235,7 @@ pub enum Spec {
     FruitsSpec(FruitsSpec),
     ChocolatesSpec(ChocolatesSpec),
     EggsSpec(EggsSpec),
+    EmulsifiersStabilizersSpec(EmulsifiersStabilizersSpec),
 }
 
 #[cfg_attr(feature = "diesel", derive(Queryable, Selectable), diesel(table_name = ingredients))]
@@ -242,6 +255,7 @@ impl IntoComposition for Spec {
             Spec::FruitsSpec(spec) => spec.into_composition(),
             Spec::ChocolatesSpec(spec) => spec.into_composition(),
             Spec::EggsSpec(spec) => spec.into_composition(),
+            Spec::EmulsifiersStabilizersSpec(spec) => spec.into_composition(),
         }
     }
 }
@@ -443,6 +457,38 @@ impl IntoComposition for EggsSpec {
         Ok(Composition::new()
             .solids(Solids::new().egg(SolidsBreakdown::new().fats(fat).snfs(solids - fat)))
             .micro(Micro::new().emulsifiers(lecithin)))
+    }
+}
+
+impl IntoComposition for EmulsifiersStabilizersSpec {
+    fn into_composition(self) -> Result<Composition> {
+        let Self {
+            emulsifiers,
+            stabilizers,
+        } = self;
+
+        if emulsifiers.is_none() && stabilizers.is_none() {
+            return Err(Error::InvalidComposition(
+                "At least one of Emulsifiers or Stabilizers must be specified".to_string(),
+            ));
+        }
+
+        let emulsifiers = emulsifiers.unwrap_or(0.0);
+        let stabilizers = stabilizers.unwrap_or(0.0);
+
+        if !is_within_100_percent(emulsifiers + stabilizers) {
+            return Err(Error::InvalidComposition(format!(
+                "Emulsifiers ({emulsifiers}) and Stabilizers ({stabilizers}) are not within a relative strength of 100"
+            )));
+        }
+
+        Ok(Composition::new()
+            .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
+            .micro(
+                Micro::new()
+                    .emulsifiers(emulsifiers)
+                    .stabilizers(stabilizers),
+            ))
     }
 }
 
@@ -795,6 +841,21 @@ mod test {
         assert_eq!(solids.egg.snfs, 19.0);
         assert_eq!(solids.total(), 48.0);
         assert_eq!(micro.emulsifiers, 8.33);
+    }
+
+    #[test]
+    fn into_composition_emulsifiers_stabilizers_spec() {
+        let Composition { solids, micro, .. } = EmulsifiersStabilizersSpec {
+            emulsifiers: Some(70.0),
+            stabilizers: Some(30.0),
+        }
+        .into_composition()
+        .unwrap();
+
+        assert_eq!(solids.other.snfs, 100.0);
+        assert_eq!(solids.total(), 100.0);
+        assert_eq!(micro.emulsifiers, 70.0);
+        assert_eq!(micro.stabilizers, 30.0);
     }
 
     #[test]

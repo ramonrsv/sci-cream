@@ -28,6 +28,7 @@ pub(crate) fn get_ingredient_spec_by_name(name: &str) -> Option<IngredientSpec> 
             "fruits.json",
             "chocolates.json",
             "eggs.json",
+            "emulsifiers_stabilizers.json",
         ] {
             specs.extend(parse_ingredient_specs_from_file(filename));
         }
@@ -72,6 +73,12 @@ pub(crate) mod test {
     #[test]
     fn parse_ingredient_specs_eggs() {
         let specs = parse_ingredient_specs_from_file("eggs.json");
+        assert_false!(specs.is_empty());
+    }
+
+    #[test]
+    fn parse_ingredient_specs_emulsifiers_stabilizers() {
+        let specs = parse_ingredient_specs_from_file("emulsifiers_stabilizers.json");
         assert_false!(specs.is_empty());
     }
 

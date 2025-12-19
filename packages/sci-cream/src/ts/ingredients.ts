@@ -3,6 +3,7 @@ import sweetenersJson from "../../../../data/ingredients/sweeteners.json";
 import fruitsJson from "../../../../data/ingredients/fruits.json";
 import chocolatesJson from "../../../../data/ingredients/chocolates.json";
 import eggsJson from "../../../../data/ingredients/eggs.json";
+import emulsifiersStabilizersJson from "../../../../data/ingredients/emulsifiers_stabilizers.json";
 
 function flattenLists(jsonLists: any[][]): any[] {
   return jsonLists.reduce((acc, list) => acc.concat(list), []);
@@ -14,4 +15,5 @@ export const allIngredients = flattenLists([
   fruitsJson,
   chocolatesJson,
   eggsJson,
+  emulsifiersStabilizersJson,
 ]);

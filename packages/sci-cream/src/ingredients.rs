@@ -18,7 +18,7 @@ pub enum Category {
     Nut,
     Fruit,
     Egg,
-    Stabilizer,
+    EmulsifierStabilizer,
     Miscellaneous,
 }
 
