@@ -2,8 +2,7 @@
 
 import { useEffect } from "react";
 
-import { fetchIngredientSpec } from "../lib/data";
-import { QtyToggle } from "../lib/ui/key-selection";
+import { fetchIngredientSpec, IngredientTransfer } from "../lib/data";
 import { fmtCompFloat } from "../lib/ui/fmt-comp-values";
 import { STATE_VAL } from "../lib/util";
 
@@ -64,16 +63,37 @@ export function calculateMixProperties(recipeState: RecipeState): MixProperties 
 export function RecipeGrid({
   recipeState,
   validIngredients,
+  ingredientCache: ingredientCacheState,
 }: {
   recipeState: RecipeState;
   validIngredients: string[];
+  ingredientCache: [
+    Map<string, IngredientTransfer>,
+    React.Dispatch<React.SetStateAction<Map<string, IngredientTransfer>>>
+  ];
 }) {
-  recipeState.forEach((rowState, idx) => {
+  const [ingredientCache, setIngredientCache] = ingredientCacheState;
+
+  const cachedFetchIngredientSpec = async (
+    name: string
+  ): Promise<IngredientTransfer | undefined> => {
+    if (!ingredientCache.has(name)) {
+      await fetchIngredientSpec(name).then((spec) => {
+        if (spec) {
+          ingredientCache.set(name, spec);
+          setIngredientCache(ingredientCache);
+        }
+      });
+    }
+    return ingredientCache.get(name);
+  };
+
+  recipeState.forEach((rowState, _) => {
     const [row, setRow] = rowState;
 
     useEffect(() => {
       if (row.name !== "" && validIngredients.includes(row.name)) {
-        fetchIngredientSpec(row.name)
+        cachedFetchIngredientSpec(row.name)
           .then((spec) => (spec ? into_ingredient_from_spec_js(spec.spec) : undefined))
           .then((ing) => setRow({ ...row, ingredient: ing }));
       } else {
