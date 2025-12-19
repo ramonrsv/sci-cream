@@ -3,6 +3,10 @@
 import { useEffect } from "react";
 
 import { fetchIngredientSpec } from "../lib/data";
+import { QtyToggle } from "../lib/ui/key-selection";
+import { fmtCompFloat } from "../lib/ui/fmt-comp-values";
+import { STATE_VAL } from "../lib/util";
+
 import {
   Ingredient,
   into_ingredient_from_spec_js,
@@ -12,7 +16,6 @@ import {
   calculate_mix_composition_js,
   calculate_mix_properties_js,
 } from "@workspace/sci-cream";
-import { STATE_VAL } from "../lib/util";
 
 export const RECIPE_TOTAL_ROWS = 21;
 
@@ -168,15 +171,15 @@ export function RecipeGrid({
           <tr className="table-header h-[25px] text-center">
             <th className="border-gray-400 border-r w-[325px] min-w-[250px]">Ingredient</th>
             <th className="border-gray-400 border-r w-[60px] min-w-[60px]">Qty (g)</th>
-            <th className="w-[55px] min-w-[55px]">Qty (%)</th>
+            <th className="w-[55px] min-w-[55px] pl-2 pr-1 whitespace-nowrap">Qty (%)</th>
           </tr>
           {/* Total Row */}
           <tr className="table-header h-[25px]">
             <td className="px-1 border-gray-400 border-r text-center">Total</td>
-            <td className="px-3.75 border-gray-400 border-r text-right">
+            <td className="px-3.75 border-gray-400 border-r comp-val">
               {mixTotal ? mixTotal.toFixed(0) : ""}
             </td>
-            <td className="px-1 text-right">{mixTotal ? "100.0" : ""}</td>
+            <td className="px-1 comp-val">{mixTotal ? "100   " : ""}</td>
           </tr>
         </thead>
         <tbody>
@@ -208,12 +211,12 @@ export function RecipeGrid({
                   onChange={(e) => updateIngredientRowQuantity(index, e.target.value)}
                   placeholder=""
                   step={1}
-                  className="table-fillable-input text-right"
+                  className="table-fillable-input text-right font-mono"
                 />
               </td>
-              <td className="px-1 text-gray-900 text-sm text-right ">
+              <td className="px-1 text-gray-900 text-sm comp-val">
                 {recipeState[index][STATE_VAL].quantity && mixTotal
-                  ? ((recipeState[index][STATE_VAL].quantity / mixTotal) * 100).toFixed(1)
+                  ? fmtCompFloat((recipeState[index][STATE_VAL].quantity / mixTotal) * 100)
                   : ""}
               </td>
             </tr>

@@ -113,7 +113,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
               {getEnabledComps().map((comp_key) => (
                 <td
                   key={comp_key}
-                  className="table-header-no-border px-1 border-gray-400 border-b border-r text-center"
+                  className="table-header-no-border border-gray-400 border-b border-r px-1 comp-val"
                 >
                   {formattedTotalCell(comp_key)}
                 </td>
@@ -126,7 +126,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
             {recipeState.map((_, index) => (
               <tr key={index} className="h-[25px]">
                 {getEnabledComps().map((comp_key) => (
-                  <td key={comp_key} className="table-inner-cell text-center">
+                  <td key={comp_key} className="table-inner-cell px-1 comp-val">
                     {formattedCompCell(index, comp_key)}
                   </td>
                 ))}

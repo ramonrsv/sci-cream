@@ -41,6 +41,10 @@ body {
   @apply w-full text-gray-900 text-sm focus:outline-none focus:ring-2 focus:ring-inset;
 }
 
+.comp-val {
+  @apply text-center font-mono whitespace-pre;
+}
+
 .main-page-grid {
   display: inline-grid;
   column-gap: 35px;

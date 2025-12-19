@@ -86,7 +86,7 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
                 <td className="table-header-no-border border-gray-400 border-t border-r w-full px-2 text-center">
                   {prop_key_as_med_str_js(prop_key)}
                 </td>
-                <td className="table-inner-cell min-w-[50px] px-2 text-center">
+                <td className="table-inner-cell min-w-[50px] px-2 comp-val">
                   {formattedPropCell(prop_key)}
                 </td>
               </tr>
