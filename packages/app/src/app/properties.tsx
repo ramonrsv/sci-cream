@@ -77,7 +77,8 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
         getKeys={getPropKeys}
         key_as_med_str_js={prop_key_as_med_str_js}
       />
-      <div className="border-gray-400 border-2 max-h-[580px] overflow-y-auto whitespace-nowrap">
+      {/* @todo overflow-x-visible should work instead of min-w-[220px], but it has a weird delay in applying */}
+      <div className="border-gray-400 border-2 max-h-[580px] min-w-[220px] overflow-y-auto whitespace-nowrap">
         <table className="border-collapse">
           <tbody>
             {getEnabledProps().map((prop_key) => (
