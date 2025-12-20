@@ -1,20 +1,18 @@
-import { defineConfig } from 'vite'
-import path from 'path'
-// @todo Remove ts-ignore and figure out what this issue is about
-// @ts-ignore - vite-plugin-wasm has export resolution issues
-import wasm from 'vite-plugin-wasm'
+import { defineConfig } from "vite";
+import path from "path";
+import wasm from "vite-plugin-wasm";
 
 export default defineConfig({
   plugins: [wasm()], // include wasm plugin
   build: {
     lib: {
-      entry: path.resolve(__dirname, 'src/ts/index.ts'),
-      name: 'MyLibrary',
-      fileName: 'index',
-      formats: ['es'], // this is important
+      entry: path.resolve(__dirname, "src/ts/index.ts"),
+      name: "MyLibrary",
+      fileName: "index",
+      formats: ["es"], // this is important
     },
     minify: false, // for demo purposes
-    target: 'esnext', // this is important as well
-    outDir: 'dist',
-  }
-})
+    target: "esnext", // this is important as well
+    outDir: "dist",
+  },
+});
