@@ -7,7 +7,7 @@
     "build": "next build --no-lint",
     "start": "next start",
     "lint": "next lint",
-    "test": "vitest run --silent passed-only",
+    "test": "vitest run",
     "coverage": "vitest run --coverage"
   },
   "dependencies": {
