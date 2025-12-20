@@ -51,7 +51,7 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
   const mixProperties = calculateMixProperties(recipeState);
 
   return (
-    <div id="mix-properties-grid" className={`relative w-full component-h bg-gray-100`}>
+    <div id="mix-properties-grid" className="relative w-full grid-component">
       <KeySelection
         qtyToggleComponent={{
           supportedQtyToggles: [QtyToggle.Quantity, QtyToggle.Percentage],

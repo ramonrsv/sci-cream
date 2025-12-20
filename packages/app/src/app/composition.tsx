@@ -72,10 +72,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
   const mixComposition = calculateMixComposition(recipeState);
 
   return (
-    <div
-      id="ingredient-composition-grid"
-      className={`relative w-full min-w-[200px] component-h bg-gray-100`}
-    >
+    <div id="ingredient-composition-grid" className="relative w-full min-w-[200px] grid-component">
       <KeySelection
         qtyToggleComponent={{
           supportedQtyToggles: [QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage],

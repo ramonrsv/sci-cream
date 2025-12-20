@@ -172,7 +172,7 @@ export function RecipeGrid({
   const mixTotal = getMixTotal(recipeState);
 
   return (
-    <div id="recipe-grid" className={`component-h bg-gray-100`}>
+    <div id="recipe-grid" className="grid-component">
       <div>
         <button onClick={copyRecipe} className="button px-1">
           Copy Recipe

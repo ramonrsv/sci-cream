@@ -67,6 +67,6 @@ body {
 }
 
 /* See COMPONENT_H_PX in app/page.tsx */
-.component-h {
-  height: 615px;
+.grid-component {
+  @apply h-[615px] bg-gray-100;
 }

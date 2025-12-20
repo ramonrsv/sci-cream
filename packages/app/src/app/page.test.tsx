@@ -1,9 +1,18 @@
 import "@testing-library/jest-dom/vitest";
 
+import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, screen, waitFor } from "@testing-library/react";
 
 import Home from "./page";
+
+const ResizeObserverMock = vi.fn(() => ({
+  observe: vi.fn(),
+  unobserve: vi.fn(),
+  disconnect: vi.fn(),
+}));
+
+vi.stubGlobal("ResizeObserver", ResizeObserverMock);
 
 vi.mock("../lib/data", () => ({
   fetchValidIngredientNames: vi.fn(() => Promise.resolve(["2% Milk", "Sucrose", "Whipping Cream"])),
@@ -13,6 +22,7 @@ vi.mock("../lib/data", () => ({
 describe("Home Page", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    setupVitestCanvasMock();
   });
 
   it("should render the main heading", () => {
@@ -30,9 +40,9 @@ describe("Home Page", () => {
     expect(container.querySelectorAll("#mix-properties-grid").length).toBe(2);
   });
 
-  it("should render two IngredientCompositionGrid components", () => {
+  it("should render one IngredientCompositionGrid components", () => {
     const { container } = render(<Home />);
-    expect(container.querySelectorAll("#ingredient-composition-grid").length).toBe(2);
+    expect(container.querySelectorAll("#ingredient-composition-grid").length).toBe(1);
   });
 
   it("should have proper page layout structure", () => {
