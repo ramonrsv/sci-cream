@@ -1,8 +1,8 @@
 import "@testing-library/jest-dom/vitest";
 
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
-import { describe, it, expect, vi, beforeEach } from "vitest";
-import { render, screen, waitFor } from "@testing-library/react";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
+import { render, screen, waitFor, cleanup } from "@testing-library/react";
 
 import Home from "./page";
 
@@ -23,6 +23,11 @@ describe("Home Page", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setupVitestCanvasMock();
+  });
+
+  afterEach(async () => {
+    cleanup();
+    await vi.waitFor(() => {}, { timeout: 100 });
   });
 
   it("should render the main heading", () => {
