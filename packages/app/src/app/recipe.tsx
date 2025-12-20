@@ -4,7 +4,7 @@ import { useEffect } from "react";
 
 import { fetchIngredientSpec, IngredientTransfer } from "../lib/data";
 import { fmtCompFloat } from "../lib/ui/fmt-comp-values";
-import { STATE_VAL } from "../lib/util";
+import { STATE_VAL, standardInputStepByPercent } from "../lib/util";
 
 import {
   Ingredient,
@@ -233,7 +233,7 @@ export function RecipeGrid({
                   value={row.quantity?.toString() || ""}
                   onChange={(e) => updateIngredientRowQuantity(index, e.target.value)}
                   placeholder=""
-                  step={1}
+                  step={standardInputStepByPercent(row.quantity, 2.5, 10)}
                   min={0}
                   className="table-fillable-input text-right font-mono"
                 />
