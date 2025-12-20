@@ -11,7 +11,7 @@ import { IngredientCompositionGrid } from "./composition";
 import { MixPropertiesGrid } from "./properties";
 import { MixPropertiesChart } from "./properties-chart";
 
-const MAX_RECIPES = 2;
+const MAX_RECIPES = 3;
 const RECIPE_TOTAL_ROWS = 21;
 
 // These values are carefully chosen so that the component and grid container heights match exactly,
@@ -46,13 +46,13 @@ export default function Home() {
 
   // prettier-ignore
   const layout = [
-    { i: "recipe-0",      x:  0, y: 0, w:  8, h, isResizable: false },
-    { i: "properties-0",  x:  8, y: 0, w:  5, h, isResizable: false },
-    { i: "composition-0", x: 13, y: 0, w: 11, h, resizeHandles: ["e"] as any, minH: h },
-    { i: "chart",         x: 13, y: 1, w: 11, h, resizeHandles: ["e", "s"] as any },
+    { i: "recipe-0",    x:  0, y: 0, w:  8, h, isResizable: false },
+    { i: "properties",  x:  8, y: 0, w:  6, h, resizeHandles: ["e"] as any },
+    { i: "composition", x: 14, y: 0, w:  9, h, resizeHandles: ["e"] as any, minH: h },
+    { i: "chart",       x: 8,  y: 1, w: 15, h, resizeHandles: ["e", "s"] as any },
 
-    { i: "recipe-1",      x:  0, y: 1, w:  8, h, isResizable: false },
-    { i: "properties-1",  x:  8, y: 1, w:  5, h, isResizable: false },
+    { i: "recipe-a",    x:  0, y: 1, w:  8, h, isResizable: false },
+    { i: "recipe-b",    x:  0, y: 2, w:  8, h, isResizable: false },
   ];
 
   const recipeGridProps = (recipe_idx: number): RecipeGridProps => {
@@ -78,12 +78,12 @@ export default function Home() {
             }}
           >
             <div key="recipe-0">{<RecipeGrid props={recipeGridProps(0)} />}</div>
-            <div key="properties-0">{<MixPropertiesGrid recipeState={recipes[0]} />}</div>
-            <div key="composition-0">{<IngredientCompositionGrid recipeState={recipes[0]} />}</div>
+            <div key="properties">{<MixPropertiesGrid recipeStates={recipes} />}</div>
+            <div key="composition">{<IngredientCompositionGrid recipeState={recipes[0]} />}</div>
             <div key="chart">{<MixPropertiesChart recipeState={recipes[0]} />}</div>
 
-            <div key="recipe-1">{<RecipeGrid props={recipeGridProps(1)} />}</div>
-            <div key="properties-1">{<MixPropertiesGrid recipeState={recipes[1]} />}</div>
+            <div key="recipe-a">{<RecipeGrid props={recipeGridProps(1)} />}</div>
+            <div key="recipe-b">{<RecipeGrid props={recipeGridProps(2)} />}</div>
           </ReactGridLayout>
         )}
       </div>

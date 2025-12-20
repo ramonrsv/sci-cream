@@ -8,7 +8,13 @@ import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
 import { PropKey, getPropKeys, isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
-import { CompKey, FpdKey, getMixProperty, prop_key_as_med_str_js } from "@workspace/sci-cream";
+import {
+  CompKey,
+  FpdKey,
+  getMixProperty,
+  MixProperties,
+  prop_key_as_med_str_js,
+} from "@workspace/sci-cream";
 
 export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   CompKey[CompKey.MilkFat],
@@ -23,21 +29,26 @@ export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   FpdKey[FpdKey.HardnessAt14C],
 ]);
 
-export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState }) {
+export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[] }) {
   const qtyToggleState = useState<QtyToggle>(QtyToggle.Percentage);
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
 
   const isPropEmpty = (prop_key: PropKey) => {
-    const prop_val = getMixProperty(mixProperties, prop_key);
-    return prop_val === 0 || Number.isNaN(prop_val);
+    for (const mixProperties of mixPropertiesList) {
+      const prop_val = getMixProperty(mixProperties, prop_key);
+      if (!(prop_val === 0 || Number.isNaN(prop_val))) {
+        return false;
+      }
+    }
+    return true;
   };
 
   const getEnabledProps = () => {
     return getEnabledKeys(propsFilterState, selectedPropsState, getPropKeys, isPropEmpty);
   };
 
-  const formattedPropCell = (prop_key: PropKey) => {
+  const formattedPropCell = (prop_key: PropKey, mixProperties: MixProperties, mixTotal: number) => {
     return applyQtyToggleAndFormat(
       getMixProperty(mixProperties, prop_key),
       mixTotal,
@@ -47,8 +58,8 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
     );
   };
 
-  const mixTotal = getMixTotal(recipeState);
-  const mixProperties = calculateMixProperties(recipeState);
+  const mixTotals = recipeStates.map((recipeState) => getMixTotal(recipeState));
+  const mixPropertiesList = recipeStates.map((recipeState) => calculateMixProperties(recipeState));
 
   return (
     <div id="mix-properties-grid" className="relative w-full grid-component">
@@ -72,9 +83,13 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
                 <td className="table-header-no-border border-gray-400 border-t border-r w-full px-2 text-center">
                   {prop_key_as_med_str_js(prop_key)}
                 </td>
-                <td className="table-inner-cell min-w-[50px] px-2 comp-val">
-                  {formattedPropCell(prop_key)}
-                </td>
+                {Array.from(mixPropertiesList.values())
+                  .filter((_, idx) => mixTotals[idx] !== undefined && mixTotals[idx] > 0)
+                  .map((mixProperties, idx) => (
+                    <td key={idx} className="table-inner-cell min-w-[50px] px-2 comp-val">
+                      {formattedPropCell(prop_key, mixProperties, mixTotals[idx] || 0)}
+                    </td>
+                  ))}
               </tr>
             ))}
           </tbody>
