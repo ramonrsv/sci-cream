@@ -91,10 +91,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
             {/* @todo The left-most and right-most borders of the table are still not right */}
             <tr className="h-[24px]">
               {getEnabledComps().map((comp_key) => (
-                <th
-                  key={comp_key}
-                  className="table-header-no-border px-1 border-gray-400 border-b border-r w-fit text-center"
-                >
+                <th key={comp_key} className="table-header-border-b-r px-1 w-fit text-center">
                   {comp_key_as_med_str_js(comp_key)}
                 </th>
               ))}
@@ -103,10 +100,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
             {/* @todo The left-most and right-most borders of the table are still not right */}
             <tr className="h-[25px]">
               {getEnabledComps().map((comp_key) => (
-                <td
-                  key={comp_key}
-                  className="table-header-no-border border-gray-400 border-b border-r px-1 comp-val"
-                >
+                <td key={comp_key} className="table-header-border-b-r px-1 comp-val">
                   {formattedTotalCell(comp_key)}
                 </td>
               ))}

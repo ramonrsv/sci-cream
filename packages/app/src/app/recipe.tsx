@@ -189,13 +189,13 @@ export function RecipeGrid({
       <table className="border-collapse border-gray-400 border-2">
         {/* Header */}
         <thead>
-          <tr className="table-header h-[25px] text-center">
+          <tr className="table-header border-1 h-[25px] text-center">
             <th className="border-gray-400 border-r w-[325px] min-w-[250px]">Ingredient</th>
             <th className="border-gray-400 border-r w-[60px] min-w-[60px]">Qty (g)</th>
             <th className="w-[55px] min-w-[55px] pl-2 pr-1 whitespace-nowrap">Qty (%)</th>
           </tr>
           {/* Total Row */}
-          <tr className="table-header h-[25px]">
+          <tr className="table-header border-1 h-[25px]">
             <td className="px-1 border-gray-400 border-r text-center">Total</td>
             <td className="px-3.75 border-gray-400 border-r comp-val">
               {mixTotal ? mixTotal.toFixed(0) : ""}

@@ -35,7 +35,7 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
   const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
 
   const isPropEmpty = (prop_key: PropKey) => {
-    for (const mixProperties of mixPropertiesList) {
+    for (const { mixProperties } of nonEmptyRecipes) {
       const prop_val = getMixProperty(mixProperties, prop_key);
       if (!(prop_val === 0 || Number.isNaN(prop_val))) {
         return false;
@@ -58,8 +58,15 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
     );
   };
 
-  const mixTotals = recipeStates.map((recipeState) => getMixTotal(recipeState));
-  const mixPropertiesList = recipeStates.map((recipeState) => calculateMixProperties(recipeState));
+  const nonEmptyRecipes = recipeStates
+    .map((recipeState, index) => {
+      return {
+        recipeIdx: index,
+        mixTotal: getMixTotal(recipeState) || 0,
+        mixProperties: calculateMixProperties(recipeState),
+      };
+    })
+    .filter(({ recipeIdx, mixTotal }) => recipeIdx == 0 || mixTotal > 0);
 
   return (
     <div id="mix-properties-grid" className="relative w-full grid-component">
@@ -76,20 +83,28 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
       {/* @todo overflow-x-visible should work instead of min-w-[220px], but it has a weird delay in applying */}
       <div className="border-gray-400 border-2 max-h-[580px] min-w-[220px] overflow-y-auto whitespace-nowrap">
         <table className="border-collapse">
+          <thead>
+            <tr className="h-[25px]">
+              <th className="table-header-border-b-r w-full px-2">Property</th>
+              {nonEmptyRecipes.map(({ recipeIdx }) => (
+                <th key={recipeIdx} className="table-header-border-b-r px-2 text-center">
+                  {recipeIdx === 0 ? "Recipe" : `Ref ${recipeIdx}`}
+                </th>
+              ))}
+            </tr>
+          </thead>
           <tbody>
             {getEnabledProps().map((prop_key) => (
               <tr key={String(prop_key)} className="h-[25px]">
                 {/* @todo The top-most border for the header column is not right, shows double */}
-                <td className="table-header-no-border border-gray-400 border-t border-r w-full px-2 text-center">
+                <td className="table-header border-gray-400 border-t border-r w-full px-2 text-center">
                   {prop_key_as_med_str_js(prop_key)}
                 </td>
-                {Array.from(mixPropertiesList.values())
-                  .filter((_, idx) => mixTotals[idx] !== undefined && mixTotals[idx] > 0)
-                  .map((mixProperties, idx) => (
-                    <td key={idx} className="table-inner-cell min-w-[50px] px-2 comp-val">
-                      {formattedPropCell(prop_key, mixProperties, mixTotals[idx] || 0)}
-                    </td>
-                  ))}
+                {nonEmptyRecipes.map(({ recipeIdx, mixProperties, mixTotal }) => (
+                  <td key={recipeIdx} className="table-inner-cell min-w-[50px] px-2 comp-val">
+                    {formattedPropCell(prop_key, mixProperties, mixTotal)}
+                  </td>
+                ))}
               </tr>
             ))}
           </tbody>
