@@ -11,7 +11,7 @@ export function tsEnumToStr<E extends object, K extends keyof E>(enumObj: E, key
 }
 
 export function makeStrEnumFromTsEnum<E extends object>(enumObj: E): { [key: string]: string } {
-  let result = {} as { [key: string]: string };
+  const result = {} as { [key: string]: string };
   getTsEnumStrings(enumObj).forEach((key) => {
     result[key as unknown as string] = key;
   });

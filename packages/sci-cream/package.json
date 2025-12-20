@@ -19,7 +19,9 @@
     "test": "pnpm run test:rust && pnpm run test:js",
     "test:rust": "cargo test --features wasm",
     "test:js": "pnpm run build:wasm && pnpm run build:js && vitest run",
-    "lint": "cargo clippy --features wasm"
+    "lint": "pnpm run lint:rust && pnpm run lint:js",
+    "lint:rust": "cargo clippy --features wasm",
+    "lint:js": "eslint src --ext .ts"
   },
   "dependencies": {
     "typescript": "5.7.3",
@@ -27,7 +29,10 @@
     "vite-plugin-wasm": "^3.5.0"
   },
   "devDependencies": {
+    "@eslint/js": "^9.39.2",
     "@vitejs/plugin-react": "^4.7.0",
+    "eslint": "^9.39.2",
+    "typescript-eslint": "^8.50.0",
     "vite-tsconfig-paths": "^5.1.4",
     "vitest": "^3.2.4"
   }

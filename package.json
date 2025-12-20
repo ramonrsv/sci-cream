@@ -8,6 +8,6 @@
     "start": "pnpm --filter sci-cream-app start",
     "lint": "pnpm run -r lint",
     "test": "pnpm run -r test",
-    "coverage": "pnpm --filter sci-cream-app coverage"
+    "coverage": "pnpm run -r coverage"
   }
 }
