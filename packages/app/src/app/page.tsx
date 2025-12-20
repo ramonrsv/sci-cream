@@ -4,8 +4,15 @@ import { ReactGridLayout, useContainerWidth } from "react-grid-layout";
 
 import { useState, useEffect } from "react";
 
-import { IngredientRow, makeEmptyIngredientRow, RecipeGrid, RECIPE_TOTAL_ROWS } from "./recipe";
 import { fetchValidIngredientNames, IngredientTransfer } from "../lib/data";
+
+import {
+  IngredientRow,
+  makeEmptyIngredientRow,
+  RecipeGrid,
+  RECIPE_TOTAL_ROWS,
+  RecipeGridProps,
+} from "./recipe";
 
 import { IngredientCompositionGrid } from "./composition";
 import { MixPropertiesGrid } from "./properties";
@@ -16,7 +23,7 @@ export default function Home() {
   const { width, containerRef, mounted } = useContainerWidth();
 
   const [validIngredients, setValidIngredients] = useState<string[]>([]);
-  const ingredientCache = useState<Map<string, IngredientTransfer>>(new Map());
+  const ingredientCacheState = useState<Map<string, IngredientTransfer>>(new Map());
 
   const recipes = Array.from({ length: MAX_RECIPES }, () =>
     Array.from({ length: RECIPE_TOTAL_ROWS }, () =>
@@ -55,6 +62,14 @@ export default function Home() {
     make_layout("composition", 1),
   ];
 
+  const recipeGridProps = (recipe_idx: number): RecipeGridProps => {
+    return {
+      recipeState: recipes[recipe_idx],
+      validIngredients: validIngredients,
+      ingredientCacheState: ingredientCacheState,
+    };
+  };
+
   return (
     <main className="min-h-screen pt-3 pl-8 pr-8 bg-gray-100">
       <h1 className="text-2xl font-bold pl-8 text-gray-900">Ice Cream Recipe Calculator</h1>
@@ -69,27 +84,11 @@ export default function Home() {
               margin: [20, 10],
             }}
           >
-            <div key="recipe-0">
-              {
-                <RecipeGrid
-                  recipeState={recipes[0]}
-                  validIngredients={validIngredients}
-                  ingredientCache={ingredientCache}
-                />
-              }
-            </div>
+            <div key="recipe-0">{<RecipeGrid props={recipeGridProps(0)} />}</div>
             <div key="properties-0">{<MixPropertiesGrid recipeState={recipes[0]} />}</div>
             <div key="composition-0">{<IngredientCompositionGrid recipeState={recipes[0]} />}</div>
 
-            <div key="recipe-1">
-              {
-                <RecipeGrid
-                  recipeState={recipes[1]}
-                  validIngredients={validIngredients}
-                  ingredientCache={ingredientCache}
-                />
-              }
-            </div>
+            <div key="recipe-1">{<RecipeGrid props={recipeGridProps(1)} />}</div>
             <div key="properties-1">{<MixPropertiesGrid recipeState={recipes[1]} />}</div>
             <div key="composition-1">{<IngredientCompositionGrid recipeState={recipes[1]} />}</div>
           </ReactGridLayout>

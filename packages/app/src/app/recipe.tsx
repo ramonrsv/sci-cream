@@ -28,7 +28,17 @@ export type IngredientRowState = [
   IngredientRow,
   React.Dispatch<React.SetStateAction<IngredientRow>>
 ];
+
 export type RecipeState = Array<IngredientRowState>;
+
+export interface RecipeGridProps {
+  recipeState: RecipeState;
+  validIngredients: string[];
+  ingredientCacheState: [
+    Map<string, IngredientTransfer>,
+    React.Dispatch<React.SetStateAction<Map<string, IngredientTransfer>>>
+  ];
+}
 
 export function makeEmptyIngredientRow(): IngredientRow {
   return { name: "", quantity: undefined, ingredient: undefined };
@@ -61,16 +71,9 @@ export function calculateMixProperties(recipeState: RecipeState): MixProperties 
 }
 
 export function RecipeGrid({
-  recipeState,
-  validIngredients,
-  ingredientCache: ingredientCacheState,
+  props: { recipeState, validIngredients, ingredientCacheState },
 }: {
-  recipeState: RecipeState;
-  validIngredients: string[];
-  ingredientCache: [
-    Map<string, IngredientTransfer>,
-    React.Dispatch<React.SetStateAction<Map<string, IngredientTransfer>>>
-  ];
+  props: RecipeGridProps;
 }) {
   const [ingredientCache, setIngredientCache] = ingredientCacheState;
 
