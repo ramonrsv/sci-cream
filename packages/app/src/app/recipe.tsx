@@ -3,7 +3,7 @@
 import { useEffect } from "react";
 
 import { fetchIngredientSpec, IngredientTransfer } from "../lib/data";
-import { fmtCompFloat } from "../lib/ui/fmt-comp-values";
+import { formatCompositionValue } from "../lib/ui/comp-values";
 import { STATE_VAL, standardInputStepByPercent } from "../lib/util";
 
 import {
@@ -238,7 +238,9 @@ export function RecipeGrid({
               </td>
               <td className="px-1 text-gray-900 text-sm comp-val">
                 {recipeState[index][STATE_VAL].quantity && mixTotal
-                  ? fmtCompFloat((recipeState[index][STATE_VAL].quantity / mixTotal) * 100)
+                  ? formatCompositionValue(
+                      (recipeState[index][STATE_VAL].quantity / mixTotal) * 100
+                    )
                   : ""}
               </td>
             </tr>

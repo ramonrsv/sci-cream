@@ -21,8 +21,10 @@ export function padToFixedDecimalPosition(
   }
 }
 
-export function fmtCompFloat(num: number) {
-  return Number.isNaN(num)
+export function formatCompositionValue(num: number | undefined) {
+  return num === undefined
+    ? ""
+    : Number.isNaN(num)
     ? "-"
     : num >= 1000
     ? padToFixedDecimalPosition(num / 1000, 1, 3, 1) + "k"
@@ -31,25 +33,35 @@ export function fmtCompFloat(num: number) {
     : padToFixedDecimalPosition(num, 1, 3, 2);
 }
 
-export function formatCompositionValue(
+export function applyQtyToggle(
   comp: number,
   ingQty: number | undefined,
   mixTotal: number | undefined,
   qtyToggle: QtyToggle,
   isQty: boolean
-) {
+): number | undefined {
   if (comp !== 0.0) {
     if (!isQty) {
-      return fmtCompFloat(comp);
+      return comp;
     }
 
     switch (qtyToggle) {
       case QtyToggle.Composition:
-        return fmtCompFloat(comp);
+        return comp;
       case QtyToggle.Quantity:
-        return ingQty ? fmtCompFloat(comp_val_as_qty(comp, ingQty)) : "";
+        return ingQty ? comp_val_as_qty(comp, ingQty) : undefined;
       case QtyToggle.Percentage:
-        return ingQty && mixTotal ? fmtCompFloat(comp_val_as_percent(comp, ingQty, mixTotal)) : "";
+        return ingQty && mixTotal ? comp_val_as_percent(comp, ingQty, mixTotal) : undefined;
     }
   }
+}
+
+export function applyQtyToggleAndFormat(
+  comp: number,
+  ingQty: number | undefined,
+  mixTotal: number | undefined,
+  qtyToggle: QtyToggle,
+  isQty: boolean
+): string {
+  return formatCompositionValue(applyQtyToggle(comp, ingQty, mixTotal, qtyToggle, isQty));
 }

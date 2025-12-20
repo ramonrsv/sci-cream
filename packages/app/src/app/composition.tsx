@@ -4,8 +4,8 @@ import { useState } from "react";
 
 import { RecipeState, getMixTotal, calculateMixComposition } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
-import { formatCompositionValue } from "../lib/ui/fmt-comp-values";
-import { getCompKeys as getCompKeysAll } from "../lib/sci-cream/sci-cream";
+import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
+import { getCompKeys as getCompKeysAll, isCompKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
 import { CompKey, comp_key_as_med_str_js } from "@workspace/sci-cream";
@@ -20,7 +20,7 @@ function getCompKeys(): CompKey[] {
   );
 }
 
-const defaultSelectedComps: Set<CompKey> = new Set([
+const DEFAULT_SELECTED_COMPS: Set<CompKey> = new Set([
   CompKey.MilkFat,
   CompKey.TotalFat,
   CompKey.MSNF,
@@ -31,7 +31,7 @@ const defaultSelectedComps: Set<CompKey> = new Set([
 export function IngredientCompositionGrid({ recipeState }: { recipeState: RecipeState }) {
   const qtyToggleState = useState<QtyToggle>(QtyToggle.Quantity);
   const compsFilterState = useState<KeyFilter>(KeyFilter.Auto);
-  const selectedCompsState = useState<Set<CompKey>>(defaultSelectedComps);
+  const selectedCompsState = useState<Set<CompKey>>(DEFAULT_SELECTED_COMPS);
 
   const isPropEmpty = (comp_key: CompKey) => {
     return recipeState.every(([row, _]) => {
@@ -43,21 +43,13 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
     return getEnabledKeys(compsFilterState, selectedCompsState, getCompKeys, isPropEmpty);
   };
 
-  const isQuantity = (prop_key: CompKey): boolean => {
-    return (
-      prop_key !== CompKey.AbsPAC &&
-      prop_key !== CompKey.EmulsifiersPerFat &&
-      prop_key !== CompKey.StabilizersPerWater
-    );
-  };
-
   const formattedTotalCell = (comp_key: CompKey) => {
-    return formatCompositionValue(
+    return applyQtyToggleAndFormat(
       mixComposition.get(comp_key),
       mixTotal,
       mixTotal,
       qtyToggleState[STATE_VAL],
-      isQuantity(comp_key)
+      isCompKeyQuantity(comp_key)
     );
   };
 
@@ -66,12 +58,12 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
     const ingQty = recipeState[index][STATE_VAL].quantity;
 
     return ingredient && ingredient.composition
-      ? formatCompositionValue(
+      ? applyQtyToggleAndFormat(
           ingredient.composition.get(comp_key),
           ingQty,
           mixTotal,
           qtyToggleState[STATE_VAL],
-          isQuantity(comp_key)
+          isCompKeyQuantity(comp_key)
         )
       : "";
   };

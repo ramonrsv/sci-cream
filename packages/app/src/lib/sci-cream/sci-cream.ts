@@ -1,4 +1,4 @@
-import { CompKey, PropKeyObj, getPropKeys as getPropKeysJS } from "@workspace/sci-cream";
+import { CompKey, PropKeyObj, getPropKeys as getPropKeysJS, isCompKey } from "@workspace/sci-cream";
 import { getWasmEnums } from "../util";
 
 // @todo For some reason `getWasmEnums(CompKey)` seems to still trip up the code analysis,
@@ -14,3 +14,20 @@ export type PropKey = keyof typeof PropKeyObj;
 export function getPropKeys(): PropKey[] {
   return getPropKeysJS() as PropKey[];
 }
+
+export const isCompKeyQuantity = (prop_key: CompKey): boolean => {
+  return (
+    prop_key !== CompKey.AbsPAC &&
+    prop_key !== CompKey.EmulsifiersPerFat &&
+    prop_key !== CompKey.StabilizersPerWater
+  );
+};
+
+export const isPropKeyQuantity = (prop_key: PropKey): boolean => {
+  return (
+    isCompKey(prop_key) &&
+    prop_key !== CompKey[CompKey.AbsPAC] &&
+    prop_key !== CompKey[CompKey.EmulsifiersPerFat] &&
+    prop_key !== CompKey[CompKey.StabilizersPerWater]
+  );
+};

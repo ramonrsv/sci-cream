@@ -4,19 +4,13 @@ import { useState } from "react";
 
 import { RecipeState, getMixTotal, calculateMixProperties } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
-import { formatCompositionValue } from "../lib/ui/fmt-comp-values";
-import { PropKey, getPropKeys } from "../lib/sci-cream/sci-cream";
+import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
+import { PropKey, getPropKeys, isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
-import {
-  CompKey,
-  FpdKey,
-  isCompKey,
-  getMixProperty,
-  prop_key_as_med_str_js,
-} from "@workspace/sci-cream";
+import { CompKey, FpdKey, getMixProperty, prop_key_as_med_str_js } from "@workspace/sci-cream";
 
-const defaultSelectedProperties: Set<PropKey> = new Set([
+export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   CompKey[CompKey.MilkFat],
   CompKey[CompKey.TotalFat],
   CompKey[CompKey.MSNF],
@@ -32,7 +26,7 @@ const defaultSelectedProperties: Set<PropKey> = new Set([
 export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState }) {
   const qtyToggleState = useState<QtyToggle>(QtyToggle.Percentage);
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
-  const selectedPropsState = useState<Set<PropKey>>(defaultSelectedProperties);
+  const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
 
   const isPropEmpty = (prop_key: PropKey) => {
     const prop_val = getMixProperty(mixProperties, prop_key);
@@ -43,22 +37,13 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
     return getEnabledKeys(propsFilterState, selectedPropsState, getPropKeys, isPropEmpty);
   };
 
-  const isQuantity = (prop_key: PropKey): boolean => {
-    return (
-      isCompKey(prop_key) &&
-      prop_key !== CompKey[CompKey.AbsPAC] &&
-      prop_key !== CompKey[CompKey.EmulsifiersPerFat] &&
-      prop_key !== CompKey[CompKey.StabilizersPerWater]
-    );
-  };
-
   const formattedPropCell = (prop_key: PropKey) => {
-    return formatCompositionValue(
+    return applyQtyToggleAndFormat(
       getMixProperty(mixProperties, prop_key),
       mixTotal,
       mixTotal,
       qtyToggleState[STATE_VAL],
-      isQuantity(prop_key)
+      isPropKeyQuantity(prop_key)
     );
   };
 
