@@ -34,7 +34,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
   const selectedCompsState = useState<Set<CompKey>>(DEFAULT_SELECTED_COMPS);
 
   const isPropEmpty = (comp_key: CompKey) => {
-    return recipeState.every(([row, _]) => {
+    return recipeState.every(([row]) => {
       return row.ingredient === undefined || row.ingredient.composition?.get(comp_key) === 0.0;
     });
   };

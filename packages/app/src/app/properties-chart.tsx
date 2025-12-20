@@ -10,6 +10,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  type TooltipItem,
 } from "chart.js";
 
 import { RecipeState, getMixTotal, calculateMixProperties } from "./recipe";
@@ -99,7 +100,7 @@ export function MixPropertiesChart({ recipeStates }: { recipeStates: RecipeState
 
   const chartData = {
     labels,
-    datasets: nonEmptyRecipes.map(({ recipeIdx, mixTotal, mixProperties }, _) => {
+    datasets: nonEmptyRecipes.map(({ recipeIdx, mixTotal, mixProperties }) => {
       return {
         label: recipeIdx == 0 ? "Recipe" : `Ref ${recipeIdx}`,
         data: enabledProps.map((prop_key) =>
@@ -123,8 +124,8 @@ export function MixPropertiesChart({ recipeStates }: { recipeStates: RecipeState
       title: { display: true, text: "Mix Properties Chart" },
       tooltip: {
         callbacks: {
-          label: (context: any) => {
-            return formatCompositionValue(context.parsed.y);
+          label: (context: TooltipItem<"bar">) => {
+            return formatCompositionValue(context.parsed.y ?? undefined);
           },
         },
       },

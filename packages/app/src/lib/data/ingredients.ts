@@ -5,7 +5,13 @@ import chocolatesJson from "../../../../../data/ingredients/chocolates.json";
 import eggsJson from "../../../../../data/ingredients/eggs.json";
 import emulsifiersStabilizersJson from "../../../../../data/ingredients/emulsifiers_stabilizers.json";
 
-function flattenLists(jsonLists: any[][]): any[] {
+export interface IngredientJson {
+  name: string;
+  category: string;
+  [key: string]: unknown;
+}
+
+function flattenLists(jsonLists: IngredientJson[][]): IngredientJson[] {
   return jsonLists.reduce((acc, list) => acc.concat(list), []);
 }
 

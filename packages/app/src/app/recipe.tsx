@@ -44,7 +44,7 @@ export function makeEmptyIngredientRow(): IngredientRow {
 
 export function getMixTotal(recipeState: RecipeState) {
   return recipeState.reduce(
-    (sum: number | undefined, [row, _]) =>
+    (sum: number | undefined, [row]) =>
       sum === undefined && row.quantity == undefined ? undefined : (sum || 0) + (row.quantity || 0),
     undefined
   );
@@ -52,10 +52,10 @@ export function getMixTotal(recipeState: RecipeState) {
 
 export function getCompositionLines(recipeState: RecipeState): CompositionLine[] {
   return recipeState
-    .filter(([row, _]) => {
+    .filter(([row]) => {
       return row.ingredient !== undefined && row.quantity !== undefined;
     })
-    .map(([row, _]) => {
+    .map(([row]) => {
       return new CompositionLine(row.ingredient!.composition!, row.quantity!);
     });
 }
@@ -89,7 +89,7 @@ export function RecipeGrid({
     return ingredientCache.get(name);
   };
 
-  recipeState.forEach((rowState, _) => {
+  recipeState.forEach((rowState) => {
     const [row, setRow] = rowState;
 
     useEffect(() => {
@@ -131,7 +131,7 @@ export function RecipeGrid({
 
   const copyRecipe = async () => {
     const recipeData = recipeState
-      .map(([row, _]) => row)
+      .map(([row]) => row)
       .filter((row) => row.name !== "" || row.quantity !== undefined)
       .map((row) => `${row.name}\t${row.quantity ?? ""}`)
       .join("\n");
@@ -206,7 +206,7 @@ export function RecipeGrid({
         <tbody>
           {/* Ingredient Rows */}
           {/* @todo The ingredient/input rows are not respecting < h-6/[25px]; not sure why yet */}
-          {recipeState.map(([row, _], index) => (
+          {recipeState.map(([row], index) => (
             <tr
               key={index}
               className="table-inner-cell h-[25px] hover:bg-blue-50 transition-colors"
