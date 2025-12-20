@@ -1,6 +1,6 @@
 "use client";
 
-import ReactGridLayout, { useContainerWidth } from "react-grid-layout";
+import { ReactGridLayout, useContainerWidth } from "react-grid-layout";
 
 import { useState, useEffect } from "react";
 
@@ -31,16 +31,28 @@ export default function Home() {
   const COLUMN_WIDTH = 50;
   const ROW_HEIGHT = 50;
 
+  const cols = Math.floor(width / COLUMN_WIDTH);
+
   const h = 10.4;
 
-  // prettier-ignore
+  const make_layout = (component: "recipe" | "properties" | "composition", idx: number) => {
+    const i = `${component}-${idx}`;
+
+    // prettier-ignore
+    switch (component) {
+      case "recipe":      return { i, x:  0, y: idx, w:  8, h: h, isResizable: false };
+      case "properties":  return { i, x:  8, y: idx, w:  5, h: h, isResizable: false };
+      case "composition": return { i, x: 13, y: idx, w: 11, h: h, resizeHandles: ["e" as any], minH: h };
+    }
+  };
+
   const layout = [
-    { i: "recipe-0",      x:  0,  y: 0, w:  8, h, isResizable: false },
-    { i: "properties-0",  x:  8,  y: 0, w:  5, h, isResizable: false },
-    { i: "composition-0", x: 13,  y: 0, w: 11, h, resizeHandles: ["e" as any], minH: h },
-    { i: "recipe-1",      x:  0,  y: 1, w:  8, h, isResizable: false },
-    { i: "properties-1",  x:  8,  y: 1, w:  5, h, isResizable: false },
-    { i: "composition-1", x: 13,  y: 1, w: 11, h, resizeHandles: ["e" as any], minH: h },
+    make_layout("recipe", 0),
+    make_layout("properties", 0),
+    make_layout("composition", 0),
+    make_layout("recipe", 1),
+    make_layout("properties", 1),
+    make_layout("composition", 1),
   ];
 
   return (
@@ -52,7 +64,7 @@ export default function Home() {
             layout={layout}
             width={width}
             gridConfig={{
-              cols: Math.floor(width / COLUMN_WIDTH),
+              cols: cols,
               rowHeight: ROW_HEIGHT,
               margin: [20, 10],
             }}
