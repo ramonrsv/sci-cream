@@ -6,18 +6,17 @@ import { useState, useEffect } from "react";
 
 import { fetchValidIngredientNames, IngredientTransfer } from "../lib/data";
 
-import {
-  IngredientRow,
-  makeEmptyIngredientRow,
-  RecipeGrid,
-  RECIPE_TOTAL_ROWS,
-  RecipeGridProps,
-} from "./recipe";
-
+import { IngredientRow, makeEmptyIngredientRow, RecipeGrid, RecipeGridProps } from "./recipe";
 import { IngredientCompositionGrid } from "./composition";
 import { MixPropertiesGrid } from "./properties";
 
-const MAX_RECIPES = 2;
+export const MAX_RECIPES = 2;
+export const RECIPE_TOTAL_ROWS = 21;
+
+// These values are carefully chosen so that the component and grid container heights match exactly,
+// and so that there is enough margin after the components to accommodate a possible scrollbar.
+export const REACT_GRID_COMPONENT_HEIGHT = 10.4;
+export const COMPONENT_H_PX = 615;
 
 export default function Home() {
   const { width, containerRef, mounted } = useContainerWidth();
@@ -40,16 +39,15 @@ export default function Home() {
 
   const cols = Math.floor(width / COLUMN_WIDTH);
 
-  const h = 10.4;
-
   const make_layout = (component: "recipe" | "properties" | "composition", idx: number) => {
     const i = `${component}-${idx}`;
+    const h = REACT_GRID_COMPONENT_HEIGHT;
 
     // prettier-ignore
     switch (component) {
-      case "recipe":      return { i, x:  0, y: idx, w:  8, h: h, isResizable: false };
-      case "properties":  return { i, x:  8, y: idx, w:  5, h: h, isResizable: false };
-      case "composition": return { i, x: 13, y: idx, w: 11, h: h, resizeHandles: ["e" as any], minH: h };
+      case "recipe":      return { i, x:  0, y: idx, w:  8, h, isResizable: false };
+      case "properties":  return { i, x:  8, y: idx, w:  5, h, isResizable: false };
+      case "composition": return { i, x: 13, y: idx, w: 11, h, resizeHandles: ["e" as any], minH: h };
     }
   };
 
