@@ -3,7 +3,6 @@
 import { useState } from "react";
 
 import { RecipeState, getMixTotal, calculateMixProperties } from "./recipe";
-import { COMPONENT_H_PX } from "./page";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { formatCompositionValue } from "../lib/ui/fmt-comp-values";
 import { PropKey, getPropKeys } from "../lib/sci-cream/sci-cream";
@@ -67,7 +66,7 @@ export function MixPropertiesGrid({ recipeState }: { recipeState: RecipeState })
   const mixProperties = calculateMixProperties(recipeState);
 
   return (
-    <div id="mix-properties-grid" className={`relative w-full h-[${COMPONENT_H_PX}px] bg-gray-100`}>
+    <div id="mix-properties-grid" className={`relative w-full component-h bg-gray-100`}>
       <KeySelection
         qtyToggleComponent={{
           supportedQtyToggles: [QtyToggle.Quantity, QtyToggle.Percentage],

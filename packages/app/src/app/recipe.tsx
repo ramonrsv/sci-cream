@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import { fetchIngredientSpec, IngredientTransfer } from "../lib/data";
 import { fmtCompFloat } from "../lib/ui/fmt-comp-values";
 import { STATE_VAL, standardInputStepByPercent } from "../lib/util";
-import { COMPONENT_H_PX } from "./page";
 
 import {
   Ingredient,
@@ -173,7 +172,7 @@ export function RecipeGrid({
   const mixTotal = getMixTotal(recipeState);
 
   return (
-    <div id="recipe-grid" className={`h-[${COMPONENT_H_PX}px] bg-gray-100`}>
+    <div id="recipe-grid" className={`component-h bg-gray-100`}>
       <div>
         <button onClick={copyRecipe} className="button px-1">
           Copy Recipe

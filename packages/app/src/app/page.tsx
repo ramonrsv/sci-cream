@@ -10,13 +10,16 @@ import { IngredientRow, makeEmptyIngredientRow, RecipeGrid, RecipeGridProps } fr
 import { IngredientCompositionGrid } from "./composition";
 import { MixPropertiesGrid } from "./properties";
 
-export const MAX_RECIPES = 2;
-export const RECIPE_TOTAL_ROWS = 21;
+const MAX_RECIPES = 2;
+const RECIPE_TOTAL_ROWS = 21;
 
 // These values are carefully chosen so that the component and grid container heights match exactly,
 // and so that there is enough margin after the components to accommodate a possible scrollbar.
-export const REACT_GRID_COMPONENT_HEIGHT = 10.4;
-export const COMPONENT_H_PX = 615;
+// @todo `pnpm build` fails if these values are exported. Also, importing and using something like
+// `h-[${COMPONENT_H_PX}px]` in the component divs intermittently fails to apply the height
+// correctly; need to investigate further. For now, use the `component-h` class in globals.css.
+const REACT_GRID_COMPONENT_HEIGHT = 10.4;
+const COMPONENT_H_PX = 615;
 
 export default function Home() {
   const { width, containerRef, mounted } = useContainerWidth();
