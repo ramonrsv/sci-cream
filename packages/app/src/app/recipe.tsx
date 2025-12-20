@@ -234,6 +234,7 @@ export function RecipeGrid({
                   onChange={(e) => updateIngredientRowQuantity(index, e.target.value)}
                   placeholder=""
                   step={1}
+                  min={0}
                   className="table-fillable-input text-right font-mono"
                 />
               </td>
