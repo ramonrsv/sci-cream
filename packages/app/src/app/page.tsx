@@ -80,7 +80,7 @@ export default function Home() {
             <div key="recipe-0">{<RecipeGrid props={recipeGridProps(0)} />}</div>
             <div key="properties">{<MixPropertiesGrid recipeStates={recipes} />}</div>
             <div key="composition">{<IngredientCompositionGrid recipeState={recipes[0]} />}</div>
-            <div key="chart">{<MixPropertiesChart recipeState={recipes[0]} />}</div>
+            <div key="chart">{<MixPropertiesChart recipeStates={recipes} />}</div>
 
             <div key="recipe-a">{<RecipeGrid props={recipeGridProps(1)} />}</div>
             <div key="recipe-b">{<RecipeGrid props={recipeGridProps(2)} />}</div>
