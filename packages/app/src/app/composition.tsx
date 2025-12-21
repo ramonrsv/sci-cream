@@ -83,24 +83,23 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
         getKeys={getCompKeys}
         key_as_med_str_js={comp_key_as_med_str_js}
       />
+      {/* @todo The table doesn't fully align to the right, and it's parent's div is ~2px too tall */}
       <div className="border-gray-400 border-2 overflow-x-auto whitespace-nowrap">
-        <table className="border-collapse">
+        <table className="relative -top-px -left-px">
           {/* Header */}
           <thead>
             {/* Composition Header */}
-            {/* @todo The left-most and right-most borders of the table are still not right */}
-            <tr className="h-6">
+            <tr className="h-6.25">
               {getEnabledComps().map((comp_key) => (
-                <th key={comp_key} className="table-header-border-b-r px-1 w-fit text-center">
+                <th key={comp_key} className="table-header px-1 w-fit text-center">
                   {comp_key_as_med_str_js(comp_key)}
                 </th>
               ))}
             </tr>
             {/* Totals Row */}
-            {/* @todo The left-most and right-most borders of the table are still not right */}
             <tr className="h-6.25">
               {getEnabledComps().map((comp_key) => (
-                <td key={comp_key} className="table-header-border-b-r px-1 comp-val">
+                <td key={comp_key} className="table-header px-1 comp-val">
                   {formattedTotalCell(comp_key)}
                 </td>
               ))}
@@ -108,7 +107,6 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
           </thead>
           <tbody>
             {/* Composition Rows */}
-            {/* @todo The very last row is a little taller than the rest; not sure why */}
             {recipeState.map((_, index) => (
               <tr key={index} className="h-6.25">
                 {getEnabledComps().map((comp_key) => (

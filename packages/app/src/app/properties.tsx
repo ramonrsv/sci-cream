@@ -5,6 +5,7 @@ import { useState } from "react";
 import { RecipeState, getMixTotal, calculateMixProperties } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
+import { RECIPE_TOTAL_ROWS } from "./page";
 import { PropKey, getPropKeys, isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
@@ -35,13 +36,10 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
   const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
 
   const isPropEmpty = (prop_key: PropKey) => {
-    if (
-      // All PropKeys are considered to be empty if all recipes are empty
-      // This handles values that are not zero for empty recipes, e.g. Water
-      nonEmptyRecipes.every(({ mixTotal }) => {
-        return mixTotal === 0;
-      })
-    ) {
+    // All PropKeys are considered to be empty if all recipes are empty
+    // This handles values that are not zero for empty recipes, e.g. Water
+    // prettier-ignore
+    if (nonEmptyRecipes.every(({ mixTotal }) => { return mixTotal === 0; })) {
       return true;
     }
 
@@ -90,13 +88,13 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
         getKeys={getPropKeys}
         key_as_med_str_js={prop_key_as_med_str_js}
       />
-      <div className="border-gray-400 border-2 min-w-55 h-[calc(100%-34px)] overflow-y-auto whitespace-nowrap">
-        <table className="border-collapse">
+      <div className="min-w-55 h-[calc(100%-36px)] overflow-y-auto whitespace-nowrap">
+        <table className="border-gray-400 border-2">
           <thead>
             <tr className="h-6.25">
-              <th className="table-header-border-b-r w-full px-2">Property</th>
+              <th className="table-header w-full px-2">Property</th>
               {nonEmptyRecipes.map(({ recipeIdx }) => (
-                <th key={recipeIdx} className="table-header-border-b-r px-2 text-center">
+                <th key={recipeIdx} className="table-header px-2 text-center">
                   {recipeIdx === 0 ? "Recipe" : `Ref ${recipeIdx}`}
                 </th>
               ))}
@@ -105,7 +103,7 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
           <tbody>
             {getEnabledProps().map((prop_key) => (
               <tr key={String(prop_key)} className="h-6.25">
-                <td className="table-header border-gray-400 border-b border-r w-full px-2 text-center">
+                <td className="table-header w-full px-2 text-center">
                   {prop_key_as_med_str_js(prop_key)}
                 </td>
                 {nonEmptyRecipes.map(({ recipeIdx, mixProperties, mixTotal }) => (

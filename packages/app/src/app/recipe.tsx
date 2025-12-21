@@ -183,10 +183,10 @@ export function RecipeGrid({
         <button onClick={copyRecipe} className="button px-1">
           Copy
         </button>
-        <button onClick={pasteRecipe} className="button ml-2 px-1">
+        <button onClick={pasteRecipe} className="button px-1 ml-2">
           Paste
         </button>
-        <button onClick={clearRecipe} className="button ml-2 px-1">
+        <button onClick={clearRecipe} className="button px-1 ml-2">
           Clear
         </button>
       </div>
@@ -195,29 +195,29 @@ export function RecipeGrid({
           <option key={name} value={name} />
         ))}
       </datalist>
-      <table className="border-collapse border-gray-400 border-2">
+      <table className="border-gray-400 border-2">
         {/* Header */}
         <thead>
-          <tr className="table-header border h-6.25 text-center">
-            <th className="border-gray-400 border-r w-81.25 min-w-62.5">Ingredient</th>
-            <th className="border-gray-400 border-r w-15 min-w-15">Qty (g)</th>
-            <th className="w-13.75 min-w-13.75 pl-2 pr-1 whitespace-nowrap">Qty (%)</th>
+          <tr className="h-6.25 text-center">
+            <th className="table-header w-81.25 min-w-62.5">Ingredient</th>
+            <th className="table-header w-15 min-w-15">Qty (g)</th>
+            <th className="table-header w-13.75 min-w-13.75 pl-2 pr-1 whitespace-nowrap">
+              Qty (%)
+            </th>
           </tr>
           {/* Total Row */}
-          <tr className="table-header border h-6.25">
-            <td className="px-1 border-gray-400 border-r text-center">Total</td>
-            <td className="px-3.75 border-gray-400 border-r comp-val">
-              {mixTotal ? mixTotal.toFixed(0) : ""}
-            </td>
-            <td className="px-1 comp-val">{mixTotal ? "100   " : ""}</td>
+          <tr className="h-6.25">
+            <td className="table-header px-1 text-center">Total</td>
+            <td className="table-header px-3.75 comp-val">{mixTotal ? mixTotal.toFixed(0) : ""}</td>
+            <td className="table-header px-1 comp-val">{mixTotal ? "100   " : ""}</td>
           </tr>
         </thead>
         <tbody>
           {/* Ingredient Rows */}
           {/* @todo The ingredient/input rows are not respecting < h-6/[25px]; not sure why yet */}
           {recipeState.map(([row], index) => (
-            <tr key={index} className="table-inner-cell h-6.25 hover:bg-blue-50 transition-colors">
-              <td className="border-gray-300 border-r">
+            <tr key={index} className="h-6.25 hover:bg-blue-50 transition-colors">
+              <td className="table-inner-cell">
                 <input
                   type="search"
                   value={row.name}
@@ -231,7 +231,7 @@ export function RecipeGrid({
                   list="valid-ingredients"
                 />
               </td>
-              <td className="border-gray-300 border-r">
+              <td className="table-inner-cell">
                 <input
                   type="number"
                   value={row.quantity?.toString() || ""}
@@ -242,7 +242,7 @@ export function RecipeGrid({
                   className="table-fillable-input text-right font-mono"
                 />
               </td>
-              <td className="px-1 text-gray-900 text-sm comp-val">
+              <td className="table-inner-cell px-1 comp-val">
                 {recipeState[index][STATE_VAL].quantity && mixTotal
                   ? formatCompositionValue(
                       (recipeState[index][STATE_VAL].quantity / mixTotal) * 100

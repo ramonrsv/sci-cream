@@ -16,14 +16,14 @@ import { MixPropertiesGrid } from "./properties";
 import { MixPropertiesChart } from "./properties-chart";
 
 const MAX_RECIPES = 3;
-const RECIPE_TOTAL_ROWS = 21;
+export const RECIPE_TOTAL_ROWS = 21;
 
 // These values are carefully chosen so that the component and grid container heights match exactly,
 // and so that there is enough margin after the components to accommodate a possible scrollbar.
 // @todo `pnpm build` fails if these values are exported. Also, importing and using something like
 // `h-${COMPONENT_H}` in the component divs className intermittently fails to apply the height
 // correctly; need to investigate further. For now, use the `component-h` class in globals.css.
-const REACT_GRID_COMPONENT_HEIGHT = 10.4;
+const REACT_GRID_COMPONENT_HEIGHT = 10.41;
 const COMPONENT_H = 153.75; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 export default function Home() {
