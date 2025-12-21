@@ -32,10 +32,6 @@ body {
   @apply border-gray-400 border bg-gray-200 text-gray-900 text-sm font-semibold;
 }
 
-.table-header-border-b-r {
-  @apply border-gray-400 border-b border-r bg-gray-200 text-gray-900 text-sm font-semibold;
-}
-
 .table-inner-cell {
   @apply border-gray-300 border text-gray-900 text-sm;
 }
@@ -46,15 +42,6 @@ body {
 
 .comp-val {
   @apply text-center font-mono whitespace-pre;
-}
-
-.main-page-grid {
-  display: inline-grid;
-  column-gap: 35px;
-  row-gap: 10px;
-  grid-template-columns: auto auto auto;
-  grid-template-rows: auto auto;
-  align-items: start;
 }
 
 .popup {
