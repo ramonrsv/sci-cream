@@ -1,11 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef } from "react";
 
 import { RecipeState, getMixTotal, calculateMixProperties } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
-import { RECIPE_TOTAL_ROWS } from "./page";
 import { PropKey, getPropKeys, isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
@@ -34,6 +33,8 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
   const qtyToggleState = useState<QtyToggle>(QtyToggle.Percentage);
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
+
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const isPropEmpty = (prop_key: PropKey) => {
     // All PropKeys are considered to be empty if all recipes are empty
@@ -66,6 +67,12 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
     );
   };
 
+  const thereIsHorizontalScroll = () => {
+    return containerRef.current
+      ? containerRef.current.scrollWidth > containerRef.current.clientWidth
+      : false;
+  };
+
   const nonEmptyRecipes = recipeStates
     .map((recipeState, index) => {
       return {
@@ -88,8 +95,12 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
         getKeys={getPropKeys}
         key_as_med_str_js={prop_key_as_med_str_js}
       />
-      <div className="min-w-55 h-[calc(100%-36px)] overflow-y-auto whitespace-nowrap">
-        <table className="border-gray-400 border-2">
+      <div
+        ref={containerRef}
+        className={`min-w-55 overflow-y-auto whitespace-nowrap border-gray-400 border-2`}
+        style={{ height: `calc(100% - ${thereIsHorizontalScroll() ? 20 : 35}px)` }}
+      >
+        <table className="relative -top-px">
           <thead>
             <tr className="h-6.25">
               <th className="table-header w-full px-2">Property</th>
