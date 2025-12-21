@@ -15,6 +15,7 @@ export enum QtyToggle {
 
 export enum KeyFilter {
   Auto = "Auto",
+  NonZero = "NonZero",
   All = "All",
   Custom = "Custom",
 }
@@ -33,6 +34,7 @@ export function getEnabledKeys<Key>(
     case KeyFilter.All:
       return getKeys();
     case KeyFilter.Auto:
+    case KeyFilter.NonZero:
       return getKeys().filter((key) => !isKeyEmpty(key));
     case KeyFilter.Custom:
       return getKeys().filter((key) => isKeySelected(key));
@@ -116,9 +118,11 @@ export function KeySelection<Key>({
           }
         }}
       >
-        <option value={KeyFilter.Auto}>{KeyFilter.Auto}</option>
-        <option value={KeyFilter.All}>{KeyFilter.All}</option>
-        <option value={KeyFilter.Custom}>{KeyFilter.Custom}</option>
+        {Object.values(KeyFilter).map((kf) => (
+          <option key={kf} value={kf}>
+            {kf}
+          </option>
+        ))}
       </select>
       {keySelectVisible &&
         createPortal(
