@@ -51,8 +51,8 @@ export default function Home() {
   // prettier-ignore
   const layout = [
     { i: "recipe-0",    x:  0, y: 0, w:  8, h, isResizable: false },
-    { i: "properties",  x:  8, y: 0, w:  6, h, resizeHandles: ["e"] as RHA[] },
-    { i: "composition", x: 14, y: 0, w:  9, h, resizeHandles: ["e"] as RHA[], minH: h },
+    { i: "properties",  x:  8, y: 0, w:  6, h, minW: 5, resizeHandles: ["e", "s"] as RHA[] },
+    { i: "composition", x: 14, y: 0, w:  9, h, minH: h, resizeHandles: ["e"] as RHA[] },
     { i: "chart",       x: 8,  y: 1, w: 15, h, resizeHandles: ["e", "s"] as RHA[] },
 
     { i: "recipe-a",    x:  0, y: 1, w:  8, h, isResizable: false },

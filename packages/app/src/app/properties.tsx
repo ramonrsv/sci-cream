@@ -35,6 +35,16 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
   const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
 
   const isPropEmpty = (prop_key: PropKey) => {
+    if (
+      // All PropKeys are considered to be empty if all recipes are empty
+      // This handles values that are not zero for empty recipes, e.g. Water
+      nonEmptyRecipes.every(({ mixTotal }) => {
+        return mixTotal === 0;
+      })
+    ) {
+      return true;
+    }
+
     for (const { mixProperties } of nonEmptyRecipes) {
       const prop_val = getMixProperty(mixProperties, prop_key);
       if (!(prop_val === 0 || Number.isNaN(prop_val))) {
@@ -69,7 +79,7 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
     .filter(({ recipeIdx, mixTotal }) => recipeIdx == 0 || mixTotal > 0);
 
   return (
-    <div id="mix-properties-grid" className="relative w-full grid-component">
+    <div id="mix-properties-grid" className="w-full h-full bg-gray-100">
       <KeySelection
         qtyToggleComponent={{
           supportedQtyToggles: [QtyToggle.Quantity, QtyToggle.Percentage],
@@ -80,8 +90,7 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
         getKeys={getPropKeys}
         key_as_med_str_js={prop_key_as_med_str_js}
       />
-      {/* @todo overflow-x-visible should work instead of min-w-55, but it has a weird delay in applying */}
-      <div className="border-gray-400 border-2 max-h-145 min-w-55 overflow-y-auto whitespace-nowrap">
+      <div className="border-gray-400 border-2 min-w-55 h-[calc(100%-34px)] overflow-y-auto whitespace-nowrap">
         <table className="border-collapse">
           <thead>
             <tr className="h-6.25">
@@ -96,8 +105,7 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
           <tbody>
             {getEnabledProps().map((prop_key) => (
               <tr key={String(prop_key)} className="h-6.25">
-                {/* @todo The top-most border for the header column is not right, shows double */}
-                <td className="table-header border-gray-400 border-t border-r w-full px-2 text-center">
+                <td className="table-header border-gray-400 border-b border-r w-full px-2 text-center">
                   {prop_key_as_med_str_js(prop_key)}
                 </td>
                 {nonEmptyRecipes.map(({ recipeIdx, mixProperties, mixTotal }) => (
