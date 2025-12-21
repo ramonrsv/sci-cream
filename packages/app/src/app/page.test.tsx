@@ -6,11 +6,11 @@ import { render, screen, waitFor, cleanup } from "@testing-library/react";
 
 import Home from "./page";
 
-const ResizeObserverMock = vi.fn(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}));
+class ResizeObserverMock {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
 
 vi.stubGlobal("ResizeObserver", ResizeObserverMock);
 
