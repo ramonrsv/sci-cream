@@ -107,7 +107,11 @@ export function KeySelection<Key>({
         <option value={KeyFilter.Custom}>{KeyFilter.Custom}</option>
       </select>
       {keySelectVisible && (
-        <div className="popup top-0 left-47 w-fit pl-1 pr-2 whitespace-nowrap">
+        <div
+          className={`popup top-0 ${
+            hasQtyToggle ? "left-47" : "left-20"
+          } w-fit pl-1 pr-2 whitespace-nowrap`}
+        >
           <button className="button" onClick={() => setKeySelectVisible(false)}>
             Done
           </button>
