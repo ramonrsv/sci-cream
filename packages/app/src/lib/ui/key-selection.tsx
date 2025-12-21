@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
+import { createPortal } from "react-dom";
 import { STATE_VAL } from "../util";
 
 export enum QtyToggle {
@@ -62,6 +63,18 @@ export function KeySelection<Key>({
   const [selectedKeys, setSelectedKeys] = selectedKeysState;
 
   const [keySelectVisible, setKeySelectVisible] = useState<boolean>(false);
+  const buttonRef = useRef<HTMLSelectElement>(null);
+  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+
+  useEffect(() => {
+    if (keySelectVisible && buttonRef.current) {
+      const rect = buttonRef.current.getBoundingClientRect();
+      setPopupPosition({
+        top: rect.bottom + window.scrollY - 20,
+        left: rect.left + window.scrollX + 80,
+      });
+    }
+  }, [keySelectVisible]);
 
   const isKeySelected = (key: Key) => {
     return selectedKeys.has(key);
@@ -93,6 +106,7 @@ export function KeySelection<Key>({
         </select>
       )}
       <select
+        ref={buttonRef}
         className={`${hasQtyToggle ? "ml-2" : ""} border-gray-400 border text-gray-900 text-sm`}
         value={keyFilter}
         onChange={(e) => {
@@ -106,29 +120,30 @@ export function KeySelection<Key>({
         <option value={KeyFilter.All}>{KeyFilter.All}</option>
         <option value={KeyFilter.Custom}>{KeyFilter.Custom}</option>
       </select>
-      {keySelectVisible && (
-        <div
-          className={`popup top-0 ${
-            hasQtyToggle ? "left-47" : "left-20"
-          } w-fit pl-1 pr-2 whitespace-nowrap`}
-        >
-          <button className="button" onClick={() => setKeySelectVisible(false)}>
-            Done
-          </button>
-          <ul>
-            {getKeys().map((key) => (
-              <li key={String(key)}>
-                <input
-                  type="checkbox"
-                  checked={isKeySelected(key)}
-                  onChange={() => updateSelectedKey(key)}
-                />
-                {" " + key_as_med_str_js(key)}
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+      {keySelectVisible &&
+        createPortal(
+          <div
+            className="z-50 absolute popup whitespace-nowrap w-fit pl-1 pr-2"
+            style={{ top: `${popupPosition.top}px`, left: `${popupPosition.left}px` }}
+          >
+            <button className="button" onClick={() => setKeySelectVisible(false)}>
+              Done
+            </button>
+            <ul>
+              {getKeys().map((key) => (
+                <li key={String(key)}>
+                  <input
+                    type="checkbox"
+                    checked={isKeySelected(key)}
+                    onChange={() => updateSelectedKey(key)}
+                  />
+                  {" " + key_as_med_str_js(key)}
+                </li>
+              ))}
+            </ul>
+          </div>,
+          document.body
+        )}
     </div>
   );
 }
