@@ -88,3 +88,25 @@ Or to build individual features, specifying different crate-types:
 $ cargo rustc --features wasm --crate-type=cdylib
 $ cargo rustc --features diesel --crate-type=rlib
 ```
+
+To upgrade `node`:
+
+```console
+$ sudo npm install -g n
+$ sudo n stable
+```
+
+To upgrade `pnpm` dependencies:
+
+```console
+$ pnpm update --latest --dir ./packages/app
+$ pnpm update --latest --dir ./packages/sci-cream
+```
+
+To upgrade Rust dependencies:
+
+```console
+$ cargo install cargo-edit
+$ cd ./packages/sci-cream
+$ cargo upgrade --incompatible
+```
