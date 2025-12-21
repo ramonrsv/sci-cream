@@ -78,15 +78,23 @@ $ sudo apt install libpq-dev
 Then we can:
 
 ```console
+$ # `--features wasm` OR `diesel` for individual features
 $ cargo build --all-features
 $ cargo test --all-features
 ```
 
-Or to build individual features, specifying different crate-types:
+To use the "wasm" feature and `wasm-pack` to prepare `npm` package:
 
 ```console
+$ cargo install wasm-pack # Only needed once
+$ cd ./packages/sci-cream
+$ # To validate build, not necessary when running wasm-pack
 $ cargo rustc --features wasm --crate-type=cdylib
-$ cargo rustc --features diesel --crate-type=rlib
+$
+$ ./scripts/set-crate-type.sh ./Cargo.toml cdylib
+$ wasm-pack build --out-dir wasm --out-name index -- --features wasm
+$     # OR
+# pnpm build
 ```
 
 To upgrade `node`:
@@ -106,7 +114,7 @@ $ pnpm update --latest --dir ./packages/sci-cream
 To upgrade Rust dependencies:
 
 ```console
-$ cargo install cargo-edit
+$ cargo install cargo-edit # Only needed once
 $ cd ./packages/sci-cream
 $ cargo upgrade --incompatible
 ```
