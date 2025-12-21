@@ -169,16 +169,25 @@ export function RecipeGrid({
     }
   };
 
+  const clearRecipe = () => {
+    for (let idx = 0; idx < recipeState.length; idx++) {
+      updateIngredientRow(idx, "", "");
+    }
+  };
+
   const mixTotal = getMixTotal(recipeState);
 
   return (
     <div id="recipe-grid" className="grid-component">
       <div>
         <button onClick={copyRecipe} className="button px-1">
-          Copy Recipe
+          Copy
         </button>
         <button onClick={pasteRecipe} className="button ml-2 px-1">
-          Paste Recipe
+          Paste
+        </button>
+        <button onClick={clearRecipe} className="button ml-2 px-1">
+          Clear
         </button>
       </div>
       <datalist id="valid-ingredients">
