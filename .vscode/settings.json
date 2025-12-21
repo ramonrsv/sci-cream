@@ -11,24 +11,17 @@
     "editor.defaultFormatter": "rust-lang.rust-analyzer"
   },
   "files.associations": {
-    "*.js": "javascriptreact"
+    "*.js": "javascriptreact",
+    "*.css": "tailwindcss",
+    "*.scss": "tailwindcss"
   },
   "editor.formatOnSave": true,
-  "rust-analyzer.linkedProjects": [
-    "./packages/sci-cream/Cargo.toml"
-  ],
+  "rust-analyzer.linkedProjects": ["./packages/sci-cream/Cargo.toml"],
   "rust-analyzer.cargo.features": "all",
   "rust-analyzer.check.features": "all",
   "rust-analyzer.cargo.allTargets": true,
   "rust-analyzer.check.allTargets": true,
   "rust-analyzer.check.command": "clippy",
   "prettier.printWidth": 100,
-  "cSpell.words": [
-    "demerara",
-    "MSNF",
-    "sgr",
-    "slt",
-    "SNF",
-    "SNFS"
-  ]
+  "cSpell.words": ["demerara", "MSNF", "sgr", "slt", "SNF", "SNFS"]
 }
