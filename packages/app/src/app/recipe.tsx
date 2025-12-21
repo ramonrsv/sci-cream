@@ -189,13 +189,13 @@ export function RecipeGrid({
       <table className="border-collapse border-gray-400 border-2">
         {/* Header */}
         <thead>
-          <tr className="table-header border-1 h-[25px] text-center">
-            <th className="border-gray-400 border-r w-[325px] min-w-[250px]">Ingredient</th>
-            <th className="border-gray-400 border-r w-[60px] min-w-[60px]">Qty (g)</th>
-            <th className="w-[55px] min-w-[55px] pl-2 pr-1 whitespace-nowrap">Qty (%)</th>
+          <tr className="table-header border h-6.25 text-center">
+            <th className="border-gray-400 border-r w-81.25 min-w-62.5">Ingredient</th>
+            <th className="border-gray-400 border-r w-15 min-w-15">Qty (g)</th>
+            <th className="w-13.75 min-w-13.75 pl-2 pr-1 whitespace-nowrap">Qty (%)</th>
           </tr>
           {/* Total Row */}
-          <tr className="table-header border-1 h-[25px]">
+          <tr className="table-header border h-6.25">
             <td className="px-1 border-gray-400 border-r text-center">Total</td>
             <td className="px-3.75 border-gray-400 border-r comp-val">
               {mixTotal ? mixTotal.toFixed(0) : ""}
@@ -207,10 +207,7 @@ export function RecipeGrid({
           {/* Ingredient Rows */}
           {/* @todo The ingredient/input rows are not respecting < h-6/[25px]; not sure why yet */}
           {recipeState.map(([row], index) => (
-            <tr
-              key={index}
-              className="table-inner-cell h-[25px] hover:bg-blue-50 transition-colors"
-            >
+            <tr key={index} className="table-inner-cell h-6.25 hover:bg-blue-50 transition-colors">
               <td className="border-gray-300 border-r">
                 <input
                   type="search"

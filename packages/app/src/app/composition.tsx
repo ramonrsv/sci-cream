@@ -72,7 +72,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
   const mixComposition = calculateMixComposition(recipeState);
 
   return (
-    <div id="ingredient-composition-grid" className="relative w-full min-w-[200px] grid-component">
+    <div id="ingredient-composition-grid" className="relative w-full min-w-50 grid-component">
       <KeySelection
         qtyToggleComponent={{
           supportedQtyToggles: [QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage],
@@ -89,7 +89,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
           <thead>
             {/* Composition Header */}
             {/* @todo The left-most and right-most borders of the table are still not right */}
-            <tr className="h-[24px]">
+            <tr className="h-6">
               {getEnabledComps().map((comp_key) => (
                 <th key={comp_key} className="table-header-border-b-r px-1 w-fit text-center">
                   {comp_key_as_med_str_js(comp_key)}
@@ -98,7 +98,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
             </tr>
             {/* Totals Row */}
             {/* @todo The left-most and right-most borders of the table are still not right */}
-            <tr className="h-[25px]">
+            <tr className="h-6.25">
               {getEnabledComps().map((comp_key) => (
                 <td key={comp_key} className="table-header-border-b-r px-1 comp-val">
                   {formattedTotalCell(comp_key)}
@@ -110,7 +110,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
             {/* Composition Rows */}
             {/* @todo The very last row is a little taller than the rest; not sure why */}
             {recipeState.map((_, index) => (
-              <tr key={index} className="h-[25px]">
+              <tr key={index} className="h-6.25">
                 {getEnabledComps().map((comp_key) => (
                   <td key={comp_key} className="table-inner-cell px-1 comp-val">
                     {formattedCompCell(index, comp_key)}

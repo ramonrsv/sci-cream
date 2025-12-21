@@ -80,11 +80,11 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
         getKeys={getPropKeys}
         key_as_med_str_js={prop_key_as_med_str_js}
       />
-      {/* @todo overflow-x-visible should work instead of min-w-[220px], but it has a weird delay in applying */}
-      <div className="border-gray-400 border-2 max-h-[580px] min-w-[220px] overflow-y-auto whitespace-nowrap">
+      {/* @todo overflow-x-visible should work instead of min-w-55, but it has a weird delay in applying */}
+      <div className="border-gray-400 border-2 max-h-145 min-w-55 overflow-y-auto whitespace-nowrap">
         <table className="border-collapse">
           <thead>
-            <tr className="h-[25px]">
+            <tr className="h-6.25">
               <th className="table-header-border-b-r w-full px-2">Property</th>
               {nonEmptyRecipes.map(({ recipeIdx }) => (
                 <th key={recipeIdx} className="table-header-border-b-r px-2 text-center">
@@ -95,13 +95,13 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
           </thead>
           <tbody>
             {getEnabledProps().map((prop_key) => (
-              <tr key={String(prop_key)} className="h-[25px]">
+              <tr key={String(prop_key)} className="h-6.25">
                 {/* @todo The top-most border for the header column is not right, shows double */}
                 <td className="table-header border-gray-400 border-t border-r w-full px-2 text-center">
                   {prop_key_as_med_str_js(prop_key)}
                 </td>
                 {nonEmptyRecipes.map(({ recipeIdx, mixProperties, mixTotal }) => (
-                  <td key={recipeIdx} className="table-inner-cell min-w-[50px] px-2 comp-val">
+                  <td key={recipeIdx} className="table-inner-cell min-w-12.5 px-2 comp-val">
                     {formattedPropCell(prop_key, mixProperties, mixTotal)}
                   </td>
                 ))}

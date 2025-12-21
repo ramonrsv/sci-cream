@@ -37,7 +37,7 @@ body {
 }
 
 .table-inner-cell {
-  @apply border-gray-300 border-1 text-gray-900 text-sm;
+  @apply border-gray-300 border text-gray-900 text-sm;
 }
 
 .table-fillable-input {
@@ -62,10 +62,10 @@ body {
 }
 
 .button {
-  @apply bg-gray-200 text-gray-900 text-sm border-1 border-gray-400 hover:bg-gray-300 active:bg-gray-400;
+  @apply bg-gray-200 text-gray-900 text-sm border border-gray-400 hover:bg-gray-300 active:bg-gray-400;
 }
 
-/* See COMPONENT_H_PX in app/page.tsx */
+/* See COMPONENT_H in app/page.tsx */
 .grid-component {
-  @apply h-[615px] bg-gray-100;
+  @apply h-153.75 bg-gray-100;
 }
