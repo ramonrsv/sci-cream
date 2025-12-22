@@ -1,6 +1,7 @@
 import { pgTable, primaryKey, integer, text, pgEnum, json } from "drizzle-orm/pg-core";
 
-import { Category } from "../sci-cream/category";
+import { SchemaCategory } from "./schema-category";
+export { SchemaCategory as Category };
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -8,7 +9,7 @@ export const usersTable = pgTable("users", {
   email: text().notNull().unique(),
 });
 
-export const categoryEnum = pgEnum("category", Category);
+export const categoryEnum = pgEnum("category", SchemaCategory);
 
 export const ingredientsTable = pgTable(
   "ingredients",

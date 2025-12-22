@@ -6,7 +6,7 @@ import { usersTable, ingredientsTable } from "./schema";
 import * as schema from "./schema";
 
 import { IngredientJson, allIngredients } from "../data/ingredients";
-import { Category } from "../sci-cream/category";
+import { SchemaCategory } from "./schema-category";
 
 type User = typeof usersTable.$inferInsert;
 
@@ -44,7 +44,7 @@ async function seedUserIngredients(user: User, ingredients: IngredientJson[]) {
     const ingredient: typeof ingredientsTable.$inferInsert = {
       name: ing.name,
       user: foundUser.id,
-      category: ing.category as Category,
+      category: ing.category as SchemaCategory,
       spec: JSON.stringify(ing),
     };
 

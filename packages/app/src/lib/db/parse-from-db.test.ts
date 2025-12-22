@@ -4,7 +4,7 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
 
-import { usersTable, ingredientsTable, User } from "./schema";
+import { usersTable, ingredientsTable, User, Category as SchemaCategory } from "./schema";
 import * as schema from "./schema";
 
 import {
@@ -14,14 +14,14 @@ import {
   Composition,
 } from "@workspace/sci-cream";
 
+import { allIngredients } from "../data/ingredients";
+
 const db = drizzle(process.env.DATABASE_URL!, { schema });
 
 const app: User = {
   name: process.env.APP_USER_NAME!,
   email: process.env.APP_USER_EMAIL!,
 };
-
-import { allIngredients } from "../data/ingredients";
 
 async function getAppUserId() {
   const [foundUser] = await db.select().from(usersTable).where(eq(usersTable.email, app.email));
@@ -37,7 +37,7 @@ test("Create Ingredient from specs from DB", async () => {
   const appUserId = await getAppUserId();
 
   for (const ing of allIngredients) {
-    expect(Category[ing.category as keyof typeof Category]).toBeDefined();
+    expect(ing.category).toBeDefined();
 
     const [ingDrizzle] = await db
       .select()
@@ -46,7 +46,7 @@ test("Create Ingredient from specs from DB", async () => {
         and(
           eq(ingredientsTable.name, ing.name),
           eq(ingredientsTable.user, appUserId),
-          eq(ingredientsTable.category, ing.category)
+          eq(ingredientsTable.category, ing.category as SchemaCategory)
         )
       );
 
