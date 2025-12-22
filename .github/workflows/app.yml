@@ -53,7 +53,7 @@ jobs:
           node-version: "24"
       - name: Installing pnpm
         run: npm install -g pnpm
-      - name: Install dependencies
+      - name: Installing dependencies
         run: pnpm install
       - name: Installing wasm-pack
         run: cargo install wasm-pack
@@ -66,3 +66,14 @@ jobs:
         run: pnpm build
       - name: Running workspace tests
         run: pnpm test
+
+  prettier:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Installing pnpm
+        run: npm install -g pnpm
+      - name: Install prettier
+        run: pnpm install -D prettier prettier-plugin-tailwindcss
+      - name: Run Prettier check
+        run: pnpm run prettier

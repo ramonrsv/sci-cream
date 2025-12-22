@@ -21,7 +21,8 @@
     "test:js": "pnpm run build:wasm && pnpm run build:js && vitest run",
     "lint": "pnpm run lint:rust && pnpm run lint:js",
     "lint:rust": "cargo clippy --features wasm",
-    "lint:js": "eslint src --ext .ts"
+    "lint:js": "eslint src --ext .ts",
+    "prettier": "prettier --check ./src/ts"
   },
   "dependencies": {
     "typescript": "5.9.3",

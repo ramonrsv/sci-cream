@@ -1,0 +1,2 @@
+# Ignore legacy sci-cream library that is only kept for reference
+/src/lib/deprecated/sci-cream-legacy.ts

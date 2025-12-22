@@ -91,11 +91,13 @@ jobs:
       - name: Running ESLint
         run: pnpm run lint:js
 
-  prettier_ts:
+  prettier:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
+      - name: Installing pnpm
+        run: npm install -g pnpm
       - name: Install prettier
-        run: npm install -D prettier prettier-plugin-tailwindcss
+        run: pnpm install -D prettier prettier-plugin-tailwindcss
       - name: Run Prettier check
-        run: npx prettier --check ./src/ts
+        run: pnpm run prettier

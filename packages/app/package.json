@@ -8,6 +8,7 @@
     "start": "next start",
     "lint": "eslint .",
     "test": "vitest run",
+    "prettier": "prettier --check ./src",
     "coverage": "vitest run --coverage"
   },
   "dependencies": {

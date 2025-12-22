@@ -8,6 +8,7 @@
     "start": "pnpm --filter sci-cream-app start",
     "lint": "pnpm run -r lint",
     "test": "pnpm run -r test",
+    "prettier": "pnpm run -r prettier",
     "coverage": "pnpm run -r coverage"
   },
   "devDependencies": {
