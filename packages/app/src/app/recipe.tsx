@@ -178,7 +178,7 @@ export function RecipeGrid({
   const mixTotal = getMixTotal(recipeState);
 
   return (
-    <div id="recipe-grid" className="grid-component">
+    <div id="recipe-grid" className="grid-component std-component-h">
       <div>
         <button onClick={copyRecipe} className="button px-1">
           Copy
@@ -195,7 +195,7 @@ export function RecipeGrid({
           <option key={name} value={name} />
         ))}
       </datalist>
-      <table className="border-gray-400 border-2">
+      <table className="component-inner-border">
         {/* Header */}
         <thead>
           <tr className="h-6.25 text-center">
@@ -216,7 +216,7 @@ export function RecipeGrid({
           {/* Ingredient Rows */}
           {/* @todo The ingredient/input rows are not respecting < h-6/[25px]; not sure why yet */}
           {recipeState.map(([row], index) => (
-            <tr key={index} className="h-6.25 hover:bg-blue-50 transition-colors">
+            <tr key={index} className="h-6.25">
               <td className="table-inner-cell">
                 <input
                   type="search"

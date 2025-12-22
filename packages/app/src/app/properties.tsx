@@ -84,7 +84,7 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
     .filter(({ recipeIdx, mixTotal }) => recipeIdx == 0 || mixTotal > 0);
 
   return (
-    <div id="mix-properties-grid" className="w-full h-full bg-gray-100">
+    <div id="mix-properties-grid" className="w-full h-full grid-component">
       <KeySelection
         qtyToggleComponent={{
           supportedQtyToggles: [QtyToggle.Quantity, QtyToggle.Percentage],
@@ -97,8 +97,8 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
       />
       <div
         ref={containerRef}
-        className={`min-w-55 overflow-y-auto whitespace-nowrap border-gray-400 border-2`}
-        style={{ height: `calc(100% - ${thereIsHorizontalScroll() ? 20 : 35}px)` }}
+        className={`min-w-55 overflow-y-auto whitespace-nowrap component-inner-border`}
+        style={{ height: `calc(100% - ${thereIsHorizontalScroll() ? 18 : 33}px)` }}
       >
         <table className="relative -top-px">
           <thead>

@@ -72,7 +72,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
   const mixComposition = calculateMixComposition(recipeState);
 
   return (
-    <div id="ingredient-composition-grid" className="w-full min-w-50 grid-component">
+    <div id="ing-composition-grid" className="w-full min-w-50 grid-component std-component-h">
       <KeySelection
         qtyToggleComponent={{
           supportedQtyToggles: [QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage],
@@ -84,7 +84,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
         key_as_med_str_js={comp_key_as_med_str_js}
       />
       {/* @todo The table doesn't fully align to the right, and it's parent's div is ~2px too tall */}
-      <div className="border-gray-400 border-2 overflow-x-auto whitespace-nowrap">
+      <div className="component-inner-border overflow-x-auto whitespace-nowrap">
         <table className="relative -top-px -left-px">
           {/* Header */}
           <thead>

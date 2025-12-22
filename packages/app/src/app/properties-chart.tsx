@@ -139,14 +139,14 @@ export function MixPropertiesChart({ recipeStates }: { recipeStates: RecipeState
   };
 
   return (
-    <div id="mix-properties-chart" className="relative w-full h-full bg-gray-100">
+    <div id="mix-properties-chart" className="relative w-full h-full grid-component">
       <KeySelection
         keyFilterState={propsFilterState}
         selectedKeysState={selectedPropsState}
         getKeys={getPropKeys}
         key_as_med_str_js={prop_key_as_med_str_js}
       />
-      <div className="border-gray-400 border-2 p-3 h-[calc(100%-36px)]">
+      <div className="component-inner-border p-3 h-[calc(100%-36px)]">
         <Bar data={chartData} options={options} />
       </div>
     </div>

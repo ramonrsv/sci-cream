@@ -47,7 +47,7 @@ describe("Home Page", () => {
 
   it("should render one IngredientCompositionGrid components", () => {
     const { container } = render(<Home />);
-    expect(container.querySelectorAll("#ingredient-composition-grid").length).toBe(1);
+    expect(container.querySelectorAll("#ing-composition-grid").length).toBe(1);
   });
 
   it("should have proper page layout structure", () => {
