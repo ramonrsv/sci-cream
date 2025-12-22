@@ -24,7 +24,7 @@ export interface IngredientRow {
 
 export type IngredientRowState = [
   IngredientRow,
-  React.Dispatch<React.SetStateAction<IngredientRow>>
+  React.Dispatch<React.SetStateAction<IngredientRow>>,
 ];
 
 export type RecipeState = Array<IngredientRowState>;
@@ -34,7 +34,7 @@ export interface RecipeGridProps {
   validIngredients: string[];
   ingredientCacheState: [
     Map<string, IngredientTransfer>,
-    React.Dispatch<React.SetStateAction<Map<string, IngredientTransfer>>>
+    React.Dispatch<React.SetStateAction<Map<string, IngredientTransfer>>>,
   ];
 }
 
@@ -46,7 +46,7 @@ export function getMixTotal(recipeState: RecipeState) {
   return recipeState.reduce(
     (sum: number | undefined, [row]) =>
       sum === undefined && row.quantity == undefined ? undefined : (sum || 0) + (row.quantity || 0),
-    undefined
+    undefined,
   );
 }
 
@@ -76,7 +76,7 @@ export function RecipeGrid({
   const [ingredientCache, setIngredientCache] = ingredientCacheState;
 
   const cachedFetchIngredientSpec = async (
-    name: string
+    name: string,
   ): Promise<IngredientTransfer | undefined> => {
     if (!ingredientCache.has(name)) {
       await fetchIngredientSpec(name).then((spec) => {
@@ -106,7 +106,7 @@ export function RecipeGrid({
   const updateIngredientRow = (
     index: number,
     _name: string | undefined,
-    quantityStr: string | undefined
+    quantityStr: string | undefined,
   ) => {
     const [row, setRow] = recipeState[index];
 
@@ -115,8 +115,8 @@ export function RecipeGrid({
       quantityStr === undefined
         ? row.quantity
         : quantityStr === ""
-        ? undefined
-        : parseFloat(quantityStr);
+          ? undefined
+          : parseFloat(quantityStr);
 
     setRow({ ...row, name, quantity });
   };
@@ -183,10 +183,10 @@ export function RecipeGrid({
         <button onClick={copyRecipe} className="button px-1">
           Copy
         </button>
-        <button onClick={pasteRecipe} className="button px-1 ml-2">
+        <button onClick={pasteRecipe} className="button ml-2 px-1">
           Paste
         </button>
-        <button onClick={clearRecipe} className="button px-1 ml-2">
+        <button onClick={clearRecipe} className="button ml-2 px-1">
           Clear
         </button>
       </div>
@@ -201,15 +201,15 @@ export function RecipeGrid({
           <tr className="h-6.25 text-center">
             <th className="table-header w-81.25 min-w-62.5">Ingredient</th>
             <th className="table-header w-15 min-w-15">Qty (g)</th>
-            <th className="table-header w-13.75 min-w-13.75 pl-2 pr-1 whitespace-nowrap">
+            <th className="table-header w-13.75 min-w-13.75 pr-1 pl-2 whitespace-nowrap">
               Qty (%)
             </th>
           </tr>
           {/* Total Row */}
           <tr className="h-6.25">
             <td className="table-header px-1 text-center">Total</td>
-            <td className="table-header px-3.75 comp-val">{mixTotal ? mixTotal.toFixed(0) : ""}</td>
-            <td className="table-header px-1 comp-val">{mixTotal ? "100   " : ""}</td>
+            <td className="table-header comp-val px-3.75">{mixTotal ? mixTotal.toFixed(0) : ""}</td>
+            <td className="table-header comp-val px-1">{mixTotal ? "100   " : ""}</td>
           </tr>
         </thead>
         <tbody>
@@ -225,7 +225,7 @@ export function RecipeGrid({
                   className={`table-fillable-input ${
                     row.name === "" || validIngredients.includes(row.name)
                       ? "focus:ring-blue-400"
-                      : "focus:ring-red-400 outline-solid outline-red-400"
+                      : "outline-red-400 outline-solid focus:ring-red-400"
                   } px-2`}
                   placeholder=""
                   list="valid-ingredients"
@@ -242,10 +242,10 @@ export function RecipeGrid({
                   className="table-fillable-input text-right font-mono"
                 />
               </td>
-              <td className="table-inner-cell px-1 comp-val">
+              <td className="table-inner-cell comp-val px-1">
                 {recipeState[index][STATE_VAL].quantity && mixTotal
                   ? formatCompositionValue(
-                      (recipeState[index][STATE_VAL].quantity / mixTotal) * 100
+                      (recipeState[index][STATE_VAL].quantity / mixTotal) * 100,
                     )
                   : ""}
               </td>

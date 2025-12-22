@@ -9,20 +9,20 @@
 }
 
 body {
-  @apply bg-stone-200 dark:bg-stone-900 text-stone-800 dark:text-stone-200;
+  @apply bg-stone-200 text-stone-800 dark:bg-stone-900 dark:text-stone-200;
   font-family: Arial, Helvetica, sans-serif;
 }
 
 .table-header {
-  @apply bg-stone-300 dark:bg-stone-700 text-stone-800 dark:text-stone-200 border border-stone-600 dark:border-stone-500 text-sm font-semibold;
+  @apply border border-stone-600 bg-stone-300 text-sm font-semibold text-stone-800 dark:border-stone-500 dark:bg-stone-700 dark:text-stone-200;
 }
 
 .table-inner-cell {
-  @apply bg-stone-50 dark:bg-stone-800 text-stone-800 dark:text-stone-200 border border-stone-400 dark:border-stone-600 text-sm;
+  @apply border border-stone-400 bg-stone-50 text-sm text-stone-800 dark:border-stone-600 dark:bg-stone-800 dark:text-stone-200;
 }
 
 .table-fillable-input {
-  @apply w-full bg-stone-50 dark:bg-stone-800 text-stone-800 transition-colors dark:hover:bg-stone-600 dark:text-stone-200 text-sm focus:outline-none focus:ring-2 focus:ring-inset;
+  @apply w-full bg-stone-50 text-sm text-stone-800 transition-colors focus:ring-2 focus:outline-none focus:ring-inset dark:bg-stone-800 dark:text-stone-200 dark:hover:bg-stone-600;
 }
 
 .comp-val {
@@ -30,15 +30,15 @@ body {
 }
 
 .popup {
-  @apply bg-stone-200 dark:bg-stone-700 text-stone-800 dark:text-stone-200 border border-stone-600 dark:border-stone-500 text-sm rounded-md;
+  @apply rounded-md border border-stone-600 bg-stone-200 text-sm text-stone-800 dark:border-stone-500 dark:bg-stone-700 dark:text-stone-200;
 }
 
 .select-input {
-  @apply border border-stone-600 dark:border-stone-500 bg-stone-300 dark:bg-stone-600 text-stone-800 dark:text-stone-200 text-sm rounded;
+  @apply rounded border border-stone-600 bg-stone-300 text-sm text-stone-800 dark:border-stone-500 dark:bg-stone-600 dark:text-stone-200;
 }
 
 .button {
-  @apply bg-stone-300 dark:bg-stone-600 text-stone-800 dark:text-stone-200 border border-stone-600 dark:border-stone-500 text-sm rounded hover:bg-stone-400 dark:hover:bg-stone-500 active:bg-stone-500 dark:active:bg-stone-400;
+  @apply rounded border border-stone-600 bg-stone-300 text-sm text-stone-800 hover:bg-stone-400 active:bg-stone-500 dark:border-stone-500 dark:bg-stone-600 dark:text-stone-200 dark:hover:bg-stone-500 dark:active:bg-stone-400;
 }
 
 /* See STD_COMPONENT_H in app/page.tsx */
@@ -47,9 +47,9 @@ body {
 }
 
 .grid-component {
-  @apply bg-stone-50 dark:bg-stone-800 border border-stone-400 dark:border-stone-600 rounded-lg;
+  @apply rounded-lg border border-stone-400 bg-stone-50 dark:border-stone-600 dark:bg-stone-800;
 }
 
 .component-inner-border {
-  @apply border-2 border-stone-600 dark:border-stone-500 rounded-md;
+  @apply rounded-md border-2 border-stone-600 dark:border-stone-500;
 }

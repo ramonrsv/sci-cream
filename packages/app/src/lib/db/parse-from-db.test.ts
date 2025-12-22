@@ -18,10 +18,7 @@ import { allIngredients } from "../data/ingredients";
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
 
-const app: User = {
-  name: process.env.APP_USER_NAME!,
-  email: process.env.APP_USER_EMAIL!,
-};
+const app: User = { name: process.env.APP_USER_NAME!, email: process.env.APP_USER_EMAIL! };
 
 async function getAppUserId() {
   const [foundUser] = await db.select().from(usersTable).where(eq(usersTable.email, app.email));
@@ -46,8 +43,8 @@ test("Create Ingredient from specs from DB", async () => {
         and(
           eq(ingredientsTable.name, ing.name),
           eq(ingredientsTable.user, appUserId),
-          eq(ingredientsTable.category, ing.category as SchemaCategory)
-        )
+          eq(ingredientsTable.category, ing.category as SchemaCategory),
+        ),
       );
 
     expect(ingDrizzle).toBeDefined();

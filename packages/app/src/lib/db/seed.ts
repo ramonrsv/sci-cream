@@ -12,15 +12,9 @@ type User = typeof usersTable.$inferInsert;
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
 
-const appUser: User = {
-  name: process.env.APP_USER_NAME!,
-  email: process.env.APP_USER_EMAIL!,
-};
+const appUser: User = { name: process.env.APP_USER_NAME!, email: process.env.APP_USER_EMAIL! };
 
-const testUser: User = {
-  name: process.env.TEST_USER_NAME!,
-  email: process.env.TEST_USER_EMAIL!,
-};
+const testUser: User = { name: process.env.TEST_USER_NAME!, email: process.env.TEST_USER_EMAIL! };
 
 async function seedUsers() {
   console.log("==========");
@@ -55,7 +49,7 @@ async function seedUserIngredients(user: User, ingredients: IngredientJson[]) {
       .select()
       .from(ingredientsTable)
       .where(
-        and(eq(ingredientsTable.name, ingredient.name), eq(ingredientsTable.user, ingredient.user))
+        and(eq(ingredientsTable.name, ingredient.name), eq(ingredientsTable.user, ingredient.user)),
       );
 
     if (existing != undefined) {
@@ -66,8 +60,8 @@ async function seedUserIngredients(user: User, ingredients: IngredientJson[]) {
         .where(
           and(
             eq(ingredientsTable.name, ingredient.name),
-            eq(ingredientsTable.user, ingredient.user)
-          )
+            eq(ingredientsTable.user, ingredient.user),
+          ),
         );
     }
 

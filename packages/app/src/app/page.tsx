@@ -34,8 +34,8 @@ export default function Home() {
 
   const recipes = Array.from({ length: MAX_RECIPES }, () =>
     Array.from({ length: RECIPE_TOTAL_ROWS }, () =>
-      useState<IngredientRow>(makeEmptyIngredientRow())
-    )
+      useState<IngredientRow>(makeEmptyIngredientRow()),
+    ),
   );
 
   useEffect(() => {
@@ -68,18 +68,14 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen pt-3 pl-8 pr-8">
-      <h1 className="text-2xl font-bold pl-8">Ice Cream Recipe Calculator</h1>
+    <main className="min-h-screen pt-3 pr-8 pl-8">
+      <h1 className="pl-8 text-2xl font-bold">Ice Cream Recipe Calculator</h1>
       <div ref={containerRef}>
         {mounted && (
           <ReactGridLayout
             layout={layout}
             width={width}
-            gridConfig={{
-              cols: cols,
-              rowHeight: ROW_HEIGHT,
-              margin: [20, 10],
-            }}
+            gridConfig={{ cols: cols, rowHeight: ROW_HEIGHT, margin: [20, 10] }}
           >
             <div key="recipe-0">{<RecipeGrid props={recipeGridProps(0)} />}</div>
             <div key="properties">{<MixPropertiesGrid recipeStates={recipes} />}</div>

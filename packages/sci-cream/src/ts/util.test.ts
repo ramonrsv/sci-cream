@@ -7,12 +7,7 @@ enum AlphaTs {
   Second,
 }
 
-const BetaTs = Object.freeze({
-  First: 0,
-  "0": "First",
-  Second: 1,
-  "1": "Second",
-});
+const BetaTs = Object.freeze({ First: 0, "0": "First", Second: 1, "1": "Second" });
 
 test("getTsEnumNumbers", () => {
   expect(getTsEnumNumbers(AlphaTs)).toEqual([0, 1]);

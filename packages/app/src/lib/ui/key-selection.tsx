@@ -24,7 +24,7 @@ export function getEnabledKeys<Key>(
   keyFilterState: [KeyFilter, React.Dispatch<React.SetStateAction<KeyFilter>>],
   selectedKeysState: [Set<Key>, React.Dispatch<React.SetStateAction<Set<Key>>>],
   getKeys: () => Key[],
-  isKeyEmpty: (key: Key) => boolean
+  isKeyEmpty: (key: Key) => boolean,
 ): Key[] {
   const isKeySelected = (key: Key) => {
     return selectedKeysState[STATE_VAL].has(key);
@@ -127,7 +127,7 @@ export function KeySelection<Key>({
       {keySelectVisible &&
         createPortal(
           <div
-            className="z-50 absolute popup whitespace-nowrap w-fit pl-1 pr-2"
+            className="popup absolute z-50 w-fit pr-2 pl-1 whitespace-nowrap"
             style={{ top: `${popupPosition.top}px`, left: `${popupPosition.left}px` }}
           >
             <button className="button" onClick={() => setKeySelectVisible(false)}>
@@ -146,7 +146,7 @@ export function KeySelection<Key>({
               ))}
             </ul>
           </div>,
-          document.body
+          document.body,
         )}
     </div>
   );

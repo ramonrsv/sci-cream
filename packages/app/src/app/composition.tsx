@@ -16,7 +16,7 @@ function getCompKeys(): CompKey[] {
       // These values aren't very meaningful in a per-ingredient breakdown
       key !== CompKey.AbsPAC &&
       key !== CompKey.EmulsifiersPerFat &&
-      key !== CompKey.StabilizersPerWater
+      key !== CompKey.StabilizersPerWater,
   );
 }
 
@@ -49,7 +49,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
       mixTotal,
       mixTotal,
       qtyToggleState[STATE_VAL],
-      isCompKeyQuantity(comp_key)
+      isCompKeyQuantity(comp_key),
     );
   };
 
@@ -63,7 +63,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
           ingQty,
           mixTotal,
           qtyToggleState[STATE_VAL],
-          isCompKeyQuantity(comp_key)
+          isCompKeyQuantity(comp_key),
         )
       : "";
   };
@@ -72,7 +72,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
   const mixComposition = calculateMixComposition(recipeState);
 
   return (
-    <div id="ing-composition-grid" className="w-full min-w-50 grid-component std-component-h">
+    <div id="ing-composition-grid" className="grid-component std-component-h w-full min-w-50">
       <KeySelection
         qtyToggleComponent={{
           supportedQtyToggles: [QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage],
@@ -91,7 +91,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
             {/* Composition Header */}
             <tr className="h-6.25">
               {getEnabledComps().map((comp_key) => (
-                <th key={comp_key} className="table-header px-1 w-fit text-center">
+                <th key={comp_key} className="table-header w-fit px-1 text-center">
                   {comp_key_as_med_str_js(comp_key)}
                 </th>
               ))}
@@ -99,7 +99,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
             {/* Totals Row */}
             <tr className="h-6.25">
               {getEnabledComps().map((comp_key) => (
-                <td key={comp_key} className="table-header px-1 comp-val">
+                <td key={comp_key} className="table-header comp-val px-1">
                   {formattedTotalCell(comp_key)}
                 </td>
               ))}
@@ -110,7 +110,7 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
             {recipeState.map((_, index) => (
               <tr key={index} className="h-6.25">
                 {getEnabledComps().map((comp_key) => (
-                  <td key={comp_key} className="table-inner-cell px-1 comp-val">
+                  <td key={comp_key} className="table-inner-cell comp-val px-1">
                     {formattedCompCell(index, comp_key)}
                   </td>
                 ))}

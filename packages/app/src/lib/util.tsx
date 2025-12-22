@@ -22,7 +22,7 @@ export function getWasmEnums<E extends object>(enumObj: E): E[] {
 export function standardInputStepByPercent(
   current: number | undefined,
   stepPercent: number = 5,
-  maxStep: number = 100
+  maxStep: number = 100,
 ): string {
   const validIncrements = [0.01, 0.05, 0.1, 0.25, 0.5, 1, 2, 5, 10, 25, 50, 100];
   const lastIdx = validIncrements.length - 1;

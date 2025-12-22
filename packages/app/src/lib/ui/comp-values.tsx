@@ -9,7 +9,7 @@ export function padToFixedDecimalPosition(
   num: number,
   decimals: number,
   left_pad_digits: number,
-  right_pad_digits: number
+  right_pad_digits: number,
 ) {
   const parts = Number(num.toFixed(decimals)).toString().split(".");
   parts[0] = parts[0].padStart(left_pad_digits, " ");
@@ -25,12 +25,12 @@ export function formatCompositionValue(num: number | undefined) {
   return num === undefined
     ? ""
     : Number.isNaN(num)
-    ? "-"
-    : num >= 1000
-    ? padToFixedDecimalPosition(num / 1000, 1, 3, 1) + "k"
-    : num < 10
-    ? padToFixedDecimalPosition(num, 2, 3, 2)
-    : padToFixedDecimalPosition(num, 1, 3, 2);
+      ? "-"
+      : num >= 1000
+        ? padToFixedDecimalPosition(num / 1000, 1, 3, 1) + "k"
+        : num < 10
+          ? padToFixedDecimalPosition(num, 2, 3, 2)
+          : padToFixedDecimalPosition(num, 1, 3, 2);
 }
 
 export function applyQtyToggle(
@@ -38,7 +38,7 @@ export function applyQtyToggle(
   ingQty: number | undefined,
   mixTotal: number | undefined,
   qtyToggle: QtyToggle,
-  isQty: boolean
+  isQty: boolean,
 ): number | undefined {
   if (comp !== 0.0) {
     if (!isQty) {
@@ -61,7 +61,7 @@ export function applyQtyToggleAndFormat(
   ingQty: number | undefined,
   mixTotal: number | undefined,
   qtyToggle: QtyToggle,
-  isQty: boolean
+  isQty: boolean,
 ): string {
   return formatCompositionValue(applyQtyToggle(comp, ingQty, mixTotal, qtyToggle, isQty));
 }

@@ -39,7 +39,7 @@ function getPropKeys(): PropKey[] {
   return getPropKeysAll().filter(
     (key) =>
       // These values make the scale hard to read in a chart
-      key !== CompKey[CompKey.Water] && key !== FpdKey[FpdKey.HardnessAt14C]
+      key !== CompKey[CompKey.Water] && key !== FpdKey[FpdKey.HardnessAt14C],
   );
 }
 
@@ -66,7 +66,7 @@ export function MixPropertiesChart({ recipeStates }: { recipeStates: RecipeState
   const getPropertyValue = (
     prop_key: PropKey,
     mixProperties: MixProperties,
-    mixTotal: number
+    mixTotal: number,
   ): number => {
     return (
       applyQtyToggle(
@@ -74,7 +74,7 @@ export function MixPropertiesChart({ recipeStates }: { recipeStates: RecipeState
         mixTotal,
         mixTotal,
         qtyToggle,
-        isPropKeyQuantity(prop_key)
+        isPropKeyQuantity(prop_key),
       ) || 0
     );
   };
@@ -104,7 +104,7 @@ export function MixPropertiesChart({ recipeStates }: { recipeStates: RecipeState
       return {
         label: recipeIdx == 0 ? "Recipe" : `Ref ${recipeIdx}`,
         data: enabledProps.map((prop_key) =>
-          Math.abs(getPropertyValue(prop_key, mixProperties, mixTotal))
+          Math.abs(getPropertyValue(prop_key, mixProperties, mixTotal)),
         ),
         backgroundColor: colorsByIdx[recipeIdx].background,
         borderColor: colorsByIdx[recipeIdx].border,
@@ -130,23 +130,18 @@ export function MixPropertiesChart({ recipeStates }: { recipeStates: RecipeState
         },
       },
     },
-    scales: {
-      y: {
-        beginAtZero: true,
-        title: { display: true, text: qtyToggle },
-      },
-    },
+    scales: { y: { beginAtZero: true, title: { display: true, text: qtyToggle } } },
   };
 
   return (
-    <div id="mix-properties-chart" className="relative w-full h-full grid-component">
+    <div id="mix-properties-chart" className="grid-component relative h-full w-full">
       <KeySelection
         keyFilterState={propsFilterState}
         selectedKeysState={selectedPropsState}
         getKeys={getPropKeys}
         key_as_med_str_js={prop_key_as_med_str_js}
       />
-      <div className="component-inner-border p-3 h-[calc(100%-36px)]">
+      <div className="component-inner-border h-[calc(100%-36px)] p-3">
         <Bar data={chartData} options={options} />
       </div>
     </div>

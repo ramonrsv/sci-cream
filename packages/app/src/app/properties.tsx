@@ -63,7 +63,7 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
       mixTotal,
       mixTotal,
       qtyToggleState[STATE_VAL],
-      isPropKeyQuantity(prop_key)
+      isPropKeyQuantity(prop_key),
     );
   };
 
@@ -84,7 +84,7 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
     .filter(({ recipeIdx, mixTotal }) => recipeIdx == 0 || mixTotal > 0);
 
   return (
-    <div id="mix-properties-grid" className="w-full h-full grid-component">
+    <div id="mix-properties-grid" className="grid-component h-full w-full">
       <KeySelection
         qtyToggleComponent={{
           supportedQtyToggles: [QtyToggle.Quantity, QtyToggle.Percentage],
@@ -97,7 +97,7 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
       />
       <div
         ref={containerRef}
-        className={`min-w-55 overflow-y-auto whitespace-nowrap component-inner-border`}
+        className={`component-inner-border min-w-55 overflow-y-auto whitespace-nowrap`}
         style={{ height: `calc(100% - ${thereIsHorizontalScroll() ? 18 : 33}px)` }}
       >
         <table className="relative -top-px">
@@ -118,7 +118,7 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
                   {prop_key_as_med_str_js(prop_key)}
                 </td>
                 {nonEmptyRecipes.map(({ recipeIdx, mixProperties, mixTotal }) => (
-                  <td key={recipeIdx} className="table-inner-cell min-w-12.5 px-2 comp-val">
+                  <td key={recipeIdx} className="table-inner-cell comp-val min-w-12.5 px-2">
                     {formattedPropCell(prop_key, mixProperties, mixTotal)}
                   </td>
                 ))}

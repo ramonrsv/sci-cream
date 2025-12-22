@@ -21,7 +21,7 @@ export const ingredientsTable = pgTable(
     category: categoryEnum(),
     spec: json(),
   },
-  (table) => [primaryKey({ columns: [table.name, table.user] })]
+  (table) => [primaryKey({ columns: [table.name, table.user] })],
 );
 
 export type User = typeof usersTable.$inferInsert;
