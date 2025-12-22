@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 
 import { RecipeState, getMixTotal, calculateMixProperties } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
@@ -34,7 +34,20 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
 
+  const [hasHorizontalScroll, setHasHorizontalScroll] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+
+  const updateScrollStatus = () => {
+    if (containerRef.current) {
+      setHasHorizontalScroll(containerRef.current.scrollWidth > containerRef.current.clientWidth);
+    }
+  };
+
+  useEffect(() => {
+    updateScrollStatus();
+    window.addEventListener("resize", updateScrollStatus);
+    return () => window.removeEventListener("resize", updateScrollStatus);
+  }, [recipeStates, selectedPropsState, qtyToggleState, propsFilterState]);
 
   const isPropEmpty = (prop_key: PropKey) => {
     // All PropKeys are considered to be empty if all recipes are empty
@@ -67,12 +80,6 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
     );
   };
 
-  const thereIsHorizontalScroll = () => {
-    return containerRef.current
-      ? containerRef.current.scrollWidth > containerRef.current.clientWidth
-      : false;
-  };
-
   const nonEmptyRecipes = recipeStates
     .map((recipeState, index) => {
       return {
@@ -98,7 +105,7 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
       <div
         ref={containerRef}
         className={`component-inner-border min-w-55 overflow-y-auto whitespace-nowrap`}
-        style={{ height: `calc(100% - ${thereIsHorizontalScroll() ? 18 : 33}px)` }}
+        style={{ height: `calc(100% - ${hasHorizontalScroll ? 18 : 33}px)` }}
       >
         <table className="relative -top-px">
           <thead>
