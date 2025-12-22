@@ -32,7 +32,6 @@ import {
   prop_key_as_med_str_js,
 } from "@workspace/sci-cream";
 
-// Register Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
 function getPropKeys(): PropKey[] {
@@ -111,7 +110,6 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
         ),
         backgroundColor: colorsByIdx[recipe.index].background,
         borderColor: colorsByIdx[recipe.index].border,
-        borderWidth: 1,
         maxBarThickness: 40,
         categoryPercentage: 0.6,
         barPercentage: 0.8,
@@ -144,7 +142,7 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
         getKeys={getPropKeys}
         key_as_med_str_js={prop_key_as_med_str_js}
       />
-      <div className="component-inner-border h-[calc(100%-36px)] p-3">
+      <div className="component-inner-border h-[calc(100%-24px)] p-3">
         <Bar data={chartData} options={options} />
       </div>
     </div>

@@ -14,6 +14,7 @@ import { RecipeGrid, makeEmptyRecipeContext } from "./recipe";
 import { IngredientCompositionGrid } from "./composition";
 import { MixPropertiesGrid } from "./properties";
 import { MixPropertiesChart } from "./properties-chart";
+import { FpdGraph } from "./fpd-graph";
 
 export const MAX_RECIPES = 3;
 export const RECIPE_TOTAL_ROWS = 20;
@@ -48,7 +49,8 @@ export default function Home() {
     { i: "recipe",      x:  0, y: 0, w:  4, h, maxW: 4, isResizable: false },
     { i: "properties",  x:  4, y: 0, w:  3, h, minW: 3, maxW: 4, resizeHandles: ["e", "s"] as RHA[] },
     { i: "composition", x:  7, y: 0, w:  5, h, minH: h, resizeHandles: ["e"] as RHA[] },
-    { i: "chart",       x:  4, y: 1, w:  6, h: h, resizeHandles: ["e", "s"] as RHA[] },
+    { i: "props-chart", x:  0, y: 1, w:  6, h, resizeHandles: ["e", "s"] as RHA[] },
+    { i: "fpd-graph",   x:  6, y: 1, w:  6, h, resizeHandles: ["e", "s"] as RHA[] },
     { i: "refs",        x:  0, y: 2, w:  4, h, isResizable: false },
   ];
 
@@ -65,8 +67,9 @@ export default function Home() {
             <div key="recipe">{<RecipeGrid prop={{ ctx: recipeCtxState, indices: [0] }} />}</div>
             <div key="properties">{<MixPropertiesGrid recipes={recipes} />}</div>
             <div key="composition">{<IngredientCompositionGrid recipe={recipes[0]} />}</div>
+            <div key="props-chart">{<MixPropertiesChart recipes={recipes} />}</div>
+            <div key="fpd-graph">{<FpdGraph recipes={recipes} />}</div>
             <div key="refs">{<RecipeGrid prop={{ ctx: recipeCtxState, indices: [1, 2] }} />}</div>
-            <div key="chart">{<MixPropertiesChart recipes={recipes} />}</div>
           </ReactGridLayout>
         )}
       </div>
