@@ -39,8 +39,18 @@ export function IngredientCompositionGrid({ recipe }: { recipe: Recipe }) {
     });
   };
 
+  const autoHeuristic = (comp_key: CompKey) => {
+    return isPropEmpty(comp_key) === false;
+  };
+
   const getEnabledComps = () => {
-    return getEnabledKeys(compsFilterState, selectedCompsState, getCompKeys, isPropEmpty);
+    return getEnabledKeys(
+      compsFilterState,
+      selectedCompsState,
+      getCompKeys,
+      isPropEmpty,
+      autoHeuristic,
+    );
   };
 
   const formattedTotalCell = (comp_key: CompKey) => {

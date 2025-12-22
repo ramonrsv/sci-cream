@@ -18,10 +18,21 @@ import {
 
 export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   CompKey[CompKey.MilkFat],
+  CompKey[CompKey.EggFat],
+  CompKey[CompKey.CacaoFat],
+  CompKey[CompKey.NutFat],
+  CompKey[CompKey.OtherFat],
   CompKey[CompKey.TotalFat],
   CompKey[CompKey.MSNF],
-  CompKey[CompKey.Sugars],
+  CompKey[CompKey.EggSNF],
+  CompKey[CompKey.CocoaSNF],
+  CompKey[CompKey.NutSNF],
+  CompKey[CompKey.TotalSNF],
+  CompKey[CompKey.TotalSNFS],
   CompKey[CompKey.TotalSolids],
+  CompKey[CompKey.Water],
+  CompKey[CompKey.Sugars],
+  CompKey[CompKey.ArtificialSweeteners],
   CompKey[CompKey.PACtotal],
   CompKey[CompKey.AbsPAC],
   FpdKey[FpdKey.FPD],
@@ -65,8 +76,18 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
     return true;
   };
 
+  const autoHeuristic = (prop_key: PropKey) => {
+    return DEFAULT_SELECTED_PROPERTIES.has(prop_key);
+  };
+
   const getEnabledProps = () => {
-    return getEnabledKeys(propsFilterState, selectedPropsState, getPropKeys, isPropEmpty);
+    return getEnabledKeys(
+      propsFilterState,
+      selectedPropsState,
+      getPropKeys,
+      isPropEmpty,
+      autoHeuristic,
+    );
   };
 
   const formattedPropCell = (prop_key: PropKey, mixProperties: MixProperties, mixTotal: number) => {

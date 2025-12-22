@@ -59,8 +59,18 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
     return true;
   };
 
+  const autoHeuristic = (prop_key: PropKey) => {
+    return DEFAULT_SELECTED_PROPERTIES.has(prop_key);
+  };
+
   const getEnabledProps = () => {
-    return getEnabledKeys(propsFilterState, selectedPropsState, getPropKeys, isPropEmpty);
+    return getEnabledKeys(
+      propsFilterState,
+      selectedPropsState,
+      getPropKeys,
+      isPropEmpty,
+      autoHeuristic,
+    );
   };
 
   const getPropertyValue = (

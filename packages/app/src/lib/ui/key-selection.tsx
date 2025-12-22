@@ -25,6 +25,7 @@ export function getEnabledKeys<Key>(
   selectedKeysState: [Set<Key>, React.Dispatch<React.SetStateAction<Set<Key>>>],
   getKeys: () => Key[],
   isKeyEmpty: (key: Key) => boolean,
+  autoHeuristic: (key: Key) => boolean,
 ): Key[] {
   const isKeySelected = (key: Key) => {
     return selectedKeysState[STATE_VAL].has(key);
@@ -34,6 +35,7 @@ export function getEnabledKeys<Key>(
     case KeyFilter.All:
       return getKeys();
     case KeyFilter.Auto:
+      return getKeys().filter((key) => autoHeuristic(key));
     case KeyFilter.NonZero:
       return getKeys().filter((key) => !isKeyEmpty(key));
     case KeyFilter.Custom:
