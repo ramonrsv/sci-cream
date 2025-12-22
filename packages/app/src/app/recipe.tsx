@@ -1,6 +1,6 @@
 "use client";
 
-import { use, useState } from "react";
+import { useState } from "react";
 
 import { fetchIngredientSpec, IngredientTransfer } from "../lib/data";
 import { formatCompositionValue } from "../lib/ui/comp-values";
