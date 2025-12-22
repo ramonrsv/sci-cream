@@ -139,18 +139,15 @@ export function RecipeGrid({
           ? undefined
           : parseFloat(quantityStr);
 
-    if (row.name !== "" && validIngredients.includes(row.name)) {
+    const isValidIngredient = row.name !== "" && validIngredients.includes(row.name);
+    updateRecipe({ ...row, ingredient: isValidIngredient ? row.ingredient : undefined });
+
+    if (isValidIngredient && (row.ingredient === undefined || row.ingredient.name !== row.name)) {
       cachedFetchIngredientSpec(row.name)
         .then((spec) => (spec ? into_ingredient_from_spec_js(spec.spec) : undefined))
-        .then((ing) => {
-          row.ingredient = ing;
-        })
-        .finally(() => {
-          updateRecipe(row);
+        .then((ingredient) => {
+          updateRecipe({ ...row, ingredient });
         });
-    } else {
-      row.ingredient = undefined;
-      updateRecipe(row);
     }
   };
 
