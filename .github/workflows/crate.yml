@@ -95,9 +95,9 @@ jobs:
       - uses: actions/checkout@v5
       - name: Installing pnpm
         run: npm install -g pnpm
-      - name: Installing eslint
-        run: pnpm install -D eslint
-      - name: Run ESLint check
+      - name: Installing dependencies, ESLint and plugins
+        run: pnpm install
+      - name: Running ESLint check
         run: pnpm run lint:js
 
   prettier:
@@ -106,7 +106,7 @@ jobs:
       - uses: actions/checkout@v5
       - name: Installing pnpm
         run: npm install -g pnpm
-      - name: Install prettier
+      - name: Installing prettier
         run: pnpm install -D prettier prettier-plugin-tailwindcss
-      - name: Run Prettier check
+      - name: Running Prettier check
         run: pnpm run prettier
