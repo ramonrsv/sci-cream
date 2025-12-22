@@ -35,9 +35,9 @@ describe("Home Page", () => {
     expect(screen.getByText("Ice Cream Recipe Calculator")).toBeInTheDocument();
   });
 
-  it("should render three RecipeGrid components", () => {
+  it("should render two RecipeGrid components", () => {
     const { container } = render(<Home />);
-    expect(container.querySelectorAll("#recipe-grid").length).toBe(3);
+    expect(container.querySelectorAll("#recipe-grid").length).toBe(2);
   });
 
   it("should render one MixPropertiesGrid components", () => {

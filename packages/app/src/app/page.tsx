@@ -10,7 +10,7 @@ import { useState, useEffect } from "react";
 
 import { fetchValidIngredientNames } from "../lib/data";
 
-import { RecipeGrid, makeEmptyRecipesData } from "./recipe";
+import { RecipeGrid, makeEmptyRecipeContext } from "./recipe";
 import { IngredientCompositionGrid } from "./composition";
 import { MixPropertiesGrid } from "./properties";
 import { MixPropertiesChart } from "./properties-chart";
@@ -29,13 +29,13 @@ const STD_COMPONENT_H = 153.75; // eslint-disable-line @typescript-eslint/no-unu
 export default function Home() {
   const { width, containerRef, mounted } = useContainerWidth();
 
-  const recipeDataState = useState(() => makeEmptyRecipesData());
-  const [recipeData, setRecipeData] = recipeDataState;
-  const recipes = recipeData.recipes;
+  const recipeCtxState = useState(() => makeEmptyRecipeContext());
+  const [recipeContext, setRecipeContext] = recipeCtxState;
+  const recipes = recipeContext.recipes;
 
   useEffect(() => {
     fetchValidIngredientNames().then((names) =>
-      setRecipeData((prev) => ({ ...prev, validIngredients: names })),
+      setRecipeContext((prev) => ({ ...prev, validIngredients: names })),
     );
     // We only want to call this once on the initial mount
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -49,13 +49,11 @@ export default function Home() {
 
   // prettier-ignore
   const layout = [
-    { i: "recipe-0",    x:  0, y: 0, w:  8, h, isResizable: false },
+    { i: "recipe",      x:  0, y: 0, w:  8, h, isResizable: false },
     { i: "properties",  x:  8, y: 0, w:  6, h, minW: 5, resizeHandles: ["e", "s"] as RHA[] },
-    { i: "composition", x: 14, y: 0, w:  9, h, minH: h, resizeHandles: ["e"] as RHA[] },
-    { i: "chart",       x: 8,  y: 1, w: 15, h, resizeHandles: ["e", "s"] as RHA[] },
-
-    { i: "recipe-a",    x:  0, y: 1, w:  8, h, isResizable: false },
-    { i: "recipe-b",    x:  0, y: 2, w:  8, h, isResizable: false },
+    { i: "composition", x: 14, y: 0, w: 10, h, minH: h, resizeHandles: ["e"] as RHA[] },
+    { i: "refs",        x:  0, y: 1, w:  8, h, isResizable: false },
+    { i: "chart",       x:  8, y: 1, w: 16, h, resizeHandles: ["e", "s"] as RHA[] },
   ];
 
   return (
@@ -68,13 +66,11 @@ export default function Home() {
             width={width}
             gridConfig={{ cols: cols, rowHeight: ROW_HEIGHT, margin: [20, 10] }}
           >
-            <div key="recipe-0">{<RecipeGrid recipesDataState={recipeDataState} index={0} />}</div>
+            <div key="recipe">{<RecipeGrid prop={{ ctx: recipeCtxState, indices: [0] }} />}</div>
             <div key="properties">{<MixPropertiesGrid recipes={recipes} />}</div>
             <div key="composition">{<IngredientCompositionGrid recipe={recipes[0]} />}</div>
+            <div key="refs">{<RecipeGrid prop={{ ctx: recipeCtxState, indices: [1, 2] }} />}</div>
             <div key="chart">{<MixPropertiesChart recipes={recipes} />}</div>
-
-            <div key="recipe-a">{<RecipeGrid recipesDataState={recipeDataState} index={1} />}</div>
-            <div key="recipe-b">{<RecipeGrid recipesDataState={recipeDataState} index={2} />}</div>
           </ReactGridLayout>
         )}
       </div>

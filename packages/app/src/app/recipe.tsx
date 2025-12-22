@@ -1,5 +1,7 @@
 "use client";
 
+import { use, useState } from "react";
+
 import { fetchIngredientSpec, IngredientTransfer } from "../lib/data";
 import { formatCompositionValue } from "../lib/ui/comp-values";
 import { standardInputStepByPercent } from "../lib/util";
@@ -30,15 +32,18 @@ export interface Recipe {
   mixProperties: MixProperties;
 }
 
-export interface RecipesData {
+export interface RecipeContext {
   validIngredients: string[];
   ingredientCache: Map<string, IngredientTransfer>;
   recipes: Recipe[];
 }
 
-export type RecipesDataState = [RecipesData, React.Dispatch<React.SetStateAction<RecipesData>>];
+export type RecipeContextState = [
+  RecipeContext,
+  React.Dispatch<React.SetStateAction<RecipeContext>>,
+];
 
-export function makeEmptyRecipesData(): RecipesData {
+export function makeEmptyRecipeContext(): RecipeContext {
   return {
     validIngredients: [],
     ingredientCache: new Map<string, IngredientTransfer>(),
@@ -88,14 +93,17 @@ export function calculateMixProperties(recipe: Recipe): MixProperties {
 }
 
 export function RecipeGrid({
-  recipesDataState: [recipesData, setRecipesData],
-  index,
+  prop: {
+    ctx: [recipeContext, setRecipeContext],
+    indices,
+  },
 }: {
-  recipesDataState: RecipesDataState;
-  index: number;
+  prop: { ctx: RecipeContextState; indices: number[] };
 }) {
-  const { validIngredients, ingredientCache, recipes } = recipesData;
-  const recipe = recipes[index];
+  const { validIngredients, ingredientCache, recipes } = recipeContext;
+  const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(indices[0]);
+
+  const recipe = recipes[currentRecipeIdx];
 
   const cachedFetchIngredientSpec = async (
     name: string,
@@ -104,7 +112,7 @@ export function RecipeGrid({
       await fetchIngredientSpec(name).then((spec) => {
         if (spec) {
           ingredientCache.set(name, spec);
-          setRecipesData({ ...recipesData, ingredientCache });
+          setRecipeContext({ ...recipeContext, ingredientCache });
         }
       });
     }
@@ -120,8 +128,10 @@ export function RecipeGrid({
       ? new MixProperties()
       : calculateMixProperties(newRecipe);
 
-    const recipes = recipesData.recipes.map((r) => (r.index === index ? newRecipe : r));
-    setRecipesData({ ...recipesData, recipes });
+    const recipes = recipeContext.recipes.map((r) =>
+      r.index === currentRecipeIdx ? newRecipe : r,
+    );
+    setRecipeContext({ ...recipeContext, recipes });
   };
 
   const updateIngredientRow = (
@@ -209,16 +219,32 @@ export function RecipeGrid({
   return (
     <div id="recipe-grid" className="grid-component std-component-h">
       <div>
-        <button onClick={copyRecipe} className="button px-1">
-          Copy
-        </button>
-        <button onClick={pasteRecipe} className="button ml-2 px-1">
-          Paste
-        </button>
-        <button onClick={clearRecipe} className="button ml-2 px-1">
-          Clear
-        </button>
+        {/* Recipe Selector */}
+        <select
+          value={currentRecipeIdx}
+          onChange={(e) => setCurrentRecipeIdx(parseInt(e.target.value))}
+          className="select-input w-20 text-center"
+        >
+          {indices.map((idx) => (
+            <option key={idx} value={idx}>
+              {recipes[idx].name}
+            </option>
+          ))}
+        </select>
+        {/* Action Buttons */}
+        <div className="float-right">
+          {[
+            { label: "Copy", action: copyRecipe },
+            { label: "Paste", action: pasteRecipe },
+            { label: "Clear", action: clearRecipe },
+          ].map(({ label, action }) => (
+            <button key={label} onClick={action} className="button ml-2 px-1">
+              {label}
+            </button>
+          ))}
+        </div>
       </div>
+      {/* Hidden Ingredients List */}
       <datalist id="valid-ingredients">
         {validIngredients.map((name) => (
           <option key={name} value={name} />
