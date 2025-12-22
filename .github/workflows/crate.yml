@@ -1,7 +1,8 @@
 # This workflow will install Rust toolchain dependencies, build the `packages/sci-cream` crate, run
 # tests, build docs, run clippy, run rustfmt, run benchmarks, and generate code coverage reports and
-# upload them to Codecov. The "wasm" and "diesel" features are also tested independently, since they
-# are mutually exclusive. This workflow runs on push and pull requests to the `main` branch.
+# upload them to Codecov. It will also install `wasm-pack` and Node.js, build the WebAssembly/Wasm
+# `packages/sci-cream` package, run vitest tests, lint via ESLint, and run Prettier checks. This
+# workflow runs on push and pull requests to the `main` branch.
 #
 # This workflow can be run locally using `act`, e.g. by running the following from the root:
 #   `act --reuse --workflows ./.github/workflows/crate.yml`
@@ -64,3 +65,37 @@ jobs:
           toolchain: stable
           components: rustfmt
       - run: cargo fmt --all -- --check
+
+  pnpm_build_test_and_lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@master
+        with:
+          toolchain: stable
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - name: Installing pnpm
+        run: npm install -g pnpm
+      - name: Install dependencies
+        run: pnpm install
+      - name: Installing wasm-pack
+        run: cargo install wasm-pack
+      - name: Building wasm package
+        run: pnpm run build:wasm
+      - name: Running `vite build`
+        run: pnpm run build:js
+      - name: Running `vitest` tests
+        run: pnpm run test:js
+      - name: Running ESLint
+        run: pnpm run lint:js
+
+  prettier_ts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Install prettier
+        run: npm install -D prettier prettier-plugin-tailwindcss
+      - name: Run Prettier check
+        run: npx prettier --check ./src/ts
