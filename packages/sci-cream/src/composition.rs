@@ -605,10 +605,7 @@ impl Composition {
     pub fn absolute_pac(&self) -> f64 {
         self.pac.absolute(self.water())
     }
-}
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-impl Composition {
     pub fn get(&self, key: CompKey) -> f64 {
         match key {
             CompKey::MilkFat => self.solids.milk.fats,

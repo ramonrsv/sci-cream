@@ -56,6 +56,13 @@ pub struct MixProperties {
 }
 
 impl MixProperties {
+    pub fn empty() -> Self {
+        Self {
+            composition: Composition::empty(),
+            fpd: FPD::empty(),
+        }
+    }
+
     pub fn get(&self, key: PropKey) -> f64 {
         match key {
             PropKey::CompKey(comp_key) => self.composition.get(comp_key),
@@ -64,14 +71,18 @@ impl MixProperties {
     }
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+impl MixProperties {
+    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    pub fn new() -> Self {
+        Self::empty()
+    }
+}
+
 pub fn calculate_mix_properties(composition_lines: &[CompositionLine]) -> MixProperties {
     MixProperties {
         composition: calculate_mix_composition(composition_lines),
-        fpd: FPD {
-            fpd: -3.0,
-            serving_temp: -14.0,
-            hardness_at_14c: 75.0,
-        },
+        fpd: FPD::empty(),
     }
 }
 #[cfg(feature = "wasm")]
@@ -90,6 +101,12 @@ pub mod js {
         calculate_mix_properties(
             &serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(composition_lines).unwrap(),
         )
+    }
+}
+
+impl Default for MixProperties {
+    fn default() -> Self {
+        Self::empty()
     }
 }
 
