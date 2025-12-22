@@ -16,15 +16,15 @@ import { MixPropertiesGrid } from "./properties";
 import { MixPropertiesChart } from "./properties-chart";
 
 export const MAX_RECIPES = 3;
-export const RECIPE_TOTAL_ROWS = 21;
+export const RECIPE_TOTAL_ROWS = 20;
 
 // These values are carefully chosen so that the component and grid container heights match exactly,
 // and so that there is enough margin after the components to accommodate a possible scrollbar.
 // @todo `pnpm build` fails if these values are exported. Also, importing and using something like
 // `h-${STD_COMPONENT_H}` in the component divs className intermittently fails to apply the height
 // correctly; need to investigate further. For now, use the `component-h` class in globals.css.
-const REACT_GRID_COMPONENT_HEIGHT = 10.41;
-const STD_COMPONENT_H = 153.75; // eslint-disable-line @typescript-eslint/no-unused-vars
+const REACT_GRID_COMPONENT_HEIGHT = 3.6;
+const STD_COMPONENT_H = 148; // eslint-disable-line @typescript-eslint/no-unused-vars
 
 export default function Home() {
   const { width, containerRef, mounted } = useContainerWidth();
@@ -41,30 +41,26 @@ export default function Home() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const COLUMN_WIDTH = 50;
-  const ROW_HEIGHT = 50;
-
-  const cols = Math.floor(width / COLUMN_WIDTH);
   const h = REACT_GRID_COMPONENT_HEIGHT;
 
   // prettier-ignore
   const layout = [
-    { i: "recipe",      x:  0, y: 0, w:  8, h, isResizable: false },
-    { i: "properties",  x:  8, y: 0, w:  6, h, minW: 5, resizeHandles: ["e", "s"] as RHA[] },
-    { i: "composition", x: 14, y: 0, w: 10, h, minH: h, resizeHandles: ["e"] as RHA[] },
-    { i: "refs",        x:  0, y: 1, w:  8, h, isResizable: false },
-    { i: "chart",       x:  8, y: 1, w: 16, h, resizeHandles: ["e", "s"] as RHA[] },
+    { i: "recipe",      x:  0, y: 0, w:  4, h, maxW: 4, isResizable: false },
+    { i: "properties",  x:  4, y: 0, w:  3, h, minW: 3, maxW: 4, resizeHandles: ["e", "s"] as RHA[] },
+    { i: "composition", x:  7, y: 0, w:  5, h, minH: h, resizeHandles: ["e"] as RHA[] },
+    { i: "chart",       x:  4, y: 1, w:  6, h: h, resizeHandles: ["e", "s"] as RHA[] },
+    { i: "refs",        x:  0, y: 2, w:  4, h, isResizable: false },
   ];
 
   return (
-    <main className="min-h-screen pt-3 pr-8 pl-8">
-      <h1 className="pl-8 text-2xl font-bold">Ice Cream Recipe Calculator</h1>
+    <main className="min-h-screen pr-8 pl-8">
+      <h1 className="pt-5 pb-2 pl-8 text-2xl font-bold">Ice Cream Recipe Calculator</h1>
       <div ref={containerRef}>
         {mounted && (
           <ReactGridLayout
             layout={layout}
             width={width}
-            gridConfig={{ cols: cols, rowHeight: ROW_HEIGHT, margin: [20, 10] }}
+            gridConfig={{ cols: 12, rowHeight: 150, margin: [20, 20] }}
           >
             <div key="recipe">{<RecipeGrid prop={{ ctx: recipeCtxState, indices: [0] }} />}</div>
             <div key="properties">{<MixPropertiesGrid recipes={recipes} />}</div>

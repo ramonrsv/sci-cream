@@ -43,7 +43,7 @@ body {
 
 /* See STD_COMPONENT_H in app/page.tsx */
 .std-component-h {
-  @apply h-153.75;
+  @apply h-148;
 }
 
 .grid-component {

@@ -250,15 +250,13 @@ export function RecipeGrid({
           <option key={name} value={name} />
         ))}
       </datalist>
-      <table className="component-inner-border">
+      <table className="component-inner-border w-full">
         {/* Header */}
         <thead>
           <tr className="h-6.25 text-center">
-            <th className="table-header w-81.25 min-w-62.5">Ingredient</th>
-            <th className="table-header w-15 min-w-15">Qty (g)</th>
-            <th className="table-header w-13.75 min-w-13.75 pr-1 pl-2 whitespace-nowrap">
-              Qty (%)
-            </th>
+            <th className="table-header min-w-62.5">Ingredient</th>
+            <th className="table-header w-15">Qty (g)</th>
+            <th className="table-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
           </tr>
           {/* Total Row */}
           <tr className="h-6.25">
