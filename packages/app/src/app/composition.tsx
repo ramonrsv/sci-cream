@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import { RecipeState, getMixTotal, calculateMixComposition } from "./recipe";
+import { IngredientRow, Recipe } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
 import { getCompKeys as getCompKeysAll, isCompKeyQuantity } from "../lib/sci-cream/sci-cream";
@@ -28,13 +28,13 @@ const DEFAULT_SELECTED_COMPS: Set<CompKey> = new Set([
   CompKey.TotalSolids,
 ]);
 
-export function IngredientCompositionGrid({ recipeState }: { recipeState: RecipeState }) {
+export function IngredientCompositionGrid({ recipe }: { recipe: Recipe }) {
   const qtyToggleState = useState<QtyToggle>(QtyToggle.Quantity);
   const compsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedCompsState = useState<Set<CompKey>>(DEFAULT_SELECTED_COMPS);
 
   const isPropEmpty = (comp_key: CompKey) => {
-    return recipeState.every(([row]) => {
+    return recipe.ingredientRows.every((row) => {
       return row.ingredient === undefined || row.ingredient.composition?.get(comp_key) === 0.0;
     });
   };
@@ -45,31 +45,25 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
 
   const formattedTotalCell = (comp_key: CompKey) => {
     return applyQtyToggleAndFormat(
-      mixComposition.get(comp_key),
-      mixTotal,
-      mixTotal,
+      recipe.mixProperties.composition.get(comp_key),
+      recipe.mixTotal,
+      recipe.mixTotal,
       qtyToggleState[STATE_VAL],
       isCompKeyQuantity(comp_key),
     );
   };
 
-  const formattedCompCell = (index: number, comp_key: CompKey) => {
-    const ingredient = recipeState[index][STATE_VAL].ingredient;
-    const ingQty = recipeState[index][STATE_VAL].quantity;
-
-    return ingredient && ingredient.composition
+  const formattedCompCell = (row: IngredientRow, comp_key: CompKey) => {
+    return row.ingredient && row.ingredient.composition
       ? applyQtyToggleAndFormat(
-          ingredient.composition.get(comp_key),
-          ingQty,
-          mixTotal,
+          row.ingredient.composition.get(comp_key),
+          row.quantity,
+          recipe.mixTotal,
           qtyToggleState[STATE_VAL],
           isCompKeyQuantity(comp_key),
         )
       : "";
   };
-
-  const mixTotal = getMixTotal(recipeState);
-  const mixComposition = calculateMixComposition(recipeState);
 
   return (
     <div id="ing-composition-grid" className="grid-component std-component-h w-full min-w-50">
@@ -107,11 +101,11 @@ export function IngredientCompositionGrid({ recipeState }: { recipeState: Recipe
           </thead>
           <tbody>
             {/* Composition Rows */}
-            {recipeState.map((_, index) => (
-              <tr key={index} className="h-6.25">
+            {recipe.ingredientRows.map((row) => (
+              <tr key={row.index} className="h-6.25">
                 {getEnabledComps().map((comp_key) => (
                   <td key={comp_key} className="table-inner-cell comp-val px-1">
-                    {formattedCompCell(index, comp_key)}
+                    {formattedCompCell(row, comp_key)}
                   </td>
                 ))}
               </tr>

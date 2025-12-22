@@ -2,7 +2,7 @@
 
 import { useState, useRef, useEffect } from "react";
 
-import { RecipeState, getMixTotal, calculateMixProperties } from "./recipe";
+import { Recipe, isRecipeEmpty } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
 import { PropKey, getPropKeys, isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
@@ -29,7 +29,7 @@ export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   FpdKey[FpdKey.HardnessAt14C],
 ]);
 
-export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[] }) {
+export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }) {
   const qtyToggleState = useState<QtyToggle>(QtyToggle.Percentage);
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
@@ -47,18 +47,17 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
     updateScrollStatus();
     window.addEventListener("resize", updateScrollStatus);
     return () => window.removeEventListener("resize", updateScrollStatus);
-  }, [recipeStates, selectedPropsState, qtyToggleState, propsFilterState]);
+  }, [allRecipes, selectedPropsState, qtyToggleState, propsFilterState]);
 
   const isPropEmpty = (prop_key: PropKey) => {
-    // All PropKeys are considered to be empty if all recipes are empty
-    // This handles values that are not zero for empty recipes, e.g. Water
-    // prettier-ignore
-    if (nonEmptyRecipes.every(({ mixTotal }) => { return mixTotal === 0; })) {
+    // All PropKeys are considered to be empty if all displayed recipes are empty
+    // This handles values that are not zero for empty recipes, e.g. PropKey.Water
+    if (recipes.every((recipe) => isRecipeEmpty(recipe))) {
       return true;
     }
 
-    for (const { mixProperties } of nonEmptyRecipes) {
-      const prop_val = getMixProperty(mixProperties, prop_key);
+    for (const recipe of recipes) {
+      const prop_val = getMixProperty(recipe.mixProperties!, prop_key);
       if (!(prop_val === 0 || Number.isNaN(prop_val))) {
         return false;
       }
@@ -80,15 +79,8 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
     );
   };
 
-  const nonEmptyRecipes = recipeStates
-    .map((recipeState, index) => {
-      return {
-        recipeIdx: index,
-        mixTotal: getMixTotal(recipeState) || 0,
-        mixProperties: calculateMixProperties(recipeState),
-      };
-    })
-    .filter(({ recipeIdx, mixTotal }) => recipeIdx == 0 || mixTotal > 0);
+  // Only display the main recipe and non-empty reference recipes
+  const recipes = allRecipes.filter((recipe) => recipe.index == 0 || !isRecipeEmpty(recipe));
 
   return (
     <div id="mix-properties-grid" className="grid-component h-full w-full">
@@ -111,9 +103,9 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
           <thead>
             <tr className="h-6.25">
               <th className="table-header w-full px-2">Property</th>
-              {nonEmptyRecipes.map(({ recipeIdx }) => (
-                <th key={recipeIdx} className="table-header px-2 text-center">
-                  {recipeIdx === 0 ? "Recipe" : `Ref ${recipeIdx}`}
+              {recipes.map((recipe) => (
+                <th key={recipe.index} className="table-header px-2 text-center">
+                  {recipe.name}
                 </th>
               ))}
             </tr>
@@ -124,9 +116,9 @@ export function MixPropertiesGrid({ recipeStates }: { recipeStates: RecipeState[
                 <td className="table-header w-full px-2 text-center">
                   {prop_key_as_med_str_js(prop_key)}
                 </td>
-                {nonEmptyRecipes.map(({ recipeIdx, mixProperties, mixTotal }) => (
-                  <td key={recipeIdx} className="table-inner-cell comp-val min-w-12.5 px-2">
-                    {formattedPropCell(prop_key, mixProperties, mixTotal)}
+                {recipes.map((recipe) => (
+                  <td key={recipe.index} className="table-inner-cell comp-val min-w-12.5 px-2">
+                    {formattedPropCell(prop_key, recipe.mixProperties!, recipe.mixTotal!)}
                   </td>
                 ))}
               </tr>

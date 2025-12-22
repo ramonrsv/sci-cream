@@ -1,10 +1,9 @@
 "use client";
 
-import { useEffect } from "react";
-
 import { fetchIngredientSpec, IngredientTransfer } from "../lib/data";
 import { formatCompositionValue } from "../lib/ui/comp-values";
-import { STATE_VAL, standardInputStepByPercent } from "../lib/util";
+import { standardInputStepByPercent } from "../lib/util";
+import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "./page";
 
 import {
   Ingredient,
@@ -17,63 +16,86 @@ import {
 } from "@workspace/sci-cream";
 
 export interface IngredientRow {
+  index: number;
   name: string;
-  quantity: number | undefined;
-  ingredient: Ingredient | undefined;
+  quantity?: number;
+  ingredient?: Ingredient;
 }
 
-export type IngredientRowState = [
-  IngredientRow,
-  React.Dispatch<React.SetStateAction<IngredientRow>>,
-];
+export interface Recipe {
+  index: number;
+  name: string;
+  ingredientRows: IngredientRow[];
+  mixTotal?: number;
+  mixProperties: MixProperties;
+}
 
-export type RecipeState = Array<IngredientRowState>;
-
-export interface RecipeGridProps {
-  recipeState: RecipeState;
+export interface RecipesData {
   validIngredients: string[];
-  ingredientCacheState: [
-    Map<string, IngredientTransfer>,
-    React.Dispatch<React.SetStateAction<Map<string, IngredientTransfer>>>,
-  ];
+  ingredientCache: Map<string, IngredientTransfer>;
+  recipes: Recipe[];
 }
 
-export function makeEmptyIngredientRow(): IngredientRow {
-  return { name: "", quantity: undefined, ingredient: undefined };
+export type RecipesDataState = [RecipesData, React.Dispatch<React.SetStateAction<RecipesData>>];
+
+export function makeEmptyRecipesData(): RecipesData {
+  return {
+    validIngredients: [],
+    ingredientCache: new Map<string, IngredientTransfer>(),
+    recipes: Array.from({ length: MAX_RECIPES }, (_, recipeIdx) => ({
+      index: recipeIdx,
+      name: recipeIdx === 0 ? "Recipe" : `Ref ${recipeIdx}`,
+      ingredientRows: Array.from({ length: RECIPE_TOTAL_ROWS }, (_, rowIdx) => ({
+        index: rowIdx,
+        name: "",
+        quantity: undefined,
+        ingredient: undefined,
+      })),
+      mixTotal: undefined,
+      mixProperties: new MixProperties(),
+    })),
+  };
 }
 
-export function getMixTotal(recipeState: RecipeState) {
-  return recipeState.reduce(
-    (sum: number | undefined, [row]) =>
+export function isRecipeEmpty(recipe: Recipe): boolean {
+  return recipe.mixTotal === undefined || recipe.mixTotal === 0;
+}
+
+export function calculateMixTotal(recipe: Recipe) {
+  return recipe.ingredientRows.reduce(
+    (sum: number | undefined, row) =>
       sum === undefined && row.quantity == undefined ? undefined : (sum || 0) + (row.quantity || 0),
     undefined,
   );
 }
 
-export function getCompositionLines(recipeState: RecipeState): CompositionLine[] {
-  return recipeState
-    .filter(([row]) => {
+export function getCompositionLines(recipe: Recipe): CompositionLine[] {
+  return recipe.ingredientRows
+    .filter((row) => {
       return row.ingredient !== undefined && row.quantity !== undefined;
     })
-    .map(([row]) => {
+    .map((row) => {
       return new CompositionLine(row.ingredient!.composition!, row.quantity!);
     });
 }
 
-export function calculateMixComposition(recipeState: RecipeState): Composition {
-  return calculate_mix_composition_js(getCompositionLines(recipeState));
+export function calculateMixComposition(recipe: Recipe): Composition {
+  return calculate_mix_composition_js(getCompositionLines(recipe));
 }
 
-export function calculateMixProperties(recipeState: RecipeState): MixProperties {
-  return calculate_mix_properties_js(getCompositionLines(recipeState));
+export function calculateMixProperties(recipe: Recipe): MixProperties {
+  return calculate_mix_properties_js(getCompositionLines(recipe));
 }
 
 export function RecipeGrid({
-  props: { recipeState, validIngredients, ingredientCacheState },
+  recipesDataState: [recipesData, setRecipesData],
+  index,
 }: {
-  props: RecipeGridProps;
+  recipesDataState: RecipesDataState;
+  index: number;
 }) {
-  const [ingredientCache, setIngredientCache] = ingredientCacheState;
+  const { validIngredients, ingredientCache, recipes } = recipesData;
+  const recipe = recipes[index];
 
   const cachedFetchIngredientSpec = async (
     name: string,
@@ -82,43 +104,54 @@ export function RecipeGrid({
       await fetchIngredientSpec(name).then((spec) => {
         if (spec) {
           ingredientCache.set(name, spec);
-          setIngredientCache(ingredientCache);
+          setRecipesData({ ...recipesData, ingredientCache });
         }
       });
     }
     return ingredientCache.get(name);
   };
 
-  recipeState.forEach((rowState) => {
-    const [row, setRow] = rowState;
+  const updateRecipe = (row: IngredientRow) => {
+    const newRecipe = { ...recipe };
+    newRecipe.ingredientRows[row.index] = row;
 
-    useEffect(() => {
-      if (row.name !== "" && validIngredients.includes(row.name)) {
-        cachedFetchIngredientSpec(row.name)
-          .then((spec) => (spec ? into_ingredient_from_spec_js(spec.spec) : undefined))
-          .then((ing) => setRow({ ...row, ingredient: ing }));
-      } else {
-        setRow({ ...row, ingredient: undefined });
-      }
-    }, [row.name, validIngredients]);
-  });
+    newRecipe.mixTotal = calculateMixTotal(newRecipe);
+    newRecipe.mixProperties = isRecipeEmpty(newRecipe)
+      ? new MixProperties()
+      : calculateMixProperties(newRecipe);
+
+    const recipes = recipesData.recipes.map((r) => (r.index === index ? newRecipe : r));
+    setRecipesData({ ...recipesData, recipes });
+  };
 
   const updateIngredientRow = (
     index: number,
     _name: string | undefined,
     quantityStr: string | undefined,
   ) => {
-    const [row, setRow] = recipeState[index];
+    const row = { ...recipe.ingredientRows[index] };
+    row.name = _name === undefined ? row.name : _name;
 
-    const name = _name === undefined ? row.name : _name;
-    const quantity =
+    row.quantity =
       quantityStr === undefined
         ? row.quantity
         : quantityStr === ""
           ? undefined
           : parseFloat(quantityStr);
 
-    setRow({ ...row, name, quantity });
+    if (row.name !== "" && validIngredients.includes(row.name)) {
+      cachedFetchIngredientSpec(row.name)
+        .then((spec) => (spec ? into_ingredient_from_spec_js(spec.spec) : undefined))
+        .then((ing) => {
+          row.ingredient = ing;
+        })
+        .finally(() => {
+          updateRecipe(row);
+        });
+    } else {
+      row.ingredient = undefined;
+      updateRecipe(row);
+    }
   };
 
   const updateIngredientRowName = (index: number, name: string) => {
@@ -130,14 +163,13 @@ export function RecipeGrid({
   };
 
   const copyRecipe = async () => {
-    const recipeData = recipeState
-      .map(([row]) => row)
+    const formattedRecipe = recipe.ingredientRows
       .filter((row) => row.name !== "" || row.quantity !== undefined)
       .map((row) => `${row.name}\t${row.quantity ?? ""}`)
       .join("\n");
 
-    if (recipeData) {
-      await navigator.clipboard.writeText(`Ingredient\tQty(g)\n${recipeData}`);
+    if (formattedRecipe) {
+      await navigator.clipboard.writeText(`Ingredient\tQty(g)\n${formattedRecipe}`);
     }
   };
 
@@ -146,15 +178,15 @@ export function RecipeGrid({
       const lines = (await navigator.clipboard.readText()).trim().split("\n");
       const lineOffset = lines[0]?.includes("Ingredient") ? 1 : 0;
 
-      if (lines.length - lineOffset > recipeState.length) {
+      if (lines.length - lineOffset > recipe.ingredientRows.length) {
         console.error("Pasted recipe has more rows than available in the recipe grid.");
         return;
       }
 
-      for (let idx = 0; idx < recipeState.length; idx++) {
-        const line = lines[idx + lineOffset]?.trim();
+      for (const row of recipe.ingredientRows) {
+        const line = lines[row.index + lineOffset]?.trim();
         if (!line) {
-          updateIngredientRow(idx, "", "");
+          updateIngredientRow(row.index, "", "");
           continue;
         }
 
@@ -162,7 +194,7 @@ export function RecipeGrid({
         const name = parts[0]?.trim() || "";
         const quantityStr = parts[1]?.trim() || "";
 
-        updateIngredientRow(idx, name, quantityStr);
+        updateIngredientRow(row.index, name, quantityStr);
       }
     } catch (err) {
       console.error("Failed to paste recipe:", err);
@@ -170,12 +202,12 @@ export function RecipeGrid({
   };
 
   const clearRecipe = () => {
-    for (let idx = 0; idx < recipeState.length; idx++) {
-      updateIngredientRow(idx, "", "");
+    for (const row of recipe.ingredientRows) {
+      updateIngredientRow(row.index, "", "");
     }
   };
 
-  const mixTotal = getMixTotal(recipeState);
+  const mixTotal = recipe.mixTotal;
 
   return (
     <div id="recipe-grid" className="grid-component std-component-h">
@@ -215,13 +247,13 @@ export function RecipeGrid({
         <tbody>
           {/* Ingredient Rows */}
           {/* @todo The ingredient/input rows are not respecting < h-6/[25px]; not sure why yet */}
-          {recipeState.map(([row], index) => (
-            <tr key={index} className="h-6.25">
+          {recipe.ingredientRows.map((row) => (
+            <tr key={row.index} className="h-6.25">
               <td className="table-inner-cell">
                 <input
                   type="search"
                   value={row.name}
-                  onChange={(e) => updateIngredientRowName(index, e.target.value)}
+                  onChange={(e) => updateIngredientRowName(row.index, e.target.value)}
                   className={`table-fillable-input ${
                     row.name === "" || validIngredients.includes(row.name)
                       ? "focus:ring-blue-400"
@@ -235,7 +267,7 @@ export function RecipeGrid({
                 <input
                   type="number"
                   value={row.quantity?.toString() || ""}
-                  onChange={(e) => updateIngredientRowQuantity(index, e.target.value)}
+                  onChange={(e) => updateIngredientRowQuantity(row.index, e.target.value)}
                   placeholder=""
                   step={standardInputStepByPercent(row.quantity, 2.5, 10)}
                   min={0}
@@ -243,10 +275,8 @@ export function RecipeGrid({
                 />
               </td>
               <td className="table-inner-cell comp-val px-1">
-                {recipeState[index][STATE_VAL].quantity && mixTotal
-                  ? formatCompositionValue(
-                      (recipeState[index][STATE_VAL].quantity / mixTotal) * 100,
-                    )
+                {row.quantity && mixTotal
+                  ? formatCompositionValue((row.quantity / mixTotal) * 100)
                   : ""}
               </td>
             </tr>

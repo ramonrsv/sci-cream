@@ -13,7 +13,7 @@ import {
   type TooltipItem,
 } from "chart.js";
 
-import { RecipeState, getMixTotal, calculateMixProperties } from "./recipe";
+import { Recipe, isRecipeEmpty } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { DEFAULT_SELECTED_PROPERTIES } from "./properties";
 import { applyQtyToggle, formatCompositionValue } from "../lib/ui/comp-values";
@@ -43,15 +43,15 @@ function getPropKeys(): PropKey[] {
   );
 }
 
-export function MixPropertiesChart({ recipeStates }: { recipeStates: RecipeState[] }) {
+export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] }) {
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
 
   const qtyToggle = QtyToggle.Percentage;
 
   const isPropEmpty = (prop_key: PropKey) => {
-    for (const { mixProperties } of nonEmptyRecipes) {
-      const prop_val = getMixProperty(mixProperties, prop_key);
+    for (const recipe of recipes) {
+      const prop_val = getMixProperty(recipe.mixProperties!, prop_key);
       if (!(prop_val === 0 || Number.isNaN(prop_val))) {
         return false;
       }
@@ -79,15 +79,8 @@ export function MixPropertiesChart({ recipeStates }: { recipeStates: RecipeState
     );
   };
 
-  const nonEmptyRecipes = recipeStates
-    .map((recipeState, index) => {
-      return {
-        recipeIdx: index,
-        mixTotal: getMixTotal(recipeState) || 0,
-        mixProperties: calculateMixProperties(recipeState),
-      };
-    })
-    .filter(({ recipeIdx, mixTotal }) => recipeIdx == 0 || mixTotal > 0);
+  // Only display the main recipe and non-empty reference recipes
+  const recipes = allRecipes.filter((recipe) => recipe.index == 0 || !isRecipeEmpty(recipe));
 
   const enabledProps = getEnabledProps();
   const labels = enabledProps.map((prop_key) => prop_key_as_med_str_js(prop_key));
@@ -100,14 +93,14 @@ export function MixPropertiesChart({ recipeStates }: { recipeStates: RecipeState
 
   const chartData = {
     labels,
-    datasets: nonEmptyRecipes.map(({ recipeIdx, mixTotal, mixProperties }) => {
+    datasets: recipes.map((recipe) => {
       return {
-        label: recipeIdx == 0 ? "Recipe" : `Ref ${recipeIdx}`,
+        label: recipe.name,
         data: enabledProps.map((prop_key) =>
-          Math.abs(getPropertyValue(prop_key, mixProperties, mixTotal)),
+          Math.abs(getPropertyValue(prop_key, recipe.mixProperties!, recipe.mixTotal!)),
         ),
-        backgroundColor: colorsByIdx[recipeIdx].background,
-        borderColor: colorsByIdx[recipeIdx].border,
+        backgroundColor: colorsByIdx[recipe.index].background,
+        borderColor: colorsByIdx[recipe.index].border,
         borderWidth: 1,
         maxBarThickness: 40,
         categoryPercentage: 0.6,

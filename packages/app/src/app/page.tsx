@@ -8,14 +8,14 @@ import {
 
 import { useState, useEffect } from "react";
 
-import { fetchValidIngredientNames, IngredientTransfer } from "../lib/data";
+import { fetchValidIngredientNames } from "../lib/data";
 
-import { IngredientRow, makeEmptyIngredientRow, RecipeGrid, RecipeGridProps } from "./recipe";
+import { RecipeGrid, makeEmptyRecipesData } from "./recipe";
 import { IngredientCompositionGrid } from "./composition";
 import { MixPropertiesGrid } from "./properties";
 import { MixPropertiesChart } from "./properties-chart";
 
-const MAX_RECIPES = 3;
+export const MAX_RECIPES = 3;
 export const RECIPE_TOTAL_ROWS = 21;
 
 // These values are carefully chosen so that the component and grid container heights match exactly,
@@ -29,17 +29,16 @@ const STD_COMPONENT_H = 153.75; // eslint-disable-line @typescript-eslint/no-unu
 export default function Home() {
   const { width, containerRef, mounted } = useContainerWidth();
 
-  const [validIngredients, setValidIngredients] = useState<string[]>([]);
-  const ingredientCacheState = useState<Map<string, IngredientTransfer>>(new Map());
-
-  const recipes = Array.from({ length: MAX_RECIPES }, () =>
-    Array.from({ length: RECIPE_TOTAL_ROWS }, () =>
-      useState<IngredientRow>(makeEmptyIngredientRow()),
-    ),
-  );
+  const recipeDataState = useState(() => makeEmptyRecipesData());
+  const [recipeData, setRecipeData] = recipeDataState;
+  const recipes = recipeData.recipes;
 
   useEffect(() => {
-    fetchValidIngredientNames().then((names) => setValidIngredients(names));
+    fetchValidIngredientNames().then((names) =>
+      setRecipeData((prev) => ({ ...prev, validIngredients: names })),
+    );
+    // We only want to call this once on the initial mount
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const COLUMN_WIDTH = 50;
@@ -59,14 +58,6 @@ export default function Home() {
     { i: "recipe-b",    x:  0, y: 2, w:  8, h, isResizable: false },
   ];
 
-  const recipeGridProps = (recipe_idx: number): RecipeGridProps => {
-    return {
-      recipeState: recipes[recipe_idx],
-      validIngredients: validIngredients,
-      ingredientCacheState: ingredientCacheState,
-    };
-  };
-
   return (
     <main className="min-h-screen pt-3 pr-8 pl-8">
       <h1 className="pl-8 text-2xl font-bold">Ice Cream Recipe Calculator</h1>
@@ -77,13 +68,13 @@ export default function Home() {
             width={width}
             gridConfig={{ cols: cols, rowHeight: ROW_HEIGHT, margin: [20, 10] }}
           >
-            <div key="recipe-0">{<RecipeGrid props={recipeGridProps(0)} />}</div>
-            <div key="properties">{<MixPropertiesGrid recipeStates={recipes} />}</div>
-            <div key="composition">{<IngredientCompositionGrid recipeState={recipes[0]} />}</div>
-            <div key="chart">{<MixPropertiesChart recipeStates={recipes} />}</div>
+            <div key="recipe-0">{<RecipeGrid recipesDataState={recipeDataState} index={0} />}</div>
+            <div key="properties">{<MixPropertiesGrid recipes={recipes} />}</div>
+            <div key="composition">{<IngredientCompositionGrid recipe={recipes[0]} />}</div>
+            <div key="chart">{<MixPropertiesChart recipes={recipes} />}</div>
 
-            <div key="recipe-a">{<RecipeGrid props={recipeGridProps(1)} />}</div>
-            <div key="recipe-b">{<RecipeGrid props={recipeGridProps(2)} />}</div>
+            <div key="recipe-a">{<RecipeGrid recipesDataState={recipeDataState} index={1} />}</div>
+            <div key="recipe-b">{<RecipeGrid recipesDataState={recipeDataState} index={2} />}</div>
           </ReactGridLayout>
         )}
       </div>
