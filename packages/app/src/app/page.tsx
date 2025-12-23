@@ -10,6 +10,7 @@ import { useState, useEffect } from "react";
 
 import { fetchValidIngredientNames } from "../lib/data";
 
+import { ThemeToggle } from "../lib/ui/theme-toggle";
 import { RecipeGrid, makeEmptyRecipeContext } from "./recipe";
 import { IngredientCompositionGrid } from "./composition";
 import { MixPropertiesGrid } from "./properties";
@@ -57,6 +58,9 @@ export default function Home() {
   return (
     <main className="min-h-screen pr-8 pl-8">
       <h1 className="pt-5 pb-2 pl-8 text-2xl font-bold">Ice Cream Recipe Calculator</h1>
+      <div className="fixed top-5 right-5 z-50">
+        <ThemeToggle />
+      </div>
       <div ref={containerRef}>
         {mounted && (
           <ReactGridLayout
