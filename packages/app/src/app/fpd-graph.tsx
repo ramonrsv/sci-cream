@@ -11,21 +11,17 @@ import {
   Tooltip,
   Legend,
   type TooltipItem,
+  type ScriptableScaleContext,
 } from "chart.js";
 
 import { Recipe, isRecipeEmpty } from "./recipe";
+import { RECIPE_COLOR_BY_IDX, GRID_COLOR } from "@/lib/styles/chart-colors";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
   // Only display the main recipe and non-empty reference recipes
   const recipes = allRecipes.filter((recipe) => recipe.index == 0 || !isRecipeEmpty(recipe));
-
-  const colorsByIdx = [
-    { background: "rgba(59, 130, 246, 0.9)", border: "rgba(59, 130, 246, 1)" },
-    { background: "rgba(220, 38, 38, 0.9)", border: "rgba(220, 38, 38, 1)" },
-    { background: "rgba(234, 179, 8, 0.9)", border: "rgba(234, 179, 8, 1)" },
-  ];
 
   // Highlight temperature at the ideal serving hardness
   const highlightedHardnessPercent = 75;
@@ -38,8 +34,8 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
     labels: Array.from({ length: 101 }, (_, i) => i),
     datasets: recipes.flatMap((recipe) => {
       const curves = recipe.mixProperties.fpd!.curves!;
-      const backgroundColor = colorsByIdx[recipe.index].background;
-      const borderColor = colorsByIdx[recipe.index].border;
+      const backgroundColor = RECIPE_COLOR_BY_IDX[recipe.index].background;
+      const borderColor = RECIPE_COLOR_BY_IDX[recipe.index].border;
 
       const lines = [
         { lineLabel: "Hardness", borderDash: [1, 1], curve: curves.hardness },
@@ -94,8 +90,21 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
             return numValue % 5 === 0 ? numValue : "";
           },
         },
+        grid: {
+          color: GRID_COLOR,
+          display: true,
+          drawOnChartArea: true,
+          lineWidth: function (context: ScriptableScaleContext) {
+            return context.tick.value % 5 === 0 ? 1 : 0;
+          },
+        },
       },
-      y: { min: -30, max: 0, title: { display: true, text: "Temperature (°C)" } },
+      y: {
+        min: -30,
+        max: 0,
+        title: { display: true, text: "Temperature (°C)" },
+        grid: { color: GRID_COLOR },
+      },
     },
   };
 

@@ -1,15 +1,9 @@
 {
   "html.format.indentInnerHtml": true,
   "typescript.format.enable": true,
-  "[javascript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[typescript]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
-  },
-  "[rust]": {
-    "editor.defaultFormatter": "rust-lang.rust-analyzer"
-  },
+  "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
+  "[rust]": { "editor.defaultFormatter": "rust-lang.rust-analyzer" },
   "files.associations": {
     "*.js": "javascriptreact",
     "*.css": "tailwindcss",
@@ -23,5 +17,5 @@
   "rust-analyzer.check.allTargets": true,
   "rust-analyzer.check.command": "clippy",
   "prettier.printWidth": 100,
-  "cSpell.words": ["demerara", "MSNF", "sgr", "slt", "SNF", "SNFS"]
+  "cSpell.words": ["demerara", "MSNF", "scriptable", "sgr", "slt", "SNF", "SNFS"]
 }

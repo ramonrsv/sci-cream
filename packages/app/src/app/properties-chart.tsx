@@ -17,6 +17,7 @@ import { Recipe, isRecipeEmpty } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { DEFAULT_SELECTED_PROPERTIES } from "./properties";
 import { applyQtyToggle, formatCompositionValue } from "../lib/ui/comp-values";
+import { RECIPE_COLOR_BY_IDX, GRID_COLOR } from "../lib/styles/chart-colors";
 
 import {
   PropKey,
@@ -94,12 +95,6 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
   const enabledProps = getEnabledProps();
   const labels = enabledProps.map((prop_key) => prop_key_as_med_str_js(prop_key));
 
-  const colorsByIdx = [
-    { background: "rgba(59, 130, 246, 0.9)", border: "rgba(59, 130, 246, 1)" },
-    { background: "rgba(220, 38, 38, 0.9)", border: "rgba(220, 38, 38, 1)" },
-    { background: "rgba(234, 179, 8, 0.9)", border: "rgba(234, 179, 8, 1)" },
-  ];
-
   const chartData = {
     labels,
     datasets: recipes.map((recipe) => {
@@ -108,8 +103,8 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
         data: enabledProps.map((prop_key) =>
           Math.abs(getPropertyValue(prop_key, recipe.mixProperties!, recipe.mixTotal!)),
         ),
-        backgroundColor: colorsByIdx[recipe.index].background,
-        borderColor: colorsByIdx[recipe.index].border,
+        backgroundColor: RECIPE_COLOR_BY_IDX[recipe.index].background,
+        borderColor: RECIPE_COLOR_BY_IDX[recipe.index].border,
         maxBarThickness: 40,
         categoryPercentage: 0.6,
         barPercentage: 0.8,
@@ -131,7 +126,14 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
         },
       },
     },
-    scales: { y: { beginAtZero: true, title: { display: true, text: qtyToggle } } },
+    scales: {
+      x: { grid: { color: GRID_COLOR } },
+      y: {
+        beginAtZero: true,
+        title: { display: true, text: qtyToggle },
+        grid: { color: GRID_COLOR },
+      },
+    },
   };
 
   return (
