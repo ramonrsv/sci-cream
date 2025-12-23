@@ -10,6 +10,7 @@ import {
   Title,
   Tooltip,
   Legend,
+  type TooltipItem,
 } from "chart.js";
 
 import { Recipe, isRecipeEmpty } from "./recipe";
@@ -26,22 +27,38 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
     { background: "rgba(234, 179, 8, 0.9)", border: "rgba(234, 179, 8, 1)" },
   ];
 
+  // Highlight temperature at the ideal serving hardness
+  const highlightedHardnessPercent = 75;
+
+  const shouldHighlight = (lineLabel: string, pointIdx: number) => {
+    return lineLabel === "Hardness" && pointIdx === highlightedHardnessPercent;
+  };
+
   const graphData = {
     labels: Array.from({ length: 101 }, (_, i) => i),
-    datasets: recipes.flatMap((recipe, idx) => {
+    datasets: recipes.flatMap((recipe) => {
+      const curves = recipe.mixProperties.fpd!.curves!;
+      const backgroundColor = colorsByIdx[recipe.index].background;
+      const borderColor = colorsByIdx[recipe.index].border;
+
       const lines = [
-        { lineLabel: "Hardness", borderDash: [1, 1] },
-        { lineLabel: "Frozen Water", borderDash: [5, 5] },
-        { lineLabel: "HF", borderDash: [2, 2] },
+        { lineLabel: "Hardness", borderDash: [1, 1], curve: curves.hardness },
+        { lineLabel: "Frozen Water", borderDash: [5, 5], curve: curves.frozen_water },
+        { lineLabel: "HF", borderDash: [2, 2], curve: curves.hardness_factor },
       ];
 
-      return lines.map(({ lineLabel, borderDash }, lineIdx) => ({
+      return lines.map(({ lineLabel, borderDash, curve }) => ({
         label: lineLabel,
-        data: Array.from({ length: 101 }).map((v, i) => -((30 / 95) * i) - idx * 3 - lineIdx * 4),
-        backgroundColor: colorsByIdx[recipe.index].background,
-        borderColor: colorsByIdx[recipe.index].border,
+        data: curve.map((point) => point.temp),
+        backgroundColor: backgroundColor,
+        borderColor: borderColor,
         borderDash: borderDash,
-        pointRadius: 0,
+        pointRadius: curve.map((_, i) => (shouldHighlight(lineLabel, i) ? 6 : 0)),
+        pointBackgroundColor: curve.map((_, i) =>
+          shouldHighlight(lineLabel, i) ? "#fff" : borderColor,
+        ),
+        pointBorderColor: borderColor,
+        pointBorderWidth: 2,
       }));
     }),
   };
@@ -49,7 +66,25 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
   const options = {
     responsive: true,
     maintainAspectRatio: false,
-    plugins: { legend: { display: true }, title: { display: true, text: "FPD Graph" } },
+    plugins: {
+      legend: { display: true },
+      title: { display: true, text: "FPD Graph" },
+      tooltip: {
+        callbacks: {
+          label: function (context: TooltipItem<"line">) {
+            const lineName = context.dataset.label;
+            const temp = context.parsed.y?.toFixed(1);
+            const frozenWaterPercent = context.parsed.x;
+
+            return `${temp}°C @${frozenWaterPercent}% ${
+              shouldHighlight(lineName ?? "", context.dataIndex)
+                ? " (Ideal Serving Temperature)"
+                : ""
+            }`;
+          },
+        },
+      },
+    },
     scales: {
       x: {
         ticks: {
