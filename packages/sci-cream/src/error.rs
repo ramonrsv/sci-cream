@@ -12,6 +12,8 @@ pub enum Error {
     CompositionNot100Percent(f64),
     #[error("Invalid composition: {0}")]
     InvalidComposition(String),
+    #[error("Invalid FPD computation: {0}")]
+    InvalidFpdComputation(String),
 }
 
 /// Convenience type alias for [`Result<T, sci_cream::error::Error>`].

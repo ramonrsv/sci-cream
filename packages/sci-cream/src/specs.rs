@@ -506,14 +506,11 @@ pub mod js {
 
 #[cfg(test)]
 mod test {
-    use approx::assert_abs_diff_eq;
-
     use crate::tests::asserts::shadow_asserts::assert_eq;
-    #[allow(unused_imports)] // @todo Remove when used.
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::tests::{assets::*, util::TESTS_EPSILON};
+    use crate::tests::assets::*;
 
     #[test]
     fn into_composition_dairy_spec() {

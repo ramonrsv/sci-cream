@@ -49,9 +49,10 @@ pub enum PropKey {
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(Copy, Clone, Debug)]
+#[derive(Clone, Debug)]
 pub struct MixProperties {
     pub composition: Composition,
+    #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
     pub fpd: FPD,
 }
 
@@ -80,11 +81,12 @@ impl MixProperties {
 }
 
 pub fn calculate_mix_properties(composition_lines: &[CompositionLine]) -> MixProperties {
-    MixProperties {
-        composition: calculate_mix_composition(composition_lines),
-        fpd: FPD::empty(),
-    }
+    let composition = calculate_mix_composition(composition_lines);
+    let fpd = FPD::compute_from_composition(composition).unwrap();
+
+    MixProperties { composition, fpd }
 }
+
 #[cfg(feature = "wasm")]
 pub mod js {
     use super::*;

@@ -24,3 +24,6 @@ pub(crate) mod shadow_asserts {
     #[allow(unused_imports)] // @todo Remove when used.
     pub(crate) use pretty_assertions::{assert_eq, assert_ne};
 }
+
+pub(crate) use approx::assert_abs_diff_eq;
+pub(crate) const TESTS_EPSILON: f64 = 0.0001;
