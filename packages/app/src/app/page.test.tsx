@@ -12,7 +12,19 @@ class ResizeObserverMock {
   disconnect = vi.fn();
 }
 
+const matchMediaMock = vi
+  .fn()
+  .mockImplementation((query) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }));
+
 vi.stubGlobal("ResizeObserver", ResizeObserverMock);
+vi.stubGlobal("matchMedia", matchMediaMock);
 
 vi.mock("../lib/data", () => ({
   fetchValidIngredientNames: vi.fn(() => Promise.resolve(["2% Milk", "Sucrose", "Whipping Cream"])),
