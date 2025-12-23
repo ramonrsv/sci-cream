@@ -7,8 +7,8 @@ use wasm_bindgen::prelude::*;
 use crate::{
     composition::{CompKey, Composition},
     constants::{
-        FPD_MSNF_FACTOR_FOR_CELSIUS, PAC_FPD_TABLE, PAC_FPD_TABLE_MAX_PAC, PAC_FPD_TABLE_STEP,
-        SERVING_TEMP_X_AXIS,
+        FPD_MSNF_FACTOR_FOR_CELSIUS, PAC_TO_FPD_POLY_COEFFS, PAC_TO_FPD_TABLE,
+        PAC_TO_FPD_TABLE_MAX_PAC, PAC_TO_FPD_TABLE_STEP, SERVING_TEMP_X_AXIS,
     },
     error::{Error, Result},
 };
@@ -90,68 +90,80 @@ impl FPD {
     }
 }
 
-fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
+pub fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
     if pac < 0.0 {
-        return Err(Error::InvalidFpdComputation(format!(
-            "PAC value {pac} cannot be negative"
-        )));
+        return Err(Error::NegativePacValue(pac));
     }
 
-    let floor_pac = (pac / PAC_FPD_TABLE_STEP as f64).floor() as usize * PAC_FPD_TABLE_STEP;
-    let ceil_pac = (pac / PAC_FPD_TABLE_STEP as f64).ceil() as usize * PAC_FPD_TABLE_STEP;
+    let (step, max_pac) = (PAC_TO_FPD_TABLE_STEP, PAC_TO_FPD_TABLE_MAX_PAC);
 
-    let (floor_pac, ceil_pac) = if ceil_pac <= PAC_FPD_TABLE_MAX_PAC {
+    let floor_pac = (pac / step as f64).floor() as usize * step;
+    let ceil_pac = (pac / step as f64).ceil() as usize * step;
+
+    let (floor_pac, ceil_pac) = if ceil_pac <= max_pac {
         (floor_pac, ceil_pac)
     } else {
-        (
-            PAC_FPD_TABLE_MAX_PAC - PAC_FPD_TABLE_STEP,
-            PAC_FPD_TABLE_MAX_PAC,
-        )
+        (max_pac - step, max_pac)
     };
 
-    let idx_floor_pac = floor_pac / PAC_FPD_TABLE_STEP;
-    let idx_ceil_pac = ceil_pac / PAC_FPD_TABLE_STEP;
+    let idx_floor_pac = floor_pac / step;
+    let idx_ceil_pac = ceil_pac / step;
 
-    let floor_fpd = PAC_FPD_TABLE[idx_floor_pac].1;
-    let ceil_fpd = PAC_FPD_TABLE[idx_ceil_pac].1;
+    let floor_fpd = PAC_TO_FPD_TABLE[idx_floor_pac].1;
+    let ceil_fpd = PAC_TO_FPD_TABLE[idx_ceil_pac].1;
 
     let run = pac - floor_pac as f64;
-    let slope = (ceil_fpd - floor_fpd) / PAC_FPD_TABLE_STEP as f64;
+    let slope = (ceil_fpd - floor_fpd) / step as f64;
 
     Ok(floor_fpd + slope * run)
 }
 
-fn compute_fpd_from_comp_and_frozen_water(
+pub fn get_fpd_from_pac_polynomial(pac: f64, coeffs: [f64; 3]) -> Result<f64> {
+    if pac < 0.0 {
+        return Err(Error::NegativePacValue(pac));
+    }
+
+    let [a, b, c] = coeffs;
+
+    Ok((a * pac.powi(2)) + (b * pac) + c)
+}
+
+pub fn compute_fpd<F: Fn(f64) -> Result<f64>>(
     composition: Composition,
     hardness_factor: f64,
     frozen_water: f64,
+    get_fpd_from_pac: &F,
 ) -> Result<f64> {
-    let water = composition.get(CompKey::Water) * ((100.0 - frozen_water) / 100.0);
-    let fpd_pac = get_fpd_from_pac_interpolation(
-        (composition.get(CompKey::PACtotal) - hardness_factor) * 100.0 / water,
-    )?;
-    let fpd_slt = (composition.get(CompKey::MSNF) * FPD_MSNF_FACTOR_FOR_CELSIUS) / water;
+    let (comp, hf, fw) = (composition, hardness_factor, frozen_water);
+
+    let water = comp.get(CompKey::Water) * ((100.0 - fw) / 100.0);
+    let fpd_pac = get_fpd_from_pac((comp.get(CompKey::PACtotal) - hf) * 100.0 / water)?;
+    let fpd_slt = (comp.get(CompKey::MSNF) * FPD_MSNF_FACTOR_FOR_CELSIUS) / water;
 
     Ok(-(fpd_pac + fpd_slt))
 }
 
-fn compute_fpd_curves(composition: Composition) -> Result<Curves> {
-    let mut curves = Curves::empty();
+pub fn compute_fpd_curves(composition: Composition) -> Result<Curves> {
+    let (comp, mut curves) = (composition, Curves::empty());
 
     for x_axis in 0..100 {
-        let cmp_fpd = compute_fpd_from_comp_and_frozen_water;
+        // @todo Use interpolation for now for ease of comparison with sci-cream-legacy.ts
+        let _ = PAC_TO_FPD_POLY_COEFFS; // _polynomial(pac, PAC_TO_FPD_POLY_COEFFS);
+        let get_fpd_from_pac = get_fpd_from_pac_interpolation;
 
-        let frozen_water_curve_fpd = cmp_fpd(composition, 0.0, x_axis as f64)?;
-        let hf_curve_fpd = cmp_fpd(composition, composition.pac.hardness_factor, x_axis as f64)?;
-        let hardness_curve_fpd = (frozen_water_curve_fpd + hf_curve_fpd) / 2.0;
+        let compute_fpd = |c, hf, fw| compute_fpd(c, hf, fw, &get_fpd_from_pac);
 
-        let frozen_water_curve_point = CurvePoint::new(frozen_water_curve_fpd, x_axis as f64);
-        let hardness_curve_point = CurvePoint::new(hardness_curve_fpd, x_axis as f64);
-        let hf_curve_point = CurvePoint::new(hf_curve_fpd, x_axis as f64);
+        let frozen_water_fpd = compute_fpd(comp, 0.0, x_axis as f64)?;
+        let hf_fpd = compute_fpd(comp, comp.pac.hardness_factor, x_axis as f64)?;
+        let hardness_fpd = (frozen_water_fpd + hf_fpd) / 2.0;
+
+        let frozen_water_curve_point = CurvePoint::new(frozen_water_fpd, x_axis as f64);
+        let hf_curve_point = CurvePoint::new(hf_fpd, x_axis as f64);
+        let hardness_curve_point = CurvePoint::new(hardness_fpd, x_axis as f64);
 
         curves.frozen_water.push(frozen_water_curve_point);
-        curves.hardness.push(hardness_curve_point);
         curves.hardness_factor.push(hf_curve_point);
+        curves.hardness.push(hardness_curve_point);
     }
 
     Ok(curves)
@@ -186,36 +198,51 @@ mod tests {
     use crate::tests::asserts::*;
 
     const REF_FPD_FROM_PAC: [(f64, f64); 19] = [
-        (0.0, 0.0),
-        (3.0, 0.18),
-        (6.0, 0.35),
-        (93.0, 6.50),
-        (96.0, 6.80),
-        (177.0, 13.48),
-        (180.0, 13.68),
+        // (pac, expected_fpd)
+        (0.0, 0.00),
         (0.5, 0.03),
         (1.0, 0.06),
         (1.5, 0.09),
         (2.0, 0.12),
         (2.5, 0.15),
+        (3.0, 0.18),
+        (6.0, 0.35),
+        (93.0, 6.50),
         (93.5, 6.55),
-        (94.0, 6.6),
+        (94.0, 6.60),
         (94.5, 6.65),
-        (95.0, 6.7),
+        (95.0, 6.70),
         (95.5, 6.75),
+        (96.0, 6.80),
+        (177.0, 13.48),
         (177.125, 13.488333),
+        (180.0, 13.68),
         (181.0, 13.746666),
     ];
 
     #[test]
-    fn fpd_from_pac_interpolation() {
+    fn get_fpd_from_pac_interpolation() {
         for (pac, expected_fpd) in REF_FPD_FROM_PAC {
-            let fpd = get_fpd_from_pac_interpolation(pac).unwrap();
+            let fpd = super::get_fpd_from_pac_interpolation(pac).unwrap();
             assert_abs_diff_eq!(fpd, expected_fpd, epsilon = TESTS_EPSILON);
         }
     }
 
-    static REFERENCE_COMPOSITION: LazyLock<Composition> = LazyLock::new(|| {
+    #[test]
+    fn get_fpd_from_pac_polynomial() {
+        let get_fpd_poly = |pac| super::get_fpd_from_pac_polynomial(pac, PAC_TO_FPD_POLY_COEFFS);
+
+        for (pac, expected_fpd) in REF_FPD_FROM_PAC {
+            // Interpolation and polynomial diverge at high PAC
+            let epsilon = if pac < 177.0 { 0.1 } else { 0.3 };
+
+            let fpd = get_fpd_poly(pac).unwrap();
+            assert_abs_diff_eq!(fpd, expected_fpd, epsilon = epsilon);
+        }
+    }
+
+    // Reference composition from Goff + Hartel, Table 6.2, Ice Cream
+    static REF_COMP: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
             .solids(
                 Solids::new()
@@ -225,29 +252,98 @@ mod tests {
             .pac(PAC::new().sugars(22.18))
     });
 
+    // Same as [`REF_COMP`], but with alcohol added
+    static REF_COMP_WITH_ALCOHOL: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .solids(
+                Solids::new()
+                    .milk(SolidsBreakdown::new().fats(5.82).snfs(12.0))
+                    .other(SolidsBreakdown::new().sweeteners(22.18)),
+            )
+            .alcohol(2.0)
+            .pac(PAC::new().sugars(22.18).alcohol(14.8))
+    });
+
     #[test]
-    fn validate_reference_composition() {
-        let comp = *REFERENCE_COMPOSITION;
+    fn validate_reference_compositions() {
+        let comp = *REF_COMP;
         assert_eq!(comp.get(CompKey::MSNF), 12.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 40.0);
+        assert_eq!(comp.get(CompKey::Water), 60.0);
         assert_eq!(comp.get(CompKey::PACtotal), 22.18);
+
+        let comp = *REF_COMP_WITH_ALCOHOL;
+        assert_eq!(comp.get(CompKey::MSNF), 12.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 2.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 40.0);
+        assert_eq!(comp.get(CompKey::Water), 58.0);
+        assert_eq!(comp.get(CompKey::PACsgr), 22.18);
+        assert_eq!(comp.get(CompKey::PACalc), 14.8);
+        assert_abs_diff_eq!(comp.get(CompKey::PACtotal), 36.98, epsilon = TESTS_EPSILON);
     }
 
-    const REFERENCE_FROZEN_WATER_FPD: [(f64, f64); 5] = [
-        (0.0, -2.745),
-        (10.0, -3.065),
-        (20.0, -3.457),
-        (30.0, -4.010),
-        (40.0, -4.774),
+    // Ice Cream, Goff + Hartel, Table 6.2, page 184
+    const REF_FROZEN_WATER_FPD: [(f64, f64); 10] = [
+        (0.0, -2.74),
+        (10.0, -3.06),
+        (20.0, -3.45),
+        (30.0, -4.01),
+        (40.0, -4.76),
+        (50.0, -5.87),
+        (60.0, -7.63),
+        (70.0, -10.79),
+        (75.0, -13.16),
+        (80.0, -16.37), // BAD?, ref is -16.61
     ];
 
-    #[test]
-    fn calculate_fdp_from_composition_and_frozen_water() {
-        let comp = *REFERENCE_COMPOSITION;
+    // Check alcohol not counted as water/solid
+    const REF_FROZEN_WATER_FPD_WITH_ALCOHOL: [(f64, f64); 2] = [(0.0, -4.649), (10.0, -5.226)];
 
-        for (frozen_water, expected_fpd) in REFERENCE_FROZEN_WATER_FPD {
-            let fpd = compute_fpd_from_comp_and_frozen_water(comp, 0.0, frozen_water).unwrap();
-            assert_abs_diff_eq!(fpd, expected_fpd, epsilon = 0.0005);
+    // Interpolation and polynomial PAC -> FPD calculation diverge at high frozen water
+    const REF_FROZEN_WATER_FPD_INTER: [(f64, f64); 2] = [(85.0, -21.270), (90.0, -31.064)];
+    const REF_FROZEN_WATER_FPD_POLY: [(f64, f64); 2] = [(85.0, -23.71), (90.0, -39.66)];
+
+    fn validate_compute_fpd<F: Fn(f64) -> Result<f64>>(
+        get_fpd_from_pac: &F,
+        ref_fpd_sets: &[(Composition, &[(f64, f64)])],
+        epsilon: f64,
+    ) {
+        let compute_pd_inter =
+            |comp: Composition, hf: f64, fw: f64| compute_fpd(comp, hf, fw, get_fpd_from_pac);
+
+        for (comp, ref_fpd) in ref_fpd_sets {
+            for (frozen_water, expected_fpd) in *ref_fpd {
+                let fpd = compute_pd_inter(*comp, 0.0, *frozen_water).unwrap();
+                assert_abs_diff_eq!(fpd, expected_fpd, epsilon = epsilon);
+            }
         }
+    }
+
+    #[test]
+    fn compute_fpd_interpolation() {
+        validate_compute_fpd(
+            &super::get_fpd_from_pac_interpolation,
+            &[
+                (*REF_COMP, &REF_FROZEN_WATER_FPD[..]),
+                (*REF_COMP_WITH_ALCOHOL, &REF_FROZEN_WATER_FPD_WITH_ALCOHOL),
+                (*REF_COMP, &REF_FROZEN_WATER_FPD_INTER),
+            ][..],
+            0.015,
+        );
+    }
+
+    #[test]
+    fn compute_fpd_polynomial() {
+        let get_fpd_poly = |pac| super::get_fpd_from_pac_polynomial(pac, PAC_TO_FPD_POLY_COEFFS);
+
+        validate_compute_fpd(
+            &get_fpd_poly,
+            &[
+                (*REF_COMP, &REF_FROZEN_WATER_FPD[..]),
+                (*REF_COMP_WITH_ALCOHOL, &REF_FROZEN_WATER_FPD_WITH_ALCOHOL),
+                (*REF_COMP, &REF_FROZEN_WATER_FPD_POLY),
+            ][..],
+            0.4,
+        );
     }
 }

@@ -17,5 +17,5 @@
   "rust-analyzer.check.allTargets": true,
   "rust-analyzer.check.command": "clippy",
   "prettier.printWidth": 100,
-  "cSpell.words": ["demerara", "MSNF", "scriptable", "sgr", "slt", "SNF", "SNFS"]
+  "cSpell.words": ["COEFF", "coeffs", "demerara", "MSNF", "scriptable", "sgr", "slt", "SNF", "SNFS"]
 }
