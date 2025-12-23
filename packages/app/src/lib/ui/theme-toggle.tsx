@@ -18,15 +18,24 @@ function applyTheme(newTheme: Theme) {
 }
 
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("system");
   const [mounted, setMounted] = useState(false);
 
+  const [theme, setTheme] = useState<Theme>(() => {
+    return typeof window !== "undefined"
+      ? (localStorage.getItem("theme") as Theme) || "system"
+      : "system";
+  });
+
   useEffect(() => {
-    const initialTheme = (localStorage.getItem("theme") as Theme) || "system";
-    setTheme(initialTheme);
-    applyTheme(initialTheme);
+    // Intentional for SSR hydration mismatch prevention, this pattern is even in their docs:
+    // https://nextjs.org/docs/messages/react-hydration-error#solution-1-using-useeffect-to-run-on-the-client-only
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
+
+  useEffect(() => {
+    applyTheme(theme);
+  }, [theme]);
 
   useEffect(() => {
     if (theme !== "system") return;
@@ -45,11 +54,6 @@ export function ThemeToggle() {
     localStorage.setItem("theme", nextTheme);
     applyTheme(nextTheme);
   };
-
-  // Prevent hydration mismatch
-  if (!mounted) {
-    return <div className="h-8 w-24" />;
-  }
 
   const getIcon = () => {
     switch (theme) {
@@ -72,6 +76,9 @@ export function ThemeToggle() {
         return "System";
     }
   };
+
+  // Prevent hydration mismatch
+  if (!mounted) return <div />;
 
   return (
     <button
