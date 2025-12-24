@@ -1,9 +1,9 @@
-import dairyJson from "../../../../data/ingredients/dairy.json";
-import sweetenersJson from "../../../../data/ingredients/sweeteners.json";
-import fruitsJson from "../../../../data/ingredients/fruits.json";
-import chocolatesJson from "../../../../data/ingredients/chocolates.json";
-import eggsJson from "../../../../data/ingredients/eggs.json";
-import emulsifiersStabilizersJson from "../../../../data/ingredients/emulsifiers_stabilizers.json";
+import dairyJson from "../../data/ingredients/dairy.json";
+import sweetenersJson from "../../data/ingredients/sweeteners.json";
+import fruitsJson from "../../data/ingredients/fruits.json";
+import chocolatesJson from "../../data/ingredients/chocolates.json";
+import eggsJson from "../../data/ingredients/eggs.json";
+import emulsifiersStabilizersJson from "../../data/ingredients/emulsifiers_stabilizers.json";
 
 export interface IngredientJson {
   name: string;

@@ -18,7 +18,7 @@ The are confusing conventions regarding what each term entails, e.g. whether the
 from milk solids is taken into account, and there are conflicting sources regarding the details of
 calculations, e.g. some sources describe 100g of sucrose in 1000g of water (9.1% sucrose in mix, as
 opposed to the expected 10%) as having a PAC of 100. However, from a user's perspective the details
-are largely irrelevant since usually the purpose of these terms is to facilitate comparison between
+are somewhat irrelevant since usually the purpose of these terms is to facilitate comparison between
 ice cream recipes, which only requires that the methods be consistent.
 
 This app and documentation uses the terms to reference two related concepts:
@@ -31,7 +31,9 @@ This app and documentation uses the terms to reference two related concepts:
    equivalence. For example, 100g of sucrose in 1000g of mix has a PAC of 100 and SE of 10.
    Similarly, 100g of fructose in 1000g of mix has a PAC of 190 and SE of 19.
 
-Note that, regarding (2), the equivalence is only with respect to freezing point depression power, and not actually equivalent to substituting those ingredients, as doing so would alter the total amount of mix and the respective proportions of solids and water.
+Note that, regarding (2), the equivalence is only with respect to freezing point depression power,
+and not actually equivalent to substituting those ingredients, as doing so would alter the total
+amount of mix and the respective proportions of solids and water.
 
 ## Absolute PAC
 

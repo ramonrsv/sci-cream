@@ -4,7 +4,7 @@ use std::sync::LazyLock;
 use crate::specs::IngredientSpec;
 
 pub(crate) fn read_ingredients_file_as_string(filename: &str) -> String {
-    std::fs::read_to_string(format!("../../data/ingredients/{filename}")).unwrap()
+    std::fs::read_to_string(format!("./data/ingredients/{filename}")).unwrap()
 }
 
 pub(crate) fn parse_ingredient_specs_from_file(filename: &str) -> HashMap<String, IngredientSpec> {
