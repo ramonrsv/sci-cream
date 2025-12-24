@@ -118,3 +118,19 @@ $ cargo install cargo-edit # Only needed once
 $ cd ./packages/sci-cream
 $ cargo upgrade --incompatible
 ```
+
+To run code coverage:
+
+```console
+$ # Rust
+$ cargo install cargo-llvm-cov # Only needed once
+$ cargo llvm-cov test --all-features
+# Generate report to upload or visualize locally
+$ cargo llvm-cov report --codecov OR --html
+$
+$ # Vitest
+$ npx vitest run --coverage
+$
+$ # Both
+$ pnpm coverage
+```
