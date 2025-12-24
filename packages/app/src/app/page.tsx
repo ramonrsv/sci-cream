@@ -8,7 +8,7 @@ import {
 
 import { useState, useEffect } from "react";
 
-import { fetchValidIngredientNames, fetchAllIngredientSpecs } from "../lib/data";
+import { IngredientTransfer, fetchAllIngredientSpecs } from "../lib/data";
 
 import { ThemeToggle } from "../lib/ui/theme-toggle";
 import { RecipeGrid, makeEmptyRecipeContext } from "./recipe";
@@ -36,17 +36,14 @@ export default function Home() {
   const recipes = recipeContext.recipes;
 
   useEffect(() => {
-    // Fetch valid ingredient names on mount
-    fetchValidIngredientNames().then((names) => {
-      setRecipeContext((prev) => ({ ...prev, validIngredients: names }));
-    });
-
-    // Pre-fetch all ingredient specs to populate the cache
+    // Pre-fetch all ingredient specs to populate valid ingredients and cache
     fetchAllIngredientSpecs().then((specs) => {
-      specs?.forEach((spec) => {
-        recipeContext.ingredientCache.set(spec.name, spec);
-        setRecipeContext((prev) => ({ ...prev, ingredientCache: recipeContext.ingredientCache }));
-      });
+      const validIngredients: string[] = specs?.map((spec) => spec.name) || [];
+      const ingredientCache = new Map<string, IngredientTransfer>(
+        specs?.map((spec) => [spec.name, spec]) || [],
+      );
+
+      setRecipeContext((prev) => ({ ...prev, validIngredients, ingredientCache }));
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 

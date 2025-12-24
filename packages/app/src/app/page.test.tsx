@@ -71,12 +71,12 @@ describe("Home Page", () => {
     expect(main).toHaveClass("min-h-screen");
   });
 
-  it("should fetch valid ingredient names on mount", async () => {
-    const { fetchValidIngredientNames } = await import("../lib/data");
+  it("should pre-fetch all ingredient specs (including names) on mount", async () => {
+    const { fetchAllIngredientSpecs } = await import("../lib/data");
     render(<Home />);
 
     await waitFor(() => {
-      expect(fetchValidIngredientNames).toHaveBeenCalled();
+      expect(fetchAllIngredientSpecs).toHaveBeenCalled();
     });
   });
 
