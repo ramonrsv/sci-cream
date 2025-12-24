@@ -1,7 +1,7 @@
 import { pgTable, primaryKey, integer, text, pgEnum, json } from "drizzle-orm/pg-core";
 
-import { SchemaCategory } from "./schema-category";
-export { SchemaCategory as Category };
+import { SchemaCategory } from "@workspace/sci-cream/schema-category";
+export { SchemaCategory };
 
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),

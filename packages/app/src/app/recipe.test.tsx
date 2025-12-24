@@ -20,7 +20,6 @@ import {
 } from "./recipe";
 
 import { fetchIngredientSpec } from "../lib/data";
-import { SchemaCategory } from "@/lib/db/schema-category";
 
 import {
   Ingredient,
@@ -31,6 +30,8 @@ import {
   calculate_mix_composition_js,
   calculate_mix_properties_js,
 } from "@workspace/sci-cream";
+
+import { SchemaCategory } from "@workspace/sci-cream/schema-category";
 
 vi.mock("../lib/data", () => ({
   fetchIngredientSpec: vi.fn(),

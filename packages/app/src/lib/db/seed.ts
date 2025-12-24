@@ -2,11 +2,10 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
 
-import { usersTable, ingredientsTable } from "./schema";
+import { usersTable, ingredientsTable, SchemaCategory } from "./schema";
 import * as schema from "./schema";
 
 import { IngredientJson, allIngredients } from "@workspace/sci-cream";
-import { SchemaCategory } from "./schema-category";
 
 type User = typeof usersTable.$inferInsert;
 
@@ -38,7 +37,7 @@ async function seedUserIngredients(user: User, ingredients: IngredientJson[]) {
     const ingredient: typeof ingredientsTable.$inferInsert = {
       name: ing.name,
       user: foundUser.id,
-      category: ing.category as SchemaCategory,
+      category: ing.category as (typeof SchemaCategory)[keyof typeof SchemaCategory],
       spec: JSON.stringify(ing),
     };
 

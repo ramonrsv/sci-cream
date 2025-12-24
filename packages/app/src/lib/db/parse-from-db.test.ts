@@ -4,7 +4,7 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
 
-import { usersTable, ingredientsTable, User, Category as SchemaCategory } from "./schema";
+import { usersTable, ingredientsTable, User, SchemaCategory } from "./schema";
 import * as schema from "./schema";
 
 import {
@@ -42,7 +42,10 @@ test("Create Ingredient from specs from DB", async () => {
         and(
           eq(ingredientsTable.name, ing.name),
           eq(ingredientsTable.user, appUserId),
-          eq(ingredientsTable.category, ing.category as SchemaCategory),
+          eq(
+            ingredientsTable.category,
+            ing.category as (typeof SchemaCategory)[keyof typeof SchemaCategory],
+          ),
         ),
       );
 

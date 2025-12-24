@@ -5,8 +5,19 @@
   "main": "./dist/index.js",
   "module": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./schema-category": {
+      "import": "./src/ts/schema-category.js",
+      "require": "./src/ts/schema-category.js"
+    }
+  },
   "files": [
-    "dist"
+    "dist",
+    "src/ts"
   ],
   "scripts": {
     "build": "pnpm build:rust && pnpm build:wasm && pnpm build:js",
