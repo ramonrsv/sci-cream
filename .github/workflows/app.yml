@@ -110,6 +110,8 @@ jobs:
         run: npm install -g pnpm
       - name: Installing dependencies
         run: pnpm install
+      - name: Installing wasm-pack
+        run: cargo install wasm-pack
       - name: Running workspace code coverage
         run: pnpm coverage
       - name: Uploading code coverage reports to Codecov

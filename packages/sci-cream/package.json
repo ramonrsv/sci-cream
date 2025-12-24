@@ -23,7 +23,7 @@
     "lint:rust": "cargo clippy --features wasm",
     "lint:js": "eslint src --ext .ts",
     "prettier": "prettier --check ./src/ts",
-    "coverage": "pnpm coverage:rust && pnpm coverage:js",
+    "coverage": "pnpm build:wasm && pnpm build:js && pnpm coverage:rust && pnpm coverage:js",
     "coverage:rust": "pnpm coverage:rust:generate && pnpm coverage:rust:codecov && pnpm coverage:rust:html",
     "coverage:rust:generate": "cargo llvm-cov test --all-features --output-path ./target/coverage",
     "coverage:rust:codecov": "cargo llvm-cov report --codecov --output-path ./target/coverage",
