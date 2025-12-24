@@ -52,3 +52,15 @@ export async function fetchIngredientSpec(name: string): Promise<IngredientTrans
 
   return ingredients.length === 0 || ingredients[0] === undefined ? undefined : ingredients[0];
 }
+
+export async function fetchAllIngredientSpecs(): Promise<IngredientTransfer[] | undefined> {
+  console.log(`[${await FetchCounter.get()}] fetchAllIngredientSpecs()`);
+
+  const ingredients = await db
+    .select()
+    .from(ingredientsTable)
+    .where(eq(ingredientsTable.user, appUserId));
+
+  console.log(`Fetched ${ingredients.length} ingredients`);
+  return ingredients;
+}

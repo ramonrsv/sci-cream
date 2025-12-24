@@ -34,8 +34,9 @@ import {
 import { SchemaCategory } from "@workspace/sci-cream/schema-category";
 
 vi.mock("../lib/data", () => ({
-  fetchIngredientSpec: vi.fn(),
-  fetchValidIngredientNames: vi.fn(() => Promise.resolve([])),
+  fetchValidIngredientNames: vi.fn(),
+  fetchIngredientSpec: vi.fn(() => Promise.resolve(undefined)),
+  fetchAllIngredientSpecs: vi.fn(() => Promise.resolve([])),
 }));
 
 vi.mock("@workspace/sci-cream", async () => {

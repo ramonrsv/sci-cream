@@ -28,7 +28,8 @@ vi.stubGlobal("matchMedia", matchMediaMock);
 
 vi.mock("../lib/data", () => ({
   fetchValidIngredientNames: vi.fn(() => Promise.resolve(["2% Milk", "Sucrose", "Whipping Cream"])),
-  fetchIngredientSpec: vi.fn(() => Promise.resolve(null)),
+  fetchIngredientSpec: vi.fn(() => Promise.resolve(undefined)),
+  fetchAllIngredientSpecs: vi.fn(() => Promise.resolve([])),
 }));
 
 describe("Home Page", () => {

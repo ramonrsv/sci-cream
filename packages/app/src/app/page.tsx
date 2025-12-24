@@ -8,7 +8,7 @@ import {
 
 import { useState, useEffect } from "react";
 
-import { fetchValidIngredientNames } from "../lib/data";
+import { fetchValidIngredientNames, fetchAllIngredientSpecs } from "../lib/data";
 
 import { ThemeToggle } from "../lib/ui/theme-toggle";
 import { RecipeGrid, makeEmptyRecipeContext } from "./recipe";
@@ -36,12 +36,19 @@ export default function Home() {
   const recipes = recipeContext.recipes;
 
   useEffect(() => {
-    fetchValidIngredientNames().then((names) =>
-      setRecipeContext((prev) => ({ ...prev, validIngredients: names })),
-    );
-    // We only want to call this once on the initial mount
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    // Fetch valid ingredient names on mount
+    fetchValidIngredientNames().then((names) => {
+      setRecipeContext((prev) => ({ ...prev, validIngredients: names }));
+    });
+
+    // Pre-fetch all ingredient specs to populate the cache
+    fetchAllIngredientSpecs().then((specs) => {
+      specs?.forEach((spec) => {
+        recipeContext.ingredientCache.set(spec.name, spec);
+        setRecipeContext((prev) => ({ ...prev, ingredientCache: recipeContext.ingredientCache }));
+      });
+    });
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const h = REACT_GRID_COMPONENT_HEIGHT;
 
