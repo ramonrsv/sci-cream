@@ -5,14 +5,11 @@ import {
   FpdKey,
   comp_key_as_med_str_js,
   fpd_key_as_med_str_js,
-  PropKey,
-  PropKeyObj,
-  getPropKeys,
   isCompKey,
   isFpdKey,
-  prop_key_as_med_str_js,
 } from "../../dist/index";
 
+import { PropKey, PropKeyObj, getPropKeys, prop_key_as_med_str_js } from "./prop_key";
 import { getTsEnumNumberKeys, getTsEnumStringKeys } from "./util";
 
 test("Import from sci-cream wasm package, at sci-cream", () => {
