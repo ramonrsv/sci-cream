@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 
 import { fetchIngredientSpec, IngredientTransfer } from "../lib/data";
 import { formatCompositionValue } from "../lib/ui/comp-values";
@@ -213,6 +213,17 @@ export function RecipeGrid({
       updateIngredientRow(row.index, "", "");
     }
   };
+
+  // Prevent stale ingredient rows if pasted quickly whilst validIngredients/ingredientCache
+  // are still loading during pre-fetch. @todo For some reason this results in 80 calls to
+  // updateIngredientRow when the component is first mounted, works normally after that.
+  // Looks like each recipe being rendered gets refreshed twice on mount; need to investigate.
+  useEffect(() => {
+    recipe.ingredientRows.forEach((row) => {
+      updateIngredientRow(row.index, row.name, row.quantity?.toString());
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [validIngredients.length, ingredientCache.size]);
 
   const mixTotal = recipe.mixTotal;
 
