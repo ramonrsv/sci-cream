@@ -9,17 +9,17 @@
     "dist"
   ],
   "scripts": {
-    "build": "pnpm run build:rust && pnpm run build:wasm && pnpm run build:js",
+    "build": "pnpm build:rust && pnpm build:wasm && pnpm build:js",
     "build:rust": "cargo rustc --features wasm --crate-type=cdylib",
+    "build:wasm": "pnpm set-crate-type:cdylib && pnpm wasm-pack-build && pnpm set-crate-type:rlib",
+    "build:js": "vite build",
+    "wasm-pack-build": "wasm-pack build --out-dir wasm --out-name index -- --features wasm",
     "set-crate-type:cdylib": "./scripts/set-crate-type.sh ./Cargo.toml cdylib",
     "set-crate-type:rlib": "./scripts/set-crate-type.sh ./Cargo.toml rlib",
-    "wasm-pack-build": "wasm-pack build --out-dir wasm --out-name index -- --features wasm",
-    "build:wasm": "pnpm run set-crate-type:cdylib && pnpm run wasm-pack-build && pnpm run set-crate-type:rlib",
-    "build:js": "vite build",
-    "test": "pnpm run test:rust && pnpm run test:js",
+    "test": "pnpm test:rust && pnpm test:js",
     "test:rust": "cargo test --features wasm",
-    "test:js": "pnpm run build:wasm && pnpm run build:js && vitest run",
-    "lint": "pnpm run lint:rust && pnpm run lint:js",
+    "test:js": "pnpm build:wasm && pnpm build:js && vitest run",
+    "lint": "pnpm lint:rust && pnpm lint:js",
     "lint:rust": "cargo clippy --features wasm",
     "lint:js": "eslint src --ext .ts",
     "prettier": "prettier --check ./src/ts"
@@ -33,6 +33,7 @@
     "@eslint/js": "^9.39.2",
     "@vitejs/plugin-react": "^5.1.2",
     "eslint": "^9.39.2",
+    "jsdom": "^27.3.0",
     "typescript-eslint": "^8.50.0",
     "vite-tsconfig-paths": "^6.0.3",
     "vitest": "^4.0.16"

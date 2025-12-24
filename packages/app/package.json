@@ -3,13 +3,13 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev --turbopack",
     "build": "next build",
-    "start": "next start",
-    "lint": "eslint ./src",
     "test": "vitest run",
+    "lint": "eslint ./src",
     "prettier": "prettier --check ./src",
-    "coverage": "vitest run --coverage"
+    "coverage": "vitest run --coverage",
+    "dev": "next dev --turbopack",
+    "start": "next start"
   },
   "dependencies": {
     "@workspace/sci-cream": "workspace:*",
