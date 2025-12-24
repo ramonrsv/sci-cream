@@ -10,7 +10,8 @@
     "prettier": "prettier --check ./src",
     "coverage": "vitest run --coverage",
     "dev": "next dev --turbopack",
-    "start": "next start"
+    "start": "next start",
+    "seed-db": "npx drizzle-kit push && pnpm tsx ./src/lib/db/seed.ts"
   },
   "dependencies": {
     "@workspace/sci-cream": "workspace:*",
