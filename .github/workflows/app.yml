@@ -98,7 +98,20 @@ jobs:
 
   code_coverage:
     runs-on: ubuntu-latest
-    if: vars.ACT != 'true'
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: sci_cream
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@master
@@ -116,9 +129,15 @@ jobs:
         run: cargo install wasm-pack
       - name: Installing dependencies
         run: pnpm install
+      - name: Seeding database
+        run: |
+          cd ./packages/app
+          npx drizzle-kit push
+          pnpm tsx ./src/lib/db/seed.ts
       - name: Running workspace code coverage
         run: pnpm coverage
-      - name: Uploading code coverage reports to Codecov
+      - if: vars.ACT != 'true'
+        name: Uploading code coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
