@@ -12,6 +12,7 @@ be imported with the library.
 ## `sci-cream` crate
 
 [![CI](https://github.com/ramonrsv/sci-cream/actions/workflows/crate.yml/badge.svg)](https://github.com/ramonrsv/sci-cream/actions)
+[![codecov](https://codecov.io/github/ramonrsv/sci-cream/graph/badge.svg?token=DJNT18MKJQ)](https://app.codecov.io/github/ramonrsv/sci-cream/tree/main/packages%2Fsci-cream%2Fsrc)
 
 The [`sci-cream` crate](https://github.com/ramonrsv/sci-cream/tree/main/packages/sci-cream) is a
 Rust library that facilitates the mathematical analysis of ice cream mixes and their properties.
@@ -19,6 +20,7 @@ Rust library that facilitates the mathematical analysis of ice cream mixes and t
 ## `sci-cream` app
 
 [![CI](https://github.com/ramonrsv/sci-cream/actions/workflows/app.yml/badge.svg)](https://github.com/ramonrsv/sci-cream/actions)
+[![codecov](https://codecov.io/github/ramonrsv/sci-cream/graph/badge.svg?token=DJNT18MKJQ)](https://app.codecov.io/github/ramonrsv/sci-cream/tree/main/packages%2Fapp%2Fsrc)
 
 The [`sci-cream` app](https://github.com/ramonrsv/sci-cream/tree/main/packages/app) is a web app
 that utilizes the [`sci-cream` crate](#sci-cream-crate) to provide user-friendly utilities, most
