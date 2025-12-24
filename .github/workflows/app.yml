@@ -51,8 +51,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
-      - name: Installing pnpm
-        run: npm install -g pnpm
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Installing dependencies
         run: pnpm install
       - name: Installing wasm-pack
@@ -75,8 +76,9 @@ jobs:
         with:
           toolchain: stable
           components: clippy
-      - name: Installing pnpm
-        run: npm install -g pnpm
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Installing dependencies, ESLint and plugins
         run: pnpm install
       - name: Run ESLint check
@@ -86,8 +88,9 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - name: Installing pnpm
-        run: npm install -g pnpm
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Installing prettier
         run: pnpm install -D prettier prettier-plugin-tailwindcss
       - name: Running Prettier check
@@ -104,14 +107,15 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
       - name: Installing cargo-llvm-cov
         run: cargo install cargo-llvm-cov
-      - name: Installing pnpm
-        run: npm install -g pnpm
-      - name: Installing dependencies
-        run: pnpm install
       - name: Installing wasm-pack
         run: cargo install wasm-pack
+      - name: Installing dependencies
+        run: pnpm install
       - name: Running workspace code coverage
         run: pnpm coverage
       - name: Uploading code coverage reports to Codecov
