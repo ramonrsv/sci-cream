@@ -5,13 +5,13 @@ import { useState } from "react";
 import { IngredientRow, Recipe } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
-import { getCompKeys as getCompKeysAll, isCompKeyQuantity } from "../lib/sci-cream/sci-cream";
+import { isCompKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
-import { CompKey, comp_key_as_med_str_js } from "@workspace/sci-cream";
+import { CompKey, comp_key_as_med_str_js, getWasmEnums } from "@workspace/sci-cream";
 
 function getCompKeys(): CompKey[] {
-  return getCompKeysAll().filter(
+  return getWasmEnums(CompKey).filter(
     (key) =>
       // These values aren't very meaningful in a per-ingredient breakdown
       key !== CompKey.AbsPAC &&

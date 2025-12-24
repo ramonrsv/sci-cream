@@ -5,12 +5,14 @@ import { useState, useRef, useEffect } from "react";
 import { Recipe, isRecipeEmpty } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
-import { PropKey, getPropKeys, isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
+import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "../lib/util";
 
 import {
   CompKey,
   FpdKey,
+  PropKey,
+  getPropKeys,
   getMixProperty,
   MixProperties,
   prop_key_as_med_str_js,
@@ -38,7 +40,7 @@ export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   FpdKey[FpdKey.FPD],
   FpdKey[FpdKey.ServingTemp],
   FpdKey[FpdKey.HardnessAt14C],
-]);
+] as PropKey[]);
 
 export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }) {
   const qtyToggleState = useState<QtyToggle>(QtyToggle.Percentage);

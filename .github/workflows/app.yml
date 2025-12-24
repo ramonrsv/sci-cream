@@ -58,13 +58,13 @@ jobs:
         run: pnpm install
       - name: Installing wasm-pack
         run: cargo install wasm-pack
+      - name: Building workspace
+        run: pnpm build
       - name: Seeding database
         run: |
           cd ./packages/app
           npx drizzle-kit push
           pnpm tsx ./src/lib/db/seed.ts
-      - name: Building workspace
-        run: pnpm build
       - name: Running workspace tests
         run: pnpm test
 
@@ -129,6 +129,8 @@ jobs:
         run: cargo install wasm-pack
       - name: Installing dependencies
         run: pnpm install
+      - name: Building workspace
+        run: pnpm build
       - name: Seeding database
         run: |
           cd ./packages/app

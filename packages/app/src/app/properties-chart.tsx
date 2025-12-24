@@ -19,15 +19,13 @@ import { DEFAULT_SELECTED_PROPERTIES } from "./properties";
 import { applyQtyToggle, formatCompositionValue } from "../lib/ui/comp-values";
 import { RECIPE_COLOR_BY_IDX, GRID_COLOR } from "../lib/styles/chart-colors";
 
-import {
-  PropKey,
-  getPropKeys as getPropKeysAll,
-  isPropKeyQuantity,
-} from "../lib/sci-cream/sci-cream";
+import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
 
 import {
   CompKey,
   FpdKey,
+  PropKey,
+  getPropKeys as getPropKeysAll,
   getMixProperty,
   MixProperties,
   prop_key_as_med_str_js,

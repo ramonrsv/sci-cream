@@ -5,7 +5,7 @@ import { eq, and } from "drizzle-orm";
 import { usersTable, ingredientsTable } from "./schema";
 import * as schema from "./schema";
 
-import { IngredientJson, allIngredients } from "../data/ingredients";
+import { IngredientJson, allIngredients } from "@workspace/sci-cream";
 import { SchemaCategory } from "./schema-category";
 
 type User = typeof usersTable.$inferInsert;

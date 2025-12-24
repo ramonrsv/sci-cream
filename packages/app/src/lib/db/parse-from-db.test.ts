@@ -12,9 +12,8 @@ import {
   Category,
   Ingredient,
   Composition,
+  allIngredients,
 } from "@workspace/sci-cream";
-
-import { allIngredients } from "../data/ingredients";
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
 

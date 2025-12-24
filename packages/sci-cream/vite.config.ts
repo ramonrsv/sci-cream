@@ -1,9 +1,10 @@
 import { defineConfig } from "vite";
 import path from "path";
 import wasm from "vite-plugin-wasm";
+import dts from "vite-plugin-dts";
 
 export default defineConfig({
-  plugins: [wasm()], // include wasm plugin
+  plugins: [wasm(), dts({ rollupTypes: true, tsconfigPath: "./tsconfig.json" })],
   build: {
     lib: {
       entry: path.resolve(__dirname, "src/ts/index.ts"),

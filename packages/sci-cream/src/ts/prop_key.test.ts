@@ -1,16 +1,17 @@
 import { expect, test } from "vitest";
 
+import { getTsEnumNumberKeys, getTsEnumStringKeys, getTsEnumStrings } from "./util";
+
+import { CompKey, FpdKey, comp_key_as_med_str_js, fpd_key_as_med_str_js } from "../../wasm/index";
+
 import {
-  CompKey,
-  FpdKey,
-  comp_key_as_med_str_js,
-  fpd_key_as_med_str_js,
+  PropKey,
+  PropKeyObj,
+  getPropKeys,
   isCompKey,
   isFpdKey,
-} from "../../dist/index";
-
-import { PropKey, PropKeyObj, getPropKeys, prop_key_as_med_str_js } from "./prop_key";
-import { getTsEnumNumberKeys, getTsEnumStringKeys } from "./util";
+  prop_key_as_med_str_js,
+} from "./prop_key";
 
 test("Import from sci-cream wasm package, at sci-cream", () => {
   expect(comp_key_as_med_str_js(CompKey.MilkFat)).toBe("Milk Fat");
@@ -30,8 +31,8 @@ test("PropKeyObj enum contains all CompKey and FpdKey values", () => {
 });
 
 test("getPropKeys returns all PropKey values in correct order", () => {
-  const compKeys = getTsEnumStringKeys(CompKey);
-  const fpdKeys = getTsEnumStringKeys(FpdKey);
+  const compKeys = getTsEnumStrings(CompKey);
+  const fpdKeys = getTsEnumStrings(FpdKey);
 
   const expectedPropKeys = compKeys.concat(fpdKeys) as PropKey[];
   const propKeys = getPropKeys();
@@ -93,13 +94,13 @@ test("comp_key_as_med_str_js works for CompKey/FpdKey number values via PropKey"
   const fpdNumKeys = getTsEnumNumberKeys(FpdKey);
 
   for (const compNumKey of compNumKeys) {
-    const compKeyMedStr = comp_key_as_med_str_js(compNumKey as CompKey);
+    const compKeyMedStr = comp_key_as_med_str_js(compNumKey as unknown as CompKey);
     const propKeyMedStr = prop_key_as_med_str_js(CompKey[compNumKey]);
     expect(propKeyMedStr).toBe(compKeyMedStr);
   }
 
   for (const fpdNumKey of fpdNumKeys) {
-    const fpdKeyMedStr = fpd_key_as_med_str_js(fpdNumKey as FpdKey);
+    const fpdKeyMedStr = fpd_key_as_med_str_js(fpdNumKey as unknown as FpdKey);
     const propKeyMedStr = prop_key_as_med_str_js(FpdKey[fpdNumKey]);
     expect(propKeyMedStr).toBe(fpdKeyMedStr);
   }
