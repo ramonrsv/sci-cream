@@ -289,7 +289,7 @@ export function RecipeGrid({
                   className={`table-fillable-input ${
                     row.name === "" || validIngredients.includes(row.name)
                       ? "focus:ring-blue-400"
-                      : "outline-red-400 outline-solid focus:ring-red-400"
+                      : "-outline-offset-2 outline-red-400 outline-solid focus:ring-red-400"
                   } px-2`}
                   placeholder=""
                   list="valid-ingredients"
