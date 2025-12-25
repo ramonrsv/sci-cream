@@ -115,11 +115,13 @@ impl Default for MixProperties {
 #[cfg(test)]
 mod test {
     use crate::tests::asserts::shadow_asserts::assert_eq;
-    #[allow(unused_imports)] // @todo Remove when used.
     use crate::tests::asserts::*;
 
-    use super::*;
     use crate::tests::assets::*;
+    use crate::tests::data::get_ingredient_spec_by_name_or_panic;
+
+    use super::*;
+    use crate::specs::IntoComposition;
 
     #[test]
     fn calculate_mix_composition() {
@@ -142,5 +144,37 @@ mod test {
         assert_eq!(mix_comp.solids.milk.total(), 10.82 / 2.0);
 
         assert_eq!(mix_comp.solids.other.total(), 50.0);
+    }
+
+    #[test]
+    fn calculate_mix_properties_with_hf() {
+        let mix_properties = calculate_mix_properties(
+            &[
+                ("Whole Milk", 245.0),
+                ("Whipping Cream", 215.0),
+                ("70% Dark Chocolate", 28.0),
+                ("Skimmed Milk Powder", 21.0),
+                ("Egg Yolk", 18.0),
+                ("Dextrose", 45.0),
+                ("Fructose", 32.0),
+                // ("Salt", 0.5),
+                ("Rich Ice Cream SB", 1.25),
+                // ("Vanilla Extract", 6.0),
+            ]
+            .map(|(name, amount)| {
+                let spec = get_ingredient_spec_by_name_or_panic(name);
+                CompositionLine::new(spec.spec.into_composition().unwrap(), amount)
+            })
+            .into_iter()
+            .collect::<Vec<CompositionLine>>(),
+        );
+        let mix_composition = &mix_properties.composition;
+
+        let epsilon = 0.1;
+        assert_abs_diff_eq!(mix_composition.pac.total_exc_hf(), 29.3, epsilon = epsilon);
+        assert_abs_diff_eq!(mix_composition.absolute_pac(), 49.7, epsilon = epsilon);
+        assert_abs_diff_eq!(mix_properties.fpd.fpd, -3.5, epsilon = epsilon);
+        assert_abs_diff_eq!(mix_properties.fpd.serving_temp, -15.4, epsilon = epsilon);
+        assert_abs_diff_eq!(mix_properties.fpd.hardness_at_14c, 72.3, epsilon = epsilon);
     }
 }

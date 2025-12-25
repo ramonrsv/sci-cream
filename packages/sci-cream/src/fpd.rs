@@ -138,7 +138,7 @@ pub fn compute_fpd<F: Fn(f64) -> Result<f64>>(
     let (comp, hf, fw) = (composition, hardness_factor, frozen_water);
 
     let water = comp.get(CompKey::Water) * ((100.0 - fw) / 100.0);
-    let fpd_pac = get_fpd_from_pac((comp.get(CompKey::PACtotal) - hf) * 100.0 / water)?;
+    let fpd_pac = get_fpd_from_pac((comp.pac.total_exc_hf() - hf) * 100.0 / water)?;
     let fpd_slt = (comp.get(CompKey::MSNF) * FPD_MSNF_FACTOR_FOR_CELSIUS) / water;
 
     Ok(-(fpd_pac + fpd_slt))
@@ -364,6 +364,34 @@ mod tests {
             ][..],
             0.4,
         );
+    }
+    #[test]
+    fn compute_fpd_interpolation_with_hf() {
+        for (comp, ref_fpd) in &[
+            (*REF_COMP, &REF_FROZEN_WATER_FPD[..]),
+            (*REF_COMP_WITH_ALCOHOL, &REF_FROZEN_WATER_FPD_WITH_ALCOHOL),
+            (*REF_COMP, &REF_FROZEN_WATER_FPD_INTER),
+        ] {
+            let comp_pac_less_hf = Composition {
+                pac: PAC {
+                    sugars: comp.pac.sugars - 10.0,
+                    ..comp.pac
+                },
+                ..*comp
+            };
+
+            for (frozen_water, expected_fpd) in *ref_fpd {
+                let compute_fpd = |c: Composition, hf: f64, fw: f64| {
+                    compute_fpd(c, hf, fw, &super::get_fpd_from_pac_interpolation)
+                };
+
+                let fpd_frozen_water = compute_fpd(*comp, 0.0, *frozen_water).unwrap();
+                let fpd_with_added_hf = compute_fpd(*comp, 10.0, *frozen_water).unwrap();
+                let fpd_pac_less_hf = compute_fpd(comp_pac_less_hf, 0.0, *frozen_water).unwrap();
+                assert_abs_diff_eq!(fpd_frozen_water, *expected_fpd, epsilon = 0.015);
+                assert_abs_diff_eq!(fpd_with_added_hf, fpd_pac_less_hf, epsilon = TESTS_EPSILON);
+            }
+        }
     }
 
     #[test]

@@ -38,6 +38,11 @@ pub(crate) fn get_ingredient_spec_by_name(name: &str) -> Option<IngredientSpec> 
     ALL_INGREDIENT_SPECS.get(name).cloned()
 }
 
+pub(crate) fn get_ingredient_spec_by_name_or_panic(name: &str) -> IngredientSpec {
+    get_ingredient_spec_by_name(name)
+        .unwrap_or_else(|| panic!("Ingredient spec not found for '{name}'"))
+}
+
 #[cfg(test)]
 pub(crate) mod test {
     use crate::tests::asserts::shadow_asserts::assert_eq;
@@ -102,7 +107,7 @@ pub(crate) mod test {
             ("Honey", ING_SPEC_HONEY.clone()),
             ("HFCS 42", ING_SPEC_HFCS42.clone()),
         ] {
-            assert_eq!(get_ingredient_spec_by_name(name).unwrap(), asset_spec);
+            assert_eq!(get_ingredient_spec_by_name_or_panic(name), asset_spec);
         }
     }
 }

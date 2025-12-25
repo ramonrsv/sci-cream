@@ -521,17 +521,12 @@ impl PAC {
         Self::empty()
     }
 
-    pub fn total(&self) -> f64 {
-        iter_fields_as::<f64, _>(self).sum()
+    pub fn total_inc_hf(&self) -> f64 {
+        self.sugars + self.salt + self.alcohol - self.hardness_factor
     }
 
-    /// Note that [`f64::NAN`] is a valid result, if there is no water
-    pub fn absolute(&self, water: f64) -> f64 {
-        if water > 0.0 {
-            (self.total() / water) * 100.0
-        } else {
-            f64::NAN
-        }
+    pub fn total_exc_hf(&self) -> f64 {
+        self.sugars + self.salt + self.alcohol
     }
 }
 
@@ -602,8 +597,13 @@ impl Composition {
     }
 
     /// Note that [`f64::NAN`] is a valid result, if there is no water
+    /// Excluding hardness factor, i.e. `self.pac.total_exc_hf() / self.water()`
     pub fn absolute_pac(&self) -> f64 {
-        self.pac.absolute(self.water())
+        if self.water() > 0.0 {
+            (self.pac.total_exc_hf() / self.water()) * 100.0
+        } else {
+            f64::NAN
+        }
     }
 
     pub fn get(&self, key: CompKey) -> f64 {
@@ -638,7 +638,7 @@ impl Composition {
             CompKey::PACsgr => self.pac.sugars,
             CompKey::PACslt => self.pac.salt,
             CompKey::PACalc => self.pac.alcohol,
-            CompKey::PACtotal => self.pac.total(),
+            CompKey::PACtotal => self.pac.total_exc_hf(),
             CompKey::AbsPAC => self.absolute_pac(),
             CompKey::HF => self.pac.hardness_factor,
         }
@@ -1010,7 +1010,7 @@ mod tests {
     fn pac_total() {
         let pac = COMP_MILK_2_PERCENT.pac;
         assert_eq!(pac.sugars, 4.8069);
-        assert_eq!(pac.total(), 4.8069);
+        assert_eq!(pac.total_inc_hf(), 4.8069);
     }
 
     #[test]

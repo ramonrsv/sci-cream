@@ -544,7 +544,7 @@ mod test {
         assert_eq!(sweeteners.sugars.total(), 4.8069);
 
         assert_eq!(pac.sugars, 4.8069);
-        assert_eq!(pac.total(), 4.8069);
+        assert_eq!(pac.total_inc_hf(), 4.8069);
 
         assert_abs_diff_eq!(
             SPEC_DAIRY_2_PERCENT.into_composition().unwrap(),
@@ -794,6 +794,9 @@ mod test {
         assert_eq!(solids.total(), 100.0);
         assert_eq!(pod, 30.0);
         assert_eq!(pac.sugars, 30.0);
+        assert_eq!(pac.hardness_factor, 90.0);
+        assert_eq!(pac.total_inc_hf(), -60.0);
+        assert_eq!(pac.total_exc_hf(), 30.0);
     }
 
     #[test]
