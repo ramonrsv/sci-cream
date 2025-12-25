@@ -17,7 +17,7 @@ import { Recipe, isRecipeEmpty } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { DEFAULT_SELECTED_PROPERTIES } from "./properties";
 import { applyQtyToggle, formatCompositionValue } from "../lib/ui/comp-values";
-import { RECIPE_COLOR_BY_IDX, GRID_COLOR } from "../lib/styles/chart-colors";
+import { GRID_COLOR, recipeChartColor } from "../lib/styles/colors";
 
 import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
 
@@ -101,8 +101,8 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
         data: enabledProps.map((prop_key) =>
           Math.abs(getPropertyValue(prop_key, recipe.mixProperties!, recipe.mixTotal!)),
         ),
-        backgroundColor: RECIPE_COLOR_BY_IDX[recipe.index].background,
-        borderColor: RECIPE_COLOR_BY_IDX[recipe.index].border,
+        backgroundColor: recipeChartColor(recipe.index),
+        borderColor: recipeChartColor(recipe.index),
         maxBarThickness: 40,
         categoryPercentage: 0.6,
         barPercentage: 0.8,

@@ -47,6 +47,8 @@ export default function Home() {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
+  const refsProps = { ctx: recipeCtxState, indices: recipes.slice(1).map((_, idx) => idx + 1) };
+
   const h = REACT_GRID_COMPONENT_HEIGHT;
 
   // prettier-ignore
@@ -72,12 +74,12 @@ export default function Home() {
             width={width}
             gridConfig={{ cols: 12, rowHeight: 150, margin: [20, 20] }}
           >
-            <div key="recipe">{<RecipeGrid prop={{ ctx: recipeCtxState, indices: [0] }} />}</div>
+            <div key="recipe">{<RecipeGrid props={{ ctx: recipeCtxState, indices: [0] }} />}</div>
             <div key="properties">{<MixPropertiesGrid recipes={recipes} />}</div>
             <div key="composition">{<IngredientCompositionGrid recipe={recipes[0]} />}</div>
             <div key="props-chart">{<MixPropertiesChart recipes={recipes} />}</div>
             <div key="fpd-graph">{<FpdGraph recipes={recipes} />}</div>
-            <div key="refs">{<RecipeGrid prop={{ ctx: recipeCtxState, indices: [1, 2] }} />}</div>
+            <div key="refs">{<RecipeGrid props={refsProps} />}</div>
           </ReactGridLayout>
         )}
       </div>

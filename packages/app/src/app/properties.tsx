@@ -7,6 +7,7 @@ import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/ke
 import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
 import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "../lib/util";
+import { recipeCompBgColor } from "@/lib/styles/colors";
 
 import {
   CompKey,
@@ -127,7 +128,13 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
             <tr className="h-6.25">
               <th className="table-header w-full px-2">Property</th>
               {recipes.map((recipe) => (
-                <th key={recipe.index} className="table-header px-2 text-center">
+                <th
+                  key={recipe.index}
+                  className="table-header px-2 text-center"
+                  {...(recipes.length > 1
+                    ? { style: { backgroundColor: recipeCompBgColor(recipe.index) } }
+                    : {})}
+                >
                   {recipe.name}
                 </th>
               ))}

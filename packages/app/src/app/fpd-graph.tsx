@@ -15,7 +15,7 @@ import {
 } from "chart.js";
 
 import { Recipe, isRecipeEmpty } from "./recipe";
-import { RECIPE_COLOR_BY_IDX, GRID_COLOR } from "@/lib/styles/chart-colors";
+import { GRID_COLOR, recipeChartColor } from "@/lib/styles/colors";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -34,19 +34,18 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
     labels: Array.from({ length: 101 }, (_, i) => i),
     datasets: recipes.flatMap((recipe) => {
       const curves = recipe.mixProperties.fpd!.curves!;
-      const backgroundColor = RECIPE_COLOR_BY_IDX[recipe.index].background;
-      const borderColor = RECIPE_COLOR_BY_IDX[recipe.index].border;
+      const borderColor = recipeChartColor(recipe.index);
 
       const lines = [
-        { lineLabel: "Hardness", borderDash: [1, 1], curve: curves.hardness },
-        { lineLabel: "Frozen Water", borderDash: [5, 5], curve: curves.frozen_water },
-        { lineLabel: "HF", borderDash: [2, 2], curve: curves.hardness_factor },
+        { lineLabel: "Hardness", curve: curves.hardness },
+        { lineLabel: "Frozen Water", borderDash: [3, 3], curve: curves.frozen_water },
+        { lineLabel: "HF", borderDash: [15, 15], curve: curves.hardness_factor },
       ];
 
       return lines.map(({ lineLabel, borderDash, curve }) => ({
         label: lineLabel,
         data: curve.map((point) => point.temp),
-        backgroundColor: backgroundColor,
+        backgroundColor: "#fff",
         borderColor: borderColor,
         borderDash: borderDash,
         pointRadius: curve.map((_, i) => (shouldHighlight(lineLabel, i) ? 6 : 0)),

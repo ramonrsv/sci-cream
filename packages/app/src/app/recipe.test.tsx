@@ -269,7 +269,7 @@ describe("RecipeGrid Component", () => {
       });
     }, []);
 
-    return <RecipeGrid prop={{ ctx: [ctx, setRecipeContext], indices }} />;
+    return <RecipeGrid props={{ ctx: [ctx, setRecipeContext], indices }} />;
   }
 
   function getIngredientNameElement(container: HTMLElement, index: number) {
@@ -300,7 +300,7 @@ describe("RecipeGrid Component", () => {
 
   it("should render recipe selector", () => {
     const { container } = render(
-      <RecipeGrid prop={{ ctx: [recipeContext, setRecipeContext], indices: [0, 1] }} />,
+      <RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0, 1] }} />,
     );
 
     const select = container.querySelector("select") as HTMLSelectElement;
@@ -310,7 +310,7 @@ describe("RecipeGrid Component", () => {
   });
 
   it("should render action buttons", () => {
-    render(<RecipeGrid prop={{ ctx: [recipeContext, setRecipeContext], indices: [0, 1] }} />);
+    render(<RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0, 1] }} />);
 
     expect(screen.getByRole("button", { name: /copy/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /paste/i })).toBeInTheDocument();
@@ -319,7 +319,7 @@ describe("RecipeGrid Component", () => {
 
   it("should render table with correct number of ingredient rows", () => {
     const { container } = render(
-      <RecipeGrid prop={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
+      <RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
     );
 
     const tbody = container.querySelector("tbody");
@@ -328,7 +328,7 @@ describe("RecipeGrid Component", () => {
   });
 
   it("should render table headers", () => {
-    render(<RecipeGrid prop={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />);
+    render(<RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />);
 
     expect(screen.getByText("Ingredient")).toBeInTheDocument();
     expect(screen.getByText("Qty (g)")).toBeInTheDocument();
@@ -385,7 +385,7 @@ describe("RecipeGrid Component", () => {
     recipeContext.recipes[0].mixTotal = 80;
 
     const { container } = render(
-      <RecipeGrid prop={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
+      <RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
     );
 
     const percentageCells = container.querySelectorAll("tbody td.comp-val");
@@ -524,7 +524,7 @@ describe("RecipeGrid Component", () => {
     recipeContext.recipes[0].ingredientRows[0].name = "2% Milk";
     recipeContext.recipes[0].ingredientRows[0].quantity = 50;
 
-    render(<RecipeGrid prop={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />);
+    render(<RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />);
 
     const clearButton = screen.getByRole("button", { name: /clear/i });
     await user.click(clearButton);
@@ -543,7 +543,7 @@ describe("RecipeGrid Component", () => {
     recipeContext.recipes[0].ingredientRows[0].name = "Invalid Ingredient";
 
     const { container } = render(
-      <RecipeGrid prop={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
+      <RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
     );
 
     expect(getIngredientNameElement(container, 0).className).toContain("outline-red-400");
@@ -553,7 +553,7 @@ describe("RecipeGrid Component", () => {
     recipeContext.recipes[0].ingredientRows[0].name = "2% Milk";
 
     const { container } = render(
-      <RecipeGrid prop={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
+      <RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
     );
 
     const firstIngredientInput = getIngredientNameElement(container, 0);
@@ -624,7 +624,7 @@ describe("RecipeGrid Component", () => {
     const user = userEvent.setup();
 
     const { container } = render(
-      <RecipeGrid prop={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
+      <RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
     );
 
     const firstIngredientInput = getIngredientNameElement(container, 0);
@@ -636,7 +636,7 @@ describe("RecipeGrid Component", () => {
 
   it("should render datalist with valid ingredients", () => {
     const { container } = render(
-      <RecipeGrid prop={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
+      <RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
     );
 
     const datalist = container.querySelector("#valid-ingredients");

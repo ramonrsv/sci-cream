@@ -6,6 +6,7 @@ import { fetchIngredientSpec, IngredientTransfer } from "../lib/data";
 import { formatCompositionValue } from "../lib/ui/comp-values";
 import { standardInputStepByPercent } from "../lib/util";
 import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "./page";
+import { recipeCompBgColor } from "@/lib/styles/colors";
 
 import {
   Ingredient,
@@ -93,12 +94,12 @@ export function calculateMixProperties(recipe: Recipe): MixProperties {
 }
 
 export function RecipeGrid({
-  prop: {
+  props: {
     ctx: [recipeContext, setRecipeContext],
     indices,
   },
 }: {
-  prop: { ctx: RecipeContextState; indices: number[] };
+  props: { ctx: RecipeContextState; indices: number[] };
 }) {
   const { validIngredients, ingredientCache, recipes } = recipeContext;
   const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(indices[0]);
@@ -234,10 +235,11 @@ export function RecipeGrid({
         <select
           value={currentRecipeIdx}
           onChange={(e) => setCurrentRecipeIdx(parseInt(e.target.value))}
-          className="select-input w-20 text-center"
+          className="select-input w-53.5 text-center"
+          style={{ backgroundColor: recipeCompBgColor(currentRecipeIdx) }}
         >
           {indices.map((idx) => (
-            <option key={idx} value={idx}>
+            <option key={idx} value={idx} style={{ backgroundColor: recipeCompBgColor(idx) }}>
               {recipes[idx].name}
             </option>
           ))}
