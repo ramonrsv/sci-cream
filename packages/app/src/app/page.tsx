@@ -31,6 +31,7 @@ export const RECIPE_TOTAL_ROWS = 20;
 const REACT_GRID_COMPONENT_HEIGHT = 11;
 const REACT_GRID_ROW_HEIGHT = 35.6;
 export const STD_COMPONENT_H_PX = 592;
+const REACT_GRID_COLS = 24;
 
 export default function Home() {
   const { width, containerRef, mounted } = useContainerWidth();
@@ -54,15 +55,20 @@ export default function Home() {
   const refsProps = { ctx: recipeCtxState, indices: recipes.slice(1).map((_, idx) => idx + 1) };
 
   const h = REACT_GRID_COMPONENT_HEIGHT;
+  const recipeDims = { w: 8, h, maxW: 8, isResizable: false };
+  const propsDims = { w: 6, h, minW: 6, maxW: 8, resizeHandles: ["e", "s"] as RHA[] };
+  const compsDims = { w: 10, h, minH: h, resizeHandles: ["e"] as RHA[] };
+  const chartDims = { w: 12, h, resizeHandles: ["e", "s"] as RHA[] };
+  const graphDims = { w: 12, h, resizeHandles: ["e", "s"] as RHA[] };
 
   // prettier-ignore
   const layout = [
-    { i: "recipe",      x:  0, y: 0, w:  4, h, maxW: 4, isResizable: false },
-    { i: "properties",  x:  4, y: 0, w:  3, h, minW: 3, maxW: 4, resizeHandles: ["e", "s"] as RHA[] },
-    { i: "composition", x:  7, y: 0, w:  5, h, minH: h, resizeHandles: ["e"] as RHA[] },
-    { i: "props-chart", x:  0, y: 1, w:  6, h, resizeHandles: ["e", "s"] as RHA[] },
-    { i: "fpd-graph",   x:  6, y: 1, w:  6, h, resizeHandles: ["e", "s"] as RHA[] },
-    { i: "refs",        x:  0, y: 2, w:  4, h, isResizable: false },
+    { i: "recipe",      x:  0, y:  0, ...recipeDims },
+    { i: "properties",  x:  8, y:  0, ...propsDims },
+    { i: "composition", x: 14, y:  0, ...compsDims },
+    { i: "props-chart", x:  0, y: 11, ...chartDims },
+    { i: "fpd-graph",   x: 12, y: 11, ...graphDims },
+    { i: "refs",        x:  0, y: 22, ...recipeDims },
   ];
 
   return (
@@ -76,7 +82,11 @@ export default function Home() {
           <ReactGridLayout
             layout={layout}
             width={width}
-            gridConfig={{ cols: 12, rowHeight: REACT_GRID_ROW_HEIGHT, margin: [20, 20] }}
+            gridConfig={{
+              cols: REACT_GRID_COLS,
+              rowHeight: REACT_GRID_ROW_HEIGHT,
+              margin: [20, 20],
+            }}
           >
             <div key="recipe">{<RecipeGrid props={{ ctx: recipeCtxState, indices: [0] }} />}</div>
             <div key="properties">{<MixPropertiesGrid recipes={recipes} />}</div>
