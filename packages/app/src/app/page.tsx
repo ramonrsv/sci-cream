@@ -1,10 +1,6 @@
 "use client";
 
-import {
-  ReactGridLayout,
-  useContainerWidth,
-  type ResizeHandleAxis as RHA,
-} from "react-grid-layout";
+import { ReactGridLayout, useContainerWidth, type ResizeHandleAxis } from "react-grid-layout";
 
 import { useState, useEffect } from "react";
 
@@ -54,12 +50,34 @@ export default function Home() {
 
   const refsProps = { ctx: recipeCtxState, indices: recipes.slice(1).map((_, idx) => idx + 1) };
 
+  // Dynamically adjusts the number of columns based on screen width, so that some components
+  // maintain a fixed-ish width and do not widen too much when going from half to full screen.
+  // @todo This is a hacky workaround; ideally react-grid-layout would support this natively.
+  // It may be possible to implement a better solution using `positionStrategy`/`constraints`.
+  const dynamicColsFromFixedPx = (widthInColUnits: number): number => {
+    const REF_SCREEN_WIDTH = 2560 / 2; // 1440p half screen
+
+    const widthInRefScreenPx = (REF_SCREEN_WIDTH / REACT_GRID_COLS) * widthInColUnits;
+    const currentScreenPxPerCol = width / REACT_GRID_COLS;
+
+    const ret =
+      width <= REF_SCREEN_WIDTH
+        ? widthInColUnits
+        : Math.ceil(widthInRefScreenPx / currentScreenPxPerCol);
+    console.log(`dynW(${widthInColUnits}) -> ${ret}`);
+    return ret;
+  };
+
+  const dynW = dynamicColsFromFixedPx;
+  const horiz = ["e"] as ResizeHandleAxis[];
+  const horizVert = ["e", "s"] as ResizeHandleAxis[];
+
   const h = REACT_GRID_COMPONENT_HEIGHT;
-  const recipeDims = { w: 8, h, maxW: 8, isResizable: false };
-  const propsDims = { w: 6, h, minW: 6, maxW: 8, resizeHandles: ["e", "s"] as RHA[] };
-  const compsDims = { w: 10, h, minH: h, resizeHandles: ["e"] as RHA[] };
-  const chartDims = { w: 12, h, resizeHandles: ["e", "s"] as RHA[] };
-  const graphDims = { w: 12, h, resizeHandles: ["e", "s"] as RHA[] };
+  const recipeDims = { h, w: dynW(8), maxW: dynW(8), isResizable: false };
+  const propsDims = { h, w: dynW(6), minW: dynW(6), maxW: dynW(8), resizeHandles: horizVert };
+  const compsDims = { h, w: 10, resizeHandles: horiz };
+  const chartDims = { h, w: 12, resizeHandles: horizVert };
+  const graphDims = { h, w: 12, resizeHandles: horizVert };
 
   // prettier-ignore
   const layout = [
