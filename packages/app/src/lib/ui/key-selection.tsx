@@ -103,7 +103,7 @@ export function KeySelection<Key>({
           onChange={(e) => setQtyToggle(e.target.value as QtyToggle)}
         >
           {supportedQtyToggles.map((qt) => (
-            <option key={qt} value={qt}>
+            <option key={qt} value={qt} className="table-inner-cell">
               {qt}
             </option>
           ))}
@@ -121,7 +121,7 @@ export function KeySelection<Key>({
         }}
       >
         {Object.values(KeyFilter).map((kf) => (
-          <option key={kf} value={kf}>
+          <option key={kf} value={kf} className="table-inner-cell">
             {kf}
           </option>
         ))}
