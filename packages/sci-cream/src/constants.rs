@@ -103,3 +103,4 @@ pub const PAC_TO_FPD_TABLE_MAX_PAC: usize = PAC_TO_FPD_TABLE.last().unwrap().0;
 pub const PAC_TO_FPD_POLY_COEFFS: [f64; 3] = [0.00009, 0.0612, 0.0];
 
 pub const SERVING_TEMP_X_AXIS: usize = 75;
+pub const TARGET_SERVING_TEMP_14C: f64 = -14.0;

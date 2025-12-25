@@ -52,7 +52,7 @@ impl KeyAsStrings for FpdKey {
         match self {
             FpdKey::FPD => "FPD",
             FpdKey::ServingTemp => "Serving Temp",
-            FpdKey::HardnessAt14C => "Hardness @14°C",
+            FpdKey::HardnessAt14C => "Hardness @-14°C",
         }
     }
 }
@@ -150,7 +150,7 @@ mod tests {
 
     #[test]
     fn fpd_keys_as_med_str() {
-        let expected_vec = vec!["FPD", "Serving Temp", "Hardness @14°C"];
+        let expected_vec = vec!["FPD", "Serving Temp", "Hardness @-14°C"];
 
         let actual_vec: Vec<&'static str> = FpdKey::iter().map(|h| h.as_med_str()).collect();
         assert_eq!(actual_vec, expected_vec);

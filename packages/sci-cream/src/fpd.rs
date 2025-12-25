@@ -9,6 +9,7 @@ use crate::{
     constants::{
         FPD_MSNF_FACTOR_FOR_CELSIUS, PAC_TO_FPD_POLY_COEFFS, PAC_TO_FPD_TABLE,
         PAC_TO_FPD_TABLE_MAX_PAC, PAC_TO_FPD_TABLE_STEP, SERVING_TEMP_X_AXIS,
+        TARGET_SERVING_TEMP_14C,
     },
     error::{Error, Result},
 };
@@ -24,13 +25,13 @@ pub enum FpdKey {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Copy, Clone, Debug)]
 pub struct CurvePoint {
-    pub temp: f64,
     pub x_axis: f64,
+    pub temp: f64,
 }
 
 impl CurvePoint {
-    pub fn new(temp: f64, x_axis: f64) -> Self {
-        Self { temp, x_axis }
+    pub fn new(x_axis: f64, temp: f64) -> Self {
+        Self { x_axis, temp }
     }
 }
 
@@ -79,12 +80,12 @@ impl FPD {
         let curves = compute_fpd_curves(composition)?;
         let fpd = curves.frozen_water[0].temp;
         let serving_temp = curves.hardness[SERVING_TEMP_X_AXIS].temp;
-        let hardness_at_14c = 75.0;
+        let hardness_at_14c = get_x_axis_at_fpd(&curves.hardness, TARGET_SERVING_TEMP_14C);
 
         Ok(Self {
             fpd,
             serving_temp,
-            hardness_at_14c,
+            hardness_at_14c: hardness_at_14c.unwrap_or(f64::NAN),
             curves,
         })
     }
@@ -147,19 +148,21 @@ pub fn compute_fpd_curves(composition: Composition) -> Result<Curves> {
     let (comp, mut curves) = (composition, Curves::empty());
 
     for x_axis in 0..100 {
+        let x_axis_f = x_axis as f64;
+
         // @todo Use interpolation for now for ease of comparison with sci-cream-legacy.ts
         let _ = PAC_TO_FPD_POLY_COEFFS; // _polynomial(pac, PAC_TO_FPD_POLY_COEFFS);
         let get_fpd_from_pac = get_fpd_from_pac_interpolation;
 
         let compute_fpd = |c, hf, fw| compute_fpd(c, hf, fw, &get_fpd_from_pac);
 
-        let frozen_water_fpd = compute_fpd(comp, 0.0, x_axis as f64)?;
-        let hf_fpd = compute_fpd(comp, comp.pac.hardness_factor, x_axis as f64)?;
+        let frozen_water_fpd = compute_fpd(comp, 0.0, x_axis_f)?;
+        let hf_fpd = compute_fpd(comp, comp.pac.hardness_factor, x_axis_f)?;
         let hardness_fpd = (frozen_water_fpd + hf_fpd) / 2.0;
 
-        let frozen_water_curve_point = CurvePoint::new(frozen_water_fpd, x_axis as f64);
-        let hf_curve_point = CurvePoint::new(hf_fpd, x_axis as f64);
-        let hardness_curve_point = CurvePoint::new(hardness_fpd, x_axis as f64);
+        let frozen_water_curve_point = CurvePoint::new(x_axis_f, frozen_water_fpd);
+        let hf_curve_point = CurvePoint::new(x_axis_f, hf_fpd);
+        let hardness_curve_point = CurvePoint::new(x_axis_f, hardness_fpd);
 
         curves.frozen_water.push(frozen_water_curve_point);
         curves.hardness_factor.push(hf_curve_point);
@@ -167,6 +170,22 @@ pub fn compute_fpd_curves(composition: Composition) -> Result<Curves> {
     }
 
     Ok(curves)
+}
+
+pub fn get_x_axis_at_fpd(curve: &[CurvePoint], target_fpd: f64) -> Option<f64> {
+    for i in 0..curve.len() - 1 {
+        let high = &curve[i];
+        let low = &curve[i + 1];
+
+        if high.temp >= target_fpd && low.temp <= target_fpd {
+            let run = target_fpd - high.temp;
+            let slope = (low.x_axis - high.x_axis) / (low.temp - high.temp);
+
+            return Some(high.x_axis + run * slope);
+        }
+    }
+
+    None
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
@@ -345,5 +364,27 @@ mod tests {
             ][..],
             0.4,
         );
+    }
+
+    #[test]
+    fn get_x_axis_at_fpd() {
+        let curve = &REF_FROZEN_WATER_FPD
+            .iter()
+            .map(|(x_axis, temp)| CurvePoint::new(*x_axis, *temp))
+            .collect::<Vec<CurvePoint>>();
+
+        for point in curve {
+            let x_axis = super::get_x_axis_at_fpd(curve, point.temp).unwrap();
+            assert_abs_diff_eq!(x_axis, point.x_axis, epsilon = TESTS_EPSILON);
+        }
+
+        for fpd in [-1.0, 85.0] {
+            assert_true!(super::get_x_axis_at_fpd(curve, fpd).is_none());
+        }
+
+        for (expected_x_axis, target_fpd) in &[(5.0, -2.9), (7.5, -2.98), (77.5, -14.765)] {
+            let x_axis = super::get_x_axis_at_fpd(curve, *target_fpd).unwrap();
+            assert_abs_diff_eq!(x_axis, *expected_x_axis, epsilon = TESTS_EPSILON);
+        }
     }
 }
