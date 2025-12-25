@@ -55,7 +55,7 @@ export default function Home() {
   // @todo This is a hacky workaround; ideally react-grid-layout would support this natively.
   // It may be possible to implement a better solution using `positionStrategy`/`constraints`.
   const dynamicColsFromFixedPx = (widthInColUnits: number): number => {
-    const REF_SCREEN_WIDTH = 2560 / 2; // 1440p half screen
+    const REF_SCREEN_WIDTH = 1200; // Measured experimentally, on 1440p half screen
 
     const widthInRefScreenPx = (REF_SCREEN_WIDTH / REACT_GRID_COLS) * widthInColUnits;
     const currentScreenPxPerCol = width / REACT_GRID_COLS;
@@ -64,7 +64,6 @@ export default function Home() {
       width <= REF_SCREEN_WIDTH
         ? widthInColUnits
         : Math.ceil(widthInRefScreenPx / currentScreenPxPerCol);
-    console.log(`dynW(${widthInColUnits}) -> ${ret}`);
     return ret;
   };
 
@@ -73,8 +72,8 @@ export default function Home() {
   const horizVert = ["e", "s"] as ResizeHandleAxis[];
 
   const h = REACT_GRID_COMPONENT_HEIGHT;
-  const recipeDims = { h, w: dynW(8), maxW: dynW(8), isResizable: false };
-  const propsDims = { h, w: dynW(6), minW: dynW(6), maxW: dynW(8), resizeHandles: horizVert };
+  const recipeDims = { h, w: dynW(8), isResizable: false };
+  const propsDims = { h, w: dynW(6), minW: dynW(6), maxW: dynW(9), resizeHandles: horizVert };
   const compsDims = { h, w: 10, resizeHandles: horiz };
   const chartDims = { h, w: 12, resizeHandles: horizVert };
   const graphDims = { h, w: 12, resizeHandles: horizVert };
