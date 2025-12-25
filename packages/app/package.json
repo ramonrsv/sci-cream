@@ -9,7 +9,9 @@
     "lint": "eslint ./src",
     "prettier": "prettier --check ./src",
     "coverage": "vitest run --coverage",
-    "dev": "next dev --turbopack",
+    "dev": "pnpm dev:turbopack",
+    "dev:turbopack": "next dev --turbopack",
+    "dev:webpack": "next dev --webpack",
     "start": "next start",
     "seed-db": "npx drizzle-kit push && pnpm tsx ./src/lib/db/seed.ts"
   },
