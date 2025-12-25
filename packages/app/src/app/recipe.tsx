@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { fetchIngredientSpec, IngredientTransfer } from "../lib/data";
 import { formatCompositionValue } from "../lib/ui/comp-values";
 import { standardInputStepByPercent } from "../lib/util";
-import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "./page";
+import { MAX_RECIPES, RECIPE_TOTAL_ROWS, STD_COMPONENT_H_PX } from "./page";
 import { recipeCompBgColor } from "@/lib/styles/colors";
 
 import {
@@ -229,7 +229,7 @@ export function RecipeGrid({
   const mixTotal = recipe.mixTotal;
 
   return (
-    <div id="recipe-grid" className="grid-component std-component-h">
+    <div id="recipe-grid" className="grid-component" style={{ height: `${STD_COMPONENT_H_PX}px` }}>
       <div>
         {/* Recipe Selector */}
         <select

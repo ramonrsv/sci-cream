@@ -20,13 +20,17 @@ import { FpdGraph } from "./fpd-graph";
 export const MAX_RECIPES = 3;
 export const RECIPE_TOTAL_ROWS = 20;
 
-// These values are carefully chosen so that the component and grid container heights match exactly,
-// and so that there is enough margin after the components to accommodate a possible scrollbar.
-// @todo `pnpm build` fails if these values are exported. Also, importing and using something like
-// `h-${STD_COMPONENT_H}` in the component divs className intermittently fails to apply the height
-// correctly; need to investigate further. For now, use the `component-h` class in globals.css.
-const REACT_GRID_COMPONENT_HEIGHT = 3.6;
-const STD_COMPONENT_H = 148; // eslint-disable-line @typescript-eslint/no-unused-vars
+// These values are carefully chosen so that the fixed height components (RecipeGrid, IngCompGrid)
+// and the grid container heights match exactly, so that there is enough margin after the components
+// to accommodate a possible scrollbar, and so that REACT_GRID_COMPONENT_HEIGHT is a whole unit so
+// that we can resize components back to their original size (resize is only allowed in whole units)
+//
+// @todo REACT_GRID_COMPONENT_HEIGHT * REACT_GRID_ROW_HEIGHT != STD_COMPONENT_H_PX; I don't
+// understand what's going on here, but I'm sick of trying to get react-grid-layout to behave, so
+// leaving it like this for now; it seems to work well, at least on Chrome and on a 1440p display.
+const REACT_GRID_COMPONENT_HEIGHT = 11;
+const REACT_GRID_ROW_HEIGHT = 35.6;
+export const STD_COMPONENT_H_PX = 592;
 
 export default function Home() {
   const { width, containerRef, mounted } = useContainerWidth();
@@ -72,7 +76,7 @@ export default function Home() {
           <ReactGridLayout
             layout={layout}
             width={width}
-            gridConfig={{ cols: 12, rowHeight: 150, margin: [20, 20] }}
+            gridConfig={{ cols: 12, rowHeight: REACT_GRID_ROW_HEIGHT, margin: [20, 20] }}
           >
             <div key="recipe">{<RecipeGrid props={{ ctx: recipeCtxState, indices: [0] }} />}</div>
             <div key="properties">{<MixPropertiesGrid recipes={recipes} />}</div>

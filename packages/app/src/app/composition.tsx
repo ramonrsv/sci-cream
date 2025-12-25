@@ -6,6 +6,7 @@ import { IngredientRow, Recipe } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
 import { isCompKeyQuantity } from "../lib/sci-cream/sci-cream";
+import { STD_COMPONENT_H_PX } from "./page";
 import { STATE_VAL } from "../lib/util";
 
 import { CompKey, comp_key_as_med_str_js, getWasmEnums } from "@workspace/sci-cream";
@@ -76,7 +77,11 @@ export function IngredientCompositionGrid({ recipe }: { recipe: Recipe }) {
   };
 
   return (
-    <div id="ing-composition-grid" className="grid-component std-component-h w-full min-w-50">
+    <div
+      id="ing-composition-grid"
+      className="grid-component w-full min-w-50"
+      style={{ height: `${STD_COMPONENT_H_PX}px` }}
+    >
       <KeySelection
         qtyToggleComponent={{
           supportedQtyToggles: [QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage],
