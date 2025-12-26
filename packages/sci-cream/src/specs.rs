@@ -186,7 +186,6 @@ pub struct FruitsSpec {
 /// // 100% Unsweetened Cocoa Powder
 /// // https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs
 /// // 1g/6g fat in nutrition table => 16.67% cocoa butter
-///
 /// let comp = ChocolatesSpec {
 ///     cacao_solids: 100.0,
 ///     cocoa_butter: 16.67,
@@ -207,11 +206,41 @@ pub struct ChocolatesSpec {
     pub sugar: Option<f64>,
 }
 
+/// Spec for egg ingredients, with water content, fat content, and lecithin (emulsifier) content
+///
+/// The composition of egg ingredients can usually be found in food composition databases, like
+/// USDA FoodData Central (<https://fdc.nal.usda.gov/food-search>), in the manufacturers' data, or
+/// in reference texts, e.g. The Science of Ice Cream, C. Clarke, p. 49. Note that
+/// [`lecithin`](Self::lecithin) is a subset of [`fats`](Self::fats), and considered an emulsifier
+/// with relative strength of 100, specified in [`Micro::emulsifiers`](Micro::emulsifiers). The
+/// remaining portion of `100 - water - fats` is assumed to be non-fat non-sugar solids (snfs),
+/// specified in [`Solids::egg`](Solids::egg)`.`[`snfs`](SolidsBreakdown::snfs).
+///
+/// # Examples
+///
+/// Based on a combination of two sources:
+///     - Foundation - 1125 (<https://fdc.nal.usda.gov/food-details/748236/nutrients>)
+///     - The Science of Ice Cream, C. Clarke, p. 49
+///
+/// ```
+/// use sci_cream::{composition::{Micro, Solids}, specs::{EggsSpec, IntoComposition}};
+///
+/// let comp = EggsSpec {
+///     water: 52.0,
+///     fats: 29.0,
+///     lecithin: 9.0,
+/// }.into_composition().unwrap();
+///
+/// assert_eq!(comp.solids.egg.fats, 29.0);
+/// assert_eq!(comp.solids.egg.snfs, 19.0);
+/// assert_eq!(comp.solids.total(), 48.0);
+/// assert_eq!(comp.micro.emulsifiers, 9.0);
+/// ```
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct EggsSpec {
-    pub fat: f64,
-    pub solids: f64,
+    pub water: f64,
+    pub fats: f64,
     pub lecithin: f64,
 }
 
@@ -443,19 +472,23 @@ impl IntoComposition for ChocolatesSpec {
 impl IntoComposition for EggsSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self {
-            fat,
-            solids,
+            water,
+            fats,
             lecithin,
         } = self;
 
-        if fat > solids {
+        if water + fats > 100.0 {
+            return Err(Error::CompositionNotWithin100Percent(water + fats));
+        }
+
+        if lecithin > fats {
             return Err(Error::InvalidComposition(format!(
-                "Fat ({fat}) cannot be greater than total solids ({solids})"
+                "Lecithin ({lecithin}) is a subset of and cannot be greater than fats ({fats})"
             )));
         }
 
         Ok(Composition::new()
-            .solids(Solids::new().egg(SolidsBreakdown::new().fats(fat).snfs(solids - fat)))
+            .solids(Solids::new().egg(SolidsBreakdown::new().fats(fats).snfs(100.0 - water - fats)))
             .micro(Micro::new().emulsifiers(lecithin)))
     }
 }
@@ -830,9 +863,9 @@ mod test {
     #[test]
     fn into_composition_eggs_spec_egg_yolk() {
         let Composition { solids, micro, .. } = EggsSpec {
-            fat: 29.0,
-            solids: 48.0,
-            lecithin: 8.33,
+            water: 52.0,
+            fats: 29.0,
+            lecithin: 9.0,
         }
         .into_composition()
         .unwrap();
@@ -840,7 +873,7 @@ mod test {
         assert_eq!(solids.egg.fats, 29.0);
         assert_eq!(solids.egg.snfs, 19.0);
         assert_eq!(solids.total(), 48.0);
-        assert_eq!(micro.emulsifiers, 8.33);
+        assert_eq!(micro.emulsifiers, 9.0);
     }
 
     #[test]
