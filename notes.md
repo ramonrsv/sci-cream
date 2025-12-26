@@ -48,11 +48,22 @@ $ pg_ctlcluster 16 main stop
 $ pg_ctlcluster 16 main start
 ```
 
-When running CI workflows locally via `act`, the postgres service may fail to start if the above
-service is already running on port `5432`. To fix this, either stop the local postgres service, or
-change the port that it's running on by modifying `port` in `postgresql.conf`, then restart the
-service/system, e.g. via `sudo service postgresql restart`, and change `DATABASE_URL` in `.env` to
-point to the new port.
+When running CI workflows locally via `act`, the job may fail to map ports if the default port 5432
+on the host is already being used by a running postgres service. To fix this either stop the local
+postgres service, change the port that it's running on, or change the host ports that the CI
+workflow uses.
+
+To change the local service port modify `port` in `postgresql.conf`, then restart the service, e.g.
+via `sudo service postgresql restart`, and change `DATABASE_URL` in `.env` to point to the new port.
+`sudo ss -tulpn` can be used to see what services are running on what ports.
+
+To change the host port that the CI workflow is using, modify `job.<id>.services.postgres.ports`,
+e.g. from `5432:5432` to `5433:5432`, to map host port `5433` instead of `5432` to port `5432` on
+the container. The respective `job.<id>.env.DATABASE_URL` needs to be changed to point to the new
+port. If multiple jobs in a CI workflow use a service that requires port mappings, they must each
+use different ports from each other and from any ports being used on the host. Note that only the
+host ports need to be unique, the container ports can be reused. See [Creating PostgresSQL service
+containers](https://docs.github.com/en/actions/tutorials/use-containerized-services/create-postgresql-service-containers)
 
 Push schema to database and seed:
 
