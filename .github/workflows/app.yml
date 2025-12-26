@@ -20,7 +20,6 @@ on:
     branches: ["main"]
 
 env:
-  DATABASE_URL: postgres://postgres:password@localhost:5432/sci_cream
   APP_USER_NAME: SciCream App
   APP_USER_EMAIL: app@scicream.ca
   TEST_USER_NAME: SciCream Test
@@ -37,12 +36,17 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
         ports:
-          - 5432:5432
+          # Host port matching port in DATABASE_URL
+          - 5432:5432 # host:service_container
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+    env:
+      # Ensure that no two jobs with a postgres service use the same port,
+      # as this can cause conflicts when running locally via `act`.
+      DATABASE_URL: postgres://postgres:password@localhost:5432/sci_cream
     steps:
       - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@master
@@ -106,12 +110,17 @@ jobs:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
         ports:
-          - 5432:5432
+          # Host port matching port in DATABASE_URL
+          - 5433:5432 # host:service_container
         options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+    env:
+      # Ensure that no two jobs with a postgres service use the same port,
+      # as this can cause conflicts when running locally via `act`.
+      DATABASE_URL: postgres://postgres:password@localhost:5433/sci_cream
     steps:
       - uses: actions/checkout@v5
       - uses: dtolnay/rust-toolchain@master
