@@ -1,6 +1,6 @@
 Install requirements and dependencies:
 
-```console
+```bash
 $ sudo apt update
 $ sudo apt install nodejs npm
 $ sudo npm install -g pnpm
@@ -9,13 +9,13 @@ $ pnpm install
 
 Install postgresql:
 
-```console
+```bash
 $ sudo apt install postgresql postgresql-contrib
 ```
 
 Create database:
 
-```console
+```bash
 $ sudo -u postgres psql
 # \password postgres
 # create database sci_cream;
@@ -42,7 +42,7 @@ If developing on WSL and using DBeaver on Windows, then port `5432` may need to 
 
 To list and start/stop running database servers:
 
-```console
+```bash
 $ pg_lscluster
 $ pg_ctlcluster 16 main stop
 $ pg_ctlcluster 16 main start
@@ -55,7 +55,7 @@ service/system, e.g. via `sudo service postgresql restart`.
 
 Push schema to database and seed:
 
-```console
+```bash
 $ cd ./packages/app
 $ npx drizzle-kit push
 $ pnpm tsx ./src/lib/db/seed.ts
@@ -63,7 +63,7 @@ $ pnpm tsx ./src/lib/db/seed.ts
 
 Build, run tests, run dev server:
 
-```console
+```bash
 $ pnpm build
 $ pnpm test
 $ pnpm dev
@@ -71,13 +71,13 @@ $ pnpm dev
 
 To build the `"diesel"` feature of the rust `sci-cream` crate, need to:
 
-```console
+```bash
 $ sudo apt install libpq-dev
 ```
 
 Then we can:
 
-```console
+```bash
 $ # `--features wasm` OR `diesel` for individual features
 $ cargo build --all-features
 $ cargo test --all-features
@@ -85,7 +85,7 @@ $ cargo test --all-features
 
 To use the "wasm" feature and `wasm-pack` to prepare `npm` package:
 
-```console
+```bash
 $ cargo install wasm-pack # Only needed once
 $ cd ./packages/sci-cream
 $ # To validate build, not necessary when running wasm-pack
@@ -99,21 +99,21 @@ $     # OR
 
 To upgrade `node`:
 
-```console
+```bash
 $ sudo npm install -g n
 $ sudo n stable
 ```
 
 To upgrade `pnpm` dependencies:
 
-```console
+```bash
 $ pnpm update --latest --dir ./packages/app
 $ pnpm update --latest --dir ./packages/sci-cream
 ```
 
 To upgrade Rust dependencies:
 
-```console
+```bash
 $ cargo install cargo-edit # Only needed once
 $ cd ./packages/sci-cream
 $ cargo upgrade --incompatible
@@ -121,7 +121,7 @@ $ cargo upgrade --incompatible
 
 To run code coverage:
 
-```console
+```bash
 $ # Rust
 $ cargo install cargo-llvm-cov # Only needed once
 $ cargo llvm-cov test --all-features
