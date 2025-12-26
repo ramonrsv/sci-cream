@@ -1,81 +1,13 @@
 [
-  {
-    "name": "1% Milk",
-    "category": "Dairy",
-    "DairySpec": {
-      "fat": 1
-    }
-  },
-  {
-    "name": "2% Milk",
-    "category": "Dairy",
-    "DairySpec": {
-      "fat": 2
-    }
-  },
-  {
-    "name": "3.25% Milk",
-    "category": "Dairy",
-    "DairySpec": {
-      "fat": 3.25
-    }
-  },
-  {
-    "name": "3.5% Milk",
-    "category": "Dairy",
-    "DairySpec": {
-      "fat": 3.5
-    }
-  },
-  {
-    "name": "35% Cream",
-    "category": "Dairy",
-    "DairySpec": {
-      "fat": 35
-    }
-  },
-  {
-    "name": "40% Cream",
-    "category": "Dairy",
-    "DairySpec": {
-      "fat": 40
-    }
-  },
-  {
-    "name": "Whole Milk",
-    "category": "Dairy",
-    "DairySpec": {
-      "fat": 3.25
-    }
-  },
-  {
-    "name": "Whipping Cream",
-    "category": "Dairy",
-    "DairySpec": {
-      "fat": 35
-    }
-  },
-  {
-    "name": "Heavy Cream",
-    "category": "Dairy",
-    "DairySpec": {
-      "fat": 36
-    }
-  },
-  {
-    "name": "Skimmed Milk Powder",
-    "category": "Dairy",
-    "DairySpec": {
-      "fat": 0,
-      "msnf": 97
-    }
-  },
-  {
-    "name": "Whole Milk Powder",
-    "category": "Dairy",
-    "DairySpec": {
-      "fat": 27,
-      "msnf": 73
-    }
-  }
+  { "name": "1% Milk", "category": "Dairy", "DairySpec": { "fat": 1 } },
+  { "name": "2% Milk", "category": "Dairy", "DairySpec": { "fat": 2 } },
+  { "name": "3.25% Milk", "category": "Dairy", "DairySpec": { "fat": 3.25 } },
+  { "name": "3.5% Milk", "category": "Dairy", "DairySpec": { "fat": 3.5 } },
+  { "name": "35% Cream", "category": "Dairy", "DairySpec": { "fat": 35 } },
+  { "name": "40% Cream", "category": "Dairy", "DairySpec": { "fat": 40 } },
+  { "name": "Whole Milk", "category": "Dairy", "DairySpec": { "fat": 3.25 } },
+  { "name": "Whipping Cream", "category": "Dairy", "DairySpec": { "fat": 35 } },
+  { "name": "Heavy Cream", "category": "Dairy", "DairySpec": { "fat": 36 } },
+  { "name": "Skimmed Milk Powder", "category": "Dairy", "DairySpec": { "fat": 0, "msnf": 97 } },
+  { "name": "Whole Milk Powder", "category": "Dairy", "DairySpec": { "fat": 27, "msnf": 73 } }
 ]
