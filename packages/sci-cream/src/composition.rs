@@ -98,12 +98,12 @@ pub struct PAC {
 /// `sweeteners` and `micro` components are both accounted for in `solids`, and should not be
 /// double-counted. They are provided separately to facilitate the analysis of key components.
 ///
-/// POD and
-/// [PAC](https://github.com/ramonrsv/sci-cream/blob/main/docs/freezing-point-depression.md#pac-afp-fpdf-se)
-/// are expressed as a sucrose equivalence and do not necessarily represent real weights of
-/// components. While some underlying components may have utilities to calculate their contributions
-/// to POD and PAC, the overall POD and PAC of a composition are independent values and are set
-/// during composition construction, taking all underlying contributions into account.
+/// POD and [PAC][1] are expressed as a sucrose equivalence and do not necessarily represent real
+/// weights of components. While some underlying components may have utilities to calculate their
+/// contributions to POD and PAC, the overall POD and PAC of a composition are independent values
+/// and are set during composition construction, taking all underlying contributions into account.
+///
+/// [1]: https://github.com/ramonrsv/sci-cream/blob/main/packages/sci-cream/docs/freezing-point-depression.md#pac-afp-fpdf-se
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Composition {
