@@ -283,6 +283,7 @@ export function RecipeGrid({
           {/* @todo The ingredient/input rows are not respecting < h-6/[25px]; not sure why yet */}
           {recipe.ingredientRows.map((row) => (
             <tr key={row.index} className="h-6.25">
+              {/* Ingredient Name Input */}
               <td className="table-inner-cell">
                 <input
                   type="search"
@@ -297,6 +298,7 @@ export function RecipeGrid({
                   list="valid-ingredients"
                 />
               </td>
+              {/* Ingredient Quantity Input */}
               <td className="table-inner-cell">
                 <input
                   type="number"
@@ -308,6 +310,7 @@ export function RecipeGrid({
                   className="table-fillable-input text-right font-mono"
                 />
               </td>
+              {/* Ingredient Quantity Percentage Display */}
               <td className="table-inner-cell comp-val px-1">
                 {row.quantity && mixTotal
                   ? formatCompositionValue((row.quantity / mixTotal) * 100)

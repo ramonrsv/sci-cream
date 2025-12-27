@@ -126,11 +126,12 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
         <table className="relative -top-px">
           <thead>
             <tr className="h-6.25">
-              <th className="table-header w-full px-2">Property</th>
+              <th className="table-header w-full px-1.25">Property</th>
+              {/* Recipe Names */}
               {recipes.map((recipe) => (
                 <th
                   key={recipe.index}
-                  className="table-header px-2 text-center"
+                  className="table-header px-1.25 text-center"
                   {...(recipes.length > 1
                     ? { style: { backgroundColor: recipeCompBgColor(recipe.index) } }
                     : {})}
@@ -143,11 +144,13 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
           <tbody>
             {getEnabledProps().map((prop_key) => (
               <tr key={String(prop_key)} className="h-6.25">
-                <td className="table-header w-full px-2 text-center">
+                {/* Property Name */}
+                <td className="table-header w-full px-1.25 text-center">
                   {prop_key_as_med_str_js(prop_key)}
                 </td>
+                {/* Property Values for Recipes */}
                 {recipes.map((recipe) => (
-                  <td key={recipe.index} className="table-inner-cell comp-val min-w-12.5 px-2">
+                  <td key={recipe.index} className="table-inner-cell comp-val px-1.25">
                     {formattedPropCell(prop_key, recipe.mixProperties!, recipe.mixTotal!)}
                   </td>
                 ))}
