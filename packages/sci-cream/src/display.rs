@@ -3,7 +3,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::{composition::CompKey, fpd::FpdKey, recipe::PropKey};
 
-trait KeyAsStrings {
+pub trait KeyAsStrings {
     fn as_med_str(&self) -> &'static str;
 }
 

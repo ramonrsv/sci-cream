@@ -39,7 +39,7 @@ pub struct SolidsBreakdown {
 ///
 /// Note that the values here are expressed as grams per 100g of _total_ ingredient/mix, not as a
 /// percentage of total solids, e.g. a 10g:90g sucrose:water mix would have `solids.total() == 10`
-/// and `solids.other.sweeteners == 10`, in spite of sucrose being 100% of the solids.
+/// and `solids.other.sweeteners.sucrose == 10`, in spite of sucrose being 100% of the solids.
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Solids {
@@ -77,6 +77,7 @@ pub struct Sweeteners {
 #[serde(default, deny_unknown_fields)]
 pub struct Micro {
     pub salt: f64,
+    pub lecithin: f64,
     pub emulsifiers: f64,
     pub stabilizers: f64,
 }
@@ -452,6 +453,7 @@ impl Micro {
     pub fn empty() -> Self {
         Self {
             salt: 0.0,
+            lecithin: 0.0,
             emulsifiers: 0.0,
             stabilizers: 0.0,
         }
@@ -459,6 +461,10 @@ impl Micro {
 
     pub fn salt(self, salt: f64) -> Self {
         Self { salt, ..self }
+    }
+
+    pub fn lecithin(self, lecithin: f64) -> Self {
+        Self { lecithin, ..self }
     }
 
     pub fn emulsifiers(self, emulsifiers: f64) -> Self {
@@ -738,6 +744,7 @@ impl ScaleComponents for Micro {
     fn scale(&self, factor: f64) -> Self {
         Self {
             salt: self.salt * factor,
+            lecithin: self.lecithin * factor,
             stabilizers: self.stabilizers * factor,
             emulsifiers: self.emulsifiers * factor,
         }
@@ -746,6 +753,7 @@ impl ScaleComponents for Micro {
     fn add(&self, other: &Self) -> Self {
         Self {
             salt: self.salt + other.salt,
+            lecithin: self.lecithin + other.lecithin,
             stabilizers: self.stabilizers + other.stabilizers,
             emulsifiers: self.emulsifiers + other.emulsifiers,
         }

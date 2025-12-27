@@ -1,0 +1,16 @@
+[
+  { "name": "Salt", "category": "Micro", "MicrosSpec": "Salt" },
+  { "name": "Lecithin", "category": "Micro", "MicrosSpec": "Lecithin" },
+  {
+    "name": "Rich Ice Cream SB",
+    "category": "Micro",
+    "MicrosSpec": { "Stabilizer": { "strength": 100 } }
+  },
+  {
+    "name": "Louis Francois Stab 2000",
+    "category": "Micro",
+    "MicrosSpec": {
+      "EmulsifierStabilizer": { "emulsifier_strength": 100, "stabilizer_strength": 40 }
+    }
+  }
+]

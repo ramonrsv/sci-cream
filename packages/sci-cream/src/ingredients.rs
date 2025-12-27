@@ -13,12 +13,12 @@ use crate::composition::Composition;
 pub enum Category {
     Dairy,
     Sweetener,
-    Alcohol,
+    Fruit,
     Chocolate,
     Nut,
-    Fruit,
     Egg,
-    EmulsifierStabilizer,
+    Alcohol,
+    Micro,
     Miscellaneous,
 }
 

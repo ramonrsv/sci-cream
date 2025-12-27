@@ -3,7 +3,7 @@ use std::sync::LazyLock;
 use crate::{
     composition::{Composition, PAC, Solids, SolidsBreakdown, Sugars, Sweeteners},
     ingredients::{Category, Ingredient},
-    specs::{CompositionBasis, DairySpec, IngredientSpec, Spec, SweetenersSpec},
+    specs::{CompositionBasis, DairySpec, IngredientSpec, MicrosSpec, Spec, SweetenersSpec},
 };
 
 // Comp Specs
@@ -176,6 +176,39 @@ pub(crate) const ING_SPEC_FRUCTOSE_STR: &str = r#"{
   }
 }"#;
 
+pub(crate) const ING_SPEC_SALT_STR: &str = r#"{
+  "name": "Salt",
+  "category": "Micro",
+  "MicrosSpec": "Salt"
+}"#;
+
+pub(crate) const ING_SPEC_LECITHIN_STR: &str = r#"{
+  "name": "Lecithin",
+  "category": "Micro",
+  "MicrosSpec": "Lecithin"
+}"#;
+
+pub(crate) const ING_SPEC_STABILIZER_STR: &str = r#"{
+  "name": "Rich Ice Cream SB",
+  "category": "Micro",
+  "MicrosSpec": {
+    "Stabilizer": {
+      "strength": 100
+    }
+  }
+}"#;
+
+pub(crate) const ING_SPEC_LOUIS_STAB2K_STR: &str = r#"{
+  "name": "Louis Francois Stab 2000",
+  "category": "Micro",
+  "MicrosSpec": {
+    "EmulsifierStabilizer": {
+      "emulsifier_strength": 100,
+      "stabilizer_strength": 40
+    }
+  }
+}"#;
+
 pub(crate) static ING_SPEC_MILK_2_PERCENT: LazyLock<IngredientSpec> =
     LazyLock::new(|| IngredientSpec {
         name: "2% Milk".to_string(),
@@ -219,6 +252,35 @@ pub(crate) static ING_SPEC_HFCS42: LazyLock<IngredientSpec> = LazyLock::new(|| I
     category: Category::Sweetener,
     spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_HFCS42),
 });
+
+pub(crate) static ING_SPEC_SALT: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    name: "Salt".to_string(),
+    category: Category::Micro,
+    spec: Spec::MicrosSpec(MicrosSpec::Salt),
+});
+
+pub(crate) static ING_SPEC_LECITHIN: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    name: "Lecithin".to_string(),
+    category: Category::Micro,
+    spec: Spec::MicrosSpec(MicrosSpec::Lecithin),
+});
+
+pub(crate) static ING_SPEC_STABILIZER: LazyLock<IngredientSpec> =
+    LazyLock::new(|| IngredientSpec {
+        name: "Rich Ice Cream SB".to_string(),
+        category: Category::Micro,
+        spec: Spec::MicrosSpec(MicrosSpec::Stabilizer { strength: 100.0 }),
+    });
+
+pub(crate) static ING_SPEC_LOUIS_STAB2K: LazyLock<IngredientSpec> =
+    LazyLock::new(|| IngredientSpec {
+        name: "Louis Francois Stab 2000".to_string(),
+        category: Category::Micro,
+        spec: Spec::MicrosSpec(MicrosSpec::EmulsifierStabilizer {
+            emulsifier_strength: 100.0,
+            stabilizer_strength: 40.0,
+        }),
+    });
 
 // Ingredients
 // --------------------------------------------

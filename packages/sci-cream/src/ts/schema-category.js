@@ -15,11 +15,11 @@
 export const SchemaCategory = Object.freeze({
   Dairy: "Dairy",
   Sweetener: "Sweetener",
-  Alcohol: "Alcohol",
+  Fruit: "Fruit",
   Chocolate: "Chocolate",
   Nut: "Nut",
-  Fruit: "Fruit",
   Egg: "Egg",
-  EmulsifierStabilizer: "EmulsifierStabilizer",
+  Alcohol: "Alcohol",
+  Micro: "Micro",
   Miscellaneous: "Miscellaneous",
 });

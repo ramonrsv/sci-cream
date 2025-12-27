@@ -244,16 +244,48 @@ pub struct EggsSpec {
     pub lecithin: f64,
 }
 
-/// Spec for emulsifier and stabilizer ingredients
+/// Spec for ingredients with solely micro components, e.g. salt, emulsifiers, stabilizer, etc.
 ///
-/// These ingredients are assumed to be 100% solids non-fat non-sugar, with the
-/// [`emulsifiers`](Self::emulsifiers) and [`stabilizers`](Self::stabilizers) fields representing
-/// their relative strengths with a maximum of 100 combined.
+/// These ingredients are assumed to be 100% solids non-fat non-sugar (technically lecithin is a
+/// lipid and therefore a subset of fats, but that is ignored here for simplicity's sake), with the
+/// `(emulsifier)_strength` and `(stabilizer)_strength` fields representing their relative strengths
+/// as a percentage of a reference.
+///
+/// This "strength" is a very fuzzy concept, since it's difficult
+/// to precisely quantify the effectiveness of emulsifiers and stabilizers, and they often differ
+/// in their modes of action and their effects have different properties than just a linear more or
+/// less stabilizing/emulsifying effect. However, this allows for a rough scaling, differentiating
+/// between very weak and very strong ingredients, for example between cornstarch and Locust Bean
+/// Gum as
+/// stabilizers, the recommended usage levels of which differ by an order of magnitude.
+///
+/// Roughly, strong gums like Guar Gum, Locust Bean Gum, Lambda Carrageenan, etc. are taken as the
+/// reference and have a stabilizer strength of 100, with a [recommended dosage of
+/// ~1.5g/kg](<https://under-belly.org/basic-ice-cream-recipe-examples/>). Cornstarch and similar
+/// have a stabilizer strength of ~15, with a recommended dosage of ~10g/kg (Hello, My Name is Ice
+/// Cream, Dana Cree). Commercial blends, such as _"Louis Francois Stab 2000"_, usually cut the active
+/// ingredients with fillers, so the relative strength of the ingredient as a whole is lower than
+/// that of pure gums. With a manufacturer recommended dosage of ~3.5g/kg, "Louis Francois Stab
+/// 2000" has a relative stabilizer strength of ~40. Lecithin is taken as the reference emulsifier
+/// with a strength of 100, with a [recommended dosage of
+/// ~3.25g/kg](<https://under-belly.org/basic-ice-cream-recipe-examples/>). Something like _"Louis
+/// Francois Stab 2000"_ has a similar recommended dosage for its emulsifier component, so it also
+/// has a a relative emulsifier strength of 100.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
-pub struct EmulsifiersStabilizersSpec {
-    pub emulsifiers: Option<f64>,
-    pub stabilizers: Option<f64>,
+pub enum MicrosSpec {
+    Salt,
+    Lecithin,
+    Stabilizer {
+        strength: f64,
+    },
+    Emulsifier {
+        strength: f64,
+    },
+    EmulsifierStabilizer {
+        emulsifier_strength: f64,
+        stabilizer_strength: f64,
+    },
 }
 
 /// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
@@ -264,7 +296,7 @@ pub enum Spec {
     FruitsSpec(FruitsSpec),
     ChocolatesSpec(ChocolatesSpec),
     EggsSpec(EggsSpec),
-    EmulsifiersStabilizersSpec(EmulsifiersStabilizersSpec),
+    MicrosSpec(MicrosSpec),
 }
 
 #[cfg_attr(feature = "diesel", derive(Queryable, Selectable), diesel(table_name = ingredients))]
@@ -284,7 +316,7 @@ impl IntoComposition for Spec {
             Spec::FruitsSpec(spec) => spec.into_composition(),
             Spec::ChocolatesSpec(spec) => spec.into_composition(),
             Spec::EggsSpec(spec) => spec.into_composition(),
-            Spec::EmulsifiersStabilizersSpec(spec) => spec.into_composition(),
+            Spec::MicrosSpec(spec) => spec.into_composition(),
         }
     }
 }
@@ -493,35 +525,51 @@ impl IntoComposition for EggsSpec {
     }
 }
 
-impl IntoComposition for EmulsifiersStabilizersSpec {
+impl IntoComposition for MicrosSpec {
     fn into_composition(self) -> Result<Composition> {
-        let Self {
-            emulsifiers,
-            stabilizers,
-        } = self;
+        let make_emulsifier_stabilizer_composition = |emulsifiers_strength: Option<f64>,
+                                                      stabilizers_strength: Option<f64>|
+         -> Result<Composition> {
+            let emulsifiers_strength = emulsifiers_strength.unwrap_or(0.0);
+            let stabilizers_strength = stabilizers_strength.unwrap_or(0.0);
 
-        if emulsifiers.is_none() && stabilizers.is_none() {
-            return Err(Error::InvalidComposition(
-                "At least one of Emulsifiers or Stabilizers must be specified".to_string(),
-            ));
+            if emulsifiers_strength < 0.0 || stabilizers_strength < 0.0 {
+                return Err(Error::InvalidComposition(
+                    "Emulsifier and Stabilizer strengths must be non-negative".to_string(),
+                ));
+            }
+
+            Ok(Composition::new()
+                .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
+                .micro(
+                    Micro::new()
+                        .emulsifiers(emulsifiers_strength)
+                        .stabilizers(stabilizers_strength),
+                ))
+        };
+
+        match self {
+            MicrosSpec::Salt => Ok(Composition::new()
+                .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
+                .micro(Micro::new().salt(100.0))
+                .pac(PAC::new().salt(constants::SALT_PAC))),
+            MicrosSpec::Lecithin => Ok(Composition::new()
+                .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
+                .micro(Micro::new().emulsifiers(100.0))),
+            MicrosSpec::Stabilizer { strength } => {
+                make_emulsifier_stabilizer_composition(None, Some(strength))
+            }
+            MicrosSpec::Emulsifier { strength } => {
+                make_emulsifier_stabilizer_composition(Some(strength), None)
+            }
+            MicrosSpec::EmulsifierStabilizer {
+                emulsifier_strength,
+                stabilizer_strength,
+            } => make_emulsifier_stabilizer_composition(
+                Some(emulsifier_strength),
+                Some(stabilizer_strength),
+            ),
         }
-
-        let emulsifiers = emulsifiers.unwrap_or(0.0);
-        let stabilizers = stabilizers.unwrap_or(0.0);
-
-        if !is_within_100_percent(emulsifiers + stabilizers) {
-            return Err(Error::InvalidComposition(format!(
-                "Emulsifiers ({emulsifiers}) and Stabilizers ({stabilizers}) are not within a relative strength of 100"
-            )));
-        }
-
-        Ok(Composition::new()
-            .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
-            .micro(
-                Micro::new()
-                    .emulsifiers(emulsifiers)
-                    .stabilizers(stabilizers),
-            ))
     }
 }
 
@@ -877,10 +925,49 @@ mod test {
     }
 
     #[test]
+    fn into_composition_micro_spec_salt() {
+        let Composition {
+            solids, micro, pac, ..
+        } = MicrosSpec::Salt.into_composition().unwrap();
+        assert_eq!(solids.other.snfs, 100.0);
+        assert_eq!(solids.total(), 100.0);
+        assert_eq!(micro.salt, 100.0);
+        assert_eq!(pac.salt, 585.0);
+    }
+
+    #[test]
+    fn into_composition_micro_spec_lecithin() {
+        let Composition { solids, micro, .. } = MicrosSpec::Lecithin.into_composition().unwrap();
+        assert_eq!(solids.other.snfs, 100.0);
+        assert_eq!(solids.total(), 100.0);
+        assert_eq!(micro.emulsifiers, 100.0);
+    }
+
+    #[test]
+    fn into_composition_micro_spec_stabilizer() {
+        let Composition { solids, micro, .. } = MicrosSpec::Stabilizer { strength: 85.0 }
+            .into_composition()
+            .unwrap();
+        assert_eq!(solids.other.snfs, 100.0);
+        assert_eq!(solids.total(), 100.0);
+        assert_eq!(micro.stabilizers, 85.0);
+    }
+
+    #[test]
+    fn into_composition_micro_spec_emulsifier() {
+        let Composition { solids, micro, .. } = MicrosSpec::Emulsifier { strength: 60.0 }
+            .into_composition()
+            .unwrap();
+        assert_eq!(solids.other.snfs, 100.0);
+        assert_eq!(solids.total(), 100.0);
+        assert_eq!(micro.emulsifiers, 60.0);
+    }
+
+    #[test]
     fn into_composition_emulsifiers_stabilizers_spec() {
-        let Composition { solids, micro, .. } = EmulsifiersStabilizersSpec {
-            emulsifiers: Some(70.0),
-            stabilizers: Some(30.0),
+        let Composition { solids, micro, .. } = MicrosSpec::EmulsifierStabilizer {
+            emulsifier_strength: 70.0,
+            stabilizer_strength: 30.0,
         }
         .into_composition()
         .unwrap();
@@ -898,6 +985,10 @@ mod test {
             (ING_SPEC_SUCROSE_STR, ING_SPEC_SUCROSE.clone()),
             (ING_SPEC_DEXTROSE_STR, ING_SPEC_DEXTROSE.clone()),
             (ING_SPEC_FRUCTOSE_STR, ING_SPEC_FRUCTOSE.clone()),
+            (ING_SPEC_SALT_STR, ING_SPEC_SALT.clone()),
+            (ING_SPEC_LECITHIN_STR, ING_SPEC_LECITHIN.clone()),
+            (ING_SPEC_STABILIZER_STR, ING_SPEC_STABILIZER.clone()),
+            (ING_SPEC_LOUIS_STAB2K_STR, ING_SPEC_LOUIS_STAB2K.clone()),
         ]
         .iter()
         .for_each(|(spec_str, spec)| {
