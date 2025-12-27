@@ -14,3 +14,6 @@
 - [ ] Consider adding support for `IngredientCompositionGrid` to show the compositions of
       references. It would be simple to just add a selector, but unsure if it should support
       displaying deltas.
+- [ ] Figure out how to handle calculating FPDs for recipes where (PACtot - HF) would be negative.
+      Currently this throws an error. This is unlikely to happen with real recipes, but it can
+      happen when adding ingredients to a recipe one-by-one, before all ingredients have been added.
