@@ -1022,6 +1022,27 @@ mod tests {
     }
 
     #[test]
+    fn composition_nan_values() {
+        let comp = Composition::new();
+
+        assert_eq!(comp.water(), 100.0);
+        assert_eq!(comp.solids.total(), 0.0);
+        assert_eq!(comp.solids.fats(), 0.0);
+        assert!(comp.emulsifiers_per_fat().is_nan());
+        assert_eq!(comp.stabilizers_per_water(), 0.0);
+        assert_eq!(comp.absolute_pac(), 0.0);
+
+        let comp =
+            Composition::new().solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)));
+
+        assert_eq!(comp.water(), 0.0);
+        assert_eq!(comp.solids.total(), 100.0);
+        assert!(comp.emulsifiers_per_fat().is_nan());
+        assert!(comp.stabilizers_per_water().is_nan());
+        assert!(comp.absolute_pac().is_nan());
+    }
+
+    #[test]
     fn composition_get() {
         let expected = HashMap::from([
             (CompKey::MilkFat, 2.0),
