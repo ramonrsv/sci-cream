@@ -17,3 +17,6 @@
 - [ ] Figure out how to handle calculating FPDs for recipes where (PACtot - HF) would be negative.
       Currently this throws an error. This is unlikely to happen with real recipes, but it can
       happen when adding ingredients to a recipe one-by-one, before all ingredients have been added.
+- [ ] When there are too many properties to show in `MixPropertiesChart`, it kind of silently crops
+      the properties being displayed. Look into a way to either indicate the cropping, or add
+      support for a horizontal scrollbar.
