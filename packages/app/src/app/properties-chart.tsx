@@ -33,7 +33,7 @@ import {
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-function getPropKeys(): PropKey[] {
+export function getPropKeys(): PropKey[] {
   return getPropKeysAll().filter(
     (key) =>
       // These values make the scale hard to read in a chart
@@ -83,7 +83,7 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
         mixTotal,
         qtyToggle,
         isPropKeyQuantity(prop_key),
-      ) || 0
+      ) ?? 0
     );
   };
 

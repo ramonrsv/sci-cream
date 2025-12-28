@@ -95,7 +95,7 @@ export function KeySelection<Key>({
   };
 
   return (
-    <div>
+    <div id="key-selection">
       {hasQtyToggle && (
         <select
           className="select-input"
