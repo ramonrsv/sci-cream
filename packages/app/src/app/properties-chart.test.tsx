@@ -13,6 +13,8 @@ import {
   CompKey,
   FpdKey,
   PropKey,
+  compToPropKey,
+  fpdToPropKey,
   prop_key_as_med_str_js,
   getMixProperty,
   getPropKeys as getPropKeysAll,
@@ -84,8 +86,8 @@ function createMockRecipeContext(nonEmptyRecipes: boolean[] = []) {
   return recipeCtx;
 }
 
-const getCompLabel = (compKey: CompKey) => prop_key_as_med_str_js(CompKey[compKey] as PropKey);
-const getFpdLabel = (fpdKey: FpdKey) => prop_key_as_med_str_js(FpdKey[fpdKey] as PropKey);
+const getCompLabel = (compKey: CompKey) => prop_key_as_med_str_js(compToPropKey(compKey));
+const getFpdLabel = (fpdKey: FpdKey) => prop_key_as_med_str_js(fpdToPropKey(fpdKey));
 const getPropIndex = (propKey: PropKey) => getPropKeys().indexOf(propKey);
 
 describe("MixPropertiesChart", () => {
@@ -103,8 +105,8 @@ describe("MixPropertiesChart", () => {
   describe("Helper Functions", () => {
     it("getPropKeys should exclude Water and HardnessAt14C", () => {
       expect(getPropKeys().length).toBe(getPropKeysAll().length - 2);
-      expect(getPropKeys()).not.toContain(CompKey[CompKey.Water]);
-      expect(getPropKeys()).not.toContain(FpdKey[FpdKey.HardnessAt14C]);
+      expect(getPropKeys()).not.toContain(compToPropKey(CompKey.Water));
+      expect(getPropKeys()).not.toContain(fpdToPropKey(FpdKey.HardnessAt14C));
     });
   });
 
@@ -361,8 +363,8 @@ describe("MixPropertiesChart", () => {
 
       expect(Math.abs(NaN)).toBeNaN();
 
-      const EmulsPerFatPropKey = CompKey[CompKey.EmulsifiersPerFat] as PropKey;
-      const AbsPACPropKey = CompKey[CompKey.AbsPAC] as PropKey;
+      const EmulsPerFatPropKey = compToPropKey(CompKey.EmulsifiersPerFat);
+      const AbsPACPropKey = compToPropKey(CompKey.AbsPAC);
 
       const captured = capturedBarProps!;
       expect(captured).not.toBeNull();

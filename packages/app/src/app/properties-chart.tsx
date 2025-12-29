@@ -25,6 +25,8 @@ import {
   CompKey,
   FpdKey,
   PropKey,
+  compToPropKey,
+  fpdToPropKey,
   getPropKeys as getPropKeysAll,
   getMixProperty,
   MixProperties,
@@ -37,7 +39,7 @@ export function getPropKeys(): PropKey[] {
   return getPropKeysAll().filter(
     (key) =>
       // These values make the scale hard to read in a chart
-      key !== CompKey[CompKey.Water] && key !== FpdKey[FpdKey.HardnessAt14C],
+      key !== compToPropKey(CompKey.Water) && key !== fpdToPropKey(FpdKey.HardnessAt14C),
   );
 }
 

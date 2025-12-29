@@ -1,5 +1,4 @@
-import { CompKey, isCompKey } from "@workspace/sci-cream";
-import type { PropKey } from "@workspace/sci-cream";
+import { CompKey, PropKey, compToPropKey, isCompKey } from "@workspace/sci-cream";
 
 export const isCompKeyQuantity = (prop_key: CompKey): boolean => {
   return (
@@ -12,8 +11,8 @@ export const isCompKeyQuantity = (prop_key: CompKey): boolean => {
 export const isPropKeyQuantity = (prop_key: PropKey): boolean => {
   return (
     isCompKey(prop_key) &&
-    prop_key !== CompKey[CompKey.AbsPAC] &&
-    prop_key !== CompKey[CompKey.EmulsifiersPerFat] &&
-    prop_key !== CompKey[CompKey.StabilizersPerWater]
+    prop_key !== compToPropKey(CompKey.AbsPAC) &&
+    prop_key !== compToPropKey(CompKey.EmulsifiersPerFat) &&
+    prop_key !== compToPropKey(CompKey.StabilizersPerWater)
   );
 };

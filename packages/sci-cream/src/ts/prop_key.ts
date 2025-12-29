@@ -12,6 +12,14 @@ export const PropKeyObj = { ...CompKey, ...FpdKey } as const;
 
 export type PropKey = keyof typeof PropKeyObj;
 
+export function compToPropKey(comp_key: CompKey): PropKey {
+  return CompKey[comp_key] as PropKey;
+}
+
+export function fpdToPropKey(fpd_key: FpdKey): PropKey {
+  return FpdKey[fpd_key] as PropKey;
+}
+
 export function isCompKey(prop_key: PropKey): boolean {
   return getTsEnumStringKeys(CompKey).includes(prop_key as keyof typeof CompKey);
 }
@@ -34,7 +42,7 @@ export function prop_key_as_med_str_js(prop_key: PropKey): string {
   } else if (isFpdKey(prop_key)) {
     return fpd_key_as_med_str_js(FpdKey[prop_key as keyof typeof FpdKey]);
   } else {
-    throw new Error("Invalid PropKey");
+    throw new Error("Invalid PropKey: " + prop_key);
   }
 }
 
@@ -44,6 +52,6 @@ export function getMixProperty(mixProperties: MixProperties, prop_key: PropKey):
   } else if (isFpdKey(prop_key)) {
     return mixProperties.fpd.get(FpdKey[prop_key as keyof typeof FpdKey]);
   } else {
-    throw new Error("Invalid PropKey");
+    throw new Error("Invalid PropKey: " + prop_key);
   }
 }

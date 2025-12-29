@@ -5,7 +5,7 @@ import {
   Composition,
   Solids,
   SolidsBreakdown,
-  PropKey,
+  compToPropKey,
   MixProperties,
   getMixProperty,
 } from "../../dist/index";
@@ -13,12 +13,12 @@ import {
 test("MixProperties NaN values", () => {
   let mixProperties = new MixProperties();
 
-  expect(getMixProperty(mixProperties, CompKey[CompKey.Water] as PropKey)).toBe(100);
-  expect(getMixProperty(mixProperties, CompKey[CompKey.TotalSolids] as PropKey)).toBe(0);
-  expect(getMixProperty(mixProperties, CompKey[CompKey.TotalFat] as PropKey)).toBe(0);
-  expect(getMixProperty(mixProperties, CompKey[CompKey.EmulsifiersPerFat] as PropKey)).toBe(NaN);
-  expect(getMixProperty(mixProperties, CompKey[CompKey.StabilizersPerWater] as PropKey)).toBe(0);
-  expect(getMixProperty(mixProperties, CompKey[CompKey.AbsPAC] as PropKey)).toBe(0);
+  expect(getMixProperty(mixProperties, compToPropKey(CompKey.Water))).toBe(100);
+  expect(getMixProperty(mixProperties, compToPropKey(CompKey.TotalSolids))).toBe(0);
+  expect(getMixProperty(mixProperties, compToPropKey(CompKey.TotalFat))).toBe(0);
+  expect(getMixProperty(mixProperties, compToPropKey(CompKey.EmulsifiersPerFat))).toBe(NaN);
+  expect(getMixProperty(mixProperties, compToPropKey(CompKey.StabilizersPerWater))).toBe(0);
+  expect(getMixProperty(mixProperties, compToPropKey(CompKey.AbsPAC))).toBe(0);
 
   mixProperties = new MixProperties();
   const composition = new Composition();
@@ -29,9 +29,9 @@ test("MixProperties NaN values", () => {
   composition.solids = solids;
   mixProperties.composition = composition;
 
-  expect(getMixProperty(mixProperties, CompKey[CompKey.Water] as PropKey)).toBe(0);
-  expect(getMixProperty(mixProperties, CompKey[CompKey.TotalSolids] as PropKey)).toBe(100);
-  expect(getMixProperty(mixProperties, CompKey[CompKey.EmulsifiersPerFat] as PropKey)).toBe(NaN);
-  expect(getMixProperty(mixProperties, CompKey[CompKey.StabilizersPerWater] as PropKey)).toBe(NaN);
-  expect(getMixProperty(mixProperties, CompKey[CompKey.AbsPAC] as PropKey)).toBe(NaN);
+  expect(getMixProperty(mixProperties, compToPropKey(CompKey.Water))).toBe(0);
+  expect(getMixProperty(mixProperties, compToPropKey(CompKey.TotalSolids))).toBe(100);
+  expect(getMixProperty(mixProperties, compToPropKey(CompKey.EmulsifiersPerFat))).toBe(NaN);
+  expect(getMixProperty(mixProperties, compToPropKey(CompKey.StabilizersPerWater))).toBe(NaN);
+  expect(getMixProperty(mixProperties, compToPropKey(CompKey.AbsPAC))).toBe(NaN);
 });

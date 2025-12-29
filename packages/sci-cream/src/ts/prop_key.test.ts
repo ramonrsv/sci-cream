@@ -1,16 +1,25 @@
 import { expect, test } from "vitest";
 
-import { getTsEnumNumberKeys, getTsEnumStringKeys, getTsEnumStrings } from "./util";
+import { getTsEnumNumberKeys, getTsEnumStringKeys, getTsEnumStrings, getWasmEnums } from "./util";
 
-import { CompKey, FpdKey, comp_key_as_med_str_js, fpd_key_as_med_str_js } from "../../wasm/index";
+import {
+  CompKey,
+  FpdKey,
+  MixProperties,
+  comp_key_as_med_str_js,
+  fpd_key_as_med_str_js,
+} from "../../wasm/index";
 
 import {
   PropKey,
   PropKeyObj,
-  getPropKeys,
+  compToPropKey,
+  fpdToPropKey,
   isCompKey,
   isFpdKey,
+  getPropKeys,
   prop_key_as_med_str_js,
+  getMixProperty,
 } from "./prop_key";
 
 test("Import from sci-cream wasm package, at sci-cream", () => {
@@ -104,4 +113,32 @@ test("comp_key_as_med_str_js works for CompKey/FpdKey number values via PropKey"
     const propKeyMedStr = prop_key_as_med_str_js(FpdKey[fpdNumKey]);
     expect(propKeyMedStr).toBe(fpdKeyMedStr);
   }
+});
+
+test("comp_key_as_med_str_js works for CompKey/FpdKey via comp/fpdToPropKey", () => {
+  const compKeys = getWasmEnums(CompKey);
+  const fpdKeys = getWasmEnums(FpdKey);
+
+  for (const compKey of compKeys) {
+    const compKeyMedStr = comp_key_as_med_str_js(compKey);
+    const propKeyMedStr = prop_key_as_med_str_js(compToPropKey(compKey));
+    expect(propKeyMedStr).toBe(compKeyMedStr);
+  }
+
+  for (const fpdKey of fpdKeys) {
+    const fpdKeyMedStr = fpd_key_as_med_str_js(fpdKey);
+    const propKeyMedStr = prop_key_as_med_str_js(fpdToPropKey(fpdKey));
+    expect(propKeyMedStr).toBe(fpdKeyMedStr);
+  }
+});
+
+test("getMixProperty", () => {
+  const mixProperties = new MixProperties();
+
+  expect(getMixProperty(mixProperties, "MilkFat")).toBe(0);
+  expect(getMixProperty(mixProperties, CompKey[CompKey.MilkFat] as PropKey)).toBe(0);
+  expect(getMixProperty(mixProperties, "FPD")).toBe(0);
+  expect(getMixProperty(mixProperties, FpdKey[FpdKey.FPD] as PropKey)).toBe(0);
+  expect(getMixProperty(mixProperties, compToPropKey(CompKey.MilkFat))).toBe(0);
+  expect(getMixProperty(mixProperties, fpdToPropKey(FpdKey.FPD))).toBe(0);
 });
