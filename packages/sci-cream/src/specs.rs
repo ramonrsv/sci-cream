@@ -236,7 +236,7 @@ pub struct ChocolatesSpec {
 /// assert_eq!(comp.solids.total(), 48.0);
 /// assert_eq!(comp.micro.emulsifiers, 9.0);
 /// ```
-#[doc = include_str!("../docs/bibliography.md")]
+#[doc = include_str!("../docs/bibs/4.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct EggsSpec {

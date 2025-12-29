@@ -544,6 +544,7 @@ impl PAC {
 }
 
 impl Composition {
+    /// Create an empty composition, which is equivalent to the composition of 100% water.
     pub fn empty() -> Self {
         Self {
             solids: Solids::empty(),

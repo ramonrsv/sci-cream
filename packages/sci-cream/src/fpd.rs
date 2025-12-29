@@ -58,25 +58,38 @@ pub struct FPD {
 }
 
 impl Curves {
+    /// Create empty FPD curves, which are straight lines at 0°C, equivalent to those of 100% water
     pub fn empty() -> Self {
         Self {
-            frozen_water: Vec::new(),
-            hardness: Vec::new(),
-            hardness_factor: Vec::new(),
+            frozen_water: (0..100)
+                .map(|x_axis| CurvePoint::new(x_axis as f64, 0.0))
+                .collect(),
+            hardness: (0..100)
+                .map(|x_axis| CurvePoint::new(x_axis as f64, 0.0))
+                .collect(),
+            hardness_factor: (0..100)
+                .map(|x_axis| CurvePoint::new(x_axis as f64, 0.0))
+                .collect(),
         }
     }
 }
 
 impl FPD {
+    /// Create an empty FPD properties, which is equivalent to the properties of a 100% water
     pub fn empty() -> Self {
         Self {
-            fpd: f64::NAN,
-            serving_temp: f64::NAN,
+            fpd: 0.0,
+            serving_temp: 0.0,
             hardness_at_14c: f64::NAN,
             curves: Curves::empty(),
         }
     }
 
+    /// Compute FPD properties from a given mix composition.
+    ///
+    /// A [`Composition::empty()`] is equivalent to a 100% water composition, and will result in an
+    /// [`FPD`](Self::fpd) of 0°C, [serving temperature](Self::serving_temp) of 0°C, [hardness at
+    /// -14°C](Self::hardness_at_14c) of [`f64::NAN`], and straight [curves](Self::curves) at 0°C.
     pub fn compute_from_composition(composition: Composition) -> Result<Self> {
         let curves = compute_fpd_curves(composition)?;
         let fpd = curves.frozen_water[0].temp;
@@ -146,7 +159,12 @@ pub fn compute_fpd<F: Fn(f64) -> Result<f64>>(
 }
 
 pub fn compute_fpd_curves(composition: Composition) -> Result<Curves> {
-    let (comp, mut curves) = (composition, Curves::empty());
+    let comp = composition;
+    let mut curves = Curves {
+        frozen_water: Vec::new(),
+        hardness: Vec::new(),
+        hardness_factor: Vec::new(),
+    };
 
     for x_axis in 0..100 {
         let x_axis_f = x_axis as f64;
@@ -417,5 +435,35 @@ mod tests {
             let x_axis = super::get_x_axis_at_fpd(curve, *target_fpd).unwrap();
             assert_abs_diff_eq!(x_axis, *expected_x_axis, epsilon = TESTS_EPSILON);
         }
+    }
+
+    #[test]
+    fn fpd_compute_from_empty_composition() {
+        let validate_empty_fpd = |fpd: &FPD| {
+            assert_eq!(fpd.fpd, 0.0);
+            assert_eq!(fpd.serving_temp, 0.0);
+            assert_true!(fpd.hardness_at_14c.is_nan());
+
+            for x_axis in 0..100 {
+                let x_axis_f = x_axis as f64;
+
+                for curve in [
+                    &fpd.curves.frozen_water,
+                    &fpd.curves.hardness_factor,
+                    &fpd.curves.hardness,
+                ] {
+                    let curve_point = &curve[x_axis];
+                    assert_eq!(curve_point.x_axis, x_axis_f);
+                    assert_eq!(curve_point.temp, 0.0);
+                }
+            }
+        };
+
+        let comp = Composition::new();
+        assert_eq!(comp.water(), 100.0);
+        assert_eq!(comp.solids.total(), 0.0);
+
+        validate_empty_fpd(&FPD::empty());
+        validate_empty_fpd(&FPD::compute_from_composition(comp).unwrap());
     }
 }
