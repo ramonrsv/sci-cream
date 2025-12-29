@@ -14,6 +14,8 @@ pub enum Error {
     InvalidComposition(String),
     #[error("PAC value cannot be negative: {0}")]
     NegativePacValue(f64),
+    #[error("FPD value cannot be positive: {0}")]
+    PositiveFpdValue(f64),
 }
 
 /// Convenience type alias for [`Result<T, sci_cream::error::Error>`].

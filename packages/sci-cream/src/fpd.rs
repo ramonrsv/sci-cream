@@ -134,13 +134,47 @@ pub fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
 }
 
 pub fn get_fpd_from_pac_polynomial(pac: f64, coeffs: [f64; 3]) -> Result<f64> {
+    let [a, b, c] = coeffs;
+
     if pac < 0.0 {
         return Err(Error::NegativePacValue(pac));
     }
 
+    Ok((a * pac.powi(2)) + (b * pac) + c)
+}
+
+pub fn get_pac_from_fpd_polynomial(fpd: f64, coeffs: [f64; 3]) -> Result<f64> {
     let [a, b, c] = coeffs;
 
-    Ok((a * pac.powi(2)) + (b * pac) + c)
+    if fpd > 0.0 {
+        return Err(Error::PositiveFpdValue(fpd));
+    }
+
+    let discriminant = b.powi(2) - 4.0 * a * (c - fpd);
+
+    if discriminant < 0.0 {
+        return Err(Error::CannotComputePAC(
+            "Discriminant is negative, no real roots exist".to_string(),
+        ));
+    }
+
+    let sqrt_discriminant = discriminant.sqrt();
+    let root1 = (-b + sqrt_discriminant) / (2.0 * a);
+    let root2 = (-b - sqrt_discriminant) / (2.0 * a);
+
+    if root1 < 0.0 && root2 < 0.0 {
+        return Err(Error::CannotComputePAC(
+            "Both roots are negative, PAC cannot be negative".to_string(),
+        ));
+    }
+
+    if root1 > 0.0 && root2 > 0.0 {
+        return Err(Error::CannotComputePAC(
+            "Both roots are positive, ambiguous PAC value".to_string(),
+        ));
+    }
+
+    Ok(root1.max(root2))
 }
 
 pub fn compute_fpd<F: Fn(f64) -> Result<f64>>(
@@ -258,6 +292,30 @@ mod tests {
         (181.0, -13.746666),
     ];
 
+    /// [`REF_FPD_FROM_PAC`] adjusted for polynomial calculation
+    const REF_FPD_FROM_PAC_POLY: [(f64, f64); 19] = [
+        // (pac, expected_fpd)
+        (0.0, -0.00000),
+        (0.5, -0.03062),
+        (1.0, -0.06129),
+        (1.5, -0.09200),
+        (2.0, -0.12276),
+        (2.5, -0.15356),
+        (3.0, -0.18441),
+        (6.0, -0.37044),
+        (93.0, -6.47001),
+        (93.5, -6.50900),
+        (94.0, -6.54804),
+        (94.5, -6.58712),
+        (95.0, -6.62625),
+        (95.5, -6.66542),
+        (96.0, -6.70464),
+        (177.0, -13.65201),
+        (177.1, -13.66132),
+        (180.0, -13.93200),
+        (181.0, -14.02569),
+    ];
+
     #[test]
     fn get_fpd_from_pac_interpolation() {
         for (pac, expected_fpd) in REF_FPD_FROM_PAC {
@@ -273,9 +331,27 @@ mod tests {
         for (pac, expected_fpd) in REF_FPD_FROM_PAC {
             // Interpolation and polynomial diverge at high PAC
             let epsilon = if pac < 177.0 { 0.1 } else { 0.3 };
+            assert_abs_diff_eq!(get_fpd_poly(pac).unwrap(), expected_fpd, epsilon = epsilon);
+        }
 
-            let fpd = get_fpd_poly(pac).unwrap();
-            assert_abs_diff_eq!(fpd, expected_fpd, epsilon = epsilon);
+        for (pac, expected_fpd) in REF_FPD_FROM_PAC_POLY {
+            assert_abs_diff_eq!(get_fpd_poly(pac).unwrap(), expected_fpd, epsilon = 0.00001);
+        }
+    }
+
+    #[test]
+    fn get_pac_from_fpd_polynomial() {
+        let get_fpd_poly = |pac| super::get_fpd_from_pac_polynomial(pac, PAC_TO_FPD_POLY_COEFFS);
+        let get_pac_poly = |fpd| super::get_pac_from_fpd_polynomial(fpd, PAC_TO_FPD_POLY_COEFFS);
+
+        for (ref_pac, ref_fpd) in REF_FPD_FROM_PAC_POLY {
+            let computed_fpd_from_ref = get_fpd_poly(ref_pac).unwrap();
+            let computed_pac_from_ref = get_pac_poly(ref_fpd).unwrap();
+            let pac_from_computed_fpd = get_pac_poly(computed_fpd_from_ref).unwrap();
+
+            assert_abs_diff_eq!(computed_fpd_from_ref, ref_fpd, epsilon = 0.00001);
+            assert_abs_diff_eq!(computed_pac_from_ref, ref_pac, epsilon = 0.0001);
+            assert_abs_diff_eq!(pac_from_computed_fpd, ref_pac, epsilon = TESTS_EPSILON);
         }
     }
 
