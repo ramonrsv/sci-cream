@@ -130,7 +130,7 @@ pub fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
     let run = pac - floor_pac as f64;
     let slope = (ceil_fpd - floor_fpd) / step as f64;
 
-    Ok(floor_fpd + slope * run)
+    Ok(-(floor_fpd + slope * run))
 }
 
 pub fn get_fpd_from_pac_polynomial(pac: f64, coeffs: [f64; 3]) -> Result<f64> {
@@ -155,7 +155,7 @@ pub fn compute_fpd<F: Fn(f64) -> Result<f64>>(
     let fpd_pac = get_fpd_from_pac((comp.pac.total_exc_hf() - hf) * 100.0 / water)?;
     let fpd_slt = (comp.get(CompKey::MSNF) * FPD_MSNF_FACTOR_FOR_CELSIUS) / water;
 
-    Ok(-(fpd_pac + fpd_slt))
+    Ok(fpd_pac + fpd_slt)
 }
 
 pub fn compute_fpd_curves(composition: Composition) -> Result<Curves> {
@@ -237,25 +237,25 @@ mod tests {
 
     const REF_FPD_FROM_PAC: [(f64, f64); 19] = [
         // (pac, expected_fpd)
-        (0.0, 0.00),
-        (0.5, 0.03),
-        (1.0, 0.06),
-        (1.5, 0.09),
-        (2.0, 0.12),
-        (2.5, 0.15),
-        (3.0, 0.18),
-        (6.0, 0.35),
-        (93.0, 6.50),
-        (93.5, 6.55),
-        (94.0, 6.60),
-        (94.5, 6.65),
-        (95.0, 6.70),
-        (95.5, 6.75),
-        (96.0, 6.80),
-        (177.0, 13.48),
-        (177.125, 13.488333),
-        (180.0, 13.68),
-        (181.0, 13.746666),
+        (0.0, -0.00),
+        (0.5, -0.03),
+        (1.0, -0.06),
+        (1.5, -0.09),
+        (2.0, -0.12),
+        (2.5, -0.15),
+        (3.0, -0.18),
+        (6.0, -0.35),
+        (93.0, -6.50),
+        (93.5, -6.55),
+        (94.0, -6.60),
+        (94.5, -6.65),
+        (95.0, -6.70),
+        (95.5, -6.75),
+        (96.0, -6.80),
+        (177.0, -13.48),
+        (177.125, -13.488333),
+        (180.0, -13.68),
+        (181.0, -13.746666),
     ];
 
     #[test]
@@ -348,12 +348,12 @@ mod tests {
         ref_fpd_sets: &[(Composition, &[(f64, f64)])],
         epsilon: f64,
     ) {
-        let compute_pd_inter =
+        let compute_fpd_inter =
             |comp: Composition, hf: f64, fw: f64| compute_fpd(comp, hf, fw, get_fpd_from_pac);
 
         for (comp, ref_fpd) in ref_fpd_sets {
             for (frozen_water, expected_fpd) in *ref_fpd {
-                let fpd = compute_pd_inter(*comp, 0.0, *frozen_water).unwrap();
+                let fpd = compute_fpd_inter(*comp, 0.0, *frozen_water).unwrap();
                 assert_abs_diff_eq!(fpd, expected_fpd, epsilon = epsilon);
             }
         }
