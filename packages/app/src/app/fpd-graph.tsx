@@ -44,7 +44,7 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
 
       return lines.map(({ lineLabel, borderDash, curve }) => ({
         label: lineLabel,
-        data: curve.map((point) => point.temp),
+        data: curve.map((point) => (point.temp >= 0 ? NaN : point.temp)),
         backgroundColor: "rgba(0, 0, 0, 0)",
         borderColor: borderColor,
         borderDash: borderDash,

@@ -60,16 +60,16 @@ pub struct FPD {
 impl Curves {
     /// Create empty FPD curves, which are straight lines at 0°C, equivalent to those of 100% water
     pub fn empty() -> Self {
+        let make_empty_curve = || {
+            (0..100)
+                .map(|x_axis| CurvePoint::new(x_axis as f64, 0.0))
+                .collect()
+        };
+
         Self {
-            frozen_water: (0..100)
-                .map(|x_axis| CurvePoint::new(x_axis as f64, 0.0))
-                .collect(),
-            hardness: (0..100)
-                .map(|x_axis| CurvePoint::new(x_axis as f64, 0.0))
-                .collect(),
-            hardness_factor: (0..100)
-                .map(|x_axis| CurvePoint::new(x_axis as f64, 0.0))
-                .collect(),
+            frozen_water: make_empty_curve(),
+            hardness: make_empty_curve(),
+            hardness_factor: make_empty_curve(),
         }
     }
 }
