@@ -42,9 +42,10 @@ freezing point depression. However, by themselves they are not very good at dete
 point depression of a mix, since they do not take into account the proportion of water that needs to
 be controlled. The equivalent concentration of sucrose in water corresponds more closely to the
 actual observed freezing point depression. The term Absolute PAC (Abs. PAC, APAC), coined by
-[Underbelly](https://under-belly.org/sugars-in-ice-cream/), represents this ratio, and is calculated
-as PAC divided by total water. Indeed, SE/water (g/100g of water) is used in the Goff-Hartel method
-for calculating a FPD Curve, looking up from the empirical table in Leighton (1927).
+Underbelly (Raphaelson, 2023, Appendix 3)[^1], represents this ratio, and is calculated as PAC
+divided by total water. Indeed, SE/water (g/100g of water) is used in the Goff-Hartel method (Goff &
+Hartel, 2013, p. 181)[^2] for calculating a FPD Curve, looking up from an empirical table of
+freezing point depression of sucrose solutions (Goff & Hartel, 2013, Table 6.1, p. 182)[^2].
 
 ## Freezing Point Depression Curve
 

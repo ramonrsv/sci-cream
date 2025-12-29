@@ -210,7 +210,7 @@ pub struct ChocolatesSpec {
 ///
 /// The composition of egg ingredients can usually be found in food composition databases, like
 /// USDA FoodData Central (<https://fdc.nal.usda.gov/food-search>), in the manufacturers' data, or
-/// in reference texts, e.g. The Science of Ice Cream, C. Clarke, p. 49. Note that
+/// in reference texts, e.g. _The Science of Ice Cream_ (Clarke, 2004, p. 49)[^4]. Note that
 /// [`lecithin`](Self::lecithin) is a subset of [`fats`](Self::fats), and considered an emulsifier
 /// with relative strength of 100, specified in [`Micro::emulsifiers`](Micro::emulsifiers). The
 /// remaining portion of `100 - water - fats` is assumed to be non-fat non-sugar solids (snfs),
@@ -236,6 +236,7 @@ pub struct ChocolatesSpec {
 /// assert_eq!(comp.solids.total(), 48.0);
 /// assert_eq!(comp.micro.emulsifiers, 9.0);
 /// ```
+#[doc = include_str!("../docs/bibliography.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct EggsSpec {
@@ -251,26 +252,26 @@ pub struct EggsSpec {
 /// `(emulsifier)_strength` and `(stabilizer)_strength` fields representing their relative strengths
 /// as a percentage of a reference.
 ///
-/// This "strength" is a very fuzzy concept, since it's difficult
-/// to precisely quantify the effectiveness of emulsifiers and stabilizers, and they often differ
-/// in their modes of action and their effects have different properties than just a linear more or
-/// less stabilizing/emulsifying effect. However, this allows for a rough scaling, differentiating
-/// between very weak and very strong ingredients, for example between cornstarch and Locust Bean
-/// Gum as
-/// stabilizers, the recommended usage levels of which differ by an order of magnitude.
+/// This "strength" is a very fuzzy concept, since it's difficult to precisely quantify the
+/// effectiveness of emulsifiers and stabilizers, and they often differ in their modes of action and
+/// their effects have different properties than just a linear more or less stabilizing/emulsifying
+/// effect. However, this allows for a rough scaling, differentiating between very weak and very
+/// strong ingredients, for example between cornstarch and Locust Bean Gum as stabilizers, the
+/// recommended usage levels of which differ by an order of magnitude.
 ///
 /// Roughly, strong gums like Guar Gum, Locust Bean Gum, Lambda Carrageenan, etc. are taken as the
-/// reference and have a stabilizer strength of 100, with a [recommended dosage of
-/// ~1.5g/kg](<https://under-belly.org/basic-ice-cream-recipe-examples/>). Cornstarch and similar
-/// have a stabilizer strength of ~15, with a recommended dosage of ~10g/kg (Hello, My Name is Ice
-/// Cream, Dana Cree). Commercial blends, such as _"Louis Francois Stab 2000"_, usually cut the active
-/// ingredients with fillers, so the relative strength of the ingredient as a whole is lower than
-/// that of pure gums. With a manufacturer recommended dosage of ~3.5g/kg, "Louis Francois Stab
-/// 2000" has a relative stabilizer strength of ~40. Lecithin is taken as the reference emulsifier
-/// with a strength of 100, with a [recommended dosage of
-/// ~3.25g/kg](<https://under-belly.org/basic-ice-cream-recipe-examples/>). Something like _"Louis
-/// Francois Stab 2000"_ has a similar recommended dosage for its emulsifier component, so it also
-/// has a a relative emulsifier strength of 100.
+/// reference and have a stabilizer strength of 100, with a recommended dosage of ~1.5g/kg
+/// (Raphaelson, 2016, Standard Base)[^5]. Cornstarch and similar have a stabilizer strength of ~15,
+/// with a recommended dosage of ~10g/kg (Cree, 2017, Blank Slate Custard Ice Cream p. 115)[^6].
+/// Commercial blends, such as _"Louis Francois Stab 2000"_, usually cut the active ingredients with
+/// fillers, so the relative strength of the ingredient as a whole is lower than that of pure gums.
+/// With a manufacturer recommended dosage of ~3.5g/kg, "Louis Francois Stab 2000" has a relative
+/// stabilizer strength of ~40. Lecithin is taken as the reference emulsifier with a strength of
+/// 100, with a recommended dosage of ~3.25g/kg (Raphaelson, 2016, Standard Base)[^5]. Something
+/// like _"Louis Francois Stab 2000"_ has a similar recommended dosage for its emulsifier component,
+/// so it also has a a relative emulsifier strength of 100.
+#[doc = include_str!("../docs/bibs/5.md")]
+#[doc = include_str!("../docs/bibs/6.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub enum MicrosSpec {
@@ -494,8 +495,8 @@ impl IntoComposition for ChocolatesSpec {
                 PAC::new()
                     .sugars(sweeteners.to_pac().unwrap())
                     .hardness_factor(
-                        cocoa_butter * constants::CACAO_BUTTER_HF
-                            + cocoa_snfs * constants::COCOA_SOLIDS_HF,
+                        cocoa_butter * constants::hf::CACAO_BUTTER
+                            + cocoa_snfs * constants::hf::COCOA_SOLIDS,
                     ),
             ))
     }
@@ -552,7 +553,7 @@ impl IntoComposition for MicrosSpec {
             MicrosSpec::Salt => Ok(Composition::new()
                 .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
                 .micro(Micro::new().salt(100.0))
-                .pac(PAC::new().salt(constants::SALT_PAC))),
+                .pac(PAC::new().salt(constants::pac::SALT))),
             MicrosSpec::Lecithin => Ok(Composition::new()
                 .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
                 .micro(Micro::new().emulsifiers(100.0))),

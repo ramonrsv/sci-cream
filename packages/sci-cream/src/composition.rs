@@ -99,12 +99,11 @@ pub struct PAC {
 /// `sweeteners` and `micro` components are both accounted for in `solids`, and should not be
 /// double-counted. They are provided separately to facilitate the analysis of key components.
 ///
-/// POD and [PAC][1] are expressed as a sucrose equivalence and do not necessarily represent real
-/// weights of components. While some underlying components may have utilities to calculate their
-/// contributions to POD and PAC, the overall POD and PAC of a composition are independent values
-/// and are set during composition construction, taking all underlying contributions into account.
-///
-/// [1]: https://github.com/ramonrsv/sci-cream/blob/main/packages/sci-cream/docs/freezing-point-depression.md#pac-afp-fpdf-se
+/// POD and [PAC](crate::docs#pac-afp-fpdf-se) are expressed as a sucrose equivalence and do not
+/// necessarily represent real weights of components. While some underlying components may have
+/// utilities to calculate their contributions to POD and PAC, the overall POD and PAC of a
+/// composition are independent values and are set during composition construction, taking all
+/// underlying contributions into account.
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Composition {
@@ -325,12 +324,12 @@ impl Sugars {
         }
 
         Ok([
-            self.glucose * constants::GLUCOSE_POD,
-            self.fructose * constants::FRUCTOSE_POD,
-            self.galactose * constants::GALACTOSE_POD,
-            self.sucrose * constants::SUCROSE_POD,
-            self.lactose * constants::LACTOSE_POD,
-            self.maltose * constants::MALTOSE_POD,
+            self.glucose * constants::pod::GLUCOSE,
+            self.fructose * constants::pod::FRUCTOSE,
+            self.galactose * constants::pod::GALACTOSE,
+            self.sucrose * constants::pod::SUCROSE,
+            self.lactose * constants::pod::LACTOSE,
+            self.maltose * constants::pod::MALTOSE,
         ]
         .into_iter()
         .sum::<f64>()
@@ -345,12 +344,12 @@ impl Sugars {
         }
 
         Ok([
-            self.glucose * constants::GLUCOSE_PAC,
-            self.fructose * constants::FRUCTOSE_PAC,
-            self.galactose * constants::GALACTOSE_PAC,
-            self.sucrose * constants::SUCROSE_PAC,
-            self.lactose * constants::LACTOSE_PAC,
-            self.maltose * constants::MALTOSE_PAC,
+            self.glucose * constants::pac::GLUCOSE,
+            self.fructose * constants::pac::FRUCTOSE,
+            self.galactose * constants::pac::GALACTOSE,
+            self.sucrose * constants::pac::SUCROSE,
+            self.lactose * constants::pac::LACTOSE,
+            self.maltose * constants::pac::MALTOSE,
         ]
         .into_iter()
         .sum::<f64>()

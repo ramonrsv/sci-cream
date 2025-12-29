@@ -7,8 +7,7 @@ use wasm_bindgen::prelude::*;
 use crate::{
     composition::{CompKey, Composition},
     constants::{
-        FPD_MSNF_FACTOR_FOR_CELSIUS, PAC_TO_FPD_POLY_COEFFS, PAC_TO_FPD_TABLE,
-        PAC_TO_FPD_TABLE_MAX_PAC, PAC_TO_FPD_TABLE_STEP, SERVING_TEMP_X_AXIS,
+        FPD_MSNF_FACTOR_FOR_CELSIUS, PAC_TO_FPD_POLY_COEFFS, PAC_TO_FPD_TABLE, SERVING_TEMP_X_AXIS,
         TARGET_SERVING_TEMP_14C,
     },
     error::{Error, Result},
@@ -35,6 +34,7 @@ impl CurvePoint {
     }
 }
 
+/// [Freezing Point Depression Curves](crate::docs#freezing-point-depression-curve)...
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Clone, Debug)]
 pub struct Curves {
@@ -46,6 +46,7 @@ pub struct Curves {
     pub hardness_factor: Vec<CurvePoint>,
 }
 
+/// [Freezing Point Depression (FPD)](crate::docs#freezing-point-depression) properties...
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Clone, Debug)]
 pub struct FPD {
@@ -96,7 +97,7 @@ pub fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
         return Err(Error::NegativePacValue(pac));
     }
 
-    let (step, max_pac) = (PAC_TO_FPD_TABLE_STEP, PAC_TO_FPD_TABLE_MAX_PAC);
+    let (step, max_pac) = (PAC_TO_FPD_TABLE[1].0, PAC_TO_FPD_TABLE.last().unwrap().0);
 
     let floor_pac = (pac / step as f64).floor() as usize * step;
     let ceil_pac = (pac / step as f64).ceil() as usize * step;
@@ -260,7 +261,8 @@ mod tests {
         }
     }
 
-    // Reference composition from Goff + Hartel, Table 6.2, Ice Cream
+    /// Ref. composition for [`REF_FROZEN_WATER_FPD`] (Goff & Hartel, 2013, Table 6.2, p. 184)[^2]
+    #[doc = include_str!("../docs/bibs/2.md")]
     static REF_COMP: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
             .solids(
@@ -301,7 +303,8 @@ mod tests {
         assert_abs_diff_eq!(comp.get(CompKey::PACtotal), 36.98, epsilon = TESTS_EPSILON);
     }
 
-    // Ice Cream, Goff + Hartel, Table 6.2, page 184
+    /// Ref. frozen water calculation for [`REF_COMP`] (Goff & Hartel, 2013, Table 6.2, p. 184)[^2]
+    #[doc = include_str!("../docs/bibs/2.md")]
     const REF_FROZEN_WATER_FPD: [(f64, f64); 10] = [
         (0.0, -2.74),
         (10.0, -3.06),

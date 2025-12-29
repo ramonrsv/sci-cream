@@ -2,6 +2,10 @@
 their properties.
 */
 
+#[doc = include_str!("../docs/freezing-point-depression.md")]
+#[doc = include_str!("../docs/bibliography.md")]
+pub mod docs;
+
 pub mod composition;
 pub mod constants;
 pub mod display;

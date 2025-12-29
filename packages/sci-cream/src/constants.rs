@@ -1,35 +1,44 @@
 pub const ABV_TO_ABW_RATIO: f64 = 0.789;
 
-// POD values are taken from Ice Cream, 7th Edition, Table 3.4, page 67
-pub const GLUCOSE_POD: f64 = 80.4;
-pub const FRUCTOSE_POD: f64 = 173.0;
-pub const GALACTOSE_POD: f64 = 0.0; // @todo
-pub const SUCROSE_POD: f64 = 100.0;
-pub const LACTOSE_POD: f64 = 16.0;
-pub const MALTOSE_POD: f64 = 32.0;
+/// POD values from _Characteristics of sweeteners and bulking agents for frozen desserts_ (Goff &
+/// Hartel, 2013, Table 3.4, p. 67)[^2]
+#[doc = include_str!("../docs/bibs/2.md")]
+pub mod pod {
+    pub const GLUCOSE: f64 = 80.4;
+    pub const FRUCTOSE: f64 = 173.0;
+    pub const GALACTOSE: f64 = 0.0; // @todo
+    pub const SUCROSE: f64 = 100.0;
+    pub const LACTOSE: f64 = 16.0;
+    pub const MALTOSE: f64 = 32.0;
+}
 
-// PAC values calculated based on molar mass relative to that of sucrose of 342.30 g/mol, e.g.
-// glucose has a molar mass of 180.16 g/mol, so its PAC is 342.30 / 180.16 * 100 = 190.
-pub const GLUCOSE_PAC: f64 = 190.0;
-pub const FRUCTOSE_PAC: f64 = 190.0;
-pub const GALACTOSE_PAC: f64 = 190.0;
-pub const SUCROSE_PAC: f64 = 100.0;
-pub const LACTOSE_PAC: f64 = 100.0;
-pub const MALTOSE_PAC: f64 = 100.0;
+/// [PAC](crate::docs#pac-afp-fpdf-se) values calculated based on molar mass relative to that of
+/// sucrose of 342.30 g/mol, e.g. glucose has a molar mass of 180.16 g/mol, so its PAC is 342.30 /
+/// 180.16 * 100 = 190.
+pub mod pac {
+    pub const GLUCOSE: f64 = 190.0;
+    pub const FRUCTOSE: f64 = 190.0;
+    pub const GALACTOSE: f64 = 190.0;
+    pub const SUCROSE: f64 = 100.0;
+    pub const LACTOSE: f64 = 100.0;
+    pub const MALTOSE: f64 = 100.0;
 
-pub const SALT_PAC: f64 = 585.0;
-pub const ALCOHOL_PAC: f64 = 740.0;
+    pub const SALT: f64 = 585.0;
+    pub const ALCOHOL: f64 = 740.0;
+}
 
-pub const CACAO_BUTTER_HF: f64 = 0.9;
-pub const COCOA_SOLIDS_HF: f64 = 1.8;
-pub const NUT_FAT_HF: f64 = 1.4;
+/// Hardness Factor (HF) values for the Corvitto method of calculating hardness with cocoa and nut
+/// ingredients (Corvitto, 2005, p. 243)[^3]
+#[doc = include_str!("../docs/bibs/3.md")]
+pub mod hf {
+    pub const CACAO_BUTTER: f64 = 0.9;
+    pub const COCOA_SOLIDS: f64 = 1.8;
+    pub const NUT_FAT: f64 = 1.4;
+}
 
-pub const STD_MSNF_IN_MILK_SERUM: f64 = 0.09;
-pub const STD_LACTOSE_IN_MSNF: f64 = 0.545;
-
-pub const FPD_MSNF_FACTOR_FOR_CELSIUS: f64 = 2.37;
-
-// PAC to FPD reference table, Ice Cream, Goff + Hartel, Table 6.1, page 182
+/// PAC to FPD lookup table from _Freezing point depression (°C) below 0°C of sucrose solutions
+/// (g/100g water)_ (Goff & Hartel, 2013, Table 6.1, p. 182)[^2]
+#[doc = include_str!("../docs/bibs/2.md")]
 pub const PAC_TO_FPD_TABLE: [(usize, f64); 61] = [
     // (g Sucrose/100g water, FPD (°C))
     (0, 0.00),
@@ -95,12 +104,17 @@ pub const PAC_TO_FPD_TABLE: [(usize, f64); 61] = [
     (180, 13.68),
 ];
 
-pub const PAC_TO_FPD_TABLE_STEP: usize = 3;
-pub const PAC_TO_FPD_TABLE_MAX_PAC: usize = PAC_TO_FPD_TABLE.last().unwrap().0;
-
-// PAC to FPD polynomial coefficients, a*x^2 + b*x + c => [a, b, c]
-// From Ice Cream, Goff + Hartel, Table 6.3, page 186
+/// PAC to FPD polynomial coefficients, a*x^2 + b*x + c => [a, b, c]
+///
+/// _Polynominal equation with intercept through zero derived from regression model where g
+/// sucrose/100 g water is graphed against FPD °C._ (Goff & Hartel, 2013, Table 6.3.c, p. 186)[^2]
+#[doc = include_str!("../docs/bibs/2.md")]
 pub const PAC_TO_FPD_POLY_COEFFS: [f64; 3] = [0.00009, 0.0612, 0.0];
+
+pub const STD_MSNF_IN_MILK_SERUM: f64 = 0.09;
+pub const STD_LACTOSE_IN_MSNF: f64 = 0.545;
+
+pub const FPD_MSNF_FACTOR_FOR_CELSIUS: f64 = 2.37;
 
 pub const SERVING_TEMP_X_AXIS: usize = 75;
 pub const TARGET_SERVING_TEMP_14C: f64 = -14.0;
