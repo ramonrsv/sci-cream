@@ -22,3 +22,5 @@
       support for a horizontal scrollbar.
 - [ ] Add `PAC::msnf_ws_salts` and handle it independently from `::salt`, as the Goff & Hartel
       method calculates the FPD for MSNF/WS separately via a constant factor, not via PAC values.
+- [ ] Some combinations of "Fructose" and "Salt", e.g. 10g and 0.54g, respectively, cause an error.
+      Investigate what is going on here, I suspect it applies to other combinations of ingredients.
