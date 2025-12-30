@@ -347,7 +347,9 @@ impl IntoComposition for DairySpec {
 
         let sweeteners = Sweeteners::new().sugars(Sugars::new().lactose(lactose));
         let pod = sweeteners.to_pod().unwrap();
-        let pad = PAC::new().sugars(sweeteners.to_pac().unwrap());
+        let pad = PAC::new()
+            .sugars(sweeteners.to_pac().unwrap())
+            .salt(msnf * constants::pac::MSNF_WS_SALTS / 100.0);
 
         Ok(Composition::new()
             .solids(
@@ -626,7 +628,8 @@ mod test {
         assert_eq!(sweeteners.sugars.total(), 4.8069);
 
         assert_eq!(pac.sugars, 4.8069);
-        assert_eq!(pac.total_inc_hf(), 4.8069);
+        assert_eq!(pac.salt, 3.2405);
+        assert_eq!(pac.total_inc_hf(), 8.0474);
 
         assert_abs_diff_eq!(
             SPEC_DAIRY_2_PERCENT.into_composition().unwrap(),

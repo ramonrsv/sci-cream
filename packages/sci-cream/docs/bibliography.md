@@ -11,3 +11,5 @@
 [^5]: Raphaelson, Paul. (2016, May). _Basic Ice Cream Recipe Examples_. <https://under-belly.org/basic-ice-cream-recipe-examples/>
 
 [^6]: Cree, Dana. (2017). _Hello, My Name Is Ice Cream_. Clarkson Potter
+
+[^7]: Raphaelson, Paul. (2016, May). _How to Build an Ice Cream Recipe_. <https://under-belly.org/how-to-build-an-ice-cream-recipe/>

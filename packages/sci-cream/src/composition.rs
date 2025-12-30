@@ -1034,7 +1034,8 @@ mod tests {
     fn pac_total() {
         let pac = COMP_MILK_2_PERCENT.pac;
         assert_eq!(pac.sugars, 4.8069);
-        assert_eq!(pac.total_inc_hf(), 4.8069);
+        assert_eq!(pac.salt, 3.2405);
+        assert_eq!(pac.total_inc_hf(), 8.0474);
     }
 
     #[test]
@@ -1074,16 +1075,16 @@ mod tests {
             (CompKey::Water, 89.18),
             (CompKey::POD, 0.769104),
             (CompKey::PACsgr, 4.8069),
-            (CompKey::PACtotal, 4.8069),
-            (CompKey::AbsPAC, 5.390109890109889),
+            (CompKey::PACslt, 3.2405),
+            (CompKey::PACtotal, 8.0474),
+            (CompKey::AbsPAC, 9.02377),
         ]);
 
         CompKey::iter().for_each(|key| {
-            assert_eq!(
+            assert_abs_diff_eq!(
                 COMP_MILK_2_PERCENT.get(key),
                 *expected.get(&key).unwrap_or(&0.0),
-                "Unexpected for CompKey::{:?}",
-                key
+                epsilon = TESTS_EPSILON
             )
         });
     }

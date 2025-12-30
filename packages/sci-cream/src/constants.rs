@@ -1,5 +1,3 @@
-pub const ABV_TO_ABW_RATIO: f64 = 0.789;
-
 /// POD values from _Characteristics of sweeteners and bulking agents for frozen desserts_ (Goff &
 /// Hartel, 2013, Table 3.4, p. 67)[^2]
 #[doc = include_str!("../docs/bibs/2.md")]
@@ -12,9 +10,9 @@ pub mod pod {
     pub const MALTOSE: f64 = 32.0;
 }
 
-/// [PAC](crate::docs#pac-afp-fpdf-se) values calculated based on molar mass relative to that of
-/// sucrose of 342.30 g/mol, e.g. glucose has a molar mass of 180.16 g/mol, so its PAC is 342.30 /
-/// 180.16 * 100 = 190.
+/// Unless otherwise specified, [PAC](crate::docs#pac-afp-fpdf-se) values were calculated based on
+/// molar mass relative to that of sucrose of 342.30 g/mol, e.g. glucose has a molar mass of 180.16
+/// g/mol, so its PAC is 342.30 / 180.16 * 100 = 190.
 pub mod pac {
     pub const GLUCOSE: f64 = 190.0;
     pub const FRUCTOSE: f64 = 190.0;
@@ -25,6 +23,16 @@ pub mod pac {
 
     pub const SALT: f64 = 585.0;
     pub const ALCOHOL: f64 = 740.0;
+
+    #[cfg(doc)]
+    use crate::constants;
+
+    /// PAC for typical salt content in milk solids non-fat (MSNF) and whey solids (WS)
+    ///
+    /// This value was reverse engineered from [`constants::FPD_MSNF_FACTOR_FOR_CELSIUS`],
+    /// calculated via [`get_pac_from_fpd_polynomial(...)`](crate::fpd::get_pac_from_fpd_polynomial)
+    /// with [`constants::FPD_MSNF_FACTOR_FOR_CELSIUS`] and [`constants::PAC_TO_FPD_POLY_COEFFS`].
+    pub const MSNF_WS_SALTS: f64 = 36.74040576149157;
 }
 
 /// Hardness Factor (HF) values for the Corvitto method of calculating hardness with cocoa and nut
@@ -35,6 +43,38 @@ pub mod hf {
     pub const COCOA_SOLIDS: f64 = 1.8;
     pub const NUT_FAT: f64 = 1.4;
 }
+
+/// PAC to FPD polynomial coefficients, a*x^2 + b*x + c => [a, b, c]
+///
+/// _Polynominal equation with intercept through zero derived from regression model where g
+/// sucrose/100 g water is graphed against FPD °C._ (Goff & Hartel, 2013, Table 6.3.c, p. 186)[^2]
+#[doc = include_str!("../docs/bibs/2.md")]
+pub const PAC_TO_FPD_POLY_COEFFS: [f64; 3] = [-0.00009, -0.0612, 0.0];
+
+/// Freezing Point Depression (FPD) constant (°C) for salts contained in MSNF and WS
+///
+/// _The freezing point depression for salts (°C) contained in MSNF and WS, ... based on the average
+/// molecular weight and concentration of salts present in milk._ (Goff & Hartel, 2013, p.183)[^2]
+#[doc = include_str!("../docs/bibs/2.md")]
+pub const FPD_CONST_FOR_MSNF_WS_SALTS: f64 = -2.37;
+
+pub const STD_MSNF_IN_MILK_SERUM: f64 = 0.09;
+
+/// Percentage of lactose typical of milk solids non-fat (MSNF) (Goff & Hartel, 2013, p. 181)[^2]
+#[doc = include_str!("../docs/bibs/2.md")]
+pub const STD_LACTOSE_IN_MSNF: f64 = 0.545;
+
+/// Percentage of lactose typically found in whey solids (WS) (Goff & Hartel, 2013, p. 181)[^2]
+#[doc = include_str!("../docs/bibs/2.md")]
+pub const STD_LACTOSE_IN_WS: f64 = 0.765;
+
+/// Typical ideal serving temperature (in °C) for ice cream (Raphaelson, 2016, Hardness)[^7]
+#[doc = include_str!("../docs/bibs/7.md")]
+pub const TARGET_SERVING_TEMP_14C: f64 = -14.0;
+
+pub const SERVING_TEMP_X_AXIS: usize = 75;
+
+pub const ABV_TO_ABW_RATIO: f64 = 0.789;
 
 /// PAC to FPD lookup table from _Freezing point depression (°C) below 0°C of sucrose solutions
 /// (g/100g water)_ (Goff & Hartel, 2013, Table 6.1, p. 182)[^2]
@@ -103,18 +143,3 @@ pub const PAC_TO_FPD_TABLE: [(usize, f64); 61] = [
     (177, 13.48),
     (180, 13.68),
 ];
-
-/// PAC to FPD polynomial coefficients, a*x^2 + b*x + c => [a, b, c]
-///
-/// _Polynominal equation with intercept through zero derived from regression model where g
-/// sucrose/100 g water is graphed against FPD °C._ (Goff & Hartel, 2013, Table 6.3.c, p. 186)[^2]
-#[doc = include_str!("../docs/bibs/2.md")]
-pub const PAC_TO_FPD_POLY_COEFFS: [f64; 3] = [-0.00009, -0.0612, 0.0];
-
-pub const STD_MSNF_IN_MILK_SERUM: f64 = 0.09;
-pub const STD_LACTOSE_IN_MSNF: f64 = 0.545;
-
-pub const FPD_MSNF_FACTOR_FOR_CELSIUS: f64 = -2.37;
-
-pub const SERVING_TEMP_X_AXIS: usize = 75;
-pub const TARGET_SERVING_TEMP_14C: f64 = -14.0;

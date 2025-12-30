@@ -170,11 +170,11 @@ mod test {
         );
         let mix_composition = &mix_properties.composition;
 
-        let epsilon = 0.1;
-        assert_abs_diff_eq!(mix_composition.pac.total_exc_hf(), 29.7, epsilon = epsilon);
-        assert_abs_diff_eq!(mix_composition.absolute_pac(), 50.5, epsilon = epsilon);
+        let epsilon = 0.15;
+        assert_abs_diff_eq!(mix_composition.pac.total_exc_hf(), 33.07, epsilon = epsilon);
+        assert_abs_diff_eq!(mix_composition.absolute_pac(), 56.2, epsilon = epsilon);
         assert_abs_diff_eq!(mix_properties.fpd.fpd, -3.5, epsilon = epsilon);
         assert_abs_diff_eq!(mix_properties.fpd.serving_temp, -15.6, epsilon = epsilon);
-        assert_abs_diff_eq!(mix_properties.fpd.hardness_at_14c, 71.9, epsilon = epsilon);
+        assert_abs_diff_eq!(mix_properties.fpd.hardness_at_14c, 71.5, epsilon = epsilon);
     }
 }
