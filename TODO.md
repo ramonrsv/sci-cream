@@ -24,3 +24,5 @@
       method calculates the FPD for MSNF/WS separately via a constant factor, not via PAC values.
 - [ ] Some combinations of "Fructose" and "Salt", e.g. 10g and 0.54g, respectively, cause an error.
       Investigate what is going on here, I suspect it applies to other combinations of ingredients.
+- [ ] Investigate why Underbelly's and Dana's chocolate recipes show as being very hard using the
+      Corvitto method. Are they actually very hard? May need a better method than Corvitto's.

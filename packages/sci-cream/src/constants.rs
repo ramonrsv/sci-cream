@@ -143,3 +143,24 @@ pub const PAC_TO_FPD_TABLE: [(usize, f64); 61] = [
     (177, 13.48),
     (180, 13.68),
 ];
+
+/// Reference table for Corvitto PAC to serving temperature (Corvitto, 2005, p. 78)[^3]
+///
+/// For most standard ice cream mixes this roughly matches the FPD at ~70% frozen water calculated
+/// using the Goff & Hartel method (2013, p. 181)[^2] with [`PAC_TO_FPD_POLY_COEFFS`], adjusting
+/// [`PAC::sugars`](crate::composition::PAC::sugars) to match the PAC in this table, but ignoring
+/// the contributions to FPD by salts present in MSNF/WS - Corvitto seems to have ignored these.
+#[doc = include_str!("../docs/bibs/2.md")]
+#[doc = include_str!("../docs/bibs/3.md")]
+pub const CORVITTO_PAC_TO_SERVING_TEMP_TABLE: [(f64, f64); 9] = [
+    // (pac, serving_temp)
+    (25.0, -10.0),
+    (27.0, -11.0),
+    (29.0, -12.0),
+    (31.0, -13.0),
+    (33.0, -14.0),
+    (35.0, -15.0),
+    (37.0, -16.0),
+    (39.0, -17.0),
+    (41.0, -18.0),
+];

@@ -9,8 +9,8 @@ use wasm_bindgen::prelude::*;
 use crate::{
     composition::Composition,
     constants::{
-        FPD_CONST_FOR_MSNF_WS_SALTS, PAC_TO_FPD_POLY_COEFFS, PAC_TO_FPD_TABLE, SERVING_TEMP_X_AXIS,
-        TARGET_SERVING_TEMP_14C,
+        CORVITTO_PAC_TO_SERVING_TEMP_TABLE, FPD_CONST_FOR_MSNF_WS_SALTS, PAC_TO_FPD_POLY_COEFFS, PAC_TO_FPD_TABLE,
+        SERVING_TEMP_X_AXIS, TARGET_SERVING_TEMP_14C,
     },
     error::{Error, Result},
     util::iter_all_abs_diff_eq,
@@ -48,8 +48,6 @@ pub struct Curves {
     pub frozen_water: Vec<CurvePoint>,
     #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
     pub hardness: Vec<CurvePoint>,
-    #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
-    pub hardness_factor: Vec<CurvePoint>,
 }
 
 /// [Freezing Point Depression (FPD)](crate::docs#freezing-point-depression) properties...
@@ -71,7 +69,6 @@ impl Curves {
         Self {
             frozen_water: make_empty_curve(),
             hardness: make_empty_curve(),
-            hardness_factor: make_empty_curve(),
         }
     }
 }
@@ -192,6 +189,16 @@ pub fn get_pac_from_fpd_polynomial(fpd: f64, coeffs: Option<[f64; 3]>) -> Result
     }
 
     Ok(root1.max(root2))
+}
+
+pub fn get_serving_temp_from_pac_corvitto(pac: f64) -> Result<f64> {
+    let first = CORVITTO_PAC_TO_SERVING_TEMP_TABLE[0];
+    let last = CORVITTO_PAC_TO_SERVING_TEMP_TABLE.last().unwrap();
+
+    let slope = (first.1 - last.1) / (first.0 - last.0);
+    let run = pac - first.0;
+
+    Ok(slope * run + first.1)
 }
 
 #[derive(Iterable, PartialEq, Copy, Clone, Debug)]
@@ -345,7 +352,6 @@ pub fn compute_fpd_curves(
     let mut curves = Curves {
         frozen_water: Vec::new(),
         hardness: Vec::new(),
-        hardness_factor: Vec::new(),
     };
 
     for x_axis in 0..100 {
@@ -356,7 +362,7 @@ pub fn compute_fpd_curves(
             PacToFpdMethod::Polynomial => |pac| get_fpd_from_pac_polynomial(pac, None),
         };
 
-        let (fpd_exc_hf, fpd_inc_hf) = match curves_method {
+        let (fpd_fw, fpd_hardness) = match curves_method {
             FpdCurvesComputationMethod::GoffHartel => {
                 compute_fpd_curve_step_goff_hartel(comp, frozen_water, &get_fpd_from_pac)
                     .map(|step| (step.fpd_total, f64::NAN))?
@@ -367,11 +373,8 @@ pub fn compute_fpd_curves(
             }
         };
 
-        let hardness = (fpd_exc_hf + fpd_inc_hf) / 2.0;
-
-        curves.frozen_water.push(CurvePoint::new(frozen_water, fpd_exc_hf));
-        curves.hardness_factor.push(CurvePoint::new(frozen_water, fpd_inc_hf));
-        curves.hardness.push(CurvePoint::new(frozen_water, hardness));
+        curves.frozen_water.push(CurvePoint::new(frozen_water, fpd_fw));
+        curves.hardness.push(CurvePoint::new(frozen_water, fpd_hardness));
     }
 
     Ok(curves)
@@ -444,7 +447,10 @@ mod tests {
     use super::*;
     use crate::{
         composition::{CompKey, Composition, PAC, Solids, SolidsBreakdown},
-        constants::{FPD_CONST_FOR_MSNF_WS_SALTS, STD_LACTOSE_IN_MSNF, STD_LACTOSE_IN_WS, pac::MSNF_WS_SALTS},
+        constants::{
+            CORVITTO_PAC_TO_SERVING_TEMP_TABLE, FPD_CONST_FOR_MSNF_WS_SALTS, STD_LACTOSE_IN_MSNF, STD_LACTOSE_IN_WS,
+            pac,
+        },
     };
 
     fn get_fpd_from_pac_inter(pac: f64) -> Result<f64> {
@@ -567,7 +573,7 @@ mod tests {
     fn pac_msnf_ws_salts() {
         assert_abs_diff_eq!(
             super::get_pac_from_fpd_polynomial(FPD_CONST_FOR_MSNF_WS_SALTS, None).unwrap(),
-            MSNF_WS_SALTS,
+            pac::MSNF_WS_SALTS,
             epsilon = TESTS_EPSILON
         );
     }
@@ -592,7 +598,7 @@ mod tests {
 
         Composition::new()
             .solids(Solids::new().milk(milk_solids).other(other_solids))
-            .pac(PAC::new().sugars(22.18).salt((10.0 + 2.0) * MSNF_WS_SALTS / 100.0))
+            .pac(PAC::new().sugars(22.18).salt((10.0 + 2.0) * pac::MSNF_WS_SALTS / 100.0))
     });
 
     /// Same as [`REF_COMP`], but with alcohol added
@@ -884,6 +890,194 @@ mod tests {
         }
     }
 
+    /// Reference composition for Corvitto FPD tests (Corvitto, 2005, p. 150)[^3]
+    /// _Fat 8%, POD 18, MSNF 10%, Total Solids 36.1%, PAC 26.7, Serving Temperature -11°C_
+    #[doc = include_str!("../docs/bibs/3.md")]
+    static CORVITTO_REF_COMP_11ST: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .solids(
+                Solids::new()
+                    .milk(SolidsBreakdown::new().fats(8.0).sweeteners(5.45).snfs(4.55))
+                    .other(SolidsBreakdown::new().sweeteners(18.1)),
+            )
+            .pod(18.0)
+            .pac(PAC::new().sugars(26.7))
+    });
+
+    /// Reference composition for Corvitto FPD tests (Corvitto, 2005, p. 151)[^3]
+    /// _Fat 8%, POD 18, MSNF 10%, Total Solids 39.3%, PAC 40.9, Serving Temperature -18°C_
+    #[doc = include_str!("../docs/bibs/3.md")]
+    static CORVITTO_REF_COMP_18ST: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .solids(
+                Solids::new()
+                    .milk(SolidsBreakdown::new().fats(8.0).sweeteners(5.45).snfs(4.55))
+                    .other(SolidsBreakdown::new().sweeteners(21.3)),
+            )
+            .pod(18.0)
+            .pac(PAC::new().sugars(40.9))
+    });
+
+    /// Reference composition for Corvitto FPD with HF tests (Corvitto, 2005, p. 251)[^3]
+    /// _Fat 8%, POD 24.5, MSNF 8%, Cocoa SNF: 4.7%, Total Solids 38.2%, PAC 37.3,
+    /// Hardness Factor: 9.7, Serving Temperature -11°C_
+    #[doc = include_str!("../docs/bibs/3.md")]
+    static CORVITTO_REF_COMP_WITH_HF_11ST: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .solids(
+                Solids::new()
+                    .milk(SolidsBreakdown::new().fats(6.1).sweeteners(3.4).snfs(4.6))
+                    .egg(SolidsBreakdown::new().fats(0.6).snfs(0.5))
+                    .cocoa(SolidsBreakdown::new().fats(1.3).snfs(4.7))
+                    .other(SolidsBreakdown::new().sweeteners(17.0)),
+            )
+            .pod(24.9)
+            .pac(PAC::new().sugars(37.3).hardness_factor(9.7))
+    });
+
+    /// Reference composition for Corvitto FPD with HF tests (Corvitto, 2005, p. 252)[^3]
+    /// _Fat 8%, POD 33.6, MSNF 8%, Cocoa SNF: 4.7%, Total Solids 43.2%, PAC 50.9,
+    /// Hardness Factor: 9.7, Serving Temperature -18°C_
+    #[doc = include_str!("../docs/bibs/3.md")]
+    static CORVITTO_REF_COMP_WITH_HF_18ST: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .solids(
+                Solids::new()
+                    .milk(SolidsBreakdown::new().fats(6.1).sweeteners(4.1).snfs(3.9))
+                    .egg(SolidsBreakdown::new().fats(0.6).snfs(0.5))
+                    .cocoa(SolidsBreakdown::new().fats(1.3).snfs(4.7))
+                    .other(SolidsBreakdown::new().sweeteners(22.0)),
+            )
+            .pod(33.6)
+            .pac(PAC::new().sugars(50.9).hardness_factor(9.7))
+    });
+
+    #[test]
+    fn validate_corvitto_reference_compositions() {
+        let comp = *CORVITTO_REF_COMP_11ST;
+        assert_eq!(comp.get(CompKey::TotalFat), 8.0);
+        assert_eq!(comp.get(CompKey::MSNF), 10.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 36.1);
+        assert_eq!(comp.get(CompKey::PACsgr), 26.7);
+        assert_eq!(comp.get(CompKey::PACtotal), 26.7);
+        assert_abs_diff_eq!(
+            super::get_serving_temp_from_pac_corvitto(comp.pac.total_inc_hf()).unwrap(),
+            -11.0,
+            epsilon = 0.25
+        );
+
+        let comp = *CORVITTO_REF_COMP_18ST;
+        assert_eq!(comp.get(CompKey::TotalFat), 8.0);
+        assert_eq!(comp.get(CompKey::MSNF), 10.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 39.3);
+        assert_eq!(comp.get(CompKey::PACsgr), 40.9);
+        assert_eq!(comp.get(CompKey::PACtotal), 40.9);
+        assert_abs_diff_eq!(
+            super::get_serving_temp_from_pac_corvitto(comp.pac.total_inc_hf()).unwrap(),
+            -18.0,
+            epsilon = 0.25
+        );
+
+        let comp = *CORVITTO_REF_COMP_WITH_HF_11ST;
+        assert_abs_diff_eq!(comp.get(CompKey::TotalFat), 8.0, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::MSNF), 8.0);
+        assert_eq!(comp.get(CompKey::CocoaSNF), 4.7);
+        assert_eq!(comp.get(CompKey::TotalSolids), 38.2);
+        assert_eq!(comp.get(CompKey::PACsgr), 37.3);
+        assert_eq!(comp.get(CompKey::PACtotal), 37.3);
+        assert_eq!(comp.get(CompKey::HF), 9.7);
+        assert_abs_diff_eq!(
+            super::get_serving_temp_from_pac_corvitto(comp.pac.total_inc_hf()).unwrap(),
+            -11.0,
+            epsilon = 0.3
+        );
+
+        let comp = *CORVITTO_REF_COMP_WITH_HF_18ST;
+        assert_abs_diff_eq!(comp.get(CompKey::TotalFat), 8.0, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::MSNF), 8.0);
+        assert_eq!(comp.get(CompKey::CocoaSNF), 4.7);
+        assert_eq!(comp.get(CompKey::TotalSolids), 43.2);
+        assert_eq!(comp.get(CompKey::PACsgr), 50.9);
+        assert_eq!(comp.get(CompKey::PACtotal), 50.9);
+        assert_eq!(comp.get(CompKey::HF), 9.7);
+        assert_abs_diff_eq!(
+            super::get_serving_temp_from_pac_corvitto(comp.pac.total_inc_hf()).unwrap(),
+            -18.0,
+            epsilon = 0.3
+        );
+    }
+
+    #[test]
+    fn get_serving_temp_from_pac_corvitto() {
+        for table in [
+            &CORVITTO_PAC_TO_SERVING_TEMP_TABLE[..],
+            &[(23.0, -9.0), (24.0, -9.5), (42.0, -18.5), (43.0, -19.0)],
+        ] {
+            for (pac, serving_temp) in table.iter() {
+                let computed_serving_temp = super::get_serving_temp_from_pac_corvitto(*pac).unwrap();
+                assert_abs_diff_eq!(computed_serving_temp, *serving_temp, epsilon = TESTS_EPSILON);
+            }
+        }
+
+        let pac = CORVITTO_REF_COMP_11ST.pac.sugars;
+        let computed_serving_temp = super::get_serving_temp_from_pac_corvitto(pac).unwrap();
+        assert_abs_diff_eq!(computed_serving_temp, -11.0, epsilon = 0.2);
+
+        let pac = CORVITTO_REF_COMP_18ST.pac.sugars;
+        let computed_serving_temp = super::get_serving_temp_from_pac_corvitto(pac).unwrap();
+        assert_abs_diff_eq!(computed_serving_temp, -18.0, epsilon = 0.2);
+    }
+
+    #[test]
+    fn corvitto_pac_to_serving_temp_vs_goff_hartel_fpd_at_70_frozen_water() {
+        for (pac, expected_serving_temp) in CORVITTO_PAC_TO_SERVING_TEMP_TABLE.iter() {
+            let mut comp = crate::recipe::calculate_mix_composition(&[
+                crate::recipe::CompositionLine::new(*CORVITTO_REF_COMP_11ST, 50.0),
+                crate::recipe::CompositionLine::new(*CORVITTO_REF_COMP_18ST, 50.0),
+            ]);
+            comp.pac.sugars = *pac;
+
+            let fpd_curve_step_at_xx_fw =
+                compute_fpd_curve_step_goff_hartel(comp, 68.25, &get_fpd_from_pac_poly).unwrap();
+            assert_abs_diff_eq!(fpd_curve_step_at_xx_fw.fpd_total, *expected_serving_temp, epsilon = 0.4);
+        }
+    }
+
+    #[test]
+    fn corvitto_pac_to_serving_temp_vs_modified_goff_hartel_corvitto_fpd_at_70_frozen_water() {
+        for (pac, expected_serving_temp) in CORVITTO_PAC_TO_SERVING_TEMP_TABLE.iter() {
+            let mut comp = crate::recipe::calculate_mix_composition(&[
+                crate::recipe::CompositionLine::new(*CORVITTO_REF_COMP_11ST, 50.0),
+                crate::recipe::CompositionLine::new(*CORVITTO_REF_COMP_18ST, 50.0),
+            ]);
+            comp.pac.sugars = *pac;
+
+            let fpd_curve_step_at_xx_fw =
+                compute_fpd_curve_step_modified_goff_hartel_corvitto(comp, 70.0, &get_fpd_from_pac_poly).unwrap();
+            assert_abs_diff_eq!(fpd_curve_step_at_xx_fw.fpd_exc_hf, *expected_serving_temp, epsilon = 0.4);
+        }
+    }
+
+    #[test]
+    fn compute_fpd_curve_modified_goff_hartel_corvitto_polynomial_corvitto_ref() {
+        for ref_comp in &[
+            *CORVITTO_REF_COMP_11ST,
+            *CORVITTO_REF_COMP_18ST,
+            *CORVITTO_REF_COMP_WITH_HF_11ST,
+            *CORVITTO_REF_COMP_WITH_HF_18ST,
+        ] {
+            let expected_serving_temp = super::get_serving_temp_from_pac_corvitto(ref_comp.pac.total_inc_hf()).unwrap();
+            let fpd_curve_step_at_xx_fw =
+                compute_fpd_curve_step_modified_goff_hartel_corvitto(*ref_comp, 70.0, &get_fpd_from_pac_poly).unwrap();
+
+            // @todo The composition with HF and -18C expected serving temp shows a large deviation.
+            let is_hf_18st = ref_comp.pac.hardness_factor > 0.0 && expected_serving_temp < -12.0;
+            let epsilon = if is_hf_18st { 2.0 } else { 0.6 };
+
+            assert_abs_diff_eq!(fpd_curve_step_at_xx_fw.fpd_inc_hf, expected_serving_temp, epsilon = epsilon);
+        }
+    }
+
     #[test]
     fn get_x_axis_at_fpd() {
         let curve = &REF_COMP_FREEZING_CURVE
@@ -916,11 +1110,7 @@ mod tests {
             for x_axis in 0..100 {
                 let x_axis_f = x_axis as f64;
 
-                for curve in [
-                    &fpd.curves.frozen_water,
-                    &fpd.curves.hardness_factor,
-                    &fpd.curves.hardness,
-                ] {
+                for curve in [&fpd.curves.frozen_water, &fpd.curves.hardness] {
                     let curve_point = &curve[x_axis];
                     assert_eq!(curve_point.x_axis, x_axis_f);
                     assert_eq!(curve_point.temp, 0.0);

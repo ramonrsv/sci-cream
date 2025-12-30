@@ -39,7 +39,6 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
       const lines = [
         { lineLabel: "Hardness", curve: curves.hardness },
         { lineLabel: "Frozen Water", borderDash: [3, 3], curve: curves.frozen_water },
-        { lineLabel: "HF", borderDash: [15, 15], curve: curves.hardness_factor },
       ];
 
       return lines.map(({ lineLabel, borderDash, curve }) => ({

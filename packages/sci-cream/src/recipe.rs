@@ -167,7 +167,7 @@ mod test {
         assert_abs_diff_eq!(mix_composition.pac.total_exc_hf(), 33.07, epsilon = epsilon);
         assert_abs_diff_eq!(mix_composition.absolute_pac(), 56.2, epsilon = epsilon);
         assert_abs_diff_eq!(mix_properties.fpd.fpd, -3.5, epsilon = epsilon);
-        assert_abs_diff_eq!(mix_properties.fpd.serving_temp, -15.6, epsilon = epsilon);
-        assert_abs_diff_eq!(mix_properties.fpd.hardness_at_14c, 71.5, epsilon = epsilon);
+        assert_abs_diff_eq!(mix_properties.fpd.serving_temp, -14.78, epsilon = epsilon);
+        assert_abs_diff_eq!(mix_properties.fpd.hardness_at_14c, 73.42, epsilon = epsilon);
     }
 }
