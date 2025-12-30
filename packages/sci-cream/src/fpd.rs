@@ -307,13 +307,18 @@ pub fn compute_fpd_curve_step_modified_goff_hartel_corvitto(
     next.frozen_water = next_frozen_water;
     next.water = (100.0 - next.frozen_water) / 100.0 * comp.water();
 
-    next.pac_exc_hf = (comp.pac.sugars + comp.pac.salt + comp.pac.alcohol) / next.water * 100.0;
-    next.hf = comp.pac.hardness_factor / next.water * 100.0;
-
     // It's important to sum the PAC values before computing FPD, rather than computing FPD for
     // each PAC value separately and summing the FPDs. See [`get_fpd_from_pac_polynomial`]'s docs.
+    next.pac_exc_hf = comp.pac.total_exc_hf() / next.water * 100.0;
+    next.hf = comp.pac.hardness_factor / next.water * 100.0;
+    let pac_inc_hf = next.pac_exc_hf - next.hf;
+
     next.fpd_exc_hf = get_fpd_from_pac(next.pac_exc_hf).unwrap();
-    next.fpd_inc_hf = get_fpd_from_pac(next.pac_exc_hf - next.hf).unwrap();
+    next.fpd_inc_hf = if pac_inc_hf >= 0.0 {
+        get_fpd_from_pac(pac_inc_hf).unwrap()
+    } else {
+        f64::NAN
+    };
 
     Ok(next)
 }
@@ -850,6 +855,32 @@ mod tests {
             assert_abs_diff_eq!(step_with_hf.hf, (10.0 / ref_step.water) * 100.0, epsilon = TESTS_EPSILON);
             assert_abs_diff_eq!(step_with_hf.pac_exc_hf, ref_step.pac_exc_hf, epsilon = 0.01);
             assert_abs_diff_eq!(step_with_hf.fpd_inc_hf, step_pac_less_hf.fpd_exc_hf, epsilon = TESTS_EPSILON);
+        }
+    }
+
+    #[test]
+    fn compute_fpd_curve_modified_goff_hartel_corvitto_polynomial_with_neg_pac_due_to_hf() {
+        let mut comp = *REF_COMP;
+        assert_eq!(comp.pac.sugars, 22.18);
+        assert_eq!(comp.pac.hardness_factor, 0.0);
+        assert_abs_diff_eq!(comp.pac.total_inc_hf(), 26.5888, epsilon = TESTS_EPSILON);
+
+        comp.pac.hardness_factor = 30.0;
+        assert_eq!(comp.pac.sugars, 22.18);
+        assert_eq!(comp.pac.hardness_factor, 30.0);
+        assert_abs_diff_eq!(comp.pac.total_inc_hf(), -3.4112, epsilon = TESTS_EPSILON);
+
+        for (ref_step, _) in REF_COMP_FREEZING_CURVE_MODIFIED_GOFF_HARTEL_CORVITTO.iter() {
+            let step_with_hf = compute_fpd_curve_step_modified_goff_hartel_corvitto(
+                comp,
+                ref_step.frozen_water,
+                &get_fpd_from_pac_poly,
+            )
+            .unwrap();
+
+            assert_abs_diff_eq!(step_with_hf.hf, (30.0 / ref_step.water) * 100.0, epsilon = TESTS_EPSILON);
+            assert_abs_diff_eq!(step_with_hf.pac_exc_hf, ref_step.pac_exc_hf, epsilon = 0.01);
+            assert_true!(step_with_hf.fpd_inc_hf.is_nan());
         }
     }
 
