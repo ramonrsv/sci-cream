@@ -29,9 +29,9 @@ pub mod pac {
 
     /// PAC for typical salt content in milk solids non-fat (MSNF) and whey solids (WS)
     ///
-    /// This value was reverse engineered from [`constants::FPD_MSNF_FACTOR_FOR_CELSIUS`],
+    /// This value was reverse engineered from [`constants::FPD_CONST_FOR_MSNF_WS_SALTS`],
     /// calculated via [`get_pac_from_fpd_polynomial(...)`](crate::fpd::get_pac_from_fpd_polynomial)
-    /// with [`constants::FPD_MSNF_FACTOR_FOR_CELSIUS`] and [`constants::PAC_TO_FPD_POLY_COEFFS`].
+    /// with [`constants::FPD_CONST_FOR_MSNF_WS_SALTS`] and [`constants::PAC_TO_FPD_POLY_COEFFS`].
     pub const MSNF_WS_SALTS: f64 = 36.74040576149157;
 }
 
