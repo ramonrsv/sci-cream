@@ -18,6 +18,7 @@
   "rust-analyzer.check.command": "clippy",
   "prettier.printWidth": 100,
   "cSpell.words": [
+    "Cmlk",
     "COEFF",
     "coeffs",
     "Corvitto",

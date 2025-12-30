@@ -209,11 +209,13 @@ pub struct GoffHartelFpdCurveStep {
     pub water: f64,
     /// Sucrose equivalent concentration (PACsgr) at this step, g/100g water
     pub se: f64,
+    /// Sucrose equivalent salt concentration (PACslt) at this step, g/100g water
+    pub sa: f64,
     /// Sucrose equivalent alcohol concentration (PACalc) at this step, g/100g water
     pub alc: f64,
     /// FPD due to sucrose equivalent concentration at this step, °C
     pub fpd_se: f64,
-    /// FPD due to salt concentration at this step, °C
+    /// FPD due to salt concentration (from `sa` and MSNF/WS salts) at this step, °C
     pub fpd_sa: f64,
     /// FPD due to alcohol concentration at this step, °C
     pub fpd_alc: f64,
@@ -227,6 +229,7 @@ impl GoffHartelFpdCurveStep {
             frozen_water: f64::NAN,
             water: f64::NAN,
             se: f64::NAN,
+            sa: f64::NAN,
             alc: f64::NAN,
             fpd_se: f64::NAN,
             fpd_sa: f64::NAN,
@@ -248,10 +251,13 @@ pub fn compute_fpd_curve_step_goff_hartel(
     next.frozen_water = next_frozen_water;
     next.water = (100.0 - next.frozen_water) / 100.0 * composition.water();
     next.se = composition.pac.sugars / next.water * 100.0;
+    next.sa = composition.pac.salt / next.water * 100.0;
     next.alc = composition.pac.alcohol / next.water * 100.0;
 
+    let fpd_msnf_ws = composition.solids.milk.snf() * FPD_CONST_FOR_MSNF_WS_SALTS / next.water;
+
     next.fpd_se = get_fpd_from_pac(next.se).unwrap();
-    next.fpd_sa = composition.solids.milk.snf() * FPD_CONST_FOR_MSNF_WS_SALTS / next.water;
+    next.fpd_sa = get_fpd_from_pac(next.sa).unwrap() + fpd_msnf_ws;
     next.fpd_alc = get_fpd_from_pac(next.alc).unwrap();
 
     next.fpd_total = next.fpd_se + next.fpd_sa + next.fpd_alc;
@@ -316,7 +322,7 @@ pub fn compute_fpd_curve_step_modified_goff_hartel_corvitto(
 
     // It's important to sum the PAC values before computing FPD, rather than computing FPD for
     // each PAC value separately and summing the FPDs. See [`get_fpd_from_pac_polynomial`]'s docs.
-    next.pac_exc_hf = comp.pac.total_exc_hf() / next.water * 100.0;
+    next.pac_exc_hf = comp.pac.total() / next.water * 100.0;
     next.hf = comp.pac.hardness_factor / next.water * 100.0;
     let pac_inc_hf = next.pac_exc_hf - next.hf;
 
@@ -598,7 +604,11 @@ mod tests {
 
         Composition::new()
             .solids(Solids::new().milk(milk_solids).other(other_solids))
-            .pac(PAC::new().sugars(22.18).salt((10.0 + 2.0) * pac::MSNF_WS_SALTS / 100.0))
+            .pac(
+                PAC::new()
+                    .sugars(22.18)
+                    .msnf_ws_salts((10.0 + 2.0) * pac::MSNF_WS_SALTS / 100.0),
+            )
     });
 
     /// Same as [`REF_COMP`], but with alcohol added
@@ -623,7 +633,7 @@ mod tests {
         assert_eq!(comp.get(CompKey::TotalSolids), 40.0);
         assert_eq!(comp.get(CompKey::Water), 60.0);
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
-        assert_abs_diff_eq!(comp.get(CompKey::PACslt), 4.4088, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.get(CompKey::PACmlk), 4.4088, epsilon = TESTS_EPSILON);
         assert_abs_diff_eq!(comp.get(CompKey::PACtotal), 26.5888, epsilon = TESTS_EPSILON);
 
         let comp = *REF_COMP_WITH_ALCOHOL;
@@ -633,7 +643,7 @@ mod tests {
         assert_eq!(comp.get(CompKey::Water), 58.0);
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
         assert_eq!(comp.get(CompKey::PACalc), 14.8);
-        assert_abs_diff_eq!(comp.get(CompKey::PACslt), 4.4088, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.get(CompKey::PACmlk), 4.4088, epsilon = TESTS_EPSILON);
         assert_abs_diff_eq!(comp.get(CompKey::PACtotal), 41.3888, epsilon = TESTS_EPSILON);
 
         let comp = *REF_COMP_WITH_HF;
@@ -641,10 +651,10 @@ mod tests {
         assert_eq!(comp.get(CompKey::TotalSolids), 40.0);
         assert_eq!(comp.get(CompKey::Water), 60.0);
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
-        assert_abs_diff_eq!(comp.get(CompKey::PACslt), 4.4088, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.get(CompKey::PACmlk), 4.4088, epsilon = TESTS_EPSILON);
         assert_eq!(comp.get(CompKey::HF), 10.0);
-        assert_abs_diff_eq!(comp.pac.total_exc_hf(), 26.5888, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(comp.pac.total_inc_hf(), 16.5888, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.pac.total(), 26.5888, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.pac.total() - comp.pac.hardness_factor, 16.5888, epsilon = TESTS_EPSILON);
     }
 
     /// Reference freezing curve for [`REF_COMP`] (Goff & Hartel, 2013, Table 6.2, p. 184)[^2]
@@ -668,6 +678,7 @@ mod tests {
             frozen_water: fw,
             water: w,
             se,
+            sa: 0.0,
             alc: 0.0,
             fpd_se,
             fpd_sa,
@@ -689,6 +700,7 @@ mod tests {
             frozen_water: fw,
             water: w,
             se,
+            sa: 0.0,
             alc,
             fpd_se,
             fpd_sa,
@@ -869,12 +881,12 @@ mod tests {
         let mut comp = *REF_COMP;
         assert_eq!(comp.pac.sugars, 22.18);
         assert_eq!(comp.pac.hardness_factor, 0.0);
-        assert_abs_diff_eq!(comp.pac.total_inc_hf(), 26.5888, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.pac.total() - comp.pac.hardness_factor, 26.5888, epsilon = TESTS_EPSILON);
 
         comp.pac.hardness_factor = 30.0;
         assert_eq!(comp.pac.sugars, 22.18);
         assert_eq!(comp.pac.hardness_factor, 30.0);
-        assert_abs_diff_eq!(comp.pac.total_inc_hf(), -3.4112, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.pac.total() - comp.pac.hardness_factor, -3.4112, epsilon = TESTS_EPSILON);
 
         for (ref_step, _) in REF_COMP_FREEZING_CURVE_MODIFIED_GOFF_HARTEL_CORVITTO.iter() {
             let step_with_hf = compute_fpd_curve_step_modified_goff_hartel_corvitto(
@@ -961,7 +973,7 @@ mod tests {
         assert_eq!(comp.get(CompKey::PACsgr), 26.7);
         assert_eq!(comp.get(CompKey::PACtotal), 26.7);
         assert_abs_diff_eq!(
-            super::get_serving_temp_from_pac_corvitto(comp.pac.total_inc_hf()).unwrap(),
+            super::get_serving_temp_from_pac_corvitto(comp.pac.total()).unwrap(),
             -11.0,
             epsilon = 0.25
         );
@@ -973,7 +985,7 @@ mod tests {
         assert_eq!(comp.get(CompKey::PACsgr), 40.9);
         assert_eq!(comp.get(CompKey::PACtotal), 40.9);
         assert_abs_diff_eq!(
-            super::get_serving_temp_from_pac_corvitto(comp.pac.total_inc_hf()).unwrap(),
+            super::get_serving_temp_from_pac_corvitto(comp.pac.total()).unwrap(),
             -18.0,
             epsilon = 0.25
         );
@@ -987,7 +999,7 @@ mod tests {
         assert_eq!(comp.get(CompKey::PACtotal), 37.3);
         assert_eq!(comp.get(CompKey::HF), 9.7);
         assert_abs_diff_eq!(
-            super::get_serving_temp_from_pac_corvitto(comp.pac.total_inc_hf()).unwrap(),
+            super::get_serving_temp_from_pac_corvitto(comp.pac.total() - comp.pac.hardness_factor).unwrap(),
             -11.0,
             epsilon = 0.3
         );
@@ -1001,7 +1013,7 @@ mod tests {
         assert_eq!(comp.get(CompKey::PACtotal), 50.9);
         assert_eq!(comp.get(CompKey::HF), 9.7);
         assert_abs_diff_eq!(
-            super::get_serving_temp_from_pac_corvitto(comp.pac.total_inc_hf()).unwrap(),
+            super::get_serving_temp_from_pac_corvitto(comp.pac.total() - comp.pac.hardness_factor).unwrap(),
             -18.0,
             epsilon = 0.3
         );
@@ -1066,7 +1078,8 @@ mod tests {
             *CORVITTO_REF_COMP_WITH_HF_11ST,
             *CORVITTO_REF_COMP_WITH_HF_18ST,
         ] {
-            let expected_serving_temp = super::get_serving_temp_from_pac_corvitto(ref_comp.pac.total_inc_hf()).unwrap();
+            let expected_serving_temp =
+                super::get_serving_temp_from_pac_corvitto(ref_comp.pac.total() - ref_comp.pac.hardness_factor).unwrap();
             let fpd_curve_step_at_xx_fw =
                 compute_fpd_curve_step_modified_goff_hartel_corvitto(*ref_comp, 70.0, &get_fpd_from_pac_poly).unwrap();
 

@@ -48,6 +48,7 @@ impl KeyAsStrings for CompKey {
             CompKey::PACsgr => "PACsgr",
             CompKey::PACslt => "PACslt",
             CompKey::PACalc => "PACalc",
+            CompKey::PACmlk => "PACmlk",
             CompKey::PACtotal => "PAC",
             CompKey::AbsPAC => "Abs.PAC",
             CompKey::HF => "HF",

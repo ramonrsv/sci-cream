@@ -76,7 +76,7 @@ pub(crate) static COMP_MILK_2_PERCENT: LazyLock<Composition> = LazyLock::new(|| 
         .solids(Solids::new().milk(SolidsBreakdown::new().fats(2.0).sweeteners(4.8069).snfs(4.0131)))
         .sweeteners(Sweeteners::new().sugars(Sugars::new().lactose(4.8069)))
         .pod(0.769104)
-        .pac(PAC::new().sugars(4.8069).salt(3.2405))
+        .pac(PAC::new().sugars(4.8069).msnf_ws_salts(3.2405))
 });
 
 pub(crate) static COMP_SUCROSE: LazyLock<Composition> = LazyLock::new(|| {

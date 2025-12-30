@@ -88,6 +88,7 @@ pub struct Micro {
 pub struct PAC {
     pub sugars: f64,
     pub salt: f64,
+    pub msnf_ws_salts: f64,
     pub alcohol: f64,
     pub hardness_factor: f64,
 }
@@ -160,6 +161,7 @@ pub enum CompKey {
     POD,
     PACsgr,
     PACslt,
+    PACmlk,
     PACalc,
     PACtotal,
     AbsPAC,
@@ -481,6 +483,7 @@ impl PAC {
         Self {
             sugars: 0.0,
             salt: 0.0,
+            msnf_ws_salts: 0.0,
             alcohol: 0.0,
             hardness_factor: 0.0,
         }
@@ -492,6 +495,10 @@ impl PAC {
 
     pub fn salt(self, salt: f64) -> Self {
         Self { salt, ..self }
+    }
+
+    pub fn msnf_ws_salts(self, msnf_ws_salts: f64) -> Self {
+        Self { msnf_ws_salts, ..self }
     }
 
     pub fn alcohol(self, alcohol: f64) -> Self {
@@ -513,12 +520,9 @@ impl PAC {
         Self::empty()
     }
 
-    pub fn total_inc_hf(&self) -> f64 {
-        self.sugars + self.salt + self.alcohol - self.hardness_factor
-    }
-
-    pub fn total_exc_hf(&self) -> f64 {
-        self.sugars + self.salt + self.alcohol
+    /// Total PAC values from all sources, excluding hardness factor
+    pub fn total(&self) -> f64 {
+        self.sugars + self.salt + self.msnf_ws_salts + self.alcohol
     }
 }
 
@@ -590,10 +594,10 @@ impl Composition {
     }
 
     /// Note that [`f64::NAN`] is a valid result, if there is no water
-    /// Excluding hardness factor, i.e. `self.pac.total_exc_hf() / self.water()`
+    /// Excluding hardness factor, i.e. `self.pac.total() / self.water()`
     pub fn absolute_pac(&self) -> f64 {
         if self.water() > 0.0 {
-            (self.pac.total_exc_hf() / self.water()) * 100.0
+            (self.pac.total() / self.water()) * 100.0
         } else {
             f64::NAN
         }
@@ -638,8 +642,9 @@ impl Composition {
             CompKey::POD => self.pod,
             CompKey::PACsgr => self.pac.sugars,
             CompKey::PACslt => self.pac.salt,
+            CompKey::PACmlk => self.pac.msnf_ws_salts,
             CompKey::PACalc => self.pac.alcohol,
-            CompKey::PACtotal => self.pac.total_exc_hf(),
+            CompKey::PACtotal => self.pac.total(),
             CompKey::AbsPAC => self.absolute_pac(),
             CompKey::HF => self.pac.hardness_factor,
         }
@@ -760,6 +765,7 @@ impl ScaleComponents for PAC {
         Self {
             sugars: self.sugars * factor,
             salt: self.salt * factor,
+            msnf_ws_salts: self.msnf_ws_salts * factor,
             alcohol: self.alcohol * factor,
             hardness_factor: self.hardness_factor * factor,
         }
@@ -769,6 +775,7 @@ impl ScaleComponents for PAC {
         Self {
             sugars: self.sugars + other.sugars,
             salt: self.salt + other.salt,
+            msnf_ws_salts: self.msnf_ws_salts + other.msnf_ws_salts,
             alcohol: self.alcohol + other.alcohol,
             hardness_factor: self.hardness_factor + other.hardness_factor,
         }
@@ -993,8 +1000,10 @@ mod tests {
     fn pac_total() {
         let pac = COMP_MILK_2_PERCENT.pac;
         assert_eq!(pac.sugars, 4.8069);
-        assert_eq!(pac.salt, 3.2405);
-        assert_eq!(pac.total_inc_hf(), 8.0474);
+        assert_eq!(pac.salt, 0.0);
+        assert_eq!(pac.msnf_ws_salts, 3.2405);
+        assert_eq!(pac.alcohol, 0.0);
+        assert_eq!(pac.total(), 8.0474);
     }
 
     #[test]
@@ -1033,7 +1042,7 @@ mod tests {
             (CompKey::Water, 89.18),
             (CompKey::POD, 0.769104),
             (CompKey::PACsgr, 4.8069),
-            (CompKey::PACslt, 3.2405),
+            (CompKey::PACmlk, 3.2405),
             (CompKey::PACtotal, 8.0474),
             (CompKey::AbsPAC, 9.02377),
         ]);
