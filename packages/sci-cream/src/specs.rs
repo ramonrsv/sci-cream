@@ -9,9 +9,7 @@ use crate::diesel::ingredients;
 use diesel::{Queryable, Selectable};
 
 use crate::{
-    composition::{
-        Composition, Micro, PAC, ScaleComponents, Solids, SolidsBreakdown, Sugars, Sweeteners,
-    },
+    composition::{Composition, Micro, PAC, ScaleComponents, Solids, SolidsBreakdown, Sugars, Sweeteners},
     constants,
     error::{Error, Result},
     ingredients::{Category, Ingredient},
@@ -352,14 +350,7 @@ impl IntoComposition for DairySpec {
             .salt(msnf * constants::pac::MSNF_WS_SALTS / 100.0);
 
         Ok(Composition::new()
-            .solids(
-                Solids::new().milk(
-                    SolidsBreakdown::new()
-                        .fats(fat)
-                        .sweeteners(lactose)
-                        .snfs(snfs),
-                ),
-            )
+            .solids(Solids::new().milk(SolidsBreakdown::new().fats(fat).sweeteners(lactose).snfs(snfs)))
             .sweeteners(sweeteners)
             .pod(pod)
             .pac(pad))
@@ -383,9 +374,7 @@ impl IntoComposition for SweetenersSpec {
         match basis {
             CompositionBasis::ByDryWeight { solids } => {
                 if sweeteners.total() + other_solids != 100.0 {
-                    return Err(Error::CompositionNot100Percent(
-                        sweeteners.total() + other_solids,
-                    ));
+                    return Err(Error::CompositionNot100Percent(sweeteners.total() + other_solids));
                 }
 
                 if !is_within_100_percent(solids) {
@@ -396,9 +385,7 @@ impl IntoComposition for SweetenersSpec {
             }
             CompositionBasis::ByTotalWeight { water } => {
                 if sweeteners.total() + other_solids + water != 100.0 {
-                    return Err(Error::CompositionNot100Percent(
-                        sweeteners.total() + other_solids + water,
-                    ));
+                    return Err(Error::CompositionNot100Percent(sweeteners.total() + other_solids + water));
                 }
             }
         };
@@ -437,23 +424,14 @@ impl IntoComposition for FruitsSpec {
         let fat = fat.unwrap_or(0.0);
 
         if !is_within_100_percent(sugars.total() + water + fat) {
-            return Err(Error::CompositionNotWithin100Percent(
-                sugars.total() + water + fat,
-            ));
+            return Err(Error::CompositionNotWithin100Percent(sugars.total() + water + fat));
         }
 
         let snfs = 100.0 - (sugars.total() + water + fat);
         let sweeteners = Sweeteners::new().sugars(sugars);
 
         Ok(Composition::new()
-            .solids(
-                Solids::new().other(
-                    SolidsBreakdown::new()
-                        .sweeteners(sugars.total())
-                        .fats(fat)
-                        .snfs(snfs),
-                ),
-            )
+            .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(sugars.total()).fats(fat).snfs(snfs)))
             .sweeteners(sweeteners)
             .pod(sweeteners.to_pod().unwrap())
             .pac(PAC::new().sugars(sweeteners.to_pac().unwrap())))
@@ -493,24 +471,15 @@ impl IntoComposition for ChocolatesSpec {
             )
             .sweeteners(sweeteners)
             .pod(sweeteners.to_pod().unwrap())
-            .pac(
-                PAC::new()
-                    .sugars(sweeteners.to_pac().unwrap())
-                    .hardness_factor(
-                        cocoa_butter * constants::hf::CACAO_BUTTER
-                            + cocoa_snfs * constants::hf::COCOA_SOLIDS,
-                    ),
-            ))
+            .pac(PAC::new().sugars(sweeteners.to_pac().unwrap()).hardness_factor(
+                cocoa_butter * constants::hf::CACAO_BUTTER + cocoa_snfs * constants::hf::COCOA_SOLIDS,
+            )))
     }
 }
 
 impl IntoComposition for EggsSpec {
     fn into_composition(self) -> Result<Composition> {
-        let Self {
-            water,
-            fats,
-            lecithin,
-        } = self;
+        let Self { water, fats, lecithin } = self;
 
         if water + fats > 100.0 {
             return Err(Error::CompositionNotWithin100Percent(water + fats));
@@ -530,26 +499,25 @@ impl IntoComposition for EggsSpec {
 
 impl IntoComposition for MicrosSpec {
     fn into_composition(self) -> Result<Composition> {
-        let make_emulsifier_stabilizer_composition = |emulsifiers_strength: Option<f64>,
-                                                      stabilizers_strength: Option<f64>|
-         -> Result<Composition> {
-            let emulsifiers_strength = emulsifiers_strength.unwrap_or(0.0);
-            let stabilizers_strength = stabilizers_strength.unwrap_or(0.0);
+        let make_emulsifier_stabilizer_composition =
+            |emulsifiers_strength: Option<f64>, stabilizers_strength: Option<f64>| -> Result<Composition> {
+                let emulsifiers_strength = emulsifiers_strength.unwrap_or(0.0);
+                let stabilizers_strength = stabilizers_strength.unwrap_or(0.0);
 
-            if emulsifiers_strength < 0.0 || stabilizers_strength < 0.0 {
-                return Err(Error::InvalidComposition(
-                    "Emulsifier and Stabilizer strengths must be non-negative".to_string(),
-                ));
-            }
+                if emulsifiers_strength < 0.0 || stabilizers_strength < 0.0 {
+                    return Err(Error::InvalidComposition(
+                        "Emulsifier and Stabilizer strengths must be non-negative".to_string(),
+                    ));
+                }
 
-            Ok(Composition::new()
-                .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
-                .micro(
-                    Micro::new()
-                        .emulsifiers(emulsifiers_strength)
-                        .stabilizers(stabilizers_strength),
-                ))
-        };
+                Ok(Composition::new()
+                    .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
+                    .micro(
+                        Micro::new()
+                            .emulsifiers(emulsifiers_strength)
+                            .stabilizers(stabilizers_strength),
+                    ))
+            };
 
         match self {
             MicrosSpec::Salt => Ok(Composition::new()
@@ -559,19 +527,12 @@ impl IntoComposition for MicrosSpec {
             MicrosSpec::Lecithin => Ok(Composition::new()
                 .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
                 .micro(Micro::new().emulsifiers(100.0))),
-            MicrosSpec::Stabilizer { strength } => {
-                make_emulsifier_stabilizer_composition(None, Some(strength))
-            }
-            MicrosSpec::Emulsifier { strength } => {
-                make_emulsifier_stabilizer_composition(Some(strength), None)
-            }
+            MicrosSpec::Stabilizer { strength } => make_emulsifier_stabilizer_composition(None, Some(strength)),
+            MicrosSpec::Emulsifier { strength } => make_emulsifier_stabilizer_composition(Some(strength), None),
             MicrosSpec::EmulsifierStabilizer {
                 emulsifier_strength,
                 stabilizer_strength,
-            } => make_emulsifier_stabilizer_composition(
-                Some(emulsifier_strength),
-                Some(stabilizer_strength),
-            ),
+            } => make_emulsifier_stabilizer_composition(Some(emulsifier_strength), Some(stabilizer_strength)),
         }
     }
 }
@@ -722,8 +683,7 @@ mod test {
             pac,
             ..
         } = SweetenersSpec {
-            sweeteners: Sweeteners::new()
-                .sugars(Sugars::new().glucose(42.5).fructose(42.5).sucrose(15.0)),
+            sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(42.5).fructose(42.5).sucrose(15.0)),
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 80.0 },
             pod: None,
@@ -732,10 +692,7 @@ mod test {
         .into_composition()
         .unwrap();
 
-        assert_eq!(
-            sweeteners,
-            Sweeteners::new().sugars(Sugars::new().glucose(34.0).fructose(34.0).sucrose(12.0))
-        );
+        assert_eq!(sweeteners, Sweeteners::new().sugars(Sugars::new().glucose(34.0).fructose(34.0).sucrose(12.0)));
 
         assert_eq!(solids.sweeteners(), 80.0);
         assert_eq!(solids.total(), 80.0);
@@ -837,10 +794,7 @@ mod test {
         .into_composition()
         .unwrap();
 
-        assert_eq!(
-            sweeteners,
-            Sweeteners::new().sugars(Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47))
-        );
+        assert_eq!(sweeteners, Sweeteners::new().sugars(Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47)));
 
         assert_abs_diff_eq!(solids.sweeteners(), 4.90, epsilon = TESTS_EPSILON);
         assert_eq!(solids.fats(), 0.3);
@@ -866,10 +820,7 @@ mod test {
         .into_composition()
         .unwrap();
 
-        assert_eq!(
-            sweeteners,
-            Sweeteners::new().sugars(Sugars::new().sucrose(30.0))
-        );
+        assert_eq!(sweeteners, Sweeteners::new().sugars(Sugars::new().sucrose(30.0)));
 
         assert_eq!(solids.cocoa.total(), 70.0);
         assert_eq!(solids.cocoa.fats, 40.0);
@@ -930,9 +881,7 @@ mod test {
 
     #[test]
     fn into_composition_micro_spec_salt() {
-        let Composition {
-            solids, micro, pac, ..
-        } = MicrosSpec::Salt.into_composition().unwrap();
+        let Composition { solids, micro, pac, .. } = MicrosSpec::Salt.into_composition().unwrap();
         assert_eq!(solids.other.snfs, 100.0);
         assert_eq!(solids.total(), 100.0);
         assert_eq!(micro.salt, 100.0);
@@ -949,9 +898,7 @@ mod test {
 
     #[test]
     fn into_composition_micro_spec_stabilizer() {
-        let Composition { solids, micro, .. } = MicrosSpec::Stabilizer { strength: 85.0 }
-            .into_composition()
-            .unwrap();
+        let Composition { solids, micro, .. } = MicrosSpec::Stabilizer { strength: 85.0 }.into_composition().unwrap();
         assert_eq!(solids.other.snfs, 100.0);
         assert_eq!(solids.total(), 100.0);
         assert_eq!(micro.stabilizers, 85.0);
@@ -959,9 +906,7 @@ mod test {
 
     #[test]
     fn into_composition_micro_spec_emulsifier() {
-        let Composition { solids, micro, .. } = MicrosSpec::Emulsifier { strength: 60.0 }
-            .into_composition()
-            .unwrap();
+        let Composition { solids, micro, .. } = MicrosSpec::Emulsifier { strength: 60.0 }.into_composition().unwrap();
         assert_eq!(solids.other.snfs, 100.0);
         assert_eq!(solids.total(), 100.0);
         assert_eq!(micro.emulsifiers, 60.0);
@@ -996,10 +941,7 @@ mod test {
         ]
         .iter()
         .for_each(|(spec_str, spec)| {
-            assert_eq!(
-                serde_json::from_str::<IngredientSpec>(spec_str).unwrap(),
-                *spec
-            );
+            assert_eq!(serde_json::from_str::<IngredientSpec>(spec_str).unwrap(), *spec);
         });
     }
 
@@ -1013,11 +955,7 @@ mod test {
         ]
         .iter()
         .for_each(|(spec, ingredient)| {
-            assert_abs_diff_eq!(
-                spec.clone().into_ingredient(),
-                *ingredient,
-                epsilon = TESTS_EPSILON
-            );
+            assert_abs_diff_eq!(spec.clone().into_ingredient(), *ingredient, epsilon = TESTS_EPSILON);
         });
     }
 }

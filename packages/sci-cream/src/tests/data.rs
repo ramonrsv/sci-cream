@@ -8,9 +8,7 @@ pub(crate) fn read_ingredients_file_as_string(filename: &str) -> String {
 }
 
 pub(crate) fn parse_ingredient_specs_from_file(filename: &str) -> HashMap<String, IngredientSpec> {
-    let specs =
-        serde_json::from_str::<Vec<serde_json::Value>>(&read_ingredients_file_as_string(filename))
-            .unwrap();
+    let specs = serde_json::from_str::<Vec<serde_json::Value>>(&read_ingredients_file_as_string(filename)).unwrap();
 
     specs
         .into_iter()
@@ -39,8 +37,7 @@ pub(crate) fn get_ingredient_spec_by_name(name: &str) -> Option<IngredientSpec> 
 }
 
 pub(crate) fn get_ingredient_spec_by_name_or_panic(name: &str) -> IngredientSpec {
-    get_ingredient_spec_by_name(name)
-        .unwrap_or_else(|| panic!("Ingredient spec not found for '{name}'"))
+    get_ingredient_spec_by_name(name).unwrap_or_else(|| panic!("Ingredient spec not found for '{name}'"))
 }
 
 #[cfg(test)]

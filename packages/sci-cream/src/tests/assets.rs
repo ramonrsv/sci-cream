@@ -9,88 +9,71 @@ use crate::{
 // Comp Specs
 // --------------------------------------------
 
-pub(crate) static SPEC_DAIRY_2_PERCENT: LazyLock<DairySpec> = LazyLock::new(|| DairySpec {
-    fat: 2.0,
-    msnf: None,
+pub(crate) static SPEC_DAIRY_2_PERCENT: LazyLock<DairySpec> = LazyLock::new(|| DairySpec { fat: 2.0, msnf: None });
+
+pub(crate) static SPEC_SWEETENERS_SUCROSE: LazyLock<SweetenersSpec> = LazyLock::new(|| SweetenersSpec {
+    sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
+    other_solids: None,
+    basis: CompositionBasis::ByDryWeight { solids: 100.0 },
+    pod: None,
+    pac: None,
 });
 
-pub(crate) static SPEC_SWEETENERS_SUCROSE: LazyLock<SweetenersSpec> =
-    LazyLock::new(|| SweetenersSpec {
-        sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
-        other_solids: None,
-        basis: CompositionBasis::ByDryWeight { solids: 100.0 },
-        pod: None,
-        pac: None,
-    });
+pub(crate) static SPEC_SWEETENERS_DEXTROSE: LazyLock<SweetenersSpec> = LazyLock::new(|| SweetenersSpec {
+    sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(100.0)),
+    other_solids: None,
+    basis: CompositionBasis::ByDryWeight { solids: 92.0 },
+    pod: None,
+    pac: None,
+});
 
-pub(crate) static SPEC_SWEETENERS_DEXTROSE: LazyLock<SweetenersSpec> =
-    LazyLock::new(|| SweetenersSpec {
-        sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(100.0)),
-        other_solids: None,
-        basis: CompositionBasis::ByDryWeight { solids: 92.0 },
-        pod: None,
-        pac: None,
-    });
+pub(crate) static SPEC_SWEETENERS_FRUCTOSE: LazyLock<SweetenersSpec> = LazyLock::new(|| SweetenersSpec {
+    sweeteners: Sweeteners::new().sugars(Sugars::new().fructose(100.0)),
+    other_solids: None,
+    basis: CompositionBasis::ByDryWeight { solids: 100.0 },
+    pod: None,
+    pac: None,
+});
 
-pub(crate) static SPEC_SWEETENERS_FRUCTOSE: LazyLock<SweetenersSpec> =
-    LazyLock::new(|| SweetenersSpec {
-        sweeteners: Sweeteners::new().sugars(Sugars::new().fructose(100.0)),
-        other_solids: None,
-        basis: CompositionBasis::ByDryWeight { solids: 100.0 },
-        pod: None,
-        pac: None,
-    });
+pub(crate) static SPEC_SWEETENERS_INVERT_SUGAR: LazyLock<SweetenersSpec> = LazyLock::new(|| SweetenersSpec {
+    sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(42.5).fructose(42.5).sucrose(15.0)),
+    other_solids: None,
+    basis: CompositionBasis::ByDryWeight { solids: 80.0 },
+    pod: None,
+    pac: None,
+});
 
-pub(crate) static SPEC_SWEETENERS_INVERT_SUGAR: LazyLock<SweetenersSpec> =
-    LazyLock::new(|| SweetenersSpec {
-        sweeteners: Sweeteners::new()
-            .sugars(Sugars::new().glucose(42.5).fructose(42.5).sucrose(15.0)),
-        other_solids: None,
-        basis: CompositionBasis::ByDryWeight { solids: 80.0 },
-        pod: None,
-        pac: None,
-    });
+pub(crate) static SPEC_SWEETENERS_HONEY: LazyLock<SweetenersSpec> = LazyLock::new(|| SweetenersSpec {
+    sweeteners: Sweeteners::new().sugars(
+        Sugars::new()
+            .glucose(36.0)
+            .fructose(41.0)
+            .sucrose(2.0)
+            .galactose(1.5)
+            .maltose(1.5),
+    ),
+    other_solids: Some(1.0),
+    basis: CompositionBasis::ByTotalWeight { water: 17.0 },
+    pod: None,
+    pac: None,
+});
 
-pub(crate) static SPEC_SWEETENERS_HONEY: LazyLock<SweetenersSpec> =
-    LazyLock::new(|| SweetenersSpec {
-        sweeteners: Sweeteners::new().sugars(
-            Sugars::new()
-                .glucose(36.0)
-                .fructose(41.0)
-                .sucrose(2.0)
-                .galactose(1.5)
-                .maltose(1.5),
-        ),
-        other_solids: Some(1.0),
-        basis: CompositionBasis::ByTotalWeight { water: 17.0 },
-        pod: None,
-        pac: None,
-    });
-
-pub(crate) static SPEC_SWEETENERS_HFCS42: LazyLock<SweetenersSpec> =
-    LazyLock::new(|| SweetenersSpec {
-        sweeteners: Sweeteners::new()
-            .sugars(Sugars::new().fructose(42.0).glucose(53.0))
-            .polysaccharide(5.0),
-        other_solids: None,
-        basis: CompositionBasis::ByDryWeight { solids: 76.0 },
-        pod: None,
-        pac: None,
-    });
+pub(crate) static SPEC_SWEETENERS_HFCS42: LazyLock<SweetenersSpec> = LazyLock::new(|| SweetenersSpec {
+    sweeteners: Sweeteners::new()
+        .sugars(Sugars::new().fructose(42.0).glucose(53.0))
+        .polysaccharide(5.0),
+    other_solids: None,
+    basis: CompositionBasis::ByDryWeight { solids: 76.0 },
+    pod: None,
+    pac: None,
+});
 
 // Compositions
 // --------------------------------------------
 
 pub(crate) static COMP_MILK_2_PERCENT: LazyLock<Composition> = LazyLock::new(|| {
     Composition::new()
-        .solids(
-            Solids::new().milk(
-                SolidsBreakdown::new()
-                    .fats(2.0)
-                    .sweeteners(4.8069)
-                    .snfs(4.0131),
-            ),
-        )
+        .solids(Solids::new().milk(SolidsBreakdown::new().fats(2.0).sweeteners(4.8069).snfs(4.0131)))
         .sweeteners(Sweeteners::new().sugars(Sugars::new().lactose(4.8069)))
         .pod(0.769104)
         .pac(PAC::new().sugars(4.8069).salt(3.2405))
@@ -209,12 +192,11 @@ pub(crate) const ING_SPEC_LOUIS_STAB2K_STR: &str = r#"{
   }
 }"#;
 
-pub(crate) static ING_SPEC_MILK_2_PERCENT: LazyLock<IngredientSpec> =
-    LazyLock::new(|| IngredientSpec {
-        name: "2% Milk".to_string(),
-        category: Category::Dairy,
-        spec: Spec::DairySpec(*SPEC_DAIRY_2_PERCENT),
-    });
+pub(crate) static ING_SPEC_MILK_2_PERCENT: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    name: "2% Milk".to_string(),
+    category: Category::Dairy,
+    spec: Spec::DairySpec(*SPEC_DAIRY_2_PERCENT),
+});
 
 pub(crate) static ING_SPEC_SUCROSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
     name: "Sucrose".to_string(),
@@ -234,12 +216,11 @@ pub(crate) static ING_SPEC_FRUCTOSE: LazyLock<IngredientSpec> = LazyLock::new(||
     spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_FRUCTOSE),
 });
 
-pub(crate) static ING_SPEC_INVERT_SUGAR: LazyLock<IngredientSpec> =
-    LazyLock::new(|| IngredientSpec {
-        name: "Invert Sugar".to_string(),
-        category: Category::Sweetener,
-        spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_INVERT_SUGAR),
-    });
+pub(crate) static ING_SPEC_INVERT_SUGAR: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    name: "Invert Sugar".to_string(),
+    category: Category::Sweetener,
+    spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_INVERT_SUGAR),
+});
 
 pub(crate) static ING_SPEC_HONEY: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
     name: "Honey".to_string(),
@@ -265,22 +246,20 @@ pub(crate) static ING_SPEC_LECITHIN: LazyLock<IngredientSpec> = LazyLock::new(||
     spec: Spec::MicrosSpec(MicrosSpec::Lecithin),
 });
 
-pub(crate) static ING_SPEC_STABILIZER: LazyLock<IngredientSpec> =
-    LazyLock::new(|| IngredientSpec {
-        name: "Rich Ice Cream SB".to_string(),
-        category: Category::Micro,
-        spec: Spec::MicrosSpec(MicrosSpec::Stabilizer { strength: 100.0 }),
-    });
+pub(crate) static ING_SPEC_STABILIZER: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    name: "Rich Ice Cream SB".to_string(),
+    category: Category::Micro,
+    spec: Spec::MicrosSpec(MicrosSpec::Stabilizer { strength: 100.0 }),
+});
 
-pub(crate) static ING_SPEC_LOUIS_STAB2K: LazyLock<IngredientSpec> =
-    LazyLock::new(|| IngredientSpec {
-        name: "Louis Francois Stab 2000".to_string(),
-        category: Category::Micro,
-        spec: Spec::MicrosSpec(MicrosSpec::EmulsifierStabilizer {
-            emulsifier_strength: 100.0,
-            stabilizer_strength: 40.0,
-        }),
-    });
+pub(crate) static ING_SPEC_LOUIS_STAB2K: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    name: "Louis Francois Stab 2000".to_string(),
+    category: Category::Micro,
+    spec: Spec::MicrosSpec(MicrosSpec::EmulsifierStabilizer {
+        emulsifier_strength: 100.0,
+        stabilizer_strength: 40.0,
+    }),
+});
 
 // Ingredients
 // --------------------------------------------

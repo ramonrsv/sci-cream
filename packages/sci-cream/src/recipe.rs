@@ -19,10 +19,7 @@ pub struct CompositionLine {
 impl CompositionLine {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     pub fn new(composition: Composition, amount: f64) -> Self {
-        Self {
-            composition,
-            amount,
-        }
+        Self { composition, amount }
     }
 }
 
@@ -93,16 +90,12 @@ pub mod js {
 
     #[wasm_bindgen]
     pub fn calculate_mix_composition_js(composition_lines: JsValue) -> Composition {
-        calculate_mix_composition(
-            &serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(composition_lines).unwrap(),
-        )
+        calculate_mix_composition(&serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(composition_lines).unwrap())
     }
 
     #[wasm_bindgen]
     pub fn calculate_mix_properties_js(composition_lines: JsValue) -> MixProperties {
-        calculate_mix_properties(
-            &serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(composition_lines).unwrap(),
-        )
+        calculate_mix_properties(&serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(composition_lines).unwrap())
     }
 }
 

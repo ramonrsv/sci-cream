@@ -310,17 +310,12 @@ impl Sugars {
     }
 
     pub fn unspecified(self, unspecified: f64) -> Self {
-        Self {
-            unspecified,
-            ..self
-        }
+        Self { unspecified, ..self }
     }
 
     pub fn to_pod(&self) -> Result<f64> {
         if self.unspecified != 0.0 {
-            return Err(Error::CannotComputePOD(
-                "Unspecified sugars should be zero".to_string(),
-            ));
+            return Err(Error::CannotComputePOD("Unspecified sugars should be zero".to_string()));
         }
 
         Ok([
@@ -338,9 +333,7 @@ impl Sugars {
 
     pub fn to_pac(&self) -> Result<f64> {
         if self.unspecified != 0.0 {
-            return Err(Error::CannotComputePAC(
-                "Unspecified sugars should be zero".to_string(),
-            ));
+            return Err(Error::CannotComputePAC("Unspecified sugars should be zero".to_string()));
         }
 
         Ok([
@@ -405,14 +398,10 @@ impl Sweeteners {
 
     pub fn to_pod(&self) -> Result<f64> {
         if self.polysaccharides != 0.0 {
-            return Err(Error::CannotComputePOD(
-                "Polysaccharides should be zero".to_string(),
-            ));
+            return Err(Error::CannotComputePOD("Polysaccharides should be zero".to_string()));
         }
         if self.artificial != 0.0 {
-            return Err(Error::CannotComputePOD(
-                "Artificial sweeteners should be zero".to_string(),
-            ));
+            return Err(Error::CannotComputePOD("Artificial sweeteners should be zero".to_string()));
         }
 
         self.sugars.to_pod()
@@ -420,14 +409,10 @@ impl Sweeteners {
 
     pub fn to_pac(&self) -> Result<f64> {
         if self.polysaccharides != 0.0 {
-            return Err(Error::CannotComputePAC(
-                "Polysaccharides should be zero".to_string(),
-            ));
+            return Err(Error::CannotComputePAC("Polysaccharides should be zero".to_string()));
         }
         if self.artificial != 0.0 {
-            return Err(Error::CannotComputePAC(
-                "Artificial sweeteners should be zero".to_string(),
-            ));
+            return Err(Error::CannotComputePAC("Artificial sweeteners should be zero".to_string()));
         }
 
         self.sugars.to_pac()
@@ -475,17 +460,11 @@ impl Micro {
     }
 
     pub fn emulsifiers(self, emulsifiers: f64) -> Self {
-        Self {
-            emulsifiers,
-            ..self
-        }
+        Self { emulsifiers, ..self }
     }
 
     pub fn stabilizers(self, stabilizers: f64) -> Self {
-        Self {
-            stabilizers,
-            ..self
-        }
+        Self { stabilizers, ..self }
     }
 }
 
@@ -907,9 +886,7 @@ impl AbsDiffEq for Sweeteners {
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
         self.sugars.abs_diff_eq(&other.sugars, epsilon)
-            && self
-                .polysaccharides
-                .abs_diff_eq(&other.polysaccharides, epsilon)
+            && self.polysaccharides.abs_diff_eq(&other.polysaccharides, epsilon)
             && self.artificial.abs_diff_eq(&other.artificial, epsilon)
     }
 }
@@ -975,10 +952,7 @@ mod tests {
 
     #[test]
     fn sugars_to_pod_error() {
-        assert!(matches!(
-            Sugars::new().unspecified(10.0).to_pod(),
-            Err(Error::CannotComputePOD(_))
-        ));
+        assert!(matches!(Sugars::new().unspecified(10.0).to_pod(), Err(Error::CannotComputePOD(_))));
     }
 
     #[test]
@@ -988,10 +962,7 @@ mod tests {
 
     #[test]
     fn sugars_to_pac_error() {
-        assert!(matches!(
-            Sugars::new().unspecified(10.0).to_pac(),
-            Err(Error::CannotComputePAC(_))
-        ));
+        assert!(matches!(Sugars::new().unspecified(10.0).to_pac(), Err(Error::CannotComputePAC(_))));
     }
 
     #[test]
@@ -1002,14 +973,8 @@ mod tests {
 
     #[test]
     fn sweeteners_to_pod_error() {
-        assert!(matches!(
-            Sweeteners::new().polysaccharide(10.0).to_pod(),
-            Err(Error::CannotComputePOD(_))
-        ));
-        assert!(matches!(
-            Sweeteners::new().artificial(10.0).to_pod(),
-            Err(Error::CannotComputePOD(_))
-        ));
+        assert!(matches!(Sweeteners::new().polysaccharide(10.0).to_pod(), Err(Error::CannotComputePOD(_))));
+        assert!(matches!(Sweeteners::new().artificial(10.0).to_pod(), Err(Error::CannotComputePOD(_))));
     }
 
     #[test]
@@ -1020,14 +985,8 @@ mod tests {
 
     #[test]
     fn sweeteners_to_pac_error() {
-        assert!(matches!(
-            Sweeteners::new().polysaccharide(10.0).to_pac(),
-            Err(Error::CannotComputePAC(_))
-        ));
-        assert!(matches!(
-            Sweeteners::new().artificial(10.0).to_pac(),
-            Err(Error::CannotComputePAC(_))
-        ));
+        assert!(matches!(Sweeteners::new().polysaccharide(10.0).to_pac(), Err(Error::CannotComputePAC(_))));
+        assert!(matches!(Sweeteners::new().artificial(10.0).to_pac(), Err(Error::CannotComputePAC(_))));
     }
 
     #[test]
@@ -1049,8 +1008,7 @@ mod tests {
         assert_eq!(comp.stabilizers_per_water(), 0.0);
         assert_eq!(comp.absolute_pac(), 0.0);
 
-        let comp =
-            Composition::new().solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)));
+        let comp = Composition::new().solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)));
 
         assert_eq!(comp.water(), 0.0);
         assert_eq!(comp.solids.total(), 100.0);

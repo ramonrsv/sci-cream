@@ -66,11 +66,7 @@ pub struct FPD {
 impl Curves {
     /// Create empty FPD curves, which are straight lines at 0°C, equivalent to those of 100% water
     pub fn empty() -> Self {
-        let make_empty_curve = || {
-            (0..100)
-                .map(|x_axis| CurvePoint::new(x_axis as f64, 0.0))
-                .collect()
-        };
+        let make_empty_curve = || (0..100).map(|x_axis| CurvePoint::new(x_axis as f64, 0.0)).collect();
 
         Self {
             frozen_water: make_empty_curve(),
@@ -180,9 +176,7 @@ pub fn get_pac_from_fpd_polynomial(fpd: f64, coeffs: Option<[f64; 3]>) -> Result
     let discriminant = b.powi(2) - 4.0 * a * (c - fpd);
 
     if discriminant < 0.0 {
-        return Err(Error::CannotComputePAC(
-            "Discriminant is negative, no real roots exist".to_string(),
-        ));
+        return Err(Error::CannotComputePAC("Discriminant is negative, no real roots exist".to_string()));
     }
 
     let sqrt_discriminant = discriminant.sqrt();
@@ -190,15 +184,11 @@ pub fn get_pac_from_fpd_polynomial(fpd: f64, coeffs: Option<[f64; 3]>) -> Result
     let root2 = (-b - sqrt_discriminant) / (2.0 * a);
 
     if root1 < 0.0 && root2 < 0.0 {
-        return Err(Error::CannotComputePAC(
-            "Both roots are negative, PAC cannot be negative".to_string(),
-        ));
+        return Err(Error::CannotComputePAC("Both roots are negative, PAC cannot be negative".to_string()));
     }
 
     if root1 > 0.0 && root2 > 0.0 {
-        return Err(Error::CannotComputePAC(
-            "Both roots are positive, ambiguous PAC value".to_string(),
-        ));
+        return Err(Error::CannotComputePAC("Both roots are positive, ambiguous PAC value".to_string()));
     }
 
     Ok(root1.max(root2))
@@ -367,26 +357,16 @@ pub fn compute_fpd_curves(
                     .map(|step| (step.fpd_total, f64::NAN))?
             }
             FpdCurvesComputationMethod::ModifiedGoffHartelCorvitto => {
-                compute_fpd_curve_step_modified_goff_hartel_corvitto(
-                    comp,
-                    frozen_water,
-                    &get_fpd_from_pac,
-                )
-                .map(|step| (step.fpd_exc_hf, step.fpd_inc_hf))?
+                compute_fpd_curve_step_modified_goff_hartel_corvitto(comp, frozen_water, &get_fpd_from_pac)
+                    .map(|step| (step.fpd_exc_hf, step.fpd_inc_hf))?
             }
         };
 
         let hardness = (fpd_exc_hf + fpd_inc_hf) / 2.0;
 
-        curves
-            .frozen_water
-            .push(CurvePoint::new(frozen_water, fpd_exc_hf));
-        curves
-            .hardness_factor
-            .push(CurvePoint::new(frozen_water, fpd_inc_hf));
-        curves
-            .hardness
-            .push(CurvePoint::new(frozen_water, hardness));
+        curves.frozen_water.push(CurvePoint::new(frozen_water, fpd_exc_hf));
+        curves.hardness_factor.push(CurvePoint::new(frozen_water, fpd_inc_hf));
+        curves.hardness.push(CurvePoint::new(frozen_water, hardness));
     }
 
     Ok(curves)
@@ -457,9 +437,7 @@ mod tests {
 
     use crate::{
         composition::{CompKey, Composition, PAC, Solids, SolidsBreakdown},
-        constants::{
-            FPD_CONST_FOR_MSNF_WS_SALTS, STD_LACTOSE_IN_MSNF, STD_LACTOSE_IN_WS, pac::MSNF_WS_SALTS,
-        },
+        constants::{FPD_CONST_FOR_MSNF_WS_SALTS, STD_LACTOSE_IN_MSNF, STD_LACTOSE_IN_WS, pac::MSNF_WS_SALTS},
     };
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
@@ -576,11 +554,7 @@ mod tests {
         let get_pac_poly = |fpd| super::get_pac_from_fpd_polynomial(fpd, None);
 
         for (expected_pac, fpd) in PAC_TO_FPD_TABLE_POLY.as_slice() {
-            assert_abs_diff_eq!(
-                get_pac_poly(*fpd).unwrap(),
-                *expected_pac,
-                epsilon = TESTS_EPSILON
-            );
+            assert_abs_diff_eq!(get_pac_poly(*fpd).unwrap(), *expected_pac, epsilon = TESTS_EPSILON);
         }
     }
 
@@ -613,11 +587,7 @@ mod tests {
 
         Composition::new()
             .solids(Solids::new().milk(milk_solids).other(other_solids))
-            .pac(
-                PAC::new()
-                    .sugars(22.18)
-                    .salt((10.0 + 2.0) * MSNF_WS_SALTS / 100.0),
-            )
+            .pac(PAC::new().sugars(22.18).salt((10.0 + 2.0) * MSNF_WS_SALTS / 100.0))
     });
 
     /// Same as [`REF_COMP`], but with alcohol added
@@ -643,11 +613,7 @@ mod tests {
         assert_eq!(comp.get(CompKey::Water), 60.0);
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
         assert_abs_diff_eq!(comp.get(CompKey::PACslt), 4.4088, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(
-            comp.get(CompKey::PACtotal),
-            26.5888,
-            epsilon = TESTS_EPSILON
-        );
+        assert_abs_diff_eq!(comp.get(CompKey::PACtotal), 26.5888, epsilon = TESTS_EPSILON);
 
         let comp = *REF_COMP_WITH_ALCOHOL;
         assert_eq!(comp.get(CompKey::MSNF), 12.0);
@@ -657,11 +623,7 @@ mod tests {
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
         assert_eq!(comp.get(CompKey::PACalc), 14.8);
         assert_abs_diff_eq!(comp.get(CompKey::PACslt), 4.4088, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(
-            comp.get(CompKey::PACtotal),
-            41.3888,
-            epsilon = TESTS_EPSILON
-        );
+        assert_abs_diff_eq!(comp.get(CompKey::PACtotal), 41.3888, epsilon = TESTS_EPSILON);
 
         let comp = *REF_COMP_WITH_HF;
         assert_eq!(comp.get(CompKey::MSNF), 12.0);
@@ -691,56 +653,46 @@ mod tests {
             (80.0, 12.0, 184.83, -14.27, -2.37, -16.61),
         ]
         .into_iter()
-        .map(
-            |(fw, w, se, fpd_se, fpd_sa, fpd_t)| GoffHartelFpdCurveStep {
-                frozen_water: fw,
-                water: w,
-                se,
-                alc: 0.0,
-                fpd_se,
-                fpd_sa,
-                fpd_alc: 0.0,
-                fpd_total: fpd_t,
-            },
-        )
+        .map(|(fw, w, se, fpd_se, fpd_sa, fpd_t)| GoffHartelFpdCurveStep {
+            frozen_water: fw,
+            water: w,
+            se,
+            alc: 0.0,
+            fpd_se,
+            fpd_sa,
+            fpd_alc: 0.0,
+            fpd_total: fpd_t,
+        })
         .collect()
     });
 
     /// Based on [`REF_COMP_FREEZING_CURVE`] but using [`REF_COMP_WITH_ALCOHOL`]
-    static REF_COMP_WITH_ALCOHOL_FREEZING_CURVE: LazyLock<Vec<GoffHartelFpdCurveStep>> =
-        LazyLock::new(|| {
-            [
-                // (fw, w,    se,  alc, fpd_se, fpd_sa, fpd_alc, fpd_t)
-                (0.0, 58.0, 38.24, 25.52, -2.47, -0.49, -1.62, -4.58),
-                (10.0, 52.2, 42.49, 28.35, -2.76, -0.54, -1.81, -5.12),
-            ]
-            .into_iter()
-            .map(
-                |(fw, w, se, alc, fpd_se, fpd_sa, fpd_alc, fpd_t)| GoffHartelFpdCurveStep {
-                    frozen_water: fw,
-                    water: w,
-                    se,
-                    alc,
-                    fpd_se,
-                    fpd_sa,
-                    fpd_alc,
-                    fpd_total: fpd_t,
-                },
-            )
-            .collect()
-        });
+    static REF_COMP_WITH_ALCOHOL_FREEZING_CURVE: LazyLock<Vec<GoffHartelFpdCurveStep>> = LazyLock::new(|| {
+        [
+            // (fw, w,    se,  alc, fpd_se, fpd_sa, fpd_alc, fpd_t)
+            (0.0, 58.0, 38.24, 25.52, -2.47, -0.49, -1.62, -4.58),
+            (10.0, 52.2, 42.49, 28.35, -2.76, -0.54, -1.81, -5.12),
+        ]
+        .into_iter()
+        .map(|(fw, w, se, alc, fpd_se, fpd_sa, fpd_alc, fpd_t)| GoffHartelFpdCurveStep {
+            frozen_water: fw,
+            water: w,
+            se,
+            alc,
+            fpd_se,
+            fpd_sa,
+            fpd_alc,
+            fpd_total: fpd_t,
+        })
+        .collect()
+    });
 
     #[test]
     fn compute_fpd_curve_goff_hartel_interpolation() {
         let get_fpd_from_pac = super::get_fpd_from_pac_interpolation;
 
         for ref_step in REF_COMP_FREEZING_CURVE.iter() {
-            let step = compute_fpd_curve_step_goff_hartel(
-                *REF_COMP,
-                ref_step.frozen_water,
-                &get_fpd_from_pac,
-            )
-            .unwrap();
+            let step = compute_fpd_curve_step_goff_hartel(*REF_COMP, ref_step.frozen_water, &get_fpd_from_pac).unwrap();
 
             assert_abs_diff_eq!(step, ref_step, epsilon = 0.27);
         }
@@ -751,12 +703,7 @@ mod tests {
         let get_fpd_from_pac = |pac| super::get_fpd_from_pac_polynomial(pac, None);
 
         for ref_step in REF_COMP_FREEZING_CURVE.iter() {
-            let step = compute_fpd_curve_step_goff_hartel(
-                *REF_COMP,
-                ref_step.frozen_water,
-                &get_fpd_from_pac,
-            )
-            .unwrap();
+            let step = compute_fpd_curve_step_goff_hartel(*REF_COMP, ref_step.frozen_water, &get_fpd_from_pac).unwrap();
 
             assert_abs_diff_eq!(step, ref_step, epsilon = 0.31);
         }
@@ -767,12 +714,9 @@ mod tests {
         let get_fpd_from_pac = |pac| super::get_fpd_from_pac_polynomial(pac, None);
 
         for ref_step in REF_COMP_WITH_ALCOHOL_FREEZING_CURVE.iter() {
-            let step = compute_fpd_curve_step_goff_hartel(
-                *REF_COMP_WITH_ALCOHOL,
-                ref_step.frozen_water,
-                &get_fpd_from_pac,
-            )
-            .unwrap();
+            let step =
+                compute_fpd_curve_step_goff_hartel(*REF_COMP_WITH_ALCOHOL, ref_step.frozen_water, &get_fpd_from_pac)
+                    .unwrap();
 
             assert_abs_diff_eq!(step, ref_step, epsilon = 0.005);
         }
@@ -847,11 +791,7 @@ mod tests {
             .iter()
             .zip(REF_COMP_FREEZING_CURVE_MODIFIED_GOFF_HARTEL_CORVITTO.iter())
         {
-            assert_abs_diff_eq!(
-                get_fpd_from_pac(*pac_slt).unwrap(),
-                ref_step.fpd_sa,
-                epsilon = 0.05
-            );
+            assert_abs_diff_eq!(get_fpd_from_pac(*pac_slt).unwrap(), ref_step.fpd_sa, epsilon = 0.05);
         }
     }
 
@@ -869,11 +809,7 @@ mod tests {
 
             // This divergence at higher PAC values is expected due to the different way of summing
             // PAC before calculating FPD, as explained in the docs [`get_fpd_from_pac_polynomial`]
-            let epsilon = if ref_step.pac_exc_hf <= 177.0 {
-                0.31
-            } else {
-                1.4
-            };
+            let epsilon = if ref_step.pac_exc_hf <= 177.0 { 0.31 } else { 1.4 };
 
             assert_abs_diff_eq!(&step, ref_step, epsilon = epsilon);
         }
@@ -883,9 +819,7 @@ mod tests {
     fn compute_fpd_curve_modified_goff_hartel_corvitto_polynomial_with_alcohol() {
         let get_fpd_from_pac = |pac| super::get_fpd_from_pac_polynomial(pac, None);
 
-        for (ref_step, _) in
-            REF_COMP_FREEZING_CURVE_MODIFIED_GOFF_HARTEL_CORVITTO_WITH_ALCOHOL.iter()
-        {
+        for (ref_step, _) in REF_COMP_FREEZING_CURVE_MODIFIED_GOFF_HARTEL_CORVITTO_WITH_ALCOHOL.iter() {
             let step = compute_fpd_curve_step_modified_goff_hartel_corvitto(
                 *REF_COMP_WITH_ALCOHOL,
                 ref_step.frozen_water,
@@ -921,19 +855,11 @@ mod tests {
             )
             .unwrap();
 
-            assert_abs_diff_eq!(
-                step_with_hf.hf,
-                (10.0 / ref_step.water) * 100.0,
-                epsilon = TESTS_EPSILON
-            );
+            assert_abs_diff_eq!(step_with_hf.hf, (10.0 / ref_step.water) * 100.0, epsilon = TESTS_EPSILON);
 
             assert_abs_diff_eq!(step_with_hf.pac_exc_hf, ref_step.pac_exc_hf, epsilon = 0.01);
 
-            assert_abs_diff_eq!(
-                step_with_hf.fpd_inc_hf,
-                step_pac_less_hf.fpd_exc_hf,
-                epsilon = TESTS_EPSILON
-            );
+            assert_abs_diff_eq!(step_with_hf.fpd_inc_hf, step_pac_less_hf.fpd_exc_hf, epsilon = TESTS_EPSILON);
         }
     }
 
