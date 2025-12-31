@@ -619,7 +619,7 @@ mod tests {
     /// Same as [`REF_COMP`], but with alcohol added
     static REF_COMP_WITH_ALCOHOL: LazyLock<Composition> = LazyLock::new(|| {
         let mut ref_comp = *REF_COMP;
-        ref_comp.alcohol = 2.0;
+        ref_comp.alcohol.by_weight = 2.0;
         ref_comp.pac.alcohol = 14.8;
         ref_comp
     });

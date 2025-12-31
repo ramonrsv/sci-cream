@@ -74,6 +74,12 @@ pub const TARGET_SERVING_TEMP_14C: f64 = -14.0;
 
 pub const SERVING_TEMP_X_AXIS: usize = 75;
 
+/// Ratio to convert Alcohol by Volume (ABV) to Alcohol by Weight (ABW)
+///
+/// _"Because of the miscibility of alcohol and water, the conversion factor is not constant but
+/// rather depends upon the concentration of alcohol."_ ("Alcohol by volume", 2025)[^8] However,
+/// for typical ice cream alcohol contents the approximation of 0.789 is sufficiently accurate.
+#[doc = include_str!("../docs/bibs/8.md")]
 pub const ABV_TO_ABW_RATIO: f64 = 0.789;
 
 /// PAC to FPD lookup table from _Freezing point depression (°C) below 0°C of sucrose solutions

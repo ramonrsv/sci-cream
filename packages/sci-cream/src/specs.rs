@@ -9,7 +9,7 @@ use crate::diesel::ingredients;
 use diesel::{Queryable, Selectable};
 
 use crate::{
-    composition::{Composition, Micro, PAC, ScaleComponents, Solids, SolidsBreakdown, Sugars, Sweeteners},
+    composition::{Alcohol, Composition, Micro, PAC, ScaleComponents, Solids, SolidsBreakdown, Sugars, Sweeteners},
     constants,
     error::{Error, Result},
     ingredients::{Category, Ingredient},
@@ -243,6 +243,34 @@ pub struct EggsSpec {
     pub lecithin: f64,
 }
 
+/// Spec for alcohol beverages and other ingredients, with ABV, optional sugar, fat, and solids
+///
+/// The composition of spirits is trivial, consisting of only the [`ABV`](Self::abv) ("Alcohol by
+/// volume", 2025)[^8]) that is always present on the label, and is internally converted to `ABW`
+/// (Alcohol by weight) via [`constants::ABV_TO_ABW_RATIO`]. Liqueurs, creams, and other alcohol
+/// ingredients may also contain sugar, fat, and other solids. These can be tricky to find, since
+/// nutrition facts tables are not usually mandated for alcoholic beverages. The best approach is
+/// to find a nutrition facts table from the manufacturer, if available, otherwise to look for
+/// unofficial sources online. The exact composition is not usually critical, since alcohol
+/// ingredients are typically used in small amounts in ice cream mixes.
+///
+/// In the fields below, [`sugar`](Self::sugar) is assumed to be sucrose, zero if not specified, and
+/// its contributions to PAC and POD are internally calculated accordingly. [`fat`](Self::fat) is
+/// assumed to be [`Solids::other`](Solids::other)`.`[`fats`](SolidsBreakdown::fats), zero if not
+/// specified. [`solids`](Self::solids) less `sugar` and `fat` is assumed to be
+/// [`Solids::other`](Solids::other)`.`[`snfs`](SolidsBreakdown::snfs). If not specified, it is
+/// calculated as `sugar + fat`. If specified, it is required that `solids >= sugar + fat`. Overall,
+/// the sum of `abw + solids <= 100%`.
+#[doc = include_str!("../docs/bibs/8.md")]
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct AlcoholSpec {
+    pub abv: f64,
+    pub sugar: Option<f64>,
+    pub fat: Option<f64>,
+    pub solids: Option<f64>,
+}
+
 /// Spec for ingredients with solely micro components, e.g. salt, emulsifiers, stabilizer, etc.
 ///
 /// These ingredients are assumed to be 100% solids non-fat non-sugar (technically lecithin is a
@@ -302,6 +330,7 @@ pub enum Spec {
     FruitsSpec(FruitsSpec),
     ChocolatesSpec(ChocolatesSpec),
     EggsSpec(EggsSpec),
+    AlcoholSpec(AlcoholSpec),
     MicrosSpec(MicrosSpec),
     OneOffSpec(OneOffSpec),
 }
@@ -323,6 +352,7 @@ impl IntoComposition for Spec {
             Spec::FruitsSpec(spec) => spec.into_composition(),
             Spec::ChocolatesSpec(spec) => spec.into_composition(),
             Spec::EggsSpec(spec) => spec.into_composition(),
+            Spec::AlcoholSpec(spec) => spec.into_composition(),
             Spec::MicrosSpec(spec) => spec.into_composition(),
             Spec::OneOffSpec(spec) => spec.into_composition(),
         }
@@ -506,6 +536,56 @@ impl IntoComposition for EggsSpec {
     }
 }
 
+impl IntoComposition for AlcoholSpec {
+    fn into_composition(self) -> Result<Composition> {
+        let Self {
+            abv,
+            sugar,
+            fat,
+            solids,
+        } = self;
+
+        let sugar = sugar.unwrap_or_default();
+        let fat = fat.unwrap_or_default();
+        let solids = solids.unwrap_or(sugar + fat);
+        let alcohol = Alcohol::from_abv(abv);
+
+        if abv < 0.0 || sugar < 0.0 || fat < 0.0 || solids < 0.0 {
+            return Err(Error::InvalidComposition("ABV, sugar, fat, and solids must be non-negative".to_string()));
+        }
+
+        if solids < sugar + fat {
+            return Err(Error::InvalidComposition(format!(
+                "Total solids ({solids}) cannot be less than the sum of sugar ({sugar}) and fat ({fat})"
+            )));
+        }
+
+        if !is_within_100_percent(alcohol.by_weight + solids) {
+            return Err(Error::CompositionNotWithin100Percent(alcohol.by_weight + solids));
+        }
+
+        let sweeteners = Sweeteners::new().sugars(Sugars::new().sucrose(sugar));
+
+        Ok(Composition::new()
+            .solids(
+                Solids::new().other(
+                    SolidsBreakdown::new()
+                        .sweeteners(sugar)
+                        .fats(fat)
+                        .snfs(solids - sugar - fat),
+                ),
+            )
+            .sweeteners(sweeteners)
+            .alcohol(alcohol)
+            .pod(sweeteners.to_pod().unwrap())
+            .pac(
+                PAC::new()
+                    .sugars(sweeteners.to_pac().unwrap())
+                    .alcohol(alcohol.to_pac()),
+            ))
+    }
+}
+
 impl IntoComposition for MicrosSpec {
     fn into_composition(self) -> Result<Composition> {
         let make_emulsifier_stabilizer_composition =
@@ -591,7 +671,7 @@ mod test {
         assert_eq!(micro.salt, 0.0);
         assert_eq!(micro.emulsifiers, 0.0);
         assert_eq!(micro.stabilizers, 0.0);
-        assert_eq!(alcohol, 0.0);
+        assert_eq!(alcohol.by_weight, 0.0);
         assert_eq!(pod, 0.769104);
 
         let Solids { milk, .. } = solids;
@@ -898,6 +978,53 @@ mod test {
     }
 
     #[test]
+    fn into_composition_alcohol_spec_40_abv_spirit() {
+        let comp = AlcoholSpec {
+            abv: 40.0,
+            sugar: None,
+            fat: None,
+            solids: None,
+        }
+        .into_composition()
+        .unwrap();
+
+        assert_eq!(comp.alcohol.to_abv(), 40.0);
+        assert_abs_diff_eq!(comp.alcohol.by_weight, 31.56, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.solids.total(), 0.0);
+        assert_eq!(comp.water(), 68.44);
+
+        assert_eq!(comp.sweeteners.total(), 0.0);
+        assert_eq!(comp.pod, 0.0);
+        assert_eq!(comp.alcohol.to_pac(), 233.544);
+        assert_eq!(comp.pac.total(), 233.544);
+        assert_eq!(comp.pac.alcohol, 233.544);
+    }
+
+    #[test]
+    fn into_composition_alcohol_spec_baileys_irish_cream() {
+        let comp = AlcoholSpec {
+            abv: 17.0,
+            sugar: Some(18.0),
+            fat: Some(13.6),
+            solids: None,
+        }
+        .into_composition()
+        .unwrap();
+
+        assert_eq!(comp.alcohol.to_abv(), 17.0);
+        assert_abs_diff_eq!(comp.alcohol.by_weight, 13.413, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.solids.total(), 31.6, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.water(), 54.987, epsilon = TESTS_EPSILON);
+
+        assert_eq!(comp.sweeteners.total(), 18.0);
+        assert_eq!(comp.pod, 18.0);
+        assert_eq!(comp.alcohol.to_pac(), 99.2562);
+        assert_eq!(comp.pac.alcohol, 99.2562);
+        assert_eq!(comp.pac.sugars, 18.0);
+        assert_eq!(comp.pac.total(), 117.2562);
+    }
+
+    #[test]
     fn into_composition_micro_spec_salt() {
         let Composition { solids, micro, pac, .. } = MicrosSpec::Salt.into_composition().unwrap();
         assert_eq!(solids.other.snfs, 100.0);
@@ -956,7 +1083,7 @@ mod test {
         assert_eq!(comp.micro.lecithin, 0.0);
         assert_eq!(comp.micro.emulsifiers, 0.0);
         assert_eq!(comp.micro.stabilizers, 0.0);
-        assert_eq!(comp.alcohol, 0.0);
+        assert_eq!(comp.alcohol.by_weight, 0.0);
         assert_eq!(comp.pod, 0.0);
         assert_eq!(comp.pac.total(), 0.0);
         assert_eq!(comp.pac.hardness_factor, 0.0);
@@ -974,6 +1101,8 @@ mod test {
             (ING_SPEC_STABILIZER_STR, ING_SPEC_STABILIZER.clone()),
             (ING_SPEC_LOUIS_STAB2K_STR, ING_SPEC_LOUIS_STAB2K.clone()),
             (ING_SPEC_WATER_STR, ING_SPEC_WATER.clone()),
+            (ING_40_ABV_SPIRITS_STR, ING_SPEC_40_ABV_SPIRIT.clone()),
+            (ING_BAILEYS_IRISH_CREAM_STR, ING_SPEC_BAILEYS_IRISH_CREAM.clone()),
         ]
         .iter()
         .for_each(|(spec_str, spec)| {

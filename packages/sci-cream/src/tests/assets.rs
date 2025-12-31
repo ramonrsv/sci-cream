@@ -3,7 +3,7 @@ use std::sync::LazyLock;
 use crate::{
     composition::{Composition, PAC, Solids, SolidsBreakdown, Sugars, Sweeteners},
     ingredients::{Category, Ingredient},
-    specs::{CompositionBasis, DairySpec, IngredientSpec, MicrosSpec, OneOffSpec, Spec, SweetenersSpec},
+    specs::{AlcoholSpec, CompositionBasis, DairySpec, IngredientSpec, MicrosSpec, OneOffSpec, Spec, SweetenersSpec},
 };
 
 // Comp Specs
@@ -192,6 +192,24 @@ pub(crate) const ING_SPEC_LOUIS_STAB2K_STR: &str = r#"{
   }
 }"#;
 
+pub(crate) const ING_40_ABV_SPIRITS_STR: &str = r#"{
+  "name": "40% ABV Spirit",
+  "category": "Alcohol",
+  "AlcoholSpec": {
+    "abv": 40
+  }
+}"#;
+
+pub(crate) const ING_BAILEYS_IRISH_CREAM_STR: &str = r#"{
+    "name": "Baileys Irish Cream",
+    "category": "Alcohol",
+    "AlcoholSpec": {
+      "abv": 17,
+      "sugar": 18,
+      "fat": 13.6
+    }
+}"#;
+
 pub(crate) static ING_SPEC_WATER_STR: &str = r#"{
   "name": "Water",
   "category": "Miscellaneous",
@@ -264,6 +282,28 @@ pub(crate) static ING_SPEC_LOUIS_STAB2K: LazyLock<IngredientSpec> = LazyLock::ne
     spec: Spec::MicrosSpec(MicrosSpec::EmulsifierStabilizer {
         emulsifier_strength: 100.0,
         stabilizer_strength: 40.0,
+    }),
+});
+
+pub(crate) static ING_SPEC_40_ABV_SPIRIT: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    name: "40% ABV Spirit".to_string(),
+    category: Category::Alcohol,
+    spec: Spec::AlcoholSpec(AlcoholSpec {
+        abv: 40.0,
+        sugar: None,
+        fat: None,
+        solids: None,
+    }),
+});
+
+pub(crate) static ING_SPEC_BAILEYS_IRISH_CREAM: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    name: "Baileys Irish Cream".to_string(),
+    category: Category::Alcohol,
+    spec: Spec::AlcoholSpec(AlcoholSpec {
+        abv: 17.0,
+        sugar: Some(18.0),
+        fat: Some(13.6),
+        solids: None,
     }),
 });
 

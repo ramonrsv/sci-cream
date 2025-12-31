@@ -85,6 +85,13 @@ pub struct Micro {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
+pub struct Alcohol {
+    pub by_weight: f64,
+}
+
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(default, deny_unknown_fields)]
 pub struct PAC {
     pub sugars: f64,
     pub salt: f64,
@@ -111,7 +118,7 @@ pub struct Composition {
     pub solids: Solids,
     pub sweeteners: Sweeteners,
     pub micro: Micro,
-    pub alcohol: f64,
+    pub alcohol: Alcohol,
     pub pod: f64,
     pub pac: PAC,
 }
@@ -152,6 +159,7 @@ pub enum CompKey {
     TotalSolids,
     Water,
     Alcohol,
+    ABV,
     Salt,
     Lecithin,
     Emulsifiers,
@@ -478,6 +486,38 @@ impl Micro {
     }
 }
 
+impl Alcohol {
+    pub fn empty() -> Self {
+        Self { by_weight: 0.0 }
+    }
+
+    pub fn by_weight(self, by_weight: f64) -> Self {
+        Self { by_weight }
+    }
+}
+
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+impl Alcohol {
+    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
+    pub fn from_abv(abv: f64) -> Self {
+        Self {
+            by_weight: abv * constants::ABV_TO_ABW_RATIO,
+        }
+    }
+
+    pub fn to_abv(&self) -> f64 {
+        self.by_weight / constants::ABV_TO_ABW_RATIO
+    }
+
+    pub fn to_pac(&self) -> f64 {
+        self.by_weight * constants::pac::ALCOHOL / 100.0
+    }
+}
+
 impl PAC {
     pub fn empty() -> Self {
         Self {
@@ -533,7 +573,7 @@ impl Composition {
             solids: Solids::empty(),
             sweeteners: Sweeteners::empty(),
             micro: Micro::empty(),
-            alcohol: 0.0,
+            alcohol: Alcohol::empty(),
             pod: 0.0,
             pac: PAC::empty(),
         }
@@ -551,7 +591,7 @@ impl Composition {
         Self { micro, ..self }
     }
 
-    pub fn alcohol(self, alcohol: f64) -> Self {
+    pub fn alcohol(self, alcohol: Alcohol) -> Self {
         Self { alcohol, ..self }
     }
 
@@ -572,7 +612,7 @@ impl Composition {
     }
 
     pub fn water(&self) -> f64 {
-        100.0 - self.solids.total() - self.alcohol
+        100.0 - self.solids.total() - self.alcohol.by_weight
     }
 
     /// Note that [`f64::NAN`] is a valid result, if there are no fats
@@ -632,7 +672,8 @@ impl Composition {
             CompKey::ArtificialSweeteners => self.sweeteners.artificial,
             CompKey::TotalSolids => self.solids.total(),
             CompKey::Water => self.water(),
-            CompKey::Alcohol => self.alcohol,
+            CompKey::Alcohol => self.alcohol.by_weight,
+            CompKey::ABV => self.alcohol.to_abv(),
             CompKey::Lecithin => self.micro.lecithin,
             CompKey::Salt => self.micro.salt,
             CompKey::Emulsifiers => self.micro.emulsifiers,
@@ -760,6 +801,20 @@ impl ScaleComponents for Micro {
     }
 }
 
+impl ScaleComponents for Alcohol {
+    fn scale(&self, factor: f64) -> Self {
+        Self {
+            by_weight: self.by_weight * factor,
+        }
+    }
+
+    fn add(&self, other: &Self) -> Self {
+        Self {
+            by_weight: self.by_weight + other.by_weight,
+        }
+    }
+}
+
 impl ScaleComponents for PAC {
     fn scale(&self, factor: f64) -> Self {
         Self {
@@ -788,7 +843,7 @@ impl ScaleComponents for Composition {
             solids: self.solids.scale(factor),
             sweeteners: self.sweeteners.scale(factor),
             micro: self.micro.scale(factor),
-            alcohol: self.alcohol * factor,
+            alcohol: self.alcohol.scale(factor),
             pod: self.pod * factor,
             pac: self.pac.scale(factor),
         }
@@ -799,7 +854,7 @@ impl ScaleComponents for Composition {
             solids: self.solids.add(&other.solids),
             sweeteners: self.sweeteners.add(&other.sweeteners),
             micro: self.micro.add(&other.micro),
-            alcohol: self.alcohol + other.alcohol,
+            alcohol: self.alcohol.add(&other.alcohol),
             pod: self.pod + other.pod,
             pac: self.pac.add(&other.pac),
         }
@@ -831,6 +886,12 @@ impl Default for Sweeteners {
 }
 
 impl Default for Micro {
+    fn default() -> Self {
+        Self::empty()
+    }
+}
+
+impl Default for Alcohol {
     fn default() -> Self {
         Self::empty()
     }
@@ -899,6 +960,18 @@ impl AbsDiffEq for Sweeteners {
 }
 
 impl AbsDiffEq for Micro {
+    type Epsilon = f64;
+
+    fn default_epsilon() -> Self::Epsilon {
+        f64::default_epsilon()
+    }
+
+    fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
+        iter_all_abs_diff_eq::<f64, f64, Self>(self, other, epsilon)
+    }
+}
+
+impl AbsDiffEq for Alcohol {
     type Epsilon = f64;
 
     fn default_epsilon() -> Self::Epsilon {

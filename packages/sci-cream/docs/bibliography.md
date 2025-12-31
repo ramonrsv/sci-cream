@@ -13,3 +13,5 @@
 [^6]: Cree, Dana. (2017). _Hello, My Name Is Ice Cream_. Clarkson Potter
 
 [^7]: Raphaelson, Paul. (2016, May). _How to Build an Ice Cream Recipe_. <https://under-belly.org/how-to-build-an-ice-cream-recipe/>
+
+[^8]: Alcohol by volume. (2025, December). In _Wikipedia_. <https://en.wikipedia.org/w/index.php?title=Alcohol_by_volume&oldid=1329682113>

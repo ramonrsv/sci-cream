@@ -17,18 +17,21 @@ pub(crate) fn parse_ingredient_specs_from_file(filename: &str) -> HashMap<String
         .collect()
 }
 
+pub(crate) const INGREDIENT_JSON_FILENAMES: &[&str] = &[
+    "dairy.json",
+    "sweeteners.json",
+    "fruits.json",
+    "chocolates.json",
+    "eggs.json",
+    "alcohol.json",
+    "micros.json",
+    "miscellaneous.json",
+];
+
 pub(crate) fn get_ingredient_spec_by_name(name: &str) -> Option<IngredientSpec> {
     static ALL_INGREDIENT_SPECS: LazyLock<HashMap<String, IngredientSpec>> = LazyLock::new(|| {
         let mut specs = HashMap::new();
-        for filename in &[
-            "dairy.json",
-            "sweeteners.json",
-            "fruits.json",
-            "chocolates.json",
-            "eggs.json",
-            "micros.json",
-            "miscellaneous.json",
-        ] {
+        for filename in INGREDIENT_JSON_FILENAMES {
             specs.extend(parse_ingredient_specs_from_file(filename));
         }
         specs
@@ -50,45 +53,11 @@ pub(crate) mod test {
     use crate::tests::assets::*;
 
     #[test]
-    fn parse_ingredient_specs_dairy() {
-        let specs = parse_ingredient_specs_from_file("dairy.json");
-        assert_false!(specs.is_empty());
-    }
-
-    #[test]
-    fn parse_ingredient_specs_sweeteners() {
-        let specs = parse_ingredient_specs_from_file("sweeteners.json");
-        assert_false!(specs.is_empty());
-    }
-
-    #[test]
-    fn parse_ingredient_specs_fruits() {
-        let specs = parse_ingredient_specs_from_file("fruits.json");
-        assert_false!(specs.is_empty());
-    }
-
-    #[test]
-    fn parse_ingredient_specs_chocolates() {
-        let specs = parse_ingredient_specs_from_file("chocolates.json");
-        assert_false!(specs.is_empty());
-    }
-
-    #[test]
-    fn parse_ingredient_specs_eggs() {
-        let specs = parse_ingredient_specs_from_file("eggs.json");
-        assert_false!(specs.is_empty());
-    }
-
-    #[test]
-    fn parse_ingredient_specs_micros() {
-        let specs = parse_ingredient_specs_from_file("micros.json");
-        assert_false!(specs.is_empty());
-    }
-
-    #[test]
-    fn parse_ingredient_specs_miscellaneous() {
-        let specs = parse_ingredient_specs_from_file("miscellaneous.json");
-        assert_false!(specs.is_empty());
+    fn parse_ingredient_specs() {
+        for filename in INGREDIENT_JSON_FILENAMES {
+            let specs = parse_ingredient_specs_from_file(filename);
+            assert_false!(specs.is_empty(), "Failed to parse ingredient specs from file: {}", filename);
+        }
     }
 
     #[test]

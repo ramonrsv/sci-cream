@@ -38,6 +38,7 @@ impl KeyAsStrings for CompKey {
             CompKey::TotalSolids => "T. Solids",
             CompKey::Water => "Water",
             CompKey::Alcohol => "Alcohol",
+            CompKey::ABV => "ABV",
             CompKey::Salt => "Salt",
             CompKey::Lecithin => "Lecithin",
             CompKey::Emulsifiers => "Emulsifiers",
