@@ -48,7 +48,7 @@ export default function Home() {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const refsProps = { ctx: recipeCtxState, indices: recipes.slice(1).map((_, idx) => idx + 1) };
+  const recipeGridProps = { ctx: recipeCtxState, indices: recipes.map((_, idx) => idx) };
 
   // Dynamically adjusts the number of columns based on screen width, so that some components
   // maintain a fixed-ish width and do not widen too much when going from half to full screen.
@@ -68,8 +68,8 @@ export default function Home() {
   };
 
   const dynW = dynamicColsFromFixedPx;
-  const horiz = ["e"] as ResizeHandleAxis[];
-  const horizVert = ["e", "s"] as ResizeHandleAxis[];
+  const horiz = ["e", "w"] as ResizeHandleAxis[];
+  const horizVert = ["e", "w", "s"] as ResizeHandleAxis[];
 
   const h = REACT_GRID_COMPONENT_HEIGHT;
   const recipeDims = { h, w: dynW(8), isResizable: false };
@@ -85,7 +85,6 @@ export default function Home() {
     { i: "composition", x: 14, y:  0, ...compsDims },
     { i: "props-chart", x:  0, y: 11, ...chartDims },
     { i: "fpd-graph",   x: 12, y: 11, ...graphDims },
-    { i: "refs",        x:  0, y: 22, ...recipeDims },
   ];
 
   return (
@@ -105,12 +104,11 @@ export default function Home() {
               margin: [20, 20],
             }}
           >
-            <div key="recipe">{<RecipeGrid props={{ ctx: recipeCtxState, indices: [0] }} />}</div>
+            <div key="recipe">{<RecipeGrid props={recipeGridProps} />}</div>
             <div key="properties">{<MixPropertiesGrid recipes={recipes} />}</div>
             <div key="composition">{<IngredientCompositionGrid recipe={recipes[0]} />}</div>
             <div key="props-chart">{<MixPropertiesChart recipes={recipes} />}</div>
             <div key="fpd-graph">{<FpdGraph recipes={recipes} />}</div>
-            <div key="refs">{<RecipeGrid props={refsProps} />}</div>
           </ReactGridLayout>
         )}
       </div>

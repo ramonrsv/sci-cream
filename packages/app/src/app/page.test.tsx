@@ -48,17 +48,17 @@ describe("Home Page", () => {
     expect(screen.getByText("Ice Cream Recipe Calculator")).toBeInTheDocument();
   });
 
-  it("should render two RecipeGrid components", () => {
+  it("should render one RecipeGrid component", () => {
     const { container } = render(<Home />);
-    expect(container.querySelectorAll("#recipe-grid").length).toBe(2);
+    expect(container.querySelectorAll("#recipe-grid").length).toBe(1);
   });
 
-  it("should render one MixPropertiesGrid components", () => {
+  it("should render one MixPropertiesGrid component", () => {
     const { container } = render(<Home />);
     expect(container.querySelectorAll("#mix-properties-grid").length).toBe(1);
   });
 
-  it("should render one IngredientCompositionGrid components", () => {
+  it("should render one IngredientCompositionGrid component", () => {
     const { container } = render(<Home />);
     expect(container.querySelectorAll("#ing-composition-grid").length).toBe(1);
   });
