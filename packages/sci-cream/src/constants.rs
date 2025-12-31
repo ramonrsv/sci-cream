@@ -164,3 +164,6 @@ pub const CORVITTO_PAC_TO_SERVING_TEMP_TABLE: [(f64, f64); 9] = [
     (39.0, -17.0),
     (41.0, -18.0),
 ];
+
+/// Epsilon value for floating point comparisons of compositions, e.g. water content
+pub const COMPOSITION_EPSILON: f64 = 1e-10;

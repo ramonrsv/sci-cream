@@ -114,7 +114,17 @@ mod test {
     use crate::tests::data::get_ingredient_spec_by_name_or_panic;
 
     use super::*;
-    use crate::specs::IntoComposition;
+    use crate::{constants::COMPOSITION_EPSILON, specs::IntoComposition};
+
+    fn convert_to_composition_lines(items: &[(&str, f64)]) -> Vec<CompositionLine> {
+        items
+            .iter()
+            .map(|(name, amount)| {
+                let spec = get_ingredient_spec_by_name_or_panic(name);
+                CompositionLine::new(spec.spec.into_composition().unwrap(), *amount)
+            })
+            .collect::<Vec<CompositionLine>>()
+    }
 
     #[test]
     fn calculate_mix_composition() {
@@ -141,26 +151,19 @@ mod test {
 
     #[test]
     fn calculate_mix_properties_with_hf() {
-        let mix_properties = calculate_mix_properties(
-            &[
-                ("Whole Milk", 245.0),
-                ("Whipping Cream", 215.0),
-                ("70% Dark Chocolate", 28.0),
-                ("Skimmed Milk Powder", 21.0),
-                ("Egg Yolk", 18.0),
-                ("Dextrose", 45.0),
-                ("Fructose", 32.0),
-                ("Salt", 0.5),
-                ("Rich Ice Cream SB", 1.25),
-                // ("Vanilla Extract", 6.0),
-            ]
-            .map(|(name, amount)| {
-                let spec = get_ingredient_spec_by_name_or_panic(name);
-                CompositionLine::new(spec.spec.into_composition().unwrap(), amount)
-            })
-            .into_iter()
-            .collect::<Vec<CompositionLine>>(),
-        );
+        let mix_properties = calculate_mix_properties(&convert_to_composition_lines(&[
+            ("Whole Milk", 245.0),
+            ("Whipping Cream", 215.0),
+            ("70% Dark Chocolate", 28.0),
+            ("Skimmed Milk Powder", 21.0),
+            ("Egg Yolk", 18.0),
+            ("Dextrose", 45.0),
+            ("Fructose", 32.0),
+            ("Salt", 0.5),
+            ("Rich Ice Cream SB", 1.25),
+            // ("Vanilla Extract", 6.0),
+        ]));
+
         let mix_composition = &mix_properties.composition;
 
         let epsilon = 0.15;
@@ -169,5 +172,18 @@ mod test {
         assert_abs_diff_eq!(mix_properties.fpd.fpd, -3.5, epsilon = epsilon);
         assert_abs_diff_eq!(mix_properties.fpd.serving_temp, -14.78, epsilon = epsilon);
         assert_abs_diff_eq!(mix_properties.fpd.hardness_at_14c, 73.42, epsilon = epsilon);
+    }
+
+    #[test]
+    fn floating_point_edge_case_zero_water_near_epsilon() {
+        let mix_properties =
+            calculate_mix_properties(&convert_to_composition_lines(&[("Fructose", 10.0), ("Salt", 0.54)]));
+
+        assert_abs_diff_eq!(mix_properties.composition.water(), 0.0, epsilon = COMPOSITION_EPSILON);
+        assert_true!(mix_properties.fpd.fpd.is_nan());
+        assert_true!(mix_properties.fpd.serving_temp.is_nan());
+        assert_true!(mix_properties.fpd.hardness_at_14c.is_nan());
+        assert_true!(mix_properties.fpd.curves.frozen_water[0].temp.is_nan());
+        assert_true!(mix_properties.fpd.curves.hardness[0].temp.is_nan());
     }
 }

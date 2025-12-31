@@ -1,4 +1,5 @@
 use approx::AbsDiffEq;
+use approx::abs_diff_eq;
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 use strum_macros::EnumIter;
@@ -9,8 +10,8 @@ use wasm_bindgen::prelude::*;
 use crate::{
     composition::Composition,
     constants::{
-        CORVITTO_PAC_TO_SERVING_TEMP_TABLE, FPD_CONST_FOR_MSNF_WS_SALTS, PAC_TO_FPD_POLY_COEFFS, PAC_TO_FPD_TABLE,
-        SERVING_TEMP_X_AXIS, TARGET_SERVING_TEMP_14C,
+        COMPOSITION_EPSILON, CORVITTO_PAC_TO_SERVING_TEMP_TABLE, FPD_CONST_FOR_MSNF_WS_SALTS, PAC_TO_FPD_POLY_COEFFS,
+        PAC_TO_FPD_TABLE, SERVING_TEMP_X_AXIS, TARGET_SERVING_TEMP_14C,
     },
     error::{Error, Result},
     util::iter_all_abs_diff_eq,
@@ -316,6 +317,10 @@ pub fn compute_fpd_curve_step_modified_goff_hartel_corvitto(
 ) -> Result<ModifiedGoffHartelCorvittoFpdCurveStep> {
     let comp = composition;
     let mut next = ModifiedGoffHartelCorvittoFpdCurveStep::empty();
+
+    if abs_diff_eq!(comp.water(), 0.0, epsilon = COMPOSITION_EPSILON) {
+        return Ok(next);
+    }
 
     next.frozen_water = next_frozen_water;
     next.water = (100.0 - next.frozen_water) / 100.0 * comp.water();
