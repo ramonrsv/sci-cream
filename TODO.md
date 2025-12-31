@@ -27,3 +27,7 @@
 - [ ] Investigate why Underbelly's and Dana's chocolate recipes show as being very hard using the
       Corvitto method. Are they actually very hard? May need a better method than Corvitto's.
 - [ ] Save recipes in local storage so that they are not lost when the page is refreshed.
+- [ ] Semver permitted upgrades of `react-grid-layout` (`2.1.0 -> 2.2.2`) and `react-resizable`
+      (`3.0.5 -> 3.1.0`) are producing an error (below). For now, remove the caret `^` in
+      package.json to force the specific known working versions, but need further investigation.
+      `Error occurred prerendering page "/" ... TypeError: b.props.children is not iterable`
