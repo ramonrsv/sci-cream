@@ -3,6 +3,7 @@ their properties.
 */
 
 #[doc = include_str!("../docs/freezing-point-depression.md")]
+#[doc = include_str!("../docs/sweeteners.md")]
 #[doc = include_str!("../docs/bibliography.md")]
 pub mod docs;
 

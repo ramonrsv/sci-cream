@@ -1,18 +1,27 @@
-/// POD values from _Characteristics of sweeteners and bulking agents for frozen desserts_ (Goff &
-/// Hartel, 2013, Table 3.4, p. 67)[^2]
+/// [Potere Dolcificante (POD)](crate::docs#pod) values various sweeteners and other ingredients
+///
+/// Expressed as g/100g of sucrose equivalence. Unless otherwise specified, values are taken from
+/// _Characteristics of sweeteners and bulking agents for frozen desserts_ (Goff & Hartel, 2013,
+/// Table 3.4, p. 67)[^2]. Other sources are cited where applicable.
 #[doc = include_str!("../docs/bibs/2.md")]
 pub mod pod {
+    /// Also known by the name 'dextrose', commonly sold as dextrose monohydrate powder.
     pub const GLUCOSE: f64 = 80.4;
     pub const FRUCTOSE: f64 = 173.0;
-    pub const GALACTOSE: f64 = 0.0; // @todo
+    /// (Spillane, 2006, p. 264)[^9]
+    #[doc = include_str!("../docs/bibs/9.md")]
+    pub const GALACTOSE: f64 = 65.0;
     pub const SUCROSE: f64 = 100.0;
     pub const LACTOSE: f64 = 16.0;
     pub const MALTOSE: f64 = 32.0;
 }
 
-/// Unless otherwise specified, [PAC](crate::docs#pac-afp-fpdf-se) values were calculated based on
-/// molar mass relative to that of sucrose of 342.30 g/mol, e.g. glucose has a molar mass of 180.16
-/// g/mol, so its PAC is 342.30 / 180.16 * 100 = 190.
+/// [Potere Anti-Congelante (PAC)](crate::docs#pac-afp-fpdf-se) values for various sweeteners and
+/// other ingredients
+///
+/// Expressed as g/100g of sucrose equivalence. Unless otherwise specified, values are calculated
+/// based on molar mass relative to that of sucrose of 342.30 g/mol, e.g. glucose has a molar mass
+/// of 180.16 g/mol, so its PAC is 342.30 / 180.16 * 100 = 190.
 pub mod pac {
     pub const GLUCOSE: f64 = 190.0;
     pub const FRUCTOSE: f64 = 190.0;
@@ -35,8 +44,10 @@ pub mod pac {
     pub const MSNF_WS_SALTS: f64 = 36.74040576149157;
 }
 
-/// Hardness Factor (HF) values for the Corvitto method of calculating hardness with cocoa and nut
-/// ingredients (Corvitto, 2005, p. 243)[^3]
+/// Hardness Factor (HF) values for chocolate and nut ingredients
+///
+/// Used in the [Corvitto method](crate::docs#corvitto-method-hardness-factor) for calculating the
+/// hardness of mixes containing chocolate and nut ingredients (Corvitto, 2005, p. 243)[^3].
 #[doc = include_str!("../docs/bibs/3.md")]
 pub mod hf {
     pub const CACAO_BUTTER: f64 = 0.9;
@@ -82,8 +93,10 @@ pub const SERVING_TEMP_X_AXIS: usize = 75;
 #[doc = include_str!("../docs/bibs/8.md")]
 pub const ABV_TO_ABW_RATIO: f64 = 0.789;
 
-/// PAC to FPD lookup table from _Freezing point depression (°C) below 0°C of sucrose solutions
-/// (g/100g water)_ (Goff & Hartel, 2013, Table 6.1, p. 182)[^2]
+/// PAC to FPD lookup table
+///
+/// Table of empirical measurements, referenced from  _Freezing point depression (°C) below 0°C of
+/// sucrose solutions (g/100g water)_ (Goff & Hartel, 2013, Table 6.1, p. 182)[^2]
 #[doc = include_str!("../docs/bibs/2.md")]
 pub const PAC_TO_FPD_TABLE: [(usize, f64); 61] = [
     // (g Sucrose/100g water, FPD (°C))

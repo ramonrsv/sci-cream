@@ -50,3 +50,7 @@ freezing point depression of sucrose solutions (Goff & Hartel, 2013, Table 6.1, 
 ## Freezing Point Depression Curve
 
 ...
+
+### Corvitto Method, Hardness Factor
+
+...

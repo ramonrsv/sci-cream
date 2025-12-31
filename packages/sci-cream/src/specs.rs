@@ -93,18 +93,16 @@ pub struct SweetenersSpec {
 /// solids (snfs).
 ///
 /// The composition for fruit ingredients can usually be found in food composition databases, like
-/// USDA FoodData Central (<https://fdc.nal.usda.gov/food-search>).
+/// [USDA FoodData Central](https://fdc.nal.usda.gov/food-search).
 ///
 /// # Examples
 ///
-/// Based on: SR Legacy - 9316 (<https://fdc.nal.usda.gov/food-details/167762/nutrients>)
-///
-///   - Strawberries, raw, per 100g:
-///     - Water: 91g
-///     - Total lipid (fat): 0.3g
-///     - Sucrose: 0.47g
-///     - Glucose: 1.99g
-///     - Fructose: 2.44g
+/// (Strawberries, raw, 2019)[^101] per 100g:
+/// - Water: 91g
+/// - Total lipid (fat): 0.3g
+/// - Sucrose: 0.47g
+/// - Glucose: 1.99g
+/// - Fructose: 2.44g
 ///
 /// ```
 /// use sci_cream::{
@@ -124,6 +122,7 @@ pub struct SweetenersSpec {
 /// assert_eq!(comp.pod, 6.29116);
 /// assert_eq!(comp.pac.sugars, 8.887);
 /// ```
+#[doc = include_str!("../docs/bibs/101.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct FruitsSpec {
@@ -207,34 +206,39 @@ pub struct ChocolatesSpec {
 /// Spec for egg ingredients, with water content, fat content, and lecithin (emulsifier) content
 ///
 /// The composition of egg ingredients can usually be found in food composition databases, like
-/// USDA FoodData Central (<https://fdc.nal.usda.gov/food-search>), in the manufacturers' data, or
-/// in reference texts, e.g. _The Science of Ice Cream_ (Clarke, 2004, p. 49)[^4]. Note that
-/// [`lecithin`](Self::lecithin) is a subset of [`fats`](Self::fats), and considered an emulsifier
-/// with relative strength of 100, specified in [`Micro::emulsifiers`](Micro::emulsifiers). The
-/// remaining portion of `100 - water - fats` is assumed to be non-fat non-sugar solids (snfs),
-/// specified in [`Solids::egg`](Solids::egg)`.`[`snfs`](SolidsBreakdown::snfs).
+/// [USDA FoodData Central](https://fdc.nal.usda.gov/food-search), in the manufacturers' data, or in
+/// reference texts, e.g. _Ice Cream 7th Edition_ (Goff & Hartel, 2013, p. 49)[^2] or _The Science
+/// of Ice Cream_ (Clarke, 2004, p. 49)[^4]. Note that [`lecithin`](Self::lecithin) is a subset of
+/// [`fats`](Self::fats), and considered an emulsifier with relative strength of 100, specified in
+/// [`Micro::emulsifiers`](Micro::emulsifiers). The remaining portion of `100 - water - fats` is
+/// assumed to be non-fat non-sugar solids (snfs), specified in
+/// [`Solids::egg`](Solids::egg)`.`[`snfs`](SolidsBreakdown::snfs).
 ///
 /// # Examples
 ///
-/// Based on a combination of two sources:
-///     - Foundation - 1125 (<https://fdc.nal.usda.gov/food-details/748236/nutrients>)
-///     - The Science of Ice Cream, C. Clarke, p. 49
+/// Based on a combination of multiple sources:
+///
+/// - Water: 52.1%, Protein: 16.2%, Total Lipid: 28.8% (Eggs, Grade A, Large, egg yolk, 2019)[^100]
+/// - Fat: 33%, Protein: 15.8%, Total Solids: 51.2% (Goff & Hartel, 2013, p. 49)[^2]
+/// - Water: 50%, Protein: 16%, Lecithin: 9%, Other Fat: 23% (Clarke, 2004, p. 49)[^4]
 ///
 /// ```
 /// use sci_cream::{composition::{Micro, Solids}, specs::{EggsSpec, IntoComposition}};
 ///
 /// let comp = EggsSpec {
-///     water: 52.0,
-///     fats: 29.0,
+///     water: 51.0,
+///     fats: 30.0,
 ///     lecithin: 9.0,
 /// }.into_composition().unwrap();
 ///
-/// assert_eq!(comp.solids.egg.fats, 29.0);
+/// assert_eq!(comp.solids.egg.fats, 30.0);
 /// assert_eq!(comp.solids.egg.snfs, 19.0);
-/// assert_eq!(comp.solids.total(), 48.0);
+/// assert_eq!(comp.solids.total(), 49.0);
 /// assert_eq!(comp.micro.emulsifiers, 9.0);
 /// ```
+#[doc = include_str!("../docs/bibs/2.md")]
 #[doc = include_str!("../docs/bibs/4.md")]
+#[doc = include_str!("../docs/bibs/100.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct EggsSpec {
@@ -838,7 +842,7 @@ mod test {
         assert_eq!(solids.sweeteners(), 82.0);
         assert_eq!(solids.snfs(), 1.0);
         assert_eq!(solids.total(), 83.0);
-        assert_eq!(pod, 102.354);
+        assert_eq!(pod, 103.329);
         assert_eq!(pac.sugars, 152.65);
     }
 
@@ -964,16 +968,16 @@ mod test {
     #[test]
     fn into_composition_eggs_spec_egg_yolk() {
         let Composition { solids, micro, .. } = EggsSpec {
-            water: 52.0,
-            fats: 29.0,
+            water: 51.0,
+            fats: 30.0,
             lecithin: 9.0,
         }
         .into_composition()
         .unwrap();
 
-        assert_eq!(solids.egg.fats, 29.0);
+        assert_eq!(solids.egg.fats, 30.0);
         assert_eq!(solids.egg.snfs, 19.0);
-        assert_eq!(solids.total(), 48.0);
+        assert_eq!(solids.total(), 49.0);
         assert_eq!(micro.emulsifiers, 9.0);
     }
 

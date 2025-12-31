@@ -15,3 +15,11 @@
 [^7]: Raphaelson, Paul. (2016, May). _How to Build an Ice Cream Recipe_. <https://under-belly.org/how-to-build-an-ice-cream-recipe/>
 
 [^8]: Alcohol by volume. (2025, December). In _Wikipedia_. <https://en.wikipedia.org/w/index.php?title=Alcohol_by_volume&oldid=1329682113>
+
+[^9]: Spillane, W. J. (2006). _Optimising sweet taste in foods_. CRC Press
+
+<!-- Ingredient references -->
+
+[^100]: Eggs, Grade A, Large, egg yolk. (2019). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/748236/nutrients>
+
+[^101]: Strawberries, raw. (2019). In _USDA FoodData Central - SR Legacy_. <https://fdc.nal.usda.gov/food-details/167762/nutrients>
