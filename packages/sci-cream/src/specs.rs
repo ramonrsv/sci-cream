@@ -319,11 +319,25 @@ pub enum MicrosSpec {
     },
 }
 
-/// Spec for one-off ingredients that aren't worth defining a spec for, e.g. Water
+/// Spec for ingredients with a full composition specified
+///
+/// This is the most flexible spec, allowing the user to specify all relevant fields of the
+/// composition directly. However, it requires that the user know and provide all relevant values,
+/// which can be an involved and challenging process for some ingredients, making it very cumbersome
+/// and error-prone to use. It is recommended to use the more specified specs where possible.
+///
+/// We could just use [`Composition`] directly, but having a separate [`FullSpec`] allows some
+/// flexibility to make the specification format more user friendly, and somewhat decouples it
+/// from the internal implementation of [`Composition`].
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
-pub enum OneOffSpec {
-    Water,
+pub struct FullSpec {
+    pub solids: Option<Solids>,
+    pub sweeteners: Option<Sweeteners>,
+    pub micro: Option<Micro>,
+    pub abv: Option<f64>,
+    pub pod: Option<f64>,
+    pub pac: Option<PAC>,
 }
 
 /// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
@@ -336,7 +350,7 @@ pub enum Spec {
     EggsSpec(EggsSpec),
     AlcoholSpec(AlcoholSpec),
     MicrosSpec(MicrosSpec),
-    OneOffSpec(OneOffSpec),
+    FullSpec(FullSpec),
 }
 
 #[cfg_attr(feature = "diesel", derive(Queryable, Selectable), diesel(table_name = ingredients))]
@@ -358,7 +372,7 @@ impl IntoComposition for Spec {
             Spec::EggsSpec(spec) => spec.into_composition(),
             Spec::AlcoholSpec(spec) => spec.into_composition(),
             Spec::MicrosSpec(spec) => spec.into_composition(),
-            Spec::OneOffSpec(spec) => spec.into_composition(),
+            Spec::FullSpec(spec) => spec.into_composition(),
         }
     }
 }
@@ -630,11 +644,36 @@ impl IntoComposition for MicrosSpec {
     }
 }
 
-impl IntoComposition for OneOffSpec {
+impl IntoComposition for FullSpec {
     fn into_composition(self) -> Result<Composition> {
-        match self {
-            OneOffSpec::Water => Ok(Composition::new()),
+        let Self {
+            solids,
+            sweeteners,
+            micro,
+            abv,
+            pod,
+            pac,
+        } = self;
+
+        let alcohol = if let Some(abv) = abv {
+            Alcohol::from_abv(abv)
+        } else {
+            Alcohol::default()
+        };
+
+        let comp = Composition::new()
+            .solids(solids.unwrap_or_default())
+            .sweeteners(sweeteners.unwrap_or_default())
+            .micro(micro.unwrap_or_default())
+            .alcohol(alcohol)
+            .pod(pod.unwrap_or_default())
+            .pac(pac.unwrap_or_default());
+
+        if !is_within_100_percent(comp.solids.total() + alcohol.by_weight) {
+            return Err(Error::CompositionNotWithin100Percent(comp.solids.total() + alcohol.by_weight));
         }
+
+        Ok(comp)
     }
 }
 
@@ -1077,8 +1116,17 @@ mod test {
     }
 
     #[test]
-    fn into_composition_one_off_spec_water() {
-        let comp = OneOffSpec::Water.into_composition().unwrap();
+    fn into_composition_full_spec_water() {
+        let comp = FullSpec {
+            solids: None,
+            sweeteners: None,
+            micro: None,
+            abv: None,
+            pod: None,
+            pac: None,
+        }
+        .into_composition()
+        .unwrap();
 
         assert_eq!(comp.water(), 100.0);
         assert_eq!(comp.solids.total(), 0.0);

@@ -3,7 +3,7 @@ use std::sync::LazyLock;
 use crate::{
     composition::{Composition, PAC, Solids, SolidsBreakdown, Sugars, Sweeteners},
     ingredients::{Category, Ingredient},
-    specs::{AlcoholSpec, CompositionBasis, DairySpec, IngredientSpec, MicrosSpec, OneOffSpec, Spec, SweetenersSpec},
+    specs::{AlcoholSpec, CompositionBasis, DairySpec, FullSpec, IngredientSpec, MicrosSpec, Spec, SweetenersSpec},
 };
 
 // Comp Specs
@@ -213,7 +213,7 @@ pub(crate) const ING_BAILEYS_IRISH_CREAM_STR: &str = r#"{
 pub(crate) static ING_SPEC_WATER_STR: &str = r#"{
   "name": "Water",
   "category": "Miscellaneous",
-  "OneOffSpec": "Water"
+  "FullSpec": {}
 }"#;
 
 pub(crate) static ING_SPEC_MILK_2_PERCENT: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
@@ -310,7 +310,14 @@ pub(crate) static ING_SPEC_BAILEYS_IRISH_CREAM: LazyLock<IngredientSpec> = LazyL
 pub(crate) static ING_SPEC_WATER: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
     name: "Water".to_string(),
     category: Category::Miscellaneous,
-    spec: Spec::OneOffSpec(OneOffSpec::Water),
+    spec: Spec::FullSpec(FullSpec {
+        solids: None,
+        sweeteners: None,
+        micro: None,
+        abv: None,
+        pod: None,
+        pac: None,
+    }),
 });
 
 // Ingredients

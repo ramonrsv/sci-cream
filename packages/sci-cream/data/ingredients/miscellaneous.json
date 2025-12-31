@@ -1,1 +1,4 @@
-[{ "name": "Water", "category": "Miscellaneous", "OneOffSpec": "Water" }]
+[
+  { "name": "Water", "category": "Miscellaneous", "FullSpec": {} },
+  { "name": "Vanilla Extract", "category": "Miscellaneous", "AlcoholSpec": { "abv": 35.0 } }
+]
