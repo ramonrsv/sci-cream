@@ -26,3 +26,4 @@
       Investigate what is going on here, I suspect it applies to other combinations of ingredients.
 - [ ] Investigate why Underbelly's and Dana's chocolate recipes show as being very hard using the
       Corvitto method. Are they actually very hard? May need a better method than Corvitto's.
+- [ ] Save recipes in local storage so that they are not lost when the page is refreshed.
