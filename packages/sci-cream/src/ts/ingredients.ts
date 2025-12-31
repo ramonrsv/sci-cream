@@ -4,6 +4,7 @@ import fruitsJson from "../../data/ingredients/fruits.json";
 import chocolatesJson from "../../data/ingredients/chocolates.json";
 import eggsJson from "../../data/ingredients/eggs.json";
 import microsJson from "../../data/ingredients/micros.json";
+import miscellaneousJson from "../../data/ingredients/miscellaneous.json";
 
 export interface IngredientJson {
   name: string;
@@ -22,4 +23,5 @@ export const allIngredients = flattenLists([
   chocolatesJson,
   eggsJson,
   microsJson,
+  miscellaneousJson,
 ]);

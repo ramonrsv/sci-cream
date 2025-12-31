@@ -27,6 +27,7 @@ pub(crate) fn get_ingredient_spec_by_name(name: &str) -> Option<IngredientSpec> 
             "chocolates.json",
             "eggs.json",
             "micros.json",
+            "miscellaneous.json",
         ] {
             specs.extend(parse_ingredient_specs_from_file(filename));
         }
@@ -81,6 +82,12 @@ pub(crate) mod test {
     #[test]
     fn parse_ingredient_specs_micros() {
         let specs = parse_ingredient_specs_from_file("micros.json");
+        assert_false!(specs.is_empty());
+    }
+
+    #[test]
+    fn parse_ingredient_specs_miscellaneous() {
+        let specs = parse_ingredient_specs_from_file("miscellaneous.json");
         assert_false!(specs.is_empty());
     }
 

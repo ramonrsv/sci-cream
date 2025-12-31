@@ -287,6 +287,13 @@ pub enum MicrosSpec {
     },
 }
 
+/// Spec for one-off ingredients that aren't worth defining a spec for, e.g. Water
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub enum OneOffSpec {
+    Water,
+}
+
 /// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum Spec {
@@ -296,6 +303,7 @@ pub enum Spec {
     ChocolatesSpec(ChocolatesSpec),
     EggsSpec(EggsSpec),
     MicrosSpec(MicrosSpec),
+    OneOffSpec(OneOffSpec),
 }
 
 #[cfg_attr(feature = "diesel", derive(Queryable, Selectable), diesel(table_name = ingredients))]
@@ -316,6 +324,7 @@ impl IntoComposition for Spec {
             Spec::ChocolatesSpec(spec) => spec.into_composition(),
             Spec::EggsSpec(spec) => spec.into_composition(),
             Spec::MicrosSpec(spec) => spec.into_composition(),
+            Spec::OneOffSpec(spec) => spec.into_composition(),
         }
     }
 }
@@ -533,6 +542,14 @@ impl IntoComposition for MicrosSpec {
                 emulsifier_strength,
                 stabilizer_strength,
             } => make_emulsifier_stabilizer_composition(Some(emulsifier_strength), Some(stabilizer_strength)),
+        }
+    }
+}
+
+impl IntoComposition for OneOffSpec {
+    fn into_composition(self) -> Result<Composition> {
+        match self {
+            OneOffSpec::Water => Ok(Composition::new()),
         }
     }
 }
@@ -929,6 +946,23 @@ mod test {
     }
 
     #[test]
+    fn into_composition_one_off_spec_water() {
+        let comp = OneOffSpec::Water.into_composition().unwrap();
+
+        assert_eq!(comp.water(), 100.0);
+        assert_eq!(comp.solids.total(), 0.0);
+        assert_eq!(comp.sweeteners.total(), 0.0);
+        assert_eq!(comp.micro.salt, 0.0);
+        assert_eq!(comp.micro.lecithin, 0.0);
+        assert_eq!(comp.micro.emulsifiers, 0.0);
+        assert_eq!(comp.micro.stabilizers, 0.0);
+        assert_eq!(comp.alcohol, 0.0);
+        assert_eq!(comp.pod, 0.0);
+        assert_eq!(comp.pac.total(), 0.0);
+        assert_eq!(comp.pac.hardness_factor, 0.0);
+    }
+
+    #[test]
     fn deserialize_ingredient_spec() {
         [
             (ING_SPEC_MILK_2_PERCENT_STR, ING_SPEC_MILK_2_PERCENT.clone()),
@@ -939,6 +973,7 @@ mod test {
             (ING_SPEC_LECITHIN_STR, ING_SPEC_LECITHIN.clone()),
             (ING_SPEC_STABILIZER_STR, ING_SPEC_STABILIZER.clone()),
             (ING_SPEC_LOUIS_STAB2K_STR, ING_SPEC_LOUIS_STAB2K.clone()),
+            (ING_SPEC_WATER_STR, ING_SPEC_WATER.clone()),
         ]
         .iter()
         .for_each(|(spec_str, spec)| {
