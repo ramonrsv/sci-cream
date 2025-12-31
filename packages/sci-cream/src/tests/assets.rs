@@ -3,7 +3,7 @@ use std::sync::LazyLock;
 use crate::{
     composition::{Composition, PAC, Solids, SolidsBreakdown, Sugars, Sweeteners},
     ingredients::{Category, Ingredient},
-    specs::{AlcoholSpec, CompositionBasis, DairySpec, FullSpec, IngredientSpec, MicrosSpec, Spec, SweetenersSpec},
+    specs::{AlcoholSpec, CompositionBasis, DairySpec, FullSpec, IngredientSpec, MicroSpec, Spec, SweetenerSpec},
 };
 
 // Comp Specs
@@ -11,7 +11,7 @@ use crate::{
 
 pub(crate) static SPEC_DAIRY_2_PERCENT: LazyLock<DairySpec> = LazyLock::new(|| DairySpec { fat: 2.0, msnf: None });
 
-pub(crate) static SPEC_SWEETENERS_SUCROSE: LazyLock<SweetenersSpec> = LazyLock::new(|| SweetenersSpec {
+pub(crate) static SPEC_SWEETENER_SUCROSE: LazyLock<SweetenerSpec> = LazyLock::new(|| SweetenerSpec {
     sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
     other_solids: None,
     basis: CompositionBasis::ByDryWeight { solids: 100.0 },
@@ -19,7 +19,7 @@ pub(crate) static SPEC_SWEETENERS_SUCROSE: LazyLock<SweetenersSpec> = LazyLock::
     pac: None,
 });
 
-pub(crate) static SPEC_SWEETENERS_DEXTROSE: LazyLock<SweetenersSpec> = LazyLock::new(|| SweetenersSpec {
+pub(crate) static SPEC_SWEETENER_DEXTROSE: LazyLock<SweetenerSpec> = LazyLock::new(|| SweetenerSpec {
     sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(100.0)),
     other_solids: None,
     basis: CompositionBasis::ByDryWeight { solids: 92.0 },
@@ -27,7 +27,7 @@ pub(crate) static SPEC_SWEETENERS_DEXTROSE: LazyLock<SweetenersSpec> = LazyLock:
     pac: None,
 });
 
-pub(crate) static SPEC_SWEETENERS_FRUCTOSE: LazyLock<SweetenersSpec> = LazyLock::new(|| SweetenersSpec {
+pub(crate) static SPEC_SWEETENER_FRUCTOSE: LazyLock<SweetenerSpec> = LazyLock::new(|| SweetenerSpec {
     sweeteners: Sweeteners::new().sugars(Sugars::new().fructose(100.0)),
     other_solids: None,
     basis: CompositionBasis::ByDryWeight { solids: 100.0 },
@@ -35,7 +35,7 @@ pub(crate) static SPEC_SWEETENERS_FRUCTOSE: LazyLock<SweetenersSpec> = LazyLock:
     pac: None,
 });
 
-pub(crate) static SPEC_SWEETENERS_INVERT_SUGAR: LazyLock<SweetenersSpec> = LazyLock::new(|| SweetenersSpec {
+pub(crate) static SPEC_SWEETENER_INVERT_SUGAR: LazyLock<SweetenerSpec> = LazyLock::new(|| SweetenerSpec {
     sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(42.5).fructose(42.5).sucrose(15.0)),
     other_solids: None,
     basis: CompositionBasis::ByDryWeight { solids: 80.0 },
@@ -43,7 +43,7 @@ pub(crate) static SPEC_SWEETENERS_INVERT_SUGAR: LazyLock<SweetenersSpec> = LazyL
     pac: None,
 });
 
-pub(crate) static SPEC_SWEETENERS_HONEY: LazyLock<SweetenersSpec> = LazyLock::new(|| SweetenersSpec {
+pub(crate) static SPEC_SWEETENER_HONEY: LazyLock<SweetenerSpec> = LazyLock::new(|| SweetenerSpec {
     sweeteners: Sweeteners::new().sugars(
         Sugars::new()
             .glucose(36.0)
@@ -58,7 +58,7 @@ pub(crate) static SPEC_SWEETENERS_HONEY: LazyLock<SweetenersSpec> = LazyLock::ne
     pac: None,
 });
 
-pub(crate) static SPEC_SWEETENERS_HFCS42: LazyLock<SweetenersSpec> = LazyLock::new(|| SweetenersSpec {
+pub(crate) static SPEC_SWEETENER_HFCS42: LazyLock<SweetenerSpec> = LazyLock::new(|| SweetenerSpec {
     sweeteners: Sweeteners::new()
         .sugars(Sugars::new().fructose(42.0).glucose(53.0))
         .polysaccharide(5.0),
@@ -117,7 +117,7 @@ pub(crate) const ING_SPEC_MILK_2_PERCENT_STR: &str = r#"{
 pub(crate) const ING_SPEC_SUCROSE_STR: &str = r#"{
   "name": "Sucrose",
   "category": "Sweetener",
-  "SweetenersSpec": {
+  "SweetenerSpec": {
     "sweeteners": {
       "sugars": {
         "sucrose": 100
@@ -132,7 +132,7 @@ pub(crate) const ING_SPEC_SUCROSE_STR: &str = r#"{
 pub(crate) const ING_SPEC_DEXTROSE_STR: &str = r#"{
   "name": "Dextrose",
   "category": "Sweetener",
-  "SweetenersSpec": {
+  "SweetenerSpec": {
     "sweeteners": {
       "sugars": {
         "glucose": 100
@@ -147,7 +147,7 @@ pub(crate) const ING_SPEC_DEXTROSE_STR: &str = r#"{
 pub(crate) const ING_SPEC_FRUCTOSE_STR: &str = r#"{
   "name": "Fructose",
   "category": "Sweetener",
-  "SweetenersSpec": {
+  "SweetenerSpec": {
     "sweeteners": {
       "sugars": {
         "fructose": 100
@@ -162,19 +162,19 @@ pub(crate) const ING_SPEC_FRUCTOSE_STR: &str = r#"{
 pub(crate) const ING_SPEC_SALT_STR: &str = r#"{
   "name": "Salt",
   "category": "Micro",
-  "MicrosSpec": "Salt"
+  "MicroSpec": "Salt"
 }"#;
 
 pub(crate) const ING_SPEC_LECITHIN_STR: &str = r#"{
   "name": "Lecithin",
   "category": "Micro",
-  "MicrosSpec": "Lecithin"
+  "MicroSpec": "Lecithin"
 }"#;
 
 pub(crate) const ING_SPEC_STABILIZER_STR: &str = r#"{
   "name": "Rich Ice Cream SB",
   "category": "Micro",
-  "MicrosSpec": {
+  "MicroSpec": {
     "Stabilizer": {
       "strength": 100
     }
@@ -184,7 +184,7 @@ pub(crate) const ING_SPEC_STABILIZER_STR: &str = r#"{
 pub(crate) const ING_SPEC_LOUIS_STAB2K_STR: &str = r#"{
   "name": "Louis Francois Stab 2000",
   "category": "Micro",
-  "MicrosSpec": {
+  "MicroSpec": {
     "EmulsifierStabilizer": {
       "emulsifier_strength": 100,
       "stabilizer_strength": 40
@@ -192,7 +192,7 @@ pub(crate) const ING_SPEC_LOUIS_STAB2K_STR: &str = r#"{
   }
 }"#;
 
-pub(crate) const ING_40_ABV_SPIRITS_STR: &str = r#"{
+pub(crate) const ING_40_ABV_SPIRIT_STR: &str = r#"{
   "name": "40% ABV Spirit",
   "category": "Alcohol",
   "AlcoholSpec": {
@@ -210,7 +210,7 @@ pub(crate) const ING_BAILEYS_IRISH_CREAM_STR: &str = r#"{
     }
 }"#;
 
-pub(crate) static ING_SPEC_WATER_STR: &str = r#"{
+pub(crate) const ING_SPEC_WATER_STR: &str = r#"{
   "name": "Water",
   "category": "Miscellaneous",
   "FullSpec": {}
@@ -225,61 +225,61 @@ pub(crate) static ING_SPEC_MILK_2_PERCENT: LazyLock<IngredientSpec> = LazyLock::
 pub(crate) static ING_SPEC_SUCROSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
     name: "Sucrose".to_string(),
     category: Category::Sweetener,
-    spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_SUCROSE),
+    spec: Spec::SweetenerSpec(*SPEC_SWEETENER_SUCROSE),
 });
 
 pub(crate) static ING_SPEC_DEXTROSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
     name: "Dextrose".to_string(),
     category: Category::Sweetener,
-    spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_DEXTROSE),
+    spec: Spec::SweetenerSpec(*SPEC_SWEETENER_DEXTROSE),
 });
 
 pub(crate) static ING_SPEC_FRUCTOSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
     name: "Fructose".to_string(),
     category: Category::Sweetener,
-    spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_FRUCTOSE),
+    spec: Spec::SweetenerSpec(*SPEC_SWEETENER_FRUCTOSE),
 });
 
 pub(crate) static ING_SPEC_INVERT_SUGAR: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
     name: "Invert Sugar".to_string(),
     category: Category::Sweetener,
-    spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_INVERT_SUGAR),
+    spec: Spec::SweetenerSpec(*SPEC_SWEETENER_INVERT_SUGAR),
 });
 
 pub(crate) static ING_SPEC_HONEY: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
     name: "Honey".to_string(),
     category: Category::Sweetener,
-    spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_HONEY),
+    spec: Spec::SweetenerSpec(*SPEC_SWEETENER_HONEY),
 });
 
 pub(crate) static ING_SPEC_HFCS42: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
     name: "HFCS 42".to_string(),
     category: Category::Sweetener,
-    spec: Spec::SweetenersSpec(*SPEC_SWEETENERS_HFCS42),
+    spec: Spec::SweetenerSpec(*SPEC_SWEETENER_HFCS42),
 });
 
 pub(crate) static ING_SPEC_SALT: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
     name: "Salt".to_string(),
     category: Category::Micro,
-    spec: Spec::MicrosSpec(MicrosSpec::Salt),
+    spec: Spec::MicroSpec(MicroSpec::Salt),
 });
 
 pub(crate) static ING_SPEC_LECITHIN: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
     name: "Lecithin".to_string(),
     category: Category::Micro,
-    spec: Spec::MicrosSpec(MicrosSpec::Lecithin),
+    spec: Spec::MicroSpec(MicroSpec::Lecithin),
 });
 
 pub(crate) static ING_SPEC_STABILIZER: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
     name: "Rich Ice Cream SB".to_string(),
     category: Category::Micro,
-    spec: Spec::MicrosSpec(MicrosSpec::Stabilizer { strength: 100.0 }),
+    spec: Spec::MicroSpec(MicroSpec::Stabilizer { strength: 100.0 }),
 });
 
 pub(crate) static ING_SPEC_LOUIS_STAB2K: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
     name: "Louis Francois Stab 2000".to_string(),
     category: Category::Micro,
-    spec: Spec::MicrosSpec(MicrosSpec::EmulsifierStabilizer {
+    spec: Spec::MicroSpec(MicroSpec::EmulsifierStabilizer {
         emulsifier_strength: 100.0,
         stabilizer_strength: 40.0,
     }),

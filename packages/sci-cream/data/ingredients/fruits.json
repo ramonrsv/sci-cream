@@ -2,7 +2,7 @@
   {
     "name": "Strawberry",
     "category": "Fruit",
-    "FruitsSpec": {
+    "FruitSpec": {
       "sugars": { "glucose": 1.99, "fructose": 2.44, "sucrose": 0.47 },
       "water": 91,
       "fat": 0.3

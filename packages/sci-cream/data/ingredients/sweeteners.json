@@ -2,7 +2,7 @@
   {
     "name": "Sucrose",
     "category": "Sweetener",
-    "SweetenersSpec": {
+    "SweetenerSpec": {
       "sweeteners": { "sugars": { "sucrose": 100 } },
       "ByDryWeight": { "solids": 100 }
     }
@@ -10,7 +10,7 @@
   {
     "name": "Dextrose",
     "category": "Sweetener",
-    "SweetenersSpec": {
+    "SweetenerSpec": {
       "sweeteners": { "sugars": { "glucose": 100 } },
       "ByDryWeight": { "solids": 92 }
     },
@@ -19,7 +19,7 @@
   {
     "name": "Fructose",
     "category": "Sweetener",
-    "SweetenersSpec": {
+    "SweetenerSpec": {
       "sweeteners": { "sugars": { "fructose": 100 } },
       "ByDryWeight": { "solids": 100 }
     }
@@ -27,7 +27,7 @@
   {
     "name": "Invert Sugar",
     "category": "Sweetener",
-    "SweetenersSpec": {
+    "SweetenerSpec": {
       "sweeteners": { "sugars": { "glucose": 42.5, "fructose": 42.5, "sucrose": 15 } },
       "ByDryWeight": { "solids": 80 }
     },
@@ -36,7 +36,7 @@
   {
     "name": "Honey",
     "category": "Sweetener",
-    "SweetenersSpec": {
+    "SweetenerSpec": {
       "sweeteners": {
         "sugars": { "glucose": 36, "fructose": 41, "sucrose": 2, "galactose": 1.5, "maltose": 1.5 }
       },
@@ -48,7 +48,7 @@
   {
     "name": "HFCS 42",
     "category": "Sweetener",
-    "SweetenersSpec": {
+    "SweetenerSpec": {
       "sweeteners": { "sugars": { "fructose": 42, "glucose": 53 }, "polysaccharides": 5 },
       "ByDryWeight": { "solids": 76 }
     },

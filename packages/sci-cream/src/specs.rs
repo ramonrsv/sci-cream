@@ -77,7 +77,7 @@ pub struct DairySpec {
 /// or `sweeteners.artificial` are non-zero.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
-pub struct SweetenersSpec {
+pub struct SweetenerSpec {
     pub sweeteners: Sweeteners,
     pub other_solids: Option<f64>,
     #[serde(flatten)]
@@ -107,10 +107,10 @@ pub struct SweetenersSpec {
 /// ```
 /// use sci_cream::{
 ///     composition::{Sugars, Sweeteners},
-///     specs::{FruitsSpec, IntoComposition}
+///     specs::{FruitSpec, IntoComposition}
 /// };
 ///
-/// let comp = FruitsSpec {
+/// let comp = FruitSpec {
 ///     sugars: Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47),
 ///     water: 91.0,
 ///     fat: Some(0.3),
@@ -125,7 +125,7 @@ pub struct SweetenersSpec {
 #[doc = include_str!("../docs/bibs/101.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
-pub struct FruitsSpec {
+pub struct FruitSpec {
     pub sugars: Sugars,
     pub water: f64,
     pub fat: Option<f64>,
@@ -162,14 +162,14 @@ pub struct FruitsSpec {
 /// ```
 /// use sci_cream::{
 ///     composition::{Sugars, Sweeteners},
-///     specs::{ChocolatesSpec, IntoComposition}
+///     specs::{ChocolateSpec, IntoComposition}
 /// };
 ///
 /// // 70% Cacao Dark Chocolate
 /// // https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g
 /// // 16g/40g fat in nutrition table => 40%% cocoa butter
 /// // 12g/40g sugars in nutrition table => 30% sugar
-/// let comp = ChocolatesSpec {
+/// let comp = ChocolateSpec {
 ///     cacao_solids: 70.0,
 ///     cocoa_butter: 40.0,
 ///     sugar: Some(30.0),
@@ -183,7 +183,7 @@ pub struct FruitsSpec {
 /// // 100% Unsweetened Cocoa Powder
 /// // https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs
 /// // 1g/6g fat in nutrition table => 16.67% cocoa butter
-/// let comp = ChocolatesSpec {
+/// let comp = ChocolateSpec {
 ///     cacao_solids: 100.0,
 ///     cocoa_butter: 16.67,
 ///     sugar: None,
@@ -197,7 +197,7 @@ pub struct FruitsSpec {
 // @todo Add a `msnf` field to support milk chocolate products (some professional chocolatier use)
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
-pub struct ChocolatesSpec {
+pub struct ChocolateSpec {
     pub cacao_solids: f64,
     pub cocoa_butter: f64,
     pub sugar: Option<f64>,
@@ -223,9 +223,9 @@ pub struct ChocolatesSpec {
 /// - Water: 50%, Protein: 16%, Lecithin: 9%, Other Fat: 23% (Clarke, 2004, p. 49)[^4]
 ///
 /// ```
-/// use sci_cream::{composition::{Micro, Solids}, specs::{EggsSpec, IntoComposition}};
+/// use sci_cream::{composition::{Micro, Solids}, specs::{EggSpec, IntoComposition}};
 ///
-/// let comp = EggsSpec {
+/// let comp = EggSpec {
 ///     water: 51.0,
 ///     fats: 30.0,
 ///     lecithin: 9.0,
@@ -241,7 +241,7 @@ pub struct ChocolatesSpec {
 #[doc = include_str!("../docs/bibs/100.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
-pub struct EggsSpec {
+pub struct EggSpec {
     pub water: f64,
     pub fats: f64,
     pub lecithin: f64,
@@ -304,7 +304,7 @@ pub struct AlcoholSpec {
 #[doc = include_str!("../docs/bibs/6.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
-pub enum MicrosSpec {
+pub enum MicroSpec {
     Salt,
     Lecithin,
     Stabilizer {
@@ -344,12 +344,12 @@ pub struct FullSpec {
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum Spec {
     DairySpec(DairySpec),
-    SweetenersSpec(SweetenersSpec),
-    FruitsSpec(FruitsSpec),
-    ChocolatesSpec(ChocolatesSpec),
-    EggsSpec(EggsSpec),
+    SweetenerSpec(SweetenerSpec),
+    FruitSpec(FruitSpec),
+    ChocolateSpec(ChocolateSpec),
+    EggSpec(EggSpec),
     AlcoholSpec(AlcoholSpec),
-    MicrosSpec(MicrosSpec),
+    MicroSpec(MicroSpec),
     FullSpec(FullSpec),
 }
 
@@ -366,12 +366,12 @@ impl IntoComposition for Spec {
     fn into_composition(self) -> Result<Composition> {
         match self {
             Spec::DairySpec(spec) => spec.into_composition(),
-            Spec::SweetenersSpec(spec) => spec.into_composition(),
-            Spec::FruitsSpec(spec) => spec.into_composition(),
-            Spec::ChocolatesSpec(spec) => spec.into_composition(),
-            Spec::EggsSpec(spec) => spec.into_composition(),
+            Spec::SweetenerSpec(spec) => spec.into_composition(),
+            Spec::FruitSpec(spec) => spec.into_composition(),
+            Spec::ChocolateSpec(spec) => spec.into_composition(),
+            Spec::EggSpec(spec) => spec.into_composition(),
             Spec::AlcoholSpec(spec) => spec.into_composition(),
-            Spec::MicrosSpec(spec) => spec.into_composition(),
+            Spec::MicroSpec(spec) => spec.into_composition(),
             Spec::FullSpec(spec) => spec.into_composition(),
         }
     }
@@ -414,7 +414,7 @@ impl IntoComposition for DairySpec {
     }
 }
 
-impl IntoComposition for SweetenersSpec {
+impl IntoComposition for SweetenerSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self {
             sweeteners,
@@ -475,7 +475,7 @@ impl IntoComposition for SweetenersSpec {
     }
 }
 
-impl IntoComposition for FruitsSpec {
+impl IntoComposition for FruitSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self { sugars, water, fat } = self;
         let fat = fat.unwrap_or(0.0);
@@ -495,7 +495,7 @@ impl IntoComposition for FruitsSpec {
     }
 }
 
-impl IntoComposition for ChocolatesSpec {
+impl IntoComposition for ChocolateSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self {
             cacao_solids,
@@ -534,7 +534,7 @@ impl IntoComposition for ChocolatesSpec {
     }
 }
 
-impl IntoComposition for EggsSpec {
+impl IntoComposition for EggSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self { water, fats, lecithin } = self;
 
@@ -604,7 +604,7 @@ impl IntoComposition for AlcoholSpec {
     }
 }
 
-impl IntoComposition for MicrosSpec {
+impl IntoComposition for MicroSpec {
     fn into_composition(self) -> Result<Composition> {
         let make_emulsifier_stabilizer_composition =
             |emulsifiers_strength: Option<f64>, stabilizers_strength: Option<f64>| -> Result<Composition> {
@@ -627,16 +627,16 @@ impl IntoComposition for MicrosSpec {
             };
 
         match self {
-            MicrosSpec::Salt => Ok(Composition::new()
+            MicroSpec::Salt => Ok(Composition::new()
                 .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
                 .micro(Micro::new().salt(100.0))
                 .pac(PAC::new().salt(constants::pac::SALT))),
-            MicrosSpec::Lecithin => Ok(Composition::new()
+            MicroSpec::Lecithin => Ok(Composition::new()
                 .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
                 .micro(Micro::new().emulsifiers(100.0))),
-            MicrosSpec::Stabilizer { strength } => make_emulsifier_stabilizer_composition(None, Some(strength)),
-            MicrosSpec::Emulsifier { strength } => make_emulsifier_stabilizer_composition(Some(strength), None),
-            MicrosSpec::EmulsifierStabilizer {
+            MicroSpec::Stabilizer { strength } => make_emulsifier_stabilizer_composition(None, Some(strength)),
+            MicroSpec::Emulsifier { strength } => make_emulsifier_stabilizer_composition(Some(strength), None),
+            MicroSpec::EmulsifierStabilizer {
                 emulsifier_strength,
                 stabilizer_strength,
             } => make_emulsifier_stabilizer_composition(Some(emulsifier_strength), Some(stabilizer_strength)),
@@ -741,14 +741,14 @@ mod test {
     }
 
     #[test]
-    fn into_composition_sweeteners_spec_sucrose() {
+    fn into_composition_sweetener_spec_sucrose() {
         let Composition {
             solids,
             sweeteners,
             pod,
             pac,
             ..
-        } = SweetenersSpec {
+        } = SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
@@ -766,14 +766,14 @@ mod test {
     }
 
     #[test]
-    fn into_composition_sweeteners_spec_dextrose() {
+    fn into_composition_sweetener_spec_dextrose() {
         let Composition {
             solids,
             sweeteners,
             pod,
             pac,
             ..
-        } = SweetenersSpec {
+        } = SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(100.0)),
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 92.0 },
@@ -791,14 +791,14 @@ mod test {
     }
 
     #[test]
-    fn into_composition_sweeteners_spec_fructose() {
+    fn into_composition_sweetener_spec_fructose() {
         let Composition {
             solids,
             sweeteners,
             pod,
             pac,
             ..
-        } = SweetenersSpec {
+        } = SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().fructose(100.0)),
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
@@ -816,14 +816,14 @@ mod test {
     }
 
     #[test]
-    fn into_composition_sugars_spec_invert_sugar() {
+    fn into_composition_sweetener_spec_invert_sugar() {
         let Composition {
             solids,
             sweeteners,
             pod,
             pac,
             ..
-        } = SweetenersSpec {
+        } = SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(42.5).fructose(42.5).sucrose(15.0)),
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 80.0 },
@@ -842,14 +842,14 @@ mod test {
     }
 
     #[test]
-    fn into_composition_sweeteners_spec_honey() {
+    fn into_composition_sweetener_spec_honey() {
         let Composition {
             solids,
             sweeteners,
             pod,
             pac,
             ..
-        } = SweetenersSpec {
+        } = SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(
                 Sugars::new()
                     .glucose(36.0)
@@ -886,14 +886,14 @@ mod test {
     }
 
     #[test]
-    fn into_composition_sweeteners_spec_hfcs42() {
+    fn into_composition_sweetener_spec_hfcs42() {
         let Composition {
             solids,
             sweeteners,
             pod,
             pac,
             ..
-        } = SweetenersSpec {
+        } = SweetenerSpec {
             sweeteners: Sweeteners::new()
                 .sugars(Sugars::new().fructose(42.0).glucose(53.0))
                 .polysaccharide(5.0),
@@ -920,14 +920,14 @@ mod test {
     }
 
     #[test]
-    fn into_composition_fruits_spec_strawberry() {
+    fn into_composition_fruit_spec_strawberry() {
         let Composition {
             solids,
             sweeteners,
             pod,
             pac,
             ..
-        } = FruitsSpec {
+        } = FruitSpec {
             sugars: Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47),
             water: 91.0,
             fat: Some(0.3),
@@ -946,14 +946,14 @@ mod test {
     }
 
     #[test]
-    fn into_composition_chocolates_spec_70_dark_chocolate() {
+    fn into_composition_chocolate_spec_70_dark_chocolate() {
         let Composition {
             solids,
             sweeteners,
             pod,
             pac,
             ..
-        } = ChocolatesSpec {
+        } = ChocolateSpec {
             cacao_solids: 70.0,
             cocoa_butter: 40.0,
             sugar: Some(30.0),
@@ -977,14 +977,14 @@ mod test {
     }
 
     #[test]
-    fn into_composition_chocolates_spec_100_unsweetened_cocoa_powder() {
+    fn into_composition_chocolate_spec_100_unsweetened_cocoa_powder() {
         let Composition {
             solids,
             sweeteners,
             pod,
             pac,
             ..
-        } = ChocolatesSpec {
+        } = ChocolateSpec {
             cacao_solids: 100.0,
             cocoa_butter: 16.67,
             sugar: None,
@@ -1005,8 +1005,8 @@ mod test {
     }
 
     #[test]
-    fn into_composition_eggs_spec_egg_yolk() {
-        let Composition { solids, micro, .. } = EggsSpec {
+    fn into_composition_egg_spec_egg_yolk() {
+        let Composition { solids, micro, .. } = EggSpec {
             water: 51.0,
             fats: 30.0,
             lecithin: 9.0,
@@ -1069,7 +1069,7 @@ mod test {
 
     #[test]
     fn into_composition_micro_spec_salt() {
-        let Composition { solids, micro, pac, .. } = MicrosSpec::Salt.into_composition().unwrap();
+        let Composition { solids, micro, pac, .. } = MicroSpec::Salt.into_composition().unwrap();
         assert_eq!(solids.other.snfs, 100.0);
         assert_eq!(solids.total(), 100.0);
         assert_eq!(micro.salt, 100.0);
@@ -1078,7 +1078,7 @@ mod test {
 
     #[test]
     fn into_composition_micro_spec_lecithin() {
-        let Composition { solids, micro, .. } = MicrosSpec::Lecithin.into_composition().unwrap();
+        let Composition { solids, micro, .. } = MicroSpec::Lecithin.into_composition().unwrap();
         assert_eq!(solids.other.snfs, 100.0);
         assert_eq!(solids.total(), 100.0);
         assert_eq!(micro.emulsifiers, 100.0);
@@ -1086,7 +1086,7 @@ mod test {
 
     #[test]
     fn into_composition_micro_spec_stabilizer() {
-        let Composition { solids, micro, .. } = MicrosSpec::Stabilizer { strength: 85.0 }.into_composition().unwrap();
+        let Composition { solids, micro, .. } = MicroSpec::Stabilizer { strength: 85.0 }.into_composition().unwrap();
         assert_eq!(solids.other.snfs, 100.0);
         assert_eq!(solids.total(), 100.0);
         assert_eq!(micro.stabilizers, 85.0);
@@ -1094,15 +1094,15 @@ mod test {
 
     #[test]
     fn into_composition_micro_spec_emulsifier() {
-        let Composition { solids, micro, .. } = MicrosSpec::Emulsifier { strength: 60.0 }.into_composition().unwrap();
+        let Composition { solids, micro, .. } = MicroSpec::Emulsifier { strength: 60.0 }.into_composition().unwrap();
         assert_eq!(solids.other.snfs, 100.0);
         assert_eq!(solids.total(), 100.0);
         assert_eq!(micro.emulsifiers, 60.0);
     }
 
     #[test]
-    fn into_composition_emulsifiers_stabilizers_spec() {
-        let Composition { solids, micro, .. } = MicrosSpec::EmulsifierStabilizer {
+    fn into_composition_micro_spec_emulsifier_stabilizer() {
+        let Composition { solids, micro, .. } = MicroSpec::EmulsifierStabilizer {
             emulsifier_strength: 70.0,
             stabilizer_strength: 30.0,
         }
@@ -1153,7 +1153,7 @@ mod test {
             (ING_SPEC_STABILIZER_STR, ING_SPEC_STABILIZER.clone()),
             (ING_SPEC_LOUIS_STAB2K_STR, ING_SPEC_LOUIS_STAB2K.clone()),
             (ING_SPEC_WATER_STR, ING_SPEC_WATER.clone()),
-            (ING_40_ABV_SPIRITS_STR, ING_SPEC_40_ABV_SPIRIT.clone()),
+            (ING_40_ABV_SPIRIT_STR, ING_SPEC_40_ABV_SPIRIT.clone()),
             (ING_BAILEYS_IRISH_CREAM_STR, ING_SPEC_BAILEYS_IRISH_CREAM.clone()),
         ]
         .iter()
