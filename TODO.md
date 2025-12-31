@@ -31,3 +31,7 @@
       (`3.0.5 -> 3.1.0`) are producing an error (below). For now, remove the caret `^` in
       package.json to force the specific known working versions, but need further investigation.
       `Error occurred prerendering page "/" ... TypeError: b.props.children is not iterable`
+- [ ] Investigate adding logs or throwing exceptions in WASM functions, to make it errors at the
+      Next.js app easier to debug - at the moment it just says the WASM function is unreachable.
+- [ ] Once available, use `FullSpec` for "Baileys Irish Cream", as it has a more complex composition
+      than can be expressed with `AlcoholSpec`, including other carbohydrates, milk solids, etc.
