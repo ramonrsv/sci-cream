@@ -5,6 +5,7 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     composition::{CompKey, Composition, ScaleComponents},
+    error::Result,
     fpd::{FPD, FpdKey},
 };
 
@@ -23,20 +24,21 @@ impl CompositionLine {
     }
 }
 
-pub fn calculate_mix_composition(composition_lines: &[CompositionLine]) -> Composition {
-    let total_amount: f64 = composition_lines.iter().map(|line| line.amount).sum();
+impl Composition {
+    pub fn calculate_from_composition_lines(composition_lines: &[CompositionLine]) -> Result<Self> {
+        let total_amount: f64 = composition_lines.iter().map(|line| line.amount).sum();
 
-    if total_amount == 0.0 {
-        return Composition::empty();
-    }
+        if total_amount == 0.0 {
+            return Ok(Composition::empty());
+        }
 
-    composition_lines
-        .iter()
-        .fold(Composition::empty(), |mut mix_comp, line| {
+        composition_lines.iter().try_fold(Composition::empty(), |acc, line| {
+            let mut mix_comp = acc;
             let weight = line.amount / total_amount;
             mix_comp = mix_comp.add(&line.composition.scale(weight));
-            mix_comp
+            Ok(mix_comp)
         })
+    }
 }
 
 #[derive(Hash, PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
@@ -67,6 +69,13 @@ impl MixProperties {
             PropKey::FpdKey(fpd_key) => self.fpd.get(fpd_key),
         }
     }
+
+    pub fn calculate_from_composition_lines(composition_lines: &[CompositionLine]) -> Result<Self> {
+        let composition = Composition::calculate_from_composition_lines(composition_lines)?;
+        let fpd = FPD::compute_from_composition(composition)?;
+
+        Ok(Self { composition, fpd })
+    }
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
@@ -77,25 +86,24 @@ impl MixProperties {
     }
 }
 
-pub fn calculate_mix_properties(composition_lines: &[CompositionLine]) -> MixProperties {
-    let composition = calculate_mix_composition(composition_lines);
-    let fpd = FPD::compute_from_composition(composition).unwrap();
-
-    MixProperties { composition, fpd }
-}
-
 #[cfg(feature = "wasm")]
-pub mod js {
+pub mod wasm {
     use super::*;
 
     #[wasm_bindgen]
-    pub fn calculate_mix_composition_js(composition_lines: JsValue) -> Composition {
-        calculate_mix_composition(&serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(composition_lines).unwrap())
+    pub fn calculate_mix_composition(composition_lines: JsValue) -> std::result::Result<Composition, JsValue> {
+        Composition::calculate_from_composition_lines(
+            &serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(composition_lines).unwrap(),
+        )
+        .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
     #[wasm_bindgen]
-    pub fn calculate_mix_properties_js(composition_lines: JsValue) -> MixProperties {
-        calculate_mix_properties(&serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(composition_lines).unwrap())
+    pub fn calculate_mix_properties(composition_lines: JsValue) -> std::result::Result<MixProperties, JsValue> {
+        MixProperties::calculate_from_composition_lines(
+            &serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(composition_lines).unwrap(),
+        )
+        .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 }
 
@@ -116,7 +124,7 @@ mod test {
     use super::*;
     use crate::{constants::COMPOSITION_EPSILON, specs::IntoComposition};
 
-    fn convert_to_composition_lines(items: &[(&str, f64)]) -> Vec<CompositionLine> {
+    fn to_comp_lines(items: &[(&str, f64)]) -> Vec<CompositionLine> {
         items
             .iter()
             .map(|(name, amount)| {
@@ -127,11 +135,12 @@ mod test {
     }
 
     #[test]
-    fn calculate_mix_composition() {
-        let mix_comp = super::calculate_mix_composition(&[
+    fn composition_calculate_from_composition_lines() {
+        let mix_comp = Composition::calculate_from_composition_lines(&[
             CompositionLine::new(*COMP_MILK_2_PERCENT, 50.0),
             CompositionLine::new(*COMP_SUCROSE, 50.0),
-        ]);
+        ])
+        .unwrap();
 
         assert_eq!(mix_comp.sweeteners.sugars.lactose, 4.8069 / 2.0);
         assert_eq!(mix_comp.sweeteners.sugars.sucrose, 50.0);
@@ -150,8 +159,8 @@ mod test {
     }
 
     #[test]
-    fn calculate_mix_properties_with_hf() {
-        let mix_properties = calculate_mix_properties(&convert_to_composition_lines(&[
+    fn mix_properties_calculate_from_composition_lines_with_hf() {
+        let mix_properties = MixProperties::calculate_from_composition_lines(&to_comp_lines(&[
             ("Whole Milk", 245.0),
             ("Whipping Cream", 215.0),
             ("70% Dark Chocolate", 28.0),
@@ -162,7 +171,8 @@ mod test {
             ("Salt", 0.5),
             ("Rich Ice Cream SB", 1.25),
             // ("Vanilla Extract", 6.0),
-        ]));
+        ]))
+        .unwrap();
 
         let mix_composition = &mix_properties.composition;
 
@@ -177,7 +187,8 @@ mod test {
     #[test]
     fn floating_point_edge_case_zero_water_near_epsilon() {
         let mix_properties =
-            calculate_mix_properties(&convert_to_composition_lines(&[("Fructose", 10.0), ("Salt", 0.54)]));
+            MixProperties::calculate_from_composition_lines(&to_comp_lines(&[("Fructose", 10.0), ("Salt", 0.54)]))
+                .unwrap();
 
         assert_abs_diff_eq!(mix_properties.composition.water(), 0.0, epsilon = COMPOSITION_EPSILON);
         assert_true!(mix_properties.fpd.fpd.is_nan());

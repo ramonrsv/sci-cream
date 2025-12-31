@@ -26,9 +26,9 @@ import {
   Composition,
   CompositionLine,
   MixProperties,
-  into_ingredient_from_spec_js,
-  calculate_mix_composition_js,
-  calculate_mix_properties_js,
+  into_ingredient_from_spec,
+  calculate_mix_composition,
+  calculate_mix_properties,
 } from "@workspace/sci-cream";
 
 import { SchemaCategory } from "@workspace/sci-cream/schema-category";
@@ -43,14 +43,14 @@ vi.mock("@workspace/sci-cream", async () => {
   const actual = await vi.importActual("@workspace/sci-cream");
   return {
     ...actual,
-    into_ingredient_from_spec_js: vi.fn((spec) => {
+    into_ingredient_from_spec: vi.fn((spec) => {
       const ingredient = { name: spec.name || "Test Ingredient", composition: new Composition() };
       return ingredient;
     }),
-    calculate_mix_composition_js: vi.fn(() => {
+    calculate_mix_composition: vi.fn(() => {
       return new Composition();
     }),
-    calculate_mix_properties_js: vi.fn(() => {
+    calculate_mix_properties: vi.fn(() => {
       return new MixProperties();
     }),
   };
@@ -230,9 +230,9 @@ describe("Recipe Helper Functions", () => {
       expect(result).toBeInstanceOf(Composition);
     });
 
-    it("should call calculate_mix_composition_js with composition lines", () => {
+    it("should call calculate_mix_composition with composition lines", () => {
       calculateMixComposition(recipe);
-      expect(calculate_mix_composition_js).toHaveBeenCalled();
+      expect(calculate_mix_composition).toHaveBeenCalled();
     });
   });
 
@@ -248,9 +248,9 @@ describe("Recipe Helper Functions", () => {
       expect(result).toBeInstanceOf(MixProperties);
     });
 
-    it("should call calculate_mix_properties_js with composition lines", () => {
+    it("should call calculate_mix_properties with composition lines", () => {
       calculateMixProperties(recipe);
-      expect(calculate_mix_properties_js).toHaveBeenCalled();
+      expect(calculate_mix_properties).toHaveBeenCalled();
     });
   });
 });
@@ -581,7 +581,7 @@ describe("RecipeGrid Component", () => {
 
   it("should make Ingredient from spec when valid ingredient is entered", async () => {
     vi.mocked(fetchIngredientSpec).mockResolvedValue(mockSpec);
-    vi.mocked(into_ingredient_from_spec_js).mockReturnValue(mockIngredient);
+    vi.mocked(into_ingredient_from_spec).mockReturnValue(mockIngredient);
 
     const { container } = render(<RecipeGridWithSpy indices={[0]} />);
 
@@ -589,7 +589,7 @@ describe("RecipeGrid Component", () => {
     fireEvent.change(firstIngredientInput, { target: { value: "2% Milk" } });
 
     await waitFor(() => {
-      expect(into_ingredient_from_spec_js).toHaveBeenCalledWith(mockDairySpe);
+      expect(into_ingredient_from_spec).toHaveBeenCalledWith(mockDairySpe);
       expect(recipeContext.recipes[0].ingredientRows[0].ingredient).toBe(mockIngredient);
     });
   });
@@ -597,7 +597,7 @@ describe("RecipeGrid Component", () => {
   it("should cache fetched ingredient specs", async () => {
     const user = userEvent.setup();
     vi.mocked(fetchIngredientSpec).mockResolvedValue(mockSpec);
-    vi.mocked(into_ingredient_from_spec_js).mockReturnValue(mockIngredient);
+    vi.mocked(into_ingredient_from_spec).mockReturnValue(mockIngredient);
 
     const { container } = render(<RecipeGridWithSpy indices={[0]} />);
     const firstIngredientInput = getIngredientNameElement(container, 0);

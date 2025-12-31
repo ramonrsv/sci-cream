@@ -9,7 +9,7 @@ import { isCompKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STD_COMPONENT_H_PX } from "./page";
 import { STATE_VAL } from "../lib/util";
 
-import { CompKey, comp_key_as_med_str_js, getWasmEnums } from "@workspace/sci-cream";
+import { CompKey, comp_key_as_med_str, getWasmEnums } from "@workspace/sci-cream";
 
 function getCompKeys(): CompKey[] {
   return getWasmEnums(CompKey).filter(
@@ -90,7 +90,7 @@ export function IngredientCompositionGrid({ recipe }: { recipe: Recipe }) {
         keyFilterState={compsFilterState}
         selectedKeysState={selectedCompsState}
         getKeys={getCompKeys}
-        key_as_med_str_js={comp_key_as_med_str_js}
+        key_as_med_str={comp_key_as_med_str}
       />
       {/* @todo The table doesn't fully align to the right, and it's parent's div is ~2px too tall */}
       <div className="component-inner-border overflow-x-auto whitespace-nowrap">
@@ -101,7 +101,7 @@ export function IngredientCompositionGrid({ recipe }: { recipe: Recipe }) {
             <tr className="h-6.25">
               {getEnabledComps().map((comp_key) => (
                 <th key={comp_key} className="table-header w-fit px-1 text-center">
-                  {comp_key_as_med_str_js(comp_key)}
+                  {comp_key_as_med_str(comp_key)}
                 </th>
               ))}
             </tr>

@@ -1,8 +1,8 @@
 import {
   CompKey,
   FpdKey,
-  comp_key_as_med_str_js,
-  fpd_key_as_med_str_js,
+  comp_key_as_med_str,
+  fpd_key_as_med_str,
   MixProperties,
 } from "../../wasm/index";
 
@@ -36,11 +36,11 @@ export function getPropKeys(): PropKey[] {
   return [...getTsEnumStringKeys(CompKey), ...getTsEnumStringKeys(FpdKey)] as PropKey[];
 }
 
-export function prop_key_as_med_str_js(prop_key: PropKey): string {
+export function prop_key_as_med_str(prop_key: PropKey): string {
   if (isCompKey(prop_key)) {
-    return comp_key_as_med_str_js(CompKey[prop_key as keyof typeof CompKey]);
+    return comp_key_as_med_str(CompKey[prop_key as keyof typeof CompKey]);
   } else if (isFpdKey(prop_key)) {
-    return fpd_key_as_med_str_js(FpdKey[prop_key as keyof typeof FpdKey]);
+    return fpd_key_as_med_str(FpdKey[prop_key as keyof typeof FpdKey]);
   } else {
     throw new Error("Invalid PropKey: " + prop_key);
   }

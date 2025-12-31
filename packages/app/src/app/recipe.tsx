@@ -10,12 +10,12 @@ import { recipeCompBgColor } from "@/lib/styles/colors";
 
 import {
   Ingredient,
-  into_ingredient_from_spec_js,
+  into_ingredient_from_spec,
   Composition,
   CompositionLine,
   MixProperties,
-  calculate_mix_composition_js,
-  calculate_mix_properties_js,
+  calculate_mix_composition,
+  calculate_mix_properties,
 } from "@workspace/sci-cream";
 
 export interface IngredientRow {
@@ -86,11 +86,11 @@ export function getCompositionLines(recipe: Recipe): CompositionLine[] {
 }
 
 export function calculateMixComposition(recipe: Recipe): Composition {
-  return calculate_mix_composition_js(getCompositionLines(recipe));
+  return calculate_mix_composition(getCompositionLines(recipe));
 }
 
 export function calculateMixProperties(recipe: Recipe): MixProperties {
-  return calculate_mix_properties_js(getCompositionLines(recipe));
+  return calculate_mix_properties(getCompositionLines(recipe));
 }
 
 export function RecipeGrid({
@@ -155,7 +155,7 @@ export function RecipeGrid({
 
     if (isValidIngredient && (row.ingredient === undefined || row.ingredient.name !== row.name)) {
       cachedFetchIngredientSpec(row.name)
-        .then((spec) => (spec ? into_ingredient_from_spec_js(spec.spec) : undefined))
+        .then((spec) => (spec ? into_ingredient_from_spec(spec.spec) : undefined))
         .then((ingredient) => {
           updateRecipe({ ...row, ingredient });
         });

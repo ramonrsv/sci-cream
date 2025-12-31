@@ -1048,10 +1048,11 @@ mod tests {
     #[test]
     fn corvitto_pac_to_serving_temp_vs_goff_hartel_fpd_at_70_frozen_water() {
         for (pac, expected_serving_temp) in CORVITTO_PAC_TO_SERVING_TEMP_TABLE.iter() {
-            let mut comp = crate::recipe::calculate_mix_composition(&[
+            let mut comp = Composition::calculate_from_composition_lines(&[
                 crate::recipe::CompositionLine::new(*CORVITTO_REF_COMP_11ST, 50.0),
                 crate::recipe::CompositionLine::new(*CORVITTO_REF_COMP_18ST, 50.0),
-            ]);
+            ])
+            .unwrap();
             comp.pac.sugars = *pac;
 
             let fpd_curve_step_at_xx_fw =
@@ -1063,10 +1064,11 @@ mod tests {
     #[test]
     fn corvitto_pac_to_serving_temp_vs_modified_goff_hartel_corvitto_fpd_at_70_frozen_water() {
         for (pac, expected_serving_temp) in CORVITTO_PAC_TO_SERVING_TEMP_TABLE.iter() {
-            let mut comp = crate::recipe::calculate_mix_composition(&[
+            let mut comp = Composition::calculate_from_composition_lines(&[
                 crate::recipe::CompositionLine::new(*CORVITTO_REF_COMP_11ST, 50.0),
                 crate::recipe::CompositionLine::new(*CORVITTO_REF_COMP_18ST, 50.0),
-            ]);
+            ])
+            .unwrap();
             comp.pac.sugars = *pac;
 
             let fpd_curve_step_at_xx_fw =

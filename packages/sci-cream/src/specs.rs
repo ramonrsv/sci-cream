@@ -678,11 +678,11 @@ impl IntoComposition for FullSpec {
 }
 
 #[cfg(feature = "wasm")]
-pub mod js {
+pub mod wasm {
     use super::*;
 
     #[wasm_bindgen]
-    pub fn into_ingredient_from_spec_js(spec: JsValue) -> Ingredient {
+    pub fn into_ingredient_from_spec(spec: JsValue) -> Ingredient {
         serde_wasm_bindgen::from_value::<IngredientSpec>(spec)
             .unwrap()
             .into_ingredient()

@@ -372,13 +372,13 @@ impl Sugars {
     }
 
     #[cfg(feature = "wasm")]
-    pub fn to_pod_js(&self) -> Option<f64> {
-        self.to_pod().ok()
+    pub fn to_pod_wasm(&self) -> std::result::Result<f64, JsValue> {
+        self.to_pod().map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
     #[cfg(feature = "wasm")]
-    pub fn to_pac_js(&self) -> Option<f64> {
-        self.to_pac().ok()
+    pub fn to_pac_wasm(&self) -> std::result::Result<f64, JsValue> {
+        self.to_pac().map_err(|e| JsValue::from_str(&e.to_string()))
     }
 }
 
@@ -441,13 +441,13 @@ impl Sweeteners {
     }
 
     #[cfg(feature = "wasm")]
-    pub fn to_pod_js(&self) -> Option<f64> {
-        self.to_pod().ok()
+    pub fn to_pod_wasm(&self) -> std::result::Result<f64, JsValue> {
+        self.to_pod().map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
     #[cfg(feature = "wasm")]
-    pub fn to_pac_js(&self) -> Option<f64> {
-        self.to_pac().ok()
+    pub fn to_pac_wasm(&self) -> std::result::Result<f64, JsValue> {
+        self.to_pac().map_err(|e| JsValue::from_str(&e.to_string()))
     }
 }
 

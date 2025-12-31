@@ -15,7 +15,7 @@ import {
   PropKey,
   compToPropKey,
   fpdToPropKey,
-  prop_key_as_med_str_js,
+  prop_key_as_med_str,
   getMixProperty,
   getPropKeys as getPropKeysAll,
 } from "@workspace/sci-cream";
@@ -86,8 +86,8 @@ function createMockRecipeContext(nonEmptyRecipes: boolean[] = []) {
   return recipeCtx;
 }
 
-const getCompLabel = (compKey: CompKey) => prop_key_as_med_str_js(compToPropKey(compKey));
-const getFpdLabel = (fpdKey: FpdKey) => prop_key_as_med_str_js(fpdToPropKey(fpdKey));
+const getCompLabel = (compKey: CompKey) => prop_key_as_med_str(compToPropKey(compKey));
+const getFpdLabel = (fpdKey: FpdKey) => prop_key_as_med_str(fpdToPropKey(fpdKey));
 const getPropIndex = (propKey: PropKey) => getPropKeys().indexOf(propKey);
 
 describe("MixPropertiesChart", () => {

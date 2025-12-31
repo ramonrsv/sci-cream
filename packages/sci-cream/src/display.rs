@@ -87,16 +87,16 @@ pub fn composition_value_as_percentage(comp: f64, qty: f64, mix_total: f64) -> f
 }
 
 #[cfg(feature = "wasm")]
-pub mod js {
+pub mod wasm {
     use super::*;
 
     #[wasm_bindgen]
-    pub fn comp_key_as_med_str_js(key: CompKey) -> String {
+    pub fn comp_key_as_med_str(key: CompKey) -> String {
         key.as_med_str().to_string()
     }
 
     #[wasm_bindgen]
-    pub fn fpd_key_as_med_str_js(key: FpdKey) -> String {
+    pub fn fpd_key_as_med_str(key: FpdKey) -> String {
         key.as_med_str().to_string()
     }
 }

@@ -6,8 +6,8 @@ import {
   CompKey,
   FpdKey,
   MixProperties,
-  comp_key_as_med_str_js,
-  fpd_key_as_med_str_js,
+  comp_key_as_med_str,
+  fpd_key_as_med_str,
 } from "../../wasm/index";
 
 import {
@@ -18,12 +18,12 @@ import {
   isCompKey,
   isFpdKey,
   getPropKeys,
-  prop_key_as_med_str_js,
+  prop_key_as_med_str,
   getMixProperty,
 } from "./prop_key";
 
 test("Import from sci-cream wasm package, at sci-cream", () => {
-  expect(comp_key_as_med_str_js(CompKey.MilkFat)).toBe("Milk Fat");
+  expect(comp_key_as_med_str(CompKey.MilkFat)).toBe("Milk Fat");
 });
 
 test("PropKeyObj enum contains all CompKey and FpdKey values", () => {
@@ -52,11 +52,11 @@ test("getPropKeys returns all PropKey values in correct order", () => {
   expect(propKeys).not.toStrictEqual(getTsEnumStringKeys(PropKeyObj));
 });
 
-test("prop_key_as_med_str_js works for all PropKey values", () => {
+test("prop_key_as_med_str works for all PropKey values", () => {
   const propKeys = getPropKeys();
 
   for (const propKey of propKeys) {
-    const medStr = prop_key_as_med_str_js(propKey);
+    const medStr = prop_key_as_med_str(propKey);
     expect(typeof medStr).toBe("string");
     expect(medStr.length).toBeGreaterThan(0);
   }
@@ -81,53 +81,53 @@ test("isCompKey and isFpdKey work correctly", () => {
   }
 });
 
-test("comp_key_as_med_str_js works for CompKey/FpdKey string values via PropKey", () => {
+test("comp_key_as_med_str works for CompKey/FpdKey string values via PropKey", () => {
   const compStrKeys = getTsEnumStringKeys(CompKey);
   const fpdStrKeys = getTsEnumStringKeys(FpdKey);
 
   for (const compStrKey of compStrKeys) {
-    const compKeyMedStr = comp_key_as_med_str_js(CompKey[compStrKey]);
-    const propKeyMedStr = prop_key_as_med_str_js(compStrKey as PropKey);
+    const compKeyMedStr = comp_key_as_med_str(CompKey[compStrKey]);
+    const propKeyMedStr = prop_key_as_med_str(compStrKey as PropKey);
     expect(propKeyMedStr).toBe(compKeyMedStr);
   }
 
   for (const fpdStrKey of fpdStrKeys) {
-    const fpdKeyMedStr = fpd_key_as_med_str_js(FpdKey[fpdStrKey]);
-    const propKeyMedStr = prop_key_as_med_str_js(fpdStrKey as PropKey);
+    const fpdKeyMedStr = fpd_key_as_med_str(FpdKey[fpdStrKey]);
+    const propKeyMedStr = prop_key_as_med_str(fpdStrKey as PropKey);
     expect(propKeyMedStr).toBe(fpdKeyMedStr);
   }
 });
 
-test("comp_key_as_med_str_js works for CompKey/FpdKey number values via PropKey", () => {
+test("comp_key_as_med_str works for CompKey/FpdKey number values via PropKey", () => {
   const compNumKeys = getTsEnumNumberKeys(CompKey);
   const fpdNumKeys = getTsEnumNumberKeys(FpdKey);
 
   for (const compNumKey of compNumKeys) {
-    const compKeyMedStr = comp_key_as_med_str_js(compNumKey as unknown as CompKey);
-    const propKeyMedStr = prop_key_as_med_str_js(CompKey[compNumKey]);
+    const compKeyMedStr = comp_key_as_med_str(compNumKey as unknown as CompKey);
+    const propKeyMedStr = prop_key_as_med_str(CompKey[compNumKey]);
     expect(propKeyMedStr).toBe(compKeyMedStr);
   }
 
   for (const fpdNumKey of fpdNumKeys) {
-    const fpdKeyMedStr = fpd_key_as_med_str_js(fpdNumKey as unknown as FpdKey);
-    const propKeyMedStr = prop_key_as_med_str_js(FpdKey[fpdNumKey]);
+    const fpdKeyMedStr = fpd_key_as_med_str(fpdNumKey as unknown as FpdKey);
+    const propKeyMedStr = prop_key_as_med_str(FpdKey[fpdNumKey]);
     expect(propKeyMedStr).toBe(fpdKeyMedStr);
   }
 });
 
-test("comp_key_as_med_str_js works for CompKey/FpdKey via comp/fpdToPropKey", () => {
+test("comp_key_as_med_str works for CompKey/FpdKey via comp/fpdToPropKey", () => {
   const compKeys = getWasmEnums(CompKey);
   const fpdKeys = getWasmEnums(FpdKey);
 
   for (const compKey of compKeys) {
-    const compKeyMedStr = comp_key_as_med_str_js(compKey);
-    const propKeyMedStr = prop_key_as_med_str_js(compToPropKey(compKey));
+    const compKeyMedStr = comp_key_as_med_str(compKey);
+    const propKeyMedStr = prop_key_as_med_str(compToPropKey(compKey));
     expect(propKeyMedStr).toBe(compKeyMedStr);
   }
 
   for (const fpdKey of fpdKeys) {
-    const fpdKeyMedStr = fpd_key_as_med_str_js(fpdKey);
-    const propKeyMedStr = prop_key_as_med_str_js(fpdToPropKey(fpdKey));
+    const fpdKeyMedStr = fpd_key_as_med_str(fpdKey);
+    const propKeyMedStr = prop_key_as_med_str(fpdToPropKey(fpdKey));
     expect(propKeyMedStr).toBe(fpdKeyMedStr);
   }
 });

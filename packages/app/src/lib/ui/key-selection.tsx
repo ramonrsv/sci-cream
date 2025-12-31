@@ -48,7 +48,7 @@ export function KeySelection<Key>({
   keyFilterState,
   selectedKeysState,
   getKeys,
-  key_as_med_str_js,
+  key_as_med_str,
 }: {
   qtyToggleComponent?: {
     supportedQtyToggles: QtyToggle[];
@@ -57,7 +57,7 @@ export function KeySelection<Key>({
   keyFilterState: [KeyFilter, React.Dispatch<React.SetStateAction<KeyFilter>>];
   selectedKeysState: [Set<Key>, React.Dispatch<React.SetStateAction<Set<Key>>>];
   getKeys: () => Key[];
-  key_as_med_str_js: (key: Key) => string;
+  key_as_med_str: (key: Key) => string;
 }) {
   const supportedQtyToggles = qtyToggleComponent?.supportedQtyToggles;
   const [qtyToggle, setQtyToggle] = qtyToggleComponent?.qtyToggleState ?? [undefined, undefined];
@@ -143,7 +143,7 @@ export function KeySelection<Key>({
                     checked={isKeySelected(key)}
                     onChange={() => updateSelectedKey(key)}
                   />
-                  {" " + key_as_med_str_js(key)}
+                  {" " + key_as_med_str(key)}
                 </li>
               ))}
             </ul>

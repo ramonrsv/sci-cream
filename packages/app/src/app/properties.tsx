@@ -18,7 +18,7 @@ import {
   getPropKeys,
   getMixProperty,
   MixProperties,
-  prop_key_as_med_str_js,
+  prop_key_as_med_str,
 } from "@workspace/sci-cream";
 
 export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
@@ -118,7 +118,7 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
         keyFilterState={propsFilterState}
         selectedKeysState={selectedPropsState}
         getKeys={getPropKeys}
-        key_as_med_str_js={prop_key_as_med_str_js}
+        key_as_med_str={prop_key_as_med_str}
       />
       <div
         ref={containerRef}
@@ -148,7 +148,7 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
               <tr key={String(prop_key)} className="h-6.25">
                 {/* Property Name */}
                 <td className="table-header w-full px-1.25 text-center">
-                  {prop_key_as_med_str_js(prop_key)}
+                  {prop_key_as_med_str(prop_key)}
                 </td>
                 {/* Property Values for Recipes */}
                 {recipes.map((recipe) => (

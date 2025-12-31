@@ -8,7 +8,7 @@ import { usersTable, ingredientsTable, User, SchemaCategory } from "./schema";
 import * as schema from "./schema";
 
 import {
-  into_ingredient_from_spec_js,
+  into_ingredient_from_spec,
   Category,
   Ingredient,
   Composition,
@@ -56,7 +56,7 @@ test("Create Ingredient from specs from DB", async () => {
 
     const expectedCategory = Category[ing.category as keyof typeof Category];
 
-    const ingParsed = into_ingredient_from_spec_js(ingDrizzle.spec);
+    const ingParsed = into_ingredient_from_spec(ingDrizzle.spec);
     expect(ingParsed.name).toBe(ing.name);
     expect(ingParsed.category).toBe(expectedCategory);
     expect(ingParsed.composition.solids).toBeDefined();

@@ -30,7 +30,7 @@ import {
   getPropKeys as getPropKeysAll,
   getMixProperty,
   MixProperties,
-  prop_key_as_med_str_js,
+  prop_key_as_med_str,
 } from "@workspace/sci-cream";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -93,7 +93,7 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
   const recipes = allRecipes.filter((recipe) => recipe.index == 0 || !isRecipeEmpty(recipe));
 
   const enabledProps = getEnabledProps();
-  const labels = enabledProps.map((prop_key) => prop_key_as_med_str_js(prop_key));
+  const labels = enabledProps.map((prop_key) => prop_key_as_med_str(prop_key));
 
   const chartData = {
     labels,
@@ -142,7 +142,7 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
         keyFilterState={propsFilterState}
         selectedKeysState={selectedPropsState}
         getKeys={getPropKeys}
-        key_as_med_str_js={prop_key_as_med_str_js}
+        key_as_med_str={prop_key_as_med_str}
       />
       <div className="component-inner-border h-[calc(100%-24px)] p-3">
         <Bar data={chartData} options={options} />
