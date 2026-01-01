@@ -2,7 +2,7 @@
   {
     "name": "Egg Yolk",
     "category": "Egg",
-    "EggSpec": { "water": 52, "fats": 29, "lecithin": 9 },
+    "EggSpec": { "water": 51, "fats": 30, "lecithin": 9 },
     "comments": "USDA FoodData Central - Foundation 1125 - Eggs, Grade A, Large, egg yolk (https://fdc.nal.usda.gov/food-details/748236/nutrients), and The Science of Ice Cream, C. Clarke, p. 49"
   }
 ]

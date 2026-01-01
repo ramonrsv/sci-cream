@@ -1071,7 +1071,7 @@ mod tests {
 
     #[test]
     fn pac_total() {
-        let pac = COMP_MILK_2_PERCENT.pac;
+        let pac = COMP_2_MILK.pac;
         assert_eq!(pac.sugars, 4.8069);
         assert_eq!(pac.salt, 0.0);
         assert_eq!(pac.msnf_ws_salts, 3.2405);
@@ -1121,11 +1121,7 @@ mod tests {
         ]);
 
         CompKey::iter().for_each(|key| {
-            assert_abs_diff_eq!(
-                COMP_MILK_2_PERCENT.get(key),
-                *expected.get(&key).unwrap_or(&0.0),
-                epsilon = TESTS_EPSILON
-            )
+            assert_abs_diff_eq!(COMP_2_MILK.get(key), *expected.get(&key).unwrap_or(&0.0), epsilon = TESTS_EPSILON)
         });
     }
 }

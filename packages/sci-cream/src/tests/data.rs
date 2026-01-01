@@ -46,41 +46,15 @@ pub(crate) fn get_ingredient_spec_by_name_or_panic(name: &str) -> IngredientSpec
 
 #[cfg(test)]
 pub(crate) mod test {
-    use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::tests::assets::*;
 
     #[test]
     fn parse_ingredient_specs() {
         for filename in INGREDIENT_JSON_FILENAMES {
             let specs = parse_ingredient_specs_from_file(filename);
             assert_false!(specs.is_empty(), "Failed to parse ingredient specs from file: {}", filename);
-        }
-    }
-
-    #[test]
-    fn get_ingredient_spec_by_name_existing() {
-        for name in &["2% Milk", "Sucrose", "Dextrose", "Fructose"] {
-            let spec = get_ingredient_spec_by_name(name);
-            assert_true!(spec.is_some());
-            assert_eq!(spec.unwrap().name, *name);
-        }
-    }
-
-    #[test]
-    fn ingredient_spec_from_file_matches_asset() {
-        for (name, asset_spec) in [
-            ("2% Milk", ING_SPEC_MILK_2_PERCENT.clone()),
-            ("Sucrose", ING_SPEC_SUCROSE.clone()),
-            ("Dextrose", ING_SPEC_DEXTROSE.clone()),
-            ("Fructose", ING_SPEC_FRUCTOSE.clone()),
-            ("Invert Sugar", ING_SPEC_INVERT_SUGAR.clone()),
-            ("Honey", ING_SPEC_HONEY.clone()),
-            ("HFCS 42", ING_SPEC_HFCS42.clone()),
-        ] {
-            assert_eq!(get_ingredient_spec_by_name_or_panic(name), asset_spec);
         }
     }
 }

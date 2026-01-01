@@ -690,15 +690,41 @@ pub mod wasm {
 }
 
 #[cfg(test)]
-mod test {
+pub(crate) mod test {
+    use std::sync::LazyLock;
+
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::tests::assets::*;
+    use crate::tests::data::get_ingredient_spec_by_name_or_panic;
+
+    pub(crate) const ING_SPEC_DAIRY_2_MILK_STR: &str = r#"{
+      "name": "2% Milk",
+      "category": "Dairy",
+      "DairySpec": {
+        "fat": 2
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_2_MILK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "2% Milk".to_string(),
+        category: Category::Dairy,
+        spec: Spec::DairySpec(DairySpec { fat: 2.0, msnf: None }),
+    });
+
+    pub(crate) static COMP_2_MILK: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .solids(Solids::new().milk(SolidsBreakdown::new().fats(2.0).sweeteners(4.8069).snfs(4.0131)))
+            .sweeteners(Sweeteners::new().sugars(Sugars::new().lactose(4.8069)))
+            .pod(0.769104)
+            .pac(PAC::new().sugars(4.8069).msnf_ws_salts(3.2405))
+    });
 
     #[test]
-    fn into_composition_dairy_spec() {
+    fn into_composition_dairy_spec_2_milk() {
+        let comp = ING_SPEC_DAIRY_2_MILK.spec.into_composition().unwrap();
+
         let Composition {
             solids,
             sweeteners,
@@ -706,39 +732,68 @@ mod test {
             alcohol,
             pod,
             pac,
-        } = *COMP_MILK_2_PERCENT;
+        } = comp;
 
         assert_eq!(solids.total(), 10.82);
-        assert_eq!(COMP_MILK_2_PERCENT.water(), 89.18);
+        assert_eq!(comp.water(), 89.18);
 
         assert_eq!(micro.salt, 0.0);
         assert_eq!(micro.emulsifiers, 0.0);
         assert_eq!(micro.stabilizers, 0.0);
         assert_eq!(alcohol.by_weight, 0.0);
-        assert_eq!(pod, 0.769104);
+        assert_abs_diff_eq!(pod, 0.769104, epsilon = TESTS_EPSILON);
 
         let Solids { milk, .. } = solids;
 
         assert_eq!(milk.fats, 2.0);
-        assert_eq!(milk.sweeteners, 4.8069);
+        assert_abs_diff_eq!(milk.sweeteners, 4.8069, epsilon = TESTS_EPSILON);
         assert_eq!(milk.snf(), 8.82);
         assert_eq!(milk.snfs, 4.0131);
         assert_eq!(milk.total(), 10.82);
 
-        assert_eq!(sweeteners.sugars.lactose, 4.8069);
-        assert_eq!(sweeteners.sugars.total(), 4.8069);
+        assert_abs_diff_eq!(sweeteners.sugars.lactose, 4.8069, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(sweeteners.sugars.total(), 4.8069, epsilon = TESTS_EPSILON);
 
-        assert_eq!(pac.sugars, 4.8069);
+        assert_abs_diff_eq!(pac.sugars, 4.8069, epsilon = TESTS_EPSILON);
         assert_eq!(pac.salt, 0.0);
-        assert_eq!(pac.msnf_ws_salts, 3.2405);
-        assert_eq!(pac.total(), 8.0474);
-
-        assert_abs_diff_eq!(
-            SPEC_DAIRY_2_PERCENT.into_composition().unwrap(),
-            *COMP_MILK_2_PERCENT,
-            epsilon = TESTS_EPSILON
-        );
+        assert_abs_diff_eq!(pac.msnf_ws_salts, 3.2405, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(pac.total(), 8.0474, epsilon = TESTS_EPSILON);
     }
+
+    pub(crate) const ING_SPEC_SWEETENER_SUCROSE_STR: &str = r#"{
+      "name": "Sucrose",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "sugars": {
+            "sucrose": 100
+          }
+        },
+        "ByDryWeight": {
+          "solids": 100
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_SUCROSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Sucrose".to_string(),
+        category: Category::Sweetener,
+        spec: Spec::SweetenerSpec(SweetenerSpec {
+            sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
+            other_solids: None,
+            basis: CompositionBasis::ByDryWeight { solids: 100.0 },
+            pod: None,
+            pac: None,
+        }),
+    });
+
+    pub(crate) static COMP_SUCROSE: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(100.0)))
+            .sweeteners(Sweeteners::new().sugars(Sugars::new().sucrose(100.0)))
+            .pod(100.0)
+            .pac(PAC::new().sugars(100.0))
+    });
 
     #[test]
     fn into_composition_sweetener_spec_sucrose() {
@@ -748,15 +803,7 @@ mod test {
             pod,
             pac,
             ..
-        } = SweetenerSpec {
-            sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
-            other_solids: None,
-            basis: CompositionBasis::ByDryWeight { solids: 100.0 },
-            pod: None,
-            pac: None,
-        }
-        .into_composition()
-        .unwrap();
+        } = ING_SPEC_SWEETENER_SUCROSE.spec.into_composition().unwrap();
 
         assert_eq!(sweeteners.sugars.sucrose, 100.0);
         assert_eq!(solids.sweeteners(), 100.0);
@@ -764,6 +811,33 @@ mod test {
         assert_eq!(pod, 100.0);
         assert_eq!(pac.sugars, 100.0);
     }
+
+    pub(crate) const ING_SPEC_SWEETENER_DEXTROSE_STR: &str = r#"{
+      "name": "Dextrose",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "sugars": {
+            "glucose": 100
+          }
+        },
+        "ByDryWeight": {
+          "solids": 92
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_DEXTROSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Dextrose".to_string(),
+        category: Category::Sweetener,
+        spec: Spec::SweetenerSpec(SweetenerSpec {
+            sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(100.0)),
+            other_solids: None,
+            basis: CompositionBasis::ByDryWeight { solids: 92.0 },
+            pod: None,
+            pac: None,
+        }),
+    });
 
     #[test]
     fn into_composition_sweetener_spec_dextrose() {
@@ -773,15 +847,7 @@ mod test {
             pod,
             pac,
             ..
-        } = SweetenerSpec {
-            sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(100.0)),
-            other_solids: None,
-            basis: CompositionBasis::ByDryWeight { solids: 92.0 },
-            pod: None,
-            pac: None,
-        }
-        .into_composition()
-        .unwrap();
+        } = ING_SPEC_SWEETENER_DEXTROSE.spec.into_composition().unwrap();
 
         assert_eq!(sweeteners.sugars.glucose, 92.0);
         assert_eq!(solids.sweeteners(), 92.0);
@@ -789,6 +855,41 @@ mod test {
         assert_eq!(pod, 73.968);
         assert_eq!(pac.sugars, 174.8);
     }
+
+    pub(crate) const ING_SPEC_SWEETENER_FRUCTOSE_STR: &str = r#"{
+      "name": "Fructose",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "sugars": {
+            "fructose": 100
+          }
+        },
+        "ByDryWeight": {
+          "solids": 100
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_FRUCTOSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Fructose".to_string(),
+        category: Category::Sweetener,
+        spec: Spec::SweetenerSpec(SweetenerSpec {
+            sweeteners: Sweeteners::new().sugars(Sugars::new().fructose(100.0)),
+            other_solids: None,
+            basis: CompositionBasis::ByDryWeight { solids: 100.0 },
+            pod: None,
+            pac: None,
+        }),
+    });
+
+    pub(crate) static COMP_FRUCTOSE: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(100.0)))
+            .sweeteners(Sweeteners::new().sugars(Sugars::new().fructose(100.0)))
+            .pod(173.0)
+            .pac(PAC::new().sugars(190.0))
+    });
 
     #[test]
     fn into_composition_sweetener_spec_fructose() {
@@ -798,15 +899,7 @@ mod test {
             pod,
             pac,
             ..
-        } = SweetenerSpec {
-            sweeteners: Sweeteners::new().sugars(Sugars::new().fructose(100.0)),
-            other_solids: None,
-            basis: CompositionBasis::ByDryWeight { solids: 100.0 },
-            pod: None,
-            pac: None,
-        }
-        .into_composition()
-        .unwrap();
+        } = ING_SPEC_SWEETENER_FRUCTOSE.spec.into_composition().unwrap();
 
         assert_eq!(sweeteners.sugars.fructose, 100.0);
         assert_eq!(solids.sweeteners(), 100.0);
@@ -814,6 +907,35 @@ mod test {
         assert_eq!(pod, 173.0);
         assert_eq!(pac.sugars, 190.0);
     }
+
+    pub(crate) const ING_SPEC_SWEETENER_INVERT_SUGAR_STR: &str = r#"{
+      "name": "Invert Sugar",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "sugars": {
+            "glucose": 42.5,
+            "fructose": 42.5,
+            "sucrose": 15
+          }
+        },
+        "ByDryWeight": {
+          "solids": 80
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_INVERT_SUGAR: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Invert Sugar".to_string(),
+        category: Category::Sweetener,
+        spec: Spec::SweetenerSpec(SweetenerSpec {
+            sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(42.5).fructose(42.5).sucrose(15.0)),
+            other_solids: None,
+            basis: CompositionBasis::ByDryWeight { solids: 80.0 },
+            pod: None,
+            pac: None,
+        }),
+    });
 
     #[test]
     fn into_composition_sweetener_spec_invert_sugar() {
@@ -823,15 +945,7 @@ mod test {
             pod,
             pac,
             ..
-        } = SweetenerSpec {
-            sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(42.5).fructose(42.5).sucrose(15.0)),
-            other_solids: None,
-            basis: CompositionBasis::ByDryWeight { solids: 80.0 },
-            pod: None,
-            pac: None,
-        }
-        .into_composition()
-        .unwrap();
+        } = ING_SPEC_SWEETENER_INVERT_SUGAR.spec.into_composition().unwrap();
 
         assert_eq!(sweeteners, Sweeteners::new().sugars(Sugars::new().glucose(34.0).fructose(34.0).sucrose(12.0)));
 
@@ -841,15 +955,30 @@ mod test {
         assert_eq!(pac.sugars, 141.2);
     }
 
-    #[test]
-    fn into_composition_sweetener_spec_honey() {
-        let Composition {
-            solids,
-            sweeteners,
-            pod,
-            pac,
-            ..
-        } = SweetenerSpec {
+    pub(crate) const ING_SPEC_SWEETENER_HONEY_STR: &str = r#"{
+      "name": "Honey",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "sugars": {
+            "glucose": 36,
+            "fructose": 41,
+            "sucrose": 2,
+            "galactose": 1.5,
+            "maltose": 1.5
+          }
+        },
+        "other_solids": 1,
+        "ByTotalWeight": {
+          "water": 17
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_HONEY: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Honey".to_string(),
+        category: Category::Sweetener,
+        spec: Spec::SweetenerSpec(SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(
                 Sugars::new()
                     .glucose(36.0)
@@ -862,9 +991,18 @@ mod test {
             basis: CompositionBasis::ByTotalWeight { water: 17.0 },
             pod: None,
             pac: None,
-        }
-        .into_composition()
-        .unwrap();
+        }),
+    });
+
+    #[test]
+    fn into_composition_sweetener_spec_honey() {
+        let Composition {
+            solids,
+            sweeteners,
+            pod,
+            pac,
+            ..
+        } = ING_SPEC_SWEETENER_HONEY.spec.into_composition().unwrap();
 
         assert_eq!(
             sweeteners,
@@ -885,6 +1023,37 @@ mod test {
         assert_eq!(pac.sugars, 152.65);
     }
 
+    pub(crate) const ING_SPEC_SWEETENER_HFCS42_STR: &str = r#"{
+      "name": "HFCS 42",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "sugars": {
+            "fructose": 42,
+            "glucose": 53
+          },
+          "polysaccharides": 5
+        },
+        "ByDryWeight": {
+          "solids": 76
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_HFCS42: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "HFCS 42".to_string(),
+        category: Category::Sweetener,
+        spec: Spec::SweetenerSpec(SweetenerSpec {
+            sweeteners: Sweeteners::new()
+                .sugars(Sugars::new().fructose(42.0).glucose(53.0))
+                .polysaccharide(5.0),
+            other_solids: None,
+            basis: CompositionBasis::ByDryWeight { solids: 76.0 },
+            pod: None,
+            pac: None,
+        }),
+    });
+
     #[test]
     fn into_composition_sweetener_spec_hfcs42() {
         let Composition {
@@ -893,17 +1062,7 @@ mod test {
             pod,
             pac,
             ..
-        } = SweetenerSpec {
-            sweeteners: Sweeteners::new()
-                .sugars(Sugars::new().fructose(42.0).glucose(53.0))
-                .polysaccharide(5.0),
-            other_solids: None,
-            basis: CompositionBasis::ByDryWeight { solids: 76.0 },
-            pod: None,
-            pac: None,
-        }
-        .into_composition()
-        .unwrap();
+        } = ING_SPEC_SWEETENER_HFCS42.spec.into_composition().unwrap();
 
         assert_eq!(
             sweeteners,
@@ -919,6 +1078,30 @@ mod test {
         assert_eq!(pac.sugars, 137.18);
     }
 
+    pub(crate) const ING_SPEC_FRUIT_STRAWBERRY_STR: &str = r#"{
+      "name": "Strawberry",
+      "category": "Fruit",
+      "FruitSpec": {
+        "sugars": {
+          "glucose": 1.99,
+          "fructose": 2.44,
+          "sucrose": 0.47
+        },
+        "water": 91,
+        "fat": 0.3
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_FRUIT_STRAWBERRY: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Strawberry".to_string(),
+        category: Category::Fruit,
+        spec: Spec::FruitSpec(FruitSpec {
+            sugars: Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47),
+            water: 91.0,
+            fat: Some(0.3),
+        }),
+    });
+
     #[test]
     fn into_composition_fruit_spec_strawberry() {
         let Composition {
@@ -927,13 +1110,7 @@ mod test {
             pod,
             pac,
             ..
-        } = FruitSpec {
-            sugars: Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47),
-            water: 91.0,
-            fat: Some(0.3),
-        }
-        .into_composition()
-        .unwrap();
+        } = ING_SPEC_FRUIT_STRAWBERRY.spec.into_composition().unwrap();
 
         assert_eq!(sweeteners, Sweeteners::new().sugars(Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47)));
 
@@ -945,21 +1122,35 @@ mod test {
         assert_eq!(pac.sugars, 8.887);
     }
 
+    pub(crate) const ING_SPEC_CHOCOLATE_70_STR: &str = r#"{
+      "name": "Chocolate 70%",
+      "category": "Chocolate",
+      "ChocolateSpec": {
+        "cacao_solids": 70,
+        "cocoa_butter": 40,
+        "sugar": 30
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_CHOCOLATE_70: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Chocolate 70%".to_string(),
+        category: Category::Chocolate,
+        spec: Spec::ChocolateSpec(ChocolateSpec {
+            cacao_solids: 70.0,
+            cocoa_butter: 40.0,
+            sugar: Some(30.0),
+        }),
+    });
+
     #[test]
-    fn into_composition_chocolate_spec_70_dark_chocolate() {
+    fn into_composition_chocolate_spec_70() {
         let Composition {
             solids,
             sweeteners,
             pod,
             pac,
             ..
-        } = ChocolateSpec {
-            cacao_solids: 70.0,
-            cocoa_butter: 40.0,
-            sugar: Some(30.0),
-        }
-        .into_composition()
-        .unwrap();
+        } = ING_SPEC_CHOCOLATE_70.spec.into_composition().unwrap();
 
         assert_eq!(sweeteners, Sweeteners::new().sugars(Sugars::new().sucrose(30.0)));
 
@@ -970,27 +1161,80 @@ mod test {
         assert_eq!(solids.other.snfs, 0.0);
         assert_eq!(solids.total(), 100.0);
         assert_eq!(pod, 30.0);
-        assert_eq!(pac.sugars, 30.0);
-        assert_eq!(pac.hardness_factor, 90.0);
         assert_eq!(pac.total(), 30.0);
-        assert_eq!(pac.total() - pac.hardness_factor, -60.0);
+        assert_eq!(pac.hardness_factor, 90.0);
     }
 
+    pub(crate) const ING_SPEC_CHOCOLATE_100_STR: &str = r#"{
+      "name": "Chocolate 100%",
+      "category": "Chocolate",
+      "ChocolateSpec": {
+        "cacao_solids": 100,
+        "cocoa_butter": 54
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_CHOCOLATE_100: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Chocolate 100%".to_string(),
+        category: Category::Chocolate,
+        spec: Spec::ChocolateSpec(ChocolateSpec {
+            cacao_solids: 100.0,
+            cocoa_butter: 54.0,
+            sugar: None,
+        }),
+    });
+
     #[test]
-    fn into_composition_chocolate_spec_100_unsweetened_cocoa_powder() {
+    fn into_composition_chocolate_spec_100() {
         let Composition {
             solids,
             sweeteners,
             pod,
             pac,
             ..
-        } = ChocolateSpec {
+        } = ING_SPEC_CHOCOLATE_100.spec.into_composition().unwrap();
+
+        assert_eq!(sweeteners, Sweeteners::new());
+
+        assert_eq!(solids.cocoa.total(), 100.0);
+        assert_eq!(solids.cocoa.fats, 54.0);
+        assert_eq!(solids.cocoa.snf(), 46.0);
+        assert_eq!(solids.other.sweeteners, 0.0);
+        assert_eq!(solids.other.snfs, 0.0);
+        assert_eq!(solids.total(), 100.0);
+        assert_eq!(pod, 0.0);
+        assert_eq!(pac.total(), 0.0);
+        assert_eq!(pac.hardness_factor, 131.4);
+    }
+
+    pub(crate) const ING_SPEC_CHOCOLATE_COCOA_POWDER_17_STR: &str = r#"{
+      "name": "Cocoa Powder 17%",
+      "category": "Chocolate",
+      "ChocolateSpec": {
+        "cacao_solids": 100,
+        "cocoa_butter": 16.67
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_CHOCOLATE_COCOA_POWDER_17: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Cocoa Powder 17%".to_string(),
+        category: Category::Chocolate,
+        spec: Spec::ChocolateSpec(ChocolateSpec {
             cacao_solids: 100.0,
             cocoa_butter: 16.67,
             sugar: None,
-        }
-        .into_composition()
-        .unwrap();
+        }),
+    });
+
+    #[test]
+    fn into_composition_chocolate_spec_cocoa_powder_17() {
+        let Composition {
+            solids,
+            sweeteners,
+            pod,
+            pac,
+            ..
+        } = ING_SPEC_CHOCOLATE_COCOA_POWDER_17.spec.into_composition().unwrap();
 
         assert_eq!(sweeteners.total(), 0.0);
 
@@ -1001,18 +1245,33 @@ mod test {
         assert_eq!(solids.other.snfs, 0.0);
         assert_eq!(solids.total(), 100.0);
         assert_eq!(pod, 0.0);
-        assert_eq!(pac.sugars, 0.0);
+        assert_eq!(pac.total(), 0.0);
+        assert_eq!(pac.hardness_factor, 164.997);
     }
 
-    #[test]
-    fn into_composition_egg_spec_egg_yolk() {
-        let Composition { solids, micro, .. } = EggSpec {
+    pub(crate) const ING_SPEC_EGG_YOLK_STR: &str = r#"{
+      "name": "Egg Yolk",
+      "category": "Egg",
+      "EggSpec": {
+        "water": 51,
+        "fats": 30,
+        "lecithin": 9
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_EGG_YOLK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Egg Yolk".to_string(),
+        category: Category::Egg,
+        spec: Spec::EggSpec(EggSpec {
             water: 51.0,
             fats: 30.0,
             lecithin: 9.0,
-        }
-        .into_composition()
-        .unwrap();
+        }),
+    });
+
+    #[test]
+    fn into_composition_egg_spec_egg_yolk() {
+        let Composition { solids, micro, .. } = ING_SPEC_EGG_YOLK.spec.into_composition().unwrap();
 
         assert_eq!(solids.egg.fats, 30.0);
         assert_eq!(solids.egg.snfs, 19.0);
@@ -1020,16 +1279,28 @@ mod test {
         assert_eq!(micro.emulsifiers, 9.0);
     }
 
-    #[test]
-    fn into_composition_alcohol_spec_40_abv_spirit() {
-        let comp = AlcoholSpec {
+    pub(crate) const ING_SPEC_ALCOHOL_40_ABV_SPIRIT_STR: &str = r#"{
+      "name": "40% ABV Spirit",
+      "category": "Alcohol",
+      "AlcoholSpec": {
+        "abv": 40
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_ALCOHOL_40_ABV_SPIRIT: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "40% ABV Spirit".to_string(),
+        category: Category::Alcohol,
+        spec: Spec::AlcoholSpec(AlcoholSpec {
             abv: 40.0,
             sugar: None,
             fat: None,
             solids: None,
-        }
-        .into_composition()
-        .unwrap();
+        }),
+    });
+
+    #[test]
+    fn into_composition_alcohol_spec_40_abv_spirit() {
+        let comp = ING_SPEC_ALCOHOL_40_ABV_SPIRIT.spec.into_composition().unwrap();
 
         assert_eq!(comp.alcohol.to_abv(), 40.0);
         assert_abs_diff_eq!(comp.alcohol.by_weight, 31.56, epsilon = TESTS_EPSILON);
@@ -1043,16 +1314,31 @@ mod test {
         assert_eq!(comp.pac.alcohol, 233.544);
     }
 
+    pub(crate) const ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM_STR: &str = r#"{
+      "name": "Baileys Irish Cream",
+      "category": "Alcohol",
+      "AlcoholSpec": {
+        "abv": 17,
+        "sugar": 18,
+        "fat": 13.6
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Baileys Irish Cream".to_string(),
+            category: Category::Alcohol,
+            spec: Spec::AlcoholSpec(AlcoholSpec {
+                abv: 17.0,
+                sugar: Some(18.0),
+                fat: Some(13.6),
+                solids: None,
+            }),
+        });
+
     #[test]
     fn into_composition_alcohol_spec_baileys_irish_cream() {
-        let comp = AlcoholSpec {
-            abv: 17.0,
-            sugar: Some(18.0),
-            fat: Some(13.6),
-            solids: None,
-        }
-        .into_composition()
-        .unwrap();
+        let comp = ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.spec.into_composition().unwrap();
 
         assert_eq!(comp.alcohol.to_abv(), 17.0);
         assert_abs_diff_eq!(comp.alcohol.by_weight, 13.413, epsilon = TESTS_EPSILON);
@@ -1067,6 +1353,18 @@ mod test {
         assert_eq!(comp.pac.total(), 117.2562);
     }
 
+    pub(crate) const ING_SPEC_MICRO_SALT_STR: &str = r#"{
+      "name": "Salt",
+      "category": "Micro",
+      "MicroSpec": "Salt"
+    }"#;
+
+    pub(crate) static ING_SPEC_MICRO_SALT: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Salt".to_string(),
+        category: Category::Micro,
+        spec: Spec::MicroSpec(MicroSpec::Salt),
+    });
+
     #[test]
     fn into_composition_micro_spec_salt() {
         let Composition { solids, micro, pac, .. } = MicroSpec::Salt.into_composition().unwrap();
@@ -1076,6 +1374,18 @@ mod test {
         assert_eq!(pac.salt, 585.0);
     }
 
+    pub(crate) const ING_SPEC_MICRO_LECITHIN_STR: &str = r#"{
+      "name": "Lecithin",
+      "category": "Micro",
+      "MicroSpec": "Lecithin"
+    }"#;
+
+    pub(crate) static ING_SPEC_MICRO_LECITHIN: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Lecithin".to_string(),
+        category: Category::Micro,
+        spec: Spec::MicroSpec(MicroSpec::Lecithin),
+    });
+
     #[test]
     fn into_composition_micro_spec_lecithin() {
         let Composition { solids, micro, .. } = MicroSpec::Lecithin.into_composition().unwrap();
@@ -1084,8 +1394,32 @@ mod test {
         assert_eq!(micro.emulsifiers, 100.0);
     }
 
+    pub(crate) const ING_SPEC_MICRO_STABILIZER_STR: &str = r#"{
+      "name": "Rich Ice Cream SB",
+      "category": "Micro",
+      "MicroSpec": {
+        "Stabilizer": {
+        "strength": 100
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_MICRO_STABILIZER: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Rich Ice Cream SB".to_string(),
+        category: Category::Micro,
+        spec: Spec::MicroSpec(MicroSpec::Stabilizer { strength: 100.0 }),
+    });
+
     #[test]
-    fn into_composition_micro_spec_stabilizer() {
+    fn into_composition_micro_spec_stabilizer_rich_ice_cream_sb() {
+        let Composition { solids, micro, .. } = ING_SPEC_MICRO_STABILIZER.spec.into_composition().unwrap();
+        assert_eq!(solids.other.snfs, 100.0);
+        assert_eq!(solids.total(), 100.0);
+        assert_eq!(micro.stabilizers, 100.0);
+    }
+
+    #[test]
+    fn into_composition_micro_spec_stabilizer_not_100() {
         let Composition { solids, micro, .. } = MicroSpec::Stabilizer { strength: 85.0 }.into_composition().unwrap();
         assert_eq!(solids.other.snfs, 100.0);
         assert_eq!(solids.total(), 100.0);
@@ -1093,40 +1427,65 @@ mod test {
     }
 
     #[test]
-    fn into_composition_micro_spec_emulsifier() {
+    fn into_composition_micro_spec_emulsifier_not_100() {
         let Composition { solids, micro, .. } = MicroSpec::Emulsifier { strength: 60.0 }.into_composition().unwrap();
         assert_eq!(solids.other.snfs, 100.0);
         assert_eq!(solids.total(), 100.0);
         assert_eq!(micro.emulsifiers, 60.0);
     }
 
-    #[test]
-    fn into_composition_micro_spec_emulsifier_stabilizer() {
-        let Composition { solids, micro, .. } = MicroSpec::EmulsifierStabilizer {
-            emulsifier_strength: 70.0,
-            stabilizer_strength: 30.0,
+    pub(crate) const ING_SPEC_MICRO_LOUIS_STAB2K_STR: &str = r#"{
+      "name": "Louis Francois Stab 2000",
+      "category": "Micro",
+      "MicroSpec": {
+        "EmulsifierStabilizer": {
+          "emulsifier_strength": 100,
+          "stabilizer_strength": 40
         }
-        .into_composition()
-        .unwrap();
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_MICRO_LOUIS_STAB2K: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Louis Francois Stab 2000".to_string(),
+        category: Category::Micro,
+        spec: Spec::MicroSpec(MicroSpec::EmulsifierStabilizer {
+            emulsifier_strength: 100.0,
+            stabilizer_strength: 40.0,
+        }),
+    });
+
+    #[test]
+    fn into_composition_micro_spec_emulsifier_stabilizer_louis_francois_stab_2000() {
+        let Composition { solids, micro, .. } = ING_SPEC_MICRO_LOUIS_STAB2K.spec.into_composition().unwrap();
 
         assert_eq!(solids.other.snfs, 100.0);
         assert_eq!(solids.total(), 100.0);
-        assert_eq!(micro.emulsifiers, 70.0);
-        assert_eq!(micro.stabilizers, 30.0);
+        assert_eq!(micro.emulsifiers, 100.0);
+        assert_eq!(micro.stabilizers, 40.0);
     }
 
-    #[test]
-    fn into_composition_full_spec_water() {
-        let comp = FullSpec {
+    pub(crate) const ING_SPEC_FULL_WATER_STR: &str = r#"{
+      "name": "Water",
+      "category": "Miscellaneous",
+      "FullSpec": {}
+    }"#;
+
+    pub(crate) static ING_SPEC_FULL_WATER: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Water".to_string(),
+        category: Category::Miscellaneous,
+        spec: Spec::FullSpec(FullSpec {
             solids: None,
             sweeteners: None,
             micro: None,
             abv: None,
             pod: None,
             pac: None,
-        }
-        .into_composition()
-        .unwrap();
+        }),
+    });
+
+    #[test]
+    fn into_composition_full_spec_water() {
+        let comp = ING_SPEC_FULL_WATER.spec.into_composition().unwrap();
 
         assert_eq!(comp.water(), 100.0);
         assert_eq!(comp.solids.total(), 0.0);
@@ -1141,38 +1500,45 @@ mod test {
         assert_eq!(comp.pac.hardness_factor, 0.0);
     }
 
+    static INGREDIENT_ASSETS_TABLE: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> = LazyLock::new(|| {
+        vec![
+            (ING_SPEC_DAIRY_2_MILK_STR, ING_SPEC_DAIRY_2_MILK.clone(), Some(*COMP_2_MILK)),
+            (ING_SPEC_SWEETENER_SUCROSE_STR, ING_SPEC_SWEETENER_SUCROSE.clone(), Some(*COMP_SUCROSE)),
+            (ING_SPEC_SWEETENER_DEXTROSE_STR, ING_SPEC_SWEETENER_DEXTROSE.clone(), None),
+            (ING_SPEC_SWEETENER_FRUCTOSE_STR, ING_SPEC_SWEETENER_FRUCTOSE.clone(), Some(*COMP_FRUCTOSE)),
+            (ING_SPEC_SWEETENER_INVERT_SUGAR_STR, ING_SPEC_SWEETENER_INVERT_SUGAR.clone(), None),
+            (ING_SPEC_SWEETENER_HONEY_STR, ING_SPEC_SWEETENER_HONEY.clone(), None),
+            (ING_SPEC_SWEETENER_HFCS42_STR, ING_SPEC_SWEETENER_HFCS42.clone(), None),
+            (ING_SPEC_FRUIT_STRAWBERRY_STR, ING_SPEC_FRUIT_STRAWBERRY.clone(), None),
+            (ING_SPEC_CHOCOLATE_70_STR, ING_SPEC_CHOCOLATE_70.clone(), None),
+            (ING_SPEC_CHOCOLATE_100_STR, ING_SPEC_CHOCOLATE_100.clone(), None),
+            (ING_SPEC_CHOCOLATE_COCOA_POWDER_17_STR, ING_SPEC_CHOCOLATE_COCOA_POWDER_17.clone(), None),
+            (ING_SPEC_EGG_YOLK_STR, ING_SPEC_EGG_YOLK.clone(), None),
+            (ING_SPEC_ALCOHOL_40_ABV_SPIRIT_STR, ING_SPEC_ALCOHOL_40_ABV_SPIRIT.clone(), None),
+            (ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM_STR, ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.clone(), None),
+            (ING_SPEC_MICRO_SALT_STR, ING_SPEC_MICRO_SALT.clone(), None),
+            (ING_SPEC_MICRO_LECITHIN_STR, ING_SPEC_MICRO_LECITHIN.clone(), None),
+            (ING_SPEC_MICRO_STABILIZER_STR, ING_SPEC_MICRO_STABILIZER.clone(), None),
+            (ING_SPEC_MICRO_LOUIS_STAB2K_STR, ING_SPEC_MICRO_LOUIS_STAB2K.clone(), None),
+            (ING_SPEC_FULL_WATER_STR, ING_SPEC_FULL_WATER.clone(), None),
+        ]
+    });
+
     #[test]
     fn deserialize_ingredient_spec() {
-        [
-            (ING_SPEC_MILK_2_PERCENT_STR, ING_SPEC_MILK_2_PERCENT.clone()),
-            (ING_SPEC_SUCROSE_STR, ING_SPEC_SUCROSE.clone()),
-            (ING_SPEC_DEXTROSE_STR, ING_SPEC_DEXTROSE.clone()),
-            (ING_SPEC_FRUCTOSE_STR, ING_SPEC_FRUCTOSE.clone()),
-            (ING_SPEC_SALT_STR, ING_SPEC_SALT.clone()),
-            (ING_SPEC_LECITHIN_STR, ING_SPEC_LECITHIN.clone()),
-            (ING_SPEC_STABILIZER_STR, ING_SPEC_STABILIZER.clone()),
-            (ING_SPEC_LOUIS_STAB2K_STR, ING_SPEC_LOUIS_STAB2K.clone()),
-            (ING_SPEC_WATER_STR, ING_SPEC_WATER.clone()),
-            (ING_40_ABV_SPIRIT_STR, ING_SPEC_40_ABV_SPIRIT.clone()),
-            (ING_BAILEYS_IRISH_CREAM_STR, ING_SPEC_BAILEYS_IRISH_CREAM.clone()),
-        ]
-        .iter()
-        .for_each(|(spec_str, spec)| {
-            assert_eq!(serde_json::from_str::<IngredientSpec>(spec_str).unwrap(), *spec);
+        INGREDIENT_ASSETS_TABLE.iter().for_each(|(spec_str, spec, _)| {
+            assert_eq!(
+                serde_json::from_str::<IngredientSpec>(spec_str)
+                    .unwrap_or_else(|e| panic!("Failed to deserialize spec '{}': {}", spec.name, e)),
+                *spec
+            );
         });
     }
 
     #[test]
-    fn ingredient_spec_into_ingredient() {
-        [
-            (ING_SPEC_MILK_2_PERCENT.clone(), ING_MILK_2_PERCENT.clone()),
-            (ING_SPEC_SUCROSE.clone(), ING_SUCROSE.clone()),
-            (ING_SPEC_DEXTROSE.clone(), ING_DEXTROSE.clone()),
-            (ING_SPEC_FRUCTOSE.clone(), ING_FRUCTOSE.clone()),
-        ]
-        .iter()
-        .for_each(|(spec, ingredient)| {
-            assert_abs_diff_eq!(spec.clone().into_ingredient(), *ingredient, epsilon = TESTS_EPSILON);
+    fn ingredient_spec_database_matches_assets() {
+        INGREDIENT_ASSETS_TABLE.iter().for_each(|(_, spec, _)| {
+            assert_eq!(spec, &get_ingredient_spec_by_name_or_panic(&spec.name));
         });
     }
 }

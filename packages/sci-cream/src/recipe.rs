@@ -137,7 +137,7 @@ mod test {
     #[test]
     fn composition_calculate_from_composition_lines() {
         let mix_comp = Composition::calculate_from_composition_lines(&[
-            CompositionLine::new(*COMP_MILK_2_PERCENT, 50.0),
+            CompositionLine::new(*COMP_2_MILK, 50.0),
             CompositionLine::new(*COMP_SUCROSE, 50.0),
         ])
         .unwrap();
@@ -163,7 +163,7 @@ mod test {
         let mix_properties = MixProperties::calculate_from_composition_lines(&to_comp_lines(&[
             ("Whole Milk", 245.0),
             ("Whipping Cream", 215.0),
-            ("70% Dark Chocolate", 28.0),
+            ("Chocolate 70%", 28.0),
             ("Skimmed Milk Powder", 21.0),
             ("Egg Yolk", 18.0),
             ("Dextrose", 45.0),
