@@ -22,6 +22,7 @@ pub(crate) const INGREDIENT_JSON_FILENAMES: &[&str] = &[
     "sweeteners.json",
     "fruits.json",
     "chocolates.json",
+    "nuts.json",
     "eggs.json",
     "alcohol.json",
     "micros.json",

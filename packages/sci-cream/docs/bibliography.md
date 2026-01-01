@@ -23,3 +23,5 @@
 [^100]: Eggs, Grade A, Large, egg yolk. (2019). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/748236/nutrients>
 
 [^101]: Strawberries, raw. (2019). In _USDA FoodData Central - SR Legacy_. <https://fdc.nal.usda.gov/food-details/167762/nutrients>
+
+[^102]: Nuts, almonds. (2019). In _USDA FoodDataCentra - SR Legacy_. <https://fdc.nal.usda.gov/food-details/170567/nutrients>

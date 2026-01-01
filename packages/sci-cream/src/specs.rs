@@ -160,10 +160,7 @@ pub struct FruitSpec {
 /// # Examples
 ///
 /// ```
-/// use sci_cream::{
-///     composition::{Sugars, Sweeteners},
-///     specs::{ChocolateSpec, IntoComposition}
-/// };
+/// use sci_cream::specs::{ChocolateSpec, IntoComposition};
 ///
 /// // 70% Cacao Dark Chocolate
 /// // https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g
@@ -203,6 +200,51 @@ pub struct ChocolateSpec {
     pub sugar: Option<f64>,
 }
 
+/// Spec for nut ingredients, usually nut butters, with fat, sugar, and water content
+///
+/// Nut ingredients are specified by their [`fat`](Self::fat) content, [`sugar`](Self::sugar)
+/// content, and [`water`](Self::water) content, by total weight. The remaining portion up to 100%
+/// is assumed to be non-sugar, non-fat solids (snfs). Sugars are assumed to be all sucrose. Fat and
+/// sugar values are specified in [`Solids::nut`](Solids::nut), in [`fats`](SolidsBreakdown::fats)
+/// and [`sweeteners`](SolidsBreakdown::sweeteners) respectively.
+///
+/// The composition of nut ingredients can usually be found in food in the nutrition facts tables
+/// provided by the manufacturer, or in food composition databases, like [USDA FoodData
+/// Central](https://fdc.nal.usda.gov/food-search).
+///
+/// # Examples
+///
+/// (Nuts, almonds, 2019)[^102] per 100g:
+/// - Water: 4.41g
+/// - Total lipid (fat): 49.9g
+/// - Total Sugars: 4.35g
+///
+/// ```
+/// use sci_cream::specs::{NutSpec, IntoComposition};
+///
+/// let comp = NutSpec {
+///    fat: 49.9,
+///    sugar: 4.35,
+///    water: 4.41,
+/// }.into_composition().unwrap();
+///
+/// assert_eq!(comp.solids.nut.fats, 49.9);
+/// assert_eq!(comp.solids.nut.sweeteners, 4.35);
+/// assert_eq!(comp.solids.nut.snfs, 41.34);
+/// assert_eq!(comp.solids.total(), 95.59);
+/// assert_eq!(comp.sweeteners.total(), 4.35);
+/// assert_eq!(comp.pod, 4.35);
+/// assert_eq!(comp.pac.hardness_factor, 69.86);
+/// ```
+#[doc = include_str!("../docs/bibs/102.md")]
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct NutSpec {
+    pub fat: f64,
+    pub sugar: f64,
+    pub water: f64,
+}
+
 /// Spec for egg ingredients, with water content, fat content, and lecithin (emulsifier) content
 ///
 /// The composition of egg ingredients can usually be found in food composition databases, like
@@ -223,7 +265,7 @@ pub struct ChocolateSpec {
 /// - Water: 50%, Protein: 16%, Lecithin: 9%, Other Fat: 23% (Clarke, 2004, p. 49)[^4]
 ///
 /// ```
-/// use sci_cream::{composition::{Micro, Solids}, specs::{EggSpec, IntoComposition}};
+/// use sci_cream::specs::{EggSpec, IntoComposition};
 ///
 /// let comp = EggSpec {
 ///     water: 51.0,
@@ -347,6 +389,7 @@ pub enum Spec {
     SweetenerSpec(SweetenerSpec),
     FruitSpec(FruitSpec),
     ChocolateSpec(ChocolateSpec),
+    NutSpec(NutSpec),
     EggSpec(EggSpec),
     AlcoholSpec(AlcoholSpec),
     MicroSpec(MicroSpec),
@@ -369,6 +412,7 @@ impl IntoComposition for Spec {
             Spec::SweetenerSpec(spec) => spec.into_composition(),
             Spec::FruitSpec(spec) => spec.into_composition(),
             Spec::ChocolateSpec(spec) => spec.into_composition(),
+            Spec::NutSpec(spec) => spec.into_composition(),
             Spec::EggSpec(spec) => spec.into_composition(),
             Spec::AlcoholSpec(spec) => spec.into_composition(),
             Spec::MicroSpec(spec) => spec.into_composition(),
@@ -531,6 +575,29 @@ impl IntoComposition for ChocolateSpec {
             .pac(PAC::new().sugars(sweeteners.to_pac().unwrap()).hardness_factor(
                 cocoa_butter * constants::hf::CACAO_BUTTER + cocoa_snfs * constants::hf::COCOA_SOLIDS,
             )))
+    }
+}
+
+impl IntoComposition for NutSpec {
+    fn into_composition(self) -> Result<Composition> {
+        let Self { fat, sugar, water } = self;
+
+        if !is_within_100_percent(fat + sugar + water) {
+            return Err(Error::CompositionNotWithin100Percent(fat + sugar + water));
+        }
+
+        let snfs = 100.0 - (fat + sugar + water);
+        let sweeteners = Sweeteners::new().sugars(Sugars::new().sucrose(sugar));
+
+        Ok(Composition::new()
+            .solids(Solids::new().nut(SolidsBreakdown::new().fats(fat).sweeteners(sugar).snfs(snfs)))
+            .sweeteners(sweeteners)
+            .pod(sweeteners.to_pod().unwrap())
+            .pac(
+                PAC::new()
+                    .sugars(sweeteners.to_pac().unwrap())
+                    .hardness_factor(fat * constants::hf::NUT_FAT),
+            ))
     }
 }
 
@@ -1249,6 +1316,40 @@ pub(crate) mod test {
         assert_eq!(pac.hardness_factor, 164.997);
     }
 
+    pub(crate) const ING_SPEC_NUT_ALMOND_STR: &str = r#"{
+      "name": "Almond",
+      "category": "Nut",
+      "NutSpec": {
+        "fat": 49.9,
+        "sugar": 4.35,
+        "water": 4.41
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_NUT_ALMOND: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Almond".to_string(),
+        category: Category::Nut,
+        spec: Spec::NutSpec(NutSpec {
+            fat: 49.9,
+            sugar: 4.35,
+            water: 4.41,
+        }),
+    });
+
+    #[test]
+    fn into_composition_nut_spec_almond() {
+        let comp = ING_SPEC_NUT_ALMOND.spec.into_composition().unwrap();
+
+        assert_eq!(comp.solids.nut.fats, 49.9);
+        assert_eq!(comp.solids.nut.sweeteners, 4.35);
+        assert_eq!(comp.solids.nut.snfs, 41.34);
+        assert_eq!(comp.solids.total(), 95.59);
+        assert_abs_diff_eq!(comp.water(), 4.41, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.sweeteners.total(), 4.35);
+        assert_eq!(comp.pod, 4.35);
+        assert_eq!(comp.pac.hardness_factor, 69.86);
+    }
+
     pub(crate) const ING_SPEC_EGG_YOLK_STR: &str = r#"{
       "name": "Egg Yolk",
       "category": "Egg",
@@ -1513,6 +1614,7 @@ pub(crate) mod test {
             (ING_SPEC_CHOCOLATE_70_STR, ING_SPEC_CHOCOLATE_70.clone(), None),
             (ING_SPEC_CHOCOLATE_100_STR, ING_SPEC_CHOCOLATE_100.clone(), None),
             (ING_SPEC_CHOCOLATE_COCOA_POWDER_17_STR, ING_SPEC_CHOCOLATE_COCOA_POWDER_17.clone(), None),
+            (ING_SPEC_NUT_ALMOND_STR, ING_SPEC_NUT_ALMOND.clone(), None),
             (ING_SPEC_EGG_YOLK_STR, ING_SPEC_EGG_YOLK.clone(), None),
             (ING_SPEC_ALCOHOL_40_ABV_SPIRIT_STR, ING_SPEC_ALCOHOL_40_ABV_SPIRIT.clone(), None),
             (ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM_STR, ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.clone(), None),
