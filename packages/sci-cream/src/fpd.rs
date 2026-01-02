@@ -967,9 +967,12 @@ mod tests {
 
     #[test]
     fn validate_corvitto_reference_compositions() {
+        // Fat 8%, POD 18, MSNF 10%, Total Solids 36.1%, PAC 26.7
         let comp = *CORVITTO_REF_COMP_11ST;
-        assert_eq!(comp.get(CompKey::TotalFats), 8.0);
+        assert_eq!(comp.get(CompKey::MilkFat), 8.0);
         assert_eq!(comp.get(CompKey::MSNF), 10.0);
+        assert_eq!(comp.get(CompKey::MilkSolids), 18.0);
+        assert_eq!(comp.get(CompKey::TotalFats), 8.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 36.1);
         assert_eq!(comp.get(CompKey::PACsgr), 26.7);
         assert_eq!(comp.get(CompKey::PACtotal), 26.7);
@@ -979,9 +982,12 @@ mod tests {
             epsilon = 0.25
         );
 
+        // Fat 8%, POD 18, MSNF 10%, Total Solids 39.3%, PAC 40.9
         let comp = *CORVITTO_REF_COMP_18ST;
-        assert_eq!(comp.get(CompKey::TotalFats), 8.0);
+        assert_eq!(comp.get(CompKey::MilkFat), 8.0);
         assert_eq!(comp.get(CompKey::MSNF), 10.0);
+        assert_eq!(comp.get(CompKey::MilkSolids), 18.0);
+        assert_eq!(comp.get(CompKey::TotalFats), 8.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 39.3);
         assert_eq!(comp.get(CompKey::PACsgr), 40.9);
         assert_eq!(comp.get(CompKey::PACtotal), 40.9);
@@ -991,10 +997,17 @@ mod tests {
             epsilon = 0.25
         );
 
+        // Fat 8%, POD 24.5, MSNF 8%, Cocoa SNF: 4.7%, Total Solids 38.2%, PAC 37.3, Hardness Factor: 9.7
         let comp = *CORVITTO_REF_COMP_WITH_HF_11ST;
-        assert_abs_diff_eq!(comp.get(CompKey::TotalFats), 8.0, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::MilkFat), 6.1);
         assert_eq!(comp.get(CompKey::MSNF), 8.0);
+        assert_eq!(comp.get(CompKey::MilkSolids), 14.1);
+        assert_eq!(comp.get(CompKey::EggFat), 0.6);
+        assert_eq!(comp.get(CompKey::EggSNF), 0.5);
+        assert_eq!(comp.get(CompKey::CocoaButter), 1.3);
         assert_eq!(comp.get(CompKey::CocoaSolids), 4.7);
+        assert_abs_diff_eq!(comp.get(CompKey::TotalFats), 8.0, epsilon = TESTS_EPSILON);
+        // assert_eq!(comp.get(CompKey::TotalSweeteners), 3.4 + 17.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 38.2);
         assert_eq!(comp.get(CompKey::PACsgr), 37.3);
         assert_eq!(comp.get(CompKey::PACtotal), 37.3);
@@ -1005,10 +1018,17 @@ mod tests {
             epsilon = 0.3
         );
 
+        // Fat 8%, POD 33.6, MSNF 8%, Cocoa SNF: 4.7%, Total Solids 43.2%, PAC 50.9, Hardness Factor: 9.7
         let comp = *CORVITTO_REF_COMP_WITH_HF_18ST;
-        assert_abs_diff_eq!(comp.get(CompKey::TotalFats), 8.0, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::MilkFat), 6.1);
         assert_eq!(comp.get(CompKey::MSNF), 8.0);
+        assert_eq!(comp.get(CompKey::MilkSolids), 14.1);
+        assert_eq!(comp.get(CompKey::EggFat), 0.6);
+        assert_eq!(comp.get(CompKey::EggSNF), 0.5);
+        assert_eq!(comp.get(CompKey::CocoaButter), 1.3);
         assert_eq!(comp.get(CompKey::CocoaSolids), 4.7);
+        assert_abs_diff_eq!(comp.get(CompKey::TotalFats), 8.0, epsilon = TESTS_EPSILON);
+        // assert_eq!(comp.get(CompKey::TotalSweeteners), 4.1 + 22.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 43.2);
         assert_eq!(comp.get(CompKey::PACsgr), 50.9);
         assert_eq!(comp.get(CompKey::PACtotal), 50.9);
