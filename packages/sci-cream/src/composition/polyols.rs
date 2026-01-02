@@ -12,6 +12,9 @@ use crate::{
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
+#[cfg(doc)]
+use crate::composition::ArtificialSweeteners;
+
 /// Sugar alcohols, commonly used as sugar substitutes, e.g. erythritol, maltitol, etc.
 ///
 /// **Note**: These are distinct from non-saccharide artificial sweeteners (e.g. aspartame,

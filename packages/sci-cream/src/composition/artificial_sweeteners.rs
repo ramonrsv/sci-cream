@@ -12,6 +12,9 @@ use crate::{
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
+#[cfg(doc)]
+use crate::composition::Polyols;
+
 /// Non-saccharide artificial sweeteners, commonly used as sugar substitutes, e.g. aspartame
 ///
 /// **Note**: These are distinct from sugar alcohols (e.g. erythritol, maltitol, etc.) which are
