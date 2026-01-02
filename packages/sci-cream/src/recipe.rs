@@ -130,8 +130,7 @@ mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
-    use crate::tests::assets::*;
-    use crate::tests::data::get_ingredient_spec_by_name_or_panic;
+    use crate::tests::{assets::*, data::get_ingredient_spec_by_name_or_panic};
 
     use super::*;
     use crate::{constants::COMPOSITION_EPSILON, specs::IntoComposition};
@@ -156,14 +155,14 @@ mod tests {
 
         assert_eq!(mix_comp.get(CompKey::Lactose), 4.8069 / 2.0);
         assert_eq!(mix_comp.get(CompKey::Sucrose), 50.0);
-        assert_eq!(mix_comp.get(CompKey::Sugars), (4.8069 / 2.0) + 50.0);
+        assert_eq!(mix_comp.get(CompKey::TotalSugars), (4.8069 / 2.0) + 50.0);
 
         assert_eq!(mix_comp.get(CompKey::TotalSolids), (10.82 / 2.0) + 50.0);
         assert_eq!(mix_comp.get(CompKey::Water), 100.0 - mix_comp.get(CompKey::TotalSolids));
 
         assert_eq!(mix_comp.get(CompKey::MilkFat), 1.0);
         assert_eq!(mix_comp.get(CompKey::MSNF), 8.82 / 2.0);
-        assert_eq!(mix_comp.get(CompKey::MilkSNFS), 4.0131 / 2.0);
+        assert_abs_diff_eq!(mix_comp.get(CompKey::MilkSNFS), 4.0131 / 2.0, epsilon = COMPOSITION_EPSILON);
         assert_eq!(mix_comp.get(CompKey::MilkSolids), 10.82 / 2.0);
 
         assert_eq!(mix_comp.get(CompKey::TotalSolids) - mix_comp.get(CompKey::MilkSolids), 50.0);

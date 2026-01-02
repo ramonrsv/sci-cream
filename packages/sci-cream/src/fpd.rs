@@ -453,7 +453,7 @@ mod tests {
 
     use super::*;
     use crate::{
-        composition::{CompKey, Composition, PAC, Solids, SolidsBreakdown},
+        composition::{Carbohydrates, CompKey, Composition, Fats, PAC, Solids, SolidsBreakdown, Sugars},
         constants::{
             CORVITTO_PAC_TO_SERVING_TEMP_TABLE, FPD_CONST_FOR_MSNF_WS_SALTS, STD_LACTOSE_IN_MSNF, STD_LACTOSE_IN_WS,
             pac,
@@ -597,11 +597,12 @@ mod tests {
         let milk_fats = total_solids - sucrose - css_42de - lactose - milk_snfs;
 
         let milk_solids = SolidsBreakdown::new()
-            .fats(milk_fats)
-            .sweeteners(lactose)
-            .snfs(milk_snfs);
+            .fats(Fats::new().total(milk_fats))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(lactose)))
+            .others(milk_snfs);
 
-        let other_solids = SolidsBreakdown::new().sweeteners(sucrose + css_42de);
+        let other_solids = SolidsBreakdown::new()
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(sucrose + css_42de)));
 
         Composition::new()
             .solids(Solids::new().milk(milk_solids).other(other_solids))
@@ -907,12 +908,17 @@ mod tests {
     /// _Fat 8%, POD 18, MSNF 10%, Total Solids 36.1%, PAC 26.7, Serving Temperature -11°C_
     #[doc = include_str!("../docs/bibs/3.md")]
     static CORVITTO_REF_COMP_11ST: LazyLock<Composition> = LazyLock::new(|| {
+        let milk_solids = SolidsBreakdown::new()
+            .fats(Fats::new().total(8.0))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(5.45)))
+            .others_from_total(18.0)
+            .unwrap();
+
+        let other_solids =
+            SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(18.1)));
+
         Composition::new()
-            .solids(
-                Solids::new()
-                    .milk(SolidsBreakdown::new().fats(8.0).sweeteners(5.45).snfs(4.55))
-                    .other(SolidsBreakdown::new().sweeteners(18.1)),
-            )
+            .solids(Solids::new().milk(milk_solids).other(other_solids))
             .pod(18.0)
             .pac(PAC::new().sugars(26.7))
     });
@@ -921,12 +927,17 @@ mod tests {
     /// _Fat 8%, POD 18, MSNF 10%, Total Solids 39.3%, PAC 40.9, Serving Temperature -18°C_
     #[doc = include_str!("../docs/bibs/3.md")]
     static CORVITTO_REF_COMP_18ST: LazyLock<Composition> = LazyLock::new(|| {
+        let milk_solids = SolidsBreakdown::new()
+            .fats(Fats::new().total(8.0))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(5.45)))
+            .others_from_total(18.0)
+            .unwrap();
+
+        let other_solids =
+            SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(21.3)));
+
         Composition::new()
-            .solids(
-                Solids::new()
-                    .milk(SolidsBreakdown::new().fats(8.0).sweeteners(5.45).snfs(4.55))
-                    .other(SolidsBreakdown::new().sweeteners(21.3)),
-            )
+            .solids(Solids::new().milk(milk_solids).other(other_solids))
             .pod(18.0)
             .pac(PAC::new().sugars(40.9))
     });
@@ -936,13 +947,26 @@ mod tests {
     /// Hardness Factor: 9.7, Serving Temperature -11°C_
     #[doc = include_str!("../docs/bibs/3.md")]
     static CORVITTO_REF_COMP_WITH_HF_11ST: LazyLock<Composition> = LazyLock::new(|| {
+        let milk_solids = SolidsBreakdown::new()
+            .fats(Fats::new().total(6.1))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.4)))
+            .others_from_total(14.1)
+            .unwrap();
+
+        let egg_solids = SolidsBreakdown::new().fats(Fats::new().total(0.6)).others(0.5);
+
+        let cocoa_solids = SolidsBreakdown::new().fats(Fats::new().total(1.3)).others(4.7);
+
+        let other_solids =
+            SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(17.0)));
+
         Composition::new()
             .solids(
                 Solids::new()
-                    .milk(SolidsBreakdown::new().fats(6.1).sweeteners(3.4).snfs(4.6))
-                    .egg(SolidsBreakdown::new().fats(0.6).snfs(0.5))
-                    .cocoa(SolidsBreakdown::new().fats(1.3).snfs(4.7))
-                    .other(SolidsBreakdown::new().sweeteners(17.0)),
+                    .milk(milk_solids)
+                    .egg(egg_solids)
+                    .cocoa(cocoa_solids)
+                    .other(other_solids),
             )
             .pod(24.9)
             .pac(PAC::new().sugars(37.3).hardness_factor(9.7))
@@ -953,13 +977,26 @@ mod tests {
     /// Hardness Factor: 9.7, Serving Temperature -18°C_
     #[doc = include_str!("../docs/bibs/3.md")]
     static CORVITTO_REF_COMP_WITH_HF_18ST: LazyLock<Composition> = LazyLock::new(|| {
+        let milk_solids = SolidsBreakdown::new()
+            .fats(Fats::new().total(6.1))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(4.1)))
+            .others_from_total(14.1)
+            .unwrap();
+
+        let egg_solids = SolidsBreakdown::new().fats(Fats::new().total(0.6)).others(0.5);
+
+        let cocoa_solids = SolidsBreakdown::new().fats(Fats::new().total(1.3)).others(4.7);
+
+        let other_solids =
+            SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(22.0)));
+
         Composition::new()
             .solids(
                 Solids::new()
-                    .milk(SolidsBreakdown::new().fats(6.1).sweeteners(4.1).snfs(3.9))
-                    .egg(SolidsBreakdown::new().fats(0.6).snfs(0.5))
-                    .cocoa(SolidsBreakdown::new().fats(1.3).snfs(4.7))
-                    .other(SolidsBreakdown::new().sweeteners(22.0)),
+                    .milk(milk_solids)
+                    .egg(egg_solids)
+                    .cocoa(cocoa_solids)
+                    .other(other_solids),
             )
             .pod(33.6)
             .pac(PAC::new().sugars(50.9).hardness_factor(9.7))
@@ -1003,11 +1040,11 @@ mod tests {
         assert_eq!(comp.get(CompKey::MSNF), 8.0);
         assert_eq!(comp.get(CompKey::MilkSolids), 14.1);
         assert_eq!(comp.get(CompKey::EggFat), 0.6);
-        assert_eq!(comp.get(CompKey::EggSNF), 0.5);
+        assert_abs_diff_eq!(comp.get(CompKey::EggSNF), 0.5, epsilon = TESTS_EPSILON);
         assert_eq!(comp.get(CompKey::CocoaButter), 1.3);
         assert_eq!(comp.get(CompKey::CocoaSolids), 4.7);
         assert_abs_diff_eq!(comp.get(CompKey::TotalFats), 8.0, epsilon = TESTS_EPSILON);
-        // assert_eq!(comp.get(CompKey::TotalSweeteners), 3.4 + 17.0);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 3.4 + 17.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 38.2);
         assert_eq!(comp.get(CompKey::PACsgr), 37.3);
         assert_eq!(comp.get(CompKey::PACtotal), 37.3);
@@ -1024,11 +1061,11 @@ mod tests {
         assert_eq!(comp.get(CompKey::MSNF), 8.0);
         assert_eq!(comp.get(CompKey::MilkSolids), 14.1);
         assert_eq!(comp.get(CompKey::EggFat), 0.6);
-        assert_eq!(comp.get(CompKey::EggSNF), 0.5);
+        assert_abs_diff_eq!(comp.get(CompKey::EggSNF), 0.5, epsilon = TESTS_EPSILON);
         assert_eq!(comp.get(CompKey::CocoaButter), 1.3);
         assert_eq!(comp.get(CompKey::CocoaSolids), 4.7);
         assert_abs_diff_eq!(comp.get(CompKey::TotalFats), 8.0, epsilon = TESTS_EPSILON);
-        // assert_eq!(comp.get(CompKey::TotalSweeteners), 4.1 + 22.0);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 4.1 + 22.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 43.2);
         assert_eq!(comp.get(CompKey::PACsgr), 50.9);
         assert_eq!(comp.get(CompKey::PACtotal), 50.9);

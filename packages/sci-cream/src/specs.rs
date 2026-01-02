@@ -9,17 +9,18 @@ use crate::diesel::ingredients;
 use diesel::{Queryable, Selectable};
 
 use crate::{
-    composition::{Alcohol, Composition, Micro, PAC, ScaleComponents, Solids, SolidsBreakdown, Sugars, Sweeteners},
+    composition::{
+        Alcohol, Carbohydrates, CompKey, Composition, Fats, Micro, PAC, ScaleComponents, Solids, SolidsBreakdown,
+        Sugars, Sweeteners,
+    },
     constants,
-    error::{Error, Result},
+    error::Result,
     ingredients::{Category, Ingredient},
+    validate::{assert_are_positive, assert_is_100_percent, assert_is_subset, assert_within_100_percent},
 };
 
 #[cfg(doc)]
-use crate::{
-    composition::CompKey,
-    constants::{STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM},
-};
+use crate::constants::{STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM};
 
 pub trait IntoComposition {
     fn into_composition(self) -> Result<Composition>;
@@ -82,6 +83,7 @@ pub struct DairySpec {
 #[serde(deny_unknown_fields)]
 pub struct SweetenerSpec {
     pub sweeteners: Sweeteners,
+    pub other_carbohydrates: Option<f64>,
     pub other_solids: Option<f64>,
     #[serde(flatten)]
     pub basis: CompositionBasis,
@@ -143,25 +145,26 @@ pub struct FruitSpec {
 ///     to as "chocolate liquor", "cocoa mass", etc.) including both cocoa butter (fat) and cocoa
 ///     solids (non-fat solids). This is the percentage advertised on chocolate packaging, e.g. 70%
 ///     dark chocolate has 70% cacao solids. Corresponds to [`cacao_solids`](Self::cacao_solids).
-///     The value is specified in [`Composition`] via [`CompKey::CacaoSolids`].
+///     The value is specified in [`Composition`] accessible via [`CompKey::CacaoSolids`].
 ///   - Cocoa butter: the fat component extracted from cacao solids (sometimes referred to as "cocoa
 ///     fat"). This is rarely advertised on packaging, but can usually be inferred from the
 ///     nutrition table. Corresponds to [`cocoa_butter`](Self::cocoa_butter). The value is
-///     specified in [`Composition`] via [`CompKey::CocoaButter`].
+///     specified in [`Composition`] accessible via [`CompKey::CocoaButter`].
 ///   - _Cocoa_ solids: the non-fat component of cacao solids (sometimes referred to as "cocoa
 ///     powder" or "cocoa fiber"), i.e. cacao solids minus cocoa butter. In ice cream mixes, this
 ///     generally determines how "chocolatey" the flavor is. This value is specified in
-///     [`Composition`] via [`CompKey::CocoaSolids`].
+///     [`Composition`] accessible via [`CompKey::CocoaSolids`].
 ///
 /// The relation of the above components is `cacao solids = cocoa butter + cocoa solids`. The sugar
 /// content of chocolate ingredients is optional, assumed to be zero if not specified, as some
-/// chocolates (e.g. Unsweetened Chocolate) may not contain any sugar at all. The total solids
-/// content of chocolate ingredients is assumed to be 100% (i.e. no water content). If
+/// chocolates (e.g. Unsweetened Chocolate) may not contain any sugar at all. Any non-zero sugar
+/// content is specified in [`Composition`] accessible via [`CompKey::TotalSugars`]. The total
+/// solids content of chocolate ingredients is assumed to be 100% (i.e. no water content). If
 /// [`sugar`](Self::sugar) and [`cacao_solids`](Self::cacao_solids) do not add up to 100%, then the
 /// remaining portion is assumed to be other non-sugar, non-fat solids, specified in [`Composition`]
-/// via [`CompKey::OtherSNFS`], e.g. emulsifiers, impurities in demerara sugar, etc. Cocoa Powder
-/// products are typically 100% cacao solids, with no sugar, and cocoa butter content ranging from
-/// ~10-24%.
+/// accessible via [`CompKey::OtherSNFS`], e.g. emulsifiers, impurities in demerara sugar, etc.
+/// Cocoa Powder products are typically 100% cacao solids, with no sugar, and cocoa butter content
+/// ranging from ~10-24%.
 ///
 /// # Examples
 ///
@@ -213,9 +216,9 @@ pub struct ChocolateSpec {
 ///
 /// Nut ingredients are specified by their [`fat`](Self::fat) content, [`sugar`](Self::sugar)
 /// content, and [`water`](Self::water) content, by total weight. The remaining portion up to 100%
-/// is assumed to be non-sugar, non-fat solids (snfs). Sugars are assumed to be all sucrose. Fat and
-/// sugar values are specified in [`Solids::nut`](Solids::nut), in [`fats`](SolidsBreakdown::fats)
-/// and [`sweeteners`](SolidsBreakdown::sweeteners) respectively.
+/// is assumed to be non-fat, non-sugar solids (snfs). Sugars are assumed to be all sucrose. Fat and
+/// sugar values are specified in [`Composition`] via [`CompKey::NutFat`] and
+/// [`CompKey::TotalSweeteners`], respectively.
 ///
 /// The composition of nut ingredients can usually be found in food in the nutrition facts tables
 /// provided by the manufacturer, or in food composition databases, like [USDA FoodData
@@ -264,10 +267,9 @@ pub struct NutSpec {
 /// [USDA FoodData Central](https://fdc.nal.usda.gov/food-search), in the manufacturers' data, or in
 /// reference texts, e.g. _Ice Cream 7th Edition_ (Goff & Hartel, 2013, p. 49)[^2] or _The Science
 /// of Ice Cream_ (Clarke, 2004, p. 49)[^4]. Note that [`lecithin`](Self::lecithin) is a subset of
-/// [`fats`](Self::fats), and considered an emulsifier with relative strength of 100, specified in
-/// [`Micro::emulsifiers`](Micro::emulsifiers). The remaining portion of `100 - water - fats` is
-/// assumed to be non-fat non-sugar solids (snfs), specified in
-/// [`Solids::egg`](Solids::egg)`.`[`snfs`](SolidsBreakdown::snfs).
+/// [`fats`](Self::fats) and considered an emulsifier with relative strength of 100, specified in
+/// [`Composition`] via [`CompKey::Emulsifiers`]. The remaining portion of `100 - water - fats` is
+/// assumed to be non-fat solids (snf), specified in [`Composition`] via [`CompKey::EggSNF`].
 ///
 /// # Examples
 ///
@@ -312,17 +314,17 @@ pub struct EggSpec {
 /// (Alcohol by weight) via [`constants::ABV_TO_ABW_RATIO`]. Liqueurs, creams, and other alcohol
 /// ingredients may also contain sugar, fat, and other solids. These can be tricky to find, since
 /// nutrition facts tables are not usually mandated for alcoholic beverages. The best approach is
-/// to find a nutrition facts table from the manufacturer, if available, otherwise to look for
-/// unofficial sources online. The exact composition is not usually critical, since alcohol
-/// ingredients are typically used in small amounts in ice cream mixes.
+/// to find a nutrition facts table from the manufacturer if available, otherwise to look for
+/// unofficial sources online. Aside from `ABV`, the exact composition is not usually critical,
+/// since alcohol ingredients are typically used in small amounts in ice cream mixes.
 ///
 /// In the fields below, [`sugar`](Self::sugar) is assumed to be sucrose, zero if not specified, and
-/// its contributions to PAC and POD are internally calculated accordingly. [`fat`](Self::fat) is
-/// assumed to be [`Solids::other`](Solids::other)`.`[`fats`](SolidsBreakdown::fats), zero if not
-/// specified. [`solids`](Self::solids) less `sugar` and `fat` is assumed to be
-/// [`Solids::other`](Solids::other)`.`[`snfs`](SolidsBreakdown::snfs). If not specified, it is
-/// calculated as `sugar + fat`. If specified, it is required that `solids >= sugar + fat`. Overall,
-/// the sum of `abw + solids <= 100%`.
+/// its contributions to PAC and POD are internally calculated accordingly. [`fat`](Self::fat), zero
+/// if not specified, is stored in [`Composition`] accessible via [`CompKey::OtherFats`]. If
+/// [`solids`](Self::solids) is not specified, it is calculated as `sugar + fat`. If specified, it
+/// is required that `solids >= sugar + fat`. `solids` less `sugar` and `fat` is store in
+/// [`Composition`] accessible via [`CompKey::OtherSNFS`]. Overall, `abw` plus `solids` must not
+/// exceed 100%, i.e. `abw + solids <= 100%`.
 #[doc = include_str!("../docs/bibs/8.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
@@ -391,7 +393,6 @@ pub enum MicroSpec {
 #[serde(deny_unknown_fields)]
 pub struct FullSpec {
     pub solids: Option<Solids>,
-    pub sweeteners: Option<Sweeteners>,
     pub micro: Option<Micro>,
     pub abv: Option<f64>,
     pub pod: Option<f64>,
@@ -400,6 +401,7 @@ pub struct FullSpec {
 
 /// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[allow(clippy::large_enum_variant)] // @todo Deal with this issue later
 pub enum Spec {
     DairySpec(DairySpec),
     SweetenerSpec(SweetenerSpec),
@@ -447,10 +449,6 @@ impl IngredientSpec {
     }
 }
 
-fn is_within_100_percent(value: f64) -> bool {
-    (0.0..=100.0).contains(&value)
-}
-
 impl IntoComposition for DairySpec {
     fn into_composition(self) -> Result<Composition> {
         let Self { fat, msnf } = self;
@@ -460,15 +458,20 @@ impl IntoComposition for DairySpec {
         let lactose = msnf * constants::STD_LACTOSE_IN_MSNF;
         let snfs = msnf - lactose;
 
-        let sweeteners = Sweeteners::new().sugars(Sugars::new().lactose(lactose));
-        let pod = sweeteners.to_pod().unwrap();
+        assert_are_positive(&[fat, msnf])?;
+
+        let milk_solids = SolidsBreakdown::new()
+            .fats(Fats::new().total(fat))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(lactose)))
+            .others(snfs);
+
+        let pod = milk_solids.carbohydrates.to_pod()?;
         let pad = PAC::new()
-            .sugars(sweeteners.to_pac().unwrap())
+            .sugars(milk_solids.carbohydrates.to_pac()?)
             .msnf_ws_salts(msnf * constants::pac::MSNF_WS_SALTS / 100.0);
 
         Ok(Composition::new()
-            .solids(Solids::new().milk(SolidsBreakdown::new().fats(fat).sweeteners(lactose).snfs(snfs)))
-            .sweeteners(sweeteners)
+            .solids(Solids::new().milk(milk_solids))
             .pod(pod)
             .pac(pad))
     }
@@ -478,58 +481,54 @@ impl IntoComposition for SweetenerSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self {
             sweeteners,
+            other_carbohydrates,
             other_solids,
             basis,
             pod,
             pac,
         } = self;
 
+        let other_carbohydrates = other_carbohydrates.unwrap_or(0.0);
         let other_solids = other_solids.unwrap_or(0.0);
+        assert_are_positive(&[other_carbohydrates, other_solids])?;
 
         let mut factor = None;
 
         match basis {
             CompositionBasis::ByDryWeight { solids } => {
-                if sweeteners.total() + other_solids != 100.0 {
-                    return Err(Error::CompositionNot100Percent(sweeteners.total() + other_solids));
-                }
-
-                if !is_within_100_percent(solids) {
-                    return Err(Error::CompositionNotWithin100Percent(solids));
-                }
+                assert_within_100_percent(sweeteners.total() + other_carbohydrates + other_solids)?;
+                assert_within_100_percent(solids)?;
 
                 factor = Some(solids / 100.0);
             }
             CompositionBasis::ByTotalWeight { water } => {
-                if sweeteners.total() + other_solids + water != 100.0 {
-                    return Err(Error::CompositionNot100Percent(sweeteners.total() + other_solids + water));
-                }
+                assert_is_100_percent(sweeteners.total() + other_carbohydrates + other_solids + water)?;
             }
         };
 
-        let (sweeteners, other_solids) = if let Some(factor) = factor {
-            (sweeteners.scale(factor), other_solids * factor)
+        let (sweeteners, other_carbohydrates, other_solids) = if let Some(factor) = factor {
+            (sweeteners.scale(factor), other_carbohydrates * factor, other_solids * factor)
         } else {
-            (sweeteners, other_solids)
+            (sweeteners, other_carbohydrates, other_solids)
         };
 
-        let ignore_polysaccharides = |s: Sweeteners| Sweeteners {
-            polysaccharides: 0.0,
-            ..s
-        };
-
-        let pod = pod.unwrap_or(ignore_polysaccharides(sweeteners).to_pod().unwrap());
-        let pac = pac.unwrap_or(ignore_polysaccharides(sweeteners).to_pac().unwrap());
+        let pod = pod.unwrap_or(sweeteners.to_pod().unwrap());
+        let pac = pac.unwrap_or(sweeteners.to_pac().unwrap());
 
         Ok(Composition::new()
             .solids(
                 Solids::new().other(
                     SolidsBreakdown::new()
-                        .sweeteners(sweeteners.total() - sweeteners.polysaccharides)
-                        .snfs(sweeteners.polysaccharides + other_solids),
+                        .carbohydrates(
+                            Carbohydrates::new()
+                                .sugars(sweeteners.sugars)
+                                .polyols(sweeteners.polyols)
+                                .others(other_carbohydrates),
+                        )
+                        .artificial_sweeteners(sweeteners.artificial)
+                        .others(other_solids),
                 ),
             )
-            .sweeteners(sweeteners)
             .pod(pod)
             .pac(PAC::new().sugars(pac)))
     }
@@ -540,18 +539,18 @@ impl IntoComposition for FruitSpec {
         let Self { sugars, water, fat } = self;
         let fat = fat.unwrap_or(0.0);
 
-        if !is_within_100_percent(sugars.total() + water + fat) {
-            return Err(Error::CompositionNotWithin100Percent(sugars.total() + water + fat));
-        }
+        assert_are_positive(&[water, fat])?;
+        assert_within_100_percent(sugars.total() + water + fat)?;
 
-        let snfs = 100.0 - (sugars.total() + water + fat);
-        let sweeteners = Sweeteners::new().sugars(sugars);
+        let solids = SolidsBreakdown::new()
+            .fats(Fats::new().total(fat))
+            .carbohydrates(Carbohydrates::new().sugars(sugars))
+            .others_from_total(100.0 - water)?;
 
         Ok(Composition::new()
-            .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(sugars.total()).fats(fat).snfs(snfs)))
-            .sweeteners(sweeteners)
-            .pod(sweeteners.to_pod().unwrap())
-            .pac(PAC::new().sugars(sweeteners.to_pac().unwrap())))
+            .solids(Solids::new().other(solids))
+            .pod(solids.carbohydrates.to_pod()?)
+            .pac(PAC::new().sugars(solids.carbohydrates.to_pac()?)))
     }
 }
 
@@ -565,32 +564,29 @@ impl IntoComposition for ChocolateSpec {
 
         let sugar = sugar.unwrap_or(0.0);
 
-        if cocoa_butter > cacao_solids {
-            return Err(Error::InvalidComposition(format!(
-                "Cocoa butter ({cocoa_butter}) is a subset of and cannot be greater than cacao solids ({cacao_solids})"
-            )));
-        }
+        assert_are_positive(&[cacao_solids, cocoa_butter, sugar])?;
+        assert_is_subset(cocoa_butter, cacao_solids, "Cacao butter must be a subset of cacao solids".to_string())?;
+        assert_within_100_percent(cacao_solids + sugar)?;
 
-        if !is_within_100_percent(cacao_solids + sugar) {
-            return Err(Error::CompositionNotWithin100Percent(cacao_solids + sugar));
-        }
+        let cocoa_snf = cacao_solids - cocoa_butter;
+        let sugars = Sugars::new().sucrose(sugar);
 
-        let cocoa_snfs = cacao_solids - cocoa_butter;
-        let other_snfs = 100.0 - (cacao_solids + sugar);
+        let cocoa_solids = SolidsBreakdown::new()
+            .fats(Fats::new().total(cocoa_butter))
+            .others_from_total(cacao_solids)?;
 
-        let sweeteners = Sweeteners::new().sugars(Sugars::new().sucrose(sugar));
+        let other_solids = SolidsBreakdown::new()
+            .carbohydrates(Carbohydrates::new().sugars(sugars))
+            .others_from_total(100.0 - cacao_solids)?;
 
         Ok(Composition::new()
-            .solids(
-                Solids::new()
-                    .cocoa(SolidsBreakdown::new().fats(cocoa_butter).snfs(cocoa_snfs))
-                    .other(SolidsBreakdown::new().sweeteners(sugar).snfs(other_snfs)),
-            )
-            .sweeteners(sweeteners)
-            .pod(sweeteners.to_pod().unwrap())
-            .pac(PAC::new().sugars(sweeteners.to_pac().unwrap()).hardness_factor(
-                cocoa_butter * constants::hf::CACAO_BUTTER + cocoa_snfs * constants::hf::COCOA_SOLIDS,
-            )))
+            .solids(Solids::new().cocoa(cocoa_solids).other(other_solids))
+            .pod(sugars.to_pod().unwrap())
+            .pac(
+                PAC::new().sugars(sugars.to_pac().unwrap()).hardness_factor(
+                    cocoa_butter * constants::hf::CACAO_BUTTER + cocoa_snf * constants::hf::COCOA_SOLIDS,
+                ),
+            ))
     }
 }
 
@@ -598,20 +594,24 @@ impl IntoComposition for NutSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self { fat, sugar, water } = self;
 
-        if !is_within_100_percent(fat + sugar + water) {
-            return Err(Error::CompositionNotWithin100Percent(fat + sugar + water));
-        }
+        assert_are_positive(&[fat, sugar, water])?;
+        assert_within_100_percent(fat + sugar + water)?;
 
-        let snfs = 100.0 - (fat + sugar + water);
-        let sweeteners = Sweeteners::new().sugars(Sugars::new().sucrose(sugar));
+        let sugars = Sugars::new().sucrose(sugar);
 
         Ok(Composition::new()
-            .solids(Solids::new().nut(SolidsBreakdown::new().fats(fat).sweeteners(sugar).snfs(snfs)))
-            .sweeteners(sweeteners)
-            .pod(sweeteners.to_pod().unwrap())
+            .solids(
+                Solids::new().nut(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(fat))
+                        .carbohydrates(Carbohydrates::new().sugars(sugars))
+                        .others_from_total(100.0 - water)?,
+                ),
+            )
+            .pod(sugars.to_pod().unwrap())
             .pac(
                 PAC::new()
-                    .sugars(sweeteners.to_pac().unwrap())
+                    .sugars(sugars.to_pac().unwrap())
                     .hardness_factor(fat * constants::hf::NUT_FAT),
             ))
     }
@@ -621,18 +621,18 @@ impl IntoComposition for EggSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self { water, fats, lecithin } = self;
 
-        if water + fats > 100.0 {
-            return Err(Error::CompositionNotWithin100Percent(water + fats));
-        }
-
-        if lecithin > fats {
-            return Err(Error::InvalidComposition(format!(
-                "Lecithin ({lecithin}) is a subset of and cannot be greater than fats ({fats})"
-            )));
-        }
+        assert_are_positive(&[water, fats, lecithin])?;
+        assert_within_100_percent(water + fats)?;
+        assert_is_subset(lecithin, fats, "Lecithin must be a subset of fats".to_string())?;
 
         Ok(Composition::new()
-            .solids(Solids::new().egg(SolidsBreakdown::new().fats(fats).snfs(100.0 - water - fats)))
+            .solids(
+                Solids::new().egg(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(fats))
+                        .others_from_total(100.0 - water)?,
+                ),
+            )
             .micro(Micro::new().lecithin(lecithin).emulsifiers(lecithin)))
     }
 }
@@ -651,39 +651,24 @@ impl IntoComposition for AlcoholSpec {
         let solids = solids.unwrap_or(sugar + fat);
         let alcohol = Alcohol::from_abv(abv);
 
-        if abv < 0.0 || sugar < 0.0 || fat < 0.0 || solids < 0.0 {
-            return Err(Error::InvalidComposition("ABV, sugar, fat, and solids must be non-negative".to_string()));
-        }
+        assert_are_positive(&[abv, sugar, fat, solids])?;
+        assert_is_subset(sugar + fat, solids, "Sugar and fat must be a subset of solids".to_string())?;
+        assert_within_100_percent(alcohol.by_weight + solids)?;
 
-        if solids < sugar + fat {
-            return Err(Error::InvalidComposition(format!(
-                "Total solids ({solids}) cannot be less than the sum of sugar ({sugar}) and fat ({fat})"
-            )));
-        }
-
-        if !is_within_100_percent(alcohol.by_weight + solids) {
-            return Err(Error::CompositionNotWithin100Percent(alcohol.by_weight + solids));
-        }
-
-        let sweeteners = Sweeteners::new().sugars(Sugars::new().sucrose(sugar));
+        let sugars = Sugars::new().sucrose(sugar);
 
         Ok(Composition::new()
             .solids(
                 Solids::new().other(
                     SolidsBreakdown::new()
-                        .sweeteners(sugar)
-                        .fats(fat)
-                        .snfs(solids - sugar - fat),
+                        .fats(Fats::new().total(fat))
+                        .carbohydrates(Carbohydrates::new().sugars(sugars))
+                        .others_from_total(solids)?,
                 ),
             )
-            .sweeteners(sweeteners)
             .alcohol(alcohol)
-            .pod(sweeteners.to_pod().unwrap())
-            .pac(
-                PAC::new()
-                    .sugars(sweeteners.to_pac().unwrap())
-                    .alcohol(alcohol.to_pac()),
-            ))
+            .pod(sugars.to_pod().unwrap())
+            .pac(PAC::new().sugars(sugars.to_pac().unwrap()).alcohol(alcohol.to_pac())))
     }
 }
 
@@ -694,14 +679,10 @@ impl IntoComposition for MicroSpec {
                 let emulsifiers_strength = emulsifiers_strength.unwrap_or(0.0);
                 let stabilizers_strength = stabilizers_strength.unwrap_or(0.0);
 
-                if emulsifiers_strength < 0.0 || stabilizers_strength < 0.0 {
-                    return Err(Error::InvalidComposition(
-                        "Emulsifier and Stabilizer strengths must be non-negative".to_string(),
-                    ));
-                }
+                assert_are_positive(&[emulsifiers_strength, stabilizers_strength])?;
 
                 Ok(Composition::new()
-                    .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
+                    .solids(Solids::new().other(SolidsBreakdown::new().others(100.0)))
                     .micro(
                         Micro::new()
                             .emulsifiers(emulsifiers_strength)
@@ -711,11 +692,11 @@ impl IntoComposition for MicroSpec {
 
         match self {
             MicroSpec::Salt => Ok(Composition::new()
-                .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
+                .solids(Solids::new().other(SolidsBreakdown::new().others(100.0)))
                 .micro(Micro::new().salt(100.0))
                 .pac(PAC::new().salt(constants::pac::SALT))),
             MicroSpec::Lecithin => Ok(Composition::new()
-                .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
+                .solids(Solids::new().other(SolidsBreakdown::new().others(100.0)))
                 .micro(Micro::new().lecithin(100.0).emulsifiers(100.0))),
             MicroSpec::Stabilizer { strength } => make_emulsifier_stabilizer_composition(None, Some(strength)),
             MicroSpec::Emulsifier { strength } => make_emulsifier_stabilizer_composition(Some(strength), None),
@@ -731,7 +712,6 @@ impl IntoComposition for FullSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self {
             solids,
-            sweeteners,
             micro,
             abv,
             pod,
@@ -746,15 +726,12 @@ impl IntoComposition for FullSpec {
 
         let comp = Composition::new()
             .solids(solids.unwrap_or_default())
-            .sweeteners(sweeteners.unwrap_or_default())
             .micro(micro.unwrap_or_default())
             .alcohol(alcohol)
             .pod(pod.unwrap_or_default())
             .pac(pac.unwrap_or_default());
 
-        if !is_within_100_percent(comp.solids.total() + alcohol.by_weight) {
-            return Err(Error::CompositionNotWithin100Percent(comp.solids.total() + alcohol.by_weight));
-        }
+        assert_within_100_percent(comp.get(CompKey::TotalSolids) + comp.get(CompKey::Alcohol))?;
 
         Ok(comp)
     }
@@ -799,8 +776,14 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_2_MILK: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
-            .solids(Solids::new().milk(SolidsBreakdown::new().fats(2.0).sweeteners(4.8069).snfs(4.0131)))
-            .sweeteners(Sweeteners::new().sugars(Sugars::new().lactose(4.8069)))
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(2.0))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(4.8069)))
+                        .others(4.0131),
+                ),
+            )
             .pod(0.769104)
             .pac(PAC::new().sugars(4.8069).msnf_ws_salts(3.2405))
     });
@@ -850,6 +833,7 @@ pub(crate) mod tests {
         category: Category::Sweetener,
         spec: Spec::SweetenerSpec(SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
+            other_carbohydrates: None,
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
             pod: None,
@@ -857,13 +841,15 @@ pub(crate) mod tests {
         }),
     });
 
-    pub(crate) static COMP_SUCROSE: LazyLock<Composition> = LazyLock::new(|| {
-        Composition::new()
-            .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(100.0)))
-            .sweeteners(Sweeteners::new().sugars(Sugars::new().sucrose(100.0)))
-            .pod(100.0)
-            .pac(PAC::new().sugars(100.0))
-    });
+    pub(crate) static COMP_SUCROSE: LazyLock<Composition> =
+        LazyLock::new(|| {
+            Composition::new()
+                .solids(Solids::new().other(
+                    SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(100.0))),
+                ))
+                .pod(100.0)
+                .pac(PAC::new().sugars(100.0))
+        });
 
     #[test]
     fn into_composition_sweetener_spec_sucrose() {
@@ -896,6 +882,7 @@ pub(crate) mod tests {
         category: Category::Sweetener,
         spec: Spec::SweetenerSpec(SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(100.0)),
+            other_carbohydrates: None,
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 92.0 },
             pod: None,
@@ -934,6 +921,7 @@ pub(crate) mod tests {
         category: Category::Sweetener,
         spec: Spec::SweetenerSpec(SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().fructose(100.0)),
+            other_carbohydrates: None,
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
             pod: None,
@@ -943,8 +931,9 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_FRUCTOSE: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
-            .solids(Solids::new().other(SolidsBreakdown::new().sweeteners(100.0)))
-            .sweeteners(Sweeteners::new().sugars(Sugars::new().fructose(100.0)))
+            .solids(Solids::new().other(
+                SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().fructose(100.0))),
+            ))
             .pod(173.0)
             .pac(PAC::new().sugars(190.0))
     });
@@ -982,6 +971,7 @@ pub(crate) mod tests {
         category: Category::Sweetener,
         spec: Spec::SweetenerSpec(SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(42.5).fructose(42.5).sucrose(15.0)),
+            other_carbohydrates: None,
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 80.0 },
             pod: None,
@@ -1035,6 +1025,7 @@ pub(crate) mod tests {
                     .galactose(1.5)
                     .maltose(1.5),
             ),
+            other_carbohydrates: None,
             other_solids: Some(1.0),
             basis: CompositionBasis::ByTotalWeight { water: 17.0 },
             pod: None,
@@ -1067,9 +1058,9 @@ pub(crate) mod tests {
           "sugars": {
             "fructose": 42,
             "glucose": 53
-          },
-          "polysaccharides": 5
+          }
         },
+        "other_carbohydrates": 5,
         "ByDryWeight": {
           "solids": 76
         }
@@ -1080,9 +1071,8 @@ pub(crate) mod tests {
         name: "HFCS 42".to_string(),
         category: Category::Sweetener,
         spec: Spec::SweetenerSpec(SweetenerSpec {
-            sweeteners: Sweeteners::new()
-                .sugars(Sugars::new().fructose(42.0).glucose(53.0))
-                .polysaccharide(5.0),
+            sweeteners: Sweeteners::new().sugars(Sugars::new().fructose(42.0).glucose(53.0)),
+            other_carbohydrates: Some(5.0),
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 76.0 },
             pod: None,
@@ -1096,11 +1086,11 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::Fructose), 31.92);
         assert_eq!(comp.get(CompKey::Glucose), 40.28);
-        assert_eq!(comp.get(CompKey::Polysaccharides), 3.8);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 31.92 + 40.28 + 3.8);
 
-        assert_eq!(comp.get(CompKey::Sugars), 72.2);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 76.0);
-        assert_eq!(comp.get(CompKey::TotalSNFS), 3.8);
+        assert_eq!(comp.get(CompKey::TotalSugars), 72.2);
+        assert_abs_diff_eq!(comp.get(CompKey::TotalSweeteners), 76.0 - 3.8, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.get(CompKey::TotalSNFS), 3.8, epsilon = TESTS_EPSILON);
         assert_eq!(comp.get(CompKey::TotalSolids), 76.0);
         assert_eq!(comp.get(CompKey::POD), 87.60672000000001);
         assert_eq!(comp.get(CompKey::PACsgr), 137.18);
@@ -1535,7 +1525,6 @@ pub(crate) mod tests {
         category: Category::Miscellaneous,
         spec: Spec::FullSpec(FullSpec {
             solids: None,
-            sweeteners: None,
             micro: None,
             abv: None,
             pod: None,
@@ -1600,6 +1589,16 @@ pub(crate) mod tests {
     fn ingredient_spec_database_matches_assets() {
         INGREDIENT_ASSETS_TABLE.iter().for_each(|(_, spec, _)| {
             assert_eq!(spec, &get_ingredient_spec_by_name_or_panic(&spec.name));
+        });
+    }
+
+    #[test]
+    fn ingredient_spec_into_composition_matches_assets() {
+        INGREDIENT_ASSETS_TABLE.iter().for_each(|(_, spec, expected_comp_opt)| {
+            let comp = spec.spec.into_composition().unwrap();
+            if let Some(expected_comp) = expected_comp_opt {
+                assert_abs_diff_eq!(&comp, expected_comp, epsilon = TESTS_EPSILON);
+            }
         });
     }
 }

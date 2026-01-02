@@ -25,7 +25,7 @@ const DEFAULT_SELECTED_COMPS: Set<CompKey> = new Set([
   CompKey.MilkFat,
   CompKey.TotalFats,
   CompKey.MSNF,
-  CompKey.Sugars,
+  CompKey.TotalSugars,
   CompKey.TotalSolids,
 ]);
 

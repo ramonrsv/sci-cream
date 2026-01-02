@@ -10,6 +10,8 @@ pub enum Error {
     CompositionNotWithin100Percent(f64),
     #[error("Composition does not sum to 100%: {0}")]
     CompositionNot100Percent(f64),
+    #[error("Composition value is not positive: {0}")]
+    CompositionNotPositive(f64),
     #[error("Invalid composition: {0}")]
     InvalidComposition(String),
     #[error("PAC value cannot be negative: {0}")]

@@ -49,7 +49,8 @@
     "name": "HFCS 42",
     "category": "Sweetener",
     "SweetenerSpec": {
-      "sweeteners": { "sugars": { "fructose": 42, "glucose": 53 }, "polysaccharides": 5 },
+      "sweeteners": { "sugars": { "fructose": 42, "glucose": 53 } },
+      "other_carbohydrates": 5,
       "ByDryWeight": { "solids": 76 }
     },
     "comments": "High Fructose Corn Syrup 42 (HFCS 42) composition values were taken from Wikipedia (https://en.wikipedia.org/wiki/High-fructose_corn_syrup#Production). The resulting POD/PAC values match those in Ice Cream 7th Edition (Table 3.4, page 67) and Ice Cream Calculator (https://icecreamcalc.com/)."

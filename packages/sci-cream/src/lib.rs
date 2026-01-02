@@ -16,6 +16,7 @@ pub mod ingredients;
 pub mod recipe;
 pub mod specs;
 pub mod util;
+pub mod validate;
 
 #[cfg(feature = "diesel")]
 pub mod diesel;

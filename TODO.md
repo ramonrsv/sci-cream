@@ -35,3 +35,5 @@
       Next.js app easier to debug - at the moment it just says the WASM function is unreachable.
 - [ ] Once available, use `FullSpec` for "Baileys Irish Cream", as it has a more complex composition
       than can be expressed with `AlcoholSpec`, including other carbohydrates, milk solids, etc.
+- [ ] Looking into using `use crate::composition::CompKey::*` to avoid having to prefix `CompKey::`
+      whenever accessing values, e.g. `comp.get(MilkFats)` vs `comp.get(CompKey::MilkFats)`.
