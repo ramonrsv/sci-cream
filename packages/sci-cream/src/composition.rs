@@ -185,11 +185,15 @@ pub enum CompKey {
     /// This generally includes proteins, fibers, and minerals. It is roughly equivalent to
     /// [`CompKey::CocoaSolids`] if cacao were treated as a nut. For nut flavored ice cream recipes,
     /// this value directly correlates with the perceived intensity of the nut flavor.
-    NutSNFS,
+    ///
+    /// **Note**: This does not include any sugar content that may be present in nut ingredients;
+    /// that is accounted for separately via [`CompKey::Sugars`]. As such, it would be equivalent to
+    /// a hypothetical `NutSNFS` (Nut Solids Non-Fat Non-Sugar).
+    NutSNF,
     /// Nut Solids, the total solid content of nut ingredients
     ///
     /// This generally includes fats, proteins, fibers, and minerals. It includes both
-    /// [`CompKey::NutFat`] and [`CompKey::NutSNFS`], and is roughly equivalent to
+    /// [`CompKey::NutFat`] and [`CompKey::NutSNF`], and is roughly equivalent to
     /// [`CompKey::CacaoSolids`] if cacao were treated as a nut.
     ///
     /// **Note**: This does not include any sugar content that may be present in nut ingredients;
@@ -198,9 +202,16 @@ pub enum CompKey {
 
     /// Egg Fats, the fat content of egg ingredients
     EggFat,
-    /// Egg Solids Non-Fat Non-Sugar (SNFS), the non-fat, non-sugar solid content of egg ingredients
-    EggSNFS,
+    /// Egg Solids Non-Fat (SNF), the non-fat solid content of egg ingredients
+    ///
+    /// **Note**: This does not include any sugar content that may be present in egg ingredients;
+    /// that is accounted for separately via [`CompKey::Sugars`]. As such, it would be equivalent to
+    /// a hypothetical `EggSNFS` (Egg Solids Non-Fat Non-Sugar).
+    EggSNF,
     /// Egg Solids, the total solid content of egg ingredients
+    ///
+    /// **Note**: This does not include any sugar content that may be present in egg ingredients;
+    /// that is accounted for separately via [`CompKey::Sugars`].
     EggSolids,
 
     /// Other Fats, the fat content of other ingredients not milk, cocoa, nut, or egg
@@ -738,11 +749,11 @@ impl Composition {
             CompKey::CacaoSolids => self.solids.cocoa.total() - self.solids.cocoa.sweeteners,
 
             CompKey::NutFat => self.solids.nut.fats,
-            CompKey::NutSNFS => self.solids.nut.snfs,
+            CompKey::NutSNF => self.solids.nut.snfs,
             CompKey::NutSolids => self.solids.nut.total() - self.solids.nut.sweeteners,
 
             CompKey::EggFat => self.solids.egg.fats,
-            CompKey::EggSNFS => self.solids.egg.snfs,
+            CompKey::EggSNF => self.solids.egg.snfs,
             CompKey::EggSolids => self.solids.egg.total() - self.solids.egg.sweeteners,
 
             CompKey::OtherFats => self.solids.other.fats,

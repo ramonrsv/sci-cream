@@ -242,7 +242,7 @@ pub struct ChocolateSpec {
 /// }.into_composition().unwrap();
 ///
 /// assert_eq!(comp.get(CompKey::NutFat), 49.9);
-/// assert_eq!(comp.get(CompKey::NutSNFS), 41.34);
+/// assert_eq!(comp.get(CompKey::NutSNF), 41.34);
 /// assert_eq!(round_to_decimals(comp.get(CompKey::NutSolids), 2), 91.24);
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 4.35);
 /// assert_eq!(comp.get(CompKey::TotalSolids), 95.59);
@@ -290,7 +290,7 @@ pub struct NutSpec {
 /// }.into_composition().unwrap();
 ///
 /// assert_eq!(comp.get(CompKey::EggFat), 30.0);
-/// assert_eq!(comp.get(CompKey::EggSNFS), 19.0);
+/// assert_eq!(comp.get(CompKey::EggSNF), 19.0);
 /// assert_eq!(comp.get(CompKey::EggSolids), 49.0);
 /// assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
 /// ```
@@ -1283,12 +1283,12 @@ pub(crate) mod tests {
         let comp = ING_SPEC_NUT_ALMOND.spec.into_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::NutFat), 49.9);
-        assert_eq!(comp.get(CompKey::NutSNFS), 41.34);
+        assert_eq!(comp.get(CompKey::NutSNF), 41.34);
         assert_abs_diff_eq!(comp.get(CompKey::NutSolids), 91.24, epsilon = TESTS_EPSILON);
 
         // Sugar in nuts is considered part of total sweeteners, not part of Nut Solids
         assert_eq!(comp.get(CompKey::TotalSweeteners), 4.35);
-        assert_eq!(comp.get(CompKey::NutSolids), comp.get(CompKey::NutFat) + comp.get(CompKey::NutSNFS));
+        assert_eq!(comp.get(CompKey::NutSolids), comp.get(CompKey::NutFat) + comp.get(CompKey::NutSNF));
         assert_eq!(comp.get(CompKey::NutSolids), comp.get(CompKey::TotalSolids) - comp.get(CompKey::TotalSweeteners));
 
         assert_eq!(comp.get(CompKey::TotalSolids), 95.59);
@@ -1322,7 +1322,7 @@ pub(crate) mod tests {
         let comp = ING_SPEC_EGG_YOLK.spec.into_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::EggFat), 30.0);
-        assert_eq!(comp.get(CompKey::EggSNFS), 19.0);
+        assert_eq!(comp.get(CompKey::EggSNF), 19.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 49.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
     }

@@ -20,11 +20,11 @@ impl KeyAsStrings for CompKey {
             CompKey::CacaoSolids => "Cacao Solids",
 
             CompKey::NutFat => "Nut Fat",
-            CompKey::NutSNFS => "Nut SNFS",
+            CompKey::NutSNF => "Nut SNF",
             CompKey::NutSolids => "Nut Solids",
 
             CompKey::EggFat => "Egg Fat",
-            CompKey::EggSNFS => "Egg SNFS",
+            CompKey::EggSNF => "Egg SNF",
             CompKey::EggSolids => "Egg Solids",
 
             CompKey::OtherFats => "Other Fats",
@@ -138,10 +138,10 @@ mod tests {
             "Cocoa Solids",
             "Cacao Solids",
             "Nut Fat",
-            "Nut SNFS",
+            "Nut SNF",
             "Nut Solids",
             "Egg Fat",
-            "Egg SNFS",
+            "Egg SNF",
             "Egg Solids",
             "Other Fats",
             "Other SNFS",
