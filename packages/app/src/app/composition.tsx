@@ -23,7 +23,7 @@ function getCompKeys(): CompKey[] {
 
 const DEFAULT_SELECTED_COMPS: Set<CompKey> = new Set([
   CompKey.MilkFat,
-  CompKey.TotalFat,
+  CompKey.TotalFats,
   CompKey.MSNF,
   CompKey.Sugars,
   CompKey.TotalSolids,

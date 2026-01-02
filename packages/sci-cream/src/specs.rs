@@ -16,7 +16,10 @@ use crate::{
 };
 
 #[cfg(doc)]
-use crate::constants::{STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM};
+use crate::{
+    composition::CompKey,
+    constants::{STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM},
+};
 
 pub trait IntoComposition {
     fn into_composition(self) -> Result<Composition>;
@@ -106,7 +109,7 @@ pub struct SweetenerSpec {
 ///
 /// ```
 /// use sci_cream::{
-///     composition::{Sugars, Sweeteners},
+///     composition::{CompKey, Sugars, Sweeteners},
 ///     specs::{FruitSpec, IntoComposition}
 /// };
 ///
@@ -116,11 +119,12 @@ pub struct SweetenerSpec {
 ///     fat: Some(0.3),
 /// }.into_composition().unwrap();
 ///
-/// assert_eq!(comp.sweeteners, Sweeteners::new().sugars(
-///    Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47)));
+/// assert_eq!(comp.get(CompKey::Glucose), 1.99);
+/// assert_eq!(comp.get(CompKey::Fructose), 2.44);
+/// assert_eq!(comp.get(CompKey::Sucrose), 0.47);
 ///
-/// assert_eq!(comp.pod, 6.29116);
-/// assert_eq!(comp.pac.sugars, 8.887);
+/// assert_eq!(comp.get(CompKey::POD), 6.29116);
+/// assert_eq!(comp.get(CompKey::PACsgr), 8.887);
 /// ```
 #[doc = include_str!("../docs/bibs/101.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
@@ -139,28 +143,33 @@ pub struct FruitSpec {
 ///     to as "chocolate liquor", "cocoa mass", etc.) including both cocoa butter (fat) and cocoa
 ///     solids (non-fat solids). This is the percentage advertised on chocolate packaging, e.g. 70%
 ///     dark chocolate has 70% cacao solids. Corresponds to [`cacao_solids`](Self::cacao_solids).
+///     The value is specified in [`Composition`] via [`CompKey::CacaoSolids`].
 ///   - Cocoa butter: the fat component extracted from cacao solids (sometimes referred to as "cocoa
 ///     fat"). This is rarely advertised on packaging, but can usually be inferred from the
-///     nutrition table. Corresponds to [`cocoa_butter`](Self::cocoa_butter).
+///     nutrition table. Corresponds to [`cocoa_butter`](Self::cocoa_butter). The value is
+///     specified in [`Composition`] via [`CompKey::CocoaButter`].
 ///   - _Cocoa_ solids: the non-fat component of cacao solids (sometimes referred to as "cocoa
 ///     powder" or "cocoa fiber"), i.e. cacao solids minus cocoa butter. In ice cream mixes, this
 ///     generally determines how "chocolatey" the flavor is. This value is specified in
-///     [`Solids::cocoa`](Solids::cocoa)`.`[`snf`](SolidsBreakdown::snf).
+///     [`Composition`] via [`CompKey::CocoaSolids`].
 ///
 /// The relation of the above components is `cacao solids = cocoa butter + cocoa solids`. The sugar
 /// content of chocolate ingredients is optional, assumed to be zero if not specified, as some
 /// chocolates (e.g. Unsweetened Chocolate) may not contain any sugar at all. The total solids
 /// content of chocolate ingredients is assumed to be 100% (i.e. no water content). If
 /// [`sugar`](Self::sugar) and [`cacao_solids`](Self::cacao_solids) do not add up to 100%, then the
-/// remaining portion is assumed to be other non-sugar, non-fat solids, specified in
-/// [`Solids::other`](Solids::other)`.`[`snfs`](SolidsBreakdown::snfs), e.g. emulsifiers, impurities
-/// in demerara sugar, etc. Cocoa Powder products are typically 100% cacao solids, with no sugar,
-/// and cocoa butter content ranging from ~10-24%.
+/// remaining portion is assumed to be other non-sugar, non-fat solids, specified in [`Composition`]
+/// via [`CompKey::OtherSNFS`], e.g. emulsifiers, impurities in demerara sugar, etc. Cocoa Powder
+/// products are typically 100% cacao solids, with no sugar, and cocoa butter content ranging from
+/// ~10-24%.
 ///
 /// # Examples
 ///
 /// ```
-/// use sci_cream::specs::{ChocolateSpec, IntoComposition};
+/// use sci_cream::{
+///     composition::CompKey,
+///     specs::{ChocolateSpec, IntoComposition}
+/// };
 ///
 /// // 70% Cacao Dark Chocolate
 /// // https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g
@@ -172,10 +181,10 @@ pub struct FruitSpec {
 ///     sugar: Some(30.0),
 /// }.into_composition().unwrap();
 ///
-/// assert_eq!(comp.sweeteners.sugars.sucrose, 30.0);
-/// assert_eq!(comp.solids.cocoa.total(), 70.0);
-/// assert_eq!(comp.solids.cocoa.fats, 40.0);
-/// assert_eq!(comp.solids.cocoa.snf(), 30.0);
+/// assert_eq!(comp.get(CompKey::Sucrose), 30.0);
+/// assert_eq!(comp.get(CompKey::CacaoSolids), 70.0);
+/// assert_eq!(comp.get(CompKey::CocoaButter), 40.0);
+/// assert_eq!(comp.get(CompKey::CocoaSolids), 30.0);
 ///
 /// // 100% Unsweetened Cocoa Powder
 /// // https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs
@@ -186,10 +195,10 @@ pub struct FruitSpec {
 ///     sugar: None,
 /// }.into_composition().unwrap();
 ///
-/// assert_eq!(comp.sweeteners.total(), 0.0);
-/// assert_eq!(comp.solids.cocoa.total(), 100.0);
-/// assert_eq!(comp.solids.cocoa.fats, 16.67);
-/// assert_eq!(comp.solids.cocoa.snf(), 83.33);
+/// assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
+/// assert_eq!(comp.get(CompKey::CacaoSolids), 100.0);
+/// assert_eq!(comp.get(CompKey::CocoaButter), 16.67);
+/// assert_eq!(comp.get(CompKey::CocoaSolids), 83.33);
 /// ```
 // @todo Add a `msnf` field to support milk chocolate products (some professional chocolatier use)
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
@@ -220,7 +229,11 @@ pub struct ChocolateSpec {
 /// - Total Sugars: 4.35g
 ///
 /// ```
-/// use sci_cream::specs::{NutSpec, IntoComposition};
+/// use sci_cream::{
+///     composition::CompKey,
+///     specs::{NutSpec, IntoComposition},
+///     util::round_to_decimals,
+/// };
 ///
 /// let comp = NutSpec {
 ///    fat: 49.9,
@@ -228,13 +241,13 @@ pub struct ChocolateSpec {
 ///    water: 4.41,
 /// }.into_composition().unwrap();
 ///
-/// assert_eq!(comp.solids.nut.fats, 49.9);
-/// assert_eq!(comp.solids.nut.sweeteners, 4.35);
-/// assert_eq!(comp.solids.nut.snfs, 41.34);
-/// assert_eq!(comp.solids.total(), 95.59);
-/// assert_eq!(comp.sweeteners.total(), 4.35);
-/// assert_eq!(comp.pod, 4.35);
-/// assert_eq!(comp.pac.hardness_factor, 69.86);
+/// assert_eq!(comp.get(CompKey::NutFat), 49.9);
+/// assert_eq!(comp.get(CompKey::NutSNFS), 41.34);
+/// assert_eq!(round_to_decimals(comp.get(CompKey::NutSolids), 2), 91.24);
+/// assert_eq!(comp.get(CompKey::TotalSweeteners), 4.35);
+/// assert_eq!(comp.get(CompKey::TotalSolids), 95.59);
+/// assert_eq!(comp.get(CompKey::POD), 4.35);
+/// assert_eq!(comp.get(CompKey::HF), 69.86);
 /// ```
 #[doc = include_str!("../docs/bibs/102.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
@@ -265,7 +278,10 @@ pub struct NutSpec {
 /// - Water: 50%, Protein: 16%, Lecithin: 9%, Other Fat: 23% (Clarke, 2004, p. 49)[^4]
 ///
 /// ```
-/// use sci_cream::specs::{EggSpec, IntoComposition};
+/// use sci_cream::{
+///     composition::CompKey,
+///     specs::{EggSpec, IntoComposition}
+/// };
 ///
 /// let comp = EggSpec {
 ///     water: 51.0,
@@ -273,10 +289,10 @@ pub struct NutSpec {
 ///     lecithin: 9.0,
 /// }.into_composition().unwrap();
 ///
-/// assert_eq!(comp.solids.egg.fats, 30.0);
-/// assert_eq!(comp.solids.egg.snfs, 19.0);
-/// assert_eq!(comp.solids.total(), 49.0);
-/// assert_eq!(comp.micro.emulsifiers, 9.0);
+/// assert_eq!(comp.get(CompKey::EggFat), 30.0);
+/// assert_eq!(comp.get(CompKey::EggSNFS), 19.0);
+/// assert_eq!(comp.get(CompKey::EggSolids), 49.0);
+/// assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
 /// ```
 #[doc = include_str!("../docs/bibs/2.md")]
 #[doc = include_str!("../docs/bibs/4.md")]
@@ -757,14 +773,15 @@ pub mod wasm {
 }
 
 #[cfg(test)]
-pub(crate) mod test {
+pub(crate) mod tests {
     use std::sync::LazyLock;
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
+    use crate::tests::data::get_ingredient_spec_by_name_or_panic;
 
     use super::*;
-    use crate::tests::data::get_ingredient_spec_by_name_or_panic;
+    use crate::composition::CompKey;
 
     pub(crate) const ING_SPEC_DAIRY_2_MILK_STR: &str = r#"{
       "name": "2% Milk",
@@ -792,39 +809,25 @@ pub(crate) mod test {
     fn into_composition_dairy_spec_2_milk() {
         let comp = ING_SPEC_DAIRY_2_MILK.spec.into_composition().unwrap();
 
-        let Composition {
-            solids,
-            sweeteners,
-            micro,
-            alcohol,
-            pod,
-            pac,
-        } = comp;
+        assert_eq!(comp.get(CompKey::TotalSolids), 10.82);
+        assert_eq!(comp.get(CompKey::Water), 89.18);
 
-        assert_eq!(solids.total(), 10.82);
-        assert_eq!(comp.water(), 89.18);
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_abs_diff_eq!(comp.get(CompKey::POD), 0.769104, epsilon = TESTS_EPSILON);
 
-        assert_eq!(micro.salt, 0.0);
-        assert_eq!(micro.emulsifiers, 0.0);
-        assert_eq!(micro.stabilizers, 0.0);
-        assert_eq!(alcohol.by_weight, 0.0);
-        assert_abs_diff_eq!(pod, 0.769104, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::MilkFat), 2.0);
+        assert_abs_diff_eq!(comp.get(CompKey::Lactose), 4.8069, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::MSNF), 8.82);
+        assert_eq!(comp.get(CompKey::MilkSNFS), 4.0131);
+        assert_eq!(comp.get(CompKey::MilkSolids), 10.82);
 
-        let Solids { milk, .. } = solids;
-
-        assert_eq!(milk.fats, 2.0);
-        assert_abs_diff_eq!(milk.sweeteners, 4.8069, epsilon = TESTS_EPSILON);
-        assert_eq!(milk.snf(), 8.82);
-        assert_eq!(milk.snfs, 4.0131);
-        assert_eq!(milk.total(), 10.82);
-
-        assert_abs_diff_eq!(sweeteners.sugars.lactose, 4.8069, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(sweeteners.sugars.total(), 4.8069, epsilon = TESTS_EPSILON);
-
-        assert_abs_diff_eq!(pac.sugars, 4.8069, epsilon = TESTS_EPSILON);
-        assert_eq!(pac.salt, 0.0);
-        assert_abs_diff_eq!(pac.msnf_ws_salts, 3.2405, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(pac.total(), 8.0474, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.get(CompKey::PACsgr), 4.8069, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_abs_diff_eq!(comp.get(CompKey::PACmlk), 3.2405, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.get(CompKey::PACtotal), 8.0474, epsilon = TESTS_EPSILON);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_SUCROSE_STR: &str = r#"{
@@ -864,19 +867,13 @@ pub(crate) mod test {
 
     #[test]
     fn into_composition_sweetener_spec_sucrose() {
-        let Composition {
-            solids,
-            sweeteners,
-            pod,
-            pac,
-            ..
-        } = ING_SPEC_SWEETENER_SUCROSE.spec.into_composition().unwrap();
+        let comp = ING_SPEC_SWEETENER_SUCROSE.spec.into_composition().unwrap();
 
-        assert_eq!(sweeteners.sugars.sucrose, 100.0);
-        assert_eq!(solids.sweeteners(), 100.0);
-        assert_eq!(solids.total(), 100.0);
-        assert_eq!(pod, 100.0);
-        assert_eq!(pac.sugars, 100.0);
+        assert_eq!(comp.get(CompKey::Sucrose), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::POD), 100.0);
+        assert_eq!(comp.get(CompKey::PACsgr), 100.0);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_DEXTROSE_STR: &str = r#"{
@@ -908,19 +905,13 @@ pub(crate) mod test {
 
     #[test]
     fn into_composition_sweetener_spec_dextrose() {
-        let Composition {
-            solids,
-            sweeteners,
-            pod,
-            pac,
-            ..
-        } = ING_SPEC_SWEETENER_DEXTROSE.spec.into_composition().unwrap();
+        let comp = ING_SPEC_SWEETENER_DEXTROSE.spec.into_composition().unwrap();
 
-        assert_eq!(sweeteners.sugars.glucose, 92.0);
-        assert_eq!(solids.sweeteners(), 92.0);
-        assert_eq!(solids.total(), 92.0);
-        assert_eq!(pod, 73.968);
-        assert_eq!(pac.sugars, 174.8);
+        assert_eq!(comp.get(CompKey::Glucose), 92.0);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 92.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 92.0);
+        assert_eq!(comp.get(CompKey::POD), 73.968);
+        assert_eq!(comp.get(CompKey::PACsgr), 174.8);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_FRUCTOSE_STR: &str = r#"{
@@ -960,19 +951,13 @@ pub(crate) mod test {
 
     #[test]
     fn into_composition_sweetener_spec_fructose() {
-        let Composition {
-            solids,
-            sweeteners,
-            pod,
-            pac,
-            ..
-        } = ING_SPEC_SWEETENER_FRUCTOSE.spec.into_composition().unwrap();
+        let comp = ING_SPEC_SWEETENER_FRUCTOSE.spec.into_composition().unwrap();
 
-        assert_eq!(sweeteners.sugars.fructose, 100.0);
-        assert_eq!(solids.sweeteners(), 100.0);
-        assert_eq!(solids.total(), 100.0);
-        assert_eq!(pod, 173.0);
-        assert_eq!(pac.sugars, 190.0);
+        assert_eq!(comp.get(CompKey::Fructose), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::POD), 173.0);
+        assert_eq!(comp.get(CompKey::PACsgr), 190.0);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_INVERT_SUGAR_STR: &str = r#"{
@@ -1006,20 +991,16 @@ pub(crate) mod test {
 
     #[test]
     fn into_composition_sweetener_spec_invert_sugar() {
-        let Composition {
-            solids,
-            sweeteners,
-            pod,
-            pac,
-            ..
-        } = ING_SPEC_SWEETENER_INVERT_SUGAR.spec.into_composition().unwrap();
+        let comp = ING_SPEC_SWEETENER_INVERT_SUGAR.spec.into_composition().unwrap();
 
-        assert_eq!(sweeteners, Sweeteners::new().sugars(Sugars::new().glucose(34.0).fructose(34.0).sucrose(12.0)));
+        assert_eq!(comp.get(CompKey::Glucose), 34.0);
+        assert_eq!(comp.get(CompKey::Fructose), 34.0);
+        assert_eq!(comp.get(CompKey::Sucrose), 12.0);
 
-        assert_eq!(solids.sweeteners(), 80.0);
-        assert_eq!(solids.total(), 80.0);
-        assert_eq!(pod, 98.156);
-        assert_eq!(pac.sugars, 141.2);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 80.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 80.0);
+        assert_eq!(comp.get(CompKey::POD), 98.156);
+        assert_eq!(comp.get(CompKey::PACsgr), 141.2);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_HONEY_STR: &str = r#"{
@@ -1063,31 +1044,19 @@ pub(crate) mod test {
 
     #[test]
     fn into_composition_sweetener_spec_honey() {
-        let Composition {
-            solids,
-            sweeteners,
-            pod,
-            pac,
-            ..
-        } = ING_SPEC_SWEETENER_HONEY.spec.into_composition().unwrap();
+        let comp = ING_SPEC_SWEETENER_HONEY.spec.into_composition().unwrap();
 
-        assert_eq!(
-            sweeteners,
-            Sweeteners::new().sugars(
-                Sugars::new()
-                    .glucose(36.0)
-                    .fructose(41.0)
-                    .sucrose(2.0)
-                    .galactose(1.5)
-                    .maltose(1.5)
-            )
-        );
+        assert_eq!(comp.get(CompKey::Glucose), 36.0);
+        assert_eq!(comp.get(CompKey::Fructose), 41.0);
+        assert_eq!(comp.get(CompKey::Sucrose), 2.0);
+        assert_eq!(comp.get(CompKey::Galactose), 1.5);
+        assert_eq!(comp.get(CompKey::Maltose), 1.5);
 
-        assert_eq!(solids.sweeteners(), 82.0);
-        assert_eq!(solids.snfs(), 1.0);
-        assert_eq!(solids.total(), 83.0);
-        assert_eq!(pod, 103.329);
-        assert_eq!(pac.sugars, 152.65);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 82.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 1.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 83.0);
+        assert_eq!(comp.get(CompKey::POD), 103.329);
+        assert_eq!(comp.get(CompKey::PACsgr), 152.65);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_HFCS42_STR: &str = r#"{
@@ -1123,26 +1092,18 @@ pub(crate) mod test {
 
     #[test]
     fn into_composition_sweetener_spec_hfcs42() {
-        let Composition {
-            solids,
-            sweeteners,
-            pod,
-            pac,
-            ..
-        } = ING_SPEC_SWEETENER_HFCS42.spec.into_composition().unwrap();
+        let comp = ING_SPEC_SWEETENER_HFCS42.spec.into_composition().unwrap();
 
-        assert_eq!(
-            sweeteners,
-            Sweeteners::new()
-                .sugars(Sugars::new().fructose(31.92).glucose(40.28))
-                .polysaccharide(3.8)
-        );
+        assert_eq!(comp.get(CompKey::Fructose), 31.92);
+        assert_eq!(comp.get(CompKey::Glucose), 40.28);
+        assert_eq!(comp.get(CompKey::Polysaccharides), 3.8);
 
-        assert_eq!(solids.sweeteners(), 72.2);
-        assert_eq!(solids.snfs(), 3.8);
-        assert_eq!(solids.total(), 76.0);
-        assert_eq!(pod, 87.60672000000001);
-        assert_eq!(pac.sugars, 137.18);
+        assert_eq!(comp.get(CompKey::Sugars), 72.2);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 76.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 3.8);
+        assert_eq!(comp.get(CompKey::TotalSolids), 76.0);
+        assert_eq!(comp.get(CompKey::POD), 87.60672000000001);
+        assert_eq!(comp.get(CompKey::PACsgr), 137.18);
     }
 
     pub(crate) const ING_SPEC_FRUIT_STRAWBERRY_STR: &str = r#"{
@@ -1171,22 +1132,18 @@ pub(crate) mod test {
 
     #[test]
     fn into_composition_fruit_spec_strawberry() {
-        let Composition {
-            solids,
-            sweeteners,
-            pod,
-            pac,
-            ..
-        } = ING_SPEC_FRUIT_STRAWBERRY.spec.into_composition().unwrap();
+        let comp = ING_SPEC_FRUIT_STRAWBERRY.spec.into_composition().unwrap();
 
-        assert_eq!(sweeteners, Sweeteners::new().sugars(Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47)));
+        assert_eq!(comp.get(CompKey::Glucose), 1.99);
+        assert_eq!(comp.get(CompKey::Fructose), 2.44);
+        assert_eq!(comp.get(CompKey::Sucrose), 0.47);
 
-        assert_abs_diff_eq!(solids.sweeteners(), 4.90, epsilon = TESTS_EPSILON);
-        assert_eq!(solids.fats(), 0.3);
-        assert_abs_diff_eq!(solids.snfs(), 3.8, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(solids.total(), 9.0, epsilon = TESTS_EPSILON);
-        assert_eq!(pod, 6.29116);
-        assert_eq!(pac.sugars, 8.887);
+        assert_abs_diff_eq!(comp.get(CompKey::TotalSweeteners), 4.90, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::TotalFats), 0.3);
+        assert_abs_diff_eq!(comp.get(CompKey::TotalSNFS), 3.8, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.get(CompKey::TotalSolids), 9.0, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::POD), 6.29116);
+        assert_eq!(comp.get(CompKey::PACsgr), 8.887);
     }
 
     pub(crate) const ING_SPEC_CHOCOLATE_70_STR: &str = r#"{
@@ -1211,25 +1168,22 @@ pub(crate) mod test {
 
     #[test]
     fn into_composition_chocolate_spec_70() {
-        let Composition {
-            solids,
-            sweeteners,
-            pod,
-            pac,
-            ..
-        } = ING_SPEC_CHOCOLATE_70.spec.into_composition().unwrap();
+        let comp = ING_SPEC_CHOCOLATE_70.spec.into_composition().unwrap();
 
-        assert_eq!(sweeteners, Sweeteners::new().sugars(Sugars::new().sucrose(30.0)));
+        assert_eq!(comp.get(CompKey::Sucrose), 30.0);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 30.0);
 
-        assert_eq!(solids.cocoa.total(), 70.0);
-        assert_eq!(solids.cocoa.fats, 40.0);
-        assert_eq!(solids.cocoa.snf(), 30.0);
-        assert_eq!(solids.other.sweeteners, 30.0);
-        assert_eq!(solids.other.snfs, 0.0);
-        assert_eq!(solids.total(), 100.0);
-        assert_eq!(pod, 30.0);
-        assert_eq!(pac.total(), 30.0);
-        assert_eq!(pac.hardness_factor, 90.0);
+        // Added sugars in chocolates is considered part of total sweeteners, not part of Cacao Solids
+        assert_eq!(comp.get(CompKey::CacaoSolids), comp.get(CompKey::TotalSolids) - comp.get(CompKey::TotalSweeteners));
+
+        assert_eq!(comp.get(CompKey::CacaoSolids), 70.0);
+        assert_eq!(comp.get(CompKey::CocoaButter), 40.0);
+        assert_eq!(comp.get(CompKey::CocoaSolids), 30.0);
+        assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::POD), 30.0);
+        assert_eq!(comp.get(CompKey::PACtotal), 30.0);
+        assert_eq!(comp.get(CompKey::HF), 90.0);
     }
 
     pub(crate) const ING_SPEC_CHOCOLATE_100_STR: &str = r#"{
@@ -1253,25 +1207,19 @@ pub(crate) mod test {
 
     #[test]
     fn into_composition_chocolate_spec_100() {
-        let Composition {
-            solids,
-            sweeteners,
-            pod,
-            pac,
-            ..
-        } = ING_SPEC_CHOCOLATE_100.spec.into_composition().unwrap();
+        let comp = ING_SPEC_CHOCOLATE_100.spec.into_composition().unwrap();
 
-        assert_eq!(sweeteners, Sweeteners::new());
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
 
-        assert_eq!(solids.cocoa.total(), 100.0);
-        assert_eq!(solids.cocoa.fats, 54.0);
-        assert_eq!(solids.cocoa.snf(), 46.0);
-        assert_eq!(solids.other.sweeteners, 0.0);
-        assert_eq!(solids.other.snfs, 0.0);
-        assert_eq!(solids.total(), 100.0);
-        assert_eq!(pod, 0.0);
-        assert_eq!(pac.total(), 0.0);
-        assert_eq!(pac.hardness_factor, 131.4);
+        assert_eq!(comp.get(CompKey::CacaoSolids), 100.0);
+        assert_eq!(comp.get(CompKey::CocoaButter), 54.0);
+        assert_eq!(comp.get(CompKey::CocoaSolids), 46.0);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
+        assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::POD), 0.0);
+        assert_eq!(comp.get(CompKey::PACtotal), 0.0);
+        assert_eq!(comp.get(CompKey::HF), 131.4);
     }
 
     pub(crate) const ING_SPEC_CHOCOLATE_COCOA_POWDER_17_STR: &str = r#"{
@@ -1295,25 +1243,19 @@ pub(crate) mod test {
 
     #[test]
     fn into_composition_chocolate_spec_cocoa_powder_17() {
-        let Composition {
-            solids,
-            sweeteners,
-            pod,
-            pac,
-            ..
-        } = ING_SPEC_CHOCOLATE_COCOA_POWDER_17.spec.into_composition().unwrap();
+        let comp = ING_SPEC_CHOCOLATE_COCOA_POWDER_17.spec.into_composition().unwrap();
 
-        assert_eq!(sweeteners.total(), 0.0);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
 
-        assert_eq!(solids.cocoa.total(), 100.0);
-        assert_eq!(solids.cocoa.fats, 16.67);
-        assert_eq!(solids.cocoa.snf(), 83.33);
-        assert_eq!(solids.other.sweeteners, 0.0);
-        assert_eq!(solids.other.snfs, 0.0);
-        assert_eq!(solids.total(), 100.0);
-        assert_eq!(pod, 0.0);
-        assert_eq!(pac.total(), 0.0);
-        assert_eq!(pac.hardness_factor, 164.997);
+        assert_eq!(comp.get(CompKey::CacaoSolids), 100.0);
+        assert_eq!(comp.get(CompKey::CocoaButter), 16.67);
+        assert_eq!(comp.get(CompKey::CocoaSolids), 83.33);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
+        assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::POD), 0.0);
+        assert_eq!(comp.get(CompKey::PACtotal), 0.0);
+        assert_eq!(comp.get(CompKey::HF), 164.997);
     }
 
     pub(crate) const ING_SPEC_NUT_ALMOND_STR: &str = r#"{
@@ -1340,14 +1282,19 @@ pub(crate) mod test {
     fn into_composition_nut_spec_almond() {
         let comp = ING_SPEC_NUT_ALMOND.spec.into_composition().unwrap();
 
-        assert_eq!(comp.solids.nut.fats, 49.9);
-        assert_eq!(comp.solids.nut.sweeteners, 4.35);
-        assert_eq!(comp.solids.nut.snfs, 41.34);
-        assert_eq!(comp.solids.total(), 95.59);
-        assert_abs_diff_eq!(comp.water(), 4.41, epsilon = TESTS_EPSILON);
-        assert_eq!(comp.sweeteners.total(), 4.35);
-        assert_eq!(comp.pod, 4.35);
-        assert_eq!(comp.pac.hardness_factor, 69.86);
+        assert_eq!(comp.get(CompKey::NutFat), 49.9);
+        assert_eq!(comp.get(CompKey::NutSNFS), 41.34);
+        assert_abs_diff_eq!(comp.get(CompKey::NutSolids), 91.24, epsilon = TESTS_EPSILON);
+
+        // Sugar in nuts is considered part of total sweeteners, not part of Nut Solids
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 4.35);
+        assert_eq!(comp.get(CompKey::NutSolids), comp.get(CompKey::NutFat) + comp.get(CompKey::NutSNFS));
+        assert_eq!(comp.get(CompKey::NutSolids), comp.get(CompKey::TotalSolids) - comp.get(CompKey::TotalSweeteners));
+
+        assert_eq!(comp.get(CompKey::TotalSolids), 95.59);
+        assert_abs_diff_eq!(comp.get(CompKey::Water), 4.41, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::POD), 4.35);
+        assert_eq!(comp.get(CompKey::HF), 69.86);
     }
 
     pub(crate) const ING_SPEC_EGG_YOLK_STR: &str = r#"{
@@ -1372,12 +1319,12 @@ pub(crate) mod test {
 
     #[test]
     fn into_composition_egg_spec_egg_yolk() {
-        let Composition { solids, micro, .. } = ING_SPEC_EGG_YOLK.spec.into_composition().unwrap();
+        let comp = ING_SPEC_EGG_YOLK.spec.into_composition().unwrap();
 
-        assert_eq!(solids.egg.fats, 30.0);
-        assert_eq!(solids.egg.snfs, 19.0);
-        assert_eq!(solids.total(), 49.0);
-        assert_eq!(micro.emulsifiers, 9.0);
+        assert_eq!(comp.get(CompKey::EggFat), 30.0);
+        assert_eq!(comp.get(CompKey::EggSNFS), 19.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 49.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
     }
 
     pub(crate) const ING_SPEC_ALCOHOL_40_ABV_SPIRIT_STR: &str = r#"{
@@ -1403,16 +1350,19 @@ pub(crate) mod test {
     fn into_composition_alcohol_spec_40_abv_spirit() {
         let comp = ING_SPEC_ALCOHOL_40_ABV_SPIRIT.spec.into_composition().unwrap();
 
-        assert_eq!(comp.alcohol.to_abv(), 40.0);
-        assert_abs_diff_eq!(comp.alcohol.by_weight, 31.56, epsilon = TESTS_EPSILON);
-        assert_eq!(comp.solids.total(), 0.0);
-        assert_eq!(comp.water(), 68.44);
+        assert_eq!(comp.get(CompKey::ABV), 40.0);
+        assert_abs_diff_eq!(comp.get(CompKey::Alcohol), 31.56, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::TotalSolids), 0.0);
+        assert_abs_diff_eq!(comp.get(CompKey::Water), 68.44, epsilon = TESTS_EPSILON);
 
-        assert_eq!(comp.sweeteners.total(), 0.0);
-        assert_eq!(comp.pod, 0.0);
-        assert_eq!(comp.alcohol.to_pac(), 234.4908);
-        assert_eq!(comp.pac.total(), 234.4908);
-        assert_eq!(comp.pac.alcohol, 234.4908);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
+        assert_eq!(comp.get(CompKey::POD), 0.0);
+        assert_eq!(comp.get(CompKey::PACalc), 234.4908);
+        assert_eq!(comp.get(CompKey::PACtotal), 234.4908);
+
+        assert_eq!(comp.alcohol.to_abv(), comp.get(CompKey::ABV));
+        assert_eq!(comp.alcohol.by_weight, comp.get(CompKey::Alcohol));
+        assert_eq!(comp.alcohol.to_pac(), comp.get(CompKey::PACalc));
     }
 
     pub(crate) const ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM_STR: &str = r#"{
@@ -1441,17 +1391,19 @@ pub(crate) mod test {
     fn into_composition_alcohol_spec_baileys_irish_cream() {
         let comp = ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.spec.into_composition().unwrap();
 
-        assert_eq!(comp.alcohol.to_abv(), 17.0);
-        assert_abs_diff_eq!(comp.alcohol.by_weight, 13.413, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(comp.solids.total(), 31.6, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(comp.water(), 54.987, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.get(CompKey::Alcohol), 13.413, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.get(CompKey::TotalSolids), 31.6, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.get(CompKey::Water), 54.987, epsilon = TESTS_EPSILON);
 
-        assert_eq!(comp.sweeteners.total(), 18.0);
-        assert_eq!(comp.pod, 18.0);
-        assert_eq!(comp.alcohol.to_pac(), 99.65859);
-        assert_eq!(comp.pac.alcohol, 99.65859);
-        assert_eq!(comp.pac.sugars, 18.0);
-        assert_eq!(comp.pac.total(), 117.65859);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 18.0);
+        assert_eq!(comp.get(CompKey::POD), 18.0);
+        assert_eq!(comp.get(CompKey::PACalc), 99.65859);
+        assert_eq!(comp.get(CompKey::PACsgr), 18.0);
+        assert_eq!(comp.get(CompKey::PACtotal), 117.65859);
+
+        assert_eq!(comp.alcohol.to_abv(), comp.get(CompKey::ABV));
+        assert_eq!(comp.alcohol.by_weight, comp.get(CompKey::Alcohol));
+        assert_eq!(comp.alcohol.to_pac(), comp.get(CompKey::PACalc));
     }
 
     pub(crate) const ING_SPEC_MICRO_SALT_STR: &str = r#"{
@@ -1468,11 +1420,12 @@ pub(crate) mod test {
 
     #[test]
     fn into_composition_micro_spec_salt() {
-        let Composition { solids, micro, pac, .. } = MicroSpec::Salt.into_composition().unwrap();
-        assert_eq!(solids.other.snfs, 100.0);
-        assert_eq!(solids.total(), 100.0);
-        assert_eq!(micro.salt, 100.0);
-        assert_eq!(pac.salt, 585.0);
+        let comp = MicroSpec::Salt.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::Salt), 100.0);
+        assert_eq!(comp.get(CompKey::PACslt), 585.0);
     }
 
     pub(crate) const ING_SPEC_MICRO_LECITHIN_STR: &str = r#"{
@@ -1489,10 +1442,11 @@ pub(crate) mod test {
 
     #[test]
     fn into_composition_micro_spec_lecithin() {
-        let Composition { solids, micro, .. } = MicroSpec::Lecithin.into_composition().unwrap();
-        assert_eq!(solids.other.snfs, 100.0);
-        assert_eq!(solids.total(), 100.0);
-        assert_eq!(micro.emulsifiers, 100.0);
+        let comp = MicroSpec::Lecithin.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 100.0);
     }
 
     pub(crate) const ING_SPEC_MICRO_STABILIZER_STR: &str = r#"{
@@ -1513,26 +1467,29 @@ pub(crate) mod test {
 
     #[test]
     fn into_composition_micro_spec_stabilizer_rich_ice_cream_sb() {
-        let Composition { solids, micro, .. } = ING_SPEC_MICRO_STABILIZER.spec.into_composition().unwrap();
-        assert_eq!(solids.other.snfs, 100.0);
-        assert_eq!(solids.total(), 100.0);
-        assert_eq!(micro.stabilizers, 100.0);
+        let comp = ING_SPEC_MICRO_STABILIZER.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 100.0);
     }
 
     #[test]
     fn into_composition_micro_spec_stabilizer_not_100() {
-        let Composition { solids, micro, .. } = MicroSpec::Stabilizer { strength: 85.0 }.into_composition().unwrap();
-        assert_eq!(solids.other.snfs, 100.0);
-        assert_eq!(solids.total(), 100.0);
-        assert_eq!(micro.stabilizers, 85.0);
+        let comp = MicroSpec::Stabilizer { strength: 85.0 }.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 85.0);
     }
 
     #[test]
     fn into_composition_micro_spec_emulsifier_not_100() {
-        let Composition { solids, micro, .. } = MicroSpec::Emulsifier { strength: 60.0 }.into_composition().unwrap();
-        assert_eq!(solids.other.snfs, 100.0);
-        assert_eq!(solids.total(), 100.0);
-        assert_eq!(micro.emulsifiers, 60.0);
+        let comp = MicroSpec::Emulsifier { strength: 60.0 }.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 60.0);
     }
 
     pub(crate) const ING_SPEC_MICRO_LOUIS_STAB2K_STR: &str = r#"{
@@ -1557,12 +1514,12 @@ pub(crate) mod test {
 
     #[test]
     fn into_composition_micro_spec_emulsifier_stabilizer_louis_francois_stab_2000() {
-        let Composition { solids, micro, .. } = ING_SPEC_MICRO_LOUIS_STAB2K.spec.into_composition().unwrap();
+        let comp = ING_SPEC_MICRO_LOUIS_STAB2K.spec.into_composition().unwrap();
 
-        assert_eq!(solids.other.snfs, 100.0);
-        assert_eq!(solids.total(), 100.0);
-        assert_eq!(micro.emulsifiers, 100.0);
-        assert_eq!(micro.stabilizers, 40.0);
+        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 100.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 40.0);
     }
 
     pub(crate) const ING_SPEC_FULL_WATER_STR: &str = r#"{
@@ -1588,17 +1545,17 @@ pub(crate) mod test {
     fn into_composition_full_spec_water() {
         let comp = ING_SPEC_FULL_WATER.spec.into_composition().unwrap();
 
-        assert_eq!(comp.water(), 100.0);
-        assert_eq!(comp.solids.total(), 0.0);
-        assert_eq!(comp.sweeteners.total(), 0.0);
-        assert_eq!(comp.micro.salt, 0.0);
-        assert_eq!(comp.micro.lecithin, 0.0);
-        assert_eq!(comp.micro.emulsifiers, 0.0);
-        assert_eq!(comp.micro.stabilizers, 0.0);
-        assert_eq!(comp.alcohol.by_weight, 0.0);
-        assert_eq!(comp.pod, 0.0);
-        assert_eq!(comp.pac.total(), 0.0);
-        assert_eq!(comp.pac.hardness_factor, 0.0);
+        assert_eq!(comp.get(CompKey::Water), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 0.0);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Lecithin), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq!(comp.get(CompKey::POD), 0.0);
+        assert_eq!(comp.get(CompKey::PACtotal), 0.0);
+        assert_eq!(comp.get(CompKey::HF), 0.0);
     }
 
     static INGREDIENT_ASSETS_TABLE: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> = LazyLock::new(|| {

@@ -46,7 +46,7 @@ pub(crate) fn get_ingredient_spec_by_name_or_panic(name: &str) -> IngredientSpec
 }
 
 #[cfg(test)]
-pub(crate) mod test {
+pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;

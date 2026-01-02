@@ -15,7 +15,7 @@ test("MixProperties NaN values", () => {
 
   expect(getMixProperty(mixProperties, compToPropKey(CompKey.Water))).toBe(100);
   expect(getMixProperty(mixProperties, compToPropKey(CompKey.TotalSolids))).toBe(0);
-  expect(getMixProperty(mixProperties, compToPropKey(CompKey.TotalFat))).toBe(0);
+  expect(getMixProperty(mixProperties, compToPropKey(CompKey.TotalFats))).toBe(0);
   expect(getMixProperty(mixProperties, compToPropKey(CompKey.EmulsifiersPerFat))).toBe(NaN);
   expect(getMixProperty(mixProperties, compToPropKey(CompKey.StabilizersPerWater))).toBe(0);
   expect(getMixProperty(mixProperties, compToPropKey(CompKey.AbsPAC))).toBe(0);
@@ -31,6 +31,7 @@ test("MixProperties NaN values", () => {
 
   expect(getMixProperty(mixProperties, compToPropKey(CompKey.Water))).toBe(0);
   expect(getMixProperty(mixProperties, compToPropKey(CompKey.TotalSolids))).toBe(100);
+  expect(getMixProperty(mixProperties, compToPropKey(CompKey.TotalFats))).toBe(0);
   expect(getMixProperty(mixProperties, compToPropKey(CompKey.EmulsifiersPerFat))).toBe(NaN);
   expect(getMixProperty(mixProperties, compToPropKey(CompKey.StabilizersPerWater))).toBe(NaN);
   expect(getMixProperty(mixProperties, compToPropKey(CompKey.AbsPAC))).toBe(NaN);

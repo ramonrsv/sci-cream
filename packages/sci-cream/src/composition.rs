@@ -12,6 +12,9 @@ use crate::{
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
+#[cfg(doc)]
+use crate::specs::ChocolateSpec;
+
 /// Breakdown of solid components, as grams of component per 100g of ingredient/mix
 ///
 /// Note that the values here are expressed as grams per 100g of _total_ ingredient/mix, not as a
@@ -131,42 +134,122 @@ pub struct Composition {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(EnumIter, Hash, PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum CompKey {
+    /// Milk Fats, the fat content of dairy ingredients, e.g. 2% in 2% milk, etc.
+    ///
+    /// This is a key component of ice cream mixes, contributing to creaminess and mouthfeel.
     MilkFat,
-    CacaoFat,
-    NutFat,
-    EggFat,
-    OtherFat,
-    TotalFat,
+    /// Milk Solids Non-Fat (MSNF), the non-fat solid content of dairy ingredients
+    ///
+    /// This includes lactose, proteins, and minerals. It is a key component in the analysis of ice
+    /// cream mixes, contributing to freezing point depression, body, and texture.
     MSNF,
-    CocoaSNF,
-    NutSNF,
-    EggSNF,
-    OtherSNF,
-    TotalSNF,
+    /// Milk Solids Non-Fat Non-Sugar (SNFS), the non-fat non-lactose content of dairy ingredients
+    ///
+    /// This includes proteins and minerals; and is equivalent to [`CompKey::MSNF`] minus lactose.
     MilkSNFS,
-    CocoaSNFS,
+    /// Total solids from milk ingredients
+    ///
+    /// Ths includes fats, lactose, proteins, and minerals. It is the sum of both
+    /// [`CompKey::MilkFat`] and [`CompKey::MSNF`].
+    MilkSolids,
+
+    /// Cocoa butter, the fat component extracted from cacao solids [`CompKey::CacaoSolids`].
+    ///
+    /// Sometimes referred to as "cocoa fat"; see [`ChocolateSpec`] for more details. This component
+    /// affects the texture of ice creams by hardening the frozen product, and contributes to the
+    /// rich mouthfeel of chocolate ice creams due to the way that cocoa fats melt in the mouth.
+    CocoaButter,
+    /// _Cocoa_ solids, the non-fat component of cacao solids [`CompKey::CacaoSolids`]
+    ///
+    /// Sometimes referred to as "cocoa powder" or "cocoa fiber", i.e. cacao solids minus cocoa
+    /// butter; see [`ChocolateSpec`] for more details. In ice cream mixes, this generally
+    /// determines how "chocolatey" the flavor is, and contributes to the texture and body.
+    CocoaSolids,
+    /// _Cacao_ solids, the total dry matter content derived from the cacao bean
+    ///
+    /// Sometimes referred to as "chocolate liquor", "cocoa mass", etc., it includes both cocoa
+    /// butter (fat) [`CompKey::CocoaButter`] and cocoa solids (non-fat solids)
+    /// [`CompKey::CocoaSolids`]. See [`ChocolateSpec`] for more details.
+    ///
+    /// **Note**: This does not include any sugar content that may be present in chocolate
+    /// ingredients; that is accounted for separately via [`CompKey::Sugars`].
+    CacaoSolids,
+
+    /// Nut Fats, the fat content of nut ingredients
+    ///
+    /// It is roughly equivalent to [`CompKey::CocoaButter`] if cacao were treated as a nut.
+    /// This component affects the texture of ice creams by hardening the frozen product.
+    NutFat,
+    /// Nut Solids Non-Fat Non-Sugar (SNFS), the non-fat, non-sugar solid content of nuts
+    ///
+    /// This generally includes proteins, fibers, and minerals. It is roughly equivalent to
+    /// [`CompKey::CocoaSolids`] if cacao were treated as a nut. For nut flavored ice cream recipes,
+    /// this value directly correlates with the perceived intensity of the nut flavor.
     NutSNFS,
+    /// Nut Solids, the total solid content of nut ingredients
+    ///
+    /// This generally includes fats, proteins, fibers, and minerals. It includes both
+    /// [`CompKey::NutFat`] and [`CompKey::NutSNFS`], and is roughly equivalent to
+    /// [`CompKey::CacaoSolids`] if cacao were treated as a nut.
+    ///
+    /// **Note**: This does not include any sugar content that may be present in nut ingredients;
+    /// that is accounted for separately via [`CompKey::Sugars`].
+    NutSolids,
+
+    /// Egg Fats, the fat content of egg ingredients
+    EggFat,
+    /// Egg Solids Non-Fat Non-Sugar (SNFS), the non-fat, non-sugar solid content of egg ingredients
     EggSNFS,
+    /// Egg Solids, the total solid content of egg ingredients
+    EggSolids,
+
+    /// Other Fats, the fat content of other ingredients not milk, cocoa, nut, or egg
+    OtherFats,
+    /// Other Solids Non-Fat Non-Sugar (SNFS), the non-fat, non-sugar solid content of other
+    /// ingredients not milk, cocoa, nut, or egg
     OtherSNFS,
+
+    /// Total Fats, sum of all fat components
+    ///
+    /// This is a key component of ice cream mixes, contributing to creaminess and mouthfeel.
+    TotalFats,
+    /// Total Solids Non-Fat, sum of all non-fat solid components
+    TotalSNF,
+    /// Total Solids Non-Fat Non-Sugar (SNFS), sum of all non-fat, non-sugar solid components
+    ///
+    /// This is a key component in the analysis of ice cream mixes, contributing to freezing point
+    /// depression, body, and texture. If ice creams feel "cakey" or "spongy", this value is often
+    /// a key indicator of the cause, being too high or too low, respectively.
     TotalSNFS,
+    /// Total Solids, sum of all solid components
+    TotalSolids,
+
+    /// Water content, `100 - TotalSolids - Alcohol.by_weight`
+    Water,
+
     Sugars,
     Glucose,
     Fructose,
+    Galactose,
     Sucrose,
     Lactose,
+    Maltose,
     Polysaccharides,
     ArtificialSweeteners,
-    TotalSolids,
-    Water,
+    TotalSweeteners,
+
     Alcohol,
     ABV,
+
     Salt,
     Lecithin,
     Emulsifiers,
     Stabilizers,
     EmulsifiersPerFat,
     StabilizersPerWater,
+
     POD,
+
     PACsgr,
     PACslt,
     PACmlk,
@@ -646,41 +729,55 @@ impl Composition {
     pub fn get(&self, key: CompKey) -> f64 {
         match key {
             CompKey::MilkFat => self.solids.milk.fats,
-            CompKey::CacaoFat => self.solids.cocoa.fats,
-            CompKey::NutFat => self.solids.nut.fats,
-            CompKey::EggFat => self.solids.egg.fats,
-            CompKey::OtherFat => self.solids.other.fats,
-            CompKey::TotalFat => self.solids.fats(),
             CompKey::MSNF => self.solids.milk.snf(),
-            CompKey::CocoaSNF => self.solids.cocoa.snf(),
-            CompKey::NutSNF => self.solids.nut.snf(),
-            CompKey::EggSNF => self.solids.egg.snf(),
-            CompKey::OtherSNF => self.solids.other.snf(),
-            CompKey::TotalSNF => self.solids.snf(),
             CompKey::MilkSNFS => self.solids.milk.snfs,
-            CompKey::CocoaSNFS => self.solids.cocoa.snfs,
+            CompKey::MilkSolids => self.solids.milk.total(),
+
+            CompKey::CocoaButter => self.solids.cocoa.fats,
+            CompKey::CocoaSolids => self.solids.cocoa.snfs,
+            CompKey::CacaoSolids => self.solids.cocoa.total() - self.solids.cocoa.sweeteners,
+
+            CompKey::NutFat => self.solids.nut.fats,
             CompKey::NutSNFS => self.solids.nut.snfs,
+            CompKey::NutSolids => self.solids.nut.total() - self.solids.nut.sweeteners,
+
+            CompKey::EggFat => self.solids.egg.fats,
             CompKey::EggSNFS => self.solids.egg.snfs,
+            CompKey::EggSolids => self.solids.egg.total() - self.solids.egg.sweeteners,
+
+            CompKey::OtherFats => self.solids.other.fats,
             CompKey::OtherSNFS => self.solids.other.snfs,
+
+            CompKey::TotalFats => self.solids.fats(),
+            CompKey::TotalSNF => self.solids.snf(),
             CompKey::TotalSNFS => self.solids.snfs(),
+            CompKey::TotalSolids => self.solids.total(),
+
+            CompKey::Water => self.water(),
+
             CompKey::Sugars => self.sweeteners.sugars.total(),
             CompKey::Glucose => self.sweeteners.sugars.glucose,
             CompKey::Fructose => self.sweeteners.sugars.fructose,
+            CompKey::Galactose => self.sweeteners.sugars.galactose,
             CompKey::Sucrose => self.sweeteners.sugars.sucrose,
             CompKey::Lactose => self.sweeteners.sugars.lactose,
+            CompKey::Maltose => self.sweeteners.sugars.maltose,
             CompKey::Polysaccharides => self.sweeteners.polysaccharides,
             CompKey::ArtificialSweeteners => self.sweeteners.artificial,
-            CompKey::TotalSolids => self.solids.total(),
-            CompKey::Water => self.water(),
+            CompKey::TotalSweeteners => self.sweeteners.total(),
+
             CompKey::Alcohol => self.alcohol.by_weight,
             CompKey::ABV => self.alcohol.to_abv(),
-            CompKey::Lecithin => self.micro.lecithin,
+
             CompKey::Salt => self.micro.salt,
+            CompKey::Lecithin => self.micro.lecithin,
             CompKey::Emulsifiers => self.micro.emulsifiers,
             CompKey::Stabilizers => self.micro.stabilizers,
             CompKey::EmulsifiersPerFat => self.emulsifiers_per_fat(),
             CompKey::StabilizersPerWater => self.stabilizers_per_water(),
+
             CompKey::POD => self.pod,
+
             CompKey::PACsgr => self.pac.sugars,
             CompKey::PACslt => self.pac.salt,
             CompKey::PACmlk => self.pac.msnf_ws_salts,
@@ -1083,36 +1180,38 @@ mod tests {
     fn composition_nan_values() {
         let comp = Composition::new();
 
-        assert_eq!(comp.water(), 100.0);
-        assert_eq!(comp.solids.total(), 0.0);
-        assert_eq!(comp.solids.fats(), 0.0);
-        assert!(comp.emulsifiers_per_fat().is_nan());
-        assert_eq!(comp.stabilizers_per_water(), 0.0);
-        assert_eq!(comp.absolute_pac(), 0.0);
+        assert_eq!(comp.get(CompKey::Water), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 0.0);
+        assert_eq!(comp.get(CompKey::TotalFats), 0.0);
+        assert!(comp.get(CompKey::EmulsifiersPerFat).is_nan());
+        assert_eq!(comp.get(CompKey::StabilizersPerWater), 0.0);
+        assert_eq!(comp.get(CompKey::AbsPAC), 0.0);
 
         let comp = Composition::new().solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)));
 
-        assert_eq!(comp.water(), 0.0);
-        assert_eq!(comp.solids.total(), 100.0);
-        assert!(comp.emulsifiers_per_fat().is_nan());
-        assert!(comp.stabilizers_per_water().is_nan());
-        assert!(comp.absolute_pac().is_nan());
+        assert_eq!(comp.get(CompKey::Water), 0.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert!(comp.get(CompKey::EmulsifiersPerFat).is_nan());
+        assert!(comp.get(CompKey::StabilizersPerWater).is_nan());
+        assert!(comp.get(CompKey::AbsPAC).is_nan());
     }
 
     #[test]
     fn composition_get() {
         let expected = HashMap::from([
             (CompKey::MilkFat, 2.0),
-            (CompKey::TotalFat, 2.0),
             (CompKey::MSNF, 8.82),
-            (CompKey::TotalSNF, 8.82),
             (CompKey::MilkSNFS, 4.0131),
+            (CompKey::MilkSolids, 10.82),
+            (CompKey::TotalFats, 2.0),
+            (CompKey::TotalSNF, 8.82),
             (CompKey::TotalSNFS, 4.0131),
+            (CompKey::TotalSolids, 10.82),
+            (CompKey::Water, 89.18),
             (CompKey::Lactose, 4.8069),
             (CompKey::Sugars, 4.8069),
             (CompKey::ArtificialSweeteners, 0.0),
-            (CompKey::TotalSolids, 10.82),
-            (CompKey::Water, 89.18),
+            (CompKey::TotalSweeteners, 4.8069),
             (CompKey::POD, 0.769104),
             (CompKey::PACsgr, 4.8069),
             (CompKey::PACmlk, 3.2405),

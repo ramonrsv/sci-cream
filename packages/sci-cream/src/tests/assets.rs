@@ -1,1 +1,1 @@
-pub(crate) use crate::specs::test::*;
+pub(crate) use crate::specs::tests::*;

@@ -52,3 +52,8 @@ pub fn iter_all_abs_diff_eq_option<E: AbsDiffEq + Copy, T: AbsDiffEq<Epsilon = E
         .zip(iter_fields_as::<Option<T>, _>(rhs))
         .all(|(lhs, rhs)| abs_diff_eq_option(lhs, rhs, epsilon))
 }
+
+pub fn round_to_decimals(value: f64, decimals: u32) -> f64 {
+    let factor = 10f64.powi(decimals as i32);
+    (value * factor).round() / factor
+}

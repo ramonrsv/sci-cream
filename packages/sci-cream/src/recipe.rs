@@ -47,6 +47,18 @@ pub enum PropKey {
     FpdKey(FpdKey),
 }
 
+impl From<CompKey> for PropKey {
+    fn from(key: CompKey) -> Self {
+        PropKey::CompKey(key)
+    }
+}
+
+impl From<FpdKey> for PropKey {
+    fn from(key: FpdKey) -> Self {
+        PropKey::FpdKey(key)
+    }
+}
+
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Clone, Debug)]
 pub struct MixProperties {
@@ -114,7 +126,7 @@ impl Default for MixProperties {
 }
 
 #[cfg(test)]
-mod test {
+mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
@@ -142,20 +154,19 @@ mod test {
         ])
         .unwrap();
 
-        assert_eq!(mix_comp.sweeteners.sugars.lactose, 4.8069 / 2.0);
-        assert_eq!(mix_comp.sweeteners.sugars.sucrose, 50.0);
-        assert_eq!(mix_comp.sweeteners.sugars.total(), (4.8069 / 2.0) + 50.0);
+        assert_eq!(mix_comp.get(CompKey::Lactose), 4.8069 / 2.0);
+        assert_eq!(mix_comp.get(CompKey::Sucrose), 50.0);
+        assert_eq!(mix_comp.get(CompKey::Sugars), (4.8069 / 2.0) + 50.0);
 
-        assert_eq!(mix_comp.solids.total(), (10.82 / 2.0) + 50.0);
-        assert_eq!(mix_comp.water(), 100.0 - mix_comp.solids.total());
+        assert_eq!(mix_comp.get(CompKey::TotalSolids), (10.82 / 2.0) + 50.0);
+        assert_eq!(mix_comp.get(CompKey::Water), 100.0 - mix_comp.get(CompKey::TotalSolids));
 
-        assert_eq!(mix_comp.solids.milk.fats, 1.0);
-        assert_eq!(mix_comp.solids.milk.sweeteners, 4.8069 / 2.0);
-        assert_eq!(mix_comp.solids.milk.snf(), 8.82 / 2.0);
-        assert_eq!(mix_comp.solids.milk.snfs, 4.0131 / 2.0);
-        assert_eq!(mix_comp.solids.milk.total(), 10.82 / 2.0);
+        assert_eq!(mix_comp.get(CompKey::MilkFat), 1.0);
+        assert_eq!(mix_comp.get(CompKey::MSNF), 8.82 / 2.0);
+        assert_eq!(mix_comp.get(CompKey::MilkSNFS), 4.0131 / 2.0);
+        assert_eq!(mix_comp.get(CompKey::MilkSolids), 10.82 / 2.0);
 
-        assert_eq!(mix_comp.solids.other.total(), 50.0);
+        assert_eq!(mix_comp.get(CompKey::TotalSolids) - mix_comp.get(CompKey::MilkSolids), 50.0);
     }
 
     #[test]
@@ -174,14 +185,12 @@ mod test {
         ]))
         .unwrap();
 
-        let mix_composition = &mix_properties.composition;
-
         let epsilon = 0.15;
-        assert_abs_diff_eq!(mix_composition.pac.total(), 33.07, epsilon = epsilon);
-        assert_abs_diff_eq!(mix_composition.absolute_pac(), 56.2, epsilon = epsilon);
-        assert_abs_diff_eq!(mix_properties.fpd.fpd, -3.5, epsilon = epsilon);
-        assert_abs_diff_eq!(mix_properties.fpd.serving_temp, -14.78, epsilon = epsilon);
-        assert_abs_diff_eq!(mix_properties.fpd.hardness_at_14c, 73.42, epsilon = epsilon);
+        assert_abs_diff_eq!(mix_properties.get(CompKey::PACtotal.into()), 33.07, epsilon = epsilon);
+        assert_abs_diff_eq!(mix_properties.get(CompKey::AbsPAC.into()), 56.2, epsilon = epsilon);
+        assert_abs_diff_eq!(mix_properties.get(FpdKey::FPD.into()), -3.5, epsilon = epsilon);
+        assert_abs_diff_eq!(mix_properties.get(FpdKey::ServingTemp.into()), -14.78, epsilon = epsilon);
+        assert_abs_diff_eq!(mix_properties.get(FpdKey::HardnessAt14C.into()), 73.42, epsilon = epsilon);
     }
 
     #[test]
@@ -190,10 +199,10 @@ mod test {
             MixProperties::calculate_from_composition_lines(&to_comp_lines(&[("Fructose", 10.0), ("Salt", 0.54)]))
                 .unwrap();
 
-        assert_abs_diff_eq!(mix_properties.composition.water(), 0.0, epsilon = COMPOSITION_EPSILON);
-        assert_true!(mix_properties.fpd.fpd.is_nan());
-        assert_true!(mix_properties.fpd.serving_temp.is_nan());
-        assert_true!(mix_properties.fpd.hardness_at_14c.is_nan());
+        assert_abs_diff_eq!(mix_properties.get(CompKey::Water.into()), 0.0, epsilon = COMPOSITION_EPSILON);
+        assert_true!(mix_properties.get(FpdKey::FPD.into()).is_nan());
+        assert_true!(mix_properties.get(FpdKey::ServingTemp.into()).is_nan());
+        assert_true!(mix_properties.get(FpdKey::HardnessAt14C.into()).is_nan());
         assert_true!(mix_properties.fpd.curves.frozen_water[0].temp.is_nan());
         assert_true!(mix_properties.fpd.curves.hardness[0].temp.is_nan());
     }
