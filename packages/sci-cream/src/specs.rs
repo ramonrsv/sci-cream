@@ -1410,9 +1410,9 @@ pub(crate) mod test {
 
         assert_eq!(comp.sweeteners.total(), 0.0);
         assert_eq!(comp.pod, 0.0);
-        assert_eq!(comp.alcohol.to_pac(), 233.544);
-        assert_eq!(comp.pac.total(), 233.544);
-        assert_eq!(comp.pac.alcohol, 233.544);
+        assert_eq!(comp.alcohol.to_pac(), 234.4908);
+        assert_eq!(comp.pac.total(), 234.4908);
+        assert_eq!(comp.pac.alcohol, 234.4908);
     }
 
     pub(crate) const ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM_STR: &str = r#"{
@@ -1448,10 +1448,10 @@ pub(crate) mod test {
 
         assert_eq!(comp.sweeteners.total(), 18.0);
         assert_eq!(comp.pod, 18.0);
-        assert_eq!(comp.alcohol.to_pac(), 99.2562);
-        assert_eq!(comp.pac.alcohol, 99.2562);
+        assert_eq!(comp.alcohol.to_pac(), 99.65859);
+        assert_eq!(comp.pac.alcohol, 99.65859);
         assert_eq!(comp.pac.sugars, 18.0);
-        assert_eq!(comp.pac.total(), 117.2562);
+        assert_eq!(comp.pac.total(), 117.65859);
     }
 
     pub(crate) const ING_SPEC_MICRO_SALT_STR: &str = r#"{

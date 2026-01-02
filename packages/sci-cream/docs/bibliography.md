@@ -18,6 +18,10 @@
 
 [^9]: Spillane, W. J. (2006). _Optimising sweet taste in foods_. CRC Press
 
+[^10]: The European Commission. (2025). _Commission Regulation (EU) No 231/2012_. <https://eur-lex.europa.eu/eli/reg/2012/231/oj>
+
+[^11]: Roberto Castro-Muñoz, Roberto, et al. (2022) _Natural sweeteners: Sources, extraction and current uses in foods and food industries._ Food Chemistry. 370. <https://www.sciencedirect.com/science/article/abs/pii/S030881462101997X>
+
 <!-- Ingredient references -->
 
 [^100]: Eggs, Grade A, Large, egg yolk. (2019). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/748236/nutrients>

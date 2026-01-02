@@ -14,24 +14,81 @@ pub mod pod {
     pub const SUCROSE: f64 = 100.0;
     pub const LACTOSE: f64 = 16.0;
     pub const MALTOSE: f64 = 32.0;
+
+    /// (The European Commission, 2025, E968)[^10]
+    #[doc = include_str!("../docs/bibs/10.md")]
+    pub const ERYTHRITOL: f64 = 70.0;
+    pub const MALTITOL: f64 = 0.0; // @todo
+    pub const SORBITOL: f64 = 0.0; // @todo
+    pub const XYLITOL: f64 = 0.0; // @todo
+
+    /// (The European Commission, 2025, E951)[^10]
+    #[doc = include_str!("../docs/bibs/10.md")]
+    pub const ASPARTAME: f64 = 20000.0;
+    /// (The European Commission, 2025, E954)[^10]
+    #[doc = include_str!("../docs/bibs/10.md")]
+    pub const SACCHARIN: f64 = 40000.0;
+    /// (Castro-Muñoz, 2022)[^11])
+    #[doc = include_str!("../docs/bibs/11.md")]
+    pub const SUCRALOSE: f64 = 60000.0;
+}
+
+pub mod molar_mass {
+    /// Calculate [PAC](crate::docs#pac-afp-fpdf-se) from molar mass, expressed as g/100g of
+    /// sucrose equivalence
+    ///
+    /// Calculate PAC based on a molar mass relative to that of sucrose of 342.30 g/mol, e.g.
+    /// glucose has a molar mass of 180.16 g/mol, so its PAC is 342.30 / 180.16 * 100 = 190.
+    pub const fn pac_from_molar_mass(molar_mass: f64) -> f64 {
+        (SUCROSE / molar_mass * 100.0).floor()
+    }
+
+    pub const GLUCOSE: f64 = 180.156;
+    pub const FRUCTOSE: f64 = 180.156;
+    pub const GALACTOSE: f64 = 180.156;
+    pub const SUCROSE: f64 = 342.30;
+    pub const LACTOSE: f64 = 342.30;
+    pub const MALTOSE: f64 = 342.30;
+
+    pub const ERYTHRITOL: f64 = 122.12;
+    pub const MALTITOL: f64 = 344.313;
+    pub const SORBITOL: f64 = 182.17;
+    pub const XYLITOL: f64 = 152.146;
+
+    pub const ASPARTAME: f64 = 294.307;
+    pub const SACCHARIN: f64 = 183.18;
+    pub const SUCRALOSE: f64 = 397.63;
+
+    pub const SALT: f64 = 58.443;
+    pub const ALCOHOL: f64 = 46.069;
 }
 
 /// [Potere Anti-Congelante (PAC)](crate::docs#pac-afp-fpdf-se) values for various sweeteners and
 /// other ingredients
 ///
 /// Expressed as g/100g of sucrose equivalence. Unless otherwise specified, values are calculated
-/// based on molar mass relative to that of sucrose of 342.30 g/mol, e.g. glucose has a molar mass
-/// of 180.16 g/mol, so its PAC is 342.30 / 180.16 * 100 = 190.
+/// based on molar mass relative to that of sucrose. See [`molar_mass::pac_from_molar_mass`].
 pub mod pac {
-    pub const GLUCOSE: f64 = 190.0;
-    pub const FRUCTOSE: f64 = 190.0;
-    pub const GALACTOSE: f64 = 190.0;
-    pub const SUCROSE: f64 = 100.0;
-    pub const LACTOSE: f64 = 100.0;
-    pub const MALTOSE: f64 = 100.0;
+    use super::molar_mass::{self, pac_from_molar_mass};
 
-    pub const SALT: f64 = 585.0;
-    pub const ALCOHOL: f64 = 740.0;
+    pub const GLUCOSE: f64 = pac_from_molar_mass(molar_mass::GLUCOSE);
+    pub const FRUCTOSE: f64 = pac_from_molar_mass(molar_mass::FRUCTOSE);
+    pub const GALACTOSE: f64 = pac_from_molar_mass(molar_mass::GALACTOSE);
+    pub const SUCROSE: f64 = pac_from_molar_mass(molar_mass::SUCROSE);
+    pub const LACTOSE: f64 = pac_from_molar_mass(molar_mass::LACTOSE);
+    pub const MALTOSE: f64 = pac_from_molar_mass(molar_mass::MALTOSE);
+
+    pub const ERYTHRITOL: f64 = pac_from_molar_mass(molar_mass::ERYTHRITOL);
+    pub const MALTITOL: f64 = pac_from_molar_mass(molar_mass::MALTITOL);
+    pub const SORBITOL: f64 = pac_from_molar_mass(molar_mass::SORBITOL);
+    pub const XYLITOL: f64 = pac_from_molar_mass(molar_mass::XYLITOL);
+
+    pub const ASPARTAME: f64 = pac_from_molar_mass(molar_mass::ASPARTAME);
+    pub const SACCHARIN: f64 = pac_from_molar_mass(molar_mass::SACCHARIN);
+    pub const SUCRALOSE: f64 = pac_from_molar_mass(molar_mass::SUCRALOSE);
+
+    pub const SALT: f64 = pac_from_molar_mass(molar_mass::SALT);
+    pub const ALCOHOL: f64 = pac_from_molar_mass(molar_mass::ALCOHOL);
 
     #[cfg(doc)]
     use crate::constants;
@@ -186,3 +243,24 @@ pub const CORVITTO_PAC_TO_SERVING_TEMP_TABLE: [(f64, f64); 9] = [
 
 /// Epsilon value for floating point comparisons of compositions, e.g. water content
 pub const COMPOSITION_EPSILON: f64 = 1e-10;
+
+#[cfg(test)]
+mod tests {
+
+    use super::*;
+
+    #[test]
+    fn pac_from_molar_mass() {
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::GLUCOSE), 190.0);
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::FRUCTOSE), 190.0);
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::GALACTOSE), 190.0);
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::SUCROSE), 100.0);
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::LACTOSE), 100.0);
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::MALTOSE), 100.0);
+
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::ERYTHRITOL), 280.0);
+
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::SALT), 585.0);
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::ALCOHOL), 743.0);
+    }
+}

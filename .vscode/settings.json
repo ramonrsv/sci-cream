@@ -18,6 +18,7 @@
   "rust-analyzer.check.command": "clippy",
   "prettier.printWidth": 100,
   "cSpell.words": [
+    "asperatame",
     "Cmlk",
     "COEFF",
     "coeffs",
@@ -25,13 +26,17 @@
     "demerara",
     "Hartel",
     "HFCS",
+    "maltitol",
+    "monohydrate",
     "MSNF",
+    "polyols",
     "Raphaelson",
     "scriptable",
     "sgr",
     "slt",
     "SNF",
     "SNFS",
+    "sucralose",
     "turbopack",
     "WSNF"
   ]
