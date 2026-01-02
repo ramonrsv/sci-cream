@@ -633,7 +633,7 @@ impl IntoComposition for EggSpec {
 
         Ok(Composition::new()
             .solids(Solids::new().egg(SolidsBreakdown::new().fats(fats).snfs(100.0 - water - fats)))
-            .micro(Micro::new().emulsifiers(lecithin)))
+            .micro(Micro::new().lecithin(lecithin).emulsifiers(lecithin)))
     }
 }
 
@@ -716,7 +716,7 @@ impl IntoComposition for MicroSpec {
                 .pac(PAC::new().salt(constants::pac::SALT))),
             MicroSpec::Lecithin => Ok(Composition::new()
                 .solids(Solids::new().other(SolidsBreakdown::new().snfs(100.0)))
-                .micro(Micro::new().emulsifiers(100.0))),
+                .micro(Micro::new().lecithin(100.0).emulsifiers(100.0))),
             MicroSpec::Stabilizer { strength } => make_emulsifier_stabilizer_composition(None, Some(strength)),
             MicroSpec::Emulsifier { strength } => make_emulsifier_stabilizer_composition(Some(strength), None),
             MicroSpec::EmulsifierStabilizer {
@@ -1325,6 +1325,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::EggSNF), 19.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 49.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
+        assert_eq!(comp.get(CompKey::Lecithin), 9.0);
     }
 
     pub(crate) const ING_SPEC_ALCOHOL_40_ABV_SPIRIT_STR: &str = r#"{
@@ -1447,6 +1448,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 100.0);
+        assert_eq!(comp.get(CompKey::Lecithin), 100.0);
     }
 
     pub(crate) const ING_SPEC_MICRO_STABILIZER_STR: &str = r#"{
