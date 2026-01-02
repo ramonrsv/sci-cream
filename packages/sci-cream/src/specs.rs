@@ -13,8 +13,8 @@ use crate::{
         Alcohol, Carbohydrates, CompKey, Composition, Fats, Micro, PAC, ScaleComponents, Solids, SolidsBreakdown,
         Sugars, Sweeteners,
     },
-    constants,
-    error::Result,
+    constants::{self, density::dairy_milliliters_to_grams},
+    error::{Error, Result},
     ingredients::{Category, Ingredient},
     validate::{assert_are_positive, assert_is_100_percent, assert_is_subset, assert_within_100_percent},
 };
@@ -42,6 +42,18 @@ pub enum CompositionBasis {
     ByTotalWeight { water: f64 },
 }
 
+/// Unit for specifying ingredient amounts in specs, either grams or milliliters
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub enum Unit {
+    #[serde(rename = "grams")]
+    Grams(f64),
+    #[serde(rename = "ml")]
+    Milliliters(f64),
+    #[serde(rename = "percent")]
+    Percent(f64),
+}
+
 /// Spec for trivial dairy ingredients, e.g. Milk, Cream, Milk Powder, etc.
 ///
 /// For most ingredients it is sufficient to specify the fat content; the rest of the components are
@@ -54,6 +66,27 @@ pub enum CompositionBasis {
 pub struct DairySpec {
     pub fat: f64,
     pub msnf: Option<f64>,
+}
+
+/// Spec for dairy ingredients derived from nutrition facts labels, with detailed breakdown
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct DairyFromNutritionSpec {
+    /// Serving size in grams; if given in ml, it is converted to grams based on fat content
+    ///
+    /// See [`constants::density::dairy_milliliters_to_grams`].
+    pub serving_size: Unit,
+    /// Total fat content per serving; it can be given in grams or as a percentage of serving size
+    ///
+    /// If a dairy product states a fat content percentage on the label, that is usually more
+    /// accurate than the whole unit grams in the nutrition facts table, so specifying a total fat
+    /// percentage is recommended whenever possible.
+    pub total_fat: Unit,
+    pub saturated_fat: f64,
+    pub trans_fat: f64,
+    pub sugars: f64,
+    pub protein: f64,
+    pub is_lactose_free: bool,
 }
 
 /// Spec for sweeteners, with a specified [`Sweeteners`] composition and optional POD/PAC
@@ -407,6 +440,7 @@ pub struct FullSpec {
 #[allow(clippy::large_enum_variant)] // @todo Deal with this issue later
 pub enum Spec {
     DairySpec(DairySpec),
+    DairyFromNutritionSpec(DairyFromNutritionSpec),
     SweetenerSpec(SweetenerSpec),
     FruitSpec(FruitSpec),
     ChocolateSpec(ChocolateSpec),
@@ -430,6 +464,7 @@ impl IntoComposition for Spec {
     fn into_composition(self) -> Result<Composition> {
         match self {
             Spec::DairySpec(spec) => spec.into_composition(),
+            Spec::DairyFromNutritionSpec(spec) => spec.into_composition(),
             Spec::SweetenerSpec(spec) => spec.into_composition(),
             Spec::FruitSpec(spec) => spec.into_composition(),
             Spec::ChocolateSpec(spec) => spec.into_composition(),
@@ -484,6 +519,79 @@ impl IntoComposition for DairySpec {
             .solids(Solids::new().milk(milk_solids))
             .pod(pod)
             .pac(pad))
+    }
+}
+
+impl IntoComposition for DairyFromNutritionSpec {
+    fn into_composition(self) -> Result<Composition> {
+        let Self {
+            serving_size,
+            total_fat,
+            saturated_fat,
+            trans_fat,
+            sugars,
+            protein,
+            is_lactose_free,
+        } = self;
+
+        let (serving_size, total_fat) = match total_fat {
+            Unit::Grams(fat_grams) => match serving_size {
+                Unit::Grams(size_grams) => (size_grams, fat_grams),
+                Unit::Milliliters(size_ml) => (dairy_milliliters_to_grams(size_ml, fat_grams), fat_grams),
+                Unit::Percent(_) => {
+                    Err(Error::InvalidComposition("serving_size cannot be in Unit::Percent".to_string()))?
+                }
+            },
+            Unit::Percent(fat_percent) => match serving_size {
+                Unit::Grams(size_grams) => (size_grams, size_grams * fat_percent / 100.0),
+                Unit::Milliliters(size_ml) => {
+                    let size_grams = dairy_milliliters_to_grams(size_ml, fat_percent);
+                    (size_grams, size_grams * fat_percent / 100.0)
+                }
+                Unit::Percent(_) => {
+                    Err(Error::InvalidComposition("serving_size cannot be in Unit::Percent".to_string()))?
+                }
+            },
+            Unit::Milliliters(_) => {
+                Err(Error::InvalidComposition("total_fat cannot be in Unit::Milliliters".to_string()))?
+            }
+        };
+
+        assert_are_positive(&[serving_size, total_fat, saturated_fat, trans_fat, sugars, protein])?;
+        assert_is_subset(saturated_fat, total_fat, "Saturated fat cannot exceed total fat".to_string())?;
+        assert_is_subset(trans_fat, total_fat, "Trans fats cannot exceed total fats".to_string())?;
+        assert_is_subset(
+            total_fat + sugars + protein,
+            serving_size,
+            "Sum of fats, sugars, and proteins cannot exceed serving size".to_string(),
+        )?;
+
+        let sugars = if !is_lactose_free {
+            Sugars::new().lactose(sugars / serving_size * 100.0)
+        } else {
+            Sugars::new()
+                .glucose(sugars / serving_size * 100.0 / 2.0)
+                .galactose(sugars / serving_size * 100.0 / 2.0)
+        };
+
+        let milk_solids = SolidsBreakdown::new()
+            .fats(
+                Fats::new()
+                    .total(total_fat / serving_size * 100.0)
+                    .saturated(saturated_fat / serving_size * 100.0)
+                    .trans(trans_fat / serving_size * 100.0),
+            )
+            .carbohydrates(Carbohydrates::new().sugars(sugars))
+            .proteins(protein / serving_size * 100.0);
+
+        Ok(Composition::new()
+            .solids(Solids::new().milk(milk_solids))
+            .pod(sugars.to_pod()?)
+            .pac(
+                PAC::new()
+                    .sugars(sugars.to_pac()?)
+                    .msnf_ws_salts(milk_solids.snf() * constants::pac::MSNF_WS_SALTS / 100.0),
+            ))
     }
 }
 
@@ -827,6 +935,62 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.0474);
     }
 
+    pub(crate) const ING_SPEC_DAIRY_3_25_MILK_STR: &str = r#"{
+      "name": "3.25% Milk",
+      "category": "Dairy",
+      "DairySpec": {
+        "fat": 3.25
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_3_25_MILK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "3.25% Milk".to_string(),
+        category: Category::Dairy,
+        spec: Spec::DairySpec(DairySpec { fat: 3.25, msnf: None }),
+    });
+
+    pub(crate) static COMP_3_25_MILK: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(3.25).saturated(2.1125).trans(0.11375))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(4.7456)))
+                        .proteins(3.0476)
+                        .others(0.9143),
+                ),
+            )
+            .pod(0.7593)
+            .pac(PAC::new().sugars(4.7456).msnf_ws_salts(3.1992))
+    });
+
+    #[test]
+    fn into_composition_dairy_spec_3_25_milk() {
+        let comp = ING_SPEC_DAIRY_3_25_MILK.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::MilkFat), 3.25);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 4.7456);
+        assert_eq!(comp.get(CompKey::MSNF), 8.7075);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 3.9619);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 3.0476);
+        assert_eq!(comp.get(CompKey::MilkSolids), 11.9575);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 3.0476);
+        assert_eq!(comp.get(CompKey::TotalSolids), 11.9575);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 88.0425);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 0.7593);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.7456);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.1992);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 7.9448);
+    }
+
     pub(crate) const ING_SPEC_DAIRY_40_CREAM_STR: &str = r#"{
       "name": "40% Cream",
       "category": "Dairy",
@@ -1004,6 +1168,224 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 25.7183);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 63.8683);
+    }
+
+    pub(crate) const ING_SPEC_DAIRY_FROM_NUTRITION_3_25_MILK_STR: &str = r#"{
+      "name": "3.25% Milk (from nutrition facts)",
+      "category": "Dairy",
+      "DairyFromNutritionSpec": {
+        "serving_size": { "ml": 250 },
+        "total_fat": { "percent": 3.25 },
+        "saturated_fat": 5,
+        "trans_fat": 0.3,
+        "sugars": 13,
+        "protein": 9,
+        "is_lactose_free": false
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_FROM_NUTRITION_3_25_MILK: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "3.25% Milk (from nutrition facts)".to_string(),
+            category: Category::Dairy,
+            spec: Spec::DairyFromNutritionSpec(DairyFromNutritionSpec {
+                serving_size: Unit::Milliliters(250.0), // 257.6667 grams
+                total_fat: Unit::Percent(3.25),         // 3.25% is 8.3742g, not 8g
+                saturated_fat: 5.0,
+                trans_fat: 0.3,
+                sugars: 13.0,
+                protein: 9.0,
+                is_lactose_free: false,
+            }),
+        });
+
+    pub(crate) static COMP_3_25_MILK_FROM_NUTRITION: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(3.25).saturated(1.9405).trans(0.1164))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(5.04528)))
+                        .proteins(3.49288),
+                ),
+            )
+            .pod(0.8072)
+            .pac(PAC::new().sugars(5.04528).msnf_ws_salts(3.137))
+    });
+
+    #[test]
+    fn into_composition_dairy_from_nutrition_spec_3_25_milk() {
+        let comp = ING_SPEC_DAIRY_FROM_NUTRITION_3_25_MILK.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::MilkFat), 3.25);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 5.04528);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 8.53816);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 3.49288);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 3.49288);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 11.78816);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 3.49288);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 11.78816);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 88.2118);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 0.8072);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 5.04528);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.137);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.1823);
+    }
+
+    pub(crate) const ING_SPEC_DAIRY_FROM_NUTRITION_WHOLE_ULTRA_FILTERED_LACTOSE_FREE_STR: &str = r#"{
+      "name": "Whole Ultra-Filtered Lactose-Free Milk",
+      "category": "Dairy",
+      "DairyFromNutritionSpec": {
+        "serving_size": { "ml": 240 },
+        "total_fat": { "grams": 8 },
+        "saturated_fat": 5,
+        "trans_fat": 0,
+        "sugars": 6,
+        "protein": 13,
+        "is_lactose_free": true
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_FROM_NUTRITION_WHOLE_ULTRA_FILTERED_LACTOSE_FREE: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Whole Ultra-Filtered Lactose-Free Milk".to_string(),
+            category: Category::Dairy,
+            spec: Spec::DairyFromNutritionSpec(DairyFromNutritionSpec {
+                serving_size: Unit::Milliliters(240.0), // 245.1288 grams
+                total_fat: Unit::Grams(8.0),            // 8g is 3.2636%
+                saturated_fat: 5.0,
+                trans_fat: 0.0,
+                sugars: 6.0,
+                protein: 13.0,
+                is_lactose_free: true,
+            }),
+        });
+
+    pub(crate) static COMP_WHOLE_ULTRA_FILTERED_LACTOSE_FREE: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(3.2636).saturated(2.0397).trans(0.0))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().glucose(1.22385).galactose(1.22385)))
+                        .proteins(5.3033),
+                ),
+            )
+            .pod(1.7794)
+            .pac(PAC::new().sugars(4.65063).msnf_ws_salts(2.8477))
+    });
+
+    #[test]
+    fn into_composition_dairy_spec_whole_ultra_filtered_lactose_free() {
+        let comp = ING_SPEC_DAIRY_FROM_NUTRITION_WHOLE_ULTRA_FILTERED_LACTOSE_FREE
+            .spec
+            .into_composition()
+            .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 3.2636);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::Glucose), 1.22385);
+        assert_eq_flt_test!(comp.get(CompKey::Galactose), 1.22385);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 7.751);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 5.3033);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 5.3033);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 11.0146);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 5.3033);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 11.0146);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 88.9854);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 1.7794);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.65063);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 2.8477);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 7.4983);
+    }
+
+    pub(crate) const ING_SPEC_DAIRY_FROM_NUTRITION_WHEY_ISOLATE_STR: &str = r#"{
+      "name": "Whey Isolate",
+      "category": "Dairy",
+      "DairyFromNutritionSpec": {
+        "serving_size": { "grams": 39 },
+        "total_fat": { "grams": 0.5 },
+        "saturated_fat": 0.3,
+        "trans_fat": 0,
+        "sugars": 1,
+        "protein": 35,
+        "is_lactose_free": false
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_FROM_NUTRITION_WHEY_ISOLATE: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Whey Isolate".to_string(),
+            category: Category::Dairy,
+            spec: Spec::DairyFromNutritionSpec(DairyFromNutritionSpec {
+                serving_size: Unit::Grams(39.0),
+                total_fat: Unit::Grams(0.5),
+                saturated_fat: 0.3,
+                trans_fat: 0.0,
+                sugars: 1.0,
+                protein: 35.0,
+                is_lactose_free: false,
+            }),
+        });
+
+    pub(crate) static COMP_WHEY_ISOLATE: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(1.2821).saturated(0.7692).trans(0.0))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(2.5641)))
+                        .proteins(89.7436),
+                ),
+            )
+            .pod(0.4103)
+            .pac(PAC::new().sugars(2.5641).msnf_ws_salts(33.9142))
+    });
+
+    #[test]
+    fn into_composition_dairy_from_nutrition_spec_whey_isolate() {
+        let comp = ING_SPEC_DAIRY_FROM_NUTRITION_WHEY_ISOLATE
+            .spec
+            .into_composition()
+            .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 1.2821);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 2.5641);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 92.3077);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 89.7436);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 89.7436);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 93.5898);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 89.7436);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 93.5898);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 6.4102);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 0.4103);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 2.5641);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 33.9142);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 36.4783);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_SUCROSE_STR: &str = r#"{
@@ -1745,9 +2127,25 @@ pub(crate) mod tests {
     static INGREDIENT_ASSETS_TABLE: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> = LazyLock::new(|| {
         vec![
             (ING_SPEC_DAIRY_2_MILK_STR, ING_SPEC_DAIRY_2_MILK.clone(), Some(*COMP_2_MILK)),
+            (ING_SPEC_DAIRY_3_25_MILK_STR, ING_SPEC_DAIRY_3_25_MILK.clone(), Some(*COMP_3_25_MILK)),
             (ING_SPEC_DAIRY_40_CREAM_STR, ING_SPEC_DAIRY_40_CREAM.clone(), Some(*COMP_40_CREAM)),
             (ING_SPEC_DAIRY_SKIMMED_POWDER_STR, ING_SPEC_DAIRY_SKIMMED_POWDER.clone(), Some(*COMP_SKIMMED_POWDER)),
             (ING_SPEC_DAIRY_WHOLE_POWDER_STR, ING_SPEC_DAIRY_WHOLE_POWDER.clone(), Some(*COMP_WHOLE_POWDER)),
+            (
+                ING_SPEC_DAIRY_FROM_NUTRITION_3_25_MILK_STR,
+                ING_SPEC_DAIRY_FROM_NUTRITION_3_25_MILK.clone(),
+                Some(*COMP_3_25_MILK_FROM_NUTRITION),
+            ),
+            (
+                ING_SPEC_DAIRY_FROM_NUTRITION_WHOLE_ULTRA_FILTERED_LACTOSE_FREE_STR,
+                ING_SPEC_DAIRY_FROM_NUTRITION_WHOLE_ULTRA_FILTERED_LACTOSE_FREE.clone(),
+                Some(*COMP_WHOLE_ULTRA_FILTERED_LACTOSE_FREE),
+            ),
+            (
+                ING_SPEC_DAIRY_FROM_NUTRITION_WHEY_ISOLATE_STR,
+                ING_SPEC_DAIRY_FROM_NUTRITION_WHEY_ISOLATE.clone(),
+                Some(*COMP_WHEY_ISOLATE),
+            ),
             (ING_SPEC_SWEETENER_SUCROSE_STR, ING_SPEC_SWEETENER_SUCROSE.clone(), Some(*COMP_SUCROSE)),
             (ING_SPEC_SWEETENER_DEXTROSE_STR, ING_SPEC_SWEETENER_DEXTROSE.clone(), None),
             (ING_SPEC_SWEETENER_FRUCTOSE_STR, ING_SPEC_SWEETENER_FRUCTOSE.clone(), Some(*COMP_FRUCTOSE)),

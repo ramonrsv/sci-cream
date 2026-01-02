@@ -20,11 +20,13 @@
 
 [^10]: The European Commission. (2025). _Commission Regulation (EU) No 231/2012_. <https://eur-lex.europa.eu/eli/reg/2012/231/oj>
 
-[^11]: Roberto Castro-Muñoz, Roberto, et al. (2022) _Natural sweeteners: Sources, extraction and current uses in foods and food industries_. Food Chemistry. 370. <https://www.sciencedirect.com/science/article/abs/pii/S030881462101997X>
+[^11]: Roberto Castro-Muñoz, Roberto, et al. (2022). _Natural sweeteners: Sources, extraction and current uses in foods and food industries_. Food Chemistry. 370. <https://www.sciencedirect.com/science/article/abs/pii/S030881462101997X>
 
-[^12]: Board on Agriculture and Renewable Resources, et al. (1974, December) _Fat Content and Composition of Animal Products_. Proceedings of a Symposium Washington, D.C. <https://www.nationalacademies.org/read/22>
+[^12]: Board on Agriculture and Renewable Resources, et al. (1974, December). _Fat Content and Composition of Animal Products_. Proceedings of a Symposium Washington, D.C. <https://www.nationalacademies.org/read/22>
 
-[^13]: United States Department of Agriculture. (2016, September) _National Nutrient Database for Standard Reference_. Release 28
+[^13]: United States Department of Agriculture. (2016, September). _National Nutrient Database for Standard Reference_. Release 28
+
+[^14]: Charrondiere, U. R., et al. (2011, July). _FAO/INFOODS Density Database version 1.0_ <https://www.fao.org/fileadmin/templates/food_composition/documents/upload/Density_databse_v1_final.pdf>
 
 <!-- Ingredient references -->
 

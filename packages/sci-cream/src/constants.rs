@@ -112,20 +112,6 @@ pub mod hf {
     pub const NUT_FAT: f64 = 1.4;
 }
 
-/// PAC to FPD polynomial coefficients, a*x^2 + b*x + c => [a, b, c]
-///
-/// _Polynominal equation with intercept through zero derived from regression model where g
-/// sucrose/100 g water is graphed against FPD °C._ (Goff & Hartel, 2013, Table 6.3.c, p. 186)[^2]
-#[doc = include_str!("../docs/bibs/2.md")]
-pub const PAC_TO_FPD_POLY_COEFFS: [f64; 3] = [-0.00009, -0.0612, 0.0];
-
-/// Freezing Point Depression (FPD) constant (°C) for salts contained in MSNF and WS
-///
-/// _The freezing point depression for salts (°C) contained in MSNF and WS, ... based on the average
-/// molecular weight and concentration of salts present in milk._ (Goff & Hartel, 2013, p.183)[^2]
-#[doc = include_str!("../docs/bibs/2.md")]
-pub const FPD_CONST_FOR_MSNF_WS_SALTS: f64 = -2.37;
-
 /// Percentage of milk solids non-fat (MSNF) typical of milk serum (Goff & Hartel, 2013, p. 160)[^2]
 #[doc = include_str!("../docs/bibs/2.md")]
 pub const STD_MSNF_IN_MILK_SERUM: f64 = 0.09;
@@ -159,12 +145,6 @@ pub const STD_TRANS_FAT_IN_MILK_FAT: f64 = 0.035;
 #[doc = include_str!("../docs/bibs/12.md")]
 pub const STD_SATURATED_FAT_IN_EGG_FAT: f64 = 0.28;
 
-/// Typical ideal serving temperature (in °C) for ice cream (Raphaelson, 2016, Hardness)[^7]
-#[doc = include_str!("../docs/bibs/7.md")]
-pub const TARGET_SERVING_TEMP_14C: f64 = -14.0;
-
-pub const SERVING_TEMP_X_AXIS: usize = 75;
-
 /// Ratio to convert Alcohol by Volume (ABV) to Alcohol by Weight (ABW)
 ///
 /// _"Because of the miscibility of alcohol and water, the conversion factor is not constant but
@@ -172,6 +152,65 @@ pub const SERVING_TEMP_X_AXIS: usize = 75;
 /// for typical ice cream alcohol contents the approximation of 0.789 is sufficiently accurate.
 #[doc = include_str!("../docs/bibs/8.md")]
 pub const ABV_TO_ABW_RATIO: f64 = 0.789;
+
+pub mod density {
+    /// Density (g/mL) of milk with 2% fat content
+    ///
+    /// _Milk, liquid, partially skimmed_ (Charrondiere et al., 2011, p. 2)[^14]
+    #[doc = include_str!("../docs/bibs/14.md")]
+    pub const MILK_2: f64 = 1.034;
+
+    /// Density (g/mL) of milk with 3.5% fat content
+    ///
+    /// _Milk, liquid, whole_ (Charrondiere et al., 2011, p. 2)[^14]
+    #[doc = include_str!("../docs/bibs/14.md")]
+    pub const MILK_3_5: f64 = 1.03;
+
+    /// Density (g/mL) of cream with 40% fat content
+    ///
+    /// _Cream, whipping (about 40% fat)_ (Charrondiere et al., 2011, p. 2)[^14]
+    #[doc = include_str!("../docs/bibs/14.md")]
+    pub const CREAM_40: f64 = 0.96;
+
+    /// Convert dairy volume in milliliters to grams based on fat content percentage
+    ///
+    /// Interpolates density between known values for milk/cream of different fat contents;
+    /// see [`MILK_2`], [`MILK_3_5`], and [`CREAM_40`].
+    pub const fn dairy_milliliters_to_grams(ml: f64, fat_content: f64) -> f64 {
+        let less_than_2 = MILK_2;
+        let between_2_and_3_5 = ((MILK_3_5 - MILK_2) / (3.5 - 2.0) * (fat_content - 2.0)) + MILK_2;
+        let between_3_5_and_40 = ((CREAM_40 - MILK_3_5) / (40.0 - 3.5) * (fat_content - 3.5)) + MILK_3_5;
+        let more_than_40 = CREAM_40;
+
+        match fat_content {
+            0.0..=2.0 => ml * less_than_2,
+            2.0..=3.5 => ml * between_2_and_3_5,
+            3.5..=40.0 => ml * between_3_5_and_40,
+            40.0.. => ml * more_than_40,
+            _ => panic!("Invalid fat content"),
+        }
+    }
+}
+
+/// Typical ideal serving temperature (in °C) for ice cream (Raphaelson, 2016, Hardness)[^7]
+#[doc = include_str!("../docs/bibs/7.md")]
+pub const TARGET_SERVING_TEMP_14C: f64 = -14.0;
+
+pub const SERVING_TEMP_X_AXIS: usize = 75;
+
+/// PAC to FPD polynomial coefficients, a*x^2 + b*x + c => [a, b, c]
+///
+/// _Polynominal equation with intercept through zero derived from regression model where g
+/// sucrose/100 g water is graphed against FPD °C._ (Goff & Hartel, 2013, Table 6.3.c, p. 186)[^2]
+#[doc = include_str!("../docs/bibs/2.md")]
+pub const PAC_TO_FPD_POLY_COEFFS: [f64; 3] = [-0.00009, -0.0612, 0.0];
+
+/// Freezing Point Depression (FPD) constant (°C) for salts contained in MSNF and WS
+///
+/// _The freezing point depression for salts (°C) contained in MSNF and WS, ... based on the average
+/// molecular weight and concentration of salts present in milk._ (Goff & Hartel, 2013, p.183)[^2]
+#[doc = include_str!("../docs/bibs/2.md")]
+pub const FPD_CONST_FOR_MSNF_WS_SALTS: f64 = -2.37;
 
 /// PAC to FPD lookup table
 ///
@@ -270,6 +309,9 @@ pub const COMPOSITION_EPSILON: f64 = 1e-10;
 #[cfg(test)]
 mod tests {
 
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    use crate::tests::asserts::*;
+
     use super::*;
 
     #[test]
@@ -285,5 +327,25 @@ mod tests {
 
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::SALT), 585.0);
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::ALCOHOL), 743.0);
+    }
+
+    #[test]
+    fn dairy_milliliters_to_grams() {
+        let expected_conversions = [
+            (0.0, 1.034),
+            (2.0, 1.034),
+            (3.0, 1.0313333),
+            (3.5, 1.03),
+            (5.0, 1.0271233),
+            (35.0, 0.969589),
+            (40.0, 0.96),
+            (50.0, 0.96),
+        ];
+
+        for (fat_content, expected_density) in expected_conversions {
+            let grams = density::dairy_milliliters_to_grams(100.0, fat_content);
+            let expected_grams = 100.0 * expected_density;
+            assert_eq_flt_test!(grams, expected_grams);
+        }
     }
 }

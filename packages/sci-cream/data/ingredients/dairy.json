@@ -9,5 +9,61 @@
   { "name": "Whipping Cream", "category": "Dairy", "DairySpec": { "fat": 35 } },
   { "name": "Heavy Cream", "category": "Dairy", "DairySpec": { "fat": 36 } },
   { "name": "Skimmed Milk Powder", "category": "Dairy", "DairySpec": { "fat": 0, "msnf": 97 } },
-  { "name": "Whole Milk Powder", "category": "Dairy", "DairySpec": { "fat": 27, "msnf": 70 } }
+  { "name": "Whole Milk Powder", "category": "Dairy", "DairySpec": { "fat": 27, "msnf": 70 } },
+  {
+    "name": "3.25% Milk (from nutrition facts)",
+    "category": "Dairy",
+    "DairyFromNutritionSpec": {
+      "serving_size": { "ml": 250 },
+      "total_fat": { "percent": 3.25 },
+      "saturated_fat": 5,
+      "trans_fat": 0.3,
+      "sugars": 13,
+      "protein": 9,
+      "is_lactose_free": false
+    },
+    "comments": "Sealtest 3.25% Milk, from nutrition facts table: https://www.sealtest.ca/en/products/milks/325-milk"
+  },
+  {
+    "name": "Whole Ultra-Filtered Lactose-Free Milk",
+    "category": "Dairy",
+    "DairyFromNutritionSpec": {
+      "serving_size": { "ml": 240 },
+      "total_fat": { "grams": 8 },
+      "saturated_fat": 5,
+      "trans_fat": 0,
+      "sugars": 6,
+      "protein": 13,
+      "is_lactose_free": true
+    },
+    "comments": "Fairlife Whole Ultra-Filtered Lactose-Free Milk, from nutrition facts table: https://fairlife.com/ultra-filtered-milk/whole-milk/"
+  },
+  {
+    "name": "Whey Isolate",
+    "category": "Dairy",
+    "DairyFromNutritionSpec": {
+      "serving_size": { "grams": 39 },
+      "total_fat": { "grams": 0.5 },
+      "saturated_fat": 0.3,
+      "trans_fat": 0,
+      "sugars": 1,
+      "protein": 35,
+      "is_lactose_free": false
+    },
+    "comments": "Leanfit Sport Whey Isolate, from nutrition facts table: https://leanfit.ca/collections/sport/products/leanfit-sport-whey-isolate-unflavoured-2kg"
+  },
+  {
+    "name": "Casein",
+    "category": "Dairy",
+    "DairyFromNutritionSpec": {
+      "serving_size": { "grams": 30 },
+      "total_fat": { "grams": 0 },
+      "saturated_fat": 0,
+      "trans_fat": 0,
+      "sugars": 1,
+      "protein": 25,
+      "is_lactose_free": false
+    },
+    "comments": "California Gold Nutrition, Sport, Micellar Casein, Unflavoured, Slow Absorption, from nutrition facts table: https://ca.iherb.com/pr/california-gold-nutrition-sport-micellar-casein-unflavored-slow-absorption-16-oz-454-g/71028"
+  }
 ]
