@@ -26,4 +26,17 @@ pub(crate) mod shadow_asserts {
 }
 
 pub(crate) use approx::assert_abs_diff_eq;
+
 pub(crate) const TESTS_EPSILON: f64 = 0.0001;
+
+/// assert_eq_f_test! that translates to assert_abs_diff_eq! with a predefined epsilon for tests.
+///
+/// @todo It would be great if these could be made to work like pretty_assertions, showing diffs.
+#[macro_export(local_inner_macros)]
+macro_rules! assert_eq_flt_test {
+    ($given:expr, $expected:expr) => {
+        approx::assert_abs_diff_eq!($given, $expected, epsilon = $crate::tests::asserts::TESTS_EPSILON)
+    };
+}
+
+pub(crate) use assert_eq_flt_test;

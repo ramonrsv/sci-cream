@@ -431,8 +431,6 @@ mod tests {
             (CompKey::AbsPAC, 9.02377),
         ]);
 
-        CompKey::iter().for_each(|key| {
-            assert_abs_diff_eq!(COMP_2_MILK.get(key), *expected.get(&key).unwrap_or(&0.0), epsilon = TESTS_EPSILON)
-        });
+        CompKey::iter().for_each(|key| assert_eq_flt_test!(COMP_2_MILK.get(key), *expected.get(&key).unwrap_or(&0.0)));
     }
 }

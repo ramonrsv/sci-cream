@@ -568,20 +568,15 @@ mod tests {
     #[test]
     fn get_pac_from_fpd_polynomial() {
         for (expected_pac, fpd) in PAC_TO_FPD_TABLE_POLY.as_slice() {
-            assert_abs_diff_eq!(
-                super::get_pac_from_fpd_polynomial(*fpd, None).unwrap(),
-                *expected_pac,
-                epsilon = TESTS_EPSILON
-            );
+            assert_eq_flt_test!(super::get_pac_from_fpd_polynomial(*fpd, None).unwrap(), *expected_pac);
         }
     }
 
     #[test]
     fn pac_msnf_ws_salts() {
-        assert_abs_diff_eq!(
+        assert_eq_flt_test!(
             super::get_pac_from_fpd_polynomial(FPD_CONST_FOR_MSNF_WS_SALTS, None).unwrap(),
-            pac::MSNF_WS_SALTS,
-            epsilon = TESTS_EPSILON
+            pac::MSNF_WS_SALTS
         );
     }
 
@@ -635,8 +630,8 @@ mod tests {
         assert_eq!(comp.get(CompKey::TotalSolids), 40.0);
         assert_eq!(comp.get(CompKey::Water), 60.0);
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
-        assert_abs_diff_eq!(comp.get(CompKey::PACmlk), 4.4088, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(comp.get(CompKey::PACtotal), 26.5888, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 4.4088);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 26.5888);
 
         let comp = *REF_COMP_WITH_ALCOHOL;
         assert_eq!(comp.get(CompKey::MSNF), 12.0);
@@ -645,18 +640,18 @@ mod tests {
         assert_eq!(comp.get(CompKey::Water), 58.0);
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
         assert_eq!(comp.get(CompKey::PACalc), 14.8);
-        assert_abs_diff_eq!(comp.get(CompKey::PACmlk), 4.4088, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(comp.get(CompKey::PACtotal), 41.3888, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 4.4088);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 41.3888);
 
         let comp = *REF_COMP_WITH_HF;
         assert_eq!(comp.get(CompKey::MSNF), 12.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 40.0);
         assert_eq!(comp.get(CompKey::Water), 60.0);
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
-        assert_abs_diff_eq!(comp.get(CompKey::PACmlk), 4.4088, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 4.4088);
         assert_eq!(comp.get(CompKey::HF), 10.0);
-        assert_abs_diff_eq!(comp.get(CompKey::PACtotal), 26.5888, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(comp.get(CompKey::PACtotal) - comp.get(CompKey::HF), 16.5888, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 26.5888);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal) - comp.get(CompKey::HF), 16.5888);
     }
 
     /// Reference freezing curve for [`REF_COMP`] (Goff & Hartel, 2013, Table 6.2, p. 184)[^2]
@@ -872,9 +867,9 @@ mod tests {
             )
             .unwrap();
 
-            assert_abs_diff_eq!(step_with_hf.hf, (10.0 / ref_step.water) * 100.0, epsilon = TESTS_EPSILON);
+            assert_eq_flt_test!(step_with_hf.hf, (10.0 / ref_step.water) * 100.0);
             assert_abs_diff_eq!(step_with_hf.pac_exc_hf, ref_step.pac_exc_hf, epsilon = 0.01);
-            assert_abs_diff_eq!(step_with_hf.fpd_inc_hf, step_pac_less_hf.fpd_exc_hf, epsilon = TESTS_EPSILON);
+            assert_eq_flt_test!(step_with_hf.fpd_inc_hf, step_pac_less_hf.fpd_exc_hf);
         }
     }
 
@@ -883,12 +878,12 @@ mod tests {
         let mut comp = *REF_COMP;
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
         assert_eq!(comp.get(CompKey::HF), 0.0);
-        assert_abs_diff_eq!(comp.get(CompKey::PACtotal) - comp.get(CompKey::HF), 26.5888, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal) - comp.get(CompKey::HF), 26.5888);
 
         comp.pac.hardness_factor = 30.0;
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
         assert_eq!(comp.get(CompKey::HF), 30.0);
-        assert_abs_diff_eq!(comp.get(CompKey::PACtotal) - comp.get(CompKey::HF), -3.4112, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal) - comp.get(CompKey::HF), -3.4112);
 
         for (ref_step, _) in REF_COMP_FREEZING_CURVE_MODIFIED_GOFF_HARTEL_CORVITTO.iter() {
             let step_with_hf = compute_fpd_curve_step_modified_goff_hartel_corvitto(
@@ -898,7 +893,7 @@ mod tests {
             )
             .unwrap();
 
-            assert_abs_diff_eq!(step_with_hf.hf, (30.0 / ref_step.water) * 100.0, epsilon = TESTS_EPSILON);
+            assert_eq_flt_test!(step_with_hf.hf, (30.0 / ref_step.water) * 100.0);
             assert_abs_diff_eq!(step_with_hf.pac_exc_hf, ref_step.pac_exc_hf, epsilon = 0.01);
             assert_true!(step_with_hf.fpd_inc_hf.is_nan());
         }
@@ -1040,10 +1035,10 @@ mod tests {
         assert_eq!(comp.get(CompKey::MSNF), 8.0);
         assert_eq!(comp.get(CompKey::MilkSolids), 14.1);
         assert_eq!(comp.get(CompKey::EggFat), 0.6);
-        assert_abs_diff_eq!(comp.get(CompKey::EggSNF), 0.5, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::EggSNF), 0.5);
         assert_eq!(comp.get(CompKey::CocoaButter), 1.3);
         assert_eq!(comp.get(CompKey::CocoaSolids), 4.7);
-        assert_abs_diff_eq!(comp.get(CompKey::TotalFats), 8.0, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFats), 8.0);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 3.4 + 17.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 38.2);
         assert_eq!(comp.get(CompKey::PACsgr), 37.3);
@@ -1061,10 +1056,10 @@ mod tests {
         assert_eq!(comp.get(CompKey::MSNF), 8.0);
         assert_eq!(comp.get(CompKey::MilkSolids), 14.1);
         assert_eq!(comp.get(CompKey::EggFat), 0.6);
-        assert_abs_diff_eq!(comp.get(CompKey::EggSNF), 0.5, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::EggSNF), 0.5);
         assert_eq!(comp.get(CompKey::CocoaButter), 1.3);
         assert_eq!(comp.get(CompKey::CocoaSolids), 4.7);
-        assert_abs_diff_eq!(comp.get(CompKey::TotalFats), 8.0, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFats), 8.0);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 4.1 + 22.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 43.2);
         assert_eq!(comp.get(CompKey::PACsgr), 50.9);
@@ -1085,7 +1080,7 @@ mod tests {
         ] {
             for (pac, serving_temp) in table.iter() {
                 let computed_serving_temp = super::get_serving_temp_from_pac_corvitto(*pac).unwrap();
-                assert_abs_diff_eq!(computed_serving_temp, *serving_temp, epsilon = TESTS_EPSILON);
+                assert_eq_flt_test!(computed_serving_temp, *serving_temp);
             }
         }
 
@@ -1161,7 +1156,7 @@ mod tests {
 
         for point in curve {
             let x_axis = super::get_x_axis_at_fpd(curve, point.temp).unwrap();
-            assert_abs_diff_eq!(x_axis, point.x_axis, epsilon = TESTS_EPSILON);
+            assert_eq_flt_test!(x_axis, point.x_axis);
         }
 
         for fpd in [-1.0, 85.0] {
@@ -1170,7 +1165,7 @@ mod tests {
 
         for (expected_x_axis, target_fpd) in &[(5.0, -2.9), (7.5, -2.98), (77.5, -14.885)] {
             let x_axis = super::get_x_axis_at_fpd(curve, *target_fpd).unwrap();
-            assert_abs_diff_eq!(x_axis, *expected_x_axis, epsilon = TESTS_EPSILON);
+            assert_eq_flt_test!(x_axis, *expected_x_axis);
         }
     }
 

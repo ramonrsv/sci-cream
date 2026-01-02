@@ -805,13 +805,13 @@ pub(crate) mod tests {
         let comp = ING_SPEC_DAIRY_2_MILK.spec.into_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::MilkFat), 2.0);
-        assert_abs_diff_eq!(comp.get(CompKey::Lactose), 4.8069, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 4.8069);
         assert_eq!(comp.get(CompKey::MSNF), 8.82);
         assert_eq!(comp.get(CompKey::MilkSNFS), 4.0131);
-        assert_abs_diff_eq!(comp.get(CompKey::MilkProteins), 3.087, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 3.087);
         assert_eq!(comp.get(CompKey::MilkSolids), 10.82);
 
-        assert_abs_diff_eq!(comp.get(CompKey::TotalProteins), 3.087, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 3.087);
         assert_eq!(comp.get(CompKey::TotalSolids), 10.82);
         assert_eq!(comp.get(CompKey::Water), 89.18);
 
@@ -819,12 +819,12 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
         assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
-        assert_abs_diff_eq!(comp.get(CompKey::POD), 0.769104, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 0.769104);
 
-        assert_abs_diff_eq!(comp.get(CompKey::PACsgr), 4.8069, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.8069);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_abs_diff_eq!(comp.get(CompKey::PACmlk), 3.2405, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(comp.get(CompKey::PACtotal), 8.0474, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.2405);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.0474);
     }
 
     pub(crate) const ING_SPEC_DAIRY_40_CREAM_STR: &str = r#"{
@@ -862,13 +862,13 @@ pub(crate) mod tests {
         let comp = ING_SPEC_DAIRY_40_CREAM.spec.into_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::MilkFat), 40.0);
-        assert_abs_diff_eq!(comp.get(CompKey::Lactose), 2.943, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(comp.get(CompKey::MSNF), 5.4, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(comp.get(CompKey::MilkSNFS), 2.457, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(comp.get(CompKey::MilkProteins), 1.89, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 2.943);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 5.4);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 2.457);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 1.89);
         assert_eq!(comp.get(CompKey::MilkSolids), 45.4);
 
-        assert_abs_diff_eq!(comp.get(CompKey::TotalProteins), 1.89, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 1.89);
         assert_eq!(comp.get(CompKey::TotalSolids), 45.4);
         assert_eq!(comp.get(CompKey::Water), 54.6);
 
@@ -876,12 +876,12 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
         assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
-        assert_abs_diff_eq!(comp.get(CompKey::POD), 0.47088, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 0.47088);
 
-        assert_abs_diff_eq!(comp.get(CompKey::PACsgr), 2.943, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 2.943);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_abs_diff_eq!(comp.get(CompKey::PACmlk), 1.984, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(comp.get(CompKey::PACtotal), 4.927, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 1.984);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 4.927);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_SUCROSE_STR: &str = r#"{
@@ -1160,8 +1160,8 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TotalCarbohydrates), 31.92 + 40.28 + 3.8);
 
         assert_eq!(comp.get(CompKey::TotalSugars), 72.2);
-        assert_abs_diff_eq!(comp.get(CompKey::TotalSweeteners), 76.0 - 3.8, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(comp.get(CompKey::TotalSNFS), 3.8, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 76.0 - 3.8);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 3.8);
         assert_eq!(comp.get(CompKey::TotalSolids), 76.0);
         assert_eq!(comp.get(CompKey::POD), 87.60672000000001);
         assert_eq!(comp.get(CompKey::PACsgr), 137.18);
@@ -1199,10 +1199,10 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Fructose), 2.44);
         assert_eq!(comp.get(CompKey::Sucrose), 0.47);
 
-        assert_abs_diff_eq!(comp.get(CompKey::TotalSweeteners), 4.90, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 4.90);
         assert_eq!(comp.get(CompKey::TotalFats), 0.3);
-        assert_abs_diff_eq!(comp.get(CompKey::TotalSNFS), 3.8, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(comp.get(CompKey::TotalSolids), 9.0, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 3.8);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 9.0);
         assert_eq!(comp.get(CompKey::POD), 6.29116);
         assert_eq!(comp.get(CompKey::PACsgr), 8.887);
     }
@@ -1345,7 +1345,7 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::NutFat), 49.9);
         assert_eq!(comp.get(CompKey::NutSNF), 41.34);
-        assert_abs_diff_eq!(comp.get(CompKey::NutSolids), 91.24, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::NutSolids), 91.24);
 
         // Sugar in nuts is considered part of total sweeteners, not part of Nut Solids
         assert_eq!(comp.get(CompKey::TotalSweeteners), 4.35);
@@ -1353,7 +1353,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::NutSolids), comp.get(CompKey::TotalSolids) - comp.get(CompKey::TotalSweeteners));
 
         assert_eq!(comp.get(CompKey::TotalSolids), 95.59);
-        assert_abs_diff_eq!(comp.get(CompKey::Water), 4.41, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 4.41);
         assert_eq!(comp.get(CompKey::POD), 4.35);
         assert_eq!(comp.get(CompKey::HF), 69.86);
     }
@@ -1413,9 +1413,9 @@ pub(crate) mod tests {
         let comp = ING_SPEC_ALCOHOL_40_ABV_SPIRIT.spec.into_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::ABV), 40.0);
-        assert_abs_diff_eq!(comp.get(CompKey::Alcohol), 31.56, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::Alcohol), 31.56);
         assert_eq!(comp.get(CompKey::TotalSolids), 0.0);
-        assert_abs_diff_eq!(comp.get(CompKey::Water), 68.44, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 68.44);
 
         assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
         assert_eq!(comp.get(CompKey::POD), 0.0);
@@ -1453,9 +1453,9 @@ pub(crate) mod tests {
     fn into_composition_alcohol_spec_baileys_irish_cream() {
         let comp = ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.spec.into_composition().unwrap();
 
-        assert_abs_diff_eq!(comp.get(CompKey::Alcohol), 13.413, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(comp.get(CompKey::TotalSolids), 31.6, epsilon = TESTS_EPSILON);
-        assert_abs_diff_eq!(comp.get(CompKey::Water), 54.987, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(comp.get(CompKey::Alcohol), 13.413);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 31.6);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 54.987);
 
         assert_eq!(comp.get(CompKey::TotalSweeteners), 18.0);
         assert_eq!(comp.get(CompKey::POD), 18.0);
@@ -1670,7 +1670,7 @@ pub(crate) mod tests {
             let comp = spec.spec.into_composition().unwrap();
             if let Some(expected_comp) = expected_comp_opt {
                 //assert_eq!(&comp, expected_comp);
-                assert_abs_diff_eq!(&comp, expected_comp, epsilon = TESTS_EPSILON);
+                assert_eq_flt_test!(&comp, expected_comp);
             }
         });
     }
