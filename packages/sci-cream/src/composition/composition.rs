@@ -383,61 +383,7 @@ mod tests {
     use crate::tests::assets::*;
 
     use super::*;
-    use crate::{composition::*, error::Error};
-
-    #[test]
-    fn sugars_to_pod() {
-        assert_eq!(Sugars::new().sucrose(10.0).to_pod().unwrap(), 10.0);
-    }
-
-    #[test]
-    fn sugars_to_pod_error() {
-        assert!(matches!(Sugars::new().unspecified(10.0).to_pod(), Err(Error::CannotComputePOD(_))));
-    }
-
-    #[test]
-    fn sugars_to_pac() {
-        assert_eq!(Sugars::new().sucrose(10.0).to_pac().unwrap(), 10.0);
-    }
-
-    #[test]
-    fn sugars_to_pac_error() {
-        assert!(matches!(Sugars::new().unspecified(10.0).to_pac(), Err(Error::CannotComputePAC(_))));
-    }
-
-    #[test]
-    fn carbohydrates_to_pod() {
-        let carbohydrates = Carbohydrates::new().sugars(Sugars::new().sucrose(10.0));
-        assert_eq!(carbohydrates.to_pod().unwrap(), 10.0);
-    }
-
-    // #[test]
-    // fn sweeteners_to_pod_error() {
-    //     assert!(matches!(Sweeteners::new().polysaccharide(10.0).to_pod(), Err(Error::CannotComputePOD(_))));
-    //     assert!(matches!(Sweeteners::new().artificial(10.0).to_pod(), Err(Error::CannotComputePOD(_))));
-    // }
-
-    #[test]
-    fn sweeteners_to_pac() {
-        let carbohydrates = Carbohydrates::new().sugars(Sugars::new().sucrose(10.0));
-        assert_eq!(carbohydrates.to_pac().unwrap(), 10.0);
-    }
-
-    // #[test]
-    // fn sweeteners_to_pac_error() {
-    //     assert!(matches!(Sweeteners::new().polysaccharide(10.0).to_pac(), Err(Error::CannotComputePAC(_))));
-    //     assert!(matches!(Sweeteners::new().artificial(10.0).to_pac(), Err(Error::CannotComputePAC(_))));
-    // }
-
-    #[test]
-    fn pac_total() {
-        let pac = COMP_2_MILK.pac;
-        assert_eq!(pac.sugars, 4.8069);
-        assert_eq!(pac.salt, 0.0);
-        assert_eq!(pac.msnf_ws_salts, 3.2405);
-        assert_eq!(pac.alcohol, 0.0);
-        assert_eq!(pac.total(), 8.0474);
-    }
+    use crate::composition::*;
 
     #[test]
     fn composition_nan_values() {

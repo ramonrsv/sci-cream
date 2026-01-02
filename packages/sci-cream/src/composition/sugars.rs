@@ -168,3 +168,33 @@ impl Default for Sugars {
         Self::empty()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    #[expect(unused_imports)]
+    use crate::tests::asserts::*;
+
+    use super::*;
+    use crate::error::Error;
+
+    #[test]
+    fn sugars_to_pod() {
+        assert_eq!(Sugars::new().sucrose(10.0).to_pod().unwrap(), 10.0);
+    }
+
+    #[test]
+    fn sugars_to_pod_error() {
+        assert!(matches!(Sugars::new().unspecified(10.0).to_pod(), Err(Error::CannotComputePOD(_))));
+    }
+
+    #[test]
+    fn sugars_to_pac() {
+        assert_eq!(Sugars::new().sucrose(10.0).to_pac().unwrap(), 10.0);
+    }
+
+    #[test]
+    fn sugars_to_pac_error() {
+        assert!(matches!(Sugars::new().unspecified(10.0).to_pac(), Err(Error::CannotComputePAC(_))));
+    }
+}

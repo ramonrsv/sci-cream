@@ -125,7 +125,6 @@ mod tests {
     use strum::IntoEnumIterator;
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
-    #[allow(unused_imports)] // @todo Remove when used.
     use crate::tests::asserts::*;
 
     use super::*;

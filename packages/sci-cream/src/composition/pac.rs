@@ -105,3 +105,22 @@ impl Default for PAC {
         Self::empty()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    #[expect(unused_imports)]
+    use crate::tests::asserts::*;
+
+    use crate::tests::assets::*;
+
+    #[test]
+    fn pac_total() {
+        let pac = COMP_2_MILK.pac;
+        assert_eq!(pac.sugars, 4.8069);
+        assert_eq!(pac.salt, 0.0);
+        assert_eq!(pac.msnf_ws_salts, 3.2405);
+        assert_eq!(pac.alcohol, 0.0);
+        assert_eq!(pac.total(), 8.0474);
+    }
+}

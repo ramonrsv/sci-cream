@@ -128,3 +128,41 @@ impl Default for Carbohydrates {
         Self::empty()
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    #[expect(unused_imports)]
+    use crate::tests::asserts::*;
+
+    use super::*;
+    use crate::composition::*;
+
+    #[test]
+    fn carbohydrates_to_pod() {
+        let carbohydrates = Carbohydrates::new().sugars(Sugars::new().sucrose(10.0));
+        assert_eq!(carbohydrates.to_pod().unwrap(), 10.0);
+    }
+
+    #[test]
+    fn carbohydrates_to_pod_error() {
+        assert!(matches!(
+            Carbohydrates::new().sugars(Sugars::new().unspecified(10.0)).to_pod(),
+            Err(Error::CannotComputePOD(_))
+        ));
+    }
+
+    #[test]
+    fn carbohydrates_to_pac() {
+        let carbohydrates = Carbohydrates::new().sugars(Sugars::new().sucrose(10.0));
+        assert_eq!(carbohydrates.to_pac().unwrap(), 10.0);
+    }
+
+    #[test]
+    fn carbohydrates_to_pac_error() {
+        assert!(matches!(
+            Carbohydrates::new().sugars(Sugars::new().unspecified(10.0)).to_pac(),
+            Err(Error::CannotComputePAC(_))
+        ));
+    }
+}
