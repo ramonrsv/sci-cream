@@ -20,7 +20,11 @@
 
 [^10]: The European Commission. (2025). _Commission Regulation (EU) No 231/2012_. <https://eur-lex.europa.eu/eli/reg/2012/231/oj>
 
-[^11]: Roberto Castro-Muñoz, Roberto, et al. (2022) _Natural sweeteners: Sources, extraction and current uses in foods and food industries._ Food Chemistry. 370. <https://www.sciencedirect.com/science/article/abs/pii/S030881462101997X>
+[^11]: Roberto Castro-Muñoz, Roberto, et al. (2022) _Natural sweeteners: Sources, extraction and current uses in foods and food industries_. Food Chemistry. 370. <https://www.sciencedirect.com/science/article/abs/pii/S030881462101997X>
+
+[^12]: Board on Agriculture and Renewable Resources, et al. (1974, December) _Fat Content and Composition of Animal Products_. Proceedings of a Symposium Washington, D.C. <https://www.nationalacademies.org/read/22>
+
+[^13]: United States Department of Agriculture. (2016, September) _National Nutrient Database for Standard Reference_. Release 28
 
 <!-- Ingredient references -->
 
@@ -28,4 +32,6 @@
 
 [^101]: Strawberries, raw. (2019). In _USDA FoodData Central - SR Legacy_. <https://fdc.nal.usda.gov/food-details/167762/nutrients>
 
-[^102]: Nuts, almonds. (2019). In _USDA FoodDataCentra - SR Legacy_. <https://fdc.nal.usda.gov/food-details/170567/nutrients>
+[^102]: Nuts, almonds. (2019). In _USDA FoodDataCentral - SR Legacy_. <https://fdc.nal.usda.gov/food-details/170567/nutrients>
+
+[^103]: Milk, whole, 3.25% milkfat, with added Vitamin D. (2019). In _USDA FoodDataCentral - Foundation_. <https://fdc.nal.usda.gov/food-details/746782/nutrients>

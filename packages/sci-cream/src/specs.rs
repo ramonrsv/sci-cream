@@ -20,7 +20,9 @@ use crate::{
 };
 
 #[cfg(doc)]
-use crate::constants::{STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM};
+use crate::constants::{
+    STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM, STD_PROTEIN_IN_MSNF, STD_SATURATED_FAT_IN_MILK_FAT,
+};
 
 pub trait IntoComposition {
     fn into_composition(self) -> Result<Composition>;
@@ -43,9 +45,10 @@ pub enum CompositionBasis {
 /// Spec for trivial dairy ingredients, e.g. Milk, Cream, Milk Powder, etc.
 ///
 /// For most ingredients it is sufficient to specify the fat content; the rest of the components are
-/// calculated from standard values, notably [`STD_MSNF_IN_MILK_SERUM`] and [`STD_LACTOSE_IN_MSNF`].
-/// For milk powder ingredients it's necessary to specify the `msnf`, e.g. 97 for Skimmed MIlk
-/// Powder - 3% water, no fat, the rest is `msnf`, or 73 for Whole Milk Powder - total less 27% fat.
+/// calculated from standard values, notably [`STD_MSNF_IN_MILK_SERUM`], [`STD_LACTOSE_IN_MSNF`],
+/// [`STD_PROTEIN_IN_MSNF`], and [`STD_SATURATED_FAT_IN_MILK_FAT`]. For milk powder ingredients it's
+/// necessary to specify the `msnf`, e.g. 97 for Skimmed MIlk Powder - 3% water, no fat, the rest is
+/// milk solids non-fat, or 70 for Whole Milk Powder - 3% water, 27% fat, the rest is `msnf`.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct DairySpec {
@@ -455,15 +458,22 @@ impl IntoComposition for DairySpec {
 
         let calculated_msnf = (100.0 - fat) * constants::STD_MSNF_IN_MILK_SERUM;
         let msnf = msnf.unwrap_or(calculated_msnf);
-        let lactose = msnf * constants::STD_LACTOSE_IN_MSNF;
-        let snfs = msnf - lactose;
-
         assert_are_positive(&[fat, msnf])?;
+        assert_within_100_percent(fat + msnf)?;
+
+        let lactose = msnf * constants::STD_LACTOSE_IN_MSNF;
+        let proteins = msnf * constants::STD_PROTEIN_IN_MSNF;
 
         let milk_solids = SolidsBreakdown::new()
-            .fats(Fats::new().total(fat))
+            .fats(
+                Fats::new()
+                    .total(fat)
+                    .saturated(fat * constants::STD_SATURATED_FAT_IN_MILK_FAT)
+                    .trans(fat * constants::STD_TRANS_FAT_IN_MILK_FAT),
+            )
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(lactose)))
-            .others(snfs);
+            .proteins(proteins)
+            .others(msnf - lactose - proteins);
 
         let pod = milk_solids.carbohydrates.to_pod()?;
         let pad = PAC::new()
@@ -779,9 +789,11 @@ pub(crate) mod tests {
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
-                        .fats(Fats::new().total(2.0))
+                        .fats(Fats::new().total(2.0).saturated(1.3).trans(0.07))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(4.8069)))
-                        .others(4.0131),
+                        .proteins(3.087)
+                        .others_from_total(2.0 + 8.82)
+                        .unwrap(),
                 ),
             )
             .pod(0.769104)
@@ -792,6 +804,14 @@ pub(crate) mod tests {
     fn into_composition_dairy_spec_2_milk() {
         let comp = ING_SPEC_DAIRY_2_MILK.spec.into_composition().unwrap();
 
+        assert_eq!(comp.get(CompKey::MilkFat), 2.0);
+        assert_abs_diff_eq!(comp.get(CompKey::Lactose), 4.8069, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::MSNF), 8.82);
+        assert_eq!(comp.get(CompKey::MilkSNFS), 4.0131);
+        assert_abs_diff_eq!(comp.get(CompKey::MilkProteins), 3.087, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::MilkSolids), 10.82);
+
+        assert_abs_diff_eq!(comp.get(CompKey::TotalProteins), 3.087, epsilon = TESTS_EPSILON);
         assert_eq!(comp.get(CompKey::TotalSolids), 10.82);
         assert_eq!(comp.get(CompKey::Water), 89.18);
 
@@ -801,16 +821,67 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_abs_diff_eq!(comp.get(CompKey::POD), 0.769104, epsilon = TESTS_EPSILON);
 
-        assert_eq!(comp.get(CompKey::MilkFat), 2.0);
-        assert_abs_diff_eq!(comp.get(CompKey::Lactose), 4.8069, epsilon = TESTS_EPSILON);
-        assert_eq!(comp.get(CompKey::MSNF), 8.82);
-        assert_eq!(comp.get(CompKey::MilkSNFS), 4.0131);
-        assert_eq!(comp.get(CompKey::MilkSolids), 10.82);
-
         assert_abs_diff_eq!(comp.get(CompKey::PACsgr), 4.8069, epsilon = TESTS_EPSILON);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_abs_diff_eq!(comp.get(CompKey::PACmlk), 3.2405, epsilon = TESTS_EPSILON);
         assert_abs_diff_eq!(comp.get(CompKey::PACtotal), 8.0474, epsilon = TESTS_EPSILON);
+    }
+
+    pub(crate) const ING_SPEC_DAIRY_40_CREAM_STR: &str = r#"{
+      "name": "40% Cream",
+      "category": "Dairy",
+      "DairySpec": {
+        "fat": 40
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_40_CREAM: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "40% Cream".to_string(),
+        category: Category::Dairy,
+        spec: Spec::DairySpec(DairySpec { fat: 40.0, msnf: None }),
+    });
+
+    pub(crate) static COMP_40_CREAM: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(40.0).saturated(26.0).trans(1.4))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(2.943)))
+                        .proteins(1.89)
+                        .others_from_total(40.0 + 5.4)
+                        .unwrap(),
+                ),
+            )
+            .pod(0.47088)
+            .pac(PAC::new().sugars(2.943).msnf_ws_salts(1.984))
+    });
+
+    #[test]
+    fn into_composition_dairy_spec_40_cream() {
+        let comp = ING_SPEC_DAIRY_40_CREAM.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::MilkFat), 40.0);
+        assert_abs_diff_eq!(comp.get(CompKey::Lactose), 2.943, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.get(CompKey::MSNF), 5.4, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.get(CompKey::MilkSNFS), 2.457, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.get(CompKey::MilkProteins), 1.89, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::MilkSolids), 45.4);
+
+        assert_abs_diff_eq!(comp.get(CompKey::TotalProteins), 1.89, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::TotalSolids), 45.4);
+        assert_eq!(comp.get(CompKey::Water), 54.6);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_abs_diff_eq!(comp.get(CompKey::POD), 0.47088, epsilon = TESTS_EPSILON);
+
+        assert_abs_diff_eq!(comp.get(CompKey::PACsgr), 2.943, epsilon = TESTS_EPSILON);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_abs_diff_eq!(comp.get(CompKey::PACmlk), 1.984, epsilon = TESTS_EPSILON);
+        assert_abs_diff_eq!(comp.get(CompKey::PACtotal), 4.927, epsilon = TESTS_EPSILON);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_SUCROSE_STR: &str = r#"{
@@ -1552,6 +1623,7 @@ pub(crate) mod tests {
     static INGREDIENT_ASSETS_TABLE: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> = LazyLock::new(|| {
         vec![
             (ING_SPEC_DAIRY_2_MILK_STR, ING_SPEC_DAIRY_2_MILK.clone(), Some(*COMP_2_MILK)),
+            (ING_SPEC_DAIRY_40_CREAM_STR, ING_SPEC_DAIRY_40_CREAM.clone(), Some(*COMP_40_CREAM)),
             (ING_SPEC_SWEETENER_SUCROSE_STR, ING_SPEC_SWEETENER_SUCROSE.clone(), Some(*COMP_SUCROSE)),
             (ING_SPEC_SWEETENER_DEXTROSE_STR, ING_SPEC_SWEETENER_DEXTROSE.clone(), None),
             (ING_SPEC_SWEETENER_FRUCTOSE_STR, ING_SPEC_SWEETENER_FRUCTOSE.clone(), Some(*COMP_FRUCTOSE)),
@@ -1597,6 +1669,7 @@ pub(crate) mod tests {
         INGREDIENT_ASSETS_TABLE.iter().for_each(|(_, spec, expected_comp_opt)| {
             let comp = spec.spec.into_composition().unwrap();
             if let Some(expected_comp) = expected_comp_opt {
+                //assert_eq!(&comp, expected_comp);
                 assert_abs_diff_eq!(&comp, expected_comp, epsilon = TESTS_EPSILON);
             }
         });

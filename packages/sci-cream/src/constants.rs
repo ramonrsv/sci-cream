@@ -126,6 +126,8 @@ pub const PAC_TO_FPD_POLY_COEFFS: [f64; 3] = [-0.00009, -0.0612, 0.0];
 #[doc = include_str!("../docs/bibs/2.md")]
 pub const FPD_CONST_FOR_MSNF_WS_SALTS: f64 = -2.37;
 
+/// Percentage of milk solids non-fat (MSNF) typical of milk serum (Goff & Hartel, 2013, p. 160)[^2]
+#[doc = include_str!("../docs/bibs/2.md")]
 pub const STD_MSNF_IN_MILK_SERUM: f64 = 0.09;
 
 /// Percentage of lactose typical of milk solids non-fat (MSNF) (Goff & Hartel, 2013, p. 181)[^2]
@@ -135,6 +137,27 @@ pub const STD_LACTOSE_IN_MSNF: f64 = 0.545;
 /// Percentage of lactose typically found in whey solids (WS) (Goff & Hartel, 2013, p. 181)[^2]
 #[doc = include_str!("../docs/bibs/2.md")]
 pub const STD_LACTOSE_IN_WS: f64 = 0.765;
+
+/// Percentage of protein typical of milk solids non-fat (MSNF) (Goff & Hartel, 2013, p. 35)[^2]
+#[doc = include_str!("../docs/bibs/2.md")]
+pub const STD_PROTEIN_IN_MSNF: f64 = 0.35;
+
+/// Percentage of protein typically found in whey solids (WS) (Goff & Hartel, 2013, p. 35)[^2]
+#[doc = include_str!("../docs/bibs/2.md")]
+pub const STD_PROTEIN_IN_WS: f64 = 0.12;
+
+/// Percentage of saturated fats typical of milk fat (Board on Agriculture..., 1974, p. 203)[^12]
+#[doc = include_str!("../docs/bibs/12.md")]
+pub const STD_SATURATED_FAT_IN_MILK_FAT: f64 = 0.65;
+
+/// Percentage of trans fats typically found in milk fat (Milk, whole, 3.25% milkfat, with added
+/// Vitamin D, 2019)[^103]
+#[doc = include_str!("../docs/bibs/103.md")]
+pub const STD_TRANS_FAT_IN_MILK_FAT: f64 = 0.035;
+
+/// Percentage of saturated fats typical of egg fat (Board on Agriculture..., 1974, p. 203)[^12]
+#[doc = include_str!("../docs/bibs/12.md")]
+pub const STD_SATURATED_FAT_IN_EGG_FAT: f64 = 0.28;
 
 /// Typical ideal serving temperature (in °C) for ice cream (Raphaelson, 2016, Hardness)[^7]
 #[doc = include_str!("../docs/bibs/7.md")]

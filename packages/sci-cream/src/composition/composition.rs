@@ -59,6 +59,8 @@ pub enum CompKey {
     ///
     /// This includes proteins and minerals; and is equivalent to [`CompKey::MSNF`] minus lactose.
     MilkSNFS,
+    /// Protein content from milk ingredients, i.e. casein and whey proteins
+    MilkProteins,
     /// Total solids from milk ingredients
     ///
     /// Ths includes fats, lactose, proteins, and minerals. It is the sum of both
@@ -144,6 +146,8 @@ pub enum CompKey {
     /// depression, body, and texture. If ice creams feel "cakey" or "spongy", this value is often
     /// a key indicator of the cause, being too high or too low, respectively.
     TotalSNFS,
+    /// Total Proteins, sum of all protein components
+    TotalProteins,
     /// Total Solids, sum of all solid components
     TotalSolids,
 
@@ -260,6 +264,7 @@ impl Composition {
             CompKey::MilkFat => self.solids.milk.fats.total,
             CompKey::MSNF => self.solids.milk.snf(),
             CompKey::MilkSNFS => self.solids.milk.snfs(),
+            CompKey::MilkProteins => self.solids.milk.proteins,
             CompKey::MilkSolids => self.solids.milk.total(),
 
             CompKey::CocoaButter => self.solids.cocoa.fats.total,
@@ -278,6 +283,7 @@ impl Composition {
             CompKey::TotalFats => self.solids.all().fats.total,
             CompKey::TotalSNF => self.solids.all().snf(),
             CompKey::TotalSNFS => self.solids.all().snfs(),
+            CompKey::TotalProteins => self.solids.all().proteins,
             CompKey::TotalSolids => self.solids.total(),
 
             CompKey::Water => self.water(),
@@ -459,10 +465,12 @@ mod tests {
             (CompKey::MilkFat, 2.0),
             (CompKey::MSNF, 8.82),
             (CompKey::MilkSNFS, 4.0131),
+            (CompKey::MilkProteins, 3.087),
             (CompKey::MilkSolids, 10.82),
             (CompKey::TotalFats, 2.0),
             (CompKey::TotalSNF, 8.82),
             (CompKey::TotalSNFS, 4.0131),
+            (CompKey::TotalProteins, 3.087),
             (CompKey::TotalSolids, 10.82),
             (CompKey::Water, 89.18),
             (CompKey::Lactose, 4.8069),

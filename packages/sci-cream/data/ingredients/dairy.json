@@ -9,5 +9,5 @@
   { "name": "Whipping Cream", "category": "Dairy", "DairySpec": { "fat": 35 } },
   { "name": "Heavy Cream", "category": "Dairy", "DairySpec": { "fat": 36 } },
   { "name": "Skimmed Milk Powder", "category": "Dairy", "DairySpec": { "fat": 0, "msnf": 97 } },
-  { "name": "Whole Milk Powder", "category": "Dairy", "DairySpec": { "fat": 27, "msnf": 73 } }
+  { "name": "Whole Milk Powder", "category": "Dairy", "DairySpec": { "fat": 27, "msnf": 70 } }
 ]

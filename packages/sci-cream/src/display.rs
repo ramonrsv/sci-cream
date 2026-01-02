@@ -13,6 +13,7 @@ impl KeyAsStrings for CompKey {
             CompKey::MilkFat => "Milk Fat",
             CompKey::MSNF => "MSNF",
             CompKey::MilkSNFS => "Milk SNFS",
+            CompKey::MilkProteins => "Milk Proteins",
             CompKey::MilkSolids => "Milk Solids",
 
             CompKey::CocoaButter => "Cocoa Butter",
@@ -33,6 +34,7 @@ impl KeyAsStrings for CompKey {
             CompKey::TotalFats => "T. Fats",
             CompKey::TotalSNF => "T. SNF",
             CompKey::TotalSNFS => "T. SNFS",
+            CompKey::TotalProteins => "T. Proteins",
             CompKey::TotalSolids => "T. Solids",
 
             CompKey::Water => "Water",
@@ -134,6 +136,7 @@ mod tests {
             "Milk Fat",
             "MSNF",
             "Milk SNFS",
+            "Milk Proteins",
             "Milk Solids",
             "Cocoa Butter",
             "Cocoa Solids",
@@ -149,6 +152,7 @@ mod tests {
             "T. Fats",
             "T. SNF",
             "T. SNFS",
+            "T. Proteins",
             "T. Solids",
             "Water",
             "Glucose",
