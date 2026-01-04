@@ -6,7 +6,7 @@
 #[doc = include_str!("../docs/bibs/2.md")]
 pub mod pod {
     /// Also known by the name 'dextrose', commonly sold as dextrose monohydrate powder.
-    pub const GLUCOSE: f64 = 80.4;
+    pub const GLUCOSE: f64 = 80.0;
     pub const FRUCTOSE: f64 = 173.0;
     /// (Spillane, 2006, p. 264)[^9]
     #[doc = include_str!("../docs/bibs/9.md")]

@@ -146,6 +146,7 @@ pub struct SweetenerSpec {
 /// - Fructose: 2.44g
 ///
 /// ```
+/// # use sci_cream::docs::assert_eq_float;
 /// use sci_cream::{
 ///     composition::{CompKey, Sugars, Sweeteners},
 ///     specs::{FruitSpec, IntoComposition}
@@ -161,7 +162,7 @@ pub struct SweetenerSpec {
 /// assert_eq!(comp.get(CompKey::Fructose), 2.44);
 /// assert_eq!(comp.get(CompKey::Sucrose), 0.47);
 ///
-/// assert_eq!(comp.get(CompKey::POD), 6.29116);
+/// assert_eq_float!(comp.get(CompKey::POD), 6.28312);
 /// assert_eq!(comp.get(CompKey::PACsgr), 8.887);
 /// ```
 #[doc = include_str!("../docs/bibs/101.md")]
@@ -1279,7 +1280,7 @@ pub(crate) mod tests {
                         .proteins(5.3033),
                 ),
             )
-            .pod(1.7794)
+            .pod(1.7746)
             .pac(PAC::new().sugars(4.65063).msnf_ws_salts(2.8477))
     });
 
@@ -1307,7 +1308,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
         assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 1.7794);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 1.7746);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.65063);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
@@ -1472,7 +1473,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Glucose), 92.0);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 92.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 92.0);
-        assert_eq!(comp.get(CompKey::POD), 73.968);
+        assert_eq!(comp.get(CompKey::POD), 73.6);
         assert_eq!(comp.get(CompKey::PACsgr), 174.8);
     }
 
@@ -1564,7 +1565,7 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::TotalSweeteners), 80.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 80.0);
-        assert_eq!(comp.get(CompKey::POD), 98.156);
+        assert_eq!(comp.get(CompKey::POD), 98.02);
         assert_eq!(comp.get(CompKey::PACsgr), 141.2);
     }
 
@@ -1621,7 +1622,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TotalSweeteners), 82.0);
         assert_eq!(comp.get(CompKey::TotalSNFS), 1.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 83.0);
-        assert_eq!(comp.get(CompKey::POD), 103.329);
+        assert_eq!(comp.get(CompKey::POD), 103.185);
         assert_eq!(comp.get(CompKey::PACsgr), 152.65);
     }
 
@@ -1667,7 +1668,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 76.0 - 3.8);
         assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 3.8);
         assert_eq!(comp.get(CompKey::TotalSolids), 76.0);
-        assert_eq!(comp.get(CompKey::POD), 87.60672000000001);
+        assert_eq!(comp.get(CompKey::POD), 87.4456);
         assert_eq!(comp.get(CompKey::PACsgr), 137.18);
     }
 
@@ -1696,6 +1697,8 @@ pub(crate) mod tests {
     });
 
     #[test]
+    // false positive, sees 6.2832 as f64::consts::TAU
+    #[allow(clippy::approx_constant)]
     fn into_composition_fruit_spec_strawberry() {
         let comp = ING_SPEC_FRUIT_STRAWBERRY.spec.into_composition().unwrap();
 
@@ -1707,7 +1710,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TotalFats), 0.3);
         assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 3.8);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 9.0);
-        assert_eq!(comp.get(CompKey::POD), 6.29116);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 6.2832);
         assert_eq!(comp.get(CompKey::PACsgr), 8.887);
     }
 
