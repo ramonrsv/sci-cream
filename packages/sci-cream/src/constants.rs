@@ -1,26 +1,44 @@
 /// [Potere Dolcificante (POD)](crate::docs#pod) values various sweeteners and other ingredients
 ///
-/// Expressed as g/100g of sucrose equivalence. Unless otherwise specified, values are taken from
-/// _Characteristics of sweeteners and bulking agents for frozen desserts_ (Goff & Hartel, 2013,
-/// Table 3.4, p. 67)[^2]. Other sources are cited where applicable.
+/// Expressed as g/100g of sucrose equivalence.
 #[doc = include_str!("../docs/bibs/2.md")]
 pub mod pod {
     /// Also known by the name 'dextrose', commonly sold as dextrose monohydrate powder.
+    ///
+    /// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]
+    #[doc = include_str!("../docs/bibs/2.md")]
     pub const GLUCOSE: f64 = 80.0;
+    /// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]
+    #[doc = include_str!("../docs/bibs/2.md")]
     pub const FRUCTOSE: f64 = 173.0;
     /// (Spillane, 2006, p. 264)[^9]
     #[doc = include_str!("../docs/bibs/9.md")]
     pub const GALACTOSE: f64 = 65.0;
+    /// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]
+    #[doc = include_str!("../docs/bibs/2.md")]
     pub const SUCROSE: f64 = 100.0;
+    /// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]
+    #[doc = include_str!("../docs/bibs/2.md")]
     pub const LACTOSE: f64 = 16.0;
+    /// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]
+    #[doc = include_str!("../docs/bibs/2.md")]
     pub const MALTOSE: f64 = 32.0;
+    /// (Hull, 2010, Appendix C.3, p. 324)[^15]
+    #[doc = include_str!("../docs/bibs/15.md")]
+    pub const TREHALOSE: f64 = 45.0;
 
     /// (The European Commission, 2025, E968)[^10]
     #[doc = include_str!("../docs/bibs/10.md")]
     pub const ERYTHRITOL: f64 = 70.0;
-    pub const MALTITOL: f64 = 0.0; // @todo
-    pub const SORBITOL: f64 = 0.0; // @todo
-    pub const XYLITOL: f64 = 0.0; // @todo
+    /// (Hull, 2010, Appendix C.3, p. 324)[^15]
+    #[doc = include_str!("../docs/bibs/15.md")]
+    pub const MALTITOL: f64 = 90.0;
+    /// (Hull, 2010, Appendix C.3, p. 324)[^15]
+    #[doc = include_str!("../docs/bibs/15.md")]
+    pub const SORBITOL: f64 = 50.0;
+    /// (Hull, 2010, Appendix C.3, p. 324)[^15]
+    #[doc = include_str!("../docs/bibs/15.md")]
+    pub const XYLITOL: f64 = 100.0;
 
     /// (The European Commission, 2025, E951)[^10]
     #[doc = include_str!("../docs/bibs/10.md")]
@@ -28,8 +46,9 @@ pub mod pod {
     /// (The European Commission, 2025, E954)[^10]
     #[doc = include_str!("../docs/bibs/10.md")]
     pub const SACCHARIN: f64 = 40000.0;
-    /// (Castro-Muñoz, 2022)[^11])
+    /// (Castro-Muñoz, 2022)[^11]), (Hull, 2010, Appendix C.3, p. 324)[^15]
     #[doc = include_str!("../docs/bibs/11.md")]
+    #[doc = include_str!("../docs/bibs/15.md")]
     pub const SUCRALOSE: f64 = 60000.0;
 }
 
@@ -47,8 +66,9 @@ pub mod molar_mass {
     pub const FRUCTOSE: f64 = 180.156;
     pub const GALACTOSE: f64 = 180.156;
     pub const SUCROSE: f64 = 342.30;
-    pub const LACTOSE: f64 = 342.30;
-    pub const MALTOSE: f64 = 342.30;
+    pub const LACTOSE: f64 = 342.297;
+    pub const MALTOSE: f64 = 342.297;
+    pub const TREHALOSE: f64 = 342.296;
 
     pub const ERYTHRITOL: f64 = 122.12;
     pub const MALTITOL: f64 = 344.313;
@@ -77,6 +97,7 @@ pub mod pac {
     pub const SUCROSE: f64 = pac_from_molar_mass(molar_mass::SUCROSE);
     pub const LACTOSE: f64 = pac_from_molar_mass(molar_mass::LACTOSE);
     pub const MALTOSE: f64 = pac_from_molar_mass(molar_mass::MALTOSE);
+    pub const TREHALOSE: f64 = pac_from_molar_mass(molar_mass::TREHALOSE);
 
     pub const ERYTHRITOL: f64 = pac_from_molar_mass(molar_mass::ERYTHRITOL);
     pub const MALTITOL: f64 = pac_from_molar_mass(molar_mass::MALTITOL);
@@ -322,6 +343,7 @@ mod tests {
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::SUCROSE), 100.0);
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::LACTOSE), 100.0);
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::MALTOSE), 100.0);
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::TREHALOSE), 100.0);
 
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::ERYTHRITOL), 280.0);
 

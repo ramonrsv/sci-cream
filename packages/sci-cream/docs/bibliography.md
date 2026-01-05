@@ -28,6 +28,8 @@
 
 [^14]: Charrondiere, U. R., et al. (2011, July). _FAO/INFOODS Density Database version 1.0_ <https://www.fao.org/fileadmin/templates/food_composition/documents/upload/Density_databse_v1_final.pdf>
 
+[^15]: Hull, Peter. (2010). _Glucose Syrups: Technology and Applications_. Wiley-Blackwell <https://www.academia.edu/49026265/Glucose_Syrups_Technology_and_Applications>
+
 <!-- Ingredient references -->
 
 [^100]: Eggs, Grade A, Large, egg yolk. (2019). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/748236/nutrients>
