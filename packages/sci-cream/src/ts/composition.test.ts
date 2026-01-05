@@ -8,20 +8,20 @@ function new_sugars_sucrose(amount: number): Sugars {
   return sugars;
 }
 
-function new_sugars_unspecified(amount: number): Sugars {
+function new_sugars_other(amount: number): Sugars {
   const sugars = new Sugars();
-  sugars.unspecified = amount;
+  sugars.other = amount;
   return sugars;
 }
 
 test("Sugars.to_pod_wasm", () => {
   expect(new_sugars_sucrose(10).to_pod_wasm()).toBe(10);
-  expect(() => new_sugars_unspecified(10).to_pod_wasm()).toThrowError();
+  expect(() => new_sugars_other(10).to_pod_wasm()).toThrowError();
 });
 
 test("Sugars.to_pac_wasm", () => {
   expect(new_sugars_sucrose(10).to_pac_wasm()).toBe(10);
-  expect(() => new_sugars_unspecified(10).to_pac_wasm()).toThrowError();
+  expect(() => new_sugars_other(10).to_pac_wasm()).toThrowError();
 });
 
 test("Composition NaN values", () => {

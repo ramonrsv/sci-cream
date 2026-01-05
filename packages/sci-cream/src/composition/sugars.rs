@@ -22,7 +22,7 @@ pub struct Sugars {
     pub sucrose: f64,
     pub lactose: f64,
     pub maltose: f64,
-    pub unspecified: f64,
+    pub other: f64,
 }
 
 impl Sugars {
@@ -34,7 +34,7 @@ impl Sugars {
             sucrose: 0.0,
             lactose: 0.0,
             maltose: 0.0,
-            unspecified: 0.0,
+            other: 0.0,
         }
     }
 
@@ -62,12 +62,12 @@ impl Sugars {
         Self { maltose, ..self }
     }
 
-    pub fn unspecified(self, unspecified: f64) -> Self {
-        Self { unspecified, ..self }
+    pub fn other(self, other: f64) -> Self {
+        Self { other, ..self }
     }
 
     pub fn to_pod(&self) -> Result<f64> {
-        if self.unspecified != 0.0 {
+        if self.other != 0.0 {
             return Err(Error::CannotComputePOD("Unspecified sugars should be zero".to_string()));
         }
 
@@ -85,7 +85,7 @@ impl Sugars {
     }
 
     pub fn to_pac(&self) -> Result<f64> {
-        if self.unspecified != 0.0 {
+        if self.other != 0.0 {
             return Err(Error::CannotComputePAC("Unspecified sugars should be zero".to_string()));
         }
 
@@ -134,7 +134,7 @@ impl ScaleComponents for Sugars {
             lactose: self.lactose * factor,
             maltose: self.maltose * factor,
             galactose: self.galactose * factor,
-            unspecified: self.unspecified * factor,
+            other: self.other * factor,
         }
     }
 
@@ -146,7 +146,7 @@ impl ScaleComponents for Sugars {
             lactose: self.lactose + other.lactose,
             maltose: self.maltose + other.maltose,
             galactose: self.galactose + other.galactose,
-            unspecified: self.unspecified + other.unspecified,
+            other: self.other + other.other,
         }
     }
 }
@@ -185,7 +185,7 @@ mod tests {
 
     #[test]
     fn sugars_to_pod_error() {
-        assert!(matches!(Sugars::new().unspecified(10.0).to_pod(), Err(Error::CannotComputePOD(_))));
+        assert!(matches!(Sugars::new().other(10.0).to_pod(), Err(Error::CannotComputePOD(_))));
     }
 
     #[test]
@@ -195,6 +195,6 @@ mod tests {
 
     #[test]
     fn sugars_to_pac_error() {
-        assert!(matches!(Sugars::new().unspecified(10.0).to_pac(), Err(Error::CannotComputePAC(_))));
+        assert!(matches!(Sugars::new().other(10.0).to_pac(), Err(Error::CannotComputePAC(_))));
     }
 }

@@ -147,7 +147,7 @@ mod tests {
     #[test]
     fn carbohydrates_to_pod_error() {
         assert!(matches!(
-            Carbohydrates::new().sugars(Sugars::new().unspecified(10.0)).to_pod(),
+            Carbohydrates::new().sugars(Sugars::new().other(10.0)).to_pod(),
             Err(Error::CannotComputePOD(_))
         ));
     }
@@ -161,7 +161,7 @@ mod tests {
     #[test]
     fn carbohydrates_to_pac_error() {
         assert!(matches!(
-            Carbohydrates::new().sugars(Sugars::new().unspecified(10.0)).to_pac(),
+            Carbohydrates::new().sugars(Sugars::new().other(10.0)).to_pac(),
             Err(Error::CannotComputePAC(_))
         ));
     }
