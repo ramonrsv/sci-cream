@@ -21,7 +21,7 @@ use crate::{
 
 #[cfg(doc)]
 use crate::{
-    composition::Polyols,
+    composition::{ArtificialSweeteners, Polyols},
     constants::{STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM, STD_PROTEIN_IN_MSNF, STD_SATURATED_FAT_IN_MILK_FAT},
 };
 
@@ -116,6 +116,7 @@ impl IntoComposition for DairySpec {
             .msnf_ws_salts(msnf * constants::pac::MSNF_WS_SALTS / 100.0);
 
         Ok(Composition::new()
+            .energy(milk_solids.energy()?)
             .solids(Solids::new().milk(milk_solids))
             .pod(pod)
             .pac(pad))
@@ -130,6 +131,8 @@ pub struct DairyFromNutritionSpec {
     ///
     /// See [`constants::density::dairy_milliliters_to_grams`].
     pub serving_size: Unit,
+    /// Energy per serving, in kcal
+    pub energy: f64,
     /// Total fat content per serving; it can be given in grams or as a percentage of serving size
     ///
     /// If a dairy product states a fat content percentage on the label, that is usually more
@@ -147,6 +150,7 @@ impl IntoComposition for DairyFromNutritionSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self {
             serving_size,
+            energy,
             total_fat,
             saturated_fat,
             trans_fat,
@@ -200,6 +204,7 @@ impl IntoComposition for DairyFromNutritionSpec {
             .proteins(protein / serving_size * 100.0);
 
         Ok(Composition::new()
+            .energy(energy / serving_size * 100.0)
             .solids(Solids::new().milk(milk_solids))
             .pod(sugars.to_pod()?)
             .pac(
@@ -242,8 +247,9 @@ impl IntoComposition for DairyFromNutritionSpec {
 /// [`basis`](Self::basis).
 ///
 /// For automatic calculations the [`other_carbohydrates`](Self::other_carbohydrates) and
-/// [`other_solids`](Self::other_solids) components are ignored, and it is an error if any `other`
-/// fields are non-zero, e.g. [`sugars.other`](Sugars::other), [`polyols.other`](Polyols::other).
+/// [`other_solids`](Self::other_solids) components are ignored, and it is an error if
+/// [`sugars.other`](Sugars::other), [`polyols.other`](Polyols::other), or
+/// [`artificial.other`](ArtificialSweeteners::other) are non-zero.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct SweetenerSpec {
@@ -326,6 +332,7 @@ impl IntoComposition for SweetenerSpec {
         };
 
         Ok(Composition::new()
+            .energy(solids.energy()?)
             .solids(Solids::new().other(solids))
             .pod(pod)
             .pac(PAC::new().sugars(pac)))
@@ -393,6 +400,7 @@ impl IntoComposition for FruitSpec {
             .others_from_total(100.0 - water)?;
 
         Ok(Composition::new()
+            .energy(solids.energy()?)
             .solids(Solids::new().other(solids))
             .pod(solids.carbohydrates.to_pod()?)
             .pac(PAC::new().sugars(solids.carbohydrates.to_pac()?)))
@@ -500,6 +508,7 @@ impl IntoComposition for ChocolateSpec {
             .others_from_total(100.0 - cacao_solids)?;
 
         Ok(Composition::new()
+            .energy(cocoa_solids.energy()? + other_solids.energy()?)
             .solids(Solids::new().cocoa(cocoa_solids).other(other_solids))
             .pod(sugars.to_pod().unwrap())
             .pac(
@@ -568,15 +577,14 @@ impl IntoComposition for NutSpec {
 
         let sugars = Sugars::new().sucrose(sugar);
 
+        let nut_solids = SolidsBreakdown::new()
+            .fats(Fats::new().total(fat))
+            .carbohydrates(Carbohydrates::new().sugars(sugars))
+            .others_from_total(100.0 - water)?;
+
         Ok(Composition::new()
-            .solids(
-                Solids::new().nut(
-                    SolidsBreakdown::new()
-                        .fats(Fats::new().total(fat))
-                        .carbohydrates(Carbohydrates::new().sugars(sugars))
-                        .others_from_total(100.0 - water)?,
-                ),
-            )
+            .energy(nut_solids.energy()?)
+            .solids(Solids::new().nut(nut_solids))
             .pod(sugars.to_pod().unwrap())
             .pac(
                 PAC::new()
@@ -640,14 +648,13 @@ impl IntoComposition for EggSpec {
         assert_within_100_percent(water + fats)?;
         assert_is_subset(lecithin, fats, "Lecithin must be a subset of fats".to_string())?;
 
+        let egg_solids = SolidsBreakdown::new()
+            .fats(Fats::new().total(fats))
+            .others_from_total(100.0 - water)?;
+
         Ok(Composition::new()
-            .solids(
-                Solids::new().egg(
-                    SolidsBreakdown::new()
-                        .fats(Fats::new().total(fats))
-                        .others_from_total(100.0 - water)?,
-                ),
-            )
+            .energy(egg_solids.energy()?)
+            .solids(Solids::new().egg(egg_solids))
             .micro(Micro::new().lecithin(lecithin).emulsifiers(lecithin)))
     }
 }
@@ -700,15 +707,14 @@ impl IntoComposition for AlcoholSpec {
 
         let sugars = Sugars::new().sucrose(sugar);
 
+        let solids = SolidsBreakdown::new()
+            .fats(Fats::new().total(fat))
+            .carbohydrates(Carbohydrates::new().sugars(sugars))
+            .others_from_total(solids)?;
+
         Ok(Composition::new()
-            .solids(
-                Solids::new().other(
-                    SolidsBreakdown::new()
-                        .fats(Fats::new().total(fat))
-                        .carbohydrates(Carbohydrates::new().sugars(sugars))
-                        .others_from_total(solids)?,
-                ),
-            )
+            .energy(solids.energy()? + alcohol.energy())
+            .solids(Solids::new().other(solids))
             .alcohol(alcohol)
             .pod(sugars.to_pod().unwrap())
             .pac(PAC::new().sugars(sugars.to_pac().unwrap()).alcohol(alcohol.to_pac())))
@@ -825,6 +831,13 @@ impl IntoComposition for FullSpec {
             pac,
         } = self;
 
+        let (solids, micro, pod, pac) = (
+            solids.unwrap_or_default(),
+            micro.unwrap_or_default(),
+            pod.unwrap_or_default(),
+            pac.unwrap_or_default(),
+        );
+
         let alcohol = if let Some(abv) = abv {
             Alcohol::from_abv(abv)
         } else {
@@ -832,11 +845,12 @@ impl IntoComposition for FullSpec {
         };
 
         let comp = Composition::new()
-            .solids(solids.unwrap_or_default())
-            .micro(micro.unwrap_or_default())
+            .energy(solids.all().energy()? + alcohol.energy())
+            .solids(solids)
+            .micro(micro)
             .alcohol(alcohol)
-            .pod(pod.unwrap_or_default())
-            .pac(pac.unwrap_or_default());
+            .pod(pod)
+            .pac(pac);
 
         assert_within_100_percent(comp.get(CompKey::TotalSolids) + comp.get(CompKey::Alcohol))?;
 
@@ -941,6 +955,7 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_2_MILK: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
+            .energy(49.5756)
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
@@ -958,6 +973,8 @@ pub(crate) mod tests {
     #[test]
     fn into_composition_dairy_spec_2_milk() {
         let comp = ING_SPEC_DAIRY_2_MILK.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 49.5756);
 
         assert_eq!(comp.get(CompKey::MilkFat), 2.0);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 4.8069);
@@ -998,6 +1015,7 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_3_25_MILK: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
+            .energy(60.42285)
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
@@ -1014,6 +1032,8 @@ pub(crate) mod tests {
     #[test]
     fn into_composition_dairy_spec_3_25_milk() {
         let comp = ING_SPEC_DAIRY_3_25_MILK.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 60.42285);
 
         assert_eq!(comp.get(CompKey::MilkFat), 3.25);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 4.7456);
@@ -1054,6 +1074,7 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_40_CREAM: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
+            .energy(379.332)
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
@@ -1071,6 +1092,8 @@ pub(crate) mod tests {
     #[test]
     fn into_composition_dairy_spec_40_cream() {
         let comp = ING_SPEC_DAIRY_40_CREAM.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 379.332);
 
         assert_eq!(comp.get(CompKey::MilkFat), 40.0);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 2.943);
@@ -1115,6 +1138,7 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_SKIMMED_POWDER: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
+            .energy(347.26)
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
@@ -1132,6 +1156,8 @@ pub(crate) mod tests {
     #[test]
     fn into_composition_dairy_spec_skimmed_powder() {
         let comp = ING_SPEC_DAIRY_SKIMMED_POWDER.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 347.26);
 
         assert_eq!(comp.get(CompKey::MilkFat), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 52.865);
@@ -1176,6 +1202,7 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_WHOLE_POWDER: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
+            .energy(493.6)
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
@@ -1193,6 +1220,8 @@ pub(crate) mod tests {
     #[test]
     fn into_composition_dairy_spec_whole_powder() {
         let comp = ING_SPEC_DAIRY_WHOLE_POWDER.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 493.6);
 
         assert_eq!(comp.get(CompKey::MilkFat), 27.0);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 38.15);
@@ -1222,6 +1251,7 @@ pub(crate) mod tests {
       "category": "Dairy",
       "DairyFromNutritionSpec": {
         "serving_size": { "ml": 250 },
+        "energy": 160,
         "total_fat": { "percent": 3.25 },
         "saturated_fat": 5,
         "trans_fat": 0.3,
@@ -1237,7 +1267,8 @@ pub(crate) mod tests {
             category: Category::Dairy,
             spec: Spec::DairyFromNutritionSpec(DairyFromNutritionSpec {
                 serving_size: Unit::Milliliters(250.0), // 257.6667 grams
-                total_fat: Unit::Percent(3.25),         // 3.25% is 8.3742g, not 8g
+                energy: 160.0,
+                total_fat: Unit::Percent(3.25), // 3.25% is 8.3742g, not 8g
                 saturated_fat: 5.0,
                 trans_fat: 0.3,
                 sugars: 13.0,
@@ -1248,6 +1279,7 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_3_25_MILK_FROM_NUTRITION: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
+            .energy(62.0957)
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
@@ -1263,6 +1295,8 @@ pub(crate) mod tests {
     #[test]
     fn into_composition_dairy_from_nutrition_spec_3_25_milk() {
         let comp = ING_SPEC_DAIRY_FROM_NUTRITION_3_25_MILK.spec.into_composition().unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 62.0957);
 
         assert_eq!(comp.get(CompKey::MilkFat), 3.25);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 5.04528);
@@ -1292,6 +1326,7 @@ pub(crate) mod tests {
       "category": "Dairy",
       "DairyFromNutritionSpec": {
         "serving_size": { "ml": 240 },
+        "energy": 150,
         "total_fat": { "grams": 8 },
         "saturated_fat": 5,
         "trans_fat": 0,
@@ -1307,7 +1342,8 @@ pub(crate) mod tests {
             category: Category::Dairy,
             spec: Spec::DairyFromNutritionSpec(DairyFromNutritionSpec {
                 serving_size: Unit::Milliliters(240.0), // 245.1288 grams
-                total_fat: Unit::Grams(8.0),            // 8g is 3.2636%
+                energy: 150.0,
+                total_fat: Unit::Grams(8.0), // 8g is 3.2636%
                 saturated_fat: 5.0,
                 trans_fat: 0.0,
                 sugars: 6.0,
@@ -1318,6 +1354,7 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_WHOLE_ULTRA_FILTERED_LACTOSE_FREE: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
+            .energy(61.1923)
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
@@ -1336,6 +1373,8 @@ pub(crate) mod tests {
             .spec
             .into_composition()
             .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 61.1923);
 
         assert_eq_flt_test!(comp.get(CompKey::MilkFat), 3.2636);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 0.0);
@@ -1367,6 +1406,7 @@ pub(crate) mod tests {
       "category": "Dairy",
       "DairyFromNutritionSpec": {
         "serving_size": { "grams": 39 },
+        "energy": 150,
         "total_fat": { "grams": 0.5 },
         "saturated_fat": 0.3,
         "trans_fat": 0,
@@ -1382,6 +1422,7 @@ pub(crate) mod tests {
             category: Category::Dairy,
             spec: Spec::DairyFromNutritionSpec(DairyFromNutritionSpec {
                 serving_size: Unit::Grams(39.0),
+                energy: 150.0,
                 total_fat: Unit::Grams(0.5),
                 saturated_fat: 0.3,
                 trans_fat: 0.0,
@@ -1393,6 +1434,7 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_WHEY_ISOLATE: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
+            .energy(384.6154)
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
@@ -1411,6 +1453,8 @@ pub(crate) mod tests {
             .spec
             .into_composition()
             .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 384.6154);
 
         assert_eq_flt_test!(comp.get(CompKey::MilkFat), 1.2821);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 2.5641);
@@ -1466,6 +1510,7 @@ pub(crate) mod tests {
     pub(crate) static COMP_SUCROSE: LazyLock<Composition> =
         LazyLock::new(|| {
             Composition::new()
+                .energy(400.0)
                 .solids(Solids::new().other(
                     SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(100.0))),
                 ))
@@ -1476,6 +1521,8 @@ pub(crate) mod tests {
     #[test]
     fn into_composition_sweetener_spec_sucrose() {
         let comp = ING_SPEC_SWEETENER_SUCROSE.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 400.0);
 
         assert_eq!(comp.get(CompKey::Sucrose), 100.0);
         assert_eq!(comp.get(CompKey::TotalSugars), 100.0);
@@ -1517,9 +1564,22 @@ pub(crate) mod tests {
         }),
     });
 
+    pub(crate) static COMP_DEXTROSE: LazyLock<Composition> =
+        LazyLock::new(|| {
+            Composition::new()
+                .energy(368.0)
+                .solids(Solids::new().other(
+                    SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().glucose(92.0))),
+                ))
+                .pod(73.6)
+                .pac(PAC::new().sugars(174.8))
+        });
+
     #[test]
     fn into_composition_sweetener_spec_dextrose() {
         let comp = ING_SPEC_SWEETENER_DEXTROSE.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 368.0);
 
         assert_eq!(comp.get(CompKey::Glucose), 92.0);
         assert_eq!(comp.get(CompKey::TotalSugars), 92.0);
@@ -1563,6 +1623,7 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_FRUCTOSE: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
+            .energy(400.0)
             .solids(Solids::new().other(
                 SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().fructose(100.0))),
             ))
@@ -1573,6 +1634,8 @@ pub(crate) mod tests {
     #[test]
     fn into_composition_sweetener_spec_fructose() {
         let comp = ING_SPEC_SWEETENER_FRUCTOSE.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 400.0);
 
         assert_eq!(comp.get(CompKey::Fructose), 100.0);
         assert_eq!(comp.get(CompKey::TotalSugars), 100.0);
@@ -1616,6 +1679,7 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_TREHALOSE: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
+            .energy(400.0)
             .solids(Solids::new().other(
                 SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().trehalose(100.0))),
             ))
@@ -1626,6 +1690,8 @@ pub(crate) mod tests {
     #[test]
     fn into_composition_sweetener_spec_trehalose() {
         let comp = ING_SPEC_SWEETENER_TREHALOSE.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 400.0);
 
         assert_eq!(comp.get(CompKey::Trehalose), 100.0);
         assert_eq!(comp.get(CompKey::TotalSugars), 100.0);
@@ -1669,6 +1735,7 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_ERYTHRITOL: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
+            .energy(0.0)
             .solids(Solids::new().other(
                 SolidsBreakdown::new().carbohydrates(Carbohydrates::new().polyols(Polyols::new().erythritol(100.0))),
             ))
@@ -1680,6 +1747,8 @@ pub(crate) mod tests {
     #[test]
     fn into_composition_sweetener_spec_erythritol() {
         let comp = ING_SPEC_SWEETENER_ERYTHRITOL.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 0.0);
 
         assert_eq!(comp.get(CompKey::Erythritol), 100.0);
         assert_eq!(comp.get(CompKey::TotalSugars), 0.0);
@@ -1726,6 +1795,8 @@ pub(crate) mod tests {
     #[test]
     fn into_composition_sweetener_spec_invert_sugar() {
         let comp = ING_SPEC_SWEETENER_INVERT_SUGAR.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 320.0);
 
         assert_eq!(comp.get(CompKey::Glucose), 34.0);
         assert_eq!(comp.get(CompKey::Fructose), 34.0);
@@ -1785,6 +1856,8 @@ pub(crate) mod tests {
     fn into_composition_sweetener_spec_honey() {
         let comp = ING_SPEC_SWEETENER_HONEY.spec.into_composition().unwrap();
 
+        assert_eq!(comp.get(CompKey::Energy), 328.0);
+
         assert_eq!(comp.get(CompKey::Glucose), 36.0);
         assert_eq!(comp.get(CompKey::Fructose), 41.0);
         assert_eq!(comp.get(CompKey::Sucrose), 2.0);
@@ -1834,6 +1907,9 @@ pub(crate) mod tests {
     #[test]
     fn into_composition_sweetener_spec_hfcs42() {
         let comp = ING_SPEC_SWEETENER_HFCS42.spec.into_composition().unwrap();
+
+        // @todo This is a bit higher than reference 281
+        assert_eq!(comp.get(CompKey::Energy), 304.0);
 
         assert_eq!(comp.get(CompKey::Fructose), 31.92);
         assert_eq!(comp.get(CompKey::Glucose), 40.28);
@@ -1891,6 +1967,8 @@ pub(crate) mod tests {
     fn into_composition_sweetener_spec_maltodextrin_10_de() {
         let comp = ING_SPEC_SWEETENER_MALTODEXTRIN_10_DE.spec.into_composition().unwrap();
 
+        assert_eq!(comp.get(CompKey::Energy), 380.0);
+
         assert_eq!(comp.get(CompKey::Fructose), 0.0);
         assert_eq!(comp.get(CompKey::Glucose), 0.57);
         assert_eq_flt_test!(comp.get(CompKey::Maltose), 2.66);
@@ -1947,6 +2025,9 @@ pub(crate) mod tests {
     fn into_composition_sweetener_spec_glucose_syrup_42_de() {
         let comp = ING_SPEC_SWEETENER_GLUCOSE_SYRUP_42_DE.spec.into_composition().unwrap();
 
+        // @todo This is significantly higher than reference 280
+        assert_eq!(comp.get(CompKey::Energy), 320.0);
+
         assert_eq!(comp.get(CompKey::Fructose), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::Glucose), 15.2);
         assert_eq_flt_test!(comp.get(CompKey::Maltose), 11.2);
@@ -2002,6 +2083,8 @@ pub(crate) mod tests {
     #[test]
     fn into_composition_sweetener_spec_glucose_powder_25_de() {
         let comp = ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 380.0);
 
         assert_eq!(comp.get(CompKey::Fructose), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::Glucose), 1.9);
@@ -2060,6 +2143,8 @@ pub(crate) mod tests {
     fn into_composition_sweetener_spec_glucose_powder_42_de() {
         let comp = ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE.spec.into_composition().unwrap();
 
+        assert_eq!(comp.get(CompKey::Energy), 380.0);
+
         assert_eq!(comp.get(CompKey::Fructose), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::Glucose), 18.05);
         assert_eq_flt_test!(comp.get(CompKey::Maltose), 13.3);
@@ -2103,6 +2188,10 @@ pub(crate) mod tests {
     #[allow(clippy::approx_constant)]
     fn into_composition_fruit_spec_strawberry() {
         let comp = ING_SPEC_FRUIT_STRAWBERRY.spec.into_composition().unwrap();
+
+        // @todo This is significantly lower than reference 32
+        // Need to add protein, fiber, and carbohydrates fields to FruitSpec
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 22.3);
 
         assert_eq!(comp.get(CompKey::Glucose), 1.99);
         assert_eq!(comp.get(CompKey::Fructose), 2.44);
@@ -2321,6 +2410,8 @@ pub(crate) mod tests {
     fn into_composition_alcohol_spec_40_abv_spirit() {
         let comp = ING_SPEC_ALCOHOL_40_ABV_SPIRIT.spec.into_composition().unwrap();
 
+        assert_eq!(comp.get(CompKey::Energy), 218.7108);
+
         assert_eq!(comp.get(CompKey::ABV), 40.0);
         assert_eq_flt_test!(comp.get(CompKey::Alcohol), 31.56);
         assert_eq!(comp.get(CompKey::TotalSolids), 0.0);
@@ -2362,6 +2453,8 @@ pub(crate) mod tests {
     fn into_composition_alcohol_spec_baileys_irish_cream() {
         let comp = ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.spec.into_composition().unwrap();
 
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 287.3521);
+
         assert_eq_flt_test!(comp.get(CompKey::Alcohol), 13.413);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 31.6);
         assert_eq_flt_test!(comp.get(CompKey::Water), 54.987);
@@ -2393,6 +2486,8 @@ pub(crate) mod tests {
     fn into_composition_micro_spec_salt() {
         let comp = MicroSpec::Salt.into_composition().unwrap();
 
+        assert_eq!(comp.get(CompKey::Energy), 0.0);
+
         assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::Salt), 100.0);
@@ -2414,6 +2509,9 @@ pub(crate) mod tests {
     #[test]
     fn into_composition_micro_spec_lecithin() {
         let comp = MicroSpec::Lecithin.into_composition().unwrap();
+
+        // @todo This should be 9.0 kcal/g since lecithin is a lipid
+        assert_eq!(comp.get(CompKey::Energy), 0.0);
 
         assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
@@ -2441,6 +2539,7 @@ pub(crate) mod tests {
     fn into_composition_micro_spec_stabilizer_rich_ice_cream_sb() {
         let comp = ING_SPEC_MICRO_STABILIZER.spec.into_composition().unwrap();
 
+        assert_eq!(comp.get(CompKey::Energy), 0.0);
         assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::Stabilizers), 100.0);
@@ -2450,6 +2549,7 @@ pub(crate) mod tests {
     fn into_composition_micro_spec_stabilizer_not_100() {
         let comp = MicroSpec::Stabilizer { strength: 85.0 }.into_composition().unwrap();
 
+        assert_eq!(comp.get(CompKey::Energy), 0.0);
         assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::Stabilizers), 85.0);
@@ -2459,6 +2559,7 @@ pub(crate) mod tests {
     fn into_composition_micro_spec_emulsifier_not_100() {
         let comp = MicroSpec::Emulsifier { strength: 60.0 }.into_composition().unwrap();
 
+        assert_eq!(comp.get(CompKey::Energy), 0.0);
         assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 60.0);
@@ -2488,6 +2589,7 @@ pub(crate) mod tests {
     fn into_composition_micro_spec_emulsifier_stabilizer_louis_francois_stab_2000() {
         let comp = ING_SPEC_MICRO_LOUIS_STAB2K.spec.into_composition().unwrap();
 
+        assert_eq!(comp.get(CompKey::Energy), 0.0);
         assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 100.0);
@@ -2516,6 +2618,7 @@ pub(crate) mod tests {
     fn into_composition_full_spec_water() {
         let comp = ING_SPEC_FULL_WATER.spec.into_composition().unwrap();
 
+        assert_eq!(comp.get(CompKey::Energy), 0.0);
         assert_eq!(comp.get(CompKey::Water), 100.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 0.0);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
@@ -2552,7 +2655,7 @@ pub(crate) mod tests {
                 Some(*COMP_WHEY_ISOLATE),
             ),
             (ING_SPEC_SWEETENER_SUCROSE_STR, ING_SPEC_SWEETENER_SUCROSE.clone(), Some(*COMP_SUCROSE)),
-            (ING_SPEC_SWEETENER_DEXTROSE_STR, ING_SPEC_SWEETENER_DEXTROSE.clone(), None),
+            (ING_SPEC_SWEETENER_DEXTROSE_STR, ING_SPEC_SWEETENER_DEXTROSE.clone(), Some(*COMP_DEXTROSE)),
             (ING_SPEC_SWEETENER_FRUCTOSE_STR, ING_SPEC_SWEETENER_FRUCTOSE.clone(), Some(*COMP_FRUCTOSE)),
             (ING_SPEC_SWEETENER_TREHALOSE_STR, ING_SPEC_SWEETENER_TREHALOSE.clone(), Some(*COMP_TREHALOSE)),
             (ING_SPEC_SWEETENER_ERYTHRITOL_STR, ING_SPEC_SWEETENER_ERYTHRITOL.clone(), Some(*COMP_ERYTHRITOL)),
@@ -2602,7 +2705,8 @@ pub(crate) mod tests {
         INGREDIENT_ASSETS_TABLE.iter().for_each(|(_, spec, expected_comp_opt)| {
             let comp = spec.spec.into_composition().unwrap();
             if let Some(expected_comp) = expected_comp_opt {
-                //assert_eq!(&comp, expected_comp);
+                // assert_eq!(&comp, expected_comp);
+                // println!("Testing composition for spec: {}", spec.name);
                 assert_eq_flt_test!(&comp, expected_comp);
             }
         });

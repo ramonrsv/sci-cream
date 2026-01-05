@@ -10,6 +10,8 @@ pub trait KeyAsStrings {
 impl KeyAsStrings for CompKey {
     fn as_med_str(&self) -> &'static str {
         match self {
+            CompKey::Energy => "Energy",
+
             CompKey::MilkFat => "Milk Fat",
             CompKey::MSNF => "MSNF",
             CompKey::MilkSNFS => "Milk SNFS",
@@ -134,6 +136,7 @@ mod tests {
     #[test]
     fn comp_keys_as_med_str() {
         let some_expected = vec![
+            "Energy",
             "Milk Fat",
             "MSNF",
             "Milk SNFS",

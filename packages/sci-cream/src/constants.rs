@@ -168,6 +168,46 @@ pub const STD_TRANS_FAT_IN_MILK_FAT: f64 = 0.035;
 #[doc = include_str!("../docs/bibs/12.md")]
 pub const STD_SATURATED_FAT_IN_EGG_FAT: f64 = 0.28;
 
+/// Energy constants (kcal/g) for macronutrients and other components
+///
+/// _The data represent physiologically available energy, which is the energy value remaining after
+/// digestive and urinary losses are deducted from gross energy._ ( U.S. Department of Agriculture,
+/// 2013, p. 13)[^18]
+#[doc = include_str!("../docs/bibs/18.md")]
+pub mod energy {
+    /// ( U.S. Department of Agriculture, 2013, p. 13)[^18]
+    #[doc = include_str!("../docs/bibs/18.md")]
+    pub const FATS: f64 = 9.0;
+    /// Energy for digestible carbohydrates; fiber and polyols are not included.
+    ///
+    /// ( U.S. Department of Agriculture, 2013, p. 13)[^18]
+    #[doc = include_str!("../docs/bibs/18.md")]
+    pub const CARBOHYDRATES: f64 = 4.0;
+    /// ( U.S. Department of Agriculture, 2013, p. 13)[^18]
+    #[doc = include_str!("../docs/bibs/18.md")]
+    pub const PROTEINS: f64 = 4.0;
+    /// ( U.S. Department of Agriculture, 2013, p. 13)[^18]
+    #[doc = include_str!("../docs/bibs/18.md")]
+    pub const ALCOHOL: f64 = 6.93;
+
+    /// (European Association of Polyols Producers, 2026, "Polyol Erythritol")[^19]
+    #[doc = include_str!("../docs/bibs/19.md")]
+    pub const ERYTHRITOL: f64 = 0.0;
+    /// (European Association of Polyols Producers, 2026, "Polyol Maltitol")[^19]
+    #[doc = include_str!("../docs/bibs/19.md")]
+    pub const MALTITOL: f64 = 2.4;
+    /// (European Association of Polyols Producers, 2026, "Polyol Sorbitol")[^19]
+    #[doc = include_str!("../docs/bibs/19.md")]
+    pub const SORBITOL: f64 = 0.0;
+    /// (European Association of Polyols Producers, 2026, "Polyol Xylitol")[^19]
+    #[doc = include_str!("../docs/bibs/19.md")]
+    pub const XYLITOL: f64 = 2.4;
+
+    pub const ASPARTAME: f64 = 0.0; // @todo
+    pub const SACCHARIN: f64 = 0.0; // @todo
+    pub const SUCRALOSE: f64 = 0.0; // @todo
+}
+
 /// Ratio to convert Alcohol by Volume (ABV) to Alcohol by Weight (ABW)
 ///
 /// _"Because of the miscibility of alcohol and water, the conversion factor is not constant but

@@ -61,6 +61,21 @@ impl Polyols {
         Self { other, ..self }
     }
 
+    pub fn energy(&self) -> Result<f64> {
+        if self.other != 0.0 {
+            return Err(Error::CannotComputeEnergy("Other polyols should be zero".to_string()));
+        }
+
+        Ok([
+            self.erythritol * constants::energy::ERYTHRITOL,
+            self.maltitol * constants::energy::MALTITOL,
+            self.sorbitol * constants::energy::SORBITOL,
+            self.xylitol * constants::energy::XYLITOL,
+        ]
+        .into_iter()
+        .sum::<f64>())
+    }
+
     pub fn to_pac(&self) -> Result<f64> {
         if self.other != 0.0 {
             return Err(Error::CannotComputePAC("Other polyols should be zero".to_string()));

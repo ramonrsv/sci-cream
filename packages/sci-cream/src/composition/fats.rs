@@ -2,7 +2,7 @@ use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
-use crate::{composition::ScaleComponents, util::iter_all_abs_diff_eq};
+use crate::{composition::ScaleComponents, constants, util::iter_all_abs_diff_eq};
 
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
@@ -43,6 +43,10 @@ impl Fats {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     pub fn new() -> Self {
         Self::empty()
+    }
+
+    pub fn energy(&self) -> f64 {
+        self.total * constants::energy::FATS
     }
 }
 

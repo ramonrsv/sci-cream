@@ -34,6 +34,10 @@
 
 [^17]: Belitz, H.-D., et al. (2009). _Food Chemistry_ (4th revised and extended Edition). Springer
 
+[^18]: U.S. Department of Agriculture. (2013, August). _Composition of Foods. Raw, Processed, Prepared. USDA National Nutrient Database for Standard Reference, Release 26. Documentation and User Guide_. <https://www.ars.usda.gov/ARSUserFiles/80400525/Data/SR26/sr26_doc.pdf>
+
+[^19]: European Association of Polyol Producers. (2026). _Polyols_. <https://polyols-eu.org/polyols/>
+
 <!-- Ingredient references -->
 
 [^100]: Eggs, Grade A, Large, egg yolk. (2019). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/748236/nutrients>

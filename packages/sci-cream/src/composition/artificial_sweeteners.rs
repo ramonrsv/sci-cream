@@ -35,7 +35,6 @@ impl ArtificialSweeteners {
             aspartame: 0.0,
             saccharin: 0.0,
             sucralose: 0.0,
-
             other: 0.0,
         }
     }
@@ -54,6 +53,11 @@ impl ArtificialSweeteners {
 
     pub fn other(self, other: f64) -> Self {
         Self { other, ..self }
+    }
+
+    pub fn energy(&self) -> Result<f64> {
+        // @todo: Consider energy contribution from artificial sweeteners
+        Ok(0.0)
     }
 
     pub fn to_pod(&self) -> Result<f64> {

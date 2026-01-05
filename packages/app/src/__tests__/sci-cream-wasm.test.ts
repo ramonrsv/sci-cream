@@ -9,9 +9,9 @@ test("Import from sci-cream wasm package, at app", () => {
 test("getWasmEnums returns values usable with wasm package", () => {
   const comp_keys = getWasmEnums(CompKey);
 
-  expect(comp_keys[0]).toBe(CompKey.MilkFat);
-  expect(comp_keys[1]).toBe(CompKey.MSNF);
+  expect(comp_keys[0]).toBe(CompKey.Energy);
+  expect(comp_keys[1]).toBe(CompKey.MilkFat);
 
-  expect(comp_key_as_med_str(comp_keys[0])).toBe("Milk Fat");
-  expect(comp_key_as_med_str(comp_keys[1])).toBe("MSNF");
+  expect(comp_key_as_med_str(comp_keys[0])).toBe("Energy");
+  expect(comp_key_as_med_str(comp_keys[1])).toBe("Milk Fat");
 });

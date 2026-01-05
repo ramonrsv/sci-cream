@@ -31,6 +31,8 @@ pub trait ScaleComponents {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Composition {
+    /// Total energy content in kilocalories (kcal) per 100g of ingredient/mix
+    pub energy: f64,
     pub solids: Solids,
     pub micro: Micro,
     pub alcohol: Alcohol,
@@ -46,6 +48,9 @@ pub struct Composition {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(EnumIter, Hash, PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum CompKey {
+    /// Total energy content in kilocalories (kcal) per 100g of ingredient/mix
+    Energy,
+
     /// Milk Fats, the fat content of dairy ingredients, e.g. 2% in 2% milk, etc.
     ///
     /// This is a key component of ice cream mixes, contributing to creaminess and mouthfeel.
@@ -193,12 +198,17 @@ impl Composition {
     /// Create an empty composition, which is equivalent to the composition of 100% water.
     pub fn empty() -> Self {
         Self {
+            energy: 0.0,
             solids: Solids::empty(),
             micro: Micro::empty(),
             alcohol: Alcohol::empty(),
             pod: 0.0,
             pac: PAC::empty(),
         }
+    }
+
+    pub fn energy(self, energy: f64) -> Self {
+        Self { energy, ..self }
     }
 
     pub fn solids(self, solids: Solids) -> Self {
@@ -263,6 +273,8 @@ impl Composition {
 
     pub fn get(&self, key: CompKey) -> f64 {
         match key {
+            CompKey::Energy => self.energy,
+
             CompKey::MilkFat => self.solids.milk.fats.total,
             CompKey::MSNF => self.solids.milk.snf(),
             CompKey::MilkSNFS => self.solids.milk.snfs(),
@@ -334,6 +346,7 @@ impl Composition {
 impl ScaleComponents for Composition {
     fn scale(&self, factor: f64) -> Self {
         Self {
+            energy: self.energy * factor,
             solids: self.solids.scale(factor),
             micro: self.micro.scale(factor),
             alcohol: self.alcohol.scale(factor),
@@ -344,6 +357,7 @@ impl ScaleComponents for Composition {
 
     fn add(&self, other: &Self) -> Self {
         Self {
+            energy: self.energy + other.energy,
             solids: self.solids.add(&other.solids),
             micro: self.micro.add(&other.micro),
             alcohol: self.alcohol.add(&other.alcohol),
@@ -361,7 +375,8 @@ impl AbsDiffEq for Composition {
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        self.solids.abs_diff_eq(&other.solids, epsilon)
+        self.energy.abs_diff_eq(&other.energy, epsilon)
+            && self.solids.abs_diff_eq(&other.solids, epsilon)
             && self.micro.abs_diff_eq(&other.micro, epsilon)
             && self.alcohol.abs_diff_eq(&other.alcohol, epsilon)
             && self.pod.abs_diff_eq(&other.pod, epsilon)
@@ -412,6 +427,7 @@ mod tests {
     #[test]
     fn composition_get() {
         let expected = HashMap::from([
+            (CompKey::Energy, 49.5756),
             (CompKey::MilkFat, 2.0),
             (CompKey::MSNF, 8.82),
             (CompKey::MilkSNFS, 4.0131),

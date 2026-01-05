@@ -4,6 +4,7 @@ use struct_iterable::Iterable;
 
 use crate::{
     composition::{Polyols, ScaleComponents, Sugars},
+    constants,
     error::{Error, Result},
 };
 
@@ -65,6 +66,13 @@ impl Carbohydrates {
             others: total - (self.total() - self.others),
             ..*self
         })
+    }
+
+    pub fn energy(&self) -> Result<f64> {
+        Ok(
+            /* fiber is intentionally ignored */
+            self.sugars.energy()? + self.polyols.energy()? + self.others * constants::energy::CARBOHYDRATES,
+        )
     }
 
     pub fn to_pod(&self) -> Result<f64> {

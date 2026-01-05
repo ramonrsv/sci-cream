@@ -4,6 +4,8 @@ use crate::specs::Unit;
 
 #[derive(Error, Debug)]
 pub enum Error {
+    #[error("Preconditions for computing energy not met: {0}")]
+    CannotComputeEnergy(String),
     #[error("Preconditions for computing POD not met: {0}")]
     CannotComputePOD(String),
     #[error("Preconditions for computing PAC not met: {0}")]

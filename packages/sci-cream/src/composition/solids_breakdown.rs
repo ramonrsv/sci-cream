@@ -4,6 +4,7 @@ use struct_iterable::Iterable;
 
 use crate::{
     composition::{ArtificialSweeteners, Carbohydrates, Fats, ScaleComponents},
+    constants,
     error::{Error, Result},
 };
 
@@ -89,6 +90,13 @@ impl SolidsBreakdown {
             others: total - (self.total() - self.others),
             ..*self
         })
+    }
+
+    pub fn energy(&self) -> Result<f64> {
+        Ok(self.fats.energy()
+            + self.carbohydrates.energy()?
+            + (self.proteins * constants::energy::PROTEINS)
+            + self.artificial_sweeteners.energy()? /* + self.others ignored */)
     }
 }
 

@@ -72,9 +72,17 @@ impl Sugars {
         Self { other, ..self }
     }
 
+    pub fn energy(&self) -> Result<f64> {
+        if self.other != 0.0 {
+            return Err(Error::CannotComputeEnergy("Other sugars should be zero".to_string()));
+        }
+
+        Ok(self.total() * constants::energy::CARBOHYDRATES)
+    }
+
     pub fn to_pod(&self) -> Result<f64> {
         if self.other != 0.0 {
-            return Err(Error::CannotComputePOD("Unspecified sugars should be zero".to_string()));
+            return Err(Error::CannotComputePOD("Other sugars should be zero".to_string()));
         }
 
         Ok([

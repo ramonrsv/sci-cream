@@ -22,6 +22,12 @@ impl Alcohol {
     pub fn by_weight(self, by_weight: f64) -> Self {
         Self { by_weight }
     }
+
+    pub fn from_abv(abv: f64) -> Self {
+        Self {
+            by_weight: abv * constants::ABV_TO_ABW_RATIO,
+        }
+    }
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
@@ -31,10 +37,8 @@ impl Alcohol {
         Self::empty()
     }
 
-    pub fn from_abv(abv: f64) -> Self {
-        Self {
-            by_weight: abv * constants::ABV_TO_ABW_RATIO,
-        }
+    pub fn energy(&self) -> f64 {
+        self.by_weight * constants::energy::ALCOHOL
     }
 
     pub fn to_abv(&self) -> f64 {
