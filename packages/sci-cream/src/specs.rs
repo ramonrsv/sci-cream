@@ -57,6 +57,12 @@ pub enum Unit {
     MolarMass(f64),
 }
 
+impl std::fmt::Display for Unit {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        std::fmt::Debug::fmt(self, f)
+    }
+}
+
 /// Scaling method values outside of the main [`CompositionBasis`]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
@@ -79,440 +85,6 @@ pub enum Scaling<T> {
 pub struct DairySpec {
     pub fat: f64,
     pub msnf: Option<f64>,
-}
-
-impl std::fmt::Display for Unit {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        std::fmt::Debug::fmt(self, f)
-    }
-}
-
-/// Spec for dairy ingredients derived from nutrition facts labels, with detailed breakdown
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-#[serde(deny_unknown_fields)]
-pub struct DairyFromNutritionSpec {
-    /// Serving size in grams; if given in ml, it is converted to grams based on fat content
-    ///
-    /// See [`constants::density::dairy_milliliters_to_grams`].
-    pub serving_size: Unit,
-    /// Total fat content per serving; it can be given in grams or as a percentage of serving size
-    ///
-    /// If a dairy product states a fat content percentage on the label, that is usually more
-    /// accurate than the whole unit grams in the nutrition facts table, so specifying a total fat
-    /// percentage is recommended whenever possible.
-    pub total_fat: Unit,
-    pub saturated_fat: f64,
-    pub trans_fat: f64,
-    pub sugars: f64,
-    pub protein: f64,
-    pub is_lactose_free: bool,
-}
-
-/// Spec for sweeteners, with a specified [`Sweeteners`] composition and optional POD/PAC
-///
-/// If [`basis`](Self::basis) is [`ByDryWeight`](CompositionBasis::ByDryWeight), the values in
-/// [`sweeteners`](Self::sweeteners) represent the composition of the sweeteners as a percentage of
-/// the dry weight (solids), its total plus [`other_carbohydrates`](Self::other_carbohydrates) and
-/// [`other_solids`](Self::other_solids) adding up to 100. For example, Invert Sugar might be
-/// composed of `sugars.glucose = 42.5`, `sugars.fructose = 42.5`, and `sugars.sucrose = 15`, with
-/// `ByDryWeight { solids: 80 }`, meaning that 85% of the sucrose was split into glucose/fructose,
-/// with 15% sucrose remaining, and the syrup containing 20% water. If [`basis`](Self::basis) is
-/// [`ByTotalWeight`](CompositionBasis::ByTotalWeight), then the values in
-/// [`sweeteners`](Self::sweeteners) represent the composition of the sweeteners as a percentage of
-/// the total weight of the ingredient, their total plus `other_carbohydrates`, `other_solids`, and
-/// `water` adding up to 100. For example, Honey might be composed of `sugars.glucose = 36`,
-/// `sugars.fructose = 41`, `sugars.sucrose = 2`, and `other_solids = 1`, with `ByTotalWeight {
-/// water = 20 }`.
-///
-/// [`other_carbohydrates`](Self::other_carbohydrates) are any carbohydrates other than mono- and
-/// disaccharides, e.g. maltodextrin and oligosaccharides found in glucose/corn syrups.
-/// [`other_solids`](Self::other_solids) represents any non-sweetener impurities that may be in the
-/// ingredient, e.g. minerals, pollen, etc., for example 1% in Honey. This value should rarely be
-/// needed, and is assumed to be zero if not specified. This field is also scaled depending on the
-/// chosen [`basis`](Self::basis).
-///
-/// If the POD or PAC values are not specified, then they are automatically calculated based on the
-/// composition of known mono- and disaccharides. If the PAC value is in [`Unit::MolarMass`], then
-/// it is calculated via [`pac_from_molar_mass`]. If specified, POD and PAC values are scaled based
-/// on the [`Scaling`]. If [`OfWhole`](Scaling::OfWhole) then they are left as-is, since they are
-/// already for the ingredient as a whole. If [`OfSolids`](Scaling::OfSolids), then they are scaled
-/// based on the dry solids content. Note that this scaling is independent of the chosen
-/// [`basis`](Self::basis).
-///
-/// For automatic calculations the [`other_carbohydrates`](Self::other_carbohydrates) and
-/// [`other_solids`](Self::other_solids) components are ignored, and it is an error if any `other`
-/// fields are non-zero, e.g. [`sugars.other`](Sugars::other), [`polyols.other`](Polyols::other).
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-#[serde(deny_unknown_fields)]
-pub struct SweetenerSpec {
-    pub sweeteners: Sweeteners,
-    pub other_carbohydrates: Option<f64>,
-    pub other_solids: Option<f64>,
-    #[serde(flatten)]
-    pub basis: CompositionBasis,
-    pub pod: Option<Scaling<f64>>,
-    pub pac: Option<Scaling<Unit>>,
-}
-
-/// Spec for fruit ingredients, with a specified [`Sugars`] composition and water content
-///
-/// Fruits are specified by their sugar content (glucose, fructose, sucrose, etc.), water content,
-/// and optional fat content. The remaining portion up to 100% is assumed to be non-sugar, non-fat
-/// solids (snfs).
-///
-/// The composition for fruit ingredients can usually be found in food composition databases, like
-/// [USDA FoodData Central](https://fdc.nal.usda.gov/food-search).
-///
-/// # Examples
-///
-/// (Strawberries, raw, 2019)[^101] per 100g:
-/// - Water: 91g
-/// - Total lipid (fat): 0.3g
-/// - Sucrose: 0.47g
-/// - Glucose: 1.99g
-/// - Fructose: 2.44g
-///
-/// ```
-/// # use sci_cream::docs::assert_eq_float;
-/// use sci_cream::{
-///     composition::{CompKey, Sugars, Sweeteners},
-///     specs::{FruitSpec, IntoComposition}
-/// };
-///
-/// let comp = FruitSpec {
-///     sugars: Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47),
-///     water: 91.0,
-///     fat: Some(0.3),
-/// }.into_composition().unwrap();
-///
-/// assert_eq!(comp.get(CompKey::Glucose), 1.99);
-/// assert_eq!(comp.get(CompKey::Fructose), 2.44);
-/// assert_eq!(comp.get(CompKey::Sucrose), 0.47);
-///
-/// assert_eq_float!(comp.get(CompKey::POD), 6.28312);
-/// assert_eq!(comp.get(CompKey::PACsgr), 8.887);
-/// ```
-#[doc = include_str!("../docs/bibs/101.md")]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-#[serde(deny_unknown_fields)]
-pub struct FruitSpec {
-    pub sugars: Sugars,
-    pub water: f64,
-    pub fat: Option<f64>,
-}
-
-/// Spec for chocolate ingredients, with cacao solids, cocoa butter, and optional sugar
-///
-/// The terminology around chocolate ingredients can be confusing and used inconsistently across
-/// different industries and stages of processing. For clarity, within this library we define:
-///   - _Cacao_ solids: the total dry matter content derived from the cacao bean (sometimes referred
-///     to as "chocolate liquor", "cocoa mass", etc.) including both cocoa butter (fat) and cocoa
-///     solids (non-fat solids). This is the percentage advertised on chocolate packaging, e.g. 70%
-///     dark chocolate has 70% cacao solids. Corresponds to [`cacao_solids`](Self::cacao_solids).
-///     The value is specified in [`Composition`] accessible via [`CompKey::CacaoSolids`].
-///   - Cocoa butter: the fat component extracted from cacao solids (sometimes referred to as "cocoa
-///     fat"). This is rarely advertised on packaging, but can usually be inferred from the
-///     nutrition table. Corresponds to [`cocoa_butter`](Self::cocoa_butter). The value is
-///     specified in [`Composition`] accessible via [`CompKey::CocoaButter`].
-///   - _Cocoa_ solids: the non-fat component of cacao solids (sometimes referred to as "cocoa
-///     powder" or "cocoa fiber"), i.e. cacao solids minus cocoa butter. In ice cream mixes, this
-///     generally determines how "chocolatey" the flavor is. This value is specified in
-///     [`Composition`] accessible via [`CompKey::CocoaSolids`].
-///
-/// The relation of the above components is `cacao solids = cocoa butter + cocoa solids`. The sugar
-/// content of chocolate ingredients is optional, assumed to be zero if not specified, as some
-/// chocolates (e.g. Unsweetened Chocolate) may not contain any sugar at all. Any non-zero sugar
-/// content is specified in [`Composition`] accessible via [`CompKey::TotalSugars`]. The total
-/// solids content of chocolate ingredients is assumed to be 100% (i.e. no water content). If
-/// [`sugar`](Self::sugar) and [`cacao_solids`](Self::cacao_solids) do not add up to 100%, then the
-/// remaining portion is assumed to be other non-sugar, non-fat solids, specified in [`Composition`]
-/// accessible via [`CompKey::OtherSNFS`], e.g. emulsifiers, impurities in demerara sugar, etc.
-/// Cocoa Powder products are typically 100% cacao solids, with no sugar, and cocoa butter content
-/// ranging from ~10-24%.
-///
-/// # Examples
-///
-/// ```
-/// use sci_cream::{
-///     composition::CompKey,
-///     specs::{ChocolateSpec, IntoComposition}
-/// };
-///
-/// // 70% Cacao Dark Chocolate
-/// // https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g
-/// // 16g/40g fat in nutrition table => 40%% cocoa butter
-/// // 12g/40g sugars in nutrition table => 30% sugar
-/// let comp = ChocolateSpec {
-///     cacao_solids: 70.0,
-///     cocoa_butter: 40.0,
-///     sugar: Some(30.0),
-/// }.into_composition().unwrap();
-///
-/// assert_eq!(comp.get(CompKey::Sucrose), 30.0);
-/// assert_eq!(comp.get(CompKey::CacaoSolids), 70.0);
-/// assert_eq!(comp.get(CompKey::CocoaButter), 40.0);
-/// assert_eq!(comp.get(CompKey::CocoaSolids), 30.0);
-///
-/// // 100% Unsweetened Cocoa Powder
-/// // https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs
-/// // 1g/6g fat in nutrition table => 16.67% cocoa butter
-/// let comp = ChocolateSpec {
-///     cacao_solids: 100.0,
-///     cocoa_butter: 16.67,
-///     sugar: None,
-/// }.into_composition().unwrap();
-///
-/// assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
-/// assert_eq!(comp.get(CompKey::CacaoSolids), 100.0);
-/// assert_eq!(comp.get(CompKey::CocoaButter), 16.67);
-/// assert_eq!(comp.get(CompKey::CocoaSolids), 83.33);
-/// ```
-// @todo Add a `msnf` field to support milk chocolate products (some professional chocolatier use)
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-#[serde(deny_unknown_fields)]
-pub struct ChocolateSpec {
-    pub cacao_solids: f64,
-    pub cocoa_butter: f64,
-    pub sugar: Option<f64>,
-}
-
-/// Spec for nut ingredients, usually nut butters, with fat, sugar, and water content
-///
-/// Nut ingredients are specified by their [`fat`](Self::fat) content, [`sugar`](Self::sugar)
-/// content, and [`water`](Self::water) content, by total weight. The remaining portion up to 100%
-/// is assumed to be non-fat, non-sugar solids (snfs). Sugars are assumed to be all sucrose. Fat and
-/// sugar values are specified in [`Composition`] via [`CompKey::NutFat`] and
-/// [`CompKey::TotalSweeteners`], respectively.
-///
-/// The composition of nut ingredients can usually be found in food in the nutrition facts tables
-/// provided by the manufacturer, or in food composition databases, like [USDA FoodData
-/// Central](https://fdc.nal.usda.gov/food-search).
-///
-/// # Examples
-///
-/// (Nuts, almonds, 2019)[^102] per 100g:
-/// - Water: 4.41g
-/// - Total lipid (fat): 49.9g
-/// - Total Sugars: 4.35g
-///
-/// ```
-/// use sci_cream::{
-///     composition::CompKey,
-///     specs::{NutSpec, IntoComposition},
-///     util::round_to_decimals,
-/// };
-///
-/// let comp = NutSpec {
-///    fat: 49.9,
-///    sugar: 4.35,
-///    water: 4.41,
-/// }.into_composition().unwrap();
-///
-/// assert_eq!(comp.get(CompKey::NutFat), 49.9);
-/// assert_eq!(comp.get(CompKey::NutSNF), 41.34);
-/// assert_eq!(round_to_decimals(comp.get(CompKey::NutSolids), 2), 91.24);
-/// assert_eq!(comp.get(CompKey::TotalSweeteners), 4.35);
-/// assert_eq!(comp.get(CompKey::TotalSolids), 95.59);
-/// assert_eq!(comp.get(CompKey::POD), 4.35);
-/// assert_eq!(comp.get(CompKey::HF), 69.86);
-/// ```
-#[doc = include_str!("../docs/bibs/102.md")]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-#[serde(deny_unknown_fields)]
-pub struct NutSpec {
-    pub fat: f64,
-    pub sugar: f64,
-    pub water: f64,
-}
-
-/// Spec for egg ingredients, with water content, fat content, and lecithin (emulsifier) content
-///
-/// The composition of egg ingredients can usually be found in food composition databases, like
-/// [USDA FoodData Central](https://fdc.nal.usda.gov/food-search), in the manufacturers' data, or in
-/// reference texts, e.g. _Ice Cream 7th Edition_ (Goff & Hartel, 2013, p. 49)[^2] or _The Science
-/// of Ice Cream_ (Clarke, 2004, p. 49)[^4]. Note that [`lecithin`](Self::lecithin) is a subset of
-/// [`fats`](Self::fats) and considered an emulsifier with relative strength of 100, specified in
-/// [`Composition`] via [`CompKey::Emulsifiers`]. The remaining portion of `100 - water - fats` is
-/// assumed to be non-fat solids (snf), specified in [`Composition`] via [`CompKey::EggSNF`].
-///
-/// # Examples
-///
-/// Based on a combination of multiple sources:
-///
-/// - Water: 52.1%, Protein: 16.2%, Total Lipid: 28.8% (Eggs, Grade A, Large, egg yolk, 2019)[^100]
-/// - Fat: 33%, Protein: 15.8%, Total Solids: 51.2% (Goff & Hartel, 2013, p. 49)[^2]
-/// - Water: 50%, Protein: 16%, Lecithin: 9%, Other Fat: 23% (Clarke, 2004, p. 49)[^4]
-///
-/// ```
-/// use sci_cream::{
-///     composition::CompKey,
-///     specs::{EggSpec, IntoComposition}
-/// };
-///
-/// let comp = EggSpec {
-///     water: 51.0,
-///     fats: 30.0,
-///     lecithin: 9.0,
-/// }.into_composition().unwrap();
-///
-/// assert_eq!(comp.get(CompKey::EggFat), 30.0);
-/// assert_eq!(comp.get(CompKey::EggSNF), 19.0);
-/// assert_eq!(comp.get(CompKey::EggSolids), 49.0);
-/// assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
-/// ```
-#[doc = include_str!("../docs/bibs/2.md")]
-#[doc = include_str!("../docs/bibs/4.md")]
-#[doc = include_str!("../docs/bibs/100.md")]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-#[serde(deny_unknown_fields)]
-pub struct EggSpec {
-    pub water: f64,
-    pub fats: f64,
-    pub lecithin: f64,
-}
-
-/// Spec for alcohol beverages and other ingredients, with ABV, optional sugar, fat, and solids
-///
-/// The composition of spirits is trivial, consisting of only the [`ABV`](Self::abv) ("Alcohol by
-/// volume", 2025)[^8]) that is always present on the label, and is internally converted to `ABW`
-/// (Alcohol by weight) via [`constants::ABV_TO_ABW_RATIO`]. Liqueurs, creams, and other alcohol
-/// ingredients may also contain sugar, fat, and other solids. These can be tricky to find, since
-/// nutrition facts tables are not usually mandated for alcoholic beverages. The best approach is
-/// to find a nutrition facts table from the manufacturer if available, otherwise to look for
-/// unofficial sources online. Aside from `ABV`, the exact composition is not usually critical,
-/// since alcohol ingredients are typically used in small amounts in ice cream mixes.
-///
-/// In the fields below, [`sugar`](Self::sugar) is assumed to be sucrose, zero if not specified, and
-/// its contributions to PAC and POD are internally calculated accordingly. [`fat`](Self::fat), zero
-/// if not specified, is stored in [`Composition`] accessible via [`CompKey::OtherFats`]. If
-/// [`solids`](Self::solids) is not specified, it is calculated as `sugar + fat`. If specified, it
-/// is required that `solids >= sugar + fat`. `solids` less `sugar` and `fat` is store in
-/// [`Composition`] accessible via [`CompKey::OtherSNFS`]. Overall, `abw` plus `solids` must not
-/// exceed 100%, i.e. `abw + solids <= 100%`.
-#[doc = include_str!("../docs/bibs/8.md")]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-#[serde(deny_unknown_fields)]
-pub struct AlcoholSpec {
-    pub abv: f64,
-    pub sugar: Option<f64>,
-    pub fat: Option<f64>,
-    pub solids: Option<f64>,
-}
-
-/// Spec for ingredients with solely micro components, e.g. salt, emulsifiers, stabilizer, etc.
-///
-/// These ingredients are assumed to be 100% solids non-fat non-sugar (technically lecithin is a
-/// lipid and therefore a subset of fats, but that is ignored here for simplicity's sake), with the
-/// `(emulsifier)_strength` and `(stabilizer)_strength` fields representing their relative strengths
-/// as a percentage of a reference.
-///
-/// This "strength" is a very fuzzy concept, since it's difficult to precisely quantify the
-/// effectiveness of emulsifiers and stabilizers, and they often differ in their modes of action and
-/// their effects have different properties than just a linear more or less stabilizing/emulsifying
-/// effect. However, this allows for a rough scaling, differentiating between very weak and very
-/// strong ingredients, for example between cornstarch and Locust Bean Gum as stabilizers, the
-/// recommended usage levels of which differ by an order of magnitude.
-///
-/// Roughly, strong gums like Guar Gum, Locust Bean Gum, Lambda Carrageenan, etc. are taken as the
-/// reference and have a stabilizer strength of 100, with a recommended dosage of ~1.5g/kg
-/// (Raphaelson, 2016, Standard Base)[^5]. Cornstarch and similar have a stabilizer strength of ~15,
-/// with a recommended dosage of ~10g/kg (Cree, 2017, Blank Slate Custard Ice Cream p. 115)[^6].
-/// Commercial blends, such as _"Louis Francois Stab 2000"_, usually cut the active ingredients with
-/// fillers, so the relative strength of the ingredient as a whole is lower than that of pure gums.
-/// With a manufacturer recommended dosage of ~3.5g/kg, "Louis Francois Stab 2000" has a relative
-/// stabilizer strength of ~40. Lecithin is taken as the reference emulsifier with a strength of
-/// 100, with a recommended dosage of ~3.25g/kg (Raphaelson, 2016, Standard Base)[^5]. Something
-/// like _"Louis Francois Stab 2000"_ has a similar recommended dosage for its emulsifier component,
-/// so it also has a a relative emulsifier strength of 100.
-#[doc = include_str!("../docs/bibs/5.md")]
-#[doc = include_str!("../docs/bibs/6.md")]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-#[serde(deny_unknown_fields)]
-pub enum MicroSpec {
-    Salt,
-    Lecithin,
-    Stabilizer {
-        strength: f64,
-    },
-    Emulsifier {
-        strength: f64,
-    },
-    EmulsifierStabilizer {
-        emulsifier_strength: f64,
-        stabilizer_strength: f64,
-    },
-}
-
-/// Spec for ingredients with a full composition specified
-///
-/// This is the most flexible spec, allowing the user to specify all relevant fields of the
-/// composition directly. However, it requires that the user know and provide all relevant values,
-/// which can be an involved and challenging process for some ingredients, making it very cumbersome
-/// and error-prone to use. It is recommended to use the more specified specs where possible.
-///
-/// We could just use [`Composition`] directly, but having a separate [`FullSpec`] allows some
-/// flexibility to make the specification format more user friendly, and somewhat decouples it
-/// from the internal implementation of [`Composition`].
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-#[serde(deny_unknown_fields)]
-pub struct FullSpec {
-    pub solids: Option<Solids>,
-    pub micro: Option<Micro>,
-    pub abv: Option<f64>,
-    pub pod: Option<f64>,
-    pub pac: Option<PAC>,
-}
-
-/// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-#[allow(clippy::large_enum_variant)] // @todo Deal with this issue later
-pub enum Spec {
-    DairySpec(DairySpec),
-    DairyFromNutritionSpec(DairyFromNutritionSpec),
-    SweetenerSpec(SweetenerSpec),
-    FruitSpec(FruitSpec),
-    ChocolateSpec(ChocolateSpec),
-    NutSpec(NutSpec),
-    EggSpec(EggSpec),
-    AlcoholSpec(AlcoholSpec),
-    MicroSpec(MicroSpec),
-    FullSpec(FullSpec),
-}
-
-#[cfg_attr(feature = "diesel", derive(Queryable, Selectable), diesel(table_name = ingredients))]
-#[derive(PartialEq, Serialize, Deserialize, Clone, Debug)]
-pub struct IngredientSpec {
-    pub name: String,
-    pub category: Category,
-    #[serde(flatten)]
-    pub spec: Spec,
-}
-
-impl IntoComposition for Spec {
-    fn into_composition(self) -> Result<Composition> {
-        match self {
-            Spec::DairySpec(spec) => spec.into_composition(),
-            Spec::DairyFromNutritionSpec(spec) => spec.into_composition(),
-            Spec::SweetenerSpec(spec) => spec.into_composition(),
-            Spec::FruitSpec(spec) => spec.into_composition(),
-            Spec::ChocolateSpec(spec) => spec.into_composition(),
-            Spec::NutSpec(spec) => spec.into_composition(),
-            Spec::EggSpec(spec) => spec.into_composition(),
-            Spec::AlcoholSpec(spec) => spec.into_composition(),
-            Spec::MicroSpec(spec) => spec.into_composition(),
-            Spec::FullSpec(spec) => spec.into_composition(),
-        }
-    }
-}
-
-impl IngredientSpec {
-    pub fn into_ingredient(self) -> Ingredient {
-        Ingredient {
-            name: self.name,
-            category: self.category,
-            composition: self.spec.into_composition().unwrap(),
-        }
-    }
 }
 
 impl IntoComposition for DairySpec {
@@ -548,6 +120,27 @@ impl IntoComposition for DairySpec {
             .pod(pod)
             .pac(pad))
     }
+}
+
+/// Spec for dairy ingredients derived from nutrition facts labels, with detailed breakdown
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct DairyFromNutritionSpec {
+    /// Serving size in grams; if given in ml, it is converted to grams based on fat content
+    ///
+    /// See [`constants::density::dairy_milliliters_to_grams`].
+    pub serving_size: Unit,
+    /// Total fat content per serving; it can be given in grams or as a percentage of serving size
+    ///
+    /// If a dairy product states a fat content percentage on the label, that is usually more
+    /// accurate than the whole unit grams in the nutrition facts table, so specifying a total fat
+    /// percentage is recommended whenever possible.
+    pub total_fat: Unit,
+    pub saturated_fat: f64,
+    pub trans_fat: f64,
+    pub sugars: f64,
+    pub protein: f64,
+    pub is_lactose_free: bool,
 }
 
 impl IntoComposition for DairyFromNutritionSpec {
@@ -615,6 +208,52 @@ impl IntoComposition for DairyFromNutritionSpec {
                     .msnf_ws_salts(milk_solids.snf() * constants::pac::MSNF_WS_SALTS / 100.0),
             ))
     }
+}
+
+/// Spec for sweeteners, with a specified [`Sweeteners`] composition and optional POD/PAC
+///
+/// If [`basis`](Self::basis) is [`ByDryWeight`](CompositionBasis::ByDryWeight), the values in
+/// [`sweeteners`](Self::sweeteners) represent the composition of the sweeteners as a percentage of
+/// the dry weight (solids), its total plus [`other_carbohydrates`](Self::other_carbohydrates) and
+/// [`other_solids`](Self::other_solids) adding up to 100. For example, Invert Sugar might be
+/// composed of `sugars.glucose = 42.5`, `sugars.fructose = 42.5`, and `sugars.sucrose = 15`, with
+/// `ByDryWeight { solids: 80 }`, meaning that 85% of the sucrose was split into glucose/fructose,
+/// with 15% sucrose remaining, and the syrup containing 20% water. If [`basis`](Self::basis) is
+/// [`ByTotalWeight`](CompositionBasis::ByTotalWeight), then the values in
+/// [`sweeteners`](Self::sweeteners) represent the composition of the sweeteners as a percentage of
+/// the total weight of the ingredient, their total plus `other_carbohydrates`, `other_solids`, and
+/// `water` adding up to 100. For example, Honey might be composed of `sugars.glucose = 36`,
+/// `sugars.fructose = 41`, `sugars.sucrose = 2`, and `other_solids = 1`, with `ByTotalWeight {
+/// water = 20 }`.
+///
+/// [`other_carbohydrates`](Self::other_carbohydrates) are any carbohydrates other than mono- and
+/// disaccharides, e.g. maltodextrin and oligosaccharides found in glucose/corn syrups.
+/// [`other_solids`](Self::other_solids) represents any non-sweetener impurities that may be in the
+/// ingredient, e.g. minerals, pollen, etc., for example 1% in Honey. This value should rarely be
+/// needed, and is assumed to be zero if not specified. This field is also scaled depending on the
+/// chosen [`basis`](Self::basis).
+///
+/// If the POD or PAC values are not specified, then they are automatically calculated based on the
+/// composition of known mono- and disaccharides. If the PAC value is in [`Unit::MolarMass`], then
+/// it is calculated via [`pac_from_molar_mass`]. If specified, POD and PAC values are scaled based
+/// on the [`Scaling`]. If [`OfWhole`](Scaling::OfWhole) then they are left as-is, since they are
+/// already for the ingredient as a whole. If [`OfSolids`](Scaling::OfSolids), then they are scaled
+/// based on the dry solids content. Note that this scaling is independent of the chosen
+/// [`basis`](Self::basis).
+///
+/// For automatic calculations the [`other_carbohydrates`](Self::other_carbohydrates) and
+/// [`other_solids`](Self::other_solids) components are ignored, and it is an error if any `other`
+/// fields are non-zero, e.g. [`sugars.other`](Sugars::other), [`polyols.other`](Polyols::other).
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct SweetenerSpec {
+    pub sweeteners: Sweeteners,
+    pub other_carbohydrates: Option<f64>,
+    pub other_solids: Option<f64>,
+    #[serde(flatten)]
+    pub basis: CompositionBasis,
+    pub pod: Option<Scaling<f64>>,
+    pub pac: Option<Scaling<Unit>>,
 }
 
 impl IntoComposition for SweetenerSpec {
@@ -693,6 +332,53 @@ impl IntoComposition for SweetenerSpec {
     }
 }
 
+/// Spec for fruit ingredients, with a specified [`Sugars`] composition and water content
+///
+/// Fruits are specified by their sugar content (glucose, fructose, sucrose, etc.), water content,
+/// and optional fat content. The remaining portion up to 100% is assumed to be non-sugar, non-fat
+/// solids (snfs).
+///
+/// The composition for fruit ingredients can usually be found in food composition databases, like
+/// [USDA FoodData Central](https://fdc.nal.usda.gov/food-search).
+///
+/// # Examples
+///
+/// (Strawberries, raw, 2019)[^101] per 100g:
+/// - Water: 91g
+/// - Total lipid (fat): 0.3g
+/// - Sucrose: 0.47g
+/// - Glucose: 1.99g
+/// - Fructose: 2.44g
+///
+/// ```
+/// # use sci_cream::docs::assert_eq_float;
+/// use sci_cream::{
+///     composition::{CompKey, Sugars, Sweeteners},
+///     specs::{FruitSpec, IntoComposition}
+/// };
+///
+/// let comp = FruitSpec {
+///     sugars: Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47),
+///     water: 91.0,
+///     fat: Some(0.3),
+/// }.into_composition().unwrap();
+///
+/// assert_eq!(comp.get(CompKey::Glucose), 1.99);
+/// assert_eq!(comp.get(CompKey::Fructose), 2.44);
+/// assert_eq!(comp.get(CompKey::Sucrose), 0.47);
+///
+/// assert_eq_float!(comp.get(CompKey::POD), 6.28312);
+/// assert_eq!(comp.get(CompKey::PACsgr), 8.887);
+/// ```
+#[doc = include_str!("../docs/bibs/101.md")]
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct FruitSpec {
+    pub sugars: Sugars,
+    pub water: f64,
+    pub fat: Option<f64>,
+}
+
 impl IntoComposition for FruitSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self { sugars, water, fat } = self;
@@ -711,6 +397,81 @@ impl IntoComposition for FruitSpec {
             .pod(solids.carbohydrates.to_pod()?)
             .pac(PAC::new().sugars(solids.carbohydrates.to_pac()?)))
     }
+}
+
+/// Spec for chocolate ingredients, with cacao solids, cocoa butter, and optional sugar
+///
+/// The terminology around chocolate ingredients can be confusing and used inconsistently across
+/// different industries and stages of processing. For clarity, within this library we define:
+///   - _Cacao_ solids: the total dry matter content derived from the cacao bean (sometimes referred
+///     to as "chocolate liquor", "cocoa mass", etc.) including both cocoa butter (fat) and cocoa
+///     solids (non-fat solids). This is the percentage advertised on chocolate packaging, e.g. 70%
+///     dark chocolate has 70% cacao solids. Corresponds to [`cacao_solids`](Self::cacao_solids).
+///     The value is specified in [`Composition`] accessible via [`CompKey::CacaoSolids`].
+///   - Cocoa butter: the fat component extracted from cacao solids (sometimes referred to as "cocoa
+///     fat"). This is rarely advertised on packaging, but can usually be inferred from the
+///     nutrition table. Corresponds to [`cocoa_butter`](Self::cocoa_butter). The value is
+///     specified in [`Composition`] accessible via [`CompKey::CocoaButter`].
+///   - _Cocoa_ solids: the non-fat component of cacao solids (sometimes referred to as "cocoa
+///     powder" or "cocoa fiber"), i.e. cacao solids minus cocoa butter. In ice cream mixes, this
+///     generally determines how "chocolatey" the flavor is. This value is specified in
+///     [`Composition`] accessible via [`CompKey::CocoaSolids`].
+///
+/// The relation of the above components is `cacao solids = cocoa butter + cocoa solids`. The sugar
+/// content of chocolate ingredients is optional, assumed to be zero if not specified, as some
+/// chocolates (e.g. Unsweetened Chocolate) may not contain any sugar at all. Any non-zero sugar
+/// content is specified in [`Composition`] accessible via [`CompKey::TotalSugars`]. The total
+/// solids content of chocolate ingredients is assumed to be 100% (i.e. no water content). If
+/// [`sugar`](Self::sugar) and [`cacao_solids`](Self::cacao_solids) do not add up to 100%, then the
+/// remaining portion is assumed to be other non-sugar, non-fat solids, specified in [`Composition`]
+/// accessible via [`CompKey::OtherSNFS`], e.g. emulsifiers, impurities in demerara sugar, etc.
+/// Cocoa Powder products are typically 100% cacao solids, with no sugar, and cocoa butter content
+/// ranging from ~10-24%.
+///
+/// # Examples
+///
+/// ```
+/// use sci_cream::{
+///     composition::CompKey,
+///     specs::{ChocolateSpec, IntoComposition}
+/// };
+///
+/// // 70% Cacao Dark Chocolate
+/// // https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g
+/// // 16g/40g fat in nutrition table => 40%% cocoa butter
+/// // 12g/40g sugars in nutrition table => 30% sugar
+/// let comp = ChocolateSpec {
+///     cacao_solids: 70.0,
+///     cocoa_butter: 40.0,
+///     sugar: Some(30.0),
+/// }.into_composition().unwrap();
+///
+/// assert_eq!(comp.get(CompKey::Sucrose), 30.0);
+/// assert_eq!(comp.get(CompKey::CacaoSolids), 70.0);
+/// assert_eq!(comp.get(CompKey::CocoaButter), 40.0);
+/// assert_eq!(comp.get(CompKey::CocoaSolids), 30.0);
+///
+/// // 100% Unsweetened Cocoa Powder
+/// // https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs
+/// // 1g/6g fat in nutrition table => 16.67% cocoa butter
+/// let comp = ChocolateSpec {
+///     cacao_solids: 100.0,
+///     cocoa_butter: 16.67,
+///     sugar: None,
+/// }.into_composition().unwrap();
+///
+/// assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
+/// assert_eq!(comp.get(CompKey::CacaoSolids), 100.0);
+/// assert_eq!(comp.get(CompKey::CocoaButter), 16.67);
+/// assert_eq!(comp.get(CompKey::CocoaSolids), 83.33);
+/// ```
+// @todo Add a `msnf` field to support milk chocolate products (some professional chocolatier use)
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct ChocolateSpec {
+    pub cacao_solids: f64,
+    pub cocoa_butter: f64,
+    pub sugar: Option<f64>,
 }
 
 impl IntoComposition for ChocolateSpec {
@@ -749,6 +510,55 @@ impl IntoComposition for ChocolateSpec {
     }
 }
 
+/// Spec for nut ingredients, usually nut butters, with fat, sugar, and water content
+///
+/// Nut ingredients are specified by their [`fat`](Self::fat) content, [`sugar`](Self::sugar)
+/// content, and [`water`](Self::water) content, by total weight. The remaining portion up to 100%
+/// is assumed to be non-fat, non-sugar solids (snfs). Sugars are assumed to be all sucrose. Fat and
+/// sugar values are specified in [`Composition`] via [`CompKey::NutFat`] and
+/// [`CompKey::TotalSweeteners`], respectively.
+///
+/// The composition of nut ingredients can usually be found in food in the nutrition facts tables
+/// provided by the manufacturer, or in food composition databases, like [USDA FoodData
+/// Central](https://fdc.nal.usda.gov/food-search).
+///
+/// # Examples
+///
+/// (Nuts, almonds, 2019)[^102] per 100g:
+/// - Water: 4.41g
+/// - Total lipid (fat): 49.9g
+/// - Total Sugars: 4.35g
+///
+/// ```
+/// use sci_cream::{
+///     composition::CompKey,
+///     specs::{NutSpec, IntoComposition},
+///     util::round_to_decimals,
+/// };
+///
+/// let comp = NutSpec {
+///    fat: 49.9,
+///    sugar: 4.35,
+///    water: 4.41,
+/// }.into_composition().unwrap();
+///
+/// assert_eq!(comp.get(CompKey::NutFat), 49.9);
+/// assert_eq!(comp.get(CompKey::NutSNF), 41.34);
+/// assert_eq!(round_to_decimals(comp.get(CompKey::NutSolids), 2), 91.24);
+/// assert_eq!(comp.get(CompKey::TotalSweeteners), 4.35);
+/// assert_eq!(comp.get(CompKey::TotalSolids), 95.59);
+/// assert_eq!(comp.get(CompKey::POD), 4.35);
+/// assert_eq!(comp.get(CompKey::HF), 69.86);
+/// ```
+#[doc = include_str!("../docs/bibs/102.md")]
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct NutSpec {
+    pub fat: f64,
+    pub sugar: f64,
+    pub water: f64,
+}
+
 impl IntoComposition for NutSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self { fat, sugar, water } = self;
@@ -776,6 +586,52 @@ impl IntoComposition for NutSpec {
     }
 }
 
+/// Spec for egg ingredients, with water content, fat content, and lecithin (emulsifier) content
+///
+/// The composition of egg ingredients can usually be found in food composition databases, like
+/// [USDA FoodData Central](https://fdc.nal.usda.gov/food-search), in the manufacturers' data, or in
+/// reference texts, e.g. _Ice Cream 7th Edition_ (Goff & Hartel, 2013, p. 49)[^2] or _The Science
+/// of Ice Cream_ (Clarke, 2004, p. 49)[^4]. Note that [`lecithin`](Self::lecithin) is a subset of
+/// [`fats`](Self::fats) and considered an emulsifier with relative strength of 100, specified in
+/// [`Composition`] via [`CompKey::Emulsifiers`]. The remaining portion of `100 - water - fats` is
+/// assumed to be non-fat solids (snf), specified in [`Composition`] via [`CompKey::EggSNF`].
+///
+/// # Examples
+///
+/// Based on a combination of multiple sources:
+///
+/// - Water: 52.1%, Protein: 16.2%, Total Lipid: 28.8% (Eggs, Grade A, Large, egg yolk, 2019)[^100]
+/// - Fat: 33%, Protein: 15.8%, Total Solids: 51.2% (Goff & Hartel, 2013, p. 49)[^2]
+/// - Water: 50%, Protein: 16%, Lecithin: 9%, Other Fat: 23% (Clarke, 2004, p. 49)[^4]
+///
+/// ```
+/// use sci_cream::{
+///     composition::CompKey,
+///     specs::{EggSpec, IntoComposition}
+/// };
+///
+/// let comp = EggSpec {
+///     water: 51.0,
+///     fats: 30.0,
+///     lecithin: 9.0,
+/// }.into_composition().unwrap();
+///
+/// assert_eq!(comp.get(CompKey::EggFat), 30.0);
+/// assert_eq!(comp.get(CompKey::EggSNF), 19.0);
+/// assert_eq!(comp.get(CompKey::EggSolids), 49.0);
+/// assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
+/// ```
+#[doc = include_str!("../docs/bibs/2.md")]
+#[doc = include_str!("../docs/bibs/4.md")]
+#[doc = include_str!("../docs/bibs/100.md")]
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct EggSpec {
+    pub water: f64,
+    pub fats: f64,
+    pub lecithin: f64,
+}
+
 impl IntoComposition for EggSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self { water, fats, lecithin } = self;
@@ -794,6 +650,34 @@ impl IntoComposition for EggSpec {
             )
             .micro(Micro::new().lecithin(lecithin).emulsifiers(lecithin)))
     }
+}
+
+/// Spec for alcohol beverages and other ingredients, with ABV, optional sugar, fat, and solids
+///
+/// The composition of spirits is trivial, consisting of only the [`ABV`](Self::abv) ("Alcohol by
+/// volume", 2025)[^8]) that is always present on the label, and is internally converted to `ABW`
+/// (Alcohol by weight) via [`constants::ABV_TO_ABW_RATIO`]. Liqueurs, creams, and other alcohol
+/// ingredients may also contain sugar, fat, and other solids. These can be tricky to find, since
+/// nutrition facts tables are not usually mandated for alcoholic beverages. The best approach is
+/// to find a nutrition facts table from the manufacturer if available, otherwise to look for
+/// unofficial sources online. Aside from `ABV`, the exact composition is not usually critical,
+/// since alcohol ingredients are typically used in small amounts in ice cream mixes.
+///
+/// In the fields below, [`sugar`](Self::sugar) is assumed to be sucrose, zero if not specified, and
+/// its contributions to PAC and POD are internally calculated accordingly. [`fat`](Self::fat), zero
+/// if not specified, is stored in [`Composition`] accessible via [`CompKey::OtherFats`]. If
+/// [`solids`](Self::solids) is not specified, it is calculated as `sugar + fat`. If specified, it
+/// is required that `solids >= sugar + fat`. `solids` less `sugar` and `fat` is store in
+/// [`Composition`] accessible via [`CompKey::OtherSNFS`]. Overall, `abw` plus `solids` must not
+/// exceed 100%, i.e. `abw + solids <= 100%`.
+#[doc = include_str!("../docs/bibs/8.md")]
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct AlcoholSpec {
+    pub abv: f64,
+    pub sugar: Option<f64>,
+    pub fat: Option<f64>,
+    pub solids: Option<f64>,
 }
 
 impl IntoComposition for AlcoholSpec {
@@ -829,6 +713,50 @@ impl IntoComposition for AlcoholSpec {
             .pod(sugars.to_pod().unwrap())
             .pac(PAC::new().sugars(sugars.to_pac().unwrap()).alcohol(alcohol.to_pac())))
     }
+}
+
+/// Spec for ingredients with solely micro components, e.g. salt, emulsifiers, stabilizer, etc.
+///
+/// These ingredients are assumed to be 100% solids non-fat non-sugar (technically lecithin is a
+/// lipid and therefore a subset of fats, but that is ignored here for simplicity's sake), with the
+/// `(emulsifier)_strength` and `(stabilizer)_strength` fields representing their relative strengths
+/// as a percentage of a reference.
+///
+/// This "strength" is a very fuzzy concept, since it's difficult to precisely quantify the
+/// effectiveness of emulsifiers and stabilizers, and they often differ in their modes of action and
+/// their effects have different properties than just a linear more or less stabilizing/emulsifying
+/// effect. However, this allows for a rough scaling, differentiating between very weak and very
+/// strong ingredients, for example between cornstarch and Locust Bean Gum as stabilizers, the
+/// recommended usage levels of which differ by an order of magnitude.
+///
+/// Roughly, strong gums like Guar Gum, Locust Bean Gum, Lambda Carrageenan, etc. are taken as the
+/// reference and have a stabilizer strength of 100, with a recommended dosage of ~1.5g/kg
+/// (Raphaelson, 2016, Standard Base)[^5]. Cornstarch and similar have a stabilizer strength of ~15,
+/// with a recommended dosage of ~10g/kg (Cree, 2017, Blank Slate Custard Ice Cream p. 115)[^6].
+/// Commercial blends, such as _"Louis Francois Stab 2000"_, usually cut the active ingredients with
+/// fillers, so the relative strength of the ingredient as a whole is lower than that of pure gums.
+/// With a manufacturer recommended dosage of ~3.5g/kg, "Louis Francois Stab 2000" has a relative
+/// stabilizer strength of ~40. Lecithin is taken as the reference emulsifier with a strength of
+/// 100, with a recommended dosage of ~3.25g/kg (Raphaelson, 2016, Standard Base)[^5]. Something
+/// like _"Louis Francois Stab 2000"_ has a similar recommended dosage for its emulsifier component,
+/// so it also has a a relative emulsifier strength of 100.
+#[doc = include_str!("../docs/bibs/5.md")]
+#[doc = include_str!("../docs/bibs/6.md")]
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub enum MicroSpec {
+    Salt,
+    Lecithin,
+    Stabilizer {
+        strength: f64,
+    },
+    Emulsifier {
+        strength: f64,
+    },
+    EmulsifierStabilizer {
+        emulsifier_strength: f64,
+        stabilizer_strength: f64,
+    },
 }
 
 impl IntoComposition for MicroSpec {
@@ -867,6 +795,26 @@ impl IntoComposition for MicroSpec {
     }
 }
 
+/// Spec for ingredients with a full composition specified
+///
+/// This is the most flexible spec, allowing the user to specify all relevant fields of the
+/// composition directly. However, it requires that the user know and provide all relevant values,
+/// which can be an involved and challenging process for some ingredients, making it very cumbersome
+/// and error-prone to use. It is recommended to use the more specified specs where possible.
+///
+/// We could just use [`Composition`] directly, but having a separate [`FullSpec`] allows some
+/// flexibility to make the specification format more user friendly, and somewhat decouples it
+/// from the internal implementation of [`Composition`].
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[serde(deny_unknown_fields)]
+pub struct FullSpec {
+    pub solids: Option<Solids>,
+    pub micro: Option<Micro>,
+    pub abv: Option<f64>,
+    pub pod: Option<f64>,
+    pub pac: Option<PAC>,
+}
+
 impl IntoComposition for FullSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self {
@@ -893,6 +841,64 @@ impl IntoComposition for FullSpec {
         assert_within_100_percent(comp.get(CompKey::TotalSolids) + comp.get(CompKey::Alcohol))?;
 
         Ok(comp)
+    }
+}
+
+/// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
+#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[allow(clippy::large_enum_variant)] // @todo Deal with this issue later
+pub enum Spec {
+    DairySpec(DairySpec),
+    DairyFromNutritionSpec(DairyFromNutritionSpec),
+    SweetenerSpec(SweetenerSpec),
+    FruitSpec(FruitSpec),
+    ChocolateSpec(ChocolateSpec),
+    NutSpec(NutSpec),
+    EggSpec(EggSpec),
+    AlcoholSpec(AlcoholSpec),
+    MicroSpec(MicroSpec),
+    FullSpec(FullSpec),
+}
+
+impl IntoComposition for Spec {
+    fn into_composition(self) -> Result<Composition> {
+        match self {
+            Spec::DairySpec(spec) => spec.into_composition(),
+            Spec::DairyFromNutritionSpec(spec) => spec.into_composition(),
+            Spec::SweetenerSpec(spec) => spec.into_composition(),
+            Spec::FruitSpec(spec) => spec.into_composition(),
+            Spec::ChocolateSpec(spec) => spec.into_composition(),
+            Spec::NutSpec(spec) => spec.into_composition(),
+            Spec::EggSpec(spec) => spec.into_composition(),
+            Spec::AlcoholSpec(spec) => spec.into_composition(),
+            Spec::MicroSpec(spec) => spec.into_composition(),
+            Spec::FullSpec(spec) => spec.into_composition(),
+        }
+    }
+}
+
+#[cfg_attr(feature = "diesel", derive(Queryable, Selectable), diesel(table_name = ingredients))]
+#[derive(PartialEq, Serialize, Deserialize, Clone, Debug)]
+pub struct IngredientSpec {
+    pub name: String,
+    pub category: Category,
+    #[serde(flatten)]
+    pub spec: Spec,
+}
+
+impl IngredientSpec {
+    pub fn into_ingredient(self) -> Ingredient {
+        Ingredient {
+            name: self.name,
+            category: self.category,
+            composition: self.spec.into_composition().unwrap(),
+        }
+    }
+}
+
+impl IntoComposition for IngredientSpec {
+    fn into_composition(self) -> Result<Composition> {
+        self.spec.into_composition()
     }
 }
 
