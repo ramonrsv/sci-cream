@@ -37,7 +37,7 @@ export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   compToPropKey(CompKey.TotalSolids),
   compToPropKey(CompKey.Water),
   compToPropKey(CompKey.TotalSugars),
-  compToPropKey(CompKey.ArtificialSweeteners),
+  compToPropKey(CompKey.TotalArtificial),
   compToPropKey(CompKey.PACtotal),
   compToPropKey(CompKey.AbsPAC),
   fpdToPropKey(FpdKey.FPD),

@@ -25,6 +25,22 @@
     }
   },
   {
+    "name": "Trehalose",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "sugars": { "trehalose": 100 } },
+      "ByDryWeight": { "solids": 100 }
+    }
+  },
+  {
+    "name": "Erythritol",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "polyols": { "erythritol": 100 } },
+      "ByDryWeight": { "solids": 100 }
+    }
+  },
+  {
     "name": "Invert Sugar",
     "category": "Sweetener",
     "SweetenerSpec": {

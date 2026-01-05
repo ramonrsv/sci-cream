@@ -22,6 +22,7 @@ pub struct Sugars {
     pub sucrose: f64,
     pub lactose: f64,
     pub maltose: f64,
+    pub trehalose: f64,
     pub other: f64,
 }
 
@@ -34,6 +35,7 @@ impl Sugars {
             sucrose: 0.0,
             lactose: 0.0,
             maltose: 0.0,
+            trehalose: 0.0,
             other: 0.0,
         }
     }
@@ -62,6 +64,10 @@ impl Sugars {
         Self { maltose, ..self }
     }
 
+    pub fn trehalose(self, trehalose: f64) -> Self {
+        Self { trehalose, ..self }
+    }
+
     pub fn other(self, other: f64) -> Self {
         Self { other, ..self }
     }
@@ -78,6 +84,7 @@ impl Sugars {
             self.sucrose * constants::pod::SUCROSE,
             self.lactose * constants::pod::LACTOSE,
             self.maltose * constants::pod::MALTOSE,
+            self.trehalose * constants::pod::TREHALOSE,
         ]
         .into_iter()
         .sum::<f64>()
@@ -96,6 +103,7 @@ impl Sugars {
             self.sucrose * constants::pac::SUCROSE,
             self.lactose * constants::pac::LACTOSE,
             self.maltose * constants::pac::MALTOSE,
+            self.trehalose * constants::pac::TREHALOSE,
         ]
         .into_iter()
         .sum::<f64>()
@@ -128,24 +136,26 @@ impl Sugars {
 impl ScaleComponents for Sugars {
     fn scale(&self, factor: f64) -> Self {
         Self {
-            sucrose: self.sucrose * factor,
             glucose: self.glucose * factor,
             fructose: self.fructose * factor,
+            galactose: self.galactose * factor,
+            sucrose: self.sucrose * factor,
             lactose: self.lactose * factor,
             maltose: self.maltose * factor,
-            galactose: self.galactose * factor,
+            trehalose: self.trehalose * factor,
             other: self.other * factor,
         }
     }
 
     fn add(&self, other: &Self) -> Self {
         Self {
-            sucrose: self.sucrose + other.sucrose,
             glucose: self.glucose + other.glucose,
             fructose: self.fructose + other.fructose,
+            galactose: self.galactose + other.galactose,
+            sucrose: self.sucrose + other.sucrose,
             lactose: self.lactose + other.lactose,
             maltose: self.maltose + other.maltose,
-            galactose: self.galactose + other.galactose,
+            trehalose: self.trehalose + other.trehalose,
             other: self.other + other.other,
         }
     }

@@ -917,7 +917,7 @@ pub(crate) mod tests {
     use crate::tests::data::get_ingredient_spec_by_name_or_panic;
 
     use super::*;
-    use crate::composition::CompKey;
+    use crate::composition::{CompKey, Polyols};
 
     pub(crate) const ING_SPEC_DAIRY_2_MILK_STR: &str = r#"{
       "name": "2% Milk",
@@ -1472,7 +1472,12 @@ pub(crate) mod tests {
         let comp = ING_SPEC_SWEETENER_SUCROSE.spec.into_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Sucrose), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSugars), 100.0);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 100.0);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 0.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::POD), 100.0);
         assert_eq!(comp.get(CompKey::PACsgr), 100.0);
@@ -1511,7 +1516,12 @@ pub(crate) mod tests {
         let comp = ING_SPEC_SWEETENER_DEXTROSE.spec.into_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Glucose), 92.0);
+        assert_eq!(comp.get(CompKey::TotalSugars), 92.0);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 92.0);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 92.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 0.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 92.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 73.6);
         assert_eq!(comp.get(CompKey::PACsgr), 174.8);
@@ -1559,10 +1569,122 @@ pub(crate) mod tests {
         let comp = ING_SPEC_SWEETENER_FRUCTOSE.spec.into_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Fructose), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSugars), 100.0);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 100.0);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 0.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::POD), 173.0);
         assert_eq!(comp.get(CompKey::PACsgr), 190.0);
+    }
+
+    pub(crate) const ING_SPEC_SWEETENER_TREHALOSE_STR: &str = r#"{
+      "name": "Trehalose",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "sugars": {
+            "trehalose": 100
+          }
+        },
+        "ByDryWeight": {
+          "solids": 100
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_TREHALOSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Trehalose".to_string(),
+        category: Category::Sweetener,
+        spec: Spec::SweetenerSpec(SweetenerSpec {
+            sweeteners: Sweeteners::new().sugars(Sugars::new().trehalose(100.0)),
+            other_carbohydrates: None,
+            other_solids: None,
+            basis: CompositionBasis::ByDryWeight { solids: 100.0 },
+            pod: None,
+            pac: None,
+        }),
+    });
+
+    pub(crate) static COMP_TREHALOSE: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .solids(Solids::new().other(
+                SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().trehalose(100.0))),
+            ))
+            .pod(45.0)
+            .pac(PAC::new().sugars(100.0))
+    });
+
+    #[test]
+    fn into_composition_sweetener_spec_trehalose() {
+        let comp = ING_SPEC_SWEETENER_TREHALOSE.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Trehalose), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSugars), 100.0);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 100.0);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 0.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::POD), 45.0);
+        assert_eq!(comp.get(CompKey::PACsgr), 100.0);
+    }
+
+    pub(crate) const ING_SPEC_SWEETENER_ERYTHRITOL_STR: &str = r#"{
+      "name": "Erythritol",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "polyols": {
+            "erythritol": 100
+          }
+        },
+        "ByDryWeight": {
+          "solids": 100
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_ERYTHRITOL: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Erythritol".to_string(),
+        category: Category::Sweetener,
+        spec: Spec::SweetenerSpec(SweetenerSpec {
+            sweeteners: Sweeteners::new().polyols(Polyols::new().erythritol(100.0)),
+            other_carbohydrates: None,
+            other_solids: None,
+            basis: CompositionBasis::ByDryWeight { solids: 100.0 },
+            pod: None,
+            pac: None,
+        }),
+    });
+
+    pub(crate) static COMP_ERYTHRITOL: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .solids(Solids::new().other(
+                SolidsBreakdown::new().carbohydrates(Carbohydrates::new().polyols(Polyols::new().erythritol(100.0))),
+            ))
+            .pod(70.0)
+            // @todo Should PAC for polyols be separate?
+            .pac(PAC::new().sugars(280.0))
+    });
+
+    #[test]
+    fn into_composition_sweetener_spec_erythritol() {
+        let comp = ING_SPEC_SWEETENER_ERYTHRITOL.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Erythritol), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSugars), 0.0);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 100.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 100.0);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::POD), 70.0);
+        assert_eq!(comp.get(CompKey::PACsgr), 280.0);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_INVERT_SUGAR_STR: &str = r#"{
@@ -1602,8 +1724,12 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Glucose), 34.0);
         assert_eq!(comp.get(CompKey::Fructose), 34.0);
         assert_eq!(comp.get(CompKey::Sucrose), 12.0);
-
+        assert_eq!(comp.get(CompKey::TotalSugars), 80.0);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 80.0);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 80.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 0.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 80.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 98.02);
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 141.2);
@@ -1658,8 +1784,11 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Sucrose), 2.0);
         assert_eq!(comp.get(CompKey::Galactose), 1.5);
         assert_eq!(comp.get(CompKey::Maltose), 1.5);
-
+        assert_eq!(comp.get(CompKey::TotalSugars), 82.0);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 82.0);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 82.0);
         assert_eq!(comp.get(CompKey::TotalSNFS), 1.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 83.0);
         assert_eq!(comp.get(CompKey::POD), 103.185);
@@ -1702,10 +1831,11 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::Fructose), 31.92);
         assert_eq!(comp.get(CompKey::Glucose), 40.28);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 31.92 + 40.28 + 3.8);
-
         assert_eq!(comp.get(CompKey::TotalSugars), 72.2);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 76.0 - 3.8);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 72.2);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 76.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 3.8);
         assert_eq!(comp.get(CompKey::TotalSolids), 76.0);
         assert_eq!(comp.get(CompKey::POD), 87.4456);
@@ -1758,10 +1888,10 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Fructose), 0.0);
         assert_eq!(comp.get(CompKey::Glucose), 0.57);
         assert_eq_flt_test!(comp.get(CompKey::Maltose), 2.66);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 95.0);
-
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 3.23);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 3.23);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 95.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 91.77);
         assert_eq!(comp.get(CompKey::TotalSolids), 95.0);
         assert_eq!(comp.get(CompKey::POD), 10.45);
@@ -1814,10 +1944,10 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Fructose), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::Glucose), 15.2);
         assert_eq_flt_test!(comp.get(CompKey::Maltose), 11.2);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 80.0);
-
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 26.4);
         assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 26.4);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 80.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 53.6);
         assert_eq!(comp.get(CompKey::TotalSolids), 80.0);
         assert_eq!(comp.get(CompKey::POD), 40.0);
@@ -1870,10 +2000,11 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Fructose), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::Glucose), 1.9);
         assert_eq_flt_test!(comp.get(CompKey::Maltose), 9.5);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 95.0);
-
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 11.4);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 11.4);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 95.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 83.6);
         assert_eq!(comp.get(CompKey::TotalSolids), 95.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 26.6);
@@ -1926,10 +2057,11 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Fructose), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::Glucose), 18.05);
         assert_eq_flt_test!(comp.get(CompKey::Maltose), 13.3);
-        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 95.0);
-
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 31.35);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 31.35);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 95.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 63.65);
         assert_eq!(comp.get(CompKey::TotalSolids), 95.0);
         assert_eq!(comp.get(CompKey::POD), 47.5);
@@ -2416,6 +2548,8 @@ pub(crate) mod tests {
             (ING_SPEC_SWEETENER_SUCROSE_STR, ING_SPEC_SWEETENER_SUCROSE.clone(), Some(*COMP_SUCROSE)),
             (ING_SPEC_SWEETENER_DEXTROSE_STR, ING_SPEC_SWEETENER_DEXTROSE.clone(), None),
             (ING_SPEC_SWEETENER_FRUCTOSE_STR, ING_SPEC_SWEETENER_FRUCTOSE.clone(), Some(*COMP_FRUCTOSE)),
+            (ING_SPEC_SWEETENER_TREHALOSE_STR, ING_SPEC_SWEETENER_TREHALOSE.clone(), Some(*COMP_TREHALOSE)),
+            (ING_SPEC_SWEETENER_ERYTHRITOL_STR, ING_SPEC_SWEETENER_ERYTHRITOL.clone(), Some(*COMP_ERYTHRITOL)),
             (ING_SPEC_SWEETENER_INVERT_SUGAR_STR, ING_SPEC_SWEETENER_INVERT_SUGAR.clone(), None),
             (ING_SPEC_SWEETENER_HONEY_STR, ING_SPEC_SWEETENER_HONEY.clone(), None),
             (ING_SPEC_SWEETENER_HFCS42_STR, ING_SPEC_SWEETENER_HFCS42.clone(), None),

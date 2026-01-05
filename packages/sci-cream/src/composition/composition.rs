@@ -160,10 +160,12 @@ pub enum CompKey {
     Sucrose,
     Lactose,
     Maltose,
+    Trehalose,
     TotalSugars,
-    Polyols,
+    Erythritol,
+    TotalPolyols,
     TotalCarbohydrates,
-    ArtificialSweeteners,
+    TotalArtificial,
     TotalSweeteners,
 
     Alcohol,
@@ -294,15 +296,17 @@ impl Composition {
             CompKey::Sucrose => self.solids.all().carbohydrates.sugars.sucrose,
             CompKey::Lactose => self.solids.all().carbohydrates.sugars.lactose,
             CompKey::Maltose => self.solids.all().carbohydrates.sugars.maltose,
+            CompKey::Trehalose => self.solids.all().carbohydrates.sugars.trehalose,
             CompKey::TotalSugars => self.solids.all().carbohydrates.sugars.total(),
-            CompKey::Polyols => self.solids.all().carbohydrates.polyols.total(),
-            CompKey::TotalCarbohydrates => self.solids.all().carbohydrates.total(),
-            CompKey::ArtificialSweeteners => self.solids.all().artificial_sweeteners.total(),
+            CompKey::Erythritol => self.solids.all().carbohydrates.polyols.erythritol,
+            CompKey::TotalPolyols => self.solids.all().carbohydrates.polyols.total(),
+            CompKey::TotalArtificial => self.solids.all().artificial_sweeteners.total(),
             CompKey::TotalSweeteners => {
                 self.solids.all().carbohydrates.sugars.total()
                     + self.solids.all().carbohydrates.polyols.total()
                     + self.solids.all().artificial_sweeteners.total()
             }
+            CompKey::TotalCarbohydrates => self.solids.all().carbohydrates.total(),
 
             CompKey::Alcohol => self.alcohol.by_weight,
             CompKey::ABV => self.alcohol.to_abv(),
@@ -421,9 +425,9 @@ mod tests {
             (CompKey::Water, 89.18),
             (CompKey::Lactose, 4.8069),
             (CompKey::TotalSugars, 4.8069),
-            (CompKey::TotalCarbohydrates, 4.8069),
-            (CompKey::ArtificialSweeteners, 0.0),
+            (CompKey::TotalArtificial, 0.0),
             (CompKey::TotalSweeteners, 4.8069),
+            (CompKey::TotalCarbohydrates, 4.8069),
             (CompKey::POD, 0.769104),
             (CompKey::PACsgr, 4.8069),
             (CompKey::PACmlk, 3.2405),
