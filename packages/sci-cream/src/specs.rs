@@ -1824,6 +1824,62 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACsgr), 63.2);
     }
 
+    pub(crate) const ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE_STR: &str = r#"{
+      "name": "Glucose Powder 25 DE",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "sugars": {
+            "glucose": 2,
+            "maltose": 10
+          }
+        },
+        "other_carbohydrates": 88,
+        "ByDryWeight": {
+          "solids": 95
+        },
+        "pod": {
+          "OfSolids": 28
+        },
+        "pac": {
+          "OfSolids": {
+            "molar_mass": 720
+          }
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Glucose Powder 25 DE".to_string(),
+            category: Category::Sweetener,
+            spec: Spec::SweetenerSpec(SweetenerSpec {
+                sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(2.0).maltose(10.0)),
+                other_carbohydrates: Some(88.0),
+                other_solids: None,
+                basis: CompositionBasis::ByDryWeight { solids: 95.0 },
+                pod: Some(Scaling::OfSolids(28.0)),
+                pac: Some(Scaling::OfSolids(Unit::MolarMass(720.0))),
+            }),
+        });
+
+    #[test]
+    fn into_composition_sweetener_spec_glucose_powder_25_de() {
+        let comp = ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Fructose), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::Glucose), 1.9);
+        assert_eq_flt_test!(comp.get(CompKey::Maltose), 9.5);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 95.0);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 11.4);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 11.4);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 83.6);
+        assert_eq!(comp.get(CompKey::TotalSolids), 95.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 26.6);
+        assert_eq!(comp.get(CompKey::PACsgr), 44.65);
+    }
+
     pub(crate) const ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE_STR: &str = r#"{
       "name": "Glucose Powder 42 DE",
       "category": "Sweetener",
@@ -2365,6 +2421,7 @@ pub(crate) mod tests {
             (ING_SPEC_SWEETENER_HFCS42_STR, ING_SPEC_SWEETENER_HFCS42.clone(), None),
             (ING_SPEC_SWEETENER_MALTODEXTRIN_10_DE_STR, ING_SPEC_SWEETENER_MALTODEXTRIN_10_DE.clone(), None),
             (ING_SPEC_SWEETENER_GLUCOSE_SYRUP_42_DE_STR, ING_SPEC_SWEETENER_GLUCOSE_SYRUP_42_DE.clone(), None),
+            (ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE_STR, ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE.clone(), None),
             (ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE_STR, ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE.clone(), None),
             (ING_SPEC_FRUIT_STRAWBERRY_STR, ING_SPEC_FRUIT_STRAWBERRY.clone(), None),
             (ING_SPEC_CHOCOLATE_70_STR, ING_SPEC_CHOCOLATE_70.clone(), None),

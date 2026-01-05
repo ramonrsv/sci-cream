@@ -65,7 +65,7 @@
       "pod": { "OfSolids": 11 },
       "pac": { "OfSolids": { "molar_mass": 1800 } }
     },
-    "comments": "POD value and molar mass taken from _Glucose Syrups: Technology and Applications_ (Hull, 2010, Appendix C.3, p. 323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for discussion on sweetness of glucose syrups and powders."
+    "comments": "Sugar spectra, POD value, and molar mass taken from _Glucose Syrups: Technology and Applications_ (Hull, 2010, Appendix C.3, p. 323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for discussion on sweetness of glucose syrups and powders."
   },
   {
     "name": "Glucose Syrup 42 DE",
@@ -77,7 +77,19 @@
       "pod": { "OfSolids": 50 },
       "pac": { "OfSolids": { "molar_mass": 429 } }
     },
-    "comments": "POD value and molar mass taken from _Glucose Syrups: Technology and Applications_ (Hull, 2010, Appendix C.3, p. 323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for discussion on sweetness of glucose syrups and powders."
+    "comments": "Sugar spectra, POD value, and molar mass taken from _Glucose Syrups: Technology and Applications_ (Hull, 2010, Appendix C.3, p. 323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for discussion on sweetness of glucose syrups and powders."
+  },
+  {
+    "name": "Glucose Powder 25 DE",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "sugars": { "glucose": 2, "maltose": 10 } },
+      "other_carbohydrates": 88,
+      "ByDryWeight": { "solids": 95 },
+      "pod": { "OfSolids": 28 },
+      "pac": { "OfSolids": { "molar_mass": 720 } }
+    },
+    "comments": "Sugar spectra (for 'Glucose syrup 28 DE), POD value (for 'Glucose syrup solids - 25 DE'), and molar mass taken from _Glucose Syrups: Technology and Applications_ (Hull, 2010, Appendix C.3, p. 323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for discussion on sweetness of glucose syrups and powders."
   },
   {
     "name": "Glucose Powder 42 DE",
