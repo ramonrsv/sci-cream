@@ -20,11 +20,13 @@ pub mod pod {
     /// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]
     #[doc = include_str!("../docs/bibs/2.md")]
     pub const LACTOSE: f64 = 16.0;
-    /// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]
+    /// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2], (Spillane, 2006, p. 253)[^9]
     #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/bibs/9.md")]
     pub const MALTOSE: f64 = 32.0;
-    /// (Hull, 2010, Appendix C.3, p. 324)[^15]
+    /// (Hull, 2010, Appendix C.3, p. 324)[^15], (Spillane, 2006, p. 262)[^9]
     #[doc = include_str!("../docs/bibs/15.md")]
+    #[doc = include_str!("../docs/bibs/9.md")]
     pub const TREHALOSE: f64 = 45.0;
 
     /// (The European Commission, 2025, E968)[^10]

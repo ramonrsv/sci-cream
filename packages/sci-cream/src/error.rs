@@ -1,5 +1,7 @@
 use thiserror::Error;
 
+use crate::specs::Unit;
+
 #[derive(Error, Debug)]
 pub enum Error {
     #[error("Preconditions for computing POD not met: {0}")]
@@ -18,6 +20,8 @@ pub enum Error {
     NegativePacValue(f64),
     #[error("FPD value cannot be positive: {0}")]
     PositiveFpdValue(f64),
+    #[error("Composition unit is not supported for this operation: {0}")]
+    UnsupportedCompositionUnit(Unit),
 }
 
 /// Convenience type alias for [`Result<T, sci_cream::error::Error>`].

@@ -43,7 +43,7 @@
       "other_solids": 1,
       "ByTotalWeight": { "water": 17 }
     },
-    "comments": "Composition values were taken from the sugar profile in Wikipedia (https://en.wikipedia.org/wiki/Honey#Nutrition). The resulting POD/PAC values roughly align with those in Underbelly's sugars chart (https://under-belly.org/wp-content/uploads/2016/05/sugars11.png), Ice Cream 7th Edition (Table 3.4, page 67), and Ice Cream Calculator (https://icecreamcalc.com/), which differ slightly among themselves."
+    "comments": "Composition values were taken from the sugar profile in Wikipedia (https://en.wikipedia.org/wiki/Honey#Nutrition), which roughly match those in Glucose Syrups (Appendix C: Sugars data, p. 325). The resulting POD/PAC values roughly align with those in Underbelly's sugars chart (https://under-belly.org/wp-content/uploads/2016/05/sugars11.png), Ice Cream 7th Edition (Table 3.4, page 67), and Ice Cream Calculator (https://icecreamcalc.com/), which differ slightly among themselves."
   },
   {
     "name": "HFCS 42",
@@ -54,5 +54,41 @@
       "ByDryWeight": { "solids": 76 }
     },
     "comments": "High Fructose Corn Syrup 42 (HFCS 42) composition values were taken from Wikipedia (https://en.wikipedia.org/wiki/High-fructose_corn_syrup#Production). The resulting POD/PAC values match those in Ice Cream 7th Edition (Table 3.4, page 67) and Ice Cream Calculator (https://icecreamcalc.com/)."
+  },
+  {
+    "name": "Maltodextrin 10 DE",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "sugars": { "glucose": 0.6, "maltose": 2.8 } },
+      "other_carbohydrates": 96.6,
+      "ByDryWeight": { "solids": 95 },
+      "pod": { "OfSolids": 11 },
+      "pac": { "OfSolids": { "molar_mass": 1800 } }
+    },
+    "comments": "POD value and molar mass taken from _Glucose Syrups: Technology and Applications_ (Hull, 2010, Appendix C.3, p. 323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for discussion on sweetness of glucose syrups and powders."
+  },
+  {
+    "name": "Glucose Syrup 42 DE",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "sugars": { "glucose": 19, "maltose": 14 } },
+      "other_carbohydrates": 67,
+      "ByDryWeight": { "solids": 80 },
+      "pod": { "OfSolids": 50 },
+      "pac": { "OfSolids": { "molar_mass": 429 } }
+    },
+    "comments": "POD value and molar mass taken from _Glucose Syrups: Technology and Applications_ (Hull, 2010, Appendix C.3, p. 323)[^15], and solids content from _Ice Cream 7th Edition_ (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]. See [Sweetness Values](crate::docs#sweetness-values) for discussion on sweetness of glucose syrups and powders."
+  },
+  {
+    "name": "Glucose Powder 42 DE",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "sugars": { "glucose": 19, "maltose": 14 } },
+      "other_carbohydrates": 67,
+      "ByDryWeight": { "solids": 95 },
+      "pod": { "OfSolids": 50 },
+      "pac": { "OfSolids": { "molar_mass": 429 } }
+    },
+    "comments": "This is a copy of 'Glucose Syrup 42 DE' but with the solids content adjusted to 95% to reflect spray dried powder form. See the comments there for more details."
   }
 ]

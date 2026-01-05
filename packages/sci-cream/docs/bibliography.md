@@ -30,6 +30,10 @@
 
 [^15]: Hull, Peter. (2010). _Glucose Syrups: Technology and Applications_. Wiley-Blackwell <https://www.academia.edu/49026265/Glucose_Syrups_Technology_and_Applications>
 
+[^16]: The Sweetness of Glucose Syrup. (2025, December). In _NguyenStarch_. <https://nguyenstarch.com/the-sweetness-of-glucose-syrup/>
+
+[^17]: Belitz, H.-D., et al. (2009). _Food Chemistry_ (4th revised and extended Edition). Springer
+
 <!-- Ingredient references -->
 
 [^100]: Eggs, Grade A, Large, egg yolk. (2019). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/748236/nutrients>
