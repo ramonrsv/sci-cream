@@ -3,10 +3,26 @@
     "name": "Strawberry",
     "category": "Fruit",
     "FruitSpec": {
-      "sugars": { "glucose": 1.99, "fructose": 2.44, "sucrose": 0.47 },
       "water": 91,
-      "fat": 0.3
+      "energy": 32,
+      "protein": 0.67,
+      "fat": 0.3,
+      "carbohydrates": 7.68,
+      "fiber": 2,
+      "sugars": { "glucose": 1.99, "fructose": 2.44, "sucrose": 0.47 }
     },
     "comments": "USDA FoodData Central - SR Legacy Foods - Strawberries, raw (https://fdc.nal.usda.gov/food-details/167762/nutrients)."
+  },
+  {
+    "name": "Navel Orange",
+    "category": "Fruit",
+    "FruitSpec": {
+      "water": 86.7,
+      "protein": 0.91,
+      "fat": 0.15,
+      "fiber": 2,
+      "sugars": { "glucose": 2.02, "fructose": 2.36, "sucrose": 4.19 }
+    },
+    "comments": "USDA FoodData Central - Foundation - Oranges, raw, navels (https://fdc.nal.usda.gov/food-details/746771/nutrients)."
   }
 ]

@@ -341,9 +341,13 @@ impl IntoComposition for SweetenerSpec {
 
 /// Spec for fruit ingredients, with a specified [`Sugars`] composition and water content
 ///
-/// Fruits are specified by their sugar content (glucose, fructose, sucrose, etc.), water content,
-/// and optional fat content. The remaining portion up to 100% is assumed to be non-sugar, non-fat
-/// solids (snfs).
+/// Fruits are specified by their [`sugar`](Self::sugars) content (glucose, fructose, sucrose,
+/// etc.), [`water`](Self::water) content, and optional [`energy`](Self::energy),
+/// [`protein`](Self::protein), [`fat`](Self::fat), and [`fiber`](Self::fiber) content. If `energy`
+/// is not specified, it is automatically calculated from the rest of the composition. If
+/// `carbohydrates` is not specified, then it is equal to `sugars`. If any other optional values are
+/// not specified, they are assumed to be zero. Adding up all the components, any remaining portion
+/// up to 100% is assumed to be non-fat, non-sugar solids (snfs).
 ///
 /// The composition for fruit ingredients can usually be found in food composition databases, like
 /// [USDA FoodData Central](https://fdc.nal.usda.gov/food-search).
@@ -352,7 +356,11 @@ impl IntoComposition for SweetenerSpec {
 ///
 /// (Strawberries, raw, 2019)[^101] per 100g:
 /// - Water: 91g
+/// - Energy: 32 kcal
+/// - Protein: 0.67g
 /// - Total lipid (fat): 0.3g
+/// - Carbohydrate: 7.68g
+/// - Fiber: 2g
 /// - Sucrose: 0.47g
 /// - Glucose: 1.99g
 /// - Fructose: 2.44g
@@ -365,10 +373,19 @@ impl IntoComposition for SweetenerSpec {
 /// };
 ///
 /// let comp = FruitSpec {
-///     sugars: Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47),
 ///     water: 91.0,
+///     energy: Some(32.0),
+///     protein: Some(0.7),
 ///     fat: Some(0.3),
+///     carbohydrates: Some(7.68),
+///     fiber: Some(2.0),
+///     sugars: Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47),
 /// }.into_composition().unwrap();
+///
+/// assert_eq!(comp.get(CompKey::Energy), 32.0);
+/// assert_eq!(comp.get(CompKey::TotalProteins), 0.7);
+/// assert_eq!(comp.get(CompKey::TotalFats), 0.3);
+/// assert_eq!(comp.get(CompKey::TotalCarbohydrates), 7.68);
 ///
 /// assert_eq!(comp.get(CompKey::Glucose), 1.99);
 /// assert_eq!(comp.get(CompKey::Fructose), 2.44);
@@ -381,26 +398,52 @@ impl IntoComposition for SweetenerSpec {
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct FruitSpec {
-    pub sugars: Sugars,
     pub water: f64,
+    pub energy: Option<f64>,
+    pub protein: Option<f64>,
     pub fat: Option<f64>,
+    pub carbohydrates: Option<f64>,
+    pub fiber: Option<f64>,
+    pub sugars: Sugars,
 }
 
 impl IntoComposition for FruitSpec {
     fn into_composition(self) -> Result<Composition> {
-        let Self { sugars, water, fat } = self;
-        let fat = fat.unwrap_or(0.0);
+        let Self {
+            water,
+            energy,
+            protein,
+            fat,
+            carbohydrates,
+            fiber,
+            sugars,
+        } = self;
 
-        assert_are_positive(&[water, fat])?;
-        assert_within_100_percent(sugars.total() + water + fat)?;
+        let protein = protein.unwrap_or(0.0);
+        let fat = fat.unwrap_or(0.0);
+        let fiber = fiber.unwrap_or(0.0);
+        let carbohydrates = carbohydrates.unwrap_or(fiber + sugars.total());
+
+        assert_is_subset(fiber + sugars.total(), carbohydrates, "Sugars + fiber <= carbohydrates".to_string())?;
+        assert_are_positive(&[water, protein, fat, carbohydrates, fiber, sugars.total()])?;
+        assert_within_100_percent(water + protein + fat + carbohydrates)?;
 
         let solids = SolidsBreakdown::new()
             .fats(Fats::new().total(fat))
-            .carbohydrates(Carbohydrates::new().sugars(sugars))
+            .carbohydrates(
+                Carbohydrates::new()
+                    .sugars(sugars)
+                    .fiber(fiber)
+                    .others_from_total(carbohydrates)?,
+            )
+            .proteins(protein)
             .others_from_total(100.0 - water)?;
 
+        let energy = energy.unwrap_or(solids.energy()?);
+        assert_are_positive(&[energy])?;
+
         Ok(Composition::new()
-            .energy(solids.energy()?)
+            .energy(energy)
             .solids(Solids::new().other(solids))
             .pod(solids.carbohydrates.to_pod()?)
             .pac(PAC::new().sugars(solids.carbohydrates.to_pac()?)))
@@ -2163,13 +2206,17 @@ pub(crate) mod tests {
       "name": "Strawberry",
       "category": "Fruit",
       "FruitSpec": {
+        "water": 91,
+        "energy": 32,
+        "protein": 0.67,
+        "fat": 0.3,
+        "carbohydrates": 7.68,
+        "fiber": 2,
         "sugars": {
           "glucose": 1.99,
           "fructose": 2.44,
           "sucrose": 0.47
-        },
-        "water": 91,
-        "fat": 0.3
+        }
       }
     }"#;
 
@@ -2177,9 +2224,13 @@ pub(crate) mod tests {
         name: "Strawberry".to_string(),
         category: Category::Fruit,
         spec: Spec::FruitSpec(FruitSpec {
-            sugars: Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47),
             water: 91.0,
+            energy: Some(32.0),
+            protein: Some(0.67),
             fat: Some(0.3),
+            carbohydrates: Some(7.68),
+            fiber: Some(2.0),
+            sugars: Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47),
         }),
     });
 
@@ -2189,20 +2240,72 @@ pub(crate) mod tests {
     fn into_composition_fruit_spec_strawberry() {
         let comp = ING_SPEC_FRUIT_STRAWBERRY.spec.into_composition().unwrap();
 
-        // @todo This is significantly lower than reference 32
-        // Need to add protein, fiber, and carbohydrates fields to FruitSpec
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 22.3);
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 32.0);
 
+        assert_eq!(comp.get(CompKey::TotalFats), 0.3);
+        assert_eq!(comp.get(CompKey::TotalProteins), 0.67);
+        assert_eq!(comp.get(CompKey::Fiber), 2.0);
         assert_eq!(comp.get(CompKey::Glucose), 1.99);
         assert_eq!(comp.get(CompKey::Fructose), 2.44);
         assert_eq!(comp.get(CompKey::Sucrose), 0.47);
-
+        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 4.9);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 7.68);
         assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 4.90);
-        assert_eq!(comp.get(CompKey::TotalFats), 0.3);
         assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 3.8);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 9.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 6.2832);
         assert_eq!(comp.get(CompKey::PACsgr), 8.887);
+    }
+
+    pub(crate) const ING_SPEC_FRUIT_NAVEL_ORANGE_STR: &str = r#"{
+      "name": "Navel Orange",
+      "category": "Fruit",
+      "FruitSpec": {
+        "water": 86.7,
+        "protein": 0.91,
+        "fat": 0.15,
+        "fiber": 2,
+        "sugars": {
+          "glucose": 2.02,
+          "fructose": 2.36,
+          "sucrose": 4.19
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_FRUIT_NAVEL_ORANGE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Navel Orange".to_string(),
+        category: Category::Fruit,
+        spec: Spec::FruitSpec(FruitSpec {
+            water: 86.7,
+            energy: None,
+            protein: Some(0.91),
+            fat: Some(0.15),
+            carbohydrates: None,
+            fiber: Some(2.0),
+            sugars: Sugars::new().glucose(2.02).fructose(2.36).sucrose(4.19),
+        }),
+    });
+
+    #[test]
+    fn into_composition_fruit_spec_navel_orange() {
+        let comp = ING_SPEC_FRUIT_NAVEL_ORANGE.spec.into_composition().unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 39.27);
+
+        assert_eq!(comp.get(CompKey::TotalFats), 0.15);
+        assert_eq!(comp.get(CompKey::TotalProteins), 0.91);
+        assert_eq!(comp.get(CompKey::Fiber), 2.0);
+        assert_eq!(comp.get(CompKey::Glucose), 2.02);
+        assert_eq!(comp.get(CompKey::Fructose), 2.36);
+        assert_eq!(comp.get(CompKey::Sucrose), 4.19);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 8.57);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 10.57);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 8.57);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 4.58);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 13.3);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 9.8888);
+        assert_eq!(comp.get(CompKey::PACsgr), 12.512);
     }
 
     pub(crate) const ING_SPEC_CHOCOLATE_70_STR: &str = r#"{
@@ -2667,6 +2770,7 @@ pub(crate) mod tests {
             (ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE_STR, ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE.clone(), None),
             (ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE_STR, ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE.clone(), None),
             (ING_SPEC_FRUIT_STRAWBERRY_STR, ING_SPEC_FRUIT_STRAWBERRY.clone(), None),
+            (ING_SPEC_FRUIT_NAVEL_ORANGE_STR, ING_SPEC_FRUIT_NAVEL_ORANGE.clone(), None),
             (ING_SPEC_CHOCOLATE_70_STR, ING_SPEC_CHOCOLATE_70.clone(), None),
             (ING_SPEC_CHOCOLATE_100_STR, ING_SPEC_CHOCOLATE_100.clone(), None),
             (ING_SPEC_CHOCOLATE_COCOA_POWDER_17_STR, ING_SPEC_CHOCOLATE_COCOA_POWDER_17.clone(), None),

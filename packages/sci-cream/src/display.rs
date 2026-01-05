@@ -41,6 +41,7 @@ impl KeyAsStrings for CompKey {
 
             CompKey::Water => "Water",
 
+            CompKey::Fiber => "Fiber",
             CompKey::Glucose => "Glucose",
             CompKey::Fructose => "Fructose",
             CompKey::Galactose => "Galactose",
@@ -159,6 +160,7 @@ mod tests {
             "T. Proteins",
             "T. Solids",
             "Water",
+            "Fiber",
             "Glucose",
             "Fructose",
             "Galactose",

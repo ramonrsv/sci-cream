@@ -159,6 +159,7 @@ pub enum CompKey {
     /// Water content, `100 - TotalSolids - Alcohol.by_weight`
     Water,
 
+    Fiber,
     Glucose,
     Fructose,
     Galactose,
@@ -302,6 +303,7 @@ impl Composition {
 
             CompKey::Water => self.water(),
 
+            CompKey::Fiber => self.solids.all().carbohydrates.fiber,
             CompKey::Glucose => self.solids.all().carbohydrates.sugars.glucose,
             CompKey::Fructose => self.solids.all().carbohydrates.sugars.fructose,
             CompKey::Galactose => self.solids.all().carbohydrates.sugars.galactose,
