@@ -22,7 +22,9 @@ use crate::{
 #[cfg(doc)]
 use crate::{
     composition::{ArtificialSweeteners, Polyols},
-    constants::{STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM, STD_PROTEIN_IN_MSNF, STD_SATURATED_FAT_IN_MILK_FAT},
+    constants::composition::{
+        STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM, STD_PROTEIN_IN_MSNF, STD_SATURATED_FAT_IN_MILK_FAT,
+    },
 };
 
 pub trait IntoComposition {
@@ -91,20 +93,20 @@ impl IntoComposition for DairySpec {
     fn into_composition(self) -> Result<Composition> {
         let Self { fat, msnf } = self;
 
-        let calculated_msnf = (100.0 - fat) * constants::STD_MSNF_IN_MILK_SERUM;
+        let calculated_msnf = (100.0 - fat) * constants::composition::STD_MSNF_IN_MILK_SERUM;
         let msnf = msnf.unwrap_or(calculated_msnf);
         assert_are_positive(&[fat, msnf])?;
         assert_within_100_percent(fat + msnf)?;
 
-        let lactose = msnf * constants::STD_LACTOSE_IN_MSNF;
-        let proteins = msnf * constants::STD_PROTEIN_IN_MSNF;
+        let lactose = msnf * constants::composition::STD_LACTOSE_IN_MSNF;
+        let proteins = msnf * constants::composition::STD_PROTEIN_IN_MSNF;
 
         let milk_solids = SolidsBreakdown::new()
             .fats(
                 Fats::new()
                     .total(fat)
-                    .saturated(fat * constants::STD_SATURATED_FAT_IN_MILK_FAT)
-                    .trans(fat * constants::STD_TRANS_FAT_IN_MILK_FAT),
+                    .saturated(fat * constants::composition::STD_SATURATED_FAT_IN_MILK_FAT)
+                    .trans(fat * constants::composition::STD_TRANS_FAT_IN_MILK_FAT),
             )
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(lactose)))
             .proteins(proteins)
@@ -706,10 +708,10 @@ impl IntoComposition for EggSpec {
 ///
 /// The composition of spirits is trivial, consisting of only the [`ABV`](Self::abv) ("Alcohol by
 /// volume", 2025)[^8]) that is always present on the label, and is internally converted to `ABW`
-/// (Alcohol by weight) via [`constants::ABV_TO_ABW_RATIO`]. Liqueurs, creams, and other alcohol
-/// ingredients may also contain sugar, fat, and other solids. These can be tricky to find, since
-/// nutrition facts tables are not usually mandated for alcoholic beverages. The best approach is
-/// to find a nutrition facts table from the manufacturer if available, otherwise to look for
+/// (Alcohol by weight) via [`constants::density::ABV_TO_ABW_RATIO`]. Liqueurs, creams, and other
+/// alcohol ingredients may also contain sugar, fat, and other solids. These can be tricky to find,
+/// since nutrition facts tables are not usually mandated for alcoholic beverages. The best approach
+/// is to find a nutrition facts table from the manufacturer if available, otherwise to look for
 /// unofficial sources online. Aside from `ABV`, the exact composition is not usually critical,
 /// since alcohol ingredients are typically used in small amounts in ice cream mixes.
 ///

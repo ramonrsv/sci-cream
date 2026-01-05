@@ -25,7 +25,7 @@ impl Alcohol {
 
     pub fn from_abv(abv: f64) -> Self {
         Self {
-            by_weight: abv * constants::ABV_TO_ABW_RATIO,
+            by_weight: abv * constants::density::ABV_TO_ABW_RATIO,
         }
     }
 }
@@ -42,7 +42,7 @@ impl Alcohol {
     }
 
     pub fn to_abv(&self) -> f64 {
-        self.by_weight / constants::ABV_TO_ABW_RATIO
+        self.by_weight / constants::density::ABV_TO_ABW_RATIO
     }
 
     pub fn to_pac(&self) -> f64 {

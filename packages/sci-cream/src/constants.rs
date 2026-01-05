@@ -118,9 +118,10 @@ pub mod pac {
 
     /// PAC for typical salt content in milk solids non-fat (MSNF) and whey solids (WS)
     ///
-    /// This value was reverse engineered from [`constants::FPD_CONST_FOR_MSNF_WS_SALTS`],
+    /// This value was reverse engineered from [`constants::fpd::FPD_CONST_FOR_MSNF_WS_SALTS`],
     /// calculated via [`get_pac_from_fpd_polynomial(...)`](crate::fpd::get_pac_from_fpd_polynomial)
-    /// with [`constants::FPD_CONST_FOR_MSNF_WS_SALTS`] and [`constants::PAC_TO_FPD_POLY_COEFFS`].
+    /// with argument [`constants::fpd::FPD_CONST_FOR_MSNF_WS_SALTS`] for the target FPD, and using
+    /// the polynomial described by [`constants::fpd::PAC_TO_FPD_POLY_COEFFS`].
     pub const MSNF_WS_SALTS: f64 = 36.74040576149157;
 }
 
@@ -135,38 +136,40 @@ pub mod hf {
     pub const NUT_FAT: f64 = 1.4;
 }
 
-/// Percentage of milk solids non-fat (MSNF) typical of milk serum (Goff & Hartel, 2013, p. 160)[^2]
-#[doc = include_str!("../docs/bibs/2.md")]
-pub const STD_MSNF_IN_MILK_SERUM: f64 = 0.09;
+pub mod composition {
+    /// Percentage of milk solids non-fat (MSNF) typical of milk serum (Goff & Hartel, 2013, p. 160)[^2]
+    #[doc = include_str!("../docs/bibs/2.md")]
+    pub const STD_MSNF_IN_MILK_SERUM: f64 = 0.09;
 
-/// Percentage of lactose typical of milk solids non-fat (MSNF) (Goff & Hartel, 2013, p. 181)[^2]
-#[doc = include_str!("../docs/bibs/2.md")]
-pub const STD_LACTOSE_IN_MSNF: f64 = 0.545;
+    /// Percentage of lactose typical of milk solids non-fat (MSNF) (Goff & Hartel, 2013, p. 181)[^2]
+    #[doc = include_str!("../docs/bibs/2.md")]
+    pub const STD_LACTOSE_IN_MSNF: f64 = 0.545;
 
-/// Percentage of lactose typically found in whey solids (WS) (Goff & Hartel, 2013, p. 181)[^2]
-#[doc = include_str!("../docs/bibs/2.md")]
-pub const STD_LACTOSE_IN_WS: f64 = 0.765;
+    /// Percentage of lactose typically found in whey solids (WS) (Goff & Hartel, 2013, p. 181)[^2]
+    #[doc = include_str!("../docs/bibs/2.md")]
+    pub const STD_LACTOSE_IN_WS: f64 = 0.765;
 
-/// Percentage of protein typical of milk solids non-fat (MSNF) (Goff & Hartel, 2013, p. 35)[^2]
-#[doc = include_str!("../docs/bibs/2.md")]
-pub const STD_PROTEIN_IN_MSNF: f64 = 0.35;
+    /// Percentage of protein typical of milk solids non-fat (MSNF) (Goff & Hartel, 2013, p. 35)[^2]
+    #[doc = include_str!("../docs/bibs/2.md")]
+    pub const STD_PROTEIN_IN_MSNF: f64 = 0.35;
 
-/// Percentage of protein typically found in whey solids (WS) (Goff & Hartel, 2013, p. 35)[^2]
-#[doc = include_str!("../docs/bibs/2.md")]
-pub const STD_PROTEIN_IN_WS: f64 = 0.12;
+    /// Percentage of protein typically found in whey solids (WS) (Goff & Hartel, 2013, p. 35)[^2]
+    #[doc = include_str!("../docs/bibs/2.md")]
+    pub const STD_PROTEIN_IN_WS: f64 = 0.12;
 
-/// Percentage of saturated fats typical of milk fat (Board on Agriculture..., 1974, p. 203)[^12]
-#[doc = include_str!("../docs/bibs/12.md")]
-pub const STD_SATURATED_FAT_IN_MILK_FAT: f64 = 0.65;
+    /// Percentage of saturated fats typical of milk fat (Board on Agriculture..., 1974, p. 203)[^12]
+    #[doc = include_str!("../docs/bibs/12.md")]
+    pub const STD_SATURATED_FAT_IN_MILK_FAT: f64 = 0.65;
 
-/// Percentage of trans fats typically found in milk fat (Milk, whole, 3.25% milkfat, with added
-/// Vitamin D, 2019)[^103]
-#[doc = include_str!("../docs/bibs/103.md")]
-pub const STD_TRANS_FAT_IN_MILK_FAT: f64 = 0.035;
+    /// Percentage of trans fats typically found in milk fat (Milk, whole, 3.25% milkfat, with added
+    /// Vitamin D, 2019)[^103]
+    #[doc = include_str!("../docs/bibs/103.md")]
+    pub const STD_TRANS_FAT_IN_MILK_FAT: f64 = 0.035;
 
-/// Percentage of saturated fats typical of egg fat (Board on Agriculture..., 1974, p. 203)[^12]
-#[doc = include_str!("../docs/bibs/12.md")]
-pub const STD_SATURATED_FAT_IN_EGG_FAT: f64 = 0.28;
+    /// Percentage of saturated fats typical of egg fat (Board on Agriculture..., 1974, p. 203)[^12]
+    #[doc = include_str!("../docs/bibs/12.md")]
+    pub const STD_SATURATED_FAT_IN_EGG_FAT: f64 = 0.28;
+}
 
 /// Energy constants (kcal/g) for macronutrients and other components
 ///
@@ -208,15 +211,15 @@ pub mod energy {
     pub const SUCRALOSE: f64 = 0.0; // @todo
 }
 
-/// Ratio to convert Alcohol by Volume (ABV) to Alcohol by Weight (ABW)
-///
-/// _"Because of the miscibility of alcohol and water, the conversion factor is not constant but
-/// rather depends upon the concentration of alcohol."_ ("Alcohol by volume", 2025)[^8] However,
-/// for typical ice cream alcohol contents the approximation of 0.789 is sufficiently accurate.
-#[doc = include_str!("../docs/bibs/8.md")]
-pub const ABV_TO_ABW_RATIO: f64 = 0.789;
-
 pub mod density {
+    /// Ratio to convert Alcohol by Volume (ABV) to Alcohol by Weight (ABW)
+    ///
+    /// _"Because of the miscibility of alcohol and water, the conversion factor is not constant but
+    /// rather depends upon the concentration of alcohol."_ ("Alcohol by volume", 2025)[^8] However,
+    /// for typical ice cream alcohol contents the approximation of 0.789 is sufficiently accurate.
+    #[doc = include_str!("../docs/bibs/8.md")]
+    pub const ABV_TO_ABW_RATIO: f64 = 0.789;
+
     /// Density (g/mL) of milk with 2% fat content
     ///
     /// _Milk, liquid, partially skimmed_ (Charrondiere et al., 2011, p. 2)[^14]
@@ -255,116 +258,118 @@ pub mod density {
     }
 }
 
-/// Typical ideal serving temperature (in °C) for ice cream (Raphaelson, 2016, Hardness)[^7]
-#[doc = include_str!("../docs/bibs/7.md")]
-pub const TARGET_SERVING_TEMP_14C: f64 = -14.0;
+pub mod fpd {
+    /// Typical ideal serving temperature (in °C) for ice cream (Raphaelson, 2016, Hardness)[^7]
+    #[doc = include_str!("../docs/bibs/7.md")]
+    pub const TARGET_SERVING_TEMP_14C: f64 = -14.0;
 
-pub const SERVING_TEMP_X_AXIS: usize = 75;
+    pub const SERVING_TEMP_X_AXIS: usize = 75;
 
-/// PAC to FPD polynomial coefficients, a*x^2 + b*x + c => [a, b, c]
-///
-/// _Polynominal equation with intercept through zero derived from regression model where g
-/// sucrose/100 g water is graphed against FPD °C._ (Goff & Hartel, 2013, Table 6.3.c, p. 186)[^2]
-#[doc = include_str!("../docs/bibs/2.md")]
-pub const PAC_TO_FPD_POLY_COEFFS: [f64; 3] = [-0.00009, -0.0612, 0.0];
+    /// PAC to FPD polynomial coefficients, a*x^2 + b*x + c => [a, b, c]
+    ///
+    /// _Polynominal equation with intercept through zero derived from regression model where g
+    /// sucrose/100 g water is graphed against FPD °C._ (Goff & Hartel, 2013, Table 6.3.c, p. 186)[^2]
+    #[doc = include_str!("../docs/bibs/2.md")]
+    pub const PAC_TO_FPD_POLY_COEFFS: [f64; 3] = [-0.00009, -0.0612, 0.0];
 
-/// Freezing Point Depression (FPD) constant (°C) for salts contained in MSNF and WS
-///
-/// _The freezing point depression for salts (°C) contained in MSNF and WS, ... based on the average
-/// molecular weight and concentration of salts present in milk._ (Goff & Hartel, 2013, p.183)[^2]
-#[doc = include_str!("../docs/bibs/2.md")]
-pub const FPD_CONST_FOR_MSNF_WS_SALTS: f64 = -2.37;
+    /// Freezing Point Depression (FPD) constant (°C) for salts contained in MSNF and WS
+    ///
+    /// _The freezing point depression for salts (°C) contained in MSNF and WS, ... based on the average
+    /// molecular weight and concentration of salts present in milk._ (Goff & Hartel, 2013, p.183)[^2]
+    #[doc = include_str!("../docs/bibs/2.md")]
+    pub const FPD_CONST_FOR_MSNF_WS_SALTS: f64 = -2.37;
 
-/// PAC to FPD lookup table
-///
-/// Table of empirical measurements, referenced from  _Freezing point depression (°C) below 0°C of
-/// sucrose solutions (g/100g water)_ (Goff & Hartel, 2013, Table 6.1, p. 182)[^2]
-#[doc = include_str!("../docs/bibs/2.md")]
-pub const PAC_TO_FPD_TABLE: [(usize, f64); 61] = [
-    // (g Sucrose/100g water, FPD (°C))
-    (0, 0.00),
-    (3, 0.18),
-    (6, 0.35),
-    (9, 0.53),
-    (12, 0.72),
-    (15, 0.90),
-    (18, 1.10),
-    (21, 1.29),
-    (24, 1.47),
-    (27, 1.67),
-    (30, 1.86),
-    (33, 2.03),
-    (36, 2.21),
-    (39, 2.40),
-    (42, 2.60),
-    (45, 2.78),
-    (48, 2.99),
-    (51, 3.20),
-    (54, 3.42),
-    (57, 3.63),
-    (60, 3.85),
-    (63, 4.10),
-    (66, 4.33),
-    (69, 4.54),
-    (72, 4.77),
-    (75, 5.00),
-    (78, 5.26),
-    (81, 5.53),
-    (84, 5.77),
-    (87, 5.99),
-    (90, 6.23),
-    (93, 6.50),
-    (96, 6.80),
-    (99, 7.04),
-    (102, 7.32),
-    (105, 7.56),
-    (108, 7.80),
-    (111, 8.04),
-    (114, 8.33),
-    (117, 8.62),
-    (120, 8.92),
-    (123, 9.19),
-    (126, 9.45),
-    (129, 9.71),
-    (132, 9.96),
-    (135, 10.22),
-    (138, 10.47),
-    (141, 10.72),
-    (144, 10.97),
-    (147, 11.19),
-    (150, 11.41),
-    (153, 11.63),
-    (156, 11.88),
-    (159, 12.14),
-    (162, 12.40),
-    (165, 12.67),
-    (168, 12.88),
-    (171, 13.08),
-    (174, 13.28),
-    (177, 13.48),
-    (180, 13.68),
-];
+    /// PAC to FPD lookup table
+    ///
+    /// Table of empirical measurements, referenced from  _Freezing point depression (°C) below 0°C of
+    /// sucrose solutions (g/100g water)_ (Goff & Hartel, 2013, Table 6.1, p. 182)[^2]
+    #[doc = include_str!("../docs/bibs/2.md")]
+    pub const PAC_TO_FPD_TABLE: [(usize, f64); 61] = [
+        // (g Sucrose/100g water, FPD (°C))
+        (0, 0.00),
+        (3, 0.18),
+        (6, 0.35),
+        (9, 0.53),
+        (12, 0.72),
+        (15, 0.90),
+        (18, 1.10),
+        (21, 1.29),
+        (24, 1.47),
+        (27, 1.67),
+        (30, 1.86),
+        (33, 2.03),
+        (36, 2.21),
+        (39, 2.40),
+        (42, 2.60),
+        (45, 2.78),
+        (48, 2.99),
+        (51, 3.20),
+        (54, 3.42),
+        (57, 3.63),
+        (60, 3.85),
+        (63, 4.10),
+        (66, 4.33),
+        (69, 4.54),
+        (72, 4.77),
+        (75, 5.00),
+        (78, 5.26),
+        (81, 5.53),
+        (84, 5.77),
+        (87, 5.99),
+        (90, 6.23),
+        (93, 6.50),
+        (96, 6.80),
+        (99, 7.04),
+        (102, 7.32),
+        (105, 7.56),
+        (108, 7.80),
+        (111, 8.04),
+        (114, 8.33),
+        (117, 8.62),
+        (120, 8.92),
+        (123, 9.19),
+        (126, 9.45),
+        (129, 9.71),
+        (132, 9.96),
+        (135, 10.22),
+        (138, 10.47),
+        (141, 10.72),
+        (144, 10.97),
+        (147, 11.19),
+        (150, 11.41),
+        (153, 11.63),
+        (156, 11.88),
+        (159, 12.14),
+        (162, 12.40),
+        (165, 12.67),
+        (168, 12.88),
+        (171, 13.08),
+        (174, 13.28),
+        (177, 13.48),
+        (180, 13.68),
+    ];
 
-/// Reference table for Corvitto PAC to serving temperature (Corvitto, 2005, p. 78)[^3]
-///
-/// For most standard ice cream mixes this roughly matches the FPD at ~70% frozen water calculated
-/// using the Goff & Hartel method (2013, p. 181)[^2] with [`PAC_TO_FPD_POLY_COEFFS`], adjusting
-/// [`PAC::sugars`](crate::composition::PAC::sugars) to match the PAC in this table, but ignoring
-/// the contributions to FPD by salts present in MSNF/WS - Corvitto seems to have ignored these.
-#[doc = include_str!("../docs/bibs/2.md")]
-#[doc = include_str!("../docs/bibs/3.md")]
-pub const CORVITTO_PAC_TO_SERVING_TEMP_TABLE: [(f64, f64); 9] = [
-    // (pac, serving_temp)
-    (25.0, -10.0),
-    (27.0, -11.0),
-    (29.0, -12.0),
-    (31.0, -13.0),
-    (33.0, -14.0),
-    (35.0, -15.0),
-    (37.0, -16.0),
-    (39.0, -17.0),
-    (41.0, -18.0),
-];
+    /// Reference table for Corvitto PAC to serving temperature (Corvitto, 2005, p. 78)[^3]
+    ///
+    /// For most standard ice cream mixes this roughly matches the FPD at ~70% frozen water calculated
+    /// using the Goff & Hartel method (2013, p. 181)[^2] with [`PAC_TO_FPD_POLY_COEFFS`], adjusting
+    /// [`PAC::sugars`](crate::composition::PAC::sugars) to match the PAC in this table, but ignoring
+    /// the contributions to FPD by salts present in MSNF/WS - Corvitto seems to have ignored these.
+    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/bibs/3.md")]
+    pub const CORVITTO_PAC_TO_SERVING_TEMP_TABLE: [(f64, f64); 9] = [
+        // (pac, serving_temp)
+        (25.0, -10.0),
+        (27.0, -11.0),
+        (29.0, -12.0),
+        (31.0, -13.0),
+        (33.0, -14.0),
+        (35.0, -15.0),
+        (37.0, -16.0),
+        (39.0, -17.0),
+        (41.0, -18.0),
+    ];
+}
 
 /// Epsilon value for floating point comparisons of compositions, e.g. water content
 pub const COMPOSITION_EPSILON: f64 = 1e-10;

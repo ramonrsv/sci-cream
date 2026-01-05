@@ -10,8 +10,11 @@ use wasm_bindgen::prelude::*;
 use crate::{
     composition::{CompKey, Composition},
     constants::{
-        COMPOSITION_EPSILON, CORVITTO_PAC_TO_SERVING_TEMP_TABLE, FPD_CONST_FOR_MSNF_WS_SALTS, PAC_TO_FPD_POLY_COEFFS,
-        PAC_TO_FPD_TABLE, SERVING_TEMP_X_AXIS, TARGET_SERVING_TEMP_14C,
+        COMPOSITION_EPSILON,
+        fpd::{
+            CORVITTO_PAC_TO_SERVING_TEMP_TABLE, FPD_CONST_FOR_MSNF_WS_SALTS, PAC_TO_FPD_POLY_COEFFS, PAC_TO_FPD_TABLE,
+            SERVING_TEMP_X_AXIS, TARGET_SERVING_TEMP_14C,
+        },
     },
     error::{Error, Result},
     util::iter_all_abs_diff_eq,
@@ -455,7 +458,8 @@ mod tests {
     use crate::{
         composition::{Carbohydrates, CompKey, Composition, Fats, PAC, Solids, SolidsBreakdown, Sugars},
         constants::{
-            CORVITTO_PAC_TO_SERVING_TEMP_TABLE, FPD_CONST_FOR_MSNF_WS_SALTS, STD_LACTOSE_IN_MSNF, STD_LACTOSE_IN_WS,
+            composition::{STD_LACTOSE_IN_MSNF, STD_LACTOSE_IN_WS},
+            fpd::{CORVITTO_PAC_TO_SERVING_TEMP_TABLE, FPD_CONST_FOR_MSNF_WS_SALTS},
             pac,
         },
     };
