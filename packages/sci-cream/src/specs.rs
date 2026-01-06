@@ -13,7 +13,7 @@ use crate::{
         Alcohol, Carbohydrates, CompKey, Composition, Fats, Micro, PAC, ScaleComponents, Solids, SolidsBreakdown,
         Sugars, Sweeteners,
     },
-    constants::{self, density::dairy_milliliters_to_grams, molar_mass::pac_from_molar_mass},
+    constants::{self, composition::cacao, density::dairy_milliliters_to_grams, molar_mass::pac_from_molar_mass},
     error::{Error, Result},
     ingredients::{Category, Ingredient},
     validate::{assert_are_positive, assert_is_100_percent, assert_is_subset, assert_within_100_percent},
@@ -452,7 +452,7 @@ impl IntoComposition for FruitSpec {
     }
 }
 
-/// Spec for chocolate ingredients, with cacao solids, cocoa butter, and optional sugar
+/// Spec for chocolate ingredients, with cacao solids, cocoa butter, and optional sugar and others
 ///
 /// The terminology around chocolate ingredients can be confusing and used inconsistently across
 /// different industries and stages of processing. For clarity, within this library we define:
@@ -470,18 +470,28 @@ impl IntoComposition for FruitSpec {
 ///     generally determines how "chocolatey" the flavor is. This value is specified in
 ///     [`Composition`] accessible via [`CompKey::CocoaSolids`].
 ///
-/// The relation of the above components is `cacao solids = cocoa butter + cocoa solids`. The sugar
-/// content of chocolate ingredients is optional, assumed to be zero if not specified, as some
-/// chocolates (e.g. Unsweetened Chocolate) may not contain any sugar at all. Any non-zero sugar
-/// content is specified in [`Composition`] accessible via [`CompKey::TotalSugars`]. The total
-/// solids content of chocolate ingredients is assumed to be 100% (i.e. no water content). If
-/// [`sugar`](Self::sugar) and [`cacao_solids`](Self::cacao_solids) do not add up to 100%, then the
-/// remaining portion is assumed to be other non-sugar, non-fat solids, specified in [`Composition`]
-/// accessible via [`CompKey::OtherSNFS`], e.g. emulsifiers, impurities in demerara sugar, etc.
+/// The relation of the above components is `cacao solids = cocoa butter + cocoa solids`. The
+/// [`sugar`](Self::sugar) content of chocolate ingredients is optional, assumed to be zero if not
+/// specified, as some chocolates (e.g. Unsweetened Chocolate) and most chocolate powders do not
+/// contain any added sugars. Any non-zero sugar content is specified in [`Composition`] accessible
+/// via [`CompKey::TotalSugars`]. The [`other_solids`](Self::other_solids) content is optional,
+/// assumed to be zero if not specified, and represents other non-sugar, non-fats solids, e.g.
+/// emulsifiers, impurities in demerara sugar, etc. If non-zero, it is specified in [`Composition`]
+/// accessible via [`CompKey::OtherSNFS`]. [`cacao_solids`](Self::cacao_solids),
+/// [`sugar`](Self::sugar), and [`other_solids`](Self::other_solids) together must add up to 100%.
 /// Cocoa Powder products are typically 100% cacao solids, with no sugar, and cocoa butter content
 /// ranging from ~10-24%.
 ///
+/// The cocoa solids content is further broken down into proteins, carbohydrates - including fiber,
+/// and ash based on standard values for cocoa solids, specified in [`constants::cacao`], e.g.
+/// [`cacao::STD_PROTEIN_IN_COCOA_SOLIDS`], [`cacao::STD_CARBOHYDRATES_IN_COCOA_SOLIDS`], etc.
+///
 /// # Examples
+///
+/// (70% Cacao Dark Chocolate, 2025)[^107] per 40g serving:
+/// - Cacao solids: 70%
+/// - Cocoa butter: 16g fat => 40%
+/// - Sugar: 12g => 30%
 ///
 /// ```
 /// use sci_cream::{
@@ -489,28 +499,34 @@ impl IntoComposition for FruitSpec {
 ///     specs::{ChocolateSpec, IntoComposition}
 /// };
 ///
-/// // 70% Cacao Dark Chocolate
-/// // https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g
-/// // 16g/40g fat in nutrition table => 40%% cocoa butter
-/// // 12g/40g sugars in nutrition table => 30% sugar
 /// let comp = ChocolateSpec {
 ///     cacao_solids: 70.0,
 ///     cocoa_butter: 40.0,
 ///     sugar: Some(30.0),
+///     other_solids: None,
 /// }.into_composition().unwrap();
 ///
 /// assert_eq!(comp.get(CompKey::Sucrose), 30.0);
 /// assert_eq!(comp.get(CompKey::CacaoSolids), 70.0);
 /// assert_eq!(comp.get(CompKey::CocoaButter), 40.0);
 /// assert_eq!(comp.get(CompKey::CocoaSolids), 30.0);
+/// ```
 ///
-/// // 100% Unsweetened Cocoa Powder
-/// // https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs
-/// // 1g/6g fat in nutrition table => 16.67% cocoa butter
+/// (100% Unsweetened Cocoa Powder, 2025)[^108] per 6g serving:
+/// - Cacao solids: 100%
+/// - Cocoa butter: 1g fat => 16.67%
+///
+/// ```
+/// # use sci_cream::{
+/// #     composition::CompKey,
+/// #     specs::{ChocolateSpec, IntoComposition}
+/// # };
+/// #
 /// let comp = ChocolateSpec {
 ///     cacao_solids: 100.0,
 ///     cocoa_butter: 16.67,
 ///     sugar: None,
+///     other_solids: None,
 /// }.into_composition().unwrap();
 ///
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
@@ -518,6 +534,8 @@ impl IntoComposition for FruitSpec {
 /// assert_eq!(comp.get(CompKey::CocoaButter), 16.67);
 /// assert_eq!(comp.get(CompKey::CocoaSolids), 83.33);
 /// ```
+#[doc = include_str!("../docs/bibs/107.md")]
+#[doc = include_str!("../docs/bibs/108.md")]
 // @todo Add a `msnf` field to support milk chocolate products (some professional chocolatier use)
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
@@ -525,6 +543,7 @@ pub struct ChocolateSpec {
     pub cacao_solids: f64,
     pub cocoa_butter: f64,
     pub sugar: Option<f64>,
+    pub other_solids: Option<f64>,
 }
 
 impl IntoComposition for ChocolateSpec {
@@ -533,24 +552,36 @@ impl IntoComposition for ChocolateSpec {
             cacao_solids,
             cocoa_butter,
             sugar,
+            other_solids,
         } = self;
 
         let sugar = sugar.unwrap_or(0.0);
+        let other_solids = other_solids.unwrap_or(0.0);
 
-        assert_are_positive(&[cacao_solids, cocoa_butter, sugar])?;
+        assert_are_positive(&[cacao_solids, cocoa_butter, sugar, other_solids])?;
         assert_is_subset(cocoa_butter, cacao_solids, "Cacao butter must be a subset of cacao solids".to_string())?;
-        assert_within_100_percent(cacao_solids + sugar)?;
+        assert_is_100_percent(cacao_solids + sugar + other_solids)?;
 
         let cocoa_snf = cacao_solids - cocoa_butter;
         let sugars = Sugars::new().sucrose(sugar);
 
         let cocoa_solids = SolidsBreakdown::new()
-            .fats(Fats::new().total(cocoa_butter))
-            .others_from_total(cacao_solids)?;
+            .fats(
+                Fats::new()
+                    .total(cocoa_butter)
+                    .saturated(cocoa_butter * cacao::STD_SATURATED_FAT_IN_COCOA_BUTTER),
+            )
+            .proteins(cocoa_snf * cacao::STD_PROTEIN_IN_COCOA_SOLIDS)
+            .carbohydrates(
+                Carbohydrates::new()
+                    .fiber(cocoa_snf * cacao::STD_FIBER_IN_COCOA_SOLIDS)
+                    .others_from_total(cocoa_snf * cacao::STD_CARBOHYDRATES_IN_COCOA_SOLIDS)?,
+            )
+            .others(cocoa_snf * cacao::STD_ASH_IN_COCOA_SOLIDS);
 
         let other_solids = SolidsBreakdown::new()
             .carbohydrates(Carbohydrates::new().sugars(sugars))
-            .others_from_total(100.0 - cacao_solids)?;
+            .others(other_solids);
 
         Ok(Composition::new()
             .energy(cocoa_solids.energy()? + other_solids.energy()?)
@@ -2259,7 +2290,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACsgr), 8.887);
     }
 
-    pub(crate) const ING_SPEC_FRUIT_NAVEL_ORANGE_STR: &str = r#"{
+    pub(crate) const ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY_STR: &str = r#"{
       "name": "Navel Orange",
       "category": "Fruit",
       "FruitSpec": {
@@ -2275,23 +2306,24 @@ pub(crate) mod tests {
       }
     }"#;
 
-    pub(crate) static ING_SPEC_FRUIT_NAVEL_ORANGE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-        name: "Navel Orange".to_string(),
-        category: Category::Fruit,
-        spec: Spec::FruitSpec(FruitSpec {
-            water: 86.7,
-            energy: None,
-            protein: Some(0.91),
-            fat: Some(0.15),
-            carbohydrates: None,
-            fiber: Some(2.0),
-            sugars: Sugars::new().glucose(2.02).fructose(2.36).sucrose(4.19),
-        }),
-    });
+    pub(crate) static ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Navel Orange".to_string(),
+            category: Category::Fruit,
+            spec: Spec::FruitSpec(FruitSpec {
+                water: 86.7,
+                energy: None,
+                protein: Some(0.91),
+                fat: Some(0.15),
+                carbohydrates: None,
+                fiber: Some(2.0),
+                sugars: Sugars::new().glucose(2.02).fructose(2.36).sucrose(4.19),
+            }),
+        });
 
     #[test]
-    fn into_composition_fruit_spec_navel_orange() {
-        let comp = ING_SPEC_FRUIT_NAVEL_ORANGE.spec.into_composition().unwrap();
+    fn into_composition_fruit_spec_navel_orange_auto_energy() {
+        let comp = ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY.spec.into_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 39.27);
 
@@ -2327,27 +2359,124 @@ pub(crate) mod tests {
             cacao_solids: 70.0,
             cocoa_butter: 40.0,
             sugar: Some(30.0),
+            other_solids: None,
         }),
+    });
+
+    pub(crate) static COMP_CHOCOLATE_70: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(543.0)
+            .solids(
+                Solids::new()
+                    .cocoa(
+                        SolidsBreakdown::new()
+                            .fats(Fats::new().total(40.0).saturated(24.0))
+                            .carbohydrates(Carbohydrates::new().fiber(12.0).others_from_total(20.4).unwrap())
+                            .proteins(7.35)
+                            .others(2.25),
+                    )
+                    .other(
+                        SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(30.0))),
+                    ),
+            )
+            .pod(30.0)
+            .pac(PAC::new().sugars(30.0).hardness_factor(90.0))
     });
 
     #[test]
     fn into_composition_chocolate_spec_70() {
         let comp = ING_SPEC_CHOCOLATE_70.spec.into_composition().unwrap();
 
+        assert_eq!(comp.get(CompKey::Energy), 543.0);
+        assert_eq!(comp.get(CompKey::TotalFats), 40.0);
+        assert_eq!(comp.solids.cocoa.fats.saturated, 24.0);
+        assert_eq!(comp.get(CompKey::TotalProteins), 7.35);
+        assert_eq!(comp.get(CompKey::Fiber), 12.0);
+
         assert_eq!(comp.get(CompKey::Sucrose), 30.0);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 30.0);
 
         // Added sugars in chocolates is considered part of total sweeteners, not part of Cacao Solids
         assert_eq!(comp.get(CompKey::CacaoSolids), comp.get(CompKey::TotalSolids) - comp.get(CompKey::TotalSweeteners));
-
         assert_eq!(comp.get(CompKey::CacaoSolids), 70.0);
         assert_eq!(comp.get(CompKey::CocoaButter), 40.0);
         assert_eq!(comp.get(CompKey::CocoaSolids), 30.0);
+        assert_eq!(comp.solids.cocoa.others, 2.25);
         assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 30.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::POD), 30.0);
         assert_eq!(comp.get(CompKey::PACtotal), 30.0);
         assert_eq!(comp.get(CompKey::HF), 90.0);
+    }
+
+    pub(crate) const ING_SPEC_CHOCOLATE_95_OTHER_SOLIDS_STR: &str = r#"{
+      "name": "Chocolate 95%",
+      "category": "Chocolate",
+      "ChocolateSpec": {
+        "cacao_solids": 95,
+        "cocoa_butter": 57.5,
+        "sugar": 3,
+        "other_solids": 2
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_CHOCOLATE_95_OTHER_SOLIDS: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Chocolate 95%".to_string(),
+        category: Category::Chocolate,
+        spec: Spec::ChocolateSpec(ChocolateSpec {
+            cacao_solids: 95.0,
+            cocoa_butter: 57.5,
+            sugar: Some(3.0),
+            other_solids: Some(2.0),
+        }),
+    });
+
+    pub(crate) static COMP_CHOCOLATE_95_OTHER_SOLIDS: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(608.25)
+            .solids(
+                Solids::new()
+                    .cocoa(
+                        SolidsBreakdown::new()
+                            .fats(Fats::new().total(57.5).saturated(34.5))
+                            .carbohydrates(Carbohydrates::new().fiber(15.0).others_from_total(25.5).unwrap())
+                            .proteins(9.1875)
+                            .others(2.8125),
+                    )
+                    .other(
+                        SolidsBreakdown::new()
+                            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)))
+                            .others(2.0),
+                    ),
+            )
+            .pod(3.0)
+            .pac(PAC::new().sugars(3.0).hardness_factor(119.25))
+    });
+
+    #[test]
+    fn into_composition_chocolate_spec_95_other_solids() {
+        let comp = ING_SPEC_CHOCOLATE_95_OTHER_SOLIDS.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 608.25);
+        assert_eq!(comp.get(CompKey::TotalFats), 57.5);
+        assert_eq!(comp.solids.cocoa.fats.saturated, 34.5);
+        assert_eq!(comp.get(CompKey::TotalProteins), 9.1875);
+        assert_eq_flt_test!(comp.get(CompKey::Fiber), 15.0);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 3.0);
+
+        assert_eq!(comp.get(CompKey::CacaoSolids), 95.0);
+        assert_eq!(comp.get(CompKey::CocoaButter), 57.5);
+        assert_eq!(comp.get(CompKey::CocoaSolids), 37.5);
+        assert_eq_flt_test!(comp.solids.cocoa.others, 2.8125);
+        assert_eq!(comp.solids.other.others, 2.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalCarbohydrates), 28.5);
+        assert_eq!(comp.get(CompKey::OtherSNFS), 2.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 39.5);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(comp.get(CompKey::POD), 3.0);
+        assert_eq!(comp.get(CompKey::PACtotal), 3.0);
+        assert_eq!(comp.get(CompKey::HF), 119.25);
     }
 
     pub(crate) const ING_SPEC_CHOCOLATE_100_STR: &str = r#"{
@@ -2366,19 +2495,41 @@ pub(crate) mod tests {
             cacao_solids: 100.0,
             cocoa_butter: 54.0,
             sugar: None,
+            other_solids: None,
         }),
+    });
+
+    pub(crate) static COMP_CHOCOLATE_100: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(582.6)
+            .solids(
+                Solids::new().cocoa(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(54.0).saturated(32.4))
+                        .carbohydrates(Carbohydrates::new().fiber(18.4).others_from_total(31.28).unwrap())
+                        .proteins(11.27)
+                        .others(3.45),
+                ),
+            )
+            .pod(0.0)
+            .pac(PAC::new().hardness_factor(131.4))
     });
 
     #[test]
     fn into_composition_chocolate_spec_100() {
         let comp = ING_SPEC_CHOCOLATE_100.spec.into_composition().unwrap();
 
+        assert_eq!(comp.get(CompKey::Energy), 582.6);
+        assert_eq!(comp.get(CompKey::TotalFats), 54.0);
+        assert_eq!(comp.solids.cocoa.fats.saturated, 32.4);
+        assert_eq!(comp.get(CompKey::TotalProteins), 11.27);
+        assert_eq_flt_test!(comp.get(CompKey::Fiber), 18.4);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
 
         assert_eq!(comp.get(CompKey::CacaoSolids), 100.0);
         assert_eq!(comp.get(CompKey::CocoaButter), 54.0);
         assert_eq!(comp.get(CompKey::CocoaSolids), 46.0);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
+        assert_eq_flt_test!(comp.solids.cocoa.others, 3.45);
         assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::POD), 0.0);
@@ -2402,19 +2553,41 @@ pub(crate) mod tests {
             cacao_solids: 100.0,
             cocoa_butter: 16.67,
             sugar: None,
+            other_solids: None,
         }),
+    });
+
+    pub(crate) static COMP_COCOA_POWDER_17: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(325.023)
+            .solids(
+                Solids::new().cocoa(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(16.67).saturated(10.002))
+                        .carbohydrates(Carbohydrates::new().fiber(33.332).others_from_total(56.6644).unwrap())
+                        .proteins(20.4159)
+                        .others(6.2498),
+                ),
+            )
+            .pod(0.0)
+            .pac(PAC::new().hardness_factor(164.997))
     });
 
     #[test]
     fn into_composition_chocolate_spec_cocoa_powder_17() {
         let comp = ING_SPEC_CHOCOLATE_COCOA_POWDER_17.spec.into_composition().unwrap();
 
+        assert_eq!(comp.get(CompKey::Energy), 325.023);
+        assert_eq!(comp.get(CompKey::TotalFats), 16.67);
+        assert_eq!(comp.solids.cocoa.fats.saturated, 10.002);
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 20.4159);
+        assert_eq_flt_test!(comp.get(CompKey::Fiber), 33.332);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
 
         assert_eq!(comp.get(CompKey::CacaoSolids), 100.0);
         assert_eq!(comp.get(CompKey::CocoaButter), 16.67);
         assert_eq!(comp.get(CompKey::CocoaSolids), 83.33);
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
+        assert_eq_flt_test!(comp.solids.cocoa.others, 6.2498);
         assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::POD), 0.0);
@@ -2772,10 +2945,19 @@ pub(crate) mod tests {
             (ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE_STR, ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE.clone(), None),
             (ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE_STR, ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE.clone(), None),
             (ING_SPEC_FRUIT_STRAWBERRY_STR, ING_SPEC_FRUIT_STRAWBERRY.clone(), None),
-            (ING_SPEC_FRUIT_NAVEL_ORANGE_STR, ING_SPEC_FRUIT_NAVEL_ORANGE.clone(), None),
-            (ING_SPEC_CHOCOLATE_70_STR, ING_SPEC_CHOCOLATE_70.clone(), None),
-            (ING_SPEC_CHOCOLATE_100_STR, ING_SPEC_CHOCOLATE_100.clone(), None),
-            (ING_SPEC_CHOCOLATE_COCOA_POWDER_17_STR, ING_SPEC_CHOCOLATE_COCOA_POWDER_17.clone(), None),
+            (ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY_STR, ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY.clone(), None),
+            (ING_SPEC_CHOCOLATE_70_STR, ING_SPEC_CHOCOLATE_70.clone(), Some(*COMP_CHOCOLATE_70)),
+            (
+                ING_SPEC_CHOCOLATE_95_OTHER_SOLIDS_STR,
+                ING_SPEC_CHOCOLATE_95_OTHER_SOLIDS.clone(),
+                Some(*COMP_CHOCOLATE_95_OTHER_SOLIDS),
+            ),
+            (ING_SPEC_CHOCOLATE_100_STR, ING_SPEC_CHOCOLATE_100.clone(), Some(*COMP_CHOCOLATE_100)),
+            (
+                ING_SPEC_CHOCOLATE_COCOA_POWDER_17_STR,
+                ING_SPEC_CHOCOLATE_COCOA_POWDER_17.clone(),
+                Some(*COMP_COCOA_POWDER_17),
+            ),
             (ING_SPEC_NUT_ALMOND_STR, ING_SPEC_NUT_ALMOND.clone(), None),
             (ING_SPEC_EGG_YOLK_STR, ING_SPEC_EGG_YOLK.clone(), None),
             (ING_SPEC_ALCOHOL_40_ABV_SPIRIT_STR, ING_SPEC_ALCOHOL_40_ABV_SPIRIT.clone(), None),

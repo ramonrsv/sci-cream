@@ -3,18 +3,30 @@
     "name": "Chocolate 70%",
     "category": "Chocolate",
     "ChocolateSpec": { "cacao_solids": 70, "cocoa_butter": 40, "sugar": 30 },
-    "comments": "From the nutrition facts table: 16g/40g fat => 40% cocoa butter, 12g/40g sugars => 30% sugar"
+    "comments": "70% cocoa solids from the label. From nutrition facts table: 16g/40g fat => 40% cocoa butter, 12g/40g sugars => 30% sugar (https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g)."
+  },
+  {
+    "name": "Chocolate 85%",
+    "category": "Chocolate",
+    "ChocolateSpec": { "cacao_solids": 85, "cocoa_butter": 45, "sugar": 15 },
+    "comments": "85% cocoa solids from the label. From nutrition facts table: 18g/40g fat => 45% cocoa butter, 6g/40g sugars => 15% sugar (https://www.lindt.ca/en/lindt-excellence-85-cacao-dark-chocolate-bar-100g)."
+  },
+  {
+    "name": "Chocolate 95%",
+    "category": "Chocolate",
+    "ChocolateSpec": { "cacao_solids": 95, "cocoa_butter": 57.5, "sugar": 3, "other_solids": 2 },
+    "comments": "95% cocoa solids from the label. From nutrition facts table: 23g/40g fat => 57.5% cocoa butter, 1g/40g sugars => ~3% sugar, other solids 2% by difference (https://www.lindt.ca/en/lindt-excellence-95-cacao-dark-chocolate-bar-80g)."
   },
   {
     "name": "Chocolate 100%",
     "category": "Chocolate",
     "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 54 },
-    "comments": "From the nutrition facts table: 27g/50g fat => 54% cocoa butter, 0g sugars"
+    "comments": "100% cocoa solids from the label. From the nutrition facts table: 27g/50g fat => 54% cocoa butter, 0g sugars (https://www.lindt.ca/en/lindt-excellence-100-cacao-bar-50g)."
   },
   {
     "name": "Cocoa Powder 17%",
     "category": "Chocolate",
     "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 16.67 },
-    "comments": "From the nutrition facts table: 1g/6g fat => 16.67% cocoa butter"
+    "comments": "100% cocoa solids from the label. From the nutrition facts table: 1g/6g fat => 16.67% cocoa butter, 0g sugars (https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs)."
   }
 ]

@@ -47,3 +47,13 @@
 [^102]: Nuts, almonds. (2019). In _USDA FoodDataCentral - SR Legacy_. <https://fdc.nal.usda.gov/food-details/170567/nutrients>
 
 [^103]: Milk, whole, 3.25% milkfat, with added Vitamin D. (2019). In _USDA FoodDataCentral - Foundation_. <https://fdc.nal.usda.gov/food-details/746782/nutrients>
+
+[^104]: Chocolate, dark, 60-69% cacao solids. (2019). In _USDA FoodDataCentral - SR Legacy_. <https://fdc.nal.usda.gov/food-details/170272/nutrients>
+
+[^105]: Chocolate, dark, 70-85% cacao solids. (2019). In _USDA FoodDataCentral - SR Legacy_. <https://fdc.nal.usda.gov/food-details/170273/nutrients>
+
+[^106]: Cocoa, dry powder, unsweetened. (2019). In _USDA FoodDataCentral - SR Legacy_. <https://fdc.nal.usda.gov/food-details/169593/nutrients>
+
+[^107]: 70% Cacao Dark Chocolate. (2026). In _lindt.ca, Chocolate Factories Lindt & Sprüngli AG_. <https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g>
+
+[^108]: 100% Unsweetened Cocoa Powder. (2026). In _ghirardelli.com_, Ghirardelli Chocolate Company\_. <https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs>

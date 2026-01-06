@@ -169,6 +169,31 @@ pub mod composition {
     /// Percentage of saturated fats typical of egg fat (Board on Agriculture..., 1974, p. 203)[^12]
     #[doc = include_str!("../docs/bibs/12.md")]
     pub const STD_SATURATED_FAT_IN_EGG_FAT: f64 = 0.28;
+
+    /// Standard composition values for cacao products, most notably cocoa solids
+    ///
+    /// These values are averages compiled from the nutrient profiles of various cacao products in
+    /// the _USDA FoodData Central_ database. (Chocolate, dark, 60-69% cacao solids, 2019)[^104],
+    /// (Chocolate, dark, 70-85% cacao solids, 2019)[^105], (Cocoa powder, unsweetened, 2019)[^106].
+    /// The values are very consistent between the different cacao products, usually all within ~3
+    /// percentage points of each other (fiber was the only exception, varying between 34% and 45%).
+    #[doc = include_str!("../docs/bibs/104.md")]
+    #[doc = include_str!("../docs/bibs/105.md")]
+    #[doc = include_str!("../docs/bibs/106.md")]
+    pub mod cacao {
+        pub const STD_WATER_CONTENT_IN_CACAO_PRODUCTS: f64 = 0.02;
+        pub const STD_PROTEIN_IN_COCOA_SOLIDS: f64 = 0.245;
+        pub const STD_CARBOHYDRATES_IN_COCOA_SOLIDS: f64 = 0.68;
+        pub const STD_FIBER_IN_COCOA_SOLIDS: f64 = 0.40;
+        pub const STD_ASH_IN_COCOA_SOLIDS: f64 = 0.075;
+
+        /// Percentage of saturated fats typical of cocoa butter
+        ///
+        /// Calculated from the nutrition facts table of various cocoa butter products (70% Cacao
+        /// Dark Chocolate, 2025)[^107], etc.
+        #[doc = include_str!("../docs/bibs/107.md")]
+        pub const STD_SATURATED_FAT_IN_COCOA_BUTTER: f64 = 0.60;
+    }
 }
 
 /// Energy constants (kcal/g) for macronutrients and other components
@@ -396,6 +421,21 @@ mod tests {
 
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::SALT), 585.0);
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::ALCOHOL), 743.0);
+    }
+
+    #[test]
+    fn cocoa_constants() {
+        assert_eq!(
+            composition::cacao::STD_PROTEIN_IN_COCOA_SOLIDS
+                + composition::cacao::STD_CARBOHYDRATES_IN_COCOA_SOLIDS
+                + composition::cacao::STD_ASH_IN_COCOA_SOLIDS,
+            1.0
+        );
+
+        assert_lt!(
+            composition::cacao::STD_FIBER_IN_COCOA_SOLIDS,
+            composition::cacao::STD_CARBOHYDRATES_IN_COCOA_SOLIDS
+        );
     }
 
     #[test]
