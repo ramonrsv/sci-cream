@@ -483,8 +483,9 @@ impl IntoComposition for FruitSpec {
 /// ranging from ~10-24%.
 ///
 /// The cocoa solids content is further broken down into proteins, carbohydrates - including fiber,
-/// and ash based on standard values for cocoa solids, specified in [`constants::cacao`], e.g.
-/// [`cacao::STD_PROTEIN_IN_COCOA_SOLIDS`], [`cacao::STD_CARBOHYDRATES_IN_COCOA_SOLIDS`], etc.
+/// and ash based on standard values for cocoa solids, specified in
+/// [`constants::composition::cacao`], e.g. [`cacao::STD_PROTEIN_IN_COCOA_SOLIDS`],
+/// [`cacao::STD_CARBOHYDRATES_IN_COCOA_SOLIDS`], [`cacao::STD_FIBER_IN_COCOA_SOLIDS`], etc.
 ///
 /// # Examples
 ///
@@ -510,6 +511,11 @@ impl IntoComposition for FruitSpec {
 /// assert_eq!(comp.get(CompKey::CacaoSolids), 70.0);
 /// assert_eq!(comp.get(CompKey::CocoaButter), 40.0);
 /// assert_eq!(comp.get(CompKey::CocoaSolids), 30.0);
+///
+/// assert_eq!(comp.get(CompKey::Energy), 543.0);
+/// assert_eq!(comp.get(CompKey::TotalFats), 40.0);
+/// assert_eq!(comp.get(CompKey::TotalProteins), 7.35);
+/// assert_eq!(comp.get(CompKey::Fiber), 12.0);
 /// ```
 ///
 /// (100% Unsweetened Cocoa Powder, 2025)[^108] per 6g serving:
@@ -517,6 +523,7 @@ impl IntoComposition for FruitSpec {
 /// - Cocoa butter: 1g fat => 16.67%
 ///
 /// ```
+/// # use sci_cream::docs::assert_eq_float;
 /// # use sci_cream::{
 /// #     composition::CompKey,
 /// #     specs::{ChocolateSpec, IntoComposition}
@@ -533,6 +540,11 @@ impl IntoComposition for FruitSpec {
 /// assert_eq!(comp.get(CompKey::CacaoSolids), 100.0);
 /// assert_eq!(comp.get(CompKey::CocoaButter), 16.67);
 /// assert_eq!(comp.get(CompKey::CocoaSolids), 83.33);
+///
+/// assert_eq!(comp.get(CompKey::Energy), 325.023);
+/// assert_eq!(comp.get(CompKey::TotalFats), 16.67);
+/// assert_eq_float!(comp.get(CompKey::TotalProteins), 20.4159);
+/// assert_eq_float!(comp.get(CompKey::Fiber), 33.332);
 /// ```
 #[doc = include_str!("../docs/bibs/107.md")]
 #[doc = include_str!("../docs/bibs/108.md")]
@@ -2577,6 +2589,7 @@ pub(crate) mod tests {
     fn into_composition_chocolate_spec_cocoa_powder_17() {
         let comp = ING_SPEC_CHOCOLATE_COCOA_POWDER_17.spec.into_composition().unwrap();
 
+        // Different similar products list the energy from 250 to 325
         assert_eq!(comp.get(CompKey::Energy), 325.023);
         assert_eq!(comp.get(CompKey::TotalFats), 16.67);
         assert_eq!(comp.solids.cocoa.fats.saturated, 10.002);
