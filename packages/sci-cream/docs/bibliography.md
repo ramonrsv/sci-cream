@@ -63,3 +63,7 @@
 [^110]: Lindt 100% Cacao Dark Chocolate. (2026). In _lindt.ca, Chocolate Factories Lindt & Sprüngli AG_. <https://www.lindt.ca/en/lindt-excellence-100-cacao-bar-50g>
 
 [^111]: Ghirardelli 100% Unsweetened Cocoa Powder. (2026). In _ghirardelli.com, Ghirardelli Chocolate Company_. <https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs>
+
+[^112]: Nuts, pistachio nuts, raw. (2019). In _USDA FoodDataCentral - SR Legacy_. <https://fdc.nal.usda.gov/food-details/170184/nutrients>
+
+[^113]: Nuts, hazelnuts or filberts. (2019). In _USDA FoodDataCentral - SR Legacy_. <https://fdc.nal.usda.gov/food-details/170581/nutrients>

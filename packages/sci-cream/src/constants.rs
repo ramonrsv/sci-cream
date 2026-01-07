@@ -170,6 +170,16 @@ pub mod composition {
     #[doc = include_str!("../docs/bibs/12.md")]
     pub const STD_SATURATED_FAT_IN_EGG_FAT: f64 = 0.28;
 
+    /// Percentage of saturated fats typical of nut fat
+    ///
+    /// This value is an average compiled from the nutrient profiles of various nuts in the _USDA
+    /// FoodData Central_ database (Nuts, almonds, 2019)[^102], (Nuts, pistachio nuts, raw,
+    /// 2019)[^112], (Nuts, hazelnuts or filberts, 2019)[^113].
+    #[doc = include_str!("../docs/bibs/102.md")]
+    #[doc = include_str!("../docs/bibs/112.md")]
+    #[doc = include_str!("../docs/bibs/113.md")]
+    pub const STD_SATURATED_FAT_IN_NUT_FAT: f64 = 0.09;
+
     /// Standard composition values for cacao products, most notably cocoa solids
     ///
     /// These values are averages compiled from the nutrient profiles of various cacao products in

@@ -347,9 +347,9 @@ impl IntoComposition for SweetenerSpec {
 /// etc.), [`water`](Self::water) content, and optional [`energy`](Self::energy),
 /// [`protein`](Self::protein), [`fat`](Self::fat), and [`fiber`](Self::fiber) content. If `energy`
 /// is not specified, it is automatically calculated from the rest of the composition. If
-/// `carbohydrates` is not specified, then it is equal to `sugars`. If any other optional values are
-/// not specified, they are assumed to be zero. Adding up all the components, any remaining portion
-/// up to 100% is assumed to be non-fat, non-sugar solids (snfs).
+/// [`carbohydrates`](Self::carbohydrates) is not specified, then it is equal to `sugars`. If any
+/// other optional values are not specified, they are assumed to be zero. Adding up all the
+/// components, any remaining portion up to 100% is assumed to be non-fat, non-sugar solids (snfs).
 ///
 /// The composition for fruit ingredients can usually be found in food composition databases, like
 /// [USDA FoodData Central](https://fdc.nal.usda.gov/food-search).
@@ -607,13 +607,15 @@ impl IntoComposition for ChocolateSpec {
     }
 }
 
-/// Spec for nut ingredients, usually nut butters, with fat, sugar, and water content
+/// Spec for nut ingredients, usually nut butters, with nutrition facts style breakdown
 ///
-/// Nut ingredients are specified by their [`fat`](Self::fat) content, [`sugar`](Self::sugar)
-/// content, and [`water`](Self::water) content, by total weight. The remaining portion up to 100%
-/// is assumed to be non-fat, non-sugar solids (snfs). Sugars are assumed to be all sucrose. Fat and
-/// sugar values are specified in [`Composition`] via [`CompKey::NutFat`] and
-/// [`CompKey::TotalSweeteners`], respectively.
+/// Nut ingredients are specified by their nutrition facts composition by total weight, namely
+/// [`water`](Self::water), [`protein`](Self::protein), [`fat`](Self::fat),
+/// [`carbohydrate`](Self::carbohydrate), [`fiber`](Self::fiber), [`sugar`](Self::sugar), and
+/// optional [`saturated_fat`](Self::saturated_fat). The remaining portion up to 100% is assumed to
+/// be non-fat, non-sugar solids (snfs). Sugars are assumed to be all sucrose. Fat and sugar values
+/// are specified in [`Composition`] via [`CompKey::NutFat`] and [`CompKey::TotalSweeteners`],
+/// respectively.
 ///
 /// The composition of nut ingredients can usually be found in food in the nutrition facts tables
 /// provided by the manufacturer, or in food composition databases, like [USDA FoodData
@@ -640,6 +642,7 @@ impl IntoComposition for ChocolateSpec {
 ///    water: 4.41,
 ///    protein: 21.2,
 ///    fat: 49.9,
+///    saturated_fat: Some(3.8),
 ///    carbohydrate: 21.6,
 ///    fiber: 12.5,
 ///    sugar: 4.35,
@@ -663,6 +666,7 @@ pub struct NutSpec {
     pub water: f64,
     pub protein: f64,
     pub fat: f64,
+    pub saturated_fat: Option<f64>,
     pub carbohydrate: f64,
     pub fiber: f64,
     pub sugar: f64,
@@ -674,6 +678,7 @@ impl IntoComposition for NutSpec {
             water,
             protein,
             fat,
+            saturated_fat,
             carbohydrate,
             fiber,
             sugar,
@@ -683,6 +688,9 @@ impl IntoComposition for NutSpec {
         assert_within_100_percent(water + protein + fat + carbohydrate)?;
         assert_is_subset(fiber + sugar, carbohydrate, "Sugar + fiber <= carbohydrate".to_string())?;
 
+        let saturated_fat = saturated_fat.unwrap_or(fat * constants::composition::STD_SATURATED_FAT_IN_NUT_FAT);
+        assert_is_subset(saturated_fat, fat, "Saturated fat cannot exceed total fat".to_string())?;
+
         let sugars = Sugars::new().sucrose(sugar);
 
         let carbohydrates = Carbohydrates::new()
@@ -691,7 +699,7 @@ impl IntoComposition for NutSpec {
             .others_from_total(carbohydrate)?;
 
         let nut_solids = SolidsBreakdown::new()
-            .fats(Fats::new().total(fat))
+            .fats(Fats::new().total(fat).saturated(saturated_fat))
             .carbohydrates(carbohydrates)
             .proteins(protein)
             .others_from_total(100.0 - water)?;
@@ -2671,6 +2679,7 @@ pub(crate) mod tests {
         "water": 4.41,
         "protein": 21.2,
         "fat": 49.9,
+        "saturated_fat": 3.8,
         "carbohydrate": 21.6,
         "fiber": 12.5,
         "sugar": 4.35
@@ -2684,6 +2693,7 @@ pub(crate) mod tests {
             water: 4.41,
             protein: 21.2,
             fat: 49.9,
+            saturated_fat: Some(3.8),
             carbohydrate: 21.6,
             fiber: 12.5,
             sugar: 4.35,
@@ -2696,7 +2706,7 @@ pub(crate) mod tests {
             .solids(
                 Solids::new().nut(
                     SolidsBreakdown::new()
-                        .fats(Fats::new().total(49.9))
+                        .fats(Fats::new().total(49.9).saturated(3.8))
                         .proteins(21.2)
                         .carbohydrates(
                             Carbohydrates::new()
@@ -2721,6 +2731,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Fiber), 12.5);
 
         assert_eq!(comp.get(CompKey::NutFat), 49.9);
+        assert_eq!(comp.solids.nut.fats.saturated, 3.8);
         assert_eq!(comp.get(CompKey::NutSNF), 41.34);
         assert_eq_flt_test!(comp.get(CompKey::NutSolids), 91.24);
 
@@ -2777,6 +2788,7 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::Energy), 334.0);
         assert_eq!(comp.get(CompKey::EggFat), 30.0);
+        assert_eq!(comp.solids.egg.fats.saturated, 8.4);
         assert_eq!(comp.get(CompKey::EggSNF), 19.0);
         assert_eq!(comp.get(CompKey::TotalProteins), 16.0);
         assert_eq!(comp.get(CompKey::TotalSNFS), 19.0);
