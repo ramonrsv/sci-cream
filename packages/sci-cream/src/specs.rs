@@ -623,25 +623,34 @@ impl IntoComposition for ChocolateSpec {
 ///
 /// (Nuts, almonds, 2019)[^102] per 100g:
 /// - Water: 4.41g
+/// - Protein: 21.2g
 /// - Total lipid (fat): 49.9g
+/// - Carbohydrate: 21.6g
+/// - Fiber: 12.5g
 /// - Total Sugars: 4.35g
 ///
 /// ```
+/// # use sci_cream::docs::assert_eq_float;
 /// use sci_cream::{
 ///     composition::CompKey,
-///     specs::{NutSpec, IntoComposition},
-///     util::round_to_decimals,
+///     specs::{NutSpec, IntoComposition}
 /// };
 ///
 /// let comp = NutSpec {
-///    fat: 49.9,
-///    sugar: 4.35,
 ///    water: 4.41,
+///    protein: 21.2,
+///    fat: 49.9,
+///    carbohydrate: 21.6,
+///    fiber: 12.5,
+///    sugar: 4.35,
 /// }.into_composition().unwrap();
 ///
+/// assert_eq!(comp.get(CompKey::Energy), 570.3);
 /// assert_eq!(comp.get(CompKey::NutFat), 49.9);
+/// assert_eq!(comp.get(CompKey::TotalProteins), 21.2);
+/// assert_eq!(comp.get(CompKey::Fiber), 12.5);
 /// assert_eq!(comp.get(CompKey::NutSNF), 41.34);
-/// assert_eq!(round_to_decimals(comp.get(CompKey::NutSolids), 2), 91.24);
+/// assert_eq_float!(comp.get(CompKey::NutSolids), 91.24);
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 4.35);
 /// assert_eq!(comp.get(CompKey::TotalSolids), 95.59);
 /// assert_eq!(comp.get(CompKey::POD), 4.35);
@@ -651,23 +660,40 @@ impl IntoComposition for ChocolateSpec {
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct NutSpec {
-    pub fat: f64,
-    pub sugar: f64,
     pub water: f64,
+    pub protein: f64,
+    pub fat: f64,
+    pub carbohydrate: f64,
+    pub fiber: f64,
+    pub sugar: f64,
 }
 
 impl IntoComposition for NutSpec {
     fn into_composition(self) -> Result<Composition> {
-        let Self { fat, sugar, water } = self;
+        let Self {
+            water,
+            protein,
+            fat,
+            carbohydrate,
+            fiber,
+            sugar,
+        } = self;
 
-        assert_are_positive(&[fat, sugar, water])?;
-        assert_within_100_percent(fat + sugar + water)?;
+        assert_are_positive(&[water, protein, fat, carbohydrate, fiber, sugar])?;
+        assert_within_100_percent(water + protein + fat + carbohydrate)?;
+        assert_is_subset(fiber + sugar, carbohydrate, "Sugar + fiber <= carbohydrate".to_string())?;
 
         let sugars = Sugars::new().sucrose(sugar);
 
+        let carbohydrates = Carbohydrates::new()
+            .sugars(sugars)
+            .fiber(fiber)
+            .others_from_total(carbohydrate)?;
+
         let nut_solids = SolidsBreakdown::new()
             .fats(Fats::new().total(fat))
-            .carbohydrates(Carbohydrates::new().sugars(sugars))
+            .carbohydrates(carbohydrates)
+            .proteins(protein)
             .others_from_total(100.0 - water)?;
 
         Ok(Composition::new()
@@ -2626,9 +2652,12 @@ pub(crate) mod tests {
       "name": "Almond",
       "category": "Nut",
       "NutSpec": {
+        "water": 4.41,
+        "protein": 21.2,
         "fat": 49.9,
-        "sugar": 4.35,
-        "water": 4.41
+        "carbohydrate": 21.6,
+        "fiber": 12.5,
+        "sugar": 4.35
       }
     }"#;
 
@@ -2636,15 +2665,44 @@ pub(crate) mod tests {
         name: "Almond".to_string(),
         category: Category::Nut,
         spec: Spec::NutSpec(NutSpec {
-            fat: 49.9,
-            sugar: 4.35,
             water: 4.41,
+            protein: 21.2,
+            fat: 49.9,
+            carbohydrate: 21.6,
+            fiber: 12.5,
+            sugar: 4.35,
         }),
+    });
+
+    pub(crate) static COMP_NUT_ALMOND: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(570.3)
+            .solids(
+                Solids::new().nut(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(49.9))
+                        .proteins(21.2)
+                        .carbohydrates(
+                            Carbohydrates::new()
+                                .fiber(12.5)
+                                .sugars(Sugars::new().sucrose(4.35))
+                                .others_from_total(21.6)
+                                .unwrap(),
+                        )
+                        .others(2.89),
+                ),
+            )
+            .pod(4.35)
+            .pac(PAC::new().sugars(4.35).hardness_factor(69.86))
     });
 
     #[test]
     fn into_composition_nut_spec_almond() {
         let comp = ING_SPEC_NUT_ALMOND.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 570.3);
+        assert_eq!(comp.get(CompKey::TotalProteins), 21.2);
+        assert_eq!(comp.get(CompKey::Fiber), 12.5);
 
         assert_eq!(comp.get(CompKey::NutFat), 49.9);
         assert_eq!(comp.get(CompKey::NutSNF), 41.34);
@@ -3004,7 +3062,7 @@ pub(crate) mod tests {
                 ING_SPEC_CHOCOLATE_COCOA_POWDER_17.clone(),
                 Some(*COMP_COCOA_POWDER_17),
             ),
-            (ING_SPEC_NUT_ALMOND_STR, ING_SPEC_NUT_ALMOND.clone(), None),
+            (ING_SPEC_NUT_ALMOND_STR, ING_SPEC_NUT_ALMOND.clone(), Some(*COMP_NUT_ALMOND)),
             (ING_SPEC_EGG_YOLK_STR, ING_SPEC_EGG_YOLK.clone(), Some(*COMP_EGG_YOLK)),
             (ING_SPEC_ALCOHOL_40_ABV_SPIRIT_STR, ING_SPEC_ALCOHOL_40_ABV_SPIRIT.clone(), None),
             (ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM_STR, ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.clone(), None),

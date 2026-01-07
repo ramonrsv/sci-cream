@@ -2,7 +2,14 @@
   {
     "name": "Almond",
     "category": "Nut",
-    "NutSpec": { "fat": 49.9, "sugar": 4.35, "water": 4.41 },
+    "NutSpec": {
+      "water": 4.41,
+      "protein": 21.2,
+      "fat": 49.9,
+      "carbohydrate": 21.6,
+      "fiber": 12.5,
+      "sugar": 4.35
+    },
     "comments": "USDA FoodData Central - SR Legacy Foods - Nuts, almonds (https://fdc.nal.usda.gov/food-details/170567/nutrients)."
   }
 ]
