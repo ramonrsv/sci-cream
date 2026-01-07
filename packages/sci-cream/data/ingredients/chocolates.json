@@ -2,19 +2,19 @@
   {
     "name": "Lindt EXCELLENCE 70% Cacao Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 70, "cocoa_butter": 40, "sugar": 30 },
+    "ChocolateSpec": { "cacao_solids": 70, "cocoa_butter": 40, "sugars": 30 },
     "comments": "70% cocoa solids from the label. From nutrition facts table: 16g/40g fat => 40% cocoa butter, 12g/40g sugars => 30% sugar (https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g)."
   },
   {
     "name": "Lindt EXCELLENCE 85% Cacao Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 85, "cocoa_butter": 45, "sugar": 15 },
+    "ChocolateSpec": { "cacao_solids": 85, "cocoa_butter": 45, "sugars": 15 },
     "comments": "85% cocoa solids from the label. From nutrition facts table: 18g/40g fat => 45% cocoa butter, 6g/40g sugars => 15% sugar (https://www.lindt.ca/en/lindt-excellence-85-cacao-dark-chocolate-bar-100g)."
   },
   {
     "name": "Lindt EXCELLENCE 95% Cacao Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 95, "cocoa_butter": 57.5, "sugar": 3, "other_solids": 2 },
+    "ChocolateSpec": { "cacao_solids": 95, "cocoa_butter": 57.5, "sugars": 3, "other_solids": 2 },
     "comments": "95% cocoa solids from the label. From nutrition facts table: 23g/40g fat => 57.5% cocoa butter, 1g/40g sugars => ~3% sugar, other solids 2% by difference (https://www.lindt.ca/en/lindt-excellence-95-cacao-dark-chocolate-bar-80g)."
   },
   {
@@ -32,49 +32,49 @@
   {
     "name": "60% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 60, "cocoa_butter": 33, "sugar": 40 },
+    "ChocolateSpec": { "cacao_solids": 60, "cocoa_butter": 33, "sugars": 40 },
     "comments": "Generic 60% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
   },
   {
     "name": "65% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 65, "cocoa_butter": 35.75, "sugar": 35 },
+    "ChocolateSpec": { "cacao_solids": 65, "cocoa_butter": 35.75, "sugars": 35 },
     "comments": "Generic 65% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
   },
   {
     "name": "70% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 70, "cocoa_butter": 38.5, "sugar": 30 },
+    "ChocolateSpec": { "cacao_solids": 70, "cocoa_butter": 38.5, "sugars": 30 },
     "comments": "Generic 70% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
   },
   {
     "name": "75% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 75, "cocoa_butter": 41.25, "sugar": 25 },
+    "ChocolateSpec": { "cacao_solids": 75, "cocoa_butter": 41.25, "sugars": 25 },
     "comments": "Generic 75% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
   },
   {
     "name": "80% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 80, "cocoa_butter": 44, "sugar": 20 },
+    "ChocolateSpec": { "cacao_solids": 80, "cocoa_butter": 44, "sugars": 20 },
     "comments": "Generic 80% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
   },
   {
     "name": "85% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 85, "cocoa_butter": 46.75, "sugar": 15 },
+    "ChocolateSpec": { "cacao_solids": 85, "cocoa_butter": 46.75, "sugars": 15 },
     "comments": "Generic 85% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
   },
   {
     "name": "90% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 90, "cocoa_butter": 49.5, "sugar": 10 },
+    "ChocolateSpec": { "cacao_solids": 90, "cocoa_butter": 49.5, "sugars": 10 },
     "comments": "Generic 90% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
   },
   {
     "name": "95% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 95, "cocoa_butter": 52.25, "sugar": 5 },
+    "ChocolateSpec": { "cacao_solids": 95, "cocoa_butter": 52.25, "sugars": 5 },
     "comments": "Generic 95% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
   },
   {

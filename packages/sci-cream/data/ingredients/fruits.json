@@ -7,7 +7,7 @@
       "energy": 32,
       "protein": 0.67,
       "fat": 0.3,
-      "carbohydrates": 7.68,
+      "carbohydrate": 7.68,
       "fiber": 2,
       "sugars": { "glucose": 1.99, "fructose": 2.44, "sucrose": 0.47 }
     },

@@ -9,25 +9,25 @@
   {
     "name": "Grand Marnier Cordon Rouge",
     "category": "Alcohol",
-    "AlcoholSpec": { "abv": 40, "sugar": 21 },
+    "AlcoholSpec": { "abv": 40, "sugars": 21 },
     "comments": "There is no official nutrition facts table, but various unofficial sources agree on a sugar content of between ~20-22%. (https://shop.frankfurt-airport.com/en-US/product/grand-marnier-cordon-rouge-liqueur-40-1l_ce87c22e7fdf2934, https://www.myfooddiary.com/foods/4707492/grand-marnier-cognac-and-orange-liqueur, https://www.recipal.com/ingredients/49490-nutrition-facts-calories-protein-carbs-fat-grand-marnier)"
   },
   {
     "name": "Kahlua Coffee Liqueur",
     "category": "Alcohol",
-    "AlcoholSpec": { "abv": 16, "sugar": 39 },
+    "AlcoholSpec": { "abv": 16, "sugars": 39 },
     "comments": "From nutrition facts table: 16.9g/43ml => ~39% sugar (https://e-label.pernod-ricard.com/L01624)"
   },
   {
     "name": "Baileys Irish Cream",
     "category": "Alcohol",
-    "AlcoholSpec": { "abv": 17, "sugar": 18, "fat": 13.6 },
+    "AlcoholSpec": { "abv": 17, "sugars": 18, "fat": 13.6 },
     "comments": "From nutrition facts table: 18g/100ml sugars => 18% sugar, 13.6g/100ml fat => 13.6% fat (https://www.baileys.com/en/products/baileys-original-irish-cream)"
   },
   {
     "name": "Marsala Wine",
     "category": "Alcohol",
-    "AlcoholSpec": { "abv": 17, "sugar": 13 },
+    "AlcoholSpec": { "abv": 17, "sugars": 13 },
     "comments": "It depends on the specific product, but Marsala wines typically have between 15-20% ABV, and a sugar content of 10-17%. Here we use 17% ABV and 13% sugar as representative values."
   },
   { "name": "Angostura Bitters", "category": "Alcohol", "AlcoholSpec": { "abv": 44.7 } },

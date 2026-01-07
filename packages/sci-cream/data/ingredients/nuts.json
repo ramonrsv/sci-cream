@@ -9,7 +9,7 @@
       "saturated_fat": 3.8,
       "carbohydrate": 21.6,
       "fiber": 12.5,
-      "sugar": 4.35
+      "sugars": 4.35
     },
     "comments": "USDA FoodData Central - SR Legacy Foods - Nuts, almonds (https://fdc.nal.usda.gov/food-details/170567/nutrients)."
   },
@@ -23,7 +23,7 @@
       "saturated_fat": 5.91,
       "carbohydrate": 27.2,
       "fiber": 10.6,
-      "sugar": 7.66
+      "sugars": 7.66
     },
     "comments": "USDA FoodData Central - SR Legacy Foods - Nuts, pistachio nuts, raw (https://fdc.nal.usda.gov/food-details/170184/nutrients)."
   },
@@ -37,7 +37,7 @@
       "saturated_fat": 4.46,
       "carbohydrate": 16.7,
       "fiber": 9.7,
-      "sugar": 4.34
+      "sugars": 4.34
     },
     "comments": "USDA FoodData Central - SR Legacy Foods - Nuts, hazelnuts or filberts (https://fdc.nal.usda.gov/food-details/170581/nutrients)."
   }
