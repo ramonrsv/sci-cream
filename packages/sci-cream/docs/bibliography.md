@@ -54,6 +54,12 @@
 
 [^106]: Cocoa, dry powder, unsweetened. (2019). In _USDA FoodDataCentral - SR Legacy_. <https://fdc.nal.usda.gov/food-details/169593/nutrients>
 
-[^107]: 70% Cacao Dark Chocolate. (2026). In _lindt.ca, Chocolate Factories Lindt & Sprüngli AG_. <https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g>
+[^107]: Lindt 70% Cacao Dark Chocolate. (2026). In _lindt.ca, Chocolate Factories Lindt & Sprüngli AG_. <https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g>
 
-[^108]: 100% Unsweetened Cocoa Powder. (2026). In _ghirardelli.com_, Ghirardelli Chocolate Company\_. <https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs>
+[^108]: Lindt 85% Cacao Dark Chocolate. (2026). In _lindt.ca, Chocolate Factories Lindt & Sprüngli AG_. <https://www.lindt.ca/en/lindt-excellence-85-cacao-dark-chocolate-bar-100g>
+
+[^109]: Lindt 95% Cacao Dark Chocolate. (2026). In _lindt.ca, Chocolate Factories Lindt & Sprüngli AG_. <https://www.lindt.ca/en/lindt-excellence-95-cacao-dark-chocolate-bar-80g>
+
+[^110]: Lindt 100% Cacao Dark Chocolate. (2026). In _lindt.ca, Chocolate Factories Lindt & Sprüngli AG_. <https://www.lindt.ca/en/lindt-excellence-100-cacao-bar-50g>
+
+[^111]: Ghirardelli 100% Unsweetened Cocoa Powder. (2026). In _ghirardelli.com, Ghirardelli Chocolate Company_. <https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs>

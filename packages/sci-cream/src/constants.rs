@@ -173,33 +173,39 @@ pub mod composition {
     /// Standard composition values for cacao products, most notably cocoa solids
     ///
     /// These values are averages compiled from the nutrient profiles of various cacao products in
-    /// the _USDA FoodData Central_ database. (Chocolate, dark, 60-69% cacao solids, 2019)[^104],
+    /// the _USDA FoodData Central_ database (Chocolate, dark, 60-69% cacao solids, 2019)[^104],
     /// (Chocolate, dark, 70-85% cacao solids, 2019)[^105], (Cocoa powder, unsweetened, 2019)[^106].
     /// The values are very consistent between the different cacao products, usually all within ~3
     /// percentage points of each other (fiber was the only exception, varying between 34% and 45%).
+    ///
+    /// The values are also consistent with the nutrition facts tables of various market cacao
+    /// products (Lindt 70% Cacao Dark Chocolate, 2025)[^107], (Lindt 85% Cacao Dark Chocolate,
+    /// 2025)[^108], (Lindt 95% Cacao Dark Chocolate, 2025)[^109], (Lindt 100% Cacao Dark Chocolate,
+    /// 2025)[^110], (Ghirardelli 100% Unsweetened Cocoa Powder, 2025)[^111].
     #[doc = include_str!("../docs/bibs/104.md")]
     #[doc = include_str!("../docs/bibs/105.md")]
     #[doc = include_str!("../docs/bibs/106.md")]
+    #[doc = include_str!("../docs/bibs/107.md")]
+    #[doc = include_str!("../docs/bibs/108.md")]
+    #[doc = include_str!("../docs/bibs/109.md")]
+    #[doc = include_str!("../docs/bibs/110.md")]
+    #[doc = include_str!("../docs/bibs/111.md")]
     pub mod cacao {
+        #[cfg(doc)]
+        pub use crate::constants::composition;
+
         pub const STD_WATER_CONTENT_IN_CACAO_PRODUCTS: f64 = 0.02;
         pub const STD_PROTEIN_IN_COCOA_SOLIDS: f64 = 0.245;
         pub const STD_CARBOHYDRATES_IN_COCOA_SOLIDS: f64 = 0.68;
         pub const STD_FIBER_IN_COCOA_SOLIDS: f64 = 0.40;
         pub const STD_ASH_IN_COCOA_SOLIDS: f64 = 0.075;
-
-        /// Percentage of saturated fats typical of cocoa butter
-        ///
-        /// This value is an average calculated from the nutrition facts table of various cocoa
-        /// butter products (70% Cacao Dark Chocolate, 2025)[^107], etc.
-        #[doc = include_str!("../docs/bibs/107.md")]
         pub const STD_SATURATED_FAT_IN_COCOA_BUTTER: f64 = 0.60;
 
-        /// Percentage of cocoa butter typically found in cacao solids
+        /// Percentage of cocoa butter typically found in cacao solids of non-powder chocolate
         ///
-        /// This value is an average calculated from the nutrition facts table of various cocoa
-        /// butter products (70% Cacao Dark Chocolate, 2025)[^107], etc.
-        #[doc = include_str!("../docs/bibs/107.md")]
-        pub const STD_COCOA_BUTTER_IN_CACAO_SOLIDS: f64 = 0.55;
+        /// This value is an average of all the products listed in [`composition::cacao`], except
+        /// for the two cocoa powder products, which contain much lesser amounts of cocoa butter.
+        pub const STD_COCOA_BUTTER_IN_CACAO_SOLIDS_OF_CHOCOLATE_NON_POWDER: f64 = 0.57;
     }
 }
 

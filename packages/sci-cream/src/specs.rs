@@ -489,7 +489,7 @@ impl IntoComposition for FruitSpec {
 ///
 /// # Examples
 ///
-/// (70% Cacao Dark Chocolate, 2025)[^107] per 40g serving:
+/// (Lindt 70% Cacao Dark Chocolate, 2025)[^107] per 40g serving:
 /// - Cacao solids: 70%
 /// - Cocoa butter: 16g fat => 40%
 /// - Sugar: 12g => 30%
@@ -518,7 +518,7 @@ impl IntoComposition for FruitSpec {
 /// assert_eq!(comp.get(CompKey::Fiber), 12.0);
 /// ```
 ///
-/// (100% Unsweetened Cocoa Powder, 2025)[^108] per 6g serving:
+/// (Ghirardelli 100% Unsweetened Cocoa Powder, 2025)[^111] per 6g serving:
 /// - Cacao solids: 100%
 /// - Cocoa butter: 1g fat => 16.67%
 ///
@@ -547,7 +547,7 @@ impl IntoComposition for FruitSpec {
 /// assert_eq_float!(comp.get(CompKey::Fiber), 33.332);
 /// ```
 #[doc = include_str!("../docs/bibs/107.md")]
-#[doc = include_str!("../docs/bibs/108.md")]
+#[doc = include_str!("../docs/bibs/111.md")]
 // @todo Add a `msnf` field to support milk chocolate products (some professional chocolatier use)
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
