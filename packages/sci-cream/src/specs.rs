@@ -682,7 +682,7 @@ impl IntoComposition for NutSpec {
     }
 }
 
-/// Spec for egg ingredients, with water content, fat content, and lecithin (emulsifier) content
+/// Spec for egg ingredients, with water, fat, protein, and lecithin (emulsifier) content
 ///
 /// The composition of egg ingredients can usually be found in food composition databases, like
 /// [USDA FoodData Central](https://fdc.nal.usda.gov/food-search), in the manufacturers' data, or in
@@ -709,10 +709,13 @@ impl IntoComposition for NutSpec {
 /// let comp = EggSpec {
 ///     water: 51.0,
 ///     fats: 30.0,
+///     proteins: 16.0,
 ///     lecithin: 9.0,
 /// }.into_composition().unwrap();
 ///
+/// assert_eq!(comp.get(CompKey::Energy), 334.0);
 /// assert_eq!(comp.get(CompKey::EggFat), 30.0);
+/// assert_eq!(comp.get(CompKey::TotalProteins), 16.0);
 /// assert_eq!(comp.get(CompKey::EggSNF), 19.0);
 /// assert_eq!(comp.get(CompKey::EggSolids), 49.0);
 /// assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
@@ -725,19 +728,30 @@ impl IntoComposition for NutSpec {
 pub struct EggSpec {
     pub water: f64,
     pub fats: f64,
+    pub proteins: f64,
     pub lecithin: f64,
 }
 
 impl IntoComposition for EggSpec {
     fn into_composition(self) -> Result<Composition> {
-        let Self { water, fats, lecithin } = self;
+        let Self {
+            water,
+            fats,
+            proteins,
+            lecithin,
+        } = self;
 
-        assert_are_positive(&[water, fats, lecithin])?;
-        assert_within_100_percent(water + fats)?;
+        assert_are_positive(&[water, fats, proteins, lecithin])?;
+        assert_within_100_percent(water + fats + proteins)?;
         assert_is_subset(lecithin, fats, "Lecithin must be a subset of fats".to_string())?;
 
         let egg_solids = SolidsBreakdown::new()
-            .fats(Fats::new().total(fats))
+            .fats(
+                Fats::new()
+                    .total(fats)
+                    .saturated(fats * constants::composition::STD_SATURATED_FAT_IN_EGG_FAT),
+            )
+            .proteins(proteins)
             .others_from_total(100.0 - water)?;
 
         Ok(Composition::new()
@@ -2653,6 +2667,7 @@ pub(crate) mod tests {
       "EggSpec": {
         "water": 51,
         "fats": 30,
+        "proteins": 16,
         "lecithin": 9
       }
     }"#;
@@ -2663,16 +2678,34 @@ pub(crate) mod tests {
         spec: Spec::EggSpec(EggSpec {
             water: 51.0,
             fats: 30.0,
+            proteins: 16.0,
             lecithin: 9.0,
         }),
+    });
+
+    pub(crate) static COMP_EGG_YOLK: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(334.0)
+            .solids(
+                Solids::new().egg(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(30.0).saturated(8.4))
+                        .proteins(16.0)
+                        .others(3.0),
+                ),
+            )
+            .micro(Micro::new().emulsifiers(9.0).lecithin(9.0))
     });
 
     #[test]
     fn into_composition_egg_spec_egg_yolk() {
         let comp = ING_SPEC_EGG_YOLK.spec.into_composition().unwrap();
 
+        assert_eq!(comp.get(CompKey::Energy), 334.0);
         assert_eq!(comp.get(CompKey::EggFat), 30.0);
         assert_eq!(comp.get(CompKey::EggSNF), 19.0);
+        assert_eq!(comp.get(CompKey::TotalProteins), 16.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 19.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 49.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
         assert_eq!(comp.get(CompKey::Lecithin), 9.0);
@@ -2972,7 +3005,7 @@ pub(crate) mod tests {
                 Some(*COMP_COCOA_POWDER_17),
             ),
             (ING_SPEC_NUT_ALMOND_STR, ING_SPEC_NUT_ALMOND.clone(), None),
-            (ING_SPEC_EGG_YOLK_STR, ING_SPEC_EGG_YOLK.clone(), None),
+            (ING_SPEC_EGG_YOLK_STR, ING_SPEC_EGG_YOLK.clone(), Some(*COMP_EGG_YOLK)),
             (ING_SPEC_ALCOHOL_40_ABV_SPIRIT_STR, ING_SPEC_ALCOHOL_40_ABV_SPIRIT.clone(), None),
             (ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM_STR, ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.clone(), None),
             (ING_SPEC_MICRO_SALT_STR, ING_SPEC_MICRO_SALT.clone(), None),

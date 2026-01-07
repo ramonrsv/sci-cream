@@ -37,5 +37,6 @@
       than can be expressed with `AlcoholSpec`, including other carbohydrates, milk solids, etc.
 - [ ] Looking into using `use crate::composition::CompKey::*` to avoid having to prefix `CompKey::`
       whenever accessing values, e.g. `comp.get(MilkFats)` vs `comp.get(CompKey::MilkFats)`.
-- [x] Add support for proteins and energy in `FruitSpec`, `ChocolateSpec`
-- [ ] Add support for proteins and energy in `NutSpec`, and `EggSpec`.
+- [x] Add support for proteins and energy in `FruitSpec`, `ChocolateSpec`, and `EggSpec`.
+- [ ] Add support for proteins and energy in `NutSpec`.
+- [ ] Add code example doc tests to all specs that don't already have them.
