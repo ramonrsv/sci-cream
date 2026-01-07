@@ -173,14 +173,14 @@ mod tests {
         let mix_properties = MixProperties::calculate_from_composition_lines(&to_comp_lines(&[
             ("Whole Milk", 245.0),
             ("Whipping Cream", 215.0),
-            ("Chocolate 70%", 28.0),
+            ("70% Dark Chocolate", 28.0),
             ("Skimmed Milk Powder", 21.0),
             ("Egg Yolk", 18.0),
             ("Dextrose", 45.0),
             ("Fructose", 32.0),
             ("Salt", 0.5),
             ("Rich Ice Cream SB", 1.25),
-            // ("Vanilla Extract", 6.0),
+            //("Vanilla Extract", 6.0),
         ]))
         .unwrap();
 

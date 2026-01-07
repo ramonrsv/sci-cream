@@ -189,10 +189,17 @@ pub mod composition {
 
         /// Percentage of saturated fats typical of cocoa butter
         ///
-        /// Calculated from the nutrition facts table of various cocoa butter products (70% Cacao
-        /// Dark Chocolate, 2025)[^107], etc.
+        /// This value is an average calculated from the nutrition facts table of various cocoa
+        /// butter products (70% Cacao Dark Chocolate, 2025)[^107], etc.
         #[doc = include_str!("../docs/bibs/107.md")]
         pub const STD_SATURATED_FAT_IN_COCOA_BUTTER: f64 = 0.60;
+
+        /// Percentage of cocoa butter typically found in cacao solids
+        ///
+        /// This value is an average calculated from the nutrition facts table of various cocoa
+        /// butter products (70% Cacao Dark Chocolate, 2025)[^107], etc.
+        #[doc = include_str!("../docs/bibs/107.md")]
+        pub const STD_COCOA_BUTTER_IN_CACAO_SOLIDS: f64 = 0.55;
     }
 }
 

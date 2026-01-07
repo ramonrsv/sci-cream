@@ -2394,8 +2394,8 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACsgr), 12.512);
     }
 
-    pub(crate) const ING_SPEC_CHOCOLATE_70_STR: &str = r#"{
-      "name": "Chocolate 70%",
+    pub(crate) const ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE_STR: &str = r#"{
+      "name": "Lindt EXCELLENCE 70% Cacao Dark Chocolate",
       "category": "Chocolate",
       "ChocolateSpec": {
         "cacao_solids": 70,
@@ -2404,18 +2404,19 @@ pub(crate) mod tests {
       }
     }"#;
 
-    pub(crate) static ING_SPEC_CHOCOLATE_70: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-        name: "Chocolate 70%".to_string(),
-        category: Category::Chocolate,
-        spec: Spec::ChocolateSpec(ChocolateSpec {
-            cacao_solids: 70.0,
-            cocoa_butter: 40.0,
-            sugar: Some(30.0),
-            other_solids: None,
-        }),
-    });
+    pub(crate) static ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Lindt EXCELLENCE 70% Cacao Dark Chocolate".to_string(),
+            category: Category::Chocolate,
+            spec: Spec::ChocolateSpec(ChocolateSpec {
+                cacao_solids: 70.0,
+                cocoa_butter: 40.0,
+                sugar: Some(30.0),
+                other_solids: None,
+            }),
+        });
 
-    pub(crate) static COMP_CHOCOLATE_70: LazyLock<Composition> = LazyLock::new(|| {
+    pub(crate) static COMP_LINDT_70_DARK_CHOCOLATE: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
             .energy(543.0)
             .solids(
@@ -2436,8 +2437,11 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_chocolate_spec_70() {
-        let comp = ING_SPEC_CHOCOLATE_70.spec.into_composition().unwrap();
+    fn into_composition_chocolate_spec_lindt_70_dark_chocolate() {
+        let comp = ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE
+            .spec
+            .into_composition()
+            .unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 543.0);
         assert_eq!(comp.get(CompKey::TotalFats), 40.0);
@@ -2462,8 +2466,8 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::HF), 90.0);
     }
 
-    pub(crate) const ING_SPEC_CHOCOLATE_95_OTHER_SOLIDS_STR: &str = r#"{
-      "name": "Chocolate 95%",
+    pub(crate) const ING_SPEC_CHOCOLATE_LINDT_95_DARK_CHOCOLATE_OTHER_SOLIDS_STR: &str = r#"{
+      "name": "Lindt EXCELLENCE 95% Cacao Dark Chocolate",
       "category": "Chocolate",
       "ChocolateSpec": {
         "cacao_solids": 95,
@@ -2473,18 +2477,19 @@ pub(crate) mod tests {
       }
     }"#;
 
-    pub(crate) static ING_SPEC_CHOCOLATE_95_OTHER_SOLIDS: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-        name: "Chocolate 95%".to_string(),
-        category: Category::Chocolate,
-        spec: Spec::ChocolateSpec(ChocolateSpec {
-            cacao_solids: 95.0,
-            cocoa_butter: 57.5,
-            sugar: Some(3.0),
-            other_solids: Some(2.0),
-        }),
-    });
+    pub(crate) static ING_SPEC_CHOCOLATE_LINDT_95_DARK_CHOCOLATE_OTHER_SOLIDS: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Lindt EXCELLENCE 95% Cacao Dark Chocolate".to_string(),
+            category: Category::Chocolate,
+            spec: Spec::ChocolateSpec(ChocolateSpec {
+                cacao_solids: 95.0,
+                cocoa_butter: 57.5,
+                sugar: Some(3.0),
+                other_solids: Some(2.0),
+            }),
+        });
 
-    pub(crate) static COMP_CHOCOLATE_95_OTHER_SOLIDS: LazyLock<Composition> = LazyLock::new(|| {
+    pub(crate) static COMP_LINDT_95_DARK_CHOCOLATE: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
             .energy(608.25)
             .solids(
@@ -2507,8 +2512,11 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_chocolate_spec_95_other_solids() {
-        let comp = ING_SPEC_CHOCOLATE_95_OTHER_SOLIDS.spec.into_composition().unwrap();
+    fn into_composition_chocolate_spec_lindt_95_dark_chocolate_other_solids() {
+        let comp = ING_SPEC_CHOCOLATE_LINDT_95_DARK_CHOCOLATE_OTHER_SOLIDS
+            .spec
+            .into_composition()
+            .unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 608.25);
         assert_eq!(comp.get(CompKey::TotalFats), 57.5);
@@ -2531,8 +2539,8 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::HF), 119.25);
     }
 
-    pub(crate) const ING_SPEC_CHOCOLATE_100_STR: &str = r#"{
-      "name": "Chocolate 100%",
+    pub(crate) const ING_SPEC_CHOCOLATE_LINDT_100_DARK_CHOCOLATE_STR: &str = r#"{
+      "name": "Lindt EXCELLENCE 100% Cacao Dark Chocolate",
       "category": "Chocolate",
       "ChocolateSpec": {
         "cacao_solids": 100,
@@ -2540,18 +2548,19 @@ pub(crate) mod tests {
       }
     }"#;
 
-    pub(crate) static ING_SPEC_CHOCOLATE_100: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-        name: "Chocolate 100%".to_string(),
-        category: Category::Chocolate,
-        spec: Spec::ChocolateSpec(ChocolateSpec {
-            cacao_solids: 100.0,
-            cocoa_butter: 54.0,
-            sugar: None,
-            other_solids: None,
-        }),
-    });
+    pub(crate) static ING_SPEC_CHOCOLATE_LINDT_100_DARK_CHOCOLATE: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Lindt EXCELLENCE 100% Cacao Dark Chocolate".to_string(),
+            category: Category::Chocolate,
+            spec: Spec::ChocolateSpec(ChocolateSpec {
+                cacao_solids: 100.0,
+                cocoa_butter: 54.0,
+                sugar: None,
+                other_solids: None,
+            }),
+        });
 
-    pub(crate) static COMP_CHOCOLATE_100: LazyLock<Composition> = LazyLock::new(|| {
+    pub(crate) static COMP_LINDT_100_DARK_CHOCOLATE: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
             .energy(582.6)
             .solids(
@@ -2568,8 +2577,11 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_chocolate_spec_100() {
-        let comp = ING_SPEC_CHOCOLATE_100.spec.into_composition().unwrap();
+    fn into_composition_chocolate_spec_lindt_100_dark_chocolate() {
+        let comp = ING_SPEC_CHOCOLATE_LINDT_100_DARK_CHOCOLATE
+            .spec
+            .into_composition()
+            .unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 582.6);
         assert_eq!(comp.get(CompKey::TotalFats), 54.0);
@@ -2589,8 +2601,8 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::HF), 131.4);
     }
 
-    pub(crate) const ING_SPEC_CHOCOLATE_COCOA_POWDER_17_STR: &str = r#"{
-      "name": "Cocoa Powder 17%",
+    pub(crate) const ING_SPEC_CHOCOLATE_GHIRARDELLI_100_COCOA_POWDER_STR: &str = r#"{
+      "name": "Ghirardelli 100% Unsweetened Cocoa Powder",
       "category": "Chocolate",
       "ChocolateSpec": {
         "cacao_solids": 100,
@@ -2598,18 +2610,19 @@ pub(crate) mod tests {
       }
     }"#;
 
-    pub(crate) static ING_SPEC_CHOCOLATE_COCOA_POWDER_17: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-        name: "Cocoa Powder 17%".to_string(),
-        category: Category::Chocolate,
-        spec: Spec::ChocolateSpec(ChocolateSpec {
-            cacao_solids: 100.0,
-            cocoa_butter: 16.67,
-            sugar: None,
-            other_solids: None,
-        }),
-    });
+    pub(crate) static ING_SPEC_CHOCOLATE_GHIRARDELLI_100_COCOA_POWDER: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Ghirardelli 100% Unsweetened Cocoa Powder".to_string(),
+            category: Category::Chocolate,
+            spec: Spec::ChocolateSpec(ChocolateSpec {
+                cacao_solids: 100.0,
+                cocoa_butter: 16.67,
+                sugar: None,
+                other_solids: None,
+            }),
+        });
 
-    pub(crate) static COMP_COCOA_POWDER_17: LazyLock<Composition> = LazyLock::new(|| {
+    pub(crate) static COMP_GHIRARDELLI_100_COCOA_POWDER: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
             .energy(325.023)
             .solids(
@@ -2626,8 +2639,11 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_chocolate_spec_cocoa_powder_17() {
-        let comp = ING_SPEC_CHOCOLATE_COCOA_POWDER_17.spec.into_composition().unwrap();
+    fn into_composition_chocolate_spec_ghirardelli_100_cocoa_powder() {
+        let comp = ING_SPEC_CHOCOLATE_GHIRARDELLI_100_COCOA_POWDER
+            .spec
+            .into_composition()
+            .unwrap();
 
         // Different similar products list the energy from 250 to 325
         assert_eq!(comp.get(CompKey::Energy), 325.023);
@@ -3050,17 +3066,25 @@ pub(crate) mod tests {
             (ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE_STR, ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE.clone(), None),
             (ING_SPEC_FRUIT_STRAWBERRY_STR, ING_SPEC_FRUIT_STRAWBERRY.clone(), None),
             (ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY_STR, ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY.clone(), None),
-            (ING_SPEC_CHOCOLATE_70_STR, ING_SPEC_CHOCOLATE_70.clone(), Some(*COMP_CHOCOLATE_70)),
             (
-                ING_SPEC_CHOCOLATE_95_OTHER_SOLIDS_STR,
-                ING_SPEC_CHOCOLATE_95_OTHER_SOLIDS.clone(),
-                Some(*COMP_CHOCOLATE_95_OTHER_SOLIDS),
+                ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE_STR,
+                ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE.clone(),
+                Some(*COMP_LINDT_70_DARK_CHOCOLATE),
             ),
-            (ING_SPEC_CHOCOLATE_100_STR, ING_SPEC_CHOCOLATE_100.clone(), Some(*COMP_CHOCOLATE_100)),
             (
-                ING_SPEC_CHOCOLATE_COCOA_POWDER_17_STR,
-                ING_SPEC_CHOCOLATE_COCOA_POWDER_17.clone(),
-                Some(*COMP_COCOA_POWDER_17),
+                ING_SPEC_CHOCOLATE_LINDT_95_DARK_CHOCOLATE_OTHER_SOLIDS_STR,
+                ING_SPEC_CHOCOLATE_LINDT_95_DARK_CHOCOLATE_OTHER_SOLIDS.clone(),
+                Some(*COMP_LINDT_95_DARK_CHOCOLATE),
+            ),
+            (
+                ING_SPEC_CHOCOLATE_LINDT_100_DARK_CHOCOLATE_STR,
+                ING_SPEC_CHOCOLATE_LINDT_100_DARK_CHOCOLATE.clone(),
+                Some(*COMP_LINDT_100_DARK_CHOCOLATE),
+            ),
+            (
+                ING_SPEC_CHOCOLATE_GHIRARDELLI_100_COCOA_POWDER_STR,
+                ING_SPEC_CHOCOLATE_GHIRARDELLI_100_COCOA_POWDER.clone(),
+                Some(*COMP_GHIRARDELLI_100_COCOA_POWDER),
             ),
             (ING_SPEC_NUT_ALMOND_STR, ING_SPEC_NUT_ALMOND.clone(), Some(*COMP_NUT_ALMOND)),
             (ING_SPEC_EGG_YOLK_STR, ING_SPEC_EGG_YOLK.clone(), Some(*COMP_EGG_YOLK)),
