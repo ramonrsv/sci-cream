@@ -38,6 +38,8 @@
 
 [^19]: European Association of Polyol Producers. (2026). _Polyols_. <https://polyols-eu.org/polyols/>
 
+[^20]: Goff & Hartel (2025). _Ice Cream_ (8th ed.). Springer
+
 <!-- Ingredient references -->
 
 [^100]: Eggs, Grade A, Large, egg yolk. (2019). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/748236/nutrients>

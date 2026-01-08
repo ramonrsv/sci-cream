@@ -76,13 +76,15 @@ pub enum CompKey {
     ///
     /// Sometimes referred to as "cocoa fat"; see [`ChocolateSpec`] for more details. This component
     /// affects the texture of ice creams by hardening the frozen product, and contributes to the
-    /// rich mouthfeel of chocolate ice creams due to the way that cocoa fats melt in the mouth.
+    /// _"perception of richness in chocolate ice creams... [due to] the lubricating effect that
+    /// cocoa butter provides as it melts in the mouth."_ (Goff & Hartel, 2025, p. 107)[^20]
+    #[doc = include_str!("../../docs/bibs/20.md")]
     CocoaButter,
     /// _Cocoa_ solids, the non-fat component of cacao solids [`CompKey::CacaoSolids`]
     ///
     /// Sometimes referred to as "cocoa powder" or "cocoa fiber", i.e. cacao solids minus cocoa
     /// butter; see [`ChocolateSpec`] for more details. In ice cream mixes, this generally
-    /// determines how "chocolatey" the flavor is, and contributes to the texture and body.
+    /// determines the intensity of the chocolate flavor, and contributes to the texture and body.
     CocoaSolids,
     /// _Cacao_ solids, the total dry matter content derived from the cacao bean
     ///
