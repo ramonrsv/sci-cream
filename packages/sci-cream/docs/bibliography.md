@@ -2,7 +2,7 @@
 
 [^1]: Raphaelson, Paul. (2023, February). _Sugars in Ice Cream_. <https://under-belly.org/sugars-in-ice-cream/>
 
-[^2]: Goff & Hartel (2013). _Ice Cream_ (7th ed.). Springer
+[^2]: Goff & Hartel. (2013). _Ice Cream_ (7th ed.). Springer
 
 [^3]: Corvitto, A. (2005). _Secrets of Ice-Cream. Ice-Cream Without Secrets_. Vilbo Ediciones Y Publicidad
 
@@ -38,7 +38,13 @@
 
 [^19]: European Association of Polyol Producers. (2026). _Polyols_. <https://polyols-eu.org/polyols/>
 
-[^20]: Goff & Hartel (2025). _Ice Cream_ (8th ed.). Springer
+[^20]: Goff & Hartel. (2025). _Ice Cream_ (8th ed.). Springer
+
+[^21]: International Food Information Council. (2019, July). In _All About Aspartame_. <https://ific.org/resources/articles/all-about-aspartame>
+
+[^22]: American Diabetes Association. (2014, April). In _Common Terms: S-Z_. <https://web.archive.org/web/20151128211136/https://www.diabetes.org/diabetes-basics/common-terms/common-terms-s-z.html>
+
+[^23]: Schiffman, Susan, S. et al. (2013, November). _Sucralose, A Synthetic Organochlorine Sweetener: Overview of Biological Issues_. <https://pmc.ncbi.nlm.nih.gov/articles/PMC3856475/>
 
 <!-- Ingredient references -->
 

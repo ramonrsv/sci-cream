@@ -254,9 +254,15 @@ pub mod energy {
     #[doc = include_str!("../docs/bibs/19.md")]
     pub const XYLITOL: f64 = 2.4;
 
-    pub const ASPARTAME: f64 = 0.0; // @todo
-    pub const SACCHARIN: f64 = 0.0; // @todo
-    pub const SUCRALOSE: f64 = 0.0; // @todo
+    /// (International Food Information Council Foundation, 2019, "What is aspartame?")[^21]
+    #[doc = include_str!("../docs/bibs/21.md")]
+    pub const ASPARTAME: f64 = 4.0;
+    /// (American Diabetes Association, 2014, "Saccharin")[^22]
+    #[doc = include_str!("../docs/bibs/22.md")]
+    pub const SACCHARIN: f64 = 0.0;
+    /// (Schiffman, 2013, "Abstract")[^23]
+    #[doc = include_str!("../docs/bibs/23.md")]
+    pub const SUCRALOSE: f64 = 0.0;
 }
 
 pub mod density {
