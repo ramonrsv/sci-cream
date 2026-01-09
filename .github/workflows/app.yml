@@ -25,6 +25,10 @@ env:
   TEST_USER_NAME: SciCream Test
   TEST_USER_EMAIL: test@scicream.ca
 
+defaults:
+  run:
+    working-directory: ./packages/app
+
 jobs:
   setup_db_seed_build_and_test:
     runs-on: ubuntu-latest
@@ -58,28 +62,29 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Installing dependencies
+      - name: Installing sci-cream crate pnpm dependencies
         run: pnpm install
+        working-directory: ./packages/sci-cream
       - name: Installing wasm-pack
         run: cargo install wasm-pack
-      - name: Building workspace
+      - name: Building sci-cream crate
+        run: pnpm build
+        working-directory: ./packages/sci-cream
+      - name: Installing app pnpm dependencies
+        run: pnpm install
+      - name: Building app
         run: pnpm build
       - name: Seeding database
         run: |
-          cd ./packages/app
           npx drizzle-kit push
           pnpm tsx ./src/lib/db/seed.ts
-      - name: Running workspace tests
+      - name: Running app tests
         run: pnpm test
 
   eslint:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@master
-        with:
-          toolchain: stable
-          components: clippy
       - uses: pnpm/action-setup@v4
         with:
           version: 10
@@ -132,23 +137,27 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Installing cargo-llvm-cov
-        run: cargo install cargo-llvm-cov
+      - name: Installing sci-cream crate pnpm dependencies
+        run: pnpm install
+        working-directory: ./packages/sci-cream
       - name: Installing wasm-pack
         run: cargo install wasm-pack
-      - name: Installing dependencies
+      - name: Building sci-cream crate
+        run: pnpm build
+        working-directory: ./packages/sci-cream
+      - name: Installing app pnpm dependencies
         run: pnpm install
-      - name: Building workspace
+      - name: Building app
         run: pnpm build
       - name: Seeding database
         run: |
-          cd ./packages/app
           npx drizzle-kit push
           pnpm tsx ./src/lib/db/seed.ts
-      - name: Running workspace code coverage
+      - name: Running app code coverage
         run: pnpm coverage
       - if: vars.ACT != 'true'
         name: Uploading code coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+          flags: app
