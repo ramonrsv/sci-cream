@@ -39,3 +39,5 @@
       whenever accessing values, e.g. `comp.get(MilkFats)` vs `comp.get(CompKey::MilkFats)`.
 - [x] Add support for proteins and energy in `FruitSpec`, `ChocolateSpec`, `NutSpec`, and `EggSpec`.
 - [ ] Add code example doc tests to all specs that don't already have them.
+- [ ] Use new [pnpm/action-setup](https://github.com/pnpm/action-setup) `cache: true` option once
+      it's released. See: <https://github.com/pnpm/action-setup/issues/201>
