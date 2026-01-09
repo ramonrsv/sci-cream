@@ -44,6 +44,7 @@ pub fn assert_is_subset(subset: f64, superset: f64, description: String) -> Resu
 }
 
 #[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
 mod tests {
     use super::*;
 

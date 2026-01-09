@@ -448,6 +448,7 @@ impl AbsDiffEq for ModifiedGoffHartelCorvittoFpdCurveStep {
 }
 
 #[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
 mod tests {
     use std::sync::LazyLock;
 

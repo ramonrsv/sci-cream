@@ -36,7 +36,7 @@
     "prettier": "prettier --check ./src/ts",
     "coverage": "pnpm build:wasm && pnpm build:js && pnpm coverage:rust && pnpm coverage:js",
     "coverage:rust": "pnpm coverage:rust:generate && pnpm coverage:rust:codecov && pnpm coverage:rust:html",
-    "coverage:rust:generate": "cargo llvm-cov test --all-features",
+    "coverage:rust:generate": "cargo +nightly llvm-cov test --all-features",
     "coverage:rust:codecov": "cargo llvm-cov report --codecov --output-path ./target/codecov_code_coverage.json",
     "coverage:rust:html": "cargo llvm-cov report --html",
     "coverage:js": "vitest run --coverage"

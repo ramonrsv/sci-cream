@@ -99,6 +99,7 @@ impl MixProperties {
 }
 
 #[cfg(feature = "wasm")]
+#[cfg_attr(coverage, coverage(off))]
 pub mod wasm {
     use super::*;
 
@@ -126,6 +127,7 @@ impl Default for MixProperties {
 }
 
 #[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;

@@ -131,11 +131,13 @@ impl Sugars {
     }
 
     #[cfg(feature = "wasm")]
+    #[cfg_attr(coverage, coverage(off))]
     pub fn to_pod_wasm(&self) -> std::result::Result<f64, JsValue> {
         self.to_pod().map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
     #[cfg(feature = "wasm")]
+    #[cfg_attr(coverage, coverage(off))]
     pub fn to_pac_wasm(&self) -> std::result::Result<f64, JsValue> {
         self.to_pac().map_err(|e| JsValue::from_str(&e.to_string()))
     }
@@ -188,6 +190,7 @@ impl Default for Sugars {
 }
 
 #[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     #[expect(unused_imports)]

@@ -109,6 +109,7 @@ pub fn composition_value_as_percentage(comp: f64, qty: f64, mix_total: f64) -> f
 }
 
 #[cfg(feature = "wasm")]
+#[cfg_attr(coverage, coverage(off))]
 pub mod wasm {
     use super::*;
 
@@ -124,6 +125,7 @@ pub mod wasm {
 }
 
 #[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
 mod tests {
     use std::collections::HashSet;
 

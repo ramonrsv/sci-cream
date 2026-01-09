@@ -1053,6 +1053,7 @@ impl IntoComposition for IngredientSpec {
 }
 
 #[cfg(feature = "wasm")]
+#[cfg_attr(coverage, coverage(off))]
 pub mod wasm {
     use super::*;
 
@@ -1065,6 +1066,7 @@ pub mod wasm {
 }
 
 #[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
 pub(crate) mod tests {
     use std::sync::LazyLock;
 

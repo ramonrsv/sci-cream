@@ -429,6 +429,7 @@ pub mod fpd {
 pub const COMPOSITION_EPSILON: f64 = 1e-10;
 
 #[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
 mod tests {
 
     use crate::tests::asserts::shadow_asserts::assert_eq;

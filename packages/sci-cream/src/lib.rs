@@ -2,6 +2,8 @@
 their properties.
 */
 
+#![cfg_attr(coverage, feature(coverage_attribute))]
+
 #[doc = include_str!("../docs/freezing-point-depression.md")]
 #[doc = include_str!("../docs/sweeteners.md")]
 #[doc = include_str!("../docs/bibliography.md")]

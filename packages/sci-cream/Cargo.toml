@@ -67,6 +67,11 @@ unused_qualifications = "warn"
 unused_results = "warn"
 variant_size_differences = "warn"
 
+# For cargo-llvm-cov #[coverage] attribute
+unexpected_cfgs = { level = "warn", check-cfg = [
+    'cfg(coverage,coverage_nightly)',
+] }
+
 [lints.clippy]
 all = { level = "warn", priority = -1 }
 cargo = { level = "warn", priority = -1 }
