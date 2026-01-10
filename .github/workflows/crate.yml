@@ -29,9 +29,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
         with:
-          toolchain: stable
+          workspaces: "packages/sci-cream"
       - run: cargo build --all-features --all-targets
       - run: cargo test --all-features --all-targets
       - run: cargo test --all-features --doc
@@ -40,9 +41,10 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
         with:
-          toolchain: stable
+          workspaces: "packages/sci-cream"
       - run: cargo doc --all-features --no-deps --document-private-items
       - run: cargo doc --examples --no-deps
 
@@ -50,37 +52,42 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
           components: clippy
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "packages/sci-cream"
       - run: cargo clippy --all-features --all-targets --no-deps
 
   rustfmt:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@stable
         with:
-          toolchain: stable
           components: rustfmt
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "packages/sci-cream"
       - run: cargo fmt --all -- --check
 
   pnpm_build_and_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
         with:
-          toolchain: stable
+          workspaces: "packages/sci-cream"
+      - name: Installing wasm-pack
+        run: cargo install wasm-pack
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
       - uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Installing wasm-pack
-        run: cargo install wasm-pack
       - name: Install dependencies
         run: pnpm install
       - name: Building wasm package
@@ -118,19 +125,20 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@master
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
         with:
-          toolchain: stable
+          workspaces: "packages/sci-cream"
+      - name: Installing cargo-llvm-cov
+        run: cargo install cargo-llvm-cov
+      - name: Installing wasm-pack
+        run: cargo install wasm-pack
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
       - uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Installing cargo-llvm-cov
-        run: cargo install cargo-llvm-cov
-      - name: Installing wasm-pack
-        run: cargo install wasm-pack
       - name: Installing pnpm dependencies
         run: pnpm install
       - name: Building sci-cream crate
