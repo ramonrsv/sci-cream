@@ -41,3 +41,4 @@
 - [ ] Add code example doc tests to all specs that don't already have them.
 - [ ] Use new [pnpm/action-setup](https://github.com/pnpm/action-setup) `cache: true` option once
       it's released. See: <https://github.com/pnpm/action-setup/issues/201>
+- [ ] Looking to making reusable GitHub Workflows for common setup to simplify the CI workflows.
