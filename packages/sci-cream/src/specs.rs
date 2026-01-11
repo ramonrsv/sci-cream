@@ -1044,12 +1044,12 @@ pub struct IngredientSpec {
 }
 
 impl IngredientSpec {
-    pub fn into_ingredient(self) -> Ingredient {
-        Ingredient {
+    pub fn into_ingredient(self) -> Result<Ingredient> {
+        Ok(Ingredient {
             name: self.name,
             category: self.category,
-            composition: self.spec.into_composition().unwrap(),
-        }
+            composition: self.spec.into_composition()?,
+        })
     }
 }
 
@@ -1065,10 +1065,10 @@ pub mod wasm {
     use super::*;
 
     #[wasm_bindgen]
-    pub fn into_ingredient_from_spec(spec: JsValue) -> Ingredient {
-        serde_wasm_bindgen::from_value::<IngredientSpec>(spec)
-            .unwrap()
+    pub fn into_ingredient_from_spec(spec: JsValue) -> std::result::Result<Ingredient, JsValue> {
+        serde_wasm_bindgen::from_value::<IngredientSpec>(spec)?
             .into_ingredient()
+            .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 }
 

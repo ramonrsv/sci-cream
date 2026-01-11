@@ -105,17 +105,17 @@ pub mod wasm {
 
     #[wasm_bindgen]
     pub fn calculate_mix_composition(composition_lines: JsValue) -> std::result::Result<Composition, JsValue> {
-        Composition::calculate_from_composition_lines(
-            &serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(composition_lines).unwrap(),
-        )
+        Composition::calculate_from_composition_lines(&serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(
+            composition_lines,
+        )?)
         .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
     #[wasm_bindgen]
     pub fn calculate_mix_properties(composition_lines: JsValue) -> std::result::Result<MixProperties, JsValue> {
-        MixProperties::calculate_from_composition_lines(
-            &serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(composition_lines).unwrap(),
-        )
+        MixProperties::calculate_from_composition_lines(&serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(
+            composition_lines,
+        )?)
         .map_err(|e| JsValue::from_str(&e.to_string()))
     }
 }
