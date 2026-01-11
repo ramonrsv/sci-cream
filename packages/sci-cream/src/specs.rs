@@ -1,8 +1,5 @@
 use serde::{Deserialize, Serialize};
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 #[cfg(feature = "diesel")]
 use crate::diesel::ingredients;
 #[cfg(feature = "diesel")]
@@ -80,7 +77,7 @@ pub enum Scaling<T> {
 /// For most ingredients it is sufficient to specify the fat content; the rest of the components are
 /// calculated from standard values, notably [`STD_MSNF_IN_MILK_SERUM`], [`STD_LACTOSE_IN_MSNF`],
 /// [`STD_PROTEIN_IN_MSNF`], and [`STD_SATURATED_FAT_IN_MILK_FAT`]. For milk powder ingredients it's
-/// necessary to specify the `msnf`, e.g. 97 for Skimmed MIlk Powder - 3% water, no fat, the rest is
+/// necessary to specify the `msnf`, e.g. 97 for Skimmed Milk Powder - 3% water, no fat, the rest is
 /// milk solids non-fat, or 70 for Whole Milk Powder - 3% water, 27% fat, the rest is `msnf`.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
@@ -179,20 +176,20 @@ impl IntoComposition for DairyFromNutritionSpec {
         };
 
         assert_are_positive(&[serving_size, total_fat, saturated_fat, trans_fat, sugars, protein])?;
-        assert_is_subset(saturated_fat, total_fat, "Saturated fat cannot exceed total fat".to_string())?;
-        assert_is_subset(trans_fat, total_fat, "Trans fats cannot exceed total fats".to_string())?;
+        assert_is_subset(saturated_fat, total_fat, "Saturated fat cannot exceed total fat")?;
+        assert_is_subset(trans_fat, total_fat, "Trans fats cannot exceed total fats")?;
         assert_is_subset(
             total_fat + sugars + protein,
             serving_size,
-            "Sum of fats, sugars, and proteins cannot exceed serving size".to_string(),
+            "Sum of fats, sugars, and proteins cannot exceed serving size",
         )?;
 
-        let sugars = if !is_lactose_free {
-            Sugars::new().lactose(sugars / serving_size * 100.0)
-        } else {
+        let sugars = if is_lactose_free {
             Sugars::new()
                 .glucose(sugars / serving_size * 100.0 / 2.0)
                 .galactose(sugars / serving_size * 100.0 / 2.0)
+        } else {
+            Sugars::new().lactose(sugars / serving_size * 100.0)
         };
 
         let milk_solids = SolidsBreakdown::new()
@@ -297,7 +294,7 @@ impl IntoComposition for SweetenerSpec {
             CompositionBasis::ByTotalWeight { water } => {
                 assert_is_100_percent(sweeteners.total() + fiber.total() + other_carbohydrates + other_solids + water)?;
             }
-        };
+        }
 
         let (sweeteners, fiber, other_carbohydrates, other_solids) = if let Some(factor) = factor {
             (sweeteners.scale(factor), fiber.scale(factor), other_carbohydrates * factor, other_solids * factor)
@@ -433,7 +430,7 @@ impl IntoComposition for FruitSpec {
         let fiber = fiber.unwrap_or(0.0);
         let carbohydrate = carbohydrate.unwrap_or(fiber + sugars.total());
 
-        assert_is_subset(fiber + sugars.total(), carbohydrate, "Sugars + fiber <= carbohydrate".to_string())?;
+        assert_is_subset(fiber + sugars.total(), carbohydrate, "Sugars + fiber <= carbohydrate")?;
         assert_are_positive(&[water, protein, fat, carbohydrate, fiber, sugars.total()])?;
         assert_within_100_percent(water + protein + fat + carbohydrate)?;
 
@@ -578,7 +575,7 @@ impl IntoComposition for ChocolateSpec {
         let other_solids = other_solids.unwrap_or(0.0);
 
         assert_are_positive(&[cacao_solids, cocoa_butter, sugars, other_solids])?;
-        assert_is_subset(cocoa_butter, cacao_solids, "Cacao butter must be a subset of cacao solids".to_string())?;
+        assert_is_subset(cocoa_butter, cacao_solids, "Cacao butter must be a subset of cacao solids")?;
         assert_is_100_percent(cacao_solids + sugars + other_solids)?;
 
         let cocoa_snf = cacao_solids - cocoa_butter;
@@ -693,10 +690,10 @@ impl IntoComposition for NutSpec {
 
         assert_are_positive(&[water, protein, fat, carbohydrate, fiber, sugars])?;
         assert_within_100_percent(water + protein + fat + carbohydrate)?;
-        assert_is_subset(fiber + sugars, carbohydrate, "Sugar + fiber <= carbohydrate".to_string())?;
+        assert_is_subset(fiber + sugars, carbohydrate, "Sugar + fiber <= carbohydrate")?;
 
         let saturated_fat = saturated_fat.unwrap_or(fat * constants::composition::STD_SATURATED_FAT_IN_NUT_FAT);
-        assert_is_subset(saturated_fat, fat, "Saturated fat cannot exceed total fat".to_string())?;
+        assert_is_subset(saturated_fat, fat, "Saturated fat cannot exceed total fat")?;
 
         let sugars = Sugars::new().sucrose(sugars);
 
@@ -784,7 +781,7 @@ impl IntoComposition for EggSpec {
 
         assert_are_positive(&[water, fat, protein, lecithin])?;
         assert_within_100_percent(water + fat + protein)?;
-        assert_is_subset(lecithin, fat, "Lecithin must be a subset of fat".to_string())?;
+        assert_is_subset(lecithin, fat, "Lecithin must be a subset of fat")?;
 
         let egg_solids = SolidsBreakdown::new()
             .fats(
@@ -845,7 +842,7 @@ impl IntoComposition for AlcoholSpec {
         let alcohol = Alcohol::from_abv(abv);
 
         assert_are_positive(&[abv, sugars, fat, solids])?;
-        assert_is_subset(sugars + fat, solids, "Sugars and fat must be a subset of solids".to_string())?;
+        assert_is_subset(sugars + fat, solids, "Sugars and fat must be a subset of solids")?;
         assert_within_100_percent(alcohol.by_weight + solids)?;
 
         let sugars = Sugars::new().sucrose(sugars);
@@ -1066,10 +1063,12 @@ impl IntoComposition for IngredientSpec {
 #[cfg(feature = "wasm")]
 #[cfg_attr(coverage, coverage(off))]
 pub mod wasm {
-    use super::*;
+    use wasm_bindgen::prelude::*;
+
+    use super::{Ingredient, IngredientSpec};
 
     #[wasm_bindgen]
-    pub fn into_ingredient_from_spec(spec: JsValue) -> std::result::Result<Ingredient, JsValue> {
+    pub fn into_ingredient_from_spec(spec: JsValue) -> Result<Ingredient, JsValue> {
         serde_wasm_bindgen::from_value::<IngredientSpec>(spec)?
             .into_ingredient()
             .map_err(|e| JsValue::from_str(&e.to_string()))
@@ -1116,7 +1115,7 @@ pub(crate) mod tests {
                         .unwrap(),
                 ),
             )
-            .pod(0.769104)
+            .pod(0.769_104)
             .pac(PAC::new().sugars(4.8069).msnf_ws_salts(3.2405))
     });
 
@@ -1141,7 +1140,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
         assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 0.769104);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 0.769_104);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.8069);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);

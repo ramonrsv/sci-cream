@@ -35,7 +35,7 @@ pub fn assert_is_100_percent(value: f64) -> Result<()> {
     }
 }
 
-pub fn assert_is_subset(subset: f64, superset: f64, description: String) -> Result<()> {
+pub fn assert_is_subset(subset: f64, superset: f64, description: &str) -> Result<()> {
     if subset <= superset {
         Ok(())
     } else {

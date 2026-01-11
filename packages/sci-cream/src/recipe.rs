@@ -101,10 +101,12 @@ impl MixProperties {
 #[cfg(feature = "wasm")]
 #[cfg_attr(coverage, coverage(off))]
 pub mod wasm {
-    use super::*;
+    use wasm_bindgen::prelude::*;
+
+    use super::{Composition, CompositionLine, MixProperties};
 
     #[wasm_bindgen]
-    pub fn calculate_mix_composition(composition_lines: JsValue) -> std::result::Result<Composition, JsValue> {
+    pub fn calculate_mix_composition(composition_lines: JsValue) -> Result<Composition, JsValue> {
         Composition::calculate_from_composition_lines(&serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(
             composition_lines,
         )?)
@@ -112,7 +114,7 @@ pub mod wasm {
     }
 
     #[wasm_bindgen]
-    pub fn calculate_mix_properties(composition_lines: JsValue) -> std::result::Result<MixProperties, JsValue> {
+    pub fn calculate_mix_properties(composition_lines: JsValue) -> Result<MixProperties, JsValue> {
         MixProperties::calculate_from_composition_lines(&serde_wasm_bindgen::from_value::<Vec<CompositionLine>>(
             composition_lines,
         )?)

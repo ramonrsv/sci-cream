@@ -220,11 +220,11 @@ pub struct GoffHartelFpdCurveStep {
     pub frozen_water: f64,
     /// g/100g of mix that is still liquid water at this step
     pub water: f64,
-    /// Sucrose equivalent concentration (PACsgr) at this step, g/100g water
+    /// Sucrose equivalent concentration [`PACsgr`](CompKey::PACsgr) at this step, g/100g water
     pub se: f64,
-    /// Sucrose equivalent salt concentration (PACslt) at this step, g/100g water
+    /// Sucrose equivalent salt concentration [`PACslt`](CompKey::PACslt) at this step, g/100g water
     pub sa: f64,
-    /// Sucrose equivalent alcohol concentration (PACalc) at this step, g/100g water
+    /// Sucrose eq. alcohol concentration [`PACalc`](CompKey::PACalc) at this step, g/100g water
     pub alc: f64,
     /// FPD due to sucrose equivalent concentration at this step, °C
     pub fpd_se: f64,
@@ -577,7 +577,7 @@ mod tests {
         assert_abs_diff_eq!(diff, 1.8, epsilon = 0.01);
     }
 
-    /// [`get_fpd_from_pac_polynomial`] above verifies the sanity of get_fpd_from_pac_polynomial.
+    /// [`get_fpd_from_pac_polynomial`] above verifies the sanity of [`get_fpd_from_pac_polynomial`]
     /// With that verified, we can generate a reference table for testing other related functions.
     static PAC_TO_FPD_TABLE_POLY: LazyLock<Vec<(f64, f64)>> = LazyLock::new(|| {
         #[expect(

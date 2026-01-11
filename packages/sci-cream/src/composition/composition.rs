@@ -458,7 +458,7 @@ mod tests {
             (CompKey::TotalArtificial, 0.0),
             (CompKey::TotalSweeteners, 4.8069),
             (CompKey::TotalCarbohydrates, 4.8069),
-            (CompKey::POD, 0.769104),
+            (CompKey::POD, 0.769_104),
             (CompKey::PACsgr, 4.8069),
             (CompKey::PACmlk, 3.2405),
             (CompKey::PACtotal, 8.0474),

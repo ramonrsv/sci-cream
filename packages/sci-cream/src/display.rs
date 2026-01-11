@@ -111,7 +111,9 @@ pub fn composition_value_as_percentage(comp: f64, qty: f64, mix_total: f64) -> f
 #[cfg(feature = "wasm")]
 #[cfg_attr(coverage, coverage(off))]
 pub mod wasm {
-    use super::*;
+    use wasm_bindgen::prelude::*;
+
+    use super::{CompKey, FpdKey, KeyAsStrings};
 
     #[wasm_bindgen]
     pub fn comp_key_as_med_str(key: CompKey) -> String {

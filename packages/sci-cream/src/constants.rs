@@ -129,7 +129,7 @@ pub mod pac {
     /// calculated via [`get_pac_from_fpd_polynomial(...)`](crate::fpd::get_pac_from_fpd_polynomial)
     /// with argument [`constants::fpd::FPD_CONST_FOR_MSNF_WS_SALTS`] for the target FPD, and using
     /// the polynomial described by [`constants::fpd::PAC_TO_FPD_POLY_COEFFS`].
-    pub const MSNF_WS_SALTS: f64 = 36.74040576149157;
+    pub const MSNF_WS_SALTS: f64 = 36.740_405_761_491_57;
 }
 
 /// Hardness Factor (HF) values for chocolate and nut ingredients
@@ -486,10 +486,10 @@ mod tests {
         let expected_conversions = [
             (0.0, 1.034),
             (2.0, 1.034),
-            (3.0, 1.0313333),
+            (3.0, 1.0313_333),
             (3.5, 1.03),
-            (5.0, 1.0271233),
-            (35.0, 0.969589),
+            (5.0, 1.0271_233),
+            (35.0, 0.969_589),
             (40.0, 0.96),
             (50.0, 0.96),
         ];
