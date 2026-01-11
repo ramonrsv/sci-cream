@@ -68,7 +68,7 @@ pub struct FPD {
 impl Curves {
     /// Create empty FPD curves, which are straight lines at 0°C, equivalent to those of 100% water
     pub fn empty() -> Self {
-        let make_empty_curve = || (0..100).map(|x_axis| CurvePoint::new(x_axis as f64, 0.0)).collect();
+        let make_empty_curve = || (0..100).map(|x_axis| CurvePoint::new(f64::from(x_axis), 0.0)).collect();
 
         Self {
             frozen_water: make_empty_curve(),
@@ -120,8 +120,13 @@ pub fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
 
     let (step, max_pac) = (PAC_TO_FPD_TABLE[1].0, PAC_TO_FPD_TABLE.last().unwrap_or_else(|| unreachable!()).0);
 
-    let floor_pac = (pac / step as f64).floor() as usize * step;
-    let ceil_pac = (pac / step as f64).ceil() as usize * step;
+    #[expect(
+        clippy::cast_precision_loss,
+        clippy::cast_possible_truncation,
+        clippy::cast_sign_loss
+    )]
+    let (floor_pac, ceil_pac) =
+        (((pac / step as f64).floor() as usize * step), ((pac / step as f64).ceil() as usize * step));
 
     let (floor_pac, ceil_pac) = if ceil_pac <= max_pac {
         (floor_pac, ceil_pac)
@@ -135,7 +140,9 @@ pub fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
     let floor_fpd = PAC_TO_FPD_TABLE[idx_floor_pac].1;
     let ceil_fpd = PAC_TO_FPD_TABLE[idx_ceil_pac].1;
 
+    #[expect(clippy::cast_precision_loss)]
     let run = pac - floor_pac as f64;
+    #[expect(clippy::cast_precision_loss)]
     let slope = (ceil_fpd - floor_fpd) / step as f64;
 
     Ok(-(floor_fpd + slope * run))
@@ -367,7 +374,7 @@ pub fn compute_fpd_curves(
     };
 
     for x_axis in 0..100 {
-        let frozen_water = x_axis as f64;
+        let frozen_water = f64::from(x_axis);
 
         let get_fpd_from_pac = match pac_to_fpd_method {
             PacToFpdMethod::Interpolation => get_fpd_from_pac_interpolation,
@@ -478,6 +485,7 @@ mod tests {
 
     /// Using [`PAC_TO_FPD_TABLE`] as f64 for testing `get_fpd_from_pac_*` functions
     static PAC_TO_FPD_TABLE_FLOAT: LazyLock<Vec<(f64, f64)>> = LazyLock::new(|| {
+        #[expect(clippy::cast_precision_loss)]
         PAC_TO_FPD_TABLE
             .iter()
             .map(|(pac, fpd)| (*pac as f64, -*fpd))
@@ -533,6 +541,11 @@ mod tests {
 
     #[test]
     fn get_fpd_from_pac_polynomial_vs_interpolation() {
+        #[expect(
+            clippy::cast_precision_loss,
+            clippy::cast_possible_truncation,
+            clippy::cast_sign_loss
+        )]
         for pac_int in 0..=((200.0 / 0.25) as usize) {
             let pac = pac_int as f64 * 0.25;
 
@@ -567,6 +580,11 @@ mod tests {
     /// [`get_fpd_from_pac_polynomial`] above verifies the sanity of get_fpd_from_pac_polynomial.
     /// With that verified, we can generate a reference table for testing other related functions.
     static PAC_TO_FPD_TABLE_POLY: LazyLock<Vec<(f64, f64)>> = LazyLock::new(|| {
+        #[expect(
+            clippy::cast_precision_loss,
+            clippy::cast_possible_truncation,
+            clippy::cast_sign_loss
+        )]
         (0..=((200.0 / 0.25) as usize))
             .map(|pac_int| pac_int as f64 * 0.25)
             .map(|pac| (pac, super::get_fpd_from_pac_polynomial(pac, None).unwrap()))
@@ -1185,6 +1203,7 @@ mod tests {
             assert_true!(fpd.hardness_at_14c.is_nan());
 
             for x_axis in 0..100 {
+                #[expect(clippy::cast_precision_loss)]
                 let x_axis_f = x_axis as f64;
 
                 for curve in [&fpd.curves.frozen_water, &fpd.curves.hardness] {

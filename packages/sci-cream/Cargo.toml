@@ -92,10 +92,6 @@ if_not_else = "allow"
 doc_markdown = "allow"
 unsafe_derive_deserialize = "allow"
 unnecessary_semicolon = "allow"
-cast_possible_truncation = "allow"
-cast_sign_loss = "allow"
-cast_precision_loss = "allow"
-cast_lossless = "allow"
 
 # `restrictions` group, opt-in into individual lints as needed.
 dbg_macro = "warn"
