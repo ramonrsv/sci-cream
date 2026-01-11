@@ -74,7 +74,7 @@ impl Solids {
     }
 
     pub fn total(&self) -> f64 {
-        self.sum_solid_breakdowns_field(|b| b.total())
+        self.sum_solid_breakdowns_field(SolidsBreakdown::total)
     }
 
     pub fn all(&self) -> SolidsBreakdown {

@@ -98,7 +98,6 @@ cast_precision_loss = "allow"
 cast_lossless = "allow"
 explicit_iter_loop = "allow"
 return_self_not_must_use = "allow"
-redundant_closure_for_method_calls = "allow"
 
 # `restrictions` group, opt-in into individual lints as needed.
 dbg_macro = "warn"
