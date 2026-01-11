@@ -48,18 +48,22 @@ impl SolidsBreakdown {
         }
     }
 
+    #[must_use]
     pub fn fats(self, fats: Fats) -> Self {
         Self { fats, ..self }
     }
 
+    #[must_use]
     pub fn carbohydrates(self, carbohydrates: Carbohydrates) -> Self {
         Self { carbohydrates, ..self }
     }
 
+    #[must_use]
     pub fn proteins(self, proteins: f64) -> Self {
         Self { proteins, ..self }
     }
 
+    #[must_use]
     pub fn artificial_sweeteners(self, artificial_sweeteners: ArtificialSweeteners) -> Self {
         Self {
             artificial_sweeteners,
@@ -67,6 +71,7 @@ impl SolidsBreakdown {
         }
     }
 
+    #[must_use]
     pub fn others(self, others: f64) -> Self {
         Self { others, ..self }
     }

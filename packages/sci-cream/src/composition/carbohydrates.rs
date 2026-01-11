@@ -31,18 +31,22 @@ impl Carbohydrates {
         }
     }
 
+    #[must_use]
     pub fn fiber(self, fiber: Fibers) -> Self {
         Self { fiber, ..self }
     }
 
+    #[must_use]
     pub fn sugars(self, sugars: Sugars) -> Self {
         Self { sugars, ..self }
     }
 
+    #[must_use]
     pub fn polyols(self, polyols: Polyols) -> Self {
         Self { polyols, ..self }
     }
 
+    #[must_use]
     pub fn others(self, others: f64) -> Self {
         Self { others, ..self }
     }

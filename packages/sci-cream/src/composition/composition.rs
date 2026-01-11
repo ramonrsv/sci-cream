@@ -12,7 +12,10 @@ use wasm_bindgen::prelude::*;
 use crate::specs::ChocolateSpec;
 
 pub trait ScaleComponents {
+    #[must_use]
     fn scale(&self, factor: f64) -> Self;
+
+    #[must_use]
     fn add(&self, other: &Self) -> Self;
 }
 
@@ -210,26 +213,32 @@ impl Composition {
         }
     }
 
+    #[must_use]
     pub fn energy(self, energy: f64) -> Self {
         Self { energy, ..self }
     }
 
+    #[must_use]
     pub fn solids(self, solids: Solids) -> Self {
         Self { solids, ..self }
     }
 
+    #[must_use]
     pub fn micro(self, micro: Micro) -> Self {
         Self { micro, ..self }
     }
 
+    #[must_use]
     pub fn alcohol(self, alcohol: Alcohol) -> Self {
         Self { alcohol, ..self }
     }
 
+    #[must_use]
     pub fn pod(self, pod: f64) -> Self {
         Self { pod, ..self }
     }
 
+    #[must_use]
     pub fn pac(self, pac: PAC) -> Self {
         Self { pac, ..self }
     }

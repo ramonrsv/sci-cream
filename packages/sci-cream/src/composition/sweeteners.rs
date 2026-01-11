@@ -27,14 +27,17 @@ impl Sweeteners {
         }
     }
 
+    #[must_use]
     pub fn sugars(self, sugars: Sugars) -> Self {
         Self { sugars, ..self }
     }
 
+    #[must_use]
     pub fn polyols(self, polyols: Polyols) -> Self {
         Self { polyols, ..self }
     }
 
+    #[must_use]
     pub fn artificial(self, artificial: ArtificialSweeteners) -> Self {
         Self { artificial, ..self }
     }

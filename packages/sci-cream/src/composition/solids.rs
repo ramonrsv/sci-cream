@@ -37,22 +37,27 @@ impl Solids {
         }
     }
 
+    #[must_use]
     pub fn milk(self, milk: SolidsBreakdown) -> Self {
         Self { milk, ..self }
     }
 
+    #[must_use]
     pub fn egg(self, egg: SolidsBreakdown) -> Self {
         Self { egg, ..self }
     }
 
+    #[must_use]
     pub fn cocoa(self, cocoa: SolidsBreakdown) -> Self {
         Self { cocoa, ..self }
     }
 
+    #[must_use]
     pub fn nut(self, nut: SolidsBreakdown) -> Self {
         Self { nut, ..self }
     }
 
+    #[must_use]
     pub fn other(self, other: SolidsBreakdown) -> Self {
         Self { other, ..self }
     }

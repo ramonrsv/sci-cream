@@ -25,14 +25,17 @@ impl Fats {
         }
     }
 
+    #[must_use]
     pub fn total(self, total: f64) -> Self {
         Self { total, ..self }
     }
 
+    #[must_use]
     pub fn saturated(self, saturated: f64) -> Self {
         Self { saturated, ..self }
     }
 
+    #[must_use]
     pub fn trans(self, trans: f64) -> Self {
         Self { trans, ..self }
     }

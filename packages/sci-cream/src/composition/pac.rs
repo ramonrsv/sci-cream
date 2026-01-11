@@ -29,22 +29,27 @@ impl PAC {
         }
     }
 
+    #[must_use]
     pub fn sugars(self, sugars: f64) -> Self {
         Self { sugars, ..self }
     }
 
+    #[must_use]
     pub fn salt(self, salt: f64) -> Self {
         Self { salt, ..self }
     }
 
+    #[must_use]
     pub fn msnf_ws_salts(self, msnf_ws_salts: f64) -> Self {
         Self { msnf_ws_salts, ..self }
     }
 
+    #[must_use]
     pub fn alcohol(self, alcohol: f64) -> Self {
         Self { alcohol, ..self }
     }
 
+    #[must_use]
     pub fn hardness_factor(self, hardness_factor: f64) -> Self {
         Self {
             hardness_factor,

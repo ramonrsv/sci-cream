@@ -19,6 +19,7 @@ impl Alcohol {
         Self { by_weight: 0.0 }
     }
 
+    #[must_use]
     pub fn by_weight(self, by_weight: f64) -> Self {
         Self { by_weight }
     }

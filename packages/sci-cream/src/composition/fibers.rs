@@ -30,14 +30,17 @@ impl Fibers {
         }
     }
 
+    #[must_use]
     pub fn inulin(self, inulin: f64) -> Self {
         Self { inulin, ..self }
     }
 
+    #[must_use]
     pub fn oligofructose(self, oligofructose: f64) -> Self {
         Self { oligofructose, ..self }
     }
 
+    #[must_use]
     pub fn other(self, other: f64) -> Self {
         Self { other, ..self }
     }

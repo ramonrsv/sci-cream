@@ -39,18 +39,22 @@ impl ArtificialSweeteners {
         }
     }
 
+    #[must_use]
     pub fn aspartame(self, aspartame: f64) -> Self {
         Self { aspartame, ..self }
     }
 
+    #[must_use]
     pub fn saccharin(self, saccharin: f64) -> Self {
         Self { saccharin, ..self }
     }
 
+    #[must_use]
     pub fn sucralose(self, sucralose: f64) -> Self {
         Self { sucralose, ..self }
     }
 
+    #[must_use]
     pub fn other(self, other: f64) -> Self {
         Self { other, ..self }
     }

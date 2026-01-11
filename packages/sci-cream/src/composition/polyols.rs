@@ -41,22 +41,27 @@ impl Polyols {
         }
     }
 
+    #[must_use]
     pub fn erythritol(self, erythritol: f64) -> Self {
         Self { erythritol, ..self }
     }
 
+    #[must_use]
     pub fn maltitol(self, maltitol: f64) -> Self {
         Self { maltitol, ..self }
     }
 
+    #[must_use]
     pub fn sorbitol(self, sorbitol: f64) -> Self {
         Self { sorbitol, ..self }
     }
 
+    #[must_use]
     pub fn xylitol(self, xylitol: f64) -> Self {
         Self { xylitol, ..self }
     }
 
+    #[must_use]
     pub fn other(self, other: f64) -> Self {
         Self { other, ..self }
     }

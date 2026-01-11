@@ -40,34 +40,42 @@ impl Sugars {
         }
     }
 
+    #[must_use]
     pub fn glucose(self, glucose: f64) -> Self {
         Self { glucose, ..self }
     }
 
+    #[must_use]
     pub fn fructose(self, fructose: f64) -> Self {
         Self { fructose, ..self }
     }
 
+    #[must_use]
     pub fn galactose(self, galactose: f64) -> Self {
         Self { galactose, ..self }
     }
 
+    #[must_use]
     pub fn sucrose(self, sucrose: f64) -> Self {
         Self { sucrose, ..self }
     }
 
+    #[must_use]
     pub fn lactose(self, lactose: f64) -> Self {
         Self { lactose, ..self }
     }
 
+    #[must_use]
     pub fn maltose(self, maltose: f64) -> Self {
         Self { maltose, ..self }
     }
 
+    #[must_use]
     pub fn trehalose(self, trehalose: f64) -> Self {
         Self { trehalose, ..self }
     }
 
+    #[must_use]
     pub fn other(self, other: f64) -> Self {
         Self { other, ..self }
     }

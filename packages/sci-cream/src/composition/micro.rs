@@ -27,18 +27,22 @@ impl Micro {
         }
     }
 
+    #[must_use]
     pub fn salt(self, salt: f64) -> Self {
         Self { salt, ..self }
     }
 
+    #[must_use]
     pub fn lecithin(self, lecithin: f64) -> Self {
         Self { lecithin, ..self }
     }
 
+    #[must_use]
     pub fn emulsifiers(self, emulsifiers: f64) -> Self {
         Self { emulsifiers, ..self }
     }
 
+    #[must_use]
     pub fn stabilizers(self, stabilizers: f64) -> Self {
         Self { stabilizers, ..self }
     }
