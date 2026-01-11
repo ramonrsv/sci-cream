@@ -605,9 +605,9 @@ impl IntoComposition for ChocolateSpec {
         Ok(Composition::new()
             .energy(cocoa_solids.energy()? + other_solids.energy()?)
             .solids(Solids::new().cocoa(cocoa_solids).other(other_solids))
-            .pod(sugars.to_pod().unwrap())
+            .pod(sugars.to_pod()?)
             .pac(
-                PAC::new().sugars(sugars.to_pac().unwrap()).hardness_factor(
+                PAC::new().sugars(sugars.to_pac()?).hardness_factor(
                     cocoa_butter * constants::hf::CACAO_BUTTER + cocoa_snf * constants::hf::COCOA_SOLIDS,
                 ),
             ))
@@ -714,10 +714,10 @@ impl IntoComposition for NutSpec {
         Ok(Composition::new()
             .energy(nut_solids.energy()?)
             .solids(Solids::new().nut(nut_solids))
-            .pod(sugars.to_pod().unwrap())
+            .pod(sugars.to_pod()?)
             .pac(
                 PAC::new()
-                    .sugars(sugars.to_pac().unwrap())
+                    .sugars(sugars.to_pac()?)
                     .hardness_factor(fat * constants::hf::NUT_FAT),
             ))
     }
@@ -859,8 +859,8 @@ impl IntoComposition for AlcoholSpec {
             .energy(solids.energy()? + alcohol.energy())
             .solids(Solids::new().other(solids))
             .alcohol(alcohol)
-            .pod(sugars.to_pod().unwrap())
-            .pac(PAC::new().sugars(sugars.to_pac().unwrap()).alcohol(alcohol.to_pac())))
+            .pod(sugars.to_pod()?)
+            .pac(PAC::new().sugars(sugars.to_pac()?).alcohol(alcohol.to_pac())))
     }
 }
 
@@ -1078,6 +1078,7 @@ pub mod wasm {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::unwrap_used)]
 pub(crate) mod tests {
     use std::sync::LazyLock;
 

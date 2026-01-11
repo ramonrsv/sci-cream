@@ -118,7 +118,7 @@ pub fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
         return Err(Error::NegativePacValue(pac));
     }
 
-    let (step, max_pac) = (PAC_TO_FPD_TABLE[1].0, PAC_TO_FPD_TABLE.last().unwrap().0);
+    let (step, max_pac) = (PAC_TO_FPD_TABLE[1].0, PAC_TO_FPD_TABLE.last().unwrap_or_else(|| unreachable!()).0);
 
     let floor_pac = (pac / step as f64).floor() as usize * step;
     let ceil_pac = (pac / step as f64).ceil() as usize * step;
@@ -197,7 +197,9 @@ pub fn get_pac_from_fpd_polynomial(fpd: f64, coeffs: Option<[f64; 3]>) -> Result
 
 pub fn get_serving_temp_from_pac_corvitto(pac: f64) -> Result<f64> {
     let first = CORVITTO_PAC_TO_SERVING_TEMP_TABLE[0];
-    let last = CORVITTO_PAC_TO_SERVING_TEMP_TABLE.last().unwrap();
+    let last = CORVITTO_PAC_TO_SERVING_TEMP_TABLE
+        .last()
+        .unwrap_or_else(|| unreachable!());
 
     let slope = (first.1 - last.1) / (first.0 - last.0);
     let run = pac - first.0;
@@ -259,9 +261,9 @@ pub fn compute_fpd_curve_step_goff_hartel(
     next.alc = composition.get(CompKey::PACalc) / next.water * 100.0;
 
     let fpd_msnf_ws = composition.get(CompKey::MSNF) * FPD_CONST_FOR_MSNF_WS_SALTS / next.water;
-    next.fpd_se = get_fpd_from_pac(next.se).unwrap();
-    next.fpd_sa = get_fpd_from_pac(next.sa).unwrap() + fpd_msnf_ws;
-    next.fpd_alc = get_fpd_from_pac(next.alc).unwrap();
+    next.fpd_se = get_fpd_from_pac(next.se)?;
+    next.fpd_sa = get_fpd_from_pac(next.sa)? + fpd_msnf_ws;
+    next.fpd_alc = get_fpd_from_pac(next.alc)?;
 
     next.fpd_total = next.fpd_se + next.fpd_sa + next.fpd_alc;
 
@@ -332,9 +334,9 @@ pub fn compute_fpd_curve_step_modified_goff_hartel_corvitto(
     next.hf = composition.get(CompKey::HF) / next.water * 100.0;
     let pac_inc_hf = next.pac_exc_hf - next.hf;
 
-    next.fpd_exc_hf = get_fpd_from_pac(next.pac_exc_hf).unwrap();
+    next.fpd_exc_hf = get_fpd_from_pac(next.pac_exc_hf)?;
     next.fpd_inc_hf = if pac_inc_hf >= 0.0 {
-        get_fpd_from_pac(pac_inc_hf).unwrap()
+        get_fpd_from_pac(pac_inc_hf)?
     } else {
         f64::NAN
     };
@@ -449,6 +451,7 @@ impl AbsDiffEq for ModifiedGoffHartelCorvittoFpdCurveStep {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::unwrap_used)]
 mod tests {
     use std::sync::LazyLock;
 

@@ -54,6 +54,7 @@ pub(crate) fn get_ingredient_spec_by_name_or_panic(name: &str) -> IngredientSpec
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::unwrap_used)]
 pub(crate) mod tests {
     use crate::tests::asserts::*;
 

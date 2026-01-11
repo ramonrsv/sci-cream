@@ -191,6 +191,7 @@ impl Default for Sugars {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::unwrap_used)]
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     #[expect(unused_imports)]
