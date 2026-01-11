@@ -176,13 +176,9 @@ impl IntoComposition for DairyFromNutritionSpec {
         };
 
         assert_are_positive(&[serving_size, total_fat, saturated_fat, trans_fat, sugars, protein])?;
-        assert_is_subset(saturated_fat, total_fat, "Saturated fat cannot exceed total fat")?;
-        assert_is_subset(trans_fat, total_fat, "Trans fats cannot exceed total fats")?;
-        assert_is_subset(
-            total_fat + sugars + protein,
-            serving_size,
-            "Sum of fats, sugars, and proteins cannot exceed serving size",
-        )?;
+        assert_is_subset(saturated_fat, total_fat, "saturated_fat <= total_fat")?;
+        assert_is_subset(trans_fat, total_fat, "trans_fat <= total_fat")?;
+        assert_is_subset(total_fat + sugars + protein, serving_size, "total_fat + sugars + protein <= serving_size")?;
 
         let sugars = if is_lactose_free {
             Sugars::new()
@@ -430,7 +426,7 @@ impl IntoComposition for FruitSpec {
         let fiber = fiber.unwrap_or(0.0);
         let carbohydrate = carbohydrate.unwrap_or(fiber + sugars.total());
 
-        assert_is_subset(fiber + sugars.total(), carbohydrate, "Sugars + fiber <= carbohydrate")?;
+        assert_is_subset(fiber + sugars.total(), carbohydrate, "fiber + sugars <= carbohydrate")?;
         assert_are_positive(&[water, protein, fat, carbohydrate, fiber, sugars.total()])?;
         assert_within_100_percent(water + protein + fat + carbohydrate)?;
 
@@ -575,7 +571,7 @@ impl IntoComposition for ChocolateSpec {
         let other_solids = other_solids.unwrap_or(0.0);
 
         assert_are_positive(&[cacao_solids, cocoa_butter, sugars, other_solids])?;
-        assert_is_subset(cocoa_butter, cacao_solids, "Cacao butter must be a subset of cacao solids")?;
+        assert_is_subset(cocoa_butter, cacao_solids, "cocoa_butter <= cacao_solids")?;
         assert_is_100_percent(cacao_solids + sugars + other_solids)?;
 
         let cocoa_snf = cacao_solids - cocoa_butter;
@@ -690,10 +686,10 @@ impl IntoComposition for NutSpec {
 
         assert_are_positive(&[water, protein, fat, carbohydrate, fiber, sugars])?;
         assert_within_100_percent(water + protein + fat + carbohydrate)?;
-        assert_is_subset(fiber + sugars, carbohydrate, "Sugar + fiber <= carbohydrate")?;
+        assert_is_subset(fiber + sugars, carbohydrate, "fiber + sugars <= carbohydrate")?;
 
         let saturated_fat = saturated_fat.unwrap_or(fat * constants::composition::STD_SATURATED_FAT_IN_NUT_FAT);
-        assert_is_subset(saturated_fat, fat, "Saturated fat cannot exceed total fat")?;
+        assert_is_subset(saturated_fat, fat, "saturated_fat <= fat")?;
 
         let sugars = Sugars::new().sucrose(sugars);
 
@@ -781,7 +777,7 @@ impl IntoComposition for EggSpec {
 
         assert_are_positive(&[water, fat, protein, lecithin])?;
         assert_within_100_percent(water + fat + protein)?;
-        assert_is_subset(lecithin, fat, "Lecithin must be a subset of fat")?;
+        assert_is_subset(lecithin, fat, "lecithin <= fat")?;
 
         let egg_solids = SolidsBreakdown::new()
             .fats(
@@ -842,7 +838,7 @@ impl IntoComposition for AlcoholSpec {
         let alcohol = Alcohol::from_abv(abv);
 
         assert_are_positive(&[abv, sugars, fat, solids])?;
-        assert_is_subset(sugars + fat, solids, "Sugars and fat must be a subset of solids")?;
+        assert_is_subset(sugars + fat, solids, "sugars + fat <= solids")?;
         assert_within_100_percent(alcohol.by_weight + solids)?;
 
         let sugars = Sugars::new().sucrose(sugars);
