@@ -974,18 +974,22 @@ impl IntoComposition for FullSpec {
             pac,
         } = self;
 
-        let (solids, micro, pod, pac) = (
-            solids.unwrap_or_default(),
-            micro.unwrap_or_default(),
-            pod.unwrap_or_default(),
-            pac.unwrap_or_default(),
-        );
+        let (solids, micro) = (solids.unwrap_or_default(), micro.unwrap_or_default());
+        let pod = pod.unwrap_or(solids.all().carbohydrates.to_pod()? + solids.all().artificial_sweeteners.to_pod()?);
 
         let alcohol = if let Some(abv) = abv {
             Alcohol::from_abv(abv)
         } else {
             Alcohol::default()
         };
+
+        let pac = pac.unwrap_or(
+            PAC::new()
+                .sugars(solids.all().carbohydrates.to_pod()? + solids.all().artificial_sweeteners.to_pod()?)
+                .alcohol(alcohol.to_pac())
+                .salt(micro.salt * constants::pac::SALT)
+                .msnf_ws_salts(solids.milk.snf() * constants::pac::MSNF_WS_SALTS / 100.0),
+        );
 
         let comp = Composition::new()
             .energy(solids.all().energy()? + alcohol.energy())
