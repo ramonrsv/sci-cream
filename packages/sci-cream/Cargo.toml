@@ -76,10 +76,36 @@ unexpected_cfgs = { level = "warn", check-cfg = [
 all = { level = "warn", priority = -1 }
 cargo = { level = "warn", priority = -1 }
 suspicious = { level = "warn", priority = -1 }
-# pedantic = "warn" @todo
+pedantic = { level = "warn", priority = -1 }
 
 # @todo Temporary allows until fixed.
+missing_panics_doc = "allow"
+missing_errors_doc = "allow"
 cargo_common_metadata = "allow"
+must_use_candidate = "allow"
+float_cmp = "allow"
+needless_pass_by_value = "allow"
+cast_possible_wrap = "allow"
+unreadable_literal = "allow"
+wildcard_imports = "allow"
+if_not_else = "allow"
+doc_markdown = "allow"
+unsafe_derive_deserialize = "allow"
+unnecessary_semicolon = "allow"
+cast_possible_truncation = "allow"
+cast_sign_loss = "allow"
+cast_precision_loss = "allow"
+cast_lossless = "allow"
+explicit_iter_loop = "allow"
+return_self_not_must_use = "allow"
+redundant_closure_for_method_calls = "allow"
+
+# `restrictions` group, opt-in into individual lints as needed.
+dbg_macro = "warn"
+print_stdout = "warn"
+unimplemented = "warn"
+todo = "warn"
+unwrap_used = "allow"  # @todo
 
 [lints.rustdoc]
 all = "warn"
