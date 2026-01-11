@@ -67,6 +67,9 @@ async function seedUserIngredients(user: User, ingredients: IngredientJson[]) {
     console.log("Inserting ingredient");
     await db.insert(ingredientsTable).values(ingredient);
   }
+
+  console.log("---");
+  console.log(`Seeded ${ingredients.length} ingredients for user `, foundUser);
 }
 
 async function main() {
