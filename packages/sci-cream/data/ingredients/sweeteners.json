@@ -118,5 +118,35 @@
       "pac": { "OfSolids": { "molar_mass": 429 } }
     },
     "comments": "This is a copy of 'Glucose Syrup 42 DE' but with the solids content adjusted to 95% to reflect spray dried powder form. See the comments there for more details."
+  },
+  {
+    "name": "Inulin Powder",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "sugars": { "glucose": 3, "fructose": 3, "sucrose": 3 } },
+      "fiber": { "inulin": 91 },
+      "ByDryWeight": { "solids": 98 }
+    },
+    "comments": "Properties taken from _Inulin and Oligofructose: What are they?_ (Niness, 1999)[^24], and moisture content of commercial inulin powders from _Determination of total water content in inulin powder..._ (Ronkart, 2006)[^26]. Energy is calculated internally from values from the same sources (1.5kcal/g). Minor POD and PAC contributions are automatically calculated from the small sugar fraction."
+  },
+  {
+    "name": "HP Inulin Powder",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": {},
+      "fiber": { "inulin": 100 },
+      "ByDryWeight": { "solids": 98 }
+    },
+    "comments": "_'This product is manufactured by removing the shorter-chain molecules [in standard inulin]. (...) [It] provides almost twice the fat mimetic characteristics of standard inulin with no sweetness contribution.'_ Properties taken from _Inulin and Oligofructose: What are they?_ (Niness, 1999)[^24], and moisture content of commercial inulin powders from _Determination of total water content in inulin powder..._ (Ronkart, 2006)[^26]. Energy is calculated internally from values from the same sources (1.5kcal/g)."
+  },
+  {
+    "name": "Oligofructose Powder",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "sugars": { "glucose": 1.67, "fructose": 1.67, "sucrose": 1.66 } },
+      "fiber": { "oligofructose": 95 },
+      "ByDryWeight": { "solids": 98 }
+    },
+    "comments": "Properties taken from _Inulin and Oligofructose: What are they?_ (Niness, 1999)[^24], and moisture content of commercial powders from _Determination of total water content in inulin powder..._ (Ronkart, 2006)[^26]. Energy is calculated internally from values from the same sources (1.5kcal/g). POD contributions are calculated internally with values from the same sources (oligofructose solids have a POD of ~40)."
   }
 ]

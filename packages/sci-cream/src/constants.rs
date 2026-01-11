@@ -52,6 +52,13 @@ pub mod pod {
     #[doc = include_str!("../docs/bibs/11.md")]
     #[doc = include_str!("../docs/bibs/15.md")]
     pub const SUCRALOSE: f64 = 60000.0;
+
+    /// (Niness, 1999, "Inulin and Oligofructose: What Are They?")[^24]
+    #[doc = include_str!("../docs/bibs/24.md")]
+    pub const INULIN: f64 = 0.0;
+    /// (Niness, 1999, "Inulin and Oligofructose: What Are They?")[^24]
+    #[doc = include_str!("../docs/bibs/24.md")]
+    pub const OLIGOFRUCTOSE: f64 = 40.0;
 }
 
 pub mod molar_mass {
@@ -263,6 +270,12 @@ pub mod energy {
     /// (Schiffman, 2013, "Abstract")[^23]
     #[doc = include_str!("../docs/bibs/23.md")]
     pub const SUCRALOSE: f64 = 0.0;
+
+    /// (Niness, 1999, "Inulin and Oligofructose: What Are They?")[^24]
+    /// (Roberfoid, 1999, "Caloric Value of Inulin and Oligofructose")[^25]
+    #[doc = include_str!("../docs/bibs/24.md")]
+    #[doc = include_str!("../docs/bibs/25.md")]
+    pub const INULIN_AND_OLIGOFRUCTOSE: f64 = 1.5;
 }
 
 pub mod density {

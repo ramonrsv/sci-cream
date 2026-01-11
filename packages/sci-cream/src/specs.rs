@@ -10,8 +10,8 @@ use diesel::{Queryable, Selectable};
 
 use crate::{
     composition::{
-        Alcohol, Carbohydrates, CompKey, Composition, Fats, Micro, PAC, ScaleComponents, Solids, SolidsBreakdown,
-        Sugars, Sweeteners,
+        Alcohol, Carbohydrates, CompKey, Composition, Fats, Fibers, Micro, PAC, ScaleComponents, Solids,
+        SolidsBreakdown, Sugars, Sweeteners,
     },
     constants::{self, composition::cacao, density::dairy_milliliters_to_grams, molar_mass::pac_from_molar_mass},
     error::{Error, Result},
@@ -221,41 +221,45 @@ impl IntoComposition for DairyFromNutritionSpec {
 ///
 /// If [`basis`](Self::basis) is [`ByDryWeight`](CompositionBasis::ByDryWeight), the values in
 /// [`sweeteners`](Self::sweeteners) represent the composition of the sweeteners as a percentage of
-/// the dry weight (solids), its total plus [`other_carbohydrates`](Self::other_carbohydrates) and
-/// [`other_solids`](Self::other_solids) adding up to 100. For example, Invert Sugar might be
+/// the dry weight (solids), its total plus [`fiber`](Self::fiber),
+/// [`other_carbohydrates`](Self::other_carbohydrates), and [`other_solids`](Self::other_solids)
+/// adding up to 100. For example, Invert Sugar might be
 /// composed of `sugars.glucose = 42.5`, `sugars.fructose = 42.5`, and `sugars.sucrose = 15`, with
 /// `ByDryWeight { solids: 80 }`, meaning that 85% of the sucrose was split into glucose/fructose,
 /// with 15% sucrose remaining, and the syrup containing 20% water. If [`basis`](Self::basis) is
 /// [`ByTotalWeight`](CompositionBasis::ByTotalWeight), then the values in
 /// [`sweeteners`](Self::sweeteners) represent the composition of the sweeteners as a percentage of
-/// the total weight of the ingredient, their total plus `other_carbohydrates`, `other_solids`, and
+/// the total weight of the ingredient, their total plus `fiber`,`other_carbohydrates`, `other_solids`, and
 /// `water` adding up to 100. For example, Honey might be composed of `sugars.glucose = 36`,
 /// `sugars.fructose = 41`, `sugars.sucrose = 2`, and `other_solids = 1`, with `ByTotalWeight {
 /// water = 20 }`.
 ///
-/// [`other_carbohydrates`](Self::other_carbohydrates) are any carbohydrates other than mono- and
-/// disaccharides, e.g. maltodextrin and oligosaccharides found in glucose/corn syrups.
-/// [`other_solids`](Self::other_solids) represents any non-sweetener impurities that may be in the
-/// ingredient, e.g. minerals, pollen, etc., for example 1% in Honey. This value should rarely be
-/// needed, and is assumed to be zero if not specified. This field is also scaled depending on the
-/// chosen [`basis`](Self::basis).
+/// [`fiber`](Self::fiber) are any dietary fibers that may be in or similar to sweetener products,
+/// e.g. inulin or oligofructose. [`other_carbohydrates`](Self::other_carbohydrates) are any
+/// carbohydrates other than mono- and disaccharides, e.g. maltodextrin and oligosaccharides found
+/// in glucose/corn syrups. [`other_solids`](Self::other_solids) represents any non-sweetener
+/// impurities that may be in the ingredient, e.g. minerals, pollen, etc., for example 1% in Honey.
+/// This value should rarely be needed, and is assumed to be zero if not specified. This field is
+/// also scaled depending on the chosen [`basis`](Self::basis).
 ///
 /// If the POD or PAC values are not specified, then they are automatically calculated based on the
-/// composition of known mono- and disaccharides. If the PAC value is in [`Unit::MolarMass`], then
-/// it is calculated via [`pac_from_molar_mass`]. If specified, POD and PAC values are scaled based
-/// on the [`Scaling`]. If [`OfWhole`](Scaling::OfWhole) then they are left as-is, since they are
-/// already for the ingredient as a whole. If [`OfSolids`](Scaling::OfSolids), then they are scaled
-/// based on the dry solids content. Note that this scaling is independent of the chosen
-/// [`basis`](Self::basis).
+/// composition of known components, e.g. mono- and disaccharides, polyols, artificial sweeteners,
+/// fibers, etg. If the PAC value is in [`Unit::MolarMass`], then it is calculated via
+/// [`pac_from_molar_mass`]. If specified, POD and PAC values are scaled based on the [`Scaling`].
+/// If [`OfWhole`](Scaling::OfWhole) then they are left as-is, since they are already for the
+/// ingredient as a whole. If [`OfSolids`](Scaling::OfSolids), then they are scaled based on the dry
+/// solids content. Note that this scaling is independent of the chosen [`basis`](Self::basis).
 ///
-/// For automatic calculations the [`other_carbohydrates`](Self::other_carbohydrates) and
-/// [`other_solids`](Self::other_solids) components are ignored, and it is an error if
-/// [`sugars.other`](Sugars::other), [`polyols.other`](Polyols::other), or
-/// [`artificial.other`](ArtificialSweeteners::other) are non-zero.
+/// For automatic calculations [`fiber.other`](Fibers::other),
+/// [`other_carbohydrates`](Self::other_carbohydrates), and [`other_solids`](Self::other_solids)
+/// components are ignored, and it is an error if [`sugars.other`](Sugars::other),
+/// [`polyols.other`](Polyols::other), or [`artificial.other`](ArtificialSweeteners::other) are
+/// non-zero.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct SweetenerSpec {
     pub sweeteners: Sweeteners,
+    pub fiber: Option<Fibers>,
     pub other_carbohydrates: Option<f64>,
     pub other_solids: Option<f64>,
     #[serde(flatten)]
@@ -268,6 +272,7 @@ impl IntoComposition for SweetenerSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self {
             sweeteners,
+            fiber,
             other_carbohydrates,
             other_solids,
             basis,
@@ -275,6 +280,7 @@ impl IntoComposition for SweetenerSpec {
             pac,
         } = self;
 
+        let fiber = fiber.unwrap_or_default();
         let other_carbohydrates = other_carbohydrates.unwrap_or(0.0);
         let other_solids = other_solids.unwrap_or(0.0);
         assert_are_positive(&[other_carbohydrates, other_solids])?;
@@ -283,25 +289,26 @@ impl IntoComposition for SweetenerSpec {
 
         match basis {
             CompositionBasis::ByDryWeight { solids } => {
-                assert_within_100_percent(sweeteners.total() + other_carbohydrates + other_solids)?;
+                assert_within_100_percent(sweeteners.total() + fiber.total() + other_carbohydrates + other_solids)?;
                 assert_within_100_percent(solids)?;
 
                 factor = Some(solids / 100.0);
             }
             CompositionBasis::ByTotalWeight { water } => {
-                assert_is_100_percent(sweeteners.total() + other_carbohydrates + other_solids + water)?;
+                assert_is_100_percent(sweeteners.total() + fiber.total() + other_carbohydrates + other_solids + water)?;
             }
         };
 
-        let (sweeteners, other_carbohydrates, other_solids) = if let Some(factor) = factor {
-            (sweeteners.scale(factor), other_carbohydrates * factor, other_solids * factor)
+        let (sweeteners, fiber, other_carbohydrates, other_solids) = if let Some(factor) = factor {
+            (sweeteners.scale(factor), fiber.scale(factor), other_carbohydrates * factor, other_solids * factor)
         } else {
-            (sweeteners, other_carbohydrates, other_solids)
+            (sweeteners, fiber, other_carbohydrates, other_solids)
         };
 
         let solids = SolidsBreakdown::new()
             .carbohydrates(
                 Carbohydrates::new()
+                    .fiber(fiber)
                     .sugars(sweeteners.sugars)
                     .polyols(sweeteners.polyols)
                     .others(other_carbohydrates),
@@ -310,7 +317,7 @@ impl IntoComposition for SweetenerSpec {
             .others(other_solids);
 
         let pod = match pod {
-            None => sweeteners.to_pod()?,
+            None => sweeteners.to_pod()? + fiber.to_pod()?,
             Some(scaling) => match scaling {
                 Scaling::OfWhole(value) => value,
                 Scaling::OfSolids(value) => value * (solids.total() / 100.0),
@@ -435,7 +442,7 @@ impl IntoComposition for FruitSpec {
             .carbohydrates(
                 Carbohydrates::new()
                     .sugars(sugars)
-                    .fiber(fiber)
+                    .fiber(Fibers::new().other(fiber))
                     .others_from_total(carbohydrate)?,
             )
             .proteins(protein)
@@ -586,7 +593,7 @@ impl IntoComposition for ChocolateSpec {
             .proteins(cocoa_snf * cacao::STD_PROTEIN_IN_COCOA_SOLIDS)
             .carbohydrates(
                 Carbohydrates::new()
-                    .fiber(cocoa_snf * cacao::STD_FIBER_IN_COCOA_SOLIDS)
+                    .fiber(Fibers::new().other(cocoa_snf * cacao::STD_FIBER_IN_COCOA_SOLIDS))
                     .others_from_total(cocoa_snf * cacao::STD_CARBOHYDRATES_IN_COCOA_SOLIDS)?,
             )
             .others(cocoa_snf * cacao::STD_ASH_IN_COCOA_SOLIDS);
@@ -695,7 +702,7 @@ impl IntoComposition for NutSpec {
 
         let carbohydrates = Carbohydrates::new()
             .sugars(sugars)
-            .fiber(fiber)
+            .fiber(Fibers::new().other(fiber))
             .others_from_total(carbohydrate)?;
 
         let nut_solids = SolidsBreakdown::new()
@@ -1637,6 +1644,7 @@ pub(crate) mod tests {
         category: Category::Sweetener,
         spec: Spec::SweetenerSpec(SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
+            fiber: None,
             other_carbohydrates: None,
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
@@ -1694,6 +1702,7 @@ pub(crate) mod tests {
         category: Category::Sweetener,
         spec: Spec::SweetenerSpec(SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(100.0)),
+            fiber: None,
             other_carbohydrates: None,
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 92.0 },
@@ -1751,6 +1760,7 @@ pub(crate) mod tests {
         category: Category::Sweetener,
         spec: Spec::SweetenerSpec(SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().fructose(100.0)),
+            fiber: None,
             other_carbohydrates: None,
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
@@ -1807,6 +1817,7 @@ pub(crate) mod tests {
         category: Category::Sweetener,
         spec: Spec::SweetenerSpec(SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().trehalose(100.0)),
+            fiber: None,
             other_carbohydrates: None,
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
@@ -1863,6 +1874,7 @@ pub(crate) mod tests {
         category: Category::Sweetener,
         spec: Spec::SweetenerSpec(SweetenerSpec {
             sweeteners: Sweeteners::new().polyols(Polyols::new().erythritol(100.0)),
+            fiber: None,
             other_carbohydrates: None,
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
@@ -1922,6 +1934,7 @@ pub(crate) mod tests {
         category: Category::Sweetener,
         spec: Spec::SweetenerSpec(SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(42.5).fructose(42.5).sucrose(15.0)),
+            fiber: None,
             other_carbohydrates: None,
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 80.0 },
@@ -1982,6 +1995,7 @@ pub(crate) mod tests {
                     .galactose(1.5)
                     .maltose(1.5),
             ),
+            fiber: None,
             other_carbohydrates: None,
             other_solids: Some(1.0),
             basis: CompositionBasis::ByTotalWeight { water: 17.0 },
@@ -2034,6 +2048,7 @@ pub(crate) mod tests {
         category: Category::Sweetener,
         spec: Spec::SweetenerSpec(SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().fructose(42.0).glucose(53.0)),
+            fiber: None,
             other_carbohydrates: Some(5.0),
             other_solids: None,
             basis: CompositionBasis::ByDryWeight { solids: 76.0 },
@@ -2093,6 +2108,7 @@ pub(crate) mod tests {
             category: Category::Sweetener,
             spec: Spec::SweetenerSpec(SweetenerSpec {
                 sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(0.6).maltose(2.8)),
+                fiber: None,
                 other_carbohydrates: Some(96.6),
                 other_solids: None,
                 basis: CompositionBasis::ByDryWeight { solids: 95.0 },
@@ -2151,6 +2167,7 @@ pub(crate) mod tests {
             category: Category::Sweetener,
             spec: Spec::SweetenerSpec(SweetenerSpec {
                 sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(19.0).maltose(14.0)),
+                fiber: None,
                 other_carbohydrates: Some(67.0),
                 other_solids: None,
                 basis: CompositionBasis::ByDryWeight { solids: 80.0 },
@@ -2210,6 +2227,7 @@ pub(crate) mod tests {
             category: Category::Sweetener,
             spec: Spec::SweetenerSpec(SweetenerSpec {
                 sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(2.0).maltose(10.0)),
+                fiber: None,
                 other_carbohydrates: Some(88.0),
                 other_solids: None,
                 basis: CompositionBasis::ByDryWeight { solids: 95.0 },
@@ -2269,6 +2287,7 @@ pub(crate) mod tests {
             category: Category::Sweetener,
             spec: Spec::SweetenerSpec(SweetenerSpec {
                 sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(19.0).maltose(14.0)),
+                fiber: None,
                 other_carbohydrates: Some(67.0),
                 other_solids: None,
                 basis: CompositionBasis::ByDryWeight { solids: 95.0 },
@@ -2295,6 +2314,203 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TotalSolids), 95.0);
         assert_eq!(comp.get(CompKey::POD), 47.5);
         assert_eq!(comp.get(CompKey::PACsgr), 75.05);
+    }
+
+    pub(crate) const ING_SPEC_SWEETENER_INULIN_POWDER_STR: &str = r#"{
+      "name": "Inulin Powder",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "sugars": {
+            "glucose": 3,
+            "fructose": 3,
+            "sucrose": 3
+          }
+        },
+        "fiber": {
+          "inulin": 91
+        },
+        "ByDryWeight": {
+          "solids": 98
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_INULIN_POWDER: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Inulin Powder".to_string(),
+        category: Category::Sweetener,
+        spec: Spec::SweetenerSpec(SweetenerSpec {
+            sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(3.0).fructose(3.0).sucrose(3.0)),
+            fiber: Some(Fibers::new().inulin(91.0)),
+            other_carbohydrates: None,
+            other_solids: None,
+            basis: CompositionBasis::ByDryWeight { solids: 98.0 },
+            pod: None,
+            pac: None,
+        }),
+    });
+
+    pub(crate) static COMP_INULIN_POWDER: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(169.05)
+            .solids(
+                Solids::new().other(
+                    SolidsBreakdown::new().carbohydrates(
+                        Carbohydrates::new()
+                            .fiber(Fibers::new().inulin(89.18))
+                            .sugars(Sugars::new().glucose(2.94).fructose(2.94).sucrose(2.94)),
+                    ),
+                ),
+            )
+            .pod(10.3782)
+            .pac(PAC::new().sugars(14.112))
+    });
+
+    #[test]
+    fn into_composition_sweetener_spec_inulin_powder() {
+        let comp = ING_SPEC_SWEETENER_INULIN_POWDER.spec.into_composition().unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 169.05);
+
+        assert_eq!(comp.get(CompKey::Glucose), 2.94);
+        assert_eq!(comp.get(CompKey::Fructose), 2.94);
+        assert_eq!(comp.get(CompKey::Sucrose), 2.94);
+        assert_eq_flt_test!(comp.get(CompKey::Fiber), 89.18);
+        assert_eq!(comp.get(CompKey::TotalSugars), 8.82);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 8.82);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 98.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 89.18);
+        assert_eq!(comp.get(CompKey::TotalSolids), 98.0);
+        assert_eq!(comp.get(CompKey::POD), 10.3782);
+        assert_eq!(comp.get(CompKey::PACsgr), 14.112);
+    }
+
+    pub(crate) const ING_SPEC_SWEETENER_HP_INULIN_POWDER_STR: &str = r#"{
+      "name": "HP Inulin Powder",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {},
+        "fiber": {
+          "inulin": 100
+        },
+        "ByDryWeight": {
+          "solids": 98
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_HP_INULIN_POWDER: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "HP Inulin Powder".to_string(),
+            category: Category::Sweetener,
+            spec: Spec::SweetenerSpec(SweetenerSpec {
+                sweeteners: Sweeteners::new(),
+                fiber: Some(Fibers::new().inulin(100.0)),
+                other_carbohydrates: None,
+                other_solids: None,
+                basis: CompositionBasis::ByDryWeight { solids: 98.0 },
+                pod: None,
+                pac: None,
+            }),
+        });
+
+    pub(crate) static COMP_HP_INULIN_POWDER: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new().energy(147.0).solids(
+            Solids::new()
+                .other(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().fiber(Fibers::new().inulin(98.0)))),
+        )
+    });
+
+    #[test]
+    fn into_composition_sweetener_spec_hp_inulin_powder() {
+        let comp = ING_SPEC_SWEETENER_HP_INULIN_POWDER.spec.into_composition().unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 147.0);
+
+        assert_eq_flt_test!(comp.get(CompKey::Fiber), 98.0);
+        assert_eq!(comp.get(CompKey::TotalSugars), 0.0);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 98.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 98.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 98.0);
+        assert_eq!(comp.get(CompKey::POD), 0.0);
+        assert_eq!(comp.get(CompKey::PACsgr), 0.0);
+    }
+
+    pub(crate) const ING_SPEC_SWEETENER_OLIGOFRUCTOSE_POWDER_STR: &str = r#"{
+      "name": "Oligofructose Powder",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "sugars": {
+            "glucose": 1.67,
+            "fructose": 1.67,
+            "sucrose": 1.66
+          }
+        },
+        "fiber": {
+          "oligofructose": 95
+        },
+        "ByDryWeight": {
+          "solids": 98
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_OLIGOFRUCTOSE_POWDER: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Oligofructose Powder".to_string(),
+            category: Category::Sweetener,
+            spec: Spec::SweetenerSpec(SweetenerSpec {
+                sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(1.67).fructose(1.67).sucrose(1.66)),
+                fiber: Some(Fibers::new().oligofructose(95.0)),
+                other_carbohydrates: None,
+                other_solids: None,
+                basis: CompositionBasis::ByDryWeight { solids: 98.0 },
+                pod: None,
+                pac: None,
+            }),
+        });
+
+    pub(crate) static COMP_OLIGOFRUCTOSE_POWDER: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(159.25)
+            .solids(
+                Solids::new().other(
+                    SolidsBreakdown::new().carbohydrates(
+                        Carbohydrates::new()
+                            .fiber(Fibers::new().oligofructose(93.1))
+                            .sugars(Sugars::new().glucose(1.6366).fructose(1.6366).sucrose(1.6268)),
+                    ),
+                ),
+            )
+            .pod(43.0074)
+            .pac(PAC::new().sugars(7.8459))
+    });
+
+    #[test]
+    fn into_composition_sweetener_spec_oligofructose_powder() {
+        let comp = ING_SPEC_SWEETENER_OLIGOFRUCTOSE_POWDER.spec.into_composition().unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 159.25);
+
+        assert_eq_flt_test!(comp.get(CompKey::Glucose), 1.6366);
+        assert_eq_flt_test!(comp.get(CompKey::Fructose), 1.6366);
+        assert_eq_flt_test!(comp.get(CompKey::Sucrose), 1.6268);
+        assert_eq_flt_test!(comp.get(CompKey::Fiber), 93.1);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 4.9);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 4.9);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 98.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 93.1);
+        assert_eq!(comp.get(CompKey::TotalSolids), 98.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 43.0074);
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 7.8459);
     }
 
     pub(crate) const ING_SPEC_FRUIT_STRAWBERRY_STR: &str = r#"{
@@ -2434,7 +2650,12 @@ pub(crate) mod tests {
                     .cocoa(
                         SolidsBreakdown::new()
                             .fats(Fats::new().total(40.0).saturated(24.0))
-                            .carbohydrates(Carbohydrates::new().fiber(12.0).others_from_total(20.4).unwrap())
+                            .carbohydrates(
+                                Carbohydrates::new()
+                                    .fiber(Fibers::new().other(12.0))
+                                    .others_from_total(20.4)
+                                    .unwrap(),
+                            )
                             .proteins(7.35)
                             .others(2.25),
                     )
@@ -2507,7 +2728,12 @@ pub(crate) mod tests {
                     .cocoa(
                         SolidsBreakdown::new()
                             .fats(Fats::new().total(57.5).saturated(34.5))
-                            .carbohydrates(Carbohydrates::new().fiber(15.0).others_from_total(25.5).unwrap())
+                            .carbohydrates(
+                                Carbohydrates::new()
+                                    .fiber(Fibers::new().other(15.0))
+                                    .others_from_total(25.5)
+                                    .unwrap(),
+                            )
                             .proteins(9.1875)
                             .others(2.8125),
                     )
@@ -2577,7 +2803,12 @@ pub(crate) mod tests {
                 Solids::new().cocoa(
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(54.0).saturated(32.4))
-                        .carbohydrates(Carbohydrates::new().fiber(18.4).others_from_total(31.28).unwrap())
+                        .carbohydrates(
+                            Carbohydrates::new()
+                                .fiber(Fibers::new().other(18.4))
+                                .others_from_total(31.28)
+                                .unwrap(),
+                        )
                         .proteins(11.27)
                         .others(3.45),
                 ),
@@ -2639,7 +2870,12 @@ pub(crate) mod tests {
                 Solids::new().cocoa(
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(16.67).saturated(10.002))
-                        .carbohydrates(Carbohydrates::new().fiber(33.332).others_from_total(56.6644).unwrap())
+                        .carbohydrates(
+                            Carbohydrates::new()
+                                .fiber(Fibers::new().other(33.332))
+                                .others_from_total(56.6644)
+                                .unwrap(),
+                        )
                         .proteins(20.4159)
                         .others(6.2498),
                 ),
@@ -2712,7 +2948,7 @@ pub(crate) mod tests {
                         .proteins(21.2)
                         .carbohydrates(
                             Carbohydrates::new()
-                                .fiber(12.5)
+                                .fiber(Fibers::new().other(12.5))
                                 .sugars(Sugars::new().sucrose(4.35))
                                 .others_from_total(21.6)
                                 .unwrap(),
@@ -3078,6 +3314,21 @@ pub(crate) mod tests {
             (ING_SPEC_SWEETENER_GLUCOSE_SYRUP_42_DE_STR, ING_SPEC_SWEETENER_GLUCOSE_SYRUP_42_DE.clone(), None),
             (ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE_STR, ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE.clone(), None),
             (ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE_STR, ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE.clone(), None),
+            (
+                ING_SPEC_SWEETENER_INULIN_POWDER_STR,
+                ING_SPEC_SWEETENER_INULIN_POWDER.clone(),
+                Some(*COMP_INULIN_POWDER),
+            ),
+            (
+                ING_SPEC_SWEETENER_HP_INULIN_POWDER_STR,
+                ING_SPEC_SWEETENER_HP_INULIN_POWDER.clone(),
+                Some(*COMP_HP_INULIN_POWDER),
+            ),
+            (
+                ING_SPEC_SWEETENER_OLIGOFRUCTOSE_POWDER_STR,
+                ING_SPEC_SWEETENER_OLIGOFRUCTOSE_POWDER.clone(),
+                Some(*COMP_OLIGOFRUCTOSE_POWDER),
+            ),
             (ING_SPEC_FRUIT_STRAWBERRY_STR, ING_SPEC_FRUIT_STRAWBERRY.clone(), None),
             (ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY_STR, ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY.clone(), None),
             (

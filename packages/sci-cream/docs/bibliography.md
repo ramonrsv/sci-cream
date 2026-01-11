@@ -46,6 +46,14 @@
 
 [^23]: Schiffman, Susan, S. et al. (2013, November). _Sucralose, A Synthetic Organochlorine Sweetener: Overview of Biological Issues_. <https://pmc.ncbi.nlm.nih.gov/articles/PMC3856475/>
 
+[^24]: Niness, Kathy R. (1999, July). _Inulin and Oligofructose: What are They?_. The Journal of Nutrition, 129(7), pages 1402S-1406S. <https://www.sciencedirect.com/science/article/pii/S0022316623021053>
+
+[^25]: Roberfoid, Marcel B. (1999, July). _Caloric Value of Inulin and Oligofructose_. The Journal of Nutrition, 129(7), pages 1436S-1437S. <https://www.sciencedirect.com/science/article/pii/S0022316623021132>
+
+[^26]: Ronkart, et al. (2006, December). _Determination of total water content in inulin using the volumetric Karl Fischer titration_. Talanta, 70(5), pages 1006-1010. <https://www.sciencedirect.com/science/article/abs/pii/S0039914006001548>
+
+[^27]: Porto, Ruben. (2026, January). _Why is inulin used in ice cream?_ Ice Cream Science. <https://www.icecreamscience.com/blog/why-is-inulin-used-in-ice-cream>
+
 <!-- Ingredient references -->
 
 [^100]: Eggs, Grade A, Large, egg yolk. (2019). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/748236/nutrients>

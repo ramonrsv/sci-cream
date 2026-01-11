@@ -4,6 +4,7 @@ pub mod carbohydrates;
 #[allow(clippy::module_inception)]
 pub mod composition;
 pub mod fats;
+pub mod fibers;
 pub mod micro;
 pub mod pac;
 pub mod polyols;
@@ -17,6 +18,7 @@ pub use artificial_sweeteners::*;
 pub use carbohydrates::*;
 pub use composition::*;
 pub use fats::*;
+pub use fibers::*;
 pub use micro::*;
 pub use pac::*;
 pub use polyols::*;

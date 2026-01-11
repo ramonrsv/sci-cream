@@ -3,7 +3,7 @@ use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
 use crate::{
-    composition::{Polyols, ScaleComponents, Sugars},
+    composition::{Fibers, Polyols, ScaleComponents, Sugars},
     constants,
     error::{Error, Result},
 };
@@ -15,7 +15,7 @@ use wasm_bindgen::prelude::*;
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Carbohydrates {
-    pub fiber: f64,
+    pub fiber: Fibers,
     pub sugars: Sugars,
     pub polyols: Polyols,
     pub others: f64,
@@ -24,14 +24,14 @@ pub struct Carbohydrates {
 impl Carbohydrates {
     pub fn empty() -> Self {
         Self {
-            fiber: 0.0,
+            fiber: Fibers::empty(),
             sugars: Sugars::empty(),
             polyols: Polyols::empty(),
             others: 0.0,
         }
     }
 
-    pub fn fiber(self, fiber: f64) -> Self {
+    pub fn fiber(self, fiber: Fibers) -> Self {
         Self { fiber, ..self }
     }
 
@@ -69,10 +69,10 @@ impl Carbohydrates {
     }
 
     pub fn energy(&self) -> Result<f64> {
-        Ok(
-            /* fiber is intentionally ignored */
-            self.sugars.energy()? + self.polyols.energy()? + self.others * constants::energy::CARBOHYDRATES,
-        )
+        Ok(self.fiber.energy()?
+            + self.sugars.energy()?
+            + self.polyols.energy()?
+            + (self.others * constants::energy::CARBOHYDRATES))
     }
 
     pub fn to_pod(&self) -> Result<f64> {
@@ -92,14 +92,14 @@ impl Carbohydrates {
     }
 
     pub fn total(&self) -> f64 {
-        self.fiber + self.sugars.total() + self.polyols.total() + self.others
+        self.fiber.total() + self.sugars.total() + self.polyols.total() + self.others
     }
 }
 
 impl ScaleComponents for Carbohydrates {
     fn scale(&self, factor: f64) -> Self {
         Self {
-            fiber: self.fiber * factor,
+            fiber: self.fiber.scale(factor),
             sugars: self.sugars.scale(factor),
             polyols: self.polyols.scale(factor),
             others: self.others * factor,
@@ -108,7 +108,7 @@ impl ScaleComponents for Carbohydrates {
 
     fn add(&self, other: &Self) -> Self {
         Self {
-            fiber: self.fiber + other.fiber,
+            fiber: self.fiber.add(&other.fiber),
             sugars: self.sugars.add(&other.sugars),
             polyols: self.polyols.add(&other.polyols),
             others: self.others + other.others,
