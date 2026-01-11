@@ -160,6 +160,8 @@ impl IntoComposition for DairyFromNutritionSpec {
 pub(crate) mod tests {
     use std::sync::LazyLock;
 
+    use approx::AbsDiffEq;
+
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
@@ -708,6 +710,51 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 33.9142);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 36.4783);
+    }
+
+    #[test]
+    fn into_composition_dairy_spec_vs_dairy_from_nutrition_spec_3_25_milk() {
+        let comp_spec = ING_SPEC_DAIRY_3_25_MILK.spec.into_composition().unwrap();
+        let comp_spec_from_nutrition = ING_SPEC_DAIRY_FROM_NUTRITION_3_25_MILK.spec.into_composition().unwrap();
+
+        let assert_comps_eq = |key: CompKey, percent: f64| {
+            let comp_spec_value = comp_spec.get(key);
+            let epsilon = comp_spec_value * percent / 100.0;
+            assert_true!(
+                comp_spec_value.abs_diff_eq(&comp_spec_from_nutrition.get(key), epsilon),
+                "Values for {:?} differ by {:.2}% (max allowed {:.2}%)",
+                key,
+                ((comp_spec_value - comp_spec_from_nutrition.get(key)).abs() / comp_spec_value) * 100.0,
+                percent
+            );
+        };
+
+        // Proteins has a ~15% difference, 3g vs. 3.5g
+        // All other values are within a 10% difference
+
+        assert_comps_eq(CompKey::Energy, 2.8);
+
+        assert_comps_eq(CompKey::MilkFat, 0.0);
+        assert_comps_eq(CompKey::Lactose, 6.4);
+        assert_comps_eq(CompKey::MSNF, 1.95);
+        assert_comps_eq(CompKey::MilkSNFS, 12.0);
+        assert_comps_eq(CompKey::MilkProteins, 15.0);
+        assert_comps_eq(CompKey::MilkSolids, 1.45);
+
+        assert_comps_eq(CompKey::TotalProteins, 15.0);
+        assert_comps_eq(CompKey::TotalSolids, 1.45);
+        assert_comps_eq(CompKey::Water, 0.2);
+
+        assert_comps_eq(CompKey::Salt, 0.0);
+        assert_comps_eq(CompKey::Emulsifiers, 0.0);
+        assert_comps_eq(CompKey::Stabilizers, 0.0);
+        assert_comps_eq(CompKey::Alcohol, 0.0);
+        assert_comps_eq(CompKey::POD, 6.35);
+
+        assert_comps_eq(CompKey::PACsgr, 6.35);
+        assert_comps_eq(CompKey::PACslt, 0.0);
+        assert_comps_eq(CompKey::PACmlk, 1.95);
+        assert_comps_eq(CompKey::PACtotal, 3.0);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_DAIRY: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
