@@ -1086,7 +1086,7 @@ mod tests {
             &CORVITTO_PAC_TO_SERVING_TEMP_TABLE[..],
             &[(23.0, -9.0), (24.0, -9.5), (42.0, -18.5), (43.0, -19.0)],
         ] {
-            for (pac, serving_temp) in table.iter() {
+            for (pac, serving_temp) in table {
                 let computed_serving_temp = super::get_serving_temp_from_pac_corvitto(*pac).unwrap();
                 assert_eq_flt_test!(computed_serving_temp, *serving_temp);
             }
@@ -1103,33 +1103,33 @@ mod tests {
 
     #[test]
     fn corvitto_pac_to_serving_temp_vs_goff_hartel_fpd_at_70_frozen_water() {
-        for (pac, expected_serving_temp) in CORVITTO_PAC_TO_SERVING_TEMP_TABLE.iter() {
+        for (pac, expected_serving_temp) in CORVITTO_PAC_TO_SERVING_TEMP_TABLE {
             let mut comp = Composition::calculate_from_composition_lines(&[
                 crate::recipe::CompositionLine::new(*CORVITTO_REF_COMP_11ST, 50.0),
                 crate::recipe::CompositionLine::new(*CORVITTO_REF_COMP_18ST, 50.0),
             ])
             .unwrap();
-            comp.pac.sugars = *pac;
+            comp.pac.sugars = pac;
 
             let fpd_curve_step_at_xx_fw =
                 compute_fpd_curve_step_goff_hartel(comp, 68.25, &get_fpd_from_pac_poly).unwrap();
-            assert_abs_diff_eq!(fpd_curve_step_at_xx_fw.fpd_total, *expected_serving_temp, epsilon = 0.4);
+            assert_abs_diff_eq!(fpd_curve_step_at_xx_fw.fpd_total, expected_serving_temp, epsilon = 0.4);
         }
     }
 
     #[test]
     fn corvitto_pac_to_serving_temp_vs_modified_goff_hartel_corvitto_fpd_at_70_frozen_water() {
-        for (pac, expected_serving_temp) in CORVITTO_PAC_TO_SERVING_TEMP_TABLE.iter() {
+        for (pac, expected_serving_temp) in CORVITTO_PAC_TO_SERVING_TEMP_TABLE {
             let mut comp = Composition::calculate_from_composition_lines(&[
                 crate::recipe::CompositionLine::new(*CORVITTO_REF_COMP_11ST, 50.0),
                 crate::recipe::CompositionLine::new(*CORVITTO_REF_COMP_18ST, 50.0),
             ])
             .unwrap();
-            comp.pac.sugars = *pac;
+            comp.pac.sugars = pac;
 
             let fpd_curve_step_at_xx_fw =
                 compute_fpd_curve_step_modified_goff_hartel_corvitto(comp, 70.0, &get_fpd_from_pac_poly).unwrap();
-            assert_abs_diff_eq!(fpd_curve_step_at_xx_fw.fpd_exc_hf, *expected_serving_temp, epsilon = 0.4);
+            assert_abs_diff_eq!(fpd_curve_step_at_xx_fw.fpd_exc_hf, expected_serving_temp, epsilon = 0.4);
         }
     }
 

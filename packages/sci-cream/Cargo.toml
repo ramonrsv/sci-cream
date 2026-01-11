@@ -96,7 +96,6 @@ cast_possible_truncation = "allow"
 cast_sign_loss = "allow"
 cast_precision_loss = "allow"
 cast_lossless = "allow"
-explicit_iter_loop = "allow"
 
 # `restrictions` group, opt-in into individual lints as needed.
 dbg_macro = "warn"
