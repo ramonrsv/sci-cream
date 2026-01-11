@@ -3,13 +3,20 @@ use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 use strum_macros::EnumIter;
 
-use crate::composition::{Alcohol, Micro, PAC, Solids};
+use crate::{
+    composition::{Alcohol, Micro, PAC, Solids},
+    error::Result,
+};
 
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
 #[cfg(doc)]
 use crate::specs::ChocolateSpec;
+
+pub trait IntoComposition {
+    fn into_composition(self) -> Result<Composition>;
+}
 
 pub trait ScaleComponents {
     #[must_use]

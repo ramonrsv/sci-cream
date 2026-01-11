@@ -138,7 +138,7 @@ mod tests {
     use crate::tests::{assets::*, data::get_ingredient_spec_by_name_or_panic};
 
     use super::*;
-    use crate::{constants::COMPOSITION_EPSILON, specs::IntoComposition};
+    use crate::{composition::IntoComposition, constants::COMPOSITION_EPSILON};
 
     fn to_comp_lines(items: &[(&str, f64)]) -> Vec<CompositionLine> {
         items
