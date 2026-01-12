@@ -1144,12 +1144,13 @@ pub(crate) mod tests {
 
     #[test]
     fn into_composition_sweetener_spec_splenda_sucralose_manual_vs_calculated_pod_and_pac() {
-        let mut auto_pod_pac_spec = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec;
+        let manual_pod_pac_spec = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec;
+        let mut auto_pod_pac_spec = manual_pod_pac_spec;
         clear_pod_in_spec(&mut auto_pod_pac_spec);
         clear_pac_in_spec(&mut auto_pod_pac_spec);
 
         let comp_auto_pod_pac = auto_pod_pac_spec.into_composition().unwrap();
-        let comp_manual_pod_pac = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec.into_composition().unwrap();
+        let comp_manual_pod_pac = manual_pod_pac_spec.into_composition().unwrap();
 
         assert_comp_eq_percent(&comp_auto_pod_pac, &comp_manual_pod_pac, CompKey::POD, 0.75);
         assert_comp_eq_percent(&comp_auto_pod_pac, &comp_manual_pod_pac, CompKey::PACsgr, 6.6);
@@ -1446,11 +1447,12 @@ pub(crate) mod tests {
 
     #[test]
     fn into_composition_sweetener_spec_sugar_twin_manual_vs_calculated_pod() {
-        let mut auto_pod_pac_spec = ING_SPEC_SWEETENER_SUGAR_TWIN.spec;
-        clear_pod_in_spec(&mut auto_pod_pac_spec);
+        let manual_pod_spec = ING_SPEC_SWEETENER_SUGAR_TWIN.spec;
+        let mut auto_pod_spec = manual_pod_spec;
+        clear_pod_in_spec(&mut auto_pod_spec);
 
-        let comp_auto_pod = auto_pod_pac_spec.into_composition().unwrap();
-        let comp_manual_pod = ING_SPEC_SWEETENER_SUGAR_TWIN.spec.into_composition().unwrap();
+        let comp_auto_pod = auto_pod_spec.into_composition().unwrap();
+        let comp_manual_pod = manual_pod_spec.into_composition().unwrap();
 
         assert_comp_eq_percent(&comp_auto_pod, &comp_manual_pod, CompKey::POD, 1.1);
     }
@@ -1531,16 +1533,100 @@ pub(crate) mod tests {
 
     #[test]
     fn into_composition_sweetener_spec_stevia_in_the_raw_packets_manual_vs_calculated_pod() {
-        let mut auto_pod_pac_spec = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS.spec;
-        clear_pod_in_spec(&mut auto_pod_pac_spec);
+        let manual_pod_spec = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS.spec;
+        let mut auto_pod_spec = manual_pod_spec;
+        clear_pod_in_spec(&mut auto_pod_spec);
 
-        let comp_auto_pod = auto_pod_pac_spec.into_composition().unwrap();
-        let comp_manual_pod = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS
+        let comp_auto_pod = auto_pod_spec.into_composition().unwrap();
+        let comp_manual_pod = manual_pod_spec.into_composition().unwrap();
+
+        assert_comp_eq_percent(&comp_auto_pod, &comp_manual_pod, CompKey::POD, 0.5);
+    }
+
+    pub(crate) const ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_BAKERS_BAG_STR: &str = r#"{
+      "name": "Stevia In The Raw (Bakers Bag)",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "artificial": {
+            "steviosides": 3.45
+          }
+        },
+        "other_carbohydrates": 91.55,
+        "ByTotalWeight": {
+          "water": 5
+        },
+        "pod": {
+          "OfWhole": 775
+        },
+        "pac": {
+          "OfSolids": {
+            "molar_mass": 1800
+          }
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_BAKERS_BAG: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Stevia In The Raw (Bakers Bag)".to_string(),
+            category: Category::Sweetener,
+            spec: Spec::SweetenerSpec(SweetenerSpec {
+                sweeteners: Sweeteners::new().artificial(ArtificialSweeteners::new().steviosides(3.45)),
+                fiber: None,
+                other_carbohydrates: Some(91.55),
+                other_solids: None,
+                basis: CompositionBasis::ByTotalWeight { water: 5.0 },
+                pod: Some(Scaling::OfWhole(775.0)),
+                pac: Some(Scaling::OfSolids(Unit::MolarMass(1800.0))),
+            }),
+        });
+
+    pub(crate) static COMP_STEVIA_IN_THE_RAW_BAKERS_BAG: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(366.2)
+            .solids(
+                Solids::new().other(
+                    SolidsBreakdown::new()
+                        .carbohydrates(Carbohydrates::new().others(91.55))
+                        .artificial_sweeteners(ArtificialSweeteners::new().steviosides(3.45)),
+                ),
+            )
+            .pod(775.0)
+            .pac(PAC::new().sugars(18.05))
+    });
+
+    #[test]
+    fn into_composition_sweetener_spec_stevia_in_the_raw_bakers_bag() {
+        let comp = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_BAKERS_BAG
             .spec
             .into_composition()
             .unwrap();
 
-        assert_comp_eq_percent(&comp_auto_pod, &comp_manual_pod, CompKey::POD, 0.5);
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 366.2);
+
+        assert_eq_flt_test!(comp.get(CompKey::Fiber), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 0.0);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 3.45);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 3.45);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 91.55);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 95.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 95.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 775.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 18.05);
+    }
+
+    #[test]
+    fn into_composition_sweetener_spec_stevia_in_the_raw_bakers_bag_manual_vs_calculated_pod() {
+        let manual_pod_spec = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_BAKERS_BAG.spec;
+        let mut auto_pod_spec = manual_pod_spec;
+        clear_pod_in_spec(&mut auto_pod_spec);
+
+        let comp_auto_pod = auto_pod_spec.into_composition().unwrap();
+        let comp_manual_pod = manual_pod_spec.into_composition().unwrap();
+
+        assert_comp_eq_percent(&comp_auto_pod, &comp_manual_pod, CompKey::POD, 0.2);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_SWEETENER: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
@@ -1598,6 +1684,11 @@ pub(crate) mod tests {
                     ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS_STR,
                     ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS.clone(),
                     Some(*COMP_STEVIA_IN_THE_RAW_PACKETS),
+                ),
+                (
+                    ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_BAKERS_BAG_STR,
+                    ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_BAKERS_BAG.clone(),
+                    Some(*COMP_STEVIA_IN_THE_RAW_BAKERS_BAG),
                 ),
             ]
         });
