@@ -128,10 +128,8 @@ impl ArtificialSweeteners {
     }
 
     pub fn to_pod(&self) -> Result<f64> {
-        if self.steviosides != 0.0 || self.mogrosides != 0.0 || self.other != 0.0 {
-            return Err(Error::CannotComputePOD(
-                "Cannot compute POD with steviosides, mogrosides, or other artificial sweeteners".to_string(),
-            ));
+        if self.other != 0.0 {
+            return Err(Error::CannotComputePOD("Cannot compute POD with other artificial sweeteners".to_string()));
         }
 
         Ok([
@@ -139,6 +137,8 @@ impl ArtificialSweeteners {
             self.cyclamate * constants::pod::CYCLAMATE,
             self.saccharin * constants::pod::SACCHARIN,
             self.sucralose * constants::pod::SUCRALOSE,
+            self.steviosides * constants::pod::STEVIOSIDES,
+            self.mogrosides * constants::pod::MOGROSIDES,
         ]
         .into_iter()
         .sum::<f64>()

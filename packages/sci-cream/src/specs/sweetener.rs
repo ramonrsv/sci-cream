@@ -1448,6 +1448,99 @@ pub(crate) mod tests {
         assert_comp_eq_percent(&comp_auto_pod, &comp_manual_pod, CompKey::POD, 1.1);
     }
 
+    pub(crate) const ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS_STR: &str = r#"{
+      "name": "Stevia In The Raw (Packets)",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "sugars": {
+            "glucose": 89.0
+          },
+          "artificial": {
+            "steviosides": 3.4
+          }
+        },
+        "ByTotalWeight": {
+          "water": 7.6
+        },
+        "pod": {
+          "OfWhole": 840
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Stevia In The Raw (Packets)".to_string(),
+            category: Category::Sweetener,
+            spec: Spec::SweetenerSpec(SweetenerSpec {
+                sweeteners: Sweeteners::new()
+                    .sugars(Sugars::new().glucose(89.0))
+                    .artificial(ArtificialSweeteners::new().steviosides(3.4)),
+                fiber: None,
+                other_carbohydrates: None,
+                other_solids: None,
+                basis: CompositionBasis::ByTotalWeight { water: 7.6 },
+                pod: Some(Scaling::OfWhole(840.0)),
+                pac: None,
+            }),
+        });
+
+    pub(crate) static COMP_STEVIA_IN_THE_RAW_PACKETS: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(356.0)
+            .solids(
+                Solids::new().other(
+                    SolidsBreakdown::new()
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().glucose(89.0)))
+                        .artificial_sweeteners(ArtificialSweeteners::new().steviosides(3.4)),
+                ),
+            )
+            .pod(840.0)
+            .pac(PAC::new().sugars(169.1))
+    });
+
+    #[test]
+    fn into_composition_sweetener_spec_stevia_in_the_raw_packets() {
+        let comp = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS
+            .spec
+            .into_composition()
+            .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 356.0);
+
+        assert_eq!(comp.get(CompKey::Glucose), 89.0);
+        assert_eq_flt_test!(comp.get(CompKey::Fiber), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 89.0);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 3.4);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 92.4);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 89.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 3.4);
+        assert_eq!(comp.get(CompKey::TotalSolids), 92.4);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 840.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 169.1);
+    }
+
+    #[test]
+    fn into_composition_sweetener_spec_stevia_in_the_raw_packets_manual_vs_calculated_pod() {
+        let auto_pod_pac_spec = if let Spec::SweetenerSpec(mut spec) = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS.spec
+        {
+            spec.pod = None;
+            Spec::SweetenerSpec(spec)
+        } else {
+            panic!("Expected SweetenerSpec");
+        };
+
+        let comp_auto_pod = auto_pod_pac_spec.into_composition().unwrap();
+        let comp_manual_pod = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS
+            .spec
+            .into_composition()
+            .unwrap();
+
+        assert_comp_eq_percent(&comp_auto_pod, &comp_manual_pod, CompKey::POD, 0.5);
+    }
+
     pub(crate) static INGREDIENT_ASSETS_TABLE_SWEETENER: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {
             vec![
@@ -1499,6 +1592,11 @@ pub(crate) mod tests {
                     Some(*COMP_SWEETLEAF_STEVIA),
                 ),
                 (ING_SPEC_SWEETENER_SUGAR_TWIN_STR, ING_SPEC_SWEETENER_SUGAR_TWIN.clone(), Some(*COMP_SUGAR_TWIN)),
+                (
+                    ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS_STR,
+                    ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS.clone(),
+                    Some(*COMP_STEVIA_IN_THE_RAW_PACKETS),
+                ),
             ]
         });
 }

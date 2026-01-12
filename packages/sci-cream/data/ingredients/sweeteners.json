@@ -204,5 +204,15 @@
       "pod": { "OfWhole": 1050 }
     },
     "comments": "POD value taken from the manufacturer's suggested 2tsp:1packet sugar to sweetener conversion, where a teaspoon of granulated sugar is 4.2g (see [`crate::constants::density::GRAMS_IN_TEASPOON_OF_SUGAR`]) and a packet is 0.8g (from the manufacturer's packaging and empirically measured with a 0.01g precision scale). Composition is taken from the ingredient list, which specifies dextrose 66% and sodium cyclamate 33%. Energy and PAC contributions are calculated internally from the composition. (https://sugartwin.ca/product/sachets/)"
+  },
+  {
+    "name": "Stevia In The Raw (Packets)",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "sugars": { "glucose": 89.0 }, "artificial": { "steviosides": 3.4 } },
+      "ByTotalWeight": { "water": 7.6 },
+      "pod": { "OfWhole": 840 }
+    },
+    "comments": "POD value taken from the manufacturer's suggested 2tsp:1packet sugar to sweetener conversion, where a teaspoon of granulated sugar is 4.2g (see [`crate::constants::density::GRAMS_IN_TEASPOON_OF_SUGAR`]) and a packet is 1g (from the manufacturer's packaging and empirically measured with a 0.01g precision scale). The composition is inferred from the ingredient list as enough steviosides to reach a POD of 840, and the rest dextrose with 8% moisture content. Energy and PAC contributions are calculated internally from the composition. (https://www.intheraw.com/using-itr/product/stevia-in-the-raw-packets/)"
   }
 ]
