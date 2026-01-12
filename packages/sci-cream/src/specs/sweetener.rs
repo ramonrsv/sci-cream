@@ -150,10 +150,9 @@ impl IntoComposition for SweetenerSpec {
 pub(crate) mod tests {
     use std::sync::LazyLock;
 
-    use approx::AbsDiffEq;
-
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
+    use crate::tests::util::assert_comp_eq_percent;
 
     use super::*;
     use crate::{
@@ -1141,21 +1140,8 @@ pub(crate) mod tests {
         let comp_auto_pod_pac = auto_pod_pac_spec.into_composition().unwrap();
         let comp_manual_pod_pac = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec.into_composition().unwrap();
 
-        let assert_comps_eq = |key: CompKey, percent: f64| {
-            let lhs = comp_auto_pod_pac.get(key);
-            let rhs = comp_manual_pod_pac.get(key);
-            let epsilon = lhs * percent / 100.0;
-            assert_true!(
-                lhs.abs_diff_eq(&rhs, epsilon),
-                "Values for {:?} differ by {:.2}% (max allowed {:.2}%)",
-                key,
-                ((lhs - rhs).abs() / lhs) * 100.0,
-                percent
-            );
-        };
-
-        assert_comps_eq(CompKey::POD, 0.75);
-        assert_comps_eq(CompKey::PACsgr, 6.6);
+        assert_comp_eq_percent(&comp_auto_pod_pac, &comp_manual_pod_pac, CompKey::POD, 0.75);
+        assert_comp_eq_percent(&comp_auto_pod_pac, &comp_manual_pod_pac, CompKey::PACsgr, 6.6);
     }
 
     pub(crate) const ING_SPEC_SWEETENER_SPLENDA_STEVIA_STR: &str = r#"{
@@ -1459,20 +1445,7 @@ pub(crate) mod tests {
         let comp_auto_pod = auto_pod_pac_spec.into_composition().unwrap();
         let comp_manual_pod = ING_SPEC_SWEETENER_SUGAR_TWIN.spec.into_composition().unwrap();
 
-        let assert_comps_eq = |key: CompKey, percent: f64| {
-            let lhs = comp_auto_pod.get(key);
-            let rhs = comp_manual_pod.get(key);
-            let epsilon = lhs * percent / 100.0;
-            assert_true!(
-                lhs.abs_diff_eq(&rhs, epsilon),
-                "Values for {:?} differ by {:.2}% (max allowed {:.2}%)",
-                key,
-                ((lhs - rhs).abs() / lhs) * 100.0,
-                percent
-            );
-        };
-
-        assert_comps_eq(CompKey::POD, 1.1);
+        assert_comp_eq_percent(&comp_auto_pod, &comp_manual_pod, CompKey::POD, 1.1);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_SWEETENER: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
