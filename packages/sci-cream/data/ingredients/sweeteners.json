@@ -25,6 +25,22 @@
     }
   },
   {
+    "name": "Lactose",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "sugars": { "lactose": 100 } },
+      "ByDryWeight": { "solids": 100 }
+    }
+  },
+  {
+    "name": "Maltose",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "sugars": { "maltose": 100 } },
+      "ByDryWeight": { "solids": 100 }
+    }
+  },
+  {
     "name": "Trehalose",
     "category": "Sweetener",
     "SweetenerSpec": {
