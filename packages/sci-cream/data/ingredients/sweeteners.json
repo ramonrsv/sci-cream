@@ -78,6 +78,17 @@
     "comments": "Composition values were taken from the sugar profile in Wikipedia (https://en.wikipedia.org/wiki/Honey#Nutrition), which roughly match those in Glucose Syrups (Appendix C: Sugars data, p. 325). The resulting POD/PAC values roughly align with those in Underbelly's sugars chart (https://under-belly.org/wp-content/uploads/2016/05/sugars11.png), Ice Cream 7th Edition (Table 3.4, page 67), and Ice Cream Calculator (https://icecreamcalc.com/), which differ slightly among themselves."
   },
   {
+    "name": "Maple Syrup",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "sugars": { "glucose": 0.65, "fructose": 0.35, "sucrose": 59 } },
+      "other_carbohydrates": 7.5,
+      "other_solids": 0.5,
+      "ByTotalWeight": { "water": 32 }
+    },
+    "comments": "Composition from USDA FoodData Central - SR Legacy - Syrup, maple, Canadian (https://fdc.nal.usda.gov/food-details/170276/nutrients). These values roughly align with the analysis in _Glucose Syrups: Technology and Applications_ (Hull, 2010, 'Maple Syrup', p. 326)[^15]."
+  },
+  {
     "name": "Fancy Molasses",
     "category": "Sweetener",
     "SweetenerSpec": {
