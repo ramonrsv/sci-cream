@@ -161,6 +161,21 @@ pub(crate) mod tests {
         specs::{IngredientSpec, Spec},
     };
 
+    fn clear_pod_in_spec(spec: &mut Spec) {
+        if let Spec::SweetenerSpec(spec) = spec {
+            spec.pod = None;
+        } else {
+            panic!("Expected SweetenerSpec");
+        }
+    }
+    fn clear_pac_in_spec(spec: &mut Spec) {
+        if let Spec::SweetenerSpec(spec) = spec {
+            spec.pac = None;
+        } else {
+            panic!("Expected SweetenerSpec");
+        }
+    }
+
     pub(crate) const ING_SPEC_SWEETENER_SUCROSE_STR: &str = r#"{
       "name": "Sucrose",
       "category": "Sweetener",
@@ -1129,13 +1144,9 @@ pub(crate) mod tests {
 
     #[test]
     fn into_composition_sweetener_spec_splenda_sucralose_manual_vs_calculated_pod_and_pac() {
-        let auto_pod_pac_spec = if let Spec::SweetenerSpec(mut spec) = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec {
-            spec.pod = None;
-            spec.pac = None;
-            Spec::SweetenerSpec(spec)
-        } else {
-            panic!("Expected SweetenerSpec");
-        };
+        let mut auto_pod_pac_spec = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec;
+        clear_pod_in_spec(&mut auto_pod_pac_spec);
+        clear_pac_in_spec(&mut auto_pod_pac_spec);
 
         let comp_auto_pod_pac = auto_pod_pac_spec.into_composition().unwrap();
         let comp_manual_pod_pac = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec.into_composition().unwrap();
@@ -1435,12 +1446,8 @@ pub(crate) mod tests {
 
     #[test]
     fn into_composition_sweetener_spec_sugar_twin_manual_vs_calculated_pod() {
-        let auto_pod_pac_spec = if let Spec::SweetenerSpec(mut spec) = ING_SPEC_SWEETENER_SUGAR_TWIN.spec {
-            spec.pod = None;
-            Spec::SweetenerSpec(spec)
-        } else {
-            panic!("Expected SweetenerSpec");
-        };
+        let mut auto_pod_pac_spec = ING_SPEC_SWEETENER_SUGAR_TWIN.spec;
+        clear_pod_in_spec(&mut auto_pod_pac_spec);
 
         let comp_auto_pod = auto_pod_pac_spec.into_composition().unwrap();
         let comp_manual_pod = ING_SPEC_SWEETENER_SUGAR_TWIN.spec.into_composition().unwrap();
@@ -1524,13 +1531,8 @@ pub(crate) mod tests {
 
     #[test]
     fn into_composition_sweetener_spec_stevia_in_the_raw_packets_manual_vs_calculated_pod() {
-        let auto_pod_pac_spec = if let Spec::SweetenerSpec(mut spec) = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS.spec
-        {
-            spec.pod = None;
-            Spec::SweetenerSpec(spec)
-        } else {
-            panic!("Expected SweetenerSpec");
-        };
+        let mut auto_pod_pac_spec = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS.spec;
+        clear_pod_in_spec(&mut auto_pod_pac_spec);
 
         let comp_auto_pod = auto_pod_pac_spec.into_composition().unwrap();
         let comp_manual_pod = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS
