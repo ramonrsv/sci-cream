@@ -62,6 +62,8 @@
 
 [^31]: Anderson, Laura. (2020, December). _How to convert grams of sugars into teaspoons_. Michigan State University. <https://www.canr.msu.edu/news/how_to_convert_grams_of_sugars_into_teaspoons>
 
+[^32]: Lawrence, J. F. (2003). _Cyclamates_. Encyclopedia of Food Sciences and Nutrition (Second Edition), pages 1712-1714. <https://www.sciencedirect.com/science/chapter/referencework/abs/pii/B012227055X003187>
+
 <!-- Ingredient references -->
 
 [^100]: Eggs, Grade A, Large, egg yolk. (2019). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/748236/nutrients>

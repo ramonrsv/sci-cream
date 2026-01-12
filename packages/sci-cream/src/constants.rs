@@ -45,6 +45,9 @@ pub mod pod {
     /// (The European Commission, 2025, E951)[^10]
     #[doc = include_str!("../docs/bibs/10.md")]
     pub const ASPARTAME: f64 = 200.0 * 100.0;
+    /// (Spillane, 2006, Table 9.4, p. 188)[^9]
+    #[doc = include_str!("../docs/bibs/9.md")]
+    pub const CYCLAMATE: f64 = 30.0 * 100.0;
     /// (The European Commission, 2025, E954)[^10]
     #[doc = include_str!("../docs/bibs/10.md")]
     pub const SACCHARIN: f64 = 400.0 * 100.0;
@@ -110,6 +113,7 @@ pub mod molar_mass {
     pub const XYLITOL: f64 = 152.146;
 
     pub const ASPARTAME: f64 = 294.307;
+    pub const CYCLAMATE: f64 = 201.22;
     pub const SACCHARIN: f64 = 183.18;
     pub const SUCRALOSE: f64 = 397.63;
 
@@ -139,6 +143,7 @@ pub mod pac {
     pub const XYLITOL: f64 = pac_from_molar_mass(molar_mass::XYLITOL);
 
     pub const ASPARTAME: f64 = pac_from_molar_mass(molar_mass::ASPARTAME);
+    pub const CYCLAMATE: f64 = pac_from_molar_mass(molar_mass::CYCLAMATE);
     pub const SACCHARIN: f64 = pac_from_molar_mass(molar_mass::SACCHARIN);
     pub const SUCRALOSE: f64 = pac_from_molar_mass(molar_mass::SUCRALOSE);
 
@@ -289,6 +294,9 @@ pub mod energy {
     /// (International Food Information Council Foundation, 2019, "What is aspartame?")[^21]
     #[doc = include_str!("../docs/bibs/21.md")]
     pub const ASPARTAME: f64 = 4.0;
+    /// (Lawrence, 2003, "Cyclamates")[^32]
+    #[doc = include_str!("../docs/bibs/32.md")]
+    pub const CYCLAMATE: f64 = 0.0;
     /// (American Diabetes Association, 2014, "Saccharin")[^22]
     #[doc = include_str!("../docs/bibs/22.md")]
     pub const SACCHARIN: f64 = 0.0;
@@ -501,6 +509,7 @@ mod tests {
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::XYLITOL), 224.0);
 
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::ASPARTAME), 116.0);
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::CYCLAMATE), 170.0);
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::SACCHARIN), 186.0);
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::SUCRALOSE), 86.0);
 

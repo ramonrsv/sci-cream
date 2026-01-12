@@ -1377,6 +1377,104 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 9.408);
     }
 
+    pub(crate) const ING_SPEC_SWEETENER_SUGAR_TWIN_STR: &str = r#"{
+      "name": "Sugar Twin",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "sugars": {
+            "glucose": 61
+          },
+          "artificial": {
+            "cyclamate": 33
+          }
+        },
+        "ByTotalWeight": {
+          "water": 6
+        },
+        "pod": {
+          "OfWhole": 1050
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_SUGAR_TWIN: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Sugar Twin".to_string(),
+        category: Category::Sweetener,
+        spec: Spec::SweetenerSpec(SweetenerSpec {
+            sweeteners: Sweeteners::new()
+                .sugars(Sugars::new().glucose(61.0))
+                .artificial(ArtificialSweeteners::new().cyclamate(33.0)),
+            fiber: None,
+            other_carbohydrates: None,
+            other_solids: None,
+            basis: CompositionBasis::ByTotalWeight { water: 6.0 },
+            pod: Some(Scaling::OfWhole(1050.0)),
+            pac: None,
+        }),
+    });
+
+    pub(crate) static COMP_SUGAR_TWIN: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(244.0)
+            .solids(
+                Solids::new().other(
+                    SolidsBreakdown::new()
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().glucose(61.0)))
+                        .artificial_sweeteners(ArtificialSweeteners::new().cyclamate(33.0)),
+                ),
+            )
+            .pod(1050.0)
+            .pac(PAC::new().sugars(172.0))
+    });
+
+    #[test]
+    fn into_composition_sweetener_spec_sugar_twin() {
+        let comp = ING_SPEC_SWEETENER_SUGAR_TWIN.spec.into_composition().unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 244.0);
+
+        assert_eq!(comp.get(CompKey::Glucose), 61.0);
+        assert_eq_flt_test!(comp.get(CompKey::Fiber), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 61.0);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 33.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 94.0);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 61.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 33.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 94.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 1050.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 172.0);
+    }
+
+    #[test]
+    fn into_composition_sweetener_spec_sugar_twin_manual_vs_calculated_pod() {
+        let auto_pod_pac_spec = if let Spec::SweetenerSpec(mut spec) = ING_SPEC_SWEETENER_SUGAR_TWIN.spec {
+            spec.pod = None;
+            Spec::SweetenerSpec(spec)
+        } else {
+            panic!("Expected SweetenerSpec");
+        };
+
+        let comp_auto_pod = auto_pod_pac_spec.into_composition().unwrap();
+        let comp_manual_pod = ING_SPEC_SWEETENER_SUGAR_TWIN.spec.into_composition().unwrap();
+
+        let assert_comps_eq = |key: CompKey, percent: f64| {
+            let lhs = comp_auto_pod.get(key);
+            let rhs = comp_manual_pod.get(key);
+            let epsilon = lhs * percent / 100.0;
+            assert_true!(
+                lhs.abs_diff_eq(&rhs, epsilon),
+                "Values for {:?} differ by {:.2}% (max allowed {:.2}%)",
+                key,
+                ((lhs - rhs).abs() / lhs) * 100.0,
+                percent
+            );
+        };
+
+        assert_comps_eq(CompKey::POD, 1.1);
+    }
+
     pub(crate) static INGREDIENT_ASSETS_TABLE_SWEETENER: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {
             vec![
@@ -1427,6 +1525,7 @@ pub(crate) mod tests {
                     ING_SPEC_SWEETENER_SWEETLEAF_STEVIA.clone(),
                     Some(*COMP_SWEETLEAF_STEVIA),
                 ),
+                (ING_SPEC_SWEETENER_SUGAR_TWIN_STR, ING_SPEC_SWEETENER_SUGAR_TWIN.clone(), Some(*COMP_SUGAR_TWIN)),
             ]
         });
 }

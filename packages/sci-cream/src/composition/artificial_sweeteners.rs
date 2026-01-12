@@ -35,6 +35,7 @@ use crate::composition::Polyols;
 #[serde(default, deny_unknown_fields)]
 pub struct ArtificialSweeteners {
     pub aspartame: f64,
+    pub cyclamate: f64,
     pub saccharin: f64,
     pub sucralose: f64,
     /// Steviol glycosides are the main active sweetening compounds in stevia extract
@@ -62,6 +63,7 @@ impl ArtificialSweeteners {
     pub fn empty() -> Self {
         Self {
             aspartame: 0.0,
+            cyclamate: 0.0,
             saccharin: 0.0,
             sucralose: 0.0,
             steviosides: 0.0,
@@ -73,6 +75,11 @@ impl ArtificialSweeteners {
     #[must_use]
     pub fn aspartame(self, aspartame: f64) -> Self {
         Self { aspartame, ..self }
+    }
+
+    #[must_use]
+    pub fn cyclamate(self, cyclamate: f64) -> Self {
+        Self { cyclamate, ..self }
     }
 
     #[must_use]
@@ -109,6 +116,7 @@ impl ArtificialSweeteners {
 
         Ok([
             self.aspartame * constants::energy::ASPARTAME,
+            self.cyclamate * constants::energy::CYCLAMATE,
             self.saccharin * constants::energy::SACCHARIN,
             self.sucralose * constants::energy::SUCRALOSE,
             self.steviosides * constants::energy::STEVIOSIDES,
@@ -128,6 +136,7 @@ impl ArtificialSweeteners {
 
         Ok([
             self.aspartame * constants::pod::ASPARTAME,
+            self.cyclamate * constants::pod::CYCLAMATE,
             self.saccharin * constants::pod::SACCHARIN,
             self.sucralose * constants::pod::SUCRALOSE,
         ]
@@ -143,6 +152,7 @@ impl ArtificialSweeteners {
 
         Ok([
             self.aspartame * constants::pac::ASPARTAME,
+            self.cyclamate * constants::pac::CYCLAMATE,
             self.saccharin * constants::pac::SACCHARIN,
             self.sucralose * constants::pac::SUCRALOSE,
             /* steviosides purposely ignored, they are large molecules */
@@ -170,6 +180,7 @@ impl ScaleComponents for ArtificialSweeteners {
     fn scale(&self, factor: f64) -> Self {
         Self {
             aspartame: self.aspartame * factor,
+            cyclamate: self.cyclamate * factor,
             saccharin: self.saccharin * factor,
             sucralose: self.sucralose * factor,
             steviosides: self.steviosides * factor,
@@ -181,6 +192,7 @@ impl ScaleComponents for ArtificialSweeteners {
     fn add(&self, other: &Self) -> Self {
         Self {
             aspartame: self.aspartame + other.aspartame,
+            cyclamate: self.cyclamate + other.cyclamate,
             saccharin: self.saccharin + other.saccharin,
             sucralose: self.sucralose + other.sucralose,
             steviosides: self.steviosides + other.steviosides,
