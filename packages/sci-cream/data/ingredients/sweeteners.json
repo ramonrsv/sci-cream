@@ -78,6 +78,17 @@
     "comments": "Composition values were taken from the sugar profile in Wikipedia (https://en.wikipedia.org/wiki/Honey#Nutrition), which roughly match those in Glucose Syrups (Appendix C: Sugars data, p. 325). The resulting POD/PAC values roughly align with those in Underbelly's sugars chart (https://under-belly.org/wp-content/uploads/2016/05/sugars11.png), Ice Cream 7th Edition (Table 3.4, page 67), and Ice Cream Calculator (https://icecreamcalc.com/), which differ slightly among themselves."
   },
   {
+    "name": "Fancy Molasses",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "sugars": { "glucose": 12, "fructose": 12, "sucrose": 32 } },
+      "other_carbohydrates": 20,
+      "other_solids": 4,
+      "ByTotalWeight": { "water": 20 }
+    },
+    "comments": "Composition values are roughly a middle ground between the nutrition facts for Crosby's Fancy Molasses (https://www.crosbys.com/product/#fancy-molasses-nutrition) and the nutrition analysis in USDA FoodData Central - SR Legacy - Molasses (https://fdc.nal.usda.gov/food-details/168820/nutrients). These values roughly align with the analysis in _Glucose Syrups: Technology and Applications_ (Hull, 2010, Table 12.1, p. 176)[^15]."
+  },
+  {
     "name": "HFCS 42",
     "category": "Sweetener",
     "SweetenerSpec": {

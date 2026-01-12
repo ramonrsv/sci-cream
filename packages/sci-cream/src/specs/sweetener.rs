@@ -694,6 +694,77 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACsgr), 152.65);
     }
 
+    pub(crate) const ING_SPEC_SWEETENER_FANCY_MOLASSES_STR: &str = r#"{
+      "name": "Fancy Molasses",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "sugars": {
+            "glucose": 12,
+            "fructose": 12,
+            "sucrose": 32
+          }
+        },
+        "other_carbohydrates": 20,
+        "other_solids": 4,
+        "ByTotalWeight": {
+          "water": 20
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_FANCY_MOLASSES: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Fancy Molasses".to_string(),
+        category: Category::Sweetener,
+        spec: Spec::SweetenerSpec(SweetenerSpec {
+            sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(12.0).fructose(12.0).sucrose(32.0)),
+            fiber: None,
+            other_carbohydrates: Some(20.0),
+            other_solids: Some(4.0),
+            basis: CompositionBasis::ByTotalWeight { water: 20.0 },
+            pod: None,
+            pac: None,
+        }),
+    });
+
+    pub(crate) static COMP_FANCY_MOLASSES: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(304.0)
+            .solids(
+                Solids::new().other(
+                    SolidsBreakdown::new()
+                        .carbohydrates(
+                            Carbohydrates::new()
+                                .sugars(Sugars::new().glucose(12.0).fructose(12.0).sucrose(32.0))
+                                .others(20.0),
+                        )
+                        .others(4.0),
+                ),
+            )
+            .pod(62.36)
+            .pac(PAC::new().sugars(77.6))
+    });
+
+    #[test]
+    fn into_composition_sweetener_spec_fancy_molasses() {
+        let comp = ING_SPEC_SWEETENER_FANCY_MOLASSES.spec.into_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 304.0);
+
+        assert_eq!(comp.get(CompKey::Glucose), 12.0);
+        assert_eq!(comp.get(CompKey::Fructose), 12.0);
+        assert_eq!(comp.get(CompKey::Sucrose), 32.0);
+        assert_eq!(comp.get(CompKey::TotalSugars), 56.0);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
+        assert_eq!(comp.get(CompKey::TotalSweeteners), 56.0);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 76.0);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 24.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 80.0);
+        assert_eq!(comp.get(CompKey::POD), 62.36);
+        assert_eq!(comp.get(CompKey::PACsgr), 77.6);
+    }
+
     pub(crate) const ING_SPEC_SWEETENER_HFCS42_STR: &str = r#"{
       "name": "HFCS 42",
       "category": "Sweetener",
@@ -1757,6 +1828,11 @@ pub(crate) mod tests {
                 (ING_SPEC_SWEETENER_ERYTHRITOL_STR, ING_SPEC_SWEETENER_ERYTHRITOL.clone(), Some(*COMP_ERYTHRITOL)),
                 (ING_SPEC_SWEETENER_INVERT_SUGAR_STR, ING_SPEC_SWEETENER_INVERT_SUGAR.clone(), None),
                 (ING_SPEC_SWEETENER_HONEY_STR, ING_SPEC_SWEETENER_HONEY.clone(), None),
+                (
+                    ING_SPEC_SWEETENER_FANCY_MOLASSES_STR,
+                    ING_SPEC_SWEETENER_FANCY_MOLASSES.clone(),
+                    Some(*COMP_FANCY_MOLASSES),
+                ),
                 (ING_SPEC_SWEETENER_HFCS42_STR, ING_SPEC_SWEETENER_HFCS42.clone(), None),
                 (ING_SPEC_SWEETENER_MALTODEXTRIN_10_DE_STR, ING_SPEC_SWEETENER_MALTODEXTRIN_10_DE.clone(), None),
                 (ING_SPEC_SWEETENER_GLUCOSE_SYRUP_42_DE_STR, ING_SPEC_SWEETENER_GLUCOSE_SYRUP_42_DE.clone(), None),
