@@ -44,14 +44,39 @@ pub mod pod {
 
     /// (The European Commission, 2025, E951)[^10]
     #[doc = include_str!("../docs/bibs/10.md")]
-    pub const ASPARTAME: f64 = 20000.0;
+    pub const ASPARTAME: f64 = 200.0 * 100.0;
     /// (The European Commission, 2025, E954)[^10]
     #[doc = include_str!("../docs/bibs/10.md")]
-    pub const SACCHARIN: f64 = 40000.0;
+    pub const SACCHARIN: f64 = 400.0 * 100.0;
     /// (Castro-Muñoz, 2022)[^11]), (Hull, 2010, Appendix C.3, p. 324)[^15]
     #[doc = include_str!("../docs/bibs/11.md")]
     #[doc = include_str!("../docs/bibs/15.md")]
-    pub const SUCRALOSE: f64 = 60000.0;
+    pub const SUCRALOSE: f64 = 600.0 * 100.0;
+
+    /// (Spillane, 2006, p. 297)[^9]
+    ///
+    /// <div class='warning'>
+    /// The POD values for steviosides vary significantly between different sources, are dependent
+    /// on concentration, extract purity, and on specific glycoside composition. The values listed
+    /// here are very rough estimations for general reference only. Given that, and that products
+    /// rarely list the exact amounts of extracts used, these should not be used to calculate POD
+    /// contributions in formulations; ingredients should explicitly provide POD values instead.
+    /// </div>
+    ///
+    #[doc = include_str!("../docs/bibs/9.md")]
+    pub const STEVIOSIDES: f64 = 225.0 * 100.0;
+    /// (Spillane, 2006, p. 297)[^9]
+    ///
+    /// <div class='warning'>
+    /// The POD values for mogrosides vary significantly between different sources, are dependent
+    /// on concentration, extract purity, and on specific glycoside composition. The values listed
+    /// here are very rough estimations for general reference only. Given that, and that products
+    /// rarely list the exact amounts of extracts used, these should not be used to calculate POD
+    /// contributions in formulations; ingredients should explicitly provide POD values instead.
+    /// </div>
+    ///
+    #[doc = include_str!("../docs/bibs/9.md")]
+    pub const MOGROSIDES: f64 = 340.0 * 100.0;
 
     /// (Niness, 1999, "Inulin and Oligofructose: What Are They?")[^24]
     #[doc = include_str!("../docs/bibs/24.md")]
@@ -270,6 +295,12 @@ pub mod energy {
     /// (Schiffman, 2013, "Abstract")[^23]
     #[doc = include_str!("../docs/bibs/23.md")]
     pub const SUCRALOSE: f64 = 0.0;
+    /// (Priscilla, 2018, "Metabolism of steviol glycosides")[^28]
+    #[doc = include_str!("../docs/bibs/28.md")]
+    pub const STEVIOSIDES: f64 = 0.0;
+    /// (Murata, 2010, "Abstract")[^29]
+    #[doc = include_str!("../docs/bibs/29.md")]
+    pub const MOGROSIDES: f64 = 0.0;
 
     /// (Niness, 1999, "Inulin and Oligofructose: What Are They?")[^24]
     /// (Roberfoid, 1999, "Caloric Value of Inulin and Oligofructose")[^25]
@@ -323,6 +354,10 @@ pub mod density {
             _ => panic!("Invalid fat content"),
         }
     }
+
+    /// Grams of sugar in one teaspoon (US) of granulated sugar (Anderson, 2010)[^31]
+    #[doc = include_str!("../docs/bibs/31.md")]
+    pub const GRAMS_IN_TEASPOON_OF_SUGAR: f64 = 4.2;
 }
 
 pub mod fpd {
@@ -461,6 +496,13 @@ mod tests {
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::TREHALOSE), 100.0);
 
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::ERYTHRITOL), 280.0);
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::MALTITOL), 99.0);
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::SORBITOL), 187.0);
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::XYLITOL), 224.0);
+
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::ASPARTAME), 116.0);
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::SACCHARIN), 186.0);
+        assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::SUCRALOSE), 86.0);
 
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::SALT), 585.0);
         assert_eq!(molar_mass::pac_from_molar_mass(molar_mass::ALCOHOL), 743.0);

@@ -148,5 +148,51 @@
       "ByDryWeight": { "solids": 98 }
     },
     "comments": "Properties taken from _Inulin and Oligofructose: What are they?_ (Niness, 1999)[^24], and moisture content of commercial powders from _Determination of total water content in inulin powder..._ (Ronkart, 2006)[^26]. Energy is calculated internally from values from the same sources (1.5kcal/g). POD contributions are calculated internally with values from the same sources (oligofructose solids have a POD of ~40)."
+  },
+  {
+    "name": "Splenda (Sucralose)",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "sugars": { "glucose": 55.0 }, "artificial": { "sucralose": 1.32 } },
+      "other_carbohydrates": 38.68,
+      "ByTotalWeight": { "water": 5 },
+      "pod": { "OfWhole": 840 },
+      "pac": { "OfWhole": { "grams": 112.6 } }
+    },
+    "comments": "POD value taken from the manufacturer's suggested 2tsp:1packet sugar to sweetener conversion, where a teaspoon of granulated sugar is 4.2g (see [`crate::constants::density::GRAMS_IN_TEASPOON_OF_SUGAR`]) and a packet is 1g (from the manufacturer's packaging and empirically measured with a 0.01g precision scale). The composition is inferred from the ingredient list, assuming 55% dextrose, ~40% maltodextrin, 5% water, and enough sucralose to reach a POD of 840 (works out to ~1.32% using a POD of 11 for maltodextrin). PAC is calculated for 55% dextrose and 40% Maltodextrin 10 DE with a PAC of 18. Energy is calculated internally from the composition. (https://www.splenda.com/product/splenda-sweetener-packets/)"
+  },
+  {
+    "name": "Splenda (Stevia)",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "polyols": { "erythritol": 99.9 }, "artificial": { "steviosides": 0.1 } },
+      "ByDryWeight": { "solids": 100 },
+      "pod": { "OfWhole": 200 }
+    },
+    "comments": "POD value taken from the manufacturer's suggested 2:1 sugar to sweetener conversion. Energy and PAC are calculated internally from the composition (virtually all erythritol), taken from the manufacturer's nutrition facts and ingredient list. (https://www.splenda.com/product/splenda-stevia-sweetener-jar/)"
+  },
+  {
+    "name": "Splenda (Monk Fruit)",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "polyols": { "erythritol": 99.9 }, "artificial": { "mogrosides": 0.1 } },
+      "ByDryWeight": { "solids": 100 },
+      "pod": { "OfWhole": 100 }
+    },
+    "comments": "POD value taken from the manufacturer's suggested 1:1 sugar to sweetener conversion. Energy and PAC are calculated internally from the composition (virtually all erythritol), taken from the manufacturer's nutrition facts and ingredient list. (https://www.splenda.ca/product/splenda-monk-fruit-sweetener-19-oz-jar/)"
+  },
+  {
+    "name": "SweetLeaf Stevia",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": {
+        "sugars": { "glucose": 2, "fructose": 2, "sucrose": 2 },
+        "artificial": { "steviosides": 5 }
+      },
+      "fiber": { "inulin": 89 },
+      "ByDryWeight": { "solids": 98 },
+      "pod": { "OfWhole": 1050 }
+    },
+    "comments": "POD value taken from the manufacturer's suggested 2tsp:1packet sugar to sweetener conversion, where a teaspoon of granulated sugar is 4.2g (see [`crate::constants::density::GRAMS_IN_TEASPOON_OF_SUGAR`]) and a packet is 0.8g (from the manufacturer's packaging and empirically measured with a 0.01g precision scale). Composition is inferred from the ingredient list as enough steviosides to reach a POD of 1050, and the rest Inulin (regular, not high-performance, with a small sugar fraction). Energy and a minor PAC contribution are calculated internally from the composition. (https://www.sweetleaf.com/products/natural-stevia-sweetener-packets-70-count/)"
   }
 ]

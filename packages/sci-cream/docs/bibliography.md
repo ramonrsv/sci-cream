@@ -54,6 +54,14 @@
 
 [^27]: Porto, Ruben. (2026, January). _Why is inulin used in ice cream?_ Ice Cream Science. <https://www.icecreamscience.com/blog/why-is-inulin-used-in-ice-cream>
 
+[^28]: Priscilla, et al. (2018, July). _Stevia Leaf to Stevia Sweetener: Exploring Its Science, Benefits, and Future Potential_. The Journal of Nutrition, 148(7), pages 1186S-1205S. <https://www.sciencedirect.com/science/article/pii/S0022316622163650>
+
+[^29]: Murata, et al. (2010, March). _Digestion and absorption of Siraitia grosvenori triterpenoids in the rat_. The National Library of Medicine. <https://pubmed.ncbi.nlm.nih.gov/20208371/>
+
+[^30]: International Food Information Council. (2021, October). _Everything You Need To Know About Monk Fruit Sweeteners_. <https://ific.org/insights/everything-you-need-to-know-about-monk-fruit-sweeteners/>
+
+[^31]: Anderson, Laura. (2020, December). _How to convert grams of sugars into teaspoons_. Michigan State University. <https://www.canr.msu.edu/news/how_to_convert_grams_of_sugars_into_teaspoons>
+
 <!-- Ingredient references -->
 
 [^100]: Eggs, Grade A, Large, egg yolk. (2019). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/748236/nutrients>

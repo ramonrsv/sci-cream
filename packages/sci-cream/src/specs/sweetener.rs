@@ -150,12 +150,14 @@ impl IntoComposition for SweetenerSpec {
 pub(crate) mod tests {
     use std::sync::LazyLock;
 
+    use approx::AbsDiffEq;
+
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
     use super::*;
     use crate::{
-        composition::{CompKey, Polyols, Sugars},
+        composition::{ArtificialSweeteners, CompKey, Polyols, Sugars},
         ingredients::Category,
         specs::{IngredientSpec, Spec},
     };
@@ -1049,6 +1051,332 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 7.8459);
     }
 
+    pub(crate) const ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE_STR: &str = r#"{
+      "name": "Splenda (Sucralose)",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "sugars": {
+            "glucose": 55.0
+          },
+          "artificial": {
+            "sucralose": 1.32
+          }
+        },
+        "other_carbohydrates": 38.68,
+        "ByTotalWeight": {
+          "water": 5
+        },
+        "pod": {
+          "OfWhole": 840
+        },
+        "pac": {
+          "OfWhole": {
+            "grams": 112.6
+          }
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Splenda (Sucralose)".to_string(),
+            category: Category::Sweetener,
+            spec: Spec::SweetenerSpec(SweetenerSpec {
+                sweeteners: Sweeteners::new()
+                    .sugars(Sugars::new().glucose(55.0))
+                    .artificial(ArtificialSweeteners::new().sucralose(1.32)),
+                fiber: None,
+                other_carbohydrates: Some(38.68),
+                other_solids: None,
+                basis: CompositionBasis::ByTotalWeight { water: 5.0 },
+                pod: Some(Scaling::OfWhole(840.0)),
+                pac: Some(Scaling::OfWhole(Unit::Grams(112.6))),
+            }),
+        });
+
+    pub(crate) static COMP_SPLENDA_SUCRALOSE: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(374.72)
+            .solids(
+                Solids::new().other(
+                    SolidsBreakdown::new()
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().glucose(55.0)).others(38.68))
+                        .artificial_sweeteners(ArtificialSweeteners::new().sucralose(1.32)),
+                ),
+            )
+            .pod(840.0)
+            .pac(PAC::new().sugars(112.6))
+    });
+
+    #[test]
+    fn into_composition_sweetener_spec_splenda_sucralose() {
+        let comp = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec.into_composition().unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 374.72);
+
+        assert_eq!(comp.get(CompKey::Glucose), 55.0);
+        assert_eq_flt_test!(comp.get(CompKey::Fiber), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 55.0);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 1.32);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 56.32);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 93.68);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 40.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 95.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 840.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 112.6);
+    }
+
+    #[test]
+    fn into_composition_sweetener_spec_splenda_sucralose_manual_vs_calculated_pod_and_pac() {
+        let auto_pod_pac_spec = if let Spec::SweetenerSpec(mut spec) = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec {
+            spec.pod = None;
+            spec.pac = None;
+            Spec::SweetenerSpec(spec)
+        } else {
+            panic!("Expected SweetenerSpec");
+        };
+
+        let comp_auto_pod_pac = auto_pod_pac_spec.into_composition().unwrap();
+        let comp_manual_pod_pac = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec.into_composition().unwrap();
+
+        let assert_comps_eq = |key: CompKey, percent: f64| {
+            let lhs = comp_auto_pod_pac.get(key);
+            let rhs = comp_manual_pod_pac.get(key);
+            let epsilon = lhs * percent / 100.0;
+            assert_true!(
+                lhs.abs_diff_eq(&rhs, epsilon),
+                "Values for {:?} differ by {:.2}% (max allowed {:.2}%)",
+                key,
+                ((lhs - rhs).abs() / lhs) * 100.0,
+                percent
+            );
+        };
+
+        assert_comps_eq(CompKey::POD, 0.75);
+        assert_comps_eq(CompKey::PACsgr, 6.6);
+    }
+
+    pub(crate) const ING_SPEC_SWEETENER_SPLENDA_STEVIA_STR: &str = r#"{
+      "name": "Splenda (Stevia)",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "polyols": {
+            "erythritol": 99.9
+          },
+          "artificial": {
+            "steviosides": 0.1
+          }
+        },
+        "ByDryWeight": {
+          "solids": 100
+        },
+        "pod": {
+          "OfWhole": 200
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_SPLENDA_STEVIA: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Splenda (Stevia)".to_string(),
+        category: Category::Sweetener,
+        spec: Spec::SweetenerSpec(SweetenerSpec {
+            sweeteners: Sweeteners::new()
+                .polyols(Polyols::new().erythritol(99.9))
+                .artificial(ArtificialSweeteners::new().steviosides(0.1)),
+            fiber: None,
+            other_carbohydrates: None,
+            other_solids: None,
+            basis: CompositionBasis::ByDryWeight { solids: 100.0 },
+            pod: Some(Scaling::OfWhole(200.0)),
+            pac: None,
+        }),
+    });
+
+    pub(crate) static COMP_SPLENDA_STEVIA: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(0.0)
+            .solids(
+                Solids::new().other(
+                    SolidsBreakdown::new()
+                        .carbohydrates(Carbohydrates::new().polyols(Polyols::new().erythritol(99.9)))
+                        .artificial_sweeteners(ArtificialSweeteners::new().steviosides(0.1)),
+                ),
+            )
+            .pod(200.0)
+            .pac(PAC::new().sugars(279.72))
+    });
+
+    #[test]
+    fn into_composition_sweetener_spec_splenda_stevia() {
+        let comp = ING_SPEC_SWEETENER_SPLENDA_STEVIA.spec.into_composition().unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 0.0);
+
+        assert_eq_flt_test!(comp.get(CompKey::Fiber), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 0.0);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 99.9);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.1);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 100.0);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 99.9);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 200.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 279.72);
+    }
+
+    pub(crate) const ING_SPEC_SWEETENER_SPLENDA_MONK_FRUIT_STR: &str = r#"{
+      "name": "Splenda (Monk Fruit)",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "polyols": {
+            "erythritol": 99.9
+          },
+          "artificial": {
+            "mogrosides": 0.1
+          }
+        },
+        "ByDryWeight": {
+          "solids": 100
+        },
+        "pod": {
+          "OfWhole": 100
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_SPLENDA_MONK_FRUIT: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Splenda (Monk Fruit)".to_string(),
+            category: Category::Sweetener,
+            spec: Spec::SweetenerSpec(SweetenerSpec {
+                sweeteners: Sweeteners::new()
+                    .polyols(Polyols::new().erythritol(99.9))
+                    .artificial(ArtificialSweeteners::new().mogrosides(0.1)),
+                fiber: None,
+                other_carbohydrates: None,
+                other_solids: None,
+                basis: CompositionBasis::ByDryWeight { solids: 100.0 },
+                pod: Some(Scaling::OfWhole(100.0)),
+                pac: None,
+            }),
+        });
+
+    pub(crate) static COMP_SPLENDA_MONK_FRUIT: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(0.0)
+            .solids(
+                Solids::new().other(
+                    SolidsBreakdown::new()
+                        .carbohydrates(Carbohydrates::new().polyols(Polyols::new().erythritol(99.9)))
+                        .artificial_sweeteners(ArtificialSweeteners::new().mogrosides(0.1)),
+                ),
+            )
+            .pod(100.0)
+            .pac(PAC::new().sugars(279.72))
+    });
+
+    #[test]
+    fn into_composition_sweetener_spec_splenda_monk_fruit() {
+        let comp = ING_SPEC_SWEETENER_SPLENDA_MONK_FRUIT.spec.into_composition().unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 0.0);
+
+        assert_eq_flt_test!(comp.get(CompKey::Fiber), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 0.0);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 99.9);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 0.1);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 100.0);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 99.9);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 100.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 100.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 279.72);
+    }
+
+    pub(crate) const ING_SPEC_SWEETENER_SWEETLEAF_STEVIA_STR: &str = r#"{
+      "name": "SweetLeaf Stevia",
+      "category": "Sweetener",
+      "SweetenerSpec": {
+        "sweeteners": {
+          "sugars": {
+            "glucose": 2,
+            "fructose": 2,
+            "sucrose": 2
+         },
+          "artificial": {
+            "steviosides": 5
+          }
+        },
+        "fiber": { "inulin": 89 },
+        "ByDryWeight": {
+          "solids": 98
+        },
+        "pod": {
+          "OfWhole": 1050
+        }
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_SWEETENER_SWEETLEAF_STEVIA: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "SweetLeaf Stevia".to_string(),
+            category: Category::Sweetener,
+            spec: Spec::SweetenerSpec(SweetenerSpec {
+                sweeteners: Sweeteners::new()
+                    .sugars(Sugars::new().glucose(2.0).fructose(2.0).sucrose(2.0))
+                    .artificial(ArtificialSweeteners::new().steviosides(5.0)),
+                fiber: Some(Fibers::new().inulin(89.0)),
+                other_carbohydrates: None,
+                other_solids: None,
+                basis: CompositionBasis::ByDryWeight { solids: 98.0 },
+                pod: Some(Scaling::OfWhole(1050.0)),
+                pac: None,
+            }),
+        });
+
+    pub(crate) static COMP_SWEETLEAF_STEVIA: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(154.35)
+            .solids(
+                Solids::new().other(
+                    SolidsBreakdown::new()
+                        .carbohydrates(
+                            Carbohydrates::new()
+                                .fiber(Fibers::new().inulin(87.22))
+                                .sugars(Sugars::new().glucose(1.96).fructose(1.96).sucrose(1.96)),
+                        )
+                        .artificial_sweeteners(ArtificialSweeteners::new().steviosides(4.9)),
+                ),
+            )
+            .pod(1050.0)
+            .pac(PAC::new().sugars(9.408))
+    });
+
+    #[test]
+    fn into_composition_sweetener_spec_sweetleaf_stevia() {
+        let comp = ING_SPEC_SWEETENER_SWEETLEAF_STEVIA.spec.into_composition().unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 154.35);
+
+        assert_eq!(comp.get(CompKey::Glucose), 1.96);
+        assert_eq!(comp.get(CompKey::Fructose), 1.96);
+        assert_eq!(comp.get(CompKey::Sucrose), 1.96);
+        assert_eq_flt_test!(comp.get(CompKey::Fiber), 87.22);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 5.88);
+        assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
+        assert_eq!(comp.get(CompKey::TotalArtificial), 4.9);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSweeteners), 10.78);
+        assert_eq!(comp.get(CompKey::TotalCarbohydrates), 93.1);
+        assert_eq!(comp.get(CompKey::TotalSNFS), 92.12);
+        assert_eq!(comp.get(CompKey::TotalSolids), 98.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 1050.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 9.408);
+    }
+
     pub(crate) static INGREDIENT_ASSETS_TABLE_SWEETENER: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {
             vec![
@@ -1078,6 +1406,26 @@ pub(crate) mod tests {
                     ING_SPEC_SWEETENER_OLIGOFRUCTOSE_POWDER_STR,
                     ING_SPEC_SWEETENER_OLIGOFRUCTOSE_POWDER.clone(),
                     Some(*COMP_OLIGOFRUCTOSE_POWDER),
+                ),
+                (
+                    ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE_STR,
+                    ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.clone(),
+                    Some(*COMP_SPLENDA_SUCRALOSE),
+                ),
+                (
+                    ING_SPEC_SWEETENER_SPLENDA_STEVIA_STR,
+                    ING_SPEC_SWEETENER_SPLENDA_STEVIA.clone(),
+                    Some(*COMP_SPLENDA_STEVIA),
+                ),
+                (
+                    ING_SPEC_SWEETENER_SPLENDA_MONK_FRUIT_STR,
+                    ING_SPEC_SWEETENER_SPLENDA_MONK_FRUIT.clone(),
+                    Some(*COMP_SPLENDA_MONK_FRUIT),
+                ),
+                (
+                    ING_SPEC_SWEETENER_SWEETLEAF_STEVIA_STR,
+                    ING_SPEC_SWEETENER_SWEETLEAF_STEVIA.clone(),
+                    Some(*COMP_SWEETLEAF_STEVIA),
                 ),
             ]
         });

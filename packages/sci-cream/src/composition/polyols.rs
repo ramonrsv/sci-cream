@@ -17,8 +17,8 @@ use crate::composition::ArtificialSweeteners;
 
 /// Sugar alcohols, commonly used as sugar substitutes, e.g. erythritol, maltitol, etc.
 ///
-/// **Note**: These are distinct from non-saccharide artificial sweeteners (e.g. aspartame,
-/// sucralose, etc.) which are not used in similar quantities. See [`ArtificialSweeteners`].
+/// **Note**: These are distinct from artificial sweeteners (e.g. aspartame, sucralose, etc.) which
+/// typically have no functional properties other than sweetness. See [`ArtificialSweeteners`].
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
@@ -68,7 +68,7 @@ impl Polyols {
 
     pub fn energy(&self) -> Result<f64> {
         if self.other != 0.0 {
-            return Err(Error::CannotComputeEnergy("Other polyols should be zero".to_string()));
+            return Err(Error::CannotComputeEnergy("Cannot compute energy with other polyols".to_string()));
         }
 
         Ok([
@@ -81,25 +81,9 @@ impl Polyols {
         .sum::<f64>())
     }
 
-    pub fn to_pac(&self) -> Result<f64> {
-        if self.other != 0.0 {
-            return Err(Error::CannotComputePAC("Other polyols should be zero".to_string()));
-        }
-
-        Ok([
-            self.erythritol * constants::pac::ERYTHRITOL,
-            self.maltitol * constants::pac::MALTITOL,
-            self.sorbitol * constants::pac::SORBITOL,
-            self.xylitol * constants::pac::XYLITOL,
-        ]
-        .into_iter()
-        .sum::<f64>()
-            / 100.0)
-    }
-
     pub fn to_pod(&self) -> Result<f64> {
         if self.other != 0.0 {
-            return Err(Error::CannotComputePOD("Other polyols should be zero".to_string()));
+            return Err(Error::CannotComputePOD("Cannot compute POD with other polyols".to_string()));
         }
 
         Ok([
@@ -107,6 +91,22 @@ impl Polyols {
             self.maltitol * constants::pod::MALTITOL,
             self.sorbitol * constants::pod::SORBITOL,
             self.xylitol * constants::pod::XYLITOL,
+        ]
+        .into_iter()
+        .sum::<f64>()
+            / 100.0)
+    }
+
+    pub fn to_pac(&self) -> Result<f64> {
+        if self.other != 0.0 {
+            return Err(Error::CannotComputePAC("Cannot compute PAC with other polyols".to_string()));
+        }
+
+        Ok([
+            self.erythritol * constants::pac::ERYTHRITOL,
+            self.maltitol * constants::pac::MALTITOL,
+            self.sorbitol * constants::pac::SORBITOL,
+            self.xylitol * constants::pac::XYLITOL,
         ]
         .into_iter()
         .sum::<f64>()
