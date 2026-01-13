@@ -34,3 +34,9 @@ pub use {
 
 #[cfg(test)]
 mod tests;
+
+// Silence unused_crate_dependencies lint for [dev-dependencies] used in /benches and /examples.
+#[cfg(test)]
+mod _lint {
+    use criterion as _;
+}

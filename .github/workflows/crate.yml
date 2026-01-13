@@ -151,3 +151,13 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: crate
+
+  benchmarks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "packages/sci-cream"
+      - run: cargo bench --all-features
