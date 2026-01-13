@@ -100,7 +100,7 @@ pub(crate) mod tests {
     use super::*;
     use crate::{
         composition::CompKey,
-        ingredients::Category,
+        ingredient::Category,
         specs::{IngredientSpec, Spec},
     };
     pub(crate) const ING_SPEC_MICRO_SALT_STR: &str = r#"{

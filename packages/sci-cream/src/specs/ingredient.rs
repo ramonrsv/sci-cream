@@ -8,7 +8,7 @@ use diesel::{Queryable, Selectable};
 use crate::{
     composition::{Composition, IntoComposition},
     error::Result,
-    ingredients::{Category, Ingredient},
+    ingredient::{Category, Ingredient},
     specs::{
         AlcoholSpec, ChocolateSpec, DairyFromNutritionSpec, DairySpec, EggSpec, FruitSpec, FullSpec, MicroSpec,
         NutSpec, SweetenerSpec,

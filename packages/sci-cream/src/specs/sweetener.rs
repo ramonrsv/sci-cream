@@ -157,7 +157,7 @@ pub(crate) mod tests {
     use super::*;
     use crate::{
         composition::{ArtificialSweeteners, CompKey, Polyols, Sugars},
-        ingredients::Category,
+        ingredient::Category,
         specs::{IngredientSpec, Spec},
     };
 

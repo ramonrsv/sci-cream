@@ -14,7 +14,7 @@ pub mod constants;
 pub mod display;
 pub mod error;
 pub mod fpd;
-pub mod ingredients;
+pub mod ingredient;
 pub mod recipe;
 pub mod specs;
 pub mod util;
@@ -28,7 +28,7 @@ pub mod wasm;
 // @todo Re-export key structs and enums for easier access
 pub use {
     composition::Composition,
-    ingredients::{Category, Ingredient},
+    ingredient::{Category, Ingredient},
 };
 
 #[cfg(test)]

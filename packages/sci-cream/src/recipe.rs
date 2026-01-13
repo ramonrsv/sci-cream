@@ -7,7 +7,7 @@ use crate::{
     composition::{CompKey, Composition},
     error::Result,
     fpd::{FPD, FpdKey},
-    ingredients::Ingredient,
+    ingredient::Ingredient,
 };
 
 #[derive(Hash, PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]

@@ -131,7 +131,7 @@ pub(crate) mod tests {
     use super::*;
     use crate::{
         composition::CompKey,
-        ingredients::Category,
+        ingredient::Category,
         specs::{IngredientSpec, Spec},
     };
 
