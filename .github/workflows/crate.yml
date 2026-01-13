@@ -152,7 +152,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: crate
 
-  benchmarks:
+  rust_benchmarks:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
@@ -160,4 +160,11 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: "packages/sci-cream"
-      - run: cargo bench --all-features
+      - name: Run Rust benchmarks
+        run: cargo bench --all-features | tee bench_output_rust.txt
+      - if: vars.ACT != 'true'
+        name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: "cargo"
+          output-file-path: bench_output_rust.txt

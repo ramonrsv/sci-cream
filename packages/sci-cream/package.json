@@ -39,7 +39,9 @@
     "coverage:rust:generate": "cargo +nightly llvm-cov test --all-features",
     "coverage:rust:codecov": "cargo llvm-cov report --codecov --output-path ./target/codecov_code_coverage.json",
     "coverage:rust:html": "cargo llvm-cov report --html",
-    "coverage:js": "vitest run --coverage"
+    "coverage:js": "vitest run --coverage",
+    "benchmark": "pnpm benchmark:rust",
+    "benchmark:rust": "cargo bench --all-features"
   },
   "dependencies": {
     "typescript": "^5.9.3",
