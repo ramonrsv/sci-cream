@@ -44,3 +44,7 @@
 - [ ] Looking to making reusable GitHub Workflows for common setup to simplify the CI workflows.
 - [ ] Figure out how to handle and track [allulose](https://en.wikipedia.org/wiki/Psicose), which
       does not fit into any of the existing sugar, polyols, artificial, or fiber categories.
+- [ ] Add `PropKey::TotalAmount` and figure out how to handle it on the JavasScript side.
+- [ ] Figure out how to re-design `Recipe` and `RecipeContext` to avoid having to copy WASM objects
+      every time we need to compute the properties of a recipe. This should probably be done after
+      benchmark support is available, so that performance impact can guide the design.
