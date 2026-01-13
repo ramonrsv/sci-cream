@@ -1,7 +1,7 @@
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
-use crate::{composition::CompKey, fpd::FpdKey, recipe::PropKey};
+use crate::{composition::CompKey, fpd::FpdKey, properties::PropKey};
 
 pub trait KeyAsStrings {
     fn as_med_str(&self) -> &'static str;

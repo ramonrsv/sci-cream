@@ -15,6 +15,7 @@ pub mod display;
 pub mod error;
 pub mod fpd;
 pub mod ingredient;
+pub mod properties;
 pub mod recipe;
 pub mod specs;
 pub mod util;
