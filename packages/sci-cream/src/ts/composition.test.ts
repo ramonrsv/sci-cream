@@ -25,7 +25,7 @@ test("Sugars.to_pac_wasm", () => {
 });
 
 test("Composition NaN values", () => {
-  let composition = new Composition();
+  const composition = new Composition();
 
   expect(composition.get(CompKey.TotalSolids)).toBe(0);
   expect(composition.get(CompKey.Water)).toBe(100);
@@ -34,7 +34,6 @@ test("Composition NaN values", () => {
   expect(composition.get(CompKey.StabilizersPerWater)).toBe(0);
   expect(composition.get(CompKey.AbsPAC)).toBe(0);
 
-  composition = new Composition();
   const solids = new Solids();
   const breakdown = new SolidsBreakdown();
   breakdown.others = 100;

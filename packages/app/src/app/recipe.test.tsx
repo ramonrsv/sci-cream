@@ -12,9 +12,7 @@ import {
   makeEmptyRecipeContext,
   isRecipeEmpty,
   calculateMixTotal,
-  getCompositionLines,
-  calculateMixComposition,
-  calculateMixProperties,
+  makeSciCreamRecipe,
   type Recipe,
   type RecipeContext,
 } from "./recipe";
@@ -22,13 +20,12 @@ import {
 import { fetchIngredientSpec } from "../lib/data";
 
 import {
+  Category,
   Ingredient,
-  Composition,
-  CompositionLine,
-  MixProperties,
   into_ingredient_from_spec,
-  calculate_mix_composition,
-  calculate_mix_properties,
+  Composition,
+  MixProperties,
+  RecipeLine,
 } from "@workspace/sci-cream";
 
 import { SchemaCategory } from "@workspace/sci-cream/schema-category";
@@ -46,12 +43,6 @@ vi.mock("@workspace/sci-cream", async () => {
     into_ingredient_from_spec: vi.fn((spec) => {
       const ingredient = { name: spec.name || "Test Ingredient", composition: new Composition() };
       return ingredient;
-    }),
-    calculate_mix_composition: vi.fn(() => {
-      return new Composition();
-    }),
-    calculate_mix_properties: vi.fn(() => {
-      return new MixProperties();
     }),
   };
 });
@@ -175,21 +166,27 @@ describe("Recipe Helper Functions", () => {
     });
   });
 
-  describe("getCompositionLines", () => {
+  describe("makeSciCreamRecipe", () => {
     let recipe: Recipe;
 
     beforeEach(() => {
       recipe = makeEmptyRecipeContext().recipes[0];
     });
 
-    it("should return empty array when no ingredients have both ingredient and quantity", () => {
-      expect(getCompositionLines(recipe)).toEqual([]);
+    it("should create SciCreamRecipe with correct name", () => {
+      recipe.name = "Test Recipe";
+      const sciCreamRecipe = makeSciCreamRecipe(recipe);
+      expect(sciCreamRecipe.name).toBe("Test Recipe");
+    });
+
+    it("should return empty recipe lines when no ingredients have both ingredient and quantity", () => {
+      expect(makeSciCreamRecipe(recipe).lines.length).toEqual(0);
     });
 
     it("should filter out rows without ingredient", () => {
       recipe.ingredientRows[0].quantity = 50;
       recipe.ingredientRows[0].ingredient = undefined;
-      expect(getCompositionLines(recipe)).toEqual([]);
+      expect(makeSciCreamRecipe(recipe).lines.length).toEqual(0);
     });
 
     it("should filter out rows without quantity", () => {
@@ -198,59 +195,51 @@ describe("Recipe Helper Functions", () => {
         composition: new Composition(),
       } as Ingredient;
       recipe.ingredientRows[0].quantity = undefined;
-      expect(getCompositionLines(recipe)).toEqual([]);
+      expect(makeSciCreamRecipe(recipe).lines.length).toEqual(0);
     });
 
-    it("should create CompositionLines for valid rows", () => {
+    it("should create RecipeLines for valid rows", () => {
       const comp1 = new Composition();
       const comp2 = new Composition();
-      recipe.ingredientRows[0].ingredient = { name: "Milk", composition: comp1 } as Ingredient;
+      recipe.ingredientRows[0].ingredient = new Ingredient("Milk", Category.Dairy, comp1);
+      recipe.ingredientRows[1].ingredient = new Ingredient("Sugar", Category.Sweetener, comp2);
       recipe.ingredientRows[0].quantity = 50;
-      recipe.ingredientRows[1].ingredient = { name: "Sugar", composition: comp2 } as Ingredient;
       recipe.ingredientRows[1].quantity = 30;
 
-      const lines = getCompositionLines(recipe);
+      const lines = makeSciCreamRecipe(recipe).lines;
       expect(lines).toHaveLength(2);
-      expect(lines[0]).toBeInstanceOf(CompositionLine);
-      expect(lines[1]).toBeInstanceOf(CompositionLine);
+      expect(lines[0]).toBeInstanceOf(RecipeLine);
+      expect(lines[1]).toBeInstanceOf(RecipeLine);
       expect(lines[0].amount).toBe(50);
       expect(lines[1].amount).toBe(30);
     });
   });
 
-  describe("calculateMixComposition", () => {
+  describe("SciCreamRecipe.calculate_composition_wasm", () => {
     let recipe: Recipe;
 
     beforeEach(() => {
+      vi.clearAllMocks();
       recipe = makeEmptyRecipeContext().recipes[0];
     });
 
     it("should return a Composition object", () => {
-      const result = calculateMixComposition(recipe);
+      const result = makeSciCreamRecipe(recipe).calculate_composition_wasm();
       expect(result).toBeInstanceOf(Composition);
-    });
-
-    it("should call calculate_mix_composition with composition lines", () => {
-      calculateMixComposition(recipe);
-      expect(calculate_mix_composition).toHaveBeenCalled();
     });
   });
 
-  describe("calculateMixProperties", () => {
+  describe("SciCreamRecipe.calculate_mix_properties_wasm", () => {
     let recipe: Recipe;
 
     beforeEach(() => {
+      vi.clearAllMocks();
       recipe = makeEmptyRecipeContext().recipes[0];
     });
 
     it("should return a MixProperties object", () => {
-      const result = calculateMixProperties(recipe);
+      const result = makeSciCreamRecipe(recipe).calculate_mix_properties_wasm();
       expect(result).toBeInstanceOf(MixProperties);
-    });
-
-    it("should call calculate_mix_properties with composition lines", () => {
-      calculateMixProperties(recipe);
-      expect(calculate_mix_properties).toHaveBeenCalled();
     });
   });
 });
@@ -365,6 +354,27 @@ describe("RecipeGrid Component", () => {
       expect(setRecipeContext).toHaveBeenCalled();
       const updatedInput = getIngredientQuantityElement(container, 0);
       expect(updatedInput.value).toBe("100");
+    });
+  });
+
+  it("should update ingredient name and quantity on input", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<RecipeGridWithSpy indices={[0]} />);
+
+    const firstIngredientInput = getIngredientNameElement(container, 0);
+    const firstQuantityInput = getIngredientQuantityElement(container, 0);
+    expect(firstIngredientInput).toBeInTheDocument();
+    expect(firstQuantityInput).toBeInTheDocument();
+
+    await user.type(firstIngredientInput, "2% Milk");
+    await user.type(firstQuantityInput, "100");
+
+    await waitFor(() => {
+      expect(setRecipeContext).toHaveBeenCalled();
+      const updatedNameInput = getIngredientNameElement(container, 0);
+      const updatedQuantityInput = getIngredientQuantityElement(container, 0);
+      expect(updatedNameInput.value).toBe("2% Milk");
+      expect(updatedQuantityInput.value).toBe("100");
     });
   });
 
@@ -577,7 +587,7 @@ describe("RecipeGrid Component", () => {
 
   const mockDairySpe = { DairySpec: { fat: 2 } };
   const mockSpec = { name: "2% Milk", user: 0, category: SchemaCategory.Dairy, spec: mockDairySpe };
-  const mockIngredient = { name: "2% Milk", composition: new Composition() } as Ingredient;
+  const mockIngredient = new Ingredient("2% Milk", Category.Dairy, new Composition());
 
   it("should make Ingredient from spec when valid ingredient is entered", async () => {
     vi.mocked(fetchIngredientSpec).mockResolvedValue(mockSpec);
@@ -647,5 +657,33 @@ describe("RecipeGrid Component", () => {
     expect(options?.[0]).toHaveAttribute("value", "2% Milk");
     expect(options?.[1]).toHaveAttribute("value", "Sucrose");
     expect(options?.[2]).toHaveAttribute("value", "Whipping Cream");
+  });
+
+  it("should not set WASM object in context in a bad state", async () => {
+    const user = userEvent.setup();
+    vi.mocked(fetchIngredientSpec).mockResolvedValue(mockSpec);
+    vi.mocked(into_ingredient_from_spec).mockReturnValue(mockIngredient);
+
+    const { container } = render(<RecipeGridWithSpy indices={[0]} />);
+
+    const firstIngredientInput = getIngredientNameElement(container, 0);
+    expect(firstIngredientInput).toBeInTheDocument();
+    await user.type(firstIngredientInput, "2% Milk");
+
+    await waitFor(() => {
+      expect(getIngredientNameElement(container, 0).value).toBe("2% Milk");
+    });
+
+    const firstQuantityInput = getIngredientQuantityElement(container, 0);
+    expect(firstQuantityInput).toBeInTheDocument();
+    await user.type(firstQuantityInput, "100");
+
+    await waitFor(() => {
+      expect(getIngredientQuantityElement(container, 0).value).toBe("100");
+    });
+
+    // If we got here without "null pointer passed to rust", the test passes
+    expect(getIngredientNameElement(container, 0).value).toBe("2% Milk");
+    expect(getIngredientQuantityElement(container, 0).value).toBe("100");
   });
 });

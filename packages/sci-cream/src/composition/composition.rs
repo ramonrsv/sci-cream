@@ -249,6 +249,21 @@ impl Composition {
     pub fn pac(self, pac: PAC) -> Self {
         Self { pac, ..self }
     }
+
+    pub fn from_combination(compositions: &[(Composition, f64)]) -> Result<Self> {
+        let total_amount: f64 = compositions.iter().map(|line| line.1).sum();
+
+        if total_amount == 0.0 {
+            return Ok(Composition::empty());
+        }
+
+        compositions.iter().try_fold(Composition::empty(), |acc, line| {
+            let mut mix_comp = acc;
+            let weight = line.1 / total_amount;
+            mix_comp = mix_comp.add(&line.0.scale(weight));
+            Ok(mix_comp)
+        })
+    }
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]

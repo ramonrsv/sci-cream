@@ -11,11 +11,9 @@ import { recipeCompBgColor } from "@/lib/styles/colors";
 import {
   Ingredient,
   into_ingredient_from_spec,
-  Composition,
-  CompositionLine,
   MixProperties,
-  calculate_mix_composition,
-  calculate_mix_properties,
+  RecipeLine,
+  Recipe as SciCreamRecipe,
 } from "@workspace/sci-cream";
 
 export interface IngredientRow {
@@ -75,22 +73,16 @@ export function calculateMixTotal(recipe: Recipe) {
   );
 }
 
-export function getCompositionLines(recipe: Recipe): CompositionLine[] {
-  return recipe.ingredientRows
-    .filter((row) => {
-      return row.ingredient !== undefined && row.quantity !== undefined;
-    })
-    .map((row) => {
-      return new CompositionLine(row.ingredient!.composition!, row.quantity!);
-    });
-}
-
-export function calculateMixComposition(recipe: Recipe): Composition {
-  return calculate_mix_composition(getCompositionLines(recipe));
-}
-
-export function calculateMixProperties(recipe: Recipe): MixProperties {
-  return calculate_mix_properties(getCompositionLines(recipe));
+export function makeSciCreamRecipe(recipe: Recipe): SciCreamRecipe {
+  return new SciCreamRecipe(
+    recipe.name,
+    recipe.ingredientRows
+      .filter((row) => row.ingredient !== undefined && row.quantity !== undefined)
+      .map((row) => {
+        // @todo There is some inefficient cloning here, try to re-design the context to avoid this
+        return new RecipeLine(row.ingredient!.clone_wasm(), row.quantity!);
+      }),
+  );
 }
 
 export function RecipeGrid({
@@ -127,7 +119,7 @@ export function RecipeGrid({
     newRecipe.mixTotal = calculateMixTotal(newRecipe);
     newRecipe.mixProperties = isRecipeEmpty(newRecipe)
       ? new MixProperties()
-      : calculateMixProperties(newRecipe);
+      : makeSciCreamRecipe(newRecipe).calculate_mix_properties_wasm();
 
     const recipes = recipeContext.recipes.map((r) =>
       r.index === currentRecipeIdx ? newRecipe : r,

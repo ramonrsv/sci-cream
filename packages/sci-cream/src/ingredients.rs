@@ -31,6 +31,37 @@ pub struct Ingredient {
     pub composition: Composition,
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+impl Ingredient {
+    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    pub fn new(name: String, category: Category, composition: Composition) -> Self {
+        Self {
+            name,
+            category,
+            composition,
+        }
+    }
+}
+
+#[cfg(feature = "wasm")]
+#[cfg_attr(coverage, coverage(off))]
+pub mod wasm {
+    use wasm_bindgen::prelude::*;
+
+    use super::Ingredient;
+
+    #[wasm_bindgen]
+    impl Ingredient {
+        /// Clones the Ingredient instance, useful when handling WASM objects in JavaScript.
+        ///
+        /// @todo This is a temporary workaround until better handling is implemented in app code.
+        #[must_use]
+        pub fn clone_wasm(&self) -> Ingredient {
+            self.clone()
+        }
+    }
+}
+
 impl AbsDiffEq for Ingredient {
     type Epsilon = f64;
 

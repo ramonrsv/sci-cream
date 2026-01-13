@@ -11,7 +11,7 @@ import {
 } from "../../dist/index";
 
 test("MixProperties NaN values", () => {
-  let mixProperties = new MixProperties();
+  const mixProperties = new MixProperties();
 
   expect(getMixProperty(mixProperties, compToPropKey(CompKey.Water))).toBe(100);
   expect(getMixProperty(mixProperties, compToPropKey(CompKey.TotalSolids))).toBe(0);
@@ -20,7 +20,6 @@ test("MixProperties NaN values", () => {
   expect(getMixProperty(mixProperties, compToPropKey(CompKey.StabilizersPerWater))).toBe(0);
   expect(getMixProperty(mixProperties, compToPropKey(CompKey.AbsPAC))).toBe(0);
 
-  mixProperties = new MixProperties();
   const composition = new Composition();
   const solids = new Solids();
   const breakdown = new SolidsBreakdown();
