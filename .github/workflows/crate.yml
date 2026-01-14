@@ -168,8 +168,11 @@ jobs:
         name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
+          name: "sci-cream Rust benchmarks"
           tool: "cargo"
           output-file-path: packages/sci-cream/bench_output_rust.txt
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
 
   js_benchmarks:
     runs-on: ubuntu-latest
@@ -199,5 +202,8 @@ jobs:
         name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
+          name: "sci-cream JS benchmarks"
           tool: "benchmarkjs"
           output-file-path: packages/sci-cream/bench_output_js.txt
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
