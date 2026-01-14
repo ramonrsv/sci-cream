@@ -65,7 +65,15 @@ use different ports from each other and from any ports being used on the host. N
 host ports need to be unique, the container ports can be reused. See [Creating PostgresSQL service
 containers](https://docs.github.com/en/actions/tutorials/use-containerized-services/create-postgresql-service-containers)
 
-Push schema to database and seed:
+Push schema to database and seed, need to configure `.env` with the values below, and run the
+following commands:
+
+```
+APP_USER_NAME="SciCream App"
+APP_USER_EMAIL="app@scicream.ca"
+TEST_USER_NAME="SciCream Test"
+TEST_USER_EMAIL="test@scicream.ca"
+```
 
 ```bash
 $ cd ./packages/app
