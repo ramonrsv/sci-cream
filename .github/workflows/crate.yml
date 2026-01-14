@@ -160,14 +160,16 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: "packages/sci-cream"
+      - name: Install cargo-criterion
+        run: cargo install cargo-criterion
       - name: Run Rust benchmarks
-        run: cargo bench --all-features | tee bench_output_rust.txt
+        run: cargo criterion --all-features --output-format bencher 2>&1 | tee bench_output_rust.txt
       - if: vars.ACT != 'true'
         name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: "cargo"
-          output-file-path: packages/sci-cream/src/bench_output_rust.txt
+          output-file-path: packages/sci-cream/bench_output_rust.txt
 
   js_benchmarks:
     runs-on: ubuntu-latest
@@ -198,4 +200,4 @@ jobs:
         uses: benchmark-action/github-action-benchmark@v1
         with:
           tool: "benchmarkjs"
-          output-file-path: packages/sci-cream/src/bench_output_js.txt
+          output-file-path: packages/sci-cream/bench_output_js.txt
