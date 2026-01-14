@@ -40,8 +40,9 @@
     "coverage:rust:codecov": "cargo llvm-cov report --codecov --output-path ./target/codecov_code_coverage.json",
     "coverage:rust:html": "cargo llvm-cov report --html",
     "coverage:js": "vitest run --coverage",
-    "benchmark": "pnpm benchmark:rust",
-    "benchmark:rust": "cargo bench --all-features"
+    "benchmark": "pnpm benchmark:rust && pnpm benchmark:js",
+    "benchmark:rust": "cargo bench --all-features",
+    "benchmark:js": "pnpm build:wasm && pnpm build:js && node --import tsx benches/ts/run-all.ts"
   },
   "dependencies": {
     "typescript": "^5.9.3",
@@ -49,10 +50,14 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
+    "@types/benchmark": "^2.1.5",
+    "@types/node": "^25.0.3",
     "@vitejs/plugin-react": "^5.1.2",
     "@vitest/coverage-v8": "^4.0.16",
+    "benchmark": "^2.1.4",
     "eslint": "^9.39.2",
     "jsdom": "^27.4.0",
+    "tsx": "^4.21.0",
     "typescript-eslint": "^8.51.0",
     "vite-plugin-dts": "^4.5.4",
     "vite-plugin-top-level-await": "^1.6.0",

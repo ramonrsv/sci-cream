@@ -168,3 +168,34 @@ jobs:
         with:
           tool: "cargo"
           output-file-path: bench_output_rust.txt
+
+  js_benchmarks:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: dtolnay/rust-toolchain@stable
+      - uses: Swatinem/rust-cache@v2
+        with:
+          workspaces: "packages/sci-cream"
+      - name: Install wasm-pack
+        run: cargo install wasm-pack
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "24"
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - name: Install dependencies
+        run: pnpm install
+      - name: Build wasm package
+        run: pnpm run build:wasm
+      - name: Run `vite build`
+        run: pnpm run build:js
+      - name: Run JS benchmarks
+        run: pnpm run benchmark:js | tee bench_output_js.txt
+      - if: vars.ACT != 'true'
+        name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          tool: "benchmarkjs"
+          output-file-path: bench_output_js.txt
