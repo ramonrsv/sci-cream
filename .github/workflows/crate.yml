@@ -80,7 +80,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: "packages/sci-cream"
-      - name: Installing wasm-pack
+      - name: Install wasm-pack
         run: cargo install wasm-pack
       - uses: actions/setup-node@v4
         with:
@@ -90,11 +90,11 @@ jobs:
           version: 10
       - name: Install dependencies
         run: pnpm install
-      - name: Building wasm package
+      - name: Build wasm package
         run: pnpm run build:wasm
-      - name: Running `vite build`
+      - name: Run `vite build`
         run: pnpm run build:js
-      - name: Running `vitest` tests
+      - name: Run `vitest` tests
         run: pnpm run test:js
 
   eslint:
@@ -104,9 +104,9 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Installing dependencies, ESLint and plugins
+      - name: Install dependencies, ESLint and plugins
         run: pnpm install
-      - name: Running ESLint check
+      - name: Run ESLint check
         run: pnpm run lint:js
 
   prettier:
@@ -116,9 +116,9 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Installing prettier
+      - name: Install prettier
         run: pnpm install -D prettier prettier-plugin-tailwindcss
-      - name: Running Prettier check
+      - name: Run Prettier check
         run: pnpm run prettier
 
   code_coverage:
@@ -129,9 +129,9 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: "packages/sci-cream"
-      - name: Installing cargo-llvm-cov
+      - name: Install cargo-llvm-cov
         run: cargo install cargo-llvm-cov
-      - name: Installing wasm-pack
+      - name: Install wasm-pack
         run: cargo install wasm-pack
       - uses: actions/setup-node@v4
         with:
@@ -139,14 +139,14 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Installing pnpm dependencies
+      - name: Install pnpm dependencies
         run: pnpm install
-      - name: Building sci-cream crate
+      - name: Build sci-cream crate
         run: pnpm build
-      - name: Running crate code coverage
+      - name: Run crate code coverage
         run: RUSTFLAGS="-A unstable_features" pnpm coverage
       - if: vars.ACT != 'true'
-        name: Uploading code coverage reports to Codecov
+        name: Upload code coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}

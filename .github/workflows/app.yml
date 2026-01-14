@@ -57,7 +57,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: "packages/sci-cream"
-      - name: Installing wasm-pack
+      - name: Install wasm-pack
         run: cargo install wasm-pack
       - uses: actions/setup-node@v4
         with:
@@ -65,21 +65,21 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Installing sci-cream crate pnpm dependencies
+      - name: Install sci-cream crate pnpm dependencies
         run: pnpm install
         working-directory: ./packages/sci-cream
-      - name: Building sci-cream crate
+      - name: Build sci-cream crate
         run: pnpm build
         working-directory: ./packages/sci-cream
-      - name: Installing app pnpm dependencies
+      - name: Install app pnpm dependencies
         run: pnpm install
-      - name: Building app
+      - name: Build app
         run: pnpm build
-      - name: Seeding database
+      - name: Seed database
         run: |
           npx drizzle-kit push
           pnpm tsx ./src/lib/db/seed.ts
-      - name: Running app tests
+      - name: Runn app tests
         run: pnpm test
 
   eslint:
@@ -89,7 +89,7 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Installing dependencies, ESLint and plugins
+      - name: Install dependencies, ESLint and plugins
         run: pnpm install
       - name: Run ESLint check
         run: pnpm run lint
@@ -101,9 +101,9 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Installing prettier
+      - name: Install prettier
         run: pnpm install -D prettier prettier-plugin-tailwindcss
-      - name: Running Prettier check
+      - name: Run Prettier check
         run: pnpm run prettier
 
   code_coverage:
@@ -133,7 +133,7 @@ jobs:
       - uses: Swatinem/rust-cache@v2
         with:
           workspaces: "packages/sci-cream"
-      - name: Installing wasm-pack
+      - name: Install wasm-pack
         run: cargo install wasm-pack
       - uses: actions/setup-node@v4
         with:
@@ -141,24 +141,24 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Installing sci-cream crate pnpm dependencies
+      - name: Install sci-cream crate pnpm dependencies
         run: pnpm install
         working-directory: ./packages/sci-cream
-      - name: Building sci-cream crate
+      - name: Build sci-cream crate
         run: pnpm build
         working-directory: ./packages/sci-cream
-      - name: Installing app pnpm dependencies
+      - name: Install app pnpm dependencies
         run: pnpm install
-      - name: Building app
+      - name: Build app
         run: pnpm build
-      - name: Seeding database
+      - name: Seed database
         run: |
           npx drizzle-kit push
           pnpm tsx ./src/lib/db/seed.ts
-      - name: Running app code coverage
+      - name: Run app code coverage
         run: pnpm coverage
       - if: vars.ACT != 'true'
-        name: Uploading code coverage reports to Codecov
+        name: Upload code coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
