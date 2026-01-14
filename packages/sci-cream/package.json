@@ -41,7 +41,7 @@
     "coverage:rust:html": "cargo llvm-cov report --html",
     "coverage:js": "vitest run --coverage",
     "benchmark": "pnpm benchmark:rust && pnpm benchmark:js",
-    "benchmark:rust": "cargo bench --all-features",
+    "benchmark:rust": "cargo criterion --all-features",
     "benchmark:js": "pnpm build:wasm && pnpm build:js && node --import tsx benches/ts/run-all.ts"
   },
   "dependencies": {
