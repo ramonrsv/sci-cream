@@ -1,16 +1,8 @@
 import Benchmark from "benchmark";
 
-import { allIngredients } from "../../src/ts/ingredients";
 import { into_ingredient_from_spec } from "../../dist/index.js";
 
-function findIngredientByName(name: string) {
-  return (
-    allIngredients.find((ing) => ing.name === name) ??
-    (() => {
-      throw new Error(`Ingredient spec not found for name: ${name}`);
-    })()
-  );
-}
+import { findIngredientSpecByName } from "./util.js";
 
 const suite = new Benchmark.Suite("into_ingredient_from_spec");
 
@@ -21,20 +13,20 @@ const ingredientSpecs = [
   "Cocoa Powder, 10% Fat",
   "Whole Milk",
   "Whey Isolate",
-].map((name) => findIngredientByName(name));
+].map((name) => findIngredientSpecByName(name));
 
-const darkRumSpec = findIngredientByName("Dark Rum");
-const wheyIsolateSpec = findIngredientByName("Whey Isolate");
+const darkRumSpec = findIngredientSpecByName("Dark Rum");
+const wheyIsolateSpec = findIngredientSpecByName("Whey Isolate");
 
 suite
   .add("into_ingredient_from_spec, single (Dark Rum)", () => {
-    into_ingredient_from_spec(darkRumSpec);
+    into_ingredient_from_spec(darkRumSpec).free();
   })
   .add("into_ingredient_from_spec, single (Whey Isolate)", () => {
-    into_ingredient_from_spec(wheyIsolateSpec);
+    into_ingredient_from_spec(wheyIsolateSpec).free();
   })
   .add("into_ingredient_from_spec, multiple", () => {
-    ingredientSpecs.forEach((spec) => into_ingredient_from_spec(spec));
+    ingredientSpecs.forEach((spec) => into_ingredient_from_spec(spec).free());
   })
   .on("cycle", (event: Benchmark.Event) => {
     console.log(String(event.target));

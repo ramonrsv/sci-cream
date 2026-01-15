@@ -4,14 +4,15 @@
 console.log("Starting TypeScript benchmarks for @workspace/sci-cream\n");
 
 (async () => {
-  for (const bench of ["ingredients.bench.ts", "into_ingredient_from_spec.ts"]) {
+  for (const bench of [
+    // "ingredients.bench.ts",
+    "into_ingredient_from_spec.ts",
+    // "recipe-wasm-bridge.bench.ts",
+  ]) {
     try {
       console.log(`Running ${bench} benchmarks...`);
       console.log("=".repeat(60));
-      const module = await import(`./${bench}`);
-      if (typeof module.default === "function") {
-        await module.default();
-      }
+      await import(`./${bench}`);
       console.log();
     } catch (error) {
       console.error("Error running benchmarks:", error);
