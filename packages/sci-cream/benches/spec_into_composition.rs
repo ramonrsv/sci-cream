@@ -1,9 +1,6 @@
-#![allow(unused_crate_dependencies, clippy::unwrap_used)]
+use criterion::{BatchSize, Criterion, criterion_group};
 
-use criterion::{BatchSize, Criterion};
-use criterion::{criterion_group, criterion_main};
-
-pub fn bench_sweetener_spec_into_composition(c: &mut Criterion) {
+pub(crate) fn bench_sweetener_spec_into_composition(c: &mut Criterion) {
     use sci_cream::{
         composition::{IntoComposition, Sugars, Sweeteners},
         specs::{SweetenerSpec, units::CompositionBasis},
@@ -25,4 +22,3 @@ pub fn bench_sweetener_spec_into_composition(c: &mut Criterion) {
 }
 
 criterion_group!(benches, bench_sweetener_spec_into_composition);
-criterion_main!(benches);

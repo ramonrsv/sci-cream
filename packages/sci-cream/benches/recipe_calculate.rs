@@ -1,9 +1,6 @@
-#![allow(unused_crate_dependencies, clippy::unwrap_used)]
+use criterion::{BatchSize, Criterion, criterion_group};
 
-use criterion::{BatchSize, Criterion};
-use criterion::{criterion_group, criterion_main};
-
-pub fn bench_recipe_calculate(c: &mut Criterion) {
+pub(crate) fn bench_recipe_calculate(c: &mut Criterion) {
     use sci_cream::recipe::{Recipe, RecipeLine};
 
     let recipe = Recipe {
@@ -41,4 +38,3 @@ pub fn bench_recipe_calculate(c: &mut Criterion) {
 }
 
 criterion_group!(benches, bench_recipe_calculate);
-criterion_main!(benches);

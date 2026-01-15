@@ -2,6 +2,7 @@
 name = "sci-cream"
 version = "0.1.0"
 edition = "2024"
+autobenches = false
 
 [features]
 # Enable WebAssembly target and npm package generation
@@ -104,10 +105,6 @@ unwrap_used = "warn"
 all = "warn"
 
 [[bench]]
-name = "recipe_calculate"
+name = "benchmarks"
 harness = false
 required-features = ["data"]
-
-[[bench]]
-name = "spec_into_composition"
-harness = false
