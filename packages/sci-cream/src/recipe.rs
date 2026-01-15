@@ -72,12 +72,14 @@ pub mod wasm {
     #[wasm_bindgen]
     impl Recipe {
         /// WASM compatible wrapper for [`Recipe::calculate_composition`]
+        #[wasm_bindgen(js_name = "calculate_composition")]
         pub fn calculate_composition_wasm(&self) -> Result<Composition, JsValue> {
             self.calculate_composition()
                 .map_err(|e| JsValue::from_str(&e.to_string()))
         }
 
         /// WASM compatible wrapper for [`Recipe::calculate_mix_properties`]
+        #[wasm_bindgen(js_name = "calculate_mix_properties")]
         pub fn calculate_mix_properties_wasm(&self) -> Result<MixProperties, JsValue> {
             self.calculate_mix_properties()
                 .map_err(|e| JsValue::from_str(&e.to_string()))

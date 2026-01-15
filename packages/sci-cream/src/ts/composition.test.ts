@@ -14,14 +14,14 @@ function new_sugars_other(amount: number): Sugars {
   return sugars;
 }
 
-test("Sugars.to_pod_wasm", () => {
-  expect(new_sugars_sucrose(10).to_pod_wasm()).toBe(10);
-  expect(() => new_sugars_other(10).to_pod_wasm()).toThrowError();
+test("Sugars.to_pod", () => {
+  expect(new_sugars_sucrose(10).to_pod()).toBe(10);
+  expect(() => new_sugars_other(10).to_pod()).toThrowError();
 });
 
-test("Sugars.to_pac_wasm", () => {
-  expect(new_sugars_sucrose(10).to_pac_wasm()).toBe(10);
-  expect(() => new_sugars_other(10).to_pac_wasm()).toThrowError();
+test("Sugars.to_pac", () => {
+  expect(new_sugars_sucrose(10).to_pac()).toBe(10);
+  expect(() => new_sugars_other(10).to_pac()).toThrowError();
 });
 
 test("Composition NaN values", () => {

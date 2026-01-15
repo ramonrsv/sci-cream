@@ -139,12 +139,14 @@ impl Sugars {
     }
 
     #[cfg(feature = "wasm")]
+    #[wasm_bindgen(js_name = "to_pod")]
     #[cfg_attr(coverage, coverage(off))]
     pub fn to_pod_wasm(&self) -> std::result::Result<f64, JsValue> {
         self.to_pod().map_err(|e| JsValue::from_str(&e.to_string()))
     }
 
     #[cfg(feature = "wasm")]
+    #[wasm_bindgen(js_name = "to_pac")]
     #[cfg_attr(coverage, coverage(off))]
     pub fn to_pac_wasm(&self) -> std::result::Result<f64, JsValue> {
         self.to_pac().map_err(|e| JsValue::from_str(&e.to_string()))

@@ -215,7 +215,7 @@ describe("Recipe Helper Functions", () => {
     });
   });
 
-  describe("SciCreamRecipe.calculate_composition_wasm", () => {
+  describe("SciCreamRecipe.calculate_composition", () => {
     let recipe: Recipe;
 
     beforeEach(() => {
@@ -224,12 +224,12 @@ describe("Recipe Helper Functions", () => {
     });
 
     it("should return a Composition object", () => {
-      const result = makeSciCreamRecipe(recipe).calculate_composition_wasm();
+      const result = makeSciCreamRecipe(recipe).calculate_composition();
       expect(result).toBeInstanceOf(Composition);
     });
   });
 
-  describe("SciCreamRecipe.calculate_mix_properties_wasm", () => {
+  describe("SciCreamRecipe.calculate_mix_properties", () => {
     let recipe: Recipe;
 
     beforeEach(() => {
@@ -238,7 +238,7 @@ describe("Recipe Helper Functions", () => {
     });
 
     it("should return a MixProperties object", () => {
-      const result = makeSciCreamRecipe(recipe).calculate_mix_properties_wasm();
+      const result = makeSciCreamRecipe(recipe).calculate_mix_properties();
       expect(result).toBeInstanceOf(MixProperties);
     });
   });

@@ -26,7 +26,7 @@ function makeRecipeLines(specLines: SpecLine[]): RecipeLine[] {
 
 function cloneRecipeLines(recipeLines: RecipeLine[]): RecipeLine[] {
   return recipeLines.map(
-    (recipeLine) => new RecipeLine(recipeLine.ingredient.clone_wasm(), recipeLine.amount),
+    (recipeLine) => new RecipeLine(recipeLine.ingredient.clone(), recipeLine.amount),
   );
 }
 
@@ -93,31 +93,31 @@ makeVsCloneSuite
   .add("makeRecipeFromClonedLines", () => {
     makeRecipeFromClonedLines(recipeLines).free();
   })
-  .add("makeRecipeFromMadeLines.calculate_composition_wasm", () => {
+  .add("makeRecipeFromMadeLines.calculate_composition", () => {
     let recipe = makeRecipeFromMadeLines(specLines);
-    recipe.calculate_composition_wasm().free();
+    recipe.calculate_composition().free();
     recipe.free();
   })
-  .add("makeRecipeFromClonedLines.calculate_composition_wasm", () => {
+  .add("makeRecipeFromClonedLines.calculate_composition", () => {
     let recipe = makeRecipeFromClonedLines(recipeLines);
-    recipe.calculate_composition_wasm().free();
+    recipe.calculate_composition().free();
     recipe.free();
   })
-  .add("recipe.calculate_composition_wasm", () => {
-    recipe.calculate_composition_wasm().free();
+  .add("recipe.calculate_composition", () => {
+    recipe.calculate_composition().free();
   })
-  .add("makeRecipeFromMadeLines.calculate_mix_properties_wasm", () => {
+  .add("makeRecipeFromMadeLines.calculate_mix_properties", () => {
     let recipe = makeRecipeFromMadeLines(specLines);
-    recipe.calculate_mix_properties_wasm().free();
+    recipe.calculate_mix_properties().free();
     recipe.free();
   })
-  .add("makeRecipeFromClonedLines.calculate_mix_properties_wasm", () => {
+  .add("makeRecipeFromClonedLines.calculate_mix_properties", () => {
     let recipe = makeRecipeFromClonedLines(recipeLines);
-    recipe.calculate_mix_properties_wasm().free();
+    recipe.calculate_mix_properties().free();
     recipe.free();
   })
-  .add("recipe.calculate_mix_properties_wasm", () => {
-    recipe.calculate_mix_properties_wasm().free();
+  .add("recipe.calculate_mix_properties", () => {
+    recipe.calculate_mix_properties().free();
   })
   .on("cycle", (event: Benchmark.Event) => {
     console.log(String(event.target));

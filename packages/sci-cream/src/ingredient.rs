@@ -55,6 +55,7 @@ pub mod wasm {
         /// Clones the Ingredient instance, useful when handling WASM objects in JavaScript.
         ///
         /// @todo This is a temporary workaround until better handling is implemented in app code.
+        #[wasm_bindgen(js_name = "clone")]
         #[must_use]
         pub fn clone_wasm(&self) -> Ingredient {
             self.clone()

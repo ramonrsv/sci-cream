@@ -80,7 +80,7 @@ export function makeSciCreamRecipe(recipe: Recipe): SciCreamRecipe {
       .filter((row) => row.ingredient !== undefined && row.quantity !== undefined)
       .map((row) => {
         // @todo There is some inefficient cloning here, try to re-design the context to avoid this
-        return new RecipeLine(row.ingredient!.clone_wasm(), row.quantity!);
+        return new RecipeLine(row.ingredient!.clone(), row.quantity!);
       }),
   );
 }
@@ -119,7 +119,7 @@ export function RecipeGrid({
     newRecipe.mixTotal = calculateMixTotal(newRecipe);
     newRecipe.mixProperties = isRecipeEmpty(newRecipe)
       ? new MixProperties()
-      : makeSciCreamRecipe(newRecipe).calculate_mix_properties_wasm();
+      : makeSciCreamRecipe(newRecipe).calculate_mix_properties();
 
     const recipes = recipeContext.recipes.map((r) =>
       r.index === currentRecipeIdx ? newRecipe : r,
