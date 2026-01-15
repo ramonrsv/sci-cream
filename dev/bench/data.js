@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768453682937,
+  "lastUpdate": 1768454546424,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -119,6 +119,36 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 274,
             "range": "± 12",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9d054f6a74a1986f38df80fa2579c41965c6bcef",
+          "message": "Use was_bindgen(js_name ..) to remove _wasm suffix",
+          "timestamp": "2026-01-15T00:07:47-05:00",
+          "tree_id": "f90c756b4781eed77cfd028dc9e84e90a0b25555",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9d054f6a74a1986f38df80fa2579c41965c6bcef"
+        },
+        "date": 1768454546035,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 314,
+            "range": "± 8",
             "unit": "ns/iter"
           }
         ]
