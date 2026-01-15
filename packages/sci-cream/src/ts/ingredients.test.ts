@@ -2,7 +2,7 @@ import { expect, test } from "vitest";
 
 import { into_ingredient_from_spec, Category, Ingredient, Composition } from "../../dist/index";
 
-import { allIngredients, findIngredientSpecByName } from "./ingredients";
+import { allIngredients, getIngredientSpecByName } from "./ingredients";
 
 test("into_ingredient_from_spec creates Ingredient instances", () => {
   for (const ingSpec of allIngredients) {
@@ -13,9 +13,9 @@ test("into_ingredient_from_spec creates Ingredient instances", () => {
   }
 });
 
-test("findIngredientSpecByName utility works", () => {
+test("getIngredientSpecByName utility works", () => {
   for (const specJson of allIngredients) {
-    const foundSpec = findIngredientSpecByName(specJson.name);
+    const foundSpec = getIngredientSpecByName(specJson.name);
     expect(foundSpec).toBeDefined();
     expect(foundSpec).toEqual(specJson);
   }

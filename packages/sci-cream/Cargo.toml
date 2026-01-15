@@ -104,5 +104,10 @@ unwrap_used = "warn"
 all = "warn"
 
 [[bench]]
-name = "sweetener_spec_into_composition"
+name = "recipe_calculate"
+harness = false
+required-features = ["data"]
+
+[[bench]]
+name = "spec_into_composition"
 harness = false

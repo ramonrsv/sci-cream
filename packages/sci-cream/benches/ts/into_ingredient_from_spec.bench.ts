@@ -1,6 +1,6 @@
 import Benchmark from "benchmark";
 
-import { findIngredientSpecByName, into_ingredient_from_spec } from "../../dist/index";
+import { getIngredientSpecByName, into_ingredient_from_spec } from "../../dist/index";
 
 const suite = new Benchmark.Suite("into_ingredient_from_spec");
 
@@ -11,10 +11,10 @@ const ingredientSpecs = [
   "Cocoa Powder, 10% Fat",
   "Whole Milk",
   "Whey Isolate",
-].map((name) => findIngredientSpecByName(name));
+].map((name) => getIngredientSpecByName(name));
 
-const darkRumSpec = findIngredientSpecByName("Dark Rum");
-const wheyIsolateSpec = findIngredientSpecByName("Whey Isolate");
+const darkRumSpec = getIngredientSpecByName("Dark Rum");
+const wheyIsolateSpec = getIngredientSpecByName("Whey Isolate");
 
 suite
   .add("into_ingredient_from_spec, single (Dark Rum)", () => {

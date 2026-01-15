@@ -30,7 +30,7 @@ export const allIngredients = flattenLists([
   miscellaneousJson,
 ]);
 
-export function findIngredientSpecByName(name: string) {
+export function getIngredientSpecByName(name: string) {
   return (
     allIngredients.find((ing) => ing.name === name) ??
     (() => {

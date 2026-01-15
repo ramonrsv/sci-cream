@@ -2,7 +2,7 @@ import Benchmark from "benchmark";
 
 import {
   IngredientJson,
-  findIngredientSpecByName,
+  getIngredientSpecByName,
   into_ingredient_from_spec,
   RecipeLine,
   Recipe,
@@ -19,7 +19,7 @@ const specLines = [
   { name: "Salt", quantity: 0.5 },
   { name: "Rich Ice Cream SB", quantity: 1.25 },
   { name: "Vanilla Extract", quantity: 6 },
-].map(({ name, quantity }) => ({ spec: findIngredientSpecByName(name), quantity }));
+].map(({ name, quantity }) => ({ spec: getIngredientSpecByName(name), quantity }));
 
 type SpecLine = { spec: IngredientJson; quantity: number };
 

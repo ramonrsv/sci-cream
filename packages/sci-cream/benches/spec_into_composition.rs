@@ -3,7 +3,7 @@
 use criterion::{BatchSize, Criterion};
 use criterion::{criterion_group, criterion_main};
 
-fn bench_sweetener_spec_into_composition(c: &mut Criterion) {
+pub fn bench_sweetener_spec_into_composition(c: &mut Criterion) {
     use sci_cream::{
         composition::{IntoComposition, Sugars, Sweeteners},
         specs::{SweetenerSpec, units::CompositionBasis},
