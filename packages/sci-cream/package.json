@@ -41,9 +41,9 @@
     "coverage:rust:codecov": "cargo llvm-cov report --codecov --output-path ./target/codecov_code_coverage.json",
     "coverage:rust:html": "cargo llvm-cov report --html",
     "coverage:js": "vitest run --coverage",
-    "benchmark": "pnpm benchmark:rust && pnpm benchmark:js",
-    "benchmark:rust": "cargo criterion --all-features",
-    "benchmark:js": "node --import tsx benches/ts/run-all.ts"
+    "bench": "pnpm bench:rust && pnpm bench:js",
+    "bench:rust": "cargo criterion --all-features",
+    "bench:js": "node --import tsx benches/ts/run-all.ts"
   },
   "dependencies": {
     "typescript": "^5.9.3",
