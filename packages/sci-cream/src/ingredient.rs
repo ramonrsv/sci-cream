@@ -1,6 +1,6 @@
 use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
-use strum_macros::Display;
+use strum_macros::{Display, EnumIter};
 
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
@@ -9,7 +9,7 @@ use crate::composition::Composition;
 
 /// Ingredient categories
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(Display, Hash, Eq, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[derive(EnumIter, Display, Hash, Eq, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum Category {
     Dairy,
     Sweetener,

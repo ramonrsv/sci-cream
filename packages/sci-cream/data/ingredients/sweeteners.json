@@ -57,6 +57,30 @@
     }
   },
   {
+    "name": "Maltitol",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "polyols": { "maltitol": 100 } },
+      "ByDryWeight": { "solids": 100 }
+    }
+  },
+  {
+    "name": "Sorbitol",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "polyols": { "sorbitol": 100 } },
+      "ByDryWeight": { "solids": 100 }
+    }
+  },
+  {
+    "name": "Xylitol",
+    "category": "Sweetener",
+    "SweetenerSpec": {
+      "sweeteners": { "polyols": { "xylitol": 100 } },
+      "ByDryWeight": { "solids": 100 }
+    }
+  },
+  {
     "name": "Invert Sugar",
     "category": "Sweetener",
     "SweetenerSpec": {
