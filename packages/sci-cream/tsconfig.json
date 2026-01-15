@@ -11,6 +11,6 @@
     "declaration": true,
     "emitDeclarationOnly": true
   },
-  "include": ["src/ts", "wasm", "benches/ts"],
-  "exclude": ["**/*.test.ts"]
+  "include": ["src/ts", "wasm"],
+  "exclude": ["**/*.test.ts", "benches/ts"]
 }
