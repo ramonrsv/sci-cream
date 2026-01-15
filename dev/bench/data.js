@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768375055656,
+  "lastUpdate": 1768442485140,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -29,6 +29,36 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 314,
             "range": "± 11",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "960a5b3cbdf2aeaf01676e3213c0f120d2567ba6",
+          "message": "Make WASM/JS prerequisites an explicit step\n\nRunning JS tests or benchmarks in sci-cream requires that we first run\n`build:wasm` and `build:js`. These were implicitly run first in all the\n`test:js`, `coverage:js`, `benchmark:js`, etc. scripts. This could\nresult in the prerequisite build steps unnecessarily running multiple\ntimes when running multiple jobs. Now it is an explicit step that must\nbe run before any of those other jobs.\n\nRunning any `app` scripts requires that we first run `build:wasm` and\n`build:js` on the sci-cream crate. That is now encapsulated in a\n`prerequisites` script.\n\nCI now explicitly runs the `prerequisites(:js)` script as needed.",
+          "timestamp": "2026-01-14T20:48:19-05:00",
+          "tree_id": "4077ea7c5cd328718147c04adb9e88514dbd176e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/960a5b3cbdf2aeaf01676e3213c0f120d2567ba6"
+        },
+        "date": 1768442484853,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 308,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
