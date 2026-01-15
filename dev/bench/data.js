@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768515915788,
+  "lastUpdate": 1768521113942,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -179,6 +179,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 304,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "09096735ca189d4a59a2b1050f9812620e33f469",
+          "message": "Group all Rust benchmarks in benches/benchmarks.rs\n\nDisable `autobenches` and make all benchmarks modules of a single\n`benchmarks.rs` file where `criterion_main! { ... }` lives, and import\nindividual `benches` groups from each submodule.\n\nThis makes it easier to define new benchmarks, reduces repetition of\n`#![allow(...)]` directives, and produces a cleaner terminal output.",
+          "timestamp": "2026-01-15T18:37:54-05:00",
+          "tree_id": "5923fbc699d305a8e5d5f141a6615664ba946fbf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/09096735ca189d4a59a2b1050f9812620e33f469"
+        },
+        "date": 1768521113501,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2528,
+            "range": "± 42",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 161182,
+            "range": "± 1416",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 307,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
