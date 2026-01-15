@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+/// <reference types="node" />
 
 console.log("Starting TypeScript benchmarks for @workspace/sci-cream\n");
 
