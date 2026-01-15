@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768442534750,
+  "lastUpdate": 1768451497630,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -59,6 +59,36 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 308,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2edd6f53dd35520427e9c6a2273c2e1b37478d96",
+          "message": "Add benchmarks for the Recipe JS <-> WASM bridge\n\n* These benchmark suite investigates the relative performance of\n  different ways of creating Recipe and RecipeLine instances to bridge\n  between JS and WASM.\n\n* A _VERY IMPORTANT_ finding from these benchmarks is that creating many\n  WASM objects without freeing them can lead to significant performance\n  degracation, hypothesized to be due to accumulation in WASM's linear\n  memory. Careful management of usage pattern and freeing is crucial.\n\n* The benchmarks show that creating new RecipeLine instances from\n  scratch is generally faster (up to ~10x) than cloning existing ones,\n  likely due to the overhead of more JS <-> WASM crossings in the\n  cloning process.\n\n* Using an existing Recipe instance is significantly faster (up to ~10x)\n  than the fastest method of creating a new one from RecipeLines.",
+          "timestamp": "2026-01-14T23:25:55-05:00",
+          "tree_id": "6ed528bdb334a132e83316a1bd622887ce9ba218",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2edd6f53dd35520427e9c6a2273c2e1b37478d96"
+        },
+        "date": 1768451496829,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 316,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
