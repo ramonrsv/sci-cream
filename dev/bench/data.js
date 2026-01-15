@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768442485140,
+  "lastUpdate": 1768442534750,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -128,6 +128,72 @@ window.BENCHMARK_DATA = {
             "range": "±7.98%",
             "unit": "ops/sec",
             "extra": "21 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "960a5b3cbdf2aeaf01676e3213c0f120d2567ba6",
+          "message": "Make WASM/JS prerequisites an explicit step\n\nRunning JS tests or benchmarks in sci-cream requires that we first run\n`build:wasm` and `build:js`. These were implicitly run first in all the\n`test:js`, `coverage:js`, `benchmark:js`, etc. scripts. This could\nresult in the prerequisite build steps unnecessarily running multiple\ntimes when running multiple jobs. Now it is an explicit step that must\nbe run before any of those other jobs.\n\nRunning any `app` scripts requires that we first run `build:wasm` and\n`build:js` on the sci-cream crate. That is now encapsulated in a\n`prerequisites` script.\n\nCI now explicitly runs the `prerequisites(:js)` script as needed.",
+          "timestamp": "2026-01-14T20:48:19-05:00",
+          "tree_id": "4077ea7c5cd328718147c04adb9e88514dbd176e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/960a5b3cbdf2aeaf01676e3213c0f120d2567ba6"
+        },
+        "date": 1768442533967,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "Find by name, first",
+            "value": 96851633,
+            "range": "±3.81%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "Find by name, last",
+            "value": 2111121,
+            "range": "±0.43%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "Map to names",
+            "value": 1974150,
+            "range": "±0.34%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "into_ingredient_from_spec, single (Dark Rum)",
+            "value": 57518,
+            "range": "±15.63%",
+            "unit": "ops/sec",
+            "extra": "25 samples"
+          },
+          {
+            "name": "into_ingredient_from_spec, single (Whey Isolate)",
+            "value": 23338,
+            "range": "±6.90%",
+            "unit": "ops/sec",
+            "extra": "39 samples"
+          },
+          {
+            "name": "into_ingredient_from_spec, multiple",
+            "value": 3451,
+            "range": "±5.99%",
+            "unit": "ops/sec",
+            "extra": "32 samples"
           }
         ]
       }
