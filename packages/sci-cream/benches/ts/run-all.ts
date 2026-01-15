@@ -5,9 +5,9 @@ console.log("Starting TypeScript benchmarks for @workspace/sci-cream\n");
 
 (async () => {
   for (const bench of [
-    // "ingredients.bench.ts",
+    "ingredients.bench.ts",
     "into_ingredient_from_spec.ts",
-    // "recipe-wasm-bridge.bench.ts",
+    "recipe-wasm-bridge.bench.ts",
   ]) {
     try {
       console.log(`Running ${bench} benchmarks...`);
