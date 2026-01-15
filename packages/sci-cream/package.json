@@ -27,14 +27,15 @@
     "wasm-pack-build": "wasm-pack build --out-dir wasm --out-name index -- --features wasm",
     "set-crate-type:cdylib": "./scripts/set-crate-type.sh ./Cargo.toml cdylib",
     "set-crate-type:rlib": "./scripts/set-crate-type.sh ./Cargo.toml rlib",
+    "prerequisites:js": "pnpm build:wasm && pnpm build:js",
     "test": "pnpm test:rust && pnpm test:js",
     "test:rust": "cargo test --features wasm",
-    "test:js": "pnpm build:wasm && pnpm build:js && vitest run",
+    "test:js": "vitest run",
     "lint": "pnpm lint:rust && pnpm lint:js",
     "lint:rust": "cargo clippy --features wasm",
     "lint:js": "eslint src --ext .ts",
     "prettier": "prettier --check ./src/ts",
-    "coverage": "pnpm build:wasm && pnpm build:js && pnpm coverage:rust && pnpm coverage:js",
+    "coverage": "pnpm coverage:rust && pnpm coverage:js",
     "coverage:rust": "pnpm coverage:rust:generate && pnpm coverage:rust:codecov && pnpm coverage:rust:html",
     "coverage:rust:generate": "cargo +nightly llvm-cov test --all-features",
     "coverage:rust:codecov": "cargo llvm-cov report --codecov --output-path ./target/codecov_code_coverage.json",
@@ -42,7 +43,7 @@
     "coverage:js": "vitest run --coverage",
     "benchmark": "pnpm benchmark:rust && pnpm benchmark:js",
     "benchmark:rust": "cargo criterion --all-features",
-    "benchmark:js": "pnpm build:wasm && pnpm build:js && node --import tsx benches/ts/run-all.ts"
+    "benchmark:js": "node --import tsx benches/ts/run-all.ts"
   },
   "dependencies": {
     "typescript": "^5.9.3",

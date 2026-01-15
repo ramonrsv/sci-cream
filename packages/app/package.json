@@ -4,6 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "prerequisites": "pnpm --dir ../sci-cream prerequisites:js",
     "build": "next build",
     "test": "vitest run",
     "lint": "eslint ./src",

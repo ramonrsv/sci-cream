@@ -90,10 +90,8 @@ jobs:
           version: 10
       - name: Install dependencies
         run: pnpm install
-      - name: Build wasm package
-        run: pnpm run build:wasm
-      - name: Run `vite build`
-        run: pnpm run build:js
+      - name: Set up prerequisites for JS tests
+        run: pnpm prerequisites:js
       - name: Run `vitest` tests
         run: pnpm run test:js
 
@@ -141,10 +139,12 @@ jobs:
           version: 10
       - name: Install pnpm dependencies
         run: pnpm install
-      - name: Build sci-cream crate
-        run: pnpm build
-      - name: Run crate code coverage
-        run: RUSTFLAGS="-A unstable_features" pnpm coverage
+      - name: Set up prerequisites for JS tests
+        run: pnpm prerequisites:js
+      - name: Run Rust code coverage
+        run: RUSTFLAGS="-A unstable_features" pnpm coverage:rust
+      - name: Run JS code coverage
+        run: pnpm coverage:js
       - if: vars.ACT != 'true'
         name: Upload code coverage reports to Codecov
         uses: codecov/codecov-action@v5
@@ -196,10 +196,8 @@ jobs:
           version: 10
       - name: Install dependencies
         run: pnpm install
-      - name: Build wasm package
-        run: pnpm run build:wasm
-      - name: Run `vite build`
-        run: pnpm run build:js
+      - name: Set up prerequisites for JS tests
+        run: pnpm prerequisites:js
       - name: Run JS benchmarks
         run: pnpm run benchmark:js | tee bench_output_js.txt
       - if: vars.ACT != 'true'

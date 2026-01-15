@@ -65,21 +65,17 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Install sci-cream crate pnpm dependencies
-        run: pnpm install
-        working-directory: ./packages/sci-cream
-      - name: Build sci-cream crate
-        run: pnpm build
-        working-directory: ./packages/sci-cream
-      - name: Install app pnpm dependencies
-        run: pnpm install
+      - name: Install workspace pnpm dependencies
+        run: pnpm --dir ../../ install
+      - name: Set up prerequisites
+        run: pnpm prerequisites
       - name: Build app
         run: pnpm build
       - name: Seed database
         run: |
           npx drizzle-kit push
           pnpm tsx ./src/lib/db/seed.ts
-      - name: Runn app tests
+      - name: Run app tests
         run: pnpm test
 
   eslint:
@@ -141,14 +137,10 @@ jobs:
       - uses: pnpm/action-setup@v4
         with:
           version: 10
-      - name: Install sci-cream crate pnpm dependencies
-        run: pnpm install
-        working-directory: ./packages/sci-cream
-      - name: Build sci-cream crate
-        run: pnpm build
-        working-directory: ./packages/sci-cream
-      - name: Install app pnpm dependencies
-        run: pnpm install
+      - name: Install workspace pnpm dependencies
+        run: pnpm --dir ../../ install
+      - name: Set up prerequisites
+        run: pnpm prerequisites
       - name: Build app
         run: pnpm build
       - name: Seed database
