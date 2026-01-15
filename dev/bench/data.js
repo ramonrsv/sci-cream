@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768454683807,
+  "lastUpdate": 1768515777294,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -149,6 +149,36 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 314,
             "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f307b6acf1b18b5edb447defd1af7fb5af14c4bd",
+          "message": "Introduce 'data' feature to embed ingredient specs\n\n* Make `src/tests/data.rs` public as `src/data.rs`, guarded by the\n  'data' feature, to enable embedding ingredient specs data into the\n  library, without the need for an external database.\n\n* This module is also always enabled for tests, which use and verify the\n  ingredient spec data assets.\n\n* If 'data' feature is enabled, the content of the data files under\n  `/data` are embedded into the library code at compile time; they are\n  no longer read from file at runtime. This simplifies deployment,\n  probably speeds things up, and allows this feature to be enabled on\n  WASM targets. These text files are currently ~28KB total, and will\n  grow at most a few times that, so there should be no bin size issues.\n\n* If both 'wasm' and 'data' features are enabled (the new default in\n  package.json), then expose `get_ingredient_spec*` function in WASM.\n\n* Move `findIngredentSpecByName` from `benches/ts/util.ts` to\n  `src/ts/ingredients.ts`.",
+          "timestamp": "2026-01-15T16:33:16-05:00",
+          "tree_id": "0ab8e300a8cf5348310a986341933c7e902669f9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f307b6acf1b18b5edb447defd1af7fb5af14c4bd"
+        },
+        "date": 1768515776414,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 304,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
