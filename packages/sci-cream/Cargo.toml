@@ -4,7 +4,11 @@ version = "0.1.0"
 edition = "2024"
 
 [features]
+# Enable WebAssembly target and npm package generation
 wasm = ["dep:wasm-bindgen", "dep:serde-wasm-bindgen"]
+# Enable embedded data, namely ingredient specs
+data = ["dep:serde_json"]
+# Enable Diesel ORM support for [`IngredientSpec`]
 diesel = ["dep:diesel"]
 
 # For the "wasm" feature, this needs to be changed to `cdylib` to work with `wasm-pack`, since it
@@ -24,6 +28,7 @@ thiserror = "2.0.17"
 # Optional dependencies for features
 wasm-bindgen = { version = "0.2", optional = true }
 serde-wasm-bindgen = { version = "0.6.5", optional = true }
+serde_json = { version = "1.0.145", optional = true }
 diesel = { version = "2.3.3", features = ["postgres"], optional = true }
 
 [dev-dependencies]

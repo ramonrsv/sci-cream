@@ -101,9 +101,10 @@ pub(crate) mod tests {
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
-    use crate::tests::{assets::*, data::get_ingredient_spec_by_name_or_panic};
+    use crate::tests::assets::*;
 
     use super::*;
+    use crate::data::get_ingredient_spec_by_name_or_panic;
 
     pub(crate) static INGREDIENT_ASSETS_TABLE: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {

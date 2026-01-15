@@ -21,6 +21,8 @@ pub mod specs;
 pub mod util;
 pub mod validate;
 
+#[cfg(any(feature = "data", test))]
+pub mod data;
 #[cfg(feature = "diesel")]
 pub mod diesel;
 #[cfg(feature = "wasm")]

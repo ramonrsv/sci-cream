@@ -94,7 +94,7 @@ mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
-    use crate::tests::data::get_ingredient_spec_by_name_or_panic;
+    use crate::data::get_ingredient_spec_by_name_or_panic;
 
     use super::*;
     use crate::{composition::CompKey, constants::COMPOSITION_EPSILON, fpd::FpdKey};

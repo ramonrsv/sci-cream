@@ -1,30 +1,25 @@
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-use strum::IntoEnumIterator;
-
 use crate::{ingredient::Category, specs::IngredientSpec};
 
-const INGREDIENT_JSON_FILENAMES: &[&str] = &[
-    "dairy.json",
-    "sweeteners.json",
-    "fruits.json",
-    "chocolates.json",
-    "nuts.json",
-    "eggs.json",
-    "alcohol.json",
-    "micros.json",
-    "miscellaneous.json",
+const EMBEDDED_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
+    ("dairy.json", include_str!("../data/ingredients/dairy.json")),
+    ("sweeteners.json", include_str!("../data/ingredients/sweeteners.json")),
+    ("fruits.json", include_str!("../data/ingredients/fruits.json")),
+    ("chocolates.json", include_str!("../data/ingredients/chocolates.json")),
+    ("nuts.json", include_str!("../data/ingredients/nuts.json")),
+    ("eggs.json", include_str!("../data/ingredients/eggs.json")),
+    ("alcohol.json", include_str!("../data/ingredients/alcohol.json")),
+    ("micros.json", include_str!("../data/ingredients/micros.json")),
+    ("miscellaneous.json", include_str!("../data/ingredients/miscellaneous.json")),
 ];
 
 static ALL_INGREDIENT_SPECS: LazyLock<HashMap<String, IngredientSpec>> = LazyLock::new(|| {
     let mut specs = HashMap::new();
 
-    for filename in INGREDIENT_JSON_FILENAMES {
-        let file_content = read_ingredients_file_as_string(filename)
-            .unwrap_or_else(|e| panic!("Failed to read file '{filename}': {e}"));
-
-        let parsed_specs = parse_ingredient_specs_from_string(&file_content)
+    for (filename, file_content) in EMBEDDED_JSON_DATA_FILES_CONTENT {
+        let parsed_specs = parse_ingredient_specs_from_string(file_content)
             .unwrap_or_else(|e| panic!("Failed to parse ingredient specs from file '{filename}': {e}"));
 
         for spec in parsed_specs.into_values() {
@@ -39,11 +34,7 @@ static ALL_INGREDIENT_SPECS: LazyLock<HashMap<String, IngredientSpec>> = LazyLoc
     specs
 });
 
-fn read_ingredients_file_as_string(filename: &str) -> Result<String, std::io::Error> {
-    std::fs::read_to_string(format!("./data/ingredients/{filename}"))
-}
-
-fn parse_ingredient_specs_from_string(
+pub fn parse_ingredient_specs_from_string(
     file_content: &str,
 ) -> Result<HashMap<String, IngredientSpec>, serde_json::Error> {
     let specs = serde_json::from_str::<Vec<serde_json::Value>>(file_content)?;
@@ -54,11 +45,11 @@ fn parse_ingredient_specs_from_string(
         .collect()
 }
 
-pub(crate) fn get_all_ingredient_specs() -> Vec<IngredientSpec> {
+pub fn get_all_ingredient_specs() -> Vec<IngredientSpec> {
     ALL_INGREDIENT_SPECS.values().cloned().collect()
 }
 
-pub(crate) fn get_ingredient_specs_by_category(category: Category) -> Vec<IngredientSpec> {
+pub fn get_ingredient_specs_by_category(category: Category) -> Vec<IngredientSpec> {
     ALL_INGREDIENT_SPECS
         .values()
         .filter(|spec| spec.category == category)
@@ -66,18 +57,57 @@ pub(crate) fn get_ingredient_specs_by_category(category: Category) -> Vec<Ingred
         .collect()
 }
 
-pub(crate) fn get_ingredient_spec_by_name(name: &str) -> Option<IngredientSpec> {
+pub fn get_ingredient_spec_by_name(name: &str) -> Option<IngredientSpec> {
     ALL_INGREDIENT_SPECS.get(name).cloned()
 }
 
-pub(crate) fn get_ingredient_spec_by_name_or_panic(name: &str) -> IngredientSpec {
+pub fn get_ingredient_spec_by_name_or_panic(name: &str) -> IngredientSpec {
     get_ingredient_spec_by_name(name).unwrap_or_else(|| panic!("Ingredient spec not found for '{name}'"))
+}
+
+#[cfg(all(feature = "wasm", feature = "data"))]
+pub mod wasm {
+    use serde::ser::Serialize;
+    use serde_wasm_bindgen::Serializer;
+
+    use wasm_bindgen::prelude::*;
+
+    use super::{get_all_ingredient_specs, get_ingredient_spec_by_name, get_ingredient_specs_by_category};
+    use crate::ingredient::Category;
+
+    fn serialize_spec<T: Serialize>(spec: &T) -> Result<JsValue, JsValue> {
+        spec.serialize(&Serializer::json_compatible())
+            .map_err(|e| JsValue::from_str(&e.to_string()))
+    }
+
+    #[wasm_bindgen(js_name = "get_all_ingredient_specs")]
+    pub fn get_all_ingredient_specs_wasm() -> Result<Vec<JsValue>, JsValue> {
+        get_all_ingredient_specs().iter().map(serialize_spec).collect()
+    }
+
+    #[wasm_bindgen(js_name = "get_ingredient_specs_by_category")]
+    pub fn get_ingredient_specs_by_category_wasm(category: Category) -> Result<Vec<JsValue>, JsValue> {
+        get_ingredient_specs_by_category(category)
+            .iter()
+            .map(serialize_spec)
+            .collect()
+    }
+
+    #[wasm_bindgen(js_name = "get_ingredient_spec_by_name")]
+    pub fn get_ingredient_spec_by_name_wasm(name: &str) -> Result<JsValue, JsValue> {
+        serialize_spec(
+            &get_ingredient_spec_by_name(name)
+                .ok_or_else(|| JsValue::from_str(&format!("Ingredient spec not found for '{name}'")))?,
+        )
+    }
 }
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::unwrap_used)]
 pub(crate) mod tests {
+    use strum::IntoEnumIterator;
+
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
@@ -86,9 +116,8 @@ pub(crate) mod tests {
 
     #[test]
     fn parse_ingredient_specs() {
-        for filename in INGREDIENT_JSON_FILENAMES {
-            let file_content = read_ingredients_file_as_string(filename).unwrap();
-            let specs = parse_ingredient_specs_from_string(&file_content).unwrap();
+        for (filename, file_content) in EMBEDDED_JSON_DATA_FILES_CONTENT {
+            let specs = parse_ingredient_specs_from_string(file_content).unwrap();
             assert_false!(specs.is_empty(), "Failed to parse ingredient specs from file: {}", filename);
         }
     }

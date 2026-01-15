@@ -1,7 +1,12 @@
 import Benchmark from "benchmark";
 
-import { IngredientJson, into_ingredient_from_spec, RecipeLine, Recipe } from "../../dist/index.js";
-import { findIngredientSpecByName } from "./util.js";
+import {
+  IngredientJson,
+  findIngredientSpecByName,
+  into_ingredient_from_spec,
+  RecipeLine,
+  Recipe,
+} from "../../dist/index.js";
 
 const specLines = [
   { name: "Whole Milk", quantity: 245 },

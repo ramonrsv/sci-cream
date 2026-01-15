@@ -170,6 +170,41 @@ pub(crate) mod tests {
         assert_eq!(comp.alcohol.to_pac(), comp.get(CompKey::PACalc));
     }
 
+    #[test]
+    fn json_field_null_same_as_missing() {
+        let spec_str_with_missing = r#"{
+          "name": "40% ABV Spirit",
+          "category": "Alcohol",
+          "AlcoholSpec": {
+            "abv": 40
+          }
+        }"#;
+
+        let spec_str_with_null = r#"{
+          "name": "40% ABV Spirit",
+          "category": "Alcohol",
+          "AlcoholSpec": {
+            "abv": 40,
+            "sugars": null,
+            "fat": null,
+            "solids": null
+          }
+        }"#;
+
+        let expected_spec = Spec::AlcoholSpec(AlcoholSpec {
+            abv: 40.0,
+            sugars: None,
+            fat: None,
+            solids: None,
+        });
+
+        let spec_missing: IngredientSpec = serde_json::from_str(spec_str_with_missing).unwrap();
+        let spec_null: IngredientSpec = serde_json::from_str(spec_str_with_null).unwrap();
+        assert_eq!(spec_missing, spec_null);
+        assert_eq!(spec_missing.spec, expected_spec);
+        assert_eq!(spec_null.spec, expected_spec);
+    }
+
     pub(crate) static INGREDIENT_ASSETS_TABLE_ALCOHOL: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {
             vec![

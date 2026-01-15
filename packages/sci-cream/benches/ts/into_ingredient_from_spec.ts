@@ -1,8 +1,6 @@
 import Benchmark from "benchmark";
 
-import { into_ingredient_from_spec } from "../../dist/index.js";
-
-import { findIngredientSpecByName } from "./util.js";
+import { findIngredientSpecByName, into_ingredient_from_spec } from "../../dist/index";
 
 const suite = new Benchmark.Suite("into_ingredient_from_spec");
 
