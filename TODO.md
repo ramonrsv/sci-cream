@@ -48,3 +48,5 @@
 - [ ] Figure out how to re-design `Recipe` and `RecipeContext` to avoid having to copy WASM objects
       every time we need to compute the properties of a recipe. This should probably be done after
       benchmark support is available, so that performance impact can guide the design.
+- [ ] Design and implement a system to calculate important ratios for `Sweeteners`, e.g. PAC:POD,
+      Solids:POD, etc. A crude implementation currently is at `data::tests::sweeteners_by_ratio`.
