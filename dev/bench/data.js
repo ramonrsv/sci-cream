@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768523124968,
+  "lastUpdate": 1768605020505,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -305,6 +305,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 307,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cd5151e914febaf4ac503852d34fffa13161420d",
+          "message": "Implement `IngredientDatabase`, with WASM support\n\n* Introduce `IngredientDatabase` to support in-memory ingredient\n  database functionality. Since ingredient objects are lightweight,\n  in most use cases keeping many or all of them in memory should not\n  be an issue. Holding them in this `IngredientDatabase` greatly\n  simplifies the setup and process of looking up ingredient\n  definitions, obviating the need for lookups from an external\n  database. It should also provide performance improvements. Lastly,\n  and the primary motivation behind this class, it's supported in\n  WASM, where it can provide significant performance improvements\n  if ingredient lookup is done on the WASM side, compared to managing\n  ingredient definitions and lookup on the JS side and bridging them\n  to WASM when requesting operations; JS <-> WASM bridging is very\n  slow, so it's almost always more performant to keep as much as\n  possible on the WASM side. It's still possible to seed the database\n  from the JS side, then subsequent looks can be done within WASM.\n\n* Add benchmarks to compare the different methods of looking up and\n  creating Ingredients on the JS side, including using specs and\n  `into_ingredient_from_sepc`, and with an `IngredientDatabase`.\n\n* Rename exported `allIngredients` to `allIngredientSpecs`",
+          "timestamp": "2026-01-16T18:00:37-05:00",
+          "tree_id": "9673d7d36d7687c462c38780c32d69740bbbfb83",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cd5151e914febaf4ac503852d34fffa13161420d"
+        },
+        "date": 1768605020227,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2466,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 172760,
+            "range": "± 5711",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 308,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
