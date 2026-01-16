@@ -140,26 +140,26 @@ mod tests {
         let recipe = make_test_recipe(&[
             ("Whole Milk", 245.0),
             ("Whipping Cream", 215.0),
-            ("70% Dark Chocolate", 28.0),
+            ("Cocoa Powder, 17% Fat", 28.0),
             ("Skimmed Milk Powder", 21.0),
             ("Egg Yolk", 18.0),
             ("Dextrose", 45.0),
             ("Fructose", 32.0),
             ("Salt", 0.5),
             ("Rich Ice Cream SB", 1.25),
-            //("Vanilla Extract", 6.0),
+            ("Vanilla Extract", 6.0),
         ]);
 
         let mix_properties = recipe.calculate_mix_properties().unwrap();
 
-        assert_eq!(mix_properties.total_amount, 605.75);
+        assert_eq!(mix_properties.total_amount, 611.75);
 
-        let epsilon = 0.15;
-        assert_abs_diff_eq!(mix_properties.get(CompKey::PACtotal.into()), 33.07, epsilon = epsilon);
-        assert_abs_diff_eq!(mix_properties.get(CompKey::AbsPAC.into()), 56.2, epsilon = epsilon);
-        assert_abs_diff_eq!(mix_properties.get(FpdKey::FPD.into()), -3.5, epsilon = epsilon);
-        assert_abs_diff_eq!(mix_properties.get(FpdKey::ServingTemp.into()), -14.78, epsilon = epsilon);
-        assert_abs_diff_eq!(mix_properties.get(FpdKey::HardnessAt14C.into()), 73.42, epsilon = epsilon);
+        assert_eq_flt_test!(mix_properties.get(CompKey::MilkFat.into()), 13.6024);
+        assert_eq_flt_test!(mix_properties.get(CompKey::PACtotal.into()), 33.3832);
+        assert_eq_flt_test!(mix_properties.get(CompKey::AbsPAC.into()), 56.6292);
+        assert_eq_flt_test!(mix_properties.get(FpdKey::FPD.into()), -3.604);
+        assert_eq_flt_test!(mix_properties.get(FpdKey::ServingTemp.into()), -13.3711);
+        assert_eq_flt_test!(mix_properties.get(FpdKey::HardnessAt14C.into()), 76.2678);
     }
 
     #[test]
