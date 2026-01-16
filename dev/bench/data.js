@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768522628845,
+  "lastUpdate": 1768523004972,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -263,6 +263,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 367,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4d3454f65010ece25960a1f6f502e89e85465ca1",
+          "message": "Add 'free' suffix to FreeVsNoFree to make unique\n\nAdd ', free' to the name of some benchmarks in the 'Free vs No-Free'\nsuite in recipe-wasm-bridge.bench.ts, in order to make all the names\nunique, otherwise there are github-action-benchmark report conflicts.",
+          "timestamp": "2026-01-15T19:19:26-05:00",
+          "tree_id": "76c4f2d9e30f28a6931656ffef310a619ddef7f5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4d3454f65010ece25960a1f6f502e89e85465ca1"
+        },
+        "date": 1768523004148,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2306,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 162142,
+            "range": "± 2537",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 307,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
