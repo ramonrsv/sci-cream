@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768521113942,
+  "lastUpdate": 1768522515756,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -221,6 +221,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 307,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1820d2c0ad04f0ebada4d043a62215ec5a839d18",
+          "message": "Use `set -o pipefail` to catch benchmark errors\n\nWhen running bencharmks in the CI workflow, their output is piped to\n`tee`. Because of that, the return code of the command is tee's, not the\nbenchmarks, so if the benchmark fails it is not caught by the CI\nframework. With `set -o pipefail` we actually get the benchmark's return\ncode if it's non-zero, and the CI framework catches failures again.\n\nFix breakage by calling the new `bench:js` instead of `benchmarks:js`.",
+          "timestamp": "2026-01-15T19:02:52-05:00",
+          "tree_id": "09a46601ec442c8c5cb8006aba435ee1a30dd907",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1820d2c0ad04f0ebada4d043a62215ec5a839d18"
+        },
+        "date": 1768522515457,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2606,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 187820,
+            "range": "± 3272",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 367,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
