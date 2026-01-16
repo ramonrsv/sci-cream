@@ -6,20 +6,27 @@ import {
   into_ingredient_from_spec,
   RecipeLine,
   Recipe,
+  make_seeded_ingredient_database_from_specs,
+  Bridge,
 } from "../../dist/index.js";
 
-const specLines = [
-  { name: "Whole Milk", quantity: 245 },
-  { name: "Whipping Cream", quantity: 215 },
-  { name: "Cocoa Powder, 17% Fat", quantity: 28 },
-  { name: "Skimmed Milk Powder", quantity: 21 },
-  { name: "Egg Yolk", quantity: 18 },
-  { name: "Dextrose", quantity: 45 },
-  { name: "Fructose", quantity: 32 },
-  { name: "Salt", quantity: 0.5 },
-  { name: "Rich Ice Cream SB", quantity: 1.25 },
-  { name: "Vanilla Extract", quantity: 6 },
-].map(({ name, quantity }) => ({ spec: getIngredientSpecByName(name), quantity }));
+const lightRecipe = [
+  ["Whole Milk", 245],
+  ["Whipping Cream", 215],
+  ["Cocoa Powder, 17% Fat", 28],
+  ["Skimmed Milk Powder", 21],
+  ["Egg Yolk", 18],
+  ["Dextrose", 45],
+  ["Fructose", 32],
+  ["Salt", 0.5],
+  ["Rich Ice Cream SB", 1.25],
+  ["Vanilla Extract", 6],
+];
+
+const specLines = lightRecipe.map(([name, quantity]) => ({
+  spec: getIngredientSpecByName(name as string)!,
+  quantity: quantity as number,
+}));
 
 type SpecLine = { spec: IngredientJson; quantity: number };
 
@@ -45,6 +52,9 @@ function makeRecipeFromClonedLines(recipeLines: RecipeLine[]): Recipe {
 
 const recipeLines = makeRecipeLines(specLines);
 const recipe = makeRecipeFromMadeLines(specLines);
+const bridge = new Bridge(
+  make_seeded_ingredient_database_from_specs(specLines.map((line) => line.spec)),
+);
 
 // Benchmark suite to investigate the relative performance of different ways of creating Recipe and
 // RecipeLine instances to bridge between TS and WASM, as well as the performance of calling
@@ -83,43 +93,54 @@ freeVsNoFree
 // crossings in the cloning process. Furthermore, using an existing Recipe instance is significantly
 // faster (up to ~10x) than creating a new one from RecipeLines, as expected.
 
-const makeVsCloneSuite = new Benchmark.Suite("Make vs Clone Recipe WASM Bridge");
+// The new Bridge calls are generally much closer in performance to using an existing Recipe,
+// with about ~2x overhead, which is quite reasonable given the flexibility this provides.
+
+const makeVsCloneSuite = new Benchmark.Suite(
+  "Recipe WASM Bridge: make/clone RecipeLines, Recipe, and Bridge calls",
+);
 
 makeVsCloneSuite
-  .add("makeRecipeLines", () => {
-    makeRecipeLines(specLines).forEach((line) => line.free());
-  })
   .add("cloneRecipeLines", () => {
     cloneRecipeLines(recipeLines).forEach((line) => line.free());
   })
-  .add("makeRecipeFromMadeLines", () => {
-    makeRecipeFromMadeLines(specLines).free();
+  .add("makeRecipeLines", () => {
+    makeRecipeLines(specLines).forEach((line) => line.free());
   })
   .add("makeRecipeFromClonedLines", () => {
     makeRecipeFromClonedLines(recipeLines).free();
   })
-  .add("makeRecipeFromMadeLines.calculate_composition", () => {
-    let recipe = makeRecipeFromMadeLines(specLines);
-    recipe.calculate_composition().free();
-    recipe.free();
+  .add("makeRecipeFromMadeLines", () => {
+    makeRecipeFromMadeLines(specLines).free();
   })
   .add("makeRecipeFromClonedLines.calculate_composition", () => {
     let recipe = makeRecipeFromClonedLines(recipeLines);
     recipe.calculate_composition().free();
     recipe.free();
   })
+  .add("makeRecipeFromMadeLines.calculate_composition", () => {
+    let recipe = makeRecipeFromMadeLines(specLines);
+    recipe.calculate_composition().free();
+    recipe.free();
+  })
+  .add("bridge.calculate_recipe_composition", () => {
+    bridge.calculate_recipe_composition(lightRecipe).free();
+  })
   .add("recipe.calculate_composition", () => {
     recipe.calculate_composition().free();
+  })
+  .add("makeRecipeFromClonedLines.calculate_mix_properties", () => {
+    let recipe = makeRecipeFromClonedLines(recipeLines);
+    recipe.calculate_mix_properties().free();
+    recipe.free();
   })
   .add("makeRecipeFromMadeLines.calculate_mix_properties", () => {
     let recipe = makeRecipeFromMadeLines(specLines);
     recipe.calculate_mix_properties().free();
     recipe.free();
   })
-  .add("makeRecipeFromClonedLines.calculate_mix_properties", () => {
-    let recipe = makeRecipeFromClonedLines(recipeLines);
-    recipe.calculate_mix_properties().free();
-    recipe.free();
+  .add("bridge.calculate_recipe_mix_properties", () => {
+    bridge.calculate_recipe_mix_properties(lightRecipe).free();
   })
   .add("recipe.calculate_mix_properties", () => {
     recipe.calculate_mix_properties().free();

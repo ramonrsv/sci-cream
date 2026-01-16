@@ -1,7 +1,5 @@
-#[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
-#[cfg(feature = "wasm")]
 #[cfg_attr(coverage, coverage(off))]
 #[wasm_bindgen]
 extern "C" {
