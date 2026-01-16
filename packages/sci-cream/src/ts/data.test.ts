@@ -7,18 +7,18 @@ import {
   get_ingredient_spec_by_name,
 } from "../../dist/index";
 
-import { allIngredients } from "./ingredients";
+import { allIngredientSpecs } from "./ingredients";
 import { getWasmEnums } from "./util";
 
 // Note that the values returned by `get_all_ingredient_specs` and associated functions are not
-// exactly equal to those in `allIngredients` because missing fields in the original JSON files are
-// serialized as `"field": null` in Rust when serializing `IngredientSpec` to JsValues. Either
+// exactly equal to those in `allIngredientSpecs` because missing fields in the original JSON files
+// are serialized as `"field": null` in Rust when serializing `IngredientSpec` to JsValues. Either
 // version deserializes to the same `IngredientSpec` object, so this is not a problem in practice.
 
 test("get_all_ingredient_specs", () => {
   const allSpecs = get_all_ingredient_specs();
   expect(allSpecs.length).toBeGreaterThanOrEqual(88);
-  expect(allSpecs.length).toBe(allIngredients.length);
+  expect(allSpecs.length).toBe(allIngredientSpecs.length);
 });
 
 test("get_ingredient_specs_by_category", () => {
@@ -33,7 +33,7 @@ test("get_ingredient_specs_by_category", () => {
 });
 
 test("get_ingredient_spec_by_name", () => {
-  for (const jsonSpec of allIngredients) {
+  for (const jsonSpec of allIngredientSpecs) {
     const spec = get_ingredient_spec_by_name(jsonSpec.name);
     expect(spec).toBeDefined();
     expect(spec.name).toBe(jsonSpec.name);

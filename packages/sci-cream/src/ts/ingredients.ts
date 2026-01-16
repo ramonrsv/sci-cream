@@ -18,7 +18,7 @@ function flattenLists(jsonLists: IngredientJson[][]): IngredientJson[] {
   return jsonLists.reduce((acc, list) => acc.concat(list), []);
 }
 
-export const allIngredients = flattenLists([
+export const allIngredientSpecs = flattenLists([
   dairyJson,
   sweetenersJson,
   fruitsJson,
@@ -32,7 +32,7 @@ export const allIngredients = flattenLists([
 
 export function getIngredientSpecByName(name: string) {
   return (
-    allIngredients.find((ing) => ing.name === name) ??
+    allIngredientSpecs.find((ing) => ing.name === name) ??
     (() => {
       throw new Error(`Ingredient spec not found for name: ${name}`);
     })()

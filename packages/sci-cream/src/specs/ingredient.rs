@@ -89,7 +89,7 @@ pub mod wasm {
     pub fn into_ingredient_from_spec(spec: JsValue) -> Result<Ingredient, JsValue> {
         serde_wasm_bindgen::from_value::<IngredientSpec>(spec)?
             .into_ingredient()
-            .map_err(|e| JsValue::from_str(&e.to_string()))
+            .map_err(Into::into)
     }
 }
 
@@ -104,7 +104,7 @@ pub(crate) mod tests {
     use crate::tests::assets::*;
 
     use super::*;
-    use crate::data::get_ingredient_spec_by_name_or_panic;
+    use crate::data::get_ingredient_spec_by_name;
 
     pub(crate) static INGREDIENT_ASSETS_TABLE: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {
@@ -136,7 +136,7 @@ pub(crate) mod tests {
     #[test]
     fn ingredient_spec_database_matches_assets() {
         INGREDIENT_ASSETS_TABLE.iter().for_each(|(_, spec, _)| {
-            assert_eq!(spec, &get_ingredient_spec_by_name_or_panic(&spec.name));
+            assert_eq!(spec, &get_ingredient_spec_by_name(&spec.name).unwrap());
         });
     }
 

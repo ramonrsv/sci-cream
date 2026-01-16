@@ -1,31 +1,51 @@
 import Benchmark from "benchmark";
 
 import {
-  allIngredients,
+  allIngredientSpecs,
   getIngredientSpecByName,
   get_ingredient_spec_by_name,
+  into_ingredient_from_spec,
+  make_seeded_ingredient_database_from_specs,
 } from "../../dist/index";
+
+const db = make_seeded_ingredient_database_from_specs(allIngredientSpecs);
 
 const suite = new Benchmark.Suite("Ingredient Operations");
 
 suite
-  .add("allIngredients.find, first", () => {
-    allIngredients.find((ing) => ing.name === allIngredients[0].name);
+  .add("into_ingredient_from_spec(allIngredientSpecs.find, first)", () => {
+    into_ingredient_from_spec(
+      allIngredientSpecs.find((ing) => ing.name === allIngredientSpecs[0].name)!,
+    ).free();
   })
-  .add("allIngredients.find, last", () => {
-    allIngredients.find((ing) => ing.name === allIngredients[allIngredients.length - 1].name);
+  .add("into_ingredient_from_spec(allIngredientSpecs.find, last)", () => {
+    into_ingredient_from_spec(
+      allIngredientSpecs.find(
+        (ing) => ing.name === allIngredientSpecs[allIngredientSpecs.length - 1].name,
+      )!,
+    ).free();
   })
-  .add("getIngredientSpecByName, first", () => {
-    getIngredientSpecByName(allIngredients[0].name);
+  .add("into_ingredient_from_spec(getIngredientSpecByName, first)", () => {
+    into_ingredient_from_spec(getIngredientSpecByName(allIngredientSpecs[0].name)!).free();
   })
-  .add("getIngredientSpecByName, last", () => {
-    getIngredientSpecByName(allIngredients[allIngredients.length - 1].name);
+  .add("into_ingredient_from_spec(getIngredientSpecByName, last)", () => {
+    into_ingredient_from_spec(
+      getIngredientSpecByName(allIngredientSpecs[allIngredientSpecs.length - 1].name)!,
+    ).free();
   })
-  .add("get_ingredient_spec_by_name, first", () => {
-    get_ingredient_spec_by_name(allIngredients[0].name);
+  .add("into_ingredient_from_spec(get_ingredient_spec_by_name, first)", () => {
+    into_ingredient_from_spec(get_ingredient_spec_by_name(allIngredientSpecs[0].name)!).free();
   })
-  .add("get_ingredient_spec_by_name, last", () => {
-    get_ingredient_spec_by_name(allIngredients[allIngredients.length - 1].name);
+  .add("into_ingredient_from_spec(get_ingredient_spec_by_name, last)", () => {
+    into_ingredient_from_spec(
+      get_ingredient_spec_by_name(allIngredientSpecs[allIngredientSpecs.length - 1].name)!,
+    ).free();
+  })
+  .add("IngredientDatabase.get_ingredient_by_name, first", () => {
+    db.get_ingredient_by_name(allIngredientSpecs[0].name).free();
+  })
+  .add("IngredientDatabase.get_ingredient_by_name, last", () => {
+    db.get_ingredient_by_name(allIngredientSpecs[allIngredientSpecs.length - 1].name).free();
   })
   .on("cycle", (event: Benchmark.Event) => {
     console.log(String(event.target));

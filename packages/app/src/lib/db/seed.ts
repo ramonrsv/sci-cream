@@ -5,7 +5,7 @@ import { eq, and } from "drizzle-orm";
 import { usersTable, ingredientsTable, SchemaCategory } from "./schema";
 import * as schema from "./schema";
 
-import { IngredientJson, allIngredients } from "@workspace/sci-cream";
+import { IngredientJson, allIngredientSpecs } from "@workspace/sci-cream";
 
 type User = typeof usersTable.$inferInsert;
 
@@ -27,18 +27,18 @@ async function seedUsers() {
   console.log("Getting all users from the database:", users);
 }
 
-async function seedUserIngredients(user: User, ingredients: IngredientJson[]) {
+async function seedUserIngredients(user: User, ingredientSpecs: IngredientJson[]) {
   const [foundUser] = await db.select().from(usersTable).where(eq(usersTable.email, user.email));
 
   console.log("==========");
   console.log("Seeding user ingredients for user:", foundUser);
 
-  for (const ing of ingredients) {
+  for (const spec of ingredientSpecs) {
     const ingredient: typeof ingredientsTable.$inferInsert = {
-      name: ing.name,
+      name: spec.name,
       user: foundUser.id,
-      category: ing.category as (typeof SchemaCategory)[keyof typeof SchemaCategory],
-      spec: JSON.stringify(ing),
+      category: spec.category as (typeof SchemaCategory)[keyof typeof SchemaCategory],
+      spec: JSON.stringify(spec),
     };
 
     console.log("---");
@@ -69,13 +69,13 @@ async function seedUserIngredients(user: User, ingredients: IngredientJson[]) {
   }
 
   console.log("---");
-  console.log(`Seeded ${ingredients.length} ingredients for user `, foundUser);
+  console.log(`Seeded ${ingredientSpecs.length} ingredients for user `, foundUser);
 }
 
 async function main() {
   await seedUsers();
 
-  await seedUserIngredients(appUser, allIngredients);
+  await seedUserIngredients(appUser, allIngredientSpecs);
   await seedUserIngredients(testUser, [
     { name: "2% Milk", category: "Dairy", DairySpec: { fat: 4 } },
   ]);

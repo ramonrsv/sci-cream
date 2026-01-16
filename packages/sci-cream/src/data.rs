@@ -1,7 +1,11 @@
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
-use crate::{ingredient::Category, specs::IngredientSpec};
+use crate::{
+    error::{Error, Result},
+    ingredient::Category,
+    specs::IngredientSpec,
+};
 
 const EMBEDDED_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
     ("dairy.json", include_str!("../data/ingredients/dairy.json")),
@@ -15,7 +19,18 @@ const EMBEDDED_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
     ("miscellaneous.json", include_str!("../data/ingredients/miscellaneous.json")),
 ];
 
-static ALL_INGREDIENT_SPECS: LazyLock<HashMap<String, IngredientSpec>> = LazyLock::new(|| {
+pub fn parse_ingredient_specs_from_string(
+    file_content: &str,
+) -> std::result::Result<HashMap<String, IngredientSpec>, serde_json::Error> {
+    let specs = serde_json::from_str::<Vec<serde_json::Value>>(file_content)?;
+
+    specs
+        .into_iter()
+        .map(|spec_serde| serde_json::from_value(spec_serde).map(|spec: IngredientSpec| (spec.name.clone(), spec)))
+        .collect()
+}
+
+static PARSED_EMBEDDED_INGREDIENT_SPECS: LazyLock<HashMap<String, IngredientSpec>> = LazyLock::new(|| {
     let mut specs = HashMap::new();
 
     for (filename, file_content) in EMBEDDED_JSON_DATA_FILES_CONTENT {
@@ -34,38 +49,27 @@ static ALL_INGREDIENT_SPECS: LazyLock<HashMap<String, IngredientSpec>> = LazyLoc
     specs
 });
 
-pub fn parse_ingredient_specs_from_string(
-    file_content: &str,
-) -> Result<HashMap<String, IngredientSpec>, serde_json::Error> {
-    let specs = serde_json::from_str::<Vec<serde_json::Value>>(file_content)?;
-
-    specs
-        .into_iter()
-        .map(|spec_serde| serde_json::from_value(spec_serde).map(|spec: IngredientSpec| (spec.name.clone(), spec)))
-        .collect()
-}
-
 pub fn get_all_ingredient_specs() -> Vec<IngredientSpec> {
-    ALL_INGREDIENT_SPECS.values().cloned().collect()
+    PARSED_EMBEDDED_INGREDIENT_SPECS.values().cloned().collect()
 }
 
 pub fn get_ingredient_specs_by_category(category: Category) -> Vec<IngredientSpec> {
-    ALL_INGREDIENT_SPECS
+    PARSED_EMBEDDED_INGREDIENT_SPECS
         .values()
         .filter(|spec| spec.category == category)
         .cloned()
         .collect()
 }
 
-pub fn get_ingredient_spec_by_name(name: &str) -> Option<IngredientSpec> {
-    ALL_INGREDIENT_SPECS.get(name).cloned()
-}
-
-pub fn get_ingredient_spec_by_name_or_panic(name: &str) -> IngredientSpec {
-    get_ingredient_spec_by_name(name).unwrap_or_else(|| panic!("Ingredient spec not found for '{name}'"))
+pub fn get_ingredient_spec_by_name(name: &str) -> Result<IngredientSpec> {
+    PARSED_EMBEDDED_INGREDIENT_SPECS
+        .get(name)
+        .cloned()
+        .ok_or_else(|| Error::IngredientNotFound(name.to_string()))
 }
 
 #[cfg(all(feature = "wasm", feature = "data"))]
+#[cfg_attr(coverage, coverage(off))]
 pub mod wasm {
     use serde::ser::Serialize;
     use serde_wasm_bindgen::Serializer;
@@ -73,11 +77,11 @@ pub mod wasm {
     use wasm_bindgen::prelude::*;
 
     use super::{get_all_ingredient_specs, get_ingredient_spec_by_name, get_ingredient_specs_by_category};
-    use crate::ingredient::Category;
 
-    fn serialize_spec<T: Serialize>(spec: &T) -> Result<JsValue, JsValue> {
-        spec.serialize(&Serializer::json_compatible())
-            .map_err(|e| JsValue::from_str(&e.to_string()))
+    use crate::{ingredient::Category, specs::IngredientSpec};
+
+    fn serialize_spec(spec: &IngredientSpec) -> Result<JsValue, JsValue> {
+        spec.serialize(&Serializer::json_compatible()).map_err(Into::into)
     }
 
     #[wasm_bindgen(js_name = "get_all_ingredient_specs")]
@@ -95,10 +99,7 @@ pub mod wasm {
 
     #[wasm_bindgen(js_name = "get_ingredient_spec_by_name")]
     pub fn get_ingredient_spec_by_name_wasm(name: &str) -> Result<JsValue, JsValue> {
-        serialize_spec(
-            &get_ingredient_spec_by_name(name)
-                .ok_or_else(|| JsValue::from_str(&format!("Ingredient spec not found for '{name}'")))?,
-        )
+        serialize_spec(&get_ingredient_spec_by_name(name).map_err::<JsValue, _>(Into::into)?)
     }
 }
 
@@ -127,7 +128,7 @@ pub(crate) mod tests {
         let specs = super::get_all_ingredient_specs();
         let original_len = specs.len();
         assert_ge!(original_len, 88);
-        assert_eq!(original_len, ALL_INGREDIENT_SPECS.len());
+        assert_eq!(original_len, PARSED_EMBEDDED_INGREDIENT_SPECS.len());
 
         let unique_names: std::collections::HashSet<_> = specs.iter().map(|spec| &spec.name).collect();
         assert_eq!(unique_names.len(), original_len);
@@ -150,7 +151,7 @@ pub(crate) mod tests {
             }
         }
 
-        assert_eq!(total_specs_count, ALL_INGREDIENT_SPECS.len());
+        assert_eq!(total_specs_count, PARSED_EMBEDDED_INGREDIENT_SPECS.len());
     }
 
     #[test]

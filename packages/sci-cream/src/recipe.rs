@@ -74,15 +74,13 @@ pub mod wasm {
         /// WASM compatible wrapper for [`Recipe::calculate_composition`]
         #[wasm_bindgen(js_name = "calculate_composition")]
         pub fn calculate_composition_wasm(&self) -> Result<Composition, JsValue> {
-            self.calculate_composition()
-                .map_err(|e| JsValue::from_str(&e.to_string()))
+            self.calculate_composition().map_err(Into::into)
         }
 
         /// WASM compatible wrapper for [`Recipe::calculate_mix_properties`]
         #[wasm_bindgen(js_name = "calculate_mix_properties")]
         pub fn calculate_mix_properties_wasm(&self) -> Result<MixProperties, JsValue> {
-            self.calculate_mix_properties()
-                .map_err(|e| JsValue::from_str(&e.to_string()))
+            self.calculate_mix_properties().map_err(Into::into)
         }
     }
 }
@@ -94,7 +92,7 @@ mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
-    use crate::data::get_ingredient_spec_by_name_or_panic;
+    use crate::data::get_ingredient_spec_by_name;
 
     use super::*;
     use crate::{composition::CompKey, constants::COMPOSITION_EPSILON, fpd::FpdKey};
@@ -103,7 +101,7 @@ mod tests {
         lines
             .iter()
             .map(|(name, amount)| RecipeLine {
-                ingredient: get_ingredient_spec_by_name_or_panic(name).into_ingredient().unwrap(),
+                ingredient: get_ingredient_spec_by_name(name).unwrap().into_ingredient().unwrap(),
                 amount: *amount,
             })
             .collect::<Vec<RecipeLine>>()

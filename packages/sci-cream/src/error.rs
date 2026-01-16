@@ -1,5 +1,8 @@
 use thiserror::Error;
 
+#[cfg(feature = "wasm")]
+use wasm_bindgen::JsValue;
+
 use crate::specs::Unit;
 
 #[derive(Error, Debug)]
@@ -24,6 +27,15 @@ pub enum Error {
     PositiveFpdValue(f64),
     #[error("Composition unit is not supported for this operation: {0}")]
     UnsupportedCompositionUnit(Unit),
+    #[error("Ingredient not found: {0}")]
+    IngredientNotFound(String),
+}
+
+#[cfg(feature = "wasm")]
+impl From<Error> for JsValue {
+    fn from(error: Error) -> Self {
+        JsValue::from_str(&error.to_string())
+    }
 }
 
 /// Convenience type alias for [`Result<T, sci_cream::error::Error>`].

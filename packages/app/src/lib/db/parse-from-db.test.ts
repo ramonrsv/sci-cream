@@ -12,7 +12,7 @@ import {
   Category,
   Ingredient,
   Composition,
-  allIngredients,
+  allIngredientSpecs,
 } from "@workspace/sci-cream";
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
@@ -32,32 +32,32 @@ test("Find App user ID", () => {
 test("Create Ingredient from specs from DB", async () => {
   const appUserId = await getAppUserId();
 
-  for (const ing of allIngredients) {
-    expect(ing.category).toBeDefined();
+  for (const spec of allIngredientSpecs) {
+    expect(spec.category).toBeDefined();
 
     const [ingDrizzle] = await db
       .select()
       .from(ingredientsTable)
       .where(
         and(
-          eq(ingredientsTable.name, ing.name),
+          eq(ingredientsTable.name, spec.name),
           eq(ingredientsTable.user, appUserId),
           eq(
             ingredientsTable.category,
-            ing.category as (typeof SchemaCategory)[keyof typeof SchemaCategory],
+            spec.category as (typeof SchemaCategory)[keyof typeof SchemaCategory],
           ),
         ),
       );
 
     expect(ingDrizzle).toBeDefined();
-    expect(ingDrizzle.name).toBe(ing.name);
+    expect(ingDrizzle.name).toBe(spec.name);
     expect(ingDrizzle.user).toBe(appUserId);
-    expect(ingDrizzle.category).toBe(ing.category);
+    expect(ingDrizzle.category).toBe(spec.category);
 
-    const expectedCategory = Category[ing.category as keyof typeof Category];
+    const expectedCategory = Category[spec.category as keyof typeof Category];
 
     const ingParsed = into_ingredient_from_spec(ingDrizzle.spec);
-    expect(ingParsed.name).toBe(ing.name);
+    expect(ingParsed.name).toBe(spec.name);
     expect(ingParsed.category).toBe(expectedCategory);
     expect(ingParsed.composition.solids).toBeDefined();
     expect(ingParsed).toBeInstanceOf(Ingredient);
