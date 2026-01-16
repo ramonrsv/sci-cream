@@ -165,7 +165,9 @@ jobs:
       - name: Install cargo-criterion
         run: cargo install cargo-criterion
       - name: Run Rust benchmarks
-        run: cargo criterion --all-features --output-format bencher 2>&1 | tee bench_output_rust.txt
+        run: |
+          set -o pipefail
+          cargo criterion --all-features --output-format bencher 2>&1 | tee bench_output_rust.txt
       - if: vars.ACT != 'true'
         name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
@@ -199,7 +201,9 @@ jobs:
       - name: Set up prerequisites for JS tests
         run: pnpm prerequisites:js
       - name: Run JS benchmarks
-        run: pnpm run benchmark:js | tee bench_output_js.txt
+        run: |
+          set -o pipefail
+          pnpm run bench:js | tee bench_output_js.txt
       - if: vars.ACT != 'true'
         name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
