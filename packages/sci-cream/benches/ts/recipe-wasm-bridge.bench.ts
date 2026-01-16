@@ -59,10 +59,10 @@ const recipe = makeRecipeFromMadeLines(specLines);
 const freeVsNoFree = new Benchmark.Suite("Free vs No-Free Recipe WASM Bridge");
 
 freeVsNoFree
-  .add("makeRecipeLines", () => {
+  .add("makeRecipeLines, free", () => {
     makeRecipeLines(specLines).forEach((line) => line.free());
   })
-  .add("cloneRecipeLines", () => {
+  .add("cloneRecipeLines, free", () => {
     cloneRecipeLines(recipeLines).forEach((line) => line.free());
   })
   .add("makeRecipeLines, no free", () => {
