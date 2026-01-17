@@ -4,10 +4,15 @@ import { ReactGridLayout, useContainerWidth, type ResizeHandleAxis } from "react
 
 import { useState, useEffect } from "react";
 
-import { IngredientTransfer, fetchAllIngredientSpecs } from "../lib/data";
+import { fetchAllIngredientSpecs } from "../lib/data";
+
+import {
+  Bridge as WasmBridge,
+  new_ingredient_database_seeded_from_specs,
+} from "@workspace/sci-cream";
 
 import { ThemeToggle } from "../lib/ui/theme-toggle";
-import { RecipeGrid, makeEmptyRecipeContext } from "./recipe";
+import { RecipeGrid, makeEmptyRecipeContext, makeEmptyRecipeResources } from "./recipe";
 import { IngredientCompositionGrid } from "./composition";
 import { MixPropertiesGrid } from "./properties";
 import { MixPropertiesChart } from "./properties-chart";
@@ -33,22 +38,26 @@ export default function Home() {
   const { width, containerRef, mounted } = useContainerWidth();
 
   const recipeCtxState = useState(() => makeEmptyRecipeContext());
-  const [recipeContext, setRecipeContext] = recipeCtxState;
+  const [recipeContext] = recipeCtxState;
   const recipes = recipeContext.recipes;
 
+  const recipeResourcesState = useState(() => makeEmptyRecipeResources());
+  const [, setRecipeResources] = recipeResourcesState;
+
   useEffect(() => {
-    // Pre-fetch all ingredient specs to populate valid ingredients and cache
-    fetchAllIngredientSpecs().then((specs) => {
+    // Pre-fetch all ingredient specs to populate valid ingredients and WASM bridge database
+    fetchAllIngredientSpecs().then(async (specs) => {
       const validIngredients: string[] = specs?.map((spec) => spec.name) || [];
-      const ingredientCache = new Map<string, IngredientTransfer>(
-        specs?.map((spec) => [spec.name, spec]) || [],
+      const wasmBridge = new WasmBridge(
+        new_ingredient_database_seeded_from_specs(specs?.map((spec) => spec.spec) || []),
       );
 
-      setRecipeContext((prev) => ({ ...prev, validIngredients, ingredientCache }));
+      setRecipeResources({ validIngredients, wasmBridge });
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const recipeGridProps = { ctx: recipeCtxState, indices: recipes.map((_, idx) => idx) };
+  const enabledRecipeIndices = recipes.map((_, idx) => idx);
+  const recipeGridProps = { recipeCtxState, recipeResourcesState, enabledRecipeIndices };
 
   // Dynamically adjusts the number of columns based on screen width, so that some components
   // maintain a fixed-ish width and do not widen too much when going from half to full screen.

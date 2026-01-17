@@ -10,11 +10,16 @@ import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "./page";
 import {
   RecipeGrid,
   makeEmptyRecipeContext,
+  makeEmptyRecipeResources,
   isRecipeEmpty,
   calculateMixTotal,
   makeSciCreamRecipe,
+  makeLightRecipe,
   type Recipe,
   type RecipeContext,
+  type RecipeResources,
+  RecipeContextState,
+  RecipeResourcesState,
 } from "./recipe";
 
 import { fetchIngredientSpec } from "../lib/data";
@@ -26,6 +31,8 @@ import {
   Composition,
   MixProperties,
   RecipeLine,
+  Bridge as WasmBridge,
+  new_ingredient_database_seeded_from_embedded_data,
 } from "@workspace/sci-cream";
 
 import { SchemaCategory } from "@workspace/sci-cream/schema-category";
@@ -86,17 +93,19 @@ describe("Recipe Helper Functions", () => {
       });
     });
 
-    it("should initialize with empty cache and valid ingredients list", () => {
-      const context = makeEmptyRecipeContext();
-      expect(context.ingredientCache.size).toBe(0);
-      expect(context.validIngredients).toEqual([]);
-    });
-
     it("should initialize mix properties for each recipe", () => {
       const context = makeEmptyRecipeContext();
       context.recipes.forEach((recipe) => {
         expect(recipe.mixProperties).toBeInstanceOf(MixProperties);
       });
+    });
+  });
+
+  describe("makeEmptyRecipeResources", () => {
+    it("should initialize with empty valid ingredients list and wasmBridge", () => {
+      const resources = makeEmptyRecipeResources();
+      expect(resources.validIngredients).toEqual([]);
+      expect(resources.wasmBridge).toBeInstanceOf(WasmBridge);
     });
   });
 
@@ -215,6 +224,48 @@ describe("Recipe Helper Functions", () => {
     });
   });
 
+  describe("makeLightRecipe", () => {
+    let recipe: Recipe;
+    const validIngredients = ["Whole Milk", "Sucrose"];
+
+    beforeEach(() => {
+      recipe = makeEmptyRecipeContext().recipes[0];
+    });
+
+    it("should return empty recipe lines when no ingredients have both ingredient and quantity", () => {
+      expect(makeLightRecipe(recipe, validIngredients).length).toEqual(0);
+    });
+
+    it("should filter out rows without ingredient name", () => {
+      recipe.ingredientRows[0].quantity = 50;
+      expect(makeLightRecipe(recipe, validIngredients).length).toEqual(0);
+    });
+
+    it("should filter out rows without quantity", () => {
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[0].quantity = undefined;
+      expect(makeLightRecipe(recipe, validIngredients).length).toEqual(0);
+    });
+
+    it("should filter out rows with invalid ingredient names", () => {
+      recipe.ingredientRows[0].name = "Invalid Ingredient";
+      recipe.ingredientRows[0].quantity = 50;
+      expect(makeLightRecipe(recipe, validIngredients).length).toEqual(0);
+    });
+
+    it("should create [name, quantity] for valid rows", () => {
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[1].name = "Sucrose";
+      recipe.ingredientRows[0].quantity = 50;
+      recipe.ingredientRows[1].quantity = 30;
+
+      const lines = makeLightRecipe(recipe, validIngredients);
+      expect(lines).toHaveLength(2);
+      expect(lines[0]).toEqual(["Whole Milk", 50]);
+      expect(lines[1]).toEqual(["Sucrose", 30]);
+    });
+  });
+
   describe("SciCreamRecipe.calculate_composition", () => {
     let recipe: Recipe;
 
@@ -246,19 +297,34 @@ describe("Recipe Helper Functions", () => {
 
 describe("RecipeGrid Component", () => {
   let recipeContext: RecipeContext;
+  let recipeResources: RecipeResources;
   let setRecipeContext: Mock<(value: SetStateAction<RecipeContext>) => void>;
+  let setRecipeResources: Mock<(value: SetStateAction<RecipeResources>) => void>;
 
   function RecipeGridWithSpy({ indices }: { indices: number[] }) {
-    const [ctx, setCtx] = useState(recipeContext);
+    const [recipeCtx, setRecipeCtx] = useState(recipeContext);
+    const [resources, setResources] = useState(recipeResources);
 
     React.useEffect(() => {
       setRecipeContext.mockImplementation((value: SetStateAction<RecipeContext>) => {
-        setCtx(value);
+        setRecipeCtx(value);
         recipeContext = value instanceof Function ? value(recipeContext) : value;
+      });
+      setRecipeResources.mockImplementation((value: SetStateAction<RecipeResources>) => {
+        setResources(value);
+        recipeResources = value instanceof Function ? value(recipeResources) : value;
       });
     }, []);
 
-    return <RecipeGrid props={{ ctx: [ctx, setRecipeContext], indices }} />;
+    return (
+      <RecipeGrid
+        props={{
+          recipeCtxState: [recipeCtx, setRecipeContext],
+          recipeResourcesState: [resources, setRecipeResources],
+          enabledRecipeIndices: indices,
+        }}
+      />
+    );
   }
 
   function getIngredientNameElement(container: HTMLElement, index: number) {
@@ -277,8 +343,13 @@ describe("RecipeGrid Component", () => {
     vi.clearAllMocks();
     setupVitestCanvasMock();
     recipeContext = makeEmptyRecipeContext();
-    recipeContext.validIngredients = ["2% Milk", "Sucrose", "Whipping Cream"];
+    recipeResources = makeEmptyRecipeResources();
+    recipeResources.validIngredients = ["2% Milk", "Sucrose", "Whipping Cream"];
+    recipeResources.wasmBridge = new WasmBridge(
+      new_ingredient_database_seeded_from_embedded_data(),
+    );
     setRecipeContext = vi.fn();
+    setRecipeResources = vi.fn();
     vi.mocked(fetchIngredientSpec).mockResolvedValue(undefined);
   });
 
@@ -287,10 +358,14 @@ describe("RecipeGrid Component", () => {
     await vi.waitFor(() => {}, { timeout: 100 });
   });
 
+  const makeRecipeGridProps = (indices: number[]) => ({
+    recipeCtxState: [recipeContext, setRecipeContext] as RecipeContextState,
+    recipeResourcesState: [recipeResources, setRecipeResources] as RecipeResourcesState,
+    enabledRecipeIndices: indices,
+  });
+
   it("should render recipe selector", () => {
-    const { container } = render(
-      <RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0, 1] }} />,
-    );
+    const { container } = render(<RecipeGrid props={makeRecipeGridProps([0, 1])} />);
 
     const select = container.querySelector("select") as HTMLSelectElement;
     expect(select).toBeInTheDocument();
@@ -299,7 +374,7 @@ describe("RecipeGrid Component", () => {
   });
 
   it("should render action buttons", () => {
-    render(<RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0, 1] }} />);
+    render(<RecipeGrid props={makeRecipeGridProps([0, 1])} />);
 
     expect(screen.getByRole("button", { name: /copy/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /paste/i })).toBeInTheDocument();
@@ -307,9 +382,7 @@ describe("RecipeGrid Component", () => {
   });
 
   it("should render table with correct number of ingredient rows", () => {
-    const { container } = render(
-      <RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
-    );
+    const { container } = render(<RecipeGrid props={makeRecipeGridProps([0])} />);
 
     const tbody = container.querySelector("tbody");
     const rows = tbody?.querySelectorAll("tr");
@@ -317,7 +390,7 @@ describe("RecipeGrid Component", () => {
   });
 
   it("should render table headers", () => {
-    render(<RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />);
+    render(<RecipeGrid props={makeRecipeGridProps([0])} />);
 
     expect(screen.getByText("Ingredient")).toBeInTheDocument();
     expect(screen.getByText("Qty (g)")).toBeInTheDocument();
@@ -394,9 +467,7 @@ describe("RecipeGrid Component", () => {
     recipeContext.recipes[0].ingredientRows[1].quantity = 30;
     recipeContext.recipes[0].mixTotal = 80;
 
-    const { container } = render(
-      <RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
-    );
+    const { container } = render(<RecipeGrid props={makeRecipeGridProps([0])} />);
 
     const percentageCells = container.querySelectorAll("tbody td.comp-val");
     const firstRowPercent = percentageCells[0].textContent?.trim();
@@ -534,7 +605,7 @@ describe("RecipeGrid Component", () => {
     recipeContext.recipes[0].ingredientRows[0].name = "2% Milk";
     recipeContext.recipes[0].ingredientRows[0].quantity = 50;
 
-    render(<RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />);
+    render(<RecipeGridWithSpy indices={[0]} />);
 
     const clearButton = screen.getByRole("button", { name: /clear/i });
     await user.click(clearButton);
@@ -552,9 +623,7 @@ describe("RecipeGrid Component", () => {
   it("should show red outline for invalid ingredient names", () => {
     recipeContext.recipes[0].ingredientRows[0].name = "Invalid Ingredient";
 
-    const { container } = render(
-      <RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
-    );
+    const { container } = render(<RecipeGrid props={makeRecipeGridProps([0])} />);
 
     expect(getIngredientNameElement(container, 0).className).toContain("outline-red-400");
   });
@@ -562,36 +631,23 @@ describe("RecipeGrid Component", () => {
   it("should show blue focus ring for valid ingredient names", () => {
     recipeContext.recipes[0].ingredientRows[0].name = "2% Milk";
 
-    const { container } = render(
-      <RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
-    );
+    const { container } = render(<RecipeGrid props={makeRecipeGridProps([0])} />);
 
     const firstIngredientInput = getIngredientNameElement(container, 0);
     expect(firstIngredientInput.className).toContain("focus:ring-blue-400");
     expect(firstIngredientInput.className).not.toContain("outline-red-400");
   });
 
-  it("should fetch ingredient spec when valid ingredient is entered", async () => {
-    const mockSpec = { name: "2% Milk", user: 0, category: SchemaCategory.Dairy, spec: {} };
-    vi.mocked(fetchIngredientSpec).mockResolvedValue(mockSpec);
-
-    const { container } = render(<RecipeGridWithSpy indices={[0]} />);
-
-    const firstIngredientInput = getIngredientNameElement(container, 0);
-    fireEvent.change(firstIngredientInput, { target: { value: "2% Milk" } });
-
-    await waitFor(() => {
-      expect(fetchIngredientSpec).toHaveBeenCalledWith("2% Milk");
-    });
-  });
-
   const mockDairySpe = { DairySpec: { fat: 2 } };
   const mockSpec = { name: "2% Milk", user: 0, category: SchemaCategory.Dairy, spec: mockDairySpe };
   const mockIngredient = new Ingredient("2% Milk", Category.Dairy, new Composition());
 
-  it("should make Ingredient from spec when valid ingredient is entered", async () => {
-    vi.mocked(fetchIngredientSpec).mockResolvedValue(mockSpec);
-    vi.mocked(into_ingredient_from_spec).mockReturnValue(mockIngredient);
+  it("should WasmBridge.get_ingredient_by_name when a valid ingredient is entered", async () => {
+    const get_ingredient_by_name_spy = vi.spyOn(
+      recipeResources.wasmBridge,
+      "get_ingredient_by_name",
+    );
+    get_ingredient_by_name_spy.mockReturnValue(mockIngredient);
 
     const { container } = render(<RecipeGridWithSpy indices={[0]} />);
 
@@ -599,55 +655,35 @@ describe("RecipeGrid Component", () => {
     fireEvent.change(firstIngredientInput, { target: { value: "2% Milk" } });
 
     await waitFor(() => {
-      expect(into_ingredient_from_spec).toHaveBeenCalledWith(mockDairySpe);
+      expect(get_ingredient_by_name_spy).toHaveBeenCalledWith("2% Milk");
       expect(recipeContext.recipes[0].ingredientRows[0].ingredient).toBe(mockIngredient);
     });
   });
 
-  it("should cache fetched ingredient specs", async () => {
-    const user = userEvent.setup();
-    vi.mocked(fetchIngredientSpec).mockResolvedValue(mockSpec);
-    vi.mocked(into_ingredient_from_spec).mockReturnValue(mockIngredient);
-
-    const { container } = render(<RecipeGridWithSpy indices={[0]} />);
-    const firstIngredientInput = getIngredientNameElement(container, 0);
-
-    await user.type(firstIngredientInput, "2% Milk");
-    await waitFor(() => {
-      expect(fetchIngredientSpec).toHaveBeenCalledWith("2% Milk");
-      expect(recipeContext.ingredientCache.has("2% Milk")).toBe(true);
-      expect(recipeContext.ingredientCache.get("2% Milk")).toBe(mockSpec);
-    });
-
-    await user.clear(firstIngredientInput);
-    await waitFor(() => {}, { timeout: 100 });
-    expect(recipeContext.ingredientCache.has("2% Milk")).toBe(true);
-
-    await user.type(firstIngredientInput, "2% Milk");
-    await waitFor(() => {}, { timeout: 100 });
-    expect(fetchIngredientSpec).toHaveBeenCalledTimes(1);
-    expect(recipeContext.ingredientCache.has("2% Milk")).toBe(true);
-    expect(recipeContext.ingredientCache.get("2% Milk")).toBe(mockSpec);
-  });
-
-  it("should not fetch ingredient spec for empty string", async () => {
-    const user = userEvent.setup();
-
-    const { container } = render(
-      <RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
+  it("should not WasmBridge.get_ingredient_by_name for empty string or invalid ingredient", async () => {
+    const get_ingredient_by_name_spy = vi.spyOn(
+      recipeResources.wasmBridge,
+      "get_ingredient_by_name",
     );
 
-    const firstIngredientInput = getIngredientNameElement(container, 0);
-    await user.clear(firstIngredientInput);
+    const user = userEvent.setup();
 
+    const { container } = render(<RecipeGrid props={makeRecipeGridProps([0])} />);
+
+    const firstIngredientInput = getIngredientNameElement(container, 0);
+    expect(firstIngredientInput).toBeInTheDocument();
+
+    await user.clear(firstIngredientInput);
     await waitFor(() => {}, { timeout: 100 });
-    expect(fetchIngredientSpec).not.toHaveBeenCalled();
+    expect(get_ingredient_by_name_spy).not.toHaveBeenCalled();
+
+    await user.type(firstIngredientInput, "Invalid Ingredient");
+    await waitFor(() => {}, { timeout: 100 });
+    expect(get_ingredient_by_name_spy).not.toHaveBeenCalled();
   });
 
   it("should render datalist with valid ingredients", () => {
-    const { container } = render(
-      <RecipeGrid props={{ ctx: [recipeContext, setRecipeContext], indices: [0] }} />,
-    );
+    const { container } = render(<RecipeGrid props={makeRecipeGridProps([0])} />);
 
     const datalist = container.querySelector("#valid-ingredients");
     expect(datalist).toBeInTheDocument();

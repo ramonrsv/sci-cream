@@ -2,7 +2,6 @@
 
 import { useState, useEffect } from "react";
 
-import { fetchIngredientSpec, IngredientTransfer } from "../lib/data";
 import { formatCompositionValue } from "../lib/ui/comp-values";
 import { standardInputStepByPercent } from "../lib/util";
 import { MAX_RECIPES, RECIPE_TOTAL_ROWS, STD_COMPONENT_H_PX } from "./page";
@@ -10,10 +9,11 @@ import { recipeCompBgColor } from "@/lib/styles/colors";
 
 import {
   Ingredient,
-  into_ingredient_from_spec,
   MixProperties,
+  IngredientDatabase,
   RecipeLine,
   Recipe as SciCreamRecipe,
+  Bridge as WasmBridge,
 } from "@workspace/sci-cream";
 
 export interface IngredientRow {
@@ -32,9 +32,12 @@ export interface Recipe {
 }
 
 export interface RecipeContext {
-  validIngredients: string[];
-  ingredientCache: Map<string, IngredientTransfer>;
   recipes: Recipe[];
+}
+
+export interface RecipeResources {
+  validIngredients: string[];
+  wasmBridge: WasmBridge;
 }
 
 export type RecipeContextState = [
@@ -42,10 +45,13 @@ export type RecipeContextState = [
   React.Dispatch<React.SetStateAction<RecipeContext>>,
 ];
 
+export type RecipeResourcesState = [
+  RecipeResources,
+  React.Dispatch<React.SetStateAction<RecipeResources>>,
+];
+
 export function makeEmptyRecipeContext(): RecipeContext {
   return {
-    validIngredients: [],
-    ingredientCache: new Map<string, IngredientTransfer>(),
     recipes: Array.from({ length: MAX_RECIPES }, (_, recipeIdx) => ({
       index: recipeIdx,
       name: recipeIdx === 0 ? "Recipe" : `Ref ${recipeIdx}`,
@@ -59,6 +65,10 @@ export function makeEmptyRecipeContext(): RecipeContext {
       mixProperties: new MixProperties(),
     })),
   };
+}
+
+export function makeEmptyRecipeResources(): RecipeResources {
+  return { validIngredients: [], wasmBridge: new WasmBridge(new IngredientDatabase()) };
 }
 
 export function isRecipeEmpty(recipe: Recipe): boolean {
@@ -79,47 +89,80 @@ export function makeSciCreamRecipe(recipe: Recipe): SciCreamRecipe {
     recipe.ingredientRows
       .filter((row) => row.ingredient !== undefined && row.quantity !== undefined)
       .map((row) => {
-        // @todo There is some inefficient cloning here, try to re-design the context to avoid this
         return new RecipeLine(row.ingredient!.clone(), row.quantity!);
       }),
   );
 }
 
+export function makeLightRecipe(recipe: Recipe, validIngredients: string[]): [string, number][] {
+  return recipe.ingredientRows
+    .filter(
+      (row) => row.name !== "" && row.quantity !== undefined && validIngredients.includes(row.name),
+    )
+    .map((row) => [row.name, row.quantity!] as [string, number]);
+}
+
 export function RecipeGrid({
   props: {
-    ctx: [recipeContext, setRecipeContext],
-    indices,
+    recipeCtxState: [recipeContext, setRecipeContext],
+    recipeResourcesState: [recipeResources],
+    enabledRecipeIndices: enabledRecipeIndices,
   },
 }: {
-  props: { ctx: RecipeContextState; indices: number[] };
+  props: {
+    recipeCtxState: RecipeContextState;
+    recipeResourcesState: RecipeResourcesState;
+    enabledRecipeIndices: number[] | undefined;
+  };
 }) {
-  const { validIngredients, ingredientCache, recipes } = recipeContext;
+  const indices = enabledRecipeIndices ? enabledRecipeIndices : [0];
+
+  const { validIngredients, wasmBridge } = recipeResources;
+  const { recipes } = recipeContext;
   const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(indices[0]);
 
   const recipe = recipes[currentRecipeIdx];
 
-  const cachedFetchIngredientSpec = async (
-    name: string,
-  ): Promise<IngredientTransfer | undefined> => {
-    if (!ingredientCache.has(name)) {
-      await fetchIngredientSpec(name).then((spec) => {
-        if (spec) {
-          ingredientCache.set(name, spec);
-          setRecipeContext({ ...recipeContext, ingredientCache });
-        }
-      });
-    }
-    return ingredientCache.get(name);
+  const requiresMixPropsUpdate = (
+    currentRow: IngredientRow,
+    updatedRow: IngredientRow,
+  ): boolean => {
+    const ret =
+      !!currentRow.ingredient !== !!updatedRow.ingredient ||
+      updatedRow.ingredient?.name !== currentRow.ingredient?.name ||
+      currentRow.quantity !== updatedRow.quantity;
+    return ret;
   };
 
-  const updateRecipe = (row: IngredientRow) => {
-    const newRecipe = { ...recipe };
-    newRecipe.ingredientRows[row.index] = row;
+  const updateMixProperties = (recipe: Recipe) => {
+    try {
+      recipe.mixProperties.free();
+    } catch {
+      // Due to the asynchronous nature of React state updates, it's possible that the mixProperties
+      // object has already been freed elsewhere. In such cases, we can safely ignore the error.
+    }
+
+    recipe.mixProperties =
+      isRecipeEmpty(recipe) || !wasmBridge
+        ? new MixProperties()
+        : wasmBridge.calculate_recipe_mix_properties(makeLightRecipe(recipe, validIngredients));
+  };
+
+  const updateRecipe = (rowUpdates: [number, IngredientRow][]) => {
+    const newRecipe = { ...recipe, ingredientRows: [...recipe.ingredientRows] };
+
+    let needsMixPropUpdate = false;
+
+    for (const [index, updatedRow] of rowUpdates) {
+      const currentRow = newRecipe.ingredientRows[index];
+      newRecipe.ingredientRows[index] = updatedRow;
+
+      needsMixPropUpdate = needsMixPropUpdate || requiresMixPropsUpdate(currentRow, updatedRow);
+    }
 
     newRecipe.mixTotal = calculateMixTotal(newRecipe);
-    newRecipe.mixProperties = isRecipeEmpty(newRecipe)
-      ? new MixProperties()
-      : makeSciCreamRecipe(newRecipe).calculate_mix_properties();
+
+    if (needsMixPropUpdate) updateMixProperties(newRecipe);
 
     const recipes = recipeContext.recipes.map((r) =>
       r.index === currentRecipeIdx ? newRecipe : r,
@@ -127,11 +170,11 @@ export function RecipeGrid({
     setRecipeContext({ ...recipeContext, recipes });
   };
 
-  const updateIngredientRow = (
+  const makeRowUpdate = (
     index: number,
     _name: string | undefined,
     quantityStr: string | undefined,
-  ) => {
+  ): [number, IngredientRow] => {
     const row = { ...recipe.ingredientRows[index] };
     row.name = _name === undefined ? row.name : _name;
 
@@ -142,24 +185,23 @@ export function RecipeGrid({
           ? undefined
           : parseFloat(quantityStr);
 
-    const isValidIngredient = row.name !== "" && validIngredients.includes(row.name);
-    updateRecipe({ ...row, ingredient: isValidIngredient ? row.ingredient : undefined });
+    const isValidIng = row.name !== "" && validIngredients.includes(row.name);
+    const needsIngUpdate = !isValidIng || !row.ingredient || row.ingredient.name !== row.name;
 
-    if (isValidIngredient && (row.ingredient === undefined || row.ingredient.name !== row.name)) {
-      cachedFetchIngredientSpec(row.name)
-        .then((spec) => (spec ? into_ingredient_from_spec(spec.spec) : undefined))
-        .then((ingredient) => {
-          updateRecipe({ ...row, ingredient });
-        });
+    if (needsIngUpdate) {
+      if (row.ingredient) row.ingredient.free();
+      row.ingredient = isValidIng ? wasmBridge.get_ingredient_by_name(row.name) : undefined;
     }
+
+    return [index, row];
   };
 
   const updateIngredientRowName = (index: number, name: string) => {
-    updateIngredientRow(index, name, undefined);
+    updateRecipe([makeRowUpdate(index, name, undefined)]);
   };
 
   const updateIngredientRowQuantity = (index: number, quantityStr: string) => {
-    updateIngredientRow(index, undefined, quantityStr);
+    updateRecipe([makeRowUpdate(index, undefined, quantityStr)]);
   };
 
   const copyRecipe = async () => {
@@ -183,10 +225,12 @@ export function RecipeGrid({
         return;
       }
 
+      const rowUpdates: [number, IngredientRow][] = [];
+
       for (const row of recipe.ingredientRows) {
         const line = lines[row.index + lineOffset]?.trim();
         if (!line) {
-          updateIngredientRow(row.index, "", "");
+          rowUpdates.push(makeRowUpdate(row.index, "", ""));
           continue;
         }
 
@@ -194,29 +238,29 @@ export function RecipeGrid({
         const name = parts[0]?.trim() || "";
         const quantityStr = parts[1]?.trim() || "";
 
-        updateIngredientRow(row.index, name, quantityStr);
+        rowUpdates.push(makeRowUpdate(row.index, name, quantityStr));
       }
+
+      updateRecipe(rowUpdates);
     } catch (err) {
       console.error("Failed to paste recipe:", err);
     }
   };
 
   const clearRecipe = () => {
-    for (const row of recipe.ingredientRows) {
-      updateIngredientRow(row.index, "", "");
-    }
+    updateRecipe(recipe.ingredientRows.map((row) => makeRowUpdate(row.index, "", "")));
   };
 
-  // Prevent stale ingredient rows if pasted quickly whilst validIngredients/ingredientCache
-  // are still loading during pre-fetch. @todo For some reason this results in 80 calls to
-  // updateIngredientRow when the component is first mounted, works normally after that.
-  // Looks like each recipe being rendered gets refreshed twice on mount; need to investigate.
+  // Prevents stale ingredient context if a row is changed (e.g. a recipe is pasted) before we have
+  // had a chance to fetch all valid ingredients and populate validIngredients and the wasmBridge.
   useEffect(() => {
-    recipe.ingredientRows.forEach((row) => {
-      updateIngredientRow(row.index, row.name, row.quantity?.toString());
-    });
+    updateRecipe(
+      recipe.ingredientRows.map((row) =>
+        makeRowUpdate(row.index, row.name, row.quantity?.toString()),
+      ),
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [validIngredients.length, ingredientCache.size]);
+  }, [validIngredients.length]);
 
   const mixTotal = recipe.mixTotal;
 
