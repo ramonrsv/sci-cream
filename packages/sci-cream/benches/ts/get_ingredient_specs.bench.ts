@@ -6,28 +6,28 @@ import {
   get_ingredient_spec_by_name,
 } from "../../dist/index";
 
-const suite = new Benchmark.Suite("Ingredient Operations");
+const LAST_IDX = allIngredientSpecs.length - 1;
+
+const suite = new Benchmark.Suite("Get Ingredient Specs");
 
 suite
   .add("allIngredientSpecs.find, first", () => {
     allIngredientSpecs.find((ing) => ing.name === allIngredientSpecs[0].name);
   })
   .add("allIngredientSpecs.find, last", () => {
-    allIngredientSpecs.find(
-      (ing) => ing.name === allIngredientSpecs[allIngredientSpecs.length - 1].name,
-    );
+    allIngredientSpecs.find((ing) => ing.name === allIngredientSpecs[LAST_IDX].name);
   })
   .add("getIngredientSpecByName, first", () => {
     getIngredientSpecByName(allIngredientSpecs[0].name);
   })
   .add("getIngredientSpecByName, last", () => {
-    getIngredientSpecByName(allIngredientSpecs[allIngredientSpecs.length - 1].name);
+    getIngredientSpecByName(allIngredientSpecs[LAST_IDX].name);
   })
   .add("get_ingredient_spec_by_name, first", () => {
     get_ingredient_spec_by_name(allIngredientSpecs[0].name);
   })
   .add("get_ingredient_spec_by_name, last", () => {
-    get_ingredient_spec_by_name(allIngredientSpecs[allIngredientSpecs.length - 1].name);
+    get_ingredient_spec_by_name(allIngredientSpecs[LAST_IDX].name);
   })
   .on("cycle", (event: Benchmark.Event) => {
     console.log(String(event.target));
