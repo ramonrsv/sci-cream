@@ -52,3 +52,6 @@
       Solids:POD, etc. A crude implementation currently is at `data::tests::sweeteners_by_ratio`.
 - [ ] When making changes to either the main recipe or reference recipes, the FPD graph for the
       reference recipes jumps around. Only the reference ones, the main one only moves as modified.
+- [ ] When making a lot of fast changes to a recipe, e.g. by repeatedly clicking the quantity arrow
+      very quickly, the UI can become a bit unresponsive for a few seconds. This much easier to
+      reproduce if a log is added to `updateRecipe` in `recipe.tsx`.
