@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768605191340,
+  "lastUpdate": 1768609017718,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -347,6 +347,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 308,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f6c34901012bcb64d447f66d2261802a2344f1a9",
+          "message": "Implement `wasm::Bridge` to provide WASM bridging\n\nThis struct serves as a bridge between WASM and the Rust backend,\nattempting to keep as much of the on-memory data structures and\noperations on the WASM side to minimize the performance overhead of\nJS <-> WASM bridging. It holds an in-memory ingredient database for\nlooking up ingredient definitions by name, and provides methods for\ncalculating recipe compositions and mix properties from \"light\" recipe\nrepresentations (tuples of ingredient names and amounts).",
+          "timestamp": "2026-01-16T19:07:59-05:00",
+          "tree_id": "2f919322989afb38e00fb4fa65acf3e34c67c2fb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f6c34901012bcb64d447f66d2261802a2344f1a9"
+        },
+        "date": 1768609016788,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2429,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 163966,
+            "range": "± 1218",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 308,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
