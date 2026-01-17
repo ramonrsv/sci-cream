@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768616820127,
+  "lastUpdate": 1768686240079,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -431,6 +431,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 303,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "344fa5d1c114fc27e6a5ed8a47dd0bc16aea5f88",
+          "message": "Add TODO about unresponsive UI when many clicks",
+          "timestamp": "2026-01-16T21:32:42-05:00",
+          "tree_id": "548e8e2cf446065194b8c9db9705c216244674f9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/344fa5d1c114fc27e6a5ed8a47dd0bc16aea5f88"
+        },
+        "date": 1768686239792,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2341,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 161729,
+            "range": "± 943",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 315,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
