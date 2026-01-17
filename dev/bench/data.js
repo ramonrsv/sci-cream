@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768609196459,
+  "lastUpdate": 1768616635177,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -389,6 +389,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 308,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "473f25ee6129e1f77dcedf6d4b90c30dc3475bb9",
+          "message": "Add get_ingredient* to Bridge, forwards to IngDb\n\n* Add the same `get_ingredient*` family of functions interface that\n  `IngredientDatabase` has to `Bridge`, forwarding to the internal\n  database. We cannot expose the `db` field directly because that would\n  require `wasm_bindgen(getter_with_clone)`.\n\n* Add benchmarks to check that there is no performance degradation to\n  the database operation by going through `Bridge`.",
+          "timestamp": "2026-01-16T20:57:45-05:00",
+          "tree_id": "ec7b998e73cacf98da873fbc902c6c3fa8738040",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/473f25ee6129e1f77dcedf6d4b90c30dc3475bb9"
+        },
+        "date": 1768616634933,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2305,
+            "range": "± 57",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 162444,
+            "range": "± 3801",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 303,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
