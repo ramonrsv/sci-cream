@@ -6,6 +6,7 @@ import {
   get_ingredient_spec_by_name,
   into_ingredient_from_spec,
   make_seeded_ingredient_database_from_specs,
+  Bridge,
 } from "../../dist/index";
 
 const LAST_IDX = allIngredientSpecs.length - 1;
@@ -15,6 +16,7 @@ const map = new Map<string, (typeof allIngredientSpecs)[0]>(
 );
 
 const db = make_seeded_ingredient_database_from_specs(allIngredientSpecs);
+const bridge = new Bridge(make_seeded_ingredient_database_from_specs(allIngredientSpecs));
 
 const suite = new Benchmark.Suite("Get Ingredient Instances");
 
@@ -44,6 +46,12 @@ suite
   })
   .add("IngredientDatabase.get_ingredient_by_name, last", () => {
     db.get_ingredient_by_name(allIngredientSpecs[LAST_IDX].name).free();
+  })
+  .add("Bridge.get_ingredient_by_name, first", () => {
+    bridge.get_ingredient_by_name(allIngredientSpecs[0].name).free();
+  })
+  .add("Bridge.get_ingredient_by_name, last", () => {
+    bridge.get_ingredient_by_name(allIngredientSpecs[LAST_IDX].name).free();
   })
   .on("cycle", (event: Benchmark.Event) => {
     console.log(String(event.target));

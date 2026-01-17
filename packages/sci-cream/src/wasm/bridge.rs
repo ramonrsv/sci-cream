@@ -4,6 +4,7 @@ use crate::{
     composition::Composition,
     database::IngredientDatabase,
     error::Result,
+    ingredient::{Category, Ingredient},
     properties::MixProperties,
     recipe::{Recipe, RecipeLine},
 };
@@ -24,6 +25,10 @@ pub struct Bridge {
 }
 
 impl Bridge {
+    pub fn get_ingredient_by_name(&self, name: &str) -> Result<Ingredient> {
+        self.db.get_ingredient_by_name(name)
+    }
+
     pub fn calculate_recipe_composition(&self, recipe: &LightRecipe) -> Result<Composition> {
         self.light_recipe_to_recipe(recipe)?.calculate_composition()
     }
@@ -57,6 +62,14 @@ impl Bridge {
             lines: lines_with_ingredients,
         })
     }
+
+    pub fn get_all_ingredients(&self) -> Vec<Ingredient> {
+        self.db.get_all_ingredients()
+    }
+
+    pub fn get_ingredients_by_category(&self, category: Category) -> Vec<Ingredient> {
+        self.db.get_ingredients_by_category(category)
+    }
 }
 
 #[cfg_attr(coverage, coverage(off))]
@@ -64,11 +77,16 @@ pub mod wasm {
     use wasm_bindgen::prelude::*;
 
     use super::Bridge;
-    use crate::{composition::Composition, properties::MixProperties};
+    use crate::{composition::Composition, ingredient::Ingredient, properties::MixProperties};
 
     //#[cfg_attr(feature = "wasm", wasm_bindgen)]
     #[wasm_bindgen]
     impl Bridge {
+        #[wasm_bindgen(js_name = "get_ingredient_by_name")]
+        pub fn get_ingredient_by_name_wasm(&self, name: &str) -> Result<Ingredient, JsValue> {
+            self.db.get_ingredient_by_name_wasm(name)
+        }
+
         fn light_recipe_from_jsvalue(recipe: JsValue) -> Result<Vec<(String, f64)>, JsValue> {
             serde_wasm_bindgen::from_value::<Vec<(String, f64)>>(recipe).map_err(Into::into)
         }
