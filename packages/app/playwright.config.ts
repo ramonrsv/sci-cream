@@ -1,0 +1,41 @@
+import { defineConfig, devices } from "@playwright/test";
+
+import "dotenv/config";
+
+// See https://playwright.dev/docs/test-configuration.
+export default defineConfig({
+  testDir: "./src/__tests__/e2e",
+  fullyParallel: false /* Prevent test interference for performance benchmarks */,
+  forbidOnly: !!process.env.CI /* Fail CI build if test.only was left in the source code. */,
+  retries: process.env.CI ? 2 : 0 /* Retry on CI only */,
+  workers: process.env.CI ? 1 : undefined /* Opt out of parallel tests on CI. */,
+  reporter: "html" /* See https://playwright.dev/docs/test-reporters */,
+
+  /* See https://playwright.dev/docs/api/class-testoptions. */
+  use: {
+    baseURL: "http://localhost:3000" /* Base URL to use in `await page.goto('')` */,
+    trace: "on-first-retry" /* See https://playwright.dev/docs/trace-viewer */,
+  },
+
+  projects: [
+    /* Test against desktop browsers. */
+    { name: "chromium", use: { ...devices["Desktop Chrome"] } },
+    { name: "firefox", use: { ...devices["Desktop Firefox"] } },
+    { name: "webkit", use: { ...devices["Desktop Safari"] } },
+
+    /* Test against mobile viewports. */
+    { name: "Mobile Chrome", use: { ...devices["Pixel 5"] } },
+    { name: "Mobile Safari", use: { ...devices["iPhone 12"] } },
+
+    /* Test against branded browsers. */
+    { name: "Google Chrome", use: { ...devices["Desktop Chrome"], channel: "chrome" } },
+    // { name: "Microsoft Edge", use: { ...devices["Desktop Edge"], channel: "msedge" } },
+  ],
+
+  /* Run your local dev server before starting the tests */
+  webServer: {
+    command: "pnpm start",
+    url: "http://localhost:3000",
+    reuseExistingServer: !process.env.CI,
+  },
+});

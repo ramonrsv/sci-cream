@@ -6,7 +6,10 @@
   "scripts": {
     "prerequisites": "pnpm --dir ../sci-cream prerequisites:js",
     "build": "next build",
-    "test": "vitest run",
+    "test": "pnpm test:unit && pnpm test:e2e",
+    "test:unit": "vitest run",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
     "lint": "eslint ./src",
     "prettier": "prettier --check ./src",
     "coverage": "vitest run --coverage",
@@ -32,6 +35,7 @@
     "vitest-canvas-mock": "^1.1.3"
   },
   "devDependencies": {
+    "@playwright/test": "^1.57.0",
     "@tailwindcss/postcss": "^4.1.18",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",

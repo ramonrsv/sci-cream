@@ -154,3 +154,15 @@ $
 $ # Both
 $ pnpm coverage
 ```
+
+To set up and run E2E tests with playwright:
+
+```bash
+$ # Set up dependencies
+$ pnpm playwright install --with-deps # default browsers
+$ pnpm playwright install chrome --with-deps # Chrome browser
+$
+$ # Run e2e tests
+$ pnpm test:e2e # 'pnpm playwright test'
+$ pnpm test:e2e:ui # 'pnpm playwright test --ui'
+```
