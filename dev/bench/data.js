@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768686419056,
+  "lastUpdate": 1768714385652,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -473,6 +473,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 315,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "901942106cb68e68138f491cfb4f445e637e47cd",
+          "message": "Implement doBenchmarkMeasurements to do many runs",
+          "timestamp": "2026-01-18T00:18:44-05:00",
+          "tree_id": "f19e3d0c2607b46d22e942eb164066d5f0392eca",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/901942106cb68e68138f491cfb4f445e637e47cd"
+        },
+        "date": 1768714385234,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2500,
+            "range": "± 70",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 162727,
+            "range": "± 1564",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 307,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
