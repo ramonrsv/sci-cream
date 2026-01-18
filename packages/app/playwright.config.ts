@@ -9,7 +9,7 @@ export default defineConfig({
   forbidOnly: !!process.env.CI /* Fail CI build if test.only was left in the source code. */,
   retries: process.env.CI ? 2 : 0 /* Retry on CI only */,
   workers: process.env.CI ? 1 : undefined /* Opt out of parallel tests on CI. */,
-  reporter: "html" /* See https://playwright.dev/docs/test-reporters */,
+  reporter: [["html", { open: "never" }]] /* See https://playwright.dev/docs/test-reporters */,
 
   /* See https://playwright.dev/docs/api/class-testoptions. */
   use: {
