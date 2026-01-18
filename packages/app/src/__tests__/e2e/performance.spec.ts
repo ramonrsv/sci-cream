@@ -65,14 +65,39 @@ const RECIPE_TEXT = [
 ].join("\n");
 
 test.describe("UI Performance Benchmarks", () => {
-  test("should measure initial page load time", async ({ page }) => {
-    const start = Date.now();
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
-    const loadTime = Date.now() - start;
+  const doBenchmarkMeasurements = async (name: string, run: () => Promise<number>) => {
+    const measurements: number[] = [];
+    const NUM_RUNS = 5;
 
-    console.log(`Initial page load time: ${loadTime}ms`);
-    expect(loadTime).toBeLessThan(THRESHOLDS.page_load);
+    for (let i = 0; i < NUM_RUNS; i++) {
+      measurements.push(await run());
+    }
+
+    const avg = measurements.reduce((a, b) => a + b, 0) / measurements.length;
+    const min = Math.min(...measurements);
+    const max = Math.max(...measurements);
+
+    console.log(
+      `${name}: [${Math.round(min)}ms, ${Math.round(avg)}ms, ${Math.round(max)}ms], ${NUM_RUNS} runs`,
+    );
+    return { avg, min, max };
+  };
+
+  const timeExecution = async (fn: () => Promise<void>): Promise<number> => {
+    const start = Date.now();
+    await fn();
+    return Date.now() - start;
+  };
+
+  test("should measure initial page load time", async ({ page }) => {
+    const { avg } = await doBenchmarkMeasurements("Initial page load time", async () => {
+      return timeExecution(async () => {
+        await page.goto("");
+        await page.waitForLoadState("networkidle");
+      });
+    });
+
+    expect(avg).toBeLessThan(THRESHOLDS.page_load);
   });
 
   const getIngredientNameInputAtIdx = (page: Page, index: number) => {
@@ -128,118 +153,123 @@ test.describe("UI Performance Benchmarks", () => {
   };
 
   test("should measure recipe ingredient input responsiveness", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    const { avg } = await doBenchmarkMeasurements("Input to display time", async () => {
+      await page.goto("");
+      await page.waitForLoadState("networkidle");
 
-    const ingNameInput = getIngredientNameInputAtIdx(page, 0);
+      const ingNameInput = getIngredientNameInputAtIdx(page, 0);
 
-    const start = Date.now();
-    await ingNameInput.fill("2% Milk");
-    await expect(ingNameInput).toBeVisible();
-    await expect(ingNameInput).toHaveValue("2% Milk");
-    const totalTime = Date.now() - start;
+      return timeExecution(async () => {
+        await ingNameInput.fill("2% Milk");
+        await expect(ingNameInput).toBeVisible();
+        await expect(ingNameInput).toHaveValue("2% Milk");
+      });
+    });
 
-    console.log(`Input to display time: ${totalTime}ms`);
-    expect(totalTime).toBeLessThan(THRESHOLDS.input_response);
+    expect(avg).toBeLessThan(THRESHOLDS.input_response);
   });
 
   test("should measure composition grid ingredient input responsiveness", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    const { avg } = await doBenchmarkMeasurements("Input to display time", async () => {
+      await page.goto("");
+      await page.waitForLoadState("networkidle");
 
-    const compGridQtyToggle = getCompositionGridQtyToggleInput(page);
-    await compGridQtyToggle.selectOption(QtyToggle.Composition);
+      const compGridQtyToggle = getCompositionGridQtyToggleInput(page);
+      await compGridQtyToggle.selectOption(QtyToggle.Composition);
 
-    const ingNameInput = getIngredientNameInputAtIdx(page, 0);
-    const compHeaders = getCompositionGridHeaders(page);
-    const milkFatStr = comp_key_as_med_str(CompKey.MilkFat);
+      const ingNameInput = getIngredientNameInputAtIdx(page, 0);
+      const compHeaders = getCompositionGridHeaders(page);
+      const milkFatStr = comp_key_as_med_str(CompKey.MilkFat);
 
-    const start = Date.now();
-    await ingNameInput.fill("2% Milk");
-    await expect(await compHeaders.allTextContents()).toContain(milkFatStr);
-    const milkFatCompValue = await getCompositionValueElement(page, 0, CompKey.MilkFat);
-    await expect(milkFatCompValue).toBeVisible();
-    await expect(milkFatCompValue).toHaveText("2");
-    const totalTime = Date.now() - start;
+      const start = Date.now();
+      await ingNameInput.fill("2% Milk");
+      await expect(await compHeaders.allTextContents()).toContain(milkFatStr);
+      const milkFatCompValue = await getCompositionValueElement(page, 0, CompKey.MilkFat);
+      await expect(milkFatCompValue).toBeVisible();
+      await expect(milkFatCompValue).toHaveText("2");
+      return Date.now() - start;
+    });
 
-    console.log(`Input to display time: ${totalTime}ms`);
-    expect(totalTime).toBeLessThan(THRESHOLDS.input_response);
+    expect(avg).toBeLessThan(THRESHOLDS.input_response);
   });
 
   test("should measure recipe quantity input responsiveness", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    const { avg } = await doBenchmarkMeasurements("Input to display time", async () => {
+      await page.goto("");
+      await page.waitForLoadState("networkidle");
 
-    const ingQtyInput = getIngredientQtyInputAtIdx(page, 0);
+      const ingQtyInput = getIngredientQtyInputAtIdx(page, 0);
 
-    const start = Date.now();
-    await ingQtyInput.fill("100");
-    await expect(ingQtyInput).toBeVisible();
-    await expect(ingQtyInput).toHaveValue("100");
-    const totalTime = Date.now() - start;
+      return timeExecution(async () => {
+        await ingQtyInput.fill("100");
+        await expect(ingQtyInput).toBeVisible();
+        await expect(ingQtyInput).toHaveValue("100");
+      });
+    });
 
-    console.log(`Input to display time: ${totalTime}ms`);
-    expect(totalTime).toBeLessThan(THRESHOLDS.input_response);
+    expect(avg).toBeLessThan(THRESHOLDS.input_response);
   });
 
   test("should measure properties grid quantity input responsiveness", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    const { avg } = await doBenchmarkMeasurements("Input to display time", async () => {
+      await page.goto("");
+      await page.waitForLoadState("networkidle");
 
-    const propsGridQtyToggle = getMixPropertiesQtyToggleInput(page);
-    await propsGridQtyToggle.selectOption(QtyToggle.Quantity);
+      const propsGridQtyToggle = getMixPropertiesQtyToggleInput(page);
+      await propsGridQtyToggle.selectOption(QtyToggle.Quantity);
 
-    const ingNameInput = getIngredientNameInputAtIdx(page, 0);
-    await ingNameInput.fill("2% Milk");
-    await expect(ingNameInput).toBeVisible();
-    await expect(ingNameInput).toHaveValue("2% Milk");
+      const ingNameInput = getIngredientNameInputAtIdx(page, 0);
+      await ingNameInput.fill("2% Milk");
+      await expect(ingNameInput).toBeVisible();
+      await expect(ingNameInput).toHaveValue("2% Milk");
 
-    const ingQtyInput = getIngredientQtyInputAtIdx(page, 0);
-    const milkFatPropValue = getMixPropertyValueElement(page, compToPropKey(CompKey.MilkFat));
+      const ingQtyInput = getIngredientQtyInputAtIdx(page, 0);
+      const milkFatPropValue = getMixPropertyValueElement(page, compToPropKey(CompKey.MilkFat));
 
-    const start = Date.now();
-    await ingQtyInput.fill("100");
-    await expect(milkFatPropValue).toBeVisible();
-    await expect(milkFatPropValue).toHaveText("2");
-    const totalTime = Date.now() - start;
+      return timeExecution(async () => {
+        await ingQtyInput.fill("100");
+        await expect(milkFatPropValue).toBeVisible();
+        await expect(milkFatPropValue).toHaveText("2");
+      });
+    });
 
-    console.log(`Input to display time: ${totalTime}ms`);
-    expect(totalTime).toBeLessThan(THRESHOLDS.input_response);
+    expect(avg).toBeLessThan(THRESHOLDS.input_response);
   });
 
   test("should measure recipe paste responsiveness", async ({ page, browserName }) => {
     test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
 
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    const { avg } = await doBenchmarkMeasurements("Paste to display time", async () => {
+      await page.goto("");
+      await page.waitForLoadState("networkidle");
 
-    await pastToClipboard(page, browserName, RECIPE_TEXT);
-    const pasteButton = getPasteButton(page);
+      await pastToClipboard(page, browserName, RECIPE_TEXT);
+      const pasteButton = getPasteButton(page);
 
-    const lastIngIdx = 9;
-    const lastIngNameInput = getIngredientNameInputAtIdx(page, lastIngIdx);
-    const lastIngQtyInput = getIngredientQtyInputAtIdx(page, lastIngIdx);
-    const propServingTemp = getMixPropertyValueElement(page, fpdToPropKey(FpdKey.ServingTemp));
-    const compHeaders = getCompositionGridHeaders(page);
-    const energyStr = comp_key_as_med_str(CompKey.Energy);
+      const lastIngIdx = 9;
+      const lastIngNameInput = getIngredientNameInputAtIdx(page, lastIngIdx);
+      const lastIngQtyInput = getIngredientQtyInputAtIdx(page, lastIngIdx);
+      const propServingTemp = getMixPropertyValueElement(page, fpdToPropKey(FpdKey.ServingTemp));
+      const compHeaders = getCompositionGridHeaders(page);
+      const energyStr = comp_key_as_med_str(CompKey.Energy);
 
-    const start = Date.now();
-    await pasteButton.click();
-    await expect(lastIngNameInput).toBeVisible();
-    await expect(lastIngQtyInput).toBeVisible();
-    await expect(propServingTemp).toBeVisible();
+      return timeExecution(async () => {
+        await pasteButton.click();
+        await expect(lastIngNameInput).toBeVisible();
+        await expect(lastIngQtyInput).toBeVisible();
+        await expect(propServingTemp).toBeVisible();
 
-    await expect(lastIngNameInput).toHaveValue("Vanilla Extract");
-    await expect(lastIngQtyInput).toHaveValue("6");
-    await expect(propServingTemp).toHaveText("-13.37");
+        await expect(lastIngNameInput).toHaveValue("Vanilla Extract");
+        await expect(lastIngQtyInput).toHaveValue("6");
+        await expect(propServingTemp).toHaveText("-13.37");
 
-    await expect(await compHeaders.allTextContents()).toContain(energyStr);
-    const energyCompValue = await getCompositionValueElement(page, lastIngIdx, CompKey.Energy);
-    await expect(energyCompValue).toBeVisible();
-    await expect(energyCompValue).toHaveText("11.5");
-    const totalTime = Date.now() - start;
+        await expect(await compHeaders.allTextContents()).toContain(energyStr);
+        const energyCompValue = await getCompositionValueElement(page, lastIngIdx, CompKey.Energy);
+        await expect(energyCompValue).toBeVisible();
+        await expect(energyCompValue).toHaveText("11.5");
+      });
+    });
 
-    console.log(`Paste to display time: ${totalTime}ms`);
-    expect(totalTime).toBeLessThan(THRESHOLDS.paste_response);
+    expect(avg).toBeLessThan(THRESHOLDS.paste_response);
   });
 });
