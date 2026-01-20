@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768943267024,
+  "lastUpdate": 1768950966251,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -683,6 +683,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 311,
             "range": "± 22",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c66ac69cf2ef0e928322d19a0cf9e653cee125e8",
+          "message": "Upload custom _benches_ with github-actions-bench\n\nAdd functionality to output benchmark results from __benches__ in a\nformat compatible with github-action-benchmarks, and upload them in CI.",
+          "timestamp": "2026-01-20T15:15:04-05:00",
+          "tree_id": "cbaf774effc4271ba40baf14632b6b04a2459db8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c66ac69cf2ef0e928322d19a0cf9e653cee125e8"
+        },
+        "date": 1768950965385,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2356,
+            "range": "± 77",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 162204,
+            "range": "± 3345",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 304,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
