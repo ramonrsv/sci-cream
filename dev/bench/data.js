@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768873900420,
+  "lastUpdate": 1768877072412,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -557,6 +557,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 264,
             "range": "± 13",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bee628d688c8da00a60506bad59d600f1a775263",
+          "message": "Cache pnpm dependencies in CI setup-pnpm action",
+          "timestamp": "2026-01-19T20:52:31-05:00",
+          "tree_id": "62c65dbca980cc18fd02bda63875ee3a8765ecea",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bee628d688c8da00a60506bad59d600f1a775263"
+        },
+        "date": 1768877072155,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2342,
+            "range": "± 47",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 162623,
+            "range": "± 567",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 304,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
