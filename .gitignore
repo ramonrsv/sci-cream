@@ -50,12 +50,6 @@ next-env.d.ts
 # Local notes
 .notes
 
-# @todo decide if we want to ignore these
-# https://doc.rust-lang.org/cargo/guide/cargo-toml-vs-cargo-lock.html
-/packages/sci-cream/Cargo.lock
-*package-lock.json
-*pnpm-lock.yaml
-
 # Local environment files
 .env
 .secrets
