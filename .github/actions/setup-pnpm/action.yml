@@ -1,13 +1,13 @@
-name: 'Setup pnpm Environment'
-description: 'Setup pnpm and Install Dependencies'
+name: "Setup pnpm Environment"
+description: "Setup pnpm and Install Dependencies"
 inputs:
   working-directory:
     # Note that this is relative to the root of the repository.
-    description: 'Working directory to run pnpm install in'
+    description: "Working directory to run pnpm install in"
     required: false
-    default: '.'
+    default: "."
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - uses: pnpm/action-setup@v4
       with:

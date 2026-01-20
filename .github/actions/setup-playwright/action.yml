@@ -1,7 +1,7 @@
-name: 'Install Playwright Browsers'
-description: 'Install Playwright browsers and dependencies'
+name: "Install Playwright Browsers"
+description: "Install Playwright browsers and dependencies"
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Install Playwright default browsers
       shell: bash

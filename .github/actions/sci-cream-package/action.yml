@@ -1,7 +1,7 @@
-name: 'Setup sci-cream Package'
-description: 'Build and setup the sci-cream pnpm package using wasm-pack'
+name: "Setup sci-cream Package"
+description: "Build and setup the sci-cream pnpm package using wasm-pack"
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Build sci-cream package
       shell: bash

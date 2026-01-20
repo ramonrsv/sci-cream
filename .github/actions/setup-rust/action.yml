@@ -1,14 +1,14 @@
-name: 'Setup Rust Environment'
-description: 'Setup Rust toolchain with caching'
+name: "Setup Rust Environment"
+description: "Setup Rust toolchain with caching"
 inputs:
   components:
-    description: 'Additional components'
+    description: "Additional components"
     required: false
   cargo-installs:
-    description: 'Cargo packages to install (comma-separated)'
+    description: "Cargo packages to install (comma-separated)"
     required: false
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - uses: dtolnay/rust-toolchain@stable
       with:

@@ -1,7 +1,7 @@
-name: 'Build App and Seed Database'
-description: 'Build /packages/app and seed the database with initial data'
+name: "Build App and Seed Database"
+description: "Build /packages/app and seed the database with initial data"
 runs:
-  using: 'composite'
+  using: "composite"
   steps:
     - name: Build app
       shell: bash
