@@ -30,6 +30,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-rust
+
       - run: cargo build --all-features --all-targets
       - run: cargo test --all-features --all-targets
       - run: cargo test --all-features --doc
@@ -39,6 +40,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-rust
+
       - run: cargo doc --all-features --no-deps --document-private-items
       - run: cargo doc --examples --no-deps
 
@@ -49,6 +51,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           components: clippy
+
       - run: cargo clippy --all-features --all-targets --no-deps
 
   rustfmt:
@@ -71,6 +74,7 @@ jobs:
         with:
           working-directory: "./packages/sci-cream"
       - uses: ./.github/actions/sci-cream-package
+
       - name: Run `vitest` tests
         run: pnpm run test:js
 
@@ -79,6 +83,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-pnpm
+
       - name: Run ESLint check
         run: pnpm run lint:js
 
@@ -87,6 +92,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-pnpm
+
       - name: Run Prettier check
         run: pnpm run prettier
 
@@ -101,10 +107,13 @@ jobs:
         with:
           working-directory: "./packages/sci-cream"
       - uses: ./.github/actions/sci-cream-package
+
       - name: Run Rust code coverage
         run: RUSTFLAGS="-A unstable_features" pnpm coverage:rust
+
       - name: Run JS code coverage
         run: pnpm coverage:js
+
       - if: vars.ACT != 'true'
         name: Upload code coverage reports to Codecov
         uses: codecov/codecov-action@v5
@@ -121,10 +130,12 @@ jobs:
       - uses: ./.github/actions/setup-rust
         with:
           cargo-installs: cargo-criterion
+
       - name: Run Rust benchmarks
         run: |
           set -o pipefail
           cargo criterion --all-features --output-format bencher 2>&1 | tee bench_output_rust.txt
+
       - if: vars.ACT != 'true'
         name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1
@@ -148,10 +159,12 @@ jobs:
         with:
           working-directory: "./packages/sci-cream"
       - uses: ./.github/actions/sci-cream-package
+
       - name: Run JS benchmarks
         run: |
           set -o pipefail
           pnpm run bench:js | tee bench_output_js.txt
+
       - if: vars.ACT != 'true'
         name: Store benchmark result
         uses: benchmark-action/github-action-benchmark@v1

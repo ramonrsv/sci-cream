@@ -6,6 +6,7 @@ runs:
     - name: Install Playwright default browsers
       shell: bash
       run: cd ./packages/app && pnpm playwright install --with-deps
+
     - name: Install Playwright Chrome browser
       shell: bash
       run: cd ./packages/app && pnpm playwright install chrome --with-deps

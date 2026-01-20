@@ -13,9 +13,11 @@ runs:
     - uses: dtolnay/rust-toolchain@stable
       with:
         components: ${{ inputs.components }}
+
     - uses: Swatinem/rust-cache@v2
       with:
         workspaces: "packages/sci-cream"
+
     - name: Install cargo packages
       if: ${{ inputs.cargo-installs != '' }}
       shell: bash

@@ -59,6 +59,7 @@ jobs:
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/sci-cream-package
       - uses: ./.github/actions/build-and-seed-database
+
       - name: Run app unit tests with Vitest
         run: pnpm test:unit
 
@@ -83,8 +84,10 @@ jobs:
       - uses: ./.github/actions/sci-cream-package
       - uses: ./.github/actions/build-and-seed-database
       - uses: ./.github/actions/setup-playwright
+
       - name: Run app end-to-end tests with Playwright
         run: pnpm test:e2e
+
       - if: ${{ vars.ACT != 'true' && !cancelled() }}
         name: Upload Playwright report
         uses: actions/upload-artifact@v4
@@ -97,6 +100,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-pnpm
+
       - name: Run ESLint check
         run: pnpm run lint
 
@@ -105,6 +109,7 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-pnpm
+
       - name: Run Prettier check
         run: pnpm run prettier
 
@@ -127,8 +132,10 @@ jobs:
       - uses: ./.github/actions/setup-node
       - uses: ./.github/actions/sci-cream-package
       - uses: ./.github/actions/build-and-seed-database
+
       - name: Run app code coverage
         run: pnpm coverage
+
       - if: vars.ACT != 'true'
         name: Upload code coverage reports to Codecov
         uses: codecov/codecov-action@v5
