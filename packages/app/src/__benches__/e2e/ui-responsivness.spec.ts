@@ -1,7 +1,12 @@
-import { test, expect, type Page } from "@playwright/test";
+import { test, expect } from "@playwright/test";
+
+import * as fs from "fs";
+import * as path from "path";
 
 import {
-  doBenchmarkMeasurements,
+  type BenchmarkResult,
+  doBenchmarkMeasurements as doBenchmarkMeasurementsGeneric,
+  formatBenchmarkResultForUpload,
   timeExecution,
   getIngredientNameInputAtIdx,
   getIngredientQtyInputAtIdx,
@@ -71,9 +76,19 @@ const RECIPE_TEXT = [
   "Vanilla Extract\t6",
 ].join("\n");
 
+// Collect all benchmark results for output
+const allBenchmarkResults: Array<BenchmarkResult> = [];
+
+function doBenchmarkMeasurements(name: string, run: () => Promise<number>) {
+  return doBenchmarkMeasurementsGeneric(COUNT_RUNS, name, run).then((result) => {
+    allBenchmarkResults.push(result);
+    return result;
+  });
+}
+
 test.describe("UI Responsiveness Performance Benchmarks", () => {
   test("should measure initial page load time", async ({ page }) => {
-    await doBenchmarkMeasurements(COUNT_RUNS, "Initial page load time", async () => {
+    await doBenchmarkMeasurements("Initial page load", async () => {
       return timeExecution(async () => {
         await page.goto("");
         await page.waitForLoadState("networkidle");
@@ -82,7 +97,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
   });
 
   test("should measure recipe ingredient input responsiveness", async ({ page }) => {
-    await doBenchmarkMeasurements(COUNT_RUNS, "Ingredient name input time", async () => {
+    await doBenchmarkMeasurements("Ingredient name input", async () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
@@ -97,82 +112,70 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
   });
 
   test("should measure composition grid ingredient input responsiveness", async ({ page }) => {
-    await doBenchmarkMeasurements(
-      COUNT_RUNS,
-      "Ingredient name input to composition time",
-      async () => {
-        await page.goto("");
-        await page.waitForLoadState("networkidle");
+    await doBenchmarkMeasurements("Ingredient name input to composition", async () => {
+      await page.goto("");
+      await page.waitForLoadState("networkidle");
 
-        const compGridQtyToggle = getCompositionGridQtyToggleInput(page);
-        await compGridQtyToggle.selectOption(QtyToggle.Composition);
+      const compGridQtyToggle = getCompositionGridQtyToggleInput(page);
+      await compGridQtyToggle.selectOption(QtyToggle.Composition);
 
-        const ingNameInput = getIngredientNameInputAtIdx(page, 0);
-        const compHeaders = getCompositionGridHeaders(page);
-        const milkFatStr = comp_key_as_med_str(CompKey.MilkFat);
+      const ingNameInput = getIngredientNameInputAtIdx(page, 0);
+      const compHeaders = getCompositionGridHeaders(page);
+      const milkFatStr = comp_key_as_med_str(CompKey.MilkFat);
 
-        const start = Date.now();
-        await ingNameInput.fill("2% Milk");
-        await expect(await compHeaders.allTextContents()).toContain(milkFatStr);
-        const milkFatCompValue = await getCompositionValueElement(page, 0, CompKey.MilkFat);
-        await expect(milkFatCompValue).toBeVisible();
-        await expect(milkFatCompValue).toHaveText("2");
-        return Date.now() - start;
-      },
-    );
+      const start = Date.now();
+      await ingNameInput.fill("2% Milk");
+      await expect(await compHeaders.allTextContents()).toContain(milkFatStr);
+      const milkFatCompValue = await getCompositionValueElement(page, 0, CompKey.MilkFat);
+      await expect(milkFatCompValue).toBeVisible();
+      await expect(milkFatCompValue).toHaveText("2");
+      return Date.now() - start;
+    });
   });
 
   test("should measure recipe quantity input responsiveness", async ({ page }) => {
-    const { avg } = await doBenchmarkMeasurements(
-      COUNT_RUNS,
-      "Ingredient quantity input time",
-      async () => {
-        await page.goto("");
-        await page.waitForLoadState("networkidle");
+    await doBenchmarkMeasurements("Ingredient quantity input", async () => {
+      await page.goto("");
+      await page.waitForLoadState("networkidle");
 
-        const ingQtyInput = getIngredientQtyInputAtIdx(page, 0);
+      const ingQtyInput = getIngredientQtyInputAtIdx(page, 0);
 
-        return timeExecution(async () => {
-          await ingQtyInput.fill("100");
-          await expect(ingQtyInput).toBeVisible();
-          await expect(ingQtyInput).toHaveValue("100");
-        });
-      },
-    );
+      return timeExecution(async () => {
+        await ingQtyInput.fill("100");
+        await expect(ingQtyInput).toBeVisible();
+        await expect(ingQtyInput).toHaveValue("100");
+      });
+    });
   });
 
   test("should measure properties grid quantity input responsiveness", async ({ page }) => {
-    await doBenchmarkMeasurements(
-      COUNT_RUNS,
-      "Ingredient quantity input to property time",
-      async () => {
-        await page.goto("");
-        await page.waitForLoadState("networkidle");
+    await doBenchmarkMeasurements("Ingredient quantity input to mix property", async () => {
+      await page.goto("");
+      await page.waitForLoadState("networkidle");
 
-        const propsGridQtyToggle = getMixPropertiesQtyToggleInput(page);
-        await propsGridQtyToggle.selectOption(QtyToggle.Quantity);
+      const propsGridQtyToggle = getMixPropertiesQtyToggleInput(page);
+      await propsGridQtyToggle.selectOption(QtyToggle.Quantity);
 
-        const ingNameInput = getIngredientNameInputAtIdx(page, 0);
-        await ingNameInput.fill("2% Milk");
-        await expect(ingNameInput).toBeVisible();
-        await expect(ingNameInput).toHaveValue("2% Milk");
+      const ingNameInput = getIngredientNameInputAtIdx(page, 0);
+      await ingNameInput.fill("2% Milk");
+      await expect(ingNameInput).toBeVisible();
+      await expect(ingNameInput).toHaveValue("2% Milk");
 
-        const ingQtyInput = getIngredientQtyInputAtIdx(page, 0);
-        const milkFatPropValue = getMixPropertyValueElement(page, compToPropKey(CompKey.MilkFat));
+      const ingQtyInput = getIngredientQtyInputAtIdx(page, 0);
+      const milkFatPropValue = getMixPropertyValueElement(page, compToPropKey(CompKey.MilkFat));
 
-        return timeExecution(async () => {
-          await ingQtyInput.fill("100");
-          await expect(milkFatPropValue).toBeVisible();
-          await expect(milkFatPropValue).toHaveText("2");
-        });
-      },
-    );
+      return timeExecution(async () => {
+        await ingQtyInput.fill("100");
+        await expect(milkFatPropValue).toBeVisible();
+        await expect(milkFatPropValue).toHaveText("2");
+      });
+    });
   });
 
   test("should measure recipe paste responsiveness", async ({ page, browserName }) => {
     test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
 
-    await doBenchmarkMeasurements(COUNT_RUNS, "Recipe paste time", async () => {
+    await doBenchmarkMeasurements("Recipe paste", async () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
@@ -202,5 +205,17 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
         await expect(energyCompValue).toHaveText("11.5");
       });
     });
+  });
+
+  // Write results to file after all benchmarks complete
+  test.afterAll(() => {
+    const forUpload = allBenchmarkResults.map((result) => formatBenchmarkResultForUpload(result));
+
+    const outputDir = path.join(process.cwd(), "bench-results");
+    fs.mkdirSync(outputDir, { recursive: true });
+
+    const outputPath = path.join(outputDir, "bench_output_ui.json");
+    fs.writeFileSync(outputPath, JSON.stringify(forUpload, null, 2));
+    console.log(`\nBenchmark results written to: ${outputPath}`);
   });
 });

@@ -10,6 +10,16 @@ declare global {
   }
 }
 
+export type BenchmarkResult = {
+  name: string;
+  avg: number;
+  min: number;
+  max: number;
+  stdDev: number;
+};
+
+export type BenchmarkResultForUpload = { name: string; unit: string; value: number; range: string };
+
 export async function doBenchmarkMeasurements(
   countRuns: number,
   name: string,
@@ -25,10 +35,19 @@ export async function doBenchmarkMeasurements(
   const min = Math.min(...measurements);
   const max = Math.max(...measurements);
 
+  const stdDev = Math.sqrt(
+    measurements.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / measurements.length,
+  );
+
   console.log(
     `${name}: [${Math.round(min)}ms, ${Math.round(avg)}ms, ${Math.round(max)}ms], ${countRuns} runs`,
   );
-  return { avg, min, max };
+
+  return { name, avg, min, max, stdDev };
+}
+
+export function formatBenchmarkResultForUpload(result: BenchmarkResult) {
+  return { name: result.name, unit: "ms", value: result.avg, range: result.stdDev.toFixed(2) };
 }
 
 export async function timeExecution(fn: () => Promise<void>): Promise<number> {

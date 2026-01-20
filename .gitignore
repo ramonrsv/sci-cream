@@ -60,3 +60,6 @@ next-env.d.ts
 /packages/app/blob-report
 /packages/app/playwright/.cache
 /packages/app/playwright/.auth
+
+# Benchmark results
+/packages/app/bench-results
