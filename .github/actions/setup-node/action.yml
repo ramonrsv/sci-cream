@@ -1,0 +1,17 @@
+name: 'Setup Node.js Environment'
+description: 'Setup Node.js & pnpm Environment, and Install Dependencies'
+inputs:
+  working-directory:
+    # Note that this is relative to the root of the repository.
+    description: 'Working directory to run pnpm install in'
+    required: false
+    default: '.'
+runs:
+  using: 'composite'
+  steps:
+    - uses: actions/setup-node@v4
+      with:
+        node-version: "24"
+    - uses: ./.github/actions/setup-pnpm
+      with:
+        working-directory: ${{ inputs.working-directory }}

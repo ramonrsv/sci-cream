@@ -29,10 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: "packages/sci-cream"
+      - uses: ./.github/actions/setup-rust
       - run: cargo build --all-features --all-targets
       - run: cargo test --all-features --all-targets
       - run: cargo test --all-features --doc
@@ -41,10 +38,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: "packages/sci-cream"
+      - uses: ./.github/actions/setup-rust
       - run: cargo doc --all-features --no-deps --document-private-items
       - run: cargo doc --examples --no-deps
 
@@ -52,46 +46,31 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: ./.github/actions/setup-rust
         with:
           components: clippy
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: "packages/sci-cream"
       - run: cargo clippy --all-features --all-targets --no-deps
 
   rustfmt:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@stable
+      - uses: ./.github/actions/setup-rust
         with:
           components: rustfmt
-      - uses: Swatinem/rust-cache@v2
-        with:
-          workspaces: "packages/sci-cream"
       - run: cargo fmt --all -- --check
 
   pnpm_build_and_test:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+      - uses: ./.github/actions/setup-rust
         with:
-          workspaces: "packages/sci-cream"
-      - name: Install wasm-pack
-        run: cargo install wasm-pack
-      - uses: actions/setup-node@v4
+          cargo-installs: wasm-pack
+      - uses: ./.github/actions/setup-node
         with:
-          node-version: "24"
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Install dependencies
-        run: pnpm install
-      - name: Set up prerequisites for JS tests
-        run: pnpm prerequisites:js
+          working-directory: "./packages/sci-cream"
+      - uses: ./.github/actions/sci-cream-package
       - name: Run `vitest` tests
         run: pnpm run test:js
 
@@ -99,11 +78,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Install dependencies, ESLint and plugins
-        run: pnpm install
+      - uses: ./.github/actions/setup-pnpm
       - name: Run ESLint check
         run: pnpm run lint:js
 
@@ -111,11 +86,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Install prettier
-        run: pnpm install -D prettier prettier-plugin-tailwindcss
+      - uses: ./.github/actions/setup-pnpm
       - name: Run Prettier check
         run: pnpm run prettier
 
@@ -123,24 +94,13 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+      - uses: ./.github/actions/setup-rust
         with:
-          workspaces: "packages/sci-cream"
-      - name: Install cargo-llvm-cov
-        run: cargo install cargo-llvm-cov
-      - name: Install wasm-pack
-        run: cargo install wasm-pack
-      - uses: actions/setup-node@v4
+          cargo-installs: wasm-pack,cargo-llvm-cov
+      - uses: ./.github/actions/setup-node
         with:
-          node-version: "24"
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Install pnpm dependencies
-        run: pnpm install
-      - name: Set up prerequisites for JS tests
-        run: pnpm prerequisites:js
+          working-directory: "./packages/sci-cream"
+      - uses: ./.github/actions/sci-cream-package
       - name: Run Rust code coverage
         run: RUSTFLAGS="-A unstable_features" pnpm coverage:rust
       - name: Run JS code coverage
@@ -158,12 +118,9 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+      - uses: ./.github/actions/setup-rust
         with:
-          workspaces: "packages/sci-cream"
-      - name: Install cargo-criterion
-        run: cargo install cargo-criterion
+          cargo-installs: cargo-criterion
       - name: Run Rust benchmarks
         run: |
           set -o pipefail
@@ -184,22 +141,13 @@ jobs:
       contents: write
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+      - uses: ./.github/actions/setup-rust
         with:
-          workspaces: "packages/sci-cream"
-      - name: Install wasm-pack
-        run: cargo install wasm-pack
-      - uses: actions/setup-node@v4
+          cargo-installs: wasm-pack
+      - uses: ./.github/actions/setup-node
         with:
-          node-version: "24"
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Install dependencies
-        run: pnpm install
-      - name: Set up prerequisites for JS tests
-        run: pnpm prerequisites:js
+          working-directory: "./packages/sci-cream"
+      - uses: ./.github/actions/sci-cream-package
       - name: Run JS benchmarks
         run: |
           set -o pipefail

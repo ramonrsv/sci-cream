@@ -53,28 +53,12 @@ jobs:
       DATABASE_URL: postgres://postgres:password@localhost:5432/sci_cream
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+      - uses: ./.github/actions/setup-rust
         with:
-          workspaces: "packages/sci-cream"
-      - name: Install wasm-pack
-        run: cargo install wasm-pack
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Install workspace pnpm dependencies
-        run: pnpm --dir ../../ install
-      - name: Set up prerequisites
-        run: pnpm prerequisites
-      - name: Build app
-        run: pnpm build
-      - name: Seed database
-        run: |
-          npx drizzle-kit push
-          pnpm tsx ./src/lib/db/seed.ts
+          cargo-installs: wasm-pack
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/sci-cream-package
+      - uses: ./.github/actions/build-and-seed-database
       - name: Run app unit tests with Vitest
         run: pnpm test:unit
 
@@ -102,32 +86,13 @@ jobs:
       DATABASE_URL: postgres://postgres:password@localhost:5433/sci_cream
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+      - uses: ./.github/actions/setup-rust
         with:
-          workspaces: "packages/sci-cream"
-      - name: Install wasm-pack
-        run: cargo install wasm-pack
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Install workspace pnpm dependencies
-        run: pnpm --dir ../../ install
-      - name: Set up prerequisites
-        run: pnpm prerequisites
-      - name: Build app
-        run: pnpm build
-      - name: Seed database
-        run: |
-          npx drizzle-kit push
-          pnpm tsx ./src/lib/db/seed.ts
-      - name: Install Playwright default browsers
-        run: pnpm playwright install --with-deps
-      - name: Install Playwright Chrome browser
-        run: pnpm playwright install chrome --with-deps
+          cargo-installs: wasm-pack
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/sci-cream-package
+      - uses: ./.github/actions/build-and-seed-database
+      - uses: ./.github/actions/setup-playwright
       - name: Run app end-to-end tests with Playwright
         run: pnpm test:e2e
       - if: ${{ vars.ACT != 'true' && !cancelled() }}
@@ -141,11 +106,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Install dependencies, ESLint and plugins
-        run: pnpm install
+      - uses: ./.github/actions/setup-pnpm
       - name: Run ESLint check
         run: pnpm run lint
 
@@ -153,11 +114,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v5
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Install prettier
-        run: pnpm install -D prettier prettier-plugin-tailwindcss
+      - uses: ./.github/actions/setup-pnpm
       - name: Run Prettier check
         run: pnpm run prettier
 
@@ -184,28 +141,12 @@ jobs:
       DATABASE_URL: postgres://postgres:password@localhost:5434/sci_cream
     steps:
       - uses: actions/checkout@v5
-      - uses: dtolnay/rust-toolchain@stable
-      - uses: Swatinem/rust-cache@v2
+      - uses: ./.github/actions/setup-rust
         with:
-          workspaces: "packages/sci-cream"
-      - name: Install wasm-pack
-        run: cargo install wasm-pack
-      - uses: actions/setup-node@v4
-        with:
-          node-version: "24"
-      - uses: pnpm/action-setup@v4
-        with:
-          version: 10
-      - name: Install workspace pnpm dependencies
-        run: pnpm --dir ../../ install
-      - name: Set up prerequisites
-        run: pnpm prerequisites
-      - name: Build app
-        run: pnpm build
-      - name: Seed database
-        run: |
-          npx drizzle-kit push
-          pnpm tsx ./src/lib/db/seed.ts
+          cargo-installs: wasm-pack
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/sci-cream-package
+      - uses: ./.github/actions/build-and-seed-database
       - name: Run app code coverage
         run: pnpm coverage
       - if: vars.ACT != 'true'

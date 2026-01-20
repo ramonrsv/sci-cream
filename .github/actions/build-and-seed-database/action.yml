@@ -1,0 +1,14 @@
+name: 'Build App and Seed Database'
+description: 'Build /packages/app and seed the database with initial data'
+runs:
+  using: 'composite'
+  steps:
+    - name: Build app
+      shell: bash
+      run: pnpm --dir ./packages/app build
+    - name: Seed database
+      shell: bash
+      run: |
+        cd ./packages/app
+        npx drizzle-kit push
+        pnpm tsx ./src/lib/db/seed.ts

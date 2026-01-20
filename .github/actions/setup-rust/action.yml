@@ -1,0 +1,26 @@
+name: 'Setup Rust Environment'
+description: 'Setup Rust toolchain with caching'
+inputs:
+  components:
+    description: 'Additional components'
+    required: false
+  cargo-installs:
+    description: 'Cargo packages to install (comma-separated)'
+    required: false
+runs:
+  using: 'composite'
+  steps:
+    - uses: dtolnay/rust-toolchain@stable
+      with:
+        components: ${{ inputs.components }}
+    - uses: Swatinem/rust-cache@v2
+      with:
+        workspaces: "packages/sci-cream"
+    - name: Install cargo packages
+      if: ${{ inputs.cargo-installs != '' }}
+      shell: bash
+      run: |
+        IFS=',' read -ra PACKAGES <<< "${{ inputs.cargo-installs }}"
+        for package in "${PACKAGES[@]}"; do
+          cargo install "$package"
+        done
