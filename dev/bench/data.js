@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768714571949,
+  "lastUpdate": 1768873719715,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -515,6 +515,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 307,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c5e5a000043947b4bce576862f818f750f2ceef6",
+          "message": "Check in Cargo.lock and pnpm-lock.yaml, for cache\n\nCheck in Cargo.lock and pnpm-lock.yaml to enable more reproducible\nbuilds in CI, and so that they can be used for cache keys in CI.",
+          "timestamp": "2026-01-19T20:34:03-05:00",
+          "tree_id": "33962f70602990f0ec698505f33ccee6d51e49c9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c5e5a000043947b4bce576862f818f750f2ceef6"
+        },
+        "date": 1768873718839,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 1933,
+            "range": "± 40",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 130026,
+            "range": "± 2877",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 264,
+            "range": "± 13",
             "unit": "ns/iter"
           }
         ]
