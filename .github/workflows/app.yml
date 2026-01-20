@@ -35,18 +35,18 @@ jobs:
     services:
       postgres:
         image: postgres:16
-        env:
+        env: &postgres-env
           POSTGRES_DB: sci_cream
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: password
-        ports:
-          # Host port matching port in DATABASE_URL
-          - 5432:5432 # host:service_container
-        options: >-
+        options: &postgres-options >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
           --health-retries 5
+        ports:
+          # Host port matching port in DATABASE_URL
+          - 5432:5432 # host:service_container
     env:
       # Ensure that no two jobs with a postgres service use the same port,
       # as this can cause conflicts when running locally via `act`.
@@ -68,21 +68,11 @@ jobs:
     services:
       postgres:
         image: postgres:16
-        env:
-          POSTGRES_DB: sci_cream
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
+        env: *postgres-env
+        options: *postgres-options
         ports:
-          # Host port matching port in DATABASE_URL
-          - 5433:5432 # host:service_container
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          - 5433:5432
     env:
-      # Ensure that no two jobs with a postgres service use the same port,
-      # as this can cause conflicts when running locally via `act`.
       DATABASE_URL: postgres://postgres:password@localhost:5433/sci_cream
     steps:
       - uses: actions/checkout@v5
@@ -123,21 +113,11 @@ jobs:
     services:
       postgres:
         image: postgres:16
-        env:
-          POSTGRES_DB: sci_cream
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: password
+        env: *postgres-env
+        options: *postgres-options
         ports:
-          # Host port matching port in DATABASE_URL
-          - 5434:5432 # host:service_container
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
+          - 5434:5432
     env:
-      # Ensure that no two jobs with a postgres service use the same port,
-      # as this can cause conflicts when running locally via `act`.
       DATABASE_URL: postgres://postgres:password@localhost:5434/sci_cream
     steps:
       - uses: actions/checkout@v5
