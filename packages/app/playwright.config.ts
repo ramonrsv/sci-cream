@@ -5,7 +5,7 @@ import "dotenv/config";
 // See https://playwright.dev/docs/test-configuration.
 export default defineConfig({
   testDir: "./src/__tests__/e2e",
-  fullyParallel: false /* Prevent test interference for performance benchmarks */,
+  fullyParallel: process.env.CI ? false : true /* Opt out of parallel test on CI. */,
   forbidOnly: !!process.env.CI /* Fail CI build if test.only was left in the source code. */,
   retries: process.env.CI ? 2 : 0 /* Retry on CI only */,
   workers: process.env.CI ? 1 : undefined /* Opt out of parallel tests on CI. */,
@@ -30,6 +30,15 @@ export default defineConfig({
     /* Test against branded browsers. */
     { name: "Google Chrome", use: { ...devices["Desktop Chrome"], channel: "chrome" } },
     // { name: "Microsoft Edge", use: { ...devices["Desktop Edge"], channel: "msedge" } },
+
+    /* Benchmarking project */
+    {
+      name: "benchmarks",
+      testDir: "./src/__benches__/e2e",
+      use: { ...devices["Desktop Chrome"], channel: "chrome" },
+      fullyParallel: false /* Disable parallel tests for benchmarks */,
+      workers: 1 /* Single worker to avoid interference */,
+    },
   ],
 
   /* Run your local dev server before starting the tests */
