@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768877773052,
+  "lastUpdate": 1768943004653,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -641,6 +641,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 263,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d07d2d6d374c0036d9d91bc55908067d397dd2a3",
+          "message": "Separate end-2-end Playwright tests and benchmarks\n\nTests under __tests__/e2e should be regular end-to-end tests mostly\nverifying functionality. Tests under __benches__/e2e are mostly\nconcerned with measuring and reporting performance benchmarks; they run\nonly on one browser, but take multiple measurements and average them.\n\nMove reusable helper functions out to __tests__/util.",
+          "timestamp": "2026-01-20T14:06:07-05:00",
+          "tree_id": "ccab938e0a555e2ed4c259f7070118de179e2ba0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d07d2d6d374c0036d9d91bc55908067d397dd2a3"
+        },
+        "date": 1768943003806,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2376,
+            "range": "± 49",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 162777,
+            "range": "± 1277",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 311,
+            "range": "± 22",
             "unit": "ns/iter"
           }
         ]
