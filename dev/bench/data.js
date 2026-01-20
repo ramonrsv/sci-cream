@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768877263082,
+  "lastUpdate": 1768877587278,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -599,6 +599,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 304,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "74044b3d30a1a19e876cab2d422b80e8ec1276f0",
+          "message": "Format YAML files using esbenp.prettier-vscode",
+          "timestamp": "2026-01-19T21:43:54-05:00",
+          "tree_id": "a0040db8fb5435c63cab7ff432276c595b6946a9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/74044b3d30a1a19e876cab2d422b80e8ec1276f0"
+        },
+        "date": 1768877586457,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 1857,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 130460,
+            "range": "± 2286",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 263,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
