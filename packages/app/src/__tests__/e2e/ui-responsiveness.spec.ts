@@ -7,24 +7,24 @@ import {
   getMixPropertiesQtyToggleInput,
   getMixPropertyValueElement,
   getCompositionGridQtyToggleInput,
-  getCompositionGridHeaders,
   getCompositionValueElement,
   pastToClipboard,
   getPasteButton,
+  recipePasteCheckElements,
+  recipeUpdateCompleted,
 } from "@/__tests__/util";
 
-import { REFERENCE_RECIPE_TEXT } from "@/__tests__/assets";
+import {
+  REFERENCE_RECIPE_TEXT,
+  LAST_INGREDIENT_IDX,
+  EXPECTED_LAST_INGREDIENT,
+} from "@/__tests__/assets";
 
 import { QtyToggle } from "@/lib/ui/key-selection";
-import {
-  CompKey,
-  comp_key_as_med_str,
-  FpdKey,
-  compToPropKey,
-  fpdToPropKey,
-} from "@workspace/sci-cream";
+import { CompKey, comp_key_as_med_str, compToPropKey } from "@workspace/sci-cream";
 
 import { Metric } from "@/lib/web-vitals";
+import { sleep_ms } from "@/lib/util";
 
 declare global {
   interface Window {
@@ -93,7 +93,6 @@ test.describe("UI Responsiveness Performance Checks", () => {
     await compGridQtyToggle.selectOption(QtyToggle.Composition);
 
     const ingNameInput = getIngredientNameInputAtIdx(page, 0);
-    const compHeaders = getCompositionGridHeaders(page);
     const milkFatStr = comp_key_as_med_str(CompKey.MilkFat);
 
     const exec_time = await timeExecution(async () => {
@@ -155,29 +154,59 @@ test.describe("UI Responsiveness Performance Checks", () => {
     await pastToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
     const pasteButton = getPasteButton(page);
 
-    const lastIngIdx = 9;
-    const lastIngNameInput = getIngredientNameInputAtIdx(page, lastIngIdx);
-    const lastIngQtyInput = getIngredientQtyInputAtIdx(page, lastIngIdx);
-    const propServingTemp = getMixPropertyValueElement(page, fpdToPropKey(FpdKey.ServingTemp));
-    const compHeaders = getCompositionGridHeaders(page);
-    const energyStr = comp_key_as_med_str(CompKey.Energy);
+    const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
 
     const exec_time = await timeExecution(async () => {
       await pasteButton.click();
-      await expect(lastIngNameInput).toBeVisible();
-      await expect(lastIngQtyInput).toBeVisible();
-      await expect(propServingTemp).toBeVisible();
-
-      await expect(lastIngNameInput).toHaveValue("Vanilla Extract");
-      await expect(lastIngQtyInput).toHaveValue("6");
-      await expect(propServingTemp).toHaveText("-13.37");
-
-      await page.getByRole("columnheader", { name: energyStr }).waitFor();
-      const energyCompValue = await getCompositionValueElement(page, lastIngIdx, CompKey.Energy);
-      await expect(energyCompValue).toBeVisible();
-      await expect(energyCompValue).toHaveText("11.5");
+      await recipeUpdateCompleted(page, elements, EXPECTED_LAST_INGREDIENT);
     });
 
     expect(exec_time).toBeLessThan(THRESHOLDS.paste_response);
+  });
+
+  // Simulates a slow initial load to ensure that recipe paste remains responsive and that the UI
+  // updates correctly once the data is available. It should fail if the `useEffect` in `RecipeGrid`
+  // to "Prevent stale ingredient rows if pasted quickly whilst... still loading..." is removed.
+  test("recipe paste should be resilient to slow initial load", async ({ page, browserName }) => {
+    test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
+
+    // Simulate slow fetch API responses
+    await page.route("**/*", async (route) => {
+      const method = route.request().method();
+      const headers = route.request().headers();
+
+      if (method === "POST" && headers["next-action"]) {
+        await sleep_ms(2000);
+      }
+
+      await route.continue();
+    });
+
+    const gotoStart = Date.now();
+    await page.goto("");
+    await page.waitForLoadState("domcontentloaded");
+
+    await pastToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+    const pasteButton = getPasteButton(page);
+
+    const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
+    const expected = EXPECTED_LAST_INGREDIENT;
+
+    const pasteStart = Date.now();
+    await pasteButton.click();
+    await expect(elements.ingNameInput).toHaveValue(expected.name);
+    await expect(elements.ingQtyInput).toHaveValue(expected.qty.toString());
+    await expect(elements.propServingTemp).toBeVisible();
+    await expect(elements.propServingTemp).not.toHaveText(expected.servingTemp);
+    const pasteEnd = Date.now();
+
+    await recipeUpdateCompleted(page, elements, EXPECTED_LAST_INGREDIENT);
+    const updateEnd = Date.now();
+
+    const pasteTime = pasteEnd - pasteStart;
+    const updateTime = updateEnd - gotoStart;
+
+    expect(pasteTime).toBeLessThan(THRESHOLDS.paste_response);
+    expect(updateTime).toBeGreaterThan(2000);
   });
 });

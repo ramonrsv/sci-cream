@@ -1,4 +1,4 @@
-import { test, expect, type Page, Locator } from "@playwright/test";
+import { test, expect } from "@playwright/test";
 
 import * as fs from "fs";
 import * as path from "path";
@@ -13,11 +13,12 @@ import {
   getMixPropertiesQtyToggleInput,
   getMixPropertyValueElement,
   getCompositionGridQtyToggleInput,
-  getCompositionGridHeaders,
   getCompositionValueElement,
   pastToClipboard,
   getPasteButton,
   getRecipeSelector,
+  recipePasteCheckElements,
+  recipeUpdateCompleted,
 } from "@/__tests__/util";
 
 import {
@@ -30,13 +31,7 @@ import {
 } from "@/__tests__/assets";
 
 import { QtyToggle } from "@/lib/ui/key-selection";
-import {
-  CompKey,
-  comp_key_as_med_str,
-  FpdKey,
-  compToPropKey,
-  fpdToPropKey,
-} from "@workspace/sci-cream";
+import { CompKey, comp_key_as_med_str, compToPropKey } from "@workspace/sci-cream";
 
 import { Metric } from "@/lib/web-vitals";
 
@@ -116,7 +111,6 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await compGridQtyToggle.selectOption(QtyToggle.Composition);
 
       const ingNameInput = getIngredientNameInputAtIdx(page, 0);
-      const compHeaders = getCompositionGridHeaders(page);
       const milkFatStr = comp_key_as_med_str(CompKey.MilkFat);
 
       const start = Date.now();
@@ -167,48 +161,6 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       });
     });
   });
-
-  type RecipePasteElements = {
-    ingredientIdx: number;
-    ingNameInput: Locator;
-    ingQtyInput: Locator;
-    propServingTemp: Locator;
-    compHeaders: Locator;
-    energyStr: string;
-  };
-
-  const recipePasteCheckElements = async (page: Page, ingredientIdx: number) => {
-    const ingNameInput = getIngredientNameInputAtIdx(page, ingredientIdx);
-    const ingQtyInput = getIngredientQtyInputAtIdx(page, ingredientIdx);
-    const propServingTemp = getMixPropertyValueElement(page, fpdToPropKey(FpdKey.ServingTemp));
-    const compHeaders = getCompositionGridHeaders(page);
-    const energyStr = comp_key_as_med_str(CompKey.Energy);
-
-    return { ingredientIdx, ingNameInput, ingQtyInput, propServingTemp, compHeaders, energyStr };
-  };
-
-  const recipeUpdateCompleted = async (
-    page: Page,
-    elements: RecipePasteElements,
-    expected: { name: string; qty: number; servingTemp: string; energy: string },
-  ) => {
-    await expect(elements.ingNameInput).toBeVisible();
-    await expect(elements.ingQtyInput).toBeVisible();
-    await expect(elements.propServingTemp).toBeVisible();
-
-    await expect(elements.ingNameInput).toHaveValue(expected.name);
-    await expect(elements.ingQtyInput).toHaveValue(expected.qty.toString());
-    await expect(elements.propServingTemp).toHaveText(expected.servingTemp);
-
-    await page.getByRole("columnheader", { name: elements.energyStr }).waitFor();
-    const energyCompValue = await getCompositionValueElement(
-      page,
-      elements.ingredientIdx,
-      CompKey.Energy,
-    );
-    await expect(energyCompValue).toBeVisible();
-    await expect(energyCompValue).toHaveText(expected.energy);
-  };
 
   test("should measure recipe paste responsiveness", async ({ page, browserName }) => {
     test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
