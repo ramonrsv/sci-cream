@@ -55,3 +55,4 @@
 - [ ] When making a lot of fast changes to a recipe, e.g. by repeatedly clicking the quantity arrow
       very quickly, the UI can become a bit unresponsive for a few seconds. This much easier to
       reproduce if a log is added to `updateRecipe` in `recipe.tsx`.
+- [ ] Investigate the stability issues when making many rapid ingredient quantity updates.

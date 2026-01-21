@@ -13,6 +13,8 @@ import {
   getPasteButton,
 } from "@/__tests__/util";
 
+import { REFERENCE_RECIPE_TEXT } from "@/__tests__/assets";
+
 import { QtyToggle } from "@/lib/ui/key-selection";
 import {
   CompKey,
@@ -57,20 +59,6 @@ test("should collect web vitals metrics and be good", async ({ page }) => {
 });
 
 const THRESHOLDS = { page_load: 3000, input_response: 250 * 2, paste_response: 500 * 2 };
-
-const RECIPE_TEXT = [
-  "Ingredient\tQty(g)",
-  "Whole Milk\t245",
-  "Whipping Cream\t215",
-  "Cocoa Powder, 17% Fat\t28",
-  "Skimmed Milk Powder\t21",
-  "Egg Yolk\t18",
-  "Dextrose\t45",
-  "Fructose\t32",
-  "Salt\t0.5",
-  "Rich Ice Cream SB\t1.25",
-  "Vanilla Extract\t6",
-].join("\n");
 
 test.describe("UI Responsiveness Performance Checks", () => {
   test("should measure initial page load time", async ({ page }) => {
@@ -164,7 +152,7 @@ test.describe("UI Responsiveness Performance Checks", () => {
     await page.goto("");
     await page.waitForLoadState("networkidle");
 
-    await pastToClipboard(page, browserName, RECIPE_TEXT);
+    await pastToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
     const pasteButton = getPasteButton(page);
 
     const lastIngIdx = 9;

@@ -20,6 +20,15 @@ import {
   getRecipeSelector,
 } from "@/__tests__/util";
 
+import {
+  REFERENCE_RECIPE_TEXT,
+  LAST_INGREDIENT_IDX,
+  EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT,
+  LAST_UPDATE_IDX,
+  EXPECTED_FIRST_INGREDIENT,
+  EXPECTED_LAST_INGREDIENT,
+} from "@/__tests__/assets";
+
 import { QtyToggle } from "@/lib/ui/key-selection";
 import {
   CompKey,
@@ -62,22 +71,6 @@ test("should collect web vitals metrics and be good", async ({ page }) => {
 });
 
 const COUNT_RUNS = 10;
-
-const RECIPE_TEXT = [
-  "Ingredient\tQty(g)",
-  "Whole Milk\t245",
-  "Whipping Cream\t215",
-  "Cocoa Powder, 17% Fat\t28",
-  "Skimmed Milk Powder\t21",
-  "Egg Yolk\t18",
-  "Dextrose\t45",
-  "Fructose\t32",
-  "Salt\t0.5",
-  "Rich Ice Cream SB\t1.25",
-  "Vanilla Extract\t6",
-].join("\n");
-
-const LAST_INGREDIENT_IDX = 9;
 
 // Collect all benchmark results for output
 const allBenchmarkResults: Array<BenchmarkResult> = [];
@@ -217,13 +210,6 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
     await expect(energyCompValue).toHaveText(expected.energy);
   };
 
-  const EXPECTED_LAST_INGREDIENT = {
-    name: "Vanilla Extract",
-    qty: 6,
-    servingTemp: "-13.37",
-    energy: "11.5",
-  };
-
   test("should measure recipe paste responsiveness", async ({ page, browserName }) => {
     test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
 
@@ -231,7 +217,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pastToClipboard(page, browserName, RECIPE_TEXT);
+      await pastToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
       const pasteButton = getPasteButton(page);
 
       const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
@@ -250,7 +236,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pastToClipboard(page, browserName, RECIPE_TEXT);
+      await pastToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
       const pasteButton = getPasteButton(page);
       await pasteButton.click();
 
@@ -275,29 +261,6 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
     });
   });
 
-  const EXPECTED_FIRST_INGREDIENT = {
-    name: "Whole Milk",
-    qty: 245,
-    servingTemp: "-13.37",
-    energy: "148",
-  };
-
-  const EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT = [
-    { qty: 250, servingTemp: "-13.26", energy: "151.1" },
-    { qty: 255, servingTemp: "-13.15", energy: "154.1" },
-    { qty: 260, servingTemp: "-13.04", energy: "157.1" },
-    { qty: 265, servingTemp: "-12.94", energy: "160.1" },
-    { qty: 270, servingTemp: "-12.83", energy: "163.1" },
-    { qty: 275, servingTemp: "-12.73", energy: "166.2" },
-    { qty: 280, servingTemp: "-12.62", energy: "169.2" },
-    { qty: 285, servingTemp: "-12.49", energy: "172.2" },
-    { qty: 290, servingTemp: "-12.36", energy: "175.2" },
-    { qty: 295, servingTemp: "-12.25", energy: "178.2" },
-    { qty: 300, servingTemp: "-12.13", energy: "181.3" },
-  ].map(({ qty, servingTemp, energy }) => ({ name: "Whole Milk", qty, servingTemp, energy }));
-
-  const LAST_UPDATE_IDX = EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT.length - 1;
-
   test("should measure rapid ingredient quantity updates, waiting each update completion", async ({
     page,
     browserName,
@@ -306,7 +269,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pastToClipboard(page, browserName, RECIPE_TEXT);
+      await pastToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
       const pasteButton = getPasteButton(page);
       await pasteButton.click();
 
@@ -330,7 +293,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pastToClipboard(page, browserName, RECIPE_TEXT);
+      await pastToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
       const pasteButton = getPasteButton(page);
       await pasteButton.click();
 
