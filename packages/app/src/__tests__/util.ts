@@ -49,10 +49,10 @@ export function formatBenchmarkResultForUpload(result: BenchmarkResult) {
   return { name: result.name, unit: "ms", value: result.avg, range: result.stdDev.toFixed(2) };
 }
 
-export async function timeExecution(fn: () => Promise<void>): Promise<number> {
+export async function timeExecution(fn: () => Promise<void>, divider: number = 1): Promise<number> {
   const start = Date.now();
   await fn();
-  return Date.now() - start;
+  return (Date.now() - start) / divider;
 }
 
 export function getIngredientNameInputAtIdx(page: Page, index: number) {
