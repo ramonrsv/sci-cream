@@ -102,3 +102,7 @@ export async function pastToClipboard(page: Page, browserName: string, text: str
 export function getPasteButton(page: Page) {
   return page.getByRole("button", { name: "Paste" });
 }
+
+export function getRecipeSelector(page: Page) {
+  return page.locator("#recipe-grid select").first();
+}

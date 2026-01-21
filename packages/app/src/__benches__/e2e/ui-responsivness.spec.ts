@@ -1,4 +1,4 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page, Locator } from "@playwright/test";
 
 import * as fs from "fs";
 import * as path from "path";
@@ -17,6 +17,7 @@ import {
   getCompositionValueElement,
   pastToClipboard,
   getPasteButton,
+  getRecipeSelector,
 } from "@/__tests__/util";
 
 import { QtyToggle } from "@/lib/ui/key-selection";
@@ -172,6 +173,52 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
     });
   });
 
+  type RecipePasteElements = {
+    lastIngIdx: number;
+    lastIngNameInput: Locator;
+    lastIngQtyInput: Locator;
+    propServingTemp: Locator;
+    compHeaders: Locator;
+    energyStr: string;
+  };
+
+  const recipePasteCheckElements = async (page: Page) => {
+    const lastIngIdx = 9;
+    const lastIngNameInput = getIngredientNameInputAtIdx(page, lastIngIdx);
+    const lastIngQtyInput = getIngredientQtyInputAtIdx(page, lastIngIdx);
+    const propServingTemp = getMixPropertyValueElement(page, fpdToPropKey(FpdKey.ServingTemp));
+    const compHeaders = getCompositionGridHeaders(page);
+    const energyStr = comp_key_as_med_str(CompKey.Energy);
+
+    return {
+      lastIngIdx,
+      lastIngNameInput,
+      lastIngQtyInput,
+      propServingTemp,
+      compHeaders,
+      energyStr,
+    };
+  };
+
+  const recipePasteCompleted = async (page: Page, elements: RecipePasteElements) => {
+    await expect(elements.lastIngNameInput).toBeVisible();
+    await expect(elements.lastIngQtyInput).toBeVisible();
+    await expect(elements.propServingTemp).toBeVisible();
+
+    await expect(elements.lastIngNameInput).toHaveValue("Vanilla Extract");
+    await expect(elements.lastIngQtyInput).toHaveValue("6");
+    await expect(elements.propServingTemp).toHaveText("-13.37");
+
+    await expect(await elements.compHeaders.allTextContents()).toContain(elements.energyStr);
+    const energyCompValue = await getCompositionValueElement(
+      page,
+      elements.lastIngIdx,
+      CompKey.Energy,
+    );
+    await expect(energyCompValue).toBeVisible();
+    await expect(energyCompValue).toHaveText("11.5");
+  };
+
   test("should measure recipe paste responsiveness", async ({ page, browserName }) => {
     test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
 
@@ -182,27 +229,43 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await pastToClipboard(page, browserName, RECIPE_TEXT);
       const pasteButton = getPasteButton(page);
 
-      const lastIngIdx = 9;
-      const lastIngNameInput = getIngredientNameInputAtIdx(page, lastIngIdx);
-      const lastIngQtyInput = getIngredientQtyInputAtIdx(page, lastIngIdx);
-      const propServingTemp = getMixPropertyValueElement(page, fpdToPropKey(FpdKey.ServingTemp));
-      const compHeaders = getCompositionGridHeaders(page);
-      const energyStr = comp_key_as_med_str(CompKey.Energy);
+      const recipePasteElements = await recipePasteCheckElements(page);
 
       return timeExecution(async () => {
         await pasteButton.click();
-        await expect(lastIngNameInput).toBeVisible();
-        await expect(lastIngQtyInput).toBeVisible();
-        await expect(propServingTemp).toBeVisible();
+        await recipePasteCompleted(page, recipePasteElements);
+      });
+    });
+  });
 
-        await expect(lastIngNameInput).toHaveValue("Vanilla Extract");
-        await expect(lastIngQtyInput).toHaveValue("6");
-        await expect(propServingTemp).toHaveText("-13.37");
+  test("should measure recipe switch responsiveness", async ({ page, browserName }) => {
+    test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
 
-        await expect(await compHeaders.allTextContents()).toContain(energyStr);
-        const energyCompValue = await getCompositionValueElement(page, lastIngIdx, CompKey.Energy);
-        await expect(energyCompValue).toBeVisible();
-        await expect(energyCompValue).toHaveText("11.5");
+    await doBenchmarkMeasurements("Recipe switch", async () => {
+      await page.goto("");
+      await page.waitForLoadState("networkidle");
+
+      await pastToClipboard(page, browserName, RECIPE_TEXT);
+      const pasteButton = getPasteButton(page);
+      await pasteButton.click();
+
+      const elements = await recipePasteCheckElements(page);
+      await recipePasteCompleted(page, elements);
+
+      const recipeSelector = getRecipeSelector(page);
+      await expect(recipeSelector).toBeVisible();
+      await expect(recipeSelector).toBeEnabled();
+
+      return timeExecution(async () => {
+        await recipeSelector.selectOption({ value: "1" });
+        await expect(elements.lastIngNameInput).toBeVisible();
+        await expect(elements.lastIngQtyInput).toBeVisible();
+
+        await expect(elements.lastIngNameInput).toHaveValue("");
+        await expect(elements.lastIngQtyInput).toHaveValue("");
+
+        await recipeSelector.selectOption({ value: "0" });
+        await recipePasteCompleted(page, elements);
       });
     });
   });
