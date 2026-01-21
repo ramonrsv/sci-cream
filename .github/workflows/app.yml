@@ -120,6 +120,8 @@ jobs:
     # Avoid Playwright server conflicts when running locally via `act`
     needs: [unit_and_e2e_tests]
     timeout-minutes: 60
+    permissions:
+      contents: write
     services:
       postgres:
         image: postgres:16
