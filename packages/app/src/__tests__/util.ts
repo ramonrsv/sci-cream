@@ -39,9 +39,8 @@ export async function doBenchmarkMeasurements(
     measurements.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / measurements.length,
   );
 
-  console.log(
-    `${name}: [${Math.round(min)}ms, ${Math.round(avg)}ms, ${Math.round(max)}ms], ${countRuns} runs`,
-  );
+  const fmtTime = (t: number) => `${Math.round(t).toFixed(0).padStart(4)}ms`;
+  console.log(`${name.padEnd(45)} time:   [${fmtTime(min)}, ${fmtTime(avg)}, ${fmtTime(max)}]`);
 
   return { name, avg, min, max, stdDev };
 }

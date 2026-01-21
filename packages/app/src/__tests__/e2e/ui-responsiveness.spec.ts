@@ -47,12 +47,9 @@ test("should collect web vitals metrics and be good", async ({ page }) => {
 
   const webVitals = await page.evaluate(() => window.__webVitals || {});
 
-  console.log("Web Vitals collected:", Object.keys(webVitals));
   expect(Object.keys(webVitals).length).toBeGreaterThan(0);
 
-  for (const [name, metric] of Object.keys(webVitals).map((key) => [key, webVitals[key]])) {
-    console.log(`${name}: ${parseFloat(metric.value.toFixed(2))} (rating: ${metric.rating})`);
-
+  for (const metric of Object.values(webVitals)) {
     expect(metric).toHaveProperty("value");
     expect(metric).toHaveProperty("rating");
     expect(metric.rating).toEqual("good");

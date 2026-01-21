@@ -13,7 +13,7 @@
     "lint": "eslint ./src",
     "prettier": "prettier --check ./src",
     "coverage": "vitest run --coverage",
-    "bench": "playwright test --project='benchmarks'",
+    "bench": "playwright test --project='benchmarks' --reporter='dot'",
     "dev": "pnpm dev:turbopack",
     "dev:turbopack": "next dev --turbopack",
     "dev:webpack": "next dev --webpack",
