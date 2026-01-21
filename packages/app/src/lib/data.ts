@@ -6,7 +6,6 @@ import { eq, and } from "drizzle-orm";
 
 import { usersTable, User, ingredientsTable, Ingredient as IngredientDb } from "./db/schema";
 import * as schema from "./db/schema";
-import { sleep_ms } from "./util";
 
 const db = drizzle(process.env.DATABASE_URL!, { schema });
 
@@ -25,8 +24,6 @@ class FetchCounter {
   private static count = 0;
 
   static async get() {
-    // @todo Simulate network latency for testing purposes
-    await sleep_ms(500);
     return this.count++;
   }
 }
