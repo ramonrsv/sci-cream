@@ -8,7 +8,9 @@ and study of ice cream recipes. There is also
 [documentation](https://github.com/ramonrsv/sci-cream/tree/main/packages/sci-cream/docs) about ice
 cream science, and an [ingredient
 database](https://github.com/ramonrsv/sci-cream/tree/main/packages/sci-cream/data/ingredients) that
-can be imported with the library.
+can be imported with the library. [GitHub Pages](https://ramonrsv.github.io/sci-cream/), including
+[benchmarks](https://ramonrsv.github.io/sci-cream/dev/bench/), are available for the project as a
+whole.
 
 ## `sci-cream` crate
 
