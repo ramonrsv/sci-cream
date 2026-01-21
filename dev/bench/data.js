@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768959382598,
+  "lastUpdate": 1768959567454,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -4726,6 +4726,68 @@ window.BENCHMARK_DATA = {
             "range": "±6.93%",
             "unit": "ops/sec",
             "extra": "10 samples"
+          }
+        ]
+      }
+    ],
+    "App UI Benchmarks": [
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7a8efba3a25704e3092f125ef4bda670491e6b35",
+          "message": "Give benchmarks CI workflow repo write permission",
+          "timestamp": "2026-01-20T20:30:30-05:00",
+          "tree_id": "f19f399a169d3847135f01d2530224aa523c57fd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7a8efba3a25704e3092f125ef4bda670491e6b35"
+        },
+        "date": 1768959566610,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Initial page load",
+            "value": 1140.8,
+            "range": "45.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 77,
+            "range": "11.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 82,
+            "range": "12.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 55.2,
+            "range": "6.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 48.9,
+            "range": "4.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 166.1,
+            "range": "11.29",
+            "unit": "ms"
           }
         ]
       }
