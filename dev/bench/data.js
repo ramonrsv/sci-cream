@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1768978003914,
+  "lastUpdate": 1769034602025,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -83,6 +83,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 310,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d1916ab1f35752779e2ab4e106b2ef0edf44fc2c",
+          "message": "Add App e2e bench for recipe switch in RecipeGrid",
+          "timestamp": "2026-01-21T04:25:07-05:00",
+          "tree_id": "fc248df690a9c417283f138a01427a672766ed84",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d1916ab1f35752779e2ab4e106b2ef0edf44fc2c"
+        },
+        "date": 1769034601536,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2283,
+            "range": "± 93",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 161739,
+            "range": "± 2351",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 303,
+            "range": "± 10",
             "unit": "ns/iter"
           }
         ]
