@@ -121,7 +121,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
 
       const start = Date.now();
       await ingNameInput.fill("2% Milk");
-      await expect(await compHeaders.allTextContents()).toContain(milkFatStr);
+      await page.getByRole("columnheader", { name: milkFatStr }).waitFor();
       const milkFatCompValue = await getCompositionValueElement(page, 0, CompKey.MilkFat);
       await expect(milkFatCompValue).toBeVisible();
       await expect(milkFatCompValue).toHaveText("2");
@@ -200,7 +200,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
     await expect(elements.ingQtyInput).toHaveValue(expected.qty.toString());
     await expect(elements.propServingTemp).toHaveText(expected.servingTemp);
 
-    await expect(await elements.compHeaders.allTextContents()).toContain(elements.energyStr);
+    await page.getByRole("columnheader", { name: elements.energyStr }).waitFor();
     const energyCompValue = await getCompositionValueElement(
       page,
       elements.ingredientIdx,

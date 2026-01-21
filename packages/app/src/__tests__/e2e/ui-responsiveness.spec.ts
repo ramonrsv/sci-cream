@@ -98,7 +98,7 @@ test.describe("UI Responsiveness Performance Checks", () => {
 
     const exec_time = await timeExecution(async () => {
       await ingNameInput.fill("2% Milk");
-      await expect(await compHeaders.allTextContents()).toContain(milkFatStr);
+      await page.getByRole("columnheader", { name: milkFatStr }).waitFor();
       const milkFatCompValue = await getCompositionValueElement(page, 0, CompKey.MilkFat);
       await expect(milkFatCompValue).toBeVisible();
       await expect(milkFatCompValue).toHaveText("2");
@@ -172,7 +172,7 @@ test.describe("UI Responsiveness Performance Checks", () => {
       await expect(lastIngQtyInput).toHaveValue("6");
       await expect(propServingTemp).toHaveText("-13.37");
 
-      await expect(await compHeaders.allTextContents()).toContain(energyStr);
+      await page.getByRole("columnheader", { name: energyStr }).waitFor();
       const energyCompValue = await getCompositionValueElement(page, lastIngIdx, CompKey.Energy);
       await expect(energyCompValue).toBeVisible();
       await expect(energyCompValue).toHaveText("11.5");
