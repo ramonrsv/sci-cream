@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769034853314,
+  "lastUpdate": 1769035068101,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -1056,6 +1056,72 @@ window.BENCHMARK_DATA = {
             "name": "Recipe paste",
             "value": 153.3,
             "range": "12.68",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d1916ab1f35752779e2ab4e106b2ef0edf44fc2c",
+          "message": "Add App e2e bench for recipe switch in RecipeGrid",
+          "timestamp": "2026-01-21T04:25:07-05:00",
+          "tree_id": "fc248df690a9c417283f138a01427a672766ed84",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d1916ab1f35752779e2ab4e106b2ef0edf44fc2c"
+        },
+        "date": 1769035067199,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Initial page load",
+            "value": 1139.1,
+            "range": "43.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 75.6,
+            "range": "10.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 85.7,
+            "range": "19.13",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 54.3,
+            "range": "7.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 46.2,
+            "range": "3.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 158.6,
+            "range": "16.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 62.2,
+            "range": "2.32",
             "unit": "ms"
           }
         ]
