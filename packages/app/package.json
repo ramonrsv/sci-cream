@@ -10,7 +10,7 @@
     "test:unit": "vitest run",
     "test:e2e": "playwright test --grep-invert __benches__",
     "test:e2e:ui": "playwright test --grep-invert __benches__ --ui",
-    "lint": "eslint ./src",
+    "lint": "eslint ./src --max-warnings=0",
     "prettier": "prettier --check ./src",
     "coverage": "vitest run --coverage",
     "bench": "playwright test --project='benchmarks' --reporter='dot'",
