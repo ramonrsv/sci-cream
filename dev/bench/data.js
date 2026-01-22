@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769042910681,
+  "lastUpdate": 1769043053793,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -1822,6 +1822,84 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 41.60909090909091,
             "range": "1.38",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "47235276c0f9486f54eed2b4b925c6e06f0bc447",
+          "message": "Remove simulated network latency in db fetches\n\nThis was originally there to make inefficient loading more aparent.\nHowever, now that everything is loaded up front once, this isn't very\nmeaningful anymore, and it greatly slows down benchmark execution setup;\nmost actual performance measurements should be unaffected.",
+          "timestamp": "2026-01-21T13:50:49-05:00",
+          "tree_id": "2ad54da4b98c3d409bda6ce145277a89f351b016",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/47235276c0f9486f54eed2b4b925c6e06f0bc447"
+        },
+        "date": 1769043052949,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Initial page load",
+            "value": 678.9,
+            "range": "55.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 84,
+            "range": "18.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 75.8,
+            "range": "7.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 49.2,
+            "range": "8.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 44.5,
+            "range": "3.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 142.2,
+            "range": "13.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 58.2,
+            "range": "2.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 61.863636363636374,
+            "range": "1.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 39.800000000000004,
+            "range": "1.27",
             "unit": "ms"
           }
         ]
