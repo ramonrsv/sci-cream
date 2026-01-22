@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769042416941,
+  "lastUpdate": 1769042650073,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -167,6 +167,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 309,
             "range": "± 39",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "47235276c0f9486f54eed2b4b925c6e06f0bc447",
+          "message": "Remove simulated network latency in db fetches\n\nThis was originally there to make inefficient loading more aparent.\nHowever, now that everything is loaded up front once, this isn't very\nmeaningful anymore, and it greatly slows down benchmark execution setup;\nmost actual performance measurements should be unaffected.",
+          "timestamp": "2026-01-21T13:50:49-05:00",
+          "tree_id": "2ad54da4b98c3d409bda6ce145277a89f351b016",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/47235276c0f9486f54eed2b4b925c6e06f0bc447"
+        },
+        "date": 1769042649651,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2488,
+            "range": "± 104",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 162194,
+            "range": "± 927",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 311,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
