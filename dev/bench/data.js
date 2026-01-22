@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769043053793,
+  "lastUpdate": 1769044158333,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -209,6 +209,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 311,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c1f5a25b345549e2488d009fb0de3f6ce06144fb",
+          "message": "Move e2e test assets to __tests__/assets, add more\n\n@todo There seems to be a stability issue when making many ingredient\nquantity updates, uncovered by the new longer list. Investigate and\nuncomment the full list once the issues have been resolved.",
+          "timestamp": "2026-01-21T13:51:23-05:00",
+          "tree_id": "81863959ffedc2e8553254a32e6fb59974ab40b8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c1f5a25b345549e2488d009fb0de3f6ce06144fb"
+        },
+        "date": 1769044158005,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2293,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 161720,
+            "range": "± 994",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 307,
+            "range": "± 11",
             "unit": "ns/iter"
           }
         ]
