@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769066300511,
+  "lastUpdate": 1769066378523,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -3420,6 +3420,84 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 35.60645161290323,
             "range": "0.69",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0e383c927f66212dab7510582c33858eb4f46823",
+          "message": "Add test to verify UI resilience to slow initial\n\nThis test simulates a slow initial load to ensure that recipe paste\nremains responsive and that the UI updates correctly once the data is\navailable. It should fail if the `useEffect` in `RecipeGrid` to \"Prevent\nstale ingredient rows if pasted quickly whilst... still loading...\" is\nremoved.",
+          "timestamp": "2026-01-21T15:58:03-05:00",
+          "tree_id": "103ec1568aeb1b80d558d3acf67e87986bd452e6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0e383c927f66212dab7510582c33858eb4f46823"
+        },
+        "date": 1769066377648,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Initial page load",
+            "value": 704.2,
+            "range": "55.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 69.4,
+            "range": "7.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 87.5,
+            "range": "14.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 51.2,
+            "range": "11.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 44.6,
+            "range": "3.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 152.4,
+            "range": "14.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 65.1,
+            "range": "3.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 68.36129032258063,
+            "range": "1.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 36.751612903225805,
+            "range": "0.76",
             "unit": "ms"
           }
         ]
