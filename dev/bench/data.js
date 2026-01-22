@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769065854813,
+  "lastUpdate": 1769065919262,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -335,6 +335,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 312,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0e383c927f66212dab7510582c33858eb4f46823",
+          "message": "Add test to verify UI resilience to slow initial\n\nThis test simulates a slow initial load to ensure that recipe paste\nremains responsive and that the UI updates correctly once the data is\navailable. It should fail if the `useEffect` in `RecipeGrid` to \"Prevent\nstale ingredient rows if pasted quickly whilst... still loading...\" is\nremoved.",
+          "timestamp": "2026-01-21T15:58:03-05:00",
+          "tree_id": "103ec1568aeb1b80d558d3acf67e87986bd452e6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0e383c927f66212dab7510582c33858eb4f46823"
+        },
+        "date": 1769065918990,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2379,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 163850,
+            "range": "± 919",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 306,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
