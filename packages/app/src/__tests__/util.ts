@@ -53,7 +53,12 @@ export async function doBenchmarkMeasurements(
 }
 
 export function formatBenchmarkResultForUpload(result: BenchmarkResult) {
-  return { name: result.name, unit: "ms", value: result.avg, range: result.stdDev.toFixed(2) };
+  return {
+    name: result.name,
+    unit: "ms",
+    value: result.avg.toFixed(2),
+    range: result.stdDev.toFixed(2),
+  };
 }
 
 export async function timeExecution(fn: () => Promise<void>, divider: number = 1): Promise<number> {
