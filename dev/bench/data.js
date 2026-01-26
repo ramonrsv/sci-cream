@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769470296558,
+  "lastUpdate": 1769470773105,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -4940,6 +4940,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 36.07,
             "range": "0.51",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1c5425dc5b57c23df5731cfb7930f212c4898d08",
+          "message": "Resolve stability issues and enable full assets\n\nThe stability issues turned out to be that the 30s test timeout was\nbeing reached, but the error messages were a bit cryptic. Setting a\nlonger timeout on the failing tests resolves the issue, and allows the\nfull set of assets to be enabled.",
+          "timestamp": "2026-01-26T18:25:20-05:00",
+          "tree_id": "c0c7605091751bd113b5f98e8a05901420ac1cc0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1c5425dc5b57c23df5731cfb7930f212c4898d08"
+        },
+        "date": 1769470772645,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 80.029,
+            "range": "4.021",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 677.3,
+            "range": "54.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 70.8,
+            "range": "17.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 78.6,
+            "range": "11.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 51.5,
+            "range": "12.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 46.1,
+            "range": "3.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 147.7,
+            "range": "16.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 61.9,
+            "range": "2.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 64.12,
+            "range": "2.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 34.92,
+            "range": "0.85",
             "unit": "ms"
           }
         ]
