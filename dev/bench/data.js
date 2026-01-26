@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769066714259,
+  "lastUpdate": 1769452452396,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -419,6 +419,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 305,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "21eb5d55eb18ed370bb0359ea40c814a1d60064b",
+          "message": "Add 'database' feature for IngredientDatabase\n\n* Add 'database' feature to guard the inclusion of `IngredientDatabase`,\n  separate from 'data' for the inclusion of embedded ingredients data.\n\n* Add new `IngredientDatabase::seeded_from_embedded_data` that is\n  enabled if both 'database' and 'data' features are enabled.",
+          "timestamp": "2026-01-26T12:24:59-05:00",
+          "tree_id": "db248c3267f86917c0046d69d8fc5460aeb7db4a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/21eb5d55eb18ed370bb0359ea40c814a1d60064b"
+        },
+        "date": 1769452451514,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2022,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 162192,
+            "range": "± 5848",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 309,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
