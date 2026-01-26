@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769452992835,
+  "lastUpdate": 1769469002155,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -461,6 +461,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 309,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7d9af8bc7a9740ff545b98d5287aebdb35097995",
+          "message": "Add memory usage benches and leak detection tests\n\n* Add peak memory usage benchmarks and memory leak detection tests.\n* Refactor __benches__/e2e and __tests__/e2e files, separating web\n  vitals, UI responsivness, and memory usage benches and tests.\n  Note that this requires the use of 'zzz-output-results.spec.ts`,\n  a hacky solution to collect and output results from multiple files.",
+          "timestamp": "2026-01-26T18:08:36-05:00",
+          "tree_id": "1ef54eb311adf1f9c84f0c04df75a7dcd16bbc8c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7d9af8bc7a9740ff545b98d5287aebdb35097995"
+        },
+        "date": 1769469001246,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 1974,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 162143,
+            "range": "± 1273",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 313,
+            "range": "± 13",
             "unit": "ns/iter"
           }
         ]
