@@ -25,9 +25,25 @@ export type BenchmarkResult = {
   stdDev: number;
 };
 
-export type BenchmarkResultForUpload = { name: string; unit: string; value: number; range: string };
+export type BenchmarkResultForUpload = { name: string; unit: string; value: string; range: string };
 
-export async function doBenchmarkMeasurements(
+// Collect all benchmark results for upload at end
+export const allBenchmarkResultsForUpload: Array<BenchmarkResultForUpload> = [];
+
+export function analyzeMeasurements(measurements: number[]) {
+  const avg = measurements.reduce((a, b) => a + b, 0) / measurements.length;
+
+  const min = Math.min(...measurements);
+  const max = Math.max(...measurements);
+
+  const stdDev = Math.sqrt(
+    measurements.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / measurements.length,
+  );
+
+  return { avg, min, max, stdDev };
+}
+
+export async function doBenchmarkTimeMeasurements(
   countRuns: number,
   name: string,
   run: () => Promise<number>,
@@ -38,13 +54,7 @@ export async function doBenchmarkMeasurements(
     measurements.push(await run());
   }
 
-  const avg = measurements.reduce((a, b) => a + b, 0) / measurements.length;
-  const min = Math.min(...measurements);
-  const max = Math.max(...measurements);
-
-  const stdDev = Math.sqrt(
-    measurements.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / measurements.length,
-  );
+  const { avg, min, max, stdDev } = analyzeMeasurements(measurements);
 
   const fmtTime = (t: number) => `${Math.round(t).toFixed(0).padStart(4)}ms`;
   console.log(`${name.padEnd(45)} time:   [${fmtTime(min)}, ${fmtTime(avg)}, ${fmtTime(max)}]`);
@@ -52,12 +62,40 @@ export async function doBenchmarkMeasurements(
   return { name, avg, min, max, stdDev };
 }
 
-export function formatBenchmarkResultForUpload(result: BenchmarkResult) {
+export async function doBenchmarkMemoryMeasurements(
+  countRuns: number,
+  name: string,
+  run: () => Promise<number>,
+) {
+  const measurements: number[] = [];
+
+  for (let i = 0; i < countRuns; i++) {
+    measurements.push(await run());
+  }
+
+  const { avg, min, max, stdDev } = analyzeMeasurements(measurements);
+
+  const fmtMem = (m: number) => `${Math.round(m).toFixed(0).padStart(4)} MB`;
+  console.log(`${name.padEnd(45)} memory: [${fmtMem(min)}, ${fmtMem(avg)}, ${fmtMem(max)}]`);
+
+  return { name, avg, min, max, stdDev };
+}
+
+export function formatTimeBenchmarkResultForUpload(result: BenchmarkResult) {
   return {
     name: result.name,
     unit: "ms",
     value: result.avg.toFixed(2),
     range: result.stdDev.toFixed(2),
+  };
+}
+
+export function formatMemoryBenchmarkResultForUpload(result: BenchmarkResult) {
+  return {
+    name: result.name,
+    unit: "MB",
+    value: result.avg.toFixed(3),
+    range: result.stdDev.toFixed(3),
   };
 }
 
@@ -102,7 +140,7 @@ export async function getCompositionValueElement(page: Page, ingIdx: number, com
   return page.locator("#ing-composition-grid table tbody tr").nth(ingIdx).locator("td").nth(colIdx);
 }
 
-export async function pastToClipboard(page: Page, browserName: string, text: string) {
+export async function pasteToClipboard(page: Page, browserName: string, text: string) {
   const permissions = browserName === "firefox" ? [] : ["clipboard-read", "clipboard-write"];
   page.context().grantPermissions(permissions);
 
@@ -113,6 +151,10 @@ export async function pastToClipboard(page: Page, browserName: string, text: str
 
 export function getPasteButton(page: Page) {
   return page.getByRole("button", { name: "Paste" });
+}
+
+export function getClearButton(page: Page) {
+  return page.getByRole("button", { name: "Clear" });
 }
 
 export function getRecipeSelector(page: Page) {
@@ -159,4 +201,34 @@ export async function recipeUpdateCompleted(
   );
   await expect(energyCompValue).toBeVisible();
   await expect(energyCompValue).toHaveText(expected.energy);
+}
+
+export type MemoryUsage = {
+  usedJSHeapSize: number;
+  totalJSHeapSize: number;
+  jsHeapSizeLimit: number;
+};
+
+// Chromium-specific extension to Performance API
+interface PerformanceWithMemory extends Performance {
+  memory: MemoryUsage;
+}
+
+export async function getMemoryUsage(page: Page, browser: string): Promise<MemoryUsage> {
+  if (browser !== "chromium") {
+    throw new Error("Memory usage measurement is only supported in Chromium-based browsers");
+  }
+
+  return page.evaluate(() => {
+    const mem = (performance as PerformanceWithMemory).memory;
+    return {
+      usedJSHeapSize: mem.usedJSHeapSize,
+      totalJSHeapSize: mem.totalJSHeapSize,
+      jsHeapSizeLimit: mem.jsHeapSizeLimit,
+    };
+  });
+}
+
+export async function getUsedJSHeapSizeInMB(page: Page, browser: string): Promise<number> {
+  return (await getMemoryUsage(page, browser)).usedJSHeapSize / 1024 / 1024;
 }

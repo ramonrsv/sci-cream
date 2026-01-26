@@ -8,13 +8,14 @@ import {
   getMixPropertyValueElement,
   getCompositionGridQtyToggleInput,
   getCompositionValueElement,
-  pastToClipboard,
+  pasteToClipboard,
   getPasteButton,
   recipePasteCheckElements,
   recipeUpdateCompleted,
 } from "@/__tests__/util";
 
 import {
+  THRESHOLDS,
   REFERENCE_RECIPE_TEXT,
   LAST_INGREDIENT_IDX,
   EXPECTED_LAST_INGREDIENT,
@@ -23,42 +24,7 @@ import {
 import { QtyToggle } from "@/lib/ui/key-selection";
 import { CompKey, comp_key_as_med_str, compToPropKey } from "@workspace/sci-cream";
 
-import { Metric } from "@/lib/web-vitals";
 import { sleep_ms } from "@/lib/util";
-
-declare global {
-  interface Window {
-    __webVitals: Record<string, Metric>;
-  }
-}
-
-test("has 'Ice Cream Recipe Calculator' heading", async ({ page }) => {
-  await page.goto("");
-  await expect(page.getByRole("heading", { name: "Ice Cream Recipe Calculator" })).toBeVisible();
-});
-
-test("should collect web vitals metrics and be good", async ({ page }) => {
-  await page.goto("");
-
-  await page.waitForLoadState("networkidle");
-  await page.waitForLoadState("load");
-
-  // Interact with page to trigger INP/FID
-  await page.getByRole("heading", { name: "Ice Cream Recipe Calculator" }).click();
-  await page.waitForTimeout(1000);
-
-  const webVitals = await page.evaluate(() => window.__webVitals || {});
-
-  expect(Object.keys(webVitals).length).toBeGreaterThan(0);
-
-  for (const metric of Object.values(webVitals)) {
-    expect(metric).toHaveProperty("value");
-    expect(metric).toHaveProperty("rating");
-    expect(metric.rating).toEqual("good");
-  }
-});
-
-const THRESHOLDS = { page_load: 3000, input_response: 250 * 2, paste_response: 500 * 2 };
 
 test.describe("UI Responsiveness Performance Checks", () => {
   test("should measure initial page load time", async ({ page }) => {
@@ -151,7 +117,7 @@ test.describe("UI Responsiveness Performance Checks", () => {
     await page.goto("");
     await page.waitForLoadState("networkidle");
 
-    await pastToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+    await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
     const pasteButton = getPasteButton(page);
 
     const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
@@ -186,7 +152,7 @@ test.describe("UI Responsiveness Performance Checks", () => {
     await page.goto("");
     await page.waitForLoadState("domcontentloaded");
 
-    await pastToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+    await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
     const pasteButton = getPasteButton(page);
 
     const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);

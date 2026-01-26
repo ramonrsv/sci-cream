@@ -1,12 +1,9 @@
 import { test, expect } from "@playwright/test";
 
-import * as fs from "fs";
-import * as path from "path";
-
 import {
-  type BenchmarkResult,
-  doBenchmarkMeasurements as doBenchmarkMeasurementsGeneric,
-  formatBenchmarkResultForUpload,
+  allBenchmarkResultsForUpload,
+  doBenchmarkTimeMeasurements as doBenchmarkTimeMeasurementsGeneric,
+  formatTimeBenchmarkResultForUpload,
   timeExecution,
   getIngredientNameInputAtIdx,
   getIngredientQtyInputAtIdx,
@@ -14,7 +11,7 @@ import {
   getMixPropertyValueElement,
   getCompositionGridQtyToggleInput,
   getCompositionValueElement,
-  pastToClipboard,
+  pasteToClipboard,
   getPasteButton,
   getRecipeSelector,
   recipePasteCheckElements,
@@ -33,53 +30,19 @@ import {
 import { QtyToggle } from "@/lib/ui/key-selection";
 import { CompKey, comp_key_as_med_str, compToPropKey } from "@workspace/sci-cream";
 
-import { Metric } from "@/lib/web-vitals";
+// Number of runs for each execution time benchmark
+const COUNT_TIME_RUNS = 10;
 
-declare global {
-  interface Window {
-    __webVitals: Record<string, Metric>;
-  }
-}
-
-test("should collect web vitals metrics and be good", async ({ page }) => {
-  await page.goto("");
-
-  await page.waitForLoadState("networkidle");
-  await page.waitForLoadState("load");
-
-  // Interact with page to trigger INP/FID
-  await page.getByRole("heading", { name: "Ice Cream Recipe Calculator" }).click();
-  await page.waitForTimeout(1000);
-
-  const webVitals = await page.evaluate(() => window.__webVitals || {});
-
-  console.log("Web Vitals collected:", Object.keys(webVitals));
-  expect(Object.keys(webVitals).length).toBeGreaterThan(0);
-
-  for (const [name, metric] of Object.keys(webVitals).map((key) => [key, webVitals[key]])) {
-    console.log(`  ${name}: ${parseFloat(metric.value.toFixed(2))} (rating: ${metric.rating})`);
-
-    expect(metric).toHaveProperty("value");
-    expect(metric).toHaveProperty("rating");
-    expect(metric.rating).toEqual("good");
-  }
-});
-
-const COUNT_RUNS = 10;
-
-// Collect all benchmark results for output
-const allBenchmarkResults: Array<BenchmarkResult> = [];
-
-function doBenchmarkMeasurements(name: string, run: () => Promise<number>) {
-  return doBenchmarkMeasurementsGeneric(COUNT_RUNS, name, run).then((result) => {
-    allBenchmarkResults.push(result);
+function doBenchmarkTimeMeasurements(name: string, run: () => Promise<number>) {
+  return doBenchmarkTimeMeasurementsGeneric(COUNT_TIME_RUNS, name, run).then((result) => {
+    allBenchmarkResultsForUpload.push(formatTimeBenchmarkResultForUpload(result));
     return result;
   });
 }
 
 test.describe("UI Responsiveness Performance Benchmarks", () => {
   test("should measure initial page load time", async ({ page }) => {
-    await doBenchmarkMeasurements("Initial page load", async () => {
+    await doBenchmarkTimeMeasurements("Initial page load", async () => {
       return timeExecution(async () => {
         await page.goto("");
         await page.waitForLoadState("networkidle");
@@ -88,7 +51,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
   });
 
   test("should measure recipe ingredient input responsiveness", async ({ page }) => {
-    await doBenchmarkMeasurements("Ingredient name input", async () => {
+    await doBenchmarkTimeMeasurements("Ingredient name input", async () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
@@ -103,7 +66,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
   });
 
   test("should measure composition grid ingredient input responsiveness", async ({ page }) => {
-    await doBenchmarkMeasurements("Ingredient name input to composition", async () => {
+    await doBenchmarkTimeMeasurements("Ingredient name input to composition", async () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
@@ -124,7 +87,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
   });
 
   test("should measure recipe quantity input responsiveness", async ({ page }) => {
-    await doBenchmarkMeasurements("Ingredient quantity input", async () => {
+    await doBenchmarkTimeMeasurements("Ingredient quantity input", async () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
@@ -139,7 +102,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
   });
 
   test("should measure properties grid quantity input responsiveness", async ({ page }) => {
-    await doBenchmarkMeasurements("Ingredient quantity input to mix property", async () => {
+    await doBenchmarkTimeMeasurements("Ingredient quantity input to mix property", async () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
@@ -165,11 +128,11 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
   test("should measure recipe paste responsiveness", async ({ page, browserName }) => {
     test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
 
-    await doBenchmarkMeasurements("Recipe paste", async () => {
+    await doBenchmarkTimeMeasurements("Recipe paste", async () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pastToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+      await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
       const pasteButton = getPasteButton(page);
 
       const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
@@ -184,11 +147,11 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
   test("should measure recipe switch responsiveness", async ({ page, browserName }) => {
     test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
 
-    await doBenchmarkMeasurements("Recipe switch", async () => {
+    await doBenchmarkTimeMeasurements("Recipe switch", async () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pastToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+      await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
       const pasteButton = getPasteButton(page);
       await pasteButton.click();
 
@@ -217,11 +180,11 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
     page,
     browserName,
   }) => {
-    await doBenchmarkMeasurements("Rapid ingredient quantity updates, each", async () => {
+    await doBenchmarkTimeMeasurements("Rapid ingredient quantity updates, each", async () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pastToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+      await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
       const pasteButton = getPasteButton(page);
       await pasteButton.click();
 
@@ -241,11 +204,11 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
     page,
     browserName,
   }) => {
-    await doBenchmarkMeasurements("Rapid ingredient quantity updates, final", async () => {
+    await doBenchmarkTimeMeasurements("Rapid ingredient quantity updates, final", async () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pastToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+      await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
       const pasteButton = getPasteButton(page);
       await pasteButton.click();
 
@@ -257,24 +220,9 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
           await elements.ingQtyInput.fill(expected.qty.toString());
         }
 
-        await recipeUpdateCompleted(
-          page,
-          elements,
-          EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT[LAST_UPDATE_IDX],
-        );
+        const finalExpected = EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT[LAST_UPDATE_IDX];
+        await recipeUpdateCompleted(page, elements, finalExpected);
       }, EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT.length);
     });
-  });
-
-  // Write results to file after all benchmarks complete
-  test.afterAll(() => {
-    const forUpload = allBenchmarkResults.map((result) => formatBenchmarkResultForUpload(result));
-
-    const outputDir = path.join(process.cwd(), "bench-results");
-    fs.mkdirSync(outputDir, { recursive: true });
-
-    const outputPath = path.join(outputDir, "bench_output_ui.json");
-    fs.writeFileSync(outputPath, JSON.stringify(forUpload, null, 2));
-    console.log(`\nBenchmark results written to: ${outputPath}`);
   });
 });

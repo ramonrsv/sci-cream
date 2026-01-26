@@ -1,3 +1,10 @@
+export const THRESHOLDS = {
+  page_load: 3000,
+  input_response: 250 * 2,
+  paste_response: 500 * 2,
+  memory_usage_percent_increase: 20,
+};
+
 export const REFERENCE_RECIPE_TEXT = [
   "Ingredient\tQty(g)",
   "Whole Milk\t245",
