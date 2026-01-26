@@ -23,7 +23,7 @@ pub mod validate;
 
 #[cfg(any(feature = "data", test))]
 pub mod data;
-#[cfg(any(feature = "data", test))]
+#[cfg(any(feature = "database", test))]
 pub mod database;
 #[cfg(feature = "diesel")]
 pub mod diesel;

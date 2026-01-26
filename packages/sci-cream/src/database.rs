@@ -51,6 +51,11 @@ impl IngredientDatabase {
         Ok(Self::new_seeded(&Self::specs_into_ingredients(specs)?))
     }
 
+    #[cfg(feature = "data")]
+    pub fn new_seeded_from_embedded_data() -> Result<Self> {
+        Self::new_seeded_from_specs(&crate::data::get_all_ingredient_specs())
+    }
+
     fn acquire_read_lock(&self) -> RwLockReadGuard<'_, HashMap<String, Ingredient>> {
         self.map
             .read()
@@ -111,7 +116,7 @@ impl Default for IngredientDatabase {
     }
 }
 
-#[cfg(all(feature = "wasm", feature = "data"))]
+#[cfg(feature = "wasm")]
 #[cfg_attr(coverage, coverage(off))]
 pub mod wasm {
     use wasm_bindgen::prelude::*;
@@ -157,6 +162,12 @@ pub mod wasm {
     #[allow(clippy::needless_pass_by_value)]
     pub fn make_seeded_ingredient_database_from_specs(specs: Box<[JsValue]>) -> Result<IngredientDatabase, JsValue> {
         IngredientDatabase::new_seeded_from_specs(&specs_from_jsvalues(&specs)?).map_err(Into::into)
+    }
+
+    #[cfg(feature = "data")]
+    #[wasm_bindgen]
+    pub fn make_seeded_ingredient_database_from_embedded_data() -> Result<IngredientDatabase, JsValue> {
+        IngredientDatabase::new_seeded_from_embedded_data().map_err(Into::into)
     }
 }
 
@@ -240,6 +251,18 @@ pub(crate) mod tests {
             let fetched_ingredient = db.get_ingredient_by_name(&spec.name).unwrap();
             let ingredient = spec.into_ingredient().unwrap();
             assert_eq!(fetched_ingredient, ingredient);
+        }
+    }
+
+    #[test]
+    fn ingredient_database_seeded_from_embedded_data() {
+        let db = IngredientDatabase::new_seeded_from_embedded_data().unwrap();
+
+        assert_eq!(db.get_all_ingredients().len(), get_all_ingredient_specs().len());
+
+        for spec in get_all_ingredient_specs() {
+            let ingredient = db.get_ingredient_by_name(&spec.name).unwrap();
+            assert_eq!(ingredient, spec.into_ingredient().unwrap());
         }
     }
 

@@ -6,6 +6,7 @@ import {
   IngredientDatabase,
   make_seeded_ingredient_database,
   make_seeded_ingredient_database_from_specs,
+  make_seeded_ingredient_database_from_embedded_data,
   get_ingredient_specs_by_category,
   get_ingredient_spec_by_name,
   into_ingredient_from_spec,
@@ -30,6 +31,13 @@ test("make_seeded_ingredient_database", () => {
 
 test("make_seeded_ingredient_database_from_specs", () => {
   const db = make_seeded_ingredient_database_from_specs(get_all_ingredient_specs());
+
+  expect(db).toBeDefined();
+  expect(db.get_all_ingredients().length).toBe(allIngredientSpecs.length);
+});
+
+test("make_seeded_ingredient_database_from_embedded_data", () => {
+  const db = make_seeded_ingredient_database_from_embedded_data();
 
   expect(db).toBeDefined();
   expect(db.get_all_ingredients().length).toBe(allIngredientSpecs.length);

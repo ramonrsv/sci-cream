@@ -1,3 +1,4 @@
+#[cfg(feature = "database")]
 pub mod bridge;
 pub mod log;
 

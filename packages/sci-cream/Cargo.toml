@@ -9,6 +9,8 @@ autobenches = false
 wasm = ["dep:wasm-bindgen", "dep:serde-wasm-bindgen"]
 # Enable embedded data, namely ingredient specs
 data = ["dep:serde_json"]
+# Enable in-memory ingredient database with seed options
+database = []
 # Enable Diesel ORM support for [`IngredientSpec`]
 diesel = ["dep:diesel"]
 
