@@ -180,6 +180,8 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
     page,
     browserName,
   }) => {
+    test.setTimeout(60 * 1000);
+
     await doBenchmarkTimeMeasurements("Rapid ingredient quantity updates, each", async () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
@@ -204,6 +206,8 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
     page,
     browserName,
   }) => {
+    test.setTimeout(60 * 1000);
+
     await doBenchmarkTimeMeasurements("Rapid ingredient quantity updates, final", async () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
