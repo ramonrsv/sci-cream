@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769469663608,
+  "lastUpdate": 1769470102283,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -503,6 +503,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 313,
             "range": "± 13",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1c5425dc5b57c23df5731cfb7930f212c4898d08",
+          "message": "Resolve stability issues and enable full assets\n\nThe stability issues turned out to be that the 30s test timeout was\nbeing reached, but the error messages were a bit cryptic. Setting a\nlonger timeout on the failing tests resolves the issue, and allows the\nfull set of assets to be enabled.",
+          "timestamp": "2026-01-26T18:25:20-05:00",
+          "tree_id": "c0c7605091751bd113b5f98e8a05901420ac1cc0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1c5425dc5b57c23df5731cfb7930f212c4898d08"
+        },
+        "date": 1769470101970,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 1974,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 159843,
+            "range": "± 665",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 308,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
