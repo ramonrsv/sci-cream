@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769556679889,
+  "lastUpdate": 1769557396411,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -754,6 +754,48 @@ window.BENCHMARK_DATA = {
           {
             "name": "sweetener_spec_into_composition",
             "value": 309,
+            "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c360865dcd90a3e9889efc86cedded3fa0bd30db",
+          "message": "Stop using branded Google Chrome in Playwright e2e\n\nStop using branded Google Chrome browser in Playwright e2e tests and\nbenchmarks; setting up branded chrome takes a lot of time in CI\nworkflows and probably doesn't offer much in extra coverage.",
+          "timestamp": "2026-01-27T16:44:15-05:00",
+          "tree_id": "8b0bd2334c32e9c13a7efd832807b03665ba4673",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c360865dcd90a3e9889efc86cedded3fa0bd30db"
+        },
+        "date": 1769557395763,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 1972,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 161238,
+            "range": "± 2904",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 312,
             "range": "± 6",
             "unit": "ns/iter"
           }
