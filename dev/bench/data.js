@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769555633708,
+  "lastUpdate": 1769555875077,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -713,6 +713,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 268,
             "range": "± 19",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "01bce5a83c9a3c213dd61dfb6405a3dba232d7ec",
+          "message": "Add playwright setup action explicit additional\n\nAdd support to actions/setup-playwright for explicitly specifying\nadditional non-default browsers to install, e.g. branded Google Chrome\n('chrome'). Add 'with.additional-browsers: chrome' to current uses.",
+          "timestamp": "2026-01-27T16:39:29-05:00",
+          "tree_id": "e5d54192414344a1aa1c9b4f9e812ba0f1fe87c4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/01bce5a83c9a3c213dd61dfb6405a3dba232d7ec"
+        },
+        "date": 1769555874634,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 1987,
+            "range": "± 28",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 160193,
+            "range": "± 8625",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 309,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
