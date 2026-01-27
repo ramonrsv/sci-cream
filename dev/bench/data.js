@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769554938517,
+  "lastUpdate": 1769554943151,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -6041,6 +6041,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 33.75,
             "range": "0.67",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8775e36fdcda6f7dbcdaeab6ca5685f353f8d6bf",
+          "message": "Introduce `clean_reports.sh` and remove lock files\n\nIntroduce `scripts/clean_reports.sh` to clean up test, coverage, and\nbenchmark reports generated during development. Also remove `Cargo.lock`\nand `pnpm-lock.yaml` from `scripts/clean_workspace.sh`, now that these\nfiles are tracked in git version control.",
+          "timestamp": "2026-01-27T12:05:22-05:00",
+          "tree_id": "588d75888e073d6d9555fdcfd8c97c9104d7898a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8775e36fdcda6f7dbcdaeab6ca5685f353f8d6bf"
+        },
+        "date": 1769554942813,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 81.864,
+            "range": "2.708",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 680.2,
+            "range": "49.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 67.8,
+            "range": "8.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 78.8,
+            "range": "8.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 51.2,
+            "range": "10.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 44.2,
+            "range": "3.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 144.5,
+            "range": "14.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 61.6,
+            "range": "2.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 62.65,
+            "range": "1.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 33.98,
+            "range": "0.73",
             "unit": "ms"
           }
         ]
