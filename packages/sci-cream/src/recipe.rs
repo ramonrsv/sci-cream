@@ -3,7 +3,14 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
+#[cfg(feature = "database")]
+use crate::database::IngredientDatabase;
+
 use crate::{composition::Composition, error::Result, fpd::FPD, ingredient::Ingredient, properties::MixProperties};
+
+pub type LightRecipeLine = (String, f64);
+pub type LightRecipe = [LightRecipeLine];
+pub type OwnedLightRecipe = Vec<LightRecipeLine>;
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -25,12 +32,30 @@ impl RecipeLine {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Recipe {
     #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
-    pub name: String,
+    pub name: Option<String>,
     #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
     pub lines: Vec<RecipeLine>,
 }
 
 impl Recipe {
+    #[cfg(feature = "database")]
+    pub fn from_light_recipe(
+        name: Option<String>,
+        light_recipe: &LightRecipe,
+        db: &IngredientDatabase,
+    ) -> Result<Self> {
+        let mut lines = Vec::with_capacity(light_recipe.len());
+
+        for (name, amount) in light_recipe {
+            lines.push(RecipeLine {
+                ingredient: db.get_ingredient_by_name(name)?,
+                amount: *amount,
+            });
+        }
+
+        Ok(Recipe { name, lines })
+    }
+
     pub fn calculate_composition(&self) -> Result<Composition> {
         Composition::from_combination(
             &self
@@ -57,7 +82,7 @@ impl Recipe {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Recipe {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
-    pub fn new(name: String, lines: Vec<RecipeLine>) -> Self {
+    pub fn new(name: Option<String>, lines: Vec<RecipeLine>) -> Self {
         Self { name, lines }
     }
 }
@@ -67,7 +92,11 @@ impl Recipe {
 pub mod wasm {
     use wasm_bindgen::prelude::*;
 
-    use super::{Composition, MixProperties, Recipe};
+    use super::{Composition, MixProperties, OwnedLightRecipe, Recipe};
+
+    pub fn light_recipe_from_jsvalue(recipe: JsValue) -> Result<OwnedLightRecipe, JsValue> {
+        serde_wasm_bindgen::from_value::<OwnedLightRecipe>(recipe).map_err(Into::into)
+    }
 
     #[wasm_bindgen]
     impl Recipe {
@@ -89,13 +118,18 @@ pub mod wasm {
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::unwrap_used)]
 mod tests {
+    use std::sync::LazyLock;
+
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
     use crate::data::get_ingredient_spec_by_name;
 
     use super::*;
-    use crate::{composition::CompKey, constants::COMPOSITION_EPSILON, fpd::FpdKey};
+    use crate::{
+        composition::CompKey, constants::COMPOSITION_EPSILON, database::IngredientDatabase, fpd::FpdKey,
+        recipe::OwnedLightRecipe,
+    };
 
     fn to_recipe_lines(lines: &[(&str, f64)]) -> Vec<RecipeLine> {
         lines
@@ -109,8 +143,45 @@ mod tests {
 
     fn make_test_recipe(lines: &[(&str, f64)]) -> Recipe {
         Recipe {
-            name: "Test Recipe".to_string(),
+            name: None,
             lines: to_recipe_lines(lines),
+        }
+    }
+
+    fn make_light_recipe(lines: &[(&str, f64)]) -> OwnedLightRecipe {
+        lines
+            .iter()
+            .map(|(name, amount)| (name.to_string(), *amount))
+            .collect::<OwnedLightRecipe>()
+    }
+
+    const REF_RECIPE_TUPLES: &[(&str, f64)] = &[
+        ("Whole Milk", 245.0),
+        ("Whipping Cream", 215.0),
+        ("Cocoa Powder, 17% Fat", 28.0),
+        ("Skimmed Milk Powder", 21.0),
+        ("Egg Yolk", 18.0),
+        ("Dextrose", 45.0),
+        ("Fructose", 32.0),
+        ("Salt", 0.5),
+        ("Rich Ice Cream SB", 1.25),
+        ("Vanilla Extract", 6.0),
+    ];
+
+    static REF_LIGHT_RECIPE: LazyLock<OwnedLightRecipe> = LazyLock::new(|| make_light_recipe(REF_RECIPE_TUPLES));
+
+    #[test]
+    fn recipe_from_light_recipe() {
+        let db = IngredientDatabase::new_seeded_from_embedded_data().unwrap();
+        let light_recipe = REF_LIGHT_RECIPE.clone();
+
+        let recipe = Recipe::from_light_recipe(None, &light_recipe, &db).unwrap();
+
+        assert_eq!(recipe.lines.len(), light_recipe.len());
+
+        for (line, (name, amount)) in recipe.lines.iter().zip(light_recipe.iter()) {
+            assert_eq!(line.ingredient.name, *name);
+            assert_eq!(line.amount, *amount);
         }
     }
 
@@ -137,18 +208,7 @@ mod tests {
 
     #[test]
     fn recipe_calculate_mix_properties_with_hf() {
-        let recipe = make_test_recipe(&[
-            ("Whole Milk", 245.0),
-            ("Whipping Cream", 215.0),
-            ("Cocoa Powder, 17% Fat", 28.0),
-            ("Skimmed Milk Powder", 21.0),
-            ("Egg Yolk", 18.0),
-            ("Dextrose", 45.0),
-            ("Fructose", 32.0),
-            ("Salt", 0.5),
-            ("Rich Ice Cream SB", 1.25),
-            ("Vanilla Extract", 6.0),
-        ]);
+        let recipe = make_test_recipe(REF_RECIPE_TUPLES);
 
         let mix_properties = recipe.calculate_mix_properties().unwrap();
 
@@ -165,7 +225,7 @@ mod tests {
     #[test]
     fn floating_point_edge_case_zero_water_near_epsilon() {
         let mix_properties = Recipe {
-            name: "Test".to_string(),
+            name: None,
             lines: to_recipe_lines(&[("Fructose", 10.0), ("Salt", 0.54)]),
         }
         .calculate_mix_properties()

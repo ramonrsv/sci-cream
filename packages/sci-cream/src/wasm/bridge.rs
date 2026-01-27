@@ -6,10 +6,8 @@ use crate::{
     error::Result,
     ingredient::{Category, Ingredient},
     properties::MixProperties,
-    recipe::{Recipe, RecipeLine},
+    recipe::{LightRecipe, Recipe},
 };
-
-type LightRecipe = [(String, f64)];
 
 /// WASM Bridge for calculating recipe compositions and mix properties
 ///
@@ -30,11 +28,11 @@ impl Bridge {
     }
 
     pub fn calculate_recipe_composition(&self, recipe: &LightRecipe) -> Result<Composition> {
-        self.light_recipe_to_recipe(recipe)?.calculate_composition()
+        Recipe::from_light_recipe(None, recipe, &self.db)?.calculate_composition()
     }
 
     pub fn calculate_recipe_mix_properties(&self, recipe: &LightRecipe) -> Result<MixProperties> {
-        self.light_recipe_to_recipe(recipe)?.calculate_mix_properties()
+        Recipe::from_light_recipe(None, recipe, &self.db)?.calculate_mix_properties()
     }
 }
 
@@ -43,24 +41,6 @@ impl Bridge {
     #[wasm_bindgen(constructor)]
     pub fn new(db: IngredientDatabase) -> Self {
         Self { db }
-    }
-
-    fn light_recipe_to_recipe(&self, recipe: &LightRecipe) -> Result<Recipe> {
-        let mut lines_with_ingredients = Vec::with_capacity(recipe.len());
-
-        for (ingredient_name, amount) in recipe {
-            let ingredient = self.db.get_ingredient_by_name(ingredient_name)?;
-
-            lines_with_ingredients.push(RecipeLine {
-                ingredient,
-                amount: *amount,
-            });
-        }
-
-        Ok(Recipe {
-            name: "Light Recipe".to_string(),
-            lines: lines_with_ingredients,
-        })
     }
 
     pub fn get_all_ingredients(&self) -> Vec<Ingredient> {
@@ -77,7 +57,10 @@ pub mod wasm {
     use wasm_bindgen::prelude::*;
 
     use super::Bridge;
-    use crate::{composition::Composition, ingredient::Ingredient, properties::MixProperties};
+    use crate::{
+        composition::Composition, ingredient::Ingredient, properties::MixProperties,
+        recipe::wasm::light_recipe_from_jsvalue,
+    };
 
     //#[cfg_attr(feature = "wasm", wasm_bindgen)]
     #[wasm_bindgen]
@@ -87,21 +70,17 @@ pub mod wasm {
             self.db.get_ingredient_by_name_wasm(name)
         }
 
-        fn light_recipe_from_jsvalue(recipe: JsValue) -> Result<Vec<(String, f64)>, JsValue> {
-            serde_wasm_bindgen::from_value::<Vec<(String, f64)>>(recipe).map_err(Into::into)
-        }
-
         /// WASM compatible wrapper for [`Bridge::calculate_recipe_composition`]
         #[wasm_bindgen(js_name = "calculate_recipe_composition")]
         pub fn calculate_recipe_composition_wasm(&self, recipe: Box<[JsValue]>) -> Result<Composition, JsValue> {
-            let light_recipe = Self::light_recipe_from_jsvalue(JsValue::from(recipe))?;
+            let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
             self.calculate_recipe_composition(&light_recipe).map_err(Into::into)
         }
 
         /// WASM compatible wrapper for [`Bridge::calculate_recipe_mix_properties`]
         #[wasm_bindgen(js_name = "calculate_recipe_mix_properties")]
         pub fn calculate_recipe_mix_properties_wasm(&self, recipe: Box<[JsValue]>) -> Result<MixProperties, JsValue> {
-            let light_recipe = Self::light_recipe_from_jsvalue(JsValue::from(recipe))?;
+            let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
             self.calculate_recipe_mix_properties(&light_recipe).map_err(Into::into)
         }
     }

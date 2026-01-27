@@ -4,7 +4,7 @@ pub(crate) fn bench_recipe_calculate(c: &mut Criterion) {
     use sci_cream::recipe::{Recipe, RecipeLine};
 
     let recipe = Recipe {
-        name: "Chocolate Ice Cream".to_string(),
+        name: None,
         lines: [
             ("Whole Milk", 245.0),
             ("Whipping Cream", 215.0),
