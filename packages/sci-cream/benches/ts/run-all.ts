@@ -9,6 +9,8 @@ console.log("Starting TypeScript benchmarks for @workspace/sci-cream\n");
     "get_ingredients.bench.ts",
     "into_ingredient_from_spec.bench.ts",
     "recipe-wasm-bridge.bench.ts",
+    // Run last to avoid interference from WASM memory accumulation
+    "free-vs-no-free-wasm.bench.ts",
   ]) {
     try {
       console.log(`Running ${bench} benchmarks...`);
