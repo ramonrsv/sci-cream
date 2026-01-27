@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769554943151,
+  "lastUpdate": 1769555452192,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -671,6 +671,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 281,
             "range": "± 16",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "618fb31a966bc0374ae569c872c96fa40df6e4fb",
+          "message": "Add more feature-specific build/test to crate CI\n\n* Clean up, clarify, and add more feature-specific crate CI build and\n  test steps, to catch any issues with specific feature enablement.\n* Clean up and rename package.json scripts for rust build/test and for\n  wasm dependency builds. The Rust script are no longer specific to the\n  'wasm' and pnpm package features, that is captured by 'build:package'.\n  Remove the 'build' script, as it contains many somewhat unrelated\n  steps that there is no clear usage for running them together.\n* Add crate CI builds for wasm32-unknown-unknown target and the 'wasm'\n  feature, which should be a common combination used by wasm-pack.\n* Add default features [\"data\", \"database\"] to sci-cram Cargo.toml.\n  Remove 'test' from #[cfg(any(feature = \"data\"/\"database\", test))];\n  tests should be run with --all-features and there will be no support\n  for test with only some features enabled.",
+          "timestamp": "2026-01-27T15:46:46-05:00",
+          "tree_id": "f07dd813bbe7f48b8cbb4cf36c37440a7693d92f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/618fb31a966bc0374ae569c872c96fa40df6e4fb"
+        },
+        "date": 1769555451263,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 1596,
+            "range": "± 68",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 124409,
+            "range": "± 2021",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 268,
+            "range": "± 19",
             "unit": "ns/iter"
           }
         ]
