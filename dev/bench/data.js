@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769554406124,
+  "lastUpdate": 1769554748156,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -629,6 +629,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 309,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d51c46dddf76c32e822310e23af42d72c05a893d",
+          "message": "Separate free-vs-no-free from wasm bridge benches",
+          "timestamp": "2026-01-27T12:33:29-05:00",
+          "tree_id": "fd5c86f17ea4d07cad50a705b00710f68f0b72ab",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d51c46dddf76c32e822310e23af42d72c05a893d"
+        },
+        "date": 1769554747702,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 1601,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 124168,
+            "range": "± 2067",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 281,
+            "range": "± 16",
             "unit": "ns/iter"
           }
         ]
