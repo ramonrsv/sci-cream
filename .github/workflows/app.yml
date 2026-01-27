@@ -60,8 +60,6 @@ jobs:
       - uses: ./.github/actions/sci-cream-package
       - uses: ./.github/actions/build-and-seed-database
       - uses: ./.github/actions/setup-playwright
-        with:
-          additional-browsers: chrome
 
       - name: Run app unit tests with Vitest
         run: pnpm test:unit
@@ -142,8 +140,6 @@ jobs:
       - uses: ./.github/actions/sci-cream-package
       - uses: ./.github/actions/build-and-seed-database
       - uses: ./.github/actions/setup-playwright
-        with:
-          additional-browsers: chrome
 
       - name: Run app benchmarks
         run: pnpm bench

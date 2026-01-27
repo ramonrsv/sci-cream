@@ -30,14 +30,14 @@ export default defineConfig({
     { name: "Mobile Safari", use: { ...devices["iPhone 12"] } },
 
     /* Test against branded browsers. */
-    { name: "Google Chrome", use: { ...devices["Desktop Chrome"], channel: "chrome" } },
+    // { name: "Google Chrome", use: { ...devices["Desktop Chrome"], channel: "chrome" } },
     // { name: "Microsoft Edge", use: { ...devices["Desktop Edge"], channel: "msedge" } },
 
     /* Benchmarking project */
     {
       name: "benchmarks",
       testDir: "./src/__benches__/e2e",
-      use: { ...devices["Desktop Chrome"], channel: "chrome" },
+      use: { ...devices["Desktop Chrome"] },
       fullyParallel: false /* Disable parallel tests for benchmarks */,
       workers: 1 /* Single worker to avoid interference */,
     },
