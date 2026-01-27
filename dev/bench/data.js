@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769480087540,
+  "lastUpdate": 1769554221281,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -587,6 +587,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 314,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8775e36fdcda6f7dbcdaeab6ca5685f353f8d6bf",
+          "message": "Introduce `clean_reports.sh` and remove lock files\n\nIntroduce `scripts/clean_reports.sh` to clean up test, coverage, and\nbenchmark reports generated during development. Also remove `Cargo.lock`\nand `pnpm-lock.yaml` from `scripts/clean_workspace.sh`, now that these\nfiles are tracked in git version control.",
+          "timestamp": "2026-01-27T12:05:22-05:00",
+          "tree_id": "588d75888e073d6d9555fdcfd8c97c9104d7898a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8775e36fdcda6f7dbcdaeab6ca5685f353f8d6bf"
+        },
+        "date": 1769554220831,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 1979,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 160387,
+            "range": "± 3610",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 309,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
