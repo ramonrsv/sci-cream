@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "prerequisites": "pnpm --dir ../sci-cream prerequisites:js",
+    "prerequisites": "pnpm --dir ../sci-cream build:package",
     "build": "next build",
     "test": "pnpm test:unit && pnpm test:e2e",
     "test:unit": "vitest run",

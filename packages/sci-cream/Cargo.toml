@@ -14,6 +14,9 @@ database = []
 # Enable Diesel ORM support for [`IngredientSpec`]
 diesel = ["dep:diesel"]
 
+# Default features: embedded data and database
+default = ["data", "database"]
+
 # For the "wasm" feature, this needs to be changed to `cdylib` to work with `wasm-pack`, since it
 # does not currently support a `--crate-type` flag. See `scripts/set-crate-type.sh`.
 # See: https://github.com/drager/wasm-pack/issues/1297, https://github.com/trunk-rs/trunk

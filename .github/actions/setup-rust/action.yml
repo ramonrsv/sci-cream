@@ -4,6 +4,9 @@ inputs:
   components:
     description: "Additional components"
     required: false
+  targets:
+    description: "Additional targets"
+    required: false
   cargo-installs:
     description: "Cargo packages to install (comma-separated)"
     required: false
@@ -13,6 +16,7 @@ runs:
     - uses: dtolnay/rust-toolchain@stable
       with:
         components: ${{ inputs.components }}
+        targets: ${{ inputs.targets }}
 
     - uses: Swatinem/rust-cache@v2
       with:

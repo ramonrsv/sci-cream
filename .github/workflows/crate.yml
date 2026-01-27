@@ -30,10 +30,25 @@ jobs:
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-rust
+        with:
+          targets: wasm32-unknown-unknown
 
-      - run: cargo build --all-features --all-targets
-      - run: cargo test --all-features --all-targets
-      - run: cargo test --all-features --doc
+      - name: Build all targets (library, tests, benches, examples)
+        run: cargo build --all-features --all-targets
+
+      - name: Build cdylib for WebAssembly target with `wasm,data,database` features
+        run: cargo rustc --crate-type cdylib --target wasm32-unknown-unknown --features wasm,data,database
+      - name: Build cdylib for WebAssembly target with only `wasm` feature
+        run: cargo rustc --crate-type cdylib --target wasm32-unknown-unknown --features wasm --no-default-features
+
+      # Build individual features to catch any feature-enablement issues
+      - run: cargo build --no-default-features --features wasm
+      - run: cargo build --no-default-features --features data
+      - run: cargo build --no-default-features --features database
+      - run: cargo build --no-default-features --features diesel
+
+      - name: Run all tests, including doc tests
+        run: cargo test --all-features
 
   build_docs:
     runs-on: ubuntu-latest
@@ -42,7 +57,7 @@ jobs:
       - uses: ./.github/actions/setup-rust
 
       - run: cargo doc --all-features --no-deps --document-private-items
-      - run: cargo doc --examples --no-deps
+      - run: cargo doc --all-features --no-deps --document-private-items --examples
 
   clippy:
     runs-on: ubuntu-latest

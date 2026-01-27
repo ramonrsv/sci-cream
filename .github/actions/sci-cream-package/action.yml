@@ -5,4 +5,4 @@ runs:
   steps:
     - name: Build sci-cream package
       shell: bash
-      run: pnpm --dir ./packages/sci-cream build:wasm && pnpm --dir ./packages/sci-cream build:js
+      run: pnpm --dir ./packages/sci-cream build:package

@@ -21,9 +21,9 @@ pub mod specs;
 pub mod util;
 pub mod validate;
 
-#[cfg(any(feature = "data", test))]
+#[cfg(feature = "data")]
 pub mod data;
-#[cfg(any(feature = "database", test))]
+#[cfg(feature = "database")]
 pub mod database;
 #[cfg(feature = "diesel")]
 pub mod diesel;
