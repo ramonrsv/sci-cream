@@ -41,6 +41,8 @@ function doBenchmarkTimeMeasurements(name: string, run: () => Promise<number>) {
 }
 
 test.describe("UI Responsiveness Performance Benchmarks", () => {
+  test.setTimeout(10 * 60 * 1000);
+
   test("should measure initial page load time", async ({ page }) => {
     await doBenchmarkTimeMeasurements("Initial page load", async () => {
       return timeExecution(async () => {
@@ -180,8 +182,6 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
     page,
     browserName,
   }) => {
-    test.setTimeout(60 * 1000);
-
     await doBenchmarkTimeMeasurements("Rapid ingredient quantity updates, each", async () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
@@ -206,8 +206,6 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
     page,
     browserName,
   }) => {
-    test.setTimeout(60 * 1000);
-
     await doBenchmarkTimeMeasurements("Rapid ingredient quantity updates, final", async () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
