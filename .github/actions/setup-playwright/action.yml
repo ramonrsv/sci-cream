@@ -1,5 +1,9 @@
 name: "Install Playwright Browsers"
 description: "Install Playwright browsers and dependencies"
+inputs:
+  additional-browsers:
+    description: "Additional browsers other than default (comma-separated)"
+    required: false
 runs:
   using: "composite"
   steps:
@@ -7,6 +11,11 @@ runs:
       shell: bash
       run: cd ./packages/app && pnpm playwright install --with-deps
 
-    - name: Install Playwright Chrome browser
+    - if: ${{ inputs.additional-browsers != '' }}
+      name: Install additional non-default browsers
       shell: bash
-      run: cd ./packages/app && pnpm playwright install chrome --with-deps
+      run: |
+        IFS=',' read -ra BROWSERS <<< "${{ inputs.additional-browsers }}"
+        for browser in "${BROWSERS[@]}"; do
+          cd ./packages/app && pnpm playwright install "$browser" --with-deps
+        done
