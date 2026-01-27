@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769556056569,
+  "lastUpdate": 1769556149192,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -6831,6 +6831,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 40.23,
             "range": "0.92",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "618fb31a966bc0374ae569c872c96fa40df6e4fb",
+          "message": "Add more feature-specific build/test to crate CI\n\n* Clean up, clarify, and add more feature-specific crate CI build and\n  test steps, to catch any issues with specific feature enablement.\n* Clean up and rename package.json scripts for rust build/test and for\n  wasm dependency builds. The Rust script are no longer specific to the\n  'wasm' and pnpm package features, that is captured by 'build:package'.\n  Remove the 'build' script, as it contains many somewhat unrelated\n  steps that there is no clear usage for running them together.\n* Add crate CI builds for wasm32-unknown-unknown target and the 'wasm'\n  feature, which should be a common combination used by wasm-pack.\n* Add default features [\"data\", \"database\"] to sci-cram Cargo.toml.\n  Remove 'test' from #[cfg(any(feature = \"data\"/\"database\", test))];\n  tests should be run with --all-features and there will be no support\n  for test with only some features enabled.",
+          "timestamp": "2026-01-27T15:46:46-05:00",
+          "tree_id": "f07dd813bbe7f48b8cbb4cf36c37440a7693d92f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/618fb31a966bc0374ae569c872c96fa40df6e4fb"
+        },
+        "date": 1769556148150,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 82.319,
+            "range": "2.952",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 674.2,
+            "range": "46.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 69.3,
+            "range": "10.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 80.5,
+            "range": "9.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 50.9,
+            "range": "8.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 46.8,
+            "range": "7.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 151.1,
+            "range": "14.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 67,
+            "range": "3.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 66.3,
+            "range": "1.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 34.78,
+            "range": "0.64",
             "unit": "ms"
           }
         ]
