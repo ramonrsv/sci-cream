@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769557899343,
+  "lastUpdate": 1769558008981,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -7352,6 +7352,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 33.23,
             "range": "0.45",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c360865dcd90a3e9889efc86cedded3fa0bd30db",
+          "message": "Stop using branded Google Chrome in Playwright e2e\n\nStop using branded Google Chrome browser in Playwright e2e tests and\nbenchmarks; setting up branded chrome takes a lot of time in CI\nworkflows and probably doesn't offer much in extra coverage.",
+          "timestamp": "2026-01-27T16:44:15-05:00",
+          "tree_id": "8b0bd2334c32e9c13a7efd832807b03665ba4673",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c360865dcd90a3e9889efc86cedded3fa0bd30db"
+        },
+        "date": 1769558008377,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 23.365,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 667.4,
+            "range": "47.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 58.1,
+            "range": "7.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 69.6,
+            "range": "5.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.3,
+            "range": "11.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 35.7,
+            "range": "1.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 149.6,
+            "range": "12.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 55.1,
+            "range": "2.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 62.83,
+            "range": "1.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 32.39,
+            "range": "0.73",
             "unit": "ms"
           }
         ]
