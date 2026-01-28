@@ -26,13 +26,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 1923,
             "range": "± 69",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 130746,
             "range": "± 1982",
             "unit": "ns/iter"
@@ -68,13 +68,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 2367,
             "range": "± 32",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 161659,
             "range": "± 938",
             "unit": "ns/iter"
@@ -110,13 +110,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 2283,
             "range": "± 93",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 161739,
             "range": "± 2351",
             "unit": "ns/iter"
@@ -152,13 +152,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 2346,
             "range": "± 22",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 162091,
             "range": "± 22933",
             "unit": "ns/iter"
@@ -194,13 +194,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 2488,
             "range": "± 104",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 162194,
             "range": "± 927",
             "unit": "ns/iter"
@@ -236,13 +236,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 2293,
             "range": "± 25",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 161720,
             "range": "± 994",
             "unit": "ns/iter"
@@ -278,13 +278,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 2361,
             "range": "± 33",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 161957,
             "range": "± 4078",
             "unit": "ns/iter"
@@ -320,13 +320,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 2404,
             "range": "± 11",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 163155,
             "range": "± 2423",
             "unit": "ns/iter"
@@ -362,13 +362,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 2379,
             "range": "± 39",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 163850,
             "range": "± 919",
             "unit": "ns/iter"
@@ -404,13 +404,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 2357,
             "range": "± 43",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 163423,
             "range": "± 1257",
             "unit": "ns/iter"
@@ -446,13 +446,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 2022,
             "range": "± 39",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 162192,
             "range": "± 5848",
             "unit": "ns/iter"
@@ -488,13 +488,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 1974,
             "range": "± 36",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 162143,
             "range": "± 1273",
             "unit": "ns/iter"
@@ -530,13 +530,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 1974,
             "range": "± 13",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 159843,
             "range": "± 665",
             "unit": "ns/iter"
@@ -572,13 +572,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 2003,
             "range": "± 33",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 160540,
             "range": "± 1394",
             "unit": "ns/iter"
@@ -614,13 +614,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 1979,
             "range": "± 32",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 160387,
             "range": "± 3610",
             "unit": "ns/iter"
@@ -656,13 +656,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 1601,
             "range": "± 41",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 124168,
             "range": "± 2067",
             "unit": "ns/iter"
@@ -698,13 +698,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 1596,
             "range": "± 68",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 124409,
             "range": "± 2021",
             "unit": "ns/iter"
@@ -740,13 +740,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 1987,
             "range": "± 28",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 160193,
             "range": "± 8625",
             "unit": "ns/iter"
@@ -782,13 +782,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 1972,
             "range": "± 16",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 161238,
             "range": "± 2904",
             "unit": "ns/iter"
@@ -824,13 +824,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 1977,
             "range": "± 37",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 160911,
             "range": "± 2198",
             "unit": "ns/iter"
@@ -866,13 +866,13 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "calculate_composition",
+            "name": "recipe.calculate_recipe_composition",
             "value": 2033,
             "range": "± 37",
             "unit": "ns/iter"
           },
           {
-            "name": "calculate_mix_properties",
+            "name": "recipe.calculate_mix_properties",
             "value": 160124,
             "range": "± 8173",
             "unit": "ns/iter"
