@@ -56,3 +56,7 @@
       very quickly, the UI can become a bit unresponsive for a few seconds. This much easier to
       reproduce if a log is added to `updateRecipe` in `recipe.tsx`.
 - [x] Investigate the stability issues when making many rapid ingredient quantity updates.
+- [ ] Investigate possible performance impact of `composition.get` and `mix_properties.get` calls
+      in `IngredientCompositionGrid` and `MixPropertiesGrid`; there may be a lot of them, which
+      could be slow given that they are JS <-> WASM calls. Perhaps doing a single call to get a full
+      map once and then doing `.get` calls on the JS side may be more performant.
