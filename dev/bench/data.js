@@ -26,7 +26,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 1923,
             "range": "± 69",
             "unit": "ns/iter"
@@ -68,7 +68,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 2367,
             "range": "± 32",
             "unit": "ns/iter"
@@ -110,7 +110,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 2283,
             "range": "± 93",
             "unit": "ns/iter"
@@ -152,7 +152,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 2346,
             "range": "± 22",
             "unit": "ns/iter"
@@ -194,7 +194,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 2488,
             "range": "± 104",
             "unit": "ns/iter"
@@ -236,7 +236,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 2293,
             "range": "± 25",
             "unit": "ns/iter"
@@ -278,7 +278,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 2361,
             "range": "± 33",
             "unit": "ns/iter"
@@ -320,7 +320,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 2404,
             "range": "± 11",
             "unit": "ns/iter"
@@ -362,7 +362,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 2379,
             "range": "± 39",
             "unit": "ns/iter"
@@ -404,7 +404,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 2357,
             "range": "± 43",
             "unit": "ns/iter"
@@ -446,7 +446,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 2022,
             "range": "± 39",
             "unit": "ns/iter"
@@ -488,7 +488,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 1974,
             "range": "± 36",
             "unit": "ns/iter"
@@ -530,7 +530,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 1974,
             "range": "± 13",
             "unit": "ns/iter"
@@ -572,7 +572,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 2003,
             "range": "± 33",
             "unit": "ns/iter"
@@ -614,7 +614,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 1979,
             "range": "± 32",
             "unit": "ns/iter"
@@ -656,7 +656,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 1601,
             "range": "± 41",
             "unit": "ns/iter"
@@ -698,7 +698,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 1596,
             "range": "± 68",
             "unit": "ns/iter"
@@ -740,7 +740,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 1987,
             "range": "± 28",
             "unit": "ns/iter"
@@ -782,7 +782,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 1972,
             "range": "± 16",
             "unit": "ns/iter"
@@ -824,7 +824,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 1977,
             "range": "± 37",
             "unit": "ns/iter"
@@ -866,7 +866,7 @@ window.BENCHMARK_DATA = {
         "tool": "cargo",
         "benches": [
           {
-            "name": "recipe.calculate_recipe_composition",
+            "name": "recipe.calculate_composition",
             "value": 2033,
             "range": "± 37",
             "unit": "ns/iter"
