@@ -4,9 +4,9 @@ import {
   Category,
   get_all_ingredient_specs,
   IngredientDatabase,
-  make_seeded_ingredient_database,
-  make_seeded_ingredient_database_from_specs,
-  make_seeded_ingredient_database_from_embedded_data,
+  new_ingredient_database_seeded,
+  new_ingredient_database_seeded_from_specs,
+  new_ingredient_database_seeded_from_embedded_data,
   get_ingredient_specs_by_category,
   get_ingredient_spec_by_name,
   into_ingredient_from_spec,
@@ -20,8 +20,8 @@ test("new IngredientDatabase", () => {
   expect(db).toBeDefined();
 });
 
-test("make_seeded_ingredient_database", () => {
-  const db = make_seeded_ingredient_database(
+test("new_ingredient_database_seeded", () => {
+  const db = new_ingredient_database_seeded(
     get_all_ingredient_specs().map((spec) => into_ingredient_from_spec(spec)),
   );
 
@@ -29,22 +29,21 @@ test("make_seeded_ingredient_database", () => {
   expect(db.get_all_ingredients().length).toBe(allIngredientSpecs.length);
 });
 
-test("make_seeded_ingredient_database_from_specs", () => {
-  const db = make_seeded_ingredient_database_from_specs(get_all_ingredient_specs());
-
+test("new_ingredient_database_seeded_from_specs", () => {
+  const db = new_ingredient_database_seeded_from_specs(get_all_ingredient_specs());
   expect(db).toBeDefined();
   expect(db.get_all_ingredients().length).toBe(allIngredientSpecs.length);
 });
 
-test("make_seeded_ingredient_database_from_embedded_data", () => {
-  const db = make_seeded_ingredient_database_from_embedded_data();
+test("new_ingredient_database_seeded_from_embedded_data", () => {
+  const db = new_ingredient_database_seeded_from_embedded_data();
 
   expect(db).toBeDefined();
   expect(db.get_all_ingredients().length).toBe(allIngredientSpecs.length);
 });
 
 test("IngredientDatabase.get_all_ingredients", () => {
-  const db = make_seeded_ingredient_database_from_specs(get_all_ingredient_specs());
+  const db = new_ingredient_database_seeded_from_specs(get_all_ingredient_specs());
   const ingredients = db.get_all_ingredients();
 
   expect(ingredients.length).toBe(allIngredientSpecs.length);
@@ -57,7 +56,7 @@ test("IngredientDatabase.get_all_ingredients", () => {
 });
 
 test("IngredientDatabase.get_ingredients_by_category", () => {
-  const db = make_seeded_ingredient_database_from_specs(get_all_ingredient_specs());
+  const db = new_ingredient_database_seeded_from_specs(get_all_ingredient_specs());
 
   for (const category of getWasmEnums(Category)) {
     const ingredients = db.get_ingredients_by_category(category);
@@ -72,7 +71,7 @@ test("IngredientDatabase.get_ingredients_by_category", () => {
 });
 
 test("IngredientDatabase.get_ingredient_by_name", () => {
-  const db = make_seeded_ingredient_database_from_specs(get_all_ingredient_specs());
+  const db = new_ingredient_database_seeded_from_specs(get_all_ingredient_specs());
 
   for (const jsonSpec of allIngredientSpecs) {
     const ing = db.get_ingredient_by_name(jsonSpec.name);

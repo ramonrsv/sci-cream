@@ -2,7 +2,7 @@ import Benchmark from "benchmark";
 
 import {
   getIngredientSpecByName,
-  make_seeded_ingredient_database_from_specs,
+  new_ingredient_database_seeded_from_specs,
   Bridge,
 } from "../../dist/index.js";
 
@@ -22,7 +22,7 @@ const specLines = LIGHT_RECIPE.map(([name, quantity]) => ({
 const recipeLines = makeRecipeLines(specLines);
 const recipe = makeRecipeFromMadeLines(specLines);
 const bridge = new Bridge(
-  make_seeded_ingredient_database_from_specs(specLines.map((line) => line.spec)),
+  new_ingredient_database_seeded_from_specs(specLines.map((line) => line.spec)),
 );
 
 // These benchmark suite shows that creating new RecipeLine instances from scratch is generally

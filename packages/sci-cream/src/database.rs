@@ -154,19 +154,19 @@ pub mod wasm {
 
     #[wasm_bindgen]
     #[allow(clippy::needless_pass_by_value)]
-    pub fn make_seeded_ingredient_database(ingredients: Box<[Ingredient]>) -> IngredientDatabase {
+    pub fn new_ingredient_database_seeded(ingredients: Box<[Ingredient]>) -> IngredientDatabase {
         IngredientDatabase::new_seeded(&ingredients)
     }
 
     #[wasm_bindgen]
     #[allow(clippy::needless_pass_by_value)]
-    pub fn make_seeded_ingredient_database_from_specs(specs: Box<[JsValue]>) -> Result<IngredientDatabase, JsValue> {
+    pub fn new_ingredient_database_seeded_from_specs(specs: Box<[JsValue]>) -> Result<IngredientDatabase, JsValue> {
         IngredientDatabase::new_seeded_from_specs(&specs_from_jsvalues(&specs)?).map_err(Into::into)
     }
 
     #[cfg(feature = "data")]
     #[wasm_bindgen]
-    pub fn make_seeded_ingredient_database_from_embedded_data() -> Result<IngredientDatabase, JsValue> {
+    pub fn new_ingredient_database_seeded_from_embedded_data() -> Result<IngredientDatabase, JsValue> {
         IngredientDatabase::new_seeded_from_embedded_data().map_err(Into::into)
     }
 }

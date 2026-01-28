@@ -5,7 +5,7 @@ import {
   getIngredientSpecByName,
   get_ingredient_spec_by_name,
   into_ingredient_from_spec,
-  make_seeded_ingredient_database_from_specs,
+  new_ingredient_database_seeded_from_specs,
   Bridge,
 } from "../../dist/index";
 
@@ -15,8 +15,8 @@ const map = new Map<string, (typeof allIngredientSpecs)[0]>(
   allIngredientSpecs.map((spec) => [spec.name, spec]),
 );
 
-const db = make_seeded_ingredient_database_from_specs(allIngredientSpecs);
-const bridge = new Bridge(make_seeded_ingredient_database_from_specs(allIngredientSpecs));
+const db = new_ingredient_database_seeded_from_specs(allIngredientSpecs);
+const bridge = new Bridge(new_ingredient_database_seeded_from_specs(allIngredientSpecs));
 
 const suite = new Benchmark.Suite("Get Ingredient Instances");
 

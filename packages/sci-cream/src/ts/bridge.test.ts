@@ -4,7 +4,7 @@ import {
   Composition,
   MixProperties,
   get_all_ingredient_specs,
-  make_seeded_ingredient_database_from_specs,
+  new_ingredient_database_seeded_from_specs,
   Bridge,
   CompKey,
   compToPropKey,
@@ -26,7 +26,7 @@ const lightRecipe = [
 ];
 
 function make_seeded_db() {
-  return make_seeded_ingredient_database_from_specs(get_all_ingredient_specs());
+  return new_ingredient_database_seeded_from_specs(get_all_ingredient_specs());
 }
 
 test("new Bridge", () => {
