@@ -1,9 +1,9 @@
-- [ ] In `RecipeContext.ingredientCache` we cache `IngredientTransfer` and convert to `Ingredient`
+- [x] In `RecipeContext.ingredientCache` we cache `IngredientTransfer` and convert to `Ingredient`
       every time via `into_ingredient_from_spec_js`, instead of caching the `Ingredient` itself.
       This is trivial to change, but I'm purposely leaving it like this until some benchmarking
       capabilities are implemented, since this change is a good candidate to study the effect it has
       on performance.
-- [ ] Once supported, benchmark the performance impact of pre-fetching all ingredient specs on
+- [x] Once supported, benchmark the performance impact of pre-fetching all ingredient specs on
       mount, compared to individually fetching specs when requested.
 - [ ] Add left columns to `IngredientCompositionGrid` to show the ingredient names and quantities,
       so that it can be positioned anywhere and does not have to be besides `RecipeGrid`.
@@ -41,11 +41,11 @@
 - [ ] Add code example doc tests to all specs that don't already have them.
 - [ ] Use new [pnpm/action-setup](https://github.com/pnpm/action-setup) `cache: true` option once
       it's released. See: <https://github.com/pnpm/action-setup/issues/201>
-- [ ] Looking to making reusable GitHub Workflows for common setup to simplify the CI workflows.
+- [x] Looking to making reusable GitHub Workflows for common setup to simplify the CI workflows.
 - [ ] Figure out how to handle and track [allulose](https://en.wikipedia.org/wiki/Psicose), which
       does not fit into any of the existing sugar, polyols, artificial, or fiber categories.
 - [ ] Add `PropKey::TotalAmount` and figure out how to handle it on the JavasScript side.
-- [ ] Figure out how to re-design `Recipe` and `RecipeContext` to avoid having to copy WASM objects
+- [x] Figure out how to re-design `Recipe` and `RecipeContext` to avoid having to copy WASM objects
       every time we need to compute the properties of a recipe. This should probably be done after
       benchmark support is available, so that performance impact can guide the design.
 - [ ] Design and implement a system to calculate important ratios for `Sweeteners`, e.g. PAC:POD,
