@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769558471934,
+  "lastUpdate": 1769558742006,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -839,6 +839,48 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 306,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5ccb17ba11956cf226dca60ba426c13463e60bc5",
+          "message": "Introduce LightRecipe & Recipe::from_light_recipe\n\nAlso make Recipe::name an Option<String>, and change all function\narguments accordingly; most current uses cases do not need a name.",
+          "timestamp": "2026-01-27T18:40:42-05:00",
+          "tree_id": "0f7e0c60c6e5020dc185bc1140e298d877ec8bcc",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5ccb17ba11956cf226dca60ba426c13463e60bc5"
+        },
+        "date": 1769558741388,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "calculate_composition",
+            "value": 2033,
+            "range": "± 37",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "calculate_mix_properties",
+            "value": 160124,
+            "range": "± 8173",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 322,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
