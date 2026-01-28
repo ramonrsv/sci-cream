@@ -60,3 +60,6 @@
       in `IngredientCompositionGrid` and `MixPropertiesGrid`; there may be a lot of them, which
       could be slow given that they are JS <-> WASM calls. Perhaps doing a single call to get a full
       map once and then doing `.get` calls on the JS side may be more performant.
+- [ ] There are various calls to `comp_key_as_med_str` and `prop_key_as_med_str` that are also
+      JS <-> WASM. These might also benefit from doing a single WASM -> JS call to get a map, then
+      subsequent lookups during component render are done within the JS side.
