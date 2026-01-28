@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769644422379,
+  "lastUpdate": 1769644661634,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -10135,6 +10135,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 30.2,
             "range": "0.46",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d4229e48fb78d85f225ee01b08ae13211d186946",
+          "message": "Add TODO about comp/prop_key_as_med_str WASM calls",
+          "timestamp": "2026-01-28T18:46:25-05:00",
+          "tree_id": "e8b00776496ecfe78aec31d59c4fee26cf6c4021",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d4229e48fb78d85f225ee01b08ae13211d186946"
+        },
+        "date": 1769644661283,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 666.1,
+            "range": "46.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 64.5,
+            "range": "18.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 68.5,
+            "range": "8.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.5,
+            "range": "8.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 38.1,
+            "range": "6.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 141.7,
+            "range": "10.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 55.2,
+            "range": "1.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 58.27,
+            "range": "0.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 29.52,
+            "range": "0.57",
             "unit": "ms"
           }
         ]
