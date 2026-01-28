@@ -112,4 +112,4 @@ all = "warn"
 [[bench]]
 name = "benchmarks"
 harness = false
-required-features = ["data"]
+required-features = ["wasm", "data", "database"]
