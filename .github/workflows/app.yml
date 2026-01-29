@@ -115,7 +115,34 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           flags: app
 
-  benchmarks:
+  unit_benchmarks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-rust
+        with:
+          cargo-installs: wasm-pack
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/sci-cream-package
+
+      - name: Run app unit benchmarks
+        run: |
+          set -o pipefail
+          pnpm run bench:unit | tee bench_output_js.txt
+
+      - if: vars.ACT != 'true'
+        name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: "App JS benchmarks"
+          tool: "benchmarkjs"
+          output-file-path: packages/app/bench_output_js.txt
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+
+  e2e_benchmarks:
     runs-on: ubuntu-latest
     # Avoid Playwright server conflicts when running locally via `act`
     needs: [unit_and_e2e_tests]
@@ -141,8 +168,8 @@ jobs:
       - uses: ./.github/actions/build-and-seed-database
       - uses: ./.github/actions/setup-playwright
 
-      - name: Run app benchmarks
-        run: pnpm bench
+      - name: Run app end-to-end benchmarks
+        run: pnpm bench:e2e
 
       - if: vars.ACT != 'true'
         name: Store benchmark result
@@ -150,6 +177,6 @@ jobs:
         with:
           name: "App UI Benchmarks"
           tool: "customSmallerIsBetter"
-          output-file-path: packages/app/bench-results/bench_output_ui.json
+          output-file-path: packages/app/bench-results/bench_output_e2e.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: true

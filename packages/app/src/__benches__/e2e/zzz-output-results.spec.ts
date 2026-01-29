@@ -13,7 +13,7 @@ test("should output benchmark results to file", async () => {
   const outputDir = path.join(process.cwd(), "bench-results");
   fs.mkdirSync(outputDir, { recursive: true });
 
-  const outputPath = path.join(outputDir, "bench_output_ui.json");
+  const outputPath = path.join(outputDir, "bench_output_e2e.json");
   fs.writeFileSync(outputPath, JSON.stringify(allBenchmarkResultsForUpload, null, 2));
   console.log(`\nBenchmark results written to: ${outputPath}`);
 });

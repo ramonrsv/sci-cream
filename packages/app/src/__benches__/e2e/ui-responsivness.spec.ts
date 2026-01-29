@@ -78,13 +78,13 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       const ingNameInput = getIngredientNameInputAtIdx(page, 0);
       const milkFatStr = comp_key_as_med_str(CompKey.MilkFat);
 
-      const start = Date.now();
-      await ingNameInput.fill("2% Milk");
-      await page.getByRole("columnheader", { name: milkFatStr }).waitFor();
-      const milkFatCompValue = await getCompositionValueElement(page, 0, CompKey.MilkFat);
-      await expect(milkFatCompValue).toBeVisible();
-      await expect(milkFatCompValue).toHaveText("2");
-      return Date.now() - start;
+      return timeExecution(async () => {
+        await ingNameInput.fill("2% Milk");
+        await page.getByRole("columnheader", { name: milkFatStr }).waitFor();
+        const milkFatCompValue = await getCompositionValueElement(page, 0, CompKey.MilkFat);
+        await expect(milkFatCompValue).toBeVisible();
+        await expect(milkFatCompValue).toHaveText("2");
+      });
     });
   });
 
