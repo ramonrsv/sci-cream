@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769728768525,
+  "lastUpdate": 1769728784282,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -1529,6 +1529,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 313,
             "range": "± 35",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1c99169109d056c1254588e6ad4dd3cf9cbd8435",
+          "message": "Remove .toBeVisible() calls from e2e benchmarks\n\nIt's unclear if these calls provide any more validation than just\ncalling .toHaveValue(...). In any case, there are e2e tests that\nalready perform this same validation for correctness. For the purposes\nof benchmarks, it is better to lower the overhead of the benchmarks\nthemselves as much as possible, to make the small real performance\nimpact of changes more apparent.",
+          "timestamp": "2026-01-29T18:14:06-05:00",
+          "tree_id": "4f81bc6005764b8eb26437d4598771bca7afd6f6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1c99169109d056c1254588e6ad4dd3cf9cbd8435"
+        },
+        "date": 1769728782561,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3541,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 162327,
+            "range": "± 3375",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2006,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 164001,
+            "range": "± 6747",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 309,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
