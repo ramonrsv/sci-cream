@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769664254640,
+  "lastUpdate": 1769664684682,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -10542,6 +10542,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 29.52,
             "range": "0.57",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7aa3724522f323ba576a76606b3c59f38c7385d9",
+          "message": "Add unique label to each dataset line in FpdGraph\n\nThis resolves an issue where the lines for reference recipes jump around\nwhenever updates are made to any recipe, or when the FpdGraph component\nis dragged. According to Clauce Sonnet 4.5, this is because, quote:\n\n  When Chart.js re-renders, it can't distinguish between which dataset\n  belongs to which recipe, causing it to animate/transition between what\n  it thinks are \"different\" datasets, resulting in the jumping behavior.\n\nCheck off the corresponding TODO item, as well as the one for UI\nresponsivness when making many rapid ingredient quantity updates; that\nseems to only be an issue when running `pnpm dev`, it does not happen\nwith a release build `pnpm start`.",
+          "timestamp": "2026-01-28T19:17:41-05:00",
+          "tree_id": "b61a80920e6e35c5b4f125332f3ab5229263fb0e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7aa3724522f323ba576a76606b3c59f38c7385d9"
+        },
+        "date": 1769664683662,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 678.5,
+            "range": "50.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 67.5,
+            "range": "16.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 70.8,
+            "range": "7.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41,
+            "range": "6.13",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 39.6,
+            "range": "7.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 150.8,
+            "range": "11.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 63,
+            "range": "8.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 62.7,
+            "range": "1.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 31.24,
+            "range": "0.54",
             "unit": "ms"
           }
         ]
