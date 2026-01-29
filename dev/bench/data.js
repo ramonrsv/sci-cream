@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769725258505,
+  "lastUpdate": 1769725359976,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -12254,6 +12254,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 30.23,
             "range": "0.50",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cf6527f475cb41d237fdbeaae8a786f27d52ff26",
+          "message": "Use different server ports for Playwright CI jobs\n\nUse an environment variable `PORT` to configure the `baseURL` and\n`webServer.url` of Playwright tests/benches. CI jobs can now set\ndifferent ports so that they don't conflict with each other when running\nlocally with `act`, and so we can now run the jobs in parallel.",
+          "timestamp": "2026-01-29T16:58:08-05:00",
+          "tree_id": "72cb1623fa10790cade8f331e6801dbf496af275",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cf6527f475cb41d237fdbeaae8a786f27d52ff26"
+        },
+        "date": 1769725359322,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 683.1,
+            "range": "52.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53.4,
+            "range": "9.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 63.1,
+            "range": "6.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 45.4,
+            "range": "10.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 41,
+            "range": "2.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 150.1,
+            "range": "15.25",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 66.9,
+            "range": "8.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 63.09,
+            "range": "1.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 31.07,
+            "range": "0.63",
             "unit": "ms"
           }
         ]
