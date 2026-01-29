@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769725069375,
+  "lastUpdate": 1769725096846,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -1367,6 +1367,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 309,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cf6527f475cb41d237fdbeaae8a786f27d52ff26",
+          "message": "Use different server ports for Playwright CI jobs\n\nUse an environment variable `PORT` to configure the `baseURL` and\n`webServer.url` of Playwright tests/benches. CI jobs can now set\ndifferent ports so that they don't conflict with each other when running\nlocally with `act`, and so we can now run the jobs in parallel.",
+          "timestamp": "2026-01-29T16:58:08-05:00",
+          "tree_id": "72cb1623fa10790cade8f331e6801dbf496af275",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cf6527f475cb41d237fdbeaae8a786f27d52ff26"
+        },
+        "date": 1769725095551,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3525,
+            "range": "± 38",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161140,
+            "range": "± 632",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1972,
+            "range": "± 49",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 159902,
+            "range": "± 650",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 313,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
