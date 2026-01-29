@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769644661634,
+  "lastUpdate": 1769664113174,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -1151,6 +1151,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 311,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7aa3724522f323ba576a76606b3c59f38c7385d9",
+          "message": "Add unique label to each dataset line in FpdGraph\n\nThis resolves an issue where the lines for reference recipes jump around\nwhenever updates are made to any recipe, or when the FpdGraph component\nis dragged. According to Clauce Sonnet 4.5, this is because, quote:\n\n  When Chart.js re-renders, it can't distinguish between which dataset\n  belongs to which recipe, causing it to animate/transition between what\n  it thinks are \"different\" datasets, resulting in the jumping behavior.\n\nCheck off the corresponding TODO item, as well as the one for UI\nresponsivness when making many rapid ingredient quantity updates; that\nseems to only be an issue when running `pnpm dev`, it does not happen\nwith a release build `pnpm start`.",
+          "timestamp": "2026-01-28T19:17:41-05:00",
+          "tree_id": "b61a80920e6e35c5b4f125332f3ab5229263fb0e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7aa3724522f323ba576a76606b3c59f38c7385d9"
+        },
+        "date": 1769664112801,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3581,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161050,
+            "range": "± 4662",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1975,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 159488,
+            "range": "± 728",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 310,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
