@@ -20,7 +20,7 @@ import {
   getPropKeys,
   prop_key_as_med_str,
   getMixProperty,
-} from "./prop_key";
+} from "./prop-key";
 
 test("Import from sci-cream wasm package, at sci-cream", () => {
   expect(comp_key_as_med_str(CompKey.MilkFat)).toBe("Milk Fat");

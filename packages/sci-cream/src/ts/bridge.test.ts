@@ -10,7 +10,7 @@ import {
   compToPropKey,
 } from "../../dist/index";
 
-import { getMixProperty } from "./prop_key";
+import { getMixProperty } from "./prop-key";
 
 const lightRecipe = [
   ["Whole Milk", 245],
