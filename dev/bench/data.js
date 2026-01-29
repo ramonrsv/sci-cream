@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769726957168,
+  "lastUpdate": 1769726982788,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -1475,6 +1475,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 312,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9fc8a956e82f2978450cbaacce8b16492a833fd9",
+          "message": "Introduce comp-value-as-qty/percent optimizations\n\nThe expecation was that it would be much more performant to replicate\nthe functionality of these functions purely on the JS side than it would\nbe to do WASM calls for such simple calculations, given the cost of\nJS <-> WASM bridging. However, as it turns out, there isn't much of a\ndifference between these two methods; perhaps because there isn't much\nJS <-> WASM overhead for simple number arguments?",
+          "timestamp": "2026-01-29T17:37:16-05:00",
+          "tree_id": "5d2ae60b48a0fac93f225b7e86d821d9d7c74ed9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9fc8a956e82f2978450cbaacce8b16492a833fd9"
+        },
+        "date": 1769726982082,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3538,
+            "range": "± 50",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161848,
+            "range": "± 8532",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1963,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160588,
+            "range": "± 16836",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 313,
+            "range": "± 35",
             "unit": "ns/iter"
           }
         ]
