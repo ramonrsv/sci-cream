@@ -2,6 +2,8 @@ import { defineConfig, devices } from "@playwright/test";
 
 import "dotenv/config";
 
+const PORT = process.env.PORT || "3000";
+
 // See https://playwright.dev/docs/test-configuration.
 export default defineConfig({
   testDir: "./src/__tests__/e2e",
@@ -15,7 +17,7 @@ export default defineConfig({
 
   /* See https://playwright.dev/docs/api/class-testoptions. */
   use: {
-    baseURL: "http://localhost:3000" /* Base URL to use in `await page.goto('')` */,
+    baseURL: `http://localhost:${PORT}` /* Base URL to use in `await page.goto('')` */,
     trace: "on-first-retry" /* See https://playwright.dev/docs/trace-viewer */,
   },
 
@@ -45,8 +47,8 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: "pnpm start",
-    url: "http://localhost:3000",
+    command: `pnpm start --port ${PORT}`,
+    url: `http://localhost:${PORT}`,
     reuseExistingServer: !process.env.CI,
   },
 });

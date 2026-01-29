@@ -65,7 +65,9 @@ jobs:
         run: pnpm test:unit
 
       - name: Run app end-to-end tests with Playwright
-        run: pnpm test:e2e
+        # Ensure that no two jobs with a playwright webServer use the same port,
+        # as this can cause conflicts when running locally via `act`.
+        run: PORT=3000 pnpm test:e2e
 
   eslint:
     runs-on: ubuntu-latest
@@ -144,9 +146,6 @@ jobs:
 
   e2e_benchmarks:
     runs-on: ubuntu-latest
-    # Avoid Playwright server conflicts when running locally via `act`
-    needs: [unit_and_e2e_tests]
-    timeout-minutes: 60
     permissions:
       contents: write
     services:
@@ -169,7 +168,7 @@ jobs:
       - uses: ./.github/actions/setup-playwright
 
       - name: Run app end-to-end benchmarks
-        run: pnpm bench:e2e
+        run: PORT=3001 pnpm bench:e2e
 
       - if: vars.ACT != 'true'
         name: Store benchmark result
