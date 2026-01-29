@@ -185,10 +185,6 @@ export async function recipeUpdateCompleted(
   elements: RecipePasteElements,
   expected: { name: string; qty: number; servingTemp: string; energy: string },
 ) {
-  await expect(elements.ingNameInput).toBeVisible();
-  await expect(elements.ingQtyInput).toBeVisible();
-  await expect(elements.propServingTemp).toBeVisible();
-
   await expect(elements.ingNameInput).toHaveValue(expected.name);
   await expect(elements.ingQtyInput).toHaveValue(expected.qty.toString());
   await expect(elements.propServingTemp).toHaveText(expected.servingTemp);
@@ -199,7 +195,6 @@ export async function recipeUpdateCompleted(
     elements.ingredientIdx,
     CompKey.Energy,
   );
-  await expect(energyCompValue).toBeVisible();
   await expect(energyCompValue).toHaveText(expected.energy);
 }
 

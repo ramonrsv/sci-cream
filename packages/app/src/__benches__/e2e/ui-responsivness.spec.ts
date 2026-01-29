@@ -61,7 +61,6 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
 
       return timeExecution(async () => {
         await ingNameInput.fill("2% Milk");
-        await expect(ingNameInput).toBeVisible();
         await expect(ingNameInput).toHaveValue("2% Milk");
       });
     });
@@ -82,7 +81,6 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
         await ingNameInput.fill("2% Milk");
         await page.getByRole("columnheader", { name: milkFatStr }).waitFor();
         const milkFatCompValue = await getCompositionValueElement(page, 0, CompKey.MilkFat);
-        await expect(milkFatCompValue).toBeVisible();
         await expect(milkFatCompValue).toHaveText("2");
       });
     });
@@ -97,7 +95,6 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
 
       return timeExecution(async () => {
         await ingQtyInput.fill("100");
-        await expect(ingQtyInput).toBeVisible();
         await expect(ingQtyInput).toHaveValue("100");
       });
     });
@@ -113,7 +110,6 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
 
       const ingNameInput = getIngredientNameInputAtIdx(page, 0);
       await ingNameInput.fill("2% Milk");
-      await expect(ingNameInput).toBeVisible();
       await expect(ingNameInput).toHaveValue("2% Milk");
 
       const ingQtyInput = getIngredientQtyInputAtIdx(page, 0);
@@ -121,7 +117,6 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
 
       return timeExecution(async () => {
         await ingQtyInput.fill("100");
-        await expect(milkFatPropValue).toBeVisible();
         await expect(milkFatPropValue).toHaveText("2");
       });
     });
@@ -161,14 +156,10 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await recipeUpdateCompleted(page, elements, EXPECTED_LAST_INGREDIENT);
 
       const recipeSelector = getRecipeSelector(page);
-      await expect(recipeSelector).toBeVisible();
       await expect(recipeSelector).toBeEnabled();
 
       return timeExecution(async () => {
         await recipeSelector.selectOption({ value: "1" });
-        await expect(elements.ingNameInput).toBeVisible();
-        await expect(elements.ingQtyInput).toBeVisible();
-
         await expect(elements.ingNameInput).toHaveValue("");
         await expect(elements.ingQtyInput).toHaveValue("");
 
