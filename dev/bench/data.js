@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769726227439,
+  "lastUpdate": 1769726957168,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -12974,6 +12974,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.78%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9fc8a956e82f2978450cbaacce8b16492a833fd9",
+          "message": "Introduce comp-value-as-qty/percent optimizations\n\nThe expecation was that it would be much more performant to replicate\nthe functionality of these functions purely on the JS side than it would\nbe to do WASM calls for such simple calculations, given the cost of\nJS <-> WASM bridging. However, as it turns out, there isn't much of a\ndifference between these two methods; perhaps because there isn't much\nJS <-> WASM overhead for simple number arguments?",
+          "timestamp": "2026-01-29T17:37:16-05:00",
+          "tree_id": "5d2ae60b48a0fac93f225b7e86d821d9d7c74ed9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9fc8a956e82f2978450cbaacce8b16492a833fd9"
+        },
+        "date": 1769726956627,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 74153,
+            "range": "±0.63%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 700573,
+            "range": "±1.32%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10077,
+            "range": "±2.14%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 594839,
+            "range": "±1.16%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
