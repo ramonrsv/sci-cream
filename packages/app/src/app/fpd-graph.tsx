@@ -35,6 +35,7 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
     datasets: recipes.flatMap((recipe) => {
       const curves = recipe.mixProperties.fpd!.curves!;
       const borderColor = recipeChartColor(recipe.index);
+      const recipeLabel = recipe.index === 0 ? "" : ` (${recipe.name})`;
 
       const lines = [
         { lineLabel: "Hardness", curve: curves.hardness },
@@ -42,7 +43,7 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
       ];
 
       return lines.map(({ lineLabel, borderDash, curve }) => ({
-        label: lineLabel,
+        label: `${lineLabel}${recipeLabel}`,
         data: curve.map((point) => (point.temp >= 0 ? NaN : point.temp)),
         backgroundColor: "rgba(0, 0, 0, 0)",
         borderColor: borderColor,
