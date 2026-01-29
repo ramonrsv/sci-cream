@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769726143138,
+  "lastUpdate": 1769726227439,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -12731,6 +12731,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 31.07,
             "range": "0.63",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a95abf2a67f4c74f5b7fbe7b0300d95fdfc0d89f",
+          "message": "Introduce Comp/Mix key get optimizations and bench\n\nIntroduce `Composition` and `MixProperties` get-by-key optimizations,\ncreating JS maps with all the key values and providing helper functions\nto access these instead of via the WASM functions of `Composition` and\n`MixProperties`. Benchmarks show that this is more performant for key\nlookups. However, the maps have to be built every time that a\n`Composition` or `MixProperties` is updated, which could be every\nrender, so this may not be more performant in real usage scenarios.",
+          "timestamp": "2026-01-29T17:11:35-05:00",
+          "tree_id": "584d45b421bd60740f6f0fe306f75dc0c857ae22",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a95abf2a67f4c74f5b7fbe7b0300d95fdfc0d89f"
+        },
+        "date": 1769726226196,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 682.7,
+            "range": "57.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 51,
+            "range": "7.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60.4,
+            "range": "4.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 44.5,
+            "range": "7.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 44,
+            "range": "6.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 152.2,
+            "range": "14.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 65.6,
+            "range": "2.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 67.83,
+            "range": "3.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 32.73,
+            "range": "0.92",
             "unit": "ms"
           }
         ]
