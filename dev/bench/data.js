@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769725359976,
+  "lastUpdate": 1769725922443,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -12443,6 +12443,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 611361,
             "range": "±0.80%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a95abf2a67f4c74f5b7fbe7b0300d95fdfc0d89f",
+          "message": "Introduce Comp/Mix key get optimizations and bench\n\nIntroduce `Composition` and `MixProperties` get-by-key optimizations,\ncreating JS maps with all the key values and providing helper functions\nto access these instead of via the WASM functions of `Composition` and\n`MixProperties`. Benchmarks show that this is more performant for key\nlookups. However, the maps have to be built every time that a\n`Composition` or `MixProperties` is updated, which could be every\nrender, so this may not be more performant in real usage scenarios.",
+          "timestamp": "2026-01-29T17:11:35-05:00",
+          "tree_id": "584d45b421bd60740f6f0fe306f75dc0c857ae22",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a95abf2a67f4c74f5b7fbe7b0300d95fdfc0d89f"
+        },
+        "date": 1769725920730,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75987,
+            "range": "±1.18%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 692642,
+            "range": "±1.59%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9942,
+            "range": "±1.98%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 596995,
+            "range": "±0.78%",
             "unit": "ops/sec",
             "extra": "92 samples"
           }
