@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769727219441,
+  "lastUpdate": 1769727245854,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -13236,6 +13236,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 32.73,
             "range": "0.92",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9fc8a956e82f2978450cbaacce8b16492a833fd9",
+          "message": "Introduce comp-value-as-qty/percent optimizations\n\nThe expecation was that it would be much more performant to replicate\nthe functionality of these functions purely on the JS side than it would\nbe to do WASM calls for such simple calculations, given the cost of\nJS <-> WASM bridging. However, as it turns out, there isn't much of a\ndifference between these two methods; perhaps because there isn't much\nJS <-> WASM overhead for simple number arguments?",
+          "timestamp": "2026-01-29T17:37:16-05:00",
+          "tree_id": "5d2ae60b48a0fac93f225b7e86d821d9d7c74ed9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9fc8a956e82f2978450cbaacce8b16492a833fd9"
+        },
+        "date": 1769727245454,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 677.4,
+            "range": "47.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 49.4,
+            "range": "8.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.4,
+            "range": "4.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.1,
+            "range": "8.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 39.7,
+            "range": "5.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 139.6,
+            "range": "10.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 58.1,
+            "range": "4.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 61.08,
+            "range": "2.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 31.78,
+            "range": "1.16",
             "unit": "ms"
           }
         ]
