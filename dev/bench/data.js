@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769724120904,
+  "lastUpdate": 1769724273071,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -1313,6 +1313,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 310,
             "range": "± 10",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "46d3820eab079d616b47feb3a1f903504bca37c4",
+          "message": "Introduce skeleton for benchmark.js App benches\n\nIntroduce skeleton for and some simple App \"unit\" benchmarks using\nbenchmark.js, as opposed to Playwright for end-to-end benchmarks.\nAdd a CI job to run these benchmarks and upload results using\ngithub-action-benchmark, similarly to other repo CI benchmarks.",
+          "timestamp": "2026-01-29T16:31:34-05:00",
+          "tree_id": "6cb50ddd65ed21e1ea3db286a9c140c1f26e9d97",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/46d3820eab079d616b47feb3a1f903504bca37c4"
+        },
+        "date": 1769724272562,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3606,
+            "range": "± 28",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161904,
+            "range": "± 1137",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2002,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160332,
+            "range": "± 2068",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 309,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
