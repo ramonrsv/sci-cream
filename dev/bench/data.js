@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769664684682,
+  "lastUpdate": 1769669861981,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -1205,6 +1205,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 310,
             "range": "± 7",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f044fc85070359b094cdc13854d84fc4f8b3a292",
+          "message": "Overhaul RecipeContext and updates, use WasmBridge\n\n* Overhaul the design of `RecipeContext`, now splitting it into a\n  a `RecipeContext` that holds only `Recipe`s, and `IngredientResources`\n  that holds `validIngredients` and the new `wasmBridge`; the ingredient\n  cache has been removed in favour of a seeded `WasmBridge`. This change\n  greatly simplifies the process of fetching ingredients and updating\n  the context, and should be more performance according to benchmarks in\n  the `sci-cream` crate - still needs to be confirmed with end-to-end\n  benchmarks and web vitals at the app level. This does force all\n  ingredient definitions to be loaded up-front, but functionality could\n  be added later to continiously seed `WasmBridge`, if necessary.\n\n    - As it turns out, according to the newly introduced end-to-end\n      benchmarks, this change has only a modest performance impact,\n      if any. However, it also has no significant negative impact on\n      initial page load time or memory usage, so the simplicity that\n      it affords is still a significant benefit. Further performance\n      analysis is required to identify areas of concern.\n\n* Refactor `updateRecipe` to take a list of row updates and call\n  `setRecipeContext` only once per update, reducing the number\n  of re-renders and `mixProperties` updates, particularly when updating\n  multiple rows at once, e.g. when pasting a recipe, or on first mount.",
+          "timestamp": "2026-01-29T01:55:47-05:00",
+          "tree_id": "6b55107dba492bf75aa66e9f808cbe938fa29cbb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f044fc85070359b094cdc13854d84fc4f8b3a292"
+        },
+        "date": 1769669860949,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3569,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 162157,
+            "range": "± 8524",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1988,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160523,
+            "range": "± 1319",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 309,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
