@@ -5,6 +5,7 @@ console.log("Starting TypeScript benchmarks for @workspace/sci-cream\n");
 
 (async () => {
   for (const bench of [
+    "comp-value-as.bench.ts",
     "get_ingredient_specs.bench.ts",
     "get_ingredients.bench.ts",
     "into_ingredient_from_spec.bench.ts",

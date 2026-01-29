@@ -33,3 +33,11 @@ export function compKeyAsMedStr(comp_key: CompKey): string {
 export function propKeyAsMedStr(prop_key: PropKey): string {
   return PROP_KEY_AS_MED_STR_MAP.get(prop_key)!;
 }
+
+export function compositionValueAsQuantity(comp: number, qty: number): number {
+  return (comp * qty) / 100.0;
+}
+
+export function compositionValueAsPercentage(comp: number, qty: number, mix_total: number): number {
+  return (comp * qty) / mix_total;
+}

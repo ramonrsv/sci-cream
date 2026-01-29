@@ -2,7 +2,14 @@ import { expect, test } from "vitest";
 
 import { getWasmEnums } from "./util";
 
-import { CompKey, Composition, MixProperties, comp_key_as_med_str } from "../../wasm/index";
+import {
+  CompKey,
+  Composition,
+  MixProperties,
+  comp_key_as_med_str,
+  composition_value_as_quantity,
+  composition_value_as_percentage,
+} from "../../wasm/index";
 
 import { getPropKeys, prop_key_as_med_str, getMixProperty } from "./prop-key";
 
@@ -11,6 +18,8 @@ import {
   makeMixPropValueMap,
   compKeyAsMedStr,
   propKeyAsMedStr,
+  compositionValueAsQuantity,
+  compositionValueAsPercentage,
 } from "./optimizations";
 
 test("makeCompValueMap matches composition.get", () => {
@@ -45,4 +54,18 @@ test("propKeyAsMedStr matches prop_key_as_med_str", () => {
   for (const propKey of propKeys) {
     expect(propKeyAsMedStr(propKey)).toBe(prop_key_as_med_str(propKey));
   }
+});
+
+test("compositionValueAsQuantity matches composition_value_as_quantity", () => {
+  expect(compositionValueAsQuantity(50, 200)).toEqual(composition_value_as_quantity(50, 200));
+  expect(compositionValueAsQuantity(0, 150)).toEqual(composition_value_as_quantity(0, 150));
+});
+
+test("compositionValueAsPercentage matches composition_value_as_percentage", () => {
+  expect(compositionValueAsPercentage(50, 200, 500)).toEqual(
+    composition_value_as_percentage(50, 200, 500),
+  );
+  expect(compositionValueAsPercentage(0, 150, 300)).toEqual(
+    composition_value_as_percentage(0, 150, 300),
+  );
 });
