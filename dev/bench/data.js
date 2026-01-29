@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769724305131,
+  "lastUpdate": 1769724341028,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -11439,6 +11439,60 @@ window.BENCHMARK_DATA = {
             "value": 30.93,
             "range": "0.42",
             "unit": "ms"
+          }
+        ]
+      }
+    ],
+    "App JS benchmarks": [
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "46d3820eab079d616b47feb3a1f903504bca37c4",
+          "message": "Introduce skeleton for benchmark.js App benches\n\nIntroduce skeleton for and some simple App \"unit\" benchmarks using\nbenchmark.js, as opposed to Playwright for end-to-end benchmarks.\nAdd a CI job to run these benchmarks and upload results using\ngithub-action-benchmark, similarly to other repo CI benchmarks.",
+          "timestamp": "2026-01-29T16:31:34-05:00",
+          "tree_id": "6cb50ddd65ed21e1ea3db286a9c140c1f26e9d97",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/46d3820eab079d616b47feb3a1f903504bca37c4"
+        },
+        "date": 1769724340026,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 73099,
+            "range": "±1.42%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 715530,
+            "range": "±0.70%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9956,
+            "range": "±2.40%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 603846,
+            "range": "±0.88%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
