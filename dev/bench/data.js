@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769670435201,
+  "lastUpdate": 1769724120904,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -1259,6 +1259,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 309,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e5bcee9ff23f4f5c1cc84c72425f1bf81de4217b",
+          "message": "Introduce *_key_as_str optimizations and benches\n\nOptimization functions to move key lookups from JS <-> WASM boundary to\nJS side, as that can be orders of magnitude more performant for simple\nkey accesses without complex computations.",
+          "timestamp": "2026-01-29T11:29:05-05:00",
+          "tree_id": "bd8896b44f21debbde857afec24aca0a14e4237e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e5bcee9ff23f4f5c1cc84c72425f1bf81de4217b"
+        },
+        "date": 1769724119674,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3509,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 162374,
+            "range": "± 10885",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1960,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 161294,
+            "range": "± 761",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 310,
+            "range": "± 10",
             "unit": "ns/iter"
           }
         ]
