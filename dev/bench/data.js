@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769729037419,
+  "lastUpdate": 1769729043068,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -13741,6 +13741,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 31.78,
             "range": "1.16",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1c99169109d056c1254588e6ad4dd3cf9cbd8435",
+          "message": "Remove .toBeVisible() calls from e2e benchmarks\n\nIt's unclear if these calls provide any more validation than just\ncalling .toHaveValue(...). In any case, there are e2e tests that\nalready perform this same validation for correctness. For the purposes\nof benchmarks, it is better to lower the overhead of the benchmarks\nthemselves as much as possible, to make the small real performance\nimpact of changes more apparent.",
+          "timestamp": "2026-01-29T18:14:06-05:00",
+          "tree_id": "4f81bc6005764b8eb26437d4598771bca7afd6f6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1c99169109d056c1254588e6ad4dd3cf9cbd8435"
+        },
+        "date": 1769729042331,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.695,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 685.6,
+            "range": "52.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48.1,
+            "range": "8.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.4,
+            "range": "5.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.7,
+            "range": "5.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 38.8,
+            "range": "8.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 172.9,
+            "range": "10.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 47.5,
+            "range": "3.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 51.83,
+            "range": "1.19",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 31.39,
+            "range": "0.92",
             "unit": "ms"
           }
         ]
