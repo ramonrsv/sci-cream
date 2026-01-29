@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769724879495,
+  "lastUpdate": 1769725069375,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -11958,6 +11958,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.88%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cf6527f475cb41d237fdbeaae8a786f27d52ff26",
+          "message": "Use different server ports for Playwright CI jobs\n\nUse an environment variable `PORT` to configure the `baseURL` and\n`webServer.url` of Playwright tests/benches. CI jobs can now set\ndifferent ports so that they don't conflict with each other when running\nlocally with `act`, and so we can now run the jobs in parallel.",
+          "timestamp": "2026-01-29T16:58:08-05:00",
+          "tree_id": "72cb1623fa10790cade8f331e6801dbf496af275",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cf6527f475cb41d237fdbeaae8a786f27d52ff26"
+        },
+        "date": 1769725068281,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 74661,
+            "range": "±0.99%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 731966,
+            "range": "±0.59%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9824,
+            "range": "±2.07%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 611361,
+            "range": "±0.80%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
