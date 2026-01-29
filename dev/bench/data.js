@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769727245854,
+  "lastUpdate": 1769728768525,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -13531,6 +13531,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.16%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1c99169109d056c1254588e6ad4dd3cf9cbd8435",
+          "message": "Remove .toBeVisible() calls from e2e benchmarks\n\nIt's unclear if these calls provide any more validation than just\ncalling .toHaveValue(...). In any case, there are e2e tests that\nalready perform this same validation for correctness. For the purposes\nof benchmarks, it is better to lower the overhead of the benchmarks\nthemselves as much as possible, to make the small real performance\nimpact of changes more apparent.",
+          "timestamp": "2026-01-29T18:14:06-05:00",
+          "tree_id": "4f81bc6005764b8eb26437d4598771bca7afd6f6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1c99169109d056c1254588e6ad4dd3cf9cbd8435"
+        },
+        "date": 1769728768136,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76384,
+            "range": "±1.32%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 731200,
+            "range": "±0.55%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10077,
+            "range": "±2.35%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 609127,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
