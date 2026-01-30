@@ -11,9 +11,8 @@
       horizontal scroll, the left-most column (containing the ingredient names or the property
       headers, respectively) does not scroll with the rest of the content.
 - [ ] Add support for `MixPropertiesGrid` to show deltas between the main recipe and the references.
-- [ ] Consider adding support for `IngredientCompositionGrid` to show the compositions of
-      references. It would be simple to just add a selector, but unsure if it should support
-      displaying deltas.
+- [ ] Consider whether to add support to `IngredientCompositionGrid` to show deltas between recipes.
+- [x] Add support for for `IngredientCompositionGrid` to show the compositions of reference recipes.
 - [x] Figure out how to handle calculating FPDs for recipes where (PACtot - HF) would be negative.
       Currently this throws an error. This is unlikely to happen with real recipes, but it can
       happen when adding ingredients to a recipe one-by-one, before all ingredients have been added.

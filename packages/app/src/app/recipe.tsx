@@ -5,7 +5,7 @@ import { useState, useEffect } from "react";
 import { formatCompositionValue } from "../lib/ui/comp-values";
 import { standardInputStepByPercent } from "../lib/util";
 import { MAX_RECIPES, RECIPE_TOTAL_ROWS, STD_COMPONENT_H_PX } from "./page";
-import { recipeCompBgColor } from "@/lib/styles/colors";
+import { RecipeSelection } from "@/lib/ui/recipe-selection";
 
 import {
   Ingredient,
@@ -75,6 +75,10 @@ export function isRecipeEmpty(recipe: Recipe): boolean {
   return recipe.mixTotal === undefined || recipe.mixTotal === 0;
 }
 
+export function getRecipeIndices(recipes: Recipe[]): number[] {
+  return recipes.map((recipe) => recipe.index);
+}
+
 export function calculateMixTotal(recipe: Recipe) {
   return recipe.ingredientRows.reduce(
     (sum: number | undefined, row) =>
@@ -106,22 +110,13 @@ export function RecipeGrid({
   props: {
     recipeCtxState: [recipeContext, setRecipeContext],
     recipeResourcesState: [recipeResources],
-    enabledRecipeIndices: enabledRecipeIndices,
   },
 }: {
-  props: {
-    recipeCtxState: RecipeContextState;
-    recipeResourcesState: RecipeResourcesState;
-    enabledRecipeIndices: number[] | undefined;
-  };
+  props: { recipeCtxState: RecipeContextState; recipeResourcesState: RecipeResourcesState };
 }) {
-  const indices = enabledRecipeIndices ? enabledRecipeIndices : [0];
-
   const { validIngredients, wasmBridge } = recipeResources;
-  const { recipes } = recipeContext;
-  const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(indices[0]);
-
-  const recipe = recipes[currentRecipeIdx];
+  const { recipes: allRecipes } = recipeContext;
+  const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(0);
 
   const requiresMixPropsUpdate = (
     currentRow: IngredientRow,
@@ -262,32 +257,25 @@ export function RecipeGrid({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [validIngredients.length]);
 
+  const recipe = allRecipes[currentRecipeIdx];
   const mixTotal = recipe.mixTotal;
 
   return (
     <div id="recipe-grid" className="grid-component" style={{ height: `${STD_COMPONENT_H_PX}px` }}>
       <div>
-        {/* Recipe Selector */}
-        <select
-          value={currentRecipeIdx}
-          onChange={(e) => setCurrentRecipeIdx(parseInt(e.target.value))}
-          className="select-input w-53.5 text-center"
-          style={{ backgroundColor: recipeCompBgColor(currentRecipeIdx) }}
-        >
-          {indices.map((idx) => (
-            <option key={idx} value={idx} style={{ backgroundColor: recipeCompBgColor(idx) }}>
-              {recipes[idx].name}
-            </option>
-          ))}
-        </select>
+        <RecipeSelection
+          allRecipes={allRecipes}
+          enabledRecipeIndices={getRecipeIndices(allRecipes)}
+          currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
+        />
         {/* Action Buttons */}
         <div className="float-right">
           {[
             { label: "Copy", action: copyRecipe },
             { label: "Paste", action: pasteRecipe },
             { label: "Clear", action: clearRecipe },
-          ].map(({ label, action }) => (
-            <button key={label} onClick={action} className="button ml-2 px-1">
+          ].map(({ label, action }, idx) => (
+            <button key={idx} onClick={action} className={`button ${idx == 0 ? "" : "ml-2"} px-1`}>
               {label}
             </button>
           ))}

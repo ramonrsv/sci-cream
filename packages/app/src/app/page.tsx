@@ -56,8 +56,7 @@ export default function Home() {
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const enabledRecipeIndices = recipes.map((_, idx) => idx);
-  const recipeGridProps = { recipeCtxState, recipeResourcesState, enabledRecipeIndices };
+  const recipeGridProps = { recipeCtxState, recipeResourcesState };
 
   // Dynamically adjusts the number of columns based on screen width, so that some components
   // maintain a fixed-ish width and do not widen too much when going from half to full screen.
@@ -115,7 +114,7 @@ export default function Home() {
           >
             <div key="recipe">{<RecipeGrid props={recipeGridProps} />}</div>
             <div key="properties">{<MixPropertiesGrid recipes={recipes} />}</div>
-            <div key="composition">{<IngredientCompositionGrid recipe={recipes[0]} />}</div>
+            <div key="composition">{<IngredientCompositionGrid recipes={recipes} />}</div>
             <div key="props-chart">{<MixPropertiesChart recipes={recipes} />}</div>
             <div key="fpd-graph">{<FpdGraph recipes={recipes} />}</div>
           </ReactGridLayout>
