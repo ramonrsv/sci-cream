@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769737473547,
+  "lastUpdate": 1769737496753,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -1583,6 +1583,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 309,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f6970504f4cbed3978b788757e8216c40e61b4c5",
+          "message": "Add CI caching of downloaded Playwright browsers",
+          "timestamp": "2026-01-29T20:42:47-05:00",
+          "tree_id": "60fd74e4d9f8ccb6820da35c7255fba968a26759",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f6970504f4cbed3978b788757e8216c40e61b4c5"
+        },
+        "date": 1769737495759,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3213,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 130961,
+            "range": "± 1209",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1652,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 131518,
+            "range": "± 2192",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 275,
+            "range": "± 14",
             "unit": "ns/iter"
           }
         ]
