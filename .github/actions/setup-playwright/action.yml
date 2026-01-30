@@ -7,9 +7,28 @@ inputs:
 runs:
   using: "composite"
   steps:
-    - name: Install Playwright default browsers
+    - name: Get Playwright version
+      id: playwright-version
       shell: bash
-      run: cd ./packages/app && pnpm playwright install --with-deps
+      run: |
+        cd ./packages/app
+        echo "version=$(pnpm list @playwright/test --json | jq -r '.[0].devDependencies["@playwright/test"].version')" >> $GITHUB_OUTPUT
+
+    - name: Cache Playwright browsers
+      uses: actions/cache@v4
+      id: playwright-cache
+      with:
+        path: ~/.cache/ms-playwright
+        key: playwright-${{ runner.os }}-${{ steps.playwright-version.outputs.version }}
+
+    - name: Install Playwright default browsers
+      if: steps.playwright-cache.outputs.cache-hit != 'true'
+      shell: bash
+      run: cd ./packages/app && pnpm playwright install
+
+    - name: Install system dependencies
+      shell: bash
+      run: cd ./packages/app && pnpm playwright install-deps
 
     - if: ${{ inputs.additional-browsers != '' }}
       name: Install additional non-default browsers
