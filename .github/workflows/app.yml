@@ -8,9 +8,9 @@
 # This workflow can be run locally using `act`, e.g. by running the following from the root:
 #   `act --reuse --workflows ./.github/workflows/app.yml`
 #
-# When running locally via `act`, the postgres service may fail to start if a service is already
-# running on port 5432. To fix this, either stop the local postgres service, or change the port
-# that it's running on by modifying `port` in `postgresql.conf`, then restart the service/system.
+# When running locally via `act`, any services (e.g. postgres) or web servers (e.g. from Playwright,
+# `pnpm dev|start`, etc.) running either locally or as part of jobs in this CI workflow must use
+# mutually exclusive ports to avoid conflicting with each other. See `noted.md` for more details.
 name: App CI
 
 on:
@@ -46,11 +46,9 @@ jobs:
           --health-retries 5
         ports:
           # Host port matching port in DATABASE_URL
-          - 5432:5432 # host:service_container
+          - 5433:5432 # host:service_container
     env:
-      # Ensure that no two jobs with a postgres service use the same port,
-      # as this can cause conflicts when running locally via `act`.
-      DATABASE_URL: postgres://postgres:password@localhost:5432/sci_cream
+      DATABASE_URL: postgres://postgres:password@localhost:5433/sci_cream
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-rust
@@ -65,9 +63,7 @@ jobs:
         run: pnpm test:unit
 
       - name: Run app end-to-end tests with Playwright
-        # Ensure that no two jobs with a playwright webServer use the same port,
-        # as this can cause conflicts when running locally via `act`.
-        run: PORT=3000 pnpm test:e2e
+        run: PORT=3001 pnpm test:e2e
 
   eslint:
     runs-on: ubuntu-latest
@@ -95,9 +91,9 @@ jobs:
         env: *postgres-env
         options: *postgres-options
         ports:
-          - 5433:5432
+          - 5434:5432
     env:
-      DATABASE_URL: postgres://postgres:password@localhost:5433/sci_cream
+      DATABASE_URL: postgres://postgres:password@localhost:5434/sci_cream
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-rust
@@ -154,9 +150,9 @@ jobs:
         env: *postgres-env
         options: *postgres-options
         ports:
-          - 5434:5432
+          - 5435:5432
     env:
-      DATABASE_URL: postgres://postgres:password@localhost:5434/sci_cream
+      DATABASE_URL: postgres://postgres:password@localhost:5435/sci_cream
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-rust
@@ -168,7 +164,7 @@ jobs:
       - uses: ./.github/actions/setup-playwright
 
       - name: Run app end-to-end benchmarks
-        run: PORT=3001 pnpm bench:e2e
+        run: PORT=3002 pnpm bench:e2e
 
       - if: vars.ACT != 'true'
         name: Store benchmark result

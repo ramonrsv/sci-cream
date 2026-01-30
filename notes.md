@@ -48,14 +48,20 @@ $ pg_ctlcluster 16 main stop
 $ pg_ctlcluster 16 main start
 ```
 
-When running CI workflows locally via `act`, the job may fail to map ports if the default port 5432
-on the host is already being used by a running postgres service. To fix this either stop the local
-postgres service, change the port that it's running on, or change the host ports that the CI
-workflow uses.
+When running CI workflows locally via `act`, any services (e.g. postgres) or web servers (e.g. from
+Playwright, `pnpm dev|start`, etc.) running either locally or as part of jobs in CI workflows must
+use mutually exclusive ports to avoid conflicting with each other. CI workflows do not use the
+default postgres port 5432 or default web server port 3000, to avoid conflicts with local services
+and servers. However, if conflicts still arise, they can be resolved by stopping or changing the
+ports used by the local services/servers, or by changing the host ports the the CI workflows use.
 
-To change the local service port modify `port` in `postgresql.conf`, then restart the service, e.g.
-via `sudo service postgresql restart`, and change `DATABASE_URL` in `.env` to point to the new port.
-`sudo ss -tulpn` can be used to see what services are running on what ports.
+The postgres service port can be changed by modifying `port` in `postgresql.conf` (for example
+located at `/etc/postgresql/16/main/postgresql.conf`) then restarting the service/system, e.g. via
+`sudo service postgresql restart`. `DATABASE_URL` in `.env` must then also be changed to point to
+the new port. `sudo ss -tulpn` can be used to see what services are running on what ports.
+
+The web server port can be changed by setting the `PORT` environment variable when starting the
+`pnpm dev|start` or `pnpm playwright` servers; e.g. setting in command line `PORT=3001 pnpm start`.
 
 To change the host port that the CI workflow is using, modify `job.<id>.services.postgres.ports`,
 e.g. from `5432:5432` to `5433:5432`, to map host port `5433` instead of `5432` to port `5432` on
