@@ -62,3 +62,5 @@
 - [ ] There are various calls to `comp_key_as_med_str` and `prop_key_as_med_str` that are also
       JS <-> WASM. These might also benefit from doing a single WASM -> JS call to get a map, then
       subsequent lookups during component render are done within the JS side.
+- [ ] Add functionality to store component layout so that it is remembered across page reloads. The
+      store should start seeded with a default for each resolution, and store any user modification.
