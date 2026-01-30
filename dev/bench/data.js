@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769812688480,
+  "lastUpdate": 1769813551321,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -15202,6 +15202,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.67%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "777763be6bf6a52c65b64f59ca1b3864a2b817c7",
+          "message": "Add TODO about storing component layout in local",
+          "timestamp": "2026-01-30T13:47:26-05:00",
+          "tree_id": "d8a46dbf1dae968a1817a419c43cd1cff35333eb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/777763be6bf6a52c65b64f59ca1b3864a2b817c7"
+        },
+        "date": 1769813550896,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75462,
+            "range": "±1.42%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 720931,
+            "range": "±0.58%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9989,
+            "range": "±1.89%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 599168,
+            "range": "±0.67%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
