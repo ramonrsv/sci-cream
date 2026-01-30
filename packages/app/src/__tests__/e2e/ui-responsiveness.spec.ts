@@ -12,6 +12,8 @@ import {
   getPasteButton,
   recipePasteCheckElements,
   recipeUpdateCompleted,
+  getRecipeGridRecipeSelector,
+  getCompositionGridRecipeSelector,
 } from "@/__tests__/util";
 
 import {
@@ -155,18 +157,31 @@ test.describe("UI Responsiveness Performance Checks", () => {
     await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
     const pasteButton = getPasteButton(page);
 
-    const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
     const expected = EXPECTED_LAST_INGREDIENT;
 
+    const recipeGridRecipeSelector = getRecipeGridRecipeSelector(page);
+    const compGridRecipeSelector = getCompositionGridRecipeSelector(page);
+
     const pasteStart = Date.now();
-    await pasteButton.click();
-    await expect(elements.ingNameInput).toHaveValue(expected.name);
-    await expect(elements.ingQtyInput).toHaveValue(expected.qty.toString());
-    await expect(elements.propServingTemp).toBeVisible();
-    await expect(elements.propServingTemp).not.toHaveText(expected.servingTemp);
+    for (const recipeIdx of [0, 1, 2]) {
+      await recipeGridRecipeSelector.selectOption(recipeIdx.toString());
+      await pasteButton.click();
+
+      const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
+      await expect(elements.ingNameInput).toHaveValue(expected.name);
+      await expect(elements.ingQtyInput).toHaveValue(expected.qty.toString());
+      await expect(elements.propServingTemp).toBeVisible();
+      await expect(elements.propServingTemp).not.toHaveText(expected.servingTemp);
+    }
     const pasteEnd = Date.now();
 
-    await recipeUpdateCompleted(page, elements, EXPECTED_LAST_INGREDIENT);
+    for (const recipeIdx of [0, 1, 2]) {
+      await recipeGridRecipeSelector.selectOption(recipeIdx.toString());
+      await compGridRecipeSelector.selectOption(recipeIdx.toString());
+
+      const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
+      await recipeUpdateCompleted(page, elements, expected);
+    }
     const updateEnd = Date.now();
 
     const pasteTime = pasteEnd - pasteStart;

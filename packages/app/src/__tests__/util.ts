@@ -105,6 +105,10 @@ export async function timeExecution(fn: () => Promise<void>, divider: number = 1
   return (Date.now() - start) / divider;
 }
 
+export function getRecipeGridRecipeSelector(page: Page) {
+  return page.locator("#recipe-grid #recipe-selection select").first();
+}
+
 export function getIngredientNameInputAtIdx(page: Page, index: number) {
   return page.locator('input[type="search"]').nth(index);
 }
@@ -115,6 +119,10 @@ export function getIngredientQtyInputAtIdx(page: Page, index: number) {
 
 export function getMixPropertiesQtyToggleInput(page: Page) {
   return page.locator("#mix-properties-grid #key-selection select").first();
+}
+
+export function getCompositionGridRecipeSelector(page: Page) {
+  return page.locator("#ing-composition-grid #recipe-selection select").first();
 }
 
 export function getCompositionGridQtyToggleInput(page: Page) {

@@ -106,6 +106,128 @@ export function makeLightRecipe(recipe: Recipe, validIngredients: string[]): [st
     .map((row) => [row.name, row.quantity!] as [string, number]);
 }
 
+export function stringifyRecipe(recipe: Recipe) {
+  const formattedRecipe = recipe.ingredientRows
+    .filter((row) => row.name !== "" || row.quantity !== undefined)
+    .map((row) => `${row.name}\t${row.quantity ?? ""}`)
+    .join("\n");
+
+  return formattedRecipe ? `Ingredient\tQty(g)\n${formattedRecipe}` : "";
+}
+
+export function parseRecipeString(recipeStr: string): [string, string][] {
+  try {
+    let lines = recipeStr.trim().split("\n");
+    if (lines[0]?.includes("Ingredient")) lines = lines.slice(1);
+
+    return lines.map((line) => {
+      const parts = line.split("\t");
+      const name = parts[0]?.trim() || "";
+      const quantityStr = parts[1]?.trim() || "";
+      return [name, quantityStr];
+    });
+  } catch (err) {
+    throw new Error("Failed to parse recipe string:", { cause: err });
+  }
+}
+
+export function requiresMixPropsUpdate(
+  currentRow: IngredientRow,
+  updatedRow: IngredientRow,
+): boolean {
+  const ret =
+    !!currentRow.ingredient !== !!updatedRow.ingredient ||
+    updatedRow.ingredient?.name !== currentRow.ingredient?.name ||
+    currentRow.quantity !== updatedRow.quantity;
+  return ret;
+}
+
+export function updateMixProperties(recipe: Recipe, resources: RecipeResources) {
+  try {
+    recipe.mixProperties.free();
+  } catch {
+    // Due to the asynchronous nature of React state updates, it's possible that the mixProperties
+    // object has already been freed elsewhere. In such cases, we can safely ignore the error.
+  }
+
+  recipe.mixProperties =
+    isRecipeEmpty(recipe) || !resources.wasmBridge
+      ? new MixProperties()
+      : resources.wasmBridge.calculate_recipe_mix_properties(
+          makeLightRecipe(recipe, resources.validIngredients),
+        );
+}
+
+export function makeUpdatedRecipe(
+  currentRecipe: Recipe,
+  updatedRows: IngredientRow[],
+  resources: RecipeResources,
+): Recipe {
+  const newRecipe = { ...currentRecipe, ingredientRows: [...currentRecipe.ingredientRows] };
+
+  let needsMixPropUpdate = false;
+
+  for (const updatedRow of updatedRows) {
+    const currentRow = newRecipe.ingredientRows[updatedRow.index];
+    newRecipe.ingredientRows[updatedRow.index] = updatedRow;
+    needsMixPropUpdate = needsMixPropUpdate || requiresMixPropsUpdate(currentRow, updatedRow);
+  }
+
+  newRecipe.mixTotal = calculateMixTotal(newRecipe);
+
+  if (needsMixPropUpdate) updateMixProperties(newRecipe, resources);
+  return newRecipe;
+}
+
+export function makeUpdatedRow(
+  currentRow: IngredientRow,
+  _name: string | undefined,
+  quantityStr: string | undefined,
+  resources: RecipeResources,
+): IngredientRow {
+  const row = { ...currentRow };
+  row.name = _name === undefined ? row.name : _name;
+
+  row.quantity =
+    quantityStr === undefined
+      ? row.quantity
+      : quantityStr === ""
+        ? undefined
+        : parseFloat(quantityStr);
+
+  const isValidIng = row.name !== "" && resources.validIngredients.includes(row.name);
+  const needsIngUpdate = !isValidIng || !row.ingredient || row.ingredient.name !== row.name;
+
+  if (needsIngUpdate) {
+    if (row.ingredient) row.ingredient.free();
+    row.ingredient = isValidIng ? resources.wasmBridge.get_ingredient_by_name(row.name) : undefined;
+  }
+
+  return row;
+}
+
+export function makeUpdatedRecipeFromString(
+  currentRecipe: Recipe,
+  recipeStr: string,
+  resources: RecipeResources,
+): Recipe {
+  const parsedLines = parseRecipeString(recipeStr);
+
+  if (parsedLines.length > currentRecipe.ingredientRows.length) {
+    throw new Error(
+      `Pasted recipe has ${parsedLines.length} rows, more than the ` +
+        `${currentRecipe.ingredientRows.length} available in the recipe grid.`,
+    );
+  }
+
+  const updatedRows = currentRecipe.ingredientRows.map((row, idx) => {
+    const [name, qtyStr] = parsedLines[idx] || ["", ""];
+    return makeUpdatedRow(row, name, qtyStr, resources);
+  });
+
+  return makeUpdatedRecipe(currentRecipe, updatedRows, resources);
+}
+
 export function RecipeGrid({
   props: {
     recipeCtxState: [recipeContext, setRecipeContext],
@@ -114,151 +236,94 @@ export function RecipeGrid({
 }: {
   props: { recipeCtxState: RecipeContextState; recipeResourcesState: RecipeResourcesState };
 }) {
-  const { validIngredients, wasmBridge } = recipeResources;
+  const { validIngredients } = recipeResources;
   const { recipes: allRecipes } = recipeContext;
   const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(0);
 
-  const requiresMixPropsUpdate = (
-    currentRow: IngredientRow,
-    updatedRow: IngredientRow,
-  ): boolean => {
-    const ret =
-      !!currentRow.ingredient !== !!updatedRow.ingredient ||
-      updatedRow.ingredient?.name !== currentRow.ingredient?.name ||
-      currentRow.quantity !== updatedRow.quantity;
-    return ret;
-  };
+  /** Update multiple recipes at once, with a single state update.
+   *
+   * This is necessary when updating multiple recipes at once, e.g. in the useEffect to prevent
+   * stale ingredient context, otherwise dependent components may asynchronously try to render stale
+   * Composition or MixProperties objects, which can lead to crashes due to freed WASM memory.
+   */
+  const updateRecipes = (updatedRecipes: Recipe[]) => {
+    const newRecipes = [...recipeContext.recipes];
 
-  const updateMixProperties = (recipe: Recipe) => {
-    try {
-      recipe.mixProperties.free();
-    } catch {
-      // Due to the asynchronous nature of React state updates, it's possible that the mixProperties
-      // object has already been freed elsewhere. In such cases, we can safely ignore the error.
+    for (const updatedRecipe of updatedRecipes) {
+      newRecipes[updatedRecipe.index] = updatedRecipe;
     }
 
-    recipe.mixProperties =
-      isRecipeEmpty(recipe) || !wasmBridge
-        ? new MixProperties()
-        : wasmBridge.calculate_recipe_mix_properties(makeLightRecipe(recipe, validIngredients));
+    setRecipeContext({ ...recipeContext, recipes: newRecipes });
   };
 
-  const updateRecipe = (rowUpdates: [number, IngredientRow][]) => {
-    const newRecipe = { ...recipe, ingredientRows: [...recipe.ingredientRows] };
+  const updateRecipe = (recipeIdx: number, updatedRows: IngredientRow[]) => {
+    updateRecipes([makeUpdatedRecipe(allRecipes[recipeIdx], updatedRows, recipeResources)]);
+  };
 
-    let needsMixPropUpdate = false;
+  const updateCurrentRecipe = (updatedRows: IngredientRow[]) => {
+    updateRecipe(currentRecipeIdx, updatedRows);
+  };
 
-    for (const [index, updatedRow] of rowUpdates) {
-      const currentRow = newRecipe.ingredientRows[index];
-      newRecipe.ingredientRows[index] = updatedRow;
+  const getRow = (recipeIdx: number, rowIdx: number): IngredientRow => {
+    return allRecipes[recipeIdx].ingredientRows[rowIdx];
+  };
 
-      needsMixPropUpdate = needsMixPropUpdate || requiresMixPropsUpdate(currentRow, updatedRow);
-    }
+  const updateCurrentIngredientRowName = (index: number, name: string) => {
+    updateCurrentRecipe([
+      makeUpdatedRow(getRow(currentRecipeIdx, index), name, undefined, recipeResources),
+    ]);
+  };
 
-    newRecipe.mixTotal = calculateMixTotal(newRecipe);
+  const updateCurrentIngredientRowQuantity = (index: number, quantityStr: string) => {
+    updateCurrentRecipe([
+      makeUpdatedRow(getRow(currentRecipeIdx, index), undefined, quantityStr, recipeResources),
+    ]);
+  };
 
-    if (needsMixPropUpdate) updateMixProperties(newRecipe);
+  const pasteRecipe = async (recipeIdx: number, recipeStr: string) => {
+    updateRecipes([makeUpdatedRecipeFromString(allRecipes[recipeIdx], recipeStr, recipeResources)]);
+  };
 
-    const recipes = recipeContext.recipes.map((r) =>
-      r.index === currentRecipeIdx ? newRecipe : r,
+  const clearRecipe = (recipeIdx: number) => {
+    updateRecipe(
+      recipeIdx,
+      allRecipes[recipeIdx].ingredientRows.map((row) =>
+        makeUpdatedRow(getRow(recipeIdx, row.index), "", "", recipeResources),
+      ),
     );
-    setRecipeContext({ ...recipeContext, recipes });
   };
 
-  const makeRowUpdate = (
-    index: number,
-    _name: string | undefined,
-    quantityStr: string | undefined,
-  ): [number, IngredientRow] => {
-    const row = { ...recipe.ingredientRows[index] };
-    row.name = _name === undefined ? row.name : _name;
-
-    row.quantity =
-      quantityStr === undefined
-        ? row.quantity
-        : quantityStr === ""
-          ? undefined
-          : parseFloat(quantityStr);
-
-    const isValidIng = row.name !== "" && validIngredients.includes(row.name);
-    const needsIngUpdate = !isValidIng || !row.ingredient || row.ingredient.name !== row.name;
-
-    if (needsIngUpdate) {
-      if (row.ingredient) row.ingredient.free();
-      row.ingredient = isValidIng ? wasmBridge.get_ingredient_by_name(row.name) : undefined;
-    }
-
-    return [index, row];
+  const clearCurrentRecipe = () => {
+    clearRecipe(currentRecipeIdx);
   };
 
-  const updateIngredientRowName = (index: number, name: string) => {
-    updateRecipe([makeRowUpdate(index, name, undefined)]);
+  const copyCurrentRecipeToClipboard = async () => {
+    await navigator.clipboard.writeText(stringifyRecipe(currentRecipe));
   };
 
-  const updateIngredientRowQuantity = (index: number, quantityStr: string) => {
-    updateRecipe([makeRowUpdate(index, undefined, quantityStr)]);
-  };
-
-  const copyRecipe = async () => {
-    const formattedRecipe = recipe.ingredientRows
-      .filter((row) => row.name !== "" || row.quantity !== undefined)
-      .map((row) => `${row.name}\t${row.quantity ?? ""}`)
-      .join("\n");
-
-    if (formattedRecipe) {
-      await navigator.clipboard.writeText(`Ingredient\tQty(g)\n${formattedRecipe}`);
-    }
-  };
-
-  const pasteRecipe = async () => {
-    try {
-      const lines = (await navigator.clipboard.readText()).trim().split("\n");
-      const lineOffset = lines[0]?.includes("Ingredient") ? 1 : 0;
-
-      if (lines.length - lineOffset > recipe.ingredientRows.length) {
-        console.error("Pasted recipe has more rows than available in the recipe grid.");
-        return;
-      }
-
-      const rowUpdates: [number, IngredientRow][] = [];
-
-      for (const row of recipe.ingredientRows) {
-        const line = lines[row.index + lineOffset]?.trim();
-        if (!line) {
-          rowUpdates.push(makeRowUpdate(row.index, "", ""));
-          continue;
-        }
-
-        const parts = line.split("\t");
-        const name = parts[0]?.trim() || "";
-        const quantityStr = parts[1]?.trim() || "";
-
-        rowUpdates.push(makeRowUpdate(row.index, name, quantityStr));
-      }
-
-      updateRecipe(rowUpdates);
-    } catch (err) {
-      console.error("Failed to paste recipe:", err);
-    }
-  };
-
-  const clearRecipe = () => {
-    updateRecipe(recipe.ingredientRows.map((row) => makeRowUpdate(row.index, "", "")));
+  const pasteCurrentRecipeFromClipboard = async () => {
+    await pasteRecipe(currentRecipeIdx, await navigator.clipboard.readText());
   };
 
   // Prevents stale ingredient context if a row is changed (e.g. a recipe is pasted) before we have
   // had a chance to fetch all valid ingredients and populate validIngredients and the wasmBridge.
   useEffect(() => {
-    updateRecipe(
-      recipe.ingredientRows.map((row) =>
-        makeRowUpdate(row.index, row.name, row.quantity?.toString()),
+    updateRecipes(
+      allRecipes.map((recipe) =>
+        makeUpdatedRecipe(
+          recipe,
+          recipe.ingredientRows.map((row) =>
+            makeUpdatedRow(row, row.name, row.quantity?.toString(), recipeResources),
+          ),
+          recipeResources,
+        ),
       ),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [validIngredients.length]);
+  }, [recipeResources]);
 
-  const recipe = allRecipes[currentRecipeIdx];
-  const mixTotal = recipe.mixTotal;
+  const currentRecipe = allRecipes[currentRecipeIdx];
+  const mixTotal = currentRecipe.mixTotal;
 
   return (
     <div id="recipe-grid" className="grid-component" style={{ height: `${STD_COMPONENT_H_PX}px` }}>
@@ -271,9 +336,9 @@ export function RecipeGrid({
         {/* Action Buttons */}
         <div className="float-right">
           {[
-            { label: "Copy", action: copyRecipe },
-            { label: "Paste", action: pasteRecipe },
-            { label: "Clear", action: clearRecipe },
+            { label: "Copy", action: copyCurrentRecipeToClipboard },
+            { label: "Paste", action: pasteCurrentRecipeFromClipboard },
+            { label: "Clear", action: clearCurrentRecipe },
           ].map(({ label, action }, idx) => (
             <button key={idx} onClick={action} className={`button ${idx == 0 ? "" : "ml-2"} px-1`}>
               {label}
@@ -305,14 +370,14 @@ export function RecipeGrid({
         <tbody>
           {/* Ingredient Rows */}
           {/* @todo The ingredient/input rows are not respecting < h-6/[25px]; not sure why yet */}
-          {recipe.ingredientRows.map((row) => (
+          {currentRecipe.ingredientRows.map((row) => (
             <tr key={row.index} className="h-6.25">
               {/* Ingredient Name Input */}
               <td className="table-inner-cell">
                 <input
                   type="search"
                   value={row.name}
-                  onChange={(e) => updateIngredientRowName(row.index, e.target.value)}
+                  onChange={(e) => updateCurrentIngredientRowName(row.index, e.target.value)}
                   className={`table-fillable-input ${
                     row.name === "" || validIngredients.includes(row.name)
                       ? "focus:ring-blue-400"
@@ -327,7 +392,7 @@ export function RecipeGrid({
                 <input
                   type="number"
                   value={row.quantity?.toString() || ""}
-                  onChange={(e) => updateIngredientRowQuantity(row.index, e.target.value)}
+                  onChange={(e) => updateCurrentIngredientRowQuantity(row.index, e.target.value)}
                   placeholder=""
                   step={standardInputStepByPercent(row.quantity, 2.5, 10)}
                   min={0}
