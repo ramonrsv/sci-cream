@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769729043068,
+  "lastUpdate": 1769737473547,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -14088,6 +14088,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.77%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f6970504f4cbed3978b788757e8216c40e61b4c5",
+          "message": "Add CI caching of downloaded Playwright browsers",
+          "timestamp": "2026-01-29T20:42:47-05:00",
+          "tree_id": "60fd74e4d9f8ccb6820da35c7255fba968a26759",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f6970504f4cbed3978b788757e8216c40e61b4c5"
+        },
+        "date": 1769737472994,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 74130,
+            "range": "±1.66%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 645945,
+            "range": "±0.67%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9562,
+            "range": "±1.61%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 572035,
+            "range": "±0.71%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
           }
         ]
       }
