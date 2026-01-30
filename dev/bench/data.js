@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769812423077,
+  "lastUpdate": 1769812436100,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -1637,6 +1637,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 275,
             "range": "± 14",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9c2ff566436d29257675915c000e72ffc387e5cf",
+          "message": "Add support for `IngCompGrid` to show references\n\n* Add support for `IngredientCompositionGrid` to select and show the\n  composition of reference recipes as well as the main recipe.\n* Create a shared `RecipeSelection` component for the common\n  recipe-selection functionality, also used by `RecipeGrid`.\n* Add custom functionality for the recipe selection component in\n  `IngredientCompositionGrid` to disappear if there are no reference\n  recipes, but to be sticky if a reference recipe is currently selected.\n  This prevents jarring jumps back to the main recipe if a reference is\n  cleared, and having to re-select it if a new ref recipe is pasted.",
+          "timestamp": "2026-01-30T13:08:13-05:00",
+          "tree_id": "a4011ffdb4a5d0c5e88ab2d0d9c90062dcd842b6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9c2ff566436d29257675915c000e72ffc387e5cf"
+        },
+        "date": 1769812435636,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3822,
+            "range": "± 107",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 193415,
+            "range": "± 5400",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2243,
+            "range": "± 28",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 193983,
+            "range": "± 1915",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 369,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
