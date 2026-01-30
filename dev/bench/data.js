@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769815089320,
+  "lastUpdate": 1769815090593,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -16266,6 +16266,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 31.95,
             "range": "0.59",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "aa83fe395d01924a6b34b6329797e209cea52e60",
+          "message": "* Overhaul `RecipeContext` updates, more modular\n\n* Overhaul the helper functions for `RecipeContext` updates to be more\n  modular and flexible; most can now be pulled out `RecipeGrid` as\n  standalone functions, with the only additional dependency being\n  `RecipeResources`. Recipe copy/paste functions are also made more\n  modular, separating the stringifying/parsing, recipe context update,\n  and clipboard interactions elements. These changes are in preparation\n  for adding support to save recipes in local storage, to persist across\n  browser window refreshes.\n* From above, the new `updateRecipes(...: Recipe[])` method is notable.\n  It updates multiple recipes at once, with a single state update. This\n  is necessary when updating multiple recipes at once, e.g. in the\n  useEffect to prevent stale ingredient context, otherwise dependent\n  components may asynchronously try to render stale `Composition` or\n  `MixProperties` objects, which can lead to crashes due to freed WASM\n  memory.\n* Fix a bug in the `useEffect` to prevent stale ingredient context\n  before the recipe resources have been populated. It was previously\n  only refreshing the main recipe; now it refreshes the references as\n  well. End-to-end tests that validate this functionality are updated\n  to also check the reference recipes.",
+          "timestamp": "2026-01-30T17:52:26-05:00",
+          "tree_id": "45a352a0088b2f5452ea3098d1df25ef3f205e30",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/aa83fe395d01924a6b34b6329797e209cea52e60"
+        },
+        "date": 1769815089338,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.695,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 677.5,
+            "range": "51.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.1,
+            "range": "8.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 53.8,
+            "range": "5.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.4,
+            "range": "11.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 38.8,
+            "range": "5.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 168.9,
+            "range": "11.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 44.8,
+            "range": "4.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 50.08,
+            "range": "0.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 30.85,
+            "range": "0.63",
             "unit": "ms"
           }
         ]
