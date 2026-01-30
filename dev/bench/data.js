@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769815090593,
+  "lastUpdate": 1769815756022,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -16873,6 +16873,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.76%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7028bada959f97bea8f38ca75ad31c915569aceb",
+          "message": "Add support to periodically save recipes in local\n\nAdd support to periodically (every ~2s) save recipes in local storage\nso that the persist across page reloads. Add new end-to-end tests to\nverify this functionality.",
+          "timestamp": "2026-01-30T18:27:16-05:00",
+          "tree_id": "1980350a1d03d627e4acfb64361d93f4b1ffc03e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7028bada959f97bea8f38ca75ad31c915569aceb"
+        },
+        "date": 1769815755597,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75569,
+            "range": "±1.69%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 735001,
+            "range": "±0.60%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10208,
+            "range": "±1.94%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 615176,
+            "range": "±0.71%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
