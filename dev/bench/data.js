@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769814688198,
+  "lastUpdate": 1769814838069,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -16316,6 +16316,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.93%",
             "unit": "ops/sec",
             "extra": "89 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "aa83fe395d01924a6b34b6329797e209cea52e60",
+          "message": "* Overhaul `RecipeContext` updates, more modular\n\n* Overhaul the helper functions for `RecipeContext` updates to be more\n  modular and flexible; most can now be pulled out `RecipeGrid` as\n  standalone functions, with the only additional dependency being\n  `RecipeResources`. Recipe copy/paste functions are also made more\n  modular, separating the stringifying/parsing, recipe context update,\n  and clipboard interactions elements. These changes are in preparation\n  for adding support to save recipes in local storage, to persist across\n  browser window refreshes.\n* From above, the new `updateRecipes(...: Recipe[])` method is notable.\n  It updates multiple recipes at once, with a single state update. This\n  is necessary when updating multiple recipes at once, e.g. in the\n  useEffect to prevent stale ingredient context, otherwise dependent\n  components may asynchronously try to render stale `Composition` or\n  `MixProperties` objects, which can lead to crashes due to freed WASM\n  memory.\n* Fix a bug in the `useEffect` to prevent stale ingredient context\n  before the recipe resources have been populated. It was previously\n  only refreshing the main recipe; now it refreshes the references as\n  well. End-to-end tests that validate this functionality are updated\n  to also check the reference recipes.",
+          "timestamp": "2026-01-30T17:52:26-05:00",
+          "tree_id": "45a352a0088b2f5452ea3098d1df25ef3f205e30",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/aa83fe395d01924a6b34b6329797e209cea52e60"
+        },
+        "date": 1769814836911,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77387,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 694529,
+            "range": "±2.27%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10150,
+            "range": "±1.90%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 603766,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
