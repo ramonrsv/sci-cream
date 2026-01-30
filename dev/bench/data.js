@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769737730662,
+  "lastUpdate": 1769812423077,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -14645,6 +14645,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.71%",
             "unit": "ops/sec",
             "extra": "96 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9c2ff566436d29257675915c000e72ffc387e5cf",
+          "message": "Add support for `IngCompGrid` to show references\n\n* Add support for `IngredientCompositionGrid` to select and show the\n  composition of reference recipes as well as the main recipe.\n* Create a shared `RecipeSelection` component for the common\n  recipe-selection functionality, also used by `RecipeGrid`.\n* Add custom functionality for the recipe selection component in\n  `IngredientCompositionGrid` to disappear if there are no reference\n  recipes, but to be sticky if a reference recipe is currently selected.\n  This prevents jarring jumps back to the main recipe if a reference is\n  cleared, and having to re-select it if a new ref recipe is pasted.",
+          "timestamp": "2026-01-30T13:08:13-05:00",
+          "tree_id": "a4011ffdb4a5d0c5e88ab2d0d9c90062dcd842b6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9c2ff566436d29257675915c000e72ffc387e5cf"
+        },
+        "date": 1769812421842,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77849,
+            "range": "±0.74%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 730074,
+            "range": "±0.67%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10140,
+            "range": "±1.94%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 616233,
+            "range": "±0.67%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
