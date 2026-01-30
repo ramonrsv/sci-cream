@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769812436100,
+  "lastUpdate": 1769812656703,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -14384,6 +14384,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 29.62,
             "range": "0.57",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9c2ff566436d29257675915c000e72ffc387e5cf",
+          "message": "Add support for `IngCompGrid` to show references\n\n* Add support for `IngredientCompositionGrid` to select and show the\n  composition of reference recipes as well as the main recipe.\n* Create a shared `RecipeSelection` component for the common\n  recipe-selection functionality, also used by `RecipeGrid`.\n* Add custom functionality for the recipe selection component in\n  `IngredientCompositionGrid` to disappear if there are no reference\n  recipes, but to be sticky if a reference recipe is currently selected.\n  This prevents jarring jumps back to the main recipe if a reference is\n  cleared, and having to re-select it if a new ref recipe is pasted.",
+          "timestamp": "2026-01-30T13:08:13-05:00",
+          "tree_id": "a4011ffdb4a5d0c5e88ab2d0d9c90062dcd842b6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9c2ff566436d29257675915c000e72ffc387e5cf"
+        },
+        "date": 1769812656104,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.695,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 670.5,
+            "range": "52.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 45.3,
+            "range": "6.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 55.8,
+            "range": "7.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.5,
+            "range": "6.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 33.9,
+            "range": "3.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 168.8,
+            "range": "4.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 40.9,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 48.87,
+            "range": "1.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 30.44,
+            "range": "0.49",
             "unit": "ms"
           }
         ]
