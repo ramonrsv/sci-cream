@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769813551321,
+  "lastUpdate": 1769813566198,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -1691,6 +1691,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 369,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "777763be6bf6a52c65b64f59ca1b3864a2b817c7",
+          "message": "Add TODO about storing component layout in local",
+          "timestamp": "2026-01-30T13:47:26-05:00",
+          "tree_id": "d8a46dbf1dae968a1817a419c43cd1cff35333eb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/777763be6bf6a52c65b64f59ca1b3864a2b817c7"
+        },
+        "date": 1769813565827,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3488,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161569,
+            "range": "± 7277",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2025,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160555,
+            "range": "± 694",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 310,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
