@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 import { formatCompositionValue } from "../lib/ui/comp-values";
 import { standardInputStepByPercent } from "../lib/util";
@@ -240,6 +240,9 @@ export function RecipeGrid({
   const { recipes: allRecipes } = recipeContext;
   const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(0);
 
+  const recipesRef = useRef(allRecipes);
+  recipesRef.current = allRecipes;
+
   /** Update multiple recipes at once, with a single state update.
    *
    * This is necessary when updating multiple recipes at once, e.g. in the useEffect to prevent
@@ -305,6 +308,21 @@ export function RecipeGrid({
     await pasteRecipe(currentRecipeIdx, await navigator.clipboard.readText());
   };
 
+  const getRecipeStringsFromStorage = () => {
+    if (typeof window !== "undefined") {
+      const storedRecipes = localStorage.getItem("recipes");
+      if (storedRecipes) return JSON.parse(storedRecipes) as string[];
+    }
+    return allRecipes.map(() => "");
+  };
+
+  const storeRecipesInStorage = async (recipes: Recipe[]) => {
+    if (typeof window !== "undefined") {
+      const recipeStrings = await Promise.all(recipes.map((recipe) => stringifyRecipe(recipe)));
+      localStorage.setItem("recipes", JSON.stringify(recipeStrings));
+    }
+  };
+
   // Prevents stale ingredient context if a row is changed (e.g. a recipe is pasted) before we have
   // had a chance to fetch all valid ingredients and populate validIngredients and the wasmBridge.
   useEffect(() => {
@@ -321,6 +339,23 @@ export function RecipeGrid({
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [recipeResources]);
+
+  // On initial load, populate recipes from local storage
+  useEffect(() => {
+    updateRecipes(
+      getRecipeStringsFromStorage().map((recipeStr, idx) =>
+        makeUpdatedRecipeFromString(allRecipes[idx], recipeStr, recipeResources),
+      ),
+    );
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Periodically store recipes to local storage
+  useEffect(() => {
+    const intervalID = setInterval(() => {
+      storeRecipesInStorage(recipesRef.current);
+    }, 2000);
+    return () => clearInterval(intervalID);
+  }, []);
 
   const currentRecipe = allRecipes[currentRecipeIdx];
   const mixTotal = currentRecipe.mixTotal;
