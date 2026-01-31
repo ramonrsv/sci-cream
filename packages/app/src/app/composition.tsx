@@ -5,10 +5,9 @@ import { useState } from "react";
 import { IngredientRow, Recipe, isRecipeEmpty, getRecipeIndices } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { RecipeSelection } from "@/lib/ui/recipe-selection";
-import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
+import { applyQtyToggleAndFormat, formatCompositionValue } from "../lib/ui/comp-values";
 import { isCompKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STD_COMPONENT_H_PX } from "./page";
-import { STATE_VAL } from "../lib/util";
 
 import { CompKey, comp_key_as_med_str, getWasmEnums } from "@workspace/sci-cream";
 
@@ -31,7 +30,7 @@ const DEFAULT_SELECTED_COMPS: Set<CompKey> = new Set([
 ]);
 
 export function IngredientCompositionGrid({ recipes: allRecipes }: { recipes: Recipe[] }) {
-  const qtyToggleState = useState<QtyToggle>(QtyToggle.Quantity);
+  const [qtyToggle, setQtyToggle] = useState<QtyToggle>(QtyToggle.Quantity);
   const compsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedCompsState = useState<Set<CompKey>>(DEFAULT_SELECTED_COMPS);
   const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(0);
@@ -61,7 +60,7 @@ export function IngredientCompositionGrid({ recipes: allRecipes }: { recipes: Re
       recipe.mixProperties.composition.get(comp_key),
       recipe.mixTotal,
       recipe.mixTotal,
-      qtyToggleState[STATE_VAL],
+      qtyToggle,
       isCompKeyQuantity(comp_key),
     );
   };
@@ -72,7 +71,7 @@ export function IngredientCompositionGrid({ recipes: allRecipes }: { recipes: Re
           row.ingredient.composition.get(comp_key),
           row.quantity,
           recipe.mixTotal,
-          qtyToggleState[STATE_VAL],
+          qtyToggle,
           isCompKeyQuantity(comp_key),
         )
       : "";
@@ -101,17 +100,53 @@ export function IngredientCompositionGrid({ recipes: allRecipes }: { recipes: Re
       <KeySelection
         qtyToggleComponent={{
           supportedQtyToggles: [QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage],
-          qtyToggleState: qtyToggleState,
+          qtyToggleState: [qtyToggle, setQtyToggle],
         }}
         keyFilterState={compsFilterState}
         selectedKeysState={selectedCompsState}
         getKeys={getCompKeys}
         key_as_med_str={comp_key_as_med_str}
       />
-      <div>
+      <div className="component-inner-border">
+        {/* Ingredient & Qty Table */}
+        <div id="ing-quantity-table">
+          <table className="component-inner-border-color relative -top-px float-left border-r-2 border-b-2">
+            <thead>
+              <tr className="h-6.25">
+                <th className="table-header w-fit px-1.25">Ingredient</th>
+                <th className="table-header w-fit px-1.25">{`Qty (${qtyToggle == QtyToggle.Percentage ? "%" : "g"})`}</th>
+              </tr>
+              <tr className="h-6.25">
+                <td className="table-header w-fit px-1.25 text-center">Total</td>
+                <td className="table-header comp-val w-fit px-1.25">
+                  {qtyToggle === QtyToggle.Percentage
+                    ? "100   "
+                    : recipe.mixTotal
+                      ? recipe.mixTotal.toFixed(0)
+                      : ""}
+                </td>
+              </tr>
+            </thead>
+            <tbody>
+              {recipe.ingredientRows.map((row) => (
+                <tr key={row.index} className="h-6.25">
+                  <td className="table-inner-cell w-fit px-2">{row.name}</td>
+                  <td className="table-inner-cell comp-val w-17 px-2">
+                    {row.quantity && recipe.mixTotal
+                      ? qtyToggle === QtyToggle.Percentage
+                        ? formatCompositionValue((row.quantity / recipe.mixTotal) * 100)
+                        : row.quantity
+                      : ""}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        {/* Composition Table */}
         {/* @todo The table doesn't fully align to the right, and its parent's div is ~2px too tall */}
-        <div className="component-inner-border overflow-x-auto whitespace-nowrap">
-          <table className="relative -top-px -left-px">
+        <div id="ing-composition-table" className="overflow-x-auto whitespace-nowrap">
+          <table className="relative -top-px">
             {/* Header */}
             <thead>
               {/* Composition Header */}

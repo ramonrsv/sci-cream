@@ -5,7 +5,7 @@
       on performance.
 - [x] Once supported, benchmark the performance impact of pre-fetching all ingredient specs on
       mount, compared to individually fetching specs when requested.
-- [ ] Add left columns to `IngredientCompositionGrid` to show the ingredient names and quantities,
+- [x] Add left columns to `IngredientCompositionGrid` to show the ingredient names and quantities,
       so that it can be positioned anywhere and does not have to be besides `RecipeGrid`.
 - [ ] In `IngredientCompositionGrid` and `MixPropertiesGrid`, make it so that, if there is a
       horizontal scroll, the left-most column (containing the ingredient names or the property

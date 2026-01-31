@@ -138,14 +138,18 @@ export function getMixPropertyValueElement(page: Page, propKey: PropKey, recipeI
 }
 
 export function getCompositionGridHeaders(page: Page) {
-  return page.locator("#ing-composition-grid table thead th");
+  return page.locator("#ing-composition-grid #ing-composition-table table thead th");
 }
 
 export async function getCompositionValueElement(page: Page, ingIdx: number, compKey: CompKey) {
   const headersTxt = await getCompositionGridHeaders(page).allTextContents();
   const colIdx = headersTxt.findIndex((text) => text.includes(comp_key_as_med_str(compKey)));
 
-  return page.locator("#ing-composition-grid table tbody tr").nth(ingIdx).locator("td").nth(colIdx);
+  return page
+    .locator("#ing-composition-grid #ing-composition-table table tbody tr")
+    .nth(ingIdx)
+    .locator("td")
+    .nth(colIdx);
 }
 
 export async function pasteToClipboard(page: Page, browserName: string, text: string) {
