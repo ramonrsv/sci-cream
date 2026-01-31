@@ -108,41 +108,43 @@ export function IngredientCompositionGrid({ recipes: allRecipes }: { recipes: Re
         getKeys={getCompKeys}
         key_as_med_str={comp_key_as_med_str}
       />
-      {/* @todo The table doesn't fully align to the right, and its parent's div is ~2px too tall */}
-      <div className="component-inner-border overflow-x-auto whitespace-nowrap">
-        <table className="relative -top-px -left-px">
-          {/* Header */}
-          <thead>
-            {/* Composition Header */}
-            <tr className="h-6.25">
-              {getEnabledComps().map((comp_key) => (
-                <th key={comp_key} className="table-header w-fit px-1 text-center">
-                  {comp_key_as_med_str(comp_key)}
-                </th>
-              ))}
-            </tr>
-            {/* Totals Row */}
-            <tr className="h-6.25">
-              {getEnabledComps().map((comp_key) => (
-                <td key={comp_key} className="table-header comp-val px-1">
-                  {formattedTotalCell(comp_key)}
-                </td>
-              ))}
-            </tr>
-          </thead>
-          <tbody>
-            {/* Composition Rows */}
-            {recipe.ingredientRows.map((row) => (
-              <tr key={row.index} className="h-6.25">
+      <div>
+        {/* @todo The table doesn't fully align to the right, and its parent's div is ~2px too tall */}
+        <div className="component-inner-border overflow-x-auto whitespace-nowrap">
+          <table className="relative -top-px -left-px">
+            {/* Header */}
+            <thead>
+              {/* Composition Header */}
+              <tr className="h-6.25">
                 {getEnabledComps().map((comp_key) => (
-                  <td key={comp_key} className="table-inner-cell comp-val px-1">
-                    {formattedCompCell(row, comp_key)}
+                  <th key={comp_key} className="table-header w-fit px-1 text-center">
+                    {comp_key_as_med_str(comp_key)}
+                  </th>
+                ))}
+              </tr>
+              {/* Totals Row */}
+              <tr className="h-6.25">
+                {getEnabledComps().map((comp_key) => (
+                  <td key={comp_key} className="table-header comp-val px-1">
+                    {formattedTotalCell(comp_key)}
                   </td>
                 ))}
               </tr>
-            ))}
-          </tbody>
-        </table>
+            </thead>
+            <tbody>
+              {/* Composition Rows */}
+              {recipe.ingredientRows.map((row) => (
+                <tr key={row.index} className="h-6.25">
+                  {getEnabledComps().map((comp_key) => (
+                    <td key={comp_key} className="table-inner-cell comp-val px-1">
+                      {formattedCompCell(row, comp_key)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
     </div>
   );
