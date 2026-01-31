@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769837724429,
+  "lastUpdate": 1769837946479,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -17414,6 +17414,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 29.48,
             "range": "0.60",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b4b1b84ad326c723e81d06ab5f2f40ddcdb7cd49",
+          "message": "Add ingredient and quanity column to `IngCompGrid`\n\nAdd two left columns to `IngredientCompositionGrid`, to show the\ncorresponding ingredient name and quantity (affected by QtyToggle).\nThese columns are actually a separate table, to which the\noverflow-x-auto does not apply, so it's not affected by a scrollbar.",
+          "timestamp": "2026-01-31T00:31:23-05:00",
+          "tree_id": "ce243172be9bf41530c16b313c3720838bfad91d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b4b1b84ad326c723e81d06ab5f2f40ddcdb7cd49"
+        },
+        "date": 1769837946007,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.695,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 676.3,
+            "range": "56.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 45.2,
+            "range": "8.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 53.3,
+            "range": "4.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.3,
+            "range": "8.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 36.7,
+            "range": "3.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 170.4,
+            "range": "9.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 46.8,
+            "range": "3.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 51.96,
+            "range": "1.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 30.33,
+            "range": "0.64",
             "unit": "ms"
           }
         ]
