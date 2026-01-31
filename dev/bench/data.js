@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769832861916,
+  "lastUpdate": 1769837686779,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -17987,6 +17987,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.72%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b4b1b84ad326c723e81d06ab5f2f40ddcdb7cd49",
+          "message": "Add ingredient and quanity column to `IngCompGrid`\n\nAdd two left columns to `IngredientCompositionGrid`, to show the\ncorresponding ingredient name and quantity (affected by QtyToggle).\nThese columns are actually a separate table, to which the\noverflow-x-auto does not apply, so it's not affected by a scrollbar.",
+          "timestamp": "2026-01-31T00:31:23-05:00",
+          "tree_id": "ce243172be9bf41530c16b313c3720838bfad91d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b4b1b84ad326c723e81d06ab5f2f40ddcdb7cd49"
+        },
+        "date": 1769837686372,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75544,
+            "range": "±1.49%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 727737,
+            "range": "±0.53%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10141,
+            "range": "±2.02%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 600028,
+            "range": "±0.84%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
