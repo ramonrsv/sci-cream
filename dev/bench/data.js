@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769837686779,
+  "lastUpdate": 1769837724429,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -1961,6 +1961,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 313,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b4b1b84ad326c723e81d06ab5f2f40ddcdb7cd49",
+          "message": "Add ingredient and quanity column to `IngCompGrid`\n\nAdd two left columns to `IngredientCompositionGrid`, to show the\ncorresponding ingredient name and quantity (affected by QtyToggle).\nThese columns are actually a separate table, to which the\noverflow-x-auto does not apply, so it's not affected by a scrollbar.",
+          "timestamp": "2026-01-31T00:31:23-05:00",
+          "tree_id": "ce243172be9bf41530c16b313c3720838bfad91d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b4b1b84ad326c723e81d06ab5f2f40ddcdb7cd49"
+        },
+        "date": 1769837723428,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3591,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 162239,
+            "range": "± 5465",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2020,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 161719,
+            "range": "± 1115",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 310,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
