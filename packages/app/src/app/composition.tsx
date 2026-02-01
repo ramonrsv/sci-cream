@@ -87,98 +87,100 @@ export function IngredientCompositionGrid({ recipes: allRecipes }: { recipes: Re
   return (
     <div
       id="ing-composition-grid"
-      className="grid-component w-full min-w-50"
+      className="w-full min-w-50"
       style={{ height: `${STD_COMPONENT_H_PX}px` }}
     >
-      {(recipes.length > 1 || currentRecipeIdx !== 0) && (
-        <RecipeSelection
-          allRecipes={allRecipes}
-          enabledRecipeIndices={getRecipeIndices(recipes)}
-          currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
+      <div className="grid-component h-[calc(100%-14px)]">
+        {(recipes.length > 1 || currentRecipeIdx !== 0) && (
+          <RecipeSelection
+            allRecipes={allRecipes}
+            enabledRecipeIndices={getRecipeIndices(recipes)}
+            currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
+          />
+        )}
+        <KeySelection
+          qtyToggleComponent={{
+            supportedQtyToggles: [QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage],
+            qtyToggleState: [qtyToggle, setQtyToggle],
+          }}
+          keyFilterState={compsFilterState}
+          selectedKeysState={selectedCompsState}
+          getKeys={getCompKeys}
+          key_as_med_str={comp_key_as_med_str}
         />
-      )}
-      <KeySelection
-        qtyToggleComponent={{
-          supportedQtyToggles: [QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage],
-          qtyToggleState: [qtyToggle, setQtyToggle],
-        }}
-        keyFilterState={compsFilterState}
-        selectedKeysState={selectedCompsState}
-        getKeys={getCompKeys}
-        key_as_med_str={comp_key_as_med_str}
-      />
-      <div className="component-inner-border">
-        {/* Ingredient & Qty Table */}
-        <div id="ing-quantity-table">
-          <table className="component-inner-border-color relative -top-px float-left border-r-2 border-b-2">
-            <thead>
-              <tr className="h-6.25">
-                <th className="table-header w-fit px-1.25">Ingredient</th>
-                <th className="table-header w-fit px-1.25">{`Qty (${qtyToggle == QtyToggle.Percentage ? "%" : "g"})`}</th>
-              </tr>
-              <tr className="h-6.25">
-                <td className="table-header w-fit px-1.25 text-center">Total</td>
-                <td className="table-header comp-val w-fit px-1.25">
-                  {qtyToggle === QtyToggle.Percentage
-                    ? "100   "
-                    : recipe.mixTotal
-                      ? recipe.mixTotal.toFixed(0)
-                      : ""}
-                </td>
-              </tr>
-            </thead>
-            <tbody>
-              {recipe.ingredientRows.map((row) => (
-                <tr key={row.index} className="h-6.25">
-                  <td className="table-inner-cell w-fit px-2">{row.name}</td>
-                  <td className="table-inner-cell comp-val w-17 px-2">
-                    {row.quantity && recipe.mixTotal
-                      ? qtyToggle === QtyToggle.Percentage
-                        ? formatCompositionValue((row.quantity / recipe.mixTotal) * 100)
-                        : row.quantity
-                      : ""}
+        <div className="component-inner-border">
+          {/* Ingredient & Qty Table */}
+          <div id="ing-quantity-table">
+            <table className="component-inner-border-color relative -top-px float-left border-r-2 border-b-2">
+              <thead>
+                <tr className="h-6.25">
+                  <th className="table-header w-fit px-1.25">Ingredient</th>
+                  <th className="table-header w-fit px-1.25">{`Qty (${qtyToggle == QtyToggle.Percentage ? "%" : "g"})`}</th>
+                </tr>
+                <tr className="h-6.25">
+                  <td className="table-header w-fit px-1.25 text-center">Total</td>
+                  <td className="table-header comp-val w-fit px-1.25">
+                    {qtyToggle === QtyToggle.Percentage
+                      ? "100   "
+                      : recipe.mixTotal
+                        ? recipe.mixTotal.toFixed(0)
+                        : ""}
                   </td>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
-        {/* Composition Table */}
-        {/* @todo The table doesn't fully align to the right, and its parent's div is ~2px too tall */}
-        <div id="ing-composition-table" className="overflow-x-auto whitespace-nowrap">
-          <table className="relative -top-px">
-            {/* Header */}
-            <thead>
-              {/* Composition Header */}
-              <tr className="h-6.25">
-                {getEnabledComps().map((comp_key) => (
-                  <th key={comp_key} className="table-header w-fit px-1 text-center">
-                    {comp_key_as_med_str(comp_key)}
-                  </th>
+              </thead>
+              <tbody>
+                {recipe.ingredientRows.map((row) => (
+                  <tr key={row.index} className="h-6.25">
+                    <td className="table-inner-cell w-fit px-2">{row.name}</td>
+                    <td className="table-inner-cell comp-val w-17 px-2">
+                      {row.quantity && recipe.mixTotal
+                        ? qtyToggle === QtyToggle.Percentage
+                          ? formatCompositionValue((row.quantity / recipe.mixTotal) * 100)
+                          : row.quantity
+                        : ""}
+                    </td>
+                  </tr>
                 ))}
-              </tr>
-              {/* Totals Row */}
-              <tr className="h-6.25">
-                {getEnabledComps().map((comp_key) => (
-                  <td key={comp_key} className="table-header comp-val px-1">
-                    {formattedTotalCell(comp_key)}
-                  </td>
-                ))}
-              </tr>
-            </thead>
-            <tbody>
-              {/* Composition Rows */}
-              {recipe.ingredientRows.map((row) => (
-                <tr key={row.index} className="h-6.25">
+              </tbody>
+            </table>
+          </div>
+          {/* Composition Table */}
+          {/* @todo The table doesn't fully align to the right, and its parent's div is ~2px too tall */}
+          <div id="ing-composition-table" className="overflow-x-auto whitespace-nowrap">
+            <table className="relative -top-px">
+              {/* Header */}
+              <thead>
+                {/* Composition Header */}
+                <tr className="h-6.25">
                   {getEnabledComps().map((comp_key) => (
-                    <td key={comp_key} className="table-inner-cell comp-val px-1">
-                      {formattedCompCell(row, comp_key)}
+                    <th key={comp_key} className="table-header w-fit px-1 text-center">
+                      {comp_key_as_med_str(comp_key)}
+                    </th>
+                  ))}
+                </tr>
+                {/* Totals Row */}
+                <tr className="h-6.25">
+                  {getEnabledComps().map((comp_key) => (
+                    <td key={comp_key} className="table-header comp-val px-1">
+                      {formattedTotalCell(comp_key)}
                     </td>
                   ))}
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {/* Composition Rows */}
+                {recipe.ingredientRows.map((row) => (
+                  <tr key={row.index} className="h-6.25">
+                    {getEnabledComps().map((comp_key) => (
+                      <td key={comp_key} className="table-inner-cell comp-val px-1">
+                        {formattedCompCell(row, comp_key)}
+                      </td>
+                    ))}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </div>
     </div>
