@@ -80,6 +80,8 @@ export default function Home() {
   const horizVert = ["e", "w", "s"] as ResizeHandleAxis[];
 
   const h = REACT_GRID_COMPONENT_HEIGHT;
+  const fullW = REACT_GRID_COLS;
+
   const recipeDims = { h, w: dynW(8), isResizable: false };
   const propsDims = { h, w: dynW(6), minW: dynW(6), maxW: dynW(9), resizeHandles: horizVert };
   const compsDims = { h, w: 10, resizeHandles: horiz };
@@ -95,9 +97,18 @@ export default function Home() {
     { i: "fpd-graph",   x: 12, y: 11, ...graphDims },
   ];
 
+  // Detect mobile viewport to stack items vertically instead of side-by-side
+  const isMobileViewport = width < 768; // Typical mobile breakpoint
+
+  if (isMobileViewport)
+    for (const [idx, item] of layout.entries())
+      layout[idx] = { ...item, x: 0, y: idx * h, w: fullW, minW: undefined, maxW: undefined };
+
+  const pX = isMobileViewport ? 2 : 8;
+
   return (
-    <main className="min-h-screen pr-8 pl-8">
-      <h1 className="pt-5 pb-2 pl-8 text-2xl font-bold">Ice Cream Recipe Calculator</h1>
+    <main className={`min-h-screen px-${pX}`}>
+      <h1 className={`pt-5 pb-2 pl-${pX} text-2xl font-bold`}>Ice Cream Recipe Calculator</h1>
       <div className="fixed top-5 right-5 z-50">
         <ThemeToggle />
       </div>

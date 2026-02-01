@@ -391,7 +391,7 @@ export function RecipeGrid({
         {/* Header */}
         <thead>
           <tr className="h-6.25 text-center">
-            <th className="table-header min-w-62.5">Ingredient</th>
+            <th className="table-header min-w-50">Ingredient</th>
             <th className="table-header w-15">Qty (g)</th>
             <th className="table-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
           </tr>
