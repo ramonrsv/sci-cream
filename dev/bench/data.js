@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769986311524,
+  "lastUpdate": 1769986313487,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -18845,6 +18845,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 30.15,
             "range": "0.50",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "95bcab61326744db165acddd7e0b8c31847d6d49",
+          "message": "Add <div> to have border independent of container\n\n* Use additinal child <div></div> under every top-level component div,\n  and move `grid-component` to this div. This allows us to control the\n  borders and the `react-grid-layout` elements independently, which\n  allows moving the border without affecting the grid layout.\n* With the above support, rework all the components to show a tighter\n  `component-inner-border`, removing the need for the stripe for the\n  scroll bar. If a horizontal scroll bar is present, the border around\n  `MixPropertiesGrid` and `IngredientCompositionGrid` will expand to\n  accomodate it, but without affecting the grid layout, as the top-level\n  is not affected by this resize.",
+          "timestamp": "2026-02-01T17:31:27-05:00",
+          "tree_id": "c610adb24af3e3af9612de45459bf331ce41f60b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/95bcab61326744db165acddd7e0b8c31847d6d49"
+        },
+        "date": 1769986312156,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.695,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 659.6,
+            "range": "48.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 43.7,
+            "range": "5.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 55.9,
+            "range": "7.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 36.7,
+            "range": "4.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 35.4,
+            "range": "2.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 185.4,
+            "range": "7.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 44.6,
+            "range": "2.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 50.95,
+            "range": "1.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 30.53,
+            "range": "0.58",
             "unit": "ms"
           }
         ]
