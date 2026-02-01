@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769985086225,
+  "lastUpdate": 1769985112169,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -2015,6 +2015,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 310,
             "range": "± 7",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d851ea0c3d861e6b6e5cd1b8bd180185b9cac655",
+          "message": "Adjust grid for mobile viewports, stack vertically\n\nAdjust the react-grid-layout for mobile viewports, stacking all the\ncomponents vertically, instead of in a side-by-side grid, and all with\nfull screen width. Also adjust `RecipeGrid` to allow it to fit in narrow\nmobile screens, like the Pixel 5 configured in `playwright.config.ts`.",
+          "timestamp": "2026-02-01T17:17:33-05:00",
+          "tree_id": "acb8aabd30ddbdd9c1890ffdd9f80eb54f3d3bde",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d851ea0c3d861e6b6e5cd1b8bd180185b9cac655"
+        },
+        "date": 1769985111572,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3198,
+            "range": "± 59",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 129348,
+            "range": "± 1370",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1656,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 132012,
+            "range": "± 3365",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 273,
+            "range": "± 10",
             "unit": "ns/iter"
           }
         ]
