@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769986072033,
+  "lastUpdate": 1769986132002,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -19207,6 +19207,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.82%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6661d9eff2c789ff97f93f7bdef8c33f45c477cd",
+          "message": "Add TODOs about drag  handle, icons, scroll bar",
+          "timestamp": "2026-02-01T17:46:38-05:00",
+          "tree_id": "cd27db634e06f12fb1edb56b181a662862add375",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6661d9eff2c789ff97f93f7bdef8c33f45c477cd"
+        },
+        "date": 1769986131530,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 73374,
+            "range": "±1.05%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 698311,
+            "range": "±1.59%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9955,
+            "range": "±1.93%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 595858,
+            "range": "±1.04%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
