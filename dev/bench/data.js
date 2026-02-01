@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769985356453,
+  "lastUpdate": 1769985359044,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -18286,6 +18286,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 30.33,
             "range": "0.64",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d851ea0c3d861e6b6e5cd1b8bd180185b9cac655",
+          "message": "Adjust grid for mobile viewports, stack vertically\n\nAdjust the react-grid-layout for mobile viewports, stacking all the\ncomponents vertically, instead of in a side-by-side grid, and all with\nfull screen width. Also adjust `RecipeGrid` to allow it to fit in narrow\nmobile screens, like the Pixel 5 configured in `playwright.config.ts`.",
+          "timestamp": "2026-02-01T17:17:33-05:00",
+          "tree_id": "acb8aabd30ddbdd9c1890ffdd9f80eb54f3d3bde",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d851ea0c3d861e6b6e5cd1b8bd180185b9cac655"
+        },
+        "date": 1769985357762,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.695,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 651,
+            "range": "51.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.3,
+            "range": "4.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54.7,
+            "range": "5.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 37.1,
+            "range": "4.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 35.3,
+            "range": "2.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 185.3,
+            "range": "6.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 45.7,
+            "range": "5.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 49.67,
+            "range": "1.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 30.15,
+            "range": "0.50",
             "unit": "ms"
           }
         ]
