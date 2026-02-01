@@ -64,3 +64,9 @@
       subsequent lookups during component render are done within the JS side.
 - [ ] Add functionality to store component layout so that it is remembered across page reloads. The
       store should start seeded with a default for each resolution, and store any user modification.
+- [ ] The horizontal scroll bar detection in `MixPropertiesGrid` does not always get refreshed with
+      all interactions that can affect it, e.g. when resizing the react-grid-layout component.
+- [ ] Add `draggableHandle` to all the react-grid-layout components so that they only activate a
+      drag when intended, otherwise every action activates a drag, which can cause annoying
+      accidental drags, and also has problems with the red background showing all the time.
+- [ ] Use icons instead of text for the Copy/Paste/... buttons, to save space and make it prettier.
