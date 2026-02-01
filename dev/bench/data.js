@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769986037535,
+  "lastUpdate": 1769986072033,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -2069,6 +2069,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 273,
             "range": "± 10",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "95bcab61326744db165acddd7e0b8c31847d6d49",
+          "message": "Add <div> to have border independent of container\n\n* Use additinal child <div></div> under every top-level component div,\n  and move `grid-component` to this div. This allows us to control the\n  borders and the `react-grid-layout` elements independently, which\n  allows moving the border without affecting the grid layout.\n* With the above support, rework all the components to show a tighter\n  `component-inner-border`, removing the need for the stripe for the\n  scroll bar. If a horizontal scroll bar is present, the border around\n  `MixPropertiesGrid` and `IngredientCompositionGrid` will expand to\n  accomodate it, but without affecting the grid layout, as the top-level\n  is not affected by this resize.",
+          "timestamp": "2026-02-01T17:31:27-05:00",
+          "tree_id": "c610adb24af3e3af9612de45459bf331ce41f60b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/95bcab61326744db165acddd7e0b8c31847d6d49"
+        },
+        "date": 1769986070801,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3710,
+            "range": "± 43",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161111,
+            "range": "± 982",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2012,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 159477,
+            "range": "± 3122",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 312,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
