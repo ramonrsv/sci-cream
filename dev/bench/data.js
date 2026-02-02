@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770011255793,
+  "lastUpdate": 1770011429510,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -19993,6 +19993,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 33,
             "range": "0.50",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "83fbbeb4ceadb9769281798264abb25a7e986301",
+          "message": "Add drag icon and ReadGridLayout.dragConfig.handle\n\nAdd a drag icon and `ReactGridLayout.dragConfig.handle` to all the\nreact-grid-layout components so that they only activate a drag when\nintended, otherwise every action activates a drag, which can cause\nannoying accidental drags, and also has problems with the red\nbackground showing all the time.",
+          "timestamp": "2026-02-02T00:31:11-05:00",
+          "tree_id": "e12417115ecb17a51e3aaaaaa3608b6515c6f7f0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/83fbbeb4ceadb9769281798264abb25a7e986301"
+        },
+        "date": 1770011428968,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 679.4,
+            "range": "53.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 47.3,
+            "range": "8.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58,
+            "range": "6.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.2,
+            "range": "8.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 37.8,
+            "range": "5.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 171.4,
+            "range": "5.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 47.5,
+            "range": "3.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 51.76,
+            "range": "1.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 30.69,
+            "range": "0.58",
             "unit": "ms"
           }
         ]
