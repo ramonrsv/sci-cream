@@ -69,4 +69,4 @@
 - [ ] Add `draggableHandle` to all the react-grid-layout components so that they only activate a
       drag when intended, otherwise every action activates a drag, which can cause annoying
       accidental drags, and also has problems with the red background showing all the time.
-- [ ] Use icons instead of text for the Copy/Paste/... buttons, to save space and make it prettier.
+- [x] Use icons instead of text for the Copy/Paste/... buttons, to save space and make it prettier.

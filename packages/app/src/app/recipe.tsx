@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import { ClipboardCopy, ClipboardPaste, Trash } from "lucide-react";
 
 import { formatCompositionValue } from "../lib/ui/comp-values";
 import { standardInputStepByPercent } from "../lib/util";
@@ -360,6 +361,8 @@ export function RecipeGrid({
   const currentRecipe = allRecipes[currentRecipeIdx];
   const mixTotal = currentRecipe.mixTotal;
 
+  const ICON_SIZE = 17;
+
   return (
     <div id="recipe-grid" style={{ height: `${STD_COMPONENT_H_PX}px` }}>
       <div className="grid-component h-[calc(100%-36px)]">
@@ -370,17 +373,25 @@ export function RecipeGrid({
             currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
           />
           {/* Action Buttons */}
-          <div>
+          <div className="flex">
             {[
-              { label: "Copy", action: copyCurrentRecipeToClipboard },
-              { label: "Paste", action: pasteCurrentRecipeFromClipboard },
-              { label: "Clear", action: clearCurrentRecipe },
-            ].map(({ label, action }, idx) => (
-              <button
-                key={idx}
-                onClick={action}
-                className={`button ${idx == 0 ? "" : "ml-2"} px-1`}
-              >
+              {
+                label: <ClipboardCopy size={ICON_SIZE} />,
+                action: copyCurrentRecipeToClipboard,
+                title: "Copy recipe to clipboard",
+              },
+              {
+                label: <ClipboardPaste size={ICON_SIZE} />,
+                action: pasteCurrentRecipeFromClipboard,
+                title: "Paste recipe from clipboard",
+              },
+              {
+                label: <Trash size={ICON_SIZE} />,
+                action: clearCurrentRecipe,
+                title: "Clear recipe",
+              },
+            ].map(({ label, action, title }, idx) => (
+              <button key={idx} onClick={action} title={title} className="button mx-0.75 mt-px">
                 {label}
               </button>
             ))}
