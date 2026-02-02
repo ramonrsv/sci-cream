@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1769986375800,
+  "lastUpdate": 1770008152955,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -20215,6 +20215,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.04%",
             "unit": "ops/sec",
             "extra": "90 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4a74bc5fa5caabe1b06b258cf13ffd980c475985",
+          "message": "Fix bug with template literal in TailwindCSS class\n\nWhen using template literals to construct `className` using Tailwind CSS\nutility classes, it is required that every utility exist as plain text,\ni.e. something like `px-${pX}` does not work, the strings \"px-2\" and\n\"px-8\" have to exist so that Tailwind's compiler will detect them. Fix a\npreviously introduced bug using the incorrect pattern described above.",
+          "timestamp": "2026-02-01T23:38:51-05:00",
+          "tree_id": "bc79efefae5688b53193b77dfd015c9fdc20f105",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4a74bc5fa5caabe1b06b258cf13ffd980c475985"
+        },
+        "date": 1770008152299,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 74842,
+            "range": "±1.63%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 719494,
+            "range": "±2.51%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10117,
+            "range": "±2.05%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 608432,
+            "range": "±0.67%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
