@@ -19,7 +19,7 @@ export function RecipeSelection({
       <select
         value={currentRecipeIdx}
         onChange={(e) => setCurrentRecipeIdx(parseInt(e.target.value))}
-        className="select-input w-55 text-center"
+        className="select-input w-fit text-center"
         style={{ backgroundColor: recipeCompBgColor(currentRecipeIdx) }}
       >
         {enabledRecipeIndices.map((idx) => (
