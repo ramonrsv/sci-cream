@@ -1,13 +1,14 @@
 "use client";
 
 import { useState } from "react";
+import { GripVertical } from "lucide-react";
 
 import { IngredientRow, Recipe, isRecipeEmpty, getRecipeIndices } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { RecipeSelection } from "@/lib/ui/recipe-selection";
 import { applyQtyToggleAndFormat, formatCompositionValue } from "../lib/ui/comp-values";
 import { isCompKeyQuantity } from "../lib/sci-cream/sci-cream";
-import { STD_COMPONENT_H_PX } from "./page";
+import { STD_COMPONENT_H_PX, COMPONENT_ACTION_ICON_SIZE } from "./page";
 
 import { CompKey, comp_key_as_med_str, getWasmEnums } from "@workspace/sci-cream";
 
@@ -91,23 +92,33 @@ export function IngredientCompositionGrid({ recipes: allRecipes }: { recipes: Re
       style={{ height: `${STD_COMPONENT_H_PX}px` }}
     >
       <div className="grid-component h-[calc(100%-14px)]">
-        {(recipes.length > 1 || currentRecipeIdx !== 0) && (
-          <RecipeSelection
-            allRecipes={allRecipes}
-            enabledRecipeIndices={getRecipeIndices(recipes)}
-            currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
+        <div className="flex items-center">
+          <GripVertical
+            size={COMPONENT_ACTION_ICON_SIZE}
+            className="drag-handle mx-0.75 mt-px cursor-move"
           />
-        )}
-        <KeySelection
-          qtyToggleComponent={{
-            supportedQtyToggles: [QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage],
-            qtyToggleState: [qtyToggle, setQtyToggle],
-          }}
-          keyFilterState={compsFilterState}
-          selectedKeysState={selectedCompsState}
-          getKeys={getCompKeys}
-          key_as_med_str={comp_key_as_med_str}
-        />
+          {(recipes.length > 1 || currentRecipeIdx !== 0) && (
+            <RecipeSelection
+              allRecipes={allRecipes}
+              enabledRecipeIndices={getRecipeIndices(recipes)}
+              currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
+            />
+          )}
+          <KeySelection
+            qtyToggleComponent={{
+              supportedQtyToggles: [
+                QtyToggle.Composition,
+                QtyToggle.Quantity,
+                QtyToggle.Percentage,
+              ],
+              qtyToggleState: [qtyToggle, setQtyToggle],
+            }}
+            keyFilterState={compsFilterState}
+            selectedKeysState={selectedCompsState}
+            getKeys={getCompKeys}
+            key_as_med_str={comp_key_as_med_str}
+          />
+        </div>
         <div className="component-inner-border">
           {/* Ingredient & Qty Table */}
           <div id="ing-quantity-table">

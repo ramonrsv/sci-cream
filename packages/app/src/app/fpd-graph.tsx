@@ -1,6 +1,7 @@
 "use client";
 
 import { Line } from "react-chartjs-2";
+import { GripVertical } from "lucide-react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -16,6 +17,7 @@ import {
 
 import { Recipe, isRecipeEmpty } from "./recipe";
 import { GRID_COLOR, recipeChartColor } from "@/lib/styles/colors";
+import { COMPONENT_ACTION_ICON_SIZE } from "./page";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
@@ -109,7 +111,13 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
 
   return (
     <div id="fpd-graph" className="grid-component relative h-full w-full">
-      <div className="component-inner-border h-full p-3">
+      <div className="flex items-center">
+        <GripVertical
+          size={COMPONENT_ACTION_ICON_SIZE}
+          className="drag-handle mx-0.75 mt-1 mb-0.75 cursor-move"
+        />
+      </div>
+      <div className="component-inner-border h-[calc(100%-24px)] p-3">
         <Line data={graphData} options={options} />
       </div>
     </div>

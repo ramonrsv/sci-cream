@@ -1,12 +1,17 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
-import { ClipboardCopy, ClipboardPaste, Trash } from "lucide-react";
+import { GripVertical, ClipboardCopy, ClipboardPaste, Trash } from "lucide-react";
 
 import { formatCompositionValue } from "../lib/ui/comp-values";
 import { standardInputStepByPercent } from "../lib/util";
-import { MAX_RECIPES, RECIPE_TOTAL_ROWS, STD_COMPONENT_H_PX } from "./page";
 import { RecipeSelection } from "@/lib/ui/recipe-selection";
+import {
+  MAX_RECIPES,
+  RECIPE_TOTAL_ROWS,
+  STD_COMPONENT_H_PX,
+  COMPONENT_ACTION_ICON_SIZE,
+} from "./page";
 
 import {
   Ingredient,
@@ -361,32 +366,35 @@ export function RecipeGrid({
   const currentRecipe = allRecipes[currentRecipeIdx];
   const mixTotal = currentRecipe.mixTotal;
 
-  const ICON_SIZE = 17;
+  const iconSize = COMPONENT_ACTION_ICON_SIZE;
 
   return (
     <div id="recipe-grid" style={{ height: `${STD_COMPONENT_H_PX}px` }}>
       <div className="grid-component h-[calc(100%-36px)]">
         <div className="flex items-center justify-between">
-          <RecipeSelection
-            allRecipes={allRecipes}
-            enabledRecipeIndices={getRecipeIndices(allRecipes)}
-            currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
-          />
+          <div className="flex items-center">
+            <GripVertical size={iconSize} className="drag-handle mx-0.75 mt-px cursor-move" />
+            <RecipeSelection
+              allRecipes={allRecipes}
+              enabledRecipeIndices={getRecipeIndices(allRecipes)}
+              currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
+            />
+          </div>
           {/* Action Buttons */}
           <div className="flex">
             {[
               {
-                label: <ClipboardCopy size={ICON_SIZE} />,
+                label: <ClipboardCopy size={iconSize} />,
                 action: copyCurrentRecipeToClipboard,
                 title: "Copy recipe to clipboard",
               },
               {
-                label: <ClipboardPaste size={ICON_SIZE} />,
+                label: <ClipboardPaste size={iconSize} />,
                 action: pasteCurrentRecipeFromClipboard,
                 title: "Paste recipe from clipboard",
               },
               {
-                label: <Trash size={ICON_SIZE} />,
+                label: <Trash size={iconSize} />,
                 action: clearCurrentRecipe,
                 title: "Clear recipe",
               },

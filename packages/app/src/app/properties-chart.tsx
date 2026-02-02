@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { GripVertical } from "lucide-react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -18,6 +19,7 @@ import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/ke
 import { DEFAULT_SELECTED_PROPERTIES } from "./properties";
 import { applyQtyToggle, formatCompositionValue } from "../lib/ui/comp-values";
 import { GRID_COLOR, recipeChartColor } from "../lib/styles/colors";
+import { COMPONENT_ACTION_ICON_SIZE } from "./page";
 
 import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
 
@@ -138,12 +140,18 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
 
   return (
     <div id="mix-properties-chart" className="grid-component relative h-full w-full">
-      <KeySelection
-        keyFilterState={propsFilterState}
-        selectedKeysState={selectedPropsState}
-        getKeys={getPropKeys}
-        key_as_med_str={prop_key_as_med_str}
-      />
+      <div className="flex items-center">
+        <GripVertical
+          size={COMPONENT_ACTION_ICON_SIZE}
+          className="drag-handle mx-0.75 mt-px cursor-move"
+        />
+        <KeySelection
+          keyFilterState={propsFilterState}
+          selectedKeysState={selectedPropsState}
+          getKeys={getPropKeys}
+          key_as_med_str={prop_key_as_med_str}
+        />
+      </div>
       <div className="component-inner-border h-[calc(100%-24px)] p-3">
         <Bar data={chartData} options={options} />
       </div>

@@ -21,6 +21,8 @@ import { FpdGraph } from "./fpd-graph";
 export const MAX_RECIPES = 3;
 export const RECIPE_TOTAL_ROWS = 20;
 
+export const COMPONENT_ACTION_ICON_SIZE = 17;
+
 // These values are carefully chosen so that the fixed height components (RecipeGrid, IngCompGrid)
 // and the grid container heights match exactly, so that there is enough margin after the components
 // to accommodate a possible scrollbar, and so that REACT_GRID_COMPONENT_HEIGHT is a whole unit so
@@ -122,6 +124,7 @@ export default function Home() {
               rowHeight: REACT_GRID_ROW_HEIGHT,
               margin: [20, 20],
             }}
+            dragConfig={{ handle: ".drag-handle" }}
           >
             <div key="recipe">{<RecipeGrid props={recipeGridProps} />}</div>
             <div key="properties">{<MixPropertiesGrid recipes={recipes} />}</div>
