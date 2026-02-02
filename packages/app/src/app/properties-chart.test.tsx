@@ -272,11 +272,11 @@ describe("MixPropertiesChart", () => {
       expect(capturedBarProps!.options.maintainAspectRatio).toBe(false);
     });
 
-    it("should configure chart with legend enabled", () => {
+    it("should configure chart with legend disabled", () => {
       const recipeCtx = createMockRecipeContext();
       render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
-      expect(capturedBarProps!.options.plugins.legend.display).toBe(true);
+      expect(capturedBarProps!.options.plugins.legend.display).toBe(false);
     });
 
     it("should configure y-axis to begin at zero", () => {

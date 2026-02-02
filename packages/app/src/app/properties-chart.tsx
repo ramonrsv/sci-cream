@@ -118,7 +118,7 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { display: true },
+      legend: { display: false, position: "top" as const, align: "center" as const },
       title: { display: true, text: "Mix Properties Chart" },
       tooltip: {
         callbacks: {
