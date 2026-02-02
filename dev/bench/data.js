@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770008422821,
+  "lastUpdate": 1770008444255,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -19801,6 +19801,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 31.31,
             "range": "0.78",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4a74bc5fa5caabe1b06b258cf13ffd980c475985",
+          "message": "Fix bug with template literal in TailwindCSS class\n\nWhen using template literals to construct `className` using Tailwind CSS\nutility classes, it is required that every utility exist as plain text,\ni.e. something like `px-${pX}` does not work, the strings \"px-2\" and\n\"px-8\" have to exist so that Tailwind's compiler will detect them. Fix a\npreviously introduced bug using the incorrect pattern described above.",
+          "timestamp": "2026-02-01T23:38:51-05:00",
+          "tree_id": "bc79efefae5688b53193b77dfd015c9fdc20f105",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4a74bc5fa5caabe1b06b258cf13ffd980c475985"
+        },
+        "date": 1770008442931,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.695,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 683.4,
+            "range": "53.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.1,
+            "range": "5.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.6,
+            "range": "5.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.3,
+            "range": "7.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 37.1,
+            "range": "2.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 175.3,
+            "range": "11.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 48.5,
+            "range": "2.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 54.01,
+            "range": "1.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 33,
+            "range": "0.50",
             "unit": "ms"
           }
         ]
