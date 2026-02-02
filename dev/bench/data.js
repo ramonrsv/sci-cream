@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770008152955,
+  "lastUpdate": 1770008186671,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -2177,6 +2177,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 308,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4a74bc5fa5caabe1b06b258cf13ffd980c475985",
+          "message": "Fix bug with template literal in TailwindCSS class\n\nWhen using template literals to construct `className` using Tailwind CSS\nutility classes, it is required that every utility exist as plain text,\ni.e. something like `px-${pX}` does not work, the strings \"px-2\" and\n\"px-8\" have to exist so that Tailwind's compiler will detect them. Fix a\npreviously introduced bug using the incorrect pattern described above.",
+          "timestamp": "2026-02-01T23:38:51-05:00",
+          "tree_id": "bc79efefae5688b53193b77dfd015c9fdc20f105",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4a74bc5fa5caabe1b06b258cf13ffd980c475985"
+        },
+        "date": 1770008185954,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3552,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161653,
+            "range": "± 8107",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1968,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 159816,
+            "range": "± 1635",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 309,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
