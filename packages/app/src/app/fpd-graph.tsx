@@ -16,7 +16,7 @@ import {
 } from "chart.js";
 
 import { Recipe, isRecipeEmpty } from "./recipe";
-import { GRID_COLOR, recipeChartColor } from "@/lib/styles/colors";
+import { LEGEND_COLOR, GRID_COLOR, recipeChartColor } from "@/lib/styles/colors";
 import { COMPONENT_ACTION_ICON_SIZE } from "./page";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -47,7 +47,6 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
       return lines.map(({ lineLabel, borderDash, curve }) => ({
         label: `${lineLabel}${recipeLabel}`,
         data: curve.map((point) => (point.temp >= 0 ? NaN : point.temp)),
-        backgroundColor: "rgba(0, 0, 0, 0)",
         borderColor: borderColor,
         borderDash: borderDash,
         pointRadius: curve.map((_, i) => (shouldHighlight(lineLabel, i) ? 6 : 0)),
@@ -60,11 +59,30 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
     }),
   };
 
+  const labelProps = {
+    hidden: false,
+    lineWidth: 2,
+    strokeStyle: LEGEND_COLOR,
+    fillStyle: "rgba(0, 0, 0, 0)",
+  };
+
   const options = {
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { display: true },
+      legend: {
+        display: true,
+        position: "chartArea" as const,
+        align: "end" as const,
+        labels: {
+          generateLabels: () => {
+            return [
+              { text: "Hardness", ...labelProps },
+              { text: "Frozen Water", lineDash: [3, 3], ...labelProps },
+            ];
+          },
+        },
+      },
       title: { display: true, text: "FPD Graph" },
       tooltip: {
         callbacks: {
