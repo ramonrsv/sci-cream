@@ -104,11 +104,11 @@ export default function Home() {
     for (const [idx, item] of layout.entries())
       layout[idx] = { ...item, x: 0, y: idx * h, w: fullW, minW: undefined, maxW: undefined };
 
-  const pX = isMobileViewport ? 2 : 8;
-
   return (
-    <main className={`min-h-screen px-${pX}`}>
-      <h1 className={`pt-5 pb-2 pl-${pX} text-2xl font-bold`}>Ice Cream Recipe Calculator</h1>
+    <main className={`min-h-screen ${isMobileViewport ? "px-2" : "px-8"}`}>
+      <h1 className={`pt-5 pb-2 ${isMobileViewport ? "pl-2" : "pl-8"} text-2xl font-bold`}>
+        Ice Cream Recipe Calculator
+      </h1>
       <div className="fixed top-5 right-5 z-50">
         <ThemeToggle />
       </div>
