@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770011219619,
+  "lastUpdate": 1770011255793,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -2285,6 +2285,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 308,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "83fbbeb4ceadb9769281798264abb25a7e986301",
+          "message": "Add drag icon and ReadGridLayout.dragConfig.handle\n\nAdd a drag icon and `ReactGridLayout.dragConfig.handle` to all the\nreact-grid-layout components so that they only activate a drag when\nintended, otherwise every action activates a drag, which can cause\nannoying accidental drags, and also has problems with the red\nbackground showing all the time.",
+          "timestamp": "2026-02-02T00:31:11-05:00",
+          "tree_id": "e12417115ecb17a51e3aaaaaa3608b6515c6f7f0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/83fbbeb4ceadb9769281798264abb25a7e986301"
+        },
+        "date": 1770011255163,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3554,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161078,
+            "range": "± 846",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2026,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 161927,
+            "range": "± 1216",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 309,
+            "range": "± 1",
             "unit": "ns/iter"
           }
         ]
