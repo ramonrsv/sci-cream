@@ -11,7 +11,7 @@ export const LEGEND_COLOR = "rgba(64, 64, 64, 1)";
 export const GRID_COLOR = "rgba(120, 113, 108, 0.5)";
 
 export const COMPONENT_BG_OPACITY = 0.5;
-export const CHART_OPACITY = 0.8;
+export const CHART_OPACITY = 0.95;
 
 export function recipeColorByIdx(idx: number): string {
   return RECIPE_COLOR_BY_IDX[idx % RECIPE_COLOR_BY_IDX.length];
