@@ -38,6 +38,7 @@ pub struct SolidsBreakdown {
 }
 
 impl SolidsBreakdown {
+    #[must_use]
     pub fn empty() -> Self {
         Self {
             fats: Fats::empty(),
@@ -108,18 +109,22 @@ impl SolidsBreakdown {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl SolidsBreakdown {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    #[must_use]
     pub fn total(&self) -> f64 {
         self.fats.total + self.carbohydrates.total() + self.proteins + self.artificial_sweeteners.total() + self.others
     }
 
+    #[must_use]
     pub fn snf(&self) -> f64 {
         self.total() - self.fats.total
     }
 
+    #[must_use]
     pub fn snfs(&self) -> f64 {
         self.snf() - self.carbohydrates.sugars.total()
     }

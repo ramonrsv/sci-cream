@@ -19,6 +19,7 @@ pub struct PAC {
 }
 
 impl PAC {
+    #[must_use]
     pub fn empty() -> Self {
         Self {
             sugars: 0.0,
@@ -61,11 +62,13 @@ impl PAC {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl PAC {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
     /// Total PAC values from all sources, excluding hardness factor
+    #[must_use]
     pub fn total(&self) -> f64 {
         self.sugars + self.salt + self.msnf_ws_salts + self.alcohol
     }

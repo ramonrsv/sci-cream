@@ -53,6 +53,7 @@ pub fn iter_all_abs_diff_eq_option<E: AbsDiffEq + Copy, T: AbsDiffEq<Epsilon = E
         .all(|(lhs, rhs)| abs_diff_eq_option(lhs, rhs, epsilon))
 }
 
+#[must_use]
 pub fn round_to_decimals(value: f64, decimals: u32) -> f64 {
     let factor = 10f64.powi(decimals.cast_signed());
     (value * factor).round() / factor

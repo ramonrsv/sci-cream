@@ -17,6 +17,7 @@ pub struct Fats {
 }
 
 impl Fats {
+    #[must_use]
     pub fn empty() -> Self {
         Self {
             total: 0.0,
@@ -44,10 +45,12 @@ impl Fats {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Fats {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    #[must_use]
     pub fn energy(&self) -> f64 {
         self.total * constants::energy::FATS
     }

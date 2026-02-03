@@ -99,11 +99,13 @@ impl KeyAsStrings for PropKey {
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[must_use]
 pub fn composition_value_as_quantity(comp: f64, qty: f64) -> f64 {
     (comp * qty) / 100.0
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[must_use]
 pub fn composition_value_as_percentage(comp: f64, qty: f64, mix_total: f64) -> f64 {
     (comp * qty) / mix_total
 }
@@ -116,11 +118,13 @@ pub mod wasm {
     use super::{CompKey, FpdKey, KeyAsStrings};
 
     #[wasm_bindgen]
+    #[must_use]
     pub fn comp_key_as_med_str(key: CompKey) -> String {
         key.as_med_str().to_string()
     }
 
     #[wasm_bindgen]
+    #[must_use]
     pub fn fpd_key_as_med_str(key: FpdKey) -> String {
         key.as_med_str().to_string()
     }

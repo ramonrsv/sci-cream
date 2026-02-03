@@ -60,6 +60,7 @@ pub struct ArtificialSweeteners {
 }
 
 impl ArtificialSweeteners {
+    #[must_use]
     pub fn empty() -> Self {
         Self {
             aspartame: 0.0,
@@ -167,10 +168,12 @@ impl ArtificialSweeteners {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl ArtificialSweeteners {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    #[must_use]
     pub fn total(&self) -> f64 {
         iter_fields_as::<f64, _>(self).sum()
     }

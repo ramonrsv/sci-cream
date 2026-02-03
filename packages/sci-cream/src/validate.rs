@@ -15,6 +15,7 @@ pub fn assert_are_positive(values: &[f64]) -> Result<()> {
     Ok(())
 }
 
+#[must_use]
 pub fn is_within_100_percent(value: f64) -> bool {
     (0.0..=100.0).contains(&value)
 }

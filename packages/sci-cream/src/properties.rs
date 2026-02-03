@@ -36,6 +36,7 @@ pub struct MixProperties {
 }
 
 impl MixProperties {
+    #[must_use]
     pub fn empty() -> Self {
         Self {
             total_amount: 0.0,
@@ -44,6 +45,7 @@ impl MixProperties {
         }
     }
 
+    #[must_use]
     pub fn get(&self, key: PropKey) -> f64 {
         match key {
             PropKey::CompKey(comp_key) => self.composition.get(comp_key),
@@ -55,6 +57,7 @@ impl MixProperties {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl MixProperties {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }

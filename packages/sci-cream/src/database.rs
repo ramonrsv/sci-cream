@@ -30,6 +30,7 @@ pub struct IngredientDatabase {
 /// performant to keep as much as possible on the WASM side. It's still possible to seed the
 /// database from the JS side, then subsequent looks can be done within WASM.
 impl IngredientDatabase {
+    #[must_use]
     pub fn new_seeded(ingredients: &[Ingredient]) -> Self {
         let mut map = HashMap::new();
         for ingredient in ingredients {
@@ -91,6 +92,7 @@ impl IngredientDatabase {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl IngredientDatabase {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new() -> Self {
         Self {
             map: RwLock::new(HashMap::new()),
@@ -154,6 +156,7 @@ pub mod wasm {
 
     #[wasm_bindgen]
     #[allow(clippy::needless_pass_by_value)]
+    #[must_use]
     pub fn new_ingredient_database_seeded(ingredients: Box<[Ingredient]>) -> IngredientDatabase {
         IngredientDatabase::new_seeded(&ingredients)
     }

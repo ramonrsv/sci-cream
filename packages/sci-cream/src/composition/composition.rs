@@ -209,6 +209,7 @@ pub enum CompKey {
 
 impl Composition {
     /// Create an empty composition, which is equivalent to the composition of 100% water.
+    #[must_use]
     pub fn empty() -> Self {
         Self {
             energy: 0.0,
@@ -269,15 +270,18 @@ impl Composition {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Composition {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    #[must_use]
     pub fn water(&self) -> f64 {
         100.0 - self.solids.total() - self.alcohol.by_weight
     }
 
     /// Note that [`f64::NAN`] is a valid result, if there are no fats
+    #[must_use]
     pub fn emulsifiers_per_fat(&self) -> f64 {
         if self.solids.all().fats.total > 0.0 {
             (self.micro.emulsifiers / self.solids.all().fats.total) * 100.0
@@ -287,6 +291,7 @@ impl Composition {
     }
 
     /// Note that [`f64::NAN`] is a valid result, if there is no water
+    #[must_use]
     pub fn stabilizers_per_water(&self) -> f64 {
         if self.water() > 0.0 {
             (self.micro.stabilizers / self.water()) * 100.0
@@ -297,6 +302,7 @@ impl Composition {
 
     /// Note that [`f64::NAN`] is a valid result, if there is no water
     /// Excluding hardness factor, i.e. `self.pac.total() / self.water()`
+    #[must_use]
     pub fn absolute_pac(&self) -> f64 {
         if self.water() > 0.0 {
             (self.pac.total() / self.water()) * 100.0
@@ -305,6 +311,7 @@ impl Composition {
         }
     }
 
+    #[must_use]
     pub fn get(&self, key: CompKey) -> f64 {
         match key {
             CompKey::Energy => self.energy,

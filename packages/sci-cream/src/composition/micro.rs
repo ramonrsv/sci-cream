@@ -18,6 +18,7 @@ pub struct Micro {
 }
 
 impl Micro {
+    #[must_use]
     pub fn empty() -> Self {
         Self {
             salt: 0.0,
@@ -51,6 +52,7 @@ impl Micro {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Micro {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }

@@ -95,6 +95,7 @@ pub mod molar_mass {
     ///
     /// Calculate PAC based on a molar mass relative to that of sucrose of 342.30 g/mol, e.g.
     /// glucose has a molar mass of 180.16 g/mol, so its PAC is 342.30 / 180.16 * 100 = 190.
+    #[must_use]
     pub const fn pac_from_molar_mass(molar_mass: f64) -> f64 {
         (SUCROSE / molar_mass * 100.0).floor()
     }
@@ -348,6 +349,7 @@ pub mod density {
     ///
     /// Interpolates density between known values for milk/cream of different fat contents;
     /// see [`MILK_2`], [`MILK_3_5`], and [`CREAM_40`].
+    #[must_use]
     pub const fn dairy_milliliters_to_grams(ml: f64, fat_content: f64) -> f64 {
         let less_than_2 = MILK_2;
         let between_2_and_3_5 = ((MILK_3_5 - MILK_2) / (3.5 - 2.0) * (fat_content - 2.0)) + MILK_2;

@@ -22,6 +22,7 @@ pub struct Fibers {
 }
 
 impl Fibers {
+    #[must_use]
     pub fn empty() -> Self {
         Self {
             inulin: 0.0,
@@ -59,10 +60,12 @@ impl Fibers {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Fibers {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    #[must_use]
     pub fn total(&self) -> f64 {
         iter_fields_as::<f64, _>(self).sum()
     }

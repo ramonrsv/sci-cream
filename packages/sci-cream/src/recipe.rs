@@ -23,6 +23,7 @@ pub struct RecipeLine {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl RecipeLine {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new(ingredient: Ingredient, amount: f64) -> Self {
         Self { ingredient, amount }
     }
@@ -82,6 +83,7 @@ impl Recipe {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Recipe {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new(name: Option<String>, lines: Vec<RecipeLine>) -> Self {
         Self { name, lines }
     }

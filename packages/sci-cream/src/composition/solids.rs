@@ -27,6 +27,7 @@ pub struct Solids {
 }
 
 impl Solids {
+    #[must_use]
     pub fn empty() -> Self {
         Self {
             milk: SolidsBreakdown::empty(),
@@ -66,6 +67,7 @@ impl Solids {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Solids {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
@@ -78,10 +80,12 @@ impl Solids {
         self.iter_fields_as_solids_breakdown().map(f).sum::<f64>()
     }
 
+    #[must_use]
     pub fn total(&self) -> f64 {
         self.sum_solid_breakdowns_field(SolidsBreakdown::total)
     }
 
+    #[must_use]
     pub fn all(&self) -> SolidsBreakdown {
         self.iter_fields_as_solids_breakdown()
             .fold(SolidsBreakdown::empty(), |acc, b| acc.add(b))

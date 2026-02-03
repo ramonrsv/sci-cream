@@ -39,6 +39,7 @@ pub struct CurvePoint {
 }
 
 impl CurvePoint {
+    #[must_use]
     pub fn new(x_axis: f64, temp: f64) -> Self {
         Self { x_axis, temp }
     }
@@ -67,6 +68,7 @@ pub struct FPD {
 
 impl Curves {
     /// Create empty FPD curves, which are straight lines at 0°C, equivalent to those of 100% water
+    #[must_use]
     pub fn empty() -> Self {
         let make_empty_curve = || (0..100).map(|x_axis| CurvePoint::new(f64::from(x_axis), 0.0)).collect();
 
@@ -79,6 +81,7 @@ impl Curves {
 
 impl FPD {
     /// Create an empty FPD properties, which is equivalent to the properties of a 100% water
+    #[must_use]
     pub fn empty() -> Self {
         Self {
             fpd: 0.0,
@@ -237,6 +240,7 @@ pub struct GoffHartelFpdCurveStep {
 }
 
 impl GoffHartelFpdCurveStep {
+    #[must_use]
     pub fn empty() -> Self {
         Self {
             frozen_water: f64::NAN,
@@ -295,6 +299,7 @@ pub struct ModifiedGoffHartelCorvittoFpdCurveStep {
 }
 
 impl ModifiedGoffHartelCorvittoFpdCurveStep {
+    #[must_use]
     pub fn empty() -> Self {
         Self {
             frozen_water: f64::NAN,
@@ -399,6 +404,7 @@ pub fn compute_fpd_curves(
     Ok(curves)
 }
 
+#[must_use]
 pub fn get_x_axis_at_fpd(curve: &[CurvePoint], target_fpd: f64) -> Option<f64> {
     for i in 0..curve.len() - 1 {
         let high = &curve[i];
@@ -417,6 +423,7 @@ pub fn get_x_axis_at_fpd(curve: &[CurvePoint], target_fpd: f64) -> Option<f64> {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl FPD {
+    #[must_use]
     pub fn get(&self, key: FpdKey) -> f64 {
         match key {
             FpdKey::FPD => self.fpd,

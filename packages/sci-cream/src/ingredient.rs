@@ -34,6 +34,7 @@ pub struct Ingredient {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Ingredient {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new(name: String, category: Category, composition: Composition) -> Self {
         Self {
             name,

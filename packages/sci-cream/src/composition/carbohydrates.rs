@@ -22,6 +22,7 @@ pub struct Carbohydrates {
 }
 
 impl Carbohydrates {
+    #[must_use]
     pub fn empty() -> Self {
         Self {
             fiber: Fibers::empty(),
@@ -91,10 +92,12 @@ impl Carbohydrates {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Carbohydrates {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    #[must_use]
     pub fn total(&self) -> f64 {
         self.fiber.total() + self.sugars.total() + self.polyols.total() + self.others
     }

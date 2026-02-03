@@ -19,6 +19,7 @@ pub struct Sweeteners {
 }
 
 impl Sweeteners {
+    #[must_use]
     pub fn empty() -> Self {
         Self {
             sugars: Sugars::empty(),
@@ -54,10 +55,12 @@ impl Sweeteners {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Sweeteners {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    #[must_use]
     pub fn total(&self) -> f64 {
         self.sugars.total() + self.polyols.total() + self.artificial.total()
     }

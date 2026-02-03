@@ -27,6 +27,7 @@ pub struct Sugars {
 }
 
 impl Sugars {
+    #[must_use]
     pub fn empty() -> Self {
         Self {
             glucose: 0.0,
@@ -130,10 +131,12 @@ impl Sugars {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Sugars {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    #[must_use]
     pub fn total(&self) -> f64 {
         iter_fields_as::<f64, _>(self).sum()
     }

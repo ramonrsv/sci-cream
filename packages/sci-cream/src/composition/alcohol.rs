@@ -15,6 +15,7 @@ pub struct Alcohol {
 }
 
 impl Alcohol {
+    #[must_use]
     pub fn empty() -> Self {
         Self { by_weight: 0.0 }
     }
@@ -24,6 +25,7 @@ impl Alcohol {
         Self { by_weight }
     }
 
+    #[must_use]
     pub fn from_abv(abv: f64) -> Self {
         Self {
             by_weight: abv * constants::density::ABV_TO_ABW_RATIO,
@@ -34,18 +36,22 @@ impl Alcohol {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Alcohol {
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    #[must_use]
     pub fn energy(&self) -> f64 {
         self.by_weight * constants::energy::ALCOHOL
     }
 
+    #[must_use]
     pub fn to_abv(&self) -> f64 {
         self.by_weight / constants::density::ABV_TO_ABW_RATIO
     }
 
+    #[must_use]
     pub fn to_pac(&self) -> f64 {
         self.by_weight * constants::pac::ALCOHOL / 100.0
     }
