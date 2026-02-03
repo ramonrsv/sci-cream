@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770096989370,
+  "lastUpdate": 1770097220390,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -22443,6 +22443,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.81%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "983321e32db74dde3749acb8ee50f9c1eee430f4",
+          "message": "Adjust `FpdGraph` legend to take up less space\n\nAdjust `FpdGraph` legend to only show a recipe-agnostic label for each\nkind of line, and to be placed within the graph area to save on vertical\nspace and to reduce the noise from so many similar labels.",
+          "timestamp": "2026-02-02T17:27:37-05:00",
+          "tree_id": "abb08f1a823e072ba6df1d3fc7800a530afaa710",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/983321e32db74dde3749acb8ee50f9c1eee430f4"
+        },
+        "date": 1770097219718,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77007,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 732505,
+            "range": "±0.44%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10257,
+            "range": "±2.06%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 607006,
+            "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
