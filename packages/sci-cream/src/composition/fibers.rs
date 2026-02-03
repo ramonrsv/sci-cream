@@ -109,7 +109,7 @@ impl Default for Fibers {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
-#[allow(clippy::unwrap_used)]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     #[expect(unused_imports)]

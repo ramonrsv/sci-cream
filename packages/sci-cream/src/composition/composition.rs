@@ -434,6 +434,7 @@ impl Default for Composition {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::float_cmp)]
 mod tests {
     use std::collections::HashMap;
 

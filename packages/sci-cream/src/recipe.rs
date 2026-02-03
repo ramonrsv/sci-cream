@@ -118,7 +118,7 @@ pub mod wasm {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
-#[allow(clippy::unwrap_used)]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
     use std::sync::LazyLock;
 

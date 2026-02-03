@@ -122,7 +122,7 @@ impl IntoComposition for NutSpec {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
-#[allow(clippy::unwrap_used)]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
 pub(crate) mod tests {
     use std::sync::LazyLock;
 
