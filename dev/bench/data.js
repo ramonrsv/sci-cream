@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770097220390,
+  "lastUpdate": 1770097246516,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -2393,6 +2393,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 314,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "983321e32db74dde3749acb8ee50f9c1eee430f4",
+          "message": "Adjust `FpdGraph` legend to take up less space\n\nAdjust `FpdGraph` legend to only show a recipe-agnostic label for each\nkind of line, and to be placed within the graph area to save on vertical\nspace and to reduce the noise from so many similar labels.",
+          "timestamp": "2026-02-02T17:27:37-05:00",
+          "tree_id": "abb08f1a823e072ba6df1d3fc7800a530afaa710",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/983321e32db74dde3749acb8ee50f9c1eee430f4"
+        },
+        "date": 1770097245759,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3514,
+            "range": "± 43",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 162725,
+            "range": "± 12076",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2021,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160021,
+            "range": "± 689",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 362,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
