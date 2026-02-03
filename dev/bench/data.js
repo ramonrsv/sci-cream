@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770011475141,
+  "lastUpdate": 1770096727805,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -21884,6 +21884,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 577057,
             "range": "±1.28%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "78b695ae402d0c587637aa4b518206c19a896489",
+          "message": "Change `RecipeSelection` component w-55 -> w-fit\n\nFor now, change the `RecipeSelection` component's width from fixed w-55\nto w-fit, so that it's much smaller, only enough to fit Recipe/Ref 1/2.\nThis allows it to fit better in mobile viewports, and looks better in\n`IngredientCompositionGrid`. Eventually something else will have to be\nimplemented for `RecipeGrid` once recipe store and lookup is supported.",
+          "timestamp": "2026-02-02T10:53:54-05:00",
+          "tree_id": "77ef6e07d71cbefc89843f7c7d44f53fc5da8aba",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/78b695ae402d0c587637aa4b518206c19a896489"
+        },
+        "date": 1770096726435,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75365,
+            "range": "±1.54%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 716170,
+            "range": "±2.52%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10141,
+            "range": "±2.02%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 604559,
+            "range": "±0.81%",
             "unit": "ops/sec",
             "extra": "92 samples"
           }
