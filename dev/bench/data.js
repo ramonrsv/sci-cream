@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770097246516,
+  "lastUpdate": 1770097388882,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -22549,6 +22549,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.75%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "66157428ae2ffd5a1bcde8ea612b4136ae8d7d3b",
+          "message": "Disable superfluous legend for `MixPropertiesGrid`\n\nThe legend for `MixPropertiesGrid` doesn't offer much information, the\ncolors already identify the recipe, and it takes up a lot of vertical\nspace, particularly when shrinking the component vertically, so disable\nit to save up that vertical space and allow new layouts.",
+          "timestamp": "2026-02-02T17:42:03-05:00",
+          "tree_id": "86781b589b394b4dac3578cd04ff0e71aa6039cf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/66157428ae2ffd5a1bcde8ea612b4136ae8d7d3b"
+        },
+        "date": 1770097387539,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75061,
+            "range": "±1.23%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 731446,
+            "range": "±0.64%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10189,
+            "range": "±2.00%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 609573,
+            "range": "±0.71%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
