@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770097642008,
+  "lastUpdate": 1770097675265,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -22380,6 +22380,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 33.83,
             "range": "0.51",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "66157428ae2ffd5a1bcde8ea612b4136ae8d7d3b",
+          "message": "Disable superfluous legend for `MixPropertiesGrid`\n\nThe legend for `MixPropertiesGrid` doesn't offer much information, the\ncolors already identify the recipe, and it takes up a lot of vertical\nspace, particularly when shrinking the component vertically, so disable\nit to save up that vertical space and allow new layouts.",
+          "timestamp": "2026-02-02T17:42:03-05:00",
+          "tree_id": "86781b589b394b4dac3578cd04ff0e71aa6039cf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/66157428ae2ffd5a1bcde8ea612b4136ae8d7d3b"
+        },
+        "date": 1770097673934,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 684.2,
+            "range": "53.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48.3,
+            "range": "10.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.4,
+            "range": "6.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.1,
+            "range": "6.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 39.2,
+            "range": "1.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 171.3,
+            "range": "9.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 51.2,
+            "range": "8.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 54.09,
+            "range": "1.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 32.3,
+            "range": "0.65",
             "unit": "ms"
           }
         ]
