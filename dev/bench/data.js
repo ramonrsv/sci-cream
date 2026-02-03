@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770096727805,
+  "lastUpdate": 1770096759313,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -2339,6 +2339,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 309,
             "range": "± 1",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "78b695ae402d0c587637aa4b518206c19a896489",
+          "message": "Change `RecipeSelection` component w-55 -> w-fit\n\nFor now, change the `RecipeSelection` component's width from fixed w-55\nto w-fit, so that it's much smaller, only enough to fit Recipe/Ref 1/2.\nThis allows it to fit better in mobile viewports, and looks better in\n`IngredientCompositionGrid`. Eventually something else will have to be\nimplemented for `RecipeGrid` once recipe store and lookup is supported.",
+          "timestamp": "2026-02-02T10:53:54-05:00",
+          "tree_id": "77ef6e07d71cbefc89843f7c7d44f53fc5da8aba",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/78b695ae402d0c587637aa4b518206c19a896489"
+        },
+        "date": 1770096758839,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3611,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161049,
+            "range": "± 1136",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1983,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 159350,
+            "range": "± 13477",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 314,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
