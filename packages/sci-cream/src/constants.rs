@@ -201,6 +201,7 @@ pub mod composition {
 
     /// Percentage of trans fats typically found in milk fat (Milk, whole, 3.25% milkfat, with added
     /// Vitamin D, 2019)[^103]
+    #[allow(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../docs/bibs/103.md")]
     pub const STD_TRANS_FAT_IN_MILK_FAT: f64 = 0.035;
 
@@ -213,11 +214,13 @@ pub mod composition {
     /// This value is an average compiled from the nutrient profiles of various nuts in the _USDA
     /// FoodData Central_ database (Nuts, almonds, 2019)[^102], (Nuts, pistachio nuts, raw,
     /// 2019)[^112], (Nuts, hazelnuts or filberts, 2019)[^113].
+    #[allow(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../docs/bibs/102.md")]
     #[doc = include_str!("../docs/bibs/112.md")]
     #[doc = include_str!("../docs/bibs/113.md")]
     pub const STD_SATURATED_FAT_IN_NUT_FAT: f64 = 0.09;
 
+    #[allow(clippy::doc_markdown)] // _FoodData_ false positive
     /// Standard composition values for cacao products, most notably cocoa solids
     ///
     /// These values are averages compiled from the nutrient profiles of various cacao products in

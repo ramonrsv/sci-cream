@@ -95,7 +95,6 @@ missing_panics_doc = "allow"
 missing_errors_doc = "allow"
 cargo_common_metadata = "allow"
 float_cmp = "allow"
-doc_markdown = "allow"
 unsafe_derive_deserialize = "allow"
 
 # `restrictions` group, opt-in into individual lints as needed.

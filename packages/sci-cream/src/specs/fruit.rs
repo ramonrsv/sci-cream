@@ -61,6 +61,7 @@ use crate::{
 /// assert_eq_float!(comp.get(CompKey::POD), 6.28312);
 /// assert_eq!(comp.get(CompKey::PACsgr), 8.887);
 /// ```
+#[allow(clippy::doc_markdown)] // _FoodData_ false positive
 #[doc = include_str!("../../docs/bibs/101.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]

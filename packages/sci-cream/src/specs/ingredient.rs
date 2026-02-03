@@ -80,7 +80,7 @@ pub mod wasm {
 
     use super::{Ingredient, IngredientSpec};
 
-    /// Converts an IngredientSpec JS value into an Ingredient instance
+    /// Converts an [`IngredientSpec`] JS value into an Ingredient instance
     ///
     /// Enum variants with associated data are not supported by [`mod@wasm_bindgen`], so we cannot
     /// support [`IngredientSpec`] directly. Instead, we have to construct it from a JS value via

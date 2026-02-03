@@ -48,6 +48,7 @@ use crate::composition::CompKey;
 /// assert_eq!(comp.get(CompKey::EggSolids), 49.0);
 /// assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
 /// ```
+#[allow(clippy::doc_markdown)] // _FoodData_ false positive
 #[doc = include_str!("../../docs/bibs/2.md")]
 #[doc = include_str!("../../docs/bibs/4.md")]
 #[doc = include_str!("../../docs/bibs/100.md")]

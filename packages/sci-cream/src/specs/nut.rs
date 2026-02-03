@@ -62,6 +62,7 @@ use crate::composition::CompKey;
 /// assert_eq!(comp.get(CompKey::POD), 4.35);
 /// assert_eq!(comp.get(CompKey::HF), 69.86);
 /// ```
+#[allow(clippy::doc_markdown)] // _FoodData_ false positive
 #[doc = include_str!("../../docs/bibs/102.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
