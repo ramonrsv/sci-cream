@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770097493625,
+  "lastUpdate": 1770097497705,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -23022,6 +23022,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.71%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f800d93fb6919ad1dc736a772d31d25deade5fd1",
+          "message": "Increase chart color opacity, looks clearer",
+          "timestamp": "2026-02-02T17:49:11-05:00",
+          "tree_id": "c160a24cd3495132c8e88351868b11dd0b1678a9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f800d93fb6919ad1dc736a772d31d25deade5fd1"
+        },
+        "date": 1770097497234,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75485,
+            "range": "±1.06%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 709169,
+            "range": "±1.31%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10147,
+            "range": "±2.02%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 610333,
+            "range": "±0.61%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
