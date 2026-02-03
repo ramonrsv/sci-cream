@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770096976041,
+  "lastUpdate": 1770096989370,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -21316,6 +21316,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 31.4,
             "range": "0.97",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "78b695ae402d0c587637aa4b518206c19a896489",
+          "message": "Change `RecipeSelection` component w-55 -> w-fit\n\nFor now, change the `RecipeSelection` component's width from fixed w-55\nto w-fit, so that it's much smaller, only enough to fit Recipe/Ref 1/2.\nThis allows it to fit better in mobile viewports, and looks better in\n`IngredientCompositionGrid`. Eventually something else will have to be\nimplemented for `RecipeGrid` once recipe store and lookup is supported.",
+          "timestamp": "2026-02-02T10:53:54-05:00",
+          "tree_id": "77ef6e07d71cbefc89843f7c7d44f53fc5da8aba",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/78b695ae402d0c587637aa4b518206c19a896489"
+        },
+        "date": 1770096988836,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 682.1,
+            "range": "53.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 47.9,
+            "range": "8.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.5,
+            "range": "6.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 43.2,
+            "range": "10.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 38.3,
+            "range": "3.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 170.9,
+            "range": "7.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 47.2,
+            "range": "3.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 54.94,
+            "range": "1.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 32.72,
+            "range": "1.66",
             "unit": "ms"
           }
         ]
