@@ -1,4 +1,4 @@
-/*! Constants and associated utilities for various ingredient properties */
+//! Constants and associated utilities for various ingredient properties
 
 /// [Potere Dolcificante (POD)](crate::docs#pod) values various sweeteners and other ingredients
 ///

@@ -1,3 +1,8 @@
+//! Inclusion and access of embedded ingredient specification data
+//!
+//! If feature `data` is enabled, this module embeds the ingredient specifications from
+//! `data/ingredients/*.json` at compile time and provides functions to retrieve them.
+
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
@@ -19,7 +24,8 @@ const EMBEDDED_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
     ("miscellaneous.json", include_str!("../data/ingredients/miscellaneous.json")),
 ];
 
-pub fn parse_ingredient_specs_from_string(
+/// Parses a JSON string of ingredient specifications into a map of ingredient names to their spec.
+pub fn parse_ingredient_specs_from_json_string(
     file_content: &str,
 ) -> std::result::Result<HashMap<String, IngredientSpec>, serde_json::Error> {
     let specs = serde_json::from_str::<Vec<serde_json::Value>>(file_content)?;
@@ -34,7 +40,7 @@ static PARSED_EMBEDDED_INGREDIENT_SPECS: LazyLock<HashMap<String, IngredientSpec
     let mut specs = HashMap::new();
 
     for (filename, file_content) in EMBEDDED_JSON_DATA_FILES_CONTENT {
-        let parsed_specs = parse_ingredient_specs_from_string(file_content)
+        let parsed_specs = parse_ingredient_specs_from_json_string(file_content)
             .unwrap_or_else(|e| panic!("Failed to parse ingredient specs from file '{filename}': {e}"));
 
         for spec in parsed_specs.into_values() {
@@ -49,10 +55,12 @@ static PARSED_EMBEDDED_INGREDIENT_SPECS: LazyLock<HashMap<String, IngredientSpec
     specs
 });
 
+/// Retrieves all embedded ingredient specifications as [`Vec<IngredientSpec>`].
 pub fn get_all_ingredient_specs() -> Vec<IngredientSpec> {
     PARSED_EMBEDDED_INGREDIENT_SPECS.values().cloned().collect()
 }
 
+/// Retrieves embedded ingredient specifications filtered by the specified category.
 pub fn get_ingredient_specs_by_category(category: Category) -> Vec<IngredientSpec> {
     PARSED_EMBEDDED_INGREDIENT_SPECS
         .values()
@@ -61,6 +69,7 @@ pub fn get_ingredient_specs_by_category(category: Category) -> Vec<IngredientSpe
         .collect()
 }
 
+/// Retrieves an embedded ingredient specification by its name.
 pub fn get_ingredient_spec_by_name(name: &str) -> Result<IngredientSpec> {
     PARSED_EMBEDDED_INGREDIENT_SPECS
         .get(name)
@@ -68,6 +77,7 @@ pub fn get_ingredient_spec_by_name(name: &str) -> Result<IngredientSpec> {
         .ok_or_else(|| Error::IngredientNotFound(name.to_string()))
 }
 
+/// WASM compatible wrappers for [`crate::data`] functions.
 #[cfg(all(feature = "wasm", feature = "data"))]
 #[cfg_attr(coverage, coverage(off))]
 pub mod wasm {
@@ -84,11 +94,13 @@ pub mod wasm {
         spec.serialize(&Serializer::json_compatible()).map_err(Into::into)
     }
 
+    /// WASM compatible wrapper for [`get_all_ingredient_specs`]
     #[wasm_bindgen(js_name = "get_all_ingredient_specs")]
     pub fn get_all_ingredient_specs_wasm() -> Result<Vec<JsValue>, JsValue> {
         get_all_ingredient_specs().iter().map(serialize_spec).collect()
     }
 
+    /// WASM compatible wrapper for [`get_ingredient_specs_by_category`]
     #[wasm_bindgen(js_name = "get_ingredient_specs_by_category")]
     pub fn get_ingredient_specs_by_category_wasm(category: Category) -> Result<Vec<JsValue>, JsValue> {
         get_ingredient_specs_by_category(category)
@@ -97,6 +109,7 @@ pub mod wasm {
             .collect()
     }
 
+    /// WASM compatible wrapper for [`get_ingredient_spec_by_name`]
     #[wasm_bindgen(js_name = "get_ingredient_spec_by_name")]
     pub fn get_ingredient_spec_by_name_wasm(name: &str) -> Result<JsValue, JsValue> {
         serialize_spec(&get_ingredient_spec_by_name(name).map_err::<JsValue, _>(Into::into)?)
@@ -116,9 +129,9 @@ pub(crate) mod tests {
     use crate::composition::{Composition, IntoComposition};
 
     #[test]
-    fn parse_ingredient_specs() {
+    fn parse_ingredient_specs_from_json() {
         for (filename, file_content) in EMBEDDED_JSON_DATA_FILES_CONTENT {
-            let specs = parse_ingredient_specs_from_string(file_content).unwrap();
+            let specs = parse_ingredient_specs_from_json_string(file_content).unwrap();
             assert_false!(specs.is_empty(), "Failed to parse ingredient specs from file: {}", filename);
         }
     }
