@@ -1,9 +1,17 @@
+//! Utilities to facilitate displaying various keys and values
+//!
+//! This module provides traits and functions to convert various lookup keys to strings suitable for
+//! display, as well as functions to compute composition values in various formats for displaying.
+//! This module is not necessary for core computations but is useful for UI and reporting purposes.
+
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
 use crate::{composition::CompKey, fpd::FpdKey, properties::PropKey};
 
+/// Trait to convert keys to display-friendly strings at varying levels of verbosity.
 pub trait KeyAsStrings {
+    /// Returns a medium verbosity string representation of the key.
     fn as_med_str(&self) -> &'static str;
 }
 
@@ -98,18 +106,53 @@ impl KeyAsStrings for PropKey {
     }
 }
 
+/// Computes a composition value as an absolute quantity based on the ingredient or mix quantity.
+///
+/// # Arguments
+///
+/// * `comp` - The composition value (grams per 100 grams) from [`Composition`](crate::Composition).
+/// * `qty` - The total quantity (grams) of the ingredient or mix.
+///
+/// # Examples
+///
+/// ```
+/// use sci_cream::display::composition_value_as_quantity;
+/// let milk_2_fat_comp = 2.0; // 2% milk fat, g/100g
+/// let milk_qty = 500.0; // grams
+/// let milk_fat_qty = composition_value_as_quantity(milk_2_fat_comp, milk_qty);
+/// assert_eq!(milk_fat_qty, 10.0);
+/// ```
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[must_use]
 pub fn composition_value_as_quantity(comp: f64, qty: f64) -> f64 {
     (comp * qty) / 100.0
 }
 
+/// Computes an ingredient composition value and quantity as a percentage of the total mix.
+///
+/// # Arguments
+///
+/// * `comp` - The composition value (grams per 100 grams) from [`Composition`](crate::Composition).
+/// * `int_qty` - The quantity (grams) of the ingredient.
+/// * `mix_total` - The total quantity (grams) of the entire mix.
+///
+/// # Examples
+///
+/// ```
+/// use sci_cream::display::composition_value_as_percentage;
+/// let milk_2_fat_comp = 2.0; // 2% milk fat, g/100g
+/// let milk_qty = 500.0; // grams
+/// let mix_total = 1000.0; // grams
+/// let milk_fat_percentage = composition_value_as_percentage(milk_2_fat_comp, milk_qty, mix_total);
+/// assert_eq!(milk_fat_percentage, 1.0);
+/// ```
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[must_use]
-pub fn composition_value_as_percentage(comp: f64, qty: f64, mix_total: f64) -> f64 {
-    (comp * qty) / mix_total
+pub fn composition_value_as_percentage(comp: f64, int_qty: f64, mix_total: f64) -> f64 {
+    (comp * int_qty) / mix_total
 }
 
+/// WASM compatible wrappers for [`crate::display`] functions and trait methods.
 #[cfg(feature = "wasm")]
 #[cfg_attr(coverage, coverage(off))]
 pub mod wasm {
@@ -117,12 +160,14 @@ pub mod wasm {
 
     use super::{CompKey, FpdKey, KeyAsStrings};
 
+    /// WASM compatible wrapper for [`KeyAsStrings::as_med_str`] for [`CompKey`]
     #[wasm_bindgen]
     #[must_use]
     pub fn comp_key_as_med_str(key: CompKey) -> String {
         key.as_med_str().to_string()
     }
 
+    /// WASM compatible wrapper for [`KeyAsStrings::as_med_str`] for [`FpdKey`]
     #[wasm_bindgen]
     #[must_use]
     pub fn fpd_key_as_med_str(key: FpdKey) -> String {
@@ -132,6 +177,7 @@ pub mod wasm {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::float_cmp)]
 mod tests {
     use std::collections::HashSet;
 
@@ -219,5 +265,22 @@ mod tests {
     fn prop_keys_as_med_str() {
         assert_eq!(PropKey::CompKey(CompKey::MilkFat).as_med_str(), "Milk Fat");
         assert_eq!(PropKey::FpdKey(FpdKey::FPD).as_med_str(), "FPD");
+    }
+
+    #[test]
+    fn composition_value_as_quantity() {
+        let comp = 2.0; // 2% milk fat, g/100g
+        let qty = 500.0;
+        let qty_result = super::composition_value_as_quantity(comp, qty);
+        assert_eq!(qty_result, 10.0);
+    }
+
+    #[test]
+    fn composition_value_as_percentage() {
+        let comp = 2.0; // 2% milk fat, g/100g
+        let ing_qty = 500.0;
+        let mix_total = 1000.0;
+        let milk_fat_percentage = super::composition_value_as_percentage(comp, ing_qty, mix_total);
+        assert_eq!(milk_fat_percentage, 1.0);
     }
 }
