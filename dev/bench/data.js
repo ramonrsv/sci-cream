@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770179024747,
+  "lastUpdate": 1770179041120,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -24486,6 +24486,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.69%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ee1022cb47257247ffd41ecaa192cfc22bb861c1",
+          "message": "Add Cargo metadata and enable cargo_common_meta...",
+          "timestamp": "2026-02-03T12:08:20-05:00",
+          "tree_id": "a17ac11bfdbb37fadbc3242d3693a1a235722c44",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ee1022cb47257247ffd41ecaa192cfc22bb861c1"
+        },
+        "date": 1770179040393,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76417,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 719729,
+            "range": "±1.12%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10126,
+            "range": "±1.97%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 606870,
+            "range": "±0.81%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
