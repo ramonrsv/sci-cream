@@ -1,3 +1,10 @@
+//! In-memory database for ingredient definition lookups
+//!
+//! If feature `database` is enabled, this module provides [`IngredientDatabase`], an in-memory
+//! database, with WASM support, for looking up [`Ingredient`] definitions. [`IngredientDatabase`]
+//! objects can be seeded from [`Ingredient`]s and ingredient specifications, including those
+//! embedded via the `data` feature; see [`crate::data`] for more information.
+
 use std::collections::HashMap;
 use std::sync::{RwLock, RwLockReadGuard, RwLockWriteGuard};
 
@@ -9,12 +16,6 @@ use crate::{
     ingredient::{Category, Ingredient},
     specs::IngredientSpec,
 };
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(Debug)]
-pub struct IngredientDatabase {
-    map: RwLock<HashMap<String, Ingredient>>,
-}
 
 /// Provides an in-memory database for looking up ingredient definitions by name
 ///
@@ -29,7 +30,14 @@ pub struct IngredientDatabase {
 /// when requesting operations; JS <-> WASM bridging is very slow, so it's almost always more
 /// performant to keep as much as possible on the WASM side. It's still possible to seed the
 /// database from the JS side, then subsequent looks can be done within WASM.
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[derive(Debug)]
+pub struct IngredientDatabase {
+    map: RwLock<HashMap<String, Ingredient>>,
+}
+
 impl IngredientDatabase {
+    /// Creates a new [`IngredientDatabase`] seeded with the provided [`Ingredient`]s.
     #[must_use]
     pub fn new_seeded(ingredients: &[Ingredient]) -> Self {
         let mut map = HashMap::new();
@@ -48,10 +56,14 @@ impl IngredientDatabase {
             .collect::<Result<_>>()
     }
 
+    /// Creates a new [`IngredientDatabase`] seeded with the provided [`IngredientSpec`]s.
     pub fn new_seeded_from_specs(specs: &[IngredientSpec]) -> Result<Self> {
         Ok(Self::new_seeded(&Self::specs_into_ingredients(specs)?))
     }
 
+    /// Creates a new [`IngredientDatabase`] seeded with all embedded ingredient specifications.
+    ///
+    /// This function requires the `data` feature to be enabled.
     #[cfg(feature = "data")]
     pub fn new_seeded_from_embedded_data() -> Result<Self> {
         Self::new_seeded_from_specs(&crate::data::get_all_ingredient_specs())
@@ -69,6 +81,7 @@ impl IngredientDatabase {
             .expect("Failed to acquire write lock on ingredient database")
     }
 
+    /// Seeds the database with the provided [`Ingredient`]s.
     pub fn seed(&self, ingredients: &[Ingredient]) {
         let mut db = self.acquire_write_lock();
         for ingredient in ingredients {
@@ -76,11 +89,13 @@ impl IngredientDatabase {
         }
     }
 
+    /// Seeds the database with the provided [`IngredientSpec`]s.
     pub fn seed_from_specs(&self, specs: &[IngredientSpec]) -> Result<()> {
         self.seed(&Self::specs_into_ingredients(specs)?);
         Ok(())
     }
 
+    /// Retrieves an [`Ingredient`] by its name.
     pub fn get_ingredient_by_name(&self, name: &str) -> Result<Ingredient> {
         self.acquire_read_lock()
             .get(name)
@@ -91,6 +106,7 @@ impl IngredientDatabase {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl IngredientDatabase {
+    /// Creates a new, empty [`IngredientDatabase`].
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
     pub fn new() -> Self {
@@ -99,10 +115,12 @@ impl IngredientDatabase {
         }
     }
 
+    /// Retrieves all [`Ingredient`]s in the database.
     pub fn get_all_ingredients(&self) -> Vec<Ingredient> {
         self.acquire_read_lock().values().cloned().collect()
     }
 
+    /// Retrieves [`Ingredient`]s filtered by the specified [`Category`].
     pub fn get_ingredients_by_category(&self, category: Category) -> Vec<Ingredient> {
         self.acquire_read_lock()
             .values()
@@ -118,6 +136,7 @@ impl Default for IngredientDatabase {
     }
 }
 
+/// WASM compatible wrappers for [`crate::database`] functions and [`IngredientDatabase`] methods.
 #[cfg(feature = "wasm")]
 #[cfg_attr(coverage, coverage(off))]
 pub mod wasm {
@@ -136,24 +155,28 @@ pub mod wasm {
 
     #[wasm_bindgen]
     impl IngredientDatabase {
+        /// WASM compatible wrapper for [`IngredientDatabase::seed`]
         #[wasm_bindgen(js_name = "seed")]
         #[allow(clippy::needless_pass_by_value)]
         pub fn seed_wasm(&self, ingredients: Box<[Ingredient]>) {
             self.seed(&ingredients);
         }
 
+        /// WASM compatible wrapper for [`IngredientDatabase::seed_from_specs`]
         #[wasm_bindgen(js_name = "seed_from_specs")]
         #[allow(clippy::needless_pass_by_value)]
         pub fn seed_from_specs_wasm(&self, specs: Box<[JsValue]>) -> Result<(), JsValue> {
             self.seed_from_specs(&specs_from_jsvalues(&specs)?).map_err(Into::into)
         }
 
+        /// WASM compatible wrapper for [`IngredientDatabase::get_ingredient_by_name`]
         #[wasm_bindgen(js_name = "get_ingredient_by_name")]
         pub fn get_ingredient_by_name_wasm(&self, name: &str) -> Result<Ingredient, JsValue> {
             self.get_ingredient_by_name(name).map_err(Into::into)
         }
     }
 
+    /// WASM compatible builder forwarding to [`IngredientDatabase::new_seeded`].
     #[wasm_bindgen]
     #[allow(clippy::needless_pass_by_value)]
     #[must_use]
@@ -161,12 +184,16 @@ pub mod wasm {
         IngredientDatabase::new_seeded(&ingredients)
     }
 
+    /// WASM compatible builder forwarding to [`IngredientDatabase::new_seeded_from_specs`].
     #[wasm_bindgen]
     #[allow(clippy::needless_pass_by_value)]
     pub fn new_ingredient_database_seeded_from_specs(specs: Box<[JsValue]>) -> Result<IngredientDatabase, JsValue> {
         IngredientDatabase::new_seeded_from_specs(&specs_from_jsvalues(&specs)?).map_err(Into::into)
     }
 
+    /// WASM compatible builder forwarding to [`IngredientDatabase::new_seeded_from_embedded_data`].
+    ///
+    /// This function requires the `data` feature to be enabled.
     #[cfg(feature = "data")]
     #[wasm_bindgen]
     pub fn new_ingredient_database_seeded_from_embedded_data() -> Result<IngredientDatabase, JsValue> {
