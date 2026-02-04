@@ -1,7 +1,7 @@
 # Freezing Point Depression
 
-Freezing point depression refers to the property of ingredients that lowers the freezing point of
-water in an ice cream mix, a crucial factor that affects the texture of ice cream once frozen.
+Freezing Point Depression (FPD) refers to the property of ingredients that lowers the freezing point
+of water in an ice cream mix, a crucial factor that affects the texture of ice cream once frozen.
 Ingredients, such as sucrose (table sugar), fully dissolve in water and create a homogeneous
 mixture. The freezing point of this solution is lower than that of pure water. How much lower
 depends on the solute and the amount. Common ingredients that contribute to this effect are sugars

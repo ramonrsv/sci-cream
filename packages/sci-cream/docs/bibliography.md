@@ -64,6 +64,8 @@
 
 [^32]: Lawrence, J. F. (2003). _Cyclamates_. Encyclopedia of Food Sciences and Nutrition (Second Edition), pages 1712-1714. <https://www.sciencedirect.com/science/chapter/referencework/abs/pii/B012227055X003187>
 
+[^33]: Merrill, A. L, Watt, B. K. (1973). _Energy Value of Foods ...basis and derivation_ Agriculture Handbook No. 74. Agricultural Research Service, United States Department of Agriculture. <https://www.ars.usda.gov/ARSUserFiles/80400525/Data/Classics/ah74.pdf>
+
 <!-- Ingredient references -->
 
 [^100]: Eggs, Grade A, Large, egg yolk. (2019). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/748236/nutrients>

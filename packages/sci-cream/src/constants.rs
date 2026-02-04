@@ -1,3 +1,5 @@
+/*! Constants and associated utilities for various ingredient properties */
+
 /// [Potere Dolcificante (POD)](crate::docs#pod) values various sweeteners and other ingredients
 ///
 /// Expressed as g/100g of sucrose equivalence.
@@ -89,6 +91,11 @@ pub mod pod {
     pub const OLIGOFRUCTOSE: f64 = 40.0;
 }
 
+/// Molar mass values (g/mol) for various sweeteners and other ingredients
+///
+/// Used to calculate [PAC](crate::docs#pac-afp-fpdf-se) based on molar mass relative to that of
+/// sucrose. These values are sourced from the respective Wikipedia articles for each ingredient.
+#[allow(missing_docs)] // No need to document each constant individually
 pub mod molar_mass {
     /// Calculate [PAC](crate::docs#pac-afp-fpdf-se) from molar mass, expressed as g/100g of
     /// sucrose equivalence
@@ -127,6 +134,7 @@ pub mod molar_mass {
 ///
 /// Expressed as g/100g of sucrose equivalence. Unless otherwise specified, values are calculated
 /// based on molar mass relative to that of sucrose. See [`molar_mass::pac_from_molar_mass`].
+#[allow(missing_docs)] // No need to document each constant individually
 pub mod pac {
     use super::molar_mass::{self, pac_from_molar_mass};
 
@@ -169,17 +177,23 @@ pub mod pac {
 /// hardness of mixes containing chocolate and nut ingredients (Corvitto, 2005, p. 243)[^3].
 #[doc = include_str!("../docs/bibs/3.md")]
 pub mod hf {
+    /// Hardness Factor for cacao butter; see [`ChocolateSpec`](crate::specs::ChocolateSpec).
     pub const CACAO_BUTTER: f64 = 0.9;
+
+    /// Hardness Factor for cocoa solids; see [`ChocolateSpec`](crate::specs::ChocolateSpec).
     pub const COCOA_SOLIDS: f64 = 1.8;
+
+    /// Hardness Factor for nut fat; see [`NutSpec`](crate::specs::NutSpec).
     pub const NUT_FAT: f64 = 1.4;
 }
 
+/// Standard composition values for various food components and ingredients
 pub mod composition {
-    /// Percentage of milk solids non-fat (MSNF) typical of milk serum (Goff & Hartel, 2013, p. 160)[^2]
+    /// Percentage milk solids non-fat (MSNF) typical of milk serum (Goff & Hartel, 2013, p.160)[^2]
     #[doc = include_str!("../docs/bibs/2.md")]
     pub const STD_MSNF_IN_MILK_SERUM: f64 = 0.09;
 
-    /// Percentage of lactose typical of milk solids non-fat (MSNF) (Goff & Hartel, 2013, p. 181)[^2]
+    /// Percentage of lactose typical of milk solids non-fat (MSNF) (Goff & Hartel, 2013, p.181)[^2]
     #[doc = include_str!("../docs/bibs/2.md")]
     pub const STD_LACTOSE_IN_MSNF: f64 = 0.545;
 
@@ -195,7 +209,7 @@ pub mod composition {
     #[doc = include_str!("../docs/bibs/2.md")]
     pub const STD_PROTEIN_IN_WS: f64 = 0.12;
 
-    /// Percentage of saturated fats typical of milk fat (Board on Agriculture..., 1974, p. 203)[^12]
+    /// Percentage of saturated fats typical of milk fat (Board on Agriculture.., 1974, p. 203)[^12]
     #[doc = include_str!("../docs/bibs/12.md")]
     pub const STD_SATURATED_FAT_IN_MILK_FAT: f64 = 0.65;
 
@@ -209,7 +223,7 @@ pub mod composition {
     #[doc = include_str!("../docs/bibs/12.md")]
     pub const STD_SATURATED_FAT_IN_EGG_FAT: f64 = 0.28;
 
-    /// Percentage of saturated fats typical of nut fat
+    /// Percentage of saturated fats typical of nut fat; see [`NutSpec`](crate::specs::NutSpec).
     ///
     /// This value is an average compiled from the nutrient profiles of various nuts in the _USDA
     /// FoodData Central_ database (Nuts, almonds, 2019)[^102], (Nuts, pistachio nuts, raw,
@@ -221,7 +235,8 @@ pub mod composition {
     pub const STD_SATURATED_FAT_IN_NUT_FAT: f64 = 0.09;
 
     #[allow(clippy::doc_markdown)] // _FoodData_ false positive
-    /// Standard composition values for cacao products, most notably cocoa solids
+    /// Standard composition values for cacao products, notably cocoa solids; see
+    /// [`crate::specs::ChocolateSpec`].
     ///
     /// These values are averages compiled from the nutrient profiles of various cacao products in
     /// the _USDA FoodData Central_ database (Chocolate, dark, 60-69% cacao solids, 2019)[^104],
@@ -243,13 +258,37 @@ pub mod composition {
     #[doc = include_str!("../docs/bibs/111.md")]
     pub mod cacao {
         #[cfg(doc)]
-        pub use crate::constants::composition;
+        pub use crate::{constants::composition, specs::ChocolateSpec};
 
+        /// Percentage of water typically found in cacao products
         pub const STD_WATER_CONTENT_IN_CACAO_PRODUCTS: f64 = 0.02;
+
+        /// Percentage of proteins typically found in cocoa solids; see [`ChocolateSpec`].
+        ///
+        /// The full composition of cocoa solids is proteins, carbohydrates, and ash - the
+        /// respective composition percentages add up to 100%.
+        /// See [`STD_CARBOHYDRATES_IN_COCOA_SOLIDS`] and [`STD_ASH_IN_COCOA_SOLIDS`].
         pub const STD_PROTEIN_IN_COCOA_SOLIDS: f64 = 0.245;
+
+        /// Percentage of carbohydrates typically found in cocoa solids; see [`ChocolateSpec`].
+        ///
+        /// The full composition of cocoa solids is proteins, carbohydrates, and ash - the
+        /// respective composition percentages add up to 100%.
+        /// See [`STD_PROTEIN_IN_COCOA_SOLIDS`] and [`STD_ASH_IN_COCOA_SOLIDS`].
         pub const STD_CARBOHYDRATES_IN_COCOA_SOLIDS: f64 = 0.68;
+
+        /// Percentage of fiber typically found in carbohydrates from cocoa solids; see
+        /// [`ChocolateSpec`].
         pub const STD_FIBER_IN_COCOA_SOLIDS: f64 = 0.40;
+
+        /// Percentage of ash (tracked as other SNFS) typically found in cocoa solids.
+        ///
+        /// The full composition of cocoa solids is proteins, carbohydrates, and ash - the
+        /// respective composition percentages add up to 100%.
+        /// See [`STD_PROTEIN_IN_COCOA_SOLIDS`] and [`STD_CARBOHYDRATES_IN_COCOA_SOLIDS`].
         pub const STD_ASH_IN_COCOA_SOLIDS: f64 = 0.075;
+
+        /// Percentage of saturated fats typically found in cocoa butter; see [`ChocolateSpec`].
         pub const STD_SATURATED_FAT_IN_COCOA_BUTTER: f64 = 0.60;
 
         /// Percentage of cocoa butter typically found in cacao solids of non-powder chocolate
@@ -264,8 +303,11 @@ pub mod composition {
 ///
 /// _The data represent physiologically available energy, which is the energy value remaining after
 /// digestive and urinary losses are deducted from gross energy._ ( U.S. Department of Agriculture,
-/// 2013, p. 13)[^18]
+/// 2013, p. 13)[^18] Energy values for major macronutrients are based on the Atwater system
+/// (Merrill & Watt, 1973)[^32], and those for polyols, artificial sweeteners, and other ingredients
+/// are based on various sources as noted.
 #[doc = include_str!("../docs/bibs/18.md")]
+#[doc = include_str!("../docs/bibs/32.md")]
 pub mod energy {
     /// ( U.S. Department of Agriculture, 2013, p. 13)[^18]
     #[doc = include_str!("../docs/bibs/18.md")]
@@ -321,6 +363,7 @@ pub mod energy {
     pub const INULIN_AND_OLIGOFRUCTOSE: f64 = 1.5;
 }
 
+/// Constants and utilities for density and conversions between volume and weight
 pub mod density {
     /// Ratio to convert Alcohol by Volume (ABV) to Alcohol by Weight (ABW)
     ///
@@ -373,31 +416,40 @@ pub mod density {
     pub const GRAMS_IN_TEASPOON_OF_SUGAR: f64 = 4.2;
 }
 
+/// Constants and utilities for [Freezing Point Depression
+/// (FPD)](crate::docs#freezing-point-depression) calculations
 pub mod fpd {
-    /// Typical ideal serving temperature (in °C) for ice cream (Raphaelson, 2016, Hardness)[^7]
+    /// Typical target serving temperature (in °C) for ice cream (Raphaelson, 2016, Hardness)[^7]
     #[doc = include_str!("../docs/bibs/7.md")]
     pub const TARGET_SERVING_TEMP_14C: f64 = -14.0;
 
+    /// Typical x-axis value ("hardness" or "frozen water") for the serving temperature of an ice
+    /// cream mix in an FPD curve
+    ///
+    /// Corvitto (2005, p. 78)[^3] uses 70%, see [`CORVITTO_PAC_TO_SERVING_TEMP_TABLE`] for details.
+    #[doc = include_str!("../docs/bibs/3.md")]
     pub const SERVING_TEMP_X_AXIS: usize = 75;
 
     /// PAC to FPD polynomial coefficients, a*x^2 + b*x + c => [a, b, c]
     ///
     /// _Polynominal equation with intercept through zero derived from regression model where g
-    /// sucrose/100 g water is graphed against FPD °C._ (Goff & Hartel, 2013, Table 6.3.c, p. 186)[^2]
+    /// sucrose/100 g water is graphed against FPD °C._ (Goff & Hartel, 2013, Table 6.3.c, p.
+    /// 186)[^2]
     #[doc = include_str!("../docs/bibs/2.md")]
     pub const PAC_TO_FPD_POLY_COEFFS: [f64; 3] = [-0.00009, -0.0612, 0.0];
 
     /// Freezing Point Depression (FPD) constant (°C) for salts contained in MSNF and WS
     ///
-    /// _The freezing point depression for salts (°C) contained in MSNF and WS, ... based on the average
-    /// molecular weight and concentration of salts present in milk._ (Goff & Hartel, 2013, p.183)[^2]
+    /// _The freezing point depression for salts (°C) contained in MSNF and WS, ... based on the
+    /// average molecular weight and concentration of salts present in milk._ (Goff & Hartel, 2013,
+    /// p.183)[^2]
     #[doc = include_str!("../docs/bibs/2.md")]
     pub const FPD_CONST_FOR_MSNF_WS_SALTS: f64 = -2.37;
 
     /// PAC to FPD lookup table
     ///
-    /// Table of empirical measurements, referenced from  _Freezing point depression (°C) below 0°C of
-    /// sucrose solutions (g/100g water)_ (Goff & Hartel, 2013, Table 6.1, p. 182)[^2]
+    /// Table of empirical measurements, referenced from  _Freezing point depression (°C) below 0°C
+    /// of sucrose solutions (g/100g water)_ (Goff & Hartel, 2013, Table 6.1, p. 182)[^2]
     #[doc = include_str!("../docs/bibs/2.md")]
     pub const PAC_TO_FPD_TABLE: [(usize, f64); 61] = [
         // (g Sucrose/100g water, FPD (°C))
@@ -466,10 +518,11 @@ pub mod fpd {
 
     /// Reference table for Corvitto PAC to serving temperature (Corvitto, 2005, p. 78)[^3]
     ///
-    /// For most standard ice cream mixes this roughly matches the FPD at ~70% frozen water calculated
-    /// using the Goff & Hartel method (2013, p. 181)[^2] with [`PAC_TO_FPD_POLY_COEFFS`], adjusting
-    /// [`PAC::sugars`](crate::composition::PAC::sugars) to match the PAC in this table, but ignoring
-    /// the contributions to FPD by salts present in MSNF/WS - Corvitto seems to have ignored these.
+    /// For most standard ice cream mixes this roughly matches the FPD at ~70% frozen water
+    /// calculated using the Goff & Hartel method (2013, p. 181)[^2] with
+    /// [`PAC_TO_FPD_POLY_COEFFS`], adjusting [`PAC::sugars`](crate::composition::PAC::sugars) to
+    /// match the PAC in this table, but ignoring the contributions to FPD by salts present in
+    /// MSNF and WS - Corvitto seems to have ignored these.
     #[doc = include_str!("../docs/bibs/2.md")]
     #[doc = include_str!("../docs/bibs/3.md")]
     pub const CORVITTO_PAC_TO_SERVING_TEMP_TABLE: [(f64, f64); 9] = [
