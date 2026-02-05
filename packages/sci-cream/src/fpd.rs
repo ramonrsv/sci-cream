@@ -1,3 +1,14 @@
+//! [Freezing Point Depression (FPD)](crate::docs#freezing-point-depression) properties and
+//! associated calculations.
+//!
+//! This module contains structs to represent FPD properties of ice cream mixes, including [FPD
+//! curves](crate::docs#freezing-point-depression-curve), as well as functionality to calculate
+//! these using various methods from literature, notably the Goff & Hartel method (2013, p. 181)[^2]
+//! and a modified version incorporating Corvitto's (2005, p. 243)[^3] approach for handling
+//! hardness factors from cocoa and nuts.
+#![doc = include_str!("../docs/bibs/2.md")]
+#![doc = include_str!("../docs/bibs/3.md")]
+
 use approx::AbsDiffEq;
 use approx::abs_diff_eq;
 use serde::{Deserialize, Serialize};
@@ -21,62 +32,50 @@ use crate::{
 };
 
 #[cfg(doc)]
-use crate::constants::pac;
+use crate::{constants::pac, properties};
 
+/// Keys for accessing specific composition values from an [`FPD`] via [`FPD::get()`]
+///
+/// This exists largely to mirror how [`CompKey`] and [`Composition::get()`] work, which is helpful
+/// in downstream applications, e.g. to have a single flattened list of keys for properties; see
+/// [`PropKey`](properties::PropKey) and [`MixProperties::get()`](properties::MixProperties::get).
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(EnumIter, Hash, PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum FpdKey {
+    /// [Freezing Point Depression (FPD)](crate::docs#freezing-point-depression) in °C
+    ///
+    /// This denotes the temperature at which a mix begins to freeze, which is typically depressed
+    /// to a temperature lower than 0°C, that at which pure water freezes. This value is the first
+    /// point on the [frozen water curve](crate::docs#freezing-point-depression-curve) at which the
+    /// x-axis is 0% frozen water; see [`CurvePoint`] and [`Curves::frozen_water`].
     FPD,
+    /// Temperature at which the mix reaches a desired serving hardness
+    ///
+    /// This is the y-value (temperature) intersection of the [hardness](Curves::hardness) [FPD
+    /// curve](crate::docs#freezing-point-depression-curve) in [`Curves`] at a specific hardness
+    /// value, typically 70-75% - defined by [`SERVING_TEMP_X_AXIS`] in current calculations.
     ServingTemp,
+    /// Hardness of the mix at -14°C, a typical target serving temperature for ice cream
+    ///
+    /// This is the x-value (hardness) intersection of the [hardness](Curves::hardness) [FPD
+    /// curve](crate::docs#freezing-point-depression-curve) at the specific y-value (temperature)
+    /// of -14°C, a typical target serving temperature for ice cream.
     HardnessAt14C,
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(Copy, Clone, Debug)]
-pub struct CurvePoint {
-    pub x_axis: f64,
-    pub temp: f64,
-}
-
-impl CurvePoint {
-    #[must_use]
-    pub fn new(x_axis: f64, temp: f64) -> Self {
-        Self { x_axis, temp }
-    }
-}
-
-/// [Freezing Point Depression Curves](crate::docs#freezing-point-depression-curve)...
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(Clone, Debug)]
-pub struct Curves {
-    #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
-    pub frozen_water: Vec<CurvePoint>,
-    #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
-    pub hardness: Vec<CurvePoint>,
 }
 
 /// [Freezing Point Depression (FPD)](crate::docs#freezing-point-depression) properties...
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Clone, Debug)]
 pub struct FPD {
+    /// [FPD](crate::docs#freezing-point-depression) in °C, maps to [`FpdKey::FPD`]
     pub fpd: f64,
+    /// Serving temperature in °C, maps to [`FpdKey::ServingTemp`]
     pub serving_temp: f64,
+    /// Hardness at -14°C, maps to [`FpdKey::HardnessAt14C`]
     pub hardness_at_14c: f64,
+    /// [FPD curves](crate::docs#freezing-point-depression-curve) for the mix
     #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
     pub curves: Curves,
-}
-
-impl Curves {
-    /// Create empty FPD curves, which are straight lines at 0°C, equivalent to those of 100% water
-    #[must_use]
-    pub fn empty() -> Self {
-        let make_empty_curve = || (0..100).map(|x_axis| CurvePoint::new(f64::from(x_axis), 0.0)).collect();
-
-        Self {
-            frozen_water: make_empty_curve(),
-            hardness: make_empty_curve(),
-        }
-    }
 }
 
 impl FPD {
@@ -100,7 +99,7 @@ impl FPD {
         let curves = compute_fpd_curves(
             composition,
             PacToFpdMethod::Interpolation,
-            FpdCurvesComputationMethod::ModifiedGoffHartelCorvitto,
+            FpdCurvesMethod::ModifiedGoffHartelCorvitto,
         )?;
 
         let fpd = curves.frozen_water[0].temp;
@@ -116,6 +115,141 @@ impl FPD {
     }
 }
 
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+impl FPD {
+    /// Access specific FPD property values via an [`FpdKey`]
+    #[must_use]
+    pub fn get(&self, key: FpdKey) -> f64 {
+        match key {
+            FpdKey::FPD => self.fpd,
+            FpdKey::ServingTemp => self.serving_temp,
+            FpdKey::HardnessAt14C => self.hardness_at_14c,
+        }
+    }
+}
+
+/// A point on an [FPD curve](crate::docs#freezing-point-depression-curve), representing the
+/// relationship between temperature (y-axis) and frozen water percentage or hardness (x-axis)
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[derive(Copy, Clone, Debug)]
+pub struct CurvePoint {
+    /// The x-axis value, representing either frozen water percentage or hardness
+    ///
+    /// This value ranges from 0 to 100, representing the percentage of the total water in the mix
+    /// that is frozen, or the "hardness" in [`Curves::hardness`], at a given temperature.
+    pub x_axis: f64,
+    /// The y-axis value, representing temperature in °C, less than or equal to 0°C
+    pub temp: f64,
+}
+
+impl CurvePoint {
+    /// Create a new `CurvePoint` with the given x-axis and temperature values
+    #[must_use]
+    pub fn new(x_axis: f64, temp: f64) -> Self {
+        Self { x_axis, temp }
+    }
+}
+
+/// [Freezing Point Depression Curves](crate::docs#freezing-point-depression-curve) for a mix
+#[doc = include_str!("../docs/bibs/2.md")]
+#[doc = include_str!("../docs/bibs/3.md")]
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[derive(Clone, Debug)]
+pub struct Curves {
+    /// Represents the relationship between frozen water percentage and temperature
+    ///
+    /// That is, the percentage of the total water in the mix that is frozen at a given temperature.
+    #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
+    pub frozen_water: Vec<CurvePoint>,
+    /// Represents the relationship between "hardness" and temperature
+    ///
+    /// "Hardness" attempts to quantity the perceived firmness of the mix at various temperatures.
+    /// If using [`FpdCurvesMethod::GoffHartel`], this curve is equivalent to the `frozen_water`
+    /// curve, frozen water percentage being a proxy for hardness. If using
+    /// [`FpdCurvesMethod::ModifiedGoffHartelCorvitto`], this curves also incorporates the effects
+    /// of hardness factors (e.g., from cocoa or nut ingredients) as per Corvitto.
+    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/bibs/3.md")]
+    #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
+    pub hardness: Vec<CurvePoint>,
+}
+
+impl Curves {
+    /// Create empty FPD curves, which are straight lines at 0°C, equivalent to those of 100% water
+    #[must_use]
+    pub fn empty() -> Self {
+        let make_empty_curve = || (0..100).map(|x_axis| CurvePoint::new(f64::from(x_axis), 0.0)).collect();
+
+        Self {
+            frozen_water: make_empty_curve(),
+            hardness: make_empty_curve(),
+        }
+    }
+}
+
+/// Methods for calculating FPD from [PAC](crate::docs#pac-afp-fpdf-se)
+#[derive(Copy, Clone, Debug)]
+pub enum PacToFpdMethod {
+    /// FPD from PAC via interpolation of [`PAC_TO_FPD_TABLE`]
+    Interpolation,
+    /// FPD from PAC via polynomial equation with coefficients [`PAC_TO_FPD_POLY_COEFFS`]
+    Polynomial,
+}
+
+/// Methods for calculating [FPD curves](crate::docs#freezing-point-depression-curve)
+#[derive(Copy, Clone, Debug)]
+pub enum FpdCurvesMethod {
+    /// Goff & Hartel method (2013, p. 181)[^2]
+    ///
+    /// See [`compute_fpd_curve_step_goff_hartel`].
+    #[doc = include_str!("../docs/bibs/2.md")]
+    GoffHartel,
+    /// Modified Goff & Hartel method (2013, p. 181)[^2] incorporating Corvitto (2005, p. 243)[^3]
+    ///
+    /// See [`compute_fpd_curve_step_modified_goff_hartel_corvitto`].
+    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/bibs/3.md")]
+    ModifiedGoffHartelCorvitto,
+}
+
+/// Compute FPD curves for a given mix composition using specified methods
+pub fn compute_fpd_curves(
+    composition: Composition,
+    pac_to_fpd_method: PacToFpdMethod,
+    curves_method: FpdCurvesMethod,
+) -> Result<Curves> {
+    let mut curves = Curves {
+        frozen_water: Vec::new(),
+        hardness: Vec::new(),
+    };
+
+    for x_axis in 0..100 {
+        let frozen_water = f64::from(x_axis);
+
+        let get_fpd_from_pac = match pac_to_fpd_method {
+            PacToFpdMethod::Interpolation => get_fpd_from_pac_interpolation,
+            PacToFpdMethod::Polynomial => |pac| get_fpd_from_pac_polynomial(pac, None),
+        };
+
+        let (fpd_fw, fpd_hardness) = match curves_method {
+            FpdCurvesMethod::GoffHartel => {
+                compute_fpd_curve_step_goff_hartel(composition, frozen_water, &get_fpd_from_pac)
+                    .map(|step| (step.fpd_total, f64::NAN))?
+            }
+            FpdCurvesMethod::ModifiedGoffHartelCorvitto => {
+                compute_fpd_curve_step_modified_goff_hartel_corvitto(composition, frozen_water, &get_fpd_from_pac)
+                    .map(|step| (step.fpd_exc_hf, step.fpd_inc_hf))?
+            }
+        };
+
+        curves.frozen_water.push(CurvePoint::new(frozen_water, fpd_fw));
+        curves.hardness.push(CurvePoint::new(frozen_water, fpd_hardness));
+    }
+
+    Ok(curves)
+}
+
+/// Compute FPD from PAC via interpolation of [`PAC_TO_FPD_TABLE`]
 pub fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
     if pac < 0.0 {
         return Err(Error::NegativePacValue(pac));
@@ -158,8 +292,8 @@ pub fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
 ///
 /// <div class='warning'>
 /// Summing multiple PAC values and then computing FPD with this function can yield significantly
-/// different results than computing FPD for each PAC value separately and summing the FPDs,
-/// particularly at higher PAC values. Summing the PAC values is the recommended approach.
+/// different results than computing FPD for each PAC value separately and then summing the FPDs,
+/// particularly at higher PAC values. Summing the PAC values first is the recommended approach.
 /// </div>
 pub fn get_fpd_from_pac_polynomial(pac: f64, coeffs: Option<[f64; 3]>) -> Result<f64> {
     let [a, b, c] = coeffs.unwrap_or(PAC_TO_FPD_POLY_COEFFS);
@@ -205,6 +339,7 @@ pub fn get_pac_from_fpd_polynomial(fpd: f64, coeffs: Option<[f64; 3]>) -> Result
     Ok(root1.max(root2))
 }
 
+/// Compute serving temperature from PAC using [`CORVITTO_PAC_TO_SERVING_TEMP_TABLE`]
 pub fn get_serving_temp_from_pac_corvitto(pac: f64) -> Result<f64> {
     let first = CORVITTO_PAC_TO_SERVING_TEMP_TABLE[0];
     let last = CORVITTO_PAC_TO_SERVING_TEMP_TABLE
@@ -217,6 +352,10 @@ pub fn get_serving_temp_from_pac_corvitto(pac: f64) -> Result<f64> {
     Ok(slope * run + first.1)
 }
 
+/// A step in an FPD curve using the Goff & Hartel method
+///
+/// Maps to [`FpdCurvesMethod::GoffHartel`] and [`compute_fpd_curve_step_goff_hartel`].
+#[doc = include_str!("../docs/bibs/2.md")]
 #[derive(Iterable, PartialEq, Copy, Clone, Debug)]
 pub struct GoffHartelFpdCurveStep {
     /// Percentage of total water in mix that's frozen at this step
@@ -240,6 +379,7 @@ pub struct GoffHartelFpdCurveStep {
 }
 
 impl GoffHartelFpdCurveStep {
+    /// Create an empty Goff-Hartel FPD curve step
     #[must_use]
     pub fn empty() -> Self {
         Self {
@@ -281,6 +421,10 @@ pub fn compute_fpd_curve_step_goff_hartel(
     Ok(next)
 }
 
+/// A step in an FPD curve using a modified Goff & Hartel method incorporating Corvitto's
+///
+/// Maps to [`FpdCurvesMethod::ModifiedGoffHartelCorvitto`] and
+/// [`compute_fpd_curve_step_modified_goff_hartel_corvitto`].
 #[derive(Iterable, PartialEq, Copy, Clone, Debug)]
 pub struct ModifiedGoffHartelCorvittoFpdCurveStep {
     /// Percentage of total water in mix that's frozen at this step
@@ -299,6 +443,7 @@ pub struct ModifiedGoffHartelCorvittoFpdCurveStep {
 }
 
 impl ModifiedGoffHartelCorvittoFpdCurveStep {
+    /// Create an empty Modified Goff-Hartel-Corvitto FPD curve step
     #[must_use]
     pub fn empty() -> Self {
         Self {
@@ -356,54 +501,7 @@ pub fn compute_fpd_curve_step_modified_goff_hartel_corvitto(
     Ok(next)
 }
 
-#[derive(Copy, Clone, Debug)]
-pub enum PacToFpdMethod {
-    Interpolation,
-    Polynomial,
-}
-
-#[derive(Copy, Clone, Debug)]
-pub enum FpdCurvesComputationMethod {
-    GoffHartel,
-    ModifiedGoffHartelCorvitto,
-}
-
-pub fn compute_fpd_curves(
-    composition: Composition,
-    pac_to_fpd_method: PacToFpdMethod,
-    curves_method: FpdCurvesComputationMethod,
-) -> Result<Curves> {
-    let mut curves = Curves {
-        frozen_water: Vec::new(),
-        hardness: Vec::new(),
-    };
-
-    for x_axis in 0..100 {
-        let frozen_water = f64::from(x_axis);
-
-        let get_fpd_from_pac = match pac_to_fpd_method {
-            PacToFpdMethod::Interpolation => get_fpd_from_pac_interpolation,
-            PacToFpdMethod::Polynomial => |pac| get_fpd_from_pac_polynomial(pac, None),
-        };
-
-        let (fpd_fw, fpd_hardness) = match curves_method {
-            FpdCurvesComputationMethod::GoffHartel => {
-                compute_fpd_curve_step_goff_hartel(composition, frozen_water, &get_fpd_from_pac)
-                    .map(|step| (step.fpd_total, f64::NAN))?
-            }
-            FpdCurvesComputationMethod::ModifiedGoffHartelCorvitto => {
-                compute_fpd_curve_step_modified_goff_hartel_corvitto(composition, frozen_water, &get_fpd_from_pac)
-                    .map(|step| (step.fpd_exc_hf, step.fpd_inc_hf))?
-            }
-        };
-
-        curves.frozen_water.push(CurvePoint::new(frozen_water, fpd_fw));
-        curves.hardness.push(CurvePoint::new(frozen_water, fpd_hardness));
-    }
-
-    Ok(curves)
-}
-
+/// Get the x-axis (frozen water or hardness) value at a given FPD (temperature) from an FPD curve
 #[must_use]
 pub fn get_x_axis_at_fpd(curve: &[CurvePoint], target_fpd: f64) -> Option<f64> {
     for i in 0..curve.len() - 1 {
@@ -419,18 +517,6 @@ pub fn get_x_axis_at_fpd(curve: &[CurvePoint], target_fpd: f64) -> Option<f64> {
     }
 
     None
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-impl FPD {
-    #[must_use]
-    pub fn get(&self, key: FpdKey) -> f64 {
-        match key {
-            FpdKey::FPD => self.fpd,
-            FpdKey::ServingTemp => self.serving_temp,
-            FpdKey::HardnessAt14C => self.hardness_at_14c,
-        }
-    }
 }
 
 impl Default for FPD {
