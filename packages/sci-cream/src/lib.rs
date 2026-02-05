@@ -4,14 +4,10 @@ their properties.
 
 #![cfg_attr(coverage, feature(coverage_attribute))]
 
-#[doc = include_str!("../docs/freezing-point-depression.md")]
-#[doc = include_str!("../docs/sweeteners.md")]
-#[doc = include_str!("../docs/bibliography.md")]
-pub mod docs;
-
 pub mod composition;
 pub mod constants;
 pub mod display;
+pub mod docs;
 pub mod error;
 pub mod fpd;
 pub mod ingredient;

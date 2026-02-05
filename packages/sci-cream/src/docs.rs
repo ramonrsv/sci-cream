@@ -1,3 +1,7 @@
+#![doc = include_str!("../docs/freezing-point-depression.md")]
+#![doc = include_str!("../docs/sweeteners.md")]
+#![doc = include_str!("../docs/bibliography.md")]
+
 /// Asserts for floating point comparisons in doc tests
 #[macro_export(local_inner_macros)]
 macro_rules! assert_eq_float {
