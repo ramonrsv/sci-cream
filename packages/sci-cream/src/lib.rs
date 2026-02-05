@@ -11,7 +11,6 @@ pub mod display;
 pub mod docs;
 pub mod error;
 pub mod fpd;
-#[allow(missing_docs)] // @todo
 pub mod ingredient;
 #[allow(missing_docs)] // @todo
 pub mod properties;
