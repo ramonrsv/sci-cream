@@ -161,7 +161,7 @@ describe("MixPropertiesChart", () => {
       const recipeCtx = createMockRecipeContext([true]);
       const { container } = render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
-      const filterSelect = container.querySelector("select") as HTMLSelectElement;
+      const filterSelect = container.querySelector("#key-filter-select") as HTMLSelectElement;
       expect(filterSelect).toBeInTheDocument();
       expect(filterSelect.value).toBe(KeyFilter.Auto);
     });
@@ -196,7 +196,7 @@ describe("MixPropertiesChart", () => {
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.labels.length).toBeGreaterThan(0);
 
-      const filterSelect = container.querySelector("select") as HTMLSelectElement;
+      const filterSelect = container.querySelector("#key-filter-select") as HTMLSelectElement;
       expect(filterSelect).toBeInTheDocument();
       fireEvent.change(filterSelect, { target: { value: KeyFilter.NonZero } });
 
@@ -224,7 +224,7 @@ describe("MixPropertiesChart", () => {
       }
 
       const { container } = render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
-      const filterSelect = container.querySelector("select") as HTMLSelectElement;
+      const filterSelect = container.querySelector("#key-filter-select") as HTMLSelectElement;
       expect(filterSelect).toBeInTheDocument();
       fireEvent.change(filterSelect, { target: { value: KeyFilter.NonZero } });
 
@@ -243,7 +243,7 @@ describe("MixPropertiesChart", () => {
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.labels.length).toBeGreaterThan(0);
 
-      const filterSelect = container.querySelector("select") as HTMLSelectElement;
+      const filterSelect = container.querySelector("#key-filter-select") as HTMLSelectElement;
       expect(filterSelect).toBeInTheDocument();
       fireEvent.change(filterSelect, { target: { value: KeyFilter.All } });
 
@@ -354,7 +354,7 @@ describe("MixPropertiesChart", () => {
       const recipeCtx = createMockRecipeContext();
       const { container } = render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
-      const filterSelect = container.querySelector("select") as HTMLSelectElement;
+      const filterSelect = container.querySelector("#key-filter-select") as HTMLSelectElement;
       expect(filterSelect).toBeInTheDocument();
       fireEvent.change(filterSelect, { target: { value: KeyFilter.All } });
       await waitFor(() => {

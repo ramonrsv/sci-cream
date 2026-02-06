@@ -98,6 +98,7 @@ export function KeySelection<Key>({
     <div id="key-selection">
       {hasQtyToggle && (
         <select
+          id={"qty-toggle-select"}
           className="select-input"
           value={qtyToggle}
           onChange={(e) => setQtyToggle(e.target.value as QtyToggle)}
@@ -111,6 +112,7 @@ export function KeySelection<Key>({
       )}
       <select
         ref={buttonRef}
+        id={"key-filter-select"}
         className={`select-input ${hasQtyToggle ? "ml-2" : ""}`}
         value={keyFilter}
         onChange={(e) => {
