@@ -12,7 +12,6 @@ pub mod docs;
 pub mod error;
 pub mod fpd;
 pub mod ingredient;
-#[allow(missing_docs)] // @todo
 pub mod properties;
 #[allow(missing_docs)] // @todo
 pub mod recipe;
@@ -35,8 +34,10 @@ pub mod wasm;
 
 // @todo Re-export key structs and enums for easier access
 pub use {
-    composition::Composition,
+    composition::{CompKey, Composition},
+    fpd::{FPD, FpdKey},
     ingredient::{Category, Ingredient},
+    properties::{MixProperties, PropKey},
 };
 
 #[cfg(test)]

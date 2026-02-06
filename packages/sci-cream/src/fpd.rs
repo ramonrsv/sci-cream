@@ -143,7 +143,7 @@ pub struct CurvePoint {
 }
 
 impl CurvePoint {
-    /// Create a new `CurvePoint` with the given x-axis and temperature values
+    /// Create a new [`CurvePoint`] with the given x-axis and temperature values
     #[must_use]
     pub fn new(x_axis: f64, temp: f64) -> Self {
         Self { x_axis, temp }
