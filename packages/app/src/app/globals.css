@@ -9,19 +9,73 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
+  /* Semantic color variables */
+  --color-bg-page-light: var(--color-gray-50);
+  --color-bg-page-dark: var(--color-gray-900);
+
+  --color-surface-light: white;
+  --color-surface-dark: var(--color-gray-800);
+
+  --color-text-primary-light: var(--color-gray-800);
+  --color-text-primary-dark: var(--color-gray-100);
+
+  --color-text-secondary-light: var(--color-gray-700);
+  --color-text-secondary-dark: var(--color-gray-200);
+
+  --color-border-subtle-light: var(--color-gray-200);
+  --color-border-subtle-dark: var(--color-gray-700);
+
+  --color-border-strong-light: var(--color-gray-300);
+  --color-border-strong-dark: var(--color-gray-600);
+
+  --color-border-hover-light: var(--color-gray-400);
+  --color-border-hover-dark: var(--color-gray-500);
+
+  --color-bg-hover-light: var(--color-gray-50);
+  --color-bg-hover-dark: var(--color-gray-700);
+
+  --color-bg-active-light: var(--color-gray-100);
+  --color-bg-active-dark: var(--color-gray-700);
+
+  --color-focus-light: var(--color-blue-500);
+  --color-focus-dark: var(--color-blue-400);
+
+  /* Chart colors */
   --color-legend: var(--color-gray-800);
   --color-grid: var(--color-gray-200);
 
   --color-legend-dark: var(--color-gray-100);
   --color-grid-dark: var(--color-gray-700);
+
+  /* Short names */
+  --color-page-lt: var(--color-bg-page-light);
+  --color-page-dk: var(--color-bg-page-dark);
+  --color-surface-lt: var(--color-surface-light);
+  --color-surface-dk: var(--color-surface-dark);
+  --color-txt-prim-lt: var(--color-text-primary-light);
+  --color-txt-prim-dk: var(--color-text-primary-dark);
+  --color-txt-sec-lt: var(--color-text-secondary-light);
+  --color-txt-sec-dk: var(--color-text-secondary-dark);
+  --color-brd-sub-lt: var(--color-border-subtle-light);
+  --color-brd-sub-dk: var(--color-border-subtle-dark);
+  --color-brd-str-lt: var(--color-border-strong-light);
+  --color-brd-str-dk: var(--color-border-strong-dark);
+  --color-brd-hov-lt: var(--color-border-hover-light);
+  --color-brd-hov-dk: var(--color-border-hover-dark);
+  --color-hov-lt: var(--color-bg-hover-light);
+  --color-hov-dk: var(--color-bg-hover-dark);
+  --color-act-lt: var(--color-bg-active-light);
+  --color-act-dk: var(--color-bg-active-dark);
+  --color-foc-lt: var(--color-focus-light);
+  --color-foc-dk: var(--color-focus-dark);
 }
 
 body {
   font-family: Arial, Helvetica, sans-serif;
 
-  @apply bg-gray-50 text-gray-800;
+  @apply bg-page-lt text-txt-prim-lt;
   @variant dark {
-    @apply bg-gray-900 text-gray-100;
+    @apply bg-page-dk text-txt-prim-dk;
   }
 }
 
@@ -29,27 +83,27 @@ body {
 .table-header {
   @apply border text-sm font-semibold;
 
-  @apply border-gray-300 bg-white text-gray-800;
+  @apply border-brd-str-lt bg-surface-lt text-txt-prim-lt;
   @variant dark {
-    @apply border-gray-600 bg-gray-800 text-gray-100;
+    @apply border-brd-str-dk bg-surface-dk text-txt-prim-dk;
   }
 }
 
 .table-inner-cell {
   @apply border text-sm;
 
-  @apply border-gray-200 bg-white text-gray-700;
+  @apply border-brd-sub-lt bg-surface-lt text-txt-sec-lt;
   @variant dark {
-    @apply border-gray-700 bg-gray-800 text-gray-200;
+    @apply border-brd-sub-dk bg-surface-dk text-txt-sec-dk;
   }
 }
 
 .table-fillable-input {
   @apply w-full text-sm focus:ring-2 focus:outline-none focus:ring-inset;
 
-  @apply bg-white text-gray-700 hover:bg-gray-50 focus:ring-blue-500;
+  @apply bg-surface-lt text-txt-sec-lt hover:bg-hov-lt focus:ring-foc-lt;
   @variant dark {
-    @apply bg-gray-800 text-gray-200 hover:bg-gray-700 focus:ring-blue-400;
+    @apply bg-surface-dk text-txt-sec-dk hover:bg-hov-dk focus:ring-foc-dk;
   }
 }
 
@@ -62,27 +116,27 @@ body {
 .popup {
   @apply rounded-md border text-sm;
 
-  @apply border-gray-200 bg-white text-gray-800;
+  @apply border-brd-sub-lt bg-surface-lt text-txt-prim-lt;
   @variant dark {
-    @apply border-gray-700 bg-gray-800 text-gray-100;
+    @apply border-brd-sub-dk bg-surface-dk text-txt-prim-dk;
   }
 }
 
 .select-input {
   @apply rounded border text-sm;
 
-  @apply border-gray-300 bg-white text-gray-800 hover:border-gray-400 hover:bg-gray-50;
+  @apply border-brd-str-lt bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt hover:bg-hov-lt;
   @variant dark {
-    @apply border-gray-600 bg-gray-800 text-gray-100 hover:border-gray-500 hover:bg-gray-700;
+    @apply border-brd-str-dk bg-surface-dk text-txt-prim-dk hover:border-brd-hov-dk hover:bg-hov-dk;
   }
 }
 
 .button {
   @apply rounded border text-sm leading-tight;
 
-  @apply border-gray-300 bg-white text-gray-800 hover:border-gray-400 hover:bg-gray-50 active:bg-gray-100;
+  @apply border-brd-str-lt bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt hover:bg-hov-lt active:bg-act-lt;
   @variant dark {
-    @apply border-gray-600 bg-gray-800 text-gray-100 hover:border-gray-500 hover:bg-gray-700 active:bg-gray-700;
+    @apply border-brd-str-dk bg-surface-dk text-txt-prim-dk hover:border-brd-hov-dk hover:bg-hov-dk active:bg-act-dk;
   }
 }
 
@@ -90,24 +144,24 @@ body {
 .grid-component {
   @apply rounded-lg border;
 
-  @apply border-gray-200 bg-white;
+  @apply border-brd-sub-lt bg-surface-lt;
   @variant dark {
-    @apply border-gray-700 bg-gray-800;
+    @apply border-brd-sub-dk bg-surface-dk;
   }
 }
 
 .component-inner-border-color {
-  @apply border-gray-200;
+  @apply border-brd-sub-lt;
   @variant dark {
-    @apply border-gray-700;
+    @apply border-brd-sub-dk;
   }
 }
 
 .component-inner-border {
   @apply rounded-md border-2;
 
-  @apply border-gray-200;
+  @apply border-brd-sub-lt;
   @variant dark {
-    @apply border-gray-700;
+    @apply border-brd-sub-dk;
   }
 }
