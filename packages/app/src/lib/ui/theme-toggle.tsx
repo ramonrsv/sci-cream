@@ -17,6 +17,10 @@ function applyTheme(newTheme: Theme) {
   }
 }
 
+export function isDarkMode(): boolean {
+  return typeof window !== "undefined" && document.documentElement.classList.contains("dark");
+}
+
 export function ThemeToggle() {
   const [mounted, setMounted] = useState(false);
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { Recipe } from "@/app/recipe";
-import { recipeCompBgColor } from "../styles/colors";
+import { getRecipeCompBgColor } from "../styles/colors";
 
 export function RecipeSelection({
   allRecipes,
@@ -20,10 +20,10 @@ export function RecipeSelection({
         value={currentRecipeIdx}
         onChange={(e) => setCurrentRecipeIdx(parseInt(e.target.value))}
         className="select-input w-fit text-center"
-        style={{ backgroundColor: recipeCompBgColor(currentRecipeIdx) }}
+        style={{ backgroundColor: getRecipeCompBgColor(currentRecipeIdx) }}
       >
         {enabledRecipeIndices.map((idx) => (
-          <option key={idx} value={idx} style={{ backgroundColor: recipeCompBgColor(idx) }}>
+          <option key={idx} value={idx} style={{ backgroundColor: getRecipeCompBgColor(idx) }}>
             {allRecipes[idx].name}
           </option>
         ))}

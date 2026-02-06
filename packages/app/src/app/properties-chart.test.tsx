@@ -7,7 +7,7 @@ import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/re
 import { MixPropertiesChart, getPropKeys } from "./properties-chart";
 import { Recipe, makeEmptyRecipeContext } from "./recipe";
 import { KeyFilter } from "@/lib/ui/key-selection";
-import { recipeChartColor } from "../lib/styles/colors";
+import { getRecipeChartColor } from "../lib/styles/colors";
 
 import {
   CompKey,
@@ -313,8 +313,8 @@ describe("MixPropertiesChart", () => {
 
       expect(capturedBarProps).not.toBeNull();
       capturedBarProps!.data.datasets.forEach((dataset, index) => {
-        expect(dataset.backgroundColor).toBe(recipeChartColor(index));
-        expect(dataset.borderColor).toBe(recipeChartColor(index));
+        expect(dataset.backgroundColor).toBe(getRecipeChartColor(index));
+        expect(dataset.borderColor).toBe(getRecipeChartColor(index));
       });
     });
 
@@ -324,8 +324,8 @@ describe("MixPropertiesChart", () => {
 
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.datasets).toHaveLength(2);
-      expect(capturedBarProps!.data.datasets[0].backgroundColor).toBe(recipeChartColor(0));
-      expect(capturedBarProps!.data.datasets[1].backgroundColor).toBe(recipeChartColor(2));
+      expect(capturedBarProps!.data.datasets[0].backgroundColor).toBe(getRecipeChartColor(0));
+      expect(capturedBarProps!.data.datasets[1].backgroundColor).toBe(getRecipeChartColor(2));
     });
 
     it("should create dataset for each visible recipe", () => {

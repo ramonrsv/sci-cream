@@ -1,3 +1,5 @@
+import { isDarkMode } from "../ui/theme-toggle";
+
 export const RECIPE_COLOR_BY_IDX = [
   "rgba(255, 105, 45, 1)", // Warm orange
   "rgba(59, 130, 246, 1)", // Bright blue
@@ -7,13 +9,33 @@ export const RECIPE_COLOR_BY_IDX = [
   "rgba(168, 85, 247, 1)", // Vibrant purple
 ];
 
-export const LEGEND_COLOR = "rgba(64, 64, 64, 1)";
-export const GRID_COLOR = "rgba(120, 113, 108, 0.5)";
-
-export const COMPONENT_BG_OPACITY = 0.5;
+export const COMPONENT_BG_OPACITY = 0.6;
 export const CHART_OPACITY = 0.95;
 
-export function recipeColorByIdx(idx: number): string {
+const SSR_DEFAULT_LEGEND_COLOR = "rgba(64, 64, 64, 1)";
+const SSR_DEFAULT_GRID_COLOR = "rgba(200, 200, 200, 1)";
+
+export function getLegendColor(): string {
+  if (typeof window === "undefined") return SSR_DEFAULT_LEGEND_COLOR;
+
+  const styles = window.getComputedStyle(document.documentElement);
+
+  return isDarkMode()
+    ? styles.getPropertyValue("--color-legend-dark")
+    : styles.getPropertyValue("--color-legend");
+}
+
+export function getGridColor(): string {
+  if (typeof window === "undefined") return SSR_DEFAULT_GRID_COLOR;
+
+  const styles = window.getComputedStyle(document.documentElement);
+
+  return isDarkMode()
+    ? styles.getPropertyValue("--color-grid-dark")
+    : styles.getPropertyValue("--color-grid");
+}
+
+export function getRecipeColorByIdx(idx: number): string {
   return RECIPE_COLOR_BY_IDX[idx % RECIPE_COLOR_BY_IDX.length];
 }
 
@@ -23,10 +45,10 @@ export function opacity(rgbaStr: string, opacity: number): string {
   });
 }
 
-export function recipeCompBgColor(idx: number): string {
-  return opacity(recipeColorByIdx(idx), COMPONENT_BG_OPACITY);
+export function getRecipeCompBgColor(idx: number): string {
+  return opacity(getRecipeColorByIdx(idx), COMPONENT_BG_OPACITY);
 }
 
-export function recipeChartColor(idx: number): string {
-  return opacity(recipeColorByIdx(idx), CHART_OPACITY);
+export function getRecipeChartColor(idx: number): string {
+  return opacity(getRecipeColorByIdx(idx), CHART_OPACITY);
 }

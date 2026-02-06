@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { GripVertical } from "lucide-react";
 import {
@@ -16,12 +17,22 @@ import {
 } from "chart.js";
 
 import { Recipe, isRecipeEmpty } from "./recipe";
-import { LEGEND_COLOR, GRID_COLOR, recipeChartColor } from "@/lib/styles/colors";
+import { getLegendColor, getGridColor, getRecipeChartColor } from "@/lib/styles/colors";
 import { COMPONENT_ACTION_ICON_SIZE } from "./page";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
 export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
+  // Track theme changes to force re-render
+  // @todo Replace with a top-level theme state
+  const [, setThemeKey] = useState(0);
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => setThemeKey((prev) => prev + 1));
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
+
   // Only display the main recipe and non-empty reference recipes
   const recipes = allRecipes.filter((recipe) => recipe.index == 0 || !isRecipeEmpty(recipe));
 
@@ -36,7 +47,7 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
     labels: Array.from({ length: 101 }, (_, i) => i),
     datasets: recipes.flatMap((recipe) => {
       const curves = recipe.mixProperties.fpd!.curves!;
-      const borderColor = recipeChartColor(recipe.index);
+      const borderColor = getRecipeChartColor(recipe.index);
       const recipeLabel = recipe.index === 0 ? "" : ` (${recipe.name})`;
 
       const lines = [
@@ -59,22 +70,28 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
     }),
   };
 
+  const gridColor = getGridColor();
+  const legendColor = getLegendColor();
+
   const labelProps = {
     hidden: false,
     lineWidth: 2,
-    strokeStyle: LEGEND_COLOR,
+    strokeStyle: legendColor,
     fillStyle: "rgba(0, 0, 0, 0)",
+    fontColor: legendColor,
   };
 
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    color: legendColor,
     plugins: {
       legend: {
         display: true,
         position: "chartArea" as const,
         align: "end" as const,
         labels: {
+          color: legendColor,
           generateLabels: () => {
             return [
               { text: "Hardness", ...labelProps },
@@ -83,7 +100,7 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
           },
         },
       },
-      title: { display: true, text: "FPD Graph" },
+      title: { display: true, text: "FPD Graph", color: legendColor },
       tooltip: {
         callbacks: {
           label: function (context: TooltipItem<"line">) {
@@ -103,6 +120,7 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
     scales: {
       x: {
         ticks: {
+          color: legendColor,
           autoSkip: false,
           callback: function (value: string | number) {
             const numValue = Number(value);
@@ -110,7 +128,7 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
           },
         },
         grid: {
-          color: GRID_COLOR,
+          color: gridColor,
           display: true,
           drawOnChartArea: true,
           lineWidth: function (context: ScriptableScaleContext) {
@@ -121,8 +139,9 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
       y: {
         min: -30,
         max: 0,
-        title: { display: true, text: "Temperature (°C)" },
-        grid: { color: GRID_COLOR },
+        ticks: { color: legendColor },
+        title: { display: true, text: "Temperature (°C)", color: legendColor },
+        grid: { color: gridColor },
       },
     },
   };

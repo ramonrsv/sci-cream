@@ -8,7 +8,7 @@ import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/ke
 import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
 import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "../lib/util";
-import { recipeCompBgColor } from "@/lib/styles/colors";
+import { getRecipeCompBgColor } from "@/lib/styles/colors";
 import { COMPONENT_ACTION_ICON_SIZE } from "./page";
 
 import {
@@ -144,7 +144,7 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
                     key={recipe.index}
                     className="table-header px-1.25 text-center"
                     {...(recipes.length > 1
-                      ? { style: { backgroundColor: recipeCompBgColor(recipe.index) } }
+                      ? { style: { backgroundColor: getRecipeCompBgColor(recipe.index) } }
                       : {})}
                   >
                     {recipe.name}

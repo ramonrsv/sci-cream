@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { GripVertical } from "lucide-react";
 import { Bar } from "react-chartjs-2";
 import {
@@ -18,7 +18,7 @@ import { Recipe, isRecipeEmpty } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { DEFAULT_SELECTED_PROPERTIES } from "./properties";
 import { applyQtyToggle, formatCompositionValue } from "../lib/ui/comp-values";
-import { GRID_COLOR, recipeChartColor } from "../lib/styles/colors";
+import { getGridColor, getLegendColor, getRecipeChartColor } from "../lib/styles/colors";
 import { COMPONENT_ACTION_ICON_SIZE } from "./page";
 
 import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
@@ -50,6 +50,16 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
   const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
 
   const qtyToggle = QtyToggle.Percentage;
+
+  // Track theme changes to force re-render
+  // @todo Replace with a top-level theme state
+  const [, setThemeKey] = useState(0);
+
+  useEffect(() => {
+    const observer = new MutationObserver(() => setThemeKey((prev) => prev + 1));
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
 
   const isPropEmpty = (prop_key: PropKey) => {
     for (const recipe of recipes) {
@@ -97,6 +107,9 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
   const enabledProps = getEnabledProps();
   const labels = enabledProps.map((prop_key) => prop_key_as_med_str(prop_key));
 
+  const gridColor = getGridColor();
+  const legendColor = getLegendColor();
+
   const chartData = {
     labels,
     datasets: recipes.map((recipe) => {
@@ -105,8 +118,8 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
         data: enabledProps.map((prop_key) =>
           Math.abs(getPropertyValue(prop_key, recipe.mixProperties!, recipe.mixTotal!)),
         ),
-        backgroundColor: recipeChartColor(recipe.index),
-        borderColor: recipeChartColor(recipe.index),
+        backgroundColor: getRecipeChartColor(recipe.index),
+        borderColor: getRecipeChartColor(recipe.index),
         maxBarThickness: 40,
         categoryPercentage: 0.6,
         barPercentage: 0.8,
@@ -119,7 +132,7 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false, position: "top" as const, align: "center" as const },
-      title: { display: true, text: "Mix Properties Chart" },
+      title: { display: true, text: "Mix Properties Chart", color: legendColor },
       tooltip: {
         callbacks: {
           label: (context: TooltipItem<"bar">) => {
@@ -129,11 +142,12 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
       },
     },
     scales: {
-      x: { grid: { color: GRID_COLOR } },
+      x: { grid: { color: gridColor }, ticks: { color: legendColor } },
       y: {
         beginAtZero: true,
-        title: { display: true, text: qtyToggle },
-        grid: { color: GRID_COLOR },
+        title: { display: true, text: qtyToggle, color: legendColor },
+        grid: { color: gridColor },
+        ticks: { color: legendColor },
       },
     },
   };
