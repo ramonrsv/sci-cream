@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770446915213,
+  "lastUpdate": 1770446937572,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -3635,6 +3635,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 310,
             "range": "± 4",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c874ee249db85d5c84315844dc9c8e5422d794a2",
+          "message": "Overhaul ThemeToggle, into *Select with headlessui\n\nOverhaul `ThemeToggle` into `ThemeSelect`, with a select dropdown using\n@headlessui/react instead of a toggle button. Pass a `useState` with a\ntheme from the main `page.tsx` which the select component sets. Then\nthat `theme` is passed down to `MixPropertiesChart` and `FpdGraph` which\nuse it to select theme-dependent colors, instead of querying `window`.\nThe `useEffect` with a `MutationObserver` can now be removed from these\ncomponents, since a `theme` change will trigger a re-render.",
+          "timestamp": "2026-02-07T00:12:39-05:00",
+          "tree_id": "85ee44f46ad6828ded5f90135ea1ad3fc19b46c4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c874ee249db85d5c84315844dc9c8e5422d794a2"
+        },
+        "date": 1770446936851,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3518,
+            "range": "± 48",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161272,
+            "range": "± 35087",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2007,
+            "range": "± 28",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 159523,
+            "range": "± 833",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 309,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
