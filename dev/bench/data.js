@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770441314675,
+  "lastUpdate": 1770441529828,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -30544,6 +30544,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 29.12,
             "range": "0.56",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ff83b59f388a6f591dd4cbe2650a78d331b4d42c",
+          "message": "Separate color styles in CSS classes, and @variant\n\nSeparate TailwindCSS color utility classes @apply in CSS classes from\nother utility classes, and use `@variant dark {...}` for the Dark theme\ncolors instead of `dark:...`. These changes are in preparation for a\ntheme rework, to organize style elements more clearly and make changes\neasier to see.",
+          "timestamp": "2026-02-06T14:33:08-05:00",
+          "tree_id": "af760e6261126f8c624e1812381d2325434b708b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ff83b59f388a6f591dd4cbe2650a78d331b4d42c"
+        },
+        "date": 1770441529099,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 681.6,
+            "range": "53.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 47.7,
+            "range": "7.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58,
+            "range": "7.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.7,
+            "range": "7.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 41.3,
+            "range": "9.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 168.1,
+            "range": "7.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 47.9,
+            "range": "2.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 52.24,
+            "range": "1.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 31.55,
+            "range": "0.77",
             "unit": "ms"
           }
         ]
