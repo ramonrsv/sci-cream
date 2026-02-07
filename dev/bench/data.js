@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770503392908,
+  "lastUpdate": 1770503413013,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -3851,6 +3851,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 312,
             "range": "± 35",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5aa9b43e00a7b90ee823deedcc57e6999792d1ce",
+          "message": "Remove colors from recipe selection and `MixProps`\n\nUsing colors to identify the main and reference recipes greatly\nrestricts the usage of colors for other UI purposes. As such, remove the\nuse of colors to identify recipes from `RecipeSelection` and\n`MixPropertiesGrid`. In a follow-up it will be removed from `FpdGraph`\nand `MixPropertiesChart` as well, where a stylish color will be used for\nthe main recipe, and gray colors for the references.",
+          "timestamp": "2026-02-07T17:10:29-05:00",
+          "tree_id": "54a6fb9844d5dfa2138464307d44a135f7d057bc",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5aa9b43e00a7b90ee823deedcc57e6999792d1ce"
+        },
+        "date": 1770503411267,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3506,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 162484,
+            "range": "± 5477",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1969,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 161725,
+            "range": "± 759",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 323,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
