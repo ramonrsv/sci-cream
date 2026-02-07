@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770502296354,
+  "lastUpdate": 1770502325139,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -3689,6 +3689,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 309,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "df74ccea845827905d4848d1e484a6fcf53f303f",
+          "message": "Rework various style elements, prep for new theme\n\n* Reduce full page horizontal margin and grid component top margin.\n* Make `.select-input` larger and add larger vertical margins.\n* Rework `.button` style to hide borders until hover, make icon larger,\n  make hover borders rounder, add more x and y spacing, etc.\n* Move drag handle icon all the way to the left of the container.",
+          "timestamp": "2026-02-07T16:55:34-05:00",
+          "tree_id": "0ad89688e3c9a9d6c90ad790fe5f4e9a280396f8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/df74ccea845827905d4848d1e484a6fcf53f303f"
+        },
+        "date": 1770502324137,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3533,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 162242,
+            "range": "± 3339",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1952,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160120,
+            "range": "± 852",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 308,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
