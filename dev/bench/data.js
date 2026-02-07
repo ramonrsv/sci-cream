@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770444980547,
+  "lastUpdate": 1770446555645,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -34697,6 +34697,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.80%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "513d2154d9341e03d5ef4d18a53525021f221335",
+          "message": "Give semantic names to color patterns and use them\n\nGive semantic names to all color patterns used in globals.css and use\nthem instead of default TailwindCSS. This should make it easier to\nsemantically and consistently apply color themes to all components.",
+          "timestamp": "2026-02-06T17:23:33-05:00",
+          "tree_id": "66c4aa5e7066e349d9613e41b3f415a00d30f6c2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/513d2154d9341e03d5ef4d18a53525021f221335"
+        },
+        "date": 1770446554199,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77305,
+            "range": "±1.10%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 730122,
+            "range": "±0.39%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9950,
+            "range": "±2.35%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 605882,
+            "range": "±0.81%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
