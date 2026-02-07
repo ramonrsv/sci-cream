@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770353653779,
+  "lastUpdate": 1770441290932,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -32469,6 +32469,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.80%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ff83b59f388a6f591dd4cbe2650a78d331b4d42c",
+          "message": "Separate color styles in CSS classes, and @variant\n\nSeparate TailwindCSS color utility classes @apply in CSS classes from\nother utility classes, and use `@variant dark {...}` for the Dark theme\ncolors instead of `dark:...`. These changes are in preparation for a\ntheme rework, to organize style elements more clearly and make changes\neasier to see.",
+          "timestamp": "2026-02-06T14:33:08-05:00",
+          "tree_id": "af760e6261126f8c624e1812381d2325434b708b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ff83b59f388a6f591dd4cbe2650a78d331b4d42c"
+        },
+        "date": 1770441290203,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76299,
+            "range": "±1.34%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 703314,
+            "range": "±1.67%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9999,
+            "range": "±2.08%",
+            "unit": "ops/sec",
+            "extra": "80 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 604547,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
