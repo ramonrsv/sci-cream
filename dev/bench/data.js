@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770443510753,
+  "lastUpdate": 1770443518999,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -31921,6 +31921,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 31.04,
             "range": "0.55",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0c13a63a24743cf5b16be716e1c2191263488083",
+          "message": "Dynamically adjust chart colors for dark/... theme\n\n* Pull the color definitions from CSS, via `getComputedStyle` and\n  `getPropertyValue(\"...\")` for the following color definitions:\n    `--color-legend`\n    `--color-grid`\n    `--color-legend-dark`\n    `--color-grid-dark`\n\n* Add a `useEffect` with a `MutationObserver` to `FpdGraph` and\n  `MixPropertiesChart` to trigger a re-render on theme changes.",
+          "timestamp": "2026-02-06T16:45:07-05:00",
+          "tree_id": "089b216975c49d04653b17f6bff8856e6236bbbe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0c13a63a24743cf5b16be716e1c2191263488083"
+        },
+        "date": 1770443518083,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 695.2,
+            "range": "50.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 51.7,
+            "range": "5.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 62.2,
+            "range": "6.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 44.9,
+            "range": "7.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 39.5,
+            "range": "4.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 172.4,
+            "range": "6.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 55.3,
+            "range": "3.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 59.24,
+            "range": "2.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 33.79,
+            "range": "1.34",
             "unit": "ms"
           }
         ]
