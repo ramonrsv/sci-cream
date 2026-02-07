@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770502325139,
+  "lastUpdate": 1770502496032,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -35917,6 +35917,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.79%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "71af5e5df8cfe3ac1419f142dfd4dd58f88f8693",
+          "message": "Add theme-aware style to component scroll bars",
+          "timestamp": "2026-02-07T16:55:41-05:00",
+          "tree_id": "d8ef37e4e9c7dbc55e2588eddc87e1b92cfce220",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/71af5e5df8cfe3ac1419f142dfd4dd58f88f8693"
+        },
+        "date": 1770502495105,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77775,
+            "range": "±0.82%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 726666,
+            "range": "±1.68%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10142,
+            "range": "±2.19%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 613660,
+            "range": "±0.71%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
