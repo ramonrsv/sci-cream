@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { Line } from "react-chartjs-2";
 import { GripVertical } from "lucide-react";
 import {
@@ -19,20 +18,11 @@ import {
 import { Recipe, isRecipeEmpty } from "./recipe";
 import { getLegendColor, getGridColor, getRecipeChartColor } from "@/lib/styles/colors";
 import { COMPONENT_ACTION_ICON_SIZE } from "./page";
+import { Theme } from "@/lib/ui/theme-select";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
 
-export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
-  // Track theme changes to force re-render
-  // @todo Replace with a top-level theme state
-  const [, setThemeKey] = useState(0);
-
-  useEffect(() => {
-    const observer = new MutationObserver(() => setThemeKey((prev) => prev + 1));
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    return () => observer.disconnect();
-  }, []);
-
+export function FpdGraph({ recipes: allRecipes, theme }: { recipes: Recipe[]; theme: Theme }) {
   // Only display the main recipe and non-empty reference recipes
   const recipes = allRecipes.filter((recipe) => recipe.index == 0 || !isRecipeEmpty(recipe));
 
@@ -70,8 +60,8 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
     }),
   };
 
-  const gridColor = getGridColor();
-  const legendColor = getLegendColor();
+  const gridColor = getGridColor(theme);
+  const legendColor = getLegendColor(theme);
 
   const labelProps = {
     hidden: false,

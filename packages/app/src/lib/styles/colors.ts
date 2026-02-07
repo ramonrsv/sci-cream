@@ -1,4 +1,4 @@
-import { isDarkMode } from "../ui/theme-toggle";
+import { Theme } from "../ui/theme-select";
 
 export const RECIPE_COLOR_BY_IDX = [
   "rgba(255, 105, 45, 1)", // Warm orange
@@ -15,22 +15,22 @@ export const CHART_OPACITY = 0.95;
 const SSR_DEFAULT_LEGEND_COLOR = "rgba(64, 64, 64, 1)";
 const SSR_DEFAULT_GRID_COLOR = "rgba(200, 200, 200, 1)";
 
-export function getLegendColor(): string {
+export function getLegendColor(theme: Theme): string {
   if (typeof window === "undefined") return SSR_DEFAULT_LEGEND_COLOR;
 
   const styles = window.getComputedStyle(document.documentElement);
 
-  return isDarkMode()
+  return theme === Theme.Dark
     ? styles.getPropertyValue("--color-legend-dark")
     : styles.getPropertyValue("--color-legend");
 }
 
-export function getGridColor(): string {
+export function getGridColor(theme: Theme): string {
   if (typeof window === "undefined") return SSR_DEFAULT_GRID_COLOR;
 
   const styles = window.getComputedStyle(document.documentElement);
 
-  return isDarkMode()
+  return theme === Theme.Dark
     ? styles.getPropertyValue("--color-grid-dark")
     : styles.getPropertyValue("--color-grid");
 }

@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { GripVertical } from "lucide-react";
 import { Bar } from "react-chartjs-2";
 import {
@@ -20,6 +20,7 @@ import { DEFAULT_SELECTED_PROPERTIES } from "./properties";
 import { applyQtyToggle, formatCompositionValue } from "../lib/ui/comp-values";
 import { getGridColor, getLegendColor, getRecipeChartColor } from "../lib/styles/colors";
 import { COMPONENT_ACTION_ICON_SIZE } from "./page";
+import { Theme } from "@/lib/ui/theme-select";
 
 import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
 
@@ -45,21 +46,17 @@ export function getPropKeys(): PropKey[] {
   );
 }
 
-export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] }) {
+export function MixPropertiesChart({
+  recipes: allRecipes,
+  theme,
+}: {
+  recipes: Recipe[];
+  theme: Theme;
+}) {
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
 
   const qtyToggle = QtyToggle.Percentage;
-
-  // Track theme changes to force re-render
-  // @todo Replace with a top-level theme state
-  const [, setThemeKey] = useState(0);
-
-  useEffect(() => {
-    const observer = new MutationObserver(() => setThemeKey((prev) => prev + 1));
-    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
-    return () => observer.disconnect();
-  }, []);
 
   const isPropEmpty = (prop_key: PropKey) => {
     for (const recipe of recipes) {
@@ -107,8 +104,8 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
   const enabledProps = getEnabledProps();
   const labels = enabledProps.map((prop_key) => prop_key_as_med_str(prop_key));
 
-  const gridColor = getGridColor();
-  const legendColor = getLegendColor();
+  const gridColor = getGridColor(theme);
+  const legendColor = getLegendColor(theme);
 
   const chartData = {
     labels,

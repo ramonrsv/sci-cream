@@ -11,7 +11,7 @@ import {
   new_ingredient_database_seeded_from_specs,
 } from "@workspace/sci-cream";
 
-import { ThemeToggle } from "../lib/ui/theme-toggle";
+import { ThemeSelect, Theme, getInitialTheme } from "../lib/ui/theme-select";
 import { RecipeGrid, makeEmptyRecipeContext, makeEmptyRecipeResources } from "./recipe";
 import { IngredientCompositionGrid } from "./composition";
 import { MixPropertiesGrid } from "./properties";
@@ -37,6 +37,7 @@ export const STD_COMPONENT_H_PX = 592;
 const REACT_GRID_COLS = 24;
 
 export default function Home() {
+  const [theme, setTheme] = useState<Theme>(() => getInitialTheme());
   const { width, containerRef, mounted } = useContainerWidth();
 
   const recipeCtxState = useState(() => makeEmptyRecipeContext());
@@ -112,7 +113,7 @@ export default function Home() {
         Ice Cream Recipe Calculator
       </h1>
       <div className="fixed top-5 right-5 z-50">
-        <ThemeToggle />
+        <ThemeSelect themeState={[theme, setTheme]} />
       </div>
       <div ref={containerRef}>
         {mounted && (
@@ -129,8 +130,8 @@ export default function Home() {
             <div key="recipe">{<RecipeGrid props={recipeGridProps} />}</div>
             <div key="properties">{<MixPropertiesGrid recipes={recipes} />}</div>
             <div key="composition">{<IngredientCompositionGrid recipes={recipes} />}</div>
-            <div key="props-chart">{<MixPropertiesChart recipes={recipes} />}</div>
-            <div key="fpd-graph">{<FpdGraph recipes={recipes} />}</div>
+            <div key="props-chart">{<MixPropertiesChart recipes={recipes} theme={theme} />}</div>
+            <div key="fpd-graph">{<FpdGraph recipes={recipes} theme={theme} />}</div>
           </ReactGridLayout>
         )}
       </div>

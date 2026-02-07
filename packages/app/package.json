@@ -23,6 +23,7 @@
     "seed-db": "npx drizzle-kit push && pnpm tsx ./src/lib/db/seed.ts"
   },
   "dependencies": {
+    "@headlessui/react": "^2.2.9",
     "@workspace/sci-cream": "workspace:*",
     "chart.js": "^4.5.1",
     "dotenv": "^17.2.3",
