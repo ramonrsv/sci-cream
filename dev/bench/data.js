@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770447174594,
+  "lastUpdate": 1770502296354,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -35811,6 +35811,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.85%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "df74ccea845827905d4848d1e484a6fcf53f303f",
+          "message": "Rework various style elements, prep for new theme\n\n* Reduce full page horizontal margin and grid component top margin.\n* Make `.select-input` larger and add larger vertical margins.\n* Rework `.button` style to hide borders until hover, make icon larger,\n  make hover borders rounder, add more x and y spacing, etc.\n* Move drag handle icon all the way to the left of the container.",
+          "timestamp": "2026-02-07T16:55:34-05:00",
+          "tree_id": "0ad89688e3c9a9d6c90ad790fe5f4e9a280396f8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/df74ccea845827905d4848d1e484a6fcf53f303f"
+        },
+        "date": 1770502295355,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75614,
+            "range": "±1.06%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 729950,
+            "range": "±0.67%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10108,
+            "range": "±1.95%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 601633,
+            "range": "±0.79%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
