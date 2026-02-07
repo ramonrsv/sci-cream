@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770443060972,
+  "lastUpdate": 1770443242272,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -33583,6 +33583,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.98%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0c13a63a24743cf5b16be716e1c2191263488083",
+          "message": "Dynamically adjust chart colors for dark/... theme\n\n* Pull the color definitions from CSS, via `getComputedStyle` and\n  `getPropertyValue(\"...\")` for the following color definitions:\n    `--color-legend`\n    `--color-grid`\n    `--color-legend-dark`\n    `--color-grid-dark`\n\n* Add a `useEffect` with a `MutationObserver` to `FpdGraph` and\n  `MixPropertiesChart` to trigger a re-render on theme changes.",
+          "timestamp": "2026-02-06T16:45:07-05:00",
+          "tree_id": "089b216975c49d04653b17f6bff8856e6236bbbe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0c13a63a24743cf5b16be716e1c2191263488083"
+        },
+        "date": 1770443241411,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77229,
+            "range": "±1.54%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 739605,
+            "range": "±0.31%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10176,
+            "range": "±2.08%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 609869,
+            "range": "±0.99%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
