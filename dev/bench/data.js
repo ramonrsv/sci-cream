@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770447171337,
+  "lastUpdate": 1770447174594,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -33436,6 +33436,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 32.51,
             "range": "0.71",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c874ee249db85d5c84315844dc9c8e5422d794a2",
+          "message": "Overhaul ThemeToggle, into *Select with headlessui\n\nOverhaul `ThemeToggle` into `ThemeSelect`, with a select dropdown using\n@headlessui/react instead of a toggle button. Pass a `useState` with a\ntheme from the main `page.tsx` which the select component sets. Then\nthat `theme` is passed down to `MixPropertiesChart` and `FpdGraph` which\nuse it to select theme-dependent colors, instead of querying `window`.\nThe `useEffect` with a `MutationObserver` can now be removed from these\ncomponents, since a `theme` change will trigger a re-render.",
+          "timestamp": "2026-02-07T00:12:39-05:00",
+          "tree_id": "85ee44f46ad6828ded5f90135ea1ad3fc19b46c4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c874ee249db85d5c84315844dc9c8e5422d794a2"
+        },
+        "date": 1770447173563,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 23.365,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 678.7,
+            "range": "57.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 50.5,
+            "range": "9.25",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 59.2,
+            "range": "6.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.6,
+            "range": "6.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 39.8,
+            "range": "5.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 167.4,
+            "range": "7.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 51,
+            "range": "5.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 54.86,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 32.55,
+            "range": "0.65",
             "unit": "ms"
           }
         ]
