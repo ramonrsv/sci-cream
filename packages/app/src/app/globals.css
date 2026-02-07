@@ -123,7 +123,7 @@ body {
 }
 
 .select-input {
-  @apply rounded border text-sm;
+  @apply my-1 rounded-lg border px-0.5 py-0.5;
 
   @apply border-brd-str-lt bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt hover:bg-hov-lt;
   @variant dark {
@@ -131,13 +131,26 @@ body {
   }
 }
 
-.button {
+.action-button {
+  @apply rounded-xl border border-transparent text-sm leading-tight hover:border;
+
+  @apply bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt hover:bg-hov-lt active:bg-act-lt;
+  @variant dark {
+    @apply bg-surface-dk text-txt-prim-dk hover:border-brd-hov-dk hover:bg-hov-dk active:bg-act-dk;
+  }
+}
+
+.theme-button {
   @apply rounded border text-sm leading-tight;
 
   @apply border-brd-str-lt bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt hover:bg-hov-lt active:bg-act-lt;
   @variant dark {
     @apply border-brd-str-dk bg-surface-dk text-txt-prim-dk hover:border-brd-hov-dk hover:bg-hov-dk active:bg-act-dk;
   }
+}
+
+.drag-handle {
+  @apply my-2 mr-0.75 -ml-1 cursor-move;
 }
 
 /* Grid Components */

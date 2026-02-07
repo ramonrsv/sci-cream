@@ -9,7 +9,7 @@ import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
 import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "../lib/util";
 import { getRecipeCompBgColor } from "@/lib/styles/colors";
-import { COMPONENT_ACTION_ICON_SIZE } from "./page";
+import { DRAG_HANDLE_ICON_SIZE } from "./page";
 
 import {
   CompKey,
@@ -114,10 +114,7 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
     <div id="mix-properties-grid" className="h-full w-full">
       <div className="grid-component h-[calc(100%-14px)]">
         <div className="flex items-center">
-          <GripVertical
-            size={COMPONENT_ACTION_ICON_SIZE}
-            className="drag-handle mx-0.75 mt-px cursor-move"
-          />
+          <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
           <KeySelection
             qtyToggleComponent={{
               supportedQtyToggles: [QtyToggle.Quantity, QtyToggle.Percentage],

@@ -21,7 +21,9 @@ import { FpdGraph } from "./fpd-graph";
 export const MAX_RECIPES = 3;
 export const RECIPE_TOTAL_ROWS = 20;
 
-export const COMPONENT_ACTION_ICON_SIZE = 17;
+export const DRAG_HANDLE_ICON_SIZE = 17;
+export const COMPONENT_ACTION_ICON_SIZE = 20;
+export const GRAPH_TITLE_FONT_SIZE = 15;
 
 // These values are carefully chosen so that the fixed height components (RecipeGrid, IngCompGrid)
 // and the grid container heights match exactly, so that there is enough margin after the components
@@ -108,11 +110,11 @@ export default function Home() {
       layout[idx] = { ...item, x: 0, y: idx * h, w: fullW, minW: undefined, maxW: undefined };
 
   return (
-    <main className={`min-h-screen ${isMobileViewport ? "px-2" : "px-8"}`}>
-      <h1 className={`pt-5 pb-2 ${isMobileViewport ? "pl-2" : "pl-8"} text-2xl font-bold`}>
+    <main className="min-h-screen">
+      <h1 className={`pt-4 ${isMobileViewport ? "pl-2" : "pl-8"} text-2xl font-bold`}>
         Ice Cream Recipe Calculator
       </h1>
-      <div className="fixed top-5 right-5 z-50">
+      <div className="fixed top-4 right-5 z-50">
         <ThemeSelect themeState={[theme, setTheme]} />
       </div>
       <div ref={containerRef}>

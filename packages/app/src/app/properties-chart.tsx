@@ -19,7 +19,7 @@ import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/ke
 import { DEFAULT_SELECTED_PROPERTIES } from "./properties";
 import { applyQtyToggle, formatCompositionValue } from "../lib/ui/comp-values";
 import { getGridColor, getLegendColor, getRecipeChartColor } from "../lib/styles/colors";
-import { COMPONENT_ACTION_ICON_SIZE } from "./page";
+import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "./page";
 import { Theme } from "@/lib/ui/theme-select";
 
 import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
@@ -129,7 +129,12 @@ export function MixPropertiesChart({
     maintainAspectRatio: false,
     plugins: {
       legend: { display: false, position: "top" as const, align: "center" as const },
-      title: { display: true, text: "Mix Properties Chart", color: legendColor },
+      title: {
+        display: true,
+        text: "Mix Properties Chart",
+        color: legendColor,
+        font: { size: GRAPH_TITLE_FONT_SIZE },
+      },
       tooltip: {
         callbacks: {
           label: (context: TooltipItem<"bar">) => {
@@ -152,10 +157,7 @@ export function MixPropertiesChart({
   return (
     <div id="mix-properties-chart" className="grid-component relative h-full w-full">
       <div className="flex items-center">
-        <GripVertical
-          size={COMPONENT_ACTION_ICON_SIZE}
-          className="drag-handle mx-0.75 mt-px cursor-move"
-        />
+        <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
         <KeySelection
           keyFilterState={propsFilterState}
           selectedKeysState={selectedPropsState}
@@ -163,7 +165,7 @@ export function MixPropertiesChart({
           key_as_med_str={prop_key_as_med_str}
         />
       </div>
-      <div className="component-inner-border h-[calc(100%-24px)] p-3">
+      <div className="component-inner-border h-[calc(100%-30px)] p-3">
         <Bar data={chartData} options={options} />
       </div>
     </div>

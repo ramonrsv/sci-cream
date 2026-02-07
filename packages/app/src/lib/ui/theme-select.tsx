@@ -89,7 +89,7 @@ export function ThemeSelect({
   return (
     <Listbox value={themeConfig} onChange={applyThemeConfig}>
       <div className="relative">
-        <ListboxButton className="button flex items-center gap-2 rounded-full! px-3.5 py-2">
+        <ListboxButton className="theme-button flex items-center gap-2 rounded-full! px-3.5 py-2">
           <selectedOption.icon className="h-5 w-5" />
         </ListboxButton>
         <ListboxOptions className="border-brd-str-lt bg-surface-lt dark:border-brd-str-dk dark:bg-surface-dk absolute right-0 z-50 mt-1 w-32 rounded-md border py-1 shadow-lg">

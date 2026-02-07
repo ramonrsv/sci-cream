@@ -11,6 +11,7 @@ import {
   RECIPE_TOTAL_ROWS,
   STD_COMPONENT_H_PX,
   COMPONENT_ACTION_ICON_SIZE,
+  DRAG_HANDLE_ICON_SIZE,
 } from "./page";
 
 import {
@@ -373,7 +374,7 @@ export function RecipeGrid({
       <div className="grid-component h-[calc(100%-36px)]">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
-            <GripVertical size={iconSize} className="drag-handle mx-0.75 mt-px cursor-move" />
+            <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
             <RecipeSelection
               allRecipes={allRecipes}
               enabledRecipeIndices={getRecipeIndices(allRecipes)}
@@ -399,7 +400,12 @@ export function RecipeGrid({
                 title: "Clear recipe",
               },
             ].map(({ label, action, title }, idx) => (
-              <button key={idx} onClick={action} title={title} className="button mx-0.75 mt-px">
+              <button
+                key={idx}
+                onClick={action}
+                title={title}
+                className="action-button px-1 py-0.75"
+              >
                 {label}
               </button>
             ))}

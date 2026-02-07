@@ -17,7 +17,7 @@ import {
 
 import { Recipe, isRecipeEmpty } from "./recipe";
 import { getLegendColor, getGridColor, getRecipeChartColor } from "@/lib/styles/colors";
-import { COMPONENT_ACTION_ICON_SIZE } from "./page";
+import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "./page";
 import { Theme } from "@/lib/ui/theme-select";
 
 ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
@@ -90,7 +90,12 @@ export function FpdGraph({ recipes: allRecipes, theme }: { recipes: Recipe[]; th
           },
         },
       },
-      title: { display: true, text: "FPD Graph", color: legendColor },
+      title: {
+        display: true,
+        text: "FPD Graph",
+        color: legendColor,
+        font: { size: GRAPH_TITLE_FONT_SIZE },
+      },
       tooltip: {
         callbacks: {
           label: function (context: TooltipItem<"line">) {
@@ -139,12 +144,9 @@ export function FpdGraph({ recipes: allRecipes, theme }: { recipes: Recipe[]; th
   return (
     <div id="fpd-graph" className="grid-component relative h-full w-full">
       <div className="flex items-center">
-        <GripVertical
-          size={COMPONENT_ACTION_ICON_SIZE}
-          className="drag-handle mx-0.75 mt-1 mb-0.75 cursor-move"
-        />
+        <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
       </div>
-      <div className="component-inner-border h-[calc(100%-24px)] p-3">
+      <div className="component-inner-border h-[calc(100%-30px)] p-3">
         <Line data={graphData} options={options} />
       </div>
     </div>

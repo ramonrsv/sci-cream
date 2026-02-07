@@ -8,7 +8,7 @@ import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/ke
 import { RecipeSelection } from "@/lib/ui/recipe-selection";
 import { applyQtyToggleAndFormat, formatCompositionValue } from "../lib/ui/comp-values";
 import { isCompKeyQuantity } from "../lib/sci-cream/sci-cream";
-import { STD_COMPONENT_H_PX, COMPONENT_ACTION_ICON_SIZE } from "./page";
+import { STD_COMPONENT_H_PX, DRAG_HANDLE_ICON_SIZE } from "./page";
 
 import { CompKey, comp_key_as_med_str, getWasmEnums } from "@workspace/sci-cream";
 
@@ -93,10 +93,7 @@ export function IngredientCompositionGrid({ recipes: allRecipes }: { recipes: Re
     >
       <div className="grid-component h-[calc(100%-14px)]">
         <div className="flex items-center">
-          <GripVertical
-            size={COMPONENT_ACTION_ICON_SIZE}
-            className="drag-handle mx-0.75 mt-px cursor-move"
-          />
+          <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
           {(recipes.length > 1 || currentRecipeIdx !== 0) && (
             <RecipeSelection
               allRecipes={allRecipes}
