@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770441540561,
+  "lastUpdate": 1770442793298,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -33024,6 +33024,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 604547,
             "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "68e77d6e8d5aeeed3313fc6b40cf275829dfafbf",
+          "message": "Introduce new Dark/Light themes, only change color",
+          "timestamp": "2026-02-06T15:12:32-05:00",
+          "tree_id": "30c5ff997df876c48adee495833b541a6b7c7e88",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/68e77d6e8d5aeeed3313fc6b40cf275829dfafbf"
+        },
+        "date": 1770442791767,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77173,
+            "range": "±0.96%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 723597,
+            "range": "±0.80%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10097,
+            "range": "±2.16%",
+            "unit": "ops/sec",
+            "extra": "81 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 606364,
+            "range": "±0.98%",
             "unit": "ops/sec",
             "extra": "92 samples"
           }
