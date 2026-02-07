@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770502756386,
+  "lastUpdate": 1770502993639,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -36925,6 +36925,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.71%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2af5fd9e819e186f190645644d7da38981ae46d6",
+          "message": "Add new color themes based on Monarch Money",
+          "timestamp": "2026-02-07T16:55:41-05:00",
+          "tree_id": "9dcc9c4e144f1164f7116976a7e18653bd967bfd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2af5fd9e819e186f190645644d7da38981ae46d6"
+        },
+        "date": 1770502992551,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 74872,
+            "range": "±1.80%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 702311,
+            "range": "±1.56%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10141,
+            "range": "±2.12%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 604530,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
