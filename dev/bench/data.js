@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770443242272,
+  "lastUpdate": 1770443268197,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -3473,6 +3473,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 306,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0c13a63a24743cf5b16be716e1c2191263488083",
+          "message": "Dynamically adjust chart colors for dark/... theme\n\n* Pull the color definitions from CSS, via `getComputedStyle` and\n  `getPropertyValue(\"...\")` for the following color definitions:\n    `--color-legend`\n    `--color-grid`\n    `--color-legend-dark`\n    `--color-grid-dark`\n\n* Add a `useEffect` with a `MutationObserver` to `FpdGraph` and\n  `MixPropertiesChart` to trigger a re-render on theme changes.",
+          "timestamp": "2026-02-06T16:45:07-05:00",
+          "tree_id": "089b216975c49d04653b17f6bff8856e6236bbbe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0c13a63a24743cf5b16be716e1c2191263488083"
+        },
+        "date": 1770443267477,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3566,
+            "range": "± 50",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 162311,
+            "range": "± 1083",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1988,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160711,
+            "range": "± 1404",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 314,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
