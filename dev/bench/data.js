@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770503259012,
+  "lastUpdate": 1770503392908,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -37482,6 +37482,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.77%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5aa9b43e00a7b90ee823deedcc57e6999792d1ce",
+          "message": "Remove colors from recipe selection and `MixProps`\n\nUsing colors to identify the main and reference recipes greatly\nrestricts the usage of colors for other UI purposes. As such, remove the\nuse of colors to identify recipes from `RecipeSelection` and\n`MixPropertiesGrid`. In a follow-up it will be removed from `FpdGraph`\nand `MixPropertiesChart` as well, where a stylish color will be used for\nthe main recipe, and gray colors for the references.",
+          "timestamp": "2026-02-07T17:10:29-05:00",
+          "tree_id": "54a6fb9844d5dfa2138464307d44a135f7d057bc",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5aa9b43e00a7b90ee823deedcc57e6999792d1ce"
+        },
+        "date": 1770503391391,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77481,
+            "range": "±0.87%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 694319,
+            "range": "±1.74%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10189,
+            "range": "±2.08%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 608395,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
