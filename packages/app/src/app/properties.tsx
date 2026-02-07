@@ -129,7 +129,7 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
         <div
           ref={containerRef}
           className={`component-inner-border min-w-55 overflow-y-auto whitespace-nowrap`}
-          style={{ height: `calc(100% - ${hasHorizontalScroll ? 6 : 21}px)` }}
+          style={{ height: `calc(100% - ${hasHorizontalScroll ? 11 : 21}px)` }}
         >
           <table className="relative -top-px">
             <thead>

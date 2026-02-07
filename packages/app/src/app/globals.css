@@ -178,3 +178,13 @@ body {
     @apply border-brd-sub-dk;
   }
 }
+
+/* Scrollbar Styles */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-brd-str-lt) var(--color-surface-lt);
+
+  @variant dark {
+    scrollbar-color: var(--color-brd-str-dk) var(--color-surface-dk);
+  }
+}
