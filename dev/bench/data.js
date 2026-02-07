@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770446555645,
+  "lastUpdate": 1770446577139,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -3581,6 +3581,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 309,
             "range": "± 9",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "513d2154d9341e03d5ef4d18a53525021f221335",
+          "message": "Give semantic names to color patterns and use them\n\nGive semantic names to all color patterns used in globals.css and use\nthem instead of default TailwindCSS. This should make it easier to\nsemantically and consistently apply color themes to all components.",
+          "timestamp": "2026-02-06T17:23:33-05:00",
+          "tree_id": "66c4aa5e7066e349d9613e41b3f415a00d30f6c2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/513d2154d9341e03d5ef4d18a53525021f221335"
+        },
+        "date": 1770446576384,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3569,
+            "range": "± 139",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161039,
+            "range": "± 1310",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2051,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 159911,
+            "range": "± 885",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 310,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
