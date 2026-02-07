@@ -8,7 +8,6 @@ import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/ke
 import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
 import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "../lib/util";
-import { getRecipeCompBgColor } from "@/lib/styles/colors";
 import { DRAG_HANDLE_ICON_SIZE } from "./page";
 
 import {
@@ -137,13 +136,7 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
                 <th className="table-header w-full px-1.25">Property</th>
                 {/* Recipe Names */}
                 {recipes.map((recipe) => (
-                  <th
-                    key={recipe.index}
-                    className="table-header px-1.25 text-center"
-                    {...(recipes.length > 1
-                      ? { style: { backgroundColor: getRecipeCompBgColor(recipe.index) } }
-                      : {})}
-                  >
+                  <th key={recipe.index} className="table-header px-1.25 text-center">
                     {recipe.name}
                   </th>
                 ))}
