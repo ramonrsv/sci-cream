@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770446830247,
+  "lastUpdate": 1770446915213,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -35254,6 +35254,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.81%",
             "unit": "ops/sec",
             "extra": "89 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c874ee249db85d5c84315844dc9c8e5422d794a2",
+          "message": "Overhaul ThemeToggle, into *Select with headlessui\n\nOverhaul `ThemeToggle` into `ThemeSelect`, with a select dropdown using\n@headlessui/react instead of a toggle button. Pass a `useState` with a\ntheme from the main `page.tsx` which the select component sets. Then\nthat `theme` is passed down to `MixPropertiesChart` and `FpdGraph` which\nuse it to select theme-dependent colors, instead of querying `window`.\nThe `useEffect` with a `MutationObserver` can now be removed from these\ncomponents, since a `theme` change will trigger a re-render.",
+          "timestamp": "2026-02-07T00:12:39-05:00",
+          "tree_id": "85ee44f46ad6828ded5f90135ea1ad3fc19b46c4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c874ee249db85d5c84315844dc9c8e5422d794a2"
+        },
+        "date": 1770446913308,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76163,
+            "range": "±1.02%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 711364,
+            "range": "±1.41%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9912,
+            "range": "±2.12%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 606829,
+            "range": "±0.85%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
