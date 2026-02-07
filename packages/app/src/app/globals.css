@@ -10,42 +10,47 @@
   --font-mono: var(--font-geist-mono);
 
   /* Semantic color variables */
-  --color-bg-page-light: var(--color-gray-50);
-  --color-bg-page-dark: var(--color-gray-900);
+  --color-bg-page-light: rgb(246, 245, 243);
+  --color-bg-page-dark: rgb(25, 25, 23);
 
-  --color-surface-light: white;
-  --color-surface-dark: var(--color-gray-800);
+  --color-surface-light: rgb(255, 255, 255);
+  --color-surface-dark: rgb(34, 34, 32);
 
-  --color-text-primary-light: var(--color-gray-800);
-  --color-text-primary-dark: var(--color-gray-100);
+  --color-text-primary-light: rgb(33, 32, 28);
+  --color-text-primary-dark: rgb(255, 255, 255);
 
-  --color-text-secondary-light: var(--color-gray-700);
-  --color-text-secondary-dark: var(--color-gray-200);
+  --color-text-secondary-light: rgb(118, 116, 115);
+  --color-text-secondary-dark: rgb(152, 151, 146);
 
-  --color-border-subtle-light: var(--color-gray-200);
-  --color-border-subtle-dark: var(--color-gray-700);
+  --color-border-light: rgb(233, 229, 226);
+  --color-border-dark: rgb(52, 51, 47);
 
-  --color-border-strong-light: var(--color-gray-300);
-  --color-border-strong-dark: var(--color-gray-600);
+  --color-border-hover-light: rgb(236, 232, 229);
+  --color-border-hover-dark: rgb(73, 72, 70);
 
-  --color-border-hover-light: var(--color-gray-400);
-  --color-border-hover-dark: var(--color-gray-500);
+  --color-bg-hover-light: rgb(220, 217, 214);
+  --color-bg-hover-dark: rgb(42, 42, 40);
 
-  --color-bg-hover-light: var(--color-gray-50);
-  --color-bg-hover-dark: var(--color-gray-700);
-
-  --color-bg-active-light: var(--color-gray-100);
-  --color-bg-active-dark: var(--color-gray-700);
+  --color-bg-active-light: rgb(246, 245, 243);
+  --color-bg-active-dark: rgb(25, 25, 24);
 
   --color-focus-light: var(--color-blue-500);
   --color-focus-dark: var(--color-blue-400);
 
-  /* Chart colors */
-  --color-legend: var(--color-gray-800);
-  --color-grid: var(--color-gray-200);
+  /* Graph colors */
+  --color-graph-orange: rgb(255, 105, 45);
+  --color-graph-green: rgb(49, 164, 109);
+  --color-graph-blue: rgb(0, 162, 200);
+  --color-graph-gray: rgb(144, 140, 137);
+  --color-graph-green-dull: rgb(37, 130, 89);
+  --color-graph-red-dull: rgb(208, 43, 48);
 
-  --color-legend-dark: var(--color-gray-100);
-  --color-grid-dark: var(--color-gray-700);
+  /* Chart colors */
+  --color-legend: var(--color-text-primary-light);
+  --color-grid: var(--color-border-light);
+
+  --color-legend-dark: var(--color-text-primary-dark);
+  --color-grid-dark: var(--color-border-dark);
 
   /* Short names */
   --color-page-lt: var(--color-bg-page-light);
@@ -56,10 +61,8 @@
   --color-txt-prim-dk: var(--color-text-primary-dark);
   --color-txt-sec-lt: var(--color-text-secondary-light);
   --color-txt-sec-dk: var(--color-text-secondary-dark);
-  --color-brd-sub-lt: var(--color-border-subtle-light);
-  --color-brd-sub-dk: var(--color-border-subtle-dark);
-  --color-brd-str-lt: var(--color-border-strong-light);
-  --color-brd-str-dk: var(--color-border-strong-dark);
+  --color-brd-lt: var(--color-border-light);
+  --color-brd-dk: var(--color-border-dark);
   --color-brd-hov-lt: var(--color-border-hover-light);
   --color-brd-hov-dk: var(--color-border-hover-dark);
   --color-hov-lt: var(--color-bg-hover-light);
@@ -83,18 +86,18 @@ body {
 .table-header {
   @apply border text-sm font-semibold;
 
-  @apply border-brd-str-lt bg-surface-lt text-txt-prim-lt;
+  @apply border-brd-lt bg-surface-lt text-txt-prim-lt;
   @variant dark {
-    @apply border-brd-str-dk bg-surface-dk text-txt-prim-dk;
+    @apply border-brd-dk bg-surface-dk text-txt-prim-dk;
   }
 }
 
 .table-inner-cell {
   @apply border text-sm;
 
-  @apply border-brd-sub-lt bg-surface-lt text-txt-sec-lt;
+  @apply border-brd-lt bg-surface-lt text-txt-sec-lt;
   @variant dark {
-    @apply border-brd-sub-dk bg-surface-dk text-txt-sec-dk;
+    @apply border-brd-dk bg-surface-dk text-txt-sec-dk;
   }
 }
 
@@ -116,36 +119,36 @@ body {
 .popup {
   @apply rounded-md border text-sm;
 
-  @apply border-brd-sub-lt bg-surface-lt text-txt-prim-lt;
+  @apply border-brd-lt bg-surface-lt text-txt-prim-lt;
   @variant dark {
-    @apply border-brd-sub-dk bg-surface-dk text-txt-prim-dk;
+    @apply border-brd-dk bg-surface-dk text-txt-prim-dk;
   }
 }
 
 .select-input {
   @apply my-1 rounded-lg border px-0.5 py-0.5;
 
-  @apply border-brd-str-lt bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt hover:bg-hov-lt;
+  @apply border-brd-lt bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt;
   @variant dark {
-    @apply border-brd-str-dk bg-surface-dk text-txt-prim-dk hover:border-brd-hov-dk hover:bg-hov-dk;
+    @apply border-brd-dk bg-surface-dk text-txt-prim-dk hover:border-brd-hov-dk;
   }
 }
 
 .action-button {
   @apply rounded-xl border border-transparent text-sm leading-tight hover:border;
 
-  @apply bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt hover:bg-hov-lt active:bg-act-lt;
+  @apply bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt active:bg-act-lt;
   @variant dark {
-    @apply bg-surface-dk text-txt-prim-dk hover:border-brd-hov-dk hover:bg-hov-dk active:bg-act-dk;
+    @apply bg-surface-dk text-txt-prim-dk hover:border-brd-hov-dk active:bg-act-dk;
   }
 }
 
 .theme-button {
   @apply rounded border text-sm leading-tight;
 
-  @apply border-brd-str-lt bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt hover:bg-hov-lt active:bg-act-lt;
+  @apply border-brd-lt bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt active:bg-act-lt;
   @variant dark {
-    @apply border-brd-str-dk bg-surface-dk text-txt-prim-dk hover:border-brd-hov-dk hover:bg-hov-dk active:bg-act-dk;
+    @apply border-brd-dk bg-surface-dk text-txt-prim-dk hover:border-brd-hov-dk active:bg-act-dk;
   }
 }
 
@@ -155,36 +158,36 @@ body {
 
 /* Grid Components */
 .grid-component {
-  @apply rounded-lg border;
+  @apply rounded-lg border border-transparent;
 
-  @apply border-brd-sub-lt bg-surface-lt;
+  @apply bg-surface-lt;
   @variant dark {
-    @apply border-brd-sub-dk bg-surface-dk;
+    @apply bg-surface-dk;
   }
 }
 
 .component-inner-border-color {
-  @apply border-brd-sub-lt;
+  @apply border-brd-lt;
   @variant dark {
-    @apply border-brd-sub-dk;
+    @apply border-brd-dk;
   }
 }
 
 .component-inner-border {
   @apply rounded-md border-2;
 
-  @apply border-brd-sub-lt;
+  @apply border-brd-lt;
   @variant dark {
-    @apply border-brd-sub-dk;
+    @apply border-brd-dk;
   }
 }
 
 /* Scrollbar Styles */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-brd-str-lt) var(--color-surface-lt);
+  scrollbar-color: var(--color-brd-lt) var(--color-surface-lt);
 
   @variant dark {
-    scrollbar-color: var(--color-brd-str-dk) var(--color-surface-dk);
+    scrollbar-color: var(--color-brd-dk) var(--color-surface-dk);
   }
 }
