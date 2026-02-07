@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770502993639,
+  "lastUpdate": 1770503019014,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -3797,6 +3797,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 310,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2af5fd9e819e186f190645644d7da38981ae46d6",
+          "message": "Add new color themes based on Monarch Money",
+          "timestamp": "2026-02-07T16:55:41-05:00",
+          "tree_id": "9dcc9c4e144f1164f7116976a7e18653bd967bfd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2af5fd9e819e186f190645644d7da38981ae46d6"
+        },
+        "date": 1770503018042,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3554,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161945,
+            "range": "± 1060",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1967,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160555,
+            "range": "± 35167",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 312,
+            "range": "± 35",
             "unit": "ns/iter"
           }
         ]
