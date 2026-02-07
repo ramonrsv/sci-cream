@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770502551824,
+  "lastUpdate": 1770502565341,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -33995,6 +33995,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 32.55,
             "range": "0.65",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "df74ccea845827905d4848d1e484a6fcf53f303f",
+          "message": "Rework various style elements, prep for new theme\n\n* Reduce full page horizontal margin and grid component top margin.\n* Make `.select-input` larger and add larger vertical margins.\n* Rework `.button` style to hide borders until hover, make icon larger,\n  make hover borders rounder, add more x and y spacing, etc.\n* Move drag handle icon all the way to the left of the container.",
+          "timestamp": "2026-02-07T16:55:34-05:00",
+          "tree_id": "0ad89688e3c9a9d6c90ad790fe5f4e9a280396f8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/df74ccea845827905d4848d1e484a6fcf53f303f"
+        },
+        "date": 1770502564397,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.695,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 662.4,
+            "range": "53.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48.8,
+            "range": "10.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 61.3,
+            "range": "7.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.3,
+            "range": "5.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 38.7,
+            "range": "4.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 183.5,
+            "range": "10.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 46.5,
+            "range": "2.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 51.77,
+            "range": "1.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 32.19,
+            "range": "0.70",
             "unit": "ms"
           }
         ]
