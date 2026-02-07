@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770441290932,
+  "lastUpdate": 1770441314675,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -3364,6 +3364,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "sweetener_spec_into_composition",
             "value": 308,
+            "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ff83b59f388a6f591dd4cbe2650a78d331b4d42c",
+          "message": "Separate color styles in CSS classes, and @variant\n\nSeparate TailwindCSS color utility classes @apply in CSS classes from\nother utility classes, and use `@variant dark {...}` for the Dark theme\ncolors instead of `dark:...`. These changes are in preparation for a\ntheme rework, to organize style elements more clearly and make changes\neasier to see.",
+          "timestamp": "2026-02-06T14:33:08-05:00",
+          "tree_id": "af760e6261126f8c624e1812381d2325434b708b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ff83b59f388a6f591dd4cbe2650a78d331b4d42c"
+        },
+        "date": 1770441313416,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3517,
+            "range": "± 108",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161686,
+            "range": "± 1796",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1999,
+            "range": "± 70",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160451,
+            "range": "± 1205",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 307,
             "range": "± 2",
             "unit": "ns/iter"
           }
