@@ -11,16 +11,27 @@ import {
   Title,
   Tooltip,
   Legend,
+  Filler,
   type TooltipItem,
+  type ScriptableContext,
   type ScriptableScaleContext,
 } from "chart.js";
 
 import { Recipe, isRecipeEmpty } from "./recipe";
-import { Color, getColor, getLegendColor, getGridColor } from "@/lib/styles/colors";
+import { Color, getColor, opacity, getLegendColor, getGridColor } from "@/lib/styles/colors";
 import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "./page";
 import { Theme } from "@/lib/ui/theme-select";
 
-ChartJS.register(CategoryScale, LinearScale, PointElement, LineElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend,
+  Filler,
+);
 
 export function FpdGraph({ recipes: allRecipes, theme }: { recipes: Recipe[]; theme: Theme }) {
   // Only display the main recipe and non-empty reference recipes
@@ -40,6 +51,7 @@ export function FpdGraph({ recipes: allRecipes, theme }: { recipes: Recipe[]; th
         recipe.index === 0 ? getColor(Color.GraphBlue) : getColor(Color.GraphGray);
 
       const curves = recipe.mixProperties.fpd!.curves!;
+      const borderWidth = recipe.index === 0 ? 4 : 3;
       const borderColor = recipeColor;
       const recipeLabel = recipe.index === 0 ? "" : ` (${recipe.name})`;
 
@@ -51,8 +63,21 @@ export function FpdGraph({ recipes: allRecipes, theme }: { recipes: Recipe[]; th
       return lines.map(({ lineLabel, borderDash, curve }) => ({
         label: `${lineLabel}${recipeLabel}`,
         data: curve.map((point) => (point.temp >= 0 ? NaN : point.temp)),
+        borderWidth: borderWidth,
         borderColor: borderColor,
+        backgroundColor: (context: ScriptableContext<"line">) => {
+          if (!context.chart.chartArea) return opacity(borderColor, 0);
+          const { ctx, chartArea: ca } = context.chart;
+
+          const gradient = ctx.createLinearGradient(ca.right, ca.top, ca.left, ca.bottom);
+
+          gradient.addColorStop(0, opacity(borderColor, 0.3));
+          gradient.addColorStop(0.9, opacity(borderColor, 0));
+
+          return gradient;
+        },
         borderDash: borderDash,
+        fill: recipe.index === 0 ? "start" : false,
         pointRadius: curve.map((_, i) => (shouldHighlight(lineLabel, i) ? 6 : 0)),
         pointBackgroundColor: curve.map((_, i) =>
           shouldHighlight(lineLabel, i) ? "#fff" : borderColor,

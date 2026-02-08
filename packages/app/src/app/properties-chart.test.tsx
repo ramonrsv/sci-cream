@@ -40,6 +40,7 @@ vi.mock("chart.js", () => ({
   Title: vi.fn(),
   Tooltip: vi.fn(),
   Legend: vi.fn(),
+  Filler: vi.fn(),
 }));
 
 interface ChartOptions {
