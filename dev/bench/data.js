@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770541470266,
+  "lastUpdate": 1770541720541,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -35594,6 +35594,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 33.86,
             "range": "0.88",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7f7c77fe69d54842bbbc9ca02f72d870f3c4a57d",
+          "message": "Remove per-recipe color entirely, rework colors.ts\n\n* Remove per-recipe colors in `FpdGraph` and `MixPropertiesChart`,\n  instead using explicit colors for main and reference recipes.\n* Introduce `Color` and `getColor(color: Color)` in `colors.ts` to\n  explicitely get colors defined in CSS variables, and remove\n  `getRecipeColorByIdx` and `getRecipeCompBg/ChartColor` functions.",
+          "timestamp": "2026-02-08T03:31:28-05:00",
+          "tree_id": "50549e119327db5c6cdb0e0f16c0d52bd3370866",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7f7c77fe69d54842bbbc9ca02f72d870f3c4a57d"
+        },
+        "date": 1770541718956,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 654.1,
+            "range": "52.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.6,
+            "range": "7.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.8,
+            "range": "6.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38,
+            "range": "5.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 35.2,
+            "range": "2.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 181.9,
+            "range": "8.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 42.2,
+            "range": "1.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 49.53,
+            "range": "0.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 30.95,
+            "range": "0.62",
             "unit": "ms"
           }
         ]
