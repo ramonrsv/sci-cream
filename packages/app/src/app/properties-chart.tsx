@@ -18,7 +18,7 @@ import { Recipe, isRecipeEmpty } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
 import { DEFAULT_SELECTED_PROPERTIES } from "./properties";
 import { applyQtyToggle, formatCompositionValue } from "../lib/ui/comp-values";
-import { getGridColor, getLegendColor, getRecipeChartColor } from "../lib/styles/colors";
+import { Color, getColor, getGridColor, getLegendColor } from "../lib/styles/colors";
 import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "./page";
 import { Theme } from "@/lib/ui/theme-select";
 
@@ -110,13 +110,16 @@ export function MixPropertiesChart({
   const chartData = {
     labels,
     datasets: recipes.map((recipe) => {
+      const recipeColor =
+        recipe.index === 0 ? getColor(Color.GraphGreen) : getColor(Color.GraphGray);
+
       return {
         label: recipe.name,
         data: enabledProps.map((prop_key) =>
           Math.abs(getPropertyValue(prop_key, recipe.mixProperties!, recipe.mixTotal!)),
         ),
-        backgroundColor: getRecipeChartColor(recipe.index),
-        borderColor: getRecipeChartColor(recipe.index),
+        backgroundColor: recipeColor,
+        borderColor: recipeColor,
         maxBarThickness: 40,
         categoryPercentage: 0.6,
         barPercentage: 0.8,

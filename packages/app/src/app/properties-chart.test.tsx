@@ -7,7 +7,7 @@ import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/re
 import { MixPropertiesChart, getPropKeys } from "./properties-chart";
 import { Recipe, makeEmptyRecipeContext } from "./recipe";
 import { KeyFilter } from "@/lib/ui/key-selection";
-import { getRecipeChartColor } from "../lib/styles/colors";
+import { Color, getColor } from "../lib/styles/colors";
 
 import {
   CompKey,
@@ -320,25 +320,27 @@ describe("MixPropertiesChart", () => {
       expect(dataset.barPercentage).toBe(0.8);
     });
 
-    it("should set dataset colors for each recipe", () => {
+    it("should set dataset colors for main recipe and reference recipes", () => {
       const recipeCtx = createMockRecipeContext([true, true, true]);
       render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
 
       expect(capturedBarProps).not.toBeNull();
       capturedBarProps!.data.datasets.forEach((dataset, index) => {
-        expect(dataset.backgroundColor).toBe(getRecipeChartColor(index));
-        expect(dataset.borderColor).toBe(getRecipeChartColor(index));
+        const expectedColor = index === 0 ? getColor(Color.GraphGreen) : getColor(Color.GraphGray);
+
+        expect(dataset.backgroundColor).toBe(expectedColor);
+        expect(dataset.borderColor).toBe(expectedColor);
       });
     });
 
-    it("should set dataset color based on global recipe index", () => {
+    it("should set main recipe color green, and reference recipes gray", () => {
       const recipeCtx = createMockRecipeContext([true, false, true]);
       render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
 
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.datasets).toHaveLength(2);
-      expect(capturedBarProps!.data.datasets[0].backgroundColor).toBe(getRecipeChartColor(0));
-      expect(capturedBarProps!.data.datasets[1].backgroundColor).toBe(getRecipeChartColor(2));
+      expect(capturedBarProps!.data.datasets[0].backgroundColor).toBe(getColor(Color.GraphGreen));
+      expect(capturedBarProps!.data.datasets[1].backgroundColor).toBe(getColor(Color.GraphGray));
     });
 
     it("should create dataset for each visible recipe", () => {

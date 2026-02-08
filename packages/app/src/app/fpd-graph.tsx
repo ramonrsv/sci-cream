@@ -16,7 +16,7 @@ import {
 } from "chart.js";
 
 import { Recipe, isRecipeEmpty } from "./recipe";
-import { getLegendColor, getGridColor, getRecipeChartColor } from "@/lib/styles/colors";
+import { Color, getColor, getLegendColor, getGridColor } from "@/lib/styles/colors";
 import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "./page";
 import { Theme } from "@/lib/ui/theme-select";
 
@@ -36,8 +36,11 @@ export function FpdGraph({ recipes: allRecipes, theme }: { recipes: Recipe[]; th
   const graphData = {
     labels: Array.from({ length: 101 }, (_, i) => i),
     datasets: recipes.flatMap((recipe) => {
+      const recipeColor =
+        recipe.index === 0 ? getColor(Color.GraphBlue) : getColor(Color.GraphGray);
+
       const curves = recipe.mixProperties.fpd!.curves!;
-      const borderColor = getRecipeChartColor(recipe.index);
+      const borderColor = recipeColor;
       const recipeLabel = recipe.index === 0 ? "" : ` (${recipe.name})`;
 
       const lines = [
