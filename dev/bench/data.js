@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770503652416,
+  "lastUpdate": 1770541459145,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -38039,6 +38039,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.78%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7f7c77fe69d54842bbbc9ca02f72d870f3c4a57d",
+          "message": "Remove per-recipe color entirely, rework colors.ts\n\n* Remove per-recipe colors in `FpdGraph` and `MixPropertiesChart`,\n  instead using explicit colors for main and reference recipes.\n* Introduce `Color` and `getColor(color: Color)` in `colors.ts` to\n  explicitely get colors defined in CSS variables, and remove\n  `getRecipeColorByIdx` and `getRecipeCompBg/ChartColor` functions.",
+          "timestamp": "2026-02-08T03:31:28-05:00",
+          "tree_id": "50549e119327db5c6cdb0e0f16c0d52bd3370866",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7f7c77fe69d54842bbbc9ca02f72d870f3c4a57d"
+        },
+        "date": 1770541457436,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76722,
+            "range": "±0.97%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 691789,
+            "range": "±3.66%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10202,
+            "range": "±1.92%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 610366,
+            "range": "±0.68%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
