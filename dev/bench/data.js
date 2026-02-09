@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770541723400,
+  "lastUpdate": 1770620477901,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -38596,6 +38596,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.68%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0da24cc4fa00c5d695e492ab7c50498785c630d8",
+          "message": "Add fill gradient to `FpdGraph` and thicken line",
+          "timestamp": "2026-02-09T01:29:00-05:00",
+          "tree_id": "dfabda5788806a90625ee47fe254c7e8c4f782be",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0da24cc4fa00c5d695e492ab7c50498785c630d8"
+        },
+        "date": 1770620476308,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78485,
+            "range": "±0.98%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 684238,
+            "range": "±1.20%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9749,
+            "range": "±1.81%",
+            "unit": "ops/sec",
+            "extra": "81 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 586724,
+            "range": "±0.74%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
