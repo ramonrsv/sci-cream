@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770620774212,
+  "lastUpdate": 1770626609046,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -39153,6 +39153,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.74%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "910ba446aa16d5f0e2e962234077b591dbcb6b07",
+          "message": "Reduce bar count in `MixPropsChart`, modify some\n\n* Reduce the `Auto` number of values displayed in `MixPropertiesChart`\n  to make them easier to see. This should only be for the most relevant\n  values that need to be seen at a glance. This is a precursor to a more\n  sophisticated system that adapts based on the particular recipe.\n* Introduce `getModifiedMixProperty` and `propKeyAsModifiedMedStr` that\n  apply modifications to the values to make them for suitable for chart\n  display, and to the strings to reflect those modifications.",
+          "timestamp": "2026-02-09T03:33:36-05:00",
+          "tree_id": "8430a4c15b5f52e9f9733e7ab2b3bd7387be9939",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/910ba446aa16d5f0e2e962234077b591dbcb6b07"
+        },
+        "date": 1770626608079,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76622,
+            "range": "±1.25%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 732468,
+            "range": "±0.40%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10272,
+            "range": "±2.08%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 619221,
+            "range": "±0.74%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
