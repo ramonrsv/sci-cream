@@ -4,10 +4,16 @@ import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
 
-import { MixPropertiesChart, getPropKeys } from "./properties-chart";
+import {
+  MixPropertiesChart,
+  getPropKeys,
+  getModifiedMixProperty,
+  propKeyAsModifiedMedStr,
+} from "./properties-chart";
 import { Recipe, makeEmptyRecipeContext } from "./recipe";
 import { KeyFilter } from "@/lib/ui/key-selection";
 import { Color, getColor } from "../lib/styles/colors";
+import { Theme } from "@/lib/ui/theme-select";
 
 import {
   CompKey,
@@ -18,8 +24,11 @@ import {
   prop_key_as_med_str,
   getMixProperty,
   getPropKeys as getPropKeysAll,
+  new_ingredient_database_seeded_from_embedded_data,
+  Bridge as WasmBridge,
 } from "@workspace/sci-cream";
-import { Theme } from "@/lib/ui/theme-select";
+
+import { REF_LIGHT_RECIPE } from "@/__tests__/assets";
 
 class ResizeObserverMock {
   observe = vi.fn();
@@ -88,9 +97,18 @@ function createMockRecipeContext(nonEmptyRecipes: boolean[] = []) {
   return recipeCtx;
 }
 
+function createMockRefRecipeContext() {
+  const recipeCtx = makeEmptyRecipeContext();
+  recipeCtx.recipes[0].mixTotal = 612;
+  recipeCtx.recipes[0].mixProperties = wasmBridge.calculate_recipe_mix_properties(REF_LIGHT_RECIPE);
+  return recipeCtx;
+}
+
 const getCompLabel = (compKey: CompKey) => prop_key_as_med_str(compToPropKey(compKey));
 const getFpdLabel = (fpdKey: FpdKey) => prop_key_as_med_str(fpdToPropKey(fpdKey));
 const getPropIndex = (propKey: PropKey) => getPropKeys().indexOf(propKey);
+
+const wasmBridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
 
 describe("MixPropertiesChart", () => {
   beforeEach(() => {
@@ -109,6 +127,31 @@ describe("MixPropertiesChart", () => {
       expect(getPropKeys().length).toBe(getPropKeysAll().length - 2);
       expect(getPropKeys()).not.toContain(compToPropKey(CompKey.Water));
       expect(getPropKeys()).not.toContain(fpdToPropKey(FpdKey.HardnessAt14C));
+    });
+
+    it("getModifiedMixProperty should modify specific property values", () => {
+      const mixProperties = wasmBridge.calculate_recipe_mix_properties(REF_LIGHT_RECIPE);
+      const getModMixProp = (propKey: PropKey) => getModifiedMixProperty(mixProperties, propKey);
+
+      expect(getModMixProp(fpdToPropKey(FpdKey.FPD))).toBeCloseTo(3.6);
+      expect(getModMixProp(fpdToPropKey(FpdKey.ServingTemp))).toBeCloseTo(13.37);
+
+      expect(getModMixProp(compToPropKey(CompKey.AbsPAC))).toBeCloseTo(56.63 / 2);
+
+      expect(getModMixProp(compToPropKey(CompKey.EmulsifiersPerFat))).toBeCloseTo(1.735 * 100);
+      expect(getModMixProp(compToPropKey(CompKey.StabilizersPerWater))).toBeCloseTo(0.3466 * 100);
+    });
+
+    it("propKeyAsModifiedMedStr should modify specific key strings", () => {
+      const propKeyAsModStr = (propKey: PropKey) => propKeyAsModifiedMedStr(propKey);
+
+      expect(propKeyAsModStr(fpdToPropKey(FpdKey.FPD))).toBe("-FPD");
+      expect(propKeyAsModStr(fpdToPropKey(FpdKey.ServingTemp))).toBe("-Serving Temp");
+
+      expect(propKeyAsModStr(compToPropKey(CompKey.AbsPAC))).toBe("Abs.PAC / 2");
+
+      expect(propKeyAsModStr(compToPropKey(CompKey.EmulsifiersPerFat))).toBe("Emul./Fat * 100");
+      expect(propKeyAsModStr(compToPropKey(CompKey.StabilizersPerWater))).toBe("Stab./Water * 100");
     });
   });
 
@@ -192,7 +235,6 @@ describe("MixPropertiesChart", () => {
       expect(capturedBarProps).not.toBeNull();
       const labels = capturedBarProps!.data.labels;
 
-      // Water and HardnessAt14C should be excluded
       expect(labels).not.toContain(getCompLabel(CompKey.Water));
       expect(labels).not.toContain(getFpdLabel(FpdKey.HardnessAt14C));
     });
@@ -395,11 +437,49 @@ describe("MixPropertiesChart", () => {
       expect(getMixProperty(mixProps, EmulsPerFatPropKey)).toBeNaN();
       expect(getMixProperty(mixProps, AbsPACPropKey)).toBe(0);
 
-      expect(capturedBarProps!.data.datasets[0].data[getPropIndex(EmulsPerFatPropKey)]).toBeNaN();
-      expect(capturedBarProps!.data.datasets[0].data[getPropIndex(AbsPACPropKey)]).toBe(0);
+      const data = capturedBarProps!.data;
+      expect(data.datasets[0].data[getPropIndex(EmulsPerFatPropKey)]).toBeNaN();
+      expect(data.datasets[0].data[getPropIndex(AbsPACPropKey)]).toBe(0);
 
-      expect(capturedBarProps!.data.labels).toContain(getCompLabel(CompKey.EmulsifiersPerFat));
-      expect(capturedBarProps!.data.labels).toContain(getCompLabel(CompKey.AbsPAC));
+      const someLabelContains = (labels: string[], substring: string) =>
+        labels.some((label) => label.includes(substring));
+
+      expect(someLabelContains(data.labels, getCompLabel(CompKey.EmulsifiersPerFat))).toBe(true);
+      expect(someLabelContains(data.labels, getCompLabel(CompKey.AbsPAC))).toBe(true);
+    });
+
+    it("should have modified values and strings", async () => {
+      const recipeCtx = createMockRefRecipeContext();
+      const { container } = render(
+        <MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />,
+      );
+
+      const filterSelect = container.querySelector("#key-filter-select") as HTMLSelectElement;
+      expect(filterSelect).toBeInTheDocument();
+      fireEvent.change(filterSelect, { target: { value: KeyFilter.All } });
+      await waitFor(() => {
+        expect(screen.getByText("All")).toBeInTheDocument();
+      });
+
+      const EmulsPerFatPropKey = compToPropKey(CompKey.EmulsifiersPerFat);
+      const StabsPerfWaterPropKey = compToPropKey(CompKey.StabilizersPerWater);
+      const AbsPACPropKey = compToPropKey(CompKey.AbsPAC);
+      const ServingTempPropKey = fpdToPropKey(FpdKey.ServingTemp);
+
+      const captured = capturedBarProps!;
+      expect(captured).not.toBeNull();
+      for (const key of [
+        EmulsPerFatPropKey,
+        StabsPerfWaterPropKey,
+        AbsPACPropKey,
+        ServingTempPropKey,
+      ]) {
+        expect(captured.data.labels.length).toBeGreaterThanOrEqual(getPropIndex(key));
+        expect(captured.data.labels).toContain(propKeyAsModifiedMedStr(key));
+        expect(captured.data.datasets[0].data[getPropIndex(key)]).toBeCloseTo(
+          getModifiedMixProperty(recipeCtx.recipes[0].mixProperties!, key),
+        );
+      }
     });
   });
 

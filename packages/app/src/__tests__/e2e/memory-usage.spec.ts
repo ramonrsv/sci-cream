@@ -11,7 +11,7 @@ import {
 
 import {
   THRESHOLDS,
-  REFERENCE_RECIPE_TEXT,
+  REF_RECIPE_TEXT,
   EXPECTED_FIRST_INGREDIENT,
   EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT,
 } from "@/__tests__/assets";
@@ -34,7 +34,7 @@ test("should measure peak memory usage and detect leaks", async ({ page, browser
   let maxLoopUsage = 0;
 
   for (let i = 0; i < COUNT_MEMORY_USAGE_OPERATION_LOOPS; i++) {
-    await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+    await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
     const pasteButton = getPasteButton(page);
     await pasteButton.click();
 

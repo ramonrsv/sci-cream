@@ -1,3 +1,5 @@
+import { CompKey, FpdKey, PropKey, compToPropKey, fpdToPropKey } from "@workspace/sci-cream";
+
 export const THRESHOLDS = {
   page_load: 3000,
   input_response: 250 * 2,
@@ -5,7 +7,7 @@ export const THRESHOLDS = {
   memory_usage_percent_increase: 20,
 };
 
-export const REFERENCE_RECIPE_TEXT = [
+export const REF_RECIPE_TEXT = [
   "Ingredient\tQty(g)",
   "Whole Milk\t245",
   "Whipping Cream\t215",
@@ -18,6 +20,29 @@ export const REFERENCE_RECIPE_TEXT = [
   "Rich Ice Cream SB\t1.25",
   "Vanilla Extract\t6",
 ].join("\n");
+
+export const REF_LIGHT_RECIPE = [
+  ["Whole Milk", 245],
+  ["Whipping Cream", 215],
+  ["Cocoa Powder, 17% Fat", 28],
+  ["Skimmed Milk Powder", 21],
+  ["Egg Yolk", 18],
+  ["Dextrose", 45],
+  ["Fructose", 32],
+  ["Salt", 0.5],
+  ["Rich Ice Cream SB", 1.25],
+  ["Vanilla Extract", 6],
+];
+
+export const REF_RECIPE_EXPECTED_PROPERTIES = new Map<PropKey, number>([
+  [compToPropKey(CompKey.MilkFat), 13.6],
+  [compToPropKey(CompKey.TotalFats), 15.3],
+  [compToPropKey(CompKey.EmulsifiersPerFat), 1.73],
+  [compToPropKey(CompKey.StabilizersPerWater), 0.35],
+  [compToPropKey(CompKey.AbsPAC), 56.6],
+  [fpdToPropKey(FpdKey.FPD), -3.6],
+  [fpdToPropKey(FpdKey.ServingTemp), -13.37],
+]);
 
 export const LAST_INGREDIENT_IDX = 9;
 

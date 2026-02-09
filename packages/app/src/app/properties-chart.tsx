@@ -16,7 +16,6 @@ import {
 
 import { Recipe, isRecipeEmpty } from "./recipe";
 import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
-import { DEFAULT_SELECTED_PROPERTIES } from "./properties";
 import { applyQtyToggle, formatCompositionValue } from "../lib/ui/comp-values";
 import { Color, getColor, getGridColor, getLegendColor } from "../lib/styles/colors";
 import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "./page";
@@ -44,6 +43,55 @@ export function getPropKeys(): PropKey[] {
       // These values make the scale hard to read in a chart
       key !== compToPropKey(CompKey.Water) && key !== fpdToPropKey(FpdKey.HardnessAt14C),
   );
+}
+export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
+  compToPropKey(CompKey.MilkFat),
+  compToPropKey(CompKey.TotalFats),
+  compToPropKey(CompKey.MSNF),
+  compToPropKey(CompKey.TotalSolids),
+  compToPropKey(CompKey.Water),
+  compToPropKey(CompKey.TotalSugars),
+  compToPropKey(CompKey.StabilizersPerWater),
+  compToPropKey(CompKey.POD),
+  compToPropKey(CompKey.PACtotal),
+  compToPropKey(CompKey.AbsPAC),
+  fpdToPropKey(FpdKey.ServingTemp),
+] as PropKey[]);
+
+/** Forward to `getMixProperty` and modify some values to be more suitable for chart display */
+export function getModifiedMixProperty(mixProperties: MixProperties, propKey: PropKey): number {
+  const rawValue = getMixProperty(mixProperties, propKey);
+
+  switch (propKey) {
+    case fpdToPropKey(FpdKey.FPD):
+    case fpdToPropKey(FpdKey.ServingTemp):
+      return -rawValue;
+    case compToPropKey(CompKey.AbsPAC):
+      return rawValue / 2;
+    case compToPropKey(CompKey.EmulsifiersPerFat):
+    case compToPropKey(CompKey.StabilizersPerWater):
+      return rawValue * 100;
+    default:
+      return rawValue;
+  }
+}
+
+/** Forward to `prop_key_as_med_str` and modify some value to reflect `getModifiedMixProperty` */
+export function propKeyAsModifiedMedStr(propKey: PropKey): string {
+  const rawMedStr = prop_key_as_med_str(propKey);
+
+  switch (propKey) {
+    case fpdToPropKey(FpdKey.FPD):
+    case fpdToPropKey(FpdKey.ServingTemp):
+      return "-" + rawMedStr;
+    case compToPropKey(CompKey.AbsPAC):
+      return rawMedStr + " / 2";
+    case compToPropKey(CompKey.EmulsifiersPerFat):
+    case compToPropKey(CompKey.StabilizersPerWater):
+      return rawMedStr + " * 100";
+    default:
+      return rawMedStr;
+  }
 }
 
 export function MixPropertiesChart({
@@ -89,7 +137,7 @@ export function MixPropertiesChart({
   ): number => {
     return (
       applyQtyToggle(
-        getMixProperty(mixProperties, prop_key),
+        getModifiedMixProperty(mixProperties, prop_key),
         mixTotal,
         mixTotal,
         qtyToggle,
@@ -102,7 +150,7 @@ export function MixPropertiesChart({
   const recipes = allRecipes.filter((recipe) => recipe.index == 0 || !isRecipeEmpty(recipe));
 
   const enabledProps = getEnabledProps();
-  const labels = enabledProps.map((prop_key) => prop_key_as_med_str(prop_key));
+  const labels = enabledProps.map((prop_key) => propKeyAsModifiedMedStr(prop_key));
 
   const gridColor = getGridColor(theme);
   const legendColor = getLegendColor(theme);

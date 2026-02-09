@@ -18,7 +18,7 @@ import {
 
 import {
   THRESHOLDS,
-  REFERENCE_RECIPE_TEXT,
+  REF_RECIPE_TEXT,
   LAST_INGREDIENT_IDX,
   EXPECTED_LAST_INGREDIENT,
 } from "@/__tests__/assets";
@@ -119,7 +119,7 @@ test.describe("UI Responsiveness Performance Checks", () => {
     await page.goto("");
     await page.waitForLoadState("networkidle");
 
-    await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+    await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
     const pasteButton = getPasteButton(page);
 
     const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
@@ -154,7 +154,7 @@ test.describe("UI Responsiveness Performance Checks", () => {
     await page.goto("");
     await page.waitForLoadState("domcontentloaded");
 
-    await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+    await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
     const pasteButton = getPasteButton(page);
 
     const expected = EXPECTED_LAST_INGREDIENT;

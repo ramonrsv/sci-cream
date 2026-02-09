@@ -19,7 +19,7 @@ import {
 } from "@/__tests__/util";
 
 import {
-  REFERENCE_RECIPE_TEXT,
+  REF_RECIPE_TEXT,
   LAST_INGREDIENT_IDX,
   EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT,
   LAST_UPDATE_IDX,
@@ -129,7 +129,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+      await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
       const pasteButton = getPasteButton(page);
 
       const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
@@ -148,7 +148,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+      await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
       const pasteButton = getPasteButton(page);
       await pasteButton.click();
 
@@ -177,7 +177,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+      await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
       const pasteButton = getPasteButton(page);
       await pasteButton.click();
 
@@ -201,7 +201,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+      await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
       const pasteButton = getPasteButton(page);
       await pasteButton.click();
 

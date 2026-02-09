@@ -13,7 +13,7 @@ import {
 } from "@/__tests__/util";
 
 import {
-  REFERENCE_RECIPE_TEXT,
+  REF_RECIPE_TEXT,
   EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT,
   EXPECTED_FIRST_INGREDIENT,
 } from "@/__tests__/assets";
@@ -44,7 +44,7 @@ test("should measure peak memory usage during typical operations", async ({
     let maxUsage = 0;
 
     for (let i = 0; i < COUNT_OPERATION_LOOPS; i++) {
-      await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+      await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
       const pasteButton = getPasteButton(page);
       await pasteButton.click();
 

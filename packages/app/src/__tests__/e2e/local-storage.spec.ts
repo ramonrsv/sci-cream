@@ -9,11 +9,7 @@ import {
   getCompositionGridRecipeSelector,
 } from "@/__tests__/util";
 
-import {
-  REFERENCE_RECIPE_TEXT,
-  LAST_INGREDIENT_IDX,
-  EXPECTED_LAST_INGREDIENT,
-} from "@/__tests__/assets";
+import { REF_RECIPE_TEXT, LAST_INGREDIENT_IDX, EXPECTED_LAST_INGREDIENT } from "@/__tests__/assets";
 
 import { sleep_ms } from "@/lib/util";
 
@@ -53,7 +49,7 @@ test.describe("Local Storage Functionality", () => {
     await page.goto("");
     await page.waitForLoadState("networkidle");
 
-    await pasteToClipboard(page, browserName, REFERENCE_RECIPE_TEXT);
+    await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
     const pasteButton = getPasteButton(page);
 
     const expected = EXPECTED_LAST_INGREDIENT;
