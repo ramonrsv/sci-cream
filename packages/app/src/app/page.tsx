@@ -1,6 +1,12 @@
 "use client";
 
-import { ReactGridLayout, useContainerWidth, type ResizeHandleAxis } from "react-grid-layout";
+import {
+  ResponsiveGridLayout,
+  ResponsiveLayouts,
+  useContainerWidth,
+  type LayoutItem,
+  type ResizeHandleAxis,
+} from "react-grid-layout";
 
 import { useState, useEffect } from "react";
 
@@ -36,7 +42,6 @@ export const GRAPH_TITLE_FONT_SIZE = 15;
 const REACT_GRID_COMPONENT_HEIGHT = 11;
 const REACT_GRID_ROW_HEIGHT = 35.6;
 export const STD_COMPONENT_H_PX = 592;
-const REACT_GRID_COLS = 24;
 
 export default function Home() {
   const [theme, setTheme] = useState<Theme>(() => getInitialTheme());
@@ -63,70 +68,94 @@ export default function Home() {
 
   const recipeGridProps = { recipeCtxState, recipeResourcesState };
 
-  // Dynamically adjusts the number of columns based on screen width, so that some components
-  // maintain a fixed-ish width and do not widen too much when going from half to full screen.
-  // @todo This is a hacky workaround; ideally react-grid-layout would support this natively.
-  // It may be possible to implement a better solution using `positionStrategy`/`constraints`.
-  const dynamicColsFromFixedPx = (widthInColUnits: number): number => {
-    const REF_SCREEN_WIDTH = 1200; // Measured experimentally, on 1440p half screen
+  // 2160p: 3840px, /2 = 1920px
+  // 1440p: 2560px, /2 = 1280px
+  // 1080p: 1920px, /2 =  960px
+  const breakpoints = { xl: 2080, lg: 1600, md: 1120, sm: 720, xs: 0 };
+  const cols = { xl: 32, lg: 24, md: 16, sm: 12, xs: 8 };
 
-    const widthInRefScreenPx = (REF_SCREEN_WIDTH / REACT_GRID_COLS) * widthInColUnits;
-    const currentScreenPxPerCol = width / REACT_GRID_COLS;
+  const h = REACT_GRID_COMPONENT_HEIGHT;
+  const fullW = (bp: keyof typeof cols) => cols[bp];
 
-    const ret =
-      width <= REF_SCREEN_WIDTH
-        ? widthInColUnits
-        : Math.ceil(widthInRefScreenPx / currentScreenPxPerCol);
-    return ret;
-  };
-
-  const dynW = dynamicColsFromFixedPx;
   const horiz = ["e", "w"] as ResizeHandleAxis[];
   const horizVert = ["e", "w", "s"] as ResizeHandleAxis[];
 
-  const h = REACT_GRID_COMPONENT_HEIGHT;
-  const fullW = REACT_GRID_COLS;
+  // prettier-ignore
+  const base = {
+    "recipe":      { i: "recipe",      h, isResizable: false },
+    "properties":  { i: "properties",  h, resizeHandles: horizVert, minW: 4 },
+    "composition": { i: "composition", h, resizeHandles: horiz, minW: 5 },
+    "props-chart": { i: "props-chart", h, resizeHandles: horizVert },
+    "fpd-graph":   { i: "fpd-graph",   h, resizeHandles: horizVert },
+  };
 
-  const recipeDims = { h, w: dynW(8), isResizable: false };
-  const propsDims = { h, w: dynW(6), minW: dynW(6), maxW: dynW(9), resizeHandles: horizVert };
-  const compsDims = { h, w: 10, resizeHandles: horiz };
-  const chartDims = { h, w: 12, resizeHandles: horizVert };
-  const graphDims = { h, w: 12, resizeHandles: horizVert };
+  const update = (i: keyof typeof base, updates: Partial<LayoutItem>): LayoutItem => {
+    return { ...base[i], ...updates } as LayoutItem;
+  };
 
   // prettier-ignore
-  const layout = [
-    { i: "recipe",      x:  0, y:  0, ...recipeDims },
-    { i: "properties",  x:  8, y:  0, ...propsDims },
-    { i: "composition", x: 14, y:  0, ...compsDims },
-    { i: "props-chart", x:  0, y: 11, ...chartDims },
-    { i: "fpd-graph",   x: 12, y: 11, ...graphDims },
+  const xlLayout: LayoutItem[] = [
+    update("properties",  { x:  0, y:  0, w:  5, h: h * 2 }),
+    update("recipe",      { x:  5, y:  0, w:  6 }),
+    update("props-chart", { x: 11, y:  0, w: 11 }),
+    update("fpd-graph",   { x: 22, y:  0, w: 10 }),
+    update("composition", { x:  5, y:  h, w: 27 }),
   ];
 
-  // Detect mobile viewport to stack items vertically instead of side-by-side
-  const isMobileViewport = width < 768; // Typical mobile breakpoint
+  // prettier-ignore
+  const lgLayout: LayoutItem[] = [
+    update("properties",  { x:  0, y:  0, w:  5, h: h * 2 }),
+    update("recipe",      { x:  5, y:  0, w:  5 }),
+    update("props-chart", { x: 10, y:  0, w:  7 }),
+    update("fpd-graph",   { x: 17, y:  0, w:  7 }),
+    update("composition", { x:  5, y:  h, w: 19 }),
+  ];
 
-  if (isMobileViewport)
-    for (const [idx, item] of layout.entries())
-      layout[idx] = { ...item, x: 0, y: idx * h, w: fullW, minW: undefined, maxW: undefined };
+  // prettier-ignore
+  const mdLayout: LayoutItem[] = [
+    update("properties",  { x:  0, y:  0, w:  5 }),
+    update("recipe",      { x:  5, y:  0, w:  5 }),
+    update("composition", { x: 10, y:  0, w:  6 }),
+    update("props-chart", { x:  0, y:  h, w:  8 }),
+    update("fpd-graph",   { x:  8, y:  h, w:  8 }),
+  ];
+
+  // prettier-ignore
+  const smLayout: LayoutItem[] = [
+    update("properties",  { x:  0, y:     0, w:  6 }),
+    update("recipe",      { x:  6, y:     0, w:  6 }),
+    update("composition", { x:  0, y: h * 1, w: fullW("sm") }),
+    update("props-chart", { x:  0, y: h * 2, w: fullW("sm") }),
+    update("fpd-graph",   { x:  0, y: h * 3, w: fullW("sm") }),
+  ];
+
+  const xsLayout: LayoutItem[] = Object.values(base).map((item, idx) =>
+    update(item.i as keyof typeof base, { x: 0, y: idx * h, w: fullW("xs") }),
+  );
+
+  const layouts: ResponsiveLayouts = {
+    xl: xlLayout,
+    lg: lgLayout,
+    md: mdLayout,
+    sm: smLayout,
+    xs: xsLayout,
+  };
 
   return (
     <main className="min-h-screen">
-      <h1 className={`pt-4 ${isMobileViewport ? "pl-2" : "pl-8"} text-2xl font-bold`}>
-        Ice Cream Recipe Calculator
-      </h1>
+      <h1 className="pt-4 pl-8 text-2xl font-bold">Ice Cream Recipe Calculator</h1>
       <div className="fixed top-4 right-5 z-50">
         <ThemeSelect themeState={[theme, setTheme]} />
       </div>
       <div ref={containerRef}>
         {mounted && (
-          <ReactGridLayout
-            layout={layout}
+          <ResponsiveGridLayout
+            breakpoints={breakpoints}
             width={width}
-            gridConfig={{
-              cols: REACT_GRID_COLS,
-              rowHeight: REACT_GRID_ROW_HEIGHT,
-              margin: [20, 20],
-            }}
+            cols={cols}
+            layouts={layouts}
+            rowHeight={REACT_GRID_ROW_HEIGHT}
+            margin={[20, 20]}
             dragConfig={{ handle: ".drag-handle" }}
           >
             <div key="recipe">{<RecipeGrid props={recipeGridProps} />}</div>
@@ -134,7 +163,7 @@ export default function Home() {
             <div key="composition">{<IngredientCompositionGrid recipes={recipes} />}</div>
             <div key="props-chart">{<MixPropertiesChart recipes={recipes} theme={theme} />}</div>
             <div key="fpd-graph">{<FpdGraph recipes={recipes} theme={theme} />}</div>
-          </ReactGridLayout>
+          </ResponsiveGridLayout>
         )}
       </div>
     </main>
