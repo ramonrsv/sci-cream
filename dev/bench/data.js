@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770705447541,
+  "lastUpdate": 1770705471728,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -4175,6 +4175,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 305,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "982be922b55e77fd70bd1e03ef5537ff4c4338fc",
+          "message": "Add TODO about Light flash when reload on Dark",
+          "timestamp": "2026-02-09T19:12:20-05:00",
+          "tree_id": "ae2754778c4a70c08f8c67a793a04c7cbc4dfbdf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/982be922b55e77fd70bd1e03ef5537ff4c4338fc"
+        },
+        "date": 1770705470609,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3577,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161277,
+            "range": "± 2633",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1962,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 159509,
+            "range": "± 1244",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 310,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
