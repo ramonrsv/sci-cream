@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770683874899,
+  "lastUpdate": 1770702724881,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -40267,6 +40267,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.72%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7b0d141ee27fea8c83913faac72988d2793c5af2",
+          "message": "Fix bug where Dark mode was not applied on reload",
+          "timestamp": "2026-02-09T19:11:59-05:00",
+          "tree_id": "9b630e0af8a0a7bf45f02be7aefc6c73628e1149",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7b0d141ee27fea8c83913faac72988d2793c5af2"
+        },
+        "date": 1770702723447,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 74725,
+            "range": "±2.42%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 717127,
+            "range": "±2.36%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9952,
+            "range": "±2.04%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 613459,
+            "range": "±0.80%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
