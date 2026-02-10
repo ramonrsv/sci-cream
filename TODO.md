@@ -70,3 +70,9 @@
       drag when intended, otherwise every action activates a drag, which can cause annoying
       accidental drags, and also has problems with the red background showing all the time.
 - [x] Use icons instead of text for the Copy/Paste/... buttons, to save space and make it prettier.
+- [ ] When in Dark mode, if the page is refreshed, it momentarily flashes a Light theme before the
+      Dark theme is applied. This can be solved with a blocking script in `layout.tsx` manually
+      reading the theme from storage and applying it, but I would rather not do that, looks messy.
+      There are many other jarring flashes on first page load (some layout changes, a flash of
+      invalid-ingredient-name red before loading, etc.), so consider adding a loading screen to
+      allow all those things to settle before displaying the main page (see how Monarch does it).
