@@ -174,7 +174,7 @@ export function FpdGraph({ recipes: allRecipes, theme }: { recipes: Recipe[]; th
       <div className="flex items-center">
         <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
       </div>
-      <div className="component-inner-border h-[calc(100%-30px)] p-3">
+      <div className="h-[calc(100%-33px)] px-2 pb-2">
         <Line data={graphData} options={options} />
       </div>
     </div>

@@ -40,8 +40,8 @@ export const GRAPH_TITLE_FONT_SIZE = 15;
 // understand what's going on here, but I'm sick of trying to get react-grid-layout to behave, so
 // leaving it like this for now; it seems to work well, at least on Chrome and on a 1440p display.
 const REACT_GRID_COMPONENT_HEIGHT = 11;
-const REACT_GRID_ROW_HEIGHT = 35.6;
-export const STD_COMPONENT_H_PX = 592;
+const REACT_GRID_ROW_HEIGHT = 36;
+export const STD_COMPONENT_H_PX = 596;
 
 export default function Home() {
   const [theme, setTheme] = useState<Theme>(() => getInitialTheme());

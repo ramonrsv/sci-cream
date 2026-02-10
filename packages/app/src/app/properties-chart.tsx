@@ -216,7 +216,7 @@ export function MixPropertiesChart({
           key_as_med_str={prop_key_as_med_str}
         />
       </div>
-      <div className="component-inner-border h-[calc(100%-30px)] p-3">
+      <div className="h-[calc(100%-33px)] px-2 pb-2">
         <Bar data={chartData} options={options} />
       </div>
     </div>

@@ -166,22 +166,6 @@ body {
   }
 }
 
-.component-inner-border-color {
-  @apply border-brd-lt;
-  @variant dark {
-    @apply border-brd-dk;
-  }
-}
-
-.component-inner-border {
-  @apply rounded-md border-2;
-
-  @apply border-brd-lt;
-  @variant dark {
-    @apply border-brd-dk;
-  }
-}
-
 /* Scrollbar Styles */
 * {
   scrollbar-width: thin;

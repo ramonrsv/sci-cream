@@ -370,117 +370,100 @@ export function RecipeGrid({
   const iconSize = COMPONENT_ACTION_ICON_SIZE;
 
   return (
-    <div id="recipe-grid" style={{ height: `${STD_COMPONENT_H_PX}px` }}>
-      <div className="grid-component h-[calc(100%-36px)]">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center">
-            <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
-            <RecipeSelection
-              allRecipes={allRecipes}
-              enabledRecipeIndices={getRecipeIndices(allRecipes)}
-              currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
-            />
-          </div>
-          {/* Action Buttons */}
-          <div className="flex">
-            {[
-              {
-                label: <ClipboardCopy size={iconSize} />,
-                action: copyCurrentRecipeToClipboard,
-                title: "Copy recipe to clipboard",
-              },
-              {
-                label: <ClipboardPaste size={iconSize} />,
-                action: pasteCurrentRecipeFromClipboard,
-                title: "Paste recipe from clipboard",
-              },
-              {
-                label: <Trash size={iconSize} />,
-                action: clearCurrentRecipe,
-                title: "Clear recipe",
-              },
-            ].map(({ label, action, title }, idx) => (
-              <button
-                key={idx}
-                onClick={action}
-                title={title}
-                className="action-button px-1 py-0.75"
-              >
-                {label}
-              </button>
-            ))}
-          </div>
+    <div id="recipe-grid" className="grid-component" style={{ height: `${STD_COMPONENT_H_PX}px` }}>
+      <div className="flex items-center justify-between">
+        <div className="flex items-center">
+          <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
+          <RecipeSelection
+            allRecipes={allRecipes}
+            enabledRecipeIndices={getRecipeIndices(allRecipes)}
+            currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
+          />
         </div>
-        {/* Hidden Ingredients List */}
-        <datalist id="valid-ingredients">
-          {validIngredients.map((name) => (
-            <option key={name} value={name} />
+        {/* Action Buttons */}
+        <div className="flex">
+          {[
+            {
+              label: <ClipboardCopy size={iconSize} />,
+              action: copyCurrentRecipeToClipboard,
+              title: "Copy recipe to clipboard",
+            },
+            {
+              label: <ClipboardPaste size={iconSize} />,
+              action: pasteCurrentRecipeFromClipboard,
+              title: "Paste recipe from clipboard",
+            },
+            { label: <Trash size={iconSize} />, action: clearCurrentRecipe, title: "Clear recipe" },
+          ].map(({ label, action, title }, idx) => (
+            <button key={idx} onClick={action} title={title} className="action-button px-1 py-0.75">
+              {label}
+            </button>
           ))}
-        </datalist>
-        <div className="component-inner-border h-full">
-          <table className="relative -top-px w-full">
-            {/* Header */}
-            <thead>
-              <tr className="h-6.25 text-center">
-                <th className="table-header min-w-50">Ingredient</th>
-                <th className="table-header w-15">Qty (g)</th>
-                <th className="table-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
-              </tr>
-              {/* Total Row */}
-              <tr className="h-6.25">
-                <td className="table-header px-1 text-center">Total</td>
-                <td className="table-header comp-val px-3.75">
-                  {mixTotal ? mixTotal.toFixed(0) : ""}
-                </td>
-                <td className="table-header comp-val px-1">{mixTotal ? "100   " : ""}</td>
-              </tr>
-            </thead>
-            <tbody>
-              {/* Ingredient Rows */}
-              {/* @todo The ingredient/input rows are not respecting < h-6/[25px]; not sure why yet */}
-              {currentRecipe.ingredientRows.map((row) => (
-                <tr key={row.index} className="h-6.25">
-                  {/* Ingredient Name Input */}
-                  <td className="table-inner-cell">
-                    <input
-                      type="search"
-                      value={row.name}
-                      onChange={(e) => updateCurrentIngredientRowName(row.index, e.target.value)}
-                      className={`table-fillable-input ${
-                        row.name === "" || validIngredients.includes(row.name)
-                          ? "focus:ring-blue-400"
-                          : "-outline-offset-2 outline-red-400 outline-solid focus:ring-red-400"
-                      } px-2`}
-                      placeholder=""
-                      list="valid-ingredients"
-                    />
-                  </td>
-                  {/* Ingredient Quantity Input */}
-                  <td className="table-inner-cell">
-                    <input
-                      type="number"
-                      value={row.quantity?.toString() || ""}
-                      onChange={(e) =>
-                        updateCurrentIngredientRowQuantity(row.index, e.target.value)
-                      }
-                      placeholder=""
-                      step={standardInputStepByPercent(row.quantity, 2.5, 10)}
-                      min={0}
-                      className="table-fillable-input text-right font-mono"
-                    />
-                  </td>
-                  {/* Ingredient Quantity Percentage Display */}
-                  <td className="table-inner-cell comp-val px-1">
-                    {row.quantity && mixTotal
-                      ? formatCompositionValue((row.quantity / mixTotal) * 100)
-                      : ""}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
       </div>
+      {/* Hidden Ingredients List */}
+      <datalist id="valid-ingredients">
+        {validIngredients.map((name) => (
+          <option key={name} value={name} />
+        ))}
+      </datalist>
+      <table className="w-full">
+        {/* Header */}
+        <thead>
+          <tr className="h-6.25 text-center">
+            <th className="table-header min-w-50">Ingredient</th>
+            <th className="table-header w-15">Qty (g)</th>
+            <th className="table-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
+          </tr>
+          {/* Total Row */}
+          <tr className="h-6.25">
+            <td className="table-header px-1 text-center">Total</td>
+            <td className="table-header comp-val px-3.75">{mixTotal ? mixTotal.toFixed(0) : ""}</td>
+            <td className="table-header comp-val px-1">{mixTotal ? "100   " : ""}</td>
+          </tr>
+        </thead>
+        <tbody>
+          {/* Ingredient Rows */}
+          {/* @todo The ingredient/input rows are not respecting < h-6/[25px]; not sure why yet */}
+          {currentRecipe.ingredientRows.map((row) => (
+            <tr key={row.index} className="h-6.25">
+              {/* Ingredient Name Input */}
+              <td className="table-inner-cell">
+                <input
+                  type="search"
+                  value={row.name}
+                  onChange={(e) => updateCurrentIngredientRowName(row.index, e.target.value)}
+                  className={`table-fillable-input ${
+                    row.name === "" || validIngredients.includes(row.name)
+                      ? "focus:ring-blue-400"
+                      : "-outline-offset-2 outline-red-400 outline-solid focus:ring-red-400"
+                  } px-2`}
+                  placeholder=""
+                  list="valid-ingredients"
+                />
+              </td>
+              {/* Ingredient Quantity Input */}
+              <td className="table-inner-cell">
+                <input
+                  type="number"
+                  value={row.quantity?.toString() || ""}
+                  onChange={(e) => updateCurrentIngredientRowQuantity(row.index, e.target.value)}
+                  placeholder=""
+                  step={standardInputStepByPercent(row.quantity, 2.5, 10)}
+                  min={0}
+                  className="table-fillable-input text-right font-mono"
+                />
+              </td>
+              {/* Ingredient Quantity Percentage Display */}
+              <td className="table-inner-cell comp-val px-1">
+                {row.quantity && mixTotal
+                  ? formatCompositionValue((row.quantity / mixTotal) * 100)
+                  : ""}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

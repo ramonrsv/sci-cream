@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
+import { useState } from "react";
 import { GripVertical } from "lucide-react";
 
 import { Recipe, isRecipeEmpty } from "./recipe";
@@ -51,21 +51,6 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
 
-  const [hasHorizontalScroll, setHasHorizontalScroll] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  const updateScrollStatus = () => {
-    if (containerRef.current) {
-      setHasHorizontalScroll(containerRef.current.scrollWidth > containerRef.current.clientWidth);
-    }
-  };
-
-  useEffect(() => {
-    updateScrollStatus();
-    window.addEventListener("resize", updateScrollStatus);
-    return () => window.removeEventListener("resize", updateScrollStatus);
-  }, [allRecipes, selectedPropsState, qtyToggleState, propsFilterState]);
-
   const isPropEmpty = (prop_key: PropKey) => {
     // All PropKeys are considered to be empty if all displayed recipes are empty
     // This handles values that are not zero for empty recipes, e.g. PropKey.Water
@@ -110,56 +95,50 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
   const recipes = allRecipes.filter((recipe) => recipe.index == 0 || !isRecipeEmpty(recipe));
 
   return (
-    <div id="mix-properties-grid" className="h-full w-full">
-      <div className="grid-component h-[calc(100%-14px)]">
-        <div className="flex items-center">
-          <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
-          <KeySelection
-            qtyToggleComponent={{
-              supportedQtyToggles: [QtyToggle.Quantity, QtyToggle.Percentage],
-              qtyToggleState: qtyToggleState,
-            }}
-            keyFilterState={propsFilterState}
-            selectedKeysState={selectedPropsState}
-            getKeys={getPropKeys}
-            key_as_med_str={prop_key_as_med_str}
-          />
-        </div>
-        <div
-          ref={containerRef}
-          className={`component-inner-border min-w-55 overflow-y-auto whitespace-nowrap`}
-          style={{ height: `calc(100% - ${hasHorizontalScroll ? 11 : 21}px)` }}
-        >
-          <table className="relative -top-px">
-            <thead>
-              <tr className="h-6.25">
-                <th className="table-header w-full px-1.25">Property</th>
-                {/* Recipe Names */}
+    <div id="mix-properties-grid" className="grid-component h-full w-full">
+      <div className="flex items-center">
+        <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
+        <KeySelection
+          qtyToggleComponent={{
+            supportedQtyToggles: [QtyToggle.Quantity, QtyToggle.Percentage],
+            qtyToggleState: qtyToggleState,
+          }}
+          keyFilterState={propsFilterState}
+          selectedKeysState={selectedPropsState}
+          getKeys={getPropKeys}
+          key_as_med_str={prop_key_as_med_str}
+        />
+      </div>
+      <div className={"h-[calc(100%-33px)] min-w-55 overflow-y-auto whitespace-nowrap"}>
+        <table>
+          <thead>
+            <tr className="h-6.25">
+              <th className="table-header w-full px-1.25">Property</th>
+              {/* Recipe Names */}
+              {recipes.map((recipe) => (
+                <th key={recipe.index} className="table-header px-1.25 text-center">
+                  {recipe.name}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {getEnabledProps().map((prop_key) => (
+              <tr key={String(prop_key)} className="h-6.25">
+                {/* Property Name */}
+                <td className="table-header w-full px-1.25 text-center">
+                  {prop_key_as_med_str(prop_key)}
+                </td>
+                {/* Property Values for Recipes */}
                 {recipes.map((recipe) => (
-                  <th key={recipe.index} className="table-header px-1.25 text-center">
-                    {recipe.name}
-                  </th>
+                  <td key={recipe.index} className="table-inner-cell comp-val px-1.25">
+                    {formattedPropCell(prop_key, recipe.mixProperties!, recipe.mixTotal!)}
+                  </td>
                 ))}
               </tr>
-            </thead>
-            <tbody>
-              {getEnabledProps().map((prop_key) => (
-                <tr key={String(prop_key)} className="h-6.25">
-                  {/* Property Name */}
-                  <td className="table-header w-full px-1.25 text-center">
-                    {prop_key_as_med_str(prop_key)}
-                  </td>
-                  {/* Property Values for Recipes */}
-                  {recipes.map((recipe) => (
-                    <td key={recipe.index} className="table-inner-cell comp-val px-1.25">
-                      {formattedPropCell(prop_key, recipe.mixProperties!, recipe.mixTotal!)}
-                    </td>
-                  ))}
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+            ))}
+          </tbody>
+        </table>
       </div>
     </div>
   );

@@ -169,7 +169,6 @@ describe("MixPropertiesChart", () => {
       );
       expect(container.querySelector("#mix-properties-chart")).toBeInTheDocument();
       expect(container.querySelector(".grid-component")).toBeInTheDocument();
-      expect(container.querySelector(".component-inner-border")).toBeInTheDocument();
     });
   });
 
