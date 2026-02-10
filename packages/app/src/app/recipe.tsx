@@ -61,7 +61,7 @@ export function makeEmptyRecipeContext(): RecipeContext {
   return {
     recipes: Array.from({ length: MAX_RECIPES }, (_, recipeIdx) => ({
       index: recipeIdx,
-      name: recipeIdx === 0 ? "Recipe" : `Ref ${recipeIdx}`,
+      name: recipeIdx === 0 ? "Recipe" : `Ref ${String.fromCharCode(64 + recipeIdx)}`,
       ingredientRows: Array.from({ length: RECIPE_TOTAL_ROWS }, (_, rowIdx) => ({
         index: rowIdx,
         name: "",

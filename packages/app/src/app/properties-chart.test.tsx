@@ -189,7 +189,7 @@ describe("MixPropertiesChart", () => {
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.datasets).toHaveLength(2);
       expect(capturedBarProps!.data.datasets[0].label).toBe("Recipe");
-      expect(capturedBarProps!.data.datasets[1].label).toBe("Ref 2");
+      expect(capturedBarProps!.data.datasets[1].label).toBe("Ref B");
     });
   });
 
@@ -392,8 +392,8 @@ describe("MixPropertiesChart", () => {
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.datasets).toHaveLength(3);
       expect(capturedBarProps!.data.datasets[0].label).toBe("Recipe");
-      expect(capturedBarProps!.data.datasets[1].label).toBe("Ref 1");
-      expect(capturedBarProps!.data.datasets[2].label).toBe("Ref 2");
+      expect(capturedBarProps!.data.datasets[1].label).toBe("Ref A");
+      expect(capturedBarProps!.data.datasets[2].label).toBe("Ref B");
     });
 
     it("should not crate dataset for empty reference recipes", () => {
@@ -402,7 +402,7 @@ describe("MixPropertiesChart", () => {
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.datasets).toHaveLength(2);
       expect(capturedBarProps!.data.datasets[0].label).toBe("Recipe");
-      expect(capturedBarProps!.data.datasets[1].label).toBe("Ref 2");
+      expect(capturedBarProps!.data.datasets[1].label).toBe("Ref B");
     });
   });
 

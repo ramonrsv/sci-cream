@@ -79,8 +79,8 @@ describe("Recipe Helper Functions", () => {
     it("should name first recipe 'Recipe' and others 'Ref N'", () => {
       const context = makeEmptyRecipeContext();
       expect(context.recipes[0].name).toBe("Recipe");
-      expect(context.recipes[1].name).toBe("Ref 1");
-      expect(context.recipes[2].name).toBe("Ref 2");
+      expect(context.recipes[1].name).toBe("Ref A");
+      expect(context.recipes[2].name).toBe("Ref B");
     });
 
     it("should initialize ingredient rows with correct indices", () => {
@@ -539,7 +539,7 @@ describe("RecipeGrid Component", () => {
 
     await user.selectOptions(select, "1");
     expect(select).toHaveValue("1");
-    expect(screen.queryByText("Ref 1")).toBeInTheDocument();
+    expect(screen.queryByText("Ref A")).toBeInTheDocument();
     await waitFor(() => {
       expect(getFirstSearchInputElement().value).toBe("Ingredient B");
       expect(getFirstQuantityInputElement().value).toBe("20");
