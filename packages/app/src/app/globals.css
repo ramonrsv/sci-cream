@@ -102,11 +102,11 @@ body {
 }
 
 .table-fillable-input {
-  @apply w-full text-sm focus:ring-2 focus:outline-none focus:ring-inset;
+  @apply focus:ring-2 focus:outline-none focus:ring-inset;
 
-  @apply bg-surface-lt text-txt-sec-lt hover:bg-hov-lt focus:ring-foc-lt;
+  @apply hover:bg-hov-lt focus:ring-foc-lt;
   @variant dark {
-    @apply bg-surface-dk text-txt-sec-dk hover:bg-hov-dk focus:ring-foc-dk;
+    @apply hover:bg-hov-dk focus:ring-foc-dk;
   }
 }
 

@@ -21,7 +21,7 @@ export function RecipeSelection({
         className="select-input w-fit text-center"
       >
         {enabledRecipeIndices.map((idx) => (
-          <option key={idx} value={idx}>
+          <option key={idx} value={idx} className="table-inner-cell">
             {allRecipes[idx].name}
           </option>
         ))}

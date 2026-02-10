@@ -437,7 +437,7 @@ export function RecipeGrid({
                     row.name === "" || validIngredients.includes(row.name)
                       ? "focus:ring-blue-400"
                       : "-outline-offset-2 outline-red-400 outline-solid focus:ring-red-400"
-                  } px-2`}
+                  } w-full px-2`}
                   placeholder=""
                   list="valid-ingredients"
                 />
@@ -451,7 +451,7 @@ export function RecipeGrid({
                   placeholder=""
                   step={standardInputStepByPercent(row.quantity, 2.5, 10)}
                   min={0}
-                  className="table-fillable-input text-right font-mono"
+                  className="table-fillable-input w-full text-right font-mono"
                 />
               </td>
               {/* Ingredient Quantity Percentage Display */}
