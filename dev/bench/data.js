@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770683604984,
+  "lastUpdate": 1770683635535,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -4067,6 +4067,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 275,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b9152c78e606713ba78ae300de50decd33c5f559",
+          "message": "Use `ResponsiveGridLayout` to dyn change layout\n\nUse `ResponsiveGridLayout` to dynamically change the position and\ndimensions of all the components to best utilize the available space and\nto ensure smooth transitions between layouts. This replaces the hacky\n`dynamicColsFromFixedPx` system previously in use.",
+          "timestamp": "2026-02-09T18:36:11-05:00",
+          "tree_id": "4ecc2522bb762fc97f199db1f2bd2c83312dfce3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b9152c78e606713ba78ae300de50decd33c5f559"
+        },
+        "date": 1770683633747,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3504,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161933,
+            "range": "± 625",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1954,
+            "range": "± 77",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160310,
+            "range": "± 539",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 307,
+            "range": "± 12",
             "unit": "ns/iter"
           }
         ]
