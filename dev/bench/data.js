@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770626881794,
+  "lastUpdate": 1770683604984,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -39710,6 +39710,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.74%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b9152c78e606713ba78ae300de50decd33c5f559",
+          "message": "Use `ResponsiveGridLayout` to dyn change layout\n\nUse `ResponsiveGridLayout` to dynamically change the position and\ndimensions of all the components to best utilize the available space and\nto ensure smooth transitions between layouts. This replaces the hacky\n`dynamicColsFromFixedPx` system previously in use.",
+          "timestamp": "2026-02-09T18:36:11-05:00",
+          "tree_id": "4ecc2522bb762fc97f199db1f2bd2c83312dfce3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b9152c78e606713ba78ae300de50decd33c5f559"
+        },
+        "date": 1770683603218,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77289,
+            "range": "±0.97%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 724794,
+            "range": "±0.43%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9905,
+            "range": "±2.50%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 600087,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
