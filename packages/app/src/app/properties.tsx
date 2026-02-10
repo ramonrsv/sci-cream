@@ -103,10 +103,12 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
             supportedQtyToggles: [QtyToggle.Quantity, QtyToggle.Percentage],
             qtyToggleState: qtyToggleState,
           }}
-          keyFilterState={propsFilterState}
-          selectedKeysState={selectedPropsState}
-          getKeys={getPropKeys}
-          key_as_med_str={prop_key_as_med_str}
+          keyFilterComponent={{
+            keyFilterState: propsFilterState,
+            selectedKeysState: selectedPropsState,
+            getKeys: getPropKeys,
+            key_as_med_str: prop_key_as_med_str,
+          }}
         />
       </div>
       <div className={"h-[calc(100%-33px)] min-w-55 overflow-y-auto whitespace-nowrap"}>

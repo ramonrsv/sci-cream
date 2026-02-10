@@ -66,31 +66,34 @@ export function getEnabledKeys<Key>(
 
 export function KeySelection<Key>({
   qtyToggleComponent,
-  keyFilterState,
-  selectedKeysState,
-  getKeys,
-  key_as_med_str,
+  keyFilterComponent,
 }: {
   qtyToggleComponent?: {
     supportedQtyToggles: QtyToggle[];
     qtyToggleState: [QtyToggle, React.Dispatch<React.SetStateAction<QtyToggle>>];
   };
-  keyFilterState: [KeyFilter, React.Dispatch<React.SetStateAction<KeyFilter>>];
-  selectedKeysState: [Set<Key>, React.Dispatch<React.SetStateAction<Set<Key>>>];
-  getKeys: () => Key[];
-  key_as_med_str: (key: Key) => string;
+  keyFilterComponent: {
+    supportedKeyFilters?: KeyFilter[];
+    keyFilterState: [KeyFilter, React.Dispatch<React.SetStateAction<KeyFilter>>];
+    selectedKeysState: [Set<Key>, React.Dispatch<React.SetStateAction<Set<Key>>>];
+    getKeys: () => Key[];
+    key_as_med_str: (key: Key) => string;
+  };
 }) {
   const supportedQtyToggles = qtyToggleComponent?.supportedQtyToggles;
   const [qtyToggle, setQtyToggle] = qtyToggleComponent?.qtyToggleState ?? [undefined, undefined];
   const hasQtyToggle = supportedQtyToggles !== undefined && qtyToggle !== undefined;
 
-  const [keyFilter, setKeyFilter] = keyFilterState;
-  const [selectedKeys, setSelectedKeys] = selectedKeysState;
+  const supportedKeyFilters = keyFilterComponent.supportedKeyFilters ?? Object.values(KeyFilter);
+  const [keyFilter, setKeyFilter] = keyFilterComponent.keyFilterState;
+  const [selectedKeys, setSelectedKeys] = keyFilterComponent.selectedKeysState;
   const [allKeysSelected, setAllKeysSelected] = useState<boolean>(false);
 
   const [keySelectVisible, setKeySelectVisible] = useState<boolean>(false);
   const buttonRef = useRef<HTMLSelectElement>(null);
-  const [popupPosition, setPopupPosition] = useState({ top: 0, right: 0 });
+  const [popupPosition, setPopupPosition] = useState<{ top: number; right: number } | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
     if (keySelectVisible && buttonRef.current) {
@@ -98,6 +101,9 @@ export function KeySelection<Key>({
       setPopupPosition({ top: rect.top + window.scrollY, right: rect.right + window.scrollX });
     }
   }, [keySelectVisible]);
+
+  const getKeys = keyFilterComponent.getKeys;
+  const key_as_med_str = keyFilterComponent.key_as_med_str;
 
   const isKeySelected = (key: Key) => {
     return selectedKeys.has(key);
@@ -149,7 +155,7 @@ export function KeySelection<Key>({
           value={keyFilter}
           onChange={(e) => setKeyFilter(e.target.value as KeyFilter)}
         >
-          {Object.values(KeyFilter).map((kf) => (
+          {supportedKeyFilters.map((kf) => (
             <option key={kf} value={kf} className="table-inner-cell">
               {kf}
             </option>
@@ -157,6 +163,7 @@ export function KeySelection<Key>({
         </select>
         {keyFilter === KeyFilter.Custom && (
           <button
+            id="customize-keys-button"
             className="action-button ml-0.5 px-1 py-0.75"
             onClick={() => setKeySelectVisible(true)}
             title="Customize properties"
@@ -166,8 +173,7 @@ export function KeySelection<Key>({
         )}
       </div>
       {keySelectVisible &&
-        popupPosition.top !== 0 &&
-        popupPosition.right !== 0 &&
+        popupPosition &&
         createPortal(
           <div
             className="popup absolute z-50 h-100 w-fit overflow-x-auto pr-2 pl-1 whitespace-nowrap"
@@ -184,7 +190,12 @@ export function KeySelection<Key>({
                 key="All"
                 className="border-brd-lt dark:border-brd-dk sticky top-0 min-w-33 border-b bg-inherit py-0.5 font-semibold"
               >
-                <input type="checkbox" checked={allKeysSelected} onChange={updateAllKeysSelected} />
+                <input
+                  id="all-properties-checkbox"
+                  type="checkbox"
+                  checked={allKeysSelected}
+                  onChange={updateAllKeysSelected}
+                />
                 {" All Properties"}
               </li>
               {getKeys().map((key) => (

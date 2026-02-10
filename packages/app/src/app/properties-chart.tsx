@@ -210,10 +210,13 @@ export function MixPropertiesChart({
       <div className="flex items-center">
         <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
         <KeySelection
-          keyFilterState={propsFilterState}
-          selectedKeysState={selectedPropsState}
-          getKeys={getPropKeys}
-          key_as_med_str={prop_key_as_med_str}
+          keyFilterComponent={{
+            supportedKeyFilters: [KeyFilter.Auto, KeyFilter.Custom],
+            keyFilterState: propsFilterState,
+            selectedKeysState: selectedPropsState,
+            getKeys: getPropKeys,
+            key_as_med_str: prop_key_as_med_str,
+          }}
         />
       </div>
       <div className="h-[calc(100%-33px)] px-2 pb-2">

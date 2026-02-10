@@ -105,10 +105,12 @@ export function IngredientCompositionGrid({ recipes: allRecipes }: { recipes: Re
             supportedQtyToggles: [QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage],
             qtyToggleState: [qtyToggle, setQtyToggle],
           }}
-          keyFilterState={compsFilterState}
-          selectedKeysState={selectedCompsState}
-          getKeys={getCompKeys}
-          key_as_med_str={comp_key_as_med_str}
+          keyFilterComponent={{
+            keyFilterState: compsFilterState,
+            selectedKeysState: selectedCompsState,
+            getKeys: getCompKeys,
+            key_as_med_str: comp_key_as_med_str,
+          }}
         />
       </div>
       <div className="border-brd-lt dark:border-brd-dk border-r">

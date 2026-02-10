@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/vitest";
 
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, cleanup, fireEvent, waitFor, within } from "@testing-library/react";
 
 import {
   MixPropertiesChart,
@@ -106,7 +106,9 @@ function createMockRefRecipeContext() {
 
 const getCompLabel = (compKey: CompKey) => prop_key_as_med_str(compToPropKey(compKey));
 const getFpdLabel = (fpdKey: FpdKey) => prop_key_as_med_str(fpdToPropKey(fpdKey));
-const getPropIndex = (propKey: PropKey) => getPropKeys().indexOf(propKey);
+
+const getPropIndex = (labels: string[], propKey: PropKey) =>
+  labels.indexOf(propKeyAsModifiedMedStr(propKey));
 
 const wasmBridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
 
@@ -204,6 +206,28 @@ describe("MixPropertiesChart", () => {
     });
   });
 
+  const selectKeyFilter = async (container: HTMLElement, optionValue: KeyFilter) => {
+    const filterSelect = container.querySelector("#key-filter-select") as HTMLSelectElement;
+    expect(filterSelect).toBeInTheDocument();
+    fireEvent.change(filterSelect, { target: { value: optionValue } });
+  };
+
+  const configCustomKeysAll = async (container: HTMLElement) => {
+    await selectKeyFilter(container, KeyFilter.Custom);
+    await waitFor(() =>
+      expect(container.querySelector("#customize-keys-button")).toBeInTheDocument(),
+    );
+
+    const customKeysBtn = container.querySelector("#customize-keys-button") as HTMLButtonElement;
+    fireEvent.click(customKeysBtn);
+    await waitFor(() => expect(screen.getByText("All Properties")).toBeInTheDocument());
+
+    const listItem = screen.getByText(/All Properties/i).closest("li");
+    const allPropsCheckbox = within(listItem!).getByRole("checkbox");
+    expect(allPropsCheckbox).toBeInTheDocument();
+    fireEvent.click(allPropsCheckbox);
+  };
+
   describe("Property Key Filtering", () => {
     it("should have KeyFilter.Auto by default", () => {
       const recipeCtx = createMockRecipeContext([true]);
@@ -238,7 +262,7 @@ describe("MixPropertiesChart", () => {
       expect(labels).not.toContain(getFpdLabel(FpdKey.HardnessAt14C));
     });
 
-    it("should show no labels for an empty recipe with KeyFilter.NonZero", async () => {
+    it("should show all labels if explicitly selected", async () => {
       const recipeCtx = createMockRecipeContext();
       const { container } = render(
         <MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />,
@@ -247,60 +271,7 @@ describe("MixPropertiesChart", () => {
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.labels.length).toBeGreaterThan(0);
 
-      const filterSelect = container.querySelector("#key-filter-select") as HTMLSelectElement;
-      expect(filterSelect).toBeInTheDocument();
-      fireEvent.change(filterSelect, { target: { value: KeyFilter.NonZero } });
-
-      await waitFor(() => {
-        expect(capturedBarProps).not.toBeNull();
-        expect(capturedBarProps!.data.labels.length).toBe(0);
-      });
-    });
-
-    it("should show non-zero labels if KeyFilter.NonZero and any recipe has non-zero values", async () => {
-      const recipeCtx = createMockRecipeContext([true, false, true]);
-
-      {
-        const composition = recipeCtx.recipes[0].mixProperties!.composition;
-        composition.pod = 5;
-        recipeCtx.recipes[0].mixProperties!.composition = composition;
-      }
-
-      {
-        const composition = recipeCtx.recipes[2].mixProperties!.composition;
-        const pac = composition.pac;
-        pac.sugars = 10;
-        composition.pac = pac;
-        recipeCtx.recipes[2].mixProperties!.composition = composition;
-      }
-
-      const { container } = render(
-        <MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />,
-      );
-      const filterSelect = container.querySelector("#key-filter-select") as HTMLSelectElement;
-      expect(filterSelect).toBeInTheDocument();
-      fireEvent.change(filterSelect, { target: { value: KeyFilter.NonZero } });
-
-      await waitFor(() => {
-        expect(capturedBarProps).not.toBeNull();
-        expect(capturedBarProps!.data.labels.length).toBeGreaterThanOrEqual(2);
-        expect(capturedBarProps!.data.labels).toContain(getCompLabel(CompKey.POD));
-        expect(capturedBarProps!.data.labels).toContain(getCompLabel(CompKey.PACsgr));
-      });
-    });
-
-    it("should show all labels for KeyFilter.All", async () => {
-      const recipeCtx = createMockRecipeContext();
-      const { container } = render(
-        <MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />,
-      );
-
-      expect(capturedBarProps).not.toBeNull();
-      expect(capturedBarProps!.data.labels.length).toBeGreaterThan(0);
-
-      const filterSelect = container.querySelector("#key-filter-select") as HTMLSelectElement;
-      expect(filterSelect).toBeInTheDocument();
-      fireEvent.change(filterSelect, { target: { value: KeyFilter.All } });
+      await configCustomKeysAll(container);
 
       await waitFor(() => {
         expect(capturedBarProps).not.toBeNull();
@@ -413,22 +384,21 @@ describe("MixPropertiesChart", () => {
         <MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />,
       );
 
-      const filterSelect = container.querySelector("#key-filter-select") as HTMLSelectElement;
-      expect(filterSelect).toBeInTheDocument();
-      fireEvent.change(filterSelect, { target: { value: KeyFilter.All } });
-      await waitFor(() => {
-        expect(screen.getByText("All")).toBeInTheDocument();
-      });
+      await configCustomKeysAll(container);
 
       expect(Math.abs(NaN)).toBeNaN();
 
       const EmulsPerFatPropKey = compToPropKey(CompKey.EmulsifiersPerFat);
       const AbsPACPropKey = compToPropKey(CompKey.AbsPAC);
+      const EmulsPerFatLabel = propKeyAsModifiedMedStr(EmulsPerFatPropKey);
+      const AbsPACLabel = propKeyAsModifiedMedStr(AbsPACPropKey);
 
-      const captured = capturedBarProps!;
-      expect(captured).not.toBeNull();
-      expect(captured.data.labels.length).toBeGreaterThanOrEqual(getPropIndex(EmulsPerFatPropKey));
-      expect(captured.data.labels.length).toBeGreaterThanOrEqual(getPropIndex(AbsPACPropKey));
+      expect(capturedBarProps).not.toBeNull();
+
+      const data = capturedBarProps!.data;
+      await waitFor(() => expect(data.labels.length).toBe(getPropKeysAll().length - 2));
+      expect(data.labels).toContain(EmulsPerFatLabel);
+      expect(data.labels).toContain(AbsPACLabel);
 
       const mixProps = recipeCtx.recipes[0].mixProperties!;
       expect(mixProps.composition.get(CompKey.EmulsifiersPerFat)).toBeNaN();
@@ -436,15 +406,8 @@ describe("MixPropertiesChart", () => {
       expect(getMixProperty(mixProps, EmulsPerFatPropKey)).toBeNaN();
       expect(getMixProperty(mixProps, AbsPACPropKey)).toBe(0);
 
-      const data = capturedBarProps!.data;
-      expect(data.datasets[0].data[getPropIndex(EmulsPerFatPropKey)]).toBeNaN();
-      expect(data.datasets[0].data[getPropIndex(AbsPACPropKey)]).toBe(0);
-
-      const someLabelContains = (labels: string[], substring: string) =>
-        labels.some((label) => label.includes(substring));
-
-      expect(someLabelContains(data.labels, getCompLabel(CompKey.EmulsifiersPerFat))).toBe(true);
-      expect(someLabelContains(data.labels, getCompLabel(CompKey.AbsPAC))).toBe(true);
+      expect(data.datasets[0].data[getPropIndex(data.labels, EmulsPerFatPropKey)]).toBeNaN();
+      expect(data.datasets[0].data[getPropIndex(data.labels, AbsPACPropKey)]).toBe(0);
     });
 
     it("should have modified values and strings", async () => {
@@ -453,29 +416,27 @@ describe("MixPropertiesChart", () => {
         <MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />,
       );
 
-      const filterSelect = container.querySelector("#key-filter-select") as HTMLSelectElement;
-      expect(filterSelect).toBeInTheDocument();
-      fireEvent.change(filterSelect, { target: { value: KeyFilter.All } });
-      await waitFor(() => {
-        expect(screen.getByText("All")).toBeInTheDocument();
-      });
+      await configCustomKeysAll(container);
 
       const EmulsPerFatPropKey = compToPropKey(CompKey.EmulsifiersPerFat);
       const StabsPerfWaterPropKey = compToPropKey(CompKey.StabilizersPerWater);
       const AbsPACPropKey = compToPropKey(CompKey.AbsPAC);
       const ServingTempPropKey = fpdToPropKey(FpdKey.ServingTemp);
 
+      expect(capturedBarProps).not.toBeNull();
+
       const captured = capturedBarProps!;
-      expect(captured).not.toBeNull();
+      const data = capturedBarProps!.data;
+      await waitFor(() => expect(data.labels.length).toBe(getPropKeysAll().length - 2));
+
       for (const key of [
         EmulsPerFatPropKey,
         StabsPerfWaterPropKey,
         AbsPACPropKey,
         ServingTempPropKey,
       ]) {
-        expect(captured.data.labels.length).toBeGreaterThanOrEqual(getPropIndex(key));
         expect(captured.data.labels).toContain(propKeyAsModifiedMedStr(key));
-        expect(captured.data.datasets[0].data[getPropIndex(key)]).toBeCloseTo(
+        expect(captured.data.datasets[0].data[getPropIndex(data.labels, key)]).toBeCloseTo(
           getModifiedMixProperty(recipeCtx.recipes[0].mixProperties!, key),
         );
       }
