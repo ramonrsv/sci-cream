@@ -62,15 +62,17 @@ export function ThemeSelect({
   themeState: [Theme, React.Dispatch<React.SetStateAction<Theme>>];
 }) {
   const [mounted, setMounted] = useState(false);
-  const [, setTheme] = themeState;
+  const [theme, setTheme] = themeState;
   const [themeConfig, setThemeConfig] = useState<ThemeConfig>(getThemeConfigOrDefault());
 
   useEffect(() => {
-    // Intentional for SSR hydration mismatch prevention, this pattern is even in their docs:
+    // Intentional for SSR hydration mismatch prevention, this pattern is in their docs:
     // https://nextjs.org/docs/messages/react-hydration-error#solution-1-using-useeffect-to-run-on-the-client-only
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setMounted(true);
+    setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
   }, []);
+
+  // Apply the initial theme on mount
+  useEffect(() => applyTheme(theme), []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const applyThemeConfig = (config: ThemeConfig) => {
     setThemeConfig(config);
