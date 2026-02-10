@@ -2,6 +2,9 @@
 
 import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
+import { X, Settings } from "lucide-react";
+
+import { COMPONENT_ACTION_ICON_SIZE } from "@/app/page";
 import { STATE_VAL } from "../util";
 
 export enum QtyToggle {
@@ -14,10 +17,28 @@ export enum QtyToggle {
 }
 
 export enum KeyFilter {
+  /// Automatically determine which keys to show based on internal heuristics
   Auto = "Auto",
-  NonZero = "NonZero",
+  /// Show only keys whose values are non-zero for at least one ingredient in at least one recipe
+  NonZero = "Non-Zero",
+  /// Show all keys regardless of value
   All = "All",
+  /// Show only keys that the user has manually selected
   Custom = "Custom",
+}
+
+/** Gets short labels for the QtyToggle options to show in the UI */
+export function qtyToggleToShortStr(qt: QtyToggle): string {
+  switch (qt) {
+    case QtyToggle.Composition:
+      return "Comp.";
+    case QtyToggle.Quantity:
+      return "Qty (g)";
+    case QtyToggle.Percentage:
+      return "Qty (%)";
+    default:
+      throw new Error("Unsupported QtyToggle value");
+  }
 }
 
 export function getEnabledKeys<Key>(
@@ -65,18 +86,16 @@ export function KeySelection<Key>({
 
   const [keyFilter, setKeyFilter] = keyFilterState;
   const [selectedKeys, setSelectedKeys] = selectedKeysState;
+  const [allKeysSelected, setAllKeysSelected] = useState<boolean>(false);
 
   const [keySelectVisible, setKeySelectVisible] = useState<boolean>(false);
   const buttonRef = useRef<HTMLSelectElement>(null);
-  const [popupPosition, setPopupPosition] = useState({ top: 0, left: 0 });
+  const [popupPosition, setPopupPosition] = useState({ top: 0, right: 0 });
 
   useEffect(() => {
     if (keySelectVisible && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      setPopupPosition({
-        top: rect.bottom + window.scrollY - 20,
-        left: rect.left + window.scrollX + 80,
-      });
+      setPopupPosition({ top: rect.top + window.scrollY, right: rect.right + window.scrollX });
     }
   }, [keySelectVisible]);
 
@@ -88,56 +107,86 @@ export function KeySelection<Key>({
     const newSet = new Set(selectedKeys);
     if (newSet.has(key)) {
       newSet.delete(key);
+      setAllKeysSelected(false);
     } else {
       newSet.add(key);
     }
     setSelectedKeys(newSet);
   };
 
+  const updateAllKeysSelected = () => {
+    const newAllKeysSelected = !allKeysSelected;
+    setAllKeysSelected(newAllKeysSelected);
+
+    if (newAllKeysSelected) {
+      setSelectedKeys(new Set(getKeys()));
+    } else {
+      setSelectedKeys(new Set());
+    }
+  };
+
   return (
     <div id="key-selection">
-      {hasQtyToggle && (
+      <div className="flex items-center">
+        {hasQtyToggle && (
+          <select
+            id={"qty-toggle-select"}
+            className="select-input"
+            value={qtyToggle}
+            onChange={(e) => setQtyToggle(e.target.value as QtyToggle)}
+          >
+            {supportedQtyToggles.map((qt) => (
+              <option key={qt} value={qt} className="table-inner-cell">
+                {qtyToggleToShortStr(qt)}
+              </option>
+            ))}
+          </select>
+        )}
         <select
-          id={"qty-toggle-select"}
-          className="select-input"
-          value={qtyToggle}
-          onChange={(e) => setQtyToggle(e.target.value as QtyToggle)}
+          ref={buttonRef}
+          id={"key-filter-select"}
+          className={`select-input ${hasQtyToggle ? "ml-2" : ""}`}
+          value={keyFilter}
+          onChange={(e) => setKeyFilter(e.target.value as KeyFilter)}
         >
-          {supportedQtyToggles.map((qt) => (
-            <option key={qt} value={qt} className="table-inner-cell">
-              {qt}
+          {Object.values(KeyFilter).map((kf) => (
+            <option key={kf} value={kf} className="table-inner-cell">
+              {kf}
             </option>
           ))}
         </select>
-      )}
-      <select
-        ref={buttonRef}
-        id={"key-filter-select"}
-        className={`select-input ${hasQtyToggle ? "ml-2" : ""}`}
-        value={keyFilter}
-        onChange={(e) => {
-          setKeyFilter(e.target.value as KeyFilter);
-          if (e.target.value === KeyFilter.Custom) {
-            setKeySelectVisible(true);
-          }
-        }}
-      >
-        {Object.values(KeyFilter).map((kf) => (
-          <option key={kf} value={kf} className="table-inner-cell">
-            {kf}
-          </option>
-        ))}
-      </select>
+        {keyFilter === KeyFilter.Custom && (
+          <button
+            className="action-button ml-0.5 px-1 py-0.75"
+            onClick={() => setKeySelectVisible(true)}
+            title="Customize properties"
+          >
+            <Settings size={COMPONENT_ACTION_ICON_SIZE - 3} />
+          </button>
+        )}
+      </div>
       {keySelectVisible &&
+        popupPosition.top !== 0 &&
+        popupPosition.right !== 0 &&
         createPortal(
           <div
-            className="popup absolute z-50 w-fit pr-2 pl-1 whitespace-nowrap"
-            style={{ top: `${popupPosition.top}px`, left: `${popupPosition.left}px` }}
+            className="popup absolute z-50 h-100 w-fit overflow-x-auto pr-2 pl-1 whitespace-nowrap"
+            style={{ top: `${popupPosition.top}px`, left: `${popupPosition.right + 5}px` }}
           >
-            <button className="button" onClick={() => setKeySelectVisible(false)}>
-              Done
+            <button
+              className="action-button sticky top-0 z-10 float-right -mr-1 pt-px"
+              onClick={() => setKeySelectVisible(false)}
+            >
+              <X size={COMPONENT_ACTION_ICON_SIZE} />
             </button>
-            <ul>
+            <ul className="bg-inherit">
+              <li
+                key="All"
+                className="border-brd-lt dark:border-brd-dk sticky top-0 min-w-33 border-b bg-inherit py-0.5 font-semibold"
+              >
+                <input type="checkbox" checked={allKeysSelected} onChange={updateAllKeysSelected} />
+                {" All Properties"}
+              </li>
               {getKeys().map((key) => (
                 <li key={String(key)}>
                   <input
