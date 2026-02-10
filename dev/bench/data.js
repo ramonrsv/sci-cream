@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770683860418,
+  "lastUpdate": 1770683874899,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -37476,6 +37476,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 33.62,
             "range": "0.82",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b9152c78e606713ba78ae300de50decd33c5f559",
+          "message": "Use `ResponsiveGridLayout` to dyn change layout\n\nUse `ResponsiveGridLayout` to dynamically change the position and\ndimensions of all the components to best utilize the available space and\nto ensure smooth transitions between layouts. This replaces the hacky\n`dynamicColsFromFixedPx` system previously in use.",
+          "timestamp": "2026-02-09T18:36:11-05:00",
+          "tree_id": "4ecc2522bb762fc97f199db1f2bd2c83312dfce3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b9152c78e606713ba78ae300de50decd33c5f559"
+        },
+        "date": 1770683873984,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 23.365,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 661.5,
+            "range": "52.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.9,
+            "range": "5.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.9,
+            "range": "5.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 43.2,
+            "range": "9.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40.5,
+            "range": "8.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 193.9,
+            "range": "10.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 55.5,
+            "range": "3.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 57,
+            "range": "1.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 35.44,
+            "range": "0.51",
             "unit": "ms"
           }
         ]
