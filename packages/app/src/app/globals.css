@@ -125,7 +125,7 @@ body {
 
 /* UI Components */
 .popup {
-  @apply rounded-md border text-sm;
+  @apply rounded-lg border text-sm;
 
   @apply border-brd-lt bg-surface-lt text-txt-prim-lt;
   @variant dark {
@@ -143,7 +143,7 @@ body {
 }
 
 .action-button {
-  @apply rounded-xl border border-transparent text-sm leading-tight hover:border;
+  @apply rounded-xl border border-transparent text-sm leading-tight hover:border hover:shadow-sm;
 
   @apply bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt active:bg-act-lt;
   @variant dark {
@@ -168,9 +168,9 @@ body {
 .grid-component {
   @apply rounded-lg border border-transparent;
 
-  @apply bg-surface-lt;
+  @apply bg-surface-lt shadow-md;
   @variant dark {
-    @apply bg-surface-dk;
+    @apply bg-surface-dk shadow-lg;
   }
 }
 
