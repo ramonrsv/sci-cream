@@ -301,7 +301,7 @@ describe("RecipeGrid Component", () => {
   let setRecipeContext: Mock<(value: SetStateAction<RecipeContext>) => void>;
   let setRecipeResources: Mock<(value: SetStateAction<RecipeResources>) => void>;
 
-  function RecipeGridWithSpy({ indices }: { indices: number[] }) {
+  function RecipeGridWithSpy() {
     const [recipeCtx, setRecipeCtx] = useState(recipeContext);
     const [resources, setResources] = useState(recipeResources);
 
@@ -321,7 +321,6 @@ describe("RecipeGrid Component", () => {
         props={{
           recipeCtxState: [recipeCtx, setRecipeContext],
           recipeResourcesState: [resources, setRecipeResources],
-          enabledRecipeIndices: indices,
         }}
       />
     );
@@ -400,7 +399,7 @@ describe("RecipeGrid Component", () => {
 
   it("should update ingredient name on input", async () => {
     const user = userEvent.setup();
-    const { container } = render(<RecipeGridWithSpy indices={[0]} />);
+    const { container } = render(<RecipeGridWithSpy />);
 
     const firstIngredientInput = getIngredientNameElement(container, 0);
     expect(firstIngredientInput).toBeInTheDocument();
@@ -416,7 +415,7 @@ describe("RecipeGrid Component", () => {
 
   it("should update quantity on input", async () => {
     const user = userEvent.setup();
-    const { container } = render(<RecipeGridWithSpy indices={[0]} />);
+    const { container } = render(<RecipeGridWithSpy />);
 
     const firstQuantityInput = getIngredientQuantityElement(container, 0);
     expect(firstQuantityInput).toBeInTheDocument();
@@ -432,7 +431,7 @@ describe("RecipeGrid Component", () => {
 
   it("should update ingredient name and quantity on input", async () => {
     const user = userEvent.setup();
-    const { container } = render(<RecipeGridWithSpy indices={[0]} />);
+    const { container } = render(<RecipeGridWithSpy />);
 
     const firstIngredientInput = getIngredientNameElement(container, 0);
     const firstQuantityInput = getIngredientQuantityElement(container, 0);
@@ -456,7 +455,7 @@ describe("RecipeGrid Component", () => {
     recipeContext.recipes[0].ingredientRows[1].quantity = 30;
     recipeContext.recipes[0].mixTotal = 80;
 
-    render(<RecipeGridWithSpy indices={[0]} />);
+    render(<RecipeGridWithSpy />);
 
     expect(screen.getByText("80")).toBeInTheDocument();
     expect(screen.getByText("100")).toBeInTheDocument(); // 100%
@@ -480,7 +479,7 @@ describe("RecipeGrid Component", () => {
 
   it("should update and display mix total on input", async () => {
     const user = userEvent.setup();
-    const { container } = render(<RecipeGridWithSpy indices={[0]} />);
+    const { container } = render(<RecipeGridWithSpy />);
 
     const firstQuantityInput = getIngredientQuantityElement(container, 0);
     const secondQuantityInput = getIngredientQuantityElement(container, 1);
@@ -515,7 +514,7 @@ describe("RecipeGrid Component", () => {
 
     const user = userEvent.setup();
 
-    const { container } = render(<RecipeGridWithSpy indices={[0, 1]} />);
+    const { container } = render(<RecipeGridWithSpy />);
 
     function getFirstSearchInputElement() {
       return container.querySelector(
@@ -556,7 +555,7 @@ describe("RecipeGrid Component", () => {
     recipeContext.recipes[0].ingredientRows[1].name = "Sucrose";
     recipeContext.recipes[0].ingredientRows[1].quantity = 30;
 
-    render(<RecipeGridWithSpy indices={[0]} />);
+    render(<RecipeGridWithSpy />);
 
     const copyButton = screen.getByRole("button", { name: /copy/i });
     await user.click(copyButton);
@@ -575,7 +574,7 @@ describe("RecipeGrid Component", () => {
       clipboard: { readText: vi.fn(() => Promise.resolve(clipboardText)) },
     });
 
-    render(<RecipeGridWithSpy indices={[0]} />);
+    render(<RecipeGridWithSpy />);
 
     const pasteButton = screen.getByRole("button", { name: /paste/i });
     await user.click(pasteButton);
@@ -605,7 +604,7 @@ describe("RecipeGrid Component", () => {
     recipeContext.recipes[0].ingredientRows[0].name = "2% Milk";
     recipeContext.recipes[0].ingredientRows[0].quantity = 50;
 
-    render(<RecipeGridWithSpy indices={[0]} />);
+    render(<RecipeGridWithSpy />);
 
     const clearButton = screen.getByRole("button", { name: /clear/i });
     await user.click(clearButton);
@@ -649,7 +648,7 @@ describe("RecipeGrid Component", () => {
     );
     get_ingredient_by_name_spy.mockReturnValue(mockIngredient);
 
-    const { container } = render(<RecipeGridWithSpy indices={[0]} />);
+    const { container } = render(<RecipeGridWithSpy />);
 
     const firstIngredientInput = getIngredientNameElement(container, 0);
     fireEvent.change(firstIngredientInput, { target: { value: "2% Milk" } });
@@ -700,7 +699,7 @@ describe("RecipeGrid Component", () => {
     vi.mocked(fetchIngredientSpec).mockResolvedValue(mockSpec);
     vi.mocked(into_ingredient_from_spec).mockReturnValue(mockIngredient);
 
-    const { container } = render(<RecipeGridWithSpy indices={[0]} />);
+    const { container } = render(<RecipeGridWithSpy />);
 
     const firstIngredientInput = getIngredientNameElement(container, 0);
     expect(firstIngredientInput).toBeInTheDocument();
