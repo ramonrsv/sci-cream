@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770787144865,
+  "lastUpdate": 1770787863733,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -42495,6 +42495,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.18%",
             "unit": "ops/sec",
             "extra": "90 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ecf346a40283d20f20ef4653669bae79c91219f9",
+          "message": "Change body font-family, now Geist Sans as default",
+          "timestamp": "2026-02-10T13:38:43-05:00",
+          "tree_id": "7ea631fb10ce690b1c64e0b6fc142c1b50a2a9fc",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ecf346a40283d20f20ef4653669bae79c91219f9"
+        },
+        "date": 1770787861874,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75284,
+            "range": "±1.67%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 712803,
+            "range": "±1.03%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10141,
+            "range": "±2.02%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 603640,
+            "range": "±1.22%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
