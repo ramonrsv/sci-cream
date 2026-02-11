@@ -7,7 +7,7 @@ import {
   recipeUpdateCompleted,
   getRecipeGridRecipeSelector,
   getCompositionGridRecipeSelector,
-} from "@/__tests__/util";
+} from "@/__tests__/e2e/util";
 
 import { REF_RECIPE_TEXT, LAST_INGREDIENT_IDX, EXPECTED_LAST_INGREDIENT } from "@/__tests__/assets";
 

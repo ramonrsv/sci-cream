@@ -14,7 +14,7 @@ import {
   recipeUpdateCompleted,
   getRecipeGridRecipeSelector,
   getCompositionGridRecipeSelector,
-} from "@/__tests__/util";
+} from "@/__tests__/e2e/util";
 
 import {
   THRESHOLDS,

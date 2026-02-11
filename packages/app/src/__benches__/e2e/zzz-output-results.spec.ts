@@ -3,11 +3,11 @@ import { test } from "@playwright/test";
 import * as fs from "fs";
 import * as path from "path";
 
-import { allBenchmarkResultsForUpload } from "@/__tests__/util";
+import { allBenchmarkResultsForUpload } from "@/__tests__/e2e/util";
 
 // Output benchmark results to a JSON file in a format compatible with `github-action-benchmark@v1`,
 // collected from shared `allBenchmarkResultsForUpload` across benchmark suites, exported from
-// `@/__tests__/util`. Note that this file is named with a `zzz-` prefix to ensure it runs last.
+// `@/__tests__/e2e/util`. Note that this file is named with a `zzz-` prefix to ensure it runs last.
 
 test("should output benchmark results to file", async () => {
   const outputDir = path.join(process.cwd(), "bench-results");
