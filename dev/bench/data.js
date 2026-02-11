@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770789301472,
+  "lastUpdate": 1770789836409,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -44166,6 +44166,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.73%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "667f20f794471052b8c5683096873348a6e3af06",
+          "message": "Overhaul `KeySelection`, better popup and Custom\n\n* Overhaul the implementation of `KeySelection`:\n    - Making it a fixed height and scrollable\n    - Adding a 'X' close button\n    - Adding a header 'All Properties' checkbox\n\n* Add an appearing gear icon button used to configure the custom\n  properties, rather than the select menu popping up every time Custom\n  is selected (this also had a problem that it would only pop up when\n  changing from something else to Custom, but not when clicking on\n  Custom if already selected)\n\n* Introduce `qtyToggleToShortStr` to get a shortened version of the\n  string represetnation, namely 'Comp.', 'Qty (g)', and 'Qty (%)'.\n\n* Rework `popupPosition` to use the `top` and `right` values of the\n  bounding rectangle, obviating the need for magic offset values.",
+          "timestamp": "2026-02-10T17:49:30-05:00",
+          "tree_id": "353cff4d54d608637d14aaec7b418b5d5b634e6a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/667f20f794471052b8c5683096873348a6e3af06"
+        },
+        "date": 1770789834766,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76373,
+            "range": "±1.75%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 709731,
+            "range": "±0.87%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9990,
+            "range": "±1.75%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 600735,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
