@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770790125230,
+  "lastUpdate": 1770790141932,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -4606,6 +4606,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "sweetener_spec_into_composition",
             "value": 307,
+            "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ac6ba3ccbd6df3735da849315bd03bfbe0644830",
+          "message": "Add `KeySelection` support for `supportedKeyFltrs`\n\nAlso change `MixPropertiesChart` to only support `KeyFilter.Auto` and\n`KeyFilter.Custom`, since `KeyFilter.All` and `KeyFilter.NonZero` have\ntoo many values to be clearly visible, the point of this component.",
+          "timestamp": "2026-02-11T00:05:07-05:00",
+          "tree_id": "610ac779fe7cfc26772782d58ae0897bc7515cb9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ac6ba3ccbd6df3735da849315bd03bfbe0644830"
+        },
+        "date": 1770790140963,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3629,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161200,
+            "range": "± 1429",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1962,
+            "range": "± 28",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 159757,
+            "range": "± 999",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 315,
             "range": "± 2",
             "unit": "ns/iter"
           }
