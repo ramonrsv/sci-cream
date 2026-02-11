@@ -34,7 +34,7 @@ import {
   getFpdLabel,
   getPropIndex,
   configCustomKeysAll,
-} from "@/__tests__/util";
+} from "@/__tests__/unit/util";
 
 class ResizeObserverMock {
   observe = vi.fn();

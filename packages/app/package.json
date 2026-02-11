@@ -14,7 +14,7 @@
     "prettier": "prettier --check ./src",
     "coverage": "vitest run --coverage",
     "bench": "pnpm bench:unit && pnpm bench:e2e",
-    "bench:unit": "node --import tsx src/__benches__/run-all.ts",
+    "bench:unit": "node --import tsx src/__benches__/unit/run-all.ts",
     "bench:e2e": "playwright test --project='benchmarks' --reporter='dot'",
     "dev": "pnpm dev:turbopack",
     "dev:turbopack": "next dev --turbopack",
