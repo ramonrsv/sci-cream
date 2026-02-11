@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770788269248,
+  "lastUpdate": 1770789020092,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -43609,6 +43609,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.88%",
             "unit": "ops/sec",
             "extra": "89 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6079d426db6a5c8ab718c0bff81ab07bb3fb0180",
+          "message": "Change 'Ref 1/2' to 'Ref A/B', it's more uniform",
+          "timestamp": "2026-02-10T16:16:57-05:00",
+          "tree_id": "86f3d505f32dd2b47627020bb81e32c286030821",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6079d426db6a5c8ab718c0bff81ab07bb3fb0180"
+        },
+        "date": 1770789019131,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75100,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 733236,
+            "range": "±0.36%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10089,
+            "range": "±2.21%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 606614,
+            "range": "±0.73%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
