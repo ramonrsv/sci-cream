@@ -60,6 +60,11 @@
       map once and then doing `.get` calls on the JS side may be more performant.
 - [ ] Add functionality to store component layout so that it is remembered across page reloads. The
       store should start seeded with a default for each resolution, and store any user modification.
+- [ ] Rework `specs::Micro` to pull out stabilizers and emulsifiers into their own category(s).
+      Should they be separate `Stabilizer` and `Emulsifier`, or something like `Texturant` that
+      includes both? I prefer the latter, which accommodates blends like "Louis Francois Stab 2000",
+      but users might find it confusing in.
+- [ ] Add gum stabilizer ingredients and Underbelly blends with reference links and explicit ratios.
 
 # Completed
 
