@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770851410100,
+  "lastUpdate": 1770853752625,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -46951,6 +46951,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.69%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "45508fdb165e55a8b89d8c3b71eca5299acb2cae",
+          "message": "Add TODOs about Stabilizers/Emulsifiers, Texturant",
+          "timestamp": "2026-02-11T10:58:11-05:00",
+          "tree_id": "35a7af1317a35be8694e0bdf6bcd9f16dfc3e995",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/45508fdb165e55a8b89d8c3b71eca5299acb2cae"
+        },
+        "date": 1770853751269,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 74079,
+            "range": "±2.09%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 637370,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9451,
+            "range": "±1.63%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 561899,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
