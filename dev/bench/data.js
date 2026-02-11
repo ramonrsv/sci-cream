@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770789859312,
+  "lastUpdate": 1770789913164,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -44272,6 +44272,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.78%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3a486e61931d758381629208d1465243761732fd",
+          "message": "Remove unused `RecipeGridWithSpy` prop `indices`",
+          "timestamp": "2026-02-10T17:51:39-05:00",
+          "tree_id": "e6a672c138f6d854c4fccf575924701da89ae67e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3a486e61931d758381629208d1465243761732fd"
+        },
+        "date": 1770789911372,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76988,
+            "range": "±0.93%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 720591,
+            "range": "±0.37%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9934,
+            "range": "±2.09%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 603449,
+            "range": "±0.73%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
