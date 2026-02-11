@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770786719512,
+  "lastUpdate": 1770786731960,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -38991,6 +38991,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 32.98,
             "range": "0.74",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "00dfdaad3bfe25841a79cd59f5ebe3f6a1018077",
+          "message": "Simplify grid components by removing borders\n\nRemove inner grid component borders, leaving only grid borders. This\nallows the component to be simplified, removing one or two divs that\nexisted to manage the component border independently of the container\nand background. This also improves and greatly simplifies the management\nof the extra space to accomodate the scrollbar, since now always having\nit does not look jarring and we do not need to detect the horizontal\nscrollbar; the background coverage on `IngredientCompositionGrid` is\nalso improved.",
+          "timestamp": "2026-02-10T13:27:27-05:00",
+          "tree_id": "b7aeb1595446e593dc2788fc8f043b9823a1c2ac",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/00dfdaad3bfe25841a79cd59f5ebe3f6a1018077"
+        },
+        "date": 1770786730428,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.695,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 657,
+            "range": "54.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 47.5,
+            "range": "5.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 55.7,
+            "range": "4.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.8,
+            "range": "4.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 39.3,
+            "range": "8.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 190.4,
+            "range": "11.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 48.6,
+            "range": "2.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.29,
+            "range": "0.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 33,
+            "range": "0.73",
             "unit": "ms"
           }
         ]
