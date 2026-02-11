@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770787889804,
+  "lastUpdate": 1770787966024,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -42601,6 +42601,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.22%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5c0602717b6ea57206ebdd03ce1ad8eb991490fd",
+          "message": "Add look & feel improvements, shadows to grid comp",
+          "timestamp": "2026-02-10T16:14:01-05:00",
+          "tree_id": "0401cd7623a2b0a5cf1446ea86632226e78aa47c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5c0602717b6ea57206ebdd03ce1ad8eb991490fd"
+        },
+        "date": 1770787964184,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75528,
+            "range": "±1.33%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 726803,
+            "range": "±0.49%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10079,
+            "range": "±2.08%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 601456,
+            "range": "±0.88%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
