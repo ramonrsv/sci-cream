@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770786731960,
+  "lastUpdate": 1770786882743,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -41938,6 +41938,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.87%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b02f2a132aea05872b5dfeaf6061a527437c23ec",
+          "message": "Remove redundant utils from `table-fillabe-input`\n\nAlso add `table-inner-cell` to `RecipeSelection` options, in order\nto match `KeySelection` options, and be more consistent all around.",
+          "timestamp": "2026-02-10T13:35:24-05:00",
+          "tree_id": "72fa9fe127f42330e26879e4bf43f91eacfba849",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b02f2a132aea05872b5dfeaf6061a527437c23ec"
+        },
+        "date": 1770786881599,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75750,
+            "range": "±1.47%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 716477,
+            "range": "±0.94%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10037,
+            "range": "±2.06%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 587369,
+            "range": "±1.18%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
