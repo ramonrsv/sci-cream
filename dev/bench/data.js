@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770786882743,
+  "lastUpdate": 1770786904898,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -4282,6 +4282,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "sweetener_spec_into_composition",
             "value": 308,
+            "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b02f2a132aea05872b5dfeaf6061a527437c23ec",
+          "message": "Remove redundant utils from `table-fillabe-input`\n\nAlso add `table-inner-cell` to `RecipeSelection` options, in order\nto match `KeySelection` options, and be more consistent all around.",
+          "timestamp": "2026-02-10T13:35:24-05:00",
+          "tree_id": "72fa9fe127f42330e26879e4bf43f91eacfba849",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b02f2a132aea05872b5dfeaf6061a527437c23ec"
+        },
+        "date": 1770786904005,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3564,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161498,
+            "range": "± 604",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2013,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160066,
+            "range": "± 2094",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 306,
             "range": "± 2",
             "unit": "ns/iter"
           }
