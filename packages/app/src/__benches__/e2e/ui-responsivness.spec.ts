@@ -27,7 +27,7 @@ import {
   EXPECTED_LAST_INGREDIENT,
 } from "@/__tests__/assets";
 
-import { QtyToggle } from "@/lib/ui/key-selection";
+import { QtyToggle } from "@/lib/ui/qty-toggle-select";
 import { CompKey, comp_key_as_med_str, compToPropKey } from "@workspace/sci-cream";
 
 // Number of runs for each execution time benchmark

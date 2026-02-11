@@ -11,7 +11,7 @@ import {
   propKeyAsModifiedMedStr,
 } from "./properties-chart";
 import { Recipe, makeEmptyRecipeContext } from "./recipe";
-import { KeyFilter } from "@/lib/ui/key-selection";
+import { KeyFilter } from "@/lib/ui/key-filter-select";
 import { Color, getColor } from "../lib/styles/colors";
 import { Theme } from "@/lib/ui/theme-select";
 

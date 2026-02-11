@@ -4,7 +4,8 @@ import { useState } from "react";
 import { GripVertical } from "lucide-react";
 
 import { Recipe, isRecipeEmpty } from "./recipe";
-import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
+import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "../lib/ui/key-filter-select";
+import { QtyToggle, QtyToggleSelect } from "../lib/ui/qty-toggle-select";
 import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
 import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "../lib/util";
@@ -98,17 +99,15 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
     <div id="mix-properties-grid" className="grid-component h-full w-full">
       <div className="flex items-center">
         <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
-        <KeySelection
-          qtyToggleComponent={{
-            supportedQtyToggles: [QtyToggle.Quantity, QtyToggle.Percentage],
-            qtyToggleState: qtyToggleState,
-          }}
-          keyFilterComponent={{
-            keyFilterState: propsFilterState,
-            selectedKeysState: selectedPropsState,
-            getKeys: getPropKeys,
-            key_as_med_str: prop_key_as_med_str,
-          }}
+        <QtyToggleSelect
+          supportedQtyToggles={[QtyToggle.Quantity, QtyToggle.Percentage]}
+          qtyToggleState={qtyToggleState}
+        />
+        <KeyFilterSelect
+          keyFilterState={propsFilterState}
+          selectedKeysState={selectedPropsState}
+          getKeys={getPropKeys}
+          key_as_med_str={prop_key_as_med_str}
         />
       </div>
       <div className={"h-[calc(100%-33px)] min-w-55 overflow-y-auto whitespace-nowrap"}>

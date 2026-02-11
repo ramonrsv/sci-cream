@@ -15,7 +15,8 @@ import {
 } from "chart.js";
 
 import { Recipe, isRecipeEmpty } from "./recipe";
-import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
+import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "../lib/ui/key-filter-select";
+import { QtyToggle } from "@/lib/ui/qty-toggle-select";
 import { applyQtyToggle, formatCompositionValue } from "../lib/ui/comp-values";
 import { Color, getColor, getGridColor, getLegendColor } from "../lib/styles/colors";
 import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "./page";
@@ -209,14 +210,12 @@ export function MixPropertiesChart({
     <div id="mix-properties-chart" className="grid-component relative h-full w-full">
       <div className="flex items-center">
         <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
-        <KeySelection
-          keyFilterComponent={{
-            supportedKeyFilters: [KeyFilter.Auto, KeyFilter.Custom],
-            keyFilterState: propsFilterState,
-            selectedKeysState: selectedPropsState,
-            getKeys: getPropKeys,
-            key_as_med_str: prop_key_as_med_str,
-          }}
+        <KeyFilterSelect
+          supportedKeyFilters={[KeyFilter.Auto, KeyFilter.Custom]}
+          keyFilterState={propsFilterState}
+          selectedKeysState={selectedPropsState}
+          getKeys={getPropKeys}
+          key_as_med_str={prop_key_as_med_str}
         />
       </div>
       <div className="h-[calc(100%-33px)] px-2 pb-2">

@@ -161,7 +161,7 @@ body {
 }
 
 .drag-handle {
-  @apply my-2 mr-0.75 -ml-1 cursor-move;
+  @apply my-2 -ml-1 cursor-move;
 }
 
 /* Grid Components */

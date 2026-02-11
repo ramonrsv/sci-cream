@@ -2,7 +2,7 @@
 
 import { Recipe } from "@/app/recipe";
 
-export function RecipeSelection({
+export function RecipeSelect({
   allRecipes,
   enabledRecipeIndices,
   currentRecipeIdxState,
@@ -14,7 +14,7 @@ export function RecipeSelection({
   const [currentRecipeIdx, setCurrentRecipeIdx] = currentRecipeIdxState;
 
   return (
-    <div id="recipe-selection" className="float-left mr-2">
+    <div id="recipe-selection" className="float-left mx-1">
       <select
         value={currentRecipeIdx}
         onChange={(e) => setCurrentRecipeIdx(parseInt(e.target.value))}

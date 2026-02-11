@@ -1,4 +1,4 @@
-import { QtyToggle } from "./key-selection";
+import { QtyToggle } from "./qty-toggle-select";
 
 import {
   composition_value_as_quantity as comp_val_as_qty,

@@ -4,8 +4,9 @@ import { useState } from "react";
 import { GripVertical } from "lucide-react";
 
 import { IngredientRow, Recipe, isRecipeEmpty, getRecipeIndices } from "./recipe";
-import { KeyFilter, QtyToggle, KeySelection, getEnabledKeys } from "../lib/ui/key-selection";
-import { RecipeSelection } from "@/lib/ui/recipe-selection";
+import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "../lib/ui/key-filter-select";
+import { QtyToggle, QtyToggleSelect } from "../lib/ui/qty-toggle-select";
+import { RecipeSelect } from "@/lib/ui/recipe-select";
 import { applyQtyToggleAndFormat, formatCompositionValue } from "../lib/ui/comp-values";
 import { isCompKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STD_COMPONENT_H_PX, DRAG_HANDLE_ICON_SIZE } from "./page";
@@ -94,23 +95,21 @@ export function IngredientCompositionGrid({ recipes: allRecipes }: { recipes: Re
       <div className="flex items-center">
         <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
         {(recipes.length > 1 || currentRecipeIdx !== 0) && (
-          <RecipeSelection
+          <RecipeSelect
             allRecipes={allRecipes}
             enabledRecipeIndices={getRecipeIndices(recipes)}
             currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
           />
         )}
-        <KeySelection
-          qtyToggleComponent={{
-            supportedQtyToggles: [QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage],
-            qtyToggleState: [qtyToggle, setQtyToggle],
-          }}
-          keyFilterComponent={{
-            keyFilterState: compsFilterState,
-            selectedKeysState: selectedCompsState,
-            getKeys: getCompKeys,
-            key_as_med_str: comp_key_as_med_str,
-          }}
+        <QtyToggleSelect
+          supportedQtyToggles={[QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage]}
+          qtyToggleState={[qtyToggle, setQtyToggle]}
+        />
+        <KeyFilterSelect
+          keyFilterState={compsFilterState}
+          selectedKeysState={selectedCompsState}
+          getKeys={getCompKeys}
+          key_as_med_str={comp_key_as_med_str}
         />
       </div>
       <div className="border-brd-lt dark:border-brd-dk border-r">

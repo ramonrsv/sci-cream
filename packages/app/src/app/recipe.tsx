@@ -5,7 +5,7 @@ import { GripVertical, ClipboardCopy, ClipboardPaste, Trash } from "lucide-react
 
 import { formatCompositionValue } from "../lib/ui/comp-values";
 import { standardInputStepByPercent } from "../lib/util";
-import { RecipeSelection } from "@/lib/ui/recipe-selection";
+import { RecipeSelect } from "@/lib/ui/recipe-select";
 import {
   MAX_RECIPES,
   RECIPE_TOTAL_ROWS,
@@ -374,7 +374,7 @@ export function RecipeGrid({
       <div className="flex items-center justify-between">
         <div className="flex items-center">
           <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
-          <RecipeSelection
+          <RecipeSelect
             allRecipes={allRecipes}
             enabledRecipeIndices={getRecipeIndices(allRecipes)}
             currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}

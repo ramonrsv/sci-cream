@@ -7,15 +7,6 @@ import { X, Settings } from "lucide-react";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/app/page";
 import { STATE_VAL } from "../util";
 
-export enum QtyToggle {
-  /// The raw composition value as stored in the Ingredient, independent of quantity
-  Composition = "Composition",
-  /// The quantity in grams based on the ingredient quantity in the recipe
-  Quantity = "Quantity (g)",
-  /// The percentage of the mix based on the ingredient quantity and total mix quantity
-  Percentage = "Quantity (%)",
-}
-
 export enum KeyFilter {
   /// Automatically determine which keys to show based on internal heuristics
   Auto = "Auto",
@@ -25,20 +16,6 @@ export enum KeyFilter {
   All = "All",
   /// Show only keys that the user has manually selected
   Custom = "Custom",
-}
-
-/** Gets short labels for the QtyToggle options to show in the UI */
-export function qtyToggleToShortStr(qt: QtyToggle): string {
-  switch (qt) {
-    case QtyToggle.Composition:
-      return "Comp.";
-    case QtyToggle.Quantity:
-      return "Qty (g)";
-    case QtyToggle.Percentage:
-      return "Qty (%)";
-    default:
-      throw new Error("Unsupported QtyToggle value");
-  }
 }
 
 export function getEnabledKeys<Key>(
@@ -64,29 +41,21 @@ export function getEnabledKeys<Key>(
   }
 }
 
-export function KeySelection<Key>({
-  qtyToggleComponent,
-  keyFilterComponent,
+export function KeyFilterSelect<Key>({
+  supportedKeyFilters = Object.values(KeyFilter),
+  keyFilterState,
+  selectedKeysState,
+  getKeys,
+  key_as_med_str,
 }: {
-  qtyToggleComponent?: {
-    supportedQtyToggles: QtyToggle[];
-    qtyToggleState: [QtyToggle, React.Dispatch<React.SetStateAction<QtyToggle>>];
-  };
-  keyFilterComponent: {
-    supportedKeyFilters?: KeyFilter[];
-    keyFilterState: [KeyFilter, React.Dispatch<React.SetStateAction<KeyFilter>>];
-    selectedKeysState: [Set<Key>, React.Dispatch<React.SetStateAction<Set<Key>>>];
-    getKeys: () => Key[];
-    key_as_med_str: (key: Key) => string;
-  };
+  supportedKeyFilters?: KeyFilter[];
+  keyFilterState: [KeyFilter, React.Dispatch<React.SetStateAction<KeyFilter>>];
+  selectedKeysState: [Set<Key>, React.Dispatch<React.SetStateAction<Set<Key>>>];
+  getKeys: () => Key[];
+  key_as_med_str: (key: Key) => string;
 }) {
-  const supportedQtyToggles = qtyToggleComponent?.supportedQtyToggles;
-  const [qtyToggle, setQtyToggle] = qtyToggleComponent?.qtyToggleState ?? [undefined, undefined];
-  const hasQtyToggle = supportedQtyToggles !== undefined && qtyToggle !== undefined;
-
-  const supportedKeyFilters = keyFilterComponent.supportedKeyFilters ?? Object.values(KeyFilter);
-  const [keyFilter, setKeyFilter] = keyFilterComponent.keyFilterState;
-  const [selectedKeys, setSelectedKeys] = keyFilterComponent.selectedKeysState;
+  const [keyFilter, setKeyFilter] = keyFilterState;
+  const [selectedKeys, setSelectedKeys] = selectedKeysState;
   const [allKeysSelected, setAllKeysSelected] = useState<boolean>(false);
 
   const [keySelectVisible, setKeySelectVisible] = useState<boolean>(false);
@@ -101,9 +70,6 @@ export function KeySelection<Key>({
       setPopupPosition({ top: rect.top + window.scrollY, right: rect.right + window.scrollX });
     }
   }, [keySelectVisible]);
-
-  const getKeys = keyFilterComponent.getKeys;
-  const key_as_med_str = keyFilterComponent.key_as_med_str;
 
   const isKeySelected = (key: Key) => {
     return selectedKeys.has(key);
@@ -132,26 +98,12 @@ export function KeySelection<Key>({
   };
 
   return (
-    <div id="key-selection">
+    <div id="key-selection" className="mx-1">
       <div className="flex items-center">
-        {hasQtyToggle && (
-          <select
-            id={"qty-toggle-select"}
-            className="select-input"
-            value={qtyToggle}
-            onChange={(e) => setQtyToggle(e.target.value as QtyToggle)}
-          >
-            {supportedQtyToggles.map((qt) => (
-              <option key={qt} value={qt} className="table-inner-cell">
-                {qtyToggleToShortStr(qt)}
-              </option>
-            ))}
-          </select>
-        )}
         <select
           ref={buttonRef}
           id={"key-filter-select"}
-          className={`select-input ${hasQtyToggle ? "ml-2" : ""}`}
+          className="select-input"
           value={keyFilter}
           onChange={(e) => setKeyFilter(e.target.value as KeyFilter)}
         >
