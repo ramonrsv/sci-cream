@@ -2,18 +2,18 @@ import "@testing-library/jest-dom/vitest";
 
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup, fireEvent, waitFor, within } from "@testing-library/react";
+import { render, screen, cleanup, waitFor } from "@testing-library/react";
 
+import { Recipe } from "@/app/recipe";
+import { KeyFilter } from "@/lib/ui/key-filter-select";
+import { Color, getColor } from "@/lib/styles/colors";
+import { Theme } from "@/lib/ui/theme-select";
 import {
   MixPropertiesChart,
   getPropKeys,
   getModifiedMixProperty,
   propKeyAsModifiedMedStr,
-} from "./properties-chart";
-import { Recipe, makeEmptyRecipeContext } from "./recipe";
-import { KeyFilter } from "@/lib/ui/key-filter-select";
-import { Color, getColor } from "../lib/styles/colors";
-import { Theme } from "@/lib/ui/theme-select";
+} from "@/app/properties-chart";
 
 import {
   CompKey,
@@ -21,14 +21,20 @@ import {
   PropKey,
   compToPropKey,
   fpdToPropKey,
-  prop_key_as_med_str,
   getMixProperty,
   getPropKeys as getPropKeysAll,
-  new_ingredient_database_seeded_from_embedded_data,
-  Bridge as WasmBridge,
 } from "@workspace/sci-cream";
 
 import { REF_LIGHT_RECIPE } from "@/__tests__/assets";
+import {
+  WASM_BRIDGE,
+  createMockRecipeContext,
+  createMockRefRecipeContext,
+  getCompLabel,
+  getFpdLabel,
+  getPropIndex,
+  configCustomKeysAll,
+} from "@/__tests__/util";
 
 class ResizeObserverMock {
   observe = vi.fn();
@@ -89,29 +95,6 @@ vi.mock("react-chartjs-2", () => ({
   //   },
 }));
 
-function createMockRecipeContext(nonEmptyRecipes: boolean[] = []) {
-  const recipeCtx = makeEmptyRecipeContext();
-  nonEmptyRecipes.forEach((isEmpty, index) => {
-    recipeCtx.recipes[index].mixTotal = isEmpty ? 100 : undefined;
-  });
-  return recipeCtx;
-}
-
-function createMockRefRecipeContext() {
-  const recipeCtx = makeEmptyRecipeContext();
-  recipeCtx.recipes[0].mixTotal = 612;
-  recipeCtx.recipes[0].mixProperties = wasmBridge.calculate_recipe_mix_properties(REF_LIGHT_RECIPE);
-  return recipeCtx;
-}
-
-const getCompLabel = (compKey: CompKey) => prop_key_as_med_str(compToPropKey(compKey));
-const getFpdLabel = (fpdKey: FpdKey) => prop_key_as_med_str(fpdToPropKey(fpdKey));
-
-const getPropIndex = (labels: string[], propKey: PropKey) =>
-  labels.indexOf(propKeyAsModifiedMedStr(propKey));
-
-const wasmBridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
-
 describe("MixPropertiesChart", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -132,7 +115,7 @@ describe("MixPropertiesChart", () => {
     });
 
     it("getModifiedMixProperty should modify specific property values", () => {
-      const mixProperties = wasmBridge.calculate_recipe_mix_properties(REF_LIGHT_RECIPE);
+      const mixProperties = WASM_BRIDGE.calculate_recipe_mix_properties(REF_LIGHT_RECIPE);
       const getModMixProp = (propKey: PropKey) => getModifiedMixProperty(mixProperties, propKey);
 
       expect(getModMixProp(fpdToPropKey(FpdKey.FPD))).toBeCloseTo(3.6);
@@ -205,28 +188,6 @@ describe("MixPropertiesChart", () => {
       expect(container.querySelector("#key-selection")).toBeInTheDocument();
     });
   });
-
-  const selectKeyFilter = async (container: HTMLElement, optionValue: KeyFilter) => {
-    const filterSelect = container.querySelector("#key-filter-select") as HTMLSelectElement;
-    expect(filterSelect).toBeInTheDocument();
-    fireEvent.change(filterSelect, { target: { value: optionValue } });
-  };
-
-  const configCustomKeysAll = async (container: HTMLElement) => {
-    await selectKeyFilter(container, KeyFilter.Custom);
-    await waitFor(() =>
-      expect(container.querySelector("#customize-keys-button")).toBeInTheDocument(),
-    );
-
-    const customKeysBtn = container.querySelector("#customize-keys-button") as HTMLButtonElement;
-    fireEvent.click(customKeysBtn);
-    await waitFor(() => expect(screen.getByText("All Properties")).toBeInTheDocument());
-
-    const listItem = screen.getByText(/All Properties/i).closest("li");
-    const allPropsCheckbox = within(listItem!).getByRole("checkbox");
-    expect(allPropsCheckbox).toBeInTheDocument();
-    fireEvent.click(allPropsCheckbox);
-  };
 
   describe("Property Key Filtering", () => {
     it("should have KeyFilter.Auto by default", () => {
