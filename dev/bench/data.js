@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770790110075,
+  "lastUpdate": 1770790125230,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -41570,6 +41570,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 34.63,
             "range": "1.00",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "667f20f794471052b8c5683096873348a6e3af06",
+          "message": "Overhaul `KeySelection`, better popup and Custom\n\n* Overhaul the implementation of `KeySelection`:\n    - Making it a fixed height and scrollable\n    - Adding a 'X' close button\n    - Adding a header 'All Properties' checkbox\n\n* Add an appearing gear icon button used to configure the custom\n  properties, rather than the select menu popping up every time Custom\n  is selected (this also had a problem that it would only pop up when\n  changing from something else to Custom, but not when clicking on\n  Custom if already selected)\n\n* Introduce `qtyToggleToShortStr` to get a shortened version of the\n  string represetnation, namely 'Comp.', 'Qty (g)', and 'Qty (%)'.\n\n* Rework `popupPosition` to use the `top` and `right` values of the\n  bounding rectangle, obviating the need for magic offset values.",
+          "timestamp": "2026-02-10T17:49:30-05:00",
+          "tree_id": "353cff4d54d608637d14aaec7b418b5d5b634e6a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/667f20f794471052b8c5683096873348a6e3af06"
+        },
+        "date": 1770790123300,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.695,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 660.7,
+            "range": "54.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.2,
+            "range": "5.19",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 56.4,
+            "range": "5.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 37.8,
+            "range": "4.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 34,
+            "range": "2.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 187.1,
+            "range": "7.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 48.2,
+            "range": "1.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.65,
+            "range": "0.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 32.56,
+            "range": "0.70",
             "unit": "ms"
           }
         ]
