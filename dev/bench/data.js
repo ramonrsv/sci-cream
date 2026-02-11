@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770790100544,
+  "lastUpdate": 1770790110075,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -44745,6 +44745,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.73%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ac6ba3ccbd6df3735da849315bd03bfbe0644830",
+          "message": "Add `KeySelection` support for `supportedKeyFltrs`\n\nAlso change `MixPropertiesChart` to only support `KeyFilter.Auto` and\n`KeyFilter.Custom`, since `KeyFilter.All` and `KeyFilter.NonZero` have\ntoo many values to be clearly visible, the point of this component.",
+          "timestamp": "2026-02-11T00:05:07-05:00",
+          "tree_id": "610ac779fe7cfc26772782d58ae0897bc7515cb9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ac6ba3ccbd6df3735da849315bd03bfbe0644830"
+        },
+        "date": 1770790109106,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76664,
+            "range": "±1.11%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 707127,
+            "range": "±1.27%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10131,
+            "range": "±1.99%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 600422,
+            "range": "±1.05%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
