@@ -42,12 +42,19 @@ approx = "0.5.1"
 struct_iterable = "0.1.1"
 thiserror = "2.0.18"
 enum-as-inner = "0.7.0"
+nalgebra = "0.34.1"
+nnls = "0.4.0"
+ndarray = "0.16"
 
 # Optional dependencies for features
 wasm-bindgen = { version = "0.2", optional = true }
 serde-wasm-bindgen = { version = "0.6.5", optional = true }
 serde_json = { version = "1.0.149", optional = true }
 diesel = { version = "2.3.6", features = ["postgres"], optional = true }
+
+# getrandom v0.2 requires the "js" feature to support wasm32 targets
+[target.'cfg(target_arch = "wasm32")'.dependencies]
+getrandom = { version = "0.2", features = ["js"] }
 
 [dev-dependencies]
 all_asserts = "2.3.3"

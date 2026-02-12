@@ -493,6 +493,7 @@ expect(mix_properties.fpd.get(FpdKey.FPD)).toBeCloseTo(-3.604);
 
 #![cfg_attr(coverage, feature(coverage_attribute))]
 
+pub mod balancing;
 pub mod composition;
 pub mod constants;
 pub mod display;
@@ -543,8 +544,13 @@ use crate::{
 #[cfg(test)]
 mod tests;
 
-// Silence unused_crate_dependencies lint for [dev-dependencies] used in /benches and /examples.
-#[cfg(test)]
+// Silence unused_crate_dependencies lint scenarios with false positives or out of our control
 mod _lint {
+    // [dev-dependencies] used in /benches and /examples.
+    #[cfg(test)]
     use criterion as _;
+
+    // `getrandom` is only added to enable `js` feature.
+    #[cfg(target_arch = "wasm32")]
+    use getrandom as _;
 }

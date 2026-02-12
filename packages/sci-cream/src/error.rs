@@ -61,6 +61,9 @@ pub enum Error {
     /// Invalid ingredient spec, e.g. due to missing required fields, invalid values, etc.
     #[error("Invalid ingredient spec: {0}")]
     InvalidSpec(String),
+    /// Failed to balance compositions to target values.
+    #[error("Failed to balance compositions: {0}")]
+    FailedToBalanceCompositions(String),
 }
 
 #[cfg_attr(coverage, coverage(off))]

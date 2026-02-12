@@ -1,6 +1,11 @@
 use std::sync::LazyLock;
 
-use crate::recipe::{ConstRecipe, OwnedLightRecipe};
+use crate::{
+    composition::CompKey,
+    fpd::FpdKey,
+    properties::PropKey,
+    recipe::{ConstRecipe, OwnedLightRecipe},
+};
 
 pub(crate) use crate::specs::{
     alcohol::tests::*, alias::tests::*, chocolate::tests::*, composite::tests::*, dairy::tests::*, egg::tests::*,
@@ -63,13 +68,127 @@ pub(crate) static REF_A_RECIPE_LIGHT: LazyLock<OwnedLightRecipe> =
 pub(crate) static REF_B_RECIPE_LIGHT: LazyLock<OwnedLightRecipe> =
     LazyLock::new(|| make_light_recipe_from_const(REF_B_RECIPE_CONST));
 
+pub(crate) static MAIN_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyLock::new(|| {
+    use CompKey::*;
+    use FpdKey::*;
+
+    vec![
+        (Energy.into(), 228.865),
+        (MilkFat.into(), 13.602),
+        (Lactose.into(), 4.836),
+        (MSNF.into(), 8.873),
+        (MilkProteins.into(), 3.106),
+        (MilkSolids.into(), 22.475),
+        (CocoaButter.into(), 0.778),
+        (CocoaSolids.into(), 3.799),
+        (Glucose.into(), 6.767),
+        (Fructose.into(), 5.23),
+        (TotalSugars.into(), 16.834),
+        (ABV.into(), 0.343),
+        (Salt.into(), 0.082),
+        (TotalFats.into(), 15.2632),
+        (TotalSolids.into(), 40.779),
+        (Water.into(), 58.95),
+        (Emulsifiers.into(), 0.2648),
+        (EmulsifiersPerFat.into(), 1.735),
+        (Stabilizers.into(), 0.2043),
+        (StabilizersPerWater.into(), 0.3466),
+        (POD.into(), 15.237),
+        (PACsgr.into(), 27.633),
+        (PACmlk.into(), 3.26),
+        (PACalc.into(), 2.012),
+        (PACtotal.into(), 33.383),
+        (AbsPAC.into(), 56.63),
+        (HF.into(), 7.538),
+        (FPD.into(), -3.604),
+        (ServingTemp.into(), -13.371),
+        (HardnessAt14C.into(), 76.268),
+    ]
+});
+
+pub(crate) static REF_A_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyLock::new(|| {
+    use CompKey::*;
+    use FpdKey::*;
+
+    vec![
+        (Energy.into(), 236.387),
+        (MilkFat.into(), 14.871),
+        (Lactose.into(), 6.118),
+        (MSNF.into(), 11.225),
+        (MilkProteins.into(), 3.929),
+        (MilkSolids.into(), 26.096),
+        (CocoaButter.into(), 0.0),
+        (CocoaSolids.into(), 0.0),
+        (Glucose.into(), 3.812),
+        (Fructose.into(), 0.994),
+        (TotalSugars.into(), 16.725),
+        (ABV.into(), 0.0),
+        (Salt.into(), 0.083),
+        (TotalFats.into(), 16.6614),
+        (TotalSolids.into(), 39.850),
+        (Water.into(), 60.150),
+        (Emulsifiers.into(), 0.5370),
+        (EmulsifiersPerFat.into(), 3.2230),
+        (Stabilizers.into(), 0.1392),
+        (StabilizersPerWater.into(), 0.2314),
+        (POD.into(), 11.550),
+        (PACsgr.into(), 21.051),
+        (PACmlk.into(), 4.124),
+        (PACalc.into(), 0.0),
+        (PACtotal.into(), 25.660),
+        (AbsPAC.into(), 42.660),
+        (HF.into(), 0.0),
+        (FPD.into(), -2.640),
+        (ServingTemp.into(), -13.056),
+        (HardnessAt14C.into(), 76.912),
+    ]
+});
+
+pub(crate) static REF_B_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyLock::new(|| {
+    use CompKey::*;
+    use FpdKey::*;
+
+    vec![
+        (Energy.into(), 228.753),
+        (MilkFat.into(), 14.318),
+        (Lactose.into(), 6.076),
+        (MSNF.into(), 11.149),
+        (MilkProteins.into(), 3.902),
+        (MilkSolids.into(), 25.467),
+        (CocoaButter.into(), 0.0),
+        (CocoaSolids.into(), 0.0),
+        (Glucose.into(), 0.790),
+        (Fructose.into(), 0.675),
+        (TotalSugars.into(), 11.094),
+        (ABV.into(), 3.520),
+        (Salt.into(), 0.083),
+        (TotalSolids.into(), 33.910),
+        (TotalFats.into(), 16.1112),
+        (Water.into(), 63.312),
+        (Emulsifiers.into(), 0.5380),
+        (EmulsifiersPerFat.into(), 3.3393),
+        (Stabilizers.into(), 0.1495),
+        (StabilizersPerWater.into(), 0.2361),
+        (POD.into(), 10.341),
+        (PACsgr.into(), 12.451),
+        (PACmlk.into(), 4.096),
+        (PACalc.into(), 20.638),
+        (PACtotal.into(), 37.670),
+        (AbsPAC.into(), 59.499),
+        (HF.into(), 0.0),
+        (FPD.into(), -3.813),
+        (ServingTemp.into(), -17.546),
+        (HardnessAt14C.into(), 67.799),
+    ]
+});
+
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
     use super::*;
 
-    use crate::{CompKey::*, FpdKey::*, IngredientDatabase, Recipe, docs::assert_eq_float};
+    use crate::{IngredientDatabase, Recipe, docs::assert_eq_float};
 
     #[test]
     fn main_recipe() {
@@ -79,39 +198,8 @@ mod tests {
 
         assert_eq!(mix_props.total_amount, 611.75);
 
-        for (key, value) in [
-            (Energy.into(), 228.865),
-            (MilkFat.into(), 13.602),
-            (Lactose.into(), 4.836),
-            (MSNF.into(), 8.873),
-            (MilkProteins.into(), 3.106),
-            (MilkSolids.into(), 22.475),
-            (CocoaButter.into(), 0.778),
-            (CocoaSolids.into(), 3.799),
-            (Glucose.into(), 6.767),
-            (Fructose.into(), 5.23),
-            (TotalSugars.into(), 16.834),
-            (ABV.into(), 0.343),
-            (Salt.into(), 0.082),
-            (TotalFats.into(), 15.2632),
-            (TotalSolids.into(), 40.779),
-            (Water.into(), 58.95),
-            (Emulsifiers.into(), 0.2648),
-            (EmulsifiersPerFat.into(), 1.735),
-            (Stabilizers.into(), 0.2043),
-            (StabilizersPerWater.into(), 0.3466),
-            (POD.into(), 15.237),
-            (PACsgr.into(), 27.633),
-            (PACmlk.into(), 3.26),
-            (PACalc.into(), 2.012),
-            (PACtotal.into(), 33.383),
-            (AbsPAC.into(), 56.63),
-            (HF.into(), 7.538),
-            (FPD.into(), -3.604),
-            (ServingTemp.into(), -13.371),
-            (HardnessAt14C.into(), 76.268),
-        ] {
-            assert_eq_float!(mix_props.get(key), value);
+        for (key, value) in MAIN_RECIPE_PROPERTIES.iter() {
+            assert_eq_float!(mix_props.get(*key), *value);
         }
     }
 
@@ -123,39 +211,8 @@ mod tests {
 
         assert_eq!(mix_props.total_amount, 603.34);
 
-        for (key, value) in [
-            (Energy.into(), 236.387),
-            (MilkFat.into(), 14.871),
-            (Lactose.into(), 6.118),
-            (MSNF.into(), 11.225),
-            (MilkProteins.into(), 3.929),
-            (MilkSolids.into(), 26.096),
-            (CocoaButter.into(), 0.0),
-            (CocoaSolids.into(), 0.0),
-            (Glucose.into(), 3.812),
-            (Fructose.into(), 0.994),
-            (TotalSugars.into(), 16.725),
-            (ABV.into(), 0.0),
-            (Salt.into(), 0.083),
-            (TotalFats.into(), 16.6614),
-            (TotalSolids.into(), 39.850),
-            (Water.into(), 60.150),
-            (Emulsifiers.into(), 0.5370),
-            (EmulsifiersPerFat.into(), 3.2230),
-            (Stabilizers.into(), 0.1392),
-            (StabilizersPerWater.into(), 0.2314),
-            (POD.into(), 11.550),
-            (PACsgr.into(), 21.051),
-            (PACmlk.into(), 4.124),
-            (PACalc.into(), 0.0),
-            (PACtotal.into(), 25.660),
-            (AbsPAC.into(), 42.660),
-            (HF.into(), 0.0),
-            (FPD.into(), -2.640),
-            (ServingTemp.into(), -13.056),
-            (HardnessAt14C.into(), 76.912),
-        ] {
-            assert_eq_float!(mix_props.get(key), value);
+        for (key, value) in REF_A_RECIPE_PROPERTIES.iter() {
+            assert_eq_float!(mix_props.get(*key), *value);
         }
     }
 
@@ -167,39 +224,8 @@ mod tests {
 
         assert_eq_float!(mix_props.total_amount, 602.2);
 
-        for (key, value) in [
-            (Energy.into(), 228.753),
-            (MilkFat.into(), 14.318),
-            (Lactose.into(), 6.076),
-            (MSNF.into(), 11.149),
-            (MilkProteins.into(), 3.902),
-            (MilkSolids.into(), 25.467),
-            (CocoaButter.into(), 0.0),
-            (CocoaSolids.into(), 0.0),
-            (Glucose.into(), 0.790),
-            (Fructose.into(), 0.675),
-            (TotalSugars.into(), 11.094),
-            (ABV.into(), 3.520),
-            (Salt.into(), 0.083),
-            (TotalSolids.into(), 33.910),
-            (TotalFats.into(), 16.1112),
-            (Water.into(), 63.312),
-            (Emulsifiers.into(), 0.5380),
-            (EmulsifiersPerFat.into(), 3.3393),
-            (Stabilizers.into(), 0.1495),
-            (StabilizersPerWater.into(), 0.2361),
-            (POD.into(), 10.341),
-            (PACsgr.into(), 12.451),
-            (PACmlk.into(), 4.096),
-            (PACalc.into(), 20.638),
-            (PACtotal.into(), 37.670),
-            (AbsPAC.into(), 59.499),
-            (HF.into(), 0.0),
-            (FPD.into(), -3.813),
-            (ServingTemp.into(), -17.546),
-            (HardnessAt14C.into(), 67.799),
-        ] {
-            assert_eq_float!(mix_props.get(key), value);
+        for (key, value) in REF_B_RECIPE_PROPERTIES.iter() {
+            assert_eq_float!(mix_props.get(*key), *value);
         }
     }
 }
