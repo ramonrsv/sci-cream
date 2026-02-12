@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770857004586,
+  "lastUpdate": 1770866161597,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -48063,6 +48063,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 608353,
             "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7e037e8dd8329f9e9aa9d7f59e8a956867e3f0f4",
+          "message": "Move common vitest util to new `__tests__/util.ts`",
+          "timestamp": "2026-02-11T16:54:04-05:00",
+          "tree_id": "bd1e148a877d595edaa98e6eccfdeb0e2036d8e4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7e037e8dd8329f9e9aa9d7f59e8a956867e3f0f4"
+        },
+        "date": 1770866159842,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77031,
+            "range": "±0.87%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 718959,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10194,
+            "range": "±2.01%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 603324,
+            "range": "±0.73%",
             "unit": "ops/sec",
             "extra": "92 samples"
           }
