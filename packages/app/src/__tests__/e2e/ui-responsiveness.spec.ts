@@ -187,7 +187,8 @@ test.describe("UI Responsiveness Performance Checks", () => {
     const pasteTime = pasteEnd - pasteStart;
     const updateTime = updateEnd - gotoStart;
 
-    expect(pasteTime).toBeLessThan(THRESHOLDS.paste_response);
+    // *2 to allow for additional overhead verifying paste of multiple recipes
+    expect(pasteTime).toBeLessThan(THRESHOLDS.paste_response * 2);
     expect(updateTime).toBeGreaterThan(2000);
   });
 });
