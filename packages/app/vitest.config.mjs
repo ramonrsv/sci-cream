@@ -8,7 +8,12 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     reporters: "verbose",
-    exclude: [...configDefaults.exclude, "**/__tests__/e2e/**", "**/__benches__/e2e/**"],
+    exclude: [
+      ...configDefaults.exclude,
+      "**/__tests__/e2e/**",
+      "**/__tests__/visual/**",
+      "**/__benches__/e2e/**",
+    ],
     coverage: { exclude: [...coverageConfigDefaults.exclude, "src/db/seed.ts"] },
   },
 });

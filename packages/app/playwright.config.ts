@@ -43,6 +43,9 @@ export default defineConfig({
       fullyParallel: false /* Disable parallel tests for benchmarks */,
       workers: 1 /* Single worker to avoid interference */,
     },
+
+    /* Visual regression testing */
+    { name: "visual", testDir: "./src/__tests__/visual", use: { ...devices["Desktop Chrome"] } },
   ],
 
   /* Run your local dev server before starting the tests */

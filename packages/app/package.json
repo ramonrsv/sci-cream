@@ -10,6 +10,8 @@
     "test:unit": "vitest run",
     "test:e2e": "playwright test --project chromium firefox webkit mobile-chrome mobile-safari",
     "test:e2e:ui": "pnpm test:e2e --ui",
+    "test:visual": "playwright test --project visual",
+    "test:visual:update": "pnpm test:visual --update-snapshots",
     "lint": "eslint ./src --max-warnings=0",
     "prettier": "prettier --check ./src",
     "coverage": "vitest run --coverage",
