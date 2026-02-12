@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770866505820,
+  "lastUpdate": 1770932671424,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -49177,6 +49177,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 611630,
             "range": "±0.67%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "96164793697df283f8a66cb9d2a8e98bdbb0dd6a",
+          "message": "Allow more margin for multi-recipe paste tests",
+          "timestamp": "2026-02-12T16:19:59-05:00",
+          "tree_id": "094ca94bfc39a8a2f5475346e32684b7a3cb7875",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/96164793697df283f8a66cb9d2a8e98bdbb0dd6a"
+        },
+        "date": 1770932670690,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 74597,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 734121,
+            "range": "±0.37%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10004,
+            "range": "±2.09%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 610748,
+            "range": "±0.69%",
             "unit": "ops/sec",
             "extra": "95 samples"
           }
