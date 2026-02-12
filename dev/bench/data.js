@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770856680919,
+  "lastUpdate": 1770856708012,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -4823,6 +4823,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 312,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6299b7b4af6afc2bae26c48244016a4ab6397bbc",
+          "message": "Move `__tests__/util.ts` > `__tests__/e2e/util.ts`\n\nThe current util.ts file contains utilities using @playwright/test for\nend-to-end tests and benchmarks. Some @playwright/test names conflict\nwith vitest names used for unit tests, so it's cleaner to separate the\nend-to-end utils from the upcoming ones for unit tests with vitest.",
+          "timestamp": "2026-02-11T12:30:10-05:00",
+          "tree_id": "d5528bf8f4daba9a9fc592fbd0dcec47863cffbe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6299b7b4af6afc2bae26c48244016a4ab6397bbc"
+        },
+        "date": 1770856706879,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3839,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 188924,
+            "range": "± 3974",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2208,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 184041,
+            "range": "± 9276",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 359,
+            "range": "± 13",
             "unit": "ns/iter"
           }
         ]
