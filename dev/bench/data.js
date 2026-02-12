@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770856944689,
+  "lastUpdate": 1770857004586,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -44546,6 +44546,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 35.68,
             "range": "0.73",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6299b7b4af6afc2bae26c48244016a4ab6397bbc",
+          "message": "Move `__tests__/util.ts` > `__tests__/e2e/util.ts`\n\nThe current util.ts file contains utilities using @playwright/test for\nend-to-end tests and benchmarks. Some @playwright/test names conflict\nwith vitest names used for unit tests, so it's cleaner to separate the\nend-to-end utils from the upcoming ones for unit tests with vitest.",
+          "timestamp": "2026-02-11T12:30:10-05:00",
+          "tree_id": "d5528bf8f4daba9a9fc592fbd0dcec47863cffbe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6299b7b4af6afc2bae26c48244016a4ab6397bbc"
+        },
+        "date": 1770857003057,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 23.365,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 684.6,
+            "range": "69.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53.2,
+            "range": "10.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 65.8,
+            "range": "6.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.5,
+            "range": "4.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 45,
+            "range": "9.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 201.2,
+            "range": "10.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 65.2,
+            "range": "13.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 66.12,
+            "range": "1.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 38.61,
+            "range": "0.87",
             "unit": "ms"
           }
         ]
