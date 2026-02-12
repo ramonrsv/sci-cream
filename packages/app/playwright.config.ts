@@ -28,16 +28,16 @@ export default defineConfig({
     { name: "webkit", use: { ...devices["Desktop Safari"] } },
 
     /* Test against mobile viewports. */
-    { name: "Mobile Chrome", use: { ...devices["Pixel 5"] } },
-    { name: "Mobile Safari", use: { ...devices["iPhone 12"] } },
+    { name: "mobile-chrome", use: { ...devices["Pixel 5"] } },
+    { name: "mobile-safari", use: { ...devices["iPhone 12"] } },
 
     /* Test against branded browsers. */
-    // { name: "Google Chrome", use: { ...devices["Desktop Chrome"], channel: "chrome" } },
-    // { name: "Microsoft Edge", use: { ...devices["Desktop Edge"], channel: "msedge" } },
+    // { name: "google-chrome", use: { ...devices["Desktop Chrome"], channel: "chrome" } },
+    // { name: "microsoft-edge", use: { ...devices["Desktop Edge"], channel: "msedge" } },
 
     /* Benchmarking project */
     {
-      name: "benchmarks",
+      name: "benches",
       testDir: "./src/__benches__/e2e",
       use: { ...devices["Desktop Chrome"] },
       fullyParallel: false /* Disable parallel tests for benchmarks */,
