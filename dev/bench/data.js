@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770866178680,
+  "lastUpdate": 1770866231205,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -48171,6 +48171,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.73%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d29a38baafbfccbc4a7873ae327ab374badead5d",
+          "message": "Move to new `__tests/benches__/unit`, prep visual\n\nMove unit tests and benchmarks to new `*/unit` subdirectories:\n  `__tests__/` -> `__tests__/unit`\n  `__benches__` -> `__benches/unit`\n\nThese mirror the setup for end-to-end tests under `*/e2e`, and are in\npreparation for visual regression tests which will go under new\n`*/visual` subdirectories.",
+          "timestamp": "2026-02-11T17:59:54-05:00",
+          "tree_id": "645ba94eb69be26fcfe0eb8fbc271d1e7bf27665",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d29a38baafbfccbc4a7873ae327ab374badead5d"
+        },
+        "date": 1770866230080,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 67610,
+            "range": "±0.93%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 705854,
+            "range": "±1.59%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9847,
+            "range": "±1.88%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 611630,
+            "range": "±0.67%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
