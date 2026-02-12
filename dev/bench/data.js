@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770932982302,
+  "lastUpdate": 1770937784070,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -49734,6 +49734,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 610748,
             "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ece88312bbaa05850d3347661a2bede44b767ab4",
+          "message": "Allow more marging when running tests locally",
+          "timestamp": "2026-02-12T17:59:07-05:00",
+          "tree_id": "b0d8f34da2691ae17412d85bde24772100ccfafa",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ece88312bbaa05850d3347661a2bede44b767ab4"
+        },
+        "date": 1770937783049,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75392,
+            "range": "±1.57%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 730866,
+            "range": "±0.51%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9998,
+            "range": "±2.47%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 614891,
+            "range": "±0.66%",
             "unit": "ops/sec",
             "extra": "95 samples"
           }
