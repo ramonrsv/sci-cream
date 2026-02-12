@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770854014816,
+  "lastUpdate": 1770856680919,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -47508,6 +47508,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.77%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6299b7b4af6afc2bae26c48244016a4ab6397bbc",
+          "message": "Move `__tests__/util.ts` > `__tests__/e2e/util.ts`\n\nThe current util.ts file contains utilities using @playwright/test for\nend-to-end tests and benchmarks. Some @playwright/test names conflict\nwith vitest names used for unit tests, so it's cleaner to separate the\nend-to-end utils from the upcoming ones for unit tests with vitest.",
+          "timestamp": "2026-02-11T12:30:10-05:00",
+          "tree_id": "d5528bf8f4daba9a9fc592fbd0dcec47863cffbe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6299b7b4af6afc2bae26c48244016a4ab6397bbc"
+        },
+        "date": 1770856679840,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76650,
+            "range": "±0.79%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 734870,
+            "range": "±0.39%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10135,
+            "range": "±2.11%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 608353,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
