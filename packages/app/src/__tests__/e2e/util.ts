@@ -117,16 +117,24 @@ export function getIngredientQtyInputAtIdx(page: Page, index: number) {
   return page.locator('input[type="number"]').nth(index);
 }
 
-export function getMixPropertiesQtyToggleInput(page: Page) {
-  return page.locator("#mix-properties-grid #key-selection select").first();
+export function getMixPropertiesQtyToggleSelectInput(page: Page) {
+  return page.locator("#mix-properties-grid #qty-toggle-select select").first();
+}
+
+export function getMixPropertiesKeyFilterSelectInput(page: Page) {
+  return page.locator("#mix-properties-grid #key-filter-select select").first();
 }
 
 export function getCompositionGridRecipeSelector(page: Page) {
   return page.locator("#ing-composition-grid #recipe-selection select").first();
 }
 
-export function getCompositionGridQtyToggleInput(page: Page) {
-  return page.locator("#ing-composition-grid #key-selection select").first();
+export function getCompositionGridQtyToggleSelectInput(page: Page) {
+  return page.locator("#ing-composition-grid #qty-toggle-select select").first();
+}
+
+export function getCompositionGridKeyFilterSelectInput(page: Page) {
+  return page.locator("#ing-composition-grid #key-filter-select select").first();
 }
 
 export function getMixPropertyValueElement(page: Page, propKey: PropKey, recipeIdx: number = 0) {

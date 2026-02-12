@@ -45,7 +45,7 @@ export const getPropIndex = (labels: string[], propKey: PropKey) =>
   labels.indexOf(propKeyAsModifiedMedStr(propKey));
 
 export async function selectKeyFilter(container: HTMLElement, optionValue: KeyFilter) {
-  const filterSelect = container.querySelector("#key-filter-select") as HTMLSelectElement;
+  const filterSelect = container.querySelector("#key-filter-select select") as HTMLSelectElement;
   expect(filterSelect).toBeInTheDocument();
   fireEvent.change(filterSelect, { target: { value: optionValue } });
 }

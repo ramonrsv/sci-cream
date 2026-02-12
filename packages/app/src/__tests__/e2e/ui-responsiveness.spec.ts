@@ -4,9 +4,9 @@ import {
   timeExecution,
   getIngredientNameInputAtIdx,
   getIngredientQtyInputAtIdx,
-  getMixPropertiesQtyToggleInput,
+  getMixPropertiesQtyToggleSelectInput,
   getMixPropertyValueElement,
-  getCompositionGridQtyToggleInput,
+  getCompositionGridQtyToggleSelectInput,
   getCompositionValueElement,
   pasteToClipboard,
   getPasteButton,
@@ -57,7 +57,7 @@ test.describe("UI Responsiveness Performance Checks", () => {
     await page.goto("");
     await page.waitForLoadState("networkidle");
 
-    const compGridQtyToggle = getCompositionGridQtyToggleInput(page);
+    const compGridQtyToggle = getCompositionGridQtyToggleSelectInput(page);
     await compGridQtyToggle.selectOption(QtyToggle.Composition);
 
     const ingNameInput = getIngredientNameInputAtIdx(page, 0);
@@ -93,7 +93,7 @@ test.describe("UI Responsiveness Performance Checks", () => {
     await page.goto("");
     await page.waitForLoadState("networkidle");
 
-    const propsGridQtyToggle = getMixPropertiesQtyToggleInput(page);
+    const propsGridQtyToggle = getMixPropertiesQtyToggleSelectInput(page);
     await propsGridQtyToggle.selectOption(QtyToggle.Quantity);
 
     const ingNameInput = getIngredientNameInputAtIdx(page, 0);

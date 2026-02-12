@@ -178,14 +178,14 @@ describe("MixPropertiesChart", () => {
     });
   });
 
-  describe("KeySelection Integration", () => {
-    it("should render KeySelection component", () => {
+  describe("KeyFilterSelect Integration", () => {
+    it("should render KeyFilterSelect component", () => {
       const recipeCtx = createMockRecipeContext([true]);
       const { container } = render(
         <MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />,
       );
 
-      expect(container.querySelector("#key-selection")).toBeInTheDocument();
+      expect(container.querySelector("#key-filter-select")).toBeInTheDocument();
     });
   });
 
@@ -196,7 +196,9 @@ describe("MixPropertiesChart", () => {
         <MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />,
       );
 
-      const filterSelect = container.querySelector("#key-filter-select") as HTMLSelectElement;
+      const filterSelect = container.querySelector(
+        "#key-filter-select select",
+      ) as HTMLSelectElement;
       expect(filterSelect).toBeInTheDocument();
       expect(filterSelect.value).toBe(KeyFilter.Auto);
     });

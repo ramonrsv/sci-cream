@@ -98,11 +98,10 @@ export function KeyFilterSelect<Key>({
   };
 
   return (
-    <div id="key-selection" className="mx-1">
+    <div id="key-filter-select" className="mx-1">
       <div className="flex items-center">
         <select
           ref={buttonRef}
-          id={"key-filter-select"}
           className="select-input"
           value={keyFilter}
           onChange={(e) => setKeyFilter(e.target.value as KeyFilter)}

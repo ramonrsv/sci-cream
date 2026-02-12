@@ -33,9 +33,8 @@ export function QtyToggleSelect({
   const [qtyToggle, setQtyToggle] = qtyToggleState;
 
   return (
-    <div id="key-selection" className="mx-1">
+    <div id="qty-toggle-select" className="mx-1">
       <select
-        id={"qty-toggle-select"}
         className="select-input"
         value={qtyToggle}
         onChange={(e) => setQtyToggle(e.target.value as QtyToggle)}
