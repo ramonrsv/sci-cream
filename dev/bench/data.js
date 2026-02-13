@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770942788761,
+  "lastUpdate": 1770960843259,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -50850,6 +50850,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.75%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8b375dc506aba73f36367fb8903673f48ad46b6b",
+          "message": "Remove `maxDiffPixelRatio` from visual regression\n\nA `maxDiffPixelRatio` of 1% is not catching component changes. Since\nonly chromium is being used for these tests, the renders should be\nfairly consistent, so we can remove `maxDiffPixelRatio` and add it back\nas needed; for now it's more beneficial to catch unintended changes.",
+          "timestamp": "2026-02-12T23:07:57-05:00",
+          "tree_id": "0145951860a72a8a7ee1a4e5b61efc34b918fd7b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8b375dc506aba73f36367fb8903673f48ad46b6b"
+        },
+        "date": 1770960841642,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75879,
+            "range": "±1.29%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 631464,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9531,
+            "range": "±1.70%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 560753,
+            "range": "±0.66%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
