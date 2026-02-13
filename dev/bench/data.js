@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770961742925,
+  "lastUpdate": 1770961759116,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -5201,6 +5201,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 308,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b2dc6d8f4738af5c7bce3c2d6f622305541d3070",
+          "message": "Upgrade pnpm dependencies, fixes react-grid-layout\n\n* Upgrade pnpm dependencies to the latest. This fixes the issue with\n  `react-grid-layout` and `react-resizable`; it's unclear if a new patch\n  version of `react-resizable` or app code changes have fixed the issue.\n* Add `pnpm test:visual` to `pnpm test` that includes `unit` and `e2e`.\n* Add TODO about color gradient in `FpdGraph` that only works with\n  `dev:webpack` but not with `dev:turbopack` or `build && start`.\n* Allow a small `maxDiffPixelRatio` in layout visual regression tests to\n  account for anti-aliasing and rendering variations, particularly on\n  large viewports. This causes some of these tests to fail to catch\n  minor component changes, but it's necessary to prevent false negatives\n  in layout tests, and other component-level visual regression tests\n  should catch those minor component changes.",
+          "timestamp": "2026-02-13T00:30:07-05:00",
+          "tree_id": "4b3761100b7756e4299d937bc093606f43a77105",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b2dc6d8f4738af5c7bce3c2d6f622305541d3070"
+        },
+        "date": 1770961758205,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3487,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 162010,
+            "range": "± 7797",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2022,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160628,
+            "range": "± 2054",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 307,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
