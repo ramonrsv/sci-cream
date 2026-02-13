@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771023308109,
+  "lastUpdate": 1771023315024,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -49091,6 +49091,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 35.14,
             "range": "0.80",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a4cd29b7f5aca8b6617f76e2dffe7e4ce433717d",
+          "message": "Use `colord` in `addOrUpdateAlpha` implementation\n\n* Rename `colors.ts:opacity` to `addOrUpdateAlpha`, which is clearer.\n* Use the `colord` package to implement this functionality instead of\n  hard-coding it, which adds support of hex colors and optinal commas.\n* `getCssColorVariable` returns rgb colors when using Webpack but hex\n  colors when using Turbopack. This was causing the former `opacity` to\n  fail when using Turbopack, which caused the gradient functionality to\n  fail as well. This change fixed the gradient issue with Turbopack.\n* Update visual regression golden screenshots for fixed gradient issue.",
+          "timestamp": "2026-02-13T13:06:28-05:00",
+          "tree_id": "e3a0e8d6b9bc09c6943466cacc766537cafc95e2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a4cd29b7f5aca8b6617f76e2dffe7e4ce433717d"
+        },
+        "date": 1771023313671,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 666.8,
+            "range": "54.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 47.6,
+            "range": "7.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60.1,
+            "range": "5.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.7,
+            "range": "6.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 38.5,
+            "range": "3.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 194.9,
+            "range": "13.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 55.5,
+            "range": "4.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 57.65,
+            "range": "1.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 33.86,
+            "range": "1.08",
             "unit": "ms"
           }
         ]
