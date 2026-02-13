@@ -61,10 +61,10 @@
       includes both? I prefer the latter, which accommodates blends like "Louis Francois Stab 2000",
       but users might find it confusing in.
 - [ ] Add gum stabilizer ingredients and Underbelly blends with reference links and explicit ratios.
-- [ ] The color gradient in `FpdGraph` is only working with `dev:webpack`, not turbopack or build.
 
 # Completed
 
+- [x] The color gradient in `FpdGraph` is only working with `dev:webpack`, not turbopack or build.
 - [x] Semver permitted upgrades of `react-grid-layout` (`2.1.0 -> 2.2.2`) and `react-resizable`
       (`3.0.5 -> 3.1.0`) are producing an error (below). For now, remove the caret `^` in
       package.json to force the specific known working versions, but need further investigation.

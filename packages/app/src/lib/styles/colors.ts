@@ -1,3 +1,5 @@
+import { colord } from "colord";
+
 import { Theme } from "../ui/theme-select";
 
 export enum Color {
@@ -39,8 +41,6 @@ export function getGridColor(theme: Theme): string {
   return getThemeCssColorVariable(Color.Grid, Color.GridDark, theme);
 }
 
-export function opacity(rgbaStr: string, opacity: number): string {
-  return rgbaStr.replace(/rgb(a?)\((\d+), (\d+), (\d+)(, ([\d.]+))?\)/, (_, __, r, g, b) => {
-    return `rgba(${r}, ${g}, ${b}, ${opacity})`;
-  });
+export function addOrUpdateAlpha(colorStr: string, opacity: number): string {
+  return colord(colorStr).alpha(opacity).toRgbString();
 }

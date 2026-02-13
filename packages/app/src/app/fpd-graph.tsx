@@ -17,8 +17,15 @@ import {
   type ScriptableScaleContext,
 } from "chart.js";
 
+import {
+  Color,
+  getColor,
+  addOrUpdateAlpha,
+  getLegendColor,
+  getGridColor,
+} from "@/lib/styles/colors";
+
 import { Recipe, isRecipeEmpty } from "./recipe";
-import { Color, getColor, opacity, getLegendColor, getGridColor } from "@/lib/styles/colors";
 import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "../lib/ui/constants";
 import { Theme } from "@/lib/ui/theme-select";
 
@@ -66,18 +73,18 @@ export function FpdGraph({ recipes: allRecipes, theme }: { recipes: Recipe[]; th
         borderWidth: borderWidth,
         borderColor: borderColor,
         backgroundColor: (context: ScriptableContext<"line">) => {
-          if (!context.chart.chartArea) return opacity(borderColor, 0);
+          if (!context.chart.chartArea) return addOrUpdateAlpha(borderColor, 0);
           const { ctx, chartArea: ca } = context.chart;
 
           const gradient = ctx.createLinearGradient(ca.right, ca.top, ca.left, ca.bottom);
 
-          gradient.addColorStop(0, opacity(borderColor, 0.3));
-          gradient.addColorStop(0.9, opacity(borderColor, 0));
+          gradient.addColorStop(0, addOrUpdateAlpha(borderColor, 0.3));
+          gradient.addColorStop(0.9, addOrUpdateAlpha(borderColor, 0));
 
           return gradient;
         },
         borderDash: borderDash,
-        fill: recipe.index === 0 ? "start" : false,
+        fill: recipe.index === 0 && lineLabel === "Hardness" ? "start" : false,
         pointRadius: curve.map((_, i) => (shouldHighlight(lineLabel, i) ? 6 : 0)),
         pointBackgroundColor: curve.map((_, i) =>
           shouldHighlight(lineLabel, i) ? "#fff" : borderColor,
