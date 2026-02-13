@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770962090046,
+  "lastUpdate": 1771023045874,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -52521,6 +52521,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.83%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a4cd29b7f5aca8b6617f76e2dffe7e4ce433717d",
+          "message": "Use `colord` in `addOrUpdateAlpha` implementation\n\n* Rename `colors.ts:opacity` to `addOrUpdateAlpha`, which is clearer.\n* Use the `colord` package to implement this functionality instead of\n  hard-coding it, which adds support of hex colors and optinal commas.\n* `getCssColorVariable` returns rgb colors when using Webpack but hex\n  colors when using Turbopack. This was causing the former `opacity` to\n  fail when using Turbopack, which caused the gradient functionality to\n  fail as well. This change fixed the gradient issue with Turbopack.\n* Update visual regression golden screenshots for fixed gradient issue.",
+          "timestamp": "2026-02-13T13:06:28-05:00",
+          "tree_id": "e3a0e8d6b9bc09c6943466cacc766537cafc95e2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a4cd29b7f5aca8b6617f76e2dffe7e4ce433717d"
+        },
+        "date": 1771023043417,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75481,
+            "range": "±0.87%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 720339,
+            "range": "±1.11%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10058,
+            "range": "±2.63%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 608217,
+            "range": "±0.87%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
