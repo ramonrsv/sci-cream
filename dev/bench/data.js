@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771023045874,
+  "lastUpdate": 1771023068551,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -5309,6 +5309,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 313,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a4cd29b7f5aca8b6617f76e2dffe7e4ce433717d",
+          "message": "Use `colord` in `addOrUpdateAlpha` implementation\n\n* Rename `colors.ts:opacity` to `addOrUpdateAlpha`, which is clearer.\n* Use the `colord` package to implement this functionality instead of\n  hard-coding it, which adds support of hex colors and optinal commas.\n* `getCssColorVariable` returns rgb colors when using Webpack but hex\n  colors when using Turbopack. This was causing the former `opacity` to\n  fail when using Turbopack, which caused the gradient functionality to\n  fail as well. This change fixed the gradient issue with Turbopack.\n* Update visual regression golden screenshots for fixed gradient issue.",
+          "timestamp": "2026-02-13T13:06:28-05:00",
+          "tree_id": "e3a0e8d6b9bc09c6943466cacc766537cafc95e2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a4cd29b7f5aca8b6617f76e2dffe7e4ce433717d"
+        },
+        "date": 1771023067273,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3542,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161360,
+            "range": "± 6550",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1971,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 162509,
+            "range": "± 1515",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 311,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
