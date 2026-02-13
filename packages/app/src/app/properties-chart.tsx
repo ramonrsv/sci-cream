@@ -18,7 +18,14 @@ import { Recipe, isRecipeEmpty } from "./recipe";
 import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "../lib/ui/key-filter-select";
 import { QtyToggle } from "@/lib/ui/qty-toggle-select";
 import { applyQtyToggle, formatCompositionValue } from "../lib/ui/comp-values";
-import { Color, getColor, getGridColor, getLegendColor } from "../lib/styles/colors";
+import {
+  Color,
+  getColor,
+  getGridColor,
+  getLegendColor,
+  getReferenceOpacity,
+  addOrUpdateAlpha,
+} from "../lib/styles/colors";
 import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "../lib/ui/constants";
 import { Theme } from "@/lib/ui/theme-select";
 
@@ -159,16 +166,20 @@ export function MixPropertiesChart({
   const chartData = {
     labels,
     datasets: recipes.map((recipe) => {
-      const recipeColor =
-        recipe.index === 0 ? getColor(Color.GraphGreen) : getColor(Color.GraphGray);
+      const isMain = recipe.index === 0;
+      const mainColor = getColor(Color.GraphGreen);
+      const grayColor = getColor(Color.GraphGray);
+      const refOpacity = getReferenceOpacity(recipe.index - 1);
 
       return {
         label: recipe.name,
         data: enabledProps.map((prop_key) =>
           Math.abs(getPropertyValue(prop_key, recipe.mixProperties!, recipe.mixTotal!)),
         ),
-        backgroundColor: recipeColor,
-        borderColor: recipeColor,
+        backgroundColor: isMain ? mainColor : addOrUpdateAlpha(grayColor, refOpacity),
+        borderColor: isMain ? mainColor : addOrUpdateAlpha(grayColor, refOpacity + 0.2),
+        borderWidth: isMain ? 0 : 1,
+        borderRadius: 3,
         maxBarThickness: 40,
         categoryPercentage: 0.6,
         barPercentage: 0.8,
@@ -180,7 +191,13 @@ export function MixPropertiesChart({
     responsive: true,
     maintainAspectRatio: false,
     plugins: {
-      legend: { display: false, position: "top" as const, align: "center" as const },
+      legend: {
+        display: recipes.length > 1,
+        position: "chartArea" as const,
+        align: "start" as const,
+        labels: { color: legendColor, usePointStyle: true, pointStyle: "rectRounded" },
+        title: { display: true, padding: { top: 30 } },
+      },
       title: {
         display: true,
         text: "Mix Properties Chart",

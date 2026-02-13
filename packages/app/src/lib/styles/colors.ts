@@ -15,6 +15,9 @@ export enum Color {
 
 const SSR_DEFAULT_COLOR = "rgba(0, 0, 0, 1)";
 
+/** Descending opacity so each successive reference is lighter */
+export const REFERENCE_OPACITIES = [0.6, 0.3] as const;
+
 export function getCssColorVariable(name: string): string {
   if (typeof window === "undefined") return SSR_DEFAULT_COLOR;
   const styles = window.getComputedStyle(document.documentElement);
@@ -41,6 +44,11 @@ export function getGridColor(theme: Theme): string {
   return getThemeCssColorVariable(Color.Grid, Color.GridDark, theme);
 }
 
+export function getReferenceOpacity(index: number): number {
+  return REFERENCE_OPACITIES[index] ?? 0.2;
+}
+
+/** Add or update the alpha value of a CSS color string (e.g. hex, rgb, hsl) */
 export function addOrUpdateAlpha(colorStr: string, opacity: number): string {
   return colord(colorStr).alpha(opacity).toRgbString();
 }

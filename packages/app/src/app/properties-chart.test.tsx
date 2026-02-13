@@ -6,7 +6,7 @@ import { render, screen, cleanup, waitFor } from "@testing-library/react";
 
 import { Recipe } from "@/app/recipe";
 import { KeyFilter } from "@/lib/ui/key-filter-select";
-import { Color, getColor } from "@/lib/styles/colors";
+import { Color, getColor, addOrUpdateAlpha } from "@/lib/styles/colors";
 import { Theme } from "@/lib/ui/theme-select";
 import {
   MixPropertiesChart,
@@ -303,22 +303,30 @@ describe("MixPropertiesChart", () => {
       render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
 
       expect(capturedBarProps).not.toBeNull();
-      capturedBarProps!.data.datasets.forEach((dataset, index) => {
-        const expectedColor = index === 0 ? getColor(Color.GraphGreen) : getColor(Color.GraphGray);
-
-        expect(dataset.backgroundColor).toBe(expectedColor);
-        expect(dataset.borderColor).toBe(expectedColor);
-      });
+      const datasets = capturedBarProps!.data.datasets;
+      const gray = getColor(Color.GraphGray);
+      // Main recipe: solid green
+      expect(datasets[0].backgroundColor).toBe(getColor(Color.GraphGreen));
+      expect(datasets[0].borderColor).toBe(getColor(Color.GraphGreen));
+      // Ref A: gray at 0.6 opacity
+      expect(datasets[1].backgroundColor).toBe(addOrUpdateAlpha(gray, 0.6));
+      expect(datasets[1].borderColor).toBe(addOrUpdateAlpha(gray, 0.8));
+      // Ref B: gray at 0.3 opacity
+      expect(datasets[2].backgroundColor).toBe(addOrUpdateAlpha(gray, 0.3));
+      expect(datasets[2].borderColor).toBe(addOrUpdateAlpha(gray, 0.5));
     });
 
-    it("should set main recipe color green, and reference recipes gray", () => {
+    it("should set reference recipe colors correctly when some references are empty", () => {
       const recipeCtx = createMockRecipeContext([true, false, true]);
       render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
 
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.datasets).toHaveLength(2);
       expect(capturedBarProps!.data.datasets[0].backgroundColor).toBe(getColor(Color.GraphGreen));
-      expect(capturedBarProps!.data.datasets[1].backgroundColor).toBe(getColor(Color.GraphGray));
+      // Ref B (index 2) clamps to last opacity tier (0.3)
+      expect(capturedBarProps!.data.datasets[1].backgroundColor).toBe(
+        addOrUpdateAlpha(getColor(Color.GraphGray), 0.3),
+      );
     });
 
     it("should create dataset for each visible recipe", () => {
