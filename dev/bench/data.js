@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770961114569,
+  "lastUpdate": 1770961116362,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -47576,6 +47576,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 34.51,
             "range": "1.06",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8b375dc506aba73f36367fb8903673f48ad46b6b",
+          "message": "Remove `maxDiffPixelRatio` from visual regression\n\nA `maxDiffPixelRatio` of 1% is not catching component changes. Since\nonly chromium is being used for these tests, the renders should be\nfairly consistent, so we can remove `maxDiffPixelRatio` and add it back\nas needed; for now it's more beneficial to catch unintended changes.",
+          "timestamp": "2026-02-12T23:07:57-05:00",
+          "tree_id": "0145951860a72a8a7ee1a4e5b61efc34b918fd7b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8b375dc506aba73f36367fb8903673f48ad46b6b"
+        },
+        "date": 1770961113779,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 665.4,
+            "range": "50.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 47.5,
+            "range": "5.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 59.6,
+            "range": "6.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.4,
+            "range": "7.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 37,
+            "range": "3.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 189.7,
+            "range": "8.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 53.3,
+            "range": "12.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 58.97,
+            "range": "0.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 35.61,
+            "range": "0.91",
             "unit": "ms"
           }
         ]
