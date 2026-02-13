@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770960843259,
+  "lastUpdate": 1770960866379,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -5147,6 +5147,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 308,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8b375dc506aba73f36367fb8903673f48ad46b6b",
+          "message": "Remove `maxDiffPixelRatio` from visual regression\n\nA `maxDiffPixelRatio` of 1% is not catching component changes. Since\nonly chromium is being used for these tests, the renders should be\nfairly consistent, so we can remove `maxDiffPixelRatio` and add it back\nas needed; for now it's more beneficial to catch unintended changes.",
+          "timestamp": "2026-02-12T23:07:57-05:00",
+          "tree_id": "0145951860a72a8a7ee1a4e5b61efc34b918fd7b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8b375dc506aba73f36367fb8903673f48ad46b6b"
+        },
+        "date": 1770960864932,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3553,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161523,
+            "range": "± 6095",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1969,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 159250,
+            "range": "± 610",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 308,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
