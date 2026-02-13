@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770962002488,
+  "lastUpdate": 1770962011902,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -48135,6 +48135,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 35.61,
             "range": "0.91",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b2dc6d8f4738af5c7bce3c2d6f622305541d3070",
+          "message": "Upgrade pnpm dependencies, fixes react-grid-layout\n\n* Upgrade pnpm dependencies to the latest. This fixes the issue with\n  `react-grid-layout` and `react-resizable`; it's unclear if a new patch\n  version of `react-resizable` or app code changes have fixed the issue.\n* Add `pnpm test:visual` to `pnpm test` that includes `unit` and `e2e`.\n* Add TODO about color gradient in `FpdGraph` that only works with\n  `dev:webpack` but not with `dev:turbopack` or `build && start`.\n* Allow a small `maxDiffPixelRatio` in layout visual regression tests to\n  account for anti-aliasing and rendering variations, particularly on\n  large viewports. This causes some of these tests to fail to catch\n  minor component changes, but it's necessary to prevent false negatives\n  in layout tests, and other component-level visual regression tests\n  should catch those minor component changes.",
+          "timestamp": "2026-02-13T00:30:07-05:00",
+          "tree_id": "4b3761100b7756e4299d937bc093606f43a77105",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b2dc6d8f4738af5c7bce3c2d6f622305541d3070"
+        },
+        "date": 1770962010594,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 660.8,
+            "range": "51.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48.6,
+            "range": "6.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 59.2,
+            "range": "5.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.9,
+            "range": "10.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 37.7,
+            "range": "6.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 192.8,
+            "range": "10.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 49.9,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 55.32,
+            "range": "1.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 33.98,
+            "range": "0.96",
             "unit": "ms"
           }
         ]
