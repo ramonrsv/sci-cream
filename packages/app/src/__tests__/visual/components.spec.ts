@@ -21,8 +21,7 @@ test.describe("Visual Regression: Empty State", () => {
     const recipeGrid = page.locator("#recipe-grid");
     await expect(recipeGrid).toBeVisible();
 
-    // Allow 1% pixel difference for minor rendering variations (e.g. anti-aliasing)
-    await expect(recipeGrid).toHaveScreenshot("recipe-grid-empty.png", { maxDiffPixelRatio: 0.01 });
+    await expect(recipeGrid).toHaveScreenshot("recipe-grid-empty.png");
   });
 
   test("empty properties grid", async ({ page }) => {
@@ -32,9 +31,7 @@ test.describe("Visual Regression: Empty State", () => {
     const propertiesGrid = page.locator("#mix-properties-grid");
     await expect(propertiesGrid).toBeVisible();
 
-    await expect(propertiesGrid).toHaveScreenshot("properties-grid-empty.png", {
-      maxDiffPixelRatio: 0.01,
-    });
+    await expect(propertiesGrid).toHaveScreenshot("properties-grid-empty.png");
   });
 
   test("empty composition grid", async ({ page }) => {
@@ -44,9 +41,7 @@ test.describe("Visual Regression: Empty State", () => {
     const compositionGrid = page.locator("#ing-composition-grid");
     await expect(compositionGrid).toBeVisible();
 
-    await expect(compositionGrid).toHaveScreenshot("composition-grid-empty.png", {
-      maxDiffPixelRatio: 0.01,
-    });
+    await expect(compositionGrid).toHaveScreenshot("composition-grid-empty.png");
   });
 
   test("empty properties chart", async ({ page }) => {
@@ -56,10 +51,7 @@ test.describe("Visual Regression: Empty State", () => {
     const propertiesChart = page.locator("#mix-properties-chart");
     await expect(propertiesChart).toBeVisible();
 
-    // Charts may have minor Canvas rendering variations between browsers, so allow 2% tolerance
-    await expect(propertiesChart).toHaveScreenshot("properties-chart-empty.png", {
-      maxDiffPixelRatio: 0.02,
-    });
+    await expect(propertiesChart).toHaveScreenshot("properties-chart-empty.png");
   });
 
   test("empty FPD graph", async ({ page }) => {
@@ -69,7 +61,7 @@ test.describe("Visual Regression: Empty State", () => {
     const fpdGraph = page.locator("#fpd-graph");
     await expect(fpdGraph).toBeVisible();
 
-    await expect(fpdGraph).toHaveScreenshot("fpd-graph-empty.png", { maxDiffPixelRatio: 0.02 });
+    await expect(fpdGraph).toHaveScreenshot("fpd-graph-empty.png");
   });
 });
 
@@ -88,9 +80,7 @@ test.describe("Visual Regression: Populated Recipe", () => {
     await recipeUpdateCompleted(page, elements, EXPECTED_LAST_INGREDIENT);
 
     const recipeGrid = page.locator("#recipe-grid");
-    await expect(recipeGrid).toHaveScreenshot("recipe-grid-populated.png", {
-      maxDiffPixelRatio: 0.01,
-    });
+    await expect(recipeGrid).toHaveScreenshot("recipe-grid-populated.png");
   });
 
   test("properties grid with calculated values", async ({ page, browserName }) => {
@@ -108,12 +98,9 @@ test.describe("Visual Regression: Populated Recipe", () => {
 
     const propertiesGrid = page.locator("#mix-properties-grid");
     await expect(propertiesGrid).toBeVisible();
-
     await propertiesGrid.locator("div").nth(1).scrollIntoViewIfNeeded();
 
-    await expect(propertiesGrid).toHaveScreenshot("properties-grid-populated.png", {
-      maxDiffPixelRatio: 0.01,
-    });
+    await expect(propertiesGrid).toHaveScreenshot("properties-grid-populated.png");
   });
 
   test("composition grid with calculated values", async ({ page, browserName }) => {
@@ -134,9 +121,7 @@ test.describe("Visual Regression: Populated Recipe", () => {
 
     await compositionGrid.locator("div").nth(1).scrollIntoViewIfNeeded();
 
-    await expect(compositionGrid).toHaveScreenshot("composition-grid-populated.png", {
-      maxDiffPixelRatio: 0.01,
-    });
+    await expect(compositionGrid).toHaveScreenshot("composition-grid-populated.png");
   });
 
   test("properties chart with reference ice cream data", async ({ page, browserName }) => {
@@ -158,10 +143,7 @@ test.describe("Visual Regression: Populated Recipe", () => {
     const propertiesChart = page.locator("#mix-properties-chart");
     await expect(propertiesChart).toBeVisible();
 
-    await expect(propertiesChart).toHaveScreenshot("properties-chart-populated.png", {
-      maxDiffPixelRatio: 0.02,
-      animations: "disabled", // Disable chart animations for consistent snapshots
-    });
+    await expect(propertiesChart).toHaveScreenshot("properties-chart-populated.png");
   });
 
   test("FPD graph with reference ice cream data", async ({ page, browserName }) => {
@@ -183,10 +165,7 @@ test.describe("Visual Regression: Populated Recipe", () => {
     const fpdGraph = page.locator("#fpd-graph");
     await expect(fpdGraph).toBeVisible();
 
-    await expect(fpdGraph).toHaveScreenshot("fpd-graph-populated.png", {
-      maxDiffPixelRatio: 0.02,
-      animations: "disabled",
-    });
+    await expect(fpdGraph).toHaveScreenshot("fpd-graph-populated.png");
   });
 });
 
@@ -200,9 +179,7 @@ test.describe("Visual Regression: Interactive States", () => {
     await nameInput.fill("Milk");
     await expect(nameInput).toHaveValue("Milk");
 
-    await expect(nameInput).toHaveScreenshot("ingredient-input-valid-focused.png", {
-      maxDiffPixelRatio: 0.03,
-    });
+    await expect(nameInput).toHaveScreenshot("ingredient-input-valid-focused.png");
   });
 
   test("invalid ingredient input focused", async ({ page }) => {
@@ -214,9 +191,7 @@ test.describe("Visual Regression: Interactive States", () => {
     await nameInput.fill("Invalid Ingredient");
     await expect(nameInput).toHaveValue("Invalid Ingredient");
 
-    await expect(nameInput).toHaveScreenshot("ingredient-input-invalid-focused.png", {
-      maxDiffPixelRatio: 0.03,
-    });
+    await expect(nameInput).toHaveScreenshot("ingredient-input-invalid-focused.png");
   });
 
   test("invalid ingredient input unfocused", async ({ page }) => {
@@ -229,9 +204,7 @@ test.describe("Visual Regression: Interactive States", () => {
     await page.click("body");
     await expect(nameInput).toHaveValue("Invalid Ingredient");
 
-    await expect(nameInput).toHaveScreenshot("ingredient-input-invalid-unfocused.png", {
-      maxDiffPixelRatio: 0.03,
-    });
+    await expect(nameInput).toHaveScreenshot("ingredient-input-invalid-unfocused.png");
   });
 });
 
@@ -260,8 +233,6 @@ test.describe("Visual Regression: Component Variations", () => {
     await scrollableDiv.evaluate((el) => (el.scrollTop = el.scrollHeight / 2));
     await page.waitForTimeout(200);
 
-    await expect(propertiesGrid).toHaveScreenshot("properties-grid-scrolled.png", {
-      maxDiffPixelRatio: 0.01,
-    });
+    await expect(propertiesGrid).toHaveScreenshot("properties-grid-scrolled.png");
   });
 });

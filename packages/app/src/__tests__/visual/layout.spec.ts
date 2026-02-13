@@ -71,10 +71,7 @@ test.describe("Visual Regression: Responsive Layout", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await expect(page).toHaveScreenshot(`${screenshot}.png`, {
-        maxDiffPixelRatio: 0.02,
-        fullPage: true,
-      });
+      await expect(page).toHaveScreenshot(`${screenshot}.png`, { fullPage: true });
     });
   }
 });
