@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770962074983,
+  "lastUpdate": 1770962090046,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -48586,6 +48586,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 33.98,
             "range": "0.96",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4a770cc73cfc361c1b5e92367a4e307e217bf000",
+          "message": "Move UI constants page.tsx -> /lib/ui/constants.ts\n\nThis is in preparation for switching `next build` to use `--webpack`,\nwhich procudes a '<CONSTANT> is not a valid Page export field' error.",
+          "timestamp": "2026-02-13T00:48:21-05:00",
+          "tree_id": "b7eec379d289607857111438588eecea3122f35c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4a770cc73cfc361c1b5e92367a4e307e217bf000"
+        },
+        "date": 1770962088909,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 667.8,
+            "range": "57.13",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48.2,
+            "range": "6.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 59.1,
+            "range": "5.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.8,
+            "range": "5.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 38.3,
+            "range": "2.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 193.9,
+            "range": "10.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 53.2,
+            "range": "5.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 56.39,
+            "range": "1.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 35.14,
+            "range": "0.80",
             "unit": "ms"
           }
         ]
