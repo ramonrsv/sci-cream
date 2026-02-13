@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770938082112,
+  "lastUpdate": 1770942519658,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -50293,6 +50293,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.66%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4a2edb29f979059f1fb52db749fff8306c3ecb89",
+          "message": "Add visual regression tests using Playwright\n\n* Add component and layout visual regressions tests with Playwright\n  under `__tests__/visual` using `expect(...).toHaveScreenshot(...)`.\n* Store golden screenshots using newly configured Git LFS.\n* Add CI job running `pnpm test:visual` to run visual regression tests.",
+          "timestamp": "2026-02-12T19:10:24-05:00",
+          "tree_id": "c21cb549ff5da62512bb65013fed4a1746b1d5df",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4a2edb29f979059f1fb52db749fff8306c3ecb89"
+        },
+        "date": 1770942518336,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 85316,
+            "range": "±1.18%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 700156,
+            "range": "±1.22%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10069,
+            "range": "±2.15%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 624872,
+            "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
