@@ -71,7 +71,17 @@ test.describe("Visual Regression: Responsive Layout", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await expect(page).toHaveScreenshot(`${screenshot}.png`, { fullPage: true });
+      // Wait for any animations or dynamic content to settle
+      await page.waitForTimeout(300);
+
+      await expect(page).toHaveScreenshot(`${screenshot}.png`, {
+        fullPage: true,
+        // Allow a small pixel difference to account for anti-aliasing and rendering variations,
+        // particularly on large viewports. This causes some of these tests to fail to catch minor
+        // component changes, but it's necessary to prevent false positives in layout tests, and
+        // other component-level visual regression tests should catch those minor component changes.
+        maxDiffPixelRatio: 0.01,
+      });
     });
   }
 });

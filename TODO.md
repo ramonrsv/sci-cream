@@ -36,10 +36,6 @@
       support for a horizontal scrollbar.
 - [ ] Investigate why Underbelly's and Dana's chocolate recipes show as being very hard using the
       Corvitto method. Are they actually very hard? May need a better method than Corvitto's.
-- [ ] Semver permitted upgrades of `react-grid-layout` (`2.1.0 -> 2.2.2`) and `react-resizable`
-      (`3.0.5 -> 3.1.0`) are producing an error (below). For now, remove the caret `^` in
-      package.json to force the specific known working versions, but need further investigation.
-      `Error occurred prerendering page "/" ... TypeError: b.props.children is not iterable`
 - [ ] Once available, use `FullSpec` for "Baileys Irish Cream", as it has a more complex composition
       than can be expressed with `AlcoholSpec`, including other carbohydrates, milk solids, etc.
 - [ ] Looking into using `use crate::composition::CompKey::*` to avoid having to prefix `CompKey::`
@@ -65,9 +61,14 @@
       includes both? I prefer the latter, which accommodates blends like "Louis Francois Stab 2000",
       but users might find it confusing in.
 - [ ] Add gum stabilizer ingredients and Underbelly blends with reference links and explicit ratios.
+- [ ] The color gradient in `FpdGraph` is only working with `dev:webpack`, not turbopack or build.
 
 # Completed
 
+- [x] Semver permitted upgrades of `react-grid-layout` (`2.1.0 -> 2.2.2`) and `react-resizable`
+      (`3.0.5 -> 3.1.0`) are producing an error (below). For now, remove the caret `^` in
+      package.json to force the specific known working versions, but need further investigation.
+      `Error occurred prerendering page "/" ... TypeError: b.props.children is not iterable`
 - [x] In `IngredientCompositionGrid` make it so that, if there is a horizontal scroll, the left-most
       column (ingredient names and quantities) does not scroll with the rest of the content.
 - [x] In `RecipeContext.ingredientCache` we cache `IngredientTransfer` and convert to `Ingredient`
