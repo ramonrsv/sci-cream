@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770961814468,
+  "lastUpdate": 1770961858375,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -5255,6 +5255,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 307,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4a770cc73cfc361c1b5e92367a4e307e217bf000",
+          "message": "Move UI constants page.tsx -> /lib/ui/constants.ts\n\nThis is in preparation for switching `next build` to use `--webpack`,\nwhich procudes a '<CONSTANT> is not a valid Page export field' error.",
+          "timestamp": "2026-02-13T00:48:21-05:00",
+          "tree_id": "b7eec379d289607857111438588eecea3122f35c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4a770cc73cfc361c1b5e92367a4e307e217bf000"
+        },
+        "date": 1770961856838,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3535,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161055,
+            "range": "± 3585",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2038,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160001,
+            "range": "± 1287",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 313,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
