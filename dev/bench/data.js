@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770961116362,
+  "lastUpdate": 1770961742925,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -51407,6 +51407,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.66%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b2dc6d8f4738af5c7bce3c2d6f622305541d3070",
+          "message": "Upgrade pnpm dependencies, fixes react-grid-layout\n\n* Upgrade pnpm dependencies to the latest. This fixes the issue with\n  `react-grid-layout` and `react-resizable`; it's unclear if a new patch\n  version of `react-resizable` or app code changes have fixed the issue.\n* Add `pnpm test:visual` to `pnpm test` that includes `unit` and `e2e`.\n* Add TODO about color gradient in `FpdGraph` that only works with\n  `dev:webpack` but not with `dev:turbopack` or `build && start`.\n* Allow a small `maxDiffPixelRatio` in layout visual regression tests to\n  account for anti-aliasing and rendering variations, particularly on\n  large viewports. This causes some of these tests to fail to catch\n  minor component changes, but it's necessary to prevent false negatives\n  in layout tests, and other component-level visual regression tests\n  should catch those minor component changes.",
+          "timestamp": "2026-02-13T00:30:07-05:00",
+          "tree_id": "4b3761100b7756e4299d937bc093606f43a77105",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b2dc6d8f4738af5c7bce3c2d6f622305541d3070"
+        },
+        "date": 1770961741651,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75117,
+            "range": "±1.59%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 704254,
+            "range": "±1.32%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9909,
+            "range": "±2.65%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 602798,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
