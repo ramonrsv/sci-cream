@@ -9,7 +9,7 @@ import { QtyToggle, QtyToggleSelect } from "../lib/ui/qty-toggle-select";
 import { applyQtyToggleAndFormat } from "../lib/ui/comp-values";
 import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "../lib/util";
-import { DRAG_HANDLE_ICON_SIZE } from "./page";
+import { DRAG_HANDLE_ICON_SIZE } from "../lib/ui/constants";
 
 import {
   CompKey,

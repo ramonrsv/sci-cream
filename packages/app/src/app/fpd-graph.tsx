@@ -19,7 +19,7 @@ import {
 
 import { Recipe, isRecipeEmpty } from "./recipe";
 import { Color, getColor, opacity, getLegendColor, getGridColor } from "@/lib/styles/colors";
-import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "./page";
+import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "../lib/ui/constants";
 import { Theme } from "@/lib/ui/theme-select";
 
 ChartJS.register(

@@ -19,7 +19,7 @@ import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "../lib/ui/key-filter
 import { QtyToggle } from "@/lib/ui/qty-toggle-select";
 import { applyQtyToggle, formatCompositionValue } from "../lib/ui/comp-values";
 import { Color, getColor, getGridColor, getLegendColor } from "../lib/styles/colors";
-import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "./page";
+import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "../lib/ui/constants";
 import { Theme } from "@/lib/ui/theme-select";
 
 import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";

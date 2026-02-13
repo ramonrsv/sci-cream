@@ -6,7 +6,7 @@ import { render, screen, cleanup, waitFor, within, fireEvent } from "@testing-li
 import userEvent from "@testing-library/user-event";
 import React, { type SetStateAction, useState } from "react";
 
-import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "./page";
+import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "../lib/ui/constants";
 import {
   RecipeGrid,
   makeEmptyRecipeContext,

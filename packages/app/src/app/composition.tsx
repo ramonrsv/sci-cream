@@ -9,7 +9,7 @@ import { QtyToggle, QtyToggleSelect } from "../lib/ui/qty-toggle-select";
 import { RecipeSelect } from "@/lib/ui/recipe-select";
 import { applyQtyToggleAndFormat, formatCompositionValue } from "../lib/ui/comp-values";
 import { isCompKeyQuantity } from "../lib/sci-cream/sci-cream";
-import { STD_COMPONENT_H_PX, DRAG_HANDLE_ICON_SIZE } from "./page";
+import { STD_COMPONENT_H_PX, DRAG_HANDLE_ICON_SIZE } from "../lib/ui/constants";
 
 import { CompKey, comp_key_as_med_str, getWasmEnums } from "@workspace/sci-cream";
 

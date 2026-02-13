@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, Settings } from "lucide-react";
 
-import { COMPONENT_ACTION_ICON_SIZE } from "@/app/page";
+import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/ui/constants";
 import { STATE_VAL } from "../util";
 
 export enum KeyFilter {

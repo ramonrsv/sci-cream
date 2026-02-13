@@ -12,7 +12,7 @@ import {
   STD_COMPONENT_H_PX,
   COMPONENT_ACTION_ICON_SIZE,
   DRAG_HANDLE_ICON_SIZE,
-} from "./page";
+} from "../lib/ui/constants";
 
 import {
   Ingredient,
