@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770961759116,
+  "lastUpdate": 1770961814468,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -51513,6 +51513,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.77%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4a770cc73cfc361c1b5e92367a4e307e217bf000",
+          "message": "Move UI constants page.tsx -> /lib/ui/constants.ts\n\nThis is in preparation for switching `next build` to use `--webpack`,\nwhich procudes a '<CONSTANT> is not a valid Page export field' error.",
+          "timestamp": "2026-02-13T00:48:21-05:00",
+          "tree_id": "b7eec379d289607857111438588eecea3122f35c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4a770cc73cfc361c1b5e92367a4e307e217bf000"
+        },
+        "date": 1770961812490,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76890,
+            "range": "±1.23%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 719166,
+            "range": "±1.42%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10154,
+            "range": "±2.13%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 605159,
+            "range": "±0.83%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
