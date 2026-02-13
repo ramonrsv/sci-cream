@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770942519658,
+  "lastUpdate": 1770942546551,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -5093,6 +5093,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 310,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4a2edb29f979059f1fb52db749fff8306c3ecb89",
+          "message": "Add visual regression tests using Playwright\n\n* Add component and layout visual regressions tests with Playwright\n  under `__tests__/visual` using `expect(...).toHaveScreenshot(...)`.\n* Store golden screenshots using newly configured Git LFS.\n* Add CI job running `pnpm test:visual` to run visual regression tests.",
+          "timestamp": "2026-02-12T19:10:24-05:00",
+          "tree_id": "c21cb549ff5da62512bb65013fed4a1746b1d5df",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4a2edb29f979059f1fb52db749fff8306c3ecb89"
+        },
+        "date": 1770942544975,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3540,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161611,
+            "range": "± 3933",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2032,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 163995,
+            "range": "± 1148",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 308,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
