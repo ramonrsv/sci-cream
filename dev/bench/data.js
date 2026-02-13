@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1770942774906,
+  "lastUpdate": 1770942788761,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -47071,6 +47071,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 39.22,
             "range": "4.45",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4a2edb29f979059f1fb52db749fff8306c3ecb89",
+          "message": "Add visual regression tests using Playwright\n\n* Add component and layout visual regressions tests with Playwright\n  under `__tests__/visual` using `expect(...).toHaveScreenshot(...)`.\n* Store golden screenshots using newly configured Git LFS.\n* Add CI job running `pnpm test:visual` to run visual regression tests.",
+          "timestamp": "2026-02-12T19:10:24-05:00",
+          "tree_id": "c21cb549ff5da62512bb65013fed4a1746b1d5df",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4a2edb29f979059f1fb52db749fff8306c3ecb89"
+        },
+        "date": 1770942787436,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.695,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 674.9,
+            "range": "57.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48,
+            "range": "6.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 59,
+            "range": "5.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.9,
+            "range": "7.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 36.8,
+            "range": "2.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 190.3,
+            "range": "10.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 52.4,
+            "range": "7.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 56.74,
+            "range": "1.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 34.51,
+            "range": "1.06",
             "unit": "ms"
           }
         ]
