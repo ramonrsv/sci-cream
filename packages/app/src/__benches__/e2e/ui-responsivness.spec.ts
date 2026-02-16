@@ -1,37 +1,40 @@
 import { test, expect } from "@playwright/test";
 
+import { QtyToggle } from "@/lib/ui/qty-toggle-select";
+import { KeyFilter } from "@/lib/ui/key-filter-select";
+import { CompKey, comp_key_as_med_str, compToPropKey } from "@workspace/sci-cream";
+
+import { RecipeID, getRecipeText, getLightRecipe } from "@/__tests__/assets";
+
+import {
+  getIngredientNameInputAtIdx,
+  getIngredientQtyInputAtIdx,
+  getRecipeGridRecipeSelector,
+  getMixPropertiesQtyToggleSelectInput,
+  getMixPropertyValueElement,
+  getCompositionGridRecipeSelector,
+  getCompositionGridQtyToggleSelectInput,
+  getCompositionGridKeyFilterSelectInput,
+  getCompositionValueElement,
+  pasteToClipboard,
+  getPasteButton,
+  getRecipeUpdateCheckElements,
+  getExpectedRecipeUpdateValues,
+  expectRecipeElementsToHaveExpected,
+  makeExpectedRecipeUpdates,
+  pasteRecipeAndWaitForUpdate,
+  PASTE_CHECK_DEFAULT_ING_IDX,
+} from "@/__tests__/e2e/util";
+
 import {
   allBenchmarkResultsForUpload,
   doBenchmarkTimeMeasurements as doBenchmarkTimeMeasurementsGeneric,
   formatTimeBenchmarkResultForUpload,
   timeExecution,
-  getIngredientNameInputAtIdx,
-  getIngredientQtyInputAtIdx,
-  getMixPropertiesQtyToggleSelectInput,
-  getMixPropertyValueElement,
-  getCompositionGridQtyToggleSelectInput,
-  getCompositionValueElement,
-  pasteToClipboard,
-  getPasteButton,
-  getRecipeSelector,
-  recipePasteCheckElements,
-  recipeUpdateCompleted,
-} from "@/__tests__/e2e/util";
+} from "@/__benches__/e2e/util";
 
-import {
-  REF_RECIPE_TEXT,
-  LAST_INGREDIENT_IDX,
-  EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT,
-  LAST_UPDATE_IDX,
-  EXPECTED_FIRST_INGREDIENT,
-  EXPECTED_LAST_INGREDIENT,
-} from "@/__tests__/assets";
-
-import { QtyToggle } from "@/lib/ui/qty-toggle-select";
-import { CompKey, comp_key_as_med_str, compToPropKey } from "@workspace/sci-cream";
-
-// Number of runs for each execution time benchmark
-const COUNT_TIME_RUNS = 10;
+const COUNT_TIME_RUNS = 10; // Number of runs for each execution time benchmark
+const QTY_UPDATES_PER_LOOP = 50; // Number of times to update an ingredient's quantity per loop
 
 function doBenchmarkTimeMeasurements(name: string, run: () => Promise<number>) {
   return doBenchmarkTimeMeasurementsGeneric(COUNT_TIME_RUNS, name, run).then((result) => {
@@ -129,14 +132,18 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
-      const pasteButton = getPasteButton(page);
+      const compGridKeyFilterSelect = getCompositionGridKeyFilterSelectInput(page);
+      await compGridKeyFilterSelect.selectOption(KeyFilter.All);
 
-      const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
+      const elements = await getRecipeUpdateCheckElements(page, RecipeID.Main);
+      const expected = getExpectedRecipeUpdateValues(getLightRecipe(RecipeID.Main));
+
+      await pasteToClipboard(page, browserName, getRecipeText(RecipeID.Main));
+      const pasteButton = getPasteButton(page);
 
       return timeExecution(async () => {
         await pasteButton.click();
-        await recipeUpdateCompleted(page, elements, EXPECTED_LAST_INGREDIENT);
+        await expectRecipeElementsToHaveExpected(elements, expected);
       });
     });
   });
@@ -148,26 +155,28 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
-      const pasteButton = getPasteButton(page);
-      await pasteButton.click();
+      await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
+      await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.RefA);
 
-      const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
-      await recipeUpdateCompleted(page, elements, EXPECTED_LAST_INGREDIENT);
+      const recipeGridRecipeSelect = getRecipeGridRecipeSelector(page);
+      const compGridRecipeSelect = getCompositionGridRecipeSelector(page);
 
-      const recipeSelector = getRecipeSelector(page);
-      await expect(recipeSelector).toBeEnabled();
+      const elements = await getRecipeUpdateCheckElements(page, RecipeID.Main);
+      const expected = getExpectedRecipeUpdateValues(getLightRecipe(RecipeID.Main));
 
       return timeExecution(async () => {
-        await recipeSelector.selectOption({ value: "1" });
-        await expect(elements.ingNameInput).toHaveValue("");
-        await expect(elements.ingQtyInput).toHaveValue("");
-
-        await recipeSelector.selectOption({ value: "0" });
-        await recipeUpdateCompleted(page, elements, EXPECTED_LAST_INGREDIENT);
+        await compGridRecipeSelect.selectOption(RecipeID.Main);
+        await recipeGridRecipeSelect.selectOption(RecipeID.Main);
+        await expectRecipeElementsToHaveExpected(elements, expected);
       });
     });
   });
+
+  const RECIPE_QTY_UPDATES_EXPECTED_VALUES = makeExpectedRecipeUpdates(
+    QTY_UPDATES_PER_LOOP,
+    getLightRecipe(RecipeID.Main),
+    PASTE_CHECK_DEFAULT_ING_IDX,
+  );
 
   test("should measure rapid ingredient quantity updates, waiting each update completion", async ({
     page,
@@ -177,19 +186,15 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
-      const pasteButton = getPasteButton(page);
-      await pasteButton.click();
-
-      const elements = await recipePasteCheckElements(page, 0);
-      await recipeUpdateCompleted(page, elements, EXPECTED_FIRST_INGREDIENT);
+      await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
+      const elements = await getRecipeUpdateCheckElements(page, RecipeID.Main);
 
       return timeExecution(async () => {
-        for (const expected of EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT) {
-          await elements.ingQtyInput.fill(expected.qty.toString());
-          await recipeUpdateCompleted(page, elements, expected);
+        for (const expected of RECIPE_QTY_UPDATES_EXPECTED_VALUES) {
+          await elements.ingQtyInput.fill(expected.ingQty);
+          await expectRecipeElementsToHaveExpected(elements, expected);
         }
-      }, EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT.length);
+      }, RECIPE_QTY_UPDATES_EXPECTED_VALUES.length);
     });
   });
 
@@ -201,21 +206,18 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
-      const pasteButton = getPasteButton(page);
-      await pasteButton.click();
+      await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
+      const elements = await getRecipeUpdateCheckElements(page, RecipeID.Main);
 
-      const elements = await recipePasteCheckElements(page, 0);
-      await recipeUpdateCompleted(page, elements, EXPECTED_FIRST_INGREDIENT);
+      const finalExpected =
+        RECIPE_QTY_UPDATES_EXPECTED_VALUES[RECIPE_QTY_UPDATES_EXPECTED_VALUES.length - 1];
 
       return timeExecution(async () => {
-        for (const expected of EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT) {
-          await elements.ingQtyInput.fill(expected.qty.toString());
-        }
+        for (const expected of RECIPE_QTY_UPDATES_EXPECTED_VALUES)
+          await elements.ingQtyInput.fill(expected.ingQty);
 
-        const finalExpected = EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT[LAST_UPDATE_IDX];
-        await recipeUpdateCompleted(page, elements, finalExpected);
-      }, EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT.length);
+        await expectRecipeElementsToHaveExpected(elements, finalExpected);
+      }, RECIPE_QTY_UPDATES_EXPECTED_VALUES.length);
     });
   });
 });

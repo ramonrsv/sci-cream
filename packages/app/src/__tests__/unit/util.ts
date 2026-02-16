@@ -14,13 +14,10 @@ import {
   compToPropKey,
   fpdToPropKey,
   prop_key_as_med_str,
-  new_ingredient_database_seeded_from_embedded_data,
-  Bridge as WasmBridge,
 } from "@workspace/sci-cream";
 
-import { REF_LIGHT_RECIPE } from "@/__tests__/assets";
-
-export const WASM_BRIDGE = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
+import { RecipeID, getLightRecipe } from "@/__tests__/assets";
+import { WASM_BRIDGE } from "@/__tests__/util";
 
 export function createMockRecipeContext(nonEmptyRecipes: boolean[] = []) {
   const recipeCtx = makeEmptyRecipeContext();
@@ -33,8 +30,9 @@ export function createMockRecipeContext(nonEmptyRecipes: boolean[] = []) {
 export function createMockRefRecipeContext() {
   const recipeCtx = makeEmptyRecipeContext();
   recipeCtx.recipes[0].mixTotal = 612;
-  recipeCtx.recipes[0].mixProperties =
-    WASM_BRIDGE.calculate_recipe_mix_properties(REF_LIGHT_RECIPE);
+  recipeCtx.recipes[0].mixProperties = WASM_BRIDGE.calculate_recipe_mix_properties(
+    getLightRecipe(RecipeID.Main),
+  );
   return recipeCtx;
 }
 

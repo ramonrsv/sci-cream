@@ -1,7 +1,12 @@
 import { test, expect } from "@playwright/test";
 
+import { QtyToggle } from "@/lib/ui/qty-toggle-select";
+import { KeyFilter } from "@/lib/ui/key-filter-select";
+import { CompKey, comp_key_as_med_str, compToPropKey } from "@workspace/sci-cream";
+
+import { THRESHOLDS, RecipeID, getRecipeText, getLightRecipe } from "@/__tests__/assets";
+
 import {
-  timeExecution,
   getIngredientNameInputAtIdx,
   getIngredientQtyInputAtIdx,
   getMixPropertiesQtyToggleSelectInput,
@@ -10,21 +15,16 @@ import {
   getCompositionValueElement,
   pasteToClipboard,
   getPasteButton,
-  recipePasteCheckElements,
-  recipeUpdateCompleted,
+  getRecipeUpdateCheckElements,
   getRecipeGridRecipeSelector,
   getCompositionGridRecipeSelector,
+  getExpectedRecipeUpdateValues,
+  expectRecipeElementsToHaveExpected,
+  configureComponentsForRecipeUpdateCheck,
+  getCompositionGridKeyFilterSelectInput,
 } from "@/__tests__/e2e/util";
 
-import {
-  THRESHOLDS,
-  REF_RECIPE_TEXT,
-  LAST_INGREDIENT_IDX,
-  EXPECTED_LAST_INGREDIENT,
-} from "@/__tests__/assets";
-
-import { QtyToggle } from "@/lib/ui/qty-toggle-select";
-import { CompKey, comp_key_as_med_str, compToPropKey } from "@workspace/sci-cream";
+import { timeExecution } from "@/__benches__/e2e/util";
 
 import { sleep_ms } from "@/lib/util";
 
@@ -119,14 +119,16 @@ test.describe("UI Responsiveness Performance Checks", () => {
     await page.goto("");
     await page.waitForLoadState("networkidle");
 
-    await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
+    await pasteToClipboard(page, browserName, getRecipeText(RecipeID.Main));
     const pasteButton = getPasteButton(page);
 
-    const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
+    await configureComponentsForRecipeUpdateCheck(page, RecipeID.Main);
+    const expected = getExpectedRecipeUpdateValues(getLightRecipe(RecipeID.Main));
+    const elements = await getRecipeUpdateCheckElements(page, RecipeID.Main);
 
     const exec_time = await timeExecution(async () => {
       await pasteButton.click();
-      await recipeUpdateCompleted(page, elements, EXPECTED_LAST_INGREDIENT);
+      await expectRecipeElementsToHaveExpected(elements, expected);
     });
 
     expect(exec_time).toBeLessThan(THRESHOLDS.paste_response);
@@ -154,33 +156,36 @@ test.describe("UI Responsiveness Performance Checks", () => {
     await page.goto("");
     await page.waitForLoadState("domcontentloaded");
 
-    await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
     const pasteButton = getPasteButton(page);
-
-    const expected = EXPECTED_LAST_INGREDIENT;
 
     const recipeGridRecipeSelector = getRecipeGridRecipeSelector(page);
     const compGridRecipeSelector = getCompositionGridRecipeSelector(page);
+    const compGridKeyFilterSelect = getCompositionGridKeyFilterSelectInput(page);
+
+    await compGridKeyFilterSelect.selectOption(KeyFilter.All);
 
     const pasteStart = Date.now();
-    for (const recipeIdx of [0, 1, 2]) {
-      await recipeGridRecipeSelector.selectOption(recipeIdx.toString());
+    for (const recipeId of [RecipeID.Main, RecipeID.RefA, RecipeID.RefB]) {
+      await pasteToClipboard(page, browserName, getRecipeText(recipeId));
+      await recipeGridRecipeSelector.selectOption(recipeId);
       await pasteButton.click();
 
-      const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
-      await expect(elements.ingNameInput).toHaveValue(expected.name);
-      await expect(elements.ingQtyInput).toHaveValue(expected.qty.toString());
+      const expected = getExpectedRecipeUpdateValues(getLightRecipe(recipeId));
+      const elements = await getRecipeUpdateCheckElements(page, recipeId);
+      await expect(elements.ingNameInput).toHaveValue(expected.ingName);
+      await expect(elements.ingQtyInput).toHaveValue(expected.ingQty);
       await expect(elements.propServingTemp).toBeVisible();
       await expect(elements.propServingTemp).not.toHaveText(expected.servingTemp);
     }
     const pasteEnd = Date.now();
 
-    for (const recipeIdx of [0, 1, 2]) {
-      await recipeGridRecipeSelector.selectOption(recipeIdx.toString());
-      await compGridRecipeSelector.selectOption(recipeIdx.toString());
+    for (const recipeId of [RecipeID.Main, RecipeID.RefA, RecipeID.RefB]) {
+      await recipeGridRecipeSelector.selectOption(recipeId);
+      await compGridRecipeSelector.selectOption(recipeId);
 
-      const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
-      await recipeUpdateCompleted(page, elements, expected);
+      const elements = await getRecipeUpdateCheckElements(page, recipeId);
+      const expected = getExpectedRecipeUpdateValues(getLightRecipe(recipeId));
+      await expectRecipeElementsToHaveExpected(elements, expected);
     }
     const updateEnd = Date.now();
 

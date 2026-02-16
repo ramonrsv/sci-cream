@@ -1,7 +1,5 @@
 import "dotenv/config";
 
-import { CompKey, FpdKey, PropKey, compToPropKey, fpdToPropKey } from "@workspace/sci-cream";
-
 // Allow extra margin when running locally since parallel execution can slow down tests
 export const THRESHOLD_MULTIPLIER = process.env.CI && !process.env.ACT ? 1 : 2;
 
@@ -12,21 +10,19 @@ export const THRESHOLDS = {
   memory_usage_percent_increase: 20,
 };
 
-export const REF_RECIPE_TEXT = [
-  "Ingredient\tQty(g)",
-  "Whole Milk\t245",
-  "Whipping Cream\t215",
-  "Cocoa Powder, 17% Fat\t28",
-  "Skimmed Milk Powder\t21",
-  "Egg Yolk\t18",
-  "Dextrose\t45",
-  "Fructose\t32",
-  "Salt\t0.5",
-  "Rich Ice Cream SB\t1.25",
-  "Vanilla Extract\t6",
-].join("\n");
+export type LightRecipe = (string | number)[][];
 
-export const REF_LIGHT_RECIPE = [
+export enum RecipeID {
+  Main = "Recipe",
+  RefA = "Ref A",
+  RefB = "Ref B",
+}
+
+export function recipeIdToIdx(recipeId: RecipeID): number {
+  return recipeId === RecipeID.Main ? 0 : recipeId === RecipeID.RefA ? 1 : 2;
+}
+
+const MAIN_RECIPE_LIGHT = [
   ["Whole Milk", 245],
   ["Whipping Cream", 215],
   ["Cocoa Powder, 17% Fat", 28],
@@ -39,84 +35,51 @@ export const REF_LIGHT_RECIPE = [
   ["Vanilla Extract", 6],
 ];
 
-export const REF_RECIPE_EXPECTED_PROPERTIES = new Map<PropKey, number>([
-  [compToPropKey(CompKey.MilkFat), 13.6],
-  [compToPropKey(CompKey.TotalFats), 15.3],
-  [compToPropKey(CompKey.EmulsifiersPerFat), 1.73],
-  [compToPropKey(CompKey.StabilizersPerWater), 0.35],
-  [compToPropKey(CompKey.AbsPAC), 56.6],
-  [fpdToPropKey(FpdKey.FPD), -3.6],
-  [fpdToPropKey(FpdKey.ServingTemp), -13.37],
-]);
+const REF_A_RECIPE_LIGHT = [
+  ["Whole Milk", 230],
+  ["Whipping Cream", 235],
+  ["Skimmed Milk Powder", 35],
+  ["Egg Yolk", 36],
+  ["Sucrose", 35],
+  ["Dextrose", 25],
+  ["Fructose", 6],
+  ["Salt", 0.5],
+  ["Rich Ice Cream SB", 0.84],
+];
 
-export const LAST_INGREDIENT_IDX = 9;
+const REF_B_RECIPE_LIGHT = [
+  ["Whole Milk", 230],
+  ["Whipping Cream", 225],
+  ["Skimmed Milk Powder", 35],
+  ["Egg Yolk", 36],
+  ["Sucrose", 10],
+  ["Dextrose", 2],
+  ["Fructose", 2],
+  ["Honey", 5],
+  ["Splenda (Sucralose)", 2],
+  ["SweetLeaf Stevia", 0.8],
+  ["Salt", 0.5],
+  ["Rich Ice Cream SB", 0.9],
+  ["Grand Marnier Cordon Rouge", 53],
+];
 
-export const EXPECTED_FIRST_INGREDIENT = {
-  name: "Whole Milk",
-  qty: 245,
-  servingTemp: "-13.37",
-  energy: "148",
-};
+export function lightRecipeToText(recipe: LightRecipe): string {
+  const header = ["Ingredient", "Qty(g)"];
+  const rows = recipe.map(([name, qty]) => [name, String(qty)]);
+  return [header, ...rows].map((row) => row.join("\t")).join("\n");
+}
 
-export const EXPECTED_LAST_INGREDIENT = {
-  name: "Vanilla Extract",
-  qty: 6,
-  servingTemp: "-13.37",
-  energy: "11.5",
-};
+export function getLightRecipe(recipeId: RecipeID): LightRecipe {
+  switch (recipeId) {
+    case RecipeID.Main:
+      return MAIN_RECIPE_LIGHT;
+    case RecipeID.RefA:
+      return REF_A_RECIPE_LIGHT;
+    case RecipeID.RefB:
+      return REF_B_RECIPE_LIGHT;
+  }
+}
 
-export const EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT = [
-  { qty: 250, servingTemp: "-13.26", energy: "151.1" },
-  { qty: 251, servingTemp: "-13.24", energy: "151.7" },
-  { qty: 252, servingTemp: "-13.22", energy: "152.3" },
-  { qty: 253, servingTemp: "-13.19", energy: "152.9" },
-  { qty: 254, servingTemp: "-13.17", energy: "153.5" },
-  { qty: 255, servingTemp: "-13.15", energy: "154.1" },
-  { qty: 256, servingTemp: "-13.13", energy: "154.7" },
-  { qty: 257, servingTemp: "-13.11", energy: "155.3" },
-  { qty: 258, servingTemp: "-13.09", energy: "155.9" },
-  { qty: 259, servingTemp: "-13.06", energy: "156.5" },
-  { qty: 260, servingTemp: "-13.04", energy: "157.1" },
-  { qty: 261, servingTemp: "-13.02", energy: "157.7" },
-  { qty: 262, servingTemp: "-13", energy: "158.3" },
-  { qty: 263, servingTemp: "-12.98", energy: "158.9" },
-  { qty: 264, servingTemp: "-12.96", energy: "159.5" },
-  { qty: 265, servingTemp: "-12.94", energy: "160.1" },
-  { qty: 266, servingTemp: "-12.92", energy: "160.7" },
-  { qty: 267, servingTemp: "-12.9", energy: "161.3" },
-  { qty: 268, servingTemp: "-12.88", energy: "161.9" },
-  { qty: 269, servingTemp: "-12.86", energy: "162.5" },
-  { qty: 270, servingTemp: "-12.83", energy: "163.1" },
-  { qty: 271, servingTemp: "-12.81", energy: "163.7" },
-  { qty: 272, servingTemp: "-12.79", energy: "164.4" },
-  { qty: 273, servingTemp: "-12.77", energy: "165" },
-  { qty: 274, servingTemp: "-12.75", energy: "165.6" },
-  { qty: 275, servingTemp: "-12.73", energy: "166.2" },
-  { qty: 276, servingTemp: "-12.71", energy: "166.8" },
-  { qty: 277, servingTemp: "-12.69", energy: "167.4" },
-  { qty: 278, servingTemp: "-12.67", energy: "168" },
-  { qty: 279, servingTemp: "-12.64", energy: "168.6" },
-  { qty: 280, servingTemp: "-12.62", energy: "169.2" },
-  { qty: 281, servingTemp: "-12.59", energy: "169.8" },
-  { qty: 282, servingTemp: "-12.56", energy: "170.4" },
-  { qty: 283, servingTemp: "-12.54", energy: "171" },
-  { qty: 284, servingTemp: "-12.51", energy: "171.6" },
-  { qty: 285, servingTemp: "-12.49", energy: "172.2" },
-  { qty: 286, servingTemp: "-12.46", energy: "172.8" },
-  { qty: 287, servingTemp: "-12.44", energy: "173.4" },
-  { qty: 288, servingTemp: "-12.41", energy: "174" },
-  { qty: 289, servingTemp: "-12.39", energy: "174.6" },
-  { qty: 290, servingTemp: "-12.36", energy: "175.2" },
-  { qty: 291, servingTemp: "-12.34", energy: "175.8" },
-  { qty: 292, servingTemp: "-12.32", energy: "176.4" },
-  { qty: 293, servingTemp: "-12.29", energy: "177" },
-  { qty: 294, servingTemp: "-12.27", energy: "177.6" },
-  { qty: 295, servingTemp: "-12.25", energy: "178.2" },
-  { qty: 296, servingTemp: "-12.22", energy: "178.9" },
-  { qty: 297, servingTemp: "-12.2", energy: "179.5" },
-  { qty: 298, servingTemp: "-12.18", energy: "180.1" },
-  { qty: 299, servingTemp: "-12.15", energy: "180.7" },
-  { qty: 300, servingTemp: "-12.13", energy: "181.3" },
-].map(({ qty, servingTemp, energy }) => ({ name: "Whole Milk", qty, servingTemp, energy }));
-
-export const LAST_UPDATE_IDX = EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT.length - 1;
+export function getRecipeText(recipeId: RecipeID): string {
+  return lightRecipeToText(getLightRecipe(recipeId));
+}

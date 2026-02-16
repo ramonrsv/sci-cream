@@ -5,13 +5,10 @@ import { KeyFilter } from "@/lib/ui/key-filter-select";
 import {
   getIngredientNameInputAtIdx,
   getMixPropertiesKeyFilterSelectInput,
-  pasteToClipboard,
-  getPasteButton,
-  recipeUpdateCompleted,
-  recipePasteCheckElements,
+  pasteRecipeAndWaitForUpdate,
 } from "@/__tests__/e2e/util";
 
-import { REF_RECIPE_TEXT, LAST_INGREDIENT_IDX, EXPECTED_LAST_INGREDIENT } from "@/__tests__/assets";
+import { RecipeID } from "@/__tests__/assets";
 
 test.describe("Visual Regression: Empty State", () => {
   test("initial page load - empty recipe grid", async ({ page }) => {
@@ -65,19 +62,14 @@ test.describe("Visual Regression: Empty State", () => {
   });
 });
 
-test.describe("Visual Regression: Populated Recipe", () => {
+test.describe("Visual Regression: Main Recipe Populated", () => {
   test("recipe grid with reference ice cream recipe", async ({ page, browserName }) => {
     test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
 
     await page.goto("");
     await page.waitForLoadState("networkidle");
 
-    await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
-    const pasteButton = getPasteButton(page);
-    const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
-
-    await pasteButton.click();
-    await recipeUpdateCompleted(page, elements, EXPECTED_LAST_INGREDIENT);
+    await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
 
     const recipeGrid = page.locator("#recipe-grid");
     await expect(recipeGrid).toHaveScreenshot("recipe-grid-populated.png");
@@ -89,17 +81,11 @@ test.describe("Visual Regression: Populated Recipe", () => {
     await page.goto("");
     await page.waitForLoadState("networkidle");
 
-    await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
-    const pasteButton = getPasteButton(page);
-    const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
-
-    await pasteButton.click();
-    await recipeUpdateCompleted(page, elements, EXPECTED_LAST_INGREDIENT);
+    await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
 
     const propertiesGrid = page.locator("#mix-properties-grid");
     await expect(propertiesGrid).toBeVisible();
     await propertiesGrid.locator("div").nth(1).scrollIntoViewIfNeeded();
-
     await expect(propertiesGrid).toHaveScreenshot("properties-grid-populated.png");
   });
 
@@ -109,18 +95,11 @@ test.describe("Visual Regression: Populated Recipe", () => {
     await page.goto("");
     await page.waitForLoadState("networkidle");
 
-    await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
-    const pasteButton = getPasteButton(page);
-    const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
-
-    await pasteButton.click();
-    await recipeUpdateCompleted(page, elements, EXPECTED_LAST_INGREDIENT);
+    await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
 
     const compositionGrid = page.locator("#ing-composition-grid");
     await expect(compositionGrid).toBeVisible();
-
     await compositionGrid.locator("div").nth(1).scrollIntoViewIfNeeded();
-
     await expect(compositionGrid).toHaveScreenshot("composition-grid-populated.png");
   });
 
@@ -130,19 +109,13 @@ test.describe("Visual Regression: Populated Recipe", () => {
     await page.goto("");
     await page.waitForLoadState("networkidle");
 
-    await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
-    const pasteButton = getPasteButton(page);
-    const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
-
-    await pasteButton.click();
-    await recipeUpdateCompleted(page, elements, EXPECTED_LAST_INGREDIENT);
+    await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
 
     // Wait for chart to finish rendering after data update
     await page.waitForTimeout(500);
 
     const propertiesChart = page.locator("#mix-properties-chart");
     await expect(propertiesChart).toBeVisible();
-
     await expect(propertiesChart).toHaveScreenshot("properties-chart-populated.png");
   });
 
@@ -152,19 +125,13 @@ test.describe("Visual Regression: Populated Recipe", () => {
     await page.goto("");
     await page.waitForLoadState("networkidle");
 
-    await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
-    const pasteButton = getPasteButton(page);
-    const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
-
-    await pasteButton.click();
-    await recipeUpdateCompleted(page, elements, EXPECTED_LAST_INGREDIENT);
+    await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
 
     // Wait for chart to finish rendering after data update
     await page.waitForTimeout(500);
 
     const fpdGraph = page.locator("#fpd-graph");
     await expect(fpdGraph).toBeVisible();
-
     await expect(fpdGraph).toHaveScreenshot("fpd-graph-populated.png");
   });
 });
@@ -215,15 +182,10 @@ test.describe("Visual Regression: Component Variations", () => {
     await page.goto("");
     await page.waitForLoadState("networkidle");
 
+    await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
+
     const keyFilter = getMixPropertiesKeyFilterSelectInput(page);
     await keyFilter.selectOption(KeyFilter.All);
-
-    await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
-    const pasteButton = getPasteButton(page);
-    const elements = await recipePasteCheckElements(page, LAST_INGREDIENT_IDX);
-
-    await pasteButton.click();
-    await recipeUpdateCompleted(page, elements, EXPECTED_LAST_INGREDIENT);
 
     const propertiesGrid = page.locator("#mix-properties-grid");
 

@@ -7,102 +7,28 @@ import {
   fpdToPropKey,
   PropKey,
   prop_key_as_med_str,
+  getMixProperty,
 } from "@workspace/sci-cream";
 
 import { Metric } from "@/lib/web-vitals";
+import { formatCompositionValue, applyQtyToggleAndFormat } from "@/lib/ui/comp-values";
+import { QtyToggle } from "@/lib/ui/qty-toggle-select";
+import { KeyFilter } from "@/lib/ui/key-filter-select";
+
+import {
+  LightRecipe,
+  RecipeID,
+  getLightRecipe,
+  getRecipeText,
+  recipeIdToIdx,
+} from "@/__tests__/assets";
+
+import { WASM_BRIDGE } from "@/__tests__/util";
 
 declare global {
   interface Window {
     __webVitals: Record<string, Metric>;
   }
-}
-
-export type BenchmarkResult = {
-  name: string;
-  avg: number;
-  min: number;
-  max: number;
-  stdDev: number;
-};
-
-export type BenchmarkResultForUpload = { name: string; unit: string; value: string; range: string };
-
-// Collect all benchmark results for upload at end
-export const allBenchmarkResultsForUpload: Array<BenchmarkResultForUpload> = [];
-
-export function analyzeMeasurements(measurements: number[]) {
-  const avg = measurements.reduce((a, b) => a + b, 0) / measurements.length;
-
-  const min = Math.min(...measurements);
-  const max = Math.max(...measurements);
-
-  const stdDev = Math.sqrt(
-    measurements.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / measurements.length,
-  );
-
-  return { avg, min, max, stdDev };
-}
-
-export async function doBenchmarkTimeMeasurements(
-  countRuns: number,
-  name: string,
-  run: () => Promise<number>,
-) {
-  const measurements: number[] = [];
-
-  for (let i = 0; i < countRuns; i++) {
-    measurements.push(await run());
-  }
-
-  const { avg, min, max, stdDev } = analyzeMeasurements(measurements);
-
-  const fmtTime = (t: number) => `${Math.round(t).toFixed(0).padStart(4)}ms`;
-  console.log(`${name.padEnd(45)} time:   [${fmtTime(min)}, ${fmtTime(avg)}, ${fmtTime(max)}]`);
-
-  return { name, avg, min, max, stdDev };
-}
-
-export async function doBenchmarkMemoryMeasurements(
-  countRuns: number,
-  name: string,
-  run: () => Promise<number>,
-) {
-  const measurements: number[] = [];
-
-  for (let i = 0; i < countRuns; i++) {
-    measurements.push(await run());
-  }
-
-  const { avg, min, max, stdDev } = analyzeMeasurements(measurements);
-
-  const fmtMem = (m: number) => `${Math.round(m).toFixed(0).padStart(4)} MB`;
-  console.log(`${name.padEnd(45)} memory: [${fmtMem(min)}, ${fmtMem(avg)}, ${fmtMem(max)}]`);
-
-  return { name, avg, min, max, stdDev };
-}
-
-export function formatTimeBenchmarkResultForUpload(result: BenchmarkResult) {
-  return {
-    name: result.name,
-    unit: "ms",
-    value: result.avg.toFixed(2),
-    range: result.stdDev.toFixed(2),
-  };
-}
-
-export function formatMemoryBenchmarkResultForUpload(result: BenchmarkResult) {
-  return {
-    name: result.name,
-    unit: "MB",
-    value: result.avg.toFixed(3),
-    range: result.stdDev.toFixed(3),
-  };
-}
-
-export async function timeExecution(fn: () => Promise<void>, divider: number = 1): Promise<number> {
-  const start = Date.now();
-  await fn();
-  return (Date.now() - start) / divider;
 }
 
 export function getRecipeGridRecipeSelector(page: Page) {
@@ -177,47 +103,6 @@ export function getClearButton(page: Page) {
   return page.getByRole("button", { name: "Clear" });
 }
 
-export function getRecipeSelector(page: Page) {
-  return page.locator("#recipe-grid select").first();
-}
-
-export type RecipePasteElements = {
-  ingredientIdx: number;
-  ingNameInput: Locator;
-  ingQtyInput: Locator;
-  propServingTemp: Locator;
-  compHeaders: Locator;
-  energyStr: string;
-};
-
-export async function recipePasteCheckElements(page: Page, ingredientIdx: number) {
-  const ingNameInput = getIngredientNameInputAtIdx(page, ingredientIdx);
-  const ingQtyInput = getIngredientQtyInputAtIdx(page, ingredientIdx);
-  const propServingTemp = getMixPropertyValueElement(page, fpdToPropKey(FpdKey.ServingTemp));
-  const compHeaders = getCompositionGridHeaders(page);
-  const energyStr = comp_key_as_med_str(CompKey.Energy);
-
-  return { ingredientIdx, ingNameInput, ingQtyInput, propServingTemp, compHeaders, energyStr };
-}
-
-export async function recipeUpdateCompleted(
-  page: Page,
-  elements: RecipePasteElements,
-  expected: { name: string; qty: number; servingTemp: string; energy: string },
-) {
-  await expect(elements.ingNameInput).toHaveValue(expected.name);
-  await expect(elements.ingQtyInput).toHaveValue(expected.qty.toString());
-  await expect(elements.propServingTemp).toHaveText(expected.servingTemp);
-
-  await page.getByRole("columnheader", { name: elements.energyStr }).waitFor();
-  const energyCompValue = await getCompositionValueElement(
-    page,
-    elements.ingredientIdx,
-    CompKey.Energy,
-  );
-  await expect(energyCompValue).toHaveText(expected.energy);
-}
-
 export type MemoryUsage = {
   usedJSHeapSize: number;
   totalJSHeapSize: number;
@@ -246,4 +131,202 @@ export async function getMemoryUsage(page: Page, browser: string): Promise<Memor
 
 export async function getUsedJSHeapSizeInMB(page: Page, browser: string): Promise<number> {
   return (await getMemoryUsage(page, browser)).usedJSHeapSize / 1024 / 1024;
+}
+
+/** Elements used to verify recipe paste, so they can be set up outside of benchmark loops */
+export type RecipeUpdateCheckElements = {
+  ingIdx: number;
+  ingNameInput: Locator;
+  ingQtyInput: Locator;
+  propServingTemp: Locator;
+  ingCompPac: Locator;
+};
+
+/** Find elements to check for recipe paste/updates, based on ingredient index
+ *
+ * @note This function may fail if component aren't configured correctly, e.g. if `RecipeGrid`'s
+ * recipe-select isn't set to the correct recipe, if `IngCompGrid`'s key filter isn't set to 'All'
+ * or if its recipe-select isn't set to the correct recipe, etc. It is the responsibility of the
+ * caller to ensure that components are in the correct state before calling this function.
+ * See `configureComponentsForRecipeUpdateCheck` for a helper function that does this.
+ */
+export async function getRecipeUpdateCheckElements(
+  page: Page,
+  recipeId: RecipeID,
+  ingIdx: number = PASTE_CHECK_DEFAULT_ING_IDX,
+): Promise<RecipeUpdateCheckElements> {
+  const recipeIdx = recipeIdToIdx(recipeId);
+  const servingTempPropKey = fpdToPropKey(FpdKey.ServingTemp);
+
+  const ingNameInput = getIngredientNameInputAtIdx(page, ingIdx);
+  const ingQtyInput = getIngredientQtyInputAtIdx(page, ingIdx);
+  const propServingTemp = getMixPropertyValueElement(page, servingTempPropKey, recipeIdx);
+  const ingCompPac = await getCompositionValueElement(page, ingIdx, CompKey.PACtotal);
+
+  return { ingIdx, ingNameInput, ingQtyInput, propServingTemp, ingCompPac };
+}
+
+/** Helper function to set up components for recipe update checks */
+export async function configureComponentsForRecipeUpdateCheck(page: Page, recipeId: RecipeID) {
+  const recipeGridRecipeSelect = getRecipeGridRecipeSelector(page);
+  const compGridRecipeSelect = getCompositionGridRecipeSelector(page);
+  const compGridKeyFilterSelect = getCompositionGridKeyFilterSelectInput(page);
+
+  await recipeGridRecipeSelect.selectOption(recipeId);
+  await compGridKeyFilterSelect.selectOption(KeyFilter.All);
+
+  // `IngCompGrid`'s recipe-select is not rendered if it was previously set to Main and only the
+  // main recipe is non-empty. In that case, it's already in the correct state and we can safely
+  // skip selecting the recipe, so we catch and ignore a timeout trying to select the recipe.
+  try {
+    await compGridRecipeSelect.selectOption(recipeId, { timeout: 100 });
+  } catch {}
+}
+
+/** Expected values for a recipe update after paste or quantity change */
+export type ExpectedRecipeUpdate = {
+  ingIdx: number;
+  ingName: string;
+  ingQty: string;
+  servingTemp: string;
+  ingCompPac: string;
+};
+
+/** Get expected values for recipe update from light recipe and WASM bridge calculations */
+export function getExpectedRecipeUpdateValues(
+  lightRecipe: LightRecipe,
+  ingIdx: number = PASTE_CHECK_DEFAULT_ING_IDX,
+): ExpectedRecipeUpdate {
+  const ingName = lightRecipe[ingIdx][0] as string;
+  const ingQty = lightRecipe[ingIdx][1] as number;
+
+  const mixProps = WASM_BRIDGE.calculate_recipe_mix_properties(lightRecipe);
+  const servingTempVal = getMixProperty(mixProps, fpdToPropKey(FpdKey.ServingTemp));
+
+  const ingComp = WASM_BRIDGE.get_ingredient_by_name(ingName).composition;
+  const ingCompPacVal = ingComp.get(CompKey.PACtotal);
+
+  const servingTemp = formatCompositionValue(servingTempVal);
+  const ingCompPac = applyQtyToggleAndFormat(
+    ingCompPacVal,
+    ingQty,
+    undefined,
+    QtyToggle.Quantity,
+    true,
+  );
+
+  return { ingIdx, ingName, ingQty: ingQty.toString(), servingTemp, ingCompPac };
+}
+
+/** Create `updateCount` expected recipe update values for a given ingredient in a light recipe */
+export function makeExpectedRecipeUpdates(
+  updateCount: number,
+  lightRecipe: LightRecipe,
+  ingIdx: number,
+): ExpectedRecipeUpdate[] {
+  const localLightRecipe = [...lightRecipe];
+  const updates: ExpectedRecipeUpdate[] = [];
+
+  for (let i = 0; i < updateCount; i++) {
+    (localLightRecipe[ingIdx][1] as number) += 1;
+    updates.push(getExpectedRecipeUpdateValues(localLightRecipe, ingIdx));
+  }
+
+  return updates;
+}
+
+/** Make expected recipe update values for multiple quantity updates for each recipe */
+export function makePerRecipeQtyUpdatesExpectedValues(
+  updateCount: number,
+  recipeIds: RecipeID[],
+  ingIdx: number,
+): Map<RecipeID, Array<ExpectedRecipeUpdate>> {
+  return new Map(
+    recipeIds.map((id) => [id, makeExpectedRecipeUpdates(updateCount, getLightRecipe(id), ingIdx)]),
+  );
+}
+
+/** Expect that recipe update elements have the expected values */
+export async function expectRecipeElementsToHaveExpected(
+  elements: RecipeUpdateCheckElements,
+  expected: ExpectedRecipeUpdate,
+) {
+  await expect(elements.ingNameInput).toHaveValue(expected.ingName);
+  await expect(elements.ingQtyInput).toHaveValue(expected.ingQty);
+  await expect(elements.propServingTemp).toHaveText(expected.servingTemp);
+  await expect(elements.ingCompPac).toHaveText(expected.ingCompPac);
+}
+
+/** Helper function to check for recipe update completion after paste or quantity change
+ *
+ * @note This function modifies selectors to check for specific ingredient and property values,
+ * so it may not leave components in the same state that they were before the function call.
+ */
+export async function expectRecipeUpdateCompleted(
+  page: Page,
+  recipeId: RecipeID,
+  expected: ExpectedRecipeUpdate,
+) {
+  await configureComponentsForRecipeUpdateCheck(page, recipeId);
+
+  const elements = await getRecipeUpdateCheckElements(page, recipeId, expected.ingIdx);
+  await expectRecipeElementsToHaveExpected(elements, expected);
+}
+
+/** Ingredient index to check for name and quantity equality after recipe updates
+ *
+ * @note This corresponds to 'Fructose' in the main and reference recipes
+ */
+export const PASTE_CHECK_DEFAULT_ING_IDX = 6;
+
+/** Expect that a recipe paste is reflected in all the relevant components
+ *
+ * @note This function modifies selectors to check for specific ingredient and property values,
+ * so it may not leave components in the same state that they were before the function call.
+ */
+export async function expectRecipePasteCompleted(page: Page, recipeId: RecipeID) {
+  const lightRecipe = getLightRecipe(recipeId);
+  const ingIdx = PASTE_CHECK_DEFAULT_ING_IDX;
+
+  const expected = getExpectedRecipeUpdateValues(lightRecipe, ingIdx);
+  await expectRecipeUpdateCompleted(page, recipeId, expected);
+}
+
+/** Helper function to paste recipe and wait for update completion, used in multiple tests
+ *
+ * @note This function modifies selectors to paste recipes in corresponding slots in `RecipeGrid,
+ * so it may not leave components in the same state that they were before the function call.
+ */
+export async function pasteRecipeAndWaitForUpdate(
+  page: Page,
+  browserName: string,
+  recipeId: RecipeID,
+) {
+  const recipeGridRecipeSelect = getRecipeGridRecipeSelector(page);
+  await recipeGridRecipeSelect.selectOption(recipeId);
+
+  await pasteToClipboard(page, browserName, getRecipeText(recipeId));
+  const pasteButton = getPasteButton(page);
+  await pasteButton.click();
+
+  await expectRecipePasteCompleted(page, recipeId);
+}
+
+/** Helper function to clear recipe and wait for update completion, used in multiple tests
+ *
+ * @note This function modifies selectors to clear recipes in corresponding slots in `RecipeGrid,
+ * so it may not leave components in the same state that they were before the function call.
+ */
+export async function clearRecipeAndWaitForUpdate(page: Page, recipeId: RecipeID) {
+  const ingIdx = PASTE_CHECK_DEFAULT_ING_IDX;
+
+  const recipeGridRecipeSelect = getRecipeGridRecipeSelector(page);
+  const clearButton = getClearButton(page);
+
+  await recipeGridRecipeSelect.selectOption(recipeId);
+  await clearButton.click();
+
+  const elements = await getRecipeUpdateCheckElements(page, recipeId, ingIdx);
+  await expect(elements.ingNameInput).toHaveValue("");
+  await expect(elements.ingQtyInput).toHaveValue("");
 }

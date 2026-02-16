@@ -1,28 +1,35 @@
-import { test, expect } from "@playwright/test";
+import { test } from "@playwright/test";
+
+import { RecipeID } from "@/__tests__/assets";
+
+import {
+  getUsedJSHeapSizeInMB,
+  getRecipeUpdateCheckElements,
+  configureComponentsForRecipeUpdateCheck,
+  expectRecipeElementsToHaveExpected,
+  makePerRecipeQtyUpdatesExpectedValues,
+  pasteRecipeAndWaitForUpdate,
+  clearRecipeAndWaitForUpdate,
+  PASTE_CHECK_DEFAULT_ING_IDX,
+} from "@/__tests__/e2e/util";
 
 import {
   allBenchmarkResultsForUpload,
   doBenchmarkMemoryMeasurements as doBenchmarkMemoryMeasurementsGeneric,
   formatMemoryBenchmarkResultForUpload,
-  pasteToClipboard,
-  getPasteButton,
-  getClearButton,
-  recipePasteCheckElements,
-  recipeUpdateCompleted,
-  getUsedJSHeapSizeInMB,
-} from "@/__tests__/e2e/util";
+} from "@/__benches__/e2e/util";
 
-import {
-  REF_RECIPE_TEXT,
-  EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT,
-  EXPECTED_FIRST_INGREDIENT,
-} from "@/__tests__/assets";
+const COUNT_MEMORY_RUNS = 5; // Number of runs for each memory usage benchmark
+const COUNT_OPERATION_LOOPS = 5; // Number of times to loop an operation sequence
+const COUNT_QTY_UPDATES_PER_LOOP = 50; // Number of times to update ingredient quantity per loop
 
-// Number of runs for each memory usage benchmark
-const COUNT_MEMORY_RUNS = 5;
+const RECIPE_IDS_TO_TEST = [RecipeID.Main];
 
-// Number of times to loop an operation sequence
-const COUNT_OPERATION_LOOPS = 5;
+const PER_RECIPE_QTY_UPDATES_EXPECTED_VALUES = makePerRecipeQtyUpdatesExpectedValues(
+  COUNT_QTY_UPDATES_PER_LOOP,
+  RECIPE_IDS_TO_TEST,
+  PASTE_CHECK_DEFAULT_ING_IDX,
+);
 
 function doBenchmarkMemoryMeasurements(name: string, run: () => Promise<number>) {
   return doBenchmarkMemoryMeasurementsGeneric(COUNT_MEMORY_RUNS, name, run).then((result) => {
@@ -43,26 +50,35 @@ test("should measure peak memory usage during typical operations", async ({
 
     let maxUsage = 0;
 
-    for (let i = 0; i < COUNT_OPERATION_LOOPS; i++) {
-      await pasteToClipboard(page, browserName, REF_RECIPE_TEXT);
-      const pasteButton = getPasteButton(page);
-      await pasteButton.click();
-
-      const elements = await recipePasteCheckElements(page, 0);
-      await recipeUpdateCompleted(page, elements, EXPECTED_FIRST_INGREDIENT);
+    const refreshMaxUsage = async () => {
       maxUsage = Math.max(maxUsage, await getUsedJSHeapSizeInMB(page, browserName));
+    };
 
-      for (const expected of EXPECTED_MULTIPLE_UPDATES_FIRST_INGREDIENT) {
-        await elements.ingQtyInput.fill(expected.qty.toString());
-        await recipeUpdateCompleted(page, elements, expected);
-        maxUsage = Math.max(maxUsage, await getUsedJSHeapSizeInMB(page, browserName));
+    for (let i = 0; i < COUNT_OPERATION_LOOPS; i++) {
+      await refreshMaxUsage();
+
+      for (const recipeId of RECIPE_IDS_TO_TEST) {
+        await pasteRecipeAndWaitForUpdate(page, browserName, recipeId);
+        await refreshMaxUsage();
       }
 
-      const clearButton = getClearButton(page);
-      await clearButton.click();
-      await expect(elements.ingNameInput).toHaveValue("");
-      await expect(elements.ingQtyInput).toHaveValue("");
-      maxUsage = Math.max(maxUsage, await getUsedJSHeapSizeInMB(page, browserName));
+      for (const recipeId of RECIPE_IDS_TO_TEST) {
+        await configureComponentsForRecipeUpdateCheck(page, recipeId);
+
+        for (const expected of PER_RECIPE_QTY_UPDATES_EXPECTED_VALUES.get(recipeId)!) {
+          const elements = await getRecipeUpdateCheckElements(page, recipeId, expected.ingIdx);
+
+          await elements.ingQtyInput.fill(expected.ingQty);
+          await expectRecipeElementsToHaveExpected(elements, expected);
+
+          await refreshMaxUsage();
+        }
+      }
+
+      for (const recipeId of RECIPE_IDS_TO_TEST) {
+        await clearRecipeAndWaitForUpdate(page, recipeId);
+        await refreshMaxUsage();
+      }
     }
 
     return maxUsage;

@@ -25,9 +25,9 @@ import {
   getPropKeys as getPropKeysAll,
 } from "@workspace/sci-cream";
 
-import { REF_LIGHT_RECIPE } from "@/__tests__/assets";
+import { RecipeID, getLightRecipe } from "@/__tests__/assets";
+import { WASM_BRIDGE } from "@/__tests__/util";
 import {
-  WASM_BRIDGE,
   createMockRecipeContext,
   createMockRefRecipeContext,
   getCompLabel,
@@ -115,7 +115,9 @@ describe("MixPropertiesChart", () => {
     });
 
     it("getModifiedMixProperty should modify specific property values", () => {
-      const mixProperties = WASM_BRIDGE.calculate_recipe_mix_properties(REF_LIGHT_RECIPE);
+      const mixProperties = WASM_BRIDGE.calculate_recipe_mix_properties(
+        getLightRecipe(RecipeID.Main),
+      );
       const getModMixProp = (propKey: PropKey) => getModifiedMixProperty(mixProperties, propKey);
 
       expect(getModMixProp(fpdToPropKey(FpdKey.FPD))).toBeCloseTo(3.6);
