@@ -1,15 +1,5 @@
 import "dotenv/config";
 
-// Allow extra margin when running locally since parallel execution can slow down tests
-export const THRESHOLD_MULTIPLIER = process.env.CI && !process.env.ACT ? 1 : 2;
-
-export const THRESHOLDS = {
-  page_load: 3000,
-  input_response: 500 * THRESHOLD_MULTIPLIER,
-  paste_response: 1000 * THRESHOLD_MULTIPLIER,
-  memory_usage_percent_increase: 20,
-};
-
 export type LightRecipe = (string | number)[][];
 
 export enum RecipeID {
