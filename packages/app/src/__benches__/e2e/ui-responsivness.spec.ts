@@ -51,9 +51,6 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       return timeExecution(async () => {
         await page.goto("");
         await page.waitForLoadState("networkidle");
-
-        // @todo Temporary delay to test github-action-benchmark integration
-        await page.waitForTimeout(2000);
       });
     });
   });
