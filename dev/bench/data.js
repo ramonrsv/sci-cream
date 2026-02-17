@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771370196988,
+  "lastUpdate": 1771371943424,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -58642,6 +58642,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.78%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c3d00306f2dce637fab7ca1920ff0752d331b6c3",
+          "message": "Add TODO to investigate perf analysis, flamegraphs",
+          "timestamp": "2026-02-17T18:43:30-05:00",
+          "tree_id": "3fe051569cb2d31d5f39d6cbd6e3f1afe41a7f08",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c3d00306f2dce637fab7ca1920ff0752d331b6c3"
+        },
+        "date": 1771371942191,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75689,
+            "range": "±1.19%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 722694,
+            "range": "±0.83%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9939,
+            "range": "±2.57%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 610276,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
