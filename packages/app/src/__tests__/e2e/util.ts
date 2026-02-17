@@ -294,6 +294,9 @@ export async function expectRecipePasteCompleted(page: Page, recipeId: RecipeID)
 
 /** Helper function to paste recipe and wait for update completion, used in multiple tests
  *
+ * This function selects the recipe in `RecipeGrid`, pastes the recipe text to the clipboard, clicks
+ * the paste button, and waits for the recipe update to be reflected in the relevant components.
+ *
  * @note This function modifies selectors to paste recipes in corresponding slots in `RecipeGrid,
  * so it may not leave components in the same state that they were before the function call.
  */
@@ -308,6 +311,33 @@ export async function pasteRecipeAndWaitForUpdate(
   await pasteToClipboard(page, browserName, getRecipeText(recipeId));
   const pasteButton = getPasteButton(page);
   await pasteButton.click();
+
+  await expectRecipePasteCompleted(page, recipeId);
+}
+
+/** Helper function to fill a recipe and wait for update completion, used in multiple tests
+ *
+ * This function selects the recipe in `RecipeGrid`, fills each ingredient name and quantity input
+ * based on the recipe, and waits for the recipe update to be reflected in the relevant components.
+ *
+ * @note This function modifies selectors to fill recipes in corresponding slots in `RecipeGrid,
+ * so it may not leave components in the same state that they were before the function call.
+ */
+export async function fillRecipeAndWaitForUpdate(
+  page: Page,
+  browserName: string,
+  recipeId: RecipeID,
+) {
+  const recipeGridRecipeSelect = getRecipeGridRecipeSelector(page);
+  await recipeGridRecipeSelect.selectOption(recipeId);
+
+  for (const [ingIdx, [name, qty]] of getLightRecipe(recipeId).entries()) {
+    const ingNameInput = getIngredientNameInputAtIdx(page, ingIdx);
+    const ingQtyInput = getIngredientQtyInputAtIdx(page, ingIdx);
+
+    await ingNameInput.fill(name as string);
+    await ingQtyInput.fill(String(qty));
+  }
 
   await expectRecipePasteCompleted(page, recipeId);
 }
