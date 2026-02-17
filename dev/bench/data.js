@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771367266945,
+  "lastUpdate": 1771367336510,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -50101,6 +50101,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 36.04,
             "range": "0.76",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ae59675626ec07984650b382ebaf68ef1f19ac51",
+          "message": "Overhaul end-to-end test/benches utils and assets\n\n* Overhaul the assets used in end-to-end tests/benches, now including\n  three light recipes (Main, Ref A, Ref B) and providing utilities to\n  programmatically generate recipe clipboard text and quantity updates.\n* Add multiple new utility functions under __tests__/e2e/util.ts, which\n  cover multiple common use patterns, e.g. pasting a recipe and checking\n  for the components to update, impled in `pasteRecipeAndWaitForUpdate`.\n  Some of these functions modify component selectors, e.g. recipe and\n  key filter, to facilitate the requested operations and update checking\n* Use the new utilities to simplify the current test implementations.\n* Add support for the memory-usage tests to fill and modify the\n  reference recipes as well; for now they still only do the main recipe.\n* Update one visual regression screenshot to cover the key-filter select\n  changing from Auto to All, as a result of using the new utilities.\n\n@note Because this commit changes so much of the verificatin mechanism\nused in performance measurement tests, performance benchmark results are\nexpected to change and set a new baseline, which would be purely due to\ntest and benchmark changes and not due to real performance differences.",
+          "timestamp": "2026-02-17T12:10:48-05:00",
+          "tree_id": "8adb9a34dedfda4d45145bf41ba3388c65383f54",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ae59675626ec07984650b382ebaf68ef1f19ac51"
+        },
+        "date": 1771367335173,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 667.3,
+            "range": "52.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 47.1,
+            "range": "4.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.7,
+            "range": "5.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.9,
+            "range": "10.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 36.7,
+            "range": "3.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 153.2,
+            "range": "17.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 41.6,
+            "range": "1.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 39.54,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 27.86,
+            "range": "0.98",
             "unit": "ms"
           }
         ]
