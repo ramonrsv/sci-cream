@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771368670188,
+  "lastUpdate": 1771368711579,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -56526,6 +56526,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.75%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8536d1fec2ab789779a9a985a48ed69f4e54bdbe",
+          "message": "[Test] Add temp delay to test gh-act-bench integr.",
+          "timestamp": "2026-02-17T17:45:10-05:00",
+          "tree_id": "b940d0ed59735e09406abc033207a9f0f504a045",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8536d1fec2ab789779a9a985a48ed69f4e54bdbe"
+        },
+        "date": 1771368710425,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 71707,
+            "range": "±2.24%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 730029,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10009,
+            "range": "±2.02%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 604297,
+            "range": "±0.87%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
