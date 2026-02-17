@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771369821567,
+  "lastUpdate": 1771369934475,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -58085,6 +58085,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.05%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9e06159711a8a29cdffc40ef62275b0f22341e04",
+          "message": "Change `MixPropsChart` bar styles, add round, gray\n\nChange some style elements of the bars in `MixPropertiesChart`, making\nthem rounder, and adding varying opacity to the reference recipes to\ndifferentiate them from each other. Update screenshots of relevant\nvisual regression tests to accomodate the new style changes.",
+          "timestamp": "2026-02-17T18:09:43-05:00",
+          "tree_id": "ab11b71b598d1834737b26189903f41e0e5ac684",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9e06159711a8a29cdffc40ef62275b0f22341e04"
+        },
+        "date": 1771369932833,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 74477,
+            "range": "±1.50%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 727276,
+            "range": "±0.92%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10141,
+            "range": "±2.19%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 605597,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
