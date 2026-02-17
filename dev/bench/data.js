@@ -53164,12 +53164,6 @@ window.BENCHMARK_DATA = {
             "unit": "MB"
           },
           {
-            "name": "Initial page load",
-            "value": 2670.3,
-            "range": "65.44",
-            "unit": "ms"
-          },
-          {
             "name": "Ingredient name input",
             "value": 48.5,
             "range": "5.33",
