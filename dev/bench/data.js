@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771369934475,
+  "lastUpdate": 1771369950972,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -5848,6 +5848,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "sweetener_spec_into_composition",
             "value": 306,
+            "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9e06159711a8a29cdffc40ef62275b0f22341e04",
+          "message": "Change `MixPropsChart` bar styles, add round, gray\n\nChange some style elements of the bars in `MixPropertiesChart`, making\nthem rounder, and adding varying opacity to the reference recipes to\ndifferentiate them from each other. Update screenshots of relevant\nvisual regression tests to accomodate the new style changes.",
+          "timestamp": "2026-02-17T18:09:43-05:00",
+          "tree_id": "ab11b71b598d1834737b26189903f41e0e5ac684",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9e06159711a8a29cdffc40ef62275b0f22341e04"
+        },
+        "date": 1771369949760,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3555,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161203,
+            "range": "± 3013",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2017,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160100,
+            "range": "± 894",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 312,
             "range": "± 3",
             "unit": "ns/iter"
           }
