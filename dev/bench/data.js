@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771367839764,
+  "lastUpdate": 1771368016710,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -54853,6 +54853,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 609431,
             "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "18a7c45596dac253842e1dc83b87691e384007d0",
+          "message": "Remove redundant e2e tests, now with benches check\n\nNow that benchmark results are a passing criteria, we can remove the\nreduncant timing tests with thresholds. These tend to have spurious\nfailures, particularly when running locally, take a long time to run\non all supported projects, and would be less useful than benchmarks at\ncatching performance regressions.",
+          "timestamp": "2026-02-17T16:25:28-05:00",
+          "tree_id": "6bfef2416dc105df764a5d66173d792e9b76d0f4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/18a7c45596dac253842e1dc83b87691e384007d0"
+        },
+        "date": 1771368015391,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76198,
+            "range": "±1.04%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 719856,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9761,
+            "range": "±2.17%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 612149,
+            "range": "±0.77%",
             "unit": "ops/sec",
             "extra": "92 samples"
           }
