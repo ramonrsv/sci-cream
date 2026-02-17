@@ -164,6 +164,9 @@ jobs:
           output-file-path: packages/app/bench_output_js.txt
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: true
+          fail-on-alert: true
+          comment-on-alert: true
+          alert-comment-cc-users: "@ramonrsv"
 
   e2e_benchmarks:
     runs-on: ubuntu-latest
@@ -200,3 +203,6 @@ jobs:
           output-file-path: packages/app/bench-results/bench_output_e2e.json
           github-token: ${{ secrets.GITHUB_TOKEN }}
           auto-push: true
+          fail-on-alert: true
+          comment-on-alert: true
+          alert-comment-cc-users: "@ramonrsv"
