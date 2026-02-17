@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771369003052,
+  "lastUpdate": 1771369557624,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -57528,6 +57528,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.87%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e078ba1401b118d8b907361f99f82344b2442382",
+          "message": "Revert \"[Test] Add temp delay to test gh-act-bench integr.\"\n\nThis reverts commit 8536d1fec2ab789779a9a985a48ed69f4e54bdbe.",
+          "timestamp": "2026-02-17T17:58:35-05:00",
+          "tree_id": "83d9a664cefbbe43dd4b3cafecbdbc37d9998277",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e078ba1401b118d8b907361f99f82344b2442382"
+        },
+        "date": 1771369556404,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78796,
+            "range": "±0.97%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 728854,
+            "range": "±1.07%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10102,
+            "range": "±2.24%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 605941,
+            "range": "±1.05%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
