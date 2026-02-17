@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771368109604,
+  "lastUpdate": 1771368247197,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -51249,6 +51249,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 32.18,
             "range": "1.10",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "18a7c45596dac253842e1dc83b87691e384007d0",
+          "message": "Remove redundant e2e tests, now with benches check\n\nNow that benchmark results are a passing criteria, we can remove the\nreduncant timing tests with thresholds. These tend to have spurious\nfailures, particularly when running locally, take a long time to run\non all supported projects, and would be less useful than benchmarks at\ncatching performance regressions.",
+          "timestamp": "2026-02-17T16:25:28-05:00",
+          "tree_id": "6bfef2416dc105df764a5d66173d792e9b76d0f4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/18a7c45596dac253842e1dc83b87691e384007d0"
+        },
+        "date": 1771368245973,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 658.5,
+            "range": "54.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48.3,
+            "range": "9.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.2,
+            "range": "6.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39,
+            "range": "5.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 34.4,
+            "range": "2.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 157.1,
+            "range": "9.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 37.6,
+            "range": "1.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 36.8,
+            "range": "0.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 26.38,
+            "range": "0.62",
             "unit": "ms"
           }
         ]
