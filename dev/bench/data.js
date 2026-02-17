@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771367815068,
+  "lastUpdate": 1771367830048,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -54749,6 +54749,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.69%",
             "unit": "ops/sec",
             "extra": "90 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a08c57ad7f45607e09136ad0e0c5a3b1b4ca8c1d",
+          "message": "Add `fail-on-alert` to github-action-benchmark CI\n\nEnable `fail-on-alert` and `comment-on-alert` on github-action-benchmark\nCI job steps so that benchmark results can be used as a passing criteria",
+          "timestamp": "2026-02-17T16:11:32-05:00",
+          "tree_id": "e08bdb1e7b932b86294f7c4336a9ef2207ab8ac9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a08c57ad7f45607e09136ad0e0c5a3b1b4ca8c1d"
+        },
+        "date": 1771367828041,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76239,
+            "range": "±1.41%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 705851,
+            "range": "±1.64%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10091,
+            "range": "±1.91%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 609431,
+            "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
