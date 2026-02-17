@@ -14,9 +14,9 @@ import {
 } from "@/__tests__/e2e/util";
 
 const COUNT_OPERATION_LOOPS = 5; // Number of times to loop an operation sequence for memory usage
-const COUNT_QTY_UPDATES_PER_LOOP = 50; // Number of times to update ingredient quantity per loop
+const COUNT_QTY_UPDATES_PER_LOOP = 30; // Number of times to update ingredient quantity per loop
 
-const RECIPE_IDS_TO_TEST = [RecipeID.Main];
+const RECIPE_IDS_TO_TEST = [RecipeID.Main, RecipeID.RefA, RecipeID.RefB];
 
 const PER_RECIPE_QTY_UPDATES_EXPECTED_VALUES = makePerRecipeQtyUpdatesExpectedValues(
   COUNT_QTY_UPDATES_PER_LOOP,
