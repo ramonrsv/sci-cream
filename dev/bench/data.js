@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771367336510,
+  "lastUpdate": 1771367559231,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -54192,6 +54192,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.26%",
             "unit": "ops/sec",
             "extra": "89 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "45c4168e3a9f879bfd895b785d78e16e580d7c43",
+          "message": "Add 'Ref A/B' recipes to peak memory usage benches\n\nNow that there are an additional 2 recipes, reduce the number of runs\nand quantity updates per loop to keep test times reasonable, ~1min.",
+          "timestamp": "2026-02-17T16:06:48-05:00",
+          "tree_id": "51198366a2f45d31f716e655b2aa671b3c7107c2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/45c4168e3a9f879bfd895b785d78e16e580d7c43"
+        },
+        "date": 1771367557271,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77646,
+            "range": "±1.27%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 631205,
+            "range": "±2.25%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9429,
+            "range": "±1.99%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 573490,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
