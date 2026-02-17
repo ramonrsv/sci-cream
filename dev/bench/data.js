@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771368016710,
+  "lastUpdate": 1771368032908,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -5579,6 +5579,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 317,
             "range": "± 8",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "18a7c45596dac253842e1dc83b87691e384007d0",
+          "message": "Remove redundant e2e tests, now with benches check\n\nNow that benchmark results are a passing criteria, we can remove the\nreduncant timing tests with thresholds. These tend to have spurious\nfailures, particularly when running locally, take a long time to run\non all supported projects, and would be less useful than benchmarks at\ncatching performance regressions.",
+          "timestamp": "2026-02-17T16:25:28-05:00",
+          "tree_id": "6bfef2416dc105df764a5d66173d792e9b76d0f4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/18a7c45596dac253842e1dc83b87691e384007d0"
+        },
+        "date": 1771368031763,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3583,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161607,
+            "range": "± 748",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2014,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 161835,
+            "range": "± 794",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 310,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
