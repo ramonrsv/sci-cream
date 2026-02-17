@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771319475987,
+  "lastUpdate": 1771367017475,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -53635,6 +53635,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.76%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ae59675626ec07984650b382ebaf68ef1f19ac51",
+          "message": "Overhaul end-to-end test/benches utils and assets\n\n* Overhaul the assets used in end-to-end tests/benches, now including\n  three light recipes (Main, Ref A, Ref B) and providing utilities to\n  programmatically generate recipe clipboard text and quantity updates.\n* Add multiple new utility functions under __tests__/e2e/util.ts, which\n  cover multiple common use patterns, e.g. pasting a recipe and checking\n  for the components to update, impled in `pasteRecipeAndWaitForUpdate`.\n  Some of these functions modify component selectors, e.g. recipe and\n  key filter, to facilitate the requested operations and update checking\n* Use the new utilities to simplify the current test implementations.\n* Add support for the memory-usage tests to fill and modify the\n  reference recipes as well; for now they still only do the main recipe.\n* Update one visual regression screenshot to cover the key-filter select\n  changing from Auto to All, as a result of using the new utilities.\n\n@note Because this commit changes so much of the verificatin mechanism\nused in performance measurement tests, performance benchmark results are\nexpected to change and set a new baseline, which would be purely due to\ntest and benchmark changes and not due to real performance differences.",
+          "timestamp": "2026-02-17T12:10:48-05:00",
+          "tree_id": "8adb9a34dedfda4d45145bf41ba3388c65383f54",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ae59675626ec07984650b382ebaf68ef1f19ac51"
+        },
+        "date": 1771367015774,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 71820,
+            "range": "±1.61%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 728752,
+            "range": "±1.03%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10126,
+            "range": "±2.03%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 599758,
+            "range": "±1.26%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
