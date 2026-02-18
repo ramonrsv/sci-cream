@@ -1,20 +1,28 @@
+# Next Release
+
 - [ ] Add code example doc tests to all specs that don't already have them.
 - [ ] Document all items in `sci-cream` crate and enable `missing_docs` lint everywhere.
 - [ ] Add `CHANGELOG.md` and `release.toml` for releases with `cargo-release` crate.
 - [ ] Document all items in `app`, look for a `missing_docs` equivalent lint.
 - [ ] Add tests for all components and utilities in `packages/app`.
-- [ ] When in Dark mode, if the page is refreshed, it momentarily flashes a Light theme before the
-      Dark theme is applied. This can be solved with a blocking script in `layout.tsx` manually
-      reading the theme from storage and applying it, but I would rather not do that, looks messy.
-      There are many other jarring flashes on first page load (some layout changes, a flash of
-      invalid-ingredient-name red before loading, etc.), so consider adding a loading screen to
-      allow all those things to settle before displaying the main page (see how Monarch does it).
-- [ ] Look into Next.js's system for displaying component placeholders to avoid layout changes.
-- [ ] Looking into doing `npm` releases of the `sci-cream` package.
+- [ ] Look into doing `npm` releases of the `sci-cream` package.
+- [ ] Add `height` prop to `MixPropertiesGrid` so that it can adapt the number of properties shown.
+- [ ] Rework `specs::Micro` to pull out stabilizers and emulsifiers into their own category(s).
+      Should they be separate `Stabilizer` and `Emulsifier`, or something like `Texturant` that
+      includes both? I prefer the latter, which accommodates blends like "Louis Francois Stab 2000",
+      but users might find it confusing in.
+- [ ] Add gum stabilizer ingredients and Underbelly blends with reference links and explicit ratios.
 - [ ] Once `0.0.1` is released, look into hosting the app live.
+
+# Up Next
+
 - [ ] Add Account and login functionality.
 - [ ] Add recipe save functionality. Recipes should support versions and notes.
-- [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
+- [ ] Add functionality to store component layout so that it is remembered across page reloads. The
+      store should start seeded with a default for each resolution, and store any user modification.
+- [ ] Implement a feature in the `sci-cream` crate to provide acceptable ranges for key properties
+      of a mix, e.g. total solids, MSNF, serving temperature, etc. It should probably support
+      category presets for different kinds of frozen desserts, e.g. ice-cream, sherbet, sorbet, etc.
 - [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
       embedded into other websites. How to handle user-defined ingredients?
 - [ ] Add make-recipe link, to click off ingredients that have been measured our for one or more
@@ -23,12 +31,24 @@
 - [ ] Add scoopability and FPD properties component with visuals.
 - [ ] Add Nutrition Facts Table component.
 - [ ] Add inventory and cost functionality.
+- [ ] Add support for `MixPropertiesGrid` to show deltas between the main recipe and the references.
+- [ ] Consider whether to add support to `IngredientCompositionGrid` to show deltas between recipes.
+
+# Backlog
+
+- [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
+- [ ] Once user-defined ingredients are supported, use embedded data for the main ingredients set.
+- [ ] When in Dark mode, if the page is refreshed, it momentarily flashes a Light theme before the
+      Dark theme is applied. This can be solved with a blocking script in `layout.tsx` manually
+      reading the theme from storage and applying it, but I would rather not do that, looks messy.
+      There are many other jarring flashes on first page load (some layout changes, a flash of
+      invalid-ingredient-name red before loading, etc.), so consider adding a loading screen to
+      allow all those things to settle before displaying the main page (see how Monarch does it).
+- [ ] Look into Next.js's system for displaying component placeholders to avoid layout changes.
 - [ ] Add test to check that `MixPropertiesGrid` has no vertical scroll with default layout/filters.
 - [ ] Look into including ingredient spec definitions in the docs, so that reference links work.
 - [ ] In `MixPropertiesGrid`, make it so that, if there is a horizontal scroll, the left-most column
       (property headers) does not scroll with the rest of the content.
-- [ ] Add support for `MixPropertiesGrid` to show deltas between the main recipe and the references.
-- [ ] Consider whether to add support to `IngredientCompositionGrid` to show deltas between recipes.
 - [ ] When there are too many properties to show in `MixPropertiesChart`, it kind of silently crops
       the properties being displayed. Look into a way to either indicate the cropping, or add
       support for a horizontal scrollbar.
@@ -52,19 +72,9 @@
       in `IngredientCompositionGrid` and `MixPropertiesGrid`; there may be a lot of them, which
       could be slow given that they are JS <-> WASM calls. Perhaps doing a single call to get a full
       map once and then doing `.get` calls on the JS side may be more performant.
-- [ ] Add functionality to store component layout so that it is remembered across page reloads. The
-      store should start seeded with a default for each resolution, and store any user modification.
-- [ ] Rework `specs::Micro` to pull out stabilizers and emulsifiers into their own category(s).
-      Should they be separate `Stabilizer` and `Emulsifier`, or something like `Texturant` that
-      includes both? I prefer the latter, which accommodates blends like "Louis Francois Stab 2000",
-      but users might find it confusing in.
-- [ ] Add gum stabilizer ingredients and Underbelly blends with reference links and explicit ratios.
 - [ ] Investigate methods for performance analysis, including Chrome DevTools Protocol (CDP),
       playwright-performance, etc. Look into generating flamegraphs.
 - [ ] Properly solve the `sslmode=no-verify` issue with `POSTGRES_URL`, see `db/util/getDatabaseUrl`
-- [ ] Implement a feature in the `sci-cream` crate to provide acceptable ranges for key properties
-      of a mix, e.g. total solids, MSNF, serving temperature, etc. It should probably support
-      category presets for different kinds of frozen desserts, e.g. ice-cream, sherbet, sorbet, etc.
 
 # Completed
 
