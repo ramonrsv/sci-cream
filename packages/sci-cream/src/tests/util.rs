@@ -1,3 +1,5 @@
+//! Miscellaneous utility functions used in tests across the codebase.
+
 use approx::AbsDiffEq;
 
 use crate::composition::{CompKey, Composition};

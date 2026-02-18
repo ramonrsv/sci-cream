@@ -16,7 +16,6 @@ pub mod properties;
 pub mod recipe;
 #[allow(missing_docs)] // @todo
 pub mod specs;
-#[allow(missing_docs)] // @todo
 pub mod util;
 #[allow(missing_docs)] // @todo
 pub mod validate;

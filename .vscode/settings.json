@@ -31,6 +31,7 @@
     "Corvitto",
     "cucurbitane",
     "demerara",
+    "downcasting",
     "Fairlife",
     "Ghirardelli",
     "Hartel",
@@ -71,9 +72,9 @@
     "SWEETLEAF",
     "triterpenoid",
     "turbopack",
-    "vitest",
-    "WSNF",
     "viewport",
-    "viewports"
+    "viewports",
+    "vitest",
+    "WSNF"
   ]
 }
