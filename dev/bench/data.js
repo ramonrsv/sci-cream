@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771453827072,
+  "lastUpdate": 1771454924716,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -60311,6 +60311,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 597866,
             "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b7ab965fcb649f5612865f829d1bf48347dc74e3",
+          "message": "Add acceptable range error bars to `MixPropsChart`\n\n* Use `chartjs-chart-error-bars` package to a new feature to show error\n  bars to indicate acceptable ranges of key mix properties. These are\n  only shown for the main recipe, and not all properties need to have an\n  acceptable range specified. If one is specified, the bar color changes\n  based on whether the value is within the range. Around the ends of the\n  range the the colors transition through yellow, orange, and red, based\n  on a margin calculated as a percentage of the range values.\n* Add a new yellow color, manually trying to match the existing ones.\n* Add `app/lib/sci-cream/.../getAcceptablePropertyRange` to provide\n  acceptable ranges for some properties. This is just to test the diplay\n  feature, it must be replaced by a more rebust feature in the\n  `sci-cream` crate. Add a TODO item and @todo comment nothing this.\n* Replace visual regression test screenshots to accomodate the changes.",
+          "timestamp": "2026-02-18T17:28:46-05:00",
+          "tree_id": "5e27b9e9ccb48f85d1beafd45c0a11aeb371dc6b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b7ab965fcb649f5612865f829d1bf48347dc74e3"
+        },
+        "date": 1771454923085,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75780,
+            "range": "±1.33%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 711888,
+            "range": "±1.59%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9946,
+            "range": "±2.08%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 603237,
+            "range": "±0.74%",
             "unit": "ops/sec",
             "extra": "92 samples"
           }
