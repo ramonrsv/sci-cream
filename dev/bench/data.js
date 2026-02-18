@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771447358579,
+  "lastUpdate": 1771447369766,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -5957,6 +5957,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 310,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a5b84898b965f08f1ca4d75db06eabbf274b66e2",
+          "message": "Change `DATABASE_URL` to `POSTGRES_URL` everywhere\n\nSupabase uses `POSTGRES_URL` in its `.env.local` and it's easier to\nchange it here, plus it better adheres to the industry convention.",
+          "timestamp": "2026-02-18T15:24:39-05:00",
+          "tree_id": "93d9c330faab33e1bba78a8e63c8ffd7cf1f8d64",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a5b84898b965f08f1ca4d75db06eabbf274b66e2"
+        },
+        "date": 1771447368044,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3140,
+            "range": "± 52",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 132572,
+            "range": "± 4281",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1627,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 127395,
+            "range": "± 1379",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 278,
+            "range": "± 14",
             "unit": "ns/iter"
           }
         ]
