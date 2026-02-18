@@ -15,6 +15,7 @@
 - [ ] Pasting the strawberry sorbet recipe, fixing 'Strawberry [Brix 9]' to remove ' [Brix 9]', then
       pasting a different recipe causes a 'null pointer passed to rust' error; still unclear why.
 - [ ] Once `0.0.1` is released, look into hosting the app live.
+- [ ] On a 1440p screen there is vertical scrolling when chrome is showing a bookmarks bar.
 
 # Up Next
 
