@@ -12,6 +12,8 @@
       includes both? I prefer the latter, which accommodates blends like "Louis Francois Stab 2000",
       but users might find it confusing in.
 - [ ] Add gum stabilizer ingredients and Underbelly blends with reference links and explicit ratios.
+- [ ] Pasting the strawberry sorbet recipe, fixing 'Strawberry [Brix 9]' to remove ' [Brix 9]', then
+      pasting a different recipe causes a 'null pointer passed to rust' error; still unclear why.
 - [ ] Once `0.0.1` is released, look into hosting the app live.
 
 # Up Next
