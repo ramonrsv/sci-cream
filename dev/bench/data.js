@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771372652391,
+  "lastUpdate": 1771447358579,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -59199,6 +59199,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.77%",
             "unit": "ops/sec",
             "extra": "90 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a5b84898b965f08f1ca4d75db06eabbf274b66e2",
+          "message": "Change `DATABASE_URL` to `POSTGRES_URL` everywhere\n\nSupabase uses `POSTGRES_URL` in its `.env.local` and it's easier to\nchange it here, plus it better adheres to the industry convention.",
+          "timestamp": "2026-02-18T15:24:39-05:00",
+          "tree_id": "93d9c330faab33e1bba78a8e63c8ffd7cf1f8d64",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a5b84898b965f08f1ca4d75db06eabbf274b66e2"
+        },
+        "date": 1771447357042,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76158,
+            "range": "±0.96%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 686413,
+            "range": "±1.56%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9708,
+            "range": "±1.99%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 583160,
+            "range": "±0.83%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
