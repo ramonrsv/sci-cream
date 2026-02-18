@@ -16,6 +16,9 @@
       pasting a different recipe causes a 'null pointer passed to rust' error; still unclear why.
 - [ ] Once `0.0.1` is released, look into hosting the app live.
 - [ ] On a 1440p screen there is vertical scrolling when chrome is showing a bookmarks bar.
+- [ ] Integrate Vercel Web Analytics `@vercel/analytics` and Speed Insights `@vercel/speed-insights`
+- [ ] Check how vertical spacing looks like on 1080p/2160p screens; look into dynamic vertical?
+- [ ] Look into setting up and how to do database migrations for the production database.
 
 # Up Next
 
