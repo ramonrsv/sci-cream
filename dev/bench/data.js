@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771447619645,
+  "lastUpdate": 1771453557174,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -59756,6 +59756,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.83%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f42878f00dfb30b9bc12159019fd89e30588965c",
+          "message": "Implement `getDatabaseUrl` workaround SSL error\n\nThis function gets the database URL from `POSTGRES_URL`, and currently\nreplaces `sslmode=require` with `sslmode=no-verify` to disable SSL\nverification in order to work around a 'SELF_SIGNED_CERT_IN_CHAIN'\nerror with Drizzle ORM. Add TODO to poperly solve this issue. See:\n  https://github.com/drizzle-team/drizzle-orm/discussions/881\n  https://github.com/brianc/node-postgres/issues/2558",
+          "timestamp": "2026-02-18T17:07:48-05:00",
+          "tree_id": "7f7ad4a4b272e5e757e2e2e9b22bdd91b7de05b2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f42878f00dfb30b9bc12159019fd89e30588965c"
+        },
+        "date": 1771453555936,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 73412,
+            "range": "±1.94%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 711497,
+            "range": "±1.38%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9853,
+            "range": "±2.14%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 597866,
+            "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
