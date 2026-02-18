@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771453821933,
+  "lastUpdate": 1771453827072,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -55650,6 +55650,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 27.18,
             "range": "0.96",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f42878f00dfb30b9bc12159019fd89e30588965c",
+          "message": "Implement `getDatabaseUrl` workaround SSL error\n\nThis function gets the database URL from `POSTGRES_URL`, and currently\nreplaces `sslmode=require` with `sslmode=no-verify` to disable SSL\nverification in order to work around a 'SELF_SIGNED_CERT_IN_CHAIN'\nerror with Drizzle ORM. Add TODO to poperly solve this issue. See:\n  https://github.com/drizzle-team/drizzle-orm/discussions/881\n  https://github.com/brianc/node-postgres/issues/2558",
+          "timestamp": "2026-02-18T17:07:48-05:00",
+          "tree_id": "7f7ad4a4b272e5e757e2e2e9b22bdd91b7de05b2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f42878f00dfb30b9bc12159019fd89e30588965c"
+        },
+        "date": 1771453824776,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 662.9,
+            "range": "54.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48.5,
+            "range": "7.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.3,
+            "range": "5.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.3,
+            "range": "4.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 36.5,
+            "range": "2.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 156,
+            "range": "5.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 40.6,
+            "range": "2.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 38.37,
+            "range": "0.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 27.31,
+            "range": "1.08",
             "unit": "ms"
           }
         ]
