@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771454942028,
+  "lastUpdate": 1771455048505,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -60417,6 +60417,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 603237,
             "range": "±0.74%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "98b05ebce580d802060d2a069743ed0229b3a5aa",
+          "message": "Organize TODOs into Next Release, ..Backlog, etc.\n\nAlso add a few more TODOs:\n  - Add `height` prop to `MixPropertiesGrid`, to adapt props shown\n  - Use user-defined ingredients are supported, use embedded data",
+          "timestamp": "2026-02-18T17:30:11-05:00",
+          "tree_id": "2891fb94dfd08565912d18760aa5839cf1f15736",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/98b05ebce580d802060d2a069743ed0229b3a5aa"
+        },
+        "date": 1771455047298,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75119,
+            "range": "±1.75%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 724112,
+            "range": "±0.54%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9983,
+            "range": "±3.00%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 609763,
+            "range": "±0.73%",
             "unit": "ops/sec",
             "extra": "92 samples"
           }
