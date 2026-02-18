@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { GripVertical } from "lucide-react";
-import { Bar } from "react-chartjs-2";
+import { Chart } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -14,10 +14,16 @@ import {
   type TooltipItem,
 } from "chart.js";
 
-import { Recipe, isRecipeEmpty } from "./recipe";
-import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "../lib/ui/key-filter-select";
+import {
+  BarWithErrorBarsController,
+  BarWithErrorBar,
+  type IErrorBarYDataPoint,
+} from "chartjs-chart-error-bars";
+
+import { Recipe, isRecipeEmpty } from "@/app/recipe";
+import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "@/lib/ui/key-filter-select";
 import { QtyToggle } from "@/lib/ui/qty-toggle-select";
-import { applyQtyToggle, formatCompositionValue } from "../lib/ui/comp-values";
+import { applyQtyToggle, formatCompositionValue } from "@/lib/ui/comp-values";
 import {
   Color,
   getColor,
@@ -25,11 +31,11 @@ import {
   getLegendColor,
   getReferenceOpacity,
   addOrUpdateAlpha,
-} from "../lib/styles/colors";
-import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "../lib/ui/constants";
+} from "@/lib/styles/colors";
+import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "@/lib/ui/constants";
 import { Theme } from "@/lib/ui/theme-select";
 
-import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
+import { isPropKeyQuantity, getAcceptablePropertyRange } from "@/lib/sci-cream/sci-cream";
 
 import {
   CompKey,
@@ -43,7 +49,16 @@ import {
   prop_key_as_med_str,
 } from "@workspace/sci-cream";
 
-ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  BarElement,
+  Title,
+  Tooltip,
+  Legend,
+  BarWithErrorBarsController,
+  BarWithErrorBar,
+);
 
 export function getPropKeys(): PropKey[] {
   return getPropKeysAll().filter(
@@ -66,10 +81,12 @@ export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   fpdToPropKey(FpdKey.ServingTemp),
 ] as PropKey[]);
 
-/** Forward to `getMixProperty` and modify some values to be more suitable for chart display */
-export function getModifiedMixProperty(mixProperties: MixProperties, propKey: PropKey): number {
-  const rawValue = getMixProperty(mixProperties, propKey);
-
+/** Modify some property values to be more suitable for chart display
+ *
+ * For example, invert FPD and ServingTemp to be positive, convert AbsPAC to a smaller range,
+ * convert emulsifier/stabilizer ratios to percentages, etc.
+ */
+export function modifyMixPropertyForChart(rawValue: number, propKey: PropKey): number {
   switch (propKey) {
     case fpdToPropKey(FpdKey.FPD):
     case fpdToPropKey(FpdKey.ServingTemp):
@@ -84,10 +101,8 @@ export function getModifiedMixProperty(mixProperties: MixProperties, propKey: Pr
   }
 }
 
-/** Forward to `prop_key_as_med_str` and modify some value to reflect `getModifiedMixProperty` */
-export function propKeyAsModifiedMedStr(propKey: PropKey): string {
-  const rawMedStr = prop_key_as_med_str(propKey);
-
+/** Modify property key strings to match modifications done in `modifyMixPropertyForChart` */
+export function modifyPropKeyAsMedStrForChart(rawMedStr: string, propKey: PropKey): string {
   switch (propKey) {
     case fpdToPropKey(FpdKey.FPD):
     case fpdToPropKey(FpdKey.ServingTemp):
@@ -100,6 +115,42 @@ export function propKeyAsModifiedMedStr(propKey: PropKey): string {
     default:
       return rawMedStr;
   }
+}
+
+/** Forward to `getMixProperty` and `modifyMixPropertyForChart` */
+export function getModifiedMixProperty(mixProperties: MixProperties, propKey: PropKey): number {
+  return modifyMixPropertyForChart(getMixProperty(mixProperties, propKey), propKey);
+}
+
+/** Forward to `prop_key_as_med_str` and `modifyPropKeyAsMedStrForChart` */
+export function propKeyAsModifiedMedStr(propKey: PropKey): string {
+  return modifyPropKeyAsMedStrForChart(prop_key_as_med_str(propKey), propKey);
+}
+
+/** Modify acceptable property range to match modifications done in `modifyMixPropertyForChart`
+ *
+ * This function also maps the sci-cream range `{ min: number; max: number }` to the format needed
+ * for error bars in the chart, `{ yMin: number; yMax: number }`, and may do additional
+ * modifications such as inverting the range for FPD and ServingTemp to match their negation.
+ */
+export function getModifiedAcceptablePropertyRange(
+  propKey: PropKey,
+): { yMin: number; yMax: number } | undefined {
+  const sciRange = getAcceptablePropertyRange(propKey);
+  if (!sciRange) return undefined;
+  let range: { yMin: number; yMax: number } = { yMin: sciRange.min, yMax: sciRange.max };
+
+  switch (propKey) {
+    // Invert max/min for FPD and ServingTemp since those property values are negated for display
+    case fpdToPropKey(FpdKey.FPD):
+    case fpdToPropKey(FpdKey.ServingTemp):
+      range = { yMin: range.yMax, yMax: range.yMin };
+  }
+
+  return {
+    yMin: modifyMixPropertyForChart(range.yMin, propKey),
+    yMax: modifyMixPropertyForChart(range.yMax, propKey),
+  };
 }
 
 export function MixPropertiesChart({
@@ -154,6 +205,29 @@ export function MixPropertiesChart({
     );
   };
 
+  const getMainBarColor = (propVal: number, range: { yMin: number; yMax: number }): string => {
+    const isWithin = (val: number, range: { yMin: number; yMax: number }) =>
+      val > range.yMin && val < range.yMax;
+
+    const idealRange = {
+      yMin: range.yMin + (range.yMax - range.yMin) * 0.15,
+      yMax: range.yMax - (range.yMax - range.yMin) * 0.15,
+    };
+
+    const expandedRange = {
+      yMin: range.yMin - (range.yMax - range.yMin) * 0.15,
+      yMax: range.yMax + (range.yMax - range.yMin) * 0.15,
+    };
+
+    return isWithin(propVal, idealRange)
+      ? getColor(Color.GraphGreen)
+      : isWithin(propVal, range)
+        ? getColor(Color.GraphYellow)
+        : isWithin(propVal, expandedRange)
+          ? getColor(Color.GraphOrange)
+          : getColor(Color.GraphRedDull);
+  };
+
   // Only display the main recipe and non-empty reference recipes
   const recipes = allRecipes.filter((recipe) => recipe.index == 0 || !isRecipeEmpty(recipe));
 
@@ -171,18 +245,33 @@ export function MixPropertiesChart({
       const grayColor = getColor(Color.GraphGray);
       const refOpacity = getReferenceOpacity(recipe.index - 1);
 
+      const mainBarColors = enabledProps.map((prop_key) => {
+        const val = getPropertyValue(prop_key, recipe.mixProperties!, recipe.mixTotal!);
+        const range = getModifiedAcceptablePropertyRange(prop_key);
+        return !range ? mainColor : getMainBarColor(val, range);
+      });
+
       return {
         label: recipe.name,
-        data: enabledProps.map((prop_key) =>
-          Math.abs(getPropertyValue(prop_key, recipe.mixProperties!, recipe.mixTotal!)),
+        data: enabledProps.map(
+          (prop_key) =>
+            ({
+              y: getPropertyValue(prop_key, recipe.mixProperties!, recipe.mixTotal!),
+              ...(isMain ? getModifiedAcceptablePropertyRange(prop_key) : {}),
+            }) as IErrorBarYDataPoint,
         ),
-        backgroundColor: isMain ? mainColor : addOrUpdateAlpha(grayColor, refOpacity),
+        backgroundColor: isMain ? mainBarColors! : addOrUpdateAlpha(grayColor, refOpacity),
         borderColor: isMain ? mainColor : addOrUpdateAlpha(grayColor, refOpacity + 0.2),
         borderWidth: isMain ? 0 : 1,
         borderRadius: 3,
         maxBarThickness: 40,
         categoryPercentage: 0.6,
         barPercentage: 0.8,
+        errorBarLineWidth: isMain ? 2 : 0,
+        errorBarColor: legendColor,
+        errorBarWhiskerLineWidth: isMain ? 4 : 0,
+        errorBarWhiskerColor: legendColor,
+        errorBarWhiskerRatio: recipes.length === 1 ? 0.4 : recipes.length === 2 ? 0.6 : 1,
       };
     }),
   };
@@ -206,7 +295,7 @@ export function MixPropertiesChart({
       },
       tooltip: {
         callbacks: {
-          label: (context: TooltipItem<"bar">) => {
+          label: (context: TooltipItem<"barWithErrorBars">) => {
             return formatCompositionValue(context.parsed.y ?? undefined);
           },
         },
@@ -236,7 +325,7 @@ export function MixPropertiesChart({
         />
       </div>
       <div className="h-[calc(100%-33px)] px-2 pb-2">
-        <Bar data={chartData} options={options} />
+        <Chart type="barWithErrorBars" data={chartData} options={options} />
       </div>
     </div>
   );

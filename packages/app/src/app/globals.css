@@ -38,9 +38,10 @@
   --color-focus-dark: var(--color-blue-400);
 
   /* Graph colors */
-  --color-graph-orange: rgb(255, 105, 45);
-  --color-graph-green: rgb(49, 164, 109);
   --color-graph-blue: rgb(0, 162, 200);
+  --color-graph-green: rgb(49, 164, 109);
+  --color-graph-yellow: rgb(201, 187, 77);
+  --color-graph-orange: rgb(255, 105, 45);
   --color-graph-gray: rgb(144, 140, 137);
   --color-graph-green-dull: rgb(37, 130, 89);
   --color-graph-red-dull: rgb(208, 43, 48);

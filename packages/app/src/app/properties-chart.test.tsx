@@ -58,6 +58,11 @@ vi.mock("chart.js", () => ({
   Filler: vi.fn(),
 }));
 
+vi.mock("chartjs-chart-error-bars", () => ({
+  BarWithErrorBarsController: vi.fn(),
+  BarWithErrorBar: vi.fn(),
+}));
+
 interface ChartOptions {
   responsive: boolean;
   maintainAspectRatio: boolean;
@@ -66,12 +71,13 @@ interface ChartOptions {
 }
 
 interface CapturedChartProps {
+  type: string;
   data: {
     labels: string[];
     datasets: Array<{
       label: string;
-      data: number[];
-      backgroundColor: string;
+      data: Array<{ y: number; yMin: number; yMax: number }>;
+      backgroundColor: string | string[];
       borderColor: string;
       maxBarThickness?: number;
       categoryPercentage?: number;
@@ -85,8 +91,8 @@ interface CapturedChartProps {
 let capturedBarProps: CapturedChartProps | null = null;
 
 vi.mock("react-chartjs-2", () => ({
-  Bar: ({ data, options }: CapturedChartProps) => {
-    capturedBarProps = { data, options };
+  Chart: ({ type, data, options }: CapturedChartProps) => {
+    capturedBarProps = { type, data, options };
     return <div data-testid="bar-chart">Mocked Bar Chart</div>;
   },
   //   Line: ({ data, options }: CapturedChartProps) => {
@@ -305,9 +311,11 @@ describe("MixPropertiesChart", () => {
       expect(capturedBarProps).not.toBeNull();
       const datasets = capturedBarProps!.data.datasets;
       const gray = getColor(Color.GraphGray);
-      // Main recipe: solid green
-      expect(datasets[0].backgroundColor).toBe(getColor(Color.GraphGreen));
-      expect(datasets[0].borderColor).toBe(getColor(Color.GraphGreen));
+      const green = getColor(Color.GraphGreen);
+      // Main recipe: per-bar colors array, all green (empty recipe has no out-of-range values)
+      expect(datasets[0].backgroundColor).toBeInstanceOf(Array);
+      expect((datasets[0].backgroundColor as string[]).every((c) => c === green)).toBe(true);
+      expect(datasets[0].borderColor).toBe(green);
       // Ref A: gray at 0.6 opacity
       expect(datasets[1].backgroundColor).toBe(addOrUpdateAlpha(gray, 0.6));
       expect(datasets[1].borderColor).toBe(addOrUpdateAlpha(gray, 0.8));
@@ -322,7 +330,8 @@ describe("MixPropertiesChart", () => {
 
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.datasets).toHaveLength(2);
-      expect(capturedBarProps!.data.datasets[0].backgroundColor).toBe(getColor(Color.GraphGreen));
+      const mainBg = capturedBarProps!.data.datasets[0].backgroundColor;
+      expect(mainBg).toBeInstanceOf(Array);
       // Ref B (index 2) clamps to last opacity tier (0.3)
       expect(capturedBarProps!.data.datasets[1].backgroundColor).toBe(
         addOrUpdateAlpha(getColor(Color.GraphGray), 0.3),
@@ -379,8 +388,8 @@ describe("MixPropertiesChart", () => {
       expect(getMixProperty(mixProps, EmulsPerFatPropKey)).toBeNaN();
       expect(getMixProperty(mixProps, AbsPACPropKey)).toBe(0);
 
-      expect(data.datasets[0].data[getPropIndex(data.labels, EmulsPerFatPropKey)]).toBeNaN();
-      expect(data.datasets[0].data[getPropIndex(data.labels, AbsPACPropKey)]).toBe(0);
+      expect(data.datasets[0].data[getPropIndex(data.labels, EmulsPerFatPropKey)].y).toBeNaN();
+      expect(data.datasets[0].data[getPropIndex(data.labels, AbsPACPropKey)].y).toBe(0);
     });
 
     it("should have modified values and strings", async () => {
@@ -409,7 +418,7 @@ describe("MixPropertiesChart", () => {
         ServingTempPropKey,
       ]) {
         expect(captured.data.labels).toContain(propKeyAsModifiedMedStr(key));
-        expect(captured.data.datasets[0].data[getPropIndex(data.labels, key)]).toBeCloseTo(
+        expect(captured.data.datasets[0].data[getPropIndex(data.labels, key)].y).toBeCloseTo(
           getModifiedMixProperty(recipeCtx.recipes[0].mixProperties!, key),
         );
       }

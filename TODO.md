@@ -10,7 +10,6 @@
       invalid-ingredient-name red before loading, etc.), so consider adding a loading screen to
       allow all those things to settle before displaying the main page (see how Monarch does it).
 - [ ] Look into Next.js's system for displaying component placeholders to avoid layout changes.
-- [ ] Use error bars in `MixPropertiesChart` to show typical valid ranges for some properties.
 - [ ] Looking into doing `npm` releases of the `sci-cream` package.
 - [ ] Once `0.0.1` is released, look into hosting the app live.
 - [ ] Add Account and login functionality.
@@ -63,9 +62,13 @@
 - [ ] Investigate methods for performance analysis, including Chrome DevTools Protocol (CDP),
       playwright-performance, etc. Look into generating flamegraphs.
 - [ ] Properly solve the `sslmode=no-verify` issue with `POSTGRES_URL`, see `db/util/getDatabaseUrl`
+- [ ] Implement a feature in the `sci-cream` crate to provide acceptable ranges for key properties
+      of a mix, e.g. total solids, MSNF, serving temperature, etc. It should probably support
+      category presets for different kinds of frozen desserts, e.g. ice-cream, sherbet, sorbet, etc.
 
 # Completed
 
+- [x] Use error bars in `MixPropertiesChart` to show typical valid ranges for some properties.
 - [x] Add snapshot tests to visually verify that there are no layout changes across viewports.
 - [x] The color gradient in `FpdGraph` is only working with `dev:webpack`, not turbopack or build.
 - [x] Semver permitted upgrades of `react-grid-layout` (`2.1.0 -> 2.2.2`) and `react-resizable`

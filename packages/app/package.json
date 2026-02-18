@@ -28,6 +28,7 @@
     "@headlessui/react": "^2.2.9",
     "@workspace/sci-cream": "workspace:*",
     "chart.js": "^4.5.1",
+    "chartjs-chart-error-bars": "^4.4.5",
     "colord": "^2.9.3",
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",

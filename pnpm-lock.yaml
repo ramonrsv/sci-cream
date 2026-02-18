@@ -26,6 +26,9 @@ importers:
       chart.js:
         specifier: ^4.5.1
         version: 4.5.1
+      chartjs-chart-error-bars:
+        specifier: ^4.4.5
+        version: 4.4.5(chart.js@4.5.1)
       colord:
         specifier: ^2.9.3
         version: 2.9.3
@@ -2051,6 +2054,11 @@ packages:
   chart.js@4.5.1:
     resolution: {integrity: sha512-GIjfiT9dbmHRiYi6Nl2yFCq7kkwdkp1W/lp2J99rX0yo9tgJGn3lKQATztIjb5tVtevcBtIdICNWqlq5+E8/Pw==}
     engines: {pnpm: '>=8'}
+
+  chartjs-chart-error-bars@4.4.5:
+    resolution: {integrity: sha512-JXdPy0AsgllDgjGUG/Kyz4oIFPPqbaa4zgAN+JqhDq0MaYYSCq17467BYDwdJEeOjmPRhtldf/7DF3p8873eTg==}
+    peerDependencies:
+      chart.js: ^4.1.0
 
   client-only@0.0.1:
     resolution: {integrity: sha512-IV3Ou0jSMzZrd3pZ48nLkT9DA7Ag1pnPzaiQhpW7c3RbcqqzvzzVu+L8gfqMp/8IM2MQtSiqaCxrrcfu8I8rMA==}
@@ -5603,6 +5611,10 @@ snapshots:
   chart.js@4.5.1:
     dependencies:
       '@kurkle/color': 0.3.4
+
+  chartjs-chart-error-bars@4.4.5(chart.js@4.5.1):
+    dependencies:
+      chart.js: 4.5.1
 
   client-only@0.0.1: {}
 

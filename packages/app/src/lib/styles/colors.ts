@@ -3,10 +3,14 @@ import { colord } from "colord";
 import { Theme } from "../ui/theme-select";
 
 export enum Color {
-  GraphGreen = "--color-graph-green",
-  GraphOrange = "--color-graph-orange",
   GraphBlue = "--color-graph-blue",
+  GraphGreen = "--color-graph-green",
+  GraphYellow = "--color-graph-yellow",
+  GraphOrange = "--color-graph-orange",
+  GraphRed = "--color-graph-red",
   GraphGray = "--color-graph-gray",
+  GraphGreenDull = "--color-graph-green-dull",
+  GraphRedDull = "--color-graph-red-dull",
   Grid = "--color-grid",
   Legend = "--color-legend",
   GridDark = "--color-grid-dark",
