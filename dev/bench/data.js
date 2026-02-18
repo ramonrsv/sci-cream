@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771455726358,
+  "lastUpdate": 1771455804854,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -63761,6 +63761,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.92%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4c9ec53b5f83c5ec1fd82cb359c410ff30f57938",
+          "message": "Add Vercel `Analytics` & `SpeedInsights` component",
+          "timestamp": "2026-02-18T17:57:07-05:00",
+          "tree_id": "d2815c7b5ed90a2d9d81b9372ef7a6b9575c40bf",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4c9ec53b5f83c5ec1fd82cb359c410ff30f57938"
+        },
+        "date": 1771455800941,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 74353,
+            "range": "±1.48%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 690643,
+            "range": "±1.35%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9388,
+            "range": "±1.98%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 570282,
+            "range": "±1.04%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
