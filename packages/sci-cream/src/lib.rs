@@ -13,7 +13,6 @@ pub mod error;
 pub mod fpd;
 pub mod ingredient;
 pub mod properties;
-#[allow(missing_docs)] // @todo
 pub mod recipe;
 #[allow(missing_docs)] // @todo
 pub mod specs;

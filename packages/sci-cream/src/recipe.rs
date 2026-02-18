@@ -1,3 +1,5 @@
+//! Recipe related logic, including the main [`Recipe`] struct and related types.
+
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "wasm")]
@@ -8,20 +10,42 @@ use crate::database::IngredientDatabase;
 
 use crate::{composition::Composition, error::Result, fpd::FPD, ingredient::Ingredient, properties::MixProperties};
 
+#[cfg(doc)]
+use crate::error::Error;
+
+/// A simple `(String, f64)` tuple representing an ingredient name and its amount, in grams.
+///
+/// This is used for easier interoperability with external data sources, such as JSON and databases,
+/// and notably for WASM interoperability. It cannot be used for calculations directly, since it
+/// does not contain a full [`Ingredient`] struct. See [`RecipeLine`] for the full struct.
 pub type LightRecipeLine = (String, f64);
+
+/// A recipe represented as a list of ingredient names and corresponding amounts, in grams.
+///
+/// This is used for easier interoperability with external data sources, such as JSON and databases,
+/// and notably for WASM interoperability. It cannot be used for calculations directly, since it
+/// does not contain full [`Ingredient`] objects. See [`Recipe`] for the full struct.
 pub type LightRecipe = [LightRecipeLine];
+
+/// An owned version of [`LightRecipe`] for use in Rust code, since [`LightRecipeLine`] is a slice.
 pub type OwnedLightRecipe = Vec<LightRecipeLine>;
 
+/// A single line in a recipe, representing an ingredient and its amount.
+///
+/// This struct contains the full [`Ingredient`] object, so it can be used directly in calculations.
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct RecipeLine {
+    /// The ingredient used in this line of the recipe.
     #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
     pub ingredient: Ingredient,
+    /// The amount of the ingredient used in this line of the recipe, in grams.
     pub amount: f64,
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl RecipeLine {
+    /// Creates a new [`RecipeLine`] with the given ingredient and amount.
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
     pub fn new(ingredient: Ingredient, amount: f64) -> Self {
@@ -29,16 +53,36 @@ impl RecipeLine {
     }
 }
 
+/// A complete recipe, consisting of an optional name and a list of [`RecipeLine`]s.
+///
+/// This struct contains the full [`Ingredient`] objects in its lines, so it can be used directly in
+/// calculations, which are exposed as methods on the struct. See [`LightRecipe`] for a simpler
+/// struct used for interoperability with external data sources.
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Recipe {
+    /// An optional name for the recipe.
     #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
     pub name: Option<String>,
+    /// The lines of the recipe, each representing an ingredient and its amount.
     #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
     pub lines: Vec<RecipeLine>,
 }
 
 impl Recipe {
+    /// Create a new [`Recipe`] from a [`LightRecipe`] and an [`IngredientDatabase`].
+    ///
+    /// This function looks up each ingredient name in the [`LightRecipe`] in the provided
+    /// [`IngredientDatabase`], to convert simple the name-and-amount pairs in the [`LightRecipe`]
+    /// into full [`Ingredient`] objects that can be used for calculations.
+    ///
+    /// This function requires the `database` feature flag, since it relies on an
+    /// [`IngredientDatabase`] for ingredient lookups.
+    ///
+    /// # Errors
+    ///
+    /// This function will return an [`Error::IngredientNotFound`] if any ingredient name in the
+    /// [`LightRecipe`] is not found in the provided [`IngredientDatabase`].
     #[cfg(feature = "database")]
     pub fn from_light_recipe(
         name: Option<String>,
@@ -57,6 +101,8 @@ impl Recipe {
         Ok(Recipe { name, lines })
     }
 
+    /// Calculate the composition of the recipe as the combination of the compositions of its
+    /// ingredients, weighted by their amounts.
     pub fn calculate_composition(&self) -> Result<Composition> {
         Composition::from_combination(
             &self
@@ -67,6 +113,7 @@ impl Recipe {
         )
     }
 
+    /// Calculate the mix properties of the recipe, including total amount, composition, and FPD.
     pub fn calculate_mix_properties(&self) -> Result<MixProperties> {
         let total_amount: f64 = self.lines.iter().map(|line| line.amount).sum();
         let composition = self.calculate_composition()?;
@@ -82,6 +129,7 @@ impl Recipe {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Recipe {
+    /// Creates a new [`Recipe`] with the optional given name and list of [`RecipeLine`]s.
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
     pub fn new(name: Option<String>, lines: Vec<RecipeLine>) -> Self {
@@ -89,6 +137,7 @@ impl Recipe {
     }
 }
 
+/// WASM compatible wrappers for [`crate::recipe`] functions and [`Recipe`] methods.
 #[cfg(feature = "wasm")]
 #[cfg_attr(coverage, coverage(off))]
 pub mod wasm {
@@ -96,6 +145,7 @@ pub mod wasm {
 
     use super::{Composition, MixProperties, OwnedLightRecipe, Recipe};
 
+    /// Create an [`OwnedLightRecipe`] from a JavaScript list of ingredient name and amount pairs.
     pub fn light_recipe_from_jsvalue(recipe: JsValue) -> Result<OwnedLightRecipe, JsValue> {
         serde_wasm_bindgen::from_value::<OwnedLightRecipe>(recipe).map_err(Into::into)
     }
