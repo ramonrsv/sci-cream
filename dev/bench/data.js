@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771455436615,
+  "lastUpdate": 1771455479634,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -62248,6 +62248,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.72%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7ba02e8df1d87adf46c49eaf48ad1035b9da65b0",
+          "message": "Add TODOs about vertical, analytics, migrations",
+          "timestamp": "2026-02-18T17:30:14-05:00",
+          "tree_id": "013e8e3f8009644d3794d2815ce02874ffeb7d5d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7ba02e8df1d87adf46c49eaf48ad1035b9da65b0"
+        },
+        "date": 1771455477693,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78204,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 658971,
+            "range": "±0.96%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9470,
+            "range": "±1.91%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 563673,
+            "range": "±0.92%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
