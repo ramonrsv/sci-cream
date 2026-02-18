@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771455126313,
+  "lastUpdate": 1771455162157,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -55842,6 +55842,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 27.31,
             "range": "1.08",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b7ab965fcb649f5612865f829d1bf48347dc74e3",
+          "message": "Add acceptable range error bars to `MixPropsChart`\n\n* Use `chartjs-chart-error-bars` package to a new feature to show error\n  bars to indicate acceptable ranges of key mix properties. These are\n  only shown for the main recipe, and not all properties need to have an\n  acceptable range specified. If one is specified, the bar color changes\n  based on whether the value is within the range. Around the ends of the\n  range the the colors transition through yellow, orange, and red, based\n  on a margin calculated as a percentage of the range values.\n* Add a new yellow color, manually trying to match the existing ones.\n* Add `app/lib/sci-cream/.../getAcceptablePropertyRange` to provide\n  acceptable ranges for some properties. This is just to test the diplay\n  feature, it must be replaced by a more rebust feature in the\n  `sci-cream` crate. Add a TODO item and @todo comment nothing this.\n* Replace visual regression test screenshots to accomodate the changes.",
+          "timestamp": "2026-02-18T17:28:46-05:00",
+          "tree_id": "5e27b9e9ccb48f85d1beafd45c0a11aeb371dc6b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b7ab965fcb649f5612865f829d1bf48347dc74e3"
+        },
+        "date": 1771455160852,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 15.354,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 662.4,
+            "range": "51.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.5,
+            "range": "5.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.1,
+            "range": "5.13",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.8,
+            "range": "8.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 38.1,
+            "range": "3.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 161.7,
+            "range": "9.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 42.7,
+            "range": "2.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 41.51,
+            "range": "2.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 29.05,
+            "range": "0.88",
             "unit": "ms"
           }
         ]
