@@ -4,6 +4,7 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
 
+import { getDatabaseUrl } from "./util";
 import { usersTable, ingredientsTable, User, SchemaCategory } from "./schema";
 import * as schema from "./schema";
 
@@ -15,7 +16,7 @@ import {
   allIngredientSpecs,
 } from "@workspace/sci-cream";
 
-const db = drizzle(process.env.POSTGRES_URL!, { schema });
+const db = drizzle(getDatabaseUrl(), { schema });
 
 const app: User = { name: process.env.APP_USER_NAME!, email: process.env.APP_USER_EMAIL! };
 

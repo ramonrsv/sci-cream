@@ -62,6 +62,7 @@
 - [ ] Add gum stabilizer ingredients and Underbelly blends with reference links and explicit ratios.
 - [ ] Investigate methods for performance analysis, including Chrome DevTools Protocol (CDP),
       playwright-performance, etc. Look into generating flamegraphs.
+- [ ] Properly solve the `sslmode=no-verify` issue with `POSTGRES_URL`, see `db/util/getDatabaseUrl`
 
 # Completed
 

@@ -4,10 +4,11 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
 
+import { getDatabaseUrl } from "./db/util";
 import { usersTable, User, ingredientsTable, Ingredient as IngredientDb } from "./db/schema";
 import * as schema from "./db/schema";
 
-const db = drizzle(process.env.POSTGRES_URL!, { schema });
+const db = drizzle(getDatabaseUrl(), { schema });
 
 export type IngredientTransfer = IngredientDb;
 

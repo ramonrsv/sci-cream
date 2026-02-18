@@ -2,6 +2,7 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
 
+import { getDatabaseUrl } from "./util";
 import { usersTable, ingredientsTable, SchemaCategory } from "./schema";
 import * as schema from "./schema";
 
@@ -9,10 +10,9 @@ import { IngredientJson, allIngredientSpecs } from "@workspace/sci-cream";
 
 type User = typeof usersTable.$inferInsert;
 
-const db = drizzle(process.env.POSTGRES_URL!, { schema });
+const db = drizzle(getDatabaseUrl(), { schema });
 
 const appUser: User = { name: process.env.APP_USER_NAME!, email: process.env.APP_USER_EMAIL! };
-
 const testUser: User = { name: process.env.TEST_USER_NAME!, email: process.env.TEST_USER_EMAIL! };
 
 async function seedUsers() {
