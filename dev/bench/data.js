@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771453557174,
+  "lastUpdate": 1771453578389,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -6011,6 +6011,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 278,
             "range": "± 14",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f42878f00dfb30b9bc12159019fd89e30588965c",
+          "message": "Implement `getDatabaseUrl` workaround SSL error\n\nThis function gets the database URL from `POSTGRES_URL`, and currently\nreplaces `sslmode=require` with `sslmode=no-verify` to disable SSL\nverification in order to work around a 'SELF_SIGNED_CERT_IN_CHAIN'\nerror with Drizzle ORM. Add TODO to poperly solve this issue. See:\n  https://github.com/drizzle-team/drizzle-orm/discussions/881\n  https://github.com/brianc/node-postgres/issues/2558",
+          "timestamp": "2026-02-18T17:07:48-05:00",
+          "tree_id": "7f7ad4a4b272e5e757e2e2e9b22bdd91b7de05b2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f42878f00dfb30b9bc12159019fd89e30588965c"
+        },
+        "date": 1771453577299,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3603,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161693,
+            "range": "± 894",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1978,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160243,
+            "range": "± 36425",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 315,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
