@@ -100,7 +100,7 @@ The app uses Drizzle ORM with PostgreSQL for type-safe database access:
   - `categoryEnum` - PostgreSQL enum from Rust `SchemaCategory` type
   - Type inference: `typeof usersTable.$inferInsert` and `$inferSelect` for type safety
 - **Config**: [drizzle.config.ts](packages/app/drizzle.config.ts) points to schema file and PostgreSQL connection
-- **Client**: Initialized in [lib/data.ts](packages/app/src/lib/data.ts) via `drizzle(process.env.DATABASE_URL!, { schema })`
+- **Client**: Initialized in [lib/data.ts](packages/app/src/lib/data.ts) via `drizzle(process.env.POSTGRES_URL!, { schema })`
 
 **Query Patterns:**
 

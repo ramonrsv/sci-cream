@@ -15,7 +15,7 @@ import {
   allIngredientSpecs,
 } from "@workspace/sci-cream";
 
-const db = drizzle(process.env.DATABASE_URL!, { schema });
+const db = drizzle(process.env.POSTGRES_URL!, { schema });
 
 const app: User = { name: process.env.APP_USER_NAME!, email: process.env.APP_USER_EMAIL! };
 

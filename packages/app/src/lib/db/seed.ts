@@ -9,7 +9,7 @@ import { IngredientJson, allIngredientSpecs } from "@workspace/sci-cream";
 
 type User = typeof usersTable.$inferInsert;
 
-const db = drizzle(process.env.DATABASE_URL!, { schema });
+const db = drizzle(process.env.POSTGRES_URL!, { schema });
 
 const appUser: User = { name: process.env.APP_USER_NAME!, email: process.env.APP_USER_EMAIL! };
 

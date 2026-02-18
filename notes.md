@@ -26,7 +26,7 @@ Database URL should be:
 
 `"postgres://<your Postgres username>:<your DB password>@localhost:5432/sci-cream"`
 
-In `.env` set `DATABASE_URL="postgres://postgres:password@localhost:5432/sci_cream"`
+In `.env` set `POSTGRES_URL="postgres://postgres:password@localhost:5432/sci_cream"`
 
 Using [DBeaver](https://dbeaver.io/), create database connection with:
 
@@ -57,7 +57,7 @@ ports used by the local services/servers, or by changing the host ports the the 
 
 The postgres service port can be changed by modifying `port` in `postgresql.conf` (for example
 located at `/etc/postgresql/16/main/postgresql.conf`) then restarting the service/system, e.g. via
-`sudo service postgresql restart`. `DATABASE_URL` in `.env` must then also be changed to point to
+`sudo service postgresql restart`. `POSTGRES_URL` in `.env` must then also be changed to point to
 the new port. `sudo ss -tulpn` can be used to see what services are running on what ports.
 
 The web server port can be changed by setting the `PORT` environment variable when starting the
@@ -65,7 +65,7 @@ The web server port can be changed by setting the `PORT` environment variable wh
 
 To change the host port that the CI workflow is using, modify `job.<id>.services.postgres.ports`,
 e.g. from `5432:5432` to `5433:5432`, to map host port `5433` instead of `5432` to port `5432` on
-the container. The respective `job.<id>.env.DATABASE_URL` needs to be changed to point to the new
+the container. The respective `job.<id>.env.POSTGRES_URL` needs to be changed to point to the new
 port. If multiple jobs in a CI workflow use a service that requires port mappings, they must each
 use different ports from each other and from any ports being used on the host. Note that only the
 host ports need to be unique, the container ports can be reused. See [Creating PostgresSQL service

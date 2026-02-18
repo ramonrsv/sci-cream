@@ -7,7 +7,7 @@ import { eq, and } from "drizzle-orm";
 import { usersTable, User, ingredientsTable, Ingredient as IngredientDb } from "./db/schema";
 import * as schema from "./db/schema";
 
-const db = drizzle(process.env.DATABASE_URL!, { schema });
+const db = drizzle(process.env.POSTGRES_URL!, { schema });
 
 export type IngredientTransfer = IngredientDb;
 
