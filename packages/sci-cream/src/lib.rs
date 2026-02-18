@@ -17,7 +17,6 @@ pub mod recipe;
 #[allow(missing_docs)] // @todo
 pub mod specs;
 pub mod util;
-#[allow(missing_docs)] // @todo
 pub mod validate;
 
 #[cfg(feature = "data")]
