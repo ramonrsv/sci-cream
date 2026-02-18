@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771455185372,
+  "lastUpdate": 1771455247220,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -61082,6 +61082,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.65%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9444e2fc76464143f4f2ed0cbbe2015920c3278a",
+          "message": "Add TODO about 'null ptr to rust' with Strawberry",
+          "timestamp": "2026-02-18T17:30:14-05:00",
+          "tree_id": "bc8564a18bc6ea4e252accab52973b942a8ef005",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9444e2fc76464143f4f2ed0cbbe2015920c3278a"
+        },
+        "date": 1771455245567,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77415,
+            "range": "±0.92%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 727609,
+            "range": "±0.70%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10057,
+            "range": "±2.18%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 610583,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
