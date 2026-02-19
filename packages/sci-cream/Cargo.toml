@@ -99,13 +99,10 @@ unexpected_cfgs = { level = "warn", check-cfg = [
 [lints.clippy]
 all = { level = "warn", priority = -1 }
 cargo = { level = "warn", priority = -1 }
-suspicious = { level = "warn", priority = -1 }
 pedantic = { level = "warn", priority = -1 }
 
-# @todo Temporary allows until fixed.
-missing_panics_doc = "allow"
-missing_errors_doc = "allow"
-unsafe_derive_deserialize = "allow"
+# `nursery` group, opt-in into individual lints as needed.
+too_long_first_doc_paragraph = "warn"
 
 # `restrictions` group, opt-in into individual lints as needed.
 dbg_macro = "warn"
@@ -113,6 +110,11 @@ print_stdout = "warn"
 unimplemented = "warn"
 todo = "warn"
 unwrap_used = "warn"
+
+# @todo Temporary allows until fixed.
+missing_panics_doc = "allow"
+missing_errors_doc = "allow"
+unsafe_derive_deserialize = "allow"
 
 [lints.rustdoc]
 all = "warn"
