@@ -165,11 +165,7 @@ pub(crate) mod tests {
     use crate::tests::util::assert_comp_eq_percent;
 
     use super::*;
-    use crate::{
-        composition::CompKey,
-        ingredient::Category,
-        specs::{IngredientSpec, Spec},
-    };
+    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
 
     pub(crate) const ING_SPEC_DAIRY_2_MILK_STR: &str = r#"{
       "name": "2% Milk",
@@ -182,7 +178,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_DAIRY_2_MILK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "2% Milk".to_string(),
         category: Category::Dairy,
-        spec: Spec::DairySpec(DairySpec { fat: 2.0, msnf: None }),
+        spec: DairySpec { fat: 2.0, msnf: None }.into(),
     });
 
     pub(crate) static COMP_2_MILK: LazyLock<Composition> = LazyLock::new(|| {
@@ -242,7 +238,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_DAIRY_3_25_MILK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "3.25% Milk".to_string(),
         category: Category::Dairy,
-        spec: Spec::DairySpec(DairySpec { fat: 3.25, msnf: None }),
+        spec: DairySpec { fat: 3.25, msnf: None }.into(),
     });
 
     pub(crate) static COMP_3_25_MILK: LazyLock<Composition> = LazyLock::new(|| {
@@ -301,7 +297,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_DAIRY_40_CREAM: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "40% Cream".to_string(),
         category: Category::Dairy,
-        spec: Spec::DairySpec(DairySpec { fat: 40.0, msnf: None }),
+        spec: DairySpec { fat: 40.0, msnf: None }.into(),
     });
 
     pub(crate) static COMP_40_CREAM: LazyLock<Composition> = LazyLock::new(|| {
@@ -362,10 +358,11 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_DAIRY_SKIMMED_POWDER: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Skimmed Milk Powder".to_string(),
         category: Category::Dairy,
-        spec: Spec::DairySpec(DairySpec {
+        spec: DairySpec {
             fat: 0.0,
             msnf: Some(97.0),
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_SKIMMED_POWDER: LazyLock<Composition> = LazyLock::new(|| {
@@ -426,10 +423,11 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_DAIRY_WHOLE_POWDER: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Whole Milk Powder".to_string(),
         category: Category::Dairy,
-        spec: Spec::DairySpec(DairySpec {
+        spec: DairySpec {
             fat: 27.0,
             msnf: Some(70.0),
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_WHOLE_POWDER: LazyLock<Composition> = LazyLock::new(|| {
@@ -497,7 +495,7 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "3.25% Milk (from nutrition facts)".to_string(),
             category: Category::Dairy,
-            spec: Spec::DairyFromNutritionSpec(DairyFromNutritionSpec {
+            spec: DairyFromNutritionSpec {
                 serving_size: Unit::Milliliters(250.0), // 257.6667 grams
                 energy: 160.0,
                 total_fat: Unit::Percent(3.25), // 3.25% is 8.3742g, not 8g
@@ -506,7 +504,8 @@ pub(crate) mod tests {
                 sugars: 13.0,
                 protein: 9.0,
                 is_lactose_free: false,
-            }),
+            }
+            .into(),
         });
 
     pub(crate) static COMP_3_25_MILK_FROM_NUTRITION: LazyLock<Composition> = LazyLock::new(|| {
@@ -572,7 +571,7 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Whole Ultra-Filtered Lactose-Free Milk".to_string(),
             category: Category::Dairy,
-            spec: Spec::DairyFromNutritionSpec(DairyFromNutritionSpec {
+            spec: DairyFromNutritionSpec {
                 serving_size: Unit::Milliliters(240.0), // 245.1288 grams
                 energy: 150.0,
                 total_fat: Unit::Grams(8.0), // 8g is 3.2636%
@@ -581,7 +580,8 @@ pub(crate) mod tests {
                 sugars: 6.0,
                 protein: 13.0,
                 is_lactose_free: true,
-            }),
+            }
+            .into(),
         });
 
     pub(crate) static COMP_WHOLE_ULTRA_FILTERED_LACTOSE_FREE: LazyLock<Composition> = LazyLock::new(|| {
@@ -652,7 +652,7 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Whey Isolate".to_string(),
             category: Category::Dairy,
-            spec: Spec::DairyFromNutritionSpec(DairyFromNutritionSpec {
+            spec: DairyFromNutritionSpec {
                 serving_size: Unit::Grams(39.0),
                 energy: 150.0,
                 total_fat: Unit::Grams(0.5),
@@ -661,7 +661,8 @@ pub(crate) mod tests {
                 sugars: 1.0,
                 protein: 35.0,
                 is_lactose_free: false,
-            }),
+            }
+            .into(),
         });
 
     pub(crate) static COMP_WHEY_ISOLATE: LazyLock<Composition> = LazyLock::new(|| {

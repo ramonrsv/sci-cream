@@ -98,11 +98,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{
-        composition::CompKey,
-        ingredient::Category,
-        specs::{IngredientSpec, Spec},
-    };
+    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
     pub(crate) const ING_SPEC_MICRO_SALT_STR: &str = r#"{
       "name": "Salt",
       "category": "Micro",
@@ -112,7 +108,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_MICRO_SALT: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Salt".to_string(),
         category: Category::Micro,
-        spec: Spec::MicroSpec(MicroSpec::Salt),
+        spec: MicroSpec::Salt.into(),
     });
 
     #[test]
@@ -136,7 +132,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_MICRO_LECITHIN: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Lecithin".to_string(),
         category: Category::Micro,
-        spec: Spec::MicroSpec(MicroSpec::Lecithin),
+        spec: MicroSpec::Lecithin.into(),
     });
 
     #[test]
@@ -165,7 +161,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_MICRO_STABILIZER: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Rich Ice Cream SB".to_string(),
         category: Category::Micro,
-        spec: Spec::MicroSpec(MicroSpec::Stabilizer { strength: 100.0 }),
+        spec: MicroSpec::Stabilizer { strength: 100.0 }.into(),
     });
 
     #[test]
@@ -212,10 +208,11 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_MICRO_LOUIS_STAB2K: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Louis Francois Stab 2000".to_string(),
         category: Category::Micro,
-        spec: Spec::MicroSpec(MicroSpec::EmulsifierStabilizer {
+        spec: MicroSpec::EmulsifierStabilizer {
             emulsifier_strength: 100.0,
             stabilizer_strength: 40.0,
-        }),
+        }
+        .into(),
     });
 
     #[test]

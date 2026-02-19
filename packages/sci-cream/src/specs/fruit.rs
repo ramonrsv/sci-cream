@@ -128,11 +128,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{
-        composition::CompKey,
-        ingredient::Category,
-        specs::{IngredientSpec, Spec},
-    };
+    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
 
     pub(crate) const ING_SPEC_FRUIT_STRAWBERRY_STR: &str = r#"{
       "name": "Strawberry",
@@ -155,7 +151,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_FRUIT_STRAWBERRY: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Strawberry".to_string(),
         category: Category::Fruit,
-        spec: Spec::FruitSpec(FruitSpec {
+        spec: FruitSpec {
             water: 91.0,
             energy: Some(32.0),
             protein: Some(0.67),
@@ -163,7 +159,8 @@ pub(crate) mod tests {
             carbohydrate: Some(7.68),
             fiber: Some(2.0),
             sugars: Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47),
-        }),
+        }
+        .into(),
     });
 
     #[test]
@@ -209,7 +206,7 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Navel Orange".to_string(),
             category: Category::Fruit,
-            spec: Spec::FruitSpec(FruitSpec {
+            spec: FruitSpec {
                 water: 86.7,
                 energy: None,
                 protein: Some(0.91),
@@ -217,7 +214,8 @@ pub(crate) mod tests {
                 carbohydrate: None,
                 fiber: Some(2.0),
                 sugars: Sugars::new().glucose(2.02).fructose(2.36).sucrose(4.19),
-            }),
+            }
+            .into(),
         });
 
     #[test]

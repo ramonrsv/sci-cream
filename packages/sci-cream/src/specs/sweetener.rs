@@ -158,22 +158,15 @@ pub(crate) mod tests {
     use crate::{
         composition::{ArtificialSweeteners, CompKey, Polyols, Sugars},
         ingredient::Category,
-        specs::{IngredientSpec, Spec},
+        specs::IngredientSpec,
     };
 
-    fn clear_pod_in_spec(spec: &mut Spec) {
-        if let Spec::SweetenerSpec(spec) = spec {
-            spec.pod = None;
-        } else {
-            panic!("Expected SweetenerSpec");
-        }
+    fn clear_pod_in_spec(spec: &mut crate::specs::TaggedSpec) {
+        spec.as_sweetener_spec_mut().unwrap().pod = None;
     }
-    fn clear_pac_in_spec(spec: &mut Spec) {
-        if let Spec::SweetenerSpec(spec) = spec {
-            spec.pac = None;
-        } else {
-            panic!("Expected SweetenerSpec");
-        }
+
+    fn clear_pac_in_spec(spec: &mut crate::specs::TaggedSpec) {
+        spec.as_sweetener_spec_mut().unwrap().pac = None;
     }
 
     pub(crate) const ING_SPEC_SWEETENER_SUCROSE_STR: &str = r#"{
@@ -194,7 +187,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_SWEETENER_SUCROSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Sucrose".to_string(),
         category: Category::Sweetener,
-        spec: Spec::SweetenerSpec(SweetenerSpec {
+        spec: SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
             fiber: None,
             other_carbohydrates: None,
@@ -202,7 +195,8 @@ pub(crate) mod tests {
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
             pod: None,
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_SUCROSE: LazyLock<Composition> =
@@ -252,7 +246,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_SWEETENER_DEXTROSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Dextrose".to_string(),
         category: Category::Sweetener,
-        spec: Spec::SweetenerSpec(SweetenerSpec {
+        spec: SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(100.0)),
             fiber: None,
             other_carbohydrates: None,
@@ -260,7 +254,8 @@ pub(crate) mod tests {
             basis: CompositionBasis::ByDryWeight { solids: 92.0 },
             pod: None,
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_DEXTROSE: LazyLock<Composition> =
@@ -310,7 +305,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_SWEETENER_FRUCTOSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Fructose".to_string(),
         category: Category::Sweetener,
-        spec: Spec::SweetenerSpec(SweetenerSpec {
+        spec: SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().fructose(100.0)),
             fiber: None,
             other_carbohydrates: None,
@@ -318,7 +313,8 @@ pub(crate) mod tests {
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
             pod: None,
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_FRUCTOSE: LazyLock<Composition> = LazyLock::new(|| {
@@ -367,7 +363,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_SWEETENER_LACTOSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Lactose".to_string(),
         category: Category::Sweetener,
-        spec: Spec::SweetenerSpec(SweetenerSpec {
+        spec: SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().lactose(100.0)),
             fiber: None,
             other_carbohydrates: None,
@@ -375,7 +371,8 @@ pub(crate) mod tests {
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
             pod: None,
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_LACTOSE: LazyLock<Composition> =
@@ -425,7 +422,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_SWEETENER_MALTOSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Maltose".to_string(),
         category: Category::Sweetener,
-        spec: Spec::SweetenerSpec(SweetenerSpec {
+        spec: SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().maltose(100.0)),
             fiber: None,
             other_carbohydrates: None,
@@ -433,7 +430,8 @@ pub(crate) mod tests {
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
             pod: None,
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_MALTOSE: LazyLock<Composition> =
@@ -483,7 +481,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_SWEETENER_TREHALOSE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Trehalose".to_string(),
         category: Category::Sweetener,
-        spec: Spec::SweetenerSpec(SweetenerSpec {
+        spec: SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().trehalose(100.0)),
             fiber: None,
             other_carbohydrates: None,
@@ -491,7 +489,8 @@ pub(crate) mod tests {
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
             pod: None,
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_TREHALOSE: LazyLock<Composition> = LazyLock::new(|| {
@@ -540,7 +539,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_SWEETENER_ERYTHRITOL: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Erythritol".to_string(),
         category: Category::Sweetener,
-        spec: Spec::SweetenerSpec(SweetenerSpec {
+        spec: SweetenerSpec {
             sweeteners: Sweeteners::new().polyols(Polyols::new().erythritol(100.0)),
             fiber: None,
             other_carbohydrates: None,
@@ -548,7 +547,8 @@ pub(crate) mod tests {
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
             pod: None,
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_ERYTHRITOL: LazyLock<Composition> = LazyLock::new(|| {
@@ -600,7 +600,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_SWEETENER_INVERT_SUGAR: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Invert Sugar".to_string(),
         category: Category::Sweetener,
-        spec: Spec::SweetenerSpec(SweetenerSpec {
+        spec: SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(42.5).fructose(42.5).sucrose(15.0)),
             fiber: None,
             other_carbohydrates: None,
@@ -608,7 +608,8 @@ pub(crate) mod tests {
             basis: CompositionBasis::ByDryWeight { solids: 80.0 },
             pod: None,
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     #[test]
@@ -654,7 +655,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_SWEETENER_HONEY: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Honey".to_string(),
         category: Category::Sweetener,
-        spec: Spec::SweetenerSpec(SweetenerSpec {
+        spec: SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(
                 Sugars::new()
                     .glucose(36.0)
@@ -669,7 +670,8 @@ pub(crate) mod tests {
             basis: CompositionBasis::ByTotalWeight { water: 17.0 },
             pod: None,
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     #[test]
@@ -716,7 +718,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_SWEETENER_MAPLE_SYRUP: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Maple Syrup".to_string(),
         category: Category::Sweetener,
-        spec: Spec::SweetenerSpec(SweetenerSpec {
+        spec: SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(0.65).fructose(0.35).sucrose(59.0)),
             fiber: None,
             other_carbohydrates: Some(7.5),
@@ -724,7 +726,8 @@ pub(crate) mod tests {
             basis: CompositionBasis::ByTotalWeight { water: 32.0 },
             pod: None,
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_MAPLE_SYRUP: LazyLock<Composition> = LazyLock::new(|| {
@@ -787,7 +790,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_SWEETENER_FANCY_MOLASSES: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Fancy Molasses".to_string(),
         category: Category::Sweetener,
-        spec: Spec::SweetenerSpec(SweetenerSpec {
+        spec: SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(12.0).fructose(12.0).sucrose(32.0)),
             fiber: None,
             other_carbohydrates: Some(20.0),
@@ -795,7 +798,8 @@ pub(crate) mod tests {
             basis: CompositionBasis::ByTotalWeight { water: 20.0 },
             pod: None,
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_FANCY_MOLASSES: LazyLock<Composition> = LazyLock::new(|| {
@@ -856,7 +860,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_SWEETENER_HFCS42: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "HFCS 42".to_string(),
         category: Category::Sweetener,
-        spec: Spec::SweetenerSpec(SweetenerSpec {
+        spec: SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().fructose(42.0).glucose(53.0)),
             fiber: None,
             other_carbohydrates: Some(5.0),
@@ -864,7 +868,8 @@ pub(crate) mod tests {
             basis: CompositionBasis::ByDryWeight { solids: 76.0 },
             pod: None,
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     #[test]
@@ -916,7 +921,7 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Maltodextrin 10 DE".to_string(),
             category: Category::Sweetener,
-            spec: Spec::SweetenerSpec(SweetenerSpec {
+            spec: SweetenerSpec {
                 sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(0.6).maltose(2.8)),
                 fiber: None,
                 other_carbohydrates: Some(96.6),
@@ -924,7 +929,8 @@ pub(crate) mod tests {
                 basis: CompositionBasis::ByDryWeight { solids: 95.0 },
                 pod: Some(Scaling::OfSolids(11.0)),
                 pac: Some(Scaling::OfSolids(Unit::MolarMass(1800.0))),
-            }),
+            }
+            .into(),
         });
 
     #[test]
@@ -975,7 +981,7 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Glucose Syrup 42 DE".to_string(),
             category: Category::Sweetener,
-            spec: Spec::SweetenerSpec(SweetenerSpec {
+            spec: SweetenerSpec {
                 sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(19.0).maltose(14.0)),
                 fiber: None,
                 other_carbohydrates: Some(67.0),
@@ -983,7 +989,8 @@ pub(crate) mod tests {
                 basis: CompositionBasis::ByDryWeight { solids: 80.0 },
                 pod: Some(Scaling::OfSolids(50.0)),
                 pac: Some(Scaling::OfSolids(Unit::MolarMass(429.0))),
-            }),
+            }
+            .into(),
         });
 
     #[test]
@@ -1035,7 +1042,7 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Glucose Powder 25 DE".to_string(),
             category: Category::Sweetener,
-            spec: Spec::SweetenerSpec(SweetenerSpec {
+            spec: SweetenerSpec {
                 sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(2.0).maltose(10.0)),
                 fiber: None,
                 other_carbohydrates: Some(88.0),
@@ -1043,7 +1050,8 @@ pub(crate) mod tests {
                 basis: CompositionBasis::ByDryWeight { solids: 95.0 },
                 pod: Some(Scaling::OfSolids(28.0)),
                 pac: Some(Scaling::OfSolids(Unit::MolarMass(720.0))),
-            }),
+            }
+            .into(),
         });
 
     #[test]
@@ -1095,7 +1103,7 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Glucose Powder 42 DE".to_string(),
             category: Category::Sweetener,
-            spec: Spec::SweetenerSpec(SweetenerSpec {
+            spec: SweetenerSpec {
                 sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(19.0).maltose(14.0)),
                 fiber: None,
                 other_carbohydrates: Some(67.0),
@@ -1103,7 +1111,8 @@ pub(crate) mod tests {
                 basis: CompositionBasis::ByDryWeight { solids: 95.0 },
                 pod: Some(Scaling::OfSolids(50.0)),
                 pac: Some(Scaling::OfSolids(Unit::MolarMass(429.0))),
-            }),
+            }
+            .into(),
         });
 
     #[test]
@@ -1149,7 +1158,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_SWEETENER_INULIN_POWDER: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Inulin Powder".to_string(),
         category: Category::Sweetener,
-        spec: Spec::SweetenerSpec(SweetenerSpec {
+        spec: SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(3.0).fructose(3.0).sucrose(3.0)),
             fiber: Some(Fibers::new().inulin(91.0)),
             other_carbohydrates: None,
@@ -1157,7 +1166,8 @@ pub(crate) mod tests {
             basis: CompositionBasis::ByDryWeight { solids: 98.0 },
             pod: None,
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_INULIN_POWDER: LazyLock<Composition> = LazyLock::new(|| {
@@ -1215,7 +1225,7 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "HP Inulin Powder".to_string(),
             category: Category::Sweetener,
-            spec: Spec::SweetenerSpec(SweetenerSpec {
+            spec: SweetenerSpec {
                 sweeteners: Sweeteners::new(),
                 fiber: Some(Fibers::new().inulin(100.0)),
                 other_carbohydrates: None,
@@ -1223,7 +1233,8 @@ pub(crate) mod tests {
                 basis: CompositionBasis::ByDryWeight { solids: 98.0 },
                 pod: None,
                 pac: None,
-            }),
+            }
+            .into(),
         });
 
     pub(crate) static COMP_HP_INULIN_POWDER: LazyLock<Composition> = LazyLock::new(|| {
@@ -1275,7 +1286,7 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Oligofructose Powder".to_string(),
             category: Category::Sweetener,
-            spec: Spec::SweetenerSpec(SweetenerSpec {
+            spec: SweetenerSpec {
                 sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(1.67).fructose(1.67).sucrose(1.66)),
                 fiber: Some(Fibers::new().oligofructose(95.0)),
                 other_carbohydrates: None,
@@ -1283,7 +1294,8 @@ pub(crate) mod tests {
                 basis: CompositionBasis::ByDryWeight { solids: 98.0 },
                 pod: None,
                 pac: None,
-            }),
+            }
+            .into(),
         });
 
     pub(crate) static COMP_OLIGOFRUCTOSE_POWDER: LazyLock<Composition> = LazyLock::new(|| {
@@ -1354,7 +1366,7 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Splenda (Sucralose)".to_string(),
             category: Category::Sweetener,
-            spec: Spec::SweetenerSpec(SweetenerSpec {
+            spec: SweetenerSpec {
                 sweeteners: Sweeteners::new()
                     .sugars(Sugars::new().glucose(55.0))
                     .artificial(ArtificialSweeteners::new().sucralose(1.32)),
@@ -1364,7 +1376,8 @@ pub(crate) mod tests {
                 basis: CompositionBasis::ByTotalWeight { water: 5.0 },
                 pod: Some(Scaling::OfWhole(840.0)),
                 pac: Some(Scaling::OfWhole(Unit::Grams(112.6))),
-            }),
+            }
+            .into(),
         });
 
     pub(crate) static COMP_SPLENDA_SUCRALOSE: LazyLock<Composition> = LazyLock::new(|| {
@@ -1438,7 +1451,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_SWEETENER_SPLENDA_STEVIA: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Splenda (Stevia)".to_string(),
         category: Category::Sweetener,
-        spec: Spec::SweetenerSpec(SweetenerSpec {
+        spec: SweetenerSpec {
             sweeteners: Sweeteners::new()
                 .polyols(Polyols::new().erythritol(99.9))
                 .artificial(ArtificialSweeteners::new().steviosides(0.1)),
@@ -1448,7 +1461,8 @@ pub(crate) mod tests {
             basis: CompositionBasis::ByDryWeight { solids: 100.0 },
             pod: Some(Scaling::OfWhole(200.0)),
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_SPLENDA_STEVIA: LazyLock<Composition> = LazyLock::new(|| {
@@ -1508,7 +1522,7 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Splenda (Monk Fruit)".to_string(),
             category: Category::Sweetener,
-            spec: Spec::SweetenerSpec(SweetenerSpec {
+            spec: SweetenerSpec {
                 sweeteners: Sweeteners::new()
                     .polyols(Polyols::new().erythritol(99.9))
                     .artificial(ArtificialSweeteners::new().mogrosides(0.1)),
@@ -1518,7 +1532,8 @@ pub(crate) mod tests {
                 basis: CompositionBasis::ByDryWeight { solids: 100.0 },
                 pod: Some(Scaling::OfWhole(100.0)),
                 pac: None,
-            }),
+            }
+            .into(),
         });
 
     pub(crate) static COMP_SPLENDA_MONK_FRUIT: LazyLock<Composition> = LazyLock::new(|| {
@@ -1581,7 +1596,7 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "SweetLeaf Stevia".to_string(),
             category: Category::Sweetener,
-            spec: Spec::SweetenerSpec(SweetenerSpec {
+            spec: SweetenerSpec {
                 sweeteners: Sweeteners::new()
                     .sugars(Sugars::new().glucose(2.0).fructose(2.0).sucrose(2.0))
                     .artificial(ArtificialSweeteners::new().steviosides(5.0)),
@@ -1591,7 +1606,8 @@ pub(crate) mod tests {
                 basis: CompositionBasis::ByDryWeight { solids: 98.0 },
                 pod: Some(Scaling::OfWhole(1050.0)),
                 pac: None,
-            }),
+            }
+            .into(),
         });
 
     pub(crate) static COMP_SWEETLEAF_STEVIA: LazyLock<Composition> = LazyLock::new(|| {
@@ -1657,7 +1673,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_SWEETENER_SUGAR_TWIN: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Sugar Twin".to_string(),
         category: Category::Sweetener,
-        spec: Spec::SweetenerSpec(SweetenerSpec {
+        spec: SweetenerSpec {
             sweeteners: Sweeteners::new()
                 .sugars(Sugars::new().glucose(61.0))
                 .artificial(ArtificialSweeteners::new().cyclamate(33.0)),
@@ -1667,7 +1683,8 @@ pub(crate) mod tests {
             basis: CompositionBasis::ByTotalWeight { water: 6.0 },
             pod: Some(Scaling::OfWhole(1050.0)),
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_SUGAR_TWIN: LazyLock<Composition> = LazyLock::new(|| {
@@ -1740,7 +1757,7 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Stevia In The Raw (Packets)".to_string(),
             category: Category::Sweetener,
-            spec: Spec::SweetenerSpec(SweetenerSpec {
+            spec: SweetenerSpec {
                 sweeteners: Sweeteners::new()
                     .sugars(Sugars::new().glucose(89.0))
                     .artificial(ArtificialSweeteners::new().steviosides(3.4)),
@@ -1750,7 +1767,8 @@ pub(crate) mod tests {
                 basis: CompositionBasis::ByTotalWeight { water: 7.6 },
                 pod: Some(Scaling::OfWhole(840.0)),
                 pac: None,
-            }),
+            }
+            .into(),
         });
 
     pub(crate) static COMP_STEVIA_IN_THE_RAW_PACKETS: LazyLock<Composition> = LazyLock::new(|| {
@@ -1829,7 +1847,7 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Stevia In The Raw (Bakers Bag)".to_string(),
             category: Category::Sweetener,
-            spec: Spec::SweetenerSpec(SweetenerSpec {
+            spec: SweetenerSpec {
                 sweeteners: Sweeteners::new().artificial(ArtificialSweeteners::new().steviosides(3.45)),
                 fiber: None,
                 other_carbohydrates: Some(91.55),
@@ -1837,7 +1855,8 @@ pub(crate) mod tests {
                 basis: CompositionBasis::ByTotalWeight { water: 5.0 },
                 pod: Some(Scaling::OfWhole(775.0)),
                 pac: Some(Scaling::OfSolids(Unit::MolarMass(1800.0))),
-            }),
+            }
+            .into(),
         });
 
     pub(crate) static COMP_STEVIA_IN_THE_RAW_BAKERS_BAG: LazyLock<Composition> = LazyLock::new(|| {

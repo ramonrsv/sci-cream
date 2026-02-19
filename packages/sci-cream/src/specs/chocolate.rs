@@ -175,11 +175,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{
-        composition::CompKey,
-        ingredient::Category,
-        specs::{IngredientSpec, Spec},
-    };
+    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
 
     pub(crate) const ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE_STR: &str = r#"{
       "name": "Lindt EXCELLENCE 70% Cacao Dark Chocolate",
@@ -195,12 +191,13 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Lindt EXCELLENCE 70% Cacao Dark Chocolate".to_string(),
             category: Category::Chocolate,
-            spec: Spec::ChocolateSpec(ChocolateSpec {
+            spec: ChocolateSpec {
                 cacao_solids: 70.0,
                 cocoa_butter: 40.0,
                 sugars: Some(30.0),
                 other_solids: None,
-            }),
+            }
+            .into(),
         });
 
     pub(crate) static COMP_LINDT_70_DARK_CHOCOLATE: LazyLock<Composition> = LazyLock::new(|| {
@@ -273,12 +270,13 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Lindt EXCELLENCE 95% Cacao Dark Chocolate".to_string(),
             category: Category::Chocolate,
-            spec: Spec::ChocolateSpec(ChocolateSpec {
+            spec: ChocolateSpec {
                 cacao_solids: 95.0,
                 cocoa_butter: 57.5,
                 sugars: Some(3.0),
                 other_solids: Some(2.0),
-            }),
+            }
+            .into(),
         });
 
     pub(crate) static COMP_LINDT_95_DARK_CHOCOLATE: LazyLock<Composition> = LazyLock::new(|| {
@@ -349,12 +347,13 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Lindt EXCELLENCE 100% Cacao Dark Chocolate".to_string(),
             category: Category::Chocolate,
-            spec: Spec::ChocolateSpec(ChocolateSpec {
+            spec: ChocolateSpec {
                 cacao_solids: 100.0,
                 cocoa_butter: 54.0,
                 sugars: None,
                 other_solids: None,
-            }),
+            }
+            .into(),
         });
 
     pub(crate) static COMP_LINDT_100_DARK_CHOCOLATE: LazyLock<Composition> = LazyLock::new(|| {
@@ -416,12 +415,13 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Ghirardelli 100% Unsweetened Cocoa Powder".to_string(),
             category: Category::Chocolate,
-            spec: Spec::ChocolateSpec(ChocolateSpec {
+            spec: ChocolateSpec {
                 cacao_solids: 100.0,
                 cocoa_butter: 16.67,
                 sugars: None,
                 other_solids: None,
-            }),
+            }
+            .into(),
         });
 
     pub(crate) static COMP_GHIRARDELLI_100_COCOA_POWDER: LazyLock<Composition> = LazyLock::new(|| {

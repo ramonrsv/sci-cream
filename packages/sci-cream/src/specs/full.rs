@@ -79,11 +79,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{
-        composition::CompKey,
-        ingredient::Category,
-        specs::{IngredientSpec, Spec},
-    };
+    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
 
     pub(crate) const ING_SPEC_FULL_WATER_STR: &str = r#"{
       "name": "Water",
@@ -94,13 +90,14 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_FULL_WATER: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Water".to_string(),
         category: Category::Miscellaneous,
-        spec: Spec::FullSpec(FullSpec {
+        spec: FullSpec {
             solids: None,
             micro: None,
             abv: None,
             pod: None,
             pac: None,
-        }),
+        }
+        .into(),
     });
 
     #[test]

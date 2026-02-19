@@ -81,11 +81,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{
-        composition::CompKey,
-        ingredient::Category,
-        specs::{IngredientSpec, Spec},
-    };
+    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
 
     pub(crate) const ING_SPEC_ALCOHOL_40_ABV_SPIRIT_STR: &str = r#"{
       "name": "40% ABV Spirit",
@@ -98,12 +94,13 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_ALCOHOL_40_ABV_SPIRIT: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "40% ABV Spirit".to_string(),
         category: Category::Alcohol,
-        spec: Spec::AlcoholSpec(AlcoholSpec {
+        spec: AlcoholSpec {
             abv: 40.0,
             sugars: None,
             fat: None,
             solids: None,
-        }),
+        }
+        .into(),
     });
 
     #[test]
@@ -141,12 +138,13 @@ pub(crate) mod tests {
         LazyLock::new(|| IngredientSpec {
             name: "Baileys Irish Cream".to_string(),
             category: Category::Alcohol,
-            spec: Spec::AlcoholSpec(AlcoholSpec {
+            spec: AlcoholSpec {
                 abv: 17.0,
                 sugars: Some(18.0),
                 fat: Some(13.6),
                 solids: None,
-            }),
+            }
+            .into(),
         });
 
     #[test]
@@ -191,12 +189,13 @@ pub(crate) mod tests {
           }
         }"#;
 
-        let expected_spec = Spec::AlcoholSpec(AlcoholSpec {
+        let expected_spec = AlcoholSpec {
             abv: 40.0,
             sugars: None,
             fat: None,
             solids: None,
-        });
+        }
+        .into();
 
         let spec_missing: IngredientSpec = serde_json::from_str(spec_str_with_missing).unwrap();
         let spec_null: IngredientSpec = serde_json::from_str(spec_str_with_null).unwrap();

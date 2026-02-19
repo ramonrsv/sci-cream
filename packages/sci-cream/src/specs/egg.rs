@@ -101,11 +101,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{
-        composition::CompKey,
-        ingredient::Category,
-        specs::{IngredientSpec, Spec},
-    };
+    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
 
     pub(crate) const ING_SPEC_EGG_YOLK_STR: &str = r#"{
       "name": "Egg Yolk",
@@ -121,12 +117,13 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_EGG_YOLK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Egg Yolk".to_string(),
         category: Category::Egg,
-        spec: Spec::EggSpec(EggSpec {
+        spec: EggSpec {
             water: 51.0,
             fat: 30.0,
             protein: 16.0,
             lecithin: 9.0,
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_EGG_YOLK: LazyLock<Composition> = LazyLock::new(|| {

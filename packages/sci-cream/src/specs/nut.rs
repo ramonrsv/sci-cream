@@ -130,11 +130,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{
-        composition::CompKey,
-        ingredient::Category,
-        specs::{IngredientSpec, Spec},
-    };
+    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
 
     pub(crate) const ING_SPEC_NUT_ALMOND_STR: &str = r#"{
       "name": "Almond",
@@ -153,7 +149,7 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_NUT_ALMOND: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Almond".to_string(),
         category: Category::Nut,
-        spec: Spec::NutSpec(NutSpec {
+        spec: NutSpec {
             water: 4.41,
             protein: 21.2,
             fat: 49.9,
@@ -161,7 +157,8 @@ pub(crate) mod tests {
             carbohydrate: 21.6,
             fiber: 12.5,
             sugars: 4.35,
-        }),
+        }
+        .into(),
     });
 
     pub(crate) static COMP_NUT_ALMOND: LazyLock<Composition> = LazyLock::new(|| {

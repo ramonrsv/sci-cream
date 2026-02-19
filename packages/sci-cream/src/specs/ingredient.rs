@@ -1,3 +1,4 @@
+use enum_as_inner::EnumAsInner;
 use serde::{Deserialize, Serialize};
 
 #[cfg(feature = "diesel")]
@@ -16,9 +17,9 @@ use crate::{
 };
 
 /// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[derive(EnumAsInner, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[allow(clippy::large_enum_variant)] // @todo Deal with this issue later
-pub enum Spec {
+pub enum TaggedSpec {
     DairySpec(DairySpec),
     DairyFromNutritionSpec(DairyFromNutritionSpec),
     SweetenerSpec(SweetenerSpec),
@@ -31,30 +32,89 @@ pub enum Spec {
     FullSpec(FullSpec),
 }
 
-impl IntoComposition for Spec {
+impl IntoComposition for TaggedSpec {
     fn into_composition(self) -> Result<Composition> {
         match self {
-            Spec::DairySpec(spec) => spec.into_composition(),
-            Spec::DairyFromNutritionSpec(spec) => spec.into_composition(),
-            Spec::SweetenerSpec(spec) => spec.into_composition(),
-            Spec::FruitSpec(spec) => spec.into_composition(),
-            Spec::ChocolateSpec(spec) => spec.into_composition(),
-            Spec::NutSpec(spec) => spec.into_composition(),
-            Spec::EggSpec(spec) => spec.into_composition(),
-            Spec::AlcoholSpec(spec) => spec.into_composition(),
-            Spec::MicroSpec(spec) => spec.into_composition(),
-            Spec::FullSpec(spec) => spec.into_composition(),
+            TaggedSpec::DairySpec(spec) => spec.into_composition(),
+            TaggedSpec::DairyFromNutritionSpec(spec) => spec.into_composition(),
+            TaggedSpec::SweetenerSpec(spec) => spec.into_composition(),
+            TaggedSpec::FruitSpec(spec) => spec.into_composition(),
+            TaggedSpec::ChocolateSpec(spec) => spec.into_composition(),
+            TaggedSpec::NutSpec(spec) => spec.into_composition(),
+            TaggedSpec::EggSpec(spec) => spec.into_composition(),
+            TaggedSpec::AlcoholSpec(spec) => spec.into_composition(),
+            TaggedSpec::MicroSpec(spec) => spec.into_composition(),
+            TaggedSpec::FullSpec(spec) => spec.into_composition(),
         }
     }
 }
 
+impl From<DairySpec> for TaggedSpec {
+    fn from(spec: DairySpec) -> Self {
+        Self::DairySpec(spec)
+    }
+}
+
+impl From<DairyFromNutritionSpec> for TaggedSpec {
+    fn from(spec: DairyFromNutritionSpec) -> Self {
+        Self::DairyFromNutritionSpec(spec)
+    }
+}
+
+impl From<SweetenerSpec> for TaggedSpec {
+    fn from(spec: SweetenerSpec) -> Self {
+        Self::SweetenerSpec(spec)
+    }
+}
+
+impl From<FruitSpec> for TaggedSpec {
+    fn from(spec: FruitSpec) -> Self {
+        Self::FruitSpec(spec)
+    }
+}
+
+impl From<ChocolateSpec> for TaggedSpec {
+    fn from(spec: ChocolateSpec) -> Self {
+        Self::ChocolateSpec(spec)
+    }
+}
+
+impl From<NutSpec> for TaggedSpec {
+    fn from(spec: NutSpec) -> Self {
+        Self::NutSpec(spec)
+    }
+}
+
+impl From<EggSpec> for TaggedSpec {
+    fn from(spec: EggSpec) -> Self {
+        Self::EggSpec(spec)
+    }
+}
+
+impl From<AlcoholSpec> for TaggedSpec {
+    fn from(spec: AlcoholSpec) -> Self {
+        Self::AlcoholSpec(spec)
+    }
+}
+
+impl From<MicroSpec> for TaggedSpec {
+    fn from(spec: MicroSpec) -> Self {
+        Self::MicroSpec(spec)
+    }
+}
+
+impl From<FullSpec> for TaggedSpec {
+    fn from(spec: FullSpec) -> Self {
+        Self::FullSpec(spec)
+    }
+}
 #[cfg_attr(feature = "diesel", derive(Queryable, Selectable), diesel(table_name = ingredients))]
 #[derive(PartialEq, Serialize, Deserialize, Clone, Debug)]
 pub struct IngredientSpec {
     pub name: String,
     pub category: Category,
     #[serde(flatten)]
-    pub spec: Spec,
+    pub spec: TaggedSpec,
 }
 
 impl IngredientSpec {
