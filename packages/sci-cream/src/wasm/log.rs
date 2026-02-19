@@ -1,3 +1,9 @@
+//! WASM bindings for `console.log`. See [`console.log` in
+//! `wasm-bindgen`](https://wasm-bindgen.github.io/wasm-bindgen/examples/console-log.html) for more
+//! details.
+
+#![allow(missing_docs)]
+
 use wasm_bindgen::prelude::*;
 
 #[cfg_attr(coverage, coverage(off))]

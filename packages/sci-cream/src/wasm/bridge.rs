@@ -1,3 +1,5 @@
+//! WASM [`Bridge`] to facilitate performant JS <-> WASM communication for recipe calculations
+
 use wasm_bindgen::prelude::*;
 
 use crate::{
@@ -16,6 +18,10 @@ use crate::{
 /// overhead of JS <-> WASM bridging. It holds an in-memory ingredient database for looking up
 /// ingredient definitions by name, and provides methods for calculating recipe compositions and
 /// mix properties from "light" recipe representations (tuples of ingredient names and amounts).
+///
+/// **Note**: Because it is currently not possible to return references to internal members within
+/// the WASM and JS environment, this class replicates many of the interfaces of [`Recipe`] and
+/// [`IngredientDatabase`], forwarding to the corresponding methods in internal members.
 #[wasm_bindgen]
 #[derive(Debug)]
 pub struct Bridge {
@@ -23,14 +29,17 @@ pub struct Bridge {
 }
 
 impl Bridge {
+    /// Forwards to [`IngredientDatabase::get_ingredient_by_name`] of the internal database
     pub fn get_ingredient_by_name(&self, name: &str) -> Result<Ingredient> {
         self.db.get_ingredient_by_name(name)
     }
 
+    /// Forwards to [`Recipe::calculate_composition`], creating a [`Recipe`] from [`LightRecipe`]
     pub fn calculate_recipe_composition(&self, recipe: &LightRecipe) -> Result<Composition> {
         Recipe::from_light_recipe(None, recipe, &self.db)?.calculate_composition()
     }
 
+    /// Forwards to [`Recipe::calculate_mix_properties`], creating a [`Recipe`] from [`LightRecipe`]
     pub fn calculate_recipe_mix_properties(&self, recipe: &LightRecipe) -> Result<MixProperties> {
         Recipe::from_light_recipe(None, recipe, &self.db)?.calculate_mix_properties()
     }
@@ -38,20 +47,27 @@ impl Bridge {
 
 #[wasm_bindgen]
 impl Bridge {
+    /// Creates a new [`Bridge`] with the given [`IngredientDatabase`].
+    ///
+    /// The database can be pre-seeded with any of the available methods on [`IngredientDatabase`]
+    /// (e.g. [`new_seeded_from_specs`](IngredientDatabase::new_seeded_from_specs)).
     #[wasm_bindgen(constructor)]
     pub fn new(db: IngredientDatabase) -> Self {
         Self { db }
     }
 
+    /// Forwards to [`IngredientDatabase::get_all_ingredients`] of the internal database
     pub fn get_all_ingredients(&self) -> Vec<Ingredient> {
         self.db.get_all_ingredients()
     }
 
+    /// Forwards to [`IngredientDatabase::get_ingredients_by_category`] of the internal database
     pub fn get_ingredients_by_category(&self, category: Category) -> Vec<Ingredient> {
         self.db.get_ingredients_by_category(category)
     }
 }
 
+/// WASM compatible wrappers for [`Bridge`] methods that need additional conversions.
 #[cfg_attr(coverage, coverage(off))]
 pub mod wasm {
     use wasm_bindgen::prelude::*;
@@ -62,9 +78,16 @@ pub mod wasm {
         recipe::wasm::light_recipe_from_jsvalue,
     };
 
+    #[cfg(doc)]
+    use crate::database::IngredientDatabase;
+
     //#[cfg_attr(feature = "wasm", wasm_bindgen)]
     #[wasm_bindgen]
     impl Bridge {
+        /// WASM compatible wrapper for [`Bridge::get_ingredient_by_name`]
+        ///
+        /// Actually an independent wrapper that forwards to the internal database's WASM wrapper
+        /// [`IngredientDatabase::get_ingredient_by_name_wasm`], but it's the same interface.
         #[wasm_bindgen(js_name = "get_ingredient_by_name")]
         pub fn get_ingredient_by_name_wasm(&self, name: &str) -> Result<Ingredient, JsValue> {
             self.db.get_ingredient_by_name_wasm(name)

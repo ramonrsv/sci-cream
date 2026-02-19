@@ -25,7 +25,6 @@ pub mod data;
 pub mod database;
 #[cfg(feature = "diesel")]
 pub mod diesel;
-#[allow(missing_docs)] // @todo
 #[cfg(feature = "wasm")]
 pub mod wasm;
 
