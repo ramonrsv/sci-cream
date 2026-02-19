@@ -1,10 +1,11 @@
 {
   "name": "@workspace/sci-cream-app",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
   "type": "module",
   "scripts": {
-    "prerequisites": "pnpm --dir ../sci-cream build:package",
+    "install:deps": "pnpm --dir ../sci-cream install:wasm",
+    "build:deps": "pnpm --dir ../sci-cream build:package",
     "build": "next build",
     "test": "pnpm test:unit && pnpm test:e2e && pnpm test:visual",
     "test:unit": "vitest run",

@@ -1,9 +1,11 @@
 {
   "name": "sci-cream-workspace",
-  "version": "0.1.0",
+  "version": "0.0.1",
   "private": true,
   "scripts": {
-    "build": "pnpm run -r build",
+    "build": "pnpm build:package && pnpm build:app",
+    "build:app": "pnpm --filter sci-cream-app build",
+    "build:package": "pnpm --filter sci-cream build:package",
     "test": "pnpm run -r test",
     "lint": "pnpm run -r lint",
     "prettier": "pnpm run -r prettier",

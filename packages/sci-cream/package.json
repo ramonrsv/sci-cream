@@ -1,6 +1,6 @@
 {
   "name": "@workspace/sci-cream",
-  "version": "1.0.0",
+  "version": "0.0.1",
   "type": "module",
   "main": "./dist/index.js",
   "module": "./dist/index.js",
@@ -20,6 +20,7 @@
     "src/ts"
   ],
   "scripts": {
+    "install:wasm": "cargo install wasm-pack && rustup target add wasm32-unknown-unknown",
     "build:rust": "cargo build --all-features --all-targets",
     "build:package": "pnpm build:wasm && pnpm build:js",
     "build:wasm": "pnpm set-crate-type:cdylib && pnpm build:wasm-pack && pnpm set-crate-type:rlib",
