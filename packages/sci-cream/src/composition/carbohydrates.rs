@@ -1,3 +1,6 @@
+//! [`Carbohydrates`] struct and associated functionality to track the carbohydrate composition of
+//! an ingredient or mix, including sugars, fibers, polyols, and other components.
+
 use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
@@ -11,17 +14,25 @@ use crate::{
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
+/// Struct representing the detailed carbohydrate composition of a mix, including sugars, fibers,
+/// polyols, and other carbohydrates.
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Carbohydrates {
+    /// The dietary fiber composition of the mix, including inulin, oligofructose, and other fibers
     pub fiber: Fibers,
+    /// The sugar composition of the mix, including monosaccharides, disaccharides, and other sugars
     pub sugars: Sugars,
+    /// The polyol composition of the mix, including sorbitol, maltitol, and other polyols
     pub polyols: Polyols,
+    /// Any other carbohydrates not captured by the above fields, typically long polysaccharides
     pub others: f64,
 }
 
 impl Carbohydrates {
+    /// Creates an empty `Carbohydrates` struct with all fields set to zero (i.e. 0g of all
+    /// carbohydrate components)
     #[must_use]
     pub fn empty() -> Self {
         Self {
@@ -32,21 +43,25 @@ impl Carbohydrates {
         }
     }
 
+    /// Field-update method for [`fiber`](Carbohydrates::fiber)
     #[must_use]
     pub fn fiber(self, fiber: Fibers) -> Self {
         Self { fiber, ..self }
     }
 
+    /// Field-update method for [`sugars`](Carbohydrates::sugars)
     #[must_use]
     pub fn sugars(self, sugars: Sugars) -> Self {
         Self { sugars, ..self }
     }
 
+    /// Field-update method for [`polyols`](Carbohydrates::polyols)
     #[must_use]
     pub fn polyols(self, polyols: Polyols) -> Self {
         Self { polyols, ..self }
     }
 
+    /// Field-update method for [`others`](Carbohydrates::others)
     #[must_use]
     pub fn others(self, others: f64) -> Self {
         Self { others, ..self }
@@ -73,6 +88,7 @@ impl Carbohydrates {
         })
     }
 
+    /// Calculates the energy contribution of the carbohydrates, in kcal per 100g of mix
     pub fn energy(&self) -> Result<f64> {
         Ok(self.fiber.energy()?
             + self.sugars.energy()?
@@ -80,23 +96,37 @@ impl Carbohydrates {
             + (self.others * constants::energy::CARBOHYDRATES))
     }
 
+    /// Calculates the [POD](crate::docs#pod) contributions of the carbohydrates, in terms of sucrose
+    /// equivalence
+    ///
+    /// **Note**: The `others` field is intentionally omitted from this calculation, since "other"
+    /// carbohydrates typically refers to long polysaccharides that do not contribute POD.
     pub fn to_pod(&self) -> Result<f64> {
-        Ok(self.sugars.to_pod()? + self.polyols.to_pod()?)
+        // `others` is intentionally omitted, see docs above
+        Ok(self.fiber.to_pod()? + self.sugars.to_pod()? + self.polyols.to_pod()?)
     }
 
+    /// Calculates the [PAC](crate::docs#pac-afp-fpdf-se) contributions of the carbohydrates, in
+    /// terms of sucrose equivalence
+    ///
+    /// **Note**: The `fiber` and `others` fields are intentionally omitted from this calculation,
+    /// they both typically refer to long polysaccharides that do not contribute PAC.
     pub fn to_pac(&self) -> Result<f64> {
+        // `fibers` and `others` are intentionally omitted, see docs above
         Ok(self.sugars.to_pac()? + self.polyols.to_pac()?)
     }
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Carbohydrates {
+    /// Creates a new empty `Carbohydrates` struct, forwards to [`Carbohydrates::empty`]
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    /// Calculates the total carbohydrate content by weight, by summing all the fields
     #[must_use]
     pub fn total(&self) -> f64 {
         self.fiber.total() + self.sugars.total() + self.polyols.total() + self.others

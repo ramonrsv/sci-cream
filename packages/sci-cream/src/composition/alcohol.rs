@@ -1,3 +1,5 @@
+//! [`Alcohol`] struct and associated trait implementations, for tracking alcohol content
+
 use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
@@ -7,24 +9,33 @@ use crate::{composition::ScaleComponents, constants, util::iter_all_abs_diff_eq}
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
+/// Struct representing the alcohol (ethanol) content of a mix, in terms of percentage by weight.
+///
+/// It also provides methods to convert between alcohol by weight (ABW) and alcohol by volume (ABV)
+/// (2025)[^8], as well as to calculate the energy and PAC contributions of the alcohol content.
+#[doc = include_str!("../../docs/bibs/8.md")]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Alcohol {
+    /// Alcohol content by weight, in grams of alcohol per 100g of total ingredient/mix
     pub by_weight: f64,
 }
 
 impl Alcohol {
+    /// Creates an empty `Alcohol` struct with all fields set to zero (i.e. 0% alcohol by weight)
     #[must_use]
     pub fn empty() -> Self {
         Self { by_weight: 0.0 }
     }
 
+    /// Creates a new [`Alcohol` struct with the specified alcohol content by weight
     #[must_use]
     pub fn by_weight(self, by_weight: f64) -> Self {
         Self { by_weight }
     }
 
+    /// Creates a new `Alcohol` struct with the specified alcohol content by volume (ABV)
     #[must_use]
     pub fn from_abv(abv: f64) -> Self {
         Self {
@@ -35,22 +46,26 @@ impl Alcohol {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Alcohol {
+    /// Creates a new empty `Alcohol` struct, forwards to [`Alcohol::empty`]
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    /// Calculates the total energy contribution of the alcohol content, in kcal per 100g of mix
     #[must_use]
     pub fn energy(&self) -> f64 {
         self.by_weight * constants::energy::ALCOHOL
     }
 
+    /// Converts the alcohol content from percentage by weight to percentage by volume (ABV)
     #[must_use]
     pub fn to_abv(&self) -> f64 {
         self.by_weight / constants::density::ABV_TO_ABW_RATIO
     }
 
+    /// Calculates the PAC contribution of the alcohol content, in terms of sucrose equivalence
     #[must_use]
     pub fn to_pac(&self) -> f64 {
         self.by_weight * constants::pac::ALCOHOL / 100.0

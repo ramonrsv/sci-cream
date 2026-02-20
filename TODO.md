@@ -37,6 +37,12 @@
 - [ ] Add inventory and cost functionality.
 - [ ] Add support for `MixPropertiesGrid` to show deltas between the main recipe and the references.
 - [ ] Consider whether to add support to `IngredientCompositionGrid` to show deltas between recipes.
+- [ ] Consider making `ScaleComponents` private so that it can only be used internally and cannot
+      be misused by users; this should not present an extensibility issue with the current design.
+- [ ] Consider whether to add `CompKey` for all polyols and artificial sweeteners.
+- [ ] Rename `assert_*` family of functions in `crate::validate` to `verify_*`, to differentiate.
+- [ ] Consider adding composition traits for calculating POD, PAC, and energy, total (sum), etc.
+- [ ] Remove uses of `.unwrap()` in documentation code examples, see the `# fn main() ...` trick.
 
 # Backlog
 
@@ -79,9 +85,15 @@
 - [ ] Investigate methods for performance analysis, including Chrome DevTools Protocol (CDP),
       playwright-performance, etc. Look into generating flamegraphs.
 - [ ] Properly solve the `sslmode=no-verify` issue with `POSTGRES_URL`, see `db/util/getDatabaseUrl`
+- [ ] Enable the `nursery` clippy lint group and opt-out of any problematic ones.
+- [ ] Find a source for the 10% lactose concentration limit, can't find it on Underbelly's blog.
+- [ ] Consider using a scrollbar as an indicator of when `MixPropertiesChart` overflows.
+- [ ] Investigate web workers and Progressive Web Apps (PWA) and their applicability to this app.
+- [ ] Look into the solubility curves for lactose, trehalose, etc. to determine a limit.
 
 # Completed
 
+- [x] Review the energy constants for polyols, they don't agree with Spillane, 2006, p. 157.
 - [x] Once `0.0.1` is released, look into hosting the app live.
 - [x] Integrate Vercel Web Analytics `@vercel/analytics` and Speed Insights `@vercel/speed-insights`
 - [x] Use error bars in `MixPropertiesChart` to show typical valid ranges for some properties.

@@ -1,3 +1,6 @@
+//! [`Sweeteners`] structure and related functionality, representing the composition of sweeteners
+//! present in an ingredient or mix, including sugars, polyols, and artificial sweeteners
+
 use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 
@@ -9,16 +12,28 @@ use crate::{
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
+#[cfg(doc)]
+use crate::{composition::Composition, specs::SweetenerSpec};
+
+/// The sweetener composition of an ingredient or mix, including sugars, polyols, and artificial
+///
+/// **Note**: This struct is not actually used in the main [`Composition`] struct. It is provided
+/// as a separate struct to facilitate some use cases for which only components with sweetness
+/// properties are relevant, e.g. defining sweetener ingredient specs; see [`SweetenerSpec`].
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Sweeteners {
+    /// The sugar composition of the mix, including monosaccharides, disaccharides, and other sugars
     pub sugars: Sugars,
+    /// The polyol composition of the mix, including sorbitol, maltitol, and other polyols
     pub polyols: Polyols,
+    /// The artificial sweetener composition of the mix, including aspartame, sucralose, etc.
     pub artificial: ArtificialSweeteners,
 }
 
 impl Sweeteners {
+    /// Creates an empty [`Sweeteners`] struct with all fields set to 0, i.e. no sweeteners present
     #[must_use]
     pub fn empty() -> Self {
         Self {
@@ -28,25 +43,35 @@ impl Sweeteners {
         }
     }
 
+    /// Field-update method for [`sugars`](Self::sugars)
     #[must_use]
     pub fn sugars(self, sugars: Sugars) -> Self {
         Self { sugars, ..self }
     }
 
+    /// Field-update method for [`polyols`](Self::polyols)
     #[must_use]
     pub fn polyols(self, polyols: Polyols) -> Self {
         Self { polyols, ..self }
     }
 
+    /// Field-update method for [`artificial`](Self::artificial)
     #[must_use]
     pub fn artificial(self, artificial: ArtificialSweeteners) -> Self {
         Self { artificial, ..self }
     }
 
+    /// Calculates the [POD](crate::docs#pod) contributions of all the sweeteners in this struct
+    ///
+    /// It forwards to the `to_pod` methods of the individual components and sums the results.
     pub fn to_pod(&self) -> Result<f64> {
         Ok(self.sugars.to_pod()? + self.polyols.to_pod()? + self.artificial.to_pod()?)
     }
 
+    /// Calculates the [PAC](crate::docs#pac-afp-fpdf-se) contributions of all the sweeteners in
+    /// this struct
+    ///
+    /// It forwards to the `to_pac` methods of the individual components and sums the results.
     pub fn to_pac(&self) -> Result<f64> {
         Ok(self.sugars.to_pac()? + self.polyols.to_pac()? + self.artificial.to_pac()?)
     }
@@ -54,12 +79,16 @@ impl Sweeteners {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Sweeteners {
+    /// Creates a new empty `Sweeteners` struct, forwards to [`Sweeteners::empty`]
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    /// Calculates the total sweetener content by weight, by summing all the fields
+    ///
+    /// It forwards to the `total` methods of the individual components and sums the results.
     #[must_use]
     pub fn total(&self) -> f64 {
         self.sugars.total() + self.polyols.total() + self.artificial.total()

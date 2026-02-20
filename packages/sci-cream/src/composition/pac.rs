@@ -1,3 +1,6 @@
+//! [`PAC`] and associated functionality to represent the overall [PAC](crate::docs#pac-afp-fpdf-se)
+//! of an ingredient or mix, and the breakdown of contributions by key ingredient categories
+
 use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
@@ -7,18 +10,25 @@ use crate::{composition::ScaleComponents, util::iter_all_abs_diff_eq};
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
+/// Overall [PAC](crate::docs#pac-afp-fpdf-se) and contributions by key ingredient categories
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct PAC {
+    /// Contribution of sugars to the overall PAC
     pub sugars: f64,
+    /// Contribution of salt to the overall PAC
     pub salt: f64,
+    /// Contribution of milk solids non-fat (MSNF) and whey solids (WS) salts to the overall PAC
     pub msnf_ws_salts: f64,
+    /// Contribution of alcohol to the overall PAC
     pub alcohol: f64,
+    /// [Hardness Factor (HF)](crate::docs#corvitto-method-hardness-factor) of the ingredient or mix
     pub hardness_factor: f64,
 }
 
 impl PAC {
+    /// Creates an empty [`PAC`] struct with all fields set to zero
     #[must_use]
     pub fn empty() -> Self {
         Self {
@@ -30,26 +40,31 @@ impl PAC {
         }
     }
 
+    /// Field-update method for [`sugars`](Self::sugars)
     #[must_use]
     pub fn sugars(self, sugars: f64) -> Self {
         Self { sugars, ..self }
     }
 
+    /// Field-update method for [`salt`](Self::salt)
     #[must_use]
     pub fn salt(self, salt: f64) -> Self {
         Self { salt, ..self }
     }
 
+    /// Field-update method for [`msnf_ws_salts`](Self::msnf_ws_salts)
     #[must_use]
     pub fn msnf_ws_salts(self, msnf_ws_salts: f64) -> Self {
         Self { msnf_ws_salts, ..self }
     }
 
+    /// Field-update method for [`alcohol`](Self::alcohol)
     #[must_use]
     pub fn alcohol(self, alcohol: f64) -> Self {
         Self { alcohol, ..self }
     }
 
+    /// Field-update method for [`hardness_factor`](Self::hardness_factor)
     #[must_use]
     pub fn hardness_factor(self, hardness_factor: f64) -> Self {
         Self {
@@ -61,13 +76,14 @@ impl PAC {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl PAC {
+    /// Creates a new empty `PAC` struct, forwards to [`PAC::empty`]
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
-    /// Total PAC values from all sources, excluding hardness factor
+    /// Calculates the total PAC contributions from all sources, excluding hardness factor
     #[must_use]
     pub fn total(&self) -> f64 {
         self.sugars + self.salt + self.msnf_ws_salts + self.alcohol

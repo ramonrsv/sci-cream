@@ -31,18 +31,24 @@ pub mod pod {
     #[doc = include_str!("../docs/bibs/9.md")]
     pub const TREHALOSE: f64 = 45.0;
 
-    /// (The European Commission, 2025, E968)[^10]
-    #[doc = include_str!("../docs/bibs/10.md")]
-    pub const ERYTHRITOL: f64 = 70.0;
+    /// (Spillane, 2006, Table 8.5, p. 159)[^9], (The European Commission, 2025, E968)[^10],
     /// (Hull, 2010, Appendix C.3, p. 324)[^15]
+    #[doc = include_str!("../docs/bibs/9.md")]
+    #[doc = include_str!("../docs/bibs/10.md")]
+    #[doc = include_str!("../docs/bibs/15.md")]
+    pub const ERYTHRITOL: f64 = 70.0;
+    /// (Spillane, 2006, Table 8.5, p. 159)[^9], (Hull, 2010, Appendix C.3, p. 324)[^15]
+    #[doc = include_str!("../docs/bibs/9.md")]
     #[doc = include_str!("../docs/bibs/15.md")]
     pub const MALTITOL: f64 = 90.0;
-    /// (Hull, 2010, Appendix C.3, p. 324)[^15]
+    /// (Spillane, 2006, Table 8.5, p. 159)[^9], (Hull, 2010, Appendix C.3, p. 324)[^15]
+    #[doc = include_str!("../docs/bibs/9.md")]
     #[doc = include_str!("../docs/bibs/15.md")]
-    pub const SORBITOL: f64 = 50.0;
-    /// (Hull, 2010, Appendix C.3, p. 324)[^15]
+    pub const SORBITOL: f64 = 55.0;
+    /// (Spillane, 2006, Table 8.5, p. 159)[^9], (Hull, 2010, Appendix C.3, p. 324)[^15]
+    #[doc = include_str!("../docs/bibs/9.md")]
     #[doc = include_str!("../docs/bibs/15.md")]
-    pub const XYLITOL: f64 = 100.0;
+    pub const XYLITOL: f64 = 95.0;
 
     /// (The European Commission, 2025, E951)[^10]
     #[doc = include_str!("../docs/bibs/10.md")]
@@ -324,18 +330,24 @@ pub mod energy {
     #[doc = include_str!("../docs/bibs/18.md")]
     pub const ALCOHOL: f64 = 6.93;
 
-    /// (European Association of Polyols Producers, 2026, "Polyol Erythritol")[^19]
+    /// (Spillane, 2006, Table 8.3, p. 157)[^9], (European Association of Polyols Producers, 2026,
+    /// "Polyol Erythritol")[^19]
+    #[doc = include_str!("../docs/bibs/9.md")]
     #[doc = include_str!("../docs/bibs/19.md")]
-    pub const ERYTHRITOL: f64 = 0.0;
-    /// (European Association of Polyols Producers, 2026, "Polyol Maltitol")[^19]
+    pub const ERYTHRITOL: f64 = 0.2;
+    /// (Spillane, 2006, Table 8.3, p. 157)[^9], (European Association of Polyols Producers, 2026,
+    /// "Polyol Maltitol")[^19]
+    #[doc = include_str!("../docs/bibs/9.md")]
     #[doc = include_str!("../docs/bibs/19.md")]
-    pub const MALTITOL: f64 = 2.4;
-    /// (European Association of Polyols Producers, 2026, "Polyol Sorbitol")[^19]
+    pub const MALTITOL: f64 = 2.5;
+    ///  (Spillane, 2006, Table 8.3, p. 157)[^9]
+    #[doc = include_str!("../docs/bibs/9.md")]
+    pub const SORBITOL: f64 = 2.8;
+    /// (Spillane, 2006, Table 8.3, p. 157)[^9], (European Association of Polyols Producers, 2026,
+    /// "Polyol Xylitol")[^19]
+    #[doc = include_str!("../docs/bibs/9.md")]
     #[doc = include_str!("../docs/bibs/19.md")]
-    pub const SORBITOL: f64 = 0.0;
-    /// (European Association of Polyols Producers, 2026, "Polyol Xylitol")[^19]
-    #[doc = include_str!("../docs/bibs/19.md")]
-    pub const XYLITOL: f64 = 2.4;
+    pub const XYLITOL: f64 = 2.7;
 
     /// (International Food Information Council Foundation, 2019, "What is aspartame?")[^21]
     #[doc = include_str!("../docs/bibs/21.md")]

@@ -574,7 +574,7 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_ERYTHRITOL: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
-            .energy(0.0)
+            .energy(20.0)
             .solids(Solids::new().other(
                 SolidsBreakdown::new().carbohydrates(Carbohydrates::new().polyols(Polyols::new().erythritol(100.0))),
             ))
@@ -587,7 +587,7 @@ pub(crate) mod tests {
     fn into_composition_sweetener_spec_erythritol() {
         let comp = ING_SPEC_SWEETENER_ERYTHRITOL.spec.into_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 0.0);
+        assert_eq!(comp.get(CompKey::Energy), 20.0);
 
         assert_eq!(comp.get(CompKey::Erythritol), 100.0);
         assert_eq!(comp.get(CompKey::TotalSugars), 0.0);
@@ -1488,7 +1488,7 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_SPLENDA_STEVIA: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
-            .energy(0.0)
+            .energy(19.98)
             .solids(
                 Solids::new().other(
                     SolidsBreakdown::new()
@@ -1504,7 +1504,7 @@ pub(crate) mod tests {
     fn into_composition_sweetener_spec_splenda_stevia() {
         let comp = ING_SPEC_SWEETENER_SPLENDA_STEVIA.spec.into_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 19.98);
 
         assert_eq_flt_test!(comp.get(CompKey::Fiber), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 0.0);
@@ -1559,7 +1559,7 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_SPLENDA_MONK_FRUIT: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
-            .energy(0.0)
+            .energy(19.98)
             .solids(
                 Solids::new().other(
                     SolidsBreakdown::new()
@@ -1575,7 +1575,7 @@ pub(crate) mod tests {
     fn into_composition_sweetener_spec_splenda_monk_fruit() {
         let comp = ING_SPEC_SWEETENER_SPLENDA_MONK_FRUIT.spec.into_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 19.98);
 
         assert_eq_flt_test!(comp.get(CompKey::Fiber), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 0.0);

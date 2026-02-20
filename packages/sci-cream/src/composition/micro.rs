@@ -1,3 +1,6 @@
+//! [`Micro`] struct and related functionality, representing the breakdown of micro components in an
+//! ice cream composition, such as salt, lecithin, emulsifiers, and stabilizers.
+
 use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
@@ -7,17 +10,41 @@ use crate::{composition::ScaleComponents, util::iter_all_abs_diff_eq};
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
+#[cfg(doc)]
+use crate::composition::{CompKey, Solids};
+
+/// Micro components breakdown of an ingredient or mix, and some related special properties
+///
+/// These components are already accounted for in [`Solids`], but they are also tracked here with a
+/// more detailed breakdown, e.g. for micronutrient nutrition analysis. Special properties and
+/// effects of these components are also tracked here, e.g. emulsification and stabilization
+/// effects, which are relevant for ice cream science but not necessarily captured by the overall
+/// solids breakdown. Except for [`salt`](Self::salt), which contributes to freezing point
+/// depression, these components do not meaningfully contribute to other macro properties of a mix,
+/// e.g. energy, [POD](crate::docs#pod), [PAC](crate::docs#pac-afp-fpdf-se), etc. Any such miniscule
+/// contributions are accounted for in the solids breakdown, i.e. as part of `solids.other.others`.
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Micro {
+    /// Total salt content, excluding salts from milk ingredients
+    ///
+    /// This includes any salt added as an ingredient, as well as any salt that is part of other
+    /// ingredients, e.g. the salt in chocolate or nut ingredients, but excludes salts naturally
+    /// present in milk ingredients, which are accounted for separately in [`CompKey::MilkSNFS`] .
     pub salt: f64,
+    /// Total lecithin content, a subset of [`emulsifiers`](Self::emulsifiers)
     pub lecithin: f64,
+    /// Total emulsifier content, including lecithin and others not explicitly tracked here
+    // @todo Should this be explicit about the concept and unit of "strength" of emulsifiers?
     pub emulsifiers: f64,
+    /// Total stabilizer content, e.g. from Locust Bean Gum, Guar Gum, etc.
+    // @todo Should this be explicit about the concept and unit of "strength" of stabilizers?
     pub stabilizers: f64,
 }
 
 impl Micro {
+    /// Creates an empty [`Micro`] struct with all fields set to 0.
     #[must_use]
     pub fn empty() -> Self {
         Self {
@@ -28,21 +55,25 @@ impl Micro {
         }
     }
 
+    /// Field-update method for [`salt`](Self::salt).
     #[must_use]
     pub fn salt(self, salt: f64) -> Self {
         Self { salt, ..self }
     }
 
+    /// Field-update method for [`lecithin`](Self::lecithin).
     #[must_use]
     pub fn lecithin(self, lecithin: f64) -> Self {
         Self { lecithin, ..self }
     }
 
+    /// Field-update method for [`emulsifiers`](Self::emulsifiers).
     #[must_use]
     pub fn emulsifiers(self, emulsifiers: f64) -> Self {
         Self { emulsifiers, ..self }
     }
 
+    /// Field-update method for [`stabilizers`](Self::stabilizers).
     #[must_use]
     pub fn stabilizers(self, stabilizers: f64) -> Self {
         Self { stabilizers, ..self }
@@ -51,6 +82,7 @@ impl Micro {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Micro {
+    /// Creates a new empty `Micro` struct, forwards to [`Micro::empty`]
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
     pub fn new() -> Self {

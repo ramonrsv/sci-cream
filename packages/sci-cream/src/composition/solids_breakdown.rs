@@ -1,3 +1,6 @@
+//! [`SolidsBreakdown`] and associated functionality to represent the breakdown of solid components
+//! of an ingredient or mix, with regards to nutrition and ice cream science
+
 use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
@@ -30,14 +33,20 @@ use wasm_bindgen::prelude::*;
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct SolidsBreakdown {
+    /// Breakdown of fat components, including total, saturated, and trans
     pub fats: Fats,
+    /// Detailed carbohydrate composition, including sugars, fibers, polyols, and others
     pub carbohydrates: Carbohydrates,
+    /// Protein content, as grams of protein per 100g of total ingredient/mix
     pub proteins: f64,
+    /// Breakdown of artificial sweetener components, including total and specific sweeteners
     pub artificial_sweeteners: ArtificialSweeteners,
+    /// Other components not included in the above categories
     pub others: f64,
 }
 
 impl SolidsBreakdown {
+    /// Creates an empty [`SolidsBreakdown`] with all fields set to zero or `empty()`
     #[must_use]
     pub fn empty() -> Self {
         Self {
@@ -49,21 +58,25 @@ impl SolidsBreakdown {
         }
     }
 
+    /// Field-update method for [`fats`](Self::fats)
     #[must_use]
     pub fn fats(self, fats: Fats) -> Self {
         Self { fats, ..self }
     }
 
+    /// Field-update method for [`carbohydrates`](Self::carbohydrates)
     #[must_use]
     pub fn carbohydrates(self, carbohydrates: Carbohydrates) -> Self {
         Self { carbohydrates, ..self }
     }
 
+    /// Field-update method for [`proteins`](Self::proteins)
     #[must_use]
     pub fn proteins(self, proteins: f64) -> Self {
         Self { proteins, ..self }
     }
 
+    /// Field-update method for [`artificial_sweeteners`](Self::artificial_sweeteners)
     #[must_use]
     pub fn artificial_sweeteners(self, artificial_sweeteners: ArtificialSweeteners) -> Self {
         Self {
@@ -72,6 +85,7 @@ impl SolidsBreakdown {
         }
     }
 
+    /// Field-update method for [`others`](Self::others)
     #[must_use]
     pub fn others(self, others: f64) -> Self {
         Self { others, ..self }
@@ -98,32 +112,51 @@ impl SolidsBreakdown {
         })
     }
 
+    /// Calculates the total energy contributed by the solids, in kcal per 100g of mix
+    ///
+    /// **Note**: This method intentionally omits the [`others`](Self::others) field, since the
+    /// specific solid compounds and their energy contributions are unknown. This should be
+    /// inconsequential in most practical circumstances, since the vast majority of solid components
+    /// with energy contributions should fit into the known categories. As such, the accuracy of
+    /// overall energy calculations depends on the quality of the ingredient definitions. Returning
+    /// an error here would be impractical, since the `others` field is rarely expected to be zero,
+    /// although it is expected to almost always be a small fraction of the total solids content.
     pub fn energy(&self) -> Result<f64> {
+        // `others` is intentionally omitted; see docs above
         Ok(self.fats.energy()
             + self.carbohydrates.energy()?
             + (self.proteins * constants::energy::PROTEINS)
-            + self.artificial_sweeteners.energy()? /* + self.others ignored */)
+            + self.artificial_sweeteners.energy()?)
     }
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl SolidsBreakdown {
+    /// Creates a new empty `SolidsBreakdown` struct, forwards to [`SolidsBreakdown::empty`]
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    /// Calculates the total solids content, by summing the solids content from all components
     #[must_use]
     pub fn total(&self) -> f64 {
         self.fats.total + self.carbohydrates.total() + self.proteins + self.artificial_sweeteners.total() + self.others
     }
 
+    /// Calculates the total solids non-fat (SNF) content, by subtracting the total fat content from
+    /// the total solids content, i.e. `total() - fats.total`
     #[must_use]
     pub fn snf(&self) -> f64 {
         self.total() - self.fats.total
     }
 
+    /// Calculates the total solids non-fat non-sugar (SNFS) content, by subtracting the total sugar
+    /// content from the SNF content, i.e. `snf() - carbohydrates.sugars.total()`
+    ///
+    /// **Note**: Largely due to convention, [`polyols`](Carbohydrates::polyols) and
+    /// [`artificial_sweeteners`](Self::artificial_sweeteners) are not subtracted here.
     #[must_use]
     pub fn snfs(&self) -> f64 {
         self.snf() - self.carbohydrates.sugars.total()

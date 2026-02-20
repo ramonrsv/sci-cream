@@ -1,3 +1,6 @@
+//! [`ArtificialSweeteners`] struct and related functionality, to track non-saccharide artificial
+//! sweeteners in an ingredient or mix's composition, e.g. aspartame, sucralose, etc.
+
 use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
@@ -34,32 +37,89 @@ use crate::composition::Polyols;
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct ArtificialSweeteners {
+    /// Aspartame is a common non-saccharide high-intensity artificial sweetener
+    ///
+    /// Aspartame is a methyl ester of aspartic acid and phenylalanine. It is approximately 200
+    /// times sweeter than sucrose, and provides about 4 kcal/g (similar to sucrose), but due to its
+    /// high potency it is used in such small quantities that its energy contribution is negligible.
+    /// It is one of the most studied food additives and has been deemed safe for human consumption
+    /// by numerous regulatory agencies worldwide (The European Commission, 2025, E951)[^10],
+    /// (International Food Information Council Foundation, 2019, "What is aspartame?")[^21],
+    /// (Spillane, 2006, Table 9.3, p. 179)[^9], (Spillane, 2006, Table 9.4, p. 187)[^9]. It is
+    /// found in various brand-name products such as Equal and Canderel.
+    #[doc = include_str!("../../docs/bibs/9.md")]
+    #[doc = include_str!("../../docs/bibs/10.md")]
+    #[doc = include_str!("../../docs/bibs/21.md")]
     pub aspartame: f64,
+    /// Cyclamate is a zero-calorie artificial sweetener
+    ///
+    /// Cyclamate is the sodium or calcium salt of cyclamic acid. It is approximately 30-50 times
+    /// sweeter than sucrose. It is often used with other artificial sweeteners like saccharin for
+    /// improved taste. It is banned in the US but approved for use in many other countries,
+    /// including the EU (E952) (Spillane, 2006, Table 9.4, p. 188)[^9], (The European Commission,
+    /// 2025, E952)[^10], (Lawrence, 2003, "Cyclamates")[^32].
+    #[doc = include_str!("../../docs/bibs/9.md")]
+    #[doc = include_str!("../../docs/bibs/10.md")]
+    #[doc = include_str!("../../docs/bibs/32.md")]
     pub cyclamate: f64,
+    /// Saccharin is a non-nutritive artificial sweetener
+    ///
+    /// Its name is derived from "saccharine", the latin word for sugar. It is approximately 400
+    /// times sweeter than sucrose, but has no caloric value. It is one of the oldest artificial
+    /// sweeteners, discovered in 1878. Its use became widespread with the introduction of
+    /// cyclamate, which is often used in combination with saccharin to improve the taste. It is
+    /// widely approved for use in many countries, including in the US and EU (E954) (Spillane,
+    /// 2006, Table 9.3, p. 181)[^9], (The European Commission, 2025, E954)[^10], (American Diabetes
+    /// Association, 2014, "Saccharin")[^22].
+    #[doc = include_str!("../../docs/bibs/9.md")]
+    #[doc = include_str!("../../docs/bibs/10.md")]
+    #[doc = include_str!("../../docs/bibs/22.md")]
     pub saccharin: f64,
+    /// Sucralose is a common non-nutritive artificial sweetener
+    ///
+    /// It is derived from and approximately 600 times sweeter than sucrose. It compares favorably
+    /// to other artificial sweeteners in terms of taste, stability, and safety profile, and is one
+    /// of the most commonly used artificial sweeteners, found in products such as Splenda. It is
+    /// widely approved for use in many countries, including in the US and EU (E955) (Spillane,
+    /// 2006, Table 9.3, p. 184)[^9], (The European Commission, 2025, E955)[^10], (Castro-Muñoz,
+    /// 2022)[^11]), (Hull, 2010, Appendix C.3, p. 324)[^15], (Schiffman, 2013, "Abstract")[^23].
+    #[doc = include_str!("../../docs/bibs/9.md")]
+    #[doc = include_str!("../../docs/bibs/10.md")]
+    #[doc = include_str!("../../docs/bibs/11.md")]
+    #[doc = include_str!("../../docs/bibs/15.md")]
+    #[doc = include_str!("../../docs/bibs/23.md")]
     pub sucralose: f64,
     /// Steviol glycosides are the main active sweetening compounds in stevia extract
     ///
     /// Stevioside and rebaudioside are ent-kaurene-type diterpene glycosides based on the aglycone
     /// steviol isolated from the leaves of Stevia rebaudiana (commonly known as candyleaf,
     /// sweetleaf, or sugarleaf). Their sweetness has been rated as 210 and 450 times sweeter than
-    /// sucrose (Spillane, 2006, p. 210, 297)[^9]. They are the primary sweetening compounds in
-    /// stevia extract, a common low-calorie sugar substitute.
+    /// sucrose (Spillane, 2006, p. 210, 297)[^9]. They are not digested and so have no caloric
+    /// value (Priscilla, 2018, "Metabolism of steviol glycosides")[^28]. They are the primary
+    /// sweetening compounds in stevia extract, a common low-calorie sugar substitute.
     #[doc = include_str!("../../docs/bibs/9.md")]
+    #[doc = include_str!("../../docs/bibs/28.md")]
     pub steviosides: f64,
     /// Mogrosides are the main active sweetening compounds in monkfruit extract
     ///
     /// Mogrosides are cucurbitane-type triterpenoid glycosides isolated from the fruits of Siraitia
     /// grosvenorii (commonly known as monkfruit, swingle fruit, or luo han guo). Their sweetness
     /// has been rated as 233 to 425 times sweeter than  sucrose (Spillane, 2006, p. 210, 297)[^9].
-    /// They are the primary sweetening compounds in monkfruit extract, a common low-calorie sugar
-    /// substitute.
+    /// They are degraded by digestive enzymes and intestinal microflora, and excreted in the feces
+    /// as mogrol, so so they have no caloric value (Murata, 2010, "Abstract")[^29].They are the
+    /// primary sweetening compounds in monkfruit extract, a common low-calorie sugar substitute.
     #[doc = include_str!("../../docs/bibs/9.md")]
+    #[doc = include_str!("../../docs/bibs/29.md")]
     pub mogrosides: f64,
+    /// Any other artificial sweeteners not explicitly tracked by the other fields
+    ///
+    /// **Note**: If this field is used, energy, POD, and PAC calculations will not be possible,
+    /// since the specific compounds being used and their properties are unknown.
     pub other: f64,
 }
 
 impl ArtificialSweeteners {
+    /// Creates an empty struct with all fields set to zero (i.e. no artificial sweeteners)
     #[must_use]
     pub fn empty() -> Self {
         Self {
@@ -73,41 +133,52 @@ impl ArtificialSweeteners {
         }
     }
 
+    /// Field-update method for [`aspartame`](Self::aspartame)
     #[must_use]
     pub fn aspartame(self, aspartame: f64) -> Self {
         Self { aspartame, ..self }
     }
 
+    /// Field-update method for [`cyclamate`](Self::cyclamate)
     #[must_use]
     pub fn cyclamate(self, cyclamate: f64) -> Self {
         Self { cyclamate, ..self }
     }
 
+    /// Field-update method for [`saccharin`](Self::saccharin)
     #[must_use]
     pub fn saccharin(self, saccharin: f64) -> Self {
         Self { saccharin, ..self }
     }
 
+    /// Field-update method for [`sucralose`](Self::sucralose)
     #[must_use]
     pub fn sucralose(self, sucralose: f64) -> Self {
         Self { sucralose, ..self }
     }
 
+    /// Field-update method for [`steviosides`](Self::steviosides)
     #[must_use]
     pub fn steviosides(self, steviosides: f64) -> Self {
         Self { steviosides, ..self }
     }
 
+    /// Field-update method for [`mogrosides`](Self::mogrosides)
     #[must_use]
     pub fn mogrosides(self, mogrosides: f64) -> Self {
         Self { mogrosides, ..self }
     }
 
+    /// Field-update method for [`other`](Self::other)
     #[must_use]
     pub fn other(self, other: f64) -> Self {
         Self { other, ..self }
     }
 
+    /// Calculates the total energy contribution of the artificial sweeteners, in kcal per 100g
+    ///
+    /// **Note**: If the [`other`](Self::other) field is used, this calculation will not be possible
+    /// since the specific compounds being used and their energy contributions are unknown.
     pub fn energy(&self) -> Result<f64> {
         if self.other != 0.0 {
             return Err(Error::CannotComputeEnergy(
@@ -128,6 +199,11 @@ impl ArtificialSweeteners {
             / 100.0)
     }
 
+    /// Calculates the [POD](crate::docs#pod) contributions of the artificial sweeteners, in terms
+    /// of sucrose equivalence
+    ///
+    /// **Note**: If the [`other`](Self::other) field is used, this calculation will not be possible
+    /// since the specific compounds being used and their POD contributions are unknown.
     pub fn to_pod(&self) -> Result<f64> {
         if self.other != 0.0 {
             return Err(Error::CannotComputePOD("Cannot compute POD with other artificial sweeteners".to_string()));
@@ -146,6 +222,11 @@ impl ArtificialSweeteners {
             / 100.0)
     }
 
+    /// Calculates the [PAC](crate::docs#pac-afp-fpdf-se) contributions of the artificial
+    /// sweeteners, in terms of sucrose equivalence
+    ///
+    /// **Note**: If the [`other`](Self::other) field is used, this calculation will not be possible
+    /// since the specific compounds being used and their PAC contributions are unknown.
     pub fn to_pac(&self) -> Result<f64> {
         if self.other != 0.0 {
             return Err(Error::CannotComputePAC("Cannot compute PAC with other artificial sweeteners".to_string()));
@@ -167,12 +248,15 @@ impl ArtificialSweeteners {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl ArtificialSweeteners {
+    /// Creates a new empty `ArtificialSweeteners` struct, forwards to
+    /// [`ArtificialSweeteners::empty`]
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    /// Calculates the total artificial sweetener content by weight, by summing all the fields
     #[must_use]
     pub fn total(&self) -> f64 {
         iter_fields_as::<f64, _>(self).sum()

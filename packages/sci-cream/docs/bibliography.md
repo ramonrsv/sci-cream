@@ -66,6 +66,12 @@
 
 [^33]: Merrill, A. L, Watt, B. K. (1973). _Energy Value of Foods ...basis and derivation_ Agriculture Handbook No. 74. Agricultural Research Service, United States Department of Agriculture. <https://www.ars.usda.gov/ARSUserFiles/80400525/Data/Classics/ah74.pdf>
 
+[^34]: Higdon, et al. (2019, March). _Fiber_. Oregon State University, Linux Pauling Institute, Micronutrient Information Center. <https://lpi.oregonstate.edu/mic/other-nutrients/fiber>
+
+[^35]: Raphaelson, Paul. (2019, July). _Sample Sorbet Recipe: Strawberry_. <https://under-belly.org/sample-sorbet-recipe/>
+
+[^36]: Furia, T.E. (1972). _Handbook of Food Additives_ (2nd ed.). CRC Press
+
 <!-- Ingredient references -->
 
 [^100]: Eggs, Grade A, Large, egg yolk. (2019). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/748236/nutrients>

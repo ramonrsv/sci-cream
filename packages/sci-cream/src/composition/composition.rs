@@ -1,3 +1,6 @@
+//! Top-level [`Composition`] struct and related types and traits, representing the composition of
+//! an ingredient or mix, and providing key methods for accessing specific components/properties.
+
 use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
@@ -12,26 +15,59 @@ use crate::{
 use wasm_bindgen::prelude::*;
 
 #[cfg(doc)]
-use crate::specs::ChocolateSpec;
+use crate::{
+    composition::{ArtificialSweeteners, Carbohydrates, Polyols, Sugars},
+    specs::ChocolateSpec,
+};
 
+/// Trait for converting various types, e.g. [`specs`](crate::specs), into a [`Composition`]
 pub trait IntoComposition {
+    /// Converts `self` into a [`Composition`], which may involve complex calculations
     fn into_composition(self) -> Result<Composition>;
 }
 
+/// Trait for scaling and adding [`Composition`]s and their constituent types
+///
+/// This is used for calculating the composition of mixes from a weighted combination of its
+/// ingredients. It should be implemented by all types that are part of the composition, including
+/// [`Composition`] itself, and all constituent types such as [`Solids`], [`Micro`], etc.
 pub trait ScaleComponents {
+    /// Scales `self` by a factor, typically `ing_qty/mix_total_qty` when calculating the
+    /// contribution of ingredients to a mix composition.
+    ///
+    /// **Note**: Composition values are typically expressed as grams per 100g, where the rest is
+    /// assumed to be water. A such, scaling a composition by a factor `f` actually changes the
+    /// relative proportions of components and therefore the nature of the composition. After
+    /// scaling, a composition represents `f` grams of ingredient per 100g of mix, and only becomes
+    /// a valid composition when combined with other scaled compositions of other ingredients, which
+    /// together sum to 100g of ingredient per 100g of mix. This is a necessary step in calculating
+    /// the composition of mixes from their ingredients, but should not be used for other purposes.
+    /// See [`add`](Self::add) for [`Composition::from_combination`] for more details about this.
     #[must_use]
     fn scale(&self, factor: f64) -> Self;
 
+    /// Adds `self` and `other`, typically scaled compositions of ingredients, when calculating the
+    /// contributions of ingredients to a mix composition.
+    ///
+    /// **Note**: This is a simple addition of composition values, and does not take into account
+    /// the relative proportions of ingredients in a mix. As such, it should only be used for adding
+    /// scaled compositions of ingredients, which together sum to 100g of ingredient per 100g of
+    /// mix, to calculate the composition of mixes. See [`scale`](Self::scale) and
+    /// [`Composition::from_combination`] for more details about and implementations of this.
     #[must_use]
     fn add(&self, other: &Self) -> Self;
 }
 
-/// Composition of an ingredient or mix, as grams of component per 100g of ingredient/mix
+/// Composition of an ingredient or mix, mostly as grams of component per 100g of ingredient/mix
+///
+/// [`Composition`] is the top-level struct representing the composition of an ingredient or mix,
+/// holding several other constituent types, and is used as the basis for all composition-related
+/// calculations and analyses.
 ///
 /// In a hypothetical 100g of ingredient/mix: `solids.total() + alcohol + water() == 100`.
 ///
-/// `sweeteners` and `micro` components are both accounted for in `solids`, and should not be
-/// double-counted. They are provided separately to facilitate the analysis of key components.
+/// [`micro`](Self::micro) components are accounted for in `solids`, and should not be
+/// double-counted. They are  provided separately to facilitate the analysis of key components.
 ///
 /// POD and [PAC](crate::docs#pac-afp-fpdf-se) are expressed as a sucrose equivalence and do not
 /// necessarily represent real weights of components. While some underlying components may have
@@ -43,10 +79,18 @@ pub trait ScaleComponents {
 pub struct Composition {
     /// Total energy content in kilocalories (kcal) per 100g of ingredient/mix
     pub energy: f64,
+    /// Detailed breakdown of solid components, as grams of component per 100g of ingredient/mix
     pub solids: Solids,
+    /// Tracking of micronutrients and other micro components and properties
+    ///
+    /// These are accounted for in `solids`; they are provided separately to facilitate the tracking
+    /// and analysis of key components and properties, e.g. stabilizers, emulsifiers, salt, etc.
     pub micro: Micro,
+    /// Alcohol content, as grams of alcohol per 100g of ingredient/mix, with ABV conversions
     pub alcohol: Alcohol,
+    /// [Potere Dolcificante (POD)](crate::docs#pod), expressed as a sucrose equivalence
     pub pod: f64,
+    /// [Potere Anti-Cristallizzante (PAC)](crate::docs#pac), expressed as a sucrose equivalence
     pub pac: PAC,
 }
 
@@ -171,44 +215,94 @@ pub enum CompKey {
     /// Water content, `100 - TotalSolids - Alcohol.by_weight`
     Water,
 
+    // Carbohydrates and Artificial Sweeteners
+    // ---------------------------------------
+    //
+    /// Total fiber content, as tracked in [`Carbohydrates::fiber`]
     Fiber,
+    /// Total free glucose content, i.e. glucose not part of disaccharides or polysaccharides
     Glucose,
+    /// Total free fructose content, i.e. fructose not part of disaccharides or polysaccharides
     Fructose,
+    /// Total free galactose content, i.e. galactose not part of disaccharides or polysaccharides
     Galactose,
+    /// Total sucrose content, as tracked in [`Carbohydrates::sugars::sucrose`](Sugars::sucrose)
     Sucrose,
+    /// Total lactose content, as tracked in [`Carbohydrates::sugars::lactose`](Sugars::lactose)
     Lactose,
+    /// Total maltose content, as tracked in [`Carbohydrates::sugars::maltose`](Sugars::maltose)
     Maltose,
+    /// Total trehalose content, tracked in [`Carbohydrates::sugars::trehalose`](Sugars::trehalose)
     Trehalose,
+    /// Total sugar content, including all mono/disaccharides tracked in [`Carbohydrates::sugars`]
     TotalSugars,
+    /// Total erythritol content, as tracked in
+    /// [`Carbohydrates::polyols::erythritol`](Polyols::erythritol)
     Erythritol,
+    /// Total polyol content, including all polyols tracked in [`Carbohydrates::polyols`]
     TotalPolyols,
+    /// Total carbohydrate content, including all sugars, polyols, and fiber in [`Carbohydrates`]
     TotalCarbohydrates,
+    /// Total artificial sweetener content, including all artificial sweeteners tracked in
+    /// [`ArtificialSweeteners`]
     TotalArtificial,
+    /// Total sweetener content, including all sugars, polyols, and artificial sweeteners, but
+    /// excluding fiber and other carbohydrates not contributing to sweetness
     TotalSweeteners,
 
+    // Alcohol and Micro Components
+    // ----------------------------
+    //
+    /// Total alcohol content, as grams of alcohol per 100g of ingredient/mix
     Alcohol,
+    /// Total alcohol by volume (ABV) content, calculated from the alcohol content by weight
     ABV,
 
+    /// Total salt content, excluding salts from milk ingredients, as tracked in [`Micro::salt`]
+    ///
+    /// This includes any salt added as an ingredient, as well as any salt that is part of other
+    /// ingredients, e.g. the salt in chocolate or nut ingredients, but excludes salts naturally
+    /// present in milk ingredients, which are accounted for separately in [`CompKey::MilkSNFS`] .
+    ///
+    /// Note that this is a subset of [`CompKey::TotalSolids`].
     Salt,
+    /// Total lecithin content, a subset of emulsifiers, tracked in [`Micro::lecithin`]
     Lecithin,
+    /// Total emulsifier content, including lecithin and others tracked in [`Micro::emulsifiers`]
+    // @todo Should this be explicit about the concept and unit of "strength" of emulsifiers?
     Emulsifiers,
+    /// Total stabilizer content, e.g. from Locust Bean Gum, etc. tracked in [`Micro::stabilizers`]
+    // @todo Should this be explicit about the concept and unit of "strength" of stabilizers?
     Stabilizers,
+    /// Total emulsifier content per fat content, i.e. `Emulsifiers / TotalFats`, as a percentage
     EmulsifiersPerFat,
+    /// Total stabilizer content per water content, i.e. `Stabilizers / Water`, as a percentage
     StabilizersPerWater,
 
+    // POD, PAC, and Hardness Factor
+    // -----------------------------
+    //
+    /// [Potere Dolcificante (POD)](crate::docs#pod) of the ingredient or mix as a whole
     POD,
 
+    /// [Potere Anti-Cristallizzante (PAC)](crate::docs#pac) contributions from sugars and polyols
     PACsgr,
+    /// [Potere Anti-Cristallizzante (PAC)](crate::docs#pac) contributions from [`CompKey::Salt`]
     PACslt,
+    /// [Potere Anti-Cristallizzante (PAC)](crate::docs#pac) contributions from milk minerals
     PACmlk,
+    /// [Potere Anti-Cristallizzante (PAC)](crate::docs#pac) contributions from alcohol
     PACalc,
+    /// Total [Potere Anti-Cristallizzante (PAC)](crate::docs#pac) of the ingredient or mix as whole
     PACtotal,
+    /// [Absolute PAC](crate::docs#absolute-pac), i.e. `PACtotal / Water`, as a percentage
     AbsPAC,
+    /// [Hardness Factor (HF)](crate::docs#corvitto-method-hardness-factor) of the ingredient or mix
     HF,
 }
 
 impl Composition {
-    /// Create an empty composition, which is equivalent to the composition of 100% water.
+    /// Creates an empty composition, which is equivalent to the composition of 100% water.
     #[must_use]
     pub fn empty() -> Self {
         Self {
@@ -221,36 +315,43 @@ impl Composition {
         }
     }
 
+    /// Field-update method for [`energy`](Self::energy)
     #[must_use]
     pub fn energy(self, energy: f64) -> Self {
         Self { energy, ..self }
     }
 
+    /// Field-update method for [`solids`](Self::solids)
     #[must_use]
     pub fn solids(self, solids: Solids) -> Self {
         Self { solids, ..self }
     }
 
+    /// Field-update method for [`micro`](Self::micro)
     #[must_use]
     pub fn micro(self, micro: Micro) -> Self {
         Self { micro, ..self }
     }
 
+    /// Field-update method for [`alcohol`](Self::alcohol)
     #[must_use]
     pub fn alcohol(self, alcohol: Alcohol) -> Self {
         Self { alcohol, ..self }
     }
 
+    /// Field-update method for [`pod`](Self::pod)
     #[must_use]
     pub fn pod(self, pod: f64) -> Self {
         Self { pod, ..self }
     }
 
+    /// Field-update method for [`pac`](Self::pac)
     #[must_use]
     pub fn pac(self, pac: PAC) -> Self {
         Self { pac, ..self }
     }
 
+    /// Calculates the composition of a mix from a weighted combination of its ingredients
     pub fn from_combination(compositions: &[(Composition, f64)]) -> Result<Self> {
         let total_amount: f64 = compositions.iter().map(|line| line.1).sum();
 
@@ -269,18 +370,28 @@ impl Composition {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Composition {
+    /// Creates an empty composition, equivalent to 100% water; forwards to [`empty`](Self::empty)
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
     pub fn new() -> Self {
         Self::empty()
     }
 
+    /// Calculates the water content as `100 - TotalSolids - Alcohol`
+    ///
+    /// An empty composition would have `TotalSolids == 0` and `Alcohol == 0`, resulting in
+    /// `Water == 100`, which is in accordance with an empty composition being equivalent to 100%
+    /// water. This is equivalent to [`get(CompKey::Water)`](Self::get).
     #[must_use]
     pub fn water(&self) -> f64 {
         100.0 - self.solids.total() - self.alcohol.by_weight
     }
 
-    /// Note that [`f64::NAN`] is a valid result, if there are no fats
+    /// Calculates the emulsifier per fat content, i.e. `Emulsifiers / TotalFats`, as a percentage
+    ///
+    /// This is equivalent to [`get(CompKey::EmulsifiersPerFat)`](Self::get).
+    ///
+    /// Note that [`f64::NAN`] is a valid result, if there are no fats.
     #[must_use]
     pub fn emulsifiers_per_fat(&self) -> f64 {
         if self.solids.all().fats.total > 0.0 {
@@ -290,6 +401,10 @@ impl Composition {
         }
     }
 
+    /// Calculates the stabilizer per water content, i.e. `Stabilizers / Water`, as a percentage
+    ///
+    /// This is equivalent to [`get(CompKey::StabilizersPerWater)`](Self::get).
+    ///
     /// Note that [`f64::NAN`] is a valid result, if there is no water
     #[must_use]
     pub fn stabilizers_per_water(&self) -> f64 {
@@ -300,8 +415,12 @@ impl Composition {
         }
     }
 
+    /// Calculates [Absolute PAC](crate::docs#absolute-pac), i.e. `PACtotal / Water`, as a
+    /// percentage, excluding the hardness factor
+    ///
+    /// This is equivalent to [`get(CompKey::AbsPAC)`](Self::get).
+    ///
     /// Note that [`f64::NAN`] is a valid result, if there is no water
-    /// Excluding hardness factor, i.e. `self.pac.total() / self.water()`
     #[must_use]
     pub fn absolute_pac(&self) -> f64 {
         if self.water() > 0.0 {
@@ -311,6 +430,7 @@ impl Composition {
         }
     }
 
+    /// Gets a specific composition value by key, using [`CompKey`] to specify the desired value
     #[must_use]
     pub fn get(&self, key: CompKey) -> f64 {
         match key {
@@ -354,13 +474,13 @@ impl Composition {
             CompKey::TotalSugars => self.solids.all().carbohydrates.sugars.total(),
             CompKey::Erythritol => self.solids.all().carbohydrates.polyols.erythritol,
             CompKey::TotalPolyols => self.solids.all().carbohydrates.polyols.total(),
+            CompKey::TotalCarbohydrates => self.solids.all().carbohydrates.total(),
             CompKey::TotalArtificial => self.solids.all().artificial_sweeteners.total(),
             CompKey::TotalSweeteners => {
                 self.solids.all().carbohydrates.sugars.total()
                     + self.solids.all().carbohydrates.polyols.total()
                     + self.solids.all().artificial_sweeteners.total()
             }
-            CompKey::TotalCarbohydrates => self.solids.all().carbohydrates.total(),
 
             CompKey::Alcohol => self.alcohol.by_weight,
             CompKey::ABV => self.alcohol.to_abv(),

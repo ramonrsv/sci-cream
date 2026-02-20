@@ -4,7 +4,6 @@ their properties.
 
 #![cfg_attr(coverage, feature(coverage_attribute))]
 
-#[allow(missing_docs)] // @todo
 pub mod composition;
 pub mod constants;
 pub mod display;
