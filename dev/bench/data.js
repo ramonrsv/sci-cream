@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771548964088,
+  "lastUpdate": 1771548979564,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -66073,6 +66073,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.77%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "21004ebbf006dff0d92b4476434381685a30e526",
+          "message": "Rename `TaggedSpec`, add From<>, `enum-as-inner`\n\n* Rename `Spec` to `TaggedSpec` to be more explicit about its purpose.\n* Add `From<...> for TaggedSpec` for all specs, now need only `into()`.\n* Add `enum-as-inner` to `TaggedSpec` to easily access inner specs.\n\nWith the above changes, the `TaggedSpec` layer of indirection can be\nignored for the most part, only needing to add `.into()` when assigning\nany spec to a `TaggedSpec`. Accessing inner specs is also easier now\nwith the use of `enum-as-inner`, no longer needing to do `if let ...`.",
+          "timestamp": "2026-02-19T17:11:35-05:00",
+          "tree_id": "1c7ecb45ba9567fc08aa7a6841a75b3a2a7d077b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/21004ebbf006dff0d92b4476434381685a30e526"
+        },
+        "date": 1771548977505,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 79990,
+            "range": "±1.18%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 728484,
+            "range": "±1.28%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9905,
+            "range": "±3.00%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 612099,
+            "range": "±0.71%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
