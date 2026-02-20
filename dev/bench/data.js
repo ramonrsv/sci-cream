@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771549438665,
+  "lastUpdate": 1771549445358,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -62215,6 +62215,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 27.38,
             "range": "0.93",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ebe57c96a291f01b0e8cba0facf333341b03f2a5",
+          "message": "Enable `clippy::too_long_first_doc_paragraph` lint\n\n* Enable the `clippy::too_long_first_doc_paragraph` lint from the\n  'nusery' group, since that group is configured to as opt-in.\n* Stop explicitly setting 'suspicious' to 'warn'; it's so by default.",
+          "timestamp": "2026-02-19T18:07:55-05:00",
+          "tree_id": "60d7982001d95faef5aa2dead2068150ba1d389e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ebe57c96a291f01b0e8cba0facf333341b03f2a5"
+        },
+        "date": 1771549443179,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 667.1,
+            "range": "52.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 45.4,
+            "range": "5.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60.1,
+            "range": "6.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.2,
+            "range": "9.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 36.7,
+            "range": "3.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 158.7,
+            "range": "5.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 40.2,
+            "range": "2.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 39.24,
+            "range": "0.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 27.83,
+            "range": "0.76",
             "unit": "ms"
           }
         ]
