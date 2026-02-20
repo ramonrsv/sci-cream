@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771549170185,
+  "lastUpdate": 1771549198392,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -6713,6 +6713,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 307,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ebe57c96a291f01b0e8cba0facf333341b03f2a5",
+          "message": "Enable `clippy::too_long_first_doc_paragraph` lint\n\n* Enable the `clippy::too_long_first_doc_paragraph` lint from the\n  'nusery' group, since that group is configured to as opt-in.\n* Stop explicitly setting 'suspicious' to 'warn'; it's so by default.",
+          "timestamp": "2026-02-19T18:07:55-05:00",
+          "tree_id": "60d7982001d95faef5aa2dead2068150ba1d389e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ebe57c96a291f01b0e8cba0facf333341b03f2a5"
+        },
+        "date": 1771549196567,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3611,
+            "range": "± 57",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 164496,
+            "range": "± 1426",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2030,
+            "range": "± 48",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160177,
+            "range": "± 847",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 319,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
