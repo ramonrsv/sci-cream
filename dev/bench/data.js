@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771549240458,
+  "lastUpdate": 1771549244056,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -61764,6 +61764,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 28.68,
             "range": "1.31",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "21004ebbf006dff0d92b4476434381685a30e526",
+          "message": "Rename `TaggedSpec`, add From<>, `enum-as-inner`\n\n* Rename `Spec` to `TaggedSpec` to be more explicit about its purpose.\n* Add `From<...> for TaggedSpec` for all specs, now need only `into()`.\n* Add `enum-as-inner` to `TaggedSpec` to easily access inner specs.\n\nWith the above changes, the `TaggedSpec` layer of indirection can be\nignored for the most part, only needing to add `.into()` when assigning\nany spec to a `TaggedSpec`. Accessing inner specs is also easier now\nwith the use of `enum-as-inner`, no longer needing to do `if let ...`.",
+          "timestamp": "2026-02-19T17:11:35-05:00",
+          "tree_id": "1c7ecb45ba9567fc08aa7a6841a75b3a2a7d077b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/21004ebbf006dff0d92b4476434381685a30e526"
+        },
+        "date": 1771549241898,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 661.9,
+            "range": "59.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 47.9,
+            "range": "11.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.9,
+            "range": "5.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 37.5,
+            "range": "5.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 36.4,
+            "range": "3.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 158.2,
+            "range": "6.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 39.5,
+            "range": "3.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 38.73,
+            "range": "1.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 27.38,
+            "range": "0.93",
             "unit": "ms"
           }
         ]
