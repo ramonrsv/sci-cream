@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771549015510,
+  "lastUpdate": 1771549170185,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -66544,6 +66544,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 612099,
             "range": "±0.71%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ebe57c96a291f01b0e8cba0facf333341b03f2a5",
+          "message": "Enable `clippy::too_long_first_doc_paragraph` lint\n\n* Enable the `clippy::too_long_first_doc_paragraph` lint from the\n  'nusery' group, since that group is configured to as opt-in.\n* Stop explicitly setting 'suspicious' to 'warn'; it's so by default.",
+          "timestamp": "2026-02-19T18:07:55-05:00",
+          "tree_id": "60d7982001d95faef5aa2dead2068150ba1d389e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ebe57c96a291f01b0e8cba0facf333341b03f2a5"
+        },
+        "date": 1771549168762,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 74154,
+            "range": "±1.34%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 716814,
+            "range": "±0.68%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9791,
+            "range": "±2.25%",
+            "unit": "ops/sec",
+            "extra": "81 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 595508,
+            "range": "±0.79%",
             "unit": "ops/sec",
             "extra": "93 samples"
           }
