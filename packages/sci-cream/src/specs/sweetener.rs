@@ -1,3 +1,6 @@
+//! [`SweetenerSpec`] and associated implementations, for sweetener ingredients like sugars,
+//! syrups, polyols, artificial sweeteners, etc.
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -54,13 +57,31 @@ use crate::composition::{ArtificialSweeteners, Polyols, Sugars};
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct SweetenerSpec {
+    /// Composition of the sweeteners, including sugars, polyols, and artificial sweeteners.
     pub sweeteners: Sweeteners,
+    /// Dietary fibers present in the sweetener, e.g. inulin, oligofructose, etc.
     pub fiber: Option<Fibers>,
+    /// Other carbohydrates present in the sweetener, e.g. maltodextrin, oligosaccharides, etc.
+    ///
+    /// This field should include any carbohydrates that are not tracked as part of
+    /// [`sweeteners`](Self::sweeteners) or [`fiber`](Self::fiber). It should rarely be needed, and
+    /// is assumed to be zero if not specified.
     pub other_carbohydrates: Option<f64>,
+    /// Other solids present in the sweetener, e.g. minerals, pollen, etc.
+    ///
+    /// This field should rarely be needed, and is assumed to be zero if not specified.
     pub other_solids: Option<f64>,
+    /// The basis for the composition, either as a percentage of the dry weight (solids) or of the
+    /// total weight of the ingredient, which affects the scaling of the composition values.
     #[serde(flatten)]
     pub basis: CompositionBasis,
+    /// [Potere Dolcificante (POD)](crate::docs#pod) value and scaling specification.
+    ///
+    /// See [`SweetenerSpec`] docs for details of how this is calculated and scaled.
     pub pod: Option<Scaling<f64>>,
+    /// [Potere Anti-Cariogeno (PAC)](crate::docs#pac) value and scaling specification.
+    ///
+    /// See [`SweetenerSpec`] docs for details of how this is calculated and scaled.
     pub pac: Option<Scaling<Unit>>,
 }
 

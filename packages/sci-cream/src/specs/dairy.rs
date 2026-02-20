@@ -1,3 +1,6 @@
+//! [`DairySpec`], [`DairyFromNutritionSpec`], and associated implementations, for dairy ingredients
+//! such as milk, cream, milk powders, protein powders, etc.
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -26,7 +29,12 @@ use crate::{
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct DairySpec {
+    /// Fat content by weight, e.g. 3.25 for whole milk, 40 for cream, and 0 for skimmed milk powder.
     pub fat: f64,
+    /// Milk solids non-fat content by weight, calculated internally for typical milks and creams.
+    ///
+    /// It is necessary to specify `msnf` for milk powders and other condensed or dried dairy
+    /// products, as they do not adhere to the standard milk and cream composition ratios.
     pub msnf: Option<f64>,
 }
 
@@ -66,7 +74,12 @@ impl IntoComposition for DairySpec {
     }
 }
 
-/// Spec for dairy ingredients derived from nutrition facts labels, with detailed breakdown
+/// Spec for dairy ingredients derived from nutrition facts labels, with detailed breakdown.
+///
+/// This spec is more flexible than [`DairySpec`] and can accommodate a wider range of dairy
+/// products, including those with non-standard compositions, e.g. lactose-free products with
+/// different types of sugars, whey protein or isolate powder, or other specialized dairy products.
+/// The required values can typically be pulled directly from the nutrition facts label.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct DairyFromNutritionSpec {
@@ -82,10 +95,22 @@ pub struct DairyFromNutritionSpec {
     /// accurate than the whole unit grams in the nutrition facts table, so specifying a total fat
     /// percentage is recommended whenever possible.
     pub total_fat: Unit,
+    /// Saturated fat content per serving, in grams; it must be a subset of total fat.
     pub saturated_fat: f64,
+    /// Trans fat content per serving, in grams; it must be a subset of total fat.
     pub trans_fat: f64,
+    /// Sugars content per serving, in grams; the detailed composition is determined by
+    /// [`is_lactose_free`](Self::is_lactose_free).
     pub sugars: f64,
+    /// Protein content per serving, in grams.
     pub protein: f64,
+    /// Whether the dairy product is lactose-free, which affects the detailed composition of
+    /// [`sugars`](Self::sugars).
+    ///
+    /// If `false`, the sugars are assumed to be all lactose, which is the predominant sugar in
+    /// regular dairy products. If `true`, the sugars are assumed to be a 50/50 mixture of glucose
+    /// and galactose, the two monosaccharides that make up lactose, which is typical of lactose
+    /// free dairy products where lactose is enzymatically broken down into its constituent sugars.
     pub is_lactose_free: bool,
 }
 

@@ -14,7 +14,6 @@ pub mod fpd;
 pub mod ingredient;
 pub mod properties;
 pub mod recipe;
-#[allow(missing_docs)] // @todo
 pub mod specs;
 pub mod util;
 pub mod validate;

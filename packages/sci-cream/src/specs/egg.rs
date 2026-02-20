@@ -1,3 +1,5 @@
+//! [`EggSpec`] and associated implementations, for egg ingredients like egg yolks, whole eggs, etc.
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -55,9 +57,13 @@ use crate::composition::CompKey;
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct EggSpec {
+    /// Water content as a percentage of total weight
     pub water: f64,
+    /// Fat content as a percentage of total weight
     pub fat: f64,
+    /// Protein content as a percentage of total weight
     pub protein: f64,
+    /// Lecithin content as a percentage of total weight. Note that lecithin is a subset of fat.
     pub lecithin: f64,
 }
 

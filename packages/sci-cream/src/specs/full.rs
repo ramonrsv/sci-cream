@@ -1,3 +1,5 @@
+//! [`FullSpec`] and associated implementations, for ingredients with a full composition specified.
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -20,10 +22,22 @@ use crate::{
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct FullSpec {
+    /// Detailed specification of the solids and their breakdown into subcategories
     pub solids: Option<Solids>,
+    /// Specification of the micro ingredients or components, like salt, emulsifiers, etc.
     pub micro: Option<Micro>,
+    /// Alcohol by volume (ABV) (2025)[^8] of the ingredient as a whole.
+    #[doc= include_str!("../../docs/bibs/8.md")]
     pub abv: Option<f64>,
+    /// [Potere Dolcificante (POD)](crate::docs#pod) of the ingredient as a whole.
+    ///
+    /// If not provided, it will be internally calculated from the composition of the solids and
+    /// known POD values of the underlying components, e.g. carbohydrates and artificial sweeteners.
     pub pod: Option<f64>,
+    /// [Potere Anti-Congelante (PAC)](crate::docs#pac) of the ingredient as a whole.
+    ///
+    /// If not provided, it will be internally calculated from the composition of the solids, the
+    /// micro components, the alcohol content, and known PAC values of the underlying components.
     pub pac: Option<PAC>,
 }
 

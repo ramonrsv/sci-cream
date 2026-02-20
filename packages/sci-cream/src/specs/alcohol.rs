@@ -1,3 +1,5 @@
+//! [`AlcoholSpec`] and associated implementations, for alcohol beverages and other ingredients
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -31,9 +33,14 @@ use crate::{composition::CompKey, constants};
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct AlcoholSpec {
+    /// Alcohol by volume (ABV) (2025)[^8] percentage, e.g. 40% for typical spirits.
+    #[doc = include_str!("../../docs/bibs/8.md")]
     pub abv: f64,
+    /// Sugars content by weight, typically zero for spirits, and up to ~40% for liqueurs.
     pub sugars: Option<f64>,
+    /// Fat content by weight, typically zero for spirits and liqueurs, and up to ~15% for creams.
     pub fat: Option<f64>,
+    /// Total solids content by weight, calculated as `sugars + fat` if not specified.
     pub solids: Option<f64>,
 }
 

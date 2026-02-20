@@ -1,3 +1,5 @@
+//! [`NutSpec`] and associated implementations, for nut ingredients, usually nut butters
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -67,12 +69,23 @@ use crate::composition::CompKey;
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct NutSpec {
+    /// Water content as percentage of total weight
     pub water: f64,
+    /// Protein content as percentage of total weight
     pub protein: f64,
+    /// Fat content as percentage of total weight
     pub fat: f64,
+    /// Saturated fat content as percentage of total weight, optional, automatically calculated if
+    /// not specified.
+    ///
+    /// If not specified, it is assumed to be a standard proportion of total fat for nuts, defined
+    /// by [`constants::composition::STD_SATURATED_FAT_IN_NUT_FAT`].
     pub saturated_fat: Option<f64>,
+    /// Carbohydrate content as percentage of total weight
     pub carbohydrate: f64,
+    /// Fiber content as percentage of total weight. Fiber is a subset of carbohydrates.
     pub fiber: f64,
+    /// Sugars content as percentage of total weight. Sugars are a subset of carbohydrates.
     pub sugars: f64,
 }
 

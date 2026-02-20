@@ -1,3 +1,5 @@
+//! [`FruitSpec`] and associated implementations, for fruit and fruit puree ingredients
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -12,8 +14,8 @@ use crate::{
 /// etc.), [`water`](Self::water) content, and optional [`energy`](Self::energy),
 /// [`protein`](Self::protein), [`fat`](Self::fat), and [`fiber`](Self::fiber) content. If `energy`
 /// is not specified, it is automatically calculated from the rest of the composition. If
-/// [`carbohydrate`](Self::carbohydrate) is not specified, then it is equal to `sugars`. If any
-/// other optional values are not specified, they are assumed to be zero. Adding up all the
+/// [`carbohydrate`](Self::carbohydrate) is not specified, then it is equal to `sugars + fiber`. If
+/// any other optional values are not specified, they are assumed to be zero. Adding up all the
 /// components, any remaining portion up to 100% is assumed to be non-fat, non-sugar solids (snfs).
 ///
 /// The composition for fruit ingredients can usually be found in food composition databases, like
@@ -66,12 +68,22 @@ use crate::{
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct FruitSpec {
+    /// Water content as percentage of total weight
     pub water: f64,
+    /// Energy content in kcal per 100g, optional, automatically calculated if not specified
     pub energy: Option<f64>,
+    /// Protein content as percentage of total weight, optional, assumed zero if not specified
     pub protein: Option<f64>,
+    /// Fat content as percentage of total weight, optional, assumed zero if not specified
     pub fat: Option<f64>,
+    /// Carbohydrate content as percentage of total weight, optional, assumed to be
+    /// `fiber + sugars` if not specified.
     pub carbohydrate: Option<f64>,
+    /// Fiber content as percentage of total weight, optional, assumed zero if not specified. Fiber
+    /// is a subset of carbohydrates.
     pub fiber: Option<f64>,
+    /// Composition and detailed breakdown of the sugars present in the fruit, as percentage of
+    /// total weight. Sugars are a subset of carbohydrates.
     pub sugars: Sugars,
 }
 

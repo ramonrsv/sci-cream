@@ -1,3 +1,11 @@
+//! [`TaggedSpec`] and [`IngredientSpec`] used mostly for interoperability with external data
+//! sources, such as JSON and databases, and for WASM interoperability.
+//!
+//! These structs are designed to be easily represented in JSON format and (de)serialized. They
+//! cannot be used for calculations directly, but can trivially be converted into full
+//! [`Composition`] and/or [`Ingredient`] instances via [`IntoComposition`] and
+//! [`IngredientSpec::into_ingredient`], respectively.
+
 use enum_as_inner::EnumAsInner;
 use serde::{Deserialize, Serialize};
 
@@ -19,6 +27,7 @@ use crate::{
 /// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
 #[derive(EnumAsInner, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[allow(clippy::large_enum_variant)] // @todo Deal with this issue later
+#[allow(missing_docs)] // Trivial mapping to the underlying specs
 pub enum TaggedSpec {
     DairySpec(DairySpec),
     DairyFromNutritionSpec(DairyFromNutritionSpec),
@@ -108,16 +117,26 @@ impl From<FullSpec> for TaggedSpec {
         Self::FullSpec(spec)
     }
 }
+
+/// Ingredient spec, which includes the name, category, and the tagged spec for the ingredient.
+///
+/// This struct is designed to have a user-friendly JSON representation, as it is used for manual
+/// ingredient definitions in the crate's ingredient database. It can be easily (de)serialized
+/// to/from JSON, and trivially converted into a full [`Composition`] and/or [`Ingredient`].
 #[cfg_attr(feature = "diesel", derive(Queryable, Selectable), diesel(table_name = ingredients))]
 #[derive(PartialEq, Serialize, Deserialize, Clone, Debug)]
 pub struct IngredientSpec {
+    /// The name of the ingredient, which should be unique across the database.
     pub name: String,
+    /// The category of the ingredient, which is used for organizational purposes.
     pub category: Category,
+    /// The tagged spec for the ingredient, which holds the actual specification data.
     #[serde(flatten)]
     pub spec: TaggedSpec,
 }
 
 impl IngredientSpec {
+    /// Converts the [`IngredientSpec`] into a full [`Ingredient`] instance
     pub fn into_ingredient(self) -> Result<Ingredient> {
         Ok(Ingredient {
             name: self.name,
@@ -133,6 +152,7 @@ impl IntoComposition for IngredientSpec {
     }
 }
 
+/// WASM compatible wrappers for [`crate::specs::ingredient`] functions and struct methods.
 #[cfg(feature = "wasm")]
 #[cfg_attr(coverage, coverage(off))]
 pub mod wasm {

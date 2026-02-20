@@ -1,3 +1,5 @@
+//! [`MicroSpec`] and associated implementations, for micro ingredients like salt, emulsifiers, etc.
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -37,16 +39,28 @@ use crate::{
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub enum MicroSpec {
+    /// Assumed to be 100% salt, with all details calculated internally
     Salt,
+    /// Assumed to be 100% lecithin, with all details calculated internally
     Lecithin,
+    /// A pure stabilizer, with the `strength` field representing its relative strength
     Stabilizer {
+        /// Relative strength of the stabilizer, relative to a reference strong stabilizer like
+        /// Guar Gum, Locust Bean Gum, Carrageenans, etc., which have a strength of 100.
         strength: f64,
     },
+    /// A pure emulsifier, with the `strength` field representing its relative strength
     Emulsifier {
+        /// Relative strength of the emulsifier, relative to a reference strong emulsifier like
+        /// lecithin, which has a strength of 100.
         strength: f64,
     },
+    /// A combined emulsifier and stabilizer, with the `strength` fields representing their relative
+    /// strengths, independently of each other.
     EmulsifierStabilizer {
+        /// Relative strength of the emulsifier, see [`MicroSpec::Emulsifier::strength`]
         emulsifier_strength: f64,
+        /// Relative strength of the stabilizer, see [`MicroSpec::Stabilizer::strength`]
         stabilizer_strength: f64,
     },
 }

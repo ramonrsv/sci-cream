@@ -1,3 +1,5 @@
+//! [`ChocolateSpec`] and associated implementations, for chocolate and other cocoa ingredients
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -106,13 +108,23 @@ use crate::composition::CompKey;
 /// ```
 #[doc = include_str!("../../docs/bibs/107.md")]
 #[doc = include_str!("../../docs/bibs/111.md")]
-// @todo Add a `msnf` field to support milk chocolate products (some professional chocolatier use)
+// @todo Add a `msnf` field to support milk chocolate products (some professional chocolatiers use)
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct ChocolateSpec {
+    /// Total cacao solids content, usually advertised on packaging, e.g. 70% for 70% dark chocolate
     pub cacao_solids: f64,
+    /// Cocoa butter content as a percentage of the product as a whole, usually from nutrition facts
     pub cocoa_butter: f64,
+    /// Sugars content as a percentage of the product as a whole, usually from nutrition facts.
+    ///
+    /// Assumed to be zero if not specified, as some products (e.g. Unsweetened Chocolate) and most
+    /// chocolate powders do not contain any added sugars.
     pub sugars: Option<f64>,
+    /// Other solids content as a percentage of the product as a whole, usually from nutrition facts
+    ///
+    /// Assumed to be zero if not specified, and represents other non-sugar, non-fats solids, e.g.
+    /// emulsifiers, impurities in demerara sugar, etc.
     pub other_solids: Option<f64>,
 }
 
