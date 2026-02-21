@@ -15,6 +15,11 @@ pub fn add_option<T: Add<Output = T>>(a: Option<T>, b: Option<T>) -> Option<T> {
 }
 
 /// Returns an iterator over the fields of an [`Iterable`] struct, downcasting each to type `T`.
+///
+/// # Panics
+///
+/// Panics if any field cannot be downcast to type `T`, with a message indicating the field name
+/// and the expected and actual types.
 pub fn iter_fields_as<'a, T: 'a + 'static, I: Iterable>(iterable: &'a I) -> impl Iterator<Item = &'a T> {
     iterable.iter().map(|(field_name, field_val)| {
         field_val.downcast_ref::<T>().unwrap_or_else(|| {

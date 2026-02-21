@@ -395,6 +395,10 @@ pub mod density {
     ///
     /// Interpolates density between known values for milk/cream of different fat contents;
     /// see [`MILK_2`], [`MILK_3_5`], and [`CREAM_40`].
+    ///
+    /// # Panics
+    ///
+    /// Panics if `fat_content` is negative or greater than 100.
     #[must_use]
     pub const fn dairy_milliliters_to_grams(ml: f64, fat_content: f64) -> f64 {
         let less_than_2 = MILK_2;
@@ -406,7 +410,7 @@ pub mod density {
             0.0..=2.0 => ml * less_than_2,
             2.0..=3.5 => ml * between_2_and_3_5,
             3.5..=40.0 => ml * between_3_5_and_40,
-            40.0.. => ml * more_than_40,
+            40.0..=100.0 => ml * more_than_40,
             _ => panic!("Invalid fat content"),
         }
     }
