@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1771549731395,
+  "lastUpdate": 1771891871477,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -68111,6 +68111,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.78%",
             "unit": "ops/sec",
             "extra": "88 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e1d5e7f38cd6fc4d948c481ea28908848d75ce12",
+          "message": "Enable `clippy::missing_panics_doc` lint and fix",
+          "timestamp": "2026-02-20T23:48:49-05:00",
+          "tree_id": "81681b536041107ed6b6643de10ad3156b47d9ef",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e1d5e7f38cd6fc4d948c481ea28908848d75ce12"
+        },
+        "date": 1771891869786,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 84417,
+            "range": "±1.66%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 711545,
+            "range": "±1.06%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10279,
+            "range": "±2.15%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 621157,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
