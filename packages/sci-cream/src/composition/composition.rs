@@ -9,6 +9,7 @@ use strum_macros::EnumIter;
 use crate::{
     composition::{Alcohol, Micro, PAC, Solids},
     error::Result,
+    validate::assert_are_positive,
 };
 
 #[cfg(feature = "wasm")]
@@ -17,12 +18,14 @@ use wasm_bindgen::prelude::*;
 #[cfg(doc)]
 use crate::{
     composition::{ArtificialSweeteners, Carbohydrates, Polyols, Sugars},
+    error::Error,
     specs::ChocolateSpec,
 };
 
 /// Trait for converting various types, e.g. [`specs`](crate::specs), into a [`Composition`]
 pub trait IntoComposition {
     /// Converts `self` into a [`Composition`], which may involve complex calculations
+    #[allow(clippy::missing_errors_doc)] // Specifics depend on the implementation
     fn into_composition(self) -> Result<Composition>;
 }
 
@@ -352,7 +355,13 @@ impl Composition {
     }
 
     /// Calculates the composition of a mix from a weighted combination of its ingredients
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error::CompositionNotPositive`] if any of the ingredient amounts are negative.
     pub fn from_combination(compositions: &[(Composition, f64)]) -> Result<Self> {
+        assert_are_positive(&compositions.iter().map(|line| line.1).collect::<Vec<_>>())?;
+
         let total_amount: f64 = compositions.iter().map(|line| line.1).sum();
 
         if total_amount == 0.0 {

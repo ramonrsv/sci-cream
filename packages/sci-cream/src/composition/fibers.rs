@@ -8,7 +8,6 @@ use struct_iterable::Iterable;
 use crate::{
     composition::ScaleComponents,
     constants,
-    error::Result,
     util::{iter_all_abs_diff_eq, iter_fields_as},
 };
 
@@ -89,9 +88,10 @@ impl Fibers {
     ///
     /// **Note**: This method intentionally omits the [`other`](Fibers::other) field, as most types
     /// of fiber are indigestible and therefore do not contribute to energy.
-    pub fn energy(&self) -> Result<f64> {
+    #[must_use]
+    pub fn energy(&self) -> f64 {
         // `other` is intentionally omitted; see docs above
-        Ok((self.inulin + self.oligofructose) * constants::energy::INULIN_AND_OLIGOFRUCTOSE)
+        (self.inulin + self.oligofructose) * constants::energy::INULIN_AND_OLIGOFRUCTOSE
     }
 
     /// Calculates the [POD](crate::docs#pod) contributions of the fibers, in terms of sucrose
@@ -99,9 +99,10 @@ impl Fibers {
     ///
     /// **Note**: This method intentionally omits the [`other`](Fibers::other) field, as most types
     /// of fiber do not contribute to POD.
-    pub fn to_pod(&self) -> Result<f64> {
+    #[must_use]
+    pub fn to_pod(&self) -> f64 {
         // `other` is intentionally omitted; see docs above
-        Ok((self.inulin * constants::pod::INULIN + self.oligofructose * constants::pod::OLIGOFRUCTOSE) / 100.0)
+        (self.inulin * constants::pod::INULIN + self.oligofructose * constants::pod::OLIGOFRUCTOSE) / 100.0
     }
 }
 
@@ -175,14 +176,14 @@ mod tests {
     #[test]
     fn fibers_energy() {
         assert_eq!(
-            Fibers::new().inulin(10.0).oligofructose(5.0).energy().unwrap(),
+            Fibers::new().inulin(10.0).oligofructose(5.0).energy(),
             (10.0 + 5.0) * constants::energy::INULIN_AND_OLIGOFRUCTOSE
         );
     }
 
     #[test]
     fn fibers_to_pod() {
-        assert_eq!(Fibers::new().inulin(10.0).to_pod().unwrap(), 0.0);
-        assert_eq!(Fibers::new().oligofructose(10.0).to_pod().unwrap(), 4.0);
+        assert_eq!(Fibers::new().inulin(10.0).to_pod(), 0.0);
+        assert_eq!(Fibers::new().oligofructose(10.0).to_pod(), 4.0);
     }
 }

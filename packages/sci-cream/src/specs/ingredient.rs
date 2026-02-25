@@ -24,6 +24,9 @@ use crate::{
     },
 };
 
+#[cfg(doc)]
+use crate::error::Error;
+
 /// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
 #[derive(EnumAsInner, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[allow(clippy::large_enum_variant)] // @todo Deal with this issue later
@@ -137,6 +140,12 @@ pub struct IngredientSpec {
 
 impl IngredientSpec {
     /// Converts the [`IngredientSpec`] into a full [`Ingredient`] instance
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] if the [`spec`](Self::spec) fails to convert into a [`Composition`],
+    /// likely due to invalid values, e.g. negative percentages, not summing to 100%, etc.
+    /// See [`IntoComposition::into_composition`] and [`specs`](crate::specs) for more details.
     pub fn into_ingredient(self) -> Result<Ingredient> {
         Ok(Ingredient {
             name: self.name,
@@ -160,11 +169,20 @@ pub mod wasm {
 
     use super::{Ingredient, IngredientSpec};
 
-    /// Converts an [`IngredientSpec`] JS value into an Ingredient instance
+    #[cfg(doc)]
+    use crate::error::Error;
+
+    /// Converts an [`IngredientSpec`] JS value into an [`Ingredient`] instance
     ///
     /// Enum variants with associated data are not supported by [`mod@wasm_bindgen`], so we cannot
     /// support [`IngredientSpec`] directly. Instead, we have to construct it from a JS value via
     /// [`serde_wasm_bindgen`], and then convert it via [`IngredientSpec::into_ingredient`].
+    ///
+    /// # Errors
+    ///
+    /// Returns a `serde::Error` if the input JS value cannot be deserialized into an
+    /// [`IngredientSpec`], or an [`Error`] if the resulting [`IngredientSpec`] fails to convert
+    /// into an [`Ingredient`], likely due to invalid values, e.g. negative percentages, etc.
     #[wasm_bindgen]
     pub fn into_ingredient_from_spec(spec: JsValue) -> Result<Ingredient, JsValue> {
         serde_wasm_bindgen::from_value::<IngredientSpec>(spec)?

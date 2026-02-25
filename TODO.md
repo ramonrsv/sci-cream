@@ -90,6 +90,7 @@
 - [ ] Consider using a scrollbar as an indicator of when `MixPropertiesChart` overflows.
 - [ ] Investigate web workers and Progressive Web Apps (PWA) and their applicability to this app.
 - [ ] Look into the solubility curves for lactose, trehalose, etc. to determine a limit.
+- [ ] Consider replacing `serde::Error` in docs with links to types, e.g. [`serde_json::Error`].
 
 # Completed
 

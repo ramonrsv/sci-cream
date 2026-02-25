@@ -89,9 +89,14 @@ impl Carbohydrates {
     }
 
     /// Calculates the energy contribution of the carbohydrates, in kcal per 100g of mix
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error::CannotComputeEnergy`] if energy calculations fail for any of the
+    /// components, e.g. due to the presence of "other" polyols with unknown energy contributions.
     pub fn energy(&self) -> Result<f64> {
-        Ok(self.fiber.energy()?
-            + self.sugars.energy()?
+        Ok(self.fiber.energy()
+            + self.sugars.energy()
             + self.polyols.energy()?
             + (self.others * constants::energy::CARBOHYDRATES))
     }
@@ -101,9 +106,14 @@ impl Carbohydrates {
     ///
     /// **Note**: The `others` field is intentionally omitted from this calculation, since "other"
     /// carbohydrates typically refers to long polysaccharides that do not contribute POD.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error::CannotComputePOD`] if POD calculations fail for any of the components,
+    /// e.g. due to the presence of "other" sugars or polyols with unknown POD contributions.
     pub fn to_pod(&self) -> Result<f64> {
         // `others` is intentionally omitted, see docs above
-        Ok(self.fiber.to_pod()? + self.sugars.to_pod()? + self.polyols.to_pod()?)
+        Ok(self.fiber.to_pod() + self.sugars.to_pod()? + self.polyols.to_pod()?)
     }
 
     /// Calculates the [PAC](crate::docs#pac-afp-fpdf-se) contributions of the carbohydrates, in
@@ -111,6 +121,11 @@ impl Carbohydrates {
     ///
     /// **Note**: The `fiber` and `others` fields are intentionally omitted from this calculation,
     /// they both typically refer to long polysaccharides that do not contribute PAC.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error::CannotComputePAC`] if PAC calculations fail for any of the components,
+    /// e.g. due to the presence of "other" sugars or polyols with unknown PAC contributions.
     pub fn to_pac(&self) -> Result<f64> {
         // `fibers` and `others` are intentionally omitted, see docs above
         Ok(self.sugars.to_pac()? + self.polyols.to_pac()?)

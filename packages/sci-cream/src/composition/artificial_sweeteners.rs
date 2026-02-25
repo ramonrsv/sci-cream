@@ -177,8 +177,11 @@ impl ArtificialSweeteners {
 
     /// Calculates the total energy contribution of the artificial sweeteners, in kcal per 100g
     ///
-    /// **Note**: If the [`other`](Self::other) field is used, this calculation will not be possible
-    /// since the specific compounds being used and their energy contributions are unknown.
+    /// # Errors
+    ///
+    /// Returns an [`Error::CannotComputeEnergy`] if the [`other`](Self::other) field is non-zero;
+    /// that would prevent this calculation from being performed since the specific compounds being
+    /// used and their energy contributions are unknown.
     pub fn energy(&self) -> Result<f64> {
         if self.other != 0.0 {
             return Err(Error::CannotComputeEnergy(
@@ -202,8 +205,11 @@ impl ArtificialSweeteners {
     /// Calculates the [POD](crate::docs#pod) contributions of the artificial sweeteners, in terms
     /// of sucrose equivalence
     ///
-    /// **Note**: If the [`other`](Self::other) field is used, this calculation will not be possible
-    /// since the specific compounds being used and their POD contributions are unknown.
+    /// # Errors
+    ///
+    /// Returns an [`Error::CannotComputePOD`] if the [`other`](Self::other) field is non-zero; that
+    /// would prevent this calculation from being performed since the specific compounds being used
+    /// and their POD contributions are unknown.
     pub fn to_pod(&self) -> Result<f64> {
         if self.other != 0.0 {
             return Err(Error::CannotComputePOD("Cannot compute POD with other artificial sweeteners".to_string()));
@@ -225,8 +231,11 @@ impl ArtificialSweeteners {
     /// Calculates the [PAC](crate::docs#pac-afp-fpdf-se) contributions of the artificial
     /// sweeteners, in terms of sucrose equivalence
     ///
-    /// **Note**: If the [`other`](Self::other) field is used, this calculation will not be possible
-    /// since the specific compounds being used and their PAC contributions are unknown.
+    /// # Errors
+    ///
+    /// Returns an [`Error::CannotComputePAC`] if the [`other`](Self::other) field is non-zero; that
+    /// would prevent this calculation from being performed since the specific compounds being used
+    /// and their PAC contributions are unknown.
     pub fn to_pac(&self) -> Result<f64> {
         if self.other != 0.0 {
             return Err(Error::CannotComputePAC("Cannot compute PAC with other artificial sweeteners".to_string()));

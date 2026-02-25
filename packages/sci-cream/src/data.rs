@@ -24,7 +24,11 @@ const EMBEDDED_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
     ("miscellaneous.json", include_str!("../data/ingredients/miscellaneous.json")),
 ];
 
-/// Parses a JSON string of ingredient specifications into a map of ingredient names to their spec.
+/// Parses a JSON string of ingredient specifications into a map of ingredient names to their spec
+///
+/// # Errors
+///
+/// Returns a [`serde_json::Error`] if the JSON string cannot be parsed into the expected format.
 pub fn parse_ingredient_specs_from_json_string(
     file_content: &str,
 ) -> std::result::Result<HashMap<String, IngredientSpec>, serde_json::Error> {
@@ -70,6 +74,10 @@ pub fn get_ingredient_specs_by_category(category: Category) -> Vec<IngredientSpe
 }
 
 /// Retrieves an embedded ingredient specification by its name.
+///
+/// # Errors
+///
+/// Returns an [`Error::IngredientNotFound`] if no ingredient with the specified name exists.
 pub fn get_ingredient_spec_by_name(name: &str) -> Result<IngredientSpec> {
     PARSED_EMBEDDED_INGREDIENT_SPECS
         .get(name)
@@ -90,19 +98,23 @@ pub mod wasm {
 
     use crate::{ingredient::Category, specs::IngredientSpec};
 
-    fn serialize_spec(spec: &IngredientSpec) -> Result<JsValue, JsValue> {
-        spec.serialize(&Serializer::json_compatible()).map_err(Into::into)
+    #[cfg(doc)]
+    use crate::error::Error;
+
+    fn serialize_spec(spec: &IngredientSpec) -> JsValue {
+        spec.serialize(&Serializer::json_compatible())
+            .expect("IngredientSpec should be serializable to JSON-compatible JS value")
     }
 
     /// WASM compatible wrapper for [`get_all_ingredient_specs`]
     #[wasm_bindgen(js_name = "get_all_ingredient_specs")]
-    pub fn get_all_ingredient_specs_wasm() -> Result<Vec<JsValue>, JsValue> {
+    pub fn get_all_ingredient_specs_wasm() -> Vec<JsValue> {
         get_all_ingredient_specs().iter().map(serialize_spec).collect()
     }
 
     /// WASM compatible wrapper for [`get_ingredient_specs_by_category`]
     #[wasm_bindgen(js_name = "get_ingredient_specs_by_category")]
-    pub fn get_ingredient_specs_by_category_wasm(category: Category) -> Result<Vec<JsValue>, JsValue> {
+    pub fn get_ingredient_specs_by_category_wasm(category: Category) -> Vec<JsValue> {
         get_ingredient_specs_by_category(category)
             .iter()
             .map(serialize_spec)
@@ -110,9 +122,13 @@ pub mod wasm {
     }
 
     /// WASM compatible wrapper for [`get_ingredient_spec_by_name`]
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error::IngredientNotFound`] if no ingredient with the specified name exists.
     #[wasm_bindgen(js_name = "get_ingredient_spec_by_name")]
     pub fn get_ingredient_spec_by_name_wasm(name: &str) -> Result<JsValue, JsValue> {
-        serialize_spec(&get_ingredient_spec_by_name(name).map_err::<JsValue, _>(Into::into)?)
+        Ok(serialize_spec(&get_ingredient_spec_by_name(name).map_err::<JsValue, _>(Into::into)?))
     }
 }
 

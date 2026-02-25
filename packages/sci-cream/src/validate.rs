@@ -35,6 +35,7 @@ pub trait Validate {
     type Type;
 
     /// Validates the current instance and returns a [`Result`] indicating success or failure.
+    #[allow(clippy::missing_errors_doc)] // Specifics depend on the implementation
     fn validate(&self) -> Result<Self::Type>;
 }
 
@@ -42,8 +43,7 @@ pub trait Validate {
 ///
 /// # Errors
 ///
-/// Return [`Error::CompositionNotPositive`] if any value is negative, with the first offending
-/// value in the range included in the returned [`Error`].
+/// Return [`Error::CompositionNotPositive`] if any value is negative.
 pub fn assert_are_positive(values: &[f64]) -> Result<()> {
     for &value in values {
         if value < 0.0 {
@@ -63,8 +63,7 @@ pub fn is_within_100_percent(value: f64) -> bool {
 ///
 /// # Errors
 ///
-/// Return [`Error::CompositionNotWithin100Percent`] if the value is not between 0 and 100, with the
-/// offending value included in the returned [`Error`].
+/// Return [`Error::CompositionNotWithin100Percent`] if the value is not between 0 and 100.
 pub fn assert_within_100_percent(value: f64) -> Result<()> {
     if is_within_100_percent(value) {
         Ok(())
@@ -77,8 +76,7 @@ pub fn assert_within_100_percent(value: f64) -> Result<()> {
 ///
 /// # Errors
 ///
-/// Return [`Error::CompositionNot100Percent`] if the value is not 100, with the offending value
-/// included in the returned [`Error`].
+/// Return [`Error::CompositionNot100Percent`] if the value is not 100.
 pub fn assert_is_100_percent(value: f64) -> Result<()> {
     if (value - 100.0).abs() < f64::EPSILON {
         Ok(())
@@ -91,8 +89,7 @@ pub fn assert_is_100_percent(value: f64) -> Result<()> {
 ///
 /// # Errors
 ///
-/// Return [`Error::InvalidComposition`] if the subset value is greater than the superset value,
-/// with a description and the offending values included in the returned [`Error`].
+/// Return [`Error::InvalidComposition`] if the subset value is greater than the superset value.
 pub fn assert_is_subset(subset: f64, superset: f64, description: &str) -> Result<()> {
     if subset <= superset {
         Ok(())

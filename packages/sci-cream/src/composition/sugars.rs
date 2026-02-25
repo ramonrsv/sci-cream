@@ -193,15 +193,19 @@ impl Sugars {
     }
 
     /// Calculates the total energy contributed by the sugars, in kcal per 100g of mix
-    pub fn energy(&self) -> Result<f64> {
-        Ok(self.total() * constants::energy::CARBOHYDRATES)
+    #[must_use]
+    pub fn energy(&self) -> f64 {
+        self.total() * constants::energy::CARBOHYDRATES
     }
 
     /// Calculates the [POD](crate::docs#pod) contributions of the sugars, in terms of sucrose
     /// equivalence
     ///
-    /// **Note**: If the [`other`](Self::other) field is used, this calculation will not be possible
-    /// since the specific compounds being used and their POD contributions are unknown.
+    /// # Errors
+    ///
+    /// Returns an [`Error::CannotComputePOD`] if the [`other`](Self::other) field is non-zero; that
+    /// would prevent this calculation from being performed since the specific compounds being used
+    /// and their POD contributions are unknown.
     pub fn to_pod(&self) -> Result<f64> {
         if self.other != 0.0 {
             return Err(Error::CannotComputePOD("Other sugars should be zero".to_string()));
@@ -224,8 +228,11 @@ impl Sugars {
     /// Calculates the [PAC](crate::docs#pac-afp-fpdf-se) contributions of the sugars, in terms of
     /// sucrose equivalence
     ///
-    /// **Note**: If the [`other`](Self::other) field is used, this calculation will not be possible
-    /// since the specific compounds being used and their PAC contributions are unknown.
+    /// # Errors
+    ///
+    /// Returns an [`Error::CannotComputePAC`] if the [`other`](Self::other) field is non-zero; that
+    /// would prevent this calculation from being performed since the specific compounds being used
+    /// and their PAC contributions are unknown.
     pub fn to_pac(&self) -> Result<f64> {
         if self.other != 0.0 {
             return Err(Error::CannotComputePAC("Unspecified sugars should be zero".to_string()));
@@ -262,6 +269,10 @@ impl Sugars {
     }
 
     /// WASM compatible wrapper for [`to_pod`](Self::to_pod)
+    ///
+    /// # Errors
+    ///
+    /// Forwards any errors from the underlying [`to_pod`](Self::to_pod) method.
     #[cfg(feature = "wasm")]
     #[wasm_bindgen(js_name = "to_pod")]
     #[cfg_attr(coverage, coverage(off))]
@@ -270,6 +281,10 @@ impl Sugars {
     }
 
     /// WASM compatible wrapper for [`to_pac`](Self::to_pac)
+    ///
+    /// # Errors
+    ///
+    /// Forwards any errors from the underlying [`to_pac`](Self::to_pac) method.
     #[cfg(feature = "wasm")]
     #[wasm_bindgen(js_name = "to_pac")]
     #[cfg_attr(coverage, coverage(off))]

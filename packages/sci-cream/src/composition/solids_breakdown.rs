@@ -121,6 +121,11 @@ impl SolidsBreakdown {
     /// overall energy calculations depends on the quality of the ingredient definitions. Returning
     /// an error here would be impractical, since the `others` field is rarely expected to be zero,
     /// although it is expected to almost always be a small fraction of the total solids content.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error::CannotComputeEnergy`] if energy calculations fail for any of the
+    /// components, e.g. due to the presence of "other" polyols with unknown energy contributions.
     pub fn energy(&self) -> Result<f64> {
         // `others` is intentionally omitted; see docs above
         Ok(self.fats.energy()

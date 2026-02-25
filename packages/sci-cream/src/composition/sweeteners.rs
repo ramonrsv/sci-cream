@@ -13,7 +13,7 @@ use crate::{
 use wasm_bindgen::prelude::*;
 
 #[cfg(doc)]
-use crate::{composition::Composition, specs::SweetenerSpec};
+use crate::{composition::Composition, error::Error, specs::SweetenerSpec};
 
 /// The sweetener composition of an ingredient or mix, including sugars, polyols, and artificial
 ///
@@ -64,6 +64,11 @@ impl Sweeteners {
     /// Calculates the [POD](crate::docs#pod) contributions of all the sweeteners in this struct
     ///
     /// It forwards to the `to_pod` methods of the individual components and sums the results.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error::CannotComputePOD`] if POD calculations fail for any of the components,
+    /// e.g. due to the presence of "other" sugars or polyols with unknown POD contributions.
     pub fn to_pod(&self) -> Result<f64> {
         Ok(self.sugars.to_pod()? + self.polyols.to_pod()? + self.artificial.to_pod()?)
     }
@@ -72,6 +77,11 @@ impl Sweeteners {
     /// this struct
     ///
     /// It forwards to the `to_pac` methods of the individual components and sums the results.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error::CannotComputePAC`] if PAC calculations fail for any of the components,
+    /// e.g. due to the presence of "other" sugars or polyols with unknown PAC contributions.
     pub fn to_pac(&self) -> Result<f64> {
         Ok(self.sugars.to_pac()? + self.polyols.to_pac()? + self.artificial.to_pac()?)
     }

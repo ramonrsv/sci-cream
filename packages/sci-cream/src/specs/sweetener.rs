@@ -134,7 +134,7 @@ impl IntoComposition for SweetenerSpec {
             .others(other_solids);
 
         let pod = match pod {
-            None => sweeteners.to_pod()? + fiber.to_pod()?,
+            None => sweeteners.to_pod()? + fiber.to_pod(),
             Some(scaling) => match scaling {
                 Scaling::OfWhole(value) => value,
                 Scaling::OfSolids(value) => value * (solids.total() / 100.0),

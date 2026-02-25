@@ -103,6 +103,11 @@ impl Recipe {
 
     /// Calculate the composition of the recipe as the combination of the compositions of its
     /// ingredients, weighted by their amounts.
+    ///
+    /// # Errors
+    ///
+    /// Forwards any errors from [`Composition::from_combination`] if the recipe is not valid, e.g.
+    /// if any ingredient has a negative amount.
     pub fn calculate_composition(&self) -> Result<Composition> {
         Composition::from_combination(
             &self
@@ -114,6 +119,10 @@ impl Recipe {
     }
 
     /// Calculate the mix properties of the recipe, including total amount, composition, and FPD.
+    ///
+    /// # Errors
+    ///
+    /// Forwards any errors from [`FPD::compute_from_composition`] if FPD calculation fails.
     pub fn calculate_mix_properties(&self) -> Result<MixProperties> {
         let total_amount: f64 = self.lines.iter().map(|line| line.amount).sum();
         let composition = self.calculate_composition()?;
@@ -145,7 +154,14 @@ pub mod wasm {
 
     use super::{Composition, MixProperties, OwnedLightRecipe, Recipe};
 
+    #[cfg(doc)]
+    use crate::fpd::FPD;
+
     /// Create an [`OwnedLightRecipe`] from a JavaScript list of ingredient name and amount pairs.
+    ///
+    /// # Errors
+    ///
+    /// Returns a `serde::Error` if the input cannot be deserialized into an [`OwnedLightRecipe`].
     pub fn light_recipe_from_jsvalue(recipe: JsValue) -> Result<OwnedLightRecipe, JsValue> {
         serde_wasm_bindgen::from_value::<OwnedLightRecipe>(recipe).map_err(Into::into)
     }
@@ -153,12 +169,21 @@ pub mod wasm {
     #[wasm_bindgen]
     impl Recipe {
         /// WASM compatible wrapper for [`Recipe::calculate_composition`]
+        ///
+        /// # Errors
+        ///
+        /// Forwards any errors from [`Composition::from_combination`] if the recipe is not valid,
+        /// e.g. if any ingredient has a negative amount.
         #[wasm_bindgen(js_name = "calculate_composition")]
         pub fn calculate_composition_wasm(&self) -> Result<Composition, JsValue> {
             self.calculate_composition().map_err(Into::into)
         }
 
         /// WASM compatible wrapper for [`Recipe::calculate_mix_properties`]
+        ///
+        /// # Errors
+        ///
+        /// Forwards any errors from [`FPD::compute_from_composition`] if FPD calculations fail.
         #[wasm_bindgen(js_name = "calculate_mix_properties")]
         pub fn calculate_mix_properties_wasm(&self) -> Result<MixProperties, JsValue> {
             self.calculate_mix_properties().map_err(Into::into)
@@ -224,7 +249,7 @@ mod tests {
 
     #[test]
     fn recipe_from_light_recipe() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data().unwrap();
+        let db = IngredientDatabase::new_seeded_from_embedded_data();
         let light_recipe = REF_LIGHT_RECIPE.clone();
 
         let recipe = Recipe::from_light_recipe(None, &light_recipe, &db).unwrap();

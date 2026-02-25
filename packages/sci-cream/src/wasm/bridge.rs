@@ -11,6 +11,9 @@ use crate::{
     recipe::{LightRecipe, Recipe},
 };
 
+#[cfg(doc)]
+use crate::error::Error;
+
 /// WASM Bridge for calculating recipe compositions and mix properties
 ///
 /// This struct serves as a bridge between WASM and the Rust backend, attempting to keep as much of
@@ -30,16 +33,34 @@ pub struct Bridge {
 
 impl Bridge {
     /// Forwards to [`IngredientDatabase::get_ingredient_by_name`] of the internal database
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error::IngredientNotFound`] if no ingredient with the name is found.
     pub fn get_ingredient_by_name(&self, name: &str) -> Result<Ingredient> {
         self.db.get_ingredient_by_name(name)
     }
 
     /// Forwards to [`Recipe::calculate_composition`], creating a [`Recipe`] from [`LightRecipe`]
+    ///
+    /// # Errors
+    ///
+    /// When converting the [`LightRecipe`] into a full [`Recipe`] via
+    /// [`Recipe::from_light_recipe`], it returns an [`Error::IngredientNotFound`] if any ingredient
+    /// name in the [`LightRecipe`] is not found in the provided [`IngredientDatabase`]. It also
+    /// forwards any errors from [`Recipe::calculate_composition`] if composition calculations fail.
     pub fn calculate_recipe_composition(&self, recipe: &LightRecipe) -> Result<Composition> {
         Recipe::from_light_recipe(None, recipe, &self.db)?.calculate_composition()
     }
 
     /// Forwards to [`Recipe::calculate_mix_properties`], creating a [`Recipe`] from [`LightRecipe`]
+    ///
+    /// # Errors
+    ///
+    /// When converting the [`LightRecipe`] into a full [`Recipe`] via
+    /// [`Recipe::from_light_recipe`], it returns an [`Error::IngredientNotFound`] if any ingredient
+    /// name in the [`LightRecipe`] is not found in the provided [`IngredientDatabase`]. It also
+    /// forwards any errors from [`Recipe::calculate_mix_properties`] if FPD calculations fail.
     pub fn calculate_recipe_mix_properties(&self, recipe: &LightRecipe) -> Result<MixProperties> {
         Recipe::from_light_recipe(None, recipe, &self.db)?.calculate_mix_properties()
     }
@@ -79,7 +100,7 @@ pub mod wasm {
     };
 
     #[cfg(doc)]
-    use crate::database::IngredientDatabase;
+    use crate::{database::IngredientDatabase, error::Error, recipe::OwnedLightRecipe};
 
     //#[cfg_attr(feature = "wasm", wasm_bindgen)]
     #[wasm_bindgen]
@@ -88,12 +109,21 @@ pub mod wasm {
         ///
         /// Actually an independent wrapper that forwards to the internal database's WASM wrapper
         /// [`IngredientDatabase::get_ingredient_by_name_wasm`], but it's the same interface.
+        ///
+        /// # Errors
+        ///
+        /// Returns an [`Error::IngredientNotFound`] if no ingredient with the name is found.
         #[wasm_bindgen(js_name = "get_ingredient_by_name")]
         pub fn get_ingredient_by_name_wasm(&self, name: &str) -> Result<Ingredient, JsValue> {
             self.db.get_ingredient_by_name_wasm(name)
         }
 
         /// WASM compatible wrapper for [`Bridge::calculate_recipe_composition`]
+        ///
+        /// # Errors
+        ///
+        /// Returns a `serde::Error` if the `JsValue` input cannot be deserialized into an
+        /// [`OwnedLightRecipe`], and forwards any errors from the forwarded-to method.
         #[wasm_bindgen(js_name = "calculate_recipe_composition")]
         pub fn calculate_recipe_composition_wasm(&self, recipe: Box<[JsValue]>) -> Result<Composition, JsValue> {
             let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
@@ -101,6 +131,11 @@ pub mod wasm {
         }
 
         /// WASM compatible wrapper for [`Bridge::calculate_recipe_mix_properties`]
+        ///
+        /// # Errors
+        ///
+        /// Returns a `serde::Error` if the `JsValue` input cannot be deserialized into an
+        /// [`OwnedLightRecipe`], and forwards any errors from the forwarded-to method.
         #[wasm_bindgen(js_name = "calculate_recipe_mix_properties")]
         pub fn calculate_recipe_mix_properties_wasm(&self, recipe: Box<[JsValue]>) -> Result<MixProperties, JsValue> {
             let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;

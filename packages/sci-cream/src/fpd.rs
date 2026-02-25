@@ -95,6 +95,10 @@ impl FPD {
     /// A [`Composition::empty()`] is equivalent to a 100% water composition, and will result in an
     /// [`FPD`](Self::fpd) of 0°C, [serving temperature](Self::serving_temp) of 0°C, [hardness at
     /// -14°C](Self::hardness_at_14c) of [`f64::NAN`], and straight [curves](Self::curves) at 0°C.
+    ///
+    /// # Errors
+    ///
+    /// Forwards any errors that may arise from [`compute_fpd_curves`].
     pub fn compute_from_composition(composition: Composition) -> Result<Self> {
         let curves = compute_fpd_curves(
             composition,
@@ -213,6 +217,13 @@ pub enum FpdCurvesMethod {
 }
 
 /// Compute FPD curves for a given mix composition using specified methods
+///
+/// # Errors
+///
+/// Forwards any errors that may arise from the underlying functions called based on the specified
+/// `pac_to_fpd_method` and `curves_method` arguments. See [`get_fpd_from_pac_interpolation`],
+/// [`get_fpd_from_pac_polynomial`], [`compute_fpd_curve_step_goff_hartel`], and
+/// [`compute_fpd_curve_step_modified_goff_hartel_corvitto`] for more details on potential errors.
 pub fn compute_fpd_curves(
     composition: Composition,
     pac_to_fpd_method: PacToFpdMethod,
@@ -250,6 +261,10 @@ pub fn compute_fpd_curves(
 }
 
 /// Compute FPD from PAC via interpolation of [`PAC_TO_FPD_TABLE`]
+///
+/// # Errors
+///
+/// Returns an [`Error::NegativePacValue`] if the provided PAC value is negative.
 pub fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
     if pac < 0.0 {
         return Err(Error::NegativePacValue(pac));
@@ -295,6 +310,10 @@ pub fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
 /// different results than computing FPD for each PAC value separately and then summing the FPDs,
 /// particularly at higher PAC values. Summing the PAC values first is the recommended approach.
 /// </div>
+///
+/// # Errors
+///
+/// Returns an [`Error::NegativePacValue`] if the provided PAC value is negative.
 pub fn get_fpd_from_pac_polynomial(pac: f64, coeffs: Option<[f64; 3]>) -> Result<f64> {
     let [a, b, c] = coeffs.unwrap_or(PAC_TO_FPD_POLY_COEFFS);
 
@@ -311,6 +330,13 @@ pub fn get_fpd_from_pac_polynomial(pac: f64, coeffs: Option<[f64; 3]>) -> Result
 /// They are an argument for flexibility, but are likely to always be [`PAC_TO_FPD_POLY_COEFFS`].
 ///
 /// This function is the inverse of [`get_fpd_from_pac_polynomial`].
+///
+/// # Errors
+///
+/// Returns an [`Error::PositiveFpdValue`] if the provided FPD value is positive, as FPD cannot be
+/// positive. It may also return an [`Error::CannotComputePAC`] if the discriminant of the
+/// polynomial equation is negative (i.e., no real roots exist), or if both roots are negative
+/// (i.e., PAC cannot be negative) or both roots are positive (i.e., ambiguous PAC value).
 pub fn get_pac_from_fpd_polynomial(fpd: f64, coeffs: Option<[f64; 3]>) -> Result<f64> {
     let [a, b, c] = coeffs.unwrap_or(PAC_TO_FPD_POLY_COEFFS);
 
@@ -340,7 +366,15 @@ pub fn get_pac_from_fpd_polynomial(fpd: f64, coeffs: Option<[f64; 3]>) -> Result
 }
 
 /// Compute serving temperature from PAC using [`CORVITTO_PAC_TO_SERVING_TEMP_TABLE`]
+///
+/// # Errors
+///
+/// Returns an [`Error::NegativePacValue`] if the provided PAC value is negative.
 pub fn get_serving_temp_from_pac_corvitto(pac: f64) -> Result<f64> {
+    if pac < 0.0 {
+        return Err(Error::NegativePacValue(pac));
+    }
+
     let first = CORVITTO_PAC_TO_SERVING_TEMP_TABLE[0];
     let last = CORVITTO_PAC_TO_SERVING_TEMP_TABLE
         .last()
@@ -397,6 +431,10 @@ impl GoffHartelFpdCurveStep {
 }
 
 /// Compute a single step in the FPD curve using the Goff & Hartel method (2013, p. 181)[^2]
+///
+/// # Errors
+///
+/// Forwards any errors that may arise from the provided `get_fpd_from_pac` function.
 #[doc = include_str!("../docs/bibs/2.md")]
 pub fn compute_fpd_curve_step_goff_hartel(
     composition: Composition,
@@ -469,6 +507,10 @@ impl ModifiedGoffHartelCorvittoFpdCurveStep {
 /// The Corvitto method (2005, p. 243)[^3] for calculating hardness with cocoa and nut ingredients
 /// is also integrated here, subtracting the hardness factor from the total PAC before computing
 /// a separate FPD including hardness factor.
+///
+/// # Errors
+///
+/// Forwards any errors that may arise from the provided `get_fpd_from_pac` function.
 #[doc = include_str!("../docs/bibs/2.md")]
 #[doc = include_str!("../docs/bibs/3.md")]
 pub fn compute_fpd_curve_step_modified_goff_hartel_corvitto(

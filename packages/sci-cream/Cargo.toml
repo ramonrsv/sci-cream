@@ -112,7 +112,6 @@ todo = "warn"
 unwrap_used = "warn"
 
 # @todo Temporary allows until fixed.
-missing_errors_doc = "allow"
 unsafe_derive_deserialize = "allow"
 
 [lints.rustdoc]

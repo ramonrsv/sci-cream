@@ -17,6 +17,9 @@ use crate::{
     specs::IngredientSpec,
 };
 
+#[cfg(doc)]
+use crate::composition::Composition;
+
 /// Provides an in-memory database for looking up ingredient definitions by name
 ///
 /// Since ingredient objects are lightweight, in most use cases keeping many or all of them in
@@ -56,7 +59,13 @@ impl IngredientDatabase {
             .collect::<Result<_>>()
     }
 
-    /// Creates a new [`IngredientDatabase`] seeded with the provided [`IngredientSpec`]s.
+    /// Creates a new [`IngredientDatabase`] seeded with the provided [`IngredientSpec`]s
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] if any of the provided specs cannot be converted into an
+    /// [`Ingredient`]. This would likely be an error converting a [`spec`](crate::specs) into a
+    /// [`Composition`] due to invalid values, e.g. negative percentages, not summing to 100%, etc.
     pub fn new_seeded_from_specs(specs: &[IngredientSpec]) -> Result<Self> {
         Ok(Self::new_seeded(&Self::specs_into_ingredients(specs)?))
     }
@@ -64,21 +73,24 @@ impl IngredientDatabase {
     /// Creates a new [`IngredientDatabase`] seeded with all embedded ingredient specifications.
     ///
     /// This function requires the `data` feature to be enabled.
+    #[allow(clippy::missing_panics_doc)] // If this panics it's a bug, not a user-facing error
     #[cfg(feature = "data")]
-    pub fn new_seeded_from_embedded_data() -> Result<Self> {
+    #[must_use]
+    pub fn new_seeded_from_embedded_data() -> Self {
         Self::new_seeded_from_specs(&crate::data::get_all_ingredient_specs())
+            .expect("Embedded ingredients specs should all `into_ingredient` successfully")
     }
 
     fn acquire_read_lock(&self) -> RwLockReadGuard<'_, HashMap<String, Ingredient>> {
         self.map
             .read()
-            .expect("Failed to acquire read lock on ingredient database")
+            .expect("Read lock on the ingredient database should be acquired successfully")
     }
 
     fn acquire_write_lock(&self) -> RwLockWriteGuard<'_, HashMap<String, Ingredient>> {
         self.map
             .write()
-            .expect("Failed to acquire write lock on ingredient database")
+            .expect("Write lock on the ingredient database should be acquired successfully")
     }
 
     /// Seeds the database with the provided [`Ingredient`]s.
@@ -90,12 +102,22 @@ impl IngredientDatabase {
     }
 
     /// Seeds the database with the provided [`IngredientSpec`]s.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] if any of the provided specs cannot be converted into an
+    /// [`Ingredient`]. This would likely be an error converting a [`spec`](crate::specs) into a
+    /// [`Composition`] due to invalid values, e.g. negative percentages, not summing to 100%, etc.
     pub fn seed_from_specs(&self, specs: &[IngredientSpec]) -> Result<()> {
         self.seed(&Self::specs_into_ingredients(specs)?);
         Ok(())
     }
 
     /// Retrieves an [`Ingredient`] by its name.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error::IngredientNotFound`] if no ingredient with the specified name is found.
     pub fn get_ingredient_by_name(&self, name: &str) -> Result<Ingredient> {
         self.acquire_read_lock()
             .get(name)
@@ -146,6 +168,9 @@ pub mod wasm {
 
     use crate::{ingredient::Ingredient, specs::IngredientSpec};
 
+    #[cfg(doc)]
+    use crate::error::Error;
+
     fn specs_from_jsvalues(specs: &[JsValue]) -> Result<Vec<IngredientSpec>, JsValue> {
         specs
             .iter()
@@ -163,6 +188,12 @@ pub mod wasm {
         }
 
         /// WASM compatible wrapper for [`IngredientDatabase::seed_from_specs`]
+        ///
+        /// # Errors
+        ///
+        /// Returns an [`Error`] if any of the specs cannot be converted into an [`Ingredient`]; see
+        /// the forwarded-to method for more details. It may also return a `serde::Error` if the
+        /// provided JS values cannot be deserialized into [`IngredientSpec`]s.
         #[wasm_bindgen(js_name = "seed_from_specs")]
         #[allow(clippy::needless_pass_by_value)]
         pub fn seed_from_specs_wasm(&self, specs: Box<[JsValue]>) -> Result<(), JsValue> {
@@ -170,6 +201,10 @@ pub mod wasm {
         }
 
         /// WASM compatible wrapper for [`IngredientDatabase::get_ingredient_by_name`]
+        ///
+        /// # Errors
+        ///
+        /// Returns an [`Error::IngredientNotFound`] if no ingredient with the name is found.
         #[wasm_bindgen(js_name = "get_ingredient_by_name")]
         pub fn get_ingredient_by_name_wasm(&self, name: &str) -> Result<Ingredient, JsValue> {
             self.get_ingredient_by_name(name).map_err(Into::into)
@@ -185,6 +220,12 @@ pub mod wasm {
     }
 
     /// WASM compatible builder forwarding to [`IngredientDatabase::new_seeded_from_specs`].
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] if any of the specs cannot be converted into an [`Ingredient`]; see
+    /// the forwarded-to method for more details. It may also return a `serde::Error` if the
+    /// provided JS values cannot be deserialized into [`IngredientSpec`]s.
     #[wasm_bindgen]
     #[allow(clippy::needless_pass_by_value)]
     pub fn new_ingredient_database_seeded_from_specs(specs: Box<[JsValue]>) -> Result<IngredientDatabase, JsValue> {
@@ -196,8 +237,9 @@ pub mod wasm {
     /// This function requires the `data` feature to be enabled.
     #[cfg(feature = "data")]
     #[wasm_bindgen]
-    pub fn new_ingredient_database_seeded_from_embedded_data() -> Result<IngredientDatabase, JsValue> {
-        IngredientDatabase::new_seeded_from_embedded_data().map_err(Into::into)
+    #[must_use]
+    pub fn new_ingredient_database_seeded_from_embedded_data() -> IngredientDatabase {
+        IngredientDatabase::new_seeded_from_embedded_data()
     }
 }
 
@@ -286,7 +328,7 @@ pub(crate) mod tests {
 
     #[test]
     fn ingredient_database_seeded_from_embedded_data() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data().unwrap();
+        let db = IngredientDatabase::new_seeded_from_embedded_data();
 
         assert_eq!(db.get_all_ingredients().len(), get_all_ingredient_specs().len());
 
