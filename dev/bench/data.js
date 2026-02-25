@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772001023307,
+  "lastUpdate": 1772001051431,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -6929,6 +6929,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 378,
             "range": "± 21",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b32bcc2885099a143b460716faa5c0a84bf44bad",
+          "message": "Add all missing item docs in `crate::composition`\n\n* Update energy constants for polyols based on (Spillane, 2006, Table\n  8.3, p. 157)[^9]. These values seem to be much more specific than\n  those from the previous source. Update the unit tests accordingly.\n\n* Add some TODOs about:\n  - Making `ScaleComponents` private\n  - Considering whether to add `CompKey`s for all polyols/artifricial\n  - Renaming `assert_*` functions to `verify_*`\n  - Adding traits for calculating POD, PAC, energy, total (sum), etc.\n  - Removing uses of `.unwrap()` in documentation code examples\n  - Enabling the 'nursery' clippy lints group and opting-out of some\n  - Reviewing the polyol energy constants, don't agree with Spillane\n  - Finding source for the 10% lactose concentration limit\n  - Considering use of scrollbar to indicate `MixPropsChart` overflow\n  - Investigating web workers and Progressive Web Apps (PWA)\n  - Looking into solubility curves for lactose, trehalose, etc.",
+          "timestamp": "2026-02-25T01:06:19-05:00",
+          "tree_id": "1a7243f4db5c3bf12e453be8c2b7ca59b6ebca55",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b32bcc2885099a143b460716faa5c0a84bf44bad"
+        },
+        "date": 1772001049890,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3571,
+            "range": "± 79",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 162392,
+            "range": "± 5249",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1967,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 159893,
+            "range": "± 515",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 305,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
