@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772001051431,
+  "lastUpdate": 1772001281166,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -63868,6 +63868,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 29.71,
             "range": "0.85",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b32bcc2885099a143b460716faa5c0a84bf44bad",
+          "message": "Add all missing item docs in `crate::composition`\n\n* Update energy constants for polyols based on (Spillane, 2006, Table\n  8.3, p. 157)[^9]. These values seem to be much more specific than\n  those from the previous source. Update the unit tests accordingly.\n\n* Add some TODOs about:\n  - Making `ScaleComponents` private\n  - Considering whether to add `CompKey`s for all polyols/artifricial\n  - Renaming `assert_*` functions to `verify_*`\n  - Adding traits for calculating POD, PAC, energy, total (sum), etc.\n  - Removing uses of `.unwrap()` in documentation code examples\n  - Enabling the 'nursery' clippy lints group and opting-out of some\n  - Reviewing the polyol energy constants, don't agree with Spillane\n  - Finding source for the 10% lactose concentration limit\n  - Considering use of scrollbar to indicate `MixPropsChart` overflow\n  - Investigating web workers and Progressive Web Apps (PWA)\n  - Looking into solubility curves for lactose, trehalose, etc.",
+          "timestamp": "2026-02-25T01:06:19-05:00",
+          "tree_id": "1a7243f4db5c3bf12e453be8c2b7ca59b6ebca55",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b32bcc2885099a143b460716faa5c0a84bf44bad"
+        },
+        "date": 1772001279414,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 662.3,
+            "range": "55.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 44.4,
+            "range": "5.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.5,
+            "range": "4.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38,
+            "range": "3.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 35,
+            "range": "3.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 156.6,
+            "range": "4.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 39.5,
+            "range": "1.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 38.04,
+            "range": "0.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 27.29,
+            "range": "0.71",
             "unit": "ms"
           }
         ]
