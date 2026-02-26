@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772147147368,
+  "lastUpdate": 1772147158368,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -7415,6 +7415,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 308,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c77b51f5cd708cef4fb20be2d7af0f1803eaa8bf",
+          "message": "chore: Release sci-cream version 0.0.2",
+          "timestamp": "2026-02-26T18:04:15-05:00",
+          "tree_id": "b29a4cefc58201f1e68b5654d4c5a608e0d2e26a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c77b51f5cd708cef4fb20be2d7af0f1803eaa8bf"
+        },
+        "date": 1772147156976,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3545,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161351,
+            "range": "± 3318",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1990,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160002,
+            "range": "± 1361",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 303,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
