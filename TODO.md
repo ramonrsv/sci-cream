@@ -1,7 +1,6 @@
 # Next Crate Release
 
 - [ ] Add `CHANGELOG.md` and `release.toml` for releases with `cargo-release` crate.
-- [ ] Add `README.md` with library description, badge links, etc.
 - [ ] Add comprehensive library overview in `lib.rs` crate docs and in `README.md`.
 
 # Next App Release
@@ -100,6 +99,7 @@
 
 # Completed
 
+- [x] Add `README.md` with library description, badge links, etc.
 - [x] Document all items in `sci-cream` crate and enable `missing_docs` lint everywhere.
 - [x] Review the energy constants for polyols, they don't agree with Spillane, 2006, p. 157.
 - [x] Once `0.0.1` is released, look into hosting the app live.
