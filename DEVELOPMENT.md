@@ -40,7 +40,6 @@ $ wasm-pack build --out-dir wasm --out-name index -- --features "wasm,data,datab
 To run code coverage:
 
 ```bash
-$ # Rust
 $ cargo install cargo-llvm-cov
 $ cargo llvm-cov test --all-features
 $ # Generate report to upload or visualize locally
@@ -53,6 +52,24 @@ To upgrade Rust dependencies:
 $ cargo install cargo-edit
 $ cd ./packages/sci-cream
 $ cargo upgrade --incompatible
+```
+
+To perform a release:
+
+```bash
+$ cargo install cargo-release
+$
+$ # Login to crates.io, needs token from https://crates.io/settings/tokens
+$ cargo login
+$
+$ # Review changes and update CHANGELOG.md
+$ cargo release changes
+$
+$ # Review release before executing
+$ cargo release patch # OR minor, major
+$
+$ # Execute release, will also push tag
+$ cargo release patch --execute
 ```
 
 # `sci-cream` app at `packages/app`

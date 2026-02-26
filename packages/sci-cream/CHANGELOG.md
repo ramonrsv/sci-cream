@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- `crates.io` and `docs.rs` documentation badges and links to `README.md`
+- `crates.io` and `docs.rs` documentation badges and links to `README.md`.
+- Instructions to `DEVELOPMENT.md`, about how to do a release using `cargo-release`.
 
 ### Fixed
 
