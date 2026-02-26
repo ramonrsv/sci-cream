@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772146528876,
+  "lastUpdate": 1772146670609,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -73124,6 +73124,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.72%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9dc566cc19b0d6ded41fb941e66af9882ee6ced8",
+          "message": "Add crates.io and docs.rs badges to `README.md`\n\nAlso change ice cream science documentation link in `README.md` to point\nto docs.rs instead of github.com.",
+          "timestamp": "2026-02-26T17:49:37-05:00",
+          "tree_id": "01618a7aa76ac5c5f90065b9bc8f0b59102b6f2b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9dc566cc19b0d6ded41fb941e66af9882ee6ced8"
+        },
+        "date": 1772146666185,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 81451,
+            "range": "±1.01%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 706412,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10009,
+            "range": "±1.91%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 587259,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
