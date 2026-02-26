@@ -47,6 +47,7 @@
 - [ ] Consider adding composition traits for calculating POD, PAC, and energy, total (sum), etc.
 - [ ] Remove uses of `.unwrap()` in documentation code examples, see the `# fn main() ...` trick.
 - [ ] Enable the `nursery` clippy lint group and opt-out of any problematic ones.
+- [ ] Investigate why `cargo release changes` is not working for the `sci-cream` crate.
 
 # Backlog
 
