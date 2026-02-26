@@ -9,7 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
-## [0.0.1] - 2026-02-26
+### Fixed
+
+- `release.toml` and `CHANGELOG.md` to accommodate extra `\n` after `next-url` added by TOML format.
 
 ## [0.0.1] - 2026-02-26
 
@@ -37,8 +39,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - TypeScript utilities, optimizations, ingredient database as JSON, wrapper for `PropKey`, etc.
 
 <!-- next-url -->
-[Unreleased]:  https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.1...HEAD
-[0.0.1]:  https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.1...sci-cream-v0.0.1
 
-[0.0.1]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.1...sci-cream-v0.0.1
+[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.1...HEAD
 [0.0.1]: https://github.com/ramonrsv/sci-cream/releases/tag/sci-cream-v0.0.1
