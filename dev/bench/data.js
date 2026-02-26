@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772147415439,
+  "lastUpdate": 1772147946206,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -74795,6 +74795,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.67%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8ace510638811c76410b4e5124b2897a40b18451",
+          "message": "Add TODO about why `cargo release changes` no work",
+          "timestamp": "2026-02-26T18:17:19-05:00",
+          "tree_id": "16bd3de667974cae620c0a2207fd2a21a9fe8a1c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8ace510638811c76410b4e5124b2897a40b18451"
+        },
+        "date": 1772147943971,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 90392,
+            "range": "±1.64%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 721616,
+            "range": "±0.81%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9909,
+            "range": "±2.49%",
+            "unit": "ops/sec",
+            "extra": "80 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 620972,
+            "range": "±0.79%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
