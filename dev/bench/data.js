@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772001292747,
+  "lastUpdate": 1772143458694,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -69782,6 +69782,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.69%",
             "unit": "ops/sec",
             "extra": "96 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "37ca50ca507dc071b1ed87814d57a0da152b6538",
+          "message": "Enable `clippy::missing_errors_doc` and fix all\n\n* Add `Errors` documentation to all items that are missing it.\n* Remove explinations of what values are returned within Error variants\n* Remove `Result<>` from the return of several interface where an error\n  would indicate a bug and not a user-facing error; use .expect instead\n* Add TODO about replacing `serde::Error` with links to actual types.",
+          "timestamp": "2026-02-26T12:09:37-05:00",
+          "tree_id": "0d39ea74bfe93763130340192c4d1ce0af7fc312",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/37ca50ca507dc071b1ed87814d57a0da152b6538"
+        },
+        "date": 1772143457197,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78727,
+            "range": "±1.35%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 696087,
+            "range": "±1.39%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9902,
+            "range": "±2.11%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 579994,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
