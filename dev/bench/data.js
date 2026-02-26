@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772143503997,
+  "lastUpdate": 1772143703553,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -64373,6 +64373,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 27.29,
             "range": "0.71",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "37ca50ca507dc071b1ed87814d57a0da152b6538",
+          "message": "Enable `clippy::missing_errors_doc` and fix all\n\n* Add `Errors` documentation to all items that are missing it.\n* Remove explinations of what values are returned within Error variants\n* Remove `Result<>` from the return of several interface where an error\n  would indicate a bug and not a user-facing error; use .expect instead\n* Add TODO about replacing `serde::Error` with links to actual types.",
+          "timestamp": "2026-02-26T12:09:37-05:00",
+          "tree_id": "0d39ea74bfe93763130340192c4d1ce0af7fc312",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/37ca50ca507dc071b1ed87814d57a0da152b6538"
+        },
+        "date": 1772143701735,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 663.3,
+            "range": "57.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.5,
+            "range": "9.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.1,
+            "range": "4.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.2,
+            "range": "7.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 35.2,
+            "range": "1.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 155.3,
+            "range": "6.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 38.9,
+            "range": "1.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 37.05,
+            "range": "0.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 26.72,
+            "range": "0.99",
             "unit": "ms"
           }
         ]
