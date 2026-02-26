@@ -1,25 +1,30 @@
-# Next Release
+# Next Crate Release
 
-- [ ] Add code example doc tests to all specs that don't already have them.
-- [ ] Document all items in `sci-cream` crate and enable `missing_docs` lint everywhere.
 - [ ] Add `CHANGELOG.md` and `release.toml` for releases with `cargo-release` crate.
+- [ ] Add `README.md` with library description, badge links, etc.
+- [ ] Add comprehensive library overview in `lib.rs` crate docs and in `README.md`.
+
+# Next App Release
+
+- [ ] Add `CHANGELOG.md`; look into a utility for doing Next.js releases.
 - [ ] Document all items in `app`, look for a `missing_docs` equivalent lint.
 - [ ] Add tests for all components and utilities in `packages/app`.
-- [ ] Look into doing `npm` releases of the `sci-cream` package.
+- [ ] Pasting the strawberry sorbet recipe, fixing 'Strawberry [Brix 9]' to remove ' [Brix 9]', then
+      pasting a different recipe causes a 'null pointer passed to rust' error; still unclear why.
+- [ ] On a 1440p screen there is vertical scrolling when chrome is showing a bookmarks bar.
+- [ ] Check how vertical spacing looks like on 1080p/2160p screens; look into dynamic vertical?
+
+# Up Next
+
+- [ ] Add more tests to `sci-cream` crate and increase code coverage.
+- [ ] Look into setting up and how to do database migrations for the production database.
 - [ ] Add `height` prop to `MixPropertiesGrid` so that it can adapt the number of properties shown.
+- [ ] Add code example doc tests to all specs that don't already have them.
 - [ ] Rework `specs::Micro` to pull out stabilizers and emulsifiers into their own category(s).
       Should they be separate `Stabilizer` and `Emulsifier`, or something like `Texturant` that
       includes both? I prefer the latter, which accommodates blends like "Louis Francois Stab 2000",
       but users might find it confusing in.
 - [ ] Add gum stabilizer ingredients and Underbelly blends with reference links and explicit ratios.
-- [ ] Pasting the strawberry sorbet recipe, fixing 'Strawberry [Brix 9]' to remove ' [Brix 9]', then
-      pasting a different recipe causes a 'null pointer passed to rust' error; still unclear why.
-- [ ] On a 1440p screen there is vertical scrolling when chrome is showing a bookmarks bar.
-- [ ] Check how vertical spacing looks like on 1080p/2160p screens; look into dynamic vertical?
-- [ ] Look into setting up and how to do database migrations for the production database.
-
-# Up Next
-
 - [ ] Add Account and login functionality.
 - [ ] Add recipe save functionality. Recipes should support versions and notes.
 - [ ] Add functionality to store component layout so that it is remembered across page reloads. The
@@ -43,9 +48,11 @@
 - [ ] Rename `assert_*` family of functions in `crate::validate` to `verify_*`, to differentiate.
 - [ ] Consider adding composition traits for calculating POD, PAC, and energy, total (sum), etc.
 - [ ] Remove uses of `.unwrap()` in documentation code examples, see the `# fn main() ...` trick.
+- [ ] Enable the `nursery` clippy lint group and opt-out of any problematic ones.
 
 # Backlog
 
+- [ ] Look into doing `npm` releases of the `sci-cream` package.
 - [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
 - [ ] Once user-defined ingredients are supported, use embedded data for the main ingredients set.
 - [ ] When in Dark mode, if the page is refreshed, it momentarily flashes a Light theme before the
@@ -85,7 +92,6 @@
 - [ ] Investigate methods for performance analysis, including Chrome DevTools Protocol (CDP),
       playwright-performance, etc. Look into generating flamegraphs.
 - [ ] Properly solve the `sslmode=no-verify` issue with `POSTGRES_URL`, see `db/util/getDatabaseUrl`
-- [ ] Enable the `nursery` clippy lint group and opt-out of any problematic ones.
 - [ ] Find a source for the 10% lactose concentration limit, can't find it on Underbelly's blog.
 - [ ] Consider using a scrollbar as an indicator of when `MixPropertiesChart` overflows.
 - [ ] Investigate web workers and Progressive Web Apps (PWA) and their applicability to this app.
@@ -94,6 +100,7 @@
 
 # Completed
 
+- [x] Document all items in `sci-cream` crate and enable `missing_docs` lint everywhere.
 - [x] Review the energy constants for polyols, they don't agree with Spillane, 2006, p. 157.
 - [x] Once `0.0.1` is released, look into hosting the app live.
 - [x] Integrate Vercel Web Analytics `@vercel/analytics` and Speed Insights `@vercel/speed-insights`
