@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772143458694,
+  "lastUpdate": 1772143503997,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -6983,6 +6983,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 305,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "37ca50ca507dc071b1ed87814d57a0da152b6538",
+          "message": "Enable `clippy::missing_errors_doc` and fix all\n\n* Add `Errors` documentation to all items that are missing it.\n* Remove explinations of what values are returned within Error variants\n* Remove `Result<>` from the return of several interface where an error\n  would indicate a bug and not a user-facing error; use .expect instead\n* Add TODO about replacing `serde::Error` with links to actual types.",
+          "timestamp": "2026-02-26T12:09:37-05:00",
+          "tree_id": "0d39ea74bfe93763130340192c4d1ce0af7fc312",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/37ca50ca507dc071b1ed87814d57a0da152b6538"
+        },
+        "date": 1772143501801,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3639,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161764,
+            "range": "± 36637",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2127,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 184873,
+            "range": "± 9602",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 315,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
