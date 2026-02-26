@@ -1,5 +1,12 @@
 /*! `sci-cream` is a Rust library that facilitates the mathematical analysis of ice cream mixes and
 their properties.
+
+# Usage
+Add `sci-cream` as a dependency in your `Cargo.toml`:
+```toml
+[dependencies]
+sci-cream = "0.0.1"
+```
 */
 
 #![cfg_attr(coverage, feature(coverage_attribute))]

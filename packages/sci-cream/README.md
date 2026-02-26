@@ -11,3 +11,12 @@ cream science, and an [ingredient
 database](https://github.com/ramonrsv/sci-cream/tree/main/packages/sci-cream/data/ingredients) that
 can be imported with the library. Tracking of
 [benchmarks](https://ramonrsv.github.io/sci-cream/dev/bench/) for key functionality is available.
+
+## Usage
+
+Add `sci-cream` as a dependency in your `Cargo.toml`:
+
+```toml
+[dependencies]
+sci-cream = "0.0.1"
+```
