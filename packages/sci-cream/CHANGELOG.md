@@ -9,9 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- `crates.io` and `docs.rs` documentation badges and links to `README.md`
+
 ### Fixed
 
 - `release.toml` and `CHANGELOG.md` to accommodate extra `\n` after `next-url` added by TOML format.
+
+### Changed
+
+- Ice cream science documentation link in `README.md` to point to `docs.rs` instead of `github.com`.
 
 ## [0.0.1] - 2026-02-26
 
