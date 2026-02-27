@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772229996070,
+  "lastUpdate": 1772230193229,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -70433,6 +70433,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 27.65,
             "range": "0.84",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2c35c15bb6f19980cc809c6a8a6e8908ba29a5ba",
+          "message": "Add workspace Cargo.toml, fix `* release changes`\n\nAdd a repo root Cargo.toml with a [workspace] configuration. This fixes\nthe previous issue with `cargo release changes` not working properly.",
+          "timestamp": "2026-02-27T02:19:23-05:00",
+          "tree_id": "2bc3d0a655caf00a6997a051a6fe5fe8b4e23c0d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2c35c15bb6f19980cc809c6a8a6e8908ba29a5ba"
+        },
+        "date": 1772230191526,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 669.8,
+            "range": "60.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.8,
+            "range": "5.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60.4,
+            "range": "5.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.2,
+            "range": "4.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 37.8,
+            "range": "2.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 161.6,
+            "range": "8.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 42,
+            "range": "5.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 39.92,
+            "range": "1.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 27.76,
+            "range": "1.31",
             "unit": "ms"
           }
         ]
