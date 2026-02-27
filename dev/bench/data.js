@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772171845295,
+  "lastUpdate": 1772229962011,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -76466,6 +76466,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.77%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2c35c15bb6f19980cc809c6a8a6e8908ba29a5ba",
+          "message": "Add workspace Cargo.toml, fix `* release changes`\n\nAdd a repo root Cargo.toml with a [workspace] configuration. This fixes\nthe previous issue with `cargo release changes` not working properly.",
+          "timestamp": "2026-02-27T02:19:23-05:00",
+          "tree_id": "2bc3d0a655caf00a6997a051a6fe5fe8b4e23c0d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2c35c15bb6f19980cc809c6a8a6e8908ba29a5ba"
+        },
+        "date": 1772229959408,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75403,
+            "range": "±0.82%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 690497,
+            "range": "±1.40%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9942,
+            "range": "±1.60%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 593730,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
