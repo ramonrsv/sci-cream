@@ -48,7 +48,7 @@ pub struct SolidsBreakdown {
 impl SolidsBreakdown {
     /// Creates an empty [`SolidsBreakdown`] with all fields set to zero or `empty()`
     #[must_use]
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self {
             fats: Fats::empty(),
             carbohydrates: Carbohydrates::empty(),
@@ -58,27 +58,33 @@ impl SolidsBreakdown {
         }
     }
 
+    /// Creates a new empty `SolidsBreakdown` struct, forwards to [`empty`](Self::empty)
+    #[must_use]
+    pub const fn new() -> Self {
+        Self::empty()
+    }
+
     /// Field-update method for [`fats`](Self::fats)
     #[must_use]
-    pub fn fats(self, fats: Fats) -> Self {
+    pub const fn fats(self, fats: Fats) -> Self {
         Self { fats, ..self }
     }
 
     /// Field-update method for [`carbohydrates`](Self::carbohydrates)
     #[must_use]
-    pub fn carbohydrates(self, carbohydrates: Carbohydrates) -> Self {
+    pub const fn carbohydrates(self, carbohydrates: Carbohydrates) -> Self {
         Self { carbohydrates, ..self }
     }
 
     /// Field-update method for [`proteins`](Self::proteins)
     #[must_use]
-    pub fn proteins(self, proteins: f64) -> Self {
+    pub const fn proteins(self, proteins: f64) -> Self {
         Self { proteins, ..self }
     }
 
     /// Field-update method for [`artificial_sweeteners`](Self::artificial_sweeteners)
     #[must_use]
-    pub fn artificial_sweeteners(self, artificial_sweeteners: ArtificialSweeteners) -> Self {
+    pub const fn artificial_sweeteners(self, artificial_sweeteners: ArtificialSweeteners) -> Self {
         Self {
             artificial_sweeteners,
             ..self
@@ -87,7 +93,7 @@ impl SolidsBreakdown {
 
     /// Field-update method for [`others`](Self::others)
     #[must_use]
-    pub fn others(self, others: f64) -> Self {
+    pub const fn others(self, others: f64) -> Self {
         Self { others, ..self }
     }
 
@@ -137,11 +143,14 @@ impl SolidsBreakdown {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl SolidsBreakdown {
-    /// Creates a new empty `SolidsBreakdown` struct, forwards to [`SolidsBreakdown::empty`]
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    /// WASM compatible wrapper for [`new`](Self::new)
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
+    #[cfg_attr(coverage, coverage(off))]
+    #[cfg(feature = "wasm")]
+    #[wasm_bindgen(constructor)]
     #[must_use]
-    pub fn new() -> Self {
-        Self::empty()
+    pub fn new_wasm() -> Self {
+        Self::new()
     }
 
     /// Calculates the total solids content, by summing the solids content from all components

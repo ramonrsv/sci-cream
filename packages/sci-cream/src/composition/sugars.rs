@@ -131,7 +131,7 @@ pub struct Sugars {
 impl Sugars {
     /// Creates an empty `Sugars` struct with all fields set to zero (i.e. 0g of all sugars)
     #[must_use]
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self {
             glucose: 0.0,
             fructose: 0.0,
@@ -144,52 +144,64 @@ impl Sugars {
         }
     }
 
+    /// Creates a new empty `Sugars` struct, forwards to [`empty`](Self::empty)
+    #[must_use]
+    pub const fn new() -> Self {
+        Self::empty()
+    }
+
     /// Field-update method for [`glucose`](Self::glucose)
     #[must_use]
-    pub fn glucose(self, glucose: f64) -> Self {
+    pub const fn glucose(self, glucose: f64) -> Self {
         Self { glucose, ..self }
     }
 
     /// Field-update method for [`fructose`](Self::fructose)
     #[must_use]
-    pub fn fructose(self, fructose: f64) -> Self {
+    pub const fn fructose(self, fructose: f64) -> Self {
         Self { fructose, ..self }
     }
 
     /// Field-update method for [`galactose`](Self::galactose)
     #[must_use]
-    pub fn galactose(self, galactose: f64) -> Self {
+    pub const fn galactose(self, galactose: f64) -> Self {
         Self { galactose, ..self }
     }
 
     /// Field-update method for [`sucrose`](Self::sucrose)
     #[must_use]
-    pub fn sucrose(self, sucrose: f64) -> Self {
+    pub const fn sucrose(self, sucrose: f64) -> Self {
         Self { sucrose, ..self }
     }
 
     /// Field-update method for [`lactose`](Self::lactose)
     #[must_use]
-    pub fn lactose(self, lactose: f64) -> Self {
+    pub const fn lactose(self, lactose: f64) -> Self {
         Self { lactose, ..self }
     }
 
     /// Field-update method for [`maltose`](Self::maltose)
     #[must_use]
-    pub fn maltose(self, maltose: f64) -> Self {
+    pub const fn maltose(self, maltose: f64) -> Self {
         Self { maltose, ..self }
     }
 
     /// Field-update method for [`trehalose`](Self::trehalose)
     #[must_use]
-    pub fn trehalose(self, trehalose: f64) -> Self {
+    pub const fn trehalose(self, trehalose: f64) -> Self {
         Self { trehalose, ..self }
     }
 
     /// Field-update method for [`other`](Self::other)
     #[must_use]
-    pub fn other(self, other: f64) -> Self {
+    pub const fn other(self, other: f64) -> Self {
         Self { other, ..self }
+    }
+
+    /// Calculates the total sugar content, in grams per 100g of mix, by summing all the fields
+    #[must_use]
+    pub fn total(&self) -> f64 {
+        iter_fields_as::<f64, _>(self).sum()
     }
 
     /// Calculates the total energy contributed by the sugars, in kcal per 100g of mix
@@ -253,19 +265,23 @@ impl Sugars {
     }
 }
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[cfg_attr(coverage, coverage(off))]
+#[cfg(feature = "wasm")]
+#[wasm_bindgen]
 impl Sugars {
-    /// Creates a new empty `Sugars` struct, forwards to [`Sugars::empty`]
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    /// WASM compatible wrapper for [`new`](Self::new)
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen constructors cannot be const
+    #[wasm_bindgen(constructor)]
     #[must_use]
-    pub fn new() -> Self {
-        Self::empty()
+    pub fn new_wasm() -> Self {
+        Self::new()
     }
 
-    /// Calculates the total sugar content, in grams per 100g of mix, by summing all the fields
+    /// WASM compatible wrapper for [`total`](Self::total)
+    #[wasm_bindgen(js_name = "total")]
     #[must_use]
-    pub fn total(&self) -> f64 {
-        iter_fields_as::<f64, _>(self).sum()
+    pub fn total_wasm(&self) -> f64 {
+        self.total()
     }
 
     /// WASM compatible wrapper for [`to_pod`](Self::to_pod)
@@ -273,9 +289,7 @@ impl Sugars {
     /// # Errors
     ///
     /// Forwards any errors from the underlying [`to_pod`](Self::to_pod) method.
-    #[cfg(feature = "wasm")]
     #[wasm_bindgen(js_name = "to_pod")]
-    #[cfg_attr(coverage, coverage(off))]
     pub fn to_pod_wasm(&self) -> std::result::Result<f64, JsValue> {
         self.to_pod().map_err(Into::into)
     }
@@ -285,9 +299,7 @@ impl Sugars {
     /// # Errors
     ///
     /// Forwards any errors from the underlying [`to_pac`](Self::to_pac) method.
-    #[cfg(feature = "wasm")]
     #[wasm_bindgen(js_name = "to_pac")]
-    #[cfg_attr(coverage, coverage(off))]
     pub fn to_pac_wasm(&self) -> std::result::Result<f64, JsValue> {
         self.to_pac().map_err(Into::into)
     }

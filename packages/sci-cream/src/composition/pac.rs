@@ -30,7 +30,7 @@ pub struct PAC {
 impl PAC {
     /// Creates an empty [`PAC`] struct with all fields set to zero
     #[must_use]
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self {
             sugars: 0.0,
             salt: 0.0,
@@ -40,53 +40,62 @@ impl PAC {
         }
     }
 
+    /// Creates a new empty `PAC` struct, forwards to [`empty`](Self::empty)
+    #[must_use]
+    pub const fn new() -> Self {
+        Self::empty()
+    }
+
     /// Field-update method for [`sugars`](Self::sugars)
     #[must_use]
-    pub fn sugars(self, sugars: f64) -> Self {
+    pub const fn sugars(self, sugars: f64) -> Self {
         Self { sugars, ..self }
     }
 
     /// Field-update method for [`salt`](Self::salt)
     #[must_use]
-    pub fn salt(self, salt: f64) -> Self {
+    pub const fn salt(self, salt: f64) -> Self {
         Self { salt, ..self }
     }
 
     /// Field-update method for [`msnf_ws_salts`](Self::msnf_ws_salts)
     #[must_use]
-    pub fn msnf_ws_salts(self, msnf_ws_salts: f64) -> Self {
+    pub const fn msnf_ws_salts(self, msnf_ws_salts: f64) -> Self {
         Self { msnf_ws_salts, ..self }
     }
 
     /// Field-update method for [`alcohol`](Self::alcohol)
     #[must_use]
-    pub fn alcohol(self, alcohol: f64) -> Self {
+    pub const fn alcohol(self, alcohol: f64) -> Self {
         Self { alcohol, ..self }
     }
 
     /// Field-update method for [`hardness_factor`](Self::hardness_factor)
     #[must_use]
-    pub fn hardness_factor(self, hardness_factor: f64) -> Self {
+    pub const fn hardness_factor(self, hardness_factor: f64) -> Self {
         Self {
             hardness_factor,
             ..self
         }
-    }
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-impl PAC {
-    /// Creates a new empty `PAC` struct, forwards to [`PAC::empty`]
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
-    #[must_use]
-    pub fn new() -> Self {
-        Self::empty()
     }
 
     /// Calculates the total PAC contributions from all sources, excluding hardness factor
     #[must_use]
     pub fn total(&self) -> f64 {
         self.sugars + self.salt + self.msnf_ws_salts + self.alcohol
+    }
+}
+
+#[cfg_attr(coverage, coverage(off))]
+#[cfg(feature = "wasm")]
+#[wasm_bindgen]
+impl PAC {
+    /// WASM compatible wrapper for [`new`](Self::new)
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
+    #[wasm_bindgen(constructor)]
+    #[must_use]
+    pub fn new_wasm() -> Self {
+        Self::new()
     }
 }
 

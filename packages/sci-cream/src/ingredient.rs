@@ -58,6 +58,7 @@ pub struct Ingredient {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Ingredient {
     /// Creates a new [`Ingredient`] instance with the given name, category, and composition
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
     pub fn new(name: String, category: Category, composition: Composition) -> Self {
@@ -85,7 +86,7 @@ pub mod wasm {
         /// Consider using [`Bridge`](crate::wasm::Bridge) patterns to avoid excessive cloning.
         #[wasm_bindgen(js_name = "clone")]
         #[must_use]
-        pub fn clone_wasm(&self) -> Ingredient {
+        pub fn clone_wasm(&self) -> Self {
             self.clone()
         }
     }

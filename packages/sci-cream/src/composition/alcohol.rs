@@ -25,13 +25,19 @@ pub struct Alcohol {
 impl Alcohol {
     /// Creates an empty `Alcohol` struct with all fields set to zero (i.e. 0% alcohol by weight)
     #[must_use]
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self { by_weight: 0.0 }
     }
 
-    /// Creates a new [`Alcohol` struct with the specified alcohol content by weight
+    /// Creates a new empty `Alcohol` struct, forwards to [`empty`](Self::empty)
     #[must_use]
-    pub fn by_weight(self, by_weight: f64) -> Self {
+    pub const fn new() -> Self {
+        Self::empty()
+    }
+
+    /// Creates a new `Alcohol` struct with the specified alcohol content by weight
+    #[must_use]
+    pub const fn by_weight(self, by_weight: f64) -> Self {
         Self { by_weight }
     }
 
@@ -41,16 +47,6 @@ impl Alcohol {
         Self {
             by_weight: abv * constants::density::ABV_TO_ABW_RATIO,
         }
-    }
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-impl Alcohol {
-    /// Creates a new empty `Alcohol` struct, forwards to [`Alcohol::empty`]
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
-    #[must_use]
-    pub fn new() -> Self {
-        Self::empty()
     }
 
     /// Calculates the total energy contribution of the alcohol content, in kcal per 100g of mix
@@ -69,6 +65,19 @@ impl Alcohol {
     #[must_use]
     pub fn to_pac(&self) -> f64 {
         self.by_weight * constants::pac::ALCOHOL / 100.0
+    }
+}
+
+#[cfg_attr(coverage, coverage(off))]
+#[cfg(feature = "wasm")]
+#[wasm_bindgen]
+impl Alcohol {
+    /// WASM compatible wrapper for [`new`](Self::new)
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
+    #[wasm_bindgen(constructor)]
+    #[must_use]
+    pub fn new_wasm() -> Self {
+        Self::new()
     }
 }
 

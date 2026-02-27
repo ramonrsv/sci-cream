@@ -100,9 +100,11 @@ unexpected_cfgs = { level = "warn", check-cfg = [
 all = { level = "warn", priority = -1 }
 cargo = { level = "warn", priority = -1 }
 pedantic = { level = "warn", priority = -1 }
+nursery = { level = "warn", priority = -1 }
 
-# `nursery` group, opt-in into individual lints as needed.
-too_long_first_doc_paragraph = "warn"
+# `nursery` group, opt-out of individual problematic lints.
+suboptimal_flops = "allow"
+redundant_pub_crate = "allow"
 
 # `restrictions` group, opt-in into individual lints as needed.
 dbg_macro = "warn"

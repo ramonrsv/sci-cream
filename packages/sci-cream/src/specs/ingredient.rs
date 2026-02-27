@@ -47,16 +47,16 @@ pub enum TaggedSpec {
 impl IntoComposition for TaggedSpec {
     fn into_composition(self) -> Result<Composition> {
         match self {
-            TaggedSpec::DairySpec(spec) => spec.into_composition(),
-            TaggedSpec::DairyFromNutritionSpec(spec) => spec.into_composition(),
-            TaggedSpec::SweetenerSpec(spec) => spec.into_composition(),
-            TaggedSpec::FruitSpec(spec) => spec.into_composition(),
-            TaggedSpec::ChocolateSpec(spec) => spec.into_composition(),
-            TaggedSpec::NutSpec(spec) => spec.into_composition(),
-            TaggedSpec::EggSpec(spec) => spec.into_composition(),
-            TaggedSpec::AlcoholSpec(spec) => spec.into_composition(),
-            TaggedSpec::MicroSpec(spec) => spec.into_composition(),
-            TaggedSpec::FullSpec(spec) => spec.into_composition(),
+            Self::DairySpec(spec) => spec.into_composition(),
+            Self::DairyFromNutritionSpec(spec) => spec.into_composition(),
+            Self::SweetenerSpec(spec) => spec.into_composition(),
+            Self::FruitSpec(spec) => spec.into_composition(),
+            Self::ChocolateSpec(spec) => spec.into_composition(),
+            Self::NutSpec(spec) => spec.into_composition(),
+            Self::EggSpec(spec) => spec.into_composition(),
+            Self::AlcoholSpec(spec) => spec.into_composition(),
+            Self::MicroSpec(spec) => spec.into_composition(),
+            Self::FullSpec(spec) => spec.into_composition(),
         }
     }
 }

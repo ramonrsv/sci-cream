@@ -84,16 +84,16 @@ impl IntoComposition for MicroSpec {
             };
 
         match self {
-            MicroSpec::Salt => Ok(Composition::new()
+            Self::Salt => Ok(Composition::new()
                 .solids(Solids::new().other(SolidsBreakdown::new().others(100.0)))
                 .micro(Micro::new().salt(100.0))
                 .pac(PAC::new().salt(constants::pac::SALT))),
-            MicroSpec::Lecithin => Ok(Composition::new()
+            Self::Lecithin => Ok(Composition::new()
                 .solids(Solids::new().other(SolidsBreakdown::new().others(100.0)))
                 .micro(Micro::new().lecithin(100.0).emulsifiers(100.0))),
-            MicroSpec::Stabilizer { strength } => make_emulsifier_stabilizer_composition(None, Some(strength)),
-            MicroSpec::Emulsifier { strength } => make_emulsifier_stabilizer_composition(Some(strength), None),
-            MicroSpec::EmulsifierStabilizer {
+            Self::Stabilizer { strength } => make_emulsifier_stabilizer_composition(None, Some(strength)),
+            Self::Emulsifier { strength } => make_emulsifier_stabilizer_composition(Some(strength), None),
+            Self::EmulsifierStabilizer {
                 emulsifier_strength,
                 stabilizer_strength,
             } => make_emulsifier_stabilizer_composition(Some(emulsifier_strength), Some(stabilizer_strength)),

@@ -1,4 +1,9 @@
-#![allow(unused_crate_dependencies, clippy::unwrap_used, missing_docs)]
+#![allow(
+    unused_crate_dependencies,
+    clippy::unwrap_used,
+    missing_docs,
+    clippy::redundant_pub_crate
+)]
 
 mod assets;
 mod bridge_calculate_recipe;

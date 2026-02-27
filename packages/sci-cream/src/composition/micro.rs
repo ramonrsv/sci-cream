@@ -46,7 +46,7 @@ pub struct Micro {
 impl Micro {
     /// Creates an empty [`Micro`] struct with all fields set to 0.
     #[must_use]
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self {
             salt: 0.0,
             lecithin: 0.0,
@@ -55,38 +55,47 @@ impl Micro {
         }
     }
 
+    /// Creates a new empty `Micro` struct, forwards to [`empty`](Self::empty)
+    #[must_use]
+    pub const fn new() -> Self {
+        Self::empty()
+    }
+
     /// Field-update method for [`salt`](Self::salt).
     #[must_use]
-    pub fn salt(self, salt: f64) -> Self {
+    pub const fn salt(self, salt: f64) -> Self {
         Self { salt, ..self }
     }
 
     /// Field-update method for [`lecithin`](Self::lecithin).
     #[must_use]
-    pub fn lecithin(self, lecithin: f64) -> Self {
+    pub const fn lecithin(self, lecithin: f64) -> Self {
         Self { lecithin, ..self }
     }
 
     /// Field-update method for [`emulsifiers`](Self::emulsifiers).
     #[must_use]
-    pub fn emulsifiers(self, emulsifiers: f64) -> Self {
+    pub const fn emulsifiers(self, emulsifiers: f64) -> Self {
         Self { emulsifiers, ..self }
     }
 
     /// Field-update method for [`stabilizers`](Self::stabilizers).
     #[must_use]
-    pub fn stabilizers(self, stabilizers: f64) -> Self {
+    pub const fn stabilizers(self, stabilizers: f64) -> Self {
         Self { stabilizers, ..self }
     }
 }
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[cfg_attr(coverage, coverage(off))]
+#[cfg(feature = "wasm")]
+#[wasm_bindgen]
 impl Micro {
-    /// Creates a new empty `Micro` struct, forwards to [`Micro::empty`]
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    /// WASM compatible wrapper for [`new`](Self::new)
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
+    #[wasm_bindgen(constructor)]
     #[must_use]
-    pub fn new() -> Self {
-        Self::empty()
+    pub fn new_wasm() -> Self {
+        Self::new()
     }
 }
 

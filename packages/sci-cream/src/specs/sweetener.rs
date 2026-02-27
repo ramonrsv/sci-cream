@@ -116,11 +116,12 @@ impl IntoComposition for SweetenerSpec {
             }
         }
 
-        let (sweeteners, fiber, other_carbohydrates, other_solids) = if let Some(factor) = factor {
-            (sweeteners.scale(factor), fiber.scale(factor), other_carbohydrates * factor, other_solids * factor)
-        } else {
-            (sweeteners, fiber, other_carbohydrates, other_solids)
-        };
+        let (sweeteners, fiber, other_carbohydrates, other_solids) = factor.map_or_else(
+            || (sweeteners, fiber, other_carbohydrates, other_solids),
+            |factor| {
+                (sweeteners.scale(factor), fiber.scale(factor), other_carbohydrates * factor, other_solids * factor)
+            },
+        );
 
         let solids = SolidsBreakdown::new()
             .carbohydrates(

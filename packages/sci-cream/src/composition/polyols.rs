@@ -98,7 +98,7 @@ pub struct Polyols {
 impl Polyols {
     /// Creates an empty `Polyols` struct with all fields set to zero (i.e. 0g of all polyols)
     #[must_use]
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self {
             erythritol: 0.0,
             maltitol: 0.0,
@@ -108,34 +108,46 @@ impl Polyols {
         }
     }
 
+    /// Creates a new empty `Polyols` struct, forwards to [`empty`](Self::empty)
+    #[must_use]
+    pub const fn new() -> Self {
+        Self::empty()
+    }
+
     /// Field-update method for [`erythritol`](Polyols::erythritol)
     #[must_use]
-    pub fn erythritol(self, erythritol: f64) -> Self {
+    pub const fn erythritol(self, erythritol: f64) -> Self {
         Self { erythritol, ..self }
     }
 
     /// Field-update method for [`maltitol`](Polyols::maltitol)
     #[must_use]
-    pub fn maltitol(self, maltitol: f64) -> Self {
+    pub const fn maltitol(self, maltitol: f64) -> Self {
         Self { maltitol, ..self }
     }
 
     /// Field-update method for [`sorbitol`](Polyols::sorbitol)
     #[must_use]
-    pub fn sorbitol(self, sorbitol: f64) -> Self {
+    pub const fn sorbitol(self, sorbitol: f64) -> Self {
         Self { sorbitol, ..self }
     }
 
     /// Field-update method for [`xylitol`](Polyols::xylitol)
     #[must_use]
-    pub fn xylitol(self, xylitol: f64) -> Self {
+    pub const fn xylitol(self, xylitol: f64) -> Self {
         Self { xylitol, ..self }
     }
 
     /// Field-update method for [`other`](Polyols::other)
     #[must_use]
-    pub fn other(self, other: f64) -> Self {
+    pub const fn other(self, other: f64) -> Self {
         Self { other, ..self }
+    }
+
+    /// Calculates the total polyol content, in grams per 100g of mix, by summing all the fields
+    #[must_use]
+    pub fn total(&self) -> f64 {
+        iter_fields_as::<f64, _>(self).sum()
     }
 
     /// Calculates the total energy contributed by the polyols, in kcal per 100g of mix
@@ -209,19 +221,16 @@ impl Polyols {
     }
 }
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[cfg_attr(coverage, coverage(off))]
+#[cfg(feature = "wasm")]
+#[wasm_bindgen]
 impl Polyols {
-    /// Creates a new empty `Polyols` struct, forwards to [`Polyols::empty`]
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    /// WASM compatible wrapper for [`new`](Self::new)
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
+    #[wasm_bindgen(constructor)]
     #[must_use]
-    pub fn new() -> Self {
-        Self::empty()
-    }
-
-    /// Calculates the total polyol content, in grams per 100g of mix, by summing all the fields
-    #[must_use]
-    pub fn total(&self) -> f64 {
-        iter_fields_as::<f64, _>(self).sum()
+    pub fn new_wasm() -> Self {
+        Self::new()
     }
 }
 

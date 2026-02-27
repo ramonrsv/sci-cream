@@ -18,71 +18,71 @@ pub trait KeyAsStrings {
 impl KeyAsStrings for CompKey {
     fn as_med_str(&self) -> &'static str {
         match self {
-            CompKey::Energy => "Energy",
+            Self::Energy => "Energy",
 
-            CompKey::MilkFat => "Milk Fat",
-            CompKey::MSNF => "MSNF",
-            CompKey::MilkSNFS => "Milk SNFS",
-            CompKey::MilkProteins => "Milk Proteins",
-            CompKey::MilkSolids => "Milk Solids",
+            Self::MilkFat => "Milk Fat",
+            Self::MSNF => "MSNF",
+            Self::MilkSNFS => "Milk SNFS",
+            Self::MilkProteins => "Milk Proteins",
+            Self::MilkSolids => "Milk Solids",
 
-            CompKey::CocoaButter => "Cocoa Butter",
-            CompKey::CocoaSolids => "Cocoa Solids",
-            CompKey::CacaoSolids => "Cacao Solids",
+            Self::CocoaButter => "Cocoa Butter",
+            Self::CocoaSolids => "Cocoa Solids",
+            Self::CacaoSolids => "Cacao Solids",
 
-            CompKey::NutFat => "Nut Fat",
-            CompKey::NutSNF => "Nut SNF",
-            CompKey::NutSolids => "Nut Solids",
+            Self::NutFat => "Nut Fat",
+            Self::NutSNF => "Nut SNF",
+            Self::NutSolids => "Nut Solids",
 
-            CompKey::EggFat => "Egg Fat",
-            CompKey::EggSNF => "Egg SNF",
-            CompKey::EggSolids => "Egg Solids",
+            Self::EggFat => "Egg Fat",
+            Self::EggSNF => "Egg SNF",
+            Self::EggSolids => "Egg Solids",
 
-            CompKey::OtherFats => "Other Fats",
-            CompKey::OtherSNFS => "Other SNFS",
+            Self::OtherFats => "Other Fats",
+            Self::OtherSNFS => "Other SNFS",
 
-            CompKey::TotalFats => "T. Fats",
-            CompKey::TotalSNF => "T. SNF",
-            CompKey::TotalSNFS => "T. SNFS",
-            CompKey::TotalProteins => "T. Proteins",
-            CompKey::TotalSolids => "T. Solids",
+            Self::TotalFats => "T. Fats",
+            Self::TotalSNF => "T. SNF",
+            Self::TotalSNFS => "T. SNFS",
+            Self::TotalProteins => "T. Proteins",
+            Self::TotalSolids => "T. Solids",
 
-            CompKey::Water => "Water",
+            Self::Water => "Water",
 
-            CompKey::Fiber => "Fiber",
-            CompKey::Glucose => "Glucose",
-            CompKey::Fructose => "Fructose",
-            CompKey::Galactose => "Galactose",
-            CompKey::Sucrose => "Sucrose",
-            CompKey::Lactose => "Lactose",
-            CompKey::Maltose => "Maltose",
-            CompKey::Trehalose => "Trehalose",
-            CompKey::TotalSugars => "T. Sugars",
-            CompKey::Erythritol => "Erythritol",
-            CompKey::TotalPolyols => "T. Polyols",
-            CompKey::TotalArtificial => "T. Artificial",
-            CompKey::TotalSweeteners => "T. Sweeteners",
-            CompKey::TotalCarbohydrates => "T. Carbohydrates",
+            Self::Fiber => "Fiber",
+            Self::Glucose => "Glucose",
+            Self::Fructose => "Fructose",
+            Self::Galactose => "Galactose",
+            Self::Sucrose => "Sucrose",
+            Self::Lactose => "Lactose",
+            Self::Maltose => "Maltose",
+            Self::Trehalose => "Trehalose",
+            Self::TotalSugars => "T. Sugars",
+            Self::Erythritol => "Erythritol",
+            Self::TotalPolyols => "T. Polyols",
+            Self::TotalArtificial => "T. Artificial",
+            Self::TotalSweeteners => "T. Sweeteners",
+            Self::TotalCarbohydrates => "T. Carbohydrates",
 
-            CompKey::Alcohol => "Alcohol",
-            CompKey::ABV => "ABV",
+            Self::Alcohol => "Alcohol",
+            Self::ABV => "ABV",
 
-            CompKey::Salt => "Salt",
-            CompKey::Lecithin => "Lecithin",
-            CompKey::Emulsifiers => "Emulsifiers",
-            CompKey::Stabilizers => "Stabilizers",
-            CompKey::EmulsifiersPerFat => "Emul./Fat",
-            CompKey::StabilizersPerWater => "Stab./Water",
+            Self::Salt => "Salt",
+            Self::Lecithin => "Lecithin",
+            Self::Emulsifiers => "Emulsifiers",
+            Self::Stabilizers => "Stabilizers",
+            Self::EmulsifiersPerFat => "Emul./Fat",
+            Self::StabilizersPerWater => "Stab./Water",
 
-            CompKey::POD => "POD",
+            Self::POD => "POD",
 
-            CompKey::PACsgr => "PACsgr",
-            CompKey::PACslt => "PACslt",
-            CompKey::PACmlk => "PACmlk",
-            CompKey::PACalc => "PACalc",
-            CompKey::PACtotal => "PAC",
-            CompKey::AbsPAC => "Abs.PAC",
-            CompKey::HF => "HF",
+            Self::PACsgr => "PACsgr",
+            Self::PACslt => "PACslt",
+            Self::PACmlk => "PACmlk",
+            Self::PACalc => "PACalc",
+            Self::PACtotal => "PAC",
+            Self::AbsPAC => "Abs.PAC",
+            Self::HF => "HF",
         }
     }
 }
@@ -90,9 +90,9 @@ impl KeyAsStrings for CompKey {
 impl KeyAsStrings for FpdKey {
     fn as_med_str(&self) -> &'static str {
         match self {
-            FpdKey::FPD => "FPD",
-            FpdKey::ServingTemp => "Serving Temp",
-            FpdKey::HardnessAt14C => "Hardness @-14°C",
+            Self::FPD => "FPD",
+            Self::ServingTemp => "Serving Temp",
+            Self::HardnessAt14C => "Hardness @-14°C",
         }
     }
 }
@@ -100,8 +100,8 @@ impl KeyAsStrings for FpdKey {
 impl KeyAsStrings for PropKey {
     fn as_med_str(&self) -> &'static str {
         match self {
-            PropKey::CompKey(comp_key) => comp_key.as_med_str(),
-            PropKey::FpdKey(fpd_key) => fpd_key.as_med_str(),
+            Self::CompKey(comp_key) => comp_key.as_med_str(),
+            Self::FpdKey(fpd_key) => fpd_key.as_med_str(),
         }
     }
 }

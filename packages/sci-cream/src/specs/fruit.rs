@@ -102,7 +102,7 @@ impl IntoComposition for FruitSpec {
         let protein = protein.unwrap_or(0.0);
         let fat = fat.unwrap_or(0.0);
         let fiber = fiber.unwrap_or(0.0);
-        let carbohydrate = carbohydrate.unwrap_or(fiber + sugars.total());
+        let carbohydrate = carbohydrate.unwrap_or_else(|| fiber + sugars.total());
 
         assert_is_subset(fiber + sugars.total(), carbohydrate, "fiber + sugars <= carbohydrate")?;
         assert_are_positive(&[water, protein, fat, carbohydrate, fiber, sugars.total()])?;

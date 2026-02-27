@@ -54,11 +54,7 @@ impl IntoComposition for FullSpec {
         let (solids, micro) = (solids.unwrap_or_default(), micro.unwrap_or_default());
         let pod = pod.unwrap_or(solids.all().carbohydrates.to_pod()? + solids.all().artificial_sweeteners.to_pod()?);
 
-        let alcohol = if let Some(abv) = abv {
-            Alcohol::from_abv(abv)
-        } else {
-            Alcohol::default()
-        };
+        let alcohol = abv.map_or_else(Alcohol::default, Alcohol::from_abv);
 
         let pac = pac.unwrap_or(
             PAC::new()

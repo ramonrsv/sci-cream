@@ -47,7 +47,7 @@ impl std::fmt::Display for Unit {
 }
 
 /// Scaling method values outside of the main [`CompositionBasis`]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[derive(Eq, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub enum Scaling<T> {
     /// Value is already for the ingredient as a whole, so it does not require scaling

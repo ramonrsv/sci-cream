@@ -46,6 +46,7 @@ pub struct RecipeLine {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl RecipeLine {
     /// Creates a new [`RecipeLine`] with the given ingredient and amount.
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
     pub fn new(ingredient: Ingredient, amount: f64) -> Self {
@@ -98,7 +99,7 @@ impl Recipe {
             });
         }
 
-        Ok(Recipe { name, lines })
+        Ok(Self { name, lines })
     }
 
     /// Calculate the composition of the recipe as the combination of the compositions of its
@@ -139,6 +140,7 @@ impl Recipe {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Recipe {
     /// Creates a new [`Recipe`] with the optional given name and list of [`RecipeLine`]s.
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
     #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
     pub fn new(name: Option<String>, lines: Vec<RecipeLine>) -> Self {

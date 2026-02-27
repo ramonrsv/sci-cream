@@ -26,7 +26,7 @@ pub struct Fats {
 impl Fats {
     /// Creates an empty [`Fats`] struct with all fields set to zero
     #[must_use]
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self {
             total: 0.0,
             saturated: 0.0,
@@ -34,38 +34,47 @@ impl Fats {
         }
     }
 
+    /// Creates a new empty `Fats` struct, forwards to [`Fats::empty`]
+    #[must_use]
+    pub const fn new() -> Self {
+        Self::empty()
+    }
+
     /// Field-update method for [`total`](Self::total)
     #[must_use]
-    pub fn total(self, total: f64) -> Self {
+    pub const fn total(self, total: f64) -> Self {
         Self { total, ..self }
     }
 
     /// Field-update method for [`saturated`](Self::saturated)
     #[must_use]
-    pub fn saturated(self, saturated: f64) -> Self {
+    pub const fn saturated(self, saturated: f64) -> Self {
         Self { saturated, ..self }
     }
 
     /// Field-update method for [`trans`](Self::trans)
     #[must_use]
-    pub fn trans(self, trans: f64) -> Self {
+    pub const fn trans(self, trans: f64) -> Self {
         Self { trans, ..self }
-    }
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-impl Fats {
-    /// Creates a new empty `Fats` struct, forwards to [`Fats::empty`]
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
-    #[must_use]
-    pub fn new() -> Self {
-        Self::empty()
     }
 
     /// Calculates the total energy contributed by the fats, in kcal per 100g of mix
     #[must_use]
     pub fn energy(&self) -> f64 {
         self.total * constants::energy::FATS
+    }
+}
+
+#[cfg_attr(coverage, coverage(off))]
+#[cfg(feature = "wasm")]
+#[wasm_bindgen]
+impl Fats {
+    /// WASM compatible wrapper for [`new`](Self::new)
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
+    #[wasm_bindgen(constructor)]
+    #[must_use]
+    pub fn new_wasm() -> Self {
+        Self::new()
     }
 }
 

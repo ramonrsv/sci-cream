@@ -45,7 +45,7 @@ pub struct Solids {
 impl Solids {
     /// Creates an empty [`Solids`] struct with all fields set to [`SolidsBreakdown::empty()`]
     #[must_use]
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self {
             milk: SolidsBreakdown::empty(),
             egg: SolidsBreakdown::empty(),
@@ -55,44 +55,53 @@ impl Solids {
         }
     }
 
+    /// Creates a new empty `Solids` struct, forwards to [`empty`](Self::empty)
+    #[must_use]
+    pub const fn new() -> Self {
+        Self::empty()
+    }
+
     /// Field-update method for [`milk`](Self::milk)
     #[must_use]
-    pub fn milk(self, milk: SolidsBreakdown) -> Self {
+    pub const fn milk(self, milk: SolidsBreakdown) -> Self {
         Self { milk, ..self }
     }
 
     /// Field-update method for [`egg`](Self::egg)
     #[must_use]
-    pub fn egg(self, egg: SolidsBreakdown) -> Self {
+    pub const fn egg(self, egg: SolidsBreakdown) -> Self {
         Self { egg, ..self }
     }
 
     /// Field-update method for [`cocoa`](Self::cocoa)
     #[must_use]
-    pub fn cocoa(self, cocoa: SolidsBreakdown) -> Self {
+    pub const fn cocoa(self, cocoa: SolidsBreakdown) -> Self {
         Self { cocoa, ..self }
     }
 
     /// Field-update method for [`nut`](Self::nut)
     #[must_use]
-    pub fn nut(self, nut: SolidsBreakdown) -> Self {
+    pub const fn nut(self, nut: SolidsBreakdown) -> Self {
         Self { nut, ..self }
     }
 
     /// Field-update method for [`other`](Self::other)
     #[must_use]
-    pub fn other(self, other: SolidsBreakdown) -> Self {
+    pub const fn other(self, other: SolidsBreakdown) -> Self {
         Self { other, ..self }
     }
 }
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Solids {
-    /// Creates a new empty `Solids` struct, forwards to [`Solids::empty`]
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    /// WASM compatible wrapper for [`new`](Self::new)
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
+    #[cfg_attr(coverage, coverage(off))]
+    #[cfg(feature = "wasm")]
+    #[wasm_bindgen(constructor)]
     #[must_use]
-    pub fn new() -> Self {
-        Self::empty()
+    pub fn new_wasm() -> Self {
+        Self::new()
     }
 
     /// Iterate over all field across ingredient categories as [`SolidsBreakdown`]s

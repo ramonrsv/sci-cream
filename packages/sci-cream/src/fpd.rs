@@ -122,6 +122,7 @@ impl FPD {
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl FPD {
     /// Access specific FPD property values via an [`FpdKey`]
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
     #[must_use]
     pub fn get(&self, key: FpdKey) -> f64 {
         match key {
@@ -149,7 +150,7 @@ pub struct CurvePoint {
 impl CurvePoint {
     /// Create a new [`CurvePoint`] with the given x-axis and temperature values
     #[must_use]
-    pub fn new(x_axis: f64, temp: f64) -> Self {
+    pub const fn new(x_axis: f64, temp: f64) -> Self {
         Self { x_axis, temp }
     }
 }
@@ -415,7 +416,7 @@ pub struct GoffHartelFpdCurveStep {
 impl GoffHartelFpdCurveStep {
     /// Create an empty Goff-Hartel FPD curve step
     #[must_use]
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self {
             frozen_water: f64::NAN,
             water: f64::NAN,
@@ -483,7 +484,7 @@ pub struct ModifiedGoffHartelCorvittoFpdCurveStep {
 impl ModifiedGoffHartelCorvittoFpdCurveStep {
     /// Create an empty Modified Goff-Hartel-Corvitto FPD curve step
     #[must_use]
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self {
             frozen_water: f64::NAN,
             water: f64::NAN,

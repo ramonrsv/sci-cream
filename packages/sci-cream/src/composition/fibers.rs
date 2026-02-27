@@ -58,7 +58,7 @@ pub struct Fibers {
 impl Fibers {
     /// Creates an empty `Fibers` struct with all fields set to zero (i.e. 0g of all fibers)
     #[must_use]
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self {
             inulin: 0.0,
             oligofructose: 0.0,
@@ -66,22 +66,34 @@ impl Fibers {
         }
     }
 
+    /// Creates a new empty `Fibers` struct, forwards to [`Fibers::empty`]
+    #[must_use]
+    pub const fn new() -> Self {
+        Self::empty()
+    }
+
     /// Field-update method for [`inulin`](Fibers::inulin)
     #[must_use]
-    pub fn inulin(self, inulin: f64) -> Self {
+    pub const fn inulin(self, inulin: f64) -> Self {
         Self { inulin, ..self }
     }
 
     /// Field-update method for [`oligofructose`](Fibers::oligofructose)
     #[must_use]
-    pub fn oligofructose(self, oligofructose: f64) -> Self {
+    pub const fn oligofructose(self, oligofructose: f64) -> Self {
         Self { oligofructose, ..self }
     }
 
     /// Field-update method for [`other`](Fibers::other)
     #[must_use]
-    pub fn other(self, other: f64) -> Self {
+    pub const fn other(self, other: f64) -> Self {
         Self { other, ..self }
+    }
+
+    /// Calculates the total fiber content, in grams per 100g of mix, by summing all the fields
+    #[must_use]
+    pub fn total(&self) -> f64 {
+        iter_fields_as::<f64, _>(self).sum()
     }
 
     /// Calculates the total energy contributed by the fibers, in kcal per 100g of mix
@@ -106,19 +118,16 @@ impl Fibers {
     }
 }
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[cfg_attr(coverage, coverage(off))]
+#[cfg(feature = "wasm")]
+#[wasm_bindgen]
 impl Fibers {
-    /// Creates a new empty `Fibers` struct, forwards to [`Fibers::empty`]
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    /// WASM compatible wrapper for [`new`](Self::new)
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
+    #[wasm_bindgen(constructor)]
     #[must_use]
-    pub fn new() -> Self {
-        Self::empty()
-    }
-
-    /// Calculates the total fiber content, in grams per 100g of mix, by summing all the fields
-    #[must_use]
-    pub fn total(&self) -> f64 {
-        iter_fields_as::<f64, _>(self).sum()
+    pub fn new_wasm() -> Self {
+        Self::new()
     }
 }
 

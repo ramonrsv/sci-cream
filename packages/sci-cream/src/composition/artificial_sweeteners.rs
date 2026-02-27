@@ -121,7 +121,7 @@ pub struct ArtificialSweeteners {
 impl ArtificialSweeteners {
     /// Creates an empty struct with all fields set to zero (i.e. no artificial sweeteners)
     #[must_use]
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self {
             aspartame: 0.0,
             cyclamate: 0.0,
@@ -133,46 +133,58 @@ impl ArtificialSweeteners {
         }
     }
 
+    /// Creates a new empty `ArtificialSweeteners` struct, forwards to [`empty`](Self::empty)
+    #[must_use]
+    pub const fn new() -> Self {
+        Self::empty()
+    }
+
     /// Field-update method for [`aspartame`](Self::aspartame)
     #[must_use]
-    pub fn aspartame(self, aspartame: f64) -> Self {
+    pub const fn aspartame(self, aspartame: f64) -> Self {
         Self { aspartame, ..self }
     }
 
     /// Field-update method for [`cyclamate`](Self::cyclamate)
     #[must_use]
-    pub fn cyclamate(self, cyclamate: f64) -> Self {
+    pub const fn cyclamate(self, cyclamate: f64) -> Self {
         Self { cyclamate, ..self }
     }
 
     /// Field-update method for [`saccharin`](Self::saccharin)
     #[must_use]
-    pub fn saccharin(self, saccharin: f64) -> Self {
+    pub const fn saccharin(self, saccharin: f64) -> Self {
         Self { saccharin, ..self }
     }
 
     /// Field-update method for [`sucralose`](Self::sucralose)
     #[must_use]
-    pub fn sucralose(self, sucralose: f64) -> Self {
+    pub const fn sucralose(self, sucralose: f64) -> Self {
         Self { sucralose, ..self }
     }
 
     /// Field-update method for [`steviosides`](Self::steviosides)
     #[must_use]
-    pub fn steviosides(self, steviosides: f64) -> Self {
+    pub const fn steviosides(self, steviosides: f64) -> Self {
         Self { steviosides, ..self }
     }
 
     /// Field-update method for [`mogrosides`](Self::mogrosides)
     #[must_use]
-    pub fn mogrosides(self, mogrosides: f64) -> Self {
+    pub const fn mogrosides(self, mogrosides: f64) -> Self {
         Self { mogrosides, ..self }
     }
 
     /// Field-update method for [`other`](Self::other)
     #[must_use]
-    pub fn other(self, other: f64) -> Self {
+    pub const fn other(self, other: f64) -> Self {
         Self { other, ..self }
+    }
+
+    /// Calculates the total artificial sweetener content by weight, by summing all the fields
+    #[must_use]
+    pub fn total(&self) -> f64 {
+        iter_fields_as::<f64, _>(self).sum()
     }
 
     /// Calculates the total energy contribution of the artificial sweeteners, in kcal per 100g
@@ -255,20 +267,16 @@ impl ArtificialSweeteners {
     }
 }
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[cfg_attr(coverage, coverage(off))]
+#[cfg(feature = "wasm")]
+#[wasm_bindgen]
 impl ArtificialSweeteners {
-    /// Creates a new empty `ArtificialSweeteners` struct, forwards to
-    /// [`ArtificialSweeteners::empty`]
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    /// WASM compatible wrapper for [`new`](Self::new)
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
+    #[wasm_bindgen(constructor)]
     #[must_use]
-    pub fn new() -> Self {
-        Self::empty()
-    }
-
-    /// Calculates the total artificial sweetener content by weight, by summing all the fields
-    #[must_use]
-    pub fn total(&self) -> f64 {
-        iter_fields_as::<f64, _>(self).sum()
+    pub fn new_wasm() -> Self {
+        Self::new()
     }
 }
 

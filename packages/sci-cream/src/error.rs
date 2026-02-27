@@ -48,7 +48,7 @@ pub enum Error {
 #[cfg(feature = "wasm")]
 impl From<Error> for JsValue {
     fn from(error: Error) -> Self {
-        JsValue::from_str(&error.to_string())
+        Self::from_str(&error.to_string())
     }
 }
 

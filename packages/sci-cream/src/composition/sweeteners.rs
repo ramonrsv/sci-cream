@@ -35,7 +35,7 @@ pub struct Sweeteners {
 impl Sweeteners {
     /// Creates an empty [`Sweeteners`] struct with all fields set to 0, i.e. no sweeteners present
     #[must_use]
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self {
             sugars: Sugars::empty(),
             polyols: Polyols::empty(),
@@ -43,22 +43,36 @@ impl Sweeteners {
         }
     }
 
+    /// Creates a new empty `Sweeteners` struct, forwards to [`empty`](Self::empty)
+    #[must_use]
+    pub const fn new() -> Self {
+        Self::empty()
+    }
+
     /// Field-update method for [`sugars`](Self::sugars)
     #[must_use]
-    pub fn sugars(self, sugars: Sugars) -> Self {
+    pub const fn sugars(self, sugars: Sugars) -> Self {
         Self { sugars, ..self }
     }
 
     /// Field-update method for [`polyols`](Self::polyols)
     #[must_use]
-    pub fn polyols(self, polyols: Polyols) -> Self {
+    pub const fn polyols(self, polyols: Polyols) -> Self {
         Self { polyols, ..self }
     }
 
     /// Field-update method for [`artificial`](Self::artificial)
     #[must_use]
-    pub fn artificial(self, artificial: ArtificialSweeteners) -> Self {
+    pub const fn artificial(self, artificial: ArtificialSweeteners) -> Self {
         Self { artificial, ..self }
+    }
+
+    /// Calculates the total sweetener content by weight, by summing all the fields
+    ///
+    /// It forwards to the `total` methods of the individual components and sums the results.
+    #[must_use]
+    pub fn total(&self) -> f64 {
+        self.sugars.total() + self.polyols.total() + self.artificial.total()
     }
 
     /// Calculates the [POD](crate::docs#pod) contributions of all the sweeteners in this struct
@@ -87,21 +101,16 @@ impl Sweeteners {
     }
 }
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[cfg_attr(coverage, coverage(off))]
+#[cfg(feature = "wasm")]
+#[wasm_bindgen]
 impl Sweeteners {
-    /// Creates a new empty `Sweeteners` struct, forwards to [`Sweeteners::empty`]
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    /// WASM compatible wrapper for [`new`](Self::new)
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
+    #[wasm_bindgen(constructor)]
     #[must_use]
-    pub fn new() -> Self {
-        Self::empty()
-    }
-
-    /// Calculates the total sweetener content by weight, by summing all the fields
-    ///
-    /// It forwards to the `total` methods of the individual components and sums the results.
-    #[must_use]
-    pub fn total(&self) -> f64 {
-        self.sugars.total() + self.polyols.total() + self.artificial.total()
+    pub fn new_wasm() -> Self {
+        Self::new()
     }
 }
 
@@ -139,6 +148,6 @@ impl AbsDiffEq for Sweeteners {
 
 impl Default for Sweeteners {
     fn default() -> Self {
-        Sweeteners::empty()
+        Self::empty()
     }
 }

@@ -72,6 +72,7 @@ impl Bridge {
     ///
     /// The database can be pre-seeded with any of the available methods on [`IngredientDatabase`]
     /// (e.g. [`new_seeded_from_specs`](IngredientDatabase::new_seeded_from_specs)).
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
     #[wasm_bindgen(constructor)]
     pub fn new(db: IngredientDatabase) -> Self {
         Self { db }

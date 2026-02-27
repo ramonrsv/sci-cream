@@ -34,13 +34,13 @@ pub enum PropKey {
 
 impl From<CompKey> for PropKey {
     fn from(key: CompKey) -> Self {
-        PropKey::CompKey(key)
+        Self::CompKey(key)
     }
 }
 
 impl From<FpdKey> for PropKey {
     fn from(key: FpdKey) -> Self {
-        PropKey::FpdKey(key)
+        Self::FpdKey(key)
     }
 }
 

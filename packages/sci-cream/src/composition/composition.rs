@@ -307,7 +307,7 @@ pub enum CompKey {
 impl Composition {
     /// Creates an empty composition, which is equivalent to the composition of 100% water.
     #[must_use]
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self {
             energy: 0.0,
             solids: Solids::empty(),
@@ -318,39 +318,45 @@ impl Composition {
         }
     }
 
+    /// Creates an empty composition, equivalent to 100% water; forwards to [`empty`](Self::empty)
+    #[must_use]
+    pub const fn new() -> Self {
+        Self::empty()
+    }
+
     /// Field-update method for [`energy`](Self::energy)
     #[must_use]
-    pub fn energy(self, energy: f64) -> Self {
+    pub const fn energy(self, energy: f64) -> Self {
         Self { energy, ..self }
     }
 
     /// Field-update method for [`solids`](Self::solids)
     #[must_use]
-    pub fn solids(self, solids: Solids) -> Self {
+    pub const fn solids(self, solids: Solids) -> Self {
         Self { solids, ..self }
     }
 
     /// Field-update method for [`micro`](Self::micro)
     #[must_use]
-    pub fn micro(self, micro: Micro) -> Self {
+    pub const fn micro(self, micro: Micro) -> Self {
         Self { micro, ..self }
     }
 
     /// Field-update method for [`alcohol`](Self::alcohol)
     #[must_use]
-    pub fn alcohol(self, alcohol: Alcohol) -> Self {
+    pub const fn alcohol(self, alcohol: Alcohol) -> Self {
         Self { alcohol, ..self }
     }
 
     /// Field-update method for [`pod`](Self::pod)
     #[must_use]
-    pub fn pod(self, pod: f64) -> Self {
+    pub const fn pod(self, pod: f64) -> Self {
         Self { pod, ..self }
     }
 
     /// Field-update method for [`pac`](Self::pac)
     #[must_use]
-    pub fn pac(self, pac: PAC) -> Self {
+    pub const fn pac(self, pac: PAC) -> Self {
         Self { pac, ..self }
     }
 
@@ -359,16 +365,16 @@ impl Composition {
     /// # Errors
     ///
     /// Returns an [`Error::CompositionNotPositive`] if any of the ingredient amounts are negative.
-    pub fn from_combination(compositions: &[(Composition, f64)]) -> Result<Self> {
+    pub fn from_combination(compositions: &[(Self, f64)]) -> Result<Self> {
         assert_are_positive(&compositions.iter().map(|line| line.1).collect::<Vec<_>>())?;
 
         let total_amount: f64 = compositions.iter().map(|line| line.1).sum();
 
         if total_amount == 0.0 {
-            return Ok(Composition::empty());
+            return Ok(Self::empty());
         }
 
-        compositions.iter().try_fold(Composition::empty(), |acc, line| {
+        compositions.iter().try_fold(Self::empty(), |acc, line| {
             let mut mix_comp = acc;
             let weight = line.1 / total_amount;
             mix_comp = mix_comp.add(&line.0.scale(weight));
@@ -379,11 +385,14 @@ impl Composition {
 
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Composition {
-    /// Creates an empty composition, equivalent to 100% water; forwards to [`empty`](Self::empty)
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    /// WASM compatible wrapper for [`new`](Self::new)
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
+    #[cfg_attr(coverage, coverage(off))]
+    #[cfg(feature = "wasm")]
+    #[wasm_bindgen(constructor)]
     #[must_use]
-    pub fn new() -> Self {
-        Self::empty()
+    pub fn new_wasm() -> Self {
+        Self::new()
     }
 
     /// Calculates the water content as `100 - TotalSolids - Alcohol`

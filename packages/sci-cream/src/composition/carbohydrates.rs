@@ -34,7 +34,7 @@ impl Carbohydrates {
     /// Creates an empty `Carbohydrates` struct with all fields set to zero (i.e. 0g of all
     /// carbohydrate components)
     #[must_use]
-    pub fn empty() -> Self {
+    pub const fn empty() -> Self {
         Self {
             fiber: Fibers::empty(),
             sugars: Sugars::empty(),
@@ -43,27 +43,33 @@ impl Carbohydrates {
         }
     }
 
+    /// Creates a new empty `Carbohydrates` struct, forwards to [`empty`](Self::empty)
+    #[must_use]
+    pub const fn new() -> Self {
+        Self::empty()
+    }
+
     /// Field-update method for [`fiber`](Carbohydrates::fiber)
     #[must_use]
-    pub fn fiber(self, fiber: Fibers) -> Self {
+    pub const fn fiber(self, fiber: Fibers) -> Self {
         Self { fiber, ..self }
     }
 
     /// Field-update method for [`sugars`](Carbohydrates::sugars)
     #[must_use]
-    pub fn sugars(self, sugars: Sugars) -> Self {
+    pub const fn sugars(self, sugars: Sugars) -> Self {
         Self { sugars, ..self }
     }
 
     /// Field-update method for [`polyols`](Carbohydrates::polyols)
     #[must_use]
-    pub fn polyols(self, polyols: Polyols) -> Self {
+    pub const fn polyols(self, polyols: Polyols) -> Self {
         Self { polyols, ..self }
     }
 
     /// Field-update method for [`others`](Carbohydrates::others)
     #[must_use]
-    pub fn others(self, others: f64) -> Self {
+    pub const fn others(self, others: f64) -> Self {
         Self { others, ..self }
     }
 
@@ -86,6 +92,12 @@ impl Carbohydrates {
             others: total - (self.total() - self.others),
             ..*self
         })
+    }
+
+    /// Calculates the total carbohydrate content by weight, by summing all the fields
+    #[must_use]
+    pub fn total(&self) -> f64 {
+        self.fiber.total() + self.sugars.total() + self.polyols.total() + self.others
     }
 
     /// Calculates the energy contribution of the carbohydrates, in kcal per 100g of mix
@@ -132,19 +144,16 @@ impl Carbohydrates {
     }
 }
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[cfg_attr(coverage, coverage(off))]
+#[cfg(feature = "wasm")]
+#[wasm_bindgen]
 impl Carbohydrates {
-    /// Creates a new empty `Carbohydrates` struct, forwards to [`Carbohydrates::empty`]
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
+    /// WASM compatible wrapper for [`new`](Self::new)
+    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
+    #[wasm_bindgen(constructor)]
     #[must_use]
-    pub fn new() -> Self {
-        Self::empty()
-    }
-
-    /// Calculates the total carbohydrate content by weight, by summing all the fields
-    #[must_use]
-    pub fn total(&self) -> f64 {
-        self.fiber.total() + self.sugars.total() + self.polyols.total() + self.others
+    pub fn new_wasm() -> Self {
+        Self::new()
     }
 }
 
