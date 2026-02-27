@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772171369291,
+  "lastUpdate": 1772171389963,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -69790,6 +69790,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 27.69,
             "range": "1.00",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8ba5e91d91a850feb0e9b0ab49b564b700607292",
+          "message": "Enable 'nursery' clippy lints group and fix all\n\nDisable `clippy::suboptimal_flops` and `clippy::redundant_pub_crate`.\nThe former make the code confusing for little benefit, and I think the\nlatter has many false positives and adds little benefit.",
+          "timestamp": "2026-02-27T00:07:30-05:00",
+          "tree_id": "a456c344aa1c185cc50fa8eeb47ecb4b6beb2f92",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8ba5e91d91a850feb0e9b0ab49b564b700607292"
+        },
+        "date": 1772171388003,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 15.354,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 671.7,
+            "range": "56.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48.4,
+            "range": "5.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 61.9,
+            "range": "5.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.9,
+            "range": "4.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 37.3,
+            "range": "2.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 160.6,
+            "range": "7.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 45,
+            "range": "2.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 42.43,
+            "range": "0.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 29.58,
+            "range": "0.94",
             "unit": "ms"
           }
         ]
