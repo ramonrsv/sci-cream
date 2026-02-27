@@ -23,6 +23,7 @@
 /build
 
 # Rust artifacts
+/target
 /packages/sci-cream/target
 /packages/sci-cream/dist
 /packages/sci-cream/wasm

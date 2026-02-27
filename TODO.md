@@ -46,7 +46,6 @@
 - [ ] Rename `assert_*` family of functions in `crate::validate` to `verify_*`, to differentiate.
 - [ ] Consider adding composition traits for calculating POD, PAC, and energy, total (sum), etc.
 - [ ] Remove uses of `.unwrap()` in documentation code examples, see the `# fn main() ...` trick.
-- [ ] Investigate why `cargo release changes` is not working for the `sci-cream` crate.
 
 # Backlog
 
@@ -98,6 +97,7 @@
 
 # Completed
 
+- [x] Investigate why `cargo release changes` is not working for the `sci-cream` crate.
 - [x] Enable the `nursery` clippy lint group and opt-out of any problematic ones.
 - [x] Add `CHANGELOG.md` and `release.toml` for releases with `cargo-release` crate.
 - [x] Add `README.md` with library description, badge links, etc.
