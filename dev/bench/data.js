@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772148208531,
+  "lastUpdate": 1772171111234,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -75352,6 +75352,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.79%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8ba5e91d91a850feb0e9b0ab49b564b700607292",
+          "message": "Enable 'nursery' clippy lints group and fix all\n\nDisable `clippy::suboptimal_flops` and `clippy::redundant_pub_crate`.\nThe former make the code confusing for little benefit, and I think the\nlatter has many false positives and adds little benefit.",
+          "timestamp": "2026-02-27T00:07:30-05:00",
+          "tree_id": "a456c344aa1c185cc50fa8eeb47ecb4b6beb2f92",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8ba5e91d91a850feb0e9b0ab49b564b700607292"
+        },
+        "date": 1772171109530,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 91162,
+            "range": "±2.22%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 714146,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10327,
+            "range": "±2.07%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 610949,
+            "range": "±0.70%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
