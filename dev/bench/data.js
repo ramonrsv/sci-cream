@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772171111234,
+  "lastUpdate": 1772171135588,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -7522,6 +7522,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "sweetener_spec_into_composition",
             "value": 306,
+            "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8ba5e91d91a850feb0e9b0ab49b564b700607292",
+          "message": "Enable 'nursery' clippy lints group and fix all\n\nDisable `clippy::suboptimal_flops` and `clippy::redundant_pub_crate`.\nThe former make the code confusing for little benefit, and I think the\nlatter has many false positives and adds little benefit.",
+          "timestamp": "2026-02-27T00:07:30-05:00",
+          "tree_id": "a456c344aa1c185cc50fa8eeb47ecb4b6beb2f92",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8ba5e91d91a850feb0e9b0ab49b564b700607292"
+        },
+        "date": 1772171134008,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3559,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 183089,
+            "range": "± 9124",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2035,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 184738,
+            "range": "± 9802",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 303,
             "range": "± 3",
             "unit": "ns/iter"
           }
