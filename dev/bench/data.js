@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772230198398,
+  "lastUpdate": 1772310375696,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -77023,6 +77023,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.72%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9d7b78cb237fa9b7ae10f9d51708b4ac9011942b",
+          "message": "Add `Recipe::from_const_recipe` and recipe assets\n\n* Add `type ConstRecipe = [(&'static str, f64)]` and\n  `Recipe::from_const_recipe(..., &ConstRecipe, ...)` to create a\n  `Recipe` from a simple `&[(&str, f64)]`, which is useful in tests and\n  doc examples, obviating the need to add a `.map(|name, qty| ...)`.\n* Add reference Main/RefA/RefB recipes to `tests::assets`, with tests\n  verifying the expected properties at 3 digits of precision. These and\n  the verified values are useful for tests, including doc example tests.",
+          "timestamp": "2026-02-28T14:36:46-05:00",
+          "tree_id": "4da51a7c5be8d771a52f84d1a8d42e13bb1d648c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9d7b78cb237fa9b7ae10f9d51708b4ac9011942b"
+        },
+        "date": 1772310372052,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76521,
+            "range": "±0.61%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 705417,
+            "range": "±0.47%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9948,
+            "range": "±2.14%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 579627,
+            "range": "±0.79%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
