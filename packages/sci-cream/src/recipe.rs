@@ -30,6 +30,11 @@ pub type LightRecipe = [LightRecipeLine];
 /// An owned version of [`LightRecipe`] for use in Rust code, since [`LightRecipeLine`] is a slice.
 pub type OwnedLightRecipe = Vec<LightRecipeLine>;
 
+/// A simple `[(&str, f64)]` list of ingredient names and amounts, in grams, representing a recipe.
+///
+/// This is used mostly for tests, doc tests, and examples, as it can be const constructed.
+pub type ConstRecipe = [(&'static str, f64)];
+
 /// A single line in a recipe, representing an ingredient and its amount.
 ///
 /// This struct contains the full [`Ingredient`] object, so it can be used directly in calculations.
@@ -100,6 +105,35 @@ impl Recipe {
         }
 
         Ok(Self { name, lines })
+    }
+
+    /// Create a new [`Recipe`] from a [`ConstRecipe`] and an [`IngredientDatabase`].
+    ///
+    /// This function looks up each ingredient name in the [`ConstRecipe`] in the provided
+    /// [`IngredientDatabase`], to convert simple the name-and-amount pairs in the [`ConstRecipe`]
+    /// into full [`Ingredient`] objects that can be used for calculations.
+    ///
+    /// This function requires the `database` feature flag, since it relies on an
+    /// [`IngredientDatabase`] for ingredient lookups.
+    ///
+    /// # Errors
+    ///
+    /// This function will return an [`Error::IngredientNotFound`] if any ingredient name in the
+    /// [`ConstRecipe`] is not found in the provided [`IngredientDatabase`].
+    #[cfg(feature = "database")]
+    pub fn from_const_recipe(
+        name: Option<String>,
+        const_recipe: &ConstRecipe,
+        db: &IngredientDatabase,
+    ) -> Result<Self> {
+        Self::from_light_recipe(
+            name,
+            &const_recipe
+                .iter()
+                .map(|(name, amount)| (name.to_string(), *amount))
+                .collect::<OwnedLightRecipe>(),
+            db,
+        )
     }
 
     /// Calculate the composition of the recipe as the combination of the compositions of its
@@ -201,60 +235,18 @@ mod tests {
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
-
-    use crate::data::get_ingredient_spec_by_name;
+    use crate::tests::assets::MAIN_RECIPE_LIGHT;
 
     use super::*;
-    use crate::{
-        composition::CompKey, constants::COMPOSITION_EPSILON, database::IngredientDatabase, fpd::FpdKey,
-        recipe::OwnedLightRecipe,
-    };
+    use crate::{composition::CompKey, constants::COMPOSITION_EPSILON, database::IngredientDatabase, fpd::FpdKey};
 
-    fn to_recipe_lines(lines: &[(&str, f64)]) -> Vec<RecipeLine> {
-        lines
-            .iter()
-            .map(|(name, amount)| RecipeLine {
-                ingredient: get_ingredient_spec_by_name(name).unwrap().into_ingredient().unwrap(),
-                amount: *amount,
-            })
-            .collect::<Vec<RecipeLine>>()
-    }
-
-    fn make_test_recipe(lines: &[(&str, f64)]) -> Recipe {
-        Recipe {
-            name: None,
-            lines: to_recipe_lines(lines),
-        }
-    }
-
-    fn make_light_recipe(lines: &[(&str, f64)]) -> OwnedLightRecipe {
-        lines
-            .iter()
-            .map(|(name, amount)| (name.to_string(), *amount))
-            .collect::<OwnedLightRecipe>()
-    }
-
-    const REF_RECIPE_TUPLES: &[(&str, f64)] = &[
-        ("Whole Milk", 245.0),
-        ("Whipping Cream", 215.0),
-        ("Cocoa Powder, 17% Fat", 28.0),
-        ("Skimmed Milk Powder", 21.0),
-        ("Egg Yolk", 18.0),
-        ("Dextrose", 45.0),
-        ("Fructose", 32.0),
-        ("Salt", 0.5),
-        ("Rich Ice Cream SB", 1.25),
-        ("Vanilla Extract", 6.0),
-    ];
-
-    static REF_LIGHT_RECIPE: LazyLock<OwnedLightRecipe> = LazyLock::new(|| make_light_recipe(REF_RECIPE_TUPLES));
+    static DB: LazyLock<IngredientDatabase> = LazyLock::new(IngredientDatabase::new_seeded_from_embedded_data);
 
     #[test]
     fn recipe_from_light_recipe() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
-        let light_recipe = REF_LIGHT_RECIPE.clone();
+        let light_recipe = MAIN_RECIPE_LIGHT.clone();
 
-        let recipe = Recipe::from_light_recipe(None, &light_recipe, &db).unwrap();
+        let recipe = Recipe::from_light_recipe(None, &light_recipe, &DB).unwrap();
 
         assert_eq!(recipe.lines.len(), light_recipe.len());
 
@@ -266,7 +258,7 @@ mod tests {
 
     #[test]
     fn recipe_calculate_composition() {
-        let recipe = make_test_recipe(&[("2% Milk", 50.0), ("Sucrose", 50.0)]);
+        let recipe = Recipe::from_const_recipe(None, &[("2% Milk", 50.0), ("Sucrose", 50.0)], &DB).unwrap();
 
         let mix_comp = recipe.calculate_composition().unwrap();
 
@@ -287,11 +279,12 @@ mod tests {
 
     #[test]
     fn recipe_calculate_mix_properties_with_hf() {
-        let recipe = make_test_recipe(REF_RECIPE_TUPLES);
+        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &DB).unwrap();
 
         let mix_properties = recipe.calculate_mix_properties().unwrap();
 
         assert_eq!(mix_properties.total_amount, 611.75);
+        assert_eq_flt_test!(mix_properties.get(CompKey::HF.into()), 7.5384);
 
         assert_eq_flt_test!(mix_properties.get(CompKey::MilkFat.into()), 13.6024);
         assert_eq_flt_test!(mix_properties.get(CompKey::PACtotal.into()), 33.3832);
@@ -303,12 +296,8 @@ mod tests {
 
     #[test]
     fn floating_point_edge_case_zero_water_near_epsilon() {
-        let mix_properties = Recipe {
-            name: None,
-            lines: to_recipe_lines(&[("Fructose", 10.0), ("Salt", 0.54)]),
-        }
-        .calculate_mix_properties()
-        .unwrap();
+        let recipe = Recipe::from_const_recipe(None, &[("Fructose", 10.0), ("Salt", 0.54)], &DB).unwrap();
+        let mix_properties = recipe.calculate_mix_properties().unwrap();
 
         assert_abs_diff_eq!(mix_properties.get(CompKey::Water.into()), 0.0, epsilon = COMPOSITION_EPSILON);
         assert_true!(mix_properties.get(FpdKey::FPD.into()).is_nan());
