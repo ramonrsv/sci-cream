@@ -48,7 +48,7 @@
 //!     .others(msnf - lactose - proteins);
 //!
 //! let pod = milk_solids.carbohydrates.to_pod()?;
-//! let pad = PAC::new()
+//! let pac = PAC::new()
 //!     .sugars(milk_solids.carbohydrates.to_pac()?)
 //!     .msnf_ws_salts(msnf * pac::MSNF_WS_SALTS / 100.0);
 //!
@@ -57,7 +57,7 @@
 //!     .energy(milk_solids.energy()?)
 //!     .solids(Solids::new().milk(milk_solids))
 //!     .pod(pod)
-//!     .pac(pad);
+//!     .pac(pac);
 //!
 //! assert_eq!(comp.get(CompKey::Energy), 49.5756);
 //!

@@ -1,7 +1,5 @@
 # Next Crate Release
 
-- [ ] Add comprehensive library overview in `lib.rs` crate docs and in `README.md`.
-
 # Next App Release
 
 - [ ] Add `CHANGELOG.md`; look into a utility for doing Next.js releases.
@@ -46,6 +44,7 @@
 - [ ] Rename `assert_*` family of functions in `crate::validate` to `verify_*`, to differentiate.
 - [ ] Consider adding composition traits for calculating POD, PAC, and energy, total (sum), etc.
 - [ ] Remove uses of `.unwrap()` in documentation code examples, see the `# fn main() ...` trick.
+- [ ] Split literature and ingredient definition bibliography; the latter clutters the docs.
 
 # Backlog
 
@@ -97,6 +96,7 @@
 
 # Completed
 
+- [x] Add comprehensive library overview in `lib.rs` crate docs and in `README.md`.
 - [x] Investigate why `cargo release changes` is not working for the `sci-cream` crate.
 - [x] Enable the `nursery` clippy lint group and opt-out of any problematic ones.
 - [x] Add `CHANGELOG.md` and `release.toml` for releases with `cargo-release` crate.
