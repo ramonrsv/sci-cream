@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772310628852,
+  "lastUpdate": 1772310647351,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -71251,6 +71251,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 27.76,
             "range": "1.31",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9d7b78cb237fa9b7ae10f9d51708b4ac9011942b",
+          "message": "Add `Recipe::from_const_recipe` and recipe assets\n\n* Add `type ConstRecipe = [(&'static str, f64)]` and\n  `Recipe::from_const_recipe(..., &ConstRecipe, ...)` to create a\n  `Recipe` from a simple `&[(&str, f64)]`, which is useful in tests and\n  doc examples, obviating the need to add a `.map(|name, qty| ...)`.\n* Add reference Main/RefA/RefB recipes to `tests::assets`, with tests\n  verifying the expected properties at 3 digits of precision. These and\n  the verified values are useful for tests, including doc example tests.",
+          "timestamp": "2026-02-28T14:36:46-05:00",
+          "tree_id": "4da51a7c5be8d771a52f84d1a8d42e13bb1d648c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9d7b78cb237fa9b7ae10f9d51708b4ac9011942b"
+        },
+        "date": 1772310645087,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 668,
+            "range": "54.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48.3,
+            "range": "10.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60.5,
+            "range": "9.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.6,
+            "range": "3.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 41.6,
+            "range": "10.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 157.8,
+            "range": "7.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 41,
+            "range": "4.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 38.44,
+            "range": "1.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 28.13,
+            "range": "0.75",
             "unit": "ms"
           }
         ]
