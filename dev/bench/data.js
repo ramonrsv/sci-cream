@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772429861467,
+  "lastUpdate": 1772429916039,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -7685,6 +7685,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 305,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "94e28dae2b94bb51e5046e832b1e3196c99eee0f",
+          "message": "Add comprehensive overview to lib.rs and README.md\n\n* Add a comprehensive overview of the library, with usage and other\n  examples, to the crate-level docs in `lib.rs` and to the `README.md`.\n* Introduce crate::docs::main_recipe! macro to easily include recipes\n  in doc code examples, in the hidden setup section, without verbosity.\n* Add TODO about splitting literature and ingredient bibliography.\n* Add `ts/examples.test.ts` with simple examples of how to use the WASM\n  and Typescript bindings, used in the overview in lib.rs/README.md.",
+          "timestamp": "2026-03-02T00:08:01-05:00",
+          "tree_id": "4c2c8b43ce58644a6e3ea874dcbc4b69a3f2650b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/94e28dae2b94bb51e5046e832b1e3196c99eee0f"
+        },
+        "date": 1772429913958,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3522,
+            "range": "± 72",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 163391,
+            "range": "± 3506",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1985,
+            "range": "± 8",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 162486,
+            "range": "± 1583",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 305,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
