@@ -139,7 +139,7 @@ frozen water and hardness curves:
 The library has the following features that enable optional functionality:
 
 - `data`: Enables embedded ingredient definitions data from [`data/ingredients`][data/ingredients],
-  accessible via the [`data`] module, e.g. `get_all_ingredient_specs`. This can be used to access
+  accessible via the `data` module, e.g. `get_all_ingredient_specs`. This can be used to access
   pre-defined `IngredientSpec`s, in most cases obviating the need for users to define their own.
   If the `database` feature is enabled, it can also be used to seed an `IngredientDatabase` via
   `IngredientDatabase::new_seeded_from_embedded_data`. This feature is enabled by default.
