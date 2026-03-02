@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772429916039,
+  "lastUpdate": 1772430115321,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -71389,6 +71389,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 28.13,
             "range": "0.75",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "94e28dae2b94bb51e5046e832b1e3196c99eee0f",
+          "message": "Add comprehensive overview to lib.rs and README.md\n\n* Add a comprehensive overview of the library, with usage and other\n  examples, to the crate-level docs in `lib.rs` and to the `README.md`.\n* Introduce crate::docs::main_recipe! macro to easily include recipes\n  in doc code examples, in the hidden setup section, without verbosity.\n* Add TODO about splitting literature and ingredient bibliography.\n* Add `ts/examples.test.ts` with simple examples of how to use the WASM\n  and Typescript bindings, used in the overview in lib.rs/README.md.",
+          "timestamp": "2026-03-02T00:08:01-05:00",
+          "tree_id": "4c2c8b43ce58644a6e3ea874dcbc4b69a3f2650b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/94e28dae2b94bb51e5046e832b1e3196c99eee0f"
+        },
+        "date": 1772430113510,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 670.9,
+            "range": "54.25",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 50.5,
+            "range": "8.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 61.4,
+            "range": "5.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 42.2,
+            "range": "5.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 37,
+            "range": "2.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 165.6,
+            "range": "7.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 43.5,
+            "range": "4.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 41.25,
+            "range": "0.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 29.37,
+            "range": "0.86",
             "unit": "ms"
           }
         ]
