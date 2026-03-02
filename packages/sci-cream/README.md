@@ -37,8 +37,6 @@ calculate the composition and properties of the mix.
 <br>
 
 ```rust
-# fn main() -> Result<(), Box<dyn std::error::Error>> {
-# use sci_cream::docs::{assert_eq_float, main_recipe};
 use sci_cream::{CompKey::*, FpdKey::*, IngredientDatabase, Recipe};
 
 let db = IngredientDatabase::new_seeded_from_embedded_data();
@@ -59,7 +57,6 @@ let recipe = Recipe::from_const_recipe(
     ],
     &db,
 )?;
-# Ok(()) }
 ```
 
 <br>
@@ -74,11 +71,6 @@ properties can be accessed via `MixProperties::get`, using the appropriate keys 
 <br>
 
 ```rust
-# fn main() -> Result<(), Box<dyn std::error::Error>> {
-# use sci_cream::docs::{assert_eq_float, main_recipe};
-# use sci_cream::{CompKey::*, FpdKey::*, IngredientDatabase, Recipe};
-# let db = IngredientDatabase::new_seeded_from_embedded_data();
-# let recipe = Recipe::from_light_recipe(None, &main_recipe!(), &db)?;
 let mix_properties = recipe.calculate_mix_properties()?;
 
 for (key, value) in [
@@ -110,7 +102,6 @@ for (key, value) in [
 ] {
     assert_eq_float!(mix_properties.get(key), value);
 }
-# Ok(()) }
 ```
 
 <br>
@@ -122,19 +113,12 @@ curves][docs-fpd-curves] of the mix. This can be accessed like this:
 <br>
 
 ```rust
-# fn main() -> Result<(), Box<dyn std::error::Error>> {
-# use sci_cream::docs::{assert_eq_float, main_recipe};
-# use sci_cream::{CompKey::*, FpdKey::*, IngredientDatabase, Recipe};
-# let db = IngredientDatabase::new_seeded_from_embedded_data();
-# let recipe = Recipe::from_light_recipe(None, &main_recipe!(), &db)?;
-# let mix_properties = recipe.calculate_mix_properties()?;
 let curves = &mix_properties.fpd.curves;
 
 assert_eq!(curves.frozen_water.len(), 100);
 assert_eq!(curves.hardness.len(), 100);
 assert_eq_float!(curves.frozen_water[0].temp, mix_properties.get(FPD.into()));
 assert_eq_float!(curves.hardness[75].temp, mix_properties.get(ServingTemp.into()));
-# Ok(()) }
 ```
 
 <br>
@@ -203,8 +187,6 @@ from the `constants` module, e.g. `STD_MSNF_IN_MILK_SERUM`, `STD_LACTOSE_IN_MSNF
 <br>
 
 ```rust
-# fn main() -> Result<(), Box<dyn std::error::Error>> {
-# use sci_cream::docs::assert_eq_float;
 use sci_cream::{CompKey::*, composition::*, constants::{composition::*, pac}};
 
 let msnf = (100.0 - 2.0) * STD_MSNF_IN_MILK_SERUM;
@@ -240,7 +222,6 @@ assert_eq_float!(comp.get(Lactose), 4.807);
 assert_eq_float!(comp.get(MSNF), 8.82);
 assert_eq_float!(comp.get(MilkProteins), 3.087);
 // ...
-# Ok(()) }
 ```
 
 # Ingredient Specifications
@@ -266,8 +247,6 @@ composition is equivalent to the one constructed in the [previous example](#comp
 <br>
 
 ```rust
-# fn main() -> Result<(), Box<dyn std::error::Error>> {
-# use sci_cream::docs::assert_eq_float;
 use sci_cream::{CompKey::*, composition::IntoComposition, specs::DairySpec};
 
 let dairy_spec = DairySpec { fat: 2.0, msnf: None };
@@ -279,7 +258,6 @@ assert_eq_float!(comp.get(Lactose), 4.807);
 assert_eq_float!(comp.get(MSNF), 8.82);
 assert_eq_float!(comp.get(MilkProteins), 3.087);
 // ...
-# Ok(()) }
 ```
 
 <br>
