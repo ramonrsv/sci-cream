@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772310647351,
+  "lastUpdate": 1772429861467,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -77526,6 +77526,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.79%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "94e28dae2b94bb51e5046e832b1e3196c99eee0f",
+          "message": "Add comprehensive overview to lib.rs and README.md\n\n* Add a comprehensive overview of the library, with usage and other\n  examples, to the crate-level docs in `lib.rs` and to the `README.md`.\n* Introduce crate::docs::main_recipe! macro to easily include recipes\n  in doc code examples, in the hidden setup section, without verbosity.\n* Add TODO about splitting literature and ingredient bibliography.\n* Add `ts/examples.test.ts` with simple examples of how to use the WASM\n  and Typescript bindings, used in the overview in lib.rs/README.md.",
+          "timestamp": "2026-03-02T00:08:01-05:00",
+          "tree_id": "4c2c8b43ce58644a6e3ea874dcbc4b69a3f2650b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/94e28dae2b94bb51e5046e832b1e3196c99eee0f"
+        },
+        "date": 1772429859522,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 80775,
+            "range": "±0.68%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 709827,
+            "range": "±0.67%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10101,
+            "range": "±1.88%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 594209,
+            "range": "±0.70%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
