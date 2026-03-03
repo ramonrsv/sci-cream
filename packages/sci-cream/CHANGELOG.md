@@ -9,6 +9,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- Comprehensive library overview documentation with code examples, in `lib.rs` and `README.md`.
+- `Recipe::from_const_recipe` and standard recipe assets that match those used in the App.
+
+### Changed
+
+- Enabled 'nursery' clippy lint group as "warn" and fixed all new reported warnings.
+- `release.toml` now also searches for and replaces the package version in `package.json`.
+
+### Fixed
+
+- Removed erroneous additional space in `[Unreleased]:  https://...` in `release.toml`.
+
 ## [0.0.2] - 2026-02-26
 
 ### Added
