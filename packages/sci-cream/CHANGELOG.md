@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- Removed erroneous additional space in `[Unreleased]:  https://...` in `release.toml`.
+- Removed erroneous additional space in `[U*released]:  https://...` in `release.toml`.
 
 ## [0.0.2] - 2026-02-26
 
