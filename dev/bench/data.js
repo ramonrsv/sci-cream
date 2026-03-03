@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772558606823,
+  "lastUpdate": 1772559089342,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -80866,6 +80866,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 592651,
             "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4d31122861293bb7dbdd98e9aa4ac5e0d5179db1",
+          "message": "Obfuscate `[Unreleased]` in CHANGELOG.md 'Fixed'\n\n* Obfuscate `[Unreleased]` in a 'Fixed' item in `CHANGELOG.md` to\n  prevent cargo-release from finding and replacing that string.",
+          "timestamp": "2026-03-03T12:27:31-05:00",
+          "tree_id": "90544d2b8721c7f8570fea0173b8ec997173e8de",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4d31122861293bb7dbdd98e9aa4ac5e0d5179db1"
+        },
+        "date": 1772559087599,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76692,
+            "range": "±0.93%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 702544,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9976,
+            "range": "±2.13%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 592608,
+            "range": "±0.71%",
             "unit": "ops/sec",
             "extra": "94 samples"
           }
