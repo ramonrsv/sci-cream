@@ -293,24 +293,24 @@ include comments that detail how the values in the spec were determined.
   "name": "Splenda (Sucralose)",
   "category": "Sweetener",
   "SweetenerSpec": {
-    "sweeteners": {
-      "sugars": { "glucose": 55.0 },
-      "artificial": { "sucralose": 1.32 }
-    },
+    "sweeteners": { "sugars": { "glucose": 55.0 }, "artificial": { "sucralose": 1.32 } },
     "other_carbohydrates": 38.68,
     "ByTotalWeight": { "water": 5 },
     "pod": { "OfWhole": 840 },
     "pac": { "OfWhole": { "grams": 112.6 } }
   },
-  "comments": "POD value taken from the manufacturer's suggested 2tsp:1packet sugar to
-  sweetener conversion, where a teaspoon of granulated sugar is 4.2g and a packet is 1g.
-  The composition is inferred from the ingredient list, assuming 55% dextrose,
-  ~40% maltodextrin, 5% water, and enough sucralose to reach a POD of 840 (works out to
-  ~1.32% using a POD of 11 for maltodextrin). PAC is calculated for 55% dextrose and 40%
-  Maltodextrin 10 DE with a PAC of 18. Energy is calculated internally from the
-  composition. (https://www.splenda.com/product/splenda-sweetener-packets/)"
+  "comments": "POD value taken from..."
 }
 ```
+
+_"POD value taken from the manufacturer's suggested 2tsp:1packet sugar to sweetener conversion,
+where a teaspoon of granulated sugar is 4.2g (see
+`constants::density::GRAMS_IN_TEASPOON_OF_SUGAR`) and a packet is 1g (from the manufacturer's
+packaging and empirically measured with a 0.01g precision scale). The composition is inferred from
+the ingredient list, assuming 55% dextrose, ~40% maltodextrin, 5% water, and enough sucralose to
+reach a POD of 840 (works out to ~1.32% using a POD of 11 for maltodextrin). PAC is calculated for
+55% dextrose and 40% Maltodextrin 10 DE with a PAC of 18. Energy is calculated internally from the
+composition. <https://www.splenda.com/product/splenda-sweetener-packets/>"_
 
 # WASM Interoperability
 
