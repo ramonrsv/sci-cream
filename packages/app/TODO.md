@@ -1,54 +1,36 @@
-# Next Crate Release
-
-# Next App Release
+# Next Release
 
 - [ ] Add `CHANGELOG.md`; look into a utility for doing Next.js releases.
 - [ ] Document all items in `app`, look for a `missing_docs` equivalent lint.
 - [ ] Add tests for all components and utilities in `packages/app`.
 - [ ] Pasting the strawberry sorbet recipe, fixing 'Strawberry [Brix 9]' to remove ' [Brix 9]', then
       pasting a different recipe causes a 'null pointer passed to rust' error; still unclear why.
-- [ ] On a 1440p screen there is vertical scrolling when chrome is showing a bookmarks bar.
-- [ ] Check how vertical spacing looks like on 1080p/2160p screens; look into dynamic vertical?
 
 # Up Next
 
-- [ ] Add more tests to `sci-cream` crate and increase code coverage.
-- [ ] Look into setting up and how to do database migrations for the production database.
-- [ ] Add `height` prop to `MixPropertiesGrid` so that it can adapt the number of properties shown.
-- [ ] Add code example doc tests to all specs that don't already have them.
-- [ ] Rework `specs::Micro` to pull out stabilizers and emulsifiers into their own category(s).
-      Should they be separate `Stabilizer` and `Emulsifier`, or something like `Texturant` that
-      includes both? I prefer the latter, which accommodates blends like "Louis Francois Stab 2000",
-      but users might find it confusing in.
-- [ ] Add gum stabilizer ingredients and Underbelly blends with reference links and explicit ratios.
 - [ ] Add Account and login functionality.
 - [ ] Add recipe save functionality. Recipes should support versions and notes.
-- [ ] Add functionality to store component layout so that it is remembered across page reloads. The
-      store should start seeded with a default for each resolution, and store any user modification.
-- [ ] Implement a feature in the `sci-cream` crate to provide acceptable ranges for key properties
-      of a mix, e.g. total solids, MSNF, serving temperature, etc. It should probably support
-      category presets for different kinds of frozen desserts, e.g. ice-cream, sherbet, sorbet, etc.
 - [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
       embedded into other websites. How to handle user-defined ingredients?
 - [ ] Add make-recipe link, to click off ingredients that have been measured our for one or more
       recipes. Wash recipe should be letter and color coded.
-- [ ] Add balancer functionality to automatically balance recipes and component substitutions.
 - [ ] Add scoopability and FPD properties component with visuals.
 - [ ] Add Nutrition Facts Table component.
-- [ ] Add inventory and cost functionality.
 - [ ] Add support for `MixPropertiesGrid` to show deltas between the main recipe and the references.
 - [ ] Consider whether to add support to `IngredientCompositionGrid` to show deltas between recipes.
-- [ ] Consider making `ScaleComponents` private so that it can only be used internally and cannot
-      be misused by users; this should not present an extensibility issue with the current design.
-- [ ] Consider whether to add `CompKey` for all polyols and artificial sweeteners.
-- [ ] Rename `assert_*` family of functions in `crate::validate` to `verify_*`, to differentiate.
-- [ ] Consider adding composition traits for calculating POD, PAC, and energy, total (sum), etc.
-- [ ] Remove uses of `.unwrap()` in documentation code examples, see the `# fn main() ...` trick.
-- [ ] Split literature and ingredient definition bibliography; the latter clutters the docs.
+- [ ] Add `Watchers` component where users can select what properties to watch. It should probably
+      support displaying deltas between the main and reference recipes, and target minx-max ranges.
+- [ ] On a 1440p screen there is vertical scrolling when chrome is showing a bookmarks bar.
+- [ ] Check how vertical spacing looks like on 1080p/2160p screens; look into dynamic vertical?
+- [ ] Add `height` prop to `MixPropertiesGrid` so that it can adapt the number of properties shown.
+- [ ] Add functionality to store component layout so that it is remembered across page reloads. The
+      store should start seeded with a default for each resolution, and store any user modification.
+- [ ] Investigate methods for performance analysis, including Chrome DevTools Protocol (CDP),
+      playwright-performance, etc. Look into generating flamegraphs.
+- [ ] Figure out how to show `sci-cream`'s beginner-friendly overview to new users of the app.
 
 # Backlog
 
-- [ ] Look into doing `npm` releases of the `sci-cream` package.
 - [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
 - [ ] Once user-defined ingredients are supported, use embedded data for the main ingredients set.
 - [ ] When in Dark mode, if the page is refreshed, it momentarily flashes a Light theme before the
@@ -59,25 +41,13 @@
       allow all those things to settle before displaying the main page (see how Monarch does it).
 - [ ] Look into Next.js's system for displaying component placeholders to avoid layout changes.
 - [ ] Add test to check that `MixPropertiesGrid` has no vertical scroll with default layout/filters.
-- [ ] Look into including ingredient spec definitions in the docs, so that reference links work.
 - [ ] In `MixPropertiesGrid`, make it so that, if there is a horizontal scroll, the left-most column
       (property headers) does not scroll with the rest of the content.
 - [ ] When there are too many properties to show in `MixPropertiesChart`, it kind of silently crops
       the properties being displayed. Look into a way to either indicate the cropping, or add
       support for a horizontal scrollbar.
-- [ ] Investigate why Underbelly's and Dana's chocolate recipes show as being very hard using the
-      Corvitto method. Are they actually very hard? May need a better method than Corvitto's.
-- [ ] Once available, use `FullSpec` for "Baileys Irish Cream", as it has a more complex composition
-      than can be expressed with `AlcoholSpec`, including other carbohydrates, milk solids, etc.
-- [ ] Looking into using `use crate::composition::CompKey::*` to avoid having to prefix `CompKey::`
-      whenever accessing values, e.g. `comp.get(MilkFats)` vs `comp.get(CompKey::MilkFats)`.
 - [ ] Use new [pnpm/action-setup](https://github.com/pnpm/action-setup) `cache: true` option once
       it's released. See: <https://github.com/pnpm/action-setup/issues/201>
-- [ ] Figure out how to handle and track [allulose](https://en.wikipedia.org/wiki/Psicose), which
-      does not fit into any of the existing sugar, polyols, artificial, or fiber categories.
-- [ ] Add `PropKey::TotalAmount` and figure out how to handle it on the JavasScript side.
-- [ ] Design and implement a system to calculate important ratios for `Sweeteners`, e.g. PAC:POD,
-      Solids:POD, etc. A crude implementation currently is at `data::tests::sweeteners_by_ratio`.
 - [ ] There are various calls to `comp_key_as_med_str` and `prop_key_as_med_str` that are also
       JS <-> WASM. These might also benefit from doing a single WASM -> JS call to get a map, then
       subsequent lookups during component render are done within the JS side.
@@ -85,24 +55,14 @@
       in `IngredientCompositionGrid` and `MixPropertiesGrid`; there may be a lot of them, which
       could be slow given that they are JS <-> WASM calls. Perhaps doing a single call to get a full
       map once and then doing `.get` calls on the JS side may be more performant.
-- [ ] Investigate methods for performance analysis, including Chrome DevTools Protocol (CDP),
-      playwright-performance, etc. Look into generating flamegraphs.
 - [ ] Properly solve the `sslmode=no-verify` issue with `POSTGRES_URL`, see `db/util/getDatabaseUrl`
-- [ ] Find a source for the 10% lactose concentration limit, can't find it on Underbelly's blog.
 - [ ] Consider using a scrollbar as an indicator of when `MixPropertiesChart` overflows.
 - [ ] Investigate web workers and Progressive Web Apps (PWA) and their applicability to this app.
-- [ ] Look into the solubility curves for lactose, trehalose, etc. to determine a limit.
-- [ ] Consider replacing `serde::Error` in docs with links to types, e.g. [`serde_json::Error`].
+- [ ] Look into setting up and how to do database migrations for the production database.
+- [ ] Add inventory and cost functionality.
 
 # Completed
 
-- [x] Add comprehensive library overview in `lib.rs` crate docs and in `README.md`.
-- [x] Investigate why `cargo release changes` is not working for the `sci-cream` crate.
-- [x] Enable the `nursery` clippy lint group and opt-out of any problematic ones.
-- [x] Add `CHANGELOG.md` and `release.toml` for releases with `cargo-release` crate.
-- [x] Add `README.md` with library description, badge links, etc.
-- [x] Document all items in `sci-cream` crate and enable `missing_docs` lint everywhere.
-- [x] Review the energy constants for polyols, they don't agree with Spillane, 2006, p. 157.
 - [x] Once `0.0.1` is released, look into hosting the app live.
 - [x] Integrate Vercel Web Analytics `@vercel/analytics` and Speed Insights `@vercel/speed-insights`
 - [x] Use error bars in `MixPropertiesChart` to show typical valid ranges for some properties.
@@ -124,17 +84,7 @@
 - [x] Add left columns to `IngredientCompositionGrid` to show the ingredient names and quantities,
       so that it can be positioned anywhere and does not have to be besides `RecipeGrid`.
 - [x] Add support for for `IngredientCompositionGrid` to show the compositions of reference recipes.
-- [x] Figure out how to handle calculating FPDs for recipes where (PACtot - HF) would be negative.
-      Currently this throws an error. This is unlikely to happen with real recipes, but it can
-      happen when adding ingredients to a recipe one-by-one, before all ingredients have been added.
-- [x] Add `PAC::msnf_ws_salts` and handle it independently from `::salt`, as the Goff & Hartel
-      method calculates the FPD for MSNF/WS separately via a constant factor, not via PAC values.
-- [x] Some combinations of "Fructose" and "Salt", e.g. 10g and 0.54g, respectively, cause an error.
-      Investigate what is going on here, I suspect it applies to other combinations of ingredients.
 - [x] Save recipes in local storage so that they are not lost when the page is refreshed.
-- [x] Investigate adding logs or throwing exceptions in WASM functions, to make it errors at the
-      Next.js app easier to debug - at the moment it just says the WASM function is unreachable.
-- [x] Add support for proteins and energy in `FruitSpec`, `ChocolateSpec`, `NutSpec`, and `EggSpec`.
 - [x] Looking to making reusable GitHub Workflows for common setup to simplify the CI workflows.
 - [x] Figure out how to re-design `Recipe` and `RecipeContext` to avoid having to copy WASM objects
       every time we need to compute the properties of a recipe. This should probably be done after
