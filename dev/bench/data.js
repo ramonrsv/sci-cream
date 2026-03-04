@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772664803069,
+  "lastUpdate": 1772664805164,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -75796,6 +75796,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 27.18,
             "range": "0.79",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fdc48982f7936cec158b32eb7b9d4a845547c4f1",
+          "message": "Separate app/crate TODOs and organize for releases\n\n* Separate `TODO.md` into `app/TODO.md` and `sci-cream/TODO.md` to track\n  items for the app and crates separately; it was getting confusing.\n* Organize TODOs into `Next Release`, `Up Next`, and `Backlog` sections.\n* Check off TODO item about using `CompKey::*`; this works and is used\n  in doc examples. Users can use it as needed, no need to include it.\n* The item about GitHub Workflows is intentionally left in both TODO.md\n* Add TODO item about beginner-friendly overview of ice cream science.\n* Add TODO item about user-configurable `Watchers` component of app.",
+          "timestamp": "2026-03-04T17:42:56-05:00",
+          "tree_id": "e94a904999dfc14d9e5e18872a002a8559c2c645",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fdc48982f7936cec158b32eb7b9d4a845547c4f1"
+        },
+        "date": 1772664802066,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 12.779,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 668.7,
+            "range": "58.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46,
+            "range": "6.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60.8,
+            "range": "5.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.4,
+            "range": "4.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 37.8,
+            "range": "3.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 159.3,
+            "range": "9.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 40.3,
+            "range": "3.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 38.74,
+            "range": "1.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 27.52,
+            "range": "0.72",
             "unit": "ms"
           }
         ]
