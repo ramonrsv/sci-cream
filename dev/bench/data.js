@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772559421106,
+  "lastUpdate": 1772664531549,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -81982,6 +81982,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.75%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fdc48982f7936cec158b32eb7b9d4a845547c4f1",
+          "message": "Separate app/crate TODOs and organize for releases\n\n* Separate `TODO.md` into `app/TODO.md` and `sci-cream/TODO.md` to track\n  items for the app and crates separately; it was getting confusing.\n* Organize TODOs into `Next Release`, `Up Next`, and `Backlog` sections.\n* Check off TODO item about using `CompKey::*`; this works and is used\n  in doc examples. Users can use it as needed, no need to include it.\n* The item about GitHub Workflows is intentionally left in both TODO.md\n* Add TODO item about beginner-friendly overview of ice cream science.\n* Add TODO item about user-configurable `Watchers` component of app.",
+          "timestamp": "2026-03-04T17:42:56-05:00",
+          "tree_id": "e94a904999dfc14d9e5e18872a002a8559c2c645",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fdc48982f7936cec158b32eb7b9d4a845547c4f1"
+        },
+        "date": 1772664529715,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 80253,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 728797,
+            "range": "±1.11%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10104,
+            "range": "±2.02%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 599254,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
           }
         ]
       }
