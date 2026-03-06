@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772828268277,
+  "lastUpdate": 1772828341609,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -84210,6 +84210,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.81%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "26ed9a00fe8de74626296c0035ebb15f3755a018",
+          "message": "Add 5%, 10%, and '18% Cream' Dairy ingredients",
+          "timestamp": "2026-03-06T02:09:53-05:00",
+          "tree_id": "66d5002b722bfd221b1ea822c54b5366cd44e859",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/26ed9a00fe8de74626296c0035ebb15f3755a018"
+        },
+        "date": 1772828339781,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76992,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 720213,
+            "range": "±1.12%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10189,
+            "range": "±1.82%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 609678,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
