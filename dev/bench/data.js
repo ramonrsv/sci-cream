@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772782187958,
+  "lastUpdate": 1772782191914,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -83150,6 +83150,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.77%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ec4e3eb33d75c5e43debead4f9ebc7d7d7ae8654",
+          "message": "Adjust crate codecov path after root `Cargo.toml`\n\nAfter introducing the root-level workspace `Cargo.toml`, the `target`\ndirectory is created at the repo root instead of `packages/sci-cream`,\nwhich causes `llvm-cov report --output-path ./target/...` to fail due\nto a missing `packages/sci-cream/target` directory. Fix by changing the\noutput-path to `../../target/...` pointing to root-level `target` dir.\n\n@note It's unclear why this didn't immediately fail CI and local `act`\ntests, and why it's failing locally now - not sure if CI would fail.",
+          "timestamp": "2026-03-06T02:09:53-05:00",
+          "tree_id": "c98ccb2bde054d98625b17f6f556f52f4ccfada2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ec4e3eb33d75c5e43debead4f9ebc7d7d7ae8654"
+        },
+        "date": 1772782189794,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78877,
+            "range": "±1.75%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 727946,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10236,
+            "range": "±1.93%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 610868,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
