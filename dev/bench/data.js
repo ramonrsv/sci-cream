@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772782191914,
+  "lastUpdate": 1772782427856,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -76439,6 +76439,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 28.43,
             "range": "0.97",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ec4e3eb33d75c5e43debead4f9ebc7d7d7ae8654",
+          "message": "Adjust crate codecov path after root `Cargo.toml`\n\nAfter introducing the root-level workspace `Cargo.toml`, the `target`\ndirectory is created at the repo root instead of `packages/sci-cream`,\nwhich causes `llvm-cov report --output-path ./target/...` to fail due\nto a missing `packages/sci-cream/target` directory. Fix by changing the\noutput-path to `../../target/...` pointing to root-level `target` dir.\n\n@note It's unclear why this didn't immediately fail CI and local `act`\ntests, and why it's failing locally now - not sure if CI would fail.",
+          "timestamp": "2026-03-06T02:09:53-05:00",
+          "tree_id": "c98ccb2bde054d98625b17f6f556f52f4ccfada2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ec4e3eb33d75c5e43debead4f9ebc7d7d7ae8654"
+        },
+        "date": 1772782425972,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 667.8,
+            "range": "52.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 44.8,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.3,
+            "range": "4.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.9,
+            "range": "8.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 37.5,
+            "range": "5.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 152.1,
+            "range": "3.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 40.9,
+            "range": "2.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 37.9,
+            "range": "1.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 26.71,
+            "range": "0.62",
             "unit": "ms"
           }
         ]
