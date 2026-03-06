@@ -54,7 +54,7 @@ $ cd ./packages/sci-cream
 $ cargo upgrade --incompatible
 ```
 
-To perform a release:
+To perform a release execute the steps below, followed by doing a GitHub release:
 
 ```bash
 $ cargo install cargo-release
@@ -166,6 +166,22 @@ To upgrade `pnpm` dependencies `pnpm update --latest`.
 ```bash
 $ pnpm update --latest --dir ./packages/app
 $ pnpm update --latest --dir ./packages/sci-cream
+```
+
+To perform a release execute the steps below, followed by doing a GitHub release:
+
+```bash
+$ # Review changes and update CHANGELOG.md
+$ ./scripts/release.sh changes
+$
+$ # Review release before executing
+$ ./scripts/release.sh release patch # OR minor, major
+$
+$ # Execute: will make changes and create commit/tag
+$ ./scripts/release.sh release patch --execute
+$
+$ # Push: will push the commit and tag to upstream
+$ ./scripts/release.sh push
 ```
 
 # Running CI workflows locally

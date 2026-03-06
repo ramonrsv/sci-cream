@@ -37,8 +37,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Unit benchmarks using Benchmark.js, for low-level utilities, e.g. `prop_key_as_med_str`, etc.
 - End-to-end Playwright benchmarks with for UI responsiveness and memory usage, detecting leaks.
 - ESLint linting with `eslint` and Prettier formatting with `prettier-plugin-tailwindcss`.
+- `scripts/release.sh` AI-generated script to mimic subset of `cargo-release` for `packages/app`.
 
 <!-- next-url -->
 
-[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.1...HEAD
-[0.0.1]: https://github.com/ramonrsv/sci-cream/releases/tag/app-v0.0.1
+[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.0...HEAD
+[0.0.0]: https://github.com/ramonrsv/sci-cream/releases/tag/app-v0.0.0

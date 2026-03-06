@@ -1,6 +1,5 @@
 # Next Release
 
-- [ ] Look into a utility for doing app releases, possibly a simple script to replicate `cargo-rel`.
 - [ ] Document all items in `app`, look for a `missing_docs` equivalent lint.
 - [ ] Add tests for all components and utilities in `packages/app`.
 - [ ] Pasting the strawberry sorbet recipe, fixing 'Strawberry [Brix 9]' to remove ' [Brix 9]', then
@@ -63,6 +62,7 @@
 
 # Completed
 
+- [x] Look into a utility for doing app releases, possibly a simple script to replicate `cargo-rel`.
 - [x] Exclude `__tests__` from code coverage reports.
 - [x] Add `CHANGELOG.md` for first release, with '# Added' items of all current features.
 - [x] Once `0.0.1` is released, look into hosting the app live.
