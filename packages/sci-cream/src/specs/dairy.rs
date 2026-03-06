@@ -107,11 +107,11 @@ pub struct DairyFromNutritionSpec {
     /// Whether the dairy product is lactose-free, which affects the detailed composition of
     /// [`sugars`](Self::sugars).
     ///
-    /// If `false`, the sugars are assumed to be all lactose, which is the predominant sugar in
-    /// regular dairy products. If `true`, the sugars are assumed to be a 50/50 mixture of glucose
-    /// and galactose, the two monosaccharides that make up lactose, which is typical of lactose
+    /// If `false`/`None`, the sugars are assumed to be all lactose, which is the predominant sugar
+    /// in regular dairy products. If `true`, the sugars are assumed to be a 50/50 glucose and
+    /// galactose mixture, the two monosaccharides that make up lactose, which is typical of lactose
     /// free dairy products where lactose is enzymatically broken down into its constituent sugars.
-    pub is_lactose_free: bool,
+    pub is_lactose_free: Option<bool>,
 }
 
 impl IntoComposition for DairyFromNutritionSpec {
@@ -126,6 +126,8 @@ impl IntoComposition for DairyFromNutritionSpec {
             protein,
             is_lactose_free,
         } = self;
+
+        let is_lactose_free = is_lactose_free.unwrap_or(false);
 
         let (serving_size, total_fat) = match total_fat {
             Unit::Grams(fat_grams) => match serving_size {
@@ -511,8 +513,7 @@ pub(crate) mod tests {
         "saturated_fat": 5,
         "trans_fat": 0.3,
         "sugars": 13,
-        "protein": 9,
-        "is_lactose_free": false
+        "protein": 9
       }
     }"#;
 
@@ -528,7 +529,7 @@ pub(crate) mod tests {
                 trans_fat: 0.3,
                 sugars: 13.0,
                 protein: 9.0,
-                is_lactose_free: false,
+                is_lactose_free: None,
             }
             .into(),
         });
@@ -604,7 +605,7 @@ pub(crate) mod tests {
                 trans_fat: 0.0,
                 sugars: 6.0,
                 protein: 13.0,
-                is_lactose_free: true,
+                is_lactose_free: Some(true),
             }
             .into(),
         });
@@ -668,8 +669,7 @@ pub(crate) mod tests {
         "saturated_fat": 0.3,
         "trans_fat": 0,
         "sugars": 1,
-        "protein": 35,
-        "is_lactose_free": false
+        "protein": 35
       }
     }"#;
 
@@ -685,7 +685,7 @@ pub(crate) mod tests {
                 trans_fat: 0.0,
                 sugars: 1.0,
                 protein: 35.0,
-                is_lactose_free: false,
+                is_lactose_free: None,
             }
             .into(),
         });

@@ -20,8 +20,7 @@
       "saturated_fat": 5,
       "trans_fat": 0.3,
       "sugars": 13,
-      "protein": 9,
-      "is_lactose_free": false
+      "protein": 9
     },
     "comments": "Sealtest 3.25% Milk, from nutrition facts table: https://www.sealtest.ca/en/products/milks/325-milk"
   },
@@ -50,8 +49,7 @@
       "saturated_fat": 0.3,
       "trans_fat": 0,
       "sugars": 1,
-      "protein": 35,
-      "is_lactose_free": false
+      "protein": 35
     },
     "comments": "Leanfit Sport Whey Isolate, from nutrition facts table: https://leanfit.ca/collections/sport/products/leanfit-sport-whey-isolate-unflavoured-2kg"
   },
@@ -65,8 +63,7 @@
       "saturated_fat": 0,
       "trans_fat": 0,
       "sugars": 1,
-      "protein": 25,
-      "is_lactose_free": false
+      "protein": 25
     },
     "comments": "California Gold Nutrition, Sport, Micellar Casein, Unflavoured, Slow Absorption, from nutrition facts table: https://ca.iherb.com/pr/california-gold-nutrition-sport-micellar-casein-unflavored-slow-absorption-16-oz-454-g/71028"
   }
