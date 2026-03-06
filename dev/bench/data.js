@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772828655243,
+  "lastUpdate": 1772828807521,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -84873,6 +84873,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.75%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bb1a077fc46e3799fd25f51c024d764bb6aa2d6a",
+          "message": "Exclude `__tests__` from code coverage reports\n\nSome files under `__tests__`, e.g. `assets.ts`, `util.ts`, etc. do not\nhave the `*.test.ts` suffix and so are not automatically excluded.",
+          "timestamp": "2026-03-06T13:45:33-05:00",
+          "tree_id": "fd5a5ed8141a33e444c9b60fc7d3452fbae7b90e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bb1a077fc46e3799fd25f51c024d764bb6aa2d6a"
+        },
+        "date": 1772828805369,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78178,
+            "range": "±0.65%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 600094,
+            "range": "±1.38%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 8594,
+            "range": "±1.61%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 535428,
+            "range": "±0.82%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
