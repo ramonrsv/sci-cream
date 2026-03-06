@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772831875325,
+  "lastUpdate": 1772831922863,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -8548,6 +8548,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "sweetener_spec_into_composition",
             "value": 304,
+            "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f9ca56da3d53dd26bdb395ec58beaae0d854120c",
+          "message": "Add AI-gen `release.sh` to mimic `cargo-release`\n\n* This script replicates a limited subset of key `cargo-release`\n  functionality in order to achieve some release process parity\n  between `packages/sci-cream` and `packages/app`.\n\n  It was AI-generated using Claude Opus 4.6.\n\n* Add `DEVELOPMENT.md` notes about the `packages/app` release process.\n* Change `packages.json` version from 0.0.1 to 0.0.0, so that next is .1",
+          "timestamp": "2026-03-06T15:11:15-05:00",
+          "tree_id": "7808aad70231c57c9547f41456b50471717a714f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f9ca56da3d53dd26bdb395ec58beaae0d854120c"
+        },
+        "date": 1772831916186,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3519,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 163496,
+            "range": "± 1102",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2034,
+            "range": "± 39",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 161981,
+            "range": "± 1121",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 302,
             "range": "± 2",
             "unit": "ns/iter"
           }
