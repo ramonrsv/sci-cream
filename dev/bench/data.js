@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772830626041,
+  "lastUpdate": 1772831875325,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -86438,6 +86438,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.85%",
             "unit": "ops/sec",
             "extra": "90 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f9ca56da3d53dd26bdb395ec58beaae0d854120c",
+          "message": "Add AI-gen `release.sh` to mimic `cargo-release`\n\n* This script replicates a limited subset of key `cargo-release`\n  functionality in order to achieve some release process parity\n  between `packages/sci-cream` and `packages/app`.\n\n  It was AI-generated using Claude Opus 4.6.\n\n* Add `DEVELOPMENT.md` notes about the `packages/app` release process.\n* Change `packages.json` version from 0.0.1 to 0.0.0, so that next is .1",
+          "timestamp": "2026-03-06T15:11:15-05:00",
+          "tree_id": "7808aad70231c57c9547f41456b50471717a714f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f9ca56da3d53dd26bdb395ec58beaae0d854120c"
+        },
+        "date": 1772831873238,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77478,
+            "range": "±0.61%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 735257,
+            "range": "±0.66%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10135,
+            "range": "±1.86%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 603193,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
