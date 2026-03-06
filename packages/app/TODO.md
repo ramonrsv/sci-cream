@@ -63,6 +63,7 @@
 
 # Completed
 
+- [x] Exclude `__tests__` from code coverage reports.
 - [x] Add `CHANGELOG.md` for first release, with '# Added' items of all current features.
 - [x] Once `0.0.1` is released, look into hosting the app live.
 - [x] Integrate Vercel Web Analytics `@vercel/analytics` and Speed Insights `@vercel/speed-insights`

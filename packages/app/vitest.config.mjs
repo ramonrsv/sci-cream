@@ -14,6 +14,6 @@ export default defineConfig({
       "**/__tests__/visual/**",
       "**/__benches__/e2e/**",
     ],
-    coverage: { exclude: [...coverageConfigDefaults.exclude, "src/db/seed.ts"] },
+    coverage: { exclude: [...coverageConfigDefaults.exclude, "**/__tests__/**", "src/db/seed.ts"] },
   },
 });
