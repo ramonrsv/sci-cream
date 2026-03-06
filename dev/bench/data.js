@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772832141357,
+  "lastUpdate": 1772832143310,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -79836,6 +79836,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 27.84,
             "range": "0.76",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f9ca56da3d53dd26bdb395ec58beaae0d854120c",
+          "message": "Add AI-gen `release.sh` to mimic `cargo-release`\n\n* This script replicates a limited subset of key `cargo-release`\n  functionality in order to achieve some release process parity\n  between `packages/sci-cream` and `packages/app`.\n\n  It was AI-generated using Claude Opus 4.6.\n\n* Add `DEVELOPMENT.md` notes about the `packages/app` release process.\n* Change `packages.json` version from 0.0.1 to 0.0.0, so that next is .1",
+          "timestamp": "2026-03-06T15:11:15-05:00",
+          "tree_id": "7808aad70231c57c9547f41456b50471717a714f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f9ca56da3d53dd26bdb395ec58beaae0d854120c"
+        },
+        "date": 1772832135544,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 668.7,
+            "range": "56.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.6,
+            "range": "5.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 61.8,
+            "range": "10.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40,
+            "range": "4.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 38.8,
+            "range": "3.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 160.3,
+            "range": "7.13",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 41.9,
+            "range": "3.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 43.07,
+            "range": "1.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 29.07,
+            "range": "0.80",
             "unit": "ms"
           }
         ]
