@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772782445569,
+  "lastUpdate": 1772828016972,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -83653,6 +83653,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.69%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b3a23828890b93c62666a4f8d1151115c75ba1fc",
+          "message": "Make `DairyFromNutSpec::is_lactose_free` optional",
+          "timestamp": "2026-03-06T02:09:53-05:00",
+          "tree_id": "2c178fea2e65291ea9d27bde48b840715f563354",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b3a23828890b93c62666a4f8d1151115c75ba1fc"
+        },
+        "date": 1772828014967,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 79088,
+            "range": "±0.91%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 733097,
+            "range": "±0.45%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10160,
+            "range": "±1.93%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 614018,
+            "range": "±0.81%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
