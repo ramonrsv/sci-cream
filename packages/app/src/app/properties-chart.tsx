@@ -23,7 +23,7 @@ import {
 import { Recipe, isRecipeEmpty } from "@/app/recipe";
 import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "@/lib/ui/key-filter-select";
 import { QtyToggle } from "@/lib/ui/qty-toggle-select";
-import { applyQtyToggle, formatCompositionValue } from "@/lib/ui/comp-values";
+import { applyQtyToggle, formatCompositionValue } from "@/lib/ui/comp-value-format";
 import {
   Color,
   getColor,

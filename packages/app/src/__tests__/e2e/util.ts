@@ -11,7 +11,7 @@ import {
 } from "@workspace/sci-cream";
 
 import { Metric } from "@/lib/web-vitals";
-import { formatCompositionValue, applyQtyToggleAndFormat } from "@/lib/ui/comp-values";
+import { formatCompositionValue, applyQtyToggleAndFormat } from "@/lib/ui/comp-value-format";
 import { QtyToggle } from "@/lib/ui/qty-toggle-select";
 import { KeyFilter } from "@/lib/ui/key-filter-select";
 

@@ -29,3 +29,15 @@ export function standardInputStepByPercent(
 
   return validIncrements[lastIdx].toString();
 }
+
+export function verify(condition: boolean, message: string | (() => string)) {
+  if (!condition) {
+    throw new Error(typeof message === "function" ? message() : message);
+  }
+}
+
+export function verifyAreNotNegative(...numbers: (number | undefined)[]) {
+  for (const num of numbers) {
+    verify(num !== undefined && num >= 0, `${num} must be non-negative`);
+  }
+}

@@ -7,7 +7,7 @@ import { IngredientRow, Recipe, isRecipeEmpty, getRecipeIndices } from "./recipe
 import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "../lib/ui/key-filter-select";
 import { QtyToggle, QtyToggleSelect } from "../lib/ui/qty-toggle-select";
 import { RecipeSelect } from "@/lib/ui/recipe-select";
-import { applyQtyToggleAndFormat, formatCompositionValue } from "../lib/ui/comp-values";
+import { applyQtyToggleAndFormat, formatCompositionValue } from "@/lib/ui/comp-value-format";
 import { isCompKeyQuantity } from "../lib/sci-cream/sci-cream";
 import { STD_COMPONENT_H_PX, DRAG_HANDLE_ICON_SIZE } from "../lib/ui/constants";
 

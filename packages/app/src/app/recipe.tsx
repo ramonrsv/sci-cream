@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef } from "react";
 import { GripVertical, ClipboardCopy, ClipboardPaste, Trash } from "lucide-react";
 
-import { formatCompositionValue } from "../lib/ui/comp-values";
+import { formatCompositionValue } from "@/lib/ui/comp-value-format";
 import { standardInputStepByPercent } from "../lib/util";
 import { RecipeSelect } from "@/lib/ui/recipe-select";
 import {
