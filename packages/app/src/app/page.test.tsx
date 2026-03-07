@@ -6,6 +6,10 @@ import { render, screen, waitFor, cleanup } from "@testing-library/react";
 
 import Home from "./page";
 
+// ---------------------------------------------------------------------------
+// Test helpers, mocks, and setup
+// ---------------------------------------------------------------------------
+
 class ResizeObserverMock {
   observe = vi.fn();
   unobserve = vi.fn();
@@ -31,6 +35,10 @@ vi.mock("../lib/data", () => ({
   fetchIngredientSpec: vi.fn(() => Promise.resolve(undefined)),
   fetchAllIngredientSpecs: vi.fn(() => Promise.resolve([])),
 }));
+
+// ---------------------------------------------------------------------------
+// Home Page
+// ---------------------------------------------------------------------------
 
 describe("Home Page", () => {
   beforeEach(() => {

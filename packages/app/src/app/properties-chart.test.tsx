@@ -36,6 +36,10 @@ import {
   configCustomKeysAll,
 } from "@/__tests__/unit/util";
 
+// ---------------------------------------------------------------------------
+// Test helpers, mocks, and setup
+// ---------------------------------------------------------------------------
+
 class ResizeObserverMock {
   observe = vi.fn();
   unobserve = vi.fn();
@@ -101,6 +105,49 @@ vi.mock("react-chartjs-2", () => ({
   //   },
 }));
 
+// ---------------------------------------------------------------------------
+// Helper functions
+// ---------------------------------------------------------------------------
+
+describe("Helper Functions", () => {
+  it("getPropKeys should exclude Water and HardnessAt14C", () => {
+    expect(getPropKeys().length).toBe(getPropKeysAll().length - 2);
+    expect(getPropKeys()).not.toContain(compToPropKey(CompKey.Water));
+    expect(getPropKeys()).not.toContain(fpdToPropKey(FpdKey.HardnessAt14C));
+  });
+
+  it("getModifiedMixProperty should modify specific property values", () => {
+    const mixProperties = WASM_BRIDGE.calculate_recipe_mix_properties(
+      getLightRecipe(RecipeID.Main),
+    );
+    const getModMixProp = (propKey: PropKey) => getModifiedMixProperty(mixProperties, propKey);
+
+    expect(getModMixProp(fpdToPropKey(FpdKey.FPD))).toBeCloseTo(3.6);
+    expect(getModMixProp(fpdToPropKey(FpdKey.ServingTemp))).toBeCloseTo(13.37);
+
+    expect(getModMixProp(compToPropKey(CompKey.AbsPAC))).toBeCloseTo(56.63 / 2);
+
+    expect(getModMixProp(compToPropKey(CompKey.EmulsifiersPerFat))).toBeCloseTo(1.735 * 100);
+    expect(getModMixProp(compToPropKey(CompKey.StabilizersPerWater))).toBeCloseTo(0.3466 * 100);
+  });
+
+  it("propKeyAsModifiedMedStr should modify specific key strings", () => {
+    const propKeyAsModStr = (propKey: PropKey) => propKeyAsModifiedMedStr(propKey);
+
+    expect(propKeyAsModStr(fpdToPropKey(FpdKey.FPD))).toBe("-FPD");
+    expect(propKeyAsModStr(fpdToPropKey(FpdKey.ServingTemp))).toBe("-Serving Temp");
+
+    expect(propKeyAsModStr(compToPropKey(CompKey.AbsPAC))).toBe("Abs.PAC / 2");
+
+    expect(propKeyAsModStr(compToPropKey(CompKey.EmulsifiersPerFat))).toBe("Emul./Fat * 100");
+    expect(propKeyAsModStr(compToPropKey(CompKey.StabilizersPerWater))).toBe("Stab./Water * 100");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// MixPropertiesChart component
+// ---------------------------------------------------------------------------
+
 describe("MixPropertiesChart", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -113,40 +160,7 @@ describe("MixPropertiesChart", () => {
     await vi.waitFor(() => {}, { timeout: 100 });
   });
 
-  describe("Helper Functions", () => {
-    it("getPropKeys should exclude Water and HardnessAt14C", () => {
-      expect(getPropKeys().length).toBe(getPropKeysAll().length - 2);
-      expect(getPropKeys()).not.toContain(compToPropKey(CompKey.Water));
-      expect(getPropKeys()).not.toContain(fpdToPropKey(FpdKey.HardnessAt14C));
-    });
-
-    it("getModifiedMixProperty should modify specific property values", () => {
-      const mixProperties = WASM_BRIDGE.calculate_recipe_mix_properties(
-        getLightRecipe(RecipeID.Main),
-      );
-      const getModMixProp = (propKey: PropKey) => getModifiedMixProperty(mixProperties, propKey);
-
-      expect(getModMixProp(fpdToPropKey(FpdKey.FPD))).toBeCloseTo(3.6);
-      expect(getModMixProp(fpdToPropKey(FpdKey.ServingTemp))).toBeCloseTo(13.37);
-
-      expect(getModMixProp(compToPropKey(CompKey.AbsPAC))).toBeCloseTo(56.63 / 2);
-
-      expect(getModMixProp(compToPropKey(CompKey.EmulsifiersPerFat))).toBeCloseTo(1.735 * 100);
-      expect(getModMixProp(compToPropKey(CompKey.StabilizersPerWater))).toBeCloseTo(0.3466 * 100);
-    });
-
-    it("propKeyAsModifiedMedStr should modify specific key strings", () => {
-      const propKeyAsModStr = (propKey: PropKey) => propKeyAsModifiedMedStr(propKey);
-
-      expect(propKeyAsModStr(fpdToPropKey(FpdKey.FPD))).toBe("-FPD");
-      expect(propKeyAsModStr(fpdToPropKey(FpdKey.ServingTemp))).toBe("-Serving Temp");
-
-      expect(propKeyAsModStr(compToPropKey(CompKey.AbsPAC))).toBe("Abs.PAC / 2");
-
-      expect(propKeyAsModStr(compToPropKey(CompKey.EmulsifiersPerFat))).toBe("Emul./Fat * 100");
-      expect(propKeyAsModStr(compToPropKey(CompKey.StabilizersPerWater))).toBe("Stab./Water * 100");
-    });
-  });
+  // ---- Component Rendering ----------------------------------------------------------------------
 
   describe("Component Rendering", () => {
     it("should render the component", () => {
@@ -164,6 +178,8 @@ describe("MixPropertiesChart", () => {
       expect(container.querySelector(".grid-component")).toBeInTheDocument();
     });
   });
+
+  // ---- Recipe Filtering -------------------------------------------------------------------------
 
   describe("Recipe Filtering", () => {
     it("should display only the main recipe when all recipes are empty", () => {
@@ -186,6 +202,8 @@ describe("MixPropertiesChart", () => {
     });
   });
 
+  // ---- KeyFilterSelect Integration --------------------------------------------------------------
+
   describe("KeyFilterSelect Integration", () => {
     it("should render KeyFilterSelect component", () => {
       const recipeCtx = createMockRecipeContext([true]);
@@ -196,6 +214,8 @@ describe("MixPropertiesChart", () => {
       expect(container.querySelector("#key-filter-select")).toBeInTheDocument();
     });
   });
+
+  // ---- Property Key Filtering -------------------------------------------------------------------
 
   describe("Property Key Filtering", () => {
     it("should have KeyFilter.Auto by default", () => {
@@ -251,6 +271,8 @@ describe("MixPropertiesChart", () => {
     });
   });
 
+  // ---- Chart Configuration ----------------------------------------------------------------------
+
   describe("Chart Configuration", () => {
     it("should configure chart with correct title", () => {
       const recipeCtx = createMockRecipeContext();
@@ -291,6 +313,8 @@ describe("MixPropertiesChart", () => {
       expect(capturedBarProps!.options.scales.y.title.text).toBe("Quantity (%)");
     });
   });
+
+  // ---- Dataset Configuration --------------------------------------------------------------------
 
   describe("Dataset Configuration", () => {
     it("should configure datasets with correct bar styling", () => {
@@ -359,6 +383,8 @@ describe("MixPropertiesChart", () => {
     });
   });
 
+  // ---- Data Values ------------------------------------------------------------------------------
+
   describe("Data Values", () => {
     it("should handle zero and NaN property values", async () => {
       const recipeCtx = createMockRecipeContext();
@@ -424,6 +450,8 @@ describe("MixPropertiesChart", () => {
       }
     });
   });
+
+  // ---- Edge Cases -------------------------------------------------------------------------------
 
   describe("Edge Cases", () => {
     it("should handle empty recipes array", () => {

@@ -37,6 +37,10 @@ import {
 
 import { SchemaCategory } from "@workspace/sci-cream/schema-category";
 
+// ---------------------------------------------------------------------------
+// Test helpers, mocks, and setup
+// ---------------------------------------------------------------------------
+
 vi.mock("../lib/data", () => ({
   fetchValidIngredientNames: vi.fn(),
   fetchIngredientSpec: vi.fn(() => Promise.resolve(undefined)),
@@ -62,7 +66,13 @@ class ResizeObserverMock {
 
 vi.stubGlobal("ResizeObserver", ResizeObserverMock);
 
+// ---------------------------------------------------------------------------
+// Helper functions
+// ---------------------------------------------------------------------------
+
 describe("Recipe Helper Functions", () => {
+  // ---- makeEmptyRecipeContext -------------------------------------------------------------------
+
   describe("makeEmptyRecipeContext", () => {
     it("should create a context with correct number of recipes", () => {
       const context = makeEmptyRecipeContext();
@@ -101,6 +111,8 @@ describe("Recipe Helper Functions", () => {
     });
   });
 
+  // ---- makeEmptyRecipeResources -----------------------------------------------------------------
+
   describe("makeEmptyRecipeResources", () => {
     it("should initialize with empty valid ingredients list and wasmBridge", () => {
       const resources = makeEmptyRecipeResources();
@@ -108,6 +120,8 @@ describe("Recipe Helper Functions", () => {
       expect(resources.wasmBridge).toBeInstanceOf(WasmBridge);
     });
   });
+
+  // ---- isRecipeEmpty ----------------------------------------------------------------------------
 
   describe("isRecipeEmpty", () => {
     let recipe: Recipe;
@@ -136,6 +150,8 @@ describe("Recipe Helper Functions", () => {
       expect(isRecipeEmpty(recipe)).toBe(false);
     });
   });
+
+  // ---- calculateMixTotal ------------------------------------------------------------------------
 
   describe("calculateMixTotal", () => {
     let recipe: Recipe;
@@ -174,6 +190,8 @@ describe("Recipe Helper Functions", () => {
       expect(calculateMixTotal(recipe)).toBe(100);
     });
   });
+
+  // ---- makeSciCreamRecipe -----------------------------------------------------------------------
 
   describe("makeSciCreamRecipe", () => {
     let recipe: Recipe;
@@ -224,6 +242,8 @@ describe("Recipe Helper Functions", () => {
     });
   });
 
+  // ---- makeLightRecipe --------------------------------------------------------------------------
+
   describe("makeLightRecipe", () => {
     let recipe: Recipe;
     const validIngredients = ["Whole Milk", "Sucrose"];
@@ -266,6 +286,8 @@ describe("Recipe Helper Functions", () => {
     });
   });
 
+  // ---- SciCreamRecipe.calculate_composition -----------------------------------------------------
+
   describe("SciCreamRecipe.calculate_composition", () => {
     let recipe: Recipe;
 
@@ -279,6 +301,8 @@ describe("Recipe Helper Functions", () => {
       expect(result).toBeInstanceOf(Composition);
     });
   });
+
+  // ---- SciCreamRecipe.calculate_mix_properties --------------------------------------------------
 
   describe("SciCreamRecipe.calculate_mix_properties", () => {
     let recipe: Recipe;
@@ -294,6 +318,10 @@ describe("Recipe Helper Functions", () => {
     });
   });
 });
+
+// ---------------------------------------------------------------------------
+// RecipeGrid component
+// ---------------------------------------------------------------------------
 
 describe("RecipeGrid Component", () => {
   let recipeContext: RecipeContext;
@@ -363,6 +391,8 @@ describe("RecipeGrid Component", () => {
     enabledRecipeIndices: indices,
   });
 
+  // ---- Rendering --------------------------------------------------------------------------------
+
   it("should render recipe selector", () => {
     const { container } = render(<RecipeGrid props={makeRecipeGridProps([0, 1])} />);
 
@@ -396,6 +426,8 @@ describe("RecipeGrid Component", () => {
     expect(screen.getByText("Qty (%)")).toBeInTheDocument();
     expect(screen.getByText("Total")).toBeInTheDocument();
   });
+
+  // ---- Updates on input -------------------------------------------------------------------------
 
   it("should update ingredient name on input", async () => {
     const user = userEvent.setup();
@@ -449,6 +481,8 @@ describe("RecipeGrid Component", () => {
       expect(updatedQuantityInput.value).toBe("100");
     });
   });
+
+  // ---- Display ----------------------------------------------------------------------------------
 
   it("should display mix total when ingredients have quantities", () => {
     recipeContext.recipes[0].ingredientRows[0].quantity = 50;
@@ -505,6 +539,8 @@ describe("RecipeGrid Component", () => {
       expect(screen.getByText("80")).toBeInTheDocument();
     });
   });
+
+  // ---- Recipe switch, copy, paste ---------------------------------------------------------------
 
   it("should change recipe when selector changes", async () => {
     recipeContext.recipes[0].ingredientRows[0].name = "Ingredient A";
@@ -619,6 +655,8 @@ describe("RecipeGrid Component", () => {
     expect(recipeContext.recipes[0].mixTotal).toBeUndefined();
   });
 
+  // ---- Input validation elements ----------------------------------------------------------------
+
   it("should show red outline for invalid ingredient names", () => {
     recipeContext.recipes[0].ingredientRows[0].name = "Invalid Ingredient";
 
@@ -693,6 +731,8 @@ describe("RecipeGrid Component", () => {
     expect(options?.[1]).toHaveAttribute("value", "Sucrose");
     expect(options?.[2]).toHaveAttribute("value", "Whipping Cream");
   });
+
+  // ---- WASM interoperability --------------------------------------------------------------------
 
   it("should not set WASM object in context in a bad state", async () => {
     const user = userEvent.setup();
