@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772866829128,
+  "lastUpdate": 1772866871518,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -8603,6 +8603,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 302,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fa41a9232f7ab27c9d3edec6875f1b9551565e70",
+          "message": "Add unit tests for `comp-value-format.ts` and fix\n\n* Rename `comp-values.ts` to `comp-value-format.ts`, to reflect that the\n  utilities are mostly formatting utilities, with minor manipulation.\n* Add unit tests for all functions in `comp-value-format.ts`.\n* Add thorough documentation for all functions in `comp-value-format.ts`\n* Fix various implementation issues that surfaced with the new more\n  thorough tests, e.g. 'k' suffix spacing, round before format, etc.\n* Change imports of this file from `../lib/ui/*` to `@/lib/ui/*`.\n* Introduce `verify` and `verifyAreNotNegative` utility functions.",
+          "timestamp": "2026-03-07T01:41:55-05:00",
+          "tree_id": "c6dc89b07757e631f28d3f236090ef49599824d1",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fa41a9232f7ab27c9d3edec6875f1b9551565e70"
+        },
+        "date": 1772866869663,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3582,
+            "range": "± 85",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 164138,
+            "range": "± 756",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1990,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 163000,
+            "range": "± 12195",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 309,
+            "range": "± 4",
             "unit": "ns/iter"
           }
         ]
