@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772866871518,
+  "lastUpdate": 1772867073033,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -79974,6 +79974,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 29.07,
             "range": "0.80",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fa41a9232f7ab27c9d3edec6875f1b9551565e70",
+          "message": "Add unit tests for `comp-value-format.ts` and fix\n\n* Rename `comp-values.ts` to `comp-value-format.ts`, to reflect that the\n  utilities are mostly formatting utilities, with minor manipulation.\n* Add unit tests for all functions in `comp-value-format.ts`.\n* Add thorough documentation for all functions in `comp-value-format.ts`\n* Fix various implementation issues that surfaced with the new more\n  thorough tests, e.g. 'k' suffix spacing, round before format, etc.\n* Change imports of this file from `../lib/ui/*` to `@/lib/ui/*`.\n* Introduce `verify` and `verifyAreNotNegative` utility functions.",
+          "timestamp": "2026-03-07T01:41:55-05:00",
+          "tree_id": "c6dc89b07757e631f28d3f236090ef49599824d1",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fa41a9232f7ab27c9d3edec6875f1b9551565e70"
+        },
+        "date": 1772867070985,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 667.4,
+            "range": "52.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 45.5,
+            "range": "5.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.7,
+            "range": "5.88",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 37.8,
+            "range": "4.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 36.5,
+            "range": "3.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 157,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 40.5,
+            "range": "3.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 41.24,
+            "range": "0.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 29.21,
+            "range": "0.81",
             "unit": "ms"
           }
         ]
