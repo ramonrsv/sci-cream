@@ -8,7 +8,7 @@ import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "../lib/ui/key-filter
 import { QtyToggle, QtyToggleSelect } from "../lib/ui/qty-toggle-select";
 import { applyQtyToggleAndFormat } from "@/lib/ui/comp-value-format";
 import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
-import { STATE_VAL } from "../lib/util";
+import { STATE_VAL } from "@/lib/util";
 import { DRAG_HANDLE_ICON_SIZE } from "../lib/ui/constants";
 
 import {
@@ -74,8 +74,8 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
 
   const getEnabledProps = () => {
     return getEnabledKeys(
-      propsFilterState,
-      selectedPropsState,
+      propsFilterState[STATE_VAL],
+      selectedPropsState[STATE_VAL],
       getPropKeys,
       isPropEmpty,
       autoHeuristic,

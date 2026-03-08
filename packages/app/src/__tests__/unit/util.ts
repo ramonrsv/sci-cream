@@ -42,21 +42,32 @@ export const getFpdLabel = (fpdKey: FpdKey) => prop_key_as_med_str(fpdToPropKey(
 export const getPropIndex = (labels: string[], propKey: PropKey) =>
   labels.indexOf(propKeyAsModifiedMedStr(propKey));
 
+/** Selects a key filter option from the dropdown. */
 export async function selectKeyFilter(container: HTMLElement, optionValue: KeyFilter) {
   const filterSelect = container.querySelector("#key-filter-select select") as HTMLSelectElement;
   expect(filterSelect).toBeInTheDocument();
   fireEvent.change(filterSelect, { target: { value: optionValue } });
 }
 
-export async function configCustomKeysAll(container: HTMLElement) {
-  await selectKeyFilter(container, KeyFilter.Custom);
+/** Waits for the custom-keys settings button to appear */
+export async function waitForCustomKeysButton(container: HTMLElement) {
   await waitFor(() =>
     expect(container.querySelector("#customize-keys-button")).toBeInTheDocument(),
   );
+}
 
+/** Opens the custom-keys popup by clicking the settings button. */
+export async function openCustomKeyFilters(container: HTMLElement) {
   const customKeysBtn = container.querySelector("#customize-keys-button") as HTMLButtonElement;
   fireEvent.click(customKeysBtn);
   await waitFor(() => expect(screen.getByText("All Properties")).toBeInTheDocument());
+}
+
+/** Configures all custom keys by selecting the "All Properties" checkbox. */
+export async function configCustomKeysAll(container: HTMLElement) {
+  await selectKeyFilter(container, KeyFilter.Custom);
+  await waitForCustomKeysButton(container);
+  await openCustomKeyFilters(container);
 
   const listItem = screen.getByText(/All Properties/i).closest("li");
   const allPropsCheckbox = within(listItem!).getByRole("checkbox");

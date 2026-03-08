@@ -34,6 +34,7 @@ import {
 } from "@/lib/styles/colors";
 import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "@/lib/ui/constants";
 import { Theme } from "@/lib/ui/theme-select";
+import { STATE_VAL } from "@/lib/util";
 
 import { isPropKeyQuantity, getAcceptablePropertyRange } from "@/lib/sci-cream/sci-cream";
 
@@ -181,8 +182,8 @@ export function MixPropertiesChart({
 
   const getEnabledProps = () => {
     return getEnabledKeys(
-      propsFilterState,
-      selectedPropsState,
+      propsFilterState[STATE_VAL],
+      selectedPropsState[STATE_VAL],
       getPropKeys,
       isPropEmpty,
       autoHeuristic,

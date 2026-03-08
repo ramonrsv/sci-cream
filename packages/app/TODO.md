@@ -27,6 +27,7 @@
 - [ ] Investigate methods for performance analysis, including Chrome DevTools Protocol (CDP),
       playwright-performance, etc. Look into generating flamegraphs.
 - [ ] Figure out how to show `sci-cream`'s beginner-friendly overview to new users of the app.
+- [ ] Add a visual regression test for the custom filter settings button and checkbox menu.
 
 # Backlog
 

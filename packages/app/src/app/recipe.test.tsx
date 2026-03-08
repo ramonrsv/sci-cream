@@ -4,7 +4,7 @@ import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from "vitest";
 import { render, screen, cleanup, waitFor, within, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import React, { type SetStateAction, useState } from "react";
+import { type SetStateAction, useState, useEffect } from "react";
 
 import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "../lib/ui/constants";
 import {
@@ -330,17 +330,17 @@ describe("RecipeGrid Component", () => {
   let setRecipeResources: Mock<(value: SetStateAction<RecipeResources>) => void>;
 
   function RecipeGridWithSpy() {
-    const [recipeCtx, setRecipeCtx] = useState(recipeContext);
-    const [resources, setResources] = useState(recipeResources);
+    const [recipeCtx, _setRecipeContext] = useState(recipeContext);
+    const [resources, _setRecipeResources] = useState(recipeResources);
 
-    React.useEffect(() => {
+    useEffect(() => {
       setRecipeContext.mockImplementation((value: SetStateAction<RecipeContext>) => {
-        setRecipeCtx(value);
         recipeContext = value instanceof Function ? value(recipeContext) : value;
+        _setRecipeContext(recipeContext);
       });
       setRecipeResources.mockImplementation((value: SetStateAction<RecipeResources>) => {
-        setResources(value);
         recipeResources = value instanceof Function ? value(recipeResources) : value;
+        _setRecipeResources(recipeResources);
       });
     }, []);
 

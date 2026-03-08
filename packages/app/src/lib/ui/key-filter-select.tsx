@@ -5,7 +5,6 @@ import { createPortal } from "react-dom";
 import { X, Settings } from "lucide-react";
 
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/ui/constants";
-import { STATE_VAL } from "../util";
 
 export enum KeyFilter {
   /// Automatically determine which keys to show based on internal heuristics
@@ -19,17 +18,17 @@ export enum KeyFilter {
 }
 
 export function getEnabledKeys<Key>(
-  keyFilterState: [KeyFilter, React.Dispatch<React.SetStateAction<KeyFilter>>],
-  selectedKeysState: [Set<Key>, React.Dispatch<React.SetStateAction<Set<Key>>>],
+  keyFilterState: KeyFilter,
+  selectedKeysState: Set<Key>,
   getKeys: () => Key[],
   isKeyEmpty: (key: Key) => boolean,
   autoHeuristic: (key: Key) => boolean,
 ): Key[] {
   const isKeySelected = (key: Key) => {
-    return selectedKeysState[STATE_VAL].has(key);
+    return selectedKeysState.has(key);
   };
 
-  switch (keyFilterState[STATE_VAL]) {
+  switch (keyFilterState) {
     case KeyFilter.All:
       return getKeys();
     case KeyFilter.Auto:
