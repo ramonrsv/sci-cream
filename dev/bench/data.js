@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772867086092,
+  "lastUpdate": 1772965386723,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -87552,6 +87552,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.69%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0c238d0d1ea00942889ca79362d906ec5be517cf",
+          "message": "Add section separation comments to unit test files",
+          "timestamp": "2026-03-07T18:58:19-05:00",
+          "tree_id": "ac009b896800a8f0dcc9d1984a95c4d835f7b366",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0c238d0d1ea00942889ca79362d906ec5be517cf"
+        },
+        "date": 1772965384590,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78167,
+            "range": "±1.64%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 735533,
+            "range": "±0.79%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10206,
+            "range": "±1.77%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 607455,
+            "range": "±0.71%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
