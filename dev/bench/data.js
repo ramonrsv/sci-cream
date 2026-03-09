@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773030367744,
+  "lastUpdate": 1773031560182,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -89223,6 +89223,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.81%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9f572b0c33d525bce346b881c23776a8814af079",
+          "message": "Add unit tests for `RecipeSelect` component",
+          "timestamp": "2026-03-09T00:19:33-04:00",
+          "tree_id": "afdd02e6c63bcb13d5a71d1316cf1ebb944e0b2d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9f572b0c33d525bce346b881c23776a8814af079"
+        },
+        "date": 1773031557641,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77140,
+            "range": "±0.99%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 740345,
+            "range": "±0.38%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10138,
+            "range": "±1.87%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 612523,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
           }
         ]
       }
