@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773031812463,
+  "lastUpdate": 1773093232756,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -89780,6 +89780,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.72%",
             "unit": "ops/sec",
             "extra": "97 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "07b77de4bb4d345a855aa7030d8ebae97485b4e0",
+          "message": "Add unit tests for utilities in `lib/util.ts`\n\n* Add unit tests for utility functions in `app/src/lib/util.ts`\n* Modify the behavior of `standardInputStepByPercent`, now rounds step.\n* Add TODO about `data.ts` rework and adding unit tests for new impl.",
+          "timestamp": "2026-03-09T13:23:54-04:00",
+          "tree_id": "9a135d089f84b8ecd86e70da671d4df14968468f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/07b77de4bb4d345a855aa7030d8ebae97485b4e0"
+        },
+        "date": 1773093230766,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78618,
+            "range": "±0.89%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 733627,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10148,
+            "range": "±1.83%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 602679,
+            "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
