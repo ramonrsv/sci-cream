@@ -4,7 +4,7 @@ import { expect } from "vitest";
 import { screen, fireEvent, waitFor, within } from "@testing-library/react";
 
 import { propKeyAsModifiedMedStr } from "@/app/properties-chart";
-import { makeEmptyRecipeContext } from "@/app/recipe";
+import { makeEmptyRecipe, makeEmptyRecipeContext } from "@/app/recipe";
 import { KeyFilter } from "@/lib/ui/key-filter-select";
 
 import {
@@ -13,32 +13,58 @@ import {
   PropKey,
   compToPropKey,
   fpdToPropKey,
+  comp_key_as_med_str,
   prop_key_as_med_str,
 } from "@workspace/sci-cream";
 
-import { RecipeID, getLightRecipe } from "@/__tests__/assets";
+import { RecipeID, getLightRecipe, recipeIdToIdx } from "@/__tests__/assets";
 import { WASM_BRIDGE } from "@/__tests__/util";
 
-export function createMockRecipeContext(nonEmptyRecipes: boolean[] = []) {
-  const recipeCtx = makeEmptyRecipeContext();
-  nonEmptyRecipes.forEach((isEmpty, index) => {
-    recipeCtx.recipes[index].mixTotal = isEmpty ? 100 : undefined;
+/** Builds a Recipe using the recipe asset for the requested RecipeID, at the corresponding idx */
+export function makeMockRecipe(recipeId: RecipeID) {
+  const recipe = makeEmptyRecipe(recipeIdToIdx(recipeId));
+  const lightRecipe = getLightRecipe(recipeId);
+
+  const mixProperties = WASM_BRIDGE.calculate_recipe_mix_properties(lightRecipe);
+  recipe.mixTotal = mixProperties.total_amount;
+  recipe.mixProperties = mixProperties;
+
+  lightRecipe.forEach(([name, qty], rowIdx) => {
+    recipe.ingredientRows[rowIdx] = {
+      index: rowIdx,
+      name: name as string,
+      quantity: qty as number,
+      ingredient: WASM_BRIDGE.get_ingredient_by_name(name as string),
+    };
   });
-  return recipeCtx;
+
+  return recipe;
 }
 
-export function createMockRefRecipeContext() {
+/** Builds a RecipeContext with the requested RecipeIDs populated via {@link makeMockRecipe} */
+export function makeMockRecipeContext(recipeIds: RecipeID[]) {
   const recipeCtx = makeEmptyRecipeContext();
-  recipeCtx.recipes[0].mixTotal = 612;
-  recipeCtx.recipes[0].mixProperties = WASM_BRIDGE.calculate_recipe_mix_properties(
-    getLightRecipe(RecipeID.Main),
-  );
+  for (const recipeId of recipeIds) {
+    recipeCtx.recipes[recipeIdToIdx(recipeId)] = makeMockRecipe(recipeId);
+  }
   return recipeCtx;
 }
 
+/** Returns the zero-based column index of a comp key in the composition table header */
+export function getCompColumnIdx(container: HTMLElement, compKey: CompKey): number {
+  const headers = Array.from(
+    container.querySelectorAll("#ing-composition-table thead tr:first-child th"),
+  );
+  return headers.findIndex((th) => th.textContent === comp_key_as_med_str(compKey));
+}
+
+/** Returns the label for a CompKey */
 export const getCompLabel = (compKey: CompKey) => prop_key_as_med_str(compToPropKey(compKey));
+
+/** Returns the label for an FpdKey */
 export const getFpdLabel = (fpdKey: FpdKey) => prop_key_as_med_str(fpdToPropKey(fpdKey));
 
+/** Returns the index of the requested propKey in the list of displayed labels */
 export const getPropIndex = (labels: string[], propKey: PropKey) =>
   labels.indexOf(propKeyAsModifiedMedStr(propKey));
 

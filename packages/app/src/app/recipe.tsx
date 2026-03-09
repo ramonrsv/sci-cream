@@ -57,20 +57,24 @@ export type RecipeResourcesState = [
   React.Dispatch<React.SetStateAction<RecipeResources>>,
 ];
 
+export function makeEmptyRecipe(recipeIdx: number): Recipe {
+  return {
+    index: recipeIdx,
+    name: recipeIdx === 0 ? "Recipe" : `Ref ${String.fromCharCode(64 + recipeIdx)}`,
+    ingredientRows: Array.from({ length: RECIPE_TOTAL_ROWS }, (_, rowIdx) => ({
+      index: rowIdx,
+      name: "",
+      quantity: undefined,
+      ingredient: undefined,
+    })),
+    mixTotal: undefined,
+    mixProperties: new MixProperties(),
+  };
+}
+
 export function makeEmptyRecipeContext(): RecipeContext {
   return {
-    recipes: Array.from({ length: MAX_RECIPES }, (_, recipeIdx) => ({
-      index: recipeIdx,
-      name: recipeIdx === 0 ? "Recipe" : `Ref ${String.fromCharCode(64 + recipeIdx)}`,
-      ingredientRows: Array.from({ length: RECIPE_TOTAL_ROWS }, (_, rowIdx) => ({
-        index: rowIdx,
-        name: "",
-        quantity: undefined,
-        ingredient: undefined,
-      })),
-      mixTotal: undefined,
-      mixProperties: new MixProperties(),
-    })),
+    recipes: Array.from({ length: MAX_RECIPES }, (_, recipeIdx) => makeEmptyRecipe(recipeIdx)),
   };
 }
 

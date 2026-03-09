@@ -19,10 +19,11 @@ import {
   prop_key_as_med_str,
 } from "@workspace/sci-cream";
 
-import { createMockRecipeContext, createMockRefRecipeContext } from "@/__tests__/unit/util";
+import { makeMockRecipeContext } from "@/__tests__/unit/util";
+import { RecipeID } from "@/__tests__/assets";
 
 // ---------------------------------------------------------------------------
-// Mocks and setup
+// Test helpers, mocks, and setup
 // ---------------------------------------------------------------------------
 
 class ResizeObserverMock {
@@ -50,31 +51,31 @@ describe("MixPropertiesGrid", () => {
 
   describe("Component Rendering", () => {
     it("should render with the correct id", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       expect(container.querySelector("#mix-properties-grid")).toBeInTheDocument();
     });
 
     it("should render with the grid-component class", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       expect(container.querySelector(".grid-component")).toBeInTheDocument();
     });
 
     it("should render QtyToggleSelect", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       expect(container.querySelector("#qty-toggle-select")).toBeInTheDocument();
     });
 
     it("should render KeyFilterSelect", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       expect(container.querySelector("#key-filter-select")).toBeInTheDocument();
     });
 
     it("should render a table", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       expect(container.querySelector("table")).toBeInTheDocument();
     });
@@ -84,27 +85,27 @@ describe("MixPropertiesGrid", () => {
 
   describe("Table Headers", () => {
     it('should show "Property" as the first column header', () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       expect(screen.getByText("Property")).toBeInTheDocument();
     });
 
     it("should show the main recipe name as a column header", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       const thead = container.querySelector("thead")!;
       expect(within(thead).getByText("Recipe")).toBeInTheDocument();
     });
 
     it("should show non-empty reference recipe names as column headers", () => {
-      const recipeCtx = createMockRecipeContext([false, true, true]);
+      const recipeCtx = makeMockRecipeContext([RecipeID.RefA, RecipeID.RefB]);
       render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       expect(screen.getByText("Ref A")).toBeInTheDocument();
       expect(screen.getByText("Ref B")).toBeInTheDocument();
     });
 
     it("should not show empty reference recipe names as column headers", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       expect(screen.queryByText("Ref A")).not.toBeInTheDocument();
       expect(screen.queryByText("Ref B")).not.toBeInTheDocument();
@@ -115,7 +116,7 @@ describe("MixPropertiesGrid", () => {
 
   describe("Recipe Filtering", () => {
     it("should show only the main recipe column when all recipes are empty", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       // "Property" + "Recipe" = 2 header cells
       expect(container.querySelectorAll("thead th")).toHaveLength(2);
@@ -123,14 +124,14 @@ describe("MixPropertiesGrid", () => {
     });
 
     it("should always show the main recipe even when it is empty", () => {
-      const recipeCtx = createMockRecipeContext([false]);
+      const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       const thead = container.querySelector("thead")!;
       expect(within(thead).getByText("Recipe")).toBeInTheDocument();
     });
 
     it("should show main recipe and non-empty reference recipe columns", () => {
-      const recipeCtx = createMockRecipeContext([false, false, true]);
+      const recipeCtx = makeMockRecipeContext([RecipeID.RefB]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       // "Property" + "Recipe" + "Ref B" = 3 header cells
       expect(container.querySelectorAll("thead th")).toHaveLength(3);
@@ -139,7 +140,7 @@ describe("MixPropertiesGrid", () => {
     });
 
     it("should show all non-empty reference recipes", () => {
-      const recipeCtx = createMockRecipeContext([false, true, true]);
+      const recipeCtx = makeMockRecipeContext([RecipeID.RefA, RecipeID.RefB]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       // "Property" + "Recipe" + "Ref A" + "Ref B" = 4 header cells
       expect(container.querySelectorAll("thead th")).toHaveLength(4);
@@ -149,7 +150,7 @@ describe("MixPropertiesGrid", () => {
     });
 
     it("should not show empty reference recipe columns", () => {
-      const recipeCtx = createMockRecipeContext([false, false, false]);
+      const recipeCtx = makeMockRecipeContext([]);
       render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       expect(screen.queryByText("Ref A")).not.toBeInTheDocument();
       expect(screen.queryByText("Ref B")).not.toBeInTheDocument();
@@ -160,20 +161,20 @@ describe("MixPropertiesGrid", () => {
 
   describe("Property Rows", () => {
     it("should show exactly DEFAULT_SELECTED_PROPERTIES keys in Auto mode", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       expect(container.querySelectorAll("tbody tr")).toHaveLength(DEFAULT_SELECTED_PROPERTIES.size);
     });
 
     it("should display property names using prop_key_as_med_str", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       const milkFatKey = compToPropKey(CompKey.MilkFat);
       expect(screen.getByText(prop_key_as_med_str(milkFatKey))).toBeInTheDocument();
     });
 
     it("should display FPD property rows in Auto mode", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       expect(screen.getByText(prop_key_as_med_str(fpdToPropKey(FpdKey.FPD)))).toBeInTheDocument();
       expect(
@@ -182,7 +183,7 @@ describe("MixPropertiesGrid", () => {
     });
 
     it("should not show keys outside DEFAULT_SELECTED_PROPERTIES in Auto mode", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       const extraKeys = getPropKeys().filter((k) => !DEFAULT_SELECTED_PROPERTIES.has(k));
       expect(extraKeys.length).toBeGreaterThan(0);
@@ -196,14 +197,14 @@ describe("MixPropertiesGrid", () => {
 
   describe("QtyToggle Integration", () => {
     it("should default to QtyToggle.Percentage", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       const select = container.querySelector("#qty-toggle-select select") as HTMLSelectElement;
       expect(select.value).toBe(QtyToggle.Percentage);
     });
 
     it("should support Quantity and Percentage options but not Composition", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       const select = container.querySelector("#qty-toggle-select select") as HTMLSelectElement;
       const options = Array.from(select.options).map((o) => o.value);
@@ -213,7 +214,7 @@ describe("MixPropertiesGrid", () => {
     });
 
     it("should update cell values when toggled from Percentage to Quantity", () => {
-      const recipeCtx = createMockRefRecipeContext();
+      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
 
       const getCellTexts = () =>
@@ -232,14 +233,14 @@ describe("MixPropertiesGrid", () => {
 
   describe("KeyFilter Integration", () => {
     it("should default to KeyFilter.Auto", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
       expect(select.value).toBe(KeyFilter.Auto);
     });
 
     it("should show all prop keys when filter is set to All", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
       fireEvent.change(select, { target: { value: KeyFilter.All } });
@@ -247,7 +248,7 @@ describe("MixPropertiesGrid", () => {
     });
 
     it("should show no rows with NonZero filter when all recipes are empty", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
       fireEvent.change(select, { target: { value: KeyFilter.NonZero } });
@@ -255,7 +256,7 @@ describe("MixPropertiesGrid", () => {
     });
 
     it("should show NonZero rows for a non-empty recipe", () => {
-      const recipeCtx = createMockRefRecipeContext();
+      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
       fireEvent.change(select, { target: { value: KeyFilter.NonZero } });
@@ -267,7 +268,7 @@ describe("MixPropertiesGrid", () => {
 
   describe("Property Values", () => {
     it("should display no meaningful numeric values in value cells for empty recipes", () => {
-      const recipeCtx = createMockRecipeContext();
+      const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       const valueCells = container.querySelectorAll("td.comp-val");
       // Cells show "" (undefined quantity) or "-" (invalid non-quantity values such as FPD keys)
@@ -277,7 +278,7 @@ describe("MixPropertiesGrid", () => {
     });
 
     it("should display non-empty formatted values for a non-empty recipe", () => {
-      const recipeCtx = createMockRefRecipeContext();
+      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
       const valueCells = container.querySelectorAll("td.comp-val");
       const nonEmptyCells = Array.from(valueCells).filter(
@@ -287,7 +288,7 @@ describe("MixPropertiesGrid", () => {
     });
 
     it("should display the correct Percentage-mode value for TotalFats", () => {
-      const recipeCtx = createMockRefRecipeContext();
+      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
       render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
 
       const mixProperties = recipeCtx.recipes[0].mixProperties!;
@@ -308,7 +309,7 @@ describe("MixPropertiesGrid", () => {
     });
 
     it("should display the correct Quantity-mode value for TotalFats", () => {
-      const recipeCtx = createMockRefRecipeContext();
+      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
       const { container } = render(<MixPropertiesGrid recipes={recipeCtx.recipes} />);
 
       const select = container.querySelector("#qty-toggle-select select") as HTMLSelectElement;
