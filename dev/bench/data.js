@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773093500500,
+  "lastUpdate": 1773094750997,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -90337,6 +90337,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.86%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0a5482bf17523dd0634d34ae0861bde08ce4c744",
+          "message": "Add unit tests for `ThemeSelect` component",
+          "timestamp": "2026-03-09T17:01:01-04:00",
+          "tree_id": "fc074fb55bbe1dd76504dbeec58a479fbdab57f4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0a5482bf17523dd0634d34ae0861bde08ce4c744"
+        },
+        "date": 1773094748152,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78544,
+            "range": "±0.73%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 666699,
+            "range": "±1.05%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9199,
+            "range": "±1.99%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 569032,
+            "range": "±0.87%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
