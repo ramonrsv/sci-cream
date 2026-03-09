@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773030095312,
+  "lastUpdate": 1773030103471,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -88299,6 +88299,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.76%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "711d79463b58acd4600a284a7f5d0a61f17f65b0",
+          "message": "Add unit tests for `QtyToggleSelect` component",
+          "timestamp": "2026-03-09T00:15:23-04:00",
+          "tree_id": "40aac472858c13f1922cad6ec1209ef4378fa2da",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/711d79463b58acd4600a284a7f5d0a61f17f65b0"
+        },
+        "date": 1773030101006,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77021,
+            "range": "±0.73%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 709233,
+            "range": "±1.91%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10182,
+            "range": "±1.82%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 605653,
+            "range": "±0.81%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
