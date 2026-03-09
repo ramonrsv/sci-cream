@@ -14,14 +14,9 @@ import { STATE_VAL } from "@/lib/util";
 
 import { CompKey, comp_key_as_med_str, getWasmEnums } from "@workspace/sci-cream";
 
-function getCompKeys(): CompKey[] {
-  return getWasmEnums(CompKey).filter(
-    (key) =>
-      // These values aren't very meaningful in a per-ingredient breakdown
-      key !== CompKey.AbsPAC &&
-      key !== CompKey.EmulsifiersPerFat &&
-      key !== CompKey.StabilizersPerWater,
-  );
+export function getCompKeys(): CompKey[] {
+  // Some values, e.g. ratio properties, aren't very meaningful in a per-ingredient breakdown
+  return getWasmEnums(CompKey).filter((key) => isCompKeyQuantity(key));
 }
 
 const DEFAULT_SELECTED_COMPS: Set<CompKey> = new Set([
