@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1772965652972,
+  "lastUpdate": 1773029839121,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -88109,6 +88109,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.71%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4bc0bcf5e18c89c60bb7e55b0e5bd36e4da319d9",
+          "message": "Add unit tests for `KeyFilterSelect` component\n\n* Add unit tests for `KeyFilterSelect` component, testing helper\n  utilities and all its functionality, including custom filters.\n* Change `getEnabledKeys` to take a state value with no setter.\n* Add TODO about visual test for custom filter setting button/menu.",
+          "timestamp": "2026-03-08T23:53:14-04:00",
+          "tree_id": "3317ba368458727a358fcb2b9d74d4c0d156d84b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4bc0bcf5e18c89c60bb7e55b0e5bd36e4da319d9"
+        },
+        "date": 1773029836992,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 85597,
+            "range": "±1.37%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 704893,
+            "range": "±1.11%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10064,
+            "range": "±1.96%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 619507,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
