@@ -33,6 +33,8 @@
 
 - [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
 - [ ] Once user-defined ingredients are supported, use embedded data for the main ingredients set.
+- [ ] Once embedded data is used for the main ingredient set, re-work `data.ts` to only support
+      requesting user-defined ingredients for a user, and implement unit tests for this.
 - [ ] When in Dark mode, if the page is refreshed, it momentarily flashes a Light theme before the
       Dark theme is applied. This can be solved with a blocking script in `layout.tsx` manually
       reading the theme from storage and applying it, but I would rather not do that, looks messy.

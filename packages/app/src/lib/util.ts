@@ -5,29 +5,36 @@ export function sleep_ms(ms: number) {
   return new Promise((resolve) => setTimeout(resolve, ms));
 }
 
+export const STD_INPUT_INCREMENTS = [0.01, 0.05, 0.1, 0.25, 0.5, 1, 2, 5, 10, 25, 50, 100];
+
 export function standardInputStepByPercent(
   current: number | undefined,
   stepPercent: number = 5,
   maxStep: number = 100,
 ): string {
-  const validIncrements = [0.01, 0.05, 0.1, 0.25, 0.5, 1, 2, 5, 10, 25, 50, 100];
-  const lastIdx = validIncrements.length - 1;
+  const LAST_IDX = STD_INPUT_INCREMENTS.length - 1;
 
-  if (current === undefined || (current * stepPercent) / 100 <= validIncrements[0]) {
-    return validIncrements[0].toString();
+  if (current === undefined || (current * stepPercent) / 100 <= STD_INPUT_INCREMENTS[0]) {
+    return STD_INPUT_INCREMENTS[0].toString();
   }
 
-  for (let i = 0; i < lastIdx; i++) {
-    if (
-      ((current * stepPercent) / 100 >= validIncrements[i] &&
-        (current * stepPercent) / 100 < validIncrements[i + 1]) ||
-      validIncrements[i + 1] > maxStep
-    ) {
-      return validIncrements[i].toString();
+  for (let i = 0; i < LAST_IDX; i++) {
+    if (STD_INPUT_INCREMENTS[i] >= maxStep) {
+      return STD_INPUT_INCREMENTS[i].toString();
+    }
+
+    const nonStdStep = (current * stepPercent) / 100;
+
+    if (nonStdStep > STD_INPUT_INCREMENTS[i] && nonStdStep <= STD_INPUT_INCREMENTS[i + 1]) {
+      const midPoint = (STD_INPUT_INCREMENTS[i] + STD_INPUT_INCREMENTS[i + 1]) / 2;
+
+      return nonStdStep < midPoint
+        ? STD_INPUT_INCREMENTS[i].toString()
+        : STD_INPUT_INCREMENTS[i + 1].toString();
     }
   }
 
-  return validIncrements[lastIdx].toString();
+  return STD_INPUT_INCREMENTS[LAST_IDX].toString();
 }
 
 export function verify(condition: boolean, message: string | (() => string)) {
