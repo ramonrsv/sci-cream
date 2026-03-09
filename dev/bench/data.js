@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773095024564,
+  "lastUpdate": 1773095028415,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -90894,6 +90894,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.87%",
             "unit": "ops/sec",
             "extra": "90 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e9d15a672732f9b61c208a8aab07aeeb0b6b8f9a",
+          "message": "Add unit tests for `MixPropertiesGrid` component",
+          "timestamp": "2026-03-09T17:50:47-04:00",
+          "tree_id": "74a90a35cb4e821256e4229b0fae4a8b412dd97c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e9d15a672732f9b61c208a8aab07aeeb0b6b8f9a"
+        },
+        "date": 1773095026242,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78243,
+            "range": "±0.90%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 735509,
+            "range": "±0.71%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10173,
+            "range": "±1.77%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 608576,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
