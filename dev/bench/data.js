@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773029896304,
+  "lastUpdate": 1773030095312,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -80984,6 +80984,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 27.72,
             "range": "0.86",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4bc0bcf5e18c89c60bb7e55b0e5bd36e4da319d9",
+          "message": "Add unit tests for `KeyFilterSelect` component\n\n* Add unit tests for `KeyFilterSelect` component, testing helper\n  utilities and all its functionality, including custom filters.\n* Change `getEnabledKeys` to take a state value with no setter.\n* Add TODO about visual test for custom filter setting button/menu.",
+          "timestamp": "2026-03-08T23:53:14-04:00",
+          "tree_id": "3317ba368458727a358fcb2b9d74d4c0d156d84b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4bc0bcf5e18c89c60bb7e55b0e5bd36e4da319d9"
+        },
+        "date": 1773030093190,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 669,
+            "range": "57.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.7,
+            "range": "5.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 60.2,
+            "range": "6.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.8,
+            "range": "4.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 38.6,
+            "range": "2.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 160.1,
+            "range": "8.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 43.6,
+            "range": "2.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 40.46,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 28.87,
+            "range": "1.13",
             "unit": "ms"
           }
         ]
