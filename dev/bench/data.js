@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773029839121,
+  "lastUpdate": 1773029896304,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -8705,6 +8705,60 @@ window.BENCHMARK_DATA = {
             "name": "recipe.calculate_mix_properties",
             "value": 192101,
             "range": "± 5553",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 303,
+            "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "4bc0bcf5e18c89c60bb7e55b0e5bd36e4da319d9",
+          "message": "Add unit tests for `KeyFilterSelect` component\n\n* Add unit tests for `KeyFilterSelect` component, testing helper\n  utilities and all its functionality, including custom filters.\n* Change `getEnabledKeys` to take a state value with no setter.\n* Add TODO about visual test for custom filter setting button/menu.",
+          "timestamp": "2026-03-08T23:53:14-04:00",
+          "tree_id": "3317ba368458727a358fcb2b9d74d4c0d156d84b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/4bc0bcf5e18c89c60bb7e55b0e5bd36e4da319d9"
+        },
+        "date": 1773029894505,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3575,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 163766,
+            "range": "± 4280",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2020,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 191715,
+            "range": "± 4094",
             "unit": "ns/iter"
           },
           {
