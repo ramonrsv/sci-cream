@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773114966348,
+  "lastUpdate": 1773117548402,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -93122,6 +93122,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.81%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2013bca028848523f3ac3e6d0a1777a76fe2f4ce",
+          "message": "Add a few missing unit tests for some utilities",
+          "timestamp": "2026-03-10T00:23:43-04:00",
+          "tree_id": "081e682b0571fefe5d4581b7b05a82d4eb8ab88d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2013bca028848523f3ac3e6d0a1777a76fe2f4ce"
+        },
+        "date": 1773117546323,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 92202,
+            "range": "±1.18%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 703762,
+            "range": "±1.65%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10455,
+            "range": "±1.89%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 624261,
+            "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
