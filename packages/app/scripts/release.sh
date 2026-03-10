@@ -171,10 +171,10 @@ cmd_release() {
   git -C "$REPO_ROOT" add -- "$PKG_REL"
 
   info "Committing..."
-  git -C "$REPO_ROOT" commit -m "chore(app): release $new_ver"
+  git -C "$REPO_ROOT" commit -m "chore: Release app version $new_ver"
 
   info "Tagging $tag_name ..."
-  git -C "$REPO_ROOT" tag -a "$tag_name" -m "chore(app): release $new_ver"
+  git -C "$REPO_ROOT" tag -a "$tag_name" -m "chore: Release app version $new_ver"
 
   echo
   echo "Done. Run '$(basename "$0") push' when ready to push."
