@@ -98,10 +98,6 @@ vi.mock("react-chartjs-2", () => ({
     capturedBarProps = { type, data, options };
     return <div data-testid="bar-chart">Mocked Bar Chart</div>;
   },
-  //   Line: ({ data, options }: CapturedChartProps) => {
-  //     capturedBarProps = { data, options };
-  //     return <div data-testid="line-chart">Mocked Line Chart</div>;
-  //   },
 }));
 
 // ---------------------------------------------------------------------------
