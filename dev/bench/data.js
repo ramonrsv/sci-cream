@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773113516643,
+  "lastUpdate": 1773114699717,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -92565,6 +92565,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.73%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "80c3b176dbf891e4253596eb544f2f65794f994b",
+          "message": "Add unit tests for `FpdGraph` component",
+          "timestamp": "2026-03-09T23:42:24-04:00",
+          "tree_id": "184bd09e57552d367aaffd8c6b5e7546bcd79a5f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/80c3b176dbf891e4253596eb544f2f65794f994b"
+        },
+        "date": 1773114697708,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76646,
+            "range": "±1.11%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 695489,
+            "range": "±1.05%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9634,
+            "range": "±2.00%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 580084,
+            "range": "±0.81%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
