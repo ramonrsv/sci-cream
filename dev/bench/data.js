@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773114699717,
+  "lastUpdate": 1773114747775,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -9143,6 +9143,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 305,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "80c3b176dbf891e4253596eb544f2f65794f994b",
+          "message": "Add unit tests for `FpdGraph` component",
+          "timestamp": "2026-03-09T23:42:24-04:00",
+          "tree_id": "184bd09e57552d367aaffd8c6b5e7546bcd79a5f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/80c3b176dbf891e4253596eb544f2f65794f994b"
+        },
+        "date": 1773114745933,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3628,
+            "range": "± 70",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 163765,
+            "range": "± 2183",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2043,
+            "range": "± 41",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 163596,
+            "range": "± 1254",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 304,
+            "range": "± 6",
             "unit": "ns/iter"
           }
         ]
