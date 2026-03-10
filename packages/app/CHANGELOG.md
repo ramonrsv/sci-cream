@@ -44,4 +44,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 <!-- next-url -->
 
 [Unreleased]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.1...HEAD
-[0.0.1]: https://github.com/ramonrsv/sci-cream/releases/tag/app-v0.0.0
+[0.0.1]: https://github.com/ramonrsv/sci-cream/releases/tag/app-v0.0.1
