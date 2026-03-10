@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773100633355,
+  "lastUpdate": 1773113259867,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -92008,6 +92008,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.80%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8ef2d57712145f615877045118c1de734accaf74",
+          "message": "Add unit tests for `IngredientCompositionGrid`\n\n* Also add a few utility functions, e.g. `setRecipeSelect`, etc.",
+          "timestamp": "2026-03-09T23:25:42-04:00",
+          "tree_id": "6ff6bc8dacc2f591dc5f880caf2cd702d8a331ac",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8ef2d57712145f615877045118c1de734accaf74"
+        },
+        "date": 1773113256881,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 79943,
+            "range": "±1.13%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 718592,
+            "range": "±1.02%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10195,
+            "range": "±1.79%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 605192,
+            "range": "±0.73%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
