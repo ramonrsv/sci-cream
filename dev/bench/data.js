@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773113259867,
+  "lastUpdate": 1773113300818,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -9083,6 +9083,60 @@ window.BENCHMARK_DATA = {
             "name": "recipe.calculate_mix_properties",
             "value": 190430,
             "range": "± 6391",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 305,
+            "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8ef2d57712145f615877045118c1de734accaf74",
+          "message": "Add unit tests for `IngredientCompositionGrid`\n\n* Also add a few utility functions, e.g. `setRecipeSelect`, etc.",
+          "timestamp": "2026-03-09T23:25:42-04:00",
+          "tree_id": "6ff6bc8dacc2f591dc5f880caf2cd702d8a331ac",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8ef2d57712145f615877045118c1de734accaf74"
+        },
+        "date": 1773113298043,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3601,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 191327,
+            "range": "± 8039",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1996,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 222595,
+            "range": "± 6530",
             "unit": "ns/iter"
           },
           {
