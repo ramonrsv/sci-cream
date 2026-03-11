@@ -17,6 +17,10 @@ import {
   type ScriptableScaleContext,
 } from "chart.js";
 
+import { useNavbarContext } from "@/lib/ui/navbar";
+import { Recipe, isRecipeEmpty } from "./recipe";
+import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "../lib/ui/constants";
+
 import {
   Color,
   getColor,
@@ -24,10 +28,6 @@ import {
   getLegendColor,
   getGridColor,
 } from "@/lib/styles/colors";
-
-import { Recipe, isRecipeEmpty } from "./recipe";
-import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "../lib/ui/constants";
-import { Theme } from "@/lib/ui/theme-select";
 
 ChartJS.register(
   CategoryScale,
@@ -40,7 +40,9 @@ ChartJS.register(
   Filler,
 );
 
-export function FpdGraph({ recipes: allRecipes, theme }: { recipes: Recipe[]; theme: Theme }) {
+export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
+  const { theme } = useNavbarContext();
+
   // Only display the main recipe and non-empty reference recipes
   const recipes = allRecipes.filter((recipe) => recipe.index == 0 || !isRecipeEmpty(recipe));
 

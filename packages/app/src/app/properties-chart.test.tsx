@@ -7,7 +7,6 @@ import { render, screen, cleanup, waitFor } from "@testing-library/react";
 import { Recipe } from "@/app/recipe";
 import { KeyFilter } from "@/lib/ui/key-filter-select";
 import { Color, getColor, addOrUpdateAlpha } from "@/lib/styles/colors";
-import { Theme } from "@/lib/ui/theme-select";
 import {
   MixPropertiesChart,
   getPropKeys,
@@ -160,15 +159,13 @@ describe("MixPropertiesChart", () => {
   describe("Component Rendering", () => {
     it("should render the component", () => {
       const recipeCtx = makeMockRecipeContext([]);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
       expect(screen.getByTestId("bar-chart")).toBeInTheDocument();
     });
 
     it("should render the correct component structure", () => {
       const recipeCtx = makeMockRecipeContext([]);
-      const { container } = render(
-        <MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />,
-      );
+      const { container } = render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
       expect(container.querySelector("#mix-properties-chart")).toBeInTheDocument();
       expect(container.querySelector(".grid-component")).toBeInTheDocument();
     });
@@ -179,7 +176,7 @@ describe("MixPropertiesChart", () => {
   describe("Recipe Filtering", () => {
     it("should display only the main recipe when all recipes are empty", () => {
       const recipeCtx = makeMockRecipeContext([]);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.datasets).toHaveLength(1);
@@ -188,7 +185,7 @@ describe("MixPropertiesChart", () => {
 
     it("should display main recipe and non-empty reference recipes", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.RefB]);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.datasets).toHaveLength(2);
@@ -202,9 +199,7 @@ describe("MixPropertiesChart", () => {
   describe("KeyFilterSelect Integration", () => {
     it("should render KeyFilterSelect component", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      const { container } = render(
-        <MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />,
-      );
+      const { container } = render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       expect(container.querySelector("#key-filter-select")).toBeInTheDocument();
     });
@@ -215,9 +210,7 @@ describe("MixPropertiesChart", () => {
   describe("Property Key Filtering", () => {
     it("should have KeyFilter.Auto by default", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      const { container } = render(
-        <MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />,
-      );
+      const { container } = render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       const filterSelect = container.querySelector(
         "#key-filter-select select",
@@ -228,7 +221,7 @@ describe("MixPropertiesChart", () => {
 
     it("should have some property keys selected by default", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       expect(capturedBarProps).not.toBeNull();
       const labels = capturedBarProps!.data.labels;
@@ -239,7 +232,7 @@ describe("MixPropertiesChart", () => {
 
     it("should filter out Water and HardnessAt14C", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       expect(capturedBarProps).not.toBeNull();
       const labels = capturedBarProps!.data.labels;
@@ -250,9 +243,7 @@ describe("MixPropertiesChart", () => {
 
     it("should show all labels if explicitly selected", async () => {
       const recipeCtx = makeMockRecipeContext([]);
-      const { container } = render(
-        <MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />,
-      );
+      const { container } = render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.labels.length).toBeGreaterThan(0);
@@ -271,7 +262,7 @@ describe("MixPropertiesChart", () => {
   describe("Chart Configuration", () => {
     it("should configure chart with correct title", () => {
       const recipeCtx = makeMockRecipeContext([]);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.options.plugins.title.display).toBe(true);
@@ -280,7 +271,7 @@ describe("MixPropertiesChart", () => {
 
     it("should configure chart with responsive and maintainAspectRatio settings", () => {
       const recipeCtx = makeMockRecipeContext([]);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       expect(capturedBarProps!.options.responsive).toBe(true);
       expect(capturedBarProps!.options.maintainAspectRatio).toBe(false);
@@ -288,21 +279,21 @@ describe("MixPropertiesChart", () => {
 
     it("should configure chart with legend disabled", () => {
       const recipeCtx = makeMockRecipeContext([]);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       expect(capturedBarProps!.options.plugins.legend.display).toBe(false);
     });
 
     it("should configure y-axis to begin at zero", () => {
       const recipeCtx = makeMockRecipeContext([]);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       expect(capturedBarProps!.options.scales.y.beginAtZero).toBe(true);
     });
 
     it("should configure y-axis title to Quantity (%)", () => {
       const recipeCtx = makeMockRecipeContext([]);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       expect(capturedBarProps!.options.scales.y.title.display).toBe(true);
       expect(capturedBarProps!.options.scales.y.title.text).toBe("Quantity (%)");
@@ -314,7 +305,7 @@ describe("MixPropertiesChart", () => {
   describe("Dataset Configuration", () => {
     it("should configure datasets with correct bar styling", () => {
       const recipeCtx = makeMockRecipeContext([]);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       expect(capturedBarProps).not.toBeNull();
       const dataset = capturedBarProps!.data.datasets[0];
@@ -325,7 +316,7 @@ describe("MixPropertiesChart", () => {
 
     it("should set dataset colors for main recipe and reference recipes", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA, RecipeID.RefB]);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       expect(capturedBarProps).not.toBeNull();
       const datasets = capturedBarProps!.data.datasets;
@@ -345,7 +336,7 @@ describe("MixPropertiesChart", () => {
 
     it("should set reference recipe colors correctly when some references are empty", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefB]);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.datasets).toHaveLength(2);
@@ -359,8 +350,8 @@ describe("MixPropertiesChart", () => {
 
     it("should create dataset for each visible recipe", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA, RecipeID.RefB]);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.datasets).toHaveLength(3);
       expect(capturedBarProps!.data.datasets[0].label).toBe("Recipe");
@@ -370,7 +361,7 @@ describe("MixPropertiesChart", () => {
 
     it("should not crate dataset for empty reference recipes", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefB]);
-      render(<MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.datasets).toHaveLength(2);
       expect(capturedBarProps!.data.datasets[0].label).toBe("Recipe");
@@ -383,9 +374,7 @@ describe("MixPropertiesChart", () => {
   describe("Data Values", () => {
     it("should handle zero and NaN property values", async () => {
       const recipeCtx = makeMockRecipeContext([]);
-      const { container } = render(
-        <MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />,
-      );
+      const { container } = render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       await configCustomKeysAll(container);
 
@@ -415,9 +404,7 @@ describe("MixPropertiesChart", () => {
 
     it("should have modified values and strings", async () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      const { container } = render(
-        <MixPropertiesChart recipes={recipeCtx.recipes} theme={Theme.Light} />,
-      );
+      const { container } = render(<MixPropertiesChart recipes={recipeCtx.recipes} />);
 
       await configCustomKeysAll(container);
 
@@ -451,7 +438,7 @@ describe("MixPropertiesChart", () => {
   describe("Edge Cases", () => {
     it("should handle empty recipes array", () => {
       const recipes: Recipe[] = [];
-      render(<MixPropertiesChart recipes={recipes} theme={Theme.Light} />);
+      render(<MixPropertiesChart recipes={recipes} />);
 
       expect(capturedBarProps).not.toBeNull();
       expect(capturedBarProps!.data.datasets).toHaveLength(0);

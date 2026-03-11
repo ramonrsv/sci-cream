@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { Sun, MoonStar, Monitor } from "lucide-react";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
 
+import { NAVBAR_ICON_SIZE } from "@/lib/ui/constants";
+
 export enum Theme {
   Light = "Light",
   Dark = "Dark",
@@ -88,20 +90,22 @@ export function ThemeSelect({
 
   const selectedOption = themeOptions.find((opt) => opt.value === themeConfig) ?? themeOptions[2];
 
+  const iconSize = NAVBAR_ICON_SIZE;
+
   return (
     <Listbox value={themeConfig} onChange={applyThemeConfig}>
       <div className="relative">
-        <ListboxButton className="theme-button flex items-center gap-2 rounded-full! px-3.5 py-2">
-          <selectedOption.icon className="h-5 w-5" />
+        <ListboxButton className="header-button flex items-center">
+          <selectedOption.icon size={iconSize} />
         </ListboxButton>
-        <ListboxOptions className="border-brd-str-lt bg-surface-lt dark:border-brd-str-dk dark:bg-surface-dk absolute right-0 z-50 mt-1 w-32 rounded-md border py-1 shadow-lg">
+        <ListboxOptions anchor="bottom start" className="popup z-50 w-32">
           {themeOptions.map((option) => (
             <ListboxOption
               key={option.value}
               value={option.value}
-              className="flex cursor-pointer items-center gap-2 px-3 py-2 hover:bg-gray-100 data-selected:bg-blue-100 dark:hover:bg-gray-700 dark:data-selected:bg-blue-900"
+              className="flex cursor-pointer items-center gap-1 px-2 py-1.5 hover:bg-gray-100 data-selected:bg-blue-100 dark:hover:bg-gray-700 dark:data-selected:bg-blue-900"
             >
-              <option.icon className="h-4 w-4" />
+              <option.icon size={iconSize} />
               <span>{option.label}</span>
             </ListboxOption>
           ))}

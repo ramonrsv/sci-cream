@@ -17,7 +17,6 @@ import {
   new_ingredient_database_seeded_from_specs,
 } from "@workspace/sci-cream";
 
-import { ThemeSelect, Theme, getInitialTheme } from "../lib/ui/theme-select";
 import { RecipeGrid, makeEmptyRecipeContext, makeEmptyRecipeResources } from "./recipe";
 import { IngredientCompositionGrid } from "./composition";
 import { MixPropertiesGrid } from "./properties";
@@ -26,7 +25,6 @@ import { FpdGraph } from "./fpd-graph";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "../lib/ui/constants";
 
 export default function Home() {
-  const [theme, setTheme] = useState<Theme>(() => getInitialTheme());
   const { width, containerRef, mounted } = useContainerWidth();
 
   const recipeCtxState = useState(() => makeEmptyRecipeContext());
@@ -124,30 +122,25 @@ export default function Home() {
   };
 
   return (
-    <main className="min-h-screen">
-      <h1 className="pt-4 pl-8 text-2xl font-bold">Ice Cream Recipe Calculator</h1>
-      <div className="fixed top-4 right-5 z-50">
-        <ThemeSelect themeState={[theme, setTheme]} />
-      </div>
-      <div ref={containerRef}>
-        {mounted && (
-          <ResponsiveGridLayout
-            breakpoints={breakpoints}
-            width={width}
-            cols={cols}
-            layouts={layouts}
-            rowHeight={REACT_GRID_ROW_HEIGHT}
-            margin={[20, 20]}
-            dragConfig={{ handle: ".drag-handle" }}
-          >
-            <div key="recipe">{<RecipeGrid props={recipeGridProps} />}</div>
-            <div key="properties">{<MixPropertiesGrid recipes={recipes} />}</div>
-            <div key="composition">{<IngredientCompositionGrid recipes={recipes} />}</div>
-            <div key="props-chart">{<MixPropertiesChart recipes={recipes} theme={theme} />}</div>
-            <div key="fpd-graph">{<FpdGraph recipes={recipes} theme={theme} />}</div>
-          </ResponsiveGridLayout>
-        )}
-      </div>
-    </main>
+    <div ref={containerRef} className="pr-4">
+      {mounted && (
+        <ResponsiveGridLayout
+          breakpoints={breakpoints}
+          width={width}
+          cols={cols}
+          layouts={layouts}
+          rowHeight={REACT_GRID_ROW_HEIGHT}
+          margin={[20, 20]}
+          containerPadding={[0, 0]}
+          dragConfig={{ handle: ".drag-handle" }}
+        >
+          <div key="recipe">{<RecipeGrid props={recipeGridProps} />}</div>
+          <div key="properties">{<MixPropertiesGrid recipes={recipes} />}</div>
+          <div key="composition">{<IngredientCompositionGrid recipes={recipes} />}</div>
+          <div key="props-chart">{<MixPropertiesChart recipes={recipes} />}</div>
+          <div key="fpd-graph">{<FpdGraph recipes={recipes} />}</div>
+        </ResponsiveGridLayout>
+      )}
+    </div>
   );
 }

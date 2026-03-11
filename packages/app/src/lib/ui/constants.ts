@@ -1,9 +1,12 @@
 export const MAX_RECIPES = 3;
 export const RECIPE_TOTAL_ROWS = 20;
 
+export const NAVBAR_ICON_SIZE = 20;
 export const DRAG_HANDLE_ICON_SIZE = 17;
 export const COMPONENT_ACTION_ICON_SIZE = 20;
 export const GRAPH_TITLE_FONT_SIZE = 15;
+
+export const DEFAULT_COLLAPSED_NAVBAR = true;
 
 // These values are carefully chosen so that the fixed height components (RecipeGrid, IngCompGrid)
 // and the grid container heights match exactly, so that there is enough margin after the components

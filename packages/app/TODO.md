@@ -18,7 +18,6 @@
 - [ ] Consider whether to add support to `IngredientCompositionGrid` to show deltas between recipes.
 - [ ] Add `Watchers` component where users can select what properties to watch. It should probably
       support displaying deltas between the main and reference recipes, and target minx-max ranges.
-- [ ] On a 1440p screen there is vertical scrolling when chrome is showing a bookmarks bar.
 - [ ] Check how vertical spacing looks like on 1080p/2160p screens; look into dynamic vertical?
 - [ ] Add `height` prop to `MixPropertiesGrid` so that it can adapt the number of properties shown.
 - [ ] Add functionality to store component layout so that it is remembered across page reloads. The
@@ -27,6 +26,7 @@
       playwright-performance, etc. Look into generating flamegraphs.
 - [ ] Figure out how to show `sci-cream`'s beginner-friendly overview to new users of the app.
 - [ ] Add a visual regression test for the custom filter settings button and checkbox menu.
+- [ ] When expanding the navbar there is a quick flicker of the items; not there when collapsing.
 
 # Backlog
 
@@ -64,6 +64,7 @@
 
 # Completed
 
+- [x] On a 1440p screen there is vertical scrolling when chrome is showing a bookmarks bar.
 - [x] Add tests for all components and utilities in `packages/app`.
 - [x] Look into a utility for doing app releases, possibly a simple script to replicate `cargo-rel`.
 - [x] Exclude `__tests__` from code coverage reports.

@@ -126,7 +126,7 @@ body {
 
 /* UI Components */
 .popup {
-  @apply rounded-lg border text-sm;
+  @apply rounded-lg border text-sm shadow-lg;
 
   @apply border-brd-lt bg-surface-lt text-txt-prim-lt;
   @variant dark {
@@ -144,20 +144,11 @@ body {
 }
 
 .action-button {
-  @apply rounded-xl border border-transparent text-sm leading-tight hover:border hover:shadow-sm;
+  @apply cursor-pointer rounded-xl border border-transparent text-sm leading-tight hover:border hover:shadow-sm;
 
   @apply bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt active:bg-act-lt;
   @variant dark {
     @apply bg-surface-dk text-txt-prim-dk hover:border-brd-hov-dk active:bg-act-dk;
-  }
-}
-
-.theme-button {
-  @apply rounded border text-sm leading-tight;
-
-  @apply border-brd-lt bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt active:bg-act-lt;
-  @variant dark {
-    @apply border-brd-dk bg-surface-dk text-txt-prim-dk hover:border-brd-hov-dk active:bg-act-dk;
   }
 }
 
@@ -172,6 +163,39 @@ body {
   @apply bg-surface-lt shadow-md;
   @variant dark {
     @apply bg-surface-dk shadow-lg;
+  }
+}
+
+/* Navigation Shell */
+.navbar {
+  @apply bg-page-lt;
+  @variant dark {
+    @apply bg-page-dk;
+  }
+}
+
+.sidebar-item {
+  @apply mx-2 flex items-center rounded-lg py-2 text-sm font-medium;
+
+  @apply text-txt-sec-lt hover:bg-hov-lt active:text-txt-prim-lt active:bg-hov-lt;
+  @variant dark {
+    @apply text-txt-sec-dk hover:bg-hov-dk active:text-txt-prim-dk active:bg-hov-dk;
+  }
+}
+
+.sidebar-item-active {
+  @apply text-txt-prim-lt bg-hov-lt;
+  @variant dark {
+    @apply text-txt-prim-dk bg-hov-dk;
+  }
+}
+
+.header-button {
+  @apply rounded-full border border-transparent p-2 text-sm leading-tight;
+
+  @apply hover:border-brd-lt hover:bg-surface-lt text-txt-prim-lt active:bg-act-lt;
+  @variant dark {
+    @apply hover:border-brd-dk hover:bg-surface-dk text-txt-prim-dk active:bg-act-dk;
   }
 }
 

@@ -21,6 +21,10 @@ vi.mock("@vercel/speed-insights/next", () => ({
   SpeedInsights: () => <div data-testid="speed-insights" />,
 }));
 
+vi.mock("@/lib/ui/navbar", () => ({
+  Navbar: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 const { default: RootLayout, metadata } = await import("./layout");
 
 // ---------------------------------------------------------------------------

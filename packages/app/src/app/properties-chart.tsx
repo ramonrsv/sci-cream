@@ -20,10 +20,13 @@ import {
   type IErrorBarYDataPoint,
 } from "chartjs-chart-error-bars";
 
+import { useNavbarContext } from "@/lib/ui/navbar";
 import { Recipe, isRecipeEmpty } from "@/app/recipe";
 import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "@/lib/ui/key-filter-select";
 import { QtyToggle } from "@/lib/ui/qty-toggle-select";
 import { applyQtyToggle, formatCompositionValue } from "@/lib/ui/comp-value-format";
+import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "@/lib/ui/constants";
+import { STATE_VAL } from "@/lib/util";
 import {
   Color,
   getColor,
@@ -32,9 +35,6 @@ import {
   getReferenceOpacity,
   addOrUpdateAlpha,
 } from "@/lib/styles/colors";
-import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "@/lib/ui/constants";
-import { Theme } from "@/lib/ui/theme-select";
-import { STATE_VAL } from "@/lib/util";
 
 import { isPropKeyQuantity, getAcceptablePropertyRange } from "@/lib/sci-cream/sci-cream";
 
@@ -154,13 +154,8 @@ export function getModifiedAcceptablePropertyRange(
   };
 }
 
-export function MixPropertiesChart({
-  recipes: allRecipes,
-  theme,
-}: {
-  recipes: Recipe[];
-  theme: Theme;
-}) {
+export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] }) {
+  const { theme } = useNavbarContext();
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
 

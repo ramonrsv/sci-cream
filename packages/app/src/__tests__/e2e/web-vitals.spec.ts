@@ -8,11 +8,6 @@ declare global {
   }
 }
 
-test("has 'Ice Cream Recipe Calculator' heading", async ({ page }) => {
-  await page.goto("");
-  await expect(page.getByRole("heading", { name: "Ice Cream Recipe Calculator" })).toBeVisible();
-});
-
 test("should collect web vitals metrics and be good", async ({ page }) => {
   await page.goto("");
 
@@ -20,7 +15,7 @@ test("should collect web vitals metrics and be good", async ({ page }) => {
   await page.waitForLoadState("load");
 
   // Interact with page to trigger INP/FID
-  await page.getByRole("heading", { name: "Ice Cream Recipe Calculator" }).click();
+  await page.getByRole("heading", { name: "Calculator" }).click();
   await page.waitForTimeout(1000);
 
   const webVitals = await page.evaluate(() => window.__webVitals || {});

@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/vitest";
 
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, waitFor, cleanup } from "@testing-library/react";
+import { render, waitFor, cleanup } from "@testing-library/react";
 
 import Home from "./page";
 
@@ -36,6 +36,8 @@ vi.mock("../lib/data", () => ({
   fetchAllIngredientSpecs: vi.fn(() => Promise.resolve([])),
 }));
 
+vi.mock("../lib/ui/sidebar", () => ({ useNavbarContext: () => ({ theme: "Light" }) }));
+
 // ---------------------------------------------------------------------------
 // Home Page
 // ---------------------------------------------------------------------------
@@ -51,11 +53,6 @@ describe("Home Page", () => {
     await vi.waitFor(() => {}, { timeout: 100 });
   });
 
-  it("should render the main heading", () => {
-    render(<Home />);
-    expect(screen.getByText("Ice Cream Recipe Calculator")).toBeInTheDocument();
-  });
-
   it("should render one RecipeGrid component", () => {
     const { container } = render(<Home />);
     expect(container.querySelectorAll("#recipe-grid").length).toBe(1);
@@ -69,14 +66,6 @@ describe("Home Page", () => {
   it("should render one IngredientCompositionGrid component", () => {
     const { container } = render(<Home />);
     expect(container.querySelectorAll("#ing-composition-grid").length).toBe(1);
-  });
-
-  it("should have proper page layout structure", () => {
-    const { container } = render(<Home />);
-
-    const main = container.querySelector("main");
-    expect(main).toBeInTheDocument();
-    expect(main).toHaveClass("min-h-screen");
   });
 
   it("should pre-fetch all ingredient specs (including names) on mount", async () => {
