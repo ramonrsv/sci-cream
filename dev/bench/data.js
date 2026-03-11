@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773207054572,
+  "lastUpdate": 1773207260914,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -87549,6 +87549,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 26.96,
             "range": "0.77",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9c13b140dfb2bb1f46c3058ebd429457e1c0395b",
+          "message": "Add header & sidebar, move theme toggle to header\n\n* Add a `Navbar` component that contains a `Header` and `Sidebar`. The\n  two childrens appear merged as one L-shaped sidebar. The `ThemeSelect`\n  button has been moved as a button in the header, and the style changed\n  accordingly to match other buttons. The `Sidebar` holds items\n  vertically, including 'Calculator', 'Recipes', etc., where\n  'Calculator' is the former home page.\n* Make some minor style adjustments, e.g. adding `cursor-pointer` to\n  `action-button`, adding `shadow-lg` to `popup`, etc. to make the style\n  more consistent across the navbar and existing components.\n* Use `React.useContext` to share light/dark `Theme`, `collapsed`, etc.\n* Update visual regression test snapshots to account for the new layout.\n* Add a visual regression test case for an expanded sidebar state.\n* Add TODO about quick flicker when expanding the navigation bar.\n* Add `waitForChartsToRender` to visual regression tests, for stability.\n* Allow up to 112 different pixels in 'properties-chart-empty.png' and\n  'fpd-graph-empty.png' screenshots for visual regression tests. It's\n  unclear why only these empty cases have the intermittent differences.",
+          "timestamp": "2026-03-11T00:22:52-04:00",
+          "tree_id": "252dbe0a2104e146a7d7c57e399a0726de2a3e7d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9c13b140dfb2bb1f46c3058ebd429457e1c0395b"
+        },
+        "date": 1773207258694,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 14.496,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 855.5,
+            "range": "67.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 47.6,
+            "range": "9.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 56.3,
+            "range": "6.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39,
+            "range": "5.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 35.7,
+            "range": "3.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 161,
+            "range": "11.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 40.1,
+            "range": "2.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 38.35,
+            "range": "0.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 26.64,
+            "range": "0.63",
             "unit": "ms"
           }
         ]
