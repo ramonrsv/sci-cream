@@ -81,7 +81,7 @@ export function Navbar({ children }: { children: React.ReactNode }) {
 export function Header() {
   const { collapsed, setCollapsed, mounted, theme, setTheme } = useContext(NavbarContext);
   const pathname = usePathname();
-  const [hoveringLogo, setHoveringLogo] = useState(true);
+  const [hoveringLogo, setHoveringLogo] = useState(false);
 
   const pageTitle =
     pathname === "/"
@@ -97,52 +97,45 @@ export function Header() {
 
   if (!mounted) return <header className="navbar h-12 shrink-0" />;
 
+  const showExpandButton = collapsed && hoveringLogo;
+
   return (
-    <header className="navbar flex h-12 shrink-0 items-center justify-between">
-      <div className="flex items-center">
-        {collapsed ? (
+    <header id="header" className="navbar flex h-12 shrink-0 items-center justify-between">
+      {/* Logo and collapse/expand button */}
+      <div className={`navbar-trans-width flex shrink-0 ${collapsed ? "w-18" : "w-52"}`}>
+        <div className="flex w-52 shrink-0 items-center overflow-hidden">
           <button
             title="Expand sidebar"
             id="expand-sidebar-button"
-            className={`m-4 p-2 ${hoveringLogo ? "" : "header-button"}`}
+            className={`${showExpandButton ? "header-button m-4 p-2" : "m-6"} mr-auto`}
             onClick={() => setCollapsed(false)}
-            onMouseEnter={() => setHoveringLogo(false)}
-            onMouseLeave={() => setHoveringLogo(true)}
+            onMouseEnter={() => setHoveringLogo(true)}
+            onMouseLeave={() => setHoveringLogo(false)}
           >
-            {!hoveringLogo ? (
+            {showExpandButton ? (
               <PanelLeftOpen size={iconSize} />
             ) : (
               <Image src="/favicon.ico" alt="Sci-Cream" width={logoSize} height={logoSize} />
             )}
           </button>
-        ) : (
-          <div className="flex w-52 items-center">
-            <Image
-              src="/favicon.ico"
-              alt="Sci-Cream"
-              width={logoSize}
-              height={logoSize}
-              className="mr-auto ml-6"
-            />
-            <ThemeSelect themeState={[theme, setTheme]} />
-            <button
-              title="Collapse sidebar"
-              id="collapse-sidebar-button"
-              className="header-button mr-3"
-              onClick={() => {
-                setCollapsed(true);
-                setHoveringLogo(true);
-              }}
-            >
-              <PanelLeftClose size={iconSize} />
-            </button>
-          </div>
-        )}
-        <h1 className="m-2 text-lg font-bold">{pageTitle}</h1>
+          <ThemeSelect themeState={[theme, setTheme]} />
+          <button
+            title="Collapse sidebar"
+            id="collapse-sidebar-button"
+            className={`header-button mr-3`}
+            onClick={() => setCollapsed(true)}
+          >
+            <PanelLeftClose size={iconSize} />
+          </button>
+        </div>
       </div>
-      <button title="Account" className="header-button m-3">
-        <CircleUserRound size={iconSize} />
-      </button>
+      {/* Page title and account button */}
+      <div className="navbar flex w-full items-center justify-between">
+        <h1 className="m-3 text-lg font-bold">{pageTitle}</h1>
+        <button title="Account" className="header-button m-4">
+          <CircleUserRound size={iconSize} />
+        </button>
+      </div>
     </header>
   );
 }
@@ -159,7 +152,7 @@ export function Sidebar() {
   return (
     <aside
       id="sidebar"
-      className={`navbar flex shrink-0 flex-col transition-[width] duration-200 ${collapsed ? "w-18" : "w-52"}`}
+      className={`navbar navbar-trans-width flex shrink-0 flex-col ${collapsed ? "w-18" : "w-52"}`}
     >
       {/* Nav links */}
       <nav className="mt-1 flex flex-1 flex-col gap-1 px-2">
@@ -172,8 +165,8 @@ export function Sidebar() {
               title={collapsed ? label : undefined}
               className={`sidebar-item ${active ? "sidebar-item-active" : ""} gap-2 px-2`}
             >
-              <Icon size={iconSize} />
-              {!collapsed && <span>{label}</span>}
+              <Icon size={iconSize} className="shrink-0" />
+              {<span className="overflow-hidden">{label}</span>}
             </Link>
           );
         })}

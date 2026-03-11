@@ -24,3 +24,28 @@ test.describe("Visual Regression: Collapsed and Expanded Sidebar", () => {
     await expect(sidebar).toHaveScreenshot("sidebar-expanded.png");
   });
 });
+
+test.describe("Visual Regression: Collapsed and Expanded Header", () => {
+  test("collapsed header", async ({ page }) => {
+    await page.goto("");
+    await page.waitForLoadState("networkidle");
+
+    const header = page.locator("#header");
+    await expect(header).toBeVisible();
+
+    await expect(header).toHaveScreenshot("header-collapsed.png");
+  });
+
+  test("expanded header", async ({ page }) => {
+    await page.goto("");
+    await page.waitForLoadState("networkidle");
+
+    const header = page.locator("#header");
+    await expect(header).toBeVisible();
+
+    const expandButton = page.locator("#expand-sidebar-button");
+    await expandButton.click();
+
+    await expect(header).toHaveScreenshot("header-expanded.png");
+  });
+});

@@ -26,7 +26,7 @@
       playwright-performance, etc. Look into generating flamegraphs.
 - [ ] Figure out how to show `sci-cream`'s beginner-friendly overview to new users of the app.
 - [ ] Add a visual regression test for the custom filter settings button and checkbox menu.
-- [ ] When expanding the navbar there is a quick flicker of the items; not there when collapsing.
+- [ ] Figure out how to do visual regression tests of animations, e.g. navbar expand/collapse.
 
 # Backlog
 
@@ -64,6 +64,7 @@
 
 # Completed
 
+- [x] When expanding the navbar there is a quick flicker of the items; not there when collapsing.
 - [x] On a 1440p screen there is vertical scrolling when chrome is showing a bookmarks bar.
 - [x] Add tests for all components and utilities in `packages/app`.
 - [x] Look into a utility for doing app releases, possibly a simple script to replicate `cargo-rel`.

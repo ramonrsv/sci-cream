@@ -94,23 +94,21 @@ export function ThemeSelect({
 
   return (
     <Listbox value={themeConfig} onChange={applyThemeConfig}>
-      <div className="relative">
-        <ListboxButton className="header-button flex items-center">
-          <selectedOption.icon size={iconSize} />
-        </ListboxButton>
-        <ListboxOptions anchor="bottom start" className="popup z-50 w-32">
-          {themeOptions.map((option) => (
-            <ListboxOption
-              key={option.value}
-              value={option.value}
-              className="flex cursor-pointer items-center gap-1 px-2 py-1.5 hover:bg-gray-100 data-selected:bg-blue-100 dark:hover:bg-gray-700 dark:data-selected:bg-blue-900"
-            >
-              <option.icon size={iconSize} />
-              <span>{option.label}</span>
-            </ListboxOption>
-          ))}
-        </ListboxOptions>
-      </div>
+      <ListboxButton className="header-button flex items-center">
+        <selectedOption.icon size={iconSize} />
+      </ListboxButton>
+      <ListboxOptions anchor="bottom start" className="popup z-50 w-32">
+        {themeOptions.map((option) => (
+          <ListboxOption
+            key={option.value}
+            value={option.value}
+            className="flex cursor-pointer items-center gap-1 px-2 py-1.5 hover:bg-gray-100 data-selected:bg-blue-100 dark:hover:bg-gray-700 dark:data-selected:bg-blue-900"
+          >
+            <option.icon size={iconSize} />
+            <span>{option.label}</span>
+          </ListboxOption>
+        ))}
+      </ListboxOptions>
     </Listbox>
   );
 }
