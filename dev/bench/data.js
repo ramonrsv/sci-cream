@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773292696846,
+  "lastUpdate": 1773292750313,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -9467,6 +9467,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 305,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c2f14f94db14ce95e11f74b708642d1c263febd7",
+          "message": "Fix the expand sidebar transition flashing issue\n\n* Fix the issue where expanding the sidebar causes the items to\n  momentarily flash. Furthermore, improve the animation so that the\n  items on the sidebar and on the corresponding part of the header\n  appear to always be there and the rest of the page covers it when\n  collapsing or exposes them when expanding.\n* Add visual regression tests for the collapsed and expanded header.\n* Add TODO about doing visual regression tests for animations.",
+          "timestamp": "2026-03-11T17:59:21-04:00",
+          "tree_id": "41a58a60c11585bf85e509943a6af2804285207c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c2f14f94db14ce95e11f74b708642d1c263febd7"
+        },
+        "date": 1773292747766,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3623,
+            "range": "± 69",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 164714,
+            "range": "± 1031",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2007,
+            "range": "± 9",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 161896,
+            "range": "± 2851",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 312,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
