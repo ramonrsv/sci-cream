@@ -3,12 +3,12 @@ import "@testing-library/jest-dom/vitest";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, within, act } from "@testing-library/react";
 
-import { IngredientCompositionGrid, getCompKeys } from "@/app/composition";
-import { QtyToggle } from "@/lib/ui/qty-toggle-select";
-import { KeyFilter } from "@/lib/ui/key-filter-select";
-import { applyQtyToggleAndFormat } from "@/lib/ui/comp-value-format";
+import { IngredientCompositionGrid, getCompKeys } from "@/app/_components/composition";
+import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
+import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
+import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
 import { isCompKeyQuantity } from "@/lib/sci-cream/sci-cream";
-import { RECIPE_TOTAL_ROWS } from "@/lib/ui/constants";
+import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 
 import { CompKey, comp_key_as_med_str } from "@workspace/sci-cream";
 

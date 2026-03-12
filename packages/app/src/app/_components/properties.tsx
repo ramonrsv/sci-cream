@@ -4,12 +4,12 @@ import { useState } from "react";
 import { GripVertical } from "lucide-react";
 
 import { Recipe, isRecipeEmpty } from "./recipe";
-import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "../lib/ui/key-filter-select";
-import { QtyToggle, QtyToggleSelect } from "../lib/ui/qty-toggle-select";
-import { applyQtyToggleAndFormat } from "@/lib/ui/comp-value-format";
-import { isPropKeyQuantity } from "../lib/sci-cream/sci-cream";
+import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "../_elements/selects/key-filter-select";
+import { QtyToggle, QtyToggleSelect } from "../_elements/selects/qty-toggle-select";
+import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
+import { isPropKeyQuantity } from "../../lib/sci-cream/sci-cream";
 import { STATE_VAL } from "@/lib/util";
-import { DRAG_HANDLE_ICON_SIZE } from "../lib/ui/constants";
+import { DRAG_HANDLE_ICON_SIZE } from "../../lib/styles/sizes";
 
 import {
   CompKey,

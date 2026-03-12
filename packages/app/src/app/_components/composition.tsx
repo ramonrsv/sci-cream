@@ -4,12 +4,12 @@ import { useState } from "react";
 import { GripVertical } from "lucide-react";
 
 import { IngredientRow, Recipe, isRecipeEmpty, getRecipeIndices } from "./recipe";
-import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "../lib/ui/key-filter-select";
-import { QtyToggle, QtyToggleSelect } from "../lib/ui/qty-toggle-select";
-import { RecipeSelect } from "@/lib/ui/recipe-select";
-import { applyQtyToggleAndFormat, formatCompositionValue } from "@/lib/ui/comp-value-format";
-import { isCompKeyQuantity } from "../lib/sci-cream/sci-cream";
-import { STD_COMPONENT_H_PX, DRAG_HANDLE_ICON_SIZE } from "../lib/ui/constants";
+import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "../_elements/selects/key-filter-select";
+import { QtyToggle, QtyToggleSelect } from "../_elements/selects/qty-toggle-select";
+import { RecipeSelect } from "@/app/_elements/selects/recipe-select";
+import { applyQtyToggleAndFormat, formatCompositionValue } from "@/lib/comp-value-format";
+import { isCompKeyQuantity } from "../../lib/sci-cream/sci-cream";
+import { STD_COMPONENT_H_PX, DRAG_HANDLE_ICON_SIZE } from "../../lib/styles/sizes";
 import { STATE_VAL } from "@/lib/util";
 
 import { CompKey, comp_key_as_med_str, getWasmEnums } from "@workspace/sci-cream";

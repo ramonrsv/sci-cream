@@ -3,16 +3,16 @@
 import { useState, useEffect, useRef } from "react";
 import { GripVertical, ClipboardCopy, ClipboardPaste, Trash } from "lucide-react";
 
-import { formatCompositionValue } from "@/lib/ui/comp-value-format";
-import { standardInputStepByPercent } from "../lib/util";
-import { RecipeSelect } from "@/lib/ui/recipe-select";
+import { formatCompositionValue } from "@/lib/comp-value-format";
+import { standardInputStepByPercent } from "../../lib/util";
+import { RecipeSelect } from "@/app/_elements/selects/recipe-select";
 import {
   MAX_RECIPES,
   RECIPE_TOTAL_ROWS,
   STD_COMPONENT_H_PX,
   COMPONENT_ACTION_ICON_SIZE,
   DRAG_HANDLE_ICON_SIZE,
-} from "../lib/ui/constants";
+} from "../../lib/styles/sizes";
 
 import {
   Ingredient,

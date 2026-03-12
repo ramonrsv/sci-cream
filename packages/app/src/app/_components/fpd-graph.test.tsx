@@ -7,7 +7,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 
 import { Color, getColor } from "@/lib/styles/colors";
-import { FpdGraph } from "@/app/fpd-graph";
+import { FpdGraph } from "@/app/_components/fpd-graph";
 
 import { RecipeID } from "@/__tests__/assets";
 import { makeMockRecipe, makeMockRecipeContext } from "@/__tests__/unit/util";

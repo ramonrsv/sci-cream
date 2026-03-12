@@ -13,7 +13,9 @@ vi.mock("next/font/google", () => ({
   Geist_Mono: () => ({ variable: "--font-geist-mono" }),
 }));
 
-vi.mock("@/lib/web-vitals", () => ({ WebVitals: () => <div data-testid="web-vitals" /> }));
+vi.mock("@/app/_elements/web-vitals", () => ({
+  WebVitals: () => <div data-testid="web-vitals" />,
+}));
 
 vi.mock("@vercel/analytics/next", () => ({ Analytics: () => <div data-testid="analytics" /> }));
 
@@ -21,7 +23,7 @@ vi.mock("@vercel/speed-insights/next", () => ({
   SpeedInsights: () => <div data-testid="speed-insights" />,
 }));
 
-vi.mock("@/lib/ui/navbar", () => ({
+vi.mock("@/app/navbar", () => ({
   Navbar: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 

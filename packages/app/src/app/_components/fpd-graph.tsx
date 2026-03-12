@@ -17,9 +17,9 @@ import {
   type ScriptableScaleContext,
 } from "chart.js";
 
-import { useNavbarContext } from "@/lib/ui/navbar";
+import { useNavbarContext } from "@/app/navbar";
 import { Recipe, isRecipeEmpty } from "./recipe";
-import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "../lib/ui/constants";
+import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "../../lib/styles/sizes";
 
 import {
   Color,

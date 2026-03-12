@@ -7,7 +7,7 @@ import {
   padToFixedDecimalPosition,
 } from "./comp-value-format";
 
-import { QtyToggle } from "./qty-toggle-select";
+import { QtyToggle } from "../app/_elements/selects/qty-toggle-select";
 
 describe("padToFixedDecimalPosition", () => {
   test("pads integer part to the left and decimal to the right", () => {

@@ -27,6 +27,7 @@
 - [ ] Figure out how to show `sci-cream`'s beginner-friendly overview to new users of the app.
 - [ ] Add a visual regression test for the custom filter settings button and checkbox menu.
 - [ ] Figure out how to do visual regression tests of animations, e.g. navbar expand/collapse.
+- [ ] In Dark mode, there is a quick flash of white when opening select dropdowns.
 
 # Backlog
 
@@ -34,6 +35,8 @@
 - [ ] Once user-defined ingredients are supported, use embedded data for the main ingredients set.
 - [ ] Once embedded data is used for the main ingredient set, re-work `data.ts` to only support
       requesting user-defined ingredients for a user, and implement unit tests for this.
+- [ ] Look into implementing a JS-side ingredient cache so that `Ingredient` WASM objects are only
+      created once, then any lookups return JS light clones, which should reduce `.free()` issues.
 - [ ] When in Dark mode, if the page is refreshed, it momentarily flashes a Light theme before the
       Dark theme is applied. This can be solved with a blocking script in `layout.tsx` manually
       reading the theme from storage and applying it, but I would rather not do that, looks messy.

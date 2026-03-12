@@ -142,7 +142,7 @@ TEST_USER_EMAIL="test@scicream.ca"
 ```bash
 $ cd ./packages/app
 $ npx drizzle-kit push
-$ pnpm tsx ./src/lib/db/seed.ts
+$ pnpm tsx ./src/lib/database/seed.ts
 ```
 
 Building, testing, and running the app can be done with `pnpm build`, `test`, `dev`, or `start`.

@@ -1,11 +1,11 @@
-import { QtyToggle } from "./qty-toggle-select";
+import { QtyToggle } from "../app/_elements/selects/qty-toggle-select";
 
 import {
   composition_value_as_quantity as comp_val_as_qty,
   composition_value_as_percentage as comp_val_as_percent,
 } from "@workspace/sci-cream";
 
-import { verify, verifyAreNotNegative } from "../util";
+import { verify, verifyAreNotNegative } from "./util";
 
 /**
  * Formats a number to a fixed-width string whilst keeping the decimal point position fixed

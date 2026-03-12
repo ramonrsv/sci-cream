@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { Sun, MoonStar, Monitor } from "lucide-react";
 import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headlessui/react";
 
-import { NAVBAR_ICON_SIZE } from "@/lib/ui/constants";
+import { NAVBAR_ICON_SIZE } from "@/lib/styles/sizes";
 
 export enum Theme {
   Light = "Light",

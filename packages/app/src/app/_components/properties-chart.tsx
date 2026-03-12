@@ -20,12 +20,16 @@ import {
   type IErrorBarYDataPoint,
 } from "chartjs-chart-error-bars";
 
-import { useNavbarContext } from "@/lib/ui/navbar";
-import { Recipe, isRecipeEmpty } from "@/app/recipe";
-import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "@/lib/ui/key-filter-select";
-import { QtyToggle } from "@/lib/ui/qty-toggle-select";
-import { applyQtyToggle, formatCompositionValue } from "@/lib/ui/comp-value-format";
-import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "@/lib/ui/constants";
+import { useNavbarContext } from "@/app/navbar";
+import { Recipe, isRecipeEmpty } from "@/app/_components/recipe";
+import {
+  KeyFilter,
+  KeyFilterSelect,
+  getEnabledKeys,
+} from "@/app/_elements/selects/key-filter-select";
+import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
+import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
+import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "@/lib/styles/sizes";
 import { STATE_VAL } from "@/lib/util";
 import {
   Color,

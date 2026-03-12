@@ -4,15 +4,15 @@ import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, waitFor } from "@testing-library/react";
 
-import { Recipe } from "@/app/recipe";
-import { KeyFilter } from "@/lib/ui/key-filter-select";
+import { Recipe } from "@/app/_components/recipe";
+import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { Color, getColor, addOrUpdateAlpha } from "@/lib/styles/colors";
 import {
   MixPropertiesChart,
   getPropKeys,
   getModifiedMixProperty,
   propKeyAsModifiedMedStr,
-} from "@/app/properties-chart";
+} from "@/app/_components/properties-chart";
 
 import {
   CompKey,

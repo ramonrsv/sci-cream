@@ -13,8 +13,8 @@ import {
   CircleUserRound,
 } from "lucide-react";
 
-import { NAVBAR_ICON_SIZE, DEFAULT_COLLAPSED_NAVBAR } from "@/lib/ui/constants";
-import { ThemeSelect, Theme, getInitialTheme } from "@/lib/ui/theme-select";
+import { NAVBAR_ICON_SIZE, DEFAULT_COLLAPSED_NAVBAR } from "@/lib/styles/sizes";
+import { ThemeSelect, Theme, getInitialTheme } from "@/app/_elements/selects/theme-select";
 
 const navItems = [
   { href: "/", label: "Calculator", icon: Calculator },

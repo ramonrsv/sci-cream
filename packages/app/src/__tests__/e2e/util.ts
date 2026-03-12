@@ -10,10 +10,10 @@ import {
   getMixProperty,
 } from "@workspace/sci-cream";
 
-import { Metric } from "@/lib/web-vitals";
-import { formatCompositionValue, applyQtyToggleAndFormat } from "@/lib/ui/comp-value-format";
-import { QtyToggle } from "@/lib/ui/qty-toggle-select";
-import { KeyFilter } from "@/lib/ui/key-filter-select";
+import { Metric } from "@/app/_elements/web-vitals";
+import { formatCompositionValue, applyQtyToggleAndFormat } from "@/lib/comp-value-format";
+import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
+import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 
 import {
   LightRecipe,

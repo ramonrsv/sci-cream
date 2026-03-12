@@ -3,10 +3,10 @@ import "@testing-library/jest-dom/vitest";
 import { expect } from "vitest";
 import { screen, fireEvent, waitFor, within } from "@testing-library/react";
 
-import { propKeyAsModifiedMedStr } from "@/app/properties-chart";
-import { makeEmptyRecipe, makeEmptyRecipeContext } from "@/app/recipe";
-import { KeyFilter } from "@/lib/ui/key-filter-select";
-import { QtyToggle } from "@/lib/ui/qty-toggle-select";
+import { propKeyAsModifiedMedStr } from "@/app/_components/properties-chart";
+import { makeEmptyRecipe, makeEmptyRecipeContext } from "@/app/_components/recipe";
+import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
+import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 
 import {
   CompKey,

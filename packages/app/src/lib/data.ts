@@ -4,9 +4,9 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
 
-import { getDatabaseUrl } from "./db/util";
-import { usersTable, User, ingredientsTable, Ingredient as IngredientDb } from "./db/schema";
-import * as schema from "./db/schema";
+import { getDatabaseUrl } from "./database/util";
+import { usersTable, User, ingredientsTable, Ingredient as IngredientDb } from "./database/schema";
+import * as schema from "./database/schema";
 
 const db = drizzle(getDatabaseUrl(), { schema });
 

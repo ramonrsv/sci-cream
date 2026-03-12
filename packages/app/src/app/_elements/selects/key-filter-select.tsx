@@ -4,7 +4,7 @@ import { useState, useRef, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { X, Settings } from "lucide-react";
 
-import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/ui/constants";
+import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 
 export enum KeyFilter {
   /// Automatically determine which keys to show based on internal heuristics

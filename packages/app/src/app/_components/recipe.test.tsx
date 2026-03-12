@@ -6,7 +6,7 @@ import { render, screen, cleanup, waitFor, within, fireEvent } from "@testing-li
 import userEvent from "@testing-library/user-event";
 import { type SetStateAction, useState, useEffect } from "react";
 
-import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "../lib/ui/constants";
+import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "../../lib/styles/sizes";
 import {
   RecipeGrid,
   makeEmptyRecipeContext,
@@ -22,7 +22,7 @@ import {
   RecipeResourcesState,
 } from "./recipe";
 
-import { fetchIngredientSpec } from "../lib/data";
+import { fetchIngredientSpec } from "@/lib/data";
 
 import {
   Category,
@@ -41,7 +41,7 @@ import { SchemaCategory } from "@workspace/sci-cream/schema-category";
 // Test helpers, mocks, and setup
 // ---------------------------------------------------------------------------
 
-vi.mock("../lib/data", () => ({
+vi.mock("@/lib/data", () => ({
   fetchValidIngredientNames: vi.fn(),
   fetchIngredientSpec: vi.fn(() => Promise.resolve(undefined)),
   fetchAllIngredientSpecs: vi.fn(() => Promise.resolve([])),

@@ -1,6 +1,6 @@
 "use client";
 
-import { Recipe } from "@/app/recipe";
+import { Recipe } from "@/app/_components/recipe";
 
 export function RecipeSelect({
   allRecipes,

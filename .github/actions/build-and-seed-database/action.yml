@@ -11,4 +11,4 @@ runs:
       run: |
         cd ./packages/app
         npx drizzle-kit push
-        pnpm tsx ./src/lib/db/seed.ts
+        pnpm tsx ./src/lib/database/seed.ts

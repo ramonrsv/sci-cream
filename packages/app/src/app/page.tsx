@@ -10,19 +10,23 @@ import {
 
 import { useState, useEffect } from "react";
 
-import { fetchAllIngredientSpecs } from "../lib/data";
-
 import {
   Bridge as WasmBridge,
   new_ingredient_database_seeded_from_specs,
 } from "@workspace/sci-cream";
 
-import { RecipeGrid, makeEmptyRecipeContext, makeEmptyRecipeResources } from "./recipe";
-import { IngredientCompositionGrid } from "./composition";
-import { MixPropertiesGrid } from "./properties";
-import { MixPropertiesChart } from "./properties-chart";
-import { FpdGraph } from "./fpd-graph";
-import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "../lib/ui/constants";
+import { IngredientCompositionGrid } from "@/app/_components/composition";
+import { MixPropertiesGrid } from "@/app/_components/properties";
+import { MixPropertiesChart } from "@/app/_components/properties-chart";
+import { FpdGraph } from "@/app/_components/fpd-graph";
+import {
+  RecipeGrid,
+  makeEmptyRecipeContext,
+  makeEmptyRecipeResources,
+} from "@/app/_components/recipe";
+
+import { fetchAllIngredientSpecs } from "@/lib/data";
+import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
 
 export default function Home() {
   const { width, containerRef, mounted } = useContainerWidth();

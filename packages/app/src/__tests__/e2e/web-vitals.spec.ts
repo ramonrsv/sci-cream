@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { Metric } from "@/lib/web-vitals";
+import { Metric } from "@/app/_elements/web-vitals";
 
 declare global {
   interface Window {

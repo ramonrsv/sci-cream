@@ -2,8 +2,8 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
-import { Navbar } from "@/lib/ui/navbar";
-import { WebVitals } from "@/lib/web-vitals";
+import { Navbar } from "@/app/navbar";
+import { WebVitals } from "@/app/_elements/web-vitals";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 

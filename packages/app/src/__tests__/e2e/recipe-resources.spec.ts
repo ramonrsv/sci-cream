@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { KeyFilter } from "@/lib/ui/key-filter-select";
+import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 
 import { RecipeID, getRecipeText, getLightRecipe } from "@/__tests__/assets";
 

@@ -1,14 +1,14 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
 
-import type { Metric } from "./web-vitals";
+import type { Metric } from "@/app/_elements/web-vitals";
 
 // Mock next/web-vitals before importing the component
 const mockUseReportWebVitals = vi.fn();
 vi.mock("next/web-vitals", () => ({ useReportWebVitals: mockUseReportWebVitals }));
 
 // Import after mocks are set up (vi.mock is hoisted)
-const { WebVitals } = await import("./web-vitals");
+const { WebVitals } = await import("@/app/_elements/web-vitals");
 
 // ---------------------------------------------------------------------------
 // WebVitals component

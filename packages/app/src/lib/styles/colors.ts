@@ -1,6 +1,6 @@
 import { colord } from "colord";
 
-import { Theme } from "../ui/theme-select";
+import { Theme } from "../../app/_elements/selects/theme-select";
 
 export enum Color {
   GraphBlue = "--color-graph-blue",

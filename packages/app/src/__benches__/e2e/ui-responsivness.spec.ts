@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
-import { QtyToggle } from "@/lib/ui/qty-toggle-select";
-import { KeyFilter } from "@/lib/ui/key-filter-select";
+import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
+import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { CompKey, comp_key_as_med_str, compToPropKey } from "@workspace/sci-cream";
 
 import { RecipeID, getRecipeText, getLightRecipe } from "@/__tests__/assets";

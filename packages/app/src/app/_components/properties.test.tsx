@@ -3,10 +3,10 @@ import "@testing-library/jest-dom/vitest";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent, within } from "@testing-library/react";
 
-import { MixPropertiesGrid, DEFAULT_SELECTED_PROPERTIES } from "@/app/properties";
-import { QtyToggle } from "@/lib/ui/qty-toggle-select";
-import { KeyFilter } from "@/lib/ui/key-filter-select";
-import { applyQtyToggleAndFormat } from "@/lib/ui/comp-value-format";
+import { MixPropertiesGrid, DEFAULT_SELECTED_PROPERTIES } from "@/app/_components/properties";
+import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
+import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
+import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
 import { isPropKeyQuantity } from "@/lib/sci-cream/sci-cream";
 
 import {
