@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773207267746,
+  "lastUpdate": 1773292696846,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -95907,6 +95907,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.82%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c2f14f94db14ce95e11f74b708642d1c263febd7",
+          "message": "Fix the expand sidebar transition flashing issue\n\n* Fix the issue where expanding the sidebar causes the items to\n  momentarily flash. Furthermore, improve the animation so that the\n  items on the sidebar and on the corresponding part of the header\n  appear to always be there and the rest of the page covers it when\n  collapsing or exposes them when expanding.\n* Add visual regression tests for the collapsed and expanded header.\n* Add TODO about doing visual regression tests for animations.",
+          "timestamp": "2026-03-11T17:59:21-04:00",
+          "tree_id": "41a58a60c11585bf85e509943a6af2804285207c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c2f14f94db14ce95e11f74b708642d1c263febd7"
+        },
+        "date": 1773292694754,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78580,
+            "range": "±0.65%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 734129,
+            "range": "±0.39%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10148,
+            "range": "±1.97%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 606645,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
