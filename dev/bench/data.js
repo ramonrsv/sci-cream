@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773299541329,
+  "lastUpdate": 1773299577414,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -9521,6 +9521,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 312,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a6fc2089007d4507c55ab937b9dfc5ce340ea56d",
+          "message": "Re-organize the project directory structure\n\n* Move all `.tsx` files up to `/app`, either in routers, or in private\n  directories, e.g. `/app/_components`, `/app/_elements/selects`, etc.\n* Move all calculator components, e.g. `FpdGraph`, `RecipeGrid`, etc.\n  to `/app/_components`, as these may be shared by multiple routes.\n* Add TODOs about dark mode flashes of white when opening select\n  dropdowns, and about JS-side ingredient cache for `Ingredient`s.",
+          "timestamp": "2026-03-12T02:31:26-04:00",
+          "tree_id": "e5fc38027d7a74517d35bff2c41f0d440121f3c2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a6fc2089007d4507c55ab937b9dfc5ce340ea56d"
+        },
+        "date": 1773299575113,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3098,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 126529,
+            "range": "± 1491",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1666,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 125790,
+            "range": "± 875",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 257,
+            "range": "± 10",
             "unit": "ns/iter"
           }
         ]
