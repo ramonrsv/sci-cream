@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773299798428,
+  "lastUpdate": 1773299845610,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -88842,6 +88842,90 @@ window.BENCHMARK_DATA = {
             "name": "Rapid ingredient quantity updates, final",
             "value": 26.64,
             "range": "0.63",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a6fc2089007d4507c55ab937b9dfc5ce340ea56d",
+          "message": "Re-organize the project directory structure\n\n* Move all `.tsx` files up to `/app`, either in routers, or in private\n  directories, e.g. `/app/_components`, `/app/_elements/selects`, etc.\n* Move all calculator components, e.g. `FpdGraph`, `RecipeGrid`, etc.\n  to `/app/_components`, as these may be shared by multiple routes.\n* Add TODOs about dark mode flashes of white when opening select\n  dropdowns, and about JS-side ingredient cache for `Ingredient`s.",
+          "timestamp": "2026-03-12T02:31:26-04:00",
+          "tree_id": "e5fc38027d7a74517d35bff2c41f0d440121f3c2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a6fc2089007d4507c55ab937b9dfc5ce340ea56d"
+        },
+        "date": 1773299843117,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 15.354,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 892.4,
+            "range": "79.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48.5,
+            "range": "5.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 64.4,
+            "range": "7.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.6,
+            "range": "5.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 38.4,
+            "range": "3.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 174.9,
+            "range": "12.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 49.4,
+            "range": "2.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 44,
+            "range": "0.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 30.06,
+            "range": "1.07",
             "unit": "ms"
           }
         ]
