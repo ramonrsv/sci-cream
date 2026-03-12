@@ -28,7 +28,7 @@ import {
 import { fetchAllIngredientSpecs } from "@/lib/data";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
 
-export default function Home() {
+export default function CalculatorPage() {
   const { width, containerRef, mounted } = useContainerWidth();
 
   const recipeCtxState = useState(() => makeEmptyRecipeContext());

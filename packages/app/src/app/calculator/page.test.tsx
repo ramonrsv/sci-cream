@@ -4,7 +4,7 @@ import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, waitFor, cleanup } from "@testing-library/react";
 
-import Home from "./page";
+import CalculatorPage from "./page";
 
 // ---------------------------------------------------------------------------
 // Test helpers, mocks, and setup
@@ -30,19 +30,19 @@ const matchMediaMock = vi
 vi.stubGlobal("ResizeObserver", ResizeObserverMock);
 vi.stubGlobal("matchMedia", matchMediaMock);
 
-vi.mock("../lib/data", () => ({
+vi.mock("@/lib/data", () => ({
   fetchValidIngredientNames: vi.fn(() => Promise.resolve(["2% Milk", "Sucrose", "Whipping Cream"])),
   fetchIngredientSpec: vi.fn(() => Promise.resolve(undefined)),
   fetchAllIngredientSpecs: vi.fn(() => Promise.resolve([])),
 }));
 
-vi.mock("../lib/ui/sidebar", () => ({ useNavbarContext: () => ({ theme: "Light" }) }));
+vi.mock("@/app/navbar", () => ({ useNavbarContext: () => ({ theme: "Light" }) }));
 
 // ---------------------------------------------------------------------------
-// Home Page
+// Calculator Page
 // ---------------------------------------------------------------------------
 
-describe("Home Page", () => {
+describe("Calculator Page", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setupVitestCanvasMock();
@@ -54,23 +54,23 @@ describe("Home Page", () => {
   });
 
   it("should render one RecipeGrid component", () => {
-    const { container } = render(<Home />);
+    const { container } = render(<CalculatorPage />);
     expect(container.querySelectorAll("#recipe-grid").length).toBe(1);
   });
 
   it("should render one MixPropertiesGrid component", () => {
-    const { container } = render(<Home />);
+    const { container } = render(<CalculatorPage />);
     expect(container.querySelectorAll("#mix-properties-grid").length).toBe(1);
   });
 
   it("should render one IngredientCompositionGrid component", () => {
-    const { container } = render(<Home />);
+    const { container } = render(<CalculatorPage />);
     expect(container.querySelectorAll("#ing-composition-grid").length).toBe(1);
   });
 
   it("should pre-fetch all ingredient specs (including names) on mount", async () => {
-    const { fetchAllIngredientSpecs } = await import("../lib/data");
-    render(<Home />);
+    const { fetchAllIngredientSpecs } = await import("../../lib/data");
+    render(<CalculatorPage />);
 
     await waitFor(() => {
       expect(fetchAllIngredientSpecs).toHaveBeenCalled();
@@ -78,7 +78,7 @@ describe("Home Page", () => {
   });
 
   it("should initialize recipes with empty ingredient rows", () => {
-    const { container } = render(<Home />);
+    const { container } = render(<CalculatorPage />);
     expect(container.querySelectorAll("input").length).toBeGreaterThan(0);
   });
 });

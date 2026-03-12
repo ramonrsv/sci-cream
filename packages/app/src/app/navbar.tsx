@@ -17,13 +17,12 @@ import { NAVBAR_ICON_SIZE, DEFAULT_COLLAPSED_NAVBAR } from "@/lib/styles/sizes";
 import { ThemeSelect, Theme, getInitialTheme } from "@/app/_elements/selects/theme-select";
 
 const navItems = [
-  { href: "/", label: "Calculator", icon: Calculator },
+  { href: "/calculator", label: "Calculator", icon: Calculator },
   { href: "/recipes", label: "Recipes", icon: BookOpen },
   { href: "/ingredients", label: "Ingredients", icon: Wheat },
 ];
 
 function isNavActive(pathname: string, href: string): boolean {
-  if (href === "/") return pathname === "/";
   return pathname.startsWith(href);
 }
 
@@ -83,15 +82,7 @@ export function Header() {
   const pathname = usePathname();
   const [hoveringLogo, setHoveringLogo] = useState(false);
 
-  const pageTitle =
-    pathname === "/"
-      ? "Calculator"
-      : pathname.startsWith("/recipes")
-        ? "Recipes"
-        : pathname.startsWith("/ingredients")
-          ? "Ingredients"
-          : "Sci-Cream";
-
+  const pageTitle = navItems.find(({ href }) => isNavActive(pathname, href))?.label || "Sci-Cream";
   const iconSize = NAVBAR_ICON_SIZE;
   const logoSize = iconSize + 2;
 
