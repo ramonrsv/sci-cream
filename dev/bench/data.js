@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773292956129,
+  "lastUpdate": 1773299541329,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -96380,6 +96380,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.72%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a6fc2089007d4507c55ab937b9dfc5ce340ea56d",
+          "message": "Re-organize the project directory structure\n\n* Move all `.tsx` files up to `/app`, either in routers, or in private\n  directories, e.g. `/app/_components`, `/app/_elements/selects`, etc.\n* Move all calculator components, e.g. `FpdGraph`, `RecipeGrid`, etc.\n  to `/app/_components`, as these may be shared by multiple routes.\n* Add TODOs about dark mode flashes of white when opening select\n  dropdowns, and about JS-side ingredient cache for `Ingredient`s.",
+          "timestamp": "2026-03-12T02:31:26-04:00",
+          "tree_id": "e5fc38027d7a74517d35bff2c41f0d440121f3c2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a6fc2089007d4507c55ab937b9dfc5ce340ea56d"
+        },
+        "date": 1773299539176,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77708,
+            "range": "±0.63%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 720867,
+            "range": "±0.42%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9992,
+            "range": "±1.97%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 602260,
+            "range": "±0.73%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
