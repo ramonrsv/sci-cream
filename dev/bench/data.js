@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773299845610,
+  "lastUpdate": 1773354016944,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -96937,6 +96937,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.73%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8a9d6aba4d3a2c9acfea36848bd2dc71525a7d10",
+          "message": "Move calculator page to `/calculator` and redirect\n\n* Move the calculator page, the current home page, to the `/calculator`\n  path, and add a permanent `/` -> `/calculator` redirect configuration.",
+          "timestamp": "2026-03-12T04:41:09-04:00",
+          "tree_id": "4ebfb9628730a3f0caa80b76fc2e50a06b25d265",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8a9d6aba4d3a2c9acfea36848bd2dc71525a7d10"
+        },
+        "date": 1773354014080,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77887,
+            "range": "±0.50%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 718951,
+            "range": "±0.84%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10102,
+            "range": "±1.89%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 610378,
+            "range": "±0.71%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
