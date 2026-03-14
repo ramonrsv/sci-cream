@@ -103,6 +103,46 @@ export function getClearButton(page: Page) {
   return page.getByRole("button", { name: "Clear" });
 }
 
+/** Get signin page email input element */
+export function getSigninEmailInput(page: Page) {
+  return page.getByPlaceholder("Email");
+}
+
+/** Get signin page password input element */
+export function getSigninPasswordInput(page: Page) {
+  return page.getByPlaceholder("Password");
+}
+
+/** Get signin page submit button element for signing in with email */
+export function getSigninWithEmailButton(page: Page) {
+  return page.getByRole("button", { name: /sign in with email/i });
+}
+
+/** Get signup page name input element */
+export function getSignupNameInput(page: Page) {
+  return page.getByPlaceholder("Name");
+}
+
+/** Get signup page email input element */
+export function getSignupEmailInput(page: Page) {
+  return page.getByPlaceholder("Email");
+}
+
+/** Get signup page password input element */
+export function getSignupPasswordInput(page: Page) {
+  return page.getByPlaceholder("Password (min. 8 characters)");
+}
+
+/** Get signup page confirm password input element */
+export function getSignupConfirmPasswordInput(page: Page) {
+  return page.getByPlaceholder("Confirm password");
+}
+
+/** Get signup page submit button element for creating an account */
+export function getSignupButton(page: Page) {
+  return page.locator("#signup-button");
+}
+
 export type MemoryUsage = {
   usedJSHeapSize: number;
   totalJSHeapSize: number;

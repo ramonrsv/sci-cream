@@ -1,5 +1,7 @@
 import "dotenv/config";
 
+import { UserInsert } from "@/lib/database/schema";
+
 /** Get the database URL from `POSTGRES_URL` and apply any necessary transformations
  *
  * @todo Currently this is replacing `sslmode=require` with `sslmode=no-verify` to disable SSL
@@ -11,3 +13,15 @@ import "dotenv/config";
 export function getDatabaseUrl() {
   return process.env.POSTGRES_URL!.replace("sslmode=require", "sslmode=no-verify");
 }
+
+export const TEST_USER_A: UserInsert = {
+  name: "SciCream Tester A",
+  email: "a.tester@sci-cream.ca",
+  passwordHash: "",
+};
+
+export const TEST_USER_B: UserInsert = {
+  name: "SciCream Tester B",
+  email: "b.tester@sci-cream.ca",
+  passwordHash: "",
+};

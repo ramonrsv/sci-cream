@@ -91,6 +91,21 @@ body {
   }
 }
 
+/* Global Styles */
+.text-primary {
+  @apply text-txt-prim-lt;
+  @variant dark {
+    @apply text-txt-prim-dk;
+  }
+}
+
+.text-secondary {
+  @apply text-txt-sec-lt;
+  @variant dark {
+    @apply text-txt-sec-dk;
+  }
+}
+
 /* Table Components */
 .table-header {
   @apply border text-sm font-semibold;
@@ -200,6 +215,59 @@ body {
   @apply hover:border-brd-lt hover:bg-surface-lt text-txt-prim-lt active:bg-act-lt;
   @variant dark {
     @apply hover:border-brd-dk hover:bg-surface-dk text-txt-prim-dk active:bg-act-dk;
+  }
+}
+
+/* Sign-in Page */
+.signin-container {
+  @apply rounded-xl border shadow-md;
+
+  @apply bg-surface-lt border-brd-lt;
+  @variant dark {
+    @apply bg-surface-dk border-brd-dk;
+  }
+}
+
+.signin-provider {
+  @apply rounded-lg border text-sm font-medium;
+
+  @apply border-brd-lt hover:bg-hov-lt active:bg-act-lt;
+  @variant dark {
+    @apply border-brd-dk hover:bg-hov-dk active:bg-act-dk;
+  }
+}
+
+.signin-failed {
+  @apply rounded-lg border text-center text-sm;
+
+  @apply border-red-300 bg-red-50 text-red-700;
+  @variant dark {
+    @apply border-red-800 bg-red-950 text-red-300;
+  }
+}
+
+.signin-success {
+  @apply rounded-lg border text-center text-sm;
+
+  @apply border-green-300 bg-green-50 text-green-700;
+  @variant dark {
+    @apply border-green-800 bg-green-950 text-green-300;
+  }
+}
+
+.signin-input {
+  @apply rounded-lg border text-sm outline-none;
+
+  @apply border-brd-lt bg-surface-lt text-txt-prim-lt focus:border-foc-lt;
+  @variant dark {
+    @apply border-brd-dk bg-surface-dk text-txt-prim-dk focus:border-foc-dk;
+  }
+}
+
+.signin-divider {
+  @apply bg-brd-lt;
+  @variant dark {
+    @apply bg-brd-dk;
   }
 }
 

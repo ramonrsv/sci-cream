@@ -3,6 +3,7 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
 import { Navbar } from "@/app/navbar";
+import { Session } from "@/app/session";
 import { WebVitals } from "@/app/_elements/web-vitals";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -19,7 +20,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
   return (
     <html lang="en">
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Navbar>{children}</Navbar>
+        <Session>
+          <Navbar>{children}</Navbar>
+        </Session>
         <WebVitals />
         <Analytics />
         <SpeedInsights />

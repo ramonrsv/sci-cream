@@ -4,8 +4,9 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
 
-import { getDatabaseUrl } from "./util";
-import { usersTable, ingredientsTable, User, SchemaCategory } from "./schema";
+import { getDatabaseUrl, TEST_USER_A } from "@/lib/database/util";
+import { findUserByEmail } from "@/lib/data";
+import { ingredientsTable, SchemaCategory } from "@/lib/database/schema";
 import * as schema from "./schema";
 
 import {
@@ -18,20 +19,12 @@ import {
 
 const db = drizzle(getDatabaseUrl(), { schema });
 
-const app: User = { name: process.env.APP_USER_NAME!, email: process.env.APP_USER_EMAIL! };
-
-async function getAppUserId() {
-  const [foundUser] = await db.select().from(usersTable).where(eq(usersTable.email, app.email));
-
-  return foundUser.id;
-}
-
-test("Find App user ID", () => {
-  expect(getAppUserId()).toBeDefined();
+test("Find TEST_USER_A", async () => {
+  expect(await findUserByEmail(TEST_USER_A.email)).toBeDefined();
 });
 
 test("Create Ingredient from specs from DB", async () => {
-  const appUserId = await getAppUserId();
+  const userId = (await findUserByEmail(TEST_USER_A.email))!.id;
 
   for (const spec of allIngredientSpecs) {
     expect(spec.category).toBeDefined();
@@ -42,7 +35,7 @@ test("Create Ingredient from specs from DB", async () => {
       .where(
         and(
           eq(ingredientsTable.name, spec.name),
-          eq(ingredientsTable.user, appUserId),
+          eq(ingredientsTable.user, userId),
           eq(
             ingredientsTable.category,
             spec.category as (typeof SchemaCategory)[keyof typeof SchemaCategory],
@@ -52,7 +45,7 @@ test("Create Ingredient from specs from DB", async () => {
 
     expect(ingDrizzle).toBeDefined();
     expect(ingDrizzle.name).toBe(spec.name);
-    expect(ingDrizzle.user).toBe(appUserId);
+    expect(ingDrizzle.user).toBe(userId);
     expect(ingDrizzle.category).toBe(spec.category);
 
     const expectedCategory = Category[spec.category as keyof typeof Category];

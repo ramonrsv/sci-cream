@@ -1,42 +1,43 @@
-import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
+import { hash } from "bcryptjs";
 
-import { getDatabaseUrl } from "./util";
-import { usersTable, ingredientsTable, SchemaCategory } from "./schema";
+import { getDatabaseUrl, TEST_USER_A, TEST_USER_B } from "@/lib/database/util";
+import { findUserByEmail } from "@/lib/data";
+import { usersTable, ingredientsTable, SchemaCategory } from "@/lib/database/schema";
 import * as schema from "./schema";
 
 import { IngredientJson, allIngredientSpecs } from "@workspace/sci-cream";
 
-type User = typeof usersTable.$inferInsert;
-
 const db = drizzle(getDatabaseUrl(), { schema });
-
-const appUser: User = { name: process.env.APP_USER_NAME!, email: process.env.APP_USER_EMAIL! };
-const testUser: User = { name: process.env.TEST_USER_NAME!, email: process.env.TEST_USER_EMAIL! };
 
 async function seedUsers() {
   console.log("==========");
   console.log("Seeding users");
 
-  for (const user of [appUser, testUser]) {
-    await db.insert(usersTable).values(user).onConflictDoNothing({ target: usersTable.email });
+  for (const user of [TEST_USER_A, TEST_USER_B]) {
+    const passwordHash = await hash("password123", 12);
+    await db
+      .insert(usersTable)
+      .values({ ...user, passwordHash })
+      .onConflictDoNothing({ target: usersTable.email });
   }
 
   const users = await db.select().from(usersTable);
   console.log("Getting all users from the database:", users);
 }
 
-async function seedUserIngredients(user: User, ingredientSpecs: IngredientJson[]) {
-  const [foundUser] = await db.select().from(usersTable).where(eq(usersTable.email, user.email));
+async function seedUserIngredients(userEmail: string, ingredientSpecs: IngredientJson[]) {
+  const user = await findUserByEmail(userEmail);
+  if (!user) throw new Error(`User with email ${userEmail} not found, cannot seed ingredients`);
 
   console.log("==========");
-  console.log("Seeding user ingredients for user:", foundUser);
+  console.log("Seeding user ingredients for user:", user);
 
   for (const spec of ingredientSpecs) {
     const ingredient: typeof ingredientsTable.$inferInsert = {
       name: spec.name,
-      user: foundUser.id,
+      user: user.id,
       category: spec.category as (typeof SchemaCategory)[keyof typeof SchemaCategory],
       spec: JSON.stringify(spec),
     };
@@ -69,14 +70,14 @@ async function seedUserIngredients(user: User, ingredientSpecs: IngredientJson[]
   }
 
   console.log("---");
-  console.log(`Seeded ${ingredientSpecs.length} ingredients for user `, foundUser);
+  console.log(`Seeded ${ingredientSpecs.length} ingredients for user `, user);
 }
 
 async function main() {
   await seedUsers();
 
-  await seedUserIngredients(appUser, allIngredientSpecs);
-  await seedUserIngredients(testUser, [
+  await seedUserIngredients(TEST_USER_A.email, allIngredientSpecs);
+  await seedUserIngredients(TEST_USER_B.email, [
     { name: "2% Milk", category: "Dairy", DairySpec: { fat: 4 } },
   ]);
 }

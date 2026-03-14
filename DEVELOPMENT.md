@@ -129,8 +129,7 @@ $ pg_ctlcluster 16 main stop
 $ pg_ctlcluster 16 main start
 ```
 
-Push schema to database and seed, need to configure `.env` with the values below, and run the
-following commands:
+Push schema to database and seed by running the following commands:
 
 ```
 APP_USER_NAME="SciCream App"
@@ -144,6 +143,30 @@ $ cd ./packages/app
 $ npx drizzle-kit push
 $ pnpm tsx ./src/lib/database/seed.ts
 ```
+
+In order to set up OAuth authentication do the following steps. `<base_url>` can be either
+`sci-cream.ca` to set up authentication for the production app, or `localhost:3000` to set it up
+for local development environments.
+
+1. Generate `AUTH_SECRET` with `npx auth secret`
+2. GitHub OAuth App
+   - Go to [Settings -> Developer -> OAuth Apps -> New OAuth App](github.com/settings/developers)
+   - Set Homepage URL to `http://<base_url>`
+   - Set Authorization callback URL to `http://<base_url>/api/auth/callback/github`
+   - Copy the Client ID -> `AUTH_GITHUB_ID`
+   - Generate a Client Secret -> `AUTH_GITHUB_SECRET`
+3. Google OAuth Credentials
+   - Go to [console.cloud.google.com/apis/credentials](console.cloud.google.com/apis/credentials)
+   - Create a project (or select an existing one)
+   - Go to OAuth consent screen -> configure as 'External', fill in app name/email
+   - Go to Credentials -> Create Credentials -> OAuth client ID
+   - Set Application type to 'Web application'
+   - Add Authorized Javascript origins: `http://<base_url>`
+   - Add Authorized redirect URI: `http://<base_url>/api/auth/callback/google`
+   - Copy the Client ID -> `AUTH_GOOGLE_ID`
+   - Copy the Client Secret -> `AUTH_GOOGLE_SECRET`
+4. Populate environment variables
+   - Add all five values to `.env` for local or to Vercel project environment for production.
 
 Building, testing, and running the app can be done with `pnpm build`, `test`, `dev`, or `start`.
 To set up and run end-to-end and visual regression tests with Playwright (also run by `pnpm test`):

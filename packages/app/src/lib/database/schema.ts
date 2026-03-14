@@ -1,4 +1,4 @@
-import { pgTable, primaryKey, integer, text, pgEnum, json } from "drizzle-orm/pg-core";
+import { pgTable, primaryKey, integer, text, pgEnum, json, timestamp } from "drizzle-orm/pg-core";
 
 import { SchemaCategory } from "@workspace/sci-cream/schema-category";
 export { SchemaCategory };
@@ -7,6 +7,8 @@ export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: text().notNull(),
   email: text().notNull().unique(),
+  passwordHash: text("password_hash"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 export const categoryEnum = pgEnum("category", SchemaCategory);
@@ -24,5 +26,6 @@ export const ingredientsTable = pgTable(
   (table) => [primaryKey({ columns: [table.name, table.user] })],
 );
 
-export type User = typeof usersTable.$inferInsert;
+export type UserInsert = typeof usersTable.$inferInsert;
+export type UserSelect = typeof usersTable.$inferSelect;
 export type Ingredient = typeof ingredientsTable.$inferSelect;

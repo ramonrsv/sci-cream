@@ -20,10 +20,7 @@ on:
     branches: ["main"]
 
 env:
-  APP_USER_NAME: SciCream App
-  APP_USER_EMAIL: app@scicream.ca
-  TEST_USER_NAME: SciCream Test
-  TEST_USER_EMAIL: test@scicream.ca
+  AUTH_SECRET: 66ab177cbeb0cb863edc40b69fcfbf4081c5bb37dd89bca026b30ef4393dace1
 
 defaults:
   run:

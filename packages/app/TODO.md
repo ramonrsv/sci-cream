@@ -43,6 +43,7 @@
       There are many other jarring flashes on first page load (some layout changes, a flash of
       invalid-ingredient-name red before loading, etc.), so consider adding a loading screen to
       allow all those things to settle before displaying the main page (see how Monarch does it).
+      There is also a flash of white when going to the sign-in page when in Dark mode.
 - [ ] Look into Next.js's system for displaying component placeholders to avoid layout changes.
 - [ ] Add test to check that `MixPropertiesGrid` has no vertical scroll with default layout/filters.
 - [ ] In `MixPropertiesGrid`, make it so that, if there is a horizontal scroll, the left-most column

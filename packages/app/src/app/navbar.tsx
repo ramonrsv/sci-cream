@@ -4,6 +4,7 @@ import { createContext, useContext, useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useSession, signIn, signOut } from "next-auth/react";
 import {
   Calculator,
   BookOpen,
@@ -11,6 +12,8 @@ import {
   PanelLeftClose,
   PanelLeftOpen,
   CircleUserRound,
+  LogIn,
+  LogOut,
 } from "lucide-react";
 
 import { NAVBAR_ICON_SIZE, DEFAULT_COLLAPSED_NAVBAR } from "@/lib/styles/sizes";
@@ -123,9 +126,7 @@ export function Header() {
       {/* Page title and account button */}
       <div className="navbar flex w-full items-center justify-between">
         <h1 className="m-3 text-lg font-bold">{pageTitle}</h1>
-        <button title="Account" className="header-button m-4">
-          <CircleUserRound size={iconSize} />
-        </button>
+        <AccountButton iconSize={iconSize} />
       </div>
     </header>
   );
@@ -163,5 +164,49 @@ export function Sidebar() {
         })}
       </nav>
     </aside>
+  );
+}
+
+function AccountButton({ iconSize }: { iconSize: number }) {
+  const { data: session, status } = useSession();
+
+  if (status === "loading") {
+    return (
+      <button title="Account" className="header-button m-4" disabled>
+        <CircleUserRound size={iconSize} />
+      </button>
+    );
+  }
+
+  if (session?.user) {
+    return (
+      <div className="flex items-center gap-2 pr-2">
+        {session.user.image ? (
+          <Image
+            src={session.user.image}
+            alt={session.user.name ?? "User"}
+            width={iconSize + 4}
+            height={iconSize + 4}
+            className="rounded-full"
+          />
+        ) : (
+          <CircleUserRound size={iconSize} />
+        )}
+        <span className="hidden text-sm sm:inline">{session.user.name}</span>
+        <button title="Sign out" className="header-button ml-1 p-1" onClick={() => signOut()}>
+          <LogOut size={iconSize} />
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      title="Sign in"
+      className="header-button m-4 flex items-center gap-1"
+      onClick={() => signIn()}
+    >
+      <LogIn size={iconSize} />
+    </button>
   );
 }
