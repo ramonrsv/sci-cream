@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773644888902,
+  "lastUpdate": 1773644938467,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -9629,6 +9629,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 313,
             "range": "± 23",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "afc3734397de1b9529e7ed1f1f184c5dabbb08b2",
+          "message": "Add user account support, with OAuth & credentials\n\n* Add support for user account authentication with NextAuth.js,\n  supporting GitHub and Google OAuth, as well as email and password.\n* Add custom sign-in page following app styles and listing providers.\n* Add custom sign-up page, following app styles, for email/password.\n* Add `api/auth/[...nextauth]` routes with NextAuth handlers.\n* Add `api/auth/signup` to sign up with email/password credentials.\n* Add `DEVELOPMENT.md` instructions for setting up OAuth environment.\n* No existing functionality is gated by account authentication, that\n  will be use for user-defined ingredients and saving use recipes.\n* Add TODO about flash of white on the sign-in page when in Dark mode.\n* Remove usage and reference to env `APP/TEST_USER_NAME/EMAIL`; this is\n  currently replaced by an internal `TEST_USER_A/B`, and will eventually\n  be replaced by loading ingredient definitions from embedded data, and\n  additional user-defined ones by fetch calls with user email param.\n* Add visual regression tests for authentication pages and errors.",
+          "timestamp": "2026-03-16T02:08:51-04:00",
+          "tree_id": "0f0672744efc72d3d233ec064e07eddd73095437",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/afc3734397de1b9529e7ed1f1f184c5dabbb08b2"
+        },
+        "date": 1773644936204,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3591,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 165545,
+            "range": "± 2480",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1977,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 187019,
+            "range": "± 15138",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 305,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
