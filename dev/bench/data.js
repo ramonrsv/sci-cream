@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773354288632,
+  "lastUpdate": 1773644888902,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -97494,6 +97494,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.71%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "afc3734397de1b9529e7ed1f1f184c5dabbb08b2",
+          "message": "Add user account support, with OAuth & credentials\n\n* Add support for user account authentication with NextAuth.js,\n  supporting GitHub and Google OAuth, as well as email and password.\n* Add custom sign-in page following app styles and listing providers.\n* Add custom sign-up page, following app styles, for email/password.\n* Add `api/auth/[...nextauth]` routes with NextAuth handlers.\n* Add `api/auth/signup` to sign up with email/password credentials.\n* Add `DEVELOPMENT.md` instructions for setting up OAuth environment.\n* No existing functionality is gated by account authentication, that\n  will be use for user-defined ingredients and saving use recipes.\n* Add TODO about flash of white on the sign-in page when in Dark mode.\n* Remove usage and reference to env `APP/TEST_USER_NAME/EMAIL`; this is\n  currently replaced by an internal `TEST_USER_A/B`, and will eventually\n  be replaced by loading ingredient definitions from embedded data, and\n  additional user-defined ones by fetch calls with user email param.\n* Add visual regression tests for authentication pages and errors.",
+          "timestamp": "2026-03-16T02:08:51-04:00",
+          "tree_id": "0f0672744efc72d3d233ec064e07eddd73095437",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/afc3734397de1b9529e7ed1f1f184c5dabbb08b2"
+        },
+        "date": 1773644886160,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77538,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 715823,
+            "range": "±0.66%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10056,
+            "range": "±1.99%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 604292,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
