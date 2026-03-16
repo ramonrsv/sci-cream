@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773645160154,
+  "lastUpdate": 1773645172648,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -89851,6 +89851,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "Rapid ingredient quantity updates, final",
             "value": 28.02,
+            "range": "0.96",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "afc3734397de1b9529e7ed1f1f184c5dabbb08b2",
+          "message": "Add user account support, with OAuth & credentials\n\n* Add support for user account authentication with NextAuth.js,\n  supporting GitHub and Google OAuth, as well as email and password.\n* Add custom sign-in page following app styles and listing providers.\n* Add custom sign-up page, following app styles, for email/password.\n* Add `api/auth/[...nextauth]` routes with NextAuth handlers.\n* Add `api/auth/signup` to sign up with email/password credentials.\n* Add `DEVELOPMENT.md` instructions for setting up OAuth environment.\n* No existing functionality is gated by account authentication, that\n  will be use for user-defined ingredients and saving use recipes.\n* Add TODO about flash of white on the sign-in page when in Dark mode.\n* Remove usage and reference to env `APP/TEST_USER_NAME/EMAIL`; this is\n  currently replaced by an internal `TEST_USER_A/B`, and will eventually\n  be replaced by loading ingredient definitions from embedded data, and\n  additional user-defined ones by fetch calls with user email param.\n* Add visual regression tests for authentication pages and errors.",
+          "timestamp": "2026-03-16T02:08:51-04:00",
+          "tree_id": "0f0672744efc72d3d233ec064e07eddd73095437",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/afc3734397de1b9529e7ed1f1f184c5dabbb08b2"
+        },
+        "date": 1773645169780,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.406,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 845.8,
+            "range": "71.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 45.1,
+            "range": "6.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 61.3,
+            "range": "11.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.4,
+            "range": "6.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 36.1,
+            "range": "3.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 152.1,
+            "range": "16.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 42,
+            "range": "4.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 38.31,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 27.54,
             "range": "0.96",
             "unit": "ms"
           }
