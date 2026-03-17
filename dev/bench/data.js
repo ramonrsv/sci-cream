@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773769281153,
+  "lastUpdate": 1773769335078,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -94126,6 +94126,102 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 470.2,
             "range": "8.36",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2513530a60132244390c3844bc3264627e44cf8f",
+          "message": "Increase 112 -> 199 pixel diff for empty FPD\n\nIncrease the allowed maximum pixel difference from 112 to 199 pixels for\nthe empty FPD graph visual regression test, \"fpd-graph-empty.png\", since\nit's intermittently failing in CI with up to 199 pixels difference.",
+          "timestamp": "2026-03-17T13:27:00-04:00",
+          "tree_id": "eabdc8dfdf9adbfa32ff5ac2c8a8ce6e386b4ec3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2513530a60132244390c3844bc3264627e44cf8f"
+        },
+        "date": 1773769332647,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.406,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 871.6,
+            "range": "86.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.4,
+            "range": "7.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 56.8,
+            "range": "6.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 37.1,
+            "range": "5.13",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 35.4,
+            "range": "2.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 162,
+            "range": "7.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 45.2,
+            "range": "15.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 38.28,
+            "range": "0.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 26.74,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 462.4,
+            "range": "15.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 477.1,
+            "range": "16.63",
             "unit": "ms"
           }
         ]
