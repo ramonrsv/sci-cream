@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773765230452,
+  "lastUpdate": 1773765262922,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -9953,6 +9953,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 304,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6e7ed04cada9606a9ccd7a77dccf8e366e8fdf97",
+          "message": "Add benchmark for refresh to paste from storage\n\nAdd an end-to-end app benchmark to measure the duration from a page\nrefresh until a recipe paste from storage is completed; this simulates\na common page refresh scenario that may happen, for example, when a user\nlogs in. Also include a WIP test case using a recipe with user-defined\ningredients, which will include additional logic in the future.",
+          "timestamp": "2026-03-17T11:48:22-04:00",
+          "tree_id": "2e752f99d42f524aefb98c62f319d110a7051c50",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6e7ed04cada9606a9ccd7a77dccf8e366e8fdf97"
+        },
+        "date": 1773765260534,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3534,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161226,
+            "range": "± 910",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1977,
+            "range": "± 10",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 199809,
+            "range": "± 5136",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 305,
+            "range": "± 7",
             "unit": "ns/iter"
           }
         ]
