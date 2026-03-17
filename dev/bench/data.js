@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773762441950,
+  "lastUpdate": 1773762509270,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -9898,6 +9898,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "sweetener_spec_into_composition",
             "value": 313,
+            "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3032e54a3c5843f082893d0b3a36940ad542dd6e",
+          "message": "Introduce `RecipeResources.hasIngredient` method\n\nThis method allows abstracting away the details of checking if an\ningredient name is valid, which may be subject to future optimizations,\nand is now being switched to `wasmBridge.has_ingredient` instead of\nkeeping a `validIngredients` list, the slowest method.",
+          "timestamp": "2026-03-17T01:52:08-04:00",
+          "tree_id": "614d43c7cf0c5dad6a4f219653683d57892c6b57",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3032e54a3c5843f082893d0b3a36940ad542dd6e"
+        },
+        "date": 1773762507094,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3559,
+            "range": "± 169",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 164334,
+            "range": "± 1365",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1980,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 169504,
+            "range": "± 6556",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 304,
             "range": "± 3",
             "unit": "ns/iter"
           }
