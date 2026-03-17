@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773786850766,
+  "lastUpdate": 1773786952530,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -94685,6 +94685,102 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 477.1,
             "range": "16.63",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ac968ce9d135e3bdde953d62766cd4bf7f1200a2",
+          "message": "Add `RecipeID` test assets with user-defined ings\n\n* Add support for `RecipeID`s for recipes that include user-defined\n  ingredients, e.g. `RecipeID.MainWithUserDefined`. Currently these\n  assets append 'Fructose (User-Defined)`, which is seeded for both\n  `TEST_USER_A` and `TEST_USER_B`; A is used in `calculator/page.tsx`.\n* Rework recipe paste/fill and expect completion utility functions in\n  `__tests__/e2e/util.ts` to split the two steps and be more flexible.\n* Add `test:e2e:chromium` script; it's useful when debugging issues.",
+          "timestamp": "2026-03-17T17:32:25-04:00",
+          "tree_id": "1f5374820cf0dbf836fa34e9a02bed9477f37d35",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ac968ce9d135e3bdde953d62766cd4bf7f1200a2"
+        },
+        "date": 1773786949448,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.406,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 890.9,
+            "range": "83.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 45.7,
+            "range": "5.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 70,
+            "range": "18.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.4,
+            "range": "4.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 39.8,
+            "range": "8.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 157.5,
+            "range": "21.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 43.9,
+            "range": "2.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 41.78,
+            "range": "0.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 29.28,
+            "range": "0.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 497.4,
+            "range": "18.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 501,
+            "range": "30.70",
             "unit": "ms"
           }
         ]
