@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773762747449,
+  "lastUpdate": 1773765230452,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -100920,6 +100920,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.71%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6e7ed04cada9606a9ccd7a77dccf8e366e8fdf97",
+          "message": "Add benchmark for refresh to paste from storage\n\nAdd an end-to-end app benchmark to measure the duration from a page\nrefresh until a recipe paste from storage is completed; this simulates\na common page refresh scenario that may happen, for example, when a user\nlogs in. Also include a WIP test case using a recipe with user-defined\ningredients, which will include additional logic in the future.",
+          "timestamp": "2026-03-17T11:48:22-04:00",
+          "tree_id": "2e752f99d42f524aefb98c62f319d110a7051c50",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6e7ed04cada9606a9ccd7a77dccf8e366e8fdf97"
+        },
+        "date": 1773765226871,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75839,
+            "range": "±1.19%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 727927,
+            "range": "±1.01%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10158,
+            "range": "±1.76%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 607200,
+            "range": "±0.70%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
           }
         ]
       }
