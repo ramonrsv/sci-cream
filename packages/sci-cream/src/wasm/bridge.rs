@@ -123,7 +123,7 @@ pub mod wasm {
     };
 
     #[cfg(doc)]
-    use crate::{database::IngredientDatabase, error::Error, recipe::OwnedLightRecipe};
+    use crate::{database::IngredientDatabase, error::Error, recipe::OwnedLightRecipe, specs::IngredientSpec};
 
     //#[cfg_attr(feature = "wasm", wasm_bindgen)]
     #[wasm_bindgen]
