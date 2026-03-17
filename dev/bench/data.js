@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773726535270,
+  "lastUpdate": 1773726849318,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -98608,6 +98608,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.67%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "381368ba4211527d1ce3d4b9590ebd9ddb720aa5",
+          "message": "Fix broken `IngredientSpec` doc link",
+          "timestamp": "2026-03-17T01:52:08-04:00",
+          "tree_id": "70b78ee313424c9b558314e1367b9a393cec49cd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/381368ba4211527d1ce3d4b9590ebd9ddb720aa5"
+        },
+        "date": 1773726846665,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77751,
+            "range": "±1.22%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 673003,
+            "range": "±0.91%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 8874,
+            "range": "±1.32%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 566174,
+            "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
