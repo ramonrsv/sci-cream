@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773786952530,
+  "lastUpdate": 1773787326652,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -103364,6 +103364,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.81%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cd92f7ead0f993a1a9100a066841dc0d441e818d",
+          "message": "Add e2e util and test for email/password login",
+          "timestamp": "2026-03-17T17:54:31-04:00",
+          "tree_id": "1dbe61dec1668b57dedfaa46545f4b51a28259f6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cd92f7ead0f993a1a9100a066841dc0d441e818d"
+        },
+        "date": 1773787324118,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 73528,
+            "range": "±1.48%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 722257,
+            "range": "±0.55%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10146,
+            "range": "±1.83%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 607767,
+            "range": "±0.79%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
