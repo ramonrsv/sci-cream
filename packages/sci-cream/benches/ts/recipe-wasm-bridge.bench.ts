@@ -2,8 +2,8 @@ import Benchmark from "benchmark";
 
 import {
   getIngredientSpecByName,
-  new_ingredient_database_seeded_from_specs,
   Bridge,
+  new_ingredient_database_seeded_from_embedded_data,
 } from "../../dist/index.js";
 
 import {
@@ -21,9 +21,7 @@ const specLines = LIGHT_RECIPE.map(([name, quantity]) => ({
 
 const recipeLines = makeRecipeLines(specLines);
 const recipe = makeRecipeFromMadeLines(specLines);
-const bridge = new Bridge(
-  new_ingredient_database_seeded_from_specs(specLines.map((line) => line.spec)),
-);
+const bridge = new Bridge(new_ingredient_database_seeded_from_embedded_data());
 
 // These benchmark suite shows that creating new RecipeLine instances from scratch is generally
 // faster (up to ~10x) than cloning existing ones, likely due to the overhead of more JS <-> WASM
