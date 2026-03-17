@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773769335078,
+  "lastUpdate": 1773786553256,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -102753,6 +102753,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.85%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ac968ce9d135e3bdde953d62766cd4bf7f1200a2",
+          "message": "Add `RecipeID` test assets with user-defined ings\n\n* Add support for `RecipeID`s for recipes that include user-defined\n  ingredients, e.g. `RecipeID.MainWithUserDefined`. Currently these\n  assets append 'Fructose (User-Defined)`, which is seeded for both\n  `TEST_USER_A` and `TEST_USER_B`; A is used in `calculator/page.tsx`.\n* Rework recipe paste/fill and expect completion utility functions in\n  `__tests__/e2e/util.ts` to split the two steps and be more flexible.\n* Add `test:e2e:chromium` script; it's useful when debugging issues.",
+          "timestamp": "2026-03-17T17:32:25-04:00",
+          "tree_id": "1f5374820cf0dbf836fa34e9a02bed9477f37d35",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ac968ce9d135e3bdde953d62766cd4bf7f1200a2"
+        },
+        "date": 1773786550967,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76960,
+            "range": "±1.13%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 724235,
+            "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10137,
+            "range": "±1.76%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 604135,
+            "range": "±0.81%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
