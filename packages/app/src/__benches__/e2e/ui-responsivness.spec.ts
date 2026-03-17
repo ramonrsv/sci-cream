@@ -24,6 +24,7 @@ import {
   makeExpectedRecipeUpdates,
   pasteRecipeAndWaitForUpdate,
   PASTE_CHECK_DEFAULT_ING_IDX,
+  expectRecipePasteCompleted,
 } from "@/__tests__/e2e/util";
 
 import {
@@ -32,6 +33,8 @@ import {
   formatTimeBenchmarkResultForUpload,
   timeExecution,
 } from "@/__benches__/e2e/util";
+
+import { sleep_ms } from "@/lib/util";
 
 const COUNT_TIME_RUNS = 10; // Number of runs for each execution time benchmark
 const QTY_UPDATES_PER_LOOP = 50; // Number of times to update an ingredient's quantity per loop
@@ -218,6 +221,60 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
 
         await expectRecipeElementsToHaveExpected(elements, finalExpected);
       }, RECIPE_QTY_UPDATES_EXPECTED_VALUES.length);
+    });
+  });
+
+  test("should measure page refresh and recipe paste from storage", async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
+
+    await doBenchmarkTimeMeasurements("Page refresh to paste from storage", async () => {
+      await page.goto("");
+      await page.waitForLoadState("networkidle");
+
+      await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
+
+      // Wait for interval to save to local storage
+      await sleep_ms(2000);
+
+      return timeExecution(async () => {
+        await page.goto("");
+        await page.waitForLoadState("domcontentloaded");
+
+        await expectRecipePasteCompleted(page, RecipeID.Main);
+      });
+    });
+  });
+
+  test("should measure page refresh and recipe paste from storage, with user-defined ingredients", async ({
+    page,
+    browserName,
+  }) => {
+    test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
+
+    await page.goto("");
+    await page.waitForLoadState("networkidle");
+
+    // @todo Login to seed user-defined ingredient specs in DB
+
+    await doBenchmarkTimeMeasurements("Refresh to paste, with user-defined ings", async () => {
+      await page.goto("");
+      await page.waitForLoadState("networkidle");
+
+      // @todo Paste recipe that includes user-defined ingredients
+      await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
+
+      // Wait for interval to save to local storage
+      await sleep_ms(2000);
+
+      return timeExecution(async () => {
+        await page.goto("");
+        await page.waitForLoadState("domcontentloaded");
+
+        await expectRecipePasteCompleted(page, RecipeID.Main);
+      });
     });
   });
 });
