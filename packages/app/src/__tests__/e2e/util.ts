@@ -423,3 +423,21 @@ export async function clearRecipeAndWaitForUpdate(page: Page, recipeId: RecipeID
   await expect(elements.ingNameInput).toHaveValue("");
   await expect(elements.ingQtyInput).toHaveValue("");
 }
+
+/** Helper function to log in as a test user using email and password credentials
+ *
+ * This function navigates to the sign-in page, fills in the email and password fields,
+ * clicks the sign-in button, and waits for navigation to complete.
+ *
+ * @param testUser - An object containing the email and password of the test user
+ */
+export async function loginAsTestUserWithCredentials(
+  page: Page,
+  testUser: { email: string; password: string },
+) {
+  await page.goto("/signin");
+  await getSigninEmailInput(page).fill(testUser.email);
+  await getSigninPasswordInput(page).fill(testUser.password);
+  await getSigninWithEmailButton(page).click();
+  await page.waitForNavigation();
+}
