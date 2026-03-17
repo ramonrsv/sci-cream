@@ -4,7 +4,7 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
 
-import { getDatabaseUrl, TEST_USER_A } from "@/lib/database/util";
+import { getDatabaseUrl } from "@/lib/database/util";
 import { findUserByEmail } from "@/lib/data";
 import { ingredientsTable, SchemaCategory } from "@/lib/database/schema";
 import * as schema from "./schema";
@@ -17,6 +17,8 @@ import {
   allIngredientSpecs,
 } from "@workspace/sci-cream";
 
+import { TEST_USER_A } from "@/lib/database/util";
+
 const db = drizzle(getDatabaseUrl(), { schema });
 
 test("Find TEST_USER_A", async () => {
@@ -24,7 +26,8 @@ test("Find TEST_USER_A", async () => {
 });
 
 test("Create Ingredient from specs from DB", async () => {
-  const userId = (await findUserByEmail(TEST_USER_A.email))!.id;
+  const user = await findUserByEmail(TEST_USER_A.email);
+  if (!user) throw new Error("User not found");
 
   for (const spec of allIngredientSpecs) {
     expect(spec.category).toBeDefined();
@@ -35,7 +38,7 @@ test("Create Ingredient from specs from DB", async () => {
       .where(
         and(
           eq(ingredientsTable.name, spec.name),
-          eq(ingredientsTable.user, userId),
+          eq(ingredientsTable.user, user.id),
           eq(
             ingredientsTable.category,
             spec.category as (typeof SchemaCategory)[keyof typeof SchemaCategory],
@@ -45,7 +48,7 @@ test("Create Ingredient from specs from DB", async () => {
 
     expect(ingDrizzle).toBeDefined();
     expect(ingDrizzle.name).toBe(spec.name);
-    expect(ingDrizzle.user).toBe(userId);
+    expect(ingDrizzle.user).toBe(user.id);
     expect(ingDrizzle.category).toBe(spec.category);
 
     const expectedCategory = Category[spec.category as keyof typeof Category];

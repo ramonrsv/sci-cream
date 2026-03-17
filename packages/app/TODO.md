@@ -6,7 +6,6 @@
 
 # Up Next
 
-- [ ] Add Account and login functionality.
 - [ ] Add recipe save functionality. Recipes should support versions and notes.
 - [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
       embedded into other websites. How to handle user-defined ingredients?
@@ -33,8 +32,6 @@
 
 - [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
 - [ ] Once user-defined ingredients are supported, use embedded data for the main ingredients set.
-- [ ] Once embedded data is used for the main ingredient set, re-work `data.ts` to only support
-      requesting user-defined ingredients for a user, and implement unit tests for this.
 - [ ] Look into implementing a JS-side ingredient cache so that `Ingredient` WASM objects are only
       created once, then any lookups return JS light clones, which should reduce `.free()` issues.
 - [ ] When in Dark mode, if the page is refreshed, it momentarily flashes a Light theme before the
@@ -68,6 +65,9 @@
 
 # Completed
 
+- [x] Once embedded data is used for the main ingredient set, re-work `data.ts` to only support
+      requesting user-defined ingredients for a user, and implement unit tests for this.
+- [x] Add Account and login functionality.
 - [x] When expanding the navbar there is a quick flicker of the items; not there when collapsing.
 - [x] On a 1440p screen there is vertical scrolling when chrome is showing a bookmarks bar.
 - [x] Add tests for all components and utilities in `packages/app`.

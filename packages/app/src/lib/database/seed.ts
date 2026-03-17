@@ -2,12 +2,14 @@ import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
 import { hash } from "bcryptjs";
 
-import { getDatabaseUrl, TEST_USER_A, TEST_USER_B } from "@/lib/database/util";
+import { getDatabaseUrl } from "@/lib/database/util";
 import { findUserByEmail } from "@/lib/data";
-import { usersTable, ingredientsTable, SchemaCategory } from "@/lib/database/schema";
+import { UserInsert, usersTable, ingredientsTable, SchemaCategory } from "@/lib/database/schema";
 import * as schema from "./schema";
 
 import { IngredientJson, allIngredientSpecs } from "@workspace/sci-cream";
+
+import { TEST_USER_A, TEST_USER_B, USER_DEFINED_FRUCTOSE_SPEC } from "@/lib/database/util";
 
 const db = drizzle(getDatabaseUrl(), { schema });
 
@@ -16,10 +18,10 @@ async function seedUsers() {
   console.log("Seeding users");
 
   for (const user of [TEST_USER_A, TEST_USER_B]) {
-    const passwordHash = await hash("password123", 12);
+    const passwordHash = await hash(user.password, 12);
     await db
       .insert(usersTable)
-      .values({ ...user, passwordHash })
+      .values({ ...user, passwordHash } as UserInsert)
       .onConflictDoNothing({ target: usersTable.email });
   }
 
@@ -77,9 +79,7 @@ async function main() {
   await seedUsers();
 
   await seedUserIngredients(TEST_USER_A.email, allIngredientSpecs);
-  await seedUserIngredients(TEST_USER_B.email, [
-    { name: "2% Milk", category: "Dairy", DairySpec: { fat: 4 } },
-  ]);
+  await seedUserIngredients(TEST_USER_B.email, [USER_DEFINED_FRUCTOSE_SPEC]);
 }
 
 main();

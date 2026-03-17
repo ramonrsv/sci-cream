@@ -4,7 +4,7 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
 
-import { getDatabaseUrl, TEST_USER_A } from "./database/util";
+import { getDatabaseUrl } from "./database/util";
 import {
   UserSelect,
   UserInsert,
@@ -27,14 +27,19 @@ class FetchCounter {
 }
 
 export async function findUserByEmail(email: string): Promise<UserSelect | undefined> {
-  console.log(`[${await FetchCounter.get()}] findUserByEmail("${email}")`);
+  console.log(`[${await FetchCounter.get()}] findUserByEmail`);
 
   const [user] = await db.select().from(usersTable).where(eq(usersTable.email, email));
+  if (!user) {
+    console.warn(`findUserByEmail: user not found`);
+    return undefined;
+  }
+
   return user;
 }
 
 export async function insertUser(user: UserInsert): Promise<UserInsert> {
-  console.log(`[${await FetchCounter.get()}] insertUser(${JSON.stringify(user)})`);
+  console.log(`[${await FetchCounter.get()}] insertUser`);
 
   const existing = await findUserByEmail(user.email);
   if (existing) throw new Error("User with this email already exists");
@@ -43,42 +48,53 @@ export async function insertUser(user: UserInsert): Promise<UserInsert> {
   return inserted;
 }
 
-export async function fetchValidIngredientNames(): Promise<string[]> {
-  console.log(`[${await FetchCounter.get()}] fetchValidIngredientNames`);
+export async function fetchUserIngredientSpecByName(
+  userEmail: string,
+  ingredientName: string,
+): Promise<IngredientTransfer | undefined> {
+  console.log(`[${await FetchCounter.get()}] fetchUserIngredientSpecByName("${ingredientName}")`);
 
-  const testUserId = (await findUserByEmail(TEST_USER_A.email))!.id;
+  const user = await findUserByEmail(userEmail);
+  if (!user) {
+    console.warn(`fetchUserIngredientSpecByName: user not found`);
+    return undefined;
+  }
 
-  const ingredients = await db
-    .select()
-    .from(ingredientsTable)
-    .where(eq(ingredientsTable.user, testUserId));
+  const ingredient = (
+    await db
+      .select()
+      .from(ingredientsTable)
+      .where(and(eq(ingredientsTable.name, ingredientName), eq(ingredientsTable.user, user.id)))
+  )[0];
 
-  return ingredients.map((ing) => ing.name);
+  if (!ingredient) {
+    console.warn(
+      `fetchUserIngredientSpecByName: ingredient "${ingredientName}" not found for userId=${user.id} `,
+    );
+    return undefined;
+  }
+
+  return ingredient;
 }
 
-export async function fetchIngredientSpec(name: string): Promise<IngredientTransfer | undefined> {
-  console.log(`[${await FetchCounter.get()}] fetchIngredientSpec("${name}")`);
+export async function fetchAllUserIngredientSpecs(
+  userEmail: string,
+): Promise<IngredientTransfer[] | undefined> {
+  console.log(`[${await FetchCounter.get()}] fetchAllUserIngredientSpecs`);
 
-  const testUserId = (await findUserByEmail(TEST_USER_A.email))!.id;
-
-  const ingredients = await db
-    .select()
-    .from(ingredientsTable)
-    .where(and(eq(ingredientsTable.name, name), eq(ingredientsTable.user, testUserId)));
-
-  return ingredients.length === 0 || ingredients[0] === undefined ? undefined : ingredients[0];
-}
-
-export async function fetchAllIngredientSpecs(): Promise<IngredientTransfer[] | undefined> {
-  console.log(`[${await FetchCounter.get()}] fetchAllIngredientSpecs()`);
-
-  const testUserId = (await findUserByEmail(TEST_USER_A.email))!.id;
+  const user = await findUserByEmail(userEmail);
+  if (!user) {
+    console.warn(`fetchAllUserIngredientSpecs: user not found`);
+    return undefined;
+  }
 
   const ingredients = await db
     .select()
     .from(ingredientsTable)
-    .where(eq(ingredientsTable.user, testUserId));
+    .where(eq(ingredientsTable.user, user.id));
 
-  console.log(`Fetched ${ingredients.length} ingredients`);
+  console.log(
+    `fetchAllUserIngredientSpecs: found ${ingredients.length} ingredients for userId=${user.id}`,
+  );
   return ingredients;
 }

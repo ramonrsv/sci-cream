@@ -30,11 +30,7 @@ const matchMediaMock = vi
 vi.stubGlobal("ResizeObserver", ResizeObserverMock);
 vi.stubGlobal("matchMedia", matchMediaMock);
 
-vi.mock("@/lib/data", () => ({
-  fetchValidIngredientNames: vi.fn(() => Promise.resolve(["2% Milk", "Sucrose", "Whipping Cream"])),
-  fetchIngredientSpec: vi.fn(() => Promise.resolve(undefined)),
-  fetchAllIngredientSpecs: vi.fn(() => Promise.resolve([])),
-}));
+vi.mock("@/lib/data", () => ({ fetchAllUserIngredientSpecs: vi.fn(() => Promise.resolve([])) }));
 
 vi.mock("@/app/navbar", () => ({ useNavbarContext: () => ({ theme: "Light" }) }));
 
@@ -69,11 +65,11 @@ describe("Calculator Page", () => {
   });
 
   it("should pre-fetch all ingredient specs (including names) on mount", async () => {
-    const { fetchAllIngredientSpecs } = await import("../../lib/data");
+    const { fetchAllUserIngredientSpecs } = await import("../../lib/data");
     render(<CalculatorPage />);
 
     await waitFor(() => {
-      expect(fetchAllIngredientSpecs).toHaveBeenCalled();
+      expect(fetchAllUserIngredientSpecs).toHaveBeenCalled();
     });
   });
 

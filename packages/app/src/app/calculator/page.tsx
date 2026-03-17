@@ -26,7 +26,8 @@ import {
   makeRecipeResources,
 } from "@/app/_components/recipe";
 
-import { fetchAllIngredientSpecs } from "@/lib/data";
+import { fetchAllUserIngredientSpecs } from "@/lib/data";
+import { TEST_USER_A } from "@/lib/database/util";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
 
 export default function CalculatorPage() {
@@ -41,7 +42,7 @@ export default function CalculatorPage() {
 
   useEffect(() => {
     // Pre-fetch all ingredient specs to populate valid ingredients and WASM bridge database
-    fetchAllIngredientSpecs().then(async (specs) => {
+    fetchAllUserIngredientSpecs(TEST_USER_A.email).then(async (specs) => {
       const wasmBridge = new WasmBridge(
         new_ingredient_database_seeded_from_specs(specs?.map((spec) => spec.spec) || []),
       );
