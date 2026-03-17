@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773758037560,
+  "lastUpdate": 1773758117640,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -9844,6 +9844,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "sweetener_spec_into_composition",
             "value": 303,
+            "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e9938a467b3a489ddec6976800e53064697fe826",
+          "message": "Add `has_ingredient` WASM Bridge benchmarks",
+          "timestamp": "2026-03-17T01:52:08-04:00",
+          "tree_id": "8766a44cf5938c692b76f1e642d5ab08a38c859b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e9938a467b3a489ddec6976800e53064697fe826"
+        },
+        "date": 1773758115484,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3610,
+            "range": "± 110",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161615,
+            "range": "± 1073",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2038,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 161936,
+            "range": "± 1176",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 313,
             "range": "± 3",
             "unit": "ns/iter"
           }
