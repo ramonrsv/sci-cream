@@ -43,8 +43,9 @@ export interface RecipeContext {
 }
 
 export interface RecipeResources {
-  validIngredients: string[];
+  updateIdx: number;
   wasmBridge: WasmBridge;
+  hasIngredient(name: string): boolean;
 }
 
 export type RecipeContextState = [
@@ -78,8 +79,19 @@ export function makeEmptyRecipeContext(): RecipeContext {
   };
 }
 
+export function makeRecipeResources(
+  wasmBridge: WasmBridge,
+  updateIdx: number = 0,
+): RecipeResources {
+  return {
+    updateIdx,
+    wasmBridge,
+    hasIngredient: (name: string) => wasmBridge.has_ingredient(name),
+  };
+}
+
 export function makeEmptyRecipeResources(): RecipeResources {
-  return { validIngredients: [], wasmBridge: new WasmBridge(new IngredientDatabase()) };
+  return makeRecipeResources(new WasmBridge(new IngredientDatabase()));
 }
 
 export function isRecipeEmpty(recipe: Recipe): boolean {
@@ -109,11 +121,12 @@ export function makeSciCreamRecipe(recipe: Recipe): SciCreamRecipe {
   );
 }
 
-export function makeLightRecipe(recipe: Recipe, validIngredients: string[]): [string, number][] {
+export function makeLightRecipe(
+  recipe: Recipe,
+  hasIngredient: (name: string) => boolean,
+): [string, number][] {
   return recipe.ingredientRows
-    .filter(
-      (row) => row.name !== "" && row.quantity !== undefined && validIngredients.includes(row.name),
-    )
+    .filter((row) => row.name !== "" && row.quantity !== undefined && hasIngredient(row.name))
     .map((row) => [row.name, row.quantity!] as [string, number]);
 }
 
@@ -165,7 +178,7 @@ export function updateMixProperties(recipe: Recipe, resources: RecipeResources) 
     isRecipeEmpty(recipe) || !resources.wasmBridge
       ? new MixProperties()
       : resources.wasmBridge.calculate_recipe_mix_properties(
-          makeLightRecipe(recipe, resources.validIngredients),
+          makeLightRecipe(recipe, resources.hasIngredient),
         );
 }
 
@@ -206,7 +219,7 @@ export function makeUpdatedRow(
         ? undefined
         : parseFloat(quantityStr);
 
-  const isValidIng = row.name !== "" && resources.validIngredients.includes(row.name);
+  const isValidIng = row.name !== "" && resources.hasIngredient(row.name);
   const needsIngUpdate = !isValidIng || !row.ingredient || row.ingredient.name !== row.name;
 
   if (needsIngUpdate) {
@@ -247,7 +260,7 @@ export function RecipeGrid({
 }: {
   props: { recipeCtxState: RecipeContextState; recipeResourcesState: RecipeResourcesState };
 }) {
-  const { validIngredients } = recipeResources;
+  const { wasmBridge } = recipeResources;
   const { recipes: allRecipes } = recipeContext;
   const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(0);
 
@@ -335,7 +348,7 @@ export function RecipeGrid({
   };
 
   // Prevents stale ingredient context if a row is changed (e.g. a recipe is pasted) before we have
-  // had a chance to fetch all valid ingredients and populate validIngredients and the wasmBridge.
+  // had a chance to fetch all user-defined ingredients and seed them into the wasmBridge database.
   useEffect(() => {
     updateRecipes(
       allRecipes.map((recipe) =>
@@ -349,7 +362,7 @@ export function RecipeGrid({
       ),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [recipeResources]);
+  }, [recipeResources.updateIdx]);
 
   // On initial load, populate recipes from local storage
   useEffect(() => {
@@ -407,8 +420,8 @@ export function RecipeGrid({
       </div>
       {/* Hidden Ingredients List */}
       <datalist id="valid-ingredients">
-        {validIngredients.map((name) => (
-          <option key={name} value={name} />
+        {wasmBridge.get_all_ingredients().map((ingredient) => (
+          <option key={ingredient.name} value={ingredient.name} />
         ))}
       </datalist>
       <table className="w-full">
@@ -438,7 +451,7 @@ export function RecipeGrid({
                   value={row.name}
                   onChange={(e) => updateCurrentIngredientRowName(row.index, e.target.value)}
                   className={`table-fillable-input ${
-                    row.name === "" || validIngredients.includes(row.name)
+                    row.name === "" || recipeResources.hasIngredient(row.name)
                       ? "focus:ring-blue-400"
                       : "-outline-offset-2 outline-red-400 outline-solid focus:ring-red-400"
                   } w-full px-2`}

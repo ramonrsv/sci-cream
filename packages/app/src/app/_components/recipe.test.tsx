@@ -11,6 +11,7 @@ import {
   RecipeGrid,
   makeEmptyRecipeContext,
   makeEmptyRecipeResources,
+  makeRecipeResources,
   isRecipeEmpty,
   calculateMixTotal,
   makeSciCreamRecipe,
@@ -22,8 +23,6 @@ import {
   RecipeResourcesState,
 } from "./recipe";
 
-import { fetchIngredientSpec } from "@/lib/data";
-
 import {
   Category,
   Ingredient,
@@ -33,9 +32,8 @@ import {
   RecipeLine,
   Bridge as WasmBridge,
   new_ingredient_database_seeded_from_embedded_data,
+  allIngredientSpecs,
 } from "@workspace/sci-cream";
-
-import { SchemaCategory } from "@workspace/sci-cream/schema-category";
 
 // ---------------------------------------------------------------------------
 // Test helpers, mocks, and setup
@@ -114,10 +112,32 @@ describe("Recipe Helper Functions", () => {
   // ---- makeEmptyRecipeResources -----------------------------------------------------------------
 
   describe("makeEmptyRecipeResources", () => {
-    it("should initialize with empty valid ingredients list and wasmBridge", () => {
+    it("should initialize with empty wasmBridge", () => {
       const resources = makeEmptyRecipeResources();
-      expect(resources.validIngredients).toEqual([]);
       expect(resources.wasmBridge).toBeInstanceOf(WasmBridge);
+      expect(resources.wasmBridge.get_all_ingredients()).toHaveLength(0);
+      expect(resources.updateIdx).toBe(0);
+      expect(resources.hasIngredient("Whole Milk")).toBe(false);
+    });
+  });
+
+  // ---- RecipeResources.hasIngredient ------------------------------------------------------------
+
+  describe("RecipeResources.hasIngredient", () => {
+    it("should return false for any ingredient when wasmBridge is empty", () => {
+      const resources = makeEmptyRecipeResources();
+      expect(resources.hasIngredient("Whole Milk")).toBe(false);
+      expect(resources.hasIngredient("Sucrose")).toBe(false);
+    });
+
+    it("should return true for ingredients present in wasmBridge", () => {
+      const resources = makeEmptyRecipeResources();
+      resources.wasmBridge.seed_from_specs([
+        allIngredientSpecs.find((spec) => spec.name === "Whole Milk"),
+        allIngredientSpecs.find((spec) => spec.name === "Sucrose"),
+      ]);
+      expect(resources.hasIngredient("Whole Milk")).toBe(true);
+      expect(resources.hasIngredient("Sucrose")).toBe(true);
     });
   });
 
@@ -246,31 +266,32 @@ describe("Recipe Helper Functions", () => {
 
   describe("makeLightRecipe", () => {
     let recipe: Recipe;
-    const validIngredients = ["Whole Milk", "Sucrose"];
+    const wasmBridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
+    const hasIngredient = (name: string) => wasmBridge.has_ingredient(name);
 
     beforeEach(() => {
       recipe = makeEmptyRecipeContext().recipes[0];
     });
 
     it("should return empty recipe lines when no ingredients have both ingredient and quantity", () => {
-      expect(makeLightRecipe(recipe, validIngredients).length).toEqual(0);
+      expect(makeLightRecipe(recipe, hasIngredient).length).toEqual(0);
     });
 
     it("should filter out rows without ingredient name", () => {
       recipe.ingredientRows[0].quantity = 50;
-      expect(makeLightRecipe(recipe, validIngredients).length).toEqual(0);
+      expect(makeLightRecipe(recipe, hasIngredient).length).toEqual(0);
     });
 
     it("should filter out rows without quantity", () => {
       recipe.ingredientRows[0].name = "Whole Milk";
       recipe.ingredientRows[0].quantity = undefined;
-      expect(makeLightRecipe(recipe, validIngredients).length).toEqual(0);
+      expect(makeLightRecipe(recipe, hasIngredient).length).toEqual(0);
     });
 
     it("should filter out rows with invalid ingredient names", () => {
       recipe.ingredientRows[0].name = "Invalid Ingredient";
       recipe.ingredientRows[0].quantity = 50;
-      expect(makeLightRecipe(recipe, validIngredients).length).toEqual(0);
+      expect(makeLightRecipe(recipe, hasIngredient).length).toEqual(0);
     });
 
     it("should create [name, quantity] for valid rows", () => {
@@ -279,7 +300,7 @@ describe("Recipe Helper Functions", () => {
       recipe.ingredientRows[0].quantity = 50;
       recipe.ingredientRows[1].quantity = 30;
 
-      const lines = makeLightRecipe(recipe, validIngredients);
+      const lines = makeLightRecipe(recipe, hasIngredient);
       expect(lines).toHaveLength(2);
       expect(lines[0]).toEqual(["Whole Milk", 50]);
       expect(lines[1]).toEqual(["Sucrose", 30]);
@@ -369,15 +390,14 @@ describe("RecipeGrid Component", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setupVitestCanvasMock();
+
     recipeContext = makeEmptyRecipeContext();
-    recipeResources = makeEmptyRecipeResources();
-    recipeResources.validIngredients = ["2% Milk", "Sucrose", "Whipping Cream"];
-    recipeResources.wasmBridge = new WasmBridge(
-      new_ingredient_database_seeded_from_embedded_data(),
+    recipeResources = makeRecipeResources(
+      new WasmBridge(new_ingredient_database_seeded_from_embedded_data()),
     );
+
     setRecipeContext = vi.fn();
     setRecipeResources = vi.fn();
-    vi.mocked(fetchIngredientSpec).mockResolvedValue(undefined);
   });
 
   afterEach(async () => {
@@ -675,8 +695,6 @@ describe("RecipeGrid Component", () => {
     expect(firstIngredientInput.className).not.toContain("outline-red-400");
   });
 
-  const mockDairySpe = { DairySpec: { fat: 2 } };
-  const mockSpec = { name: "2% Milk", user: 0, category: SchemaCategory.Dairy, spec: mockDairySpe };
   const mockIngredient = new Ingredient("2% Milk", Category.Dairy, new Composition());
 
   it("should WasmBridge.get_ingredient_by_name when a valid ingredient is entered", async () => {
@@ -726,17 +744,16 @@ describe("RecipeGrid Component", () => {
     expect(datalist).toBeInTheDocument();
 
     const options = datalist?.querySelectorAll("option");
-    expect(options).toHaveLength(3);
-    expect(options?.[0]).toHaveAttribute("value", "2% Milk");
-    expect(options?.[1]).toHaveAttribute("value", "Sucrose");
-    expect(options?.[2]).toHaveAttribute("value", "Whipping Cream");
+    expect(options?.length).toBeGreaterThanOrEqual(91);
+    expect(options?.values().find((opt) => opt.value === "2% Milk")).toBeDefined();
+    expect(options?.values().find((opt) => opt.value === "Sucrose")).toBeDefined();
+    expect(options?.values().find((opt) => opt.value === "Whipping Cream")).toBeDefined();
   });
 
   // ---- WASM interoperability --------------------------------------------------------------------
 
   it("should not set WASM object in context in a bad state", async () => {
     const user = userEvent.setup();
-    vi.mocked(fetchIngredientSpec).mockResolvedValue(mockSpec);
     vi.mocked(into_ingredient_from_spec).mockReturnValue(mockIngredient);
 
     const { container } = render(<RecipeGridWithSpy />);

@@ -23,6 +23,7 @@ import {
   RecipeGrid,
   makeEmptyRecipeContext,
   makeEmptyRecipeResources,
+  makeRecipeResources,
 } from "@/app/_components/recipe";
 
 import { fetchAllIngredientSpecs } from "@/lib/data";
@@ -41,12 +42,11 @@ export default function CalculatorPage() {
   useEffect(() => {
     // Pre-fetch all ingredient specs to populate valid ingredients and WASM bridge database
     fetchAllIngredientSpecs().then(async (specs) => {
-      const validIngredients: string[] = specs?.map((spec) => spec.name) || [];
       const wasmBridge = new WasmBridge(
         new_ingredient_database_seeded_from_specs(specs?.map((spec) => spec.spec) || []),
       );
 
-      setRecipeResources({ validIngredients, wasmBridge });
+      setRecipeResources((prev) => makeRecipeResources(wasmBridge, prev.updateIdx + 1));
     });
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
