@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773787970394,
+  "lastUpdate": 1773788018879,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -10223,6 +10223,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 311,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2ee0aa205880fa81fe8ba0f6fc32338d14e7b53a",
+          "message": "Use embedded ing. specs for `WasmBridge` init seed\n\n* Use embedded ingredient specs data to seed the `WasmBridge` on mount,\n  instead of fetching the specs from the database. This should be more\n  performant, and obviates the need to have a dummy user in the database\n  with ingredient specs in sync with the `sci-cream` crate definitions.\n  Now the main set of ingredient specs come directly from the crate.\n* In addition to the embedded specs, if a user is logged in then also\n  fetch their user-defined specs and seed them into the `WasmBridge`.",
+          "timestamp": "2026-03-17T18:41:52-04:00",
+          "tree_id": "761a8cad54e4c2e828f1f878ad2f35fcc3c03a93",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2ee0aa205880fa81fe8ba0f6fc32338d14e7b53a"
+        },
+        "date": 1773788016662,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3641,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161381,
+            "range": "± 2031",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2060,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 181049,
+            "range": "± 13416",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 307,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
