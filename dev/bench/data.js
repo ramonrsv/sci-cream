@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773768853871,
+  "lastUpdate": 1773769002254,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -102142,6 +102142,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.72%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2513530a60132244390c3844bc3264627e44cf8f",
+          "message": "Increase 112 -> 199 pixel diff for empty FPD\n\nIncrease the allowed maximum pixel difference from 112 to 199 pixels for\nthe empty FPD graph visual regression test, \"fpd-graph-empty.png\", since\nit's intermittently failing in CI with up to 199 pixels difference.",
+          "timestamp": "2026-03-17T13:27:00-04:00",
+          "tree_id": "eabdc8dfdf9adbfa32ff5ac2c8a8ce6e386b4ec3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2513530a60132244390c3844bc3264627e44cf8f"
+        },
+        "date": 1773768997780,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78513,
+            "range": "±1.07%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 706769,
+            "range": "±1.30%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10032,
+            "range": "±1.81%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 596253,
+            "range": "±0.85%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
