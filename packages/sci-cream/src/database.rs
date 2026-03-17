@@ -137,6 +137,11 @@ impl IngredientDatabase {
         }
     }
 
+    /// Checks if the database contains an [`Ingredient`] with the specified name.
+    pub fn has_ingredient(&self, name: &str) -> bool {
+        self.acquire_read_lock().contains_key(name)
+    }
+
     /// Retrieves all [`Ingredient`]s in the database.
     pub fn get_all_ingredients(&self) -> Vec<Ingredient> {
         self.acquire_read_lock().values().cloned().collect()
@@ -336,6 +341,17 @@ pub(crate) mod tests {
             let ingredient = db.get_ingredient_by_name(&spec.name).unwrap();
             assert_eq!(ingredient, spec.into_ingredient().unwrap());
         }
+    }
+
+    #[test]
+    fn ingredient_database_has_ingredient() {
+        let db = IngredientDatabase::new_seeded_from_specs(&get_all_ingredient_specs()).unwrap();
+
+        for spec in get_all_ingredient_specs() {
+            assert_true!(db.has_ingredient(&spec.name));
+        }
+
+        assert_false!(db.has_ingredient("non_existent_ingredient"));
     }
 
     #[test]

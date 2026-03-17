@@ -9,6 +9,7 @@ use crate::{
     ingredient::{Category, Ingredient},
     properties::MixProperties,
     recipe::{LightRecipe, Recipe},
+    specs::IngredientSpec,
 };
 
 #[cfg(doc)]
@@ -64,6 +65,22 @@ impl Bridge {
     pub fn calculate_recipe_mix_properties(&self, recipe: &LightRecipe) -> Result<MixProperties> {
         Recipe::from_light_recipe(None, recipe, &self.db)?.calculate_mix_properties()
     }
+
+    /// Forwards to [`IngredientDatabase::seed`], seeding the db with the provided [`Ingredient`]s.
+    pub fn seed(&self, ingredients: &[Ingredient]) {
+        self.db.seed(ingredients);
+    }
+
+    /// Forwards to [`IngredientDatabase::seed_from_specs`], seeding with the [`IngredientSpec`]s.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] if any of the provided specs cannot be converted into an
+    /// [`Ingredient`]. This would likely be an error converting a [`spec`](crate::specs) into a
+    /// [`Composition`] due to invalid values, e.g. negative percentages, not summing to 100%, etc.
+    pub fn seed_from_specs(&self, specs: &[IngredientSpec]) -> Result<()> {
+        self.db.seed_from_specs(specs)
+    }
 }
 
 #[wasm_bindgen]
@@ -76,6 +93,11 @@ impl Bridge {
     #[wasm_bindgen(constructor)]
     pub fn new(db: IngredientDatabase) -> Self {
         Self { db }
+    }
+
+    /// Forwards to [`IngredientDatabase::has_ingredient`] of the internal database
+    pub fn has_ingredient(&self, name: &str) -> bool {
+        self.db.has_ingredient(name)
     }
 
     /// Forwards to [`IngredientDatabase::get_all_ingredients`] of the internal database
@@ -142,6 +164,26 @@ pub mod wasm {
             let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
             self.calculate_recipe_mix_properties(&light_recipe).map_err(Into::into)
         }
+
+        /// WASM compatible wrapper for [`Bridge::seed`]
+        #[wasm_bindgen(js_name = "seed")]
+        #[allow(clippy::needless_pass_by_value)]
+        pub fn seed_wasm(&self, ingredients: Box<[Ingredient]>) {
+            self.db.seed(&ingredients);
+        }
+
+        /// WASM compatible wrapper for [`Bridge::seed_from_specs`]
+        ///
+        /// # Errors
+        ///
+        /// Returns an [`Error`] if any of the specs cannot be converted into an [`Ingredient`]; see
+        /// the forwarded-to method for more details. It may also return a `serde::Error` if the
+        /// provided JS values cannot be deserialized into [`IngredientSpec`]s.
+        #[wasm_bindgen(js_name = "seed_from_specs")]
+        #[allow(clippy::needless_pass_by_value)]
+        pub fn seed_from_specs_wasm(&self, specs: Box<[JsValue]>) -> Result<(), JsValue> {
+            self.db.seed_from_specs_wasm(specs)
+        }
     }
 }
 
@@ -154,7 +196,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{composition::CompKey, data::get_all_ingredient_specs};
+    use crate::{composition::CompKey, data::get_all_ingredient_specs, ingredient::Ingredient};
 
     const LIGHT_RECIPE: &[(&str, f64)] = &[
         ("Whole Milk", 245.0),
@@ -182,7 +224,17 @@ pub(crate) mod tests {
 
     #[test]
     fn bridge_new_empty() {
-        let _bridge = Bridge::new(IngredientDatabase::new());
+        let bridge = Bridge::new(IngredientDatabase::new());
+        assert_true!(bridge.get_all_ingredients().is_empty());
+    }
+
+    #[test]
+    fn bridge_new_populated() {
+        let db = make_seeded_db();
+        assert_eq!(db.get_all_ingredients().len(), get_all_ingredient_specs().len());
+
+        let bridge = Bridge::new(db);
+        assert_eq!(bridge.get_all_ingredients().len(), get_all_ingredient_specs().len());
     }
 
     #[test]
@@ -203,5 +255,70 @@ pub(crate) mod tests {
             .unwrap();
 
         assert_eq_flt_test!(mix_properties.get(CompKey::MilkFat.into()), 13.6024);
+    }
+
+    #[test]
+    fn bridge_seed() {
+        let bridge = Bridge::new(IngredientDatabase::new());
+        assert!(bridge.get_all_ingredients().is_empty());
+
+        let ingredients = get_all_ingredient_specs()[..10]
+            .iter()
+            .map(|spec| spec.clone().into_ingredient().unwrap())
+            .collect::<Vec<Ingredient>>();
+
+        bridge.seed(&ingredients);
+        assert_eq!(bridge.get_all_ingredients().len(), 10);
+
+        for ingredient in ingredients {
+            let fetched = bridge.get_ingredient_by_name(&ingredient.name).unwrap();
+            assert_eq!(fetched, ingredient);
+        }
+    }
+
+    #[test]
+    fn bridge_seed_from_spec() {
+        let bridge = Bridge::new(IngredientDatabase::new());
+        assert!(bridge.get_all_ingredients().is_empty());
+
+        let specs = get_all_ingredient_specs()[..10].to_vec();
+
+        bridge.seed_from_specs(&specs).unwrap();
+        assert_eq!(bridge.get_all_ingredients().len(), 10);
+
+        for spec in specs {
+            let fetched = bridge.get_ingredient_by_name(&spec.name).unwrap();
+            assert_eq!(fetched, spec.into_ingredient().unwrap());
+        }
+    }
+
+    #[test]
+    fn bridge_seed_from_specs() {
+        let bridge = Bridge::new(IngredientDatabase::new());
+        assert!(bridge.get_all_ingredients().is_empty());
+
+        let specs = get_all_ingredient_specs()[..10].to_vec();
+
+        bridge.seed_from_specs(&specs).unwrap();
+        assert_eq!(bridge.get_all_ingredients().len(), 10);
+
+        for spec in specs {
+            let fetched = bridge.get_ingredient_by_name(&spec.name).unwrap();
+            let ingredient = spec.into_ingredient().unwrap();
+            assert_eq!(fetched, ingredient);
+        }
+    }
+
+    #[test]
+    fn bridge_has_ingredient() {
+        let bridge = Bridge::new(IngredientDatabase::new());
+        assert_false!(bridge.has_ingredient("Whole Milk"));
+
+        bridge.seed(&[Ingredient {
+            name: "Whole Milk".to_string(),
+            category: Category::Dairy,
+            composition: Composition::new(),
+        }]);
+        assert_true!(bridge.has_ingredient("Whole Milk"));
     }
 }
