@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773788273510,
+  "lastUpdate": 1773788311384,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -95803,6 +95803,102 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 491.9,
             "range": "16.50",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2ee0aa205880fa81fe8ba0f6fc32338d14e7b53a",
+          "message": "Use embedded ing. specs for `WasmBridge` init seed\n\n* Use embedded ingredient specs data to seed the `WasmBridge` on mount,\n  instead of fetching the specs from the database. This should be more\n  performant, and obviates the need to have a dummy user in the database\n  with ingredient specs in sync with the `sci-cream` crate definitions.\n  Now the main set of ingredient specs come directly from the crate.\n* In addition to the embedded specs, if a user is logged in then also\n  fetch their user-defined specs and seed them into the `WasmBridge`.",
+          "timestamp": "2026-03-17T18:41:52-04:00",
+          "tree_id": "761a8cad54e4c2e828f1f878ad2f35fcc3c03a93",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2ee0aa205880fa81fe8ba0f6fc32338d14e7b53a"
+        },
+        "date": 1773788308700,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 14.496,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 820.9,
+            "range": "70.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.1,
+            "range": "6.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.5,
+            "range": "5.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 37.2,
+            "range": "5.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40,
+            "range": "7.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 155.3,
+            "range": "19.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 41.4,
+            "range": "2.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 38.3,
+            "range": "0.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 27.09,
+            "range": "0.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 490.3,
+            "range": "9.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 530.8,
+            "range": "20.03",
             "unit": "ms"
           }
         ]
