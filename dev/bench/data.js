@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773645172648,
+  "lastUpdate": 1773726262785,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -98051,6 +98051,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.72%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ba6d906cf0281721fca78bbd1e89b0ac591dd2f0",
+          "message": "Introduce `has_ingredient` and add `Bridge::seed*`\n\n* Introduce `IngredientDatabase::has_ingredient`, also in `wasm::Bridge`\n* Expose the `IngredientDatbase::seed*` methods via `wasm::Bridge`",
+          "timestamp": "2026-03-17T00:06:02-04:00",
+          "tree_id": "92b2154bb8c7323af4b5587caa552a56173ff916",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ba6d906cf0281721fca78bbd1e89b0ac591dd2f0"
+        },
+        "date": 1773726259783,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76586,
+            "range": "±1.33%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 734876,
+            "range": "±0.37%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10187,
+            "range": "±1.98%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 610361,
+            "range": "±0.67%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
