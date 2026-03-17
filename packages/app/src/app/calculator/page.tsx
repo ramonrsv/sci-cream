@@ -1,5 +1,7 @@
 "use client";
 
+import { useSession } from "next-auth/react";
+import { useState, useEffect } from "react";
 import {
   ResponsiveGridLayout,
   ResponsiveLayouts,
@@ -8,13 +10,6 @@ import {
   type ResizeHandleAxis,
 } from "react-grid-layout";
 
-import { useState, useEffect } from "react";
-
-import {
-  Bridge as WasmBridge,
-  new_ingredient_database_seeded_from_specs,
-} from "@workspace/sci-cream";
-
 import { IngredientCompositionGrid } from "@/app/_components/composition";
 import { MixPropertiesGrid } from "@/app/_components/properties";
 import { MixPropertiesChart } from "@/app/_components/properties-chart";
@@ -22,34 +17,33 @@ import { FpdGraph } from "@/app/_components/fpd-graph";
 import {
   RecipeGrid,
   makeEmptyRecipeContext,
-  makeEmptyRecipeResources,
-  makeRecipeResources,
+  makeRecipeResourcesFromEmbeddedData,
 } from "@/app/_components/recipe";
 
 import { fetchAllUserIngredientSpecs } from "@/lib/data";
-import { TEST_USER_A } from "@/lib/database/util";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
 
 export default function CalculatorPage() {
+  const { data: session } = useSession();
+
   const { width, containerRef, mounted } = useContainerWidth();
 
   const recipeCtxState = useState(() => makeEmptyRecipeContext());
   const [recipeContext] = recipeCtxState;
   const recipes = recipeContext.recipes;
 
-  const recipeResourcesState = useState(() => makeEmptyRecipeResources());
-  const [, setRecipeResources] = recipeResourcesState;
+  const recipeResourcesState = useState(() => makeRecipeResourcesFromEmbeddedData());
+  const [recipeResources, setRecipeResources] = recipeResourcesState;
 
   useEffect(() => {
-    // Pre-fetch all ingredient specs to populate valid ingredients and WASM bridge database
-    fetchAllUserIngredientSpecs(TEST_USER_A.email).then(async (specs) => {
-      const wasmBridge = new WasmBridge(
-        new_ingredient_database_seeded_from_specs(specs?.map((spec) => spec.spec) || []),
-      );
-
-      setRecipeResources((prev) => makeRecipeResources(wasmBridge, prev.updateIdx + 1));
-    });
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+    if (session?.user?.email) {
+      fetchAllUserIngredientSpecs(session.user.email).then(async (userSpecs) => {
+        recipeResources.wasmBridge.seed_from_specs((userSpecs ?? []).map((s) => s.spec));
+        setRecipeResources((prev) => ({ ...prev, updateIdx: prev.updateIdx + 1 }));
+      });
+    }
+  }, [session?.user?.email]);
+  // eslint-disable-line react-hooks/exhaustive-deps
 
   const recipeGridProps = { recipeCtxState, recipeResourcesState };
 

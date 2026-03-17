@@ -21,6 +21,7 @@ import {
   RecipeLine,
   Recipe as SciCreamRecipe,
   Bridge as WasmBridge,
+  new_ingredient_database_seeded_from_embedded_data,
 } from "@workspace/sci-cream";
 
 export interface IngredientRow {
@@ -92,6 +93,10 @@ export function makeRecipeResources(
 
 export function makeEmptyRecipeResources(): RecipeResources {
   return makeRecipeResources(new WasmBridge(new IngredientDatabase()));
+}
+
+export function makeRecipeResourcesFromEmbeddedData(): RecipeResources {
+  return makeRecipeResources(new WasmBridge(new_ingredient_database_seeded_from_embedded_data()));
 }
 
 export function isRecipeEmpty(recipe: Recipe): boolean {

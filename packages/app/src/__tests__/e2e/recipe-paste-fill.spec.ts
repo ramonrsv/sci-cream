@@ -1,7 +1,13 @@
 import { test } from "@playwright/test";
 
 import { RecipeID } from "@/__tests__/assets";
-import { pasteRecipeAndWaitForUpdate, fillRecipeAndWaitForUpdate } from "@/__tests__/e2e/util";
+import {
+  pasteRecipeAndWaitForUpdate,
+  fillRecipeAndWaitForUpdate,
+  loginAsTestUserWithCredentials,
+} from "@/__tests__/e2e/util";
+
+import { TEST_USER_B } from "@/lib/database/util";
 
 const RECIPE_IDS_WITHOUT_USER_DEFINED = [RecipeID.Main, RecipeID.RefA, RecipeID.RefB];
 const RECIPE_IDS_WITH_USER_DEFINED = [
@@ -43,6 +49,8 @@ test.describe("Recipe Paste and Fill", () => {
     await page.goto("");
     await page.waitForLoadState("networkidle");
 
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
+
     for (const recipeId of RECIPE_IDS_WITH_USER_DEFINED)
       await pasteRecipeAndWaitForUpdate(page, browserName, recipeId);
   });
@@ -52,6 +60,8 @@ test.describe("Recipe Paste and Fill", () => {
   }) => {
     await page.goto("");
     await page.waitForLoadState("networkidle");
+
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
 
     for (const recipeId of RECIPE_IDS_WITH_USER_DEFINED)
       await fillRecipeAndWaitForUpdate(page, recipeId);

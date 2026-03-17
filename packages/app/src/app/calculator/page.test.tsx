@@ -6,6 +6,8 @@ import { render, waitFor, cleanup } from "@testing-library/react";
 
 import CalculatorPage from "./page";
 
+import { TEST_USER_A } from "@/lib/database/util";
+
 // ---------------------------------------------------------------------------
 // Test helpers, mocks, and setup
 // ---------------------------------------------------------------------------
@@ -30,7 +32,26 @@ const matchMediaMock = vi
 vi.stubGlobal("ResizeObserver", ResizeObserverMock);
 vi.stubGlobal("matchMedia", matchMediaMock);
 
-vi.mock("@/lib/data", () => ({ fetchAllUserIngredientSpecs: vi.fn(() => Promise.resolve([])) }));
+vi.mock("@workspace/sci-cream", async () => {
+  const actual =
+    await vi.importActual<typeof import("@workspace/sci-cream")>("@workspace/sci-cream");
+
+  return {
+    ...actual,
+    new_ingredient_database_seeded_from_embedded_data: vi.fn(() =>
+      actual.new_ingredient_database_seeded_from_embedded_data(),
+    ),
+  };
+});
+
+vi.mock("@/lib/data", () => ({
+  fetchUserIngredientSpecByName: vi.fn(() => Promise.resolve(undefined)),
+  fetchAllUserIngredientSpecs: vi.fn(() => Promise.resolve([])),
+}));
+
+vi.mock("next-auth/react", () => ({
+  useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
+}));
 
 vi.mock("@/app/navbar", () => ({ useNavbarContext: () => ({ theme: "Light" }) }));
 
@@ -39,9 +60,16 @@ vi.mock("@/app/navbar", () => ({ useNavbarContext: () => ({ theme: "Light" }) })
 // ---------------------------------------------------------------------------
 
 describe("Calculator Page", () => {
-  beforeEach(() => {
+  beforeEach(async () => {
     vi.clearAllMocks();
     setupVitestCanvasMock();
+
+    const { useSession } = await import("next-auth/react");
+    vi.mocked(useSession).mockReturnValue({
+      update: vi.fn(),
+      data: null,
+      status: "unauthenticated",
+    });
   });
 
   afterEach(async () => {
@@ -64,12 +92,39 @@ describe("Calculator Page", () => {
     expect(container.querySelectorAll("#ing-composition-grid").length).toBe(1);
   });
 
-  it("should pre-fetch all ingredient specs (including names) on mount", async () => {
-    const { fetchAllUserIngredientSpecs } = await import("../../lib/data");
+  it("should pre-seed WasmBridge with all embedded ingredient specs on mount", async () => {
+    const { new_ingredient_database_seeded_from_embedded_data } =
+      await import("@workspace/sci-cream");
+
     render(<CalculatorPage />);
 
     await waitFor(() => {
-      expect(fetchAllUserIngredientSpecs).toHaveBeenCalled();
+      expect(new_ingredient_database_seeded_from_embedded_data).toHaveBeenCalled();
+    });
+  });
+
+  it("if logged in, should pre-fetch all user ingredient specs on mount", async () => {
+    const { useSession } = await import("next-auth/react");
+    vi.mocked(useSession).mockReturnValue({
+      data: { user: { email: TEST_USER_A.email }, expires: "" },
+      status: "authenticated",
+      update: vi.fn(),
+    });
+
+    const { fetchAllUserIngredientSpecs } = await import("@/lib/data");
+    render(<CalculatorPage />);
+
+    await waitFor(() => {
+      expect(fetchAllUserIngredientSpecs).toHaveBeenCalledWith(TEST_USER_A.email);
+    });
+  });
+
+  it("if not logged in, should not pre-fetch any user ingredient specs on mount", async () => {
+    const { fetchAllUserIngredientSpecs } = await import("@/lib/data");
+    render(<CalculatorPage />);
+
+    await waitFor(() => {
+      expect(fetchAllUserIngredientSpecs).not.toHaveBeenCalled();
     });
   });
 

@@ -25,6 +25,7 @@ import {
   pasteRecipeAndWaitForUpdate,
   PASTE_CHECK_DEFAULT_ING_IDX,
   expectRecipePasteCompleted,
+  loginAsTestUserWithCredentials,
 } from "@/__tests__/e2e/util";
 
 import {
@@ -35,6 +36,7 @@ import {
 } from "@/__benches__/e2e/util";
 
 import { sleep_ms } from "@/lib/util";
+import { TEST_USER_B } from "@/lib/database/util";
 
 const COUNT_TIME_RUNS = 10; // Number of runs for each execution time benchmark
 const QTY_UPDATES_PER_LOOP = 50; // Number of times to update an ingredient's quantity per loop
@@ -257,7 +259,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
     await page.goto("");
     await page.waitForLoadState("networkidle");
 
-    // @todo Login to seed user-defined ingredient specs in DB
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
 
     await doBenchmarkTimeMeasurements("Refresh to paste, with user-defined ings", async () => {
       await page.goto("");
