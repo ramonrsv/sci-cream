@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773786553256,
+  "lastUpdate": 1773786602931,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -10115,6 +10115,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 363,
             "range": "± 11",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ac968ce9d135e3bdde953d62766cd4bf7f1200a2",
+          "message": "Add `RecipeID` test assets with user-defined ings\n\n* Add support for `RecipeID`s for recipes that include user-defined\n  ingredients, e.g. `RecipeID.MainWithUserDefined`. Currently these\n  assets append 'Fructose (User-Defined)`, which is seeded for both\n  `TEST_USER_A` and `TEST_USER_B`; A is used in `calculator/page.tsx`.\n* Rework recipe paste/fill and expect completion utility functions in\n  `__tests__/e2e/util.ts` to split the two steps and be more flexible.\n* Add `test:e2e:chromium` script; it's useful when debugging issues.",
+          "timestamp": "2026-03-17T17:32:25-04:00",
+          "tree_id": "1f5374820cf0dbf836fa34e9a02bed9477f37d35",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ac968ce9d135e3bdde953d62766cd4bf7f1200a2"
+        },
+        "date": 1773786600008,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3570,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161914,
+            "range": "± 650",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1980,
+            "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 186005,
+            "range": "± 5344",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 303,
+            "range": "± 5",
             "unit": "ns/iter"
           }
         ]
