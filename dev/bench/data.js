@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773728655777,
+  "lastUpdate": 1773728700009,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -9791,6 +9791,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 303,
             "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "877079b066c42ebeee69603de83131e80cd27ef8",
+          "message": "Change Bridge benches to seed all embedded specs\n\nChange WASM Bridge JS benchmarks to seed the bridge with all embedded\ningredient specs, as this is more representative of real use cases.",
+          "timestamp": "2026-03-17T01:52:08-04:00",
+          "tree_id": "bd36f65d20e66c0fcbcaf7e9aa13b83de6390f84",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/877079b066c42ebeee69603de83131e80cd27ef8"
+        },
+        "date": 1773728697331,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3602,
+            "range": "± 94",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 162634,
+            "range": "± 2287",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1982,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160512,
+            "range": "± 3205",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 303,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
