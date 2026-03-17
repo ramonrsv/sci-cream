@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773728911665,
+  "lastUpdate": 1773758037560,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -99722,6 +99722,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.86%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e9938a467b3a489ddec6976800e53064697fe826",
+          "message": "Add `has_ingredient` WASM Bridge benchmarks",
+          "timestamp": "2026-03-17T01:52:08-04:00",
+          "tree_id": "8766a44cf5938c692b76f1e642d5ab08a38c859b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e9938a467b3a489ddec6976800e53064697fe826"
+        },
+        "date": 1773758035267,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78146,
+            "range": "±0.84%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 726349,
+            "range": "±0.42%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9979,
+            "range": "±2.11%",
+            "unit": "ops/sec",
+            "extra": "81 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 606297,
+            "range": "±0.88%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
