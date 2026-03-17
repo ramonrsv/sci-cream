@@ -8,6 +8,7 @@ console.log("Starting TypeScript benchmarks for @workspace/sci-cream\n");
     "comp-value-as.bench.ts",
     "get_ingredient_specs.bench.ts",
     "get_ingredients.bench.ts",
+    "has_ingredient.bench.ts",
     "into_ingredient_from_spec.bench.ts",
     "recipe-wasm-bridge.bench.ts",
     "key-accesses.bench.ts",
