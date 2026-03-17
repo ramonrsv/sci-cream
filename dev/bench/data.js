@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773787665565,
+  "lastUpdate": 1773787970394,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -103975,6 +103975,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.79%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2ee0aa205880fa81fe8ba0f6fc32338d14e7b53a",
+          "message": "Use embedded ing. specs for `WasmBridge` init seed\n\n* Use embedded ingredient specs data to seed the `WasmBridge` on mount,\n  instead of fetching the specs from the database. This should be more\n  performant, and obviates the need to have a dummy user in the database\n  with ingredient specs in sync with the `sci-cream` crate definitions.\n  Now the main set of ingredient specs come directly from the crate.\n* In addition to the embedded specs, if a user is logged in then also\n  fetch their user-defined specs and seed them into the `WasmBridge`.",
+          "timestamp": "2026-03-17T18:41:52-04:00",
+          "tree_id": "761a8cad54e4c2e828f1f878ad2f35fcc3c03a93",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2ee0aa205880fa81fe8ba0f6fc32338d14e7b53a"
+        },
+        "date": 1773787967784,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78241,
+            "range": "±0.74%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 737635,
+            "range": "±0.58%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10070,
+            "range": "±1.55%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 607154,
+            "range": "±0.81%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
           }
         ]
       }
