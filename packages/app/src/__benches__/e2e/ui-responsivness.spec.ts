@@ -263,8 +263,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      // @todo Paste recipe that includes user-defined ingredients
-      await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
+      await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.MainWithUserDefined);
 
       // Wait for interval to save to local storage
       await sleep_ms(2000);
@@ -273,7 +272,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
         await page.goto("");
         await page.waitForLoadState("domcontentloaded");
 
-        await expectRecipePasteCompleted(page, RecipeID.Main);
+        await expectRecipePasteCompleted(page, RecipeID.MainWithUserDefined);
       });
     });
   });

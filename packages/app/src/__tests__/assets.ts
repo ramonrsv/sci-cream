@@ -6,10 +6,41 @@ export enum RecipeID {
   Main = "Recipe",
   RefA = "Ref A",
   RefB = "Ref B",
+  MainWithUserDefined = "Recipe (with user-defined)",
+  RefAWithUserDefined = "Ref A (with user-defined)",
+  RefBWithUserDefined = "Ref B (with user-defined)",
 }
 
 export function recipeIdToIdx(recipeId: RecipeID): number {
-  return recipeId === RecipeID.Main ? 0 : recipeId === RecipeID.RefA ? 1 : 2;
+  switch (recipeId) {
+    case RecipeID.Main:
+    case RecipeID.MainWithUserDefined:
+      return 0;
+    case RecipeID.RefA:
+    case RecipeID.RefAWithUserDefined:
+      return 1;
+    case RecipeID.RefB:
+    case RecipeID.RefBWithUserDefined:
+      return 2;
+    default:
+      throw new Error(`Invalid recipeId: ${recipeId}`);
+  }
+}
+
+export function recipeIdToOption(recipeId: RecipeID): string {
+  switch (recipeId) {
+    case RecipeID.Main:
+    case RecipeID.MainWithUserDefined:
+      return "Recipe";
+    case RecipeID.RefA:
+    case RecipeID.RefAWithUserDefined:
+      return "Ref A";
+    case RecipeID.RefB:
+    case RecipeID.RefBWithUserDefined:
+      return "Ref B";
+    default:
+      throw new Error(`Invalid recipeId: ${recipeId}`);
+  }
 }
 
 const MAIN_RECIPE_LIGHT = [
@@ -60,6 +91,11 @@ export function lightRecipeToText(recipe: LightRecipe): string {
 }
 
 export function getLightRecipe(recipeId: RecipeID): LightRecipe {
+  const replaceAndConcatFructose = (base: LightRecipe) =>
+    base
+      .map(([name, qty]) => [name == "Fructose" ? "Fructose (User-Defined)" : name, qty])
+      .concat([["Fructose (User-Defined)", 5]]);
+
   switch (recipeId) {
     case RecipeID.Main:
       return MAIN_RECIPE_LIGHT;
@@ -67,6 +103,12 @@ export function getLightRecipe(recipeId: RecipeID): LightRecipe {
       return REF_A_RECIPE_LIGHT;
     case RecipeID.RefB:
       return REF_B_RECIPE_LIGHT;
+    case RecipeID.MainWithUserDefined:
+      return replaceAndConcatFructose(MAIN_RECIPE_LIGHT);
+    case RecipeID.RefAWithUserDefined:
+      return replaceAndConcatFructose(REF_A_RECIPE_LIGHT);
+    case RecipeID.RefBWithUserDefined:
+      return replaceAndConcatFructose(REF_B_RECIPE_LIGHT);
   }
 }
 

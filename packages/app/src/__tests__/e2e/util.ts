@@ -21,6 +21,7 @@ import {
   getLightRecipe,
   getRecipeText,
   recipeIdToIdx,
+  recipeIdToOption,
 } from "@/__tests__/assets";
 
 import { WASM_BRIDGE } from "@/__tests__/util";
@@ -212,14 +213,14 @@ export async function configureComponentsForRecipeUpdateCheck(page: Page, recipe
   const compGridRecipeSelect = getCompositionGridRecipeSelector(page);
   const compGridKeyFilterSelect = getCompositionGridKeyFilterSelectInput(page);
 
-  await recipeGridRecipeSelect.selectOption(recipeId);
+  await recipeGridRecipeSelect.selectOption(recipeIdToOption(recipeId));
   await compGridKeyFilterSelect.selectOption(KeyFilter.All);
 
   // `IngCompGrid`'s recipe-select is not rendered if it was previously set to Main and only the
   // main recipe is non-empty. In that case, it's already in the correct state and we can safely
   // skip selecting the recipe, so we catch and ignore a timeout trying to select the recipe.
   try {
-    await compGridRecipeSelect.selectOption(recipeId, { timeout: 100 });
+    await compGridRecipeSelect.selectOption(recipeIdToOption(recipeId), { timeout: 100 });
   } catch {}
 }
 
@@ -332,6 +333,25 @@ export async function expectRecipePasteCompleted(page: Page, recipeId: RecipeID)
   await expectRecipeUpdateCompleted(page, recipeId, expected);
 }
 
+/** Helper function to paste a recipe into a `RecipeGrid`, based on the recipe ID
+ *
+ * This function selects the recipe in `RecipeGrid`, pastes the recipe text to the clipboard, and
+ * clicks the paste button, but does not wait for the recipe update to be reflected in the relevant
+ * components. It is the responsibility of the caller to wait for the update completion if needed,
+ * e.g. by calling `expectRecipePasteCompleted`.
+ *
+ * @note This function modifies selectors to paste recipes in corresponding slots in `RecipeGrid,
+ * so it may not leave components in the same state that they were before the function call.
+ */
+export async function pasteRecipeIntoGrid(page: Page, browserName: string, recipeId: RecipeID) {
+  const recipeGridRecipeSelect = getRecipeGridRecipeSelector(page);
+  await recipeGridRecipeSelect.selectOption(recipeIdToOption(recipeId));
+
+  await pasteToClipboard(page, browserName, getRecipeText(recipeId));
+  const pasteButton = getPasteButton(page);
+  await pasteButton.click();
+}
+
 /** Helper function to paste recipe and wait for update completion, used in multiple tests
  *
  * This function selects the recipe in `RecipeGrid`, pastes the recipe text to the clipboard, clicks
@@ -345,14 +365,31 @@ export async function pasteRecipeAndWaitForUpdate(
   browserName: string,
   recipeId: RecipeID,
 ) {
-  const recipeGridRecipeSelect = getRecipeGridRecipeSelector(page);
-  await recipeGridRecipeSelect.selectOption(recipeId);
-
-  await pasteToClipboard(page, browserName, getRecipeText(recipeId));
-  const pasteButton = getPasteButton(page);
-  await pasteButton.click();
-
+  await pasteRecipeIntoGrid(page, browserName, recipeId);
   await expectRecipePasteCompleted(page, recipeId);
+}
+
+/** Helper function to fill a recipe into a `RecipeGrid`, based on the recipe ID
+ *
+ * This function selects the recipe in `RecipeGrid`, fills each ingredient name and quantity input
+ * based on the recipe, but does not wait for the recipe update to be reflected in the relevant
+ * components. It is the responsibility of the caller to wait for the update completion if needed,
+ * e.g. by calling `expectRecipePasteCompleted`.
+ *
+ * @note This function modifies selectors to fill recipes in corresponding slots in `RecipeGrid,
+ * so it may not leave components in the same state that they were before the function call.
+ */
+export async function fillRecipeIntoGrid(page: Page, recipeId: RecipeID) {
+  const recipeGridRecipeSelect = getRecipeGridRecipeSelector(page);
+  await recipeGridRecipeSelect.selectOption(recipeIdToOption(recipeId));
+
+  for (const [ingIdx, [name, qty]] of getLightRecipe(recipeId).entries()) {
+    const ingNameInput = getIngredientNameInputAtIdx(page, ingIdx);
+    const ingQtyInput = getIngredientQtyInputAtIdx(page, ingIdx);
+
+    await ingNameInput.fill(name as string);
+    await ingQtyInput.fill(String(qty));
+  }
 }
 
 /** Helper function to fill a recipe and wait for update completion, used in multiple tests
@@ -363,22 +400,8 @@ export async function pasteRecipeAndWaitForUpdate(
  * @note This function modifies selectors to fill recipes in corresponding slots in `RecipeGrid,
  * so it may not leave components in the same state that they were before the function call.
  */
-export async function fillRecipeAndWaitForUpdate(
-  page: Page,
-  browserName: string,
-  recipeId: RecipeID,
-) {
-  const recipeGridRecipeSelect = getRecipeGridRecipeSelector(page);
-  await recipeGridRecipeSelect.selectOption(recipeId);
-
-  for (const [ingIdx, [name, qty]] of getLightRecipe(recipeId).entries()) {
-    const ingNameInput = getIngredientNameInputAtIdx(page, ingIdx);
-    const ingQtyInput = getIngredientQtyInputAtIdx(page, ingIdx);
-
-    await ingNameInput.fill(name as string);
-    await ingQtyInput.fill(String(qty));
-  }
-
+export async function fillRecipeAndWaitForUpdate(page: Page, recipeId: RecipeID) {
+  await fillRecipeIntoGrid(page, recipeId);
   await expectRecipePasteCompleted(page, recipeId);
 }
 
@@ -393,7 +416,7 @@ export async function clearRecipeAndWaitForUpdate(page: Page, recipeId: RecipeID
   const recipeGridRecipeSelect = getRecipeGridRecipeSelector(page);
   const clearButton = getClearButton(page);
 
-  await recipeGridRecipeSelect.selectOption(recipeId);
+  await recipeGridRecipeSelect.selectOption(recipeIdToOption(recipeId));
   await clearButton.click();
 
   const elements = await getRecipeUpdateCheckElements(page, recipeId, ingIdx);

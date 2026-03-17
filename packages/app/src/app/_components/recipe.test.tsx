@@ -39,12 +39,6 @@ import {
 // Test helpers, mocks, and setup
 // ---------------------------------------------------------------------------
 
-vi.mock("@/lib/data", () => ({
-  fetchValidIngredientNames: vi.fn(),
-  fetchIngredientSpec: vi.fn(() => Promise.resolve(undefined)),
-  fetchAllIngredientSpecs: vi.fn(() => Promise.resolve([])),
-}));
-
 vi.mock("@workspace/sci-cream", async () => {
   const actual = await vi.importActual("@workspace/sci-cream");
   return {

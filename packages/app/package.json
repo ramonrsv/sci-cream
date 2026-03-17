@@ -10,6 +10,7 @@
     "test": "pnpm test:unit && pnpm test:e2e && pnpm test:visual",
     "test:unit": "vitest run",
     "test:e2e": "playwright test --project chromium firefox webkit mobile-chrome mobile-safari",
+    "test:e2e:chromium": "playwright test --project chromium",
     "test:e2e:ui": "pnpm test:e2e --ui",
     "test:visual": "playwright test --project visual",
     "test:visual:update": "pnpm test:visual --update-snapshots",

@@ -11,13 +11,15 @@ import { IngredientJson, allIngredientSpecs } from "@workspace/sci-cream";
 
 import { TEST_USER_A, TEST_USER_B, USER_DEFINED_FRUCTOSE_SPEC } from "@/lib/database/util";
 
+type UserAsset = typeof TEST_USER_A;
+
 const db = drizzle(getDatabaseUrl(), { schema });
 
-async function seedUsers() {
+async function seedUsers(users: UserAsset[]) {
   console.log("==========");
   console.log("Seeding users");
 
-  for (const user of [TEST_USER_A, TEST_USER_B]) {
+  for (const user of users) {
     const passwordHash = await hash(user.password, 12);
     await db
       .insert(usersTable)
@@ -25,8 +27,8 @@ async function seedUsers() {
       .onConflictDoNothing({ target: usersTable.email });
   }
 
-  const users = await db.select().from(usersTable);
-  console.log("Getting all users from the database:", users);
+  const usersInDb = await db.select().from(usersTable);
+  console.log("Users in the database:", usersInDb);
 }
 
 async function seedUserIngredients(userEmail: string, ingredientSpecs: IngredientJson[]) {
@@ -76,9 +78,10 @@ async function seedUserIngredients(userEmail: string, ingredientSpecs: Ingredien
 }
 
 async function main() {
-  await seedUsers();
+  await seedUsers([TEST_USER_A, TEST_USER_B]);
 
   await seedUserIngredients(TEST_USER_A.email, allIngredientSpecs);
+  await seedUserIngredients(TEST_USER_A.email, [USER_DEFINED_FRUCTOSE_SPEC]);
   await seedUserIngredients(TEST_USER_B.email, [USER_DEFINED_FRUCTOSE_SPEC]);
 }
 
