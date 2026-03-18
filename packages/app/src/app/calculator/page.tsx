@@ -42,8 +42,7 @@ export default function CalculatorPage() {
         setRecipeResources((prev) => ({ ...prev, updateIdx: prev.updateIdx + 1 }));
       });
     }
-  }, [session?.user?.email]);
-  // eslint-disable-line react-hooks/exhaustive-deps
+  }, [session?.user?.email]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const recipeGridProps = { recipeCtxState, recipeResourcesState };
 
