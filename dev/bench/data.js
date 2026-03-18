@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773796277306,
+  "lastUpdate": 1773817471139,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -105195,6 +105195,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 605650,
             "range": "±0.83%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "914ee9c2a9ca0ff37b1e277874545c0c7485e18e",
+          "message": "Use `next-themes` to solve Dark theme flash issue",
+          "timestamp": "2026-03-18T02:41:36-04:00",
+          "tree_id": "f682582454842646ecc4d228d31089daa25fc898",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/914ee9c2a9ca0ff37b1e277874545c0c7485e18e"
+        },
+        "date": 1773817468393,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77277,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 707322,
+            "range": "±1.10%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10106,
+            "range": "±1.86%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 600846,
+            "range": "±0.82%",
             "unit": "ops/sec",
             "extra": "92 samples"
           }
