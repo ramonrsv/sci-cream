@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773817814886,
+  "lastUpdate": 1773870888931,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -105808,6 +105808,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.82%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1d4ee0def7a5ff810d3c5c8b55d522275bac9a3e",
+          "message": "Re-organize app TODOs for next rel, backlog, etc.\n\n* Re-organize app TODOs for the next release, up next, and backlog.\n* Add TODOs about layout shifts, user-defined ingredients, C++/FFI\n  support, 'User Guide', ice cream knowledge and blog navbar sections,\n  and about reviewing sign-in CSS classes used in `/signin` & `/signup`.",
+          "timestamp": "2026-03-18T11:59:37-04:00",
+          "tree_id": "f202393a4ef24ff583c0593b437d968c27614413",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1d4ee0def7a5ff810d3c5c8b55d522275bac9a3e"
+        },
+        "date": 1773870886054,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78823,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 688134,
+            "range": "±1.24%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9104,
+            "range": "±2.23%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 593031,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
