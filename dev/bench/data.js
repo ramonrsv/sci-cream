@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773871245782,
+  "lastUpdate": 1773871630424,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -106419,6 +106419,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.77%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5eeea80aece03af29618511b78bb16755ed25bee",
+          "message": "Add sci-cream TODOs about flavourings and extracts",
+          "timestamp": "2026-03-18T12:00:59-04:00",
+          "tree_id": "a54883283b643a1c2ca2a55f5e0c3288670f455a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5eeea80aece03af29618511b78bb16755ed25bee"
+        },
+        "date": 1773871626754,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76312,
+            "range": "±1.76%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 737238,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10255,
+            "range": "±1.80%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 610859,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
