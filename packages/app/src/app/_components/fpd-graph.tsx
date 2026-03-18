@@ -17,8 +17,8 @@ import {
   type ScriptableScaleContext,
 } from "chart.js";
 
-import { useNavbarContext } from "@/app/navbar";
 import { Recipe, isRecipeEmpty } from "./recipe";
+import { useTheme } from "@/lib/theme";
 import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "../../lib/styles/sizes";
 
 import {
@@ -41,7 +41,7 @@ ChartJS.register(
 );
 
 export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
-  const { theme } = useNavbarContext();
+  const { theme } = useTheme();
 
   // Only display the main recipe and non-empty reference recipes
   const recipes = allRecipes.filter((recipe) => recipe.index == 0 || !isRecipeEmpty(recipe));

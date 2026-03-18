@@ -17,7 +17,7 @@ import {
 } from "lucide-react";
 
 import { NAVBAR_ICON_SIZE, DEFAULT_COLLAPSED_NAVBAR } from "@/lib/styles/sizes";
-import { ThemeSelect, Theme, getInitialTheme } from "@/app/_elements/selects/theme-select";
+import { ThemeSelect } from "@/app/_elements/selects/theme-select";
 
 const navItems = [
   { href: "/calculator", label: "Calculator", icon: Calculator },
@@ -33,15 +33,7 @@ const NavbarContext = createContext<{
   collapsed: boolean;
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
   mounted: boolean;
-  theme: Theme;
-  setTheme: React.Dispatch<React.SetStateAction<Theme>>;
-}>({
-  collapsed: false,
-  setCollapsed: () => {},
-  mounted: false,
-  theme: Theme.Light,
-  setTheme: () => {},
-});
+}>({ collapsed: false, setCollapsed: () => {}, mounted: false });
 
 export function useNavbarContext() {
   return useContext(NavbarContext);
@@ -56,7 +48,6 @@ function getInitialCollapsedState(): boolean {
 export function Navbar({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(() => getInitialCollapsedState());
   const [mounted, setMounted] = useState(false);
-  const [theme, setTheme] = useState<Theme>(() => getInitialTheme());
 
   useEffect(() => {
     setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
@@ -67,7 +58,7 @@ export function Navbar({ children }: { children: React.ReactNode }) {
   }, [collapsed]);
 
   return (
-    <NavbarContext value={{ collapsed, setCollapsed, mounted, theme, setTheme }}>
+    <NavbarContext value={{ collapsed, setCollapsed, mounted }}>
       <div className="flex h-screen flex-col">
         <Header />
         <div className="flex min-h-0 flex-1">
@@ -81,7 +72,7 @@ export function Navbar({ children }: { children: React.ReactNode }) {
 
 /** Logo, collapse/expand button, `ThemeSelect` button, and account button to the right */
 export function Header() {
-  const { collapsed, setCollapsed, mounted, theme, setTheme } = useContext(NavbarContext);
+  const { collapsed, setCollapsed, mounted } = useContext(NavbarContext);
   const pathname = usePathname();
   const [hoveringLogo, setHoveringLogo] = useState(false);
 
@@ -112,7 +103,7 @@ export function Header() {
               <Image src="/favicon.ico" alt="Sci-Cream" width={logoSize} height={logoSize} />
             )}
           </button>
-          <ThemeSelect themeState={[theme, setTheme]} />
+          <ThemeSelect />
           <button
             title="Collapse sidebar"
             id="collapse-sidebar-button"

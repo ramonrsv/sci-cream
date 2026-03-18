@@ -1,9 +1,12 @@
-import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 
+import type { Metadata } from "next";
+import { Geist, Geist_Mono } from "next/font/google";
+
+import { SessionProvider } from "next-auth/react";
+import { ThemeProvider } from "next-themes";
+
 import { Navbar } from "@/app/navbar";
-import { Session } from "@/app/session";
 import { WebVitals } from "@/app/_elements/web-vitals";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
@@ -18,11 +21,13 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-        <Session>
-          <Navbar>{children}</Navbar>
-        </Session>
+        <SessionProvider>
+          <ThemeProvider attribute="class">
+            <Navbar>{children}</Navbar>
+          </ThemeProvider>
+        </SessionProvider>
         <WebVitals />
         <Analytics />
         <SpeedInsights />

@@ -26,20 +26,15 @@
 - [ ] Figure out how to show `sci-cream`'s beginner-friendly overview to new users of the app.
 - [ ] Add a visual regression test for the custom filter settings button and checkbox menu.
 - [ ] Figure out how to do visual regression tests of animations, e.g. navbar expand/collapse.
-- [ ] In Dark mode, there is a quick flash of white when opening select dropdowns.
 
 # Backlog
 
 - [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
 - [ ] Look into implementing a JS-side ingredient cache so that `Ingredient` WASM objects are only
       created once, then any lookups return JS light clones, which should reduce `.free()` issues.
-- [ ] When in Dark mode, if the page is refreshed, it momentarily flashes a Light theme before the
-      Dark theme is applied. This can be solved with a blocking script in `layout.tsx` manually
-      reading the theme from storage and applying it, but I would rather not do that, looks messy.
-      There are many other jarring flashes on first page load (some layout changes, a flash of
+- [ ] There are many jarring flashes on first page load (some layout changes, a flash of
       invalid-ingredient-name red before loading, etc.), so consider adding a loading screen to
       allow all those things to settle before displaying the main page (see how Monarch does it).
-      There is also a flash of white when going to the sign-in page when in Dark mode.
 - [ ] Look into Next.js's system for displaying component placeholders to avoid layout changes.
 - [ ] Add test to check that `MixPropertiesGrid` has no vertical scroll with default layout/filters.
 - [ ] In `MixPropertiesGrid`, make it so that, if there is a horizontal scroll, the left-most column
@@ -64,6 +59,11 @@
 
 # Completed
 
+- [x] In Dark mode, there is a quick flash of white when opening select dropdowns.
+- [x] When in Dark mode, if the page is refreshed, it momentarily flashes a Light theme before the
+      Dark theme is applied. This can be solved with a blocking script in `layout.tsx` manually
+      reading the theme from storage and applying it, but I would rather not do that, looks messy.
+      There is also a flash of white when going to the sign-in page when in Dark mode.
 - [x] Once user-defined ingredients are supported, use embedded data for the main ingredients set.
 - [x] Once embedded data is used for the main ingredient set, re-work `data.ts` to only support
       requesting user-defined ingredients for a user, and implement unit tests for this.

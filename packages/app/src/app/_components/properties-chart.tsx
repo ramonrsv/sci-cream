@@ -20,7 +20,7 @@ import {
   type IErrorBarYDataPoint,
 } from "chartjs-chart-error-bars";
 
-import { useNavbarContext } from "@/app/navbar";
+import { useTheme } from "@/lib/theme";
 import { Recipe, isRecipeEmpty } from "@/app/_components/recipe";
 import {
   KeyFilter,
@@ -159,7 +159,7 @@ export function getModifiedAcceptablePropertyRange(
 }
 
 export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] }) {
-  const { theme } = useNavbarContext();
+  const { theme } = useTheme();
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
 

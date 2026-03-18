@@ -27,6 +27,14 @@ vi.mock("@/app/navbar", () => ({
   Navbar: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
+vi.mock("next-themes", () => ({
+  ThemeProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
+vi.mock("next-auth/react", () => ({
+  SessionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 const { default: RootLayout, metadata } = await import("./layout");
 
 // ---------------------------------------------------------------------------

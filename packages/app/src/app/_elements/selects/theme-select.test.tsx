@@ -4,9 +4,11 @@ import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
+import { useTheme, ThemeProvider } from "next-themes";
 
-import { Theme, ThemeSelect, isDarkMode, getInitialTheme } from "./theme-select";
+import { Theme, appThemeToNextTheme, resolvedNextThemeToAppTheme } from "@/lib/theme";
+import { ThemeSelect } from "./theme-select";
 
 // ---------------------------------------------------------------------------
 // Test helpers, mocks, and setup
@@ -38,80 +40,32 @@ function mockMatchMedia(prefersDark: boolean) {
 }
 
 // ---------------------------------------------------------------------------
-// isDarkMode()
-// ---------------------------------------------------------------------------
-
-describe("isDarkMode", () => {
-  afterEach(() => {
-    document.documentElement.classList.remove("dark");
-  });
-
-  it("returns false when the dark class is not present", () => {
-    expect(isDarkMode()).toBe(false);
-  });
-
-  it("returns true when the dark class is present", () => {
-    document.documentElement.classList.add("dark");
-    expect(isDarkMode()).toBe(true);
-  });
-});
-
-// ---------------------------------------------------------------------------
-// getInitialTheme()
-// ---------------------------------------------------------------------------
-
-describe("getInitialTheme", () => {
-  beforeEach(() => {
-    localStorage.clear();
-    // Default (no localStorage entry) resolves via System -> needs matchMedia
-    mockMatchMedia(false);
-  });
-
-  it("defaults to Theme.Light when no localStorage entry and system prefers light", () => {
-    expect(getInitialTheme()).toBe(Theme.Light);
-  });
-
-  it("defaults to Theme.Dark when no localStorage entry and system prefers dark", () => {
-    mockMatchMedia(true);
-    expect(getInitialTheme()).toBe(Theme.Dark);
-  });
-
-  it("returns Theme.Light when localStorage theme is Light", () => {
-    localStorage.setItem("theme", "Light");
-    expect(getInitialTheme()).toBe(Theme.Light);
-  });
-
-  it("returns Theme.Dark when localStorage theme is Dark", () => {
-    localStorage.setItem("theme", "Dark");
-    expect(getInitialTheme()).toBe(Theme.Dark);
-  });
-
-  it("returns Theme.Light when localStorage is System and system prefers light", () => {
-    localStorage.setItem("theme", "System");
-    mockMatchMedia(false);
-    expect(getInitialTheme()).toBe(Theme.Light);
-  });
-
-  it("returns Theme.Dark when localStorage is System and system prefers dark", () => {
-    localStorage.setItem("theme", "System");
-    mockMatchMedia(true);
-    expect(getInitialTheme()).toBe(Theme.Dark);
-  });
-});
-
-// ---------------------------------------------------------------------------
 // ThemeSelect component
 // ---------------------------------------------------------------------------
 
 describe("ThemeSelect", () => {
   let currentTheme: Theme;
 
-  function TestWrapper({ initialTheme = Theme.Light }: { initialTheme?: Theme }) {
-    const [theme, setTheme] = useState<Theme>(initialTheme);
+  function ThemeController({ initialTheme }: { initialTheme: Theme }) {
+    const { resolvedTheme, setTheme } = useTheme();
+
     useEffect(() => {
-      currentTheme = theme;
-    }, [theme]);
-    return <ThemeSelect themeState={[theme, setTheme]} />;
+      setTheme(appThemeToNextTheme(initialTheme));
+    }, [initialTheme]); // eslint-disable-line react-hooks/exhaustive-deps
+
+    useEffect(() => {
+      currentTheme = resolvedNextThemeToAppTheme(resolvedTheme);
+    }, [resolvedTheme]);
+
+    return <ThemeSelect />;
+  }
+
+  function TestWrapper({ initialTheme = Theme.Light }: { initialTheme?: Theme }) {
+    return (
+      <ThemeProvider attribute="class">
+        <ThemeController initialTheme={initialTheme} />
+      </ThemeProvider>
+    );
   }
 
   beforeEach(() => {
@@ -133,7 +87,7 @@ describe("ThemeSelect", () => {
     expect(screen.getByRole("button")).toBeInTheDocument();
   });
 
-  it("applies the initial theme to the document on mount", () => {
+  it("applies the initial theme to the document on mount", async () => {
     render(<TestWrapper initialTheme={Theme.Dark} />);
     expect(document.documentElement.classList.contains("dark")).toBe(true);
     expect(currentTheme).toBe(Theme.Dark);
@@ -157,7 +111,7 @@ describe("ThemeSelect", () => {
     await waitFor(() => expect(screen.getByText("Dark")).toBeInTheDocument());
     await user.click(screen.getByText("Dark"));
     expect(document.documentElement.classList.contains("dark")).toBe(true);
-    expect(localStorage.getItem("theme")).toBe("Dark");
+    expect(localStorage.getItem("theme")).toBe("dark");
     expect(currentTheme).toBe(Theme.Dark);
   });
 
@@ -169,7 +123,7 @@ describe("ThemeSelect", () => {
     await waitFor(() => expect(screen.getByText("Light")).toBeInTheDocument());
     await user.click(screen.getByText("Light"));
     expect(document.documentElement.classList.contains("dark")).toBe(false);
-    expect(localStorage.getItem("theme")).toBe("Light");
+    expect(localStorage.getItem("theme")).toBe("light");
     expect(currentTheme).toBe(Theme.Light);
   });
 
@@ -181,7 +135,7 @@ describe("ThemeSelect", () => {
     await waitFor(() => expect(screen.getByText("System")).toBeInTheDocument());
     await user.click(screen.getByText("System"));
     expect(document.documentElement.classList.contains("dark")).toBe(true);
-    expect(localStorage.getItem("theme")).toBe("System");
+    expect(localStorage.getItem("theme")).toBe("system");
     expect(currentTheme).toBe(Theme.Dark);
   });
 
@@ -194,7 +148,7 @@ describe("ThemeSelect", () => {
     await waitFor(() => expect(screen.getByText("System")).toBeInTheDocument());
     await user.click(screen.getByText("System"));
     expect(document.documentElement.classList.contains("dark")).toBe(false);
-    expect(localStorage.getItem("theme")).toBe("System");
+    expect(localStorage.getItem("theme")).toBe("system");
     expect(currentTheme).toBe(Theme.Light);
   });
 });
