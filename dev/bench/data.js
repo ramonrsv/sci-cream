@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773871200191,
+  "lastUpdate": 1773871245782,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -97480,6 +97480,102 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 511.2,
             "range": "12.45",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1d4ee0def7a5ff810d3c5c8b55d522275bac9a3e",
+          "message": "Re-organize app TODOs for next rel, backlog, etc.\n\n* Re-organize app TODOs for the next release, up next, and backlog.\n* Add TODOs about layout shifts, user-defined ingredients, C++/FFI\n  support, 'User Guide', ice cream knowledge and blog navbar sections,\n  and about reviewing sign-in CSS classes used in `/signin` & `/signup`.",
+          "timestamp": "2026-03-18T11:59:37-04:00",
+          "tree_id": "f202393a4ef24ff583c0593b437d968c27614413",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1d4ee0def7a5ff810d3c5c8b55d522275bac9a3e"
+        },
+        "date": 1773871242575,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 815.7,
+            "range": "68.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 45.6,
+            "range": "6.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.9,
+            "range": "7.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.7,
+            "range": "6.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 37.8,
+            "range": "9.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 159,
+            "range": "5.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 40,
+            "range": "3.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 38.11,
+            "range": "0.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 26.9,
+            "range": "0.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 506.7,
+            "range": "17.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 535.5,
+            "range": "24.65",
             "unit": "ms"
           }
         ]
