@@ -7,12 +7,14 @@ import { Listbox, ListboxButton, ListboxOption, ListboxOptions } from "@headless
 
 import { NAVBAR_ICON_SIZE } from "@/lib/styles/sizes";
 
+/** Available theme options with their display label and icon */
 const themeOptions = [
   { value: "light", label: "Light", icon: Sun },
   { value: "dark", label: "Dark", icon: MoonStar },
   { value: "system", label: "System", icon: Monitor },
 ];
 
+/** Dropdown button in the navbar for switching between light, dark, and system themes */
 export function ThemeSelect() {
   const { theme, setTheme } = useTheme();
 

@@ -22,12 +22,14 @@ import { TEST_USER_B, USER_DEFINED_FRUCTOSE_SPEC } from "@/lib/database/util";
 
 type SpecAsset = typeof USER_DEFINED_FRUCTOSE_SPEC;
 
+/** Helper function to get the test user B from the database, throwing an error if not found */
 async function getTestUserB() {
   const user = await findUserByEmail(TEST_USER_B.email);
   if (!user) throw new Error("Test user B not found");
   return user;
 }
 
+/** Helper to assert that a Drizzle ingredient spec matches the expected spec and user asset */
 function expectDrizzleSpecToMatch(
   specDrizzle: IngredientTransfer | undefined,
   spec: SpecAsset,
@@ -40,6 +42,7 @@ function expectDrizzleSpecToMatch(
   expect(JSON.stringify(specDrizzle!.spec)).toBe(JSON.stringify(spec));
 }
 
+/** Helper to assert that an `Ingredient` parsed from a spec matches the expected spec asset */
 function expectParsedIngredientToMatchSpec(ingParsed: Ingredient, spec: SpecAsset) {
   expect(ingParsed.name).toBe(spec.name);
   expect(ingParsed.category).toBe(Category[spec.category as keyof typeof Category]);

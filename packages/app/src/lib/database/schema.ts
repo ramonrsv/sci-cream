@@ -3,6 +3,7 @@ import { pgTable, primaryKey, integer, text, pgEnum, json, timestamp } from "dri
 import { SchemaCategory } from "@workspace/sci-cream/schema-category";
 export { SchemaCategory };
 
+/** Drizzle ORM table definition for registered users. */
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
   name: text().notNull(),
@@ -11,8 +12,10 @@ export const usersTable = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+/** PostgreSQL enum type for ingredient categories, derived from the Rust `SchemaCategory` enum. */
 export const categoryEnum = pgEnum("category", SchemaCategory);
 
+/** Drizzle ORM table definition for ingredients, keyed by name and user. */
 export const ingredientsTable = pgTable(
   "ingredients",
   {

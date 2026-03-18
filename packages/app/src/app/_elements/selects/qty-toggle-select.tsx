@@ -1,5 +1,6 @@
 "use client";
 
+/** Controls how ingredient and mix quantity composition values are displayed */
 export enum QtyToggle {
   /// The raw composition value as stored in the Ingredient, independent of quantity
   Composition = "Composition",
@@ -23,6 +24,7 @@ export function qtyToggleToShortStr(qt: QtyToggle): string {
   }
 }
 
+/** Select element for switching between `QtyToggle` display modes */
 export function QtyToggleSelect({
   supportedQtyToggles,
   qtyToggleState,

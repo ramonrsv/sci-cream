@@ -65,6 +65,13 @@ ChartJS.register(
   BarWithErrorBar,
 );
 
+/**
+ * Returns all `PropKey` values suitable for chart display
+ *
+ * Some property keys are excluded from the list because their values would make the scale difficult
+ * to read, e.g. PropKey.Water and FpdKey.HardnessAt14C, whose value are in the ~50-80 range, while
+ * most other top out at ~30. All keys are still available for selection in the `KeyFilterSelect`.
+ */
 export function getPropKeys(): PropKey[] {
   return getPropKeysAll().filter(
     (key) =>
@@ -72,6 +79,7 @@ export function getPropKeys(): PropKey[] {
       key !== compToPropKey(CompKey.Water) && key !== fpdToPropKey(FpdKey.HardnessAt14C),
   );
 }
+/** Default set of property keys shown when the Custom key filter is first initialized */
 export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   compToPropKey(CompKey.MilkFat),
   compToPropKey(CompKey.TotalFats),
@@ -86,7 +94,8 @@ export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   fpdToPropKey(FpdKey.ServingTemp),
 ] as PropKey[]);
 
-/** Modify some property values to be more suitable for chart display
+/**
+ * Modify some property values to be more suitable for chart display
  *
  * For example, invert FPD and ServingTemp to be positive, convert AbsPAC to a smaller range,
  * convert emulsifier/stabilizer ratios to percentages, etc.
@@ -132,7 +141,8 @@ export function propKeyAsModifiedMedStr(propKey: PropKey): string {
   return modifyPropKeyAsMedStrForChart(prop_key_as_med_str(propKey), propKey);
 }
 
-/** Modify acceptable property range to match modifications done in `modifyMixPropertyForChart`
+/**
+ * Modify acceptable property range to match modifications done in `modifyMixPropertyForChart`
  *
  * This function also maps the sci-cream range `{ min: number; max: number }` to the format needed
  * for error bars in the chart, `{ yMin: number; yMax: number }`, and may do additional
@@ -158,13 +168,19 @@ export function getModifiedAcceptablePropertyRange(
   };
 }
 
+/**
+ * Bar chart displaying key mix property values for the active recipes, with acceptable-range error
+ * bars for the main recipe, including color coding based on the position relative to the range.
+ */
 export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] }) {
   const { theme } = useTheme();
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
 
+  /** Always display properties as percentages in the chart */
   const qtyToggle = QtyToggle.Percentage;
 
+  /** Returns `true` when every non-empty recipe has a zero/NaN value for the given property key */
   const isPropEmpty = (prop_key: PropKey) => {
     for (const recipe of recipes) {
       const prop_val = getMixProperty(recipe.mixProperties!, prop_key);
@@ -175,10 +191,12 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
     return true;
   };
 
+  /** Auto-filter heuristic: includes a property key when it is part of the default selection */
   const autoHeuristic = (prop_key: PropKey) => {
     return DEFAULT_SELECTED_PROPERTIES.has(prop_key);
   };
 
+  /** Returns the list of property keys to display, based on the current filter and selection */
   const getEnabledProps = () => {
     return getEnabledKeys(
       propsFilterState[STATE_VAL],
@@ -189,6 +207,7 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
     );
   };
 
+  /** Returns the display-ready (modified + qty-toggled) numeric value for a property key */
   const getPropertyValue = (
     prop_key: PropKey,
     mixProperties: MixProperties,
@@ -205,6 +224,15 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
     );
   };
 
+  /**
+   * Returns the bar colour for the main recipe based on where the value falls relative to the
+   * acceptable range for that property, with the following scheme:
+   *
+   * Green = within the inner 85% of the range
+   * Yellow = within range
+   * Orange = within 15% outside
+   * Red = further out
+   */
   const getMainBarColor = (propVal: number, range: { yMin: number; yMax: number }): string => {
     const isWithin = (val: number, range: { yMin: number; yMax: number }) =>
       val > range.yMin && val < range.yMax;
@@ -237,6 +265,7 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
   const gridColor = getGridColor(theme);
   const legendColor = getLegendColor(theme);
 
+  /** Chart.js dataset configuration built from the active recipes' mix property values */
   const chartData = {
     labels,
     datasets: recipes.map((recipe) => {
@@ -276,6 +305,7 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
     }),
   };
 
+  /** Chart.js options controlling layout, legend, tooltip, and axis configuration */
   const options = {
     responsive: true,
     maintainAspectRatio: false,

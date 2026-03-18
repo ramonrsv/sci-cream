@@ -19,32 +19,38 @@ import {
 import { NAVBAR_ICON_SIZE, DEFAULT_COLLAPSED_NAVBAR } from "@/lib/styles/sizes";
 import { ThemeSelect } from "@/app/_elements/selects/theme-select";
 
+/** Primary navigation links shown in the sidebar */
 const navItems = [
   { href: "/calculator", label: "Calculator", icon: Calculator },
   { href: "/recipes", label: "Recipes", icon: BookOpen },
   { href: "/ingredients", label: "Ingredients", icon: Wheat },
 ];
 
+/** Returns `true` when the current pathname starts with the given nav item href */
 function isNavActive(pathname: string, href: string): boolean {
   return pathname.startsWith(href);
 }
 
+/** Context providing the sidebar collapsed state and mount status to child components */
 const NavbarContext = createContext<{
   collapsed: boolean;
   setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
   mounted: boolean;
 }>({ collapsed: false, setCollapsed: () => {}, mounted: false });
 
+/** Hook to access the `NavbarContext` value from any descendant component */
 export function useNavbarContext() {
   return useContext(NavbarContext);
 }
 
+/** Read the sidebar collapsed state from `localStorage`, fall back to `DEFAULT_COLLAPSED_NAVBAR` */
 function getInitialCollapsedState(): boolean {
   if (typeof window === "undefined") return DEFAULT_COLLAPSED_NAVBAR;
   const stored = localStorage.getItem("sidebar-collapsed");
   return stored !== null ? stored === "true" : DEFAULT_COLLAPSED_NAVBAR;
 }
 
+/** Root layout shell with the `NavbarContext`, top header, collapsible sidebar, and main area */
 export function Navbar({ children }: { children: React.ReactNode }) {
   const [collapsed, setCollapsed] = useState(() => getInitialCollapsedState());
   const [mounted, setMounted] = useState(false);
@@ -158,6 +164,7 @@ export function Sidebar() {
   );
 }
 
+/** Account button: shows a signed-in user avatar + sign-out button, or a sign-in button */
 function AccountButton({ iconSize }: { iconSize: number }) {
   const { data: session, status } = useSession();
 

@@ -50,6 +50,7 @@ vi.mock("@workspace/sci-cream", async () => {
   };
 });
 
+/** Mock implementation of ResizeObserver for testing purposes */
 class ResizeObserverMock {
   observe = vi.fn();
   unobserve = vi.fn();
@@ -344,6 +345,7 @@ describe("RecipeGrid Component", () => {
   let setRecipeContext: Mock<(value: SetStateAction<RecipeContext>) => void>;
   let setRecipeResources: Mock<(value: SetStateAction<RecipeResources>) => void>;
 
+  /** Wrapper component that wires spy mocks into `useState` so updates are reflected in the DOM */
   function RecipeGridWithSpy() {
     const [recipeCtx, _setRecipeContext] = useState(recipeContext);
     const [resources, _setRecipeResources] = useState(recipeResources);
@@ -369,12 +371,14 @@ describe("RecipeGrid Component", () => {
     );
   }
 
+  /** Get the ingredient name search input element at the given row index within a container */
   function getIngredientNameElement(container: HTMLElement, index: number) {
     return container.querySelector(
       `tbody tr:${index == 0 ? "first-child" : `nth-child(${index + 1})`} input[type="search"]`,
     ) as HTMLInputElement;
   }
 
+  /** Get the ingredient quantity number input element at the given row index within a container */
   function getIngredientQuantityElement(container: HTMLElement, index: number) {
     return container.querySelector(
       `tbody tr:${index == 0 ? "first-child" : `nth-child(${index + 1})`} input[type="number"]`,
@@ -399,6 +403,7 @@ describe("RecipeGrid Component", () => {
     await vi.waitFor(() => {}, { timeout: 100 });
   });
 
+  /** Build `RecipeGrid` props with the given enabled recipe indices and the current spy state */
   const makeRecipeGridProps = (indices: number[]) => ({
     recipeCtxState: [recipeContext, setRecipeContext] as RecipeContextState,
     recipeResourcesState: [recipeResources, setRecipeResources] as RecipeResourcesState,
@@ -566,12 +571,14 @@ describe("RecipeGrid Component", () => {
 
     const { container } = render(<RecipeGridWithSpy />);
 
+    /** Get the first ingredient name search input element within the container */
     function getFirstSearchInputElement() {
       return container.querySelector(
         `tbody tr:first-child input[type="search"]`,
       ) as HTMLInputElement;
     }
 
+    /** Get the first ingredient quantity number input element within the container */
     function getFirstQuantityInputElement() {
       return container.querySelector(
         `tbody tr:first-child input[type="number"]`,
@@ -617,6 +624,7 @@ describe("RecipeGrid Component", () => {
     vi.unstubAllGlobals();
   });
 
+  /** Render `RecipeGrid`, click Paste with the given clipboard text, and assert the expected rows are populated */
   async function validatePaste(clipboardText: string) {
     const user = userEvent.setup();
 

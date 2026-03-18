@@ -11,10 +11,13 @@ import { IngredientJson, allIngredientSpecs } from "@workspace/sci-cream";
 
 import { TEST_USER_A, TEST_USER_B, USER_DEFINED_FRUCTOSE_SPEC } from "@/lib/database/util";
 
+/** Shape of a test-user asset constant (email, password, name) */
 type UserAsset = typeof TEST_USER_A;
 
+/** Drizzle database client used throughout the seed script */
 const db = drizzle(getDatabaseUrl(), { schema });
 
+/** Insert test users into the database, skipping any that already exist */
 async function seedUsers(users: UserAsset[]) {
   console.log("==========");
   console.log("Seeding users");
@@ -31,6 +34,11 @@ async function seedUsers(users: UserAsset[]) {
   console.log("Users in the database:", usersInDb);
 }
 
+/**
+ * Upsert a list of ingredient specs for the given user.
+ *
+ * Each ingredient is deleted if it already exists, then re-inserted, so the spec is always current.
+ */
 async function seedUserIngredients(userEmail: string, ingredientSpecs: IngredientJson[]) {
   const user = await findUserByEmail(userEmail);
   if (!user) throw new Error(`User with email ${userEmail} not found, cannot seed ingredients`);
@@ -77,6 +85,7 @@ async function seedUserIngredients(userEmail: string, ingredientSpecs: Ingredien
   console.log(`Seeded ${ingredientSpecs.length} ingredients for user `, user);
 }
 
+/** Entry point: seed test users and their ingredient libraries */
 async function main() {
   await seedUsers([TEST_USER_A, TEST_USER_B]);
 

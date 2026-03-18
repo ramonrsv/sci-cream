@@ -38,6 +38,10 @@ describe("qtyToggleToShortStr", () => {
 describe("QtyToggleSelect", () => {
   let currentQtyToggle: QtyToggle;
 
+  /**
+   * Wrapper component around a `QtyToggleSelect` that owns a `QtyToggle` state, which is a prop to
+   * `QtyToggleSelect`, and exposes it for assertions via `useEffect` and closure variables.
+   */
   function TestWrapper({
     supportedQtyToggles = Object.values(QtyToggle),
     initialQtyToggle = QtyToggle.Composition,

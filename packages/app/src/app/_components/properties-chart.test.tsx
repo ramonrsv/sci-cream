@@ -38,6 +38,7 @@ import {
 // Test helpers, mocks, and setup
 // ---------------------------------------------------------------------------
 
+/** Mock implementation of ResizeObserver for testing purposes */
 class ResizeObserverMock {
   observe = vi.fn();
   unobserve = vi.fn();

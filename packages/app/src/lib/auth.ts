@@ -5,6 +5,7 @@ import { compare } from "bcryptjs";
 import authConfig from "@/../auth.config";
 import { findUserByEmail, insertUser } from "@/lib/data";
 
+/** NextAuth handlers and helpers for authentication, session management, and sign-in/sign-out. */
 export const { handlers, auth, signIn, signOut } = NextAuth({
   ...authConfig,
   providers: [

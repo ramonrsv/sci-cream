@@ -3,6 +3,13 @@ import { hash } from "bcryptjs";
 
 import { findUserByEmail, insertUser } from "@/lib/data";
 
+/**
+ * POST /api/auth/signup
+ *
+ * Creates a new user account with email/password credentials. Expects a JSON body with `name`,
+ * `email`, and `password` (min. 8 characters). Returns 400 for missing/invalid fields, 409 if the
+ * email is already registered, and 201 on success. It stores a hash of the password using `bcrypt`.
+ */
 export async function POST(request: Request) {
   const body = await request.json();
   const { name, email, password } = body;

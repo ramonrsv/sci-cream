@@ -14,13 +14,16 @@ import { ThemeSelect } from "./theme-select";
 // Test helpers, mocks, and setup
 // ---------------------------------------------------------------------------
 
-// headlessui v2 uses ResizeObserver internally; mock it for jsdom
-global.ResizeObserver = class ResizeObserver {
-  observe() {}
-  unobserve() {}
-  disconnect() {}
-};
+/** Mock implementation of ResizeObserver for testing purposes, used by headlessui v2 */
+class ResizeObserverMock {
+  observe = vi.fn();
+  unobserve = vi.fn();
+  disconnect = vi.fn();
+}
 
+vi.stubGlobal("ResizeObserver", ResizeObserverMock);
+
+/** Mocks the window.matchMedia function for testing purposes */
 function mockMatchMedia(prefersDark: boolean) {
   Object.defineProperty(window, "matchMedia", {
     writable: true,
@@ -46,6 +49,7 @@ function mockMatchMedia(prefersDark: boolean) {
 describe("ThemeSelect", () => {
   let currentTheme: Theme;
 
+  /** Controller component that manages theme state and exposes it via variable for assertions */
   function ThemeController({ initialTheme }: { initialTheme: Theme }) {
     const { resolvedTheme, setTheme } = useTheme();
 
@@ -60,6 +64,7 @@ describe("ThemeSelect", () => {
     return <ThemeSelect />;
   }
 
+  /** Wrapper component that provides the `ThemeProvider` context for testing `ThemeSelect` */
   function TestWrapper({ initialTheme = Theme.Light }: { initialTheme?: Theme }) {
     return (
       <ThemeProvider attribute="class">

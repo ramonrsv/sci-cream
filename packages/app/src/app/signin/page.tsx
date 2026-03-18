@@ -6,11 +6,13 @@ import { signIn } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
 import { Suspense, useState } from "react";
 
+/** OAuth provider configurations rendered as sign-in buttons */
 const oauthProviders = [
   { id: "google", name: "Google", icon: "/icons/google.svg" },
   { id: "github", name: "GitHub", icon: "/icons/github.svg" },
 ];
 
+/** Sign-in form with OAuth provider buttons and an email/password credentials form */
 function SignInForm() {
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/";
@@ -103,6 +105,7 @@ function SignInForm() {
   );
 }
 
+/** Sign-in page — wraps `SignInForm` in a `Suspense` boundary required for `useSearchParams` */
 export default function SignInPage() {
   return (
     <Suspense>

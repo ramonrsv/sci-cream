@@ -24,6 +24,7 @@ import {
   new_ingredient_database_seeded_from_embedded_data,
 } from "@workspace/sci-cream";
 
+/** A single row in the recipe grid, holding the name, quantity, and resolved WASM `Ingredient` */
 export interface IngredientRow {
   index: number;
   name: string;
@@ -31,6 +32,7 @@ export interface IngredientRow {
   ingredient?: Ingredient;
 }
 
+/** Represents one recipe slot: its name, ingredient rows, mix total, and computed mix properties */
 export interface Recipe {
   index: number;
   name: string;
@@ -39,26 +41,31 @@ export interface Recipe {
   mixProperties: MixProperties;
 }
 
+/** Top-level context holding all recipe slots; passed as shared state through the component tree */
 export interface RecipeContext {
   recipes: Recipe[];
 }
 
+/** Shared WASM resources: the bridge used for ingredient lookups and mix-property calculations */
 export interface RecipeResources {
   updateIdx: number;
   wasmBridge: WasmBridge;
   hasIngredient(name: string): boolean;
 }
 
+/** `useState` tuple for `RecipeContext`, passed between components that read or update recipes */
 export type RecipeContextState = [
   RecipeContext,
   React.Dispatch<React.SetStateAction<RecipeContext>>,
 ];
 
+/** `useState` tuple for `RecipeResources`, passed between components that read/update resources */
 export type RecipeResourcesState = [
   RecipeResources,
   React.Dispatch<React.SetStateAction<RecipeResources>>,
 ];
 
+/** Create a blank `Recipe` at the given index with empty ingredient rows and `MixProperties` */
 export function makeEmptyRecipe(recipeIdx: number): Recipe {
   return {
     index: recipeIdx,
@@ -74,12 +81,14 @@ export function makeEmptyRecipe(recipeIdx: number): Recipe {
   };
 }
 
+/** Create a `RecipeContext` with `MAX_RECIPES` empty recipe slots */
 export function makeEmptyRecipeContext(): RecipeContext {
   return {
     recipes: Array.from({ length: MAX_RECIPES }, (_, recipeIdx) => makeEmptyRecipe(recipeIdx)),
   };
 }
 
+/** Wrap a `WasmBridge` in a `RecipeResources` object, creating a `hasIngredient` helper object */
 export function makeRecipeResources(
   wasmBridge: WasmBridge,
   updateIdx: number = 0,
@@ -91,22 +100,31 @@ export function makeRecipeResources(
   };
 }
 
+/** Create a `RecipeResources` backed by an empty (unseeded) ingredient database */
 export function makeEmptyRecipeResources(): RecipeResources {
   return makeRecipeResources(new WasmBridge(new IngredientDatabase()));
 }
 
+/** Create a `RecipeResources` backed by the embedded (bundled) ingredient database */
 export function makeRecipeResourcesFromEmbeddedData(): RecipeResources {
   return makeRecipeResources(new WasmBridge(new_ingredient_database_seeded_from_embedded_data()));
 }
 
+/** Returns `true` when a recipe has no ingredients (mix total is undefined or zero) */
 export function isRecipeEmpty(recipe: Recipe): boolean {
   return recipe.mixTotal === undefined || recipe.mixTotal === 0;
 }
 
+/** Extract the numeric indices from an array of `Recipe` objects */
 export function getRecipeIndices(recipes: Recipe[]): number[] {
   return recipes.map((recipe) => recipe.index);
 }
 
+/**
+ * Sum the defined quantities across all ingredient rows.
+ *
+ * Returns `undefined` when every row quantity is undefined (i.e. the recipe is completely empty).
+ */
 export function calculateMixTotal(recipe: Recipe) {
   return recipe.ingredientRows.reduce(
     (sum: number | undefined, row) =>
@@ -115,6 +133,16 @@ export function calculateMixTotal(recipe: Recipe) {
   );
 }
 
+/**
+ * Build a WASM `SciCreamRecipe` from a `Recipe`, including only rows with both a valid ingredient
+ * name that has been resolved to a WASM `Ingredient` in the resources, and a valid quantity.
+ *
+ * The resulting `SciCreamRecipe` WASM object can be used to calculate mix properties.
+ *
+ * **Note:** The `SciCreamRecipe` object should be freed manually to avoid memory leaks. This
+ * function also clones every WASM `Ingredient` in the recipe, which can be inefficient. Prefer
+ * using {@link makeLightRecipe} and a {@link WasmBridge} to avoid these issues when possible.
+ */
 export function makeSciCreamRecipe(recipe: Recipe): SciCreamRecipe {
   return new SciCreamRecipe(
     recipe.name,
@@ -126,6 +154,13 @@ export function makeSciCreamRecipe(recipe: Recipe): SciCreamRecipe {
   );
 }
 
+/**
+ * Build a light recipe, i.e. a `[name, quantity]` array, from a `Recipe`, including only rows with
+ * a non-empty name, a valid quantity, and where the WASM resource database has the ingredient name.
+ *
+ * This is suitable for passing into a `WasmBridge` method to calculate mix composition and/or
+ * properties, without needing to clone every WASM `Ingredient`, which can be inefficient.
+ */
 export function makeLightRecipe(
   recipe: Recipe,
   hasIngredient: (name: string) => boolean,
@@ -135,6 +170,7 @@ export function makeLightRecipe(
     .map((row) => [row.name, row.quantity!] as [string, number]);
 }
 
+/** Serialize a `Recipe` to a tab-separated string with a header row, suitable for clipboard copy */
 export function stringifyRecipe(recipe: Recipe) {
   const formattedRecipe = recipe.ingredientRows
     .filter((row) => row.name !== "" || row.quantity !== undefined)
@@ -144,6 +180,7 @@ export function stringifyRecipe(recipe: Recipe) {
   return formattedRecipe ? `Ingredient\tQty(g)\n${formattedRecipe}` : "";
 }
 
+/** Parse a tab-separated recipe string (with or without header) into `[name, quantityStr]` pairs */
 export function parseRecipeString(recipeStr: string): [string, string][] {
   try {
     let lines = recipeStr.trim().split("\n");
@@ -160,6 +197,7 @@ export function parseRecipeString(recipeStr: string): [string, string][] {
   }
 }
 
+/** Returns `true` when an ingredient row change requires mix properties to be recalculated */
 export function requiresMixPropsUpdate(
   currentRow: IngredientRow,
   updatedRow: IngredientRow,
@@ -171,6 +209,12 @@ export function requiresMixPropsUpdate(
   return ret;
 }
 
+/**
+ * Recalculate and assign mix properties for a recipe in-place.
+ *
+ * The previous `MixProperties` WASM object is freed first; any double-free errors for the
+ * `MixProperties` object from concurrent React state updates are silently swallowed.
+ */
 export function updateMixProperties(recipe: Recipe, resources: RecipeResources) {
   try {
     recipe.mixProperties.free();
@@ -187,6 +231,10 @@ export function updateMixProperties(recipe: Recipe, resources: RecipeResources) 
         );
 }
 
+/**
+ * Shallow-clone a `Recipe`, apply the given row updates, recalculate the mix total, and update mix
+ * properties if necessary based on the nature of the row updates, returning the updated recipe.
+ */
 export function makeUpdatedRecipe(
   currentRecipe: Recipe,
   updatedRows: IngredientRow[],
@@ -208,6 +256,11 @@ export function makeUpdatedRecipe(
   return newRecipe;
 }
 
+/**
+ * Produce an updated `IngredientRow` from optional name and quantity-string overrides.
+ *
+ * Resolves the WASM `Ingredient` when the name is valid and has changed, freeing the previous one.
+ */
 export function makeUpdatedRow(
   currentRow: IngredientRow,
   _name: string | undefined,
@@ -235,6 +288,7 @@ export function makeUpdatedRow(
   return row;
 }
 
+/** Parse a tab-separated recipe string and apply it to a `Recipe`, returning the updated recipe */
 export function makeUpdatedRecipeFromString(
   currentRecipe: Recipe,
   recipeStr: string,
@@ -257,6 +311,14 @@ export function makeUpdatedRecipeFromString(
   return makeUpdatedRecipe(currentRecipe, updatedRows, resources);
 }
 
+/**
+ * Grid component for editing recipes, including all input handling logic for ingredient names and
+ * quantities, actions for copying/pasting recipes, and all logic for updating the recipes context.
+ *
+ * This component is responsible for maintaining the integrity of the recipes context state,
+ * ensuring that all updates to recipes are applied consistently and correctly, and updating the
+ * `MixProperties` objects that are consumed by dependent components, e.g. `MixPropertiesGrid`, etc.
+ */
 export function RecipeGrid({
   props: {
     recipeCtxState: [recipeContext, setRecipeContext],
@@ -272,11 +334,12 @@ export function RecipeGrid({
   const recipesRef = useRef(allRecipes);
   recipesRef.current = allRecipes;
 
-  /** Update multiple recipes at once, with a single state update.
+  /**
+   * Update multiple recipes at once, with a single state update.
    *
    * This is necessary when updating multiple recipes at once, e.g. in the useEffect to prevent
    * stale ingredient context, otherwise dependent components may asynchronously try to render stale
-   * Composition or MixProperties objects, which can lead to crashes due to freed WASM memory.
+   * `Composition` or `MixProperties` objects, which can lead to crashes due to freed WASM memory.
    */
   const updateRecipes = (updatedRecipes: Recipe[]) => {
     const newRecipes = [...recipeContext.recipes];
@@ -288,34 +351,41 @@ export function RecipeGrid({
     setRecipeContext({ ...recipeContext, recipes: newRecipes });
   };
 
+  /** Update a single recipe in context by applying the given row changes */
   const updateRecipe = (recipeIdx: number, updatedRows: IngredientRow[]) => {
     updateRecipes([makeUpdatedRecipe(allRecipes[recipeIdx], updatedRows, recipeResources)]);
   };
 
+  /** Update the currently selected recipe with the given row changes */
   const updateCurrentRecipe = (updatedRows: IngredientRow[]) => {
     updateRecipe(currentRecipeIdx, updatedRows);
   };
 
+  /** Get the ingredient row at the given recipe and row indices */
   const getRow = (recipeIdx: number, rowIdx: number): IngredientRow => {
     return allRecipes[recipeIdx].ingredientRows[rowIdx];
   };
 
+  /** Handle a name change for a row in the currently selected recipe */
   const updateCurrentIngredientRowName = (index: number, name: string) => {
     updateCurrentRecipe([
       makeUpdatedRow(getRow(currentRecipeIdx, index), name, undefined, recipeResources),
     ]);
   };
 
+  /** Handle a quantity change for a row in the currently selected recipe */
   const updateCurrentIngredientRowQuantity = (index: number, quantityStr: string) => {
     updateCurrentRecipe([
       makeUpdatedRow(getRow(currentRecipeIdx, index), undefined, quantityStr, recipeResources),
     ]);
   };
 
+  /** Parse and apply a tab-separated recipe string to the given recipe slot */
   const pasteRecipe = async (recipeIdx: number, recipeStr: string) => {
     updateRecipes([makeUpdatedRecipeFromString(allRecipes[recipeIdx], recipeStr, recipeResources)]);
   };
 
+  /** Clear all ingredient rows in the given recipe slot */
   const clearRecipe = (recipeIdx: number) => {
     updateRecipe(
       recipeIdx,
@@ -325,18 +395,22 @@ export function RecipeGrid({
     );
   };
 
+  /** Clear all ingredient rows in the currently selected recipe slot */
   const clearCurrentRecipe = () => {
     clearRecipe(currentRecipeIdx);
   };
 
+  /** Copy the currently selected recipe as a tab-separated string to the clipboard */
   const copyCurrentRecipeToClipboard = async () => {
     await navigator.clipboard.writeText(stringifyRecipe(currentRecipe));
   };
 
+  /** Read a tab-separated recipe string from clipboard and apply it to the current recipe slot */
   const pasteCurrentRecipeFromClipboard = async () => {
     await pasteRecipe(currentRecipeIdx, await navigator.clipboard.readText());
   };
 
+  /** Retrieve serialized recipe strings from `localStorage`, default empty strings if none found */
   const getRecipeStringsFromStorage = () => {
     if (typeof window !== "undefined") {
       const storedRecipes = localStorage.getItem("recipes");
@@ -345,6 +419,7 @@ export function RecipeGrid({
     return allRecipes.map(() => "");
   };
 
+  /** Serialize the current recipes and persist them to `localStorage` */
   const storeRecipesInStorage = async (recipes: Recipe[]) => {
     if (typeof window !== "undefined") {
       const recipeStrings = await Promise.all(recipes.map((recipe) => stringifyRecipe(recipe)));

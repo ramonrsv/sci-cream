@@ -31,6 +31,12 @@ const PER_RECIPE_QTY_UPDATES_EXPECTED_VALUES = makePerRecipeQtyUpdatesExpectedVa
   PASTE_CHECK_DEFAULT_ING_IDX,
 );
 
+/**
+ * Helper function to run memory usage benchmarks and collect results for upload
+ *
+ * It wraps the generic {@link doBenchmarkMemoryMeasurements} function, providing a fixed number of
+ * runs, automatically formatting results for upload, and storing them in a shared array for output.
+ */
 function doBenchmarkMemoryMeasurements(name: string, run: () => Promise<number>) {
   return doBenchmarkMemoryMeasurementsGeneric(COUNT_MEMORY_RUNS, name, run).then((result) => {
     allBenchmarkResultsForUpload.push(formatMemoryBenchmarkResultForUpload(result));

@@ -23,6 +23,14 @@ import {
 import { fetchAllUserIngredientSpecs } from "@/lib/data";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
 
+/**
+ * Main calculator page: responsive drag-and-drop grid of recipe and major display components
+ *
+ * The layout is defined as a set of breakpoint-specific configurations, which are passed to
+ * `ResponsiveGridLayout` to automatically switch between them based on the container width. Most
+ * grid items can be resized horizontally and vertically, with some exceptions (e.g. the recipe
+ * input grid has a fixed dimension, and the composition grid is only resizable horizontally).
+ */
 export default function CalculatorPage() {
   const { data: session } = useSession();
 
@@ -36,6 +44,9 @@ export default function CalculatorPage() {
   const [recipeResources, setRecipeResources] = recipeResourcesState;
 
   useEffect(() => {
+    // On initial load, fetch and seed the WASM bridge with any user-defined ingredient specs
+    // associated with the logged-in user, if any, then trigger a re-render to propagate the updated
+    // bridge to all components that depends on it, which should produce a `MixProperties` update.
     if (session?.user?.email) {
       fetchAllUserIngredientSpecs(session.user.email).then(async (userSpecs) => {
         recipeResources.wasmBridge.seed_from_specs((userSpecs ?? []).map((s) => s.spec));
@@ -49,7 +60,11 @@ export default function CalculatorPage() {
   // 2160p: 3840px, /2 = 1920px
   // 1440p: 2560px, /2 = 1280px
   // 1080p: 1920px, /2 =  960px
+
+  /** Pixel-width breakpoints for the responsive grid layout */
   const breakpoints = { xl: 2080, lg: 1600, md: 1120, sm: 720, xs: 0 };
+
+  /** Number of grid columns at each breakpoint */
   const cols = { xl: 32, lg: 24, md: 16, sm: 12, xs: 8 };
 
   const h = REACT_GRID_COMPONENT_HEIGHT;
@@ -58,6 +73,7 @@ export default function CalculatorPage() {
   const horiz = ["e", "w"] as ResizeHandleAxis[];
   const horizVert = ["e", "w", "s"] as ResizeHandleAxis[];
 
+  /** Base layout item configuration shared across all breakpoint layouts */
   // prettier-ignore
   const base = {
     "recipe":      { i: "recipe",      h, isResizable: false },
@@ -67,6 +83,7 @@ export default function CalculatorPage() {
     "fpd-graph":   { i: "fpd-graph",   h, resizeHandles: horizVert },
   };
 
+  /** Merge override properties into a base layout item, producing a fully-typed `LayoutItem` */
   const update = (i: keyof typeof base, updates: Partial<LayoutItem>): LayoutItem => {
     return { ...base[i], ...updates } as LayoutItem;
   };

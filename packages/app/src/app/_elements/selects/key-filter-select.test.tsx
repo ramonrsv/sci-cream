@@ -13,6 +13,7 @@ import { openCustomKeyFilters } from "@/__tests__/unit/util";
 // Test helpers, mocks, and setup
 // ---------------------------------------------------------------------------
 
+/** Minimal key enum used across all `KeyFilterSelect` tests */
 enum TestKey {
   Fat = "fat",
   Sugar = "sugar",
@@ -20,11 +21,16 @@ enum TestKey {
   Protein = "protein",
 }
 
+/** All values of `TestKey`, used as the full key universe in tests */
 const ALL_KEYS: TestKey[] = [TestKey.Fat, TestKey.Sugar, TestKey.Water, TestKey.Protein];
 
+/** Returns the full `ALL_KEYS` array; used as the `getKeys` prop */
 const getAllKeys = () => ALL_KEYS;
+/** Returns `true` for keys that should be treated as empty/zero (Water) */
 const isKeyEmpty = (key: TestKey) => key === TestKey.Water;
+/** Returns `true` for keys selected by the Auto heuristic (Fat, Sugar) */
 const autoHeuristic = (key: TestKey) => key === TestKey.Fat || key === TestKey.Sugar;
+/** Converts a `TestKey` to its capitalised display string */
 const key_as_med_str = (key: TestKey) => key.charAt(0).toUpperCase() + key.slice(1);
 
 // ---------------------------------------------------------------------------
@@ -97,6 +103,10 @@ describe("KeyFilterSelect", () => {
   let currentFilter: KeyFilter;
   let currentSelectedKeys: Set<TestKey>;
 
+  /**
+   * Wrapper component around a `KeyFilterSelect` that owns filter and selectedKeys state, which are
+   * props to `KeyFilterSelect`, and exposes them for assertions via `useEffect` and variables.
+   */
   function TestWrapper({
     supportedKeyFilters,
     initialFilter = KeyFilter.Auto,

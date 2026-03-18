@@ -14,11 +14,13 @@ import { SpeedInsights } from "@vercel/speed-insights/next";
 const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
 const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
 
+/** Next.js metadata for the application */
 export const metadata: Metadata = {
   title: "Ice Cream Calculator",
   description: "A simple ice cream calculator",
 };
 
+/** Root layout: sets up fonts, session, theme, navbar, and observability providers */
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>

@@ -6,6 +6,7 @@ import { X, Settings } from "lucide-react";
 
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 
+/** Controls which subset of keys is shown in composition/property tables and charts */
 export enum KeyFilter {
   /// Automatically determine which keys to show based on internal heuristics
   Auto = "Auto",
@@ -17,6 +18,14 @@ export enum KeyFilter {
   Custom = "Custom",
 }
 
+/**
+ * Return the subset of keys that should be displayed, based on the active `KeyFilter`.
+ *
+ * - `All` — every key returned by `getKeys`
+ * - `Auto` — keys passing `autoHeuristic`
+ * - `NonZero` — keys for which `isKeyEmpty` returns `false`
+ * - `Custom` — only keys present in `selectedKeysState`
+ */
 export function getEnabledKeys<Key>(
   keyFilterState: KeyFilter,
   selectedKeysState: Set<Key>,
@@ -24,6 +33,7 @@ export function getEnabledKeys<Key>(
   isKeyEmpty: (key: Key) => boolean,
   autoHeuristic: (key: Key) => boolean,
 ): Key[] {
+  /** Returns `true` when the given key is in the current custom selection */
   const isKeySelected = (key: Key) => {
     return selectedKeysState.has(key);
   };
@@ -40,6 +50,7 @@ export function getEnabledKeys<Key>(
   }
 }
 
+/** Select element for choosing a `KeyFilter` mode, with an optional settings popup for `Custom` */
 export function KeyFilterSelect<Key>({
   supportedKeyFilters = Object.values(KeyFilter),
   keyFilterState,
@@ -70,10 +81,12 @@ export function KeyFilterSelect<Key>({
     }
   }, [keySelectVisible]);
 
+  /** Returns `true` when the given key is in the current custom selection */
   const isKeySelected = (key: Key) => {
     return selectedKeys.has(key);
   };
 
+  /** Toggle a single key in/out of the custom selection; clears "all selected" flag on removal */
   const updateSelectedKey = (key: Key) => {
     const newSet = new Set(selectedKeys);
     if (newSet.has(key)) {
@@ -85,6 +98,7 @@ export function KeyFilterSelect<Key>({
     setSelectedKeys(newSet);
   };
 
+  /** Toggle "All Properties" checkbox: selects all keys when enabling, clears all when disabling */
   const updateAllKeysSelected = () => {
     const newAllKeysSelected = !allKeysSelected;
     setAllKeysSelected(newAllKeysSelected);

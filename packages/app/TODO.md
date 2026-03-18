@@ -1,6 +1,5 @@
 # Next Release
 
-- [ ] Document all items in `app`, look for a `missing_docs` equivalent lint.
 - [ ] Pasting the strawberry sorbet recipe, fixing 'Strawberry [Brix 9]' to remove ' [Brix 9]', then
       pasting a different recipe causes a 'null pointer passed to rust' error; still unclear why.
 - [ ] Add recipe save functionality. Recipes should support versions and notes.
@@ -66,6 +65,7 @@
 
 # Completed
 
+- [x] Document all items in `app`, look for a `missing_docs` equivalent lint.
 - [x] In Dark mode, there is a quick flash of white when opening select dropdowns.
 - [x] When in Dark mode, if the page is refreshed, it momentarily flashes a Light theme before the
       Dark theme is applied. This can be solved with a blocking script in `layout.tsx` manually

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+/** Sign-up page with a name, email, password, and confirm form that posts to `/api/auth/signup` */
 export default function SignUpPage() {
   const router = useRouter();
   const [name, setName] = useState("");
@@ -14,6 +15,7 @@ export default function SignUpPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
 
+  /** Validate fields, POST to the signup API, and redirect to the sign-in page on success */
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");

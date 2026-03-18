@@ -13,6 +13,7 @@ import {
   isDarkMode,
 } from "@/lib/theme";
 
+/** Mocks the window.matchMedia function for testing purposes */
 function mockMatchMedia(prefersDark: boolean) {
   Object.defineProperty(window, "matchMedia", {
     writable: true,

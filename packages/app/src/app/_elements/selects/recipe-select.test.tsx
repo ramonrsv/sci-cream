@@ -12,6 +12,7 @@ import { RecipeSelect } from "./recipe-select";
 // Test helpers, mocks, and setup
 // ---------------------------------------------------------------------------
 
+/** Creates a mock empty `Recipe` object with the given index and name */
 function makeRecipe(index: number, name: string): Recipe {
   return { index, name } as Recipe;
 }
@@ -29,6 +30,10 @@ const ALL_RECIPES: Recipe[] = [
 describe("RecipeSelect", () => {
   let currentRecipeIdx: number;
 
+  /**
+   * Wrapper component around a `RecipeSelect` that owns recipe index state, which is a prop to
+   * `RecipeSelect`, and exposes it for assertions via `useEffect` and closure variables.
+   */
   function TestWrapper({
     allRecipes = ALL_RECIPES,
     enabledRecipeIndices = [0, 1, 2],

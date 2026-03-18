@@ -41,6 +41,12 @@ import { TEST_USER_B } from "@/lib/database/util";
 const COUNT_TIME_RUNS = 10; // Number of runs for each execution time benchmark
 const QTY_UPDATES_PER_LOOP = 50; // Number of times to update an ingredient's quantity per loop
 
+/**
+ * Helper function to run time measurements benchmarks and collect results for upload
+ *
+ * It wraps the generic {@link doBenchmarkTimeMeasurements} function, providing a fixed number of
+ * runs, automatically formatting results for upload, and storing them in a shared array for output.
+ */
 function doBenchmarkTimeMeasurements(name: string, run: () => Promise<number>) {
   return doBenchmarkTimeMeasurementsGeneric(COUNT_TIME_RUNS, name, run).then((result) => {
     allBenchmarkResultsForUpload.push(formatTimeBenchmarkResultForUpload(result));

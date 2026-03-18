@@ -32,38 +32,47 @@ declare global {
   }
 }
 
+/** Get `RecipeGrid`'s recipe selector element, in `RecipeSelect` */
 export function getRecipeGridRecipeSelector(page: Page) {
   return page.locator("#recipe-grid #recipe-selection select").first();
 }
 
+/** Get ingredient name search input element at the given index */
 export function getIngredientNameInputAtIdx(page: Page, index: number) {
   return page.locator('input[type="search"]').nth(index);
 }
 
+/** Get ingredient quantity number input element at the given index */
 export function getIngredientQtyInputAtIdx(page: Page, index: number) {
   return page.locator('input[type="number"]').nth(index);
 }
 
+/** Get `MixPropertiesGrid`'s `QtyToggle` select input element, in `QtyToggleSelect` */
 export function getMixPropertiesQtyToggleSelectInput(page: Page) {
   return page.locator("#mix-properties-grid #qty-toggle-select select").first();
 }
 
+/** Get `MixPropertiesGrid`'s `KeyFilter` select input element, in `KeyFilterSelect` */
 export function getMixPropertiesKeyFilterSelectInput(page: Page) {
   return page.locator("#mix-properties-grid #key-filter-select select").first();
 }
 
+/** Get `IngredientCompositionGrid`'s recipe selector element, in `RecipeSelect` */
 export function getCompositionGridRecipeSelector(page: Page) {
   return page.locator("#ing-composition-grid #recipe-selection select").first();
 }
 
+/** Get `IngredientCompositionGrid`'s `QtyToggle` select input element, in `QtyToggleSelect` */
 export function getCompositionGridQtyToggleSelectInput(page: Page) {
   return page.locator("#ing-composition-grid #qty-toggle-select select").first();
 }
 
+/** Get `IngredientCompositionGrid`'s `KeyFilter` select input element, in `KeyFilterSelect` */
 export function getCompositionGridKeyFilterSelectInput(page: Page) {
   return page.locator("#ing-composition-grid #key-filter-select select").first();
 }
 
+/** Get `MixPropertiesGrid`'s value cell element for the given property key and recipe index */
 export function getMixPropertyValueElement(page: Page, propKey: PropKey, recipeIdx: number = 0) {
   return page
     .locator("#mix-properties-grid table tbody tr")
@@ -72,10 +81,12 @@ export function getMixPropertyValueElement(page: Page, propKey: PropKey, recipeI
     .nth(recipeIdx);
 }
 
+/** Get all header cell elements in the `IngredientCompositionGrid` */
 export function getCompositionGridHeaders(page: Page) {
   return page.locator("#ing-composition-grid #ing-composition-table table thead th");
 }
 
+/** Get the `IngCompositionGrid`'s value cell element for the given ingredient index and comp key */
 export async function getCompositionValueElement(page: Page, ingIdx: number, compKey: CompKey) {
   const headersTxt = await getCompositionGridHeaders(page).allTextContents();
   const colIdx = headersTxt.findIndex((text) => text.includes(comp_key_as_med_str(compKey)));
@@ -87,6 +98,7 @@ export async function getCompositionValueElement(page: Page, ingIdx: number, com
     .nth(colIdx);
 }
 
+/** Write text to the clipboard, using browser-appropriate permissions */
 export async function pasteToClipboard(page: Page, browserName: string, text: string) {
   const permissions = browserName === "firefox" ? [] : ["clipboard-read", "clipboard-write"];
   page.context().grantPermissions(permissions);
@@ -96,10 +108,12 @@ export async function pasteToClipboard(page: Page, browserName: string, text: st
   }, text);
 }
 
+/** Get the Paste button element */
 export function getPasteButton(page: Page) {
   return page.getByRole("button", { name: "Paste" });
 }
 
+/** Get the Clear button element */
 export function getClearButton(page: Page) {
   return page.getByRole("button", { name: "Clear" });
 }
@@ -144,17 +158,19 @@ export function getSignupButton(page: Page) {
   return page.locator("#signup-button");
 }
 
+/** JS heap memory usage snapshot from the Chromium Performance API */
 export type MemoryUsage = {
   usedJSHeapSize: number;
   totalJSHeapSize: number;
   jsHeapSizeLimit: number;
 };
 
-// Chromium-specific extension to Performance API
+/** Chromium-specific extension to the Performance API that exposes memory usage */
 interface PerformanceWithMemory extends Performance {
   memory: MemoryUsage;
 }
 
+/** Get current JS heap memory usage; only supported in Chromium-based browsers */
 export async function getMemoryUsage(page: Page, browser: string): Promise<MemoryUsage> {
   if (browser !== "chromium") {
     throw new Error("Memory usage measurement is only supported in Chromium-based browsers");
@@ -170,6 +186,7 @@ export async function getMemoryUsage(page: Page, browser: string): Promise<Memor
   });
 }
 
+/** Get used JS heap size in megabytes; only supported in Chromium-based browsers */
 export async function getUsedJSHeapSizeInMB(page: Page, browser: string): Promise<number> {
   return (await getMemoryUsage(page, browser)).usedJSHeapSize / 1024 / 1024;
 }
@@ -183,9 +200,10 @@ export type RecipeUpdateCheckElements = {
   ingCompPac: Locator;
 };
 
-/** Find elements to check for recipe paste/updates, based on ingredient index
+/**
+ * Find elements to check for recipe paste/updates, based on ingredient index
  *
- * @note This function may fail if component aren't configured correctly, e.g. if `RecipeGrid`'s
+ * **Note:** This function may fail if component aren't configured correctly, e.g. if `RecipeGrid`'s
  * recipe-select isn't set to the correct recipe, if `IngCompGrid`'s key filter isn't set to 'All'
  * or if its recipe-select isn't set to the correct recipe, etc. It is the responsibility of the
  * caller to ensure that components are in the correct state before calling this function.
@@ -298,9 +316,10 @@ export async function expectRecipeElementsToHaveExpected(
   await expect(elements.ingCompPac).toHaveText(expected.ingCompPac);
 }
 
-/** Helper function to check for recipe update completion after paste or quantity change
+/**
+ * Helper function to check for recipe update completion after paste or quantity change
  *
- * @note This function modifies selectors to check for specific ingredient and property values,
+ * **Note:** This function modifies selectors to check for specific ingredient and property values,
  * so it may not leave components in the same state that they were before the function call.
  */
 export async function expectRecipeUpdateCompleted(
@@ -314,15 +333,17 @@ export async function expectRecipeUpdateCompleted(
   await expectRecipeElementsToHaveExpected(elements, expected);
 }
 
-/** Ingredient index to check for name and quantity equality after recipe updates
+/**
+ * Ingredient index to check for name and quantity equality after recipe updates
  *
- * @note This corresponds to 'Fructose' in the main and reference recipes
+ * **Note:** This corresponds to 'Fructose' in the main and reference recipes
  */
 export const PASTE_CHECK_DEFAULT_ING_IDX = 6;
 
-/** Expect that a recipe paste is reflected in all the relevant components
+/**
+ * Expect that a recipe paste is reflected in all the relevant components
  *
- * @note This function modifies selectors to check for specific ingredient and property values,
+ * **Note:** This function modifies selectors to check for specific ingredient and property values,
  * so it may not leave components in the same state that they were before the function call.
  */
 export async function expectRecipePasteCompleted(page: Page, recipeId: RecipeID) {
@@ -333,14 +354,15 @@ export async function expectRecipePasteCompleted(page: Page, recipeId: RecipeID)
   await expectRecipeUpdateCompleted(page, recipeId, expected);
 }
 
-/** Helper function to paste a recipe into a `RecipeGrid`, based on the recipe ID
+/**
+ * Helper function to paste a recipe into a `RecipeGrid`, based on the recipe ID
  *
  * This function selects the recipe in `RecipeGrid`, pastes the recipe text to the clipboard, and
  * clicks the paste button, but does not wait for the recipe update to be reflected in the relevant
  * components. It is the responsibility of the caller to wait for the update completion if needed,
  * e.g. by calling `expectRecipePasteCompleted`.
  *
- * @note This function modifies selectors to paste recipes in corresponding slots in `RecipeGrid,
+ * **Note:** This function modifies selectors to paste recipes in corresponding `RecipeGrid` slots,
  * so it may not leave components in the same state that they were before the function call.
  */
 export async function pasteRecipeIntoGrid(page: Page, browserName: string, recipeId: RecipeID) {
@@ -352,12 +374,13 @@ export async function pasteRecipeIntoGrid(page: Page, browserName: string, recip
   await pasteButton.click();
 }
 
-/** Helper function to paste recipe and wait for update completion, used in multiple tests
+/**
+ * Helper function to paste recipe and wait for update completion, used in multiple tests
  *
  * This function selects the recipe in `RecipeGrid`, pastes the recipe text to the clipboard, clicks
  * the paste button, and waits for the recipe update to be reflected in the relevant components.
  *
- * @note This function modifies selectors to paste recipes in corresponding slots in `RecipeGrid,
+ * **Note:** This function modifies selectors to paste recipes in corresponding `RecipeGrid` slots,
  * so it may not leave components in the same state that they were before the function call.
  */
 export async function pasteRecipeAndWaitForUpdate(
@@ -369,14 +392,15 @@ export async function pasteRecipeAndWaitForUpdate(
   await expectRecipePasteCompleted(page, recipeId);
 }
 
-/** Helper function to fill a recipe into a `RecipeGrid`, based on the recipe ID
+/**
+ * Helper function to fill a recipe into a `RecipeGrid`, based on the recipe ID
  *
  * This function selects the recipe in `RecipeGrid`, fills each ingredient name and quantity input
  * based on the recipe, but does not wait for the recipe update to be reflected in the relevant
  * components. It is the responsibility of the caller to wait for the update completion if needed,
  * e.g. by calling `expectRecipePasteCompleted`.
  *
- * @note This function modifies selectors to fill recipes in corresponding slots in `RecipeGrid,
+ * **Note:** This function modifies selectors to fill recipes in corresponding `RecipeGrid` slots,
  * so it may not leave components in the same state that they were before the function call.
  */
 export async function fillRecipeIntoGrid(page: Page, recipeId: RecipeID) {
@@ -392,12 +416,13 @@ export async function fillRecipeIntoGrid(page: Page, recipeId: RecipeID) {
   }
 }
 
-/** Helper function to fill a recipe and wait for update completion, used in multiple tests
+/**
+ * Helper function to fill a recipe and wait for update completion, used in multiple tests
  *
  * This function selects the recipe in `RecipeGrid`, fills each ingredient name and quantity input
  * based on the recipe, and waits for the recipe update to be reflected in the relevant components.
  *
- * @note This function modifies selectors to fill recipes in corresponding slots in `RecipeGrid,
+ * **Note:** This function modifies selectors to fill recipes in corresponding slots in `RecipeGrid,
  * so it may not leave components in the same state that they were before the function call.
  */
 export async function fillRecipeAndWaitForUpdate(page: Page, recipeId: RecipeID) {
@@ -405,9 +430,10 @@ export async function fillRecipeAndWaitForUpdate(page: Page, recipeId: RecipeID)
   await expectRecipePasteCompleted(page, recipeId);
 }
 
-/** Helper function to clear recipe and wait for update completion, used in multiple tests
+/**
+ * Helper function to clear recipe and wait for update completion, used in multiple tests
  *
- * @note This function modifies selectors to clear recipes in corresponding slots in `RecipeGrid,
+ * **Note:** This function modifies selectors to clear recipes in corresponding `RecipeGrid` slots,
  * so it may not leave components in the same state that they were before the function call.
  */
 export async function clearRecipeAndWaitForUpdate(page: Page, recipeId: RecipeID) {
@@ -424,7 +450,9 @@ export async function clearRecipeAndWaitForUpdate(page: Page, recipeId: RecipeID
   await expect(elements.ingQtyInput).toHaveValue("");
 }
 
-/** Helper function to log in as a test user using email and password credentials
+/* eslint-disable jsdoc/check-param-names */
+/**
+ * Helper function to log in as a test user using email and password credentials
  *
  * This function navigates to the sign-in page, fills in the email and password fields,
  * clicks the sign-in button, and waits for navigation to complete.
@@ -441,3 +469,4 @@ export async function loginAsTestUserWithCredentials(
   await getSigninWithEmailButton(page).click();
   await page.waitForNavigation();
 }
+/* eslint-enable jsdoc/check-param-names */

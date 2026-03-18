@@ -2,6 +2,7 @@
 
 import { Recipe } from "@/app/_components/recipe";
 
+/** Select element for switching between recipes; renders only the enabled indices as options */
 export function RecipeSelect({
   allRecipes,
   enabledRecipeIndices,

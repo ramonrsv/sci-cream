@@ -7,6 +7,7 @@ import {
   isCompKey,
 } from "@workspace/sci-cream";
 
+/** Returns `true` when a `CompKey` represents a quantity (g) rather than a dimensionless ratio */
 export function isCompKeyQuantity(prop_key: CompKey): boolean {
   return (
     prop_key !== CompKey.AbsPAC &&
@@ -15,6 +16,7 @@ export function isCompKeyQuantity(prop_key: CompKey): boolean {
   );
 }
 
+/** Returns `true` when a `PropKey` is for a quantity `CompKey` (excludes FPD & ratio comp keys) */
 export function isPropKeyQuantity(prop_key: PropKey): boolean {
   return (
     isCompKey(prop_key) &&
@@ -24,8 +26,12 @@ export function isPropKeyQuantity(prop_key: PropKey): boolean {
   );
 }
 
-// @todo These are temporary just to test the properties chart "acceptable range" feature; it
-// should eventually be replaced with a more robust solution implemented in the `sci-cream` crate.
+/**
+ * Return the acceptable `{ min, max }` range for a property key, or `undefined` if none is defined.
+ *
+ * @todo These ranges are temporary placeholders for the prop chart's "acceptable range" feature;
+ * should eventually be replaced with a more robust solution implemented in the `sci-cream` crate.
+ */
 export function getAcceptablePropertyRange(
   propKey: PropKey,
 ): { min: number; max: number } | undefined {

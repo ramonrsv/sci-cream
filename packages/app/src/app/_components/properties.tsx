@@ -23,6 +23,7 @@ import {
   prop_key_as_med_str,
 } from "@workspace/sci-cream";
 
+/** Default set of property keys shown when the Custom key filter is first initialized */
 export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   compToPropKey(CompKey.MilkFat),
   compToPropKey(CompKey.EggFat),
@@ -47,11 +48,18 @@ export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   fpdToPropKey(FpdKey.HardnessAt14C),
 ] as PropKey[]);
 
+/** Table component displaying mix property values across all active recipes */
 export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }) {
   const qtyToggleState = useState<QtyToggle>(QtyToggle.Percentage);
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
 
+  /**
+   * Returns `true` when the given property key has a zero/NaN value across all displayed recipes.
+   *
+   * Treats all keys as empty when every displayed recipe is itself empty, which avoids showing
+   * non-zero default values (e.g. `PropKey.Water`) for an otherwise blank recipe.
+   */
   const isPropEmpty = (prop_key: PropKey) => {
     // All PropKeys are considered to be empty if all displayed recipes are empty
     // This handles values that are not zero for empty recipes, e.g. PropKey.Water
@@ -68,10 +76,12 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
     return true;
   };
 
+  /** Auto-filter heuristic: includes a property key when it is part of the default selection */
   const autoHeuristic = (prop_key: PropKey) => {
     return DEFAULT_SELECTED_PROPERTIES.has(prop_key);
   };
 
+  /** Returns the list of property keys to display, based on the current filter and selection */
   const getEnabledProps = () => {
     return getEnabledKeys(
       propsFilterState[STATE_VAL],
@@ -82,6 +92,7 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
     );
   };
 
+  /** Formats a property cell value, applying the current qty toggle */
   const formattedPropCell = (prop_key: PropKey, mixProperties: MixProperties, mixTotal: number) => {
     return applyQtyToggleAndFormat(
       getMixProperty(mixProperties, prop_key),

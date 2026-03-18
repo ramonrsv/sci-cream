@@ -40,19 +40,22 @@ ChartJS.register(
   Filler,
 );
 
+/** Line chart visualizing FPD curves (hardness and frozen water) for the active recipes */
 export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
   const { theme } = useTheme();
 
   // Only display the main recipe and non-empty reference recipes
   const recipes = allRecipes.filter((recipe) => recipe.index == 0 || !isRecipeEmpty(recipe));
 
-  // Highlight temperature at the ideal serving hardness
+  /** Ideal serving 'hardness' value, in [0, 100], used to place a highlight point */
   const highlightedHardnessPercent = 75;
 
+  /** Returns `true` when the given dataset point should be rendered as a highlight marker */
   const shouldHighlight = (lineLabel: string, pointIdx: number) => {
     return lineLabel === "Hardness" && pointIdx === highlightedHardnessPercent;
   };
 
+  /** Chart.js dataset configuration built from the active recipes' FPD curves */
   const graphData = {
     labels: Array.from({ length: 101 }, (_, i) => i),
     datasets: recipes.flatMap((recipe) => {
@@ -100,6 +103,7 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
   const gridColor = getGridColor(theme);
   const legendColor = getLegendColor(theme);
 
+  /** Shared legend label style applied to all custom legend entries */
   const labelProps = {
     hidden: false,
     lineWidth: 2,
@@ -108,6 +112,7 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
     fontColor: legendColor,
   };
 
+  /** Chart.js options controlling layout, legend, tooltip, and axis configuration */
   const options = {
     responsive: true,
     maintainAspectRatio: false,

@@ -1,7 +1,9 @@
 import "dotenv/config";
 
+/** A lightweight recipe representation as an array of `[ingredientName, quantity]` pairs */
 export type LightRecipe = (string | number)[][];
 
+/** Identifies one of the test recipes, including variants that include user-defined ingredients */
 export enum RecipeID {
   Main = "Recipe",
   RefA = "Ref A",
@@ -11,6 +13,13 @@ export enum RecipeID {
   RefBWithUserDefined = "Ref B (with user-defined)",
 }
 
+/**
+ * Map a `RecipeID` to its zero-based index in the recipe array (Main = 0, RefA = 1, RefB = 2)
+ *
+ * **Note:** The variants with user-defined ingredients share the same index as their base recipe,
+ * since they only differ by the presence of user-defined ingredients, but are input into the app
+ * using the same `RecipeGrid` slot, and so are displayed in the same position in other components.
+ */
 export function recipeIdToIdx(recipeId: RecipeID): number {
   switch (recipeId) {
     case RecipeID.Main:
@@ -27,6 +36,11 @@ export function recipeIdToIdx(recipeId: RecipeID): number {
   }
 }
 
+/**
+ * Map a `RecipeID` to the display string used as the `<select>` option value
+ *
+ * **Note:** The variants with user-defined ingredients share the same string as their base recipe.
+ */
 export function recipeIdToOption(recipeId: RecipeID): string {
   switch (recipeId) {
     case RecipeID.Main:
@@ -43,6 +57,7 @@ export function recipeIdToOption(recipeId: RecipeID): string {
   }
 }
 
+/** Light recipe data for the main test recipe */
 const MAIN_RECIPE_LIGHT = [
   ["Whole Milk", 245],
   ["Whipping Cream", 215],
@@ -56,6 +71,7 @@ const MAIN_RECIPE_LIGHT = [
   ["Vanilla Extract", 6],
 ];
 
+/** Light recipe data for the reference A test recipe */
 const REF_A_RECIPE_LIGHT = [
   ["Whole Milk", 230],
   ["Whipping Cream", 235],
@@ -68,6 +84,7 @@ const REF_A_RECIPE_LIGHT = [
   ["Rich Ice Cream SB", 0.84],
 ];
 
+/** Light recipe data for the reference B test recipe */
 const REF_B_RECIPE_LIGHT = [
   ["Whole Milk", 230],
   ["Whipping Cream", 225],
@@ -84,12 +101,21 @@ const REF_B_RECIPE_LIGHT = [
   ["Grand Marnier Cordon Rouge", 53],
 ];
 
+/** Serialize a `LightRecipe` to tab-separated text with a header row, suitable for clipboard paste */
 export function lightRecipeToText(recipe: LightRecipe): string {
   const header = ["Ingredient", "Qty(g)"];
   const rows = recipe.map(([name, qty]) => [name, String(qty)]);
   return [header, ...rows].map((row) => row.join("\t")).join("\n");
 }
 
+/**
+ * Return the `LightRecipe` for the given `RecipeID`, with possible modifications for user-defined
+ *
+ * For the variants with user-defined ingredients, replace "Fructose" with "Fructose (User-Defined)"
+ * and add a new "Fructose (User-Defined)" ingredient with quantity 5g, to ensure that the
+ * user-defined ingredient is present in the recipe, and that the original fructose is not used,
+ * which would interfere with testing the user-defined ingredient functionality.
+ */
 export function getLightRecipe(recipeId: RecipeID): LightRecipe {
   const replaceAndConcatFructose = (base: LightRecipe) =>
     base
@@ -112,6 +138,7 @@ export function getLightRecipe(recipeId: RecipeID): LightRecipe {
   }
 }
 
+/** Convenience wrapper for calls to {@link getLightRecipe} and {@link lightRecipeToText} */
 export function getRecipeText(recipeId: RecipeID): string {
   return lightRecipeToText(getLightRecipe(recipeId));
 }

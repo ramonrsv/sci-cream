@@ -14,6 +14,7 @@ const mockFindUser = vi.mocked(findUserByEmail);
 const mockInsertUser = vi.mocked(insertUser);
 const mockHash = vi.mocked(hash);
 
+/** Helper function to create a Request object with the given body for testing the POST handler */
 function makeRequest(body: object) {
   return new Request("http://localhost/api/auth/signup", {
     method: "POST",

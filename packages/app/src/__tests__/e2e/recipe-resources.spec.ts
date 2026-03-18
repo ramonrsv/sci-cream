@@ -25,7 +25,8 @@ test.describe("Recipe Resources", () => {
     expect(optionCount).toBeGreaterThanOrEqual(88);
   });
 
-  /** Simulates slow fetch API responses, used to validate that UI updates are resilient to slow
+  /**
+   * Simulates slow fetch API responses, used to validate that UI updates are resilient to slow
    * loading of user-defined ingredient specs, and unaffected if not using user-defined ingredients.
    */
   const simulateSlowFetchApiResponse = async (page: Page, delayMs: number) => {
