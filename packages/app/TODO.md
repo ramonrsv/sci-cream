@@ -3,33 +3,40 @@
 - [ ] Document all items in `app`, look for a `missing_docs` equivalent lint.
 - [ ] Pasting the strawberry sorbet recipe, fixing 'Strawberry [Brix 9]' to remove ' [Brix 9]', then
       pasting a different recipe causes a 'null pointer passed to rust' error; still unclear why.
-
-# Up Next
-
 - [ ] Add recipe save functionality. Recipes should support versions and notes.
 - [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
       embedded into other websites. How to handle user-defined ingredients?
+- [ ] Add support for `MixPropertiesGrid` to show deltas between the main recipe and the references.
+- [ ] Add `height` prop to `MixPropertiesGrid` so that it can adapt the number of properties shown.
+
+# Up Next
+
+- [ ] Review the sign-in classes in `globals.css`, used in `/signin/page.tsx` and `/signup/page.tsx`
+- [ ] Add `Watchers` component where users can select what properties to watch. It should probably
+      support displaying deltas between the main and reference recipes, and target minx-max ranges.
 - [ ] Add make-recipe link, to click off ingredients that have been measured our for one or more
       recipes. Wash recipe should be letter and color coded.
 - [ ] Add scoopability and FPD properties component with visuals.
 - [ ] Add Nutrition Facts Table component.
-- [ ] Add support for `MixPropertiesGrid` to show deltas between the main recipe and the references.
-- [ ] Consider whether to add support to `IngredientCompositionGrid` to show deltas between recipes.
-- [ ] Add `Watchers` component where users can select what properties to watch. It should probably
-      support displaying deltas between the main and reference recipes, and target minx-max ranges.
 - [ ] Check how vertical spacing looks like on 1080p/2160p screens; look into dynamic vertical?
-- [ ] Add `height` prop to `MixPropertiesGrid` so that it can adapt the number of properties shown.
 - [ ] Add functionality to store component layout so that it is remembered across page reloads. The
       store should start seeded with a default for each resolution, and store any user modification.
-- [ ] Investigate methods for performance analysis, including Chrome DevTools Protocol (CDP),
-      playwright-performance, etc. Look into generating flamegraphs.
 - [ ] Figure out how to show `sci-cream`'s beginner-friendly overview to new users of the app.
 - [ ] Add a visual regression test for the custom filter settings button and checkbox menu.
 - [ ] Figure out how to do visual regression tests of animations, e.g. navbar expand/collapse.
+- [ ] In `MixPropertiesGrid`, make it so that, if there is a horizontal scroll, the left-most column
+      (property headers) does not scroll with the rest of the content.
+- [ ] Look into setting up and how to do database migrations for the production database.
+- [ ] There are some `react-grid-layout` layout shifts on page refresh; it's worse on mobile.
+- [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
+- [ ] Add support for sharing of user-defined ingredients, similarly to sharing of recipes.
 
 # Backlog
 
-- [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
+- [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
+- [ ] Add a navbar item with general ice cream science knowledge, likely referencing `sci-cream`.
+- [ ] Add a navbar item for a blog-style thing where I can include information from personal
+      experience, which would not be appropriate for `sci-cream`. Look into using markdown.
 - [ ] Look into implementing a JS-side ingredient cache so that `Ingredient` WASM objects are only
       created once, then any lookups return JS light clones, which should reduce `.free()` issues.
 - [ ] There are many jarring flashes on first page load (some layout changes, a flash of
@@ -37,11 +44,9 @@
       allow all those things to settle before displaying the main page (see how Monarch does it).
 - [ ] Look into Next.js's system for displaying component placeholders to avoid layout changes.
 - [ ] Add test to check that `MixPropertiesGrid` has no vertical scroll with default layout/filters.
-- [ ] In `MixPropertiesGrid`, make it so that, if there is a horizontal scroll, the left-most column
-      (property headers) does not scroll with the rest of the content.
 - [ ] When there are too many properties to show in `MixPropertiesChart`, it kind of silently crops
       the properties being displayed. Look into a way to either indicate the cropping, or add
-      support for a horizontal scrollbar.
+      support for a horizontal scrollbar as an indicator of when `MixPropertiesChart` overflows.
 - [ ] Use new [pnpm/action-setup](https://github.com/pnpm/action-setup) `cache: true` option once
       it's released. See: <https://github.com/pnpm/action-setup/issues/201>
 - [ ] There are various calls to `comp_key_as_med_str` and `prop_key_as_med_str` that are also
@@ -52,10 +57,12 @@
       could be slow given that they are JS <-> WASM calls. Perhaps doing a single call to get a full
       map once and then doing `.get` calls on the JS side may be more performant.
 - [ ] Properly solve the `sslmode=no-verify` issue with `POSTGRES_URL`, see `db/util/getDatabaseUrl`
-- [ ] Consider using a scrollbar as an indicator of when `MixPropertiesChart` overflows.
 - [ ] Investigate web workers and Progressive Web Apps (PWA) and their applicability to this app.
-- [ ] Look into setting up and how to do database migrations for the production database.
-- [ ] Add inventory and cost functionality.
+- [ ] Add support for ingredient inventory and cost functionality; maybe affects balancing?
+- [ ] Consider whether to add support to `IngredientCompositionGrid` to show deltas between recipes.
+- [ ] Investigate methods for performance analysis, including Chrome DevTools Protocol (CDP),
+      playwright-performance, etc. Look into generating flamegraphs.
+- [ ] Add and/or verify support for C/C++ interoperability with FFI; look into `cxx` crate.
 
 # Completed
 
