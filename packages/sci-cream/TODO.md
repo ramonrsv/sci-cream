@@ -13,6 +13,8 @@
 - [ ] Consider whether to add `CompKey` for all polyols and artificial sweeteners.
 - [ ] Rename `assert_*` family of functions in `crate::validate` to `verify_*`, to differentiate.
 - [ ] Split literature and ingredient definition bibliography; the latter clutters the docs.
+- [ ] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
+- [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
 
 # Up Next
 
