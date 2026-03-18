@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773870888931,
+  "lastUpdate": 1773870940180,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -10385,6 +10385,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 309,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "1d4ee0def7a5ff810d3c5c8b55d522275bac9a3e",
+          "message": "Re-organize app TODOs for next rel, backlog, etc.\n\n* Re-organize app TODOs for the next release, up next, and backlog.\n* Add TODOs about layout shifts, user-defined ingredients, C++/FFI\n  support, 'User Guide', ice cream knowledge and blog navbar sections,\n  and about reviewing sign-in CSS classes used in `/signin` & `/signup`.",
+          "timestamp": "2026-03-18T11:59:37-04:00",
+          "tree_id": "f202393a4ef24ff583c0593b437d968c27614413",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/1d4ee0def7a5ff810d3c5c8b55d522275bac9a3e"
+        },
+        "date": 1773870937740,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3523,
+            "range": "± 43",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161366,
+            "range": "± 1432",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1977,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 159728,
+            "range": "± 838",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 303,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
