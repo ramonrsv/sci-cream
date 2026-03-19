@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773953711510,
+  "lastUpdate": 1773955734779,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -108252,6 +108252,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.73%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "389d8c388b9cfb67e2bffe5cf811065d2ac9de01",
+          "message": "Add unit tests for `composition::Alcohol`",
+          "timestamp": "2026-03-19T16:47:44-04:00",
+          "tree_id": "9077e3c7a28d0764d3fb72432bede8b6cfbe7a6b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/389d8c388b9cfb67e2bffe5cf811065d2ac9de01"
+        },
+        "date": 1773955732229,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 79033,
+            "range": "±0.88%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 733399,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10148,
+            "range": "±1.85%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 605359,
+            "range": "±0.88%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
