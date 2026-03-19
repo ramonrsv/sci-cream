@@ -112,3 +112,66 @@ impl Default for Alcohol {
         Self::empty()
     }
 }
+
+#[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
+mod tests {
+    use approx::assert_abs_diff_ne;
+
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    use crate::tests::asserts::*;
+
+    use super::*;
+
+    #[test]
+    fn alcohol_empty() {
+        let alcohol = Alcohol::empty();
+        assert_eq!(alcohol, Alcohol::new());
+        assert_eq!(alcohol.by_weight, 0.0);
+        assert_eq!(alcohol.to_abv(), 0.0);
+        assert_eq!(alcohol.energy(), 0.0);
+        assert_eq!(alcohol.to_pac(), 0.0);
+    }
+
+    #[test]
+    fn alcohol_by_weight() {
+        let alcohol = Alcohol::new().by_weight(5.0);
+        assert_eq!(alcohol.by_weight, 5.0);
+        assert_eq_flt_test!(alcohol.to_abv(), 6.3371);
+        assert_eq!(alcohol.energy(), 34.65);
+        assert_eq!(alcohol.to_pac(), 37.15);
+    }
+
+    #[test]
+    fn alcohol_from_abv() {
+        let alcohol = Alcohol::from_abv(5.0);
+        assert_eq_flt_test!(alcohol.by_weight, 3.945);
+        assert_eq_flt_test!(alcohol.to_abv(), 5.0);
+        assert_eq_flt_test!(alcohol.energy(), 27.3389);
+        assert_eq_flt_test!(alcohol.to_pac(), 29.3114);
+    }
+
+    #[test]
+    fn alcohol_scale() {
+        let alcohol = Alcohol::new().by_weight(5.0);
+        let scaled = alcohol.scale(0.5);
+        assert_eq!(scaled.by_weight, 2.5);
+    }
+
+    #[test]
+    fn alcohol_add() {
+        let a = Alcohol::new().by_weight(5.0);
+        let b = Alcohol::new().by_weight(3.0);
+        assert_eq!(a.add(&b).by_weight, 8.0);
+    }
+
+    #[test]
+    fn alcohol_abs_diff_eq() {
+        let a = Alcohol::new().by_weight(5.0);
+        let b = Alcohol::new().by_weight(5.0);
+        let c = Alcohol::new().by_weight(5.000_000_000_001);
+        assert_abs_diff_eq!(a, b);
+        assert_abs_diff_ne!(a, c);
+    }
+}
