@@ -43,7 +43,8 @@
     "coverage:js": "vitest run --coverage",
     "bench": "pnpm bench:rust && pnpm bench:js",
     "bench:rust": "cargo criterion --all-features",
-    "bench:js": "node --import tsx benches/ts/run-all.ts"
+    "bench:js": "node --import tsx benches/ts/run-all.ts",
+    "doc": "cargo doc --all-features"
   },
   "dependencies": {
     "eslint-plugin-jsdoc": "^62.8.0",
