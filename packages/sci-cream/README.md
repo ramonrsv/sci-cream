@@ -1,6 +1,7 @@
 # `sci-cream`
 
 [![CI](https://github.com/ramonrsv/sci-cream/actions/workflows/crate.yml/badge.svg)](https://github.com/ramonrsv/sci-cream/actions)
+[![GitHub Release](https://img.shields.io/github/v/release/ramonrsv/sci-cream?filter=sci-cream-v*)](https://github.com/ramonrsv/sci-cream/releases/tag/sci-cream-v0.0.3)
 [![Crates.io](https://img.shields.io/crates/v/sci-cream.svg)](https://crates.io/crates/sci-cream)
 [![Documentation](https://docs.rs/sci-cream/badge.svg)](https://docs.rs/sci-cream)
 [![codecov](https://codecov.io/github/ramonrsv/sci-cream/graph/badge.svg?flag=crate)](https://app.codecov.io/github/ramonrsv/sci-cream/tree/main?flags%5B0%5D=crate)

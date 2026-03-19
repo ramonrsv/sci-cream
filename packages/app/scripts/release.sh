@@ -107,8 +107,10 @@ cmd_release() {
   local pj="$PKG_DIR/package.json"
   # 2. CHANGELOG.md — multiple replacements (order matters)
   local cl="$PKG_DIR/CHANGELOG.md"
-  # 3. README.md — crate usage line (if present)
+  # 3. README.md — versioned lines (if present)
   local rm="$PKG_DIR/README.md"
+  # 4. Root README.md — versioned lines (if present)
+  local rm_root="$REPO_ROOT/README.md"
 
   # Build a description of planned changes for the dry-run report.
   echo "Planned file changes:"
@@ -123,6 +125,16 @@ cmd_release() {
   if grep -qE 'sci-cream = ' "$rm" 2>/dev/null; then
     info "$PKG_REL/README.md"
     info "  sci-cream = ...  →  sci-cream = \"$new_ver\""
+    echo
+  fi
+  if grep -qE 'tag/app-v[^)]*\)' "$rm" 2>/dev/null; then
+    info "$PKG_REL/README.md"
+    info "  tag/app-v...  →  tag/app-v$new_ver)"
+    echo
+  fi
+  if grep -qE 'tag/app-v[^)]*\)' "$rm_root" 2>/dev/null; then
+    info "README.md"
+    info "  tag/app-v...  →  tag/app-v$new_ver)"
     echo
   fi
 
@@ -151,6 +163,14 @@ cmd_release() {
     sed -i -E "s/sci-cream = .*/sci-cream = \"$new_ver\"/" "$rm"
     info "Updated $PKG_REL/README.md"
   fi
+  if grep -qE 'tag/app-v[^)]*\)' "$rm" 2>/dev/null; then
+    sed -i -E "s/tag\/app-v[^)]*\)/tag\/app-v${new_ver})/" "$rm"
+    info "Updated $PKG_REL/README.md"
+  fi
+  if grep -qE 'tag/app-v[^)]*\)' "$rm_root" 2>/dev/null; then
+    sed -i -E "s/tag\/app-v[^)]*\)/tag\/app-v${new_ver})/" "$rm_root"
+    info "Updated README.md"
+  fi
 
   # -- CHANGELOG.md --------------------------------------------------------
   # Replace "Unreleased" with the new version (both header and link label).
@@ -167,8 +187,8 @@ cmd_release() {
 
   # -- git add, commit, tag ------------------------------------------------
   echo
-  info "Staging $PKG_REL/ ..."
-  git -C "$REPO_ROOT" add -- "$PKG_REL"
+  info "Staging $PKG_REL/ ... and README.md"
+  git -C "$REPO_ROOT" add -- "$PKG_REL" "$REPO_ROOT/README.md"
 
   info "Committing..."
   git -C "$REPO_ROOT" commit -m "chore: Release app version $new_ver"

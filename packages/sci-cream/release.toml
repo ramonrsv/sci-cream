@@ -1,5 +1,7 @@
 pre-release-replacements = [
     { file = "README.md", search = "sci-cream = .*", replace = "{{crate_name}} = \"{{version}}\"" },
+    { file = "README.md", search = "tag/sci-cream-v.*\\)", replace = "tag/sci-cream-v{{version}})" },
+    { file = "../../README.md", search = "tag/sci-cream-v.*\\)", replace = "tag/sci-cream-v{{version}})" },
     { file = "src/lib.rs", search = "sci-cream = .*", replace = "{{crate_name}} = \"{{version}}\"" },
     { file = "package.json", search = "\"version\": \".*\"", replace = "\"version\": \"{{version}}\"" },
     { file = "CHANGELOG.md", search = "Unreleased", replace = "{{version}}" },
