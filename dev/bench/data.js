@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773951874466,
+  "lastUpdate": 1773953351264,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -107641,6 +107641,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.75%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "295613d9c14dc28bb431dcfeea1885b7663f1744",
+          "message": "Add `eslint-plugin-jsdoc` and require jsdoc config\n\n* Add `eslint-plugin-jsdoc` package and configure it to require jsdoc\n  for most items, e.g. function/method/class declarations/definitions.\n* Fix all new ESLint errors and warnings, adding missing jsdoc items.",
+          "timestamp": "2026-03-19T15:25:24-04:00",
+          "tree_id": "023ad4fce6c91acee76ef8796984c0accd45724d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/295613d9c14dc28bb431dcfeea1885b7663f1744"
+        },
+        "date": 1773953346913,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76855,
+            "range": "±0.83%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 729930,
+            "range": "±0.64%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10110,
+            "range": "±1.82%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 601630,
+            "range": "±0.73%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
