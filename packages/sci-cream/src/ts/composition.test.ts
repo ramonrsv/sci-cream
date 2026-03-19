@@ -2,12 +2,14 @@ import { expect, test } from "vitest";
 
 import { CompKey, Composition, Solids, SolidsBreakdown, Sugars } from "../../dist/index";
 
+/** Creates a `Sugars` instance with the given amount of sucrose. */
 function new_sugars_sucrose(amount: number): Sugars {
   const sugars = new Sugars();
   sugars.sucrose = amount;
   return sugars;
 }
 
+/** Creates a `Sugars` instance with the given amount of other sugars. */
 function new_sugars_other(amount: number): Sugars {
   const sugars = new Sugars();
   sugars.other = amount;

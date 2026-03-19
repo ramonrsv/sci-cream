@@ -1,5 +1,6 @@
 import { IngredientJson, into_ingredient_from_spec, RecipeLine, Recipe } from "../../dist/index.js";
 
+/** Sample chocolate ice cream light recipe used as benchmark input. */
 export const LIGHT_RECIPE = [
   ["Whole Milk", 245],
   ["Whipping Cream", 215],
@@ -15,22 +16,26 @@ export const LIGHT_RECIPE = [
 
 export type SpecLine = { spec: IngredientJson; quantity: number };
 
+/** Converts an array of spec lines into `RecipeLine` instances by deserializing each ing. spec. */
 export function makeRecipeLines(specLines: SpecLine[]): RecipeLine[] {
   return specLines.map(
     (specLine) => new RecipeLine(into_ingredient_from_spec(specLine.spec), specLine.quantity),
   );
 }
 
+/** Clones an array of `RecipeLine` instances by deep-copying their `Ingredient`s. */
 export function cloneRecipeLines(recipeLines: RecipeLine[]): RecipeLine[] {
   return recipeLines.map(
     (recipeLine) => new RecipeLine(recipeLine.ingredient.clone(), recipeLine.amount),
   );
 }
 
+/** Builds a `Recipe` from freshly deserialized ingredient spec lines. */
 export function makeRecipeFromMadeLines(specLines: SpecLine[]): Recipe {
   return new Recipe("Chocolate Ice Cream", makeRecipeLines(specLines));
 }
 
+/** Builds a `Recipe` from cloned recipe lines. */
 export function makeRecipeFromClonedLines(recipeLines: RecipeLine[]): Recipe {
   return new Recipe("Chocolate Ice Cream", cloneRecipeLines(recipeLines));
 }

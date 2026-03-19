@@ -1,6 +1,5 @@
 # Next Release
 
-- [ ] Document all TypeScript items, look for a `missing_docs` equivalent lint.
 - [ ] Add more tests to `sci-cream` crate and increase code coverage.
 - [ ] Add code example doc tests to all specs that don't already have them.
 - [ ] Rework `specs::Micro` to pull out stabilizers and emulsifiers into their own category(s).
@@ -45,6 +44,7 @@
 
 # Completed
 
+- [x] Document all TypeScript items, look for a `missing_docs` equivalent lint.
 - [x] Looking into using `use crate::composition::CompKey::*` to avoid having to prefix `CompKey::`
       whenever accessing values, e.g. `comp.get(MilkFats)` vs `comp.get(CompKey::MilkFats)`.
 - [x] Add comprehensive library overview in `lib.rs` crate docs and in `README.md`.

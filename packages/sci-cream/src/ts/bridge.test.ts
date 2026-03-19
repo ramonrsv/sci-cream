@@ -26,6 +26,7 @@ const lightRecipe = [
   ["Vanilla Extract", 6],
 ];
 
+/** Creates a new ingredient database pre-seeded with all built-in ingredient specs. */
 function make_seeded_db() {
   return new_ingredient_database_seeded_from_specs(get_all_ingredient_specs());
 }

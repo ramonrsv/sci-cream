@@ -46,6 +46,7 @@
     "bench:js": "node --import tsx benches/ts/run-all.ts"
   },
   "dependencies": {
+    "eslint-plugin-jsdoc": "^62.8.0",
     "typescript": "^5.9.3",
     "vite": "^7.3.1"
   },
