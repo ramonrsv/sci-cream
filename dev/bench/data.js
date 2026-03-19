@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773951548799,
+  "lastUpdate": 1773951582453,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -10493,6 +10493,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 272,
             "range": "± 6",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "398341f148e0f256c794b84b1739a80409478315",
+          "message": "Add `eslint-plugin-jsdoc` and require jsdoc config\n\n* Add `eslint-plugin-jsdoc` package and configure it to require jsdoc\n  for most items, e.g. function/method/class declarations/definitions.\n* Add VS Code settings to validate with and show eslint errors/warnings.\n* Fix all new ESLint errors and warnings, adding missing jsdoc items.",
+          "timestamp": "2026-03-19T14:55:02-04:00",
+          "tree_id": "4918867663032e8ff6442214f04b1af7ead9dea7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/398341f148e0f256c794b84b1739a80409478315"
+        },
+        "date": 1773951580098,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3558,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161157,
+            "range": "± 2508",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2030,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 159973,
+            "range": "± 2920",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 305,
+            "range": "± 3",
             "unit": "ns/iter"
           }
         ]
