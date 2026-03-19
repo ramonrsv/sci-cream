@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773953649060,
+  "lastUpdate": 1773953711510,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -99157,6 +99157,102 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 528.8,
             "range": "21.06",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "295613d9c14dc28bb431dcfeea1885b7663f1744",
+          "message": "Add `eslint-plugin-jsdoc` and require jsdoc config\n\n* Add `eslint-plugin-jsdoc` package and configure it to require jsdoc\n  for most items, e.g. function/method/class declarations/definitions.\n* Fix all new ESLint errors and warnings, adding missing jsdoc items.",
+          "timestamp": "2026-03-19T15:25:24-04:00",
+          "tree_id": "023ad4fce6c91acee76ef8796984c0accd45724d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/295613d9c14dc28bb431dcfeea1885b7663f1744"
+        },
+        "date": 1773953707965,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 819.4,
+            "range": "72.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 47.5,
+            "range": "6.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.2,
+            "range": "7.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.3,
+            "range": "5.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 34.3,
+            "range": "1.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 159.2,
+            "range": "7.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 40.7,
+            "range": "3.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 38.05,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 26.82,
+            "range": "0.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 506.7,
+            "range": "22.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 514.4,
+            "range": "24.18",
             "unit": "ms"
           }
         ]
