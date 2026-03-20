@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773956936772,
+  "lastUpdate": 1773986311577,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -109474,6 +109474,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.84%",
             "unit": "ops/sec",
             "extra": "89 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e385f8f7c5d92c536fa58c84d23b2384d70e290c",
+          "message": "Add GitHub release badge links to all `README.md`\n\nAlso update `sci-cream/release.toml` and `app/scripts/release.sh` to\nupdate the tag links, since latest does not work for both tag prefixes.",
+          "timestamp": "2026-03-20T01:55:36-04:00",
+          "tree_id": "bb7049984633d5806a971650fe85d2febabfc29b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e385f8f7c5d92c536fa58c84d23b2384d70e290c"
+        },
+        "date": 1773986308660,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78281,
+            "range": "±1.01%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 656964,
+            "range": "±0.50%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9057,
+            "range": "±1.74%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 565439,
+            "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
