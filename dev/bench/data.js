@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773986311577,
+  "lastUpdate": 1773986365909,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -10709,6 +10709,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 307,
             "range": "± 61",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e385f8f7c5d92c536fa58c84d23b2384d70e290c",
+          "message": "Add GitHub release badge links to all `README.md`\n\nAlso update `sci-cream/release.toml` and `app/scripts/release.sh` to\nupdate the tag links, since latest does not work for both tag prefixes.",
+          "timestamp": "2026-03-20T01:55:36-04:00",
+          "tree_id": "bb7049984633d5806a971650fe85d2febabfc29b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e385f8f7c5d92c536fa58c84d23b2384d70e290c"
+        },
+        "date": 1773986363046,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3623,
+            "range": "± 69",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161997,
+            "range": "± 4432",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1985,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 159731,
+            "range": "± 360",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 303,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
