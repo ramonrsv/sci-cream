@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1773986677047,
+  "lastUpdate": 1774060278500,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -110083,6 +110083,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 565439,
             "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3f6920da9c62c0175518285b970a977c2c6ce439",
+          "message": "Add unit tests for `composition::ArtificialSweet*`\n\n* Add unit tests for `composition::ARtificialSweeteners`\n* Introduce `test::util::assert_f64_fields_eq/ne_zero`\n* Add `--all-targets` to `lint:rust` script in `package.json`",
+          "timestamp": "2026-03-20T20:32:23-04:00",
+          "tree_id": "5e3a78bd3b78486eaa040e6a0ceda2b3e381e3d5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3f6920da9c62c0175518285b970a977c2c6ce439"
+        },
+        "date": 1774060275789,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77107,
+            "range": "±1.26%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 732970,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10115,
+            "range": "±1.69%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 610926,
+            "range": "±0.69%",
             "unit": "ops/sec",
             "extra": "93 samples"
           }
