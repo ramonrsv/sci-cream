@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774060576942,
+  "lastUpdate": 1774060635157,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -101393,6 +101393,102 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 523.9,
             "range": "19.31",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3f6920da9c62c0175518285b970a977c2c6ce439",
+          "message": "Add unit tests for `composition::ArtificialSweet*`\n\n* Add unit tests for `composition::ARtificialSweeteners`\n* Introduce `test::util::assert_f64_fields_eq/ne_zero`\n* Add `--all-targets` to `lint:rust` script in `package.json`",
+          "timestamp": "2026-03-20T20:32:23-04:00",
+          "tree_id": "5e3a78bd3b78486eaa040e6a0ceda2b3e381e3d5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3f6920da9c62c0175518285b970a977c2c6ce439"
+        },
+        "date": 1774060632052,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 16.308,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 814.4,
+            "range": "62.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 44.3,
+            "range": "4.82",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 55.1,
+            "range": "5.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 36.7,
+            "range": "6.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 33.8,
+            "range": "1.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 157.4,
+            "range": "5.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 39,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 36.93,
+            "range": "0.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 26.21,
+            "range": "0.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 498.8,
+            "range": "10.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 497.4,
+            "range": "6.33",
             "unit": "ms"
           }
         ]
