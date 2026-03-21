@@ -335,20 +335,24 @@ mod tests {
 
     use super::*;
 
-    const FIELDS_MUT: [fn(&mut ArtificialSweeteners) -> &mut f64; 7] = [
-        |v| &mut v.aspartame,
-        |v| &mut v.cyclamate,
-        |v| &mut v.saccharin,
-        |v| &mut v.sucralose,
-        |v| &mut v.steviosides,
-        |v| &mut v.mogrosides,
-        |v| &mut v.other,
+    const FIELD_MODIFIERS: [fn(&mut ArtificialSweeteners, f64); 7] = [
+        |v, ec| v.aspartame += ec,
+        |v, ec| v.cyclamate += ec,
+        |v, ec| v.saccharin += ec,
+        |v, ec| v.sucralose += ec,
+        |v, ec| v.steviosides += ec,
+        |v, ec| v.mogrosides += ec,
+        |v, ec| v.other += ec,
     ];
 
     #[test]
+    fn artificial_sweetener_field_count() {
+        assert_eq!(ArtificialSweeteners::new().iter().count(), 7);
+    }
+
+    #[test]
     fn artificial_sweetener_no_fields_missed() {
-        let sweeteners = ArtificialSweeteners::new();
-        assert_eq!(iter_fields_as::<f64, _>(&sweeteners).count(), FIELDS_MUT.len());
+        assert_eq!(ArtificialSweeteners::new().iter().count(), FIELD_MODIFIERS.len());
     }
 
     #[test]
@@ -410,7 +414,11 @@ mod tests {
         assert_eq!(new().sucralose(100.0).energy().unwrap(), 0.0);
         assert_eq!(new().steviosides(100.0).energy().unwrap(), 0.0);
         assert_eq!(new().mogrosides(100.0).energy().unwrap(), 0.0);
-        assert!(matches!(new().other(100.0).energy(), Err(Error::CannotComputeEnergy(_))));
+    }
+
+    #[test]
+    fn artificial_sweeteners_energy_error() {
+        assert!(matches!(ArtificialSweeteners::new().other(100.0).energy(), Err(Error::CannotComputeEnergy(_))));
     }
 
     #[test]
@@ -422,7 +430,11 @@ mod tests {
         assert_eq!(new().sucralose(1.0).to_pod().unwrap(), 600.0);
         assert_eq!(new().steviosides(1.0).to_pod().unwrap(), 225.0);
         assert_eq!(new().mogrosides(1.0).to_pod().unwrap(), 340.0);
-        assert!(matches!(new().other(1.0).to_pod(), Err(Error::CannotComputePOD(_))));
+    }
+
+    #[test]
+    fn artificial_sweeteners_to_pod_error() {
+        assert!(matches!(ArtificialSweeteners::new().other(1.0).to_pod(), Err(Error::CannotComputePOD(_))));
     }
 
     #[test]
@@ -434,7 +446,11 @@ mod tests {
         assert_eq!(new().sucralose(100.0).to_pac().unwrap(), 86.0);
         assert_eq!(new().steviosides(100.0).to_pac().unwrap(), 0.0);
         assert_eq!(new().mogrosides(100.0).to_pac().unwrap(), 0.0);
-        assert!(matches!(new().other(100.0).to_pac(), Err(Error::CannotComputePAC(_))));
+    }
+
+    #[test]
+    fn artificial_sweeteners_to_pac_error() {
+        assert!(matches!(ArtificialSweeteners::new().other(100.0).to_pac(), Err(Error::CannotComputePAC(_))));
     }
 
     #[test]
@@ -516,11 +532,11 @@ mod tests {
         assert_abs_diff_eq!(a, b);
         assert_abs_diff_eq!(a, c);
 
-        for field in FIELDS_MUT {
+        for field_modifier in FIELD_MODIFIERS {
             assert_abs_diff_eq!(a, c);
-            *field(&mut c) += 1e-10;
+            field_modifier(&mut c, 1e-10);
             assert_abs_diff_ne!(a, c);
-            *field(&mut c) -= 1e-10;
+            field_modifier(&mut c, -1e-10);
             assert_abs_diff_eq!(a, c);
         }
     }

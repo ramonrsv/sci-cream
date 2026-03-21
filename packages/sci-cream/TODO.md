@@ -2,6 +2,7 @@
 
 - [ ] Add more tests to `sci-cream` crate and increase code coverage.
 - [ ] Add code example doc tests to all specs that don't already have them.
+- [ ] Consider adding composition traits for calculating POD, PAC, and energy, total (sum), etc.
 - [ ] Rework `specs::Micro` to pull out stabilizers and emulsifiers into their own category(s).
       Should they be separate `Stabilizer` and `Emulsifier`, or something like `Texturant` that
       includes both? I prefer the latter, which accommodates blends like "Louis Francois Stab 2000",
@@ -40,7 +41,6 @@
 - [ ] Consider replacing `serde::Error` in docs with links to types, e.g. [`serde_json::Error`].
 - [ ] Consider making `ScaleComponents` private so that it can only be used internally and cannot
       be misused by users; this should not present an extensibility issue with the current design.
-- [ ] Consider adding composition traits for calculating POD, PAC, and energy, total (sum), etc.
 
 # Completed
 

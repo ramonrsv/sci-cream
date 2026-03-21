@@ -202,17 +202,145 @@ impl Default for Carbohydrates {
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
-    use crate::tests::asserts::shadow_asserts::assert_eq;
-    #[expect(unused_imports)]
+    use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
     use crate::tests::asserts::*;
 
     use super::*;
     use crate::composition::*;
 
+    const FIELD_MODIFIERS: [fn(&mut Carbohydrates, f64); 4] = [
+        |c, ec| c.fiber.inulin += ec,
+        |c, ec| c.sugars.glucose += ec,
+        |c, ec| c.polyols.sorbitol += ec,
+        |c, ec| c.others += ec,
+    ];
+
+    #[test]
+    fn carbohydrates_field_count() {
+        assert_eq!(Carbohydrates::new().iter().count(), 4);
+    }
+
+    #[test]
+    fn artificial_sweetener_no_fields_missed() {
+        assert_eq!(Carbohydrates::new().iter().count(), FIELD_MODIFIERS.len());
+    }
+
+    #[test]
+    fn carbohydrates_empty() {
+        let carbohydrates = Carbohydrates::empty();
+        assert_eq!(carbohydrates, Carbohydrates::new());
+        assert_eq!(carbohydrates.fiber, Fibers::empty());
+        assert_eq!(carbohydrates.sugars, Sugars::empty());
+        assert_eq!(carbohydrates.polyols, Polyols::empty());
+        assert_eq!(carbohydrates.others, 0.0);
+
+        assert_eq!(carbohydrates.total(), 0.0);
+        assert_eq!(carbohydrates.energy().unwrap(), 0.0);
+        assert_eq!(carbohydrates.to_pod().unwrap(), 0.0);
+        assert_eq!(carbohydrates.to_pac().unwrap(), 0.0);
+    }
+
+    #[test]
+    fn carbohydrates_field_update_methods() {
+        let carbohydrates = Carbohydrates::new()
+            .fiber(Fibers::new().inulin(5.0))
+            .sugars(Sugars::new().glucose(3.0))
+            .polyols(Polyols::new().sorbitol(2.0))
+            .others(1.0);
+
+        assert_eq!(carbohydrates.fiber, Fibers::new().inulin(5.0));
+        assert_eq!(carbohydrates.sugars, Sugars::new().glucose(3.0));
+        assert_eq!(carbohydrates.polyols, Polyols::new().sorbitol(2.0));
+        assert_eq!(carbohydrates.others, 1.0);
+    }
+
+    #[test]
+    fn carbohydrates_others_from_total() {
+        let carbohydrates = Carbohydrates::new()
+            .fiber(Fibers::new().inulin(5.0))
+            .sugars(Sugars::new().glucose(3.0))
+            .polyols(Polyols::new().sorbitol(2.0));
+
+        let carbohydrates_with_others = carbohydrates.others_from_total(12.0).unwrap();
+        assert_eq!(carbohydrates_with_others.others, 2.0);
+        assert_eq!(carbohydrates_with_others.total(), 12.0);
+    }
+
+    #[test]
+    fn carbohydrates_others_from_total_override() {
+        let carbohydrates = Carbohydrates::new().fiber(Fibers::new().inulin(10.0)).others(5.0);
+        assert_eq!(carbohydrates.others, 5.0);
+        assert_eq!(carbohydrates.total(), 15.0);
+
+        let carbohydrates_with_others = carbohydrates.others_from_total(12.0).unwrap();
+        assert_eq!(carbohydrates_with_others.others, 2.0);
+        assert_eq!(carbohydrates_with_others.total(), 12.0);
+    }
+
+    #[test]
+    fn carbohydrates_others_from_total_error() {
+        let carbohydrates = Carbohydrates::new().fiber(Fibers::new().inulin(10.0));
+        assert!(matches!(carbohydrates.others_from_total(9.0), Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn carbohydrates_total() {
+        let carbohydrates = Carbohydrates::new()
+            .fiber(Fibers::new().inulin(5.0))
+            .sugars(Sugars::new().glucose(3.0))
+            .polyols(Polyols::new().sorbitol(2.0))
+            .others(1.0);
+
+        assert_eq!(carbohydrates.total(), 11.0);
+    }
+
+    #[test]
+    fn carbohydrates_energy() {
+        let fibers = Fibers::new().inulin(5.0);
+        let sugars = Sugars::new().glucose(3.0);
+        let polyols = Polyols::new().sorbitol(2.0);
+        assert_ne!(fibers.energy(), 0.0);
+        assert_ne!(sugars.energy(), 0.0);
+        assert_ne!(polyols.energy().unwrap(), 0.0);
+
+        let carbohydrates = Carbohydrates::new()
+            .fiber(fibers)
+            .sugars(sugars)
+            .polyols(polyols)
+            .others(1.0);
+
+        assert_eq!(
+            carbohydrates.energy().unwrap(),
+            fibers.energy() + sugars.energy() + polyols.energy().unwrap() + 4.0
+        );
+    }
+
+    #[test]
+    fn carbohydrates_energy_error() {
+        let carbohydrates = Carbohydrates::new().polyols(Polyols::new().other(10.0));
+        assert!(matches!(carbohydrates.energy(), Err(Error::CannotComputeEnergy(_))));
+    }
+
     #[test]
     fn carbohydrates_to_pod() {
-        let carbohydrates = Carbohydrates::new().sugars(Sugars::new().sucrose(10.0));
-        assert_eq!(carbohydrates.to_pod().unwrap(), 10.0);
+        let fibers = Fibers::new().oligofructose(5.0);
+        let sugars = Sugars::new().sucrose(3.0);
+        let polyols = Polyols::new().maltitol(2.0);
+        assert_ne!(fibers.to_pod(), 0.0);
+        assert_ne!(sugars.to_pod().unwrap(), 0.0);
+        assert_ne!(polyols.to_pod().unwrap(), 0.0);
+
+        let carbohydrates = Carbohydrates::new()
+            .fiber(fibers)
+            .sugars(sugars)
+            .polyols(polyols)
+            .others(10.0);
+
+        assert_eq!(
+            carbohydrates.to_pod().unwrap(),
+            /* `others` intentionally omitted */
+            fibers.to_pod() + sugars.to_pod().unwrap() + polyols.to_pod().unwrap()
+        );
     }
 
     #[test]
@@ -221,12 +349,32 @@ mod tests {
             Carbohydrates::new().sugars(Sugars::new().other(10.0)).to_pod(),
             Err(Error::CannotComputePOD(_))
         ));
+        assert!(matches!(
+            Carbohydrates::new().polyols(Polyols::new().other(10.0)).to_pod(),
+            Err(Error::CannotComputePOD(_))
+        ));
     }
 
     #[test]
     fn carbohydrates_to_pac() {
-        let carbohydrates = Carbohydrates::new().sugars(Sugars::new().sucrose(10.0));
-        assert_eq!(carbohydrates.to_pac().unwrap(), 10.0);
+        let fibers = Fibers::new().oligofructose(5.0);
+        let sugars = Sugars::new().sucrose(3.0);
+        let polyols = Polyols::new().maltitol(2.0);
+        assert_ne!(sugars.to_pac().unwrap(), 0.0);
+        assert_ne!(polyols.to_pac().unwrap(), 0.0);
+
+        let carbohydrates = Carbohydrates::new()
+            .fiber(fibers)
+            .sugars(sugars)
+            .polyols(polyols)
+            .others(10.0);
+
+        assert_eq!(
+            carbohydrates.to_pac().unwrap(),
+            /* `others` intentionally omitted */
+            /* `fibers` intentionally omitted, it has no `to_pac` */
+            sugars.to_pac().unwrap() + polyols.to_pac().unwrap()
+        );
     }
 
     #[test]
@@ -235,5 +383,78 @@ mod tests {
             Carbohydrates::new().sugars(Sugars::new().other(10.0)).to_pac(),
             Err(Error::CannotComputePAC(_))
         ));
+        assert!(matches!(
+            Carbohydrates::new().polyols(Polyols::new().other(10.0)).to_pac(),
+            Err(Error::CannotComputePAC(_))
+        ));
+    }
+
+    #[test]
+    fn carbohydrates_scale() {
+        let carbohydrates = Carbohydrates::new()
+            .fiber(Fibers::new().inulin(5.0))
+            .sugars(Sugars::new().glucose(3.0))
+            .polyols(Polyols::new().sorbitol(2.0))
+            .others(1.0);
+        assert_eq!(carbohydrates.total(), 11.0);
+
+        let scaled = carbohydrates.scale(0.5);
+        assert_eq!(scaled.fiber, Fibers::new().inulin(2.5));
+        assert_eq!(scaled.sugars, Sugars::new().glucose(1.5));
+        assert_eq!(scaled.polyols, Polyols::new().sorbitol(1.0));
+        assert_eq!(scaled.others, 0.5);
+        assert_eq!(scaled.total(), 5.5);
+    }
+
+    #[test]
+    fn carbohydrates_add() {
+        let carbohydrates1 = Carbohydrates::new()
+            .fiber(Fibers::new().inulin(5.0))
+            .sugars(Sugars::new().glucose(3.0))
+            .polyols(Polyols::new().sorbitol(2.0))
+            .others(1.0);
+        let carbohydrates2 = Carbohydrates::new()
+            .fiber(Fibers::new().oligofructose(4.0))
+            .sugars(Sugars::new().sucrose(2.0))
+            .polyols(Polyols::new().maltitol(1.0))
+            .others(0.5);
+        assert_eq!(carbohydrates1.total(), 11.0);
+        assert_eq!(carbohydrates2.total(), 7.5);
+
+        let sum = carbohydrates1.add(&carbohydrates2);
+        assert_eq!(sum.fiber, Fibers::new().inulin(5.0).oligofructose(4.0));
+        assert_eq!(sum.sugars, Sugars::new().glucose(3.0).sucrose(2.0));
+        assert_eq!(sum.polyols, Polyols::new().sorbitol(2.0).maltitol(1.0));
+        assert_eq!(sum.others, 1.5);
+        assert_eq!(sum.total(), 18.5);
+    }
+
+    #[test]
+    fn artificial_sweeteners_abs_diff_eq() {
+        let a = Carbohydrates::new()
+            .fiber(Fibers::new().inulin(5.0))
+            .sugars(Sugars::new().glucose(3.0))
+            .polyols(Polyols::new().sorbitol(2.0))
+            .others(1.0);
+        let b = a;
+        let mut c = b;
+
+        for v in [a, b, c] {
+            assert_ne!(v.fiber.total(), 0.0);
+            assert_ne!(v.sugars.total(), 0.0);
+            assert_ne!(v.polyols.total(), 0.0);
+            assert_ne!(v.others, 0.0);
+        }
+
+        assert_abs_diff_eq!(a, b);
+        assert_abs_diff_eq!(a, c);
+
+        for field_modifier in FIELD_MODIFIERS {
+            assert_abs_diff_eq!(a, c);
+            field_modifier(&mut c, 1e-10);
+            assert_abs_diff_ne!(a, c);
+            field_modifier(&mut c, -1e-10);
+            assert_abs_diff_eq!(a, c);
+        }
     }
 }

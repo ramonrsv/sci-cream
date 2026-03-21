@@ -123,6 +123,11 @@ mod tests {
     use super::*;
 
     #[test]
+    fn alcohol_field_count() {
+        assert_eq!(Alcohol::new().iter().count(), 1);
+    }
+
+    #[test]
     fn alcohol_empty() {
         let alcohol = Alcohol::empty();
         assert_eq!(alcohol, Alcohol::new());
