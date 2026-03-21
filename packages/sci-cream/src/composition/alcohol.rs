@@ -117,8 +117,6 @@ impl Default for Alcohol {
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
-    use approx::assert_abs_diff_ne;
-
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
@@ -170,7 +168,7 @@ mod tests {
     fn alcohol_abs_diff_eq() {
         let a = Alcohol::new().by_weight(5.0);
         let b = Alcohol::new().by_weight(5.0);
-        let c = Alcohol::new().by_weight(5.000_000_000_001);
+        let c = Alcohol::new().by_weight(5.0 + 1e-10);
         assert_abs_diff_eq!(a, b);
         assert_abs_diff_ne!(a, c);
     }

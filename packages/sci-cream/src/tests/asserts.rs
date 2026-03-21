@@ -20,11 +20,11 @@ pub(crate) use more_asserts::{assert_ge, assert_gt, assert_le, assert_lt};
 pub(crate) use pretty_assertions::{assert_eq, assert_ne};
 
 pub(crate) mod shadow_asserts {
-    #[expect(unused_imports)]
     pub(crate) use pretty_assertions::{assert_eq, assert_ne};
 }
 
 pub(crate) use approx::assert_abs_diff_eq;
+pub(crate) use approx::assert_abs_diff_ne;
 
 pub(crate) const TESTS_EPSILON: f64 = 0.0001;
 

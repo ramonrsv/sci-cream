@@ -323,3 +323,205 @@ impl Default for ArtificialSweeteners {
         Self::empty()
     }
 }
+
+#[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
+mod tests {
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    use crate::tests::asserts::*;
+
+    use crate::tests::util::{assert_f64_fields_eq_zero, assert_f64_fields_ne_zero};
+
+    use super::*;
+
+    const FIELDS_MUT: [fn(&mut ArtificialSweeteners) -> &mut f64; 7] = [
+        |v| &mut v.aspartame,
+        |v| &mut v.cyclamate,
+        |v| &mut v.saccharin,
+        |v| &mut v.sucralose,
+        |v| &mut v.steviosides,
+        |v| &mut v.mogrosides,
+        |v| &mut v.other,
+    ];
+
+    #[test]
+    fn artificial_sweetener_no_fields_missed() {
+        let sweeteners = ArtificialSweeteners::new();
+        assert_eq!(iter_fields_as::<f64, _>(&sweeteners).count(), FIELDS_MUT.len());
+    }
+
+    #[test]
+    fn artificial_sweeteners_empty() {
+        let sweeteners = ArtificialSweeteners::empty();
+        assert_eq!(sweeteners, ArtificialSweeteners::new());
+
+        assert_f64_fields_eq_zero(&sweeteners);
+
+        assert_eq!(sweeteners.total(), 0.0);
+        assert_eq!(sweeteners.energy().unwrap(), 0.0);
+        assert_eq!(sweeteners.to_pod().unwrap(), 0.0);
+        assert_eq!(sweeteners.to_pac().unwrap(), 0.0);
+    }
+
+    #[test]
+    fn artificial_sweeteners_field_update_methods() {
+        let sweeteners = ArtificialSweeteners::new()
+            .aspartame(1.0)
+            .cyclamate(2.0)
+            .saccharin(3.0)
+            .sucralose(4.0)
+            .steviosides(5.0)
+            .mogrosides(6.0)
+            .other(7.0);
+
+        assert_f64_fields_ne_zero(&sweeteners);
+
+        assert_eq!(sweeteners.aspartame, 1.0);
+        assert_eq!(sweeteners.cyclamate, 2.0);
+        assert_eq!(sweeteners.saccharin, 3.0);
+        assert_eq!(sweeteners.sucralose, 4.0);
+        assert_eq!(sweeteners.steviosides, 5.0);
+        assert_eq!(sweeteners.mogrosides, 6.0);
+        assert_eq!(sweeteners.other, 7.0);
+    }
+
+    #[test]
+    fn artificial_sweeteners_total() {
+        let sweeteners = ArtificialSweeteners::new()
+            .aspartame(1.0)
+            .cyclamate(2.0)
+            .saccharin(3.0)
+            .sucralose(4.0)
+            .steviosides(5.0)
+            .mogrosides(6.0)
+            .other(7.0);
+
+        assert_f64_fields_ne_zero(&sweeteners);
+        assert_eq!(sweeteners.total(), 28.0);
+    }
+
+    #[test]
+    fn artificial_sweeteners_energy() {
+        let new = || ArtificialSweeteners::new();
+        assert_eq!(new().aspartame(100.0).energy().unwrap(), 4.0);
+        assert_eq!(new().cyclamate(100.0).energy().unwrap(), 0.0);
+        assert_eq!(new().saccharin(100.0).energy().unwrap(), 0.0);
+        assert_eq!(new().sucralose(100.0).energy().unwrap(), 0.0);
+        assert_eq!(new().steviosides(100.0).energy().unwrap(), 0.0);
+        assert_eq!(new().mogrosides(100.0).energy().unwrap(), 0.0);
+        assert!(matches!(new().other(100.0).energy(), Err(Error::CannotComputeEnergy(_))));
+    }
+
+    #[test]
+    fn artificial_sweeteners_to_pod() {
+        let new = || ArtificialSweeteners::new();
+        assert_eq!(new().aspartame(1.0).to_pod().unwrap(), 200.0);
+        assert_eq!(new().cyclamate(1.0).to_pod().unwrap(), 30.0);
+        assert_eq!(new().saccharin(1.0).to_pod().unwrap(), 400.0);
+        assert_eq!(new().sucralose(1.0).to_pod().unwrap(), 600.0);
+        assert_eq!(new().steviosides(1.0).to_pod().unwrap(), 225.0);
+        assert_eq!(new().mogrosides(1.0).to_pod().unwrap(), 340.0);
+        assert!(matches!(new().other(1.0).to_pod(), Err(Error::CannotComputePOD(_))));
+    }
+
+    #[test]
+    fn artificial_sweeteners_to_pac() {
+        let new = || ArtificialSweeteners::new();
+        assert_eq!(new().aspartame(100.0).to_pac().unwrap(), 116.0);
+        assert_eq!(new().cyclamate(100.0).to_pac().unwrap(), 170.0);
+        assert_eq!(new().saccharin(100.0).to_pac().unwrap(), 186.0);
+        assert_eq!(new().sucralose(100.0).to_pac().unwrap(), 86.0);
+        assert_eq!(new().steviosides(100.0).to_pac().unwrap(), 0.0);
+        assert_eq!(new().mogrosides(100.0).to_pac().unwrap(), 0.0);
+        assert!(matches!(new().other(100.0).to_pac(), Err(Error::CannotComputePAC(_))));
+    }
+
+    #[test]
+    fn artificial_sweeteners_scale() {
+        let sweeteners = ArtificialSweeteners::new()
+            .aspartame(1.0)
+            .cyclamate(2.0)
+            .saccharin(3.0)
+            .sucralose(4.0)
+            .steviosides(5.0)
+            .mogrosides(6.0)
+            .other(7.0);
+        let scaled = sweeteners.scale(0.5);
+
+        assert_f64_fields_ne_zero(&sweeteners);
+        assert_f64_fields_ne_zero(&scaled);
+
+        assert_eq!(scaled.aspartame, 0.5);
+        assert_eq!(scaled.cyclamate, 1.0);
+        assert_eq!(scaled.saccharin, 1.5);
+        assert_eq!(scaled.sucralose, 2.0);
+        assert_eq!(scaled.steviosides, 2.5);
+        assert_eq!(scaled.mogrosides, 3.0);
+        assert_eq!(scaled.other, 3.5);
+    }
+
+    #[test]
+    fn artificial_sweeteners_add() {
+        let a = ArtificialSweeteners::new()
+            .aspartame(1.0)
+            .cyclamate(2.0)
+            .saccharin(3.0)
+            .sucralose(4.0)
+            .steviosides(5.0)
+            .mogrosides(6.0)
+            .other(7.0);
+
+        let b = ArtificialSweeteners::new()
+            .aspartame(0.5)
+            .cyclamate(1.0)
+            .saccharin(1.5)
+            .sucralose(2.0)
+            .steviosides(2.5)
+            .mogrosides(3.0)
+            .other(3.5);
+
+        let added = a.add(&b);
+
+        for v in [a, b, added] {
+            assert_f64_fields_ne_zero(&v);
+        }
+
+        assert_eq!(added.aspartame, 1.5);
+        assert_eq!(added.cyclamate, 3.0);
+        assert_eq!(added.saccharin, 4.5);
+        assert_eq!(added.sucralose, 6.0);
+        assert_eq!(added.steviosides, 7.5);
+        assert_eq!(added.mogrosides, 9.0);
+        assert_eq!(added.other, 10.5);
+    }
+
+    #[test]
+    fn artificial_sweeteners_abs_diff_eq() {
+        let a = ArtificialSweeteners::new()
+            .aspartame(1.0)
+            .cyclamate(2.0)
+            .saccharin(3.0)
+            .sucralose(4.0)
+            .steviosides(5.0)
+            .mogrosides(6.0)
+            .other(7.0);
+        let b = a;
+        let mut c = b;
+
+        for v in [a, b, c] {
+            assert_f64_fields_ne_zero(&v);
+        }
+
+        assert_abs_diff_eq!(a, b);
+        assert_abs_diff_eq!(a, c);
+
+        for field in FIELDS_MUT {
+            assert_abs_diff_eq!(a, c);
+            *field(&mut c) += 1e-10;
+            assert_abs_diff_ne!(a, c);
+            *field(&mut c) -= 1e-10;
+            assert_abs_diff_eq!(a, c);
+        }
+    }
+}
