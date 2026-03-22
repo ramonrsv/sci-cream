@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774204409723,
+  "lastUpdate": 1774204481905,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -11140,6 +11140,60 @@ window.BENCHMARK_DATA = {
           {
             "name": "sweetener_spec_into_composition",
             "value": 306,
+            "range": "± 2",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e2990d7006814043bcc93c31e852e2b1fc55c311",
+          "message": "Fix `/100` bug in `ArtificialSweeteners::energy`",
+          "timestamp": "2026-03-22T13:19:52-04:00",
+          "tree_id": "6f077e9f8b4740d559693207ceb45882ea2ff2d0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e2990d7006814043bcc93c31e852e2b1fc55c311"
+        },
+        "date": 1774204478796,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3507,
+            "range": "± 64",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 162589,
+            "range": "± 1756",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2088,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160113,
+            "range": "± 1180",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 301,
             "range": "± 2",
             "unit": "ns/iter"
           }
