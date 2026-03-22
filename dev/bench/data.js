@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774204367013,
+  "lastUpdate": 1774204392041,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -113803,6 +113803,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.78%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e2990d7006814043bcc93c31e852e2b1fc55c311",
+          "message": "Fix `/100` bug in `ArtificialSweeteners::energy`",
+          "timestamp": "2026-03-22T13:19:52-04:00",
+          "tree_id": "6f077e9f8b4740d559693207ceb45882ea2ff2d0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e2990d7006814043bcc93c31e852e2b1fc55c311"
+        },
+        "date": 1774204388665,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78594,
+            "range": "±0.65%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 721542,
+            "range": "±1.04%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10192,
+            "range": "±1.84%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 613532,
+            "range": "±0.71%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
