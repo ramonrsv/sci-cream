@@ -273,3 +273,195 @@ impl Default for Polyols {
         Self::empty()
     }
 }
+
+#[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
+mod tests {
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    use crate::tests::asserts::*;
+    use crate::tests::util::{assert_f64_fields_eq_zero, assert_f64_fields_ne_zero};
+
+    use super::*;
+
+    const FIELD_MODIFIERS: [fn(&mut Polyols, f64); 5] = [
+        |v, ec| v.erythritol += ec,
+        |v, ec| v.maltitol += ec,
+        |v, ec| v.sorbitol += ec,
+        |v, ec| v.xylitol += ec,
+        |v, ec| v.other += ec,
+    ];
+
+    #[test]
+    fn polyols_field_count() {
+        assert_eq!(Polyols::new().iter().count(), 5);
+    }
+
+    #[test]
+    fn polyols_no_fields_missed() {
+        assert_eq!(Polyols::new().iter().count(), FIELD_MODIFIERS.len());
+    }
+
+    #[test]
+    fn polyols_empty() {
+        let polyols = Polyols::empty();
+        assert_eq!(polyols, Polyols::new());
+
+        assert_f64_fields_eq_zero(&polyols);
+
+        assert_eq!(polyols.total(), 0.0);
+        assert_eq!(polyols.energy().unwrap(), 0.0);
+        assert_eq!(polyols.to_pod().unwrap(), 0.0);
+        assert_eq!(polyols.to_pac().unwrap(), 0.0);
+    }
+
+    #[test]
+    fn polyols_field_update_methods() {
+        let polyols = Polyols::new()
+            .erythritol(1.0)
+            .maltitol(2.0)
+            .sorbitol(3.0)
+            .xylitol(4.0)
+            .other(5.0);
+
+        assert_f64_fields_ne_zero(&polyols);
+
+        assert_eq!(polyols.erythritol, 1.0);
+        assert_eq!(polyols.maltitol, 2.0);
+        assert_eq!(polyols.sorbitol, 3.0);
+        assert_eq!(polyols.xylitol, 4.0);
+        assert_eq!(polyols.other, 5.0);
+    }
+
+    #[test]
+    fn polyols_total() {
+        let polyols = Polyols::new()
+            .erythritol(1.0)
+            .maltitol(2.0)
+            .sorbitol(3.0)
+            .xylitol(4.0)
+            .other(5.0);
+        assert_eq!(polyols.total(), 15.0);
+    }
+
+    #[test]
+    fn polyols_energy() {
+        let new = || Polyols::new();
+        assert_eq!(new().erythritol(1.0).energy().unwrap(), 0.2);
+        assert_eq!(new().maltitol(1.0).energy().unwrap(), 2.5);
+        assert_eq!(new().sorbitol(1.0).energy().unwrap(), 2.8);
+        assert_eq!(new().xylitol(1.0).energy().unwrap(), 2.7);
+    }
+
+    #[test]
+    fn polyols_energy_error() {
+        assert!(matches!(Polyols::new().other(1.0).energy(), Err(Error::CannotComputeEnergy(_))));
+    }
+
+    #[test]
+    fn polyols_to_pod() {
+        let new = || Polyols::new();
+        assert_eq!(new().erythritol(100.0).to_pod().unwrap(), 70.0);
+        assert_eq!(new().maltitol(100.0).to_pod().unwrap(), 90.0);
+        assert_eq!(new().sorbitol(100.0).to_pod().unwrap(), 55.0);
+        assert_eq!(new().xylitol(100.0).to_pod().unwrap(), 95.0);
+    }
+
+    #[test]
+    fn polyols_to_pod_error() {
+        assert!(matches!(Polyols::new().other(1.0).to_pod(), Err(Error::CannotComputePOD(_))));
+    }
+
+    #[test]
+    fn polyols_to_pac() {
+        let new = || Polyols::new();
+        assert_eq!(new().erythritol(100.0).to_pac().unwrap(), 280.0);
+        assert_eq!(new().maltitol(100.0).to_pac().unwrap(), 99.0);
+        assert_eq!(new().sorbitol(100.0).to_pac().unwrap(), 187.0);
+        assert_eq!(new().xylitol(100.0).to_pac().unwrap(), 224.0);
+    }
+
+    #[test]
+    fn polyols_to_pac_error() {
+        assert!(matches!(Polyols::new().other(1.0).to_pac(), Err(Error::CannotComputePAC(_))));
+    }
+
+    #[test]
+    fn polyols_scale() {
+        let polyols = Polyols::new()
+            .erythritol(2.0)
+            .maltitol(4.0)
+            .sorbitol(6.0)
+            .xylitol(8.0)
+            .other(10.0);
+        assert_eq!(polyols.total(), 30.0);
+
+        let scaled = polyols.scale(0.5);
+
+        assert_f64_fields_ne_zero(&polyols);
+        assert_f64_fields_ne_zero(&scaled);
+
+        assert_eq!(scaled.erythritol, 1.0);
+        assert_eq!(scaled.maltitol, 2.0);
+        assert_eq!(scaled.sorbitol, 3.0);
+        assert_eq!(scaled.xylitol, 4.0);
+        assert_eq!(scaled.other, 5.0);
+        assert_eq!(scaled.total(), 15.0);
+    }
+
+    #[test]
+    fn polyols_add() {
+        let a = Polyols::new()
+            .erythritol(1.0)
+            .maltitol(2.0)
+            .sorbitol(3.0)
+            .xylitol(4.0)
+            .other(5.0);
+        let b = Polyols::new()
+            .erythritol(0.5)
+            .maltitol(1.0)
+            .sorbitol(1.5)
+            .xylitol(2.0)
+            .other(2.5);
+
+        let sum = a.add(&b);
+
+        assert_f64_fields_ne_zero(&a);
+        assert_f64_fields_ne_zero(&b);
+        assert_f64_fields_ne_zero(&sum);
+
+        assert_eq!(sum.erythritol, 1.5);
+        assert_eq!(sum.maltitol, 3.0);
+        assert_eq!(sum.sorbitol, 4.5);
+        assert_eq!(sum.xylitol, 6.0);
+        assert_eq!(sum.other, 7.5);
+        assert_eq!(sum.total(), a.total() + b.total());
+    }
+
+    #[test]
+    fn polyols_abs_diff_eq() {
+        let a = Polyols::new()
+            .erythritol(1.0)
+            .maltitol(2.0)
+            .sorbitol(3.0)
+            .xylitol(4.0)
+            .other(5.0);
+        let b = a;
+        let mut c = b;
+
+        for v in [a, b, c] {
+            assert_f64_fields_ne_zero(&v);
+        }
+
+        assert_abs_diff_eq!(a, b);
+        assert_abs_diff_eq!(a, c);
+
+        for field_modifier in FIELD_MODIFIERS {
+            assert_abs_diff_eq!(a, c);
+            field_modifier(&mut c, 1e-10);
+            assert_abs_diff_ne!(a, c);
+            field_modifier(&mut c, -1e-10);
+            assert_abs_diff_eq!(a, c);
+        }
+    }
+}

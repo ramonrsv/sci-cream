@@ -463,6 +463,8 @@ mod tests {
             .steviosides(5.0)
             .mogrosides(6.0)
             .other(7.0);
+        assert_eq!(sweeteners.total(), 28.0);
+
         let scaled = sweeteners.scale(0.5);
 
         assert_f64_fields_ne_zero(&sweeteners);
@@ -475,6 +477,7 @@ mod tests {
         assert_eq!(scaled.steviosides, 2.5);
         assert_eq!(scaled.mogrosides, 3.0);
         assert_eq!(scaled.other, 3.5);
+        assert_eq!(scaled.total(), 14.0);
     }
 
     #[test]
@@ -497,6 +500,9 @@ mod tests {
             .mogrosides(3.0)
             .other(3.5);
 
+        assert_eq!(a.total(), 28.0);
+        assert_eq!(b.total(), 14.0);
+
         let added = a.add(&b);
 
         for v in [a, b, added] {
@@ -510,6 +516,7 @@ mod tests {
         assert_eq!(added.steviosides, 7.5);
         assert_eq!(added.mogrosides, 9.0);
         assert_eq!(added.other, 10.5);
+        assert_eq!(added.total(), 42.0);
     }
 
     #[test]
