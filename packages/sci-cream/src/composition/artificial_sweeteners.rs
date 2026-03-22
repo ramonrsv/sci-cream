@@ -210,8 +210,7 @@ impl ArtificialSweeteners {
             self.mogrosides * constants::energy::MOGROSIDES,
         ]
         .into_iter()
-        .sum::<f64>()
-            / 100.0)
+        .sum::<f64>())
     }
 
     /// Calculates the [POD](crate::docs#pod) contributions of the artificial sweeteners, in terms
@@ -408,12 +407,12 @@ mod tests {
     #[test]
     fn artificial_sweeteners_energy() {
         let new = || ArtificialSweeteners::new();
-        assert_eq!(new().aspartame(100.0).energy().unwrap(), 4.0);
-        assert_eq!(new().cyclamate(100.0).energy().unwrap(), 0.0);
-        assert_eq!(new().saccharin(100.0).energy().unwrap(), 0.0);
-        assert_eq!(new().sucralose(100.0).energy().unwrap(), 0.0);
-        assert_eq!(new().steviosides(100.0).energy().unwrap(), 0.0);
-        assert_eq!(new().mogrosides(100.0).energy().unwrap(), 0.0);
+        assert_eq!(new().aspartame(1.0).energy().unwrap(), 4.0);
+        assert_eq!(new().cyclamate(1.0).energy().unwrap(), 0.0);
+        assert_eq!(new().saccharin(1.0).energy().unwrap(), 0.0);
+        assert_eq!(new().sucralose(1.0).energy().unwrap(), 0.0);
+        assert_eq!(new().steviosides(1.0).energy().unwrap(), 0.0);
+        assert_eq!(new().mogrosides(1.0).energy().unwrap(), 0.0);
     }
 
     #[test]
