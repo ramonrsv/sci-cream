@@ -144,18 +144,167 @@ impl Default for PAC {
 #[allow(clippy::float_cmp)]
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
-    #[expect(unused_imports)]
     use crate::tests::asserts::*;
+    use crate::tests::util::{assert_f64_fields_eq_zero, assert_f64_fields_ne_zero};
 
+    use super::*;
     use crate::tests::assets::*;
+
+    const FIELD_MODIFIERS: [fn(&mut PAC, f64); 5] = [
+        |s, v| s.sugars += v,
+        |s, v| s.salt += v,
+        |s, v| s.msnf_ws_salts += v,
+        |s, v| s.alcohol += v,
+        |s, v| s.hardness_factor += v,
+    ];
+
+    #[test]
+    fn pac_field_count() {
+        assert_eq!(PAC::new().iter().count(), 5);
+    }
+
+    #[test]
+    fn pac_no_fields_missed() {
+        assert_eq!(PAC::new().iter().count(), FIELD_MODIFIERS.len());
+    }
+
+    #[test]
+    fn pac_empty() {
+        let p = PAC::empty();
+        assert_eq!(p, PAC::new());
+
+        assert_f64_fields_eq_zero(&p);
+
+        assert_eq!(p.sugars, 0.0);
+        assert_eq!(p.salt, 0.0);
+        assert_eq!(p.msnf_ws_salts, 0.0);
+        assert_eq!(p.alcohol, 0.0);
+        assert_eq!(p.hardness_factor, 0.0);
+        assert_eq!(p.total(), 0.0);
+    }
+
+    #[test]
+    fn pac_field_update_methods() {
+        let p = PAC::new()
+            .sugars(1.0)
+            .salt(2.0)
+            .msnf_ws_salts(3.0)
+            .alcohol(4.0)
+            .hardness_factor(5.0);
+
+        assert_f64_fields_ne_zero(&p);
+
+        assert_eq!(p.sugars, 1.0);
+        assert_eq!(p.salt, 2.0);
+        assert_eq!(p.msnf_ws_salts, 3.0);
+        assert_eq!(p.alcohol, 4.0);
+        assert_eq!(p.hardness_factor, 5.0);
+    }
 
     #[test]
     fn pac_total() {
+        let p = PAC::new().sugars(1.0).salt(2.0).msnf_ws_salts(3.0).alcohol(4.0);
+        assert_eq!(p.total(), 10.0);
+    }
+
+    #[test]
+    fn pac_total_excludes_hardness_factor() {
+        // hardness_factor is intentionally excluded from total()
+        let p = PAC::new()
+            .sugars(1.0)
+            .salt(2.0)
+            .msnf_ws_salts(3.0)
+            .alcohol(4.0)
+            .hardness_factor(100.0);
+
+        assert_f64_fields_ne_zero(&p);
+        assert_eq!(p.total(), 10.0);
+    }
+
+    #[test]
+    fn pac_2_percent_milk() {
         let pac = COMP_2_MILK.pac;
         assert_eq!(pac.sugars, 4.8069);
         assert_eq!(pac.salt, 0.0);
         assert_eq!(pac.msnf_ws_salts, 3.2405);
         assert_eq!(pac.alcohol, 0.0);
         assert_eq!(pac.total(), 8.0474);
+    }
+
+    #[test]
+    fn pac_scale() {
+        let p = PAC::new()
+            .sugars(4.0)
+            .salt(2.0)
+            .msnf_ws_salts(2.0)
+            .alcohol(2.0)
+            .hardness_factor(10.0);
+        assert_eq!(p.total(), 10.0);
+
+        let scaled = p.scale(0.5);
+        assert_eq!(scaled.sugars, 2.0);
+        assert_eq!(scaled.salt, 1.0);
+        assert_eq!(scaled.msnf_ws_salts, 1.0);
+        assert_eq!(scaled.alcohol, 1.0);
+        assert_eq!(scaled.hardness_factor, 5.0);
+        assert_eq!(scaled.total(), 5.0);
+    }
+
+    #[test]
+    fn pac_add() {
+        let a = PAC::new()
+            .sugars(4.0)
+            .salt(1.0)
+            .msnf_ws_salts(2.0)
+            .alcohol(1.0)
+            .hardness_factor(3.0);
+        let b = PAC::new()
+            .sugars(2.0)
+            .salt(3.0)
+            .msnf_ws_salts(1.0)
+            .alcohol(0.5)
+            .hardness_factor(1.0);
+        assert_eq!(a.total(), 8.0);
+        assert_eq!(b.total(), 6.5);
+
+        assert_f64_fields_ne_zero(&a);
+        assert_f64_fields_ne_zero(&b);
+
+        let sum = a.add(&b);
+        assert_eq!(sum.sugars, 6.0);
+        assert_eq!(sum.salt, 4.0);
+        assert_eq!(sum.msnf_ws_salts, 3.0);
+        assert_eq!(sum.alcohol, 1.5);
+        assert_eq!(sum.hardness_factor, 4.0);
+        assert_eq!(sum.total(), a.total() + b.total());
+        assert_eq!(sum.total(), 14.5);
+        assert_f64_fields_ne_zero(&sum);
+    }
+
+    #[test]
+    fn pac_abs_diff_eq() {
+        let a = PAC::new()
+            .sugars(4.0)
+            .salt(1.0)
+            .msnf_ws_salts(2.0)
+            .alcohol(1.0)
+            .hardness_factor(3.0);
+        let b = a;
+        let mut c = b;
+
+        for v in [a, b, c] {
+            assert_f64_fields_ne_zero(&v);
+        }
+
+        assert_abs_diff_eq!(a, b);
+        assert_abs_diff_eq!(a, c);
+
+        for field_modifier in FIELD_MODIFIERS {
+            assert_abs_diff_eq!(a, c);
+            field_modifier(&mut c, 1e-10);
+            assert_abs_diff_ne!(a, c);
+            field_modifier(&mut c, -1e-10);
+            assert_abs_diff_eq!(a, c);
+        }
     }
 }
