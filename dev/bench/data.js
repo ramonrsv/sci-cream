@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774205529919,
+  "lastUpdate": 1774205575313,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -115025,6 +115025,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.72%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "56a1b9bafe94b81a2385b5fd03b8c284849cde01",
+          "message": "Add unit tests for `composition::PAC`",
+          "timestamp": "2026-03-22T13:28:58-04:00",
+          "tree_id": "994a80a1bc6f048b995573ea0c5466c8d4772c43",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/56a1b9bafe94b81a2385b5fd03b8c284849cde01"
+        },
+        "date": 1774205572393,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77709,
+            "range": "±0.68%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 731923,
+            "range": "±0.74%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10047,
+            "range": "±1.79%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 608573,
+            "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
