@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774203719204,
+  "lastUpdate": 1774204367013,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -113751,6 +113751,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.69%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b5d4baa330a51bfb5d71afd74ebf5a4a32656bd5",
+          "message": "Add unit tests for `composition::Sweeteners`",
+          "timestamp": "2026-03-22T12:55:29-04:00",
+          "tree_id": "b87cd994a6831bc5a59a85450ac0ac3046c38f03",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b5d4baa330a51bfb5d71afd74ebf5a4a32656bd5"
+        },
+        "date": 1774204364297,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76062,
+            "range": "±1.59%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 726087,
+            "range": "±0.42%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10048,
+            "range": "±1.87%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 596535,
+            "range": "±0.78%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
