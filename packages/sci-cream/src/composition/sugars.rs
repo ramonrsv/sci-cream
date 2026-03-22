@@ -356,15 +356,107 @@ impl Default for Sugars {
 #[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
-    #[expect(unused_imports)]
     use crate::tests::asserts::*;
+    use crate::tests::util::{assert_f64_fields_eq_zero, assert_f64_fields_ne_zero};
 
     use super::*;
-    use crate::error::Error;
+
+    const FIELD_MODIFIERS: [fn(&mut Sugars, f64); 8] = [
+        |v, ec| v.glucose += ec,
+        |v, ec| v.fructose += ec,
+        |v, ec| v.galactose += ec,
+        |v, ec| v.sucrose += ec,
+        |v, ec| v.lactose += ec,
+        |v, ec| v.maltose += ec,
+        |v, ec| v.trehalose += ec,
+        |v, ec| v.other += ec,
+    ];
+
+    #[test]
+    fn sugars_field_count() {
+        assert_eq!(Sugars::new().iter().count(), 8);
+    }
+
+    #[test]
+    fn sugars_no_fields_missed() {
+        assert_eq!(Sugars::new().iter().count(), FIELD_MODIFIERS.len());
+    }
+
+    #[test]
+    fn sugars_empty() {
+        let sugars = Sugars::empty();
+        assert_eq!(sugars, Sugars::new());
+
+        assert_f64_fields_eq_zero(&sugars);
+
+        assert_eq!(sugars.total(), 0.0);
+        assert_eq!(sugars.energy(), 0.0);
+        assert_eq!(sugars.to_pod().unwrap(), 0.0);
+        assert_eq!(sugars.to_pac().unwrap(), 0.0);
+    }
+
+    #[test]
+    fn sugars_field_update_methods() {
+        let sugars = Sugars::new()
+            .glucose(1.0)
+            .fructose(2.0)
+            .galactose(3.0)
+            .sucrose(4.0)
+            .lactose(5.0)
+            .maltose(6.0)
+            .trehalose(7.0)
+            .other(8.0);
+
+        assert_f64_fields_ne_zero(&sugars);
+
+        assert_eq!(sugars.glucose, 1.0);
+        assert_eq!(sugars.fructose, 2.0);
+        assert_eq!(sugars.galactose, 3.0);
+        assert_eq!(sugars.sucrose, 4.0);
+        assert_eq!(sugars.lactose, 5.0);
+        assert_eq!(sugars.maltose, 6.0);
+        assert_eq!(sugars.trehalose, 7.0);
+        assert_eq!(sugars.other, 8.0);
+    }
+
+    #[test]
+    fn sugars_total() {
+        let sugars = Sugars::new()
+            .glucose(1.0)
+            .fructose(2.0)
+            .galactose(3.0)
+            .sucrose(4.0)
+            .lactose(5.0)
+            .maltose(6.0)
+            .trehalose(7.0)
+            .other(8.0);
+        assert_eq!(sugars.total(), 36.0);
+    }
+
+    #[test]
+    fn sugars_energy() {
+        let sugars = Sugars::new()
+            .glucose(1.0)
+            .fructose(2.0)
+            .galactose(3.0)
+            .sucrose(4.0)
+            .lactose(5.0)
+            .maltose(6.0)
+            .trehalose(7.0)
+            .other(8.0);
+        assert_eq!(sugars.energy(), 36.0 * 4.0);
+    }
 
     #[test]
     fn sugars_to_pod() {
-        assert_eq!(Sugars::new().sucrose(10.0).to_pod().unwrap(), 10.0);
+        let new = || Sugars::new();
+        assert_eq!(new().glucose(100.0).to_pod().unwrap(), 80.0);
+        assert_eq!(new().fructose(100.0).to_pod().unwrap(), 173.0);
+        assert_eq!(new().galactose(100.0).to_pod().unwrap(), 65.0);
+        assert_eq!(new().sucrose(100.0).to_pod().unwrap(), 100.0);
+        assert_eq!(new().lactose(100.0).to_pod().unwrap(), 16.0);
+        assert_eq!(new().maltose(100.0).to_pod().unwrap(), 32.0);
+        assert_eq!(new().trehalose(100.0).to_pod().unwrap(), 45.0);
     }
 
     #[test]
@@ -374,11 +466,116 @@ mod tests {
 
     #[test]
     fn sugars_to_pac() {
-        assert_eq!(Sugars::new().sucrose(10.0).to_pac().unwrap(), 10.0);
+        let new = || Sugars::new();
+        assert_eq!(new().glucose(100.0).to_pac().unwrap(), 190.0);
+        assert_eq!(new().fructose(100.0).to_pac().unwrap(), 190.0);
+        assert_eq!(new().galactose(100.0).to_pac().unwrap(), 190.0);
+        assert_eq!(new().sucrose(100.0).to_pac().unwrap(), 100.0);
+        assert_eq!(new().lactose(100.0).to_pac().unwrap(), 100.0);
+        assert_eq!(new().maltose(100.0).to_pac().unwrap(), 100.0);
+        assert_eq!(new().trehalose(100.0).to_pac().unwrap(), 100.0);
     }
 
     #[test]
     fn sugars_to_pac_error() {
         assert!(matches!(Sugars::new().other(10.0).to_pac(), Err(Error::CannotComputePAC(_))));
+    }
+
+    #[test]
+    fn sugars_scale() {
+        let sugars = Sugars::new()
+            .glucose(2.0)
+            .fructose(4.0)
+            .galactose(6.0)
+            .sucrose(8.0)
+            .lactose(10.0)
+            .maltose(12.0)
+            .trehalose(14.0)
+            .other(16.0);
+
+        let scaled = sugars.scale(0.5);
+
+        assert_f64_fields_ne_zero(&sugars);
+        assert_f64_fields_ne_zero(&scaled);
+
+        assert_eq!(scaled.glucose, 1.0);
+        assert_eq!(scaled.fructose, 2.0);
+        assert_eq!(scaled.galactose, 3.0);
+        assert_eq!(scaled.sucrose, 4.0);
+        assert_eq!(scaled.lactose, 5.0);
+        assert_eq!(scaled.maltose, 6.0);
+        assert_eq!(scaled.trehalose, 7.0);
+        assert_eq!(scaled.other, 8.0);
+        assert_eq!(scaled.total(), sugars.total() * 0.5);
+    }
+
+    #[test]
+    fn sugars_add() {
+        let a = Sugars::new()
+            .glucose(1.0)
+            .fructose(2.0)
+            .galactose(3.0)
+            .sucrose(4.0)
+            .lactose(5.0)
+            .maltose(6.0)
+            .trehalose(7.0)
+            .other(8.0);
+        let b = Sugars::new()
+            .glucose(0.5)
+            .fructose(1.0)
+            .galactose(1.5)
+            .sucrose(2.0)
+            .lactose(2.5)
+            .maltose(3.0)
+            .trehalose(3.5)
+            .other(4.0);
+        assert_eq!(a.total(), 36.0);
+        assert_eq!(b.total(), 18.0);
+
+        let sum = a.add(&b);
+
+        assert_f64_fields_ne_zero(&a);
+        assert_f64_fields_ne_zero(&b);
+        assert_f64_fields_ne_zero(&sum);
+
+        assert_eq!(sum.glucose, 1.5);
+        assert_eq!(sum.fructose, 3.0);
+        assert_eq!(sum.galactose, 4.5);
+        assert_eq!(sum.sucrose, 6.0);
+        assert_eq!(sum.lactose, 7.5);
+        assert_eq!(sum.maltose, 9.0);
+        assert_eq!(sum.trehalose, 10.5);
+        assert_eq!(sum.other, 12.0);
+        assert_eq!(sum.total(), 54.0);
+    }
+
+    #[test]
+    fn sugars_abs_diff_eq() {
+        let a = Sugars::new()
+            .glucose(1.0)
+            .fructose(2.0)
+            .galactose(3.0)
+            .sucrose(4.0)
+            .lactose(5.0)
+            .maltose(6.0)
+            .trehalose(7.0)
+            .other(8.0);
+        let b = a;
+        let mut c = b;
+
+        for v in [a, b, c] {
+            assert_f64_fields_ne_zero(&v);
+        }
+
+        assert_abs_diff_eq!(a, b);
+        assert_abs_diff_eq!(a, c);
+
+        for field_modifier in FIELD_MODIFIERS {
+            assert_abs_diff_eq!(a, c);
+            field_modifier(&mut c, 1e-10);
+            assert_abs_diff_ne!(a, c);
+            field_modifier(&mut c, -1e-10);
+            assert_abs_diff_eq!(a, c);
+        }
     }
 }
