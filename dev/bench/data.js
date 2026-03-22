@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774060635157,
+  "lastUpdate": 1774157976966,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -110696,6 +110696,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.69%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a5cb8bb1e61d76bb0d5b348a4eafe3cede678e4c",
+          "message": "Add unit tests for `composition::Carbohydrates`\n\nAlso move TODO item about adding composition traits for calculating POD,\nPAC, etc. from backlog to Next Release, as it should be a simple task.",
+          "timestamp": "2026-03-22T00:39:48-04:00",
+          "tree_id": "c9eff288d18372cf02f2dd20d797bab1bafaca1b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a5cb8bb1e61d76bb0d5b348a4eafe3cede678e4c"
+        },
+        "date": 1774157973931,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78095,
+            "range": "±0.67%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 736644,
+            "range": "±0.71%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10213,
+            "range": "±1.90%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 607291,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
