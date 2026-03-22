@@ -113,3 +113,98 @@ impl Default for Fats {
         Self::empty()
     }
 }
+
+#[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
+mod tests {
+    use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
+    use crate::tests::asserts::*;
+
+    use super::*;
+
+    const FIELD_MODIFIERS: [fn(&mut Fats, f64); 3] =
+        [|f, v| f.total += v, |f, v| f.saturated += v, |f, v| f.trans += v];
+
+    #[test]
+    fn fats_field_count() {
+        assert_eq!(Fats::new().iter().count(), 3);
+    }
+
+    #[test]
+    fn fats_no_fields_missed() {
+        assert_eq!(Fats::new().iter().count(), FIELD_MODIFIERS.len());
+    }
+
+    #[test]
+    fn fats_empty() {
+        let fats = Fats::empty();
+        assert_eq!(fats, Fats::new());
+        assert_eq!(fats.total, 0.0);
+        assert_eq!(fats.saturated, 0.0);
+        assert_eq!(fats.trans, 0.0);
+
+        assert_eq!(fats.energy(), 0.0);
+    }
+
+    #[test]
+    fn fats_field_update_methods() {
+        let fats = Fats::new().total(10.0).saturated(5.0).trans(1.0);
+
+        assert_eq!(fats.total, 10.0);
+        assert_eq!(fats.saturated, 5.0);
+        assert_eq!(fats.trans, 1.0);
+    }
+
+    #[test]
+    fn fats_energy() {
+        let fats = Fats::new().total(100.0).saturated(30.0).trans(2.0);
+        assert_ne!(fats.energy(), 0.0);
+        assert_eq!(fats.energy(), 100.0 * 9.0);
+    }
+
+    #[test]
+    fn fats_scale() {
+        let fats = Fats::new().total(10.0).saturated(5.0).trans(1.0);
+
+        let scaled = fats.scale(0.5);
+        assert_eq!(scaled.total, 5.0);
+        assert_eq!(scaled.saturated, 2.5);
+        assert_eq!(scaled.trans, 0.5);
+    }
+
+    #[test]
+    fn fats_add() {
+        let a = Fats::new().total(10.0).saturated(5.0).trans(1.0);
+        let b = Fats::new().total(4.0).saturated(2.0).trans(0.5);
+
+        let sum = a.add(&b);
+        assert_eq!(sum.total, 14.0);
+        assert_eq!(sum.saturated, 7.0);
+        assert_eq!(sum.trans, 1.5);
+    }
+
+    #[test]
+    fn fats_abs_diff_eq() {
+        let a = Fats::new().total(10.0).saturated(5.0).trans(1.0);
+        let b = a;
+        let mut c = b;
+
+        for v in [a, b, c] {
+            assert_ne!(v.total, 0.0);
+            assert_ne!(v.saturated, 0.0);
+            assert_ne!(v.trans, 0.0);
+        }
+
+        assert_abs_diff_eq!(a, b);
+        assert_abs_diff_eq!(a, c);
+
+        for field_modifier in FIELD_MODIFIERS {
+            assert_abs_diff_eq!(a, c);
+            field_modifier(&mut c, 1e-10);
+            assert_abs_diff_ne!(a, c);
+            field_modifier(&mut c, -1e-10);
+            assert_abs_diff_eq!(a, c);
+        }
+    }
+}
