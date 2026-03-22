@@ -151,3 +151,190 @@ impl Default for Sweeteners {
         Self::empty()
     }
 }
+
+#[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
+mod tests {
+    use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
+    use crate::tests::asserts::*;
+
+    use super::*;
+    use crate::composition::*;
+    use crate::error::Error;
+
+    const FIELD_MODIFIERS: [fn(&mut Sweeteners, f64); 3] = [
+        |s, ec| s.sugars.sucrose += ec,
+        |s, ec| s.polyols.sorbitol += ec,
+        |s, ec| s.artificial.aspartame += ec,
+    ];
+
+    #[test]
+    fn sweeteners_empty() {
+        let sweeteners = Sweeteners::empty();
+        assert_eq!(sweeteners, Sweeteners::new());
+        assert_eq!(sweeteners.sugars, Sugars::empty());
+        assert_eq!(sweeteners.polyols, Polyols::empty());
+        assert_eq!(sweeteners.artificial, ArtificialSweeteners::empty());
+
+        assert_eq!(sweeteners.total(), 0.0);
+        assert_eq!(sweeteners.to_pod().unwrap(), 0.0);
+        assert_eq!(sweeteners.to_pac().unwrap(), 0.0);
+    }
+
+    #[test]
+    fn sweeteners_field_update_methods() {
+        let sweeteners = Sweeteners::new()
+            .sugars(Sugars::new().sucrose(5.0))
+            .polyols(Polyols::new().sorbitol(3.0))
+            .artificial(ArtificialSweeteners::new().aspartame(1.0));
+
+        assert_eq!(sweeteners.sugars, Sugars::new().sucrose(5.0));
+        assert_eq!(sweeteners.polyols, Polyols::new().sorbitol(3.0));
+        assert_eq!(sweeteners.artificial, ArtificialSweeteners::new().aspartame(1.0));
+    }
+
+    #[test]
+    fn sweeteners_total() {
+        let sugars = Sugars::new().sucrose(5.0);
+        let polyols = Polyols::new().sorbitol(3.0);
+        let artificial = ArtificialSweeteners::new().aspartame(1.0);
+
+        let sweeteners = Sweeteners::new().sugars(sugars).polyols(polyols).artificial(artificial);
+
+        assert_eq!(sweeteners.total(), sugars.total() + polyols.total() + artificial.total());
+        assert_eq!(sweeteners.total(), 9.0);
+    }
+
+    #[test]
+    fn sweeteners_to_pod() {
+        let sugars = Sugars::new().sucrose(5.0);
+        let polyols = Polyols::new().maltitol(3.0);
+        let artificial = ArtificialSweeteners::new().sucralose(1.0);
+        assert_ne!(sugars.to_pod().unwrap(), 0.0);
+        assert_ne!(polyols.to_pod().unwrap(), 0.0);
+        assert_ne!(artificial.to_pod().unwrap(), 0.0);
+
+        let sweeteners = Sweeteners::new().sugars(sugars).polyols(polyols).artificial(artificial);
+
+        assert_eq!(
+            sweeteners.to_pod().unwrap(),
+            sugars.to_pod().unwrap() + polyols.to_pod().unwrap() + artificial.to_pod().unwrap()
+        );
+    }
+
+    #[test]
+    fn sweeteners_to_pod_error() {
+        assert!(matches!(
+            Sweeteners::new().sugars(Sugars::new().other(1.0)).to_pod(),
+            Err(Error::CannotComputePOD(_))
+        ));
+        assert!(matches!(
+            Sweeteners::new().polyols(Polyols::new().other(1.0)).to_pod(),
+            Err(Error::CannotComputePOD(_))
+        ));
+        assert!(matches!(
+            Sweeteners::new()
+                .artificial(ArtificialSweeteners::new().other(1.0))
+                .to_pod(),
+            Err(Error::CannotComputePOD(_))
+        ));
+    }
+
+    #[test]
+    fn sweeteners_to_pac() {
+        let sugars = Sugars::new().sucrose(5.0);
+        let polyols = Polyols::new().maltitol(3.0);
+        let artificial = ArtificialSweeteners::new().sucralose(1.0);
+        assert_ne!(sugars.to_pac().unwrap(), 0.0);
+        assert_ne!(polyols.to_pac().unwrap(), 0.0);
+        assert_ne!(artificial.to_pac().unwrap(), 0.0);
+
+        let sweeteners = Sweeteners::new().sugars(sugars).polyols(polyols).artificial(artificial);
+
+        assert_eq!(
+            sweeteners.to_pac().unwrap(),
+            sugars.to_pac().unwrap() + polyols.to_pac().unwrap() + artificial.to_pac().unwrap()
+        );
+    }
+
+    #[test]
+    fn sweeteners_to_pac_error() {
+        assert!(matches!(
+            Sweeteners::new().sugars(Sugars::new().other(1.0)).to_pac(),
+            Err(Error::CannotComputePAC(_))
+        ));
+        assert!(matches!(
+            Sweeteners::new().polyols(Polyols::new().other(1.0)).to_pac(),
+            Err(Error::CannotComputePAC(_))
+        ));
+        assert!(matches!(
+            Sweeteners::new()
+                .artificial(ArtificialSweeteners::new().other(1.0))
+                .to_pac(),
+            Err(Error::CannotComputePAC(_))
+        ));
+    }
+
+    #[test]
+    fn sweeteners_scale() {
+        let sweeteners = Sweeteners::new()
+            .sugars(Sugars::new().sucrose(6.0))
+            .polyols(Polyols::new().sorbitol(4.0))
+            .artificial(ArtificialSweeteners::new().aspartame(2.0));
+        assert_eq!(sweeteners.total(), 12.0);
+
+        let scaled = sweeteners.scale(0.5);
+        assert_eq!(scaled.sugars, Sugars::new().sucrose(3.0));
+        assert_eq!(scaled.polyols, Polyols::new().sorbitol(2.0));
+        assert_eq!(scaled.artificial, ArtificialSweeteners::new().aspartame(1.0));
+        assert_eq!(scaled.total(), 6.0);
+    }
+
+    #[test]
+    fn sweeteners_add() {
+        let a = Sweeteners::new()
+            .sugars(Sugars::new().sucrose(6.0))
+            .polyols(Polyols::new().sorbitol(4.0))
+            .artificial(ArtificialSweeteners::new().aspartame(2.0));
+        let b = Sweeteners::new()
+            .sugars(Sugars::new().glucose(3.0))
+            .polyols(Polyols::new().maltitol(2.0))
+            .artificial(ArtificialSweeteners::new().sucralose(1.0));
+        assert_eq!(a.total(), 12.0);
+        assert_eq!(b.total(), 6.0);
+
+        let sum = a.add(&b);
+        assert_eq!(sum.sugars, Sugars::new().sucrose(6.0).glucose(3.0));
+        assert_eq!(sum.polyols, Polyols::new().sorbitol(4.0).maltitol(2.0));
+        assert_eq!(sum.artificial, ArtificialSweeteners::new().aspartame(2.0).sucralose(1.0));
+        assert_eq!(sum.total(), 18.0);
+    }
+
+    #[test]
+    fn sweeteners_abs_diff_eq() {
+        let a = Sweeteners::new()
+            .sugars(Sugars::new().sucrose(5.0))
+            .polyols(Polyols::new().sorbitol(3.0))
+            .artificial(ArtificialSweeteners::new().aspartame(1.0));
+        let b = a;
+        let mut c = b;
+
+        for v in [a, b, c] {
+            assert_ne!(v.sugars.total(), 0.0);
+            assert_ne!(v.polyols.total(), 0.0);
+            assert_ne!(v.artificial.total(), 0.0);
+        }
+
+        assert_abs_diff_eq!(a, b);
+        assert_abs_diff_eq!(a, c);
+
+        for field_modifier in FIELD_MODIFIERS {
+            assert_abs_diff_eq!(a, c);
+            field_modifier(&mut c, 1e-10);
+            assert_abs_diff_ne!(a, c);
+            field_modifier(&mut c, -1e-10);
+            assert_abs_diff_eq!(a, c);
+        }
+    }
+}
