@@ -222,3 +222,261 @@ impl Default for SolidsBreakdown {
         Self::empty()
     }
 }
+
+#[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
+mod tests {
+    use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
+    use crate::tests::asserts::*;
+
+    use super::*;
+    use crate::composition::*;
+
+    const FIELD_MODIFIERS: [fn(&mut SolidsBreakdown, f64); 5] = [
+        |s, ec| s.fats.total += ec,
+        |s, ec| s.carbohydrates.sugars.sucrose += ec,
+        |s, ec| s.proteins += ec,
+        |s, ec| s.artificial_sweeteners.aspartame += ec,
+        |s, ec| s.others += ec,
+    ];
+
+    #[test]
+    fn solids_breakdown_field_count() {
+        assert_eq!(SolidsBreakdown::new().iter().count(), 5);
+    }
+
+    #[test]
+    fn solids_breakdown_no_fields_missed() {
+        assert_eq!(SolidsBreakdown::new().iter().count(), FIELD_MODIFIERS.len());
+    }
+
+    #[test]
+    fn solids_breakdown_empty() {
+        let s = SolidsBreakdown::empty();
+        assert_eq!(s, SolidsBreakdown::new());
+        assert_eq!(s.fats, Fats::empty());
+        assert_eq!(s.carbohydrates, Carbohydrates::empty());
+        assert_eq!(s.proteins, 0.0);
+        assert_eq!(s.artificial_sweeteners, ArtificialSweeteners::empty());
+        assert_eq!(s.others, 0.0);
+
+        assert_eq!(s.total(), 0.0);
+        assert_eq!(s.snf(), 0.0);
+        assert_eq!(s.snfs(), 0.0);
+        assert_eq!(s.energy().unwrap(), 0.0);
+    }
+
+    #[test]
+    fn solids_breakdown_field_update_methods() {
+        let s = SolidsBreakdown::new()
+            .fats(Fats::new().total(5.0))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)))
+            .proteins(2.0)
+            .artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0))
+            .others(4.0);
+
+        assert_eq!(s.fats, Fats::new().total(5.0));
+        assert_eq!(s.carbohydrates, Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)));
+        assert_eq!(s.proteins, 2.0);
+        assert_eq!(s.artificial_sweeteners, ArtificialSweeteners::new().aspartame(1.0));
+        assert_eq!(s.others, 4.0);
+    }
+
+    #[test]
+    fn solids_breakdown_others_from_total() {
+        let s = SolidsBreakdown::new()
+            .fats(Fats::new().total(5.0))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)))
+            .proteins(2.0);
+        assert_eq!(s.total(), 10.0);
+
+        let s_with_others = s.others_from_total(12.0).unwrap();
+        assert_eq!(s_with_others.others, 2.0);
+        assert_eq!(s_with_others.total(), 12.0);
+    }
+
+    #[test]
+    fn solids_breakdown_others_from_total_override() {
+        let s = SolidsBreakdown::new().fats(Fats::new().total(10.0)).others(5.0);
+        assert_eq!(s.others, 5.0);
+        assert_eq!(s.total(), 15.0);
+
+        let s_with_others = s.others_from_total(12.0).unwrap();
+        assert_eq!(s_with_others.others, 2.0);
+        assert_eq!(s_with_others.total(), 12.0);
+    }
+
+    #[test]
+    fn solids_breakdown_others_from_total_error() {
+        let s = SolidsBreakdown::new().fats(Fats::new().total(10.0));
+        assert!(matches!(s.others_from_total(9.0), Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn solids_breakdown_total() {
+        let s = SolidsBreakdown::new()
+            .fats(Fats::new().total(5.0))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)))
+            .proteins(2.0)
+            .artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0))
+            .others(4.0);
+
+        assert_eq!(s.total(), 15.0);
+    }
+
+    #[test]
+    fn solids_breakdown_snf() {
+        let s = SolidsBreakdown::new()
+            .fats(Fats::new().total(5.0).saturated(2.0))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)))
+            .proteins(2.0)
+            .others(1.0);
+        assert_eq!(s.total(), 11.0);
+        assert_eq!(s.fats.total, 5.0);
+
+        assert_eq!(s.snf(), s.total() - s.fats.total);
+        assert_eq!(s.snf(), 6.0);
+    }
+
+    #[test]
+    fn solids_breakdown_snfs() {
+        let s = SolidsBreakdown::new()
+            .fats(Fats::new().total(7.0))
+            .carbohydrates(
+                Carbohydrates::new()
+                    .sugars(Sugars::new().sucrose(6.0))
+                    .polyols(Polyols::new().sorbitol(5.0))
+                    .others(4.0),
+            )
+            .artificial_sweeteners(ArtificialSweeteners::new().aspartame(3.0))
+            .proteins(2.0)
+            .others(1.0);
+        assert_eq!(s.total(), 28.0);
+        assert_eq!(s.fats.total, 7.0);
+        assert_eq!(s.snf(), 21.0);
+        assert_eq!(s.carbohydrates.sugars.total(), 6.0);
+
+        assert_eq!(s.snfs(), s.snf() - s.carbohydrates.sugars.total());
+        assert_eq!(s.snfs(), 15.0);
+    }
+
+    #[test]
+    fn solids_breakdown_energy() {
+        let fats = Fats::new().total(5.0);
+        let carbohydrates = Carbohydrates::new().sugars(Sugars::new().sucrose(3.0));
+        let artificial_sweeteners = ArtificialSweeteners::new().aspartame(1.0);
+        assert_ne!(fats.energy(), 0.0);
+        assert_ne!(carbohydrates.energy().unwrap(), 0.0);
+        assert_ne!(artificial_sweeteners.energy().unwrap(), 0.0);
+
+        let s = SolidsBreakdown::new()
+            .fats(fats)
+            .carbohydrates(carbohydrates)
+            .proteins(2.0)
+            .artificial_sweeteners(artificial_sweeteners)
+            .others(100.0); // `others` is intentionally omitted from energy
+
+        assert_eq!(
+            s.energy().unwrap(),
+            fats.energy()
+                + carbohydrates.energy().unwrap()
+                + 2.0 * 4.0 /* proteins */
+                + artificial_sweeteners.energy().unwrap()
+        );
+        assert_eq!(s.energy().unwrap(), 69.0);
+    }
+
+    #[test]
+    fn solids_breakdown_energy_error() {
+        assert!(matches!(
+            SolidsBreakdown::new()
+                .carbohydrates(Carbohydrates::new().polyols(Polyols::new().other(1.0)))
+                .energy(),
+            Err(Error::CannotComputeEnergy(_))
+        ));
+        assert!(matches!(
+            SolidsBreakdown::new()
+                .artificial_sweeteners(ArtificialSweeteners::new().other(1.0))
+                .energy(),
+            Err(Error::CannotComputeEnergy(_))
+        ));
+    }
+
+    #[test]
+    fn solids_breakdown_scale() {
+        let s = SolidsBreakdown::new()
+            .fats(Fats::new().total(4.0))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(6.0)))
+            .proteins(2.0)
+            .artificial_sweeteners(ArtificialSweeteners::new().aspartame(2.0))
+            .others(2.0);
+        assert_eq!(s.total(), 16.0);
+
+        let scaled = s.scale(0.5);
+        assert_eq!(scaled.fats, Fats::new().total(2.0));
+        assert_eq!(scaled.carbohydrates, Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)));
+        assert_eq!(scaled.proteins, 1.0);
+        assert_eq!(scaled.artificial_sweeteners, ArtificialSweeteners::new().aspartame(1.0));
+        assert_eq!(scaled.others, 1.0);
+        assert_eq!(scaled.total(), 8.0);
+    }
+
+    #[test]
+    fn solids_breakdown_add() {
+        let a = SolidsBreakdown::new()
+            .fats(Fats::new().total(5.0))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(4.0)))
+            .proteins(3.0)
+            .artificial_sweeteners(ArtificialSweeteners::new().aspartame(2.0))
+            .others(1.0);
+        let b = SolidsBreakdown::new()
+            .fats(Fats::new().total(2.5))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().glucose(2.0)))
+            .proteins(1.5)
+            .artificial_sweeteners(ArtificialSweeteners::new().sucralose(1.0))
+            .others(0.5);
+        assert_eq!(a.total(), 15.0);
+        assert_eq!(b.total(), 7.5);
+
+        let sum = a.add(&b);
+        assert_eq!(sum.fats, Fats::new().total(7.5));
+        assert_eq!(sum.carbohydrates, Carbohydrates::new().sugars(Sugars::new().sucrose(4.0).glucose(2.0)));
+        assert_eq!(sum.proteins, 4.5);
+        assert_eq!(sum.artificial_sweeteners, ArtificialSweeteners::new().aspartame(2.0).sucralose(1.0));
+        assert_eq!(sum.others, 1.5);
+        assert_eq!(sum.total(), a.total() + b.total());
+        assert_eq!(sum.total(), 22.5);
+    }
+
+    #[test]
+    fn solids_breakdown_abs_diff_eq() {
+        let a = SolidsBreakdown::new()
+            .fats(Fats::new().total(4.0))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(6.0)))
+            .proteins(2.0)
+            .artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0))
+            .others(1.0);
+        let b = a;
+        let mut c = b;
+
+        for v in [a, b, c] {
+            assert_ne!(v.fats.total, 0.0);
+            assert_ne!(v.carbohydrates.total(), 0.0);
+            assert_ne!(v.proteins, 0.0);
+            assert_ne!(v.artificial_sweeteners.total(), 0.0);
+            assert_ne!(v.others, 0.0);
+        }
+
+        assert_abs_diff_eq!(a, b);
+        assert_abs_diff_eq!(a, c);
+
+        for field_modifier in FIELD_MODIFIERS {
+            assert_abs_diff_eq!(a, c);
+            field_modifier(&mut c, 1e-10);
+            assert_abs_diff_ne!(a, c);
+            field_modifier(&mut c, -1e-10);
+            assert_abs_diff_eq!(a, c);
+        }
+    }
+}
