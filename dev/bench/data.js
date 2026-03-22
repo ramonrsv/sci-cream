@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774158309369,
+  "lastUpdate": 1774158765434,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -111307,6 +111307,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.77%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9864a3cd98b3e1a4f815ec4ee4c71858a2c863a9",
+          "message": "Implement unit tests for `composition::Fats`",
+          "timestamp": "2026-03-22T00:45:44-04:00",
+          "tree_id": "522baae9ddd5052990faddeb95c7504cb127195d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9864a3cd98b3e1a4f815ec4ee4c71858a2c863a9"
+        },
+        "date": 1774158762269,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75648,
+            "range": "±1.24%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 735549,
+            "range": "±0.61%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10123,
+            "range": "±1.95%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 607046,
+            "range": "±0.73%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
