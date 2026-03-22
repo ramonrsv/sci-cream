@@ -175,3 +175,182 @@ impl Default for Solids {
         Self::empty()
     }
 }
+
+#[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
+mod tests {
+    use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
+    use crate::tests::asserts::*;
+
+    use super::*;
+    use crate::composition::*;
+
+    const FIELD_MODIFIERS: [fn(&mut Solids, f64); 5] = [
+        |s, v| s.milk.fats.total += v,
+        |s, v| s.egg.proteins += v,
+        |s, v| s.cocoa.carbohydrates.sugars.sucrose += v,
+        |s, v| s.nut.others += v,
+        |s, v| s.other.artificial_sweeteners.aspartame += v,
+    ];
+
+    #[test]
+    fn solids_field_count() {
+        assert_eq!(Solids::new().iter().count(), 5);
+    }
+
+    #[test]
+    fn solids_no_fields_missed() {
+        assert_eq!(Solids::new().iter().count(), FIELD_MODIFIERS.len());
+    }
+
+    #[test]
+    fn solids_empty() {
+        let s = Solids::empty();
+        assert_eq!(s, Solids::new());
+        assert_eq!(s.milk, SolidsBreakdown::empty());
+        assert_eq!(s.egg, SolidsBreakdown::empty());
+        assert_eq!(s.cocoa, SolidsBreakdown::empty());
+        assert_eq!(s.nut, SolidsBreakdown::empty());
+        assert_eq!(s.other, SolidsBreakdown::empty());
+        assert_eq!(s.total(), 0.0);
+        assert_eq!(s.all(), SolidsBreakdown::empty());
+    }
+
+    #[test]
+    fn solids_field_update_methods() {
+        let milk = SolidsBreakdown::new().fats(Fats::new().total(5.0));
+        let egg = SolidsBreakdown::new().proteins(4.0);
+        let cocoa = SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)));
+        let nut = SolidsBreakdown::new().others(2.0);
+        let other = SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0));
+
+        let s = Solids::new().milk(milk).egg(egg).cocoa(cocoa).nut(nut).other(other);
+
+        assert_eq!(s.milk, milk);
+        assert_eq!(s.egg, egg);
+        assert_eq!(s.cocoa, cocoa);
+        assert_eq!(s.nut, nut);
+        assert_eq!(s.other, other);
+    }
+
+    #[test]
+    fn solids_total() {
+        let s = Solids::new()
+            .milk(SolidsBreakdown::new().fats(Fats::new().total(5.0)))
+            .egg(SolidsBreakdown::new().proteins(4.0))
+            .cocoa(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0))))
+            .nut(SolidsBreakdown::new().others(2.0))
+            .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0)));
+
+        assert_eq!(s.total(), 15.0);
+    }
+
+    #[test]
+    fn solids_all() {
+        let s = Solids::new()
+            .milk(SolidsBreakdown::new().fats(Fats::new().total(5.0)))
+            .egg(SolidsBreakdown::new().proteins(4.0))
+            .cocoa(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0))))
+            .nut(SolidsBreakdown::new().others(2.0))
+            .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0)));
+
+        let all = s.all();
+        assert_eq!(all.fats.total, 5.0);
+        assert_eq!(all.proteins, 4.0);
+        assert_eq!(all.carbohydrates.sugars.sucrose, 3.0);
+        assert_eq!(all.others, 2.0);
+        assert_eq!(all.artificial_sweeteners.aspartame, 1.0);
+        assert_eq!(all.total(), 15.0);
+    }
+
+    #[test]
+    fn solids_total_equals_all_total() {
+        // Verifies the claim in the @todo comment on total()
+        let s = Solids::new()
+            .milk(SolidsBreakdown::new().fats(Fats::new().total(5.0)))
+            .egg(SolidsBreakdown::new().proteins(4.0))
+            .cocoa(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0))))
+            .nut(SolidsBreakdown::new().others(2.0))
+            .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0)));
+
+        assert_eq!(s.total(), s.all().total());
+    }
+
+    #[test]
+    fn solids_scale() {
+        let s = Solids::new()
+            .milk(SolidsBreakdown::new().fats(Fats::new().total(5.0)))
+            .egg(SolidsBreakdown::new().proteins(4.0))
+            .cocoa(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0))))
+            .nut(SolidsBreakdown::new().others(2.0))
+            .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0)));
+        assert_eq!(s.total(), 15.0);
+
+        let scaled = s.scale(0.5);
+        assert_eq!(scaled.milk.fats.total, 2.5);
+        assert_eq!(scaled.egg.proteins, 2.0);
+        assert_eq!(scaled.cocoa.carbohydrates.sugars.sucrose, 1.5);
+        assert_eq!(scaled.nut.others, 1.0);
+        assert_eq!(scaled.other.artificial_sweeteners.aspartame, 0.5);
+        assert_eq!(scaled.total(), 7.5);
+    }
+
+    #[test]
+    fn solids_add() {
+        let a = Solids::new()
+            .milk(SolidsBreakdown::new().fats(Fats::new().total(5.0)))
+            .egg(SolidsBreakdown::new().proteins(4.0))
+            .cocoa(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0))))
+            .nut(SolidsBreakdown::new().others(2.0))
+            .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0)));
+        let b = Solids::new()
+            .milk(SolidsBreakdown::new().fats(Fats::new().total(2.5)))
+            .egg(SolidsBreakdown::new().proteins(2.0))
+            .cocoa(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(1.5))))
+            .nut(SolidsBreakdown::new().others(1.0))
+            .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(0.5)));
+        assert_eq!(a.total(), 15.0);
+        assert_eq!(b.total(), 7.5);
+
+        let sum = a.add(&b);
+        assert_eq!(sum.milk.fats.total, 7.5);
+        assert_eq!(sum.egg.proteins, 6.0);
+        assert_eq!(sum.cocoa.carbohydrates.sugars.sucrose, 4.5);
+        assert_eq!(sum.nut.others, 3.0);
+        assert_eq!(sum.other.artificial_sweeteners.aspartame, 1.5);
+        assert_eq!(sum.total(), a.total() + b.total());
+        assert_eq!(sum.total(), 22.5);
+    }
+
+    #[test]
+    fn solids_abs_diff_eq() {
+        let a = Solids::new()
+            .milk(SolidsBreakdown::new().fats(Fats::new().total(5.0)))
+            .egg(SolidsBreakdown::new().proteins(4.0))
+            .cocoa(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0))))
+            .nut(SolidsBreakdown::new().others(2.0))
+            .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0)));
+        let b = a;
+        let mut c = b;
+
+        for v in [a, b, c] {
+            assert_ne!(v.milk.fats.total, 0.0);
+            assert_ne!(v.egg.proteins, 0.0);
+            assert_ne!(v.cocoa.carbohydrates.sugars.sucrose, 0.0);
+            assert_ne!(v.nut.others, 0.0);
+            assert_ne!(v.other.artificial_sweeteners.aspartame, 0.0);
+        }
+
+        assert_abs_diff_eq!(a, b);
+        assert_abs_diff_eq!(a, c);
+
+        for field_modifier in FIELD_MODIFIERS {
+            assert_abs_diff_eq!(a, c);
+            field_modifier(&mut c, 1e-10);
+            assert_abs_diff_ne!(a, c);
+            field_modifier(&mut c, -1e-10);
+            assert_abs_diff_eq!(a, c);
+        }
+    }
+}

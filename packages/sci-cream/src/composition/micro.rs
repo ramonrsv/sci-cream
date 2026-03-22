@@ -136,3 +136,104 @@ impl Default for Micro {
         Self::empty()
     }
 }
+
+#[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::float_cmp)]
+mod tests {
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    use crate::tests::asserts::*;
+    use crate::tests::util::{assert_f64_fields_eq_zero, assert_f64_fields_ne_zero};
+
+    use super::*;
+
+    const FIELD_MODIFIERS: [fn(&mut Micro, f64); 4] = [
+        |m, v| m.salt += v,
+        |m, v| m.lecithin += v,
+        |m, v| m.emulsifiers += v,
+        |m, v| m.stabilizers += v,
+    ];
+
+    #[test]
+    fn micro_field_count() {
+        assert_eq!(Micro::new().iter().count(), 4);
+    }
+
+    #[test]
+    fn micro_no_fields_missed() {
+        assert_eq!(Micro::new().iter().count(), FIELD_MODIFIERS.len());
+    }
+
+    #[test]
+    fn micro_empty() {
+        let m = Micro::empty();
+        assert_eq!(m, Micro::new());
+
+        assert_f64_fields_eq_zero(&m);
+
+        assert_eq!(m.salt, 0.0);
+        assert_eq!(m.lecithin, 0.0);
+        assert_eq!(m.emulsifiers, 0.0);
+        assert_eq!(m.stabilizers, 0.0);
+    }
+
+    #[test]
+    fn micro_field_update_methods() {
+        let m = Micro::new().salt(1.0).lecithin(2.0).emulsifiers(3.0).stabilizers(4.0);
+        assert_f64_fields_ne_zero(&m);
+
+        assert_eq!(m.salt, 1.0);
+        assert_eq!(m.lecithin, 2.0);
+        assert_eq!(m.emulsifiers, 3.0);
+        assert_eq!(m.stabilizers, 4.0);
+    }
+
+    #[test]
+    fn micro_scale() {
+        let m = Micro::new().salt(4.0).lecithin(2.0).emulsifiers(2.0).stabilizers(2.0);
+        assert_f64_fields_ne_zero(&m);
+
+        let scaled = m.scale(0.5);
+        assert_eq!(scaled.salt, 2.0);
+        assert_eq!(scaled.lecithin, 1.0);
+        assert_eq!(scaled.emulsifiers, 1.0);
+        assert_eq!(scaled.stabilizers, 1.0);
+    }
+
+    #[test]
+    fn micro_add() {
+        let a = Micro::new().salt(4.0).lecithin(1.0).emulsifiers(2.0).stabilizers(1.0);
+        let b = Micro::new().salt(2.0).lecithin(3.0).emulsifiers(1.0).stabilizers(0.5);
+        assert_f64_fields_ne_zero(&a);
+        assert_f64_fields_ne_zero(&b);
+
+        let sum = a.add(&b);
+        assert_eq!(sum.salt, 6.0);
+        assert_eq!(sum.lecithin, 4.0);
+        assert_eq!(sum.emulsifiers, 3.0);
+        assert_eq!(sum.stabilizers, 1.5);
+        assert_f64_fields_ne_zero(&sum);
+    }
+
+    #[test]
+    fn micro_abs_diff_eq() {
+        let a = Micro::new().salt(4.0).lecithin(1.0).emulsifiers(2.0).stabilizers(1.0);
+        let b = a;
+        let mut c = b;
+
+        for v in [a, b, c] {
+            assert_f64_fields_ne_zero(&v);
+        }
+
+        assert_abs_diff_eq!(a, b);
+        assert_abs_diff_eq!(a, c);
+
+        for field_modifier in FIELD_MODIFIERS {
+            assert_abs_diff_eq!(a, c);
+            field_modifier(&mut c, 1e-10);
+            assert_abs_diff_ne!(a, c);
+            field_modifier(&mut c, -1e-10);
+            assert_abs_diff_eq!(a, c);
+        }
+    }
+}
