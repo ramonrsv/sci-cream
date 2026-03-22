@@ -171,11 +171,45 @@ impl Default for Fibers {
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
-    use crate::tests::asserts::shadow_asserts::assert_eq;
-    #[expect(unused_imports)]
+    use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
     use crate::tests::asserts::*;
 
     use super::*;
+
+    const FIELD_MODIFIERS: [fn(&mut Fibers, f64); 3] =
+        [|f, v| f.inulin += v, |f, v| f.oligofructose += v, |f, v| f.other += v];
+
+    #[test]
+    fn fibers_field_count() {
+        assert_eq!(Fibers::new().iter().count(), 3);
+    }
+
+    #[test]
+    fn fibers_no_fields_missed() {
+        assert_eq!(Fibers::new().iter().count(), FIELD_MODIFIERS.len());
+    }
+
+    #[test]
+    fn fibers_empty() {
+        let fibers = Fibers::empty();
+        assert_eq!(fibers, Fibers::new());
+        assert_eq!(fibers.inulin, 0.0);
+        assert_eq!(fibers.oligofructose, 0.0);
+        assert_eq!(fibers.other, 0.0);
+
+        assert_eq!(fibers.total(), 0.0);
+        assert_eq!(fibers.energy(), 0.0);
+        assert_eq!(fibers.to_pod(), 0.0);
+    }
+
+    #[test]
+    fn fibers_field_update_methods() {
+        let fibers = Fibers::new().inulin(5.0).oligofructose(3.0).other(2.0);
+
+        assert_eq!(fibers.inulin, 5.0);
+        assert_eq!(fibers.oligofructose, 3.0);
+        assert_eq!(fibers.other, 2.0);
+    }
 
     #[test]
     fn fibers_total() {
@@ -184,15 +218,66 @@ mod tests {
 
     #[test]
     fn fibers_energy() {
-        assert_eq!(
-            Fibers::new().inulin(10.0).oligofructose(5.0).energy(),
-            (10.0 + 5.0) * constants::energy::INULIN_AND_OLIGOFRUCTOSE
-        );
+        let fibers = Fibers::new().inulin(10.0).oligofructose(5.0).other(100.0);
+        assert_ne!(fibers.energy(), 0.0);
+        assert_eq!(fibers.energy(), /* `other` intentionally omitted */ (10.0 + 5.0) * 1.5);
     }
 
     #[test]
     fn fibers_to_pod() {
-        assert_eq!(Fibers::new().inulin(10.0).to_pod(), 0.0);
-        assert_eq!(Fibers::new().oligofructose(10.0).to_pod(), 4.0);
+        assert_eq!(Fibers::new().inulin(10.0).other(100.0).to_pod(), 0.0);
+        assert_eq!(
+            Fibers::new().inulin(10.0).oligofructose(10.0).other(100.0).to_pod(),
+            /* `other` and `inulin` intentionally omitted */
+            10.0 * 40.0 / 100.0
+        );
+    }
+
+    #[test]
+    fn fibers_scale() {
+        let fibers = Fibers::new().inulin(6.0).oligofructose(4.0).other(2.0);
+        assert_eq!(fibers.total(), 12.0);
+
+        let scaled = fibers.scale(0.5);
+        assert_eq!(scaled.inulin, 3.0);
+        assert_eq!(scaled.oligofructose, 2.0);
+        assert_eq!(scaled.other, 1.0);
+        assert_eq!(scaled.total(), 6.0);
+    }
+
+    #[test]
+    fn fibers_add() {
+        let a = Fibers::new().inulin(6.0).oligofructose(4.0).other(2.0);
+        let b = Fibers::new().inulin(1.0).oligofructose(2.0).other(3.0);
+
+        let sum = a.add(&b);
+        assert_eq!(sum.inulin, 7.0);
+        assert_eq!(sum.oligofructose, 6.0);
+        assert_eq!(sum.other, 5.0);
+        assert_eq!(sum.total(), 18.0);
+    }
+
+    #[test]
+    fn fibers_abs_diff_eq() {
+        let a = Fibers::new().inulin(6.0).oligofructose(4.0).other(2.0);
+        let b = a;
+        let mut c = b;
+
+        for v in [a, b, c] {
+            assert_ne!(v.inulin, 0.0);
+            assert_ne!(v.oligofructose, 0.0);
+            assert_ne!(v.other, 0.0);
+        }
+
+        assert_abs_diff_eq!(a, b);
+        assert_abs_diff_eq!(a, c);
+
+        for field_modifier in FIELD_MODIFIERS {
+            assert_abs_diff_eq!(a, c);
+            field_modifier(&mut c, 1e-10);
+            assert_abs_diff_ne!(a, c);
+            field_modifier(&mut c, -1e-10);
+            assert_abs_diff_eq!(a, c);
+        }
     }
 }
