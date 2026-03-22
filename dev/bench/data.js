@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774157976966,
+  "lastUpdate": 1774158017672,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -10817,6 +10817,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 302,
             "range": "± 3",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a5cb8bb1e61d76bb0d5b348a4eafe3cede678e4c",
+          "message": "Add unit tests for `composition::Carbohydrates`\n\nAlso move TODO item about adding composition traits for calculating POD,\nPAC, etc. from backlog to Next Release, as it should be a simple task.",
+          "timestamp": "2026-03-22T00:39:48-04:00",
+          "tree_id": "c9eff288d18372cf02f2dd20d797bab1bafaca1b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a5cb8bb1e61d76bb0d5b348a4eafe3cede678e4c"
+        },
+        "date": 1774158015115,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3727,
+            "range": "± 47",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 166866,
+            "range": "± 2081",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1984,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 162194,
+            "range": "± 10215",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 308,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
