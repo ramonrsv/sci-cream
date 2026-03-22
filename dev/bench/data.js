@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774159232877,
+  "lastUpdate": 1774198294298,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -112529,6 +112529,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.71%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "917196e7a9562e2a2357cca2b418e339877fc9d5",
+          "message": "Add unit tests for `composition::Polyols`",
+          "timestamp": "2026-03-22T01:03:59-04:00",
+          "tree_id": "49ecb21e38f230a7e051fd3e2f2929749f264a0d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/917196e7a9562e2a2357cca2b418e339877fc9d5"
+        },
+        "date": 1774198291595,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 91355,
+            "range": "±1.15%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 696082,
+            "range": "±0.82%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9976,
+            "range": "±2.16%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 616547,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
