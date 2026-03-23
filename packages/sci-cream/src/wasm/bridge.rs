@@ -191,12 +191,18 @@ pub mod wasm {
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::unwrap_used)]
 pub(crate) mod tests {
-    #[allow(unused_imports)]
+    use strum::IntoEnumIterator;
+
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{composition::CompKey, data::get_all_ingredient_specs, ingredient::Ingredient};
+    use crate::{
+        composition::CompKey,
+        data::get_all_ingredient_specs,
+        ingredient::Ingredient,
+        specs::{DairySpec, IngredientSpec},
+    };
 
     const LIGHT_RECIPE: &[(&str, f64)] = &[
         ("Whole Milk", 245.0),
@@ -238,6 +244,56 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn bridge_get_ingredient_by_name() {
+        let bridge = Bridge::new(make_seeded_db());
+
+        for spec in get_all_ingredient_specs() {
+            let ingredient = bridge.get_ingredient_by_name(&spec.name).unwrap();
+            assert_eq!(ingredient.name, spec.name);
+            assert_eq!(ingredient.category, spec.category);
+        }
+    }
+
+    #[test]
+    fn bridge_get_ingredient_by_name_not_found() {
+        let bridge = Bridge::new(make_seeded_db());
+        let result = bridge.get_ingredient_by_name("Nonexistent Ingredient");
+        assert!(
+            matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")
+        );
+    }
+
+    #[test]
+    fn bridge_get_all_ingredients() {
+        let bridge = Bridge::new(make_seeded_db());
+        let ingredients = bridge.get_all_ingredients();
+        assert_eq!(ingredients.len(), get_all_ingredient_specs().len());
+
+        for spec in get_all_ingredient_specs() {
+            assert_true!(
+                ingredients
+                    .iter()
+                    .any(|ing| ing.name == spec.name && ing.category == spec.category)
+            );
+        }
+    }
+
+    #[test]
+    fn bridge_get_ingredients_by_category() {
+        let bridge = Bridge::new(make_seeded_db());
+
+        for category in Category::iter() {
+            let ingredients = bridge.get_ingredients_by_category(category);
+            let expected_len = get_all_ingredient_specs()
+                .iter()
+                .filter(|spec| spec.category == category)
+                .count();
+            assert_eq!(ingredients.len(), expected_len);
+            assert!(ingredients.iter().all(|ing| ing.category == category));
+        }
+    }
+
+    #[test]
     fn bridge_calculate_recipe_composition() {
         let bridge = Bridge::new(make_seeded_db());
         let comp = bridge
@@ -248,6 +304,15 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn bridge_calculate_recipe_composition_ingredient_not_found() {
+        let bridge = Bridge::new(make_seeded_db());
+        let result = bridge.calculate_recipe_composition(&[("Nonexistent Ingredient".to_string(), 100.0)]);
+        assert!(
+            matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")
+        );
+    }
+
+    #[test]
     fn bridge_calculate_recipe_mix_properties() {
         let bridge = Bridge::new(make_seeded_db());
         let mix_properties = bridge
@@ -255,6 +320,15 @@ pub(crate) mod tests {
             .unwrap();
 
         assert_eq_flt_test!(mix_properties.get(CompKey::MilkFat.into()), 13.6024);
+    }
+
+    #[test]
+    fn bridge_calculate_recipe_mix_properties_ingredient_not_found() {
+        let bridge = Bridge::new(make_seeded_db());
+        let result = bridge.calculate_recipe_mix_properties(&[("Nonexistent Ingredient".to_string(), 100.0)]);
+        assert!(
+            matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")
+        );
     }
 
     #[test]
@@ -277,7 +351,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn bridge_seed_from_spec() {
+    fn bridge_seed_from_specs() {
         let bridge = Bridge::new(IngredientDatabase::new());
         assert!(bridge.get_all_ingredients().is_empty());
 
@@ -293,20 +367,16 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn bridge_seed_from_specs() {
+    fn bridge_seed_from_specs_invalid_spec() {
         let bridge = Bridge::new(IngredientDatabase::new());
-        assert!(bridge.get_all_ingredients().is_empty());
+        let invalid_spec = IngredientSpec {
+            name: "Invalid Ingredient".to_string(),
+            category: Category::Dairy,
+            spec: DairySpec { fat: -10.0, msnf: None }.into(),
+        };
 
-        let specs = get_all_ingredient_specs()[..10].to_vec();
-
-        bridge.seed_from_specs(&specs).unwrap();
-        assert_eq!(bridge.get_all_ingredients().len(), 10);
-
-        for spec in specs {
-            let fetched = bridge.get_ingredient_by_name(&spec.name).unwrap();
-            let ingredient = spec.into_ingredient().unwrap();
-            assert_eq!(fetched, ingredient);
-        }
+        let result = bridge.seed_from_specs(&[invalid_spec]);
+        assert!(matches!(result, Err(crate::error::Error::CompositionNotPositive(_))));
     }
 
     #[test]
