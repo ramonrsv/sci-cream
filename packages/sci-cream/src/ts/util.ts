@@ -22,13 +22,6 @@ export function makeStrEnumFromTsEnum<E extends object>(enumObj: E): { [key: str
   return Object.freeze(result);
 }
 
-/** Returns a function that converts a TypeScript enum key to its string representation. */
-export function makeTsEnumToStrConverter<E extends object>(enumObj: E) {
-  return function <K extends keyof E>(key: K): string {
-    return enumObj[enumObj[key] as unknown as keyof E] as unknown as string;
-  };
-}
-
 /**
  * Returns the numeric keys of a TypeScript enum object as typed enum members.
  *
