@@ -193,6 +193,8 @@ mod tests {
     fn fibers_empty() {
         let fibers = Fibers::empty();
         assert_eq!(fibers, Fibers::new());
+        assert_eq!(fibers, Fibers::default());
+
         assert_eq!(fibers.inulin, 0.0);
         assert_eq!(fibers.oligofructose, 0.0);
         assert_eq!(fibers.other, 0.0);

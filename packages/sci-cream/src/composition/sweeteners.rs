@@ -173,6 +173,8 @@ mod tests {
     fn sweeteners_empty() {
         let sweeteners = Sweeteners::empty();
         assert_eq!(sweeteners, Sweeteners::new());
+        assert_eq!(sweeteners, Sweeteners::default());
+
         assert_eq!(sweeteners.sugars, Sugars::empty());
         assert_eq!(sweeteners.polyols, Polyols::empty());
         assert_eq!(sweeteners.artificial, ArtificialSweeteners::empty());

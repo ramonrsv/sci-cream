@@ -358,6 +358,7 @@ mod tests {
     fn artificial_sweeteners_empty() {
         let sweeteners = ArtificialSweeteners::empty();
         assert_eq!(sweeteners, ArtificialSweeteners::new());
+        assert_eq!(sweeteners, ArtificialSweeteners::default());
 
         assert_f64_fields_eq_zero(&sweeteners);
 

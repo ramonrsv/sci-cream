@@ -208,6 +208,8 @@ mod tests {
     fn solids_empty() {
         let s = Solids::empty();
         assert_eq!(s, Solids::new());
+        assert_eq!(s, Solids::default());
+
         assert_eq!(s.milk, SolidsBreakdown::empty());
         assert_eq!(s.egg, SolidsBreakdown::empty());
         assert_eq!(s.cocoa, SolidsBreakdown::empty());

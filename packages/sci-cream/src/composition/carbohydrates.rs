@@ -229,6 +229,8 @@ mod tests {
     fn carbohydrates_empty() {
         let carbohydrates = Carbohydrates::empty();
         assert_eq!(carbohydrates, Carbohydrates::new());
+        assert_eq!(carbohydrates, Carbohydrates::default());
+
         assert_eq!(carbohydrates.fiber, Fibers::empty());
         assert_eq!(carbohydrates.sugars, Sugars::empty());
         assert_eq!(carbohydrates.polyols, Polyols::empty());

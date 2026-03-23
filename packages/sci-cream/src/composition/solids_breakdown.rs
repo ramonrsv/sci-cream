@@ -255,6 +255,8 @@ mod tests {
     fn solids_breakdown_empty() {
         let s = SolidsBreakdown::empty();
         assert_eq!(s, SolidsBreakdown::new());
+        assert_eq!(s, SolidsBreakdown::default());
+
         assert_eq!(s.fats, Fats::empty());
         assert_eq!(s.carbohydrates, Carbohydrates::empty());
         assert_eq!(s.proteins, 0.0);

@@ -386,6 +386,7 @@ mod tests {
     fn sugars_empty() {
         let sugars = Sugars::empty();
         assert_eq!(sugars, Sugars::new());
+        assert_eq!(sugars, Sugars::default());
 
         assert_f64_fields_eq_zero(&sugars);
 

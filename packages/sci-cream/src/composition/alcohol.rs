@@ -131,6 +131,8 @@ mod tests {
     fn alcohol_empty() {
         let alcohol = Alcohol::empty();
         assert_eq!(alcohol, Alcohol::new());
+        assert_eq!(alcohol, Alcohol::default());
+
         assert_eq!(alcohol.by_weight, 0.0);
         assert_eq!(alcohol.to_abv(), 0.0);
         assert_eq!(alcohol.energy(), 0.0);

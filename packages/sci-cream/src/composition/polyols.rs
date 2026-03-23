@@ -306,6 +306,7 @@ mod tests {
     fn polyols_empty() {
         let polyols = Polyols::empty();
         assert_eq!(polyols, Polyols::new());
+        assert_eq!(polyols, Polyols::default());
 
         assert_f64_fields_eq_zero(&polyols);
 

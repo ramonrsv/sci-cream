@@ -172,6 +172,7 @@ mod tests {
     fn pac_empty() {
         let p = PAC::empty();
         assert_eq!(p, PAC::new());
+        assert_eq!(p, PAC::default());
 
         assert_f64_fields_eq_zero(&p);
 

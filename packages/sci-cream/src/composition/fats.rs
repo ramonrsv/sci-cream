@@ -140,6 +140,8 @@ mod tests {
     fn fats_empty() {
         let fats = Fats::empty();
         assert_eq!(fats, Fats::new());
+        assert_eq!(fats, Fats::default());
+
         assert_eq!(fats.total, 0.0);
         assert_eq!(fats.saturated, 0.0);
         assert_eq!(fats.trans, 0.0);

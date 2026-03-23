@@ -168,6 +168,7 @@ mod tests {
     fn micro_empty() {
         let m = Micro::empty();
         assert_eq!(m, Micro::new());
+        assert_eq!(m, Micro::default());
 
         assert_f64_fields_eq_zero(&m);
 
