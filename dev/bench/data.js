@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774238660818,
+  "lastUpdate": 1774238685913,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -120985,6 +120985,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 600160,
             "range": "±0.74%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "67e30c28861d720c455cabd674645416b3937bba",
+          "message": "Add missing `default` unit tests for `composition`",
+          "timestamp": "2026-03-23T00:01:44-04:00",
+          "tree_id": "0119e2d5f536a634eb252066ac505739d56e1188",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/67e30c28861d720c455cabd674645416b3937bba"
+        },
+        "date": 1774238682632,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 82370,
+            "range": "±1.73%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 717801,
+            "range": "±0.80%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9843,
+            "range": "±2.10%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 618517,
+            "range": "±0.77%",
             "unit": "ops/sec",
             "extra": "94 samples"
           }
