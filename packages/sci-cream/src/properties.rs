@@ -46,7 +46,7 @@ impl From<FpdKey> for PropKey {
 
 /// Properties of an ice cream mix, including [`Composition`] and freezing point depression [`FPD`]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(Clone, Debug)]
+#[derive(PartialEq, Clone, Debug)]
 pub struct MixProperties {
     /// Total amount of the mix in grams
     pub total_amount: f64,
@@ -91,5 +91,127 @@ impl MixProperties {
 impl Default for MixProperties {
     fn default() -> Self {
         Self::empty()
+    }
+}
+
+#[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
+mod tests {
+    use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
+    use crate::tests::asserts::*;
+
+    use crate::composition::*;
+    use crate::fpd::FpdKey;
+
+    use super::*;
+
+    // --- PropKey conversions ---
+
+    #[test]
+    fn prop_key_from_comp_key() {
+        let key: PropKey = CompKey::MilkFat.into();
+        assert_eq!(key, PropKey::CompKey(CompKey::MilkFat));
+    }
+
+    #[test]
+    fn prop_key_from_fpd_key() {
+        let key: PropKey = FpdKey::FPD.into();
+        assert_eq!(key, PropKey::FpdKey(FpdKey::FPD));
+    }
+
+    #[test]
+    fn prop_key_equality_same_variant() {
+        assert_eq!(PropKey::CompKey(CompKey::MilkFat), PropKey::CompKey(CompKey::MilkFat));
+        assert_eq!(PropKey::FpdKey(FpdKey::ServingTemp), PropKey::FpdKey(FpdKey::ServingTemp));
+    }
+
+    #[test]
+    fn prop_key_inequality_different_inner_key() {
+        assert_ne!(PropKey::CompKey(CompKey::MilkFat), PropKey::CompKey(CompKey::MSNF));
+        assert_ne!(PropKey::FpdKey(FpdKey::FPD), PropKey::FpdKey(FpdKey::ServingTemp));
+    }
+
+    #[test]
+    fn prop_key_inequality_different_outer_variant() {
+        assert_ne!(PropKey::CompKey(CompKey::MilkFat), PropKey::FpdKey(FpdKey::FPD));
+    }
+
+    // --- MixProperties::empty / new / default ---
+
+    #[test]
+    fn mix_properties_empty_total_amount_is_zero() {
+        let mix_props = MixProperties::empty();
+        assert_eq!(mix_props.total_amount, 0.0);
+    }
+
+    #[test]
+    fn mix_properties_empty_comp_keys_return_zero() {
+        let mix_props = MixProperties::empty();
+        for key in [
+            CompKey::MilkFat,
+            CompKey::MSNF,
+            CompKey::TotalSolids,
+            CompKey::Energy,
+            CompKey::TotalSugars,
+        ] {
+            assert_eq_flt_test!(mix_props.get(key.into()), 0.0);
+        }
+    }
+
+    #[test]
+    fn mix_properties_empty_water_is_100() {
+        // An empty composition represents pure water: 100 - TotalSolids - Alcohol = 100
+        let mix_props = MixProperties::empty();
+        assert_eq_flt_test!(mix_props.get(CompKey::Water.into()), 100.0);
+    }
+
+    #[test]
+    fn mix_properties_empty_fpd_is_zero() {
+        let mix_props = MixProperties::empty();
+        assert_eq_flt_test!(mix_props.get(FpdKey::FPD.into()), 0.0);
+        assert_eq_flt_test!(mix_props.get(FpdKey::ServingTemp.into()), 0.0);
+    }
+
+    #[test]
+    fn mix_properties_empty_hardness_at_14c_is_nan() {
+        let mix_props = MixProperties::empty();
+        assert_true!(mix_props.get(FpdKey::HardnessAt14C.into()).is_nan());
+    }
+
+    #[test]
+    fn mix_properties_new_matches_empty() {
+        let from_new = MixProperties::new();
+        let from_empty = MixProperties::empty();
+        assert_eq!(from_new.total_amount, from_empty.total_amount);
+        assert_eq_flt_test!(from_new.get(CompKey::MilkFat.into()), from_empty.get(CompKey::MilkFat.into()));
+        assert_eq_flt_test!(from_new.get(FpdKey::FPD.into()), from_empty.get(FpdKey::FPD.into()));
+        assert_true!(from_new.get(FpdKey::HardnessAt14C.into()).is_nan());
+
+        // Equality assertions fails because of FPD::hardness_at_14c being NaN
+        assert_ne!(from_new, from_empty);
+        let mut from_new = from_new;
+        from_new.fpd.hardness_at_14c = 70.0;
+        let mut from_empty = from_empty;
+        from_empty.fpd.hardness_at_14c = 70.0;
+        assert_eq!(from_new, from_empty);
+    }
+
+    #[test]
+    fn mix_properties_default_matches_empty() {
+        let from_default = MixProperties::default();
+        let from_empty = MixProperties::empty();
+        assert_eq!(from_default.total_amount, from_empty.total_amount);
+        assert_eq_flt_test!(from_default.get(CompKey::MilkFat.into()), from_empty.get(CompKey::MilkFat.into()));
+        assert_eq_flt_test!(from_default.get(FpdKey::FPD.into()), from_empty.get(FpdKey::FPD.into()));
+        assert_true!(from_default.get(FpdKey::HardnessAt14C.into()).is_nan());
+
+        // Equality assertions fails because of FPD::hardness_at_14c being NaN
+        assert_ne!(from_default, from_empty);
+        let mut from_default = from_default;
+        from_default.fpd.hardness_at_14c = 70.0;
+        let mut from_empty = from_empty;
+        from_empty.fpd.hardness_at_14c = 70.0;
+        assert_eq!(from_default, from_empty);
     }
 }

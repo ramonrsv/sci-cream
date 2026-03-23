@@ -610,6 +610,7 @@ mod tests {
     fn composition_empty() {
         let c = Composition::empty();
         assert_eq!(c, Composition::new());
+        assert_eq!(c, Composition::default());
         assert_eq!(c.energy, 0.0);
         assert_eq!(c.solids, Solids::empty());
         assert_eq!(c.micro, Micro::empty());

@@ -65,7 +65,7 @@ pub enum FpdKey {
 
 /// [Freezing Point Depression (FPD)](crate::docs#freezing-point-depression) properties...
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(Clone, Debug)]
+#[derive(PartialEq, Clone, Debug)]
 pub struct FPD {
     /// [FPD](crate::docs#freezing-point-depression) in °C, maps to [`FpdKey::FPD`]
     pub fpd: f64,
@@ -136,7 +136,7 @@ impl FPD {
 /// A point on an [FPD curve](crate::docs#freezing-point-depression-curve), representing the
 /// relationship between temperature (y-axis) and frozen water percentage or hardness (x-axis)
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(Copy, Clone, Debug)]
+#[derive(PartialEq, Copy, Clone, Debug)]
 pub struct CurvePoint {
     /// The x-axis value, representing either frozen water percentage or hardness
     ///
@@ -159,7 +159,7 @@ impl CurvePoint {
 #[doc = include_str!("../docs/bibs/2.md")]
 #[doc = include_str!("../docs/bibs/3.md")]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(Clone, Debug)]
+#[derive(PartialEq, Clone, Debug)]
 pub struct Curves {
     /// Represents the relationship between frozen water percentage and temperature
     ///
