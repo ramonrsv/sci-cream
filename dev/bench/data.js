@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774234703263,
+  "lastUpdate": 1774235766692,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -118028,6 +118028,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.07%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "226757064a9737cd0893297a520af2ed9e327ab6",
+          "message": "Add more unit tests for `wasm::Bridge`",
+          "timestamp": "2026-03-22T22:31:19-04:00",
+          "tree_id": "a3bc9e3f1f9771c96d62adcf9a539da6d3ecddd0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/226757064a9737cd0893297a520af2ed9e327ab6"
+        },
+        "date": 1774235763208,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 79266,
+            "range": "±0.80%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 730930,
+            "range": "±0.70%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10166,
+            "range": "±1.82%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 604590,
+            "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
