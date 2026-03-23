@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774243328070,
+  "lastUpdate": 1774298922979,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -122303,6 +122303,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 607348,
             "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "16927d3ee3e3e2559dafa79df9999d8b7285c1c0",
+          "message": "Add unit tests for functions in `ts/util.ts`\n\nAlso remove `makeTsEnumToStrConverter`, since it's not used anywhere,\ndon't think it ever was, and I'm not even sure anymore how to use it.",
+          "timestamp": "2026-03-23T10:42:42-04:00",
+          "tree_id": "b9fd8c03eb6dd1297a42c4bbe90bace78d44556e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/16927d3ee3e3e2559dafa79df9999d8b7285c1c0"
+        },
+        "date": 1774298919269,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78337,
+            "range": "±1.08%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 727804,
+            "range": "±0.73%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9670,
+            "range": "±2.10%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 607745,
+            "range": "±0.85%",
             "unit": "ops/sec",
             "extra": "92 samples"
           }
