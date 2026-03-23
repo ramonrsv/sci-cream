@@ -24,7 +24,8 @@
     "dev:turbopack": "next dev --turbopack",
     "dev:webpack": "next dev --webpack",
     "start": "next start",
-    "seed-db": "npx drizzle-kit push && pnpm tsx ./src/lib/database/seed.ts"
+    "seed-db": "npx drizzle-kit push && pnpm tsx ./src/lib/database/seed.ts",
+    "doc": "tsc --noEmit false --outDir ./dist && npx jsdoc -c ./jsdoc.config.json"
   },
   "dependencies": {
     "@headlessui/react": "^2.2.9",
@@ -35,6 +36,7 @@
     "chart.js": "^4.5.1",
     "chartjs-chart-error-bars": "^4.4.5",
     "colord": "^2.9.3",
+    "docdash": "^2.0.2",
     "dotenv": "^17.3.1",
     "drizzle-orm": "^0.45.1",
     "eslint-plugin-jsdoc": "^62.8.0",
@@ -70,6 +72,8 @@
     "drizzle-kit": "^0.31.9",
     "eslint": "^9.39.2",
     "eslint-config-next": "16.1.0",
+    "jsdoc": "^4.0.5",
+    "jsdoc-plugin-typescript": "^3.2.0",
     "jsdom": "^27.4.0",
     "tailwindcss": "^4.1.18",
     "tsx": "^4.21.0",

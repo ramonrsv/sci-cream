@@ -64,3 +64,8 @@ next-env.d.ts
 
 # Benchmark results
 /packages/app/bench-results
+
+# App jsdoc output
+/packages/app/dist
+/packages/app/docs
+

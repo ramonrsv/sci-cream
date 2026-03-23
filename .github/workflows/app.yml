@@ -105,6 +105,19 @@ jobs:
       - name: Run Prettier check
         run: pnpm run prettier
 
+  build_docs:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-rust
+        with:
+          cargo-installs: wasm-pack
+      - uses: ./.github/actions/setup-pnpm
+      - uses: ./.github/actions/sci-cream-package
+
+      - name: Build documentation
+        run: pnpm run doc
+
   code_coverage:
     runs-on: ubuntu-latest
     services:
