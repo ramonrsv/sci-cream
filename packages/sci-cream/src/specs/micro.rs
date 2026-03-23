@@ -6,7 +6,7 @@ use crate::{
     composition::{Composition, IntoComposition, Micro, PAC, Solids, SolidsBreakdown},
     constants::{self},
     error::Result,
-    validate::assert_are_positive,
+    validate::verify_are_positive,
 };
 
 /// Spec for ingredients with solely micro components, e.g. salt, emulsifiers, stabilizer, etc.
@@ -72,7 +72,7 @@ impl IntoComposition for MicroSpec {
                 let emulsifiers_strength = emulsifiers_strength.unwrap_or(0.0);
                 let stabilizers_strength = stabilizers_strength.unwrap_or(0.0);
 
-                assert_are_positive(&[emulsifiers_strength, stabilizers_strength])?;
+                verify_are_positive(&[emulsifiers_strength, stabilizers_strength])?;
 
                 Ok(Composition::new()
                     .solids(Solids::new().other(SolidsBreakdown::new().others(100.0)))

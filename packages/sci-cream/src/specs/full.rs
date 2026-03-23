@@ -6,7 +6,7 @@ use crate::{
     composition::{Alcohol, CompKey, Composition, IntoComposition, Micro, PAC, Solids},
     constants::{self},
     error::Result,
-    validate::assert_within_100_percent,
+    validate::verify_is_within_100_percent,
 };
 
 /// Spec for ingredients with a full composition specified
@@ -72,7 +72,7 @@ impl IntoComposition for FullSpec {
             .pod(pod)
             .pac(pac);
 
-        assert_within_100_percent(comp.get(CompKey::TotalSolids) + comp.get(CompKey::Alcohol))?;
+        verify_is_within_100_percent(comp.get(CompKey::TotalSolids) + comp.get(CompKey::Alcohol))?;
 
         Ok(comp)
     }

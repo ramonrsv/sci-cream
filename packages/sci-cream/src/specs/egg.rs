@@ -6,7 +6,7 @@ use crate::{
     composition::{Composition, Fats, IntoComposition, Micro, Solids, SolidsBreakdown},
     constants::{self},
     error::Result,
-    validate::{assert_are_positive, assert_is_subset, assert_within_100_percent},
+    validate::{verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
 
 #[cfg(doc)]
@@ -76,9 +76,9 @@ impl IntoComposition for EggSpec {
             lecithin,
         } = self;
 
-        assert_are_positive(&[water, fat, protein, lecithin])?;
-        assert_within_100_percent(water + fat + protein)?;
-        assert_is_subset(lecithin, fat, "lecithin <= fat")?;
+        verify_are_positive(&[water, fat, protein, lecithin])?;
+        verify_is_within_100_percent(water + fat + protein)?;
+        verify_is_subset(lecithin, fat, "lecithin <= fat")?;
 
         let egg_solids = SolidsBreakdown::new()
             .fats(

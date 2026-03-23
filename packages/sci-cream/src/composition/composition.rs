@@ -9,7 +9,7 @@ use strum_macros::EnumIter;
 use crate::{
     composition::{Alcohol, Micro, PAC, Solids},
     error::Result,
-    validate::assert_are_positive,
+    validate::verify_are_positive,
 };
 
 #[cfg(feature = "wasm")]
@@ -366,7 +366,7 @@ impl Composition {
     ///
     /// Returns an [`Error::CompositionNotPositive`] if any of the ingredient amounts are negative.
     pub fn from_combination(compositions: &[(Self, f64)]) -> Result<Self> {
-        assert_are_positive(&compositions.iter().map(|line| line.1).collect::<Vec<_>>())?;
+        verify_are_positive(&compositions.iter().map(|line| line.1).collect::<Vec<_>>())?;
 
         let total_amount: f64 = compositions.iter().map(|line| line.1).sum();
 

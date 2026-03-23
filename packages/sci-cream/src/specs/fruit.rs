@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     composition::{Carbohydrates, Composition, Fats, Fibers, IntoComposition, PAC, Solids, SolidsBreakdown, Sugars},
     error::Result,
-    validate::{assert_are_positive, assert_is_subset, assert_within_100_percent},
+    validate::{verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
 
 /// Spec for fruit ingredients, with a specified [`Sugars`] composition and water content
@@ -104,9 +104,9 @@ impl IntoComposition for FruitSpec {
         let fiber = fiber.unwrap_or(0.0);
         let carbohydrate = carbohydrate.unwrap_or_else(|| fiber + sugars.total());
 
-        assert_is_subset(fiber + sugars.total(), carbohydrate, "fiber + sugars <= carbohydrate")?;
-        assert_are_positive(&[water, protein, fat, carbohydrate, fiber, sugars.total()])?;
-        assert_within_100_percent(water + protein + fat + carbohydrate)?;
+        verify_is_subset(fiber + sugars.total(), carbohydrate, "fiber + sugars <= carbohydrate")?;
+        verify_are_positive(&[water, protein, fat, carbohydrate, fiber, sugars.total()])?;
+        verify_is_within_100_percent(water + protein + fat + carbohydrate)?;
 
         let solids = SolidsBreakdown::new()
             .fats(Fats::new().total(fat))
@@ -120,7 +120,7 @@ impl IntoComposition for FruitSpec {
             .others_from_total(100.0 - water)?;
 
         let energy = energy.unwrap_or(solids.energy()?);
-        assert_are_positive(&[energy])?;
+        verify_are_positive(&[energy])?;
 
         Ok(Composition::new()
             .energy(energy)

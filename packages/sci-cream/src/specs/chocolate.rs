@@ -6,7 +6,7 @@ use crate::{
     composition::{Carbohydrates, Composition, Fats, Fibers, IntoComposition, PAC, Solids, SolidsBreakdown, Sugars},
     constants::{self, composition::cacao},
     error::Result,
-    validate::{assert_are_positive, assert_is_100_percent, assert_is_subset},
+    validate::{verify_are_positive, verify_is_100_percent, verify_is_subset},
 };
 
 #[cfg(doc)]
@@ -140,9 +140,9 @@ impl IntoComposition for ChocolateSpec {
         let sugars = sugars.unwrap_or(0.0);
         let other_solids = other_solids.unwrap_or(0.0);
 
-        assert_are_positive(&[cacao_solids, cocoa_butter, sugars, other_solids])?;
-        assert_is_subset(cocoa_butter, cacao_solids, "cocoa_butter <= cacao_solids")?;
-        assert_is_100_percent(cacao_solids + sugars + other_solids)?;
+        verify_are_positive(&[cacao_solids, cocoa_butter, sugars, other_solids])?;
+        verify_is_subset(cocoa_butter, cacao_solids, "cocoa_butter <= cacao_solids")?;
+        verify_is_100_percent(cacao_solids + sugars + other_solids)?;
 
         let cocoa_snf = cacao_solids - cocoa_butter;
         let sugars = Sugars::new().sucrose(sugars);

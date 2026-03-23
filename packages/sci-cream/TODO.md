@@ -1,17 +1,16 @@
 # Next Release
 
-- [ ] Add more tests to `sci-cream` crate and increase code coverage.
 - [ ] Add code example doc tests to all specs that don't already have them.
-- [ ] Consider adding composition traits for calculating POD, PAC, and energy, total (sum), etc.
+- [ ] Implement `Validate` for `composition` (and `specs`?) and add unit tests to verify.
+- [ ] Remove uses of `.unwrap()` in documentation code examples, see the `# fn main() ...` trick.
+
 - [ ] Rework `specs::Micro` to pull out stabilizers and emulsifiers into their own category(s).
       Should they be separate `Stabilizer` and `Emulsifier`, or something like `Texturant` that
       includes both? I prefer the latter, which accommodates blends like "Louis Francois Stab 2000",
       but users might find it confusing in.
 - [ ] Add gum stabilizer ingredients and Underbelly blends with reference links and explicit ratios.
-- [ ] Remove uses of `.unwrap()` in documentation code examples, see the `# fn main() ...` trick.
 - [ ] Add a beginner-friendly overview of the core ice cream science concepts, e.g. FPD curves.
 - [ ] Consider whether to add `CompKey` for all polyols and artificial sweeteners.
-- [ ] Rename `assert_*` family of functions in `crate::validate` to `verify_*`, to differentiate.
 - [ ] Split literature and ingredient definition bibliography; the latter clutters the docs.
 - [ ] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
@@ -41,9 +40,12 @@
 - [ ] Consider replacing `serde::Error` in docs with links to types, e.g. [`serde_json::Error`].
 - [ ] Consider making `ScaleComponents` private so that it can only be used internally and cannot
       be misused by users; this should not present an extensibility issue with the current design.
+- [ ] Consider adding composition traits for calculating POD, PAC, and energy, total (sum), etc.
 
 # Completed
 
+- [x] Rename `assert_*` family of functions in `crate::validate` to `verify_*`, to differentiate.
+- [x] Add more tests to `sci-cream` crate and increase code coverage.
 - [x] Document all TypeScript items, look for a `missing_docs` equivalent lint.
 - [x] Looking into using `use crate::composition::CompKey::*` to avoid having to prefix `CompKey::`
       whenever accessing values, e.g. `comp.get(MilkFats)` vs `comp.get(CompKey::MilkFats)`.

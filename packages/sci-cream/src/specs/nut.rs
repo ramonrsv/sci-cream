@@ -6,7 +6,7 @@ use crate::{
     composition::{Carbohydrates, Composition, Fats, Fibers, IntoComposition, PAC, Solids, SolidsBreakdown, Sugars},
     constants::{self},
     error::Result,
-    validate::{assert_are_positive, assert_is_subset, assert_within_100_percent},
+    validate::{verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
 
 #[cfg(doc)]
@@ -101,12 +101,12 @@ impl IntoComposition for NutSpec {
             sugars,
         } = self;
 
-        assert_are_positive(&[water, protein, fat, carbohydrate, fiber, sugars])?;
-        assert_within_100_percent(water + protein + fat + carbohydrate)?;
-        assert_is_subset(fiber + sugars, carbohydrate, "fiber + sugars <= carbohydrate")?;
+        verify_are_positive(&[water, protein, fat, carbohydrate, fiber, sugars])?;
+        verify_is_within_100_percent(water + protein + fat + carbohydrate)?;
+        verify_is_subset(fiber + sugars, carbohydrate, "fiber + sugars <= carbohydrate")?;
 
         let saturated_fat = saturated_fat.unwrap_or(fat * constants::composition::STD_SATURATED_FAT_IN_NUT_FAT);
-        assert_is_subset(saturated_fat, fat, "saturated_fat <= fat")?;
+        verify_is_subset(saturated_fat, fat, "saturated_fat <= fat")?;
 
         let sugars = Sugars::new().sucrose(sugars);
 

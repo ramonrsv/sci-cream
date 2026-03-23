@@ -10,7 +10,7 @@ use crate::{
     constants::molar_mass::pac_from_molar_mass,
     error::{Error, Result},
     specs::units::{CompositionBasis, Scaling, Unit},
-    validate::{assert_are_positive, assert_is_100_percent, assert_within_100_percent},
+    validate::{verify_are_positive, verify_is_100_percent, verify_is_within_100_percent},
 };
 
 #[cfg(doc)]
@@ -100,19 +100,19 @@ impl IntoComposition for SweetenerSpec {
         let fiber = fiber.unwrap_or_default();
         let other_carbohydrates = other_carbohydrates.unwrap_or(0.0);
         let other_solids = other_solids.unwrap_or(0.0);
-        assert_are_positive(&[other_carbohydrates, other_solids])?;
+        verify_are_positive(&[other_carbohydrates, other_solids])?;
 
         let mut factor = None;
 
         match basis {
             CompositionBasis::ByDryWeight { solids } => {
-                assert_within_100_percent(sweeteners.total() + fiber.total() + other_carbohydrates + other_solids)?;
-                assert_within_100_percent(solids)?;
+                verify_is_within_100_percent(sweeteners.total() + fiber.total() + other_carbohydrates + other_solids)?;
+                verify_is_within_100_percent(solids)?;
 
                 factor = Some(solids / 100.0);
             }
             CompositionBasis::ByTotalWeight { water } => {
-                assert_is_100_percent(sweeteners.total() + fiber.total() + other_carbohydrates + other_solids + water)?;
+                verify_is_100_percent(sweeteners.total() + fiber.total() + other_carbohydrates + other_solids + water)?;
             }
         }
 

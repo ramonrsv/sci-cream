@@ -8,7 +8,7 @@ use crate::{
     constants::{self, density::dairy_milliliters_to_grams},
     error::{Error, Result},
     specs::units::Unit,
-    validate::{assert_are_positive, assert_is_subset, assert_within_100_percent},
+    validate::{verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
 
 #[cfg(doc)]
@@ -44,8 +44,8 @@ impl IntoComposition for DairySpec {
 
         let calculated_msnf = (100.0 - fat) * constants::composition::STD_MSNF_IN_MILK_SERUM;
         let msnf = msnf.unwrap_or(calculated_msnf);
-        assert_are_positive(&[fat, msnf])?;
-        assert_within_100_percent(fat + msnf)?;
+        verify_are_positive(&[fat, msnf])?;
+        verify_is_within_100_percent(fat + msnf)?;
 
         let lactose = msnf * constants::composition::STD_LACTOSE_IN_MSNF;
         let proteins = msnf * constants::composition::STD_PROTEIN_IN_MSNF;
@@ -146,10 +146,10 @@ impl IntoComposition for DairyFromNutritionSpec {
             _ => Err(Error::UnsupportedCompositionUnit(serving_size))?,
         };
 
-        assert_are_positive(&[serving_size, total_fat, saturated_fat, trans_fat, sugars, protein])?;
-        assert_is_subset(saturated_fat, total_fat, "saturated_fat <= total_fat")?;
-        assert_is_subset(trans_fat, total_fat, "trans_fat <= total_fat")?;
-        assert_is_subset(total_fat + sugars + protein, serving_size, "total_fat + sugars + protein <= serving_size")?;
+        verify_are_positive(&[serving_size, total_fat, saturated_fat, trans_fat, sugars, protein])?;
+        verify_is_subset(saturated_fat, total_fat, "saturated_fat <= total_fat")?;
+        verify_is_subset(trans_fat, total_fat, "trans_fat <= total_fat")?;
+        verify_is_subset(total_fat + sugars + protein, serving_size, "total_fat + sugars + protein <= serving_size")?;
 
         let sugars = if is_lactose_free {
             Sugars::new()

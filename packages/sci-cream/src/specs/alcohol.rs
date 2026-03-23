@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     composition::{Alcohol, Carbohydrates, Composition, Fats, IntoComposition, PAC, Solids, SolidsBreakdown, Sugars},
     error::Result,
-    validate::{assert_are_positive, assert_is_subset, assert_within_100_percent},
+    validate::{verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
 
 #[cfg(doc)]
@@ -58,9 +58,9 @@ impl IntoComposition for AlcoholSpec {
         let solids = solids.unwrap_or(sugars + fat);
         let alcohol = Alcohol::from_abv(abv);
 
-        assert_are_positive(&[abv, sugars, fat, solids])?;
-        assert_is_subset(sugars + fat, solids, "sugars + fat <= solids")?;
-        assert_within_100_percent(alcohol.by_weight + solids)?;
+        verify_are_positive(&[abv, sugars, fat, solids])?;
+        verify_is_subset(sugars + fat, solids, "sugars + fat <= solids")?;
+        verify_is_within_100_percent(alcohol.by_weight + solids)?;
 
         let sugars = Sugars::new().sucrose(sugars);
 
