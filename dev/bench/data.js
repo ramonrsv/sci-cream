@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774299204286,
+  "lastUpdate": 1774299271106,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -112573,6 +112573,102 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 510.3,
             "range": "15.23",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "16927d3ee3e3e2559dafa79df9999d8b7285c1c0",
+          "message": "Add unit tests for functions in `ts/util.ts`\n\nAlso remove `makeTsEnumToStrConverter`, since it's not used anywhere,\ndon't think it ever was, and I'm not even sure anymore how to use it.",
+          "timestamp": "2026-03-23T10:42:42-04:00",
+          "tree_id": "b9fd8c03eb6dd1297a42c4bbe90bace78d44556e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/16927d3ee3e3e2559dafa79df9999d8b7285c1c0"
+        },
+        "date": 1774299267327,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 810.1,
+            "range": "41.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48.5,
+            "range": "12.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.3,
+            "range": "7.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 37.4,
+            "range": "5.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 36.8,
+            "range": "3.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 162.9,
+            "range": "6.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 45,
+            "range": "2.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 41.73,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 29.13,
+            "range": "1.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 497.6,
+            "range": "15.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 499.8,
+            "range": "12.96",
             "unit": "ms"
           }
         ]
