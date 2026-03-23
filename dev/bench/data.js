@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774235807162,
+  "lastUpdate": 1774235833557,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -118134,6 +118134,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.75%",
             "unit": "ops/sec",
             "extra": "89 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "35af9a955c987d5d7a768b928bde092bb266415d",
+          "message": "Add unit tests for `MixProperties`",
+          "timestamp": "2026-03-22T23:13:40-04:00",
+          "tree_id": "6e1a3ed7f7581ca1fc4fbce5e71388844ae05bd2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/35af9a955c987d5d7a768b928bde092bb266415d"
+        },
+        "date": 1774235830667,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78716,
+            "range": "±0.93%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 718311,
+            "range": "±1.09%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10034,
+            "range": "±2.24%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 603923,
+            "range": "±0.74%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
