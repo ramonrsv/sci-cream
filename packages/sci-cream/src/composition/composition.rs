@@ -572,19 +572,93 @@ impl Default for Composition {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
-#[allow(clippy::float_cmp)]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
     use std::collections::HashMap;
 
     use strum::IntoEnumIterator;
 
-    use crate::tests::asserts::shadow_asserts::assert_eq;
+    use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
     use crate::tests::asserts::*;
 
+    use crate::error::Error;
     use crate::tests::assets::*;
 
     use super::*;
     use crate::composition::*;
+
+    const FIELD_MODIFIERS: [fn(&mut Composition, f64); 6] = [
+        |c, v| c.energy += v,
+        |c, v| c.solids.milk.fats.total += v,
+        |c, v| c.micro.salt += v,
+        |c, v| c.alcohol.by_weight += v,
+        |c, v| c.pod += v,
+        |c, v| c.pac.sugars += v,
+    ];
+
+    #[test]
+    fn composition_field_count() {
+        assert_eq!(Composition::new().iter().count(), 6);
+    }
+
+    #[test]
+    fn composition_no_fields_missed() {
+        assert_eq!(Composition::new().iter().count(), FIELD_MODIFIERS.len());
+    }
+
+    #[test]
+    fn composition_empty() {
+        let c = Composition::empty();
+        assert_eq!(c, Composition::new());
+        assert_eq!(c.energy, 0.0);
+        assert_eq!(c.solids, Solids::empty());
+        assert_eq!(c.micro, Micro::empty());
+        assert_eq!(c.alcohol, Alcohol::empty());
+        assert_eq!(c.pod, 0.0);
+        assert_eq!(c.pac, PAC::empty());
+
+        // An empty composition is equivalent to 100% water
+        assert_eq!(c.water(), 100.0);
+    }
+
+    #[test]
+    fn composition_field_update_methods() {
+        let solids = Solids::new().milk(SolidsBreakdown::new().fats(Fats::new().total(5.0)));
+        let micro = Micro::new().salt(0.5);
+        let alcohol = Alcohol::new().by_weight(3.0);
+        let pac = PAC::new().sugars(4.0).msnf_ws_salts(2.0);
+
+        let c = Composition::new()
+            .energy(150.0)
+            .solids(solids)
+            .micro(micro)
+            .alcohol(alcohol)
+            .pod(1.5)
+            .pac(pac);
+
+        assert_eq!(c.energy, 150.0);
+        assert_eq!(c.solids, solids);
+        assert_eq!(c.micro, micro);
+        assert_eq!(c.alcohol, alcohol);
+        assert_eq!(c.pod, 1.5);
+        assert_eq!(c.pac, pac);
+    }
+
+    #[test]
+    fn composition_water() {
+        assert_eq!(Composition::new().water(), 100.0);
+
+        let with_solids = Composition::new().solids(Solids::new().other(SolidsBreakdown::new().others(10.0)));
+        assert_eq!(with_solids.water(), 90.0);
+
+        let with_alcohol = Composition::new().alcohol(Alcohol::new().by_weight(5.0));
+        assert_eq!(with_alcohol.water(), 95.0);
+
+        let with_both = Composition::new()
+            .solids(Solids::new().other(SolidsBreakdown::new().others(10.0)))
+            .alcohol(Alcohol::new().by_weight(5.0));
+        assert_eq!(with_both.water(), 85.0);
+    }
 
     #[test]
     fn composition_nan_values() {
@@ -607,7 +681,33 @@ mod tests {
     }
 
     #[test]
-    fn composition_get() {
+    fn composition_emulsifiers_per_fat() {
+        let c = Composition::new()
+            .micro(Micro::new().emulsifiers(0.5))
+            .solids(Solids::new().milk(SolidsBreakdown::new().fats(Fats::new().total(10.0))));
+        assert_eq!(c.emulsifiers_per_fat(), 5.0);
+    }
+
+    #[test]
+    fn composition_stabilizers_per_water() {
+        let c = Composition::new()
+            .micro(Micro::new().stabilizers(0.9))
+            .solids(Solids::new().other(SolidsBreakdown::new().others(10.0)));
+        // 0.9 / 90.0 * 100 == 1.0
+        assert_eq!(c.stabilizers_per_water(), 1.0);
+    }
+
+    #[test]
+    fn composition_absolute_pac() {
+        let c = Composition::new()
+            .pac(PAC::new().sugars(9.0))
+            .solids(Solids::new().other(SolidsBreakdown::new().others(10.0)));
+        // 9.0 / 90.0 * 100 == 10.0
+        assert_eq!(c.absolute_pac(), 10.0);
+    }
+
+    #[test]
+    fn composition_2_percent_milk_get() {
         let expected = HashMap::from([
             (CompKey::Energy, 49.5756),
             (CompKey::MilkFat, 2.0),
@@ -634,5 +734,265 @@ mod tests {
         ]);
 
         CompKey::iter().for_each(|key| assert_eq_flt_test!(COMP_2_MILK.get(key), *expected.get(&key).unwrap_or(&0.0)));
+    }
+
+    #[allow(clippy::too_many_lines)]
+    #[test]
+    fn composition_get_all_keys() {
+        // Build a composition with every field set to known non-zero values to exercise all
+        // CompKey branches. Any key that maps to 0.0 (because it falls through to a default)
+        // would cause unwrap() to fail below, making it easy to catch new unhandled keys.
+        //
+        // Per-category totals: milk=13, egg=4, cocoa=7, nut=4, other=10.5 -> TotalSolids=38.5
+        // alcohol=2.5 -> Water = 100 - 38.5 - 2.5 = 59.0
+        let milk = SolidsBreakdown::new()
+            .fats(Fats::new().total(4.0))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(5.0)))
+            .proteins(3.0)
+            .others(1.0);
+
+        let egg = SolidsBreakdown::new()
+            .fats(Fats::new().total(2.0))
+            .proteins(1.0)
+            .others(1.0);
+
+        let cocoa = SolidsBreakdown::new()
+            .fats(Fats::new().total(3.0))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(2.0)))
+            .proteins(1.0)
+            .others(1.0);
+
+        let nut = SolidsBreakdown::new()
+            .fats(Fats::new().total(2.0))
+            .proteins(1.0)
+            .others(1.0);
+
+        let other = SolidsBreakdown::new()
+            .fats(Fats::new().total(1.0))
+            .carbohydrates(
+                Carbohydrates::new()
+                    .sugars(
+                        Sugars::new()
+                            .glucose(1.0)
+                            .fructose(1.0)
+                            .galactose(1.0)
+                            .maltose(1.0)
+                            .trehalose(1.0),
+                    )
+                    .polyols(Polyols::new().erythritol(2.0))
+                    .fiber(Fibers::new().oligofructose(1.0)),
+            )
+            .artificial_sweeteners(ArtificialSweeteners::new().aspartame(0.5))
+            .proteins(0.5)
+            .others(0.5);
+
+        let c = Composition::new()
+            .energy(100.0)
+            .solids(Solids::new().milk(milk).egg(egg).cocoa(cocoa).nut(nut).other(other))
+            .micro(Micro::new().salt(0.3).lecithin(0.1).emulsifiers(0.6).stabilizers(0.59))
+            .alcohol(Alcohol::new().by_weight(2.5))
+            .pod(5.0)
+            .pac(
+                PAC::new()
+                    .sugars(6.0)
+                    .salt(1.0)
+                    .msnf_ws_salts(2.0)
+                    .alcohol(0.5)
+                    .hardness_factor(1.0),
+            );
+
+        let abv = c.alcohol.to_abv(); // 2.5 / ABV_TO_ABW_RATIO
+        let abs_pac = c.absolute_pac(); // (6+1+2+0.5) / 59.0 * 100
+
+        #[rustfmt::skip]
+        let expected = HashMap::from([
+            (CompKey::Energy,               100.0),
+            // Milk
+            (CompKey::MilkFat,              4.0),
+            (CompKey::MSNF,                 9.0),   // milk.snf()  = 13 - 4
+            (CompKey::MilkSNFS,             4.0),   // milk.snfs() = 9 - 5 (lactose)
+            (CompKey::MilkProteins,         3.0),
+            (CompKey::MilkSolids,           13.0),
+            // Cocoa
+            (CompKey::CocoaButter,          3.0),
+            (CompKey::CocoaSolids,          2.0),   // cocoa.snfs() = (7-3) - 2 (sucrose)
+            (CompKey::CacaoSolids,          5.0),   // cocoa.total() - cocoa.sugars = 7 - 2
+            // Nut
+            (CompKey::NutFat,               2.0),
+            (CompKey::NutSNF,               2.0),   // nut.snfs() = (4-2) - 0
+            (CompKey::NutSolids,            4.0),   // nut.total() - nut.sugars = 4 - 0
+            // Egg
+            (CompKey::EggFat,               2.0),
+            (CompKey::EggSNF,               2.0),   // egg.snfs() = (4-2) - 0
+            (CompKey::EggSolids,            4.0),   // egg.total() - egg.sugars = 4 - 0
+            // Other
+            (CompKey::OtherFats,            1.0),
+            (CompKey::OtherSNFS,            4.5),   // other.snfs() = (10.5-1) - 5.0 (sugars)
+            // Totals
+            (CompKey::TotalFats,            12.0),  // 4+2+3+2+1
+            (CompKey::TotalSNF,             26.5),  // 38.5 - 12.0
+            (CompKey::TotalSNFS,            14.5),  // 26.5 - 12.0 (TotalSugars)
+            (CompKey::TotalProteins,        6.5),   // 3+1+1+1+0.5
+            (CompKey::TotalSolids,          38.5),  // 13+4+7+4+10.5
+            (CompKey::Water,                59.0),  // 100 - 38.5 - 2.5
+            // Carbohydrates
+            (CompKey::Fiber,                1.0),   // oligofructose
+            (CompKey::Glucose,              1.0),
+            (CompKey::Fructose,             1.0),
+            (CompKey::Galactose,            1.0),
+            (CompKey::Sucrose,              2.0),
+            (CompKey::Lactose,              5.0),
+            (CompKey::Maltose,              1.0),
+            (CompKey::Trehalose,            1.0),
+            (CompKey::TotalSugars,          12.0),  // 1+1+1+2+5+1+1
+            (CompKey::Erythritol,           2.0),
+            (CompKey::TotalPolyols,         2.0),
+            (CompKey::TotalCarbohydrates,   15.0),  // 12 (sugars) + 2 (polyols) + 1 (fiber)
+            (CompKey::TotalArtificial,      0.5),   // aspartame
+            (CompKey::TotalSweeteners,      14.5),  // 12 + 2 + 0.5
+            // Alcohol and Micro
+            (CompKey::Alcohol,              2.5),
+            (CompKey::ABV,                  abv),
+            (CompKey::Salt,                 0.3),
+            (CompKey::Lecithin,             0.1),
+            (CompKey::Emulsifiers,          0.6),
+            (CompKey::Stabilizers,          0.59),
+            (CompKey::EmulsifiersPerFat,    5.0),   // 0.6 / 12.0 * 100
+            (CompKey::StabilizersPerWater,  1.0),   // 0.59 / 59.0 * 100
+            // POD and PAC
+            (CompKey::POD,                  5.0),
+            (CompKey::PACsgr,               6.0),
+            (CompKey::PACslt,               1.0),
+            (CompKey::PACmlk,               2.0),
+            (CompKey::PACalc,               0.5),
+            (CompKey::PACtotal,             9.5),
+            (CompKey::AbsPAC,               abs_pac),
+            (CompKey::HF,                   1.0),
+        ]);
+
+        // unwrap (not unwrap_or) so that any newly added CompKey not in the map panics the test
+        CompKey::iter().for_each(|key| assert_eq_flt_test!(c.get(key), *expected.get(&key).unwrap()));
+    }
+
+    #[test]
+    fn composition_from_combination_empty() {
+        assert_eq!(Composition::from_combination(&[]).unwrap(), Composition::empty());
+    }
+
+    #[test]
+    fn composition_from_combination_zero_total() {
+        let c = Composition::new().energy(100.0).pod(2.0);
+        assert_eq!(Composition::from_combination(&[(c, 0.0)]).unwrap(), Composition::empty());
+    }
+
+    #[test]
+    fn composition_from_combination_single() {
+        let c = Composition::new()
+            .energy(100.0)
+            .solids(Solids::new().other(SolidsBreakdown::new().others(10.0)))
+            .pod(2.0);
+        let result = Composition::from_combination(&[(c, 1.0)]).unwrap();
+        assert_abs_diff_eq!(result, c);
+    }
+
+    #[test]
+    fn composition_from_combination_two_equal_weights() {
+        let a = Composition::new()
+            .energy(100.0)
+            .solids(Solids::new().other(SolidsBreakdown::new().others(20.0)));
+        let b = Composition::new()
+            .energy(60.0)
+            .solids(Solids::new().other(SolidsBreakdown::new().others(10.0)));
+
+        let result = Composition::from_combination(&[(a, 1.0), (b, 1.0)]).unwrap();
+        assert_eq!(result.energy, 80.0);
+        assert_eq!(result.solids.other.others, 15.0);
+    }
+
+    #[test]
+    fn composition_from_combination_error() {
+        let c = Composition::new();
+        assert!(matches!(Composition::from_combination(&[(c, -1.0)]), Err(Error::CompositionNotPositive(_))));
+    }
+
+    #[test]
+    fn composition_scale() {
+        let c = Composition::new()
+            .energy(100.0)
+            .solids(Solids::new().other(SolidsBreakdown::new().others(20.0)))
+            .micro(Micro::new().salt(1.0))
+            .alcohol(Alcohol::new().by_weight(4.0))
+            .pod(2.0)
+            .pac(PAC::new().sugars(8.0));
+
+        let scaled = c.scale(0.5);
+        assert_eq!(scaled.energy, 50.0);
+        assert_eq!(scaled.solids.other.others, 10.0);
+        assert_eq!(scaled.micro.salt, 0.5);
+        assert_eq!(scaled.alcohol.by_weight, 2.0);
+        assert_eq!(scaled.pod, 1.0);
+        assert_eq!(scaled.pac.sugars, 4.0);
+    }
+
+    #[test]
+    fn composition_add() {
+        let a = Composition::new()
+            .energy(100.0)
+            .solids(Solids::new().other(SolidsBreakdown::new().others(20.0)))
+            .micro(Micro::new().salt(1.0))
+            .alcohol(Alcohol::new().by_weight(4.0))
+            .pod(2.0)
+            .pac(PAC::new().sugars(8.0));
+        let b = Composition::new()
+            .energy(50.0)
+            .solids(Solids::new().milk(SolidsBreakdown::new().proteins(5.0)))
+            .micro(Micro::new().stabilizers(0.2))
+            .alcohol(Alcohol::new().by_weight(1.0))
+            .pod(1.0)
+            .pac(PAC::new().msnf_ws_salts(3.0));
+
+        let sum = a.add(&b);
+        assert_eq!(sum.energy, 150.0);
+        assert_eq!(sum.solids.other.others, 20.0);
+        assert_eq!(sum.solids.milk.proteins, 5.0);
+        assert_eq!(sum.micro.salt, 1.0);
+        assert_eq!(sum.micro.stabilizers, 0.2);
+        assert_eq!(sum.alcohol.by_weight, 5.0);
+        assert_eq!(sum.pod, 3.0);
+        assert_eq!(sum.pac.sugars, 8.0);
+        assert_eq!(sum.pac.msnf_ws_salts, 3.0);
+    }
+
+    #[test]
+    fn composition_abs_diff_eq() {
+        let a = Composition::new()
+            .energy(100.0)
+            .solids(Solids::new().milk(SolidsBreakdown::new().fats(Fats::new().total(5.0))))
+            .micro(Micro::new().salt(1.0))
+            .alcohol(Alcohol::new().by_weight(3.0))
+            .pod(2.0)
+            .pac(PAC::new().sugars(4.0));
+        let b = a;
+        let mut c = b;
+
+        for v in [a, b, c] {
+            assert_ne!(v.energy, 0.0);
+            assert_ne!(v.solids.milk.fats.total, 0.0);
+            assert_ne!(v.micro.salt, 0.0);
+            assert_ne!(v.alcohol.by_weight, 0.0);
+            assert_ne!(v.pod, 0.0);
+            assert_ne!(v.pac.sugars, 0.0);
+        }
+
+        assert_abs_diff_eq!(a, b);
+        assert_abs_diff_eq!(a, c);
+
+        for field_modifier in FIELD_MODIFIERS {
+            assert_abs_diff_eq!(a, c);
+            field_modifier(&mut c, 1e-10);
+            assert_abs_diff_ne!(a, c);
+            field_modifier(&mut c, -1e-10);
+            assert_abs_diff_eq!(a, c);
+        }
     }
 }
