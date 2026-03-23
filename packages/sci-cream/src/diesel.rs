@@ -2,6 +2,8 @@
 //!
 //! This module is only compiled when the `diesel` feature is enabled.
 
+#![cfg_attr(coverage, coverage(off))] // WIP, @todo
+
 #[cfg(feature = "diesel")]
 diesel::table! {
     #[allow(missing_docs)] // WIP, @todo
