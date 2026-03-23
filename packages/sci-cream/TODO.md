@@ -13,6 +13,7 @@
 - [ ] Split literature and ingredient definition bibliography; the latter clutters the docs.
 - [ ] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
+- [ ] Add lactose-free support to `DairySpec`, to allow simple lactose-free ingredient specs.
 
 # Up Next
 
@@ -20,6 +21,12 @@
       of a mix, e.g. total solids, MSNF, serving temperature, etc. It should probably support
       category presets for different kinds of frozen desserts, e.g. ice-cream, sherbet, sorbet, etc.
 - [ ] Add balancer functionality to automatically balance recipes and component substitutions.
+- [ ] Add support for ingredient name aliases so that generic names, e.g. 'Chocolate Powder', can be
+      explicitly linked to more specific or branded names, e.g. 'Chocolate Powder, 17% at'.
+- [ ] Add support for composite ingredient specs, i.e. allowing ingredients to be specified as a
+      weighted combination of other ingredients, by name. Converting these into `Ingredient`s would
+      need access to the full list of ingredients, there may be circular dependency issues, etc.
+- [ ] Consider adding support for `Composition` to also return `Unit` instead of just `f64`.
 
 # Backlog
 

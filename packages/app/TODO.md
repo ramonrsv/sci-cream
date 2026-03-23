@@ -32,6 +32,7 @@
 
 # Backlog
 
+- [ ] Add an app "tour" to show users the main components of the app, where to go for docs, etc.
 - [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
 - [ ] Add a navbar item with general ice cream science knowledge, likely referencing `sci-cream`.
 - [ ] Add a navbar item for a blog-style thing where I can include information from personal
@@ -62,6 +63,7 @@
 - [ ] Investigate methods for performance analysis, including Chrome DevTools Protocol (CDP),
       playwright-performance, etc. Look into generating flamegraphs.
 - [ ] Add and/or verify support for C/C++ interoperability with FFI; look into `cxx` crate.
+- [ ] Look into `SharedArrayBuffer` to improve JS <-> WASM interoperability performance.
 
 # Completed
 
