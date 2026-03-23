@@ -45,6 +45,7 @@ pub enum Error {
     IngredientNotFound(String),
 }
 
+#[cfg_attr(coverage, coverage(off))]
 #[cfg(feature = "wasm")]
 impl From<Error> for JsValue {
     fn from(error: Error) -> Self {
