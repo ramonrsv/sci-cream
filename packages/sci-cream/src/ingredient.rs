@@ -105,3 +105,133 @@ impl AbsDiffEq for Ingredient {
             && self.composition.abs_diff_eq(&other.composition, epsilon)
     }
 }
+
+#[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
+mod tests {
+    use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
+    use crate::tests::asserts::*;
+
+    use super::*;
+    use crate::composition::Composition;
+
+    // --- Category ---
+
+    #[test]
+    fn category_equality() {
+        assert_eq!(Category::Dairy, Category::Dairy);
+        assert_ne!(Category::Dairy, Category::Egg);
+    }
+
+    #[test]
+    fn category_display() {
+        assert_eq!(Category::Dairy.to_string(), "Dairy");
+        assert_eq!(Category::Sweetener.to_string(), "Sweetener");
+        assert_eq!(Category::Fruit.to_string(), "Fruit");
+        assert_eq!(Category::Chocolate.to_string(), "Chocolate");
+        assert_eq!(Category::Nut.to_string(), "Nut");
+        assert_eq!(Category::Egg.to_string(), "Egg");
+        assert_eq!(Category::Alcohol.to_string(), "Alcohol");
+        assert_eq!(Category::Micro.to_string(), "Micro");
+        assert_eq!(Category::Miscellaneous.to_string(), "Miscellaneous");
+    }
+
+    #[test]
+    fn category_serde_roundtrip() {
+        for cat in [
+            Category::Dairy,
+            Category::Sweetener,
+            Category::Chocolate,
+            Category::Egg,
+            Category::Miscellaneous,
+        ] {
+            let ser = serde_json::to_string(&cat).unwrap();
+            let de: Category = serde_json::from_str(&ser).unwrap();
+            assert_eq!(cat, de);
+        }
+    }
+
+    // --- Ingredient ---
+
+    #[test]
+    fn ingredient_new_stores_fields() {
+        let comp = Composition::empty().energy(42.0);
+        let ing = Ingredient::new("Whole Milk".to_string(), Category::Dairy, comp);
+        assert_eq!(ing.name, "Whole Milk");
+        assert_eq!(ing.category, Category::Dairy);
+        assert_eq!(ing.composition, comp);
+    }
+
+    #[test]
+    fn ingredient_clone_is_equal() {
+        let comp = Composition::empty().energy(10.0);
+        let ing1 = Ingredient::new("Egg Yolk".to_string(), Category::Egg, comp);
+        let ing2 = ing1.clone();
+        assert_eq!(ing1, ing2);
+    }
+
+    #[test]
+    fn ingredient_equality_same() {
+        let comp = Composition::empty().energy(5.0);
+        let a = Ingredient::new("Sugar".to_string(), Category::Sweetener, comp);
+        let b = Ingredient::new("Sugar".to_string(), Category::Sweetener, comp);
+        assert_eq!(a, b);
+        assert_abs_diff_eq!(a, b);
+    }
+
+    #[test]
+    fn ingredient_inequality_different_name() {
+        let comp = Composition::empty();
+        let a = Ingredient::new("Milk".to_string(), Category::Dairy, comp);
+        let b = Ingredient::new("Cream".to_string(), Category::Dairy, comp);
+        assert_ne!(a, b);
+        assert_abs_diff_ne!(a, b);
+    }
+
+    #[test]
+    fn ingredient_inequality_different_category() {
+        let comp = Composition::empty();
+        let a = Ingredient::new("X".to_string(), Category::Dairy, comp);
+        let b = Ingredient::new("X".to_string(), Category::Sweetener, comp);
+        assert_ne!(a, b);
+        assert_abs_diff_ne!(a, b);
+    }
+
+    #[test]
+    fn ingredient_inequality_different_composition() {
+        let comp1 = Composition::empty().energy(1.0);
+        let comp2 = Composition::empty().energy(2.0);
+        let a = Ingredient::new("X".to_string(), Category::Micro, comp1);
+        let b = Ingredient::new("X".to_string(), Category::Micro, comp2);
+        assert_ne!(a, b);
+        assert_abs_diff_ne!(a, b);
+    }
+
+    #[test]
+    fn ingredient_abs_diff_eq_within_epsilon() {
+        let comp1 = Composition::empty().energy(1.0);
+        let comp2 = Composition::empty().energy(1.0 + 1e-10);
+        let a = Ingredient::new("Salt".to_string(), Category::Micro, comp1);
+        let b = Ingredient::new("Salt".to_string(), Category::Micro, comp2);
+        assert_abs_diff_eq!(a, b, epsilon = 1e-9);
+    }
+
+    #[test]
+    fn ingredient_abs_diff_eq_outside_epsilon() {
+        let comp1 = Composition::empty().energy(1.0);
+        let comp2 = Composition::empty().energy(2.0);
+        let a = Ingredient::new("Salt".to_string(), Category::Micro, comp1);
+        let b = Ingredient::new("Salt".to_string(), Category::Micro, comp2);
+        assert_abs_diff_ne!(a, b, epsilon = 1e-10);
+    }
+
+    #[test]
+    fn ingredient_serde_roundtrip() {
+        let comp = Composition::empty().energy(5.5);
+        let ing = Ingredient::new("Sucrose".to_string(), Category::Sweetener, comp);
+        let ser = serde_json::to_string(&ing).unwrap();
+        let de: Ingredient = serde_json::from_str(&ser).unwrap();
+        assert_eq!(ing, de);
+    }
+}
