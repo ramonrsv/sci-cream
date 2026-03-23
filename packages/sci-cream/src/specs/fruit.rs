@@ -35,6 +35,7 @@ use crate::{
 /// - Fructose: 2.44g
 ///
 /// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// # use sci_cream::docs::assert_eq_float;
 /// use sci_cream::{
 ///     composition::{CompKey, IntoComposition, Sugars, Sweeteners},
@@ -49,7 +50,7 @@ use crate::{
 ///     carbohydrate: Some(7.68),
 ///     fiber: Some(2.0),
 ///     sugars: Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47),
-/// }.into_composition().unwrap();
+/// }.into_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::Energy), 32.0);
 /// assert_eq!(comp.get(CompKey::TotalProteins), 0.7);
@@ -62,6 +63,7 @@ use crate::{
 ///
 /// assert_eq_float!(comp.get(CompKey::POD), 6.28312);
 /// assert_eq!(comp.get(CompKey::PACsgr), 8.887);
+/// # Ok(()) }
 /// ```
 #[allow(clippy::doc_markdown)] // _FoodData_ false positive
 #[doc = include_str!("../../docs/bibs/101.md")]

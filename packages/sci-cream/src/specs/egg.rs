@@ -31,6 +31,7 @@ use crate::composition::CompKey;
 /// - Water: 50%, Protein: 16%, Lecithin: 9%, Other Fat: 23% (Clarke, 2004, p. 49)[^4]
 ///
 /// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// use sci_cream::{
 ///     composition::{CompKey, IntoComposition},
 ///     specs::EggSpec
@@ -41,7 +42,7 @@ use crate::composition::CompKey;
 ///     fat: 30.0,
 ///     protein: 16.0,
 ///     lecithin: 9.0,
-/// }.into_composition().unwrap();
+/// }.into_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::Energy), 334.0);
 /// assert_eq!(comp.get(CompKey::EggFat), 30.0);
@@ -49,6 +50,7 @@ use crate::composition::CompKey;
 /// assert_eq!(comp.get(CompKey::EggSNF), 19.0);
 /// assert_eq!(comp.get(CompKey::EggSolids), 49.0);
 /// assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
+/// # Ok(()) }
 /// ```
 #[allow(clippy::doc_markdown)] // _FoodData_ false positive
 #[doc = include_str!("../../docs/bibs/2.md")]

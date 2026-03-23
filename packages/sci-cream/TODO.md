@@ -2,7 +2,6 @@
 
 - [ ] Add code example doc tests to all specs that don't already have them.
 - [ ] Implement `Validate` for `composition` (and `specs`?) and add unit tests to verify.
-- [ ] Remove uses of `.unwrap()` in documentation code examples, see the `# fn main() ...` trick.
 
 - [ ] Rework `specs::Micro` to pull out stabilizers and emulsifiers into their own category(s).
       Should they be separate `Stabilizer` and `Emulsifier`, or something like `Texturant` that
@@ -44,6 +43,7 @@
 
 # Completed
 
+- [x] Remove uses of `.unwrap()` in documentation code examples, see the `# fn main() ...` trick.
 - [x] Rename `assert_*` family of functions in `crate::validate` to `verify_*`, to differentiate.
 - [x] Add more tests to `sci-cream` crate and increase code coverage.
 - [x] Document all TypeScript items, look for a `missing_docs` equivalent lint.

@@ -37,6 +37,7 @@ use crate::composition::CompKey;
 /// - Total Sugars: 4.35g
 ///
 /// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// # use sci_cream::docs::assert_eq_float;
 /// use sci_cream::{
 ///     composition::{CompKey, IntoComposition},
@@ -51,7 +52,7 @@ use crate::composition::CompKey;
 ///    carbohydrate: 21.6,
 ///    fiber: 12.5,
 ///    sugars: 4.35,
-/// }.into_composition().unwrap();
+/// }.into_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::Energy), 570.3);
 /// assert_eq!(comp.get(CompKey::NutFat), 49.9);
@@ -63,6 +64,7 @@ use crate::composition::CompKey;
 /// assert_eq!(comp.get(CompKey::TotalSolids), 95.59);
 /// assert_eq!(comp.get(CompKey::POD), 4.35);
 /// assert_eq!(comp.get(CompKey::HF), 69.86);
+/// # Ok(()) }
 /// ```
 #[allow(clippy::doc_markdown)] // _FoodData_ false positive
 #[doc = include_str!("../../docs/bibs/102.md")]

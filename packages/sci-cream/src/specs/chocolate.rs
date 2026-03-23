@@ -55,6 +55,7 @@ use crate::composition::CompKey;
 /// - Sugars: 12g => 30%
 ///
 /// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// use sci_cream::{
 ///     composition::{CompKey, IntoComposition},
 ///     specs::ChocolateSpec
@@ -65,7 +66,7 @@ use crate::composition::CompKey;
 ///     cocoa_butter: 40.0,
 ///     sugars: Some(30.0),
 ///     other_solids: None,
-/// }.into_composition().unwrap();
+/// }.into_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::Sucrose), 30.0);
 /// assert_eq!(comp.get(CompKey::CacaoSolids), 70.0);
@@ -76,6 +77,7 @@ use crate::composition::CompKey;
 /// assert_eq!(comp.get(CompKey::TotalFats), 40.0);
 /// assert_eq!(comp.get(CompKey::TotalProteins), 7.35);
 /// assert_eq!(comp.get(CompKey::Fiber), 12.0);
+/// # Ok(()) }
 /// ```
 ///
 /// (Ghirardelli 100% Unsweetened Cocoa Powder, 2025)[^111] per 6g serving:
@@ -83,6 +85,7 @@ use crate::composition::CompKey;
 /// - Cocoa butter: 1g fat => 16.67%
 ///
 /// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// # use sci_cream::docs::assert_eq_float;
 /// # use sci_cream::{
 /// #     composition::{CompKey, IntoComposition},
@@ -94,7 +97,7 @@ use crate::composition::CompKey;
 ///     cocoa_butter: 16.67,
 ///     sugars: None,
 ///     other_solids: None,
-/// }.into_composition().unwrap();
+/// }.into_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
 /// assert_eq!(comp.get(CompKey::CacaoSolids), 100.0);
@@ -105,6 +108,7 @@ use crate::composition::CompKey;
 /// assert_eq!(comp.get(CompKey::TotalFats), 16.67);
 /// assert_eq_float!(comp.get(CompKey::TotalProteins), 20.4159);
 /// assert_eq_float!(comp.get(CompKey::Fiber), 33.332);
+/// # Ok(()) }
 /// ```
 #[doc = include_str!("../../docs/bibs/107.md")]
 #[doc = include_str!("../../docs/bibs/111.md")]
