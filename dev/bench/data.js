@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774236735784,
+  "lastUpdate": 1774238363924,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -120470,6 +120470,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 615875,
             "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f9418813e132131694281c96deed1a8d4cba42af",
+          "message": "Add unit tests for `ingredients` module",
+          "timestamp": "2026-03-22T23:13:49-04:00",
+          "tree_id": "21f45b3688a79be5000c79f3f628a959def8b6e2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f9418813e132131694281c96deed1a8d4cba42af"
+        },
+        "date": 1774238360878,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 74816,
+            "range": "±0.82%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 728507,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10075,
+            "range": "±1.88%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 600160,
+            "range": "±0.74%",
             "unit": "ops/sec",
             "extra": "94 samples"
           }
