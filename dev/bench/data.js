@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774299741108,
+  "lastUpdate": 1774302200254,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -123527,6 +123527,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.70%",
             "unit": "ops/sec",
             "extra": "96 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b59790cceeb1fda0d9fcc8c999ecb43e7d273759",
+          "message": "Rename `assert_*` functions to `verify_*`, to diff\n\nAlso reorganize crate Next Release TODOs a bit, to highlight immediate.",
+          "timestamp": "2026-03-23T16:50:24-04:00",
+          "tree_id": "22b5555a812c202a89829107b7f72967a285852a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b59790cceeb1fda0d9fcc8c999ecb43e7d273759"
+        },
+        "date": 1774302196925,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 84509,
+            "range": "±1.65%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 713394,
+            "range": "±0.89%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9926,
+            "range": "±2.12%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 613054,
+            "range": "±1.20%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
