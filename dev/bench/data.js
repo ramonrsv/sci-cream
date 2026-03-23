@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774299271106,
+  "lastUpdate": 1774299375515,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -122916,6 +122916,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.85%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "bbbe5802f2aa25ef397855888b115c2e6842c715",
+          "message": "Add tests to keep explicit count of defined specs\n\nAlso add unit tests verifying error conditions `pop_key_as_med_str`,\n`getMixProperty`, and `getIngredientSpecByName`; all should throw.",
+          "timestamp": "2026-03-23T10:55:11-04:00",
+          "tree_id": "07c678229ba5ea6e41960adf3f9cfdc27f7a7928",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/bbbe5802f2aa25ef397855888b115c2e6842c715"
+        },
+        "date": 1774299372502,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75645,
+            "range": "±1.52%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 728422,
+            "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10039,
+            "range": "±1.84%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 604458,
+            "range": "±0.70%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
           }
         ]
       }
