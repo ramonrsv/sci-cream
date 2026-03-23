@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774298922979,
+  "lastUpdate": 1774298964649,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -11843,6 +11843,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 309,
             "range": "± 5",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "16927d3ee3e3e2559dafa79df9999d8b7285c1c0",
+          "message": "Add unit tests for functions in `ts/util.ts`\n\nAlso remove `makeTsEnumToStrConverter`, since it's not used anywhere,\ndon't think it ever was, and I'm not even sure anymore how to use it.",
+          "timestamp": "2026-03-23T10:42:42-04:00",
+          "tree_id": "b9fd8c03eb6dd1297a42c4bbe90bace78d44556e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/16927d3ee3e3e2559dafa79df9999d8b7285c1c0"
+        },
+        "date": 1774298961220,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3555,
+            "range": "± 38",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 162089,
+            "range": "± 738",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1994,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160532,
+            "range": "± 1561",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 304,
+            "range": "± 2",
             "unit": "ns/iter"
           }
         ]
