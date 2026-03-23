@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774302526744,
+  "lastUpdate": 1774308647134,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -124138,6 +124138,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.20%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "03a73c7150dd3e8ef8e47e4012a5c902690e72f4",
+          "message": "Remove uses of `.unwrap()` in doc code examples",
+          "timestamp": "2026-03-23T17:03:42-04:00",
+          "tree_id": "68c4fbed18674260505077f485d4a96c76aff6a7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/03a73c7150dd3e8ef8e47e4012a5c902690e72f4"
+        },
+        "date": 1774308643173,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 80299,
+            "range": "±0.84%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 648191,
+            "range": "±2.79%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9115,
+            "range": "±1.99%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 578878,
+            "range": "±0.83%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
