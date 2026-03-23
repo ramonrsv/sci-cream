@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774236409356,
+  "lastUpdate": 1774236417441,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -119410,6 +119410,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.64%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "df84f58a11a631f75690e585732ef9ba5596f9cc",
+          "message": "Disable codecov for WIP `diesel` module",
+          "timestamp": "2026-03-22T23:13:49-04:00",
+          "tree_id": "ac62c94c05c39785727ff08cad115e33a1d7dae0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/df84f58a11a631f75690e585732ef9ba5596f9cc"
+        },
+        "date": 1774236411246,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 89484,
+            "range": "±1.21%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 703414,
+            "range": "±0.60%",
+            "unit": "ops/sec",
+            "extra": "97 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9997,
+            "range": "±2.31%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 615875,
+            "range": "±0.86%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
