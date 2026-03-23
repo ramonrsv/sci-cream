@@ -153,10 +153,16 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn get_all_ingredient_specs_count() {
+        // This test is mostly to keep explicit track of the total number of ingredient specs
+        assert_eq!(super::get_all_ingredient_specs().len(), 91);
+    }
+
+    #[test]
     fn get_all_ingredient_specs() {
         let specs = super::get_all_ingredient_specs();
         let original_len = specs.len();
-        assert_ge!(original_len, 88);
+        assert_gt!(original_len, 0);
         assert_eq!(original_len, PARSED_EMBEDDED_INGREDIENT_SPECS.len());
 
         let unique_names: std::collections::HashSet<_> = specs.iter().map(|spec| &spec.name).collect();

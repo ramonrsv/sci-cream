@@ -4,6 +4,11 @@ import { into_ingredient_from_spec, Category, Ingredient, Composition } from "..
 
 import { allIngredientSpecs, getIngredientSpecByName } from "./ingredients";
 
+test("allIngredientSpecs count", () => {
+  // Update this if the number of ingredient specs changes
+  expect(allIngredientSpecs.length).toEqual(91);
+});
+
 test("into_ingredient_from_spec creates Ingredient instances", () => {
   for (const ingSpec of allIngredientSpecs) {
     const ingParsed = into_ingredient_from_spec(ingSpec);
@@ -19,4 +24,8 @@ test("getIngredientSpecByName utility works", () => {
     expect(foundSpec).toBeDefined();
     expect(foundSpec).toEqual(specJson);
   }
+});
+
+test("getIngredientSpecByName throws for non-existent ingredient", () => {
+  expect(() => getIngredientSpecByName("non_existent_ingredient")).toThrow();
 });

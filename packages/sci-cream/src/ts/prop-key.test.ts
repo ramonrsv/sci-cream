@@ -142,3 +142,12 @@ test("getMixProperty", () => {
   expect(getMixProperty(mixProperties, compToPropKey(CompKey.MilkFat))).toBe(0);
   expect(getMixProperty(mixProperties, fpdToPropKey(FpdKey.FPD))).toBe(0);
 });
+
+test("prop_key_as_med_str throws for invalid PropKey", () => {
+  expect(() => prop_key_as_med_str("InvalidPropKey" as PropKey)).toThrow();
+});
+
+test("getMixProperty throws for invalid PropKey", () => {
+  const mixProperties = new MixProperties();
+  expect(() => getMixProperty(mixProperties, "InvalidPropKey" as PropKey)).toThrow();
+});
