@@ -5,7 +5,13 @@ use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
-use crate::{composition::ScaleComponents, constants, util::iter_all_abs_diff_eq};
+use crate::{
+    composition::ScaleComponents,
+    constants,
+    error::Result,
+    util::{collect_fields_copied_as, iter_all_abs_diff_eq},
+    validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
+};
 
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
@@ -78,6 +84,16 @@ impl Fats {
     }
 }
 
+impl Validate for Fats {
+    fn validate(&self) -> Result<()> {
+        verify_are_positive(&collect_fields_copied_as(self))?;
+        verify_is_within_100_percent(self.total)?;
+        verify_is_subset(self.saturated, self.total, "saturated <= total")?;
+        verify_is_subset(self.trans, self.total, "trans <= total")?;
+        Ok(())
+    }
+}
+
 impl ScaleComponents for Fats {
     fn scale(&self, factor: f64) -> Self {
         Self {
@@ -122,6 +138,7 @@ mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
+    use crate::error::Error;
 
     const FIELD_MODIFIERS: [fn(&mut Fats, f64); 3] =
         [|f, v| f.total += v, |f, v| f.saturated += v, |f, v| f.trans += v];
@@ -208,5 +225,66 @@ mod tests {
             field_modifier(&mut c, -1e-10);
             assert_abs_diff_eq!(a, c);
         }
+    }
+
+    // --- Validate ---
+
+    #[test]
+    fn validate_ok_for_empty() {
+        assert!(Fats::empty().validate().is_ok());
+    }
+
+    #[test]
+    fn validate_ok_for_valid_values() {
+        assert!(Fats::new().total(10.0).saturated(4.0).trans(1.0).validate().is_ok());
+    }
+
+    #[test]
+    fn validate_ok_when_total_is_exactly_100() {
+        assert!(Fats::new().total(100.0).saturated(50.0).trans(10.0).validate().is_ok());
+    }
+
+    #[test]
+    fn validate_ok_when_subsets_equal_total() {
+        // saturated == total and trans == total are both valid boundary cases
+        assert!(Fats::new().total(10.0).saturated(10.0).trans(0.0).validate().is_ok());
+        assert!(Fats::new().total(10.0).saturated(0.0).trans(10.0).validate().is_ok());
+    }
+
+    #[test]
+    fn validate_err_for_each_negative_field() {
+        for field_modifier in FIELD_MODIFIERS {
+            let mut fats = Fats::empty();
+            field_modifier(&mut fats, -1.0);
+            assert!(matches!(fats.validate(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn validate_err_when_total_exceeds_100() {
+        assert!(matches!(Fats::new().total(101.0).validate(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn validate_err_when_saturated_exceeds_total() {
+        assert!(matches!(Fats::new().total(10.0).saturated(11.0).validate(), Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn validate_err_when_trans_exceeds_total() {
+        assert!(matches!(Fats::new().total(10.0).trans(11.0).validate(), Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn validate_into_returns_self_when_valid() {
+        let fats = Fats::new().total(10.0).saturated(4.0).trans(1.0);
+        let result = fats.validate_into();
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().total, 10.0);
+    }
+
+    #[test]
+    fn validate_into_returns_err_when_invalid() {
+        assert!(Fats::new().total(-1.0).validate_into().is_err());
     }
 }

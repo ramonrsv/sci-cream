@@ -9,7 +9,8 @@ use crate::{
     composition::ScaleComponents,
     constants,
     error::{Error, Result},
-    util::{iter_all_abs_diff_eq, iter_fields_as},
+    util::{collect_fields_copied_as, iter_all_abs_diff_eq, iter_fields_as},
+    validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
 
 #[cfg(feature = "wasm")]
@@ -305,6 +306,14 @@ impl Sugars {
     }
 }
 
+impl Validate for Sugars {
+    fn validate(&self) -> Result<()> {
+        verify_are_positive(&collect_fields_copied_as(self))?;
+        verify_is_within_100_percent(self.total())?;
+        Ok(())
+    }
+}
+
 impl ScaleComponents for Sugars {
     fn scale(&self, factor: f64) -> Self {
         Self {
@@ -360,6 +369,7 @@ mod tests {
     use crate::tests::util::{assert_f64_fields_eq_zero, assert_f64_fields_ne_zero};
 
     use super::*;
+    use crate::error::Error;
 
     const FIELD_MODIFIERS: [fn(&mut Sugars, f64); 8] = [
         |v, ec| v.glucose += ec,
@@ -578,5 +588,57 @@ mod tests {
             field_modifier(&mut c, -1e-10);
             assert_abs_diff_eq!(a, c);
         }
+    }
+
+    // --- Validate ---
+
+    #[test]
+    fn validate_ok_for_empty() {
+        assert!(Sugars::empty().validate().is_ok());
+    }
+
+    #[test]
+    fn validate_ok_for_valid_values() {
+        assert!(
+            Sugars::new()
+                .glucose(10.0)
+                .sucrose(20.0)
+                .lactose(30.0)
+                .validate()
+                .is_ok()
+        );
+    }
+
+    #[test]
+    fn validate_ok_when_total_is_exactly_100() {
+        assert!(Sugars::new().glucose(50.0).fructose(50.0).validate().is_ok());
+    }
+
+    #[test]
+    fn validate_err_for_each_negative_field() {
+        for field_modifier in FIELD_MODIFIERS {
+            let mut sugars = Sugars::empty();
+            field_modifier(&mut sugars, -1.0);
+            assert!(matches!(sugars.validate(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn validate_err_when_total_exceeds_100() {
+        let sugars = Sugars::new().glucose(60.0).fructose(41.0);
+        assert!(matches!(sugars.validate(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn validate_into_returns_self_when_valid() {
+        let sugars = Sugars::new().sucrose(10.0);
+        let result = sugars.validate_into();
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().sucrose, 10.0);
+    }
+
+    #[test]
+    fn validate_into_returns_err_when_invalid() {
+        assert!(Sugars::new().glucose(-1.0).validate_into().is_err());
     }
 }

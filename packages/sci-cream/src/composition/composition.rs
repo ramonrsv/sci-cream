@@ -9,7 +9,7 @@ use strum_macros::EnumIter;
 use crate::{
     composition::{Alcohol, Micro, PAC, Solids},
     error::Result,
-    validate::verify_are_positive,
+    validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
 
 #[cfg(feature = "wasm")]
@@ -523,6 +523,18 @@ impl Composition {
     }
 }
 
+impl Validate for Composition {
+    fn validate(&self) -> Result<()> {
+        self.solids.validate()?;
+        self.micro.validate()?;
+        self.alcohol.validate()?;
+        self.pac.validate()?;
+        verify_are_positive(&[self.energy, self.pod])?;
+        verify_is_within_100_percent(self.solids.total() + self.alcohol.by_weight)?;
+        Ok(())
+    }
+}
+
 impl ScaleComponents for Composition {
     fn scale(&self, factor: f64) -> Self {
         Self {
@@ -996,5 +1008,79 @@ mod tests {
             field_modifier(&mut c, -1e-10);
             assert_abs_diff_eq!(a, c);
         }
+    }
+
+    // --- Validate ---
+
+    #[test]
+    fn validate_ok_for_empty() {
+        assert!(Composition::empty().validate().is_ok());
+    }
+
+    #[test]
+    fn validate_ok_for_valid_values() {
+        let c = Composition::new()
+            .energy(250.0)
+            .solids(Solids::new().milk(SolidsBreakdown::new().fats(Fats::new().total(10.0))))
+            .micro(Micro::new().salt(0.5))
+            .alcohol(Alcohol::new().by_weight(2.0))
+            .pod(80.0)
+            .pac(PAC::new().sugars(6.0));
+        assert!(c.validate().is_ok());
+    }
+
+    #[test]
+    fn validate_err_for_each_negative_field() {
+        for field_modifier in FIELD_MODIFIERS {
+            let mut c = Composition::empty();
+            field_modifier(&mut c, -1.0);
+            assert!(matches!(c.validate(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn validate_err_when_solids_plus_alcohol_exceeds_100() {
+        let c = Composition::new()
+            .solids(Solids::new().milk(SolidsBreakdown::new().others(60.0)))
+            .alcohol(Alcohol::new().by_weight(41.0));
+        assert!(matches!(c.validate(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn validate_err_on_invalid_solids() {
+        let c = Composition::new()
+            .solids(Solids::new().milk(SolidsBreakdown::new().fats(Fats::new().total(10.0).saturated(11.0))));
+        assert!(matches!(c.validate(), Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn validate_err_on_invalid_micro() {
+        let c = Composition::new().micro(Micro::new().salt(-1.0));
+        assert!(matches!(c.validate(), Err(Error::CompositionNotPositive(_))));
+    }
+
+    #[test]
+    fn validate_err_on_invalid_alcohol() {
+        let c = Composition::new().alcohol(Alcohol::new().by_weight(101.0));
+        assert!(matches!(c.validate(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn validate_err_on_invalid_pac() {
+        let c = Composition::new().pac(PAC::new().sugars(-1.0));
+        assert!(matches!(c.validate(), Err(Error::CompositionNotPositive(_))));
+    }
+
+    #[test]
+    fn validate_into_returns_self_when_valid() {
+        let c = Composition::new().energy(100.0).pod(50.0);
+        let result = c.validate_into();
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().energy, 100.0);
+    }
+
+    #[test]
+    fn validate_into_returns_err_when_invalid() {
+        assert!(Composition::new().energy(-1.0).validate_into().is_err());
     }
 }

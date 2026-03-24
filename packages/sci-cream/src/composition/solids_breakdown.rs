@@ -9,6 +9,7 @@ use crate::{
     composition::{ArtificialSweeteners, Carbohydrates, Fats, ScaleComponents},
     constants,
     error::{Error, Result},
+    validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
 
 #[cfg(feature = "wasm")]
@@ -177,6 +178,17 @@ impl SolidsBreakdown {
     }
 }
 
+impl Validate for SolidsBreakdown {
+    fn validate(&self) -> Result<()> {
+        self.fats.validate()?;
+        self.carbohydrates.validate()?;
+        self.artificial_sweeteners.validate()?;
+        verify_are_positive(&[self.proteins, self.others])?;
+        verify_is_within_100_percent(self.total())?;
+        Ok(())
+    }
+}
+
 impl ScaleComponents for SolidsBreakdown {
     fn scale(&self, factor: f64) -> Self {
         Self {
@@ -232,6 +244,7 @@ mod tests {
 
     use super::*;
     use crate::composition::*;
+    use crate::error::Error;
 
     const FIELD_MODIFIERS: [fn(&mut SolidsBreakdown, f64); 5] = [
         |s, ec| s.fats.total += ec,
@@ -480,5 +493,51 @@ mod tests {
             field_modifier(&mut c, -1e-10);
             assert_abs_diff_eq!(a, c);
         }
+    }
+
+    // --- Validate ---
+
+    #[test]
+    fn validate_ok_for_empty() {
+        assert!(SolidsBreakdown::empty().validate().is_ok());
+    }
+
+    #[test]
+    fn validate_ok_for_valid_values() {
+        let s = SolidsBreakdown::new()
+            .fats(Fats::new().total(10.0))
+            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(20.0)))
+            .proteins(5.0)
+            .artificial_sweeteners(ArtificialSweeteners::new().aspartame(3.0))
+            .others(2.0);
+        assert!(s.validate().is_ok());
+    }
+
+    #[test]
+    fn validate_err_for_each_negative_field() {
+        for field_modifier in FIELD_MODIFIERS {
+            let mut s = SolidsBreakdown::empty();
+            field_modifier(&mut s, -1.0);
+            assert!(matches!(s.validate(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn validate_err_when_total_exceeds_100() {
+        let s = SolidsBreakdown::new().fats(Fats::new().total(70.0)).proteins(31.0);
+        assert!(matches!(s.validate(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn validate_into_returns_self_when_valid() {
+        let s = SolidsBreakdown::new().proteins(5.0);
+        let result = s.validate_into();
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().proteins, 5.0);
+    }
+
+    #[test]
+    fn validate_into_returns_err_when_invalid() {
+        assert!(SolidsBreakdown::new().proteins(-1.0).validate_into().is_err());
     }
 }

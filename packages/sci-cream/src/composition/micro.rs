@@ -5,7 +5,12 @@ use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
-use crate::{composition::ScaleComponents, util::iter_all_abs_diff_eq};
+use crate::{
+    composition::ScaleComponents,
+    error::Result,
+    util::{collect_fields_copied_as, iter_all_abs_diff_eq},
+    validate::{Validate, verify_are_positive},
+};
 
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
@@ -99,6 +104,13 @@ impl Micro {
     }
 }
 
+impl Validate for Micro {
+    fn validate(&self) -> Result<()> {
+        verify_are_positive(&collect_fields_copied_as(self))?;
+        Ok(())
+    }
+}
+
 impl ScaleComponents for Micro {
     fn scale(&self, factor: f64) -> Self {
         Self {
@@ -139,13 +151,14 @@ impl Default for Micro {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
-#[allow(clippy::float_cmp)]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
     use crate::tests::util::{assert_f64_fields_eq_zero, assert_f64_fields_ne_zero};
 
     use super::*;
+    use crate::error::Error;
 
     const FIELD_MODIFIERS: [fn(&mut Micro, f64); 4] = [
         |m, v| m.salt += v,
@@ -236,5 +249,47 @@ mod tests {
             field_modifier(&mut c, -1e-10);
             assert_abs_diff_eq!(a, c);
         }
+    }
+
+    // --- Validate ---
+
+    #[test]
+    fn validate_ok_for_empty() {
+        assert!(Micro::empty().validate().is_ok());
+    }
+
+    #[test]
+    fn validate_ok_for_valid_values() {
+        assert!(
+            Micro::new()
+                .salt(1.0)
+                .lecithin(0.5)
+                .emulsifiers(1.0)
+                .stabilizers(0.3)
+                .validate()
+                .is_ok()
+        );
+    }
+
+    #[test]
+    fn validate_err_for_each_negative_field() {
+        for field_modifier in FIELD_MODIFIERS {
+            let mut micro = Micro::empty();
+            field_modifier(&mut micro, -1.0);
+            assert!(matches!(micro.validate(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn validate_into_returns_self_when_valid() {
+        let micro = Micro::new().salt(1.0).lecithin(0.5);
+        let result = micro.validate_into();
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().salt, 1.0);
+    }
+
+    #[test]
+    fn validate_into_returns_err_when_invalid() {
+        assert!(Micro::new().salt(-1.0).validate_into().is_err());
     }
 }

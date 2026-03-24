@@ -6,7 +6,7 @@ use crate::{
     composition::{Carbohydrates, Composition, Fats, Fibers, IntoComposition, PAC, Solids, SolidsBreakdown, Sugars},
     constants::{self, composition::cacao},
     error::Result,
-    validate::{verify_are_positive, verify_is_100_percent, verify_is_subset},
+    validate::{Validate, verify_are_positive, verify_is_100_percent, verify_is_subset},
 };
 
 #[cfg(doc)]
@@ -169,7 +169,7 @@ impl IntoComposition for ChocolateSpec {
             .carbohydrates(Carbohydrates::new().sugars(sugars))
             .others(other_solids);
 
-        Ok(Composition::new()
+        Composition::new()
             .energy(cocoa_solids.energy()? + other_solids.energy()?)
             .solids(Solids::new().cocoa(cocoa_solids).other(other_solids))
             .pod(sugars.to_pod()?)
@@ -177,7 +177,8 @@ impl IntoComposition for ChocolateSpec {
                 PAC::new().sugars(sugars.to_pac()?).hardness_factor(
                     cocoa_butter * constants::hf::CACAO_BUTTER + cocoa_snf * constants::hf::COCOA_SOLIDS,
                 ),
-            ))
+            )
+            .validate_into()
     }
 }
 

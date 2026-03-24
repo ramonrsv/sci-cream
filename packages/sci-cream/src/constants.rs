@@ -556,7 +556,7 @@ pub mod fpd {
 }
 
 /// Epsilon value for floating point comparisons of compositions, e.g. water content
-pub const COMPOSITION_EPSILON: f64 = 1e-10;
+pub const COMPOSITION_EPSILON: f64 = 1e-13;
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]

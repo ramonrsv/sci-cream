@@ -6,7 +6,7 @@ use crate::{
     composition::{Carbohydrates, Composition, Fats, Fibers, IntoComposition, PAC, Solids, SolidsBreakdown, Sugars},
     constants::{self},
     error::Result,
-    validate::{verify_are_positive, verify_is_subset, verify_is_within_100_percent},
+    validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
 
 #[cfg(doc)]
@@ -123,7 +123,7 @@ impl IntoComposition for NutSpec {
             .proteins(protein)
             .others_from_total(100.0 - water)?;
 
-        Ok(Composition::new()
+        Composition::new()
             .energy(nut_solids.energy()?)
             .solids(Solids::new().nut(nut_solids))
             .pod(sugars.to_pod()?)
@@ -131,7 +131,8 @@ impl IntoComposition for NutSpec {
                 PAC::new()
                     .sugars(sugars.to_pac()?)
                     .hardness_factor(fat * constants::hf::NUT_FAT),
-            ))
+            )
+            .validate_into()
     }
 }
 

@@ -6,7 +6,7 @@ use crate::{
     composition::{Composition, IntoComposition, Micro, PAC, Solids, SolidsBreakdown},
     constants::{self},
     error::Result,
-    validate::verify_are_positive,
+    validate::{Validate, verify_are_positive},
 };
 
 /// Spec for ingredients with solely micro components, e.g. salt, emulsifiers, stabilizer, etc.
@@ -74,23 +74,26 @@ impl IntoComposition for MicroSpec {
 
                 verify_are_positive(&[emulsifiers_strength, stabilizers_strength])?;
 
-                Ok(Composition::new()
+                Composition::new()
                     .solids(Solids::new().other(SolidsBreakdown::new().others(100.0)))
                     .micro(
                         Micro::new()
                             .emulsifiers(emulsifiers_strength)
                             .stabilizers(stabilizers_strength),
-                    ))
+                    )
+                    .validate_into()
             };
 
         match self {
-            Self::Salt => Ok(Composition::new()
+            Self::Salt => Composition::new()
                 .solids(Solids::new().other(SolidsBreakdown::new().others(100.0)))
                 .micro(Micro::new().salt(100.0))
-                .pac(PAC::new().salt(constants::pac::SALT))),
-            Self::Lecithin => Ok(Composition::new()
+                .pac(PAC::new().salt(constants::pac::SALT))
+                .validate_into(),
+            Self::Lecithin => Composition::new()
                 .solids(Solids::new().other(SolidsBreakdown::new().others(100.0)))
-                .micro(Micro::new().lecithin(100.0).emulsifiers(100.0))),
+                .micro(Micro::new().lecithin(100.0).emulsifiers(100.0))
+                .validate_into(),
             Self::Stabilizer { strength } => make_emulsifier_stabilizer_composition(None, Some(strength)),
             Self::Emulsifier { strength } => make_emulsifier_stabilizer_composition(Some(strength), None),
             Self::EmulsifierStabilizer {

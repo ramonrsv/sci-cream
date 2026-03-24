@@ -5,7 +5,12 @@ use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
-use crate::{composition::ScaleComponents, util::iter_all_abs_diff_eq};
+use crate::{
+    composition::ScaleComponents,
+    error::Result,
+    util::{collect_fields_copied_as, iter_all_abs_diff_eq},
+    validate::{Validate, verify_are_positive},
+};
 
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
@@ -99,6 +104,13 @@ impl PAC {
     }
 }
 
+impl Validate for PAC {
+    fn validate(&self) -> Result<()> {
+        verify_are_positive(&collect_fields_copied_as(self))?;
+        Ok(())
+    }
+}
+
 impl ScaleComponents for PAC {
     fn scale(&self, factor: f64) -> Self {
         Self {
@@ -141,13 +153,14 @@ impl Default for PAC {
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
-#[allow(clippy::float_cmp)]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
     use crate::tests::util::{assert_f64_fields_eq_zero, assert_f64_fields_ne_zero};
 
     use super::*;
+    use crate::error::Error;
     use crate::tests::assets::*;
 
     const FIELD_MODIFIERS: [fn(&mut PAC, f64); 5] = [
@@ -307,5 +320,48 @@ mod tests {
             field_modifier(&mut c, -1e-10);
             assert_abs_diff_eq!(a, c);
         }
+    }
+
+    // --- Validate ---
+
+    #[test]
+    fn validate_ok_for_empty() {
+        assert!(PAC::empty().validate().is_ok());
+    }
+
+    #[test]
+    fn validate_ok_for_valid_values() {
+        assert!(
+            PAC::new()
+                .sugars(4.0)
+                .salt(1.0)
+                .msnf_ws_salts(2.0)
+                .alcohol(1.0)
+                .hardness_factor(3.0)
+                .validate()
+                .is_ok()
+        );
+    }
+
+    #[test]
+    fn validate_err_for_each_negative_field() {
+        for field_modifier in FIELD_MODIFIERS {
+            let mut pac = PAC::empty();
+            field_modifier(&mut pac, -1.0);
+            assert!(matches!(pac.validate(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn validate_into_returns_self_when_valid() {
+        let pac = PAC::new().sugars(4.0).salt(1.0);
+        let result = pac.validate_into();
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().sugars, 4.0);
+    }
+
+    #[test]
+    fn validate_into_returns_err_when_invalid() {
+        assert!(PAC::new().sugars(-1.0).validate_into().is_err());
     }
 }

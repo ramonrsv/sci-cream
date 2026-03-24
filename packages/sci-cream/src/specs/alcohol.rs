@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     composition::{Alcohol, Carbohydrates, Composition, Fats, IntoComposition, PAC, Solids, SolidsBreakdown, Sugars},
     error::Result,
-    validate::{verify_are_positive, verify_is_subset, verify_is_within_100_percent},
+    validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
 
 #[cfg(doc)]
@@ -69,12 +69,13 @@ impl IntoComposition for AlcoholSpec {
             .carbohydrates(Carbohydrates::new().sugars(sugars))
             .others_from_total(solids)?;
 
-        Ok(Composition::new()
+        Composition::new()
             .energy(solids.energy()? + alcohol.energy())
             .solids(Solids::new().other(solids))
             .alcohol(alcohol)
             .pod(sugars.to_pod()?)
-            .pac(PAC::new().sugars(sugars.to_pac()?).alcohol(alcohol.to_pac())))
+            .pac(PAC::new().sugars(sugars.to_pac()?).alcohol(alcohol.to_pac()))
+            .validate_into()
     }
 }
 

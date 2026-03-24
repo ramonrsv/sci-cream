@@ -9,7 +9,8 @@ use crate::{
     composition::ScaleComponents,
     constants,
     error::{Error, Result},
-    util::{iter_all_abs_diff_eq, iter_fields_as},
+    util::{collect_fields_copied_as, iter_all_abs_diff_eq, iter_fields_as},
+    validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
 
 #[cfg(feature = "wasm")]
@@ -276,6 +277,14 @@ impl ArtificialSweeteners {
     #[must_use]
     pub fn new_wasm() -> Self {
         Self::new()
+    }
+}
+
+impl Validate for ArtificialSweeteners {
+    fn validate(&self) -> Result<()> {
+        verify_are_positive(&collect_fields_copied_as(self))?;
+        verify_is_within_100_percent(self.total())?;
+        Ok(())
     }
 }
 
@@ -546,5 +555,68 @@ mod tests {
             field_modifier(&mut c, -1e-10);
             assert_abs_diff_eq!(a, c);
         }
+    }
+
+    // --- Validate ---
+
+    #[test]
+    fn validate_ok() {
+        assert_true!(ArtificialSweeteners::empty().validate().is_ok());
+    }
+
+    #[test]
+    fn validate_ok_for_valid_values() {
+        let sweeteners = ArtificialSweeteners::new().aspartame(10.0).sucralose(20.0);
+        assert_true!(sweeteners.validate().is_ok());
+    }
+
+    #[test]
+    fn validate_ok_when_total_is_exactly_100() {
+        // Spread 100g across all 7 fields
+        let sweeteners = ArtificialSweeteners::new()
+            .aspartame(20.0)
+            .cyclamate(20.0)
+            .saccharin(20.0)
+            .sucralose(20.0)
+            .steviosides(10.0)
+            .mogrosides(5.0)
+            .other(5.0);
+        assert_eq!(sweeteners.total(), 100.0);
+        assert_true!(sweeteners.validate().is_ok());
+    }
+
+    #[test]
+    fn validate_err_for_each_negative_field() {
+        for field_modifier in FIELD_MODIFIERS {
+            let mut sweeteners = ArtificialSweeteners::empty();
+            field_modifier(&mut sweeteners, -1.0);
+            assert!(matches!(sweeteners.validate(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn validate_err_when_total_exceeds_100() {
+        // Single field that alone exceeds 100
+        let sweeteners = ArtificialSweeteners::new().aspartame(101.0);
+        assert!(matches!(sweeteners.validate(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn validate_err_when_multiple_fields_sum_exceeds_100() {
+        let sweeteners = ArtificialSweeteners::new().aspartame(60.0).sucralose(60.0);
+        assert!(matches!(sweeteners.validate(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn validate_into_returns_self_when_valid() {
+        let sweeteners = ArtificialSweeteners::new().aspartame(5.0).sucralose(3.0);
+        let result = sweeteners.validate_into();
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().aspartame, 5.0);
+    }
+
+    #[test]
+    fn validate_into_returns_err_when_invalid() {
+        assert!(ArtificialSweeteners::new().aspartame(-1.0).validate_into().is_err());
     }
 }

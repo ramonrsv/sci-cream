@@ -4,7 +4,13 @@ use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
-use crate::{composition::ScaleComponents, constants, util::iter_all_abs_diff_eq};
+use crate::{
+    composition::ScaleComponents,
+    constants,
+    error::Result,
+    util::iter_all_abs_diff_eq,
+    validate::{Validate, verify_are_positive, verify_is_within_100_percent},
+};
 
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
@@ -81,6 +87,14 @@ impl Alcohol {
     }
 }
 
+impl Validate for Alcohol {
+    fn validate(&self) -> Result<()> {
+        verify_are_positive(&[self.by_weight])?;
+        verify_is_within_100_percent(self.by_weight)?;
+        Ok(())
+    }
+}
+
 impl ScaleComponents for Alcohol {
     fn scale(&self, factor: f64) -> Self {
         Self {
@@ -121,6 +135,7 @@ mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
+    use crate::error::Error;
 
     #[test]
     fn alcohol_field_count() {
@@ -178,5 +193,38 @@ mod tests {
         let c = Alcohol::new().by_weight(5.0 + 1e-10);
         assert_abs_diff_eq!(a, b);
         assert_abs_diff_ne!(a, c);
+    }
+
+    // --- Validate ---
+
+    #[test]
+    fn validate_ok() {
+        assert_true!(Alcohol::empty().validate().is_ok());
+        assert_true!(Alcohol::new().by_weight(0.0).validate().is_ok());
+        assert_true!(Alcohol::new().by_weight(50.0).validate().is_ok());
+        assert_true!(Alcohol::new().by_weight(100.0).validate().is_ok());
+    }
+
+    #[test]
+    fn validate_err_for_negative() {
+        assert!(matches!(Alcohol::new().by_weight(-1.0).validate(), Err(Error::CompositionNotPositive(_))));
+    }
+
+    #[test]
+    fn validate_err_for_above_100() {
+        assert!(matches!(Alcohol::new().by_weight(101.0).validate(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn validate_into_returns_self_when_valid() {
+        let alcohol = Alcohol::new().by_weight(5.0);
+        let result = alcohol.validate_into();
+        assert_true!(result.is_ok());
+        assert_eq!(result.unwrap().by_weight, 5.0);
+    }
+
+    #[test]
+    fn validate_into_returns_err_when_invalid() {
+        assert_true!(Alcohol::new().by_weight(-1.0).validate_into().is_err());
     }
 }

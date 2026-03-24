@@ -8,7 +8,9 @@ use struct_iterable::Iterable;
 use crate::{
     composition::ScaleComponents,
     constants,
-    util::{iter_all_abs_diff_eq, iter_fields_as},
+    error::Result,
+    util::{collect_fields_copied_as, iter_all_abs_diff_eq, iter_fields_as},
+    validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
 
 #[cfg(feature = "wasm")]
@@ -131,6 +133,14 @@ impl Fibers {
     }
 }
 
+impl Validate for Fibers {
+    fn validate(&self) -> Result<()> {
+        verify_are_positive(&collect_fields_copied_as(self))?;
+        verify_is_within_100_percent(self.total())?;
+        Ok(())
+    }
+}
+
 impl ScaleComponents for Fibers {
     fn scale(&self, factor: f64) -> Self {
         Self {
@@ -175,6 +185,7 @@ mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
+    use crate::error::Error;
 
     const FIELD_MODIFIERS: [fn(&mut Fibers, f64); 3] =
         [|f, v| f.inulin += v, |f, v| f.oligofructose += v, |f, v| f.other += v];
@@ -281,5 +292,71 @@ mod tests {
             field_modifier(&mut c, -1e-10);
             assert_abs_diff_eq!(a, c);
         }
+    }
+
+    // --- Validate ---
+
+    #[test]
+    fn validate_ok_for_empty() {
+        assert!(Fibers::empty().validate().is_ok());
+    }
+
+    #[test]
+    fn validate_ok_for_valid_values() {
+        assert!(
+            Fibers::new()
+                .inulin(5.0)
+                .oligofructose(3.0)
+                .other(2.0)
+                .validate()
+                .is_ok()
+        );
+    }
+
+    #[test]
+    fn validate_ok_when_total_is_exactly_100() {
+        assert!(
+            Fibers::new()
+                .inulin(50.0)
+                .oligofructose(30.0)
+                .other(20.0)
+                .validate()
+                .is_ok()
+        );
+    }
+
+    #[test]
+    fn validate_err_for_each_negative_field() {
+        for field_modifier in FIELD_MODIFIERS {
+            let mut fibers = Fibers::empty();
+            field_modifier(&mut fibers, -1.0);
+            assert!(matches!(fibers.validate(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn validate_err_when_total_exceeds_100() {
+        assert!(matches!(Fibers::new().inulin(101.0).validate(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn validate_err_when_multiple_fields_sum_exceeds_100() {
+        assert!(matches!(
+            Fibers::new().inulin(60.0).oligofructose(60.0).validate(),
+            Err(Error::CompositionNotWithin100Percent(_))
+        ));
+    }
+
+    #[test]
+    fn validate_into_returns_self_when_valid() {
+        let fibers = Fibers::new().inulin(5.0).oligofructose(3.0);
+        let result = fibers.validate_into();
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().inulin, 5.0);
+    }
+
+    #[test]
+    fn validate_into_returns_err_when_invalid() {
+        assert!(Fibers::new().inulin(-1.0).validate_into().is_err());
     }
 }

@@ -7,7 +7,9 @@ use struct_iterable::Iterable;
 
 use crate::{
     composition::{ScaleComponents, SolidsBreakdown},
+    error::Result,
     util::{iter_all_abs_diff_eq, iter_fields_as},
+    validate::{Validate, verify_is_within_100_percent},
 };
 
 #[cfg(feature = "wasm")]
@@ -136,6 +138,14 @@ impl Solids {
     }
 }
 
+impl Validate for Solids {
+    fn validate(&self) -> Result<()> {
+        iter_fields_as::<SolidsBreakdown, _>(self).try_for_each(Validate::validate)?;
+        verify_is_within_100_percent(self.total())?;
+        Ok(())
+    }
+}
+
 impl ScaleComponents for Solids {
     fn scale(&self, factor: f64) -> Self {
         Self {
@@ -185,6 +195,7 @@ mod tests {
 
     use super::*;
     use crate::composition::*;
+    use crate::error::Error;
 
     const FIELD_MODIFIERS: [fn(&mut Solids, f64); 5] = [
         |s, v| s.milk.fats.total += v,
@@ -354,5 +365,79 @@ mod tests {
             field_modifier(&mut c, -1e-10);
             assert_abs_diff_eq!(a, c);
         }
+    }
+
+    // --- Validate ---
+
+    #[test]
+    fn validate_ok_for_empty() {
+        assert!(Solids::empty().validate().is_ok());
+    }
+
+    #[test]
+    fn validate_ok_for_valid_values() {
+        let s = Solids::new()
+            .milk(SolidsBreakdown::new().fats(Fats::new().total(10.0)))
+            .egg(SolidsBreakdown::new().proteins(5.0));
+        assert!(s.validate().is_ok());
+    }
+
+    #[test]
+    fn validate_err_for_each_negative_field() {
+        for field_modifier in FIELD_MODIFIERS {
+            let mut s = Solids::empty();
+            field_modifier(&mut s, -1.0);
+            assert!(matches!(s.validate(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn validate_err_when_total_exceeds_100() {
+        let s = Solids::new()
+            .milk(SolidsBreakdown::new().fats(Fats::new().total(60.0)))
+            .egg(SolidsBreakdown::new().proteins(41.0));
+        assert!(matches!(s.validate(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn validate_err_on_invalid_nested_breakdown() {
+        let milk = SolidsBreakdown::new().fats(Fats::new().total(10.0).saturated(11.0));
+        let egg = SolidsBreakdown::new().carbohydrates(Carbohydrates::new().others(-1.0));
+        let cocoa = SolidsBreakdown::new().proteins(101.0);
+        let nut = SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(-1.0));
+        let other = SolidsBreakdown::new().others(-1.0);
+
+        let s = Solids::new().milk(milk);
+        assert!(matches!(s.validate(), Err(Error::InvalidComposition(_))));
+
+        let s = Solids::new().egg(egg);
+        assert!(matches!(s.validate(), Err(Error::CompositionNotPositive(_))));
+
+        let s = Solids::new().cocoa(cocoa);
+        assert!(matches!(s.validate(), Err(Error::CompositionNotWithin100Percent(_))));
+
+        let s = Solids::new().nut(nut);
+        assert!(matches!(s.validate(), Err(Error::CompositionNotPositive(_))));
+
+        let s = Solids::new().other(other);
+        assert!(matches!(s.validate(), Err(Error::CompositionNotPositive(_))));
+    }
+
+    #[test]
+    fn validate_into_returns_self_when_valid() {
+        let s = Solids::new().egg(SolidsBreakdown::new().proteins(5.0));
+        let result = s.validate_into();
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().egg.proteins, 5.0);
+    }
+
+    #[test]
+    fn validate_into_returns_err_when_invalid() {
+        assert!(
+            Solids::new()
+                .egg(SolidsBreakdown::new().proteins(-1.0))
+                .validate_into()
+                .is_err()
+        );
     }
 }

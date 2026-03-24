@@ -7,6 +7,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     composition::{ArtificialSweeteners, Polyols, ScaleComponents, Sugars},
     error::Result,
+    validate::{Validate, verify_is_within_100_percent},
 };
 
 #[cfg(feature = "wasm")]
@@ -111,6 +112,16 @@ impl Sweeteners {
     #[must_use]
     pub fn new_wasm() -> Self {
         Self::new()
+    }
+}
+
+impl Validate for Sweeteners {
+    fn validate(&self) -> Result<()> {
+        self.sugars.validate()?;
+        self.polyols.validate()?;
+        self.artificial.validate()?;
+        verify_is_within_100_percent(self.total())?;
+        Ok(())
     }
 }
 
@@ -338,5 +349,56 @@ mod tests {
             field_modifier(&mut c, -1e-10);
             assert_abs_diff_eq!(a, c);
         }
+    }
+
+    // --- Validate ---
+
+    #[test]
+    fn validate_ok_for_empty() {
+        assert!(Sweeteners::empty().validate().is_ok());
+    }
+
+    #[test]
+    fn validate_ok_for_valid_values() {
+        let s = Sweeteners::new()
+            .sugars(Sugars::new().sucrose(30.0))
+            .polyols(Polyols::new().sorbitol(20.0))
+            .artificial(ArtificialSweeteners::new().aspartame(10.0));
+        assert!(s.validate().is_ok());
+    }
+
+    #[test]
+    fn validate_err_for_each_negative_field() {
+        for field_modifier in FIELD_MODIFIERS {
+            let mut s = Sweeteners::empty();
+            field_modifier(&mut s, -1.0);
+            assert!(matches!(s.validate(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn validate_err_when_total_exceeds_100() {
+        let s = Sweeteners::new()
+            .sugars(Sugars::new().sucrose(60.0))
+            .polyols(Polyols::new().sorbitol(41.0));
+        assert!(matches!(s.validate(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn validate_into_returns_self_when_valid() {
+        let s = Sweeteners::new().sugars(Sugars::new().sucrose(10.0));
+        let result = s.validate_into();
+        assert!(result.is_ok());
+        assert_eq!(result.unwrap().sugars.sucrose, 10.0);
+    }
+
+    #[test]
+    fn validate_into_returns_err_when_invalid() {
+        assert!(
+            Sweeteners::new()
+                .sugars(Sugars::new().sucrose(-1.0))
+                .validate_into()
+                .is_err()
+        );
     }
 }

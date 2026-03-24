@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     composition::{Carbohydrates, Composition, Fats, Fibers, IntoComposition, PAC, Solids, SolidsBreakdown, Sugars},
     error::Result,
-    validate::{verify_are_positive, verify_is_subset, verify_is_within_100_percent},
+    validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
 
 /// Spec for fruit ingredients, with a specified [`Sugars`] composition and water content
@@ -124,11 +124,12 @@ impl IntoComposition for FruitSpec {
         let energy = energy.unwrap_or(solids.energy()?);
         verify_are_positive(&[energy])?;
 
-        Ok(Composition::new()
+        Composition::new()
             .energy(energy)
             .solids(Solids::new().other(solids))
             .pod(solids.carbohydrates.to_pod()?)
-            .pac(PAC::new().sugars(solids.carbohydrates.to_pac()?)))
+            .pac(PAC::new().sugars(solids.carbohydrates.to_pac()?))
+            .validate_into()
     }
 }
 

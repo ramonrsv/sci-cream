@@ -9,6 +9,7 @@ use crate::{
     composition::{Fibers, Polyols, ScaleComponents, Sugars},
     constants,
     error::{Error, Result},
+    validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
 
 #[cfg(feature = "wasm")]
@@ -154,6 +155,17 @@ impl Carbohydrates {
     #[must_use]
     pub fn new_wasm() -> Self {
         Self::new()
+    }
+}
+
+impl Validate for Carbohydrates {
+    fn validate(&self) -> Result<()> {
+        self.fiber.validate()?;
+        self.sugars.validate()?;
+        self.polyols.validate()?;
+        verify_are_positive(&[self.others])?;
+        verify_is_within_100_percent(self.total())?;
+        Ok(())
     }
 }
 
@@ -458,5 +470,67 @@ mod tests {
             field_modifier(&mut c, -1e-10);
             assert_abs_diff_eq!(a, c);
         }
+    }
+
+    // --- Validate ---
+
+    #[test]
+    fn validate_ok_for_empty() {
+        assert_true!(Carbohydrates::empty().validate().is_ok());
+    }
+
+    #[test]
+    fn validate_ok_for_valid_values() {
+        let carbohydrates = Carbohydrates::new()
+            .fiber(Fibers::new().inulin(5.0))
+            .sugars(Sugars::new().glucose(10.0))
+            .polyols(Polyols::new().sorbitol(5.0))
+            .others(3.0);
+        assert_true!(carbohydrates.validate().is_ok());
+    }
+
+    #[test]
+    fn validate_ok_when_total_is_exactly_100() {
+        let carbohydrates = Carbohydrates::new()
+            .fiber(Fibers::new().inulin(25.0))
+            .sugars(Sugars::new().glucose(25.0))
+            .polyols(Polyols::new().sorbitol(25.0))
+            .others(25.0);
+        assert_eq!(carbohydrates.total(), 100.0);
+        assert_true!(carbohydrates.validate().is_ok());
+    }
+
+    #[test]
+    fn validate_err_for_each_negative_field() {
+        for field_modifier in FIELD_MODIFIERS {
+            let mut carbohydrates = Carbohydrates::empty();
+            field_modifier(&mut carbohydrates, -1.0);
+            assert!(matches!(carbohydrates.validate(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn validate_err_when_total_exceeds_100() {
+        let carbohydrates = Carbohydrates::new().others(101.0);
+        assert!(matches!(carbohydrates.validate(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn validate_err_when_multiple_fields_sum_exceeds_100() {
+        let carbohydrates = Carbohydrates::new().sugars(Sugars::new().glucose(60.0)).others(60.0);
+        assert!(matches!(carbohydrates.validate(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn validate_into_returns_self_when_valid() {
+        let carbohydrates = Carbohydrates::new().sugars(Sugars::new().sucrose(10.0)).others(5.0);
+        let result = carbohydrates.validate_into();
+        assert_true!(result.is_ok());
+        assert_eq!(result.unwrap().others, 5.0);
+    }
+
+    #[test]
+    fn validate_into_returns_err_when_invalid() {
+        assert_true!(Carbohydrates::new().others(-1.0).validate_into().is_err());
     }
 }

@@ -33,6 +33,16 @@ pub fn iter_fields_as<'a, T: 'a + 'static, I: Iterable>(iterable: &'a I) -> impl
     })
 }
 
+/// Returns a vector of the fields of an [`Iterable`] struct, downcasting each to type `T`
+///
+/// # Panics
+///
+/// Panics if any field cannot be downcast to type `T`, with a message indicating the field name
+/// and the expected and actual types.
+pub fn collect_fields_copied_as<T: 'static + Copy, I: Iterable>(iterable: &I) -> Vec<T> {
+    iter_fields_as::<T, _>(iterable).copied().collect()
+}
+
 /// Compares two [`Option<T>`] values via [`AbsDiffEq`], treating [`None`] as equal to each other.
 ///
 /// That is, if both are [`Some`], the inner values are compared via [`AbsDiffEq`]; if both are
@@ -129,6 +139,36 @@ mod tests {
         let s = TwoF64 { a: 1.0, b: 2.0 };
         // Attempt to downcast f64 fields as i32 — must panic
         drop(iter_fields_as::<i32, _>(&s).collect::<Vec<&i32>>());
+    }
+
+    // --- collect_fields_copied_as ---
+
+    #[test]
+    fn collect_fields_copied_as_returns_all_values() {
+        let s = TwoF64 { a: 1.5, b: 2.5 };
+        assert_eq!(collect_fields_copied_as::<f64, _>(&s), vec![1.5_f64, 2.5_f64]);
+    }
+
+    #[test]
+    fn collect_fields_copied_as_count_matches_field_count() {
+        let s = TwoF64 { a: 0.0, b: 0.0 };
+        assert_eq!(collect_fields_copied_as::<f64, _>(&s).len(), 2);
+    }
+
+    #[test]
+    fn collect_fields_copied_as_returns_owned_copies() {
+        let s = TwoF64 { a: 3.0, b: 7.0 };
+        let mut vals = collect_fields_copied_as::<f64, _>(&s);
+        vals[0] = 99.0;
+        // Original struct is unaffected — vals are independent copies
+        assert_eq!(s.a, 3.0);
+    }
+
+    #[test]
+    #[should_panic(expected = "Field 'a' should be of type")]
+    fn collect_fields_copied_as_panics_on_wrong_type() {
+        let s = TwoF64 { a: 1.0, b: 2.0 };
+        drop(collect_fields_copied_as::<i32, _>(&s));
     }
 
     // --- abs_diff_eq_option ---

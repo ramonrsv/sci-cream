@@ -8,7 +8,7 @@ use crate::{
     constants::{self, density::dairy_milliliters_to_grams},
     error::{Error, Result},
     specs::units::Unit,
-    validate::{verify_are_positive, verify_is_subset, verify_is_within_100_percent},
+    validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
 
 #[cfg(doc)]
@@ -66,11 +66,12 @@ impl IntoComposition for DairySpec {
             .sugars(milk_solids.carbohydrates.to_pac()?)
             .msnf_ws_salts(msnf * constants::pac::MSNF_WS_SALTS / 100.0);
 
-        Ok(Composition::new()
+        Composition::new()
             .energy(milk_solids.energy()?)
             .solids(Solids::new().milk(milk_solids))
             .pod(pod)
-            .pac(pad))
+            .pac(pad)
+            .validate_into()
     }
 }
 
@@ -169,7 +170,7 @@ impl IntoComposition for DairyFromNutritionSpec {
             .carbohydrates(Carbohydrates::new().sugars(sugars))
             .proteins(protein / serving_size * 100.0);
 
-        Ok(Composition::new()
+        Composition::new()
             .energy(energy / serving_size * 100.0)
             .solids(Solids::new().milk(milk_solids))
             .pod(sugars.to_pod()?)
@@ -177,7 +178,8 @@ impl IntoComposition for DairyFromNutritionSpec {
                 PAC::new()
                     .sugars(sugars.to_pac()?)
                     .msnf_ws_salts(milk_solids.snf() * constants::pac::MSNF_WS_SALTS / 100.0),
-            ))
+            )
+            .validate_into()
     }
 }
 

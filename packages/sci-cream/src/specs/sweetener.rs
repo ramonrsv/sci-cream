@@ -10,7 +10,7 @@ use crate::{
     constants::molar_mass::pac_from_molar_mass,
     error::{Error, Result},
     specs::units::{CompositionBasis, Scaling, Unit},
-    validate::{verify_are_positive, verify_is_100_percent, verify_is_within_100_percent},
+    validate::{Validate, verify_are_positive, verify_is_100_percent, verify_is_within_100_percent},
 };
 
 #[cfg(doc)]
@@ -158,11 +158,12 @@ impl IntoComposition for SweetenerSpec {
             }
         };
 
-        Ok(Composition::new()
+        Composition::new()
             .energy(solids.energy()?)
             .solids(Solids::new().other(solids))
             .pod(pod)
-            .pac(PAC::new().sugars(pac)))
+            .pac(PAC::new().sugars(pac))
+            .validate_into()
     }
 }
 
