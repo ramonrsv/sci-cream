@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774319938854,
+  "lastUpdate": 1774388766221,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -125360,6 +125360,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.87%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "36320cd68606f464255e387d352165a686d02623",
+          "message": "Implement `Validate` for all comp, use in specs\n\n* Modify the `Validate` trait to have a `validate` and `validate_into`\n  methods; composition structs only need to implement `validate`.\n* Use `AbsDiffEq` and `COMPOSITION_EPSILON` for all `verify_*` functions\n  when comparing floating point values, including <= and >= comparisons.\n* Implement `Validate` for all composition structs, cascading down to\n  constituent structs where applicable, and use it in spec definitions.\n* Introduce `util::collect_fields_copies_as` function, used in validate.\n* Add unit tests to all Comp structs to verify the new `validate` impls.",
+          "timestamp": "2026-03-24T17:06:07-04:00",
+          "tree_id": "291f84c702e40e39f035803b19cd8c3dea9731d0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/36320cd68606f464255e387d352165a686d02623"
+        },
+        "date": 1774388762546,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77593,
+            "range": "±0.97%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 714578,
+            "range": "±1.12%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10061,
+            "range": "±1.84%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 612293,
+            "range": "±0.72%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
