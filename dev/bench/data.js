@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774389061151,
+  "lastUpdate": 1774389092394,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -115368,6 +115368,102 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 519.9,
             "range": "9.68",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "36320cd68606f464255e387d352165a686d02623",
+          "message": "Implement `Validate` for all comp, use in specs\n\n* Modify the `Validate` trait to have a `validate` and `validate_into`\n  methods; composition structs only need to implement `validate`.\n* Use `AbsDiffEq` and `COMPOSITION_EPSILON` for all `verify_*` functions\n  when comparing floating point values, including <= and >= comparisons.\n* Implement `Validate` for all composition structs, cascading down to\n  constituent structs where applicable, and use it in spec definitions.\n* Introduce `util::collect_fields_copies_as` function, used in validate.\n* Add unit tests to all Comp structs to verify the new `validate` impls.",
+          "timestamp": "2026-03-24T17:06:07-04:00",
+          "tree_id": "291f84c702e40e39f035803b19cd8c3dea9731d0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/36320cd68606f464255e387d352165a686d02623"
+        },
+        "date": 1774389089190,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 832.8,
+            "range": "82.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 49.2,
+            "range": "6.19",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.7,
+            "range": "6.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.7,
+            "range": "5.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 35.8,
+            "range": "2.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 159,
+            "range": "7.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 44.5,
+            "range": "3.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 40.1,
+            "range": "1.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 27.46,
+            "range": "0.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 516.9,
+            "range": "11.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 531.2,
+            "range": "15.15",
             "unit": "ms"
           }
         ]
