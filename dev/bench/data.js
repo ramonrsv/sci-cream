@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774471829948,
+  "lastUpdate": 1774475795755,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -126582,6 +126582,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.69%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2c355406733d55946a5636be5d64a4a65f6e0f6a",
+          "message": "Add documentation code examples for `AlcoholSpec`",
+          "timestamp": "2026-03-25T16:54:36-04:00",
+          "tree_id": "64bb0bd8c03b9906374143af163365e75d6f9af9",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2c355406733d55946a5636be5d64a4a65f6e0f6a"
+        },
+        "date": 1774475792395,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75333,
+            "range": "±1.28%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 732442,
+            "range": "±0.35%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10086,
+            "range": "±1.92%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 610338,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
