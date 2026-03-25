@@ -82,6 +82,10 @@ impl IntoComposition for EggSpec {
         verify_is_within_100_percent(water + fat + protein)?;
         verify_is_subset(lecithin, fat, "lecithin <= fat")?;
 
+        // @todo We check that `water + fat + protein <= 100` above instead of `== 100` to allow for
+        // the 2-3% of other solids (snf) that are typically present in egg ingredients. Should
+        // there be a sanity check that the other solids are within a reasonable range, e.g. 0-10%?
+
         let egg_solids = SolidsBreakdown::new()
             .fats(
                 Fats::new()
@@ -110,7 +114,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
+    use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
 
     pub(crate) const ING_SPEC_EGG_YOLK_STR: &str = r#"{
       "name": "Egg Yolk",
@@ -166,4 +170,49 @@ pub(crate) mod tests {
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_EGG: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| vec![(ING_SPEC_EGG_YOLK_STR, ING_SPEC_EGG_YOLK.clone(), Some(*COMP_EGG_YOLK))]);
+
+    #[test]
+    fn into_composition_err_on_negative_field() {
+        let base = EggSpec {
+            water: 51.0,
+            fat: 30.0,
+            protein: 16.0,
+            lecithin: 9.0,
+        };
+        let neg_cases = [
+            EggSpec { water: -1.0, ..base },
+            EggSpec { fat: -1.0, ..base },
+            EggSpec { protein: -1.0, ..base },
+            EggSpec { lecithin: -1.0, ..base },
+        ];
+
+        for spec in neg_cases {
+            let result = spec.into_composition();
+            assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn into_composition_err_when_water_plus_fat_plus_protein_exceeds_100() {
+        let result = EggSpec {
+            water: 60.0,
+            fat: 30.0,
+            protein: 20.0,
+            lecithin: 9.0,
+        }
+        .into_composition();
+        assert!(matches!(result, Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn into_composition_err_when_lecithin_exceeds_fat() {
+        let result = EggSpec {
+            water: 51.0,
+            fat: 10.0,
+            protein: 16.0,
+            lecithin: 20.0,
+        }
+        .into_composition();
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
 }

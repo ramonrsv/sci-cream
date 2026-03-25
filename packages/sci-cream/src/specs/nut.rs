@@ -146,7 +146,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
+    use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
 
     pub(crate) const ING_SPEC_NUT_ALMOND_STR: &str = r#"{
       "name": "Almond",
@@ -225,4 +225,75 @@ pub(crate) mod tests {
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_NUT: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| vec![(ING_SPEC_NUT_ALMOND_STR, ING_SPEC_NUT_ALMOND.clone(), Some(*COMP_NUT_ALMOND))]);
+
+    #[test]
+    fn into_composition_err_on_negative_field() {
+        let base = NutSpec {
+            water: 4.41,
+            protein: 21.2,
+            fat: 49.9,
+            saturated_fat: None,
+            carbohydrate: 21.6,
+            fiber: 12.5,
+            sugars: 4.35,
+        };
+
+        let neg_cases = [
+            NutSpec { water: -1.0, ..base },
+            NutSpec { protein: -1.0, ..base },
+            NutSpec { fat: -1.0, ..base },
+            NutSpec {
+                carbohydrate: -1.0,
+                ..base
+            },
+            NutSpec { fiber: -1.0, ..base },
+            NutSpec { sugars: -1.0, ..base },
+        ];
+
+        for spec in neg_cases {
+            assert!(matches!(spec.into_composition(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn into_composition_err_when_total_exceeds_100() {
+        let spec = NutSpec {
+            water: 50.0,
+            protein: 21.2,
+            fat: 49.9,
+            saturated_fat: None,
+            carbohydrate: 21.6,
+            fiber: 12.5,
+            sugars: 4.35,
+        };
+        assert!(matches!(spec.into_composition(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn into_composition_err_when_fiber_plus_sugars_exceeds_carbohydrate() {
+        let spec = NutSpec {
+            water: 4.41,
+            protein: 21.2,
+            fat: 49.9,
+            saturated_fat: None,
+            carbohydrate: 10.0,
+            fiber: 8.0,
+            sugars: 4.0,
+        };
+        assert!(matches!(spec.into_composition(), Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn into_composition_err_when_saturated_fat_exceeds_fat() {
+        let spec = NutSpec {
+            water: 4.41,
+            protein: 21.2,
+            fat: 10.0,
+            saturated_fat: Some(15.0),
+            carbohydrate: 21.6,
+            fiber: 12.5,
+            sugars: 4.35,
+        };
+        assert!(matches!(spec.into_composition(), Err(Error::InvalidComposition(_))));
+    }
 }

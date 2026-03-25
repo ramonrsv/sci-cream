@@ -143,7 +143,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
+    use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
 
     pub(crate) const ING_SPEC_FRUIT_STRAWBERRY_STR: &str = r#"{
       "name": "Strawberry",
@@ -261,4 +261,101 @@ pub(crate) mod tests {
                 (ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY_STR, ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY.clone(), None),
             ]
         });
+
+    #[test]
+    fn into_composition_err_on_negative_field() {
+        let base = FruitSpec {
+            water: 91.0,
+            energy: None,
+            protein: Some(0.67),
+            fat: Some(0.3),
+            carbohydrate: Some(7.68),
+            fiber: Some(2.0),
+            sugars: Sugars::new().sucrose(4.0),
+        };
+
+        let neg_cases = [
+            FruitSpec { water: -1.0, ..base },
+            FruitSpec {
+                protein: Some(-1.0),
+                ..base
+            },
+            FruitSpec {
+                fat: Some(-1.0),
+                ..base
+            },
+            FruitSpec {
+                fiber: Some(-1.0),
+                ..base
+            },
+            FruitSpec {
+                sugars: Sugars::new().sucrose(-1.0),
+                ..base
+            },
+        ];
+
+        for spec in neg_cases {
+            assert!(matches!(spec.into_composition(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn into_composition_err_when_fiber_plus_sugars_exceeds_carbohydrate() {
+        let result = FruitSpec {
+            water: 80.0,
+            energy: None,
+            protein: None,
+            fat: None,
+            carbohydrate: Some(5.0),
+            fiber: Some(3.0),
+            sugars: Sugars::new().sucrose(4.0),
+        }
+        .into_composition();
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn into_composition_err_when_total_exceeds_100() {
+        let result = FruitSpec {
+            water: 50.0,
+            energy: None,
+            protein: Some(20.0),
+            fat: Some(20.0),
+            carbohydrate: Some(20.0),
+            fiber: None,
+            sugars: Sugars::new().sucrose(10.0),
+        }
+        .into_composition();
+        assert!(matches!(result, Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn into_composition_err_on_negative_energy() {
+        let result = FruitSpec {
+            water: 91.0,
+            energy: Some(-10.0),
+            protein: Some(0.67),
+            fat: Some(0.3),
+            carbohydrate: Some(7.68),
+            fiber: Some(2.0),
+            sugars: Sugars::new().sucrose(4.0),
+        }
+        .into_composition();
+        assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
+    }
+
+    #[test]
+    fn into_composition_err_when_sugars_has_other() {
+        let result = FruitSpec {
+            water: 91.0,
+            energy: None,
+            protein: None,
+            fat: None,
+            carbohydrate: Some(7.68),
+            fiber: None,
+            sugars: Sugars::new().other(5.0),
+        }
+        .into_composition();
+        assert!(matches!(result, Err(Error::CannotComputePOD(_))));
+    }
 }

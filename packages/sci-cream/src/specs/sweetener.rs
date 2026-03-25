@@ -180,6 +180,7 @@ pub(crate) mod tests {
     use super::*;
     use crate::{
         composition::{ArtificialSweeteners, CompKey, Polyols, Sugars},
+        error::Error,
         ingredient::Category,
         specs::IngredientSpec,
     };
@@ -2000,4 +2001,153 @@ pub(crate) mod tests {
                 ),
             ]
         });
+
+    #[test]
+    fn into_composition_err_on_negative_other_fields() {
+        let base = SweetenerSpec {
+            sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
+            fiber: None,
+            other_carbohydrates: None,
+            other_solids: None,
+            basis: CompositionBasis::ByDryWeight { solids: 100.0 },
+            pod: None,
+            pac: None,
+        };
+
+        let neg_cases = [
+            SweetenerSpec {
+                other_carbohydrates: Some(-1.0),
+                ..base
+            },
+            SweetenerSpec {
+                other_solids: Some(-1.0),
+                ..base
+            },
+        ];
+
+        for spec in neg_cases {
+            assert!(matches!(spec.into_composition(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn into_composition_err_by_dry_weight_when_components_exceed_100() {
+        let spec = SweetenerSpec {
+            sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(105.0)),
+            fiber: None,
+            other_carbohydrates: None,
+            other_solids: None,
+            basis: CompositionBasis::ByDryWeight { solids: 80.0 },
+            pod: None,
+            pac: None,
+        };
+        assert!(matches!(spec.into_composition(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn into_composition_err_by_dry_weight_when_solids_exceed_100() {
+        let spec = SweetenerSpec {
+            sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
+            fiber: None,
+            other_carbohydrates: None,
+            other_solids: None,
+            basis: CompositionBasis::ByDryWeight { solids: 110.0 },
+            pod: None,
+            pac: None,
+        };
+        assert!(matches!(spec.into_composition(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn into_composition_err_by_total_weight_when_components_do_not_sum_to_100() {
+        let spec = SweetenerSpec {
+            sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(60.0)),
+            fiber: None,
+            other_carbohydrates: None,
+            other_solids: None,
+            basis: CompositionBasis::ByTotalWeight { water: 20.0 },
+            pod: None,
+            pac: None,
+        };
+        assert!(matches!(spec.into_composition(), Err(Error::CompositionNot100Percent(_))));
+    }
+
+    #[test]
+    fn into_composition_err_when_pod_cannot_be_computed() {
+        let spec = SweetenerSpec {
+            sweeteners: Sweeteners::new().sugars(Sugars::new().other(5.0)),
+            fiber: None,
+            other_carbohydrates: None,
+            other_solids: None,
+            basis: CompositionBasis::ByDryWeight { solids: 100.0 },
+            pod: None,
+            pac: None,
+        };
+        assert!(matches!(spec.into_composition(), Err(Error::CannotComputePOD(_))));
+    }
+
+    #[test]
+    fn into_composition_err_when_pac_cannot_be_computed() {
+        let spec = SweetenerSpec {
+            sweeteners: Sweeteners::new().sugars(Sugars::new().other(5.0)),
+            fiber: None,
+            other_carbohydrates: None,
+            other_solids: None,
+            basis: CompositionBasis::ByDryWeight { solids: 100.0 },
+            pod: Some(Scaling::OfWhole(50.0)), // skip to_pod()
+            pac: None,                         // calls to_pac() -> fails
+        };
+        assert!(matches!(spec.into_composition(), Err(Error::CannotComputePAC(_))));
+    }
+
+    #[test]
+    fn into_composition_err_on_unsupported_pac_unit() {
+        let base = SweetenerSpec {
+            sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
+            fiber: None,
+            other_carbohydrates: None,
+            other_solids: None,
+            basis: CompositionBasis::ByDryWeight { solids: 100.0 },
+            pod: Some(Scaling::OfWhole(100.0)),
+            pac: None,
+        };
+
+        let unsupported_cases = [
+            SweetenerSpec {
+                pac: Some(Scaling::OfWhole(Unit::Milliliters(100.0))),
+                ..base
+            },
+            SweetenerSpec {
+                pac: Some(Scaling::OfWhole(Unit::Percent(100.0))),
+                ..base
+            },
+            SweetenerSpec {
+                pac: Some(Scaling::OfSolids(Unit::Milliliters(100.0))),
+                ..base
+            },
+            SweetenerSpec {
+                pac: Some(Scaling::OfSolids(Unit::Percent(100.0))),
+                ..base
+            },
+        ];
+        for spec in unsupported_cases {
+            assert!(matches!(spec.into_composition(), Err(Error::UnsupportedCompositionUnit(_))));
+        }
+    }
+
+    #[test]
+    fn into_composition_err_when_energy_cannot_be_computed() {
+        // polyols.other != 0 causes energy() to fail;
+        // pod/pac provided as Some(...) to bypass to_pod()/to_pac() checks
+        let spec = SweetenerSpec {
+            sweeteners: Sweeteners::new().polyols(Polyols::new().other(5.0)),
+            fiber: None,
+            other_carbohydrates: None,
+            other_solids: None,
+            basis: CompositionBasis::ByTotalWeight { water: 95.0 },
+            pod: Some(Scaling::OfWhole(50.0)),
+            pac: Some(Scaling::OfWhole(Unit::Grams(50.0))),
+        };
+        assert!(matches!(spec.into_composition(), Err(Error::CannotComputeEnergy(_))));
+    }
 }

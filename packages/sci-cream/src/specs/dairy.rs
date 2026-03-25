@@ -194,7 +194,7 @@ pub(crate) mod tests {
     use crate::tests::util::assert_comp_eq_percent;
 
     use super::*;
-    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
+    use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
 
     pub(crate) const ING_SPEC_DAIRY_2_MILK_STR: &str = r#"{
       "name": "2% Milk",
@@ -801,4 +801,208 @@ pub(crate) mod tests {
                 ),
             ]
         });
+
+    #[test]
+    fn dairy_spec_err_on_negative_field() {
+        let result_neg_fat = DairySpec { fat: -1.0, msnf: None }.into_composition();
+        assert!(matches!(result_neg_fat, Err(Error::CompositionNotPositive(_))));
+
+        let result_neg_msnf = DairySpec {
+            fat: 3.25,
+            msnf: Some(-1.0),
+        }
+        .into_composition();
+        assert!(matches!(result_neg_msnf, Err(Error::CompositionNotPositive(_))));
+    }
+
+    #[test]
+    fn dairy_spec_err_when_fat_plus_msnf_exceeds_100() {
+        let result = DairySpec {
+            fat: 60.0,
+            msnf: Some(60.0),
+        }
+        .into_composition();
+        assert!(matches!(result, Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn dairy_from_nutrition_spec_err_on_unsupported_unit() {
+        let base = DairyFromNutritionSpec {
+            serving_size: Unit::Milliliters(250.0),
+            energy: 160.0,
+            total_fat: Unit::Grams(8.0),
+            saturated_fat: 5.0,
+            trans_fat: 0.3,
+            sugars: 13.0,
+            protein: 9.0,
+            is_lactose_free: None,
+        };
+
+        // serving_size,  total_fat
+        // ✔ Grams,       Grams       | Percent
+        // ✘ Grams,       Milliliters | MolarMass
+        // ✔ Milliliters, Grams       | Percent
+        // ✘ Milliliters, Milliliters | MolarMass
+        // ✘ Percent,     any unit
+        // ✘ MolarMass,   any unit
+        let bad_units = [
+            // ✘ Grams,       Milliliters | MolarMass
+            DairyFromNutritionSpec {
+                serving_size: Unit::Grams(250.0),
+                total_fat: Unit::Milliliters(8.0),
+                ..base
+            },
+            DairyFromNutritionSpec {
+                serving_size: Unit::Grams(250.0),
+                total_fat: Unit::MolarMass(3.25),
+                ..base
+            },
+            // ✘ Milliliters, Milliliters | MolarMass
+            DairyFromNutritionSpec {
+                serving_size: Unit::Milliliters(100.0),
+                total_fat: Unit::Milliliters(8.0),
+                ..base
+            },
+            DairyFromNutritionSpec {
+                serving_size: Unit::Milliliters(250.0),
+                total_fat: Unit::MolarMass(3.25),
+                ..base
+            },
+            // ✘ Percent,     any unit
+            DairyFromNutritionSpec {
+                serving_size: Unit::Percent(100.0),
+                total_fat: Unit::Grams(8.0),
+                ..base
+            },
+            DairyFromNutritionSpec {
+                serving_size: Unit::Percent(100.0),
+                total_fat: Unit::Milliliters(8.0),
+                ..base
+            },
+            DairyFromNutritionSpec {
+                serving_size: Unit::Percent(100.0),
+                total_fat: Unit::Percent(3.25),
+                ..base
+            },
+            DairyFromNutritionSpec {
+                serving_size: Unit::Percent(100.0),
+                total_fat: Unit::MolarMass(8.0),
+                ..base
+            },
+            // ✘ MolarMass,   any unit
+            DairyFromNutritionSpec {
+                serving_size: Unit::MolarMass(100.0),
+                total_fat: Unit::Grams(8.0),
+                ..base
+            },
+            DairyFromNutritionSpec {
+                serving_size: Unit::MolarMass(100.0),
+                total_fat: Unit::Milliliters(8.0),
+                ..base
+            },
+            DairyFromNutritionSpec {
+                serving_size: Unit::MolarMass(100.0),
+                total_fat: Unit::Percent(3.25),
+                ..base
+            },
+            DairyFromNutritionSpec {
+                serving_size: Unit::MolarMass(100.0),
+                total_fat: Unit::MolarMass(8.0),
+                ..base
+            },
+        ];
+
+        for spec in bad_units {
+            let result = spec.into_composition();
+            assert!(matches!(result, Err(Error::UnsupportedCompositionUnit(_))));
+        }
+    }
+
+    #[test]
+    fn dairy_from_nutrition_spec_err_on_negative_field() {
+        let base = DairyFromNutritionSpec {
+            serving_size: Unit::Grams(250.0),
+            energy: 160.0,
+            total_fat: Unit::Grams(8.0),
+            saturated_fat: 5.0,
+            trans_fat: 0.3,
+            sugars: 13.0,
+            protein: 9.0,
+            is_lactose_free: None,
+        };
+
+        let neg_cases = [
+            DairyFromNutritionSpec {
+                serving_size: Unit::Grams(-1.0),
+                ..base
+            },
+            DairyFromNutritionSpec {
+                total_fat: Unit::Grams(-1.0),
+                ..base
+            },
+            DairyFromNutritionSpec {
+                saturated_fat: -1.0,
+                ..base
+            },
+            DairyFromNutritionSpec {
+                trans_fat: -1.0,
+                ..base
+            },
+            DairyFromNutritionSpec { sugars: -1.0, ..base },
+            DairyFromNutritionSpec { protein: -1.0, ..base },
+        ];
+
+        for spec in neg_cases {
+            let result = spec.into_composition();
+            assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn dairy_from_nutrition_spec_err_when_saturated_fat_exceeds_total_fat() {
+        let result = DairyFromNutritionSpec {
+            serving_size: Unit::Grams(250.0),
+            energy: 160.0,
+            total_fat: Unit::Grams(5.0),
+            saturated_fat: 8.0,
+            trans_fat: 0.0,
+            sugars: 13.0,
+            protein: 9.0,
+            is_lactose_free: None,
+        }
+        .into_composition();
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn dairy_from_nutrition_spec_err_when_trans_fat_exceeds_total_fat() {
+        let result = DairyFromNutritionSpec {
+            serving_size: Unit::Grams(250.0),
+            energy: 160.0,
+            total_fat: Unit::Grams(5.0),
+            saturated_fat: 3.0,
+            trans_fat: 8.0,
+            sugars: 13.0,
+            protein: 9.0,
+            is_lactose_free: None,
+        }
+        .into_composition();
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn dairy_from_nutrition_spec_err_when_fat_plus_sugars_plus_protein_exceeds_serving_size() {
+        let result = DairyFromNutritionSpec {
+            serving_size: Unit::Grams(20.0),
+            energy: 160.0,
+            total_fat: Unit::Grams(8.0),
+            saturated_fat: 5.0,
+            trans_fat: 0.3,
+            sugars: 13.0,
+            protein: 9.0,
+            is_lactose_free: None,
+        }
+        .into_composition();
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
 }

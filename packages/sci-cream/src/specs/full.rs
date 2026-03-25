@@ -52,17 +52,20 @@ impl IntoComposition for FullSpec {
         } = self;
 
         let (solids, micro) = (solids.unwrap_or_default(), micro.unwrap_or_default());
-        let pod = pod.unwrap_or(solids.all().carbohydrates.to_pod()? + solids.all().artificial_sweeteners.to_pod()?);
-
         let alcohol = abv.map_or_else(Alcohol::default, Alcohol::from_abv);
 
-        let pac = pac.unwrap_or(
-            PAC::new()
-                .sugars(solids.all().carbohydrates.to_pod()? + solids.all().artificial_sweeteners.to_pod()?)
+        let calculate_pod = || Ok(solids.all().carbohydrates.to_pod()? + solids.all().artificial_sweeteners.to_pod()?);
+
+        let calculate_pac = || {
+            Ok(PAC::new()
+                .sugars(solids.all().carbohydrates.to_pac()? + solids.all().artificial_sweeteners.to_pac()?)
                 .alcohol(alcohol.to_pac())
                 .salt(micro.salt * constants::pac::SALT)
-                .msnf_ws_salts(solids.milk.snf() * constants::pac::MSNF_WS_SALTS / 100.0),
-        );
+                .msnf_ws_salts(solids.milk.snf() * constants::pac::MSNF_WS_SALTS / 100.0))
+        };
+
+        let pod = pod.map_or_else(calculate_pod, Ok)?;
+        let pac = pac.map_or_else(calculate_pac, Ok)?;
 
         let comp = Composition::new()
             .energy(solids.all().energy()? + alcohol.energy())
@@ -89,7 +92,12 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
+    use crate::{
+        composition::{ArtificialSweeteners, Carbohydrates, CompKey, Solids, SolidsBreakdown, Sugars},
+        error::Error,
+        ingredient::Category,
+        specs::IngredientSpec,
+    };
 
     pub(crate) const ING_SPEC_FULL_WATER_STR: &str = r#"{
       "name": "Water",
@@ -130,4 +138,95 @@ pub(crate) mod tests {
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_FULL: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| vec![(ING_SPEC_FULL_WATER_STR, ING_SPEC_FULL_WATER.clone(), None)]);
+
+    #[test]
+    fn into_composition_err_when_pod_cannot_be_computed() {
+        let base = FullSpec {
+            solids: Some(Solids::new()),
+            micro: None,
+            abv: None,
+            pod: None,
+            pac: None,
+        };
+
+        let cases = [
+            FullSpec {
+                solids: Some(Solids::new().other(
+                    SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().other(5.0))),
+                )),
+                ..base
+            },
+            FullSpec {
+                solids: Some(
+                    Solids::new()
+                        .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().other(5.0))),
+                ),
+                ..base
+            },
+        ];
+        for spec in cases {
+            assert!(matches!(spec.into_composition(), Err(Error::CannotComputePOD(_))));
+        }
+    }
+
+    #[test]
+    fn into_composition_err_when_pac_cannot_be_computed() {
+        // pod: Some(...) skips calculate_pod, so we reach calculate_pac
+        let base = FullSpec {
+            solids: Some(Solids::new()),
+            micro: None,
+            abv: None,
+            pod: Some(0.0),
+            pac: None,
+        };
+
+        let cases = [
+            FullSpec {
+                solids: Some(Solids::new().other(
+                    SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().other(5.0))),
+                )),
+                ..base
+            },
+            FullSpec {
+                solids: Some(
+                    Solids::new()
+                        .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().other(5.0))),
+                ),
+                ..base
+            },
+        ];
+        for spec in cases {
+            assert!(matches!(spec.into_composition(), Err(Error::CannotComputePAC(_))));
+        }
+    }
+
+    #[test]
+    fn into_composition_err_when_total_solids_plus_alcohol_exceeds_100() {
+        let spec = FullSpec {
+            solids: Some(Solids::new().other(SolidsBreakdown::new().others(100.0))),
+            micro: None,
+            abv: Some(50.0),
+            pod: None,
+            pac: None,
+        };
+        assert!(matches!(spec.into_composition(), Err(Error::CompositionNotWithin100Percent(_))));
+    }
+
+    #[test]
+    fn into_composition_err_when_energy_cannot_be_computed() {
+        // With lazy evaluation, pod/pac computations are skipped when provided as Some,
+        // so polyols.other != 0 reaches energy() instead of being caught by to_pod() first
+        use crate::composition::{Carbohydrates, Polyols};
+        let spec =
+            FullSpec {
+                solids: Some(Solids::new().other(
+                    SolidsBreakdown::new().carbohydrates(Carbohydrates::new().polyols(Polyols::new().other(5.0))),
+                )),
+                micro: None,
+                abv: None,
+                pod: Some(0.0),
+                pac: Some(PAC::new()),
+            };
+        assert!(matches!(spec.into_composition(), Err(Error::CannotComputeEnergy(_))));
+    }
 }

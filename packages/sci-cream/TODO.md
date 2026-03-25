@@ -13,6 +13,8 @@
 - [ ] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
 - [ ] Add lactose-free support to `DairySpec`, to allow simple lactose-free ingredient specs.
+- [ ] Rename `DairySpec` and `DairyFromNutritionSpec`to something shorter and clearer.
+- [ ] Add evaporated milk ingredients, e.g. 'Evaporated Milk', 'Fat Free Evaporated Skim Milk', etc.
 
 # Up Next
 
@@ -46,6 +48,7 @@
 - [ ] Consider making `ScaleComponents` private so that it can only be used internally and cannot
       be misused by users; this should not present an extensibility issue with the current design.
 - [ ] Consider adding composition traits for calculating POD, PAC, and energy, total (sum), etc.
+- [ ] Add more unit tests and example ingredients defined using `FullSpec`; it's WIP at the moment.
 
 # Completed
 

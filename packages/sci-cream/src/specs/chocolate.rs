@@ -192,7 +192,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
+    use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
 
     pub(crate) const ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE_STR: &str = r#"{
       "name": "Lindt EXCELLENCE 70% Cacao Dark Chocolate",
@@ -513,4 +513,80 @@ pub(crate) mod tests {
                 ),
             ]
         });
+
+    #[test]
+    fn into_composition_err_on_negative_field() {
+        let neg_specs = [
+            ChocolateSpec {
+                cacao_solids: -1.0,
+                cocoa_butter: 0.0,
+                sugars: None,
+                other_solids: None,
+            },
+            ChocolateSpec {
+                cacao_solids: 70.0,
+                cocoa_butter: -1.0,
+                sugars: None,
+                other_solids: None,
+            },
+            ChocolateSpec {
+                cacao_solids: 70.0,
+                cocoa_butter: 40.0,
+                sugars: Some(-1.0),
+                other_solids: None,
+            },
+            ChocolateSpec {
+                cacao_solids: 70.0,
+                cocoa_butter: 40.0,
+                sugars: None,
+                other_solids: Some(-1.0),
+            },
+        ];
+
+        for spec in neg_specs {
+            let result = spec.into_composition();
+            assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn into_composition_err_when_cocoa_butter_exceeds_cacao_solids() {
+        let result = ChocolateSpec {
+            cacao_solids: 40.0,
+            cocoa_butter: 60.0,
+            sugars: None,
+            other_solids: None,
+        }
+        .into_composition();
+        assert!(matches!(result, Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn into_composition_err_when_components_do_not_sum_to_100() {
+        let gt_100_specs = [
+            ChocolateSpec {
+                cacao_solids: 50.0,
+                cocoa_butter: 20.0,
+                sugars: None,
+                other_solids: None,
+            },
+            ChocolateSpec {
+                cacao_solids: 70.0,
+                cocoa_butter: 40.0,
+                sugars: Some(35.0),
+                other_solids: None,
+            },
+            ChocolateSpec {
+                cacao_solids: 70.0,
+                cocoa_butter: 40.0,
+                sugars: None,
+                other_solids: Some(35.0),
+            },
+        ];
+
+        for spec in gt_100_specs {
+            let result = spec.into_composition();
+            assert!(matches!(result, Err(Error::CompositionNot100Percent(_))));
+        }
+    }
 }

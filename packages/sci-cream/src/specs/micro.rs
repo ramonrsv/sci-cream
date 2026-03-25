@@ -115,7 +115,8 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
+    use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
+
     pub(crate) const ING_SPEC_MICRO_SALT_STR: &str = r#"{
       "name": "Salt",
       "category": "Micro",
@@ -252,4 +253,23 @@ pub(crate) mod tests {
                 (ING_SPEC_MICRO_LOUIS_STAB2K_STR, ING_SPEC_MICRO_LOUIS_STAB2K.clone(), None),
             ]
         });
+
+    #[test]
+    fn into_composition_err_on_negative_strength() {
+        let neg_cases = [
+            MicroSpec::Stabilizer { strength: -1.0 },
+            MicroSpec::Emulsifier { strength: -1.0 },
+            MicroSpec::EmulsifierStabilizer {
+                emulsifier_strength: -1.0,
+                stabilizer_strength: 1.0,
+            },
+            MicroSpec::EmulsifierStabilizer {
+                emulsifier_strength: 1.0,
+                stabilizer_strength: -1.0,
+            },
+        ];
+        for spec in neg_cases {
+            assert!(matches!(spec.into_composition(), Err(Error::CompositionNotPositive(_))));
+        }
+    }
 }
