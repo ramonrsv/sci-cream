@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774475841916,
+  "lastUpdate": 1774475904330,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -126686,6 +126686,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 610338,
             "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7a39b6d1e337e3cec5a1c8ce9ff144e03395cb01",
+          "message": "Add doc code examples for `SweetenerSpec`",
+          "timestamp": "2026-03-25T17:32:45-04:00",
+          "tree_id": "c0a6c88f071c32c218602da2bd178548cf8c3a9a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7a39b6d1e337e3cec5a1c8ce9ff144e03395cb01"
+        },
+        "date": 1774475900729,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77585,
+            "range": "±1.48%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 701934,
+            "range": "±1.21%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9178,
+            "range": "±1.79%",
+            "unit": "ops/sec",
+            "extra": "81 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 585487,
+            "range": "±0.76%",
             "unit": "ops/sec",
             "extra": "93 samples"
           }
