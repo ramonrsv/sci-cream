@@ -29,6 +29,65 @@ use crate::{composition::CompKey, constants};
 /// is required that `solids >= sugars + fat`. `solids` less `sugars` and `fat` is store in
 /// [`Composition`] accessible via [`CompKey::OtherSNFS`]. Overall, `abw` plus `solids` must not
 /// exceed 100%, i.e. `abw + solids <= 100%`.
+///
+/// # Examples
+///
+/// 40% ABV spirit with no sugars or fats, e.g. vodka:
+///
+/// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// # use sci_cream::docs::assert_eq_float;
+/// use sci_cream::{
+///     composition::{CompKey, IntoComposition},
+///     specs::AlcoholSpec
+/// };
+///
+/// let comp = AlcoholSpec {
+///    abv: 40.0,
+///    sugars: None,
+///    fat: None,
+///    solids: None,
+/// }.into_composition()?;
+///
+/// assert_eq!(comp.get(CompKey::Energy), 218.7108);
+/// assert_eq!(comp.get(CompKey::ABV), 40.0);
+/// assert_eq_float!(comp.get(CompKey::Alcohol), 31.56);
+/// assert_eq!(comp.get(CompKey::TotalSolids), 0.0);
+/// assert_eq_float!(comp.get(CompKey::Water), 68.44);
+/// assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
+/// assert_eq!(comp.get(CompKey::PACalc), 234.4908);
+/// # Ok(()) }
+/// ```
+///
+/// Baileys Irish Cream with 17% ABV, 18% sugars, and 13.6% fat:
+///
+/// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// # use sci_cream::docs::assert_eq_float;
+/// # use sci_cream::{
+/// #    composition::{CompKey, IntoComposition},
+/// #    specs::AlcoholSpec
+/// # };
+/// #
+/// let comp = AlcoholSpec {
+///    abv: 17.0,
+///    sugars: Some(18.0),
+///    fat: Some(13.6),
+///    solids: None,
+/// }.into_composition()?;
+///
+/// assert_eq_float!(comp.get(CompKey::Energy), 287.3521);
+/// assert_eq!(comp.get(CompKey::ABV), 17.0);
+/// assert_eq_float!(comp.get(CompKey::Alcohol), 13.413);
+/// assert_eq_float!(comp.get(CompKey::TotalSolids), 31.6);
+/// assert_eq_float!(comp.get(CompKey::Water), 54.987);
+/// assert_eq!(comp.get(CompKey::TotalSweeteners), 18.0);
+/// assert_eq!(comp.get(CompKey::POD), 18.0);
+/// assert_eq!(comp.get(CompKey::PACalc), 99.65859);
+/// assert_eq!(comp.get(CompKey::PACsgr), 18.0);
+/// assert_eq!(comp.get(CompKey::PACtotal), 117.65859);
+/// # Ok(()) }
+/// ```
 #[doc = include_str!("../../docs/bibs/8.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
