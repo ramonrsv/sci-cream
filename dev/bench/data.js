@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774389092394,
+  "lastUpdate": 1774471482865,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -125971,6 +125971,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.72%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e957172b82520a6028e20a650625a126890473be",
+          "message": "Add unit tests for error paths in spec `into_comp`\n\nAlso add TODOs about renaming `DairySpec` and `DairyFromNutritionSpec`,\nabout adding evaporated milk products ingredient definitions, and about\nadding more unit tests and example ingredients defs using `FullSpec`.",
+          "timestamp": "2026-03-25T16:40:26-04:00",
+          "tree_id": "5037f59cbf3b6024dc80b0c24f0f94d04d95ce5c",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e957172b82520a6028e20a650625a126890473be"
+        },
+        "date": 1774471479503,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76824,
+            "range": "±1.89%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 727210,
+            "range": "±1.05%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10071,
+            "range": "±1.94%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 609193,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
