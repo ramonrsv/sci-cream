@@ -101,3 +101,7 @@
 [^112]: Nuts, pistachio nuts, raw. (2019). In _USDA FoodData Central - SR Legacy_. <https://fdc.nal.usda.gov/food-details/170184/nutrients>
 
 [^113]: Nuts, hazelnuts or filberts. (2019). In _USDA FoodData Central - SR Legacy_. <https://fdc.nal.usda.gov/food-details/170581/nutrients>
+
+[^114]: Syrup, maple, Canadian. (2018). In _USDA FoodData Central - SR Legacy_. <https://fdc.nal.usda.gov/food-details/170276/nutrients>
+
+[^115]: Splenda Sweetener Packets. (2026). In _Splenda_. <https://www.splenda.com/product/splenda-sweetener-packets/>

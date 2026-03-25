@@ -14,7 +14,10 @@ use crate::{
 };
 
 #[cfg(doc)]
-use crate::composition::{ArtificialSweeteners, Polyols, Sugars};
+use crate::{
+    composition::{ArtificialSweeteners, Polyols, Sugars},
+    constants::density::GRAMS_IN_TEASPOON_OF_SUGAR,
+};
 
 /// Spec for sweeteners, with a specified [`Sweeteners`] composition and optional POD/PAC
 ///
@@ -54,6 +57,131 @@ use crate::composition::{ArtificialSweeteners, Polyols, Sugars};
 /// components are ignored, and it is an error if [`sugars.other`](Sugars::other),
 /// [`polyols.other`](Polyols::other), or [`artificial.other`](ArtificialSweeteners::other) are
 /// non-zero.
+///
+/// # Examples
+///
+/// Dextrose (monohydrate), with:
+/// - 100% glucose by dry weight
+/// - 92% solids
+/// - 8% bound water
+///
+/// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// # use sci_cream::docs::assert_eq_float;
+/// use sci_cream::{
+///     composition::{CompKey, IntoComposition, Sugars, Sweeteners},
+///     specs::{CompositionBasis, SweetenerSpec},
+/// };
+///
+/// let comp = SweetenerSpec {
+///     sweeteners: Sweeteners::new().sugars(Sugars::new().glucose(100.0)),
+///     fiber: None,
+///     other_carbohydrates: None,
+///     other_solids: None,
+///     basis: CompositionBasis::ByDryWeight { solids: 92.0 },
+///     pod: None,
+///     pac: None,
+/// }.into_composition()?;
+///
+/// assert_eq!(comp.get(CompKey::Energy), 368.0);
+/// assert_eq!(comp.get(CompKey::Glucose), 92.0);
+/// assert_eq!(comp.get(CompKey::TotalSugars), 92.0);
+/// assert_eq!(comp.get(CompKey::TotalSweeteners), 92.0);
+/// assert_eq!(comp.get(CompKey::TotalCarbohydrates), 92.0);
+/// assert_eq!(comp.get(CompKey::TotalSolids), 92.0);
+/// assert_eq_float!(comp.get(CompKey::POD), 73.6);
+/// assert_eq!(comp.get(CompKey::PACsgr), 174.8);
+/// # Ok(()) }
+/// ```
+///
+/// (Canadian Maple Syrup, 2018)[^114], from _USDA FoodData Central_:
+/// - 60% mixed sugars (59% sucrose, 1% glucose/fructose)
+/// - 7.5% oligosaccharides
+/// - 0.5% minerals
+/// - 32% water
+///
+/// _"These values align with the analysis in _Glucose Syrups: Technology and Applications_ (Hull,
+/// 2010, 'Maple Syrup', p. 326)[^15]."_
+///
+/// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// # use sci_cream::docs::assert_eq_float;
+/// use sci_cream::{
+///     composition::{CompKey, IntoComposition, Sugars, Sweeteners},
+///     specs::{CompositionBasis, SweetenerSpec},
+/// };
+///
+/// let comp = SweetenerSpec {
+///     sweeteners: Sweeteners::new().sugars(
+///         Sugars::new().glucose(0.65).fructose(0.35).sucrose(59.0)
+///     ),
+///     fiber: None,
+///     other_carbohydrates: Some(7.5),
+///     other_solids: Some(0.5),
+///     basis: CompositionBasis::ByTotalWeight { water: 32.0 },
+///     pod: None,
+///     pac: None,
+/// }.into_composition()?;
+///
+/// assert_eq!(comp.get(CompKey::Energy), 270.0);
+/// assert_eq!(comp.get(CompKey::Sucrose), 59.0);
+/// assert_eq!(comp.get(CompKey::TotalSugars), 60.0);
+/// assert_eq!(comp.get(CompKey::TotalSweeteners), 60.0);
+/// assert_eq!(comp.get(CompKey::TotalCarbohydrates), 67.5);
+/// assert_eq!(comp.get(CompKey::TotalSolids), 68.0);
+/// assert_eq!(comp.get(CompKey::POD), 60.1255);
+/// assert_eq!(comp.get(CompKey::PACsgr), 60.9);
+/// # Ok(()) }
+/// ```
+///
+/// (Splenda Sweetener Packets)[^115], from the manufacturer:
+/// - Bulked with Dextrose and Maltodextrin
+/// - Explicitly specified [`POD`](crate::docs#pod) (840)
+/// - Explicitly specified [`PAC`](crate::docs#pac-afp-fpdf-se) (112.6g/100g).
+///
+/// _"POD value taken from the manufacturer's suggested 2tsp:1packet sugar to sweetener conversion,
+/// where a teaspoon of granulated sugar is 4.2g (see [`GRAMS_IN_TEASPOON_OF_SUGAR`]) and a packet
+/// is 1g (from the manufacturer's packaging and empirically measured with a 0.01g precision scale).
+/// The composition is inferred from the ingredient list, assuming 55% dextrose, ~40% maltodextrin,
+/// 5% water, and enough sucralose to reach a POD of 840 (works out to ~1.32% using a POD of 11 for
+/// maltodextrin). PAC is calculated for 55% dextrose and 40% Maltodextrin 10 DE with a PAC of 18.
+/// Energy is calculated internally from the composition."_
+///
+/// ```
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// # use sci_cream::docs::assert_eq_float;
+/// use sci_cream::{
+///     composition::{ArtificialSweeteners, CompKey, IntoComposition, Sugars, Sweeteners},
+///     specs::{CompositionBasis, Scaling, SweetenerSpec, Unit},
+/// };
+///
+/// let comp = SweetenerSpec {
+///     sweeteners: Sweeteners::new()
+///         .sugars(Sugars::new().glucose(55.0))
+///         .artificial(ArtificialSweeteners::new().sucralose(1.32)),
+///     fiber: None,
+///     other_carbohydrates: Some(38.68),
+///     other_solids: None,
+///     basis: CompositionBasis::ByTotalWeight { water: 5.0 },
+///     pod: Some(Scaling::OfWhole(840.0)),
+///     pac: Some(Scaling::OfWhole(Unit::Grams(112.6))),
+/// }.into_composition()?;
+///
+/// assert_eq_float!(comp.get(CompKey::Energy), 374.72);
+/// assert_eq!(comp.get(CompKey::Glucose), 55.0);
+/// assert_eq_float!(comp.get(CompKey::TotalSugars), 55.0);
+/// assert_eq!(comp.get(CompKey::TotalArtificial), 1.32);
+/// assert_eq_float!(comp.get(CompKey::TotalSweeteners), 56.32);
+/// assert_eq!(comp.get(CompKey::TotalCarbohydrates), 93.68);
+/// assert_eq!(comp.get(CompKey::TotalSolids), 95.0);
+/// assert_eq_float!(comp.get(CompKey::POD), 840.0);
+/// assert_eq_float!(comp.get(CompKey::PACsgr), 112.6);
+/// # Ok(()) }
+/// ```
+#[doc = include_str!("../../docs/bibs/15.md")]
+#[doc = include_str!("../../docs/bibs/114.md")]
+#[doc = include_str!("../../docs/bibs/115.md")]
+#[allow(clippy::doc_markdown)] // false positive on 'FoodData'
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct SweetenerSpec {
