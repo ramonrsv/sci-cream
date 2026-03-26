@@ -13,6 +13,8 @@ rm -rvf $SCRIPT_DIR/../target
 rm -rvf $SCRIPT_DIR/../packages/app/.next
 rm -rvf $SCRIPT_DIR/../packages/app/node_modules
 rm -rvf $SCRIPT_DIR/../packages/app/next-env.d.ts
+rm -rvf $SCRIPT_DIR/../packages/app/dist
+rm -rvf $SCRIPT_DIR/../packages/app/docs
 
 rm -rvf $SCRIPT_DIR/../packages/sci-cream/dist
 rm -rvf $SCRIPT_DIR/../packages/sci-cream/node_modules

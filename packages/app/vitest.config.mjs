@@ -14,6 +14,8 @@ export default defineConfig({
       "**/__tests__/e2e/**",
       "**/__tests__/visual/**",
       "**/__benches__/e2e/**",
+      "dist/**",
+      "docs/**",
     ],
     coverage: {
       exclude: [...coverageConfigDefaults.exclude, "**/__tests__/**", "src/lib/database/seed.ts"],
