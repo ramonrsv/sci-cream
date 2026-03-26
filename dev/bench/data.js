@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774476248568,
+  "lastUpdate": 1774486015632,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -127804,6 +127804,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.76%",
             "unit": "ops/sec",
             "extra": "93 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "adc748d4367ffd904d6ed79eed1b45509f60b79d",
+          "message": "Add `dist` & `docs` to vitest exclude, and clean\n\nAdd `packages/app/dist` and `packages/app/docs` directories, used by\n`pnpm doc`, to `vitest.config.mjs`'s excludes, as vitest was trying to\nrun tests in those dirs. Also add them to `scripts/clean_workspaces.sh`.",
+          "timestamp": "2026-03-25T20:42:26-04:00",
+          "tree_id": "273573d4af6fb084a7ab6ea8b4f82bad6adf4880",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/adc748d4367ffd904d6ed79eed1b45509f60b79d"
+        },
+        "date": 1774486012115,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75229,
+            "range": "±1.08%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 717083,
+            "range": "±0.67%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10054,
+            "range": "±1.90%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 604759,
+            "range": "±0.79%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
