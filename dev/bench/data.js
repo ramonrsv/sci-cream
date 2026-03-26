@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774486312213,
+  "lastUpdate": 1774486618803,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -117604,6 +117604,102 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 522,
             "range": "10.99",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "adc748d4367ffd904d6ed79eed1b45509f60b79d",
+          "message": "Add `dist` & `docs` to vitest exclude, and clean\n\nAdd `packages/app/dist` and `packages/app/docs` directories, used by\n`pnpm doc`, to `vitest.config.mjs`'s excludes, as vitest was trying to\nrun tests in those dirs. Also add them to `scripts/clean_workspaces.sh`.",
+          "timestamp": "2026-03-25T20:42:26-04:00",
+          "tree_id": "273573d4af6fb084a7ab6ea8b4f82bad6adf4880",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/adc748d4367ffd904d6ed79eed1b45509f60b79d"
+        },
+        "date": 1774486615707,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 801.4,
+            "range": "59.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.3,
+            "range": "5.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.7,
+            "range": "6.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.1,
+            "range": "5.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40,
+            "range": "9.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 150.3,
+            "range": "12.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 40.1,
+            "range": "3.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 36.72,
+            "range": "0.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 28.79,
+            "range": "2.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 520.2,
+            "range": "22.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 531.3,
+            "range": "15.96",
             "unit": "ms"
           }
         ]
