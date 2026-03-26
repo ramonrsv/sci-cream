@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774486015632,
+  "lastUpdate": 1774486058961,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -12329,6 +12329,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_into_composition",
             "value": 4340,
             "range": "± 80",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "adc748d4367ffd904d6ed79eed1b45509f60b79d",
+          "message": "Add `dist` & `docs` to vitest exclude, and clean\n\nAdd `packages/app/dist` and `packages/app/docs` directories, used by\n`pnpm doc`, to `vitest.config.mjs`'s excludes, as vitest was trying to\nrun tests in those dirs. Also add them to `scripts/clean_workspaces.sh`.",
+          "timestamp": "2026-03-25T20:42:26-04:00",
+          "tree_id": "273573d4af6fb084a7ab6ea8b4f82bad6adf4880",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/adc748d4367ffd904d6ed79eed1b45509f60b79d"
+        },
+        "date": 1774486054931,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3152,
+            "range": "± 33",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 128892,
+            "range": "± 1784",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1642,
+            "range": "± 42",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 127207,
+            "range": "± 2525",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_into_composition",
+            "value": 3022,
+            "range": "± 28",
             "unit": "ns/iter"
           }
         ]
