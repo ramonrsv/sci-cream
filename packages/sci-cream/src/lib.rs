@@ -254,7 +254,7 @@ available, and examples of how to use them.
 
 <a id="dairy-spec-example"></a>
 As an example, the code snippet below shows how to define a [`Composition`] for _'2% Milk'_ using
-the [`DairySpec`], which only requires the user to specify the fat content. The resulting
+the [`DairySimpleSpec`], which only requires the user to specify the fat content. The resulting
 composition is equivalent to the one constructed in the [previous example](#composition-example).
 
 <br>
@@ -262,9 +262,9 @@ composition is equivalent to the one constructed in the [previous example](#comp
 ```
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
 # use sci_cream::docs::assert_eq_float;
-use sci_cream::{CompKey::*, composition::IntoComposition, specs::DairySpec};
+use sci_cream::{CompKey::*, composition::IntoComposition, specs::DairySimpleSpec};
 
-let dairy_spec = DairySpec { fat: 2.0, msnf: None };
+let dairy_spec = DairySimpleSpec { fat: 2.0, msnf: None };
 let comp = dairy_spec.into_composition()?;
 
 assert_eq_float!(comp.get(Energy), 49.576);
@@ -286,7 +286,7 @@ all defined as JSON strings of [`IngredientSpec`]s and serve as good examples, l
 [`data/ingredients`][data/ingredients].
 
 <a id="ingredient-spec-dairy-json-example"></a>
-For example, `"DairySpec": { "fat": 2 }` is the JSON representation of the [`DairySpec`] [example
+For example, `"DairySimpleSpec": { "fat": 2 }` is the JSON representation of the [`DairySimpleSpec`] [example
 above](#dairy-spec-example) for _'2% Milk'_. Typically they are defined as [`IngredientSpec`]s that
 include the ingredient name and category as well. Below is an example for a _'2% Milk'_ ingredient.
 
@@ -294,7 +294,7 @@ include the ingredient name and category as well. Below is an example for a _'2%
 {
   "name": "2% Milk",
   "category": "Dairy",
-  "DairySpec": { "fat": 2 }
+  "DairySimpleSpec": { "fat": 2 }
 }
 ```
 
@@ -475,7 +475,7 @@ use crate::{
     constants::composition::{STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM},
     fpd::Curves,
     specs::{
-        DairySpec, IngredientSpec, SweetenerSpec,
+        DairySimpleSpec, IngredientSpec, SweetenerSpec,
         units::{CompositionBasis, Scaling, Unit},
     },
 };

@@ -1,22 +1,30 @@
 [
-  { "name": "1% Milk", "category": "Dairy", "DairySpec": { "fat": 1 } },
-  { "name": "2% Milk", "category": "Dairy", "DairySpec": { "fat": 2 } },
-  { "name": "3.25% Milk", "category": "Dairy", "DairySpec": { "fat": 3.25 } },
-  { "name": "3.5% Milk", "category": "Dairy", "DairySpec": { "fat": 3.5 } },
-  { "name": "5% Cream", "category": "Dairy", "DairySpec": { "fat": 5 } },
-  { "name": "10% Cream", "category": "Dairy", "DairySpec": { "fat": 10 } },
-  { "name": "18% Cream", "category": "Dairy", "DairySpec": { "fat": 18 } },
-  { "name": "35% Cream", "category": "Dairy", "DairySpec": { "fat": 35 } },
-  { "name": "40% Cream", "category": "Dairy", "DairySpec": { "fat": 40 } },
-  { "name": "Whole Milk", "category": "Dairy", "DairySpec": { "fat": 3.25 } },
-  { "name": "Whipping Cream", "category": "Dairy", "DairySpec": { "fat": 35 } },
-  { "name": "Heavy Cream", "category": "Dairy", "DairySpec": { "fat": 36 } },
-  { "name": "Skimmed Milk Powder", "category": "Dairy", "DairySpec": { "fat": 0, "msnf": 97 } },
-  { "name": "Whole Milk Powder", "category": "Dairy", "DairySpec": { "fat": 27, "msnf": 70 } },
+  { "name": "1% Milk", "category": "Dairy", "DairySimpleSpec": { "fat": 1 } },
+  { "name": "2% Milk", "category": "Dairy", "DairySimpleSpec": { "fat": 2 } },
+  { "name": "3.25% Milk", "category": "Dairy", "DairySimpleSpec": { "fat": 3.25 } },
+  { "name": "3.5% Milk", "category": "Dairy", "DairySimpleSpec": { "fat": 3.5 } },
+  { "name": "5% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 5 } },
+  { "name": "10% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 10 } },
+  { "name": "18% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 18 } },
+  { "name": "35% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 35 } },
+  { "name": "40% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 40 } },
+  { "name": "Whole Milk", "category": "Dairy", "DairySimpleSpec": { "fat": 3.25 } },
+  { "name": "Whipping Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 35 } },
+  { "name": "Heavy Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 36 } },
+  {
+    "name": "Skimmed Milk Powder",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 0, "msnf": 97 }
+  },
+  {
+    "name": "Whole Milk Powder",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 27, "msnf": 70 }
+  },
   {
     "name": "3.25% Milk (from nutrition facts)",
     "category": "Dairy",
-    "DairyFromNutritionSpec": {
+    "DairyLabelSpec": {
       "serving_size": { "ml": 250 },
       "energy": 160,
       "total_fat": { "percent": 3.25 },
@@ -30,7 +38,7 @@
   {
     "name": "Whole Ultra-Filtered Lactose-Free Milk",
     "category": "Dairy",
-    "DairyFromNutritionSpec": {
+    "DairyLabelSpec": {
       "serving_size": { "ml": 240 },
       "energy": 150,
       "total_fat": { "grams": 8 },
@@ -45,7 +53,7 @@
   {
     "name": "Whey Isolate",
     "category": "Dairy",
-    "DairyFromNutritionSpec": {
+    "DairyLabelSpec": {
       "serving_size": { "grams": 39 },
       "energy": 150,
       "total_fat": { "grams": 0.5 },
@@ -59,7 +67,7 @@
   {
     "name": "Casein",
     "category": "Dairy",
-    "DairyFromNutritionSpec": {
+    "DairyLabelSpec": {
       "serving_size": { "grams": 30 },
       "energy": 110,
       "total_fat": { "grams": 0 },

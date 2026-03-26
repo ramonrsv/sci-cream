@@ -12,8 +12,7 @@
 - [ ] Split literature and ingredient definition bibliography; the latter clutters the docs.
 - [ ] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
-- [ ] Add lactose-free support to `DairySpec`, to allow simple lactose-free ingredient specs.
-- [ ] Rename `DairySpec` and `DairyFromNutritionSpec`to something shorter and clearer.
+- [ ] Add lactose-free support to `DairySimpleSpec`, to allow simple lactose-free ingredient specs.
 - [ ] Add evaporated milk ingredients, e.g. 'Evaporated Milk', 'Fat Free Evaporated Skim Milk', etc.
 
 # Up Next
@@ -52,6 +51,7 @@
 
 # Completed
 
+- [x] Rename `DairySpec` and `DairyFromNutritionSpec`to something shorter and clearer.
 - [x] Implement `Validate` for `composition` (and `specs`?) and add unit tests to verify.
 - [x] Remove uses of `.unwrap()` in documentation code examples, see the `# fn main() ...` trick.
 - [x] Rename `assert_*` family of functions in `crate::validate` to `verify_*`, to differentiate.

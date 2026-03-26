@@ -19,7 +19,7 @@ use crate::{
     error::Result,
     ingredient::{Category, Ingredient},
     specs::{
-        AlcoholSpec, ChocolateSpec, DairyFromNutritionSpec, DairySpec, EggSpec, FruitSpec, FullSpec, MicroSpec,
+        AlcoholSpec, ChocolateSpec, DairyLabelSpec, DairySimpleSpec, EggSpec, FruitSpec, FullSpec, MicroSpec,
         NutSpec, SweetenerSpec,
     },
 };
@@ -32,8 +32,8 @@ use crate::error::Error;
 #[allow(clippy::large_enum_variant)] // @todo Deal with this issue later
 #[allow(missing_docs)] // Trivial mapping to the underlying specs
 pub enum TaggedSpec {
-    DairySpec(DairySpec),
-    DairyFromNutritionSpec(DairyFromNutritionSpec),
+    DairySimpleSpec(DairySimpleSpec),
+    DairyLabelSpec(DairyLabelSpec),
     SweetenerSpec(SweetenerSpec),
     FruitSpec(FruitSpec),
     ChocolateSpec(ChocolateSpec),
@@ -47,8 +47,8 @@ pub enum TaggedSpec {
 impl IntoComposition for TaggedSpec {
     fn into_composition(self) -> Result<Composition> {
         match self {
-            Self::DairySpec(spec) => spec.into_composition(),
-            Self::DairyFromNutritionSpec(spec) => spec.into_composition(),
+            Self::DairySimpleSpec(spec) => spec.into_composition(),
+            Self::DairyLabelSpec(spec) => spec.into_composition(),
             Self::SweetenerSpec(spec) => spec.into_composition(),
             Self::FruitSpec(spec) => spec.into_composition(),
             Self::ChocolateSpec(spec) => spec.into_composition(),
@@ -61,15 +61,15 @@ impl IntoComposition for TaggedSpec {
     }
 }
 
-impl From<DairySpec> for TaggedSpec {
-    fn from(spec: DairySpec) -> Self {
-        Self::DairySpec(spec)
+impl From<DairySimpleSpec> for TaggedSpec {
+    fn from(spec: DairySimpleSpec) -> Self {
+        Self::DairySimpleSpec(spec)
     }
 }
 
-impl From<DairyFromNutritionSpec> for TaggedSpec {
-    fn from(spec: DairyFromNutritionSpec) -> Self {
-        Self::DairyFromNutritionSpec(spec)
+impl From<DairyLabelSpec> for TaggedSpec {
+    fn from(spec: DairyLabelSpec) -> Self {
+        Self::DairyLabelSpec(spec)
     }
 }
 

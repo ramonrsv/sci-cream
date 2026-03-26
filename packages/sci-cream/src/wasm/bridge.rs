@@ -201,7 +201,7 @@ pub(crate) mod tests {
         composition::CompKey,
         data::get_all_ingredient_specs,
         ingredient::Ingredient,
-        specs::{DairySpec, IngredientSpec},
+        specs::{DairySimpleSpec, IngredientSpec},
     };
 
     const LIGHT_RECIPE: &[(&str, f64)] = &[
@@ -372,7 +372,7 @@ pub(crate) mod tests {
         let invalid_spec = IngredientSpec {
             name: "Invalid Ingredient".to_string(),
             category: Category::Dairy,
-            spec: DairySpec { fat: -10.0, msnf: None }.into(),
+            spec: DairySimpleSpec { fat: -10.0, msnf: None }.into(),
         };
 
         let result = bridge.seed_from_specs(&[invalid_spec]);

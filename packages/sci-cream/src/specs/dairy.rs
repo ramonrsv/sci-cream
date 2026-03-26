@@ -1,4 +1,4 @@
-//! [`DairySpec`], [`DairyFromNutritionSpec`], and associated implementations, for dairy ingredients
+//! [`DairySimpleSpec`], [`DairyLabelSpec`], and associated implementations, for dairy ingredients
 //! such as milk, cream, milk powders, protein powders, etc.
 
 use serde::{Deserialize, Serialize};
@@ -28,7 +28,7 @@ use crate::{
 /// milk solids non-fat, or 70 for Whole Milk Powder - 3% water, 27% fat, the rest is `msnf`.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
-pub struct DairySpec {
+pub struct DairySimpleSpec {
     /// Fat content by weight, e.g. 3.25 for whole milk, 40 for cream, and 0 for skimmed milk powder.
     pub fat: f64,
     /// Milk solids non-fat content by weight, calculated internally for typical milks and creams.
@@ -38,7 +38,7 @@ pub struct DairySpec {
     pub msnf: Option<f64>,
 }
 
-impl IntoComposition for DairySpec {
+impl IntoComposition for DairySimpleSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self { fat, msnf } = self;
 
@@ -77,13 +77,13 @@ impl IntoComposition for DairySpec {
 
 /// Spec for dairy ingredients derived from nutrition facts labels, with detailed breakdown.
 ///
-/// This spec is more flexible than [`DairySpec`] and can accommodate a wider range of dairy
+/// This spec is more flexible than [`DairySimpleSpec`] and can accommodate a wider range of dairy
 /// products, including those with non-standard compositions, e.g. lactose-free products with
 /// different types of sugars, whey protein or isolate powder, or other specialized dairy products.
 /// The required values can typically be pulled directly from the nutrition facts label.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
-pub struct DairyFromNutritionSpec {
+pub struct DairyLabelSpec {
     /// Serving size in grams; if given in ml, it is converted to grams based on fat content
     ///
     /// See [`constants::density::dairy_milliliters_to_grams`].
@@ -115,7 +115,7 @@ pub struct DairyFromNutritionSpec {
     pub is_lactose_free: Option<bool>,
 }
 
-impl IntoComposition for DairyFromNutritionSpec {
+impl IntoComposition for DairyLabelSpec {
     fn into_composition(self) -> Result<Composition> {
         let Self {
             serving_size,
@@ -196,18 +196,18 @@ pub(crate) mod tests {
     use super::*;
     use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
 
-    pub(crate) const ING_SPEC_DAIRY_2_MILK_STR: &str = r#"{
+    pub(crate) const ING_SPEC_DAIRY_SIMPLE_2_MILK_STR: &str = r#"{
       "name": "2% Milk",
       "category": "Dairy",
-      "DairySpec": {
+      "DairySimpleSpec": {
         "fat": 2
       }
     }"#;
 
-    pub(crate) static ING_SPEC_DAIRY_2_MILK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    pub(crate) static ING_SPEC_DAIRY_SIMPLE_2_MILK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "2% Milk".to_string(),
         category: Category::Dairy,
-        spec: DairySpec { fat: 2.0, msnf: None }.into(),
+        spec: DairySimpleSpec { fat: 2.0, msnf: None }.into(),
     });
 
     pub(crate) static COMP_2_MILK: LazyLock<Composition> = LazyLock::new(|| {
@@ -228,8 +228,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_spec_2_milk() {
-        let comp = ING_SPEC_DAIRY_2_MILK.spec.into_composition().unwrap();
+    fn into_composition_dairy_simple_spec_2_milk() {
+        let comp = ING_SPEC_DAIRY_SIMPLE_2_MILK.spec.into_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 49.5756);
 
@@ -256,18 +256,18 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.0474);
     }
 
-    pub(crate) const ING_SPEC_DAIRY_3_25_MILK_STR: &str = r#"{
+    pub(crate) const ING_SPEC_DAIRY_SIMPLE_3_25_MILK_STR: &str = r#"{
       "name": "3.25% Milk",
       "category": "Dairy",
-      "DairySpec": {
+      "DairySimpleSpec": {
         "fat": 3.25
       }
     }"#;
 
-    pub(crate) static ING_SPEC_DAIRY_3_25_MILK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    pub(crate) static ING_SPEC_DAIRY_SIMPLE_3_25_MILK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "3.25% Milk".to_string(),
         category: Category::Dairy,
-        spec: DairySpec { fat: 3.25, msnf: None }.into(),
+        spec: DairySimpleSpec { fat: 3.25, msnf: None }.into(),
     });
 
     pub(crate) static COMP_3_25_MILK: LazyLock<Composition> = LazyLock::new(|| {
@@ -287,8 +287,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_spec_3_25_milk() {
-        let comp = ING_SPEC_DAIRY_3_25_MILK.spec.into_composition().unwrap();
+    fn into_composition_dairy_simple_spec_3_25_milk() {
+        let comp = ING_SPEC_DAIRY_SIMPLE_3_25_MILK.spec.into_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 60.42285);
 
@@ -315,18 +315,18 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 7.9448);
     }
 
-    pub(crate) const ING_SPEC_DAIRY_40_CREAM_STR: &str = r#"{
+    pub(crate) const ING_SPEC_DAIRY_SIMPLE_40_CREAM_STR: &str = r#"{
       "name": "40% Cream",
       "category": "Dairy",
-      "DairySpec": {
+      "DairySimpleSpec": {
         "fat": 40
       }
     }"#;
 
-    pub(crate) static ING_SPEC_DAIRY_40_CREAM: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    pub(crate) static ING_SPEC_DAIRY_SIMPLE_40_CREAM: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "40% Cream".to_string(),
         category: Category::Dairy,
-        spec: DairySpec { fat: 40.0, msnf: None }.into(),
+        spec: DairySimpleSpec { fat: 40.0, msnf: None }.into(),
     });
 
     pub(crate) static COMP_40_CREAM: LazyLock<Composition> = LazyLock::new(|| {
@@ -347,8 +347,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_spec_40_cream() {
-        let comp = ING_SPEC_DAIRY_40_CREAM.spec.into_composition().unwrap();
+    fn into_composition_dairy_simple_spec_40_cream() {
+        let comp = ING_SPEC_DAIRY_SIMPLE_40_CREAM.spec.into_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 379.332);
 
@@ -375,24 +375,25 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 4.927);
     }
 
-    pub(crate) const ING_SPEC_DAIRY_SKIMMED_POWDER_STR: &str = r#"{
+    pub(crate) const ING_SPEC_DAIRY_SIMPLE_SKIMMED_POWDER_STR: &str = r#"{
       "name": "Skimmed Milk Powder",
       "category": "Dairy",
-      "DairySpec": {
+      "DairySimpleSpec": {
         "fat": 0,
         "msnf": 97
       }
     }"#;
 
-    pub(crate) static ING_SPEC_DAIRY_SKIMMED_POWDER: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-        name: "Skimmed Milk Powder".to_string(),
-        category: Category::Dairy,
-        spec: DairySpec {
-            fat: 0.0,
-            msnf: Some(97.0),
-        }
-        .into(),
-    });
+    pub(crate) static ING_SPEC_DAIRY_SIMPLE_SKIMMED_POWDER: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Skimmed Milk Powder".to_string(),
+            category: Category::Dairy,
+            spec: DairySimpleSpec {
+                fat: 0.0,
+                msnf: Some(97.0),
+            }
+            .into(),
+        });
 
     pub(crate) static COMP_SKIMMED_POWDER: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
@@ -412,8 +413,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_spec_skimmed_powder() {
-        let comp = ING_SPEC_DAIRY_SKIMMED_POWDER.spec.into_composition().unwrap();
+    fn into_composition_dairy_simple_spec_skimmed_powder() {
+        let comp = ING_SPEC_DAIRY_SIMPLE_SKIMMED_POWDER.spec.into_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 347.26);
 
@@ -440,19 +441,19 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 88.5032);
     }
 
-    pub(crate) const ING_SPEC_DAIRY_WHOLE_POWDER_STR: &str = r#"{
+    pub(crate) const ING_SPEC_DAIRY_SIMPLE_WHOLE_POWDER_STR: &str = r#"{
       "name": "Whole Milk Powder",
       "category": "Dairy",
-      "DairySpec": {
+      "DairySimpleSpec": {
         "fat": 27,
         "msnf": 70
       }
     }"#;
 
-    pub(crate) static ING_SPEC_DAIRY_WHOLE_POWDER: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+    pub(crate) static ING_SPEC_DAIRY_SIMPLE_WHOLE_POWDER: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Whole Milk Powder".to_string(),
         category: Category::Dairy,
-        spec: DairySpec {
+        spec: DairySimpleSpec {
             fat: 27.0,
             msnf: Some(70.0),
         }
@@ -477,8 +478,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_spec_whole_powder() {
-        let comp = ING_SPEC_DAIRY_WHOLE_POWDER.spec.into_composition().unwrap();
+    fn into_composition_dairy_simple_spec_whole_powder() {
+        let comp = ING_SPEC_DAIRY_SIMPLE_WHOLE_POWDER.spec.into_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 493.6);
 
@@ -505,10 +506,10 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 63.8683);
     }
 
-    pub(crate) const ING_SPEC_DAIRY_FROM_NUTRITION_3_25_MILK_STR: &str = r#"{
+    pub(crate) const ING_SPEC_DAIRY_LABEL_3_25_MILK_STR: &str = r#"{
       "name": "3.25% Milk (from nutrition facts)",
       "category": "Dairy",
-      "DairyFromNutritionSpec": {
+      "DairyLabelSpec": {
         "serving_size": { "ml": 250 },
         "energy": 160,
         "total_fat": { "percent": 3.25 },
@@ -519,22 +520,21 @@ pub(crate) mod tests {
       }
     }"#;
 
-    pub(crate) static ING_SPEC_DAIRY_FROM_NUTRITION_3_25_MILK: LazyLock<IngredientSpec> =
-        LazyLock::new(|| IngredientSpec {
-            name: "3.25% Milk (from nutrition facts)".to_string(),
-            category: Category::Dairy,
-            spec: DairyFromNutritionSpec {
-                serving_size: Unit::Milliliters(250.0), // 257.6667 grams
-                energy: 160.0,
-                total_fat: Unit::Percent(3.25), // 3.25% is 8.3742g, not 8g
-                saturated_fat: 5.0,
-                trans_fat: 0.3,
-                sugars: 13.0,
-                protein: 9.0,
-                is_lactose_free: None,
-            }
-            .into(),
-        });
+    pub(crate) static ING_SPEC_DAIRY_LABEL_3_25_MILK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "3.25% Milk (from nutrition facts)".to_string(),
+        category: Category::Dairy,
+        spec: DairyLabelSpec {
+            serving_size: Unit::Milliliters(250.0), // 257.6667 grams
+            energy: 160.0,
+            total_fat: Unit::Percent(3.25), // 3.25% is 8.3742g, not 8g
+            saturated_fat: 5.0,
+            trans_fat: 0.3,
+            sugars: 13.0,
+            protein: 9.0,
+            is_lactose_free: None,
+        }
+        .into(),
+    });
 
     pub(crate) static COMP_3_25_MILK_FROM_NUTRITION: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
@@ -552,8 +552,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_from_nutrition_spec_3_25_milk() {
-        let comp = ING_SPEC_DAIRY_FROM_NUTRITION_3_25_MILK.spec.into_composition().unwrap();
+    fn into_composition_dairy_label_spec_3_25_milk() {
+        let comp = ING_SPEC_DAIRY_LABEL_3_25_MILK.spec.into_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 62.0957);
 
@@ -580,10 +580,10 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.1823);
     }
 
-    pub(crate) const ING_SPEC_DAIRY_FROM_NUTRITION_WHOLE_ULTRA_FILTERED_LACTOSE_FREE_STR: &str = r#"{
+    pub(crate) const ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE_STR: &str = r#"{
       "name": "Whole Ultra-Filtered Lactose-Free Milk",
       "category": "Dairy",
-      "DairyFromNutritionSpec": {
+      "DairyLabelSpec": {
         "serving_size": { "ml": 240 },
         "energy": 150,
         "total_fat": { "grams": 8 },
@@ -595,11 +595,11 @@ pub(crate) mod tests {
       }
     }"#;
 
-    pub(crate) static ING_SPEC_DAIRY_FROM_NUTRITION_WHOLE_ULTRA_FILTERED_LACTOSE_FREE: LazyLock<IngredientSpec> =
+    pub(crate) static ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE: LazyLock<IngredientSpec> =
         LazyLock::new(|| IngredientSpec {
             name: "Whole Ultra-Filtered Lactose-Free Milk".to_string(),
             category: Category::Dairy,
-            spec: DairyFromNutritionSpec {
+            spec: DairyLabelSpec {
                 serving_size: Unit::Milliliters(240.0), // 245.1288 grams
                 energy: 150.0,
                 total_fat: Unit::Grams(8.0), // 8g is 3.2636%
@@ -628,8 +628,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_spec_whole_ultra_filtered_lactose_free() {
-        let comp = ING_SPEC_DAIRY_FROM_NUTRITION_WHOLE_ULTRA_FILTERED_LACTOSE_FREE
+    fn into_composition_dairy_simple_spec_whole_ultra_filtered_lactose_free() {
+        let comp = ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE
             .spec
             .into_composition()
             .unwrap();
@@ -661,10 +661,10 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 7.4983);
     }
 
-    pub(crate) const ING_SPEC_DAIRY_FROM_NUTRITION_WHEY_ISOLATE_STR: &str = r#"{
+    pub(crate) const ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE_STR: &str = r#"{
       "name": "Whey Isolate",
       "category": "Dairy",
-      "DairyFromNutritionSpec": {
+      "DairyLabelSpec": {
         "serving_size": { "grams": 39 },
         "energy": 150,
         "total_fat": { "grams": 0.5 },
@@ -675,22 +675,21 @@ pub(crate) mod tests {
       }
     }"#;
 
-    pub(crate) static ING_SPEC_DAIRY_FROM_NUTRITION_WHEY_ISOLATE: LazyLock<IngredientSpec> =
-        LazyLock::new(|| IngredientSpec {
-            name: "Whey Isolate".to_string(),
-            category: Category::Dairy,
-            spec: DairyFromNutritionSpec {
-                serving_size: Unit::Grams(39.0),
-                energy: 150.0,
-                total_fat: Unit::Grams(0.5),
-                saturated_fat: 0.3,
-                trans_fat: 0.0,
-                sugars: 1.0,
-                protein: 35.0,
-                is_lactose_free: None,
-            }
-            .into(),
-        });
+    pub(crate) static ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Whey Isolate".to_string(),
+        category: Category::Dairy,
+        spec: DairyLabelSpec {
+            serving_size: Unit::Grams(39.0),
+            energy: 150.0,
+            total_fat: Unit::Grams(0.5),
+            saturated_fat: 0.3,
+            trans_fat: 0.0,
+            sugars: 1.0,
+            protein: 35.0,
+            is_lactose_free: None,
+        }
+        .into(),
+    });
 
     pub(crate) static COMP_WHEY_ISOLATE: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
@@ -708,11 +707,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_from_nutrition_spec_whey_isolate() {
-        let comp = ING_SPEC_DAIRY_FROM_NUTRITION_WHEY_ISOLATE
-            .spec
-            .into_composition()
-            .unwrap();
+    fn into_composition_dairy_label_spec_whey_isolate() {
+        let comp = ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE.spec.into_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 384.6154);
 
@@ -740,9 +736,9 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn into_composition_dairy_spec_vs_dairy_from_nutrition_spec_3_25_milk() {
-        let comp_spec = ING_SPEC_DAIRY_3_25_MILK.spec.into_composition().unwrap();
-        let comp_spec_from_nutrition = ING_SPEC_DAIRY_FROM_NUTRITION_3_25_MILK.spec.into_composition().unwrap();
+    fn into_composition_dairy_simple_spec_vs_dairy_label_spec_3_25_milk() {
+        let comp_spec = ING_SPEC_DAIRY_SIMPLE_3_25_MILK.spec.into_composition().unwrap();
+        let comp_spec_from_nutrition = ING_SPEC_DAIRY_LABEL_3_25_MILK.spec.into_composition().unwrap();
 
         let assert_comp_eq_percent = |key: CompKey, tolerance_percent: f64| {
             assert_comp_eq_percent(&comp_spec, &comp_spec_from_nutrition, key, tolerance_percent);
@@ -779,35 +775,43 @@ pub(crate) mod tests {
     pub(crate) static INGREDIENT_ASSETS_TABLE_DAIRY: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {
             vec![
-                (ING_SPEC_DAIRY_2_MILK_STR, ING_SPEC_DAIRY_2_MILK.clone(), Some(*COMP_2_MILK)),
-                (ING_SPEC_DAIRY_3_25_MILK_STR, ING_SPEC_DAIRY_3_25_MILK.clone(), Some(*COMP_3_25_MILK)),
-                (ING_SPEC_DAIRY_40_CREAM_STR, ING_SPEC_DAIRY_40_CREAM.clone(), Some(*COMP_40_CREAM)),
-                (ING_SPEC_DAIRY_SKIMMED_POWDER_STR, ING_SPEC_DAIRY_SKIMMED_POWDER.clone(), Some(*COMP_SKIMMED_POWDER)),
-                (ING_SPEC_DAIRY_WHOLE_POWDER_STR, ING_SPEC_DAIRY_WHOLE_POWDER.clone(), Some(*COMP_WHOLE_POWDER)),
+                (ING_SPEC_DAIRY_SIMPLE_2_MILK_STR, ING_SPEC_DAIRY_SIMPLE_2_MILK.clone(), Some(*COMP_2_MILK)),
+                (ING_SPEC_DAIRY_SIMPLE_3_25_MILK_STR, ING_SPEC_DAIRY_SIMPLE_3_25_MILK.clone(), Some(*COMP_3_25_MILK)),
+                (ING_SPEC_DAIRY_SIMPLE_40_CREAM_STR, ING_SPEC_DAIRY_SIMPLE_40_CREAM.clone(), Some(*COMP_40_CREAM)),
                 (
-                    ING_SPEC_DAIRY_FROM_NUTRITION_3_25_MILK_STR,
-                    ING_SPEC_DAIRY_FROM_NUTRITION_3_25_MILK.clone(),
+                    ING_SPEC_DAIRY_SIMPLE_SKIMMED_POWDER_STR,
+                    ING_SPEC_DAIRY_SIMPLE_SKIMMED_POWDER.clone(),
+                    Some(*COMP_SKIMMED_POWDER),
+                ),
+                (
+                    ING_SPEC_DAIRY_SIMPLE_WHOLE_POWDER_STR,
+                    ING_SPEC_DAIRY_SIMPLE_WHOLE_POWDER.clone(),
+                    Some(*COMP_WHOLE_POWDER),
+                ),
+                (
+                    ING_SPEC_DAIRY_LABEL_3_25_MILK_STR,
+                    ING_SPEC_DAIRY_LABEL_3_25_MILK.clone(),
                     Some(*COMP_3_25_MILK_FROM_NUTRITION),
                 ),
                 (
-                    ING_SPEC_DAIRY_FROM_NUTRITION_WHOLE_ULTRA_FILTERED_LACTOSE_FREE_STR,
-                    ING_SPEC_DAIRY_FROM_NUTRITION_WHOLE_ULTRA_FILTERED_LACTOSE_FREE.clone(),
+                    ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE_STR,
+                    ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE.clone(),
                     Some(*COMP_WHOLE_ULTRA_FILTERED_LACTOSE_FREE),
                 ),
                 (
-                    ING_SPEC_DAIRY_FROM_NUTRITION_WHEY_ISOLATE_STR,
-                    ING_SPEC_DAIRY_FROM_NUTRITION_WHEY_ISOLATE.clone(),
+                    ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE_STR,
+                    ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE.clone(),
                     Some(*COMP_WHEY_ISOLATE),
                 ),
             ]
         });
 
     #[test]
-    fn dairy_spec_err_on_negative_field() {
-        let result_neg_fat = DairySpec { fat: -1.0, msnf: None }.into_composition();
+    fn dairy_simple_spec_err_on_negative_field() {
+        let result_neg_fat = DairySimpleSpec { fat: -1.0, msnf: None }.into_composition();
         assert!(matches!(result_neg_fat, Err(Error::CompositionNotPositive(_))));
 
-        let result_neg_msnf = DairySpec {
+        let result_neg_msnf = DairySimpleSpec {
             fat: 3.25,
             msnf: Some(-1.0),
         }
@@ -816,8 +820,8 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn dairy_spec_err_when_fat_plus_msnf_exceeds_100() {
-        let result = DairySpec {
+    fn dairy_simple_spec_err_when_fat_plus_msnf_exceeds_100() {
+        let result = DairySimpleSpec {
             fat: 60.0,
             msnf: Some(60.0),
         }
@@ -826,8 +830,8 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn dairy_from_nutrition_spec_err_on_unsupported_unit() {
-        let base = DairyFromNutritionSpec {
+    fn dairy_label_spec_err_on_unsupported_unit() {
+        let base = DairyLabelSpec {
             serving_size: Unit::Milliliters(250.0),
             energy: 160.0,
             total_fat: Unit::Grams(8.0),
@@ -847,65 +851,65 @@ pub(crate) mod tests {
         // ✘ MolarMass,   any unit
         let bad_units = [
             // ✘ Grams,       Milliliters | MolarMass
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 serving_size: Unit::Grams(250.0),
                 total_fat: Unit::Milliliters(8.0),
                 ..base
             },
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 serving_size: Unit::Grams(250.0),
                 total_fat: Unit::MolarMass(3.25),
                 ..base
             },
             // ✘ Milliliters, Milliliters | MolarMass
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 serving_size: Unit::Milliliters(100.0),
                 total_fat: Unit::Milliliters(8.0),
                 ..base
             },
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 serving_size: Unit::Milliliters(250.0),
                 total_fat: Unit::MolarMass(3.25),
                 ..base
             },
             // ✘ Percent,     any unit
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 serving_size: Unit::Percent(100.0),
                 total_fat: Unit::Grams(8.0),
                 ..base
             },
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 serving_size: Unit::Percent(100.0),
                 total_fat: Unit::Milliliters(8.0),
                 ..base
             },
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 serving_size: Unit::Percent(100.0),
                 total_fat: Unit::Percent(3.25),
                 ..base
             },
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 serving_size: Unit::Percent(100.0),
                 total_fat: Unit::MolarMass(8.0),
                 ..base
             },
             // ✘ MolarMass,   any unit
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 serving_size: Unit::MolarMass(100.0),
                 total_fat: Unit::Grams(8.0),
                 ..base
             },
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 serving_size: Unit::MolarMass(100.0),
                 total_fat: Unit::Milliliters(8.0),
                 ..base
             },
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 serving_size: Unit::MolarMass(100.0),
                 total_fat: Unit::Percent(3.25),
                 ..base
             },
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 serving_size: Unit::MolarMass(100.0),
                 total_fat: Unit::MolarMass(8.0),
                 ..base
@@ -919,8 +923,8 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn dairy_from_nutrition_spec_err_on_negative_field() {
-        let base = DairyFromNutritionSpec {
+    fn dairy_label_spec_err_on_negative_field() {
+        let base = DairyLabelSpec {
             serving_size: Unit::Grams(250.0),
             energy: 160.0,
             total_fat: Unit::Grams(8.0),
@@ -932,24 +936,24 @@ pub(crate) mod tests {
         };
 
         let neg_cases = [
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 serving_size: Unit::Grams(-1.0),
                 ..base
             },
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 total_fat: Unit::Grams(-1.0),
                 ..base
             },
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 saturated_fat: -1.0,
                 ..base
             },
-            DairyFromNutritionSpec {
+            DairyLabelSpec {
                 trans_fat: -1.0,
                 ..base
             },
-            DairyFromNutritionSpec { sugars: -1.0, ..base },
-            DairyFromNutritionSpec { protein: -1.0, ..base },
+            DairyLabelSpec { sugars: -1.0, ..base },
+            DairyLabelSpec { protein: -1.0, ..base },
         ];
 
         for spec in neg_cases {
@@ -959,8 +963,8 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn dairy_from_nutrition_spec_err_when_saturated_fat_exceeds_total_fat() {
-        let result = DairyFromNutritionSpec {
+    fn dairy_label_spec_err_when_saturated_fat_exceeds_total_fat() {
+        let result = DairyLabelSpec {
             serving_size: Unit::Grams(250.0),
             energy: 160.0,
             total_fat: Unit::Grams(5.0),
@@ -975,8 +979,8 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn dairy_from_nutrition_spec_err_when_trans_fat_exceeds_total_fat() {
-        let result = DairyFromNutritionSpec {
+    fn dairy_label_spec_err_when_trans_fat_exceeds_total_fat() {
+        let result = DairyLabelSpec {
             serving_size: Unit::Grams(250.0),
             energy: 160.0,
             total_fat: Unit::Grams(5.0),
@@ -991,8 +995,8 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn dairy_from_nutrition_spec_err_when_fat_plus_sugars_plus_protein_exceeds_serving_size() {
-        let result = DairyFromNutritionSpec {
+    fn dairy_label_spec_err_when_fat_plus_sugars_plus_protein_exceeds_serving_size() {
+        let result = DairyLabelSpec {
             serving_size: Unit::Grams(20.0),
             energy: 160.0,
             total_fat: Unit::Grams(8.0),
