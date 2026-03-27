@@ -34,6 +34,8 @@
     "lint": "pnpm lint:rust && pnpm lint:js",
     "lint:rust": "cargo clippy --all-features --all-targets",
     "lint:js": "eslint src --ext .ts --max-warnings=0",
+    "fmt:check": "pnpm rustfmt && pnpm prettier",
+    "rustfmt": "cargo fmt --all -- --check",
     "prettier": "prettier --check ./src/ts",
     "coverage": "pnpm coverage:rust && pnpm coverage:js",
     "coverage:rust": "pnpm coverage:rust:generate && pnpm coverage:rust:codecov && pnpm coverage:rust:html",
