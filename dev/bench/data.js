@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774635831145,
+  "lastUpdate": 1774635888490,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -12491,6 +12491,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_to_composition",
             "value": 3984,
             "range": "± 51",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7537c5f3f1faab9823533d44607a73ca7f8df8c1",
+          "message": "Add `run-local-test-suite.sh` scripts for local\n\nThese scripts run a subset of the CI test suite locally, using local\nresources without running the full GitHub Actions workflow via `act`.\nThis is useful for quick feedback during development.",
+          "timestamp": "2026-03-27T13:27:16-04:00",
+          "tree_id": "771f07ba70778f2fe015fb206d6f8cfbc529353e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7537c5f3f1faab9823533d44607a73ca7f8df8c1"
+        },
+        "date": 1774635884953,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3580,
+            "range": "± 49",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 162491,
+            "range": "± 1975",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2028,
+            "range": "± 67",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 162665,
+            "range": "± 6373",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 3967,
+            "range": "± 20",
             "unit": "ns/iter"
           }
         ]
