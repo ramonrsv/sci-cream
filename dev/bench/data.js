@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774636171068,
+  "lastUpdate": 1774641654224,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -130248,6 +130248,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.75%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "29b09727d874d3844998c7c3f8e1c3695c48cbf6",
+          "message": "Add `fail-on-alert` to crate benchmark CI workflow\n\nThis was missed when it was originally added to App benchmarks.",
+          "timestamp": "2026-03-27T13:54:51-04:00",
+          "tree_id": "38a86267d2cae19ff601cf91530e484b7f1b46d2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/29b09727d874d3844998c7c3f8e1c3695c48cbf6"
+        },
+        "date": 1774641650281,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 79598,
+            "range": "±0.97%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 710766,
+            "range": "±0.94%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10057,
+            "range": "±1.85%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 597476,
+            "range": "±0.70%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
