@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774634021247,
+  "lastUpdate": 1774634062653,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -118722,6 +118722,102 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 516.6,
             "range": "14.26",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "80d31054ab1dfa4e50792187f0c8fa8e3737667e",
+          "message": "Rework `IntoComposition` trait to `ToComposition`\n\nRename the `IntoComposition` trait to `ToComposition`, and change its\nmethod from `into_composition(self)` to `to_composition(&self)`. Since\n`Composition` is `Copy`, there is no benefit to consuming any values\nfrom the spec. This is irrelevant while `TaggedSpec` is also `Copy`,\nbut an upcoming change to introduce `CompositeSpec` will make it only\n`Clone`, which will make `to_composition` much more convenient.",
+          "timestamp": "2026-03-27T13:06:05-04:00",
+          "tree_id": "46fa7263498c9f4f0b3f9051587ba258a4da8b08",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/80d31054ab1dfa4e50792187f0c8fa8e3737667e"
+        },
+        "date": 1774634058826,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 806.5,
+            "range": "62.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46,
+            "range": "5.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 56.7,
+            "range": "6.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.4,
+            "range": "5.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 37,
+            "range": "5.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 162.5,
+            "range": "3.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 42.9,
+            "range": "2.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 40.78,
+            "range": "0.90",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 28.36,
+            "range": "0.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 503.9,
+            "range": "14.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 517.4,
+            "range": "9.81",
             "unit": "ms"
           }
         ]
