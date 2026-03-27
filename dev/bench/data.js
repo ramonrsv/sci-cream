@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774636131385,
+  "lastUpdate": 1774636171068,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -119281,6 +119281,102 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 517.4,
             "range": "9.81",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7537c5f3f1faab9823533d44607a73ca7f8df8c1",
+          "message": "Add `run-local-test-suite.sh` scripts for local\n\nThese scripts run a subset of the CI test suite locally, using local\nresources without running the full GitHub Actions workflow via `act`.\nThis is useful for quick feedback during development.",
+          "timestamp": "2026-03-27T13:27:16-04:00",
+          "tree_id": "771f07ba70778f2fe015fb206d6f8cfbc529353e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7537c5f3f1faab9823533d44607a73ca7f8df8c1"
+        },
+        "date": 1774636167839,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 838.5,
+            "range": "73.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 45.5,
+            "range": "4.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.3,
+            "range": "5.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 36.7,
+            "range": "5.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 36.5,
+            "range": "2.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 162.3,
+            "range": "8.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 43.8,
+            "range": "4.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 40.22,
+            "range": "0.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 28.05,
+            "range": "0.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 508.7,
+            "range": "15.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 515.7,
+            "range": "10.71",
             "unit": "ms"
           }
         ]
