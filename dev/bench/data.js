@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774633733288,
+  "lastUpdate": 1774633775284,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -12437,6 +12437,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_to_composition",
             "value": 3995,
             "range": "± 34",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "80d31054ab1dfa4e50792187f0c8fa8e3737667e",
+          "message": "Rework `IntoComposition` trait to `ToComposition`\n\nRename the `IntoComposition` trait to `ToComposition`, and change its\nmethod from `into_composition(self)` to `to_composition(&self)`. Since\n`Composition` is `Copy`, there is no benefit to consuming any values\nfrom the spec. This is irrelevant while `TaggedSpec` is also `Copy`,\nbut an upcoming change to introduce `CompositeSpec` will make it only\n`Clone`, which will make `to_composition` much more convenient.",
+          "timestamp": "2026-03-27T13:06:05-04:00",
+          "tree_id": "46fa7263498c9f4f0b3f9051587ba258a4da8b08",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/80d31054ab1dfa4e50792187f0c8fa8e3737667e"
+        },
+        "date": 1774633772322,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3527,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 161198,
+            "range": "± 37501",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1997,
+            "range": "± 14",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 159638,
+            "range": "± 14791",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 3984,
+            "range": "± 51",
             "unit": "ns/iter"
           }
         ]
