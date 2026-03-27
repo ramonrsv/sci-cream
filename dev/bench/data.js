@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774634062653,
+  "lastUpdate": 1774635831145,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -129635,6 +129635,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 599975,
             "range": "±0.71%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "7537c5f3f1faab9823533d44607a73ca7f8df8c1",
+          "message": "Add `run-local-test-suite.sh` scripts for local\n\nThese scripts run a subset of the CI test suite locally, using local\nresources without running the full GitHub Actions workflow via `act`.\nThis is useful for quick feedback during development.",
+          "timestamp": "2026-03-27T13:27:16-04:00",
+          "tree_id": "771f07ba70778f2fe015fb206d6f8cfbc529353e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/7537c5f3f1faab9823533d44607a73ca7f8df8c1"
+        },
+        "date": 1774635826981,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 72769,
+            "range": "±0.65%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 720763,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9928,
+            "range": "±1.84%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 602665,
+            "range": "±0.75%",
             "unit": "ops/sec",
             "extra": "94 samples"
           }
