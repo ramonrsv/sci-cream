@@ -38,7 +38,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 281,
             "range": "± 30",
             "unit": "ns/iter"
@@ -80,7 +80,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 310,
             "range": "± 4",
             "unit": "ns/iter"
@@ -122,7 +122,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 10",
             "unit": "ns/iter"
@@ -164,7 +164,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 39",
             "unit": "ns/iter"
@@ -206,7 +206,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 311,
             "range": "± 4",
             "unit": "ns/iter"
@@ -248,7 +248,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 11",
             "unit": "ns/iter"
@@ -290,7 +290,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 304,
             "range": "± 3",
             "unit": "ns/iter"
@@ -332,7 +332,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 312,
             "range": "± 6",
             "unit": "ns/iter"
@@ -374,7 +374,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 306,
             "range": "± 5",
             "unit": "ns/iter"
@@ -416,7 +416,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 3",
             "unit": "ns/iter"
@@ -458,7 +458,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 4",
             "unit": "ns/iter"
@@ -500,7 +500,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 313,
             "range": "± 13",
             "unit": "ns/iter"
@@ -542,7 +542,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 3",
             "unit": "ns/iter"
@@ -584,7 +584,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 314,
             "range": "± 4",
             "unit": "ns/iter"
@@ -626,7 +626,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 6",
             "unit": "ns/iter"
@@ -668,7 +668,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 281,
             "range": "± 16",
             "unit": "ns/iter"
@@ -710,7 +710,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 268,
             "range": "± 19",
             "unit": "ns/iter"
@@ -752,7 +752,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 6",
             "unit": "ns/iter"
@@ -794,7 +794,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 312,
             "range": "± 6",
             "unit": "ns/iter"
@@ -836,7 +836,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 306,
             "range": "± 5",
             "unit": "ns/iter"
@@ -878,7 +878,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 322,
             "range": "± 1",
             "unit": "ns/iter"
@@ -932,7 +932,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 11",
             "unit": "ns/iter"
@@ -986,7 +986,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 312,
             "range": "± 4",
             "unit": "ns/iter"
@@ -1040,7 +1040,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 316,
             "range": "± 5",
             "unit": "ns/iter"
@@ -1094,7 +1094,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 312,
             "range": "± 2",
             "unit": "ns/iter"
@@ -1148,7 +1148,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 311,
             "range": "± 3",
             "unit": "ns/iter"
@@ -1202,7 +1202,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 310,
             "range": "± 7",
             "unit": "ns/iter"
@@ -1256,7 +1256,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 5",
             "unit": "ns/iter"
@@ -1310,7 +1310,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 310,
             "range": "± 10",
             "unit": "ns/iter"
@@ -1364,7 +1364,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 1",
             "unit": "ns/iter"
@@ -1418,7 +1418,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 313,
             "range": "± 3",
             "unit": "ns/iter"
@@ -1472,7 +1472,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 312,
             "range": "± 3",
             "unit": "ns/iter"
@@ -1526,7 +1526,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 313,
             "range": "± 35",
             "unit": "ns/iter"
@@ -1580,7 +1580,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 3",
             "unit": "ns/iter"
@@ -1634,7 +1634,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 275,
             "range": "± 14",
             "unit": "ns/iter"
@@ -1688,7 +1688,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 369,
             "range": "± 6",
             "unit": "ns/iter"
@@ -1742,7 +1742,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 310,
             "range": "± 2",
             "unit": "ns/iter"
@@ -1796,7 +1796,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 326,
             "range": "± 11",
             "unit": "ns/iter"
@@ -1850,7 +1850,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 314,
             "range": "± 2",
             "unit": "ns/iter"
@@ -1904,7 +1904,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 316,
             "range": "± 3",
             "unit": "ns/iter"
@@ -1958,7 +1958,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 313,
             "range": "± 4",
             "unit": "ns/iter"
@@ -2012,7 +2012,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 310,
             "range": "± 7",
             "unit": "ns/iter"
@@ -2066,7 +2066,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 273,
             "range": "± 10",
             "unit": "ns/iter"
@@ -2120,7 +2120,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 312,
             "range": "± 2",
             "unit": "ns/iter"
@@ -2174,7 +2174,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 3",
             "unit": "ns/iter"
@@ -2228,7 +2228,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 7",
             "unit": "ns/iter"
@@ -2282,7 +2282,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 5",
             "unit": "ns/iter"
@@ -2336,7 +2336,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 1",
             "unit": "ns/iter"
@@ -2390,7 +2390,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 314,
             "range": "± 4",
             "unit": "ns/iter"
@@ -2444,7 +2444,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 362,
             "range": "± 5",
             "unit": "ns/iter"
@@ -2498,7 +2498,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 315,
             "range": "± 3",
             "unit": "ns/iter"
@@ -2552,7 +2552,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 2",
             "unit": "ns/iter"
@@ -2606,7 +2606,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 315,
             "range": "± 7",
             "unit": "ns/iter"
@@ -2660,7 +2660,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 310,
             "range": "± 5",
             "unit": "ns/iter"
@@ -2714,7 +2714,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 299,
             "range": "± 28",
             "unit": "ns/iter"
@@ -2768,7 +2768,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 2",
             "unit": "ns/iter"
@@ -2822,7 +2822,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 3",
             "unit": "ns/iter"
@@ -2876,7 +2876,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 3",
             "unit": "ns/iter"
@@ -2930,7 +2930,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 2",
             "unit": "ns/iter"
@@ -2984,7 +2984,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 314,
             "range": "± 31",
             "unit": "ns/iter"
@@ -3038,7 +3038,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 3",
             "unit": "ns/iter"
@@ -3092,7 +3092,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 2",
             "unit": "ns/iter"
@@ -3146,7 +3146,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 1",
             "unit": "ns/iter"
@@ -3200,7 +3200,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 1",
             "unit": "ns/iter"
@@ -3254,7 +3254,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 315,
             "range": "± 4",
             "unit": "ns/iter"
@@ -3308,7 +3308,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 274,
             "range": "± 15",
             "unit": "ns/iter"
@@ -3362,7 +3362,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 2",
             "unit": "ns/iter"
@@ -3416,7 +3416,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 2",
             "unit": "ns/iter"
@@ -3470,7 +3470,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 306,
             "range": "± 2",
             "unit": "ns/iter"
@@ -3524,7 +3524,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 314,
             "range": "± 4",
             "unit": "ns/iter"
@@ -3578,7 +3578,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 9",
             "unit": "ns/iter"
@@ -3632,7 +3632,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 310,
             "range": "± 4",
             "unit": "ns/iter"
@@ -3686,7 +3686,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 2",
             "unit": "ns/iter"
@@ -3740,7 +3740,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 6",
             "unit": "ns/iter"
@@ -3794,7 +3794,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 310,
             "range": "± 2",
             "unit": "ns/iter"
@@ -3848,7 +3848,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 312,
             "range": "± 35",
             "unit": "ns/iter"
@@ -3902,7 +3902,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 323,
             "range": "± 2",
             "unit": "ns/iter"
@@ -3956,7 +3956,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 314,
             "range": "± 22",
             "unit": "ns/iter"
@@ -4010,7 +4010,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 315,
             "range": "± 1",
             "unit": "ns/iter"
@@ -4064,7 +4064,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 275,
             "range": "± 6",
             "unit": "ns/iter"
@@ -4118,7 +4118,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 12",
             "unit": "ns/iter"
@@ -4172,7 +4172,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 6",
             "unit": "ns/iter"
@@ -4226,7 +4226,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 310,
             "range": "± 3",
             "unit": "ns/iter"
@@ -4280,7 +4280,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 2",
             "unit": "ns/iter"
@@ -4334,7 +4334,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 306,
             "range": "± 2",
             "unit": "ns/iter"
@@ -4388,7 +4388,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 317,
             "range": "± 2",
             "unit": "ns/iter"
@@ -4442,7 +4442,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 306,
             "range": "± 2",
             "unit": "ns/iter"
@@ -4496,7 +4496,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 310,
             "range": "± 2",
             "unit": "ns/iter"
@@ -4550,7 +4550,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 314,
             "range": "± 2",
             "unit": "ns/iter"
@@ -4604,7 +4604,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 2",
             "unit": "ns/iter"
@@ -4658,7 +4658,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 315,
             "range": "± 2",
             "unit": "ns/iter"
@@ -4712,7 +4712,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 312,
             "range": "± 3",
             "unit": "ns/iter"
@@ -4766,7 +4766,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 3",
             "unit": "ns/iter"
@@ -4820,7 +4820,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 312,
             "range": "± 2",
             "unit": "ns/iter"
@@ -4874,7 +4874,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 359,
             "range": "± 13",
             "unit": "ns/iter"
@@ -4928,7 +4928,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 364,
             "range": "± 31",
             "unit": "ns/iter"
@@ -4982,7 +4982,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 306,
             "range": "± 2",
             "unit": "ns/iter"
@@ -5036,7 +5036,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 315,
             "range": "± 4",
             "unit": "ns/iter"
@@ -5090,7 +5090,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 310,
             "range": "± 2",
             "unit": "ns/iter"
@@ -5144,7 +5144,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 3",
             "unit": "ns/iter"
@@ -5198,7 +5198,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 2",
             "unit": "ns/iter"
@@ -5252,7 +5252,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 3",
             "unit": "ns/iter"
@@ -5306,7 +5306,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 313,
             "range": "± 5",
             "unit": "ns/iter"
@@ -5360,7 +5360,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 311,
             "range": "± 7",
             "unit": "ns/iter"
@@ -5414,7 +5414,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 315,
             "range": "± 7",
             "unit": "ns/iter"
@@ -5468,7 +5468,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 314,
             "range": "± 3",
             "unit": "ns/iter"
@@ -5522,7 +5522,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 2",
             "unit": "ns/iter"
@@ -5576,7 +5576,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 317,
             "range": "± 8",
             "unit": "ns/iter"
@@ -5630,7 +5630,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 310,
             "range": "± 2",
             "unit": "ns/iter"
@@ -5684,7 +5684,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 4",
             "unit": "ns/iter"
@@ -5738,7 +5738,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 370,
             "range": "± 3",
             "unit": "ns/iter"
@@ -5792,7 +5792,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 292,
             "range": "± 29",
             "unit": "ns/iter"
@@ -5846,7 +5846,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 306,
             "range": "± 3",
             "unit": "ns/iter"
@@ -5900,7 +5900,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 312,
             "range": "± 3",
             "unit": "ns/iter"
@@ -5954,7 +5954,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 310,
             "range": "± 5",
             "unit": "ns/iter"
@@ -6008,7 +6008,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 278,
             "range": "± 14",
             "unit": "ns/iter"
@@ -6062,7 +6062,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 315,
             "range": "± 6",
             "unit": "ns/iter"
@@ -6116,7 +6116,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 3",
             "unit": "ns/iter"
@@ -6170,7 +6170,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 317,
             "range": "± 4",
             "unit": "ns/iter"
@@ -6224,7 +6224,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 315,
             "range": "± 5",
             "unit": "ns/iter"
@@ -6278,7 +6278,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 287,
             "range": "± 22",
             "unit": "ns/iter"
@@ -6332,7 +6332,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 312,
             "range": "± 3",
             "unit": "ns/iter"
@@ -6386,7 +6386,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 310,
             "range": "± 3",
             "unit": "ns/iter"
@@ -6440,7 +6440,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 319,
             "range": "± 5",
             "unit": "ns/iter"
@@ -6494,7 +6494,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 3",
             "unit": "ns/iter"
@@ -6548,7 +6548,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 312,
             "range": "± 3",
             "unit": "ns/iter"
@@ -6602,7 +6602,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 3",
             "unit": "ns/iter"
@@ -6656,7 +6656,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 326,
             "range": "± 3",
             "unit": "ns/iter"
@@ -6710,7 +6710,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 2",
             "unit": "ns/iter"
@@ -6764,7 +6764,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 319,
             "range": "± 4",
             "unit": "ns/iter"
@@ -6818,7 +6818,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 3",
             "unit": "ns/iter"
@@ -6872,7 +6872,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 314,
             "range": "± 2",
             "unit": "ns/iter"
@@ -6926,7 +6926,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 378,
             "range": "± 21",
             "unit": "ns/iter"
@@ -6980,7 +6980,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 3",
             "unit": "ns/iter"
@@ -7034,7 +7034,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 315,
             "range": "± 6",
             "unit": "ns/iter"
@@ -7088,7 +7088,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 304,
             "range": "± 2",
             "unit": "ns/iter"
@@ -7142,7 +7142,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 306,
             "range": "± 3",
             "unit": "ns/iter"
@@ -7196,7 +7196,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 304,
             "range": "± 3",
             "unit": "ns/iter"
@@ -7250,7 +7250,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 304,
             "range": "± 7",
             "unit": "ns/iter"
@@ -7304,7 +7304,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 8",
             "unit": "ns/iter"
@@ -7358,7 +7358,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 2",
             "unit": "ns/iter"
@@ -7412,7 +7412,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 3",
             "unit": "ns/iter"
@@ -7466,7 +7466,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 2",
             "unit": "ns/iter"
@@ -7520,7 +7520,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 306,
             "range": "± 3",
             "unit": "ns/iter"
@@ -7574,7 +7574,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 3",
             "unit": "ns/iter"
@@ -7628,7 +7628,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 304,
             "range": "± 3",
             "unit": "ns/iter"
@@ -7682,7 +7682,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 3",
             "unit": "ns/iter"
@@ -7736,7 +7736,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 4",
             "unit": "ns/iter"
@@ -7790,7 +7790,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 373,
             "range": "± 9",
             "unit": "ns/iter"
@@ -7844,7 +7844,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 4",
             "unit": "ns/iter"
@@ -7898,7 +7898,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 302,
             "range": "± 2",
             "unit": "ns/iter"
@@ -7952,7 +7952,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 301,
             "range": "± 2",
             "unit": "ns/iter"
@@ -8006,7 +8006,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 272,
             "range": "± 35",
             "unit": "ns/iter"
@@ -8060,7 +8060,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 2",
             "unit": "ns/iter"
@@ -8114,7 +8114,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 5",
             "unit": "ns/iter"
@@ -8168,7 +8168,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 368,
             "range": "± 3",
             "unit": "ns/iter"
@@ -8222,7 +8222,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 358,
             "range": "± 6",
             "unit": "ns/iter"
@@ -8276,7 +8276,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 302,
             "range": "± 6",
             "unit": "ns/iter"
@@ -8330,7 +8330,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 314,
             "range": "± 2",
             "unit": "ns/iter"
@@ -8384,7 +8384,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 335,
             "range": "± 3",
             "unit": "ns/iter"
@@ -8438,7 +8438,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 347,
             "range": "± 4",
             "unit": "ns/iter"
@@ -8492,7 +8492,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 3",
             "unit": "ns/iter"
@@ -8546,7 +8546,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 304,
             "range": "± 2",
             "unit": "ns/iter"
@@ -8600,7 +8600,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 302,
             "range": "± 2",
             "unit": "ns/iter"
@@ -8654,7 +8654,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 4",
             "unit": "ns/iter"
@@ -8708,7 +8708,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 2",
             "unit": "ns/iter"
@@ -8762,7 +8762,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 2",
             "unit": "ns/iter"
@@ -8816,7 +8816,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 10",
             "unit": "ns/iter"
@@ -8870,7 +8870,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 4",
             "unit": "ns/iter"
@@ -8924,7 +8924,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 311,
             "range": "± 5",
             "unit": "ns/iter"
@@ -8978,7 +8978,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 322,
             "range": "± 14",
             "unit": "ns/iter"
@@ -9032,7 +9032,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 264,
             "range": "± 7",
             "unit": "ns/iter"
@@ -9086,7 +9086,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 2",
             "unit": "ns/iter"
@@ -9140,7 +9140,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 2",
             "unit": "ns/iter"
@@ -9194,7 +9194,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 304,
             "range": "± 6",
             "unit": "ns/iter"
@@ -9248,7 +9248,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 315,
             "range": "± 5",
             "unit": "ns/iter"
@@ -9302,7 +9302,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 356,
             "range": "± 8",
             "unit": "ns/iter"
@@ -9356,7 +9356,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 316,
             "range": "± 35",
             "unit": "ns/iter"
@@ -9410,7 +9410,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 311,
             "range": "± 2",
             "unit": "ns/iter"
@@ -9464,7 +9464,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 2",
             "unit": "ns/iter"
@@ -9518,7 +9518,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 312,
             "range": "± 5",
             "unit": "ns/iter"
@@ -9572,7 +9572,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 257,
             "range": "± 10",
             "unit": "ns/iter"
@@ -9626,7 +9626,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 313,
             "range": "± 23",
             "unit": "ns/iter"
@@ -9680,7 +9680,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 2",
             "unit": "ns/iter"
@@ -9734,7 +9734,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 306,
             "range": "± 3",
             "unit": "ns/iter"
@@ -9788,7 +9788,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 2",
             "unit": "ns/iter"
@@ -9842,7 +9842,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 3",
             "unit": "ns/iter"
@@ -9896,7 +9896,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 313,
             "range": "± 3",
             "unit": "ns/iter"
@@ -9950,7 +9950,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 304,
             "range": "± 3",
             "unit": "ns/iter"
@@ -10004,7 +10004,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 7",
             "unit": "ns/iter"
@@ -10058,7 +10058,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 12",
             "unit": "ns/iter"
@@ -10112,7 +10112,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 363,
             "range": "± 11",
             "unit": "ns/iter"
@@ -10166,7 +10166,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 5",
             "unit": "ns/iter"
@@ -10220,7 +10220,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 311,
             "range": "± 6",
             "unit": "ns/iter"
@@ -10274,7 +10274,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 3",
             "unit": "ns/iter"
@@ -10328,7 +10328,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 312,
             "range": "± 4",
             "unit": "ns/iter"
@@ -10382,7 +10382,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 5",
             "unit": "ns/iter"
@@ -10436,7 +10436,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 3",
             "unit": "ns/iter"
@@ -10490,7 +10490,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 272,
             "range": "± 6",
             "unit": "ns/iter"
@@ -10544,7 +10544,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 3",
             "unit": "ns/iter"
@@ -10598,7 +10598,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 302,
             "range": "± 2",
             "unit": "ns/iter"
@@ -10652,7 +10652,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 302,
             "range": "± 3",
             "unit": "ns/iter"
@@ -10706,7 +10706,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 307,
             "range": "± 61",
             "unit": "ns/iter"
@@ -10760,7 +10760,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 2",
             "unit": "ns/iter"
@@ -10814,7 +10814,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 302,
             "range": "± 3",
             "unit": "ns/iter"
@@ -10868,7 +10868,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 308,
             "range": "± 2",
             "unit": "ns/iter"
@@ -10922,7 +10922,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 306,
             "range": "± 3",
             "unit": "ns/iter"
@@ -10976,7 +10976,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 304,
             "range": "± 2",
             "unit": "ns/iter"
@@ -11030,7 +11030,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 5",
             "unit": "ns/iter"
@@ -11084,7 +11084,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 3",
             "unit": "ns/iter"
@@ -11138,7 +11138,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 306,
             "range": "± 2",
             "unit": "ns/iter"
@@ -11192,7 +11192,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 301,
             "range": "± 2",
             "unit": "ns/iter"
@@ -11246,7 +11246,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 315,
             "range": "± 25",
             "unit": "ns/iter"
@@ -11300,7 +11300,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 302,
             "range": "± 2",
             "unit": "ns/iter"
@@ -11354,7 +11354,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 302,
             "range": "± 2",
             "unit": "ns/iter"
@@ -11408,7 +11408,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 3",
             "unit": "ns/iter"
@@ -11462,7 +11462,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 2",
             "unit": "ns/iter"
@@ -11516,7 +11516,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 301,
             "range": "± 3",
             "unit": "ns/iter"
@@ -11570,7 +11570,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 300,
             "range": "± 5",
             "unit": "ns/iter"
@@ -11624,7 +11624,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 2",
             "unit": "ns/iter"
@@ -11678,7 +11678,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 306,
             "range": "± 8",
             "unit": "ns/iter"
@@ -11732,7 +11732,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 287,
             "range": "± 21",
             "unit": "ns/iter"
@@ -11786,7 +11786,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 6",
             "unit": "ns/iter"
@@ -11840,7 +11840,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 309,
             "range": "± 5",
             "unit": "ns/iter"
@@ -11894,7 +11894,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 304,
             "range": "± 2",
             "unit": "ns/iter"
@@ -11948,7 +11948,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 303,
             "range": "± 3",
             "unit": "ns/iter"
@@ -12002,7 +12002,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 305,
             "range": "± 14",
             "unit": "ns/iter"
@@ -12056,7 +12056,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 301,
             "range": "± 3",
             "unit": "ns/iter"
@@ -12110,7 +12110,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 301,
             "range": "± 2",
             "unit": "ns/iter"
@@ -12164,7 +12164,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 4004,
             "range": "± 50",
             "unit": "ns/iter"
@@ -12218,7 +12218,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 3927,
             "range": "± 23",
             "unit": "ns/iter"
@@ -12272,7 +12272,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 4068,
             "range": "± 30",
             "unit": "ns/iter"
@@ -12326,7 +12326,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 4340,
             "range": "± 80",
             "unit": "ns/iter"
@@ -12380,7 +12380,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 3022,
             "range": "± 28",
             "unit": "ns/iter"
@@ -12434,7 +12434,7 @@ window.BENCHMARK_DATA = {
             "unit": "ns/iter"
           },
           {
-            "name": "sweetener_spec_into_composition",
+            "name": "sweetener_spec_to_composition",
             "value": 3995,
             "range": "± 34",
             "unit": "ns/iter"
