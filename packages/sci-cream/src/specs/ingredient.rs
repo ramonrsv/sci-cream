@@ -3,7 +3,7 @@
 //!
 //! These structs are designed to be easily represented in JSON format and (de)serialized. They
 //! cannot be used for calculations directly, but can trivially be converted into full
-//! [`Composition`] and/or [`Ingredient`] instances via [`IntoComposition`] and
+//! [`Composition`] and/or [`Ingredient`] instances via [`ToComposition`] and
 //! [`IngredientSpec::into_ingredient`], respectively.
 
 use enum_as_inner::EnumAsInner;
@@ -15,12 +15,12 @@ use crate::diesel::ingredients;
 use diesel::{Queryable, Selectable};
 
 use crate::{
-    composition::{Composition, IntoComposition},
+    composition::{Composition, ToComposition},
     error::Result,
     ingredient::{Category, Ingredient},
     specs::{
-        AlcoholSpec, ChocolateSpec, DairyLabelSpec, DairySimpleSpec, EggSpec, FruitSpec, FullSpec, MicroSpec,
-        NutSpec, SweetenerSpec,
+        AlcoholSpec, ChocolateSpec, DairyLabelSpec, DairySimpleSpec, EggSpec, FruitSpec, FullSpec, MicroSpec, NutSpec,
+        SweetenerSpec,
     },
 };
 
@@ -44,19 +44,19 @@ pub enum TaggedSpec {
     FullSpec(FullSpec),
 }
 
-impl IntoComposition for TaggedSpec {
-    fn into_composition(self) -> Result<Composition> {
+impl ToComposition for TaggedSpec {
+    fn to_composition(&self) -> Result<Composition> {
         match self {
-            Self::DairySimpleSpec(spec) => spec.into_composition(),
-            Self::DairyLabelSpec(spec) => spec.into_composition(),
-            Self::SweetenerSpec(spec) => spec.into_composition(),
-            Self::FruitSpec(spec) => spec.into_composition(),
-            Self::ChocolateSpec(spec) => spec.into_composition(),
-            Self::NutSpec(spec) => spec.into_composition(),
-            Self::EggSpec(spec) => spec.into_composition(),
-            Self::AlcoholSpec(spec) => spec.into_composition(),
-            Self::MicroSpec(spec) => spec.into_composition(),
-            Self::FullSpec(spec) => spec.into_composition(),
+            Self::DairySimpleSpec(spec) => spec.to_composition(),
+            Self::DairyLabelSpec(spec) => spec.to_composition(),
+            Self::SweetenerSpec(spec) => spec.to_composition(),
+            Self::FruitSpec(spec) => spec.to_composition(),
+            Self::ChocolateSpec(spec) => spec.to_composition(),
+            Self::NutSpec(spec) => spec.to_composition(),
+            Self::EggSpec(spec) => spec.to_composition(),
+            Self::AlcoholSpec(spec) => spec.to_composition(),
+            Self::MicroSpec(spec) => spec.to_composition(),
+            Self::FullSpec(spec) => spec.to_composition(),
         }
     }
 }
@@ -145,19 +145,19 @@ impl IngredientSpec {
     ///
     /// Returns an [`Error`] if the [`spec`](Self::spec) fails to convert into a [`Composition`],
     /// likely due to invalid values, e.g. negative percentages, not summing to 100%, etc.
-    /// See [`IntoComposition::into_composition`] and [`specs`](crate::specs) for more details.
+    /// See [`ToComposition::to_composition`] and [`specs`](crate::specs) for more details.
     pub fn into_ingredient(self) -> Result<Ingredient> {
         Ok(Ingredient {
             name: self.name,
             category: self.category,
-            composition: self.spec.into_composition()?,
+            composition: self.spec.to_composition()?,
         })
     }
 }
 
-impl IntoComposition for IngredientSpec {
-    fn into_composition(self) -> Result<Composition> {
-        self.spec.into_composition()
+impl ToComposition for IngredientSpec {
+    fn to_composition(&self) -> Result<Composition> {
+        self.spec.to_composition()
     }
 }
 
@@ -239,9 +239,9 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn ingredient_spec_into_composition_matches_assets() {
+    fn ingredient_spec_to_composition_matches_assets() {
         INGREDIENT_ASSETS_TABLE.iter().for_each(|(_, spec, expected_comp_opt)| {
-            let comp = spec.spec.into_composition().unwrap();
+            let comp = spec.spec.to_composition().unwrap();
             if let Some(expected_comp) = expected_comp_opt {
                 // assert_eq!(&comp, expected_comp);
                 // println!("Testing composition for spec: {}", spec.name);

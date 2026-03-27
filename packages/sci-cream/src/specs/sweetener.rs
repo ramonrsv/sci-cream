@@ -5,7 +5,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     composition::{
-        Carbohydrates, Composition, Fibers, IntoComposition, PAC, ScaleComponents, Solids, SolidsBreakdown, Sweeteners,
+        Carbohydrates, Composition, Fibers, PAC, ScaleComponents, Solids, SolidsBreakdown, Sweeteners, ToComposition,
     },
     constants::molar_mass::pac_from_molar_mass,
     error::{Error, Result},
@@ -69,7 +69,7 @@ use crate::{
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// # use sci_cream::docs::assert_eq_float;
 /// use sci_cream::{
-///     composition::{CompKey, IntoComposition, Sugars, Sweeteners},
+///     composition::{CompKey, Sugars, Sweeteners, ToComposition},
 ///     specs::{CompositionBasis, SweetenerSpec},
 /// };
 ///
@@ -81,7 +81,7 @@ use crate::{
 ///     basis: CompositionBasis::ByDryWeight { solids: 92.0 },
 ///     pod: None,
 ///     pac: None,
-/// }.into_composition()?;
+/// }.to_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::Energy), 368.0);
 /// assert_eq!(comp.get(CompKey::Glucose), 92.0);
@@ -107,7 +107,7 @@ use crate::{
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// # use sci_cream::docs::assert_eq_float;
 /// use sci_cream::{
-///     composition::{CompKey, IntoComposition, Sugars, Sweeteners},
+///     composition::{CompKey, Sugars, Sweeteners, ToComposition},
 ///     specs::{CompositionBasis, SweetenerSpec},
 /// };
 ///
@@ -121,7 +121,7 @@ use crate::{
 ///     basis: CompositionBasis::ByTotalWeight { water: 32.0 },
 ///     pod: None,
 ///     pac: None,
-/// }.into_composition()?;
+/// }.to_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::Energy), 270.0);
 /// assert_eq!(comp.get(CompKey::Sucrose), 59.0);
@@ -151,7 +151,7 @@ use crate::{
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// # use sci_cream::docs::assert_eq_float;
 /// use sci_cream::{
-///     composition::{ArtificialSweeteners, CompKey, IntoComposition, Sugars, Sweeteners},
+///     composition::{ArtificialSweeteners, CompKey, Sugars, Sweeteners, ToComposition},
 ///     specs::{CompositionBasis, Scaling, SweetenerSpec, Unit},
 /// };
 ///
@@ -165,7 +165,7 @@ use crate::{
 ///     basis: CompositionBasis::ByTotalWeight { water: 5.0 },
 ///     pod: Some(Scaling::OfWhole(840.0)),
 ///     pac: Some(Scaling::OfWhole(Unit::Grams(112.6))),
-/// }.into_composition()?;
+/// }.to_composition()?;
 ///
 /// assert_eq_float!(comp.get(CompKey::Energy), 374.72);
 /// assert_eq!(comp.get(CompKey::Glucose), 55.0);
@@ -213,8 +213,8 @@ pub struct SweetenerSpec {
     pub pac: Option<Scaling<Unit>>,
 }
 
-impl IntoComposition for SweetenerSpec {
-    fn into_composition(self) -> Result<Composition> {
+impl ToComposition for SweetenerSpec {
+    fn to_composition(&self) -> Result<Composition> {
         let Self {
             sweeteners,
             fiber,
@@ -223,7 +223,7 @@ impl IntoComposition for SweetenerSpec {
             basis,
             pod,
             pac,
-        } = self;
+        } = *self;
 
         let fiber = fiber.unwrap_or_default();
         let other_carbohydrates = other_carbohydrates.unwrap_or(0.0);
@@ -363,8 +363,8 @@ pub(crate) mod tests {
         });
 
     #[test]
-    fn into_composition_sweetener_spec_sucrose() {
-        let comp = ING_SPEC_SWEETENER_SUCROSE.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_sucrose() {
+        let comp = ING_SPEC_SWEETENER_SUCROSE.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 400.0);
 
@@ -422,8 +422,8 @@ pub(crate) mod tests {
         });
 
     #[test]
-    fn into_composition_sweetener_spec_dextrose() {
-        let comp = ING_SPEC_SWEETENER_DEXTROSE.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_dextrose() {
+        let comp = ING_SPEC_SWEETENER_DEXTROSE.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 368.0);
 
@@ -480,8 +480,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_fructose() {
-        let comp = ING_SPEC_SWEETENER_FRUCTOSE.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_fructose() {
+        let comp = ING_SPEC_SWEETENER_FRUCTOSE.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 400.0);
 
@@ -539,8 +539,8 @@ pub(crate) mod tests {
         });
 
     #[test]
-    fn into_composition_sweetener_spec_lactose() {
-        let comp = ING_SPEC_SWEETENER_LACTOSE.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_lactose() {
+        let comp = ING_SPEC_SWEETENER_LACTOSE.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 400.0);
 
@@ -598,8 +598,8 @@ pub(crate) mod tests {
         });
 
     #[test]
-    fn into_composition_sweetener_spec_maltose() {
-        let comp = ING_SPEC_SWEETENER_MALTOSE.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_maltose() {
+        let comp = ING_SPEC_SWEETENER_MALTOSE.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 400.0);
 
@@ -656,8 +656,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_trehalose() {
-        let comp = ING_SPEC_SWEETENER_TREHALOSE.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_trehalose() {
+        let comp = ING_SPEC_SWEETENER_TREHALOSE.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 400.0);
 
@@ -715,8 +715,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_erythritol() {
-        let comp = ING_SPEC_SWEETENER_ERYTHRITOL.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_erythritol() {
+        let comp = ING_SPEC_SWEETENER_ERYTHRITOL.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 20.0);
 
@@ -765,8 +765,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_invert_sugar() {
-        let comp = ING_SPEC_SWEETENER_INVERT_SUGAR.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_invert_sugar() {
+        let comp = ING_SPEC_SWEETENER_INVERT_SUGAR.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 320.0);
 
@@ -827,8 +827,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_honey() {
-        let comp = ING_SPEC_SWEETENER_HONEY.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_honey() {
+        let comp = ING_SPEC_SWEETENER_HONEY.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 328.0);
 
@@ -901,8 +901,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_maple_syrup() {
-        let comp = ING_SPEC_SWEETENER_MAPLE_SYRUP.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_maple_syrup() {
+        let comp = ING_SPEC_SWEETENER_MAPLE_SYRUP.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 270.0);
 
@@ -973,8 +973,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_fancy_molasses() {
-        let comp = ING_SPEC_SWEETENER_FANCY_MOLASSES.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_fancy_molasses() {
+        let comp = ING_SPEC_SWEETENER_FANCY_MOLASSES.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 304.0);
 
@@ -1025,8 +1025,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_hfcs42() {
-        let comp = ING_SPEC_SWEETENER_HFCS42.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_hfcs42() {
+        let comp = ING_SPEC_SWEETENER_HFCS42.spec.to_composition().unwrap();
 
         // @todo This is a bit higher than reference 281
         assert_eq!(comp.get(CompKey::Energy), 304.0);
@@ -1086,8 +1086,8 @@ pub(crate) mod tests {
         });
 
     #[test]
-    fn into_composition_sweetener_spec_maltodextrin_10_de() {
-        let comp = ING_SPEC_SWEETENER_MALTODEXTRIN_10_DE.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_maltodextrin_10_de() {
+        let comp = ING_SPEC_SWEETENER_MALTODEXTRIN_10_DE.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 380.0);
 
@@ -1146,8 +1146,8 @@ pub(crate) mod tests {
         });
 
     #[test]
-    fn into_composition_sweetener_spec_glucose_syrup_42_de() {
-        let comp = ING_SPEC_SWEETENER_GLUCOSE_SYRUP_42_DE.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_glucose_syrup_42_de() {
+        let comp = ING_SPEC_SWEETENER_GLUCOSE_SYRUP_42_DE.spec.to_composition().unwrap();
 
         // @todo This is significantly higher than reference 280
         assert_eq!(comp.get(CompKey::Energy), 320.0);
@@ -1207,8 +1207,8 @@ pub(crate) mod tests {
         });
 
     #[test]
-    fn into_composition_sweetener_spec_glucose_powder_25_de() {
-        let comp = ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_glucose_powder_25_de() {
+        let comp = ING_SPEC_SWEETENER_GLUCOSE_POWDER_25_DE.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 380.0);
 
@@ -1268,8 +1268,8 @@ pub(crate) mod tests {
         });
 
     #[test]
-    fn into_composition_sweetener_spec_glucose_powder_42_de() {
-        let comp = ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_glucose_powder_42_de() {
+        let comp = ING_SPEC_SWEETENER_GLUCOSE_POWDER_42_DE.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 380.0);
 
@@ -1339,8 +1339,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_inulin_powder() {
-        let comp = ING_SPEC_SWEETENER_INULIN_POWDER.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_inulin_powder() {
+        let comp = ING_SPEC_SWEETENER_INULIN_POWDER.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 169.05);
 
@@ -1397,8 +1397,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_hp_inulin_powder() {
-        let comp = ING_SPEC_SWEETENER_HP_INULIN_POWDER.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_hp_inulin_powder() {
+        let comp = ING_SPEC_SWEETENER_HP_INULIN_POWDER.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 147.0);
 
@@ -1467,8 +1467,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_oligofructose_powder() {
-        let comp = ING_SPEC_SWEETENER_OLIGOFRUCTOSE_POWDER.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_oligofructose_powder() {
+        let comp = ING_SPEC_SWEETENER_OLIGOFRUCTOSE_POWDER.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 159.25);
 
@@ -1547,8 +1547,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_splenda_sucralose() {
-        let comp = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_splenda_sucralose() {
+        let comp = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 374.72);
 
@@ -1566,14 +1566,14 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn into_composition_sweetener_spec_splenda_sucralose_manual_vs_calculated_pod_and_pac() {
+    fn to_composition_sweetener_spec_splenda_sucralose_manual_vs_calculated_pod_and_pac() {
         let manual_pod_pac_spec = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec;
         let mut auto_pod_pac_spec = manual_pod_pac_spec;
         clear_pod_in_spec(&mut auto_pod_pac_spec);
         clear_pac_in_spec(&mut auto_pod_pac_spec);
 
-        let comp_auto_pod_pac = auto_pod_pac_spec.into_composition().unwrap();
-        let comp_manual_pod_pac = manual_pod_pac_spec.into_composition().unwrap();
+        let comp_auto_pod_pac = auto_pod_pac_spec.to_composition().unwrap();
+        let comp_manual_pod_pac = manual_pod_pac_spec.to_composition().unwrap();
 
         assert_comp_eq_percent(&comp_auto_pod_pac, &comp_manual_pod_pac, CompKey::POD, 0.75);
         assert_comp_eq_percent(&comp_auto_pod_pac, &comp_manual_pod_pac, CompKey::PACsgr, 6.6);
@@ -1632,8 +1632,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_splenda_stevia() {
-        let comp = ING_SPEC_SWEETENER_SPLENDA_STEVIA.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_splenda_stevia() {
+        let comp = ING_SPEC_SWEETENER_SPLENDA_STEVIA.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 19.98);
 
@@ -1703,8 +1703,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_splenda_monk_fruit() {
-        let comp = ING_SPEC_SWEETENER_SPLENDA_MONK_FRUIT.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_splenda_monk_fruit() {
+        let comp = ING_SPEC_SWEETENER_SPLENDA_MONK_FRUIT.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 19.98);
 
@@ -1781,8 +1781,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_sweetleaf_stevia() {
-        let comp = ING_SPEC_SWEETENER_SWEETLEAF_STEVIA.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_sweetleaf_stevia() {
+        let comp = ING_SPEC_SWEETENER_SWEETLEAF_STEVIA.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 154.35);
 
@@ -1854,8 +1854,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_sugar_twin() {
-        let comp = ING_SPEC_SWEETENER_SUGAR_TWIN.spec.into_composition().unwrap();
+    fn to_composition_sweetener_spec_sugar_twin() {
+        let comp = ING_SPEC_SWEETENER_SUGAR_TWIN.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 244.0);
 
@@ -1873,13 +1873,13 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn into_composition_sweetener_spec_sugar_twin_manual_vs_calculated_pod() {
+    fn to_composition_sweetener_spec_sugar_twin_manual_vs_calculated_pod() {
         let manual_pod_spec = ING_SPEC_SWEETENER_SUGAR_TWIN.spec;
         let mut auto_pod_spec = manual_pod_spec;
         clear_pod_in_spec(&mut auto_pod_spec);
 
-        let comp_auto_pod = auto_pod_spec.into_composition().unwrap();
-        let comp_manual_pod = manual_pod_spec.into_composition().unwrap();
+        let comp_auto_pod = auto_pod_spec.to_composition().unwrap();
+        let comp_manual_pod = manual_pod_spec.to_composition().unwrap();
 
         assert_comp_eq_percent(&comp_auto_pod, &comp_manual_pod, CompKey::POD, 1.1);
     }
@@ -1938,10 +1938,10 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_stevia_in_the_raw_packets() {
+    fn to_composition_sweetener_spec_stevia_in_the_raw_packets() {
         let comp = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS
             .spec
-            .into_composition()
+            .to_composition()
             .unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 356.0);
@@ -1960,13 +1960,13 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn into_composition_sweetener_spec_stevia_in_the_raw_packets_manual_vs_calculated_pod() {
+    fn to_composition_sweetener_spec_stevia_in_the_raw_packets_manual_vs_calculated_pod() {
         let manual_pod_spec = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS.spec;
         let mut auto_pod_spec = manual_pod_spec;
         clear_pod_in_spec(&mut auto_pod_spec);
 
-        let comp_auto_pod = auto_pod_spec.into_composition().unwrap();
-        let comp_manual_pod = manual_pod_spec.into_composition().unwrap();
+        let comp_auto_pod = auto_pod_spec.to_composition().unwrap();
+        let comp_manual_pod = manual_pod_spec.to_composition().unwrap();
 
         assert_comp_eq_percent(&comp_auto_pod, &comp_manual_pod, CompKey::POD, 0.5);
     }
@@ -2026,10 +2026,10 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_sweetener_spec_stevia_in_the_raw_bakers_bag() {
+    fn to_composition_sweetener_spec_stevia_in_the_raw_bakers_bag() {
         let comp = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_BAKERS_BAG
             .spec
-            .into_composition()
+            .to_composition()
             .unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 366.2);
@@ -2047,13 +2047,13 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn into_composition_sweetener_spec_stevia_in_the_raw_bakers_bag_manual_vs_calculated_pod() {
+    fn to_composition_sweetener_spec_stevia_in_the_raw_bakers_bag_manual_vs_calculated_pod() {
         let manual_pod_spec = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_BAKERS_BAG.spec;
         let mut auto_pod_spec = manual_pod_spec;
         clear_pod_in_spec(&mut auto_pod_spec);
 
-        let comp_auto_pod = auto_pod_spec.into_composition().unwrap();
-        let comp_manual_pod = manual_pod_spec.into_composition().unwrap();
+        let comp_auto_pod = auto_pod_spec.to_composition().unwrap();
+        let comp_manual_pod = manual_pod_spec.to_composition().unwrap();
 
         assert_comp_eq_percent(&comp_auto_pod, &comp_manual_pod, CompKey::POD, 0.2);
     }
@@ -2131,7 +2131,7 @@ pub(crate) mod tests {
         });
 
     #[test]
-    fn into_composition_err_on_negative_other_fields() {
+    fn to_composition_err_on_negative_other_fields() {
         let base = SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
             fiber: None,
@@ -2154,12 +2154,12 @@ pub(crate) mod tests {
         ];
 
         for spec in neg_cases {
-            assert!(matches!(spec.into_composition(), Err(Error::CompositionNotPositive(_))));
+            assert!(matches!(spec.to_composition(), Err(Error::CompositionNotPositive(_))));
         }
     }
 
     #[test]
-    fn into_composition_err_by_dry_weight_when_components_exceed_100() {
+    fn to_composition_err_by_dry_weight_when_components_exceed_100() {
         let spec = SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(105.0)),
             fiber: None,
@@ -2169,11 +2169,11 @@ pub(crate) mod tests {
             pod: None,
             pac: None,
         };
-        assert!(matches!(spec.into_composition(), Err(Error::CompositionNotWithin100Percent(_))));
+        assert!(matches!(spec.to_composition(), Err(Error::CompositionNotWithin100Percent(_))));
     }
 
     #[test]
-    fn into_composition_err_by_dry_weight_when_solids_exceed_100() {
+    fn to_composition_err_by_dry_weight_when_solids_exceed_100() {
         let spec = SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
             fiber: None,
@@ -2183,11 +2183,11 @@ pub(crate) mod tests {
             pod: None,
             pac: None,
         };
-        assert!(matches!(spec.into_composition(), Err(Error::CompositionNotWithin100Percent(_))));
+        assert!(matches!(spec.to_composition(), Err(Error::CompositionNotWithin100Percent(_))));
     }
 
     #[test]
-    fn into_composition_err_by_total_weight_when_components_do_not_sum_to_100() {
+    fn to_composition_err_by_total_weight_when_components_do_not_sum_to_100() {
         let spec = SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(60.0)),
             fiber: None,
@@ -2197,11 +2197,11 @@ pub(crate) mod tests {
             pod: None,
             pac: None,
         };
-        assert!(matches!(spec.into_composition(), Err(Error::CompositionNot100Percent(_))));
+        assert!(matches!(spec.to_composition(), Err(Error::CompositionNot100Percent(_))));
     }
 
     #[test]
-    fn into_composition_err_when_pod_cannot_be_computed() {
+    fn to_composition_err_when_pod_cannot_be_computed() {
         let spec = SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().other(5.0)),
             fiber: None,
@@ -2211,11 +2211,11 @@ pub(crate) mod tests {
             pod: None,
             pac: None,
         };
-        assert!(matches!(spec.into_composition(), Err(Error::CannotComputePOD(_))));
+        assert!(matches!(spec.to_composition(), Err(Error::CannotComputePOD(_))));
     }
 
     #[test]
-    fn into_composition_err_when_pac_cannot_be_computed() {
+    fn to_composition_err_when_pac_cannot_be_computed() {
         let spec = SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().other(5.0)),
             fiber: None,
@@ -2225,11 +2225,11 @@ pub(crate) mod tests {
             pod: Some(Scaling::OfWhole(50.0)), // skip to_pod()
             pac: None,                         // calls to_pac() -> fails
         };
-        assert!(matches!(spec.into_composition(), Err(Error::CannotComputePAC(_))));
+        assert!(matches!(spec.to_composition(), Err(Error::CannotComputePAC(_))));
     }
 
     #[test]
-    fn into_composition_err_on_unsupported_pac_unit() {
+    fn to_composition_err_on_unsupported_pac_unit() {
         let base = SweetenerSpec {
             sweeteners: Sweeteners::new().sugars(Sugars::new().sucrose(100.0)),
             fiber: None,
@@ -2259,12 +2259,12 @@ pub(crate) mod tests {
             },
         ];
         for spec in unsupported_cases {
-            assert!(matches!(spec.into_composition(), Err(Error::UnsupportedCompositionUnit(_))));
+            assert!(matches!(spec.to_composition(), Err(Error::UnsupportedCompositionUnit(_))));
         }
     }
 
     #[test]
-    fn into_composition_err_when_energy_cannot_be_computed() {
+    fn to_composition_err_when_energy_cannot_be_computed() {
         // polyols.other != 0 causes energy() to fail;
         // pod/pac provided as Some(...) to bypass to_pod()/to_pac() checks
         let spec = SweetenerSpec {
@@ -2276,6 +2276,6 @@ pub(crate) mod tests {
             pod: Some(Scaling::OfWhole(50.0)),
             pac: Some(Scaling::OfWhole(Unit::Grams(50.0))),
         };
-        assert!(matches!(spec.into_composition(), Err(Error::CannotComputeEnergy(_))));
+        assert!(matches!(spec.to_composition(), Err(Error::CannotComputeEnergy(_))));
     }
 }

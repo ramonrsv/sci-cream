@@ -248,10 +248,10 @@ composition is equivalent to the one constructed in the [previous example](#comp
 <br>
 
 ```rust
-use sci_cream::{CompKey::*, composition::IntoComposition, specs::DairySpec};
+use sci_cream::{CompKey::*, composition::ToComposition, specs::DairySpec};
 
 let dairy_spec = DairySpec { fat: 2.0, msnf: None };
-let comp = dairy_spec.into_composition()?;
+let comp = dairy_spec.to_composition()?;
 
 assert_eq_float!(comp.get(Energy), 49.576);
 assert_eq_float!(comp.get(MilkFat), 2.0);

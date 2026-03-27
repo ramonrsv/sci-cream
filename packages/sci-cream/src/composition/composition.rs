@@ -22,11 +22,15 @@ use crate::{
     specs::ChocolateSpec,
 };
 
-/// Trait for converting various types, e.g. [`specs`](crate::specs), into a [`Composition`]
-pub trait IntoComposition {
-    /// Converts `self` into a [`Composition`], which may involve complex calculations
-    #[allow(clippy::missing_errors_doc)] // Specifics depend on the implementation
-    fn into_composition(self) -> Result<Composition>;
+/// Trait for converting various types, e.g. [`specs`](crate::specs), to a [`Composition`]
+pub trait ToComposition {
+    /// Converts `&self` into a [`Composition`], which may involve complex calculations
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] if the conversion cannot be performed, e.g. due to missing values,
+    /// invalid ingredient specs, etc. The specific errors are implementation-dependent.
+    fn to_composition(&self) -> Result<Composition>;
 }
 
 /// Trait for scaling and adding [`Composition`]s and their constituent types

@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Carbohydrates, Composition, Fats, Fibers, IntoComposition, PAC, Solids, SolidsBreakdown, Sugars},
+    composition::{Carbohydrates, Composition, Fats, Fibers, PAC, Solids, SolidsBreakdown, Sugars, ToComposition},
     error::Result,
     validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
@@ -38,7 +38,7 @@ use crate::{
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// # use sci_cream::docs::assert_eq_float;
 /// use sci_cream::{
-///     composition::{CompKey, IntoComposition, Sugars, Sweeteners},
+///     composition::{CompKey, Sugars, Sweeteners, ToComposition},
 ///     specs::FruitSpec
 /// };
 ///
@@ -50,7 +50,7 @@ use crate::{
 ///     carbohydrate: Some(7.68),
 ///     fiber: Some(2.0),
 ///     sugars: Sugars::new().glucose(1.99).fructose(2.44).sucrose(0.47),
-/// }.into_composition()?;
+/// }.to_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::Energy), 32.0);
 /// assert_eq!(comp.get(CompKey::TotalProteins), 0.7);
@@ -89,8 +89,8 @@ pub struct FruitSpec {
     pub sugars: Sugars,
 }
 
-impl IntoComposition for FruitSpec {
-    fn into_composition(self) -> Result<Composition> {
+impl ToComposition for FruitSpec {
+    fn to_composition(&self) -> Result<Composition> {
         let Self {
             water,
             energy,
@@ -99,7 +99,7 @@ impl IntoComposition for FruitSpec {
             carbohydrate,
             fiber,
             sugars,
-        } = self;
+        } = *self;
 
         let protein = protein.unwrap_or(0.0);
         let fat = fat.unwrap_or(0.0);
@@ -181,8 +181,8 @@ pub(crate) mod tests {
     #[test]
     // false positive, sees 6.2832 as f64::consts::TAU
     #[expect(clippy::approx_constant)]
-    fn into_composition_fruit_spec_strawberry() {
-        let comp = ING_SPEC_FRUIT_STRAWBERRY.spec.into_composition().unwrap();
+    fn to_composition_fruit_spec_strawberry() {
+        let comp = ING_SPEC_FRUIT_STRAWBERRY.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 32.0);
 
@@ -234,8 +234,8 @@ pub(crate) mod tests {
         });
 
     #[test]
-    fn into_composition_fruit_spec_navel_orange_auto_energy() {
-        let comp = ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY.spec.into_composition().unwrap();
+    fn to_composition_fruit_spec_navel_orange_auto_energy() {
+        let comp = ING_SPEC_FRUIT_NAVEL_ORANGE_AUTO_ENERGY.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 39.27);
 
@@ -263,7 +263,7 @@ pub(crate) mod tests {
         });
 
     #[test]
-    fn into_composition_err_on_negative_field() {
+    fn to_composition_err_on_negative_field() {
         let base = FruitSpec {
             water: 91.0,
             energy: None,
@@ -295,12 +295,12 @@ pub(crate) mod tests {
         ];
 
         for spec in neg_cases {
-            assert!(matches!(spec.into_composition(), Err(Error::CompositionNotPositive(_))));
+            assert!(matches!(spec.to_composition(), Err(Error::CompositionNotPositive(_))));
         }
     }
 
     #[test]
-    fn into_composition_err_when_fiber_plus_sugars_exceeds_carbohydrate() {
+    fn to_composition_err_when_fiber_plus_sugars_exceeds_carbohydrate() {
         let result = FruitSpec {
             water: 80.0,
             energy: None,
@@ -310,12 +310,12 @@ pub(crate) mod tests {
             fiber: Some(3.0),
             sugars: Sugars::new().sucrose(4.0),
         }
-        .into_composition();
+        .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
     }
 
     #[test]
-    fn into_composition_err_when_total_exceeds_100() {
+    fn to_composition_err_when_total_exceeds_100() {
         let result = FruitSpec {
             water: 50.0,
             energy: None,
@@ -325,12 +325,12 @@ pub(crate) mod tests {
             fiber: None,
             sugars: Sugars::new().sucrose(10.0),
         }
-        .into_composition();
+        .to_composition();
         assert!(matches!(result, Err(Error::CompositionNotWithin100Percent(_))));
     }
 
     #[test]
-    fn into_composition_err_on_negative_energy() {
+    fn to_composition_err_on_negative_energy() {
         let result = FruitSpec {
             water: 91.0,
             energy: Some(-10.0),
@@ -340,12 +340,12 @@ pub(crate) mod tests {
             fiber: Some(2.0),
             sugars: Sugars::new().sucrose(4.0),
         }
-        .into_composition();
+        .to_composition();
         assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
     }
 
     #[test]
-    fn into_composition_err_when_sugars_has_other() {
+    fn to_composition_err_when_sugars_has_other() {
         let result = FruitSpec {
             water: 91.0,
             energy: None,
@@ -355,7 +355,7 @@ pub(crate) mod tests {
             fiber: None,
             sugars: Sugars::new().other(5.0),
         }
-        .into_composition();
+        .to_composition();
         assert!(matches!(result, Err(Error::CannotComputePOD(_))));
     }
 }

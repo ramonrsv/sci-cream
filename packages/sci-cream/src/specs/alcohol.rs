@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Alcohol, Carbohydrates, Composition, Fats, IntoComposition, PAC, Solids, SolidsBreakdown, Sugars},
+    composition::{Alcohol, Carbohydrates, Composition, Fats, PAC, Solids, SolidsBreakdown, Sugars, ToComposition},
     error::Result,
     validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
@@ -38,7 +38,7 @@ use crate::{composition::CompKey, constants};
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// # use sci_cream::docs::assert_eq_float;
 /// use sci_cream::{
-///     composition::{CompKey, IntoComposition},
+///     composition::{CompKey, ToComposition},
 ///     specs::AlcoholSpec
 /// };
 ///
@@ -47,7 +47,7 @@ use crate::{composition::CompKey, constants};
 ///    sugars: None,
 ///    fat: None,
 ///    solids: None,
-/// }.into_composition()?;
+/// }.to_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::Energy), 218.7108);
 /// assert_eq!(comp.get(CompKey::ABV), 40.0);
@@ -65,7 +65,7 @@ use crate::{composition::CompKey, constants};
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// # use sci_cream::docs::assert_eq_float;
 /// # use sci_cream::{
-/// #    composition::{CompKey, IntoComposition},
+/// #    composition::{CompKey, ToComposition},
 /// #    specs::AlcoholSpec
 /// # };
 /// #
@@ -74,7 +74,7 @@ use crate::{composition::CompKey, constants};
 ///    sugars: Some(18.0),
 ///    fat: Some(13.6),
 ///    solids: None,
-/// }.into_composition()?;
+/// }.to_composition()?;
 ///
 /// assert_eq_float!(comp.get(CompKey::Energy), 287.3521);
 /// assert_eq!(comp.get(CompKey::ABV), 17.0);
@@ -103,14 +103,14 @@ pub struct AlcoholSpec {
     pub solids: Option<f64>,
 }
 
-impl IntoComposition for AlcoholSpec {
-    fn into_composition(self) -> Result<Composition> {
+impl ToComposition for AlcoholSpec {
+    fn to_composition(&self) -> Result<Composition> {
         let Self {
             abv,
             sugars,
             fat,
             solids,
-        } = self;
+        } = *self;
 
         let sugars = sugars.unwrap_or(0.0);
         let fat = fat.unwrap_or(0.0);
@@ -171,8 +171,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_alcohol_spec_40_abv_spirit() {
-        let comp = ING_SPEC_ALCOHOL_40_ABV_SPIRIT.spec.into_composition().unwrap();
+    fn to_composition_alcohol_spec_40_abv_spirit() {
+        let comp = ING_SPEC_ALCOHOL_40_ABV_SPIRIT.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 218.7108);
 
@@ -215,8 +215,8 @@ pub(crate) mod tests {
         });
 
     #[test]
-    fn into_composition_alcohol_spec_baileys_irish_cream() {
-        let comp = ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.spec.into_composition().unwrap();
+    fn to_composition_alcohol_spec_baileys_irish_cream() {
+        let comp = ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 287.3521);
 
@@ -280,7 +280,7 @@ pub(crate) mod tests {
         });
 
     #[test]
-    fn into_composition_err_on_negative_field() {
+    fn to_composition_err_on_negative_field() {
         let neg_specs = [
             AlcoholSpec {
                 abv: -1.0,
@@ -309,32 +309,32 @@ pub(crate) mod tests {
         ];
 
         for spec in neg_specs {
-            let result = spec.into_composition();
+            let result = spec.to_composition();
             assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
         }
     }
 
     #[test]
-    fn into_composition_err_when_sugars_plus_fat_exceeds_solids() {
+    fn to_composition_err_when_sugars_plus_fat_exceeds_solids() {
         let result = AlcoholSpec {
             abv: 17.0,
             sugars: Some(20.0),
             fat: Some(20.0),
             solids: Some(30.0),
         }
-        .into_composition();
+        .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
     }
 
     #[test]
-    fn into_composition_err_when_alcohol_plus_solids_exceeds_100() {
+    fn to_composition_err_when_alcohol_plus_solids_exceeds_100() {
         let result = AlcoholSpec {
             abv: 80.0,
             sugars: None,
             fat: None,
             solids: Some(40.0),
         }
-        .into_composition();
+        .to_composition();
         assert!(matches!(result, Err(Error::CompositionNotWithin100Percent(_))));
     }
 }

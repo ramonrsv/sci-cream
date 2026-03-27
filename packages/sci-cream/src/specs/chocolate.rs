@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Carbohydrates, Composition, Fats, Fibers, IntoComposition, PAC, Solids, SolidsBreakdown, Sugars},
+    composition::{Carbohydrates, Composition, Fats, Fibers, PAC, Solids, SolidsBreakdown, Sugars, ToComposition},
     constants::{self, composition::cacao},
     error::Result,
     validate::{Validate, verify_are_positive, verify_is_100_percent, verify_is_subset},
@@ -57,7 +57,7 @@ use crate::composition::CompKey;
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// use sci_cream::{
-///     composition::{CompKey, IntoComposition},
+///     composition::{CompKey, ToComposition},
 ///     specs::ChocolateSpec
 /// };
 ///
@@ -66,7 +66,7 @@ use crate::composition::CompKey;
 ///     cocoa_butter: 40.0,
 ///     sugars: Some(30.0),
 ///     other_solids: None,
-/// }.into_composition()?;
+/// }.to_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::Sucrose), 30.0);
 /// assert_eq!(comp.get(CompKey::CacaoSolids), 70.0);
@@ -88,7 +88,7 @@ use crate::composition::CompKey;
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// # use sci_cream::docs::assert_eq_float;
 /// # use sci_cream::{
-/// #     composition::{CompKey, IntoComposition},
+/// #     composition::{CompKey, ToComposition},
 /// #     specs::ChocolateSpec
 /// # };
 /// #
@@ -97,7 +97,7 @@ use crate::composition::CompKey;
 ///     cocoa_butter: 16.67,
 ///     sugars: None,
 ///     other_solids: None,
-/// }.into_composition()?;
+/// }.to_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
 /// assert_eq!(comp.get(CompKey::CacaoSolids), 100.0);
@@ -132,14 +132,14 @@ pub struct ChocolateSpec {
     pub other_solids: Option<f64>,
 }
 
-impl IntoComposition for ChocolateSpec {
-    fn into_composition(self) -> Result<Composition> {
+impl ToComposition for ChocolateSpec {
+    fn to_composition(&self) -> Result<Composition> {
         let Self {
             cacao_solids,
             cocoa_butter,
             sugars,
             other_solids,
-        } = self;
+        } = *self;
 
         let sugars = sugars.unwrap_or(0.0);
         let other_solids = other_solids.unwrap_or(0.0);
@@ -243,10 +243,10 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_chocolate_spec_lindt_70_dark_chocolate() {
+    fn to_composition_chocolate_spec_lindt_70_dark_chocolate() {
         let comp = ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE
             .spec
-            .into_composition()
+            .to_composition()
             .unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 543.0);
@@ -324,10 +324,10 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_chocolate_spec_lindt_95_dark_chocolate_other_solids() {
+    fn to_composition_chocolate_spec_lindt_95_dark_chocolate_other_solids() {
         let comp = ING_SPEC_CHOCOLATE_LINDT_95_DARK_CHOCOLATE_OTHER_SOLIDS
             .spec
-            .into_composition()
+            .to_composition()
             .unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 608.25);
@@ -395,10 +395,10 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_chocolate_spec_lindt_100_dark_chocolate() {
+    fn to_composition_chocolate_spec_lindt_100_dark_chocolate() {
         let comp = ING_SPEC_CHOCOLATE_LINDT_100_DARK_CHOCOLATE
             .spec
-            .into_composition()
+            .to_composition()
             .unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 582.6);
@@ -463,10 +463,10 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_chocolate_spec_ghirardelli_100_cocoa_powder() {
+    fn to_composition_chocolate_spec_ghirardelli_100_cocoa_powder() {
         let comp = ING_SPEC_CHOCOLATE_GHIRARDELLI_100_COCOA_POWDER
             .spec
-            .into_composition()
+            .to_composition()
             .unwrap();
 
         // Different similar products list the energy from 250 to 325
@@ -515,7 +515,7 @@ pub(crate) mod tests {
         });
 
     #[test]
-    fn into_composition_err_on_negative_field() {
+    fn to_composition_err_on_negative_field() {
         let neg_specs = [
             ChocolateSpec {
                 cacao_solids: -1.0,
@@ -544,25 +544,25 @@ pub(crate) mod tests {
         ];
 
         for spec in neg_specs {
-            let result = spec.into_composition();
+            let result = spec.to_composition();
             assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
         }
     }
 
     #[test]
-    fn into_composition_err_when_cocoa_butter_exceeds_cacao_solids() {
+    fn to_composition_err_when_cocoa_butter_exceeds_cacao_solids() {
         let result = ChocolateSpec {
             cacao_solids: 40.0,
             cocoa_butter: 60.0,
             sugars: None,
             other_solids: None,
         }
-        .into_composition();
+        .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
     }
 
     #[test]
-    fn into_composition_err_when_components_do_not_sum_to_100() {
+    fn to_composition_err_when_components_do_not_sum_to_100() {
         let gt_100_specs = [
             ChocolateSpec {
                 cacao_solids: 50.0,
@@ -585,7 +585,7 @@ pub(crate) mod tests {
         ];
 
         for spec in gt_100_specs {
-            let result = spec.into_composition();
+            let result = spec.to_composition();
             assert!(matches!(result, Err(Error::CompositionNot100Percent(_))));
         }
     }

@@ -8,12 +8,12 @@
 mod assets;
 mod bridge_calculate_recipe;
 mod recipe_calculate;
-mod spec_into_composition;
+mod spec_to_composition;
 
 use criterion::criterion_main;
 
 criterion_main! {
     bridge_calculate_recipe::benches,
     recipe_calculate::benches,
-    spec_into_composition::benches,
+    spec_to_composition::benches,
 }

@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Carbohydrates, Composition, Fats, Fibers, IntoComposition, PAC, Solids, SolidsBreakdown, Sugars},
+    composition::{Carbohydrates, Composition, Fats, Fibers, PAC, Solids, SolidsBreakdown, Sugars, ToComposition},
     constants::{self},
     error::Result,
     validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
@@ -40,7 +40,7 @@ use crate::composition::CompKey;
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// # use sci_cream::docs::assert_eq_float;
 /// use sci_cream::{
-///     composition::{CompKey, IntoComposition},
+///     composition::{CompKey, ToComposition},
 ///     specs::NutSpec
 /// };
 ///
@@ -52,7 +52,7 @@ use crate::composition::CompKey;
 ///    carbohydrate: 21.6,
 ///    fiber: 12.5,
 ///    sugars: 4.35,
-/// }.into_composition()?;
+/// }.to_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::Energy), 570.3);
 /// assert_eq!(comp.get(CompKey::NutFat), 49.9);
@@ -91,8 +91,8 @@ pub struct NutSpec {
     pub sugars: f64,
 }
 
-impl IntoComposition for NutSpec {
-    fn into_composition(self) -> Result<Composition> {
+impl ToComposition for NutSpec {
+    fn to_composition(&self) -> Result<Composition> {
         let Self {
             water,
             protein,
@@ -101,7 +101,7 @@ impl IntoComposition for NutSpec {
             carbohydrate,
             fiber,
             sugars,
-        } = self;
+        } = *self;
 
         verify_are_positive(&[water, protein, fat, carbohydrate, fiber, sugars])?;
         verify_is_within_100_percent(water + protein + fat + carbohydrate)?;
@@ -200,8 +200,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_nut_spec_almond() {
-        let comp = ING_SPEC_NUT_ALMOND.spec.into_composition().unwrap();
+    fn to_composition_nut_spec_almond() {
+        let comp = ING_SPEC_NUT_ALMOND.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 570.3);
         assert_eq!(comp.get(CompKey::TotalProteins), 21.2);
@@ -227,7 +227,7 @@ pub(crate) mod tests {
         LazyLock::new(|| vec![(ING_SPEC_NUT_ALMOND_STR, ING_SPEC_NUT_ALMOND.clone(), Some(*COMP_NUT_ALMOND))]);
 
     #[test]
-    fn into_composition_err_on_negative_field() {
+    fn to_composition_err_on_negative_field() {
         let base = NutSpec {
             water: 4.41,
             protein: 21.2,
@@ -251,12 +251,12 @@ pub(crate) mod tests {
         ];
 
         for spec in neg_cases {
-            assert!(matches!(spec.into_composition(), Err(Error::CompositionNotPositive(_))));
+            assert!(matches!(spec.to_composition(), Err(Error::CompositionNotPositive(_))));
         }
     }
 
     #[test]
-    fn into_composition_err_when_total_exceeds_100() {
+    fn to_composition_err_when_total_exceeds_100() {
         let spec = NutSpec {
             water: 50.0,
             protein: 21.2,
@@ -266,11 +266,11 @@ pub(crate) mod tests {
             fiber: 12.5,
             sugars: 4.35,
         };
-        assert!(matches!(spec.into_composition(), Err(Error::CompositionNotWithin100Percent(_))));
+        assert!(matches!(spec.to_composition(), Err(Error::CompositionNotWithin100Percent(_))));
     }
 
     #[test]
-    fn into_composition_err_when_fiber_plus_sugars_exceeds_carbohydrate() {
+    fn to_composition_err_when_fiber_plus_sugars_exceeds_carbohydrate() {
         let spec = NutSpec {
             water: 4.41,
             protein: 21.2,
@@ -280,11 +280,11 @@ pub(crate) mod tests {
             fiber: 8.0,
             sugars: 4.0,
         };
-        assert!(matches!(spec.into_composition(), Err(Error::InvalidComposition(_))));
+        assert!(matches!(spec.to_composition(), Err(Error::InvalidComposition(_))));
     }
 
     #[test]
-    fn into_composition_err_when_saturated_fat_exceeds_fat() {
+    fn to_composition_err_when_saturated_fat_exceeds_fat() {
         let spec = NutSpec {
             water: 4.41,
             protein: 21.2,
@@ -294,6 +294,6 @@ pub(crate) mod tests {
             fiber: 12.5,
             sugars: 4.35,
         };
-        assert!(matches!(spec.into_composition(), Err(Error::InvalidComposition(_))));
+        assert!(matches!(spec.to_composition(), Err(Error::InvalidComposition(_))));
     }
 }

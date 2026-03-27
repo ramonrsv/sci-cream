@@ -142,7 +142,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::composition::{Composition, IntoComposition};
+    use crate::composition::{Composition, ToComposition};
 
     #[test]
     fn parse_ingredient_specs_from_json() {
@@ -202,7 +202,7 @@ pub(crate) mod tests {
         assert_false!(sweeteners.is_empty());
 
         let get_ratio = |spec: &IngredientSpec| {
-            let comp = spec.clone().into_composition().unwrap();
+            let comp = spec.to_composition().unwrap();
             let num = get_num(comp);
             let den = get_den(comp);
 

@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Composition, Fats, IntoComposition, Micro, Solids, SolidsBreakdown},
+    composition::{Composition, Fats, Micro, Solids, SolidsBreakdown, ToComposition},
     constants::{self},
     error::Result,
     validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
@@ -33,7 +33,7 @@ use crate::composition::CompKey;
 /// ```
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// use sci_cream::{
-///     composition::{CompKey, IntoComposition},
+///     composition::{CompKey, ToComposition},
 ///     specs::EggSpec
 /// };
 ///
@@ -42,7 +42,7 @@ use crate::composition::CompKey;
 ///     fat: 30.0,
 ///     protein: 16.0,
 ///     lecithin: 9.0,
-/// }.into_composition()?;
+/// }.to_composition()?;
 ///
 /// assert_eq!(comp.get(CompKey::Energy), 334.0);
 /// assert_eq!(comp.get(CompKey::EggFat), 30.0);
@@ -69,14 +69,14 @@ pub struct EggSpec {
     pub lecithin: f64,
 }
 
-impl IntoComposition for EggSpec {
-    fn into_composition(self) -> Result<Composition> {
+impl ToComposition for EggSpec {
+    fn to_composition(&self) -> Result<Composition> {
         let Self {
             water,
             fat,
             protein,
             lecithin,
-        } = self;
+        } = *self;
 
         verify_are_positive(&[water, fat, protein, lecithin])?;
         verify_is_within_100_percent(water + fat + protein)?;
@@ -154,8 +154,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_egg_spec_egg_yolk() {
-        let comp = ING_SPEC_EGG_YOLK.spec.into_composition().unwrap();
+    fn to_composition_egg_spec_egg_yolk() {
+        let comp = ING_SPEC_EGG_YOLK.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 334.0);
         assert_eq!(comp.get(CompKey::EggFat), 30.0);
@@ -172,7 +172,7 @@ pub(crate) mod tests {
         LazyLock::new(|| vec![(ING_SPEC_EGG_YOLK_STR, ING_SPEC_EGG_YOLK.clone(), Some(*COMP_EGG_YOLK))]);
 
     #[test]
-    fn into_composition_err_on_negative_field() {
+    fn to_composition_err_on_negative_field() {
         let base = EggSpec {
             water: 51.0,
             fat: 30.0,
@@ -187,32 +187,32 @@ pub(crate) mod tests {
         ];
 
         for spec in neg_cases {
-            let result = spec.into_composition();
+            let result = spec.to_composition();
             assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
         }
     }
 
     #[test]
-    fn into_composition_err_when_water_plus_fat_plus_protein_exceeds_100() {
+    fn to_composition_err_when_water_plus_fat_plus_protein_exceeds_100() {
         let result = EggSpec {
             water: 60.0,
             fat: 30.0,
             protein: 20.0,
             lecithin: 9.0,
         }
-        .into_composition();
+        .to_composition();
         assert!(matches!(result, Err(Error::CompositionNotWithin100Percent(_))));
     }
 
     #[test]
-    fn into_composition_err_when_lecithin_exceeds_fat() {
+    fn to_composition_err_when_lecithin_exceeds_fat() {
         let result = EggSpec {
             water: 51.0,
             fat: 10.0,
             protein: 16.0,
             lecithin: 20.0,
         }
-        .into_composition();
+        .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
     }
 }

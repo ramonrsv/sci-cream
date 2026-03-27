@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Alcohol, CompKey, Composition, IntoComposition, Micro, PAC, Solids},
+    composition::{Alcohol, CompKey, Composition, Micro, PAC, Solids, ToComposition},
     constants::{self},
     error::Result,
     validate::verify_is_within_100_percent,
@@ -41,15 +41,15 @@ pub struct FullSpec {
     pub pac: Option<PAC>,
 }
 
-impl IntoComposition for FullSpec {
-    fn into_composition(self) -> Result<Composition> {
+impl ToComposition for FullSpec {
+    fn to_composition(&self) -> Result<Composition> {
         let Self {
             solids,
             micro,
             abv,
             pod,
             pac,
-        } = self;
+        } = *self;
 
         let (solids, micro) = (solids.unwrap_or_default(), micro.unwrap_or_default());
         let alcohol = abv.map_or_else(Alcohol::default, Alcohol::from_abv);
@@ -119,8 +119,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_full_spec_water() {
-        let comp = ING_SPEC_FULL_WATER.spec.into_composition().unwrap();
+    fn to_composition_full_spec_water() {
+        let comp = ING_SPEC_FULL_WATER.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 0.0);
         assert_eq!(comp.get(CompKey::Water), 100.0);
@@ -140,7 +140,7 @@ pub(crate) mod tests {
         LazyLock::new(|| vec![(ING_SPEC_FULL_WATER_STR, ING_SPEC_FULL_WATER.clone(), None)]);
 
     #[test]
-    fn into_composition_err_when_pod_cannot_be_computed() {
+    fn to_composition_err_when_pod_cannot_be_computed() {
         let base = FullSpec {
             solids: Some(Solids::new()),
             micro: None,
@@ -165,12 +165,12 @@ pub(crate) mod tests {
             },
         ];
         for spec in cases {
-            assert!(matches!(spec.into_composition(), Err(Error::CannotComputePOD(_))));
+            assert!(matches!(spec.to_composition(), Err(Error::CannotComputePOD(_))));
         }
     }
 
     #[test]
-    fn into_composition_err_when_pac_cannot_be_computed() {
+    fn to_composition_err_when_pac_cannot_be_computed() {
         // pod: Some(...) skips calculate_pod, so we reach calculate_pac
         let base = FullSpec {
             solids: Some(Solids::new()),
@@ -196,12 +196,12 @@ pub(crate) mod tests {
             },
         ];
         for spec in cases {
-            assert!(matches!(spec.into_composition(), Err(Error::CannotComputePAC(_))));
+            assert!(matches!(spec.to_composition(), Err(Error::CannotComputePAC(_))));
         }
     }
 
     #[test]
-    fn into_composition_err_when_total_solids_plus_alcohol_exceeds_100() {
+    fn to_composition_err_when_total_solids_plus_alcohol_exceeds_100() {
         let spec = FullSpec {
             solids: Some(Solids::new().other(SolidsBreakdown::new().others(100.0))),
             micro: None,
@@ -209,11 +209,11 @@ pub(crate) mod tests {
             pod: None,
             pac: None,
         };
-        assert!(matches!(spec.into_composition(), Err(Error::CompositionNotWithin100Percent(_))));
+        assert!(matches!(spec.to_composition(), Err(Error::CompositionNotWithin100Percent(_))));
     }
 
     #[test]
-    fn into_composition_err_when_energy_cannot_be_computed() {
+    fn to_composition_err_when_energy_cannot_be_computed() {
         // With lazy evaluation, pod/pac computations are skipped when provided as Some,
         // so polyols.other != 0 reaches energy() instead of being caught by to_pod() first
         use crate::composition::{Carbohydrates, Polyols};
@@ -227,6 +227,6 @@ pub(crate) mod tests {
                 pod: Some(0.0),
                 pac: Some(PAC::new()),
             };
-        assert!(matches!(spec.into_composition(), Err(Error::CannotComputeEnergy(_))));
+        assert!(matches!(spec.to_composition(), Err(Error::CannotComputeEnergy(_))));
     }
 }

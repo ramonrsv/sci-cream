@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Composition, IntoComposition, Micro, PAC, Solids, SolidsBreakdown},
+    composition::{Composition, Micro, PAC, Solids, SolidsBreakdown, ToComposition},
     constants::{self},
     error::Result,
     validate::{Validate, verify_are_positive},
@@ -65,8 +65,8 @@ pub enum MicroSpec {
     },
 }
 
-impl IntoComposition for MicroSpec {
-    fn into_composition(self) -> Result<Composition> {
+impl ToComposition for MicroSpec {
+    fn to_composition(&self) -> Result<Composition> {
         let make_emulsifier_stabilizer_composition =
             |emulsifiers_strength: Option<f64>, stabilizers_strength: Option<f64>| -> Result<Composition> {
                 let emulsifiers_strength = emulsifiers_strength.unwrap_or(0.0);
@@ -84,7 +84,7 @@ impl IntoComposition for MicroSpec {
                     .validate_into()
             };
 
-        match self {
+        match *self {
             Self::Salt => Composition::new()
                 .solids(Solids::new().other(SolidsBreakdown::new().others(100.0)))
                 .micro(Micro::new().salt(100.0))
@@ -130,8 +130,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_micro_spec_salt() {
-        let comp = MicroSpec::Salt.into_composition().unwrap();
+    fn to_composition_micro_spec_salt() {
+        let comp = MicroSpec::Salt.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 0.0);
 
@@ -154,8 +154,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_micro_spec_lecithin() {
-        let comp = MicroSpec::Lecithin.into_composition().unwrap();
+    fn to_composition_micro_spec_lecithin() {
+        let comp = MicroSpec::Lecithin.to_composition().unwrap();
 
         // @todo This should be 9.0 kcal/g since lecithin is a lipid
         assert_eq!(comp.get(CompKey::Energy), 0.0);
@@ -183,8 +183,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_micro_spec_stabilizer_rich_ice_cream_sb() {
-        let comp = ING_SPEC_MICRO_STABILIZER.spec.into_composition().unwrap();
+    fn to_composition_micro_spec_stabilizer_rich_ice_cream_sb() {
+        let comp = ING_SPEC_MICRO_STABILIZER.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 0.0);
         assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
@@ -193,8 +193,8 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn into_composition_micro_spec_stabilizer_not_100() {
-        let comp = MicroSpec::Stabilizer { strength: 85.0 }.into_composition().unwrap();
+    fn to_composition_micro_spec_stabilizer_not_100() {
+        let comp = MicroSpec::Stabilizer { strength: 85.0 }.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 0.0);
         assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
@@ -203,8 +203,8 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn into_composition_micro_spec_emulsifier_not_100() {
-        let comp = MicroSpec::Emulsifier { strength: 60.0 }.into_composition().unwrap();
+    fn to_composition_micro_spec_emulsifier_not_100() {
+        let comp = MicroSpec::Emulsifier { strength: 60.0 }.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 0.0);
         assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
@@ -234,8 +234,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_micro_spec_emulsifier_stabilizer_louis_francois_stab_2000() {
-        let comp = ING_SPEC_MICRO_LOUIS_STAB2K.spec.into_composition().unwrap();
+    fn to_composition_micro_spec_emulsifier_stabilizer_louis_francois_stab_2000() {
+        let comp = ING_SPEC_MICRO_LOUIS_STAB2K.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 0.0);
         assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
@@ -255,7 +255,7 @@ pub(crate) mod tests {
         });
 
     #[test]
-    fn into_composition_err_on_negative_strength() {
+    fn to_composition_err_on_negative_strength() {
         let neg_cases = [
             MicroSpec::Stabilizer { strength: -1.0 },
             MicroSpec::Emulsifier { strength: -1.0 },
@@ -269,7 +269,7 @@ pub(crate) mod tests {
             },
         ];
         for spec in neg_cases {
-            assert!(matches!(spec.into_composition(), Err(Error::CompositionNotPositive(_))));
+            assert!(matches!(spec.to_composition(), Err(Error::CompositionNotPositive(_))));
         }
     }
 }

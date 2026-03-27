@@ -4,7 +4,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Carbohydrates, Composition, Fats, IntoComposition, PAC, Solids, SolidsBreakdown, Sugars},
+    composition::{Carbohydrates, Composition, Fats, PAC, Solids, SolidsBreakdown, Sugars, ToComposition},
     constants::{self, density::dairy_milliliters_to_grams},
     error::{Error, Result},
     specs::units::Unit,
@@ -38,9 +38,9 @@ pub struct DairySimpleSpec {
     pub msnf: Option<f64>,
 }
 
-impl IntoComposition for DairySimpleSpec {
-    fn into_composition(self) -> Result<Composition> {
-        let Self { fat, msnf } = self;
+impl ToComposition for DairySimpleSpec {
+    fn to_composition(&self) -> Result<Composition> {
+        let Self { fat, msnf } = *self;
 
         let calculated_msnf = (100.0 - fat) * constants::composition::STD_MSNF_IN_MILK_SERUM;
         let msnf = msnf.unwrap_or(calculated_msnf);
@@ -115,8 +115,8 @@ pub struct DairyLabelSpec {
     pub is_lactose_free: Option<bool>,
 }
 
-impl IntoComposition for DairyLabelSpec {
-    fn into_composition(self) -> Result<Composition> {
+impl ToComposition for DairyLabelSpec {
+    fn to_composition(&self) -> Result<Composition> {
         let Self {
             serving_size,
             energy,
@@ -126,7 +126,7 @@ impl IntoComposition for DairyLabelSpec {
             sugars,
             protein,
             is_lactose_free,
-        } = self;
+        } = *self;
 
         let is_lactose_free = is_lactose_free.unwrap_or(false);
 
@@ -228,8 +228,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_simple_spec_2_milk() {
-        let comp = ING_SPEC_DAIRY_SIMPLE_2_MILK.spec.into_composition().unwrap();
+    fn to_composition_dairy_simple_spec_2_milk() {
+        let comp = ING_SPEC_DAIRY_SIMPLE_2_MILK.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 49.5756);
 
@@ -287,8 +287,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_simple_spec_3_25_milk() {
-        let comp = ING_SPEC_DAIRY_SIMPLE_3_25_MILK.spec.into_composition().unwrap();
+    fn to_composition_dairy_simple_spec_3_25_milk() {
+        let comp = ING_SPEC_DAIRY_SIMPLE_3_25_MILK.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 60.42285);
 
@@ -347,8 +347,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_simple_spec_40_cream() {
-        let comp = ING_SPEC_DAIRY_SIMPLE_40_CREAM.spec.into_composition().unwrap();
+    fn to_composition_dairy_simple_spec_40_cream() {
+        let comp = ING_SPEC_DAIRY_SIMPLE_40_CREAM.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 379.332);
 
@@ -413,8 +413,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_simple_spec_skimmed_powder() {
-        let comp = ING_SPEC_DAIRY_SIMPLE_SKIMMED_POWDER.spec.into_composition().unwrap();
+    fn to_composition_dairy_simple_spec_skimmed_powder() {
+        let comp = ING_SPEC_DAIRY_SIMPLE_SKIMMED_POWDER.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 347.26);
 
@@ -478,8 +478,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_simple_spec_whole_powder() {
-        let comp = ING_SPEC_DAIRY_SIMPLE_WHOLE_POWDER.spec.into_composition().unwrap();
+    fn to_composition_dairy_simple_spec_whole_powder() {
+        let comp = ING_SPEC_DAIRY_SIMPLE_WHOLE_POWDER.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 493.6);
 
@@ -552,8 +552,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_label_spec_3_25_milk() {
-        let comp = ING_SPEC_DAIRY_LABEL_3_25_MILK.spec.into_composition().unwrap();
+    fn to_composition_dairy_label_spec_3_25_milk() {
+        let comp = ING_SPEC_DAIRY_LABEL_3_25_MILK.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 62.0957);
 
@@ -628,10 +628,10 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_simple_spec_whole_ultra_filtered_lactose_free() {
+    fn to_composition_dairy_simple_spec_whole_ultra_filtered_lactose_free() {
         let comp = ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE
             .spec
-            .into_composition()
+            .to_composition()
             .unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 61.1923);
@@ -707,8 +707,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn into_composition_dairy_label_spec_whey_isolate() {
-        let comp = ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE.spec.into_composition().unwrap();
+    fn to_composition_dairy_label_spec_whey_isolate() {
+        let comp = ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 384.6154);
 
@@ -736,9 +736,9 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn into_composition_dairy_simple_spec_vs_dairy_label_spec_3_25_milk() {
-        let comp_spec = ING_SPEC_DAIRY_SIMPLE_3_25_MILK.spec.into_composition().unwrap();
-        let comp_spec_from_nutrition = ING_SPEC_DAIRY_LABEL_3_25_MILK.spec.into_composition().unwrap();
+    fn to_composition_dairy_simple_spec_vs_dairy_label_spec_3_25_milk() {
+        let comp_spec = ING_SPEC_DAIRY_SIMPLE_3_25_MILK.spec.to_composition().unwrap();
+        let comp_spec_from_nutrition = ING_SPEC_DAIRY_LABEL_3_25_MILK.spec.to_composition().unwrap();
 
         let assert_comp_eq_percent = |key: CompKey, tolerance_percent: f64| {
             assert_comp_eq_percent(&comp_spec, &comp_spec_from_nutrition, key, tolerance_percent);
@@ -808,14 +808,14 @@ pub(crate) mod tests {
 
     #[test]
     fn dairy_simple_spec_err_on_negative_field() {
-        let result_neg_fat = DairySimpleSpec { fat: -1.0, msnf: None }.into_composition();
+        let result_neg_fat = DairySimpleSpec { fat: -1.0, msnf: None }.to_composition();
         assert!(matches!(result_neg_fat, Err(Error::CompositionNotPositive(_))));
 
         let result_neg_msnf = DairySimpleSpec {
             fat: 3.25,
             msnf: Some(-1.0),
         }
-        .into_composition();
+        .to_composition();
         assert!(matches!(result_neg_msnf, Err(Error::CompositionNotPositive(_))));
     }
 
@@ -825,7 +825,7 @@ pub(crate) mod tests {
             fat: 60.0,
             msnf: Some(60.0),
         }
-        .into_composition();
+        .to_composition();
         assert!(matches!(result, Err(Error::CompositionNotWithin100Percent(_))));
     }
 
@@ -917,7 +917,7 @@ pub(crate) mod tests {
         ];
 
         for spec in bad_units {
-            let result = spec.into_composition();
+            let result = spec.to_composition();
             assert!(matches!(result, Err(Error::UnsupportedCompositionUnit(_))));
         }
     }
@@ -957,7 +957,7 @@ pub(crate) mod tests {
         ];
 
         for spec in neg_cases {
-            let result = spec.into_composition();
+            let result = spec.to_composition();
             assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
         }
     }
@@ -974,7 +974,7 @@ pub(crate) mod tests {
             protein: 9.0,
             is_lactose_free: None,
         }
-        .into_composition();
+        .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
     }
 
@@ -990,7 +990,7 @@ pub(crate) mod tests {
             protein: 9.0,
             is_lactose_free: None,
         }
-        .into_composition();
+        .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
     }
 
@@ -1006,7 +1006,7 @@ pub(crate) mod tests {
             protein: 9.0,
             is_lactose_free: None,
         }
-        .into_composition();
+        .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
     }
 }
