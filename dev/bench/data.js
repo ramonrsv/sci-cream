@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774486618803,
+  "lastUpdate": 1774631730832,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -128415,6 +128415,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.79%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8d78df8d3c75b2b3c931188886946cc877fb43b9",
+          "message": "Rename `DairySpec` and `DairyFromNutritionSpec`\n\nRename the dairy specs to make their intent clearer, and to indicate\ntaht there are multiple kinds, which `DairySpec` does not convey.\n\n  `DairySpec`              -> `DairySimpleSpec`\n  `DairyFromNutritionSpec` -> `DairyLabel`",
+          "timestamp": "2026-03-26T23:25:27-04:00",
+          "tree_id": "09a165b2ce8bdaadae3352b7deb578c650c9f50d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8d78df8d3c75b2b3c931188886946cc877fb43b9"
+        },
+        "date": 1774631726576,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 79746,
+            "range": "±0.93%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 666301,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 9197,
+            "range": "±2.02%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 573138,
+            "range": "±0.77%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
