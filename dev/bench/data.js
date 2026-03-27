@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774641654224,
+  "lastUpdate": 1774641696094,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -12545,6 +12545,60 @@ window.BENCHMARK_DATA = {
             "name": "sweetener_spec_to_composition",
             "value": 3967,
             "range": "± 20",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "29b09727d874d3844998c7c3f8e1c3695c48cbf6",
+          "message": "Add `fail-on-alert` to crate benchmark CI workflow\n\nThis was missed when it was originally added to App benchmarks.",
+          "timestamp": "2026-03-27T13:54:51-04:00",
+          "tree_id": "38a86267d2cae19ff601cf91530e484b7f1b46d2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/29b09727d874d3844998c7c3f8e1c3695c48cbf6"
+        },
+        "date": 1774641693082,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 3358,
+            "range": "± 79",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 153829,
+            "range": "± 3041",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 1896,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 152818,
+            "range": "± 3165",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4066,
+            "range": "± 91",
             "unit": "ns/iter"
           }
         ]
