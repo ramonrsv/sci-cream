@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774632028176,
+  "lastUpdate": 1774632094714,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -118163,6 +118163,102 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 531.3,
             "range": "15.96",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8d78df8d3c75b2b3c931188886946cc877fb43b9",
+          "message": "Rename `DairySpec` and `DairyFromNutritionSpec`\n\nRename the dairy specs to make their intent clearer, and to indicate\ntaht there are multiple kinds, which `DairySpec` does not convey.\n\n  `DairySpec`              -> `DairySimpleSpec`\n  `DairyFromNutritionSpec` -> `DairyLabel`",
+          "timestamp": "2026-03-26T23:25:27-04:00",
+          "tree_id": "09a165b2ce8bdaadae3352b7deb578c650c9f50d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8d78df8d3c75b2b3c931188886946cc877fb43b9"
+        },
+        "date": 1774632090805,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 821.4,
+            "range": "66.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 46.5,
+            "range": "6.25",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 59.6,
+            "range": "6.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.2,
+            "range": "5.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 35.6,
+            "range": "3.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 161.2,
+            "range": "7.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 42.5,
+            "range": "2.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 39.38,
+            "range": "0.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 28.35,
+            "range": "0.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 510.6,
+            "range": "19.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 516.6,
+            "range": "14.26",
             "unit": "ms"
           }
         ]
