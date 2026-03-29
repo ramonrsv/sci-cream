@@ -507,7 +507,7 @@ pub(crate) mod tests {
     }
 
     pub(crate) const ING_SPEC_DAIRY_LABEL_3_25_MILK_STR: &str = r#"{
-      "name": "3.25% Milk (from nutrition facts)",
+      "name": "Sealtest 3.25% Milk",
       "category": "Dairy",
       "DairyLabelSpec": {
         "serving_size": { "ml": 250 },
@@ -521,7 +521,7 @@ pub(crate) mod tests {
     }"#;
 
     pub(crate) static ING_SPEC_DAIRY_LABEL_3_25_MILK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-        name: "3.25% Milk (from nutrition facts)".to_string(),
+        name: "Sealtest 3.25% Milk".to_string(),
         category: Category::Dairy,
         spec: DairyLabelSpec {
             serving_size: Unit::Milliliters(250.0), // 257.6667 grams
@@ -581,7 +581,7 @@ pub(crate) mod tests {
     }
 
     pub(crate) const ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE_STR: &str = r#"{
-      "name": "Whole Ultra-Filtered Lactose-Free Milk",
+      "name": "Fairlife Whole Ultra-Filtered Lactose-Free Milk",
       "category": "Dairy",
       "DairyLabelSpec": {
         "serving_size": { "ml": 240 },
@@ -597,7 +597,7 @@ pub(crate) mod tests {
 
     pub(crate) static ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE: LazyLock<IngredientSpec> =
         LazyLock::new(|| IngredientSpec {
-            name: "Whole Ultra-Filtered Lactose-Free Milk".to_string(),
+            name: "Fairlife Whole Ultra-Filtered Lactose-Free Milk".to_string(),
             category: Category::Dairy,
             spec: DairyLabelSpec {
                 serving_size: Unit::Milliliters(240.0), // 245.1288 grams
@@ -662,7 +662,7 @@ pub(crate) mod tests {
     }
 
     pub(crate) const ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE_STR: &str = r#"{
-      "name": "Whey Isolate",
+      "name": "Leanfit Sport Whey Isolate",
       "category": "Dairy",
       "DairyLabelSpec": {
         "serving_size": { "grams": 39 },
@@ -676,7 +676,7 @@ pub(crate) mod tests {
     }"#;
 
     pub(crate) static ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-        name: "Whey Isolate".to_string(),
+        name: "Leanfit Sport Whey Isolate".to_string(),
         category: Category::Dairy,
         spec: DairyLabelSpec {
             serving_size: Unit::Grams(39.0),

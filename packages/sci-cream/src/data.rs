@@ -155,7 +155,7 @@ pub(crate) mod tests {
     #[test]
     fn get_all_ingredient_specs_count() {
         // This test is mostly to keep explicit track of the total number of ingredient specs
-        assert_eq!(super::get_all_ingredient_specs().len(), 91);
+        assert_eq!(super::get_all_ingredient_specs().len(), 92);
     }
 
     #[test]

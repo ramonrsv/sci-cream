@@ -1567,8 +1567,8 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_splenda_sucralose_manual_vs_calculated_pod_and_pac() {
-        let manual_pod_pac_spec = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec;
-        let mut auto_pod_pac_spec = manual_pod_pac_spec;
+        let manual_pod_pac_spec = ING_SPEC_SWEETENER_SPLENDA_SUCRALOSE.spec.clone();
+        let mut auto_pod_pac_spec = manual_pod_pac_spec.clone();
         clear_pod_in_spec(&mut auto_pod_pac_spec);
         clear_pac_in_spec(&mut auto_pod_pac_spec);
 
@@ -1874,8 +1874,8 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_sugar_twin_manual_vs_calculated_pod() {
-        let manual_pod_spec = ING_SPEC_SWEETENER_SUGAR_TWIN.spec;
-        let mut auto_pod_spec = manual_pod_spec;
+        let manual_pod_spec = ING_SPEC_SWEETENER_SUGAR_TWIN.spec.clone();
+        let mut auto_pod_spec = manual_pod_spec.clone();
         clear_pod_in_spec(&mut auto_pod_spec);
 
         let comp_auto_pod = auto_pod_spec.to_composition().unwrap();
@@ -1961,8 +1961,8 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_stevia_in_the_raw_packets_manual_vs_calculated_pod() {
-        let manual_pod_spec = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS.spec;
-        let mut auto_pod_spec = manual_pod_spec;
+        let manual_pod_spec = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_PACKETS.spec.clone();
+        let mut auto_pod_spec = manual_pod_spec.clone();
         clear_pod_in_spec(&mut auto_pod_spec);
 
         let comp_auto_pod = auto_pod_spec.to_composition().unwrap();
@@ -2048,8 +2048,8 @@ pub(crate) mod tests {
 
     #[test]
     fn to_composition_sweetener_spec_stevia_in_the_raw_bakers_bag_manual_vs_calculated_pod() {
-        let manual_pod_spec = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_BAKERS_BAG.spec;
-        let mut auto_pod_spec = manual_pod_spec;
+        let manual_pod_spec = ING_SPEC_SWEETENER_STEVIA_IN_THE_RAW_BAKERS_BAG.spec.clone();
+        let mut auto_pod_spec = manual_pod_spec.clone();
         clear_pod_in_spec(&mut auto_pod_spec);
 
         let comp_auto_pod = auto_pod_spec.to_composition().unwrap();

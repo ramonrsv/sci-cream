@@ -13,7 +13,8 @@ use wasm_bindgen::prelude::*;
 
 use crate::{
     error::{Error, Result},
-    ingredient::{Category, Ingredient},
+    ingredient::{Category, Ingredient, IntoIngredient},
+    resolution::IngredientGetter,
     specs::IngredientSpec,
 };
 
@@ -154,6 +155,15 @@ impl IngredientDatabase {
             .filter(|ingredient| ingredient.category == category)
             .cloned()
             .collect()
+    }
+}
+
+impl IngredientGetter for IngredientDatabase {
+    fn get_ingredient_by_name(&self, name: &str) -> Result<Ingredient> {
+        self.acquire_read_lock()
+            .get(name)
+            .cloned()
+            .ok_or_else(|| Error::IngredientNotFound(name.to_string()))
     }
 }
 

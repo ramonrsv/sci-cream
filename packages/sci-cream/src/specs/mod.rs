@@ -14,14 +14,27 @@
 //! can be added as needed for new ingredient types, and internal tracking can be expanded without
 //! affecting the user-facing interfaces. [`FullSpec`] is also provided as a fallback for cases
 //! where the user wants to directly specify the full composition.
+//!
+//! Dependent specs like [`AliasSpec`] and [`CompositeSpec`] are also provided, which allow for
+//! defining ingredients that reference other ingredients, e.g. "Whole Milk" can be an alias of
+//! "3.25% Milk", etc. These specs require resolution of their dependencies to obtain the full
+//! composition, which is done via the [`ResolveComposition`] and [`ResolveIntoIngredient`] traits,
+//! and the [`IngredientGetter`] trait for looking up ingredients by name during resolution.
 
 #[cfg(doc)]
-use crate::{composition::Composition, ingredient::Ingredient};
+use crate::{
+    composition::{Composition, ResolveComposition},
+    ingredient::{Ingredient, ResolveIntoIngredient},
+    resolution::IngredientGetter,
+};
 
 pub mod alcohol;
+pub mod alias;
 pub mod chocolate;
+pub mod composite;
 pub mod dairy;
 pub mod egg;
+pub mod entry;
 pub mod fruit;
 pub mod full;
 pub mod ingredient;
@@ -31,9 +44,12 @@ pub mod sweetener;
 pub mod units;
 
 pub use alcohol::*;
+pub use alias::*;
 pub use chocolate::*;
+pub use composite::*;
 pub use dairy::*;
 pub use egg::*;
+pub use entry::*;
 pub use fruit::*;
 pub use full::*;
 pub use ingredient::*;

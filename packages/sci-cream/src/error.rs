@@ -7,6 +7,13 @@ use wasm_bindgen::JsValue;
 
 use crate::specs::Unit;
 
+#[cfg(doc)]
+use crate::{
+    composition::{Composition, ToComposition},
+    database::IngredientDatabase,
+    specs::CompositeSpec,
+};
+
 /// Error type for Sci-Cream.
 #[derive(Error, Debug)]
 pub enum Error {
@@ -43,6 +50,14 @@ pub enum Error {
     /// Ingredient not found in database or embedded list.
     #[error("Ingredient not found: {0}")]
     IngredientNotFound(String),
+    /// A spec entry or ingredient spec is not supported in a certain context, e.g. converting a
+    /// [`CompositeSpec`] directly into a [`Composition`] via [`ToComposition::to_composition`].
+    #[error("Unsupported spec: {0}")]
+    UnsupportedSpec(String),
+    /// Ingredient name is not unique in a collection where uniqueness is required, e.g. when
+    /// seeding an [`IngredientDatabase`] with a list of ingredients or ingredient specs.
+    #[error("Ingredient name is not unique: {0}")]
+    IngredientNameNotUnique(String),
 }
 
 #[cfg_attr(coverage, coverage(off))]

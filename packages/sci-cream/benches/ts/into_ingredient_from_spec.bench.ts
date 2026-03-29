@@ -10,11 +10,11 @@ const ingredientSpecs = [
   "70% Dark Chocolate",
   "Cocoa Powder, 10% Fat",
   "Whole Milk",
-  "Whey Isolate",
+  "Leanfit Sport Whey Isolate",
 ].map((name) => getIngredientSpecByName(name));
 
 const darkRumSpec = getIngredientSpecByName("Dark Rum");
-const wheyIsolateSpec = getIngredientSpecByName("Whey Isolate");
+const wheyIsolateSpec = getIngredientSpecByName("Leanfit Sport Whey Isolate");
 
 suite
   .add("into_ingredient_from_spec, single (Dark Rum)", () => {

@@ -15,21 +15,19 @@ use crate::diesel::ingredients;
 use diesel::{Queryable, Selectable};
 
 use crate::{
-    composition::{Composition, ToComposition},
-    error::Result,
-    ingredient::{Category, Ingredient},
+    composition::{Composition, ResolveComposition, ToComposition},
+    error::{Error, Result},
+    ingredient::{Category, Ingredient, IntoIngredient, ResolveIntoIngredient},
+    resolution::IngredientGetter,
     specs::{
-        AlcoholSpec, ChocolateSpec, DairyLabelSpec, DairySimpleSpec, EggSpec, FruitSpec, FullSpec, MicroSpec, NutSpec,
-        SweetenerSpec,
+        AlcoholSpec, ChocolateSpec, CompositeSpec, DairyLabelSpec, DairySimpleSpec, EggSpec, FruitSpec, FullSpec,
+        MicroSpec, NutSpec, SweetenerSpec,
     },
 };
 
-#[cfg(doc)]
-use crate::error::Error;
-
 /// Tagged enum for all the supported specs, which is useful for (de)serialization of specs.
-#[derive(EnumAsInner, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
-#[allow(clippy::large_enum_variant)] // @todo Deal with this issue later
+#[derive(EnumAsInner, PartialEq, Serialize, Deserialize, Clone, Debug)]
+#[expect(clippy::large_enum_variant)] // @todo Deal with this issue later
 #[allow(missing_docs)] // Trivial mapping to the underlying specs
 pub enum TaggedSpec {
     DairySimpleSpec(DairySimpleSpec),
@@ -42,6 +40,7 @@ pub enum TaggedSpec {
     AlcoholSpec(AlcoholSpec),
     MicroSpec(MicroSpec),
     FullSpec(FullSpec),
+    CompositeSpec(CompositeSpec),
 }
 
 impl ToComposition for TaggedSpec {
@@ -57,6 +56,20 @@ impl ToComposition for TaggedSpec {
             Self::AlcoholSpec(spec) => spec.to_composition(),
             Self::MicroSpec(spec) => spec.to_composition(),
             Self::FullSpec(spec) => spec.to_composition(),
+            Self::CompositeSpec(_) => Err(Error::UnsupportedSpec(
+                "CompositeSpec cannot be converted into a Composition directly, as it requires
+                access to the ingredient database. Use CompositeSpec::resolve_composition instead."
+                    .to_string(),
+            )),
+        }
+    }
+}
+
+impl ResolveComposition for TaggedSpec {
+    fn resolve_composition(&self, getter: &dyn IngredientGetter) -> Result<Composition> {
+        match self {
+            Self::CompositeSpec(spec) => spec.resolve_composition(getter),
+            _ => self.to_composition(),
         }
     }
 }
@@ -121,6 +134,12 @@ impl From<FullSpec> for TaggedSpec {
     }
 }
 
+impl From<CompositeSpec> for TaggedSpec {
+    fn from(spec: CompositeSpec) -> Self {
+        Self::CompositeSpec(spec)
+    }
+}
+
 /// Ingredient spec, which includes the name, category, and the tagged spec for the ingredient.
 ///
 /// This struct is designed to have a user-friendly JSON representation, as it is used for manual
@@ -129,7 +148,7 @@ impl From<FullSpec> for TaggedSpec {
 #[cfg_attr(feature = "diesel", derive(Queryable, Selectable), diesel(table_name = ingredients))]
 #[derive(PartialEq, Serialize, Deserialize, Clone, Debug)]
 pub struct IngredientSpec {
-    /// The name of the ingredient, which should be unique across the database.
+    /// The name of the ingredient, which should be unique across a collection.
     pub name: String,
     /// The category of the ingredient, which is used for organizational purposes.
     pub category: Category,
@@ -138,15 +157,20 @@ pub struct IngredientSpec {
     pub spec: TaggedSpec,
 }
 
-impl IngredientSpec {
-    /// Converts the [`IngredientSpec`] into a full [`Ingredient`] instance
-    ///
-    /// # Errors
-    ///
-    /// Returns an [`Error`] if the [`spec`](Self::spec) fails to convert into a [`Composition`],
-    /// likely due to invalid values, e.g. negative percentages, not summing to 100%, etc.
-    /// See [`ToComposition::to_composition`] and [`specs`](crate::specs) for more details.
-    pub fn into_ingredient(self) -> Result<Ingredient> {
+impl ToComposition for IngredientSpec {
+    fn to_composition(&self) -> Result<Composition> {
+        self.spec.to_composition()
+    }
+}
+
+impl ResolveComposition for IngredientSpec {
+    fn resolve_composition(&self, getter: &dyn IngredientGetter) -> Result<Composition> {
+        self.spec.resolve_composition(getter)
+    }
+}
+
+impl IntoIngredient for IngredientSpec {
+    fn into_ingredient(self) -> Result<Ingredient> {
         Ok(Ingredient {
             name: self.name,
             category: self.category,
@@ -155,9 +179,13 @@ impl IngredientSpec {
     }
 }
 
-impl ToComposition for IngredientSpec {
-    fn to_composition(&self) -> Result<Composition> {
-        self.spec.to_composition()
+impl ResolveIntoIngredient for IngredientSpec {
+    fn resolve_into_ingredient(self, getter: &dyn IngredientGetter) -> Result<Ingredient> {
+        Ok(Ingredient {
+            name: self.name,
+            category: self.category,
+            composition: self.spec.resolve_composition(getter)?,
+        })
     }
 }
 
@@ -168,6 +196,7 @@ pub mod wasm {
     use wasm_bindgen::prelude::*;
 
     use super::{Ingredient, IngredientSpec};
+    use crate::ingredient::IntoIngredient;
 
     #[cfg(doc)]
     use crate::error::Error;
@@ -225,7 +254,7 @@ pub(crate) mod tests {
         INGREDIENT_ASSETS_TABLE.iter().for_each(|(spec_str, spec, _)| {
             assert_eq!(
                 serde_json::from_str::<IngredientSpec>(spec_str)
-                    .unwrap_or_else(|e| panic!("Failed to deserialize spec '{}': {}", spec.name, e)),
+                    .unwrap_or_else(|e| panic!("Failed to deserialize spec '{name}': {e}", name = spec.name)),
                 *spec
             );
         });

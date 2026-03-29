@@ -9,6 +9,7 @@ use strum_macros::EnumIter;
 use crate::{
     composition::{Alcohol, Micro, PAC, Solids},
     error::Result,
+    resolution::IngredientGetter,
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
 
@@ -19,7 +20,7 @@ use wasm_bindgen::prelude::*;
 use crate::{
     composition::{ArtificialSweeteners, Carbohydrates, Polyols, Sugars},
     error::Error,
-    specs::ChocolateSpec,
+    specs::{ChocolateSpec, CompositeSpec},
 };
 
 /// Trait for converting various types, e.g. [`specs`](crate::specs), to a [`Composition`]
@@ -31,6 +32,23 @@ pub trait ToComposition {
     /// Returns an [`Error`] if the conversion cannot be performed, e.g. due to missing values,
     /// invalid ingredient specs, etc. The specific errors are implementation-dependent.
     fn to_composition(&self) -> Result<Composition>;
+}
+
+/// Trait for resolving a [`Composition`] from a type that may reference other ingredients
+///
+/// This is used for types that may reference other ingredients, e.g. [`CompositeSpec`]s, which need
+/// to resolve the compositions of their referenced ingredients, via a provided
+/// [`IngredientGetter`], in order to calculate their own composition.
+pub trait ResolveComposition {
+    /// Resolves a [`Composition`] from `self`, which may involve looking up referenced ingredients
+    /// via the provided [`IngredientGetter`] and calculating combinations of their compositions.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] if any referenced ingredient cannot be found via the getter, or if any
+    /// composition calculations fail, likely due to invalid values, e.g. negative percentages, not
+    /// summing to 100%, etc. See [`CompositeSpec`] as an example for more details.
+    fn resolve_composition(&self, getter: &dyn IngredientGetter) -> Result<Composition>;
 }
 
 /// Trait for scaling and adding [`Composition`]s and their constituent types

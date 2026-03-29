@@ -6,7 +6,7 @@ import { allIngredientSpecs, getIngredientSpecByName } from "./ingredients";
 
 test("allIngredientSpecs count", () => {
   // Update this if the number of ingredient specs changes
-  expect(allIngredientSpecs.length).toEqual(91);
+  expect(allIngredientSpecs.length).toEqual(92);
 });
 
 test("into_ingredient_from_spec creates Ingredient instances", () => {

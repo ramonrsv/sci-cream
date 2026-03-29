@@ -9,6 +9,7 @@ use crate::{
     ingredient::{Category, Ingredient},
     properties::MixProperties,
     recipe::{LightRecipe, Recipe},
+    resolution::IngredientGetter,
     specs::IngredientSpec,
 };
 
@@ -111,6 +112,13 @@ impl Bridge {
     }
 }
 
+impl IngredientGetter for Bridge {
+    /// Forwards to [`IngredientDatabase::get_ingredient_by_name`] of the internal database
+    fn get_ingredient_by_name(&self, name: &str) -> Result<Ingredient> {
+        self.db.get_ingredient_by_name(name)
+    }
+}
+
 /// WASM compatible wrappers for [`Bridge`] methods that need additional conversions.
 #[cfg_attr(coverage, coverage(off))]
 pub mod wasm {
@@ -200,7 +208,7 @@ pub(crate) mod tests {
     use crate::{
         composition::CompKey,
         data::get_all_ingredient_specs,
-        ingredient::Ingredient,
+        ingredient::{Ingredient, IntoIngredient},
         specs::{DairySimpleSpec, IngredientSpec},
     };
 

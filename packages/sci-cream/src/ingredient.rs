@@ -7,7 +7,40 @@ use strum_macros::{Display, EnumIter};
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
-use crate::composition::Composition;
+use crate::{composition::Composition, error::Result, resolution::IngredientGetter};
+
+#[cfg(doc)]
+use crate::{
+    composition::{ResolveComposition, ToComposition},
+    error::Error,
+    specs::{AliasSpec, CompositeSpec, IngredientSpec},
+};
+
+/// Trait for converting various types, e.g. [`IngredientSpec`]s, into an [`Ingredient`]
+pub trait IntoIngredient {
+    /// Converts `self` into a full [`Ingredient`] instance
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] if the [`spec`](crate::specs) fails to convert into a [`Composition`],
+    /// likely due to invalid values, e.g. negative percentages, not summing to 100%, etc.
+    /// See [`ToComposition::to_composition`] and [`specs`](crate::specs) for more details.
+    fn into_ingredient(self) -> Result<Ingredient>;
+}
+
+/// Trait for resolving an [`Ingredient`] from a type that may reference other ingredients
+pub trait ResolveIntoIngredient {
+    /// Converts `self` into a full [`Ingredient`] instance, supporting dependent specs like
+    /// [`AliasSpec`]s and [`CompositeSpec`]s by resolving them against the provided getter.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] if the [`spec`](crate::specs) fails to resolve into a [`Composition`],
+    /// likely due to invalid values, e.g. negative percentages, etc., or if the spec is a
+    /// [`CompositeSpec`] that fails to resolve due to failed ingredient lookups via the getter. See
+    /// [`ResolveComposition::resolve_composition`] and [`specs`](crate::specs) for more details.
+    fn resolve_into_ingredient(self, getter: &dyn IngredientGetter) -> Result<Ingredient>;
+}
 
 /// Ingredient categories
 ///

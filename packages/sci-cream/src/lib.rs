@@ -445,6 +445,7 @@ pub mod fpd;
 pub mod ingredient;
 pub mod properties;
 pub mod recipe;
+pub mod resolution;
 pub mod specs;
 pub mod util;
 pub mod validate;

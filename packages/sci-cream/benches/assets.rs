@@ -2,6 +2,7 @@ use std::sync::LazyLock;
 
 use sci_cream::{
     data::get_ingredient_spec_by_name,
+    ingredient::IntoIngredient,
     recipe::{OwnedLightRecipe, Recipe, RecipeLine},
 };
 
