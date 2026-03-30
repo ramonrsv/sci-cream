@@ -32,7 +32,8 @@ import {
   RecipeLine,
   Bridge as WasmBridge,
   new_ingredient_database_seeded_from_embedded_data,
-  allIngredientSpecs,
+  allSpecEntries,
+  specEntryName,
 } from "@workspace/sci-cream";
 
 // ---------------------------------------------------------------------------
@@ -121,6 +122,7 @@ describe("Recipe Helper Functions", () => {
   describe("RecipeResources.hasIngredient", () => {
     it("should return false for any ingredient when wasmBridge is empty", () => {
       const resources = makeEmptyRecipeResources();
+      expect(resources.hasIngredient("3.25% Milk")).toBe(false);
       expect(resources.hasIngredient("Whole Milk")).toBe(false);
       expect(resources.hasIngredient("Sucrose")).toBe(false);
     });
@@ -128,9 +130,11 @@ describe("Recipe Helper Functions", () => {
     it("should return true for ingredients present in wasmBridge", () => {
       const resources = makeEmptyRecipeResources();
       resources.wasmBridge.seed_from_specs([
-        allIngredientSpecs.find((spec) => spec.name === "Whole Milk"),
-        allIngredientSpecs.find((spec) => spec.name === "Sucrose"),
+        allSpecEntries.find((spec) => specEntryName(spec) === "3.25% Milk"),
+        allSpecEntries.find((spec) => specEntryName(spec) === "Whole Milk"),
+        allSpecEntries.find((spec) => specEntryName(spec) === "Sucrose"),
       ]);
+      expect(resources.hasIngredient("3.25% Milk")).toBe(true);
       expect(resources.hasIngredient("Whole Milk")).toBe(true);
       expect(resources.hasIngredient("Sucrose")).toBe(true);
     });

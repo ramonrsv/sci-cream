@@ -231,7 +231,7 @@ pub(crate) mod tests {
     use crate::tests::assets::*;
 
     use super::*;
-    use crate::data::get_ingredient_spec_by_name;
+    use crate::{data::get_spec_entry_by_name, specs::SpecEntry};
 
     pub(crate) static INGREDIENT_ASSETS_TABLE: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {
@@ -263,7 +263,7 @@ pub(crate) mod tests {
     #[test]
     fn ingredient_spec_database_matches_assets() {
         INGREDIENT_ASSETS_TABLE.iter().for_each(|(_, spec, _)| {
-            assert_eq!(spec, &get_ingredient_spec_by_name(&spec.name).unwrap());
+            assert_eq!(SpecEntry::Ingredient(spec.clone()), get_spec_entry_by_name(&spec.name).unwrap());
         });
     }
 

@@ -1,9 +1,14 @@
-import { IngredientJson, into_ingredient_from_spec, RecipeLine, Recipe } from "../../dist/index.js";
+import {
+  IngredientSpecJson,
+  into_ingredient_from_spec,
+  RecipeLine,
+  Recipe,
+} from "../../dist/index.js";
 
 /** Sample chocolate ice cream light recipe used as benchmark input. */
 export const LIGHT_RECIPE = [
-  ["Whole Milk", 245],
-  ["Whipping Cream", 215],
+  ["3.25% Milk", 245],
+  ["35% Cream", 215],
   ["Cocoa Powder, 17% Fat", 28],
   ["Skimmed Milk Powder", 21],
   ["Egg Yolk", 18],
@@ -14,7 +19,7 @@ export const LIGHT_RECIPE = [
   ["Vanilla Extract", 6],
 ];
 
-export type SpecLine = { spec: IngredientJson; quantity: number };
+export type SpecLine = { spec: IngredientSpecJson; quantity: number };
 
 /** Converts an array of spec lines into `RecipeLine` instances by deserializing each ing. spec. */
 export function makeRecipeLines(specLines: SpecLine[]): RecipeLine[] {

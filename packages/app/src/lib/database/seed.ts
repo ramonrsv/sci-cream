@@ -7,7 +7,7 @@ import { findUserByEmail } from "@/lib/data";
 import { UserInsert, usersTable, ingredientsTable, SchemaCategory } from "@/lib/database/schema";
 import * as schema from "./schema";
 
-import { IngredientJson, allIngredientSpecs } from "@workspace/sci-cream";
+import { IngredientSpecJson, getNonAliasIngredientSpecs } from "@workspace/sci-cream";
 
 import { TEST_USER_A, TEST_USER_B, USER_DEFINED_FRUCTOSE_SPEC } from "@/lib/database/util";
 
@@ -35,11 +35,11 @@ async function seedUsers(users: UserAsset[]) {
 }
 
 /**
- * Upsert a list of ingredient specs for the given user.
+ * Upsert a list of ingredient spec entries for the given user.
  *
- * Each ingredient is deleted if it already exists, then re-inserted, so the spec is always current.
+ * Each entry is deleted if it already exists, then re-inserted, so the spec is always current.
  */
-async function seedUserIngredients(userEmail: string, ingredientSpecs: IngredientJson[]) {
+async function seedUserIngredients(userEmail: string, ingredientSpecs: IngredientSpecJson[]) {
   const user = await findUserByEmail(userEmail);
   if (!user) throw new Error(`User with email ${userEmail} not found, cannot seed ingredients`);
 
@@ -89,7 +89,9 @@ async function seedUserIngredients(userEmail: string, ingredientSpecs: Ingredien
 async function main() {
   await seedUsers([TEST_USER_A, TEST_USER_B]);
 
-  await seedUserIngredients(TEST_USER_A.email, allIngredientSpecs);
+  // Seed only non-alias ingredient specs, since aliases are not supported in the database
+  await seedUserIngredients(TEST_USER_A.email, getNonAliasIngredientSpecs());
+
   await seedUserIngredients(TEST_USER_A.email, [USER_DEFINED_FRUCTOSE_SPEC]);
   await seedUserIngredients(TEST_USER_B.email, [USER_DEFINED_FRUCTOSE_SPEC]);
 }

@@ -1,14 +1,15 @@
 import Benchmark from "benchmark";
 
 import {
-  allIngredientSpecs,
-  getIngredientSpecByName,
-  get_ingredient_spec_by_name,
+  getIndependentIngredientSpecs,
+  getIndependentIngredientSpecByName,
+  get_independent_ingredient_spec_by_name,
   into_ingredient_from_spec,
   new_ingredient_database_seeded_from_specs,
   Bridge,
 } from "../../dist/index";
 
+const allIngredientSpecs = getIndependentIngredientSpecs();
 const LAST_IDX = allIngredientSpecs.length - 1;
 
 const map = new Map<string, (typeof allIngredientSpecs)[0]>(
@@ -22,17 +23,23 @@ const suite = new Benchmark.Suite("Get Ingredient Instances");
 
 suite
   .add("into_ingredient_from_spec(getIngredientSpecByName, first)", () => {
-    into_ingredient_from_spec(getIngredientSpecByName(allIngredientSpecs[0].name)!).free();
+    into_ingredient_from_spec(
+      getIndependentIngredientSpecByName(allIngredientSpecs[0].name)!,
+    ).free();
   })
   .add("into_ingredient_from_spec(getIngredientSpecByName, last)", () => {
-    into_ingredient_from_spec(getIngredientSpecByName(allIngredientSpecs[LAST_IDX].name)!).free();
+    into_ingredient_from_spec(
+      getIndependentIngredientSpecByName(allIngredientSpecs[LAST_IDX].name)!,
+    ).free();
   })
   .add("into_ingredient_from_spec(get_ingredient_spec_by_name, first)", () => {
-    into_ingredient_from_spec(get_ingredient_spec_by_name(allIngredientSpecs[0].name)!).free();
+    into_ingredient_from_spec(
+      get_independent_ingredient_spec_by_name(allIngredientSpecs[0].name)!,
+    ).free();
   })
   .add("into_ingredient_from_spec(get_ingredient_spec_by_name, last)", () => {
     into_ingredient_from_spec(
-      get_ingredient_spec_by_name(allIngredientSpecs[LAST_IDX].name)!,
+      get_independent_ingredient_spec_by_name(allIngredientSpecs[LAST_IDX].name)!,
     ).free();
   })
   .add("into_ingredient_from_spec(map lookup, first)", () => {

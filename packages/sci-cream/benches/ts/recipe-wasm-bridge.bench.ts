@@ -1,7 +1,7 @@
 import Benchmark from "benchmark";
 
 import {
-  getIngredientSpecByName,
+  getIndependentIngredientSpecByName,
   Bridge,
   new_ingredient_database_seeded_from_embedded_data,
 } from "../../dist/index.js";
@@ -15,7 +15,7 @@ import {
 } from "./util.ts";
 
 const specLines = LIGHT_RECIPE.map(([name, quantity]) => ({
-  spec: getIngredientSpecByName(name as string)!,
+  spec: getIndependentIngredientSpecByName(name as string)!,
   quantity: quantity as number,
 }));
 
@@ -49,12 +49,12 @@ suite
     makeRecipeFromMadeLines(specLines).free();
   })
   .add("makeRecipeFromClonedLines.calculate_composition", () => {
-    let recipe = makeRecipeFromClonedLines(recipeLines);
+    const recipe = makeRecipeFromClonedLines(recipeLines);
     recipe.calculate_composition().free();
     recipe.free();
   })
   .add("makeRecipeFromMadeLines.calculate_composition", () => {
-    let recipe = makeRecipeFromMadeLines(specLines);
+    const recipe = makeRecipeFromMadeLines(specLines);
     recipe.calculate_composition().free();
     recipe.free();
   })
@@ -65,12 +65,12 @@ suite
     recipe.calculate_composition().free();
   })
   .add("makeRecipeFromClonedLines.calculate_mix_properties", () => {
-    let recipe = makeRecipeFromClonedLines(recipeLines);
+    const recipe = makeRecipeFromClonedLines(recipeLines);
     recipe.calculate_mix_properties().free();
     recipe.free();
   })
   .add("makeRecipeFromMadeLines.calculate_mix_properties", () => {
-    let recipe = makeRecipeFromMadeLines(specLines);
+    const recipe = makeRecipeFromMadeLines(specLines);
     recipe.calculate_mix_properties().free();
     recipe.free();
   })

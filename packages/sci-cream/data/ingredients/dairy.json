@@ -9,9 +9,9 @@
   { "name": "35% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 35 } },
   { "name": "36% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 36 } },
   { "name": "40% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 40 } },
-  { "name": "Whole Milk", "category": "Dairy", "DairySimpleSpec": { "fat": 3.25 } },
-  { "name": "Whipping Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 35 } },
-  { "name": "Heavy Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 36 } },
+  { "alias": "Whole Milk", "for": "3.25% Milk" },
+  { "alias": "Whipping Cream", "for": "35% Cream" },
+  { "alias": "Heavy Cream", "for": "36% Cream" },
   {
     "name": "Skimmed Milk Powder",
     "category": "Dairy",
@@ -78,5 +78,7 @@
       "protein": 25
     },
     "comments": "From nutrition facts table: https://ca.iherb.com/pr/california-gold-nutrition-sport-micellar-casein-unflavored-slow-absorption-16-oz-454-g/71028"
-  }
+  },
+  { "alias": "Whey Isolate", "for": "Leanfit Sport Whey Isolate" },
+  { "alias": "Casein", "for": "California Gold Nutrition, Sport, Micellar Casein" }
 ]

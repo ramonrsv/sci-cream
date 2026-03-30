@@ -1,33 +1,34 @@
 import Benchmark from "benchmark";
 
 import {
-  allIngredientSpecs,
-  getIngredientSpecByName,
-  get_ingredient_spec_by_name,
+  allSpecEntries,
+  getSpecEntryByName,
+  get_spec_entry_by_name,
+  specEntryName,
 } from "../../dist/index";
 
-const LAST_IDX = allIngredientSpecs.length - 1;
+const LAST_IDX = allSpecEntries.length - 1;
 
 const suite = new Benchmark.Suite("Get Ingredient Specs");
 
 suite
   .add("allIngredientSpecs.find, first", () => {
-    allIngredientSpecs.find((ing) => ing.name === allIngredientSpecs[0].name);
+    allSpecEntries.find((spec) => specEntryName(spec) === specEntryName(allSpecEntries[0]));
   })
   .add("allIngredientSpecs.find, last", () => {
-    allIngredientSpecs.find((ing) => ing.name === allIngredientSpecs[LAST_IDX].name);
+    allSpecEntries.find((spec) => specEntryName(spec) === specEntryName(allSpecEntries[LAST_IDX]));
   })
   .add("getIngredientSpecByName, first", () => {
-    getIngredientSpecByName(allIngredientSpecs[0].name);
+    getSpecEntryByName(specEntryName(allSpecEntries[0]));
   })
   .add("getIngredientSpecByName, last", () => {
-    getIngredientSpecByName(allIngredientSpecs[LAST_IDX].name);
+    getSpecEntryByName(specEntryName(allSpecEntries[LAST_IDX]));
   })
   .add("get_ingredient_spec_by_name, first", () => {
-    get_ingredient_spec_by_name(allIngredientSpecs[0].name);
+    get_spec_entry_by_name(specEntryName(allSpecEntries[0]));
   })
   .add("get_ingredient_spec_by_name, last", () => {
-    get_ingredient_spec_by_name(allIngredientSpecs[LAST_IDX].name);
+    get_spec_entry_by_name(specEntryName(allSpecEntries[LAST_IDX]));
   })
   .on("cycle", (event: Benchmark.Event) => {
     console.log(String(event.target));

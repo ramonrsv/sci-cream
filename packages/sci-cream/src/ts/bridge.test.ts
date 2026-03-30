@@ -3,7 +3,7 @@ import { expect, test } from "vitest";
 import {
   Composition,
   MixProperties,
-  get_all_ingredient_specs,
+  get_all_spec_entries,
   new_ingredient_database_seeded_from_specs,
   Bridge,
   CompKey,
@@ -28,21 +28,21 @@ const lightRecipe = [
 
 /** Creates a new ingredient database pre-seeded with all built-in ingredient specs. */
 function make_seeded_db() {
-  return new_ingredient_database_seeded_from_specs(get_all_ingredient_specs());
+  return new_ingredient_database_seeded_from_specs(get_all_spec_entries());
 }
 
 test("new Bridge", () => {
   const bridge = new Bridge(make_seeded_db());
   expect(bridge).toBeDefined();
   expect(bridge).toBeInstanceOf(Bridge);
-  expect(bridge.get_all_ingredients().length).toEqual(get_all_ingredient_specs().length);
+  expect(bridge.get_all_ingredients().length).toEqual(get_all_spec_entries().length);
 });
 
 test("Bridge.seed_from_specs", () => {
   const bridge = new Bridge(new IngredientDatabase());
   expect(bridge.has_ingredient("Whole Milk")).toBe(false);
 
-  bridge.seed_from_specs(get_all_ingredient_specs());
+  bridge.seed_from_specs(get_all_spec_entries());
   expect(bridge.has_ingredient("Whole Milk")).toBe(true);
   expect(bridge.get_ingredient_by_name("Whole Milk")).toBeDefined();
 

@@ -14,11 +14,6 @@
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
 - [ ] Add lactose-free support to `DairySimpleSpec`, to allow simple lactose-free ingredient specs.
 - [ ] Add evaporated milk ingredients, e.g. 'Evaporated Milk', 'Fat Free Evaporated Skim Milk', etc.
-- [ ] Add support for ingredient name aliases so that generic names, e.g. 'Chocolate Powder', can be
-      explicitly linked to more specific or branded names, e.g. 'Chocolate Powder, 17% at'.
-- [ ] Add support for composite ingredient specs, i.e. allowing ingredients to be specified as a
-      weighted combination of other ingredients, by name. Converting these into `Ingredient`s would
-      need access to the full list of ingredients, there may be circular dependency issues, etc.
 - [ ] Once there are real composite ingredients, add them to the test assets to be verified.
 
 # Up Next
@@ -52,6 +47,11 @@
 
 # Completed
 
+- [x] Add support for ingredient name aliases so that generic names, e.g. 'Chocolate Powder', can be
+      explicitly linked to more specific or branded names, e.g. 'Chocolate Powder, 17% at'.
+- [x] Add support for composite ingredient specs, i.e. allowing ingredients to be specified as a
+      weighted combination of other ingredients, by name. Converting these into `Ingredient`s would
+      need access to the full list of ingredients, there may be circular dependency issues, etc.
 - [x] Rename `DairySpec` and `DairyFromNutritionSpec`to something shorter and clearer.
 - [x] Implement `Validate` for `composition` (and `specs`?) and add unit tests to verify.
 - [x] Remove uses of `.unwrap()` in documentation code examples, see the `# fn main() ...` trick.

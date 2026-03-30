@@ -10,7 +10,7 @@ use crate::{
     properties::MixProperties,
     recipe::{LightRecipe, Recipe},
     resolution::IngredientGetter,
-    specs::IngredientSpec,
+    specs::SpecEntry,
 };
 
 #[cfg(doc)]
@@ -34,15 +34,6 @@ pub struct Bridge {
 }
 
 impl Bridge {
-    /// Forwards to [`IngredientDatabase::get_ingredient_by_name`] of the internal database
-    ///
-    /// # Errors
-    ///
-    /// Returns an [`Error::IngredientNotFound`] if no ingredient with the name is found.
-    pub fn get_ingredient_by_name(&self, name: &str) -> Result<Ingredient> {
-        self.db.get_ingredient_by_name(name)
-    }
-
     /// Forwards to [`Recipe::calculate_composition`], creating a [`Recipe`] from [`LightRecipe`]
     ///
     /// # Errors
@@ -68,18 +59,20 @@ impl Bridge {
     }
 
     /// Forwards to [`IngredientDatabase::seed`], seeding the db with the provided [`Ingredient`]s.
-    pub fn seed(&self, ingredients: &[Ingredient]) {
-        self.db.seed(ingredients);
-    }
-
-    /// Forwards to [`IngredientDatabase::seed_from_specs`], seeding with the [`IngredientSpec`]s.
     ///
     /// # Errors
     ///
-    /// Returns an [`Error`] if any of the provided specs cannot be converted into an
-    /// [`Ingredient`]. This would likely be an error converting a [`spec`](crate::specs) into a
-    /// [`Composition`] due to invalid values, e.g. negative percentages, not summing to 100%, etc.
-    pub fn seed_from_specs(&self, specs: &[IngredientSpec]) -> Result<()> {
+    /// It forwards any errors from [`IngredientDatabase::seed`]; see that method for more details.
+    pub fn seed(&self, ingredients: &[Ingredient]) -> Result<()> {
+        self.db.seed(ingredients)
+    }
+
+    /// Forwards to [`IngredientDatabase::seed_from_specs`], seeding with the [`SpecEntry`]s.
+    ///
+    /// # Errors
+    ///
+    /// It forwards any errors from [`IngredientDatabase::seed_from_specs`]; see more details.
+    pub fn seed_from_specs(&self, specs: &[SpecEntry]) -> Result<()> {
         self.db.seed_from_specs(specs)
     }
 }
@@ -131,9 +124,11 @@ pub mod wasm {
     };
 
     #[cfg(doc)]
-    use crate::{database::IngredientDatabase, error::Error, recipe::OwnedLightRecipe, specs::IngredientSpec};
+    use crate::{
+        database::IngredientDatabase, error::Error, recipe::OwnedLightRecipe, resolution::IngredientGetter,
+        specs::IngredientSpec,
+    };
 
-    //#[cfg_attr(feature = "wasm", wasm_bindgen)]
     #[wasm_bindgen]
     impl Bridge {
         /// WASM compatible wrapper for [`Bridge::get_ingredient_by_name`]
@@ -154,7 +149,8 @@ pub mod wasm {
         /// # Errors
         ///
         /// Returns a `serde::Error` if the `JsValue` input cannot be deserialized into an
-        /// [`OwnedLightRecipe`], and forwards any errors from the forwarded-to method.
+        /// [`OwnedLightRecipe`], and forwards any errors from the forwarded-to method. See
+        /// [`Bridge::calculate_recipe_composition`] for more details on the forwarded errors.
         #[wasm_bindgen(js_name = "calculate_recipe_composition")]
         pub fn calculate_recipe_composition_wasm(&self, recipe: Box<[JsValue]>) -> Result<Composition, JsValue> {
             let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
@@ -166,7 +162,8 @@ pub mod wasm {
         /// # Errors
         ///
         /// Returns a `serde::Error` if the `JsValue` input cannot be deserialized into an
-        /// [`OwnedLightRecipe`], and forwards any errors from the forwarded-to method.
+        /// [`OwnedLightRecipe`], and forwards any errors from the forwarded-to method. See
+        /// [`Bridge::calculate_recipe_mix_properties`] for more details on the forwarded errors.
         #[wasm_bindgen(js_name = "calculate_recipe_mix_properties")]
         pub fn calculate_recipe_mix_properties_wasm(&self, recipe: Box<[JsValue]>) -> Result<MixProperties, JsValue> {
             let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
@@ -174,19 +171,21 @@ pub mod wasm {
         }
 
         /// WASM compatible wrapper for [`Bridge::seed`]
+        ///
+        /// # Errors
+        ///
+        /// It forwards any errors from [`IngredientDatabase::seed`]; see for more details.
         #[wasm_bindgen(js_name = "seed")]
         #[allow(clippy::needless_pass_by_value)]
-        pub fn seed_wasm(&self, ingredients: Box<[Ingredient]>) {
-            self.db.seed(&ingredients);
+        pub fn seed_wasm(&self, ingredients: Box<[Ingredient]>) -> Result<(), JsValue> {
+            self.db.seed(&ingredients).map_err(Into::into)
         }
 
         /// WASM compatible wrapper for [`Bridge::seed_from_specs`]
         ///
         /// # Errors
         ///
-        /// Returns an [`Error`] if any of the specs cannot be converted into an [`Ingredient`]; see
-        /// the forwarded-to method for more details. It may also return a `serde::Error` if the
-        /// provided JS values cannot be deserialized into [`IngredientSpec`]s.
+        /// It forwards any errors from [`IngredientDatabase::seed_from_specs`]; see for details.
         #[wasm_bindgen(js_name = "seed_from_specs")]
         #[allow(clippy::needless_pass_by_value)]
         pub fn seed_from_specs_wasm(&self, specs: Box<[JsValue]>) -> Result<(), JsValue> {
@@ -207,8 +206,8 @@ pub(crate) mod tests {
     use super::*;
     use crate::{
         composition::CompKey,
-        data::get_all_ingredient_specs,
-        ingredient::{Ingredient, IntoIngredient},
+        data::{get_all_independent_ingredient_specs, get_all_spec_entries},
+        ingredient::{Ingredient, IntoIngredient, ResolveIntoIngredient},
         specs::{DairySimpleSpec, IngredientSpec},
     };
 
@@ -226,7 +225,7 @@ pub(crate) mod tests {
     ];
 
     fn make_seeded_db() -> IngredientDatabase {
-        IngredientDatabase::new_seeded_from_specs(&get_all_ingredient_specs()).unwrap()
+        IngredientDatabase::new_seeded_from_specs(&get_all_spec_entries()).unwrap()
     }
 
     fn light_recipe_to_owned(recipe: &[(&str, f64)]) -> Vec<(String, f64)> {
@@ -245,20 +244,25 @@ pub(crate) mod tests {
     #[test]
     fn bridge_new_populated() {
         let db = make_seeded_db();
-        assert_eq!(db.get_all_ingredients().len(), get_all_ingredient_specs().len());
+        assert_eq!(db.get_all_ingredients().len(), get_all_spec_entries().len());
 
         let bridge = Bridge::new(db);
-        assert_eq!(bridge.get_all_ingredients().len(), get_all_ingredient_specs().len());
+        assert_eq!(bridge.get_all_ingredients().len(), get_all_spec_entries().len());
     }
 
     #[test]
     fn bridge_get_ingredient_by_name() {
         let bridge = Bridge::new(make_seeded_db());
 
-        for spec in get_all_ingredient_specs() {
-            let ingredient = bridge.get_ingredient_by_name(&spec.name).unwrap();
-            assert_eq!(ingredient.name, spec.name);
-            assert_eq!(ingredient.category, spec.category);
+        for spec in get_all_spec_entries() {
+            let ingredient = bridge.get_ingredient_by_name(spec.name()).unwrap();
+            assert_eq!(ingredient.name, spec.name());
+        }
+
+        let db = make_seeded_db();
+        for ingredient in db.get_all_ingredients() {
+            let fetched = bridge.get_ingredient_by_name(&ingredient.name).unwrap();
+            assert_eq!(fetched, ingredient);
         }
     }
 
@@ -275,13 +279,14 @@ pub(crate) mod tests {
     fn bridge_get_all_ingredients() {
         let bridge = Bridge::new(make_seeded_db());
         let ingredients = bridge.get_all_ingredients();
-        assert_eq!(ingredients.len(), get_all_ingredient_specs().len());
+        assert_eq!(ingredients.len(), get_all_spec_entries().len());
 
-        for spec in get_all_ingredient_specs() {
+        let db = make_seeded_db();
+        for ingredient in db.get_all_ingredients() {
             assert_true!(
                 ingredients
                     .iter()
-                    .any(|ing| ing.name == spec.name && ing.category == spec.category)
+                    .any(|ing| ing.name == ingredient.name && ing.category == ingredient.category)
             );
         }
     }
@@ -289,10 +294,12 @@ pub(crate) mod tests {
     #[test]
     fn bridge_get_ingredients_by_category() {
         let bridge = Bridge::new(make_seeded_db());
+        let db = make_seeded_db();
 
         for category in Category::iter() {
             let ingredients = bridge.get_ingredients_by_category(category);
-            let expected_len = get_all_ingredient_specs()
+            let expected_len = db
+                .get_all_ingredients()
                 .iter()
                 .filter(|spec| spec.category == category)
                 .count();
@@ -344,12 +351,12 @@ pub(crate) mod tests {
         let bridge = Bridge::new(IngredientDatabase::new());
         assert!(bridge.get_all_ingredients().is_empty());
 
-        let ingredients = get_all_ingredient_specs()[..10]
+        let ingredients = get_all_independent_ingredient_specs()[..10]
             .iter()
             .map(|spec| spec.clone().into_ingredient().unwrap())
             .collect::<Vec<Ingredient>>();
 
-        bridge.seed(&ingredients);
+        bridge.seed(&ingredients).unwrap();
         assert_eq!(bridge.get_all_ingredients().len(), 10);
 
         for ingredient in ingredients {
@@ -363,25 +370,26 @@ pub(crate) mod tests {
         let bridge = Bridge::new(IngredientDatabase::new());
         assert!(bridge.get_all_ingredients().is_empty());
 
-        let specs = get_all_ingredient_specs()[..10].to_vec();
+        let specs = get_all_spec_entries();
 
         bridge.seed_from_specs(&specs).unwrap();
-        assert_eq!(bridge.get_all_ingredients().len(), 10);
+        assert_eq!(bridge.get_all_ingredients().len(), specs.len());
 
+        let db = IngredientDatabase::new_seeded_from_specs(&specs).unwrap();
         for spec in specs {
-            let fetched = bridge.get_ingredient_by_name(&spec.name).unwrap();
-            assert_eq!(fetched, spec.into_ingredient().unwrap());
+            let fetched = bridge.get_ingredient_by_name(spec.name()).unwrap();
+            assert_eq!(fetched, spec.resolve_into_ingredient(&db).unwrap());
         }
     }
 
     #[test]
     fn bridge_seed_from_specs_invalid_spec() {
         let bridge = Bridge::new(IngredientDatabase::new());
-        let invalid_spec = IngredientSpec {
+        let invalid_spec = SpecEntry::Ingredient(IngredientSpec {
             name: "Invalid Ingredient".to_string(),
             category: Category::Dairy,
             spec: DairySimpleSpec { fat: -10.0, msnf: None }.into(),
-        };
+        });
 
         let result = bridge.seed_from_specs(&[invalid_spec]);
         assert!(matches!(result, Err(crate::error::Error::CompositionNotPositive(_))));
@@ -392,11 +400,13 @@ pub(crate) mod tests {
         let bridge = Bridge::new(IngredientDatabase::new());
         assert_false!(bridge.has_ingredient("Whole Milk"));
 
-        bridge.seed(&[Ingredient {
-            name: "Whole Milk".to_string(),
-            category: Category::Dairy,
-            composition: Composition::new(),
-        }]);
+        bridge
+            .seed(&[Ingredient {
+                name: "Whole Milk".to_string(),
+                category: Category::Dairy,
+                composition: Composition::new(),
+            }])
+            .unwrap();
         assert_true!(bridge.has_ingredient("Whole Milk"));
     }
 }

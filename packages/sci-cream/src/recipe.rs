@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
 #[cfg(feature = "database")]
-use crate::database::IngredientDatabase;
+use crate::{database::IngredientDatabase, resolution::IngredientGetter};
 
 use crate::{composition::Composition, error::Result, fpd::FPD, ingredient::Ingredient, properties::MixProperties};
 

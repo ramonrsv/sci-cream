@@ -68,10 +68,10 @@ pub(crate) mod tests {
                 },
             ),
             (
-                "{\"alias\": \"Whipping Cream\", \"for\": \"36% Cream\"}",
+                "{\"alias\": \"Whipping Cream\", \"for\": \"35% Cream\"}",
                 AliasSpec {
                     alias: "Whipping Cream".to_string(),
-                    for_name: "36% Cream".to_string(),
+                    for_name: "35% Cream".to_string(),
                 },
             ),
         ]

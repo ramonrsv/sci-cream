@@ -3,8 +3,8 @@ use std::sync::LazyLock;
 use crate::recipe::{ConstRecipe, OwnedLightRecipe};
 
 pub(crate) use crate::specs::{
-    alcohol::tests::*, alias::tests::*, chocolate::tests::*, dairy::tests::*, egg::tests::*, fruit::tests::*,
-    full::tests::*, ingredient::tests::*, micro::tests::*, nut::tests::*, sweetener::tests::*,
+    alcohol::tests::*, alias::tests::*, chocolate::tests::*, composite::tests::*, dairy::tests::*, egg::tests::*,
+    fruit::tests::*, full::tests::*, ingredient::tests::*, micro::tests::*, nut::tests::*, sweetener::tests::*,
 };
 
 fn make_light_recipe_from_const(const_recipe: &ConstRecipe) -> OwnedLightRecipe {

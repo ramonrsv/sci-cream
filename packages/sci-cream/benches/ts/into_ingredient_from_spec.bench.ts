@@ -1,6 +1,6 @@
 import Benchmark from "benchmark";
 
-import { getIngredientSpecByName, into_ingredient_from_spec } from "../../dist/index";
+import { getIndependentIngredientSpecByName, into_ingredient_from_spec } from "../../dist/index";
 
 const suite = new Benchmark.Suite("into_ingredient_from_spec");
 
@@ -9,12 +9,12 @@ const ingredientSpecs = [
   "Baileys Irish Cream",
   "70% Dark Chocolate",
   "Cocoa Powder, 10% Fat",
-  "Whole Milk",
+  "3.25% Milk",
   "Leanfit Sport Whey Isolate",
-].map((name) => getIngredientSpecByName(name));
+].map((name) => getIndependentIngredientSpecByName(name));
 
-const darkRumSpec = getIngredientSpecByName("Dark Rum");
-const wheyIsolateSpec = getIngredientSpecByName("Leanfit Sport Whey Isolate");
+const darkRumSpec = getIndependentIngredientSpecByName("Dark Rum");
+const wheyIsolateSpec = getIndependentIngredientSpecByName("Leanfit Sport Whey Isolate");
 
 suite
   .add("into_ingredient_from_spec, single (Dark Rum)", () => {

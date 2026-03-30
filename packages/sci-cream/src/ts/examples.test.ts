@@ -1,7 +1,7 @@
 import { expect, test } from "vitest";
 
 import {
-  getIngredientSpecByName,
+  getIndependentIngredientSpecByName,
   into_ingredient_from_spec,
   Recipe,
   RecipeLine,
@@ -26,10 +26,15 @@ const RECIPE = [
 ];
 
 test("example, without using WasmBridge", () => {
-  const recipeLines = RECIPE.map(
+  // Aliases and composites not supported without WasmBridge
+  const NEW_RECIPE = RECIPE;
+  NEW_RECIPE[0][0] = "3.25% Milk";
+  NEW_RECIPE[1][0] = "35% Cream";
+
+  const recipeLines = NEW_RECIPE.map(
     ([name, quantity]) =>
       new RecipeLine(
-        into_ingredient_from_spec(getIngredientSpecByName(name as string)!),
+        into_ingredient_from_spec(getIndependentIngredientSpecByName(name as string)!),
         quantity as number,
       ),
   );

@@ -140,13 +140,13 @@ frozen water and hardness curves:
 The library has the following features that enable optional functionality:
 
 - `data`: Enables embedded ingredient definitions data from [`data/ingredients`][data/ingredients],
-  accessible via the `data` module, e.g. `get_all_ingredient_specs`. This can be used to access
-  pre-defined `IngredientSpec`s, in most cases obviating the need for users to define their own.
+  accessible via the `data` module, e.g. `get_all_spec_entries`. This can be used to access
+  pre-defined `SpecEntry`s, in most cases obviating the need for users to define their own.
   If the `database` feature is enabled, it can also be used to seed an `IngredientDatabase` via
   `IngredientDatabase::new_seeded_from_embedded_data`. This feature is enabled by default.
 - `database`: Enables the `IngredientDatabase` struct and related functionality, which provides
   an in-memory database of `Ingredient`s that can be looked up by name. It can be seeded with
-  `Ingredient`s and `IngredientSpec`s defined by the user. Alternatively, if the `data` feature
+  `Ingredient`s and `SpecEntry`s defined by the user. Alternatively, if the `data` feature
   is enabled, it can be seeded with the embedded ingredient definitions data via
   `IngredientDatabase::new_seeded_from_embedded_data`. This feature is enabled by default.
 - `wasm`: Enables WebAssembly support, including TypeScript bindings via
@@ -351,7 +351,12 @@ const RECIPE = [
   ["Vanilla Extract", 6],
 ];
 
-const recipeLines = RECIPE.map(
+// Aliases and composites not supported without WasmBridge
+const NEW_RECIPE = RECIPE;
+NEW_RECIPE[0][0] = "3.25% Milk";
+NEW_RECIPE[1][0] = "35% Cream";
+
+const recipeLines = NEW_RECIPE.map(
   ([name, quantity]) =>
     new RecipeLine(
       into_ingredient_from_spec(getIngredientSpecByName(name as string)!),

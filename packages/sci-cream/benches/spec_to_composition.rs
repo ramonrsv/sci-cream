@@ -1,9 +1,9 @@
 use criterion::{BatchSize, Criterion, criterion_group};
 
-use sci_cream::{composition::ToComposition, data::get_ingredient_spec_by_name};
+use sci_cream::{composition::ToComposition, data::get_independent_ingredient_spec_by_name};
 
 pub(crate) fn bench_sweetener_spec_to_composition(c: &mut Criterion) {
-    let sweetener_spec = get_ingredient_spec_by_name("HFCS 42")
+    let sweetener_spec = get_independent_ingredient_spec_by_name("HFCS 42")
         .unwrap()
         .spec
         .into_sweetener_spec()

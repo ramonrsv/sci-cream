@@ -10,11 +10,11 @@ import { ingredientsTable, SchemaCategory } from "@/lib/database/schema";
 import * as schema from "./schema";
 
 import {
+  getNonAliasIngredientSpecs,
   into_ingredient_from_spec,
   Category,
   Ingredient,
   Composition,
-  allIngredientSpecs,
 } from "@workspace/sci-cream";
 
 import { TEST_USER_A } from "@/lib/database/util";
@@ -29,7 +29,7 @@ test("Create Ingredient from specs from DB", async () => {
   const user = await findUserByEmail(TEST_USER_A.email);
   if (!user) throw new Error("User not found");
 
-  for (const spec of allIngredientSpecs) {
+  for (const spec of getNonAliasIngredientSpecs()) {
     expect(spec.category).toBeDefined();
 
     const [ingDrizzle] = await db

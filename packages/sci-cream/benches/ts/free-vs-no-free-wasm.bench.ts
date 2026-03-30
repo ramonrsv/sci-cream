@@ -1,11 +1,11 @@
 import Benchmark from "benchmark";
 
-import { getIngredientSpecByName } from "../../dist/index.js";
+import { getIndependentIngredientSpecs } from "../../dist/index.js";
 
 import { LIGHT_RECIPE, makeRecipeLines, cloneRecipeLines } from "./util.js";
 
 const specLines = LIGHT_RECIPE.map(([name, quantity]) => ({
-  spec: getIngredientSpecByName(name as string)!,
+  spec: getIndependentIngredientSpecs().find((spec) => spec.name === name)!,
   quantity: quantity as number,
 }));
 
