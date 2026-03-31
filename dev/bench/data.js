@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774994345979,
+  "lastUpdate": 1774994400159,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -120399,6 +120399,102 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 554.3,
             "range": "21.93",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "296410a134e6425149676eed7668cee632b4f48d",
+          "message": "Introduce dependent `CompositeSpec` & `AliasSpec`\n\n* Introduce `CompositeSpec`, a specification for composite ingredients,\n  which are defined as a combination of multiple other ingredients by\n  name, each with a specified percentage by weight.\n* Introduce `AliasSpec`, which allows an ingredient to be defined as an\n  alieas of another ingredient, e.g. \"Whole Milk\" for \"3.25% Milk\", etc.\n* Introduce the `ResolveComposition` trait. The new `CompositeSpec`\n  cannot be converted to a `Composition` by itself, since it needs to\n  look up the compositions of it constituent ingredients. As such, it is\n  not supported by `ToComposition`. It requires the new trait with\n  `resolve_composition(&self, getter: &dyn IngredientGetter)` that has\n  an `&dyn IngredientGetter` parameter via which to look up ingredients.\n* Introduce the `IngredientGetter` trait with `get_ingredient_by_name`,\n  to allow lookup methods other than via an `IngredientDatabase`.\n* Add TODO about including real composite specs into test assets.\n* Modify some ingredient to remove a generic name in favor of a specific\n  branded name based on the source; aliases will be added later.",
+          "timestamp": "2026-03-29T19:47:02-04:00",
+          "tree_id": "d40cc7616ba1d401052ef1fab881502ec9bfc9cd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/296410a134e6425149676eed7668cee632b4f48d"
+        },
+        "date": 1774994396462,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.357,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 809.7,
+            "range": "75.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 45.9,
+            "range": "5.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 56.9,
+            "range": "6.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 37.3,
+            "range": "6.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 34.2,
+            "range": "1.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 158.2,
+            "range": "5.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 42.2,
+            "range": "3.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 38.56,
+            "range": "1.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 28.74,
+            "range": "0.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 504.7,
+            "range": "14.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 504.6,
+            "range": "14.11",
             "unit": "ms"
           }
         ]
