@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774994908393,
+  "lastUpdate": 1774994987795,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -120958,6 +120958,102 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 504.6,
             "range": "14.11",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a0d62372736da2df3ea863fbf3712aa7b469582c",
+          "message": "Add data(base) support for `Alias/CompositeSpec`\n\n* Add support to the `data` module to handle `AliasSpec` and\n  `CompositeSpec`. Introduce new methods `get_all_spec_entries` and\n  `get_spec_entry_by_name` which support all entries, including\n  `AliasSpec` and `CompositeSpec`. New method\n  `get_all_independent_ingredient_specs` filters out `AliasSpec`\n  and `CompositeSpec`. New `get_independent_ingredient_spec_by_name`\n  returns an error if the entry with the specified name is one of\n  `AlisSpec` or `CompositeSpec`.\n* Add support to `IngredientDatabase` to handle `AliasSpec` and\n  `CompositeSpec` in `seed_from_specs`. The function now allows\n  dependent specs that reference ingredients already in the database\n  or present in the collection being seeded. It processes first the\n  independent specs, then the composites, since they may only reference\n  independent specs, and lastly aliases.\n* Add support for `wasm::Bridge` to handle `SpecEntry`s instead of\n  `IngredientSpec`s, thereby adding support for the new specs.\n* Refactor `ts/ingredient.ts` and tests into `ts/data.ts` and\n  `ts/data.test.ts`, with a new interface that add support for the\n  new alias and composite specs.\n* Modify some Dairy ingredients to be aliases, e.g. \"Whole Milk\" is an\n  alias for \"3.25% Milk\", \"Whipping Cream\" for \"35% Cream\", etc.\n* Change some instances of \"Whole Milk\" and \"Whipping Cream\" to their\n  referenced independent ingredient names, as dependent ones are not\n  supported in some contexts, e.g. in bench assets for `to_ingredient`.\n* Modify App user-defined ingredient seeding to skip aliases in the the\n  list of embedded specs, as those are not supported in the database,\n  since they don't have a category; this may change in the future.",
+          "timestamp": "2026-03-31T01:36:01-04:00",
+          "tree_id": "429480f9b845e3576dee028a803db324718dfde6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a0d62372736da2df3ea863fbf3712aa7b469582c"
+        },
+        "date": 1774994983150,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 14.496,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 849.4,
+            "range": "76.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 47.9,
+            "range": "6.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 61.2,
+            "range": "5.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.4,
+            "range": "6.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 37.7,
+            "range": "2.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 166,
+            "range": "6.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 43.7,
+            "range": "2.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 42.94,
+            "range": "1.02",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 31.16,
+            "range": "1.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 541.1,
+            "range": "14.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 558.6,
+            "range": "15.67",
             "unit": "ms"
           }
         ]
