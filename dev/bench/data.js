@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774642014248,
+  "lastUpdate": 1774994051687,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -130857,6 +130857,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 597476,
             "range": "±0.70%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "296410a134e6425149676eed7668cee632b4f48d",
+          "message": "Introduce dependent `CompositeSpec` & `AliasSpec`\n\n* Introduce `CompositeSpec`, a specification for composite ingredients,\n  which are defined as a combination of multiple other ingredients by\n  name, each with a specified percentage by weight.\n* Introduce `AliasSpec`, which allows an ingredient to be defined as an\n  alieas of another ingredient, e.g. \"Whole Milk\" for \"3.25% Milk\", etc.\n* Introduce the `ResolveComposition` trait. The new `CompositeSpec`\n  cannot be converted to a `Composition` by itself, since it needs to\n  look up the compositions of it constituent ingredients. As such, it is\n  not supported by `ToComposition`. It requires the new trait with\n  `resolve_composition(&self, getter: &dyn IngredientGetter)` that has\n  an `&dyn IngredientGetter` parameter via which to look up ingredients.\n* Introduce the `IngredientGetter` trait with `get_ingredient_by_name`,\n  to allow lookup methods other than via an `IngredientDatabase`.\n* Add TODO about including real composite specs into test assets.\n* Modify some ingredient to remove a generic name in favor of a specific\n  branded name based on the source; aliases will be added later.",
+          "timestamp": "2026-03-29T19:47:02-04:00",
+          "tree_id": "d40cc7616ba1d401052ef1fab881502ec9bfc9cd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/296410a134e6425149676eed7668cee632b4f48d"
+        },
+        "date": 1774994048450,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78772,
+            "range": "±0.70%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 716036,
+            "range": "±0.79%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10166,
+            "range": "±1.94%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 607538,
+            "range": "±0.89%",
             "unit": "ops/sec",
             "extra": "91 samples"
           }
