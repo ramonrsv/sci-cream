@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774994400159,
+  "lastUpdate": 1774994622353,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -131470,6 +131470,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.89%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "a0d62372736da2df3ea863fbf3712aa7b469582c",
+          "message": "Add data(base) support for `Alias/CompositeSpec`\n\n* Add support to the `data` module to handle `AliasSpec` and\n  `CompositeSpec`. Introduce new methods `get_all_spec_entries` and\n  `get_spec_entry_by_name` which support all entries, including\n  `AliasSpec` and `CompositeSpec`. New method\n  `get_all_independent_ingredient_specs` filters out `AliasSpec`\n  and `CompositeSpec`. New `get_independent_ingredient_spec_by_name`\n  returns an error if the entry with the specified name is one of\n  `AlisSpec` or `CompositeSpec`.\n* Add support to `IngredientDatabase` to handle `AliasSpec` and\n  `CompositeSpec` in `seed_from_specs`. The function now allows\n  dependent specs that reference ingredients already in the database\n  or present in the collection being seeded. It processes first the\n  independent specs, then the composites, since they may only reference\n  independent specs, and lastly aliases.\n* Add support for `wasm::Bridge` to handle `SpecEntry`s instead of\n  `IngredientSpec`s, thereby adding support for the new specs.\n* Refactor `ts/ingredient.ts` and tests into `ts/data.ts` and\n  `ts/data.test.ts`, with a new interface that add support for the\n  new alias and composite specs.\n* Modify some Dairy ingredients to be aliases, e.g. \"Whole Milk\" is an\n  alias for \"3.25% Milk\", \"Whipping Cream\" for \"35% Cream\", etc.\n* Change some instances of \"Whole Milk\" and \"Whipping Cream\" to their\n  referenced independent ingredient names, as dependent ones are not\n  supported in some contexts, e.g. in bench assets for `to_ingredient`.\n* Modify App user-defined ingredient seeding to skip aliases in the the\n  list of embedded specs, as those are not supported in the database,\n  since they don't have a category; this may change in the future.",
+          "timestamp": "2026-03-31T01:36:01-04:00",
+          "tree_id": "429480f9b845e3576dee028a803db324718dfde6",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/a0d62372736da2df3ea863fbf3712aa7b469582c"
+        },
+        "date": 1774994618277,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76916,
+            "range": "±1.27%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 728643,
+            "range": "±0.35%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10091,
+            "range": "±1.88%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 602074,
+            "range": "±0.79%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
