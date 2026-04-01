@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1774994987795,
+  "lastUpdate": 1775010692513,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -132081,6 +132081,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.79%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d768a88b89a0c4c502a2a9ea4cd29f7ef5b0b3cb",
+          "message": "Add top-level docs for `AliasSpec`/`CompositeSpec`\n\n* Add documentation to `README.md` and `lib.rs` about `AliasSpec` and\n  `CompositeSpec`, the \"dependent\" specs. These contain code examples\n  for `AliasSpec`, but are missing examples for `CompositeSpec`. Add a\n  TODO about including composite spec examples.\n* Add TODOs about `data` support for resolving dependent specs, for\n  encoding (in)dependent specs in different enums, and for adding\n  `resolution` module support for validating a collection of specs.",
+          "timestamp": "2026-03-31T22:02:38-04:00",
+          "tree_id": "5a324a212b1fd7fbe002842cc7d2428ffc952a3e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d768a88b89a0c4c502a2a9ea4cd29f7ef5b0b3cb"
+        },
+        "date": 1775010688958,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 77916,
+            "range": "±1.01%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 721016,
+            "range": "±0.65%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10063,
+            "range": "±1.92%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 595783,
+            "range": "±0.82%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
