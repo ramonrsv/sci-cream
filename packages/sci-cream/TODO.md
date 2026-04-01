@@ -14,7 +14,8 @@
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
 - [ ] Add lactose-free support to `DairySimpleSpec`, to allow simple lactose-free ingredient specs.
 - [ ] Add evaporated milk ingredients, e.g. 'Evaporated Milk', 'Fat Free Evaporated Skim Milk', etc.
-- [ ] Once there are real composite ingredients, add them to the test assets to be verified.
+- [ ] Once there are real composite ingredients, add them to the test assets to be verified. Also
+      add CompositeSpec examples to the documentation code snippets, in `README.md` and `lib.rs`.
 
 # Up Next
 
@@ -23,6 +24,9 @@
       category presets for different kinds of frozen desserts, e.g. ice-cream, sherbet, sorbet, etc.
 - [ ] Add balancer functionality to automatically balance recipes and component substitutions.
 - [ ] Consider adding support for `Composition` to also return `Unit` instead of just `f64`.
+- [ ] Add support for `data` to resolve `AliasSpec` and `CompositeSpec` on per-spec requests.
+- [ ] Encode (in)dependent specs in different enums; don't implement `ToIngredient` for dependents.
+- [ ] Add `resolution` support for validating a spec collection for reference sanity, etc.
 
 # Backlog
 

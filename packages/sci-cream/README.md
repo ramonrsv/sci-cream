@@ -242,15 +242,15 @@ available, and examples of how to use them.
 
 <a id="dairy-spec-example"></a>
 As an example, the code snippet below shows how to define a `Composition` for _'2% Milk'_ using
-the `DairySpec`, which only requires the user to specify the fat content. The resulting
+the `DairySimpleSpec`, which only requires the user to specify the fat content. The resulting
 composition is equivalent to the one constructed in the [previous example](#composition-example).
 
 <br>
 
 ```rust
-use sci_cream::{CompKey::*, composition::ToComposition, specs::DairySpec};
+use sci_cream::{CompKey::*, composition::ToComposition, specs::DairySimpleSpec};
 
-let dairy_spec = DairySpec { fat: 2.0, msnf: None };
+let dairy_spec = DairySimpleSpec { fat: 2.0, msnf: None };
 let comp = dairy_spec.to_composition()?;
 
 assert_eq_float!(comp.get(Energy), 49.576);
@@ -271,12 +271,13 @@ all defined as JSON strings of `IngredientSpec`s and serve as good examples, loc
 [`data/ingredients`][data/ingredients].
 
 <a id="ingredient-spec-dairy-json-example"></a>
-For example, `"DairySpec": { "fat": 2 }` is the JSON representation of the `DairySpec` [example
-above](#dairy-spec-example) for _'2% Milk'_. Typically they are defined as `IngredientSpec`s that
-include the ingredient name and category as well. Below is an example for a _'2% Milk'_ ingredient.
+For example, `"DairySimpleSpec": { "fat": 2 }` is the JSON representation of the `DairySimpleSpec`
+[example above](#dairy-spec-example) for _'2% Milk'_. Typically they are defined as
+`IngredientSpec`s that include the ingredient name and category as well. Below is an example for a
+_'2% Milk'_ ingredient.
 
 ```json
-{ "name": "2% Milk", "category": "Dairy", "DairySpec": { "fat": 2 } }
+{ "name": "2% Milk", "category": "Dairy", "DairySimpleSpec": { "fat": 2 } }
 ```
 
 <br>
@@ -312,6 +313,47 @@ the ingredient list, assuming 55% dextrose, ~40% maltodextrin, 5% water, and eno
 reach a POD of 840 (works out to ~1.32% using a POD of 11 for maltodextrin). PAC is calculated for
 55% dextrose and 40% Maltodextrin 10 DE with a PAC of 18. Energy is calculated internally from the
 composition. <https://www.splenda.com/product/splenda-sweetener-packets/>"_
+
+`AliasSpec` and `CompositeSpec` are "dependent" specs that allow ingredient specs to reference
+other ingredient specs, either as aliases or as components of a composite ingredient. This allows
+for more modular and reusable ingredient definitions, e.g. "Whole Milk" can be defined as an alias
+of "3.25% Milk", and ... @todo composite spec example ... Since these specs reference other
+ingredient specs, they cannot be directly converted into a `Composition` or `Ingredient` on
+their own, but instead need to lookup the ingredient specs they reference in order to access their
+`Composition`. This is done via the `ResolveComposition` and `ResolveIntoIngredient` traits
+which take an `IngredientGetter` that allows them to look up spec dependencies.
+`IngredientDatabase` implements this trait.
+
+```rust
+let db = IngredientDatabase::new_seeded_from_specs(
+    get_all_independent_ingredient_specs()
+        .into_iter()
+        .map(SpecEntry::Ingredient)
+        .collect::<Vec<_>>()
+        .as_slice(),
+)?;
+
+let whole_milk_spec = AliasSpec {
+    alias: "Whole Milk".into(),
+    for_name: "3.25% Milk".into(),
+};
+
+assert_eq!(
+    whole_milk_spec.resolve_composition(&db)?,
+    db.get_ingredient_by_name("3.25% Milk")?.composition
+);
+
+// @todo composite spec example
+// ...
+```
+
+These specs can also be easily defined in JSON format. The equivalent of the above examples is:
+
+```json
+{
+  { "alias": "Whole Milk", "for": "3.25% Milk" }
+}
+```
 
 # WASM Interoperability
 

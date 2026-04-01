@@ -282,13 +282,14 @@ Specs can also be deserialized from JSON format - they are actually designed to 
 user-friendly when defined in JSON. This allows them to be easily defined in external files, stored
 in databases, sent over APIs, etc. See the documentation of each spec for more details and examples
 of how to define them in JSON. More expansively, the ingredient definitions in the embedded data are
-all defined as JSON strings of [`IngredientSpec`]s and serve as good examples, located at
+all defined as JSON strings of [`SpecEntry`]s and serve as good examples, located at
 [`data/ingredients`][data/ingredients].
 
 <a id="ingredient-spec-dairy-json-example"></a>
-For example, `"DairySimpleSpec": { "fat": 2 }` is the JSON representation of the [`DairySimpleSpec`] [example
-above](#dairy-spec-example) for _'2% Milk'_. Typically they are defined as [`IngredientSpec`]s that
-include the ingredient name and category as well. Below is an example for a _'2% Milk'_ ingredient.
+For example, `"DairySimpleSpec": { "fat": 2 }` is the JSON representation of the [`DairySimpleSpec`]
+[example above](#dairy-spec-example) for _'2% Milk'_. Typically they are defined as
+[`IngredientSpec`]s that include the ingredient name and category as well. Below is an example for
+a _'2% Milk'_ ingredient.
 
 ```json
 {
@@ -335,6 +336,56 @@ reach a POD of 840 (works out to ~1.32% using a POD of 11 for maltodextrin). PAC
 55% dextrose and 40% Maltodextrin 10 DE with a PAC of 18. Energy is calculated internally from the
 composition. <https://www.splenda.com/product/splenda-sweetener-packets/>"_
 
+[`AliasSpec`] and [`CompositeSpec`] are "dependent" specs that allow ingredient specs to reference
+other ingredient specs, either as aliases or as components of a composite ingredient. This allows
+for more modular and reusable ingredient definitions, e.g. "Whole Milk" can be defined as an alias
+of "3.25% Milk", and ... @todo composite spec example ... Since these specs reference other
+ingredient specs, they cannot be directly converted into a [`Composition`] or [`Ingredient`] on
+their own, but instead need to lookup the ingredient specs they reference in order to access their
+[`Composition`]. This is done via the [`ResolveComposition`] and [`ResolveIntoIngredient`] traits
+which take an [`IngredientGetter`] that allows them to look up spec dependencies.
+[`IngredientDatabase`] implements this trait.
+
+```
+# fn main() -> Result<(), Box<dyn std::error::Error>> {
+# use sci_cream::{
+#     composition::ResolveComposition,
+#     data::get_all_independent_ingredient_specs,
+#     database::IngredientDatabase,
+#     resolution::IngredientGetter,
+#     specs::{AliasSpec, CompositeSpec, SpecEntry},
+# };
+#
+let db = IngredientDatabase::new_seeded_from_specs(
+    get_all_independent_ingredient_specs()
+        .into_iter()
+        .map(SpecEntry::Ingredient)
+        .collect::<Vec<_>>()
+        .as_slice(),
+)?;
+
+let whole_milk_spec = AliasSpec {
+    alias: "Whole Milk".into(),
+    for_name: "3.25% Milk".into(),
+};
+
+assert_eq!(
+    whole_milk_spec.resolve_composition(&db)?,
+    db.get_ingredient_by_name("3.25% Milk")?.composition
+);
+
+// @todo composite spec example
+// ...
+# Ok(()) }
+```
+
+These specs can also be easily defined in JSON format. The equivalent of the above examples is:
+
+```json
+{
+  { "alias": "Whole Milk", "for": "3.25% Milk" }
+}
+```
 
 # WASM Interoperability
 
@@ -477,11 +528,13 @@ pub use database::IngredientDatabase;
 
 #[cfg(doc)]
 use crate::{
-    composition::{Carbohydrates, Fats, SolidsBreakdown, Sugars, Sweeteners},
+    composition::{Carbohydrates, Fats, ResolveComposition, SolidsBreakdown, Sugars, Sweeteners},
     constants::composition::{STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM},
     fpd::Curves,
+    ingredient::ResolveIntoIngredient,
+    resolution::IngredientGetter,
     specs::{
-        DairySimpleSpec, IngredientSpec, SpecEntry, SweetenerSpec,
+        AliasSpec, CompositeSpec, DairySimpleSpec, IngredientSpec, SpecEntry, SweetenerSpec,
         units::{CompositionBasis, Scaling, Unit},
     },
 };
