@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1775010983515,
+  "lastUpdate": 1775011028035,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -121517,6 +121517,102 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 558.6,
             "range": "15.67",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d768a88b89a0c4c502a2a9ea4cd29f7ef5b0b3cb",
+          "message": "Add top-level docs for `AliasSpec`/`CompositeSpec`\n\n* Add documentation to `README.md` and `lib.rs` about `AliasSpec` and\n  `CompositeSpec`, the \"dependent\" specs. These contain code examples\n  for `AliasSpec`, but are missing examples for `CompositeSpec`. Add a\n  TODO about including composite spec examples.\n* Add TODOs about `data` support for resolving dependent specs, for\n  encoding (in)dependent specs in different enums, and for adding\n  `resolution` module support for validating a collection of specs.",
+          "timestamp": "2026-03-31T22:02:38-04:00",
+          "tree_id": "5a324a212b1fd7fbe002842cc7d2428ffc952a3e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d768a88b89a0c4c502a2a9ea4cd29f7ef5b0b3cb"
+        },
+        "date": 1775011024622,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 13.638,
+            "range": "0.000",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 839.1,
+            "range": "82.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 47.2,
+            "range": "6.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57.2,
+            "range": "5.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 37.2,
+            "range": "5.10",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 34.3,
+            "range": "3.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 161,
+            "range": "8.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 40.6,
+            "range": "2.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 38.22,
+            "range": "0.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 26.81,
+            "range": "0.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 505.8,
+            "range": "14.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 520.6,
+            "range": "10.10",
             "unit": "ms"
           }
         ]
