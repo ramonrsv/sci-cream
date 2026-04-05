@@ -30,15 +30,16 @@ use crate::{
 };
 
 const EMBEDDED_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
-    ("dairy.json", include_str!("../data/ingredients/dairy.json")),
-    ("sweeteners.json", include_str!("../data/ingredients/sweeteners.json")),
-    ("fruits.json", include_str!("../data/ingredients/fruits.json")),
-    ("chocolates.json", include_str!("../data/ingredients/chocolates.json")),
-    ("nuts.json", include_str!("../data/ingredients/nuts.json")),
-    ("eggs.json", include_str!("../data/ingredients/eggs.json")),
     ("alcohol.json", include_str!("../data/ingredients/alcohol.json")),
-    ("micros.json", include_str!("../data/ingredients/micros.json")),
+    ("chocolates.json", include_str!("../data/ingredients/chocolates.json")),
+    ("dairy.json", include_str!("../data/ingredients/dairy.json")),
+    ("eggs.json", include_str!("../data/ingredients/eggs.json")),
+    ("emulsifiers.json", include_str!("../data/ingredients/emulsifiers.json")),
+    ("fruits.json", include_str!("../data/ingredients/fruits.json")),
     ("miscellaneous.json", include_str!("../data/ingredients/miscellaneous.json")),
+    ("nuts.json", include_str!("../data/ingredients/nuts.json")),
+    ("stabilizers.json", include_str!("../data/ingredients/stabilizers.json")),
+    ("sweeteners.json", include_str!("../data/ingredients/sweeteners.json")),
 ];
 
 /// Parses a JSON string of spec entries into a map of ingredient names or aliases to their spec
@@ -247,9 +248,9 @@ pub(crate) mod tests {
     //
     // These tests are mostly to keep explicit track of the total number of embedded specs.
 
-    const EXPECTED_EMBEDDED_SPEC_COUNT: usize = 94;
-    const EXPECTED_EMBEDDED_SPEC_NON_ALIAS_COUNT: usize = 89;
-    const EXPECTED_EMBEDDED_SPEC_INDEPENDENT_COUNT: usize = 89;
+    const EXPECTED_EMBEDDED_SPEC_COUNT: usize = 114;
+    const EXPECTED_EMBEDDED_SPEC_NON_ALIAS_COUNT: usize = 104;
+    const EXPECTED_EMBEDDED_SPEC_INDEPENDENT_COUNT: usize = 100;
 
     #[test]
     fn spec_entry_counts() {
@@ -389,10 +390,10 @@ pub(crate) mod tests {
 
     #[test]
     fn parse_spec_entries_includes_composite_entries() {
-        let json = format!("[{ING_SPEC_COMPOSITE_MILK_CREAM_50_50_STR}]");
+        let json = format!("[{ING_SPEC_COMPOSITE_UNDERBELLY_GP_SB_STR}]");
         let entries = super::parse_spec_entries_from_json_string(&json).unwrap();
         assert_eq!(entries.len(), 1);
-        let entry = entries.get("Milk-Cream Blend 50-50").unwrap();
+        let entry = entries.get("Underbelly General Purpose Stabilizer Blend").unwrap();
         assert!(matches!(
             entry,
             SpecEntry::Ingredient(spec) if matches!(spec.spec, TaggedSpec::CompositeSpec(_))
@@ -401,17 +402,21 @@ pub(crate) mod tests {
 
     #[test]
     fn parse_spec_entries_mixed_alias_and_composite() {
-        use crate::specs::composite::tests::ING_SPEC_COMPOSITE_MILK_CREAM_80_20_STR;
+        use crate::specs::composite::tests::ING_SPEC_COMPOSITE_UNDERBELLY_GP_SB_STR;
+
         let json = format!(
             r#"[
                 {{"alias": "Whole Milk", "for": "3.25% Milk"}},
-                {ING_SPEC_COMPOSITE_MILK_CREAM_80_20_STR}
+                {ING_SPEC_COMPOSITE_UNDERBELLY_GP_SB_STR}
             ]"#
         );
         let entries = super::parse_spec_entries_from_json_string(&json).unwrap();
         assert_eq!(entries.len(), 2);
         assert!(matches!(entries.get("Whole Milk").unwrap(), SpecEntry::Alias(_)));
-        assert!(matches!(entries.get("Milk-Cream Blend 80-20").unwrap(), SpecEntry::Ingredient(_)));
+        assert!(matches!(
+            entries.get("Underbelly General Purpose Stabilizer Blend").unwrap(),
+            SpecEntry::Ingredient(_)
+        ));
     }
 
     // --- sweetener ratio sorting ---

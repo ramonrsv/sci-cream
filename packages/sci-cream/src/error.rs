@@ -58,6 +58,9 @@ pub enum Error {
     /// seeding an [`IngredientDatabase`] with a list of ingredients or ingredient specs.
     #[error("Ingredient name is not unique: {0}")]
     IngredientNameNotUnique(String),
+    /// Invalid ingredient spec, e.g. due to missing required fields, invalid values, etc.
+    #[error("Invalid ingredient spec: {0}")]
+    InvalidSpec(String),
 }
 
 #[cfg_attr(coverage, coverage(off))]

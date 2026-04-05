@@ -88,7 +88,7 @@ pub(crate) mod tests {
 
     // --- ByPercentage ---
 
-    pub(crate) const ING_SPEC_COMPOSITE_MILK_CREAM_50_50_STR: &str = r#"{
+    const ING_SPEC_COMPOSITE_MILK_CREAM_50_50_STR: &str = r#"{
       "name": "Milk-Cream Blend 50-50",
       "category": "Dairy",
       "CompositeSpec": {
@@ -99,17 +99,16 @@ pub(crate) mod tests {
       }
     }"#;
 
-    pub(crate) static ING_SPEC_COMPOSITE_MILK_CREAM_50_50: LazyLock<IngredientSpec> =
-        LazyLock::new(|| IngredientSpec {
-            name: "Milk-Cream Blend 50-50".to_string(),
-            category: Category::Dairy,
-            spec: CompositeSpec {
-                components: Basis::ByPercentage(vec![("2% Milk".to_string(), 50.0), ("40% Cream".to_string(), 50.0)]),
-            }
-            .into(),
-        });
+    static ING_SPEC_COMPOSITE_MILK_CREAM_50_50: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Milk-Cream Blend 50-50".to_string(),
+        category: Category::Dairy,
+        spec: CompositeSpec {
+            components: Basis::ByPercentage(vec![("2% Milk".to_string(), 50.0), ("40% Cream".to_string(), 50.0)]),
+        }
+        .into(),
+    });
 
-    pub(crate) const ING_SPEC_COMPOSITE_MILK_CREAM_80_20_STR: &str = r#"{
+    const ING_SPEC_COMPOSITE_MILK_CREAM_80_20_STR: &str = r#"{
       "name": "Milk-Cream Blend 80-20",
       "category": "Dairy",
       "CompositeSpec": {
@@ -120,15 +119,14 @@ pub(crate) mod tests {
       }
     }"#;
 
-    pub(crate) static ING_SPEC_COMPOSITE_MILK_CREAM_80_20: LazyLock<IngredientSpec> =
-        LazyLock::new(|| IngredientSpec {
-            name: "Milk-Cream Blend 80-20".to_string(),
-            category: Category::Dairy,
-            spec: CompositeSpec {
-                components: Basis::ByPercentage(vec![("2% Milk".to_string(), 80.0), ("40% Cream".to_string(), 20.0)]),
-            }
-            .into(),
-        });
+    static ING_SPEC_COMPOSITE_MILK_CREAM_80_20: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Milk-Cream Blend 80-20".to_string(),
+        category: Category::Dairy,
+        spec: CompositeSpec {
+            components: Basis::ByPercentage(vec![("2% Milk".to_string(), 80.0), ("40% Cream".to_string(), 20.0)]),
+        }
+        .into(),
+    });
 
     #[test]
     fn parse_composite_spec_from_json_empty() {
@@ -230,7 +228,7 @@ pub(crate) mod tests {
 
     // --- ByParts ---
 
-    pub(crate) const ING_SPEC_COMPOSITE_MILK_CREAM_1_1_PARTS_STR: &str = r#"{
+    const ING_SPEC_COMPOSITE_MILK_CREAM_1_1_PARTS_STR: &str = r#"{
       "name": "Milk-Cream Blend 1:1 Parts",
       "category": "Dairy",
       "CompositeSpec": {
@@ -241,17 +239,16 @@ pub(crate) mod tests {
       }
     }"#;
 
-    pub(crate) static ING_SPEC_COMPOSITE_MILK_CREAM_1_1_PARTS: LazyLock<IngredientSpec> =
-        LazyLock::new(|| IngredientSpec {
-            name: "Milk-Cream Blend 1:1 Parts".to_string(),
-            category: Category::Dairy,
-            spec: CompositeSpec {
-                components: Basis::ByParts(vec![("2% Milk".to_string(), 1.0), ("40% Cream".to_string(), 1.0)]),
-            }
-            .into(),
-        });
+    static ING_SPEC_COMPOSITE_MILK_CREAM_1_1_PARTS: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Milk-Cream Blend 1:1 Parts".to_string(),
+        category: Category::Dairy,
+        spec: CompositeSpec {
+            components: Basis::ByParts(vec![("2% Milk".to_string(), 1.0), ("40% Cream".to_string(), 1.0)]),
+        }
+        .into(),
+    });
 
-    pub(crate) const ING_SPEC_COMPOSITE_MILK_CREAM_4_1_PARTS_STR: &str = r#"{
+    const ING_SPEC_COMPOSITE_MILK_CREAM_4_1_PARTS_STR: &str = r#"{
       "name": "Milk-Cream Blend 4:1 Parts",
       "category": "Dairy",
       "CompositeSpec": {
@@ -262,15 +259,14 @@ pub(crate) mod tests {
       }
     }"#;
 
-    pub(crate) static ING_SPEC_COMPOSITE_MILK_CREAM_4_1_PARTS: LazyLock<IngredientSpec> =
-        LazyLock::new(|| IngredientSpec {
-            name: "Milk-Cream Blend 4:1 Parts".to_string(),
-            category: Category::Dairy,
-            spec: CompositeSpec {
-                components: Basis::ByParts(vec![("2% Milk".to_string(), 4.0), ("40% Cream".to_string(), 1.0)]),
-            }
-            .into(),
-        });
+    static ING_SPEC_COMPOSITE_MILK_CREAM_4_1_PARTS: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Milk-Cream Blend 4:1 Parts".to_string(),
+        category: Category::Dairy,
+        spec: CompositeSpec {
+            components: Basis::ByParts(vec![("2% Milk".to_string(), 4.0), ("40% Cream".to_string(), 1.0)]),
+        }
+        .into(),
+    });
 
     #[test]
     fn parse_composite_spec_from_json_by_parts() {
@@ -377,4 +373,58 @@ pub(crate) mod tests {
         let err = spec.resolve_composition(&db).unwrap_err();
         assert_eq!(err.to_string(), "Ingredient not found: Nonexistent Ingredient");
     }
+
+    // --- Real Assets ---
+
+    pub(crate) const ING_SPEC_COMPOSITE_UNDERBELLY_GP_SB_STR: &str = r#"{
+      "name": "Underbelly General Purpose Stabilizer Blend",
+      "category": "Stabilizer",
+      "CompositeSpec": {
+        "ByParts": [
+          ["Locust Bean Gum", 4],
+          ["Guar Gum", 2],
+          ["Lambda Carrageenan", 1]
+        ]
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_COMPOSITE_UNDERBELLY_GP_SB: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Underbelly General Purpose Stabilizer Blend".to_string(),
+            category: Category::Stabilizer,
+            spec: CompositeSpec {
+                components: Basis::ByParts(vec![
+                    ("Locust Bean Gum".to_string(), 4.0),
+                    ("Guar Gum".to_string(), 2.0),
+                    ("Lambda Carrageenan".to_string(), 1.0),
+                ]),
+            }
+            .into(),
+        });
+
+    #[test]
+    fn resolve_composition_composite_spec_underbelly_gp_sb() {
+        let db = IngredientDatabase::new_seeded_from_embedded_data();
+
+        let combo = [
+            ("Locust Bean Gum".to_string(), 4.0 / 7.0 * 100.0),
+            ("Guar Gum".to_string(), 2.0 / 7.0 * 100.0),
+            ("Lambda Carrageenan".to_string(), 1.0 / 7.0 * 100.0),
+        ]
+        .map(|(name, weight)| (db.get_ingredient_by_name(&name).unwrap().composition, weight))
+        .to_vec();
+
+        let composite_comp = ING_SPEC_COMPOSITE_UNDERBELLY_GP_SB.resolve_composition(&db).unwrap();
+        let combined_comp = Composition::from_combination(&combo).unwrap();
+        assert_eq!(composite_comp, combined_comp);
+
+        assert_eq!(composite_comp.get(CompKey::Fiber), 100.0);
+        assert_eq!(composite_comp.get(CompKey::TotalSolids), 100.0);
+        assert_eq!(composite_comp.get(CompKey::Stabilizers), 100.0);
+    }
+
+    pub(crate) static INGREDIENT_ASSETS_TABLE_COMPOSITE: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
+        LazyLock::new(|| {
+            vec![(ING_SPEC_COMPOSITE_UNDERBELLY_GP_SB_STR, ING_SPEC_COMPOSITE_UNDERBELLY_GP_SB.clone(), None)]
+        });
 }

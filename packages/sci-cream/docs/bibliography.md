@@ -72,6 +72,22 @@
 
 [^36]: Furia, T.E. (1972). _Handbook of Food Additives_ (2nd ed.). CRC Press
 
+[^37]: Raphaelson, Paul. (2023, January). _Ice Cream Stabilizers_. <https://under-belly.org/ice-cream-stabilizers/>
+
+[^38]: Raphaelson, Paul. (2023, January). _Ice Cream Emulsifiers_. <https://under-belly.org/ice-cream-emulsifiers/>
+
+[^39]: Williams, et al. (2003). _11 - The use of hydrocolloids to improve food texture_. Texture in Food, Volume 1: Semi-Solid Foods, pages 251-274. <https://www.sciencedirect.com/science/chapter/edited-volume/abs/pii/B9781855736733500163>
+
+[^40]: Chin, Tim. (2024, September). _A Guide to Cornstarch_. Serious Eats. <https://www.seriouseats.com/what-is-cornstarch-5324865>
+
+[^41]: Pikosky, Matt. (2016, July). _What Is The Difference Between Whey and Casein Protein?_ Undeniably Dairy. <https://www.usdairy.com/news-articles/whats-the-difference-between-casein-and-whey>
+
+[^42]: Ice Cream Science. (2026, April). _Why are stabilizers used in ice cream?_. <https://www.icecreamscience.com/blog/stabilizers-ice-cream>
+
+[^43]: Carl. (2024, April). _How to use stabilizers in ice cream_. Dream Scoops <https://www.dreamscoops.com/ice-cream-science/using-stabilizers-ice-cream/>
+
+[^44]: Drugs.com (2025, July). _Carboxymethylcellulose_. <https://www.drugs.com/inactive/carboxymethylcellulose-589>
+
 <!-- Ingredient references -->
 
 [^100]: Eggs, Grade A, Large, egg yolk. (2019). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/748236/nutrients>
@@ -105,3 +121,5 @@
 [^114]: Syrup, maple, Canadian. (2018). In _USDA FoodData Central - SR Legacy_. <https://fdc.nal.usda.gov/food-details/170276/nutrients>
 
 [^115]: Splenda Sweetener Packets. (2026). In _Splenda_. <https://www.splenda.com/product/splenda-sweetener-packets/>
+
+[^116]: Perfected Guar Gum. (2026). In _Modernist Pantry_. <https://modernistpantry.com/products/perfected-guar-gum.html>

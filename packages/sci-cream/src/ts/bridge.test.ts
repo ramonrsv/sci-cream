@@ -22,7 +22,7 @@ const lightRecipe = [
   ["Dextrose", 45],
   ["Fructose", 32],
   ["Salt", 0.5],
-  ["Rich Ice Cream SB", 1.25],
+  ["Stabilizer Blend", 1.25],
   ["Vanilla Extract", 6],
 ];
 

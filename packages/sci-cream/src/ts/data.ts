@@ -1,12 +1,13 @@
-import dairyJson from "../../data/ingredients/dairy.json";
-import sweetenersJson from "../../data/ingredients/sweeteners.json";
-import fruitsJson from "../../data/ingredients/fruits.json";
-import chocolatesJson from "../../data/ingredients/chocolates.json";
-import nutsJson from "../../data/ingredients/nuts.json";
-import eggsJson from "../../data/ingredients/eggs.json";
 import alcoholJson from "../../data/ingredients/alcohol.json";
-import microsJson from "../../data/ingredients/micros.json";
+import chocolatesJson from "../../data/ingredients/chocolates.json";
+import dairyJson from "../../data/ingredients/dairy.json";
+import eggsJson from "../../data/ingredients/eggs.json";
+import emulsifiersJson from "../../data/ingredients/emulsifiers.json";
+import fruitsJson from "../../data/ingredients/fruits.json";
 import miscellaneousJson from "../../data/ingredients/miscellaneous.json";
+import nutsJson from "../../data/ingredients/nuts.json";
+import stabilizersJson from "../../data/ingredients/stabilizers.json";
+import sweetenersJson from "../../data/ingredients/sweeteners.json";
 
 export type IngredientSpecJson = { name: string; category: string; [key: string]: unknown };
 export type AliasSpecJson = { alias: string; for: string };
@@ -19,15 +20,16 @@ function flattenLists(jsonLists: SpecEntryJson[][]): SpecEntryJson[] {
 
 /** All built-in spec entries aggregated from every ingredient category JSON file. */
 export const allSpecEntries = flattenLists([
-  dairyJson,
-  sweetenersJson,
-  fruitsJson,
-  chocolatesJson,
-  nutsJson,
-  eggsJson,
   alcoholJson,
-  microsJson,
+  chocolatesJson,
+  dairyJson,
+  eggsJson,
+  emulsifiersJson,
+  fruitsJson,
   miscellaneousJson,
+  nutsJson,
+  stabilizersJson,
+  sweetenersJson,
 ]);
 
 /** Returns the name of a spec entry, whether it's an ingredient or an alias. */

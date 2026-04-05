@@ -23,7 +23,7 @@ macro_rules! main_recipe {
             ("Dextrose", 45.0),
             ("Fructose", 32.0),
             ("Salt", 0.5),
-            ("Rich Ice Cream SB", 1.25),
+            ("Stabilizer Blend", 1.25),
             ("Vanilla Extract", 6.0),
         ]
         .map(|(name, amount)| (name.to_string(), amount))

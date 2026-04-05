@@ -2,11 +2,8 @@
 
 - [ ] Add code example doc tests to all specs that don't already have them.
 
-- [ ] Rework `specs::Micro` to pull out stabilizers and emulsifiers into their own category(s).
-      Should they be separate `Stabilizer` and `Emulsifier`, or something like `Texturant` that
-      includes both? I prefer the latter, which accommodates blends like "Louis Francois Stab 2000",
-      but users might find it confusing in.
-- [ ] Add gum stabilizer ingredients and Underbelly blends with reference links and explicit ratios.
+- [ ] Add "Louis Francois Stab 2000" ingredient, which has stabilizer and emulsifier components.
+
 - [ ] Add a beginner-friendly overview of the core ice cream science concepts, e.g. FPD curves.
 - [ ] Consider whether to add `CompKey` for all polyols and artificial sweeteners.
 - [ ] Split literature and ingredient definition bibliography; the latter clutters the docs.
@@ -16,6 +13,18 @@
 - [ ] Add evaporated milk ingredients, e.g. 'Evaporated Milk', 'Fat Free Evaporated Skim Milk', etc.
 - [ ] Once there are real composite ingredients, add them to the test assets to be verified. Also
       add CompositeSpec examples to the documentation code snippets, in `README.md` and `lib.rs`.
+- [ ] Separate the different `constants` modules into their own files, as it's getting long.
+- [ ] Figure out how to track egg and milk proteins for stabilizing properties. If they are included
+      in `composition::Stabilizers`, then we may need to differentiate those from stabilizer
+      ingredients like gums, gelatin, etc. If they are not included, then that would be inconsistent
+      with how `Emulsifiers` is populated, and it would make it harder to calculate `Texture`.
+- [ ] Modify `EggSpec`, `Dairy*Spec`, etc. to populate `Stabilizers` and `Emulsifiers` with
+      appropriate sub-components, e.g. lecithin, egg proteins, whey/casein proteins, etc.
+- [ ] Refine the stabilizer strength constants - try to find a recipe that's similar between
+      Underbelly, Dana, etc. and compare the recommended concentrations of different stabilizers.
+- [ ] Add support for tracking milk casein/whey proteins and egg yolk/white proteins. This may need
+      modifications to `Composition`, and the specs need to be modified to allow more specificity.
+- [ ] Add unit tests for `to_texture` methods, stabilizer/emulsifier strength values, etc.
 
 # Up Next
 
@@ -48,9 +57,18 @@
       be misused by users; this should not present an extensibility issue with the current design.
 - [ ] Consider adding composition traits for calculating POD, PAC, and energy, total (sum), etc.
 - [ ] Add more unit tests and example ingredients defined using `FullSpec`; it's WIP at the moment.
+- [ ] Look into quantifying stabilizers' different functions, e.g. ice crystal suppression, adding
+      viscosity, flavour release, mouthfeel, etc. May be difficult to source strength values.
 
 # Completed
 
+- [x] Add gum stabilizer ingredients and Underbelly blends with reference links and explicit ratios.
+- [x] Add functionality for `Stabilizers` and `Emulsifiers` to generate their own solids breakdown
+      and `Texture`. This would help maintain DRY in specs that have stabilizers and/or emulsifiers.
+- [x] Rework `specs::Micro` to pull out stabilizers and emulsifiers into their own category(s).
+      Should they be separate `Stabilizer` and `Emulsifier`, or something like `Texturant` that
+      includes both? I prefer the latter, which accommodates blends like "Louis Francois Stab 2000",
+      but users might find it confusing in.
 - [x] Add support for ingredient name aliases so that generic names, e.g. 'Chocolate Powder', can be
       explicitly linked to more specific or branded names, e.g. 'Chocolate Powder, 17% at'.
 - [x] Add support for composite ingredient specs, i.e. allowing ingredients to be specified as a

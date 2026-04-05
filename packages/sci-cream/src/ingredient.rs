@@ -63,8 +63,10 @@ pub enum Category {
     Egg,
     /// Alcoholic ingredients, e.g. spirits, liqueurs, etc.
     Alcohol,
-    /// Salt, emulsifiers and stabilizers, e.g. guar gum, carrageenan, lecithin, etc.
-    Micro,
+    /// Stabilizer ingredients, e.g. gums, starches, gelatin, stabilizer blends, etc.
+    Stabilizer,
+    /// Emulsifier ingredients, e.g. lecithin, mono- and diglycerides, etc.
+    Emulsifier,
     /// Miscellaneous ingredients that do not fit into other categories
     Miscellaneous,
 }
@@ -166,7 +168,8 @@ mod tests {
         assert_eq!(Category::Nut.to_string(), "Nut");
         assert_eq!(Category::Egg.to_string(), "Egg");
         assert_eq!(Category::Alcohol.to_string(), "Alcohol");
-        assert_eq!(Category::Micro.to_string(), "Micro");
+        assert_eq!(Category::Stabilizer.to_string(), "Stabilizer");
+        assert_eq!(Category::Emulsifier.to_string(), "Emulsifier");
         assert_eq!(Category::Miscellaneous.to_string(), "Miscellaneous");
     }
 
@@ -175,8 +178,13 @@ mod tests {
         for cat in [
             Category::Dairy,
             Category::Sweetener,
+            Category::Fruit,
             Category::Chocolate,
+            Category::Nut,
             Category::Egg,
+            Category::Alcohol,
+            Category::Stabilizer,
+            Category::Emulsifier,
             Category::Miscellaneous,
         ] {
             let ser = serde_json::to_string(&cat).unwrap();
@@ -235,8 +243,8 @@ mod tests {
     fn ingredient_inequality_different_composition() {
         let comp1 = Composition::empty().energy(1.0);
         let comp2 = Composition::empty().energy(2.0);
-        let a = Ingredient::new("X".to_string(), Category::Micro, comp1);
-        let b = Ingredient::new("X".to_string(), Category::Micro, comp2);
+        let a = Ingredient::new("X".to_string(), Category::Miscellaneous, comp1);
+        let b = Ingredient::new("X".to_string(), Category::Miscellaneous, comp2);
         assert_ne!(a, b);
         assert_abs_diff_ne!(a, b);
     }
@@ -245,8 +253,8 @@ mod tests {
     fn ingredient_abs_diff_eq_within_epsilon() {
         let comp1 = Composition::empty().energy(1.0);
         let comp2 = Composition::empty().energy(1.0 + 1e-10);
-        let a = Ingredient::new("Salt".to_string(), Category::Micro, comp1);
-        let b = Ingredient::new("Salt".to_string(), Category::Micro, comp2);
+        let a = Ingredient::new("Salt".to_string(), Category::Miscellaneous, comp1);
+        let b = Ingredient::new("Salt".to_string(), Category::Miscellaneous, comp2);
         assert_abs_diff_eq!(a, b, epsilon = 1e-9);
     }
 
@@ -254,8 +262,8 @@ mod tests {
     fn ingredient_abs_diff_eq_outside_epsilon() {
         let comp1 = Composition::empty().energy(1.0);
         let comp2 = Composition::empty().energy(2.0);
-        let a = Ingredient::new("Salt".to_string(), Category::Micro, comp1);
-        let b = Ingredient::new("Salt".to_string(), Category::Micro, comp2);
+        let a = Ingredient::new("Salt".to_string(), Category::Miscellaneous, comp1);
+        let b = Ingredient::new("Salt".to_string(), Category::Miscellaneous, comp2);
         assert_abs_diff_ne!(a, b, epsilon = 1e-10);
     }
 

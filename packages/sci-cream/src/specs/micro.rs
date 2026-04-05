@@ -1,4 +1,4 @@
-//! [`MicroSpec`] and associated implementations, for micro ingredients like salt, emulsifiers, etc.
+//! [`MicroSpec`] and associated implementations, for micro ingredients like salt, etc.
 
 use serde::{Deserialize, Serialize};
 
@@ -6,100 +6,27 @@ use crate::{
     composition::{Composition, Micro, PAC, Solids, SolidsBreakdown, ToComposition},
     constants::{self},
     error::Result,
-    validate::{Validate, verify_are_positive},
+    validate::Validate,
 };
 
-/// Spec for ingredients with solely micro components, e.g. salt, emulsifiers, stabilizer, etc.
-///
-/// These ingredients are assumed to be 100% solids non-fat non-sugar (technically lecithin is a
-/// lipid and therefore a subset of fats, but that is ignored here for simplicity's sake), with the
-/// `(emulsifier)_strength` and `(stabilizer)_strength` fields representing their relative strengths
-/// as a percentage of a reference.
-///
-/// This "strength" is a very fuzzy concept, since it's difficult to precisely quantify the
-/// effectiveness of emulsifiers and stabilizers, and they often differ in their modes of action and
-/// their effects have different properties than just a linear more or less stabilizing/emulsifying
-/// effect. However, this allows for a rough scaling, differentiating between very weak and very
-/// strong ingredients, for example between cornstarch and Locust Bean Gum as stabilizers, the
-/// recommended usage levels of which differ by an order of magnitude.
-///
-/// Roughly, strong gums like Guar Gum, Locust Bean Gum, Lambda Carrageenan, etc. are taken as the
-/// reference and have a stabilizer strength of 100, with a recommended dosage of ~1.5g/kg
-/// (Raphaelson, 2016, Standard Base)[^5]. Cornstarch and similar have a stabilizer strength of ~15,
-/// with a recommended dosage of ~10g/kg (Cree, 2017, Blank Slate Custard Ice Cream p. 115)[^6].
-/// Commercial blends, such as _"Louis Francois Stab 2000"_, usually cut the active ingredients with
-/// fillers, so the relative strength of the ingredient as a whole is lower than that of pure gums.
-/// With a manufacturer recommended dosage of ~3.5g/kg, "Louis Francois Stab 2000" has a relative
-/// stabilizer strength of ~40. Lecithin is taken as the reference emulsifier with a strength of
-/// 100, with a recommended dosage of ~3.25g/kg (Raphaelson, 2016, Standard Base)[^5]. Something
-/// like _"Louis Francois Stab 2000"_ has a similar recommended dosage for its emulsifier component,
-/// so it also has a a relative emulsifier strength of 100.
+/// Spec for ingredients with solely micro components, e.g. salt, etc.
 #[doc = include_str!("../../docs/bibs/5.md")]
 #[doc = include_str!("../../docs/bibs/6.md")]
-#[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[derive(Eq, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub enum MicroSpec {
     /// Assumed to be 100% salt, with all details calculated internally
     Salt,
-    /// Assumed to be 100% lecithin, with all details calculated internally
-    Lecithin,
-    /// A pure stabilizer, with the `strength` field representing its relative strength
-    Stabilizer {
-        /// Relative strength of the stabilizer, relative to a reference strong stabilizer like
-        /// Guar Gum, Locust Bean Gum, Carrageenans, etc., which have a strength of 100.
-        strength: f64,
-    },
-    /// A pure emulsifier, with the `strength` field representing its relative strength
-    Emulsifier {
-        /// Relative strength of the emulsifier, relative to a reference strong emulsifier like
-        /// lecithin, which has a strength of 100.
-        strength: f64,
-    },
-    /// A combined emulsifier and stabilizer, with the `strength` fields representing their relative
-    /// strengths, independently of each other.
-    EmulsifierStabilizer {
-        /// Relative strength of the emulsifier, see [`MicroSpec::Emulsifier::strength`]
-        emulsifier_strength: f64,
-        /// Relative strength of the stabilizer, see [`MicroSpec::Stabilizer::strength`]
-        stabilizer_strength: f64,
-    },
 }
 
 impl ToComposition for MicroSpec {
     fn to_composition(&self) -> Result<Composition> {
-        let make_emulsifier_stabilizer_composition =
-            |emulsifiers_strength: Option<f64>, stabilizers_strength: Option<f64>| -> Result<Composition> {
-                let emulsifiers_strength = emulsifiers_strength.unwrap_or(0.0);
-                let stabilizers_strength = stabilizers_strength.unwrap_or(0.0);
-
-                verify_are_positive(&[emulsifiers_strength, stabilizers_strength])?;
-
-                Composition::new()
-                    .solids(Solids::new().other(SolidsBreakdown::new().others(100.0)))
-                    .micro(
-                        Micro::new()
-                            .emulsifiers(emulsifiers_strength)
-                            .stabilizers(stabilizers_strength),
-                    )
-                    .validate_into()
-            };
-
         match *self {
             Self::Salt => Composition::new()
                 .solids(Solids::new().other(SolidsBreakdown::new().others(100.0)))
                 .micro(Micro::new().salt(100.0))
                 .pac(PAC::new().salt(constants::pac::SALT))
                 .validate_into(),
-            Self::Lecithin => Composition::new()
-                .solids(Solids::new().other(SolidsBreakdown::new().others(100.0)))
-                .micro(Micro::new().lecithin(100.0).emulsifiers(100.0))
-                .validate_into(),
-            Self::Stabilizer { strength } => make_emulsifier_stabilizer_composition(None, Some(strength)),
-            Self::Emulsifier { strength } => make_emulsifier_stabilizer_composition(Some(strength), None),
-            Self::EmulsifierStabilizer {
-                emulsifier_strength,
-                stabilizer_strength,
-            } => make_emulsifier_stabilizer_composition(Some(emulsifier_strength), Some(stabilizer_strength)),
         }
     }
 }
@@ -115,17 +42,17 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
+    use crate::{composition::CompKey, ingredient::Category, specs::IngredientSpec};
 
     pub(crate) const ING_SPEC_MICRO_SALT_STR: &str = r#"{
       "name": "Salt",
-      "category": "Micro",
+      "category": "Miscellaneous",
       "MicroSpec": "Salt"
     }"#;
 
     pub(crate) static ING_SPEC_MICRO_SALT: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "Salt".to_string(),
-        category: Category::Micro,
+        category: Category::Miscellaneous,
         spec: MicroSpec::Salt.into(),
     });
 
@@ -141,135 +68,6 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 585.0);
     }
 
-    pub(crate) const ING_SPEC_MICRO_LECITHIN_STR: &str = r#"{
-      "name": "Lecithin",
-      "category": "Micro",
-      "MicroSpec": "Lecithin"
-    }"#;
-
-    pub(crate) static ING_SPEC_MICRO_LECITHIN: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-        name: "Lecithin".to_string(),
-        category: Category::Micro,
-        spec: MicroSpec::Lecithin.into(),
-    });
-
-    #[test]
-    fn to_composition_micro_spec_lecithin() {
-        let comp = MicroSpec::Lecithin.to_composition().unwrap();
-
-        // @todo This should be 9.0 kcal/g since lecithin is a lipid
-        assert_eq!(comp.get(CompKey::Energy), 0.0);
-
-        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 100.0);
-        assert_eq!(comp.get(CompKey::Lecithin), 100.0);
-    }
-
-    pub(crate) const ING_SPEC_MICRO_STABILIZER_STR: &str = r#"{
-      "name": "Rich Ice Cream SB",
-      "category": "Micro",
-      "MicroSpec": {
-        "Stabilizer": {
-        "strength": 100
-        }
-      }
-    }"#;
-
-    pub(crate) static ING_SPEC_MICRO_STABILIZER: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-        name: "Rich Ice Cream SB".to_string(),
-        category: Category::Micro,
-        spec: MicroSpec::Stabilizer { strength: 100.0 }.into(),
-    });
-
-    #[test]
-    fn to_composition_micro_spec_stabilizer_rich_ice_cream_sb() {
-        let comp = ING_SPEC_MICRO_STABILIZER.spec.to_composition().unwrap();
-
-        assert_eq!(comp.get(CompKey::Energy), 0.0);
-        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 100.0);
-    }
-
-    #[test]
-    fn to_composition_micro_spec_stabilizer_not_100() {
-        let comp = MicroSpec::Stabilizer { strength: 85.0 }.to_composition().unwrap();
-
-        assert_eq!(comp.get(CompKey::Energy), 0.0);
-        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 85.0);
-    }
-
-    #[test]
-    fn to_composition_micro_spec_emulsifier_not_100() {
-        let comp = MicroSpec::Emulsifier { strength: 60.0 }.to_composition().unwrap();
-
-        assert_eq!(comp.get(CompKey::Energy), 0.0);
-        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 60.0);
-    }
-
-    pub(crate) const ING_SPEC_MICRO_LOUIS_STAB2K_STR: &str = r#"{
-      "name": "Louis Francois Stab 2000",
-      "category": "Micro",
-      "MicroSpec": {
-        "EmulsifierStabilizer": {
-          "emulsifier_strength": 100,
-          "stabilizer_strength": 40
-        }
-      }
-    }"#;
-
-    pub(crate) static ING_SPEC_MICRO_LOUIS_STAB2K: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-        name: "Louis Francois Stab 2000".to_string(),
-        category: Category::Micro,
-        spec: MicroSpec::EmulsifierStabilizer {
-            emulsifier_strength: 100.0,
-            stabilizer_strength: 40.0,
-        }
-        .into(),
-    });
-
-    #[test]
-    fn to_composition_micro_spec_emulsifier_stabilizer_louis_francois_stab_2000() {
-        let comp = ING_SPEC_MICRO_LOUIS_STAB2K.spec.to_composition().unwrap();
-
-        assert_eq!(comp.get(CompKey::Energy), 0.0);
-        assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
-        assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 100.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 40.0);
-    }
-
     pub(crate) static INGREDIENT_ASSETS_TABLE_MICRO: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
-        LazyLock::new(|| {
-            vec![
-                (ING_SPEC_MICRO_SALT_STR, ING_SPEC_MICRO_SALT.clone(), None),
-                (ING_SPEC_MICRO_LECITHIN_STR, ING_SPEC_MICRO_LECITHIN.clone(), None),
-                (ING_SPEC_MICRO_STABILIZER_STR, ING_SPEC_MICRO_STABILIZER.clone(), None),
-                (ING_SPEC_MICRO_LOUIS_STAB2K_STR, ING_SPEC_MICRO_LOUIS_STAB2K.clone(), None),
-            ]
-        });
-
-    #[test]
-    fn to_composition_err_on_negative_strength() {
-        let neg_cases = [
-            MicroSpec::Stabilizer { strength: -1.0 },
-            MicroSpec::Emulsifier { strength: -1.0 },
-            MicroSpec::EmulsifierStabilizer {
-                emulsifier_strength: -1.0,
-                stabilizer_strength: 1.0,
-            },
-            MicroSpec::EmulsifierStabilizer {
-                emulsifier_strength: 1.0,
-                stabilizer_strength: -1.0,
-            },
-        ];
-        for spec in neg_cases {
-            assert!(matches!(spec.to_composition(), Err(Error::CompositionNotPositive(_))));
-        }
-    }
+        LazyLock::new(|| vec![(ING_SPEC_MICRO_SALT_STR, ING_SPEC_MICRO_SALT.clone(), None)]);
 }

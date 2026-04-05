@@ -6,7 +6,7 @@ use crate::{
     composition::Composition,
     database::IngredientDatabase,
     error::Result,
-    ingredient::{Category, Ingredient},
+    ingredient::{Category, Ingredient, ResolveIntoIngredient},
     properties::MixProperties,
     recipe::{LightRecipe, Recipe},
     resolution::IngredientGetter,
@@ -75,6 +75,15 @@ impl Bridge {
     pub fn seed_from_specs(&self, specs: &[SpecEntry]) -> Result<()> {
         self.db.seed_from_specs(specs)
     }
+
+    /// Resolves an ingredient from a [`SpecEntry`] using the internal database
+    ///
+    /// # Errors
+    ///
+    /// It forwards any errors from [`SpecEntry::resolve_into_ingredient`]; see for more details.
+    pub fn resolve_into_ingredient_from_spec(&self, spec: SpecEntry) -> Result<Ingredient> {
+        spec.resolve_into_ingredient(&self.db)
+    }
 }
 
 #[wasm_bindgen]
@@ -120,7 +129,7 @@ pub mod wasm {
     use super::Bridge;
     use crate::{
         composition::Composition, ingredient::Ingredient, properties::MixProperties,
-        recipe::wasm::light_recipe_from_jsvalue,
+        recipe::wasm::light_recipe_from_jsvalue, specs::entry::wasm::spec_entry_from_jsvalue,
     };
 
     #[cfg(doc)]
@@ -191,6 +200,18 @@ pub mod wasm {
         pub fn seed_from_specs_wasm(&self, specs: Box<[JsValue]>) -> Result<(), JsValue> {
             self.db.seed_from_specs_wasm(specs)
         }
+
+        /// WASM compatible wrapper for [`Bridge::resolve_into_ingredient_from_spec`]
+        ///
+        /// # Errors
+        ///
+        /// It forwards any errors from [`spec_entry_from_jsvalue`] and
+        /// [`Bridge::resolve_into_ingredient_from_spec`]; see those methods for more details.
+        #[wasm_bindgen(js_name = "resolve_into_ingredient_from_spec")]
+        pub fn resolve_into_ingredient_from_spec_wasm(&self, spec: JsValue) -> Result<Ingredient, JsValue> {
+            self.resolve_into_ingredient_from_spec(spec_entry_from_jsvalue(spec)?)
+                .map_err(Into::into)
+        }
     }
 }
 
@@ -220,7 +241,7 @@ pub(crate) mod tests {
         ("Dextrose", 45.0),
         ("Fructose", 32.0),
         ("Salt", 0.5),
-        ("Rich Ice Cream SB", 1.25),
+        ("Stabilizer Blend", 1.25),
         ("Vanilla Extract", 6.0),
     ];
 
@@ -379,6 +400,17 @@ pub(crate) mod tests {
         for spec in specs {
             let fetched = bridge.get_ingredient_by_name(spec.name()).unwrap();
             assert_eq!(fetched, spec.resolve_into_ingredient(&db).unwrap());
+        }
+    }
+
+    #[test]
+    fn bridge_resolve_into_ingredient_from_spec() {
+        let bridge = Bridge::new(make_seeded_db());
+
+        for spec in get_all_spec_entries() {
+            let ingredient = bridge.resolve_into_ingredient_from_spec(spec.clone()).unwrap();
+            assert_eq!(ingredient.name, spec.name());
+            assert_eq!(ingredient.category, spec.resolve_into_ingredient(&bridge.db).unwrap().category);
         }
     }
 

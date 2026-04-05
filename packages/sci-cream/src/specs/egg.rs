@@ -3,8 +3,8 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Composition, Fats, Micro, Solids, SolidsBreakdown, ToComposition},
-    constants::{self},
+    composition::{Composition, Emulsifiers, Fats, Micro, Solids, SolidsBreakdown, ToComposition},
+    constants,
     error::Result,
     validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
@@ -95,10 +95,14 @@ impl ToComposition for EggSpec {
             .proteins(protein)
             .others_from_total(100.0 - water)?;
 
+        let micro = Micro::new().emulsifiers(Emulsifiers::new().lecithin(lecithin));
+        let texture = micro.emulsifiers.to_texture(None)?;
+
         Composition::new()
             .energy(egg_solids.energy()?)
             .solids(Solids::new().egg(egg_solids))
-            .micro(Micro::new().lecithin(lecithin).emulsifiers(lecithin))
+            .micro(micro)
+            .texture(texture)
             .validate_into()
     }
 }
@@ -114,7 +118,12 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
+    use crate::{
+        composition::{CompKey, Texture},
+        error::Error,
+        ingredient::Category,
+        specs::IngredientSpec,
+    };
 
     pub(crate) const ING_SPEC_EGG_YOLK_STR: &str = r#"{
       "name": "Egg Yolk",
@@ -150,7 +159,8 @@ pub(crate) mod tests {
                         .others(3.0),
                 ),
             )
-            .micro(Micro::new().emulsifiers(9.0).lecithin(9.0))
+            .micro(Micro::new().emulsifiers(Emulsifiers::new().lecithin(9.0)))
+            .texture(Texture::new().emulsification(9.0))
     });
 
     #[test]
@@ -166,6 +176,8 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TotalSolids), 49.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
         assert_eq!(comp.get(CompKey::Lecithin), 9.0);
+
+        assert_eq!(comp.micro.emulsifiers.lecithin, 9.0);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_EGG: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =

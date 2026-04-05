@@ -4,7 +4,8 @@ use crate::recipe::{ConstRecipe, OwnedLightRecipe};
 
 pub(crate) use crate::specs::{
     alcohol::tests::*, alias::tests::*, chocolate::tests::*, composite::tests::*, dairy::tests::*, egg::tests::*,
-    fruit::tests::*, full::tests::*, ingredient::tests::*, micro::tests::*, nut::tests::*, sweetener::tests::*,
+    emulsifier::tests::*, fruit::tests::*, full::tests::*, ingredient::tests::*, micro::tests::*, nut::tests::*,
+    stabilizer::tests::*, sweetener::tests::*,
 };
 
 fn make_light_recipe_from_const(const_recipe: &ConstRecipe) -> OwnedLightRecipe {
@@ -23,7 +24,7 @@ const MAIN_RECIPE_CONST: &[(&str, f64)] = &[
     ("Dextrose", 45.0),
     ("Fructose", 32.0),
     ("Salt", 0.5),
-    ("Rich Ice Cream SB", 1.25),
+    ("Stabilizer Blend", 1.25),
     ("Vanilla Extract", 6.0),
 ];
 
@@ -36,7 +37,7 @@ const REF_A_RECIPE_CONST: &[(&str, f64)] = &[
     ("Dextrose", 25.0),
     ("Fructose", 6.0),
     ("Salt", 0.5),
-    ("Rich Ice Cream SB", 0.84),
+    ("Stabilizer Blend", 0.84),
 ];
 
 const REF_B_RECIPE_CONST: &[(&str, f64)] = &[
@@ -51,7 +52,7 @@ const REF_B_RECIPE_CONST: &[(&str, f64)] = &[
     ("Splenda (Sucralose)", 2.0),
     ("SweetLeaf Stevia", 0.8),
     ("Salt", 0.5),
-    ("Rich Ice Cream SB", 0.9),
+    ("Stabilizer Blend", 0.9),
     ("Grand Marnier Cordon Rouge", 53.0),
 ];
 

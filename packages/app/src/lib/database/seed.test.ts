@@ -11,10 +11,14 @@ import * as schema from "./schema";
 
 import {
   getNonAliasIngredientSpecs,
+  isSpecEntryIndependent,
+  Bridge as WasmBridge,
+  new_ingredient_database_seeded_from_specs,
   into_ingredient_from_spec,
   Category,
   Ingredient,
   Composition,
+  getIndependentIngredientSpecs,
 } from "@workspace/sci-cream";
 
 import { TEST_USER_A } from "@/lib/database/util";
@@ -28,6 +32,10 @@ test("Find TEST_USER_A", async () => {
 test("Create Ingredient from specs from DB", async () => {
   const user = await findUserByEmail(TEST_USER_A.email);
   if (!user) throw new Error("User not found");
+
+  const bridge = new WasmBridge(
+    new_ingredient_database_seeded_from_specs(getIndependentIngredientSpecs()),
+  );
 
   for (const spec of getNonAliasIngredientSpecs()) {
     expect(spec.category).toBeDefined();
@@ -53,7 +61,14 @@ test("Create Ingredient from specs from DB", async () => {
 
     const expectedCategory = Category[spec.category as keyof typeof Category];
 
-    const ingParsed = into_ingredient_from_spec(ingDrizzle.spec);
+    const ingParsed = (() => {
+      if (isSpecEntryIndependent(spec)) {
+        return into_ingredient_from_spec(ingDrizzle.spec);
+      } else {
+        return bridge.resolve_into_ingredient_from_spec(ingDrizzle.spec);
+      }
+    })();
+
     expect(ingParsed.name).toBe(spec.name);
     expect(ingParsed.category).toBe(expectedCategory);
     expect(ingParsed.composition.solids).toBeDefined();

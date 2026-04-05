@@ -7,7 +7,7 @@ use struct_iterable::Iterable;
 use strum_macros::EnumIter;
 
 use crate::{
-    composition::{Alcohol, Micro, PAC, Solids},
+    composition::{Alcohol, Micro, PAC, Solids, Texture},
     error::Result,
     resolution::IngredientGetter,
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
@@ -18,7 +18,7 @@ use wasm_bindgen::prelude::*;
 
 #[cfg(doc)]
 use crate::{
-    composition::{ArtificialSweeteners, Carbohydrates, Polyols, Sugars},
+    composition::{ArtificialSweeteners, Carbohydrates, Emulsifiers, Polyols, Sugars},
     error::Error,
     specs::{ChocolateSpec, CompositeSpec},
 };
@@ -117,6 +117,8 @@ pub struct Composition {
     pub pod: f64,
     /// [Potere Anti-Cristallizzante (PAC)](crate::docs#pac), expressed as a sucrose equivalence
     pub pac: PAC,
+    /// Texture properties, representing the overall contributions from various components
+    pub texture: Texture,
 }
 
 /// Keys for accessing specific composition values from a [`Composition`] via [`Composition::get()`]
@@ -291,13 +293,15 @@ pub enum CompKey {
     ///
     /// Note that this is a subset of [`CompKey::TotalSolids`].
     Salt,
-    /// Total lecithin content, a subset of emulsifiers, tracked in [`Micro::lecithin`]
+    /// Total lecithin content, a subset of emulsifiers, tracked in [`Emulsifiers::lecithin`]
     Lecithin,
     /// Total emulsifier content, including lecithin and others tracked in [`Micro::emulsifiers`]
-    // @todo Should this be explicit about the concept and unit of "strength" of emulsifiers?
+    // @todo Introduce `Emulsification` as a separate key, representing the overall emulsification
+    // strength of the mix from all sources, as tracked in [`Texture::emulsification`]
     Emulsifiers,
     /// Total stabilizer content, e.g. from Locust Bean Gum, etc. tracked in [`Micro::stabilizers`]
-    // @todo Should this be explicit about the concept and unit of "strength" of stabilizers?
+    // @todo Introduce `Stabilization` as a separate key, representing the overall stabilization
+    // strength of the mix from all sources, as tracked in [`Texture::stabilization`]
     Stabilizers,
     /// Total emulsifier content per fat content, i.e. `Emulsifiers / TotalFats`, as a percentage
     EmulsifiersPerFat,
@@ -337,6 +341,7 @@ impl Composition {
             alcohol: Alcohol::empty(),
             pod: 0.0,
             pac: PAC::empty(),
+            texture: Texture::empty(),
         }
     }
 
@@ -380,6 +385,12 @@ impl Composition {
     #[must_use]
     pub const fn pac(self, pac: PAC) -> Self {
         Self { pac, ..self }
+    }
+
+    /// Field-update method for [`texture`](Self::texture)
+    #[must_use]
+    pub const fn texture(self, texture: Texture) -> Self {
+        Self { texture, ..self }
     }
 
     /// Calculates the composition of a mix from a weighted combination of its ingredients
@@ -435,7 +446,7 @@ impl Composition {
     #[must_use]
     pub fn emulsifiers_per_fat(&self) -> f64 {
         if self.solids.all().fats.total > 0.0 {
-            (self.micro.emulsifiers / self.solids.all().fats.total) * 100.0
+            (self.micro.emulsifiers.total() / self.solids.all().fats.total) * 100.0
         } else {
             f64::NAN
         }
@@ -449,7 +460,7 @@ impl Composition {
     #[must_use]
     pub fn stabilizers_per_water(&self) -> f64 {
         if self.water() > 0.0 {
-            (self.micro.stabilizers / self.water()) * 100.0
+            (self.micro.stabilizers.total() / self.water()) * 100.0
         } else {
             f64::NAN
         }
@@ -526,9 +537,9 @@ impl Composition {
             CompKey::ABV => self.alcohol.to_abv(),
 
             CompKey::Salt => self.micro.salt,
-            CompKey::Lecithin => self.micro.lecithin,
-            CompKey::Emulsifiers => self.micro.emulsifiers,
-            CompKey::Stabilizers => self.micro.stabilizers,
+            CompKey::Lecithin => self.micro.emulsifiers.lecithin,
+            CompKey::Emulsifiers => self.micro.emulsifiers.total(),
+            CompKey::Stabilizers => self.micro.stabilizers.total(),
             CompKey::EmulsifiersPerFat => self.emulsifiers_per_fat(),
             CompKey::StabilizersPerWater => self.stabilizers_per_water(),
 
@@ -551,6 +562,7 @@ impl Validate for Composition {
         self.micro.validate()?;
         self.alcohol.validate()?;
         self.pac.validate()?;
+        self.texture.validate()?;
         verify_are_positive(&[self.energy, self.pod])?;
         verify_is_within_100_percent(self.solids.total() + self.alcohol.by_weight)?;
         Ok(())
@@ -566,6 +578,7 @@ impl ScaleComponents for Composition {
             alcohol: self.alcohol.scale(factor),
             pod: self.pod * factor,
             pac: self.pac.scale(factor),
+            texture: self.texture.scale(factor),
         }
     }
 
@@ -577,6 +590,7 @@ impl ScaleComponents for Composition {
             alcohol: self.alcohol.add(&other.alcohol),
             pod: self.pod + other.pod,
             pac: self.pac.add(&other.pac),
+            texture: self.texture.add(&other.texture),
         }
     }
 }
@@ -595,6 +609,7 @@ impl AbsDiffEq for Composition {
             && self.alcohol.abs_diff_eq(&other.alcohol, epsilon)
             && self.pod.abs_diff_eq(&other.pod, epsilon)
             && self.pac.abs_diff_eq(&other.pac, epsilon)
+            && self.texture.abs_diff_eq(&other.texture, epsilon)
     }
 }
 
@@ -621,18 +636,19 @@ mod tests {
     use super::*;
     use crate::composition::*;
 
-    const FIELD_MODIFIERS: [fn(&mut Composition, f64); 6] = [
+    const FIELD_MODIFIERS: [fn(&mut Composition, f64); 7] = [
         |c, v| c.energy += v,
         |c, v| c.solids.milk.fats.total += v,
         |c, v| c.micro.salt += v,
         |c, v| c.alcohol.by_weight += v,
         |c, v| c.pod += v,
         |c, v| c.pac.sugars += v,
+        |c, v| c.texture.stabilization += v,
     ];
 
     #[test]
     fn composition_field_count() {
-        assert_eq!(Composition::new().iter().count(), 6);
+        assert_eq!(Composition::new().iter().count(), 7);
     }
 
     #[test]
@@ -652,6 +668,7 @@ mod tests {
         assert_eq!(c.alcohol, Alcohol::empty());
         assert_eq!(c.pod, 0.0);
         assert_eq!(c.pac, PAC::empty());
+        assert_eq!(c.texture, Texture::empty());
 
         // An empty composition is equivalent to 100% water
         assert_eq!(c.water(), 100.0);
@@ -663,6 +680,7 @@ mod tests {
         let micro = Micro::new().salt(0.5);
         let alcohol = Alcohol::new().by_weight(3.0);
         let pac = PAC::new().sugars(4.0).msnf_ws_salts(2.0);
+        let texture = Texture::new().stabilization(0.8);
 
         let c = Composition::new()
             .energy(150.0)
@@ -670,7 +688,8 @@ mod tests {
             .micro(micro)
             .alcohol(alcohol)
             .pod(1.5)
-            .pac(pac);
+            .pac(pac)
+            .texture(texture);
 
         assert_eq!(c.energy, 150.0);
         assert_eq!(c.solids, solids);
@@ -678,6 +697,7 @@ mod tests {
         assert_eq!(c.alcohol, alcohol);
         assert_eq!(c.pod, 1.5);
         assert_eq!(c.pac, pac);
+        assert_eq!(c.texture, texture);
     }
 
     #[test]
@@ -719,7 +739,7 @@ mod tests {
     #[test]
     fn composition_emulsifiers_per_fat() {
         let c = Composition::new()
-            .micro(Micro::new().emulsifiers(0.5))
+            .micro(Micro::new().emulsifiers(Emulsifiers::new().lecithin(0.5)))
             .solids(Solids::new().milk(SolidsBreakdown::new().fats(Fats::new().total(10.0))));
         assert_eq!(c.emulsifiers_per_fat(), 5.0);
     }
@@ -727,7 +747,7 @@ mod tests {
     #[test]
     fn composition_stabilizers_per_water() {
         let c = Composition::new()
-            .micro(Micro::new().stabilizers(0.9))
+            .micro(Micro::new().stabilizers(Stabilizers::new().locust_bean_gum(0.9)))
             .solids(Solids::new().other(SolidsBreakdown::new().others(10.0)));
         // 0.9 / 90.0 * 100 == 1.0
         assert_eq!(c.stabilizers_per_water(), 1.0);
@@ -825,7 +845,12 @@ mod tests {
         let c = Composition::new()
             .energy(100.0)
             .solids(Solids::new().milk(milk).egg(egg).cocoa(cocoa).nut(nut).other(other))
-            .micro(Micro::new().salt(0.3).lecithin(0.1).emulsifiers(0.6).stabilizers(0.59))
+            .micro(
+                Micro::new()
+                    .salt(0.3)
+                    .emulsifiers(Emulsifiers::new().lecithin(0.6))
+                    .stabilizers(Stabilizers::new().locust_bean_gum(0.59)),
+            )
             .alcohol(Alcohol::new().by_weight(2.5))
             .pod(5.0)
             .pac(
@@ -890,7 +915,7 @@ mod tests {
             (CompKey::Alcohol,              2.5),
             (CompKey::ABV,                  abv),
             (CompKey::Salt,                 0.3),
-            (CompKey::Lecithin,             0.1),
+            (CompKey::Lecithin,             0.6),
             (CompKey::Emulsifiers,          0.6),
             (CompKey::Stabilizers,          0.59),
             (CompKey::EmulsifiersPerFat,    5.0),   // 0.6 / 12.0 * 100
@@ -978,25 +1003,28 @@ mod tests {
             .micro(Micro::new().salt(1.0))
             .alcohol(Alcohol::new().by_weight(4.0))
             .pod(2.0)
-            .pac(PAC::new().sugars(8.0));
+            .pac(PAC::new().sugars(8.0))
+            .texture(Texture::new().stabilization(0.5));
         let b = Composition::new()
             .energy(50.0)
             .solids(Solids::new().milk(SolidsBreakdown::new().proteins(5.0)))
-            .micro(Micro::new().stabilizers(0.2))
+            .micro(Micro::new().stabilizers(Stabilizers::new().locust_bean_gum(0.2)))
             .alcohol(Alcohol::new().by_weight(1.0))
             .pod(1.0)
-            .pac(PAC::new().msnf_ws_salts(3.0));
+            .pac(PAC::new().msnf_ws_salts(3.0))
+            .texture(Texture::new().stabilization(0.7));
 
         let sum = a.add(&b);
         assert_eq!(sum.energy, 150.0);
         assert_eq!(sum.solids.other.others, 20.0);
         assert_eq!(sum.solids.milk.proteins, 5.0);
         assert_eq!(sum.micro.salt, 1.0);
-        assert_eq!(sum.micro.stabilizers, 0.2);
+        assert_eq!(sum.micro.stabilizers.locust_bean_gum, 0.2);
         assert_eq!(sum.alcohol.by_weight, 5.0);
         assert_eq!(sum.pod, 3.0);
         assert_eq!(sum.pac.sugars, 8.0);
         assert_eq!(sum.pac.msnf_ws_salts, 3.0);
+        assert_eq!(sum.texture.stabilization, 1.2);
     }
 
     #[test]
@@ -1007,7 +1035,8 @@ mod tests {
             .micro(Micro::new().salt(1.0))
             .alcohol(Alcohol::new().by_weight(3.0))
             .pod(2.0)
-            .pac(PAC::new().sugars(4.0));
+            .pac(PAC::new().sugars(4.0))
+            .texture(Texture::new().stabilization(0.5));
         let b = a;
         let mut c = b;
 
@@ -1047,7 +1076,8 @@ mod tests {
             .micro(Micro::new().salt(0.5))
             .alcohol(Alcohol::new().by_weight(2.0))
             .pod(80.0)
-            .pac(PAC::new().sugars(6.0));
+            .pac(PAC::new().sugars(6.0))
+            .texture(Texture::new().stabilization(0.5));
         assert!(c.validate().is_ok());
     }
 
@@ -1090,6 +1120,12 @@ mod tests {
     #[test]
     fn validate_err_on_invalid_pac() {
         let c = Composition::new().pac(PAC::new().sugars(-1.0));
+        assert!(matches!(c.validate(), Err(Error::CompositionNotPositive(_))));
+    }
+
+    #[test]
+    fn validate_err_on_invalid_texture() {
+        let c = Composition::new().texture(Texture::new().stabilization(-0.1));
         assert!(matches!(c.validate(), Err(Error::CompositionNotPositive(_))));
     }
 

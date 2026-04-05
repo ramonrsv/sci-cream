@@ -78,11 +78,13 @@
 //! # Ok(()) }
 //! ```
 
+#[allow(clippy::module_inception)]
+pub mod composition;
+
 pub mod alcohol;
 pub mod artificial_sweeteners;
 pub mod carbohydrates;
-#[allow(clippy::module_inception)]
-pub mod composition;
+pub mod emulsifiers;
 pub mod fats;
 pub mod fibers;
 pub mod micro;
@@ -90,13 +92,16 @@ pub mod pac;
 pub mod polyols;
 pub mod solids;
 pub mod solids_breakdown;
+pub mod stabilizers;
 pub mod sugars;
 pub mod sweeteners;
+pub mod texture;
 
 pub use alcohol::*;
 pub use artificial_sweeteners::*;
 pub use carbohydrates::*;
 pub use composition::*;
+pub use emulsifiers::*;
 pub use fats::*;
 pub use fibers::*;
 pub use micro::*;
@@ -104,5 +109,7 @@ pub use pac::*;
 pub use polyols::*;
 pub use solids::*;
 pub use solids_breakdown::*;
+pub use stabilizers::*;
 pub use sugars::*;
 pub use sweeteners::*;
+pub use texture::*;

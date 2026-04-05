@@ -67,7 +67,7 @@ const MAIN_RECIPE_LIGHT = [
   ["Dextrose", 45],
   ["Fructose", 32],
   ["Salt", 0.5],
-  ["Rich Ice Cream SB", 1.25],
+  ["Stabilizer Blend", 1.25],
   ["Vanilla Extract", 6],
 ];
 
@@ -81,7 +81,7 @@ const REF_A_RECIPE_LIGHT = [
   ["Dextrose", 25],
   ["Fructose", 6],
   ["Salt", 0.5],
-  ["Rich Ice Cream SB", 0.84],
+  ["Stabilizer Blend", 0.84],
 ];
 
 /** Light recipe data for the reference B test recipe */
@@ -97,7 +97,7 @@ const REF_B_RECIPE_LIGHT = [
   ["Splenda (Sucralose)", 2],
   ["SweetLeaf Stevia", 0.8],
   ["Salt", 0.5],
-  ["Rich Ice Cream SB", 0.9],
+  ["Stabilizer Blend", 0.9],
   ["Grand Marnier Cordon Rouge", 53],
 ];
 

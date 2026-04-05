@@ -60,7 +60,7 @@ impl ToComposition for FullSpec {
             Ok(PAC::new()
                 .sugars(solids.all().carbohydrates.to_pac()? + solids.all().artificial_sweeteners.to_pac()?)
                 .alcohol(alcohol.to_pac())
-                .salt(micro.salt * constants::pac::SALT)
+                .salt(micro.salt * constants::pac::SALT / 100.0)
                 .msnf_ws_salts(solids.milk.snf() * constants::pac::MSNF_WS_SALTS / 100.0))
         };
 

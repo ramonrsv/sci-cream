@@ -20,8 +20,8 @@ use crate::{
     ingredient::{Category, Ingredient, IntoIngredient, ResolveIntoIngredient},
     resolution::IngredientGetter,
     specs::{
-        AlcoholSpec, ChocolateSpec, CompositeSpec, DairyLabelSpec, DairySimpleSpec, EggSpec, FruitSpec, FullSpec,
-        MicroSpec, NutSpec, SweetenerSpec,
+        AlcoholSpec, ChocolateSpec, CompositeSpec, DairyLabelSpec, DairySimpleSpec, EggSpec, EmulsifierSpec, FruitSpec,
+        FullSpec, MicroSpec, NutSpec, StabilizerSpec, SweetenerSpec,
     },
 };
 
@@ -38,6 +38,8 @@ pub enum TaggedSpec {
     NutSpec(NutSpec),
     EggSpec(EggSpec),
     AlcoholSpec(AlcoholSpec),
+    StabilizerSpec(StabilizerSpec),
+    EmulsifierSpec(EmulsifierSpec),
     MicroSpec(MicroSpec),
     FullSpec(FullSpec),
     CompositeSpec(CompositeSpec),
@@ -54,6 +56,8 @@ impl ToComposition for TaggedSpec {
             Self::NutSpec(spec) => spec.to_composition(),
             Self::EggSpec(spec) => spec.to_composition(),
             Self::AlcoholSpec(spec) => spec.to_composition(),
+            Self::StabilizerSpec(spec) => spec.to_composition(),
+            Self::EmulsifierSpec(spec) => spec.to_composition(),
             Self::MicroSpec(spec) => spec.to_composition(),
             Self::FullSpec(spec) => spec.to_composition(),
             Self::CompositeSpec(_) => Err(Error::UnsupportedSpec(
@@ -119,6 +123,18 @@ impl From<EggSpec> for TaggedSpec {
 impl From<AlcoholSpec> for TaggedSpec {
     fn from(spec: AlcoholSpec) -> Self {
         Self::AlcoholSpec(spec)
+    }
+}
+
+impl From<StabilizerSpec> for TaggedSpec {
+    fn from(spec: StabilizerSpec) -> Self {
+        Self::StabilizerSpec(spec)
+    }
+}
+
+impl From<EmulsifierSpec> for TaggedSpec {
+    fn from(spec: EmulsifierSpec) -> Self {
+        Self::EmulsifierSpec(spec)
     }
 }
 
@@ -231,19 +247,26 @@ pub(crate) mod tests {
     use crate::tests::assets::*;
 
     use super::*;
-    use crate::{data::get_spec_entry_by_name, specs::SpecEntry};
+    use crate::{
+        data::{get_all_independent_ingredient_specs, get_spec_entry_by_name},
+        database::IngredientDatabase,
+        specs::SpecEntry,
+    };
 
     pub(crate) static INGREDIENT_ASSETS_TABLE: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {
             [
                 INGREDIENT_ASSETS_TABLE_ALCOHOL.as_slice(),
                 INGREDIENT_ASSETS_TABLE_CHOCOLATE.as_slice(),
+                INGREDIENT_ASSETS_TABLE_COMPOSITE.as_slice(),
                 INGREDIENT_ASSETS_TABLE_DAIRY.as_slice(),
                 INGREDIENT_ASSETS_TABLE_EGG.as_slice(),
+                INGREDIENT_ASSETS_TABLE_EMULSIFIERS.as_slice(),
                 INGREDIENT_ASSETS_TABLE_FRUIT.as_slice(),
                 INGREDIENT_ASSETS_TABLE_FULL.as_slice(),
                 INGREDIENT_ASSETS_TABLE_MICRO.as_slice(),
                 INGREDIENT_ASSETS_TABLE_NUT.as_slice(),
+                INGREDIENT_ASSETS_TABLE_STABILIZERS.as_slice(),
                 INGREDIENT_ASSETS_TABLE_SWEETENER.as_slice(),
             ]
             .concat()
@@ -269,11 +292,32 @@ pub(crate) mod tests {
 
     #[test]
     fn ingredient_spec_to_composition_matches_assets() {
+        INGREDIENT_ASSETS_TABLE
+            .iter()
+            // CompositeSpec requires database access to resolve, so we skip them in this test
+            .filter(|(_, spec, _)| !matches!(spec.spec, TaggedSpec::CompositeSpec(_)))
+            .for_each(|(_, spec, expected_comp_opt)| {
+                let comp = spec.spec.to_composition().unwrap();
+                if let Some(expected_comp) = expected_comp_opt {
+                    assert_eq_flt_test!(&comp, expected_comp);
+                }
+            });
+    }
+
+    #[test]
+    fn ingredient_spec_resolve_composition_matches_assets() {
+        let db = IngredientDatabase::new_seeded_from_specs(
+            get_all_independent_ingredient_specs()
+                .into_iter()
+                .map(SpecEntry::Ingredient)
+                .collect::<Vec<_>>()
+                .as_slice(),
+        )
+        .unwrap();
+
         INGREDIENT_ASSETS_TABLE.iter().for_each(|(_, spec, expected_comp_opt)| {
-            let comp = spec.spec.to_composition().unwrap();
+            let comp = spec.resolve_composition(&db).unwrap();
             if let Some(expected_comp) = expected_comp_opt {
-                // assert_eq!(&comp, expected_comp);
-                // println!("Testing composition for spec: {}", spec.name);
                 assert_eq_flt_test!(&comp, expected_comp);
             }
         });

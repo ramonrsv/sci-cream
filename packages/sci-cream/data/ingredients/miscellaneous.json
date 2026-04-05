@@ -1,4 +1,5 @@
 [
   { "name": "Water", "category": "Miscellaneous", "FullSpec": {} },
+  { "name": "Salt", "category": "Miscellaneous", "MicroSpec": "Salt" },
   { "name": "Vanilla Extract", "category": "Miscellaneous", "AlcoholSpec": { "abv": 35.0 } }
 ]

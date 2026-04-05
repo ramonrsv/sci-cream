@@ -1,9 +1,9 @@
 use std::sync::LazyLock;
 
 use sci_cream::{
-    data::get_independent_ingredient_spec_by_name,
-    ingredient::IntoIngredient,
+    database::IngredientDatabase,
     recipe::{OwnedLightRecipe, Recipe, RecipeLine},
+    resolution::IngredientGetter,
 };
 
 pub(crate) const REF_RECIPE_NAME: &str = "Chocolate Ice Cream";
@@ -18,7 +18,7 @@ pub(crate) static REF_LIGHT_RECIPE: LazyLock<OwnedLightRecipe> = LazyLock::new(|
         ("Dextrose", 45.0),
         ("Fructose", 32.0),
         ("Salt", 0.5),
-        ("Rich Ice Cream SB", 1.25),
+        ("Stabilizer Blend", 1.25),
         ("Vanilla Extract", 6.0),
     ]
     .iter()
@@ -26,16 +26,17 @@ pub(crate) static REF_LIGHT_RECIPE: LazyLock<OwnedLightRecipe> = LazyLock::new(|
     .collect()
 });
 
-pub(crate) static REF_RECIPE: LazyLock<Recipe> = LazyLock::new(|| Recipe {
-    name: Some(REF_RECIPE_NAME.to_string()),
-    lines: REF_LIGHT_RECIPE
-        .iter()
-        .map(|(name, amount)| RecipeLine {
-            ingredient: get_independent_ingredient_spec_by_name(name)
-                .unwrap()
-                .into_ingredient()
-                .unwrap(),
-            amount: *amount,
-        })
-        .collect::<Vec<RecipeLine>>(),
+pub(crate) static REF_RECIPE: LazyLock<Recipe> = LazyLock::new(|| {
+    let db = IngredientDatabase::new_seeded_from_embedded_data();
+
+    Recipe {
+        name: Some(REF_RECIPE_NAME.to_string()),
+        lines: REF_LIGHT_RECIPE
+            .iter()
+            .map(|(name, amount)| RecipeLine {
+                ingredient: db.get_ingredient_by_name(name).unwrap(),
+                amount: *amount,
+            })
+            .collect::<Vec<RecipeLine>>(),
+    }
 });

@@ -15,7 +15,7 @@ export const LIGHT_RECIPE = [
   ["Dextrose", 45],
   ["Fructose", 32],
   ["Salt", 0.5],
-  ["Rich Ice Cream SB", 1.25],
+  ["Locust Bean Gum", 1.25],
   ["Vanilla Extract", 6],
 ];
 

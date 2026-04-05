@@ -47,7 +47,7 @@ let recipe = Recipe::from_const_recipe(
         ("Dextrose", 45.0),
         ("Fructose", 32.0),
         ("Salt", 0.5),
-        ("Rich Ice Cream SB", 1.25),
+        ("Stabilizer Blend", 1.25),
         ("Vanilla Extract", 6.0),
     ],
     &db,
@@ -421,7 +421,7 @@ const RECIPE = [
   ["Dextrose", 45],
   ["Fructose", 32],
   ["Salt", 0.5],
-  ["Rich Ice Cream SB", 1.25],
+  ["Stabilizer Blend", 1.25],
   ["Vanilla Extract", 6],
 ];
 
@@ -429,6 +429,7 @@ const RECIPE = [
 const NEW_RECIPE = RECIPE;
 NEW_RECIPE[0][0] = "3.25% Milk";
 NEW_RECIPE[1][0] = "35% Cream";
+NEW_RECIPE[8][0] = "Locust Bean Gum";
 
 const recipeLines = NEW_RECIPE.map(
 ([name, quantity]) =>
