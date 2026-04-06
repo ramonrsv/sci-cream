@@ -1,0 +1,29 @@
+[
+  {
+    "name": "Locust Bean Gum",
+    "category": "Stabilizer",
+    "StabilizerSpec": { "stabilizers": { "locust_bean_gum": 100.0 } }
+  },
+  {
+    "name": "Guar Gum",
+    "category": "Stabilizer",
+    "StabilizerSpec": { "stabilizers": { "guar_gum": 100.0 } }
+  },
+  {
+    "name": "Lambda Carrageenan",
+    "category": "Stabilizer",
+    "StabilizerSpec": { "stabilizers": { "carrageenans": 100.0 } }
+  },
+  {
+    "name": "Underbelly General Purpose Stabilizer Blend",
+    "category": "Stabilizer",
+    "CompositeSpec": {
+      "ByParts": [
+        ["Locust Bean Gum", 4],
+        ["Guar Gum", 2],
+        ["Lambda Carrageenan", 1]
+      ]
+    }
+  },
+  { "alias": "Stabilizer Blend", "for": "Underbelly General Purpose Stabilizer Blend" }
+]
