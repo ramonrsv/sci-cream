@@ -64,7 +64,7 @@ pub(crate) static REF_B_RECIPE_LIGHT: LazyLock<OwnedLightRecipe> =
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
-#[allow(clippy::unwrap_used)]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
     use super::*;
 
@@ -75,6 +75,8 @@ mod tests {
         let db = IngredientDatabase::new_seeded_from_embedded_data();
         let recipe = Recipe::from_light_recipe(Some("Chocolate Ice Cream".into()), &MAIN_RECIPE_LIGHT, &db).unwrap();
         let mix_props = recipe.calculate_mix_properties().unwrap();
+
+        assert_eq!(mix_props.total_amount, 611.75);
 
         for (key, value) in [
             (Energy.into(), 228.865),
@@ -90,8 +92,13 @@ mod tests {
             (TotalSugars.into(), 16.834),
             (ABV.into(), 0.343),
             (Salt.into(), 0.082),
+            (TotalFats.into(), 15.2632),
             (TotalSolids.into(), 40.779),
             (Water.into(), 58.95),
+            (Emulsifiers.into(), 0.2648),
+            (EmulsifiersPerFat.into(), 1.735),
+            (Stabilizers.into(), 0.2043),
+            (StabilizersPerWater.into(), 0.3466),
             (POD.into(), 15.237),
             (PACsgr.into(), 27.633),
             (PACmlk.into(), 3.26),
@@ -113,6 +120,8 @@ mod tests {
         let recipe = Recipe::from_light_recipe(Some("Standard Base".into()), &REF_A_RECIPE_LIGHT, &db).unwrap();
         let mix_props = recipe.calculate_mix_properties().unwrap();
 
+        assert_eq!(mix_props.total_amount, 603.34);
+
         for (key, value) in [
             (Energy.into(), 236.387),
             (MilkFat.into(), 14.871),
@@ -127,8 +136,13 @@ mod tests {
             (TotalSugars.into(), 16.725),
             (ABV.into(), 0.0),
             (Salt.into(), 0.083),
+            (TotalFats.into(), 16.6614),
             (TotalSolids.into(), 39.850),
             (Water.into(), 60.150),
+            (Emulsifiers.into(), 0.5370),
+            (EmulsifiersPerFat.into(), 3.2230),
+            (Stabilizers.into(), 0.1392),
+            (StabilizersPerWater.into(), 0.2314),
             (POD.into(), 11.550),
             (PACsgr.into(), 21.051),
             (PACmlk.into(), 4.124),
@@ -150,6 +164,8 @@ mod tests {
         let recipe = Recipe::from_light_recipe(Some("Grand Marnier".into()), &REF_B_RECIPE_LIGHT, &db).unwrap();
         let mix_props = recipe.calculate_mix_properties().unwrap();
 
+        assert_eq_float!(mix_props.total_amount, 602.2);
+
         for (key, value) in [
             (Energy.into(), 228.753),
             (MilkFat.into(), 14.318),
@@ -165,7 +181,12 @@ mod tests {
             (ABV.into(), 3.520),
             (Salt.into(), 0.083),
             (TotalSolids.into(), 33.910),
+            (TotalFats.into(), 16.1112),
             (Water.into(), 63.312),
+            (Emulsifiers.into(), 0.5380),
+            (EmulsifiersPerFat.into(), 3.3393),
+            (Stabilizers.into(), 0.1495),
+            (StabilizersPerWater.into(), 0.2361),
             (POD.into(), 10.341),
             (PACsgr.into(), 12.451),
             (PACmlk.into(), 4.096),
