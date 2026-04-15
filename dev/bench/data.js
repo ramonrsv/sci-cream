@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776218805013,
+  "lastUpdate": 1776219550954,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -133301,6 +133301,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 587990,
             "range": "±0.83%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f0c335517f2d0da3c3a3eaa41f888fc72f7182b4",
+          "message": "Add Percentage/Parts support to `CompositeSpec`\n\nAdd support to `CompositeSpec` to specify the basis of the weights,\neither by percentage, adding up to 100%, or by parts, e.g. 4:2:1.",
+          "timestamp": "2026-04-14T22:06:11-04:00",
+          "tree_id": "42a8916cedf3c2ae3c9e48b665077e4893930330",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f0c335517f2d0da3c3a3eaa41f888fc72f7182b4"
+        },
+        "date": 1776219547599,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 76116,
+            "range": "±1.16%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 721107,
+            "range": "±0.88%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10064,
+            "range": "±1.90%",
+            "unit": "ops/sec",
+            "extra": "83 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 595359,
+            "range": "±0.90%",
             "unit": "ops/sec",
             "extra": "91 samples"
           }
