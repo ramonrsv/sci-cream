@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1775011028035,
+  "lastUpdate": 1776218427438,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -132692,6 +132692,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.82%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "18eb2e155bcd9a40c5d8dace9253c87a82168749",
+          "message": "Add Stabs./Emuls. ratio tests for recipe assets",
+          "timestamp": "2026-04-06T23:48:29-04:00",
+          "tree_id": "5ae9cec2abc8ee260233fb593adfee21fe68132e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/18eb2e155bcd9a40c5d8dace9253c87a82168749"
+        },
+        "date": 1776218424028,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 78491,
+            "range": "±0.82%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 722000,
+            "range": "±0.42%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10146,
+            "range": "±1.88%",
+            "unit": "ops/sec",
+            "extra": "82 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 587990,
+            "range": "±0.83%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
