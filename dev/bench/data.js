@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1776219917827,
+  "lastUpdate": 1776720845883,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -133914,6 +133914,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.90%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2d0c149b09f61a50ebf22bc11e46ca6c589874d4",
+          "message": "Overhaul Micro/Stabs./Emuls. composition & specs\n\n* Introduce new `composition::Stabilizers` and `::Emulsifiers` to\n  contain detailed breakdown of stabilizer and emulsifier components,\n  e.g. tracking lecithin, locust bean gum, gelatin, etc. contents.\n  These are used in the `stabilizers` and `emulsifiers` fields in\n  `composition::Micro` to replace f64 with the more complex structs.\n* Add new 'Stabilizer' and 'Emulsifier' ingredient categories, which\n  replace `Micro`. Ingredients like \"Salt\" are now 'Miscellaneous'.\n* Introduce new `StabilizerSpec` and `EmulsifierSpec` to allow\n  defining more detailed stabilizer and emulsifier ingredients.\n* Remove the above functionality from `MicroSpec`; now it only supports\n  `MicroSpec::Salt`. Eventually this spec will be removed entirely.\n* Introduce `composition::Texture` struct that contains estimations\n  of various texture aspects with contributions from various components.\n  Currently it only has 'stabilization' and 'emulsification' fields,\n  which contain strength-weighted contributiosn from stabilizer and\n  emulsifier ingredients; @todo to estimate and take into account the\n  contributions from other components, e.g. proteins, sugars, etc.\n* Introduce new `data/ingredients/stabilizers.json` and\n  `*/emulsifiers.json`, and add new stabilizer and emulsifier\n  ingredients, including lecithin, gums, etc. and Underbelly blends.\n* Add functionality for `composition::Stabilizers` and `::Emulsifiers`\n  to generate their own `Texture`, so that different specs can\n  reference the same authoritative one-definition implementations.\n* Add strength estimation contants for lecithin, strong gums, etc.\n* Rename 'Rich Ice Cream SB' to 'Stabilizer Blend', which is now an\n  alias for 'Underbelly General Purpose Stabilizer Blend\".\n* Adjust `packages/sci-cream` and `packages/app` tests to handle the\n  new `CompositeSpec`s that were introduces into  the ingredient db.\n* Add TODOs about tracking egg and milk proteins as stabilizers, about\n  refining stabilizer strength constants, about adding support for\n  tracking milk whey/casein proteins and egg yolk/white proteins, about\n  quantifying the different aspects of stabilzier effects, etc.\n* Introduce contants for whey/casein ratio in milk solids proteins:\n    `STD_WHEY_PROTEIN_IN_MSNF_PROTEIN`\n    `STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN`\n* Modify visual regression test assets to accommodate for the ingredient\n  name change 'Rich Ice Cream SB' -> 'Stabilizer Blend', and Total\n  Carbohydrates value due to different stabilizer classification.\n\n@note Documentation for `composition::Emulsifiers` and emulsifier\nstrength constants are still largely missing, to be added in an upcoming\ncommit; had a bitlocker scare and don't want to lose all this work.",
+          "timestamp": "2026-04-20T13:27:38-04:00",
+          "tree_id": "e58dd0fb881cb689f6293a7c31f0c1ec24b90c2f",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2d0c149b09f61a50ebf22bc11e46ca6c589874d4"
+        },
+        "date": 1776720842198,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 74665,
+            "range": "±0.69%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 729238,
+            "range": "±0.38%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 10029,
+            "range": "±1.86%",
+            "unit": "ops/sec",
+            "extra": "84 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 602594,
+            "range": "±0.79%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
