@@ -34,9 +34,6 @@
 
 - [ ] Add an app "tour" to show users the main components of the app, where to go for docs, etc.
 - [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
-- [ ] Add a navbar item with general ice cream science knowledge, likely referencing `sci-cream`.
-- [ ] Add a navbar item for a blog-style thing where I can include information from personal
-      experience, which would not be appropriate for `sci-cream`. Look into using markdown.
 - [ ] Look into implementing a JS-side ingredient cache so that `Ingredient` WASM objects are only
       created once, then any lookups return JS light clones, which should reduce `.free()` issues.
 - [ ] There are many jarring flashes on first page load (some layout changes, a flash of
@@ -67,6 +64,9 @@
 
 # Completed
 
+- [x] Add a navbar item with general ice cream science knowledge, likely referencing `sci-cream`.
+- [x] Add a navbar item for a blog-style thing where I can include information from personal
+      experience, which would not be appropriate for `sci-cream`. Look into using markdown.
 - [x] Document all items in `app`, look for a `missing_docs` equivalent lint.
 - [x] In Dark mode, there is a quick flash of white when opening select dropdowns.
 - [x] When in Dark mode, if the page is refreshed, it momentarily flashes a Light theme before the

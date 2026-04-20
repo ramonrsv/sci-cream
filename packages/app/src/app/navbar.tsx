@@ -9,6 +9,8 @@ import {
   Calculator,
   BookOpen,
   Wheat,
+  Library,
+  Newspaper,
   PanelLeftClose,
   PanelLeftOpen,
   CircleUserRound,
@@ -24,6 +26,8 @@ const navItems = [
   { href: "/calculator", label: "Calculator", icon: Calculator },
   { href: "/recipes", label: "Recipes", icon: BookOpen },
   { href: "/ingredients", label: "Ingredients", icon: Wheat },
+  { href: "/docs", label: "Docs", icon: Library },
+  { href: "/blog", label: "Blog", icon: Newspaper },
 ];
 
 /** Returns `true` when the current pathname starts with the given nav item href */

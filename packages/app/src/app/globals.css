@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
 @import "react-grid-layout/css/styles.css";
 @import "react-resizable/css/styles.css";
@@ -137,6 +138,12 @@ body {
 /* Typography */
 .comp-val {
   @apply text-center font-mono whitespace-pre;
+}
+
+/* Remove @tailwindcss/typography's decorative backticks around <code> elements. */
+.prose :where(code)::before,
+.prose :where(code)::after {
+  content: none !important;
 }
 
 /* UI Components */
