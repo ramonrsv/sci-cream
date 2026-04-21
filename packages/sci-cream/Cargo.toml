@@ -93,7 +93,7 @@ variant_size_differences = "warn"
 
 # For cargo-llvm-cov #[coverage] attribute
 unexpected_cfgs = { level = "warn", check-cfg = [
-    'cfg(coverage,coverage_nightly)',
+    "cfg(coverage,coverage_nightly)",
 ] }
 
 [lints.clippy]
