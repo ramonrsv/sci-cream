@@ -27,6 +27,9 @@
 - [ ] Add support for tracking milk casein/whey proteins and egg yolk/white proteins. This may need
       modifications to `Composition`, and the specs need to be modified to allow more specificity.
 - [ ] Add unit tests for `to_texture` methods, stabilizer/emulsifier strength values, etc.
+- [ ] Move all the inline ice cream science documentation to the `docs` section, and reference it
+      in the previous inline locations either by programmatically copying docs, or via doc links.
+- [ ] Add a `build.rs` script to automatically merge all markdowns and create a table-of-content.
 
 ## Up Next
 
@@ -61,6 +64,8 @@
 - [ ] Add more unit tests and example ingredients defined using `FullSpec`; it's WIP at the moment.
 - [ ] Look into quantifying stabilizers' different functions, e.g. ice crystal suppression, adding
       viscosity, flavour release, mouthfeel, etc. May be difficult to source strength values.
+- [ ] Refine the knowledge base documentation, using more peer-reviewed articles and literature
+      sources. At the moment it it mostly citing blogs (Underbelly, etc.) and 1-3 books.
 
 ## Completed
 

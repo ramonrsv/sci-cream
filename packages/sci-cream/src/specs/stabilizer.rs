@@ -65,7 +65,7 @@ pub struct StabilizerSpec {
 impl ToComposition for StabilizerSpec {
     fn to_composition(&self) -> Result<Composition> {
         let Stabilizers {
-            egg_yolk_proteins,
+            egg_yolk_solids,
             gelatin,
             cornstarch,
             tapioca_starch,
@@ -83,9 +83,9 @@ impl ToComposition for StabilizerSpec {
             ));
         }
 
-        let proteins = egg_yolk_proteins + gelatin;
+        let proteins = gelatin;
         let starches = cornstarch + tapioca_starch;
-        let other_snfs = other;
+        let other_snfs = other + egg_yolk_solids;
         let fiber = self.stabilizers.total() - proteins - starches - other_snfs;
 
         let solids = SolidsBreakdown::new()

@@ -2,6 +2,6 @@
   {
     "name": "Soy Lecithin",
     "category": "Emulsifier",
-    "EmulsifierSpec": { "emulsifiers": { "lecithin": 100.0 } }
+    "EmulsifierSpec": { "emulsifiers": { "non_egg_lecithin": 100.0 } }
   }
 ]

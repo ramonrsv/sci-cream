@@ -150,7 +150,7 @@ mod tests {
 
     const FIELD_MODIFIERS: [fn(&mut Micro, f64); 3] = [
         |m, v| m.salt += v,
-        |m, v| m.emulsifiers.lecithin += v,
+        |m, v| m.emulsifiers.egg_yolk_lecithin += v,
         |m, v| m.stabilizers.cornstarch += v,
     ];
 
@@ -180,12 +180,12 @@ mod tests {
         let m = Micro::new()
             .salt(1.0)
             .stabilizers(Stabilizers::new().cornstarch(2.0))
-            .emulsifiers(Emulsifiers::new().lecithin(2.0));
+            .emulsifiers(Emulsifiers::new().egg_yolk_lecithin(2.0));
 
         assert_eq!(m.salt, 1.0);
         assert_eq!(m.stabilizers.cornstarch, 2.0);
         assert_eq!(m.stabilizers.total(), 2.0);
-        assert_eq!(m.emulsifiers.lecithin, 2.0);
+        assert_eq!(m.emulsifiers.egg_yolk_lecithin, 2.0);
         assert_eq!(m.emulsifiers.total(), 2.0);
     }
 
@@ -194,13 +194,13 @@ mod tests {
         let m = Micro::new()
             .salt(4.0)
             .stabilizers(Stabilizers::new().cornstarch(2.0))
-            .emulsifiers(Emulsifiers::new().lecithin(2.0));
+            .emulsifiers(Emulsifiers::new().egg_yolk_lecithin(2.0));
 
         let scaled = m.scale(0.5);
         assert_eq!(scaled.salt, 2.0);
         assert_eq!(scaled.stabilizers.cornstarch, 1.0);
         assert_eq!(scaled.stabilizers.total(), 1.0);
-        assert_eq!(scaled.emulsifiers.lecithin, 1.0);
+        assert_eq!(scaled.emulsifiers.egg_yolk_lecithin, 1.0);
         assert_eq!(scaled.emulsifiers.total(), 1.0);
     }
 
@@ -209,17 +209,17 @@ mod tests {
         let a = Micro::new()
             .salt(4.0)
             .stabilizers(Stabilizers::new().cornstarch(1.0))
-            .emulsifiers(Emulsifiers::new().lecithin(2.0));
+            .emulsifiers(Emulsifiers::new().egg_yolk_lecithin(2.0));
         let b = Micro::new()
             .salt(2.0)
             .stabilizers(Stabilizers::new().cornstarch(0.5))
-            .emulsifiers(Emulsifiers::new().lecithin(1.0));
+            .emulsifiers(Emulsifiers::new().egg_yolk_lecithin(1.0));
 
         let sum = a.add(&b);
         assert_eq!(sum.salt, 6.0);
         assert_eq!(sum.stabilizers.cornstarch, 1.5);
         assert_eq!(sum.stabilizers.total(), 1.5);
-        assert_eq!(sum.emulsifiers.lecithin, 3.0);
+        assert_eq!(sum.emulsifiers.egg_yolk_lecithin, 3.0);
         assert_eq!(sum.emulsifiers.total(), 3.0);
     }
 
@@ -228,7 +228,7 @@ mod tests {
         let a = Micro::new()
             .salt(4.0)
             .stabilizers(Stabilizers::new().cornstarch(1.0))
-            .emulsifiers(Emulsifiers::new().lecithin(2.0));
+            .emulsifiers(Emulsifiers::new().egg_yolk_lecithin(2.0));
         let b = a;
         let mut c = b;
 
@@ -256,7 +256,7 @@ mod tests {
         assert!(
             Micro::new()
                 .salt(1.0)
-                .emulsifiers(Emulsifiers::new().lecithin(0.5))
+                .emulsifiers(Emulsifiers::new().egg_yolk_lecithin(0.5))
                 .stabilizers(Stabilizers::new().cornstarch(0.3))
                 .validate()
                 .is_ok()
@@ -274,7 +274,9 @@ mod tests {
 
     #[test]
     fn validate_into_returns_self_when_valid() {
-        let micro = Micro::new().salt(1.0).emulsifiers(Emulsifiers::new().lecithin(0.5));
+        let micro = Micro::new()
+            .salt(1.0)
+            .emulsifiers(Emulsifiers::new().egg_yolk_lecithin(0.5));
         let result = micro.validate_into();
         assert!(result.is_ok());
         assert_eq!(result.unwrap().salt, 1.0);

@@ -9,7 +9,7 @@ use crate::{
     composition::{ScaleComponents, Texture},
     constants::stabilization::{
         STABILIZER_STRENGTH_CARBOXYMETHYL_CELLULOSE, STABILIZER_STRENGTH_CARRAGEENANS, STABILIZER_STRENGTH_CORNSTARCH,
-        STABILIZER_STRENGTH_EGG_YOLK_PROTEINS, STABILIZER_STRENGTH_GELATIN, STABILIZER_STRENGTH_GUAR_GUM,
+        STABILIZER_STRENGTH_EGG_YOLK_SOLIDS, STABILIZER_STRENGTH_GELATIN, STABILIZER_STRENGTH_GUAR_GUM,
         STABILIZER_STRENGTH_LOCUST_BEAN_GUM, STABILIZER_STRENGTH_PECTIN, STABILIZER_STRENGTH_SODIUM_ALGINATE,
         STABILIZER_STRENGTH_TAPIOCA_STARCH, STABILIZER_STRENGTH_TARA_GUM, STABILIZER_STRENGTH_WHEY_PROTEINS,
         STABILIZER_STRENGTH_XANTHAN_GUM,
@@ -63,7 +63,7 @@ use crate::{
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Stabilizers {
-    /// Egg yolk proteins, typically in the form of egg custards, which have stabilizing properties
+    /// Egg yolk solids, typically in the form of egg custards, which have stabilizing properties
     ///
     /// Egg custards are among the most effective stabilizers at creating great textures, but only
     /// middling at slowing ice crystal growth, likely because they exhibit _synerisis_, or weeping:
@@ -78,11 +78,11 @@ pub struct Stabilizers {
     //
     // @todo `EggSpec` does not yet populate this field, but it will in a future change to take into
     // account stabilizing contributions from other components like egg and milk proteins, etc.
-    // @todo Egg yolk and egg white proteins have significantly different properties with regards to
+    // @todo Egg yolk and egg white solids have significantly different properties with regards to
     // stabilization, emulsification, and texture, therefore they are tracked separately. `EggSpec`
-    // needs to be updated to allow specifying the egg yolk and egg white breakdown of proteins.
+    // needs to be updated to allow specifying the egg yolk and egg white breakdown of solids.
     #[doc = include_str!("../../docs/bibs/37.md")]
-    pub egg_yolk_proteins: f64,
+    pub egg_yolk_solids: f64,
     /// Whey proteins, from dairy products, which have stabilizing properties when denatured by heat
     ///
     /// Some of the whey proteins can form a gel-like network when heated to the right temperature
@@ -400,7 +400,7 @@ impl Stabilizers {
     #[must_use]
     pub const fn empty() -> Self {
         Self {
-            egg_yolk_proteins: 0.0,
+            egg_yolk_solids: 0.0,
             whey_proteins: 0.0,
             cornstarch: 0.0,
             tapioca_starch: 0.0,
@@ -423,11 +423,11 @@ impl Stabilizers {
         Self::empty()
     }
 
-    /// Field-update method for [`egg_yolk_proteins`](Self::egg_yolk_proteins).
+    /// Field-update method for [`egg_yolk_solids`](Self::egg_yolk_solids).
     #[must_use]
-    pub const fn egg_yolk_proteins(self, egg_yolk_proteins: f64) -> Self {
+    pub const fn egg_yolk_solids(self, egg_yolk_solids: f64) -> Self {
         Self {
-            egg_yolk_proteins,
+            egg_yolk_solids,
             ..self
         }
     }
@@ -540,7 +540,7 @@ impl Stabilizers {
 
         Ok(Texture::new().stabilization(strength.unwrap_or_else(|| {
             [
-                self.egg_yolk_proteins * STABILIZER_STRENGTH_EGG_YOLK_PROTEINS,
+                self.egg_yolk_solids * STABILIZER_STRENGTH_EGG_YOLK_SOLIDS,
                 self.whey_proteins * STABILIZER_STRENGTH_WHEY_PROTEINS,
                 self.cornstarch * STABILIZER_STRENGTH_CORNSTARCH,
                 self.tapioca_starch * STABILIZER_STRENGTH_TAPIOCA_STARCH,
@@ -585,7 +585,7 @@ impl Validate for Stabilizers {
 impl ScaleComponents for Stabilizers {
     fn scale(&self, factor: f64) -> Self {
         Self {
-            egg_yolk_proteins: self.egg_yolk_proteins * factor,
+            egg_yolk_solids: self.egg_yolk_solids * factor,
             whey_proteins: self.whey_proteins * factor,
             cornstarch: self.cornstarch * factor,
             tapioca_starch: self.tapioca_starch * factor,
@@ -604,7 +604,7 @@ impl ScaleComponents for Stabilizers {
 
     fn add(&self, other: &Self) -> Self {
         Self {
-            egg_yolk_proteins: self.egg_yolk_proteins + other.egg_yolk_proteins,
+            egg_yolk_solids: self.egg_yolk_solids + other.egg_yolk_solids,
             whey_proteins: self.whey_proteins + other.whey_proteins,
             cornstarch: self.cornstarch + other.cornstarch,
             tapioca_starch: self.tapioca_starch + other.tapioca_starch,
@@ -652,7 +652,7 @@ mod tests {
     use crate::error::Error;
 
     const FIELD_MODIFIERS: [fn(&mut Stabilizers, f64); 14] = [
-        |m, v| m.egg_yolk_proteins += v,
+        |m, v| m.egg_yolk_solids += v,
         |m, v| m.whey_proteins += v,
         |m, v| m.cornstarch += v,
         |m, v| m.tapioca_starch += v,
@@ -686,7 +686,7 @@ mod tests {
 
         assert_f64_fields_eq_zero(&m);
 
-        assert_eq!(m.egg_yolk_proteins, 0.0);
+        assert_eq!(m.egg_yolk_solids, 0.0);
         assert_eq!(m.whey_proteins, 0.0);
         assert_eq!(m.cornstarch, 0.0);
         assert_eq!(m.tapioca_starch, 0.0);
@@ -705,7 +705,7 @@ mod tests {
     #[test]
     fn stabilizers_field_update_methods() {
         let m = Stabilizers::new()
-            .egg_yolk_proteins(1.0)
+            .egg_yolk_solids(1.0)
             .whey_proteins(2.0)
             .cornstarch(3.0)
             .tapioca_starch(4.0)
@@ -721,7 +721,7 @@ mod tests {
             .other(14.0);
         assert_f64_fields_ne_zero(&m);
 
-        assert_eq!(m.egg_yolk_proteins, 1.0);
+        assert_eq!(m.egg_yolk_solids, 1.0);
         assert_eq!(m.whey_proteins, 2.0);
         assert_eq!(m.cornstarch, 3.0);
         assert_eq!(m.tapioca_starch, 4.0);
@@ -740,7 +740,7 @@ mod tests {
     #[test]
     fn stabilizers_scale() {
         let m = Stabilizers::new()
-            .egg_yolk_proteins(1.0)
+            .egg_yolk_solids(1.0)
             .whey_proteins(2.0)
             .cornstarch(3.0)
             .tapioca_starch(4.0)
@@ -757,7 +757,7 @@ mod tests {
         assert_f64_fields_ne_zero(&m);
 
         let scaled = m.scale(0.5);
-        assert_eq!(scaled.egg_yolk_proteins, 0.5);
+        assert_eq!(scaled.egg_yolk_solids, 0.5);
         assert_eq!(scaled.whey_proteins, 1.0);
         assert_eq!(scaled.cornstarch, 1.5);
         assert_eq!(scaled.tapioca_starch, 2.0);
@@ -776,7 +776,7 @@ mod tests {
     #[test]
     fn stabilizers_add() {
         let a = Stabilizers::new()
-            .egg_yolk_proteins(1.0)
+            .egg_yolk_solids(1.0)
             .whey_proteins(2.0)
             .cornstarch(3.0)
             .tapioca_starch(4.0)
@@ -791,7 +791,7 @@ mod tests {
             .tara_gum(13.0)
             .other(14.0);
         let b = Stabilizers::new()
-            .egg_yolk_proteins(1.5)
+            .egg_yolk_solids(1.5)
             .whey_proteins(2.5)
             .cornstarch(3.5)
             .tapioca_starch(4.5)
@@ -810,7 +810,7 @@ mod tests {
         assert_f64_fields_ne_zero(&b);
 
         let sum = a.add(&b);
-        assert_eq!(sum.egg_yolk_proteins, 2.5);
+        assert_eq!(sum.egg_yolk_solids, 2.5);
         assert_eq!(sum.whey_proteins, 4.5);
         assert_eq!(sum.cornstarch, 6.5);
         assert_eq!(sum.tapioca_starch, 8.5);
@@ -830,7 +830,7 @@ mod tests {
     #[test]
     fn stabilizers_abs_diff_eq() {
         let a = Stabilizers::new()
-            .egg_yolk_proteins(1.0)
+            .egg_yolk_solids(1.0)
             .whey_proteins(2.0)
             .cornstarch(3.0)
             .tapioca_starch(4.0)

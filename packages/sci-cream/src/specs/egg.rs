@@ -95,7 +95,7 @@ impl ToComposition for EggSpec {
             .proteins(protein)
             .others_from_total(100.0 - water)?;
 
-        let micro = Micro::new().emulsifiers(Emulsifiers::new().lecithin(lecithin));
+        let micro = Micro::new().emulsifiers(Emulsifiers::new().egg_yolk_lecithin(lecithin));
         let texture = micro.emulsifiers.to_texture(None)?;
 
         Composition::new()
@@ -159,7 +159,7 @@ pub(crate) mod tests {
                         .others(3.0),
                 ),
             )
-            .micro(Micro::new().emulsifiers(Emulsifiers::new().lecithin(9.0)))
+            .micro(Micro::new().emulsifiers(Emulsifiers::new().egg_yolk_lecithin(9.0)))
             .texture(Texture::new().emulsification(9.0))
     });
 
@@ -177,7 +177,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
         assert_eq!(comp.get(CompKey::Lecithin), 9.0);
 
-        assert_eq!(comp.micro.emulsifiers.lecithin, 9.0);
+        assert_eq!(comp.micro.emulsifiers.egg_yolk_lecithin, 9.0);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_EGG: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =

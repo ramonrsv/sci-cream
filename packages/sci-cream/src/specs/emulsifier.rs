@@ -55,7 +55,8 @@ pub struct EmulsifierSpec {
 
 impl ToComposition for EmulsifierSpec {
     fn to_composition(&self) -> Result<Composition> {
-        let Emulsifiers { lecithin, other, .. } = self.emulsifiers;
+        let total_lecithin = self.emulsifiers.total_lecithin();
+        let other = self.emulsifiers.other;
 
         verify_are_positive(&collect_fields_copied_as::<f64, _>(&self.emulsifiers))?;
         verify_is_100_percent(self.emulsifiers.total())?;
@@ -67,7 +68,9 @@ impl ToComposition for EmulsifierSpec {
             ));
         }
 
-        let solids = SolidsBreakdown::new().fats(Fats::new().total(lecithin)).others(other);
+        let solids = SolidsBreakdown::new()
+            .fats(Fats::new().total(total_lecithin))
+            .others(other);
         let micro = Micro::new().emulsifiers(self.emulsifiers);
         let texture = self.emulsifiers.to_texture(self.strength)?;
 
@@ -98,7 +101,7 @@ pub(crate) mod tests {
       "category": "Emulsifier",
       "EmulsifierSpec": {
         "emulsifiers": {
-          "lecithin": 100.0
+          "non_egg_lecithin": 100.0
         }
       }
     }"#;
@@ -107,7 +110,7 @@ pub(crate) mod tests {
         name: "Soy Lecithin".to_string(),
         category: Category::Emulsifier,
         spec: EmulsifierSpec {
-            emulsifiers: Emulsifiers::new().lecithin(100.0),
+            emulsifiers: Emulsifiers::new().non_egg_lecithin(100.0),
             strength: None,
         }
         .into(),
@@ -123,7 +126,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 100.0);
 
-        assert_eq!(comp.micro.emulsifiers, Emulsifiers::new().lecithin(100.0));
+        assert_eq!(comp.micro.emulsifiers, Emulsifiers::new().non_egg_lecithin(100.0));
         assert_eq!(comp.texture.emulsification, 100.0);
     }
 
@@ -133,7 +136,7 @@ pub(crate) mod tests {
     #[test]
     fn to_composition_err_on_negative_strength() {
         let neg_cases = [EmulsifierSpec {
-            emulsifiers: Emulsifiers::new().lecithin(100.0),
+            emulsifiers: Emulsifiers::new().non_egg_lecithin(100.0),
             strength: Some(-1.0),
         }];
         for spec in neg_cases {

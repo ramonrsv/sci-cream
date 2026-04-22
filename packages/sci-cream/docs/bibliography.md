@@ -90,6 +90,10 @@
 
 [^44]: Drugs.com (2025, July). _Carboxymethylcellulose_. <https://www.drugs.com/inactive/carboxymethylcellulose-589>
 
+[^45]: Ice Cream Science. (2026, May). _Why are emulsifiers used in ice cream?_. <https://www.icecreamscience.com/blog/why-are-emulsifiers-used-in-ice-cream>
+
+[^46]: Carl. (2024, April), _How to use emulsifiers in ice cream_. Dream Scoops <https://www.dreamscoops.com/ice-cream-science/using-emulsifiers-ice-cream/>
+
 <!-- Ingredient references -->
 
 [^100]: Eggs, Grade A, Large, egg yolk. (2019). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/748236/nutrients>
