@@ -86,7 +86,7 @@ for (key, value) in [
     (Glucose.into(), 6.767),
     (Fructose.into(), 5.23),
     (TotalSugars.into(), 16.834),
-    (ABV.into(), 0.343), // Alcohol-by-value %
+    (ABV.into(), 0.343), // Alcohol-by-volume %
     (Salt.into(), 0.082),
     (TotalSolids.into(), 40.779),
     (Water.into(), 58.95),

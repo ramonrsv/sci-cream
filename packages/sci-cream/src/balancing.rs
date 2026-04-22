@@ -85,9 +85,9 @@ pub fn balance_compositions_nnls(comps: &[Composition], targets: &[(CompKey, f64
 /// Each row corresponds to a target key in `targets`, the last row corresponds to the total sum
 /// constraint, and each column corresponds to a composition in `comps`.
 ///
-/// [3.25, 40,    0]   \[x1\]   \[16\]  // Milk Fat
-/// [8.71,  5.4, 97] * \[x2\] = \[11\]  // MSNF
-/// [1,     1,    1]   \[x3\]    \[1\]  // Total sums to 100%
+/// [3.25, 40,    0]
+/// [8.71,  5.4, 97]
+/// [1,     1,    1]
 fn make_matrix_a(comps: &[Composition], targets: &[(CompKey, f64)]) -> Vec<f64> {
     targets
         .iter()
@@ -101,9 +101,9 @@ fn make_matrix_a(comps: &[Composition], targets: &[(CompKey, f64)]) -> Vec<f64> 
 /// Each element corresponds to a target value for the specified keys in `targets`, and the last
 /// element corresponds to the total sum constraint.
 ///
-/// [3.25, 40,    0]   \[x1\]   \[16\]  // Milk Fat
-/// [8.71,  5.4, 97] * \[x2\] = \[11\]  // MSNF
-/// [1,     1,    1]   \[x3\]    \[1\]  // Total sums to 100%
+/// \[16\]  // Milk Fat
+/// \[11\]  // MSNF
+///  \[1\]  // Total sums to 100%
 fn make_vector_y(targets: &[(CompKey, f64)]) -> Vec<f64> {
     targets
         .iter()
