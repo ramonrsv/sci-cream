@@ -276,8 +276,13 @@ For example, `"DairySimpleSpec": { "fat": 2 }` is the JSON representation of the
 `IngredientSpec`s that include the ingredient name and category as well. Below is an example for a
 _'2% Milk'_ ingredient.
 
+<!-- prettier-ignore -->
 ```json
-{ "name": "2% Milk", "category": "Dairy", "DairySimpleSpec": { "fat": 2 } }
+{
+  "name": "2% Milk",
+  "category": "Dairy",
+  "DairySimpleSpec": { "fat": 2 }
+}
 ```
 
 <br>
@@ -290,12 +295,16 @@ relatively complex, as well as `basis` for `CompositionBasis` specification, and
 details about composition basis, units, and scaling. The embedded ingredient definition JSON files
 include comments that detail how the values in the spec were determined.
 
+<!-- prettier-ignore -->
 ```json
 {
   "name": "Splenda (Sucralose)",
   "category": "Sweetener",
   "SweetenerSpec": {
-    "sweeteners": { "sugars": { "glucose": 55.0 }, "artificial": { "sucralose": 1.32 } },
+    "sweeteners": {
+      "sugars": { "glucose": 55.0 },
+      "artificial": { "sucralose": 1.32 }
+    },
     "other_carbohydrates": 38.68,
     "ByTotalWeight": { "water": 5 },
     "pod": { "OfWhole": 840 },
