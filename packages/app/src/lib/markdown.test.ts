@@ -213,7 +213,7 @@ describe("getMarkdownPage", () => {
     readFileSyncSpy.mockReturnValue("---\ntitle: Test\n---\n# Heading\n\nA paragraph.");
 
     const page = await getMarkdownPage("blog", "test");
-    expect(page.contentHtml).toContain("<h1>");
+    expect(page.contentHtml).toContain("<h1 id=");
     expect(page.contentHtml).toContain("Heading");
     expect(page.contentHtml).toContain("<p>");
     expect(page.contentHtml).toContain("A paragraph.");
@@ -232,5 +232,15 @@ describe("getMarkdownPage", () => {
     const page = await getMarkdownPage("blog", "no-frontmatter");
     expect(page.slug).toBe("no-frontmatter");
     expect(page.contentHtml).toContain("Just plain markdown");
+  });
+
+  it("adds id attributes to headings", async () => {
+    readFileSyncSpy.mockReturnValue(
+      "---\ntitle: Test\n---\n## My Section Title\n\n### Sub Section",
+    );
+
+    const page = await getMarkdownPage("blog", "test");
+    expect(page.contentHtml).toContain('<h2 id="my-section-title">');
+    expect(page.contentHtml).toContain('<h3 id="sub-section">');
   });
 });

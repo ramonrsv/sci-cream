@@ -4,6 +4,7 @@ import path from "path";
 import matter from "gray-matter";
 import { remark } from "remark";
 import html from "remark-html";
+import remarkSlug from "remark-slug";
 
 const contentRoot = path.join(process.cwd(), "content");
 
@@ -76,7 +77,9 @@ export function getMarkdownSummaries(section: string): MarkdownPage[] {
 /** Read a single markdown file, convert to HTML, and return the result. */
 export async function getMarkdownPage(section: string, slug: string): Promise<MarkdownPage> {
   const { data, content } = matter(readFileFromContentRoot(section, `${slug}.md`));
-  const processed = await remark().use(html, { sanitize: false }).process(content);
+
+  // @ts-expect-error: unified version mismatch between remark-slug@7 and remark@15
+  const processed = await remark().use(remarkSlug).use(html, { sanitize: false }).process(content);
 
   return { slug, frontmatter: data as Frontmatter, contentHtml: processed.toString() };
 }
