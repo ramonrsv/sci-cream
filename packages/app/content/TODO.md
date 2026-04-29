@@ -1,5 +1,9 @@
 # Up Next
 
+- [ ] Update blog/2026-04-27-welcome.md date and content to reflect latest release before publish.
+- [ ] Update images for blog/2026-04-27-welcome, to reflect latest release, including fixes.
+- [ ] Update blog/2026-04-27-welcome.md with links for Patreon and Buy Me Coffee accounts.
+
 # Backlog
 
 - [ ] Locust Bean Gum hydration experiments. Measure viscosity at various cooking temps, etc.

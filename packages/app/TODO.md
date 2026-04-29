@@ -12,9 +12,9 @@
 
 - [ ] Review the sign-in classes in `globals.css`, used in `/signin/page.tsx` and `/signup/page.tsx`
 - [ ] Add `Watchers` component where users can select what properties to watch. It should probably
-      support displaying deltas between the main and reference recipes, and target minx-max ranges.
-- [ ] Add make-recipe link, to click off ingredients that have been measured our for one or more
-      recipes. Wash recipe should be letter and color coded.
+      support displaying deltas between the main and reference recipes, and target min-max ranges.
+- [ ] Add make-recipe link, to click off ingredients that have been measured out for one or more
+      recipes. Each recipe should be letter and color coded.
 - [ ] Add scoopability and FPD properties component with visuals.
 - [ ] Add Nutrition Facts Table component.
 - [ ] Check how vertical spacing looks like on 1080p/2160p screens; look into dynamic vertical?

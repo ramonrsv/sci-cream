@@ -8,11 +8,16 @@ draft: true
 
 Blah blah...
 
-Calculators...
+# Calculators
 
 - [icecreamcalc.com](https://icecreamcalc.com/)
 - [Ice Cream Science spreadsheet](https://www.icecreamscience.com/blog/commercial-ice-cream-amp-gelato-mix-calculation-spreadsheet)
 - [Dream Scoops spreadsheet](https://www.dreamscoops.com/ice-cream-science/ice-cream-calculator/)
+- [Gelatodemy](https://gelatodemy.com/en/ice-cream-balancing-software/)
+- [Dairy Science Mix Calculator](https://www.dairyscience.info/calculator1/index.php)
+- [Owl Software](https://owlsoft.com/)
+
+# Science Knowledge
 
 ## Underbelly
 
@@ -91,7 +96,7 @@ Blah blah... [/science](https://icecreamcalc.com/category/science/)
 - [Evaporation](https://icecreamcalc.com/2020/07/11/evaporation/)
 - [Stabilizers](https://icecreamcalc.com/stabilizers/)
 
-## Others
+# Other Resources
 
 - [Ice Cream Nation](https://www.icecreamnation.org/)
 - [if the spoon fits](https://ifthespoonfits.com/)
