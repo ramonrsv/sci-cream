@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD033 -- needed for br and id attributes -->
+
 # `sci-cream`
 
 [![CI](https://github.com/ramonrsv/sci-cream/actions/workflows/crate.yml/badge.svg)](https://github.com/ramonrsv/sci-cream/actions)
@@ -19,7 +21,7 @@ JS <-> WASM interoperability, allowing it to be used in web applications. Lastly
 understanding this library. [Benchmarks](https://ramonrsv.github.io/sci-cream/dev/bench/) for key
 functionality are available.
 
-# Usage
+## Usage
 
 Add `sci-cream` as a dependency in your `Cargo.toml`:
 
@@ -135,7 +137,7 @@ frozen water and hardness curves:
 
 <br>
 
-# Features
+## Features
 
 The library has the following features that enable optional functionality:
 
@@ -156,7 +158,7 @@ The library has the following features that enable optional functionality:
   Interoperability](#wasm-interoperability) for more information. This feature is not enabled by
   default.
 
-# Ingredient/Mix Composition
+## Ingredient/Mix Composition
 
 The composition of an ingredient or mix is the most fundamental representation of its properties;
 it directly represents many key quantities and aspects that are relevant to the formulation of ice
@@ -225,7 +227,7 @@ assert_eq_float!(comp.get(MilkProteins), 3.087);
 // ...
 ```
 
-# Ingredient Specifications
+## Ingredient Specifications
 
 An `Ingredient` is defined chiefly by its `Composition`, which is used to calculate its
 contributions to the overall properties of a mix. The `Composition` struct is very complex and
@@ -364,7 +366,7 @@ These specs can also be easily defined in JSON format. The equivalent of the abo
 }
 ```
 
-# WASM Interoperability
+## WASM Interoperability
 
 If the `wasm` feature is enabled, the library can be compiled to WebAssembly - target
 `wasm32-unknown-unknown` - and used in web applications. The library includes TypeScript bindings

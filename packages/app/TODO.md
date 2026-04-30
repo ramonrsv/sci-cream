@@ -1,4 +1,6 @@
-# Next Release
+<!-- markdownlint-disable MD041 -->
+
+## Next Release
 
 - [ ] Pasting the strawberry sorbet recipe, fixing 'Strawberry [Brix 9]' to remove ' [Brix 9]', then
       pasting a different recipe causes a 'null pointer passed to rust' error; still unclear why.
@@ -8,7 +10,7 @@
 - [ ] Add support for `MixPropertiesGrid` to show deltas between the main recipe and the references.
 - [ ] Add `height` prop to `MixPropertiesGrid` so that it can adapt the number of properties shown.
 
-# Up Next
+## Up Next
 
 - [ ] Review the sign-in classes in `globals.css`, used in `/signin/page.tsx` and `/signup/page.tsx`
 - [ ] Add `Watchers` component where users can select what properties to watch. It should probably
@@ -30,8 +32,9 @@
 - [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
 - [ ] Add support for sharing of user-defined ingredients, similarly to sharing of recipes.
 
-# Backlog
+## Backlog
 
+- [ ] Implement scroll restoration, so that pages return to the last point when navigating back.
 - [ ] Look into usability on vertical mobile screens; the shrinking sidebar may not be enough.
 - [ ] Make navbar width adjustments more maintainable in `navbar.tsx`. At the moment there are a
       bunch of widths and margins that need to be adjusted, with various runtime conditions.
@@ -65,7 +68,7 @@
 - [ ] Add and/or verify support for C/C++ interoperability with FFI; look into `cxx` crate.
 - [ ] Look into `SharedArrayBuffer` to improve JS <-> WASM interoperability performance.
 
-# Completed
+## Completed
 
 - [x] Add a navbar item with general ice cream science knowledge, likely referencing `sci-cream`.
 - [x] Add a navbar item for a blog-style thing where I can include information from personal

@@ -4,11 +4,12 @@ description: "Other resources..."
 draft: true
 ---
 
+<!-- markdownlint-disable-next-line MD025 -- frontmatter title is not rendered as H1 -->
 # Resources
 
 Blah blah...
 
-# Calculators
+## Calculators
 
 - [icecreamcalc.com](https://icecreamcalc.com/)
 - [Ice Cream Science spreadsheet](https://www.icecreamscience.com/blog/commercial-ice-cream-amp-gelato-mix-calculation-spreadsheet)
@@ -17,9 +18,9 @@ Blah blah...
 - [Dairy Science Mix Calculator](https://www.dairyscience.info/calculator1/index.php)
 - [Owl Software](https://owlsoft.com/)
 
-# Science Knowledge
+## Science Knowledge
 
-## Underbelly
+### Underbelly
 
 _The_ source... [under-belly.org](https://under-belly.org/category/ice-cream/)...
 
@@ -40,7 +41,7 @@ _The_ source... [under-belly.org](https://under-belly.org/category/ice-cream/)..
 - [The Components of Ice Cream](https://under-belly.org/the-components-of-ice-cream/)
 - [Ice Cream Series](https://under-belly.org/ice-cream-series/)
 
-## Ice Cream Science
+### Ice Cream Science
 
 Blah blah... excellent blog at [icecreamscience.com](https://www.icecreamscience.com/)...
 
@@ -67,7 +68,7 @@ Blah blah... excellent blog at [icecreamscience.com](https://www.icecreamscience
 - [RECOMMENDED READING](https://www.icecreamscience.com/blog/top-5-ice-cream-books)
 - [Air in ice cream](https://www.icecreamscience.com/blog/air-in-ice-cream)
 
-## Dream Scoops
+### Dream Scoops
 
 Blah blah... [dreamscoops.com](https://www.dreamscoops.com/home/)
 
@@ -79,7 +80,7 @@ Blah blah... [dreamscoops.com](https://www.dreamscoops.com/home/)
 - [Ice in ice cream: A friend and an enemy!](https://www.dreamscoops.com/ice-cream-science/ice-in-ice-cream/)
 - [Air: The invisible Ice Cream ingredient](https://www.dreamscoops.com/ice-cream-science/air-in-ice-cream/)
 
-## icecreamcalc.com
+### icecreamcalc.com
 
 Blah blah... [/science](https://icecreamcalc.com/category/science/)
 
@@ -96,7 +97,7 @@ Blah blah... [/science](https://icecreamcalc.com/category/science/)
 - [Evaporation](https://icecreamcalc.com/2020/07/11/evaporation/)
 - [Stabilizers](https://icecreamcalc.com/stabilizers/)
 
-# Other Resources
+## Other Resources
 
 - [Ice Cream Nation](https://www.icecreamnation.org/)
 - [if the spoon fits](https://ifthespoonfits.com/)

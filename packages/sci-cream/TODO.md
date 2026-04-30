@@ -1,4 +1,6 @@
-# Next Release
+<!-- markdownlint-disable MD041 -->
+
+## Next Release
 
 - [ ] Add code example doc tests to all specs that don't already have them.
 
@@ -26,7 +28,7 @@
       modifications to `Composition`, and the specs need to be modified to allow more specificity.
 - [ ] Add unit tests for `to_texture` methods, stabilizer/emulsifier strength values, etc.
 
-# Up Next
+## Up Next
 
 - [ ] Implement a feature in the `sci-cream` crate to provide acceptable ranges for key properties
       of a mix, e.g. total solids, MSNF, serving temperature, etc. It should probably support
@@ -37,7 +39,7 @@
 - [ ] Encode (in)dependent specs in different enums; don't implement `ToIngredient` for dependents.
 - [ ] Add `resolution` support for validating a spec collection for reference sanity, etc.
 
-# Backlog
+## Backlog
 
 - [ ] Look into doing `npm` releases of the `sci-cream` package.
 - [ ] Look into including ingredient spec definitions in the docs, so that reference links work.
@@ -60,7 +62,7 @@
 - [ ] Look into quantifying stabilizers' different functions, e.g. ice crystal suppression, adding
       viscosity, flavour release, mouthfeel, etc. May be difficult to source strength values.
 
-# Completed
+## Completed
 
 - [x] Add gum stabilizer ingredients and Underbelly blends with reference links and explicit ratios.
 - [x] Add functionality for `Stabilizers` and `Emulsifiers` to generate their own solids breakdown

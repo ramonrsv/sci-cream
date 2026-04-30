@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD024 -- intended design of keepachangelog.com -->
+
 # Changelog
 
 All notable changes to this project will be documented in this file.

@@ -1,3 +1,5 @@
+<!-- markdownlint-disable MD041 MD053 -->
+
 <!-- Using APA-ish style -->
 
 [^1]: Raphaelson, Paul. (2023, February). _Sugars in Ice Cream_. <https://under-belly.org/sugars-in-ice-cream/>

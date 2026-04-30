@@ -4,6 +4,7 @@ description: "Reference recipes..."
 draft: true
 ---
 
+<!-- markdownlint-disable-next-line MD025 -- frontmatter title is not rendered as H1 -->
 # Recipes
 
 Blah blah...
