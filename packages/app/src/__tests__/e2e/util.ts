@@ -470,3 +470,25 @@ export async function loginAsTestUserWithCredentials(
   await page.waitForNavigation();
 }
 /* eslint-enable jsdoc/check-param-names */
+
+/** Enum representing different playwright `Page` load states */
+export enum LoadState {
+  Load = "load",
+  DomContentLoaded = "domcontentloaded",
+  NetworkIdle = "networkidle",
+}
+
+/**
+ * Helper function to navigate to a page and wait for a specific load state
+ *
+ * This function navigates to the given URL and waits for the specified load state to be reached.
+ * By default, it navigates to the root URL and waits for `LoadState::NetworkIdle = "networkidle"`.
+ */
+export async function goToPageAndWaitFor(
+  page: Page,
+  url: string = "",
+  loadState: LoadState = LoadState.NetworkIdle,
+) {
+  await page.goto(url);
+  await page.waitForLoadState(loadState);
+}

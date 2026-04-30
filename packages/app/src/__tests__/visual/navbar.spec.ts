@@ -1,9 +1,10 @@
 import { test, expect } from "@playwright/test";
 
+import { goToPageAndWaitFor } from "../e2e/util";
+
 test.describe("Visual Regression: Collapsed and Expanded Sidebar", () => {
   test("collapsed sidebar", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     const sidebar = page.locator("#sidebar");
     await expect(sidebar).toBeVisible();
@@ -12,8 +13,7 @@ test.describe("Visual Regression: Collapsed and Expanded Sidebar", () => {
   });
 
   test("expanded sidebar", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     const sidebar = page.locator("#sidebar");
     await expect(sidebar).toBeVisible();
@@ -27,8 +27,7 @@ test.describe("Visual Regression: Collapsed and Expanded Sidebar", () => {
 
 test.describe("Visual Regression: Collapsed and Expanded Header", () => {
   test("collapsed header", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     const header = page.locator("#header");
     await expect(header).toBeVisible();
@@ -37,8 +36,7 @@ test.describe("Visual Regression: Collapsed and Expanded Header", () => {
   });
 
   test("expanded header", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     const header = page.locator("#header");
     await expect(header).toBeVisible();
@@ -56,8 +54,7 @@ test.describe("Visual Regression: Collapsed and Expanded Sidebar, Shrunk", () =>
   });
 
   test("collapsed sidebar", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     const sidebar = page.locator("#sidebar");
     await expect(sidebar).toBeVisible();
@@ -66,8 +63,7 @@ test.describe("Visual Regression: Collapsed and Expanded Sidebar, Shrunk", () =>
   });
 
   test("expanded sidebar", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     const sidebar = page.locator("#sidebar");
     await expect(sidebar).toBeVisible();

@@ -9,12 +9,12 @@ import {
   getSignupPasswordInput,
   getSignupConfirmPasswordInput,
   getSignupButton,
+  goToPageAndWaitFor,
 } from "@/__tests__/e2e/util";
 
 test.describe("Visual Regression: Authentication Pages", () => {
   test("signin page", async ({ page }) => {
-    await page.goto("/signin");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page, "/signin");
 
     const signin = page.locator("#signin");
     await expect(signin).toBeVisible();
@@ -23,8 +23,7 @@ test.describe("Visual Regression: Authentication Pages", () => {
   });
 
   test("signup page", async ({ page }) => {
-    await page.goto("/signup");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page, "/signup");
 
     const signup = page.locator("#signup");
     await expect(signup).toBeVisible();
@@ -42,8 +41,7 @@ test.describe("Visual Regression: Authentication Pages", () => {
       }),
     );
 
-    await page.goto("/signin");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page, "/signin");
 
     const signin = page.locator("#signin");
     await expect(signin).toBeVisible();
@@ -60,8 +58,7 @@ test.describe("Visual Regression: Authentication Pages", () => {
   });
 
   test("signup error, password mismatch", async ({ page }) => {
-    await page.goto("/signup");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page, "/signup");
 
     const signup = page.locator("#signup");
     await expect(signup).toBeVisible();
@@ -82,8 +79,7 @@ test.describe("Visual Regression: Authentication Pages", () => {
   });
 
   test("signup error, existing email", async ({ page }) => {
-    await page.goto("/signup");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page, "/signup");
 
     const signup = page.locator("#signup");
     await expect(signup).toBeVisible();

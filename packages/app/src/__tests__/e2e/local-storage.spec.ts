@@ -1,7 +1,11 @@
 import { test, expect } from "@playwright/test";
 
 import { RecipeID } from "@/__tests__/assets";
-import { expectRecipePasteCompleted, pasteRecipeAndWaitForUpdate } from "@/__tests__/e2e/util";
+import {
+  expectRecipePasteCompleted,
+  pasteRecipeAndWaitForUpdate,
+  goToPageAndWaitFor,
+} from "@/__tests__/e2e/util";
 
 import { sleep_ms } from "@/lib/util";
 
@@ -12,8 +16,7 @@ test.describe("Local Storage Functionality", () => {
   }) => {
     test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
 
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     for (const recipeId of [RecipeID.Main, RecipeID.RefA, RecipeID.RefB])
       await pasteRecipeAndWaitForUpdate(page, browserName, recipeId);

@@ -1,5 +1,7 @@
 import { test, expect, devices } from "@playwright/test";
 
+import { goToPageAndWaitFor } from "@/__tests__/e2e/util";
+
 test.describe("Visual Regression: Responsive Layout", () => {
   const TEST_CASES: {
     name: string;
@@ -68,8 +70,7 @@ test.describe("Visual Regression: Responsive Layout", () => {
     test(name, async ({ page }) => {
       await page.setViewportSize(viewport);
 
-      await page.goto("");
-      await page.waitForLoadState("networkidle");
+      await goToPageAndWaitFor(page);
 
       // Wait for any animations or dynamic content to settle
       await page.waitForTimeout(300);

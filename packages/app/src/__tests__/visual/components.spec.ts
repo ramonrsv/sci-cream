@@ -6,6 +6,7 @@ import {
   getIngredientNameInputAtIdx,
   getMixPropertiesKeyFilterSelectInput,
   pasteRecipeAndWaitForUpdate,
+  goToPageAndWaitFor,
 } from "@/__tests__/e2e/util";
 
 import { RecipeID } from "@/__tests__/assets";
@@ -17,8 +18,7 @@ function waitForChartsToRender(page: Page) {
 
 test.describe("Visual Regression: Empty State", () => {
   test("initial page load - empty recipe grid", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     const recipeGrid = page.locator("#recipe-grid");
     await expect(recipeGrid).toBeVisible();
@@ -27,8 +27,7 @@ test.describe("Visual Regression: Empty State", () => {
   });
 
   test("empty properties grid", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     const propertiesGrid = page.locator("#mix-properties-grid");
     await expect(propertiesGrid).toBeVisible();
@@ -37,8 +36,7 @@ test.describe("Visual Regression: Empty State", () => {
   });
 
   test("empty composition grid", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     const compositionGrid = page.locator("#ing-composition-grid");
     await expect(compositionGrid).toBeVisible();
@@ -47,8 +45,7 @@ test.describe("Visual Regression: Empty State", () => {
   });
 
   test("empty properties chart", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     const propertiesChart = page.locator("#mix-properties-chart");
     await expect(propertiesChart).toBeVisible();
@@ -62,8 +59,7 @@ test.describe("Visual Regression: Empty State", () => {
   });
 
   test("empty FPD graph", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     const fpdGraph = page.locator("#fpd-graph");
     await expect(fpdGraph).toBeVisible();
@@ -83,8 +79,7 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
   ) => {
     test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
 
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     for (const recipeId of recipeIds) {
       await pasteRecipeAndWaitForUpdate(page, browserName, recipeId);
@@ -180,8 +175,7 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
 
 test.describe("Visual Regression: Interactive States", () => {
   test("valid ingredient input focused", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     const nameInput = getIngredientNameInputAtIdx(page, 0);
     await nameInput.click();
@@ -192,8 +186,7 @@ test.describe("Visual Regression: Interactive States", () => {
   });
 
   test("invalid ingredient input focused", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     const nameInput = getIngredientNameInputAtIdx(page, 0);
     await nameInput.click();
@@ -204,8 +197,7 @@ test.describe("Visual Regression: Interactive States", () => {
   });
 
   test("invalid ingredient input unfocused", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     const nameInput = getIngredientNameInputAtIdx(page, 0);
     await nameInput.click();
@@ -221,8 +213,7 @@ test.describe("Visual Regression: Component Variations", () => {
   test("properties grid - scrolled state", async ({ page, browserName }) => {
     test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
 
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
 

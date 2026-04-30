@@ -8,6 +8,8 @@ import {
   pasteRecipeIntoGrid,
   expectRecipePasteCompleted,
   loginAsTestUserWithCredentials,
+  goToPageAndWaitFor,
+  LoadState,
 } from "@/__tests__/e2e/util";
 
 import { sleep_ms } from "@/lib/util";
@@ -16,8 +18,7 @@ import { TEST_USER_B } from "@/lib/database/util";
 
 test.describe("Recipe Resources", () => {
   test("valid-ingredients datalist is present and has options", async ({ page }) => {
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
 
     const datalist = page.locator("#valid-ingredients");
     await expect(datalist).toBeAttached();
@@ -51,8 +52,7 @@ test.describe("Recipe Resources", () => {
     await simulateSlowFetchApiResponse(page, 2000);
 
     const gotoStart = Date.now();
-    await page.goto("");
-    await page.waitForLoadState("domcontentloaded");
+    await goToPageAndWaitFor(page, "", LoadState.DomContentLoaded);
 
     const pasteStart = Date.now();
     for (const recipeId of [RecipeID.Main, RecipeID.RefA, RecipeID.RefB]) {
@@ -87,13 +87,11 @@ test.describe("Recipe Resources", () => {
 
     await simulateSlowFetchApiResponse(page, 2000);
 
-    await page.goto("");
-    await page.waitForLoadState("networkidle");
+    await goToPageAndWaitFor(page);
     await loginAsTestUserWithCredentials(page, TEST_USER_B);
 
     const gotoStart = Date.now();
-    await page.goto("");
-    await page.waitForLoadState("domcontentloaded");
+    await goToPageAndWaitFor(page, "", LoadState.DomContentLoaded);
 
     const pasteStart = Date.now();
     for (const recipeId of [
