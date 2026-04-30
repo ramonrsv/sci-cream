@@ -33,7 +33,7 @@ export default async function BlogSlugPage({ params }: Props) {
     notFound();
   }
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10">
+    <div className="blog-post">
       {page.frontmatter.date && (
         <time className="text-txt-sec-lt dark:text-txt-sec-dk mb-2 block text-sm">
           {page.frontmatter.date}

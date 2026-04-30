@@ -278,6 +278,15 @@ body {
   }
 }
 
+/* Blog and Documentation pages */
+.blog-post {
+  @apply mx-auto max-w-5xl py-2 pr-2 sm:px-6 sm:py-10;
+}
+
+.doc-page {
+  @apply mx-auto max-w-5xl py-2 pr-2 sm:px-6 sm:py-10;
+}
+
 /* Scrollbar Styles */
 * {
   scrollbar-width: thin;

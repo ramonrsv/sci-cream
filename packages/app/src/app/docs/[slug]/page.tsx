@@ -33,7 +33,7 @@ export default async function DocsSlugPage({ params }: Props) {
     notFound();
   }
   return (
-    <div className="mx-auto max-w-5xl px-6 py-10">
+    <div className="doc-page">
       <article
         className="prose dark:prose-invert max-w-5xl"
         dangerouslySetInnerHTML={{ __html: page.contentHtml! }}
