@@ -97,12 +97,14 @@ export function Header() {
   return (
     <header id="header" className="navbar flex h-12 shrink-0 items-center justify-between">
       {/* Logo and collapse/expand button */}
-      <div className={`navbar-trans-width flex shrink-0 ${collapsed ? "w-18" : "w-52"}`}>
-        <div className="flex w-52 shrink-0 items-center overflow-hidden">
+      <div
+        className={`navbar-trans-width flex shrink-0 ${collapsed ? "w-14 sm:w-18" : "w-48 sm:w-52"}`}
+      >
+        <div className="flex w-48 shrink-0 items-center overflow-hidden sm:w-52">
           <button
             title="Expand sidebar"
             id="expand-sidebar-button"
-            className={`${showExpandButton ? "header-button m-4 p-2" : "m-6"} mr-auto`}
+            className={`${showExpandButton ? "header-button ml-2 sm:ml-4" : "ml-4 sm:ml-6"} mr-auto`}
             onClick={() => setCollapsed(false)}
             onMouseEnter={() => setHoveringLogo(true)}
             onMouseLeave={() => setHoveringLogo(false)}
@@ -117,7 +119,7 @@ export function Header() {
           <button
             title="Collapse sidebar"
             id="collapse-sidebar-button"
-            className={`header-button mr-3`}
+            className={`header-button mr-2 sm:mr-4`}
             onClick={() => setCollapsed(true)}
           >
             <PanelLeftClose size={iconSize} />
@@ -126,7 +128,7 @@ export function Header() {
       </div>
       {/* Page title and account button */}
       <div className="navbar flex w-full items-center justify-between">
-        <h1 className="m-3 text-lg font-bold">{pageTitle}</h1>
+        <h1 className="m-4 text-lg font-bold">{pageTitle}</h1>
         <AccountButton iconSize={iconSize} />
       </div>
     </header>
@@ -138,14 +140,14 @@ export function Sidebar() {
   const pathname = usePathname();
   const { collapsed, mounted } = useContext(NavbarContext);
 
-  if (!mounted) return <aside className="navbar w-18 shrink-0" />;
+  if (!mounted) return <aside className="navbar w-14 shrink-0 sm:w-18" />;
 
   const iconSize = NAVBAR_ICON_SIZE;
 
   return (
     <aside
       id="sidebar"
-      className={`navbar navbar-trans-width flex shrink-0 flex-col ${collapsed ? "w-18" : "w-52"}`}
+      className={`navbar navbar-trans-width flex shrink-0 flex-col ${collapsed ? "w-14 sm:w-18" : "w-48 sm:w-52"}`}
     >
       {/* Nav links */}
       <nav className="mt-1 flex flex-1 flex-col gap-1 px-2">
@@ -156,7 +158,7 @@ export function Sidebar() {
               key={href}
               href={href}
               title={collapsed ? label : undefined}
-              className={`sidebar-item ${active ? "sidebar-item-active" : ""} gap-2 px-2`}
+              className={`sidebar-item ${active ? "sidebar-item-active" : ""} mx-0.5 gap-2 px-2 sm:mx-2.25`}
             >
               <Icon size={iconSize} className="shrink-0" />
               {<span className="overflow-hidden">{label}</span>}

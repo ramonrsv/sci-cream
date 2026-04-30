@@ -201,7 +201,7 @@ body {
 }
 
 .sidebar-item {
-  @apply mx-2 flex items-center rounded-lg py-2 text-sm font-medium;
+  @apply flex items-center rounded-lg py-2 text-sm font-medium;
 
   @apply text-txt-sec-lt hover:bg-hov-lt active:text-txt-prim-lt active:bg-hov-lt;
   @variant dark {

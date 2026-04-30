@@ -32,6 +32,9 @@
 
 # Backlog
 
+- [ ] Look into usability on vertical mobile screens; the shrinking sidebar may not be enough.
+- [ ] Make navbar width adjustments more maintainable in `navbar.tsx`. At the moment there are a
+      bunch of widths and margins that need to be adjusted, with various runtime conditions.
 - [ ] Add an app "tour" to show users the main components of the app, where to go for docs, etc.
 - [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
 - [ ] Look into implementing a JS-side ingredient cache so that `Ingredient` WASM objects are only
