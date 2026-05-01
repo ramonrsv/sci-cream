@@ -37,8 +37,8 @@ use crate::composition::{ArtificialSweeteners, Polyols};
 /// reasons or to achieve specific functional properties that aren't possible with sugars alone,
 /// e.g. using erythritol for maximum freezing point depression without adding sweetness (Raphaelson,
 /// 2019, July)[^35]. See [`Polyols`] and [`ArtificialSweeteners`] for more details on these.
-#[doc = include_str!("../../docs/bibs/1.md")]
-#[doc = include_str!("../../docs/bibs/35.md")]
+#[doc = include_str!("../../docs/references/index/1.md")]
+#[doc = include_str!("../../docs/references/index/35.md")]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
@@ -53,7 +53,7 @@ pub struct Sugars {
     /// the form of dextrose monohydrate, which is about 92% glucose by weight. Having dextrose
     /// available is one of the most impactful upgrades that a home ice cream maker can make, since
     /// it allows for much better control over the sweetness and texture of the ice cream.
-    #[doc = include_str!("../../docs/bibs/1.md")]
+    #[doc = include_str!("../../docs/references/index/1.md")]
     pub glucose: f64,
     /// Fructose is is one of the two monosaccharides present in sucrose, the other being glucose
     ///
@@ -63,7 +63,7 @@ pub struct Sugars {
     /// so it is particularly effective at reducing the formation of ice crystals and sugar
     /// crystals, more than any other sugar (Raphaelson, 2023, February)[^1]. It is available for
     /// purchase in crystalline form, and it's also present in honey, invert syrup, and others.
-    #[doc = include_str!("../../docs/bibs/1.md")]
+    #[doc = include_str!("../../docs/references/index/1.md")]
     pub fructose: f64,
     /// Galactose is a monosaccharide that is less common in ice cream formulations, but it is one
     /// of the two monosaccharides present in lactose, the other being glucose
@@ -72,7 +72,7 @@ pub struct Sugars {
     /// glucose and fructose (Spillane, 2006, p. 264)[^9]. It is not commonly used as a standalone
     /// ingredient in ice cream formulations, but it is often present in lactose-free dairy
     /// products, where the lactose is enzymatically broken down into glucose and galactose.
-    #[doc = include_str!("../../docs/bibs/9.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
     pub galactose: f64,
     /// Sucrose, or table sugar, is the most common sugar used in ice cream formulations, and is
     /// often the baseline for sweetness, freezing point depression, and other properties
@@ -83,8 +83,8 @@ pub struct Sugars {
     /// flavor and sweetness profile, it is often the primary sugar used in ice cream formulations,
     /// with others used as supplements to achieve specific functional properties (Raphaelson, 2023,
     /// February)[^1], (Goff & Hartel, 2013, Table 3.4, p. 67)[^2].
-    #[doc = include_str!("../../docs/bibs/1.md")]
-    #[doc = include_str!("../../docs/bibs/2.md")]
+    #[doc = include_str!("../../docs/references/index/1.md")]
+    #[doc = include_str!("../../docs/references/index/2.md")]
     pub sucrose: f64,
     /// Lactose is a disaccharide composed of one glucose molecule and one galactose molecule
     ///
@@ -95,8 +95,8 @@ pub struct Sugars {
     /// (Raphaelson, 2023, February)[^1]. However, lactose has limited solubility in water, which
     /// limits how much can be added to a formulation before it starts to crystallize (Spillane,
     /// 2006, p. 264)[^9]. It's also usually not an option in dairy-free formulations like sorbets.
-    #[doc = include_str!("../../docs/bibs/1.md")]
-    #[doc = include_str!("../../docs/bibs/9.md")]
+    #[doc = include_str!("../../docs/references/index/1.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
     pub lactose: f64,
     /// Maltose is a disaccharide composed of two glucose molecules
     ///
@@ -104,9 +104,9 @@ pub struct Sugars {
     /// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2], (Spillane, 2006, p. 253)[^9]. It is rarely
     /// used as a standalone ingredient in ice cream formulations, but it is often present in
     /// partially hydrolyzed starches, like maltodextrin and corn syrups (Furia, 1972, p. 45)[^36].
-    #[doc = include_str!("../../docs/bibs/2.md")]
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/36.md")]
+    #[doc = include_str!("../../docs/references/index/2.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/36.md")]
     pub maltose: f64,
     /// Trehalose is a disaccharide composed of two glucose molecules linked in 1.1-position
     ///
@@ -118,9 +118,9 @@ pub struct Sugars {
     /// formulations, it has strong water controlling properties and helps with texture. However, it
     /// has low solubility and can crystallize if the concentration is too high. It has very similar
     /// functional properties to lactose in milk solids (Raphaelson, 2019, July)[^35].
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/15.md")]
-    #[doc = include_str!("../../docs/bibs/35.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/15.md")]
+    #[doc = include_str!("../../docs/references/index/35.md")]
     pub trehalose: f64,
     /// Any other types of sugars not explicitly tracked by the other fields
     ///

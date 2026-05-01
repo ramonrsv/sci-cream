@@ -33,7 +33,7 @@ use crate::composition::Polyols;
 ///
 /// **Note**: These are distinct from sugar alcohols (e.g. erythritol, maltitol, etc.) which have
 /// different functional properties and are used in different quantities. See [`Polyols`].
-#[doc = include_str!("../../docs/bibs/9.md")]
+#[doc = include_str!("../../docs/references/index/9.md")]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
@@ -48,9 +48,9 @@ pub struct ArtificialSweeteners {
     /// (International Food Information Council Foundation, 2019, "What is aspartame?")[^21],
     /// (Spillane, 2006, Table 9.3, p. 179)[^9], (Spillane, 2006, Table 9.4, p. 187)[^9]. It is
     /// found in various brand-name products such as Equal and Canderel.
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/10.md")]
-    #[doc = include_str!("../../docs/bibs/21.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/10.md")]
+    #[doc = include_str!("../../docs/references/index/21.md")]
     pub aspartame: f64,
     /// Cyclamate is a zero-calorie artificial sweetener
     ///
@@ -59,9 +59,9 @@ pub struct ArtificialSweeteners {
     /// improved taste. It is banned in the US but approved for use in many other countries,
     /// including the EU (E952) (Spillane, 2006, Table 9.4, p. 188)[^9], (The European Commission,
     /// 2025, E952)[^10], (Lawrence, 2003, "Cyclamates")[^32].
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/10.md")]
-    #[doc = include_str!("../../docs/bibs/32.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/10.md")]
+    #[doc = include_str!("../../docs/references/index/32.md")]
     pub cyclamate: f64,
     /// Saccharin is a non-nutritive artificial sweetener
     ///
@@ -72,9 +72,9 @@ pub struct ArtificialSweeteners {
     /// widely approved for use in many countries, including in the US and EU (E954) (Spillane,
     /// 2006, Table 9.3, p. 181)[^9], (The European Commission, 2025, E954)[^10], (American Diabetes
     /// Association, 2014, "Saccharin")[^22].
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/10.md")]
-    #[doc = include_str!("../../docs/bibs/22.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/10.md")]
+    #[doc = include_str!("../../docs/references/index/22.md")]
     pub saccharin: f64,
     /// Sucralose is a common non-nutritive artificial sweetener
     ///
@@ -84,11 +84,11 @@ pub struct ArtificialSweeteners {
     /// widely approved for use in many countries, including in the US and EU (E955) (Spillane,
     /// 2006, Table 9.3, p. 184)[^9], (The European Commission, 2025, E955)[^10], (Castro-Muñoz,
     /// 2022)[^11]), (Hull, 2010, Appendix C.3, p. 324)[^15], (Schiffman, 2013, "Abstract")[^23].
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/10.md")]
-    #[doc = include_str!("../../docs/bibs/11.md")]
-    #[doc = include_str!("../../docs/bibs/15.md")]
-    #[doc = include_str!("../../docs/bibs/23.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/10.md")]
+    #[doc = include_str!("../../docs/references/index/11.md")]
+    #[doc = include_str!("../../docs/references/index/15.md")]
+    #[doc = include_str!("../../docs/references/index/23.md")]
     pub sucralose: f64,
     /// Steviol glycosides are the main active sweetening compounds in stevia extract
     ///
@@ -98,8 +98,8 @@ pub struct ArtificialSweeteners {
     /// sucrose (Spillane, 2006, p. 210, 297)[^9]. They are not digested and so have no caloric
     /// value (Priscilla, 2018, "Metabolism of steviol glycosides")[^28]. They are the primary
     /// sweetening compounds in stevia extract, a common low-calorie sugar substitute.
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/28.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/28.md")]
     pub steviosides: f64,
     /// Mogrosides are the main active sweetening compounds in monkfruit extract
     ///
@@ -109,8 +109,8 @@ pub struct ArtificialSweeteners {
     /// They are degraded by digestive enzymes and intestinal microflora, and excreted in the feces
     /// as mogrol, so so they have no caloric value (Murata, 2010, "Abstract")[^29].They are the
     /// primary sweetening compounds in monkfruit extract, a common low-calorie sugar substitute.
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/29.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/29.md")]
     pub mogrosides: f64,
     /// Any other artificial sweeteners not explicitly tracked by the other fields
     ///

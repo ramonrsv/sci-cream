@@ -3,65 +3,65 @@
 /// [Potere Dolcificante (POD)](crate::docs#pod) values various sweeteners and other ingredients
 ///
 /// Expressed as g/100g of sucrose equivalence.
-#[doc = include_str!("../docs/bibs/2.md")]
+#[doc = include_str!("../docs/references/index/2.md")]
 pub mod pod {
     /// Also known by the name 'dextrose', commonly sold as dextrose monohydrate powder.
     ///
     /// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]
-    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
     pub const GLUCOSE: f64 = 80.0;
     /// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]
-    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
     pub const FRUCTOSE: f64 = 173.0;
     /// (Spillane, 2006, p. 264)[^9]
-    #[doc = include_str!("../docs/bibs/9.md")]
+    #[doc = include_str!("../docs/references/index/9.md")]
     pub const GALACTOSE: f64 = 65.0;
     /// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]
-    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
     pub const SUCROSE: f64 = 100.0;
     /// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2]
-    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
     pub const LACTOSE: f64 = 16.0;
     /// (Goff & Hartel, 2013, Table 3.4, p. 67)[^2], (Spillane, 2006, p. 253)[^9]
-    #[doc = include_str!("../docs/bibs/2.md")]
-    #[doc = include_str!("../docs/bibs/9.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
+    #[doc = include_str!("../docs/references/index/9.md")]
     pub const MALTOSE: f64 = 32.0;
     /// (Hull, 2010, Appendix C.3, p. 324)[^15], (Spillane, 2006, p. 262)[^9]
-    #[doc = include_str!("../docs/bibs/15.md")]
-    #[doc = include_str!("../docs/bibs/9.md")]
+    #[doc = include_str!("../docs/references/index/15.md")]
+    #[doc = include_str!("../docs/references/index/9.md")]
     pub const TREHALOSE: f64 = 45.0;
 
     /// (Spillane, 2006, Table 8.5, p. 159)[^9], (The European Commission, 2025, E968)[^10],
     /// (Hull, 2010, Appendix C.3, p. 324)[^15]
-    #[doc = include_str!("../docs/bibs/9.md")]
-    #[doc = include_str!("../docs/bibs/10.md")]
-    #[doc = include_str!("../docs/bibs/15.md")]
+    #[doc = include_str!("../docs/references/index/9.md")]
+    #[doc = include_str!("../docs/references/index/10.md")]
+    #[doc = include_str!("../docs/references/index/15.md")]
     pub const ERYTHRITOL: f64 = 70.0;
     /// (Spillane, 2006, Table 8.5, p. 159)[^9], (Hull, 2010, Appendix C.3, p. 324)[^15]
-    #[doc = include_str!("../docs/bibs/9.md")]
-    #[doc = include_str!("../docs/bibs/15.md")]
+    #[doc = include_str!("../docs/references/index/9.md")]
+    #[doc = include_str!("../docs/references/index/15.md")]
     pub const MALTITOL: f64 = 90.0;
     /// (Spillane, 2006, Table 8.5, p. 159)[^9], (Hull, 2010, Appendix C.3, p. 324)[^15]
-    #[doc = include_str!("../docs/bibs/9.md")]
-    #[doc = include_str!("../docs/bibs/15.md")]
+    #[doc = include_str!("../docs/references/index/9.md")]
+    #[doc = include_str!("../docs/references/index/15.md")]
     pub const SORBITOL: f64 = 55.0;
     /// (Spillane, 2006, Table 8.5, p. 159)[^9], (Hull, 2010, Appendix C.3, p. 324)[^15]
-    #[doc = include_str!("../docs/bibs/9.md")]
-    #[doc = include_str!("../docs/bibs/15.md")]
+    #[doc = include_str!("../docs/references/index/9.md")]
+    #[doc = include_str!("../docs/references/index/15.md")]
     pub const XYLITOL: f64 = 95.0;
 
     /// (The European Commission, 2025, E951)[^10]
-    #[doc = include_str!("../docs/bibs/10.md")]
+    #[doc = include_str!("../docs/references/index/10.md")]
     pub const ASPARTAME: f64 = 200.0 * 100.0;
     /// (Spillane, 2006, Table 9.4, p. 188)[^9]
-    #[doc = include_str!("../docs/bibs/9.md")]
+    #[doc = include_str!("../docs/references/index/9.md")]
     pub const CYCLAMATE: f64 = 30.0 * 100.0;
     /// (The European Commission, 2025, E954)[^10]
-    #[doc = include_str!("../docs/bibs/10.md")]
+    #[doc = include_str!("../docs/references/index/10.md")]
     pub const SACCHARIN: f64 = 400.0 * 100.0;
     /// (Castro-Muñoz, 2022)[^11]), (Hull, 2010, Appendix C.3, p. 324)[^15]
-    #[doc = include_str!("../docs/bibs/11.md")]
-    #[doc = include_str!("../docs/bibs/15.md")]
+    #[doc = include_str!("../docs/references/index/11.md")]
+    #[doc = include_str!("../docs/references/index/15.md")]
     pub const SUCRALOSE: f64 = 600.0 * 100.0;
 
     /// (Spillane, 2006, p. 297)[^9]
@@ -74,7 +74,7 @@ pub mod pod {
     /// contributions in formulations; ingredients should explicitly provide POD values instead.
     /// </div>
     ///
-    #[doc = include_str!("../docs/bibs/9.md")]
+    #[doc = include_str!("../docs/references/index/9.md")]
     pub const STEVIOSIDES: f64 = 225.0 * 100.0;
     /// (Spillane, 2006, p. 297)[^9]
     ///
@@ -86,14 +86,14 @@ pub mod pod {
     /// contributions in formulations; ingredients should explicitly provide POD values instead.
     /// </div>
     ///
-    #[doc = include_str!("../docs/bibs/9.md")]
+    #[doc = include_str!("../docs/references/index/9.md")]
     pub const MOGROSIDES: f64 = 340.0 * 100.0;
 
     /// (Niness, 1999, "Inulin and Oligofructose: What Are They?")[^24]
-    #[doc = include_str!("../docs/bibs/24.md")]
+    #[doc = include_str!("../docs/references/index/24.md")]
     pub const INULIN: f64 = 0.0;
     /// (Niness, 1999, "Inulin and Oligofructose: What Are They?")[^24]
-    #[doc = include_str!("../docs/bibs/24.md")]
+    #[doc = include_str!("../docs/references/index/24.md")]
     pub const OLIGOFRUCTOSE: f64 = 40.0;
 }
 
@@ -181,7 +181,7 @@ pub mod pac {
 ///
 /// Used in the [Corvitto method](crate::docs#corvitto-method-hardness-factor) for calculating the
 /// hardness of mixes containing chocolate and nut ingredients (Corvitto, 2005, p. 243)[^3].
-#[doc = include_str!("../docs/bibs/3.md")]
+#[doc = include_str!("../docs/references/index/3.md")]
 pub mod hf {
     /// Hardness Factor for cacao butter; see [`ChocolateSpec`](crate::specs::ChocolateSpec).
     pub const CACAO_BUTTER: f64 = 0.9;
@@ -196,45 +196,45 @@ pub mod hf {
 /// Standard composition values for various food components and ingredients
 pub mod composition {
     /// Percentage milk solids non-fat (MSNF) typical of milk serum (Goff & Hartel, 2013, p.160)[^2]
-    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
     pub const STD_MSNF_IN_MILK_SERUM: f64 = 0.09;
 
     /// Percentage of lactose typical of milk solids non-fat (MSNF) (Goff & Hartel, 2013, p.181)[^2]
-    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
     pub const STD_LACTOSE_IN_MSNF: f64 = 0.545;
 
     /// Percentage of lactose typically found in whey solids (WS) (Goff & Hartel, 2013, p. 181)[^2]
-    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
     pub const STD_LACTOSE_IN_WS: f64 = 0.765;
 
     /// Percentage of protein typical of milk solids non-fat (MSNF) (Goff & Hartel, 2013, p. 35)[^2]
-    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
     pub const STD_PROTEIN_IN_MSNF: f64 = 0.35;
 
     /// Percentage of protein typically found in whey solids (WS) (Goff & Hartel, 2013, p. 35)[^2]
-    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
     pub const STD_PROTEIN_IN_WS: f64 = 0.12;
 
     /// Proportion of proteins in milk solids that is whey (Goff & Hartel, 2025, p. 315)[^20].
-    #[doc = include_str!("../docs/bibs/20.md")]
+    #[doc = include_str!("../docs/references/index/20.md")]
     pub const STD_WHEY_PROTEIN_IN_MSNF_PROTEIN: f64 = 0.2;
 
     /// Proportion of proteins in milk solids that is casein (Goff & Hartel, 2025, p. 315)[^20].
-    #[doc = include_str!("../docs/bibs/20.md")]
+    #[doc = include_str!("../docs/references/index/20.md")]
     pub const STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN: f64 = 0.8;
 
     /// Percentage of saturated fats typical of milk fat (Board on Agriculture.., 1974, p. 203)[^12]
-    #[doc = include_str!("../docs/bibs/12.md")]
+    #[doc = include_str!("../docs/references/index/12.md")]
     pub const STD_SATURATED_FAT_IN_MILK_FAT: f64 = 0.65;
 
     /// Percentage of trans fats typically found in milk fat (Milk, whole, 3.25% milkfat, with added
     /// Vitamin D, 2019)[^103]
     #[allow(clippy::doc_markdown)] // _FoodData_ false positive
-    #[doc = include_str!("../docs/bibs/103.md")]
+    #[doc = include_str!("../docs/references/index/103.md")]
     pub const STD_TRANS_FAT_IN_MILK_FAT: f64 = 0.035;
 
     /// Percentage of saturated fats typical of egg fat (Board on Agriculture..., 1974, p. 203)[^12]
-    #[doc = include_str!("../docs/bibs/12.md")]
+    #[doc = include_str!("../docs/references/index/12.md")]
     pub const STD_SATURATED_FAT_IN_EGG_FAT: f64 = 0.28;
 
     /// Percentage of saturated fats typical of nut fat; see [`NutSpec`](crate::specs::NutSpec).
@@ -243,9 +243,9 @@ pub mod composition {
     /// FoodData Central_ database (Nuts, almonds, 2019)[^102], (Nuts, pistachio nuts, raw,
     /// 2019)[^112], (Nuts, hazelnuts or filberts, 2019)[^113].
     #[allow(clippy::doc_markdown)] // _FoodData_ false positive
-    #[doc = include_str!("../docs/bibs/102.md")]
-    #[doc = include_str!("../docs/bibs/112.md")]
-    #[doc = include_str!("../docs/bibs/113.md")]
+    #[doc = include_str!("../docs/references/index/102.md")]
+    #[doc = include_str!("../docs/references/index/112.md")]
+    #[doc = include_str!("../docs/references/index/113.md")]
     pub const STD_SATURATED_FAT_IN_NUT_FAT: f64 = 0.09;
 
     #[allow(clippy::doc_markdown)] // _FoodData_ false positive
@@ -262,14 +262,14 @@ pub mod composition {
     /// products (Lindt 70% Cacao Dark Chocolate, 2025)[^107], (Lindt 85% Cacao Dark Chocolate,
     /// 2025)[^108], (Lindt 95% Cacao Dark Chocolate, 2025)[^109], (Lindt 100% Cacao Dark Chocolate,
     /// 2025)[^110], (Ghirardelli 100% Unsweetened Cocoa Powder, 2025)[^111].
-    #[doc = include_str!("../docs/bibs/104.md")]
-    #[doc = include_str!("../docs/bibs/105.md")]
-    #[doc = include_str!("../docs/bibs/106.md")]
-    #[doc = include_str!("../docs/bibs/107.md")]
-    #[doc = include_str!("../docs/bibs/108.md")]
-    #[doc = include_str!("../docs/bibs/109.md")]
-    #[doc = include_str!("../docs/bibs/110.md")]
-    #[doc = include_str!("../docs/bibs/111.md")]
+    #[doc = include_str!("../docs/references/index/104.md")]
+    #[doc = include_str!("../docs/references/index/105.md")]
+    #[doc = include_str!("../docs/references/index/106.md")]
+    #[doc = include_str!("../docs/references/index/107.md")]
+    #[doc = include_str!("../docs/references/index/108.md")]
+    #[doc = include_str!("../docs/references/index/109.md")]
+    #[doc = include_str!("../docs/references/index/110.md")]
+    #[doc = include_str!("../docs/references/index/111.md")]
     pub mod cacao {
         #[cfg(doc)]
         pub use crate::{constants::composition, specs::ChocolateSpec};
@@ -320,66 +320,66 @@ pub mod composition {
 /// 2013, p. 13)[^18] Energy values for major macronutrients are based on the Atwater system
 /// (Merrill & Watt, 1973)[^32], and those for polyols, artificial sweeteners, and other ingredients
 /// are based on various sources as noted.
-#[doc = include_str!("../docs/bibs/18.md")]
-#[doc = include_str!("../docs/bibs/32.md")]
+#[doc = include_str!("../docs/references/index/18.md")]
+#[doc = include_str!("../docs/references/index/32.md")]
 pub mod energy {
     /// ( U.S. Department of Agriculture, 2013, p. 13)[^18]
-    #[doc = include_str!("../docs/bibs/18.md")]
+    #[doc = include_str!("../docs/references/index/18.md")]
     pub const FATS: f64 = 9.0;
     /// Energy for digestible carbohydrates; fiber and polyols are not included.
     ///
     /// ( U.S. Department of Agriculture, 2013, p. 13)[^18]
-    #[doc = include_str!("../docs/bibs/18.md")]
+    #[doc = include_str!("../docs/references/index/18.md")]
     pub const CARBOHYDRATES: f64 = 4.0;
     /// ( U.S. Department of Agriculture, 2013, p. 13)[^18]
-    #[doc = include_str!("../docs/bibs/18.md")]
+    #[doc = include_str!("../docs/references/index/18.md")]
     pub const PROTEINS: f64 = 4.0;
     /// ( U.S. Department of Agriculture, 2013, p. 13)[^18]
-    #[doc = include_str!("../docs/bibs/18.md")]
+    #[doc = include_str!("../docs/references/index/18.md")]
     pub const ALCOHOL: f64 = 6.93;
 
     /// (Spillane, 2006, Table 8.3, p. 157)[^9], (European Association of Polyols Producers, 2026,
     /// "Polyol Erythritol")[^19]
-    #[doc = include_str!("../docs/bibs/9.md")]
-    #[doc = include_str!("../docs/bibs/19.md")]
+    #[doc = include_str!("../docs/references/index/9.md")]
+    #[doc = include_str!("../docs/references/index/19.md")]
     pub const ERYTHRITOL: f64 = 0.2;
     /// (Spillane, 2006, Table 8.3, p. 157)[^9], (European Association of Polyols Producers, 2026,
     /// "Polyol Maltitol")[^19]
-    #[doc = include_str!("../docs/bibs/9.md")]
-    #[doc = include_str!("../docs/bibs/19.md")]
+    #[doc = include_str!("../docs/references/index/9.md")]
+    #[doc = include_str!("../docs/references/index/19.md")]
     pub const MALTITOL: f64 = 2.5;
     ///  (Spillane, 2006, Table 8.3, p. 157)[^9]
-    #[doc = include_str!("../docs/bibs/9.md")]
+    #[doc = include_str!("../docs/references/index/9.md")]
     pub const SORBITOL: f64 = 2.8;
     /// (Spillane, 2006, Table 8.3, p. 157)[^9], (European Association of Polyols Producers, 2026,
     /// "Polyol Xylitol")[^19]
-    #[doc = include_str!("../docs/bibs/9.md")]
-    #[doc = include_str!("../docs/bibs/19.md")]
+    #[doc = include_str!("../docs/references/index/9.md")]
+    #[doc = include_str!("../docs/references/index/19.md")]
     pub const XYLITOL: f64 = 2.7;
 
     /// (International Food Information Council Foundation, 2019, "What is aspartame?")[^21]
-    #[doc = include_str!("../docs/bibs/21.md")]
+    #[doc = include_str!("../docs/references/index/21.md")]
     pub const ASPARTAME: f64 = 4.0;
     /// (Lawrence, 2003, "Cyclamates")[^32]
-    #[doc = include_str!("../docs/bibs/32.md")]
+    #[doc = include_str!("../docs/references/index/32.md")]
     pub const CYCLAMATE: f64 = 0.0;
     /// (American Diabetes Association, 2014, "Saccharin")[^22]
-    #[doc = include_str!("../docs/bibs/22.md")]
+    #[doc = include_str!("../docs/references/index/22.md")]
     pub const SACCHARIN: f64 = 0.0;
     /// (Schiffman, 2013, "Abstract")[^23]
-    #[doc = include_str!("../docs/bibs/23.md")]
+    #[doc = include_str!("../docs/references/index/23.md")]
     pub const SUCRALOSE: f64 = 0.0;
     /// (Priscilla, 2018, "Metabolism of steviol glycosides")[^28]
-    #[doc = include_str!("../docs/bibs/28.md")]
+    #[doc = include_str!("../docs/references/index/28.md")]
     pub const STEVIOSIDES: f64 = 0.0;
     /// (Murata, 2010, "Abstract")[^29]
-    #[doc = include_str!("../docs/bibs/29.md")]
+    #[doc = include_str!("../docs/references/index/29.md")]
     pub const MOGROSIDES: f64 = 0.0;
 
     /// (Niness, 1999, "Inulin and Oligofructose: What Are They?")[^24]
     /// (Roberfoid, 1999, "Caloric Value of Inulin and Oligofructose")[^25]
-    #[doc = include_str!("../docs/bibs/24.md")]
-    #[doc = include_str!("../docs/bibs/25.md")]
+    #[doc = include_str!("../docs/references/index/24.md")]
+    #[doc = include_str!("../docs/references/index/25.md")]
     pub const INULIN_AND_OLIGOFRUCTOSE: f64 = 1.5;
 }
 
@@ -390,25 +390,25 @@ pub mod density {
     /// _"Because of the miscibility of alcohol and water, the conversion factor is not constant but
     /// rather depends upon the concentration of alcohol."_ ("Alcohol by volume", 2025)[^8] However,
     /// for typical ice cream alcohol contents the approximation of 0.789 is sufficiently accurate.
-    #[doc = include_str!("../docs/bibs/8.md")]
+    #[doc = include_str!("../docs/references/index/8.md")]
     pub const ABV_TO_ABW_RATIO: f64 = 0.789;
 
     /// Density (g/mL) of milk with 2% fat content
     ///
     /// _Milk, liquid, partially skimmed_ (Charrondiere et al., 2011, p. 2)[^14]
-    #[doc = include_str!("../docs/bibs/14.md")]
+    #[doc = include_str!("../docs/references/index/14.md")]
     pub const MILK_2: f64 = 1.034;
 
     /// Density (g/mL) of milk with 3.5% fat content
     ///
     /// _Milk, liquid, whole_ (Charrondiere et al., 2011, p. 2)[^14]
-    #[doc = include_str!("../docs/bibs/14.md")]
+    #[doc = include_str!("../docs/references/index/14.md")]
     pub const MILK_3_5: f64 = 1.03;
 
     /// Density (g/mL) of cream with 40% fat content
     ///
     /// _Cream, whipping (about 40% fat)_ (Charrondiere et al., 2011, p. 2)[^14]
-    #[doc = include_str!("../docs/bibs/14.md")]
+    #[doc = include_str!("../docs/references/index/14.md")]
     pub const CREAM_40: f64 = 0.96;
 
     /// Convert dairy volume in milliliters to grams based on fat content percentage
@@ -436,7 +436,7 @@ pub mod density {
     }
 
     /// Grams of sugar in one teaspoon (US) of granulated sugar (Anderson, 2010)[^31]
-    #[doc = include_str!("../docs/bibs/31.md")]
+    #[doc = include_str!("../docs/references/index/31.md")]
     pub const GRAMS_IN_TEASPOON_OF_SUGAR: f64 = 4.2;
 }
 
@@ -469,16 +469,16 @@ pub mod density {
 // @todo Find a better way to estimate the relative strength of other stabilizers, ideally from
 // literature, and without referencing the recommended dosages, as those can vary significantly
 // depending on the rest of the formulation.
-#[doc = include_str!("../docs/bibs/4.md")]
-#[doc = include_str!("../docs/bibs/6.md")]
-#[doc = include_str!("../docs/bibs/20.md")]
-#[doc = include_str!("../docs/bibs/37.md")]
+#[doc = include_str!("../docs/references/index/4.md")]
+#[doc = include_str!("../docs/references/index/6.md")]
+#[doc = include_str!("../docs/references/index/20.md")]
+#[doc = include_str!("../docs/references/index/37.md")]
 pub mod stabilization {
     /// Stabilizer strength for Locust Bean Gum (LBG), set to 100 as the reference stabilizer
     ///
     /// Locust Bean Gum, with a recommended dosage of ~2g/kg, is taken as the reference stabilizer,
     /// and has a stabilizer strength of 100 (Cree, 2017, Locust Bean Gum, p. 71)[^6].
-    #[doc = include_str!("../docs/bibs/6.md")]
+    #[doc = include_str!("../docs/references/index/6.md")]
     pub const STABILIZER_STRENGTH_LOCUST_BEAN_GUM: f64 = 100.0;
 
     /// @todo...
@@ -491,7 +491,7 @@ pub mod stabilization {
     ///
     /// Cornstarch, with a recommended dosage of ~10g/kg, has a stabilizer strength of ~20 (Cree,
     /// 2017, Cornstarch, p. 69)[^6], (Cree, 2017, Blank Slate Custard Ice Cream, p. 115)[^6].
-    #[doc = include_str!("../docs/bibs/6.md")]
+    #[doc = include_str!("../docs/references/index/6.md")]
     pub const STABILIZER_STRENGTH_CORNSTARCH: f64 = 20.0;
 
     /// Stabilizer strength for tapioca starch, expressed as a percentage relative to a reference
@@ -499,35 +499,35 @@ pub mod stabilization {
     /// Tapioca starch, with a recommended dosage of ~5g/kg, has a stabilizer strength of ~40, twice
     /// as strong as cornstarch (Cree, 2017, Tapioca Starch, p. 71)[^6], (Cree, 2017, Blank Slate
     /// Custard Ice Cream, p. 115)[^6].
-    #[doc = include_str!("../docs/bibs/6.md")]
+    #[doc = include_str!("../docs/references/index/6.md")]
     pub const STABILIZER_STRENGTH_TAPIOCA_STARCH: f64 = 40.0;
 
     /// Stabilizer strength for pectin, expressed as a percentage relative to a reference
     ///
     /// Pectin, with a recommended dosage of ~1g/kg, has a stabilizer strength of ~200 (Cree, 2017,
     /// Pectin, p. 72)[^6].
-    #[doc = include_str!("../docs/bibs/6.md")]
+    #[doc = include_str!("../docs/references/index/6.md")]
     pub const STABILIZER_STRENGTH_PECTIN: f64 = 200.0;
 
     /// Stabilizer strength for gelatin, expressed as a percentage relative to a reference
     ///
     /// Gelatin, with a recommended dosage of ~4g/kg, has a stabilizer strength of ~50 (Cree, 2017,
     /// Gelatin, p. 76)[^6].
-    #[doc = include_str!("../docs/bibs/6.md")]
+    #[doc = include_str!("../docs/references/index/6.md")]
     pub const STABILIZER_STRENGTH_GELATIN: f64 = 50.0;
 
     /// Stabilizer strength for Guar Gum, expressed as a percentage relative to a reference
     ///
     /// Guar Gum, with a recommended dosage of ~1g/kg, has a stabilizer strength of ~200 (Cree,
     /// 2017, Guar Gum, p. 73)[^6].
-    #[doc = include_str!("../docs/bibs/6.md")]
+    #[doc = include_str!("../docs/references/index/6.md")]
     pub const STABILIZER_STRENGTH_GUAR_GUM: f64 = 200.0;
 
     /// Stabilizer strength for Carrageenans, expressed as a percentage relative to a reference
     ///
     /// Carrageenans, with a recommended dosage of ~2.5g/kg, has a stabilizer strength of ~80 (Cree,
     /// 2017, Carrageenans, p. 74)[^6].
-    #[doc = include_str!("../docs/bibs/6.md")]
+    #[doc = include_str!("../docs/references/index/6.md")]
     pub const STABILIZER_STRENGTH_CARRAGEENANS: f64 = 80.0;
 
     /// @todo...
@@ -537,7 +537,7 @@ pub mod stabilization {
     ///
     /// Xanthan Gum, with a recommended dosage of ~1g/kg, has a stabilizer strength of ~200 (Cree,
     /// 2017, Xanthan Gum, p. 73)[^6].
-    #[doc = include_str!("../docs/bibs/6.md")]
+    #[doc = include_str!("../docs/references/index/6.md")]
     pub const STABILIZER_STRENGTH_XANTHAN_GUM: f64 = 200.0;
 
     /// @todo...
@@ -569,16 +569,16 @@ pub mod stabilization {
 // @todo Find a better way to estimate the relative strength of other emulsifiers, ideally from
 // literature, and without referencing the recommended dosages, as those can vary significantly
 // depending on the rest of the formulation.
-#[doc = include_str!("../docs/bibs/4.md")]
-#[doc = include_str!("../docs/bibs/5.md")]
-#[doc = include_str!("../docs/bibs/20.md")]
-#[doc = include_str!("../docs/bibs/38.md")]
+#[doc = include_str!("../docs/references/index/4.md")]
+#[doc = include_str!("../docs/references/index/5.md")]
+#[doc = include_str!("../docs/references/index/20.md")]
+#[doc = include_str!("../docs/references/index/38.md")]
 pub mod emulsification {
     /// Emulsifier strength for Lecithin, set to 100 as the reference emulsifier
     ///
     /// Lecithin, with a recommended dosage of ~3.25g/kg, is taken as the reference emulsifier,
     /// and has an emulsifier strength of 100 (Raphaelson, 2016, Standard Base)[^5].
-    #[doc = include_str!("../docs/bibs/5.md")]
+    #[doc = include_str!("../docs/references/index/5.md")]
     pub const EMULSIFIER_STRENGTH_LECITHIN: f64 = 100.0;
 
     /// @todo...
@@ -596,7 +596,7 @@ pub mod emulsification {
     /// commercial Gum Arabic products claim that it is a 1:1 substitute for mono- and diglycerides,
     /// which itself has a recommended dosage of 1-2g/kg (Raphaelson, 2023, January)[^38]. Taking
     /// the average of 1.5g/kg, Gum Arabic has an emulsifier strength of ~217.
-    #[doc = include_str!("../docs/bibs/38.md")]
+    #[doc = include_str!("../docs/references/index/38.md")]
     pub const EMULSIFIER_STRENGTH_GUM_ARABIC: f64 = 217.0;
 
     /// Emulsifier strength for mono- and diglycerides, expressed as a reference-relative percentage
@@ -604,8 +604,8 @@ pub mod emulsification {
     /// Mono- and diglycerides, with a recommended dosage of 1-2g/kg, have an emulsifier strength of
     /// ~217 (Raphaelson, 2023, January)[^38], (Ice Cream Science, 2026, May, "Why are emulsifiers
     /// used in ice cream?")[^45].
-    #[doc = include_str!("../docs/bibs/38.md")]
-    #[doc = include_str!("../docs/bibs/45.md")]
+    #[doc = include_str!("../docs/references/index/38.md")]
+    #[doc = include_str!("../docs/references/index/45.md")]
     pub const EMULSIFIER_STRENGTH_MONO_AND_DIGLYCERIDES: f64 = 217.0;
 
     /// @todo...
@@ -615,7 +615,7 @@ pub mod emulsification {
     ///
     /// Polysorbate 80, with a recommended dosage of ~0.2-0.4g/kg, has an emulsifier strength of
     /// ~1000 (Raphaelson, 2023, January)[^38].
-    #[doc = include_str!("../docs/bibs/38.md")]
+    #[doc = include_str!("../docs/references/index/38.md")]
     pub const EMULSIFIER_STRENGTH_POLYSORBATE_80: f64 = 1000.0;
 }
 
@@ -623,14 +623,14 @@ pub mod emulsification {
 /// (FPD)](crate::docs#freezing-point-depression) calculations
 pub mod fpd {
     /// Typical target serving temperature (in °C) for ice cream (Raphaelson, 2016, Hardness)[^7]
-    #[doc = include_str!("../docs/bibs/7.md")]
+    #[doc = include_str!("../docs/references/index/7.md")]
     pub const TARGET_SERVING_TEMP_14C: f64 = -14.0;
 
     /// Typical x-axis value ("hardness" or "frozen water") for the serving temperature of an ice
     /// cream mix in an FPD curve
     ///
     /// Corvitto (2005, p. 78)[^3] uses 70%, see [`CORVITTO_PAC_TO_SERVING_TEMP_TABLE`] for details.
-    #[doc = include_str!("../docs/bibs/3.md")]
+    #[doc = include_str!("../docs/references/index/3.md")]
     pub const SERVING_TEMP_X_AXIS: usize = 75;
 
     /// PAC to FPD polynomial coefficients, a*x^2 + b*x + c => [a, b, c]
@@ -638,7 +638,7 @@ pub mod fpd {
     /// _Polynominal equation with intercept through zero derived from regression model where g
     /// sucrose/100 g water is graphed against FPD °C._ (Goff & Hartel, 2013, Table 6.3.c, p.
     /// 186)[^2]
-    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
     pub const PAC_TO_FPD_POLY_COEFFS: [f64; 3] = [-0.00009, -0.0612, 0.0];
 
     /// Freezing Point Depression (FPD) constant (°C) for salts contained in MSNF and WS
@@ -646,14 +646,14 @@ pub mod fpd {
     /// _The freezing point depression for salts (°C) contained in MSNF and WS, ... based on the
     /// average molecular weight and concentration of salts present in milk._ (Goff & Hartel, 2013,
     /// p.183)[^2]
-    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
     pub const FPD_CONST_FOR_MSNF_WS_SALTS: f64 = -2.37;
 
     /// PAC to FPD lookup table
     ///
     /// Table of empirical measurements, referenced from  _Freezing point depression (°C) below 0°C
     /// of sucrose solutions (g/100g water)_ (Goff & Hartel, 2013, Table 6.1, p. 182)[^2]
-    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
     pub const PAC_TO_FPD_TABLE: [(usize, f64); 61] = [
         // (g Sucrose/100g water, FPD (°C))
         (0, 0.00),
@@ -726,8 +726,8 @@ pub mod fpd {
     /// [`PAC_TO_FPD_POLY_COEFFS`], adjusting [`PAC::sugars`](crate::composition::PAC::sugars) to
     /// match the PAC in this table, but ignoring the contributions to FPD by salts present in
     /// MSNF and WS - Corvitto seems to have ignored these.
-    #[doc = include_str!("../docs/bibs/2.md")]
-    #[doc = include_str!("../docs/bibs/3.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
+    #[doc = include_str!("../docs/references/index/3.md")]
     pub const CORVITTO_PAC_TO_SERVING_TEMP_TABLE: [(f64, f64); 9] = [
         // (pac, serving_temp)
         (25.0, -10.0),

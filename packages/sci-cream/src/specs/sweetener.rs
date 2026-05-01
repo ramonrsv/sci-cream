@@ -178,9 +178,9 @@ use crate::{
 /// assert_eq_float!(comp.get(CompKey::PACsgr), 112.6);
 /// # Ok(()) }
 /// ```
-#[doc = include_str!("../../docs/bibs/15.md")]
-#[doc = include_str!("../../docs/bibs/114.md")]
-#[doc = include_str!("../../docs/bibs/115.md")]
+#[doc = include_str!("../../docs/references/index/15.md")]
+#[doc = include_str!("../../docs/references/index/114.md")]
+#[doc = include_str!("../../docs/references/index/115.md")]
 #[allow(clippy::doc_markdown)] // false positive on 'FoodData'
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]

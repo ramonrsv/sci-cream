@@ -159,7 +159,7 @@ pub enum CompKey {
     /// affects the texture of ice creams by hardening the frozen product, and contributes to the
     /// _"perception of richness in chocolate ice creams... [due to] the lubricating effect that
     /// cocoa butter provides as it melts in the mouth."_ (Goff & Hartel, 2025, p. 107)[^20]
-    #[doc = include_str!("../../docs/bibs/20.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
     CocoaButter,
     /// _Cocoa_ solids, the non-fat component of cacao solids [`CompKey::CacaoSolids`]
     ///

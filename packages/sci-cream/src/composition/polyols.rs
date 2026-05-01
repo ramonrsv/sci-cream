@@ -30,7 +30,7 @@ use crate::composition::ArtificialSweeteners;
 ///
 /// **Note**: These are distinct from artificial sweeteners (e.g. aspartame, sucralose, etc.) which
 /// typically have no functional properties other than sweetness. See [`ArtificialSweeteners`].
-#[doc = include_str!("../../docs/bibs/9.md")]
+#[doc = include_str!("../../docs/references/index/9.md")]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
@@ -43,10 +43,10 @@ pub struct Polyols {
     /// most countries, including in the US and EU (E968) (Spillane, 2006, Table 8.5, p. 159)[^9],
     /// (The European Commission, 2025, E968)[^10], (Hull, 2010, Appendix C.3, p. 324)[^15],
     /// (European Association of Polyols Producers, 2026, "Polyol Erythritol")[^19].
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/10.md")]
-    #[doc = include_str!("../../docs/bibs/15.md")]
-    #[doc = include_str!("../../docs/bibs/19.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/10.md")]
+    #[doc = include_str!("../../docs/references/index/15.md")]
+    #[doc = include_str!("../../docs/references/index/19.md")]
     pub erythritol: f64,
     /// Maltitol is a sugar alcohol derived from maltose obtained from starch
     ///
@@ -57,10 +57,10 @@ pub struct Polyols {
     /// and EU (E965) (Spillane, 2006, Tables 8.3, 8.5, p. 156, 159)[^9], (The European Commission,
     /// 2025, E965)[^10], (Hull, 2010, Appendix C.3, p. 324)[^15], (European Association of Polyols
     /// Producers, 2026, "Polyol Maltitol")[^19]
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/10.md")]
-    #[doc = include_str!("../../docs/bibs/15.md")]
-    #[doc = include_str!("../../docs/bibs/19.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/10.md")]
+    #[doc = include_str!("../../docs/references/index/15.md")]
+    #[doc = include_str!("../../docs/references/index/19.md")]
     pub maltitol: f64,
     /// Sorbitol is a sugar alcohol that occurs naturally in some fruits
     ///
@@ -70,10 +70,10 @@ pub struct Polyols {
     /// most countries, including in the US and EU (E420) (Spillane, 2006, Tables 8.3, 8.5, p. 156,
     /// 159)[^9], (The European Commission, 2025, E420)[^10], (Hull, 2010, Appendix C.3, p.
     /// 324)[^15], (European Association of Polyols Producers, 2026, "Polyol Sorbitol")[^19].
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/10.md")]
-    #[doc = include_str!("../../docs/bibs/15.md")]
-    #[doc = include_str!("../../docs/bibs/19.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/10.md")]
+    #[doc = include_str!("../../docs/references/index/15.md")]
+    #[doc = include_str!("../../docs/references/index/19.md")]
     pub sorbitol: f64,
     /// Xylitol is a sugar alcohol that occurs naturally in some fruits
     ///
@@ -84,10 +84,10 @@ pub struct Polyols {
     /// the US and EU (E967) (Spillane, 2006, Tables 8.3, 8.5, p. 156, 159)[^9], (The European
     /// Commission, 2025, E967)[^10], (Hull, 2010, Appendix C.3, p. 324)[^15], (European Association
     /// of Polyols Producers, 2026, "Polyol Xylitol")[^19].
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/10.md")]
-    #[doc = include_str!("../../docs/bibs/15.md")]
-    #[doc = include_str!("../../docs/bibs/19.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/10.md")]
+    #[doc = include_str!("../../docs/references/index/15.md")]
+    #[doc = include_str!("../../docs/references/index/19.md")]
     pub xylitol: f64,
     /// Any other polyols not explicitly tracked by the other fields
     ///

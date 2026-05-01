@@ -52,13 +52,13 @@ use crate::{
 /// miniscule amounts. These components do not meaningfully contribute to the other macro properties
 /// of a mix, e.g. energy, [POD](crate::docs#pod), [PAC](crate::docs#pac-afp-fpdf-se), etc. Any such
 /// minor contributions are accounted for in the solids breakdown.
-#[doc = include_str!("../../docs/bibs/4.md")]
-#[doc = include_str!("../../docs/bibs/6.md")]
-#[doc = include_str!("../../docs/bibs/20.md")]
-#[doc = include_str!("../../docs/bibs/37.md")]
-#[doc = include_str!("../../docs/bibs/39.md")]
-#[doc = include_str!("../../docs/bibs/42.md")]
-#[doc = include_str!("../../docs/bibs/43.md")]
+#[doc = include_str!("../../docs/references/index/4.md")]
+#[doc = include_str!("../../docs/references/index/6.md")]
+#[doc = include_str!("../../docs/references/index/20.md")]
+#[doc = include_str!("../../docs/references/index/37.md")]
+#[doc = include_str!("../../docs/references/index/39.md")]
+#[doc = include_str!("../../docs/references/index/42.md")]
+#[doc = include_str!("../../docs/references/index/43.md")]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
@@ -81,7 +81,7 @@ pub struct Stabilizers {
     // @todo Egg yolk and egg white solids have significantly different properties with regards to
     // stabilization, emulsification, and texture, therefore they are tracked separately. `EggSpec`
     // needs to be updated to allow specifying the egg yolk and egg white breakdown of solids.
-    #[doc = include_str!("../../docs/bibs/37.md")]
+    #[doc = include_str!("../../docs/references/index/37.md")]
     pub egg_yolk_solids: f64,
     /// Whey proteins, from dairy products, which have stabilizing properties when denatured by heat
     ///
@@ -95,11 +95,11 @@ pub struct Stabilizers {
     /// in concentrations of 3-6% by weight, although it almost always augmented with other
     /// stabilizers (Cree, 2017, Milk Powder, p. 65)[^6], (Raphaelson, 2016, May)[^7], (Pikosky,
     /// 2016, July)[^41], (Goff & Hartel, 2025, p. 315)[^20].
-    #[doc = include_str!("../../docs/bibs/6.md")]
-    #[doc = include_str!("../../docs/bibs/7.md")]
-    #[doc = include_str!("../../docs/bibs/20.md")]
-    #[doc = include_str!("../../docs/bibs/37.md")]
-    #[doc = include_str!("../../docs/bibs/41.md")]
+    #[doc = include_str!("../../docs/references/index/6.md")]
+    #[doc = include_str!("../../docs/references/index/7.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/37.md")]
+    #[doc = include_str!("../../docs/references/index/41.md")]
     pub whey_proteins: f64,
     /// Cornstarch, a polysaccharide derived from corn, is a common and widely available stabilizer
     ///
@@ -116,8 +116,8 @@ pub struct Stabilizers {
     ///
     /// Cornstarch generally gives better flavor release than custard, but not as good as gums
     /// (Raphaelson, 2023, January)[^37].
-    #[doc = include_str!("../../docs/bibs/6.md")]
-    #[doc = include_str!("../../docs/bibs/37.md")]
+    #[doc = include_str!("../../docs/references/index/6.md")]
+    #[doc = include_str!("../../docs/references/index/37.md")]
     pub cornstarch: f64,
     /// Tapioca starch, a polysaccharide derived from cassava root, is a common stabilizer
     ///
@@ -130,9 +130,9 @@ pub struct Stabilizers {
     ///
     /// Tapioca starch generally gives better flavor release than custard, but not as good as gums
     /// (Raphaelson, 2023, January)[^37].
-    #[doc = include_str!("../../docs/bibs/6.md")]
-    #[doc = include_str!("../../docs/bibs/37.md")]
-    #[doc = include_str!("../../docs/bibs/40.md")]
+    #[doc = include_str!("../../docs/references/index/6.md")]
+    #[doc = include_str!("../../docs/references/index/37.md")]
+    #[doc = include_str!("../../docs/references/index/40.md")]
     pub tapioca_starch: f64,
     /// Pectin is a polysaccharide derived from the cell wall of plants, particularly citrus fruits
     ///
@@ -152,11 +152,11 @@ pub struct Stabilizers {
     /// juice at 30-50% by weight (sometimes as high as 75%). As such, fruits that contain a lot of
     /// pectin require special adjustments to the stabilizer use in sorbet formulations (Goff &
     /// Hartel, 2025, p. 432)[^20], (Raphaelson, 2019, July)[^35].
-    #[doc = include_str!("../../docs/bibs/4.md")]
-    #[doc = include_str!("../../docs/bibs/6.md")]
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/20.md")]
-    #[doc = include_str!("../../docs/bibs/35.md")]
+    #[doc = include_str!("../../docs/references/index/4.md")]
+    #[doc = include_str!("../../docs/references/index/6.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/35.md")]
     pub pectin: f64,
     /// Gelatin, a protein derived from collagen, is one of the oldest non-egg stabilizers
     ///
@@ -175,11 +175,11 @@ pub struct Stabilizers {
     /// a temperature of 60°C (140°F) or higher. This is not a problem for ice cream formulations,
     /// which are typically heated to at least 71°C (160°F), but it presents complications for
     /// no-cook formulations, particularly sorbets (Raphaelson, 2023, January)[^37].
-    #[doc = include_str!("../../docs/bibs/4.md")]
-    #[doc = include_str!("../../docs/bibs/6.md")]
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/20.md")]
-    #[doc = include_str!("../../docs/bibs/37.md")]
+    #[doc = include_str!("../../docs/references/index/4.md")]
+    #[doc = include_str!("../../docs/references/index/6.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/37.md")]
     pub gelatin: f64,
     /// Locust Bean Gum (LBG), also known as Carob Bean Gum, is a very common gum stabilizer
     ///
@@ -212,12 +212,12 @@ pub struct Stabilizers {
     /// combination with other stabilizers, usually Guar Gum and Carrageenan, due to their
     /// synergistic effects (Cree, 2017, Locust Bean Gum, p. 71)[^6], (Goff & Hartel, 2025, p.
     /// 80)[^20], (Raphaelson, 2023, January)[^37].
-    #[doc = include_str!("../../docs/bibs/4.md")]
-    #[doc = include_str!("../../docs/bibs/6.md")]
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/20.md")]
-    #[doc = include_str!("../../docs/bibs/37.md")]
-    #[doc = include_str!("../../docs/bibs/42.md")]
+    #[doc = include_str!("../../docs/references/index/4.md")]
+    #[doc = include_str!("../../docs/references/index/6.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/37.md")]
+    #[doc = include_str!("../../docs/references/index/42.md")]
     pub locust_bean_gum: f64,
     /// Guar Gum is a common gum stabilizer, often used in combination with Locust Bean Gum
     ///
@@ -250,14 +250,14 @@ pub struct Stabilizers {
     /// combination with other stabilizers, usually Locust Bean Gum and Carrageenan, due to their
     /// synergistic effects (Cree, 2017, Guar Gum, p. 73)[^6], (Goff & Hartel, 2025, p. 80)[^20],
     /// (Raphaelson, 2023, January)[^37].
-    #[doc = include_str!("../../docs/bibs/4.md")]
-    #[doc = include_str!("../../docs/bibs/6.md")]
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/20.md")]
-    #[doc = include_str!("../../docs/bibs/37.md")]
-    #[doc = include_str!("../../docs/bibs/42.md")]
-    #[doc = include_str!("../../docs/bibs/43.md")]
-    #[doc = include_str!("../../docs/bibs/116.md")]
+    #[doc = include_str!("../../docs/references/index/4.md")]
+    #[doc = include_str!("../../docs/references/index/6.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/37.md")]
+    #[doc = include_str!("../../docs/references/index/42.md")]
+    #[doc = include_str!("../../docs/references/index/43.md")]
+    #[doc = include_str!("../../docs/references/index/116.md")]
     pub guar_gum: f64,
     /// Carrageenans are a family of polysaccharides commonly used as stabilizers
     ///
@@ -294,12 +294,12 @@ pub struct Stabilizers {
     /// a recommended concentration of Carrageenans along has little practical meaning, but for the
     /// purposes of calculating relative strength, 0.25% by weight has been sited as a possible
     /// concentration for ice cream formulations (Cree, 2017, Carrageenans, p. 74)[^6].
-    #[doc = include_str!("../../docs/bibs/4.md")]
-    #[doc = include_str!("../../docs/bibs/6.md")]
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/20.md")]
-    #[doc = include_str!("../../docs/bibs/37.md")]
-    #[doc = include_str!("../../docs/bibs/42.md")]
+    #[doc = include_str!("../../docs/references/index/4.md")]
+    #[doc = include_str!("../../docs/references/index/6.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/37.md")]
+    #[doc = include_str!("../../docs/references/index/42.md")]
     pub carrageenans: f64,
     /// Carboxymethyl Cellulose (CMC) is a stabilizer derived from purified cellulose
     ///
@@ -324,10 +324,10 @@ pub struct Stabilizers {
     /// CMC is particularly useful in sorbet formulations, since it hydrates easily in cold water,
     /// so it can be blended into fruit purees without any need for cooking. These qualities make it
     /// a perfect substitute for Locust Bean Gum (Raphaelson, 2023, January)[^37].
-    #[doc = include_str!("../../docs/bibs/4.md")]
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/37.md")]
-    #[doc = include_str!("../../docs/bibs/44.md")]
+    #[doc = include_str!("../../docs/references/index/4.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/37.md")]
+    #[doc = include_str!("../../docs/references/index/44.md")]
     pub carboxymethyl_cellulose: f64,
     /// Xanthan Gum is a polysaccharide produced by bacterial action, and is a common stabilizer
     ///
@@ -351,11 +351,11 @@ pub struct Stabilizers {
     /// result, it is not commonly used in commercial ice cream formulations, but it may be used in
     /// home recipes due to its wide availability (Raphaelson, 2023, January)[^37]. It is typically
     /// used in concentrations of 0.1% by weight (Cree, 2017, Xanthan Gum, p. 73)[^6]
-    #[doc = include_str!("../../docs/bibs/4.md")]
-    #[doc = include_str!("../../docs/bibs/6.md")]
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/20.md")]
-    #[doc = include_str!("../../docs/bibs/37.md")]
+    #[doc = include_str!("../../docs/references/index/4.md")]
+    #[doc = include_str!("../../docs/references/index/6.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/37.md")]
     pub xanthan_gum: f64,
     /// Sodium Alginate is a polysaccharide derived from brown algae, and is a common stabilizer
     ///
@@ -372,10 +372,10 @@ pub struct Stabilizers {
     /// the ice cream is spun, creating a unique body and viscosity. The major advantage of alginate
     /// is its resistance to acid conditions, particularly when heated, whereas other stabilizers
     /// would lose their functionality (Clarke, 2004, p. 51)[^4], (Raphaelson, 2023, January)[^37].
-    #[doc = include_str!("../../docs/bibs/4.md")]
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/20.md")]
-    #[doc = include_str!("../../docs/bibs/37.md")]
+    #[doc = include_str!("../../docs/references/index/4.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/37.md")]
     pub sodium_alginate: f64,
     /// Tara Gum is a polysaccharide that has recently become available as an ice cream stabilizer
     ///
@@ -386,9 +386,9 @@ pub struct Stabilizers {
     /// ice crystal suppression and thick, creamy consistency. Most Tara Gums need to be heated to
     /// around 80°C (176°F) to fully hydrate (The European Commission, 2025, E417)[^9], (Goff &
     /// Hartel, 2025, p. 82)[^20], (Raphaelson, 2023, January)[^37].
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/20.md")]
-    #[doc = include_str!("../../docs/bibs/37.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/37.md")]
     pub tara_gum: f64,
     /// Other unspecified stabilizers, which require the `strength` parameter to be provided in
     /// in order to calculate the contribution to texture; see [`to_texture`](Self::to_texture).

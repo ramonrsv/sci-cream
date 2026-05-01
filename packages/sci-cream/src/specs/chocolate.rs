@@ -110,8 +110,8 @@ use crate::composition::CompKey;
 /// assert_eq_float!(comp.get(CompKey::Fiber), 33.332);
 /// # Ok(()) }
 /// ```
-#[doc = include_str!("../../docs/bibs/107.md")]
-#[doc = include_str!("../../docs/bibs/111.md")]
+#[doc = include_str!("../../docs/references/index/107.md")]
+#[doc = include_str!("../../docs/references/index/111.md")]
 // @todo Add a `msnf` field to support milk chocolate products (some professional chocolatiers use)
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]

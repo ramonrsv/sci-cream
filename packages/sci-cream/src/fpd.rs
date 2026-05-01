@@ -6,8 +6,8 @@
 //! these using various methods from literature, notably the Goff & Hartel method (2013, p. 181)[^2]
 //! and a modified version incorporating Corvitto's (2005, p. 243)[^3] approach for handling
 //! hardness factors from cocoa and nuts.
-#![doc = include_str!("../docs/bibs/2.md")]
-#![doc = include_str!("../docs/bibs/3.md")]
+#![doc = include_str!("../docs/references/index/2.md")]
+#![doc = include_str!("../docs/references/index/3.md")]
 
 use approx::AbsDiffEq;
 use approx::abs_diff_eq;
@@ -156,8 +156,8 @@ impl CurvePoint {
 }
 
 /// [Freezing Point Depression Curves](crate::docs#freezing-point-depression-curve) for a mix
-#[doc = include_str!("../docs/bibs/2.md")]
-#[doc = include_str!("../docs/bibs/3.md")]
+#[doc = include_str!("../docs/references/index/2.md")]
+#[doc = include_str!("../docs/references/index/3.md")]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(PartialEq, Clone, Debug)]
 pub struct Curves {
@@ -173,8 +173,8 @@ pub struct Curves {
     /// curve, frozen water percentage being a proxy for hardness. If using
     /// [`FpdCurvesMethod::ModifiedGoffHartelCorvitto`], this curves also incorporates the effects
     /// of hardness factors (e.g., from cocoa or nut ingredients) as per Corvitto.
-    #[doc = include_str!("../docs/bibs/2.md")]
-    #[doc = include_str!("../docs/bibs/3.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
+    #[doc = include_str!("../docs/references/index/3.md")]
     #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
     pub hardness: Vec<CurvePoint>,
 }
@@ -207,13 +207,13 @@ pub enum FpdCurvesMethod {
     /// Goff & Hartel method (2013, p. 181)[^2]
     ///
     /// See [`compute_fpd_curve_step_goff_hartel`].
-    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
     GoffHartel,
     /// Modified Goff & Hartel method (2013, p. 181)[^2] incorporating Corvitto (2005, p. 243)[^3]
     ///
     /// See [`compute_fpd_curve_step_modified_goff_hartel_corvitto`].
-    #[doc = include_str!("../docs/bibs/2.md")]
-    #[doc = include_str!("../docs/bibs/3.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
+    #[doc = include_str!("../docs/references/index/3.md")]
     ModifiedGoffHartelCorvitto,
 }
 
@@ -390,7 +390,7 @@ pub fn get_serving_temp_from_pac_corvitto(pac: f64) -> Result<f64> {
 /// A step in an FPD curve using the Goff & Hartel method
 ///
 /// Maps to [`FpdCurvesMethod::GoffHartel`] and [`compute_fpd_curve_step_goff_hartel`].
-#[doc = include_str!("../docs/bibs/2.md")]
+#[doc = include_str!("../docs/references/index/2.md")]
 #[derive(Iterable, PartialEq, Copy, Clone, Debug)]
 pub struct GoffHartelFpdCurveStep {
     /// Percentage of total water in mix that's frozen at this step
@@ -436,7 +436,7 @@ impl GoffHartelFpdCurveStep {
 /// # Errors
 ///
 /// Forwards any errors that may arise from the provided `get_fpd_from_pac` function.
-#[doc = include_str!("../docs/bibs/2.md")]
+#[doc = include_str!("../docs/references/index/2.md")]
 pub fn compute_fpd_curve_step_goff_hartel(
     composition: Composition,
     next_frozen_water: f64,
@@ -512,8 +512,8 @@ impl ModifiedGoffHartelCorvittoFpdCurveStep {
 /// # Errors
 ///
 /// Forwards any errors that may arise from the provided `get_fpd_from_pac` function.
-#[doc = include_str!("../docs/bibs/2.md")]
-#[doc = include_str!("../docs/bibs/3.md")]
+#[doc = include_str!("../docs/references/index/2.md")]
+#[doc = include_str!("../docs/references/index/3.md")]
 pub fn compute_fpd_curve_step_modified_goff_hartel_corvitto(
     composition: Composition,
     next_frozen_water: f64,
@@ -745,7 +745,7 @@ mod tests {
     /// Ref. composition for [`REF_FROZEN_WATER_FPD`] (Goff & Hartel, 2013, Table 6.2, p. 184)[^2]
     ///
     /// _10% MSNF, 2% whey solids, 12% sucrose, 4% 42DE CSS, 60% water (40% total solids)_
-    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
     static REF_COMP: LazyLock<Composition> = LazyLock::new(|| {
         let (msnf, ws, sucrose, css_42de, total_solids) = (10.0, 2.0, 12.0, 4.0, 40.0);
 
@@ -817,7 +817,7 @@ mod tests {
     }
 
     /// Reference freezing curve for [`REF_COMP`] (Goff & Hartel, 2013, Table 6.2, p. 184)[^2]
-    #[doc = include_str!("../docs/bibs/2.md")]
+    #[doc = include_str!("../docs/references/index/2.md")]
     static REF_COMP_FREEZING_CURVE: LazyLock<Vec<GoffHartelFpdCurveStep>> = LazyLock::new(|| {
         [
             // (fw, w,    se,  fpd_se, fpd_sa, fpd_t)
@@ -1063,7 +1063,7 @@ mod tests {
 
     /// Reference composition for Corvitto FPD tests (Corvitto, 2005, p. 150)[^3]
     /// _Fat 8%, POD 18, MSNF 10%, Total Solids 36.1%, PAC 26.7, Serving Temperature -11°C_
-    #[doc = include_str!("../docs/bibs/3.md")]
+    #[doc = include_str!("../docs/references/index/3.md")]
     static CORVITTO_REF_COMP_11ST: LazyLock<Composition> = LazyLock::new(|| {
         let milk_solids = SolidsBreakdown::new()
             .fats(Fats::new().total(8.0))
@@ -1082,7 +1082,7 @@ mod tests {
 
     /// Reference composition for Corvitto FPD tests (Corvitto, 2005, p. 151)[^3]
     /// _Fat 8%, POD 18, MSNF 10%, Total Solids 39.3%, PAC 40.9, Serving Temperature -18°C_
-    #[doc = include_str!("../docs/bibs/3.md")]
+    #[doc = include_str!("../docs/references/index/3.md")]
     static CORVITTO_REF_COMP_18ST: LazyLock<Composition> = LazyLock::new(|| {
         let milk_solids = SolidsBreakdown::new()
             .fats(Fats::new().total(8.0))
@@ -1102,7 +1102,7 @@ mod tests {
     /// Reference composition for Corvitto FPD with HF tests (Corvitto, 2005, p. 251)[^3]
     /// _Fat 8%, POD 24.5, MSNF 8%, Cocoa SNF: 4.7%, Total Solids 38.2%, PAC 37.3,
     /// Hardness Factor: 9.7, Serving Temperature -11°C_
-    #[doc = include_str!("../docs/bibs/3.md")]
+    #[doc = include_str!("../docs/references/index/3.md")]
     static CORVITTO_REF_COMP_WITH_HF_11ST: LazyLock<Composition> = LazyLock::new(|| {
         let milk_solids = SolidsBreakdown::new()
             .fats(Fats::new().total(6.1))
@@ -1132,7 +1132,7 @@ mod tests {
     /// Reference composition for Corvitto FPD with HF tests (Corvitto, 2005, p. 252)[^3]
     /// _Fat 8%, POD 33.6, MSNF 8%, Cocoa SNF: 4.7%, Total Solids 43.2%, PAC 50.9,
     /// Hardness Factor: 9.7, Serving Temperature -18°C_
-    #[doc = include_str!("../docs/bibs/3.md")]
+    #[doc = include_str!("../docs/references/index/3.md")]
     static CORVITTO_REF_COMP_WITH_HF_18ST: LazyLock<Composition> = LazyLock::new(|| {
         let milk_solids = SolidsBreakdown::new()
             .fats(Fats::new().total(6.1))

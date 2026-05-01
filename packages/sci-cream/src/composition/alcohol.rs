@@ -19,7 +19,7 @@ use wasm_bindgen::prelude::*;
 ///
 /// It also provides methods to convert between alcohol by weight (ABW) and alcohol by volume (ABV)
 /// (2025)[^8], as well as to calculate the energy and PAC contributions of the alcohol content.
-#[doc = include_str!("../../docs/bibs/8.md")]
+#[doc = include_str!("../../docs/references/index/8.md")]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]

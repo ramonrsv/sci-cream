@@ -25,8 +25,8 @@ use wasm_bindgen::prelude::*;
 /// a multitude of health benefits (Higdon, 2019)[^34]. In ice cream making certain types of fiber,
 /// most notably inulin and oligofructose, can be used as substitutes for sugars and fats, providing
 /// similar functional properties along with several health-promoting properties (Porto, 2026)[^27].
-#[doc = include_str!("../../docs/bibs/27.md")]
-#[doc = include_str!("../../docs/bibs/34.md")]
+#[doc = include_str!("../../docs/references/index/27.md")]
+#[doc = include_str!("../../docs/references/index/34.md")]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
@@ -36,8 +36,8 @@ pub struct Fibers {
     /// It is commonly extracted from chicory root for use in food products. It provides similar
     /// functional properties to fats in ice cream, while offering health benefits like promoting
     /// gut health and aiding in blood sugar regulation (Niness, 1999)[^24], (Porto, 2026)[^27].
-    #[doc = include_str!("../../docs/bibs/24.md")]
-    #[doc = include_str!("../../docs/bibs/27.md")]
+    #[doc = include_str!("../../docs/references/index/24.md")]
+    #[doc = include_str!("../../docs/references/index/27.md")]
     pub inulin: f64,
     /// Oligofructose is a type of soluble fiber that is chemically similar to inulin, but with a
     /// shorter chain length
@@ -47,8 +47,8 @@ pub struct Fibers {
     /// shorter chains, with lengths ranging from 2 to 10. This results in a compound with ~30-40%
     /// the sweetness of sucrose (Niness, 1999)[^24]. It can be used to replace some of the sugars
     /// in ice cream formulations, while also providing health benefits (Porto, 2026)[^27].
-    #[doc = include_str!("../../docs/bibs/24.md")]
-    #[doc = include_str!("../../docs/bibs/27.md")]
+    #[doc = include_str!("../../docs/references/index/24.md")]
+    #[doc = include_str!("../../docs/references/index/27.md")]
     pub oligofructose: f64,
     /// Any other types of dietary fiber not explicitly tracked by the other fields
     ///

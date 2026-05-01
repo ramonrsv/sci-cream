@@ -88,12 +88,12 @@ use crate::{composition::CompKey, constants};
 /// assert_eq!(comp.get(CompKey::PACtotal), 117.65859);
 /// # Ok(()) }
 /// ```
-#[doc = include_str!("../../docs/bibs/8.md")]
+#[doc = include_str!("../../docs/references/index/8.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct AlcoholSpec {
     /// Alcohol by volume (ABV) (2025)[^8] percentage, e.g. 40% for typical spirits.
-    #[doc = include_str!("../../docs/bibs/8.md")]
+    #[doc = include_str!("../../docs/references/index/8.md")]
     pub abv: f64,
     /// Sugars content by weight, typically zero for spirits, and up to ~40% for liqueurs.
     pub sugars: Option<f64>,

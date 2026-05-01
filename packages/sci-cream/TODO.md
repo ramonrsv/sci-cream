@@ -8,7 +8,6 @@
 
 - [ ] Add a beginner-friendly overview of the core ice cream science concepts, e.g. FPD curves.
 - [ ] Consider whether to add `CompKey` for all polyols and artificial sweeteners.
-- [ ] Split literature and ingredient definition bibliography; the latter clutters the docs.
 - [ ] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
 - [ ] Add lactose-free support to `DairySimpleSpec`, to allow simple lactose-free ingredient specs.
@@ -69,6 +68,7 @@
 
 ## Completed
 
+- [x] Split literature and ingredient definition bibliography; the latter clutters the docs.
 - [x] Add gum stabilizer ingredients and Underbelly blends with reference links and explicit ratios.
 - [x] Add functionality for `Stabilizers` and `Emulsifiers` to generate their own solids breakdown
       and `Texture`. This would help maintain DRY in specs that have stabilizers and/or emulsifiers.

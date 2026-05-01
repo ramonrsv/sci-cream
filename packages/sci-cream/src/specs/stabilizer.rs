@@ -41,7 +41,7 @@ use crate::constants::{self, stabilization::STABILIZER_STRENGTH_LOCUST_BEAN_GUM}
 /// active ingredients with fillers, so the relative strength of the ingredient as a whole is lower
 /// than that of pure gums. With a manufacturer recommended dosage of ~3.5g/kg, "Louis Francois Stab
 /// 2000" has a relative stabilizer strength of ~57.
-#[doc = include_str!("../../docs/bibs/6.md")]
+#[doc = include_str!("../../docs/references/index/6.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct StabilizerSpec {

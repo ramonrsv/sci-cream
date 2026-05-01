@@ -54,11 +54,11 @@ use crate::composition::{CompKey, Solids};
 /// small amounts. These components do not meaningfully contribute to the other macro properties
 /// of a mix, e.g. energy, [POD](crate::docs#pod), [PAC](crate::docs#pac-afp-fpdf-se), etc. Any such
 /// minor contributions are accounted for in the solids breakdown.
-#[doc = include_str!("../../docs/bibs/4.md")]
-#[doc = include_str!("../../docs/bibs/20.md")]
-#[doc = include_str!("../../docs/bibs/38.md")]
-#[doc = include_str!("../../docs/bibs/45.md")]
-#[doc = include_str!("../../docs/bibs/46.md")]
+#[doc = include_str!("../../docs/references/index/4.md")]
+#[doc = include_str!("../../docs/references/index/20.md")]
+#[doc = include_str!("../../docs/references/index/38.md")]
+#[doc = include_str!("../../docs/references/index/45.md")]
+#[doc = include_str!("../../docs/references/index/46.md")]
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
@@ -71,8 +71,8 @@ pub struct Emulsifiers {
     /// them too stable and requiring the use of additional emulsifiers to _destabilize_ the
     /// emulsion and partial coalescence of fat globules during whipping and freezing (Goff &
     /// Hartel, 2025, p. 84)[^20], (Raphaelson, 2023, January)[^38].
-    #[doc = include_str!("../../docs/bibs/20.md")]
-    #[doc = include_str!("../../docs/bibs/38.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/38.md")]
     pub casein_proteins: f64,
     /// Whey proteins, ~20% of milk proteins, have an emulsifying effect when partially denatured
     ///
@@ -95,7 +95,7 @@ pub struct Emulsifiers {
     /// the 10% range, as straight milk and cream do not supply sufficient whey protein
     /// concentrations; skimmed milk powder is a common means of achieving this (Raphaelson,
     /// 2023, January)[^38].
-    #[doc = include_str!("../../docs/bibs/38.md")]
+    #[doc = include_str!("../../docs/references/index/38.md")]
     pub whey_proteins: f64,
     /// Lecithin sourced specifically from egg yolk, often introduced through egg ingredients
     ///
@@ -121,9 +121,9 @@ pub struct Emulsifiers {
     /// [`egg_yolk_solids`](Self::egg_yolk_solids)). Combined with
     /// [`non_egg_lecithin`](Self::non_egg_lecithin), this field contributes to the total lecithin
     /// in the mix (see [`total_lecithin`](Self::total_lecithin)).
-    #[doc = include_str!("../../docs/bibs/4.md")]
-    #[doc = include_str!("../../docs/bibs/20.md")]
-    #[doc = include_str!("../../docs/bibs/38.md")]
+    #[doc = include_str!("../../docs/references/index/4.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/38.md")]
     pub egg_yolk_lecithin: f64,
     /// Non-lecithin solids from egg yolk, which have less prominent emulsifying properties
     ///
@@ -139,9 +139,9 @@ pub struct Emulsifiers {
     // @todo Egg yolk and egg white solids have significantly different properties with regards to
     // stabilization, emulsification, and texture, therefore they are tracked separately. `EggSpec`
     // needs to be updated to allow specifying the egg yolk and egg white breakdown of solids.
-    #[doc = include_str!("../../docs/bibs/4.md")]
-    #[doc = include_str!("../../docs/bibs/20.md")]
-    #[doc = include_str!("../../docs/bibs/38.md")]
+    #[doc = include_str!("../../docs/references/index/4.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/38.md")]
     pub egg_yolk_other_solids: f64,
     /// Lecithin from non-egg sources, which can be added directly in egg-free formulations
     ///
@@ -158,7 +158,7 @@ pub struct Emulsifiers {
     /// latter is accompanied by other egg yolk solids that also influence the mix's properties.
     /// Combined with [`egg_yolk_lecithin`](Self::egg_yolk_lecithin), this field contributes to the
     /// total lecithin in the mix (see [`total_lecithin`](Self::total_lecithin)).
-    #[doc = include_str!("../../docs/bibs/38.md")]
+    #[doc = include_str!("../../docs/references/index/38.md")]
     pub non_egg_lecithin: f64,
     /// Gum Arabic, an all natural emulsifier derived from acadia trees in sub-Saharan Africa
     ///
@@ -167,7 +167,7 @@ pub struct Emulsifiers {
     /// natural emulsifier. Its effectiveness as an emulsifier depends on the type and sample. Some
     /// commercial Gum Arabic products claim that it is a 1:1 substitute for mono- and diglycerides,
     /// which itself has a recommended dosage of 1-2g/kg (Raphaelson, 2023, January)[^38].
-    #[doc = include_str!("../../docs/bibs/38.md")]
+    #[doc = include_str!("../../docs/references/index/38.md")]
     pub gum_arabic: f64,
     /// Mono- and diglycerides, common emulsifiers derived from glycerol and fatty acids
     ///
@@ -196,12 +196,12 @@ pub struct Emulsifiers {
     /// Mono- and diglycerides are typically used in concentrations of 1-2g/kg (0.1-0.2%) by weight
     /// in ice cream mixes (Clarke, 2004, p. 48)[^4], (Raphaelson, 2023, January)[^38], (Ice Cream
     /// Science, 2026, May, "Why are emulsifiers used in ice cream?")[^45].
-    #[doc = include_str!("../../docs/bibs/4.md")]
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/20.md")]
-    #[doc = include_str!("../../docs/bibs/38.md")]
-    #[doc = include_str!("../../docs/bibs/45.md")]
-    #[doc = include_str!("../../docs/bibs/46.md")]
+    #[doc = include_str!("../../docs/references/index/4.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/38.md")]
+    #[doc = include_str!("../../docs/references/index/45.md")]
+    #[doc = include_str!("../../docs/references/index/46.md")]
     pub mono_and_diglycerides: f64,
     /// Distilled monoglycerides, mono- and diglycerides distilled to a higher monoglyceride content
     ///
@@ -213,10 +213,10 @@ pub struct Emulsifiers {
     /// diglycerides mixtures (Clarke, 2004, p. 48)[^4], (Goff & Hartel, 2025, p. 85)[^20],
     /// (Raphaelson, 2023, January)[^38], (Ice Cream Science, 2026, May, "Why are emulsifiers used
     /// in ice cream?")[^45].
-    #[doc = include_str!("../../docs/bibs/4.md")]
-    #[doc = include_str!("../../docs/bibs/20.md")]
-    #[doc = include_str!("../../docs/bibs/38.md")]
-    #[doc = include_str!("../../docs/bibs/45.md")]
+    #[doc = include_str!("../../docs/references/index/4.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/38.md")]
+    #[doc = include_str!("../../docs/references/index/45.md")]
     pub distilled_monoglycerides: f64,
     /// Polysorbate 80 is the most common sorbitan ester, an emulsifier, used in ice cream mixes
     ///
@@ -240,12 +240,12 @@ pub struct Emulsifiers {
     /// 0.02-0.04% by weight (Clarke, 2004, p. 48)[^4], (Raphaelson, 2023, January)[^38], (Ice Cream
     /// Science, 2026, May, "Why are emulsifiers used in ice cream?")[^45], (Carl, 2024,
     /// April)[^46].
-    #[doc = include_str!("../../docs/bibs/4.md")]
-    #[doc = include_str!("../../docs/bibs/9.md")]
-    #[doc = include_str!("../../docs/bibs/20.md")]
-    #[doc = include_str!("../../docs/bibs/38.md")]
-    #[doc = include_str!("../../docs/bibs/45.md")]
-    #[doc = include_str!("../../docs/bibs/46.md")]
+    #[doc = include_str!("../../docs/references/index/4.md")]
+    #[doc = include_str!("../../docs/references/index/9.md")]
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/38.md")]
+    #[doc = include_str!("../../docs/references/index/45.md")]
+    #[doc = include_str!("../../docs/references/index/46.md")]
     pub polysorbate_80: f64,
     /// Other unspecified emulsifiers, which require the `strength` parameter to be provided in
     /// in order to calculate the contribution to texture; see [`to_texture`](Self::to_texture).

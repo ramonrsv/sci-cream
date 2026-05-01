@@ -67,7 +67,7 @@ use crate::composition::CompKey;
 /// # Ok(()) }
 /// ```
 #[allow(clippy::doc_markdown)] // _FoodData_ false positive
-#[doc = include_str!("../../docs/bibs/102.md")]
+#[doc = include_str!("../../docs/references/index/102.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct NutSpec {

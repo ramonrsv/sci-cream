@@ -27,7 +27,7 @@ pub struct FullSpec {
     /// Specification of the micro ingredients or components, like salt, emulsifiers, etc.
     pub micro: Option<Micro>,
     /// Alcohol by volume (ABV) (2025)[^8] of the ingredient as a whole.
-    #[doc= include_str!("../../docs/bibs/8.md")]
+    #[doc= include_str!("../../docs/references/index/8.md")]
     pub abv: Option<f64>,
     /// [Potere Dolcificante (POD)](crate::docs#pod) of the ingredient as a whole.
     ///

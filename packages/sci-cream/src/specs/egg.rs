@@ -53,9 +53,9 @@ use crate::composition::CompKey;
 /// # Ok(()) }
 /// ```
 #[allow(clippy::doc_markdown)] // _FoodData_ false positive
-#[doc = include_str!("../../docs/bibs/2.md")]
-#[doc = include_str!("../../docs/bibs/4.md")]
-#[doc = include_str!("../../docs/bibs/100.md")]
+#[doc = include_str!("../../docs/references/index/2.md")]
+#[doc = include_str!("../../docs/references/index/4.md")]
+#[doc = include_str!("../../docs/references/index/100.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct EggSpec {
