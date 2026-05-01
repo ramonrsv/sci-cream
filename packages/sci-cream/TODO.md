@@ -2,7 +2,6 @@
 
 ## Next Release
 
-- [ ] Separate the different `constants` modules into their own files, as it's getting long.
 - [ ] Move all the inline ice cream science documentation to the `docs` section, and reference it
       in the previous inline locations either by programmatically copying docs, or via doc links.
 - [ ] Add a `build.rs` script to automatically merge all markdowns and create a table-of-content.
@@ -65,6 +64,7 @@
 
 ## Completed
 
+- [x] Separate the different `constants` modules into their own files, as it's getting long.
 - [x] Once there are real composite ingredients, add them to the test assets to be verified. Also
       add CompositeSpec examples to the documentation code snippets, in `README.md` and `lib.rs`.
 - [x] Split literature and ingredient definition bibliography; the latter clutters the docs.
