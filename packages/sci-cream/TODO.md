@@ -2,19 +2,19 @@
 
 ## Next Release
 
+- [ ] Separate the different `constants` modules into their own files, as it's getting long.
+- [ ] Move all the inline ice cream science documentation to the `docs` section, and reference it
+      in the previous inline locations either by programmatically copying docs, or via doc links.
+- [ ] Add a `build.rs` script to automatically merge all markdowns and create a table-of-content.
+
 - [ ] Add code example doc tests to all specs that don't already have them.
-
 - [ ] Add "Louis Francois Stab 2000" ingredient, which has stabilizer and emulsifier components.
-
 - [ ] Add a beginner-friendly overview of the core ice cream science concepts, e.g. FPD curves.
 - [ ] Consider whether to add `CompKey` for all polyols and artificial sweeteners.
 - [ ] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
 - [ ] Add lactose-free support to `DairySimpleSpec`, to allow simple lactose-free ingredient specs.
 - [ ] Add evaporated milk ingredients, e.g. 'Evaporated Milk', 'Fat Free Evaporated Skim Milk', etc.
-- [ ] Once there are real composite ingredients, add them to the test assets to be verified. Also
-      add CompositeSpec examples to the documentation code snippets, in `README.md` and `lib.rs`.
-- [ ] Separate the different `constants` modules into their own files, as it's getting long.
 - [ ] Figure out how to track egg and milk proteins for stabilizing properties. If they are included
       in `composition::Stabilizers`, then we may need to differentiate those from stabilizer
       ingredients like gums, gelatin, etc. If they are not included, then that would be inconsistent
@@ -26,9 +26,6 @@
 - [ ] Add support for tracking milk casein/whey proteins and egg yolk/white proteins. This may need
       modifications to `Composition`, and the specs need to be modified to allow more specificity.
 - [ ] Add unit tests for `to_texture` methods, stabilizer/emulsifier strength values, etc.
-- [ ] Move all the inline ice cream science documentation to the `docs` section, and reference it
-      in the previous inline locations either by programmatically copying docs, or via doc links.
-- [ ] Add a `build.rs` script to automatically merge all markdowns and create a table-of-content.
 
 ## Up Next
 
@@ -68,6 +65,8 @@
 
 ## Completed
 
+- [x] Once there are real composite ingredients, add them to the test assets to be verified. Also
+      add CompositeSpec examples to the documentation code snippets, in `README.md` and `lib.rs`.
 - [x] Split literature and ingredient definition bibliography; the latter clutters the docs.
 - [x] Add gum stabilizer ingredients and Underbelly blends with reference links and explicit ratios.
 - [x] Add functionality for `Stabilizers` and `Emulsifiers` to generate their own solids breakdown

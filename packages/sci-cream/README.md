@@ -328,12 +328,12 @@ composition. <https://www.splenda.com/product/splenda-sweetener-packets/>"_
 `AliasSpec` and `CompositeSpec` are "dependent" specs that allow ingredient specs to reference
 other ingredient specs, either as aliases or as components of a composite ingredient. This allows
 for more modular and reusable ingredient definitions, e.g. "Whole Milk" can be defined as an alias
-of "3.25% Milk", and ... @todo composite spec example ... Since these specs reference other
-ingredient specs, they cannot be directly converted into a `Composition` or `Ingredient` on
-their own, but instead need to lookup the ingredient specs they reference in order to access their
-`Composition`. This is done via the `ResolveComposition` and `ResolveIntoIngredient` traits
-which take an `IngredientGetter` that allows them to look up spec dependencies.
-`IngredientDatabase` implements this trait.
+of "3.25% Milk", stabilizer blends can be defined as parts of existing stabilizer ingredients, etc.
+Since these specs reference other ingredient specs, they cannot be directly converted into a
+`Composition` or `Ingredient` on their own, but instead need to lookup the ingredient specs they
+reference in order to access their `Composition`. This is done via the `ResolveComposition` and
+`ResolveIntoIngredient` traits which take an `IngredientGetter` that allows them to look up spec
+dependencies. `IngredientDatabase` implements this trait.
 
 ```rust
 let db = IngredientDatabase::new_seeded_from_specs(
@@ -354,15 +354,39 @@ assert_eq!(
     db.get_ingredient_by_name("3.25% Milk")?.composition
 );
 
-// @todo composite spec example
-// ...
+let stabilizer_blend_spec = CompositeSpec {
+    components: Basis::ByParts(vec![
+        ("Locust Bean Gum".to_string(), 4.0),
+        ("Guar Gum".to_string(), 2.0),
+        ("Lambda Carrageenan".to_string(), 1.0),
+    ]),
+};
+
+let comp = stabilizer_blend_spec.resolve_composition(&db)?;
+assert_eq!(comp.get(Stabilizers), 100.0);
+
+let stabs = comp.micro.stabilizers;
+assert_eq_float!(stabs.locust_bean_gum, 57.143);
+assert_eq_float!(stabs.guar_gum, 28.571);
+assert_eq_float!(stabs.carrageenans, 14.286);
 ```
 
 These specs can also be easily defined in JSON format. The equivalent of the above examples is:
 
 ```json
 {
-  { "alias": "Whole Milk", "for": "3.25% Milk" }
+  { "alias": "Whole Milk", "for": "3.25% Milk" },
+  {
+    "name": "Stabilizer Blend",
+    "category": "Stabilizer",
+    "CompositeSpec": {
+      "ByParts": [
+        ["Locust Bean Gum", 4],
+        ["Guar Gum", 2],
+        ["Lambda Carrageenan", 1]
+      ]
+    }
+  },
 }
 ```
 
