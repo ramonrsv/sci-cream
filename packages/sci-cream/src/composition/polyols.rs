@@ -21,73 +21,34 @@ use crate::composition::ArtificialSweeteners;
 
 /// Sugar alcohols, commonly used as sugar substitutes, e.g. erythritol, maltitol, etc.
 ///
-/// Polyols are reduced-calorie, sugar-free bulk sweeteners. Because the intensity of sweetness and
-/// sweetness profile of polyols are close to sucrose, they can be used to replace sugar for bulk
-/// and sweetness in ice cream formulations. This is an advantage of polyols over intense sweeteners
-/// that require bulking agents or fillers (Spillane, 2006, p. 153)[^9]. Polyols also have sever
-/// health advantages, such as not promoting tooth decay and producing low glycemic index and
-/// reduced insulin response, making them suitable for diabetics (Spillane, 2006, p. 161)[^9].
+/// This struct tracks a detailed breakdown of all the different sugar alcohols commonly found in
+/// ice cream, which allows accurate calculations of energy, PAC, and POD contributions.
 ///
 /// **Note**: These are distinct from artificial sweeteners (e.g. aspartame, sucralose, etc.) which
 /// typically have no functional properties other than sweetness. See [`ArtificialSweeteners`].
-#[doc = include_str!("../../docs/references/index/9.md")]
+///
+/// See the [polyols documentation](crate::docs#polyols) for more information on the different types
+/// of polyols, their physical and sensory properties, their effects in ice cream formulations, and
+/// their regulatory status and safety profiles.
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Polyols {
     /// Erythritol is a sugar alcohol that occurs naturally in some fruits and fermented foods
     ///
-    /// It is about 70% as sweet as sucrose, but has almost no caloric value (0.2 kcal/g). It has a
-    /// sweetness profile similar to sucrose with slight acidity and bitterness, no aftertaste,
-    /// clean sweet taste, and a cooling sensation in the mouth. It is approved for general use in
-    /// most countries, including in the US and EU (E968) (Spillane, 2006, Table 8.5, p. 159)[^9],
-    /// (The European Commission, 2025, E968)[^10], (Hull, 2010, Appendix C.3, p. 324)[^15],
-    /// (European Association of Polyols Producers, 2026, "Polyol Erythritol")[^19].
-    #[doc = include_str!("../../docs/references/index/9.md")]
-    #[doc = include_str!("../../docs/references/index/10.md")]
-    #[doc = include_str!("../../docs/references/index/15.md")]
-    #[doc = include_str!("../../docs/references/index/19.md")]
+    /// See the [erythritol documentation](crate::docs#erythritol) for more information.
     pub erythritol: f64,
     /// Maltitol is a sugar alcohol derived from maltose obtained from starch
     ///
-    /// It is about 90% as sweet as sucrose, sweeter than most other polyols, has a low cooling
-    /// effect in the mouth, similar to sucrose, and is one of the most hygroscopic polyols. It has
-    /// a caloric value of approximately 2.4 kcal/g. It is often used as a fat replacer because of
-    /// its creamy mouth feel. It is approved for general use in most countries, including in the US
-    /// and EU (E965) (Spillane, 2006, Tables 8.3, 8.5, p. 156, 159)[^9], (The European Commission,
-    /// 2025, E965)[^10], (Hull, 2010, Appendix C.3, p. 324)[^15], (European Association of Polyols
-    /// Producers, 2026, "Polyol Maltitol")[^19]
-    #[doc = include_str!("../../docs/references/index/9.md")]
-    #[doc = include_str!("../../docs/references/index/10.md")]
-    #[doc = include_str!("../../docs/references/index/15.md")]
-    #[doc = include_str!("../../docs/references/index/19.md")]
+    /// See the [maltitol documentation](crate::docs#maltitol) for more information.
     pub maltitol: f64,
     /// Sorbitol is a sugar alcohol that occurs naturally in some fruits
     ///
-    /// It is approximately 50-60% as sweet as sucrose and has a similar sweetness profile, but it
-    /// has a significant cooling effect in the mouth. It is one of the most hygroscopic polyols,
-    /// and has a caloric value of approximately 2.6-3.0 kcal/g. It is approved for general use in
-    /// most countries, including in the US and EU (E420) (Spillane, 2006, Tables 8.3, 8.5, p. 156,
-    /// 159)[^9], (The European Commission, 2025, E420)[^10], (Hull, 2010, Appendix C.3, p.
-    /// 324)[^15], (European Association of Polyols Producers, 2026, "Polyol Sorbitol")[^19].
-    #[doc = include_str!("../../docs/references/index/9.md")]
-    #[doc = include_str!("../../docs/references/index/10.md")]
-    #[doc = include_str!("../../docs/references/index/15.md")]
-    #[doc = include_str!("../../docs/references/index/19.md")]
+    /// See the [sorbitol documentation](crate::docs#sorbitol) for more information.
     pub sorbitol: f64,
     /// Xylitol is a sugar alcohol that occurs naturally in some fruits
     ///
-    /// It is almost as sweet as sucrose at about 95% the sweetness, and has a similar sweetness
-    /// profile, but it has an intense cooling effect in the mouth that makes it less suitable for
-    /// use in some formulations. It is the most hygroscopic polyol, and has a caloric value of
-    /// approximately 2.4-3.0 kcal/g. It is approved for general use in most countries, including in
-    /// the US and EU (E967) (Spillane, 2006, Tables 8.3, 8.5, p. 156, 159)[^9], (The European
-    /// Commission, 2025, E967)[^10], (Hull, 2010, Appendix C.3, p. 324)[^15], (European Association
-    /// of Polyols Producers, 2026, "Polyol Xylitol")[^19].
-    #[doc = include_str!("../../docs/references/index/9.md")]
-    #[doc = include_str!("../../docs/references/index/10.md")]
-    #[doc = include_str!("../../docs/references/index/15.md")]
-    #[doc = include_str!("../../docs/references/index/19.md")]
+    /// See the [xylitol documentation](crate::docs#xylitol) for more information.
     pub xylitol: f64,
     /// Any other polyols not explicitly tracked by the other fields
     ///

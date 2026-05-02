@@ -1,6 +1,17 @@
-#![doc = include_str!("../docs/freezing-point-depression.md")]
+#![doc = include_str!("../docs/table-of-contents.md")]
 #![doc = include_str!("../docs/sweeteners.md")]
+#![doc = include_str!("../docs/sugars.md")]
+#![doc = include_str!("../docs/polyols.md")]
+#![doc = include_str!("../docs/artificial-sweeteners.md")]
+#![doc = include_str!("../docs/glucose-syrup.md")]
+#![doc = include_str!("../docs/freezing-point-depression.md")]
 #![doc = include_str!("../docs/references/literature.md")]
+
+#[cfg(doc)]
+use crate::{
+    composition::{ArtificialSweeteners, CompKey, Polyols, Sugars},
+    constants,
+};
 
 /// Asserts for floating point comparisons in doc tests
 #[macro_export(local_inner_macros)]

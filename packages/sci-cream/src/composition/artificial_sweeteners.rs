@@ -21,96 +21,43 @@ use crate::composition::Polyols;
 
 /// Non-saccharide artificial sweeteners, commonly used as sugar substitutes, e.g. aspartame
 ///
-/// These are typically high-intensity sweeteners ranging from 10s to 100s of thousands of times
-/// sweeter than sucrose (Spillane, 2006, Table 9.7, p. 209-213)[^9]. They are often non-nutritive,
-/// but even when they aren't (e.g. [`ASPARTAME`](constants::energy::ASPARTAME), which provides
-/// 4kcal/g, similar to sucrose), due to their high potency they are used in such small quantities
-/// that their energy contribution is negligible. They can be produced synthetically (e.g.
-/// aspartame, sucralose) or extracted from natural sources (e.g. stevia and monkfruit extracts).
-///
-/// In ice cream formulations their sole purpose is to provide sweetness without contributing to
-/// the bulk, freezing point depression, or other functional properties that sugars provide.
+/// This struct tracks a detailed breakdown of all the different non-saccharide artificial
+/// sweeteners commonly found in ice cream, which allows accurate calculations of energy, PAC, and
+/// most importantly POD contributions.
 ///
 /// **Note**: These are distinct from sugar alcohols (e.g. erythritol, maltitol, etc.) which have
 /// different functional properties and are used in different quantities. See [`Polyols`].
-#[doc = include_str!("../../docs/references/index/9.md")]
+///
+/// See the [artificial sweeteners documentation](crate::docs#artificial-sweeteners) for more
+/// information on the different types of sweeteners, their physical and sensory properties, their
+/// effects in ice cream formulations, and their regulatory status and safety profiles.
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct ArtificialSweeteners {
     /// Aspartame is a common non-saccharide high-intensity artificial sweetener
     ///
-    /// Aspartame is a methyl ester of aspartic acid and phenylalanine. It is approximately 200
-    /// times sweeter than sucrose, and provides about 4 kcal/g (similar to sucrose), but due to its
-    /// high potency it is used in such small quantities that its energy contribution is negligible.
-    /// It is one of the most studied food additives and has been deemed safe for human consumption
-    /// by numerous regulatory agencies worldwide (The European Commission, 2025, E951)[^10],
-    /// (International Food Information Council Foundation, 2019, "What is aspartame?")[^21],
-    /// (Spillane, 2006, Table 9.3, p. 179)[^9], (Spillane, 2006, Table 9.4, p. 187)[^9]. It is
-    /// found in various brand-name products such as Equal and Canderel.
-    #[doc = include_str!("../../docs/references/index/9.md")]
-    #[doc = include_str!("../../docs/references/index/10.md")]
-    #[doc = include_str!("../../docs/references/index/21.md")]
+    /// See the [aspartame documentation](crate::docs#aspartame) for more information.
     pub aspartame: f64,
     /// Cyclamate is a zero-calorie artificial sweetener
     ///
-    /// Cyclamate is the sodium or calcium salt of cyclamic acid. It is approximately 30-50 times
-    /// sweeter than sucrose. It is often used with other artificial sweeteners like saccharin for
-    /// improved taste. It is banned in the US but approved for use in many other countries,
-    /// including the EU (E952) (Spillane, 2006, Table 9.4, p. 188)[^9], (The European Commission,
-    /// 2025, E952)[^10], (Lawrence, 2003, "Cyclamates")[^32].
-    #[doc = include_str!("../../docs/references/index/9.md")]
-    #[doc = include_str!("../../docs/references/index/10.md")]
-    #[doc = include_str!("../../docs/references/index/32.md")]
+    /// See the [cyclamate documentation](crate::docs#cyclamate) for more information.
     pub cyclamate: f64,
     /// Saccharin is a non-nutritive artificial sweetener
     ///
-    /// Its name is derived from "saccharine", the latin word for sugar. It is approximately 400
-    /// times sweeter than sucrose, but has no caloric value. It is one of the oldest artificial
-    /// sweeteners, discovered in 1878. Its use became widespread with the introduction of
-    /// cyclamate, which is often used in combination with saccharin to improve the taste. It is
-    /// widely approved for use in many countries, including in the US and EU (E954) (Spillane,
-    /// 2006, Table 9.3, p. 181)[^9], (The European Commission, 2025, E954)[^10], (American Diabetes
-    /// Association, 2014, "Saccharin")[^22].
-    #[doc = include_str!("../../docs/references/index/9.md")]
-    #[doc = include_str!("../../docs/references/index/10.md")]
-    #[doc = include_str!("../../docs/references/index/22.md")]
+    /// See the [saccharin documentation](crate::docs#saccharin) for more information.
     pub saccharin: f64,
     /// Sucralose is a common non-nutritive artificial sweetener
     ///
-    /// It is derived from and approximately 600 times sweeter than sucrose. It compares favorably
-    /// to other artificial sweeteners in terms of taste, stability, and safety profile, and is one
-    /// of the most commonly used artificial sweeteners, found in products such as Splenda. It is
-    /// widely approved for use in many countries, including in the US and EU (E955) (Spillane,
-    /// 2006, Table 9.3, p. 184)[^9], (The European Commission, 2025, E955)[^10], (Castro-Muñoz,
-    /// 2022)[^11]), (Hull, 2010, Appendix C.3, p. 324)[^15], (Schiffman, 2013, "Abstract")[^23].
-    #[doc = include_str!("../../docs/references/index/9.md")]
-    #[doc = include_str!("../../docs/references/index/10.md")]
-    #[doc = include_str!("../../docs/references/index/11.md")]
-    #[doc = include_str!("../../docs/references/index/15.md")]
-    #[doc = include_str!("../../docs/references/index/23.md")]
+    /// See the [sucralose documentation](crate::docs#sucralose) for more information.
     pub sucralose: f64,
     /// Steviol glycosides are the main active sweetening compounds in stevia extract
     ///
-    /// Stevioside and rebaudioside are ent-kaurene-type diterpene glycosides based on the aglycone
-    /// steviol isolated from the leaves of Stevia rebaudiana (commonly known as candyleaf,
-    /// sweetleaf, or sugarleaf). Their sweetness has been rated as 210 and 450 times sweeter than
-    /// sucrose (Spillane, 2006, p. 210, 297)[^9]. They are not digested and so have no caloric
-    /// value (Priscilla, 2018, "Metabolism of steviol glycosides")[^28]. They are the primary
-    /// sweetening compounds in stevia extract, a common low-calorie sugar substitute.
-    #[doc = include_str!("../../docs/references/index/9.md")]
-    #[doc = include_str!("../../docs/references/index/28.md")]
+    /// See the [steviosides documentation](crate::docs#steviosides) for more information.
     pub steviosides: f64,
     /// Mogrosides are the main active sweetening compounds in monkfruit extract
     ///
-    /// Mogrosides are cucurbitane-type triterpenoid glycosides isolated from the fruits of Siraitia
-    /// grosvenorii (commonly known as monkfruit, swingle fruit, or luo han guo). Their sweetness
-    /// has been rated as 233 to 425 times sweeter than  sucrose (Spillane, 2006, p. 210, 297)[^9].
-    /// They are degraded by digestive enzymes and intestinal microflora, and excreted in the feces
-    /// as mogrol, so so they have no caloric value (Murata, 2010, "Abstract")[^29].They are the
-    /// primary sweetening compounds in monkfruit extract, a common low-calorie sugar substitute.
-    #[doc = include_str!("../../docs/references/index/9.md")]
-    #[doc = include_str!("../../docs/references/index/29.md")]
+    /// See the [mogrosides documentation](crate::docs#mogrosides) for more information.
     pub mogrosides: f64,
     /// Any other artificial sweeteners not explicitly tracked by the other fields
     ///
