@@ -32,6 +32,11 @@
 - [ ] Add support for `data` to resolve `AliasSpec` and `CompositeSpec` on per-spec requests.
 - [ ] Encode (in)dependent specs in different enums; don't implement `ToIngredient` for dependents.
 - [ ] Add `resolution` support for validating a spec collection for reference sanity, etc.
+- [ ] Implement a ratios system that calculates important ratios from a `Composition`. Maybe it can
+      be added to `MixProperties` for ratios like Stabilizers/Water, Emulsifiers/Fat, etc. It also
+      needs to support `Ingredient`s, primarily for sweeteners, with ratios like PAC:POD,
+      Solids:POD, etc. A crude implementation currently is at `data::tests::sweeteners_by_ratio`.
+- [ ] Add Abs.POD property; looks for literature sources for it, I think I saw it in Goff & Hartel.
 
 ## Backlog
 
@@ -44,8 +49,6 @@
 - [ ] Figure out how to handle and track [allulose](https://en.wikipedia.org/wiki/Psicose), which
       does not fit into any of the existing sugar, polyols, artificial, or fiber categories.
 - [ ] Add `PropKey::TotalAmount` and figure out how to handle it on the JavasScript side.
-- [ ] Design and implement a system to calculate important ratios for `Sweeteners`, e.g. PAC:POD,
-      Solids:POD, etc. A crude implementation currently is at `data::tests::sweeteners_by_ratio`.
 - [ ] Find a source for the 10% lactose concentration limit, can't find it on Underbelly's blog.
 - [ ] Look into the solubility curves for lactose, trehalose, etc. to determine a limit.
 - [ ] Consider replacing `serde::Error` in docs with links to types, e.g. [`serde_json::Error`].

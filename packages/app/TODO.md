@@ -31,6 +31,7 @@
 - [ ] There are some `react-grid-layout` layout shifts on page refresh; it's worse on mobile.
 - [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
 - [ ] Add support for sharing of user-defined ingredients, similarly to sharing of recipes.
+- [ ] Add support for comments in blog posts, maybe also in documentation posts.
 
 ## Backlog
 
