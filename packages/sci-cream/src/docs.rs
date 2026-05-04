@@ -7,16 +7,18 @@
 #![doc = include_str!("../docs/freezing-point-depression.md")]
 #![doc = include_str!("../docs/stabilizers.md")]
 #![doc = include_str!("../docs/emulsifiers.md")]
+#![doc = include_str!("../docs/chocolate.md")]
 #![doc = include_str!("../docs/references/literature.md")]
 #![doc = include_str!("../docs/references/index/116.md")]
 
 #[cfg(doc)]
 use crate::{
-    composition::{ArtificialSweeteners, CompKey, Emulsifiers, Polyols, Stabilizers, Sugars},
+    composition::{ArtificialSweeteners, CompKey, Composition, Emulsifiers, Polyols, Stabilizers, Sugars},
     constants::{
         self,
         composition::{STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_PROTEIN_IN_MSNF, STD_WHEY_PROTEIN_IN_MSNF_PROTEIN},
     },
+    specs::ChocolateSpec,
 };
 
 /// Asserts for floating point comparisons in doc tests

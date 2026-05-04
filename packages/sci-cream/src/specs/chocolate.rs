@@ -14,21 +14,9 @@ use crate::composition::CompKey;
 
 /// Spec for chocolate ingredients, with cacao solids, cocoa butter, and optional sugar and others
 ///
-/// The terminology around chocolate ingredients can be confusing and used inconsistently across
-/// different industries and stages of processing. For clarity, within this library we define:
-///   - _Cacao_ solids: the total dry matter content derived from the cacao bean (sometimes referred
-///     to as "chocolate liquor", "cocoa mass", etc.) including both cocoa butter (fat) and cocoa
-///     solids (non-fat solids). This is the percentage advertised on chocolate packaging, e.g. 70%
-///     dark chocolate has 70% cacao solids. Corresponds to [`cacao_solids`](Self::cacao_solids).
-///     The value is specified in [`Composition`] accessible via [`CompKey::CacaoSolids`].
-///   - Cocoa butter: the fat component extracted from cacao solids (sometimes referred to as "cocoa
-///     fat"). This is rarely advertised on packaging, but can usually be inferred from the
-///     nutrition table. Corresponds to [`cocoa_butter`](Self::cocoa_butter). The value is
-///     specified in [`Composition`] accessible via [`CompKey::CocoaButter`].
-///   - _Cocoa_ solids: the non-fat component of cacao solids (sometimes referred to as "cocoa
-///     powder" or "cocoa fiber"), i.e. cacao solids minus cocoa butter. In ice cream mixes, this
-///     generally determines how "chocolatey" the flavor is. This value is specified in
-///     [`Composition`] accessible via [`CompKey::CocoaSolids`].
+/// See the [chocolate documentation](crate::docs#chocolate) for more details on chocolate
+/// ingredients and the terminology used to define its various constituent components, e.g. _cacao_
+/// solids, cocoa butter, _cocoa_ solids, etc.
 ///
 /// The relation of the above components is `cacao solids = cocoa butter + cocoa solids`. The
 /// [`sugars`](Self::sugars) content of chocolate ingredients is optional, assumed to be zero if not

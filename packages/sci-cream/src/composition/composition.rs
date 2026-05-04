@@ -155,23 +155,19 @@ pub enum CompKey {
 
     /// Cocoa butter, the fat component extracted from cacao solids [`CompKey::CacaoSolids`].
     ///
-    /// Sometimes referred to as "cocoa fat"; see [`ChocolateSpec`] for more details. This component
-    /// affects the texture of ice creams by hardening the frozen product, and contributes to the
-    /// _"perception of richness in chocolate ice creams... [due to] the lubricating effect that
-    /// cocoa butter provides as it melts in the mouth."_ (Goff & Hartel, 2025, p. 107)[^20]
-    #[doc = include_str!("../../docs/references/index/20.md")]
+    /// Sometimes referred to as "cocoa fat"; see the [chocolate
+    /// documentation](crate::docs#chocolate) for more details.
     CocoaButter,
     /// _Cocoa_ solids, the non-fat component of cacao solids [`CompKey::CacaoSolids`]
     ///
     /// Sometimes referred to as "cocoa powder" or "cocoa fiber", i.e. cacao solids minus cocoa
-    /// butter; see [`ChocolateSpec`] for more details. In ice cream mixes, this generally
-    /// determines the intensity of the chocolate flavor, and contributes to the texture and body.
+    /// butter; see the [chocolate documentation](crate::docs#chocolate) for more details.
     CocoaSolids,
     /// _Cacao_ solids, the total dry matter content derived from the cacao bean
     ///
-    /// Sometimes referred to as "chocolate liquor", "cocoa mass", etc., it includes both cocoa
-    /// butter (fat) [`CompKey::CocoaButter`] and cocoa solids (non-fat solids)
-    /// [`CompKey::CocoaSolids`]. See [`ChocolateSpec`] for more details.
+    /// This includes both cocoa butter (fat) [`CompKey::CocoaButter`] and cocoa solids (non-fat
+    /// solids) [`CompKey::CocoaSolids`]. See the [chocolate documentation](crate::docs#chocolate)
+    /// for more details.
     ///
     /// **Note**: This does not include any sugar content that may be present in chocolate
     /// ingredients; that is accounted for separately via [`CompKey::TotalSugars`].

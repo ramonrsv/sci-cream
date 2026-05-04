@@ -14,3 +14,4 @@
     - [Corvitto Method, Hardness Factor](crate::docs#corvitto-method-hardness-factor)
 - [Stabilizers](crate::docs#stabilizers)
 - [Emulsifiers](crate::docs#emulsifiers)
+- [Chocolate](crate::docs#chocolate)

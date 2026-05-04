@@ -54,8 +54,8 @@ pub const STD_SATURATED_FAT_IN_EGG_FAT: f64 = 0.28;
 pub const STD_SATURATED_FAT_IN_NUT_FAT: f64 = 0.09;
 
 #[allow(clippy::doc_markdown)] // _FoodData_ false positive
-/// Standard composition values for cacao products, notably cocoa solids; see
-/// [`crate::specs::ChocolateSpec`].
+/// Standard composition values for cacao products, notably cocoa solids; see the [chocolate
+/// documentation](crate::docs#chocolate) for more details about the components of chocolate.
 ///
 /// These values are averages compiled from the nutrient profiles of various cacao products in
 /// the _USDA FoodData Central_ database (Chocolate, dark, 60-69% cacao solids, 2019)[^104],
@@ -77,27 +77,26 @@ pub const STD_SATURATED_FAT_IN_NUT_FAT: f64 = 0.09;
 #[doc = include_str!("../../docs/references/index/111.md")]
 pub mod cacao {
     #[cfg(doc)]
-    pub use crate::{constants::composition, specs::ChocolateSpec};
+    pub use crate::constants::composition;
 
     /// Percentage of water typically found in cacao products
     pub const STD_WATER_CONTENT_IN_CACAO_PRODUCTS: f64 = 0.02;
 
-    /// Percentage of proteins typically found in cocoa solids; see [`ChocolateSpec`].
+    /// Percentage of proteins typically found in cocoa solids
     ///
     /// The full composition of cocoa solids is proteins, carbohydrates, and ash - the
     /// respective composition percentages add up to 100%.
     /// See [`STD_CARBOHYDRATES_IN_COCOA_SOLIDS`] and [`STD_ASH_IN_COCOA_SOLIDS`].
     pub const STD_PROTEIN_IN_COCOA_SOLIDS: f64 = 0.245;
 
-    /// Percentage of carbohydrates typically found in cocoa solids; see [`ChocolateSpec`].
+    /// Percentage of carbohydrates typically found in cocoa solids
     ///
     /// The full composition of cocoa solids is proteins, carbohydrates, and ash - the
     /// respective composition percentages add up to 100%.
     /// See [`STD_PROTEIN_IN_COCOA_SOLIDS`] and [`STD_ASH_IN_COCOA_SOLIDS`].
     pub const STD_CARBOHYDRATES_IN_COCOA_SOLIDS: f64 = 0.68;
 
-    /// Percentage of fiber typically found in carbohydrates from cocoa solids; see
-    /// [`ChocolateSpec`].
+    /// Percentage of fiber typically found in carbohydrates from cocoa solids
     pub const STD_FIBER_IN_COCOA_SOLIDS: f64 = 0.40;
 
     /// Percentage of ash (tracked as other SNFS) typically found in cocoa solids.
@@ -107,7 +106,7 @@ pub mod cacao {
     /// See [`STD_PROTEIN_IN_COCOA_SOLIDS`] and [`STD_CARBOHYDRATES_IN_COCOA_SOLIDS`].
     pub const STD_ASH_IN_COCOA_SOLIDS: f64 = 0.075;
 
-    /// Percentage of saturated fats typically found in cocoa butter; see [`ChocolateSpec`].
+    /// Percentage of saturated fats typically found in cocoa butter
     pub const STD_SATURATED_FAT_IN_COCOA_BUTTER: f64 = 0.60;
 
     /// Percentage of cocoa butter typically found in cacao solids of non-powder chocolate
