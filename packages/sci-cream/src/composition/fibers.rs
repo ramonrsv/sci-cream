@@ -13,9 +13,6 @@ use crate::{
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 /// Represents the dietary fiber composition of a mix or ingredient, including tracking of specific
 /// subgroups of fibers such as inulin and oligofructose
 ///
@@ -27,7 +24,6 @@ use wasm_bindgen::prelude::*;
 /// similar functional properties along with several health-promoting properties (Porto, 2026)[^27].
 #[doc = include_str!("../../docs/references/index/27.md")]
 #[doc = include_str!("../../docs/references/index/34.md")]
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Fibers {
@@ -117,19 +113,6 @@ impl Fibers {
     pub fn to_pod(&self) -> f64 {
         // `other` is intentionally omitted; see docs above
         (self.inulin * constants::pod::INULIN + self.oligofructose * constants::pod::OLIGOFRUCTOSE) / 100.0
-    }
-}
-
-#[cfg_attr(coverage, coverage(off))]
-#[cfg(feature = "wasm")]
-#[wasm_bindgen]
-impl Fibers {
-    /// WASM compatible wrapper for [`new`](Self::new)
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[wasm_bindgen(constructor)]
-    #[must_use]
-    pub fn new_wasm() -> Self {
-        Self::new()
     }
 }
 

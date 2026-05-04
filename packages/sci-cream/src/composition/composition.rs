@@ -99,7 +99,6 @@ pub trait ScaleComponents {
 /// utilities to calculate their contributions to POD and PAC, the overall POD and PAC of a
 /// composition are independent values and are set during composition construction, taking all
 /// underlying contributions into account.
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub struct Composition {
     /// Total energy content in kilocalories (kcal) per 100g of ingredient/mix
@@ -409,19 +408,6 @@ impl Composition {
             mix_comp = mix_comp.add(&line.0.scale(weight));
             Ok(mix_comp)
         })
-    }
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-impl Composition {
-    /// WASM compatible wrapper for [`new`](Self::new)
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[cfg_attr(coverage, coverage(off))]
-    #[cfg(feature = "wasm")]
-    #[wasm_bindgen(constructor)]
-    #[must_use]
-    pub fn new_wasm() -> Self {
-        Self::new()
     }
 
     /// Calculates the water content as `100 - TotalSolids - Alcohol`

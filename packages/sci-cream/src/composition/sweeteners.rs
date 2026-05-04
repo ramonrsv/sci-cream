@@ -10,9 +10,6 @@ use crate::{
     validate::{Validate, verify_is_within_100_percent},
 };
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 #[cfg(doc)]
 use crate::{composition::Composition, error::Error, specs::SweetenerSpec};
 
@@ -21,7 +18,6 @@ use crate::{composition::Composition, error::Error, specs::SweetenerSpec};
 /// **Note**: This struct is not actually used in the main [`Composition`] struct. It is provided
 /// as a separate struct to facilitate some use cases for which only components with sweetness
 /// properties are relevant, e.g. defining sweetener ingredient specs; see [`SweetenerSpec`].
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Sweeteners {
@@ -99,19 +95,6 @@ impl Sweeteners {
     /// e.g. due to the presence of "other" sugars or polyols with unknown PAC contributions.
     pub fn to_pac(&self) -> Result<f64> {
         Ok(self.sugars.to_pac()? + self.polyols.to_pac()? + self.artificial.to_pac()?)
-    }
-}
-
-#[cfg_attr(coverage, coverage(off))]
-#[cfg(feature = "wasm")]
-#[wasm_bindgen]
-impl Sweeteners {
-    /// WASM compatible wrapper for [`new`](Self::new)
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[wasm_bindgen(constructor)]
-    #[must_use]
-    pub fn new_wasm() -> Self {
-        Self::new()
     }
 }
 

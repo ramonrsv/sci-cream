@@ -13,11 +13,7 @@ use crate::{
     validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 /// Breakdown of fat components, reflecting the standard nutrition facts labelling
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Fats {
@@ -68,19 +64,6 @@ impl Fats {
     #[must_use]
     pub fn energy(&self) -> f64 {
         self.total * constants::energy::FATS
-    }
-}
-
-#[cfg_attr(coverage, coverage(off))]
-#[cfg(feature = "wasm")]
-#[wasm_bindgen]
-impl Fats {
-    /// WASM compatible wrapper for [`new`](Self::new)
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[wasm_bindgen(constructor)]
-    #[must_use]
-    pub fn new_wasm() -> Self {
-        Self::new()
     }
 }
 

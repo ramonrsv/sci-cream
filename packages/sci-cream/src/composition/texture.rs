@@ -12,9 +12,6 @@ use crate::{
     validate::{Validate, verify_are_positive},
 };
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 #[cfg(doc)]
 use crate::{
     composition::{Emulsifiers, Stabilizers},
@@ -38,7 +35,6 @@ use crate::{
 /// This is an area of ongoing development and refinement, and so the specific properties tracked
 /// here, as well as the methods for estimating them from components, are subject to change as more
 /// research and experimentation is done in this area.
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Texture {
@@ -89,19 +85,6 @@ impl Texture {
     #[must_use]
     pub const fn emulsification(self, emulsification: f64) -> Self {
         Self { emulsification, ..self }
-    }
-}
-
-#[cfg_attr(coverage, coverage(off))]
-#[cfg(feature = "wasm")]
-#[wasm_bindgen]
-impl Texture {
-    /// WASM compatible wrapper for [`new`](Self::new)
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[wasm_bindgen(constructor)]
-    #[must_use]
-    pub fn new_wasm() -> Self {
-        Self::new()
     }
 }
 

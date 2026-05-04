@@ -12,15 +12,11 @@ use crate::{
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 /// Struct representing the alcohol (ethanol) content of a mix, in terms of percentage by weight.
 ///
 /// It also provides methods to convert between alcohol by weight (ABW) and alcohol by volume (ABV)
 /// (2025)[^8], as well as to calculate the energy and PAC contributions of the alcohol content.
 #[doc = include_str!("../../docs/references/index/8.md")]
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Alcohol {
@@ -71,19 +67,6 @@ impl Alcohol {
     #[must_use]
     pub fn to_pac(&self) -> f64 {
         self.by_weight * constants::pac::ALCOHOL / 100.0
-    }
-}
-
-#[cfg_attr(coverage, coverage(off))]
-#[cfg(feature = "wasm")]
-#[wasm_bindgen]
-impl Alcohol {
-    /// WASM compatible wrapper for [`new`](Self::new)
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[wasm_bindgen(constructor)]
-    #[must_use]
-    pub fn new_wasm() -> Self {
-        Self::new()
     }
 }
 

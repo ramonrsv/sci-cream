@@ -11,9 +11,6 @@ use crate::{
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 #[cfg(doc)]
 use crate::composition::{CompKey, Solids};
 
@@ -25,7 +22,6 @@ use crate::composition::{CompKey, Solids};
 /// components do not meaningfully contribute to other macro properties of a mix, e.g. energy,
 /// [POD](crate::docs#pod), [PAC](crate::docs#pac-afp-fpdf-se), etc. Any such miniscule
 /// contributions are accounted for in the solids breakdown.
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Micro {
@@ -74,19 +70,6 @@ impl Micro {
     #[must_use]
     pub const fn emulsifiers(self, emulsifiers: Emulsifiers) -> Self {
         Self { emulsifiers, ..self }
-    }
-}
-
-#[cfg_attr(coverage, coverage(off))]
-#[cfg(feature = "wasm")]
-#[wasm_bindgen]
-impl Micro {
-    /// WASM compatible wrapper for [`new`](Self::new)
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[wasm_bindgen(constructor)]
-    #[must_use]
-    pub fn new_wasm() -> Self {
-        Self::new()
     }
 }
 

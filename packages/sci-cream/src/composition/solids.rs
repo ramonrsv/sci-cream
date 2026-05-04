@@ -12,9 +12,6 @@ use crate::{
     validate::{Validate, verify_is_within_100_percent},
 };
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 /// Solid Components of an ingredient or mix broken down by key ingredient categories
 ///
 /// This struct holds a [`SolidsBreakdown`] for each key ingredient category relevant to ice cream
@@ -28,7 +25,6 @@ use wasm_bindgen::prelude::*;
 /// Note that the values here are expressed as grams per 100g of _total_ ingredient/mix, not as a
 /// percentage of total solids, e.g. a 10g:90g sucrose:water mix would have `solids.total() == 10`
 /// and `solids.other.sweeteners.sucrose == 10`, in spite of sucrose being 100% of the solids.
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Solids {
@@ -91,19 +87,6 @@ impl Solids {
     #[must_use]
     pub const fn other(self, other: SolidsBreakdown) -> Self {
         Self { other, ..self }
-    }
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-impl Solids {
-    /// WASM compatible wrapper for [`new`](Self::new)
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[cfg_attr(coverage, coverage(off))]
-    #[cfg(feature = "wasm")]
-    #[wasm_bindgen(constructor)]
-    #[must_use]
-    pub fn new_wasm() -> Self {
-        Self::new()
     }
 
     /// Iterate over all field across ingredient categories as [`SolidsBreakdown`]s

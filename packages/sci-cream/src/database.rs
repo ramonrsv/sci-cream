@@ -48,6 +48,14 @@ type ReadLock<'a> = RwLockReadGuard<'a, HashMap<String, Ingredient>>;
 type WriteLock<'a> = RwLockWriteGuard<'a, HashMap<String, Ingredient>>;
 
 impl IngredientDatabase {
+    /// Creates a new, empty [`IngredientDatabase`].
+    #[must_use]
+    pub fn new() -> Self {
+        Self {
+            map: RwLock::new(HashMap::new()),
+        }
+    }
+
     fn acquire_read_lock(&self) -> ReadLock<'_> {
         self.map
             .read()
@@ -58,6 +66,25 @@ impl IngredientDatabase {
         self.map
             .write()
             .expect("Write lock on the ingredient database should be acquired successfully")
+    }
+
+    /// Checks if the database contains an [`Ingredient`] with the specified name.
+    pub fn has_ingredient(&self, name: &str) -> bool {
+        self.acquire_read_lock().contains_key(name)
+    }
+
+    /// Retrieves all [`Ingredient`]s in the database.
+    pub fn get_all_ingredients(&self) -> Vec<Ingredient> {
+        self.acquire_read_lock().values().cloned().collect()
+    }
+
+    /// Retrieves [`Ingredient`]s filtered by the specified [`Category`].
+    pub fn get_ingredients_by_category(&self, category: Category) -> Vec<Ingredient> {
+        self.acquire_read_lock()
+            .values()
+            .filter(|ingredient| ingredient.category == category)
+            .cloned()
+            .collect()
     }
 
     /// Seeds a single [`Ingredient`] into the database, using a passed write lock, ensuring the
@@ -201,37 +228,6 @@ impl IngredientDatabase {
     }
 }
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-impl IngredientDatabase {
-    /// Creates a new, empty [`IngredientDatabase`].
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
-    #[must_use]
-    pub fn new() -> Self {
-        Self {
-            map: RwLock::new(HashMap::new()),
-        }
-    }
-
-    /// Checks if the database contains an [`Ingredient`] with the specified name.
-    pub fn has_ingredient(&self, name: &str) -> bool {
-        self.acquire_read_lock().contains_key(name)
-    }
-
-    /// Retrieves all [`Ingredient`]s in the database.
-    pub fn get_all_ingredients(&self) -> Vec<Ingredient> {
-        self.acquire_read_lock().values().cloned().collect()
-    }
-
-    /// Retrieves [`Ingredient`]s filtered by the specified [`Category`].
-    pub fn get_ingredients_by_category(&self, category: Category) -> Vec<Ingredient> {
-        self.acquire_read_lock()
-            .values()
-            .filter(|ingredient| ingredient.category == category)
-            .cloned()
-            .collect()
-    }
-}
-
 impl IngredientGetter for IngredientDatabase {
     fn get_ingredient_by_name(&self, name: &str) -> Result<Ingredient> {
         self.acquire_read_lock()
@@ -244,98 +240,6 @@ impl IngredientGetter for IngredientDatabase {
 impl Default for IngredientDatabase {
     fn default() -> Self {
         Self::new()
-    }
-}
-
-/// WASM compatible wrappers for [`crate::database`] functions and [`IngredientDatabase`] methods.
-#[cfg(feature = "wasm")]
-#[cfg_attr(coverage, coverage(off))]
-pub mod wasm {
-    use wasm_bindgen::prelude::*;
-
-    use super::IngredientDatabase;
-
-    use crate::{ingredient::Ingredient, resolution::IngredientGetter, specs::SpecEntry};
-
-    #[cfg(doc)]
-    use crate::error::Error;
-
-    fn specs_from_jsvalues(specs: &[JsValue]) -> Result<Vec<SpecEntry>, JsValue> {
-        specs
-            .iter()
-            .map(|spec| serde_wasm_bindgen::from_value::<SpecEntry>(spec.clone()).map_err(Into::into))
-            .collect::<Result<_, JsValue>>()
-    }
-
-    #[wasm_bindgen]
-    impl IngredientDatabase {
-        /// WASM compatible wrapper for [`IngredientDatabase::seed`]
-        ///
-        /// # Errors
-        ///
-        /// It forwards any errors from [`IngredientDatabase::seed`]; see for more details.
-        #[wasm_bindgen(js_name = "seed")]
-        #[allow(clippy::needless_pass_by_value)]
-        pub fn seed_wasm(&self, ingredients: Box<[Ingredient]>) -> Result<(), JsValue> {
-            self.seed(&ingredients).map_err(Into::into)
-        }
-
-        /// WASM compatible wrapper for [`IngredientDatabase::seed_from_specs`]
-        ///
-        /// # Errors
-        ///
-        /// It forwards any errors from [`IngredientDatabase::seed_from_specs`]; see that method for
-        /// more details. It may also return a `serde::Error` if the provided JS values cannot be
-        /// deserialized into [`SpecEntry`]s.
-        #[wasm_bindgen(js_name = "seed_from_specs")]
-        #[allow(clippy::needless_pass_by_value)]
-        pub fn seed_from_specs_wasm(&self, specs: Box<[JsValue]>) -> Result<(), JsValue> {
-            self.seed_from_specs(&specs_from_jsvalues(&specs)?).map_err(Into::into)
-        }
-
-        /// WASM compatible wrapper for [`IngredientDatabase::get_ingredient_by_name`]
-        ///
-        /// # Errors
-        ///
-        /// Returns an [`Error::IngredientNotFound`] if no ingredient with the name is found.
-        #[wasm_bindgen(js_name = "get_ingredient_by_name")]
-        pub fn get_ingredient_by_name_wasm(&self, name: &str) -> Result<Ingredient, JsValue> {
-            self.get_ingredient_by_name(name).map_err(Into::into)
-        }
-    }
-
-    /// WASM compatible builder forwarding to [`IngredientDatabase::new_seeded`].
-    ///
-    /// # Errors
-    ///
-    /// It forwards any errors from [`IngredientDatabase::new_seeded`]; see for more details.
-    #[wasm_bindgen]
-    #[allow(clippy::needless_pass_by_value)]
-    pub fn new_ingredient_database_seeded(ingredients: Box<[Ingredient]>) -> Result<IngredientDatabase, JsValue> {
-        IngredientDatabase::new_seeded(&ingredients).map_err(Into::into)
-    }
-
-    /// WASM compatible builder forwarding to [`IngredientDatabase::new_seeded_from_specs`].
-    ///
-    /// # Errors
-    ///
-    /// It forwards any errors from [`IngredientDatabase::new_seeded_from_specs`]; see that method
-    /// for more details. It may also return a `serde::Error` if the provided JS values cannot be
-    /// deserialized into [`SpecEntry`]s.
-    #[wasm_bindgen]
-    #[allow(clippy::needless_pass_by_value)]
-    pub fn new_ingredient_database_seeded_from_specs(specs: Box<[JsValue]>) -> Result<IngredientDatabase, JsValue> {
-        IngredientDatabase::new_seeded_from_specs(&specs_from_jsvalues(&specs)?).map_err(Into::into)
-    }
-
-    /// WASM compatible builder forwarding to [`IngredientDatabase::new_seeded_from_embedded_data`].
-    ///
-    /// This function requires the `data` feature to be enabled.
-    #[cfg(feature = "data")]
-    #[wasm_bindgen]
-    #[must_use]
-    pub fn new_ingredient_database_seeded_from_embedded_data() -> IngredientDatabase {
-        IngredientDatabase::new_seeded_from_embedded_data()
     }
 }
 

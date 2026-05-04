@@ -37,6 +37,7 @@
       needs to support `Ingredient`s, primarily for sweeteners, with ratios like PAC:POD,
       Solids:POD, etc. A crude implementation currently is at `data::tests::sweeteners_by_ratio`.
 - [ ] Add Abs.POD property; looks for literature sources for it, I think I saw it in Goff & Hartel.
+- [ ] Consider dropping WASM support for `Recipe`, rely only on `Bridge` and `IngredientDatabase`.
 
 ## Backlog
 

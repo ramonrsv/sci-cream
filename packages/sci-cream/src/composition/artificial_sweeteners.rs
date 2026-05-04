@@ -13,9 +13,6 @@ use crate::{
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 #[cfg(doc)]
 use crate::composition::Polyols;
 
@@ -31,7 +28,6 @@ use crate::composition::Polyols;
 /// See the [artificial sweeteners documentation](crate::docs#artificial-sweeteners) for more
 /// information on the different types of sweeteners, their physical and sensory properties, their
 /// effects in ice cream formulations, and their regulatory status and safety profiles.
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct ArtificialSweeteners {
@@ -211,19 +207,6 @@ impl ArtificialSweeteners {
         .into_iter()
         .sum::<f64>()
             / 100.0)
-    }
-}
-
-#[cfg_attr(coverage, coverage(off))]
-#[cfg(feature = "wasm")]
-#[wasm_bindgen]
-impl ArtificialSweeteners {
-    /// WASM compatible wrapper for [`new`](Self::new)
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[wasm_bindgen(constructor)]
-    #[must_use]
-    pub fn new_wasm() -> Self {
-        Self::new()
     }
 }
 

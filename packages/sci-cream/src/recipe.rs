@@ -2,9 +2,6 @@
 
 use serde::{Deserialize, Serialize};
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 #[cfg(feature = "database")]
 use crate::{database::IngredientDatabase, resolution::IngredientGetter};
 
@@ -38,23 +35,18 @@ pub type ConstRecipe = [(&'static str, f64)];
 /// A single line in a recipe, representing an ingredient and its amount.
 ///
 /// This struct contains the full [`Ingredient`] object, so it can be used directly in calculations.
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct RecipeLine {
     /// The ingredient used in this line of the recipe.
-    #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
     pub ingredient: Ingredient,
     /// The amount of the ingredient used in this line of the recipe, in grams.
     pub amount: f64,
 }
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl RecipeLine {
     /// Creates a new [`RecipeLine`] with the given ingredient and amount.
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
-    pub fn new(ingredient: Ingredient, amount: f64) -> Self {
+    pub const fn new(ingredient: Ingredient, amount: f64) -> Self {
         Self { ingredient, amount }
     }
 }
@@ -64,18 +56,21 @@ impl RecipeLine {
 /// This struct contains the full [`Ingredient`] objects in its lines, so it can be used directly in
 /// calculations, which are exposed as methods on the struct. See [`LightRecipe`] for a simpler
 /// struct used for interoperability with external data sources.
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct Recipe {
     /// An optional name for the recipe.
-    #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
     pub name: Option<String>,
     /// The lines of the recipe, each representing an ingredient and its amount.
-    #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
     pub lines: Vec<RecipeLine>,
 }
 
 impl Recipe {
+    /// Creates a new [`Recipe`] with the optional given name and list of [`RecipeLine`]s.
+    #[must_use]
+    pub const fn new(name: Option<String>, lines: Vec<RecipeLine>) -> Self {
+        Self { name, lines }
+    }
+
     /// Create a new [`Recipe`] from a [`LightRecipe`] and an [`IngredientDatabase`].
     ///
     /// This function looks up each ingredient name in the [`LightRecipe`] in the provided
@@ -168,62 +163,6 @@ impl Recipe {
             composition,
             fpd,
         })
-    }
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-impl Recipe {
-    /// Creates a new [`Recipe`] with the optional given name and list of [`RecipeLine`]s.
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
-    #[must_use]
-    pub fn new(name: Option<String>, lines: Vec<RecipeLine>) -> Self {
-        Self { name, lines }
-    }
-}
-
-/// WASM compatible wrappers for [`crate::recipe`] functions and [`Recipe`] methods.
-#[cfg(feature = "wasm")]
-#[cfg_attr(coverage, coverage(off))]
-pub mod wasm {
-    use wasm_bindgen::prelude::*;
-
-    use super::{Composition, MixProperties, OwnedLightRecipe, Recipe};
-
-    #[cfg(doc)]
-    use crate::fpd::FPD;
-
-    /// Create an [`OwnedLightRecipe`] from a JavaScript list of ingredient name and amount pairs.
-    ///
-    /// # Errors
-    ///
-    /// Returns a `serde::Error` if the input cannot be deserialized into an [`OwnedLightRecipe`].
-    pub fn light_recipe_from_jsvalue(recipe: JsValue) -> Result<OwnedLightRecipe, JsValue> {
-        serde_wasm_bindgen::from_value::<OwnedLightRecipe>(recipe).map_err(Into::into)
-    }
-
-    #[wasm_bindgen]
-    impl Recipe {
-        /// WASM compatible wrapper for [`Recipe::calculate_composition`]
-        ///
-        /// # Errors
-        ///
-        /// Forwards any errors from [`Composition::from_combination`] if the recipe is not valid,
-        /// e.g. if any ingredient has a negative amount.
-        #[wasm_bindgen(js_name = "calculate_composition")]
-        pub fn calculate_composition_wasm(&self) -> Result<Composition, JsValue> {
-            self.calculate_composition().map_err(Into::into)
-        }
-
-        /// WASM compatible wrapper for [`Recipe::calculate_mix_properties`]
-        ///
-        /// # Errors
-        ///
-        /// Forwards any errors from [`FPD::compute_from_composition`] if FPD calculations fail.
-        #[wasm_bindgen(js_name = "calculate_mix_properties")]
-        pub fn calculate_mix_properties_wasm(&self) -> Result<MixProperties, JsValue> {
-            self.calculate_mix_properties().map_err(Into::into)
-        }
     }
 }
 

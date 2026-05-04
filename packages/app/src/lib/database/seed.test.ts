@@ -71,7 +71,6 @@ test("Create Ingredient from specs from DB", async () => {
 
     expect(ingParsed.name).toBe(spec.name);
     expect(ingParsed.category).toBe(expectedCategory);
-    expect(ingParsed.composition.solids).toBeDefined();
     expect(ingParsed).toBeInstanceOf(Ingredient);
     expect(ingParsed.composition).toBeInstanceOf(Composition);
   }

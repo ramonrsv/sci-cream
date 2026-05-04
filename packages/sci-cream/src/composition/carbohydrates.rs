@@ -12,12 +12,8 @@ use crate::{
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 /// Struct representing the detailed carbohydrate composition of a mix, including sugars, fibers,
 /// polyols, and other carbohydrates.
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Carbohydrates {
@@ -142,19 +138,6 @@ impl Carbohydrates {
     pub fn to_pac(&self) -> Result<f64> {
         // `fibers` and `others` are intentionally omitted, see docs above
         Ok(self.sugars.to_pac()? + self.polyols.to_pac()?)
-    }
-}
-
-#[cfg_attr(coverage, coverage(off))]
-#[cfg(feature = "wasm")]
-#[wasm_bindgen]
-impl Carbohydrates {
-    /// WASM compatible wrapper for [`new`](Self::new)
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[wasm_bindgen(constructor)]
-    #[must_use]
-    pub fn new_wasm() -> Self {
-        Self::new()
     }
 }
 

@@ -34,6 +34,21 @@ pub struct Bridge {
 }
 
 impl Bridge {
+    /// Forwards to [`IngredientDatabase::has_ingredient`] of the internal database
+    pub fn has_ingredient(&self, name: &str) -> bool {
+        self.db.has_ingredient(name)
+    }
+
+    /// Forwards to [`IngredientDatabase::get_all_ingredients`] of the internal database
+    pub fn get_all_ingredients(&self) -> Vec<Ingredient> {
+        self.db.get_all_ingredients()
+    }
+
+    /// Forwards to [`IngredientDatabase::get_ingredients_by_category`] of the internal database
+    pub fn get_ingredients_by_category(&self, category: Category) -> Vec<Ingredient> {
+        self.db.get_ingredients_by_category(category)
+    }
+
     /// Forwards to [`Recipe::calculate_composition`], creating a [`Recipe`] from [`LightRecipe`]
     ///
     /// # Errors
@@ -97,21 +112,6 @@ impl Bridge {
     pub fn new(db: IngredientDatabase) -> Self {
         Self { db }
     }
-
-    /// Forwards to [`IngredientDatabase::has_ingredient`] of the internal database
-    pub fn has_ingredient(&self, name: &str) -> bool {
-        self.db.has_ingredient(name)
-    }
-
-    /// Forwards to [`IngredientDatabase::get_all_ingredients`] of the internal database
-    pub fn get_all_ingredients(&self) -> Vec<Ingredient> {
-        self.db.get_all_ingredients()
-    }
-
-    /// Forwards to [`IngredientDatabase::get_ingredients_by_category`] of the internal database
-    pub fn get_ingredients_by_category(&self, category: Category) -> Vec<Ingredient> {
-        self.db.get_ingredients_by_category(category)
-    }
 }
 
 impl IngredientGetter for Bridge {
@@ -128,8 +128,12 @@ pub mod wasm {
 
     use super::Bridge;
     use crate::{
-        composition::Composition, ingredient::Ingredient, properties::MixProperties,
-        recipe::wasm::light_recipe_from_jsvalue, specs::entry::wasm::spec_entry_from_jsvalue,
+        ingredient::Category,
+        specs::entry::wasm::spec_entry_from_jsvalue,
+        wasm::{
+            composition::Composition as WasmComposition, ingredient::Ingredient as WasmIngredient,
+            properties::MixProperties as WasmMixProperties, recipe::light_recipe_from_jsvalue,
+        },
     };
 
     #[cfg(doc)]
@@ -140,6 +144,27 @@ pub mod wasm {
 
     #[wasm_bindgen]
     impl Bridge {
+        /// WASM compatible wrapper for [`Bridge::has_ingredient`]
+        #[wasm_bindgen(js_name = "has_ingredient")]
+        pub fn has_ingredient_wasm(&self, name: &str) -> bool {
+            self.has_ingredient(name)
+        }
+
+        /// WASM compatible wrapper for [`Bridge::get_all_ingredients`]
+        #[wasm_bindgen(js_name = "get_all_ingredients")]
+        pub fn get_all_ingredients_wasm(&self) -> Vec<WasmIngredient> {
+            self.get_all_ingredients().into_iter().map(Into::into).collect()
+        }
+
+        /// WASM compatible wrapper for [`Bridge::get_ingredients_by_category`]
+        #[wasm_bindgen(js_name = "get_ingredients_by_category")]
+        pub fn get_ingredients_by_category_wasm(&self, category: Category) -> Vec<WasmIngredient> {
+            self.get_ingredients_by_category(category)
+                .into_iter()
+                .map(Into::into)
+                .collect()
+        }
+
         /// WASM compatible wrapper for [`Bridge::get_ingredient_by_name`]
         ///
         /// Actually an independent wrapper that forwards to the internal database's WASM wrapper
@@ -149,7 +174,7 @@ pub mod wasm {
         ///
         /// Returns an [`Error::IngredientNotFound`] if no ingredient with the name is found.
         #[wasm_bindgen(js_name = "get_ingredient_by_name")]
-        pub fn get_ingredient_by_name_wasm(&self, name: &str) -> Result<Ingredient, JsValue> {
+        pub fn get_ingredient_by_name_wasm(&self, name: &str) -> Result<WasmIngredient, JsValue> {
             self.db.get_ingredient_by_name_wasm(name)
         }
 
@@ -161,9 +186,11 @@ pub mod wasm {
         /// [`OwnedLightRecipe`], and forwards any errors from the forwarded-to method. See
         /// [`Bridge::calculate_recipe_composition`] for more details on the forwarded errors.
         #[wasm_bindgen(js_name = "calculate_recipe_composition")]
-        pub fn calculate_recipe_composition_wasm(&self, recipe: Box<[JsValue]>) -> Result<Composition, JsValue> {
+        pub fn calculate_recipe_composition_wasm(&self, recipe: Box<[JsValue]>) -> Result<WasmComposition, JsValue> {
             let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
-            self.calculate_recipe_composition(&light_recipe).map_err(Into::into)
+            self.calculate_recipe_composition(&light_recipe)
+                .map(Into::into)
+                .map_err(Into::into)
         }
 
         /// WASM compatible wrapper for [`Bridge::calculate_recipe_mix_properties`]
@@ -174,9 +201,14 @@ pub mod wasm {
         /// [`OwnedLightRecipe`], and forwards any errors from the forwarded-to method. See
         /// [`Bridge::calculate_recipe_mix_properties`] for more details on the forwarded errors.
         #[wasm_bindgen(js_name = "calculate_recipe_mix_properties")]
-        pub fn calculate_recipe_mix_properties_wasm(&self, recipe: Box<[JsValue]>) -> Result<MixProperties, JsValue> {
+        pub fn calculate_recipe_mix_properties_wasm(
+            &self,
+            recipe: Box<[JsValue]>,
+        ) -> Result<WasmMixProperties, JsValue> {
             let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
-            self.calculate_recipe_mix_properties(&light_recipe).map_err(Into::into)
+            self.calculate_recipe_mix_properties(&light_recipe)
+                .map(Into::into)
+                .map_err(Into::into)
         }
 
         /// WASM compatible wrapper for [`Bridge::seed`]
@@ -186,8 +218,10 @@ pub mod wasm {
         /// It forwards any errors from [`IngredientDatabase::seed`]; see for more details.
         #[wasm_bindgen(js_name = "seed")]
         #[allow(clippy::needless_pass_by_value)]
-        pub fn seed_wasm(&self, ingredients: Box<[Ingredient]>) -> Result<(), JsValue> {
-            self.db.seed(&ingredients).map_err(Into::into)
+        pub fn seed_wasm(&self, ingredients: Box<[WasmIngredient]>) -> Result<(), JsValue> {
+            self.db
+                .seed(&ingredients.into_iter().map(Into::into).collect::<Vec<_>>())
+                .map_err(Into::into)
         }
 
         /// WASM compatible wrapper for [`Bridge::seed_from_specs`]
@@ -208,8 +242,9 @@ pub mod wasm {
         /// It forwards any errors from [`spec_entry_from_jsvalue`] and
         /// [`Bridge::resolve_into_ingredient_from_spec`]; see those methods for more details.
         #[wasm_bindgen(js_name = "resolve_into_ingredient_from_spec")]
-        pub fn resolve_into_ingredient_from_spec_wasm(&self, spec: JsValue) -> Result<Ingredient, JsValue> {
+        pub fn resolve_into_ingredient_from_spec_wasm(&self, spec: JsValue) -> Result<WasmIngredient, JsValue> {
             self.resolve_into_ingredient_from_spec(spec_entry_from_jsvalue(spec)?)
+                .map(Into::into)
                 .map_err(Into::into)
         }
     }

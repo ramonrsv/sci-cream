@@ -12,11 +12,7 @@ use crate::{
     validate::{Validate, verify_are_positive},
 };
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 /// Overall [PAC](crate::docs#pac-afp-fpdf-se) and contributions by key ingredient categories
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct PAC {
@@ -88,19 +84,6 @@ impl PAC {
     #[must_use]
     pub fn total(&self) -> f64 {
         self.sugars + self.salt + self.msnf_ws_salts + self.alcohol
-    }
-}
-
-#[cfg_attr(coverage, coverage(off))]
-#[cfg(feature = "wasm")]
-#[wasm_bindgen]
-impl PAC {
-    /// WASM compatible wrapper for [`new`](Self::new)
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[wasm_bindgen(constructor)]
-    #[must_use]
-    pub fn new_wasm() -> Self {
-        Self::new()
     }
 }
 

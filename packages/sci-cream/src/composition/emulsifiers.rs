@@ -18,9 +18,6 @@ use crate::{
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 #[cfg(doc)]
 use crate::composition::{CompKey, Solids};
 
@@ -34,7 +31,6 @@ use crate::composition::{CompKey, Solids};
 ///
 /// See the [emulsifiers documentation](crate::docs#emulsifiers) for more information on the role of
 /// emulsifiers in ice cream, and the different types and their effects on ice cream properties.
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Emulsifiers {
@@ -256,19 +252,6 @@ impl Emulsifiers {
             .sum::<f64>()
                 / 100.0
         })))
-    }
-}
-
-#[cfg_attr(coverage, coverage(off))]
-#[cfg(feature = "wasm")]
-#[wasm_bindgen]
-impl Emulsifiers {
-    /// WASM compatible wrapper for [`new`](Self::new)
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[wasm_bindgen(constructor)]
-    #[must_use]
-    pub fn new_wasm() -> Self {
-        Self::new()
     }
 }
 

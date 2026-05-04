@@ -2,9 +2,6 @@
 
 use serde::{Deserialize, Serialize};
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 use crate::{
     composition::{CompKey, Composition},
     fpd::{FPD, FpdKey},
@@ -45,7 +42,6 @@ impl From<FpdKey> for PropKey {
 }
 
 /// Properties of an ice cream mix, including [`Composition`] and freezing point depression [`FPD`]
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(PartialEq, Clone, Debug)]
 pub struct MixProperties {
     /// Total amount of the mix in grams
@@ -53,7 +49,6 @@ pub struct MixProperties {
     /// Composition properties of the mix
     pub composition: Composition,
     /// [Freezing Point Depression (FPD)](crate::docs#freezing-point-depression)
-    #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
     pub fpd: FPD,
 }
 
@@ -68,6 +63,12 @@ impl MixProperties {
         }
     }
 
+    /// Creates a new empty [`MixProperties`], forwards to [`MixProperties::empty`].
+    #[must_use]
+    pub fn new() -> Self {
+        Self::empty()
+    }
+
     /// Access specific mix property values via an [`PropKey`]
     #[must_use]
     pub fn get(&self, key: PropKey) -> f64 {
@@ -75,16 +76,6 @@ impl MixProperties {
             PropKey::CompKey(comp_key) => self.composition.get(comp_key),
             PropKey::FpdKey(fpd_key) => self.fpd.get(fpd_key),
         }
-    }
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-impl MixProperties {
-    /// Creates a new empty [`MixProperties`], forwards to [`MixProperties::empty`].
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
-    #[must_use]
-    pub fn new() -> Self {
-        Self::empty()
     }
 }
 

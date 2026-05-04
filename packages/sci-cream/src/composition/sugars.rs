@@ -13,9 +13,6 @@ use crate::{
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 /// Sugars present in an ingredient or mix, mostly monosaccharides and disaccharides
 ///
 /// This struct tracks a detailed breakdown of all the different monosaccharides and disaccharides
@@ -24,7 +21,6 @@ use wasm_bindgen::prelude::*;
 ///
 /// See the [sugars documentation](crate::docs#sugars) for more information on the different types
 /// of sugars, their physical and sensory properties, and their effects in ice cream formulations.
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Sugars {
@@ -200,46 +196,6 @@ impl Sugars {
         .into_iter()
         .sum::<f64>()
             / 100.0)
-    }
-}
-
-#[cfg_attr(coverage, coverage(off))]
-#[cfg(feature = "wasm")]
-#[wasm_bindgen]
-impl Sugars {
-    /// WASM compatible wrapper for [`new`](Self::new)
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen constructors cannot be const
-    #[wasm_bindgen(constructor)]
-    #[must_use]
-    pub fn new_wasm() -> Self {
-        Self::new()
-    }
-
-    /// WASM compatible wrapper for [`total`](Self::total)
-    #[wasm_bindgen(js_name = "total")]
-    #[must_use]
-    pub fn total_wasm(&self) -> f64 {
-        self.total()
-    }
-
-    /// WASM compatible wrapper for [`to_pod`](Self::to_pod)
-    ///
-    /// # Errors
-    ///
-    /// Forwards any errors from the underlying [`to_pod`](Self::to_pod) method.
-    #[wasm_bindgen(js_name = "to_pod")]
-    pub fn to_pod_wasm(&self) -> std::result::Result<f64, JsValue> {
-        self.to_pod().map_err(Into::into)
-    }
-
-    /// WASM compatible wrapper for [`to_pac`](Self::to_pac)
-    ///
-    /// # Errors
-    ///
-    /// Forwards any errors from the underlying [`to_pac`](Self::to_pac) method.
-    #[wasm_bindgen(js_name = "to_pac")]
-    pub fn to_pac_wasm(&self) -> std::result::Result<f64, JsValue> {
-        self.to_pac().map_err(Into::into)
     }
 }
 

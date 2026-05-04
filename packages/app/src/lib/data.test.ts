@@ -46,7 +46,6 @@ function expectDrizzleSpecToMatch(
 function expectParsedIngredientToMatchSpec(ingParsed: Ingredient, spec: SpecAsset) {
   expect(ingParsed.name).toBe(spec.name);
   expect(ingParsed.category).toBe(Category[spec.category as keyof typeof Category]);
-  expect(ingParsed.composition.solids).toBeDefined();
   expect(ingParsed).toBeInstanceOf(Ingredient);
   expect(ingParsed.composition).toBeInstanceOf(Composition);
 }

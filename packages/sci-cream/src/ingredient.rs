@@ -78,11 +78,9 @@ pub enum Category {
 /// unique. The [`category`](Self::category) is mostly used for filtering and organization, and does
 /// not affect calculations. The [`composition`](Self::composition) holds the actual data used in
 /// calculations, and does not depend on the other fields.
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(PartialEq, Serialize, Deserialize, Clone, Debug)]
 pub struct Ingredient {
     /// The name of the ingredient, usually required to be unique, e.g. "Whole Milk", "Sucrose"
-    #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
     pub name: String,
     /// The category of the ingredient, e.g. [`Category::Dairy`], [`Category::Sweetener`], etc.
     pub category: Category,
@@ -90,39 +88,14 @@ pub struct Ingredient {
     pub composition: Composition,
 }
 
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 impl Ingredient {
     /// Creates a new [`Ingredient`] instance with the given name, category, and composition
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[cfg_attr(feature = "wasm", wasm_bindgen(constructor))]
     #[must_use]
-    pub fn new(name: String, category: Category, composition: Composition) -> Self {
+    pub const fn new(name: String, category: Category, composition: Composition) -> Self {
         Self {
             name,
             category,
             composition,
-        }
-    }
-}
-
-/// WASM compatible wrappers for [`crate::ingredient`] functions and [`Ingredient`] methods.
-#[cfg(feature = "wasm")]
-#[cfg_attr(coverage, coverage(off))]
-pub mod wasm {
-    use wasm_bindgen::prelude::*;
-
-    use super::Ingredient;
-
-    #[wasm_bindgen]
-    impl Ingredient {
-        /// Clones the `Ingredient` instance, useful when handling WASM objects in JavaScript.
-        ///
-        /// **Note**: This can be very inefficient depending on the use case, so use with caution.
-        /// Consider using [`Bridge`](crate::wasm::Bridge) patterns to avoid excessive cloning.
-        #[wasm_bindgen(js_name = "clone")]
-        #[must_use]
-        pub fn clone_wasm(&self) -> Self {
-            self.clone()
         }
     }
 }

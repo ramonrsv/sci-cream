@@ -12,9 +12,6 @@ use crate::{
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
 
-#[cfg(feature = "wasm")]
-use wasm_bindgen::prelude::*;
-
 /// Breakdown of solid components, as grams of component per 100g of ingredient/mix
 ///
 /// This breakdown reflects the standard nutrition facts labelling; for most ingredients with a
@@ -30,7 +27,6 @@ use wasm_bindgen::prelude::*;
 /// percentage of a particular ingredient's solids, i.e. it describes this ingredient's contribution
 /// to the total mix, taking into account its proportion in the mix. For example, a 50g:50g
 /// 2% milk:water mix would have `milk.fats == 1`, in spite of the milk ingredient being 2% fat.
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct SolidsBreakdown {
@@ -119,41 +115,6 @@ impl SolidsBreakdown {
         })
     }
 
-    /// Calculates the total energy contributed by the solids, in kcal per 100g of mix
-    ///
-    /// **Note**: This method intentionally omits the [`others`](Self::others) field, since the
-    /// specific solid compounds and their energy contributions are unknown. This should be
-    /// inconsequential in most practical circumstances, since the vast majority of solid components
-    /// with energy contributions should fit into the known categories. As such, the accuracy of
-    /// overall energy calculations depends on the quality of the ingredient definitions. Returning
-    /// an error here would be impractical, since the `others` field is rarely expected to be zero,
-    /// although it is expected to almost always be a small fraction of the total solids content.
-    ///
-    /// # Errors
-    ///
-    /// Returns an [`Error::CannotComputeEnergy`] if energy calculations fail for any of the
-    /// components, e.g. due to the presence of "other" polyols with unknown energy contributions.
-    pub fn energy(&self) -> Result<f64> {
-        // `others` is intentionally omitted; see docs above
-        Ok(self.fats.energy()
-            + self.carbohydrates.energy()?
-            + (self.proteins * constants::energy::PROTEINS)
-            + self.artificial_sweeteners.energy()?)
-    }
-}
-
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
-impl SolidsBreakdown {
-    /// WASM compatible wrapper for [`new`](Self::new)
-    #[allow(clippy::missing_const_for_fn)] // wasm_bindgen does not support const
-    #[cfg_attr(coverage, coverage(off))]
-    #[cfg(feature = "wasm")]
-    #[wasm_bindgen(constructor)]
-    #[must_use]
-    pub fn new_wasm() -> Self {
-        Self::new()
-    }
-
     /// Calculates the total solids content, by summing the solids content from all components
     #[must_use]
     pub fn total(&self) -> f64 {
@@ -175,6 +136,28 @@ impl SolidsBreakdown {
     #[must_use]
     pub fn snfs(&self) -> f64 {
         self.snf() - self.carbohydrates.sugars.total()
+    }
+
+    /// Calculates the total energy contributed by the solids, in kcal per 100g of mix
+    ///
+    /// **Note**: This method intentionally omits the [`others`](Self::others) field, since the
+    /// specific solid compounds and their energy contributions are unknown. This should be
+    /// inconsequential in most practical circumstances, since the vast majority of solid components
+    /// with energy contributions should fit into the known categories. As such, the accuracy of
+    /// overall energy calculations depends on the quality of the ingredient definitions. Returning
+    /// an error here would be impractical, since the `others` field is rarely expected to be zero,
+    /// although it is expected to almost always be a small fraction of the total solids content.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error::CannotComputeEnergy`] if energy calculations fail for any of the
+    /// components, e.g. due to the presence of "other" polyols with unknown energy contributions.
+    pub fn energy(&self) -> Result<f64> {
+        // `others` is intentionally omitted; see docs above
+        Ok(self.fats.energy()
+            + self.carbohydrates.energy()?
+            + (self.proteins * constants::energy::PROTEINS)
+            + self.artificial_sweeteners.energy()?)
     }
 }
 

@@ -205,37 +205,6 @@ impl ResolveIntoIngredient for IngredientSpec {
     }
 }
 
-/// WASM compatible wrappers for [`crate::specs::ingredient`] functions and struct methods.
-#[cfg(feature = "wasm")]
-#[cfg_attr(coverage, coverage(off))]
-pub mod wasm {
-    use wasm_bindgen::prelude::*;
-
-    use super::{Ingredient, IngredientSpec};
-    use crate::ingredient::IntoIngredient;
-
-    #[cfg(doc)]
-    use crate::error::Error;
-
-    /// Converts an [`IngredientSpec`] JS value into an [`Ingredient`] instance
-    ///
-    /// Enum variants with associated data are not supported by [`mod@wasm_bindgen`], so we cannot
-    /// support [`IngredientSpec`] directly. Instead, we have to construct it from a JS value via
-    /// [`serde_wasm_bindgen`], and then convert it via [`IngredientSpec::into_ingredient`].
-    ///
-    /// # Errors
-    ///
-    /// Returns a `serde::Error` if the input JS value cannot be deserialized into an
-    /// [`IngredientSpec`], or an [`Error`] if the resulting [`IngredientSpec`] fails to convert
-    /// into an [`Ingredient`], likely due to invalid values, e.g. negative percentages, etc.
-    #[wasm_bindgen]
-    pub fn into_ingredient_from_spec(spec: JsValue) -> Result<Ingredient, JsValue> {
-        serde_wasm_bindgen::from_value::<IngredientSpec>(spec)?
-            .into_ingredient()
-            .map_err(Into::into)
-    }
-}
-
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::unwrap_used)]
