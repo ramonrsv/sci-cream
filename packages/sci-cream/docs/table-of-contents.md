@@ -12,3 +12,5 @@
   - [Absolute PAC](crate::docs#absolute-pac)
   - [Freezing Point Depression Curve](crate::docs#freezing-point-depression-curve)
     - [Corvitto Method, Hardness Factor](crate::docs#corvitto-method-hardness-factor)
+- [Stabilizers](crate::docs#stabilizers)
+- [Emulsifiers](crate::docs#emulsifiers)
