@@ -52,6 +52,10 @@ use crate::composition::CompKey;
 /// assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
 /// # Ok(()) }
 /// ```
+//
+// @todo Egg yolk and egg white solids have significantly different properties with regards to
+// stabilization, emulsification, and texture, therefore they should be tracked separately. This
+// spec needs to be updated to allow specifying the egg yolk and egg white breakdown of solids.
 #[allow(clippy::doc_markdown)] // _FoodData_ false positive
 #[doc = include_str!("../../docs/references/index/2.md")]
 #[doc = include_str!("../../docs/references/index/4.md")]
@@ -95,7 +99,7 @@ impl ToComposition for EggSpec {
             .proteins(protein)
             .others_from_total(100.0 - water)?;
 
-        let micro = Micro::new().emulsifiers(Emulsifiers::new().egg_yolk_lecithin(lecithin));
+        let micro = Micro::new().emulsifiers(Emulsifiers::new().lecithin(lecithin));
         let texture = micro.emulsifiers.to_texture(None)?;
 
         Composition::new()
@@ -159,7 +163,7 @@ pub(crate) mod tests {
                         .others(3.0),
                 ),
             )
-            .micro(Micro::new().emulsifiers(Emulsifiers::new().egg_yolk_lecithin(9.0)))
+            .micro(Micro::new().emulsifiers(Emulsifiers::new().lecithin(9.0)))
             .texture(Texture::new().emulsification(9.0))
     });
 
@@ -176,8 +180,6 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TotalSolids), 49.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
         assert_eq!(comp.get(CompKey::Lecithin), 9.0);
-
-        assert_eq!(comp.micro.emulsifiers.egg_yolk_lecithin, 9.0);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_EGG: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =

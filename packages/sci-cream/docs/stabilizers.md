@@ -34,8 +34,6 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
   For thickening and stabilization, egg custard ice cream formulations typically require a minimum
   of 3% egg yolk by weight, up to 10% being common (Raphaelson, 2023, January)[^37].
 
-  This component is tracked in [`field@Stabilizers::egg_yolk_solids`].
-
 - <a id="stabilizer-whey-proteins"></a>**Whey proteins**, from dairy products, have stabilizing
   properties when denatured by heat. Some of the whey proteins can form a gel-like network when
   heated to the right temperature for the right amount of time. This network functions in the same
@@ -46,8 +44,6 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
   Milk powder is typically used in concentrations of 3-6% by weight, although it almost always
   augmented with other stabilizers (Cree, 2017, Milk Powder, p. 65)[^6], (Raphaelson, 2016,
   May)[^7], (Pikosky, 2016, July)[^41], (Goff & Hartel, 2025, p. 315)[^20].
-
-  This component is tracked in [`field@Stabilizers::whey_proteins`].
 
 - <a id="cornstarch"></a>**Cornstarch**, a polysaccharide derived from corn, is a common and widely
   available stabilizer. Cornstarch is a staple in many ice cream traditions, most famously

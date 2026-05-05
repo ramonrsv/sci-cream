@@ -38,8 +38,6 @@ documented here can be found at [`constants::emulsification`](crate::constants::
   partial coalescence of fat globules during whipping and freezing (Goff & Hartel, 2025, p.
   84)[^20], (Raphaelson, 2023, January)[^38].
 
-  This component is tracked in [`field@Emulsifiers::casein_proteins`].
-
 - <a id="emulsifier-whey-proteins"></a>**Whey proteins**, which make up ~20% of milk proteins (see
   [`STD_WHEY_PROTEIN_IN_MSNF_PROTEIN`]), have an emulsifying effect when partially denatured. Unlike
   casein, whey proteins are considerably less heat-stable and begin to denature above approximately
@@ -59,8 +57,6 @@ documented here can be found at [`constants::emulsification`](crate::constants::
   range, as straight milk and cream do not supply sufficient whey protein concentrations; skimmed
   milk powder is a common means of achieving this (Raphaelson, 2023, January)[^38].
 
-  This component is tracked in [`field@Emulsifiers::whey_proteins`].
-
 - <a id="emulsifier-egg-yolk-solids"></a>**Egg yolk solids**, which contains several amphiphilic
   components with emulsifying properties, are often used in ‘all-natural’, premium or homemade ice
   creams. The unique smoothness of custard type ice creams can be attributed at least partially to
@@ -77,8 +73,7 @@ documented here can be found at [`constants::emulsification`](crate::constants::
   more delicate flavours (Clarke, 2004, p. 49)[^4], (Goff & Hartel, 2025, p. 84)[^20], (Raphaelson,
   2023, January)[^38].
 
-  This component is tracked in [`field@Emulsifiers::egg_yolk_lecithin`] and
-  [`field@Emulsifiers::egg_yolk_other_solids`].
+  This component is partially tracked in [`field@Emulsifiers::lecithin`].
 
 - <a id="lecithin"></a>**Lecithin**, which consists of phosphatides and phospholipids, is the most
   significant emulsifier in egg yolks, making up roughly 9% of total weight, and about 18% of egg
@@ -92,8 +87,7 @@ documented here can be found at [`constants::emulsification`](crate::constants::
   detectible flavour of its own, depending on the quality of the ingredient, so careful sourcing may
   be required (Raphaelson, 2023, January)[^38].
 
-  This component is tracked in [`field@Emulsifiers::egg_yolk_lecithin`] and
-  [`field@Emulsifiers::non_egg_lecithin`].
+  This component is tracked in [`field@Emulsifiers::lecithin`].
 
 - <a id="gum-arabic"></a>**Gum Arabic**, also known as Gum Acadia, is an all natural emulsifier
   derived from acadia trees in sub-Saharan Africa. It is derived from two types of acadia trees,

@@ -519,7 +519,7 @@ impl Composition {
             CompKey::ABV => self.alcohol.to_abv(),
 
             CompKey::Salt => self.micro.salt,
-            CompKey::Lecithin => self.micro.emulsifiers.total_lecithin(),
+            CompKey::Lecithin => self.micro.emulsifiers.lecithin,
             CompKey::Emulsifiers => self.micro.emulsifiers.total(),
             CompKey::Stabilizers => self.micro.stabilizers.total(),
             CompKey::EmulsifiersPerFat => self.emulsifiers_per_fat(),
@@ -721,7 +721,7 @@ mod tests {
     #[test]
     fn composition_emulsifiers_per_fat() {
         let c = Composition::new()
-            .micro(Micro::new().emulsifiers(Emulsifiers::new().egg_yolk_lecithin(0.5)))
+            .micro(Micro::new().emulsifiers(Emulsifiers::new().lecithin(0.5)))
             .solids(Solids::new().milk(SolidsBreakdown::new().fats(Fats::new().total(10.0))));
         assert_eq!(c.emulsifiers_per_fat(), 5.0);
     }
@@ -830,7 +830,7 @@ mod tests {
             .micro(
                 Micro::new()
                     .salt(0.3)
-                    .emulsifiers(Emulsifiers::new().egg_yolk_lecithin(0.6))
+                    .emulsifiers(Emulsifiers::new().lecithin(0.6))
                     .stabilizers(Stabilizers::new().locust_bean_gum(0.59)),
             )
             .alcohol(Alcohol::new().by_weight(2.5))

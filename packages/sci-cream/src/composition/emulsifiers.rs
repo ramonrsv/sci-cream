@@ -8,10 +8,8 @@ use struct_iterable::Iterable;
 use crate::{
     composition::{ScaleComponents, Texture},
     constants::emulsification::{
-        EMULSIFIER_STRENGTH_CASEIN_PROTEINS, EMULSIFIER_STRENGTH_DISTILLED_MONOGLYCERIDES,
-        EMULSIFIER_STRENGTH_EGG_YOLK_OTHER_SOLIDS, EMULSIFIER_STRENGTH_GUM_ARABIC, EMULSIFIER_STRENGTH_LECITHIN,
+        EMULSIFIER_STRENGTH_DISTILLED_MONOGLYCERIDES, EMULSIFIER_STRENGTH_GUM_ARABIC, EMULSIFIER_STRENGTH_LECITHIN,
         EMULSIFIER_STRENGTH_MONO_AND_DIGLYCERIDES, EMULSIFIER_STRENGTH_POLYSORBATE_80,
-        EMULSIFIER_STRENGTH_WHEY_PROTEINS,
     },
     error::{Error, Result},
     util::{collect_fields_copied_as, iter_all_abs_diff_eq, iter_fields_as},
@@ -29,58 +27,21 @@ use crate::composition::{CompKey, Solids};
 /// of a mix, e.g. energy, [POD](crate::docs#pod), [PAC](crate::docs#pac-afp-fpdf-se), etc. Any such
 /// minor contributions are accounted for in the solids breakdown.
 ///
+/// **Note**: This struct only tracks added emulsifiers, i.e. it does not attempt to track the
+/// emulsifying contributions of other components such as sugars, milk proteins, egg proteins, etc.
+/// Their respective [`specs`](crate::specs) are responsible for correctly populating [`Texture`].
+/// [`EggSpec`](crate::specs::EggSpec) is an exception to this, and it populates the
+/// [`Self::lecithin`] field of this struct to account for the lecithin content of egg yolk.
+///
 /// See the [emulsifiers documentation](crate::docs#emulsifiers) for more information on the role of
 /// emulsifiers in ice cream, and the different types and their effects on ice cream properties.
 #[derive(Iterable, PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(default, deny_unknown_fields)]
 pub struct Emulsifiers {
-    /// Casein proteins, which make up ~80% of milk proteins and are the primary emulsifying agents
+    /// Lecithin from any source, including as part of egg yolks, directly as soy lecithin, etc.
     ///
-    /// See the [casein proteins documentation](crate::docs#emulsifier-casein-proteins) for more
-    /// information.
-    pub casein_proteins: f64,
-    /// Whey proteins, ~20% of milk proteins, have an emulsifying effect when partially denatured
-    ///
-    /// See the [whey proteins documentation](crate::docs#emulsifier-whey-proteins) for more
-    /// information.
-    pub whey_proteins: f64,
-    /// Lecithin sourced specifically from egg yolk, often introduced through egg ingredients
-    ///
-    /// See the [egg yolk solids](crate::docs#emulsifier-egg-yolk-solids) and [lecithin
-    /// documentation](crate::docs#lecithin) for more information.
-    ///
-    /// This field tracks only the lecithin fraction of egg yolk solids; all other egg yolk dry
-    /// matter (phospholipids, proteins, etc.) is captured in
-    /// [`egg_yolk_other_solids`](Self::egg_yolk_other_solids). Together these two fields are
-    /// mutually exclusive and sum to total egg yolk solids (see
-    /// [`egg_yolk_solids`](Self::egg_yolk_solids)). Combined with
-    /// [`non_egg_lecithin`](Self::non_egg_lecithin), this field contributes to the total lecithin
-    /// in the mix (see [`total_lecithin`](Self::total_lecithin)).
-    pub egg_yolk_lecithin: f64,
-    /// Non-lecithin solids from egg yolk, which have less prominent emulsifying properties
-    ///
-    /// See the [egg yolk solids documentation](crate::docs#emulsifier-egg-yolk-solids) for more
-    /// information.
-    ///
-    /// Together with [`egg_yolk_lecithin`](Self::egg_yolk_lecithin) this forms the complete egg
-    /// yolk solids contribution (see [`egg_yolk_solids`](Self::egg_yolk_solids)).
-    //
-    // @todo `EggSpec` does not yet populate this field, but it will in a future change to take into
-    // account emulsifying contributions from other components like egg and milk proteins, etc.
-    // @todo Egg yolk and egg white solids have significantly different properties with regards to
-    // stabilization, emulsification, and texture, therefore they are tracked separately. `EggSpec`
-    // needs to be updated to allow specifying the egg yolk and egg white breakdown of solids.
-    pub egg_yolk_other_solids: f64,
-    /// Lecithin from non-egg sources, which can be added directly in egg-free formulations
-    ///
-    /// See the [egg yolk solids documentation](crate::docs#emulsifier-egg-yolk-solids) and
-    /// [lecithin documentation](crate::docs#lecithin) for more information.
-    ///
-    /// This field tracks lecithin from non-egg sources separately from egg yolk lecithin, as the
-    /// latter is accompanied by other egg yolk solids that also influence the mix's properties.
-    /// Combined with [`egg_yolk_lecithin`](Self::egg_yolk_lecithin), this field contributes to the
-    /// total lecithin in the mix (see [`total_lecithin`](Self::total_lecithin)).
-    pub non_egg_lecithin: f64,
+    /// See the [lecithin documentation](crate::docs#lecithin) for more information.
+    pub lecithin: f64,
     /// Gum Arabic, an all natural emulsifier derived from acadia trees in sub-Saharan Africa
     ///
     /// See the [gum arabic documentation](crate::docs#gum-arabic) for more information.
@@ -109,11 +70,7 @@ impl Emulsifiers {
     #[must_use]
     pub const fn empty() -> Self {
         Self {
-            casein_proteins: 0.0,
-            whey_proteins: 0.0,
-            egg_yolk_lecithin: 0.0,
-            egg_yolk_other_solids: 0.0,
-            non_egg_lecithin: 0.0,
+            lecithin: 0.0,
             gum_arabic: 0.0,
             mono_and_diglycerides: 0.0,
             distilled_monoglycerides: 0.0,
@@ -128,46 +85,10 @@ impl Emulsifiers {
         Self::empty()
     }
 
-    /// Field-update method for [`casein_proteins`](Self::casein_proteins).
+    /// Field-update method for [`lecithin`](Self::lecithin).
     #[must_use]
-    pub const fn casein_proteins(self, casein_proteins: f64) -> Self {
-        Self {
-            casein_proteins,
-            ..self
-        }
-    }
-
-    /// Field-update method for [`whey_proteins`](Self::whey_proteins).
-    #[must_use]
-    pub const fn whey_proteins(self, whey_proteins: f64) -> Self {
-        Self { whey_proteins, ..self }
-    }
-
-    /// Field-update method for [`egg_yolk_lecithin`](Self::egg_yolk_lecithin).
-    #[must_use]
-    pub const fn egg_yolk_lecithin(self, egg_yolk_lecithin: f64) -> Self {
-        Self {
-            egg_yolk_lecithin,
-            ..self
-        }
-    }
-
-    /// Field-update method for [`egg_yolk_other_solids`](Self::egg_yolk_other_solids).
-    #[must_use]
-    pub const fn egg_yolk_other_solids(self, egg_yolk_other_solids: f64) -> Self {
-        Self {
-            egg_yolk_other_solids,
-            ..self
-        }
-    }
-
-    /// Field-update method for [`non_egg_lecithin`](Self::non_egg_lecithin).
-    #[must_use]
-    pub const fn non_egg_lecithin(self, non_egg_lecithin: f64) -> Self {
-        Self {
-            non_egg_lecithin,
-            ..self
-        }
+    pub const fn lecithin(self, lecithin: f64) -> Self {
+        Self { lecithin, ..self }
     }
 
     /// Field-update method for [`gum_arabic`](Self::gum_arabic).
@@ -212,18 +133,6 @@ impl Emulsifiers {
         iter_fields_as::<f64, _>(self).sum()
     }
 
-    /// Returns total egg yolk solids (`egg_yolk_lecithin + egg_yolk_other_solids`)
-    #[must_use]
-    pub fn egg_yolk_solids(&self) -> f64 {
-        self.egg_yolk_lecithin + self.egg_yolk_other_solids
-    }
-
-    /// Returns total lecithin from all sources (`egg_yolk_lecithin + non_egg_lecithin`)
-    #[must_use]
-    pub fn total_lecithin(&self) -> f64 {
-        self.egg_yolk_lecithin + self.non_egg_lecithin
-    }
-
     /// Converts the emulsifier breakdown into a contribution to the [`Texture`] of the composition,
     /// based on the relative strength of the constituent emulsifier components.
     ///
@@ -239,10 +148,7 @@ impl Emulsifiers {
 
         Ok(Texture::new().emulsification(strength.unwrap_or_else(|| {
             [
-                self.casein_proteins * EMULSIFIER_STRENGTH_CASEIN_PROTEINS,
-                self.whey_proteins * EMULSIFIER_STRENGTH_WHEY_PROTEINS,
-                (self.egg_yolk_lecithin + self.non_egg_lecithin) * EMULSIFIER_STRENGTH_LECITHIN,
-                self.egg_yolk_other_solids * EMULSIFIER_STRENGTH_EGG_YOLK_OTHER_SOLIDS,
+                self.lecithin * EMULSIFIER_STRENGTH_LECITHIN,
                 self.gum_arabic * EMULSIFIER_STRENGTH_GUM_ARABIC,
                 self.mono_and_diglycerides * EMULSIFIER_STRENGTH_MONO_AND_DIGLYCERIDES,
                 self.distilled_monoglycerides * EMULSIFIER_STRENGTH_DISTILLED_MONOGLYCERIDES,
@@ -266,11 +172,7 @@ impl Validate for Emulsifiers {
 impl ScaleComponents for Emulsifiers {
     fn scale(&self, factor: f64) -> Self {
         Self {
-            casein_proteins: self.casein_proteins * factor,
-            whey_proteins: self.whey_proteins * factor,
-            egg_yolk_lecithin: self.egg_yolk_lecithin * factor,
-            egg_yolk_other_solids: self.egg_yolk_other_solids * factor,
-            non_egg_lecithin: self.non_egg_lecithin * factor,
+            lecithin: self.lecithin * factor,
             gum_arabic: self.gum_arabic * factor,
             mono_and_diglycerides: self.mono_and_diglycerides * factor,
             distilled_monoglycerides: self.distilled_monoglycerides * factor,
@@ -281,11 +183,7 @@ impl ScaleComponents for Emulsifiers {
 
     fn add(&self, other: &Self) -> Self {
         Self {
-            casein_proteins: self.casein_proteins + other.casein_proteins,
-            whey_proteins: self.whey_proteins + other.whey_proteins,
-            egg_yolk_lecithin: self.egg_yolk_lecithin + other.egg_yolk_lecithin,
-            egg_yolk_other_solids: self.egg_yolk_other_solids + other.egg_yolk_other_solids,
-            non_egg_lecithin: self.non_egg_lecithin + other.non_egg_lecithin,
+            lecithin: self.lecithin + other.lecithin,
             gum_arabic: self.gum_arabic + other.gum_arabic,
             mono_and_diglycerides: self.mono_and_diglycerides + other.mono_and_diglycerides,
             distilled_monoglycerides: self.distilled_monoglycerides + other.distilled_monoglycerides,
@@ -324,12 +222,8 @@ mod tests {
     use super::*;
     use crate::error::Error;
 
-    const FIELD_MODIFIERS: [fn(&mut Emulsifiers, f64); 10] = [
-        |m, v| m.casein_proteins += v,
-        |m, v| m.whey_proteins += v,
-        |m, v| m.egg_yolk_lecithin += v,
-        |m, v| m.egg_yolk_other_solids += v,
-        |m, v| m.non_egg_lecithin += v,
+    const FIELD_MODIFIERS: [fn(&mut Emulsifiers, f64); 6] = [
+        |m, v| m.lecithin += v,
         |m, v| m.gum_arabic += v,
         |m, v| m.mono_and_diglycerides += v,
         |m, v| m.distilled_monoglycerides += v,
@@ -339,7 +233,7 @@ mod tests {
 
     #[test]
     fn emulsifiers_field_count() {
-        assert_eq!(Emulsifiers::new().iter().count(), 10);
+        assert_eq!(Emulsifiers::new().iter().count(), 6);
     }
 
     #[test]
@@ -355,11 +249,7 @@ mod tests {
 
         assert_f64_fields_eq_zero(&m);
 
-        assert_eq!(m.casein_proteins, 0.0);
-        assert_eq!(m.whey_proteins, 0.0);
-        assert_eq!(m.egg_yolk_lecithin, 0.0);
-        assert_eq!(m.egg_yolk_other_solids, 0.0);
-        assert_eq!(m.non_egg_lecithin, 0.0);
+        assert_eq!(m.lecithin, 0.0);
         assert_eq!(m.gum_arabic, 0.0);
         assert_eq!(m.mono_and_diglycerides, 0.0);
         assert_eq!(m.distilled_monoglycerides, 0.0);
@@ -370,113 +260,81 @@ mod tests {
     #[test]
     fn emulsifiers_field_update_methods() {
         let m = Emulsifiers::new()
-            .casein_proteins(1.0)
-            .whey_proteins(2.0)
-            .egg_yolk_lecithin(3.0)
-            .egg_yolk_other_solids(9.0)
-            .non_egg_lecithin(10.0)
-            .gum_arabic(4.0)
-            .mono_and_diglycerides(5.0)
-            .distilled_monoglycerides(6.0)
-            .polysorbate_80(7.0)
-            .other(8.0);
+            .lecithin(1.0)
+            .gum_arabic(2.0)
+            .mono_and_diglycerides(3.0)
+            .distilled_monoglycerides(4.0)
+            .polysorbate_80(5.0)
+            .other(6.0);
         assert_f64_fields_ne_zero(&m);
 
-        assert_eq!(m.casein_proteins, 1.0);
-        assert_eq!(m.whey_proteins, 2.0);
-        assert_eq!(m.egg_yolk_lecithin, 3.0);
-        assert_eq!(m.egg_yolk_other_solids, 9.0);
-        assert_eq!(m.non_egg_lecithin, 10.0);
-        assert_eq!(m.gum_arabic, 4.0);
-        assert_eq!(m.mono_and_diglycerides, 5.0);
-        assert_eq!(m.distilled_monoglycerides, 6.0);
-        assert_eq!(m.polysorbate_80, 7.0);
-        assert_eq!(m.other, 8.0);
+        assert_eq!(m.lecithin, 1.0);
+        assert_eq!(m.gum_arabic, 2.0);
+        assert_eq!(m.mono_and_diglycerides, 3.0);
+        assert_eq!(m.distilled_monoglycerides, 4.0);
+        assert_eq!(m.polysorbate_80, 5.0);
+        assert_eq!(m.other, 6.0);
     }
 
     #[test]
     fn emulsifiers_scale() {
         let m = Emulsifiers::new()
-            .casein_proteins(2.0)
-            .whey_proteins(4.0)
-            .egg_yolk_lecithin(6.0)
-            .egg_yolk_other_solids(18.0)
-            .non_egg_lecithin(20.0)
-            .gum_arabic(8.0)
-            .mono_and_diglycerides(10.0)
-            .distilled_monoglycerides(12.0)
-            .polysorbate_80(14.0)
-            .other(16.0);
+            .lecithin(2.0)
+            .gum_arabic(4.0)
+            .mono_and_diglycerides(6.0)
+            .distilled_monoglycerides(8.0)
+            .polysorbate_80(10.0)
+            .other(12.0);
         assert_f64_fields_ne_zero(&m);
 
         let scaled = m.scale(0.5);
-        assert_eq!(scaled.casein_proteins, 1.0);
-        assert_eq!(scaled.whey_proteins, 2.0);
-        assert_eq!(scaled.egg_yolk_lecithin, 3.0);
-        assert_eq!(scaled.egg_yolk_other_solids, 9.0);
-        assert_eq!(scaled.non_egg_lecithin, 10.0);
-        assert_eq!(scaled.gum_arabic, 4.0);
-        assert_eq!(scaled.mono_and_diglycerides, 5.0);
-        assert_eq!(scaled.distilled_monoglycerides, 6.0);
-        assert_eq!(scaled.polysorbate_80, 7.0);
-        assert_eq!(scaled.other, 8.0);
+        assert_eq!(scaled.lecithin, 1.0);
+        assert_eq!(scaled.gum_arabic, 2.0);
+        assert_eq!(scaled.mono_and_diglycerides, 3.0);
+        assert_eq!(scaled.distilled_monoglycerides, 4.0);
+        assert_eq!(scaled.polysorbate_80, 5.0);
+        assert_eq!(scaled.other, 6.0);
     }
 
     #[test]
     fn emulsifiers_add() {
         let a = Emulsifiers::new()
-            .casein_proteins(2.0)
-            .whey_proteins(4.0)
-            .egg_yolk_lecithin(6.0)
-            .egg_yolk_other_solids(18.0)
-            .non_egg_lecithin(20.0)
-            .gum_arabic(8.0)
-            .mono_and_diglycerides(10.0)
-            .distilled_monoglycerides(12.0)
-            .polysorbate_80(14.0)
-            .other(16.0);
-        let b = Emulsifiers::new()
-            .casein_proteins(1.0)
-            .whey_proteins(2.0)
-            .egg_yolk_lecithin(3.0)
-            .egg_yolk_other_solids(9.0)
-            .non_egg_lecithin(10.0)
+            .lecithin(2.0)
             .gum_arabic(4.0)
-            .mono_and_diglycerides(5.0)
-            .distilled_monoglycerides(6.0)
-            .polysorbate_80(7.0)
-            .other(8.0);
+            .mono_and_diglycerides(6.0)
+            .distilled_monoglycerides(8.0)
+            .polysorbate_80(10.0)
+            .other(12.0);
+        let b = Emulsifiers::new()
+            .lecithin(1.0)
+            .gum_arabic(2.0)
+            .mono_and_diglycerides(3.0)
+            .distilled_monoglycerides(4.0)
+            .polysorbate_80(5.0)
+            .other(6.0);
 
         assert_f64_fields_ne_zero(&a);
         assert_f64_fields_ne_zero(&b);
 
         let sum = a.add(&b);
-        assert_eq!(sum.casein_proteins, 3.0);
-        assert_eq!(sum.whey_proteins, 6.0);
-        assert_eq!(sum.egg_yolk_lecithin, 9.0);
-        assert_eq!(sum.egg_yolk_other_solids, 27.0);
-        assert_eq!(sum.non_egg_lecithin, 30.0);
-        assert_eq!(sum.gum_arabic, 12.0);
-        assert_eq!(sum.mono_and_diglycerides, 15.0);
-        assert_eq!(sum.distilled_monoglycerides, 18.0);
-        assert_eq!(sum.polysorbate_80, 21.0);
-        assert_eq!(sum.other, 24.0);
+        assert_eq!(sum.lecithin, 3.0);
+        assert_eq!(sum.gum_arabic, 6.0);
+        assert_eq!(sum.mono_and_diglycerides, 9.0);
+        assert_eq!(sum.distilled_monoglycerides, 12.0);
+        assert_eq!(sum.polysorbate_80, 15.0);
+        assert_eq!(sum.other, 18.0);
         assert_f64_fields_ne_zero(&sum);
     }
 
     #[test]
     fn emulsifiers_abs_diff_eq() {
         let a = Emulsifiers::new()
-            .casein_proteins(1.0)
-            .whey_proteins(2.0)
-            .egg_yolk_lecithin(3.0)
-            .egg_yolk_other_solids(9.0)
-            .non_egg_lecithin(10.0)
-            .gum_arabic(4.0)
-            .mono_and_diglycerides(5.0)
-            .distilled_monoglycerides(6.0)
-            .polysorbate_80(7.0)
-            .other(8.0);
+            .lecithin(1.0)
+            .gum_arabic(2.0)
+            .mono_and_diglycerides(3.0)
+            .distilled_monoglycerides(4.0)
+            .polysorbate_80(5.0)
+            .other(6.0);
         let b = a;
         let mut c = b;
 
@@ -496,59 +354,6 @@ mod tests {
         }
     }
 
-    // --- Computed methods ---
-
-    #[test]
-    fn egg_yolk_solids_returns_sum_of_egg_yolk_fields() {
-        let m = Emulsifiers::new().egg_yolk_lecithin(3.0).egg_yolk_other_solids(7.0);
-        assert_eq!(m.egg_yolk_solids(), 10.0);
-    }
-
-    #[test]
-    fn egg_yolk_solids_zero_when_empty() {
-        assert_eq!(Emulsifiers::empty().egg_yolk_solids(), 0.0);
-    }
-
-    #[test]
-    fn egg_yolk_solids_ignores_non_egg_lecithin() {
-        let m = Emulsifiers::new()
-            .egg_yolk_lecithin(3.0)
-            .egg_yolk_other_solids(7.0)
-            .non_egg_lecithin(5.0);
-        assert_eq!(m.egg_yolk_solids(), 10.0);
-    }
-
-    #[test]
-    fn total_lecithin_returns_sum_of_lecithin_fields() {
-        let m = Emulsifiers::new().egg_yolk_lecithin(3.0).non_egg_lecithin(5.0);
-        assert_eq!(m.total_lecithin(), 8.0);
-    }
-
-    #[test]
-    fn total_lecithin_zero_when_empty() {
-        assert_eq!(Emulsifiers::empty().total_lecithin(), 0.0);
-    }
-
-    #[test]
-    fn total_lecithin_ignores_egg_yolk_other_solids() {
-        let m = Emulsifiers::new()
-            .egg_yolk_lecithin(3.0)
-            .egg_yolk_other_solids(7.0)
-            .non_egg_lecithin(5.0);
-        assert_eq!(m.total_lecithin(), 8.0);
-    }
-
-    #[test]
-    fn egg_yolk_solids_and_total_lecithin_share_egg_yolk_lecithin() {
-        // egg_yolk_lecithin contributes to both views
-        let m = Emulsifiers::new()
-            .egg_yolk_lecithin(4.0)
-            .egg_yolk_other_solids(6.0)
-            .non_egg_lecithin(2.0);
-        assert_eq!(m.egg_yolk_solids(), 10.0);
-        assert_eq!(m.total_lecithin(), 6.0);
-    }
-
     // --- Validate ---
 
     #[test]
@@ -560,11 +365,7 @@ mod tests {
     fn validate_ok_for_valid_values() {
         assert!(
             Emulsifiers::new()
-                .casein_proteins(0.2)
-                .whey_proteins(0.1)
-                .egg_yolk_lecithin(0.3)
-                .egg_yolk_other_solids(0.1)
-                .non_egg_lecithin(0.1)
+                .lecithin(0.1)
                 .gum_arabic(0.1)
                 .mono_and_diglycerides(0.1)
                 .distilled_monoglycerides(0.1)
@@ -586,14 +387,14 @@ mod tests {
 
     #[test]
     fn validate_into_returns_self_when_valid() {
-        let emulsifiers = Emulsifiers::new().egg_yolk_lecithin(1.0).other(0.5);
+        let emulsifiers = Emulsifiers::new().lecithin(1.0).other(0.5);
         let result = emulsifiers.validate_into();
         assert!(result.is_ok());
-        assert_eq!(result.unwrap().egg_yolk_lecithin, 1.0);
+        assert_eq!(result.unwrap().lecithin, 1.0);
     }
 
     #[test]
     fn validate_into_returns_err_when_invalid() {
-        assert!(Emulsifiers::new().egg_yolk_lecithin(-1.0).validate_into().is_err());
+        assert!(Emulsifiers::new().lecithin(-1.0).validate_into().is_err());
     }
 }
