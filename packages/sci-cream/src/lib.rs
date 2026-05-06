@@ -17,7 +17,7 @@ Add `sci-cream` as a dependency in your `Cargo.toml`:
 
 ```toml
 [dependencies]
-sci-cream = "0.0.3"
+sci-cream = "0.0.4"
 ```
 
 <br>

@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+## [0.0.4] - 2026-05-06
+
 ### Added
 
 - Preliminary automatic recipe balancing functionality, using `nalgebra` and `nnls` modules.
@@ -118,7 +120,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-url -->
 
-[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.3...HEAD
+[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.4...HEAD
+[0.0.4]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.3...sci-cream-v0.0.4
 [0.0.3]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.2...sci-cream-v0.0.3
 [0.0.2]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.1...sci-cream-v0.0.2
 [0.0.1]: https://github.com/ramonrsv/sci-cream/releases/tag/sci-cream-v0.0.1
