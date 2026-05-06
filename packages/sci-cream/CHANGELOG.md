@@ -50,7 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Division-by-100 bug in `ArtificialSweeteners::energy`; don't need to `/100` for energy value.
-- `release.toml` bug with extra `\n` in `CHANGELOG.md` after `[Unreleased]` section.
+- `release.toml` bug with extra `\n` in `CHANGELOG.md` after `[U*released]` section.
 - Broken `IngredientSpec` doc link, 'alcohol-by-volume' typo, JSON format in `README.md`, etc.
 - `markdownlint` warnings on all markdown files, mainly `/docs`; disable false positive warnings.
 
