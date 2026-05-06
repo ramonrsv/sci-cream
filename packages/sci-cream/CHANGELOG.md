@@ -11,6 +11,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- Preliminary automatic recipe balancing functionality, using `nalgebra` and `nnls` modules.
+- `AliasSpec` and `CompositeSpec`, which allow defining ingredients specs based on existing specs.
+- `data` and `database` modules support for dependent `AliasSpec` and `CompositeSpec` specs.
+- Top-level documentation and code examples for `Alias/CompositeSpec` in `README.md` and `lib.rs`.
+- Thorough unit tests for all `composition` structs, raising module code coverage to nearly 100%.
+- Unit tests for all other modules, e.g. `wasm::Bridge`, `ingredients`, `MixProps`, `util`, etc.
+- Unit tests for error paths in `specs` module, verifying user-facing input error condition paths.
+- `Validate` trait implementations for all `composition` structs, used in `specs` for resolution.
+- Overhaul of `Micro`, `Stabilizers`, and `Emulsifiers` composition, specs, and documentation.
+  - `Stabilizer` and `Emulsifier` ingredient categories, along with `Stabilizer/EmulsifierSpec`.
+  - `composition::Stabilizers` and `::Emulsifiers` with detailed stabilizer/emulsifier breakdown.
+  - `composition::Texture` with texture estimations from all sources, e.g. stabilizers, MSNF, etc.
+  - `data/ingredients/stabilizers.json` and `/emulsifiers.json` with new ingredients, blends, etc.
+  - Strength estimation concept and associated constants for all stabilizer and emulsifier fields.
+- `IngredientDatabase::has_ingredient` and expose it and `::seed_*` methods via `wasm::Bridge`.
+- `eslint-plugin-jsdoc` and configured it to require jsdoc for most items, e.g. methods, etc.
+- Missing jsdoc for all items to satisfy the new ESLint warnings raised by `eslint-plugin-jsdoc`.
+- GitHub release badge links to all `README.md`; also add `doc` script to `package.json`.
+- WASM Bridge `has_ingredient` JavaScript benchmarks, alongside similar find-ingredient benchmarks.
+- Unit tests to keep explicit count of defined ingredient specs; currently has 104 non-alias specs.
+- `scripts/run-local-test-suite.sh` to run test suite similar to CI, but faster than using `act`.
+- Documentation code examples for `AlcoholSpec` and `SweetenerSpec`.
+- More dairy ingredients, including 5%, 10%, and 18% Cream.
+
+### Changed
+
+- Philosophy for WASM interoperability, now providing only minimally required subset of interface.
+- WASM `Bridge` JS benchmarks to seed all embedded specs, as this is more like real use cases.
+- Rename `validate` module `assert_*` functions to `verify_*`, to indicate the differing behavior.
+- Rename `DairySpec` -> `DairySimpleSpec`, `DairyFromNutritionSpec` -> `DairyLabelSpec`.
+- Make `DairyLabelSpec::is_lactose_free` optional; omission in JSON specs implies `false`.
+- Move inline science knowledge in `Sugars`, `Fibers`, `Polyols`, etc. to markdown under `/docs`.
+- Use official `rustlang/cargo` JSON schema for `Cargo.toml`; fixes various VSCode warnings.
+
+### Fixed
+
+- Division-by-100 bug in `ArtificialSweeteners::energy`; don't need to `/100` for energy value.
+- `release.toml` bug with extra `\n` in `CHANGELOG.md` after `[Unreleased]` section.
+- Broken `IngredientSpec` doc link, 'alcohol-by-volume' typo, JSON format in `README.md`, etc.
+- `markdownlint` warnings on all markdown files, mainly `/docs`; disable false positive warnings.
+
+### Removed
+
+- Stabilizer/emulsifier sub-components from `MicroSpec`; it now only supports `MicroSpec::Salt`.
+- All uses of `.unwrap()` in documentation code examples, using `fn main() -> Result<(), ...>`.
+- `Micro` category, since `Stabilizer/Emulsifier` were introduced; "Salt" is now `Miscellaneous`.
+
 ## [0.0.3] - 2026-03-03
 
 ### Added
