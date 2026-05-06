@@ -5,6 +5,7 @@
   - [Sugars](crate::docs#sugars)
   - [Polyols](crate::docs#polyols)
   - [Artificial Sweeteners](crate::docs#artificial-sweeteners)
+  - [Fibers](crate::docs#fibers)
   - [Glucose Syrups and Powders](crate::docs#glucose-syrups-and-powders)
     - [Sweetness Values](crate::docs#sweetness-values)
 - [Freezing Point Depression](crate::docs#freezing-point-depression)

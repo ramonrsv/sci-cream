@@ -32,6 +32,7 @@
 - [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
 - [ ] Add support for sharing of user-defined ingredients, similarly to sharing of recipes.
 - [ ] Add support for comments in blog posts, maybe also in documentation posts.
+- [ ] Refine performance benchmarks; some of them may not be measuring what they claim to measure.
 
 ## Backlog
 

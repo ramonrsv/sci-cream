@@ -3,6 +3,7 @@
 #![doc = include_str!("../docs/sugars.md")]
 #![doc = include_str!("../docs/polyols.md")]
 #![doc = include_str!("../docs/artificial-sweeteners.md")]
+#![doc = include_str!("../docs/fibers.md")]
 #![doc = include_str!("../docs/glucose-syrup.md")]
 #![doc = include_str!("../docs/freezing-point-depression.md")]
 #![doc = include_str!("../docs/stabilizers.md")]
@@ -13,7 +14,7 @@
 
 #[cfg(doc)]
 use crate::{
-    composition::{ArtificialSweeteners, CompKey, Composition, Emulsifiers, Polyols, Stabilizers, Sugars},
+    composition::{ArtificialSweeteners, CompKey, Composition, Emulsifiers, Fibers, Polyols, Stabilizers, Sugars},
     constants::{
         self,
         composition::{STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_PROTEIN_IN_MSNF, STD_WHEY_PROTEIN_IN_MSNF_PROTEIN},

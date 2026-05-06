@@ -10,6 +10,10 @@
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
 - [ ] Add lactose-free support to `DairySimpleSpec`, to allow simple lactose-free ingredient specs.
 - [ ] Add evaporated milk ingredients, e.g. 'Evaporated Milk', 'Fat Free Evaporated Skim Milk', etc.
+
+## Up Next
+
+- [ ] Add `data` support for embedded recipes, and add data files for Underbelly, Dana, etc.
 - [ ] Figure out how to track egg and milk proteins for stabilizing properties. If they are included
       in `composition::Stabilizers`, then we may need to differentiate those from stabilizer
       ingredients like gums, gelatin, etc. If they are not included, then that would be inconsistent
@@ -21,9 +25,6 @@
 - [ ] Add support for tracking milk casein/whey proteins and egg yolk/white proteins. This may need
       modifications to `Composition`, and the specs need to be modified to allow more specificity.
 - [ ] Add unit tests for `to_texture` methods, stabilizer/emulsifier strength values, etc.
-
-## Up Next
-
 - [ ] Implement a feature in the `sci-cream` crate to provide acceptable ranges for key properties
       of a mix, e.g. total solids, MSNF, serving temperature, etc. It should probably support
       category presets for different kinds of frozen desserts, e.g. ice-cream, sherbet, sorbet, etc.
