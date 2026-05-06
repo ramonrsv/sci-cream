@@ -1,12 +1,12 @@
 //! Energy constants (kcal/g) for macronutrients and other components
 //!
 //! _The data represent physiologically available energy, which is the energy value remaining after
-//! digestive and urinary losses are deducted from gross energy._ ( U.S. Department of Agriculture,
+//! digestive and urinary losses are deducted from gross energy._ (U.S. Department of Agriculture,
 //! 2013, p. 13)[^18] Energy values for major macronutrients are based on the Atwater system
-//! (Merrill & Watt, 1973)[^32], and those for polyols, artificial sweeteners, and other ingredients
+//! (Merrill & Watt, 1973)[^33], and those for polyols, artificial sweeteners, and other ingredients
 //! are based on various sources as noted.
 #![doc = include_str!("../../docs/references/index/18.md")]
-#![doc = include_str!("../../docs/references/index/32.md")]
+#![doc = include_str!("../../docs/references/index/33.md")]
 
 /// ( U.S. Department of Agriculture, 2013, p. 13)[^18]
 #[doc = include_str!("../../docs/references/index/18.md")]

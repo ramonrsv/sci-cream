@@ -50,7 +50,7 @@ pub const fn dairy_milliliters_to_grams(ml: f64, fat_content: f64) -> f64 {
     }
 }
 
-/// Grams of sugar in one teaspoon (US) of granulated sugar (Anderson, 2010)[^31]
+/// Grams of sugar in one teaspoon (US) of granulated sugar (Anderson, 2020)[^31]
 #[doc = include_str!("../../docs/references/index/31.md")]
 pub const GRAMS_IN_TEASPOON_OF_SUGAR: f64 = 4.2;
 

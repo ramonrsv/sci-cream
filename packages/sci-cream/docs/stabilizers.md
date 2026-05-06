@@ -80,7 +80,7 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
   material, usually citrus peel or apple pomace. It is a polysaccharide consisting of linear chains
   of galacturonic acid and galacturonic acid methyl ester units. Pectin is classified according to
   its degree of esterification. High methoxy (>50% esterified) and low methoxy (<50%) pectins
-  possess different properties (Clarke, 2004, p. 53)[^4], (The European Commission, 2025, E440)[^9].
+  possess different properties (Clarke, 2004, p. 53)[^4], (The European Commission, 2025, E440)[^10].
 
   Low-methoxy pectin, widely available to home consumers, is most suitable for ice cream
   formulations. It requires calcium ions to form a gel, which are abundant in dairy ice cream
@@ -101,7 +101,7 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
   replaced by polysaccharide stabilizers, it is still a good stabilizer, forming a weak gel that
   melts readily in the mouth giving no impression of gumminess, with ice crystal suppression and
   texture arguably superior to starches. It's also more available to home consumers than most gums
-  (Clarke, 2004, p. 54)[^4], (The European Commission, 2025, E441)[^9],(Goff & Hartel, 2025, p.
+  (Clarke, 2004, p. 54)[^4], (The European Commission, 2025, E441)[^10],(Goff & Hartel, 2025, p.
   80)[^20], (Raphaelson, 2023, January)[^37].
 
   The strength of gelatin available on the market can vary significantly, so it may require some
@@ -121,7 +121,7 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
   creamy texture with good flavor release. These properties make it widely regarded as a good ice
   cream stabilizer, considered the best stabilizer for many ice cream applications, and arguably the
   most important of the gums in ice cream formulations (Clarke, 2004, p. 52)[^4], (The European
-  Commission, 2025, E410)[^9], (Goff & Hartel, 2025, p. 81)[^20], (Raphaelson, 2023, January)[^37].
+  Commission, 2025, E410)[^10], (Goff & Hartel, 2025, p. 81)[^20], (Raphaelson, 2023, January)[^37].
 
   A drawback of LBG is its incompatibility with milk proteins, which causes a phase separation of
   milk proteins and polysaccharides known as 'wheying off'. The leaking of a clear watery serum
@@ -150,7 +150,7 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
   annual crop grown in the Indian subcontinent, and is chemically similar to Locust Bean Gum.
   Although it is not quite as effective as LBG at ice crystal suppression, its solutions have a
   higher viscosity than those of LBG at similar concentrations (Clarke, 2004, p. 52)[^4], (The
-  European Commission, 2025, E412)[^9], (Goff & Hartel, 2025, p. 81)[^20], (Raphaelson, 2023,
+  European Commission, 2025, E412)[^10], (Goff & Hartel, 2025, p. 81)[^20], (Raphaelson, 2023,
   January)[^37].
 
   In combination, Guar and LBG strengthen each other through synergistic interactions, so they are
@@ -227,7 +227,7 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
   CMC is not commonly used in ice cream formulations due to its perception as a 'chemical' or
   synthetic ingredient. This is largely a marketing issue; CMC is generally recognized as safe
   (GRAS) by the FDA, and approved for use in food products by the European Commission (E466)
-  (Clarke, 2004, p. 53)[^4], (The European Commission, 2025, E466)[^9], (Raphaelson, 2023,
+  (Clarke, 2004, p. 53)[^4], (The European Commission, 2025, E466)[^10], (Raphaelson, 2023,
   January)[^37], (Drugs.com, 2025, July, "Carboxymethylcellulose")[^44].
 
   CMC is particularly useful in sorbet formulations, since it hydrates easily in cold water, so it
@@ -242,7 +242,7 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
   water (10-30°C), its solutions have uniform viscosity over a wide temperature and pH range, it
   produces high viscosity at low concentrations, it can tolerate alcohol, freeze-thaw cycles, etc.
   These properties make it a very commonly used stabilizer in a wide variety of applications,
-  including ice cream (Clarke, 2004, p. 53)[^4], (The European Commission, 2025, E415)[^9], (Goff &
+  including ice cream (Clarke, 2004, p. 53)[^4], (The European Commission, 2025, E415)[^10], (Goff &
   Hartel, 2025, p. 83)[^20], (Raphaelson, 2023, January)[^37].
 
   Solutions of Xanthan Gum have a high degree of pseudoplasticity, meaning that their viscosity
@@ -266,7 +266,7 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
   forms a gel in the presence of calcium ions in the dairy. Its gelling quality makes it less useful
   in standard recipes, although that can be mitigated by mixing it with phosphate, citrate or
   tartrate ions to prevent premature gelation due to the calcium from the milk solids (Clarke, 2004,
-  p. 51)[^4], (The European Commission, 2025, E401)[^9], (Goff & Hartel, 2025, p. 79)[^20],
+  p. 51)[^4], (The European Commission, 2025, E401)[^10], (Goff & Hartel, 2025, p. 79)[^20],
   (Raphaelson, 2023, January)[^37].
 
   It is quite effective at ice crystal suppression, and the gel breaks into a fluid gel when the ice
@@ -282,7 +282,7 @@ documented here can be found at [`constants::stabilization`](crate::constants::s
   Bean Gum and Guar Gum, its solutions being less viscous than those of Guar Gum, but more than
   those of Locust Bean Gum. This makes it an attractive, one-ingredient stabilizer that offers good
   ice crystal suppression and thick, creamy consistency. Most Tara Gums need to be heated to around
-  80°C (176°F) to fully hydrate (The European Commission, 2025, E417)[^9], (Goff & Hartel, 2025, p.
+  80°C (176°F) to fully hydrate (The European Commission, 2025, E417)[^10], (Goff & Hartel, 2025, p.
   82)[^20], (Raphaelson, 2023, January)[^37].
 
   This component is tracked in [`field@Stabilizers::tara_gum`].

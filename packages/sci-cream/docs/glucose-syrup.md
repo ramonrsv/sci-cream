@@ -36,7 +36,7 @@ It is worth noting that sweetness values can sometimes vary widely between sourc
 sweetness of maltose relative to sucrose has been cited as 32 (Goff & Hartel, 2013, Table 3.4,
 p. 67)[^2], 35 (Spillane, 2006, p. 253)[^9], 50 (Hull, 2010, Appendix C.3, p. 323)[^15], 75 ("The
 Sweetness of Glucose Syrup", 2025)[^16], etc., and they can even vary based on concentrations
-(Belitz, 2009)[^16]. As such, there may be strong limitations on the ability to source accurate and
+(Belitz, 2009)[^17]. As such, there may be strong limitations on the ability to source accurate and
 consistent sweetness values for various sweeteners.
 
 Within this library, and with regards to maltodextrin, glucose syrup, high maltose syrup, and

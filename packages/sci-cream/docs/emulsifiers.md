@@ -108,7 +108,7 @@ documented here can be found at [`constants::emulsification`](crate::constants::
   applications typically containing 40% or greater, as monoglycerides are most amphiphilic and hence
   functional. The nature of the fatty acids also influences the functionality, with unsaturated
   fatty acids encouraging higher rates of protein displacement and, consequently, higher rates of
-  partial coalescence (Clarke, 2004, p. 48)[^4], (The European Commission, 2025, E471)[^9], (Goff &
+  partial coalescence (Clarke, 2004, p. 48)[^4], (The European Commission, 2025, E471)[^10], (Goff &
   Hartel, 2025, p. 85)[^20], (Raphaelson, 2023, January)[^38], (Ice Cream Science, 2026, May, "Why
   are emulsifiers used in ice cream?")[^45].
 
@@ -142,7 +142,7 @@ documented here can be found at [`constants::emulsification`](crate::constants::
   Polyoxyethylene groups are also attached to the sorbitol molecule to make it water soluble.
   Polysorbate 80 (E433), polyoxyethylene sorbitan monooleate, is the most common of these sorbitan
   esters used in ice cream applications (Clarke, 2004, p. 48)[^4], (The European Commission, 2025,
-  E433)[^9], (Goff & Hartel, 2025, p. 85)[^20], (Raphaelson, 2023, January)[^38], (Ice Cream
+  E433)[^10], (Goff & Hartel, 2025, p. 85)[^20], (Raphaelson, 2023, January)[^38], (Ice Cream
   Science, 2026, May, "Why are emulsifiers used in ice cream?")[^45], (Carl, 2024, April)[^46].
 
   Sorbitan have been shown to be most active at the interface between fat and water, making them
