@@ -2,6 +2,7 @@
 
 ## Next Release
 
+- [ ] Fix `wasm` module code coverage gap, mostly by disabling anything with a `JsValue`.
 - [ ] Add code example doc tests to all specs that don't already have them.
 - [ ] Add "Louis Francois Stab 2000" ingredient, which has stabilizer and emulsifier components.
 - [ ] Add a beginner-friendly overview of the core ice cream science concepts, e.g. FPD curves.
