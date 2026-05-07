@@ -26,20 +26,22 @@ use crate::{
 use crate::{
     composition::{Composition, ResolveComposition},
     ingredient::{Ingredient, ResolveIntoIngredient},
+    recipe::OwnedLightRecipe,
     specs::{AliasSpec, CompositeSpec},
 };
 
-const EMBEDDED_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
-    ("alcohol.json", include_str!("../data/ingredients/alcohol.json")),
-    ("chocolates.json", include_str!("../data/ingredients/chocolates.json")),
-    ("dairy.json", include_str!("../data/ingredients/dairy.json")),
-    ("eggs.json", include_str!("../data/ingredients/eggs.json")),
-    ("emulsifiers.json", include_str!("../data/ingredients/emulsifiers.json")),
-    ("fruits.json", include_str!("../data/ingredients/fruits.json")),
-    ("miscellaneous.json", include_str!("../data/ingredients/miscellaneous.json")),
-    ("nuts.json", include_str!("../data/ingredients/nuts.json")),
-    ("stabilizers.json", include_str!("../data/ingredients/stabilizers.json")),
-    ("sweeteners.json", include_str!("../data/ingredients/sweeteners.json")),
+/// (filename, file content) pairs for all embedded ingredient specs JSON data files
+const EMBEDDED_INGREDIENTS_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
+    ("alcohol.json", include_str!("../../data/ingredients/alcohol.json")),
+    ("chocolates.json", include_str!("../../data/ingredients/chocolates.json")),
+    ("dairy.json", include_str!("../../data/ingredients/dairy.json")),
+    ("eggs.json", include_str!("../../data/ingredients/eggs.json")),
+    ("emulsifiers.json", include_str!("../../data/ingredients/emulsifiers.json")),
+    ("fruits.json", include_str!("../../data/ingredients/fruits.json")),
+    ("miscellaneous.json", include_str!("../../data/ingredients/miscellaneous.json")),
+    ("nuts.json", include_str!("../../data/ingredients/nuts.json")),
+    ("stabilizers.json", include_str!("../../data/ingredients/stabilizers.json")),
+    ("sweeteners.json", include_str!("../../data/ingredients/sweeteners.json")),
 ];
 
 /// Parses a JSON string of spec entries into a map of ingredient names or aliases to their spec
@@ -50,27 +52,30 @@ const EMBEDDED_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
 pub fn parse_spec_entries_from_json_string(
     file_content: &str,
 ) -> std::result::Result<HashMap<String, SpecEntry>, serde_json::Error> {
-    let specs = serde_json::from_str::<Vec<serde_json::Value>>(file_content)?;
+    let entries = serde_json::from_str::<Vec<serde_json::Value>>(file_content)?;
 
-    specs
+    entries
         .into_iter()
-        .map(|spec_serde| serde_json::from_value(spec_serde).map(|spec: SpecEntry| (spec.name().to_string(), spec)))
+        .map(|entry_serde| {
+            serde_json::from_value(entry_serde).map(|entry: SpecEntry| (entry.name().to_string(), entry))
+        })
         .collect()
 }
 
-/// Lazy static init of the embedded spec entries, parsed from the JSON strings at compile time.
+/// Lazy static init of the embedded spec entries, parsed from the JSON strings at init time.
 static PARSED_EMBEDDED_SPEC_ENTRIES: LazyLock<HashMap<String, SpecEntry>> = LazyLock::new(|| {
     let mut specs = HashMap::new();
 
-    for (filename, file_content) in EMBEDDED_JSON_DATA_FILES_CONTENT {
+    for (filename, file_content) in EMBEDDED_INGREDIENTS_JSON_DATA_FILES_CONTENT {
         let parsed_specs = parse_spec_entries_from_json_string(file_content)
             .unwrap_or_else(|e| panic!("Failed to parse spec entry from file '{filename}': {e}"));
 
         for spec in parsed_specs.into_values() {
+            let key = spec.name().to_string();
+
             assert!(
-                specs.insert(spec.name().to_string(), spec.clone()).is_none(),
-                "Duplicate ingredient spec name found: '{}'",
-                spec.name()
+                specs.insert(key.clone(), spec.clone()).is_none(),
+                "Duplicate ingredient spec name found: '{key}' (from file '{filename}')"
             );
         }
     }
@@ -171,7 +176,7 @@ pub(crate) mod tests {
 
     #[test]
     fn parse_spec_entries_from_json_string() {
-        for (filename, file_content) in EMBEDDED_JSON_DATA_FILES_CONTENT {
+        for (filename, file_content) in EMBEDDED_INGREDIENTS_JSON_DATA_FILES_CONTENT {
             let specs = super::parse_spec_entries_from_json_string(file_content).unwrap();
             assert_false!(specs.is_empty(), "Failed to parse spec entry from file: {}", filename);
         }
