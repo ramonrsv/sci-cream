@@ -14,7 +14,7 @@ use crate::{
 
 /// WASM compatible alternative [`MixProperties`](RustMixProperties) that uses a newtype
 /// [`Composition`]
-#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[wasm_bindgen]
 #[derive(Debug)]
 pub struct MixProperties {
     /// Total amount of the mix in grams
@@ -22,7 +22,7 @@ pub struct MixProperties {
     /// Composition properties of the mix
     pub composition: Composition,
     /// [Freezing Point Depression (FPD)](crate::docs#freezing-point-depression)
-    #[cfg_attr(feature = "wasm", wasm_bindgen(getter_with_clone))]
+    #[wasm_bindgen(getter_with_clone)]
     pub fpd: FPD,
 }
 
@@ -56,5 +56,49 @@ impl From<MixProperties> for RustMixProperties {
             composition: RustComposition::from(mix.composition),
             fpd: mix.fpd,
         }
+    }
+}
+
+#[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
+mod tests {
+    use std::sync::LazyLock;
+
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    use crate::tests::asserts::*;
+
+    use super::*;
+    use crate::{composition::CompKey, fpd::FPD};
+
+    static RUST_MIX_PROPS: LazyLock<RustMixProperties> = LazyLock::new(|| RustMixProperties {
+        total_amount: 500.0,
+        composition: RustComposition::new().energy(42.0),
+        fpd: FPD {
+            // Equality assertions fail if FPD::hardness_at_14c is NaN
+            hardness_at_14c: 75.0,
+            ..FPD::empty()
+        },
+    });
+
+    #[test]
+    fn new_returns_default_mix_properties() {
+        let mix = MixProperties::new();
+        assert_eq_flt_test!(mix.total_amount, 0.0);
+        assert_eq_flt_test!(mix.composition.get(CompKey::Energy), 0.0);
+        assert_eq_flt_test!(mix.fpd.fpd, 0.0);
+    }
+
+    #[test]
+    fn from_rust_mix_properties_preserves_fields() {
+        let wasm_mix = MixProperties::from(RUST_MIX_PROPS.clone());
+        assert_eq_flt_test!(wasm_mix.total_amount, 500.0);
+        assert_eq_flt_test!(wasm_mix.composition.get(CompKey::Energy), 42.0);
+        assert_eq_flt_test!(wasm_mix.fpd.fpd, 0.0);
+    }
+
+    #[test]
+    fn from_mix_properties_into_rust_mix_properties_round_trips() {
+        let back = RustMixProperties::from(MixProperties::from(RUST_MIX_PROPS.clone()));
+        assert_eq!(back, *RUST_MIX_PROPS);
     }
 }

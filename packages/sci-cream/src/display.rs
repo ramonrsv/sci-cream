@@ -152,29 +152,6 @@ pub fn composition_value_as_percentage(comp: f64, int_qty: f64, mix_total: f64) 
     (comp * int_qty) / mix_total
 }
 
-/// WASM compatible wrappers for [`crate::display`] functions and trait methods.
-#[cfg(feature = "wasm")]
-#[cfg_attr(coverage, coverage(off))]
-pub mod wasm {
-    use wasm_bindgen::prelude::*;
-
-    use super::{CompKey, FpdKey, KeyAsStrings};
-
-    /// WASM compatible wrapper for [`KeyAsStrings::as_med_str`] for [`CompKey`]
-    #[wasm_bindgen]
-    #[must_use]
-    pub fn comp_key_as_med_str(key: CompKey) -> String {
-        key.as_med_str().to_string()
-    }
-
-    /// WASM compatible wrapper for [`KeyAsStrings::as_med_str`] for [`FpdKey`]
-    #[wasm_bindgen]
-    #[must_use]
-    pub fn fpd_key_as_med_str(key: FpdKey) -> String {
-        key.as_med_str().to_string()
-    }
-}
-
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::float_cmp)]

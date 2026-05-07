@@ -12,7 +12,7 @@ use crate::{
     composition::Composition as RustComposition,
     ingredient::{Category, Ingredient as RustIngredient, IntoIngredient},
     specs::IngredientSpec,
-    wasm::composition::Composition,
+    wasm::{Composition, JsResult},
 };
 
 #[cfg(doc)]
@@ -20,7 +20,7 @@ use crate::error::Error;
 
 /// WASM compatible alternative [`Ingredient`](RustIngredient) that uses a newtype [`Composition`]
 #[wasm_bindgen]
-#[derive(Clone, Debug)]
+#[derive(PartialEq, Clone, Debug)]
 pub struct Ingredient {
     /// The name of the ingredient, usually required to be unique, e.g. "Whole Milk", "Sucrose"
     #[wasm_bindgen(getter_with_clone)]
@@ -68,7 +68,7 @@ impl Ingredient {
 /// [`IngredientSpec`], or an [`Error`] if the resulting [`IngredientSpec`] fails to convert
 /// into an [`Ingredient`], likely due to invalid values, e.g. negative percentages, etc.
 #[wasm_bindgen]
-pub fn into_ingredient_from_spec(spec: JsValue) -> Result<Ingredient, JsValue> {
+pub fn into_ingredient_from_spec(spec: JsValue) -> JsResult<Ingredient> {
     serde_wasm_bindgen::from_value::<IngredientSpec>(spec)?
         .into_ingredient()
         .map(Ingredient::from)
@@ -92,5 +92,70 @@ impl From<Ingredient> for RustIngredient {
             category: ing.category,
             composition: RustComposition::from(ing.composition),
         }
+    }
+}
+
+#[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::float_cmp)]
+pub(crate) mod tests {
+    use std::sync::LazyLock;
+
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    use crate::tests::asserts::*;
+
+    use super::*;
+    use crate::{
+        composition::{CompKey, Composition as RustComposition},
+        ingredient::Category,
+        wasm::composition::Composition,
+    };
+
+    pub(crate) static WHOLE_MILK_ING: LazyLock<Ingredient> = LazyLock::new(|| Ingredient {
+        name: "Whole Milk".to_string(),
+        category: Category::Dairy,
+        composition: Composition::from(RustComposition::new().energy(42.0)),
+    });
+
+    pub(crate) static SUCROSE_ING: LazyLock<Ingredient> = LazyLock::new(|| Ingredient {
+        name: "Sucrose".to_string(),
+        category: Category::Sweetener,
+        composition: Composition::from(RustComposition::new().energy(10.0)),
+    });
+
+    static SUCROSE_RUST_ING: LazyLock<RustIngredient> = LazyLock::new(|| RustIngredient {
+        name: "Sucrose".to_string(),
+        category: Category::Sweetener,
+        composition: RustComposition::new().energy(10.0),
+    });
+
+    #[test]
+    fn new_sets_fields() {
+        let ing = Ingredient::new("Whole Milk".to_string(), Category::Dairy, Composition::new());
+        assert_eq!(ing.name, "Whole Milk");
+        assert_eq!(ing.category, Category::Dairy);
+        assert_eq_flt_test!(ing.composition.get(CompKey::Energy), 0.0);
+    }
+
+    #[test]
+    fn clone_wasm_produces_equal_ingredient() {
+        let ing = WHOLE_MILK_ING.clone();
+        assert_eq!(ing.clone_wasm(), ing);
+    }
+
+    #[test]
+    fn from_rust_ingredient_preserves_fields() {
+        let wasm_ing = Ingredient::from(SUCROSE_RUST_ING.clone());
+        assert_eq!(wasm_ing.name, "Sucrose");
+        assert_eq!(wasm_ing.category, Category::Sweetener);
+        assert_eq_flt_test!(wasm_ing.composition.get(CompKey::Energy), 10.0);
+        assert_eq!(wasm_ing, *SUCROSE_ING);
+    }
+
+    #[test]
+    fn from_ingredient_into_rust_ingredient_round_trips() {
+        let rust_ing = SUCROSE_RUST_ING.clone();
+        let back = RustIngredient::from(Ingredient::from(rust_ing.clone()));
+        assert_eq!(back, rust_ing);
     }
 }

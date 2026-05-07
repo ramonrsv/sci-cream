@@ -40,6 +40,7 @@
       Solids:POD, etc. A crude implementation currently is at `data::tests::sweeteners_by_ratio`.
 - [ ] Add Abs.POD property; looks for literature sources for it, I think I saw it in Goff & Hartel.
 - [ ] Consider dropping WASM support for `Recipe`, rely only on `Bridge` and `IngredientDatabase`.
+- [ ] Look into `wasm_bindgen_test` and `wasm-pack test --headless --chrome` for testing `JsValue`.
 
 ## Backlog
 
@@ -66,6 +67,7 @@
 
 ## Completed
 
+- [x] Look into add unit tests for `wasm` code; some of it can be tested if `JsValue` is not used.
 - [x] Move all the inline ice cream science documentation to the `docs` section, and reference it
       in the previous inline locations either by programmatically copying docs, or via doc links.
 - [x] Separate the different `constants` modules into their own files, as it's getting long.

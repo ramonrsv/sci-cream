@@ -3,19 +3,22 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    database::IngredientDatabase, ingredient::Category, resolution::IngredientGetter, specs::SpecEntry,
-    wasm::Ingredient as WasmIngredient,
+    database::IngredientDatabase,
+    ingredient::Category,
+    resolution::IngredientGetter,
+    specs::SpecEntry,
+    wasm::{Ingredient, error::JsResult},
 };
 
 #[cfg(doc)]
 use crate::error::Error;
 
 /// Helper function to convert an array of `JsValue`s into a vector of [`SpecEntry`]s
-fn specs_from_jsvalues(specs: &[JsValue]) -> Result<Vec<SpecEntry>, JsValue> {
+fn specs_from_jsvalues(specs: &[JsValue]) -> JsResult<Vec<SpecEntry>> {
     specs
         .iter()
         .map(|spec| serde_wasm_bindgen::from_value::<SpecEntry>(spec.clone()).map_err(Into::into))
-        .collect::<Result<_, JsValue>>()
+        .collect::<JsResult<_>>()
 }
 
 #[wasm_bindgen]
@@ -35,13 +38,13 @@ impl IngredientDatabase {
 
     /// WASM compatible wrapper for [`IngredientDatabase::get_all_ingredients`]
     #[wasm_bindgen(js_name = "get_all_ingredients")]
-    pub fn get_all_ingredients_wasm(&self) -> Vec<WasmIngredient> {
+    pub fn get_all_ingredients_wasm(&self) -> Vec<Ingredient> {
         self.get_all_ingredients().into_iter().map(Into::into).collect()
     }
 
     /// WASM compatible wrapper for [`IngredientDatabase::get_ingredients_by_category`]
     #[wasm_bindgen(js_name = "get_ingredients_by_category")]
-    pub fn get_ingredients_by_category_wasm(&self, category: Category) -> Vec<WasmIngredient> {
+    pub fn get_ingredients_by_category_wasm(&self, category: Category) -> Vec<Ingredient> {
         self.get_ingredients_by_category(category)
             .into_iter()
             .map(Into::into)
@@ -55,7 +58,7 @@ impl IngredientDatabase {
     /// It forwards any errors from [`IngredientDatabase::seed`]; see for more details.
     #[wasm_bindgen(js_name = "seed")]
     #[allow(clippy::needless_pass_by_value)]
-    pub fn seed_wasm(&self, ingredients: Box<[WasmIngredient]>) -> Result<(), JsValue> {
+    pub fn seed_wasm(&self, ingredients: Box<[Ingredient]>) -> JsResult<()> {
         self.seed(&ingredients.into_iter().map(Into::into).collect::<Vec<_>>())
             .map_err(Into::into)
     }
@@ -69,7 +72,7 @@ impl IngredientDatabase {
     /// deserialized into [`SpecEntry`]s.
     #[wasm_bindgen(js_name = "seed_from_specs")]
     #[allow(clippy::needless_pass_by_value)]
-    pub fn seed_from_specs_wasm(&self, specs: Box<[JsValue]>) -> Result<(), JsValue> {
+    pub fn seed_from_specs_wasm(&self, specs: Box<[JsValue]>) -> JsResult<()> {
         self.seed_from_specs(&specs_from_jsvalues(&specs)?).map_err(Into::into)
     }
 
@@ -79,7 +82,7 @@ impl IngredientDatabase {
     ///
     /// Returns an [`Error::IngredientNotFound`] if no ingredient with the name is found.
     #[wasm_bindgen(js_name = "get_ingredient_by_name")]
-    pub fn get_ingredient_by_name_wasm(&self, name: &str) -> Result<WasmIngredient, JsValue> {
+    pub fn get_ingredient_by_name_wasm(&self, name: &str) -> JsResult<Ingredient> {
         self.get_ingredient_by_name(name).map(Into::into).map_err(Into::into)
     }
 }
@@ -91,7 +94,7 @@ impl IngredientDatabase {
 /// It forwards any errors from [`IngredientDatabase::new_seeded`]; see for more details.
 #[wasm_bindgen]
 #[allow(clippy::needless_pass_by_value)]
-pub fn new_ingredient_database_seeded(ingredients: Box<[WasmIngredient]>) -> Result<IngredientDatabase, JsValue> {
+pub fn new_ingredient_database_seeded(ingredients: Box<[Ingredient]>) -> JsResult<IngredientDatabase> {
     IngredientDatabase::new_seeded(&ingredients.into_iter().map(Into::into).collect::<Vec<_>>()).map_err(Into::into)
 }
 
@@ -104,7 +107,7 @@ pub fn new_ingredient_database_seeded(ingredients: Box<[WasmIngredient]>) -> Res
 /// deserialized into [`SpecEntry`]s.
 #[wasm_bindgen]
 #[allow(clippy::needless_pass_by_value)]
-pub fn new_ingredient_database_seeded_from_specs(specs: Box<[JsValue]>) -> Result<IngredientDatabase, JsValue> {
+pub fn new_ingredient_database_seeded_from_specs(specs: Box<[JsValue]>) -> JsResult<IngredientDatabase> {
     IngredientDatabase::new_seeded_from_specs(&specs_from_jsvalues(&specs)?).map_err(Into::into)
 }
 
@@ -116,4 +119,90 @@ pub fn new_ingredient_database_seeded_from_specs(specs: Box<[JsValue]>) -> Resul
 #[must_use]
 pub fn new_ingredient_database_seeded_from_embedded_data() -> IngredientDatabase {
     IngredientDatabase::new_seeded_from_embedded_data()
+}
+
+#[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::unwrap_used)]
+mod tests {
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    use crate::tests::asserts::*;
+
+    use crate::wasm::ingredient::tests::{SUCROSE_ING, WHOLE_MILK_ING};
+
+    use super::*;
+    use crate::ingredient::Category;
+
+    #[test]
+    fn new_wasm_creates_empty_db() {
+        let db = IngredientDatabase::new_wasm();
+        assert_true!(db.get_all_ingredients_wasm().is_empty());
+    }
+
+    #[test]
+    fn has_ingredient_wasm_delegates() {
+        let db = IngredientDatabase::new_wasm();
+        assert_false!(db.has_ingredient_wasm("Whole Milk"));
+
+        db.seed_wasm(Box::new([WHOLE_MILK_ING.clone()])).unwrap();
+        assert_true!(db.has_ingredient_wasm("Whole Milk"));
+    }
+
+    #[test]
+    fn get_all_ingredients_wasm_returns_wasm_types() {
+        let db = IngredientDatabase::new_wasm();
+        db.seed_wasm(Box::new([WHOLE_MILK_ING.clone()])).unwrap();
+
+        let ingredients = db.get_all_ingredients_wasm();
+        assert_eq!(ingredients.len(), 1);
+        assert_eq!(ingredients[0], *WHOLE_MILK_ING);
+    }
+
+    #[test]
+    fn get_ingredients_by_category_wasm_filters_by_category() {
+        let db = IngredientDatabase::new_wasm();
+        let dairy = WHOLE_MILK_ING.clone();
+        let sweetener = SUCROSE_ING.clone();
+        db.seed_wasm(Box::new([dairy, sweetener])).unwrap();
+
+        let dairy_results = db.get_ingredients_by_category_wasm(Category::Dairy);
+        assert_eq!(dairy_results.len(), 1);
+        assert_eq!(dairy_results[0], *WHOLE_MILK_ING);
+
+        let sweetener_results = db.get_ingredients_by_category_wasm(Category::Sweetener);
+        assert_eq!(sweetener_results.len(), 1);
+        assert_eq!(sweetener_results[0], *SUCROSE_ING);
+    }
+
+    #[test]
+    fn seed_wasm_adds_ingredients() {
+        let db = IngredientDatabase::new_wasm();
+
+        let result = db.seed_wasm(Box::new([WHOLE_MILK_ING.clone()]));
+        assert_true!(result.is_ok());
+        assert_eq!(db.get_all_ingredients_wasm().len(), 1);
+    }
+
+    #[test]
+    fn get_ingredient_by_name_wasm_found() {
+        let db = IngredientDatabase::new_wasm();
+        db.seed_wasm(Box::new([WHOLE_MILK_ING.clone()])).unwrap();
+
+        let result = db.get_ingredient_by_name_wasm("Whole Milk");
+        assert_true!(result.is_ok());
+        assert_eq!(result.unwrap().name, "Whole Milk");
+    }
+
+    #[test]
+    fn new_ingredient_database_seeded_creates_populated_db() {
+        let result = new_ingredient_database_seeded(Box::new([WHOLE_MILK_ING.clone()]));
+        assert_true!(result.is_ok());
+        assert_eq!(result.unwrap().get_all_ingredients_wasm().len(), 1);
+    }
+
+    #[test]
+    fn new_ingredient_database_seeded_from_embedded_data_is_non_empty() {
+        let db = new_ingredient_database_seeded_from_embedded_data();
+        assert_false!(db.get_all_ingredients_wasm().is_empty());
+    }
 }

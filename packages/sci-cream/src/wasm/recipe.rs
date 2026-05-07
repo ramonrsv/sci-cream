@@ -9,7 +9,7 @@ use wasm_bindgen::prelude::*;
 use crate::{
     ingredient::Ingredient as RustIngredient,
     recipe::{OwnedLightRecipe, Recipe as RustRecipe},
-    wasm::{Composition, Ingredient, MixProperties},
+    wasm::{Composition, Ingredient, JsResult, MixProperties},
 };
 
 #[cfg(doc)]
@@ -17,7 +17,7 @@ use crate::{fpd::FPD, recipe::RecipeLine as RustRecipeLine, wasm::Bridge};
 
 /// WASM compatible alternative [`RecipeLine`](RustRecipeLine) that uses a newtype [`Ingredient`]
 #[wasm_bindgen]
-#[derive(Clone, Debug)]
+#[derive(PartialEq, Clone, Debug)]
 pub struct RecipeLine {
     /// The ingredient used in this line of the recipe.
     #[wasm_bindgen(getter_with_clone)]
@@ -39,7 +39,7 @@ impl RecipeLine {
 
 /// WASM compatible alternative [`Recipe`](RustRecipe) that uses a newtype [`RecipeLine`]
 #[wasm_bindgen]
-#[derive(Clone, Debug)]
+#[derive(PartialEq, Clone, Debug)]
 pub struct Recipe {
     /// An optional name for the recipe.
     #[wasm_bindgen(getter_with_clone)]
@@ -54,7 +54,7 @@ pub struct Recipe {
 /// # Errors
 ///
 /// Returns a `serde::Error` if the input cannot be deserialized into an [`OwnedLightRecipe`].
-pub fn light_recipe_from_jsvalue(recipe: JsValue) -> Result<OwnedLightRecipe, JsValue> {
+pub fn light_recipe_from_jsvalue(recipe: JsValue) -> JsResult<OwnedLightRecipe> {
     serde_wasm_bindgen::from_value::<OwnedLightRecipe>(recipe).map_err(Into::into)
 }
 
@@ -77,7 +77,7 @@ impl Recipe {
     /// [`Composition::from_combination`](crate::composition::Composition::from_combination) if the
     /// recipe is not valid, e.g. if any ingredient has a negative amount.
     #[wasm_bindgen(js_name = "calculate_composition")]
-    pub fn calculate_composition_wasm(&self) -> Result<Composition, JsValue> {
+    pub fn calculate_composition_wasm(&self) -> JsResult<Composition> {
         RustRecipe::from(self.clone())
             .calculate_composition()
             .map(Into::into)
@@ -91,7 +91,7 @@ impl Recipe {
     ///
     /// Forwards any errors from [`FPD::compute_from_composition`] if FPD calculations fail.
     #[wasm_bindgen(js_name = "calculate_mix_properties")]
-    pub fn calculate_mix_properties_wasm(&self) -> Result<MixProperties, JsValue> {
+    pub fn calculate_mix_properties_wasm(&self) -> JsResult<MixProperties> {
         RustRecipe::from(self.clone())
             .calculate_mix_properties()
             .map(Into::into)
@@ -128,5 +128,71 @@ impl From<Recipe> for RustRecipe {
                 })
                 .collect(),
         }
+    }
+}
+
+#[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
+#[allow(clippy::unwrap_used)]
+mod tests {
+    use std::sync::LazyLock;
+
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    use crate::tests::asserts::*;
+
+    use crate::wasm::ingredient::tests::WHOLE_MILK_ING;
+
+    use super::*;
+    use crate::composition::CompKey;
+
+    static TEST_RECIPE: LazyLock<Recipe> = LazyLock::new(|| {
+        Recipe::new(Some("Test Recipe".to_string()), vec![RecipeLine::new(WHOLE_MILK_ING.clone(), 100.0)])
+    });
+
+    #[test]
+    fn recipe_line_new_sets_fields() {
+        let line = RecipeLine::new(WHOLE_MILK_ING.clone(), 250.0);
+        assert_eq!(line.ingredient, *WHOLE_MILK_ING);
+        assert_eq_flt_test!(line.amount, 250.0);
+    }
+
+    #[test]
+    fn recipe_new_sets_fields() {
+        let recipe = TEST_RECIPE.clone();
+        assert_eq!(recipe.name, Some("Test Recipe".to_string()));
+        assert_eq!(recipe.lines.len(), 1);
+        assert_eq!(recipe.lines[0].ingredient, *WHOLE_MILK_ING);
+        assert_eq_flt_test!(recipe.lines[0].amount, 100.0);
+    }
+
+    #[test]
+    fn calculate_composition_wasm_returns_composition() {
+        let result = TEST_RECIPE.calculate_composition_wasm();
+        assert_true!(result.is_ok());
+        assert_eq_flt_test!(result.unwrap().get(CompKey::Water), 100.0);
+    }
+
+    #[test]
+    fn calculate_mix_properties_wasm_returns_mix_properties() {
+        let result = TEST_RECIPE.calculate_mix_properties_wasm();
+        assert_true!(result.is_ok());
+        assert_eq_flt_test!(result.unwrap().total_amount, 100.0);
+    }
+
+    #[test]
+    fn from_rust_recipe_preserves_fields() {
+        let rust_recipe = RustRecipe::from(TEST_RECIPE.clone());
+        let wasm_recipe = Recipe::from(rust_recipe);
+        assert_eq!(wasm_recipe.name, TEST_RECIPE.name);
+        assert_eq!(wasm_recipe.lines.len(), TEST_RECIPE.lines.len());
+        assert_eq!(wasm_recipe.lines[0].ingredient, TEST_RECIPE.lines[0].ingredient);
+        assert_eq_flt_test!(wasm_recipe.lines[0].amount, TEST_RECIPE.lines[0].amount);
+    }
+
+    #[test]
+    fn from_recipe_into_rust_recipe_round_trips() {
+        let rust = RustRecipe::from(TEST_RECIPE.clone());
+        let back = Recipe::from(rust);
+        assert_eq!(back, TEST_RECIPE.clone());
     }
 }

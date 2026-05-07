@@ -20,8 +20,13 @@
 #[cfg(feature = "database")]
 pub mod bridge;
 pub mod composition;
+#[cfg(feature = "data")]
+pub mod data;
 #[cfg(feature = "database")]
 pub mod database;
+pub mod display;
+pub mod entry;
+pub mod error;
 pub mod ingredient;
 pub mod log;
 pub mod properties;
@@ -30,8 +35,13 @@ pub mod recipe;
 #[cfg(feature = "database")]
 pub use bridge::*;
 pub use composition::*;
+#[cfg(feature = "data")]
+pub use data::*;
 #[cfg(feature = "database")]
 pub use database::*;
+pub use display::*;
+pub use entry::*;
+pub use error::*;
 pub use ingredient::*;
 pub use log::*;
 pub use properties::*;
