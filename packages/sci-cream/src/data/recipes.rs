@@ -110,7 +110,7 @@ pub(crate) mod tests {
             ("Egg Yolk".into(), 36.0),
             ("Sucrose".into(), 70.0),
             ("Dextrose".into(), 25.0),
-            ("Invert Syrup".into(), 15.0),
+            ("Invert Sugar".into(), 15.0),
             ("Locust Bean Gum".into(), 0.8),
             ("Guar Gum".into(), 0.4),
             ("Lambda Carrageenan".into(), 0.2),
