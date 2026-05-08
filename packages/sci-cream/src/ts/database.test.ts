@@ -18,7 +18,7 @@ import {
   specEntryName,
   isSpecEntryAlias,
   getIndependentIngredientSpecs,
-} from "./data";
+} from "./data.ingredients";
 
 const SPEC_ENTRY_COUNT = allSpecEntries.length;
 const SPEC_ENTRY_INDEPENDENT_COUNT = getIndependentIngredientSpecs().length;

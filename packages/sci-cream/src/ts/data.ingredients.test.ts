@@ -23,7 +23,7 @@ import {
   isSpecEntryAlias,
   getIndependentIngredientSpecByName,
   getNonAliasIngredientSpecs,
-} from "./data";
+} from "./data.ingredients";
 
 // Note: WASM functions like `get_all_spec_entries` may serialize missing optional fields as
 // `null`, while the JSON source files omit them entirely. Both forms deserialize to equivalent

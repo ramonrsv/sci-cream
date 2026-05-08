@@ -14,7 +14,6 @@
 
 ## Up Next
 
-- [ ] Add `data` support for embedded recipes, and add data files for Underbelly, Dana, etc.
 - [ ] Figure out how to track egg and milk proteins for stabilizing properties. If they are included
       in `composition::Stabilizers`, then we may need to differentiate those from stabilizer
       ingredients like gums, gelatin, etc. If they are not included, then that would be inconsistent
@@ -41,6 +40,7 @@
 - [ ] Add Abs.POD property; looks for literature sources for it, I think I saw it in Goff & Hartel.
 - [ ] Consider dropping WASM support for `Recipe`, rely only on `Bridge` and `IngredientDatabase`.
 - [ ] Look into `wasm_bindgen_test` and `wasm-pack test --headless --chrome` for testing `JsValue`.
+- [ ] Add more reference recipes from Underbelly, Dana, Corvitto, Ice Cream Science, etc.
 
 ## Backlog
 
@@ -67,6 +67,7 @@
 
 ## Completed
 
+- [x] Add `data` support for embedded recipes, and add data files for Underbelly, Dana, etc.
 - [x] Look into add unit tests for `wasm` code; some of it can be tested if `JsValue` is not used.
 - [x] Move all the inline ice cream science documentation to the `docs` section, and reference it
       in the previous inline locations either by programmatically copying docs, or via doc links.
