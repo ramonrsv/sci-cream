@@ -94,6 +94,7 @@ pub fn get_all_recipe_entries() -> Vec<RecipeEntry> {
 pub(crate) mod tests {
     use std::sync::LazyLock;
 
+    use crate::IngredientDatabase;
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
@@ -210,5 +211,20 @@ pub(crate) mod tests {
     fn underbelly_standard_base_matches_asset() {
         let entry = find_entry("Standard Base", Some("Underbelly")).unwrap();
         assert_eq!(&*UB_STANDARD_BASE, &entry);
+    }
+
+    #[test]
+    fn all_recipe_ingredients_are_known() {
+        let db = IngredientDatabase::new_seeded_from_embedded_data();
+
+        for entry in get_all_recipe_entries() {
+            for (ingredient, _) in &entry.recipe {
+                assert_true!(
+                    db.has_ingredient(ingredient),
+                    "Unknown ingredient '{ingredient}' found in recipe '{}'",
+                    entry.gen_id()
+                );
+            }
+        }
     }
 }

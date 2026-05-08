@@ -9,13 +9,13 @@
       ["Egg Yolk", 36],
       ["Sucrose", 70],
       ["Dextrose", 25],
-      ["Invert Syrup", 15],
+      ["Invert Sugar", 15],
       ["Locust Bean Gum", 0.8],
       ["Guar Gum", 0.4],
       ["Lambda Carrageenan", 0.2],
       ["Salt", 0.7]
     ],
-    "comments": "Underbelly's Standard Base recipe, posted 2016-05-25, visited 2026-05-7. Source: https://under-belly.org/basic-ice-cream-recipe-examples/. 'Whole Milk' is quoted as 3.3%, which I assume is 3.25% rounded up, consistent with Sci-Cream's definition. 'Heavy Cream' is quoted as 36%, consistent with Sci-Cream's definition. The 'Egg Yolk' amount is a whole multiple of 18g large egg yolks. The stabilizers are the 4:2:1 'Underbelly General Purpose Stabilizer Blend', total 1.4g. The 15g of 'Invert Syrup' can be replaced by 6g each of 'Dextrose' and 'Fructose', as per https://under-belly.org/basic-ice-cream-recipe-examples/#comment-12, which is much easier to work with."
+    "comments": "Underbelly's Standard Base recipe, posted 2016-05-25, visited 2026-05-7. Source: https://under-belly.org/basic-ice-cream-recipe-examples/. 'Whole Milk' is quoted as 3.3%, which I assume is 3.25% rounded up, consistent with Sci-Cream's definition. 'Heavy Cream' is quoted as 36%, consistent with Sci-Cream's definition. The 'Egg Yolk' amount is a whole multiple of 18g large egg yolks. The stabilizers are the 4:2:1 'Underbelly General Purpose Stabilizer Blend', total 1.4g. The 15g of 'Invert Sugar' can be replaced by 6g each of 'Dextrose' and 'Fructose', as per https://under-belly.org/basic-ice-cream-recipe-examples/#comment-12, which is much easier to work with."
   },
   {
     "name": "French Variation",
@@ -27,13 +27,13 @@
       ["Egg Yolk", 108],
       ["Sucrose", 75],
       ["Dextrose", 35],
-      ["Invert Syrup", 15],
+      ["Invert Sugar", 15],
       ["Locust Bean Gum", 0.6],
       ["Guar Gum", 0.3],
       ["Lambda Carrageenan", 0.15],
       ["Salt", 0.7]
     ],
-    "comments": "Underbelly's French Variation recipe, posted 2016-05-25, visited 2026-05-7. Source: https://under-belly.org/basic-ice-cream-recipe-examples/. 'Whole Milk' is quoted as 3.3%, which I assume is 3.25% rounded up, consistent with Sci-Cream's definition. 'Heavy Cream' is quoted as 36%, consistent with Sci-Cream's definition. The 'Egg Yolk' amount is a whole multiple of 18g large egg yolks. The stabilizers are the 4:2:1 'Underbelly General Purpose Stabilizer Blend', total 1.05g. The 15g of 'Invert Syrup' can be replaced by 6g each of 'Dextrose' and 'Fructose', as per https://under-belly.org/basic-ice-cream-recipe-examples/#comment-12, which is much easier to work with."
+    "comments": "Underbelly's French Variation recipe, posted 2016-05-25, visited 2026-05-7. Source: https://under-belly.org/basic-ice-cream-recipe-examples/. 'Whole Milk' is quoted as 3.3%, which I assume is 3.25% rounded up, consistent with Sci-Cream's definition. 'Heavy Cream' is quoted as 36%, consistent with Sci-Cream's definition. The 'Egg Yolk' amount is a whole multiple of 18g large egg yolks. The stabilizers are the 4:2:1 'Underbelly General Purpose Stabilizer Blend', total 1.05g. The 15g of 'Invert Sugar' can be replaced by 6g each of 'Dextrose' and 'Fructose', as per https://under-belly.org/basic-ice-cream-recipe-examples/#comment-12, which is much easier to work with."
   },
   {
     "name": "Light Variation",
@@ -44,13 +44,13 @@
       ["Skimmed Milk Powder", 85],
       ["Sucrose", 70],
       ["Dextrose", 30],
-      ["Invert Syrup", 15],
-      ["Lecithin", 2],
+      ["Invert Sugar", 15],
+      ["Soy Lecithin", 2],
       ["Locust Bean Gum", 0.8],
       ["Guar Gum", 0.6],
       ["Lambda Carrageenan", 0.4],
       ["Salt", 0.7]
     ],
-    "comments": "Underbelly's Light Variation recipe, posted 2016-05-25, visited 2026-05-7. Source: https://under-belly.org/basic-ice-cream-recipe-examples/. 'Whole Milk' is quoted as 3.3%, which I assume is 3.25% rounded up, consistent with Sci-Cream's definition. 'Heavy Cream' is quoted as 36%, consistent with Sci-Cream's definition. The stabilizers are a 4:3:2 blend, total 1.8g, and 2g of 'Lecithin'. This is inconsistent with 'Underbelly Eggless Ice Cream Stabilizer Blend', which uses a 4:2:1 blend, and 4 'Lecithin'. It's also inconsistent with the 2.1g of stabilizers in the composition table, and with the stated 4.5g of 'Lecithin' in the discussion. The stabilizer blends were both ostensibly edited on 2018-10, but they are inconsistent with each other. The 15g of 'Invert Syrup' can be replaced by 6g each of 'Dextrose' and 'Fructose', as per https://under-belly.org/basic-ice-cream-recipe-examples/#comment-12, which is much easier to work with."
+    "comments": "Underbelly's Light Variation recipe, posted 2016-05-25, visited 2026-05-7. Source: https://under-belly.org/basic-ice-cream-recipe-examples/. 'Whole Milk' is quoted as 3.3%, which I assume is 3.25% rounded up, consistent with Sci-Cream's definition. 'Heavy Cream' is quoted as 36%, consistent with Sci-Cream's definition. The stabilizers are a 4:3:2 blend, total 1.8g, and 2g of 'Soy Lecithin'. This is inconsistent with 'Underbelly Eggless Ice Cream Stabilizer Blend', which uses a 4:2:1 blend, and 4 'Soy Lecithin'. It's also inconsistent with the 2.1g of stabilizers in the composition table, and with the stated 4.5g of 'Soy Lecithin' in the discussion. The stabilizer blends were both ostensibly edited on 2018-10, but they are inconsistent with each other. The 15g of 'Invert Sugar' can be replaced by 6g each of 'Dextrose' and 'Fructose', as per https://under-belly.org/basic-ice-cream-recipe-examples/#comment-12, which is much easier to work with."
   }
 ]
