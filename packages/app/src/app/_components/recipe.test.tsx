@@ -425,6 +425,14 @@ describe("RecipeGrid Component", () => {
     expect(within(select).getByText("Recipe")).toBeInTheDocument();
   });
 
+  it("should select the slot given by initialRecipeIdx on first render", () => {
+    const { container } = render(
+      <RecipeGrid props={{ ...makeRecipeGridProps([0, 1, 2]), initialRecipeIdx: 2 }} />,
+    );
+    const select = container.querySelector("select") as HTMLSelectElement;
+    expect(select).toHaveValue("2");
+  });
+
   it("should render action buttons", () => {
     render(<RecipeGrid props={makeRecipeGridProps([0, 1])} />);
 

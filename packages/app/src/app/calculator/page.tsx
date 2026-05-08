@@ -1,7 +1,8 @@
 "use client";
 
 import { useSession } from "next-auth/react";
-import { useState, useEffect } from "react";
+import { useSearchParams } from "next/navigation";
+import { useState, useEffect, Suspense } from "react";
 import {
   ResponsiveGridLayout,
   ResponsiveLayouts,
@@ -22,6 +23,7 @@ import {
 
 import { fetchAllUserIngredientSpecs } from "@/lib/data";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
+import { recipeSlotOrDefault } from "@/app/_elements/selects/recipe-select";
 
 /**
  * Main calculator page: responsive drag-and-drop grid of recipe and major display components
@@ -30,9 +32,17 @@ import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles
  * `ResponsiveGridLayout` to automatically switch between them based on the container width. Most
  * grid items can be resized horizontally and vertically, with some exceptions (e.g. the recipe
  * input grid has a fixed dimension, and the composition grid is only resizable horizontally).
+ *
+ * On initial load, the calculator checks for a `slot` query parameter in the URL, which indicates
+ * the initial recipe index to select in `RecipeGrid`'s `RecipeSelect`; default is 0 ('Recipe').
+ *
+ * Wrapped by {@link CalculatorPage} so that `useSearchParams` is inside required Suspense boundary
  */
-export default function CalculatorPage() {
+function CalculatorContent() {
   const { data: session } = useSession();
+
+  const searchParams = useSearchParams();
+  const recipeGridRecipeIdx = recipeSlotOrDefault(parseInt(searchParams.get("slot") ?? ""));
 
   const { width, containerRef, mounted } = useContainerWidth();
 
@@ -55,7 +65,11 @@ export default function CalculatorPage() {
     }
   }, [session?.user?.email]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  const recipeGridProps = { recipeCtxState, recipeResourcesState };
+  const recipeGridProps = {
+    recipeCtxState,
+    recipeResourcesState,
+    initialRecipeIdx: recipeGridRecipeIdx,
+  };
 
   // 2160p: 3840px, /2 = 1920px
   // 1440p: 2560px, /2 = 1280px
@@ -157,5 +171,14 @@ export default function CalculatorPage() {
         </ResponsiveGridLayout>
       )}
     </div>
+  );
+}
+
+/** Wraps {@link CalculatorContent} in a Suspense boundary, required by `useSearchParams` */
+export default function CalculatorPage() {
+  return (
+    <Suspense>
+      <CalculatorContent />
+    </Suspense>
   );
 }

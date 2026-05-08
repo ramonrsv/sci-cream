@@ -6,7 +6,7 @@ import { render, cleanup, fireEvent } from "@testing-library/react";
 import { useState, useEffect } from "react";
 
 import { type Recipe } from "@/app/_components/recipe";
-import { RecipeSelect } from "./recipe-select";
+import { RecipeSelect, recipeSlotOrDefault } from "./recipe-select";
 
 // ---------------------------------------------------------------------------
 // Test helpers, mocks, and setup
@@ -126,5 +126,27 @@ describe("RecipeSelect", () => {
     const { container } = render(<TestWrapper enabledRecipeIndices={[]} />);
     const select = container.querySelector("#recipe-selection select") as HTMLSelectElement;
     expect(select.options).toHaveLength(0);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// clampRecipeSlot
+// ---------------------------------------------------------------------------
+
+describe("recipeSlotOrDefault", () => {
+  it("returns a valid index unchanged", () => {
+    expect(recipeSlotOrDefault(1)).toBe(1);
+  });
+
+  it("returns 0 for a value above the range", () => {
+    expect(recipeSlotOrDefault(5)).toBe(0);
+  });
+
+  it("returns 0 for a negative value", () => {
+    expect(recipeSlotOrDefault(-1)).toBe(0);
+  });
+
+  it("returns 0 for NaN", () => {
+    expect(recipeSlotOrDefault(NaN)).toBe(0);
   });
 });

@@ -323,13 +323,18 @@ export function RecipeGrid({
   props: {
     recipeCtxState: [recipeContext, setRecipeContext],
     recipeResourcesState: [recipeResources],
+    initialRecipeIdx = 0,
   },
 }: {
-  props: { recipeCtxState: RecipeContextState; recipeResourcesState: RecipeResourcesState };
+  props: {
+    recipeCtxState: RecipeContextState;
+    recipeResourcesState: RecipeResourcesState;
+    initialRecipeIdx?: number;
+  };
 }) {
   const { wasmBridge } = recipeResources;
   const { recipes: allRecipes } = recipeContext;
-  const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(0);
+  const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(initialRecipeIdx);
 
   const recipesRef = useRef(allRecipes);
   recipesRef.current = allRecipes;

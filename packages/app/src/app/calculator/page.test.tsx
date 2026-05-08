@@ -3,7 +3,6 @@ import "@testing-library/jest-dom/vitest";
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, waitFor, cleanup } from "@testing-library/react";
-
 import CalculatorPage from "./page";
 
 import { TEST_USER_A } from "@/lib/database/util";
@@ -54,6 +53,9 @@ vi.mock("next-auth/react", () => ({
   useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
 }));
 
+const mockUseSearchParams = vi.hoisted(() => vi.fn().mockReturnValue(new URLSearchParams()));
+vi.mock("next/navigation", () => ({ useSearchParams: mockUseSearchParams }));
+
 vi.mock("@/app/navbar", () => ({ useNavbarContext: () => ({ theme: "Light" }) }));
 
 // ---------------------------------------------------------------------------
@@ -64,6 +66,8 @@ describe("Calculator Page", () => {
   beforeEach(async () => {
     vi.clearAllMocks();
     setupVitestCanvasMock();
+
+    mockUseSearchParams.mockReturnValue(new URLSearchParams());
 
     const { useSession } = await import("next-auth/react");
     vi.mocked(useSession).mockReturnValue({
@@ -132,5 +136,37 @@ describe("Calculator Page", () => {
   it("should initialize recipes with empty ingredient rows", () => {
     const { container } = render(<CalculatorPage />);
     expect(container.querySelectorAll("input").length).toBeGreaterThan(0);
+  });
+
+  // ---------------------------------------------------------------------------
+  // Slot query param
+  // ---------------------------------------------------------------------------
+
+  describe("slot query param", () => {
+    beforeEach(() => {
+      mockUseSearchParams.mockReturnValue(new URLSearchParams());
+    });
+
+    const recipeSelect = (container: HTMLElement) =>
+      container.querySelector("#recipe-selection select") as HTMLSelectElement;
+
+    it("defaults to slot 0 when no slot param is given", () => {
+      const { container } = render(<CalculatorPage />);
+      expect(recipeSelect(container)?.value).toBe("0");
+    });
+
+    it.each([0, 1, 2])("selects slot %i when valid ?slot=%i", (slot) => {
+      mockUseSearchParams.mockReturnValue(new URLSearchParams(`slot=${slot}`));
+
+      const { container } = render(<CalculatorPage />);
+      expect(recipeSelect(container)?.value).toBe(String(slot));
+    });
+
+    it.each([-1, 3, 99, "abc"])("defaults to slot 0 for invalid slot %s", (slot) => {
+      mockUseSearchParams.mockReturnValue(new URLSearchParams(`slot=${slot}`));
+
+      const { container } = render(<CalculatorPage />);
+      expect(recipeSelect(container)?.value).toBe("0");
+    });
   });
 });
