@@ -20,6 +20,7 @@ import {
 
 import { NAVBAR_ICON_SIZE, DEFAULT_COLLAPSED_NAVBAR } from "@/lib/styles/sizes";
 import { ThemeSelect } from "@/app/_elements/selects/theme-select";
+import { setLocalStorage, getLocalStorage } from "@/lib/local-storage";
 
 /** Primary navigation links shown in the sidebar */
 const navItems = [
@@ -47,11 +48,9 @@ export function useNavbarContext() {
   return useContext(NavbarContext);
 }
 
-/** Read the sidebar collapsed state from `localStorage`, fall back to `DEFAULT_COLLAPSED_NAVBAR` */
+/** Read the sidebar collapsed state from `localStorage`, default `DEFAULT_COLLAPSED_NAVBAR` */
 function getInitialCollapsedState(): boolean {
-  if (typeof window === "undefined") return DEFAULT_COLLAPSED_NAVBAR;
-  const stored = localStorage.getItem("sidebar-collapsed");
-  return stored !== null ? stored === "true" : DEFAULT_COLLAPSED_NAVBAR;
+  return getLocalStorage<boolean>("sidebar-collapsed") ?? DEFAULT_COLLAPSED_NAVBAR;
 }
 
 /** Root layout shell with the `NavbarContext`, top header, collapsible sidebar, and main area */
@@ -64,7 +63,7 @@ export function Navbar({ children }: { children: React.ReactNode }) {
   }, []);
 
   useEffect(() => {
-    localStorage.setItem("sidebar-collapsed", String(collapsed));
+    setLocalStorage("sidebar-collapsed", collapsed);
   }, [collapsed]);
 
   return (
