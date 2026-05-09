@@ -9,6 +9,7 @@ import { type SetStateAction, useState, useEffect } from "react";
 import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "../../lib/styles/sizes";
 import {
   RecipeGrid,
+  makeRecipeId,
   makeEmptyRecipeContext,
   makeEmptyRecipeResources,
   makeRecipeResources,
@@ -65,6 +66,17 @@ vi.stubGlobal("ResizeObserver", ResizeObserverMock);
 // ---------------------------------------------------------------------------
 
 describe("Recipe Helper Functions", () => {
+  // ---- makeRecipeId ----------------------------------------------------------------------------
+
+  describe("makeRecipeId", () => {
+    it("should return 'Recipe' for index 0 and 'Ref N' for others", () => {
+      expect(makeRecipeId(0)).toBe("Recipe");
+      expect(makeRecipeId(1)).toBe("Ref A");
+      expect(makeRecipeId(2)).toBe("Ref B");
+      expect(makeRecipeId(3)).toBe("Ref C");
+    });
+  });
+
   // ---- makeEmptyRecipeContext -------------------------------------------------------------------
 
   describe("makeEmptyRecipeContext", () => {
@@ -80,11 +92,11 @@ describe("Recipe Helper Functions", () => {
       });
     });
 
-    it("should name first recipe 'Recipe' and others 'Ref N'", () => {
+    it("should assign id 'Recipe' to first slot and 'Ref N' to others", () => {
       const context = makeEmptyRecipeContext();
-      expect(context.recipes[0].name).toBe("Recipe");
-      expect(context.recipes[1].name).toBe("Ref A");
-      expect(context.recipes[2].name).toBe("Ref B");
+      expect(context.recipes[0].id).toBe("Recipe");
+      expect(context.recipes[1].id).toBe("Ref A");
+      expect(context.recipes[2].id).toBe("Ref B");
     });
 
     it("should initialize ingredient rows with correct indices", () => {

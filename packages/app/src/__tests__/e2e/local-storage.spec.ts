@@ -25,7 +25,7 @@ test.describe("Local Storage Functionality", () => {
     await sleep_ms(2000);
 
     const recipes = await page.evaluate(() => {
-      return JSON.parse(localStorage.getItem("recipes") || "[]");
+      return JSON.parse(localStorage.getItem("recipe-stores") || "[]");
     });
     expect(recipes).toHaveLength(3);
 

@@ -129,7 +129,7 @@ export function MixPropertiesGrid({ recipes: allRecipes }: { recipes: Recipe[] }
               {/* Recipe Names */}
               {recipes.map((recipe) => (
                 <th key={recipe.index} className="table-header px-1.25 text-center">
-                  {recipe.name}
+                  {recipe.id}
                 </th>
               ))}
             </tr>

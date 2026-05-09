@@ -65,7 +65,7 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
       const curves = recipe.mixProperties.fpd!.curves!;
       const borderWidth = recipe.index === 0 ? 4 : 3;
       const borderColor = recipeColor;
-      const recipeLabel = recipe.index === 0 ? "" : ` (${recipe.name})`;
+      const recipeLabel = recipe.index === 0 ? "" : ` (${recipe.name || recipe.id})`;
 
       const lines = [
         { lineLabel: "Hardness", curve: curves.hardness },

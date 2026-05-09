@@ -281,7 +281,7 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
       });
 
       return {
-        label: recipe.name,
+        label: recipe.name || recipe.id,
         data: enabledProps.map(
           (prop_key) =>
             ({

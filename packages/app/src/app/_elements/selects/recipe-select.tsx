@@ -29,7 +29,7 @@ export function RecipeSelect({
       >
         {enabledRecipeIndices.map((idx) => (
           <option key={idx} value={idx} className="table-inner-cell">
-            {allRecipes[idx].name}
+            {allRecipes[idx].id}
           </option>
         ))}
       </select>

@@ -6,6 +6,7 @@ import { GripVertical, ClipboardCopy, ClipboardPaste, Trash } from "lucide-react
 import { formatCompositionValue } from "@/lib/comp-value-format";
 import { standardInputStepByPercent } from "../../lib/util";
 import { RecipeSelect } from "@/app/_elements/selects/recipe-select";
+import { getLocalStorage, setLocalStorage } from "@/lib/local-storage";
 import {
   MAX_RECIPES,
   RECIPE_TOTAL_ROWS,
@@ -32,13 +33,22 @@ export interface IngredientRow {
   ingredient?: Ingredient;
 }
 
-/** Represents one recipe slot: its name, ingredient rows, mix total, and computed mix properties */
+/** Represents one recipe slot: idx, id, name, ingredient rows, mix total, and computed mix props */
 export interface Recipe {
   index: number;
+  /** Fixed slot identifier string (e.g. "Recipe", "Ref A"), for display purposes */
+  id: string;
+  /** User-defined display name for this recipe, e.g. "Standard Base", etc., default "" */
   name: string;
   ingredientRows: IngredientRow[];
   mixTotal?: number;
   mixProperties: MixProperties;
+}
+
+/** Represents a recipe in local storage, including name and serialized ingredient rows */
+export interface RecipeStore {
+  name: string;
+  serializedRows: string;
 }
 
 /** Top-level context holding all recipe slots; passed as shared state through the component tree */
@@ -65,11 +75,17 @@ export type RecipeResourcesState = [
   React.Dispatch<React.SetStateAction<RecipeResources>>,
 ];
 
+/** Generate the corresponding recipe ID for a given index */
+export function makeRecipeId(recipeIdx: number): string {
+  return recipeIdx === 0 ? "Recipe" : `Ref ${String.fromCharCode(64 + recipeIdx)}`;
+}
+
 /** Create a blank `Recipe` at the given index with empty ingredient rows and `MixProperties` */
 export function makeEmptyRecipe(recipeIdx: number): Recipe {
   return {
     index: recipeIdx,
-    name: recipeIdx === 0 ? "Recipe" : `Ref ${String.fromCharCode(64 + recipeIdx)}`,
+    id: makeRecipeId(recipeIdx),
+    name: "",
     ingredientRows: Array.from({ length: RECIPE_TOTAL_ROWS }, (_, rowIdx) => ({
       index: rowIdx,
       name: "",
@@ -145,7 +161,7 @@ export function calculateMixTotal(recipe: Recipe) {
  */
 export function makeSciCreamRecipe(recipe: Recipe): SciCreamRecipe {
   return new SciCreamRecipe(
-    recipe.name,
+    recipe.name || recipe.id,
     recipe.ingredientRows
       .filter((row) => row.ingredient !== undefined && row.quantity !== undefined)
       .map((row) => {
@@ -231,20 +247,45 @@ export function updateMixProperties(recipe: Recipe, resources: RecipeResources) 
         );
 }
 
+/** Serialize a `Recipe` to a `RecipeStore` object */
+export function stringifyRecipeToStore(recipe: Recipe): RecipeStore {
+  return { name: recipe.name, serializedRows: stringifyRecipe(recipe) };
+}
+
+/** Persist the passed `RecipeStore`s into `localStorage` */
+export function setRecipeStoresToStorage(recipes: RecipeStore[]): void {
+  setLocalStorage("recipe-stores", recipes);
+}
+
+/** Retrieve `RecipeStore`s from `localStorage`, default empty strings if none found */
+export function getRecipeStoresFromStorage(): RecipeStore[] {
+  return (
+    getLocalStorage<RecipeStore[]>("recipe-stores") ??
+    Array.from({ length: MAX_RECIPES }, () => ({ name: "", serializedRows: "" }))
+  );
+}
+
+/** Represents updates to a `Recipe`, including optional name and row updates */
+interface RecipeUpdates {
+  name?: string;
+  rows?: IngredientRow[];
+}
+
 /**
- * Shallow-clone a `Recipe`, apply the given row updates, recalculate the mix total, and update mix
- * properties if necessary based on the nature of the row updates, returning the updated recipe.
+ * Shallow-clone a `Recipe`, apply the given recipe updates, recalculate the mix total, and update
+ * mix properties if necessary based on the nature of the row updates, returning the updated recipe.
  */
 export function makeUpdatedRecipe(
   currentRecipe: Recipe,
-  updatedRows: IngredientRow[],
+  recipeUpdates: RecipeUpdates,
   resources: RecipeResources,
 ): Recipe {
   const newRecipe = { ...currentRecipe, ingredientRows: [...currentRecipe.ingredientRows] };
+  newRecipe.name = recipeUpdates.name ?? newRecipe.name;
 
   let needsMixPropUpdate = false;
 
-  for (const updatedRow of updatedRows) {
+  for (const updatedRow of recipeUpdates.rows ?? []) {
     const currentRow = newRecipe.ingredientRows[updatedRow.index];
     newRecipe.ingredientRows[updatedRow.index] = updatedRow;
     needsMixPropUpdate = needsMixPropUpdate || requiresMixPropsUpdate(currentRow, updatedRow);
@@ -288,13 +329,14 @@ export function makeUpdatedRow(
   return row;
 }
 
-/** Parse a tab-separated recipe string and apply it to a `Recipe`, returning the updated recipe */
-export function makeUpdatedRecipeFromString(
+/** Parse a `RecipeStore` object and apply it to a `Recipe`, returning the updated recipe */
+export function makeUpdatedRecipeFromStore(
   currentRecipe: Recipe,
-  recipeStr: string,
+  recipeStore: RecipeStore,
   resources: RecipeResources,
 ): Recipe {
-  const parsedLines = parseRecipeString(recipeStr);
+  const parsedLines = parseRecipeString(recipeStore.serializedRows);
+  const name = recipeStore.name;
 
   if (parsedLines.length > currentRecipe.ingredientRows.length) {
     throw new Error(
@@ -308,7 +350,7 @@ export function makeUpdatedRecipeFromString(
     return makeUpdatedRow(row, name, qtyStr, resources);
   });
 
-  return makeUpdatedRecipe(currentRecipe, updatedRows, resources);
+  return makeUpdatedRecipe(currentRecipe, { rows: updatedRows, name }, resources);
 }
 
 /**
@@ -356,14 +398,9 @@ export function RecipeGrid({
     setRecipeContext({ ...recipeContext, recipes: newRecipes });
   };
 
-  /** Update a single recipe in context by applying the given row changes */
-  const updateRecipe = (recipeIdx: number, updatedRows: IngredientRow[]) => {
-    updateRecipes([makeUpdatedRecipe(allRecipes[recipeIdx], updatedRows, recipeResources)]);
-  };
-
-  /** Update the currently selected recipe with the given row changes */
-  const updateCurrentRecipe = (updatedRows: IngredientRow[]) => {
-    updateRecipe(currentRecipeIdx, updatedRows);
+  /** Update a single recipe in context by applying the given recipe updates */
+  const updateRecipe = (recipeIdx: number, recipeUpdates: RecipeUpdates) => {
+    updateRecipes([makeUpdatedRecipe(allRecipes[recipeIdx], recipeUpdates, recipeResources)]);
   };
 
   /** Get the ingredient row at the given recipe and row indices */
@@ -373,31 +410,37 @@ export function RecipeGrid({
 
   /** Handle a name change for a row in the currently selected recipe */
   const updateCurrentIngredientRowName = (index: number, name: string) => {
-    updateCurrentRecipe([
-      makeUpdatedRow(getRow(currentRecipeIdx, index), name, undefined, recipeResources),
-    ]);
+    updateRecipe(currentRecipeIdx, {
+      rows: [makeUpdatedRow(getRow(currentRecipeIdx, index), name, undefined, recipeResources)],
+    });
   };
 
   /** Handle a quantity change for a row in the currently selected recipe */
-  const updateCurrentIngredientRowQuantity = (index: number, quantityStr: string) => {
-    updateCurrentRecipe([
-      makeUpdatedRow(getRow(currentRecipeIdx, index), undefined, quantityStr, recipeResources),
-    ]);
+  const updateCurrentIngredientRowQuantity = (index: number, qtyStr: string) => {
+    updateRecipe(currentRecipeIdx, {
+      rows: [makeUpdatedRow(getRow(currentRecipeIdx, index), undefined, qtyStr, recipeResources)],
+    });
   };
 
   /** Parse and apply a tab-separated recipe string to the given recipe slot */
-  const pasteRecipe = async (recipeIdx: number, recipeStr: string) => {
-    updateRecipes([makeUpdatedRecipeFromString(allRecipes[recipeIdx], recipeStr, recipeResources)]);
+  const pasteRecipe = async (recipeIdx: number, serializedRows: string) => {
+    updateRecipes([
+      makeUpdatedRecipeFromStore(
+        allRecipes[recipeIdx],
+        { name: "", serializedRows },
+        recipeResources,
+      ),
+    ]);
   };
 
   /** Clear all ingredient rows in the given recipe slot */
   const clearRecipe = (recipeIdx: number) => {
-    updateRecipe(
-      recipeIdx,
-      allRecipes[recipeIdx].ingredientRows.map((row) =>
+    updateRecipe(recipeIdx, {
+      name: "",
+      rows: allRecipes[recipeIdx].ingredientRows.map((row) =>
         makeUpdatedRow(getRow(recipeIdx, row.index), "", "", recipeResources),
       ),
-    );
+    });
   };
 
   /** Clear all ingredient rows in the currently selected recipe slot */
@@ -415,23 +458,6 @@ export function RecipeGrid({
     await pasteRecipe(currentRecipeIdx, await navigator.clipboard.readText());
   };
 
-  /** Retrieve serialized recipe strings from `localStorage`, default empty strings if none found */
-  const getRecipeStringsFromStorage = () => {
-    if (typeof window !== "undefined") {
-      const storedRecipes = localStorage.getItem("recipes");
-      if (storedRecipes) return JSON.parse(storedRecipes) as string[];
-    }
-    return allRecipes.map(() => "");
-  };
-
-  /** Serialize the current recipes and persist them to `localStorage` */
-  const storeRecipesInStorage = async (recipes: Recipe[]) => {
-    if (typeof window !== "undefined") {
-      const recipeStrings = await Promise.all(recipes.map((recipe) => stringifyRecipe(recipe)));
-      localStorage.setItem("recipes", JSON.stringify(recipeStrings));
-    }
-  };
-
   // Prevents stale ingredient context if a row is changed (e.g. a recipe is pasted) before we have
   // had a chance to fetch all user-defined ingredients and seed them into the wasmBridge database.
   useEffect(() => {
@@ -439,9 +465,12 @@ export function RecipeGrid({
       allRecipes.map((recipe) =>
         makeUpdatedRecipe(
           recipe,
-          recipe.ingredientRows.map((row) =>
-            makeUpdatedRow(row, row.name, row.quantity?.toString(), recipeResources),
-          ),
+          {
+            // Need to call `makeUpdatedRow` to ensure that the WASM `Ingredient`s are updated
+            rows: recipe.ingredientRows.map((row) =>
+              makeUpdatedRow(row, row.name, row.quantity?.toString(), recipeResources),
+            ),
+          },
           recipeResources,
         ),
       ),
@@ -452,8 +481,8 @@ export function RecipeGrid({
   // On initial load, populate recipes from local storage
   useEffect(() => {
     updateRecipes(
-      getRecipeStringsFromStorage().map((recipeStr, idx) =>
-        makeUpdatedRecipeFromString(allRecipes[idx], recipeStr, recipeResources),
+      getRecipeStoresFromStorage().map((recipeStore, idx) =>
+        makeUpdatedRecipeFromStore(allRecipes[idx], recipeStore, recipeResources),
       ),
     );
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -461,7 +490,7 @@ export function RecipeGrid({
   // Periodically store recipes to local storage
   useEffect(() => {
     const intervalID = setInterval(() => {
-      storeRecipesInStorage(recipesRef.current);
+      setRecipeStoresToStorage(recipesRef.current.map((recipe) => stringifyRecipeToStore(recipe)));
     }, 2000);
     return () => clearInterval(intervalID);
   }, []);
@@ -473,8 +502,8 @@ export function RecipeGrid({
 
   return (
     <div id="recipe-grid" className="grid-component" style={{ height: `${STD_COMPONENT_H_PX}px` }}>
-      <div className="flex items-center justify-between">
-        <div className="flex items-center">
+      <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center">
           <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
           <RecipeSelect
             allRecipes={allRecipes}
@@ -482,8 +511,11 @@ export function RecipeGrid({
             currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
           />
         </div>
+        <div className="text-secondary flex-1 truncate px-1 py-0 text-sm font-medium">
+          {currentRecipe.name ?? ""}
+        </div>
         {/* Action Buttons */}
-        <div className="flex">
+        <div className="flex shrink-0">
           {[
             {
               label: <ClipboardCopy size={iconSize} />,

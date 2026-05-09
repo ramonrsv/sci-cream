@@ -12,9 +12,9 @@ import { RecipeSelect, recipeSlotOrDefault } from "./recipe-select";
 // Test helpers, mocks, and setup
 // ---------------------------------------------------------------------------
 
-/** Creates a mock empty `Recipe` object with the given index and name */
-function makeRecipe(index: number, name: string): Recipe {
-  return { index, name } as Recipe;
+/** Creates a mock empty `Recipe` object with the given index and id */
+function makeRecipe(index: number, id: string): Recipe {
+  return { index, id } as Recipe;
 }
 
 const ALL_RECIPES: Recipe[] = [
