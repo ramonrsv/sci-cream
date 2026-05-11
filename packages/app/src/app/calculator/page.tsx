@@ -1,8 +1,7 @@
 "use client";
 
-import { useSession } from "next-auth/react";
 import { useSearchParams } from "next/navigation";
-import { useState, useEffect, Suspense } from "react";
+import { useState, Suspense } from "react";
 import {
   ResponsiveGridLayout,
   ResponsiveLayouts,
@@ -15,10 +14,9 @@ import { CompositionBreakdownPanel } from "@/app/_components/composition-breakdo
 import { PropertiesPanel } from "@/app/_components/properties-panel";
 import { PropertiesChartPanel } from "@/app/_components/properties-chart-panel";
 import { FpdGraphPanel } from "@/app/_components/fpd-graph-panel";
-import { makeEmptyRecipeContext, makeRecipeResourcesFromEmbeddedData } from "@/lib/recipe";
+import { makeEmptyRecipeContext } from "@/lib/recipe";
 import { RecipeEditorPanel } from "@/app/_components/recipe-editor-panel";
-
-import { fetchAllUserIngredientSpecs } from "@/lib/data";
+import { useSeededWasmResources } from "@/lib/wasm-resources";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
 import { recipeSlotOrDefault } from "@/app/_elements/selects/recipe-select";
 
@@ -36,10 +34,8 @@ import { recipeSlotOrDefault } from "@/app/_elements/selects/recipe-select";
  * Wrapped by {@link CalculatorPage} so that `useSearchParams` is inside required Suspense boundary
  */
 function CalculatorContent() {
-  const { data: session } = useSession();
-
   const searchParams = useSearchParams();
-  const recipeGridRecipeIdx = recipeSlotOrDefault(parseInt(searchParams.get("slot") ?? ""));
+  const recipeEditorRecipeIdx = recipeSlotOrDefault(parseInt(searchParams.get("slot") ?? ""));
 
   const { width, containerRef, mounted } = useContainerWidth();
 
@@ -47,25 +43,12 @@ function CalculatorContent() {
   const [recipeContext] = recipeCtxState;
   const recipes = recipeContext.recipes;
 
-  const recipeResourcesState = useState(() => makeRecipeResourcesFromEmbeddedData());
-  const [recipeResources, setRecipeResources] = recipeResourcesState;
-
-  useEffect(() => {
-    // On initial load, fetch and seed the WASM bridge with any user-defined ingredient specs
-    // associated with the logged-in user, if any, then trigger a re-render to propagate the updated
-    // bridge to all components that depends on it, which should produce a `MixProperties` update.
-    if (session?.user?.email) {
-      fetchAllUserIngredientSpecs(session.user.email).then(async (userSpecs) => {
-        recipeResources.wasmBridge.seed_from_specs((userSpecs ?? []).map((s) => s.spec));
-        setRecipeResources((prev) => ({ ...prev, updateIdx: prev.updateIdx + 1 }));
-      });
-    }
-  }, [session?.user?.email]); // eslint-disable-line react-hooks/exhaustive-deps
+  const wasmResourcesState = useSeededWasmResources();
 
   const recipeGridProps = {
     recipeCtxState,
-    recipeResourcesState,
-    initialRecipeIdx: recipeGridRecipeIdx,
+    wasmResourcesState,
+    initialRecipeIdx: recipeEditorRecipeIdx,
   };
 
   // 2160p: 3840px, /2 = 1920px

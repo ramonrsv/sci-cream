@@ -4,14 +4,8 @@ import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
 
-import {
-  makeEmptyRecipeContext,
-  makeRecipeResources,
-  type RecipeContext,
-  type RecipeResources,
-  RecipeContextState,
-  RecipeResourcesState,
-} from "@/lib/recipe";
+import { makeEmptyRecipeContext, type RecipeContext, RecipeContextState } from "@/lib/recipe";
+import { makeWasmResources, WasmResourcesState, WasmResources } from "@/lib/wasm-resources";
 import { RecipeEditorPanel } from "./recipe-editor-panel";
 
 import {
@@ -30,14 +24,14 @@ vi.stubGlobal("ResizeObserver", ResizeObserverMock);
 
 describe("RecipeEditorPanel", () => {
   let recipeContext: RecipeContext;
-  let recipeResources: RecipeResources;
+  let wasmResources: WasmResources;
 
   beforeEach(() => {
     vi.clearAllMocks();
     setupVitestCanvasMock();
 
     recipeContext = makeEmptyRecipeContext();
-    recipeResources = makeRecipeResources(
+    wasmResources = makeWasmResources(
       new WasmBridge(new_ingredient_database_seeded_from_embedded_data()),
     );
   });
@@ -49,7 +43,7 @@ describe("RecipeEditorPanel", () => {
 
   const makePanelProps = () => ({
     recipeCtxState: [recipeContext, vi.fn()] as RecipeContextState,
-    recipeResourcesState: [recipeResources, vi.fn()] as RecipeResourcesState,
+    wasmResourcesState: [wasmResources, vi.fn()] as WasmResourcesState,
   });
 
   describe("Panel Chrome", () => {

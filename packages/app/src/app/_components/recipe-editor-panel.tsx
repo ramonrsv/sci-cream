@@ -2,7 +2,8 @@
 
 import { GripVertical } from "lucide-react";
 
-import { RecipeContextState, RecipeResourcesState } from "@/lib/recipe";
+import { RecipeContextState } from "@/lib/recipe";
+import { WasmResourcesState } from "@/lib/wasm-resources";
 import { RecipeEditor } from "@/app/_elements/tables/recipe";
 import { STD_COMPONENT_H_PX, DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
 
@@ -14,7 +15,7 @@ export function RecipeEditorPanel({
 }: {
   props: {
     recipeCtxState: RecipeContextState;
-    recipeResourcesState: RecipeResourcesState;
+    wasmResourcesState: WasmResourcesState;
     initialRecipeIdx?: number;
   };
 }) {

@@ -7,14 +7,8 @@ import userEvent from "@testing-library/user-event";
 import { type SetStateAction, useState, useEffect } from "react";
 
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
-import {
-  makeEmptyRecipeContext,
-  makeRecipeResources,
-  type RecipeContext,
-  type RecipeResources,
-  RecipeContextState,
-  RecipeResourcesState,
-} from "@/lib/recipe";
+import { makeEmptyRecipeContext, type RecipeContext, RecipeContextState } from "@/lib/recipe";
+import { makeWasmResources, WasmResourcesState, WasmResources } from "@/lib/wasm-resources";
 import { RecipeEditor, RecipeTable } from "@/app/_elements/tables/recipe";
 
 import {
@@ -106,23 +100,23 @@ describe("RecipeTable", () => {
 
 describe("RecipeEditor", () => {
   let recipeContext: RecipeContext;
-  let recipeResources: RecipeResources;
+  let wasmResources: WasmResources;
   let setRecipeContext: Mock<(value: SetStateAction<RecipeContext>) => void>;
-  let setRecipeResources: Mock<(value: SetStateAction<RecipeResources>) => void>;
+  let setWasmResources: Mock<(value: SetStateAction<WasmResources>) => void>;
 
   /** Wrapper component that wires spy mocks into `useState` so updates are reflected in the DOM */
   function RecipeEditorWithSpy() {
     const [recipeCtx, _setRecipeContext] = useState(recipeContext);
-    const [resources, _setRecipeResources] = useState(recipeResources);
+    const [resources, _setWasmResources] = useState(wasmResources);
 
     useEffect(() => {
       setRecipeContext.mockImplementation((value: SetStateAction<RecipeContext>) => {
         recipeContext = value instanceof Function ? value(recipeContext) : value;
         _setRecipeContext(recipeContext);
       });
-      setRecipeResources.mockImplementation((value: SetStateAction<RecipeResources>) => {
-        recipeResources = value instanceof Function ? value(recipeResources) : value;
-        _setRecipeResources(recipeResources);
+      setWasmResources.mockImplementation((value: SetStateAction<WasmResources>) => {
+        wasmResources = value instanceof Function ? value(wasmResources) : value;
+        _setWasmResources(wasmResources);
       });
     }, []);
 
@@ -130,7 +124,7 @@ describe("RecipeEditor", () => {
       <RecipeEditor
         props={{
           recipeCtxState: [recipeCtx, setRecipeContext],
-          recipeResourcesState: [resources, setRecipeResources],
+          wasmResourcesState: [resources, setWasmResources],
         }}
       />
     );
@@ -155,12 +149,12 @@ describe("RecipeEditor", () => {
     setupVitestCanvasMock();
 
     recipeContext = makeEmptyRecipeContext();
-    recipeResources = makeRecipeResources(
+    wasmResources = makeWasmResources(
       new WasmBridge(new_ingredient_database_seeded_from_embedded_data()),
     );
 
     setRecipeContext = vi.fn();
-    setRecipeResources = vi.fn();
+    setWasmResources = vi.fn();
   });
 
   afterEach(async () => {
@@ -171,7 +165,7 @@ describe("RecipeEditor", () => {
   /** Build `RecipeEditor` props with the given enabled recipe indices and the current spy state */
   const makeRecipeEditorProps = (indices: number[]) => ({
     recipeCtxState: [recipeContext, setRecipeContext] as RecipeContextState,
-    recipeResourcesState: [recipeResources, setRecipeResources] as RecipeResourcesState,
+    wasmResourcesState: [wasmResources, setWasmResources] as WasmResourcesState,
     enabledRecipeIndices: indices,
   });
 
@@ -473,10 +467,7 @@ describe("RecipeEditor", () => {
   const mockIngredient = new Ingredient("2% Milk", Category.Dairy, new Composition());
 
   it("should WasmBridge.get_ingredient_by_name when a valid ingredient is entered", async () => {
-    const get_ingredient_by_name_spy = vi.spyOn(
-      recipeResources.wasmBridge,
-      "get_ingredient_by_name",
-    );
+    const get_ingredient_by_name_spy = vi.spyOn(wasmResources.wasmBridge, "get_ingredient_by_name");
     get_ingredient_by_name_spy.mockReturnValue(mockIngredient);
 
     const { container } = render(<RecipeEditorWithSpy />);
@@ -491,10 +482,7 @@ describe("RecipeEditor", () => {
   });
 
   it("should not WasmBridge.get_ingredient_by_name for empty string or invalid ingredient", async () => {
-    const get_ingredient_by_name_spy = vi.spyOn(
-      recipeResources.wasmBridge,
-      "get_ingredient_by_name",
-    );
+    const get_ingredient_by_name_spy = vi.spyOn(wasmResources.wasmBridge, "get_ingredient_by_name");
 
     const user = userEvent.setup();
 

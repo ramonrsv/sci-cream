@@ -7,7 +7,6 @@ import {
   IngredientRow,
   Recipe,
   RecipeContextState,
-  RecipeResourcesState,
   RecipeUpdates,
   getRecipeIndices,
   makeUpdatedRecipe,
@@ -18,6 +17,8 @@ import {
   setRecipeStoresToStorage,
   getRecipeStoresFromStorage,
 } from "@/lib/recipe";
+
+import { WasmResourcesState } from "@/lib/wasm-resources";
 import { RecipeSelect } from "@/app/_elements/selects/recipe-select";
 import { formatCompositionValue } from "@/lib/comp-value-format";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
@@ -165,19 +166,19 @@ export function RecipeEditorTable({
 export function RecipeEditor({
   props: {
     recipeCtxState: [recipeContext, setRecipeContext],
-    recipeResourcesState: [recipeResources],
+    wasmResourcesState: [wasmResources],
     initialRecipeIdx = 0,
     toolbarPrefix,
   },
 }: {
   props: {
     recipeCtxState: RecipeContextState;
-    recipeResourcesState: RecipeResourcesState;
+    wasmResourcesState: WasmResourcesState;
     initialRecipeIdx?: number;
     toolbarPrefix?: ReactNode;
   };
 }) {
-  const { wasmBridge } = recipeResources;
+  const { wasmBridge } = wasmResources;
   const { recipes: allRecipes } = recipeContext;
   const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(initialRecipeIdx);
 
@@ -203,7 +204,7 @@ export function RecipeEditor({
 
   /** Update a single recipe in context by applying the given recipe updates */
   const updateRecipe = (recipeIdx: number, recipeUpdates: RecipeUpdates) => {
-    updateRecipes([makeUpdatedRecipe(allRecipes[recipeIdx], recipeUpdates, recipeResources)]);
+    updateRecipes([makeUpdatedRecipe(allRecipes[recipeIdx], recipeUpdates, wasmResources)]);
   };
 
   /** Get the ingredient row at the given recipe and row indices */
@@ -214,14 +215,14 @@ export function RecipeEditor({
   /** Handle a name change for a row in the currently selected recipe */
   const updateCurrentIngredientRowName = (index: number, name: string) => {
     updateRecipe(currentRecipeIdx, {
-      rows: [makeUpdatedRow(getRow(currentRecipeIdx, index), name, undefined, recipeResources)],
+      rows: [makeUpdatedRow(getRow(currentRecipeIdx, index), name, undefined, wasmResources)],
     });
   };
 
   /** Handle a quantity change for a row in the currently selected recipe */
   const updateCurrentIngredientRowQuantity = (index: number, qtyStr: string) => {
     updateRecipe(currentRecipeIdx, {
-      rows: [makeUpdatedRow(getRow(currentRecipeIdx, index), undefined, qtyStr, recipeResources)],
+      rows: [makeUpdatedRow(getRow(currentRecipeIdx, index), undefined, qtyStr, wasmResources)],
     });
   };
 
@@ -231,7 +232,7 @@ export function RecipeEditor({
       makeUpdatedRecipeFromStore(
         allRecipes[recipeIdx],
         { name: "", serializedRows },
-        recipeResources,
+        wasmResources,
       ),
     ]);
   };
@@ -241,7 +242,7 @@ export function RecipeEditor({
     updateRecipe(recipeIdx, {
       name: "",
       rows: allRecipes[recipeIdx].ingredientRows.map((row) =>
-        makeUpdatedRow(getRow(recipeIdx, row.index), "", "", recipeResources),
+        makeUpdatedRow(getRow(recipeIdx, row.index), "", "", wasmResources),
       ),
     });
   };
@@ -271,21 +272,21 @@ export function RecipeEditor({
           {
             // Need to call `makeUpdatedRow` to ensure that the WASM `Ingredient`s are updated
             rows: recipe.ingredientRows.map((row) =>
-              makeUpdatedRow(row, row.name, row.quantity?.toString(), recipeResources),
+              makeUpdatedRow(row, row.name, row.quantity?.toString(), wasmResources),
             ),
           },
-          recipeResources,
+          wasmResources,
         ),
       ),
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [recipeResources.updateIdx]);
+  }, [wasmResources.updateIdx]);
 
   // On initial load, populate recipes from local storage
   useEffect(() => {
     updateRecipes(
       getRecipeStoresFromStorage().map((recipeStore, idx) =>
-        makeUpdatedRecipeFromStore(allRecipes[idx], recipeStore, recipeResources),
+        makeUpdatedRecipeFromStore(allRecipes[idx], recipeStore, wasmResources),
       ),
     );
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
@@ -340,7 +341,7 @@ export function RecipeEditor({
       <RecipeEditorTable
         recipe={currentRecipe}
         validIngredients={validIngredients}
-        hasIngredient={recipeResources.hasIngredient}
+        hasIngredient={wasmResources.hasIngredient}
         onNameChange={updateCurrentIngredientRowName}
         onQuantityChange={updateCurrentIngredientRowQuantity}
       />

@@ -1,14 +1,12 @@
 import { getLocalStorage, setLocalStorage } from "@/lib/local-storage";
 import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 
+import { WasmResources } from "./wasm-resources";
 import {
   Ingredient,
   MixProperties,
-  IngredientDatabase,
   RecipeLine,
   Recipe as SciCreamRecipe,
-  Bridge as WasmBridge,
-  new_ingredient_database_seeded_from_embedded_data,
 } from "@workspace/sci-cream";
 
 /** A single row in the recipe grid, holding the name, quantity, and resolved WASM `Ingredient` */
@@ -53,23 +51,10 @@ export interface RecipeContext {
   recipes: Recipe[];
 }
 
-/** Shared WASM resources: the bridge used for ingredient lookups and mix-property calculations */
-export interface RecipeResources {
-  updateIdx: number;
-  wasmBridge: WasmBridge;
-  hasIngredient(name: string): boolean;
-}
-
 /** `useState` tuple for `RecipeContext`, passed between components that read or update recipes */
 export type RecipeContextState = [
   RecipeContext,
   React.Dispatch<React.SetStateAction<RecipeContext>>,
-];
-
-/** `useState` tuple for `RecipeResources`, passed between components that read/update resources */
-export type RecipeResourcesState = [
-  RecipeResources,
-  React.Dispatch<React.SetStateAction<RecipeResources>>,
 ];
 
 /** Generate the corresponding recipe ID for a given index */
@@ -99,28 +84,6 @@ export function makeEmptyRecipeContext(): RecipeContext {
   return {
     recipes: Array.from({ length: MAX_RECIPES }, (_, recipeIdx) => makeEmptyRecipe(recipeIdx)),
   };
-}
-
-/** Wrap a `WasmBridge` in a `RecipeResources` object, creating a `hasIngredient` helper object */
-export function makeRecipeResources(
-  wasmBridge: WasmBridge,
-  updateIdx: number = 0,
-): RecipeResources {
-  return {
-    updateIdx,
-    wasmBridge,
-    hasIngredient: (name: string) => wasmBridge.has_ingredient(name),
-  };
-}
-
-/** Create a `RecipeResources` backed by an empty (unseeded) ingredient database */
-export function makeEmptyRecipeResources(): RecipeResources {
-  return makeRecipeResources(new WasmBridge(new IngredientDatabase()));
-}
-
-/** Create a `RecipeResources` backed by the embedded (bundled) ingredient database */
-export function makeRecipeResourcesFromEmbeddedData(): RecipeResources {
-  return makeRecipeResources(new WasmBridge(new_ingredient_database_seeded_from_embedded_data()));
 }
 
 /** Returns `true` when a recipe has no ingredients (mix total is undefined or zero) */
@@ -237,7 +200,7 @@ export function requiresMixPropsUpdate(
  * The previous `MixProperties` WASM object is freed first; any double-free errors for the
  * `MixProperties` object from concurrent React state updates are silently swallowed.
  */
-export function updateMixProperties(recipe: Recipe, resources: RecipeResources) {
+export function updateMixProperties(recipe: Recipe, resources: WasmResources) {
   try {
     recipe.mixProperties.free();
   } catch {
@@ -284,7 +247,7 @@ export interface RecipeUpdates {
 export function makeUpdatedRecipe(
   currentRecipe: Recipe,
   recipeUpdates: RecipeUpdates,
-  resources: RecipeResources,
+  resources: WasmResources,
 ): Recipe {
   const newRecipe = { ...currentRecipe, ingredientRows: [...currentRecipe.ingredientRows] };
   newRecipe.name = recipeUpdates.name ?? newRecipe.name;
@@ -312,7 +275,7 @@ export function makeUpdatedRow(
   currentRow: IngredientRow,
   _name: string | undefined,
   quantityStr: string | undefined,
-  resources: RecipeResources,
+  resources: WasmResources,
 ): IngredientRow {
   const row = { ...currentRow };
   row.name = _name === undefined ? row.name : _name;
@@ -339,7 +302,7 @@ export function makeUpdatedRow(
 export function makeUpdatedRecipeFromStore(
   currentRecipe: Recipe,
   recipeStore: RecipeStore,
-  resources: RecipeResources,
+  resources: WasmResources,
 ): Recipe {
   const parsedLines = parseRecipeString(recipeStore.serializedRows);
   const name = recipeStore.name;

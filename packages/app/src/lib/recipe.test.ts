@@ -6,7 +6,6 @@ import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import {
   makeRecipeId,
   makeEmptyRecipeContext,
-  makeEmptyRecipeResources,
   isRecipeEmpty,
   calculateMixTotal,
   makeSciCreamRecipe,
@@ -22,8 +21,6 @@ import {
   RecipeLine,
   Bridge as WasmBridge,
   new_ingredient_database_seeded_from_embedded_data,
-  allSpecEntries,
-  specEntryName,
 } from "@workspace/sci-cream";
 
 vi.mock("@workspace/sci-cream", async () => {
@@ -90,41 +87,6 @@ describe("Recipe Helper Functions", () => {
       context.recipes.forEach((recipe) => {
         expect(recipe.mixProperties).toBeInstanceOf(MixProperties);
       });
-    });
-  });
-
-  // ---- makeEmptyRecipeResources -----------------------------------------------------------------
-
-  describe("makeEmptyRecipeResources", () => {
-    it("should initialize with empty wasmBridge", () => {
-      const resources = makeEmptyRecipeResources();
-      expect(resources.wasmBridge).toBeInstanceOf(WasmBridge);
-      expect(resources.wasmBridge.get_all_ingredients()).toHaveLength(0);
-      expect(resources.updateIdx).toBe(0);
-      expect(resources.hasIngredient("Whole Milk")).toBe(false);
-    });
-  });
-
-  // ---- RecipeResources.hasIngredient ------------------------------------------------------------
-
-  describe("RecipeResources.hasIngredient", () => {
-    it("should return false for any ingredient when wasmBridge is empty", () => {
-      const resources = makeEmptyRecipeResources();
-      expect(resources.hasIngredient("3.25% Milk")).toBe(false);
-      expect(resources.hasIngredient("Whole Milk")).toBe(false);
-      expect(resources.hasIngredient("Sucrose")).toBe(false);
-    });
-
-    it("should return true for ingredients present in wasmBridge", () => {
-      const resources = makeEmptyRecipeResources();
-      resources.wasmBridge.seed_from_specs([
-        allSpecEntries.find((spec) => specEntryName(spec) === "3.25% Milk"),
-        allSpecEntries.find((spec) => specEntryName(spec) === "Whole Milk"),
-        allSpecEntries.find((spec) => specEntryName(spec) === "Sucrose"),
-      ]);
-      expect(resources.hasIngredient("3.25% Milk")).toBe(true);
-      expect(resources.hasIngredient("Whole Milk")).toBe(true);
-      expect(resources.hasIngredient("Sucrose")).toBe(true);
     });
   });
 
