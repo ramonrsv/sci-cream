@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi, beforeEach } from "vitest";
 
-import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "../../lib/styles/sizes";
+import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import {
   makeRecipeId,
   makeEmptyRecipeContext,

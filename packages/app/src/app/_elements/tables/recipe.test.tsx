@@ -3,7 +3,7 @@ import "@testing-library/jest-dom/vitest";
 import { describe, it, expect, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
 
-import { RecipeTable } from "@/app/_elements/tables/recipe-table";
+import { RecipeTable } from "@/app/_elements/tables/recipe";
 
 import { RecipeID, getLightRecipe } from "@/__tests__/assets";
 import { makeMockRecipe } from "@/__tests__/unit/util";

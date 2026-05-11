@@ -15,10 +15,7 @@ import { CompositionBreakdownPanel } from "@/app/_components/composition-breakdo
 import { PropertiesPanel } from "@/app/_components/properties-panel";
 import { PropertiesChartPanel } from "@/app/_components/properties-chart-panel";
 import { FpdGraphPanel } from "@/app/_components/fpd-graph-panel";
-import {
-  makeEmptyRecipeContext,
-  makeRecipeResourcesFromEmbeddedData,
-} from "@/app/_components/recipe";
+import { makeEmptyRecipeContext, makeRecipeResourcesFromEmbeddedData } from "@/lib/recipe";
 import { RecipeEditorPanel } from "@/app/_components/recipe-editor-panel";
 
 import { fetchAllUserIngredientSpecs } from "@/lib/data";

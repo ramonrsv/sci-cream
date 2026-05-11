@@ -1,7 +1,5 @@
-"use client";
-
 import { getLocalStorage, setLocalStorage } from "@/lib/local-storage";
-import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "../../lib/styles/sizes";
+import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 
 import {
   Ingredient,

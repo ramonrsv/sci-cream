@@ -16,7 +16,7 @@ import {
   type ScriptableScaleContext,
 } from "chart.js";
 
-import { RecipeSummary } from "@/app/_components/recipe";
+import { RecipeSummary } from "@/lib/recipe";
 import { useTheme } from "@/lib/theme";
 import { GRAPH_TITLE_FONT_SIZE } from "@/lib/styles/sizes";
 

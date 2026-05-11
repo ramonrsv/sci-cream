@@ -2,16 +2,18 @@ import "@testing-library/jest-dom/vitest";
 
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
+import { render, screen, cleanup, waitFor } from "@testing-library/react";
 
 import { Color, getColor, addOrUpdateAlpha } from "@/lib/styles/colors";
 import {
   PropertiesBarChart,
+  PropertiesChartView,
   getPropKeys,
   getModifiedMixProperty,
   propKeyAsModifiedMedStr,
-} from "@/app/_elements/charts/properties-bar-chart";
-import { filterActiveSlots } from "@/app/_components/recipe";
+} from "@/app/_elements/charts/properties-chart";
+import { filterActiveSlots } from "@/lib/recipe";
+import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 
 import {
   CompKey,
@@ -20,11 +22,18 @@ import {
   compToPropKey,
   fpdToPropKey,
   getPropKeys as getPropKeysAll,
+  getMixProperty,
 } from "@workspace/sci-cream";
 
 import { RecipeID, getLightRecipe } from "@/__tests__/assets";
 import { WASM_BRIDGE } from "@/__tests__/util";
-import { makeMockRecipeContext } from "@/__tests__/unit/util";
+import {
+  makeMockRecipeContext,
+  getCompLabel,
+  getFpdLabel,
+  getPropIndex,
+  configCustomKeysAll,
+} from "@/__tests__/unit/util";
 
 /** Mock implementation of ResizeObserver for testing purposes */
 class ResizeObserverMock {
@@ -247,6 +256,127 @@ describe("PropertiesBarChart", () => {
       const propKeys: PropKey[] = [compToPropKey(CompKey.AbsPAC), fpdToPropKey(FpdKey.FPD)];
       renderFromContext([], propKeys);
       expect(capturedBarProps!.data.labels).toEqual(propKeys.map(propKeyAsModifiedMedStr));
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// PropertiesChartView (toolbar + bare)
+// ---------------------------------------------------------------------------
+
+describe("PropertiesChartView", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    capturedBarProps = null;
+    setupVitestCanvasMock();
+  });
+
+  afterEach(async () => {
+    cleanup();
+    await vi.waitFor(() => {}, { timeout: 100 });
+  });
+
+  /** Convenience: build active recipes from a mock context and render the view with them */
+  function renderViewFromContext(recipeIds: RecipeID[]) {
+    const recipeCtx = makeMockRecipeContext(recipeIds);
+    const active = filterActiveSlots(recipeCtx.recipes);
+    return {
+      recipeCtx,
+      ...render(<PropertiesChartView main={active[0]} refs={active.slice(1)} />),
+    };
+  }
+
+  describe("Toolbar Rendering", () => {
+    it("should render KeyFilterSelect", () => {
+      const { container } = renderViewFromContext([RecipeID.Main]);
+      expect(container.querySelector("#key-filter-select")).toBeInTheDocument();
+    });
+
+    it("should render the underlying bar chart", () => {
+      const { container } = renderViewFromContext([RecipeID.Main]);
+      expect(container.querySelector('[data-testid="bar-chart"]')).toBeInTheDocument();
+    });
+  });
+
+  describe("Property Key Filtering", () => {
+    it("should default to KeyFilter.Auto", () => {
+      const { container } = renderViewFromContext([RecipeID.Main]);
+      const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
+      expect(select).toBeInTheDocument();
+      expect(select.value).toBe(KeyFilter.Auto);
+    });
+
+    it("should have some property keys selected by default", () => {
+      renderViewFromContext([RecipeID.Main]);
+      const labels = capturedBarProps!.data.labels;
+      expect(labels.length).toBeGreaterThan(0);
+      expect(labels).toContain(getCompLabel(CompKey.MilkFat));
+    });
+
+    it("should filter out Water and HardnessAt14C", () => {
+      renderViewFromContext([RecipeID.Main]);
+      const labels = capturedBarProps!.data.labels;
+      expect(labels).not.toContain(getCompLabel(CompKey.Water));
+      expect(labels).not.toContain(getFpdLabel(FpdKey.HardnessAt14C));
+    });
+
+    it("should show all labels if explicitly selected", async () => {
+      const { container } = renderViewFromContext([]);
+      expect(capturedBarProps!.data.labels.length).toBeGreaterThan(0);
+
+      await configCustomKeysAll(container);
+
+      await waitFor(() => {
+        expect(capturedBarProps!.data.labels.length).toBe(getPropKeys().length);
+      });
+    });
+  });
+
+  describe("Data Values", () => {
+    it("should handle zero and NaN property values", async () => {
+      const { container, recipeCtx } = renderViewFromContext([]);
+
+      await configCustomKeysAll(container);
+
+      const EmulsPerFatPropKey = compToPropKey(CompKey.EmulsifiersPerFat);
+      const AbsPACPropKey = compToPropKey(CompKey.AbsPAC);
+      const EmulsPerFatLabel = propKeyAsModifiedMedStr(EmulsPerFatPropKey);
+      const AbsPACLabel = propKeyAsModifiedMedStr(AbsPACPropKey);
+
+      const data = capturedBarProps!.data;
+      await waitFor(() => expect(data.labels.length).toBe(getPropKeysAll().length - 2));
+      expect(data.labels).toContain(EmulsPerFatLabel);
+      expect(data.labels).toContain(AbsPACLabel);
+
+      const mixProps = recipeCtx.recipes[0].mixProperties!;
+      expect(mixProps.composition.get(CompKey.EmulsifiersPerFat)).toBeNaN();
+      expect(mixProps.composition.get(CompKey.AbsPAC)).toBe(0);
+      expect(getMixProperty(mixProps, EmulsPerFatPropKey)).toBeNaN();
+      expect(getMixProperty(mixProps, AbsPACPropKey)).toBe(0);
+
+      expect(data.datasets[0].data[getPropIndex(data.labels, EmulsPerFatPropKey)].y).toBeNaN();
+      expect(data.datasets[0].data[getPropIndex(data.labels, AbsPACPropKey)].y).toBe(0);
+    });
+
+    it("should have modified values and strings", async () => {
+      const { container, recipeCtx } = renderViewFromContext([RecipeID.Main]);
+
+      await configCustomKeysAll(container);
+
+      const data = capturedBarProps!.data;
+      await waitFor(() => expect(data.labels.length).toBe(getPropKeysAll().length - 2));
+
+      for (const key of [
+        compToPropKey(CompKey.EmulsifiersPerFat),
+        compToPropKey(CompKey.StabilizersPerWater),
+        compToPropKey(CompKey.AbsPAC),
+        fpdToPropKey(FpdKey.ServingTemp),
+      ]) {
+        expect(data.labels).toContain(propKeyAsModifiedMedStr(key));
+        expect(data.datasets[0].data[getPropIndex(data.labels, key)].y).toBeCloseTo(
+          getModifiedMixProperty(recipeCtx.recipes[0].mixProperties!, key),
+        );
+      }
     });
   });
 });

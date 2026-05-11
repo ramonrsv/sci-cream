@@ -5,7 +5,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, cleanup, fireEvent } from "@testing-library/react";
 import { useState, useEffect } from "react";
 
-import { type Recipe } from "@/app/_components/recipe";
+import { type Recipe } from "@/lib/recipe";
 import { RecipeSelect, recipeSlotOrDefault } from "./recipe-select";
 
 // ---------------------------------------------------------------------------

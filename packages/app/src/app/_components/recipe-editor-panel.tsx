@@ -2,8 +2,8 @@
 
 import { GripVertical } from "lucide-react";
 
-import { RecipeContextState, RecipeResourcesState } from "@/app/_components/recipe";
-import { RecipeEditor } from "@/app/_elements/tables/recipe-editor";
+import { RecipeContextState, RecipeResourcesState } from "@/lib/recipe";
+import { RecipeEditor } from "@/app/_elements/tables/recipe";
 import { STD_COMPONENT_H_PX, DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
 
 /**

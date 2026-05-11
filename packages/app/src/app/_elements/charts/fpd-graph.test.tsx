@@ -8,7 +8,7 @@ import { render, screen, cleanup } from "@testing-library/react";
 
 import { Color, getColor } from "@/lib/styles/colors";
 import { FpdGraph } from "@/app/_elements/charts/fpd-graph";
-import { filterActiveSlots } from "@/app/_components/recipe";
+import { filterActiveSlots } from "@/lib/recipe";
 
 import { RecipeID } from "@/__tests__/assets";
 import { makeMockRecipe, makeMockRecipeContext } from "@/__tests__/unit/util";

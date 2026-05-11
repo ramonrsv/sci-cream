@@ -2,8 +2,8 @@
 
 import { GripVertical } from "lucide-react";
 
-import { Recipe } from "@/app/_components/recipe";
-import { CompositionBreakdownView } from "@/app/_elements/tables/composition-breakdown-view";
+import { Recipe } from "@/lib/recipe";
+import { CompositionBreakdownView } from "@/app/_elements/tables/composition-breakdown";
 import { STD_COMPONENT_H_PX, DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
 
 /**

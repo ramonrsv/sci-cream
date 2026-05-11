@@ -1,6 +1,6 @@
 "use client";
 
-import { Recipe } from "@/app/_components/recipe";
+import { Recipe } from "@/lib/recipe";
 import { MAX_RECIPES } from "@/lib/styles/sizes";
 
 /** Returns `slot` if it is a valid recipe index, otherwise 0 */

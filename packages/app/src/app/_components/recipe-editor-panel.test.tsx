@@ -14,7 +14,7 @@ import {
   type RecipeResources,
   RecipeContextState,
   RecipeResourcesState,
-} from "./recipe";
+} from "@/lib/recipe";
 import { RecipeEditorPanel } from "./recipe-editor-panel";
 
 import {
