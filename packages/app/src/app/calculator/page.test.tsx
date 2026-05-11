@@ -92,7 +92,7 @@ describe("Calculator Page", () => {
     expect(container.querySelectorAll("#mix-properties-grid").length).toBe(1);
   });
 
-  it("should render one IngredientCompositionGrid component", () => {
+  it("should render one CompositionBreakdownPanel component", () => {
     const { container } = render(<CalculatorPage />);
     expect(container.querySelectorAll("#ing-composition-grid").length).toBe(1);
   });

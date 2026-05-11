@@ -122,7 +122,7 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
   };
 
   const testCompositionGrid = async (recipeIds: RecipeID[]) => {
-    test(makeRecipeName("IngredientCompositionGrid", recipeIds), async ({ page, browserName }) => {
+    test(makeRecipeName("CompositionBreakdownPanel", recipeIds), async ({ page, browserName }) => {
       await initializeAndPasteRecipes(page, browserName, recipeIds);
 
       const compositionGrid = page.locator("#ing-composition-grid");
