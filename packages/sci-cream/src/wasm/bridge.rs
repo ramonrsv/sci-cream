@@ -125,6 +125,13 @@ impl Bridge {
         self.has_ingredient(name)
     }
 
+    /// WASM compatible wrapper for [`Bridge::get_all_ingredients`] that returns just the names,
+    /// obviating the need for JS to `.free()` the returned WASMs if they only need the names.
+    #[wasm_bindgen]
+    pub fn get_all_ingredient_names(&self) -> Vec<String> {
+        self.get_all_ingredients().into_iter().map(|ing| ing.name).collect()
+    }
+
     /// WASM compatible wrapper for [`Bridge::get_all_ingredients`]
     #[wasm_bindgen(js_name = "get_all_ingredients")]
     pub fn get_all_ingredients_wasm(&self) -> Vec<Ingredient> {
@@ -470,6 +477,33 @@ pub(crate) mod tests {
         assert_false!(bridge.has_ingredient_wasm("Whole Milk"));
         bridge.seed_wasm(Box::new([WHOLE_MILK_ING.clone()])).unwrap();
         assert_true!(bridge.has_ingredient_wasm("Whole Milk"));
+    }
+
+    #[test]
+    fn get_all_ingredient_names_empty() {
+        let bridge = Bridge::new(IngredientDatabase::new());
+        assert_true!(bridge.get_all_ingredient_names().is_empty());
+    }
+
+    #[test]
+    fn get_all_ingredient_names_single_ingredient() {
+        let bridge = Bridge::new(IngredientDatabase::new());
+        bridge.seed_wasm(Box::new([WHOLE_MILK_ING.clone()])).unwrap();
+        let names = bridge.get_all_ingredient_names();
+        assert_eq!(names, vec!["Whole Milk".to_string()]);
+    }
+
+    #[test]
+    fn get_all_ingredient_names_matches_get_all_ingredients() {
+        let bridge = Bridge::new(make_seeded_db());
+        let names = bridge.get_all_ingredient_names();
+        let ingredients = bridge.get_all_ingredients();
+
+        assert_eq!(names.len(), ingredients.len());
+
+        for ingredient in ingredients {
+            assert_true!(names.contains(&ingredient.name));
+        }
     }
 
     #[test]

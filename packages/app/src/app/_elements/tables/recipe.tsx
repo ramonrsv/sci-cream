@@ -300,7 +300,7 @@ export function RecipeEditor({
   }, []);
 
   const currentRecipe = allRecipes[currentRecipeIdx];
-  const validIngredients = wasmBridge.get_all_ingredients().map((ing) => ing.name);
+  const validIngredients = wasmBridge.get_all_ingredient_names();
 
   const iconSize = COMPONENT_ACTION_ICON_SIZE;
 
