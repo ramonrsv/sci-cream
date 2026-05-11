@@ -16,10 +16,10 @@ import { PropertiesPanel } from "@/app/_components/properties-panel";
 import { PropertiesChartPanel } from "@/app/_components/properties-chart-panel";
 import { FpdGraphPanel } from "@/app/_components/fpd-graph-panel";
 import {
-  RecipeGrid,
   makeEmptyRecipeContext,
   makeRecipeResourcesFromEmbeddedData,
 } from "@/app/_components/recipe";
+import { RecipeEditorPanel } from "@/app/_components/recipe-editor-panel";
 
 import { fetchAllUserIngredientSpecs } from "@/lib/data";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
@@ -34,7 +34,7 @@ import { recipeSlotOrDefault } from "@/app/_elements/selects/recipe-select";
  * input grid has a fixed dimension, and the composition grid is only resizable horizontally).
  *
  * On initial load, the calculator checks for a `slot` query parameter in the URL, which indicates
- * the initial recipe index to select in `RecipeGrid`'s `RecipeSelect`; default is 0 ('Recipe').
+ * the initial recipe index to select in `RecipeEditor`'s `RecipeSelect`; default is 0 ('Recipe').
  *
  * Wrapped by {@link CalculatorPage} so that `useSearchParams` is inside required Suspense boundary
  */
@@ -163,7 +163,7 @@ function CalculatorContent() {
           containerPadding={[0, 0]}
           dragConfig={{ handle: ".drag-handle" }}
         >
-          <div key="recipe">{<RecipeGrid props={recipeGridProps} />}</div>
+          <div key="recipe">{<RecipeEditorPanel props={recipeGridProps} />}</div>
           <div key="properties">{<PropertiesPanel recipes={recipes} />}</div>
           <div key="composition">{<CompositionBreakdownPanel recipes={recipes} />}</div>
           <div key="props-chart">{<PropertiesChartPanel recipes={recipes} />}</div>

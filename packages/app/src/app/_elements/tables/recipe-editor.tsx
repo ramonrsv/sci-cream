@@ -1,0 +1,223 @@
+"use client";
+
+import { ReactNode, useState, useEffect, useRef } from "react";
+import { ClipboardCopy, ClipboardPaste, Trash } from "lucide-react";
+
+import {
+  IngredientRow,
+  Recipe,
+  RecipeContextState,
+  RecipeResourcesState,
+  getRecipeIndices,
+  makeUpdatedRecipe,
+  makeUpdatedRow,
+  makeUpdatedRecipeFromStore,
+  stringifyRecipe,
+  stringifyRecipeToStore,
+  setRecipeStoresToStorage,
+  getRecipeStoresFromStorage,
+} from "@/app/_components/recipe";
+import { RecipeSelect } from "@/app/_elements/selects/recipe-select";
+import { RecipeEditorTable } from "@/app/_elements/tables/recipe-editor-table";
+import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
+
+/** Represents updates to a `Recipe`, including optional name and row updates */
+interface RecipeUpdates {
+  name?: string;
+  rows?: IngredientRow[];
+}
+
+/**
+ * Recipe editor view: toolbar (RecipeSelect, recipe name display, copy/paste/clear buttons) plus
+ * the {@link RecipeEditorTable}. Owns all editor state — recipe-context updates, ingredient
+ * resolution, localStorage persistence, and clipboard interactions — and writes through to the
+ * shared `RecipeContext` via the provided state setter.
+ *
+ * `toolbarPrefix` is rendered inside the toolbar's left-aligned group (alongside `RecipeSelect`);
+ * used by the panel wrapper to inject a drag handle.
+ */
+export function RecipeEditor({
+  props: {
+    recipeCtxState: [recipeContext, setRecipeContext],
+    recipeResourcesState: [recipeResources],
+    initialRecipeIdx = 0,
+    toolbarPrefix,
+  },
+}: {
+  props: {
+    recipeCtxState: RecipeContextState;
+    recipeResourcesState: RecipeResourcesState;
+    initialRecipeIdx?: number;
+    toolbarPrefix?: ReactNode;
+  };
+}) {
+  const { wasmBridge } = recipeResources;
+  const { recipes: allRecipes } = recipeContext;
+  const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(initialRecipeIdx);
+
+  const recipesRef = useRef(allRecipes);
+  recipesRef.current = allRecipes;
+
+  /**
+   * Update multiple recipes at once, with a single state update.
+   *
+   * This is necessary when updating multiple recipes at once, e.g. in the useEffect to prevent
+   * stale ingredient context, otherwise dependent components may asynchronously try to render stale
+   * `Composition` or `MixProperties` objects, which can lead to crashes due to freed WASM memory.
+   */
+  const updateRecipes = (updatedRecipes: Recipe[]) => {
+    const newRecipes = [...recipeContext.recipes];
+
+    for (const updatedRecipe of updatedRecipes) {
+      newRecipes[updatedRecipe.index] = updatedRecipe;
+    }
+
+    setRecipeContext({ ...recipeContext, recipes: newRecipes });
+  };
+
+  /** Update a single recipe in context by applying the given recipe updates */
+  const updateRecipe = (recipeIdx: number, recipeUpdates: RecipeUpdates) => {
+    updateRecipes([makeUpdatedRecipe(allRecipes[recipeIdx], recipeUpdates, recipeResources)]);
+  };
+
+  /** Get the ingredient row at the given recipe and row indices */
+  const getRow = (recipeIdx: number, rowIdx: number): IngredientRow => {
+    return allRecipes[recipeIdx].ingredientRows[rowIdx];
+  };
+
+  /** Handle a name change for a row in the currently selected recipe */
+  const updateCurrentIngredientRowName = (index: number, name: string) => {
+    updateRecipe(currentRecipeIdx, {
+      rows: [makeUpdatedRow(getRow(currentRecipeIdx, index), name, undefined, recipeResources)],
+    });
+  };
+
+  /** Handle a quantity change for a row in the currently selected recipe */
+  const updateCurrentIngredientRowQuantity = (index: number, qtyStr: string) => {
+    updateRecipe(currentRecipeIdx, {
+      rows: [makeUpdatedRow(getRow(currentRecipeIdx, index), undefined, qtyStr, recipeResources)],
+    });
+  };
+
+  /** Parse and apply a tab-separated recipe string to the given recipe slot */
+  const pasteRecipe = async (recipeIdx: number, serializedRows: string) => {
+    updateRecipes([
+      makeUpdatedRecipeFromStore(
+        allRecipes[recipeIdx],
+        { name: "", serializedRows },
+        recipeResources,
+      ),
+    ]);
+  };
+
+  /** Clear all ingredient rows in the given recipe slot */
+  const clearRecipe = (recipeIdx: number) => {
+    updateRecipe(recipeIdx, {
+      name: "",
+      rows: allRecipes[recipeIdx].ingredientRows.map((row) =>
+        makeUpdatedRow(getRow(recipeIdx, row.index), "", "", recipeResources),
+      ),
+    });
+  };
+
+  /** Clear all ingredient rows in the currently selected recipe slot */
+  const clearCurrentRecipe = () => {
+    clearRecipe(currentRecipeIdx);
+  };
+
+  /** Copy the currently selected recipe as a tab-separated string to the clipboard */
+  const copyCurrentRecipeToClipboard = async () => {
+    await navigator.clipboard.writeText(stringifyRecipe(currentRecipe));
+  };
+
+  /** Read a tab-separated recipe string from clipboard and apply it to the current recipe slot */
+  const pasteCurrentRecipeFromClipboard = async () => {
+    await pasteRecipe(currentRecipeIdx, await navigator.clipboard.readText());
+  };
+
+  // Prevents stale ingredient context if a row is changed (e.g. a recipe is pasted) before we have
+  // had a chance to fetch all user-defined ingredients and seed them into the wasmBridge database.
+  useEffect(() => {
+    updateRecipes(
+      allRecipes.map((recipe) =>
+        makeUpdatedRecipe(
+          recipe,
+          {
+            // Need to call `makeUpdatedRow` to ensure that the WASM `Ingredient`s are updated
+            rows: recipe.ingredientRows.map((row) =>
+              makeUpdatedRow(row, row.name, row.quantity?.toString(), recipeResources),
+            ),
+          },
+          recipeResources,
+        ),
+      ),
+    );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [recipeResources.updateIdx]);
+
+  // On initial load, populate recipes from local storage
+  useEffect(() => {
+    updateRecipes(
+      getRecipeStoresFromStorage().map((recipeStore, idx) =>
+        makeUpdatedRecipeFromStore(allRecipes[idx], recipeStore, recipeResources),
+      ),
+    );
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
+  // Periodically store recipes to local storage
+  useEffect(() => {
+    const intervalID = setInterval(() => {
+      setRecipeStoresToStorage(recipesRef.current.map((recipe) => stringifyRecipeToStore(recipe)));
+    }, 2000);
+    return () => clearInterval(intervalID);
+  }, []);
+
+  const currentRecipe = allRecipes[currentRecipeIdx];
+  const validIngredients = wasmBridge.get_all_ingredients().map((ing) => ing.name);
+
+  const iconSize = COMPONENT_ACTION_ICON_SIZE;
+
+  return (
+    <>
+      <div className="flex items-center gap-1">
+        <div className="flex shrink-0 items-center">
+          {toolbarPrefix}
+          <RecipeSelect
+            allRecipes={allRecipes}
+            enabledRecipeIndices={getRecipeIndices(allRecipes)}
+            currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
+          />
+        </div>
+        <div className="text-secondary flex-1 truncate px-1 py-0 text-sm font-medium">
+          {currentRecipe.name ?? ""}
+        </div>
+        <div className="flex shrink-0">
+          {[
+            {
+              label: <ClipboardCopy size={iconSize} />,
+              action: copyCurrentRecipeToClipboard,
+              title: "Copy recipe to clipboard",
+            },
+            {
+              label: <ClipboardPaste size={iconSize} />,
+              action: pasteCurrentRecipeFromClipboard,
+              title: "Paste recipe from clipboard",
+            },
+            { label: <Trash size={iconSize} />, action: clearCurrentRecipe, title: "Clear recipe" },
+          ].map(({ label, action, title }, idx) => (
+            <button key={idx} onClick={action} title={title} className="action-button px-1 py-0.75">
+              {label}
+            </button>
+          ))}
+        </div>
+      </div>
+      <RecipeEditorTable
+        recipe={currentRecipe}
+        validIngredients={validIngredients}
+        hasIngredient={recipeResources.hasIngredient}
+        onNameChange={updateCurrentIngredientRowName}
+        onQuantityChange={updateCurrentIngredientRowQuantity}
+      />
+    </>
+  );
+}

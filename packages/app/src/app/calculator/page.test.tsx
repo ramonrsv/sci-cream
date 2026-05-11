@@ -82,7 +82,7 @@ describe("Calculator Page", () => {
     await vi.waitFor(() => {}, { timeout: 100 });
   });
 
-  it("should render one RecipeGrid component", () => {
+  it("should render one RecipeEditorPanel component", () => {
     const { container } = render(<CalculatorPage />);
     expect(container.querySelectorAll("#recipe-grid").length).toBe(1);
   });
