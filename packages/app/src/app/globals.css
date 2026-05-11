@@ -287,6 +287,50 @@ body {
   @apply mx-auto max-w-5xl py-2 pr-2 sm:px-6 sm:py-10;
 }
 
+/* Search Components */
+.search-list-item {
+  @apply w-full rounded-lg border px-3 py-2 text-left transition-colors;
+
+  @apply border-brd-lt bg-surface-lt hover:bg-hov-lt;
+  @variant dark {
+    @apply border-brd-dk bg-surface-dk hover:bg-hov-dk;
+  }
+}
+
+.search-list-item-active {
+  @apply bg-hov-lt border-blue-400;
+  @variant dark {
+    @apply bg-hov-dk;
+  }
+}
+
+.search-detail-panel {
+  @apply flex flex-1 flex-col gap-4 overflow-y-auto rounded-lg border p-4 [scrollbar-gutter:stable];
+
+  @apply border-brd-lt;
+  @variant dark {
+    @apply border-brd-dk;
+  }
+}
+
+.search-empty {
+  @apply flex flex-1 items-center justify-center rounded-lg border text-sm;
+
+  @apply border-brd-lt text-txt-sec-lt;
+  @variant dark {
+    @apply border-brd-dk text-txt-sec-dk;
+  }
+}
+
+.meta-tag {
+  @apply rounded px-1.5 py-0.5 text-xs;
+
+  @apply bg-hov-lt text-txt-sec-lt;
+  @variant dark {
+    @apply bg-hov-dk text-txt-sec-dk;
+  }
+}
+
 /* Scrollbar Styles */
 * {
   scrollbar-width: thin;

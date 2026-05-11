@@ -31,7 +31,13 @@ import { standardInputStepByPercent } from "@/lib/util";
  *
  * Caller is responsible for sizing/scrolling.
  */
-export function RecipeTable({ recipe }: { recipe: Recipe }) {
+export function RecipeTable({
+  recipe,
+  isValidIngredient,
+}: {
+  recipe: Recipe;
+  isValidIngredient?: (name: string) => boolean;
+}) {
   const mixTotal = recipe.mixTotal;
   const rows = recipe.ingredientRows.filter((row) => row.name !== "" || row.quantity !== undefined);
 
@@ -50,19 +56,27 @@ export function RecipeTable({ recipe }: { recipe: Recipe }) {
         </tr>
       </thead>
       <tbody>
-        {rows.map((row) => (
-          <tr key={row.index} className="h-6.25">
-            <td className="table-inner-cell px-2">{row.name}</td>
-            <td className="table-inner-cell comp-val px-2 text-right font-mono">
-              {row.quantity ?? ""}
-            </td>
-            <td className="table-inner-cell comp-val px-1">
-              {row.quantity && mixTotal
-                ? formatCompositionValue((row.quantity / mixTotal) * 100)
-                : ""}
-            </td>
-          </tr>
-        ))}
+        {rows.map((row) => {
+          const invalid =
+            isValidIngredient !== undefined && row.name !== "" && !isValidIngredient(row.name);
+          return (
+            <tr key={row.index} className="h-6.25">
+              <td
+                className={`table-inner-cell px-2 ${invalid ? "-outline-offset-2 outline-red-400 outline-solid" : ""}`}
+              >
+                {row.name}
+              </td>
+              <td className="table-inner-cell comp-val px-2 text-right font-mono">
+                {row.quantity ?? ""}
+              </td>
+              <td className="table-inner-cell comp-val px-1">
+                {row.quantity && mixTotal
+                  ? formatCompositionValue((row.quantity / mixTotal) * 100)
+                  : ""}
+              </td>
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );

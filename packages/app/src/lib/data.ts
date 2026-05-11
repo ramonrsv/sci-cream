@@ -3,6 +3,7 @@
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and } from "drizzle-orm";
+import type { RecipeEntryJson } from "@workspace/sci-cream";
 
 import { getDatabaseUrl } from "./database/util";
 import {
@@ -113,4 +114,25 @@ export async function fetchAllUserIngredientSpecs(
     `fetchAllUserIngredientSpecs: found ${ingredients.length} ingredients for userId=${user.id}`,
   );
   return ingredients;
+}
+
+/**
+ * Fetch all saved recipes belonging to the given user; `undefined` if the user is not found.
+ *
+ * @todo Implement once a `saved_recipes` table is added to the schema. Hard-coded stub for now
+ * so that visual regression tests can exercise the invalid-ingredient highlight in RecipeTable.
+ */
+export async function fetchAllUserSavedRecipes(
+  _userEmail: string, // eslint-disable-line @typescript-eslint/no-unused-vars
+): Promise<RecipeEntryJson[] | undefined> {
+  return [
+    {
+      name: "User Recipe (Stub)",
+      recipe: [
+        ["Heavy Cream", 500],
+        ["Sucrose", 120],
+        ["Ghost Ingredient", 30],
+      ],
+    },
+  ];
 }
