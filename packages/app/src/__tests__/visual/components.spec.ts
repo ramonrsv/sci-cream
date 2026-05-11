@@ -20,40 +20,40 @@ test.describe("Visual Regression: Empty State", () => {
   test("initial page load - empty recipe grid", async ({ page }) => {
     await goToPageAndWaitFor(page);
 
-    const recipeGrid = page.locator("#recipe-grid");
+    const recipeGrid = page.locator("#recipe-editor-panel");
     await expect(recipeGrid).toBeVisible();
 
-    await expect(recipeGrid).toHaveScreenshot("recipe-grid-empty.png");
+    await expect(recipeGrid).toHaveScreenshot("recipe-editor-panel-empty.png");
   });
 
   test("empty properties grid", async ({ page }) => {
     await goToPageAndWaitFor(page);
 
-    const propertiesGrid = page.locator("#mix-properties-grid");
+    const propertiesGrid = page.locator("#properties-panel");
     await expect(propertiesGrid).toBeVisible();
 
-    await expect(propertiesGrid).toHaveScreenshot("properties-grid-empty.png");
+    await expect(propertiesGrid).toHaveScreenshot("properties-panel-empty.png");
   });
 
   test("empty composition grid", async ({ page }) => {
     await goToPageAndWaitFor(page);
 
-    const compositionGrid = page.locator("#ing-composition-grid");
+    const compositionGrid = page.locator("#composition-breakdown-panel");
     await expect(compositionGrid).toBeVisible();
 
-    await expect(compositionGrid).toHaveScreenshot("composition-grid-empty.png");
+    await expect(compositionGrid).toHaveScreenshot("composition-breakdown-panel-empty.png");
   });
 
   test("empty properties chart", async ({ page }) => {
     await goToPageAndWaitFor(page);
 
-    const propertiesChart = page.locator("#mix-properties-chart");
+    const propertiesChart = page.locator("#properties-chart-panel");
     await expect(propertiesChart).toBeVisible();
 
     await waitForChartsToRender(page);
 
     // @todo Investigate why there are intermittently up to 112 different pixels in the screenshot
-    await expect(propertiesChart).toHaveScreenshot("properties-chart-empty.png", {
+    await expect(propertiesChart).toHaveScreenshot("properties-chart-panel-empty.png", {
       maxDiffPixels: 112,
     });
   });
@@ -61,13 +61,13 @@ test.describe("Visual Regression: Empty State", () => {
   test("empty FPD graph", async ({ page }) => {
     await goToPageAndWaitFor(page);
 
-    const fpdGraph = page.locator("#fpd-graph");
+    const fpdGraph = page.locator("#fpd-graph-panel");
     await expect(fpdGraph).toBeVisible();
 
     await waitForChartsToRender(page);
 
     // @todo Investigate why there are intermittently up to 199 different pixels in the screenshot
-    await expect(fpdGraph).toHaveScreenshot("fpd-graph-empty.png", { maxDiffPixels: 199 });
+    await expect(fpdGraph).toHaveScreenshot("fpd-graph-panel-empty.png", { maxDiffPixels: 199 });
   });
 });
 
@@ -104,9 +104,9 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
     test(makeRecipeName("RecipeEditorPanel", recipeIds), async ({ page, browserName }) => {
       await initializeAndPasteRecipes(page, browserName, recipeIds);
 
-      const recipeGrid = page.locator("#recipe-grid");
+      const recipeGrid = page.locator("#recipe-editor-panel");
       await expect(recipeGrid).toBeVisible();
-      await expect(recipeGrid).toHaveScreenshot(makeFilename("recipe-grid", recipeIds));
+      await expect(recipeGrid).toHaveScreenshot(makeFilename("recipe-editor-panel", recipeIds));
     });
   };
 
@@ -114,10 +114,10 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
     test(makeRecipeName("PropertiesPanel", recipeIds), async ({ page, browserName }) => {
       await initializeAndPasteRecipes(page, browserName, recipeIds);
 
-      const propertiesGrid = page.locator("#mix-properties-grid");
+      const propertiesGrid = page.locator("#properties-panel");
       await expect(propertiesGrid).toBeVisible();
       await propertiesGrid.locator("div").nth(1).scrollIntoViewIfNeeded();
-      await expect(propertiesGrid).toHaveScreenshot(makeFilename("properties-grid", recipeIds));
+      await expect(propertiesGrid).toHaveScreenshot(makeFilename("properties-panel", recipeIds));
     });
   };
 
@@ -125,10 +125,12 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
     test(makeRecipeName("CompositionBreakdownPanel", recipeIds), async ({ page, browserName }) => {
       await initializeAndPasteRecipes(page, browserName, recipeIds);
 
-      const compositionGrid = page.locator("#ing-composition-grid");
+      const compositionGrid = page.locator("#composition-breakdown-panel");
       await expect(compositionGrid).toBeVisible();
       await compositionGrid.locator("div").nth(1).scrollIntoViewIfNeeded();
-      await expect(compositionGrid).toHaveScreenshot(makeFilename("composition-grid", recipeIds));
+      await expect(compositionGrid).toHaveScreenshot(
+        makeFilename("composition-breakdown-panel", recipeIds),
+      );
     });
   };
 
@@ -138,9 +140,11 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
 
       await waitForChartsToRender(page);
 
-      const propertiesChart = page.locator("#mix-properties-chart");
+      const propertiesChart = page.locator("#properties-chart-panel");
       await expect(propertiesChart).toBeVisible();
-      await expect(propertiesChart).toHaveScreenshot(makeFilename("properties-chart", recipeIds));
+      await expect(propertiesChart).toHaveScreenshot(
+        makeFilename("properties-chart-panel", recipeIds),
+      );
     });
   };
 
@@ -150,9 +154,9 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
 
       await waitForChartsToRender(page);
 
-      const fpdGraph = page.locator("#fpd-graph");
+      const fpdGraph = page.locator("#fpd-graph-panel");
       await expect(fpdGraph).toBeVisible();
-      await expect(fpdGraph).toHaveScreenshot(makeFilename("fpd-graph", recipeIds));
+      await expect(fpdGraph).toHaveScreenshot(makeFilename("fpd-graph-panel", recipeIds));
     });
   };
 
@@ -220,7 +224,7 @@ test.describe("Visual Regression: Component Variations", () => {
     const keyFilter = getMixPropertiesKeyFilterSelectInput(page);
     await keyFilter.selectOption(KeyFilter.All);
 
-    const propertiesGrid = page.locator("#mix-properties-grid");
+    const propertiesGrid = page.locator("#properties-panel");
 
     // Target the scrollable container with overflow-y-auto class
     const scrollableDiv = propertiesGrid.locator("div.overflow-y-auto");
@@ -228,6 +232,6 @@ test.describe("Visual Regression: Component Variations", () => {
     await scrollableDiv.evaluate((el) => (el.scrollTop = el.scrollHeight / 2));
     await page.waitForTimeout(200);
 
-    await expect(propertiesGrid).toHaveScreenshot("properties-grid-scrolled.png");
+    await expect(propertiesGrid).toHaveScreenshot("properties-panel-scrolled.png");
   });
 });

@@ -77,7 +77,7 @@ export function CompositionBreakdown({
   return (
     <div className="border-brd-lt dark:border-brd-dk border-r">
       {/* Ingredient & Qty Table */}
-      <div id="ing-quantity-table">
+      <div id="composition-breakdown-recipe-table">
         <table className="float-left">
           <thead>
             <tr className="h-6.25">
@@ -113,7 +113,7 @@ export function CompositionBreakdown({
       </div>
       {/* Composition Table */}
       {/* @todo The table doesn't fully align to the right, and its parent's div is ~2px too tall */}
-      <div id="ing-composition-table" className="overflow-x-auto whitespace-nowrap">
+      <div id="composition-breakdown-table" className="overflow-x-auto whitespace-nowrap">
         <table>
           <thead>
             <tr className="h-6.25">

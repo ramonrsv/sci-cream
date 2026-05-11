@@ -84,17 +84,17 @@ describe("Calculator Page", () => {
 
   it("should render one RecipeEditorPanel component", () => {
     const { container } = render(<CalculatorPage />);
-    expect(container.querySelectorAll("#recipe-grid").length).toBe(1);
+    expect(container.querySelectorAll("#recipe-editor-panel").length).toBe(1);
   });
 
   it("should render one PropertiesPanel component", () => {
     const { container } = render(<CalculatorPage />);
-    expect(container.querySelectorAll("#mix-properties-grid").length).toBe(1);
+    expect(container.querySelectorAll("#properties-panel").length).toBe(1);
   });
 
   it("should render one CompositionBreakdownPanel component", () => {
     const { container } = render(<CalculatorPage />);
-    expect(container.querySelectorAll("#ing-composition-grid").length).toBe(1);
+    expect(container.querySelectorAll("#composition-breakdown-panel").length).toBe(1);
   });
 
   it("should pre-seed WasmBridge with all embedded ingredient specs on mount", async () => {

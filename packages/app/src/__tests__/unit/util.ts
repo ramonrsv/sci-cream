@@ -54,7 +54,7 @@ export function makeMockRecipeContext(recipeIds: RecipeID[]) {
 /** Returns the zero-based column index of a comp key in the composition table header */
 export function getCompColumnIdx(container: HTMLElement, compKey: CompKey): number {
   const headers = Array.from(
-    container.querySelectorAll("#ing-composition-table thead tr:first-child th"),
+    container.querySelectorAll("#composition-breakdown-table thead tr:first-child th"),
   );
   return headers.findIndex((th) => th.textContent === comp_key_as_med_str(compKey));
 }

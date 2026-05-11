@@ -14,7 +14,7 @@ import { STD_COMPONENT_H_PX, DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
 export function CompositionBreakdownPanel({ recipes }: { recipes: Recipe[] }) {
   return (
     <div
-      id="ing-composition-grid"
+      id="composition-breakdown-panel"
       className="grid-component w-full min-w-50"
       style={{ height: `${STD_COMPONENT_H_PX}px` }}
     >

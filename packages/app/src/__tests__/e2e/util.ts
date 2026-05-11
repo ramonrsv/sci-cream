@@ -34,7 +34,7 @@ declare global {
 
 /** Get `RecipeGrid`'s recipe selector element, in `RecipeSelect` */
 export function getRecipeGridRecipeSelector(page: Page) {
-  return page.locator("#recipe-grid #recipe-selection select").first();
+  return page.locator("#recipe-editor-panel #recipe-selection select").first();
 }
 
 /** Get ingredient name search input element at the given index */
@@ -49,33 +49,33 @@ export function getIngredientQtyInputAtIdx(page: Page, index: number) {
 
 /** Get `MixPropertiesGrid`'s `QtyToggle` select input element, in `QtyToggleSelect` */
 export function getMixPropertiesQtyToggleSelectInput(page: Page) {
-  return page.locator("#mix-properties-grid #qty-toggle-select select").first();
+  return page.locator("#properties-panel #qty-toggle-select select").first();
 }
 
 /** Get `MixPropertiesGrid`'s `KeyFilter` select input element, in `KeyFilterSelect` */
 export function getMixPropertiesKeyFilterSelectInput(page: Page) {
-  return page.locator("#mix-properties-grid #key-filter-select select").first();
+  return page.locator("#properties-panel #key-filter-select select").first();
 }
 
 /** Get `IngredientCompositionGrid`'s recipe selector element, in `RecipeSelect` */
 export function getCompositionGridRecipeSelector(page: Page) {
-  return page.locator("#ing-composition-grid #recipe-selection select").first();
+  return page.locator("#composition-breakdown-panel #recipe-selection select").first();
 }
 
 /** Get `IngredientCompositionGrid`'s `QtyToggle` select input element, in `QtyToggleSelect` */
 export function getCompositionGridQtyToggleSelectInput(page: Page) {
-  return page.locator("#ing-composition-grid #qty-toggle-select select").first();
+  return page.locator("#composition-breakdown-panel #qty-toggle-select select").first();
 }
 
 /** Get `IngredientCompositionGrid`'s `KeyFilter` select input element, in `KeyFilterSelect` */
 export function getCompositionGridKeyFilterSelectInput(page: Page) {
-  return page.locator("#ing-composition-grid #key-filter-select select").first();
+  return page.locator("#composition-breakdown-panel #key-filter-select select").first();
 }
 
 /** Get `MixPropertiesGrid`'s value cell element for the given property key and recipe index */
 export function getMixPropertyValueElement(page: Page, propKey: PropKey, recipeIdx: number = 0) {
   return page
-    .locator("#mix-properties-grid table tbody tr")
+    .locator("#properties-panel table tbody tr")
     .filter({ has: page.locator("td", { hasText: prop_key_as_med_str(propKey) }) })
     .locator("td.comp-val")
     .nth(recipeIdx);
@@ -83,7 +83,7 @@ export function getMixPropertyValueElement(page: Page, propKey: PropKey, recipeI
 
 /** Get all header cell elements in the `IngredientCompositionGrid` */
 export function getCompositionGridHeaders(page: Page) {
-  return page.locator("#ing-composition-grid #ing-composition-table table thead th");
+  return page.locator("#composition-breakdown-panel #composition-breakdown-table table thead th");
 }
 
 /** Get the `IngCompositionGrid`'s value cell element for the given ingredient index and comp key */
@@ -92,7 +92,7 @@ export async function getCompositionValueElement(page: Page, ingIdx: number, com
   const colIdx = headersTxt.findIndex((text) => text.includes(comp_key_as_med_str(compKey)));
 
   return page
-    .locator("#ing-composition-grid #ing-composition-table table tbody tr")
+    .locator("#composition-breakdown-panel #composition-breakdown-table table tbody tr")
     .nth(ingIdx)
     .locator("td")
     .nth(colIdx);

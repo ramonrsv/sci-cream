@@ -73,7 +73,7 @@ describe("FpdGraphPanel", () => {
     it("should render with the correct id", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
       const { container } = render(<FpdGraphPanel recipes={recipeCtx.recipes} />);
-      expect(container.querySelector("#fpd-graph")).toBeInTheDocument();
+      expect(container.querySelector("#fpd-graph-panel")).toBeInTheDocument();
     });
 
     it("should render with the grid-component class", () => {

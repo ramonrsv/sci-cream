@@ -19,7 +19,11 @@ export function RecipeEditorPanel({
   };
 }) {
   return (
-    <div id="recipe-grid" className="grid-component" style={{ height: `${STD_COMPONENT_H_PX}px` }}>
+    <div
+      id="recipe-editor-panel"
+      className="grid-component"
+      style={{ height: `${STD_COMPONENT_H_PX}px` }}
+    >
       <RecipeEditor
         props={{
           ...props,

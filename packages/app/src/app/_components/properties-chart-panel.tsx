@@ -15,7 +15,7 @@ import { DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
 export function PropertiesChartPanel({ recipes }: { recipes: Recipe[] }) {
   const active = filterActiveSlots(recipes);
   return (
-    <div id="mix-properties-chart" className="grid-component relative h-full w-full">
+    <div id="properties-chart-panel" className="grid-component relative h-full w-full">
       <PropertiesChartView
         main={active[0]}
         refs={active.slice(1)}

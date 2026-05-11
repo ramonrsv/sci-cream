@@ -32,7 +32,7 @@ describe("PropertiesPanel", () => {
     it("should render with the correct id", () => {
       const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<PropertiesPanel recipes={recipeCtx.recipes} />);
-      expect(container.querySelector("#mix-properties-grid")).toBeInTheDocument();
+      expect(container.querySelector("#properties-panel")).toBeInTheDocument();
     });
 
     it("should render with the grid-component class", () => {

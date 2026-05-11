@@ -67,7 +67,7 @@ describe("PropertiesChartPanel", () => {
     it("should render with the correct id", () => {
       const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<PropertiesChartPanel recipes={recipeCtx.recipes} />);
-      expect(container.querySelector("#mix-properties-chart")).toBeInTheDocument();
+      expect(container.querySelector("#properties-chart-panel")).toBeInTheDocument();
     });
 
     it("should render with the grid-component class", () => {
