@@ -7,14 +7,11 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 
 import { Color, getColor } from "@/lib/styles/colors";
-import { FpdGraph } from "@/app/_components/fpd-graph";
+import { FpdGraph } from "@/app/_elements/charts/fpd-graph";
+import { filterActiveSlots } from "@/app/_components/recipe";
 
 import { RecipeID } from "@/__tests__/assets";
 import { makeMockRecipe, makeMockRecipeContext } from "@/__tests__/unit/util";
-
-// ---------------------------------------------------------------------------
-// Test helpers, mocks, and setup
-// ---------------------------------------------------------------------------
 
 /** Mock implementation of ResizeObserver for testing purposes */
 class ResizeObserverMock {
@@ -89,9 +86,12 @@ vi.mock("react-chartjs-2", () => ({
   },
 }));
 
-// ---------------------------------------------------------------------------
-// FpdGraph
-// ---------------------------------------------------------------------------
+/** Convenience: render FpdGraph with the active recipes from a mock context (main + non-empty refs) */
+function renderFromContext(recipeIds: RecipeID[]) {
+  const recipeCtx = makeMockRecipeContext(recipeIds);
+  const active = filterActiveSlots(recipeCtx.recipes);
+  return render(<FpdGraph main={active[0]} refs={active.slice(1)} />);
+}
 
 describe("FpdGraph", () => {
   beforeEach(() => {
@@ -109,63 +109,28 @@ describe("FpdGraph", () => {
 
   describe("Component Rendering", () => {
     it("should render without crashing", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
+      renderFromContext([RecipeID.Main]);
       expect(screen.getByTestId("line-chart")).toBeInTheDocument();
-    });
-
-    it("should render with the correct container structure", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      const { container } = render(<FpdGraph recipes={recipeCtx.recipes} />);
-      expect(container.querySelector("#fpd-graph")).toBeInTheDocument();
-      expect(container.querySelector(".grid-component")).toBeInTheDocument();
     });
   });
 
-  // ---- Recipe Filtering -----------------------------------------------------------------------
+  // ---- Dataset Count --------------------------------------------------------------------------
 
-  describe("Recipe Filtering", () => {
-    it("should produce 2 datasets when only the main recipe is present", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+  describe("Dataset Count", () => {
+    it("should produce 2 datasets when only the main recipe is provided", () => {
+      renderFromContext([RecipeID.Main]);
       expect(capturedLineProps).not.toBeNull();
       expect(capturedLineProps!.data.datasets).toHaveLength(2);
     });
 
-    it("should produce 4 datasets when main and one non-empty reference are present", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
-      expect(capturedLineProps).not.toBeNull();
+    it("should produce 4 datasets when main and one reference are provided", () => {
+      renderFromContext([RecipeID.Main, RecipeID.RefA]);
       expect(capturedLineProps!.data.datasets).toHaveLength(4);
     });
 
-    it("should produce 6 datasets when main and two non-empty references are present", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA, RecipeID.RefB]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
-      expect(capturedLineProps).not.toBeNull();
+    it("should produce 6 datasets when main and two references are provided", () => {
+      renderFromContext([RecipeID.Main, RecipeID.RefA, RecipeID.RefB]);
       expect(capturedLineProps!.data.datasets).toHaveLength(6);
-    });
-
-    it("should exclude empty reference recipes from the graph", () => {
-      // Only Main is populated; RefA and RefB remain empty
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
-      const labels = capturedLineProps!.data.datasets.map((d) => d.label);
-      expect(labels.some((l) => l.includes("Ref"))).toBe(false);
-    });
-
-    it("should include only the non-empty reference when one reference is empty", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefB]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
-      expect(capturedLineProps!.data.datasets).toHaveLength(4);
-      const labels = capturedLineProps!.data.datasets.map((d) => d.label);
-      expect(labels.some((l) => l.includes("Ref A"))).toBe(false);
-      expect(labels.some((l) => l.includes("Ref B"))).toBe(true);
     });
   });
 
@@ -173,18 +138,14 @@ describe("FpdGraph", () => {
 
   describe("Dataset Labels", () => {
     it("should label main recipe datasets without a name suffix", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       const labels = capturedLineProps!.data.datasets.map((d) => d.label);
       expect(labels).toContain("Hardness");
       expect(labels).toContain("Frozen Water");
     });
 
     it("should label reference recipe datasets with a recipe name suffix", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main, RecipeID.RefA]);
       const labels = capturedLineProps!.data.datasets.map((d) => d.label);
       expect(labels).toContain("Hardness (Ref A)");
       expect(labels).toContain("Frozen Water (Ref A)");
@@ -195,9 +156,7 @@ describe("FpdGraph", () => {
 
   describe("Dataset Colors", () => {
     it("should use GraphBlue for main recipe datasets", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       const expectedColor = getColor(Color.GraphBlue);
       capturedLineProps!.data.datasets.forEach((dataset) => {
         expect(dataset.borderColor).toBe(expectedColor);
@@ -205,8 +164,7 @@ describe("FpdGraph", () => {
     });
 
     it("should use GraphGray for reference recipe datasets", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
+      renderFromContext([RecipeID.Main, RecipeID.RefA]);
 
       const refDatasets = capturedLineProps!.data.datasets.filter((d) =>
         d.label.includes("(Ref A)"),
@@ -223,9 +181,7 @@ describe("FpdGraph", () => {
 
   describe("Border Styles", () => {
     it("should apply a dashed border to the Frozen Water dataset", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       const frozenWaterDataset = capturedLineProps!.data.datasets.find((d) =>
         d.label.startsWith("Frozen Water"),
       );
@@ -234,9 +190,7 @@ describe("FpdGraph", () => {
     });
 
     it("should not apply a dashed border to the Hardness dataset", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       const hardnessDataset = capturedLineProps!.data.datasets.find((d) =>
         d.label.startsWith("Hardness"),
       );
@@ -245,8 +199,7 @@ describe("FpdGraph", () => {
     });
 
     it("should use a wider border for the main recipe than for references", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
+      renderFromContext([RecipeID.Main, RecipeID.RefA]);
 
       const mainDatasets = capturedLineProps!.data.datasets.filter((d) => !d.label.includes("("));
       const refDatasets = capturedLineProps!.data.datasets.filter((d) =>
@@ -262,17 +215,13 @@ describe("FpdGraph", () => {
 
   describe("Fill Configuration", () => {
     it("should fill the main recipe Hardness dataset from the start", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       const hardnessDataset = capturedLineProps!.data.datasets.find((d) => d.label === "Hardness");
       expect(hardnessDataset!.fill).toBe("start");
     });
 
     it("should not fill the main recipe Frozen Water dataset", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       const frozenWaterDataset = capturedLineProps!.data.datasets.find(
         (d) => d.label === "Frozen Water",
       );
@@ -280,9 +229,7 @@ describe("FpdGraph", () => {
     });
 
     it("should not fill reference recipe datasets", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main, RecipeID.RefA]);
       const refDatasets = capturedLineProps!.data.datasets.filter((d) =>
         d.label.includes("(Ref A)"),
       );
@@ -294,18 +241,14 @@ describe("FpdGraph", () => {
 
   describe("Curve Data", () => {
     it("should produce 100 data points per dataset", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       capturedLineProps!.data.datasets.forEach((dataset) => {
         expect(dataset.data).toHaveLength(100);
       });
     });
 
     it("should map non-negative temperatures to NaN", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       capturedLineProps!.data.datasets.forEach((dataset) => {
         dataset.data.forEach((value) => {
           if (!Number.isNaN(value)) {
@@ -317,9 +260,7 @@ describe("FpdGraph", () => {
 
     it("should have negative temperature values for a real recipe", () => {
       const recipe = makeMockRecipe(RecipeID.Main);
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      recipeCtx.recipes[0] = recipe;
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
+      render(<FpdGraph main={recipe} />);
 
       const hardnessDataset = capturedLineProps!.data.datasets.find((d) => d.label === "Hardness")!;
       const negativeValues = hardnessDataset.data.filter((v) => !Number.isNaN(v));
@@ -332,17 +273,13 @@ describe("FpdGraph", () => {
 
   describe("Point Highlighting", () => {
     it("should highlight index 75 on the main recipe Hardness dataset", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       const hardnessDataset = capturedLineProps!.data.datasets.find((d) => d.label === "Hardness")!;
       expect(hardnessDataset.pointRadius[75]).toBe(6);
     });
 
     it("should not highlight index 75 on the Frozen Water dataset", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       const frozenWaterDataset = capturedLineProps!.data.datasets.find(
         (d) => d.label === "Frozen Water",
       )!;
@@ -350,9 +287,7 @@ describe("FpdGraph", () => {
     });
 
     it("should set pointRadius to 0 for all non-highlighted indices on the Hardness dataset", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       const hardnessDataset = capturedLineProps!.data.datasets.find((d) => d.label === "Hardness")!;
       hardnessDataset.pointRadius.forEach((r, i) => {
         if (i !== 75) expect(r).toBe(0);
@@ -364,9 +299,7 @@ describe("FpdGraph", () => {
 
   describe("X-Axis Labels", () => {
     it("should produce 101 x-axis labels covering 0 to 100", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       const labels = capturedLineProps!.data.labels;
       expect(labels).toHaveLength(101);
       expect(labels[0]).toBe(0);
@@ -378,33 +311,25 @@ describe("FpdGraph", () => {
 
   describe("Chart Options", () => {
     it("should configure the chart title as 'FPD Graph'", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       expect(capturedLineProps!.options.plugins.title.display).toBe(true);
       expect(capturedLineProps!.options.plugins.title.text).toBe("FPD Graph");
     });
 
     it("should configure the chart as responsive without fixed aspect ratio", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       expect(capturedLineProps!.options.responsive).toBe(true);
       expect(capturedLineProps!.options.maintainAspectRatio).toBe(false);
     });
 
     it("should configure the y-axis with min -30 and max 0", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       expect(capturedLineProps!.options.scales.y.min).toBe(-30);
       expect(capturedLineProps!.options.scales.y.max).toBe(0);
     });
 
     it("should configure the y-axis title as 'Temperature (°C)'", () => {
-      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
-      render(<FpdGraph recipes={recipeCtx.recipes} />);
-
+      renderFromContext([RecipeID.Main]);
       expect(capturedLineProps!.options.scales.y.title.display).toBe(true);
       expect(capturedLineProps!.options.scales.y.title.text).toBe("Temperature (°C)");
     });

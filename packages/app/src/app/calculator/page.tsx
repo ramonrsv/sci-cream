@@ -14,7 +14,7 @@ import {
 import { IngredientCompositionGrid } from "@/app/_components/composition";
 import { PropertiesPanel } from "@/app/_components/properties-panel";
 import { MixPropertiesChart } from "@/app/_components/properties-chart";
-import { FpdGraph } from "@/app/_components/fpd-graph";
+import { FpdGraphPanel } from "@/app/_components/fpd-graph-panel";
 import {
   RecipeGrid,
   makeEmptyRecipeContext,
@@ -167,7 +167,7 @@ function CalculatorContent() {
           <div key="properties">{<PropertiesPanel recipes={recipes} />}</div>
           <div key="composition">{<IngredientCompositionGrid recipes={recipes} />}</div>
           <div key="props-chart">{<MixPropertiesChart recipes={recipes} />}</div>
-          <div key="fpd-graph">{<FpdGraph recipes={recipes} />}</div>
+          <div key="fpd-graph">{<FpdGraphPanel recipes={recipes} />}</div>
         </ResponsiveGridLayout>
       )}
     </div>

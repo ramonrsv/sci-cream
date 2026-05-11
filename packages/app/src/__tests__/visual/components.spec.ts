@@ -145,7 +145,7 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
   };
 
   const testFpdGraph = async (recipeIds: RecipeID[]) => {
-    test(makeRecipeName("FpdGraph", recipeIds), async ({ page, browserName }) => {
+    test(makeRecipeName("FpdGraphPanel", recipeIds), async ({ page, browserName }) => {
       await initializeAndPasteRecipes(page, browserName, recipeIds);
 
       await waitForChartsToRender(page);

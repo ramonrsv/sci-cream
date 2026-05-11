@@ -1,7 +1,6 @@
 "use client";
 
 import { Line } from "react-chartjs-2";
-import { GripVertical } from "lucide-react";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -17,9 +16,9 @@ import {
   type ScriptableScaleContext,
 } from "chart.js";
 
-import { Recipe, isRecipeEmpty } from "./recipe";
+import { RecipeSummary } from "@/app/_components/recipe";
 import { useTheme } from "@/lib/theme";
-import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "../../lib/styles/sizes";
+import { GRAPH_TITLE_FONT_SIZE } from "@/lib/styles/sizes";
 
 import {
   Color,
@@ -40,12 +39,15 @@ ChartJS.register(
   Filler,
 );
 
-/** Line chart visualizing FPD curves (hardness and frozen water) for the active recipes */
-export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
+/**
+ * Bare line chart visualizing FPD curves (hardness and frozen water) for a main recipe plus zero
+ * or more reference recipes. The main recipe is drawn with a wider, filled blue line and the
+ * reference recipes with thinner gray lines, with a highlight marker at the ideal serving point.
+ *
+ * Consumer is responsible for sizing the chart via a parent container.
+ */
+export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: RecipeSummary[] }) {
   const { theme } = useTheme();
-
-  // Only display the main recipe and non-empty reference recipes
-  const recipes = allRecipes.filter((recipe) => recipe.index == 0 || !isRecipeEmpty(recipe));
 
   /** Ideal serving 'hardness' value, in [0, 100], used to place a highlight point */
   const highlightedHardnessPercent = 75;
@@ -55,17 +57,22 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
     return lineLabel === "Hardness" && pointIdx === highlightedHardnessPercent;
   };
 
+  /** All recipes in display order: main first, then refs */
+  const recipes: { recipe: RecipeSummary; isMain: boolean }[] = [
+    { recipe: main, isMain: true },
+    ...refs.map((r) => ({ recipe: r, isMain: false })),
+  ];
+
   /** Chart.js dataset configuration built from the active recipes' FPD curves */
   const graphData = {
     labels: Array.from({ length: 101 }, (_, i) => i),
-    datasets: recipes.flatMap((recipe) => {
-      const recipeColor =
-        recipe.index === 0 ? getColor(Color.GraphBlue) : getColor(Color.GraphGray);
+    datasets: recipes.flatMap(({ recipe, isMain }) => {
+      const recipeColor = isMain ? getColor(Color.GraphBlue) : getColor(Color.GraphGray);
 
       const curves = recipe.mixProperties.fpd!.curves!;
-      const borderWidth = recipe.index === 0 ? 4 : 3;
+      const borderWidth = isMain ? 4 : 3;
       const borderColor = recipeColor;
-      const recipeLabel = recipe.index === 0 ? "" : ` (${recipe.name || recipe.id})`;
+      const recipeLabel = isMain ? "" : ` (${recipe.name || recipe.id})`;
 
       const lines = [
         { lineLabel: "Hardness", curve: curves.hardness },
@@ -89,7 +96,7 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
           return gradient;
         },
         borderDash: borderDash,
-        fill: recipe.index === 0 && lineLabel === "Hardness" ? "start" : false,
+        fill: isMain && lineLabel === "Hardness" ? "start" : false,
         pointRadius: curve.map((_, i) => (shouldHighlight(lineLabel, i) ? 6 : 0)),
         pointBackgroundColor: curve.map((_, i) =>
           shouldHighlight(lineLabel, i) ? "#fff" : borderColor,
@@ -183,14 +190,5 @@ export function FpdGraph({ recipes: allRecipes }: { recipes: Recipe[] }) {
     },
   };
 
-  return (
-    <div id="fpd-graph" className="grid-component relative h-full w-full">
-      <div className="flex items-center">
-        <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
-      </div>
-      <div className="h-[calc(100%-33px)] px-2 pb-2">
-        <Line data={graphData} options={options} />
-      </div>
-    </div>
-  );
+  return <Line data={graphData} options={options} />;
 }
