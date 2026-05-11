@@ -1,7 +1,5 @@
 "use client";
 
-import { useState } from "react";
-import { GripVertical } from "lucide-react";
 import { Chart } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -20,17 +18,11 @@ import {
   type IErrorBarYDataPoint,
 } from "chartjs-chart-error-bars";
 
+import { RecipeSummary } from "@/app/_components/recipe";
 import { useTheme } from "@/lib/theme";
-import { Recipe, isRecipeEmpty } from "@/app/_components/recipe";
-import {
-  KeyFilter,
-  KeyFilterSelect,
-  getEnabledKeys,
-} from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
-import { DRAG_HANDLE_ICON_SIZE, GRAPH_TITLE_FONT_SIZE } from "@/lib/styles/sizes";
-import { STATE_VAL } from "@/lib/util";
+import { GRAPH_TITLE_FONT_SIZE } from "@/lib/styles/sizes";
 import {
   Color,
   getColor,
@@ -66,33 +58,18 @@ ChartJS.register(
 );
 
 /**
- * Returns all `PropKey` values suitable for chart display
+ * Returns all `PropKey` values suitable for chart display.
  *
  * Some property keys are excluded from the list because their values would make the scale difficult
- * to read, e.g. PropKey.Water and FpdKey.HardnessAt14C, whose value are in the ~50-80 range, while
- * most other top out at ~30. All keys are still available for selection in the `KeyFilterSelect`.
+ * to read, e.g. `PropKey.Water` and `FpdKey.HardnessAt14C`, whose values are in the ~50-80 range,
+ * while most others top out at ~30. All keys are still available for selection in the
+ * `KeyFilterSelect` above the chart.
  */
 export function getPropKeys(): PropKey[] {
   return getPropKeysAll().filter(
-    (key) =>
-      // These values make the scale hard to read in a chart
-      key !== compToPropKey(CompKey.Water) && key !== fpdToPropKey(FpdKey.HardnessAt14C),
+    (key) => key !== compToPropKey(CompKey.Water) && key !== fpdToPropKey(FpdKey.HardnessAt14C),
   );
 }
-/** Default set of property keys shown when the Custom key filter is first initialized */
-export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
-  compToPropKey(CompKey.MilkFat),
-  compToPropKey(CompKey.TotalFats),
-  compToPropKey(CompKey.MSNF),
-  compToPropKey(CompKey.TotalSolids),
-  compToPropKey(CompKey.Water),
-  compToPropKey(CompKey.TotalSugars),
-  compToPropKey(CompKey.StabilizersPerWater),
-  compToPropKey(CompKey.POD),
-  compToPropKey(CompKey.PACtotal),
-  compToPropKey(CompKey.AbsPAC),
-  fpdToPropKey(FpdKey.ServingTemp),
-] as PropKey[]);
 
 /**
  * Modify some property values to be more suitable for chart display
@@ -156,7 +133,6 @@ export function getModifiedAcceptablePropertyRange(
   let range: { yMin: number; yMax: number } = { yMin: sciRange.min, yMax: sciRange.max };
 
   switch (propKey) {
-    // Invert max/min for FPD and ServingTemp since those property values are negated for display
     case fpdToPropKey(FpdKey.FPD):
     case fpdToPropKey(FpdKey.ServingTemp):
       range = { yMin: range.yMax, yMax: range.yMin };
@@ -169,57 +145,39 @@ export function getModifiedAcceptablePropertyRange(
 }
 
 /**
- * Bar chart displaying key mix property values for the active recipes, with acceptable-range error
- * bars for the main recipe, including color coding based on the position relative to the range.
+ * Bare bar chart displaying key mix property values for the main recipe and zero or more
+ * reference recipes, with acceptable-range error bars on the main recipe's bars and color coding
+ * based on the position relative to the range.
+ *
+ * Consumer is responsible for sizing the chart via a parent container.
  */
-export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] }) {
+export function PropertiesBarChart({
+  main,
+  refs = [],
+  propKeys,
+}: {
+  main: RecipeSummary;
+  refs?: RecipeSummary[];
+  propKeys: PropKey[];
+}) {
   const { theme } = useTheme();
-  const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
-  const selectedPropsState = useState<Set<PropKey>>(DEFAULT_SELECTED_PROPERTIES);
 
   /** Always display properties as percentages in the chart */
   const qtyToggle = QtyToggle.Percentage;
 
-  /** Returns `true` when every non-empty recipe has a zero/NaN value for the given property key */
-  const isPropEmpty = (prop_key: PropKey) => {
-    for (const recipe of recipes) {
-      const prop_val = getMixProperty(recipe.mixProperties!, prop_key);
-      if (!(prop_val === 0 || Number.isNaN(prop_val))) {
-        return false;
-      }
-    }
-    return true;
-  };
-
-  /** Auto-filter heuristic: includes a property key when it is part of the default selection */
-  const autoHeuristic = (prop_key: PropKey) => {
-    return DEFAULT_SELECTED_PROPERTIES.has(prop_key);
-  };
-
-  /** Returns the list of property keys to display, based on the current filter and selection */
-  const getEnabledProps = () => {
-    return getEnabledKeys(
-      propsFilterState[STATE_VAL],
-      selectedPropsState[STATE_VAL],
-      getPropKeys,
-      isPropEmpty,
-      autoHeuristic,
-    );
-  };
-
   /** Returns the display-ready (modified + qty-toggled) numeric value for a property key */
   const getPropertyValue = (
-    prop_key: PropKey,
+    propKey: PropKey,
     mixProperties: MixProperties,
     mixTotal: number,
   ): number => {
     return (
       applyQtyToggle(
-        getModifiedMixProperty(mixProperties, prop_key),
+        getModifiedMixProperty(mixProperties, propKey),
         mixTotal,
         mixTotal,
         qtyToggle,
-        isPropKeyQuantity(prop_key),
+        isPropKeyQuantity(propKey),
       ) ?? 0
     );
   };
@@ -256,37 +214,40 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
           : getColor(Color.GraphRedDull);
   };
 
-  // Only display the main recipe and non-empty reference recipes
-  const recipes = allRecipes.filter((recipe) => recipe.index == 0 || !isRecipeEmpty(recipe));
-
-  const enabledProps = getEnabledProps();
-  const labels = enabledProps.map((prop_key) => propKeyAsModifiedMedStr(prop_key));
+  const labels = propKeys.map((propKey) => propKeyAsModifiedMedStr(propKey));
 
   const gridColor = getGridColor(theme);
   const legendColor = getLegendColor(theme);
 
-  /** Chart.js dataset configuration built from the active recipes' mix property values */
+  /** All recipes in display order: main first, then refs */
+  const allRecipes: { recipe: RecipeSummary; isMain: boolean; refIdx: number }[] = [
+    { recipe: main, isMain: true, refIdx: -1 },
+    ...refs.map((r, i) => ({ recipe: r, isMain: false, refIdx: i })),
+  ];
+
+  const totalRecipes = allRecipes.length;
+
+  /** Chart.js dataset configuration built from the recipes' mix property values */
   const chartData = {
     labels,
-    datasets: recipes.map((recipe) => {
-      const isMain = recipe.index === 0;
+    datasets: allRecipes.map(({ recipe, isMain, refIdx }) => {
       const mainColor = getColor(Color.GraphGreen);
       const grayColor = getColor(Color.GraphGray);
-      const refOpacity = getReferenceOpacity(recipe.index - 1);
+      const refOpacity = getReferenceOpacity(refIdx);
 
-      const mainBarColors = enabledProps.map((prop_key) => {
-        const val = getPropertyValue(prop_key, recipe.mixProperties!, recipe.mixTotal!);
-        const range = getModifiedAcceptablePropertyRange(prop_key);
+      const mainBarColors = propKeys.map((propKey) => {
+        const val = getPropertyValue(propKey, recipe.mixProperties, recipe.mixTotal!);
+        const range = getModifiedAcceptablePropertyRange(propKey);
         return !range ? mainColor : getMainBarColor(val, range);
       });
 
       return {
         label: recipe.name || recipe.id,
-        data: enabledProps.map(
-          (prop_key) =>
+        data: propKeys.map(
+          (propKey) =>
             ({
-              y: getPropertyValue(prop_key, recipe.mixProperties!, recipe.mixTotal!),
-              ...(isMain ? getModifiedAcceptablePropertyRange(prop_key) : {}),
+              y: getPropertyValue(propKey, recipe.mixProperties, recipe.mixTotal!),
+              ...(isMain ? getModifiedAcceptablePropertyRange(propKey) : {}),
             }) as IErrorBarYDataPoint,
         ),
         backgroundColor: isMain ? mainBarColors! : addOrUpdateAlpha(grayColor, refOpacity),
@@ -300,7 +261,7 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
         errorBarColor: legendColor,
         errorBarWhiskerLineWidth: isMain ? 4 : 0,
         errorBarWhiskerColor: legendColor,
-        errorBarWhiskerRatio: recipes.length === 1 ? 0.4 : recipes.length === 2 ? 0.6 : 1,
+        errorBarWhiskerRatio: totalRecipes === 1 ? 0.4 : totalRecipes === 2 ? 0.6 : 1,
       };
     }),
   };
@@ -311,7 +272,7 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
     maintainAspectRatio: false,
     plugins: {
       legend: {
-        display: recipes.length > 1,
+        display: refs.length > 0,
         position: "chartArea" as const,
         align: "start" as const,
         labels: { color: legendColor, usePointStyle: true, pointStyle: "rectRounded" },
@@ -342,21 +303,5 @@ export function MixPropertiesChart({ recipes: allRecipes }: { recipes: Recipe[] 
     },
   };
 
-  return (
-    <div id="mix-properties-chart" className="grid-component relative h-full w-full">
-      <div className="flex items-center">
-        <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
-        <KeyFilterSelect
-          supportedKeyFilters={[KeyFilter.Auto, KeyFilter.Custom]}
-          keyFilterState={propsFilterState}
-          selectedKeysState={selectedPropsState}
-          getKeys={getPropKeys}
-          key_as_med_str={prop_key_as_med_str}
-        />
-      </div>
-      <div className="h-[calc(100%-33px)] px-2 pb-2">
-        <Chart type="barWithErrorBars" data={chartData} options={options} />
-      </div>
-    </div>
-  );
+  return <Chart type="barWithErrorBars" data={chartData} options={options} />;
 }

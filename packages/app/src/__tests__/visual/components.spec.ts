@@ -133,7 +133,7 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
   };
 
   const testMixPropertiesChart = async (recipeIds: RecipeID[]) => {
-    test(makeRecipeName("MixPropertiesChart", recipeIds), async ({ page, browserName }) => {
+    test(makeRecipeName("PropertiesChartPanel", recipeIds), async ({ page, browserName }) => {
       await initializeAndPasteRecipes(page, browserName, recipeIds);
 
       await waitForChartsToRender(page);

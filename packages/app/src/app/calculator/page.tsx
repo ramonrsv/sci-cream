@@ -13,7 +13,7 @@ import {
 
 import { IngredientCompositionGrid } from "@/app/_components/composition";
 import { PropertiesPanel } from "@/app/_components/properties-panel";
-import { MixPropertiesChart } from "@/app/_components/properties-chart";
+import { PropertiesChartPanel } from "@/app/_components/properties-chart-panel";
 import { FpdGraphPanel } from "@/app/_components/fpd-graph-panel";
 import {
   RecipeGrid,
@@ -166,7 +166,7 @@ function CalculatorContent() {
           <div key="recipe">{<RecipeGrid props={recipeGridProps} />}</div>
           <div key="properties">{<PropertiesPanel recipes={recipes} />}</div>
           <div key="composition">{<IngredientCompositionGrid recipes={recipes} />}</div>
-          <div key="props-chart">{<MixPropertiesChart recipes={recipes} />}</div>
+          <div key="props-chart">{<PropertiesChartPanel recipes={recipes} />}</div>
           <div key="fpd-graph">{<FpdGraphPanel recipes={recipes} />}</div>
         </ResponsiveGridLayout>
       )}
