@@ -33,16 +33,27 @@ export interface IngredientRow {
   ingredient?: Ingredient;
 }
 
-/** Represents one recipe slot: idx, id, name, ingredient rows, mix total, and computed mix props */
-export interface Recipe {
-  index: number;
+/**
+ * Slim shape of a recipe sufficient for properties/chart display: identifier, computed mix total,
+ * and computed mix properties. Suitable for read-only views that don't need the ingredient rows
+ * (e.g. recipe search results), avoiding the cost of cloning WASM `Ingredient` objects per row.
+ *
+ * The `id` field is used both as a display label and a React key for callers that render lists,
+ * and must be unique within a list passed to display components.
+ */
+export interface RecipeSummary {
   /** Fixed slot identifier string (e.g. "Recipe", "Ref A"), for display purposes */
   id: string;
   /** User-defined display name for this recipe, e.g. "Standard Base", etc., default "" */
   name: string;
-  ingredientRows: IngredientRow[];
   mixTotal?: number;
   mixProperties: MixProperties;
+}
+
+/** Represents one recipe slot: idx, id, name, ingredient rows, mix total, and computed mix props */
+export interface Recipe extends RecipeSummary {
+  index: number;
+  ingredientRows: IngredientRow[];
 }
 
 /** Represents a recipe in local storage, including name and serialized ingredient rows */
@@ -127,13 +138,22 @@ export function makeRecipeResourcesFromEmbeddedData(): RecipeResources {
 }
 
 /** Returns `true` when a recipe has no ingredients (mix total is undefined or zero) */
-export function isRecipeEmpty(recipe: Recipe): boolean {
+export function isRecipeEmpty(recipe: RecipeSummary): boolean {
   return recipe.mixTotal === undefined || recipe.mixTotal === 0;
 }
 
 /** Extract the numeric indices from an array of `Recipe` objects */
 export function getRecipeIndices(recipes: Recipe[]): number[] {
   return recipes.map((recipe) => recipe.index);
+}
+
+/**
+ * Slot-filter for the calculator: keeps the main recipe (slot 0) plus any non-empty reference
+ * recipes. Used by display panels that should always show the main recipe column even when blank,
+ * but otherwise omit empty reference slots from the rendering.
+ */
+export function filterActiveSlots(recipes: Recipe[]): Recipe[] {
+  return recipes.filter((r) => r.index === 0 || !isRecipeEmpty(r));
 }
 
 /**
@@ -359,7 +379,7 @@ export function makeUpdatedRecipeFromStore(
  *
  * This component is responsible for maintaining the integrity of the recipes context state,
  * ensuring that all updates to recipes are applied consistently and correctly, and updating the
- * `MixProperties` objects that are consumed by dependent components, e.g. `MixPropertiesGrid`, etc.
+ * `MixProperties` objects that are consumed by dependent components, e.g. `PropertiesPanel`, etc.
  */
 export function RecipeGrid({
   props: {

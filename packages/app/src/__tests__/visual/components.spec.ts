@@ -111,7 +111,7 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
   };
 
   const testMixPropertiesGrid = async (recipeIds: RecipeID[]) => {
-    test(makeRecipeName("MixPropertiesGrid", recipeIds), async ({ page, browserName }) => {
+    test(makeRecipeName("PropertiesPanel", recipeIds), async ({ page, browserName }) => {
       await initializeAndPasteRecipes(page, browserName, recipeIds);
 
       const propertiesGrid = page.locator("#mix-properties-grid");

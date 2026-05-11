@@ -87,7 +87,7 @@ describe("Calculator Page", () => {
     expect(container.querySelectorAll("#recipe-grid").length).toBe(1);
   });
 
-  it("should render one MixPropertiesGrid component", () => {
+  it("should render one PropertiesPanel component", () => {
     const { container } = render(<CalculatorPage />);
     expect(container.querySelectorAll("#mix-properties-grid").length).toBe(1);
   });
