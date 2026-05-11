@@ -151,11 +151,23 @@ and `dist/`. Notable helpers:
 ### Next.js app (`packages/app/src/`)
 
 - **`app/calculator/page.tsx`** — main page; root path redirects here. Renders a responsive
-  drag-and-drop grid (`react-grid-layout`) of five components: `RecipeGrid`, `MixPropertiesGrid`,
-  `IngredientCompositionGrid`, `MixPropertiesChart`, `FpdGraph`.
-- **`app/_components/`** — calculator UI components. They consume `recipes` from a `RecipeContext`
-  and call into the WASM bridge to compute and render results. The context caches ingredient
-  transfer objects (not full `Ingredient`s) by name to avoid redundant fetches.
+  drag-and-drop grid (`react-grid-layout`) of five `*Panel` composites: `RecipeEditorPanel`,
+  `PropertiesPanel`, `CompositionBreakdownPanel`, `PropertiesChartPanel`, `FpdGraphPanel`.
+- **`app/_components/`** — only the calculator's panel composites. Each panel adds grid-layout
+  chrome (drag handle, `grid-component` wrapper, slot filter) around a reusable view from
+  `_elements/`.
+- **`app/_elements/tables/`** and **`app/_elements/charts/`** — reusable widgets. Each component
+  file consolidates two layers: a bare presentational element (`PropertiesTable`,
+  `CompositionBreakdown`, `PropertiesBarChart`, `RecipeTable`, `RecipeEditorTable`, etc.) and a
+  view that wraps it with a toolbar (`PropertiesView`, `CompositionBreakdownView`,
+  `PropertiesChartView`, `RecipeEditor`). The view layer is the drop-in widget consumers outside
+  the calculator (e.g. recipe search) reuse. `FpdGraph` has no toolbar, so its file holds only
+  the bare element.
+- **`lib/recipe.ts`** — recipe data layer: `Recipe`/`RecipeSummary` types, factory helpers
+  (`makeEmptyRecipeContext`, `makeRecipeResources*`), update helpers (`makeUpdatedRecipe*`),
+  serialization (`stringifyRecipe`, `parseRecipeString`), and localStorage persistence. Pure
+  utilities — no JSX, no React. `Recipe extends RecipeSummary` so display components that only
+  need `id`/`name`/`mixProperties` can take the slim shape.
 - **`lib/sci-cream/sci-cream.ts`** — small helpers around `@workspace/sci-cream` types
   (`isCompKeyQuantity`, `isPropKeyQuantity`, `getAcceptablePropertyRange`).
 - **`lib/database/`** — Drizzle ORM schema (`schema.ts`) + seed (`seed.ts`). Two tables: `users` and
@@ -165,6 +177,21 @@ and `dist/`. Notable helpers:
   types via `into_ingredient_from_spec_js()`.
 - **`lib/auth.ts`** — NextAuth v5 (beta) with GitHub + Google OAuth providers.
 - **`app/blog/`**, **`app/docs/`** — markdown-rendered content.
+
+#### UI layering pattern
+
+Five of the calculator's display widgets follow the same three-layer split:
+
+1. **Bare** (`_elements/tables/*` or `_elements/charts/*`) — pure presentation; props in, JSX out.
+2. **View** (same file as bare) — adds the toolbar (`KeyFilterSelect`, `QtyToggleSelect`, etc.)
+   and owns toolbar state. Accepts an optional `toolbarPrefix?: ReactNode` so the panel can slot
+   in its drag handle without breaking the toolbar's flex row.
+3. **Panel** (`_components/*-panel.tsx`) — adds the `grid-component` wrapper, the drag handle (via
+   `toolbarPrefix`), and applies `filterActiveSlots(recipes)` to drop empty reference slots before
+   passing to the view.
+
+The calculator page uses panels; recipe-search and other future consumers reuse the views (or
+bare elements) directly.
 
 When working on UI components, prefer routing recipe → mix-property calculations through
 `WasmBridge` rather than constructing `Recipe` / `RecipeLine` from JS — the bridge is the
