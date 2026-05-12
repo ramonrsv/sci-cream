@@ -45,7 +45,7 @@ export function RecipeTable({
     <table className="w-full">
       <thead>
         <tr className="h-6.25 text-center">
-          <th className="table-header min-w-50">Ingredient</th>
+          <th className="table-header">Ingredient</th>
           <th className="table-header w-15">Qty (g)</th>
           <th className="table-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
         </tr>
@@ -62,7 +62,7 @@ export function RecipeTable({
           return (
             <tr key={row.index} className="h-6.25">
               <td
-                className={`table-inner-cell px-2 ${invalid ? "-outline-offset-2 outline-red-400 outline-solid" : ""}`}
+                className={`table-inner-cell px-2 whitespace-nowrap ${invalid ? "-outline-offset-2 outline-red-400 outline-solid" : ""}`}
               >
                 {row.name}
               </td>
@@ -116,7 +116,7 @@ export function RecipeEditorTable({
       <table className="w-full">
         <thead>
           <tr className="h-6.25 text-center">
-            <th className="table-header min-w-50">Ingredient</th>
+            <th className="table-header">Ingredient</th>
             <th className="table-header w-15">Qty (g)</th>
             <th className="table-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
           </tr>
@@ -135,7 +135,7 @@ export function RecipeEditorTable({
                   type="search"
                   value={row.name}
                   onChange={(e) => onNameChange(row.index, e.target.value)}
-                  className={`table-fillable-input ${
+                  className={`table-fillable-input whitespace-nowrap ${
                     row.name === "" || hasIngredient(row.name)
                       ? "focus:ring-blue-400"
                       : "-outline-offset-2 outline-red-400 outline-solid focus:ring-red-400"

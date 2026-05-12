@@ -13,7 +13,7 @@ import { DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
  */
 export function PropertiesPanel({ recipes }: { recipes: Recipe[] }) {
   return (
-    <div id="properties-panel" className="grid-component h-full w-full">
+    <div id="properties-panel" className="grid-component h-full w-full min-w-55">
       <PropertiesView
         recipes={filterActiveSlots(recipes)}
         toolbarPrefix={<GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />}

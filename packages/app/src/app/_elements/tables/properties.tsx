@@ -174,7 +174,7 @@ export function PropertiesView({
           key_as_med_str={prop_key_as_med_str}
         />
       </div>
-      <div className="h-[calc(100%-33px)] min-w-55 overflow-y-auto whitespace-nowrap">
+      <div className="h-[calc(100%-33px)] overflow-y-auto whitespace-nowrap">
         <PropertiesTable
           recipes={recipes}
           propKeys={getEnabledProps()}

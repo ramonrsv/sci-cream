@@ -165,9 +165,9 @@ export function RecipeSearch({ onLoadRecipe, savedRecipes = [], slots }: RecipeS
       </div>
 
       {/* Two-column layout */}
-      <div className="flex h-[70vh] gap-4">
+      <div className="flex flex-col gap-4 md:h-[75vh] md:flex-row">
         {/* Left: recipe list */}
-        <div className="flex w-60 shrink-0 flex-col gap-1.5 overflow-y-auto pr-1 [scrollbar-gutter:stable]">
+        <div className="flex h-[20vh] shrink-0 flex-col gap-1.5 overflow-y-auto pr-1 [scrollbar-gutter:stable] md:h-auto md:w-60">
           {filtered.length === 0 ? (
             <p className="text-secondary text-sm">No recipes found.</p>
           ) : (
@@ -233,15 +233,15 @@ export function RecipeSearch({ onLoadRecipe, savedRecipes = [], slots }: RecipeS
 
             {/* Ingredient table + mix properties side by side */}
             {recipeOfSelected && (
-              <div className="flex items-start gap-6">
-                <div className="mt-8.25 min-w-45 flex-1">
+              <div className="@container flex flex-wrap items-start gap-6">
+                <div className="min-w-50 flex-1 basis-65 @[484px]:mt-8.25">
                   <RecipeTable
                     recipe={recipeOfSelected}
                     isValidIngredient={(name) => wasmBridge.has_ingredient(name)}
                   />
                 </div>
                 <div
-                  className="max-w-65 min-w-45 flex-1"
+                  className="max-w-65 min-w-50 flex-1 basis-35"
                   style={{ height: `${STD_COMPONENT_H_PX}px` }}
                 >
                   <PropertiesView recipes={[recipeOfSelected]} />

@@ -40,7 +40,7 @@ export default function RecipesPage() {
   const slots = Array.from({ length: MAX_RECIPES }, (_, idx) => idx);
 
   return (
-    <div className="mx-auto mt-4 max-w-5xl px-4">
+    <div className="mx-auto mt-4 max-w-5xl px-1 md:px-4">
       <RecipeSearch onLoadRecipe={handleLoadRecipe} savedRecipes={savedRecipes} slots={slots} />
     </div>
   );

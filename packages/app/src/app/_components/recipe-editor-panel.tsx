@@ -22,7 +22,7 @@ export function RecipeEditorPanel({
   return (
     <div
       id="recipe-editor-panel"
-      className="grid-component"
+      className="grid-component min-w-50"
       style={{ height: `${STD_COMPONENT_H_PX}px` }}
     >
       <RecipeEditor
