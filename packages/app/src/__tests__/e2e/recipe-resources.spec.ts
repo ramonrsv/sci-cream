@@ -14,7 +14,7 @@ import {
 
 import { sleep_ms } from "@/lib/util";
 
-import { TEST_USER_B } from "@/lib/database/util";
+import { TEST_USER_B } from "@/lib/database/assets";
 
 test.describe("Recipe Resources", () => {
   test("valid-ingredients datalist is present and has options", async ({ page }) => {

@@ -21,7 +21,7 @@ import {
   getIndependentIngredientSpecs,
 } from "@workspace/sci-cream";
 
-import { TEST_USER_A } from "@/lib/database/util";
+import { TEST_USER_A } from "@/lib/database/assets";
 
 const db = drizzle(getDatabaseUrl(), { schema });
 

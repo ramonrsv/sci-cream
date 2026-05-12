@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 
-import { TEST_USER_B } from "@/lib/database/util";
+import { TEST_USER_B } from "@/lib/database/assets";
 import {
   goToPageAndWaitFor,
   loginAsTestUserWithCredentials,
@@ -16,6 +16,7 @@ async function goToRecipesPage(page: Page) {
 
 test.describe("Visual Regression: Recipe Search", () => {
   test("empty state - no recipe selected", async ({ page }) => {
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
     await goToRecipesPage(page);
 
     await expect(page.locator(".search-empty")).toBeVisible();
@@ -59,6 +60,7 @@ test.describe("Visual Regression: Recipe Search", () => {
   });
 
   test("search query - filtered list", async ({ page }) => {
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
     await goToRecipesPage(page);
 
     await page.locator('input[type="search"]').fill("Standard Base");
@@ -77,7 +79,8 @@ test.describe("Visual Regression: Recipe Search", () => {
     await expect(page.locator("#recipe-search")).toHaveScreenshot("recipe-search-no-results.png");
   });
 
-  test("source filter - built-in only", async ({ page }) => {
+  test("source filter - built-in only (user logged in)", async ({ page }) => {
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
     await goToRecipesPage(page);
 
     await page.getByRole("button", { name: "Built-in" }).click();
@@ -85,6 +88,14 @@ test.describe("Visual Regression: Recipe Search", () => {
     await expect(page.locator("#recipe-search")).toHaveScreenshot(
       "recipe-search-source-builtin.png",
     );
+  });
+
+  test("source filter - saved only (user logged in)", async ({ page }) => {
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
+    await goToRecipesPage(page);
+
+    await page.getByRole("button", { name: "Saved" }).click();
+    await expect(page.locator("#recipe-search")).toHaveScreenshot("recipe-search-source-saved.png");
   });
 
   test("source filter - saved only (empty, user not logged in)", async ({ page }) => {
@@ -111,7 +122,7 @@ test.describe("Visual Regression: Recipe Search", () => {
   test("saved recipe with invalid ingredient - cell highlighted red", async ({ page }) => {
     await loginAsTestUserWithCredentials(page, TEST_USER_B);
     await goToRecipesPage(page);
-    await selectRecipeByName(page, "User Recipe (Stub)");
+    await selectRecipeByName(page, "Recipe with Invalid Ingredients");
 
     await expect(page.locator(".search-detail-panel")).toBeVisible();
     await expect(page.locator(".search-detail-panel")).toHaveScreenshot(

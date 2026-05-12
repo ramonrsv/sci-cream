@@ -36,7 +36,7 @@ import {
 } from "@/__benches__/e2e/util";
 
 import { sleep_ms } from "@/lib/util";
-import { TEST_USER_B } from "@/lib/database/util";
+import { TEST_USER_B } from "@/lib/database/assets";
 
 const COUNT_TIME_RUNS = 10; // Number of runs for each execution time benchmark
 const QTY_UPDATES_PER_LOOP = 50; // Number of times to update an ingredient's quantity per loop

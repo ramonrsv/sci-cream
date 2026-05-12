@@ -8,7 +8,7 @@ import {
   goToPageAndWaitFor,
 } from "@/__tests__/e2e/util";
 
-import { TEST_USER_B } from "@/lib/database/util";
+import { TEST_USER_B } from "@/lib/database/assets";
 
 const RECIPE_IDS_WITHOUT_USER_DEFINED = [RecipeID.Main, RecipeID.RefA, RecipeID.RefB];
 const RECIPE_IDS_WITH_USER_DEFINED = [

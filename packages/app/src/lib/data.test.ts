@@ -4,6 +4,7 @@ import {
   findUserByEmail,
   fetchUserIngredientSpecByName,
   fetchAllUserIngredientSpecs,
+  fetchAllUserSavedRecipes,
   IngredientTransfer,
 } from "@/lib/data";
 
@@ -16,9 +17,19 @@ import {
   Composition,
   Bridge as WasmBridge,
   IngredientDatabase,
+  allRecipeEntries,
+  type RecipeEntryJson,
 } from "@workspace/sci-cream";
 
-import { TEST_USER_B, USER_DEFINED_FRUCTOSE_SPEC } from "@/lib/database/util";
+import { RecipeID, getLightRecipe } from "@/../src/__tests__/assets";
+
+import {
+  TEST_USER_A,
+  TEST_USER_B,
+  USER_DEFINED_FRUCTOSE_SPEC,
+  RECIPE_INVALID_INGREDIENT,
+  TEST_USER_B_RECIPES,
+} from "@/lib/database/assets";
 
 type SpecAsset = typeof USER_DEFINED_FRUCTOSE_SPEC;
 
@@ -108,5 +119,71 @@ describe("fetchAllUserIngredientSpecs", () => {
     expect(bridge.get_all_ingredients().length).toBeGreaterThan(0);
     expect(bridge.has_ingredient(spec.name)).toBe(true);
     expectParsedIngredientToMatchSpec(bridge.get_ingredient_by_name(spec.name), spec);
+  });
+});
+
+/** Helper to assert that every row in a recipe is a [string, number] pair */
+function expectRecipeRowsToBeValid(recipe: RecipeEntryJson) {
+  expect(Array.isArray(recipe.recipe)).toBe(true);
+  for (const row of recipe.recipe) {
+    expect(row).toHaveLength(2);
+    expect(typeof row[0]).toBe("string");
+    expect(typeof row[1]).toBe("number");
+  }
+}
+
+describe("fetchAllUserSavedRecipes", () => {
+  test("returns undefined for an unknown user", async () => {
+    const result = await fetchAllUserSavedRecipes("nobody@example.com");
+    expect(result).toBeUndefined();
+  });
+
+  test("returns all seeded recipes for TEST_USER_B", async () => {
+    const recipes = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+    expect(recipes).toBeDefined();
+    expect(recipes!.length).toEqual(TEST_USER_B_RECIPES.length);
+
+    const names = recipes!.map((r) => r.name);
+    for (const expected of TEST_USER_B_RECIPES.map((r) => r.name)) {
+      expect(names).toContain(expected);
+    }
+  });
+
+  test("every returned entry has valid [string, number] recipe rows", async () => {
+    const recipes = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+    expect(recipes).toBeDefined();
+    for (const entry of recipes!) {
+      expectRecipeRowsToBeValid(entry);
+    }
+  });
+
+  test("Chocolate Ice Cream rows match getLightRecipe(RecipeID.Main)", async () => {
+    const recipes = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+    expect(recipes).toBeDefined();
+
+    const entry = recipes!.find((r) => r.name === "Chocolate Ice Cream");
+    expect(entry).toBeDefined();
+    expect(entry!.recipe).toEqual(getLightRecipe(RecipeID.Main));
+  });
+
+  test("Recipe with Invalid Ingredients rows match RECIPE_INVALID_INGREDIENT", async () => {
+    const recipes = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+    expect(recipes).toBeDefined();
+
+    const entry = recipes!.find((r) => r.name === "Recipe with Invalid Ingredients");
+    expect(entry).toBeDefined();
+    expect(entry!.recipe).toEqual(RECIPE_INVALID_INGREDIENT);
+  });
+
+  test("returns allRecipeEntries for TEST_USER_A", async () => {
+    const recipes = await fetchAllUserSavedRecipes(TEST_USER_A.email);
+    expect(recipes).toBeDefined();
+    expect(recipes!.length).toBe(allRecipeEntries.length);
+
+    const names = recipes!.map((r) => r.name);
+    const expectedNames = allRecipeEntries.map((e) => e.name);
+    for (const expected of expectedNames) {
+      expect(names).toContain(expected);
+    }
   });
 });

@@ -1,7 +1,7 @@
 import { test, expect } from "@playwright/test";
 
 import { loginAsTestUserWithCredentials, goToPageAndWaitFor } from "@/__tests__/e2e/util";
-import { TEST_USER_B } from "@/lib/database/util";
+import { TEST_USER_B } from "@/lib/database/assets";
 
 test("should be able to login with valid email/password credentials", async ({ page }) => {
   await goToPageAndWaitFor(page);

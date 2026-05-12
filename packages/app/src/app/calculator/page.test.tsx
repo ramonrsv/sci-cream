@@ -5,7 +5,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, waitFor, cleanup } from "@testing-library/react";
 import CalculatorPage from "./page";
 
-import { TEST_USER_A } from "@/lib/database/util";
+import { TEST_USER_A } from "@/lib/database/assets";
 
 // ---------------------------------------------------------------------------
 // Test helpers, mocks, and setup

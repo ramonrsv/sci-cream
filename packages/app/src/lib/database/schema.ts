@@ -12,6 +12,9 @@ export const usersTable = pgTable("users", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
+export type UserInsert = typeof usersTable.$inferInsert;
+export type UserSelect = typeof usersTable.$inferSelect;
+
 /** PostgreSQL enum type for ingredient categories, derived from the Rust `SchemaCategory` enum. */
 export const categoryEnum = pgEnum("category", SchemaCategory);
 
@@ -29,6 +32,20 @@ export const ingredientsTable = pgTable(
   (table) => [primaryKey({ columns: [table.name, table.user] })],
 );
 
-export type UserInsert = typeof usersTable.$inferInsert;
-export type UserSelect = typeof usersTable.$inferSelect;
 export type Ingredient = typeof ingredientsTable.$inferSelect;
+
+/** Drizzle ORM table definition for recipes, keyed by name and user. */
+export const recipesTable = pgTable(
+  "recipes",
+  {
+    name: text().notNull(),
+    user: integer()
+      .notNull()
+      .references(() => usersTable.id),
+    recipe: json(),
+  },
+  (table) => [primaryKey({ columns: [table.name, table.user] })],
+);
+
+export type RecipeInsert = typeof recipesTable.$inferInsert;
+export type RecipeSelect = typeof recipesTable.$inferSelect;

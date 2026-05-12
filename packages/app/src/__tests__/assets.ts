@@ -1,7 +1,7 @@
 import "dotenv/config";
 
 /** A lightweight recipe representation as an array of `[ingredientName, quantity]` pairs */
-export type LightRecipe = (string | number)[][];
+export type LightRecipe = [string, number][];
 
 /** Identifies one of the test recipes, including variants that include user-defined ingredients */
 export enum RecipeID {
@@ -58,7 +58,7 @@ export function recipeIdToOption(recipeId: RecipeID): string {
 }
 
 /** Light recipe data for the main test recipe */
-const MAIN_RECIPE_LIGHT = [
+const MAIN_RECIPE_LIGHT: [string, number][] = [
   ["Whole Milk", 245],
   ["Whipping Cream", 215],
   ["Cocoa Powder, 17% Fat", 28],
@@ -72,7 +72,7 @@ const MAIN_RECIPE_LIGHT = [
 ];
 
 /** Light recipe data for the reference A test recipe */
-const REF_A_RECIPE_LIGHT = [
+const REF_A_RECIPE_LIGHT: [string, number][] = [
   ["Whole Milk", 230],
   ["Whipping Cream", 235],
   ["Skimmed Milk Powder", 35],
@@ -85,7 +85,7 @@ const REF_A_RECIPE_LIGHT = [
 ];
 
 /** Light recipe data for the reference B test recipe */
-const REF_B_RECIPE_LIGHT = [
+const REF_B_RECIPE_LIGHT: [string, number][] = [
   ["Whole Milk", 230],
   ["Whipping Cream", 225],
   ["Skimmed Milk Powder", 35],
@@ -117,9 +117,12 @@ export function lightRecipeToText(recipe: LightRecipe): string {
  * which would interfere with testing the user-defined ingredient functionality.
  */
 export function getLightRecipe(recipeId: RecipeID): LightRecipe {
-  const replaceAndConcatFructose = (base: LightRecipe) =>
+  const replaceAndConcatFructose = (base: LightRecipe): LightRecipe =>
     base
-      .map(([name, qty]) => [name == "Fructose" ? "Fructose (User-Defined)" : name, qty])
+      .map(([name, qty]): [string, number] => [
+        name == "Fructose" ? "Fructose (User-Defined)" : name,
+        qty,
+      ])
       .concat([["Fructose (User-Defined)", 5]]);
 
   switch (recipeId) {

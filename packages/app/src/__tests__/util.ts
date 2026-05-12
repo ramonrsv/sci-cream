@@ -3,7 +3,7 @@ import {
   new_ingredient_database_seeded_from_embedded_data,
 } from "@workspace/sci-cream";
 
-import { USER_DEFINED_FRUCTOSE_SPEC } from "@/lib/database/util";
+import { USER_DEFINED_FRUCTOSE_SPEC } from "@/lib/database/assets";
 
 /**
  * Single shared WASM bridge instance used for testing

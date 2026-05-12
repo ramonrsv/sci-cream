@@ -12,6 +12,7 @@ import {
   usersTable,
   Ingredient as IngredientDb,
   ingredientsTable,
+  recipesTable,
 } from "./database/schema";
 import * as schema from "./database/schema";
 
@@ -123,16 +124,19 @@ export async function fetchAllUserIngredientSpecs(
  * so that visual regression tests can exercise the invalid-ingredient highlight in RecipeTable.
  */
 export async function fetchAllUserSavedRecipes(
-  _userEmail: string, // eslint-disable-line @typescript-eslint/no-unused-vars
+  userEmail: string,
 ): Promise<RecipeEntryJson[] | undefined> {
-  return [
-    {
-      name: "User Recipe (Stub)",
-      recipe: [
-        ["Heavy Cream", 500],
-        ["Sucrose", 120],
-        ["Ghost Ingredient", 30],
-      ],
-    },
-  ];
+  console.log(`[${await FetchCounter.get()}] fetchAllUserSavedRecipes`);
+
+  const user = await findUserByEmail(userEmail);
+  if (!user) {
+    console.warn(`fetchAllUserSavedRecipes: user not found`);
+    return undefined;
+  }
+
+  const recipes = await db.select().from(recipesTable).where(eq(recipesTable.user, user.id));
+
+  console.log(`fetchAllUserSavedRecipes: found ${recipes.length} recipes for userId=${user.id}`);
+
+  return recipes.map((r) => ({ name: r.name, recipe: r.recipe as [string, number][] }));
 }
