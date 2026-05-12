@@ -492,3 +492,9 @@ export async function goToPageAndWaitFor(
   await page.goto(url);
   await page.waitForLoadState(loadState);
 }
+
+/** On the `/recipes` page, select a recipe by its name and wait for the detail panel to appear */
+export async function selectRecipeByName(page: Page, name: string) {
+  await page.locator(".search-list-item").filter({ hasText: name }).first().click();
+  await expect(page.locator(".search-detail-panel")).toBeVisible();
+}

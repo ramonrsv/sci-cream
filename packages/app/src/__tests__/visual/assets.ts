@@ -35,46 +35,60 @@ export const VIEWPORT_TABLET_LANDSCAPE: ViewportAsset = {
   screenshot: "tablet-landscape",
 };
 
+/**
+ * Desktop viewport - default size from Playwright's built-in devices
+ *
+ * This is a 1080p screen, but a much smaller viewport (1280x720), ostensibly to simulate a "typical
+ * browser window with toolbars, tabs, and address bar included", although it seems too much to me.
+ *
+ * @see https://github.com/microsoft/playwright/blob/main/packages/playwright-core/src/server/deviceDescriptorsSource.json
+ */
+export const VIEWPORT_DESKTOP_DEFAULT: ViewportAsset = {
+  name: "desktop viewport - default",
+  viewport: devices["Desktop Chrome"].viewport,
+  screenshot: "desktop-default",
+};
+
+/** Estimated vertical space taken by browser UI (address bar, tabs, etc.) on desktop viewports */
+export const BROWSER_VERTICAL_OFFSET = 170;
+
+/** Estimated horizontal space taken by browser UI (scrollbars, borders, etc.) desktop viewports */
+export const BROWSER_HORIZONTAL_OFFSET = 2;
+
+/** Adjusts a desktop viewport to account for estimated browser UI space */
+export function adjustDesktopViewportForBrowserUI(viewport: { width: number; height: number }) {
+  return {
+    width: viewport.width - BROWSER_HORIZONTAL_OFFSET,
+    height: viewport.height - BROWSER_VERTICAL_OFFSET,
+  };
+}
+
 /** Desktop viewport - 1080p, half screen */
 export const VIEWPORT_DESKTOP_1080P_HALF: ViewportAsset = {
   name: "desktop viewport - 1080p, half screen",
-  viewport: { width: 960, height: 1080 },
+  viewport: adjustDesktopViewportForBrowserUI({ width: 960, height: 1080 }),
   screenshot: "desktop-1080p-half",
 };
 
 /** Desktop viewport - 1080p, full screen */
 export const VIEWPORT_DESKTOP_1080P_FULL: ViewportAsset = {
   name: "desktop viewport - 1080p, full screen",
-  viewport: { width: 1920, height: 1080 },
+  viewport: adjustDesktopViewportForBrowserUI({ width: 1920, height: 1080 }),
   screenshot: "desktop-1080p-full",
 };
 
-/** Desktop viewport - 1440p, half screen */
+/** Desktop viewport - 1440p, half screen; doubles as 2160p with 150% scaling */
 export const VIEWPORT_DESKTOP_1440P_HALF: ViewportAsset = {
   name: "desktop viewport - 1440p, half screen",
-  viewport: { width: 1280, height: 1440 },
+  viewport: adjustDesktopViewportForBrowserUI({ width: 1280, height: 1440 }),
   screenshot: "desktop-1440p-half",
 };
 
-/** Desktop viewport - 1440p, full screen */
+/** Desktop viewport - 1440p, full screen; doubles as 2160p with 150% scaling*/
 export const VIEWPORT_DESKTOP_1440P_FULL: ViewportAsset = {
   name: "desktop viewport - 1440p, full screen",
-  viewport: { width: 2560, height: 1440 },
+  viewport: adjustDesktopViewportForBrowserUI({ width: 2560, height: 1440 }),
   screenshot: "desktop-1440p-full",
-};
-
-/** Desktop viewport - 2160p (4K UHD), half screen */
-export const VIEWPORT_DESKTOP_2160P_HALF: ViewportAsset = {
-  name: "desktop viewport - 4K UHD, half screen",
-  viewport: { width: 1920, height: 2160 },
-  screenshot: "desktop-2160p-half",
-};
-
-/** Desktop viewport - 2160p (4K UHD), full screen */
-export const VIEWPORT_DESKTOP_2160P_FULL: ViewportAsset = {
-  name: "desktop viewport - 4K UHD, full screen",
-  viewport: { width: 3840, height: 2160 },
-  screenshot: "desktop-2160p-full",
 };
 
 /** Common viewports for visual regression tests, derived from Playwright's built-in devices. */
@@ -83,10 +97,9 @@ export const VIEWPORTS: ViewportAsset[] = [
   VIEWPORT_MOBILE_LANDSCAPE,
   VIEWPORT_TABLET_PORTRAIT,
   VIEWPORT_TABLET_LANDSCAPE,
+  VIEWPORT_DESKTOP_DEFAULT,
   VIEWPORT_DESKTOP_1080P_HALF,
   VIEWPORT_DESKTOP_1080P_FULL,
   VIEWPORT_DESKTOP_1440P_HALF,
   VIEWPORT_DESKTOP_1440P_FULL,
-  VIEWPORT_DESKTOP_2160P_HALF,
-  VIEWPORT_DESKTOP_2160P_FULL,
 ];
