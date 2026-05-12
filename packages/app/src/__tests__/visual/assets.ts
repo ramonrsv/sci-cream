@@ -7,38 +7,32 @@ interface ViewportAsset {
   screenshot: string;
 }
 
-/** Mobile viewport in vertical orientation (e.g. Pixel 5) */
-export const VIEWPORT_MOBILE_VERTICAL: ViewportAsset = {
-  name: "mobile viewport - horizontal layout",
+/** Mobile viewport in portrait orientation (e.g. Pixel 5) */
+export const VIEWPORT_MOBILE_PORTRAIT: ViewportAsset = {
+  name: "mobile viewport - portrait layout",
   viewport: devices["Pixel 5"].viewport,
-  screenshot: "mobile-vertical",
+  screenshot: "mobile-portrait",
 };
 
-/** Mobile viewport in horizontal orientation (e.g. Pixel 5) */
-export const VIEWPORT_MOBILE_HORIZONTAL: ViewportAsset = {
-  name: "mobile viewport - vertical layout",
-  viewport: {
-    width: devices["Pixel 5"].viewport.height,
-    height: devices["Pixel 5"].viewport.width,
-  },
-  screenshot: "mobile-horizontal",
+/** Mobile viewport in landscape orientation (e.g. Pixel 5) */
+export const VIEWPORT_MOBILE_LANDSCAPE: ViewportAsset = {
+  name: "mobile viewport - landscape layout",
+  viewport: devices["Pixel 5 landscape"].viewport,
+  screenshot: "mobile-landscape",
 };
 
-/** Tablet viewport in vertical orientation (e.g. iPad Pro 11) */
-export const VIEWPORT_TABLET_VERTICAL: ViewportAsset = {
-  name: "tablet viewport - vertical layout",
+/** Tablet viewport in portrait orientation (e.g. iPad Pro 11) */
+export const VIEWPORT_TABLET_PORTRAIT: ViewportAsset = {
+  name: "tablet viewport - portrait layout",
   viewport: devices["iPad Pro 11"].viewport,
-  screenshot: "tablet-vertical",
+  screenshot: "tablet-portrait",
 };
 
-/** Tablet viewport in horizontal orientation (e.g. iPad Pro 11) */
-export const VIEWPORT_TABLET_HORIZONTAL: ViewportAsset = {
-  name: "tablet viewport - horizontal layout",
-  viewport: {
-    width: devices["iPad Pro 11"].viewport.height,
-    height: devices["iPad Pro 11"].viewport.width,
-  },
-  screenshot: "tablet-horizontal",
+/** Tablet viewport in landscape orientation (e.g. iPad Pro 11) */
+export const VIEWPORT_TABLET_LANDSCAPE: ViewportAsset = {
+  name: "tablet viewport - landscape layout",
+  viewport: devices["iPad Pro 11 landscape"].viewport,
+  screenshot: "tablet-landscape",
 };
 
 /** Desktop viewport - 1080p, half screen */
@@ -85,10 +79,10 @@ export const VIEWPORT_DESKTOP_2160P_FULL: ViewportAsset = {
 
 /** Common viewports for visual regression tests, derived from Playwright's built-in devices. */
 export const VIEWPORTS: ViewportAsset[] = [
-  VIEWPORT_MOBILE_VERTICAL,
-  VIEWPORT_MOBILE_HORIZONTAL,
-  VIEWPORT_TABLET_VERTICAL,
-  VIEWPORT_TABLET_HORIZONTAL,
+  VIEWPORT_MOBILE_PORTRAIT,
+  VIEWPORT_MOBILE_LANDSCAPE,
+  VIEWPORT_TABLET_PORTRAIT,
+  VIEWPORT_TABLET_LANDSCAPE,
   VIEWPORT_DESKTOP_1080P_HALF,
   VIEWPORT_DESKTOP_1080P_FULL,
   VIEWPORT_DESKTOP_1440P_HALF,
