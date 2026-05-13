@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from "react";
-import { Search } from "lucide-react";
+import { Search, Trash } from "lucide-react";
 import {
   allRecipeEntries,
   recipeEntryId,
@@ -61,6 +61,11 @@ export interface RecipeSearchProps {
   savedRecipes?: RecipeEntryJson[];
   /** Enabled slot indices for loading recipes; default 0 if not provided or empty */
   slots?: number[];
+  /**
+   * Called when the user confirms deletion of a saved recipe entry. The parent is responsible for
+   * the actual deletion and for refreshing `savedRecipes`. Only invoked for `RecipeSource.Saved`.
+   */
+  onDeleteSavedRecipe?: (entry: RecipeEntryJson) => void | Promise<void>;
 }
 
 /**
@@ -89,13 +94,31 @@ function makeRecipeFromEntry(entry: RecipeEntryJson | null, bridge: WasmBridge):
  * collection of user-saved recipes. Supports filtering by name, author, or ingredient.
  * Clicking a recipe entry opens its details and mix properties in a side panel.
  */
-export function RecipeSearch({ onLoadRecipe, savedRecipes = [], slots }: RecipeSearchProps) {
+export function RecipeSearch({
+  onLoadRecipe,
+  savedRecipes = [],
+  slots,
+  onDeleteSavedRecipe,
+}: RecipeSearchProps) {
   const [query, setQuery] = useState("");
   const [source, setSource] = useState<RecipeSource>(RecipeSource.All);
   const [targetSlot, setTargetSlot] = useState(slots?.[0] ?? 0);
   const [selectedEntry, setSelectedEntry] = useState<TaggedEntry | null>(null);
 
   const { updateIdx: wasmUpdateIdx, wasmBridge } = useSeededWasmResources()[STATE_VAL];
+
+  const handleDeleteSelected = async () => {
+    if (!selectedEntry || selectedEntry._source !== RecipeSource.Saved || !onDeleteSavedRecipe) {
+      throw new Error(
+        "handleDeleteSelected invoked without a selected saved entry or a delete callback — " +
+          "the Delete button should not have been rendered in this state",
+      );
+    }
+
+    if (!window.confirm(`Delete saved recipe "${selectedEntry.name}"?`)) return;
+    await onDeleteSavedRecipe(selectedEntry);
+    setSelectedEntry(null);
+  };
 
   const recipeOfSelected = useMemo<Recipe>(
     () => makeRecipeFromEntry(selectedEntry, wasmBridge),
@@ -206,29 +229,41 @@ export function RecipeSearch({ onLoadRecipe, savedRecipes = [], slots }: RecipeS
                   </span>
                 </div>
               </div>
-              {onLoadRecipe && (
-                <div className="flex shrink-0 items-center gap-1">
-                  {slots && slots.length > 1 && (
-                    <select
-                      value={targetSlot}
-                      onChange={(e) => setTargetSlot(parseInt(e.target.value))}
-                      className="select-input text-sm"
-                    >
-                      {slots.map((slot, idx) => (
-                        <option key={idx} value={slot}>
-                          {makeRecipeId(slot)}
-                        </option>
-                      ))}
-                    </select>
-                  )}
+              <div className="flex shrink-0 items-center gap-1">
+                {selectedEntry._source === RecipeSource.Saved && onDeleteSavedRecipe && (
                   <button
-                    onClick={() => onLoadRecipe(selectedEntry, targetSlot)}
+                    onClick={handleDeleteSelected}
+                    title="Delete saved recipe"
+                    aria-label="Delete saved recipe"
                     className="action-button px-2 py-0.5 text-sm"
                   >
-                    Load
+                    <Trash size={14} />
                   </button>
-                </div>
-              )}
+                )}
+                {onLoadRecipe && (
+                  <>
+                    {slots && slots.length > 1 && (
+                      <select
+                        value={targetSlot}
+                        onChange={(e) => setTargetSlot(parseInt(e.target.value))}
+                        className="select-input text-sm"
+                      >
+                        {slots.map((slot, idx) => (
+                          <option key={idx} value={slot}>
+                            {makeRecipeId(slot)}
+                          </option>
+                        ))}
+                      </select>
+                    )}
+                    <button
+                      onClick={() => onLoadRecipe(selectedEntry, targetSlot)}
+                      className="action-button px-2 py-0.5 text-sm"
+                    >
+                      Load
+                    </button>
+                  </>
+                )}
+              </div>
             </div>
 
             {/* Ingredient table + mix properties side by side */}

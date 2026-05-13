@@ -22,6 +22,12 @@ class ResizeObserverMock {
 
 vi.stubGlobal("ResizeObserver", ResizeObserverMock);
 
+vi.mock("next-auth/react", () => ({
+  useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
+}));
+
+vi.mock("@/lib/data", () => ({ upsertUserRecipe: vi.fn() }));
+
 describe("RecipeEditorPanel", () => {
   let recipeContext: RecipeContext;
   let wasmResources: WasmResources;

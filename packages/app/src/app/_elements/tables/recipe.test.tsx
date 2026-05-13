@@ -5,10 +5,12 @@ import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from "vite
 import { render, screen, cleanup, waitFor, within, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { type SetStateAction, useState, useEffect } from "react";
+import { useSession } from "next-auth/react";
 
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import { makeEmptyRecipeContext, type RecipeContext, RecipeContextState } from "@/lib/recipe";
 import { makeWasmResources, WasmResourcesState, WasmResources } from "@/lib/wasm-resources";
+import { upsertUserRecipe } from "@/lib/data";
 import { RecipeEditor, RecipeTable } from "@/app/_elements/tables/recipe";
 
 import {
@@ -33,6 +35,14 @@ vi.mock("@workspace/sci-cream", async () => {
     }),
   };
 });
+
+vi.mock("next-auth/react", () => ({
+  useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
+}));
+
+vi.mock("@/lib/data", () => ({
+  upsertUserRecipe: vi.fn().mockResolvedValue({ name: "X", user: 1, recipe: [] }),
+}));
 
 /** Mock implementation of ResizeObserver for testing purposes */
 class ResizeObserverMock {
@@ -540,5 +550,89 @@ describe("RecipeEditor", () => {
     // If we got here without "null pointer passed to rust", the test passes
     expect(getIngredientNameElement(container, 0).value).toBe("2% Milk");
     expect(getIngredientQuantityElement(container, 0).value).toBe("100");
+  });
+
+  // ---- Recipe name input ------------------------------------------------------------------------
+
+  describe("Recipe name input", () => {
+    it("renders an editable recipe name input", () => {
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      expect(screen.getByLabelText("Recipe name")).toBeInTheDocument();
+    });
+
+    it("updates the recipe context when the user types a name", () => {
+      render(<RecipeEditorWithSpy />);
+      fireEvent.change(screen.getByLabelText("Recipe name"), { target: { value: "My Recipe" } });
+      expect(setRecipeContext).toHaveBeenCalled();
+      expect(recipeContext.recipes[0].name).toBe("My Recipe");
+    });
+  });
+
+  // ---- Save button ------------------------------------------------------------------------------
+
+  describe("Save button", () => {
+    /** Populate slot 0 of `recipeContext` with the given name and a single valid ingredient row */
+    function populateRecipe(name: string) {
+      recipeContext.recipes[0].name = name;
+      recipeContext.recipes[0].ingredientRows[0].name = "Whole Milk";
+      recipeContext.recipes[0].ingredientRows[0].quantity = 500;
+      recipeContext.recipes[0].mixTotal = 500;
+    }
+
+    /** Mock useSession to return an authenticated session with `a@b.c` */
+    function mockSignedIn() {
+      vi.mocked(useSession).mockReturnValue({
+        data: { user: { email: "a@b.c" }, expires: "" },
+        status: "authenticated",
+        update: vi.fn(),
+      });
+    }
+
+    it("renders the Save button", () => {
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      expect(screen.getByTitle(/Sign in to save recipes|Save recipe/)).toBeInTheDocument();
+    });
+
+    it("is disabled when the user is not signed in", () => {
+      populateRecipe("My Recipe");
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      expect(screen.getByTitle("Sign in to save recipes")).toBeDisabled();
+    });
+
+    it("is disabled when the recipe has no name", () => {
+      mockSignedIn();
+      populateRecipe("");
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      expect(screen.getByTitle("Enter a name to save")).toBeDisabled();
+    });
+
+    it("is disabled when the recipe is empty", () => {
+      mockSignedIn();
+      recipeContext.recipes[0].name = "My Recipe";
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      expect(screen.getByTitle("Add ingredients to save")).toBeDisabled();
+    });
+
+    it("is disabled when the selected slot is not the main recipe", () => {
+      mockSignedIn();
+      // Populate slot 1 (Ref A) with an otherwise-saveable recipe to isolate the slot guard
+      recipeContext.recipes[1].name = "Ref Recipe";
+      recipeContext.recipes[1].ingredientRows[0].name = "Whole Milk";
+      recipeContext.recipes[1].ingredientRows[0].quantity = 500;
+      recipeContext.recipes[1].mixTotal = 500;
+      render(<RecipeEditor props={{ ...makeRecipeEditorProps([0, 1]), initialRecipeIdx: 1 }} />);
+      expect(screen.getByTitle("Select main recipe to save")).toBeDisabled();
+    });
+
+    it("calls upsertUserRecipe with the user email, recipe name, and light recipe", async () => {
+      mockSignedIn();
+      populateRecipe("My Recipe");
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+
+      fireEvent.click(screen.getByTitle("Save recipe"));
+      await waitFor(() => {
+        expect(upsertUserRecipe).toHaveBeenCalledWith("a@b.c", "My Recipe", [["Whole Milk", 500]]);
+      });
+    });
   });
 });

@@ -421,4 +421,47 @@ describe("RecipeSearch", () => {
       expect(screen.getByText("No recipes found.")).toBeInTheDocument();
     });
   });
+
+  describe("delete button", () => {
+    const savedEntry: RecipeEntryJson = {
+      name: "Strawberry Gelato",
+      recipe: [["Whole Milk", 300]],
+    };
+
+    it("shows the Delete button on a selected saved entry when onDeleteSavedRecipe is provided", () => {
+      render(<RecipeSearch savedRecipes={[savedEntry]} onDeleteSavedRecipe={vi.fn()} />);
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      expect(screen.getByLabelText("Delete saved recipe")).toBeInTheDocument();
+    });
+
+    it("does not show the Delete button on a built-in entry", () => {
+      render(<RecipeSearch onDeleteSavedRecipe={vi.fn()} />);
+      fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
+      expect(screen.queryByLabelText("Delete saved recipe")).not.toBeInTheDocument();
+    });
+
+    it("does not show the Delete button when onDeleteSavedRecipe is not provided", () => {
+      render(<RecipeSearch savedRecipes={[savedEntry]} />);
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      expect(screen.queryByLabelText("Delete saved recipe")).not.toBeInTheDocument();
+    });
+
+    it("calls onDeleteSavedRecipe with the entry when confirm() returns true", () => {
+      const onDelete = vi.fn();
+      vi.spyOn(window, "confirm").mockReturnValue(true);
+      render(<RecipeSearch savedRecipes={[savedEntry]} onDeleteSavedRecipe={onDelete} />);
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      fireEvent.click(screen.getByLabelText("Delete saved recipe"));
+      expect(onDelete).toHaveBeenCalledWith(expect.objectContaining({ name: "Strawberry Gelato" }));
+    });
+
+    it("does not call onDeleteSavedRecipe when confirm() returns false", () => {
+      const onDelete = vi.fn();
+      vi.spyOn(window, "confirm").mockReturnValue(false);
+      render(<RecipeSearch savedRecipes={[savedEntry]} onDeleteSavedRecipe={onDelete} />);
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      fireEvent.click(screen.getByLabelText("Delete saved recipe"));
+      expect(onDelete).not.toHaveBeenCalled();
+    });
+  });
 });

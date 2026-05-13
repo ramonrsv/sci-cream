@@ -1,11 +1,13 @@
 import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, cleanup } from "@testing-library/react";
+import { render, cleanup, waitFor } from "@testing-library/react";
 
 import { type RecipeEntryJson, recipeEntryId } from "@workspace/sci-cream";
 import { MAX_RECIPES } from "@/lib/styles/sizes";
 import { RecipeSearch, type RecipeSearchProps } from "@/app/_components/recipe-search";
+import { useSession } from "next-auth/react";
+import { deleteUserRecipe, fetchAllUserSavedRecipes } from "@/lib/data";
 
 import RecipesPage from "./page";
 
@@ -19,7 +21,10 @@ vi.mock("next/navigation", () => ({ useRouter: vi.fn(() => ({ push: mockPush }))
 vi.mock("next-auth/react", () => ({
   useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
 }));
-vi.mock("@/lib/data", () => ({ fetchAllUserSavedRecipes: vi.fn().mockResolvedValue(undefined) }));
+vi.mock("@/lib/data", () => ({
+  fetchAllUserSavedRecipes: vi.fn().mockResolvedValue(undefined),
+  deleteUserRecipe: vi.fn().mockResolvedValue(undefined),
+}));
 vi.mock("@/app/_components/recipe-search", () => ({ RecipeSearch: vi.fn(() => null) }));
 
 // ---------------------------------------------------------------------------
@@ -60,6 +65,41 @@ describe("RecipesPage", () => {
   it("passes all slot indices (0..MAX_RECIPES-1) to RecipeSearch", () => {
     render(<RecipesPage />);
     expect(capturedProps().slots).toEqual(Array.from({ length: MAX_RECIPES }, (_, i) => i));
+  });
+
+  describe("onDeleteSavedRecipe wiring", () => {
+    it("does not pass an onDeleteSavedRecipe when the user is not signed in", () => {
+      render(<RecipesPage />);
+      expect(capturedProps().onDeleteSavedRecipe).toBeUndefined();
+    });
+
+    it("passes an onDeleteSavedRecipe when the user is signed in", () => {
+      vi.mocked(useSession).mockReturnValueOnce({
+        data: { user: { email: "a@b.c" }, expires: "" },
+        status: "authenticated",
+        update: vi.fn(),
+      });
+      render(<RecipesPage />);
+      expect(capturedProps().onDeleteSavedRecipe).toBeDefined();
+    });
+
+    it("invoking onDeleteSavedRecipe calls deleteUserRecipe then refetches the saved list", async () => {
+      vi.mocked(useSession).mockReturnValue({
+        data: { user: { email: "a@b.c" }, expires: "" },
+        status: "authenticated",
+        update: vi.fn(),
+      });
+      vi.mocked(fetchAllUserSavedRecipes).mockResolvedValue([]);
+
+      render(<RecipesPage />);
+      await capturedProps().onDeleteSavedRecipe!(entry);
+
+      expect(deleteUserRecipe).toHaveBeenCalledWith("a@b.c", entry.name);
+      await waitFor(() => {
+        // The page should refetch the saved list after a delete (mount + post-delete = 2 calls)
+        expect(fetchAllUserSavedRecipes).toHaveBeenCalledTimes(2);
+      });
+    });
   });
 
   describe("handleLoadRecipe", () => {

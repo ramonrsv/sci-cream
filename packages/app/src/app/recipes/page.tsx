@@ -8,7 +8,7 @@ import { recipeEntryId, type RecipeEntryJson } from "@workspace/sci-cream";
 import { RecipeSearch } from "@/app/_components/recipe-search";
 import { MAX_RECIPES } from "@/lib/styles/sizes";
 import { getRecipeStoresFromStorage, setRecipeStoresToStorage } from "@/lib/recipe";
-import { fetchAllUserSavedRecipes } from "@/lib/data";
+import { deleteUserRecipe, fetchAllUserSavedRecipes } from "@/lib/data";
 
 /** Recipes page: browse and load recipes from embedded data and the user's from database */
 export default function RecipesPage() {
@@ -37,11 +37,25 @@ export default function RecipesPage() {
     router.push(`/calculator?slot=${String(slotIndex)}`);
   }
 
+  /** Delete the entry from the user's saved recipes and refresh the list */
+  async function handleDeleteSavedRecipe(entry: RecipeEntryJson) {
+    const email = session?.user?.email;
+    if (!email) return;
+    await deleteUserRecipe(email, entry.name);
+    const recipes = await fetchAllUserSavedRecipes(email);
+    if (recipes) setSavedRecipes(recipes);
+  }
+
   const slots = Array.from({ length: MAX_RECIPES }, (_, idx) => idx);
 
   return (
     <div className="mx-auto mt-4 max-w-5xl px-1 md:px-4">
-      <RecipeSearch onLoadRecipe={handleLoadRecipe} savedRecipes={savedRecipes} slots={slots} />
+      <RecipeSearch
+        onLoadRecipe={handleLoadRecipe}
+        savedRecipes={savedRecipes}
+        slots={slots}
+        onDeleteSavedRecipe={session?.user?.email ? handleDeleteSavedRecipe : undefined}
+      />
     </div>
   );
 }
