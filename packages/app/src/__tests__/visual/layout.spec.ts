@@ -1,6 +1,10 @@
 import { test, expect } from "@playwright/test";
 
-import { goToPageAndWaitFor, selectRecipeByName } from "@/__tests__/e2e/util";
+import {
+  goToPageAndWaitFor,
+  selectIngredientByName,
+  selectRecipeByName,
+} from "@/__tests__/e2e/util";
 import { VIEWPORTS } from "@/__tests__/visual/assets";
 
 /** Waits for a short period to allow any layout shifts or animations to complete. */
@@ -38,6 +42,20 @@ test.describe("Visual Regression: Responsive Layout, recipes page", () => {
       await waitForLayoutStability();
 
       await expect(page).toHaveScreenshot(`recipes-${screenshot}.png`, { fullPage: true });
+    });
+  }
+});
+
+test.describe("Visual Regression: Responsive Layout, ingredients page", () => {
+  for (const { name, viewport, screenshot } of VIEWPORTS) {
+    test(name, async ({ page }) => {
+      await page.setViewportSize(viewport);
+
+      await goToPageAndWaitFor(page, "/ingredients");
+      await selectIngredientByName(page, "Sealtest 3.25% Milk");
+      await waitForLayoutStability();
+
+      await expect(page).toHaveScreenshot(`ingredients-${screenshot}.png`, { fullPage: true });
     });
   }
 });

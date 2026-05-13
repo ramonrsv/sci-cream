@@ -123,6 +123,15 @@ describe("fetchAllUserIngredientSpecs", () => {
     expect(bridge.has_ingredient(spec.name)).toBe(true);
     expectParsedIngredientToMatchSpec(bridge.get_ingredient_by_name(spec.name), spec);
   });
+
+  test("returns specs in ascending order by name (for stable UI rendering)", async () => {
+    const specs = await fetchAllUserIngredientSpecs(TEST_USER_A.email);
+    expect(specs).toBeDefined();
+    expect(specs!.length).toBeGreaterThan(1);
+
+    const names = specs!.map((s) => s.name);
+    expect(names).toEqual([...names].sort());
+  });
 });
 
 /** Helper to assert that every row in a recipe is a [string, number] pair */
@@ -188,6 +197,15 @@ describe("fetchAllUserSavedRecipes", () => {
     for (const expected of expectedNames) {
       expect(names).toContain(expected);
     }
+  });
+
+  test("returns recipes in ascending order by name (for stable UI rendering)", async () => {
+    const recipes = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+    expect(recipes).toBeDefined();
+    expect(recipes!.length).toBeGreaterThan(1);
+
+    const names = recipes!.map((r) => r.name);
+    expect(names).toEqual([...names].sort());
   });
 });
 

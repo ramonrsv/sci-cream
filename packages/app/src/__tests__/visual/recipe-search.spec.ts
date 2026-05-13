@@ -49,9 +49,7 @@ test.describe("Visual Regression: Recipe Search", () => {
     await goToRecipesPage(page);
     await selectRecipeByName(page, "Standard Base");
 
-    await page
-      .locator(".search-detail-panel")
-      .evaluate((el) => (el.scrollTop = el.scrollHeight / 2));
+    await page.locator(".search-detail-panel").evaluate((el) => (el.scrollTop = el.scrollHeight));
     await page.waitForTimeout(200);
 
     await expect(page.locator(".search-detail-panel")).toHaveScreenshot(

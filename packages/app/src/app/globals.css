@@ -331,6 +331,16 @@ body {
   }
 }
 
+/* Code Display */
+.code-block {
+  @apply overflow-auto rounded-lg border p-2 font-mono text-sm leading-snug;
+
+  @apply border-brd-lt text-txt-sec-lt bg-surface-lt;
+  @variant dark {
+    @apply border-brd-dk text-txt-sec-dk bg-surface-dk;
+  }
+}
+
 /* Scrollbar Styles */
 * {
   scrollbar-width: thin;

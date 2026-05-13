@@ -493,8 +493,33 @@ export async function goToPageAndWaitFor(
   await page.waitForLoadState(loadState);
 }
 
+/** Escape any regex metacharacters in `s` so it can be embedded in a `RegExp` literal */
+function escapeRegExp(s: string) {
+  return s.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+/**
+ * Locator for a `.search-list-item` whose title span (the `.text-primary` child) is exactly
+ * `name`. Avoids substring collisions where `hasText: name` would also match longer names
+ * containing `name` as a prefix/substring (e.g. "Sugar-Free Base" vs the seeded longer
+ * "Sugar-Free Base (with user-defined)").
+ */
+function searchListItemByName(page: Page, name: string) {
+  return page
+    .locator(".search-list-item")
+    .filter({
+      has: page.locator(".text-primary", { hasText: new RegExp(`^${escapeRegExp(name)}$`) }),
+    });
+}
+
 /** On the `/recipes` page, select a recipe by its name and wait for the detail panel to appear */
 export async function selectRecipeByName(page: Page, name: string) {
-  await page.locator(".search-list-item").filter({ hasText: name }).first().click();
+  await searchListItemByName(page, name).first().click();
+  await expect(page.locator(".search-detail-panel")).toBeVisible();
+}
+
+/** On the `/ingredients` page, select an entry by its name and wait for the detail panel */
+export async function selectIngredientByName(page: Page, name: string) {
+  await searchListItemByName(page, name).first().click();
   await expect(page.locator(".search-detail-panel")).toBeVisible();
 }
