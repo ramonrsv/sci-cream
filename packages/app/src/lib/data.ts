@@ -13,6 +13,7 @@ import {
   Ingredient as IngredientDb,
   ingredientsTable,
   recipesTable,
+  RecipeSelect,
 } from "./database/schema";
 import * as schema from "./database/schema";
 
@@ -117,12 +118,7 @@ export async function fetchAllUserIngredientSpecs(
   return ingredients;
 }
 
-/**
- * Fetch all saved recipes belonging to the given user; `undefined` if the user is not found.
- *
- * @todo Implement once a `saved_recipes` table is added to the schema. Hard-coded stub for now
- * so that visual regression tests can exercise the invalid-ingredient highlight in RecipeTable.
- */
+/** Fetch all saved recipes belonging to the given user; `undefined` if the user is not found. */
 export async function fetchAllUserSavedRecipes(
   userEmail: string,
 ): Promise<RecipeEntryJson[] | undefined> {
@@ -139,4 +135,56 @@ export async function fetchAllUserSavedRecipes(
   console.log(`fetchAllUserSavedRecipes: found ${recipes.length} recipes for userId=${user.id}`);
 
   return recipes.map((r) => ({ name: r.name, recipe: r.recipe as [string, number][] }));
+}
+
+/**
+ * Insert or update a saved recipe for the given user, keyed by `(user, name)`.
+ *
+ * Returns the resulting row, or `undefined` if the user is not found.
+ */
+export async function upsertUserRecipe(
+  userEmail: string,
+  name: string,
+  recipe: [string, number][],
+): Promise<RecipeSelect | undefined> {
+  console.log(`[${await FetchCounter.get()}] upsertUserRecipe("${name}")`);
+
+  const user = await findUserByEmail(userEmail);
+  if (!user) {
+    console.warn(`upsertUserRecipe: user not found`);
+    return undefined;
+  }
+
+  const [row] = await db
+    .insert(recipesTable)
+    .values({ name, user: user.id, recipe })
+    .onConflictDoUpdate({ target: [recipesTable.name, recipesTable.user], set: { recipe } })
+    .returning();
+
+  return row;
+}
+
+/**
+ * Delete a saved recipe for the given user, keyed by `(user, name)`.
+ *
+ * Returns the deleted row, or `undefined` if the user was not found or no matching row existed.
+ */
+export async function deleteUserRecipe(
+  userEmail: string,
+  name: string,
+): Promise<RecipeSelect | undefined> {
+  console.log(`[${await FetchCounter.get()}] deleteUserRecipe("${name}")`);
+
+  const user = await findUserByEmail(userEmail);
+  if (!user) {
+    console.warn(`deleteUserRecipe: user not found`);
+    return undefined;
+  }
+
+  const [row] = await db
+    .delete(recipesTable)
+    .where(and(eq(recipesTable.user, user.id), eq(recipesTable.name, name)))
+    .returning();
+
+  return row;
 }

@@ -5,6 +5,8 @@ import {
   fetchUserIngredientSpecByName,
   fetchAllUserIngredientSpecs,
   fetchAllUserSavedRecipes,
+  upsertUserRecipe,
+  deleteUserRecipe,
   IngredientTransfer,
 } from "@/lib/data";
 
@@ -185,5 +187,62 @@ describe("fetchAllUserSavedRecipes", () => {
     for (const expected of expectedNames) {
       expect(names).toContain(expected);
     }
+  });
+});
+
+describe("upsertUserRecipe", () => {
+  test("returns undefined for an unknown user", async () => {
+    const result = await upsertUserRecipe("nobody@example.com", "X", [["Whole Milk", 100]]);
+    expect(result).toBeUndefined();
+  });
+
+  test("inserts then updates a recipe round-trip, cleaning up at the end", async () => {
+    const name = "Round-trip Test Recipe";
+    const initial: [string, number][] = [["Whole Milk", 200]];
+    const updated: [string, number][] = [
+      ["Whole Milk", 300],
+      ["Sucrose", 50],
+    ];
+
+    try {
+      const inserted = await upsertUserRecipe(TEST_USER_B.email, name, initial);
+      expect(inserted).toBeDefined();
+      expect(inserted!.name).toBe(name);
+      expect(inserted!.recipe).toEqual(initial);
+
+      const updatedRow = await upsertUserRecipe(TEST_USER_B.email, name, updated);
+      expect(updatedRow).toBeDefined();
+      expect(updatedRow!.recipe).toEqual(updated);
+
+      const all = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+      const found = all!.find((r) => r.name === name);
+      expect(found!.recipe).toEqual(updated);
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, name);
+    }
+  });
+});
+
+describe("deleteUserRecipe", () => {
+  test("returns undefined for an unknown user", async () => {
+    const result = await deleteUserRecipe("nobody@example.com", "X");
+    expect(result).toBeUndefined();
+  });
+
+  test("returns undefined when no matching row exists", async () => {
+    const result = await deleteUserRecipe(TEST_USER_B.email, "definitely-not-a-real-recipe");
+    expect(result).toBeUndefined();
+  });
+
+  test("removes a recipe round-trip", async () => {
+    const name = "Delete Round-trip Test Recipe";
+    await upsertUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]]);
+
+    const deleted = await deleteUserRecipe(TEST_USER_B.email, name);
+    expect(deleted).toBeDefined();
+    expect(deleted!.name).toBe(name);
+
+    const all = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+    expect(all!.find((r) => r.name === name)).toBeUndefined();
   });
 });
