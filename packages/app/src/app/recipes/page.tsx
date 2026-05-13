@@ -8,7 +8,7 @@ import { recipeEntryId, type RecipeEntryJson } from "@workspace/sci-cream";
 import { RecipeSearch } from "@/app/_components/recipe-search";
 import { MAX_RECIPES } from "@/lib/styles/sizes";
 import { getRecipeStoresFromStorage, setRecipeStoresToStorage } from "@/lib/recipe";
-import { deleteUserRecipe, fetchAllUserSavedRecipes } from "@/lib/data";
+import { deleteUserRecipe, fetchAllUserSavedRecipes, updateUserRecipeComments } from "@/lib/data";
 
 /** Recipes page: browse and load recipes from embedded data and the user's from database */
 export default function RecipesPage() {
@@ -16,13 +16,15 @@ export default function RecipesPage() {
   const { data: session } = useSession();
   const [savedRecipes, setSavedRecipes] = useState<RecipeEntryJson[]>([]);
 
+  const userEmail = session?.user?.email;
+
   useEffect(() => {
-    if (session?.user?.email) {
-      fetchAllUserSavedRecipes(session.user.email).then((recipes) => {
+    if (userEmail) {
+      fetchAllUserSavedRecipes(userEmail).then((recipes) => {
         if (recipes) setSavedRecipes(recipes);
       });
     }
-  }, [session?.user?.email]);
+  }, [userEmail]);
 
   /** Write the entry into the given localStorage slot and navigate to the calculator */
   function handleLoadRecipe(entry: RecipeEntryJson, slotIndex: number) {
@@ -39,10 +41,19 @@ export default function RecipesPage() {
 
   /** Delete the entry from the user's saved recipes and refresh the list */
   async function handleDeleteSavedRecipe(entry: RecipeEntryJson) {
-    const email = session?.user?.email;
-    if (!email) return;
-    await deleteUserRecipe(email, entry.name);
-    const recipes = await fetchAllUserSavedRecipes(email);
+    if (!userEmail) return;
+
+    await deleteUserRecipe(userEmail, entry.name);
+    const recipes = await fetchAllUserSavedRecipes(userEmail);
+    if (recipes) setSavedRecipes(recipes);
+  }
+
+  /** Update the comments of a saved recipe and refresh the list */
+  async function handleUpdateSavedRecipeComments(entry: RecipeEntryJson, comments: string) {
+    if (!userEmail) return;
+
+    await updateUserRecipeComments(userEmail, entry.name, comments);
+    const recipes = await fetchAllUserSavedRecipes(userEmail);
     if (recipes) setSavedRecipes(recipes);
   }
 
@@ -54,7 +65,8 @@ export default function RecipesPage() {
         onLoadRecipe={handleLoadRecipe}
         savedRecipes={savedRecipes}
         slots={slots}
-        onDeleteSavedRecipe={session?.user?.email ? handleDeleteSavedRecipe : undefined}
+        onDeleteSavedRecipe={userEmail ? handleDeleteSavedRecipe : undefined}
+        onUpdateSavedRecipeComments={userEmail ? handleUpdateSavedRecipeComments : undefined}
       />
     </div>
   );

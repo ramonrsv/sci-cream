@@ -66,6 +66,11 @@ export interface RecipeSearchProps {
    * the actual deletion and for refreshing `savedRecipes`. Only invoked for `RecipeSource.Saved`.
    */
   onDeleteSavedRecipe?: (entry: RecipeEntryJson) => void | Promise<void>;
+  /**
+   * Called when the user clicks "Save comments" on a saved recipe entry. The parent is responsible
+   * for persisting the change and refreshing `savedRecipes`. Only invoked for `RecipeSource.Saved`.
+   */
+  onUpdateSavedRecipeComments?: (entry: RecipeEntryJson, comments: string) => void | Promise<void>;
 }
 
 /**
@@ -99,25 +104,48 @@ export function RecipeSearch({
   savedRecipes = [],
   slots,
   onDeleteSavedRecipe,
+  onUpdateSavedRecipeComments,
 }: RecipeSearchProps) {
   const [query, setQuery] = useState("");
   const [source, setSource] = useState<RecipeSource>(RecipeSource.All);
   const [targetSlot, setTargetSlot] = useState(slots?.[0] ?? 0);
   const [selectedEntry, setSelectedEntry] = useState<TaggedEntry | null>(null);
+  const [editedComments, setEditedComments] = useState("");
 
   const { updateIdx: wasmUpdateIdx, wasmBridge } = useSeededWasmResources()[STATE_VAL];
 
+  /** Change selection and re-seed the comments editor from the new entry's persisted comments */
+  const selectEntry = (entry: TaggedEntry | null) => {
+    if (entry === selectedEntry) return;
+    setSelectedEntry(entry);
+    setEditedComments((entry?.comments as string | undefined) ?? "");
+  };
+
+  // A saved recipe entry is selected and we have a delete callback, so deletion is possible
+  const deleteRecipeEnabled = selectedEntry?._source === RecipeSource.Saved && onDeleteSavedRecipe;
+
   const handleDeleteSelected = async () => {
-    if (!selectedEntry || selectedEntry._source !== RecipeSource.Saved || !onDeleteSavedRecipe) {
+    if (!deleteRecipeEnabled)
       throw new Error(
-        "handleDeleteSelected invoked without a selected saved entry or a delete callback — " +
-          "the Delete button should not have been rendered in this state",
+        "handleDeleteSelected invoked without a selected saved entry or a delete callback",
       );
-    }
 
     if (!window.confirm(`Delete saved recipe "${selectedEntry.name}"?`)) return;
     await onDeleteSavedRecipe(selectedEntry);
-    setSelectedEntry(null);
+    selectEntry(null);
+  };
+
+  // A saved recipe entry is selected and we have an update callback, so comment editing is possible
+  const saveCommentsEnabled =
+    selectedEntry?._source === RecipeSource.Saved && onUpdateSavedRecipeComments;
+
+  const handleSaveComments = async () => {
+    if (!saveCommentsEnabled)
+      throw new Error(
+        "handleSaveComments invoked without a selected saved entry or an update callback",
+      );
+
+    await onUpdateSavedRecipeComments(selectedEntry, editedComments);
   };
 
   const recipeOfSelected = useMemo<Recipe>(
@@ -197,7 +225,7 @@ export function RecipeSearch({
             filtered.map((entry) => (
               <button
                 key={`${entry._source}-${recipeEntryId(entry)}`}
-                onClick={() => setSelectedEntry(entry)}
+                onClick={() => selectEntry(entry)}
                 className={`search-list-item ${isSelected(entry) ? "search-list-item-active" : ""}`}
               >
                 <span className="text-primary block truncate text-sm font-medium">
@@ -230,7 +258,7 @@ export function RecipeSearch({
                 </div>
               </div>
               <div className="flex shrink-0 items-center gap-1">
-                {selectedEntry._source === RecipeSource.Saved && onDeleteSavedRecipe && (
+                {deleteRecipeEnabled && (
                   <button
                     onClick={handleDeleteSelected}
                     title="Delete saved recipe"
@@ -284,9 +312,27 @@ export function RecipeSearch({
               </div>
             )}
 
-            {/* Comments */}
-            {comments && (
-              <p className="text-secondary text-sm leading-relaxed">{autoLink(comments)}</p>
+            {/* Comments — editable for saved entries, read-only otherwise */}
+            {saveCommentsEnabled ? (
+              <div className="flex flex-col gap-2">
+                <textarea
+                  value={editedComments}
+                  onChange={(e) => setEditedComments(e.target.value)}
+                  placeholder="Add comments…"
+                  aria-label="Recipe comments"
+                  className="table-fillable-input text-secondary min-h-20 rounded-lg px-2 py-1 text-sm leading-relaxed"
+                />
+                <button
+                  onClick={handleSaveComments}
+                  className="action-button self-end px-2 py-0.5 text-sm"
+                >
+                  Save comments
+                </button>
+              </div>
+            ) : (
+              comments && (
+                <p className="text-secondary text-sm leading-relaxed">{autoLink(comments)}</p>
+              )
             )}
           </div>
         )}

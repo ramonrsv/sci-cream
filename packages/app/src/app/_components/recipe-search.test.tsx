@@ -464,4 +464,91 @@ describe("RecipeSearch", () => {
       expect(onDelete).not.toHaveBeenCalled();
     });
   });
+
+  describe("editable comments", () => {
+    const savedWithComments: RecipeEntryJson = {
+      name: "Strawberry Gelato",
+      recipe: [["Whole Milk", 300]],
+      comments: "Tart but smooth.",
+    };
+
+    const savedWithoutComments: RecipeEntryJson = {
+      name: "Plain Saved",
+      recipe: [["Whole Milk", 300]],
+    };
+
+    it("shows an editable textarea (pre-filled) for a saved entry when the callback is provided", () => {
+      render(
+        <RecipeSearch savedRecipes={[savedWithComments]} onUpdateSavedRecipeComments={vi.fn()} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      const textarea = screen.getByLabelText("Recipe comments") as HTMLTextAreaElement;
+      expect(textarea).toBeInTheDocument();
+      expect(textarea.value).toBe("Tart but smooth.");
+    });
+
+    it("pre-fills the textarea with an empty string when the saved entry has no comments", () => {
+      render(
+        <RecipeSearch
+          savedRecipes={[savedWithoutComments]}
+          onUpdateSavedRecipeComments={vi.fn()}
+        />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Plain Saved/ }));
+      const textarea = screen.getByLabelText("Recipe comments") as HTMLTextAreaElement;
+      expect(textarea.value).toBe("");
+    });
+
+    it("resets the textarea when switching to a different entry", () => {
+      const otherSaved: RecipeEntryJson = {
+        name: "Other Saved",
+        recipe: [["Whole Milk", 200]],
+        comments: "Different notes.",
+      };
+      render(
+        <RecipeSearch
+          savedRecipes={[savedWithComments, otherSaved]}
+          onUpdateSavedRecipeComments={vi.fn()}
+        />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      expect((screen.getByLabelText("Recipe comments") as HTMLTextAreaElement).value).toBe(
+        "Tart but smooth.",
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Other Saved/ }));
+      expect((screen.getByLabelText("Recipe comments") as HTMLTextAreaElement).value).toBe(
+        "Different notes.",
+      );
+    });
+
+    it("calls onUpdateSavedRecipeComments with the entry and the current text on Save", async () => {
+      const onUpdate = vi.fn().mockResolvedValue(undefined);
+      render(
+        <RecipeSearch savedRecipes={[savedWithComments]} onUpdateSavedRecipeComments={onUpdate} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      fireEvent.change(screen.getByLabelText("Recipe comments"), {
+        target: { value: "Now with sprinkles." },
+      });
+      fireEvent.click(screen.getByRole("button", { name: "Save comments" }));
+      expect(onUpdate).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "Strawberry Gelato" }),
+        "Now with sprinkles.",
+      );
+    });
+
+    it("shows a read-only comments paragraph (not a textarea) for a saved entry when the callback is absent", () => {
+      render(<RecipeSearch savedRecipes={[savedWithComments]} />);
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      expect(screen.queryByLabelText("Recipe comments")).not.toBeInTheDocument();
+      expect(screen.getByText("Tart but smooth.")).toBeInTheDocument();
+    });
+
+    it("shows a read-only comments paragraph (not a textarea) for a built-in entry even when the callback is provided", () => {
+      render(<RecipeSearch onUpdateSavedRecipeComments={vi.fn()} />);
+      fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
+      expect(screen.queryByLabelText("Recipe comments")).not.toBeInTheDocument();
+      expect(screen.getByText(/A classic base recipe/)).toBeInTheDocument();
+    });
+  });
 });

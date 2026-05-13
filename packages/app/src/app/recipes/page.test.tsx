@@ -7,7 +7,7 @@ import { type RecipeEntryJson, recipeEntryId } from "@workspace/sci-cream";
 import { MAX_RECIPES } from "@/lib/styles/sizes";
 import { RecipeSearch, type RecipeSearchProps } from "@/app/_components/recipe-search";
 import { useSession } from "next-auth/react";
-import { deleteUserRecipe, fetchAllUserSavedRecipes } from "@/lib/data";
+import { deleteUserRecipe, fetchAllUserSavedRecipes, updateUserRecipeComments } from "@/lib/data";
 
 import RecipesPage from "./page";
 
@@ -24,6 +24,7 @@ vi.mock("next-auth/react", () => ({
 vi.mock("@/lib/data", () => ({
   fetchAllUserSavedRecipes: vi.fn().mockResolvedValue(undefined),
   deleteUserRecipe: vi.fn().mockResolvedValue(undefined),
+  updateUserRecipeComments: vi.fn().mockResolvedValue(undefined),
 }));
 vi.mock("@/app/_components/recipe-search", () => ({ RecipeSearch: vi.fn(() => null) }));
 
@@ -53,6 +54,12 @@ describe("RecipesPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    // mockReturnValue overrides persist across tests; reset to the unauthenticated default
+    vi.mocked(useSession).mockReturnValue({
+      data: null,
+      status: "unauthenticated",
+      update: vi.fn(),
+    });
   });
 
   afterEach(cleanup);
@@ -97,6 +104,40 @@ describe("RecipesPage", () => {
       expect(deleteUserRecipe).toHaveBeenCalledWith("a@b.c", entry.name);
       await waitFor(() => {
         // The page should refetch the saved list after a delete (mount + post-delete = 2 calls)
+        expect(fetchAllUserSavedRecipes).toHaveBeenCalledTimes(2);
+      });
+    });
+  });
+
+  describe("onUpdateSavedRecipeComments wiring", () => {
+    it("does not pass an onUpdateSavedRecipeComments when the user is not signed in", () => {
+      render(<RecipesPage />);
+      expect(capturedProps().onUpdateSavedRecipeComments).toBeUndefined();
+    });
+
+    it("passes an onUpdateSavedRecipeComments when the user is signed in", () => {
+      vi.mocked(useSession).mockReturnValueOnce({
+        data: { user: { email: "a@b.c" }, expires: "" },
+        status: "authenticated",
+        update: vi.fn(),
+      });
+      render(<RecipesPage />);
+      expect(capturedProps().onUpdateSavedRecipeComments).toBeDefined();
+    });
+
+    it("invoking onUpdateSavedRecipeComments calls updateUserRecipeComments then refetches", async () => {
+      vi.mocked(useSession).mockReturnValue({
+        data: { user: { email: "a@b.c" }, expires: "" },
+        status: "authenticated",
+        update: vi.fn(),
+      });
+      vi.mocked(fetchAllUserSavedRecipes).mockResolvedValue([]);
+
+      render(<RecipesPage />);
+      await capturedProps().onUpdateSavedRecipeComments!(entry, "Tasty.");
+
+      expect(updateUserRecipeComments).toHaveBeenCalledWith("a@b.c", entry.name, "Tasty.");
+      await waitFor(() => {
         expect(fetchAllUserSavedRecipes).toHaveBeenCalledTimes(2);
       });
     });

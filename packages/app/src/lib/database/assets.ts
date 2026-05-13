@@ -36,7 +36,11 @@ export const RECIPE_INVALID_INGREDIENT: [string, number][] = [
 
 /** Example recipes for TEST_USER_B, used in seeding and integration tests. */
 export const TEST_USER_B_RECIPES = [
-  { name: "Chocolate Ice Cream", recipe: getLightRecipe(RecipeID.Main) },
+  {
+    name: "Chocolate Ice Cream",
+    recipe: getLightRecipe(RecipeID.Main),
+    comments: "Rich, dark, and bittersweet. Let the mix ripen overnight before churning.",
+  },
   { name: "Standard Base", recipe: getLightRecipe(RecipeID.RefA) },
   { name: "Sugar-Free Base", recipe: getLightRecipe(RecipeID.RefB) },
   {

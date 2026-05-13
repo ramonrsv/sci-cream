@@ -43,6 +43,7 @@ export const recipesTable = pgTable(
       .notNull()
       .references(() => usersTable.id),
     recipe: json(),
+    comments: text(),
   },
   (table) => [primaryKey({ columns: [table.name, table.user] })],
 );

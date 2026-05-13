@@ -114,10 +114,12 @@ async function seedUserRecipes(userEmail: string, recipes: RecipeEntryJson[]) {
   console.log("Seeding recipes for user:", user);
 
   for (const entry of recipes) {
+    const comments = entry.comments as string | undefined;
     const recipe: typeof recipesTable.$inferInsert = {
       name: entry.name,
       user: user.id,
       recipe: JSON.stringify(entry.recipe),
+      ...(comments != null && { comments }),
     };
 
     console.log("---");

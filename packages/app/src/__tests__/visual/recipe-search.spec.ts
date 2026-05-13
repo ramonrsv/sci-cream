@@ -129,4 +129,62 @@ test.describe("Visual Regression: Recipe Search", () => {
       "recipe-search-invalid-ingredient.png",
     );
   });
+
+  test("saved recipe - editable comments textarea pre-filled from seed", async ({ page }) => {
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
+    await goToRecipesPage(page);
+    // Source-filter to Saved so we don't accidentally pick a built-in with the same name
+    await page.getByRole("button", { name: "Saved" }).click();
+    await selectRecipeByName(page, "Chocolate Ice Cream");
+
+    const textarea = page.getByLabel("Recipe comments");
+    await expect(textarea).toHaveValue(/Rich, dark, and bittersweet/);
+    await expect(page.getByRole("button", { name: "Save comments" })).toBeAttached();
+
+    // The comments section is below the fold in the detail panel — scroll to bottom
+    await page.locator(".search-detail-panel").evaluate((el) => (el.scrollTop = el.scrollHeight));
+    await page.waitForTimeout(200);
+
+    await expect(page.locator(".search-detail-panel")).toHaveScreenshot(
+      "recipe-search-saved-comments-prefilled.png",
+    );
+  });
+
+  test("saved recipe - editable comments textarea empty (placeholder visible)", async ({
+    page,
+  }) => {
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
+    await goToRecipesPage(page);
+    await page.getByRole("button", { name: "Saved" }).click();
+    await selectRecipeByName(page, "Sugar-Free Base");
+
+    const textarea = page.getByLabel("Recipe comments");
+    await expect(textarea).toHaveValue("");
+    await expect(page.getByRole("button", { name: "Save comments" })).toBeAttached();
+
+    await page.locator(".search-detail-panel").evaluate((el) => (el.scrollTop = el.scrollHeight));
+    await page.waitForTimeout(200);
+
+    await expect(page.locator(".search-detail-panel")).toHaveScreenshot(
+      "recipe-search-saved-comments-empty.png",
+    );
+  });
+
+  test("saved recipe - typed comments shown in textarea (dirty state)", async ({ page }) => {
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
+    await goToRecipesPage(page);
+    await page.getByRole("button", { name: "Saved" }).click();
+    await selectRecipeByName(page, "Sugar-Free Base");
+
+    const textarea = page.getByLabel("Recipe comments");
+    await textarea.fill("Try with 70% cocoa.");
+    await expect(textarea).toHaveValue("Try with 70% cocoa.");
+
+    await page.locator(".search-detail-panel").evaluate((el) => (el.scrollTop = el.scrollHeight));
+    await page.waitForTimeout(200);
+
+    await expect(page.locator(".search-detail-panel")).toHaveScreenshot(
+      "recipe-search-saved-comments-edited.png",
+    );
+  });
 });

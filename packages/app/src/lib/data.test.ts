@@ -6,6 +6,7 @@ import {
   fetchAllUserIngredientSpecs,
   fetchAllUserSavedRecipes,
   upsertUserRecipe,
+  updateUserRecipeComments,
   deleteUserRecipe,
   IngredientTransfer,
 } from "@/lib/data";
@@ -217,6 +218,47 @@ describe("upsertUserRecipe", () => {
       const all = await fetchAllUserSavedRecipes(TEST_USER_B.email);
       const found = all!.find((r) => r.name === name);
       expect(found!.recipe).toEqual(updated);
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, name);
+    }
+  });
+});
+
+describe("updateUserRecipeComments", () => {
+  test("returns undefined for an unknown user", async () => {
+    const result = await updateUserRecipeComments("nobody@example.com", "X", "hi");
+    expect(result).toBeUndefined();
+  });
+
+  test("returns undefined when no matching row exists", async () => {
+    const result = await updateUserRecipeComments(
+      TEST_USER_B.email,
+      "definitely-not-a-real-recipe",
+      "hi",
+    );
+    expect(result).toBeUndefined();
+  });
+
+  test("sets and clears comments round-trip", async () => {
+    const name = "Comments Round-trip Test Recipe";
+    await upsertUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]]);
+
+    try {
+      const set = await updateUserRecipeComments(TEST_USER_B.email, name, "Tasty stuff.");
+      expect(set?.comments).toBe("Tasty stuff.");
+
+      const fetched = (await fetchAllUserSavedRecipes(TEST_USER_B.email))!.find(
+        (r) => r.name === name,
+      );
+      expect(fetched?.comments).toBe("Tasty stuff.");
+
+      const cleared = await updateUserRecipeComments(TEST_USER_B.email, name, "");
+      expect(cleared?.comments).toBeNull();
+
+      const fetchedAfter = (await fetchAllUserSavedRecipes(TEST_USER_B.email))!.find(
+        (r) => r.name === name,
+      );
+      expect(fetchedAfter?.comments).toBeUndefined();
     } finally {
       await deleteUserRecipe(TEST_USER_B.email, name);
     }

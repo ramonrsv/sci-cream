@@ -134,7 +134,11 @@ export async function fetchAllUserSavedRecipes(
 
   console.log(`fetchAllUserSavedRecipes: found ${recipes.length} recipes for userId=${user.id}`);
 
-  return recipes.map((r) => ({ name: r.name, recipe: r.recipe as [string, number][] }));
+  return recipes.map((r) => ({
+    name: r.name,
+    recipe: r.recipe as [string, number][],
+    ...(r.comments != null && { comments: r.comments }),
+  }));
 }
 
 /**
@@ -159,6 +163,34 @@ export async function upsertUserRecipe(
     .insert(recipesTable)
     .values({ name, user: user.id, recipe })
     .onConflictDoUpdate({ target: [recipesTable.name, recipesTable.user], set: { recipe } })
+    .returning();
+
+  return row;
+}
+
+/**
+ * Update the comments field of a saved recipe for the given user, keyed by `(user, name)`.
+ *
+ * An empty-string `comments` clears the field (stored as `null`). Returns the updated row, or
+ * `undefined` if the user was not found or no matching row existed.
+ */
+export async function updateUserRecipeComments(
+  userEmail: string,
+  name: string,
+  comments: string,
+): Promise<RecipeSelect | undefined> {
+  console.log(`[${await FetchCounter.get()}] updateUserRecipeComments("${name}")`);
+
+  const user = await findUserByEmail(userEmail);
+  if (!user) {
+    console.warn(`updateUserRecipeComments: user not found`);
+    return undefined;
+  }
+
+  const [row] = await db
+    .update(recipesTable)
+    .set({ comments: comments === "" ? null : comments })
+    .where(and(eq(recipesTable.user, user.id), eq(recipesTable.name, name)))
     .returning();
 
   return row;
