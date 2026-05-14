@@ -2,26 +2,28 @@
 
 ## Next Release
 
-- [ ] Add recipe save functionality. Recipes should support versions and notes.
-- [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
-      embedded into other websites. How to handle user-defined ingredients?
+- [ ] Add `Watchers` component where users can select what properties to watch. It should probably
+      support displaying deltas between the main and reference recipes, and target min-max ranges.
 - [ ] Add support for `MixPropertiesGrid` to show deltas between the main recipe and the references.
 - [ ] Add `height` prop to `MixPropertiesGrid` so that it can adapt the number of properties shown.
+- [ ] Add a visual regression test for the custom filter settings button and checkbox menu.
+- [ ] Add support for comments in blog posts, maybe also in documentation posts.
+- [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
+- [ ] Add a home page with a quick intro and overview, pointing to user guide, docs, etc.
+- [ ] Figure out how to show `sci-cream`'s beginner-friendly overview to new users of the app.
 
 ## Up Next
 
+- [ ] Add support for recipe versions, with appropriate UI support and grouping in `RecipeSearch`.
+- [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
+      embedded into other websites. How to handle user-defined ingredients?
 - [ ] Review the sign-in classes in `globals.css`, used in `/signin/page.tsx` and `/signup/page.tsx`
-- [ ] Add `Watchers` component where users can select what properties to watch. It should probably
-      support displaying deltas between the main and reference recipes, and target min-max ranges.
 - [ ] Add make-recipe link, to click off ingredients that have been measured out for one or more
       recipes. Each recipe should be letter and color coded.
 - [ ] Add scoopability and FPD properties component with visuals.
 - [ ] Add Nutrition Facts Table component.
-- [ ] Check how vertical spacing looks like on 1080p/2160p screens; look into dynamic vertical?
 - [ ] Add functionality to store component layout so that it is remembered across page reloads. The
       store should start seeded with a default for each resolution, and store any user modification.
-- [ ] Figure out how to show `sci-cream`'s beginner-friendly overview to new users of the app.
-- [ ] Add a visual regression test for the custom filter settings button and checkbox menu.
 - [ ] Figure out how to do visual regression tests of animations, e.g. navbar expand/collapse.
 - [ ] In `MixPropertiesGrid`, make it so that, if there is a horizontal scroll, the left-most column
       (property headers) does not scroll with the rest of the content.
@@ -29,8 +31,8 @@
 - [ ] There are some `react-grid-layout` layout shifts on page refresh; it's worse on mobile.
 - [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
 - [ ] Add support for sharing of user-defined ingredients, similarly to sharing of recipes.
-- [ ] Add support for comments in blog posts, maybe also in documentation posts.
 - [ ] Refine performance benchmarks; some of them may not be measuring what they claim to measure.
+- [ ] Add an app "tour" to show users the main components of the app, where to go for docs, etc.
 
 ## Backlog
 
@@ -38,8 +40,6 @@
 - [ ] Look into usability on vertical mobile screens; the shrinking sidebar may not be enough.
 - [ ] Make navbar width adjustments more maintainable in `navbar.tsx`. At the moment there are a
       bunch of widths and margins that need to be adjusted, with various runtime conditions.
-- [ ] Add an app "tour" to show users the main components of the app, where to go for docs, etc.
-- [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
 - [ ] Look into implementing a JS-side ingredient cache so that `Ingredient` WASM objects are only
       created once, then any lookups return JS light clones, which should reduce `.free()` issues.
 - [ ] There are many jarring flashes on first page load (some layout changes, a flash of
@@ -70,6 +70,8 @@
 
 ## Completed
 
+- [x] Check how vertical spacing looks like on 1080p/2160p screens; look into dynamic vertical?
+- [x] Add recipe save functionality, with support for editable comments/notes.
 - [x] Pasting the strawberry sorbet recipe, fixing 'Strawberry [Brix 9]' to remove ' [Brix 9]', then
       pasting a different recipe causes a 'null pointer passed to rust' error; still unclear why.
 - [x] Add a navbar item with general ice cream science knowledge, likely referencing `sci-cream`.
