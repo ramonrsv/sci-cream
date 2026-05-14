@@ -14,6 +14,7 @@ import { CompositionBreakdownPanel } from "@/app/_components/composition-breakdo
 import { PropertiesPanel } from "@/app/_components/properties-panel";
 import { PropertiesChartPanel } from "@/app/_components/properties-chart-panel";
 import { FpdGraphPanel } from "@/app/_components/fpd-graph-panel";
+import { WatchersPanel } from "@/app/_components/watchers-panel";
 import { makeEmptyRecipeContext } from "@/lib/recipe";
 import { RecipeEditorPanel } from "@/app/_components/recipe-editor-panel";
 import { useSeededWasmResources } from "@/lib/wasm-resources";
@@ -71,10 +72,11 @@ function CalculatorContent() {
   // prettier-ignore
   const base = {
     "recipe":      { i: "recipe",      h, resizeHandles: horiz, minW: 5 },
-    "properties":  { i: "properties",  h, resizeHandles: horizVert, minW: 4 },
-    "composition": { i: "composition", h, resizeHandles: horiz, minW: 5 },
+    "watchers":    { i: "watchers",    h, resizeHandles: horizVert, minW: 4 },
     "props-chart": { i: "props-chart", h, resizeHandles: horizVert },
+    "properties":  { i: "properties",  h, resizeHandles: horizVert, minW: 4 },
     "fpd-graph":   { i: "fpd-graph",   h, resizeHandles: horizVert },
+    "composition": { i: "composition", h, resizeHandles: horiz, minW: 5 },
   };
 
   /** Merge override properties into a base layout item, producing a fully-typed `LayoutItem` */
@@ -84,43 +86,53 @@ function CalculatorContent() {
 
   // prettier-ignore
   const xlLayout: LayoutItem[] = [
-    update("properties",  { x:  0, y:  0, w:  5, h: h * 2 }),
-    update("recipe",      { x:  5, y:  0, w:  6 }),
-    update("props-chart", { x: 11, y:  0, w: 11 }),
-    update("fpd-graph",   { x: 22, y:  0, w: 10 }),
-    update("composition", { x:  5, y:  h, w: 27 }),
+    update("recipe",      { x:  0, y:     0, w:   7 }),
+    update("watchers",    { x:  7, y:     0, w:  12 }),
+    update("props-chart", { x: 19, y:     0, w:  13 }),
+    update("properties",  { x:  0, y:     h, w:   7 }),
+    update("fpd-graph",   { x:  7, y:     h, w:  10 }),
+    update("composition", { x: 17, y:     h, w:  15 }),
   ];
 
   // prettier-ignore
   const lgLayout: LayoutItem[] = [
-    update("properties",  { x:  0, y:  0, w:  5, h: h * 2 }),
-    update("recipe",      { x:  5, y:  0, w:  5 }),
-    update("props-chart", { x: 10, y:  0, w:  7 }),
-    update("fpd-graph",   { x: 17, y:  0, w:  7 }),
-    update("composition", { x:  5, y:  h, w: 19 }),
+    update("recipe",      { x:  0, y:     0, w:   7 }),
+    update("watchers",    { x:  7, y:     0, w:  17, h: 7}),
+    update("props-chart", { x:  7, y:     7, w:  17, h: 7 }),
+    update("properties",  { x:  0, y:     h, w:   7 }),
+    update("fpd-graph",   { x:  7, y:    14, w:   9, h: 8 }),
+    update("composition", { x: 16, y:    14, w:   8 }),
   ];
 
   // prettier-ignore
   const mdLayout: LayoutItem[] = [
-    update("properties",  { x:  0, y:  0, w:  5 }),
-    update("recipe",      { x:  5, y:  0, w:  5 }),
-    update("composition", { x: 10, y:  0, w:  6 }),
-    update("props-chart", { x:  0, y:  h, w:  8 }),
-    update("fpd-graph",   { x:  8, y:  h, w:  8 }),
+    update("recipe",      { x:  0, y:     0, w:   6 }),
+    update("watchers",    { x:  6, y:     0, w:  10, h: 7}),
+    update("props-chart", { x:  6, y:     7, w:  10, h: 7 }),
+    update("properties",  { x:  0, y:     h, w:   6 }),
+    update("fpd-graph",   { x:  6, y:    14, w:  10, h: 8 }),
+    update("composition", { x:  0, y: h * 2, w:  fullW("md") }),
   ];
 
   // prettier-ignore
   const smLayout: LayoutItem[] = [
-    update("properties",  { x:  0, y:     0, w:  6 }),
-    update("recipe",      { x:  6, y:     0, w:  6 }),
-    update("composition", { x:  0, y: h * 1, w: fullW("sm") }),
-    update("props-chart", { x:  0, y: h * 2, w: fullW("sm") }),
-    update("fpd-graph",   { x:  0, y: h * 3, w: fullW("sm") }),
+    update("recipe",      { x:  0, y:     0, w:  5 }),
+    update("watchers",    { x:  5, y:     0, w:  7 }),
+    update("properties",  { x:  0, y:     h, w:  4 }),
+    update("props-chart", { x:  4, y:     h, w:  8 }),
+    update("fpd-graph",   { x:  0, y: h * 2, w:  6 }),
+    update("composition", { x:  6, y: h * 2, w:  6 }),
   ];
 
-  const xsLayout: LayoutItem[] = Object.values(base).map((item, idx) =>
-    update(item.i as keyof typeof base, { x: 0, y: idx * h, w: fullW("xs") }),
-  );
+  // prettier-ignore
+  const xsLayout: LayoutItem[] = [
+    update("recipe",      { x:  0, y:     0, w:  fullW("xs") }),
+    update("watchers",    { x:  0, y:     h, w:  fullW("xs") }),
+    update("props-chart", { x:  0, y: h * 2, w:  fullW("xs") }),
+    update("properties",  { x:  0, y: h * 3, w:  fullW("xs") }),
+    update("fpd-graph",   { x:  0, y: h * 4, w:  fullW("xs"), h: h - 1 }),
+    update("composition", { x:  0, y: h * 5 - 1, w: fullW("xs") }),
+  ];
 
   const layouts: ResponsiveLayouts = {
     xl: xlLayout,
@@ -148,6 +160,7 @@ function CalculatorContent() {
           <div key="composition">{<CompositionBreakdownPanel recipes={recipes} />}</div>
           <div key="props-chart">{<PropertiesChartPanel recipes={recipes} />}</div>
           <div key="fpd-graph">{<FpdGraphPanel recipes={recipes} />}</div>
+          <div key="watchers">{<WatchersPanel recipes={recipes} />}</div>
         </ResponsiveGridLayout>
       )}
     </div>

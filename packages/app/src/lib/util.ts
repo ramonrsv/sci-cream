@@ -14,8 +14,9 @@ export const STD_INPUT_INCREMENTS = [0.01, 0.05, 0.1, 0.25, 0.5, 1, 2, 5, 10, 25
 /**
  * Return the nearest standard input increment for a number input `step` attribute.
  *
- * The target step is `current * stepPercent / 100`, clamped to `STD_INPUT_INCREMENTS` and snapped
- * to the closest standard value using a midpoint rule. Capped at largest step that's <= `maxStep`.
+ * The target step is `|current| * stepPercent / 100`, clamped to `STD_INPUT_INCREMENTS` and
+ * snapped to the closest standard value using a midpoint rule. Capped at the largest step that's
+ * `<= maxStep`. The result is always a positive step, independent of `current`'s sign.
  *
  * This is used to provide reasonable default step values for quantity inputs based on current
  * values, snapping to a finite set of increments to avoid values that are too small to be useful.
@@ -26,8 +27,9 @@ export function standardInputStepByPercent(
   maxStep: number = 100,
 ): string {
   const LAST_IDX = STD_INPUT_INCREMENTS.length - 1;
+  const magnitude = current === undefined ? undefined : Math.abs(current);
 
-  if (current === undefined || (current * stepPercent) / 100 <= STD_INPUT_INCREMENTS[0]) {
+  if (magnitude === undefined || (magnitude * stepPercent) / 100 <= STD_INPUT_INCREMENTS[0]) {
     return STD_INPUT_INCREMENTS[0].toString();
   }
 
@@ -36,7 +38,7 @@ export function standardInputStepByPercent(
       return STD_INPUT_INCREMENTS[i].toString();
     }
 
-    const nonStdStep = (current * stepPercent) / 100;
+    const nonStdStep = (magnitude * stepPercent) / 100;
 
     if (nonStdStep > STD_INPUT_INCREMENTS[i] && nonStdStep <= STD_INPUT_INCREMENTS[i + 1]) {
       const midPoint = (STD_INPUT_INCREMENTS[i] + STD_INPUT_INCREMENTS[i + 1]) / 2;

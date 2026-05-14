@@ -74,6 +74,22 @@ describe("standardInputStepByPercent", () => {
     // (100000 * 5) / 100 = 5000 > 100 -> "100"
     expect(standardInputStepByPercent(100000)).toBe("100");
   });
+
+  it("treats negative values by their absolute magnitude", () => {
+    // The step is independent of sign — the input `step` attribute is always a positive interval.
+    for (const current of [-0.5, -1, -10, -15, -100, -1000, -100000]) {
+      expect(
+        standardInputStepByPercent(current),
+        `current=${current} vs |current|=${Math.abs(current)}`,
+      ).toBe(standardInputStepByPercent(Math.abs(current)));
+    }
+  });
+
+  it("returns the smallest increment for zero", () => {
+    // 0 * anything == 0 <= STD_INPUT_INCREMENTS[0] (0.01) -> "0.01"
+    expect(standardInputStepByPercent(0)).toBe("0.01");
+    expect(standardInputStepByPercent(-0)).toBe("0.01");
+  });
 });
 
 // ---------------------------------------------------------------------------

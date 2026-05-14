@@ -68,3 +68,41 @@ export function getReferenceOpacity(index: number): number {
 export function addOrUpdateAlpha(colorStr: string, opacity: number): string {
   return colord(colorStr).alpha(opacity).toRgbString();
 }
+
+/**
+ * Returns a CSS `var(...)` reference for the given `Color` — SSR-safe replacement for
+ * {@link getColor} when assigning to an inline `style` attribute (whose resolved value would
+ * differ between server and client and trigger a hydration mismatch).
+ */
+export function colorVar(color: Color): string {
+  return `var(${color})`;
+}
+
+/**
+ * Returns a CSS `color-mix(...)` expression that applies `alpha` (0–1) to the given `Color`
+ * variable, suitable for use in inline `style` attributes. SSR-safe, like {@link colorVar}.
+ */
+export function colorVarWithAlpha(color: Color, alpha: number): string {
+  return `color-mix(in srgb, var(${color}) ${alpha * 100}%, transparent)`;
+}
+
+/**
+ * Returns a `Color` representing how `value` sits within the acceptable `{ min, max }` range:
+ *
+ * - Green — within the inner 70% of the range (ideal band)
+ * - Yellow — within the range but outside the ideal band
+ * - Orange — within 15% outside the range on either side
+ * - RedDull — further out than 15% beyond the range
+ */
+export function getRangeColor(value: number, range: { min: number; max: number }): Color {
+  const span = range.max - range.min;
+  const idealMin = range.min + span * 0.15;
+  const idealMax = range.max - span * 0.15;
+  const expandedMin = range.min - span * 0.15;
+  const expandedMax = range.max + span * 0.15;
+
+  if (value > idealMin && value < idealMax) return Color.GraphGreen;
+  if (value > range.min && value < range.max) return Color.GraphYellow;
+  if (value > expandedMin && value < expandedMax) return Color.GraphOrange;
+  return Color.GraphRedDull;
+}

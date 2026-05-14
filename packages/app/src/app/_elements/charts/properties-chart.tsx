@@ -35,6 +35,7 @@ import {
   getColor,
   getGridColor,
   getLegendColor,
+  getRangeColor,
   getReferenceOpacity,
   addOrUpdateAlpha,
 } from "@/lib/styles/colors";
@@ -189,36 +190,9 @@ export function PropertiesBarChart({
     );
   };
 
-  /**
-   * Returns the bar colour for the main recipe based on where the value falls relative to the
-   * acceptable range for that property, with the following scheme:
-   *
-   * Green = within the inner 85% of the range
-   * Yellow = within range
-   * Orange = within 15% outside
-   * Red = further out
-   */
+  /** Returns the bar color for the main recipe via the shared {@link getRangeColor} helper */
   const getMainBarColor = (propVal: number, range: { yMin: number; yMax: number }): string => {
-    const isWithin = (val: number, range: { yMin: number; yMax: number }) =>
-      val > range.yMin && val < range.yMax;
-
-    const idealRange = {
-      yMin: range.yMin + (range.yMax - range.yMin) * 0.15,
-      yMax: range.yMax - (range.yMax - range.yMin) * 0.15,
-    };
-
-    const expandedRange = {
-      yMin: range.yMin - (range.yMax - range.yMin) * 0.15,
-      yMax: range.yMax + (range.yMax - range.yMin) * 0.15,
-    };
-
-    return isWithin(propVal, idealRange)
-      ? getColor(Color.GraphGreen)
-      : isWithin(propVal, range)
-        ? getColor(Color.GraphYellow)
-        : isWithin(propVal, expandedRange)
-          ? getColor(Color.GraphOrange)
-          : getColor(Color.GraphRedDull);
+    return getColor(getRangeColor(propVal, { min: range.yMin, max: range.yMax }));
   };
 
   const labels = propKeys.map((propKey) => propKeyAsModifiedMedStr(propKey));
