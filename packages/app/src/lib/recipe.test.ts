@@ -10,8 +10,11 @@ import {
   calculateMixTotal,
   makeSciCreamRecipe,
   makeLightRecipe,
+  makeUpdatedRecipeFromStore,
   type Recipe,
 } from "./recipe";
+
+import type { WasmResources } from "./wasm-resources";
 
 import {
   Category,
@@ -285,6 +288,42 @@ describe("Recipe Helper Functions", () => {
     it("should return a MixProperties object", () => {
       const result = makeSciCreamRecipe(recipe).calculate_mix_properties();
       expect(result).toBeInstanceOf(MixProperties);
+    });
+  });
+
+  // ---- makeUpdatedRecipeFromStore ---------------------------------------------------------------
+
+  describe("makeUpdatedRecipeFromStore", () => {
+    let recipe: Recipe;
+    let resources: WasmResources;
+
+    beforeEach(() => {
+      const bridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
+      resources = {
+        updateIdx: 0,
+        wasmBridge: bridge,
+        hasIngredient: (n) => bridge.has_ingredient(n),
+      };
+      recipe = makeEmptyRecipeContext().recipes[0];
+    });
+
+    it("should not throw when pasting into a slot that already has a valid ingredient", () => {
+      recipe = makeUpdatedRecipeFromStore(
+        recipe,
+        { name: "", serializedRows: "Fructose\t100" },
+        resources,
+      );
+      expect(recipe.ingredientRows[0].name).toBe("Fructose");
+
+      expect(() => {
+        recipe = makeUpdatedRecipeFromStore(
+          recipe,
+          { name: "", serializedRows: "Whole Milk\t100" },
+          resources,
+        );
+      }).not.toThrow();
+
+      expect(recipe.ingredientRows[0].name).toBe("Whole Milk");
     });
   });
 });

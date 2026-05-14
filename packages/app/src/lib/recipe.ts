@@ -189,7 +189,11 @@ export function requiresMixPropsUpdate(
 ): boolean {
   const ret =
     !!currentRow.ingredient !== !!updatedRow.ingredient ||
-    updatedRow.ingredient?.name !== currentRow.ingredient?.name ||
+    // The WASM object in `currentRow.ingredient` may have been freed by `makeUpdatedRow`, so we
+    // cannot check `currentRow.ingredient?.name` without risking a zero pointer error. We are
+    // guaranteed that `updatedRow.ingredient` is either `undefined` or a new valid WASM object, so
+    // we can safely check `updatedRow.ingredient?.name` to determine if the ingredient has changed.
+    updatedRow.ingredient?.name !== currentRow.name ||
     currentRow.quantity !== updatedRow.quantity;
   return ret;
 }

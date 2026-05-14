@@ -2,8 +2,6 @@
 
 ## Next Release
 
-- [ ] Pasting the strawberry sorbet recipe, fixing 'Strawberry [Brix 9]' to remove ' [Brix 9]', then
-      pasting a different recipe causes a 'null pointer passed to rust' error; still unclear why.
 - [ ] Add recipe save functionality. Recipes should support versions and notes.
 - [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
       embedded into other websites. How to handle user-defined ingredients?
@@ -72,6 +70,8 @@
 
 ## Completed
 
+- [x] Pasting the strawberry sorbet recipe, fixing 'Strawberry [Brix 9]' to remove ' [Brix 9]', then
+      pasting a different recipe causes a 'null pointer passed to rust' error; still unclear why.
 - [x] Add a navbar item with general ice cream science knowledge, likely referencing `sci-cream`.
 - [x] Add a navbar item for a blog-style thing where I can include information from personal
       experience, which would not be appropriate for `sci-cream`. Look into using markdown.
