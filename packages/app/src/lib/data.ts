@@ -2,7 +2,7 @@
 
 import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
-import { eq, and, asc } from "drizzle-orm";
+import { eq, and, sql } from "drizzle-orm";
 import type { RecipeEntryJson } from "@workspace/sci-cream";
 
 import { getDatabaseUrl } from "./database/util";
@@ -111,7 +111,7 @@ export async function fetchAllUserIngredientSpecs(
     .select()
     .from(ingredientsTable)
     .where(eq(ingredientsTable.user, user.id))
-    .orderBy(asc(ingredientsTable.name));
+    .orderBy(sql`${ingredientsTable.name} COLLATE "C" ASC`);
 
   console.log(
     `fetchAllUserIngredientSpecs: found ${ingredients.length} ingredients for userId=${user.id}`,
@@ -135,7 +135,7 @@ export async function fetchAllUserSavedRecipes(
     .select()
     .from(recipesTable)
     .where(eq(recipesTable.user, user.id))
-    .orderBy(asc(recipesTable.name));
+    .orderBy(sql`${recipesTable.name} COLLATE "C" ASC`);
 
   console.log(`fetchAllUserSavedRecipes: found ${recipes.length} recipes for userId=${user.id}`);
 
