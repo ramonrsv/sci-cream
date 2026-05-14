@@ -70,7 +70,7 @@ function CalculatorContent() {
   /** Base layout item configuration shared across all breakpoint layouts */
   // prettier-ignore
   const base = {
-    "recipe":      { i: "recipe",      h, isResizable: false },
+    "recipe":      { i: "recipe",      h, resizeHandles: horiz, minW: 5 },
     "properties":  { i: "properties",  h, resizeHandles: horizVert, minW: 4 },
     "composition": { i: "composition", h, resizeHandles: horiz, minW: 5 },
     "props-chart": { i: "props-chart", h, resizeHandles: horizVert },
