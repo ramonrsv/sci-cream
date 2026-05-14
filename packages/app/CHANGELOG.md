@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+## [0.0.2] - 2026-05-14
+
 ### Added
 
 - `Navbar` component with a `Header` and `Sidebar` which appear merged as one L-shaped sidebar.
@@ -82,5 +84,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-url -->
 
-[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.1...HEAD
+[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.2...HEAD
+[0.0.2]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.1...app-v0.0.2
 [0.0.1]: https://github.com/ramonrsv/sci-cream/releases/tag/app-v0.0.1

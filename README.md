@@ -25,7 +25,7 @@ Rust library that facilitates the mathematical analysis of ice cream mixes and t
 ## `sci-cream` app
 
 [![CI](https://github.com/ramonrsv/sci-cream/actions/workflows/app.yml/badge.svg)](https://github.com/ramonrsv/sci-cream/actions)
-[![GitHub Release](https://img.shields.io/github/v/release/ramonrsv/sci-cream?filter=app-v*)](https://github.com/ramonrsv/sci-cream/releases/tag/app-v0.0.1)
+[![GitHub Release](https://img.shields.io/github/v/release/ramonrsv/sci-cream?filter=app-v*)](https://github.com/ramonrsv/sci-cream/releases/tag/app-v0.0.2)
 [![codecov](https://codecov.io/github/ramonrsv/sci-cream/graph/badge.svg?flag=app)](https://app.codecov.io/github/ramonrsv/sci-cream/tree/main?flags%5B0%5D=app)
 
 The [`sci-cream` app](https://github.com/ramonrsv/sci-cream/tree/main/packages/app) is a Next.js
