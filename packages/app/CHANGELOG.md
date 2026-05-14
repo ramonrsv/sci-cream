@@ -11,6 +11,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- `Navbar` component with a `Header` and `Sidebar` which appear merged as one L-shaped sidebar.
+- Collapsible `Sidebar` with navigation items including `/calculator`, `/recipes`, etc.
+- User account support with OAuth and email/password credentials; creates database user by email.
+- `RecipeSearch` to search embedded/user-saved recipes; displays recipe, mix properties, comments.
+  - Includes support for loading recipes into `RecipeEditor` and navigating via `?slot=*` params.
+  - Includes support for deleting saved recipes, adding and editing comments on saved recipes.
+- `IngredientSearch` to search embedded/user-defined ingredients; displays JSON spec, composition.
+- Database and `data.ts` support for user-saved recipes, including upserting, deleting, etc.
+- `RecipeEditor` support for recipe names, saving recipes to DB, selecting via `?slot=*` params.
+- `/blog` and `/docs` routes with static content generated from markdown in `packages/app/content`.
+- Draft welcome blog post, as well links to other resources for recipes and science knowledge.
+- `eslint-plugin-jsdoc` and configured it to require jsdoc for most items, e.g. methods, etc.
+- Missing jsdoc for all items to satisfy the new ESLint warnings raised by `eslint-plugin-jsdoc`.
+- GitHub release badge links to all `README.md`; replacement support in `scripts/release.sh`.
+- `scripts/run-local-test-suite.sh` to run test suite similar to CI, but faster than using `act`.
+- Better support for mobile layouts, with responsive stacking layouts, shrinking margins, etc.
+- `CLAUDE.md` for the project as a whole, detailing structure, components, workflows, etc.
+
+### Changed
+
+- Theme toggle is now in collapsible part of `Header` and is a selector dropdown, not a toggle.
+- `/recipes` and `/ingredients` pages now show `RecipeSearch` and `IngredientSearch`, not stubs.
+- Use `next-themes` to handle Light/Dark themes, which solves storage and theme flashing issues.
+- Overhaul project directory structure, `.tsx` up to `src/app/_components` and `src/app/_elements`.
+- Rename, re-design, and refactor components into 3 reusable layers: table -> view -> panel|search.
+- Use embedded ingredients in `WasmBridge`, seeding user-defined ones at load if logged in.
+- Rework `data.ts` to only support per-user requests; built-in are now seeded from embedded.
+- Overhaul layout visual regression tests, with more tests, new viewports, portrait/landscape, etc.
+- Move the calculator page, the current home page, to `/calculator` and add redirect from `/`.
+
+### Fixed
+
+- 'null pointer passed to rust' bug when pasting new valid ingredients on top of previous valid.
+- Issue where expanding the sidebar caused the items to flash; improve expand/collapse animation.
+
 ## [0.0.1] - 2026-03-10
 
 ### Added
