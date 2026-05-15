@@ -7,18 +7,40 @@ interface ViewportAsset {
   screenshot: string;
 }
 
-/** Mobile viewport in portrait orientation (e.g. Pixel 5) */
-export const VIEWPORT_MOBILE_PORTRAIT: ViewportAsset = {
-  name: "mobile viewport - portrait layout",
+/** Mobile (small) viewport in portrait orientation (e.g. Pixel 5) */
+export const VIEWPORT_MOBILE_SMALL_PORTRAIT: ViewportAsset = {
+  name: "small mobile viewport - portrait layout",
   viewport: devices["Pixel 5"].viewport,
-  screenshot: "mobile-portrait",
+  screenshot: "mobile-small-portrait",
 };
 
-/** Mobile viewport in landscape orientation (e.g. Pixel 5) */
-export const VIEWPORT_MOBILE_LANDSCAPE: ViewportAsset = {
-  name: "mobile viewport - landscape layout",
+/** Mobile (small) viewport in landscape orientation (e.g. Pixel 5) */
+export const VIEWPORT_MOBILE_SMALL_LANDSCAPE: ViewportAsset = {
+  name: "small mobile viewport - landscape layout",
   viewport: devices["Pixel 5 landscape"].viewport,
-  screenshot: "mobile-landscape",
+  screenshot: "mobile-small-landscape",
+};
+
+/**
+ * Mobile (large) viewport in portrait orientation (e.g. Pixel 8 Pro)
+ *
+ * Measured experimentally with `whatismyviewport.com` on a Pixel 8 Pro.
+ */
+export const VIEWPORT_MOBILE_LARGE_PORTRAIT: ViewportAsset = {
+  name: "large mobile viewport - portrait layout",
+  viewport: { width: 448, height: 867 },
+  screenshot: "mobile-large-portrait",
+};
+
+/**
+ * Mobile (large) viewport in landscape orientation (e.g. Pixel 8 Pro)
+ *
+ * Measured experimentally with `whatismyviewport.com` on a Pixel 8 Pro.
+ */
+export const VIEWPORT_MOBILE_LARGE_LANDSCAPE: ViewportAsset = {
+  name: "large mobile viewport - landscape layout",
+  viewport: { width: 947, height: 340 },
+  screenshot: "mobile-large-landscape",
 };
 
 /** Tablet viewport in portrait orientation (e.g. iPad Pro 11) */
@@ -93,8 +115,10 @@ export const VIEWPORT_DESKTOP_1440P_FULL: ViewportAsset = {
 
 /** Common viewports for visual regression tests, derived from Playwright's built-in devices. */
 export const VIEWPORTS: ViewportAsset[] = [
-  VIEWPORT_MOBILE_PORTRAIT,
-  VIEWPORT_MOBILE_LANDSCAPE,
+  VIEWPORT_MOBILE_SMALL_PORTRAIT,
+  VIEWPORT_MOBILE_SMALL_LANDSCAPE,
+  VIEWPORT_MOBILE_LARGE_PORTRAIT,
+  VIEWPORT_MOBILE_LARGE_LANDSCAPE,
   VIEWPORT_TABLET_PORTRAIT,
   VIEWPORT_TABLET_LANDSCAPE,
   VIEWPORT_DESKTOP_DEFAULT,
