@@ -72,7 +72,9 @@ export function Navbar({ children }: { children: React.ReactNode }) {
         <Header />
         <div className="flex min-h-0 flex-1">
           <Sidebar />
-          <div className="flex-1 overflow-auto">{children}</div>
+          <div data-testid="app-content" className="flex-1 overflow-auto">
+            {children}
+          </div>
         </div>
       </div>
     </NavbarContext>
