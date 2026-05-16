@@ -238,7 +238,7 @@ export function EntitySearch<E>({
         {selectedEntry === null ? (
           <div className="search-empty">{emptyDetailText}</div>
         ) : (
-          <div className="search-detail-panel">
+          <div className="search-detail-panel" data-testid="search-detail-panel">
             {/* Header: title, badges, action buttons */}
             <div className="flex items-start justify-between gap-3">
               <div className="flex min-w-0 flex-col gap-1">

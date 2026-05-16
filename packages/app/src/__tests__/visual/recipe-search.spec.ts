@@ -6,6 +6,7 @@ import {
   loginAsTestUserWithCredentials,
   selectRecipeByName,
 } from "@/__tests__/e2e/util";
+import { captureFullContent } from "./util";
 
 const RECIPES_URL = "/recipes";
 
@@ -28,6 +29,11 @@ test.describe("Visual Regression: Recipe Search", () => {
     await selectRecipeByName(page, "Standard Base");
 
     await expect(page.locator("#recipe-search")).toHaveScreenshot("recipe-search-selected.png");
+
+    await expect(page.locator(".search-list-item-active")).toBeVisible();
+    await expect(page.locator(".search-list-item-active")).toHaveScreenshot(
+      "recipe-search-active-list-item.png",
+    );
   });
 
   test("recipe selected - detail panel with table and mix properties", async ({ page }) => {
@@ -40,20 +46,8 @@ test.describe("Visual Regression: Recipe Search", () => {
       page.getByRole("button", { name: "Load" }).locator("..").locator("select"),
     ).toBeVisible();
 
-    await expect(page.locator(".search-detail-panel")).toHaveScreenshot(
-      "recipe-search-detail-panel.png",
-    );
-  });
-
-  test("recipe selected - detail panel scrolled", async ({ page }) => {
-    await goToRecipesPage(page);
-    await selectRecipeByName(page, "Standard Base");
-
-    await page.locator(".search-detail-panel").evaluate((el) => (el.scrollTop = el.scrollHeight));
-    await page.waitForTimeout(200);
-
-    await expect(page.locator(".search-detail-panel")).toHaveScreenshot(
-      "recipe-search-detail-panel-scrolled.png",
+    expect(await captureFullContent(page, "search-detail-panel")).toMatchSnapshot(
+      `recipe-search-detail-panel.png`,
     );
   });
 
@@ -74,7 +68,9 @@ test.describe("Visual Regression: Recipe Search", () => {
     await page.locator('input[type="search"]').fill("zzz-no-match");
 
     await expect(page.getByText("No recipes found.")).toBeVisible();
-    await expect(page.locator("#recipe-search")).toHaveScreenshot("recipe-search-no-results.png");
+    await expect(page.locator("#recipe-search")).toHaveScreenshot(
+      "recipe-search-query-no-results.png",
+    );
   });
 
   test("source filter - built-in only (user logged in)", async ({ page }) => {
@@ -107,16 +103,6 @@ test.describe("Visual Regression: Recipe Search", () => {
     );
   });
 
-  test("active recipe highlighted in list", async ({ page }) => {
-    await goToRecipesPage(page);
-    await selectRecipeByName(page, "Standard Base");
-
-    await expect(page.locator(".search-list-item-active")).toBeVisible();
-    await expect(page.locator(".search-list-item-active")).toHaveScreenshot(
-      "recipe-search-active-list-item.png",
-    );
-  });
-
   test("saved recipe with invalid ingredient - cell highlighted red", async ({ page }) => {
     await loginAsTestUserWithCredentials(page, TEST_USER_B);
     await goToRecipesPage(page);
@@ -139,10 +125,7 @@ test.describe("Visual Regression: Recipe Search", () => {
     await expect(textarea).toHaveValue(/Rich, dark, and bittersweet/);
     await expect(page.getByRole("button", { name: "Save comments" })).toBeAttached();
 
-    // The comments section is below the fold in the detail panel — scroll to bottom
-    await page.locator(".search-detail-panel").evaluate((el) => (el.scrollTop = el.scrollHeight));
-    await page.waitForTimeout(200);
-
+    textarea.scrollIntoViewIfNeeded();
     await expect(page.locator(".search-detail-panel")).toHaveScreenshot(
       "recipe-search-saved-comments-prefilled.png",
     );
@@ -160,9 +143,7 @@ test.describe("Visual Regression: Recipe Search", () => {
     await expect(textarea).toHaveValue("");
     await expect(page.getByRole("button", { name: "Save comments" })).toBeAttached();
 
-    await page.locator(".search-detail-panel").evaluate((el) => (el.scrollTop = el.scrollHeight));
-    await page.waitForTimeout(200);
-
+    await textarea.scrollIntoViewIfNeeded();
     await expect(page.locator(".search-detail-panel")).toHaveScreenshot(
       "recipe-search-saved-comments-empty.png",
     );
@@ -178,9 +159,7 @@ test.describe("Visual Regression: Recipe Search", () => {
     await textarea.fill("Try with 70% cocoa.");
     await expect(textarea).toHaveValue("Try with 70% cocoa.");
 
-    await page.locator(".search-detail-panel").evaluate((el) => (el.scrollTop = el.scrollHeight));
-    await page.waitForTimeout(200);
-
+    await textarea.scrollIntoViewIfNeeded();
     await expect(page.locator(".search-detail-panel")).toHaveScreenshot(
       "recipe-search-saved-comments-edited.png",
     );

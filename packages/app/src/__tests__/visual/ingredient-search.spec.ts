@@ -1,6 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
 import { TEST_USER_B } from "@/lib/database/assets";
+import { captureFullContent } from "@/__tests__/visual/util";
 import {
   goToPageAndWaitFor,
   loginAsTestUserWithCredentials,
@@ -32,29 +33,28 @@ test.describe("Visual Regression: Ingredient Search", () => {
     await expect(page.locator("#ingredient-search")).toHaveScreenshot(
       "ingredient-search-selected.png",
     );
+
+    await expect(page.locator(".search-list-item-active")).toBeVisible();
+    await expect(page.locator(".search-list-item-active")).toHaveScreenshot(
+      "ingredient-search-active-list-item.png",
+    );
   });
 
   test("ingredient selected - detail panel with JSON spec and composition", async ({ page }) => {
     await goToIngredientsPage(page);
-    await selectIngredientByName(page, "1% Milk");
+    await selectIngredientByName(page, "Sealtest 3.25% Milk");
 
     // No Load button on the read-only ingredients page
     await expect(page.getByRole("button", { name: "Load" })).toHaveCount(0);
 
-    await expect(page.locator(".search-detail-panel")).toHaveScreenshot(
-      "ingredient-search-detail-panel.png",
-    );
-  });
+    const detailPanel = page.locator(".search-detail-panel");
+    // The JSON pre redacts the comments value; the full text renders as a paragraph below
+    await expect(detailPanel.locator("pre")).toContainText('"comments": "..."');
+    // The URL in the comments should be auto-linked
+    await expect(detailPanel.getByRole("link")).toBeVisible();
 
-  test("ingredient selected - detail panel scrolled", async ({ page }) => {
-    await goToIngredientsPage(page);
-    await selectIngredientByName(page, "Underbelly General Purpose Stabilizer Blend");
-
-    await page.locator(".search-detail-panel").evaluate((el) => (el.scrollTop = el.scrollHeight));
-    await page.waitForTimeout(200);
-
-    await expect(page.locator(".search-detail-panel")).toHaveScreenshot(
-      "ingredient-search-detail-panel-scrolled.png",
+    expect(await captureFullContent(page, "search-detail-panel")).toMatchSnapshot(
+      `ingredient-search-detail-panel.png`,
     );
   });
 
@@ -70,26 +70,20 @@ test.describe("Visual Regression: Ingredient Search", () => {
     // The literal "alias for X" prose was removed in favour of the badge
     await expect(detailPanel.getByText(/alias for/i)).toHaveCount(0);
 
-    await expect(detailPanel).toHaveScreenshot("ingredient-search-alias-selected.png");
+    await expect(detailPanel).toHaveScreenshot("ingredient-search-detail-panel-alias.png");
   });
 
-  test("ingredient with comments - redacted JSON + autoLinked comments paragraph", async ({
-    page,
-  }) => {
+  test("saved selected - shows 'saved' source badge", async ({ page }) => {
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
     await goToIngredientsPage(page);
-    await selectIngredientByName(page, "Sealtest 3.25% Milk");
+    // Source-filter to Saved so we don't accidentally pick a built-in entry with the same name
+    await page.getByRole("button", { name: "Saved" }).click();
+    await selectIngredientByName(page, "Fructose (User-Defined)");
 
     const detailPanel = page.locator(".search-detail-panel");
-    // The JSON pre redacts the comments value; the full text renders as a paragraph below
-    await expect(detailPanel.locator("pre")).toContainText('"comments": "..."');
-    // The URL in the comments should be auto-linked
-    await expect(detailPanel.getByRole("link")).toBeVisible();
+    await expect(detailPanel.getByText("saved")).toBeVisible();
 
-    // The comments section is below the fold in the detail panel — scroll to bottom
-    await page.locator(".search-detail-panel").evaluate((el) => (el.scrollTop = el.scrollHeight));
-    await page.waitForTimeout(200);
-
-    await expect(detailPanel).toHaveScreenshot("ingredient-search-with-comments.png");
+    await expect(detailPanel).toHaveScreenshot("ingredient-search-detail-panel-saved.png");
   });
 
   test("search query - filtered list", async ({ page }) => {
@@ -110,7 +104,7 @@ test.describe("Visual Regression: Ingredient Search", () => {
 
     await expect(page.getByText("No ingredients found.")).toBeVisible();
     await expect(page.locator("#ingredient-search")).toHaveScreenshot(
-      "ingredient-search-no-results.png",
+      "ingredient-search-query-no-results.png",
     );
   });
 
@@ -147,28 +141,5 @@ test.describe("Visual Regression: Ingredient Search", () => {
     await expect(page.locator("#ingredient-search")).toHaveScreenshot(
       "ingredient-search-source-saved-empty.png",
     );
-  });
-
-  test("active ingredient highlighted in list", async ({ page }) => {
-    await goToIngredientsPage(page);
-    await selectIngredientByName(page, "Sucrose");
-
-    await expect(page.locator(".search-list-item-active")).toBeVisible();
-    await expect(page.locator(".search-list-item-active")).toHaveScreenshot(
-      "ingredient-search-active-list-item.png",
-    );
-  });
-
-  test("saved user-defined ingredient - shows 'saved' source badge", async ({ page }) => {
-    await loginAsTestUserWithCredentials(page, TEST_USER_B);
-    await goToIngredientsPage(page);
-    // Source-filter to Saved so we don't accidentally pick a built-in entry with the same name
-    await page.getByRole("button", { name: "Saved" }).click();
-    await selectIngredientByName(page, "Fructose (User-Defined)");
-
-    const detailPanel = page.locator(".search-detail-panel");
-    await expect(detailPanel.getByText("saved")).toBeVisible();
-
-    await expect(detailPanel).toHaveScreenshot("ingredient-search-saved-selected.png");
   });
 });
