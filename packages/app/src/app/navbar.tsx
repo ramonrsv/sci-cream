@@ -72,7 +72,10 @@ export function Navbar({ children }: { children: React.ReactNode }) {
         <Header />
         <div className="flex min-h-0 flex-1">
           <Sidebar />
-          <div data-testid="app-content" className="flex-1 overflow-auto">
+          {/* `scrollbar-gutter:stable` keeps content width fixed when the scrollbar toggles,
+              so `react-grid-layout` on the calculator page can't flip breakpoints at viewport
+              widths where the container straddles one (e.g. Pixel 5 landscape at 802px). */}
+          <div data-testid="app-content" className="flex-1 overflow-auto [scrollbar-gutter:stable]">
             {children}
           </div>
         </div>
