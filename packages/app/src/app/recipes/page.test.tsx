@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import { deleteUserRecipe, fetchAllUserSavedRecipes, updateUserRecipeComments } from "@/lib/data";
 
 import RecipesPage from "./page";
+import { STORAGE_KEYS } from "@/lib/local-storage";
 
 // ---------------------------------------------------------------------------
 // Mocks
@@ -148,7 +149,7 @@ describe("RecipesPage", () => {
       render(<RecipesPage />);
       capturedProps().onLoadRecipe!(entry, 1);
 
-      const stored = JSON.parse(localStorage.getItem("recipe-stores")!);
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.recipeStores)!);
       expect(stored[1].serializedRows).toBe("Heavy Cream\t500\nSucrose\t100");
     });
 
@@ -156,7 +157,7 @@ describe("RecipesPage", () => {
       render(<RecipesPage />);
       capturedProps().onLoadRecipe!(entry, 0);
 
-      const stored = JSON.parse(localStorage.getItem("recipe-stores")!);
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.recipeStores)!);
       expect(stored[0].name).toBe(recipeEntryId(entry));
     });
 
@@ -164,7 +165,7 @@ describe("RecipesPage", () => {
       render(<RecipesPage />);
       capturedProps().onLoadRecipe!(entry, 1);
 
-      const stored = JSON.parse(localStorage.getItem("recipe-stores")!);
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.recipeStores)!);
       expect(stored[0].serializedRows).toBe("");
       expect(stored[2].serializedRows).toBe("");
     });
@@ -188,7 +189,7 @@ describe("RecipesPage", () => {
       render(<RecipesPage />);
       capturedProps().onLoadRecipe!(multiRowEntry, 0);
 
-      const stored = JSON.parse(localStorage.getItem("recipe-stores")!);
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.recipeStores)!);
       expect(stored[0].serializedRows).toBe(
         "Whole Milk\t700\nSkimmed Milk Powder\t80\nSucrose\t120",
       );

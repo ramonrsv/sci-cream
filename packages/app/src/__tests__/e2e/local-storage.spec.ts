@@ -8,6 +8,7 @@ import {
 } from "@/__tests__/e2e/util";
 
 import { sleep_ms } from "@/lib/util";
+import { STORAGE_KEYS } from "@/lib/local-storage";
 
 test.describe("Local Storage Functionality", () => {
   test("recipes should be stored in local storage and persist across page reloads", async ({
@@ -24,9 +25,9 @@ test.describe("Local Storage Functionality", () => {
     // Wait for interval to save to local storage
     await sleep_ms(2000);
 
-    const recipes = await page.evaluate(() => {
-      return JSON.parse(localStorage.getItem("recipe-stores") || "[]");
-    });
+    const recipes = await page.evaluate((key) => {
+      return JSON.parse(localStorage.getItem(key) || "[]");
+    }, STORAGE_KEYS.recipeStores);
     expect(recipes).toHaveLength(3);
 
     // Reload the page to check persistence

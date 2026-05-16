@@ -1,4 +1,4 @@
-import { getLocalStorage, setLocalStorage } from "@/lib/local-storage";
+import { getLocalStorage, setLocalStorage, STORAGE_KEYS } from "@/lib/local-storage";
 import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 
 import { WasmResources } from "./wasm-resources";
@@ -227,13 +227,13 @@ export function stringifyRecipeToStore(recipe: Recipe): RecipeStore {
 
 /** Persist the passed `RecipeStore`s into `localStorage` */
 export function setRecipeStoresToStorage(recipes: RecipeStore[]): void {
-  setLocalStorage("recipe-stores", recipes);
+  setLocalStorage(STORAGE_KEYS.recipeStores, recipes);
 }
 
 /** Retrieve `RecipeStore`s from `localStorage`, default empty strings if none found */
 export function getRecipeStoresFromStorage(): RecipeStore[] {
   return (
-    getLocalStorage<RecipeStore[]>("recipe-stores") ??
+    getLocalStorage<RecipeStore[]>(STORAGE_KEYS.recipeStores) ??
     Array.from({ length: MAX_RECIPES }, () => ({ name: "", serializedRows: "" }))
   );
 }

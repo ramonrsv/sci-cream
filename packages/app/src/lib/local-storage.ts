@@ -1,3 +1,11 @@
+/** All `localStorage` keys used by the app */
+export const STORAGE_KEYS = {
+  recipeStores: "recipe-stores",
+  sidebarCollapsed: "sidebar-collapsed",
+  watcherSelectedProps: "watcher-selected-props",
+  watcherTargets: "watcher-targets",
+} as const;
+
 /** Read and deserialize a value from `localStorage`; returns `null` when absent or malformed */
 export function getLocalStorage<T>(key: string): T | null {
   if (typeof window === "undefined") return null;

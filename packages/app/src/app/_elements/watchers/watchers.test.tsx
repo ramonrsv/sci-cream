@@ -3,12 +3,8 @@ import "@testing-library/jest-dom/vitest";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 
-import {
-  WatcherCard,
-  WatchersView,
-  WATCHER_SELECTED_PROPS_KEY,
-  WATCHER_TARGETS_KEY,
-} from "@/app/_elements/watchers/watchers";
+import { WatcherCard, WatchersView } from "@/app/_elements/watchers/watchers";
+import { STORAGE_KEYS } from "@/lib/local-storage";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { makeEmptyRecipe } from "@/lib/recipe";
 import { getRangeColor, Color } from "@/lib/styles/colors";
@@ -296,7 +292,7 @@ describe("WatchersView", () => {
   });
 
   it("hydrates the selection from localStorage on mount", () => {
-    localStorage.setItem(WATCHER_SELECTED_PROPS_KEY, JSON.stringify([TOTAL_FATS]));
+    localStorage.setItem(STORAGE_KEYS.watcherSelectedProps, JSON.stringify([TOTAL_FATS]));
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(<WatchersView main={main} />);
 
@@ -309,7 +305,7 @@ describe("WatchersView", () => {
   });
 
   it("hydrates target values from localStorage on mount", () => {
-    localStorage.setItem(WATCHER_TARGETS_KEY, JSON.stringify({ [MSNF]: 9.5 }));
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 9.5 }));
     const main = makeMockRecipe(RecipeID.Main);
     render(<WatchersView main={main} />);
     const input = screen.getByTestId(`watcher-card-${String(MSNF)}-target`) as HTMLInputElement;
@@ -320,7 +316,7 @@ describe("WatchersView", () => {
     const main = makeMockRecipe(RecipeID.Main);
     render(<WatchersView main={main} />);
     fireEvent.click(screen.getByTestId(`watcher-card-${String(MSNF)}-remove`));
-    const stored = JSON.parse(localStorage.getItem(WATCHER_SELECTED_PROPS_KEY) ?? "[]");
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherSelectedProps) ?? "[]");
     expect(stored).not.toContain(MSNF);
     expect(stored).toContain(TOTAL_SOLIDS);
   });
@@ -330,7 +326,7 @@ describe("WatchersView", () => {
     render(<WatchersView main={main} />);
     const input = screen.getByTestId(`watcher-card-${String(MSNF)}-target`) as HTMLInputElement;
     fireEvent.change(input, { target: { value: "9.5" } });
-    const stored = JSON.parse(localStorage.getItem(WATCHER_TARGETS_KEY) ?? "{}");
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherTargets) ?? "{}");
     expect(stored[MSNF]).toBe(9.5);
   });
 

@@ -19,7 +19,7 @@ import {
   getRangeColor,
   getReferenceOpacity,
 } from "@/lib/styles/colors";
-import { getLocalStorage, setLocalStorage } from "@/lib/local-storage";
+import { getLocalStorage, setLocalStorage, STORAGE_KEYS } from "@/lib/local-storage";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { STATE_VAL, standardInputStepByPercent } from "@/lib/util";
 
@@ -36,11 +36,6 @@ import {
 
 /** Map of `PropKey` to user-entered target value; sparse, only set entries are tracked */
 export type TargetsMap = Partial<Record<PropKey, number>>;
-
-/** localStorage key for the user's set of watched `PropKey`s */
-export const WATCHER_SELECTED_PROPS_KEY = "watcher-selected-props";
-/** localStorage key for the user's target values, keyed by `PropKey` */
-export const WATCHER_TARGETS_KEY = "watcher-targets";
 
 /** Default set of property keys shown when the Custom key filter is first initialized */
 export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
@@ -334,21 +329,22 @@ export function WatchersView({
 
   // Hydrate selection + targets from localStorage on mount (client-only, after SSR pass)
   useEffect(() => {
-    const stored = getLocalStorage<PropKey[]>(WATCHER_SELECTED_PROPS_KEY);
+    const stored = getLocalStorage<PropKey[]>(STORAGE_KEYS.watcherSelectedProps);
     if (stored) setSelectedProps(new Set(stored));
-    const storedTargets = getLocalStorage<TargetsMap>(WATCHER_TARGETS_KEY);
+
+    const storedTargets = getLocalStorage<TargetsMap>(STORAGE_KEYS.watcherTargets);
     if (storedTargets) setTargets(storedTargets);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   // Persist selection to localStorage on change
   useEffect(() => {
-    setLocalStorage(WATCHER_SELECTED_PROPS_KEY, Array.from(selectedPropsState[STATE_VAL]));
+    setLocalStorage(STORAGE_KEYS.watcherSelectedProps, Array.from(selectedPropsState[STATE_VAL]));
   }, [selectedPropsState]);
 
   // Persist targets to localStorage on change
   useEffect(() => {
-    setLocalStorage(WATCHER_TARGETS_KEY, targets);
+    setLocalStorage(STORAGE_KEYS.watcherTargets, targets);
   }, [targets]);
 
   /** Returns `true` when every recipe has a zero/NaN value for the given property key */

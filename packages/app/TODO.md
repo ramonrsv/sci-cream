@@ -33,6 +33,7 @@
 - [ ] Add support for sharing of user-defined ingredients, similarly to sharing of recipes.
 - [ ] Refine performance benchmarks; some of them may not be measuring what they claim to measure.
 - [ ] Add an app "tour" to show users the main components of the app, where to go for docs, etc.
+- [ ] Add support for every instance of `KeySelect` to independently store custom keys in local.
 
 ## Backlog
 

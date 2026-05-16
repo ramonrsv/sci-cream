@@ -6,7 +6,7 @@ import { getAcceptablePropertyRange } from "@/lib/sci-cream/sci-cream";
 import { pasteRecipeAndWaitForUpdate, goToPageAndWaitFor } from "@/__tests__/e2e/util";
 import { RecipeID } from "@/__tests__/assets";
 
-import { WATCHER_SELECTED_PROPS_KEY } from "@/app/_elements/watchers/watchers";
+import { STORAGE_KEYS } from "@/lib/local-storage";
 
 /**
  * Inject a watcher-selection list into `localStorage` before navigation, so that `WatchersView`'s
@@ -17,7 +17,7 @@ export async function presetWatcherSelection(page: Page, propKeys: string[]) {
     ([key, keys]) => {
       localStorage.setItem(key, JSON.stringify(keys));
     },
-    [WATCHER_SELECTED_PROPS_KEY, propKeys] as const,
+    [STORAGE_KEYS.watcherSelectedProps, propKeys] as const,
   );
 }
 
