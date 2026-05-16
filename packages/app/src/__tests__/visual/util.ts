@@ -1,4 +1,5 @@
 import { Page } from "@playwright/test";
+import sharp from "sharp";
 
 import { sleep_ms } from "@/lib/util";
 
@@ -8,13 +9,20 @@ export async function scrollToBottomOfPage(page: Page) {
   await sleep_ms(500); // Wait for any lazy-loaded content to load
 }
 
-/** Gets the vertical overflow of the main content area of the page, inside the shell (`Navbar`). */
-export async function getContentOverflow(page: Page): Promise<number> {
-  return page.evaluate(() => {
-    const el = document.querySelector("[data-testid='app-content']");
+/**
+ * Gets the vertical overflow of the scroll container identified by `scrollTargetTestId`.
+ *
+ * Defaults to the app shell's main content area (`[data-testid='app-content']`).
+ */
+export async function getContentOverflow(
+  page: Page,
+  scrollTargetTestId = "app-content",
+): Promise<number> {
+  return page.evaluate((testId) => {
+    const el = document.querySelector(`[data-testid='${testId}']`);
     if (!el) return 0;
     return el.scrollHeight - el.clientHeight;
-  });
+  }, scrollTargetTestId);
 }
 
 /**
@@ -40,4 +48,86 @@ export async function setViewportHeightForAllContentScreenshot(page: Page) {
     width: currentViewport.width,
     height: currentViewport.height + overflow + 10,
   });
+}
+
+/**
+ * Captures a scroll container's full content as a single stitched PNG.
+ *
+ * `scrollTargetTestId` identifies the scroll container by `data-testid` (defaults to
+ * `app-content`, the app shell's main content area). Useful for capturing nested scrollers, e.g.
+ * the search list or detail panel inside `EntitySearch`.
+ *
+ * Unlike {@link setViewportHeightForAllContentScreenshot}, this keeps the viewport at its natural
+ * size so viewport-adaptive components (`flex-1`, charts that observe their box, etc.) render at
+ * the size a real user would see. Each viewport-sized frame is captured at successive scroll
+ * positions of the target scroller, then cropped to the scroller's bounding box, trimmed for
+ * overlap, and composited vertically with `sharp`.
+ *
+ * Sticky elements inside the scroll container will repeat across the stitched output, since they
+ * appear at the same on-screen position in every frame. Chrome outside the scroller (e.g. the
+ * navbar `Header`) is excluded.
+ */
+export async function captureFullContent(
+  page: Page,
+  scrollTargetTestId = "app-content",
+): Promise<Buffer> {
+  const scroller = page.getByTestId(scrollTargetTestId);
+  const box = await scroller.boundingBox();
+  if (!box) throw new Error(`'${scrollTargetTestId}' scroller has no bounding box`);
+
+  const dpr = await page.evaluate(() => window.devicePixelRatio);
+  const totalHeight = await scroller.evaluate((el) => el.scrollHeight);
+
+  const positions: number[] = [];
+  for (let y = 0; y < totalHeight; y += box.height) {
+    positions.push(Math.min(y, totalHeight - box.height));
+  }
+  const uniquePositions = [...new Set(positions)];
+
+  const pieces: { buf: Buffer; height: number }[] = [];
+  let prevBottom = 0;
+  for (const top of uniquePositions) {
+    await scroller.evaluate(
+      (el, t) => el.scrollTo({ top: t, behavior: "instant" as ScrollBehavior }),
+      top,
+    );
+    await sleep_ms(100);
+    const shot = await page.screenshot();
+
+    const overlap = Math.max(0, prevBottom - top);
+    const cropTopPx = Math.round((box.y + overlap) * dpr);
+    const cropHeightPx = Math.round((box.height - overlap) * dpr);
+    if (cropHeightPx <= 0) continue;
+
+    const piece = await sharp(shot)
+      .extract({
+        left: Math.round(box.x * dpr),
+        top: cropTopPx,
+        width: Math.round(box.width * dpr),
+        height: cropHeightPx,
+      })
+      .toBuffer();
+    pieces.push({ buf: piece, height: cropHeightPx });
+    prevBottom = top + box.height;
+  }
+
+  const stitchedHeight = pieces.reduce((sum, p) => sum + p.height, 0);
+  const composites: sharp.OverlayOptions[] = [];
+  let y = 0;
+  for (const p of pieces) {
+    composites.push({ input: p.buf, left: 0, top: y });
+    y += p.height;
+  }
+
+  return sharp({
+    create: {
+      width: Math.round(box.width * dpr),
+      height: stitchedHeight,
+      channels: 4,
+      background: { r: 0, g: 0, b: 0, alpha: 0 },
+    },
+  })
+    .composite(composites)
+    .png()
+    .toBuffer();
 }
