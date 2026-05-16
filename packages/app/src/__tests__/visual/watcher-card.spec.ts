@@ -1,14 +1,25 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, Page } from "@playwright/test";
 
 import { CompKey, compToPropKey } from "@workspace/sci-cream";
-
 import { getAcceptablePropertyRange } from "@/lib/sci-cream/sci-cream";
 
 import { pasteRecipeAndWaitForUpdate, goToPageAndWaitFor } from "@/__tests__/e2e/util";
-
 import { RecipeID } from "@/__tests__/assets";
 
-import { presetWatcherSelection } from "./util";
+import { WATCHER_SELECTED_PROPS_KEY } from "@/app/_elements/watchers/watchers";
+
+/**
+ * Inject a watcher-selection list into `localStorage` before navigation, so that `WatchersView`'s
+ * mount-time hydration picks it up. Use to control which cards appear in screenshot tests.
+ */
+export async function presetWatcherSelection(page: Page, propKeys: string[]) {
+  await page.addInitScript(
+    ([key, keys]) => {
+      localStorage.setItem(key, JSON.stringify(keys));
+    },
+    [WATCHER_SELECTED_PROPS_KEY, propKeys] as const,
+  );
+}
 
 /**
  * `PropKey`s used to exercise the with-range and no-range code paths in `WatcherCard` close-ups.

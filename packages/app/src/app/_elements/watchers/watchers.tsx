@@ -23,7 +23,16 @@ import { getLocalStorage, setLocalStorage } from "@/lib/local-storage";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { STATE_VAL, standardInputStepByPercent } from "@/lib/util";
 
-import { PropKey, getPropKeys, getMixProperty, prop_key_as_med_str } from "@workspace/sci-cream";
+import {
+  PropKey,
+  getPropKeys,
+  getMixProperty,
+  prop_key_as_med_str,
+  compToPropKey,
+  CompKey,
+  fpdToPropKey,
+  FpdKey,
+} from "@workspace/sci-cream";
 
 /** Map of `PropKey` to user-entered target value; sparse, only set entries are tracked */
 export type TargetsMap = Partial<Record<PropKey, number>>;
@@ -33,15 +42,19 @@ export const WATCHER_SELECTED_PROPS_KEY = "watcher-selected-props";
 /** localStorage key for the user's target values, keyed by `PropKey` */
 export const WATCHER_TARGETS_KEY = "watcher-targets";
 
-/**
- * Default set of properties auto-selected when no localStorage value is present.
- *
- * Limited to keys for which {@link getAcceptablePropertyRange} returns a defined range, since those
- * are the keys for which the color-coded range indicator is meaningful.
- */
-export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set(
-  getPropKeys().filter((key) => getAcceptablePropertyRange(key) !== undefined),
-);
+/** Default set of property keys shown when the Custom key filter is first initialized */
+export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
+  compToPropKey(CompKey.MilkFat),
+  compToPropKey(CompKey.TotalFats),
+  compToPropKey(CompKey.MSNF),
+  compToPropKey(CompKey.TotalSolids),
+  compToPropKey(CompKey.Water),
+  compToPropKey(CompKey.TotalSugars),
+  compToPropKey(CompKey.StabilizersPerWater),
+  compToPropKey(CompKey.POD),
+  compToPropKey(CompKey.AbsPAC),
+  fpdToPropKey(FpdKey.ServingTemp),
+] as PropKey[]);
 
 /** Format a numeric delta as a signed string (e.g. `+0.58`, `−0.47`); returns "" for NaN/undefined */
 function formatDelta(delta: number | undefined): string {
@@ -314,7 +327,7 @@ export function WatchersView({
   toolbarPrefix?: ReactNode;
   defaultSelected?: Set<PropKey>;
 }) {
-  const propsFilterState = useState<KeyFilter>(KeyFilter.Custom);
+  const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(defaultSelected);
   const [, setSelectedProps] = selectedPropsState;
   const [targets, setTargets] = useState<TargetsMap>({});

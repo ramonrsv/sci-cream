@@ -9,6 +9,7 @@ import {
   WATCHER_SELECTED_PROPS_KEY,
   WATCHER_TARGETS_KEY,
 } from "@/app/_elements/watchers/watchers";
+import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { makeEmptyRecipe } from "@/lib/recipe";
 import { getRangeColor, Color } from "@/lib/styles/colors";
 
@@ -297,7 +298,12 @@ describe("WatchersView", () => {
   it("hydrates the selection from localStorage on mount", () => {
     localStorage.setItem(WATCHER_SELECTED_PROPS_KEY, JSON.stringify([TOTAL_FATS]));
     const main = makeMockRecipe(RecipeID.Main);
-    render(<WatchersView main={main} />);
+    const { container } = render(<WatchersView main={main} />);
+
+    // Default filter is Auto (ignores selection); switch to Custom to observe the hydrated set
+    const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
+    fireEvent.change(select, { target: { value: KeyFilter.Custom } });
+
     expect(screen.getByTestId(`watcher-card-${String(TOTAL_FATS)}`)).toBeInTheDocument();
     expect(screen.queryByTestId(`watcher-card-${String(MSNF)}`)).not.toBeInTheDocument();
   });

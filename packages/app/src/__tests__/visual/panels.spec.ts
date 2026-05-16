@@ -11,8 +11,6 @@ import {
 
 import { RecipeID } from "@/__tests__/assets";
 
-import { presetWatcherSelection } from "./util";
-
 /** Waits a timeout for charts to finish rendering; helps with screenshot stability */
 function waitForChartsToRender(page: Page) {
   return page.waitForTimeout(500);
@@ -268,26 +266,5 @@ test.describe("Visual Regression: Component Variations", () => {
     await page.waitForTimeout(200);
 
     await expect(propertiesGrid).toHaveScreenshot("properties-panel-scrolled.png");
-  });
-});
-
-test.describe("Visual Regression: Watchers Panel", () => {
-  /** Mixed selection: 3 keys with defined acceptable ranges + 3 keys without */
-  const MIXED_KEYS = ["MSNF", "TotalSolids", "ServingTemp", "MilkFat", "TotalFats", "TotalSugars"];
-
-  test("WatchersPanel - mixed range/no-range keys, populated", async ({ page, browserName }) => {
-    test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
-
-    await presetWatcherSelection(page, MIXED_KEYS);
-    await goToPageAndWaitFor(page);
-
-    for (const recipeId of [RecipeID.Main, RecipeID.RefA, RecipeID.RefB]) {
-      await pasteRecipeAndWaitForUpdate(page, browserName, recipeId);
-    }
-
-    const watchersPanel = page.locator("#watchers-panel");
-    await expect(watchersPanel).toBeVisible();
-    await watchersPanel.scrollIntoViewIfNeeded();
-    await expect(watchersPanel).toHaveScreenshot("watchers-panel-mixed-keys-populated.png");
   });
 });

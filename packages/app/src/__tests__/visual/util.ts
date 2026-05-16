@@ -1,21 +1,7 @@
 import { Page } from "@playwright/test";
 import sharp from "sharp";
 
-import { WATCHER_SELECTED_PROPS_KEY } from "@/app/_elements/watchers/watchers";
 import { sleep_ms } from "@/lib/util";
-
-/**
- * Inject a watcher-selection list into `localStorage` before navigation, so that `WatchersView`'s
- * mount-time hydration picks it up. Use to control which cards appear in screenshot tests.
- */
-export async function presetWatcherSelection(page: Page, propKeys: string[]) {
-  await page.addInitScript(
-    ([key, keys]) => {
-      localStorage.setItem(key, JSON.stringify(keys));
-    },
-    [WATCHER_SELECTED_PROPS_KEY, propKeys] as const,
-  );
-}
 
 /** Scrolls to the bottom of the page and waits for a short period to allow lazy-loaded content. */
 export async function scrollToBottomOfPage(page: Page) {
