@@ -16,11 +16,13 @@ import {
   CircleUserRound,
   LogIn,
   LogOut,
+  RotateCcw,
 } from "lucide-react";
 
 import { NAVBAR_ICON_SIZE, DEFAULT_COLLAPSED_NAVBAR } from "@/lib/styles/sizes";
 import { ThemeSelect } from "@/app/_elements/selects/theme-select";
 import { setLocalStorage, getLocalStorage, STORAGE_KEYS } from "@/lib/local-storage";
+import { clearStoredLayouts, dispatchLayoutReset } from "@/lib/calculator-layout";
 
 /** Primary navigation links shown in the sidebar */
 const navItems = [
@@ -97,6 +99,13 @@ export function Header() {
   if (!mounted) return <header className="navbar h-12 shrink-0" />;
 
   const showExpandButton = collapsed && hoveringLogo;
+  const onCalculator = pathname === "/calculator";
+
+  const handleResetLayout = () => {
+    if (!window.confirm("Reset the calculator layout to its default arrangement?")) return;
+    clearStoredLayouts();
+    dispatchLayoutReset();
+  };
 
   return (
     <header id="header" className="navbar flex h-12 shrink-0 items-center justify-between">
@@ -119,6 +128,18 @@ export function Header() {
               <Image src="/favicon.ico" alt="Sci-Cream" width={logoSize} height={logoSize} />
             )}
           </button>
+          {onCalculator && (
+            <button
+              type="button"
+              title="Reset calculator layout"
+              aria-label="Reset calculator layout"
+              id="reset-layout-button"
+              className="header-button"
+              onClick={handleResetLayout}
+            >
+              <RotateCcw size={iconSize} />
+            </button>
+          )}
           <ThemeSelect />
           <button
             title="Collapse sidebar"

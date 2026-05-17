@@ -4,6 +4,7 @@ export const STORAGE_KEYS = {
   sidebarCollapsed: "sidebar-collapsed",
   watcherSelectedProps: "watcher-selected-props",
   watcherTargets: "watcher-targets",
+  calculatorLayouts: "calculator-layouts",
 } as const;
 
 /** Read and deserialize a value from `localStorage`; returns `null` when absent or malformed */
@@ -22,4 +23,10 @@ export function getLocalStorage<T>(key: string): T | null {
 export function setLocalStorage<T>(key: string, value: T): void {
   if (typeof window === "undefined") return;
   localStorage.setItem(key, JSON.stringify(value));
+}
+
+/** Remove a key from `localStorage`; no-op when running on the server */
+export function removeLocalStorage(key: string): void {
+  if (typeof window === "undefined") return;
+  localStorage.removeItem(key);
 }

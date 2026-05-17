@@ -1,11 +1,12 @@
 "use client";
 
 import { useSearchParams } from "next/navigation";
-import { useState, Suspense } from "react";
+import { useState, useEffect, useRef, Suspense } from "react";
 import {
   ResponsiveGridLayout,
   ResponsiveLayouts,
   useContainerWidth,
+  type Layout,
   type LayoutItem,
   type ResizeHandleAxis,
 } from "react-grid-layout";
@@ -20,6 +21,7 @@ import { RecipeEditorPanel } from "@/app/_components/recipe-editor-panel";
 import { useSeededWasmResources } from "@/lib/wasm-resources";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
 import { recipeSlotOrDefault } from "@/app/_elements/selects/recipe-select";
+import { loadStoredLayouts, onLayoutReset, saveLayouts } from "@/lib/calculator-layout";
 
 /**
  * Main calculator page: responsive drag-and-drop grid of recipe and major display components
@@ -134,13 +136,40 @@ function CalculatorContent() {
     update("composition", { x:  0, y: h * 5 - 1, w: fullW("xs") }),
   ];
 
-  const layouts: ResponsiveLayouts = {
+  const defaultLayouts: ResponsiveLayouts = {
     xl: xlLayout,
     lg: lgLayout,
     md: mdLayout,
     sm: smLayout,
     xs: xsLayout,
   };
+
+  const [layouts, setLayouts] = useState<ResponsiveLayouts>(defaultLayouts);
+  const hydratedRef = useRef(false);
+
+  // Hydrate stored layouts on mount; falls through to defaults when storage is empty or its
+  // schema (version/fingerprint) no longer matches the current panel set.
+  useEffect(() => {
+    const stored = loadStoredLayouts(defaultLayouts);
+    if (stored) setLayouts(stored);
+    hydratedRef.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // Persist on every committed layout change. Skipped until hydration completes so the initial
+  // mount with default layouts doesn't clobber the stored value before we can read it.
+  const handleLayoutChange = (_: Layout, allLayouts: ResponsiveLayouts) => {
+    if (!hydratedRef.current) return;
+    setLayouts(allLayouts);
+    saveLayouts(allLayouts);
+  };
+
+  // Listen for reset events fired by the Header's "Reset layout" button (which lives outside
+  // this component's React tree); fall back to the hardcoded defaults when one arrives.
+  useEffect(() => {
+    return onLayoutReset(() => setLayouts(defaultLayouts));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div ref={containerRef} className="pr-4">
@@ -150,6 +179,7 @@ function CalculatorContent() {
           width={width}
           cols={cols}
           layouts={layouts}
+          onLayoutChange={handleLayoutChange}
           rowHeight={REACT_GRID_ROW_HEIGHT}
           margin={[20, 20]}
           containerPadding={[0, 0]}

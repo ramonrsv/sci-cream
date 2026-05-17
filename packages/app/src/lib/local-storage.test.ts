@@ -1,6 +1,6 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
-import { getLocalStorage, setLocalStorage } from "./local-storage";
+import { getLocalStorage, removeLocalStorage, setLocalStorage } from "./local-storage";
 
 // ---------------------------------------------------------------------------
 // getLocalStorage
@@ -92,5 +92,33 @@ describe("setLocalStorage", () => {
     setLocalStorage("k", "hello");
     vi.unstubAllGlobals();
     expect(localStorage.getItem("k")).toBeNull();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// removeLocalStorage
+// ---------------------------------------------------------------------------
+
+describe("removeLocalStorage", () => {
+  beforeEach(() => localStorage.clear());
+  afterEach(() => vi.unstubAllGlobals());
+
+  it("removes an existing key", () => {
+    localStorage.setItem("k", JSON.stringify("hello"));
+    removeLocalStorage("k");
+    expect(localStorage.getItem("k")).toBeNull();
+  });
+
+  it("is a no-op when the key is absent", () => {
+    expect(() => removeLocalStorage("missing")).not.toThrow();
+    expect(localStorage.getItem("missing")).toBeNull();
+  });
+
+  it("does nothing when window is undefined (SSR)", () => {
+    localStorage.setItem("k", JSON.stringify("hello"));
+    vi.stubGlobal("window", undefined);
+    removeLocalStorage("k");
+    vi.unstubAllGlobals();
+    expect(localStorage.getItem("k")).toBe(JSON.stringify("hello"));
   });
 });

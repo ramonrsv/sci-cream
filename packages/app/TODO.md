@@ -22,8 +22,6 @@
       recipes. Each recipe should be letter and color coded.
 - [ ] Add scoopability and FPD properties component with visuals.
 - [ ] Add Nutrition Facts Table component.
-- [ ] Add functionality to store component layout so that it is remembered across page reloads. The
-      store should start seeded with a default for each resolution, and store any user modification.
 - [ ] Figure out how to do visual regression tests of animations, e.g. navbar expand/collapse.
 - [ ] In `MixPropertiesGrid`, make it so that, if there is a horizontal scroll, the left-most column
       (property headers) does not scroll with the rest of the content.
@@ -71,6 +69,8 @@
 
 ## Completed
 
+- [x] Add functionality to store component layout so that it is remembered across page reloads. The
+      store should start seeded with a default for each resolution, and store any user modification.
 - [x] Check how vertical spacing looks like on 1080p/2160p screens; look into dynamic vertical?
 - [x] Add recipe save functionality, with support for editable comments/notes.
 - [x] Pasting the strawberry sorbet recipe, fixing 'Strawberry [Brix 9]' to remove ' [Brix 9]', then
