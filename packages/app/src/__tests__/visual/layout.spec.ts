@@ -6,7 +6,7 @@ import {
   selectRecipeByName,
 } from "@/__tests__/e2e/util";
 
-import { VIEWPORTS } from "@/__tests__/visual/assets";
+import { VIEWPORTS, VIEWPORT_DESKTOP_DEFAULT } from "@/__tests__/visual/assets";
 import {
   captureFullContent,
   getContentOverflow,
@@ -33,15 +33,19 @@ async function takeViewportAndFullContentScreenshots(
   viewport: { width: number; height: number },
   screenshot: string,
   pageSetup: (page: Page) => Promise<void>,
-  options?: { maxDiffPixelRatio?: number; fullContent?: "resize" | "stitch" },
+  options?: {
+    maxDiffPixelRatio?: number;
+    maxDiffPixels?: number;
+    fullContent?: "resize" | "stitch";
+  },
 ) {
-  const { maxDiffPixelRatio, fullContent = "resize" } = options ?? {};
+  const { maxDiffPixelRatio, maxDiffPixels, fullContent = "resize" } = options ?? {};
 
   await page.setViewportSize(viewport);
 
   await pageSetup(page);
   await waitForLayoutStability();
-  await expect(page).toHaveScreenshot(`${screenshot}.png`, { maxDiffPixelRatio });
+  await expect(page).toHaveScreenshot(`${screenshot}.png`, { maxDiffPixelRatio, maxDiffPixels });
 
   const scrollTargetTestId = "app-content";
 
@@ -53,31 +57,35 @@ async function takeViewportAndFullContentScreenshots(
   if (fullContent === "stitch") {
     expect(await captureFullContent(page, scrollTargetTestId)).toMatchSnapshot(
       `${screenshot}-all-content-stitched.png`,
-      { maxDiffPixelRatio },
+      { maxDiffPixels, maxDiffPixelRatio },
     );
   } else {
     await setViewportHeightForAllContentScreenshot(page);
-    await pageSetup(page);
     await waitForLayoutStability();
-    await expect(page).toHaveScreenshot(`${screenshot}-all-content.png`, { maxDiffPixelRatio });
+
+    await expect(page).toHaveScreenshot(`${screenshot}-all-content.png`, {
+      maxDiffPixelRatio,
+      maxDiffPixels,
+    });
   }
 }
 
 test.describe("Visual Regression: Responsive Layout, calculator page", () => {
-  // Allow a small pixel difference to account for anti-aliasing and rendering variations,
-  // particularly on large viewports. This causes some of these tests to fail to catch minor
-  // component changes, but it's necessary to prevent false positives in layout tests, and
-  // other component-level visual regression tests should catch those minor component changes.
-  const maxDiffPixelRatio = 0.01; // Allow up to 1% of pixels to differ
-
   for (const { name, viewport, screenshot } of VIEWPORTS) {
+    // Allow a small pixel difference to account for anti-aliasing and rendering variations,
+    // particularly on large viewports. This causes some of these tests to miss catching minor
+    // component changes, but it's necessary to prevent false positives in layout tests, and
+    // other component-level visual regression tests should catch those minor component changes.
+    const maxDiffPixels =
+      viewport.height >= VIEWPORT_DESKTOP_DEFAULT.viewport.height ? 208 : undefined;
+
     test(name, async ({ page }) => {
       await takeViewportAndFullContentScreenshots(
         page,
         viewport,
         `calculator-${screenshot}`,
         async (page) => await goToPageAndWaitFor(page, "/calculator"),
-        { maxDiffPixelRatio },
+        { maxDiffPixels },
       );
     });
   }
