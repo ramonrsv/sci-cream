@@ -10,7 +10,12 @@ import { useSession } from "next-auth/react";
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import { makeEmptyRecipeContext, type RecipeContext, RecipeContextState } from "@/lib/recipe";
 import { makeWasmResources, WasmResourcesState, WasmResources } from "@/lib/wasm-resources";
-import { upsertUserRecipe } from "@/lib/data";
+import {
+  createUserRecipe,
+  createUserRecipeVersion,
+  renameUserRecipe,
+  updateUserRecipeVersion,
+} from "@/lib/data";
 import { RecipeEditor, RecipeTable } from "@/app/_elements/tables/recipe";
 
 import {
@@ -41,7 +46,21 @@ vi.mock("next-auth/react", () => ({
 }));
 
 vi.mock("@/lib/data", () => ({
-  upsertUserRecipe: vi.fn().mockResolvedValue({ name: "X", user: 1, recipe: [] }),
+  createUserRecipe: vi
+    .fn()
+    .mockResolvedValue({
+      recipeId: 42,
+      version: { version: 1, recipe: [], createdAt: "2026-05-17T00:00:00.000Z" },
+    }),
+  createUserRecipeVersion: vi
+    .fn()
+    .mockResolvedValue({ version: 2, recipe: [], createdAt: "2026-05-17T00:00:00.000Z" }),
+  updateUserRecipeVersion: vi
+    .fn()
+    .mockResolvedValue({ version: 1, recipe: [], createdAt: "2026-05-17T00:00:00.000Z" }),
+  renameUserRecipe: vi
+    .fn()
+    .mockResolvedValue({ id: 42, name: "renamed", user: 1, createdAt: new Date() }),
 }));
 
 /** Mock implementation of ResizeObserver for testing purposes */
@@ -590,13 +609,18 @@ describe("RecipeEditor", () => {
 
     it("renders the Save button", () => {
       render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
-      expect(screen.getByTitle(/Sign in to save recipes|Save recipe/)).toBeInTheDocument();
+      // When signed out, both Save and Save-as-new-version share the "Sign in to save recipes"
+      // tooltip, so exactly two buttons match the regex.
+      expect(screen.getAllByTitle(/Sign in to save recipes|Save recipe/)).toHaveLength(2);
     });
 
     it("is disabled when the user is not signed in", () => {
       populateRecipe("My Recipe");
       render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
-      expect(screen.getByTitle("Sign in to save recipes")).toBeDisabled();
+      // Both Save and Save-as-new-version share this disabled-state tooltip; verify both
+      screen
+        .getAllByTitle("Sign in to save recipes")
+        .forEach((button) => expect(button).toBeDisabled());
     });
 
     it("is disabled when the recipe has no name", () => {
@@ -621,18 +645,144 @@ describe("RecipeEditor", () => {
       recipeContext.recipes[1].ingredientRows[0].quantity = 500;
       recipeContext.recipes[1].mixTotal = 500;
       render(<RecipeEditor props={{ ...makeRecipeEditorProps([0, 1]), initialRecipeIdx: 1 }} />);
-      expect(screen.getByTitle("Select main recipe to save")).toBeDisabled();
+      // Both Save and Save-as-new-version share this disabled-state tooltip; verify both
+      screen
+        .getAllByTitle("Select main recipe to save")
+        .forEach((button) => expect(button).toBeDisabled());
     });
 
-    it("calls upsertUserRecipe with the user email, recipe name, and light recipe", async () => {
+    it("calls createUserRecipe with the user email, name, and rows for a new recipe (no recipeId)", async () => {
       mockSignedIn();
       populateRecipe("My Recipe");
       render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
 
       fireEvent.click(screen.getByTitle("Save recipe"));
       await waitFor(() => {
-        expect(upsertUserRecipe).toHaveBeenCalledWith("a@b.c", "My Recipe", [["Whole Milk", 500]]);
+        expect(createUserRecipe).toHaveBeenCalledWith("a@b.c", "My Recipe", [["Whole Milk", 500]]);
       });
+    });
+
+    it("calls updateUserRecipeVersion when the recipe already has an identity", async () => {
+      mockSignedIn();
+      populateRecipe("My Recipe");
+      // Mark the recipe as a loaded version of an existing saved recipe with a clean baseline
+      recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 3 };
+      recipeContext.recipes[0].baseline = { name: "My Recipe", serializedRows: "" };
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+
+      fireEvent.click(
+        screen.getByTitle((value) => /Save changes to version 3|Saved — version 3/.test(value)),
+      );
+      await waitFor(() => {
+        expect(updateUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, 3, {
+          recipe: [["Whole Milk", 500]],
+        });
+      });
+    });
+
+    it("renames the recipe before update when the name was edited since baseline", async () => {
+      mockSignedIn();
+      populateRecipe("My Recipe Renamed");
+      recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 1 };
+      // Baseline name differs from current name -> renameUserRecipe should be called
+      recipeContext.recipes[0].baseline = { name: "Original Name", serializedRows: "" };
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+
+      fireEvent.click(
+        screen.getByTitle((value) => /Save changes to version 1|Saved — version 1/.test(value)),
+      );
+      await waitFor(() => {
+        expect(renameUserRecipe).toHaveBeenCalledWith("a@b.c", 7, "My Recipe Renamed");
+        expect(updateUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, 1, {
+          recipe: [["Whole Milk", 500]],
+        });
+      });
+    });
+
+    it("renders 'Save as new version' disabled for an anonymous recipe with no savedRef", () => {
+      mockSignedIn();
+      populateRecipe("My Recipe");
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      const button = screen.getByTitle(
+        "Save the recipe at least once before creating a new version",
+      );
+      expect(button).toBeInTheDocument();
+      expect(button).toBeDisabled();
+    });
+
+    it("renders 'Save as new version' enabled when a saved recipe is loaded", () => {
+      mockSignedIn();
+      populateRecipe("My Recipe");
+      recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 1 };
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      const button = screen.getByTitle("Save as new version");
+      expect(button).toBeInTheDocument();
+      expect(button).not.toBeDisabled();
+    });
+
+    it("calls createUserRecipeVersion when 'Save as new version' is clicked", async () => {
+      mockSignedIn();
+      populateRecipe("My Recipe");
+      recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 1 };
+      recipeContext.recipes[0].baseline = { name: "My Recipe", serializedRows: "" };
+
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      fireEvent.click(screen.getByRole("button", { name: "Save as new version" }));
+      await waitFor(() => {
+        expect(createUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, [["Whole Milk", 500]]);
+      });
+    });
+  });
+
+  describe("Dirty indicator", () => {
+    /** Populate slot 0 with a saved-recipe identity that matches its baseline (i.e. clean) */
+    function populateLoadedRecipeClean() {
+      recipeContext.recipes[0].name = "Loaded Recipe";
+      recipeContext.recipes[0].ingredientRows[0].name = "Whole Milk";
+      recipeContext.recipes[0].ingredientRows[0].quantity = 500;
+      recipeContext.recipes[0].mixTotal = 500;
+      recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 1 };
+      recipeContext.recipes[0].baseline = {
+        name: "Loaded Recipe",
+        serializedRows: "Ingredient\tQty(g)\nWhole Milk\t500",
+      };
+    }
+
+    it("does not show the unsaved-changes dot when the recipe matches baseline", () => {
+      populateLoadedRecipeClean();
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      expect(screen.queryByLabelText("Unsaved changes")).not.toBeInTheDocument();
+    });
+
+    it("does not show the unsaved-changes dot for a brand-new recipe with no baseline", () => {
+      recipeContext.recipes[0].name = "Anon Recipe";
+      recipeContext.recipes[0].ingredientRows[0].name = "Whole Milk";
+      recipeContext.recipes[0].ingredientRows[0].quantity = 500;
+      recipeContext.recipes[0].mixTotal = 500;
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      expect(screen.queryByLabelText("Unsaved changes")).not.toBeInTheDocument();
+    });
+
+    it("shows the unsaved-changes dot when a loaded recipe is renamed", () => {
+      populateLoadedRecipeClean();
+      recipeContext.recipes[0].name = "Loaded Recipe (edited)";
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      expect(screen.getByLabelText("Unsaved changes")).toBeInTheDocument();
+    });
+  });
+
+  describe("Version badge", () => {
+    it("shows the version badge for a loaded recipe", () => {
+      recipeContext.recipes[0].name = "Loaded Recipe";
+      recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 3 };
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      expect(screen.getByTitle("Editing version 3")).toBeInTheDocument();
+    });
+
+    it("does not show the version badge for an anonymous recipe", () => {
+      recipeContext.recipes[0].name = "Anon Recipe";
+      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      expect(screen.queryByTitle(/Editing version/)).not.toBeInTheDocument();
     });
   });
 });

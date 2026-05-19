@@ -62,8 +62,21 @@ export interface EntitySearchProps<E> {
   renderListItemSubtitle?: (e: Tagged<E>) => ReactNode;
   /** Optional badges/labels rendered next to the source tag in the detail header */
   renderHeaderMeta?: (e: Tagged<E>) => ReactNode;
-  /** Body of the detail panel; entity-specific content slotted between header and comments */
-  renderDetailBody: (e: Tagged<E>) => ReactNode;
+  /**
+   * Body of the detail panel; entity-specific content slotted between header and comments. Used by
+   * the default panel rendering; ignored when {@link renderDetailPanel} is provided.
+   */
+  renderDetailBody?: (e: Tagged<E>) => ReactNode;
+  /**
+   * When provided, replaces the entire detail panel content (header, body, actions, and comments)
+   * with this render prop's output. The consumer takes responsibility for rendering everything
+   * inside the panel container, including any header/title chrome and comments UI. Useful for
+   * entities that need shared state across multiple panel regions (e.g. recipe versions).
+   *
+   * The default load/delete/comments/slot wiring (`onLoad`, `onDelete`, `onUpdateComments`,
+   * `getComments`, `slots`, …) is bypassed when this prop is set.
+   */
+  renderDetailPanel?: (e: Tagged<E>) => ReactNode;
   /** Optional id for the outermost wrapper, for tests/CSS targeting */
   id?: string;
 
@@ -108,6 +121,7 @@ export function EntitySearch<E>({
   renderListItemSubtitle,
   renderHeaderMeta,
   renderDetailBody,
+  renderDetailPanel,
   id,
   onLoad,
   loadButtonLabel = "Load",
@@ -120,6 +134,9 @@ export function EntitySearch<E>({
   onUpdateComments,
   commentsLabel = "Entry comments",
 }: EntitySearchProps<E>) {
+  if (renderDetailBody === undefined && renderDetailPanel === undefined) {
+    throw new Error("EntitySearch requires either `renderDetailBody` or `renderDetailPanel`");
+  }
   const [query, setQuery] = useState("");
   const [source, setSource] = useState<EntitySource>(EntitySource.All);
   const [targetSlot, setTargetSlot] = useState(slots?.[0] ?? 0);
@@ -237,6 +254,10 @@ export function EntitySearch<E>({
         {/* Right: detail panel */}
         {selectedEntry === null ? (
           <div className="search-empty">{emptyDetailText}</div>
+        ) : renderDetailPanel ? (
+          <div className="search-detail-panel" data-testid="search-detail-panel">
+            {renderDetailPanel(selectedEntry)}
+          </div>
         ) : (
           <div className="search-detail-panel" data-testid="search-detail-panel">
             {/* Header: title, badges, action buttons */}
@@ -289,7 +310,7 @@ export function EntitySearch<E>({
               </div>
             </div>
 
-            {renderDetailBody(selectedEntry)}
+            {renderDetailBody!(selectedEntry)}
 
             {/* Comments — editable for saved entries, read-only for others */}
             {saveCommentsEnabled ? (

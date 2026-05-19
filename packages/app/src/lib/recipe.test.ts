@@ -10,6 +10,12 @@ import {
   calculateMixTotal,
   makeSciCreamRecipe,
   makeLightRecipe,
+  makeRecipeBaseline,
+  isRecipeDirty,
+  isRecipeRenamed,
+  clearRecipeIdentity,
+  withRecipeIdentity,
+  stringifyRecipeToStore,
   makeUpdatedRecipeFromStore,
   type Recipe,
 } from "./recipe";
@@ -324,6 +330,211 @@ describe("Recipe Helper Functions", () => {
       }).not.toThrow();
 
       expect(recipe.ingredientRows[0].name).toBe("Whole Milk");
+    });
+
+    it("propagates the store's savedRef onto the resulting recipe", () => {
+      const result = makeUpdatedRecipeFromStore(
+        recipe,
+        {
+          name: "Loaded",
+          serializedRows: "Whole Milk\t100",
+          savedRef: { recipeId: 7, versionNumber: 3 },
+        },
+        resources,
+      );
+      expect(result.savedRef).toEqual({ recipeId: 7, versionNumber: 3 });
+    });
+
+    it("captures a fresh baseline when loading a saved-recipe store (savedRef set)", () => {
+      const result = makeUpdatedRecipeFromStore(
+        recipe,
+        {
+          name: "Loaded",
+          serializedRows: "Whole Milk\t100",
+          savedRef: { recipeId: 7, versionNumber: 1 },
+        },
+        resources,
+      );
+      expect(result.baseline).toBeDefined();
+      expect(isRecipeDirty(result)).toBe(false);
+    });
+
+    it("leaves baseline undefined for an anonymous store (no savedRef)", () => {
+      const result = makeUpdatedRecipeFromStore(
+        recipe,
+        { name: "Anon", serializedRows: "Whole Milk\t100" },
+        resources,
+      );
+      expect(result.savedRef).toBeUndefined();
+      expect(result.baseline).toBeUndefined();
+      expect(isRecipeDirty(result)).toBe(false);
+    });
+  });
+
+  // ---- Baseline + dirty + identity helpers --------------------------------------------------------
+
+  describe("makeRecipeBaseline", () => {
+    it("captures the current name and serialized rows", () => {
+      const recipe = makeEmptyRecipeContext().recipes[0];
+      recipe.name = "My Recipe";
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[0].quantity = 100;
+
+      const baseline = makeRecipeBaseline(recipe);
+      expect(baseline.name).toBe("My Recipe");
+      expect(baseline.serializedRows).toContain("Whole Milk\t100");
+    });
+  });
+
+  describe("isRecipeDirty", () => {
+    let recipe: Recipe;
+
+    beforeEach(() => {
+      recipe = makeEmptyRecipeContext().recipes[0];
+      recipe.name = "Loaded Recipe";
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[0].quantity = 500;
+    });
+
+    it("returns false when baseline is undefined (anonymous recipe)", () => {
+      expect(recipe.baseline).toBeUndefined();
+      expect(isRecipeDirty(recipe)).toBe(false);
+    });
+
+    it("returns false when current state matches baseline", () => {
+      recipe.baseline = makeRecipeBaseline(recipe);
+      expect(isRecipeDirty(recipe)).toBe(false);
+    });
+
+    it("returns true when the name differs from baseline", () => {
+      recipe.baseline = makeRecipeBaseline(recipe);
+      recipe.name = "Loaded Recipe (edited)";
+      expect(isRecipeDirty(recipe)).toBe(true);
+    });
+
+    it("returns true when an ingredient row differs from baseline", () => {
+      recipe.baseline = makeRecipeBaseline(recipe);
+      recipe.ingredientRows[0].quantity = 600;
+      expect(isRecipeDirty(recipe)).toBe(true);
+    });
+
+    it("returns true when a row is added beyond baseline", () => {
+      recipe.baseline = makeRecipeBaseline(recipe);
+      recipe.ingredientRows[1].name = "Sucrose";
+      recipe.ingredientRows[1].quantity = 100;
+      expect(isRecipeDirty(recipe)).toBe(true);
+    });
+  });
+
+  describe("isRecipeRenamed", () => {
+    let recipe: Recipe;
+
+    beforeEach(() => {
+      recipe = makeEmptyRecipeContext().recipes[0];
+      recipe.name = "Original";
+    });
+
+    it("returns false when baseline is undefined", () => {
+      expect(isRecipeRenamed(recipe)).toBe(false);
+    });
+
+    it("returns false when the name matches baseline", () => {
+      recipe.baseline = makeRecipeBaseline(recipe);
+      expect(isRecipeRenamed(recipe)).toBe(false);
+    });
+
+    it("returns true when the name differs from baseline", () => {
+      recipe.baseline = makeRecipeBaseline(recipe);
+      recipe.name = "Renamed";
+      expect(isRecipeRenamed(recipe)).toBe(true);
+    });
+
+    it("returns true even when only the name changed (rows still match baseline)", () => {
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[0].quantity = 100;
+      recipe.baseline = makeRecipeBaseline(recipe);
+      recipe.name = "Renamed";
+      expect(isRecipeRenamed(recipe)).toBe(true);
+    });
+  });
+
+  describe("clearRecipeIdentity", () => {
+    it("strips savedRef and baseline; preserves other fields", () => {
+      const recipe = makeEmptyRecipeContext().recipes[0];
+      recipe.name = "Loaded";
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[0].quantity = 100;
+      recipe.savedRef = { recipeId: 7, versionNumber: 2 };
+      recipe.baseline = makeRecipeBaseline(recipe);
+
+      const cleared = clearRecipeIdentity(recipe);
+      expect(cleared.savedRef).toBeUndefined();
+      expect(cleared.baseline).toBeUndefined();
+      expect(cleared.name).toBe("Loaded");
+      expect(cleared.ingredientRows[0].name).toBe("Whole Milk");
+    });
+
+    it("returns a new object (does not mutate the input)", () => {
+      const recipe = makeEmptyRecipeContext().recipes[0];
+      recipe.savedRef = { recipeId: 7, versionNumber: 1 };
+      clearRecipeIdentity(recipe);
+      expect(recipe.savedRef).toEqual({ recipeId: 7, versionNumber: 1 });
+    });
+  });
+
+  describe("withRecipeIdentity", () => {
+    it("sets savedRef and captures a fresh baseline reflecting current state", () => {
+      const recipe = makeEmptyRecipeContext().recipes[0];
+      recipe.name = "Newly Saved";
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[0].quantity = 100;
+
+      const next = withRecipeIdentity(recipe, { recipeId: 42, versionNumber: 1 });
+      expect(next.savedRef).toEqual({ recipeId: 42, versionNumber: 1 });
+      expect(next.baseline?.name).toBe("Newly Saved");
+      expect(next.baseline?.serializedRows).toContain("Whole Milk\t100");
+    });
+
+    it("leaves the resulting recipe clean (not dirty)", () => {
+      const recipe = makeEmptyRecipeContext().recipes[0];
+      recipe.name = "Newly Saved";
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[0].quantity = 100;
+
+      const next = withRecipeIdentity(recipe, { recipeId: 42, versionNumber: 1 });
+      expect(isRecipeDirty(next)).toBe(false);
+    });
+
+    it("returns a new object (does not mutate the input)", () => {
+      const recipe = makeEmptyRecipeContext().recipes[0];
+      withRecipeIdentity(recipe, { recipeId: 7, versionNumber: 1 });
+      expect(recipe.savedRef).toBeUndefined();
+      expect(recipe.baseline).toBeUndefined();
+    });
+  });
+
+  describe("stringifyRecipeToStore", () => {
+    it("includes the savedRef when set", () => {
+      const recipe = makeEmptyRecipeContext().recipes[0];
+      recipe.name = "Loaded";
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[0].quantity = 100;
+      recipe.savedRef = { recipeId: 7, versionNumber: 2 };
+
+      const store = stringifyRecipeToStore(recipe);
+      expect(store.name).toBe("Loaded");
+      expect(store.savedRef).toEqual({ recipeId: 7, versionNumber: 2 });
+      expect(store.serializedRows).toContain("Whole Milk\t100");
+    });
+
+    it("omits the savedRef key entirely for anonymous recipes", () => {
+      const recipe = makeEmptyRecipeContext().recipes[0];
+      recipe.name = "Anon";
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[0].quantity = 100;
+
+      const store = stringifyRecipeToStore(recipe);
+      expect("savedRef" in store).toBe(false);
     });
   });
 });

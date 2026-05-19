@@ -1,4 +1,13 @@
-import { pgTable, primaryKey, integer, text, pgEnum, json, timestamp } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  primaryKey,
+  unique,
+  integer,
+  text,
+  pgEnum,
+  json,
+  timestamp,
+} from "drizzle-orm/pg-core";
 
 import { SchemaCategory } from "@workspace/sci-cream/schema-category";
 export { SchemaCategory };
@@ -34,19 +43,50 @@ export const ingredientsTable = pgTable(
 
 export type Ingredient = typeof ingredientsTable.$inferSelect;
 
-/** Drizzle ORM table definition for recipes, keyed by name and user. */
+/**
+ * Drizzle ORM table definition for the identity of a user's saved recipe.
+ *
+ * One row per `(user, name)` pair; the actual recipe contents and per-snapshot metadata live in
+ * {@link recipeVersionsTable} so each recipe can carry multiple versions over time.
+ */
 export const recipesTable = pgTable(
   "recipes",
   {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
     name: text().notNull(),
     user: integer()
       .notNull()
       .references(() => usersTable.id),
-    recipe: json(),
-    comments: text(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
   },
-  (table) => [primaryKey({ columns: [table.name, table.user] })],
+  (table) => [unique("recipes_user_name_uq").on(table.user, table.name)],
 );
 
 export type RecipeInsert = typeof recipesTable.$inferInsert;
 export type RecipeSelect = typeof recipesTable.$inferSelect;
+
+/**
+ * Drizzle ORM table definition for snapshots of a recipe.
+ *
+ * One row per `(recipe_id, version)` pair; `version` is monotonically increasing per recipe and is
+ * assigned by the server action that creates the snapshot. Comments and an optional short `label`
+ * are scoped to the individual version, not the recipe identity.
+ */
+export const recipeVersionsTable = pgTable(
+  "recipe_versions",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    recipeId: integer("recipe_id")
+      .notNull()
+      .references(() => recipesTable.id, { onDelete: "cascade" }),
+    version: integer().notNull(),
+    recipe: json().notNull(),
+    comments: text(),
+    label: text(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+  },
+  (table) => [unique("recipe_versions_recipe_version_uq").on(table.recipeId, table.version)],
+);
+
+export type RecipeVersionInsert = typeof recipeVersionsTable.$inferInsert;
+export type RecipeVersionSelect = typeof recipeVersionsTable.$inferSelect;

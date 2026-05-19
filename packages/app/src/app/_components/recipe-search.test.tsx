@@ -6,7 +6,8 @@ import { render, screen, fireEvent, cleanup, within } from "@testing-library/rea
 
 import { type RecipeEntryJson } from "@workspace/sci-cream";
 import { makeWasmResources, useSeededWasmResources } from "@/lib/wasm-resources";
-import { RecipeSearch, recipeMatchesQuery } from "./recipe-search";
+import { RecipeSearch, recipeMatchesQuery, type GroupedRecipe } from "./recipe-search";
+import type { SavedRecipeJson } from "@/lib/data";
 
 // ---------------------------------------------------------------------------
 // Global stubs
@@ -63,20 +64,34 @@ vi.mock("@/lib/wasm-resources", async (importOriginal) => {
 // Fixtures
 // ---------------------------------------------------------------------------
 
-const embedded1: RecipeEntryJson = {
+const groupedEmbedded1: GroupedRecipe = {
+  id: "Alice: Standard Base",
   name: "Standard Base",
   author: "Alice",
-  recipe: [
-    ["Heavy Cream", 500],
-    ["Sucrose", 100],
+  versions: [
+    {
+      version: 1,
+      recipe: [
+        ["Heavy Cream", 500],
+        ["Sucrose", 100],
+      ],
+      createdAt: "",
+    },
   ],
 };
 
-const embedded2: RecipeEntryJson = {
+const groupedEmbedded2: GroupedRecipe = {
+  id: "Chocolate Mix",
   name: "Chocolate Mix",
-  recipe: [
-    ["Whole Milk", 400],
-    ["Cocoa Powder, 17% Fat", 50],
+  versions: [
+    {
+      version: 1,
+      recipe: [
+        ["Whole Milk", 400],
+        ["Cocoa Powder, 17% Fat", 50],
+      ],
+      createdAt: "",
+    },
   ],
 };
 
@@ -84,38 +99,33 @@ const embedded2: RecipeEntryJson = {
 // recipeMatchesQuery
 // ---------------------------------------------------------------------------
 
-// Note: `recipeMatchesQuery` is invoked with an already-lowercased query by `filterTaggedEntries`,
-// so these direct tests always pass lowercase queries. Source tagging, source filtering, and the
-// source+query combination are covered by `entity-search.test.tsx`'s `filterTaggedEntries` tests.
-
 describe("recipeMatchesQuery", () => {
   it("matches name (case-insensitive against the entry side)", () => {
-    expect(recipeMatchesQuery(embedded1, "standard")).toBe(true);
+    expect(recipeMatchesQuery(groupedEmbedded1, "standard")).toBe(true);
   });
 
   it("matches a partial name", () => {
-    expect(recipeMatchesQuery(embedded2, "choc")).toBe(true);
+    expect(recipeMatchesQuery(groupedEmbedded2, "choc")).toBe(true);
   });
 
   it("matches author", () => {
-    expect(recipeMatchesQuery(embedded1, "alice")).toBe(true);
+    expect(recipeMatchesQuery(groupedEmbedded1, "alice")).toBe(true);
   });
 
   it("does not match an author query against an entry with no author field", () => {
-    expect(recipeMatchesQuery(embedded2, "alice")).toBe(false);
+    expect(recipeMatchesQuery(groupedEmbedded2, "alice")).toBe(false);
   });
 
-  it("matches an ingredient name", () => {
-    expect(recipeMatchesQuery(embedded2, "cocoa")).toBe(true);
+  it("matches an ingredient name across any version", () => {
+    expect(recipeMatchesQuery(groupedEmbedded2, "cocoa")).toBe(true);
   });
 
   it("matches a partial ingredient name", () => {
-    // matches "Heavy Cream"
-    expect(recipeMatchesQuery(embedded1, "crea")).toBe(true);
+    expect(recipeMatchesQuery(groupedEmbedded1, "crea")).toBe(true);
   });
 
   it("returns false when no field matches", () => {
-    expect(recipeMatchesQuery(embedded1, "zzz-no-match")).toBe(false);
+    expect(recipeMatchesQuery(groupedEmbedded1, "zzz-no-match")).toBe(false);
   });
 });
 
@@ -187,9 +197,10 @@ describe("RecipeSearch", () => {
     });
 
     it("shows the 'saved' badge when a saved entry is selected", () => {
-      const savedEntry: RecipeEntryJson = {
+      const savedEntry: SavedRecipeJson = {
+        id: 42,
         name: "Strawberry Gelato",
-        recipe: [["Whole Milk", 300]],
+        versions: [{ version: 1, recipe: [["Whole Milk", 300]], createdAt: "" }],
       };
       const { container } = render(<RecipeSearch savedRecipes={[savedEntry]} />);
       fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
@@ -211,13 +222,13 @@ describe("RecipeSearch", () => {
       expect(within(detailPanel).queryByText("Alice")).not.toBeInTheDocument();
     });
 
-    it("shows the comments when the selected entry has a comments field", () => {
+    it("shows the version's comments when the selected entry has them (embedded)", () => {
       render(<RecipeSearch />);
       fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
       expect(screen.getByText(/A classic base recipe/)).toBeInTheDocument();
     });
 
-    it("does not show a comments paragraph when the selected entry has none", () => {
+    it("does not show a comments paragraph when the version has none", () => {
       render(<RecipeSearch />);
       fireEvent.click(screen.getByRole("button", { name: /Chocolate Mix/ }));
       expect(screen.queryByText(/A classic base recipe/)).not.toBeInTheDocument();
@@ -237,13 +248,14 @@ describe("RecipeSearch", () => {
       expect(screen.queryByRole("button", { name: "Load" })).not.toBeInTheDocument();
     });
 
-    it("calls onLoadRecipe with the selected entry and default slot on click", () => {
+    it("calls onLoadRecipe with the selected entry, version, and default slot on click", () => {
       const onLoadRecipe = vi.fn();
       render(<RecipeSearch onLoadRecipe={onLoadRecipe} slots={[0]} />);
       fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
       fireEvent.click(screen.getByRole("button", { name: "Load" }));
       expect(onLoadRecipe).toHaveBeenCalledWith(
         expect.objectContaining({ name: "Standard Base" }),
+        expect.objectContaining({ version: 1 }),
         0,
       );
     });
@@ -253,7 +265,6 @@ describe("RecipeSearch", () => {
     it("does not show the slot select when only one slot is provided", () => {
       render(<RecipeSearch onLoadRecipe={vi.fn()} slots={[0]} />);
       fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
-      // Slot select is absent; its options ("Recipe", "Ref A", …) should not be in the DOM
       expect(screen.queryByRole("option", { name: "Ref A" })).not.toBeInTheDocument();
     });
 
@@ -267,12 +278,12 @@ describe("RecipeSearch", () => {
       const onLoadRecipe = vi.fn();
       render(<RecipeSearch onLoadRecipe={onLoadRecipe} slots={[0, 1, 2]} />);
       fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
-      // Find the slot <select> via its unique "Recipe" / "Ref A" options
       const slotSelect = screen.getByRole("option", { name: "Recipe" }).closest("select")!;
       fireEvent.change(slotSelect, { target: { value: "1" } });
       fireEvent.click(screen.getByRole("button", { name: "Load" }));
       expect(onLoadRecipe).toHaveBeenCalledWith(
         expect.objectContaining({ name: "Standard Base" }),
+        expect.objectContaining({ version: 1 }),
         1,
       );
     });
@@ -298,9 +309,10 @@ describe("RecipeSearch", () => {
   });
 
   describe("delete button", () => {
-    const savedEntry: RecipeEntryJson = {
+    const savedEntry: SavedRecipeJson = {
+      id: 42,
       name: "Strawberry Gelato",
-      recipe: [["Whole Milk", 300]],
+      versions: [{ version: 1, recipe: [["Whole Milk", 300]], createdAt: "" }],
     };
 
     it("shows the Delete button on a selected saved entry when onDeleteSavedRecipe is provided", () => {
@@ -340,66 +352,126 @@ describe("RecipeSearch", () => {
     });
   });
 
-  describe("editable comments", () => {
-    const savedWithComments: RecipeEntryJson = {
-      name: "Strawberry Gelato",
-      recipe: [["Whole Milk", 300]],
-      comments: "Tart but smooth.",
+  describe("version selector", () => {
+    const multiVersionEntry: SavedRecipeJson = {
+      id: 42,
+      name: "Iterated Recipe",
+      versions: [
+        { version: 1, recipe: [["Whole Milk", 100]], createdAt: "2026-05-01T00:00:00.000Z" },
+        {
+          version: 2,
+          recipe: [["Whole Milk", 110]],
+          comments: "Bumped milk a bit.",
+          label: "milk bump",
+          createdAt: "2026-05-10T00:00:00.000Z",
+        },
+      ],
     };
 
-    const savedWithoutComments: RecipeEntryJson = {
-      name: "Plain Saved",
-      recipe: [["Whole Milk", 300]],
-    };
+    it("shows the version selector when more than one version exists", () => {
+      render(<RecipeSearch savedRecipes={[multiVersionEntry]} />);
+      fireEvent.click(screen.getByRole("button", { name: /Iterated Recipe/ }));
+      expect(screen.getByLabelText("Recipe version")).toBeInTheDocument();
+    });
 
-    it("shows an editable textarea (pre-filled) for a saved entry when the callback is provided", () => {
+    it("does not show the version selector for a single-version entry", () => {
+      const single: SavedRecipeJson = {
+        id: 1,
+        name: "Single",
+        versions: [{ version: 1, recipe: [["Whole Milk", 100]], createdAt: "" }],
+      };
+      render(<RecipeSearch savedRecipes={[single]} />);
+      fireEvent.click(screen.getByRole("button", { name: /Single/ }));
+      expect(screen.queryByLabelText("Recipe version")).not.toBeInTheDocument();
+    });
+
+    it("defaults to the latest version (last in the list)", () => {
+      render(<RecipeSearch savedRecipes={[multiVersionEntry]} />);
+      fireEvent.click(screen.getByRole("button", { name: /Iterated Recipe/ }));
+      const select = screen.getByLabelText("Recipe version") as HTMLSelectElement;
+      // Last option is index 1 (v2)
+      expect(select.value).toBe("1");
+      // The latest version's comments are pre-filled in the comments textarea (when callback provided)
+    });
+
+    it("loads the selected version when Load is clicked", () => {
+      const onLoadRecipe = vi.fn();
       render(
-        <RecipeSearch savedRecipes={[savedWithComments]} onUpdateSavedRecipeComments={vi.fn()} />,
+        <RecipeSearch savedRecipes={[multiVersionEntry]} onLoadRecipe={onLoadRecipe} slots={[0]} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Iterated Recipe/ }));
+      const select = screen.getByLabelText("Recipe version") as HTMLSelectElement;
+      fireEvent.change(select, { target: { value: "0" } });
+      fireEvent.click(screen.getByRole("button", { name: "Load" }));
+      expect(onLoadRecipe).toHaveBeenCalledWith(
+        expect.objectContaining({ name: "Iterated Recipe" }),
+        expect.objectContaining({ version: 1 }),
+        0,
+      );
+    });
+
+    it("shows the version-delete button only when more than one version exists", () => {
+      render(
+        <RecipeSearch savedRecipes={[multiVersionEntry]} onDeleteSavedRecipeVersion={vi.fn()} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Iterated Recipe/ }));
+      expect(screen.getByLabelText("Delete this version")).toBeInTheDocument();
+    });
+  });
+
+  describe("editable comments (per-version)", () => {
+    const savedWithVersions: SavedRecipeJson = {
+      id: 42,
+      name: "Strawberry Gelato",
+      versions: [
+        {
+          version: 1,
+          recipe: [["Whole Milk", 300]],
+          comments: "Tart but smooth.",
+          createdAt: "2026-05-01T00:00:00.000Z",
+        },
+        {
+          version: 2,
+          recipe: [["Whole Milk", 310]],
+          comments: "After sweetener tweak.",
+          createdAt: "2026-05-10T00:00:00.000Z",
+        },
+      ],
+    };
+
+    it("shows the latest version's comments by default", () => {
+      render(
+        <RecipeSearch
+          savedRecipes={[savedWithVersions]}
+          onUpdateSavedRecipeVersionComments={vi.fn()}
+        />,
       );
       fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
       const textarea = screen.getByLabelText("Recipe comments") as HTMLTextAreaElement;
-      expect(textarea).toBeInTheDocument();
+      expect(textarea.value).toBe("After sweetener tweak.");
+    });
+
+    it("re-seeds the textarea when switching versions", () => {
+      render(
+        <RecipeSearch
+          savedRecipes={[savedWithVersions]}
+          onUpdateSavedRecipeVersionComments={vi.fn()}
+        />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      const versionSelect = screen.getByLabelText("Recipe version") as HTMLSelectElement;
+      fireEvent.change(versionSelect, { target: { value: "0" } });
+      const textarea = screen.getByLabelText("Recipe comments") as HTMLTextAreaElement;
       expect(textarea.value).toBe("Tart but smooth.");
     });
 
-    it("pre-fills the textarea with an empty string when the saved entry has no comments", () => {
-      render(
-        <RecipeSearch
-          savedRecipes={[savedWithoutComments]}
-          onUpdateSavedRecipeComments={vi.fn()}
-        />,
-      );
-      fireEvent.click(screen.getByRole("button", { name: /Plain Saved/ }));
-      const textarea = screen.getByLabelText("Recipe comments") as HTMLTextAreaElement;
-      expect(textarea.value).toBe("");
-    });
-
-    it("resets the textarea when switching to a different entry", () => {
-      const otherSaved: RecipeEntryJson = {
-        name: "Other Saved",
-        recipe: [["Whole Milk", 200]],
-        comments: "Different notes.",
-      };
-      render(
-        <RecipeSearch
-          savedRecipes={[savedWithComments, otherSaved]}
-          onUpdateSavedRecipeComments={vi.fn()}
-        />,
-      );
-      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
-      expect((screen.getByLabelText("Recipe comments") as HTMLTextAreaElement).value).toBe(
-        "Tart but smooth.",
-      );
-      fireEvent.click(screen.getByRole("button", { name: /Other Saved/ }));
-      expect((screen.getByLabelText("Recipe comments") as HTMLTextAreaElement).value).toBe(
-        "Different notes.",
-      );
-    });
-
-    it("calls onUpdateSavedRecipeComments with the entry and the current text on Save", async () => {
+    it("calls onUpdateSavedRecipeVersionComments with the entry, version, and edited text", async () => {
       const onUpdate = vi.fn().mockResolvedValue(undefined);
       render(
-        <RecipeSearch savedRecipes={[savedWithComments]} onUpdateSavedRecipeComments={onUpdate} />,
+        <RecipeSearch
+          savedRecipes={[savedWithVersions]}
+          onUpdateSavedRecipeVersionComments={onUpdate}
+        />,
       );
       fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
       fireEvent.change(screen.getByLabelText("Recipe comments"), {
@@ -408,19 +480,13 @@ describe("RecipeSearch", () => {
       fireEvent.click(screen.getByRole("button", { name: "Save comments" }));
       expect(onUpdate).toHaveBeenCalledWith(
         expect.objectContaining({ name: "Strawberry Gelato" }),
+        expect.objectContaining({ version: 2 }),
         "Now with sprinkles.",
       );
     });
 
-    it("shows a read-only comments paragraph (not a textarea) for a saved entry when the callback is absent", () => {
-      render(<RecipeSearch savedRecipes={[savedWithComments]} />);
-      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
-      expect(screen.queryByLabelText("Recipe comments")).not.toBeInTheDocument();
-      expect(screen.getByText("Tart but smooth.")).toBeInTheDocument();
-    });
-
-    it("shows a read-only comments paragraph (not a textarea) for a built-in entry even when the callback is provided", () => {
-      render(<RecipeSearch onUpdateSavedRecipeComments={vi.fn()} />);
+    it("shows a read-only comments paragraph for a built-in entry", () => {
+      render(<RecipeSearch onUpdateSavedRecipeVersionComments={vi.fn()} />);
       fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
       expect(screen.queryByLabelText("Recipe comments")).not.toBeInTheDocument();
       expect(screen.getByText(/A classic base recipe/)).toBeInTheDocument();

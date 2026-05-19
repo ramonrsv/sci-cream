@@ -10,6 +10,7 @@ import {
   ingredientsTable,
   SchemaCategory,
   recipesTable,
+  recipeVersionsTable,
 } from "@/lib/database/schema";
 import * as schema from "./schema";
 
@@ -25,6 +26,7 @@ import {
   TEST_USER_B,
   USER_DEFINED_FRUCTOSE_SPEC,
   TEST_USER_B_RECIPES,
+  type SeedRecipeAsset,
 } from "@/lib/database/assets";
 
 /** Shape of a test-user asset constant (email, password, name) */
@@ -102,11 +104,26 @@ async function seedUserIngredients(userEmail: string, ingredientSpecs: Ingredien
 }
 
 /**
+ * Adapt embedded recipe entries to the seed asset shape — one identity per entry with a single
+ * version capturing the entry's `recipe` (and `comments`, when present).
+ */
+function adaptEmbeddedToSeedAssets(entries: RecipeEntryJson[]): SeedRecipeAsset[] {
+  return entries.map((entry) => {
+    const comments = entry.comments as string | undefined;
+    return {
+      name: entry.name,
+      versions: [{ recipe: entry.recipe, ...(comments != null && { comments }) }],
+    };
+  });
+}
+
+/**
  * Upsert a list of recipe entries for the given user.
  *
- * Each entry is deleted if it already exists, then re-inserted, so the recipe is always current.
+ * Each entry is deleted (cascading to its versions) if it already exists, then re-inserted with
+ * all of its versions in order, so the seeded state is always current.
  */
-async function seedUserRecipes(userEmail: string, recipes: RecipeEntryJson[]) {
+async function seedUserRecipes(userEmail: string, recipes: SeedRecipeAsset[]) {
   const user = await findUserByEmail(userEmail);
   if (!user) throw new Error(`User with email ${userEmail} not found, cannot seed recipes`);
 
@@ -114,32 +131,38 @@ async function seedUserRecipes(userEmail: string, recipes: RecipeEntryJson[]) {
   console.log("Seeding recipes for user:", user);
 
   for (const entry of recipes) {
-    const comments = entry.comments as string | undefined;
-    const recipe: typeof recipesTable.$inferInsert = {
-      name: entry.name,
-      user: user.id,
-      recipe: JSON.stringify(entry.recipe),
-      ...(comments != null && { comments }),
-    };
-
     console.log("---");
-    console.log("Adding recipe:", recipe);
+    console.log(`Adding recipe "${entry.name}" with ${entry.versions.length} version(s)`);
 
     const [existing] = await db
       .select()
       .from(recipesTable)
-      .where(and(eq(recipesTable.name, recipe.name), eq(recipesTable.user, recipe.user)));
+      .where(and(eq(recipesTable.name, entry.name), eq(recipesTable.user, user.id)));
 
     if (existing != undefined) {
-      console.log("Found existing recipe, deleting");
-
+      console.log("Found existing recipe, deleting (cascades to versions)");
       await db
         .delete(recipesTable)
-        .where(and(eq(recipesTable.name, recipe.name), eq(recipesTable.user, recipe.user)));
+        .where(and(eq(recipesTable.name, entry.name), eq(recipesTable.user, user.id)));
     }
 
-    console.log("Inserting recipe");
-    await db.insert(recipesTable).values(recipe);
+    const [recipeRow] = await db
+      .insert(recipesTable)
+      .values({ name: entry.name, user: user.id })
+      .returning();
+
+    for (let i = 0; i < entry.versions.length; i++) {
+      const v = entry.versions[i];
+      await db
+        .insert(recipeVersionsTable)
+        .values({
+          recipeId: recipeRow.id,
+          version: i + 1,
+          recipe: JSON.stringify(v.recipe),
+          comments: v.comments ?? null,
+          label: v.label ?? null,
+        });
+    }
   }
 
   console.log("---");
@@ -156,7 +179,7 @@ async function main() {
   await seedUserIngredients(TEST_USER_A.email, [USER_DEFINED_FRUCTOSE_SPEC]);
   await seedUserIngredients(TEST_USER_B.email, [USER_DEFINED_FRUCTOSE_SPEC]);
 
-  await seedUserRecipes(TEST_USER_A.email, allRecipeEntries);
+  await seedUserRecipes(TEST_USER_A.email, adaptEmbeddedToSeedAssets(allRecipeEntries));
   await seedUserRecipes(TEST_USER_B.email, TEST_USER_B_RECIPES);
 }
 

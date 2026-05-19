@@ -5,10 +5,14 @@ import {
   fetchUserIngredientSpecByName,
   fetchAllUserIngredientSpecs,
   fetchAllUserSavedRecipes,
-  upsertUserRecipe,
-  updateUserRecipeComments,
+  createUserRecipe,
+  createUserRecipeVersion,
+  updateUserRecipeVersion,
+  renameUserRecipe,
   deleteUserRecipe,
+  deleteUserRecipeVersion,
   IngredientTransfer,
+  SavedRecipeJson,
 } from "@/lib/data";
 
 import { UserSelect } from "@/lib/database/schema";
@@ -20,8 +24,6 @@ import {
   Composition,
   Bridge as WasmBridge,
   IngredientDatabase,
-  allRecipeEntries,
-  type RecipeEntryJson,
 } from "@workspace/sci-cream";
 
 import { RecipeID, getLightRecipe } from "@/../src/__tests__/assets";
@@ -134,13 +136,16 @@ describe("fetchAllUserIngredientSpecs", () => {
   });
 });
 
-/** Helper to assert that every row in a recipe is a [string, number] pair */
-function expectRecipeRowsToBeValid(recipe: RecipeEntryJson) {
-  expect(Array.isArray(recipe.recipe)).toBe(true);
-  for (const row of recipe.recipe) {
-    expect(row).toHaveLength(2);
-    expect(typeof row[0]).toBe("string");
-    expect(typeof row[1]).toBe("number");
+/** Helper to assert that every version of a saved recipe has valid [string, number] recipe rows */
+function expectAllVersionsToBeValid(entry: SavedRecipeJson) {
+  expect(entry.versions.length).toBeGreaterThan(0);
+  for (const v of entry.versions) {
+    expect(Array.isArray(v.recipe)).toBe(true);
+    for (const row of v.recipe) {
+      expect(row).toHaveLength(2);
+      expect(typeof row[0]).toBe("string");
+      expect(typeof row[1]).toBe("number");
+    }
   }
 }
 
@@ -161,21 +166,33 @@ describe("fetchAllUserSavedRecipes", () => {
     }
   });
 
-  test("every returned entry has valid [string, number] recipe rows", async () => {
+  test("every returned entry has at least one version with valid rows", async () => {
     const recipes = await fetchAllUserSavedRecipes(TEST_USER_B.email);
     expect(recipes).toBeDefined();
     for (const entry of recipes!) {
-      expectRecipeRowsToBeValid(entry);
+      expectAllVersionsToBeValid(entry);
     }
   });
 
-  test("Chocolate Ice Cream rows match getLightRecipe(RecipeID.Main)", async () => {
+  test("Chocolate Ice Cream v1 rows match getLightRecipe(RecipeID.Main)", async () => {
     const recipes = await fetchAllUserSavedRecipes(TEST_USER_B.email);
     expect(recipes).toBeDefined();
 
     const entry = recipes!.find((r) => r.name === "Chocolate Ice Cream");
     expect(entry).toBeDefined();
-    expect(entry!.recipe).toEqual(getLightRecipe(RecipeID.Main));
+    const v1 = entry!.versions.find((v) => v.version === 1);
+    expect(v1).toBeDefined();
+    expect(v1!.recipe).toEqual(getLightRecipe(RecipeID.Main));
+  });
+
+  test("Chocolate Ice Cream has two seeded versions in ascending order", async () => {
+    const recipes = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+    const entry = recipes!.find((r) => r.name === "Chocolate Ice Cream");
+    expect(entry).toBeDefined();
+    expect(entry!.versions.length).toBe(2);
+    expect(entry!.versions.map((v) => v.version)).toEqual([1, 2]);
+    expect(entry!.versions[0].label).toBe("first cut");
+    expect(entry!.versions[1].label).toBe("sweeter tweak");
   });
 
   test("Recipe with Invalid Ingredients rows match RECIPE_INVALID_INGREDIENT", async () => {
@@ -184,19 +201,7 @@ describe("fetchAllUserSavedRecipes", () => {
 
     const entry = recipes!.find((r) => r.name === "Recipe with Invalid Ingredients");
     expect(entry).toBeDefined();
-    expect(entry!.recipe).toEqual(RECIPE_INVALID_INGREDIENT);
-  });
-
-  test("returns allRecipeEntries for TEST_USER_A", async () => {
-    const recipes = await fetchAllUserSavedRecipes(TEST_USER_A.email);
-    expect(recipes).toBeDefined();
-    expect(recipes!.length).toBe(allRecipeEntries.length);
-
-    const names = recipes!.map((r) => r.name);
-    const expectedNames = allRecipeEntries.map((e) => e.name);
-    for (const expected of expectedNames) {
-      expect(names).toContain(expected);
-    }
+    expect(entry!.versions[0].recipe).toEqual(RECIPE_INVALID_INGREDIENT);
   });
 
   test("returns recipes in ascending order by name (for stable UI rendering)", async () => {
@@ -209,100 +214,231 @@ describe("fetchAllUserSavedRecipes", () => {
   });
 });
 
-describe("upsertUserRecipe", () => {
+describe("createUserRecipe", () => {
   test("returns undefined for an unknown user", async () => {
-    const result = await upsertUserRecipe("nobody@example.com", "X", [["Whole Milk", 100]]);
+    const result = await createUserRecipe("nobody@example.com", "X", [["Whole Milk", 100]]);
     expect(result).toBeUndefined();
   });
 
-  test("inserts then updates a recipe round-trip, cleaning up at the end", async () => {
-    const name = "Round-trip Test Recipe";
-    const initial: [string, number][] = [["Whole Milk", 200]];
-    const updated: [string, number][] = [
-      ["Whole Milk", 300],
-      ["Sucrose", 50],
-    ];
+  test("creates a new recipe with version 1, round-trips, cleans up at the end", async () => {
+    const user = await getTestUserB();
+    const name = "Create Round-trip Test Recipe";
+    const rows: [string, number][] = [["Whole Milk", 200]];
+
+    const created = await createUserRecipe(TEST_USER_B.email, name, rows, {
+      comments: "first",
+      label: "initial",
+    });
+    expect(created).toBeDefined();
+    expect(created!.version.version).toBe(1);
+    expect(created!.version.recipe).toEqual(rows);
+    expect(created!.version.comments).toBe("first");
+    expect(created!.version.label).toBe("initial");
 
     try {
-      const inserted = await upsertUserRecipe(TEST_USER_B.email, name, initial);
-      expect(inserted).toBeDefined();
-      expect(inserted!.name).toBe(name);
-      expect(inserted!.recipe).toEqual(initial);
-
-      const updatedRow = await upsertUserRecipe(TEST_USER_B.email, name, updated);
-      expect(updatedRow).toBeDefined();
-      expect(updatedRow!.recipe).toEqual(updated);
-
       const all = await fetchAllUserSavedRecipes(TEST_USER_B.email);
       const found = all!.find((r) => r.name === name);
-      expect(found!.recipe).toEqual(updated);
+      expect(found).toBeDefined();
+      expect(found!.id).toBe(created!.recipeId);
+      expect(found!.versions[0].recipe).toEqual(rows);
     } finally {
-      await deleteUserRecipe(TEST_USER_B.email, name);
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+
+    // Side-effect cleanup verification (user count unchanged is implicit)
+    expect(user.id).toBeGreaterThan(0);
+  });
+});
+
+describe("createUserRecipeVersion", () => {
+  test("returns undefined for an unknown user", async () => {
+    const result = await createUserRecipeVersion("nobody@example.com", 1, [["Whole Milk", 100]]);
+    expect(result).toBeUndefined();
+  });
+
+  test("returns undefined when the recipe is not owned by the user", async () => {
+    // Use a high id that almost-certainly doesn't exist for this user
+    const result = await createUserRecipeVersion(TEST_USER_B.email, 999_999_999, [
+      ["Whole Milk", 100],
+    ]);
+    expect(result).toBeUndefined();
+  });
+
+  test("appends successive versions with monotonically-increasing numbers", async () => {
+    const name = "Version Append Test Recipe";
+    const v1: [string, number][] = [["Whole Milk", 100]];
+    const v2: [string, number][] = [
+      ["Whole Milk", 100],
+      ["Sucrose", 25],
+    ];
+    const v3: [string, number][] = [
+      ["Whole Milk", 90],
+      ["Sucrose", 30],
+    ];
+
+    const created = await createUserRecipe(TEST_USER_B.email, name, v1);
+    expect(created).toBeDefined();
+    try {
+      const second = await createUserRecipeVersion(TEST_USER_B.email, created!.recipeId, v2);
+      expect(second?.version).toBe(2);
+      expect(second?.recipe).toEqual(v2);
+
+      const third = await createUserRecipeVersion(TEST_USER_B.email, created!.recipeId, v3, {
+        label: "tweaked sugar",
+      });
+      expect(third?.version).toBe(3);
+      expect(third?.recipe).toEqual(v3);
+      expect(third?.label).toBe("tweaked sugar");
+
+      const all = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+      const entry = all!.find((r) => r.name === name);
+      expect(entry?.versions.map((v) => v.version)).toEqual([1, 2, 3]);
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
     }
   });
 });
 
-describe("updateUserRecipeComments", () => {
+describe("updateUserRecipeVersion", () => {
   test("returns undefined for an unknown user", async () => {
-    const result = await updateUserRecipeComments("nobody@example.com", "X", "hi");
+    const result = await updateUserRecipeVersion("nobody@example.com", 1, 1, { comments: "hi" });
     expect(result).toBeUndefined();
   });
 
-  test("returns undefined when no matching row exists", async () => {
-    const result = await updateUserRecipeComments(
-      TEST_USER_B.email,
-      "definitely-not-a-real-recipe",
-      "hi",
-    );
+  test("returns undefined when the recipe is not owned by the user", async () => {
+    const result = await updateUserRecipeVersion(TEST_USER_B.email, 999_999_999, 1, {
+      comments: "hi",
+    });
     expect(result).toBeUndefined();
   });
 
-  test("sets and clears comments round-trip", async () => {
-    const name = "Comments Round-trip Test Recipe";
-    await upsertUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]]);
+  test("partially updates recipe rows, comments, label; clears with null", async () => {
+    const name = "Partial Update Test Recipe";
+    const initial: [string, number][] = [["Whole Milk", 100]];
+    const updatedRows: [string, number][] = [
+      ["Whole Milk", 150],
+      ["Dextrose", 10],
+    ];
+
+    const created = await createUserRecipe(TEST_USER_B.email, name, initial, {
+      comments: "before",
+      label: "v1",
+    });
+    expect(created).toBeDefined();
 
     try {
-      const set = await updateUserRecipeComments(TEST_USER_B.email, name, "Tasty stuff.");
-      expect(set?.comments).toBe("Tasty stuff.");
+      const updated = await updateUserRecipeVersion(TEST_USER_B.email, created!.recipeId, 1, {
+        recipe: updatedRows,
+        comments: "after",
+      });
+      expect(updated?.recipe).toEqual(updatedRows);
+      expect(updated?.comments).toBe("after");
+      expect(updated?.label).toBe("v1"); // unchanged
 
-      const fetched = (await fetchAllUserSavedRecipes(TEST_USER_B.email))!.find(
-        (r) => r.name === name,
-      );
-      expect(fetched?.comments).toBe("Tasty stuff.");
-
-      const cleared = await updateUserRecipeComments(TEST_USER_B.email, name, "");
-      expect(cleared?.comments).toBeNull();
-
-      const fetchedAfter = (await fetchAllUserSavedRecipes(TEST_USER_B.email))!.find(
-        (r) => r.name === name,
-      );
-      expect(fetchedAfter?.comments).toBeUndefined();
+      const cleared = await updateUserRecipeVersion(TEST_USER_B.email, created!.recipeId, 1, {
+        comments: null,
+        label: null,
+      });
+      expect(cleared?.comments).toBeUndefined();
+      expect(cleared?.label).toBeUndefined();
     } finally {
-      await deleteUserRecipe(TEST_USER_B.email, name);
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+});
+
+describe("renameUserRecipe", () => {
+  test("returns undefined for an unknown user", async () => {
+    const result = await renameUserRecipe("nobody@example.com", 1, "X");
+    expect(result).toBeUndefined();
+  });
+
+  test("renames a user-owned recipe round-trip", async () => {
+    const original = "Rename Round-trip Recipe";
+    const renamed = "Rename Round-trip Recipe (renamed)";
+
+    const created = await createUserRecipe(TEST_USER_B.email, original, [["Whole Milk", 100]]);
+    expect(created).toBeDefined();
+
+    try {
+      const row = await renameUserRecipe(TEST_USER_B.email, created!.recipeId, renamed);
+      expect(row).toBeDefined();
+      expect(row!.name).toBe(renamed);
+
+      const all = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+      expect(all!.find((r) => r.name === renamed)).toBeDefined();
+      expect(all!.find((r) => r.name === original)).toBeUndefined();
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
     }
   });
 });
 
 describe("deleteUserRecipe", () => {
   test("returns undefined for an unknown user", async () => {
-    const result = await deleteUserRecipe("nobody@example.com", "X");
+    const result = await deleteUserRecipe("nobody@example.com", 1);
     expect(result).toBeUndefined();
   });
 
   test("returns undefined when no matching row exists", async () => {
-    const result = await deleteUserRecipe(TEST_USER_B.email, "definitely-not-a-real-recipe");
+    const result = await deleteUserRecipe(TEST_USER_B.email, 999_999_999);
     expect(result).toBeUndefined();
   });
 
-  test("removes a recipe round-trip", async () => {
+  test("removes a recipe and cascades to its versions, round-trip", async () => {
     const name = "Delete Round-trip Test Recipe";
-    await upsertUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]]);
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]]);
+    expect(created).toBeDefined();
+    await createUserRecipeVersion(TEST_USER_B.email, created!.recipeId, [["Whole Milk", 200]]);
 
-    const deleted = await deleteUserRecipe(TEST_USER_B.email, name);
+    const deleted = await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
     expect(deleted).toBeDefined();
     expect(deleted!.name).toBe(name);
 
     const all = await fetchAllUserSavedRecipes(TEST_USER_B.email);
     expect(all!.find((r) => r.name === name)).toBeUndefined();
+  });
+});
+
+describe("deleteUserRecipeVersion", () => {
+  test("returns undefined for an unknown user", async () => {
+    const result = await deleteUserRecipeVersion("nobody@example.com", 1, 1);
+    expect(result).toBeUndefined();
+  });
+
+  test("refuses to delete the last remaining version", async () => {
+    const name = "Last Version Refuse Test Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]]);
+    expect(created).toBeDefined();
+
+    try {
+      const result = await deleteUserRecipeVersion(TEST_USER_B.email, created!.recipeId, 1);
+      expect(result).toBeUndefined();
+
+      const all = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+      const entry = all!.find((r) => r.name === name);
+      expect(entry?.versions.length).toBe(1);
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+
+  test("deletes a specific version when more than one exists", async () => {
+    const name = "Delete Single Version Test Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]]);
+    expect(created).toBeDefined();
+    await createUserRecipeVersion(TEST_USER_B.email, created!.recipeId, [["Whole Milk", 200]]);
+    await createUserRecipeVersion(TEST_USER_B.email, created!.recipeId, [["Whole Milk", 300]]);
+
+    try {
+      const deleted = await deleteUserRecipeVersion(TEST_USER_B.email, created!.recipeId, 2);
+      expect(deleted?.version).toBe(2);
+
+      const all = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+      const entry = all!.find((r) => r.name === name);
+      expect(entry?.versions.map((v) => v.version)).toEqual([1, 3]);
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
   });
 });

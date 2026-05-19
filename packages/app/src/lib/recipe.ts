@@ -34,16 +34,47 @@ export interface RecipeSummary {
   mixProperties: MixProperties;
 }
 
-/** Represents one recipe slot: idx, id, name, ingredient rows, mix total, and computed mix props */
+/**
+ * Snapshot of a recipe's name and serialized rows taken at load time (or after a successful save).
+ * Used by {@link isRecipeDirty} to detect unsaved edits; the `name` half is split out so callers
+ * can also detect rename-at-save without re-parsing.
+ */
+export interface RecipeBaseline {
+  name: string;
+  serializedRows: string;
+}
+
+/**
+ * Reference to a specific saved-recipe version. Grouped so the "both or neither" invariant is
+ * enforced by the type — a Recipe either is or isn't tied to a saved version, never half-tied.
+ */
+export interface SavedRecipeRef {
+  recipeId: number;
+  versionNumber: number;
+}
+
+/**
+ * Represents one recipe slot: idx, id, name, ingredient rows, mix total, and computed mix props.
+ *
+ * `savedRef` identifies the saved-recipe version this slot is currently editing (undefined for
+ * anonymous/embedded recipes). `baseline` is a snapshot — captured on load and re-captured on
+ * successful save — used by {@link isRecipeDirty} to detect unsaved edits.
+ */
 export interface Recipe extends RecipeSummary {
   index: number;
   ingredientRows: IngredientRow[];
+  savedRef?: SavedRecipeRef;
+  baseline?: RecipeBaseline;
 }
 
-/** Represents a recipe in local storage, including name and serialized ingredient rows */
+/**
+ * Represents a recipe in local storage, including name, serialized ingredient rows, and the
+ * optional reference to the saved-recipe version being edited.
+ */
 export interface RecipeStore {
   name: string;
   serializedRows: string;
+  savedRef?: SavedRecipeRef;
 }
 
 /** Top-level context holding all recipe slots; passed as shared state through the component tree */
@@ -165,6 +196,40 @@ export function stringifyRecipe(recipe: Recipe) {
   return formattedRecipe ? `Ingredient\tQty(g)\n${formattedRecipe}` : "";
 }
 
+/** Capture a fresh {@link RecipeBaseline} for the current state of `recipe` */
+export function makeRecipeBaseline(recipe: Recipe): RecipeBaseline {
+  return { name: recipe.name, serializedRows: stringifyRecipe(recipe) };
+}
+
+/** Returns `true` when `recipe` was loaded from a saved version and has unsaved edits */
+export function isRecipeDirty(recipe: Recipe): boolean {
+  if (recipe.baseline === undefined) return false;
+  return (
+    recipe.name !== recipe.baseline.name ||
+    stringifyRecipe(recipe) !== recipe.baseline.serializedRows
+  );
+}
+
+/** Returns `true` when the recipe's name has changed since baseline (i.e. a rename is pending) */
+export function isRecipeRenamed(recipe: Recipe): boolean {
+  return recipe.baseline !== undefined && recipe.name !== recipe.baseline.name;
+}
+
+/** Returns a copy of `recipe` with saved-recipe identity (savedRef, baseline) cleared */
+export function clearRecipeIdentity(recipe: Recipe): Recipe {
+  return { ...recipe, savedRef: undefined, baseline: undefined };
+}
+
+/**
+ * Returns a copy of `recipe` with saved-recipe identity set and a fresh `baseline` captured from
+ * the current contents. Used by the editor after a successful save or save-as-new-version.
+ */
+export function withRecipeIdentity(recipe: Recipe, savedRef: SavedRecipeRef): Recipe {
+  const next = { ...recipe, savedRef };
+  next.baseline = makeRecipeBaseline(next);
+  return next;
+}
+
 /** Parse a tab-separated recipe string (with or without header) into `[name, quantityStr]` pairs */
 export function parseRecipeString(recipeStr: string): [string, string][] {
   try {
@@ -220,9 +285,13 @@ export function updateMixProperties(recipe: Recipe, resources: WasmResources) {
         );
 }
 
-/** Serialize a `Recipe` to a `RecipeStore` object */
+/** Serialize a `Recipe` to a `RecipeStore` object, preserving any saved-recipe identity */
 export function stringifyRecipeToStore(recipe: Recipe): RecipeStore {
-  return { name: recipe.name, serializedRows: stringifyRecipe(recipe) };
+  return {
+    name: recipe.name,
+    serializedRows: stringifyRecipe(recipe),
+    ...(recipe.savedRef !== undefined && { savedRef: recipe.savedRef }),
+  };
 }
 
 /** Persist the passed `RecipeStore`s into `localStorage` */
@@ -302,7 +371,12 @@ export function makeUpdatedRow(
   return row;
 }
 
-/** Parse a `RecipeStore` object and apply it to a `Recipe`, returning the updated recipe */
+/**
+ * Parse a `RecipeStore` object and apply it to a `Recipe`, returning the updated recipe.
+ *
+ * Carries through the store's optional `savedRef` onto the resulting recipe and captures a fresh
+ * `baseline` so dirty-detection starts clean after the load.
+ */
 export function makeUpdatedRecipeFromStore(
   currentRecipe: Recipe,
   recipeStore: RecipeStore,
@@ -323,5 +397,13 @@ export function makeUpdatedRecipeFromStore(
     return makeUpdatedRow(row, name, qtyStr, resources);
   });
 
-  return makeUpdatedRecipe(currentRecipe, { rows: updatedRows, name }, resources);
+  const updated = makeUpdatedRecipe(
+    { ...currentRecipe, savedRef: recipeStore.savedRef },
+    { rows: updatedRows, name },
+    resources,
+  );
+
+  // Only saved-recipe loads get a baseline; anonymous loads (no savedRef) stay free of dirty state
+  updated.baseline = recipeStore.savedRef !== undefined ? makeRecipeBaseline(updated) : undefined;
+  return updated;
 }

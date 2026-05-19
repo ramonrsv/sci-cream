@@ -122,7 +122,8 @@ test.describe("Visual Regression: Recipe Search", () => {
     await selectRecipeByName(page, "Chocolate Ice Cream");
 
     const textarea = page.getByLabel("Recipe comments");
-    await expect(textarea).toHaveValue(/Rich, dark, and bittersweet/);
+    // Default-to-latest: the seeded v2 comments appear first
+    await expect(textarea).toHaveValue(/Slightly sweeter/);
     await expect(page.getByRole("button", { name: "Save comments" })).toBeAttached();
 
     textarea.scrollIntoViewIfNeeded();

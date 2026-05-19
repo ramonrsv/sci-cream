@@ -3,18 +3,30 @@
 import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
-import { recipeEntryId, type RecipeEntryJson } from "@workspace/sci-cream";
 
-import { RecipeSearch } from "@/app/_components/recipe-search";
+import { RecipeSearch, type GroupedRecipe } from "@/app/_components/recipe-search";
 import { MAX_RECIPES } from "@/lib/styles/sizes";
-import { getRecipeStoresFromStorage, setRecipeStoresToStorage } from "@/lib/recipe";
-import { deleteUserRecipe, fetchAllUserSavedRecipes, updateUserRecipeComments } from "@/lib/data";
 
-/** Recipes page: browse and load recipes from embedded data and the user's from database */
+import {
+  getRecipeStoresFromStorage,
+  setRecipeStoresToStorage,
+  type RecipeStore,
+} from "@/lib/recipe";
+
+import {
+  deleteUserRecipe,
+  deleteUserRecipeVersion,
+  fetchAllUserSavedRecipes,
+  updateUserRecipeVersion,
+  type SavedRecipeJson,
+  type SavedRecipeVersionJson,
+} from "@/lib/data";
+
+/** Recipes page: browse and load recipes from embedded data and the user's saved versions */
 export default function RecipesPage() {
   const router = useRouter();
   const { data: session } = useSession();
-  const [savedRecipes, setSavedRecipes] = useState<RecipeEntryJson[]>([]);
+  const [savedRecipes, setSavedRecipes] = useState<SavedRecipeJson[]>([]);
 
   const userEmail = session?.user?.email;
 
@@ -26,33 +38,65 @@ export default function RecipesPage() {
     }
   }, [userEmail]);
 
-  /** Write the entry into the given localStorage slot and navigate to the calculator */
-  function handleLoadRecipe(entry: RecipeEntryJson, slotIndex: number) {
+  /**
+   * Write the chosen version into the given localStorage slot and navigate to the calculator.
+   * For embedded entries (`recipeId === undefined`) the slot is populated anonymously; for saved
+   * entries the slot carries a `savedRef` so the editor knows it is editing a specific saved
+   * version.
+   */
+  function handleLoadRecipe(
+    entry: GroupedRecipe,
+    version: SavedRecipeVersionJson,
+    slotIndex: number,
+  ) {
     const stores = getRecipeStoresFromStorage();
 
-    stores[slotIndex] = {
-      name: recipeEntryId(entry),
-      serializedRows: entry.recipe.map(([n, q]) => `${n}\t${q}`).join("\n"),
+    const serializedRows = version.recipe.map(([n, q]) => `${n}\t${q}`).join("\n");
+    const store: RecipeStore = {
+      name: entry.name,
+      serializedRows,
+      ...(entry.recipeId !== undefined && {
+        savedRef: { recipeId: entry.recipeId, versionNumber: version.version },
+      }),
     };
+    stores[slotIndex] = store;
 
     setRecipeStoresToStorage(stores);
     router.push(`/calculator?slot=${String(slotIndex)}`);
   }
 
-  /** Delete the entry from the user's saved recipes and refresh the list */
-  async function handleDeleteSavedRecipe(entry: RecipeEntryJson) {
-    if (!userEmail) return;
+  /** Delete the entry (all versions) from the user's saved recipes and refresh the list */
+  async function handleDeleteSavedRecipe(entry: GroupedRecipe) {
+    if (!userEmail || entry.recipeId === undefined) return;
 
-    await deleteUserRecipe(userEmail, entry.name);
+    await deleteUserRecipe(userEmail, entry.recipeId);
     const recipes = await fetchAllUserSavedRecipes(userEmail);
     if (recipes) setSavedRecipes(recipes);
   }
 
-  /** Update the comments of a saved recipe and refresh the list */
-  async function handleUpdateSavedRecipeComments(entry: RecipeEntryJson, comments: string) {
-    if (!userEmail) return;
+  /** Delete a single version of a saved recipe and refresh the list */
+  async function handleDeleteSavedRecipeVersion(
+    entry: GroupedRecipe,
+    version: SavedRecipeVersionJson,
+  ) {
+    if (!userEmail || entry.recipeId === undefined) return;
 
-    await updateUserRecipeComments(userEmail, entry.name, comments);
+    await deleteUserRecipeVersion(userEmail, entry.recipeId, version.version);
+    const recipes = await fetchAllUserSavedRecipes(userEmail);
+    if (recipes) setSavedRecipes(recipes);
+  }
+
+  /** Update the comments on a saved recipe's version and refresh the list */
+  async function handleUpdateSavedRecipeVersionComments(
+    entry: GroupedRecipe,
+    version: SavedRecipeVersionJson,
+    comments: string,
+  ) {
+    if (!userEmail || entry.recipeId === undefined) return;
+
+    await updateUserRecipeVersion(userEmail, entry.recipeId, version.version, {
+      comments: comments === "" ? null : comments,
+    });
     const recipes = await fetchAllUserSavedRecipes(userEmail);
     if (recipes) setSavedRecipes(recipes);
   }
@@ -66,7 +110,10 @@ export default function RecipesPage() {
         savedRecipes={savedRecipes}
         slots={slots}
         onDeleteSavedRecipe={userEmail ? handleDeleteSavedRecipe : undefined}
-        onUpdateSavedRecipeComments={userEmail ? handleUpdateSavedRecipeComments : undefined}
+        onDeleteSavedRecipeVersion={userEmail ? handleDeleteSavedRecipeVersion : undefined}
+        onUpdateSavedRecipeVersionComments={
+          userEmail ? handleUpdateSavedRecipeVersionComments : undefined
+        }
       />
     </div>
   );

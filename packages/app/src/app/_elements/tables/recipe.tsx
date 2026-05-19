@@ -2,15 +2,19 @@
 
 import { ReactNode, useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { ClipboardCopy, ClipboardPaste, Save, Trash } from "lucide-react";
+import { ClipboardCopy, ClipboardPaste, GitBranchPlus, Save, Trash } from "lucide-react";
 
 import {
   IngredientRow,
   Recipe,
   RecipeContextState,
   RecipeUpdates,
+  SavedRecipeRef,
+  clearRecipeIdentity,
   getRecipeIndices,
+  isRecipeDirty,
   isRecipeEmpty,
+  isRecipeRenamed,
   makeLightRecipe,
   makeUpdatedRecipe,
   makeUpdatedRow,
@@ -19,9 +23,16 @@ import {
   stringifyRecipeToStore,
   setRecipeStoresToStorage,
   getRecipeStoresFromStorage,
+  withRecipeIdentity,
 } from "@/lib/recipe";
 
-import { upsertUserRecipe } from "@/lib/data";
+import {
+  createUserRecipe,
+  createUserRecipeVersion,
+  renameUserRecipe,
+  updateUserRecipeVersion,
+} from "@/lib/data";
+
 import { WasmResourcesState } from "@/lib/wasm-resources";
 import { RecipeSelect } from "@/app/_elements/selects/recipe-select";
 import { formatCompositionValue } from "@/lib/comp-value-format";
@@ -261,25 +272,40 @@ export function RecipeEditor({
     });
   };
 
-  /** Parse and apply a tab-separated recipe string to the given recipe slot */
+  /**
+   * Parse and apply a tab-separated recipe string to the given recipe slot.
+   *
+   * Pasted content has no saved-recipe identity, so any existing identity on the slot is dropped
+   * (the editor switches to "anonymous" mode for that slot until the user saves it explicitly).
+   */
   const pasteRecipe = async (recipeIdx: number, serializedRows: string) => {
     updateRecipes([
-      makeUpdatedRecipeFromStore(
-        allRecipes[recipeIdx],
-        { name: "", serializedRows },
-        wasmResources,
+      clearRecipeIdentity(
+        makeUpdatedRecipeFromStore(
+          allRecipes[recipeIdx],
+          { name: "", serializedRows },
+          wasmResources,
+        ),
       ),
     ]);
   };
 
-  /** Clear all ingredient rows in the given recipe slot */
+  /**
+   * Clear all ingredient rows in the given recipe slot. Also drops any saved-recipe identity so
+   * the slot returns to a clean "anonymous" state without a pending dirty flag.
+   */
   const clearRecipe = (recipeIdx: number) => {
-    updateRecipe(recipeIdx, {
-      name: "",
-      rows: allRecipes[recipeIdx].ingredientRows.map((row) =>
-        makeUpdatedRow(getRow(recipeIdx, row.index), "", "", wasmResources),
-      ),
-    });
+    const cleared = makeUpdatedRecipe(
+      allRecipes[recipeIdx],
+      {
+        name: "",
+        rows: allRecipes[recipeIdx].ingredientRows.map((row) =>
+          makeUpdatedRow(getRow(recipeIdx, row.index), "", "", wasmResources),
+        ),
+      },
+      wasmResources,
+    );
+    updateRecipes([clearRecipeIdentity(cleared)]);
   };
 
   /** Clear all ingredient rows in the currently selected recipe slot */
@@ -297,7 +323,48 @@ export function RecipeEditor({
     await pasteRecipe(currentRecipeIdx, await navigator.clipboard.readText());
   };
 
-  /** Save the currently selected recipe to the database under its current name */
+  /**
+   * Persist a rename for the loaded recipe when the in-editor name differs from baseline. Returns
+   * `true` on success (or when no rename is needed), `false` if the rename failed.
+   */
+  const applyRenameIfNeeded = async (recipe: Recipe): Promise<boolean> => {
+    if (!userEmail || recipe.savedRef === undefined || !isRecipeRenamed(recipe)) return true;
+    const renamed = await renameUserRecipe(userEmail, recipe.savedRef.recipeId, recipe.name.trim());
+    return renamed !== undefined;
+  };
+
+  /**
+   * Shared scaffolding for the save flows: sets `Saving` → runs `operation` → on success applies
+   * the returned identity to the recipe and sets `Saved`; on a falsy return or thrown error sets
+   * `Error`. Callers do their own precondition checks before invoking this.
+   */
+  const performSave = async (
+    recipe: Recipe,
+    operation: () => Promise<SavedRecipeRef | undefined>,
+  ) => {
+    setSaveStatus(SaveStatus.Saving);
+    try {
+      const newRef = await operation();
+      if (!newRef) {
+        setSaveStatus(SaveStatus.Error);
+        return;
+      }
+      updateRecipes([withRecipeIdentity(recipe, newRef)]);
+      setSaveStatus(SaveStatus.Saved);
+    } catch (err) {
+      console.error("save failed:", err);
+      setSaveStatus(SaveStatus.Error);
+    }
+  };
+
+  /**
+   * Save the currently selected recipe.
+   *
+   * Two branches based on the recipe's current identity:
+   * - No `savedRef`: creates a brand-new recipe with version 1.
+   * - Has `savedRef`: rewrites that version in-place (rename-on-save is honored when the in-editor
+   *   name differs from baseline).
+   */
   const saveCurrentRecipe = async () => {
     const recipe = allRecipes[currentRecipeIdx];
 
@@ -308,16 +375,52 @@ export function RecipeEditor({
       );
     }
 
-    setSaveStatus(SaveStatus.Saving);
-
-    try {
+    await performSave(recipe, async () => {
       const lightRecipe = makeLightRecipe(recipe, wasmResources.hasIngredient);
-      const row = await upsertUserRecipe(userEmail, recipe.name.trim(), lightRecipe);
-      setSaveStatus(row ? SaveStatus.Saved : SaveStatus.Error);
-    } catch (err) {
-      console.error("saveCurrentRecipe failed:", err);
-      setSaveStatus(SaveStatus.Error);
+
+      if (recipe.savedRef === undefined) {
+        const created = await createUserRecipe(userEmail, recipe.name.trim(), lightRecipe);
+        return created && { recipeId: created.recipeId, versionNumber: created.version.version };
+      }
+
+      // Existing recipe: rename first if needed, then overwrite the loaded version
+      if (!(await applyRenameIfNeeded(recipe))) return undefined;
+      const { recipeId, versionNumber } = recipe.savedRef;
+      const updated = await updateUserRecipeVersion(userEmail, recipeId, versionNumber, {
+        recipe: lightRecipe,
+      });
+      return updated && { recipeId, versionNumber };
+    });
+  };
+
+  /**
+   * Save the currently selected recipe as a new version of the loaded recipe. Only meaningful when
+   * a saved recipe is currently loaded (`savedRef` defined); the button is disabled otherwise.
+   */
+  const saveCurrentRecipeAsNewVersion = async () => {
+    const recipe = allRecipes[currentRecipeIdx];
+
+    if (
+      !userEmail ||
+      currentRecipeIdx !== 0 ||
+      recipe.savedRef === undefined ||
+      !recipe.name.trim() ||
+      isRecipeEmpty(recipe)
+    ) {
+      throw new Error(
+        "saveCurrentRecipeAsNewVersion invoked while the button should be disabled " +
+          "(missing auth, non-main slot, no loaded recipe, empty name, or empty recipe)",
+      );
     }
+    // Capture the narrowed savedRef for use inside the operation closure
+    const { recipeId } = recipe.savedRef;
+
+    await performSave(recipe, async () => {
+      if (!(await applyRenameIfNeeded(recipe))) return undefined;
+      const lightRecipe = makeLightRecipe(recipe, wasmResources.hasIngredient);
+      const created = await createUserRecipeVersion(userEmail, recipeId, lightRecipe);
+      return created && { recipeId, versionNumber: created.version };
+    });
   };
 
   // Prevents stale ingredient context if a row is changed (e.g. a recipe is pasted) before we have
@@ -375,6 +478,11 @@ export function RecipeEditor({
     currentRecipe.name.trim() !== "" &&
     !isRecipeEmpty(currentRecipe);
 
+  // "Save as new version" only makes sense once the recipe has been saved at least once
+  const canSaveAsNewVersion = canSave && currentRecipe.savedRef !== undefined;
+
+  const dirty = isRecipeDirty(currentRecipe);
+
   const saveTitle = !userEmail
     ? "Sign in to save recipes"
     : currentRecipeIdx !== 0
@@ -389,14 +497,30 @@ export function RecipeEditor({
               ? "Saved"
               : saveStatus === SaveStatus.Error
                 ? "Save failed — try again"
-                : "Save recipe";
+                : currentRecipe.savedRef !== undefined
+                  ? dirty
+                    ? `Save changes to version ${currentRecipe.savedRef.versionNumber}`
+                    : `Saved — version ${currentRecipe.savedRef.versionNumber}`
+                  : "Save recipe";
+
+  const saveAsNewVersionTitle = !userEmail
+    ? "Sign in to save recipes"
+    : currentRecipeIdx !== 0
+      ? "Select main recipe to save"
+      : !canSaveAsNewVersion
+        ? "Save the recipe at least once before creating a new version"
+        : saveStatus === SaveStatus.Saving
+          ? "Saving…"
+          : "Save as new version";
 
   const saveIconColorClass =
     saveStatus === SaveStatus.Saved
       ? "text-green-500"
       : saveStatus === SaveStatus.Error
         ? "text-red-500"
-        : undefined;
+        : dirty
+          ? "text-amber-500"
+          : undefined;
 
   return (
     <>
@@ -409,14 +533,35 @@ export function RecipeEditor({
             currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
           />
         </div>
-        <input
-          type="text"
-          value={currentRecipe.name}
-          onChange={(e) => updateCurrentRecipeName(e.target.value)}
-          placeholder="Recipe name"
-          aria-label="Recipe name"
-          className="text-secondary table-fillable-input min-w-0 flex-1 truncate px-1 py-0 text-sm font-medium"
-        />
+        <div className="flex min-w-0 flex-1 items-center gap-1">
+          {/* Unsaved-changes dot, only when a saved recipe is loaded and edits are pending */}
+          <span
+            className={`leading-none text-amber-500 ${dirty ? "" : "invisible"}`}
+            {...(dirty
+              ? { "aria-label": "Unsaved changes", title: "Unsaved changes" }
+              : { "aria-hidden": true })}
+          >
+            •
+          </span>
+          {/* Editable recipe name field */}
+          <input
+            type="text"
+            value={currentRecipe.name}
+            onChange={(e) => updateCurrentRecipeName(e.target.value)}
+            placeholder="Recipe name"
+            aria-label="Recipe name"
+            className="text-secondary table-fillable-input min-w-0 flex-1 truncate px-1 py-0 text-sm font-medium"
+          />
+          {/* Version badge, only when a saved recipe version is loaded */}
+          {currentRecipe.savedRef !== undefined && (
+            <span
+              className="text-secondary shrink-0 rounded-md border border-current/20 px-1 text-xs"
+              title={`Editing version ${currentRecipe.savedRef.versionNumber}`}
+            >
+              v{currentRecipe.savedRef.versionNumber}
+            </span>
+          )}
+        </div>
         <div className="flex shrink-0">
           {[
             {
@@ -442,6 +587,12 @@ export function RecipeEditor({
               action: saveCurrentRecipe,
               title: saveTitle,
               disabled: !canSave || saveStatus === SaveStatus.Saving,
+            },
+            {
+              label: <GitBranchPlus size={iconSize} className={saveIconColorClass} />,
+              action: saveCurrentRecipeAsNewVersion,
+              title: saveAsNewVersionTitle,
+              disabled: !canSaveAsNewVersion || saveStatus === SaveStatus.Saving,
             },
           ].map(({ label, action, title, disabled }, idx) => (
             <button
