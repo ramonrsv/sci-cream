@@ -223,6 +223,10 @@ export function PropertiesBarChart({
       });
 
       return {
+        // Stable identity for react-chartjs-2 dataset matching across renders. Using `recipe.id`
+        // (slot id, e.g. "Recipe" / "Ref A") instead of relying on the default `label` keeps the
+        // chart from treating live name edits as a brand-new dataset and re-animating the bars.
+        id: recipe.id,
         label: recipe.name || recipe.id,
         data: propKeys.map(
           (propKey) =>
@@ -284,7 +288,7 @@ export function PropertiesBarChart({
     },
   };
 
-  return <Chart type="barWithErrorBars" data={chartData} options={options} />;
+  return <Chart type="barWithErrorBars" data={chartData} options={options} datasetIdKey="id" />;
 }
 
 /** Default set of property keys shown when the Custom key filter is first initialized */

@@ -80,6 +80,11 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
       ];
 
       return lines.map(({ lineLabel, borderDash, curve }) => ({
+        // Stable identity for react-chartjs-2 dataset matching across renders. Using `recipe.id`
+        // (slot id, e.g. "Recipe" / "Ref A") combined with the line label gives each dataset a
+        // unique, edit-resilient id — the chart no longer needs to lean on `recipeLabel` for
+        // disambiguation, so renaming a ref recipe doesn't make its lines jump on every keystroke.
+        id: `${recipe.id}:${lineLabel}`,
         label: `${lineLabel}${recipeLabel}`,
         data: curve.map((point) => (point.temp >= 0 ? NaN : point.temp)),
         borderWidth: borderWidth,
@@ -190,5 +195,5 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
     },
   };
 
-  return <Line data={graphData} options={options} />;
+  return <Line data={graphData} options={options} datasetIdKey="id" />;
 }
