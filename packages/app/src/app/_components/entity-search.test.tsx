@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, cleanup, within } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup } from "@testing-library/react";
 
 import { EntitySearch, EntitySource, filterTaggedEntries } from "@/app/_components/entity-search";
 
@@ -12,12 +12,11 @@ import { EntitySearch, EntitySource, filterTaggedEntries } from "@/app/_componen
 interface Entry {
   name: string;
   tag: string;
-  comments?: string;
 }
 
-const builtinA: Entry = { name: "Alpha", tag: "first", comments: "alpha notes" };
+const builtinA: Entry = { name: "Alpha", tag: "first" };
 const builtinB: Entry = { name: "Beta", tag: "second" };
-const savedA: Entry = { name: "Gamma", tag: "third", comments: "gamma notes" };
+const savedA: Entry = { name: "Gamma", tag: "third" };
 const savedB: Entry = { name: "Delta", tag: "second" };
 
 const getId = (e: Entry) => e.name;
@@ -32,7 +31,7 @@ function renderShell(overrides: Partial<React.ComponentProps<typeof EntitySearch
       savedEntries={[savedA, savedB]}
       getId={getId}
       matchesQuery={matchesQuery}
-      renderDetailBody={(e) => <div data-testid="body">body for {e.name}</div>}
+      renderDetailPanel={(e) => <div data-testid="panel">panel for {e.name}</div>}
       {...overrides}
     />,
   );
@@ -108,7 +107,7 @@ describe("filterTaggedEntries", () => {
 });
 
 // ---------------------------------------------------------------------------
-// EntitySearch
+// EntitySearch (shell only — list, selection, source filter, panel passthrough)
 // ---------------------------------------------------------------------------
 
 describe("EntitySearch", () => {
@@ -160,17 +159,18 @@ describe("EntitySearch", () => {
       expect(screen.getAllByTestId("subtitle")).toHaveLength(4);
     });
 
-    it("renders the renderHeaderMeta output and a source badge in the detail header", () => {
-      renderShell({ renderHeaderMeta: (e) => <span data-testid="header-meta">tag: {e.tag}</span> });
-      fireEvent.click(screen.getByRole("button", { name: /Alpha/ }));
-      expect(screen.getByTestId("header-meta")).toHaveTextContent("tag: first");
-      expect(screen.getByText("built-in")).toBeInTheDocument();
-    });
-
-    it("renders the renderDetailBody output for the selected entry", () => {
+    it("renders the renderDetailPanel output for the selected entry", () => {
       renderShell();
       fireEvent.click(screen.getByRole("button", { name: /Alpha/ }));
-      expect(screen.getByTestId("body")).toHaveTextContent("body for Alpha");
+      expect(screen.getByTestId("panel")).toHaveTextContent("panel for Alpha");
+    });
+
+    it("passes the source tag to renderDetailPanel via the entry's _source", () => {
+      renderShell({ renderDetailPanel: (e) => <div data-testid="panel">{e._source}</div> });
+      fireEvent.click(screen.getByRole("button", { name: /Alpha/ }));
+      expect(screen.getByTestId("panel")).toHaveTextContent("embedded");
+      fireEvent.click(screen.getByRole("button", { name: /Gamma/ }));
+      expect(screen.getByTestId("panel")).toHaveTextContent("saved");
     });
   });
 
@@ -187,123 +187,6 @@ describe("EntitySearch", () => {
       fireEvent.click(screen.getByRole("button", { name: "Saved" }));
       expect(screen.queryByRole("button", { name: /Alpha/ })).not.toBeInTheDocument();
       expect(screen.getByRole("button", { name: /Gamma/ })).toBeInTheDocument();
-    });
-  });
-
-  describe("delete", () => {
-    it("does not show a delete button for an embedded entry even with onDelete", () => {
-      renderShell({ onDelete: vi.fn() });
-      fireEvent.click(screen.getByRole("button", { name: /Alpha/ }));
-      expect(screen.queryByLabelText("Delete saved entry")).not.toBeInTheDocument();
-    });
-
-    it("shows the default-labelled delete button for a saved entry when onDelete is provided", () => {
-      renderShell({ onDelete: vi.fn() });
-      fireEvent.click(screen.getByRole("button", { name: /Gamma/ }));
-      expect(screen.getByLabelText("Delete saved entry")).toBeInTheDocument();
-    });
-
-    it("uses the custom deleteLabel when provided", () => {
-      renderShell({ onDelete: vi.fn(), deleteLabel: "Remove this thing" });
-      fireEvent.click(screen.getByRole("button", { name: /Gamma/ }));
-      expect(screen.getByLabelText("Remove this thing")).toBeInTheDocument();
-    });
-
-    it("calls onDelete with the entry when confirm() returns true", async () => {
-      const onDelete = vi.fn();
-      vi.spyOn(window, "confirm").mockReturnValue(true);
-      renderShell({ onDelete });
-      fireEvent.click(screen.getByRole("button", { name: /Gamma/ }));
-      fireEvent.click(screen.getByLabelText("Delete saved entry"));
-      expect(onDelete).toHaveBeenCalledWith(expect.objectContaining({ name: "Gamma" }));
-    });
-
-    it("uses the custom getDeleteConfirmText for the confirm() prompt", () => {
-      const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
-      renderShell({ onDelete: vi.fn(), getDeleteConfirmText: (e) => `Really nuke ${e.name}?` });
-      fireEvent.click(screen.getByRole("button", { name: /Gamma/ }));
-      fireEvent.click(screen.getByLabelText("Delete saved entry"));
-      expect(confirmSpy).toHaveBeenCalledWith("Really nuke Gamma?");
-    });
-  });
-
-  describe("load", () => {
-    it("does not show the load button when onLoad is absent", () => {
-      renderShell();
-      fireEvent.click(screen.getByRole("button", { name: /Alpha/ }));
-      expect(screen.queryByRole("button", { name: "Load" })).not.toBeInTheDocument();
-    });
-
-    it("shows the load button with default label when onLoad is provided", () => {
-      renderShell({ onLoad: vi.fn() });
-      fireEvent.click(screen.getByRole("button", { name: /Alpha/ }));
-      expect(screen.getByRole("button", { name: "Load" })).toBeInTheDocument();
-    });
-
-    it("uses the custom loadButtonLabel when provided", () => {
-      renderShell({ onLoad: vi.fn(), loadButtonLabel: "Use this" });
-      fireEvent.click(screen.getByRole("button", { name: /Alpha/ }));
-      expect(screen.getByRole("button", { name: "Use this" })).toBeInTheDocument();
-    });
-
-    it("does not show a slot picker when slots has 0 or 1 entries", () => {
-      const { container } = renderShell({ onLoad: vi.fn(), slots: [0] });
-      fireEvent.click(screen.getByRole("button", { name: /Alpha/ }));
-      const headerSelects = within(container.querySelector(".search-detail-panel")!).queryAllByRole(
-        "combobox",
-      );
-      expect(headerSelects).toHaveLength(0);
-    });
-
-    it("shows a slot picker labelled via slotLabel when slots has more than one entry", () => {
-      renderShell({ onLoad: vi.fn(), slots: [0, 1], slotLabel: (s) => `Slot ${s}` });
-      fireEvent.click(screen.getByRole("button", { name: /Alpha/ }));
-      expect(screen.getByRole("option", { name: "Slot 0" })).toBeInTheDocument();
-      expect(screen.getByRole("option", { name: "Slot 1" })).toBeInTheDocument();
-    });
-
-    it("calls onLoad with the entry and the selected slot", () => {
-      const onLoad = vi.fn();
-      renderShell({ onLoad, slots: [0, 1], slotLabel: (s) => `Slot ${s}` });
-      fireEvent.click(screen.getByRole("button", { name: /Alpha/ }));
-      fireEvent.change(screen.getByRole("combobox"), { target: { value: "1" } });
-      fireEvent.click(screen.getByRole("button", { name: "Load" }));
-      expect(onLoad).toHaveBeenCalledWith(expect.objectContaining({ name: "Alpha" }), 1);
-    });
-  });
-
-  describe("comments", () => {
-    it("renders the editable textarea for a saved entry when onUpdateComments is provided", () => {
-      renderShell({ getComments: (e) => e.comments, onUpdateComments: vi.fn() });
-      fireEvent.click(screen.getByRole("button", { name: /Gamma/ }));
-      const textarea = screen.getByLabelText("Entry comments") as HTMLTextAreaElement;
-      expect(textarea.value).toBe("gamma notes");
-    });
-
-    it("uses the custom commentsLabel when provided", () => {
-      renderShell({
-        getComments: (e) => e.comments,
-        onUpdateComments: vi.fn(),
-        commentsLabel: "Thing comments",
-      });
-      fireEvent.click(screen.getByRole("button", { name: /Gamma/ }));
-      expect(screen.getByLabelText("Thing comments")).toBeInTheDocument();
-    });
-
-    it("calls onUpdateComments with the new value on Save", () => {
-      const onUpdate = vi.fn();
-      renderShell({ getComments: (e) => e.comments, onUpdateComments: onUpdate });
-      fireEvent.click(screen.getByRole("button", { name: /Gamma/ }));
-      fireEvent.change(screen.getByLabelText("Entry comments"), { target: { value: "edited" } });
-      fireEvent.click(screen.getByRole("button", { name: "Save comments" }));
-      expect(onUpdate).toHaveBeenCalledWith(expect.objectContaining({ name: "Gamma" }), "edited");
-    });
-
-    it("renders comments read-only for built-in entries even when onUpdateComments is set", () => {
-      renderShell({ getComments: (e) => e.comments, onUpdateComments: vi.fn() });
-      fireEvent.click(screen.getByRole("button", { name: /Alpha/ }));
-      expect(screen.queryByLabelText("Entry comments")).not.toBeInTheDocument();
-      expect(screen.getByText("alpha notes")).toBeInTheDocument();
     });
   });
 });

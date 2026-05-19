@@ -13,10 +13,12 @@ import {
 } from "@workspace/sci-cream";
 
 import { EntitySearch, Tagged } from "@/app/_components/entity-search";
+import { DetailPanelHeader } from "@/app/_components/detail-panel";
 import { CompositionView } from "@/app/_elements/tables/composition";
 import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
 import { useSeededWasmResources } from "@/lib/wasm-resources";
 import { STATE_VAL } from "@/lib/util";
+import { autoLink } from "@/lib/text";
 
 /** Props for {@link IngredientSearch} */
 export interface IngredientSearchProps {
@@ -48,7 +50,7 @@ function getEntryComments(entry: SpecEntryJson): string | undefined {
 /**
  * Pretty-print an entry as JSON, omitting the EntitySearch `_source` tag. When the entry has a
  * non-empty `comments` field, the value is redacted to `"..."` in the JSON — the full text is
- * rendered separately under the spec by the EntitySearch shell via {@link autoLink}.
+ * rendered separately under the spec via {@link autoLink}.
  */
 function stringifyEntry(entry: Tagged<SpecEntryJson>): string {
   const { _source, ...spec } = entry; // eslint-disable-line @typescript-eslint/no-unused-vars
@@ -103,6 +105,36 @@ function IngredientDetailBody({
   );
 }
 
+/** Full detail panel for an ingredient: header (with category/alias meta) + body + comments */
+function IngredientDetailPanel({
+  entry,
+  bridge,
+}: {
+  entry: Tagged<SpecEntryJson>;
+  bridge: WasmBridge;
+}) {
+  const isAlias = isSpecEntryAlias(entry);
+  const category = isAlias ? aliasTargetCategory(entry.for) : entry.category;
+  const comments = getEntryComments(entry);
+
+  return (
+    <>
+      <DetailPanelHeader
+        title={specEntryName(entry)}
+        source={entry._source}
+        meta={
+          <>
+            {category && <span className="meta-tag">{category}</span>}
+            {isAlias && <span className="meta-tag">Alias</span>}
+          </>
+        }
+      />
+      <IngredientDetailBody entry={entry} bridge={bridge} />
+      {comments && <p className="text-secondary text-sm leading-relaxed">{autoLink(comments)}</p>}
+    </>
+  );
+}
+
 /**
  * Searchable list of ingredients from the embedded sci-cream dataset and an optional collection
  * of user-saved specs. Built-in entries include aliases; saved entries are independent specs only.
@@ -127,18 +159,6 @@ export function IngredientSearch({ savedSpecs = [] }: IngredientSearchProps) {
     );
   };
 
-  /** Header badges: category meta-tag (resolved for aliases) plus an "Alias" badge for aliases */
-  const renderHeaderMeta = (entry: Tagged<SpecEntryJson>) => {
-    const isAlias = isSpecEntryAlias(entry);
-    const category = isAlias ? aliasTargetCategory(entry.for) : entry.category;
-    return (
-      <>
-        {category && <span className="meta-tag">{category}</span>}
-        {isAlias && <span className="meta-tag">Alias</span>}
-      </>
-    );
-  };
-
   return (
     <EntitySearch<SpecEntryJson>
       id="ingredient-search"
@@ -150,9 +170,7 @@ export function IngredientSearch({ savedSpecs = [] }: IngredientSearchProps) {
       emptyDetailText="Select an ingredient to see details"
       emptyResultsText="No ingredients found."
       renderListItemSubtitle={renderListItemSubtitle}
-      renderHeaderMeta={renderHeaderMeta}
-      renderDetailBody={(entry) => <IngredientDetailBody entry={entry} bridge={wasmBridge} />}
-      getComments={getEntryComments}
+      renderDetailPanel={(entry) => <IngredientDetailPanel entry={entry} bridge={wasmBridge} />}
     />
   );
 }

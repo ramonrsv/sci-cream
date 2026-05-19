@@ -9,6 +9,8 @@ export const NAVBAR_ICON_SIZE = 20;
 export const DRAG_HANDLE_ICON_SIZE = 17;
 /** Icon size (px) for component action buttons. */
 export const COMPONENT_ACTION_ICON_SIZE = 20;
+/** Icon size (px) for action buttons inside an entity-search detail panel. */
+export const DETAIL_PANEL_ACTION_ICON_SIZE = 14;
 /** Font size (px) for graph titles. */
 export const GRAPH_TITLE_FONT_SIZE = 15;
 

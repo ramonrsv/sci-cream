@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
-import { Trash } from "lucide-react";
 import {
   allRecipeEntries,
   type RecipeEntryJson,
@@ -22,6 +21,12 @@ import {
   filterTaggedEntries,
   Tagged,
 } from "@/app/_components/entity-search";
+import {
+  DeleteAction,
+  DetailPanelHeader,
+  EditableComments,
+  LoadAction,
+} from "@/app/_components/detail-panel";
 import type { SavedRecipeJson, SavedRecipeVersionJson } from "@/lib/data";
 
 /** Sources of recipes; re-export of {@link EntitySource} for backwards compatibility */
@@ -113,6 +118,19 @@ export interface RecipeSearchProps {
   ) => void | Promise<void>;
 }
 
+/** Props for {@link RecipeDetailPanel} */
+interface RecipeDetailPanelProps extends Pick<
+  RecipeSearchProps,
+  | "slots"
+  | "onLoadRecipe"
+  | "onDeleteSavedRecipe"
+  | "onDeleteSavedRecipeVersion"
+  | "onUpdateSavedRecipeVersionComments"
+> {
+  entry: TaggedGroupedRecipe;
+  bridge: WasmBridge;
+}
+
 /**
  * Creates a `Recipe` object from a flat `[name, qty][]` recipe and `WasmBridge`, without WASM
  * `Ingredient`s. Used by the detail panel to render the currently selected version.
@@ -153,35 +171,6 @@ function formatVersionOption(v: SavedRecipeVersionJson, isLatest: boolean): stri
 }
 
 /**
- * Per-version comments editor. Keyed on `(entry.id, version.version)` by the parent so React
- * remounts it whenever the entry or selected version changes — this avoids the need for a
- * setState-in-effect reset and keeps the textarea state local to the active version.
- */
-function VersionCommentsEditor({
-  initialComments,
-  onSave,
-}: {
-  initialComments: string;
-  onSave: (comments: string) => void | Promise<void>;
-}) {
-  const [edited, setEdited] = useState<string>(initialComments);
-  return (
-    <div className="flex flex-col gap-2">
-      <textarea
-        value={edited}
-        onChange={(e) => setEdited(e.target.value)}
-        placeholder="Add comments…"
-        aria-label="Recipe comments"
-        className="table-fillable-input text-secondary min-h-20 rounded-lg px-2 py-1 text-sm leading-relaxed"
-      />
-      <button onClick={() => onSave(edited)} className="action-button self-end px-2 py-0.5 text-sm">
-        Save comments
-      </button>
-    </div>
-  );
-}
-
-/**
  * Stateful detail panel for a grouped recipe; owns the selected-version state. The parent renders
  * this with `key={entry.id}` so React remounts it on entry change, which naturally resets the
  * selected-version state without a setState-in-effect.
@@ -194,14 +183,7 @@ function RecipeDetailPanel({
   onDeleteSavedRecipe,
   onDeleteSavedRecipeVersion,
   onUpdateSavedRecipeVersionComments,
-}: { entry: TaggedGroupedRecipe; bridge: WasmBridge } & Pick<
-  RecipeSearchProps,
-  | "slots"
-  | "onLoadRecipe"
-  | "onDeleteSavedRecipe"
-  | "onDeleteSavedRecipeVersion"
-  | "onUpdateSavedRecipeVersionComments"
->) {
+}: RecipeDetailPanelProps) {
   const { updateIdx: wasmUpdateIdx } = useSeededWasmResources()[STATE_VAL];
   const isSaved = entry._source === EntitySource.Saved;
   const hasMultipleVersions = entry.versions.length > 1;
@@ -209,8 +191,6 @@ function RecipeDetailPanel({
   const latestIdx = entry.versions.length - 1;
   const [selectedVersionIdx, setSelectedVersionIdx] = useState<number>(latestIdx);
   const selectedVersion = entry.versions[selectedVersionIdx] ?? entry.versions[latestIdx];
-
-  const [targetSlot, setTargetSlot] = useState<number>(slots?.[0] ?? 0);
 
   const recipe = useMemo<Recipe>(
     () => makeRecipeFromRows(entry.name, selectedVersion?.recipe ?? null, bridge),
@@ -229,80 +209,41 @@ function RecipeDetailPanel({
   );
 
   const deleteRecipeEnabled = isSaved && !!onDeleteSavedRecipe;
+
   const deleteVersionEnabled =
     isSaved && hasMultipleVersions && !!onDeleteSavedRecipeVersion && !!selectedVersion;
+
   const commentsEnabled = isSaved && !!onUpdateSavedRecipeVersionComments && !!selectedVersion;
-
-  const handleDeleteRecipe = async () => {
-    if (!deleteRecipeEnabled) return;
-    const text = `Delete saved recipe "${entry.name}" and all ${entry.versions.length} of its versions?`;
-    if (!window.confirm(text)) return;
-    await onDeleteSavedRecipe(entry);
-  };
-
-  const handleDeleteVersion = async () => {
-    if (!deleteVersionEnabled) return;
-    const text = `Delete version ${selectedVersion.version} of "${entry.name}"?`;
-    if (!window.confirm(text)) return;
-    await onDeleteSavedRecipeVersion(entry, selectedVersion);
-  };
-
-  const handleSaveComments = async (comments: string) => {
-    if (!commentsEnabled) return;
-    await onUpdateSavedRecipeVersionComments(entry, selectedVersion, comments);
-  };
 
   return (
     <>
-      {/* Header: title, badges, action buttons */}
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex min-w-0 flex-col gap-1">
-          <h2 className="text-primary text-base font-semibold">{entry.name}</h2>
-          <div className="flex flex-wrap items-center gap-2">
+      <DetailPanelHeader
+        title={entry.name}
+        source={entry._source}
+        meta={
+          <>
             {entry.author && <span className="text-secondary text-sm">{entry.author}</span>}
-            <span className="meta-tag">{isSaved ? "saved" : "built-in"}</span>
             {hasMultipleVersions && (
               <span className="meta-tag">{entry.versions.length} versions</span>
             )}
-          </div>
-        </div>
-        <div className="flex shrink-0 items-center gap-1">
-          {deleteRecipeEnabled && (
-            <button
-              onClick={handleDeleteRecipe}
-              title="Delete saved recipe"
-              aria-label="Delete saved recipe"
-              className="action-button px-2 py-0.5 text-sm"
-            >
-              <Trash size={14} />
-            </button>
-          )}
-          {onLoadRecipe && selectedVersion && (
-            <>
-              {slots && slots.length > 1 && (
-                <select
-                  value={targetSlot}
-                  onChange={(e) => setTargetSlot(parseInt(e.target.value))}
-                  className="select-input text-sm"
-                  aria-label="Target slot"
-                >
-                  {slots.map((slot) => (
-                    <option key={slot} value={slot}>
-                      {makeRecipeId(slot)}
-                    </option>
-                  ))}
-                </select>
-              )}
-              <button
-                onClick={() => onLoadRecipe(entry, selectedVersion, targetSlot)}
-                className="action-button px-2 py-0.5 text-sm"
-              >
-                Load
-              </button>
-            </>
-          )}
-        </div>
-      </div>
+          </>
+        }
+      >
+        {deleteRecipeEnabled && (
+          <DeleteAction
+            onDelete={() => onDeleteSavedRecipe(entry)}
+            confirmText={`Delete saved recipe "${entry.name}" and all ${entry.versions.length} of its versions?`}
+            label="Delete saved recipe"
+          />
+        )}
+        {onLoadRecipe && selectedVersion && (
+          <LoadAction
+            onLoad={(slot) => onLoadRecipe(entry, selectedVersion, slot)}
+            slots={slots}
+            slotLabel={makeRecipeId}
+          />
+        )}
+      </DetailPanelHeader>
 
       {/* Version selector (only when there's more than one version) */}
       {hasMultipleVersions && (
@@ -324,14 +265,12 @@ function RecipeDetailPanel({
             ))}
           </select>
           {deleteVersionEnabled && (
-            <button
-              onClick={handleDeleteVersion}
-              title="Delete this version"
-              aria-label="Delete this version"
-              className="action-button px-2 py-0.5 text-sm"
-            >
-              <Trash size={12} />
-            </button>
+            <DeleteAction
+              onDelete={() => onDeleteSavedRecipeVersion(entry, selectedVersion)}
+              confirmText={`Delete version ${selectedVersion.version} of "${entry.name}"?`}
+              label="Delete this version"
+              iconSize={12}
+            />
           )}
         </div>
       )}
@@ -351,11 +290,14 @@ function RecipeDetailPanel({
 
       {/* Comments — editable per-version for saved, read-only paragraph for embedded */}
       {commentsEnabled ? (
-        <VersionCommentsEditor
+        <EditableComments
           // Remount on version change so the textarea re-seeds from the new version's comments
           key={`${entry.id}-v${selectedVersion.version}`}
-          initialComments={selectedVersion.comments ?? ""}
-          onSave={handleSaveComments}
+          initialValue={selectedVersion.comments ?? ""}
+          onSave={(comments) =>
+            onUpdateSavedRecipeVersionComments(entry, selectedVersion, comments)
+          }
+          ariaLabel="Recipe comments"
         />
       ) : (
         selectedVersion?.comments && (

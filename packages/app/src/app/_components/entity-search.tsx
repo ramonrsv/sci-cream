@@ -1,9 +1,7 @@
 "use client";
 
 import { ReactNode, useMemo, useState } from "react";
-import { Search, Trash } from "lucide-react";
-
-import { autoLink } from "@/lib/text";
+import { Search } from "lucide-react";
 
 /** Sources of entries displayed by an {@link EntitySearch}, including `All` */
 export enum EntitySource {
@@ -44,11 +42,11 @@ export function filterTaggedEntries<E>(
 export interface EntitySearchProps<E> {
   /** Read-only built-in entries (e.g. embedded data) */
   embeddedEntries: E[];
-  /** User-owned entries (delete/edit-capable when callbacks are provided) */
+  /** User-owned entries */
   savedEntries: E[];
   /** Stable identifier per entry; used as React key (with `_source`) and selection equality */
   getId: (e: E) => string;
-  /** Display name shown as the list-item title and the detail-panel header; defaults to `getId` */
+  /** Display name shown as the list-item title; defaults to `getId` */
   getDisplayName?: (e: E) => string;
   /** Case-insensitive query match predicate; `q` is already lowercased */
   matchesQuery: (e: E, q: string) => boolean;
@@ -60,54 +58,23 @@ export interface EntitySearchProps<E> {
   emptyResultsText?: string;
   /** Optional second-line content under each list-item title (e.g. author, category) */
   renderListItemSubtitle?: (e: Tagged<E>) => ReactNode;
-  /** Optional badges/labels rendered next to the source tag in the detail header */
-  renderHeaderMeta?: (e: Tagged<E>) => ReactNode;
   /**
-   * Body of the detail panel; entity-specific content slotted between header and comments. Used by
-   * the default panel rendering; ignored when {@link renderDetailPanel} is provided.
+   * Renders the entire content of the detail panel — header, body, actions, comments. EntitySearch
+   * owns the outer container and the empty state; everything inside is the consumer's. Compose with
+   * the atoms in `@/app/_components/detail-panel` (DetailPanelHeader, LoadAction, DeleteAction,
+   * EditableComments) for a consistent look across entity types.
    */
-  renderDetailBody?: (e: Tagged<E>) => ReactNode;
-  /**
-   * When provided, replaces the entire detail panel content (header, body, actions, and comments)
-   * with this render prop's output. The consumer takes responsibility for rendering everything
-   * inside the panel container, including any header/title chrome and comments UI. Useful for
-   * entities that need shared state across multiple panel regions (e.g. recipe versions).
-   *
-   * The default load/delete/comments/slot wiring (`onLoad`, `onDelete`, `onUpdateComments`,
-   * `getComments`, `slots`, …) is bypassed when this prop is set.
-   */
-  renderDetailPanel?: (e: Tagged<E>) => ReactNode;
+  renderDetailPanel: (e: Tagged<E>) => ReactNode;
   /** Optional id for the outermost wrapper, for tests/CSS targeting */
   id?: string;
-
-  /** Called when the user clicks the load button; passes the selected slot if `slots` is provided */
-  onLoad?: (e: E, slot: number) => void;
-  /** Label for the load button when `onLoad` is provided; defaults to "Load" */
-  loadButtonLabel?: string;
-  /** Enabled slot indices for the slot picker; renders the picker only when `length > 1` */
-  slots?: number[];
-  /** Display label for a slot value; defaults to the numeric slot index */
-  slotLabel?: (slot: number) => string;
-
-  /** Called when the user confirms deletion of a saved entry. Saved-only. */
-  onDelete?: (e: E) => void | Promise<void>;
-  /** Title/aria-label for the delete button; defaults to "Delete saved entry" */
-  deleteLabel?: string;
-  /** Confirmation prompt for delete; defaults to `Delete saved entry "<display name>"?` */
-  getDeleteConfirmText?: (e: E) => string;
-
-  /** Extract the comments string from an entry. Used for both read-only display and edit. */
-  getComments?: (e: E) => string | undefined;
-  /** Called when the user clicks "Save comments" on a saved entry. Saved-only. */
-  onUpdateComments?: (e: E, comments: string) => void | Promise<void>;
-  /** Aria-label for the comments textarea; defaults to "Entry comments" */
-  commentsLabel?: string;
 }
 
 /**
- * Generic searchable two-column list/detail view backing both {@link RecipeSearch} and
- * {@link IngredientSearch}. Owns the search input, source-filter tabs, selection state, and the
- * delete/load/comments wiring; consumers supply the entry list shape and the detail body.
+ * Generic searchable two-column list/detail shell. Owns the search input, source-filter tabs,
+ * list selection, and the detail-panel container; the consumer renders the panel content via
+ * {@link EntitySearchProps.renderDetailPanel} (typically composing the atoms in `detail-panel.tsx`).
+ *
+ * Used by {@link RecipeSearch} and {@link IngredientSearch}.
  */
 export function EntitySearch<E>({
   embeddedEntries,
@@ -119,65 +86,12 @@ export function EntitySearch<E>({
   emptyDetailText = "Select an entry to see details",
   emptyResultsText = "No entries found.",
   renderListItemSubtitle,
-  renderHeaderMeta,
-  renderDetailBody,
   renderDetailPanel,
   id,
-  onLoad,
-  loadButtonLabel = "Load",
-  slots,
-  slotLabel,
-  onDelete,
-  deleteLabel = "Delete saved entry",
-  getDeleteConfirmText,
-  getComments,
-  onUpdateComments,
-  commentsLabel = "Entry comments",
 }: EntitySearchProps<E>) {
-  if (renderDetailBody === undefined && renderDetailPanel === undefined) {
-    throw new Error("EntitySearch requires either `renderDetailBody` or `renderDetailPanel`");
-  }
   const [query, setQuery] = useState("");
   const [source, setSource] = useState<EntitySource>(EntitySource.All);
-  const [targetSlot, setTargetSlot] = useState(slots?.[0] ?? 0);
   const [selectedEntry, setSelectedEntry] = useState<Tagged<E> | null>(null);
-  const [editedComments, setEditedComments] = useState("");
-
-  /** Change selection and re-seed the comments editor from the new entry's persisted comments */
-  const selectEntry = (entry: Tagged<E> | null) => {
-    if (entry === selectedEntry) return;
-    setSelectedEntry(entry);
-    setEditedComments(entry && getComments ? (getComments(entry) ?? "") : "");
-  };
-
-  // A saved entry is selected and we have a delete callback, so deletion is possible
-  const deleteEnabled = selectedEntry?._source === EntitySource.Saved && onDelete;
-
-  const handleDeleteSelected = async () => {
-    if (!deleteEnabled)
-      throw new Error(
-        "handleDeleteSelected invoked without a selected saved entry or a delete callback",
-      );
-
-    const confirmText =
-      getDeleteConfirmText?.(selectedEntry) ??
-      `Delete saved entry "${getDisplayName(selectedEntry)}"?`;
-    if (!window.confirm(confirmText)) return;
-    await onDelete(selectedEntry);
-    selectEntry(null);
-  };
-
-  // A saved entry is selected and we have an update callback, so comment editing is possible
-  const saveCommentsEnabled = selectedEntry?._source === EntitySource.Saved && onUpdateComments;
-
-  const handleSaveComments = async () => {
-    if (!saveCommentsEnabled)
-      throw new Error(
-        "handleSaveComments invoked without a selected saved entry or an update callback",
-      );
-
-    await onUpdateComments(selectedEntry, editedComments);
-  };
 
   const filtered = useMemo(
     () => filterTaggedEntries(embeddedEntries, savedEntries, source, query, matchesQuery),
@@ -194,8 +108,6 @@ export function EntitySearch<E>({
     selectedEntry !== null &&
     selectedEntry._source === entry._source &&
     getId(selectedEntry) === getId(entry);
-
-  const comments = selectedEntry && getComments ? getComments(selectedEntry) : undefined;
 
   return (
     <div id={id} className="flex flex-col gap-3">
@@ -239,7 +151,7 @@ export function EntitySearch<E>({
             filtered.map((entry) => (
               <button
                 key={`${entry._source}-${getId(entry)}`}
-                onClick={() => selectEntry(entry)}
+                onClick={() => setSelectedEntry(entry)}
                 className={`search-list-item ${isSelected(entry) ? "search-list-item-active" : ""}`}
               >
                 <span className="text-primary block truncate text-sm font-medium">
@@ -254,86 +166,9 @@ export function EntitySearch<E>({
         {/* Right: detail panel */}
         {selectedEntry === null ? (
           <div className="search-empty">{emptyDetailText}</div>
-        ) : renderDetailPanel ? (
-          <div className="search-detail-panel" data-testid="search-detail-panel">
-            {renderDetailPanel(selectedEntry)}
-          </div>
         ) : (
           <div className="search-detail-panel" data-testid="search-detail-panel">
-            {/* Header: title, badges, action buttons */}
-            <div className="flex items-start justify-between gap-3">
-              <div className="flex min-w-0 flex-col gap-1">
-                <h2 className="text-primary text-base font-semibold">
-                  {getDisplayName(selectedEntry)}
-                </h2>
-                <div className="flex flex-wrap items-center gap-2">
-                  {renderHeaderMeta?.(selectedEntry)}
-                  <span className="meta-tag">
-                    {selectedEntry._source === EntitySource.Embedded ? "built-in" : "saved"}
-                  </span>
-                </div>
-              </div>
-              <div className="flex shrink-0 items-center gap-1">
-                {deleteEnabled && (
-                  <button
-                    onClick={handleDeleteSelected}
-                    title={deleteLabel}
-                    aria-label={deleteLabel}
-                    className="action-button px-2 py-0.5 text-sm"
-                  >
-                    <Trash size={14} />
-                  </button>
-                )}
-                {onLoad && (
-                  <>
-                    {slots && slots.length > 1 && (
-                      <select
-                        value={targetSlot}
-                        onChange={(e) => setTargetSlot(parseInt(e.target.value))}
-                        className="select-input text-sm"
-                      >
-                        {slots.map((slot, idx) => (
-                          <option key={idx} value={slot}>
-                            {slotLabel?.(slot) ?? slot}
-                          </option>
-                        ))}
-                      </select>
-                    )}
-                    <button
-                      onClick={() => onLoad(selectedEntry, targetSlot)}
-                      className="action-button px-2 py-0.5 text-sm"
-                    >
-                      {loadButtonLabel}
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-
-            {renderDetailBody!(selectedEntry)}
-
-            {/* Comments — editable for saved entries, read-only for others */}
-            {saveCommentsEnabled ? (
-              <div className="flex flex-col gap-2">
-                <textarea
-                  value={editedComments}
-                  onChange={(e) => setEditedComments(e.target.value)}
-                  placeholder="Add comments…"
-                  aria-label={commentsLabel}
-                  className="table-fillable-input text-secondary min-h-20 rounded-lg px-2 py-1 text-sm leading-relaxed"
-                />
-                <button
-                  onClick={handleSaveComments}
-                  className="action-button self-end px-2 py-0.5 text-sm"
-                >
-                  Save comments
-                </button>
-              </div>
-            ) : (
-              comments && (
-                <p className="text-secondary text-sm leading-relaxed">{autoLink(comments)}</p>
-              )
-            )}
+            {renderDetailPanel(selectedEntry)}
           </div>
         )}
       </div>
