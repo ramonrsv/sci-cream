@@ -11,6 +11,7 @@
 - [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
 - [ ] Add a home page with a quick intro and overview, pointing to user guide, docs, etc.
 - [ ] Figure out how to show `sci-cream`'s beginner-friendly overview to new users of the app.
+- [ ] Fix issue where version lists in `RecipeSearch` do not visually update when one is deleted.
 
 ## Up Next
 
@@ -32,6 +33,7 @@
 - [ ] Refine performance benchmarks; some of them may not be measuring what they claim to measure.
 - [ ] Add an app "tour" to show users the main components of the app, where to go for docs, etc.
 - [ ] Add support for every instance of `KeySelect` to independently store custom keys in local.
+- [ ] Add feature to show different ranges around serving temp in `FpdGraph`, like a 'zoom'.
 
 ## Backlog
 
