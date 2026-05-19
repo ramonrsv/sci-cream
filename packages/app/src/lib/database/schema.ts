@@ -12,6 +12,12 @@ import {
 import { SchemaCategory } from "@workspace/sci-cream/schema-category";
 export { SchemaCategory };
 
+// NOTE: drizzle-kit has a known bug (https://github.com/drizzle-team/drizzle-orm/issues/3274) where
+// composite unique constraint columns are introspected in column-position order. If the schema
+// definition order differs, every push issues a spurious DROP + ADD CONSTRAINT — and prompts about
+// truncation once the table has rows. Workaround: define composite unique constraints with columns
+// in table-definition order.
+
 /** Drizzle ORM table definition for registered users. */
 export const usersTable = pgTable("users", {
   id: integer().primaryKey().generatedAlwaysAsIdentity(),
@@ -59,7 +65,7 @@ export const recipesTable = pgTable(
       .references(() => usersTable.id),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
-  (table) => [unique("recipes_user_name_uq").on(table.user, table.name)],
+  (table) => [unique("recipes_user_name_uq").on(table.name, table.user)],
 );
 
 export type RecipeInsert = typeof recipesTable.$inferInsert;
