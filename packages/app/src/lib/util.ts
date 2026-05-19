@@ -52,9 +52,28 @@ export function standardInputStepByPercent(
   return STD_INPUT_INCREMENTS[LAST_IDX].toString();
 }
 
-/** Throw an `Error` if `condition` is `false`, with the given message from string or function */
-export function verify(condition: boolean, message: string | (() => string)) {
+/**
+ * Throw an `Error` if `condition` is falsy, with the given message from string or function.
+ *
+ * For precondition checks where a failure indicates a programming bug, not a user-facing
+ * error. The `asserts condition` signature narrows types at the call site so downstream code
+ * can rely on the condition holding.
+ */
+export function verify(condition: unknown, message: string | (() => string)): asserts condition {
   if (!condition) {
+    throw new Error(typeof message === "function" ? message() : message);
+  }
+}
+
+/**
+ * Throw an `Error` if `value` is `null` or `undefined`. Narrows `value` to `NonNullable<T>`.
+ * Convenience wrapper around {@link verify} for the most common precondition shape.
+ */
+export function verifyDefined<T>(
+  value: T,
+  message: string | (() => string),
+): asserts value is NonNullable<T> {
+  if (value === null || value === undefined) {
     throw new Error(typeof message === "function" ? message() : message);
   }
 }

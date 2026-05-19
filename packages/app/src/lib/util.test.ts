@@ -1,6 +1,12 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 
-import { sleep_ms, standardInputStepByPercent, verify, verifyAreNotNegative } from "./util";
+import {
+  sleep_ms,
+  standardInputStepByPercent,
+  verify,
+  verifyAreNotNegative,
+  verifyDefined,
+} from "./util";
 
 // ---------------------------------------------------------------------------
 // sleep_ms
@@ -114,6 +120,75 @@ describe("verify", () => {
     const msgFn = vi.fn(() => "should not be called");
     verify(true, msgFn);
     expect(msgFn).not.toHaveBeenCalled();
+  });
+
+  it("does not throw on truthy non-boolean values", () => {
+    expect(() => verify("non-empty", "should not throw")).not.toThrow();
+    expect(() => verify(1, "should not throw")).not.toThrow();
+    expect(() => verify({}, "should not throw")).not.toThrow();
+    expect(() => verify([], "should not throw")).not.toThrow();
+  });
+
+  it("throws on falsy non-boolean values", () => {
+    expect(() => verify(null, "bad")).toThrow("bad");
+    expect(() => verify(undefined, "bad")).toThrow("bad");
+    expect(() => verify(0, "bad")).toThrow("bad");
+    expect(() => verify("", "bad")).toThrow("bad");
+  });
+
+  it("narrows types after the call", () => {
+    const value: string | undefined = "x";
+    verify(value !== undefined, "value should be defined");
+    // Compile-time check: `value` is narrowed to `string` here; `.length` would fail to
+    // type-check if narrowing didn't apply.
+    expect(value.length).toBe(1);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// verifyDefined
+// ---------------------------------------------------------------------------
+
+describe("verifyDefined", () => {
+  it("does not throw for a defined value", () => {
+    expect(() => verifyDefined("hello", "should not throw")).not.toThrow();
+    expect(() => verifyDefined(42, "should not throw")).not.toThrow();
+    expect(() => verifyDefined({}, "should not throw")).not.toThrow();
+  });
+
+  it("does not throw for falsy-but-defined values", () => {
+    expect(() => verifyDefined(0, "should not throw")).not.toThrow();
+    expect(() => verifyDefined("", "should not throw")).not.toThrow();
+    expect(() => verifyDefined(false, "should not throw")).not.toThrow();
+    expect(() => verifyDefined(Number.NaN, "should not throw")).not.toThrow();
+  });
+
+  it("throws on null", () => {
+    expect(() => verifyDefined(null, "value is null")).toThrow("value is null");
+  });
+
+  it("throws on undefined", () => {
+    expect(() => verifyDefined(undefined, "value is undefined")).toThrow("value is undefined");
+  });
+
+  it("supports a function message", () => {
+    const msgFn = vi.fn(() => "computed");
+    expect(() => verifyDefined(null, msgFn)).toThrow("computed");
+    expect(msgFn).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not call the message function when value is defined", () => {
+    const msgFn = vi.fn(() => "should not be called");
+    verifyDefined("present", msgFn);
+    expect(msgFn).not.toHaveBeenCalled();
+  });
+
+  it("narrows the value to NonNullable after the call", () => {
+    const value: string | undefined = "x";
+    verifyDefined(value, "value should be defined");
+    // Compile-time check: `value` is narrowed to `string` here; `.length` would fail to
+    // type-check if narrowing didn't apply.
+    expect(value.length).toBe(1);
   });
 });
 

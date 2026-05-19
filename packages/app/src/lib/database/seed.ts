@@ -12,6 +12,7 @@ import {
   recipesTable,
   recipeVersionsTable,
 } from "@/lib/database/schema";
+import { verifyDefined } from "@/lib/util";
 import * as schema from "./schema";
 
 import {
@@ -59,7 +60,7 @@ async function seedUsers(users: UserAsset[]) {
  */
 async function seedUserIngredients(userEmail: string, ingredientSpecs: IngredientSpecJson[]) {
   const user = await findUserByEmail(userEmail);
-  if (!user) throw new Error(`User with email ${userEmail} not found, cannot seed ingredients`);
+  verifyDefined(user, `User with email ${userEmail} not found, cannot seed ingredients`);
 
   console.log("==========");
   console.log("Seeding user ingredients for user:", user);
@@ -125,7 +126,7 @@ function adaptEmbeddedToSeedAssets(entries: RecipeEntryJson[]): SeedRecipeAsset[
  */
 async function seedUserRecipes(userEmail: string, recipes: SeedRecipeAsset[]) {
   const user = await findUserByEmail(userEmail);
-  if (!user) throw new Error(`User with email ${userEmail} not found, cannot seed recipes`);
+  verifyDefined(user, `User with email ${userEmail} not found, cannot seed recipes`);
 
   console.log("==========");
   console.log("Seeding recipes for user:", user);

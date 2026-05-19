@@ -12,6 +12,7 @@ import {
   setRecipeStoresToStorage,
   type RecipeStore,
 } from "@/lib/recipe";
+import { verify } from "@/lib/util";
 
 import {
   deleteUserRecipe,
@@ -67,7 +68,10 @@ export default function RecipesPage() {
 
   /** Delete the entry (all versions) from the user's saved recipes and refresh the list */
   async function handleDeleteSavedRecipe(entry: GroupedRecipe) {
-    if (!userEmail || entry.recipeId === undefined) return;
+    verify(
+      userEmail && entry.recipeId !== undefined,
+      "handleDeleteSavedRecipe invoked while userEmail or entry.recipeId is missing",
+    );
 
     await deleteUserRecipe(userEmail, entry.recipeId);
     const recipes = await fetchAllUserSavedRecipes(userEmail);
@@ -79,7 +83,10 @@ export default function RecipesPage() {
     entry: GroupedRecipe,
     version: SavedRecipeVersionJson,
   ) {
-    if (!userEmail || entry.recipeId === undefined) return;
+    verify(
+      userEmail && entry.recipeId !== undefined,
+      "handleDeleteSavedRecipeVersion invoked while userEmail or entry.recipeId is missing",
+    );
 
     await deleteUserRecipeVersion(userEmail, entry.recipeId, version.version);
     const recipes = await fetchAllUserSavedRecipes(userEmail);
@@ -92,7 +99,10 @@ export default function RecipesPage() {
     version: SavedRecipeVersionJson,
     comments: string,
   ) {
-    if (!userEmail || entry.recipeId === undefined) return;
+    verify(
+      userEmail && entry.recipeId !== undefined,
+      "handleUpdateSavedRecipeVersionComments invoked while userEmail or entry.recipeId is missing",
+    );
 
     await updateUserRecipeVersion(userEmail, entry.recipeId, version.version, {
       comments: comments === "" ? null : comments,

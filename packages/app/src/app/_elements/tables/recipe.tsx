@@ -37,7 +37,7 @@ import { WasmResourcesState } from "@/lib/wasm-resources";
 import { RecipeSelect } from "@/app/_elements/selects/recipe-select";
 import { formatCompositionValue } from "@/lib/comp-value-format";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
-import { standardInputStepByPercent } from "@/lib/util";
+import { standardInputStepByPercent, verify } from "@/lib/util";
 
 /**
  * Bare read-only table of a recipe's ingredients, quantities (in grams), and per-row percentage
@@ -368,12 +368,11 @@ export function RecipeEditor({
   const saveCurrentRecipe = async () => {
     const recipe = allRecipes[currentRecipeIdx];
 
-    if (!userEmail || currentRecipeIdx !== 0 || !recipe.name.trim() || isRecipeEmpty(recipe)) {
-      throw new Error(
-        "saveCurrentRecipe invoked while the Save button should be disabled " +
-          "(missing auth, non-main slot, empty name, or empty recipe)",
-      );
-    }
+    verify(
+      userEmail && currentRecipeIdx === 0 && recipe.name.trim() !== "" && !isRecipeEmpty(recipe),
+      "saveCurrentRecipe invoked while the Save button should be disabled " +
+        "(missing auth, non-main slot, empty name, or empty recipe)",
+    );
 
     await performSave(recipe, async () => {
       const lightRecipe = makeLightRecipe(recipe, wasmResources.hasIngredient);
@@ -400,18 +399,16 @@ export function RecipeEditor({
   const saveCurrentRecipeAsNewVersion = async () => {
     const recipe = allRecipes[currentRecipeIdx];
 
-    if (
-      !userEmail ||
-      currentRecipeIdx !== 0 ||
-      recipe.savedRef === undefined ||
-      !recipe.name.trim() ||
-      isRecipeEmpty(recipe)
-    ) {
-      throw new Error(
-        "saveCurrentRecipeAsNewVersion invoked while the button should be disabled " +
-          "(missing auth, non-main slot, no loaded recipe, empty name, or empty recipe)",
-      );
-    }
+    verify(
+      userEmail &&
+        currentRecipeIdx === 0 &&
+        recipe.savedRef !== undefined &&
+        recipe.name.trim() !== "" &&
+        !isRecipeEmpty(recipe),
+      "saveCurrentRecipeAsNewVersion invoked while the button should be disabled " +
+        "(missing auth, non-main slot, no loaded recipe, empty name, or empty recipe)",
+    );
+
     // Capture the narrowed savedRef for use inside the operation closure
     const { recipeId } = recipe.savedRef;
 
