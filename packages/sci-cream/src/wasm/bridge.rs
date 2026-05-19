@@ -456,7 +456,12 @@ pub(crate) mod tests {
         let invalid_spec = SpecEntry::Ingredient(IngredientSpec {
             name: "Invalid Ingredient".to_string(),
             category: Category::Dairy,
-            spec: DairySimpleSpec { fat: -10.0, msnf: None }.into(),
+            spec: DairySimpleSpec {
+                fat: -10.0,
+                msnf: None,
+                lactose_free: None,
+            }
+            .into(),
         });
 
         let result = bridge.seed_from_specs(&[invalid_spec]);

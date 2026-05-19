@@ -1,14 +1,17 @@
 [
+  { "name": "0% Milk", "category": "Dairy", "DairySimpleSpec": { "fat": 0 } },
   { "name": "1% Milk", "category": "Dairy", "DairySimpleSpec": { "fat": 1 } },
   { "name": "2% Milk", "category": "Dairy", "DairySimpleSpec": { "fat": 2 } },
   { "name": "3.25% Milk", "category": "Dairy", "DairySimpleSpec": { "fat": 3.25 } },
   { "name": "3.5% Milk", "category": "Dairy", "DairySimpleSpec": { "fat": 3.5 } },
   { "name": "5% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 5 } },
   { "name": "10% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 10 } },
+  { "name": "15% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 15 } },
   { "name": "18% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 18 } },
   { "name": "35% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 35 } },
   { "name": "36% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 36 } },
   { "name": "40% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 40 } },
+  { "alias": "Skim Milk", "for": "0% Milk" },
   { "alias": "Whole Milk", "for": "3.25% Milk" },
   { "alias": "Whipping Cream", "for": "35% Cream" },
   { "alias": "Heavy Cream", "for": "36% Cream" },
@@ -22,6 +25,59 @@
     "category": "Dairy",
     "DairySimpleSpec": { "fat": 27, "msnf": 70 }
   },
+  {
+    "name": "Lactose-Free 0% Milk",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 0, "lactose_free": true }
+  },
+  {
+    "name": "Lactose-Free 1% Milk",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 1, "lactose_free": true }
+  },
+  {
+    "name": "Lactose-Free 2% Milk",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 2, "lactose_free": true }
+  },
+  {
+    "name": "Lactose-Free 3.25% Milk",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 3.25, "lactose_free": true }
+  },
+  {
+    "name": "Lactose-Free 3.5% Milk",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 3.5, "lactose_free": true }
+  },
+  {
+    "name": "Lactose-Free 5% Cream",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 5, "lactose_free": true }
+  },
+  {
+    "name": "Lactose-Free 10% Cream",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 10, "lactose_free": true }
+  },
+  {
+    "name": "Lactose-Free 15% Cream",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 15, "lactose_free": true }
+  },
+  {
+    "name": "Lactose-Free 18% Cream",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 18, "lactose_free": true }
+  },
+  {
+    "name": "Lactose-Free 35% Cream",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 35, "lactose_free": true }
+  },
+  { "alias": "Lactose-Free Skim Milk", "for": "Lactose-Free 0% Milk" },
+  { "alias": "Lactose-Free Whole Milk", "for": "Lactose-Free 3.25% Milk" },
+  { "alias": "Lactose-Free Whipping Cream", "for": "Lactose-Free 35% Cream" },
   {
     "name": "Sealtest 3.25% Milk",
     "category": "Dairy",
@@ -47,7 +103,7 @@
       "trans_fat": 0,
       "sugars": 6,
       "protein": 13,
-      "is_lactose_free": true
+      "lactose_free": true
     },
     "comments": "From nutrition facts table: https://fairlife.com/ultra-filtered-milk/whole-milk/"
   },

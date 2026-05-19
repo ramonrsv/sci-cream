@@ -36,11 +36,25 @@ pub struct DairySimpleSpec {
     /// It is necessary to specify `msnf` for milk powders and other condensed or dried dairy
     /// products, as they do not adhere to the standard milk and cream composition ratios.
     pub msnf: Option<f64>,
+    /// Whether the dairy product is lactose-free, which affects the detailed sugars composition
+    ///
+    /// If `false`/`None`, the sugars are assumed to be all lactose, calculated from
+    /// [`msnf`](Self::msnf) via [`STD_LACTOSE_IN_MSNF`]. If `true`, the same amount of lactose is
+    /// instead assumed to be a 50/50 glucose and galactose mixture, the two monosaccharides that
+    /// make up lactose, which is typical of lactose-free dairy products where lactose is
+    /// enzymatically broken down into its constituent sugars.
+    pub lactose_free: Option<bool>,
 }
 
 impl ToComposition for DairySimpleSpec {
     fn to_composition(&self) -> Result<Composition> {
-        let Self { fat, msnf } = *self;
+        let Self {
+            fat,
+            msnf,
+            lactose_free,
+        } = *self;
+
+        let lactose_free = lactose_free.unwrap_or(false);
 
         let calculated_msnf = (100.0 - fat) * constants::composition::STD_MSNF_IN_MILK_SERUM;
         let msnf = msnf.unwrap_or(calculated_msnf);
@@ -50,6 +64,12 @@ impl ToComposition for DairySimpleSpec {
         let lactose = msnf * constants::composition::STD_LACTOSE_IN_MSNF;
         let proteins = msnf * constants::composition::STD_PROTEIN_IN_MSNF;
 
+        let sugars = if lactose_free {
+            Sugars::new().glucose(lactose / 2.0).galactose(lactose / 2.0)
+        } else {
+            Sugars::new().lactose(lactose)
+        };
+
         let milk_solids = SolidsBreakdown::new()
             .fats(
                 Fats::new()
@@ -57,7 +77,7 @@ impl ToComposition for DairySimpleSpec {
                     .saturated(fat * constants::composition::STD_SATURATED_FAT_IN_MILK_FAT)
                     .trans(fat * constants::composition::STD_TRANS_FAT_IN_MILK_FAT),
             )
-            .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(lactose)))
+            .carbohydrates(Carbohydrates::new().sugars(sugars))
             .proteins(proteins)
             .others(msnf - lactose - proteins);
 
@@ -101,7 +121,7 @@ pub struct DairyLabelSpec {
     /// Trans fat content per serving, in grams; it must be a subset of total fat.
     pub trans_fat: f64,
     /// Sugars content per serving, in grams; the detailed composition is determined by
-    /// [`is_lactose_free`](Self::is_lactose_free).
+    /// [`lactose_free`](Self::lactose_free).
     pub sugars: f64,
     /// Protein content per serving, in grams.
     pub protein: f64,
@@ -112,7 +132,7 @@ pub struct DairyLabelSpec {
     /// in regular dairy products. If `true`, the sugars are assumed to be a 50/50 glucose and
     /// galactose mixture, the two monosaccharides that make up lactose, which is typical of lactose
     /// free dairy products where lactose is enzymatically broken down into its constituent sugars.
-    pub is_lactose_free: Option<bool>,
+    pub lactose_free: Option<bool>,
 }
 
 impl ToComposition for DairyLabelSpec {
@@ -125,10 +145,10 @@ impl ToComposition for DairyLabelSpec {
             trans_fat,
             sugars,
             protein,
-            is_lactose_free,
+            lactose_free,
         } = *self;
 
-        let is_lactose_free = is_lactose_free.unwrap_or(false);
+        let lactose_free = lactose_free.unwrap_or(false);
 
         let (serving_size, total_fat) = match total_fat {
             Unit::Grams(fat_grams) => match serving_size {
@@ -152,7 +172,7 @@ impl ToComposition for DairyLabelSpec {
         verify_is_subset(trans_fat, total_fat, "trans_fat <= total_fat")?;
         verify_is_subset(total_fat + sugars + protein, serving_size, "total_fat + sugars + protein <= serving_size")?;
 
-        let sugars = if is_lactose_free {
+        let sugars = if lactose_free {
             Sugars::new()
                 .glucose(sugars / serving_size * 100.0 / 2.0)
                 .galactose(sugars / serving_size * 100.0 / 2.0)
@@ -196,6 +216,71 @@ pub(crate) mod tests {
     use super::*;
     use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
 
+    pub(crate) const ING_SPEC_DAIRY_SIMPLE_0_MILK_STR: &str = r#"{
+      "name": "0% Milk",
+      "category": "Dairy",
+      "DairySimpleSpec": {
+        "fat": 0
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_SIMPLE_0_MILK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "0% Milk".to_string(),
+        category: Category::Dairy,
+        spec: DairySimpleSpec {
+            fat: 0.0,
+            msnf: None,
+            lactose_free: None,
+        }
+        .into(),
+    });
+
+    pub(crate) static COMP_0_MILK: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(32.22)
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(0.0))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(4.905)))
+                        .proteins(3.15)
+                        .others_from_total(9.0)
+                        .unwrap(),
+                ),
+            )
+            .pod(0.7848)
+            .pac(PAC::new().sugars(4.905).msnf_ws_salts(3.3066))
+    });
+
+    #[test]
+    fn to_composition_dairy_simple_spec_0_milk() {
+        let comp = ING_SPEC_DAIRY_SIMPLE_0_MILK.spec.to_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 32.22);
+
+        assert_eq!(comp.get(CompKey::MilkFat), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 4.905);
+        assert_eq!(comp.get(CompKey::MSNF), 9.0);
+        assert_eq!(comp.get(CompKey::MilkSNFS), 4.095);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 3.15);
+        assert_eq!(comp.get(CompKey::MilkSolids), 9.0);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 3.15);
+        assert_eq!(comp.get(CompKey::TotalSolids), 9.0);
+        assert_eq!(comp.get(CompKey::Water), 91.0);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 0.7848);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.905);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.3066);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.2116);
+    }
+
     pub(crate) const ING_SPEC_DAIRY_SIMPLE_2_MILK_STR: &str = r#"{
       "name": "2% Milk",
       "category": "Dairy",
@@ -207,7 +292,12 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_DAIRY_SIMPLE_2_MILK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "2% Milk".to_string(),
         category: Category::Dairy,
-        spec: DairySimpleSpec { fat: 2.0, msnf: None }.into(),
+        spec: DairySimpleSpec {
+            fat: 2.0,
+            msnf: None,
+            lactose_free: None,
+        }
+        .into(),
     });
 
     pub(crate) static COMP_2_MILK: LazyLock<Composition> = LazyLock::new(|| {
@@ -267,7 +357,12 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_DAIRY_SIMPLE_3_25_MILK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "3.25% Milk".to_string(),
         category: Category::Dairy,
-        spec: DairySimpleSpec { fat: 3.25, msnf: None }.into(),
+        spec: DairySimpleSpec {
+            fat: 3.25,
+            msnf: None,
+            lactose_free: None,
+        }
+        .into(),
     });
 
     pub(crate) static COMP_3_25_MILK: LazyLock<Composition> = LazyLock::new(|| {
@@ -326,7 +421,12 @@ pub(crate) mod tests {
     pub(crate) static ING_SPEC_DAIRY_SIMPLE_40_CREAM: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
         name: "40% Cream".to_string(),
         category: Category::Dairy,
-        spec: DairySimpleSpec { fat: 40.0, msnf: None }.into(),
+        spec: DairySimpleSpec {
+            fat: 40.0,
+            msnf: None,
+            lactose_free: None,
+        }
+        .into(),
     });
 
     pub(crate) static COMP_40_CREAM: LazyLock<Composition> = LazyLock::new(|| {
@@ -391,6 +491,7 @@ pub(crate) mod tests {
             spec: DairySimpleSpec {
                 fat: 0.0,
                 msnf: Some(97.0),
+                lactose_free: None,
             }
             .into(),
         });
@@ -456,6 +557,7 @@ pub(crate) mod tests {
         spec: DairySimpleSpec {
             fat: 27.0,
             msnf: Some(70.0),
+            lactose_free: None,
         }
         .into(),
     });
@@ -506,6 +608,74 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 63.8683);
     }
 
+    pub(crate) const ING_SPEC_DAIRY_SIMPLE_2_MILK_LACTOSE_FREE_STR: &str = r#"{
+      "name": "Lactose-Free 2% Milk",
+      "category": "Dairy",
+      "DairySimpleSpec": {
+        "fat": 2,
+        "lactose_free": true
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_SIMPLE_2_MILK_LACTOSE_FREE: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Lactose-Free 2% Milk".to_string(),
+            category: Category::Dairy,
+            spec: DairySimpleSpec {
+                fat: 2.0,
+                msnf: None,
+                lactose_free: Some(true),
+            }
+            .into(),
+        });
+
+    pub(crate) static COMP_2_MILK_LACTOSE_FREE: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(49.5756)
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(2.0).saturated(1.3).trans(0.07))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().glucose(2.40345).galactose(2.40345)))
+                        .proteins(3.087)
+                        .others_from_total(2.0 + 8.82)
+                        .unwrap(),
+                ),
+            )
+            .pod(3.485)
+            .pac(PAC::new().sugars(9.1331).msnf_ws_salts(3.2405))
+    });
+
+    #[test]
+    fn to_composition_dairy_simple_spec_2_milk_lactose_free() {
+        let comp = ING_SPEC_DAIRY_SIMPLE_2_MILK_LACTOSE_FREE.spec.to_composition().unwrap();
+
+        assert_eq!(comp.get(CompKey::Energy), 49.5756);
+
+        assert_eq!(comp.get(CompKey::MilkFat), 2.0);
+        assert_eq_flt_test!(comp.get(CompKey::Glucose), 2.40345);
+        assert_eq_flt_test!(comp.get(CompKey::Galactose), 2.40345);
+        assert_eq!(comp.get(CompKey::MSNF), 8.82);
+        assert_eq!(comp.get(CompKey::MilkSNFS), 4.0131);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 3.087);
+        assert_eq!(comp.get(CompKey::MilkSolids), 10.82);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 3.087);
+        assert_eq!(comp.get(CompKey::TotalSolids), 10.82);
+        assert_eq!(comp.get(CompKey::Water), 89.18);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 3.485);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 9.1331);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.2405);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 12.3736);
+    }
+
     pub(crate) const ING_SPEC_DAIRY_LABEL_3_25_MILK_STR: &str = r#"{
       "name": "Sealtest 3.25% Milk",
       "category": "Dairy",
@@ -531,7 +701,7 @@ pub(crate) mod tests {
             trans_fat: 0.3,
             sugars: 13.0,
             protein: 9.0,
-            is_lactose_free: None,
+            lactose_free: None,
         }
         .into(),
     });
@@ -591,7 +761,7 @@ pub(crate) mod tests {
         "trans_fat": 0,
         "sugars": 6,
         "protein": 13,
-        "is_lactose_free": true
+        "lactose_free": true
       }
     }"#;
 
@@ -607,7 +777,7 @@ pub(crate) mod tests {
                 trans_fat: 0.0,
                 sugars: 6.0,
                 protein: 13.0,
-                is_lactose_free: Some(true),
+                lactose_free: Some(true),
             }
             .into(),
         });
@@ -686,7 +856,7 @@ pub(crate) mod tests {
             trans_fat: 0.0,
             sugars: 1.0,
             protein: 35.0,
-            is_lactose_free: None,
+            lactose_free: None,
         }
         .into(),
     });
@@ -775,6 +945,7 @@ pub(crate) mod tests {
     pub(crate) static INGREDIENT_ASSETS_TABLE_DAIRY: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {
             vec![
+                (ING_SPEC_DAIRY_SIMPLE_0_MILK_STR, ING_SPEC_DAIRY_SIMPLE_0_MILK.clone(), Some(*COMP_0_MILK)),
                 (ING_SPEC_DAIRY_SIMPLE_2_MILK_STR, ING_SPEC_DAIRY_SIMPLE_2_MILK.clone(), Some(*COMP_2_MILK)),
                 (ING_SPEC_DAIRY_SIMPLE_3_25_MILK_STR, ING_SPEC_DAIRY_SIMPLE_3_25_MILK.clone(), Some(*COMP_3_25_MILK)),
                 (ING_SPEC_DAIRY_SIMPLE_40_CREAM_STR, ING_SPEC_DAIRY_SIMPLE_40_CREAM.clone(), Some(*COMP_40_CREAM)),
@@ -787,6 +958,11 @@ pub(crate) mod tests {
                     ING_SPEC_DAIRY_SIMPLE_WHOLE_POWDER_STR,
                     ING_SPEC_DAIRY_SIMPLE_WHOLE_POWDER.clone(),
                     Some(*COMP_WHOLE_POWDER),
+                ),
+                (
+                    ING_SPEC_DAIRY_SIMPLE_2_MILK_LACTOSE_FREE_STR,
+                    ING_SPEC_DAIRY_SIMPLE_2_MILK_LACTOSE_FREE.clone(),
+                    Some(*COMP_2_MILK_LACTOSE_FREE),
                 ),
                 (
                     ING_SPEC_DAIRY_LABEL_3_25_MILK_STR,
@@ -808,12 +984,18 @@ pub(crate) mod tests {
 
     #[test]
     fn dairy_simple_spec_err_on_negative_field() {
-        let result_neg_fat = DairySimpleSpec { fat: -1.0, msnf: None }.to_composition();
+        let result_neg_fat = DairySimpleSpec {
+            fat: -1.0,
+            msnf: None,
+            lactose_free: None,
+        }
+        .to_composition();
         assert!(matches!(result_neg_fat, Err(Error::CompositionNotPositive(_))));
 
         let result_neg_msnf = DairySimpleSpec {
             fat: 3.25,
             msnf: Some(-1.0),
+            lactose_free: None,
         }
         .to_composition();
         assert!(matches!(result_neg_msnf, Err(Error::CompositionNotPositive(_))));
@@ -824,6 +1006,7 @@ pub(crate) mod tests {
         let result = DairySimpleSpec {
             fat: 60.0,
             msnf: Some(60.0),
+            lactose_free: None,
         }
         .to_composition();
         assert!(matches!(result, Err(Error::CompositionNotWithin100Percent(_))));
@@ -839,7 +1022,7 @@ pub(crate) mod tests {
             trans_fat: 0.3,
             sugars: 13.0,
             protein: 9.0,
-            is_lactose_free: None,
+            lactose_free: None,
         };
 
         // serving_size,  total_fat
@@ -932,7 +1115,7 @@ pub(crate) mod tests {
             trans_fat: 0.3,
             sugars: 13.0,
             protein: 9.0,
-            is_lactose_free: None,
+            lactose_free: None,
         };
 
         let neg_cases = [
@@ -972,7 +1155,7 @@ pub(crate) mod tests {
             trans_fat: 0.0,
             sugars: 13.0,
             protein: 9.0,
-            is_lactose_free: None,
+            lactose_free: None,
         }
         .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
@@ -988,7 +1171,7 @@ pub(crate) mod tests {
             trans_fat: 8.0,
             sugars: 13.0,
             protein: 9.0,
-            is_lactose_free: None,
+            lactose_free: None,
         }
         .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
@@ -1004,7 +1187,7 @@ pub(crate) mod tests {
             trans_fat: 0.3,
             sugars: 13.0,
             protein: 9.0,
-            is_lactose_free: None,
+            lactose_free: None,
         }
         .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
