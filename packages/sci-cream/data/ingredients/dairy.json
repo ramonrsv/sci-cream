@@ -79,6 +79,48 @@
   { "alias": "Lactose-Free Whole Milk", "for": "Lactose-Free 3.25% Milk" },
   { "alias": "Lactose-Free Whipping Cream", "for": "Lactose-Free 35% Cream" },
   {
+    "name": "Sealtest 0% Skim Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "ml": 250 },
+      "energy": 90,
+      "total_fat": { "percent": 0 },
+      "saturated_fat": 0,
+      "trans_fat": 0,
+      "sugars": 12,
+      "protein": 9
+    },
+    "comments": "From nutrition facts table: https://www.sealtest.ca/en/products/milks/skim-milk"
+  },
+  {
+    "name": "Sealtest 1% Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "ml": 250 },
+      "energy": 110,
+      "total_fat": { "percent": 1 },
+      "saturated_fat": 1.5,
+      "trans_fat": 0.1,
+      "sugars": 13,
+      "protein": 9
+    },
+    "comments": "From nutrition facts table: https://www.sealtest.ca/en/products/milks/1-milk"
+  },
+  {
+    "name": "Sealtest 2% Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "ml": 250 },
+      "energy": 130,
+      "total_fat": { "percent": 2 },
+      "saturated_fat": 3,
+      "trans_fat": 0.2,
+      "sugars": 13,
+      "protein": 9
+    },
+    "comments": "From nutrition facts table: https://www.sealtest.ca/en/products/milks/2-milk"
+  },
+  {
     "name": "Sealtest 3.25% Milk",
     "category": "Dairy",
     "DairyLabelSpec": {
@@ -91,6 +133,62 @@
       "protein": 9
     },
     "comments": "From nutrition facts table: https://www.sealtest.ca/en/products/milks/325-milk"
+  },
+  {
+    "name": "Sealtest Light Cream 5%",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "ml": 15 },
+      "energy": 10,
+      "total_fat": { "percent": 5 },
+      "saturated_fat": 0.5,
+      "trans_fat": 0,
+      "sugars": 1,
+      "protein": 0.5
+    },
+    "comments": "From nutrition facts table: https://www.sealtest.ca/en/products/creams/light-cream-5"
+  },
+  {
+    "name": "Sealtest Half and Half Cream 10%",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "ml": 15 },
+      "energy": 20,
+      "total_fat": { "percent": 10 },
+      "saturated_fat": 1,
+      "trans_fat": 0,
+      "sugars": 1,
+      "protein": 0.4
+    },
+    "comments": "From nutrition facts table: https://www.sealtest.ca/en/products/creams/half-and-half-cream-10"
+  },
+  {
+    "name": "Sealtest Table Cream 18%",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "ml": 15 },
+      "energy": 30,
+      "total_fat": { "percent": 18 },
+      "saturated_fat": 1.5,
+      "trans_fat": 0.1,
+      "sugars": 1,
+      "protein": 0.4
+    },
+    "comments": "From nutrition facts table: https://www.sealtest.ca/en/products/creams/table-cream-18"
+  },
+  {
+    "name": "Sealtest Whipping Cream 35%",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "ml": 15 },
+      "energy": 50,
+      "total_fat": { "percent": 35 },
+      "saturated_fat": 3,
+      "trans_fat": 0.1,
+      "sugars": 0.5,
+      "protein": 0.3
+    },
+    "comments": "From nutrition facts table: https://www.sealtest.ca/en/products/creams/whipping-cream-35. The label lists 1g of carbohydrates and 0g of sugars. There shouldn't be any other carbohydrates other than lactose (there are trace amounts), so we take the middle value of 0.5g sugars - this is consistent with the standard ~60/40 ratio of lactose to proteins in MSNF - [constants::composition::STD_LACTOSE_IN_MSNF], [constants::composition::STD_PROTEIN_IN_MSNF]."
   },
   {
     "name": "Fairlife Whole Ultra-Filtered Lactose-Free Milk",
@@ -136,5 +234,89 @@
     "comments": "From nutrition facts table: https://ca.iherb.com/pr/california-gold-nutrition-sport-micellar-casein-unflavored-slow-absorption-16-oz-454-g/71028"
   },
   { "alias": "Whey Isolate", "for": "Leanfit Sport Whey Isolate" },
-  { "alias": "Casein", "for": "California Gold Nutrition, Sport, Micellar Casein" }
+  { "alias": "Casein", "for": "California Gold Nutrition, Sport, Micellar Casein" },
+  {
+    "name": "Carnation Fat Free Evaporated Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 16.125 },
+      "energy": 10,
+      "total_fat": { "grams": 0 },
+      "saturated_fat": 0,
+      "trans_fat": 0,
+      "sugars": 2,
+      "protein": 1
+    },
+    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/fat-free-skim. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]."
+  },
+  {
+    "name": "Carnation 2% Evaporated Partly Skimmed Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 16.125 },
+      "energy": 15,
+      "total_fat": { "percent": 2 },
+      "saturated_fat": 0.2,
+      "trans_fat": 0,
+      "sugars": 1.5,
+      "protein": 1
+    },
+    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/2-partly-skimmed. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]. The label lists 2g of carbohydrates and 1g of sugars. There shouldn't be any other carbohydrates other than lactose (there are trace amounts), so we take the middle value of 1.5g sugars - this is consistent with the standard ~60/40 ratio of lactose to proteins in MSNF - [constants::composition::STD_LACTOSE_IN_MSNF], [constants::composition::STD_PROTEIN_IN_MSNF]."
+  },
+  {
+    "name": "Carnation Evaporated Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 16.125 },
+      "energy": 20,
+      "total_fat": { "grams": 1 },
+      "saturated_fat": 0.5,
+      "trans_fat": 0,
+      "sugars": 1.5,
+      "protein": 1
+    },
+    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/evaporated-milk. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]. The label lists 2g of carbohydrates and 1g of sugars. There shouldn't be any other carbohydrates other than lactose (there are trace amounts), so we take the middle value of 1.5g sugars - this is consistent with the standard ~60/40 ratio of lactose to proteins in MSNF - [constants::composition::STD_LACTOSE_IN_MSNF], [constants::composition::STD_PROTEIN_IN_MSNF]."
+  },
+  {
+    "name": "Fat-Free Evaporated Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 78,
+      "total_fat": { "grams": 0.2 },
+      "saturated_fat": 0.121,
+      "trans_fat": 0,
+      "sugars": 11.35,
+      "protein": 7.55
+    },
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, fat free (skim): https://fdc.nal.usda.gov/food-details/2705401/nutrients."
+  },
+  {
+    "name": "2% Reduced-Fat Evaporated Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 92,
+      "total_fat": { "grams": 1.96 },
+      "saturated_fat": 1.214,
+      "trans_fat": 0,
+      "sugars": 11.15,
+      "protein": 7.42
+    },
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, reduced fat (2%): https://fdc.nal.usda.gov/food-details/2705400/nutrients."
+  },
+  {
+    "name": "Whole Evaporated Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 134,
+      "total_fat": { "grams": 7.56 },
+      "saturated_fat": 4.591,
+      "trans_fat": 0,
+      "sugars": 10.04,
+      "protein": 6.81
+    },
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, whole: https://fdc.nal.usda.gov/food-details/2705399/nutrients."
+  }
 ]

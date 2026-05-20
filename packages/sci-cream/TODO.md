@@ -9,7 +9,6 @@
 - [ ] Consider whether to add `CompKey` for all polyols and artificial sweeteners.
 - [ ] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
-- [ ] Add evaporated milk ingredients, e.g. 'Evaporated Milk', 'Fat Free Evaporated Skim Milk', etc.
 
 ## Up Next
 
@@ -66,6 +65,7 @@
 
 ## Completed
 
+- [x] Add evaporated milk ingredients, e.g. 'Evaporated Milk', 'Fat Free Evaporated Skim Milk', etc.
 - [x] Add support for composite specs that include the dependency specs inline, not referenced.
 - [x] Add lactose-free support to `DairySimpleSpec`, to allow simple lactose-free ingredient specs.
 - [x] Add `data` support for embedded recipes, and add data files for Underbelly, Dana, etc.

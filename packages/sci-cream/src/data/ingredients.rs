@@ -186,9 +186,9 @@ pub(crate) mod tests {
     //
     // These tests are mostly to keep explicit track of the total number of embedded specs.
 
-    const EXPECTED_EMBEDDED_SPEC_COUNT: usize = 130;
-    const EXPECTED_EMBEDDED_SPEC_NON_ALIAS_COUNT: usize = 116;
-    const EXPECTED_EMBEDDED_SPEC_INDEPENDENT_COUNT: usize = 112;
+    const EXPECTED_EMBEDDED_SPEC_COUNT: usize = 143;
+    const EXPECTED_EMBEDDED_SPEC_NON_ALIAS_COUNT: usize = 129;
+    const EXPECTED_EMBEDDED_SPEC_INDEPENDENT_COUNT: usize = 125;
 
     #[test]
     fn spec_entry_counts() {

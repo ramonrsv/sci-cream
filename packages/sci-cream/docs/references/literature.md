@@ -97,3 +97,5 @@
 [^47]: Health Canada. (2017, May). _Sugar Alcohols (Polyols) and Polydextrose Used as Sweeteners in Foods - Food Safety - Health Canada_. <https://www.canada.ca/en/health-canada/services/food-nutrition/food-safety/food-additives/sugar-substitutes/sugar-alcohols-polyols-polydextrose-used-sweeteners-foods-food-safety.html>
 
 [^48]: Nabors, Lyn O'Brien. (2012). _Alternative Sweeteners_ (4th ed.). CRC Press
+
+[^49]: Lewis, Michael. (2023). _Food Process Engineering Principles and Data_. Elsevier

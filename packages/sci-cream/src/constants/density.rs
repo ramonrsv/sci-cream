@@ -26,6 +26,13 @@ pub const MILK_3_5: f64 = 1.03;
 #[doc = include_str!("../../docs/references/index/14.md")]
 pub const CREAM_40: f64 = 0.96;
 
+/// Density (g/mL) of evaporated milk
+///
+/// _Milk, evaporated_ (Charrondiere et al., 2011, p. 3)[^14], (Lewis, 2023, Chapter 23.7)[^49]
+#[doc = include_str!("../../docs/references/index/14.md")]
+#[doc = include_str!("../../docs/references/index/49.md")]
+pub const EVAPORATED_MILK: f64 = 1.075;
+
 /// Convert dairy volume in milliliters to grams based on fat content percentage
 ///
 /// Interpolates density between known values for milk/cream of different fat contents;
