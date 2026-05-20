@@ -353,7 +353,7 @@ dependencies. [`IngredientDatabase`] implements this trait.
 #     data::get_all_independent_ingredient_specs,
 #     database::IngredientDatabase,
 #     resolution::IngredientGetter,
-#     specs::{AliasSpec, Basis, CompositeSpec, SpecEntry},
+#     specs::{AliasSpec, Basis, ComponentSource::Named, CompositeSpec, SpecEntry},
 # };
 #
 let db = IngredientDatabase::new_seeded_from_specs(
@@ -376,9 +376,9 @@ assert_eq!(
 
 let stabilizer_blend_spec = CompositeSpec {
     components: Basis::ByParts(vec![
-        ("Locust Bean Gum".to_string(), 4.0),
-        ("Guar Gum".to_string(), 2.0),
-        ("Lambda Carrageenan".to_string(), 1.0),
+        (Named("Locust Bean Gum".to_string()), 4.0),
+        (Named("Guar Gum".to_string()), 2.0),
+        (Named("Lambda Carrageenan".to_string()), 1.0),
     ]),
 };
 

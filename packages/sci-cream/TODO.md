@@ -2,7 +2,6 @@
 
 ## Next Release
 
-- [ ] Add support for composite specs that include the dependency specs inline, not referenced.
 - [ ] Fix `wasm` module code coverage gap, mostly by disabling anything with a `JsValue`.
 - [ ] Add code example doc tests to all specs that don't already have them.
 - [ ] Add "Louis Francois Stab 2000" ingredient, which has stabilizer and emulsifier components.
@@ -67,6 +66,7 @@
 
 ## Completed
 
+- [x] Add support for composite specs that include the dependency specs inline, not referenced.
 - [x] Add lactose-free support to `DairySimpleSpec`, to allow simple lactose-free ingredient specs.
 - [x] Add `data` support for embedded recipes, and add data files for Underbelly, Dana, etc.
 - [x] Look into add unit tests for `wasm` code; some of it can be tested if `JsValue` is not used.
