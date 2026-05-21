@@ -1380,6 +1380,51 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn compare_specs_skim_milk_simple_vs_usda_vs_sealtest() {
+        let sources = [
+            ("Simple", "0% Milk"),
+            ("USDA", "USDA Fat-Free (Skim) Milk"),
+            ("Sealtest", "Sealtest 0% Skim Milk"),
+        ]
+        .map(source_str_to_comp);
+
+        // MilkFat hits 100% for both pairs involving USDA: Simple and Sealtest define fat as
+        // exactly 0, while USDA reports 0.08g/100g. Near-zero values make the relative diff
+        // degenerate. MilkSNFS is 16.24% (Simple vs USDA) because the 0.08g fat shifts the
+        // SNFS calculation.
+        let ceiling = CompCeiling::new(10.0)
+            .with(CompKey::MilkFat, 100.0)
+            .with(CompKey::MilkSNFS, 17.0);
+
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+    }
+
+    #[test]
+    fn compare_specs_2_milk_simple_vs_usda_vs_sealtest() {
+        let sources = [
+            ("Simple", "2% Milk"),
+            ("USDA", "USDA 2% Reduced-Fat Milk"),
+            ("Sealtest", "Sealtest 2% Milk"),
+        ]
+        .map(source_str_to_comp);
+
+        // Except for some exceptions noted below, most values are generally within a ~10% range.
+        // The exceptions are:
+        //    - MilkSNFS        16.27%  (Simple vs USDA)
+        //    - MilkSNFS        13.24%  (Simple vs Sealtest)
+        //    - MilkProteins    11.33%  (Simple vs Sealtest)
+        //    - TotalProteins   11.33%  (Simple vs Sealtest)
+        let ceiling = CompCeiling::new(10.0)
+            .with(CompKey::MilkSNFS, 17.0)
+            .with(CompKey::MilkProteins, 12.0)
+            .with(CompKey::TotalProteins, 12.0);
+
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+    }
+
+    #[test]
     fn compare_specs_whole_milk_simple_vs_usda_vs_sealtest() {
         let sources = [
             ("Simple", "3.25% Milk"),
@@ -1398,6 +1443,115 @@ pub(crate) mod tests {
             .with(CompKey::MilkSNFS, 18.0)
             .with(CompKey::MilkProteins, 13.0)
             .with(CompKey::TotalProteins, 13.0);
+
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+    }
+
+    #[test]
+    fn compare_specs_half_and_half_simple_vs_usda_vs_sealtest() {
+        let sources = [
+            ("Simple", "10% Cream"),
+            ("USDA", "USDA Half and Half Cream"),
+            ("Sealtest", "Sealtest Half and Half Cream 10%"),
+        ]
+        .map(source_str_to_comp);
+
+        // Sealtest's small 15ml serving rounds sugars coarsely (1g/15ml = 6.67g/100g), driving
+        // large differences in Lactose and all derived fields (MSNF, MilkSNFS, POD, PAC*).
+        // MilkFat: 13.04% — Simple's spec uses exactly 10% vs USDA's measured 11.5g/100g.
+        // The exceptions are:
+        //    - MilkFat        13.04%  (Simple vs USDA and USDA vs Sealtest)
+        //    - MSNF           20.85%  (USDA vs Sealtest)
+        //    - Lactose        36.96%  (USDA vs Sealtest)
+        //    - MilkSNFS       28.89%  (Simple vs Sealtest)
+        //    - MilkProteins   16.27%  (USDA vs Sealtest)
+        //    - TotalProteins  16.27%  (USDA vs Sealtest)
+        //    - POD            36.96%  (USDA vs Sealtest)
+        //    - PACsgr         36.96%  (USDA vs Sealtest)
+        //    - PACmlk         20.85%  (USDA vs Sealtest)
+        //    - PACtotal       31.49%  (USDA vs Sealtest)
+        let ceiling = CompCeiling::new(10.0)
+            .with(CompKey::MilkFat, 14.0)
+            .with(CompKey::MSNF, 21.0)
+            .with(CompKey::Lactose, 37.0)
+            .with(CompKey::MilkSNFS, 29.0)
+            .with(CompKey::MilkProteins, 17.0)
+            .with(CompKey::TotalProteins, 17.0)
+            .with(CompKey::POD, 37.0)
+            .with(CompKey::PACsgr, 37.0)
+            .with(CompKey::PACmlk, 21.0)
+            .with(CompKey::PACtotal, 32.0);
+
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+    }
+
+    #[test]
+    fn compare_specs_light_cream_simple_vs_usda_vs_sealtest() {
+        let sources = [
+            ("Simple", "18% Cream"),
+            ("USDA", "USDA Light Cream"),
+            ("Sealtest", "Sealtest Table Cream 18%"),
+        ]
+        .map(source_str_to_comp);
+
+        // Sealtest's small 15ml serving rounds sugars coarsely (1g/15ml = 6.67g/100g); at 18%
+        // fat the lactose fraction is even smaller, amplifying relative differences further.
+        // The exceptions are:
+        //    - MSNF           28.81%  (USDA vs Sealtest)
+        //    - Lactose        44.83%  (USDA vs Sealtest)
+        //    - MilkSNFS       20.76%  (Simple vs Sealtest)
+        //    - MilkProteins   12.74%  (Simple vs USDA)
+        //    - TotalProteins  12.74%  (Simple vs USDA)
+        //    - POD            44.83%  (USDA vs Sealtest)
+        //    - PACsgr         44.83%  (USDA vs Sealtest)
+        //    - PACmlk         28.81%  (USDA vs Sealtest)
+        //    - PACtotal       39.39%  (USDA vs Sealtest)
+        let ceiling = CompCeiling::new(10.0)
+            .with(CompKey::MSNF, 29.0)
+            .with(CompKey::Lactose, 45.0)
+            .with(CompKey::MilkSNFS, 21.0)
+            .with(CompKey::MilkProteins, 13.0)
+            .with(CompKey::TotalProteins, 13.0)
+            .with(CompKey::POD, 45.0)
+            .with(CompKey::PACsgr, 45.0)
+            .with(CompKey::PACmlk, 29.0)
+            .with(CompKey::PACtotal, 40.0);
+
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+    }
+
+    #[test]
+    fn compare_specs_whipping_cream_simple_vs_usda_vs_sealtest() {
+        let sources = [
+            ("Simple", "35% Cream"),
+            ("USDA", "USDA Heavy Cream"),
+            ("Sealtest", "Sealtest Whipping Cream 35%"),
+        ]
+        .map(source_str_to_comp);
+
+        // USDA Heavy Cream is 35.6% fat; close enough to compare with the 35% Simple/Sealtest
+        // entries. Sealtest's 15ml serving gives low lactose precision (0.5g/15ml = 3.33g/100g —
+        // already interpolated from a 0–1g label range), but differences stay moderate because
+        // the label value was set at the midpoint rather than rounded.
+        // The exceptions are:
+        //    - MSNF           15.56%  (Simple vs USDA)
+        //    - Lactose        15.06%  (USDA vs Sealtest)
+        //    - MilkSNFS       24.11%  (Simple vs USDA) — the 0.6g fat gap shifts non-fat solids
+        //    - POD            15.06%  (USDA vs Sealtest)
+        //    - PACsgr         15.06%  (USDA vs Sealtest)
+        //    - PACmlk         15.56%  (Simple vs USDA)
+        //    - PACtotal       13.26%  (USDA vs Sealtest)
+        let ceiling = CompCeiling::new(10.0)
+            .with(CompKey::MSNF, 16.0)
+            .with(CompKey::Lactose, 16.0)
+            .with(CompKey::MilkSNFS, 25.0)
+            .with(CompKey::POD, 16.0)
+            .with(CompKey::PACsgr, 16.0)
+            .with(CompKey::PACmlk, 16.0)
+            .with(CompKey::PACtotal, 14.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
