@@ -4,13 +4,19 @@ import { get_all_recipe_entries, get_all_recipe_entry_ids } from "../../dist/ind
 
 import { type RecipeEntryJson, allRecipeEntries, recipeEntryId } from "./data.recipes";
 
-// Update this count if the data assets change
-const RECIPE_ENTRY_COUNT = 3;
-
 // --- TS-side recipe helpers ---
 
-test("Recipe entry count", () => {
-  expect(allRecipeEntries.length).toEqual(RECIPE_ENTRY_COUNT);
+// Snapshots the full list of embedded recipe IDs with a total count in the header. Replaces a
+// hand-maintained count constant: a data change shows exactly which recipes moved.
+
+/** Builds the count-headed report of embedded recipe IDs for snapshotting. */
+function embeddedRecipeEntriesReport(): string {
+  const ids = allRecipeEntries.map(recipeEntryId).sort((a, b) => (a < b ? -1 : a > b ? 1 : 0));
+  return [`total: ${ids.length}`, "", ...ids].join("\n");
+}
+
+test("Embedded recipe entries", () => {
+  expect(embeddedRecipeEntriesReport()).toMatchSnapshot();
 });
 
 test("allRecipeEntries entries have name and recipe fields", () => {
@@ -45,7 +51,6 @@ test("recipeEntryId returns just name when author is absent", () => {
 
 test("get_all_recipe_entry_ids", () => {
   const ids = get_all_recipe_entry_ids();
-  expect(ids.length).toEqual(RECIPE_ENTRY_COUNT);
   expect(ids.length).toEqual(allRecipeEntries.length);
 
   const expectedIds = allRecipeEntries.map(recipeEntryId);
@@ -54,7 +59,6 @@ test("get_all_recipe_entry_ids", () => {
 
 test("get_all_recipe_entries", () => {
   const entries = get_all_recipe_entries() as RecipeEntryJson[];
-  expect(entries.length).toEqual(RECIPE_ENTRY_COUNT);
   expect(entries.length).toEqual(allRecipeEntries.length);
 
   const entryNames = entries.map((e) => e.name);

@@ -1,0 +1,9 @@
+---
+source: packages/sci-cream/src/data/recipes.rs
+expression: embedded_recipe_entries_report()
+---
+total: 3
+
+Underbelly: French Variation
+Underbelly: Light Variation
+Underbelly: Standard Base

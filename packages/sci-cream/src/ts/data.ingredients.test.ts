@@ -29,19 +29,40 @@ import {
 // `null`, while the JSON source files omit them entirely. Both forms deserialize to equivalent
 // `IngredientSpec` objects, so this is not a problem in practice.
 
-// Update these number of the data assets change
-const SPEC_ENTRY_COUNT = 148;
-const SPEC_ENTRY_NON_ALIAS_COUNT = 134;
-const SPEC_ENTRY_INDEPENDENT_COUNT = 130;
-
 // --- TS-side spec helpers ---
 
-test("Spec entry counts", () => {
-  expect(allSpecEntries.length).toEqual(SPEC_ENTRY_COUNT);
-  expect(allSpecEntries.filter((e) => !isSpecEntryAlias(e)).length).toEqual(
-    SPEC_ENTRY_NON_ALIAS_COUNT,
-  );
-  expect(getIndependentIngredientSpecs().length).toEqual(SPEC_ENTRY_INDEPENDENT_COUNT);
+// Snapshots the full list of embedded spec entries with total / non-alias / independent counts in
+// the header. Alias and composite entries carry a type prefix; plain independent ingredients are
+// unprefixed. Replaces hand-maintained count constants: a data change shows exactly which entries
+// were added, removed, or changed type.
+
+/** Classifies a spec entry as an `alias`, a `composite`, or an independent `ingredient`. */
+function specEntryKind(entry: SpecEntryJson): string {
+  if (isSpecEntryAlias(entry)) return "alias";
+  if (isSpecEntryIndependent(entry)) return "ingredient";
+  return "composite";
+}
+
+/** Builds the count-headed report of embedded spec entries for snapshotting. */
+function embeddedSpecEntriesReport(): string {
+  const entries = allSpecEntries
+    .map((entry) => ({ kind: specEntryKind(entry), name: specEntryName(entry) }))
+    .sort((a, b) => (a.name < b.name ? -1 : a.name > b.name ? 1 : 0));
+
+  const total = entries.length;
+  const nonAlias = entries.filter((e) => e.kind !== "alias").length;
+  const independent = entries.filter((e) => e.kind === "ingredient").length;
+
+  const header = `total: ${total}  (non-alias: ${nonAlias}, independent: ${independent})`;
+  const lines = entries.map((e) => {
+    const prefix = e.kind === "ingredient" ? "" : `[${e.kind}]`;
+    return prefix.padEnd(11) + " " + e.name;
+  });
+  return [header, "", ...lines].join("\n");
+}
+
+test("Embedded spec entries", () => {
+  expect(embeddedSpecEntriesReport()).toMatchSnapshot();
 });
 
 test("specEntryName returns name for ingredient/alias specs", () => {
@@ -96,7 +117,6 @@ test("getNonAliasIngredientSpecs excludes aliases", () => {
   expect(nonAlias.length).toBeGreaterThan(0);
   expect(nonAlias.length).toBeLessThan(allSpecEntries.length);
   expect(nonAlias.every((e) => !isSpecEntryAlias(e))).toBe(true);
-  expect(nonAlias.length).toEqual(SPEC_ENTRY_NON_ALIAS_COUNT);
 });
 
 test("getNonAliasIngredientSpecs all entries have name and category", () => {
@@ -111,7 +131,6 @@ test("getIndependentIngredientSpecs excludes aliases and composites", () => {
   expect(independent.length).toBeGreaterThan(0);
   expect(independent.length).toBeLessThan(allSpecEntries.length);
   expect(independent.every(isSpecEntryIndependent)).toBe(true);
-  expect(independent.length).toEqual(SPEC_ENTRY_INDEPENDENT_COUNT);
 });
 
 test("getIndependentIngredientSpecs all entries have name and category", () => {
@@ -163,7 +182,6 @@ test("get_all_spec_entries", () => {
   const entries = get_all_spec_entries();
   expect(entries.length).toBeGreaterThan(0);
   expect(entries.length).toBe(allSpecEntries.length);
-  expect(entries.length).toBe(SPEC_ENTRY_COUNT);
 
   // Just check that names match, since the WASM entries may have `null` for empty optional fields
   const entryNames = entries.map((e) => e.name ?? e.alias);

@@ -182,35 +182,52 @@ pub(crate) mod tests {
         }
     }
 
-    // --- counts of embedded specs ---
+    // --- embedded spec entries snapshot ---
     //
-    // These tests are mostly to keep explicit track of the total number of embedded specs.
+    // Snapshots the full list of embedded spec entries with total / non-alias / independent
+    // counts in the header. Alias and composite entries carry a type prefix; plain independent
+    // ingredients are unprefixed. Replaces hand-maintained count constants: a data change shows
+    // exactly which entries were added, removed, or changed type.
 
-    const EXPECTED_EMBEDDED_SPEC_COUNT: usize = 148;
-    const EXPECTED_EMBEDDED_SPEC_NON_ALIAS_COUNT: usize = 134;
-    const EXPECTED_EMBEDDED_SPEC_INDEPENDENT_COUNT: usize = 130;
+    fn embedded_spec_entries_report() -> String {
+        let mut entries: Vec<(&str, String)> = super::get_all_spec_entries()
+            .iter()
+            .map(|entry| {
+                let kind = match entry {
+                    SpecEntry::Alias(_) => "alias",
+                    SpecEntry::Ingredient(IngredientSpec {
+                        spec: TaggedSpec::CompositeSpec(_),
+                        ..
+                    }) => "composite",
+                    SpecEntry::Ingredient(_) => "ingredient",
+                };
+                (kind, entry.name().to_string())
+            })
+            .collect();
+        entries.sort_by(|(_, a), (_, b)| a.cmp(b));
 
-    #[test]
-    fn spec_entry_counts() {
-        assert_eq!(PARSED_EMBEDDED_SPEC_ENTRIES.len(), EXPECTED_EMBEDDED_SPEC_COUNT);
-        assert_eq!(get_all_spec_entry_names().len(), EXPECTED_EMBEDDED_SPEC_COUNT);
-        assert_eq!(super::get_all_spec_entries().len(), EXPECTED_EMBEDDED_SPEC_COUNT);
+        let total = entries.len();
+        let non_alias = entries.iter().filter(|(kind, _)| *kind != "alias").count();
+        let independent = entries.iter().filter(|(kind, _)| *kind == "ingredient").count();
+
+        let mut lines = vec![
+            format!("total: {total}  (non-alias: {non_alias}, independent: {independent})"),
+            String::new(),
+        ];
+        for (kind, name) in &entries {
+            let prefix = if *kind == "ingredient" {
+                String::new()
+            } else {
+                format!("[{kind}]")
+            };
+            lines.push(format!("{prefix:<11} {name}"));
+        }
+        lines.join("\n")
     }
 
     #[test]
-    fn non_alias_spec_counts() {
-        assert_eq!(
-            super::get_all_spec_entries()
-                .iter()
-                .filter(|e| !matches!(e, SpecEntry::Alias(_)))
-                .count(),
-            EXPECTED_EMBEDDED_SPEC_NON_ALIAS_COUNT
-        );
-    }
-
-    #[test]
-    fn independent_spec_counts() {
-        assert_eq!(super::get_all_independent_ingredient_specs().len(), EXPECTED_EMBEDDED_SPEC_INDEPENDENT_COUNT);
+    fn embedded_spec_entries() {
+        insta::assert_snapshot!(embedded_spec_entries_report());
     }
 
     // --- Spec entry functions ---

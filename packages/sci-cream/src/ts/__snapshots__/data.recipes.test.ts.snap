@@ -1,0 +1,9 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`Embedded recipe entries 1`] = `
+"total: 3
+
+Underbelly: French Variation
+Underbelly: Light Variation
+Underbelly: Standard Base"
+`;

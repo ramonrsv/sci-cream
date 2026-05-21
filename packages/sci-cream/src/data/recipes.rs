@@ -124,17 +124,24 @@ pub(crate) mod tests {
             .find(|e| e.name == name && e.author.as_deref() == author)
     }
 
-    // --- counts of embedded recipes ---
+    // --- embedded recipe entries snapshot ---
     //
-    // This test is mostly to keep explicit track of the total number of embedded recipes.
+    // Snapshots the full list of embedded recipe IDs with a total count in the header. Replaces a
+    // hand-maintained count constant: a data change shows exactly which recipes moved.
 
-    const EXPECTED_EMBEDDED_RECIPE_COUNT: usize = 3;
+    fn embedded_recipe_entries_report() -> String {
+        let mut ids = get_all_recipe_entry_ids();
+        ids.sort();
+
+        let mut lines = vec![format!("total: {}", ids.len()), String::new()];
+        lines.extend(ids);
+        lines.join("\n")
+    }
 
     #[test]
-    fn recipe_entry_counts() {
-        assert_eq!(PARSED_EMBEDDED_RECIPE_ENTRIES.len(), EXPECTED_EMBEDDED_RECIPE_COUNT);
-        assert_eq!(get_all_recipe_entry_ids().len(), EXPECTED_EMBEDDED_RECIPE_COUNT);
-        assert_eq!(get_all_recipe_entries().len(), EXPECTED_EMBEDDED_RECIPE_COUNT);
+    fn embedded_recipe_entries() {
+        assert_eq!(get_all_recipe_entry_ids().len(), get_all_recipe_entries().len());
+        insta::assert_snapshot!(embedded_recipe_entries_report());
     }
 
     // --- gen_id ---
