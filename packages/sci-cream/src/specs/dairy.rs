@@ -229,7 +229,7 @@ pub(crate) mod tests {
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
-    use crate::tests::util::assert_comp_eq_percent;
+    use crate::tests::util::{CompCeiling, assert_compositions_consistent, compare_compositions};
 
     use super::*;
     use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
@@ -694,8 +694,85 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 12.3736);
     }
 
+    // https://fdc.nal.usda.gov/food-details/2705385/nutrients
+    pub(crate) const ING_SPEC_DAIRY_LABEL_WHOLE_MILK_USDA_STR: &str = r#"{
+      "name": "USDA Whole Milk",
+      "category": "Dairy",
+      "DairyLabelSpec": {
+        "serving_size": { "grams": 100 },
+        "energy": 61,
+        "total_fat": { "grams": 3.2 },
+        "saturated_fat": 1.86,
+        "trans_fat": 0,
+        "sugars": 4.81,
+        "protein": 3.27
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_LABEL_WHOLE_MILK_USDA: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "USDA Whole Milk".to_string(),
+            category: Category::Dairy,
+            spec: DairyLabelSpec {
+                serving_size: Unit::Grams(100.0),
+                energy: 61.0,
+                total_fat: Unit::Grams(3.2),
+                saturated_fat: 1.86,
+                trans_fat: 0.0,
+                sugars: 4.81,
+                protein: 3.27,
+                lactose_free: None,
+                sucrose: None,
+            }
+            .into(),
+        });
+
+    pub(crate) static COMP_WHOLE_MILK_USDA: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(61.0)
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(3.2).saturated(1.86).trans(0.0))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(4.81)))
+                        .proteins(3.27),
+                ),
+            )
+            .pod(0.7696)
+            .pac(PAC::new().sugars(4.81).msnf_ws_salts(2.9686))
+    });
+
+    #[test]
+    fn to_composition_dairy_label_spec_whole_milk_usda() {
+        let comp = ING_SPEC_DAIRY_LABEL_WHOLE_MILK_USDA.spec.to_composition().unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 61.0);
+
+        assert_eq!(comp.get(CompKey::MilkFat), 3.2);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 4.81);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 8.08);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 3.27);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 3.27);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 11.28);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 3.27);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 11.28);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 88.72);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 0.7696);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.81);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 2.9686);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 7.7786);
+    }
+
     // https://www.sealtest.ca/en/products/milks/325-milk
-    pub(crate) const ING_SPEC_DAIRY_LABEL_3_25_MILK_STR: &str = r#"{
+    pub(crate) const ING_SPEC_DAIRY_LABEL_3_25_MILK_SEALTEST_STR: &str = r#"{
       "name": "Sealtest 3.25% Milk",
       "category": "Dairy",
       "DairyLabelSpec": {
@@ -709,24 +786,25 @@ pub(crate) mod tests {
       }
     }"#;
 
-    pub(crate) static ING_SPEC_DAIRY_LABEL_3_25_MILK: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
-        name: "Sealtest 3.25% Milk".to_string(),
-        category: Category::Dairy,
-        spec: DairyLabelSpec {
-            serving_size: Unit::Milliliters(250.0), // 257.6667 grams
-            energy: 160.0,
-            total_fat: Unit::Percent(3.25), // 3.25% is 8.3742g, not 8g
-            saturated_fat: 5.0,
-            trans_fat: 0.3,
-            sugars: 13.0,
-            protein: 9.0,
-            lactose_free: None,
-            sucrose: None,
-        }
-        .into(),
-    });
+    pub(crate) static ING_SPEC_DAIRY_LABEL_3_25_MILK_SEALTEST: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Sealtest 3.25% Milk".to_string(),
+            category: Category::Dairy,
+            spec: DairyLabelSpec {
+                serving_size: Unit::Milliliters(250.0), // 257.6667 grams
+                energy: 160.0,
+                total_fat: Unit::Percent(3.25), // 3.25% is 8.3742g, not 8g
+                saturated_fat: 5.0,
+                trans_fat: 0.3,
+                sugars: 13.0,
+                protein: 9.0,
+                lactose_free: None,
+                sucrose: None,
+            }
+            .into(),
+        });
 
-    pub(crate) static COMP_3_25_MILK_FROM_NUTRITION: LazyLock<Composition> = LazyLock::new(|| {
+    pub(crate) static COMP_3_25_MILK_SEALTEST: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
             .energy(62.0957)
             .solids(
@@ -742,8 +820,8 @@ pub(crate) mod tests {
     });
 
     #[test]
-    fn to_composition_dairy_label_spec_3_25_milk() {
-        let comp = ING_SPEC_DAIRY_LABEL_3_25_MILK.spec.to_composition().unwrap();
+    fn to_composition_dairy_label_spec_3_25_milk_sealtest() {
+        let comp = ING_SPEC_DAIRY_LABEL_3_25_MILK_SEALTEST.spec.to_composition().unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 62.0957);
 
@@ -1012,7 +1090,7 @@ pub(crate) mod tests {
 
     // https://fdc.nal.usda.gov/food-details/2705400/nutrients
     pub(crate) const ING_SPEC_DAIRY_LABEL_2_EVAPORATED_MILK_USDA_STR: &str = r#"{
-      "name": "2% Reduced-Fat Evaporated Milk",
+      "name": "USDA 2% Reduced-Fat Evaporated Milk",
       "category": "Dairy",
       "DairyLabelSpec": {
         "serving_size": { "grams": 100 },
@@ -1027,7 +1105,7 @@ pub(crate) mod tests {
 
     pub(crate) static ING_SPEC_DAIRY_LABEL_2_EVAPORATED_MILK_USDA: LazyLock<IngredientSpec> =
         LazyLock::new(|| IngredientSpec {
-            name: "2% Reduced-Fat Evaporated Milk".to_string(),
+            name: "USDA 2% Reduced-Fat Evaporated Milk".to_string(),
             category: Category::Dairy,
             spec: DairyLabelSpec {
                 serving_size: Unit::Grams(100.0), // 100g serving size
@@ -1094,7 +1172,7 @@ pub(crate) mod tests {
     // https://fdc.nal.usda.gov/food-details/2758990/nutrients
 
     pub(crate) const ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_USDA_STR: &str = r#"{
-      "name": "Sweetened Condensed Milk",
+      "name": "USDA Sweetened Condensed Milk",
       "category": "Dairy",
       "DairyLabelSpec": {
         "serving_size": { "grams": 100 },
@@ -1110,7 +1188,7 @@ pub(crate) mod tests {
 
     pub(crate) static ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_USDA: LazyLock<IngredientSpec> =
         LazyLock::new(|| IngredientSpec {
-            name: "Sweetened Condensed Milk".to_string(),
+            name: "USDA Sweetened Condensed Milk".to_string(),
             category: Category::Dairy,
             spec: DairyLabelSpec {
                 serving_size: Unit::Grams(100.0),
@@ -1268,115 +1346,86 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 62.1192);
     }
 
+    /// Composition keys compared when cross-checking dairy ingredient data sources.
+    ///
+    /// These keys carry meaningful, generally non-zero values for milk-based ingredients. Keys
+    /// irrelevant to dairy (cocoa, nut, egg, and other non-milk components) are excluded so that
+    /// comparisons stay focused on values a reader would expect to differ between sources.
+    const COMPARABLE_DAIRY_KEYS: &[CompKey] = &[
+        CompKey::Energy,
+        CompKey::MilkFat,
+        CompKey::Lactose,
+        CompKey::MSNF,
+        CompKey::MilkSNFS,
+        CompKey::MilkProteins,
+        CompKey::MilkSolids,
+        CompKey::TotalProteins,
+        CompKey::TotalSolids,
+        CompKey::Water,
+        CompKey::POD,
+        CompKey::PACsgr,
+        CompKey::PACmlk,
+        CompKey::PACtotal,
+    ];
+
     #[test]
-    fn to_composition_dairy_simple_spec_vs_dairy_label_spec_3_25_milk() {
-        let comp_spec = ING_SPEC_DAIRY_SIMPLE_3_25_MILK.spec.to_composition().unwrap();
-        let comp_spec_from_nutrition = ING_SPEC_DAIRY_LABEL_3_25_MILK.spec.to_composition().unwrap();
+    fn compare_specs_whole_milk_simple_vs_usda_vs_sealtest() {
+        let sources = [
+            ("Simple", &ING_SPEC_DAIRY_SIMPLE_3_25_MILK),
+            ("USDA", &ING_SPEC_DAIRY_LABEL_WHOLE_MILK_USDA),
+            ("Sealtest", &ING_SPEC_DAIRY_LABEL_3_25_MILK_SEALTEST),
+        ]
+        .map(|(name, spec)| (name, spec.spec.to_composition().unwrap()));
 
-        let assert_comp_eq_percent = |key: CompKey, tolerance_percent: f64| {
-            assert_comp_eq_percent(&comp_spec, &comp_spec_from_nutrition, key, tolerance_percent);
-        };
+        // Except for some exceptions noted below, most values are generally within a ~10% range.
+        // The exceptions are:
+        //    - MilkSNFS        17.46%  (Simple vs USDA)
+        //    - MilkSNFS        11.84%  (Simple vs Sealtest)
+        //    - MilkProteins    12.75%  (Simple vs Sealtest)
+        //    - TotalProteins   12.75%  (Simple vs Sealtest)
+        let ceiling = CompCeiling::new(10.0)
+            .with(CompKey::MilkSNFS, 18.0)
+            .with(CompKey::MilkProteins, 13.0)
+            .with(CompKey::TotalProteins, 13.0);
 
-        // Proteins has a ~15% difference, 3g vs. 3.5g
-        // All other values are within a 10% difference
-
-        assert_comp_eq_percent(CompKey::Energy, 2.8);
-
-        assert_comp_eq_percent(CompKey::MilkFat, 0.0);
-        assert_comp_eq_percent(CompKey::Lactose, 6.4);
-        assert_comp_eq_percent(CompKey::MSNF, 1.95);
-        assert_comp_eq_percent(CompKey::MilkSNFS, 12.0);
-        assert_comp_eq_percent(CompKey::MilkProteins, 15.0);
-        assert_comp_eq_percent(CompKey::MilkSolids, 1.45);
-
-        assert_comp_eq_percent(CompKey::TotalProteins, 15.0);
-        assert_comp_eq_percent(CompKey::TotalSolids, 1.45);
-        assert_comp_eq_percent(CompKey::Water, 0.2);
-
-        assert_comp_eq_percent(CompKey::POD, 6.35);
-
-        assert_comp_eq_percent(CompKey::PACsgr, 6.35);
-        assert_comp_eq_percent(CompKey::PACmlk, 1.95);
-        assert_comp_eq_percent(CompKey::PACtotal, 3.0);
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
     }
 
     #[test]
-    fn to_composition_dairy_label_spec_2_evaporated_milk_carnation_vs_usda() {
-        let comp_carnation = ING_SPEC_DAIRY_LABEL_2_EVAPORATED_MILK_CARNATION
-            .spec
-            .to_composition()
-            .unwrap();
-        let comp_usda = ING_SPEC_DAIRY_LABEL_2_EVAPORATED_MILK_USDA
-            .spec
-            .to_composition()
-            .unwrap();
+    fn compare_specs_evaporated_milk_usda_vs_carnation() {
+        let sources = [
+            ("USDA", &ING_SPEC_DAIRY_LABEL_2_EVAPORATED_MILK_USDA),
+            ("Carnation", &ING_SPEC_DAIRY_LABEL_2_EVAPORATED_MILK_CARNATION),
+        ]
+        .map(|(name, spec)| (name, spec.spec.to_composition().unwrap()));
 
-        let assert_comp_eq_percent = |key: CompKey, tolerance_percent: f64| {
-            assert_comp_eq_percent(&comp_carnation, &comp_usda, key, tolerance_percent);
-        };
-
-        // @todo Many values differ by up to 20%; need to investigate.
-
-        assert_comp_eq_percent(CompKey::Energy, 1.101);
-
-        assert_comp_eq_percent(CompKey::MilkFat, 2.001);
-        assert_comp_eq_percent(CompKey::Lactose, 20.0);
-        assert_comp_eq_percent(CompKey::MSNF, 20.0);
-        assert_comp_eq_percent(CompKey::MilkSNFS, 20.0);
-        assert_comp_eq_percent(CompKey::MilkProteins, 20.0);
-        assert_comp_eq_percent(CompKey::MilkSolids, 17.5);
-
-        assert_comp_eq_percent(CompKey::TotalProteins, 20.0);
-        assert_comp_eq_percent(CompKey::TotalSolids, 17.5);
-        assert_comp_eq_percent(CompKey::Water, 4.0);
-
-        assert_comp_eq_percent(CompKey::POD, 20.0);
-
-        assert_comp_eq_percent(CompKey::PACsgr, 20.0);
-        assert_comp_eq_percent(CompKey::PACmlk, 20.0);
-        assert_comp_eq_percent(CompKey::PACtotal, 20.0);
+        // @todo Many values differ by up to ~17%; need to investigate.
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &CompCeiling::new(17.0));
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
     }
 
     #[test]
-    fn to_composition_dairy_label_spec_sweetened_condensed_milk_eagle_vs_usda() {
-        let comp_eagle = ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_EAGLE_BRAND
-            .spec
-            .to_composition()
-            .unwrap();
-        let comp_usda = ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_USDA
-            .spec
-            .to_composition()
-            .unwrap();
+    fn compare_specs_sweetened_condensed_usda_vs_milk_eagle() {
+        let sources = [
+            ("USDA", &ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_USDA),
+            ("Eagle Brand", &ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_EAGLE_BRAND),
+        ]
+        .map(|(name, spec)| (name, spec.spec.to_composition().unwrap()));
 
-        let assert_comp_eq_percent = |key: CompKey, tolerance_percent: f64| {
-            assert_comp_eq_percent(&comp_eagle, &comp_usda, key, tolerance_percent);
-        };
-
-        // Protein content differs significantly (~54%): Eagle Brand CA label reports 1g per 19.5g
+        // Protein content differs significantly (~36%): Eagle Brand CA label reports 1g per 19.5g
         // serving (= 5.13g/100g) vs. USDA data at 7.91g/100g. All protein-derived fields
-        // (MilkSNFS, MilkProteins, TotalProteins, MSNF, MilkSolids) are affected.
-        // (Rodrigues, 2017)[^50] has protein at 6.04g/100g. Low-Fat Eagle Brand has 10.2g/100g
-        // protein, which is much higher than all of these (jump from 1g -> 2g per serving).
+        // (MilkSNFS, MilkProteins, TotalProteins) are affected, hence the per-key ceiling
+        // overrides below. (Rodrigues, 2017)[^50] has protein at 6.04g/100g. Low-Fat Eagle Brand
+        // has 10.2g/100g protein, much higher than all of these (jump from 1g -> 2g per serving).
         // @todo Need to investigate why there is so much variability with protein content.
+        let ceiling = CompCeiling::new(12.0)
+            .with(CompKey::MilkSNFS, 36.0)
+            .with(CompKey::MilkProteins, 36.0)
+            .with(CompKey::TotalProteins, 36.0);
 
-        assert_comp_eq_percent(CompKey::Energy, 10.6);
-
-        assert_comp_eq_percent(CompKey::MilkFat, 13.2);
-        assert_comp_eq_percent(CompKey::Lactose, 9.8);
-        assert_comp_eq_percent(CompKey::MSNF, 11.5);
-        assert_comp_eq_percent(CompKey::MilkSNFS, 55.0);
-        assert_comp_eq_percent(CompKey::MilkProteins, 55.0);
-        assert_comp_eq_percent(CompKey::MilkSolids, 12.1);
-
-        assert_comp_eq_percent(CompKey::TotalProteins, 55.0);
-        assert_comp_eq_percent(CompKey::TotalSolids, 2.6);
-        assert_comp_eq_percent(CompKey::Water, 5.9);
-
-        assert_comp_eq_percent(CompKey::POD, 2.5);
-
-        assert_comp_eq_percent(CompKey::PACsgr, 3.6);
-        assert_comp_eq_percent(CompKey::PACmlk, 11.5);
-        assert_comp_eq_percent(CompKey::PACtotal, 2.3);
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_DAIRY: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
@@ -1402,9 +1451,14 @@ pub(crate) mod tests {
                     Some(*COMP_2_MILK_LACTOSE_FREE),
                 ),
                 (
-                    ING_SPEC_DAIRY_LABEL_3_25_MILK_STR,
-                    ING_SPEC_DAIRY_LABEL_3_25_MILK.clone(),
-                    Some(*COMP_3_25_MILK_FROM_NUTRITION),
+                    ING_SPEC_DAIRY_LABEL_WHOLE_MILK_USDA_STR,
+                    ING_SPEC_DAIRY_LABEL_WHOLE_MILK_USDA.clone(),
+                    Some(*COMP_WHOLE_MILK_USDA),
+                ),
+                (
+                    ING_SPEC_DAIRY_LABEL_3_25_MILK_SEALTEST_STR,
+                    ING_SPEC_DAIRY_LABEL_3_25_MILK_SEALTEST.clone(),
+                    Some(*COMP_3_25_MILK_SEALTEST),
                 ),
                 (
                     ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE_STR,

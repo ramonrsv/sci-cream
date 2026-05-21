@@ -79,6 +79,20 @@
   { "alias": "Lactose-Free Whole Milk", "for": "Lactose-Free 3.25% Milk" },
   { "alias": "Lactose-Free Whipping Cream", "for": "Lactose-Free 35% Cream" },
   {
+    "name": "USDA Whole Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 61,
+      "total_fat": { "grams": 3.2 },
+      "saturated_fat": 1.86,
+      "trans_fat": 0,
+      "sugars": 4.81,
+      "protein": 3.27
+    },
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, whole: https://fdc.nal.usda.gov/food-details/2705385/nutrients."
+  },
+  {
     "name": "Sealtest 0% Skim Milk",
     "category": "Dairy",
     "DairyLabelSpec": {
@@ -278,7 +292,7 @@
     "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/evaporated-milk. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]. The label lists 2g of carbohydrates and 1g of sugars. There shouldn't be any other carbohydrates other than lactose (there are trace amounts), so we take the middle value of 1.5g sugars - this is consistent with the standard ~60/40 ratio of lactose to proteins in MSNF - [constants::composition::STD_LACTOSE_IN_MSNF], [constants::composition::STD_PROTEIN_IN_MSNF]."
   },
   {
-    "name": "Fat-Free Evaporated Milk",
+    "name": "USDA Fat-Free Evaporated Milk",
     "category": "Dairy",
     "DairyLabelSpec": {
       "serving_size": { "grams": 100 },
@@ -292,7 +306,7 @@
     "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, fat free (skim): https://fdc.nal.usda.gov/food-details/2705401/nutrients."
   },
   {
-    "name": "2% Reduced-Fat Evaporated Milk",
+    "name": "USDA 2% Reduced-Fat Evaporated Milk",
     "category": "Dairy",
     "DairyLabelSpec": {
       "serving_size": { "grams": 100 },
@@ -306,7 +320,7 @@
     "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, reduced fat (2%): https://fdc.nal.usda.gov/food-details/2705400/nutrients."
   },
   {
-    "name": "Whole Evaporated Milk",
+    "name": "USDA Whole Evaporated Milk",
     "category": "Dairy",
     "DairyLabelSpec": {
       "serving_size": { "grams": 100 },
@@ -320,7 +334,7 @@
     "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, whole: https://fdc.nal.usda.gov/food-details/2705399/nutrients."
   },
   {
-    "name": "Sweetened Condensed Milk",
+    "name": "USDA Sweetened Condensed Milk",
     "category": "Dairy",
     "DairyLabelSpec": {
       "serving_size": { "grams": 100 },

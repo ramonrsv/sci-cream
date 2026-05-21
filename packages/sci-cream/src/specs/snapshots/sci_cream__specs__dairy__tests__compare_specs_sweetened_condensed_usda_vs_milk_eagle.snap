@@ -1,0 +1,20 @@
+---
+source: packages/sci-cream/src/specs/dairy.rs
+expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
+---
+sources: USDA, Eagle Brand
+
+Energy          10.58%  (USDA vs Eagle Brand)
+MilkFat         11.58%  (USDA vs Eagle Brand)
+Lactose          9.70%  (USDA vs Eagle Brand)
+MSNF            10.23%  (USDA vs Eagle Brand)
+MilkSNFS        35.17%  (USDA vs Eagle Brand)
+MilkProteins    35.17%  (USDA vs Eagle Brand)
+MilkSolids      10.69%  (USDA vs Eagle Brand)
+TotalProteins   35.17%  (USDA vs Eagle Brand)
+TotalSolids      2.51%  (USDA vs Eagle Brand)
+Water            5.78%  (USDA vs Eagle Brand)
+POD              2.44%  (USDA vs Eagle Brand)
+PACsgr           3.56%  (USDA vs Eagle Brand)
+PACmlk          10.23%  (USDA vs Eagle Brand)
+PACtotal         2.19%  (USDA vs Eagle Brand)

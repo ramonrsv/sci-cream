@@ -21,6 +21,7 @@
   ],
   "scripts": {
     "install:wasm": "cargo install wasm-pack && rustup target add wasm32-unknown-unknown",
+    "install:insta": "cargo install cargo-insta",
     "build:rust": "cargo build --all-features --all-targets",
     "build:package": "pnpm build:wasm && pnpm build:js",
     "build:wasm": "pnpm set-crate-type:cdylib && pnpm build:wasm-pack && pnpm set-crate-type:rlib",
@@ -31,6 +32,8 @@
     "test": "pnpm test:rust && pnpm test:js",
     "test:rust": "cargo test --all-features",
     "test:js": "vitest run",
+    "snapshots:review": "cargo insta test --all-features --review",
+    "snapshots:accept": "cargo insta test --all-features --accept",
     "lint": "pnpm lint:rust && pnpm lint:js",
     "lint:rust": "cargo clippy --all-features --all-targets",
     "lint:js": "eslint src --ext .ts --max-warnings=0",
