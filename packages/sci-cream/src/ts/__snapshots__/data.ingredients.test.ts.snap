@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 148  (non-alias: 134, independent: 130)
+"total: 153  (non-alias: 139, independent: 135)
 
             0% Milk
             1% Milk
@@ -133,7 +133,12 @@ exports[`Embedded spec entries 1`] = `
             Tara Gum
             Trehalose
             USDA 2% Reduced-Fat Evaporated Milk
+            USDA 2% Reduced-Fat Milk
+            USDA Fat-Free (Skim) Milk
             USDA Fat-Free Evaporated Milk
+            USDA Half and Half Cream
+            USDA Heavy Cream
+            USDA Light Cream
             USDA Sweetened Condensed Milk
             USDA Whole Evaporated Milk
             USDA Whole Milk

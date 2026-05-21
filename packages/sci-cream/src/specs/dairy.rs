@@ -232,7 +232,10 @@ pub(crate) mod tests {
     use crate::tests::util::{CompCeiling, assert_compositions_consistent, compare_compositions};
 
     use super::*;
-    use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
+    use crate::{
+        composition::CompKey, database::IngredientDatabase, error::Error, ingredient::Category,
+        resolution::IngredientGetter, specs::IngredientSpec,
+    };
 
     pub(crate) const ING_SPEC_DAIRY_SIMPLE_0_MILK_STR: &str = r#"{
       "name": "0% Milk",
@@ -703,7 +706,7 @@ pub(crate) mod tests {
         "energy": 61,
         "total_fat": { "grams": 3.2 },
         "saturated_fat": 1.86,
-        "trans_fat": 0,
+        "trans_fat": 0.112,
         "sugars": 4.81,
         "protein": 3.27
       }
@@ -718,7 +721,7 @@ pub(crate) mod tests {
                 energy: 61.0,
                 total_fat: Unit::Grams(3.2),
                 saturated_fat: 1.86,
-                trans_fat: 0.0,
+                trans_fat: 0.112,
                 sugars: 4.81,
                 protein: 3.27,
                 lactose_free: None,
@@ -733,7 +736,7 @@ pub(crate) mod tests {
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
-                        .fats(Fats::new().total(3.2).saturated(1.86).trans(0.0))
+                        .fats(Fats::new().total(3.2).saturated(1.86).trans(0.112))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(4.81)))
                         .proteins(3.27),
                 ),
@@ -1097,7 +1100,7 @@ pub(crate) mod tests {
         "energy": 92,
         "total_fat": { "grams": 1.96 },
         "saturated_fat": 1.214,
-        "trans_fat": 0,
+        "trans_fat": 0.069,
         "sugars": 11.15,
         "protein": 7.42
       }
@@ -1112,7 +1115,7 @@ pub(crate) mod tests {
                 energy: 92.0,
                 total_fat: Unit::Grams(1.96),
                 saturated_fat: 1.214,
-                trans_fat: 0.0,
+                trans_fat: 0.069,
                 sugars: 11.15,
                 protein: 7.42,
                 lactose_free: None,
@@ -1127,7 +1130,7 @@ pub(crate) mod tests {
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
-                        .fats(Fats::new().total(1.96).saturated(1.214))
+                        .fats(Fats::new().total(1.96).saturated(1.214).trans(0.069))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(11.15)))
                         .proteins(7.42),
                 ),
@@ -1179,7 +1182,7 @@ pub(crate) mod tests {
         "energy": 321,
         "total_fat": { "grams": 8.7 },
         "saturated_fat": 5.486,
-        "trans_fat": 0,
+        "trans_fat": 0.304,
         "sugars": 54.4,
         "protein": 7.91,
         "sucrose": 45
@@ -1195,7 +1198,7 @@ pub(crate) mod tests {
                 energy: 321.0,
                 total_fat: Unit::Grams(8.7),
                 saturated_fat: 5.486,
-                trans_fat: 0.0,
+                trans_fat: 0.304,
                 sugars: 54.4,
                 protein: 7.91,
                 lactose_free: None,
@@ -1211,7 +1214,7 @@ pub(crate) mod tests {
                 Solids::new()
                     .milk(
                         SolidsBreakdown::new()
-                            .fats(Fats::new().total(8.7).saturated(5.486))
+                            .fats(Fats::new().total(8.7).saturated(5.486).trans(0.304))
                             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(9.4)))
                             .proteins(7.91),
                     )
@@ -1368,14 +1371,22 @@ pub(crate) mod tests {
         CompKey::PACtotal,
     ];
 
+    /// Embedded database used to compare database specs not mirrored in this test file
+    static EMBEDDED_DB: LazyLock<IngredientDatabase> = LazyLock::new(IngredientDatabase::new_seeded_from_embedded_data);
+
+    /// Convert a tuple of source name and ingredient name to a tuple of source name and composition
+    fn source_str_to_comp(names: (&'static str, &str)) -> (&'static str, Composition) {
+        (names.0, EMBEDDED_DB.get_ingredient_by_name(names.1).unwrap().composition)
+    }
+
     #[test]
     fn compare_specs_whole_milk_simple_vs_usda_vs_sealtest() {
         let sources = [
-            ("Simple", &ING_SPEC_DAIRY_SIMPLE_3_25_MILK),
-            ("USDA", &ING_SPEC_DAIRY_LABEL_WHOLE_MILK_USDA),
-            ("Sealtest", &ING_SPEC_DAIRY_LABEL_3_25_MILK_SEALTEST),
+            ("Simple", "3.25% Milk"),
+            ("USDA", "USDA Whole Milk"),
+            ("Sealtest", "Sealtest 3.25% Milk"),
         ]
-        .map(|(name, spec)| (name, spec.spec.to_composition().unwrap()));
+        .map(source_str_to_comp);
 
         // Except for some exceptions noted below, most values are generally within a ~10% range.
         // The exceptions are:
@@ -1395,10 +1406,10 @@ pub(crate) mod tests {
     #[test]
     fn compare_specs_evaporated_milk_usda_vs_carnation() {
         let sources = [
-            ("USDA", &ING_SPEC_DAIRY_LABEL_2_EVAPORATED_MILK_USDA),
-            ("Carnation", &ING_SPEC_DAIRY_LABEL_2_EVAPORATED_MILK_CARNATION),
+            ("USDA", "USDA 2% Reduced-Fat Evaporated Milk"),
+            ("Carnation", "Carnation 2% Evaporated Partly Skimmed Milk"),
         ]
-        .map(|(name, spec)| (name, spec.spec.to_composition().unwrap()));
+        .map(source_str_to_comp);
 
         // @todo Many values differ by up to ~17%; need to investigate.
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &CompCeiling::new(17.0));
@@ -1408,10 +1419,10 @@ pub(crate) mod tests {
     #[test]
     fn compare_specs_sweetened_condensed_usda_vs_milk_eagle() {
         let sources = [
-            ("USDA", &ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_USDA),
-            ("Eagle Brand", &ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_EAGLE_BRAND),
+            ("USDA", "USDA Sweetened Condensed Milk"),
+            ("Eagle Brand", "Eagle Brand Original Sweetened Condensed Milk"),
         ]
-        .map(|(name, spec)| (name, spec.spec.to_composition().unwrap()));
+        .map(source_str_to_comp);
 
         // Protein content differs significantly (~36%): Eagle Brand CA label reports 1g per 19.5g
         // serving (= 5.13g/100g) vs. USDA data at 7.91g/100g. All protein-derived fields
