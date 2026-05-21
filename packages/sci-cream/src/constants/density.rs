@@ -33,6 +33,13 @@ pub const CREAM_40: f64 = 0.96;
 #[doc = include_str!("../../docs/references/index/49.md")]
 pub const EVAPORATED_MILK: f64 = 1.075;
 
+/// Density (g/mL) of sweetened condensed milk
+///
+/// (Rodrigues, 2017)[^50], (Moro, 1985)[^51]
+#[doc = include_str!("../../docs/references/index/50.md")]
+#[doc = include_str!("../../docs/references/index/51.md")]
+pub const SWEETENED_CONDENSED_MILK: f64 = 1.3;
+
 /// Convert dairy volume in milliliters to grams based on fat content percentage
 ///
 /// Interpolates density between known values for milk/cream of different fat contents;

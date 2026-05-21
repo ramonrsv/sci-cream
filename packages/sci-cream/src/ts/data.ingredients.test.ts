@@ -30,9 +30,9 @@ import {
 // `IngredientSpec` objects, so this is not a problem in practice.
 
 // Update these number of the data assets change
-const SPEC_ENTRY_COUNT = 143;
-const SPEC_ENTRY_NON_ALIAS_COUNT = 129;
-const SPEC_ENTRY_INDEPENDENT_COUNT = 125;
+const SPEC_ENTRY_COUNT = 147;
+const SPEC_ENTRY_NON_ALIAS_COUNT = 133;
+const SPEC_ENTRY_INDEPENDENT_COUNT = 129;
 
 // --- TS-side spec helpers ---
 

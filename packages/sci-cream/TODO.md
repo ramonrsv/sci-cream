@@ -9,6 +9,7 @@
 - [ ] Consider whether to add `CompKey` for all polyols and artificial sweeteners.
 - [ ] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
+- [ ] Add milk and cream ingredients based on USDA, and investigate protein content discrepancies.
 
 ## Up Next
 

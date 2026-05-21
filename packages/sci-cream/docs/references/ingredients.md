@@ -35,3 +35,5 @@
 [^115]: Splenda Sweetener Packets. (2026). In _Splenda_. <https://www.splenda.com/product/splenda-sweetener-packets/>
 
 [^116]: Perfected Guar Gum. (2026). In _Modernist Pantry_. <https://modernistpantry.com/products/perfected-guar-gum.html>
+
+[^117]: Sweetened condensed milk. (2026). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/2758990/nutrients>

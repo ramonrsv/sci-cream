@@ -99,3 +99,8 @@
 [^48]: Nabors, Lyn O'Brien. (2012). _Alternative Sweeteners_ (4th ed.). CRC Press
 
 [^49]: Lewis, Michael. (2023). _Food Process Engineering Principles and Data_. Elsevier
+
+[^50]: Rodrigues, et al. (2017). _Characterization of physicochemical composition, microbiology, sensory evaluation
+and microscopical attributes of sweetened condensed milk_. Food Science and Technology. <https://www.researchgate.net/publication/320627963_Characterization_of_physicochemical_composition_microbiology_sensory_evaluation_and_microscopical_attributes_of_sweetened_condensed_milk>
+
+[^51]: Moro, et al.(1985). _Total Solids and Density Measurements of Dulce de Leche, a Typical Argentine Dairy Product_. Dairy Foods Research Papers.
