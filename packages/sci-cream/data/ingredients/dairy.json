@@ -18,16 +18,6 @@
   { "alias": "Whipping Cream", "for": "35% Cream" },
   { "alias": "Heavy Cream", "for": "36% Cream" },
   {
-    "name": "Skimmed Milk Powder",
-    "category": "Dairy",
-    "DairySimpleSpec": { "fat": 0, "msnf": 97 }
-  },
-  {
-    "name": "Whole Milk Powder",
-    "category": "Dairy",
-    "DairySimpleSpec": { "fat": 27, "msnf": 70 }
-  },
-  {
     "name": "Lactose-Free 0% Milk",
     "category": "Dairy",
     "DairySimpleSpec": { "fat": 0, "lactose_free": true }
@@ -82,6 +72,16 @@
   { "alias": "Lactose-Free Half and Half", "for": "Lactose-Free 10% Cream" },
   { "alias": "Lactose-Free Table Cream", "for": "Lactose-Free 18% Cream" },
   { "alias": "Lactose-Free Whipping Cream", "for": "Lactose-Free 35% Cream" },
+  {
+    "name": "Skimmed Milk Powder",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 0, "msnf": 97 }
+  },
+  {
+    "name": "Whole Milk Powder",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 27, "msnf": 70 }
+  },
   {
     "name": "USDA Fat-Free (Skim) Milk",
     "category": "Dairy",
@@ -294,6 +294,150 @@
     "comments": "From nutrition facts table: https://fairlife.com/ultra-filtered-milk/whole-milk/"
   },
   {
+    "name": "USDA Fat-Free Evaporated Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 78,
+      "total_fat": { "grams": 0.2 },
+      "saturated_fat": 0.121,
+      "trans_fat": 0.007,
+      "sugars": 11.35,
+      "protein": 7.55
+    },
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, fat free (skim): https://fdc.nal.usda.gov/food-details/2705401/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
+  },
+  {
+    "name": "USDA 2% Reduced-Fat Evaporated Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 92,
+      "total_fat": { "grams": 1.96 },
+      "saturated_fat": 1.214,
+      "trans_fat": 0.069,
+      "sugars": 11.15,
+      "protein": 7.42
+    },
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, reduced fat (2%): https://fdc.nal.usda.gov/food-details/2705400/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
+  },
+  {
+    "name": "USDA Whole Evaporated Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 134,
+      "total_fat": { "grams": 7.56 },
+      "saturated_fat": 4.591,
+      "trans_fat": 0.265,
+      "sugars": 10.04,
+      "protein": 6.81
+    },
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, whole: https://fdc.nal.usda.gov/food-details/2705399/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
+  },
+  {
+    "name": "Carnation Fat Free Evaporated Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 16.125 },
+      "energy": 10,
+      "total_fat": { "grams": 0 },
+      "saturated_fat": 0,
+      "trans_fat": 0,
+      "sugars": 2,
+      "protein": 1
+    },
+    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/fat-free-skim. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]."
+  },
+  {
+    "name": "Carnation 2% Evaporated Partly Skimmed Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 16.125 },
+      "energy": 15,
+      "total_fat": { "percent": 2 },
+      "saturated_fat": 0.2,
+      "trans_fat": 0,
+      "sugars": 1.5,
+      "protein": 1
+    },
+    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/2-partly-skimmed. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]. The label lists 2g of carbohydrates and 1g of sugars. There shouldn't be any other carbohydrates other than lactose (there are trace amounts), so we take the middle value of 1.5g sugars - this is consistent with the standard ~60/40 ratio of lactose to proteins in MSNF - [constants::composition::STD_LACTOSE_IN_MSNF], [constants::composition::STD_PROTEIN_IN_MSNF]."
+  },
+  {
+    "name": "Carnation Evaporated Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 16.125 },
+      "energy": 20,
+      "total_fat": { "grams": 1 },
+      "saturated_fat": 0.5,
+      "trans_fat": 0,
+      "sugars": 1.5,
+      "protein": 1
+    },
+    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/evaporated-milk. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]. The label lists 2g of carbohydrates and 1g of sugars. There shouldn't be any other carbohydrates other than lactose (there are trace amounts), so we take the middle value of 1.5g sugars - this is consistent with the standard ~60/40 ratio of lactose to proteins in MSNF - [constants::composition::STD_LACTOSE_IN_MSNF], [constants::composition::STD_PROTEIN_IN_MSNF]."
+  },
+  {
+    "name": "USDA Sweetened Condensed Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 321,
+      "total_fat": { "grams": 8.7 },
+      "saturated_fat": 5.486,
+      "trans_fat": 0.304,
+      "sugars": 54.4,
+      "protein": 7.91,
+      "sucrose": 45
+    },
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, condensed, sweetened: https://fdc.nal.usda.gov/food-details/2705402/nutrients. Lactose amount from USDA FoodData Central - Foundation - Sweetened condensed milk: https://fdc.nal.usda.gov/food-details/2758990/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
+  },
+  {
+    "name": "Eagle Brand Original Sweetened Condensed Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 19.5 },
+      "energy": 70,
+      "total_fat": { "grams": 1.5 },
+      "saturated_fat": 1.0,
+      "trans_fat": 0,
+      "sugars": 11,
+      "protein": 1,
+      "sucrose": 8.97
+    },
+    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/original. Serving size is 15ml at 1.3 g/ml [constants::density::SWEETENED_CONDENSED_MILK]. The label does not specify lactose content, so it is assumed as 46% of total weight (Sweetened condensed milk, 2026)[^117], (Moros, 1985)[^51]."
+  },
+  {
+    "name": "Eagle Brand Low Fat Sweetened Condensed Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 19.5 },
+      "energy": 70,
+      "total_fat": { "grams": 1 },
+      "saturated_fat": 0.5,
+      "trans_fat": 0,
+      "sugars": 12,
+      "protein": 2,
+      "sucrose": 8.97
+    },
+    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/low-fat. Serving size is 15ml at 1.3 g/ml [constants::density::SWEETENED_CONDENSED_MILK]. The label does not specify lactose content, so it is assumed as 46% of total weight (Sweetened condensed milk, 2026)[^117], (Moros, 1985)[^51]."
+  },
+  {
+    "name": "Eagle Brand Dulce de Leche Caramel Flavoured Sauce",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 19.5 },
+      "energy": 70,
+      "total_fat": { "grams": 1.5 },
+      "saturated_fat": 0.5,
+      "trans_fat": 0,
+      "sugars": 10,
+      "protein": 2,
+      "sucrose": 8.2
+    },
+    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/dulce-de-leche. Serving size is 15ml at 1.3 g/ml [constants::density::SWEETENED_CONDENSED_MILK]. The label specifies 11g of carbohydrates and 10g of sugars, which is expected since some sugars should have caramelized into more complex carbohydrates. We just leave sugars as 10g and ignore the 1g. The label does not specify lactose content, so it is assumed as 82% of total sugars (Sweetened condensed milk, 2026)[^117], (Moros, 1985)[^51]."
+  },
+  {
     "name": "Medallion Skim Milk Powder",
     "category": "Dairy",
     "DairyLabelSpec": {
@@ -378,149 +522,5 @@
     "comments": "From nutrition facts table: https://ca.iherb.com/pr/california-gold-nutrition-sport-micellar-casein-unflavored-slow-absorption-16-oz-454-g/71028"
   },
   { "alias": "Whey Isolate", "for": "Leanfit Sport Whey Isolate" },
-  { "alias": "Casein", "for": "California Gold Nutrition, Sport, Micellar Casein" },
-  {
-    "name": "Carnation Fat Free Evaporated Milk",
-    "category": "Dairy",
-    "DairyLabelSpec": {
-      "serving_size": { "grams": 16.125 },
-      "energy": 10,
-      "total_fat": { "grams": 0 },
-      "saturated_fat": 0,
-      "trans_fat": 0,
-      "sugars": 2,
-      "protein": 1
-    },
-    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/fat-free-skim. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]."
-  },
-  {
-    "name": "Carnation 2% Evaporated Partly Skimmed Milk",
-    "category": "Dairy",
-    "DairyLabelSpec": {
-      "serving_size": { "grams": 16.125 },
-      "energy": 15,
-      "total_fat": { "percent": 2 },
-      "saturated_fat": 0.2,
-      "trans_fat": 0,
-      "sugars": 1.5,
-      "protein": 1
-    },
-    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/2-partly-skimmed. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]. The label lists 2g of carbohydrates and 1g of sugars. There shouldn't be any other carbohydrates other than lactose (there are trace amounts), so we take the middle value of 1.5g sugars - this is consistent with the standard ~60/40 ratio of lactose to proteins in MSNF - [constants::composition::STD_LACTOSE_IN_MSNF], [constants::composition::STD_PROTEIN_IN_MSNF]."
-  },
-  {
-    "name": "Carnation Evaporated Milk",
-    "category": "Dairy",
-    "DairyLabelSpec": {
-      "serving_size": { "grams": 16.125 },
-      "energy": 20,
-      "total_fat": { "grams": 1 },
-      "saturated_fat": 0.5,
-      "trans_fat": 0,
-      "sugars": 1.5,
-      "protein": 1
-    },
-    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/evaporated-milk. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]. The label lists 2g of carbohydrates and 1g of sugars. There shouldn't be any other carbohydrates other than lactose (there are trace amounts), so we take the middle value of 1.5g sugars - this is consistent with the standard ~60/40 ratio of lactose to proteins in MSNF - [constants::composition::STD_LACTOSE_IN_MSNF], [constants::composition::STD_PROTEIN_IN_MSNF]."
-  },
-  {
-    "name": "USDA Fat-Free Evaporated Milk",
-    "category": "Dairy",
-    "DairyLabelSpec": {
-      "serving_size": { "grams": 100 },
-      "energy": 78,
-      "total_fat": { "grams": 0.2 },
-      "saturated_fat": 0.121,
-      "trans_fat": 0.007,
-      "sugars": 11.35,
-      "protein": 7.55
-    },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, fat free (skim): https://fdc.nal.usda.gov/food-details/2705401/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
-  },
-  {
-    "name": "USDA 2% Reduced-Fat Evaporated Milk",
-    "category": "Dairy",
-    "DairyLabelSpec": {
-      "serving_size": { "grams": 100 },
-      "energy": 92,
-      "total_fat": { "grams": 1.96 },
-      "saturated_fat": 1.214,
-      "trans_fat": 0.069,
-      "sugars": 11.15,
-      "protein": 7.42
-    },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, reduced fat (2%): https://fdc.nal.usda.gov/food-details/2705400/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
-  },
-  {
-    "name": "USDA Whole Evaporated Milk",
-    "category": "Dairy",
-    "DairyLabelSpec": {
-      "serving_size": { "grams": 100 },
-      "energy": 134,
-      "total_fat": { "grams": 7.56 },
-      "saturated_fat": 4.591,
-      "trans_fat": 0.265,
-      "sugars": 10.04,
-      "protein": 6.81
-    },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, whole: https://fdc.nal.usda.gov/food-details/2705399/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
-  },
-  {
-    "name": "USDA Sweetened Condensed Milk",
-    "category": "Dairy",
-    "DairyLabelSpec": {
-      "serving_size": { "grams": 100 },
-      "energy": 321,
-      "total_fat": { "grams": 8.7 },
-      "saturated_fat": 5.486,
-      "trans_fat": 0.304,
-      "sugars": 54.4,
-      "protein": 7.91,
-      "sucrose": 45
-    },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, condensed, sweetened: https://fdc.nal.usda.gov/food-details/2705402/nutrients. Lactose amount from USDA FoodData Central - Foundation - Sweetened condensed milk: https://fdc.nal.usda.gov/food-details/2758990/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
-  },
-  {
-    "name": "Eagle Brand Original Sweetened Condensed Milk",
-    "category": "Dairy",
-    "DairyLabelSpec": {
-      "serving_size": { "grams": 19.5 },
-      "energy": 70,
-      "total_fat": { "grams": 1.5 },
-      "saturated_fat": 1.0,
-      "trans_fat": 0,
-      "sugars": 11,
-      "protein": 1,
-      "sucrose": 8.97
-    },
-    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/original. Serving size is 15ml at 1.3 g/ml [constants::density::SWEETENED_CONDENSED_MILK]. The label does not specify lactose content, so it is assumed as 46% of total weight (Sweetened condensed milk, 2026)[^117], (Moros, 1985)[^51]."
-  },
-  {
-    "name": "Eagle Brand Low Fat Sweetened Condensed Milk",
-    "category": "Dairy",
-    "DairyLabelSpec": {
-      "serving_size": { "grams": 19.5 },
-      "energy": 70,
-      "total_fat": { "grams": 1 },
-      "saturated_fat": 0.5,
-      "trans_fat": 0,
-      "sugars": 12,
-      "protein": 2,
-      "sucrose": 8.97
-    },
-    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/low-fat. Serving size is 15ml at 1.3 g/ml [constants::density::SWEETENED_CONDENSED_MILK]. The label does not specify lactose content, so it is assumed as 46% of total weight (Sweetened condensed milk, 2026)[^117], (Moros, 1985)[^51]."
-  },
-  {
-    "name": "Eagle Brand Dulce de Leche Caramel Flavoured Sauce",
-    "category": "Dairy",
-    "DairyLabelSpec": {
-      "serving_size": { "grams": 19.5 },
-      "energy": 70,
-      "total_fat": { "grams": 1.5 },
-      "saturated_fat": 0.5,
-      "trans_fat": 0,
-      "sugars": 10,
-      "protein": 2,
-      "sucrose": 8.2
-    },
-    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/dulce-de-leche. Serving size is 15ml at 1.3 g/ml [constants::density::SWEETENED_CONDENSED_MILK]. The label specifies 11g of carbohydrates and 10g of sugars, which is expected since some sugars should have caramelized into more complex carbohydrates. We just leave sugars as 10g and ignore the 1g. The label does not specify lactose content, so it is assumed as 82% of total sugars (Sweetened condensed milk, 2026)[^117], (Moros, 1985)[^51]."
-  }
+  { "alias": "Casein", "for": "California Gold Nutrition, Sport, Micellar Casein" }
 ]
