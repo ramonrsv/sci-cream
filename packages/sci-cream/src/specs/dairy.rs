@@ -933,6 +933,324 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 7.4983);
     }
 
+    // https://www.medallionmilk.com/products/skim-milk-powder-500g-bag
+    pub(crate) const ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_MEDALLION_STR: &str = r#"{
+      "name": "Medallion Skim Milk Powder",
+      "category": "Dairy",
+      "DairyLabelSpec": {
+        "serving_size": { "grams": 25 },
+        "energy": 90,
+        "total_fat": { "grams": 0 },
+        "saturated_fat": 0,
+        "trans_fat": 0,
+        "sugars": 12.5,
+        "protein": 9
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_MEDALLION: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Medallion Skim Milk Powder".to_string(),
+            category: Category::Dairy,
+            spec: DairyLabelSpec {
+                serving_size: Unit::Grams(25.0),
+                energy: 90.0,
+                total_fat: Unit::Grams(0.0),
+                saturated_fat: 0.0,
+                trans_fat: 0.0,
+                sugars: 12.5,
+                protein: 9.0,
+                lactose_free: None,
+                sucrose: None,
+            }
+            .into(),
+        });
+
+    pub(crate) static COMP_SKIM_MILK_POWDER_MEDALLION: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(360.0)
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(0.0))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(50.0)))
+                        .proteins(36.0),
+                ),
+            )
+            .pod(8.0)
+            .pac(PAC::new().sugars(50.0).msnf_ws_salts(31.5967))
+    });
+
+    #[test]
+    fn to_composition_dairy_label_spec_skim_milk_powder_medallion() {
+        let comp = ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_MEDALLION
+            .spec
+            .to_composition()
+            .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 360.0);
+
+        assert_eq!(comp.get(CompKey::MilkFat), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 50.0);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 86.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 36.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 36.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 86.0);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 36.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 86.0);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 14.0);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 8.0);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 50.0);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 31.5967);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 81.5967);
+    }
+
+    // https://www.medallionmilk.com/products/whole-milk-powder-500g-bag
+    pub(crate) const ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_MEDALLION_STR: &str = r#"{
+      "name": "Medallion Whole Milk Powder",
+      "category": "Dairy",
+      "DairyLabelSpec": {
+        "serving_size": { "grams": 30 },
+        "energy": 150,
+        "total_fat": { "grams": 8 },
+        "saturated_fat": 5,
+        "trans_fat": 0.25,
+        "sugars": 11,
+        "protein": 8
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_MEDALLION: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Medallion Whole Milk Powder".to_string(),
+            category: Category::Dairy,
+            spec: DairyLabelSpec {
+                serving_size: Unit::Grams(30.0),
+                energy: 150.0,
+                total_fat: Unit::Grams(8.0),
+                saturated_fat: 5.0,
+                trans_fat: 0.25, // estimated ~3% of total fat
+                sugars: 11.0,
+                protein: 8.0,
+                lactose_free: None,
+                sucrose: None,
+            }
+            .into(),
+        });
+
+    pub(crate) static COMP_WHOLE_MILK_POWDER_MEDALLION: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(500.0)
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(26.6667).saturated(16.6667).trans(0.8333))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(36.6667)))
+                        .proteins(26.6667),
+                ),
+            )
+            .pod(5.8667)
+            .pac(PAC::new().sugars(36.6667).msnf_ws_salts(23.2689))
+    });
+
+    #[test]
+    fn to_composition_dairy_label_spec_whole_milk_powder_medallion() {
+        let comp = ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_MEDALLION
+            .spec
+            .to_composition()
+            .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 500.0);
+
+        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 26.6667);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 36.6667);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 63.3333);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 26.6667);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 26.6667);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 90.0);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 26.6667);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 90.0);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 10.0);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 5.8667);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 36.6667);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 23.2689);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 59.9356);
+    }
+
+    pub(crate) const ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_THELAND_STR: &str = r#"{
+      "name": "Theland Skim Milk Powder",
+      "category": "Dairy",
+      "DairyLabelSpec": {
+        "serving_size": { "grams": 25 },
+        "energy": 92,
+        "total_fat": { "grams": 0.3 },
+        "saturated_fat": 0,
+        "trans_fat": 0,
+        "sugars": 13.3,
+        "protein": 8.7
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_THELAND: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Theland Skim Milk Powder".to_string(),
+            category: Category::Dairy,
+            spec: DairyLabelSpec {
+                serving_size: Unit::Grams(25.0),
+                energy: 92.0,
+                total_fat: Unit::Grams(0.3),
+                saturated_fat: 0.0,
+                trans_fat: 0.0,
+                sugars: 13.3,
+                protein: 8.7,
+                lactose_free: None,
+                sucrose: None,
+            }
+            .into(),
+        });
+
+    pub(crate) static COMP_SKIM_MILK_POWDER_THELAND: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(368.0)
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(1.2))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(53.2)))
+                        .proteins(34.8),
+                ),
+            )
+            .pod(8.512)
+            .pac(PAC::new().sugars(53.2).msnf_ws_salts(32.3316))
+    });
+
+    #[test]
+    fn to_composition_dairy_label_spec_skim_milk_powder_theland() {
+        let comp = ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_THELAND
+            .spec
+            .to_composition()
+            .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 368.0);
+
+        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 1.2);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 53.2);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 88.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 34.8);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 34.8);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 89.2);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 34.8);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 89.2);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 10.8);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 8.512);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 53.2);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 32.3316);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 85.5316);
+    }
+
+    pub(crate) const ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_THELAND_STR: &str = r#"{
+      "name": "Theland Whole Milk Powder",
+      "category": "Dairy",
+      "DairyLabelSpec": {
+        "serving_size": { "grams": 25 },
+        "energy": 131,
+        "total_fat": { "grams": 7.4 },
+        "saturated_fat": 4.81,
+        "trans_fat": 0.26,
+        "sugars": 9.8,
+        "protein": 6.3
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_THELAND: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Theland Whole Milk Powder".to_string(),
+            category: Category::Dairy,
+            spec: DairyLabelSpec {
+                serving_size: Unit::Grams(25.0),
+                energy: 131.0,
+                total_fat: Unit::Grams(7.4),
+                saturated_fat: 4.81, // estimated ~65% of total fat
+                trans_fat: 0.26,     // estimated ~3.5% of total fat
+                sugars: 9.8,
+                protein: 6.3,
+                lactose_free: None,
+                sucrose: None,
+            }
+            .into(),
+        });
+
+    pub(crate) static COMP_WHOLE_MILK_POWDER_THELAND: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(524.0)
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(29.6).saturated(19.24).trans(1.04))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(39.2)))
+                        .proteins(25.2),
+                ),
+            )
+            .pod(6.272)
+            .pac(PAC::new().sugars(39.2).msnf_ws_salts(23.6608))
+    });
+
+    #[test]
+    fn to_composition_dairy_label_spec_whole_milk_powder_theland() {
+        let comp = ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_THELAND
+            .spec
+            .to_composition()
+            .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 524.0);
+
+        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 29.6);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 39.2);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 64.4);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 25.2);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 25.2);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 94.0);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 25.2);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 94.0);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 6.0);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 6.272);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 39.2);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 23.6608);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 62.8608);
+    }
+
     pub(crate) const ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE_STR: &str = r#"{
       "name": "Leanfit Sport Whey Isolate",
       "category": "Dairy",
@@ -1593,6 +1911,68 @@ pub(crate) mod tests {
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
     }
 
+    #[test]
+    fn compare_specs_skim_milk_powder_simple_vs_medallion_vs_theland() {
+        let sources = [
+            ("Simple", "Skimmed Milk Powder"),
+            ("Medallion", "Medallion Skim Milk Powder"),
+            ("Theland", "Theland Skim Milk Powder"),
+        ]
+        .map(source_str_to_comp);
+
+        // The Simple spec is an idealized model (3% water, the rest milk solids-non-fat); the
+        // Medallion and Theland labels resolve to ~14% and ~11% water because coarse 25g servings
+        // round the protein and sugar values. The tiny absolute water content makes its relative
+        // diff degenerate, and the lower total solids cascades into every solids-derived field.
+        // MilkFat hits 100% (Simple vs Theland) because the Simple spec defines skim fat as
+        // exactly 0 while Theland's label reports 0.3g/serving — a near-zero value degenerates the
+        // relative diff. MilkSNFS diverges most where a label's protein-to-lactose split differs
+        // from the idealized spec.
+        // The exceptions are:
+        //    - MilkFat      100.00%  (Simple vs Theland)
+        //    - MSNF          11.34%  (Simple vs Medallion)
+        //    - MilkSNFS      21.15%  (Simple vs Theland)
+        //    - MilkSolids    11.34%  (Simple vs Medallion)
+        //    - TotalSolids   11.34%  (Simple vs Medallion)
+        //    - Water         78.57%  (Simple vs Medallion)
+        //    - PACmlk        11.34%  (Simple vs Medallion)
+        let ceiling = CompCeiling::new(10.0)
+            .with(CompKey::MilkFat, 100.0)
+            .with(CompKey::MSNF, 12.0)
+            .with(CompKey::MilkSNFS, 22.0)
+            .with(CompKey::MilkSolids, 12.0)
+            .with(CompKey::TotalSolids, 12.0)
+            .with(CompKey::Water, 79.0)
+            .with(CompKey::PACmlk, 12.0);
+
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+    }
+
+    #[test]
+    fn compare_specs_whole_milk_powder_simple_vs_medallion_vs_theland() {
+        let sources = [
+            ("Simple", "Whole Milk Powder"),
+            ("Medallion", "Medallion Whole Milk Powder"),
+            ("Theland", "Theland Whole Milk Powder"),
+        ]
+        .map(source_str_to_comp);
+
+        // As with skim powder, the Simple spec models 3% water while the Medallion and Theland
+        // labels resolve to ~10% and ~6% water; the small absolute water content makes its
+        // relative diff degenerate. MilkSNFS diverges most because each label's protein-to-lactose
+        // split differs from the idealized spec.
+        // The exceptions are:
+        //    - MilkSNFS      20.88%  (Simple vs Theland)
+        //    - Water         70.00%  (Simple vs Medallion)
+        let ceiling = CompCeiling::new(10.0)
+            .with(CompKey::MilkSNFS, 21.0)
+            .with(CompKey::Water, 70.0);
+
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+    }
+
     pub(crate) static INGREDIENT_ASSETS_TABLE_DAIRY: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {
             vec![
@@ -1629,6 +2009,26 @@ pub(crate) mod tests {
                     ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE_STR,
                     ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE.clone(),
                     Some(*COMP_WHOLE_ULTRA_FILTERED_LACTOSE_FREE),
+                ),
+                (
+                    ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_MEDALLION_STR,
+                    ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_MEDALLION.clone(),
+                    Some(*COMP_SKIM_MILK_POWDER_MEDALLION),
+                ),
+                (
+                    ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_MEDALLION_STR,
+                    ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_MEDALLION.clone(),
+                    Some(*COMP_WHOLE_MILK_POWDER_MEDALLION),
+                ),
+                (
+                    ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_THELAND_STR,
+                    ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_THELAND.clone(),
+                    Some(*COMP_SKIM_MILK_POWDER_THELAND),
+                ),
+                (
+                    ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_THELAND_STR,
+                    ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_THELAND.clone(),
+                    Some(*COMP_WHOLE_MILK_POWDER_THELAND),
                 ),
                 (
                     ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE_STR,

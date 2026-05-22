@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 157  (non-alias: 139, independent: 135)
+total: 161  (non-alias: 143, independent: 139)
 
             0% Milk
             1% Milk
@@ -104,6 +104,8 @@ total: 157  (non-alias: 139, independent: 135)
             Maltose
             Maple Syrup
             Marsala Wine
+            Medallion Skim Milk Powder
+            Medallion Whole Milk Powder
             Navel Orange
             Oligofructose Powder
             Pectin
@@ -136,6 +138,8 @@ total: 157  (non-alias: 139, independent: 135)
 [alias]     Table Cream
             Tapioca Starch
             Tara Gum
+            Theland Skim Milk Powder
+            Theland Whole Milk Powder
             Trehalose
             USDA 2% Reduced-Fat Evaporated Milk
             USDA 2% Reduced-Fat Milk

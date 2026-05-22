@@ -294,6 +294,62 @@
     "comments": "From nutrition facts table: https://fairlife.com/ultra-filtered-milk/whole-milk/"
   },
   {
+    "name": "Medallion Skim Milk Powder",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 25 },
+      "energy": 90,
+      "total_fat": { "grams": 0 },
+      "saturated_fat": 0,
+      "trans_fat": 0,
+      "sugars": 12.5,
+      "protein": 9
+    },
+    "comments": "From nutrition facts table: https://www.medallionmilk.com/products/skim-milk-powder-500g-bag. The label lists 13g of carbohydrates and 12g of sugars. There shouldn't be any other carbohydrates other than lactose (there are trace amounts), so we take the middle value of 12.5g sugars - this is consistent with the standard ~60/40 ratio of lactose to proteins in MSNF - [constants::composition::STD_LACTOSE_IN_MSNF], [constants::composition::STD_PROTEIN_IN_MSNF]."
+  },
+  {
+    "name": "Medallion Whole Milk Powder",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 30 },
+      "energy": 150,
+      "total_fat": { "grams": 8 },
+      "saturated_fat": 5,
+      "trans_fat": 0.25,
+      "sugars": 11,
+      "protein": 8
+    },
+    "comments": "From nutrition facts table: https://www.medallionmilk.com/products/whole-milk-powder-500g-bag. Trans fats are estimated as ~3.1% of total fat, consistent with [constants::composition::STD_TRANS_FAT_IN_MILK_FAT] and other similar product labels."
+  },
+  {
+    "name": "Theland Skim Milk Powder",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 25 },
+      "energy": 92,
+      "total_fat": { "grams": 0.3 },
+      "saturated_fat": 0,
+      "trans_fat": 0,
+      "sugars": 13.3,
+      "protein": 8.7
+    },
+    "comments": "From nutrition facts table (could not find a link - it's sold in Asian markets, but was able to use the packaging label from a bag I had on hand)."
+  },
+  {
+    "name": "Theland Whole Milk Powder",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 25 },
+      "energy": 131,
+      "total_fat": { "grams": 7.4 },
+      "saturated_fat": 4.81,
+      "trans_fat": 0.26,
+      "sugars": 9.8,
+      "protein": 6.3
+    },
+    "comments": "From nutrition facts table (could not find a link - it's sold in Asian markets, but was able to use the packaging label from a bag I had on hand). Saturated and trans fats are estimated as ~65% and ~3.5% of total fat respectively, consistent with [constants::composition::STD_SATURATED_FAT_IN_MILK_FAT], [constants::composition::STD_TRANS_FAT_IN_MILK_FAT] and other similar product labels."
+  },
+  {
     "name": "Leanfit Sport Whey Isolate",
     "category": "Dairy",
     "DairyLabelSpec": {
