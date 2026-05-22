@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 153  (non-alias: 139, independent: 135)
+"total: 157  (non-alias: 139, independent: 135)
 
             0% Milk
             1% Milk
@@ -65,6 +65,7 @@ exports[`Embedded spec entries 1`] = `
             Guar Gum
             HFCS 42
             HP Inulin Powder
+[alias]     Half and Half
             Hazelnut
 [alias]     Heavy Cream
             Honey
@@ -85,7 +86,9 @@ exports[`Embedded spec entries 1`] = `
             Lactose-Free 3.5% Milk
             Lactose-Free 35% Cream
             Lactose-Free 5% Cream
+[alias]     Lactose-Free Half and Half
 [alias]     Lactose-Free Skim Milk
+[alias]     Lactose-Free Table Cream
 [alias]     Lactose-Free Whipping Cream
 [alias]     Lactose-Free Whole Milk
             Lambda Carrageenan
@@ -129,6 +132,7 @@ exports[`Embedded spec entries 1`] = `
             Sucrose
             Sugar Twin
             SweetLeaf Stevia
+[alias]     Table Cream
             Tapioca Starch
             Tara Gum
             Trehalose

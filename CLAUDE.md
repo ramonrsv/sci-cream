@@ -134,6 +134,19 @@ JSON files in `packages/sci-cream/data/ingredients/<category>.json` are the sour
 embedded data. After editing, rebuild WASM (`pnpm build:package`) and re-run `pnpm seed-db` in the
 app to refresh the database copy.
 
+#### Default vs. reference dairy ingredients
+
+The brand- and country-neutral `DairySimpleSpec` milk/cream entries (`0% Milk`, `3.25% Milk`,
+`35% Cream`, …) are the canonical **defaults**, surfaced through the friendly aliases (`Whole Milk`,
+`Half and Half`, `Whipping Cream`, …). They are preferred as defaults because they span the full fat
+ladder (only the Simple set covers every rung), model milk salts as a distinct MSNF component, and
+stay consistent with the crate's own composition model.
+
+The named-source `DairyLabelSpec` entries (`USDA …`, `Sealtest …`, `Carnation …`, `Eagle Brand …`)
+are real-world **reference data**, not defaults. They back the cross-source `compare_specs_*` tests
+in `src/specs/dairy.rs` — which treat the Simple specs as the baseline — and are selectable
+alternatives. These values can be coarsely label-rounded and should not be treated as canonical.
+
 ### TypeScript package (`packages/sci-cream/src/ts/`)
 
 Thin wrappers around the generated WASM bindings; built output lands in `packages/sci-cream/wasm/`

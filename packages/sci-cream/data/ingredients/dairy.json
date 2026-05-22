@@ -13,6 +13,8 @@
   { "name": "40% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 40 } },
   { "alias": "Skim Milk", "for": "0% Milk" },
   { "alias": "Whole Milk", "for": "3.25% Milk" },
+  { "alias": "Half and Half", "for": "10% Cream" },
+  { "alias": "Table Cream", "for": "18% Cream" },
   { "alias": "Whipping Cream", "for": "35% Cream" },
   { "alias": "Heavy Cream", "for": "36% Cream" },
   {
@@ -77,6 +79,8 @@
   },
   { "alias": "Lactose-Free Skim Milk", "for": "Lactose-Free 0% Milk" },
   { "alias": "Lactose-Free Whole Milk", "for": "Lactose-Free 3.25% Milk" },
+  { "alias": "Lactose-Free Half and Half", "for": "Lactose-Free 10% Cream" },
+  { "alias": "Lactose-Free Table Cream", "for": "Lactose-Free 18% Cream" },
   { "alias": "Lactose-Free Whipping Cream", "for": "Lactose-Free 35% Cream" },
   {
     "name": "USDA Fat-Free (Skim) Milk",
