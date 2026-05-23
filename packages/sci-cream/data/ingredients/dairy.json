@@ -90,11 +90,10 @@
       "energy": 34,
       "total_fat": { "grams": 0.08 },
       "saturated_fat": 0.049,
-      "trans_fat": 0.003,
       "sugars": 5.05,
       "protein": 3.43
     },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, fat free (skim): https://fdc.nal.usda.gov/food-details/2705388/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, fat free (skim): https://fdc.nal.usda.gov/food-details/2705388/nutrients"
   },
   {
     "name": "USDA 2% Reduced-Fat Milk",
@@ -104,11 +103,10 @@
       "energy": 50,
       "total_fat": { "grams": 1.9 },
       "saturated_fat": 1.11,
-      "trans_fat": 0.067,
       "sugars": 4.89,
       "protein": 3.36
     },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, reduced fat (2%): https://fdc.nal.usda.gov/food-details/2705386/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, reduced fat (2%): https://fdc.nal.usda.gov/food-details/2705386/nutrients"
   },
   {
     "name": "USDA Whole Milk",
@@ -118,11 +116,10 @@
       "energy": 61,
       "total_fat": { "grams": 3.2 },
       "saturated_fat": 1.86,
-      "trans_fat": 0.112,
       "sugars": 4.81,
       "protein": 3.27
     },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, whole: https://fdc.nal.usda.gov/food-details/2705385/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, whole: https://fdc.nal.usda.gov/food-details/2705385/nutrients"
   },
   {
     "name": "USDA Half and Half Cream",
@@ -132,11 +129,10 @@
       "energy": 131,
       "total_fat": { "grams": 11.5 },
       "saturated_fat": 7.03,
-      "trans_fat": 0.403,
       "sugars": 4.13,
       "protein": 3.13
     },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Cream, half and half: https://fdc.nal.usda.gov/food-details/2705594/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Cream, half and half: https://fdc.nal.usda.gov/food-details/2705594/nutrients"
   },
   {
     "name": "USDA Light Cream",
@@ -146,11 +142,10 @@
       "energy": 195,
       "total_fat": { "grams": 19.1 },
       "saturated_fat": 10.2,
-      "trans_fat": 0.669,
       "sugars": 3.67,
       "protein": 2.96
     },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Cream, light: https://fdc.nal.usda.gov/food-details/2705593/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Cream, light: https://fdc.nal.usda.gov/food-details/2705593/nutrients"
   },
   {
     "name": "USDA Heavy Cream",
@@ -160,11 +155,10 @@
       "energy": 343,
       "total_fat": { "grams": 35.6 },
       "saturated_fat": 20.4,
-      "trans_fat": 1.246,
       "sugars": 2.92,
       "protein": 2.02
     },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Cream, heavy: https://fdc.nal.usda.gov/food-details/2705597/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Cream, heavy: https://fdc.nal.usda.gov/food-details/2705597/nutrients"
   },
   {
     "name": "Sealtest 0% Skim Milk",
@@ -173,8 +167,6 @@
       "serving_size": { "ml": 250 },
       "energy": 90,
       "total_fat": { "percent": 0 },
-      "saturated_fat": 0,
-      "trans_fat": 0,
       "sugars": 12,
       "protein": 9
     },
@@ -230,7 +222,6 @@
       "energy": 10,
       "total_fat": { "percent": 5 },
       "saturated_fat": 0.5,
-      "trans_fat": 0,
       "sugars": 1,
       "protein": 0.5
     },
@@ -244,7 +235,6 @@
       "energy": 20,
       "total_fat": { "percent": 10 },
       "saturated_fat": 1,
-      "trans_fat": 0,
       "sugars": 1,
       "protein": 0.4
     },
@@ -286,7 +276,6 @@
       "energy": 150,
       "total_fat": { "grams": 8 },
       "saturated_fat": 5,
-      "trans_fat": 0,
       "sugars": 6,
       "protein": 13,
       "lactose_free": true
@@ -301,11 +290,10 @@
       "energy": 78,
       "total_fat": { "grams": 0.2 },
       "saturated_fat": 0.121,
-      "trans_fat": 0.007,
       "sugars": 11.35,
       "protein": 7.55
     },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, fat free (skim): https://fdc.nal.usda.gov/food-details/2705401/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, fat free (skim): https://fdc.nal.usda.gov/food-details/2705401/nutrients"
   },
   {
     "name": "USDA 2% Reduced-Fat Evaporated Milk",
@@ -315,11 +303,10 @@
       "energy": 92,
       "total_fat": { "grams": 1.96 },
       "saturated_fat": 1.214,
-      "trans_fat": 0.069,
       "sugars": 11.15,
       "protein": 7.42
     },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, reduced fat (2%): https://fdc.nal.usda.gov/food-details/2705400/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, reduced fat (2%): https://fdc.nal.usda.gov/food-details/2705400/nutrients"
   },
   {
     "name": "USDA Whole Evaporated Milk",
@@ -329,11 +316,10 @@
       "energy": 134,
       "total_fat": { "grams": 7.56 },
       "saturated_fat": 4.591,
-      "trans_fat": 0.265,
       "sugars": 10.04,
       "protein": 6.81
     },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, whole: https://fdc.nal.usda.gov/food-details/2705399/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, evaporated, whole: https://fdc.nal.usda.gov/food-details/2705399/nutrients"
   },
   {
     "name": "Carnation Fat Free Evaporated Milk",
@@ -342,8 +328,6 @@
       "serving_size": { "grams": 16.125 },
       "energy": 10,
       "total_fat": { "grams": 0 },
-      "saturated_fat": 0,
-      "trans_fat": 0,
       "sugars": 2,
       "protein": 1
     },
@@ -357,7 +341,6 @@
       "energy": 15,
       "total_fat": { "percent": 2 },
       "saturated_fat": 0.2,
-      "trans_fat": 0,
       "sugars": 1.5,
       "protein": 1
     },
@@ -371,7 +354,6 @@
       "energy": 20,
       "total_fat": { "grams": 1 },
       "saturated_fat": 0.5,
-      "trans_fat": 0,
       "sugars": 1.5,
       "protein": 1
     },
@@ -385,12 +367,11 @@
       "energy": 321,
       "total_fat": { "grams": 8.7 },
       "saturated_fat": 5.486,
-      "trans_fat": 0.304,
       "sugars": 54.4,
       "protein": 7.91,
       "sucrose": 45
     },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, condensed, sweetened: https://fdc.nal.usda.gov/food-details/2705402/nutrients. Lactose amount from USDA FoodData Central - Foundation - Sweetened condensed milk: https://fdc.nal.usda.gov/food-details/2758990/nutrients. USDA does not report trans fat for this food, so it is estimated as 3.5% of total fat [constants::composition::STD_TRANS_FAT_IN_MILK_FAT]."
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, condensed, sweetened: https://fdc.nal.usda.gov/food-details/2705402/nutrients. Lactose amount from USDA FoodData Central - Foundation - Sweetened condensed milk: https://fdc.nal.usda.gov/food-details/2758990/nutrients"
   },
   {
     "name": "Eagle Brand Original Sweetened Condensed Milk",
@@ -400,7 +381,6 @@
       "energy": 70,
       "total_fat": { "grams": 1.5 },
       "saturated_fat": 1.0,
-      "trans_fat": 0,
       "sugars": 11,
       "protein": 1,
       "sucrose": 8.97
@@ -415,7 +395,6 @@
       "energy": 70,
       "total_fat": { "grams": 1 },
       "saturated_fat": 0.5,
-      "trans_fat": 0,
       "sugars": 12,
       "protein": 2,
       "sucrose": 8.97
@@ -430,7 +409,6 @@
       "energy": 70,
       "total_fat": { "grams": 1.5 },
       "saturated_fat": 0.5,
-      "trans_fat": 0,
       "sugars": 10,
       "protein": 2,
       "sucrose": 8.2
@@ -444,8 +422,6 @@
       "serving_size": { "grams": 25 },
       "energy": 90,
       "total_fat": { "grams": 0 },
-      "saturated_fat": 0,
-      "trans_fat": 0,
       "sugars": 12.5,
       "protein": 9
     },
@@ -459,11 +435,10 @@
       "energy": 150,
       "total_fat": { "grams": 8 },
       "saturated_fat": 5,
-      "trans_fat": 0.25,
       "sugars": 11,
       "protein": 8
     },
-    "comments": "From nutrition facts table: https://www.medallionmilk.com/products/whole-milk-powder-500g-bag. Trans fats are estimated as ~3.1% of total fat, consistent with [constants::composition::STD_TRANS_FAT_IN_MILK_FAT] and other similar product labels."
+    "comments": "From nutrition facts table: https://www.medallionmilk.com/products/whole-milk-powder-500g-bag"
   },
   {
     "name": "Theland Skim Milk Powder",
@@ -472,8 +447,6 @@
       "serving_size": { "grams": 25 },
       "energy": 92,
       "total_fat": { "grams": 0.3 },
-      "saturated_fat": 0,
-      "trans_fat": 0,
       "sugars": 13.3,
       "protein": 8.7
     },
@@ -486,12 +459,10 @@
       "serving_size": { "grams": 25 },
       "energy": 131,
       "total_fat": { "grams": 7.4 },
-      "saturated_fat": 4.81,
-      "trans_fat": 0.26,
       "sugars": 9.8,
       "protein": 6.3
     },
-    "comments": "From nutrition facts table (could not find a link - it's sold in Asian markets, but was able to use the packaging label from a bag I had on hand). Saturated and trans fats are estimated as ~65% and ~3.5% of total fat respectively, consistent with [constants::composition::STD_SATURATED_FAT_IN_MILK_FAT], [constants::composition::STD_TRANS_FAT_IN_MILK_FAT] and other similar product labels."
+    "comments": "From nutrition facts table (could not find a link - it's sold in Asian markets, but was able to use the packaging label from a bag I had on hand)"
   },
   {
     "name": "Leanfit Sport Whey Isolate",
@@ -501,7 +472,6 @@
       "energy": 150,
       "total_fat": { "grams": 0.5 },
       "saturated_fat": 0.3,
-      "trans_fat": 0,
       "sugars": 1,
       "protein": 35
     },
@@ -514,8 +484,6 @@
       "serving_size": { "grams": 30 },
       "energy": 110,
       "total_fat": { "grams": 0 },
-      "saturated_fat": 0,
-      "trans_fat": 0,
       "sugars": 1,
       "protein": 25
     },

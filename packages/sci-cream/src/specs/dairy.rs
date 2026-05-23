@@ -18,6 +18,7 @@ use crate::{
     composition::{ArtificialSweeteners, Polyols},
     constants::composition::{
         STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM, STD_PROTEIN_IN_MSNF, STD_SATURATED_FAT_IN_MILK_FAT,
+        STD_TRANS_FAT_IN_MILK_FAT,
     },
 };
 
@@ -119,9 +120,19 @@ pub struct DairyLabelSpec {
     /// percentage is recommended whenever possible.
     pub total_fat: Unit,
     /// Saturated fat content per serving, in grams; it must be a subset of total fat.
-    pub saturated_fat: f64,
+    ///
+    /// If unspecified, it is calculated as [`STD_SATURATED_FAT_IN_MILK_FAT`] of
+    /// [`total_fat`](Self::total_fat). Nutrition tables sometimes list this as zero, particularly
+    /// for small serving sizes, in which cases it's usually more accurate to not specify it and
+    /// instead have it internally calculated from the total fat content.
+    pub saturated_fat: Option<f64>,
     /// Trans fat content per serving, in grams; it must be a subset of total fat.
-    pub trans_fat: f64,
+    ///
+    /// If unspecified, it is calculated as [`STD_TRANS_FAT_IN_MILK_FAT`] of
+    /// [`total_fat`](Self::total_fat). Nutrition tables sometimes list this as zero, particularly
+    /// for small serving sizes, in which cases it's usually more accurate to not specify it and
+    /// instead have it internally calculated from the total fat content.
+    pub trans_fat: Option<f64>,
     /// Sugars content per serving, in grams; the detailed composition is determined by
     /// [`lactose_free`](Self::lactose_free) and [`sucrose`](Self::sucrose).
     pub sugars: f64,
@@ -183,6 +194,9 @@ impl ToComposition for DairyLabelSpec {
             },
             _ => Err(Error::UnsupportedCompositionUnit(serving_size))?,
         };
+
+        let saturated_fat = saturated_fat.unwrap_or(constants::composition::STD_SATURATED_FAT_IN_MILK_FAT * total_fat);
+        let trans_fat = trans_fat.unwrap_or(constants::composition::STD_TRANS_FAT_IN_MILK_FAT * total_fat);
 
         verify_are_positive(&[serving_size, total_fat, saturated_fat, trans_fat, sugars, protein])?;
         verify_is_subset(saturated_fat, total_fat, "saturated_fat <= total_fat")?;
@@ -727,7 +741,6 @@ pub(crate) mod tests {
         "energy": 61,
         "total_fat": { "grams": 3.2 },
         "saturated_fat": 1.86,
-        "trans_fat": 0.112,
         "sugars": 4.81,
         "protein": 3.27
       }
@@ -741,8 +754,8 @@ pub(crate) mod tests {
                 serving_size: Unit::Grams(100.0),
                 energy: 61.0,
                 total_fat: Unit::Grams(3.2),
-                saturated_fat: 1.86,
-                trans_fat: 0.112,
+                saturated_fat: Some(1.86),
+                trans_fat: None,
                 sugars: 4.81,
                 protein: 3.27,
                 lactose_free: None,
@@ -781,7 +794,7 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 3.27);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 11.28);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 88.72);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 88.72); // USDA lists 88.1
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -821,8 +834,8 @@ pub(crate) mod tests {
                 serving_size: Unit::Milliliters(250.0), // 257.6667 grams
                 energy: 160.0,
                 total_fat: Unit::Percent(3.25), // 3.25% is 8.3742g, not 8g
-                saturated_fat: 5.0,
-                trans_fat: 0.3,
+                saturated_fat: Some(5.0),
+                trans_fat: Some(0.3),
                 sugars: 13.0,
                 protein: 9.0,
                 lactose_free: None,
@@ -878,6 +891,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.1164);
     }
 
+    // https://fairlife.com/ultra-filtered-milk/whole-milk/
     pub(crate) const ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE_STR: &str = r#"{
       "name": "Fairlife Whole Ultra-Filtered Lactose-Free Milk",
       "category": "Dairy",
@@ -886,7 +900,6 @@ pub(crate) mod tests {
         "energy": 150,
         "total_fat": { "grams": 8 },
         "saturated_fat": 5,
-        "trans_fat": 0,
         "sugars": 6,
         "protein": 13,
         "lactose_free": true
@@ -901,8 +914,8 @@ pub(crate) mod tests {
                 serving_size: Unit::Milliliters(240.0), // 245.1288 grams
                 energy: 150.0,
                 total_fat: Unit::Grams(8.0), // 8g is 3.2636%
-                saturated_fat: 5.0,
-                trans_fat: 0.0,
+                saturated_fat: Some(5.0),
+                trans_fat: None,
                 sugars: 6.0,
                 protein: 13.0,
                 lactose_free: Some(true),
@@ -917,7 +930,7 @@ pub(crate) mod tests {
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
-                        .fats(Fats::new().total(3.2636).saturated(2.0397).trans(0.0))
+                        .fats(Fats::new().total(3.2636).saturated(2.0397).trans(0.1142))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().glucose(1.22385).galactose(1.22385)))
                         .proteins(5.3033),
                 ),
@@ -960,7 +973,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 7.4983);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 2.0397);
-        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.1142);
     }
 
     // https://fdc.nal.usda.gov/food-details/2705400/nutrients
@@ -972,7 +985,6 @@ pub(crate) mod tests {
         "energy": 92,
         "total_fat": { "grams": 1.96 },
         "saturated_fat": 1.214,
-        "trans_fat": 0.069,
         "sugars": 11.15,
         "protein": 7.42
       }
@@ -986,8 +998,8 @@ pub(crate) mod tests {
                 serving_size: Unit::Grams(100.0), // 100g serving size
                 energy: 92.0,
                 total_fat: Unit::Grams(1.96),
-                saturated_fat: 1.214,
-                trans_fat: 0.069,
+                saturated_fat: Some(1.214),
+                trans_fat: None,
                 sugars: 11.15,
                 protein: 7.42,
                 lactose_free: None,
@@ -1002,7 +1014,7 @@ pub(crate) mod tests {
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
-                        .fats(Fats::new().total(1.96).saturated(1.214).trans(0.069))
+                        .fats(Fats::new().total(1.96).saturated(1.214).trans(0.0686))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(11.15)))
                         .proteins(7.42),
                 ),
@@ -1029,7 +1041,7 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 7.42);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 20.53);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 79.47);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 79.47); // USDA lists 78
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -1043,7 +1055,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 17.9727);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.214);
-        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.069);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.0686);
     }
 
     // https://www.carnationmilk.ca/en/products/2-partly-skimmed
@@ -1055,7 +1067,6 @@ pub(crate) mod tests {
         "energy": 15,
         "total_fat": { "percent": 2 },
         "saturated_fat": 0.2,
-        "trans_fat": 0,
         "sugars": 1.5,
         "protein": 1
       }
@@ -1069,8 +1080,8 @@ pub(crate) mod tests {
                 serving_size: Unit::Grams(16.125), // 15ml @ 1.075 g/ml
                 energy: 15.0,
                 total_fat: Unit::Percent(2.0),
-                saturated_fat: 0.2,
-                trans_fat: 0.0,
+                saturated_fat: Some(0.2),
+                trans_fat: None,
                 // label says 1g sugar, 2g carbohydrates; not sure what carbohydrates are if not
                 // lactose, so assume some odd rounding issue and take the middle value of 1.5g
                 // This is consistent with the standard ~60/40 ratio of lactose to proteins in MSNF
@@ -1088,7 +1099,7 @@ pub(crate) mod tests {
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
-                        .fats(Fats::new().total(2.0).saturated(1.2403))
+                        .fats(Fats::new().total(2.0).saturated(1.2403).trans(0.07))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(9.3024)))
                         .proteins(6.2016),
                 ),
@@ -1129,12 +1140,11 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 14.9986);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.2403);
-        assert_eq!(comp.get(CompKey::TransFat), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.07);
     }
 
     // https://fdc.nal.usda.gov/food-details/2705402/nutrients
     // https://fdc.nal.usda.gov/food-details/2758990/nutrients
-
     pub(crate) const ING_SPEC_DAIRY_LABEL_SWEETENED_CONDENSED_MILK_USDA_STR: &str = r#"{
       "name": "USDA Sweetened Condensed Milk",
       "category": "Dairy",
@@ -1143,7 +1153,6 @@ pub(crate) mod tests {
         "energy": 321,
         "total_fat": { "grams": 8.7 },
         "saturated_fat": 5.486,
-        "trans_fat": 0.304,
         "sugars": 54.4,
         "protein": 7.91,
         "sucrose": 45
@@ -1158,8 +1167,8 @@ pub(crate) mod tests {
                 serving_size: Unit::Grams(100.0),
                 energy: 321.0,
                 total_fat: Unit::Grams(8.7),
-                saturated_fat: 5.486,
-                trans_fat: 0.304,
+                saturated_fat: Some(5.486),
+                trans_fat: None,
                 sugars: 54.4,
                 protein: 7.91,
                 lactose_free: None,
@@ -1175,7 +1184,7 @@ pub(crate) mod tests {
                 Solids::new()
                     .milk(
                         SolidsBreakdown::new()
-                            .fats(Fats::new().total(8.7).saturated(5.486).trans(0.304))
+                            .fats(Fats::new().total(8.7).saturated(5.486).trans(0.3045))
                             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(9.4)))
                             .proteins(7.91),
                     )
@@ -1208,7 +1217,7 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 7.91);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 71.01);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 28.99);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 28.99); // USDA lists 27.2
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -1222,7 +1231,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 60.7598);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 5.486);
-        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.304);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.3045);
     }
 
     // https://www.eaglebrand.ca/en/products/original
@@ -1234,7 +1243,6 @@ pub(crate) mod tests {
         "energy": 70,
         "total_fat": { "grams": 1.5 },
         "saturated_fat": 1.0,
-        "trans_fat": 0,
         "sugars": 11,
         "protein": 1,
         "sucrose": 8.97
@@ -1249,8 +1257,8 @@ pub(crate) mod tests {
                 serving_size: Unit::Grams(19.5), // 15ml @ 1.3 g/ml
                 energy: 70.0,
                 total_fat: Unit::Grams(1.5),
-                saturated_fat: 1.0,
-                trans_fat: 0.0,
+                saturated_fat: Some(1.0),
+                trans_fat: None,
                 sugars: 11.0,
                 protein: 1.0,
                 lactose_free: None,
@@ -1266,7 +1274,7 @@ pub(crate) mod tests {
                 Solids::new()
                     .milk(
                         SolidsBreakdown::new()
-                            .fats(Fats::new().total(7.6923).saturated(5.1282))
+                            .fats(Fats::new().total(7.6923).saturated(5.1282).trans(0.2692))
                             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(10.4103)))
                             .proteins(5.1282),
                     )
@@ -1313,7 +1321,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 62.1192);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 5.1282);
-        assert_eq!(comp.get(CompKey::TransFat), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.2692);
     }
 
     // https://www.medallionmilk.com/products/skim-milk-powder-500g-bag
@@ -1324,8 +1332,6 @@ pub(crate) mod tests {
         "serving_size": { "grams": 25 },
         "energy": 90,
         "total_fat": { "grams": 0 },
-        "saturated_fat": 0,
-        "trans_fat": 0,
         "sugars": 12.5,
         "protein": 9
       }
@@ -1339,8 +1345,8 @@ pub(crate) mod tests {
                 serving_size: Unit::Grams(25.0),
                 energy: 90.0,
                 total_fat: Unit::Grams(0.0),
-                saturated_fat: 0.0,
-                trans_fat: 0.0,
+                saturated_fat: None,
+                trans_fat: None,
                 sugars: 12.5,
                 protein: 9.0,
                 lactose_free: None,
@@ -1408,7 +1414,6 @@ pub(crate) mod tests {
         "energy": 150,
         "total_fat": { "grams": 8 },
         "saturated_fat": 5,
-        "trans_fat": 0.25,
         "sugars": 11,
         "protein": 8
       }
@@ -1422,8 +1427,8 @@ pub(crate) mod tests {
                 serving_size: Unit::Grams(30.0),
                 energy: 150.0,
                 total_fat: Unit::Grams(8.0),
-                saturated_fat: 5.0,
-                trans_fat: 0.25, // estimated ~3% of total fat
+                saturated_fat: Some(5.0),
+                trans_fat: None,
                 sugars: 11.0,
                 protein: 8.0,
                 lactose_free: None,
@@ -1438,7 +1443,7 @@ pub(crate) mod tests {
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
-                        .fats(Fats::new().total(26.6667).saturated(16.6667).trans(0.8333))
+                        .fats(Fats::new().total(26.6667).saturated(16.6667).trans(0.9333))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(36.6667)))
                         .proteins(26.6667),
                 ),
@@ -1479,7 +1484,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 59.9356);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 16.6667);
-        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.8333);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.9333);
     }
 
     pub(crate) const ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_THELAND_STR: &str = r#"{
@@ -1489,8 +1494,6 @@ pub(crate) mod tests {
         "serving_size": { "grams": 25 },
         "energy": 92,
         "total_fat": { "grams": 0.3 },
-        "saturated_fat": 0,
-        "trans_fat": 0,
         "sugars": 13.3,
         "protein": 8.7
       }
@@ -1504,8 +1507,8 @@ pub(crate) mod tests {
                 serving_size: Unit::Grams(25.0),
                 energy: 92.0,
                 total_fat: Unit::Grams(0.3),
-                saturated_fat: 0.0,
-                trans_fat: 0.0,
+                saturated_fat: None,
+                trans_fat: None,
                 sugars: 13.3,
                 protein: 8.7,
                 lactose_free: None,
@@ -1520,7 +1523,7 @@ pub(crate) mod tests {
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
-                        .fats(Fats::new().total(1.2))
+                        .fats(Fats::new().total(1.2).saturated(0.78).trans(0.042))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(53.2)))
                         .proteins(34.8),
                 ),
@@ -1560,8 +1563,8 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 32.3316);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 85.5316);
 
-        assert_eq!(comp.get(CompKey::SaturatedFat), 0.0);
-        assert_eq!(comp.get(CompKey::TransFat), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 0.78);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.042);
     }
 
     pub(crate) const ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_THELAND_STR: &str = r#"{
@@ -1571,8 +1574,6 @@ pub(crate) mod tests {
         "serving_size": { "grams": 25 },
         "energy": 131,
         "total_fat": { "grams": 7.4 },
-        "saturated_fat": 4.81,
-        "trans_fat": 0.26,
         "sugars": 9.8,
         "protein": 6.3
       }
@@ -1586,8 +1587,8 @@ pub(crate) mod tests {
                 serving_size: Unit::Grams(25.0),
                 energy: 131.0,
                 total_fat: Unit::Grams(7.4),
-                saturated_fat: 4.81, // estimated ~65% of total fat
-                trans_fat: 0.26,     // estimated ~3.5% of total fat
+                saturated_fat: None,
+                trans_fat: None,
                 sugars: 9.8,
                 protein: 6.3,
                 lactose_free: None,
@@ -1602,7 +1603,7 @@ pub(crate) mod tests {
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
-                        .fats(Fats::new().total(29.6).saturated(19.24).trans(1.04))
+                        .fats(Fats::new().total(29.6).saturated(19.24).trans(1.036))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(39.2)))
                         .proteins(25.2),
                 ),
@@ -1643,9 +1644,10 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 62.8608);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 19.24);
-        assert_eq_flt_test!(comp.get(CompKey::TransFat), 1.04);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 1.036);
     }
 
+    // https://leanfit.ca/collections/sport/products/leanfit-sport-whey-isolate-unflavoured-2kg
     pub(crate) const ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE_STR: &str = r#"{
       "name": "Leanfit Sport Whey Isolate",
       "category": "Dairy",
@@ -1654,7 +1656,6 @@ pub(crate) mod tests {
         "energy": 150,
         "total_fat": { "grams": 0.5 },
         "saturated_fat": 0.3,
-        "trans_fat": 0,
         "sugars": 1,
         "protein": 35
       }
@@ -1667,8 +1668,8 @@ pub(crate) mod tests {
             serving_size: Unit::Grams(39.0),
             energy: 150.0,
             total_fat: Unit::Grams(0.5),
-            saturated_fat: 0.3,
-            trans_fat: 0.0,
+            saturated_fat: Some(0.3),
+            trans_fat: None,
             sugars: 1.0,
             protein: 35.0,
             lactose_free: None,
@@ -1683,7 +1684,7 @@ pub(crate) mod tests {
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
-                        .fats(Fats::new().total(1.2821).saturated(0.7692).trans(0.0))
+                        .fats(Fats::new().total(1.2821).saturated(0.7692).trans(0.0449))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(2.5641)))
                         .proteins(89.7436),
                 ),
@@ -1721,7 +1722,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 36.4783);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 0.7692);
-        assert_eq!(comp.get(CompKey::TransFat), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.0449);
     }
 
     /// Composition keys compared when cross-checking dairy ingredient data sources.
@@ -1798,13 +1799,13 @@ pub(crate) mod tests {
         //    - TotalProteins   11.33%  (Simple vs Sealtest)
         //    - SaturatedFat    14.62%  (Simple vs USDA)
         //    - SaturatedFat    10.73%  (Simple vs Sealtest)
-        //    - TransFat        13.40%  (USDA vs Sealtest)
+        //    - TransFat        14.05%  (USDA vs Sealtest)
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::MilkSNFS, 17.0)
             .with(CompKey::MilkProteins, 12.0)
             .with(CompKey::TotalProteins, 12.0)
             .with(CompKey::SaturatedFat, 15.0)
-            .with(CompKey::TransFat, 14.0);
+            .with(CompKey::TransFat, 15.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -1847,9 +1848,9 @@ pub(crate) mod tests {
 
         // Sealtest's small 15ml serving rounds sugars coarsely (1g/15ml = 6.67g/100g), driving
         // large differences in Lactose and all derived fields (MSNF, MilkSNFS, POD, PAC*).
-        // MilkFat: 13.04% — Simple's spec uses exactly 10% vs USDA's measured 11.5g/100g.
-        // TransFat hits 100% on the Sealtest pairs because Sealtest's label reports trans fat
-        // as exact 0 while Simple's model and USDA both report tiny non-zero values.
+        // MilkFat: 13.04% — Simple's spec uses exactly 10% vs USDA's measured 11.5g/100g. Since
+        // all three specs now estimate trans fat as a fixed fraction of total fat, TransFat
+        // tracks the MilkFat difference.
         // The exceptions are:
         //    - MilkFat        13.04%  (Simple vs USDA and USDA vs Sealtest)
         //    - MSNF           20.85%  (USDA vs Sealtest)
@@ -1861,7 +1862,7 @@ pub(crate) mod tests {
         //    - PACsgr         36.96%  (USDA vs Sealtest)
         //    - PACmlk         20.85%  (USDA vs Sealtest)
         //    - PACtotal       31.49%  (USDA vs Sealtest)
-        //    - TransFat      100.00%  (Simple vs Sealtest and USDA vs Sealtest)
+        //    - TransFat       13.04%  (Simple vs USDA and USDA vs Sealtest)
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::MilkFat, 14.0)
             .with(CompKey::MSNF, 21.0)
@@ -1873,7 +1874,7 @@ pub(crate) mod tests {
             .with(CompKey::PACsgr, 37.0)
             .with(CompKey::PACmlk, 21.0)
             .with(CompKey::PACtotal, 32.0)
-            .with(CompKey::TransFat, 100.0);
+            .with(CompKey::TransFat, 14.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -1966,9 +1967,7 @@ pub(crate) mod tests {
         .map(source_str_to_comp);
 
         // @todo Many values differ by up to ~17%; need to investigate.
-        // TransFat is 100% because Carnation's label reports trans fat as exact 0 while USDA
-        // reports a small non-zero value.
-        let ceiling = CompCeiling::new(17.0).with(CompKey::TransFat, 100.0);
+        let ceiling = CompCeiling::new(17.0);
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
     }
@@ -1987,13 +1986,10 @@ pub(crate) mod tests {
         // overrides below. (Rodrigues, 2017)[^50] has protein at 6.04g/100g. Low-Fat Eagle Brand
         // has 10.2g/100g protein, much higher than all of these (jump from 1g -> 2g per serving).
         // @todo Need to investigate why there is so much variability with protein content.
-        // TransFat is 100% because Eagle Brand's label reports trans fat as exact 0 while USDA
-        // reports a small non-zero value.
         let ceiling = CompCeiling::new(12.0)
             .with(CompKey::MilkSNFS, 36.0)
             .with(CompKey::MilkProteins, 36.0)
-            .with(CompKey::TotalProteins, 36.0)
-            .with(CompKey::TransFat, 100.0);
+            .with(CompKey::TotalProteins, 36.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2014,8 +2010,11 @@ pub(crate) mod tests {
         // diff degenerate, and the lower total solids cascades into every solids-derived field.
         // MilkFat hits 100% (Simple vs Theland) because the Simple spec defines skim fat as
         // exactly 0 while Theland's label reports 0.3g/serving — a near-zero value degenerates the
-        // relative diff. MilkSNFS diverges most where a label's protein-to-lactose split differs
-        // from the idealized spec.
+        // relative diff. The same near-zero degeneracy drives SaturatedFat and TransFat to 100% on
+        // any pair involving Theland, since the Simple and Medallion specs treat them as exactly
+        // 0 while Theland's non-zero fat induces a small estimated value from the standard
+        // factors. MilkSNFS diverges most where a label's protein-to-lactose split differs from
+        // the idealized spec.
         // The exceptions are:
         //    - MilkFat      100.00%  (Simple vs Theland)
         //    - MSNF          11.34%  (Simple vs Medallion)
@@ -2024,6 +2023,8 @@ pub(crate) mod tests {
         //    - TotalSolids   11.34%  (Simple vs Medallion)
         //    - Water         78.57%  (Simple vs Medallion)
         //    - PACmlk        11.34%  (Simple vs Medallion)
+        //    - SaturatedFat 100.00%  (Simple vs Theland and Medallion vs Theland)
+        //    - TransFat     100.00%  (Simple vs Theland and Medallion vs Theland)
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::MilkFat, 100.0)
             .with(CompKey::MSNF, 12.0)
@@ -2031,7 +2032,9 @@ pub(crate) mod tests {
             .with(CompKey::MilkSolids, 12.0)
             .with(CompKey::TotalSolids, 12.0)
             .with(CompKey::Water, 79.0)
-            .with(CompKey::PACmlk, 12.0);
+            .with(CompKey::PACmlk, 12.0)
+            .with(CompKey::SaturatedFat, 100.0)
+            .with(CompKey::TransFat, 100.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2049,18 +2052,16 @@ pub(crate) mod tests {
         // As with skim powder, the Simple spec models 3% water while the Medallion and Theland
         // labels resolve to ~10% and ~6% water; the small absolute water content makes its
         // relative diff degenerate. MilkSNFS diverges most because each label's protein-to-lactose
-        // split differs from the idealized spec. SaturatedFat and TransFat diverge because each
-        // brand's label rounds them differently from the Simple model's standard ratios.
+        // split differs from the idealized spec. SaturatedFat diverges between Medallion (label
+        // value, ~0.625 of total fat) and Theland (estimated via the standard ~0.65 ratio).
         // The exceptions are:
         //    - MilkSNFS      20.88%  (Simple vs Theland)
         //    - Water         70.00%  (Simple vs Medallion)
         //    - SaturatedFat  13.37%  (Medallion vs Theland)
-        //    - TransFat      19.87%  (Medallion vs Theland)
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::MilkSNFS, 21.0)
             .with(CompKey::Water, 70.0)
-            .with(CompKey::SaturatedFat, 14.0)
-            .with(CompKey::TransFat, 20.0);
+            .with(CompKey::SaturatedFat, 14.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2187,8 +2188,8 @@ pub(crate) mod tests {
             serving_size: Unit::Milliliters(250.0),
             energy: 160.0,
             total_fat: Unit::Grams(8.0),
-            saturated_fat: 5.0,
-            trans_fat: 0.3,
+            saturated_fat: Some(5.0),
+            trans_fat: Some(0.3),
             sugars: 13.0,
             protein: 9.0,
             lactose_free: None,
@@ -2281,8 +2282,8 @@ pub(crate) mod tests {
             serving_size: Unit::Grams(250.0),
             energy: 160.0,
             total_fat: Unit::Grams(8.0),
-            saturated_fat: 5.0,
-            trans_fat: 0.3,
+            saturated_fat: Some(5.0),
+            trans_fat: Some(0.3),
             sugars: 13.0,
             protein: 9.0,
             lactose_free: None,
@@ -2299,11 +2300,11 @@ pub(crate) mod tests {
                 ..base
             },
             DairyLabelSpec {
-                saturated_fat: -1.0,
+                saturated_fat: Some(-1.0),
                 ..base
             },
             DairyLabelSpec {
-                trans_fat: -1.0,
+                trans_fat: Some(-1.0),
                 ..base
             },
             DairyLabelSpec { sugars: -1.0, ..base },
@@ -2322,8 +2323,8 @@ pub(crate) mod tests {
             serving_size: Unit::Grams(250.0),
             energy: 160.0,
             total_fat: Unit::Grams(5.0),
-            saturated_fat: 8.0,
-            trans_fat: 0.0,
+            saturated_fat: Some(8.0),
+            trans_fat: Some(0.0),
             sugars: 13.0,
             protein: 9.0,
             lactose_free: None,
@@ -2339,8 +2340,8 @@ pub(crate) mod tests {
             serving_size: Unit::Grams(250.0),
             energy: 160.0,
             total_fat: Unit::Grams(5.0),
-            saturated_fat: 3.0,
-            trans_fat: 8.0,
+            saturated_fat: Some(3.0),
+            trans_fat: Some(8.0),
             sugars: 13.0,
             protein: 9.0,
             lactose_free: None,
@@ -2356,8 +2357,8 @@ pub(crate) mod tests {
             serving_size: Unit::Grams(20.0),
             energy: 160.0,
             total_fat: Unit::Grams(8.0),
-            saturated_fat: 5.0,
-            trans_fat: 0.3,
+            saturated_fat: Some(5.0),
+            trans_fat: Some(0.3),
             sugars: 13.0,
             protein: 9.0,
             lactose_free: None,
