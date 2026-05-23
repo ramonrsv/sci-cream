@@ -239,7 +239,6 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::Energy), 543.0);
         assert_eq!(comp.get(CompKey::TotalFats), 40.0);
-        assert_eq!(comp.solids.cocoa.fats.saturated, 24.0);
         assert_eq!(comp.get(CompKey::TotalProteins), 7.35);
         assert_eq!(comp.get(CompKey::Fiber), 12.0);
 
@@ -258,6 +257,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::POD), 30.0);
         assert_eq!(comp.get(CompKey::PACtotal), 30.0);
         assert_eq!(comp.get(CompKey::HF), 90.0);
+
+        assert_eq!(comp.get(CompKey::SaturatedFat), 24.0);
+        assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
     pub(crate) const ING_SPEC_CHOCOLATE_LINDT_95_DARK_CHOCOLATE_OTHER_SOLIDS_STR: &str = r#"{
@@ -320,7 +322,6 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::Energy), 608.25);
         assert_eq!(comp.get(CompKey::TotalFats), 57.5);
-        assert_eq!(comp.solids.cocoa.fats.saturated, 34.5);
         assert_eq!(comp.get(CompKey::TotalProteins), 9.1875);
         assert_eq_flt_test!(comp.get(CompKey::Fiber), 15.0);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 3.0);
@@ -337,6 +338,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::POD), 3.0);
         assert_eq!(comp.get(CompKey::PACtotal), 3.0);
         assert_eq!(comp.get(CompKey::HF), 119.25);
+
+        assert_eq!(comp.get(CompKey::SaturatedFat), 34.5);
+        assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
     pub(crate) const ING_SPEC_CHOCOLATE_LINDT_100_DARK_CHOCOLATE_STR: &str = r#"{
@@ -391,7 +395,6 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::Energy), 582.6);
         assert_eq!(comp.get(CompKey::TotalFats), 54.0);
-        assert_eq!(comp.solids.cocoa.fats.saturated, 32.4);
         assert_eq!(comp.get(CompKey::TotalProteins), 11.27);
         assert_eq_flt_test!(comp.get(CompKey::Fiber), 18.4);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
@@ -405,6 +408,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::POD), 0.0);
         assert_eq!(comp.get(CompKey::PACtotal), 0.0);
         assert_eq!(comp.get(CompKey::HF), 131.4);
+
+        assert_eq!(comp.get(CompKey::SaturatedFat), 32.4);
+        assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
     pub(crate) const ING_SPEC_CHOCOLATE_GHIRARDELLI_100_COCOA_POWDER_STR: &str = r#"{
@@ -460,7 +466,6 @@ pub(crate) mod tests {
         // Different similar products list the energy from 250 to 325
         assert_eq!(comp.get(CompKey::Energy), 325.023);
         assert_eq!(comp.get(CompKey::TotalFats), 16.67);
-        assert_eq!(comp.solids.cocoa.fats.saturated, 10.002);
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 20.4159);
         assert_eq_flt_test!(comp.get(CompKey::Fiber), 33.332);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
@@ -474,6 +479,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::POD), 0.0);
         assert_eq!(comp.get(CompKey::PACtotal), 0.0);
         assert_eq!(comp.get(CompKey::HF), 164.997);
+
+        assert_eq!(comp.get(CompKey::SaturatedFat), 10.002);
+        assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_CHOCOLATE: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =

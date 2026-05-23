@@ -83,6 +83,9 @@ impl KeyAsStrings for CompKey {
             Self::PACtotal => "PAC",
             Self::AbsPAC => "Abs.PAC",
             Self::HF => "HF",
+
+            Self::SaturatedFat => "Saturated Fat",
+            Self::TransFat => "Trans Fat",
         }
     }
 }
@@ -221,6 +224,8 @@ mod tests {
             "PAC",
             "Abs.PAC",
             "HF",
+            "Saturated Fat",
+            "Trans Fat",
         ];
 
         let actual_set: HashSet<&'static str> = CompKey::iter().map(|h| h.as_med_str()).collect();

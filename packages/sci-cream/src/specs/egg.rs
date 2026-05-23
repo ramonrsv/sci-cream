@@ -173,13 +173,14 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::Energy), 334.0);
         assert_eq!(comp.get(CompKey::EggFat), 30.0);
-        assert_eq!(comp.solids.egg.fats.saturated, 8.4);
         assert_eq!(comp.get(CompKey::EggSNF), 19.0);
         assert_eq!(comp.get(CompKey::TotalProteins), 16.0);
         assert_eq!(comp.get(CompKey::TotalSNFS), 19.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 49.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
         assert_eq!(comp.get(CompKey::Lecithin), 9.0);
+        assert_eq!(comp.get(CompKey::SaturatedFat), 8.4);
+        assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_EGG: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =

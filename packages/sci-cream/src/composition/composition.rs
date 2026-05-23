@@ -323,6 +323,14 @@ pub enum CompKey {
     AbsPAC,
     /// [Hardness Factor (HF)](crate::docs#corvitto-method-hardness-factor) of the ingredient or mix
     HF,
+
+    // Nutritional Properties
+    // ----------------------
+    //
+    /// Total saturated fat content, as the sum of saturated fats from all fat sources
+    SaturatedFat,
+    /// Total trans fat content, as the sum of trans fats from all fat sources
+    TransFat,
 }
 
 impl Composition {
@@ -534,6 +542,9 @@ impl Composition {
             CompKey::PACtotal => self.pac.total(),
             CompKey::AbsPAC => self.absolute_pac(),
             CompKey::HF => self.pac.hardness_factor,
+
+            CompKey::SaturatedFat => self.solids.all().fats.saturated,
+            CompKey::TransFat => self.solids.all().fats.trans,
         }
     }
 }
@@ -769,6 +780,8 @@ mod tests {
             (CompKey::PACmlk, 3.2405),
             (CompKey::PACtotal, 8.0474),
             (CompKey::AbsPAC, 9.02377),
+            (CompKey::SaturatedFat, 1.3),
+            (CompKey::TransFat, 0.07),
         ]);
 
         CompKey::iter().for_each(|key| assert_eq_flt_test!(COMP_2_MILK.get(key), *expected.get(&key).unwrap_or(&0.0)));
@@ -784,29 +797,29 @@ mod tests {
         // Per-category totals: milk=13, egg=4, cocoa=7, nut=4, other=10.5 -> TotalSolids=38.5
         // alcohol=2.5 -> Water = 100 - 38.5 - 2.5 = 59.0
         let milk = SolidsBreakdown::new()
-            .fats(Fats::new().total(4.0))
+            .fats(Fats::new().total(4.0).saturated(2.6).trans(0.14))
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(5.0)))
             .proteins(3.0)
             .others(1.0);
 
         let egg = SolidsBreakdown::new()
-            .fats(Fats::new().total(2.0))
+            .fats(Fats::new().total(2.0).saturated(0.56).trans(0.1))
             .proteins(1.0)
             .others(1.0);
 
         let cocoa = SolidsBreakdown::new()
-            .fats(Fats::new().total(3.0))
+            .fats(Fats::new().total(3.0).saturated(1.8).trans(0.2))
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(2.0)))
             .proteins(1.0)
             .others(1.0);
 
         let nut = SolidsBreakdown::new()
-            .fats(Fats::new().total(2.0))
+            .fats(Fats::new().total(2.0).saturated(0.18).trans(0.3))
             .proteins(1.0)
             .others(1.0);
 
         let other = SolidsBreakdown::new()
-            .fats(Fats::new().total(1.0))
+            .fats(Fats::new().total(1.0).saturated(0.5).trans(0.4))
             .carbohydrates(
                 Carbohydrates::new()
                     .sugars(
@@ -911,6 +924,9 @@ mod tests {
             (CompKey::PACtotal,             9.5),
             (CompKey::AbsPAC,               abs_pac),
             (CompKey::HF,                   1.0),
+            // Saturated and Trans Fat
+            (CompKey::SaturatedFat,         5.64),  // 2.6 + 0.56 + 1.8 + 0.18 + 0.5
+            (CompKey::TransFat,             1.14),  // 0.14 + 0.1 + 0.2 + 0.3 + 0.4
         ]);
 
         // unwrap (not unwrap_or) so that any newly added CompKey not in the map panics the test

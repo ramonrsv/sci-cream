@@ -208,7 +208,6 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Fiber), 12.5);
 
         assert_eq!(comp.get(CompKey::NutFat), 49.9);
-        assert_eq!(comp.solids.nut.fats.saturated, 3.8);
         assert_eq!(comp.get(CompKey::NutSNF), 41.34);
         assert_eq_flt_test!(comp.get(CompKey::NutSolids), 91.24);
 
@@ -221,6 +220,9 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Water), 4.41);
         assert_eq!(comp.get(CompKey::POD), 4.35);
         assert_eq!(comp.get(CompKey::HF), 69.86);
+
+        assert_eq!(comp.get(CompKey::SaturatedFat), 3.8);
+        assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_NUT: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =

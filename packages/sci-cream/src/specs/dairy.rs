@@ -300,6 +300,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.3066);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.2116);
+
+        assert_eq!(comp.get(CompKey::SaturatedFat), 0.0);
+        assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
     pub(crate) const ING_SPEC_DAIRY_SIMPLE_2_MILK_STR: &str = r#"{
@@ -365,6 +368,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.2405);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.0474);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.3);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.07);
     }
 
     pub(crate) const ING_SPEC_DAIRY_SIMPLE_3_25_MILK_STR: &str = r#"{
@@ -429,6 +435,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.1992);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 7.9448);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 2.1125);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.11375);
     }
 
     pub(crate) const ING_SPEC_DAIRY_SIMPLE_40_CREAM_STR: &str = r#"{
@@ -494,6 +503,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 1.984);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 4.927);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 26.0);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 1.4);
     }
 
     pub(crate) const ING_SPEC_DAIRY_SIMPLE_2_MILK_LACTOSE_FREE_STR: &str = r#"{
@@ -562,6 +574,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.2405);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 12.3736);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.3);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.07);
     }
 
     pub(crate) const ING_SPEC_DAIRY_SIMPLE_SKIMMED_POWDER_STR: &str = r#"{
@@ -629,6 +644,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 35.6382);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 88.5032);
+
+        assert_eq!(comp.get(CompKey::SaturatedFat), 0.0);
+        assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
     pub(crate) const ING_SPEC_DAIRY_SIMPLE_WHOLE_POWDER_STR: &str = r#"{
@@ -695,6 +713,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 25.7183);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 63.8683);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 17.55);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.945);
     }
 
     // https://fdc.nal.usda.gov/food-details/2705385/nutrients
@@ -772,6 +793,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 2.9686);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 7.7786);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.86);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.112);
     }
 
     // https://www.sealtest.ca/en/products/milks/325-milk
@@ -849,6 +873,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.137);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.1823);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.9405);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.1164);
     }
 
     pub(crate) const ING_SPEC_DAIRY_LABEL_WHOLE_ULTRA_FILTERED_LACTOSE_FREE_STR: &str = r#"{
@@ -931,6 +958,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 2.8477);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 7.4983);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 2.0397);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.0);
     }
 
     // https://fdc.nal.usda.gov/food-details/2705400/nutrients
@@ -1011,6 +1041,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 6.8227);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 17.9727);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.214);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.069);
     }
 
     // https://www.carnationmilk.ca/en/products/2-partly-skimmed
@@ -1094,6 +1127,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 5.6962);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 14.9986);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.2403);
+        assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
     // https://fdc.nal.usda.gov/food-details/2705402/nutrients
@@ -1184,6 +1220,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 6.3598);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 60.7598);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 5.486);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.304);
     }
 
     // https://www.eaglebrand.ca/en/products/original
@@ -1272,6 +1311,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 5.7089);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 62.1192);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 5.1282);
+        assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
     // https://www.medallionmilk.com/products/skim-milk-powder-500g-bag
@@ -1352,6 +1394,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 31.5967);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 81.5967);
+
+        assert_eq!(comp.get(CompKey::SaturatedFat), 0.0);
+        assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
     // https://www.medallionmilk.com/products/whole-milk-powder-500g-bag
@@ -1432,6 +1477,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 23.2689);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 59.9356);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 16.6667);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.8333);
     }
 
     pub(crate) const ING_SPEC_DAIRY_LABEL_SKIM_MILK_POWDER_THELAND_STR: &str = r#"{
@@ -1511,6 +1559,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 32.3316);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 85.5316);
+
+        assert_eq!(comp.get(CompKey::SaturatedFat), 0.0);
+        assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
     pub(crate) const ING_SPEC_DAIRY_LABEL_WHOLE_MILK_POWDER_THELAND_STR: &str = r#"{
@@ -1590,6 +1641,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 23.6608);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 62.8608);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 19.24);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 1.04);
     }
 
     pub(crate) const ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE_STR: &str = r#"{
@@ -1665,6 +1719,9 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 33.9142);
         assert_eq_flt_test!(comp.get(CompKey::PACtotal), 36.4783);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 0.7692);
+        assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
     /// Composition keys compared when cross-checking dairy ingredient data sources.
@@ -1687,6 +1744,8 @@ pub(crate) mod tests {
         CompKey::PACsgr,
         CompKey::PACmlk,
         CompKey::PACtotal,
+        CompKey::SaturatedFat,
+        CompKey::TransFat,
     ];
 
     /// Embedded database used to compare database specs not mirrored in this test file
@@ -1709,10 +1768,14 @@ pub(crate) mod tests {
         // MilkFat hits 100% for both pairs involving USDA: Simple and Sealtest define fat as
         // exactly 0, while USDA reports 0.08g/100g. Near-zero values make the relative diff
         // degenerate. MilkSNFS is 16.24% (Simple vs USDA) because the 0.08g fat shifts the
-        // SNFS calculation.
+        // SNFS calculation. SaturatedFat and TransFat are 100% on the same USDA pairs for the
+        // same reason: Simple and Sealtest treat both as exact 0 while USDA reports tiny
+        // non-zero values.
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::MilkFat, 100.0)
-            .with(CompKey::MilkSNFS, 17.0);
+            .with(CompKey::MilkSNFS, 17.0)
+            .with(CompKey::SaturatedFat, 100.0)
+            .with(CompKey::TransFat, 100.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -1733,10 +1796,15 @@ pub(crate) mod tests {
         //    - MilkSNFS        13.24%  (Simple vs Sealtest)
         //    - MilkProteins    11.33%  (Simple vs Sealtest)
         //    - TotalProteins   11.33%  (Simple vs Sealtest)
+        //    - SaturatedFat    14.62%  (Simple vs USDA)
+        //    - SaturatedFat    10.73%  (Simple vs Sealtest)
+        //    - TransFat        13.40%  (USDA vs Sealtest)
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::MilkSNFS, 17.0)
             .with(CompKey::MilkProteins, 12.0)
-            .with(CompKey::TotalProteins, 12.0);
+            .with(CompKey::TotalProteins, 12.0)
+            .with(CompKey::SaturatedFat, 15.0)
+            .with(CompKey::TransFat, 14.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -1757,10 +1825,12 @@ pub(crate) mod tests {
         //    - MilkSNFS        11.84%  (Simple vs Sealtest)
         //    - MilkProteins    12.75%  (Simple vs Sealtest)
         //    - TotalProteins   12.75%  (Simple vs Sealtest)
+        //    - SaturatedFat    11.95%  (Simple vs USDA)
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::MilkSNFS, 18.0)
             .with(CompKey::MilkProteins, 13.0)
-            .with(CompKey::TotalProteins, 13.0);
+            .with(CompKey::TotalProteins, 13.0)
+            .with(CompKey::SaturatedFat, 12.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -1778,6 +1848,8 @@ pub(crate) mod tests {
         // Sealtest's small 15ml serving rounds sugars coarsely (1g/15ml = 6.67g/100g), driving
         // large differences in Lactose and all derived fields (MSNF, MilkSNFS, POD, PAC*).
         // MilkFat: 13.04% — Simple's spec uses exactly 10% vs USDA's measured 11.5g/100g.
+        // TransFat hits 100% on the Sealtest pairs because Sealtest's label reports trans fat
+        // as exact 0 while Simple's model and USDA both report tiny non-zero values.
         // The exceptions are:
         //    - MilkFat        13.04%  (Simple vs USDA and USDA vs Sealtest)
         //    - MSNF           20.85%  (USDA vs Sealtest)
@@ -1789,6 +1861,7 @@ pub(crate) mod tests {
         //    - PACsgr         36.96%  (USDA vs Sealtest)
         //    - PACmlk         20.85%  (USDA vs Sealtest)
         //    - PACtotal       31.49%  (USDA vs Sealtest)
+        //    - TransFat      100.00%  (Simple vs Sealtest and USDA vs Sealtest)
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::MilkFat, 14.0)
             .with(CompKey::MSNF, 21.0)
@@ -1799,7 +1872,8 @@ pub(crate) mod tests {
             .with(CompKey::POD, 37.0)
             .with(CompKey::PACsgr, 37.0)
             .with(CompKey::PACmlk, 21.0)
-            .with(CompKey::PACtotal, 32.0);
+            .with(CompKey::PACtotal, 32.0)
+            .with(CompKey::TransFat, 100.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -1826,6 +1900,7 @@ pub(crate) mod tests {
         //    - PACsgr         44.83%  (USDA vs Sealtest)
         //    - PACmlk         28.81%  (USDA vs Sealtest)
         //    - PACtotal       39.39%  (USDA vs Sealtest)
+        //    - SaturatedFat   14.72%  (Simple vs Sealtest)
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::MSNF, 29.0)
             .with(CompKey::Lactose, 45.0)
@@ -1835,7 +1910,8 @@ pub(crate) mod tests {
             .with(CompKey::POD, 45.0)
             .with(CompKey::PACsgr, 45.0)
             .with(CompKey::PACmlk, 29.0)
-            .with(CompKey::PACtotal, 40.0);
+            .with(CompKey::PACtotal, 40.0)
+            .with(CompKey::SaturatedFat, 15.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -1853,7 +1929,9 @@ pub(crate) mod tests {
         // USDA Heavy Cream is 35.6% fat; close enough to compare with the 35% Simple/Sealtest
         // entries. Sealtest's 15ml serving gives low lactose precision (0.5g/15ml = 3.33g/100g —
         // already interpolated from a 0–1g label range), but differences stay moderate because
-        // the label value was set at the midpoint rather than rounded.
+        // the label value was set at the midpoint rather than rounded. The same coarse serving
+        // also rounds trans fat aggressively (0.1g/15ml = 0.67g/100g), driving TransFat ~45%
+        // higher than the Simple model's 1.225g/100g and USDA's 1.2g/100g.
         // The exceptions are:
         //    - MSNF           15.56%  (Simple vs USDA)
         //    - Lactose        15.06%  (USDA vs Sealtest)
@@ -1862,6 +1940,8 @@ pub(crate) mod tests {
         //    - PACsgr         15.06%  (USDA vs Sealtest)
         //    - PACmlk         15.56%  (Simple vs USDA)
         //    - PACtotal       13.26%  (USDA vs Sealtest)
+        //    - SaturatedFat   10.33%  (Simple vs USDA)
+        //    - TransFat       44.82%  (USDA vs Sealtest)
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::MSNF, 16.0)
             .with(CompKey::Lactose, 16.0)
@@ -1869,7 +1949,9 @@ pub(crate) mod tests {
             .with(CompKey::POD, 16.0)
             .with(CompKey::PACsgr, 16.0)
             .with(CompKey::PACmlk, 16.0)
-            .with(CompKey::PACtotal, 14.0);
+            .with(CompKey::PACtotal, 14.0)
+            .with(CompKey::SaturatedFat, 11.0)
+            .with(CompKey::TransFat, 45.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -1884,7 +1966,10 @@ pub(crate) mod tests {
         .map(source_str_to_comp);
 
         // @todo Many values differ by up to ~17%; need to investigate.
-        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &CompCeiling::new(17.0));
+        // TransFat is 100% because Carnation's label reports trans fat as exact 0 while USDA
+        // reports a small non-zero value.
+        let ceiling = CompCeiling::new(17.0).with(CompKey::TransFat, 100.0);
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
     }
 
@@ -1902,10 +1987,13 @@ pub(crate) mod tests {
         // overrides below. (Rodrigues, 2017)[^50] has protein at 6.04g/100g. Low-Fat Eagle Brand
         // has 10.2g/100g protein, much higher than all of these (jump from 1g -> 2g per serving).
         // @todo Need to investigate why there is so much variability with protein content.
+        // TransFat is 100% because Eagle Brand's label reports trans fat as exact 0 while USDA
+        // reports a small non-zero value.
         let ceiling = CompCeiling::new(12.0)
             .with(CompKey::MilkSNFS, 36.0)
             .with(CompKey::MilkProteins, 36.0)
-            .with(CompKey::TotalProteins, 36.0);
+            .with(CompKey::TotalProteins, 36.0)
+            .with(CompKey::TransFat, 100.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -1961,13 +2049,18 @@ pub(crate) mod tests {
         // As with skim powder, the Simple spec models 3% water while the Medallion and Theland
         // labels resolve to ~10% and ~6% water; the small absolute water content makes its
         // relative diff degenerate. MilkSNFS diverges most because each label's protein-to-lactose
-        // split differs from the idealized spec.
+        // split differs from the idealized spec. SaturatedFat and TransFat diverge because each
+        // brand's label rounds them differently from the Simple model's standard ratios.
         // The exceptions are:
         //    - MilkSNFS      20.88%  (Simple vs Theland)
         //    - Water         70.00%  (Simple vs Medallion)
+        //    - SaturatedFat  13.37%  (Medallion vs Theland)
+        //    - TransFat      19.87%  (Medallion vs Theland)
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::MilkSNFS, 21.0)
-            .with(CompKey::Water, 70.0);
+            .with(CompKey::Water, 70.0)
+            .with(CompKey::SaturatedFat, 14.0)
+            .with(CompKey::TransFat, 20.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
