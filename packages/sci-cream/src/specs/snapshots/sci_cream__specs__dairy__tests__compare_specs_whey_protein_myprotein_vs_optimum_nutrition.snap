@@ -1,0 +1,22 @@
+---
+source: packages/sci-cream/src/specs/dairy.rs
+expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
+---
+sources: MyProtein, Optimum Nutrition
+
+Energy           6.50%  (MyProtein vs Optimum Nutrition)
+MilkFat          0.00%  (MyProtein vs Optimum Nutrition)
+Lactose         17.50%  (MyProtein vs Optimum Nutrition)
+MSNF             3.96%  (MyProtein vs Optimum Nutrition)
+MilkSNFS         5.00%  (MyProtein vs Optimum Nutrition)
+MilkProteins     5.00%  (MyProtein vs Optimum Nutrition)
+MilkSolids       3.78%  (MyProtein vs Optimum Nutrition)
+TotalProteins    5.00%  (MyProtein vs Optimum Nutrition)
+TotalSolids      3.78%  (MyProtein vs Optimum Nutrition)
+Water           20.62%  (MyProtein vs Optimum Nutrition)
+POD             17.50%  (MyProtein vs Optimum Nutrition)
+PACsgr          17.50%  (MyProtein vs Optimum Nutrition)
+PACmlk           3.96%  (MyProtein vs Optimum Nutrition)
+PACtotal         1.51%  (MyProtein vs Optimum Nutrition)
+SaturatedFat    65.00%  (MyProtein vs Optimum Nutrition)
+TransFat         0.00%  (MyProtein vs Optimum Nutrition)

@@ -20,11 +20,15 @@ pub const STD_PROTEIN_IN_MSNF: f64 = 0.35;
 #[doc = include_str!("../../docs/references/index/2.md")]
 pub const STD_PROTEIN_IN_WS: f64 = 0.12;
 
-/// Proportion of proteins in milk solids that is whey (Goff & Hartel, 2025, p. 315)[^20].
+/// Proportion of proteins in milk solids that is whey (Clarke, 2004, p. 40)[^4], (Goff & Hartel,
+/// 2025, p. 315)[^20].
+#[doc = include_str!("../../docs/references/index/4.md")]
 #[doc = include_str!("../../docs/references/index/20.md")]
 pub const STD_WHEY_PROTEIN_IN_MSNF_PROTEIN: f64 = 0.2;
 
-/// Proportion of proteins in milk solids that is casein (Goff & Hartel, 2025, p. 315)[^20].
+/// Proportion of proteins in milk solids that is casein (Clarke, 2004, p. 40)[^4], (Goff & Hartel,
+/// 2025, p. 315)[^20].
+#[doc = include_str!("../../docs/references/index/4.md")]
 #[doc = include_str!("../../docs/references/index/20.md")]
 pub const STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN: f64 = 0.8;
 

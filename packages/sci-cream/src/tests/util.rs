@@ -47,7 +47,7 @@ pub(crate) fn assert_f64_fields_ne_zero<T: Iterable>(iterable: &T) {
 /// The larger magnitude is used as the denominator so the result does not depend on argument
 /// order, and so that a zero on one side yields a finite (100%) difference rather than infinity.
 /// Two exact zeroes are treated as a 0% difference.
-fn relative_diff_percent(lhs: f64, rhs: f64) -> f64 {
+pub(crate) fn relative_diff_percent(lhs: f64, rhs: f64) -> f64 {
     let denominator = lhs.abs().max(rhs.abs());
 
     #[allow(clippy::float_cmp)] // An exact zero denominator is the only degenerate case to guard

@@ -111,8 +111,8 @@ pub struct DairyLabelSpec {
     ///
     /// See [`constants::density::dairy_milliliters_to_grams`].
     pub serving_size: Unit,
-    /// Energy per serving, in kcal
-    pub energy: f64,
+    /// Energy per serving, in kcal; calculated based on macronutrients composition if unspecified
+    pub energy: Option<f64>,
     /// Total fat content per serving; it can be given in grams or as a percentage of serving size
     ///
     /// If a dairy product states a fat content percentage on the label, that is usually more
@@ -220,9 +220,10 @@ impl ToComposition for DairyLabelSpec {
             .proteins(protein);
 
         let other_solids = SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(other_sugars));
+        let total_solids = milk_solids.add(&other_solids);
 
         Composition::new()
-            .energy(energy)
+            .energy(energy.unwrap_or(total_solids.energy()?))
             .solids(Solids::new().milk(milk_solids).other(other_solids))
             .pod(total_sugars.to_pod()?)
             .pac(
@@ -243,7 +244,9 @@ pub(crate) mod tests {
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
-    use crate::tests::util::{CompCeiling, assert_compositions_consistent, compare_compositions};
+    use crate::tests::util::{
+        CompCeiling, assert_compositions_consistent, compare_compositions, relative_diff_percent,
+    };
 
     use super::*;
     use crate::{
@@ -752,7 +755,7 @@ pub(crate) mod tests {
             category: Category::Dairy,
             spec: DairyLabelSpec {
                 serving_size: Unit::Grams(100.0),
-                energy: 61.0,
+                energy: Some(61.0),
                 total_fat: Unit::Grams(3.2),
                 saturated_fat: Some(1.86),
                 trans_fat: None,
@@ -794,7 +797,10 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 3.27);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 11.28);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 88.72); // USDA lists 88.1
+        assert_eq_flt_test!(comp.get(CompKey::Water), 88.72);
+
+        // USDA lists water as 88.1
+        assert_eq_flt_test!(relative_diff_percent(comp.get(CompKey::Water), 88.1), 0.6988);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -832,7 +838,7 @@ pub(crate) mod tests {
             category: Category::Dairy,
             spec: DairyLabelSpec {
                 serving_size: Unit::Milliliters(250.0), // 257.6667 grams
-                energy: 160.0,
+                energy: Some(160.0),
                 total_fat: Unit::Percent(3.25), // 3.25% is 8.3742g, not 8g
                 saturated_fat: Some(5.0),
                 trans_fat: Some(0.3),
@@ -912,7 +918,7 @@ pub(crate) mod tests {
             category: Category::Dairy,
             spec: DairyLabelSpec {
                 serving_size: Unit::Milliliters(240.0), // 245.1288 grams
-                energy: 150.0,
+                energy: Some(150.0),
                 total_fat: Unit::Grams(8.0), // 8g is 3.2636%
                 saturated_fat: Some(5.0),
                 trans_fat: None,
@@ -996,7 +1002,7 @@ pub(crate) mod tests {
             category: Category::Dairy,
             spec: DairyLabelSpec {
                 serving_size: Unit::Grams(100.0), // 100g serving size
-                energy: 92.0,
+                energy: Some(92.0),
                 total_fat: Unit::Grams(1.96),
                 saturated_fat: Some(1.214),
                 trans_fat: None,
@@ -1041,7 +1047,10 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 7.42);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 20.53);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 79.47); // USDA lists 78
+        assert_eq_flt_test!(comp.get(CompKey::Water), 79.47);
+
+        // USDA lists water as 78
+        assert_eq_flt_test!(relative_diff_percent(comp.get(CompKey::Water), 78.0), 1.8498);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -1078,7 +1087,7 @@ pub(crate) mod tests {
             category: Category::Dairy,
             spec: DairyLabelSpec {
                 serving_size: Unit::Grams(16.125), // 15ml @ 1.075 g/ml
-                energy: 15.0,
+                energy: Some(15.0),
                 total_fat: Unit::Percent(2.0),
                 saturated_fat: Some(0.2),
                 trans_fat: None,
@@ -1165,7 +1174,7 @@ pub(crate) mod tests {
             category: Category::Dairy,
             spec: DairyLabelSpec {
                 serving_size: Unit::Grams(100.0),
-                energy: 321.0,
+                energy: Some(321.0),
                 total_fat: Unit::Grams(8.7),
                 saturated_fat: Some(5.486),
                 trans_fat: None,
@@ -1219,6 +1228,9 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 71.01);
         assert_eq_flt_test!(comp.get(CompKey::Water), 28.99); // USDA lists 27.2
 
+        // USDA lists water as 27.2
+        assert_eq_flt_test!(relative_diff_percent(comp.get(CompKey::Water), 27.2), 6.1745);
+
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
         assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
@@ -1255,7 +1267,7 @@ pub(crate) mod tests {
             category: Category::Dairy,
             spec: DairyLabelSpec {
                 serving_size: Unit::Grams(19.5), // 15ml @ 1.3 g/ml
-                energy: 70.0,
+                energy: Some(70.0),
                 total_fat: Unit::Grams(1.5),
                 saturated_fat: Some(1.0),
                 trans_fat: None,
@@ -1343,7 +1355,7 @@ pub(crate) mod tests {
             category: Category::Dairy,
             spec: DairyLabelSpec {
                 serving_size: Unit::Grams(25.0),
-                energy: 90.0,
+                energy: Some(90.0),
                 total_fat: Unit::Grams(0.0),
                 saturated_fat: None,
                 trans_fat: None,
@@ -1425,7 +1437,7 @@ pub(crate) mod tests {
             category: Category::Dairy,
             spec: DairyLabelSpec {
                 serving_size: Unit::Grams(30.0),
-                energy: 150.0,
+                energy: Some(150.0),
                 total_fat: Unit::Grams(8.0),
                 saturated_fat: Some(5.0),
                 trans_fat: None,
@@ -1505,7 +1517,7 @@ pub(crate) mod tests {
             category: Category::Dairy,
             spec: DairyLabelSpec {
                 serving_size: Unit::Grams(25.0),
-                energy: 92.0,
+                energy: Some(92.0),
                 total_fat: Unit::Grams(0.3),
                 saturated_fat: None,
                 trans_fat: None,
@@ -1585,7 +1597,7 @@ pub(crate) mod tests {
             category: Category::Dairy,
             spec: DairyLabelSpec {
                 serving_size: Unit::Grams(25.0),
-                energy: 131.0,
+                energy: Some(131.0),
                 total_fat: Unit::Grams(7.4),
                 saturated_fat: None,
                 trans_fat: None,
@@ -1666,7 +1678,7 @@ pub(crate) mod tests {
         category: Category::Dairy,
         spec: DairyLabelSpec {
             serving_size: Unit::Grams(39.0),
-            energy: 150.0,
+            energy: Some(150.0),
             total_fat: Unit::Grams(0.5),
             saturated_fat: Some(0.3),
             trans_fat: None,
@@ -1723,6 +1735,170 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 0.7692);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.0449);
+    }
+
+    // https://www.optimumnutrition.com/products/gold-standard-100-whey-protein-powder-eu?variant=52105832956171
+    pub(crate) const ING_SPEC_DAIRY_LABEL_GOLD_STANDARD_WHEY_OPTIMUM_NUTRITION_STR: &str = r#"{
+      "name": "Optimum Nutrition Gold Standard 100% Whey",
+      "category": "Dairy",
+      "DairyLabelSpec": {
+        "serving_size": { "grams": 100 },
+        "energy": 374,
+        "total_fat": { "grams": 4.0 },
+        "saturated_fat": 1.4,
+        "sugars": 3.3,
+        "protein": 80
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_LABEL_GOLD_STANDARD_WHEY_OPTIMUM_NUTRITION: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Optimum Nutrition Gold Standard 100% Whey".to_string(),
+            category: Category::Dairy,
+            spec: DairyLabelSpec {
+                serving_size: Unit::Grams(100.0),
+                energy: Some(374.0),
+                total_fat: Unit::Grams(4.0),
+                saturated_fat: Some(1.4),
+                trans_fat: None,
+                sugars: 3.3,
+                protein: 80.0,
+                lactose_free: None,
+                sucrose: None,
+            }
+            .into(),
+        });
+
+    pub(crate) static COMP_GOLD_STANDARD_WHEY_OPTIMUM_NUTRITION: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(374.0)
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(4.0).saturated(1.4).trans(0.14))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(3.3)))
+                        .proteins(80.0),
+                ),
+            )
+            .pod(0.528)
+            .pac(PAC::new().sugars(3.3).msnf_ws_salts(30.6048))
+    });
+
+    #[test]
+    fn to_composition_dairy_label_spec_gold_standard_whey_optimum_nutrition() {
+        let comp = ING_SPEC_DAIRY_LABEL_GOLD_STANDARD_WHEY_OPTIMUM_NUTRITION
+            .spec
+            .to_composition()
+            .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 374.0);
+
+        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 4.0);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 3.3);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 83.3);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 80.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 80.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 87.3);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 80.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 87.3);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 12.7);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 0.528);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 3.3);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 30.6048);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 33.9048);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.4);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.14);
+    }
+
+    // https://www.optimumnutrition.com/products/gold-standard-100-casein-protein-powder-eu?variant=52105828106507
+    pub(crate) const ING_SPEC_DAIRY_LABEL_GOLD_STANDARD_CASEIN_OPTIMUM_NUTRITION_STR: &str = r#"{
+      "name": "Optimum Nutrition Gold Standard 100% Casein",
+      "category": "Dairy",
+      "DairyLabelSpec": {
+        "serving_size": { "grams": 100 },
+        "energy": 352,
+        "total_fat": { "grams": 1.8 },
+        "saturated_fat": 1.1,
+        "sugars": 4.3,
+        "protein": 73
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_LABEL_GOLD_STANDARD_CASEIN_OPTIMUM_NUTRITION: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Optimum Nutrition Gold Standard 100% Casein".to_string(),
+            category: Category::Dairy,
+            spec: DairyLabelSpec {
+                serving_size: Unit::Grams(100.0),
+                energy: Some(352.0),
+                total_fat: Unit::Grams(1.8),
+                saturated_fat: Some(1.1),
+                trans_fat: None,
+                sugars: 4.3,
+                protein: 73.0,
+                lactose_free: None,
+                sucrose: None,
+            }
+            .into(),
+        });
+
+    pub(crate) static COMP_GOLD_STANDARD_CASEIN_OPTIMUM_NUTRITION: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(352.0)
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(1.8).saturated(1.1).trans(0.063))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(4.3)))
+                        .proteins(73.0),
+                ),
+            )
+            .pod(0.688)
+            .pac(PAC::new().sugars(4.3).msnf_ws_salts(28.4003))
+    });
+
+    #[test]
+    fn to_composition_dairy_label_spec_gold_standard_casein_optimum_nutrition() {
+        let comp = ING_SPEC_DAIRY_LABEL_GOLD_STANDARD_CASEIN_OPTIMUM_NUTRITION
+            .spec
+            .to_composition()
+            .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 352.0);
+
+        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 1.8);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 4.3);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 77.3);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 73.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 73.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 79.1);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 73.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 79.1);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 20.9);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 0.688);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.3);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 28.4003);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 32.7003);
+
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.1);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.063);
     }
 
     /// Composition keys compared when cross-checking dairy ingredient data sources.
@@ -2067,6 +2243,161 @@ pub(crate) mod tests {
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
     }
 
+    #[test]
+    fn compare_specs_whey_protein_myprotein_vs_optimum_nutrition() {
+        let sources = [
+            ("MyProtein", "MyProtein Impact Whey Protein"),
+            ("Optimum Nutrition", "Optimum Nutrition Gold Standard 100% Whey"),
+        ]
+        .map(source_str_to_comp);
+
+        // Both are whey protein concentrates/blends; nutrient densities are similar but the
+        // labels diverge in two ways. First, coarse 1g sugar / serving rounding spreads the
+        // sugar-derived fields: MyProtein's 1g/25g = 4g/100g vs ON's 3.3g/100g, a ~17.5%
+        // relative gap that propagates to Lactose, POD, PACsgr, and (via the smaller MSNF
+        // share) Water. Second, MyProtein labels saturated fat as 1g / 1g total — 100% of total
+        // fat, clearly a small-serving rounding artifact — vs ON's realistic 1.4g / 4.0g total
+        // (~35%); SaturatedFat diverges ~65% as a result.
+        // The exceptions are:
+        //    - Lactose       17.50%
+        //    - Water         20.62%
+        //    - POD           17.50%
+        //    - PACsgr        17.50%
+        //    - SaturatedFat  65.00%
+        let ceiling = CompCeiling::new(10.0)
+            .with(CompKey::Lactose, 18.0)
+            .with(CompKey::Water, 21.0)
+            .with(CompKey::POD, 18.0)
+            .with(CompKey::PACsgr, 18.0)
+            .with(CompKey::SaturatedFat, 67.0);
+
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+    }
+
+    #[test]
+    fn compare_specs_whey_isolate_bulk_barn_vs_leanfit_vs_myprotein_vs_optimum_nutrition() {
+        let sources = [
+            ("Bulk Barn", "Bulk Barn Whey Protein Isolate 90%"),
+            ("Leanfit", "Leanfit Sport Whey Isolate"),
+            ("MyProtein", "MyProtein Clear Whey Isolate"),
+            ("Optimum Nutrition", "Optimum Nutrition Gold Standard 100% Isolate"),
+        ]
+        .map(source_str_to_comp);
+
+        // The four isolates span very different formulations. Bulk Barn and Leanfit sit at the
+        // upper end of WPI purity (~90% protein, residual fat and sugars); MyProtein Clear is a
+        // water-based "clear" format with exactly 0g fat and 0g sugar; ON Gold Standard 100%
+        // Isolate sits in the middle at ~83% protein with low but non-zero fat and sugar.
+        // MyProtein Clear's exact zeros force every fat- and sugar-derived field (MilkFat,
+        // SaturatedFat, TransFat, Lactose, POD, PACsgr) to a degenerate 100% diff against any
+        // of the other three. Water diverges sharply (~68%) because protein density spans 80%
+        // (Clear) up to ~94% (Leanfit), and Energy hits ~18% from the same density gap (Clear
+        // vs Bulk Barn). Protein-derived fields (MilkProteins, MilkSNFS, TotalProteins,
+        // MilkSolids, TotalSolids, MSNF, PACmlk, PACtotal) sit in the 10–20% band because the
+        // four sources still legitimately differ in dry-matter content.
+        // The exceptions are:
+        //    - Energy          17.95%  (MyProtein vs Bulk Barn)
+        //    - MilkFat        100.00%  (any pair involving MyProtein Clear)
+        //    - Lactose        100.00%  (any pair involving MyProtein Clear)
+        //    - MSNF            13.33%  (Leanfit vs MyProtein)
+        //    - MilkSNFS        11.11%  (MyProtein vs Bulk Barn)
+        //    - MilkProteins    11.11%  (MyProtein vs Bulk Barn)
+        //    - MilkSolids      14.52%  (Leanfit vs MyProtein)
+        //    - TotalProteins   11.11%  (MyProtein vs Bulk Barn)
+        //    - TotalSolids     14.52%  (Leanfit vs MyProtein)
+        //    - Water           67.95%  (Leanfit vs MyProtein)
+        //    - POD            100.00%  (any pair involving MyProtein Clear)
+        //    - PACsgr         100.00%  (any pair involving MyProtein Clear)
+        //    - PACmlk          13.33%  (Leanfit vs MyProtein)
+        //    - PACtotal        19.43%  (Leanfit vs MyProtein)
+        //    - SaturatedFat   100.00%  (any pair involving MyProtein Clear)
+        //    - TransFat       100.00%  (any pair involving MyProtein Clear)
+        let ceiling = CompCeiling::new(10.0)
+            .with(CompKey::Energy, 18.0)
+            .with(CompKey::MilkFat, 100.0)
+            .with(CompKey::Lactose, 100.0)
+            .with(CompKey::MSNF, 14.0)
+            .with(CompKey::MilkSNFS, 12.0)
+            .with(CompKey::MilkProteins, 12.0)
+            .with(CompKey::MilkSolids, 15.0)
+            .with(CompKey::TotalProteins, 12.0)
+            .with(CompKey::TotalSolids, 15.0)
+            .with(CompKey::Water, 68.0)
+            .with(CompKey::POD, 100.0)
+            .with(CompKey::PACsgr, 100.0)
+            .with(CompKey::PACmlk, 14.0)
+            .with(CompKey::PACtotal, 20.0)
+            .with(CompKey::SaturatedFat, 100.0)
+            .with(CompKey::TransFat, 100.0);
+
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+    }
+
+    #[test]
+    fn compare_specs_casein_california_gold_vs_myprotein_vs_optimum_nutrition() {
+        let sources = [
+            ("California Gold", "California Gold Nutrition, Sport, Micellar Casein"),
+            ("MyProtein", "MyProtein Slow-Release Casein"),
+            ("Optimum Nutrition", "Optimum Nutrition Gold Standard 100% Casein"),
+        ]
+        .map(source_str_to_comp);
+
+        // All three are micellar casein products with broadly similar protein densities but
+        // different fat and sugar profiles. California Gold's 0.5g/30g (= 1.67g/100g) total fat
+        // sits well below MyProtein's 1g/30g (= 3.33g/100g) — so MilkFat diverges 50% on that
+        // pair — but is close to ON's 1.8g/100g (only 7%). ON's 100g serving carries 4.3g
+        // sugars vs the others' 1g/30g (= 3.33g/100g), driving Lactose, POD, and PACsgr to
+        // ~22% on any pair involving ON. Protein density ranges from 73% (ON) up to 83%
+        // (California Gold), which propagates through protein-derived fields (~12%) and
+        // inflates Water by ~44% since California Gold has both the lowest fat and the highest
+        // protein. California Gold and MyProtein omit saturated fat on their labels, so it
+        // falls back to the standard milk-fat ratio applied to total fat; SaturatedFat then
+        // tracks MilkFat between California Gold and MyProtein (50%) but lands almost on top
+        // of ON between California Gold and ON (~1.5%), while MyProtein's STD-derived
+        // 2.17g/100g sits ~49% above ON's labelled 1.1g/100g. TransFat is always STD-derived
+        // and tracks MilkFat directly.
+        // The exceptions are:
+        //    - MilkFat         50.00%  (California Gold vs MyProtein)
+        //    - MilkFat         46.00%  (MyProtein vs ON)
+        //    - Lactose         22.48%  (pairs involving ON)
+        //    - MSNF            10.81%  (California Gold vs ON)
+        //    - MilkSNFS        12.40%  (California Gold vs ON)
+        //    - MilkProteins    12.40%  (California Gold vs ON)
+        //    - MilkSolids      10.45%  (California Gold vs ON)
+        //    - TotalProteins   12.40%  (California Gold vs ON)
+        //    - TotalSolids     10.45%  (California Gold vs ON)
+        //    - Water           44.18%  (California Gold vs ON)
+        //    - Water           30.00%  (California Gold vs MyProtein)
+        //    - Water           20.26%  (MyProtein vs ON)
+        //    - POD             22.48%  (pairs involving ON)
+        //    - PACsgr          22.48%  (pairs involving ON)
+        //    - PACmlk          10.81%  (California Gold vs ON) — tracks the MSNF gap
+        //    - SaturatedFat    50.00%  (California Gold vs MyProtein)
+        //    - SaturatedFat    49.23%  (MyProtein vs ON)
+        //    - TransFat        50.00%  (California Gold vs MyProtein)
+        //    - TransFat        46.00%  (MyProtein vs ON)
+        let ceiling = CompCeiling::new(10.0)
+            .with(CompKey::MilkFat, 51.0)
+            .with(CompKey::Lactose, 23.0)
+            .with(CompKey::MSNF, 11.0)
+            .with(CompKey::MilkSNFS, 13.0)
+            .with(CompKey::MilkProteins, 13.0)
+            .with(CompKey::MilkSolids, 11.0)
+            .with(CompKey::TotalProteins, 13.0)
+            .with(CompKey::TotalSolids, 11.0)
+            .with(CompKey::Water, 45.0)
+            .with(CompKey::POD, 23.0)
+            .with(CompKey::PACsgr, 23.0)
+            .with(CompKey::PACmlk, 11.0)
+            .with(CompKey::SaturatedFat, 51.0)
+            .with(CompKey::TransFat, 51.0);
+
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+    }
+
     pub(crate) static INGREDIENT_ASSETS_TABLE_DAIRY: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =
         LazyLock::new(|| {
             vec![
@@ -2149,6 +2480,16 @@ pub(crate) mod tests {
                     ING_SPEC_DAIRY_LABEL_WHEY_ISOLATE.clone(),
                     Some(*COMP_WHEY_ISOLATE),
                 ),
+                (
+                    ING_SPEC_DAIRY_LABEL_GOLD_STANDARD_WHEY_OPTIMUM_NUTRITION_STR,
+                    ING_SPEC_DAIRY_LABEL_GOLD_STANDARD_WHEY_OPTIMUM_NUTRITION.clone(),
+                    Some(*COMP_GOLD_STANDARD_WHEY_OPTIMUM_NUTRITION),
+                ),
+                (
+                    ING_SPEC_DAIRY_LABEL_GOLD_STANDARD_CASEIN_OPTIMUM_NUTRITION_STR,
+                    ING_SPEC_DAIRY_LABEL_GOLD_STANDARD_CASEIN_OPTIMUM_NUTRITION.clone(),
+                    Some(*COMP_GOLD_STANDARD_CASEIN_OPTIMUM_NUTRITION),
+                ),
             ]
         });
 
@@ -2186,7 +2527,7 @@ pub(crate) mod tests {
     fn dairy_label_spec_err_on_unsupported_unit() {
         let base = DairyLabelSpec {
             serving_size: Unit::Milliliters(250.0),
-            energy: 160.0,
+            energy: Some(160.0),
             total_fat: Unit::Grams(8.0),
             saturated_fat: Some(5.0),
             trans_fat: Some(0.3),
@@ -2280,7 +2621,7 @@ pub(crate) mod tests {
     fn dairy_label_spec_err_on_negative_field() {
         let base = DairyLabelSpec {
             serving_size: Unit::Grams(250.0),
-            energy: 160.0,
+            energy: Some(160.0),
             total_fat: Unit::Grams(8.0),
             saturated_fat: Some(5.0),
             trans_fat: Some(0.3),
@@ -2321,7 +2662,7 @@ pub(crate) mod tests {
     fn dairy_label_spec_err_when_saturated_fat_exceeds_total_fat() {
         let result = DairyLabelSpec {
             serving_size: Unit::Grams(250.0),
-            energy: 160.0,
+            energy: Some(160.0),
             total_fat: Unit::Grams(5.0),
             saturated_fat: Some(8.0),
             trans_fat: Some(0.0),
@@ -2338,7 +2679,7 @@ pub(crate) mod tests {
     fn dairy_label_spec_err_when_trans_fat_exceeds_total_fat() {
         let result = DairyLabelSpec {
             serving_size: Unit::Grams(250.0),
-            energy: 160.0,
+            energy: Some(160.0),
             total_fat: Unit::Grams(5.0),
             saturated_fat: Some(3.0),
             trans_fat: Some(8.0),
@@ -2355,7 +2696,7 @@ pub(crate) mod tests {
     fn dairy_label_spec_err_when_fat_plus_sugars_plus_protein_exceeds_serving_size() {
         let result = DairyLabelSpec {
             serving_size: Unit::Grams(20.0),
-            energy: 160.0,
+            energy: Some(160.0),
             total_fat: Unit::Grams(8.0),
             saturated_fat: Some(5.0),
             trans_fat: Some(0.3),

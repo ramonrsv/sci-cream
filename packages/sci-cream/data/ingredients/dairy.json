@@ -158,7 +158,7 @@
       "sugars": 2.92,
       "protein": 2.02
     },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Cream, heavy: https://fdc.nal.usda.gov/food-details/2705597/nutrients"
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Cream, heavy: https://fdc.nal.usda.gov/food-details/2705597/nutrients. Carbohydrates by difference listed as 3.8g."
   },
   {
     "name": "Sealtest 0% Skim Milk",
@@ -478,16 +478,105 @@
     "comments": "From nutrition facts table: https://leanfit.ca/collections/sport/products/leanfit-sport-whey-isolate-unflavoured-2kg"
   },
   {
+    "name": "Bulk Barn Whey Protein Isolate 90%",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 390,
+      "total_fat": { "grams": 1.5 },
+      "saturated_fat": 0.3,
+      "sugars": 1,
+      "protein": 90
+    },
+    "comments": "From nutrition facts table (unflavored): https://www.bulkbarn.ca/en/Products/All/Whey-Protein-Isolate-90Percent-1580. Label lists 4g of total carbohydrates."
+  },
+  {
     "name": "California Gold Nutrition, Sport, Micellar Casein",
     "category": "Dairy",
     "DairyLabelSpec": {
       "serving_size": { "grams": 30 },
       "energy": 110,
-      "total_fat": { "grams": 0 },
+      "total_fat": { "grams": 0.5 },
       "sugars": 1,
       "protein": 25
     },
-    "comments": "From nutrition facts table: https://ca.iherb.com/pr/california-gold-nutrition-sport-micellar-casein-unflavored-slow-absorption-16-oz-454-g/71028"
+    "comments": "From nutrition facts table: https://ca.iherb.com/pr/california-gold-nutrition-sport-micellar-casein-unflavored-slow-absorption-16-oz-454-g/71028. Label lists 2g of total carbohydrates."
+  },
+  {
+    "name": "MyProtein Impact Whey Protein",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 25 },
+      "energy": 100,
+      "total_fat": { "grams": 1 },
+      "saturated_fat": 1,
+      "sugars": 1,
+      "protein": 19
+    },
+    "comments": "From nutrition facts table (unflavored variant): https://ca.myprotein.com/p/sports-nutrition/impact-whey-protein/10852500/?variation=15152175. Label lists 3g of total carbohydrates."
+  },
+  {
+    "name": "MyProtein Clear Whey Isolate",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 25 },
+      "energy": 80,
+      "total_fat": { "grams": 0 },
+      "sugars": 0,
+      "protein": 20
+    },
+    "comments": "From nutrition facts table (lemonade variant): https://ca.myprotein.com/p/sports-nutrition/clear-whey-isolate/12095867/"
+  },
+  {
+    "name": "MyProtein Slow-Release Casein",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 30 },
+      "energy": 110,
+      "total_fat": { "grams": 1 },
+      "sugars": 1,
+      "protein": 23
+    },
+    "comments": "From nutrition facts table (vanilla variant): https://ca.myprotein.com/p/sports-nutrition/slow-release-casein/11092497/?variation=11410392. Label lists 3g of total carbohydrates."
+  },
+  {
+    "name": "Optimum Nutrition Gold Standard 100% Whey",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 374,
+      "total_fat": { "grams": 4.0 },
+      "saturated_fat": 1.4,
+      "sugars": 3.3,
+      "protein": 80
+    },
+    "comments": "From nutrition facts table (unflavored variant): https://www.optimumnutrition.com/products/gold-standard-100-whey-protein-powder-eu?variant=52105832956171. Label lists 4.2g of carbohydrates, 0.52g of salt."
+  },
+  {
+    "name": "Optimum Nutrition Gold Standard 100% Isolate",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 361,
+      "total_fat": { "grams": 1.2 },
+      "saturated_fat": 0.3,
+      "sugars": 1,
+      "protein": 83
+    },
+    "comments": "From nutrition facts table (vanilla variant): https://www.optimumnutrition.com/products/gold-standard-100-isolate-whey-protein-powder-eu?variant=52105839477003. Label lists 4g of total carbohydrates, 0.12g of salt."
+  },
+  {
+    "name": "Optimum Nutrition Gold Standard 100% Casein",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 352,
+      "total_fat": { "grams": 1.8 },
+      "saturated_fat": 1.1,
+      "sugars": 4.3,
+      "protein": 73
+    },
+    "comments": "From nutrition facts table (strawberry delight variant): https://www.optimumnutrition.com/products/gold-standard-100-casein-protein-powder-eu?variant=52105828106507. Label lists 11g of total carbohydrates, 1.4g of salt."
   },
   { "alias": "Whey Isolate", "for": "Leanfit Sport Whey Isolate" },
   { "alias": "Casein", "for": "California Gold Nutrition, Sport, Micellar Casein" }

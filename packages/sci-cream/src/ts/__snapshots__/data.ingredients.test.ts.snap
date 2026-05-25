@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 161  (non-alias: 143, independent: 139)
+"total: 168  (non-alias: 150, independent: 146)
 
             0% Milk
             1% Milk
@@ -30,6 +30,7 @@ exports[`Embedded spec entries 1`] = `
             Appleton Estate 8-year Rum
             Baileys Irish Cream
             Bourbon Whiskey
+            Bulk Barn Whey Protein Isolate 90%
 [alias]     CMC
             California Gold Nutrition, Sport, Micellar Casein
             Carboxymethyl Cellulose
@@ -105,8 +106,14 @@ exports[`Embedded spec entries 1`] = `
             Marsala Wine
             Medallion Skim Milk Powder
             Medallion Whole Milk Powder
+            MyProtein Clear Whey Isolate
+            MyProtein Impact Whey Protein
+            MyProtein Slow-Release Casein
             Navel Orange
             Oligofructose Powder
+            Optimum Nutrition Gold Standard 100% Casein
+            Optimum Nutrition Gold Standard 100% Isolate
+            Optimum Nutrition Gold Standard 100% Whey
             Pectin
             Pistachio
             Salt
