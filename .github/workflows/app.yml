@@ -182,6 +182,10 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+    env:
+      # `next build` loads `lib/database/util.ts`, which calls `.replace()` on `POSTGRES_URL`
+      # during module init. This placeholder satisfies the parse — no DB connection needed.
+      POSTGRES_URL: postgres://placeholder:placeholder@localhost:5432/placeholder
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-rust

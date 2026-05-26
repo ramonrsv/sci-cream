@@ -35,6 +35,7 @@
 - [ ] Add support for every instance of `KeySelect` to independently store custom keys in local.
 - [ ] Add feature to show different ranges around serving temp in `FpdGraph`, like a 'zoom'.
 - [ ] Look for opportunities to optimize bundle size, particularly in `/ingredients` and `/recipes`.
+- [ ] Find a proper fix for the placeholder `POSTGRES_URL` in the `bundle_benchmark` workflow.
 
 ## Backlog
 
