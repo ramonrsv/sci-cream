@@ -473,7 +473,8 @@
       "total_fat": { "grams": 0.5 },
       "saturated_fat": 0.3,
       "sugars": 1,
-      "protein": 35
+      "protein": 35,
+      "solids_source": "Whey"
     },
     "comments": "From nutrition facts table: https://leanfit.ca/collections/sport/products/leanfit-sport-whey-isolate-unflavoured-2kg"
   },
@@ -486,7 +487,8 @@
       "total_fat": { "grams": 1.5 },
       "saturated_fat": 0.3,
       "sugars": 1,
-      "protein": 90
+      "protein": 90,
+      "solids_source": "Whey"
     },
     "comments": "From nutrition facts table (unflavored): https://www.bulkbarn.ca/en/Products/All/Whey-Protein-Isolate-90Percent-1580. Label lists 4g of total carbohydrates."
   },
@@ -498,7 +500,8 @@
       "energy": 110,
       "total_fat": { "grams": 0.5 },
       "sugars": 1,
-      "protein": 25
+      "protein": 25,
+      "solids_source": "Casein"
     },
     "comments": "From nutrition facts table: https://ca.iherb.com/pr/california-gold-nutrition-sport-micellar-casein-unflavored-slow-absorption-16-oz-454-g/71028. Label lists 2g of total carbohydrates."
   },
@@ -511,7 +514,8 @@
       "total_fat": { "grams": 1 },
       "saturated_fat": 1,
       "sugars": 1,
-      "protein": 19
+      "protein": 19,
+      "solids_source": "Whey"
     },
     "comments": "From nutrition facts table (unflavored variant): https://ca.myprotein.com/p/sports-nutrition/impact-whey-protein/10852500/?variation=15152175. Label lists 3g of total carbohydrates."
   },
@@ -523,7 +527,8 @@
       "energy": 80,
       "total_fat": { "grams": 0 },
       "sugars": 0,
-      "protein": 20
+      "protein": 20,
+      "solids_source": "Whey"
     },
     "comments": "From nutrition facts table (lemonade variant): https://ca.myprotein.com/p/sports-nutrition/clear-whey-isolate/12095867/"
   },
@@ -535,7 +540,8 @@
       "energy": 110,
       "total_fat": { "grams": 1 },
       "sugars": 1,
-      "protein": 23
+      "protein": 23,
+      "solids_source": "Casein"
     },
     "comments": "From nutrition facts table (vanilla variant): https://ca.myprotein.com/p/sports-nutrition/slow-release-casein/11092497/?variation=11410392. Label lists 3g of total carbohydrates."
   },
@@ -548,7 +554,8 @@
       "total_fat": { "grams": 4.0 },
       "saturated_fat": 1.4,
       "sugars": 3.3,
-      "protein": 80
+      "protein": 80,
+      "solids_source": "Whey"
     },
     "comments": "From nutrition facts table (unflavored variant): https://www.optimumnutrition.com/products/gold-standard-100-whey-protein-powder-eu?variant=52105832956171. Label lists 4.2g of carbohydrates, 0.52g of salt."
   },
@@ -561,7 +568,8 @@
       "total_fat": { "grams": 1.2 },
       "saturated_fat": 0.3,
       "sugars": 1,
-      "protein": 83
+      "protein": 83,
+      "solids_source": "Whey"
     },
     "comments": "From nutrition facts table (vanilla variant): https://www.optimumnutrition.com/products/gold-standard-100-isolate-whey-protein-powder-eu?variant=52105839477003. Label lists 4g of total carbohydrates, 0.12g of salt."
   },
@@ -574,7 +582,8 @@
       "total_fat": { "grams": 1.8 },
       "saturated_fat": 1.1,
       "sugars": 4.3,
-      "protein": 73
+      "protein": 73,
+      "solids_source": "Casein"
     },
     "comments": "From nutrition facts table (strawberry delight variant): https://www.optimumnutrition.com/products/gold-standard-100-casein-protein-powder-eu?variant=52105828106507. Label lists 11g of total carbohydrates, 1.4g of salt."
   },

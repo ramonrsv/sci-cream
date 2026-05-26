@@ -7,7 +7,14 @@ use crate::{
     composition::{
         Carbohydrates, Composition, Fats, PAC, ScaleComponents, Solids, SolidsBreakdown, Sugars, ToComposition,
     },
-    constants::{self, density::dairy_milliliters_to_grams},
+    constants::{
+        self,
+        composition::{
+            STD_LACTOSE_IN_MSNF, STD_LACTOSE_IN_WS, STD_MIN_WATER_CONTENT_IN_MILK_POWDER, STD_MSNF_IN_MILK_SERUM,
+            STD_PROTEIN_IN_MSNF, STD_PROTEIN_IN_WS, STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
+        },
+        density::dairy_milliliters_to_grams,
+    },
     error::{Error, Result},
     specs::units::Unit,
     validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
@@ -16,11 +23,26 @@ use crate::{
 #[cfg(doc)]
 use crate::{
     composition::{ArtificialSweeteners, Polyols},
-    constants::composition::{
-        STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM, STD_PROTEIN_IN_MSNF, STD_SATURATED_FAT_IN_MILK_FAT,
-        STD_TRANS_FAT_IN_MILK_FAT,
-    },
+    constants::composition::{STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_WHEY_PROTEIN_IN_MSNF_PROTEIN},
 };
+
+/// Indicates the origin of the non-fat solids in a dairy product, which affects its composition
+#[derive(PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
+pub enum SolidsSource {
+    /// Milk solids (MSNF), a natural ~80/20 casein/whey proteins split, lactose, ~10.5% minerals
+    ///
+    /// See [`STD_LACTOSE_IN_MSNF`], [`STD_PROTEIN_IN_MSNF`], [`STD_WHEY_PROTEIN_IN_MSNF_PROTEIN`],
+    /// and [`STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN`] for details about the composition assumptions.
+    Milk,
+    /// Whey solids (WS), all whey proteins, lactose, ~11.5% minerals.
+    ///
+    /// See [`STD_LACTOSE_IN_WS`] and [`STD_PROTEIN_IN_WS`] for details about the composition.
+    Whey,
+    /// Casein solids, all casein proteins, ~10% minerals
+    //
+    // @todo The mineral content is an estimate
+    Casein,
+}
 
 /// Spec for trivial dairy ingredients, e.g. Milk, Cream, Milk Powder, etc.
 ///
@@ -32,7 +54,7 @@ use crate::{
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct DairySimpleSpec {
-    /// Fat content by weight, e.g. 3.25 for whole milk, 40 for cream, and 0 for skimmed milk powder.
+    /// Fat content by weight, e.g. 3.25 for whole milk, 40 for cream, 0 for skimmed milk, etc.
     pub fat: f64,
     /// Milk solids non-fat content by weight, calculated internally for typical milks and creams.
     ///
@@ -59,13 +81,13 @@ impl ToComposition for DairySimpleSpec {
 
         let lactose_free = lactose_free.unwrap_or(false);
 
-        let calculated_msnf = (100.0 - fat) * constants::composition::STD_MSNF_IN_MILK_SERUM;
+        let calculated_msnf = (100.0 - fat) * STD_MSNF_IN_MILK_SERUM;
         let msnf = msnf.unwrap_or(calculated_msnf);
         verify_are_positive(&[fat, msnf])?;
         verify_is_within_100_percent(fat + msnf)?;
 
-        let lactose = msnf * constants::composition::STD_LACTOSE_IN_MSNF;
-        let proteins = msnf * constants::composition::STD_PROTEIN_IN_MSNF;
+        let lactose = msnf * STD_LACTOSE_IN_MSNF;
+        let proteins = msnf * STD_PROTEIN_IN_MSNF;
 
         let sugars = if lactose_free {
             Sugars::new().glucose(lactose / 2.0).galactose(lactose / 2.0)
@@ -77,12 +99,12 @@ impl ToComposition for DairySimpleSpec {
             .fats(
                 Fats::new()
                     .total(fat)
-                    .saturated(fat * constants::composition::STD_SATURATED_FAT_IN_MILK_FAT)
-                    .trans(fat * constants::composition::STD_TRANS_FAT_IN_MILK_FAT),
+                    .saturated(fat * STD_SATURATED_FAT_IN_MILK_FAT)
+                    .trans(fat * STD_TRANS_FAT_IN_MILK_FAT),
             )
             .carbohydrates(Carbohydrates::new().sugars(sugars))
             .proteins(proteins)
-            .others(msnf - lactose - proteins);
+            .others_from_total(fat + msnf)?;
 
         let pod = milk_solids.carbohydrates.to_pod()?;
         let pad = PAC::new()
@@ -104,6 +126,15 @@ impl ToComposition for DairySimpleSpec {
 /// products, including those with non-standard compositions, e.g. lactose-free products with
 /// different types of sugars, whey protein or isolate powder, or other specialized dairy products.
 /// The required values can typically be pulled directly from the nutrition facts label.
+///
+/// In addition to lactose and proteins, MSNF (milk solids non-fat) and WS (whey solids) typically
+/// include ~10-12% minerals and salts which are not easy to infer from nutrition facts labels. As
+/// such, the total MSNF or WS content is internally estimated from `dairy_sugars` (see
+/// [`sugars`](Self::sugars) and [`sucrose`](Self::sucrose)), [`protein`](Self::protein), and
+/// standard composition constants: [`STD_LACTOSE_IN_MSNF`] and [`STD_PROTEIN_IN_MSNF`] if
+/// [`solids_source`](Self::solids_source) is [`Milk`](SolidsSource::Milk), [`STD_LACTOSE_IN_WS`]
+/// and [`STD_PROTEIN_IN_WS`] if [`Whey`](SolidsSource::Whey) (Goff & Hartel, 2025, p. 37)[^20].
+#[doc = include_str!("../../docs/references/index/20.md")]
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct DairyLabelSpec {
@@ -137,6 +168,8 @@ pub struct DairyLabelSpec {
     /// [`lactose_free`](Self::lactose_free) and [`sucrose`](Self::sucrose).
     pub sugars: f64,
     /// Protein content per serving, in grams.
+    ///
+    /// The detailed proteins breakdown is determined by [`solids_source`](Self::solids_source).
     pub protein: f64,
     /// Whether the dairy product is lactose-free, which affects the detailed composition of
     /// [`sugars`](Self::sugars).
@@ -159,6 +192,10 @@ pub struct DairyLabelSpec {
     /// See [`lactose_free`](Self::sucrose) for the possibility of different natural sugar
     /// compositions in lactose-free products.
     pub sucrose: Option<f64>,
+    /// Source of the solids non-fat in this product, [`SolidsSource::Milk`] if unspecified
+    ///
+    /// This affects the detailed protein and mineral composition of the solids non-fat.
+    pub solids_source: Option<SolidsSource>,
 }
 
 impl ToComposition for DairyLabelSpec {
@@ -173,10 +210,12 @@ impl ToComposition for DairyLabelSpec {
             protein,
             lactose_free,
             sucrose,
+            solids_source,
         } = *self;
 
         let lactose_free = lactose_free.unwrap_or(false);
         let sucrose = sucrose.unwrap_or(0.0);
+        let solids_source = solids_source.unwrap_or(SolidsSource::Milk);
 
         let (serving_size, total_fat) = match total_fat {
             Unit::Grams(fat_grams) => match serving_size {
@@ -195,16 +234,38 @@ impl ToComposition for DairyLabelSpec {
             _ => Err(Error::UnsupportedCompositionUnit(serving_size))?,
         };
 
-        let saturated_fat = saturated_fat.unwrap_or(constants::composition::STD_SATURATED_FAT_IN_MILK_FAT * total_fat);
-        let trans_fat = trans_fat.unwrap_or(constants::composition::STD_TRANS_FAT_IN_MILK_FAT * total_fat);
-
-        verify_are_positive(&[serving_size, total_fat, saturated_fat, trans_fat, sugars, protein])?;
-        verify_is_subset(saturated_fat, total_fat, "saturated_fat <= total_fat")?;
-        verify_is_subset(trans_fat, total_fat, "trans_fat <= total_fat")?;
-        verify_is_subset(total_fat + sugars + protein, serving_size, "total_fat + sugars + protein <= serving_size")?;
-        verify_is_subset(sucrose, sugars, "sucrose <= sugars")?;
+        let saturated_fat = saturated_fat.unwrap_or(STD_SATURATED_FAT_IN_MILK_FAT * total_fat);
+        let trans_fat = trans_fat.unwrap_or(STD_TRANS_FAT_IN_MILK_FAT * total_fat);
 
         let dairy_sugars = sugars - sucrose;
+
+        let std_minerals_in_snf = match solids_source {
+            SolidsSource::Milk => 1.0 - STD_LACTOSE_IN_MSNF - STD_PROTEIN_IN_MSNF,
+            SolidsSource::Whey => 1.0 - STD_LACTOSE_IN_WS - STD_PROTEIN_IN_WS,
+            SolidsSource::Casein => 0.1, // 10% guess, @todo find a reference for this value
+        };
+
+        let snf = f64::min(
+            (dairy_sugars + protein) / (1.0 - std_minerals_in_snf),
+            (1.0 - STD_MIN_WATER_CONTENT_IN_MILK_POWDER) * serving_size - total_fat - sucrose,
+        );
+
+        verify_are_positive(&[
+            serving_size,
+            total_fat,
+            saturated_fat,
+            trans_fat,
+            sugars,
+            protein,
+            sucrose,
+            snf,
+        ])?;
+
+        verify_is_subset(saturated_fat, total_fat, "saturated_fat <= total_fat")?;
+        verify_is_subset(trans_fat, total_fat, "trans_fat <= total_fat")?;
+        verify_is_subset(total_fat + snf + sucrose, serving_size, "total_fat + snf + sucrose <= serving_size")?;
+        verify_is_subset(sucrose, sugars, "sucrose <= sugars")?;
+
         let dairy_sugars = if lactose_free {
             Sugars::new().glucose(dairy_sugars / 2.0).galactose(dairy_sugars / 2.0)
         } else {
@@ -217,7 +278,8 @@ impl ToComposition for DairyLabelSpec {
         let milk_solids = SolidsBreakdown::new()
             .fats(Fats::new().total(total_fat).saturated(saturated_fat).trans(trans_fat))
             .carbohydrates(Carbohydrates::new().sugars(dairy_sugars))
-            .proteins(protein);
+            .proteins(protein)
+            .others_from_total(total_fat + snf)?;
 
         let other_solids = SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(other_sugars));
         let total_solids = milk_solids.add(&other_solids);
@@ -229,7 +291,7 @@ impl ToComposition for DairyLabelSpec {
             .pac(
                 PAC::new()
                     .sugars(total_sugars.to_pac()?)
-                    .msnf_ws_salts(milk_solids.snf() * constants::pac::MSNF_WS_SALTS / 100.0),
+                    .msnf_ws_salts(snf * constants::pac::MSNF_WS_SALTS / 100.0),
             )
             .scale(100.0 / serving_size)
             .validate_into()
@@ -763,6 +825,7 @@ pub(crate) mod tests {
                 protein: 3.27,
                 lactose_free: None,
                 sucrose: None,
+                solids_source: None,
             }
             .into(),
         });
@@ -775,11 +838,12 @@ pub(crate) mod tests {
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(3.2).saturated(1.86).trans(0.112))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(4.81)))
-                        .proteins(3.27),
+                        .proteins(3.27)
+                        .others(0.9479),
                 ),
             )
             .pod(0.7696)
-            .pac(PAC::new().sugars(4.81).msnf_ws_salts(2.9686))
+            .pac(PAC::new().sugars(4.81).msnf_ws_salts(3.3169))
     });
 
     #[test]
@@ -790,17 +854,17 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::MilkFat), 3.2);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 4.81);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 8.08);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 3.27);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 9.0279);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 4.2179);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 3.27);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 11.28);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 12.2279);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 3.27);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 11.28);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 88.72);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 12.2279);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 87.7721);
 
         // USDA lists water as 88.1
-        assert_eq_flt_test!(relative_diff_percent(comp.get(CompKey::Water), 88.1), 0.6988);
+        assert_eq_flt_test!(relative_diff_percent(comp.get(CompKey::Water), 88.1), 0.3722);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -810,8 +874,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.81);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 2.9686);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 7.7786);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.3169);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.1269);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.86);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.112);
@@ -846,6 +910,7 @@ pub(crate) mod tests {
                 protein: 9.0,
                 lactose_free: None,
                 sucrose: None,
+                solids_source: None,
             }
             .into(),
         });
@@ -858,11 +923,12 @@ pub(crate) mod tests {
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(3.25).saturated(1.9405).trans(0.1164))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(5.04528)))
-                        .proteins(3.49288),
+                        .proteins(3.49288)
+                        .others(1.0017),
                 ),
             )
             .pod(0.8072)
-            .pac(PAC::new().sugars(5.04528).msnf_ws_salts(3.137))
+            .pac(PAC::new().sugars(5.04528).msnf_ws_salts(3.5050))
     });
 
     #[test]
@@ -873,14 +939,14 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::MilkFat), 3.25);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 5.04528);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 8.53816);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 3.49288);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 9.5398);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 4.4946);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 3.49288);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 11.78816);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 12.7898);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 3.49288);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 11.78816);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 88.2118);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 12.7898);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 87.2102);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -890,8 +956,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 5.04528);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.137);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.1823);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.5050);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.5503);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.9405);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.1164);
@@ -926,6 +992,7 @@ pub(crate) mod tests {
                 protein: 13.0,
                 lactose_free: Some(true),
                 sucrose: None,
+                solids_source: None,
             }
             .into(),
         });
@@ -938,11 +1005,12 @@ pub(crate) mod tests {
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(3.2636).saturated(2.0397).trans(0.1142))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().glucose(1.22385).galactose(1.22385)))
-                        .proteins(5.3033),
+                        .proteins(5.3033)
+                        .others(0.9093),
                 ),
             )
             .pod(1.7746)
-            .pac(PAC::new().sugars(4.65063).msnf_ws_salts(2.8477))
+            .pac(PAC::new().sugars(4.65063).msnf_ws_salts(3.1819))
     });
 
     #[test]
@@ -958,14 +1026,14 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::Glucose), 1.22385);
         assert_eq_flt_test!(comp.get(CompKey::Galactose), 1.22385);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 7.751);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 5.3033);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 8.6604);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 6.2126);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 5.3033);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 11.0146);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 11.9240);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 5.3033);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 11.0146);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 88.9854);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 11.9240);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 88.0760);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -975,8 +1043,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.65063);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 2.8477);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 7.4983);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.1819);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 7.8325);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 2.0397);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.1142);
@@ -1010,6 +1078,7 @@ pub(crate) mod tests {
                 protein: 7.42,
                 lactose_free: None,
                 sucrose: None,
+                solids_source: None,
             }
             .into(),
         });
@@ -1022,11 +1091,12 @@ pub(crate) mod tests {
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(1.96).saturated(1.214).trans(0.0686))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(11.15)))
-                        .proteins(7.42),
+                        .proteins(7.42)
+                        .others(2.1786),
                 ),
             )
             .pod(1.784)
-            .pac(PAC::new().sugars(11.15).msnf_ws_salts(6.8227))
+            .pac(PAC::new().sugars(11.15).msnf_ws_salts(7.6231))
     });
 
     #[test]
@@ -1040,17 +1110,17 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::MilkFat), 1.96);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 11.15);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 18.57);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 7.42);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 20.7486);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 9.5986);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 7.42);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 20.53);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 22.7086);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 7.42);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 20.53);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 79.47);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 22.7086);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 77.2914);
 
         // USDA lists water as 78
-        assert_eq_flt_test!(relative_diff_percent(comp.get(CompKey::Water), 78.0), 1.8498);
+        assert_eq_flt_test!(relative_diff_percent(comp.get(CompKey::Water), 78.0), 0.9085);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -1060,8 +1130,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 11.15);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 6.8227);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 17.9727);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 7.6231);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 18.7731);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.214);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.0686);
@@ -1098,6 +1168,7 @@ pub(crate) mod tests {
                 protein: 1.0,
                 lactose_free: None,
                 sucrose: None,
+                solids_source: None,
             }
             .into(),
         });
@@ -1110,11 +1181,12 @@ pub(crate) mod tests {
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(2.0).saturated(1.2403).trans(0.07))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(9.3024)))
-                        .proteins(6.2016),
+                        .proteins(6.2016)
+                        .others(1.8189),
                 ),
             )
             .pod(1.4884)
-            .pac(PAC::new().sugars(9.3024).msnf_ws_salts(5.6962))
+            .pac(PAC::new().sugars(9.3024).msnf_ws_salts(6.3645))
     });
 
     #[test]
@@ -1128,14 +1200,14 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::MilkFat), 2.0);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 9.3024);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 15.5039);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 6.2016);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 17.3228);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 8.0204);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 6.2016);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 17.5039);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 19.3228);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 6.2016);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 17.5039);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 82.4961);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 19.3228);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 80.6772);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -1145,8 +1217,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 9.3024);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 5.6962);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 14.9986);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 6.3645);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 15.6668);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.2403);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.07);
@@ -1182,6 +1254,7 @@ pub(crate) mod tests {
                 protein: 7.91,
                 lactose_free: None,
                 sucrose: Some(45.0),
+                solids_source: None,
             }
             .into(),
         });
@@ -1195,14 +1268,15 @@ pub(crate) mod tests {
                         SolidsBreakdown::new()
                             .fats(Fats::new().total(8.7).saturated(5.486).trans(0.3045))
                             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(9.4)))
-                            .proteins(7.91),
+                            .proteins(7.91)
+                            .others(2.0308),
                     )
                     .other(
                         SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(45.0))),
                     ),
             )
             .pod(46.504)
-            .pac(PAC::new().sugars(54.4).msnf_ws_salts(6.3598))
+            .pac(PAC::new().sugars(54.4).msnf_ws_salts(7.1059))
     });
 
     #[test]
@@ -1216,20 +1290,20 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::MilkFat), 8.7);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 9.4);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 17.31);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 7.91);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 19.3408);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 9.9408);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 7.91);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 26.01);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 28.0408);
 
         assert_eq_flt_test!(comp.get(CompKey::Sucrose), 45.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 54.4);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 7.91);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 71.01);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 28.99); // USDA lists 27.2
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 73.0408);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 26.9592); // USDA lists 27.2
 
         // USDA lists water as 27.2
-        assert_eq_flt_test!(relative_diff_percent(comp.get(CompKey::Water), 27.2), 6.1745);
+        assert_eq_flt_test!(relative_diff_percent(comp.get(CompKey::Water), 27.2), 0.8853);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -1239,8 +1313,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 54.4);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 6.3598);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 60.7598);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 7.1059);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 61.5059);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 5.486);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.3045);
@@ -1275,6 +1349,7 @@ pub(crate) mod tests {
                 protein: 1.0,
                 lactose_free: None,
                 sucrose: Some(8.97), // estimated 46% of total, based on USDA + Moro
+                solids_source: None,
             }
             .into(),
         });
@@ -1288,14 +1363,15 @@ pub(crate) mod tests {
                         SolidsBreakdown::new()
                             .fats(Fats::new().total(7.6923).saturated(5.1282).trans(0.2692))
                             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(10.4103)))
-                            .proteins(5.1282),
+                            .proteins(5.1282)
+                            .others(1.8229),
                     )
                     .other(
                         SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(46.0))),
                     ),
             )
             .pod(47.6656)
-            .pac(PAC::new().sugars(56.4102).msnf_ws_salts(5.7089))
+            .pac(PAC::new().sugars(56.4102).msnf_ws_salts(6.3787))
     });
 
     #[test]
@@ -1309,17 +1385,17 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::MilkFat), 7.6923);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 10.4103);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 15.5385);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 5.1282);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 17.3614);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 6.9512);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 5.1282);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 23.2308);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 25.0537);
 
         assert_eq_flt_test!(comp.get(CompKey::Sucrose), 46.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 56.4103);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 5.1282);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 69.2308);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 30.7692);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 71.0537);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 28.9463);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -1329,8 +1405,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 56.4103);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 5.7089);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 62.1192);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 6.3787);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 62.7890);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 5.1282);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.2692);
@@ -1363,6 +1439,7 @@ pub(crate) mod tests {
                 protein: 9.0,
                 lactose_free: None,
                 sucrose: None,
+                solids_source: None,
             }
             .into(),
         });
@@ -1375,11 +1452,12 @@ pub(crate) mod tests {
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(0.0))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(50.0)))
-                        .proteins(36.0),
+                        .proteins(36.0)
+                        .others(10.0894),
                 ),
             )
             .pod(8.0)
-            .pac(PAC::new().sugars(50.0).msnf_ws_salts(31.5967))
+            .pac(PAC::new().sugars(50.0).msnf_ws_salts(35.3036))
     });
 
     #[test]
@@ -1393,14 +1471,14 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::MilkFat), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 50.0);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 86.0);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 36.0);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 96.0894);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 46.0894);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 36.0);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 86.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 96.0894);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 36.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 86.0);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 14.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 96.0894);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 3.9106);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -1410,8 +1488,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 50.0);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 31.5967);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 81.5967);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 35.3036);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 85.3036);
 
         assert_eq!(comp.get(CompKey::SaturatedFat), 0.0);
         assert_eq!(comp.get(CompKey::TransFat), 0.0);
@@ -1445,6 +1523,7 @@ pub(crate) mod tests {
                 protein: 8.0,
                 lactose_free: None,
                 sucrose: None,
+                solids_source: None,
             }
             .into(),
         });
@@ -1457,11 +1536,12 @@ pub(crate) mod tests {
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(26.6667).saturated(16.6667).trans(0.9333))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(36.6667)))
-                        .proteins(26.6667),
+                        .proteins(26.6667)
+                        .others(7.4302),
                 ),
             )
             .pod(5.8667)
-            .pac(PAC::new().sugars(36.6667).msnf_ws_salts(23.2689))
+            .pac(PAC::new().sugars(36.6667).msnf_ws_salts(25.9988))
     });
 
     #[test]
@@ -1475,14 +1555,14 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::MilkFat), 26.6667);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 36.6667);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 63.3333);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 26.6667);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 70.7635);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 34.0968);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 26.6667);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 90.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 97.4302);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 26.6667);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 90.0);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 10.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 97.4302);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 2.5698);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -1492,8 +1572,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 36.6667);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 23.2689);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 59.9356);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 25.9988);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 62.6655);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 16.6667);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.9333);
@@ -1525,6 +1605,7 @@ pub(crate) mod tests {
                 protein: 8.7,
                 lactose_free: None,
                 sucrose: None,
+                solids_source: None,
             }
             .into(),
         });
@@ -1537,11 +1618,12 @@ pub(crate) mod tests {
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(1.2).saturated(0.78).trans(0.042))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(53.2)))
-                        .proteins(34.8),
+                        .proteins(34.8)
+                        .others(8.8),
                 ),
             )
             .pod(8.512)
-            .pac(PAC::new().sugars(53.2).msnf_ws_salts(32.3316))
+            .pac(PAC::new().sugars(53.2).msnf_ws_salts(35.5647))
     });
 
     #[test]
@@ -1555,14 +1637,14 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::MilkFat), 1.2);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 53.2);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 88.0);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 34.8);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 96.8);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 43.6);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 34.8);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 89.2);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 98.0);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 34.8);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 89.2);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 10.8);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 98.0);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 2.0);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -1572,8 +1654,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 53.2);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 32.3316);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 85.5316);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 35.5647);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 88.7647);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 0.78);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.042);
@@ -1605,6 +1687,7 @@ pub(crate) mod tests {
                 protein: 6.3,
                 lactose_free: None,
                 sucrose: None,
+                solids_source: None,
             }
             .into(),
         });
@@ -1617,11 +1700,12 @@ pub(crate) mod tests {
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(29.6).saturated(19.24).trans(1.036))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(39.2)))
-                        .proteins(25.2),
+                        .proteins(25.2)
+                        .others(4.0),
                 ),
             )
             .pod(6.272)
-            .pac(PAC::new().sugars(39.2).msnf_ws_salts(23.6608))
+            .pac(PAC::new().sugars(39.2).msnf_ws_salts(25.1304))
     });
 
     #[test]
@@ -1635,14 +1719,14 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::MilkFat), 29.6);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 39.2);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 64.4);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 25.2);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 68.4);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 29.2);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 25.2);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 94.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 98.0);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 25.2);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 94.0);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 6.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 98.0);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 2.0);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -1652,8 +1736,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 39.2);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 23.6608);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 62.8608);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 25.1304);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 64.3304);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 19.24);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 1.036);
@@ -1669,7 +1753,8 @@ pub(crate) mod tests {
         "total_fat": { "grams": 0.5 },
         "saturated_fat": 0.3,
         "sugars": 1,
-        "protein": 35
+        "protein": 35,
+        "solids_source": "Whey"
       }
     }"#;
 
@@ -1686,6 +1771,7 @@ pub(crate) mod tests {
             protein: 35.0,
             lactose_free: None,
             sucrose: None,
+            solids_source: Some(SolidsSource::Whey),
         }
         .into(),
     });
@@ -1698,11 +1784,12 @@ pub(crate) mod tests {
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(1.2821).saturated(0.7692).trans(0.0449))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(2.5641)))
-                        .proteins(89.7436),
+                        .proteins(89.7436)
+                        .others(4.4103),
                 ),
             )
             .pod(0.4103)
-            .pac(PAC::new().sugars(2.5641).msnf_ws_salts(33.9142))
+            .pac(PAC::new().sugars(2.5641).msnf_ws_salts(35.5346))
     });
 
     #[test]
@@ -1713,14 +1800,14 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::MilkFat), 1.2821);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 2.5641);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 92.3077);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 89.7436);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 96.7179);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 94.1538);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 89.7436);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 93.5898);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 98.0);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 89.7436);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 93.5898);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 6.4102);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 98.0);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 2.0);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -1730,8 +1817,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 2.5641);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 33.9142);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 36.4783);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 35.5346);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 38.0987);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 0.7692);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.0449);
@@ -1747,7 +1834,8 @@ pub(crate) mod tests {
         "total_fat": { "grams": 4.0 },
         "saturated_fat": 1.4,
         "sugars": 3.3,
-        "protein": 80
+        "protein": 80,
+        "solids_source": "Whey"
       }
     }"#;
 
@@ -1765,6 +1853,7 @@ pub(crate) mod tests {
                 protein: 80.0,
                 lactose_free: None,
                 sucrose: None,
+                solids_source: Some(SolidsSource::Whey),
             }
             .into(),
         });
@@ -1777,11 +1866,12 @@ pub(crate) mod tests {
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(4.0).saturated(1.4).trans(0.14))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(3.3)))
-                        .proteins(80.0),
+                        .proteins(80.0)
+                        .others(10.7),
                 ),
             )
             .pod(0.528)
-            .pac(PAC::new().sugars(3.3).msnf_ws_salts(30.6048))
+            .pac(PAC::new().sugars(3.3).msnf_ws_salts(34.5360))
     });
 
     #[test]
@@ -1795,14 +1885,14 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::MilkFat), 4.0);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 3.3);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 83.3);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 80.0);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 94.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 90.7);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 80.0);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 87.3);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 98.0);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 80.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 87.3);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 12.7);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 98.0);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 2.0);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -1812,8 +1902,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 3.3);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 30.6048);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 33.9048);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 34.5360);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 37.8360);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.4);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.14);
@@ -1829,7 +1919,8 @@ pub(crate) mod tests {
         "total_fat": { "grams": 1.8 },
         "saturated_fat": 1.1,
         "sugars": 4.3,
-        "protein": 73
+        "protein": 73,
+        "solids_source": "Casein"
       }
     }"#;
 
@@ -1847,6 +1938,7 @@ pub(crate) mod tests {
                 protein: 73.0,
                 lactose_free: None,
                 sucrose: None,
+                solids_source: Some(SolidsSource::Casein),
             }
             .into(),
         });
@@ -1859,11 +1951,12 @@ pub(crate) mod tests {
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(1.8).saturated(1.1).trans(0.063))
                         .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(4.3)))
-                        .proteins(73.0),
+                        .proteins(73.0)
+                        .others(8.5889),
                 ),
             )
             .pod(0.688)
-            .pac(PAC::new().sugars(4.3).msnf_ws_salts(28.4003))
+            .pac(PAC::new().sugars(4.3).msnf_ws_salts(31.5559))
     });
 
     #[test]
@@ -1877,14 +1970,14 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::MilkFat), 1.8);
         assert_eq_flt_test!(comp.get(CompKey::Lactose), 4.3);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 77.3);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 73.0);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 85.8889);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 81.5889);
         assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 73.0);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 79.1);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSolids), 87.6889);
 
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 73.0);
-        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 79.1);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 20.9);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 87.6889);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 12.3111);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
@@ -1894,8 +1987,8 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.3);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 28.4003);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 32.7003);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 31.5559);
+        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 35.8559);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.1);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.063);
@@ -1944,13 +2037,12 @@ pub(crate) mod tests {
 
         // MilkFat hits 100% for both pairs involving USDA: Simple and Sealtest define fat as
         // exactly 0, while USDA reports 0.08g/100g. Near-zero values make the relative diff
-        // degenerate. MilkSNFS is 16.24% (Simple vs USDA) because the 0.08g fat shifts the
-        // SNFS calculation. SaturatedFat and TransFat are 100% on the same USDA pairs for the
-        // same reason: Simple and Sealtest treat both as exact 0 while USDA reports tiny
-        // non-zero values.
+        // degenerate. SaturatedFat and TransFat are 100% on the same USDA pairs for the same
+        // reason: Simple and Sealtest treat both as exact 0 while USDA reports tiny non-zero
+        // values. With MSNF now estimated from lactose+protein (instead of being just
+        // proteins-only SNFS), all other fields land comfortably under 10%.
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::MilkFat, 100.0)
-            .with(CompKey::MilkSNFS, 17.0)
             .with(CompKey::SaturatedFat, 100.0)
             .with(CompKey::TransFat, 100.0);
 
@@ -1969,15 +2061,14 @@ pub(crate) mod tests {
 
         // Except for some exceptions noted below, most values are generally within a ~10% range.
         // The exceptions are:
-        //    - MilkSNFS        16.27%  (Simple vs USDA)
-        //    - MilkSNFS        13.24%  (Simple vs Sealtest)
+        //    - MilkSNFS        10.42%  (Simple vs Sealtest)
         //    - MilkProteins    11.33%  (Simple vs Sealtest)
         //    - TotalProteins   11.33%  (Simple vs Sealtest)
         //    - SaturatedFat    14.62%  (Simple vs USDA)
         //    - SaturatedFat    10.73%  (Simple vs Sealtest)
         //    - TransFat        14.05%  (USDA vs Sealtest)
         let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::MilkSNFS, 17.0)
+            .with(CompKey::MilkSNFS, 11.0)
             .with(CompKey::MilkProteins, 12.0)
             .with(CompKey::TotalProteins, 12.0)
             .with(CompKey::SaturatedFat, 15.0)
@@ -1998,13 +2089,12 @@ pub(crate) mod tests {
 
         // Except for some exceptions noted below, most values are generally within a ~10% range.
         // The exceptions are:
-        //    - MilkSNFS        17.46%  (Simple vs USDA)
-        //    - MilkSNFS        11.84%  (Simple vs Sealtest)
+        //    - MilkSNFS        11.85%  (Simple vs Sealtest)
         //    - MilkProteins    12.75%  (Simple vs Sealtest)
         //    - TotalProteins   12.75%  (Simple vs Sealtest)
         //    - SaturatedFat    11.95%  (Simple vs USDA)
         let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::MilkSNFS, 18.0)
+            .with(CompKey::MilkSNFS, 12.0)
             .with(CompKey::MilkProteins, 13.0)
             .with(CompKey::TotalProteins, 13.0)
             .with(CompKey::SaturatedFat, 12.0);
@@ -2023,29 +2113,34 @@ pub(crate) mod tests {
         .map(source_str_to_comp);
 
         // Sealtest's small 15ml serving rounds sugars coarsely (1g/15ml = 6.67g/100g), driving
-        // large differences in Lactose and all derived fields (MSNF, MilkSNFS, POD, PAC*).
-        // MilkFat: 13.04% — Simple's spec uses exactly 10% vs USDA's measured 11.5g/100g. Since
-        // all three specs now estimate trans fat as a fixed fraction of total fat, TransFat
-        // tracks the MilkFat difference.
+        // large differences in Lactose and all derived fields (MSNF, POD, PAC*). With MSNF now
+        // estimated from lactose+protein, label-derived MSNF tracks the sugar coarseness directly,
+        // pulling MilkSolids into the >10% band too. MilkFat: 13.04% — Simple's spec uses exactly
+        // 10% vs USDA's measured 11.5g/100g; since all three specs now estimate trans fat as a
+        // fixed fraction of total fat, TransFat tracks the MilkFat difference.
         // The exceptions are:
         //    - MilkFat        13.04%  (Simple vs USDA and USDA vs Sealtest)
+        //    - MSNF           20.96%  (Simple vs Sealtest)
         //    - MSNF           20.85%  (USDA vs Sealtest)
         //    - Lactose        36.96%  (USDA vs Sealtest)
-        //    - MilkSNFS       28.89%  (Simple vs Sealtest)
         //    - MilkProteins   16.27%  (USDA vs Sealtest)
+        //    - MilkSolids     10.61%  (Simple vs Sealtest)
         //    - TotalProteins  16.27%  (USDA vs Sealtest)
+        //    - TotalSolids    10.61%  (Simple vs Sealtest)
         //    - POD            36.96%  (USDA vs Sealtest)
         //    - PACsgr         36.96%  (USDA vs Sealtest)
+        //    - PACmlk         20.96%  (Simple vs Sealtest)
         //    - PACmlk         20.85%  (USDA vs Sealtest)
-        //    - PACtotal       31.49%  (USDA vs Sealtest)
+        //    - PACtotal       31.08%  (USDA vs Sealtest)
         //    - TransFat       13.04%  (Simple vs USDA and USDA vs Sealtest)
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::MilkFat, 14.0)
             .with(CompKey::MSNF, 21.0)
             .with(CompKey::Lactose, 37.0)
-            .with(CompKey::MilkSNFS, 29.0)
             .with(CompKey::MilkProteins, 17.0)
+            .with(CompKey::MilkSolids, 11.0)
             .with(CompKey::TotalProteins, 17.0)
+            .with(CompKey::TotalSolids, 11.0)
             .with(CompKey::POD, 37.0)
             .with(CompKey::PACsgr, 37.0)
             .with(CompKey::PACmlk, 21.0)
@@ -2066,28 +2161,39 @@ pub(crate) mod tests {
         .map(source_str_to_comp);
 
         // Sealtest's small 15ml serving rounds sugars coarsely (1g/15ml = 6.67g/100g); at 18%
-        // fat the lactose fraction is even smaller, amplifying relative differences further.
+        // fat the lactose fraction is even smaller, amplifying relative differences further. With
+        // MSNF now estimated from lactose+protein, MSNF and PACmlk track the sugar coarseness
+        // (vs. the older proteins-only SNFS that was insensitive to it), which also drags
+        // MilkSolids/TotalSolids into the >10% band on the Simple vs Sealtest pair.
         // The exceptions are:
+        //    - MSNF           29.08%  (Simple vs Sealtest)
         //    - MSNF           28.81%  (USDA vs Sealtest)
         //    - Lactose        44.83%  (USDA vs Sealtest)
-        //    - MilkSNFS       20.76%  (Simple vs Sealtest)
+        //    - MilkSNFS       10.54%  (Simple vs Sealtest)
         //    - MilkProteins   12.74%  (Simple vs USDA)
+        //    - MilkProteins   10.11%  (USDA vs Sealtest)
+        //    - MilkSolids     10.65%  (Simple vs Sealtest)
         //    - TotalProteins  12.74%  (Simple vs USDA)
+        //    - TotalProteins  10.11%  (USDA vs Sealtest)
+        //    - TotalSolids    10.65%  (Simple vs Sealtest)
         //    - POD            44.83%  (USDA vs Sealtest)
         //    - PACsgr         44.83%  (USDA vs Sealtest)
+        //    - PACmlk         29.08%  (Simple vs Sealtest)
         //    - PACmlk         28.81%  (USDA vs Sealtest)
-        //    - PACtotal       39.39%  (USDA vs Sealtest)
+        //    - PACtotal       38.98%  (USDA vs Sealtest)
         //    - SaturatedFat   14.72%  (Simple vs Sealtest)
         let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::MSNF, 29.0)
+            .with(CompKey::MSNF, 30.0)
             .with(CompKey::Lactose, 45.0)
-            .with(CompKey::MilkSNFS, 21.0)
+            .with(CompKey::MilkSNFS, 11.0)
             .with(CompKey::MilkProteins, 13.0)
+            .with(CompKey::MilkSolids, 11.0)
             .with(CompKey::TotalProteins, 13.0)
+            .with(CompKey::TotalSolids, 11.0)
             .with(CompKey::POD, 45.0)
             .with(CompKey::PACsgr, 45.0)
-            .with(CompKey::PACmlk, 29.0)
-            .with(CompKey::PACtotal, 40.0)
+            .with(CompKey::PACmlk, 30.0)
+            .with(CompKey::PACtotal, 39.0)
             .with(CompKey::SaturatedFat, 15.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
@@ -2108,24 +2214,24 @@ pub(crate) mod tests {
         // already interpolated from a 0–1g label range), but differences stay moderate because
         // the label value was set at the midpoint rather than rounded. The same coarse serving
         // also rounds trans fat aggressively (0.1g/15ml = 0.67g/100g), driving TransFat ~45%
-        // higher than the Simple model's 1.225g/100g and USDA's 1.2g/100g.
+        // higher than the Simple model's 1.225g/100g and USDA's 1.2g/100g. With MSNF now
+        // estimated from lactose+protein, MilkSNFS stays within the default 10% band (vs the
+        // old proteins-only SNFS that diverged ~24% on the Simple vs USDA fat gap).
         // The exceptions are:
-        //    - MSNF           15.56%  (Simple vs USDA)
         //    - Lactose        15.06%  (USDA vs Sealtest)
-        //    - MilkSNFS       24.11%  (Simple vs USDA) — the 0.6g fat gap shifts non-fat solids
+        //    - MSNF           10.19%  (USDA vs Sealtest)
         //    - POD            15.06%  (USDA vs Sealtest)
         //    - PACsgr         15.06%  (USDA vs Sealtest)
-        //    - PACmlk         15.56%  (Simple vs USDA)
-        //    - PACtotal       13.26%  (USDA vs Sealtest)
+        //    - PACmlk         10.19%  (USDA vs Sealtest)
+        //    - PACtotal       13.13%  (USDA vs Sealtest)
         //    - SaturatedFat   10.33%  (Simple vs USDA)
         //    - TransFat       44.82%  (USDA vs Sealtest)
         let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::MSNF, 16.0)
+            .with(CompKey::MSNF, 11.0)
             .with(CompKey::Lactose, 16.0)
-            .with(CompKey::MilkSNFS, 25.0)
             .with(CompKey::POD, 16.0)
             .with(CompKey::PACsgr, 16.0)
-            .with(CompKey::PACmlk, 16.0)
+            .with(CompKey::PACmlk, 11.0)
             .with(CompKey::PACtotal, 14.0)
             .with(CompKey::SaturatedFat, 11.0)
             .with(CompKey::TransFat, 45.0);
@@ -2156,14 +2262,16 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        // Protein content differs significantly (~36%): Eagle Brand CA label reports 1g per 19.5g
+        // Protein content differs significantly (~35%): Eagle Brand CA label reports 1g per 19.5g
         // serving (= 5.13g/100g) vs. USDA data at 7.91g/100g. All protein-derived fields
         // (MilkSNFS, MilkProteins, TotalProteins) are affected, hence the per-key ceiling
         // overrides below. (Rodrigues, 2017)[^50] has protein at 6.04g/100g. Low-Fat Eagle Brand
         // has 10.2g/100g protein, much higher than all of these (jump from 1g -> 2g per serving).
+        // MilkSNFS now lands ~30% (rather than tracking proteins exactly at ~35%) because the
+        // estimated mineral fraction softens the protein-only gap slightly.
         // @todo Need to investigate why there is so much variability with protein content.
         let ceiling = CompCeiling::new(12.0)
-            .with(CompKey::MilkSNFS, 36.0)
+            .with(CompKey::MilkSNFS, 31.0)
             .with(CompKey::MilkProteins, 36.0)
             .with(CompKey::TotalProteins, 36.0);
 
@@ -2180,35 +2288,26 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        // The Simple spec is an idealized model (3% water, the rest milk solids-non-fat); the
-        // Medallion and Theland labels resolve to ~14% and ~11% water because coarse 25g servings
-        // round the protein and sugar values. The tiny absolute water content makes its relative
-        // diff degenerate, and the lower total solids cascades into every solids-derived field.
-        // MilkFat hits 100% (Simple vs Theland) because the Simple spec defines skim fat as
-        // exactly 0 while Theland's label reports 0.3g/serving — a near-zero value degenerates the
-        // relative diff. The same near-zero degeneracy drives SaturatedFat and TransFat to 100% on
-        // any pair involving Theland, since the Simple and Medallion specs treat them as exactly
-        // 0 while Theland's non-zero fat induces a small estimated value from the standard
-        // factors. MilkSNFS diverges most where a label's protein-to-lactose split differs from
-        // the idealized spec.
+        // The Simple spec is an idealized model (3% water, the rest milk solids-non-fat); with
+        // MSNF now derived from sugars+protein and capped at the 98% min-water threshold for
+        // powders, the Medallion and Theland labels both end up at the cap too — so MSNF,
+        // MilkSolids, TotalSolids, and PACmlk all land within ~10% of Simple. Water still
+        // diverges sharply because the absolute amount is tiny (Simple 3% vs Medallion ~3.9% vs
+        // Theland ~2%) so small absolute gaps blow up in relative terms. MilkFat hits 100%
+        // (Simple vs Theland) because the Simple spec defines skim fat as exactly 0 while
+        // Theland's label reports 0.3g/serving — a near-zero value degenerates the relative
+        // diff. The same near-zero degeneracy drives SaturatedFat and TransFat to 100% on any
+        // pair involving Theland.
         // The exceptions are:
-        //    - MilkFat      100.00%  (Simple vs Theland)
-        //    - MSNF          11.34%  (Simple vs Medallion)
-        //    - MilkSNFS      21.15%  (Simple vs Theland)
-        //    - MilkSolids    11.34%  (Simple vs Medallion)
-        //    - TotalSolids   11.34%  (Simple vs Medallion)
-        //    - Water         78.57%  (Simple vs Medallion)
-        //    - PACmlk        11.34%  (Simple vs Medallion)
+        //    - MilkFat      100.00%  (Simple vs Theland and Medallion vs Theland)
+        //    - Water         23.29%  (Simple vs Medallion)
+        //    - Water         33.33%  (Simple vs Theland)
+        //    - Water         48.86%  (Medallion vs Theland)
         //    - SaturatedFat 100.00%  (Simple vs Theland and Medallion vs Theland)
         //    - TransFat     100.00%  (Simple vs Theland and Medallion vs Theland)
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::MilkFat, 100.0)
-            .with(CompKey::MSNF, 12.0)
-            .with(CompKey::MilkSNFS, 22.0)
-            .with(CompKey::MilkSolids, 12.0)
-            .with(CompKey::TotalSolids, 12.0)
-            .with(CompKey::Water, 79.0)
-            .with(CompKey::PACmlk, 12.0)
+            .with(CompKey::Water, 49.0)
             .with(CompKey::SaturatedFat, 100.0)
             .with(CompKey::TransFat, 100.0);
 
@@ -2225,18 +2324,22 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        // As with skim powder, the Simple spec models 3% water while the Medallion and Theland
-        // labels resolve to ~10% and ~6% water; the small absolute water content makes its
-        // relative diff degenerate. MilkSNFS diverges most because each label's protein-to-lactose
-        // split differs from the idealized spec. SaturatedFat diverges between Medallion (label
+        // As with skim powder, the new MSNF-from-lactose+protein estimate (capped at the 98%
+        // min-water powder threshold) brings all three sources close together on MSNF and the
+        // solids fields. Water still diverges in relative terms because absolute values are tiny
+        // (Simple ~3% vs Medallion ~2.6% vs Theland ~2%). MilkSNFS lands largest between
+        // Medallion and Theland (~14%) since they sit on opposite sides of the cap with subtly
+        // different protein-to-lactose splits. SaturatedFat diverges between Medallion (label
         // value, ~0.625 of total fat) and Theland (estimated via the standard ~0.65 ratio).
         // The exceptions are:
-        //    - MilkSNFS      20.88%  (Simple vs Theland)
-        //    - Water         70.00%  (Simple vs Medallion)
+        //    - MilkSNFS      14.36%  (Medallion vs Theland)
+        //    - Water         14.34%  (Simple vs Medallion)
+        //    - Water         33.33%  (Simple vs Theland)
+        //    - Water         22.17%  (Medallion vs Theland)
         //    - SaturatedFat  13.37%  (Medallion vs Theland)
         let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::MilkSNFS, 21.0)
-            .with(CompKey::Water, 70.0)
+            .with(CompKey::MilkSNFS, 15.0)
+            .with(CompKey::Water, 34.0)
             .with(CompKey::SaturatedFat, 14.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
@@ -2254,19 +2357,20 @@ pub(crate) mod tests {
         // Both are whey protein concentrates/blends; nutrient densities are similar but the
         // labels diverge in two ways. First, coarse 1g sugar / serving rounding spreads the
         // sugar-derived fields: MyProtein's 1g/25g = 4g/100g vs ON's 3.3g/100g, a ~17.5%
-        // relative gap that propagates to Lactose, POD, PACsgr, and (via the smaller MSNF
-        // share) Water. Second, MyProtein labels saturated fat as 1g / 1g total — 100% of total
-        // fat, clearly a small-serving rounding artifact — vs ON's realistic 1.4g / 4.0g total
-        // (~35%); SaturatedFat diverges ~65% as a result.
+        // relative gap that propagates to Lactose, POD, and PACsgr. Second, MyProtein labels
+        // saturated fat as 1g / 1g total — 100% of total fat, clearly a small-serving rounding
+        // artifact — vs ON's realistic 1.4g / 4.0g total (~35%); SaturatedFat diverges ~65% as a
+        // result. Water blows out (~64%) because MyProtein hits the 2% min-water cap on its WS
+        // SNF estimate, pinning Water at 2.0% vs ON's ~5.6%.
         // The exceptions are:
         //    - Lactose       17.50%
-        //    - Water         20.62%
+        //    - Water         64.31%
         //    - POD           17.50%
         //    - PACsgr        17.50%
         //    - SaturatedFat  65.00%
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::Lactose, 18.0)
-            .with(CompKey::Water, 21.0)
+            .with(CompKey::Water, 65.0)
             .with(CompKey::POD, 18.0)
             .with(CompKey::PACsgr, 18.0)
             .with(CompKey::SaturatedFat, 67.0);
@@ -2291,43 +2395,49 @@ pub(crate) mod tests {
         // Isolate sits in the middle at ~83% protein with low but non-zero fat and sugar.
         // MyProtein Clear's exact zeros force every fat- and sugar-derived field (MilkFat,
         // SaturatedFat, TransFat, Lactose, POD, PACsgr) to a degenerate 100% diff against any
-        // of the other three. Water diverges sharply (~68%) because protein density spans 80%
-        // (Clear) up to ~94% (Leanfit), and Energy hits ~18% from the same density gap (Clear
-        // vs Bulk Barn). Protein-derived fields (MilkProteins, MilkSNFS, TotalProteins,
-        // MilkSolids, TotalSolids, MSNF, PACmlk, PACtotal) sit in the 10–20% band because the
-        // four sources still legitimately differ in dry-matter content.
+        // of the other three. With MSNF now estimated from lactose+protein and capped at the
+        // 98% min-water threshold for powders, Bulk Barn / Leanfit / Optimum Nutrition all
+        // pin Water at 2.0% — but MyProtein Clear stays at ~9.6g/100g water, so Water blows out
+        // (~79%) on any pair involving it, and ~49% between BB/Leanfit and ON because ON's
+        // higher fat doesn't push it to the cap. Energy hits ~18% from the same density gap.
+        // Protein-derived fields (MilkProteins, TotalProteins) sit ~11% because the four
+        // sources still legitimately differ in dry-matter content.
         // The exceptions are:
-        //    - Energy          17.95%  (MyProtein vs Bulk Barn)
+        //    - Energy          17.95%  (Bulk Barn vs MyProtein)
+        //    - Energy          16.80%  (Leanfit vs MyProtein)
+        //    - Energy          11.36%  (MyProtein vs ON)
         //    - MilkFat        100.00%  (any pair involving MyProtein Clear)
+        //    - MilkFat         14.53%  (Bulk Barn vs Leanfit)
+        //    - MilkFat         20.00%  (Bulk Barn vs ON)
         //    - Lactose        100.00%  (any pair involving MyProtein Clear)
-        //    - MSNF            13.33%  (Leanfit vs MyProtein)
-        //    - MilkSNFS        11.11%  (MyProtein vs Bulk Barn)
-        //    - MilkProteins    11.11%  (MyProtein vs Bulk Barn)
-        //    - MilkSolids      14.52%  (Leanfit vs MyProtein)
-        //    - TotalProteins   11.11%  (MyProtein vs Bulk Barn)
-        //    - TotalSolids     14.52%  (Leanfit vs MyProtein)
-        //    - Water           67.95%  (Leanfit vs MyProtein)
+        //    - Lactose         61.00%  (Bulk Barn vs Leanfit and Leanfit vs ON)
+        //    - MilkProteins    11.11%  (Bulk Barn vs MyProtein)
+        //    - MilkProteins    10.86%  (Leanfit vs MyProtein)
+        //    - TotalProteins   11.11%  (Bulk Barn vs MyProtein)
+        //    - TotalProteins   10.86%  (Leanfit vs MyProtein)
+        //    - Water           79.18%  (any pair involving MyProtein Clear)
+        //    - Water           48.52%  (Bulk Barn/Leanfit vs ON)
+        //    - Water           59.55%  (MyProtein vs ON)
         //    - POD            100.00%  (any pair involving MyProtein Clear)
+        //    - POD             61.00%  (Bulk Barn vs Leanfit and Leanfit vs ON)
         //    - PACsgr         100.00%  (any pair involving MyProtein Clear)
-        //    - PACmlk          13.33%  (Leanfit vs MyProtein)
-        //    - PACtotal        19.43%  (Leanfit vs MyProtein)
+        //    - PACsgr          61.00%  (Bulk Barn vs Leanfit and Leanfit vs ON)
+        //    - PACtotal        12.83%  (Leanfit vs MyProtein)
         //    - SaturatedFat   100.00%  (any pair involving MyProtein Clear)
+        //    - SaturatedFat    61.00%  (Bulk Barn vs Leanfit and Leanfit vs ON)
         //    - TransFat       100.00%  (any pair involving MyProtein Clear)
+        //    - TransFat        14.53%  (Bulk Barn vs Leanfit)
+        //    - TransFat        20.00%  (Bulk Barn vs ON)
         let ceiling = CompCeiling::new(10.0)
             .with(CompKey::Energy, 18.0)
             .with(CompKey::MilkFat, 100.0)
             .with(CompKey::Lactose, 100.0)
-            .with(CompKey::MSNF, 14.0)
-            .with(CompKey::MilkSNFS, 12.0)
             .with(CompKey::MilkProteins, 12.0)
-            .with(CompKey::MilkSolids, 15.0)
             .with(CompKey::TotalProteins, 12.0)
-            .with(CompKey::TotalSolids, 15.0)
-            .with(CompKey::Water, 68.0)
+            .with(CompKey::Water, 80.0)
             .with(CompKey::POD, 100.0)
             .with(CompKey::PACsgr, 100.0)
-            .with(CompKey::PACmlk, 14.0)
-            .with(CompKey::PACtotal, 20.0)
+            .with(CompKey::PACtotal, 13.0)
             .with(CompKey::SaturatedFat, 100.0)
             .with(CompKey::TransFat, 100.0);
 
@@ -2350,27 +2460,29 @@ pub(crate) mod tests {
         // pair — but is close to ON's 1.8g/100g (only 7%). ON's 100g serving carries 4.3g
         // sugars vs the others' 1g/30g (= 3.33g/100g), driving Lactose, POD, and PACsgr to
         // ~22% on any pair involving ON. Protein density ranges from 73% (ON) up to 83%
-        // (California Gold), which propagates through protein-derived fields (~12%) and
-        // inflates Water by ~44% since California Gold has both the lowest fat and the highest
-        // protein. California Gold and MyProtein omit saturated fat on their labels, so it
-        // falls back to the standard milk-fat ratio applied to total fat; SaturatedFat then
-        // tracks MilkFat between California Gold and MyProtein (50%) but lands almost on top
-        // of ON between California Gold and ON (~1.5%), while MyProtein's STD-derived
-        // 2.17g/100g sits ~49% above ON's labelled 1.1g/100g. TransFat is always STD-derived
-        // and tracks MilkFat directly.
+        // (California Gold), which propagates through protein-derived fields (~12%) and inflates
+        // Water sharply: with the 10% casein-minerals factor and the 98% min-water cap for
+        // powders, California Gold and MyProtein both pin at ~2% Water while ON sits near 12%,
+        // so Water blows out 83% (CGold vs ON), 74% (CGold vs MyP — both at 2% but with subtly
+        // different sucrose offsets), and 37% (MyP vs ON). California Gold and MyProtein omit
+        // saturated fat on their labels, so it falls back to the standard milk-fat ratio
+        // applied to total fat; SaturatedFat then tracks MilkFat between California Gold and
+        // MyProtein (50%) but lands almost on top of ON between California Gold and ON (~1.5%),
+        // while MyProtein's STD-derived 2.17g/100g sits ~49% above ON's labelled 1.1g/100g.
+        // TransFat is always STD-derived and tracks MilkFat directly.
         // The exceptions are:
         //    - MilkFat         50.00%  (California Gold vs MyProtein)
         //    - MilkFat         46.00%  (MyProtein vs ON)
         //    - Lactose         22.48%  (pairs involving ON)
         //    - MSNF            10.81%  (California Gold vs ON)
-        //    - MilkSNFS        12.40%  (California Gold vs ON)
+        //    - MilkSNFS        12.24%  (California Gold vs ON)
         //    - MilkProteins    12.40%  (California Gold vs ON)
-        //    - MilkSolids      10.45%  (California Gold vs ON)
+        //    - MilkSolids      10.49%  (California Gold vs ON)
         //    - TotalProteins   12.40%  (California Gold vs ON)
-        //    - TotalSolids     10.45%  (California Gold vs ON)
-        //    - Water           44.18%  (California Gold vs ON)
-        //    - Water           30.00%  (California Gold vs MyProtein)
-        //    - Water           20.26%  (MyProtein vs ON)
+        //    - TotalSolids     10.49%  (California Gold vs ON)
+        //    - Water           83.45%  (California Gold vs ON)
+        //    - Water           73.81%  (California Gold vs MyProtein)
+        //    - Water           36.82%  (MyProtein vs ON)
         //    - POD             22.48%  (pairs involving ON)
         //    - PACsgr          22.48%  (pairs involving ON)
         //    - PACmlk          10.81%  (California Gold vs ON) — tracks the MSNF gap
@@ -2387,7 +2499,7 @@ pub(crate) mod tests {
             .with(CompKey::MilkSolids, 11.0)
             .with(CompKey::TotalProteins, 13.0)
             .with(CompKey::TotalSolids, 11.0)
-            .with(CompKey::Water, 45.0)
+            .with(CompKey::Water, 84.0)
             .with(CompKey::POD, 23.0)
             .with(CompKey::PACsgr, 23.0)
             .with(CompKey::PACmlk, 11.0)
@@ -2535,6 +2647,7 @@ pub(crate) mod tests {
             protein: 9.0,
             lactose_free: None,
             sucrose: None,
+            solids_source: None,
         };
 
         // serving_size,  total_fat
@@ -2629,6 +2742,7 @@ pub(crate) mod tests {
             protein: 9.0,
             lactose_free: None,
             sucrose: None,
+            solids_source: None,
         };
 
         let neg_cases = [
@@ -2670,6 +2784,7 @@ pub(crate) mod tests {
             protein: 9.0,
             lactose_free: None,
             sucrose: None,
+            solids_source: None,
         }
         .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
@@ -2687,6 +2802,7 @@ pub(crate) mod tests {
             protein: 9.0,
             lactose_free: None,
             sucrose: None,
+            solids_source: None,
         }
         .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
@@ -2704,6 +2820,7 @@ pub(crate) mod tests {
             protein: 9.0,
             lactose_free: None,
             sucrose: None,
+            solids_source: None,
         }
         .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
