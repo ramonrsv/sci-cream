@@ -186,9 +186,9 @@ export async function getMemoryUsage(page: Page, browser: string): Promise<Memor
   });
 }
 
-/** Get used JS heap size in megabytes; only supported in Chromium-based browsers */
-export async function getUsedJSHeapSizeInMB(page: Page, browser: string): Promise<number> {
-  return (await getMemoryUsage(page, browser)).usedJSHeapSize / 1024 / 1024;
+/** Get used JS heap size in bytes; only supported in Chromium-based browsers */
+export async function getUsedJSHeapSize(page: Page, browser: string): Promise<number> {
+  return (await getMemoryUsage(page, browser)).usedJSHeapSize;
 }
 
 /** Elements used to verify recipe paste, so they can be set up outside of benchmark loops */

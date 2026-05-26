@@ -3,7 +3,7 @@ import { test } from "@playwright/test";
 import { RecipeID } from "@/__tests__/assets";
 
 import {
-  getUsedJSHeapSizeInMB,
+  getUsedJSHeapSize,
   getRecipeUpdateCheckElements,
   configureComponentsForRecipeUpdateCheck,
   expectRecipeElementsToHaveExpected,
@@ -13,10 +13,10 @@ import {
   PASTE_CHECK_DEFAULT_ING_IDX,
 } from "@/__tests__/e2e/util";
 
+import { formatByteSizeBenchmarkResultForUpload } from "@/__benches__/util";
 import {
   allBenchmarkResultsForUpload,
   doBenchmarkMemoryMeasurements as doBenchmarkMemoryMeasurementsGeneric,
-  formatMemoryBenchmarkResultForUpload,
 } from "@/__benches__/e2e/util";
 
 const COUNT_MEMORY_RUNS = 2; // Number of runs for each memory usage benchmark
@@ -39,7 +39,7 @@ const PER_RECIPE_QTY_UPDATES_EXPECTED_VALUES = makePerRecipeQtyUpdatesExpectedVa
  */
 function doBenchmarkMemoryMeasurements(name: string, run: () => Promise<number>) {
   return doBenchmarkMemoryMeasurementsGeneric(COUNT_MEMORY_RUNS, name, run).then((result) => {
-    allBenchmarkResultsForUpload.push(formatMemoryBenchmarkResultForUpload(result));
+    allBenchmarkResultsForUpload.push(formatByteSizeBenchmarkResultForUpload(result, "MB"));
     return result;
   });
 }
@@ -57,7 +57,7 @@ test("should measure peak memory usage during typical operations", async ({
     let maxUsage = 0;
 
     const refreshMaxUsage = async () => {
-      maxUsage = Math.max(maxUsage, await getUsedJSHeapSizeInMB(page, browserName));
+      maxUsage = Math.max(maxUsage, await getUsedJSHeapSize(page, browserName));
     };
 
     for (let i = 0; i < COUNT_OPERATION_LOOPS; i++) {

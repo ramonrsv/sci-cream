@@ -28,10 +28,10 @@ import {
   loginAsTestUserWithCredentials,
 } from "@/__tests__/e2e/util";
 
+import { formatTimeBenchmarkResultForUpload } from "@/__benches__/util";
 import {
   allBenchmarkResultsForUpload,
   doBenchmarkTimeMeasurements as doBenchmarkTimeMeasurementsGeneric,
-  formatTimeBenchmarkResultForUpload,
   timeExecution,
 } from "@/__benches__/e2e/util";
 

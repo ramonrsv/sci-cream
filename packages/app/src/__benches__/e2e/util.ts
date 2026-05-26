@@ -1,43 +1,14 @@
-export type BenchmarkResult = {
-  name: string;
-  avg: number;
-  min: number;
-  max: number;
-  stdDev: number;
-};
-
-export type BenchmarkResultForUpload = {
-  name: string;
-  unit: string;
-  value: string;
-  range?: string;
-};
+import { BenchmarkResultForUpload, analyzeMeasurements } from "@/__benches__/util";
 
 /**
  * This array collects all benchmark results formatted for upload with `github-action-benchmark`.
  *
  * Each benchmark function (e.g. {@link doBenchmarkTimeMeasurements}) can format its result with the
  * appropriate unit (e.g. "ms" for time, "MB" for memory) and push it to this array. Then, at the
- * end of the benchmark suite, results are uploaded to GitHub via `zzz-output-results.spec.ts`.
- *
- * @see formatTimeBenchmarkResultForUpload
- * @see formatMemoryBenchmarkResultForUpload
+ * end of the benchmark suite, results are uploaded to GitHub via `zzz-output-results.spec.ts`. See
+ * `@/__benches__/util` for the result formatters.
  */
 export const allBenchmarkResultsForUpload: Array<BenchmarkResultForUpload> = [];
-
-/** Analyze an array of measurements and return statistical data, e.g. avg, max, min, and stdDev */
-export function analyzeMeasurements(measurements: number[]) {
-  const avg = measurements.reduce((a, b) => a + b, 0) / measurements.length;
-
-  const min = Math.min(...measurements);
-  const max = Math.max(...measurements);
-
-  const stdDev = Math.sqrt(
-    measurements.reduce((sum, val) => sum + Math.pow(val - avg, 2), 0) / measurements.length,
-  );
-
-  return { avg, min, max, stdDev };
-}
 
 /**
  * Helper function to run time measurements benchmarks and collect statistical data
@@ -77,7 +48,7 @@ export async function doBenchmarkTimeMeasurements(
  *
  * @param countRuns - The number of times to run the benchmarked function
  * @param name - A descriptive name for the benchmark, used for logging and result identification
- * @param run - An async function that performs the benchmark and returns a memory usage in MBs.
+ * @param run - An async function that performs the benchmark and returns a memory usage in bytes.
  */
 export async function doBenchmarkMemoryMeasurements(
   countRuns: number,
@@ -92,30 +63,14 @@ export async function doBenchmarkMemoryMeasurements(
 
   const { avg, min, max, stdDev } = analyzeMeasurements(measurements);
 
-  const fmtMem = (m: number) => `${Math.round(m).toFixed(0).padStart(4)} MB`;
+  const fmtMem = (m: number) =>
+    `${Math.round(m / 1024 / 1024)
+      .toFixed(0)
+      .padStart(4)} MB`;
+
   console.log(`${name.padEnd(45)} memory: [${fmtMem(min)}, ${fmtMem(avg)}, ${fmtMem(max)}]`);
 
   return { name, avg, min, max, stdDev };
-}
-
-/** Format a time benchmark result for upload with `github-action-benchmark`, with unit "ms" */
-export function formatTimeBenchmarkResultForUpload(result: BenchmarkResult) {
-  return {
-    name: result.name,
-    unit: "ms",
-    value: result.avg.toFixed(2),
-    range: result.stdDev.toFixed(2),
-  };
-}
-
-/** Format a memory benchmark result for upload with `github-action-benchmark`, with unit "MB" */
-export function formatMemoryBenchmarkResultForUpload(result: BenchmarkResult) {
-  return {
-    name: result.name,
-    unit: "MB",
-    value: result.avg.toFixed(2),
-    range: result.stdDev.toFixed(2),
-  };
 }
 
 /** Helper function to measure the execution time of an async function in milliseconds */

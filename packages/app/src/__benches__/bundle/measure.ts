@@ -23,13 +23,16 @@ import * as fs from "node:fs";
 import * as path from "node:path";
 import * as zlib from "node:zlib";
 
-import type { BenchmarkResultForUpload } from "@/__benches__/e2e/util";
+import {
+  BenchmarkResult,
+  formatByteSizeBenchmarkResultForUpload,
+  writeBenchmarkResultsToFile,
+} from "@/__benches__/util";
 
 const APP_DIR = process.cwd();
 const NEXT_DIR = path.join(APP_DIR, ".next");
 const STATIC_CHUNKS_DIR = path.join(NEXT_DIR, "static", "chunks");
-const OUTPUT_DIR = path.join(APP_DIR, "bench-results");
-const OUTPUT_PATH = path.join(OUTPUT_DIR, "bench_output_bundle.json");
+const OUTPUT_FILENAME = "bench_output_bundle.json";
 
 /**
  * Routes whose per-route first-load JS we surface as individual metrics. Curated rather than
@@ -103,11 +106,6 @@ function walkSumGzip(dir: string, exts: string[]): number {
   return total;
 }
 
-/** Build a `github-action-benchmark` `customSmallerIsBetter` entry for a single KB-valued metric */
-function metric(name: string, bytes: number): BenchmarkResultForUpload {
-  return { name, unit: "KB", value: (bytes / 1024).toFixed(2) };
-}
-
 /** Compute every tracked bundle-size metric and write the results JSON for CI to upload */
 function main(): void {
   if (!fs.existsSync(NEXT_DIR)) {
@@ -120,7 +118,11 @@ function main(): void {
   const sharedChunks = readSharedChunks();
   const sharedGz = sumGzip(sharedChunks);
 
-  const results: BenchmarkResultForUpload[] = [metric("Shared framework JS (gzip)", sharedGz)];
+  // Pack a byte-valued metric into a `BenchmarkResult`. File sizes are deterministic, so there's
+  // no min/max/stdDev — only `name` and `avg` (the gzipped byte count).
+  const metric = (name: string, bytes: number) => ({ name, avg: bytes });
+
+  const results: BenchmarkResult[] = [metric("Shared framework JS (gzip)", sharedGz)];
 
   for (const { route, label } of TRACKED_ROUTES) {
     const routeChunks = readRouteChunks(route);
@@ -139,13 +141,14 @@ function main(): void {
   results.push(metric("Total static JS (gzip)", walkSumGzip(STATIC_CHUNKS_DIR, [".js"])));
   results.push(metric("Total static CSS (gzip)", walkSumGzip(STATIC_CHUNKS_DIR, [".css"])));
 
-  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-  fs.writeFileSync(OUTPUT_PATH, JSON.stringify(results, null, 2));
-
   console.log("Bundle size benchmarks:");
-  const fmt = (b: number) => `${(b / 1024).toFixed(1).padStart(7)} KB`;
-  for (const r of results) console.log(`  ${r.name.padEnd(48)} ${fmt(parseInt(r.value, 10))}`);
-  console.log(`\nBenchmark results written to: ${OUTPUT_PATH}`);
+  for (const r of results)
+    console.log(`  ${r.name.padEnd(48)} ${(r.avg / 1024).toFixed(2).padStart(7)} KB`);
+
+  writeBenchmarkResultsToFile(
+    results.map((r) => formatByteSizeBenchmarkResultForUpload(r, "KB")),
+    OUTPUT_FILENAME,
+  );
 }
 
 main();
