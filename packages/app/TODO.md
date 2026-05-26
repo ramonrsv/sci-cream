@@ -34,6 +34,7 @@
 - [ ] Add an app "tour" to show users the main components of the app, where to go for docs, etc.
 - [ ] Add support for every instance of `KeySelect` to independently store custom keys in local.
 - [ ] Add feature to show different ranges around serving temp in `FpdGraph`, like a 'zoom'.
+- [ ] Look for opportunities to optimize bundle size, particularly in `/ingredients` and `/recipes`.
 
 ## Backlog
 
@@ -68,6 +69,7 @@
       playwright-performance, etc. Look into generating flamegraphs.
 - [ ] Add and/or verify support for C/C++ interoperability with FFI; look into `cxx` crate.
 - [ ] Look into `SharedArrayBuffer` to improve JS <-> WASM interoperability performance.
+- [ ] Investigate alternatives to custom impl for bundle size benchmarks, e.g. npm `bundlewatch`.
 
 ## Completed
 

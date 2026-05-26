@@ -6,7 +6,12 @@ export type BenchmarkResult = {
   stdDev: number;
 };
 
-export type BenchmarkResultForUpload = { name: string; unit: string; value: string; range: string };
+export type BenchmarkResultForUpload = {
+  name: string;
+  unit: string;
+  value: string;
+  range?: string;
+};
 
 /**
  * This array collects all benchmark results formatted for upload with `github-action-benchmark`.

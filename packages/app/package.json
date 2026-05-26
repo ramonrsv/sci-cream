@@ -6,6 +6,7 @@
   "scripts": {
     "install:deps": "pnpm --dir ../sci-cream install:wasm",
     "build:deps": "pnpm --dir ../sci-cream build:package",
+    "build:analyze": "ANALYZE=true next build --webpack",
     "build": "next build",
     "test": "pnpm test:unit && pnpm test:e2e && pnpm test:visual",
     "test:unit": "vitest run",
@@ -17,8 +18,9 @@
     "lint": "eslint ./src --max-warnings=0",
     "prettier": "prettier --check ./src",
     "coverage": "vitest run --coverage",
-    "bench": "pnpm bench:unit && pnpm bench:e2e",
+    "bench": "pnpm bench:unit && pnpm bench:bundle && pnpm bench:e2e",
     "bench:unit": "node --import tsx src/__benches__/unit/run-all.ts",
+    "bench:bundle": "node --import tsx src/__benches__/bundle/measure.ts",
     "bench:e2e": "playwright test --project benches --reporter='dot'",
     "dev": "pnpm dev:turbopack",
     "dev:turbopack": "next dev --turbopack",
@@ -58,6 +60,7 @@
     "vitest-canvas-mock": "^1.1.3"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^16.1.6",
     "@playwright/test": "^1.58.2",
     "@tailwindcss/postcss": "^4.1.18",
     "@tailwindcss/typography": "^0.5.19",

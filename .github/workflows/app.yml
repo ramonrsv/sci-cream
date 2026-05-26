@@ -178,6 +178,37 @@ jobs:
           comment-on-alert: true
           alert-comment-cc-users: "@ramonrsv"
 
+  bundle_benchmarks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-rust
+        with:
+          cargo-installs: wasm-pack
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/sci-cream-package
+
+      - name: Build app
+        run: pnpm build
+
+      - name: Run bundle size benchmarks
+        run: pnpm bench:bundle
+
+      - if: vars.ACT != 'true'
+        name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1
+        with:
+          name: "App Bundle Size Benchmarks"
+          tool: "customSmallerIsBetter"
+          output-file-path: packages/app/bench-results/bench_output_bundle.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          fail-on-alert: true
+          comment-on-alert: true
+          alert-comment-cc-users: "@ramonrsv"
+
   e2e_benchmarks:
     runs-on: ubuntu-latest
     permissions:
