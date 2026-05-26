@@ -103,9 +103,9 @@ function walkSumGzip(dir: string, exts: string[]): number {
   return total;
 }
 
-/** Build a `github-action-benchmark` `customSmallerIsBetter` entry for a single byte-valued metric */
+/** Build a `github-action-benchmark` `customSmallerIsBetter` entry for a single KB-valued metric */
 function metric(name: string, bytes: number): BenchmarkResultForUpload {
-  return { name, unit: "B", value: bytes.toString() };
+  return { name, unit: "KB", value: (bytes / 1024).toFixed(2) };
 }
 
 /** Compute every tracked bundle-size metric and write the results JSON for CI to upload */

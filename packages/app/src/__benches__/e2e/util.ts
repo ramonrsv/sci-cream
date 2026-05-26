@@ -113,8 +113,8 @@ export function formatMemoryBenchmarkResultForUpload(result: BenchmarkResult) {
   return {
     name: result.name,
     unit: "MB",
-    value: result.avg.toFixed(3),
-    range: result.stdDev.toFixed(3),
+    value: result.avg.toFixed(2),
+    range: result.stdDev.toFixed(2),
   };
 }
 
