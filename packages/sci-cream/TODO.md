@@ -9,10 +9,9 @@
 - [ ] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
 - [ ] Add TypeScript interface for the existing preliminary automatic balancing functionality.
-- [ ] Make `cocoa_butter` optional in `ChocolateSpec`, use the standard fraction by default.
-- [ ] Add `compare_specs_*` tests for comparable chocolate ingredients, from std and label.
 - [ ] Add more ultra-filtered milk products, e.g. `Fairlife Whole Ultra-Filtered Lactose-Free Milk`.
 - [ ] Add evaporated and condensed milk products from Goff & Hartel, as references for comparison.
+- [ ] Add USDA chocolate ingredients and include them in `compare_specs_*` tests vs simple & lindt.
 
 ## Up Next
 
@@ -74,6 +73,8 @@
 
 ## Completed
 
+- [x] Add `compare_specs_*` tests for comparable chocolate ingredients, from std and label.
+- [x] Make `cocoa_butter` optional in `ChocolateSpec`, use the standard fraction by default.
 - [x] Some keys in `COMPARABLE_DAIRY_KEYS` are redundant, e.g. `TotalProteins` == `MilkProteins`.
 - [x] Add milk and cream ingredients based on USDA, and investigate protein content discrepancies.
 - [x] Add evaporated milk ingredients, e.g. 'Evaporated Milk', 'Fat Free Evaporated Skim Milk', etc.

@@ -1,0 +1,25 @@
+---
+source: packages/sci-cream/src/specs/chocolate.rs
+expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
+---
+sources: Simple, Lindt
+
+Energy           0.69 pp  (Simple vs Lindt)
+TotalFats        0.10 pp  (Simple vs Lindt)
+CacaoSolids      0.00 pp  (Simple vs Lindt)
+CocoaButter      0.10 pp  (Simple vs Lindt)
+CocoaSolids      0.10 pp  (Simple vs Lindt)
+Fiber            0.04 pp  (Simple vs Lindt)
+TotalSugars      0.00 pp  (Simple vs Lindt)
+TotalCarbohydrates   0.07 pp  (Simple vs Lindt)
+OtherSNFS        0.00 pp  (Simple vs Lindt)
+TotalSNFS        0.10 pp  (Simple vs Lindt)
+TotalProteins    0.02 pp  (Simple vs Lindt)
+TotalSolids      0.00 pp  (Simple vs Lindt)
+Water            0.00 pp  (Simple vs Lindt)
+POD              0.00 pp  (Simple vs Lindt)
+PACsgr           0.00 pp  (Simple vs Lindt)
+HF               0.09 pp  (Simple vs Lindt)
+PACtotal         0.00 pp  (Simple vs Lindt)
+SaturatedFat     0.06 pp  (Simple vs Lindt)
+TransFat         0.00 pp  (Simple vs Lindt)

@@ -1,0 +1,25 @@
+---
+source: packages/sci-cream/src/specs/chocolate.rs
+expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
+---
+sources: Simple, Ghirardelli
+
+Energy           2.28 pp  (Simple vs Ghirardelli)
+TotalFats        0.33 pp  (Simple vs Ghirardelli)
+CacaoSolids      0.00 pp  (Simple vs Ghirardelli)
+CocoaButter      0.33 pp  (Simple vs Ghirardelli)
+CocoaSolids      0.33 pp  (Simple vs Ghirardelli)
+Fiber            0.13 pp  (Simple vs Ghirardelli)
+TotalSugars      0.00 pp  (Simple vs Ghirardelli)
+TotalCarbohydrates   0.22 pp  (Simple vs Ghirardelli)
+OtherSNFS        0.00 pp  (Simple vs Ghirardelli)
+TotalSNFS        0.33 pp  (Simple vs Ghirardelli)
+TotalProteins    0.08 pp  (Simple vs Ghirardelli)
+TotalSolids      0.00 pp  (Simple vs Ghirardelli)
+Water            0.00 pp  (Simple vs Ghirardelli)
+POD              0.00 pp  (Simple vs Ghirardelli)
+PACsgr           0.00 pp  (Simple vs Ghirardelli)
+HF               0.30 pp  (Simple vs Ghirardelli)
+PACtotal         0.00 pp  (Simple vs Ghirardelli)
+SaturatedFat     0.20 pp  (Simple vs Ghirardelli)
+TransFat         0.00 pp  (Simple vs Ghirardelli)

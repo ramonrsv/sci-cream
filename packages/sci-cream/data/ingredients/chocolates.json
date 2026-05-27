@@ -32,85 +32,71 @@
   {
     "name": "60% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 60, "cocoa_butter": 33, "sugars": 40 },
-    "comments": "Generic 60% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
+    "ChocolateSpec": { "cacao_solids": 60, "sugars": 40 }
   },
   {
     "name": "65% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 65, "cocoa_butter": 35.75, "sugars": 35 },
-    "comments": "Generic 65% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
+    "ChocolateSpec": { "cacao_solids": 65, "sugars": 35 }
   },
   {
     "name": "70% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 70, "cocoa_butter": 38.5, "sugars": 30 },
-    "comments": "Generic 70% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
+    "ChocolateSpec": { "cacao_solids": 70, "sugars": 30 }
   },
   {
     "name": "75% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 75, "cocoa_butter": 41.25, "sugars": 25 },
-    "comments": "Generic 75% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
+    "ChocolateSpec": { "cacao_solids": 75, "sugars": 25 }
   },
   {
     "name": "80% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 80, "cocoa_butter": 44, "sugars": 20 },
-    "comments": "Generic 80% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
+    "ChocolateSpec": { "cacao_solids": 80, "sugars": 20 }
   },
   {
     "name": "85% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 85, "cocoa_butter": 46.75, "sugars": 15 },
-    "comments": "Generic 85% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
+    "ChocolateSpec": { "cacao_solids": 85, "sugars": 15 }
   },
   {
     "name": "90% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 90, "cocoa_butter": 49.5, "sugars": 10 },
-    "comments": "Generic 90% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
+    "ChocolateSpec": { "cacao_solids": 90, "sugars": 10 }
   },
   {
     "name": "95% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 95, "cocoa_butter": 52.25, "sugars": 5 },
-    "comments": "Generic 95% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
+    "ChocolateSpec": { "cacao_solids": 95, "sugars": 5 }
   },
   {
     "name": "100% Dark Chocolate",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 55 },
-    "comments": "Generic 100% dark chocolate, standard 55% cocoa butter content assumed (see [STD_COCOA_BUTTER_IN_CACAO_SOLIDS])."
+    "ChocolateSpec": { "cacao_solids": 100 }
   },
   {
     "name": "Cocoa Powder, 10% Fat",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 10 },
-    "comments": "Generic cocoa powder with 10% cocoa butter."
+    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 10 }
   },
   {
     "name": "Cocoa Powder, 15% Fat",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 15 },
-    "comments": "Generic cocoa powder with 15% cocoa butter."
+    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 15 }
   },
   {
     "name": "Cocoa Powder, 17% Fat",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 17 },
-    "comments": "Generic cocoa powder with 17% cocoa butter."
+    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 17 }
   },
   {
     "name": "Cocoa Powder, 20% Fat",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 20 },
-    "comments": "Generic cocoa powder with 20% cocoa butter."
+    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 20 }
   },
   {
     "name": "Cocoa Powder, 22% Fat",
     "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 22 },
-    "comments": "Generic cocoa powder with 22% cocoa butter."
+    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 22 }
   }
 ]
