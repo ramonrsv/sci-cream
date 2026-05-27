@@ -2042,6 +2042,11 @@ pub(crate) mod tests {
     /// These keys carry meaningful, generally non-zero values for milk-based ingredients. Keys
     /// irrelevant to dairy (cocoa, nut, egg, and other non-milk components) are excluded so that
     /// comparisons stay focused on values a reader would expect to differ between sources.
+    ///
+    /// **Energy:** as `kcal/g of solids × 100` it lands in `[400, 900]` vs `[0, 100]` for mass
+    /// components, so the same fractional precision error shows up 4–9× larger. Energy ceiling
+    /// overrides are common as a result; 20–45 pp is typical, past ~60 pp likely flags a real
+    /// solids energy density disagreement.
     const COMPARABLE_DAIRY_KEYS: &[CompKey] = &[
         CompKey::Energy,
         CompKey::MilkFat,
@@ -2078,16 +2083,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        // MilkFat hits 100% for both pairs involving USDA: Simple and Sealtest define fat as
-        // exactly 0, while USDA reports 0.08g/100g. Near-zero values make the relative diff
-        // degenerate. SaturatedFat and TransFat are 100% on the same USDA pairs for the same
-        // reason: Simple and Sealtest treat both as exact 0 while USDA reports tiny non-zero
-        // values. With MSNF now estimated from lactose+protein (instead of being just
-        // proteins-only SNFS), all other fields land comfortably under 10%.
-        let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::MilkFat, 100.0)
-            .with(CompKey::SaturatedFat, 100.0)
-            .with(CompKey::TransFat, 100.0);
+        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 28.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2102,20 +2098,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        // Except for some exceptions noted below, most values are generally within a ~10% range.
-        // The exceptions are:
-        //    - MilkSNFS        10.42%  (Simple vs Sealtest)
-        //    - MilkProteins    11.33%  (Simple vs Sealtest)
-        //    - TotalProteins   11.33%  (Simple vs Sealtest)
-        //    - SaturatedFat    14.62%  (Simple vs USDA)
-        //    - SaturatedFat    10.73%  (Simple vs Sealtest)
-        //    - TransFat        14.05%  (USDA vs Sealtest)
-        let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::MilkSNFS, 11.0)
-            .with(CompKey::MilkProteins, 12.0)
-            .with(CompKey::TotalProteins, 12.0)
-            .with(CompKey::SaturatedFat, 15.0)
-            .with(CompKey::TransFat, 15.0);
+        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 22.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2130,17 +2113,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        // Except for some exceptions noted below, most values are generally within a ~10% range.
-        // The exceptions are:
-        //    - MilkSNFS        11.85%  (Simple vs Sealtest)
-        //    - MilkProteins    12.75%  (Simple vs Sealtest)
-        //    - TotalProteins   12.75%  (Simple vs Sealtest)
-        //    - SaturatedFat    11.95%  (Simple vs USDA)
-        let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::MilkSNFS, 12.0)
-            .with(CompKey::MilkProteins, 13.0)
-            .with(CompKey::TotalProteins, 13.0)
-            .with(CompKey::SaturatedFat, 12.0);
+        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 20.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2155,40 +2128,16 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        // Sealtest's small 15ml serving rounds sugars coarsely (1g/15ml = 6.67g/100g), driving
-        // large differences in Lactose and all derived fields (MSNF, POD, PAC*). With MSNF now
-        // estimated from lactose+protein, label-derived MSNF tracks the sugar coarseness directly,
-        // pulling MilkSolids into the >10% band too. MilkFat: 13.04% — Simple's spec uses exactly
-        // 10% vs USDA's measured 11.5g/100g; since all three specs now estimate trans fat as a
-        // fixed fraction of total fat, TransFat tracks the MilkFat difference.
-        // The exceptions are:
-        //    - MilkFat        13.04%  (Simple vs USDA and USDA vs Sealtest)
-        //    - MSNF           20.96%  (Simple vs Sealtest)
-        //    - MSNF           20.85%  (USDA vs Sealtest)
-        //    - Lactose        36.96%  (USDA vs Sealtest)
-        //    - MilkProteins   16.27%  (USDA vs Sealtest)
-        //    - MilkSolids     10.61%  (Simple vs Sealtest)
-        //    - TotalProteins  16.27%  (USDA vs Sealtest)
-        //    - TotalSolids    10.61%  (Simple vs Sealtest)
-        //    - POD            36.96%  (USDA vs Sealtest)
-        //    - PACsgr         36.96%  (USDA vs Sealtest)
-        //    - PACmlk         20.96%  (Simple vs Sealtest)
-        //    - PACmlk         20.85%  (USDA vs Sealtest)
-        //    - PACtotal       31.08%  (USDA vs Sealtest)
-        //    - TransFat       13.04%  (Simple vs USDA and USDA vs Sealtest)
+        // Sealtest's small 15ml serving rounds sugars coarsely (1g/15ml = 6.67g/100g), pulling
+        // Lactose, PACsgr, and PACtotal a few pp above the default ceiling. The exceptions are:
+        //    - Lactose        11.30 pp  (USDA vs Sealtest)
+        //    - PACsgr         11.30 pp  (USDA vs Sealtest)
+        //    - PACtotal       14.70 pp  (USDA vs Sealtest)
         let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::MilkFat, 14.0)
-            .with(CompKey::MSNF, 21.0)
-            .with(CompKey::Lactose, 37.0)
-            .with(CompKey::MilkProteins, 17.0)
-            .with(CompKey::MilkSolids, 11.0)
-            .with(CompKey::TotalProteins, 17.0)
-            .with(CompKey::TotalSolids, 11.0)
-            .with(CompKey::POD, 37.0)
-            .with(CompKey::PACsgr, 37.0)
-            .with(CompKey::PACmlk, 21.0)
-            .with(CompKey::PACtotal, 32.0)
-            .with(CompKey::TransFat, 14.0);
+            .with(CompKey::Energy, 21.0)
+            .with(CompKey::Lactose, 12.0)
+            .with(CompKey::PACsgr, 12.0)
+            .with(CompKey::PACtotal, 15.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2203,41 +2152,14 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        // Sealtest's small 15ml serving rounds sugars coarsely (1g/15ml = 6.67g/100g); at 18%
-        // fat the lactose fraction is even smaller, amplifying relative differences further. With
-        // MSNF now estimated from lactose+protein, MSNF and PACmlk track the sugar coarseness
-        // (vs. the older proteins-only SNFS that was insensitive to it), which also drags
-        // MilkSolids/TotalSolids into the >10% band on the Simple vs Sealtest pair.
-        // The exceptions are:
-        //    - MSNF           29.08%  (Simple vs Sealtest)
-        //    - MSNF           28.81%  (USDA vs Sealtest)
-        //    - Lactose        44.83%  (USDA vs Sealtest)
-        //    - MilkSNFS       10.54%  (Simple vs Sealtest)
-        //    - MilkProteins   12.74%  (Simple vs USDA)
-        //    - MilkProteins   10.11%  (USDA vs Sealtest)
-        //    - MilkSolids     10.65%  (Simple vs Sealtest)
-        //    - TotalProteins  12.74%  (Simple vs USDA)
-        //    - TotalProteins  10.11%  (USDA vs Sealtest)
-        //    - TotalSolids    10.65%  (Simple vs Sealtest)
-        //    - POD            44.83%  (USDA vs Sealtest)
-        //    - PACsgr         44.83%  (USDA vs Sealtest)
-        //    - PACmlk         29.08%  (Simple vs Sealtest)
-        //    - PACmlk         28.81%  (USDA vs Sealtest)
-        //    - PACtotal       38.98%  (USDA vs Sealtest)
-        //    - SaturatedFat   14.72%  (Simple vs Sealtest)
+        // Sealtest's 15ml serving rounds sugars and saturated fat coarsely, pushing PACtotal
+        // and SaturatedFat above the default ceiling. The exceptions are:
+        //    - PACtotal       12.76 pp  (USDA vs Sealtest)
+        //    - SaturatedFat   10.97 pp  (Simple vs Sealtest)
         let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::MSNF, 30.0)
-            .with(CompKey::Lactose, 45.0)
-            .with(CompKey::MilkSNFS, 11.0)
-            .with(CompKey::MilkProteins, 13.0)
-            .with(CompKey::MilkSolids, 11.0)
-            .with(CompKey::TotalProteins, 13.0)
-            .with(CompKey::TotalSolids, 11.0)
-            .with(CompKey::POD, 45.0)
-            .with(CompKey::PACsgr, 45.0)
-            .with(CompKey::PACmlk, 30.0)
-            .with(CompKey::PACtotal, 39.0)
-            .with(CompKey::SaturatedFat, 15.0);
+            .with(CompKey::Energy, 40.0)
+            .with(CompKey::PACtotal, 13.0)
+            .with(CompKey::SaturatedFat, 11.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2253,39 +2175,16 @@ pub(crate) mod tests {
         .map(source_str_to_comp);
 
         // USDA Heavy Cream is 35.6% fat; close enough to compare with the 35% Simple/Sealtest
-        // entries. Sealtest's 15ml serving rounds the lactose label aggressively — the label
-        // reads 0g sugars at this fat level, so every pair involving Sealtest is degenerate
-        // (100%) on Lactose, POD, and PACsgr, which cascades through MSNF and PACmlk (now
-        // derived from lactose+protein) and onto PACtotal. The same coarse serving rounds
-        // trans fat aggressively (0.1g/15ml = 0.67g/100g), driving TransFat ~44% higher than
-        // the Simple model's 1.225g/100g and USDA's 1.2g/100g. MilkSNFS stays in the low
-        // double-digit band (vs the old proteins-only SNFS that diverged ~24% on the Simple
-        // vs USDA fat gap).
-        // The exceptions are:
-        //    - Lactose       100.00%  (Simple vs Sealtest and USDA vs Sealtest)
-        //    - MSNF           60.60%  (Simple vs Sealtest)
-        //    - MSNF           58.24%  (USDA vs Sealtest)
-        //    - MilkSNFS       13.41%  (Simple vs Sealtest)
-        //    - MilkSNFS       11.34%  (USDA vs Sealtest)
-        //    - POD           100.00%  (Simple vs Sealtest and USDA vs Sealtest)
-        //    - PACsgr        100.00%  (Simple vs Sealtest and USDA vs Sealtest)
-        //    - PACmlk         60.60%  (Simple vs Sealtest)
-        //    - PACmlk         58.24%  (USDA vs Sealtest)
-        //    - PACtotal       84.14%  (Simple vs Sealtest)
-        //    - PACtotal       82.89%  (USDA vs Sealtest)
-        //    - SaturatedFat   10.33%  (Simple vs USDA)
-        //    - TransFat       43.87%  (Simple vs Sealtest)
-        //    - TransFat       44.82%  (USDA vs Sealtest)
+        // entries. Sealtest's 15ml serving rounds the lactose label to 0g sugars at this fat
+        // level, which cascades through MilkSolids and PACtotal (missing lactose is exactly
+        // missing solids). The exceptions are:
+        //    - MilkSolids     15.56 pp  (Simple vs Sealtest)
+        //    - MilkSolids     13.47 pp  (USDA vs Sealtest)
+        //    - PACtotal       11.15 pp  (Simple vs Sealtest)
         let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::Lactose, 100.0)
-            .with(CompKey::MSNF, 61.0)
-            .with(CompKey::MilkSNFS, 14.0)
-            .with(CompKey::POD, 100.0)
-            .with(CompKey::PACsgr, 100.0)
-            .with(CompKey::PACmlk, 61.0)
-            .with(CompKey::PACtotal, 85.0)
-            .with(CompKey::SaturatedFat, 11.0)
-            .with(CompKey::TransFat, 45.0);
+            .with(CompKey::Energy, 45.0)
+            .with(CompKey::MilkSolids, 16.0)
+            .with(CompKey::PACtotal, 12.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2302,31 +2201,25 @@ pub(crate) mod tests {
         // Taking Carnation sugars as the literal label value (1g) instead of the midpoint
         // between the 2g of total carbohydrates and 1g of sugars (i.e. 1.5g) causes a big
         // difference in Lactose content, which cascades into every lactose-derived field
-        // (POD, PACsgr) and — via the new MSNF-from-lactose+protein estimate — into MSNF,
-        // MilkSolids, PACmlk, and PACtotal. Protein-derived fields (MilkSNFS, MilkProteins,
-        // TotalProteins) diverge a more modest ~16-20% from the underlying label difference.
+        // (POD, PACsgr) and — via the MSNF-from-lactose+protein estimate — into MSNF,
+        // MilkSolids, PACmlk, and PACtotal. The exceptions are:
+        //    - Lactose        20.99 pp  (USDA vs Carnation)
+        //    - MSNF           28.55 pp  (USDA vs Carnation)
+        //    - MilkSolids     28.11 pp  (USDA vs Carnation)
+        //    - PACsgr         20.99 pp  (USDA vs Carnation)
+        //    - PACmlk         10.49 pp  (USDA vs Carnation)
+        //    - PACtotal       31.48 pp  (USDA vs Carnation)
+        //
         // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
         // given how much cross-source consistency it bought us.
-        // The exceptions are:
-        //    - Lactose        44.38%  (USDA vs Carnation)
-        //    - MSNF           33.21%  (USDA vs Carnation)
-        //    - MilkSNFS       20.23%  (USDA vs Carnation)
-        //    - MilkProteins   16.42%  (USDA vs Carnation)
-        //    - MilkSolids     30.17%  (USDA vs Carnation)
-        //    - TotalProteins  16.42%  (USDA vs Carnation)
-        //    - POD            44.38%  (USDA vs Carnation)
-        //    - PACsgr         44.38%  (USDA vs Carnation)
-        //    - PACmlk         33.21%  (USDA vs Carnation)
-        //    - PACtotal       39.84%  (USDA vs Carnation)
-        let ceiling = CompCeiling::new(17.0)
-            .with(CompKey::Lactose, 45.0)
-            .with(CompKey::MSNF, 34.0)
-            .with(CompKey::MilkSNFS, 21.0)
-            .with(CompKey::MilkSolids, 31.0)
-            .with(CompKey::POD, 45.0)
-            .with(CompKey::PACsgr, 45.0)
-            .with(CompKey::PACmlk, 34.0)
-            .with(CompKey::PACtotal, 40.0);
+        let ceiling = CompCeiling::new(10.0)
+            .with(CompKey::Energy, 17.0)
+            .with(CompKey::Lactose, 21.0)
+            .with(CompKey::MSNF, 29.0)
+            .with(CompKey::MilkSolids, 29.0)
+            .with(CompKey::PACsgr, 21.0)
+            .with(CompKey::PACmlk, 11.0)
+            .with(CompKey::PACtotal, 32.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2340,18 +2233,13 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        // Protein content differs significantly (~35%): Eagle Brand CA label reports 1g per 19.5g
-        // serving (= 5.13g/100g) vs. USDA data at 7.91g/100g. All protein-derived fields
-        // (MilkSNFS, MilkProteins, TotalProteins) are affected, hence the per-key ceiling
-        // overrides below. (Rodrigues, 2017)[^50] has protein at 6.04g/100g. Low-Fat Eagle Brand
-        // has 10.2g/100g protein, much higher than all of these (jump from 1g -> 2g per serving).
-        // MilkSNFS now lands ~30% (rather than tracking proteins exactly at ~35%) because the
-        // estimated mineral fraction softens the protein-only gap slightly.
-        // @todo Need to investigate why there is so much variability with protein content.
-        let ceiling = CompCeiling::new(12.0)
-            .with(CompKey::MilkSNFS, 31.0)
-            .with(CompKey::MilkProteins, 36.0)
-            .with(CompKey::TotalProteins, 36.0);
+        // Energy stands out at ~66 pp — high even for this suite — and likely flags a real
+        // disagreement in solids energy density: USDA's 321 kcal/100g vs Eagle Brand's
+        // 359 kcal/100g at similar TS. (Rodrigues, 2017)[^50] reports protein at 6.04g/100g,
+        // between Eagle Brand CA's 5.13g/100g (1g per 19.5g serving) and USDA's 7.91g/100g;
+        // Low-Fat Eagle Brand jumps to 10.2g/100g (1g -> 2g per serving on the label).
+        // @todo investigate which side has the more accurate energy density.
+        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 66.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2366,27 +2254,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        // The Simple spec is an idealized model (3% water, the rest milk solids-non-fat); with
-        // MSNF now derived from sugars+protein and capped at the 98% min-water threshold for
-        // powders, the Medallion and Theland labels both end up at the cap too — so MSNF,
-        // MilkSolids, TotalSolids, and PACmlk all land within ~10% of Simple. Water still
-        // diverges in relative terms because the absolute amount is tiny (Simple 3% vs
-        // Medallion ~2.1% vs Theland ~2%), so small absolute gaps blow up. MilkFat hits 100%
-        // (Simple vs Theland) because the Simple spec defines skim fat as exactly 0 while
-        // Theland's label reports 0.3g/serving — a near-zero value degenerates the relative
-        // diff. The same near-zero degeneracy drives SaturatedFat and TransFat to 100% on any
-        // pair involving Theland.
-        // The exceptions are:
-        //    - MilkFat      100.00%  (Simple vs Theland and Medallion vs Theland)
-        //    - Water         28.49%  (Simple vs Medallion)
-        //    - Water         33.33%  (Simple vs Theland)
-        //    - SaturatedFat 100.00%  (Simple vs Theland and Medallion vs Theland)
-        //    - TransFat     100.00%  (Simple vs Theland and Medallion vs Theland)
-        let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::MilkFat, 100.0)
-            .with(CompKey::Water, 34.0)
-            .with(CompKey::SaturatedFat, 100.0)
-            .with(CompKey::TransFat, 100.0);
+        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 18.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2401,23 +2269,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        // As with skim powder, the new MSNF-from-lactose+protein estimate (capped at the 98%
-        // min-water powder threshold) brings all three sources close together on MSNF and the
-        // solids fields. Water still diverges in relative terms because absolute values are tiny
-        // (Simple ~3% vs Medallion ~2.6% vs Theland ~2%). MilkSNFS lands largest between
-        // Medallion and Theland (~14%) since they sit on opposite sides of the cap with subtly
-        // different protein-to-lactose splits. SaturatedFat diverges between Medallion (label
-        // value, ~0.625 of total fat) and Theland (estimated via the standard ~0.65 ratio).
-        // The exceptions are:
-        //    - MilkSNFS      14.36%  (Medallion vs Theland)
-        //    - Water         14.34%  (Simple vs Medallion)
-        //    - Water         33.33%  (Simple vs Theland)
-        //    - Water         22.17%  (Medallion vs Theland)
-        //    - SaturatedFat  13.37%  (Medallion vs Theland)
-        let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::MilkSNFS, 15.0)
-            .with(CompKey::Water, 34.0)
-            .with(CompKey::SaturatedFat, 14.0);
+        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 26.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2431,25 +2283,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        // Both are whey protein concentrates/blends; nutrient densities are similar but the
-        // labels diverge in two ways. First, coarse 1g sugar / serving rounding spreads the
-        // sugar-derived fields: MyProtein's 1g/25g = 4g/100g vs ON's 3.3g/100g, a ~17.5%
-        // relative gap that propagates to Lactose, POD, and PACsgr. Second, MyProtein labels
-        // saturated fat as 1g / 1g total — 100% of total fat, clearly a small-serving rounding
-        // artifact — vs ON's realistic 1.4g / 4.0g total (~35%); SaturatedFat diverges ~65% as a
-        // result. Both sources now hit the 2% min-water cap on the WS SNF estimate, so Water
-        // sits at 0% divergence (vs the earlier ~64% before the carbohydrates accounting was
-        // tightened).
-        // The exceptions are:
-        //    - Lactose       17.50%
-        //    - POD           17.50%
-        //    - PACsgr        17.50%
-        //    - SaturatedFat  65.00%
-        let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::Lactose, 18.0)
-            .with(CompKey::POD, 18.0)
-            .with(CompKey::PACsgr, 18.0)
-            .with(CompKey::SaturatedFat, 67.0);
+        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 27.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2466,52 +2300,13 @@ pub(crate) mod tests {
         .map(source_str_to_comp);
 
         // The four isolates span very different formulations. Bulk Barn and Leanfit sit at the
-        // upper end of WPI purity (~90% protein, residual fat and sugars); MyProtein Clear label
-        // lists exactly 0g fat and 0g sugar; ON Gold Standard 100% Isolate sits in the middle at
-        // ~83% protein with low but non-zero fat and sugar. MyProtein Clear's exact zeros force
-        // every fat- and sugar-derived field (MilkFat, SaturatedFat, TransFat, Lactose, POD,
-        // PACsgr) to a degenerate 100% diff against any of the other three. With MSNF now estimated
-        // from lactose+protein and capped at the 98% min-water threshold for powders, Bulk Barn,
-        // Leanfit, and ON all pin Water at 2.0% (so Water is 0% between any of them) while
-        // MyProtein Clear sits at ~9.6g/100g, making Water blow out to ~79% on any pair involving
-        // Clear. Energy hits ~18% from the same density gap. Protein-derived fields (MilkProteins,
-        // TotalProteins) sit ~11% because the four sources still legitimately differ in dry-matter.
-        // The exceptions are:
-        //    - Energy          17.95%  (Bulk Barn vs MyProtein)
-        //    - Energy          16.80%  (Leanfit vs MyProtein)
-        //    - Energy          11.36%  (MyProtein vs ON)
-        //    - MilkFat        100.00%  (any pair involving MyProtein Clear)
-        //    - MilkFat         14.53%  (Bulk Barn vs Leanfit)
-        //    - MilkFat         20.00%  (Bulk Barn vs ON)
-        //    - Lactose        100.00%  (any pair involving MyProtein Clear)
-        //    - Lactose         61.00%  (Bulk Barn vs Leanfit and Leanfit vs ON)
-        //    - MilkProteins    11.11%  (Bulk Barn vs MyProtein)
-        //    - MilkProteins    10.86%  (Leanfit vs MyProtein)
-        //    - TotalProteins   11.11%  (Bulk Barn vs MyProtein)
-        //    - TotalProteins   10.86%  (Leanfit vs MyProtein)
-        //    - Water           79.18%  (any pair involving MyProtein Clear)
-        //    - POD            100.00%  (any pair involving MyProtein Clear)
-        //    - POD             61.00%  (Bulk Barn vs Leanfit and Leanfit vs ON)
-        //    - PACsgr         100.00%  (any pair involving MyProtein Clear)
-        //    - PACsgr          61.00%  (Bulk Barn vs Leanfit and Leanfit vs ON)
-        //    - PACtotal        12.83%  (Leanfit vs MyProtein)
-        //    - SaturatedFat   100.00%  (any pair involving MyProtein Clear)
-        //    - SaturatedFat    61.00%  (Bulk Barn vs Leanfit and Leanfit vs ON)
-        //    - TransFat       100.00%  (any pair involving MyProtein Clear)
-        //    - TransFat        14.53%  (Bulk Barn vs Leanfit)
-        //    - TransFat        20.00%  (Bulk Barn vs ON)
-        let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::Energy, 18.0)
-            .with(CompKey::MilkFat, 100.0)
-            .with(CompKey::Lactose, 100.0)
-            .with(CompKey::MilkProteins, 12.0)
-            .with(CompKey::TotalProteins, 12.0)
-            .with(CompKey::Water, 80.0)
-            .with(CompKey::POD, 100.0)
-            .with(CompKey::PACsgr, 100.0)
-            .with(CompKey::PACtotal, 13.0)
-            .with(CompKey::SaturatedFat, 100.0)
-            .with(CompKey::TransFat, 100.0);
+        // upper end of WPI purity (~90% protein, residual fat and sugars); ON Gold Standard
+        // 100% Isolate sits in the middle at ~83% protein with low but non-zero fat and sugar.
+        // MyProtein Clear is a hydrolyzed/extra-filtered isolate intended to mix into a clear
+        // juice-like drink rather than a shake — it lists only 80% protein and exactly 0g fat
+        // and 0g sugar, which gives it a noticeably lower kcal-per-g-of-solids profile and
+        // drives the ~44 pp Energy gap.
+        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 44.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2526,44 +2321,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        // All three are micellar casein products with broadly similar protein densities but
-        // different fat and sugar profiles. California Gold's 0.5g/30g (= 1.67g/100g) total fat
-        // sits well below MyProtein's 1g/30g (= 3.33g/100g) — so MilkFat diverges 50% on that
-        // pair — but is close to ON's 1.8g/100g (only 7%). ON's 100g serving carries 4.3g
-        // sugars vs the others' 1g/30g (= 3.33g/100g), driving Lactose, POD, and PACsgr to
-        // ~22% on any pair involving ON, and dragging MilkProteins into a ~12% gap. With the
-        // 10% casein-minerals factor and the 98% min-water cap for powders, California Gold
-        // and MyProtein both pin at the cap (and at the same Water, so they agree exactly on
-        // Water) while ON sits near 5.6g/100g of water, so Water blows out ~64% on every pair
-        // involving ON. California Gold and MyProtein omit saturated fat on their labels, so
-        // it falls back to the standard milk-fat ratio applied to total fat; SaturatedFat then
-        // tracks MilkFat between California Gold and MyProtein (50%) but lands almost on top
-        // of ON between California Gold and ON (~1.5%), while MyProtein's STD-derived
-        // 2.17g/100g sits ~49% above ON's labelled 1.1g/100g. TransFat is always STD-derived
-        // and tracks MilkFat directly.
-        // The exceptions are:
-        //    - MilkFat         50.00%  (California Gold vs MyProtein)
-        //    - MilkFat         46.00%  (MyProtein vs ON)
-        //    - Lactose         22.48%  (pairs involving ON)
-        //    - MilkProteins    12.40%  (California Gold vs ON)
-        //    - TotalProteins   12.40%  (California Gold vs ON)
-        //    - Water           64.36%  (California Gold vs ON and MyProtein vs ON)
-        //    - POD             22.48%  (pairs involving ON)
-        //    - PACsgr          22.48%  (pairs involving ON)
-        //    - SaturatedFat    50.00%  (California Gold vs MyProtein)
-        //    - SaturatedFat    49.23%  (MyProtein vs ON)
-        //    - TransFat        50.00%  (California Gold vs MyProtein)
-        //    - TransFat        46.00%  (MyProtein vs ON)
-        let ceiling = CompCeiling::new(10.0)
-            .with(CompKey::MilkFat, 51.0)
-            .with(CompKey::Lactose, 23.0)
-            .with(CompKey::MilkProteins, 13.0)
-            .with(CompKey::TotalProteins, 13.0)
-            .with(CompKey::Water, 65.0)
-            .with(CompKey::POD, 23.0)
-            .with(CompKey::PACsgr, 23.0)
-            .with(CompKey::SaturatedFat, 51.0)
-            .with(CompKey::TransFat, 51.0);
+        let ceiling = CompCeiling::new(10.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));

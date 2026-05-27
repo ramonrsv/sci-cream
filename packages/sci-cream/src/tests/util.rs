@@ -58,56 +58,98 @@ pub(crate) fn relative_diff_percent(lhs: f64, rhs: f64) -> f64 {
     }
 }
 
-/// Per-key ceilings for [`assert_compositions_consistent`].
+/// Difference between two component values expressed as percentage points of each source's total
+/// solids — a proxy for "how different will the resulting ice cream mix composition be if I
+/// substitute one source for the other while dosing each to the same solids contribution."
+///
+/// `lhs` / `rhs` are per-100g-of-product values; `ts_lhs` / `ts_rhs` are per-100g-of-product
+/// [`CompKey::TotalSolids`]. The output is `|lhs/ts_lhs − rhs/ts_rhs| × 100`, in percentage
+/// points of solids composition. For keys that aren't components-of-solids
+/// ([`CompKey::TotalSolids`] itself, [`CompKey::Water`]), pass the raw 100.0 as the TS values so
+/// the function degenerates to a direct percentage-point diff.
+///
+/// A zero [`CompKey::TotalSolids`] on either side is treated as a zero solids fraction.
+pub(crate) fn solids_fraction_diff_pp(lhs: f64, ts_lhs: f64, rhs: f64, ts_rhs: f64) -> f64 {
+    #[allow(clippy::float_cmp)] // Exact zero TS is the only degenerate case to guard
+    let frac_lhs = if ts_lhs == 0.0 { 0.0 } else { lhs / ts_lhs };
+    #[allow(clippy::float_cmp)]
+    let frac_rhs = if ts_rhs == 0.0 { 0.0 } else { rhs / ts_rhs };
+    (frac_lhs - frac_rhs).abs() * 100.0
+}
+
+/// Returns the appropriate total solids "denominator" for solids-fraction comparison of `key`.
+///
+/// For component-of-solids keys (every fat, sugar, protein, mineral, derived value, etc.), this
+/// returns the composition's [`CompKey::TotalSolids`]. For keys that are already in
+/// "fraction of whole product" units ([`CompKey::TotalSolids`] itself, [`CompKey::Water`]), it
+/// returns 100, which makes [`solids_fraction_diff_pp`] degenerate into a direct percentage-point
+/// comparison. [`CompKey::Energy`] is divided by [`CompKey::TotalSolids`] too — the resulting
+/// "kcal per gram of solids" is the natural concentration unit.
+fn solids_denominator_for(key: CompKey, comp: &Composition) -> f64 {
+    match key {
+        CompKey::TotalSolids | CompKey::Water => 100.0,
+        _ => comp.get(CompKey::TotalSolids),
+    }
+}
+
+/// Per-key ceilings for [`assert_compositions_consistent`], expressed in percentage points of
+/// solids composition (matching [`solids_fraction_diff_pp`]).
 ///
 /// A single default ceiling applies to every comparable keys list entry, with optional
 /// per-key overrides for components known to diverge more widely between data sources.
 pub(crate) struct CompCeiling {
-    default_percent: f64,
+    default_pp: f64,
     overrides: Vec<(CompKey, f64)>,
 }
 
 impl CompCeiling {
-    /// Creates a ceiling where every key allows up to `default_percent` difference.
-    pub(crate) const fn new(default_percent: f64) -> Self {
+    /// Creates a ceiling where every key allows up to `default_pp` difference, in percentage
+    /// points of solids composition.
+    pub(crate) const fn new(default_pp: f64) -> Self {
         Self {
-            default_percent,
+            default_pp,
             overrides: Vec::new(),
         }
     }
 
     /// Overrides the ceiling for a single key, e.g. for a component with known wide variance.
     #[must_use]
-    pub(crate) fn with(mut self, key: CompKey, percent: f64) -> Self {
-        self.overrides.push((key, percent));
+    pub(crate) fn with(mut self, key: CompKey, pp: f64) -> Self {
+        self.overrides.push((key, pp));
         self
     }
 
-    /// Returns the ceiling percentage that applies to `key`.
+    /// Returns the ceiling, in percentage points of solids composition, that applies to `key`.
     fn for_key(&self, key: CompKey) -> f64 {
         self.overrides
             .iter()
             .find(|(overridden, _)| *overridden == key)
-            .map_or(self.default_percent, |(_, percent)| *percent)
+            .map_or(self.default_pp, |(_, pp)| *pp)
     }
 }
 
 /// Asserts that several compositions of the same conceptual ingredient agree within a ceiling.
 ///
-/// Every pair of `sources` (a `(label, composition)` slice) is compared across `keys`; a key whose
-/// symmetric relative difference exceeds its [`CompCeiling`] entry fails the assertion. This is a
-/// deliberately loose backstop against regressions — the precise per-key discrepancies are
-/// recorded separately by [`compare_compositions`] snapshots.
+/// Every pair of `sources` (a `(label, composition)` slice) is compared across `keys`; a key
+/// whose [`solids_fraction_diff_pp`] (in percentage points of each source's solids composition)
+/// exceeds its [`CompCeiling`] entry fails the assertion. This is a deliberately loose backstop
+/// against regressions — the precise per-key discrepancies are recorded separately by
+/// [`compare_compositions`] snapshots.
 pub(crate) fn assert_compositions_consistent(sources: &[(&str, Composition)], keys: &[CompKey], ceiling: &CompCeiling) {
     for &key in keys {
         let limit = ceiling.for_key(key);
 
         for (index, (label_a, comp_a)) in sources.iter().enumerate() {
             for (label_b, comp_b) in &sources[index + 1..] {
-                let diff = relative_diff_percent(comp_a.get(key), comp_b.get(key));
+                let diff = solids_fraction_diff_pp(
+                    comp_a.get(key),
+                    solids_denominator_for(key, comp_a),
+                    comp_b.get(key),
+                    solids_denominator_for(key, comp_b),
+                );
                 assert_true!(
                     diff <= limit,
-                    "Composition values for {:?} differ by {:.2}% between {} and {} (ceiling {:.2}%)",
+                    "Composition values for {:?} differ by {:.2} pp of solids between {} and {} (ceiling {:.2} pp)",
                     key,
                     diff,
                     label_a,
@@ -121,9 +163,10 @@ pub(crate) fn assert_compositions_consistent(sources: &[(&str, Composition)], ke
 
 /// Builds a deterministic, human-readable report of per-key discrepancies between `sources`.
 ///
-/// For each source pair the report lists the symmetric relative difference of every `keys` entry.
-/// It is intended to be captured by an `insta` snapshot so discrepancies stay documented and are
-/// reviewed when the underlying ingredients data changes.
+/// For each source pair the report lists the [`solids_fraction_diff_pp`] of every `keys` entry —
+/// in percentage points of each source's [`CompKey::TotalSolids`] composition. It is intended to
+/// be captured by an `insta` snapshot so discrepancies stay documented and are reviewed when the
+/// underlying ingredients data changes.
 pub(crate) fn compare_compositions(sources: &[(&str, Composition)], keys: &[CompKey]) -> String {
     let labels: Vec<&str> = sources.iter().map(|(label, _)| *label).collect();
     let mut lines = vec![format!("sources: {}", labels.join(", "))];
@@ -133,8 +176,13 @@ pub(crate) fn compare_compositions(sources: &[(&str, Composition)], keys: &[Comp
             lines.push(String::new());
             for &key in keys {
                 let key_name = format!("{key:?}");
-                let diff = relative_diff_percent(comp_a.get(key), comp_b.get(key));
-                lines.push(format!("{key_name:<14} {diff:>6.2}%  ({label_a} vs {label_b})"));
+                let diff = solids_fraction_diff_pp(
+                    comp_a.get(key),
+                    solids_denominator_for(key, comp_a),
+                    comp_b.get(key),
+                    solids_denominator_for(key, comp_b),
+                );
+                lines.push(format!("{key_name:<14} {diff:>6.2} pp  ({label_a} vs {label_b})"));
             }
         }
     }
@@ -148,15 +196,23 @@ mod tests {
 
     use super::{
         CompCeiling, assert_comp_eq_percent, assert_compositions_consistent, assert_f64_fields_eq_zero,
-        assert_f64_fields_ne_zero, compare_compositions, relative_diff_percent,
+        assert_f64_fields_ne_zero, compare_compositions, relative_diff_percent, solids_fraction_diff_pp,
     };
-    use crate::composition::{CompKey, Composition};
+    use crate::composition::{CompKey, Composition, Solids, SolidsBreakdown};
     use crate::tests::asserts::{assert_eq_flt_test, assert_true};
 
     #[derive(Iterable)]
     struct TwoFields {
         a: f64,
         b: f64,
+    }
+
+    /// Builds a stub composition with a target [`CompKey::TotalSolids`] by putting all of it
+    /// under `milk.proteins`. Used by the assertion tests below where the value of
+    /// [`CompKey::TotalSolids`] itself is what's being compared (so the metric reduces to a
+    /// direct percentage-point diff).
+    fn comp_ts(ts: f64) -> Composition {
+        Composition::new().solids(Solids::new().milk(SolidsBreakdown::new().proteins(ts)))
     }
 
     // --- relative_diff_percent ---
@@ -186,6 +242,44 @@ mod tests {
     fn relative_diff_percent_is_100_when_one_side_is_zero() {
         assert_eq_flt_test!(relative_diff_percent(0.0, 5.0), 100.0);
         assert_eq_flt_test!(relative_diff_percent(5.0, 0.0), 100.0);
+    }
+
+    // --- solids_fraction_diff_pp ---
+
+    #[test]
+    fn solids_fraction_diff_pp_is_zero_for_equal_fractions() {
+        // Same value at same TS → 0; same fraction at different absolute values also → 0.
+        assert_eq_flt_test!(solids_fraction_diff_pp(5.0, 10.0, 5.0, 10.0), 0.0);
+        assert_eq_flt_test!(solids_fraction_diff_pp(5.0, 10.0, 50.0, 100.0), 0.0);
+    }
+
+    #[test]
+    fn solids_fraction_diff_pp_reports_fraction_gap_times_100() {
+        // 0.5 / 10 - 0.4 / 10 = 0.01 fraction gap → 1.00 pp
+        assert_eq_flt_test!(solids_fraction_diff_pp(0.5, 10.0, 0.4, 10.0), 1.0);
+    }
+
+    #[test]
+    fn solids_fraction_diff_pp_is_independent_of_argument_order() {
+        let forward = solids_fraction_diff_pp(0.5, 10.0, 0.4, 10.0);
+        let reverse = solids_fraction_diff_pp(0.4, 10.0, 0.5, 10.0);
+        assert_eq_flt_test!(forward, reverse);
+    }
+
+    #[test]
+    fn solids_fraction_diff_pp_tames_near_zero_degeneracy() {
+        // Old relative metric reports 100% for 0 vs 0.08; the solids-fraction view at TS=9
+        // correctly says "0.89 pp of solids" — small, as it should be.
+        assert_eq_flt_test!(solids_fraction_diff_pp(0.0, 9.0, 0.08, 9.0), 0.08 / 9.0 * 100.0);
+    }
+
+    #[test]
+    fn solids_fraction_diff_pp_treats_zero_ts_as_zero_fraction() {
+        // Guards against div-by-zero; a source with zero TotalSolids contributes 0 to the
+        // solids fraction, so the diff is the other side's fraction.
+        assert_eq_flt_test!(solids_fraction_diff_pp(0.0, 0.0, 5.0, 50.0), 10.0);
+        assert_eq_flt_test!(solids_fraction_diff_pp(5.0, 50.0, 0.0, 0.0), 10.0);
+        assert_eq_flt_test!(solids_fraction_diff_pp(0.0, 0.0, 0.0, 0.0), 0.0);
     }
 
     // --- CompCeiling ---
@@ -249,88 +343,73 @@ mod tests {
 
     #[test]
     fn assert_compositions_consistent_passes_within_ceiling() {
-        let a = Composition::new().energy(100.0).pod(10.0);
-        let b = Composition::new().energy(105.0).pod(10.5);
-        let sources = [("A", a), ("B", b)];
-        assert_compositions_consistent(&sources, &[CompKey::Energy, CompKey::POD], &CompCeiling::new(25.0));
+        // 10pp vs 12pp TotalSolids → 2 pp diff, well within the 25 pp ceiling.
+        let sources = [("A", comp_ts(10.0)), ("B", comp_ts(12.0))];
+        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &CompCeiling::new(25.0));
     }
 
     #[test]
     fn assert_compositions_consistent_passes_for_three_sources() {
-        let a = Composition::new().energy(100.0).pod(10.0);
-        let b = Composition::new().energy(105.0).pod(10.5);
-        let c = Composition::new().energy(98.0).pod(9.8);
-        let sources = [("A", a), ("B", b), ("C", c)];
-        assert_compositions_consistent(&sources, &[CompKey::Energy, CompKey::POD], &CompCeiling::new(25.0));
+        let sources = [("A", comp_ts(10.0)), ("B", comp_ts(12.0)), ("C", comp_ts(8.0))];
+        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &CompCeiling::new(25.0));
     }
 
     #[test]
     #[should_panic(expected = "differ by")]
     fn assert_compositions_consistent_panics_above_ceiling() {
-        let a = Composition::new().energy(100.0);
-        let b = Composition::new().energy(200.0);
-        let sources = [("A", a), ("B", b)];
-        assert_compositions_consistent(&sources, &[CompKey::Energy], &CompCeiling::new(25.0));
+        // 10 vs 40 → 30 pp diff, exceeds the 25 pp ceiling.
+        let sources = [("A", comp_ts(10.0)), ("B", comp_ts(40.0))];
+        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &CompCeiling::new(25.0));
     }
 
     #[test]
     #[should_panic(expected = "differ by")]
     fn assert_compositions_consistent_checks_non_adjacent_pairs() {
-        // A-B (20%) and B-C (~21.9%) are within the 25% ceiling; only the non-adjacent A-C
-        // pair (37.5%) exceeds it, so it must still be compared.
-        let a = Composition::new().energy(100.0);
-        let b = Composition::new().energy(125.0);
-        let c = Composition::new().energy(160.0);
-        let sources = [("A", a), ("B", b), ("C", c)];
-        assert_compositions_consistent(&sources, &[CompKey::Energy], &CompCeiling::new(25.0));
+        // A-B (12.5 pp) and B-C (20 pp) are within the 25 pp ceiling; only the non-adjacent A-C
+        // pair (32.5 pp) exceeds it, so it must still be compared.
+        let sources = [("A", comp_ts(10.0)), ("B", comp_ts(22.5)), ("C", comp_ts(42.5))];
+        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &CompCeiling::new(25.0));
     }
 
     #[test]
     fn assert_compositions_consistent_honors_per_key_override() {
-        let a = Composition::new().energy(100.0);
-        let b = Composition::new().energy(200.0);
-        let sources = [("A", a), ("B", b)];
-        // The 50% difference would fail the 25% default, but the per-key override permits it.
-        let ceiling = CompCeiling::new(25.0).with(CompKey::Energy, 60.0);
-        assert_compositions_consistent(&sources, &[CompKey::Energy], &ceiling);
+        // 50 pp difference would fail the 25 pp default, but the per-key override permits it.
+        let sources = [("A", comp_ts(10.0)), ("B", comp_ts(60.0))];
+        let ceiling = CompCeiling::new(25.0).with(CompKey::TotalSolids, 60.0);
+        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &ceiling);
     }
 
     // --- compare_compositions ---
 
     #[test]
     fn compare_compositions_lists_header_and_every_key() {
-        let a = Composition::new().energy(100.0).pod(10.0);
-        let b = Composition::new().energy(100.0).pod(10.0);
-        let report = compare_compositions(&[("A", a), ("B", b)], &[CompKey::Energy, CompKey::POD]);
+        let sources = [("A", comp_ts(10.0)), ("B", comp_ts(10.0))];
+        let report = compare_compositions(&sources, &[CompKey::TotalSolids, CompKey::Water]);
         assert_true!(report.contains("sources: A, B"));
-        assert_true!(report.contains("Energy"));
-        assert_true!(report.contains("POD"));
+        assert_true!(report.contains("TotalSolids"));
+        assert_true!(report.contains("Water"));
     }
 
     #[test]
     fn compare_compositions_lists_pair_even_when_values_match() {
-        let a = Composition::new().energy(100.0);
-        let b = Composition::new().energy(100.0);
-        let report = compare_compositions(&[("A", a), ("B", b)], &[CompKey::Energy]);
-        // Identical values still produce a line, reported as a 0.00% difference.
+        let sources = [("A", comp_ts(10.0)), ("B", comp_ts(10.0))];
+        let report = compare_compositions(&sources, &[CompKey::TotalSolids]);
+        // Identical values still produce a line, reported as a 0.00 pp difference.
         assert_true!(report.contains("(A vs B)"));
-        assert_true!(report.contains("0.00%"));
+        assert_true!(report.contains("0.00 pp"));
     }
 
     #[test]
     fn compare_compositions_annotates_pair_when_values_differ() {
-        let a = Composition::new().energy(100.0);
-        let b = Composition::new().energy(110.0);
-        let report = compare_compositions(&[("A", a), ("B", b)], &[CompKey::Energy]);
+        let sources = [("A", comp_ts(10.0)), ("B", comp_ts(15.0))];
+        let report = compare_compositions(&sources, &[CompKey::TotalSolids]);
         assert_true!(report.contains("(A vs B)"));
     }
 
     #[test]
     fn compare_compositions_lists_every_source_pair() {
-        let a = Composition::new().energy(100.0);
-        let b = Composition::new().energy(105.0);
-        let c = Composition::new().energy(200.0);
-        let report = compare_compositions(&[("A", a), ("B", b), ("C", c)], &[CompKey::Energy]);
+        let sources = [("A", comp_ts(10.0)), ("B", comp_ts(12.0)), ("C", comp_ts(20.0))];
+        let report = compare_compositions(&sources, &[CompKey::TotalSolids]);
         // All three combinations of the three sources are reported, not just the widest.
         assert_true!(report.contains("(A vs B)"));
         assert_true!(report.contains("(A vs C)"));
