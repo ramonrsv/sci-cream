@@ -2055,7 +2055,6 @@ pub(crate) mod tests {
         CompKey::MilkSNFS,
         CompKey::MilkProteins,
         CompKey::MilkSolids,
-        CompKey::TotalProteins,
         CompKey::TotalSolids,
         CompKey::Water,
         CompKey::POD,
