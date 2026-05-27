@@ -12,30 +12,34 @@
 - [ ] Add a home page with a quick intro and overview, pointing to user guide, docs, etc.
 - [ ] Figure out how to show `sci-cream`'s beginner-friendly overview to new users of the app.
 - [ ] Fix issue where version lists in `RecipeSearch` do not visually update when one is deleted.
+- [ ] Fix the `WatcherCard` diff calculation, it should be main's delta compared to references.
+- [ ] When a ref property is zero, `WatcherCard` shows A/B with nothing next to it, needs fix.
+- [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
+- [ ] In `/ingredients`, the composition panel does not scroll when the key exceed the height.
+- [ ] There is a weird horizontal line in `/ingredient-search-detail-panel-visual-linux.png`
+- [ ] Remove the '"comments": "..."' placeholder in `/ingredients`, just remove the field.
+- [ ] Fix typo in welcome blog post, "you will **find** areas where it goes well beyond...".
 
 ## Up Next
 
-- [ ] Add support for recipe versions, with appropriate UI support and grouping in `RecipeSearch`.
-- [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
-      embedded into other websites. How to handle user-defined ingredients?
 - [ ] Review the sign-in classes in `globals.css`, used in `/signin/page.tsx` and `/signup/page.tsx`
 - [ ] Add make-recipe link, to click off ingredients that have been measured out for one or more
       recipes. Each recipe should be letter and color coded.
 - [ ] Add scoopability and FPD properties component with visuals.
 - [ ] Add Nutrition Facts Table component.
-- [ ] Figure out how to do visual regression tests of animations, e.g. navbar expand/collapse.
 - [ ] In `MixPropertiesGrid`, make it so that, if there is a horizontal scroll, the left-most column
       (property headers) does not scroll with the rest of the content.
-- [ ] Look into setting up and how to do database migrations for the production database.
 - [ ] There are some `react-grid-layout` layout shifts on page refresh; it's worse on mobile.
-- [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
-- [ ] Add support for sharing of user-defined ingredients, similarly to sharing of recipes.
-- [ ] Refine performance benchmarks; some of them may not be measuring what they claim to measure.
-- [ ] Add an app "tour" to show users the main components of the app, where to go for docs, etc.
-- [ ] Add support for every instance of `KeySelect` to independently store custom keys in local.
-- [ ] Add feature to show different ranges around serving temp in `FpdGraph`, like a 'zoom'.
-- [ ] Look for opportunities to optimize bundle size, particularly in `/ingredients` and `/recipes`.
-- [ ] Find a proper fix for the placeholder `POSTGRES_URL` in the `bundle_benchmark` workflow.
+- [ ] Add tests to verify `/recipes` & `/ingredients`' handling of slow fetches of user content.
+- [ ] Consider adding e2e benches for `/recipes` & `/ingredients`, inc. web vitals, first-load, etc.
+- [ ] Add richer syntax highlighting of JSON ingredient specs in `/ingredients` details panel.
+- [ ] Add automatic links to specs, docs, etc. in `/ingredients`, based on the loaded spec.
+- [ ] Add support for showing recipe diffs between versions of a recipe in `/recipes`.
+- [ ] Add some visual feedback for when a recipe matches targets within a given precision.
+- [ ] Add a button to set all currently selected watcher targets from a reference recipe.
+- [ ] On mobile, change ingredients comp table height to fit, with max, and move comments below it.
+- [ ] Double check the calculator mobile layouts, `FpdGraphPanel` looks too tall on Pixel 8 Pro.
+- [ ] Add a `Balance` button to `WatchersPanel`, with some indicator that is a beta feature.
 
 ## Backlog
 
@@ -71,9 +75,24 @@
 - [ ] Add and/or verify support for C/C++ interoperability with FFI; look into `cxx` crate.
 - [ ] Look into `SharedArrayBuffer` to improve JS <-> WASM interoperability performance.
 - [ ] Investigate alternatives to custom impl for bundle size benchmarks, e.g. npm `bundlewatch`.
+- [ ] Add a "Tools" navbar item with tools like sweeteners lookup, ingredient replacement, etc.
+- [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
+      embedded into other websites. How to handle user-defined ingredients?
+- [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
+- [ ] Add support for sharing of user-defined ingredients, similarly to sharing of recipes.
+- [ ] Add a visual warning indicator for user-defined ingredients that shadow built-in ones.
+- [ ] Look into setting up and how to do database migrations for the production database.
+- [ ] Find a proper fix for the placeholder `POSTGRES_URL` in the `bundle_benchmark` workflow.
+- [ ] Refine performance benchmarks; some of them may not be measuring what they claim to measure.
+- [ ] Figure out how to do visual regression tests of animations, e.g. navbar expand/collapse.
+- [ ] Look for opportunities to optimize bundle size, particularly in `/ingredients` and `/recipes`.
+- [ ] Add an app "tour" to show users the main components of the app, where to go for docs, etc.
+- [ ] Add support for every instance of `KeySelect` to independently store custom keys in local.
+- [ ] Add feature to show different ranges around serving temp in `FpdGraph`, like a 'zoom'.
 
 ## Completed
 
+- [x] Add support for recipe versions, with appropriate UI support and grouping in `RecipeSearch`.
 - [x] Add functionality to store component layout so that it is remembered across page reloads. The
       store should start seeded with a default for each resolution, and store any user modification.
 - [x] Check how vertical spacing looks like on 1080p/2160p screens; look into dynamic vertical?

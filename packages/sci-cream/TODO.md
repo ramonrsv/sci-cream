@@ -2,14 +2,17 @@
 
 ## Next Release
 
-- [ ] Fix `wasm` module code coverage gap, mostly by disabling anything with a `JsValue`.
 - [ ] Add code example doc tests to all specs that don't already have them.
 - [ ] Add "Louis Francois Stab 2000" ingredient, which has stabilizer and emulsifier components.
 - [ ] Add a beginner-friendly overview of the core ice cream science concepts, e.g. FPD curves.
 - [ ] Consider whether to add `CompKey` for all polyols and artificial sweeteners.
 - [ ] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
-- [ ] Add milk and cream ingredients based on USDA, and investigate protein content discrepancies.
+- [ ] Add TypeScript interface for the existing preliminary automatic balancing functionality.
+- [ ] Make `cocoa_butter` optional in `ChocolateSpec`, use the standard fraction by default.
+- [ ] Add `compare_specs_*` tests for comparable chocolate ingredients, from std and label.
+- [ ] Add more ultra-filtered milk products, e.g. `Fairlife Whole Ultra-Filtered Lactose-Free Milk`.
+- [ ] Add evaporated and condensed milk products from Goff & Hartel, as references for comparison.
 
 ## Up Next
 
@@ -19,8 +22,6 @@
       with how `Emulsifiers` is populated, and it would make it harder to calculate `Texture`.
 - [ ] Modify `EggSpec`, `Dairy*Spec`, etc. to populate `Stabilizers` and `Emulsifiers` with
       appropriate sub-components, e.g. lecithin, egg proteins, whey/casein proteins, etc.
-- [ ] Refine the stabilizer strength constants - try to find a recipe that's similar between
-      Underbelly, Dana, etc. and compare the recommended concentrations of different stabilizers.
 - [ ] Add support for tracking milk casein/whey proteins and egg yolk/white proteins. This may need
       modifications to `Composition`, and the specs need to be modified to allow more specificity.
 - [ ] Add unit tests for `to_texture` methods, stabilizer/emulsifier strength values, etc.
@@ -30,16 +31,11 @@
 - [ ] Add balancer functionality to automatically balance recipes and component substitutions.
 - [ ] Consider adding support for `Composition` to also return `Unit` instead of just `f64`.
 - [ ] Add support for `data` to resolve `AliasSpec` and `CompositeSpec` on per-spec requests.
-- [ ] Encode (in)dependent specs in different enums; don't implement `ToIngredient` for dependents.
-- [ ] Add `resolution` support for validating a spec collection for reference sanity, etc.
-- [ ] Implement a ratios system that calculates important ratios from a `Composition`. Maybe it can
-      be added to `MixProperties` for ratios like Stabilizers/Water, Emulsifiers/Fat, etc. It also
-      needs to support `Ingredient`s, primarily for sweeteners, with ratios like PAC:POD,
-      Solids:POD, etc. A crude implementation currently is at `data::tests::sweeteners_by_ratio`.
-- [ ] Add Abs.POD property; looks for literature sources for it, I think I saw it in Goff & Hartel.
-- [ ] Consider dropping WASM support for `Recipe`, rely only on `Bridge` and `IngredientDatabase`.
-- [ ] Look into `wasm_bindgen_test` and `wasm-pack test --headless --chrome` for testing `JsValue`.
 - [ ] Add more reference recipes from Underbelly, Dana, Corvitto, Ice Cream Science, etc.
+- [ ] Consider adding `compare_specs_*` tests for simple and label lactose-free dairy products.
+- [ ] Add whey and casein concentrate products, e.g. "Whey Powder", "Whey Protein Concentrate 80%",
+      "Whey Protein Isolate 90%", "Sodium Caseinate", "Buttermilk Powder", etc.
+- [ ] FPD properties cannot be balanced, so add some way to convert them to (PAC-HF)/Water.
 
 ## Backlog
 
@@ -63,9 +59,23 @@
       viscosity, flavour release, mouthfeel, etc. May be difficult to source strength values.
 - [ ] Refine the knowledge base documentation, using more peer-reviewed articles and literature
       sources. At the moment it it mostly citing blogs (Underbelly, etc.) and 1-3 books.
+- [ ] Refine the stabilizer strength constants - try to find a recipe that's similar between
+      Underbelly, Dana, etc. and compare the recommended concentrations of different stabilizers.
+- [ ] Encode (in)dependent specs in different enums; don't implement `ToIngredient` for dependents.
+- [ ] Add `resolution` support for validating a spec collection for reference sanity, etc.
+- [ ] Implement a ratios system that calculates important ratios from a `Composition`. Maybe it can
+      be added to `MixProperties` for ratios like Stabilizers/Water, Emulsifiers/Fat, etc. It also
+      needs to support `Ingredient`s, primarily for sweeteners, with ratios like PAC:POD,
+      Solids:POD, etc. A crude implementation currently is at `data::tests::sweeteners_by_ratio`.
+- [ ] Add Abs.POD property; looks for literature sources for it, I think I saw it in Goff & Hartel.
+- [ ] Consider dropping WASM support for `Recipe`, rely only on `Bridge` and `IngredientDatabase`.
+- [ ] Look into `wasm_bindgen_test` and `wasm-pack test --headless --chrome` for testing `JsValue`.
+- [ ] Fix `wasm` module code coverage gap, mostly by disabling anything with a `JsValue`.
 
 ## Completed
 
+- [x] Some keys in `COMPARABLE_DAIRY_KEYS` are redundant, e.g. `TotalProteins` == `MilkProteins`.
+- [x] Add milk and cream ingredients based on USDA, and investigate protein content discrepancies.
 - [x] Add evaporated milk ingredients, e.g. 'Evaporated Milk', 'Fat Free Evaporated Skim Milk', etc.
 - [x] Add support for composite specs that include the dependency specs inline, not referenced.
 - [x] Add lactose-free support to `DairySimpleSpec`, to allow simple lactose-free ingredient specs.
