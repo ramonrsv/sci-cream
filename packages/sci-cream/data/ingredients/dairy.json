@@ -155,10 +155,11 @@
       "energy": 343,
       "total_fat": { "grams": 35.6 },
       "saturated_fat": 20.4,
+      "carbohydrates": 3.8,
       "sugars": 2.92,
       "protein": 2.02
     },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Cream, heavy: https://fdc.nal.usda.gov/food-details/2705597/nutrients. Carbohydrates by difference listed as 3.8g."
+    "comments": "USDA FoodData Central - Survey (FNDDS) - Cream, heavy: https://fdc.nal.usda.gov/food-details/2705597/nutrients."
   },
   {
     "name": "Sealtest 0% Skim Milk",
@@ -263,10 +264,11 @@
       "total_fat": { "percent": 35 },
       "saturated_fat": 3,
       "trans_fat": 0.1,
+      "carbohydrates": 1,
       "sugars": 0,
       "protein": 0.3
     },
-    "comments": "From nutrition facts table: https://www.sealtest.ca/en/products/creams/whipping-cream-35. Label lists 1g of carbohydrates."
+    "comments": "From nutrition facts table: https://www.sealtest.ca/en/products/creams/whipping-cream-35."
   },
   {
     "name": "Fairlife Whole Ultra-Filtered Lactose-Free Milk",
@@ -341,10 +343,11 @@
       "energy": 15,
       "total_fat": { "percent": 2 },
       "saturated_fat": 0.2,
+      "carbohydrates": 2,
       "sugars": 1,
       "protein": 1
     },
-    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/2-partly-skimmed. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]. Label lists 2g of carbohydrates."
+    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/2-partly-skimmed. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]."
   },
   {
     "name": "Carnation Evaporated Milk",
@@ -354,10 +357,11 @@
       "energy": 20,
       "total_fat": { "grams": 1 },
       "saturated_fat": 0.5,
+      "carbohydrates": 2,
       "sugars": 1,
       "protein": 1
     },
-    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/evaporated-milk. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]. Label lists 2g of carbohydrates."
+    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/evaporated-milk. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]."
   },
   {
     "name": "USDA Sweetened Condensed Milk",
@@ -409,11 +413,12 @@
       "energy": 70,
       "total_fat": { "grams": 1.5 },
       "saturated_fat": 0.5,
+      "carbohydrates": 11,
       "sugars": 10,
       "protein": 2,
       "sucrose": 8.2
     },
-    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/dulce-de-leche. Serving size is 15ml at 1.3 g/ml [constants::density::SWEETENED_CONDENSED_MILK]. Label specifies 11g of carbohydrates."
+    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/dulce-de-leche. Serving size is 15ml at 1.3 g/ml [constants::density::SWEETENED_CONDENSED_MILK]."
   },
   {
     "name": "Medallion Skim Milk Powder",
@@ -422,10 +427,11 @@
       "serving_size": { "grams": 25 },
       "energy": 90,
       "total_fat": { "grams": 0 },
+      "carbohydrates": 13,
       "sugars": 12,
       "protein": 9
     },
-    "comments": "From nutrition facts table: https://www.medallionmilk.com/products/skim-milk-powder-500g-bag. Label lists 13g of carbohydrates."
+    "comments": "From nutrition facts table: https://www.medallionmilk.com/products/skim-milk-powder-500g-bag"
   },
   {
     "name": "Medallion Whole Milk Powder",
@@ -486,11 +492,12 @@
       "energy": 390,
       "total_fat": { "grams": 1.5 },
       "saturated_fat": 0.3,
+      "carbohydrates": 4,
       "sugars": 1,
       "protein": 90,
       "solids_source": "Whey"
     },
-    "comments": "From nutrition facts table (unflavored): https://www.bulkbarn.ca/en/Products/All/Whey-Protein-Isolate-90Percent-1580. Label lists 4g of total carbohydrates."
+    "comments": "From nutrition facts table (unflavored): https://www.bulkbarn.ca/en/Products/All/Whey-Protein-Isolate-90Percent-1580"
   },
   {
     "name": "California Gold Nutrition, Sport, Micellar Casein",
@@ -499,11 +506,12 @@
       "serving_size": { "grams": 30 },
       "energy": 110,
       "total_fat": { "grams": 0.5 },
+      "carbohydrates": 2,
       "sugars": 1,
       "protein": 25,
       "solids_source": "Casein"
     },
-    "comments": "From nutrition facts table: https://ca.iherb.com/pr/california-gold-nutrition-sport-micellar-casein-unflavored-slow-absorption-16-oz-454-g/71028. Label lists 2g of total carbohydrates."
+    "comments": "From nutrition facts table: https://ca.iherb.com/pr/california-gold-nutrition-sport-micellar-casein-unflavored-slow-absorption-16-oz-454-g/71028"
   },
   {
     "name": "MyProtein Impact Whey Protein",
@@ -513,11 +521,12 @@
       "energy": 100,
       "total_fat": { "grams": 1 },
       "saturated_fat": 1,
+      "carbohydrates": 3,
       "sugars": 1,
       "protein": 19,
       "solids_source": "Whey"
     },
-    "comments": "From nutrition facts table (unflavored variant): https://ca.myprotein.com/p/sports-nutrition/impact-whey-protein/10852500/?variation=15152175. Label lists 3g of total carbohydrates."
+    "comments": "From nutrition facts table (unflavored variant): https://ca.myprotein.com/p/sports-nutrition/impact-whey-protein/10852500/?variation=15152175"
   },
   {
     "name": "MyProtein Clear Whey Isolate",
@@ -539,11 +548,12 @@
       "serving_size": { "grams": 30 },
       "energy": 110,
       "total_fat": { "grams": 1 },
+      "carbohydrates": 3,
       "sugars": 1,
       "protein": 23,
       "solids_source": "Casein"
     },
-    "comments": "From nutrition facts table (vanilla variant): https://ca.myprotein.com/p/sports-nutrition/slow-release-casein/11092497/?variation=11410392. Label lists 3g of total carbohydrates."
+    "comments": "From nutrition facts table (vanilla variant): https://ca.myprotein.com/p/sports-nutrition/slow-release-casein/11092497/?variation=11410392"
   },
   {
     "name": "Optimum Nutrition Gold Standard 100% Whey",
@@ -553,11 +563,12 @@
       "energy": 374,
       "total_fat": { "grams": 4.0 },
       "saturated_fat": 1.4,
+      "carbohydrates": 4.2,
       "sugars": 3.3,
       "protein": 80,
       "solids_source": "Whey"
     },
-    "comments": "From nutrition facts table (unflavored variant): https://www.optimumnutrition.com/products/gold-standard-100-whey-protein-powder-eu?variant=52105832956171. Label lists 4.2g of carbohydrates, 0.52g of salt."
+    "comments": "From nutrition facts table (unflavored variant): https://www.optimumnutrition.com/products/gold-standard-100-whey-protein-powder-eu?variant=52105832956171. Label lists 0.52g of salt."
   },
   {
     "name": "Optimum Nutrition Gold Standard 100% Isolate",
@@ -567,11 +578,12 @@
       "energy": 361,
       "total_fat": { "grams": 1.2 },
       "saturated_fat": 0.3,
+      "carbohydrates": 4,
       "sugars": 1,
       "protein": 83,
       "solids_source": "Whey"
     },
-    "comments": "From nutrition facts table (vanilla variant): https://www.optimumnutrition.com/products/gold-standard-100-isolate-whey-protein-powder-eu?variant=52105839477003. Label lists 4g of total carbohydrates, 0.12g of salt."
+    "comments": "From nutrition facts table (vanilla variant): https://www.optimumnutrition.com/products/gold-standard-100-isolate-whey-protein-powder-eu?variant=52105839477003. Label lists 0.12g of salt."
   },
   {
     "name": "Optimum Nutrition Gold Standard 100% Casein",
@@ -581,11 +593,12 @@
       "energy": 352,
       "total_fat": { "grams": 1.8 },
       "saturated_fat": 1.1,
+      "carbohydrates": 11,
       "sugars": 4.3,
       "protein": 73,
       "solids_source": "Casein"
     },
-    "comments": "From nutrition facts table (strawberry delight variant): https://www.optimumnutrition.com/products/gold-standard-100-casein-protein-powder-eu?variant=52105828106507. Label lists 11g of total carbohydrates, 1.4g of salt."
+    "comments": "From nutrition facts table (strawberry delight variant): https://www.optimumnutrition.com/products/gold-standard-100-casein-protein-powder-eu?variant=52105828106507. Label lists 1.4g of salt."
   },
   { "alias": "Whey Isolate", "for": "Leanfit Sport Whey Isolate" },
   { "alias": "Casein", "for": "California Gold Nutrition, Sport, Micellar Casein" }
