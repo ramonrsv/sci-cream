@@ -1,5 +1,7 @@
 import { devices } from "@playwright/test";
 
+import { RecipeID } from "@/__tests__/assets";
+
 /** Represents a viewport configuration for visual regression tests. */
 interface ViewportAsset {
   name: string;
@@ -127,3 +129,20 @@ export const VIEWPORTS: ViewportAsset[] = [
   VIEWPORT_DESKTOP_1440P_HALF,
   VIEWPORT_DESKTOP_1440P_FULL,
 ];
+
+/** Get a list of recipe names from their IDs */
+const getRecipeNames = (recipeIds: RecipeID[]) => {
+  return recipeIds.map((id) => (id === RecipeID.Main ? "Main" : String(id)));
+};
+
+/** Generate a test name based on a prefix and a set of recipes */
+export const makeRecipesTestName = (testNamePrefix: string, recipeIds: RecipeID[]) => {
+  return `${testNamePrefix} - ${getRecipeNames(recipeIds).join(", ")} recipes populated`;
+};
+
+/** Generate a filename based on a prefix and a set of recipes */
+export const makeRecipesScreenshotFilename = (filenamePrefix: string, recipeIds: RecipeID[]) => {
+  return `${filenamePrefix}-populated-${getRecipeNames(recipeIds)
+    .map((v) => v.toLowerCase())
+    .join("-")}.png`;
+};

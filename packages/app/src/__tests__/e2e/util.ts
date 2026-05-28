@@ -15,6 +15,8 @@ import { formatCompositionValue, applyQtyToggleAndFormat } from "@/lib/comp-valu
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 
+import { verify } from "@/lib/util";
+
 import {
   LightRecipe,
   RecipeID,
@@ -79,6 +81,27 @@ export function getMixPropertyValueElement(page: Page, propKey: PropKey, recipeI
     .filter({ has: page.locator("td", { hasText: prop_key_as_med_str(propKey) }) })
     .locator("td.comp-val")
     .nth(recipeIdx);
+}
+
+/**
+ * Compute the rendered column index for `recipeId` in panels that drop empty reference slots.
+ *
+ * Mirrors `filterActiveSlots` (see `lib/recipe.ts`): the main slot is always at column 0, and each
+ * populated reference slot occupies the next column in slot-index order. With a gap (e.g. Main +
+ * RefB but not RefA), RefB renders at column 1 even though its logical slot index is 2.
+ */
+export function renderedRecipeColumnIdx(
+  recipeId: RecipeID,
+  populatedRecipeIds: RecipeID[],
+): number {
+  const slotIdx = recipeIdToIdx(recipeId);
+  if (slotIdx === 0) return 0;
+
+  const refSlots = populatedRecipeIds.map(recipeIdToIdx).filter((idx) => idx !== 0);
+  const pos = refSlots.indexOf(slotIdx);
+
+  verify(pos !== -1, `${recipeId} (slot ${slotIdx}) is not in populatedRecipeIds`);
+  return 1 + pos;
 }
 
 /** Get all header cell elements in the `IngredientCompositionGrid` */
@@ -213,8 +236,12 @@ export async function getRecipeUpdateCheckElements(
   page: Page,
   recipeId: RecipeID,
   ingIdx: number = PASTE_CHECK_DEFAULT_ING_IDX,
+  populatedRecipeIds?: RecipeID[],
 ): Promise<RecipeUpdateCheckElements> {
-  const recipeIdx = recipeIdToIdx(recipeId);
+  const recipeIdx = populatedRecipeIds
+    ? renderedRecipeColumnIdx(recipeId, populatedRecipeIds)
+    : recipeIdToIdx(recipeId);
+
   const servingTempPropKey = fpdToPropKey(FpdKey.ServingTemp);
 
   const ingNameInput = getIngredientNameInputAtIdx(page, ingIdx);
@@ -326,10 +353,16 @@ export async function expectRecipeUpdateCompleted(
   page: Page,
   recipeId: RecipeID,
   expected: ExpectedRecipeUpdate,
+  populatedRecipeIds?: RecipeID[],
 ) {
   await configureComponentsForRecipeUpdateCheck(page, recipeId);
 
-  const elements = await getRecipeUpdateCheckElements(page, recipeId, expected.ingIdx);
+  const elements = await getRecipeUpdateCheckElements(
+    page,
+    recipeId,
+    expected.ingIdx,
+    populatedRecipeIds,
+  );
   await expectRecipeElementsToHaveExpected(elements, expected);
 }
 
@@ -346,12 +379,16 @@ export const PASTE_CHECK_DEFAULT_ING_IDX = 6;
  * **Note:** This function modifies selectors to check for specific ingredient and property values,
  * so it may not leave components in the same state that they were before the function call.
  */
-export async function expectRecipePasteCompleted(page: Page, recipeId: RecipeID) {
+export async function expectRecipePasteCompleted(
+  page: Page,
+  recipeId: RecipeID,
+  populatedRecipeIds?: RecipeID[],
+) {
   const lightRecipe = getLightRecipe(recipeId);
   const ingIdx = PASTE_CHECK_DEFAULT_ING_IDX;
 
   const expected = getExpectedRecipeUpdateValues(lightRecipe, ingIdx);
-  await expectRecipeUpdateCompleted(page, recipeId, expected);
+  await expectRecipeUpdateCompleted(page, recipeId, expected, populatedRecipeIds);
 }
 
 /**
@@ -387,9 +424,10 @@ export async function pasteRecipeAndWaitForUpdate(
   page: Page,
   browserName: string,
   recipeId: RecipeID,
+  populatedRecipeIds?: RecipeID[],
 ) {
   await pasteRecipeIntoGrid(page, browserName, recipeId);
-  await expectRecipePasteCompleted(page, recipeId);
+  await expectRecipePasteCompleted(page, recipeId, populatedRecipeIds);
 }
 
 /**
