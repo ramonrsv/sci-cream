@@ -7,6 +7,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
+    composition::CompKey,
     ingredient::Ingredient as RustIngredient,
     recipe::{OwnedLightRecipe, Recipe as RustRecipe},
     wasm::{Composition, Ingredient, JsResult, MixProperties},
@@ -58,6 +59,15 @@ pub fn light_recipe_from_jsvalue(recipe: JsValue) -> JsResult<OwnedLightRecipe> 
     serde_wasm_bindgen::from_value::<OwnedLightRecipe>(recipe).map_err(Into::into)
 }
 
+/// Create a list of balancing targets from a JavaScript list of comp key and target value pairs.
+///
+/// # Errors
+///
+/// Returns a `serde::Error` if the input cannot be deserialized into an `Vec<(CompKey, f64)>`.
+pub fn balancing_targets_from_jsvalue(targets: JsValue) -> JsResult<Vec<(CompKey, f64)>> {
+    serde_wasm_bindgen::from_value::<Vec<(CompKey, f64)>>(targets).map_err(Into::into)
+}
+
 #[wasm_bindgen]
 impl Recipe {
     /// Creates a new [`Recipe`] with the optional given name and list of [`RecipeLine`]s.
@@ -94,6 +104,22 @@ impl Recipe {
     pub fn calculate_mix_properties_wasm(&self) -> JsResult<MixProperties> {
         RustRecipe::from(self.clone())
             .calculate_mix_properties()
+            .map(Into::into)
+            .map_err(Into::into)
+    }
+
+    /// WASM compatible wrapper for [`Recipe::balance`](RustRecipe::balance)
+    ///
+    /// # Errors
+    ///
+    /// Returns a `serde::Error` if the `JsValue` input cannot be deserialized into a `(CompKey,
+    /// f64)[]`. Forwards any errors from internal balancing calculations; see [`crate::balancing`].
+    #[wasm_bindgen(js_name = "balance")]
+    pub fn balance_wasm(&self, targets: Box<[JsValue]>) -> JsResult<Self> {
+        let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
+
+        RustRecipe::from(self.clone())
+            .balance(&targets)
             .map(Into::into)
             .map_err(Into::into)
     }

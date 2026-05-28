@@ -5,7 +5,14 @@ use serde::{Deserialize, Serialize};
 #[cfg(feature = "database")]
 use crate::{database::IngredientDatabase, resolution::IngredientGetter};
 
-use crate::{composition::Composition, error::Result, fpd::FPD, ingredient::Ingredient, properties::MixProperties};
+use crate::{
+    balancing::balance_compositions_nnls,
+    composition::{CompKey, Composition},
+    error::Result,
+    fpd::FPD,
+    ingredient::Ingredient,
+    properties::MixProperties,
+};
 
 #[cfg(doc)]
 use crate::error::Error;
@@ -164,6 +171,51 @@ impl Recipe {
             fpd,
         })
     }
+
+    /// Balance the recipe to meet the given target composition values
+    ///
+    /// The relative proportions of the ingredients in the recipe are adjusted to meet the target
+    /// composition values as closely as possible, while keeping the total amount of the recipe
+    /// constant. The balancing is done via [`balance_compositions_nnls`]; see for more details.
+    ///
+    /// # Errors
+    ///
+    /// Forwards any errors from [`balance_compositions_nnls`] if balancing calculations fail.
+    pub fn balance(self, targets: &[(CompKey, f64)]) -> Result<Self> {
+        let total_amount: f64 = self.lines.iter().map(|line| line.amount).sum();
+
+        let balanced = balance_compositions_nnls(
+            self.lines
+                .iter()
+                .map(|line| line.ingredient.composition)
+                .collect::<Vec<_>>()
+                .as_slice(),
+            targets,
+        )?;
+
+        Ok(Self {
+            name: self.name,
+            lines: self
+                .lines
+                .into_iter()
+                .zip(balanced.into_iter().map(|(_, fraction)| fraction))
+                .map(|(line, fraction)| RecipeLine {
+                    ingredient: line.ingredient,
+                    amount: total_amount * fraction,
+                })
+                .collect(),
+        })
+    }
+}
+
+impl From<Recipe> for OwnedLightRecipe {
+    fn from(recipe: Recipe) -> Self {
+        recipe
+            .lines
+            .into_iter()
+            .map(|line| (line.ingredient.name, line.amount))
+            .collect()
+    }
 }
 
 #[cfg(test)]
@@ -244,5 +296,100 @@ mod tests {
         assert_true!(mix_properties.get(FpdKey::HardnessAt14C.into()).is_nan());
         assert_true!(mix_properties.fpd.curves.frozen_water[0].temp.is_nan());
         assert_true!(mix_properties.fpd.curves.hardness[0].temp.is_nan());
+    }
+
+    #[test]
+    fn recipe_balance_dairy() {
+        let recipe = Recipe::from_const_recipe(
+            Some("Dairy Base".into()),
+            &[
+                ("3.25% Milk", 400.0),
+                ("40% Cream", 100.0),
+                ("Skimmed Milk Powder", 50.0),
+            ],
+            &DB,
+        )
+        .unwrap();
+        let original_total: f64 = recipe.lines.iter().map(|line| line.amount).sum();
+        let original_names: Vec<_> = recipe.lines.iter().map(|line| line.ingredient.name.clone()).collect();
+
+        let targets = [(CompKey::MilkFat, 16.0), (CompKey::MSNF, 11.0)];
+        let balanced = recipe.balance(&targets).unwrap();
+
+        assert_eq!(balanced.name, Some("Dairy Base".into()));
+        assert_eq!(balanced.lines.len(), original_names.len());
+
+        let balanced_total: f64 = balanced.lines.iter().map(|line| line.amount).sum();
+        assert_eq_flt_test!(balanced_total, original_total);
+
+        let balanced_names: Vec<_> = balanced.lines.iter().map(|line| line.ingredient.name.clone()).collect();
+        assert_eq!(balanced_names, original_names);
+
+        for line in &balanced.lines {
+            assert_true!(line.amount >= 0.0);
+        }
+
+        let comp = balanced.calculate_composition().unwrap();
+        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 16.0);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 11.0);
+    }
+
+    #[test]
+    fn recipe_balance_main_recipe_important_targets() {
+        let recipe = Recipe::from_light_recipe(Some("Main Recipe".into()), &MAIN_RECIPE_LIGHT, &DB).unwrap();
+        let original_total: f64 = recipe.lines.iter().map(|line| line.amount).sum();
+
+        let targets = [
+            (CompKey::MilkFat, 14.0),
+            (CompKey::MSNF, 10.0),
+            (CompKey::TotalSugars, 17.0),
+            (CompKey::TotalSolids, 41.0),
+        ];
+        let balanced = recipe.balance(&targets).unwrap();
+
+        assert_eq!(balanced.name, Some("Main Recipe".into()));
+        assert_eq!(balanced.lines.len(), MAIN_RECIPE_LIGHT.len());
+
+        let balanced_total: f64 = balanced.lines.iter().map(|line| line.amount).sum();
+        assert_eq_flt_test!(balanced_total, original_total);
+
+        let comp = balanced.calculate_composition().unwrap();
+        for (key, target_amount) in &targets {
+            assert_eq_flt_test!(comp.get(*key), *target_amount);
+        }
+    }
+
+    #[test]
+    fn recipe_balance_preserves_none_name() {
+        let recipe = Recipe::from_const_recipe(
+            None,
+            &[
+                ("3.25% Milk", 200.0),
+                ("40% Cream", 100.0),
+                ("Skimmed Milk Powder", 25.0),
+            ],
+            &DB,
+        )
+        .unwrap();
+
+        let balanced = recipe
+            .balance(&[(CompKey::MilkFat, 12.0), (CompKey::MSNF, 10.0)])
+            .unwrap();
+
+        assert_eq!(balanced.name, None);
+    }
+
+    #[test]
+    fn recipe_into_owned_light_recipe() {
+        let const_recipe: &ConstRecipe = &[("Whole Milk", 245.0), ("Sucrose", 50.0), ("Egg Yolk", 18.0)];
+        let recipe = Recipe::from_const_recipe(Some("Test".into()), const_recipe, &DB).unwrap();
+
+        let light: OwnedLightRecipe = recipe.into();
+
+        assert_eq!(light.len(), const_recipe.len());
+        for (i, (name, amount)) in light.iter().enumerate() {
+            assert_eq!(name, const_recipe[i].0);
+            assert_eq!(*amount, const_recipe[i].1);
+        }
     }
 }

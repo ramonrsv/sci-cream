@@ -12,6 +12,8 @@
 - [ ] Add more ultra-filtered milk products, e.g. `Fairlife Whole Ultra-Filtered Lactose-Free Milk`.
 - [ ] Add evaporated and condensed milk products from Goff & Hartel, as references for comparison.
 - [ ] Add USDA chocolate ingredients and include them in `compare_specs_*` tests vs simple & lindt.
+- [ ] Add top-level `lib.rs` and `README.md` docs and code examples for balancing functionality.
+- [ ] Add TS-side unit tests for the `wasm::Recipe` functionality; it's independent from `Bridge`.
 
 ## Up Next
 
@@ -70,6 +72,10 @@
 - [ ] Consider dropping WASM support for `Recipe`, rely only on `Bridge` and `IngredientDatabase`.
 - [ ] Look into `wasm_bindgen_test` and `wasm-pack test --headless --chrome` for testing `JsValue`.
 - [ ] Fix `wasm` module code coverage gap, mostly by disabling anything with a `JsValue`.
+- [ ] Adopt `serde_repr` on `CompKey`/`FpdKey` so `bridge.balance_recipe` (and other
+      `serde_wasm_bindgen`-tunneled paths) accept numeric values, dropping the TS string mapping.
+- [ ] Add a stable string-based serialization path for `CompKey`/`FpdKey`/`PropKey` for permanent
+      storage; the numeric `serde_repr` above is unsafe for persistence (discriminant drift).
 
 ## Completed
 

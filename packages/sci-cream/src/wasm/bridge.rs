@@ -3,31 +3,39 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    composition::Composition as RustComposition,
+    composition::{CompKey, Composition as RustComposition},
     database::IngredientDatabase,
     error::Result,
     ingredient::{Category, Ingredient as RustIngredient, ResolveIntoIngredient},
     properties::MixProperties as RustMixProperties,
-    recipe::{LightRecipe, Recipe},
+    recipe::{LightRecipe, OwnedLightRecipe, Recipe as RustRecipe},
     resolution::IngredientGetter,
     specs::entry::SpecEntry,
-    wasm::{Composition, Ingredient, JsResult, MixProperties, light_recipe_from_jsvalue, spec_entry_from_jsvalue},
+    wasm::{
+        Composition, Ingredient, JsResult, MixProperties, balancing_targets_from_jsvalue, light_recipe_from_jsvalue,
+        spec_entry_from_jsvalue,
+    },
 };
 
 #[cfg(doc)]
-use crate::{error::Error, recipe::OwnedLightRecipe};
+use crate::error::Error;
 
 /// WASM Bridge for calculating recipe compositions and mix properties
 ///
 /// This struct serves as a bridge between WASM and the Rust backend, attempting to keep as much of
 /// the on-memory data structures and operations on the WASM side to minimize the performance
 /// overhead of JS <-> WASM bridging. It holds an in-memory ingredient database for looking up
-/// ingredient definitions by name, and provides methods for calculating recipe compositions and
-/// mix properties from "light" recipe representations (tuples of ingredient names and amounts).
+/// ingredient definitions by name, and provides methods for calculating recipe compositions and mix
+/// properties from "light" recipe representations (tuples of ingredient names and amounts).
 ///
 /// **Note**: Because it is currently not possible to return references to internal members within
-/// the WASM and JS environment, this class replicates many of the interfaces of [`Recipe`] and
-/// [`IngredientDatabase`], forwarding to the corresponding methods in internal members.
+/// the WASM and JS environment, this class replicates many of the interfaces of
+/// [`Recipe`](RustRecipe) and [`IngredientDatabase`], forwarding to the corresponding methods in
+/// internal members.
+///
+/// **Note**: This struct purposely uses [`crate::recipe::Recipe`] instead of
+/// [`crate::wasm::recipe::Recipe`] to avoid an unnecessary [`crate::wasm`] dependency for internals
+/// that are not user-facing, in line with the crate's WASM interoperability design principles.
 #[wasm_bindgen]
 #[derive(Debug)]
 pub struct Bridge {
@@ -58,28 +66,50 @@ impl Bridge {
         self.db.get_ingredients_by_category(category)
     }
 
-    /// Forwards to [`Recipe::calculate_composition`], creating a [`Recipe`] from [`LightRecipe`]
+    /// Forwards to [`Recipe::calculate_composition`](RustRecipe::calculate_composition), creating a
+    /// [`Recipe`](RustRecipe) from [`LightRecipe`]
     ///
     /// # Errors
     ///
-    /// When converting the [`LightRecipe`] into a full [`Recipe`] via
-    /// [`Recipe::from_light_recipe`], it returns an [`Error::IngredientNotFound`] if any ingredient
-    /// name in the [`LightRecipe`] is not found in the provided [`IngredientDatabase`]. It also
-    /// forwards any errors from [`Recipe::calculate_composition`] if composition calculations fail.
+    /// When converting the [`LightRecipe`] into a full [`Recipe`](RustRecipe) via
+    /// [`Recipe::from_light_recipe`](RustRecipe::from_light_recipe), it returns an
+    /// [`Error::IngredientNotFound`] if any ingredient name in the [`LightRecipe`] is not found in
+    /// the provided [`IngredientDatabase`]. It also forwards any errors from
+    /// [`Recipe::calculate_composition`](RustRecipe::calculate_composition) if composition
+    /// calculations fail.
     pub fn calculate_recipe_composition(&self, recipe: &LightRecipe) -> Result<RustComposition> {
-        Recipe::from_light_recipe(None, recipe, &self.db)?.calculate_composition()
+        RustRecipe::from_light_recipe(None, recipe, &self.db)?.calculate_composition()
     }
 
-    /// Forwards to [`Recipe::calculate_mix_properties`], creating a [`Recipe`] from [`LightRecipe`]
+    /// Forwards to [`Recipe::calculate_mix_properties`](RustRecipe::calculate_mix_properties),
+    /// creating a [`Recipe`](RustRecipe) from [`LightRecipe`]
     ///
     /// # Errors
     ///
-    /// When converting the [`LightRecipe`] into a full [`Recipe`] via
-    /// [`Recipe::from_light_recipe`], it returns an [`Error::IngredientNotFound`] if any ingredient
-    /// name in the [`LightRecipe`] is not found in the provided [`IngredientDatabase`]. It also
-    /// forwards any errors from [`Recipe::calculate_mix_properties`] if FPD calculations fail.
+    /// When converting the [`LightRecipe`] into a full [`Recipe`](RustRecipe) via
+    /// [`Recipe::from_light_recipe`](RustRecipe::from_light_recipe), it returns an
+    /// [`Error::IngredientNotFound`] if any ingredient name in the [`LightRecipe`] is not found in
+    /// the provided [`IngredientDatabase`]. It also forwards any errors from
+    /// [`Recipe::calculate_mix_properties`](RustRecipe::calculate_mix_properties) if FPD
+    /// calculations fail.
     pub fn calculate_recipe_mix_properties(&self, recipe: &LightRecipe) -> Result<RustMixProperties> {
-        Recipe::from_light_recipe(None, recipe, &self.db)?.calculate_mix_properties()
+        RustRecipe::from_light_recipe(None, recipe, &self.db)?.calculate_mix_properties()
+    }
+
+    /// Forwards to [`Recipe::balance`](RustRecipe::balance), creating a [`Recipe`](RustRecipe) from
+    /// [`LightRecipe`] and returning an [`OwnedLightRecipe`]
+    ///
+    /// # Errors
+    ///
+    /// When converting the [`LightRecipe`] into a full [`Recipe`](RustRecipe) via
+    /// [`Recipe::from_light_recipe`](RustRecipe::from_light_recipe), it returns an
+    /// [`Error::IngredientNotFound`] if any ingredient name in the [`LightRecipe`] is not found in
+    /// the provided [`IngredientDatabase`]. It also forwards any errors from
+    /// [`Recipe::balance`](RustRecipe::balance) if balancing calculations fail.
+    pub fn balance_recipe(&self, recipe: &LightRecipe, targets: &[(CompKey, f64)]) -> Result<OwnedLightRecipe> {
+        RustRecipe::from_light_recipe(None, recipe, &self.db)?
+            .balance(targets)
+            .map(Into::into)
     }
 
     /// Forwards to [`IngredientDatabase::seed`], seeding the db with the provided [`Ingredient`]s.
@@ -188,6 +218,26 @@ impl Bridge {
         self.calculate_recipe_mix_properties(&light_recipe)
             .map(Into::into)
             .map_err(Into::into)
+    }
+
+    /// WASM compatible wrapper for [`Bridge::balance_recipe`]
+    ///
+    /// # Errors
+    ///
+    /// Returns a `serde::Error` if the `JsValue` inputs cannot be deserialized into an
+    /// [`OwnedLightRecipe`] or a `(CompKey, f64)[]`. Forwards any errors from the forwarded-to
+    /// method. See [`Bridge::balance_recipe`] for more details on the forwarded errors.
+    #[wasm_bindgen(js_name = "balance_recipe")]
+    pub fn balance_recipe_wasm(&self, recipe: Box<[JsValue]>, targets: Box<[JsValue]>) -> JsResult<Box<[JsValue]>> {
+        let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
+        let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
+
+        self.balance_recipe(&light_recipe, &targets)
+            .map_err(Into::<JsValue>::into)?
+            .into_iter()
+            .map(|line| serde_wasm_bindgen::to_value(&line).map_err(Into::into))
+            .collect::<JsResult<Vec<JsValue>>>()
+            .map(Vec::into_boxed_slice)
     }
 
     /// WASM compatible wrapper for [`Bridge::seed`]
@@ -398,6 +448,46 @@ pub(crate) mod tests {
     fn bridge_calculate_recipe_mix_properties_ingredient_not_found() {
         let bridge = Bridge::new(make_seeded_db());
         let result = bridge.calculate_recipe_mix_properties(&[("Nonexistent Ingredient".to_string(), 100.0)]);
+        assert!(
+            matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")
+        );
+    }
+
+    #[test]
+    fn bridge_balance_recipe() {
+        let bridge = Bridge::new(make_seeded_db());
+        let recipe = light_recipe_to_owned(LIGHT_RECIPE);
+        let original_total: f64 = recipe.iter().map(|(_, g)| *g).sum();
+
+        let targets = [
+            (CompKey::MilkFat, 14.0),
+            (CompKey::MSNF, 10.0),
+            (CompKey::TotalSugars, 17.0),
+            (CompKey::TotalSolids, 41.0),
+        ];
+
+        let balanced = bridge.balance_recipe(&recipe, &targets).unwrap();
+
+        assert_eq!(balanced.len(), recipe.len());
+        for (i, (name, amount)) in balanced.iter().enumerate() {
+            assert_eq!(name, &recipe[i].0);
+            assert_true!(*amount >= 0.0);
+        }
+
+        let balanced_total: f64 = balanced.iter().map(|(_, g)| *g).sum();
+        assert_eq_flt_test!(balanced_total, original_total);
+
+        let comp = bridge.calculate_recipe_composition(&balanced).unwrap();
+        for (key, target) in &targets {
+            assert_eq_flt_test!(comp.get(*key), *target);
+        }
+    }
+
+    #[test]
+    fn bridge_balance_recipe_ingredient_not_found() {
+        let bridge = Bridge::new(make_seeded_db());
+        let result =
+            bridge.balance_recipe(&[("Nonexistent Ingredient".to_string(), 100.0)], &[(CompKey::MilkFat, 10.0)]);
         assert!(
             matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")
         );

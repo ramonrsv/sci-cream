@@ -66,3 +66,44 @@ test("Bridge.calculate_recipe_mix_properties", () => {
   expect(mix_properties).toBeInstanceOf(MixProperties);
   expect(getMixProperty(mix_properties, compToPropKey(CompKey.MilkFat))).toBeCloseTo(13.6024, 4);
 });
+
+test("Bridge.balance_recipe", () => {
+  const bridge = new Bridge(make_seeded_db());
+
+  const targets: [CompKey, number][] = [
+    [CompKey.MilkFat, 14],
+    [CompKey.MSNF, 10],
+    [CompKey.TotalSugars, 17],
+    [CompKey.TotalSolids, 41],
+  ];
+
+  // Serde deserializes `CompKey` via its variant name, not its numeric TS enum value
+  const serializedTargets = targets.map(([key, value]) => [CompKey[key], value]);
+
+  const balanced = bridge.balance_recipe(lightRecipe, serializedTargets) as [string, number][];
+
+  expect(balanced).toBeDefined();
+  expect(balanced.length).toEqual(lightRecipe.length);
+
+  for (let i = 0; i < lightRecipe.length; i++) {
+    expect(balanced[i][0]).toEqual(lightRecipe[i][0]);
+    expect(balanced[i][1]).toBeGreaterThanOrEqual(0);
+  }
+
+  const originalTotal = lightRecipe.reduce((sum, line) => sum + (line[1] as number), 0);
+  const balancedTotal = balanced.reduce((sum, line) => sum + line[1], 0);
+  expect(balancedTotal).toBeCloseTo(originalTotal, 4);
+
+  const comp = bridge.calculate_recipe_composition(balanced);
+  for (const [key, value] of targets) {
+    expect(comp.get(key)).toBeCloseTo(value, 2);
+  }
+});
+
+test("Bridge.balance_recipe throws on unknown ingredient", () => {
+  const bridge = new Bridge(make_seeded_db());
+  const badRecipe = [["Nonexistent Ingredient", 100]];
+  const targets = [[CompKey[CompKey.MilkFat], 10]];
+
+  expect(() => bridge.balance_recipe(badRecipe, targets)).toThrow();
+});
