@@ -250,7 +250,7 @@ describe("WatcherCard", () => {
     expect(onRemove).toHaveBeenCalledTimes(1);
   });
 
-  it("renders an empty value when the recipe is empty", () => {
+  it("renders a placeholder value when the recipe is empty", () => {
     const emptyMain = makeEmptyRecipe(0);
     const { container } = render(
       <WatcherCard
@@ -261,14 +261,189 @@ describe("WatcherCard", () => {
         onRemove={vi.fn()}
       />,
     );
-    // Main value cell is empty when there's no value to show
+    // Main value cell renders a non-breaking-space placeholder to preserve layout
     const valueCell = container.querySelector('[title="Current value"]');
-    expect(valueCell?.textContent).toBe("");
+    expect(valueCell?.textContent).toBe(" ");
 
     // Header is still rendered with an inline backgroundColor (neutral when no value)
     const card = container.querySelector(`[data-testid="watcher-card-${String(MSNF)}"]`)!;
     const header = card.firstElementChild as HTMLElement;
     expect(header.style.backgroundColor).not.toBe("");
+  });
+});
+
+describe("WatcherCard delta", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("renders the ref delta as mainValue minus refValue with matching sign and magnitude", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const refA = makeMockRecipe(RecipeID.RefA);
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        refs={[refA]}
+        target={undefined}
+        onTargetChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+
+    const mainNum = parseFloat(container.querySelector('[title="Current value"]')!.textContent!);
+    const refRow = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-ref-Ref A"]`,
+    )!;
+    const refNum = parseFloat((refRow.children[1] as HTMLElement).textContent!);
+    const deltaText = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-ref-Ref A-delta"]`,
+    )!.textContent!;
+
+    expect(Number.isFinite(mainNum)).toBe(true);
+    expect(Number.isFinite(refNum)).toBe(true);
+
+    const expected = mainNum - refNum;
+    expect(deltaText[0]).toBe(expected > 0 ? "+" : "−");
+    const renderedMagnitude = parseFloat(deltaText.slice(1));
+    expect(renderedMagnitude).toBeCloseTo(Math.abs(expected), 1);
+  });
+
+  it("filters out fully empty ref recipes entirely (no row rendered)", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const emptyRef = makeEmptyRecipe(1); // id = "Ref A", mixTotal=undefined → empty
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        refs={[emptyRef]}
+        target={undefined}
+        onTargetChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(
+      container.querySelector(`[data-testid="watcher-card-${String(MSNF)}-ref-Ref A"]`),
+    ).toBeNull();
+  });
+
+  it("renders an invisible placeholder row when the ref recipe is non-empty but lacks a value for the key", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    // Non-empty ref (mixTotal > 0) with empty MixProperties → no value for MSNF.
+    const stubRef = makeEmptyRecipe(1);
+    stubRef.mixTotal = 100;
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        refs={[stubRef]}
+        target={undefined}
+        onTargetChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    const row = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-ref-Ref A"]`,
+    ) as HTMLElement;
+    expect(row).not.toBeNull();
+    expect(row.style.visibility).toBe("hidden");
+    expect(row.getAttribute("aria-hidden")).toBe("true");
+  });
+
+  it("renders an empty ref delta when the main recipe has no value", () => {
+    const emptyMain = makeEmptyRecipe(0);
+    const refA = makeMockRecipe(RecipeID.RefA);
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={emptyMain}
+        refs={[refA]}
+        target={undefined}
+        onTargetChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    const deltaEl = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-ref-Ref A-delta"]`,
+    );
+    expect(deltaEl?.textContent).toBe("");
+  });
+
+  it("does not render the target delta when target is undefined", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        target={undefined}
+        onTargetChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(
+      container.querySelector(`[data-testid="watcher-card-${String(MSNF)}-target-delta"]`),
+    ).toBeNull();
+  });
+
+  it("does not render the target delta when the main recipe has no value", () => {
+    const emptyMain = makeEmptyRecipe(0);
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={emptyMain}
+        target={9.5}
+        onTargetChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(
+      container.querySelector(`[data-testid="watcher-card-${String(MSNF)}-target-delta"]`),
+    ).toBeNull();
+  });
+
+  it("renders a positive target delta with a green color when target exceeds current", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        target={100} // far above Main's MSNF (~8.87)
+        onTargetChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    const delta = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-target-delta"]`,
+    ) as HTMLElement;
+    expect(delta).not.toBeNull();
+    expect(delta.textContent!.startsWith("+")).toBe(true);
+    expect(delta.style.color).toContain(Color.GraphGreen);
+  });
+
+  it("renders a negative target delta with unicode minus and a red color when target is below current", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        target={0} // below Main's MSNF (~8.87)
+        onTargetChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    const delta = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-target-delta"]`,
+    ) as HTMLElement;
+    expect(delta).not.toBeNull();
+    // Uses the unicode minus sign (U+2212), not the hyphen-minus (U+002D)
+    expect(delta.textContent![0]).toBe("−");
+    expect(delta.textContent![0]).not.toBe("-");
+    expect(delta.style.color).toContain(Color.GraphRedDull);
   });
 });
 

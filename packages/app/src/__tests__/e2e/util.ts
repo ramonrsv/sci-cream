@@ -561,3 +561,18 @@ export async function selectIngredientByName(page: Page, name: string) {
   await searchListItemByName(page, name).first().click();
   await expect(page.locator(".search-detail-panel")).toBeVisible();
 }
+
+/** Navigate to the / page and paste the given recipes, with support for missing recipe IDs */
+export async function goToPageAndPasteRecipes(
+  page: Page,
+  browserName: string,
+  recipeIds: RecipeID[],
+) {
+  await goToPageAndWaitFor(page);
+
+  const populated: RecipeID[] = [];
+  for (const recipeId of recipeIds) {
+    populated.push(recipeId);
+    await pasteRecipeAndWaitForUpdate(page, browserName, recipeId, populated);
+  }
+}

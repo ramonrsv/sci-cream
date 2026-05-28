@@ -12,13 +12,7 @@ import {
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
 import { getAcceptablePropertyRange, isPropKeyQuantity } from "@/lib/sci-cream/sci-cream";
-import {
-  Color,
-  colorVar,
-  colorVarWithAlpha,
-  getRangeColor,
-  getReferenceOpacity,
-} from "@/lib/styles/colors";
+import { Color, colorVar, colorVarWithAlpha, getRangeColor } from "@/lib/styles/colors";
 import { getLocalStorage, setLocalStorage, STORAGE_KEYS } from "@/lib/local-storage";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { STATE_VAL, standardInputStepByPercent } from "@/lib/util";
@@ -149,6 +143,9 @@ export function WatcherCard({
    */
   const targetStep = standardInputStepByPercent(target ?? (mainHasValue ? mainValue : undefined));
 
+  const titleBackgroundOpacity = 0.6;
+  const refRowOpacity = 0.8;
+
   return (
     <div
       className="border-brd-lt dark:border-brd-dk flex flex-col overflow-hidden rounded-md border text-sm"
@@ -158,7 +155,7 @@ export function WatcherCard({
       {/* Header: property name + color-coded background + remove button */}
       <div
         className="flex items-center justify-between px-1.5 py-0.5 font-semibold"
-        style={{ backgroundColor: colorVarWithAlpha(headerColor, 0.6) }}
+        style={{ backgroundColor: colorVarWithAlpha(headerColor, titleBackgroundOpacity) }}
       >
         <span title={prop_key_as_med_str(propKey)} className="truncate">
           {prop_key_as_med_str(propKey)}
@@ -178,56 +175,58 @@ export function WatcherCard({
         {/* Main value + (optional) acceptable range, centered as a group */}
         <div className="flex items-baseline justify-center gap-1.5">
           <span className="comp-val text-lg" title="Current value">
-            {formatCompositionValue(mainValue)}
+            {/* Show a placeholder whitespace value to keep layouts consistent */}
+            {formatCompositionValue(mainValue) || "\u00A0"}
           </span>
           {range && (
-            <span
-              className="text-txt-sec-lt dark:text-txt-sec-dk text-[11px]"
-              title="Acceptable range"
-            >
+            <span className="text-secondary text-[11px]" title="Acceptable range">
               {formatRange(range)}
             </span>
           )}
         </div>
 
-        {/* Reference rows: letter doubles as a fill-target button, then value + delta */}
-        {refs.map((ref, idx) => {
-          const refValue = getDisplayValue(propKey, ref);
-          const refHasValue = refValue !== undefined && !Number.isNaN(refValue);
-          const delta = mainHasValue && refHasValue ? refValue - mainValue : undefined;
-          const opacity = getReferenceOpacity(idx);
-          const refLetter = ref.id.replace(/^Ref\s*/, "").trim() || ref.id;
-          return (
-            <div
-              key={ref.id}
-              className="flex items-center justify-between"
-              style={{ opacity: opacity + 0.3 }}
-              title={`${ref.id} value (delta from current)`}
-              data-testid={`watcher-card-${String(propKey)}-ref-${ref.id}`}
-            >
-              {refHasValue ? (
+        {/* Reference rows: letter doubles as a fill-target button, then value + delta. */}
+        {refs
+          .filter((ref) => !isRecipeEmpty(ref))
+          .map((ref) => {
+            // Always render a row for non-empty ref recipes, to keep vertical layout consistent,
+            // but hide the content when the mix properties don't have a value for the watched key.
+
+            const refValue = getDisplayValue(propKey, ref);
+            const refHasValue = refValue !== undefined && !Number.isNaN(refValue);
+            const delta = mainHasValue && refHasValue ? mainValue - refValue : undefined;
+            const refLetter = ref.id.replace(/^Ref\s*/, "").trim() || ref.id;
+
+            return (
+              <div
+                key={ref.id}
+                className="flex items-center justify-between"
+                style={{ opacity: refRowOpacity, visibility: refHasValue ? "visible" : "hidden" }}
+                title={`${ref.id} value (delta from current)`}
+                data-testid={`watcher-card-${String(propKey)}-ref-${ref.id}`}
+                aria-hidden={!refHasValue}
+              >
                 <button
                   className="action-button flex items-center px-0.5 py-0"
-                  onClick={() => onTargetChange(roundToStep(refValue, targetStep))}
+                  onClick={() => onTargetChange(roundToStep(refValue!, targetStep))}
                   title={`Fill target from ${ref.id}`}
                   data-testid={`watcher-card-${String(propKey)}-fill-${ref.id}`}
+                  style={{ visibility: refHasValue ? "visible" : "hidden" }}
                 >
                   <ArrowDown size={COMPONENT_ACTION_ICON_SIZE - 10} />
                   <span className="text-[11px] font-semibold">{refLetter}</span>
                 </button>
-              ) : (
-                <span className="comp-val w-3 text-left font-semibold">{refLetter}</span>
-              )}
-              <span className="comp-val">{formatCompositionValue(refValue)}</span>
-              <span
-                className="comp-val w-12 text-right text-[11px]"
-                style={{ color: getDeltaColor(delta) }}
-              >
-                {formatDelta(delta)}
-              </span>
-            </div>
-          );
-        })}
+                <span className="comp-val">{formatCompositionValue(refValue)}</span>
+                <span
+                  className="comp-val w-12 text-right text-[11px]"
+                  style={{ color: getDeltaColor(delta) }}
+                  data-testid={`watcher-card-${String(propKey)}-ref-${ref.id}-delta`}
+                >
+                  {formatDelta(delta || undefined)}
+                </span>
+              </div>
+            );
+          })}
 
         {/* Target row: input + (optional) inline delta-from-current */}
         <div className="flex items-center gap-0.5" title="Target value">
@@ -249,6 +248,7 @@ export function WatcherCard({
               className="comp-val w-12 text-right text-[11px]"
               title="Delta from current to target"
               style={{ color: getDeltaColor(target - mainValue) }}
+              data-testid={`watcher-card-${String(propKey)}-target-delta`}
             >
               {formatDelta(target - mainValue)}
             </span>

@@ -9,6 +9,7 @@ import {
   getMixPropertiesKeyFilterSelectInput,
   pasteRecipeAndWaitForUpdate,
   goToPageAndWaitFor,
+  goToPageAndPasteRecipes,
 } from "@/__tests__/e2e/util";
 
 /** Waits a timeout for charts to finish rendering; helps with screenshot stability */
@@ -21,6 +22,16 @@ async function locatePanelAndExpectVisible(page: Page, panelId: string) {
   const panel = page.locator(panelId);
   await expect(panel).toBeVisible();
   return panel;
+}
+
+/** Initialize the page and paste the given recipes */
+async function initializePageAndPasteRecipes(
+  page: Page,
+  browserName: string,
+  recipeIds: RecipeID[],
+) {
+  test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
+  await goToPageAndPasteRecipes(page, browserName, recipeIds);
 }
 
 test.describe("Visual Regression: Empty State", () => {
@@ -80,25 +91,9 @@ test.describe("Visual Regression: Empty State", () => {
 });
 
 test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
-  const initializeAndPasteRecipes = async (
-    page: Page,
-    browserName: string,
-    recipeIds: RecipeID[],
-  ) => {
-    test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
-
-    await goToPageAndWaitFor(page);
-
-    const populated: RecipeID[] = [];
-    for (const recipeId of recipeIds) {
-      populated.push(recipeId);
-      await pasteRecipeAndWaitForUpdate(page, browserName, recipeId, populated);
-    }
-  };
-
   const testRecipeEditorPanel = async (recipeIds: RecipeID[]) => {
     test(makeRecipesTestName("RecipeEditorPanel", recipeIds), async ({ page, browserName }) => {
-      await initializeAndPasteRecipes(page, browserName, recipeIds);
+      await initializePageAndPasteRecipes(page, browserName, recipeIds);
       const panel = await locatePanelAndExpectVisible(page, "#recipe-editor-panel");
 
       await expect(panel).toHaveScreenshot(
@@ -109,7 +104,7 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
 
   const testPropertiesPanel = async (recipeIds: RecipeID[]) => {
     test(makeRecipesTestName("PropertiesPanel", recipeIds), async ({ page, browserName }) => {
-      await initializeAndPasteRecipes(page, browserName, recipeIds);
+      await initializePageAndPasteRecipes(page, browserName, recipeIds);
       const panel = await locatePanelAndExpectVisible(page, "#properties-panel");
 
       await panel.locator("div").nth(1).scrollIntoViewIfNeeded();
@@ -123,7 +118,7 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
     test(
       makeRecipesTestName("CompositionBreakdownPanel", recipeIds),
       async ({ page, browserName }) => {
-        await initializeAndPasteRecipes(page, browserName, recipeIds);
+        await initializePageAndPasteRecipes(page, browserName, recipeIds);
         const panel = await locatePanelAndExpectVisible(page, "#composition-breakdown-panel");
 
         await panel.locator("div").nth(1).scrollIntoViewIfNeeded();
@@ -136,7 +131,7 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
 
   const testPropertiesChartPanel = async (recipeIds: RecipeID[]) => {
     test(makeRecipesTestName("PropertiesChartPanel", recipeIds), async ({ page, browserName }) => {
-      await initializeAndPasteRecipes(page, browserName, recipeIds);
+      await initializePageAndPasteRecipes(page, browserName, recipeIds);
       const panel = await locatePanelAndExpectVisible(page, "#properties-chart-panel");
 
       await waitForChartsToRender(page);
@@ -148,7 +143,7 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
 
   const testFpdGraphPanel = async (recipeIds: RecipeID[]) => {
     test(makeRecipesTestName("FpdGraphPanel", recipeIds), async ({ page, browserName }) => {
-      await initializeAndPasteRecipes(page, browserName, recipeIds);
+      await initializePageAndPasteRecipes(page, browserName, recipeIds);
       const panel = await locatePanelAndExpectVisible(page, "#fpd-graph-panel");
 
       await waitForChartsToRender(page);
@@ -160,7 +155,7 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
 
   const testWatchersPanel = async (recipeIds: RecipeID[]) => {
     test(makeRecipesTestName("WatchersPanel", recipeIds), async ({ page, browserName }) => {
-      await initializeAndPasteRecipes(page, browserName, recipeIds);
+      await initializePageAndPasteRecipes(page, browserName, recipeIds);
       const panel = await locatePanelAndExpectVisible(page, "#watchers-panel");
 
       await panel.scrollIntoViewIfNeeded();

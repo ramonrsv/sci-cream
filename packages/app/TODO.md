@@ -2,8 +2,6 @@
 
 ## Next Release
 
-- [ ] Add `Watchers` component where users can select what properties to watch. It should probably
-      support displaying deltas between the main and reference recipes, and target min-max ranges.
 - [ ] Add support for `MixPropertiesGrid` to show deltas between the main recipe and the references.
 - [ ] Add `height` prop to `MixPropertiesGrid` so that it can adapt the number of properties shown.
 - [ ] Add a visual regression test for the custom filter settings button and checkbox menu.
@@ -12,8 +10,6 @@
 - [ ] Add a home page with a quick intro and overview, pointing to user guide, docs, etc.
 - [ ] Figure out how to show `sci-cream`'s beginner-friendly overview to new users of the app.
 - [ ] Fix issue where version lists in `RecipeSearch` do not visually update when one is deleted.
-- [ ] Fix the `WatcherCard` diff calculation, it should be main's delta compared to references.
-- [ ] When a ref property is zero, `WatcherCard` shows A/B with nothing next to it, needs fix.
 - [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
 - [ ] In `/ingredients`, the composition panel does not scroll when the key exceed the height.
 - [ ] There is a weird horizontal line in `/ingredient-search-detail-panel-visual-linux.png`
@@ -92,6 +88,10 @@
 
 ## Completed
 
+- [x] Add `Watchers` component where users can select what properties to watch. It should probably
+      support displaying deltas between the main and reference recipes, and target min-max ranges.
+- [x] Fix the `WatcherCard` diff calculation, it should be main's delta compared to references.
+- [x] When a ref property is zero, `WatcherCard` shows A/B with nothing next to it, needs fix.
 - [x] Add support for recipe versions, with appropriate UI support and grouping in `RecipeSearch`.
 - [x] Add functionality to store component layout so that it is remembered across page reloads. The
       store should start seeded with a default for each resolution, and store any user modification.
