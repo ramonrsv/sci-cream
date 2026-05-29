@@ -16,7 +16,12 @@ import { PropertiesPanel } from "@/app/_components/properties-panel";
 import { PropertiesChartPanel } from "@/app/_components/properties-chart-panel";
 import { FpdGraphPanel } from "@/app/_components/fpd-graph-panel";
 import { WatchersPanel } from "@/app/_components/watchers-panel";
-import { makeEmptyRecipeContext } from "@/lib/recipe";
+import {
+  makeBalancedRecipeUpdates,
+  makeEmptyRecipeContext,
+  makeUpdatedRecipe,
+  makeUpdatedRecipeContext,
+} from "@/lib/recipe";
 import { RecipeEditorPanel } from "@/app/_components/recipe-editor-panel";
 import { useSeededWasmResources } from "@/lib/wasm-resources";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
@@ -43,16 +48,27 @@ function CalculatorContent() {
   const { width, containerRef, mounted } = useContainerWidth();
 
   const recipeCtxState = useState(() => makeEmptyRecipeContext());
-  const [recipeContext] = recipeCtxState;
+  const [recipeContext, setRecipeContext] = recipeCtxState;
   const recipes = recipeContext.recipes;
 
   const wasmResourcesState = useSeededWasmResources();
+  const [wasmResources] = wasmResourcesState;
 
   const recipeGridProps = {
     recipeCtxState,
     wasmResourcesState,
     initialRecipeIdx: recipeEditorRecipeIdx,
   };
+
+  /** Apply a balanced light recipe (from `Bridge.balance_recipe`) onto the main recipe (slot 0) */
+  const onApplyBalancedMain = (balanced: [string, number][]) => {
+    const current = recipeContext.recipes[0];
+    const updates = makeBalancedRecipeUpdates(current, balanced, wasmResources.hasIngredient);
+    const updated = makeUpdatedRecipe(current, updates, wasmResources);
+    setRecipeContext((prev) => makeUpdatedRecipeContext(prev, [updated]));
+  };
+
+  const watchersPanelProps = { recipes, wasmBridge: wasmResources.wasmBridge, onApplyBalancedMain };
 
   // 2160p: 3840px, /2 = 1920px
   // 1440p: 2560px, /2 = 1280px
@@ -190,7 +206,7 @@ function CalculatorContent() {
           <div key="composition">{<CompositionBreakdownPanel recipes={recipes} />}</div>
           <div key="props-chart">{<PropertiesChartPanel recipes={recipes} />}</div>
           <div key="fpd-graph">{<FpdGraphPanel recipes={recipes} />}</div>
-          <div key="watchers">{<WatchersPanel recipes={recipes} />}</div>
+          <div key="watchers">{<WatchersPanel {...watchersPanelProps} />}</div>
         </ResponsiveGridLayout>
       )}
     </div>

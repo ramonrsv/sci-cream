@@ -1,14 +1,16 @@
 import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
+import { render, screen, cleanup, fireEvent } from "@testing-library/react";
 
 import { WatchersPanel } from "@/app/_components/watchers-panel";
+import { STORAGE_KEYS } from "@/lib/local-storage";
 
 import { CompKey, FpdKey, compToPropKey, fpdToPropKey } from "@workspace/sci-cream";
 
 import { makeMockRecipeContext } from "@/__tests__/unit/util";
 import { RecipeID } from "@/__tests__/assets";
+import { WASM_BRIDGE } from "@/__tests__/util";
 
 /** Mock implementation of ResizeObserver for testing purposes */
 class ResizeObserverMock {
@@ -90,6 +92,43 @@ describe("WatchersPanel", () => {
       render(<WatchersPanel recipes={recipeCtx.recipes} />);
       expect(screen.getByTestId(`watcher-card-${String(MSNF)}-ref-Ref A`)).toBeInTheDocument();
       expect(screen.getByTestId(`watcher-card-${String(MSNF)}-ref-Ref B`)).toBeInTheDocument();
+    });
+  });
+
+  // ---- Balance Wiring -------------------------------------------------------------------------
+
+  describe("Balance Wiring", () => {
+    it("hides the Balance button when wiring props are omitted", () => {
+      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
+      render(<WatchersPanel recipes={recipeCtx.recipes} />);
+      expect(screen.queryByTestId("watchers-balance-button")).not.toBeInTheDocument();
+    });
+
+    it("forwards wasmBridge and onApplyBalancedMain so the Balance button renders", () => {
+      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
+      render(
+        <WatchersPanel
+          recipes={recipeCtx.recipes}
+          wasmBridge={WASM_BRIDGE}
+          onApplyBalancedMain={vi.fn()}
+        />,
+      );
+      expect(screen.getByTestId("watchers-balance-button")).toBeInTheDocument();
+    });
+
+    it("invokes the parent-supplied onApplyBalancedMain when Balance is clicked", () => {
+      localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
+      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
+      const onApply = vi.fn();
+      render(
+        <WatchersPanel
+          recipes={recipeCtx.recipes}
+          wasmBridge={WASM_BRIDGE}
+          onApplyBalancedMain={onApply}
+        />,
+      );
+      fireEvent.click(screen.getByTestId("watchers-balance-button"));
+      expect(onApply).toHaveBeenCalledTimes(1);
     });
   });
 });

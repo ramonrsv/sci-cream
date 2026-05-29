@@ -15,6 +15,10 @@
 - [ ] There is a weird horizontal line in `/ingredient-search-detail-panel-visual-linux.png`
 - [ ] Remove the '"comments": "..."' placeholder in `/ingredients`, just remove the field.
 - [ ] Fix typo in welcome blog post, "you will **find** areas where it goes well beyond...".
+- [ ] Look into single `props` argument or spread out arguments for Next.js components.
+- [ ] Closing a `WatcherCard` when on `Auto` doesn't do anything; this needs a fix.
+- [ ] When a recipe is deleted, the UI does not update, it still showed the deleted recipe.
+- [ ] Add end-to-end tests for balancing functionality; check surfacing of balancing errors?
 
 ## Up Next
 
@@ -85,6 +89,9 @@
 - [ ] Add an app "tour" to show users the main components of the app, where to go for docs, etc.
 - [ ] Add support for every instance of `KeySelect` to independently store custom keys in local.
 - [ ] Add feature to show different ranges around serving temp in `FpdGraph`, like a 'zoom'.
+- [ ] Explore options for a UI system to communicate errors/notification; popups, text bar?
+- [ ] Explore undo/redo system - necessary now that automatic balancing has been enabled.
+- [ ] Explore adding support for a total mix amount input/slider and balancing target.
 
 ## Completed
 

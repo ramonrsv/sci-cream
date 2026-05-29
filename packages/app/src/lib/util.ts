@@ -53,6 +53,25 @@ export function standardInputStepByPercent(
 }
 
 /**
+ * Round `value` to the nearest multiple of `step`, then clean up float-noise via `toFixed` so the
+ * result reads cleanly as a decimal.
+ *
+ * Matches how an HTML number input's up/down arrows snap values to step boundaries — e.g. value
+ * `12.78` with step `"0.5"` returns `13` (not `12.8`), and `12.78` with step `"0.25"` returns
+ * `12.75`. Use this when pushing a higher-precision value (a WASM-computed reference, an
+ * NNLS-derived gram amount) into an input whose `step` attribute the user will edit against.
+ *
+ * `step` is a string to match the shape returned by {@link standardInputStepByPercent} and used as
+ * the input's `step` attribute. A `step` of `"0"` would divide by zero; callers should provide a
+ * positive step.
+ */
+export function roundToStep(value: number, step: string): number {
+  const stepNum = Number(step);
+  const decimals = step.split(".")[1]?.length ?? 0;
+  return Number((Math.round(value / stepNum) * stepNum).toFixed(decimals));
+}
+
+/**
  * Throw an `Error` if `condition` is falsy, with the given message from string or function.
  *
  * For precondition checks where a failure indicates a programming bug, not a user-facing

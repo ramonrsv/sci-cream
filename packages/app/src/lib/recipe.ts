@@ -1,5 +1,6 @@
 import { getLocalStorage, setLocalStorage, STORAGE_KEYS } from "@/lib/local-storage";
 import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
+import { roundToStep, standardInputStepByPercent, verify } from "@/lib/util";
 
 import { WasmResources } from "./wasm-resources";
 import {
@@ -171,19 +172,58 @@ export function makeSciCreamRecipe(recipe: Recipe): SciCreamRecipe {
 }
 
 /**
- * Build a light recipe, i.e. a `[name, quantity]` array, from a `Recipe`, including only rows with
- * a non-empty name, a valid quantity, and where the WASM resource database has the ingredient name.
+ * Returns `true` when a row contributes to a light recipe: non-empty name and an ingredient name
+ * known to the WASM resource database. Quantity may be undefined — see {@link makeLightRecipe}.
+ */
+export function isLightRecipeEligible(
+  row: IngredientRow,
+  hasIngredient: (name: string) => boolean,
+): boolean {
+  return row.name !== "" && hasIngredient(row.name);
+}
+
+/**
+ * Build a light recipe, i.e. a `[name, quantity]` array, from a `Recipe`, including only rows
+ * eligible per {@link isLightRecipeEligible}. Rows with `quantity === undefined` are included
+ * with a quantity of 0 — this lets the balancer fill them in via {@link makeBalancedRecipeUpdates}
+ * while contributing nothing to a forward mix-property calculation.
  *
- * This is suitable for passing into a `WasmBridge` method to calculate mix composition and/or
- * properties, without needing to clone every WASM `Ingredient`, which can be inefficient.
+ * Suitable for passing into a `WasmBridge` method to calculate mix composition and/or properties,
+ * without needing to clone every WASM `Ingredient`, which can be inefficient.
  */
 export function makeLightRecipe(
   recipe: Recipe,
   hasIngredient: (name: string) => boolean,
 ): [string, number][] {
   return recipe.ingredientRows
-    .filter((row) => row.name !== "" && row.quantity !== undefined && hasIngredient(row.name))
-    .map((row) => [row.name, row.quantity!] as [string, number]);
+    .filter((row) => isLightRecipeEligible(row, hasIngredient))
+    .map((row) => [row.name, row.quantity ?? 0] as [string, number]);
+}
+
+/**
+ * Return a new {@link RecipeContext} with each `updatedRecipe` written into its `.index` slot;
+ * throws on out-of-range indices.
+ *
+ * Must be called inside a functional setter — closing over a stale context lets concurrent
+ * same-tick updates silently overwrite each other:
+ *
+ * ```ts
+ * setRecipeContext((prev) => makeUpdatedRecipeContext(prev, [updated]));
+ * ```
+ */
+export function makeUpdatedRecipeContext(
+  currentContext: RecipeContext,
+  updatedRecipes: Recipe[],
+): RecipeContext {
+  const newRecipes = [...currentContext.recipes];
+  for (const updatedRecipe of updatedRecipes) {
+    verify(
+      updatedRecipe.index >= 0 && updatedRecipe.index < currentContext.recipes.length,
+      `recipe index ${updatedRecipe.index} out of range [0, ${currentContext.recipes.length})`,
+    );
+    newRecipes[updatedRecipe.index] = updatedRecipe;
+  }
+  return { ...currentContext, recipes: newRecipes };
 }
 
 /** Serialize a `Recipe` to a tab-separated string with a header row, suitable for clipboard copy */
@@ -385,12 +425,11 @@ export function makeUpdatedRecipeFromStore(
   const parsedLines = parseRecipeString(recipeStore.serializedRows);
   const name = recipeStore.name;
 
-  if (parsedLines.length > currentRecipe.ingredientRows.length) {
-    throw new Error(
-      `Pasted recipe has ${parsedLines.length} rows, more than the ` +
-        `${currentRecipe.ingredientRows.length} available in the recipe grid.`,
-    );
-  }
+  verify(
+    parsedLines.length <= currentRecipe.ingredientRows.length,
+    `Pasted recipe has ${parsedLines.length} rows, more than the ` +
+      `${currentRecipe.ingredientRows.length} available in the recipe grid.`,
+  );
 
   const updatedRows = currentRecipe.ingredientRows.map((row, idx) => {
     const [name, qtyStr] = parsedLines[idx] || ["", ""];
@@ -406,4 +445,35 @@ export function makeUpdatedRecipeFromStore(
   // Only saved-recipe loads get a baseline; anonymous loads (no savedRef) stay free of dirty state
   updated.baseline = recipeStore.savedRef !== undefined ? makeRecipeBaseline(updated) : undefined;
   return updated;
+}
+
+/**
+ * Build a {@link RecipeUpdates} from a balanced light recipe (output of `Bridge.balance_recipe`),
+ * zipping `[name, grams][]` back onto eligible rows by index (same filter as
+ * {@link makeLightRecipe}) and rounding to the recipe input's step precision.
+ *
+ * Pass the result to {@link makeUpdatedRecipe} to recalculate mix properties.
+ *
+ * Throws on length mismatch — `balance_recipe`' guarantees equal length, so it'd be a bug.
+ */
+export function makeBalancedRecipeUpdates(
+  recipe: Recipe,
+  balanced: [string, number][],
+  hasIngredient: (name: string) => boolean,
+): RecipeUpdates {
+  const eligibleIndices = recipe.ingredientRows.flatMap((row, i) =>
+    isLightRecipeEligible(row, hasIngredient) ? [i] : [],
+  );
+
+  verify(
+    eligibleIndices.length === balanced.length,
+    `balanced length (${balanced.length}) does not match eligible row count (${eligibleIndices.length})`,
+  );
+
+  return {
+    rows: eligibleIndices.map((i, balIdx) => ({
+      ...recipe.ingredientRows[i],
+      quantity: roundToStep(balanced[balIdx][1], standardInputStepByPercent(balanced[balIdx][1])),
+    })),
+  };
 }

@@ -3,7 +3,7 @@
 import { ReactNode, useEffect, useState } from "react";
 import { ArrowDown, X } from "lucide-react";
 
-import { RecipeSummary, isRecipeEmpty } from "@/lib/recipe";
+import { Recipe, RecipeSummary, isRecipeEmpty, makeLightRecipe } from "@/lib/recipe";
 import {
   KeyFilter,
   KeyFilterSelect,
@@ -15,7 +15,7 @@ import { getAcceptablePropertyRange, isPropKeyQuantity } from "@/lib/sci-cream/s
 import { Color, colorVar, colorVarWithAlpha, getRangeColor } from "@/lib/styles/colors";
 import { getLocalStorage, setLocalStorage, STORAGE_KEYS } from "@/lib/local-storage";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
-import { STATE_VAL, standardInputStepByPercent } from "@/lib/util";
+import { STATE_VAL, roundToStep, standardInputStepByPercent, verify } from "@/lib/util";
 
 import {
   PropKey,
@@ -26,6 +26,8 @@ import {
   CompKey,
   fpdToPropKey,
   FpdKey,
+  isCompKey,
+  Bridge as WasmBridge,
 } from "@workspace/sci-cream";
 
 /** Map of `PropKey` to user-entered target value; sparse, only set entries are tracked */
@@ -45,11 +47,18 @@ export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   fpdToPropKey(FpdKey.ServingTemp),
 ] as PropKey[]);
 
-/** Format a numeric delta as a signed string (e.g. `+0.58`, `−0.47`); returns "" for NaN/undefined */
+/** Type predicate: `val` is a defined, non-NaN number (i.e. a real computed numeric result). */
+function isUsableNumber(val: number | undefined): val is number {
+  return val !== undefined && !Number.isNaN(val);
+}
+
+/** Format a numeric delta as a signed string (e.g. `+0.58`, `−0.47`); returns "" for NaN/undef */
 function formatDelta(delta: number | undefined): string {
-  if (delta === undefined || Number.isNaN(delta)) return "";
+  if (!isUsableNumber(delta)) return "";
+
   const formatted = formatCompositionValue(Math.abs(delta)).trim();
   if (formatted === "" || formatted === "-") return "";
+
   const sign = delta > 0 ? "+" : delta < 0 ? "−" : " ";
   return `${sign}${formatted}`;
 }
@@ -65,21 +74,8 @@ function formatDelta(delta: number | undefined): string {
  * hydration mismatches on inline `style` attributes; see {@link colorVar}.
  */
 function getDeltaColor(delta: number | undefined): string | undefined {
-  if (delta === undefined || Number.isNaN(delta) || delta === 0) return undefined;
+  if (!isUsableNumber(delta) || delta === 0) return undefined;
   return colorVar(delta > 0 ? Color.GraphGreen : Color.GraphRedDull);
-}
-
-/**
- * Round `value` to the decimal precision implied by a number-input `step` string.
- *
- * E.g. step `"0.5"` → 1 decimal, step `"0.01"` → 2 decimals, step `"1"` → 0 decimals.
- *
- * Used to clean up values that get pushed into a number input from a higher-precision source
- * (e.g. a WASM-computed reference value), so the input doesn't display noisy trailing digits.
- */
-function roundToStep(value: number, step: string): number {
-  const decimals = step.split(".")[1]?.length ?? 0;
-  return Number(value.toFixed(decimals));
 }
 
 /**
@@ -90,6 +86,41 @@ function roundToStep(value: number, step: string): number {
  */
 function formatRange(range: { min: number; max: number }): string {
   return `[${formatCompositionValue(range.min).trim()}, ${formatCompositionValue(range.max).trim()}]`;
+}
+
+/**
+ * Filter a `TargetsMap` to CompKey-derived entries that are currently watched (in `enabledSet`),
+ * as `[variantName, value][]` expected by `Bridge.balance_recipe` for serde <-> JsValue boundary.
+ *
+ * A CompKey-derived `PropKey` is literally the CompKey variant name string (see `compToPropKey`),
+ * so the propKey passes through as the serde tag with no conversion needed. Restricting to
+ * `enabledSet` keeps the balancer aligned with what the user sees — targets persisted in
+ * localStorage but filtered out of view aren't silently applied.
+ */
+function targetsToBalanceArgs(targets: TargetsMap, enabledSet: Set<PropKey>): [string, number][] {
+  return Object.entries(targets)
+    .filter(
+      ([propKey, val]) =>
+        isUsableNumber(val) && isCompKey(propKey as PropKey) && enabledSet.has(propKey as PropKey),
+    )
+    .map(([propKey, val]) => [propKey, val as number]);
+}
+
+/**
+ * Mutate `targets` in place: set `propKey` to `val` when defined and finite, otherwise remove the
+ * entry to keep the map sparse.
+ */
+function setOrClearTarget(targets: TargetsMap, propKey: PropKey, val: number | undefined): void {
+  if (!isUsableNumber(val)) {
+    delete targets[propKey];
+  } else {
+    targets[propKey] = val;
+  }
+}
+
+/** Step for a target input, scaled to `target` if set, else `mainValue` (NaN-safe). */
+function getTargetStep(target: number | undefined, mainValue: number | undefined): string {
+  return standardInputStepByPercent(target ?? (isUsableNumber(mainValue) ? mainValue : undefined));
 }
 
 /** Compute the display value for a `PropKey` on a recipe, using the `Percentage` qty toggle */
@@ -132,16 +163,12 @@ export function WatcherCard({
   const range = getAcceptablePropertyRange(propKey);
 
   const mainValue = getDisplayValue(propKey, main);
-  const mainHasValue = mainValue !== undefined && !Number.isNaN(mainValue);
+  const mainHasValue = isUsableNumber(mainValue);
 
   const headerColor: Color =
     range && mainHasValue ? getRangeColor(mainValue, range) : Color.GraphGray;
 
-  /**
-   * Step for the target input, scaled to the magnitude of whatever value the user is editing
-   * around (the current target if set, otherwise the current recipe value).
-   */
-  const targetStep = standardInputStepByPercent(target ?? (mainHasValue ? mainValue : undefined));
+  const targetStep = getTargetStep(target, mainValue);
 
   const titleBackgroundOpacity = 0.6;
   const refRowOpacity = 0.8;
@@ -193,7 +220,7 @@ export function WatcherCard({
             // but hide the content when the mix properties don't have a value for the watched key.
 
             const refValue = getDisplayValue(propKey, ref);
-            const refHasValue = refValue !== undefined && !Number.isNaN(refValue);
+            const refHasValue = isUsableNumber(refValue);
             const delta = mainHasValue && refHasValue ? mainValue - refValue : undefined;
             const refLetter = ref.id.replace(/^Ref\s*/, "").trim() || ref.id;
 
@@ -308,24 +335,31 @@ export function WatchersGrid({
  * `toolbarPrefix` is rendered inside the toolbar's flex row before the controls; used by the panel
  * wrapper to inject a drag handle without breaking the toolbar layout.
  *
- * Reserves a fixed-height footer slot below the grid for the future "Balance" interface; the slot
- * is empty in v1 but keeps the panel layout stable for later additions.
+ * The toolbar's right-side action group has a Balance button (runs the WASM balancer using
+ * watched CompKey-derived targets, then calls `onApplyBalancedMain`) and one Fill-from-Ref
+ * button per non-empty reference (fills currently-watched targets from that reference's values).
+ * Both are inert without `wasmBridge` and `onApplyBalancedMain`, so bare renders stay read-only.
  */
 export function WatchersView({
   main,
   refs = [],
   toolbarPrefix,
   defaultSelected = DEFAULT_SELECTED_PROPERTIES,
+  wasmBridge,
+  onApplyBalancedMain,
 }: {
-  main: RecipeSummary;
+  main: Recipe;
   refs?: RecipeSummary[];
   toolbarPrefix?: ReactNode;
   defaultSelected?: Set<PropKey>;
+  wasmBridge?: WasmBridge;
+  onApplyBalancedMain?: (balanced: [string, number][]) => void;
 }) {
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(defaultSelected);
   const [, setSelectedProps] = selectedPropsState;
   const [targets, setTargets] = useState<TargetsMap>({});
+  const [balanceError, setBalanceError] = useState<string | undefined>(undefined);
 
   // Hydrate selection + targets from localStorage on mount (client-only, after SSR pass)
   useEffect(() => {
@@ -379,11 +413,7 @@ export function WatchersView({
   const onTargetChange = (propKey: PropKey, val: number | undefined) => {
     setTargets((prev) => {
       const next = { ...prev };
-      if (val === undefined || Number.isNaN(val)) {
-        delete next[propKey];
-      } else {
-        next[propKey] = val;
-      }
+      setOrClearTarget(next, propKey, val);
       return next;
     });
   };
@@ -395,6 +425,7 @@ export function WatchersView({
       next.delete(propKey);
       return next;
     });
+
     setTargets((prev) => {
       if (!(propKey in prev)) return prev;
       const next = { ...prev };
@@ -402,6 +433,57 @@ export function WatchersView({
       return next;
     });
   };
+
+  const enabledProps = getEnabledProps();
+  const balanceTargets = targetsToBalanceArgs(targets, new Set(enabledProps));
+
+  /**
+   * Balance the main recipe to the current targets, passing the result to `onApplyBalancedMain`.
+   * NNLS failures (infeasible targets) surface as an inline error on the Balance button.
+   */
+  const onBalance = () => {
+    // The 'Balance' button should not be enabled if any of these conditions aren't met
+    verify(wasmBridge !== undefined, "wasmBridge undefined");
+    verify(onApplyBalancedMain !== undefined, "onApplyBalancedMain undefined");
+    verify(!isRecipeEmpty(main), "main recipe is empty");
+    verify(balanceTargets.length > 0, "no CompKey targets");
+
+    try {
+      const lightRecipe = makeLightRecipe(main, (n) => wasmBridge.has_ingredient(n));
+      const balanced = wasmBridge.balance_recipe(lightRecipe, balanceTargets) as [string, number][];
+
+      setBalanceError(undefined);
+      onApplyBalancedMain(balanced);
+    } catch (err) {
+      console.error("balance failed:", err);
+      setBalanceError(String(err));
+    }
+  };
+
+  /** Mirror watched targets from `ref` (rounded to the input's step); clear keys `ref` lacks. */
+  const onFillTargetsFromRef = (ref: RecipeSummary) => {
+    setTargets((prev) => {
+      const next = { ...prev };
+      for (const propKey of enabledProps) {
+        const refVal = getDisplayValue(propKey, ref);
+        const step = getTargetStep(prev[propKey], getDisplayValue(propKey, main));
+        const val = isUsableNumber(refVal) ? roundToStep(refVal, step) : undefined;
+        setOrClearTarget(next, propKey, val);
+      }
+      return next;
+    });
+  };
+
+  const balanceDisabled =
+    !wasmBridge || !onApplyBalancedMain || isRecipeEmpty(main) || balanceTargets.length === 0;
+
+  const balanceTitle = balanceError
+    ? `Balance failed: ${balanceError}`
+    : balanceTargets.length === 0
+      ? "Set at least one composition target to balance"
+      : "Balance the recipe to meet current targets";
+
+  const nonEmptyRefs = refs.filter((r) => !isRecipeEmpty(r));
 
   return (
     <>
@@ -414,11 +496,47 @@ export function WatchersView({
           getKeys={getPropKeys}
           key_as_med_str={prop_key_as_med_str}
         />
+        {(wasmBridge !== undefined || nonEmptyRefs.length > 0) && (
+          <div className="ml-auto flex shrink-0 items-center">
+            {nonEmptyRefs.map((ref) => {
+              const letter = ref.id.replace(/^Ref\s*/, "").trim() || ref.id;
+              const hasAnyFillable = enabledProps.some((k) =>
+                isUsableNumber(getDisplayValue(k, ref)),
+              );
+              return (
+                <button
+                  key={ref.id}
+                  className="action-button flex items-center px-1"
+                  onClick={() => onFillTargetsFromRef(ref)}
+                  disabled={enabledProps.length === 0 || !hasAnyFillable}
+                  title={`Fill targets for all watched properties from ${ref.id}`}
+                  data-testid={`watchers-fill-all-${ref.id}`}
+                >
+                  <ArrowDown size={COMPONENT_ACTION_ICON_SIZE - 8} />
+                  <span className="pr-0.5 text-sm font-semibold">{letter}</span>
+                </button>
+              );
+            })}
+            {wasmBridge !== undefined && onApplyBalancedMain !== undefined && (
+              <button
+                className={`action-button mr-1 px-1.5 py-0.5 text-sm font-semibold ${
+                  balanceError ? "border-rd-lt dark:border-rd-dk border" : ""
+                }`}
+                onClick={onBalance}
+                disabled={balanceDisabled}
+                title={balanceTitle}
+                data-testid="watchers-balance-button"
+              >
+                Balance
+              </button>
+            )}
+          </div>
+        )}
       </div>
       <div className="flex h-[calc(100%-33px)] flex-col">
         <div className="flex-1 overflow-y-auto">
           <WatchersGrid
-            propKeys={getEnabledProps()}
+            propKeys={enabledProps}
             main={main}
             refs={refs}
             targets={targets}
@@ -426,8 +544,6 @@ export function WatchersView({
             onRemove={onRemove}
           />
         </div>
-        {/* Future Balance interface slot — empty in v1 to keep panel layout stable */}
-        <div id="watchers-balance-slot" className="h-0" />
       </div>
     </>
   );

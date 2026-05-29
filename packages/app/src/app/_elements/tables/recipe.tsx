@@ -17,6 +17,7 @@ import {
   isRecipeRenamed,
   makeLightRecipe,
   makeUpdatedRecipe,
+  makeUpdatedRecipeContext,
   makeUpdatedRow,
   makeUpdatedRecipeFromStore,
   stringifyRecipe,
@@ -234,13 +235,7 @@ export function RecipeEditor({
    * `Composition` or `MixProperties` objects, which can lead to crashes due to freed WASM memory.
    */
   const updateRecipes = (updatedRecipes: Recipe[]) => {
-    const newRecipes = [...recipeContext.recipes];
-
-    for (const updatedRecipe of updatedRecipes) {
-      newRecipes[updatedRecipe.index] = updatedRecipe;
-    }
-
-    setRecipeContext({ ...recipeContext, recipes: newRecipes });
+    setRecipeContext((prev) => makeUpdatedRecipeContext(prev, updatedRecipes));
   };
 
   /** Update a single recipe in context by applying the given recipe updates */
@@ -597,7 +592,7 @@ export function RecipeEditor({
               onClick={action}
               title={title}
               disabled={disabled}
-              className="action-button px-1 py-0.75 disabled:cursor-not-allowed disabled:opacity-40"
+              className="action-button px-1 py-0.75"
             >
               {label}
             </button>

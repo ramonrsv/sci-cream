@@ -8,11 +8,19 @@ import { STORAGE_KEYS } from "@/lib/local-storage";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { makeEmptyRecipe } from "@/lib/recipe";
 import { getRangeColor, Color } from "@/lib/styles/colors";
+import { roundToStep } from "@/lib/util";
 
-import { CompKey, FpdKey, compToPropKey, fpdToPropKey } from "@workspace/sci-cream";
+import {
+  Bridge as WasmBridge,
+  CompKey,
+  FpdKey,
+  compToPropKey,
+  fpdToPropKey,
+} from "@workspace/sci-cream";
 
 import { makeMockRecipe, makeMockRecipeContext } from "@/__tests__/unit/util";
 import { RecipeID } from "@/__tests__/assets";
+import { WASM_BRIDGE } from "@/__tests__/util";
 
 /** Mock implementation of ResizeObserver for testing purposes */
 class ResizeObserverMock {
@@ -510,5 +518,199 @@ describe("WatchersView", () => {
     render(<WatchersView main={ctx.recipes[0]} refs={[ctx.recipes[2]]} />);
     expect(screen.getByTestId(`watcher-card-${String(MSNF)}-ref-Ref B`)).toBeInTheDocument();
     expect(screen.queryByTestId(`watcher-card-${String(MSNF)}-ref-Ref A`)).not.toBeInTheDocument();
+  });
+});
+
+describe("WatchersView Balance", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("does not render the Balance button when wiring props are absent", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} />);
+    expect(screen.queryByTestId("watchers-balance-button")).not.toBeInTheDocument();
+  });
+
+  it("renders the Balance button when both wasmBridge and onApplyBalancedMain are provided", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
+    expect(screen.getByTestId("watchers-balance-button")).toBeInTheDocument();
+  });
+
+  it("Balance is disabled when no CompKey targets are set", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
+    expect(screen.getByTestId("watchers-balance-button")).toBeDisabled();
+  });
+
+  it("Balance stays disabled when only an FpdKey target (e.g. ServingTemp) is set", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [SERVING_TEMP]: -12 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
+    expect(screen.getByTestId("watchers-balance-button")).toBeDisabled();
+  });
+
+  it("Balance is enabled when at least one CompKey target is set on a non-empty main", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
+    expect(screen.getByTestId("watchers-balance-button")).not.toBeDisabled();
+  });
+
+  it("Balance ignores targets for unwatched keys (filtered out of view)", () => {
+    // Energy is a CompKey but not in DEFAULT_SELECTED_PROPERTIES, so the Auto filter hides it; a
+    // target on it from a prior session must not enable Balance, since the user can't see the
+    // card and would be surprised by silent inclusion in the balance call.
+    const ENERGY = compToPropKey(CompKey.Energy);
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [ENERGY]: 200 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
+    expect(screen.queryByTestId(`watcher-card-${String(ENERGY)}`)).not.toBeInTheDocument();
+    expect(screen.getByTestId("watchers-balance-button")).toBeDisabled();
+  });
+
+  it("Balance is disabled when the main recipe is empty", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
+    const emptyMain = makeEmptyRecipe(0);
+    render(
+      <WatchersView main={emptyMain} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />,
+    );
+    expect(screen.getByTestId("watchers-balance-button")).toBeDisabled();
+  });
+
+  it("clicking Balance invokes onApplyBalancedMain with a same-length [string, number][]", () => {
+    localStorage.setItem(
+      STORAGE_KEYS.watcherTargets,
+      JSON.stringify({
+        [compToPropKey(CompKey.MilkFat)]: 14,
+        [MSNF]: 10,
+        [compToPropKey(CompKey.TotalSugars)]: 17,
+        [TOTAL_SOLIDS]: 41,
+      }),
+    );
+    const main = makeMockRecipe(RecipeID.Main);
+    const onApply = vi.fn();
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={onApply} />);
+    fireEvent.click(screen.getByTestId("watchers-balance-button"));
+    expect(onApply).toHaveBeenCalledTimes(1);
+    const arg = onApply.mock.calls[0][0] as [string, number][];
+    expect(Array.isArray(arg)).toBe(true);
+    expect(arg.length).toBe(main.ingredientRows.filter((r) => r.quantity !== undefined).length);
+    for (const [name, grams] of arg) {
+      expect(typeof name).toBe("string");
+      expect(typeof grams).toBe("number");
+      expect(grams).toBeGreaterThanOrEqual(0);
+    }
+  });
+
+  it("surfaces a balance error and does not invoke onApplyBalancedMain when the bridge throws", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    const onApply = vi.fn();
+    const consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+
+    const throwingBridge = {
+      has_ingredient: () => true,
+      balance_recipe: () => {
+        throw new Error("infeasible");
+      },
+    } as unknown as WasmBridge;
+
+    render(<WatchersView main={main} wasmBridge={throwingBridge} onApplyBalancedMain={onApply} />);
+    const button = screen.getByTestId("watchers-balance-button");
+    fireEvent.click(button);
+
+    expect(onApply).not.toHaveBeenCalled();
+    expect(consoleErrorSpy).toHaveBeenCalled();
+    expect(button.title).toContain("infeasible");
+    expect(button.className).toContain("border-rd");
+
+    consoleErrorSpy.mockRestore();
+  });
+});
+
+describe("WatchersView Fill from Ref", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("renders one fill button per non-empty ref", () => {
+    const ctx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA, RecipeID.RefB]);
+    render(<WatchersView main={ctx.recipes[0]} refs={[ctx.recipes[1], ctx.recipes[2]]} />);
+    expect(screen.getByTestId("watchers-fill-all-Ref A")).toBeInTheDocument();
+    expect(screen.getByTestId("watchers-fill-all-Ref B")).toBeInTheDocument();
+  });
+
+  it("does not render a fill button for an empty ref", () => {
+    const ctx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]);
+    const emptyRefB = makeEmptyRecipe(2);
+    render(<WatchersView main={ctx.recipes[0]} refs={[ctx.recipes[1], emptyRefB]} />);
+    expect(screen.getByTestId("watchers-fill-all-Ref A")).toBeInTheDocument();
+    expect(screen.queryByTestId("watchers-fill-all-Ref B")).not.toBeInTheDocument();
+  });
+
+  it("populates targets for currently-watched keys from the ref's values when clicked", () => {
+    const ctx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]);
+    render(<WatchersView main={ctx.recipes[0]} refs={[ctx.recipes[1]]} />);
+
+    // Sanity-check: target inputs start empty for default-watched keys
+    const msnfInput = screen.getByTestId(`watcher-card-${String(MSNF)}-target`) as HTMLInputElement;
+    const solidsInput = screen.getByTestId(
+      `watcher-card-${String(TOTAL_SOLIDS)}-target`,
+    ) as HTMLInputElement;
+    expect(msnfInput.value).toBe("");
+    expect(solidsInput.value).toBe("");
+
+    fireEvent.click(screen.getByTestId("watchers-fill-all-Ref A"));
+
+    // Both should now hold rounded numbers derived from Ref A's mix properties
+    expect(msnfInput.value).not.toBe("");
+    expect(solidsInput.value).not.toBe("");
+    expect(Number.isFinite(parseFloat(msnfInput.value))).toBe(true);
+    expect(Number.isFinite(parseFloat(solidsInput.value))).toBe(true);
+  });
+
+  it("overwrites existing targets when clicked", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 99 }));
+    const ctx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]);
+    render(<WatchersView main={ctx.recipes[0]} refs={[ctx.recipes[1]]} />);
+
+    const msnfInput = screen.getByTestId(`watcher-card-${String(MSNF)}-target`) as HTMLInputElement;
+    expect(msnfInput.value).toBe("99");
+
+    fireEvent.click(screen.getByTestId("watchers-fill-all-Ref A"));
+    expect(msnfInput.value).not.toBe("99");
+  });
+
+  it("snaps imported values to the target input's step boundaries", () => {
+    const ctx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]);
+    render(<WatchersView main={ctx.recipes[0]} refs={[ctx.recipes[1]]} />);
+    fireEvent.click(screen.getByTestId("watchers-fill-all-Ref A"));
+
+    // Fixed-point check: re-snapping a step-snapped value to the same step is a no-op. Stronger
+    // than a decimal-place check because it catches half-step misses (e.g. 12.7 under step "0.5"
+    // would pass a `toFixed(1)` check but isn't a multiple of 0.5).
+    const msnfInput = screen.getByTestId(`watcher-card-${String(MSNF)}-target`) as HTMLInputElement;
+    const parsed = parseFloat(msnfInput.value);
+    expect(parsed).toBe(roundToStep(parsed, msnfInput.step));
+  });
+
+  it("persists filled targets to localStorage", () => {
+    const ctx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]);
+    render(<WatchersView main={ctx.recipes[0]} refs={[ctx.recipes[1]]} />);
+    fireEvent.click(screen.getByTestId("watchers-fill-all-Ref A"));
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherTargets) ?? "{}");
+    expect(typeof stored[MSNF]).toBe("number");
   });
 });

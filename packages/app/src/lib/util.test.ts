@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, afterEach } from "vitest";
 
 import {
+  roundToStep,
   sleep_ms,
   standardInputStepByPercent,
   verify,
@@ -95,6 +96,59 @@ describe("standardInputStepByPercent", () => {
     // 0 * anything == 0 <= STD_INPUT_INCREMENTS[0] (0.01) -> "0.01"
     expect(standardInputStepByPercent(0)).toBe("0.01");
     expect(standardInputStepByPercent(-0)).toBe("0.01");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// roundToStep
+// ---------------------------------------------------------------------------
+
+describe("roundToStep", () => {
+  it("rounds to the nearest power-of-10 step", () => {
+    expect(roundToStep(12.78, "0.1")).toBe(12.8);
+    expect(roundToStep(12.78, "0.01")).toBe(12.78);
+    expect(roundToStep(12.4, "1")).toBe(12);
+    expect(roundToStep(12.7, "1")).toBe(13);
+  });
+
+  it("rounds to the nearest non-power-of-10 step", () => {
+    // 12.78 / 0.5 = 25.56 → round → 26 → * 0.5 = 13.
+    expect(roundToStep(12.78, "0.5")).toBe(13);
+    expect(roundToStep(12.3, "0.5")).toBe(12.5);
+    expect(roundToStep(12.78, "0.25")).toBe(12.75);
+    expect(roundToStep(12.78, "2.5")).toBe(12.5);
+    expect(roundToStep(13, "2.5")).toBe(12.5);
+    expect(roundToStep(14, "5")).toBe(15);
+    expect(roundToStep(12, "5")).toBe(10);
+  });
+
+  it("scrubs float-noise from the result", () => {
+    // 0.3 / 0.1 = 2.9999... in float; *0.1 leaves a 0.30000000000000004 result.
+    // toFixed snaps the result back to a clean decimal.
+    expect(roundToStep(0.3, "0.1")).toBe(0.3);
+    expect(Number.isInteger(roundToStep(13, "0.5") * 2)).toBe(true);
+  });
+
+  it("preserves values that already sit on a step boundary", () => {
+    expect(roundToStep(13, "0.5")).toBe(13);
+    expect(roundToStep(12.5, "0.5")).toBe(12.5);
+    expect(roundToStep(15, "5")).toBe(15);
+  });
+
+  it("rounds half-step values via Math.round (banker's? no — half-away-from-zero for positives)", () => {
+    // 12.25 / 0.5 = 24.5 → Math.round → 25 → * 0.5 = 12.5 (Math.round rounds .5 to nearest even
+    // for negatives but away from zero for positives in JS).
+    expect(roundToStep(12.25, "0.5")).toBe(12.5);
+  });
+
+  it("rounds negative values symmetrically", () => {
+    expect(roundToStep(-12.78, "0.5")).toBe(-13);
+    expect(roundToStep(-12.3, "0.5")).toBe(-12.5);
+  });
+
+  it("handles zero", () => {
+    expect(roundToStep(0, "0.5")).toBe(0);
+    expect(roundToStep(0, "5")).toBe(0);
   });
 });
 

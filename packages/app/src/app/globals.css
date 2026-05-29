@@ -167,6 +167,7 @@ body {
 
 .action-button {
   @apply cursor-pointer rounded-xl border border-transparent text-sm leading-tight hover:border hover:shadow-sm;
+  @apply disabled:cursor-not-allowed disabled:opacity-40;
 
   @apply bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt active:bg-act-lt;
   @variant dark {

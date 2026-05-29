@@ -10,6 +10,9 @@ import {
   calculateMixTotal,
   makeSciCreamRecipe,
   makeLightRecipe,
+  makeBalancedRecipeUpdates,
+  makeUpdatedRecipeContext,
+  makeEmptyRecipe,
   makeRecipeBaseline,
   isRecipeDirty,
   isRecipeRenamed,
@@ -240,10 +243,11 @@ describe("Recipe Helper Functions", () => {
       expect(makeLightRecipe(recipe, hasIngredient).length).toEqual(0);
     });
 
-    it("should filter out rows without quantity", () => {
+    it("should include rows with undefined quantity as 0 (so the balancer can fill them)", () => {
       recipe.ingredientRows[0].name = "Whole Milk";
       recipe.ingredientRows[0].quantity = undefined;
-      expect(makeLightRecipe(recipe, hasIngredient).length).toEqual(0);
+      const lines = makeLightRecipe(recipe, hasIngredient);
+      expect(lines).toEqual([["Whole Milk", 0]]);
     });
 
     it("should filter out rows with invalid ingredient names", () => {
@@ -262,6 +266,182 @@ describe("Recipe Helper Functions", () => {
       expect(lines).toHaveLength(2);
       expect(lines[0]).toEqual(["Whole Milk", 50]);
       expect(lines[1]).toEqual(["Sucrose", 30]);
+    });
+  });
+
+  // ---- makeBalancedRecipeUpdates ----------------------------------------------------------------
+
+  describe("makeBalancedRecipeUpdates", () => {
+    let recipe: Recipe;
+    const wasmBridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
+    const hasIngredient = (name: string) => wasmBridge.has_ingredient(name);
+
+    beforeEach(() => {
+      recipe = makeEmptyRecipeContext().recipes[0];
+      // Populate two eligible rows + leave the rest empty
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[0].quantity = 50;
+      recipe.ingredientRows[1].name = "Sucrose";
+      recipe.ingredientRows[1].quantity = 30;
+    });
+
+    it("throws when balanced length doesn't match eligible rows", () => {
+      // 2 eligible rows but only 1 balanced entry
+      expect(() => makeBalancedRecipeUpdates(recipe, [["Whole Milk", 60]], hasIngredient)).toThrow(
+        /balanced length.*does not match eligible row count/,
+      );
+    });
+
+    it("returns a `rows` array with one entry per eligible row (== balanced.length)", () => {
+      const balanced: [string, number][] = [
+        ["Whole Milk", 60],
+        ["Sucrose", 20],
+      ];
+      const updates = makeBalancedRecipeUpdates(recipe, balanced, hasIngredient);
+      expect(updates.rows).toBeDefined();
+      expect(updates.rows!.length).toBe(balanced.length);
+    });
+
+    it("writes balanced quantities onto eligible rows by index", () => {
+      const balanced: [string, number][] = [
+        ["Whole Milk", 60],
+        ["Sucrose", 20],
+      ];
+      const updates = makeBalancedRecipeUpdates(recipe, balanced, hasIngredient);
+      expect(updates.rows![0].quantity).toBe(60);
+      expect(updates.rows![1].quantity).toBe(20);
+    });
+
+    it("excludes non-eligible rows from the updates array (so they pass through unchanged)", () => {
+      // Row 2 has an unknown ingredient name → not eligible.
+      // Row 3+ are left in the default empty state, also non-eligible.
+      // None should appear in updates.rows, so makeUpdatedRecipe leaves them untouched.
+      recipe.ingredientRows[2].name = "Definitely Not An Ingredient";
+      recipe.ingredientRows[2].quantity = 10;
+      const balanced: [string, number][] = [
+        ["Whole Milk", 60],
+        ["Sucrose", 20],
+      ];
+      const updates = makeBalancedRecipeUpdates(recipe, balanced, hasIngredient);
+      expect(updates.rows!.length).toBe(2);
+      expect(updates.rows!.every((row) => row.index === 0 || row.index === 1)).toBe(true);
+    });
+
+    it("correctly maps balanced values across a gap of non-eligible rows", () => {
+      // Eligible rows: 0 (Whole Milk), 1 (Sucrose), 3 (Egg Yolk).
+      // Row 2 is non-eligible (unknown ingredient name) and must be skipped without throwing
+      // off the mapping of `balanced[2]` to recipe row 3.
+      recipe.ingredientRows[2].name = "Definitely Not An Ingredient";
+      recipe.ingredientRows[2].quantity = 10;
+      recipe.ingredientRows[3].name = "Egg Yolk";
+      recipe.ingredientRows[3].quantity = 20;
+      const balanced: [string, number][] = [
+        ["Whole Milk", 60],
+        ["Sucrose", 20],
+        ["Egg Yolk", 15],
+      ];
+      const updates = makeBalancedRecipeUpdates(recipe, balanced, hasIngredient);
+      expect(updates.rows!.map((r) => r.index)).toEqual([0, 1, 3]);
+      expect(updates.rows![2].name).toBe("Egg Yolk");
+      expect(updates.rows![2].quantity).toBe(15);
+    });
+
+    it("writes balanced quantities onto rows that started with undefined quantity", () => {
+      // Add a third row with a known ingredient but no starting quantity — eligible now, so the
+      // balanced array must have 3 entries and its third value should be written to that row.
+      recipe.ingredientRows[2].name = "Egg Yolk";
+      recipe.ingredientRows[2].quantity = undefined;
+      const balanced: [string, number][] = [
+        ["Whole Milk", 60],
+        ["Sucrose", 20],
+        ["Egg Yolk", 15],
+      ];
+      const updates = makeBalancedRecipeUpdates(recipe, balanced, hasIngredient);
+      expect(updates.rows![2].quantity).toBe(15);
+      expect(updates.rows![2].name).toBe("Egg Yolk");
+    });
+
+    it("preserves ingredient names on updated rows", () => {
+      const balanced: [string, number][] = [
+        ["Whole Milk", 60],
+        ["Sucrose", 20],
+      ];
+      const updates = makeBalancedRecipeUpdates(recipe, balanced, hasIngredient);
+      expect(updates.rows![0].name).toBe("Whole Milk");
+      expect(updates.rows![1].name).toBe("Sucrose");
+    });
+
+    it("snaps NNLS-derived floats to the input's sub-unit step (per standardInputStepByPercent)", () => {
+      // standardInputStepByPercent(8.4) = "0.5"  → snap to nearest 0.5  → 8.5
+      //   (a naive `.toFixed(1)` would give 8.4)
+      // standardInputStepByPercent(4.3) = "0.25" → snap to nearest 0.25 → 4.25
+      //   (a naive `.toFixed(2)` would give 4.30)
+      const balanced: [string, number][] = [
+        ["Whole Milk", 8.4],
+        ["Sucrose", 4.3],
+      ];
+      const updates = makeBalancedRecipeUpdates(recipe, balanced, hasIngredient);
+      expect(updates.rows![0].quantity).toBe(8.5);
+      expect(updates.rows![1].quantity).toBe(4.25);
+    });
+  });
+
+  // ---- makeUpdatedRecipeContext -----------------------------------------------------------------
+
+  describe("makeUpdatedRecipeContext", () => {
+    it("writes a single updated recipe into its `.index` slot", () => {
+      const ctx = makeEmptyRecipeContext();
+      const updated = makeEmptyRecipe(1);
+      updated.name = "renamed-ref-a";
+
+      const next = makeUpdatedRecipeContext(ctx, [updated]);
+
+      expect(next.recipes[1]).toBe(updated);
+      expect(next.recipes[1].name).toBe("renamed-ref-a");
+      expect(next.recipes[0]).toBe(ctx.recipes[0]);
+      expect(next.recipes[2]).toBe(ctx.recipes[2]);
+    });
+
+    it("writes multiple updated recipes into their respective slots in one pass", () => {
+      const ctx = makeEmptyRecipeContext();
+      const updated0 = makeEmptyRecipe(0);
+      updated0.name = "a";
+      const updated2 = makeEmptyRecipe(2);
+      updated2.name = "b";
+
+      const next = makeUpdatedRecipeContext(ctx, [updated0, updated2]);
+
+      expect(next.recipes[0]).toBe(updated0);
+      expect(next.recipes[2]).toBe(updated2);
+      expect(next.recipes[1]).toBe(ctx.recipes[1]);
+    });
+
+    it("returns a new context object (does not mutate input)", () => {
+      const ctx = makeEmptyRecipeContext();
+      const updated = makeEmptyRecipe(0);
+      const next = makeUpdatedRecipeContext(ctx, [updated]);
+      expect(next).not.toBe(ctx);
+      expect(next.recipes).not.toBe(ctx.recipes);
+    });
+
+    it("throws when a recipe's index is out of range (too high)", () => {
+      const ctx = makeEmptyRecipeContext();
+      const bad = makeEmptyRecipe(0);
+      bad.index = ctx.recipes.length;
+      expect(() => makeUpdatedRecipeContext(ctx, [bad])).toThrow(/out of range/);
+    });
+
+    it("throws when a recipe's index is negative", () => {
+      const ctx = makeEmptyRecipeContext();
+      const bad = makeEmptyRecipe(0);
+      bad.index = -1;
+      expect(() => makeUpdatedRecipeContext(ctx, [bad])).toThrow(/out of range/);
+    });
+
+    it("is a no-op when called with an empty updates array", () => {
+      const ctx = makeEmptyRecipeContext();
+      const next = makeUpdatedRecipeContext(ctx, []);
+      expect(next.recipes).toEqual(ctx.recipes);
     });
   });
 
