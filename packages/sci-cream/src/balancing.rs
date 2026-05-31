@@ -9,7 +9,7 @@
 //!   [8.71,  5.4, 97] * \[x2\] = \[11\]  // MSNF
 //!   [1,     1,    1]   \[x3\]    \[1\]  // Total sums to 100%
 //!
-//! Where x1, x2, x3 are the amounts of each composition to use.
+//! Where x1, x2, x3 are the amounts of each composition/ingredient to use.
 //!
 //! @todo This is a work in progress, and the API and implementation may change significantly in the
 //! near future. For now, it's mostly intended for benchmarking and testing different approaches.
@@ -49,11 +49,10 @@ pub fn balance_compositions_nalgebra(
     let a = DMatrix::from_row_slice(targets.len() + 1, comps.len(), &flat_a);
     let y = DVector::from_vec(flat_y);
 
-    let a_t = a.transpose();
-    let svd = SVD::new(a_t.clone() * a, true, true);
+    let svd = SVD::new(a, true, true);
 
     let x = svd
-        .solve(&(a_t * y), 1e-10)
+        .solve(&y, 1e-10)
         .map_err(|e| Error::FailedToBalanceCompositions(e.to_string()))?;
 
     Ok(x.iter().enumerate().map(|(i, amount)| (comps[i], *amount)).collect())
@@ -150,6 +149,7 @@ pub static IMPORTANT_TARGET_KEYS: LazyLock<Vec<CompKey>> = LazyLock::new(|| {
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::float_cmp, clippy::unwrap_used)]
 mod tests {
+    use approx::AbsDiffEq;
     use std::sync::LazyLock;
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
@@ -194,23 +194,61 @@ mod tests {
         targets.iter().filter(|(key, _)| keys.contains(key)).copied().collect()
     }
 
+    /// Epsilon values for different types of assertions in the balance composition tests
+    #[derive(Debug, Clone, Copy)]
+    struct Epsilons {
+        /// Epsilon for asserting composition amounts, e.g. that they sum to 1
+        amount: f64,
+        /// Epsilon for asserting that composition amounts are non-negative
+        neg: f64,
+        /// Epsilon for asserting that the balanced composition matches target values for given keys
+        comp: f64,
+    }
+
+    impl Default for Epsilons {
+        fn default() -> Self {
+            Self {
+                amount: TESTS_EPSILON,
+                neg: TESTS_EPSILON,
+                comp: TESTS_EPSILON,
+            }
+        }
+    }
+
     /// Helper function to verify that a given balancing function produces a combination of
     /// composition amounts that matches the target values for the specified keys, and sum to 1.
     fn verify_balance_composition<T: Fn(&[Composition], &[(CompKey, f64)]) -> Result<Vec<(Composition, f64)>>>(
         comps: &[Composition],
         targets: &[(CompKey, f64)],
         balance_compositions: T,
-        epsilon: Option<f64>,
+        epsilons: Epsilons,
     ) {
         let balanced = balance_compositions(comps, targets).unwrap();
 
         assert_eq!(balanced.len(), comps.len());
-        assert_eq_flt_test!(balanced.iter().map(|(_, amount)| *amount).sum::<f64>(), 1.0);
+        assert_abs_diff_eq!(balanced.iter().map(|(_, amount)| *amount).sum::<f64>(), 1.0, epsilon = epsilons.amount);
+
+        for (idx, (_comp, amount)) in balanced.iter().enumerate() {
+            assert_gt!(*amount, 0.0 - epsilons.neg, "Negative amount {:.5} for composition idx {}", amount, idx);
+        }
+
+        // Clamp negatives within `neg_epsilon` to 0, since ::from_composition use COMP_EPSILON
+        // @todo Should be integrated into the balancing functions, or at least a helper function
+        let balanced = balanced
+            .into_iter()
+            .map(|(comp, amount)| (comp, f64::max(amount, 0.0)))
+            .collect::<Vec<_>>();
 
         let comp = Composition::from_combination(&balanced).unwrap();
 
         for (key, target_amount) in targets {
-            assert_abs_diff_eq!(comp.get(*key), target_amount, epsilon = epsilon.unwrap_or(TESTS_EPSILON));
+            assert_true!(
+                comp.get(*key).abs_diff_eq(target_amount, epsilons.comp),
+                "Target key {:?} not balanced within epsilon: got {:.5}, expected {:.5}",
+                key,
+                comp.get(*key),
+                target_amount
+            );
         }
     }
 
@@ -259,12 +297,12 @@ mod tests {
 
     #[test]
     fn balance_compositions_nalgebra_dairy() {
-        verify_balance_composition(&DAIRY_COMPS, &DAIRY_TARGETS, balance_compositions_nalgebra, None);
+        verify_balance_composition(&DAIRY_COMPS, &DAIRY_TARGETS, balance_compositions_nalgebra, Epsilons::default());
     }
 
     #[test]
     fn balance_compositions_nnls_dairy() {
-        verify_balance_composition(&DAIRY_COMPS, &DAIRY_TARGETS, balance_compositions_nnls, None);
+        verify_balance_composition(&DAIRY_COMPS, &DAIRY_TARGETS, balance_compositions_nnls, Epsilons::default());
     }
 
     #[test]
@@ -273,7 +311,10 @@ mod tests {
             &MAIN_RECIPE_COMPS,
             &MAIN_RECIPE_TARGETS_IMPORTANT,
             balance_compositions_nalgebra,
-            Some(0.001),
+            Epsilons {
+                comp: 0.001,
+                ..Default::default()
+            },
         );
     }
 
@@ -283,12 +324,27 @@ mod tests {
             &REF_A_RECIPE_COMPS,
             &REF_A_RECIPE_TARGETS_IMPORTANT,
             balance_compositions_nalgebra,
-            Some(0.001),
+            Epsilons {
+                comp: 0.001,
+                ..Default::default()
+            },
         );
     }
 
-    // Ref B recipe gives a negative composition amount with nalgebra, even through valid +ve values
-    // exist for this set of compositions and targets. Following tests using nnls pass for Ref B.
+    #[test]
+    fn balance_compositions_nalgebra_important_targets_ref_b_recipe() {
+        verify_balance_composition(
+            &REF_B_RECIPE_COMPS,
+            &REF_B_RECIPE_TARGETS_IMPORTANT,
+            balance_compositions_nalgebra,
+            Epsilons {
+                // This is effectively failing to balance the composition
+                comp: 7.0,
+                neg: 0.05,
+                ..Epsilons::default()
+            },
+        );
+    }
 
     #[test]
     fn balance_compositions_nnls_important_targets_main_recipe() {
@@ -296,7 +352,10 @@ mod tests {
             &MAIN_RECIPE_COMPS,
             &MAIN_RECIPE_TARGETS_IMPORTANT,
             balance_compositions_nnls,
-            Some(0.001),
+            Epsilons {
+                comp: 0.001,
+                ..Default::default()
+            },
         );
     }
 
@@ -306,7 +365,10 @@ mod tests {
             &REF_A_RECIPE_COMPS,
             &REF_A_RECIPE_TARGETS_IMPORTANT,
             balance_compositions_nnls,
-            Some(0.001),
+            Epsilons {
+                comp: 0.001,
+                ..Default::default()
+            },
         );
     }
 
@@ -316,7 +378,10 @@ mod tests {
             &REF_B_RECIPE_COMPS,
             &REF_B_RECIPE_TARGETS_IMPORTANT,
             balance_compositions_nnls,
-            Some(0.001),
+            Epsilons {
+                comp: 0.001,
+                ..Default::default()
+            },
         );
     }
 }
