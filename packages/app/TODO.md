@@ -40,6 +40,10 @@
 - [ ] On mobile, change ingredients comp table height to fit, with max, and move comments below it.
 - [ ] Double check the calculator mobile layouts, `FpdGraphPanel` looks too tall on Pixel 8 Pro.
 - [ ] Add a `Balance` button to `WatchersPanel`, with some indicator that is a beta feature.
+- [ ] Add support for `RecipeEditor` to display fewer lines than the internal fixed number of lines,
+      and to dynamically adjust the number based on the panel size, only showing a scrollbar if the
+      any filled lines would be hidden. This may cause issues with `CompositionBreakdown`, which
+      currently relies on a fixed number of rows, and won't be easy to make vertically scrollable.
 
 ## Backlog
 
