@@ -327,9 +327,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
-    use crate::tests::util::{
-        CompCeiling, assert_compositions_consistent, compare_compositions, relative_diff_percent,
-    };
+    use crate::tests::util::{KeyCeiling, assert_compositions_consistent, compare_compositions, relative_diff_percent};
 
     use super::*;
     use crate::{
@@ -2083,7 +2081,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 28.0);
+        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 28.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2098,7 +2096,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 22.0);
+        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 22.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2113,7 +2111,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 20.0);
+        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 20.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2133,7 +2131,7 @@ pub(crate) mod tests {
         //    - Lactose        11.30 pp  (USDA vs Sealtest)
         //    - PACsgr         11.30 pp  (USDA vs Sealtest)
         //    - PACtotal       14.70 pp  (USDA vs Sealtest)
-        let ceiling = CompCeiling::new(10.0)
+        let ceiling = KeyCeiling::new(10.0)
             .with(CompKey::Energy, 21.0)
             .with(CompKey::Lactose, 12.0)
             .with(CompKey::PACsgr, 12.0)
@@ -2156,7 +2154,7 @@ pub(crate) mod tests {
         // and SaturatedFat above the default ceiling. The exceptions are:
         //    - PACtotal       12.76 pp  (USDA vs Sealtest)
         //    - SaturatedFat   10.97 pp  (Simple vs Sealtest)
-        let ceiling = CompCeiling::new(10.0)
+        let ceiling = KeyCeiling::new(10.0)
             .with(CompKey::Energy, 40.0)
             .with(CompKey::PACtotal, 13.0)
             .with(CompKey::SaturatedFat, 11.0);
@@ -2181,7 +2179,7 @@ pub(crate) mod tests {
         //    - MilkSolids     15.56 pp  (Simple vs Sealtest)
         //    - MilkSolids     13.47 pp  (USDA vs Sealtest)
         //    - PACtotal       11.15 pp  (Simple vs Sealtest)
-        let ceiling = CompCeiling::new(10.0)
+        let ceiling = KeyCeiling::new(10.0)
             .with(CompKey::Energy, 45.0)
             .with(CompKey::MilkSolids, 16.0)
             .with(CompKey::PACtotal, 12.0);
@@ -2212,7 +2210,7 @@ pub(crate) mod tests {
         //
         // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
         // given how much cross-source consistency it bought us.
-        let ceiling = CompCeiling::new(10.0)
+        let ceiling = KeyCeiling::new(10.0)
             .with(CompKey::Energy, 17.0)
             .with(CompKey::Lactose, 21.0)
             .with(CompKey::MSNF, 29.0)
@@ -2239,7 +2237,7 @@ pub(crate) mod tests {
         // between Eagle Brand CA's 5.13g/100g (1g per 19.5g serving) and USDA's 7.91g/100g;
         // Low-Fat Eagle Brand jumps to 10.2g/100g (1g -> 2g per serving on the label).
         // @todo investigate which side has the more accurate energy density.
-        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 66.0);
+        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 66.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2254,7 +2252,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 18.0);
+        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 18.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2269,7 +2267,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 26.0);
+        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 26.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2283,7 +2281,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 27.0);
+        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 27.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2306,7 +2304,7 @@ pub(crate) mod tests {
         // juice-like drink rather than a shake — it lists only 80% protein and exactly 0g fat
         // and 0g sugar, which gives it a noticeably lower kcal-per-g-of-solids profile and
         // drives the ~44 pp Energy gap.
-        let ceiling = CompCeiling::new(10.0).with(CompKey::Energy, 44.0);
+        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 44.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2321,7 +2319,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        let ceiling = CompCeiling::new(10.0);
+        let ceiling = KeyCeiling::new(10.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));

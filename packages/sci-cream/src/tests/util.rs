@@ -58,6 +58,21 @@ pub(crate) fn relative_diff_percent(lhs: f64, rhs: f64) -> f64 {
     }
 }
 
+/// Root mean square of a set of values, i.e. `sqrt(mean(vᵢ²))`.
+///
+/// Returns `0.0` for an empty slice rather than the `NaN` the naive `0 / 0` would produce, since
+/// the mean of no values is taken to be zero here.
+pub(crate) fn root_mean_square(values: &[f64]) -> f64 {
+    if values.is_empty() {
+        return 0.0;
+    }
+
+    #[allow(clippy::cast_precision_loss)] // Value counts stay far below f64's exact-integer range
+    let count = values.len() as f64;
+
+    (values.iter().map(|value| value * value).sum::<f64>() / count).sqrt()
+}
+
 /// Difference between two component values expressed as percentage points of each source's total
 /// solids — a proxy for "how different will the resulting ice cream mix composition be if I
 /// substitute one source for the other while dosing each to the same solids contribution."
@@ -92,19 +107,18 @@ fn solids_denominator_for(key: CompKey, comp: &Composition) -> f64 {
     }
 }
 
-/// Per-key ceilings for [`assert_compositions_consistent`], expressed in percentage points of
-/// solids composition (matching [`solids_fraction_diff_pp`]).
+/// A per-[`CompKey`] tolerance table: a single default ceiling plus optional per-key overrides.
 ///
-/// A single default ceiling applies to every comparable keys list entry, with optional
-/// per-key overrides for components known to diverge more widely between data sources.
-pub(crate) struct CompCeiling {
+/// The unit of the ceiling is defined by whatever metric the caller compares against it (e.g.
+/// percentage points of solids composition for [`assert_compositions_consistent`], or relative
+/// error for balancing backstops) — this type only stores and looks up the per-key value.
+pub(crate) struct KeyCeiling {
     default_pp: f64,
     overrides: Vec<(CompKey, f64)>,
 }
 
-impl CompCeiling {
-    /// Creates a ceiling where every key allows up to `default_pp` difference, in percentage
-    /// points of solids composition.
+impl KeyCeiling {
+    /// Creates a ceiling where every key allows up to `default_pp`.
     pub(crate) const fn new(default_pp: f64) -> Self {
         Self {
             default_pp,
@@ -112,15 +126,20 @@ impl CompCeiling {
         }
     }
 
-    /// Overrides the ceiling for a single key, e.g. for a component with known wide variance.
+    /// Creates a ceiling with a tight default and no overrides.
+    pub(crate) const fn exact() -> Self {
+        Self::new(TESTS_EPSILON)
+    }
+
+    /// Overrides the ceiling for a single key, e.g. for a value with known wide variance.
     #[must_use]
     pub(crate) fn with(mut self, key: CompKey, pp: f64) -> Self {
         self.overrides.push((key, pp));
         self
     }
 
-    /// Returns the ceiling, in percentage points of solids composition, that applies to `key`.
-    fn for_key(&self, key: CompKey) -> f64 {
+    /// Returns the ceiling that applies to `key`.
+    pub(crate) fn for_key(&self, key: CompKey) -> f64 {
         self.overrides
             .iter()
             .find(|(overridden, _)| *overridden == key)
@@ -132,10 +151,10 @@ impl CompCeiling {
 ///
 /// Every pair of `sources` (a `(label, composition)` slice) is compared across `keys`; a key
 /// whose [`solids_fraction_diff_pp`] (in percentage points of each source's solids composition)
-/// exceeds its [`CompCeiling`] entry fails the assertion. This is a deliberately loose backstop
+/// exceeds its [`KeyCeiling`] entry fails the assertion. This is a deliberately loose backstop
 /// against regressions — the precise per-key discrepancies are recorded separately by
 /// [`compare_compositions`] snapshots.
-pub(crate) fn assert_compositions_consistent(sources: &[(&str, Composition)], keys: &[CompKey], ceiling: &CompCeiling) {
+pub(crate) fn assert_compositions_consistent(sources: &[(&str, Composition)], keys: &[CompKey], ceiling: &KeyCeiling) {
     for &key in keys {
         let limit = ceiling.for_key(key);
 
@@ -195,8 +214,9 @@ mod tests {
     use struct_iterable::Iterable;
 
     use super::{
-        CompCeiling, assert_comp_eq_percent, assert_compositions_consistent, assert_f64_fields_eq_zero,
-        assert_f64_fields_ne_zero, compare_compositions, relative_diff_percent, solids_fraction_diff_pp,
+        KeyCeiling, assert_comp_eq_percent, assert_compositions_consistent, assert_f64_fields_eq_zero,
+        assert_f64_fields_ne_zero, compare_compositions, relative_diff_percent, root_mean_square,
+        solids_fraction_diff_pp,
     };
     use crate::composition::{CompKey, Composition, Solids, SolidsBreakdown};
     use crate::tests::asserts::{assert_eq_flt_test, assert_true};
@@ -244,6 +264,35 @@ mod tests {
         assert_eq_flt_test!(relative_diff_percent(5.0, 0.0), 100.0);
     }
 
+    // --- root_mean_square ---
+
+    #[test]
+    fn root_mean_square_of_empty_is_zero() {
+        assert_eq_flt_test!(root_mean_square(&[]), 0.0);
+    }
+
+    #[test]
+    fn root_mean_square_of_single_value_is_its_magnitude() {
+        assert_eq_flt_test!(root_mean_square(&[7.0]), 7.0);
+        assert_eq_flt_test!(root_mean_square(&[-7.0]), 7.0);
+    }
+
+    #[test]
+    fn root_mean_square_of_equal_values_is_that_value() {
+        assert_eq_flt_test!(root_mean_square(&[5.0, 5.0, 5.0]), 5.0);
+    }
+
+    #[test]
+    fn root_mean_square_combines_squares() {
+        // sqrt((3² + 4²) / 2) = sqrt(12.5)
+        assert_eq_flt_test!(root_mean_square(&[3.0, 4.0]), 12.5_f64.sqrt());
+    }
+
+    #[test]
+    fn root_mean_square_ignores_sign() {
+        assert_eq_flt_test!(root_mean_square(&[-3.0, 4.0]), root_mean_square(&[3.0, 4.0]));
+    }
+
     // --- solids_fraction_diff_pp ---
 
     #[test]
@@ -282,16 +331,16 @@ mod tests {
         assert_eq_flt_test!(solids_fraction_diff_pp(0.0, 0.0, 0.0, 0.0), 0.0);
     }
 
-    // --- CompCeiling ---
+    // --- KeyCeiling ---
 
     #[test]
-    fn comp_ceiling_returns_default_for_unoverridden_key() {
-        assert_eq_flt_test!(CompCeiling::new(25.0).for_key(CompKey::Energy), 25.0);
+    fn key_ceiling_returns_default_for_unoverridden_key() {
+        assert_eq_flt_test!(KeyCeiling::new(25.0).for_key(CompKey::Energy), 25.0);
     }
 
     #[test]
-    fn comp_ceiling_override_applies_only_to_its_key() {
-        let ceiling = CompCeiling::new(25.0).with(CompKey::MilkProteins, 60.0);
+    fn key_ceiling_override_applies_only_to_its_key() {
+        let ceiling = KeyCeiling::new(25.0).with(CompKey::MilkProteins, 60.0);
         assert_eq_flt_test!(ceiling.for_key(CompKey::MilkProteins), 60.0);
         assert_eq_flt_test!(ceiling.for_key(CompKey::Energy), 25.0);
     }
@@ -345,13 +394,13 @@ mod tests {
     fn assert_compositions_consistent_passes_within_ceiling() {
         // 10pp vs 12pp TotalSolids → 2 pp diff, well within the 25 pp ceiling.
         let sources = [("A", comp_ts(10.0)), ("B", comp_ts(12.0))];
-        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &CompCeiling::new(25.0));
+        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &KeyCeiling::new(25.0));
     }
 
     #[test]
     fn assert_compositions_consistent_passes_for_three_sources() {
         let sources = [("A", comp_ts(10.0)), ("B", comp_ts(12.0)), ("C", comp_ts(8.0))];
-        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &CompCeiling::new(25.0));
+        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &KeyCeiling::new(25.0));
     }
 
     #[test]
@@ -359,7 +408,7 @@ mod tests {
     fn assert_compositions_consistent_panics_above_ceiling() {
         // 10 vs 40 → 30 pp diff, exceeds the 25 pp ceiling.
         let sources = [("A", comp_ts(10.0)), ("B", comp_ts(40.0))];
-        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &CompCeiling::new(25.0));
+        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &KeyCeiling::new(25.0));
     }
 
     #[test]
@@ -368,14 +417,14 @@ mod tests {
         // A-B (12.5 pp) and B-C (20 pp) are within the 25 pp ceiling; only the non-adjacent A-C
         // pair (32.5 pp) exceeds it, so it must still be compared.
         let sources = [("A", comp_ts(10.0)), ("B", comp_ts(22.5)), ("C", comp_ts(42.5))];
-        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &CompCeiling::new(25.0));
+        assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &KeyCeiling::new(25.0));
     }
 
     #[test]
     fn assert_compositions_consistent_honors_per_key_override() {
         // 50 pp difference would fail the 25 pp default, but the per-key override permits it.
         let sources = [("A", comp_ts(10.0)), ("B", comp_ts(60.0))];
-        let ceiling = CompCeiling::new(25.0).with(CompKey::TotalSolids, 60.0);
+        let ceiling = KeyCeiling::new(25.0).with(CompKey::TotalSolids, 60.0);
         assert_compositions_consistent(&sources, &[CompKey::TotalSolids], &ceiling);
     }
 

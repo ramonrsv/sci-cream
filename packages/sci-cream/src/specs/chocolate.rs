@@ -185,7 +185,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
-    use crate::tests::util::{CompCeiling, assert_compositions_consistent, compare_compositions};
+    use crate::tests::util::{KeyCeiling, assert_compositions_consistent, compare_compositions};
 
     use super::*;
     use crate::{
@@ -798,7 +798,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        let ceiling = CompCeiling::new(1.0);
+        let ceiling = KeyCeiling::new(1.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -812,7 +812,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        let ceiling = CompCeiling::new(4.0).with(CompKey::Energy, 24.0);
+        let ceiling = KeyCeiling::new(4.0).with(CompKey::Energy, 24.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -826,7 +826,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        let ceiling = CompCeiling::new(4.0)
+        let ceiling = KeyCeiling::new(4.0)
             .with(CompKey::TotalCarbohydrates, 5.0)
             .with(CompKey::Energy, 24.0);
 
@@ -842,7 +842,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        let ceiling = CompCeiling::new(4.0).with(CompKey::Energy, 21.0);
+        let ceiling = KeyCeiling::new(4.0).with(CompKey::Energy, 21.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
@@ -856,7 +856,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        let ceiling = CompCeiling::new(1.0).with(CompKey::Energy, 3.0);
+        let ceiling = KeyCeiling::new(1.0).with(CompKey::Energy, 3.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));

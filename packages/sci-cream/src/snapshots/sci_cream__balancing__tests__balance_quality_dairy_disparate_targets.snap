@@ -1,0 +1,39 @@
+---
+source: packages/sci-cream/src/balancing.rs
+expression: "report_balance_quality(&comps_from_names(DAIRY_ING), &DAIRY_DISPARATE_TARGETS,\nBOTH_SOLVERS, Some(DAIRY_ING))"
+---
+targets:
+  Energy         200.00
+  MilkFat         12.00
+  MSNF             8.00
+  POD              0.50
+
+[nalgebra]
+  [           ingredient           | qty ]
+  3.25% Milk                        56.10
+  40% Cream                         40.51
+  Skimmed Milk Powder                3.39
+
+  [    key     | target | achieved |  error  ]
+  Energy         200.00    199.33      0.33 pp
+  MilkFat         12.00     18.03     50.22 pp
+  MSNF             8.00     10.36     29.52 pp
+  POD              0.50      0.90     80.71 pp
+
+  [    sum     |  neg. |    max    |    rms  ]
+     1.0000        0      80.71 pp    49.77 pp
+
+[nnls]
+  [           ingredient           | qty ]
+  3.25% Milk                        56.10
+  40% Cream                         40.51
+  Skimmed Milk Powder                3.39
+
+  [    key     | target | achieved |  error  ]
+  Energy         200.00    199.33      0.33 pp
+  MilkFat         12.00     18.03     50.22 pp
+  MSNF             8.00     10.36     29.52 pp
+  POD              0.50      0.90     80.71 pp
+
+  [    sum     |  neg. |    max    |    rms  ]
+     1.0000        0      80.71 pp    49.77 pp

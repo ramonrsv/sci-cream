@@ -1,11 +1,11 @@
 use criterion::{BatchSize, Criterion, criterion_group};
 
-use sci_cream::balancing::{IMPORTANT_TARGET_KEYS, balance_compositions_nalgebra, balance_compositions_nnls};
+use sci_cream::balancing::{balance_compositions_nalgebra, balance_compositions_nnls, get_balanceable_comp_keys};
 
 use crate::assets::REF_RECIPE;
 
 pub(crate) fn bench_balance_main_recipe_compositions(c: &mut Criterion) {
-    let recipe_properties = REF_RECIPE.calculate_mix_properties().unwrap();
+    let mix_comp = REF_RECIPE.calculate_composition().unwrap();
 
     let comps = REF_RECIPE
         .lines
@@ -13,9 +13,9 @@ pub(crate) fn bench_balance_main_recipe_compositions(c: &mut Criterion) {
         .map(|line| line.ingredient.composition)
         .collect::<Vec<_>>();
 
-    let targets = IMPORTANT_TARGET_KEYS
+    let targets = get_balanceable_comp_keys()
         .iter()
-        .map(|key| (*key, recipe_properties.get((*key).into())))
+        .map(|key| (*key, mix_comp.get(*key)))
         .collect::<Vec<_>>();
 
     let _ = c.bench_function("balance_compositions_nalgebra(recipe...)", |b| {

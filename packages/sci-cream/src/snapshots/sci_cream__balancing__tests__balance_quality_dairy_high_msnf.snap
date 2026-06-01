@@ -1,0 +1,36 @@
+---
+source: packages/sci-cream/src/balancing.rs
+expression: "report_balance_quality(&comps_from_names(DAIRY_ING), &DAIRY_HIGH_MSNF_TARGETS,\nBOTH_SOLVERS, Some(DAIRY_ING))"
+---
+targets:
+  MSNF            16.00
+  Lactose          5.00
+  MilkFat         10.00
+
+[nalgebra]
+  [           ingredient           | qty ]
+  3.25% Milk                        73.79
+  40% Cream                         19.00
+  Skimmed Milk Powder                7.20
+
+  [    key     | target | achieved |  error  ]
+  MSNF            16.00     14.44      9.77 pp
+  Lactose          5.00      7.87     57.36 pp
+  MilkFat         10.00     10.00      0.00 pp
+
+  [    sum     |  neg. |    max    |    rms  ]
+     1.0000        0      57.36 pp    33.59 pp
+
+[nnls]
+  [           ingredient           | qty ]
+  3.25% Milk                        73.79
+  40% Cream                         19.00
+  Skimmed Milk Powder                7.20
+
+  [    key     | target | achieved |  error  ]
+  MSNF            16.00     14.44      9.77 pp
+  Lactose          5.00      7.87     57.36 pp
+  MilkFat         10.00     10.00      0.00 pp
+
+  [    sum     |  neg. |    max    |    rms  ]
+     1.0000        0      57.36 pp    33.59 pp
