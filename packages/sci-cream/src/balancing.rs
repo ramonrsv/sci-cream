@@ -421,6 +421,10 @@ mod tests {
     /// [`CompKey::PACtotal`] per gram makes a separate PAC target easy to over-constrain.
     const BOOZY_ING: &[&str] = &["3.25% Milk", "40% Cream", "Sucrose", "Grand Marnier Cordon Rouge"];
 
+    /// A multi-sugar palette whose sugars differ in POD:PAC ratio, giving the solver enough freedom
+    /// to hit a sweetness ([`CompKey::POD`]) and a hardness ([`CompKey::PACtotal`]) target at once.
+    const SUGAR_BLEND_ING: &[&str] = &["Water", "Sucrose", "Dextrose", "Fructose"];
+
     // --- Exact balancing targets ---
 
     /// Trivial dairy targets that the dairy compositions can match exactly, used for sanity checks.
@@ -434,6 +438,19 @@ mod tests {
             (CompKey::MilkFat, 16.0),
             (CompKey::MSNF, 11.0),
             (CompKey::Stabilizers, 0.0),
+        ]
+    });
+
+    /// Feasible targets for the [`SUGAR_BLEND_ING`] palette: the composition of a real blend
+    /// (Water 68 / Sucrose 14 / Dextrose 10 / Fructose 8), so the solver can recover them exactly
+    /// while hitting a sweetness ([`CompKey::POD`]) and hardness ([`CompKey::PACtotal`]) target at
+    /// once. These targets genuinely require all three sugars — any two-sugar subset misses by
+    /// >10 pp (see [`balance_multi_sugar_needs_all_three_sugars`]).
+    static SUGAR_BLEND_TARGETS: LazyLock<Vec<(CompKey, f64)>> = LazyLock::new(|| {
+        vec![
+            (CompKey::TotalSolids, 31.2),
+            (CompKey::POD, 35.2),
+            (CompKey::PACtotal, 46.68),
         ]
     });
 
@@ -583,6 +600,41 @@ mod tests {
     }
 
     #[test]
+    fn balance_multi_sugar_pod_and_pac() {
+        assert_balance_compositions(
+            &comps_from_names(SUGAR_BLEND_ING),
+            &SUGAR_BLEND_TARGETS,
+            balance_compositions_nnls,
+            Epsilons::default(),
+            &KeyCeiling::exact(),
+        );
+    }
+
+    /// The companion to [`balance_multi_sugar_pod_and_pac`]: the same targets cannot be hit without
+    /// all three sugars. Dropping *any* one of them leaves an over-determined system whose best fit
+    /// misses by over 10 pp, confirming each of the three sugars is individually load-bearing.
+    #[test]
+    fn balance_multi_sugar_needs_all_three_sugars() {
+        // Each palette is water plus two of the three sugars (i.e. one sugar dropped).
+        let two_sugar_palettes: [&[&str]; 3] = [
+            &["Water", "Sucrose", "Dextrose"],  // no Fructose
+            &["Water", "Sucrose", "Fructose"],  // no Dextrose
+            &["Water", "Dextrose", "Fructose"], // no Sucrose
+        ];
+
+        for palette in two_sugar_palettes {
+            let balanced = balance_compositions_nnls(&comps_from_names(palette), &SUGAR_BLEND_TARGETS).unwrap();
+
+            let max_error = SUGAR_BLEND_TARGETS
+                .iter()
+                .map(|(key, target)| balance_rel_error_pp(achieved_value(&balanced, *key), *target))
+                .fold(0.0_f64, f64::max);
+
+            assert_gt!(max_error, 10.0);
+        }
+    }
+
+    #[test]
     fn balance_dairy_disparate_targets() {
         assert_balance_compositions(
             &comps_from_names(DAIRY_ING),
@@ -712,5 +764,85 @@ mod tests {
             BOTH_SOLVERS,
             Some(BOOZY_ING)
         ));
+    }
+
+    // --- Ratio keys ---
+
+    #[test]
+    fn is_ratio_key_identifies_ratio_keys() {
+        assert_true!(is_ratio_key(CompKey::AbsPAC));
+        assert_true!(is_ratio_key(CompKey::StabilizersPerWater));
+        assert_true!(is_ratio_key(CompKey::EmulsifiersPerFat));
+    }
+
+    #[test]
+    fn is_ratio_key_rejects_extensive_keys() {
+        assert_false!(is_ratio_key(CompKey::MilkFat));
+        assert_false!(is_ratio_key(CompKey::Energy));
+        assert_false!(is_ratio_key(CompKey::PACtotal));
+        assert_false!(is_ratio_key(CompKey::Water));
+    }
+
+    #[test]
+    fn get_balanceable_comp_keys_excludes_exactly_the_ratio_keys() {
+        let balanceable = get_balanceable_comp_keys();
+        let ratio_count = CompKey::iter().filter(|key| is_ratio_key(*key)).count();
+
+        assert_eq!(ratio_count, 3);
+        assert_eq!(balanceable.len(), CompKey::iter().count() - ratio_count);
+        assert_true!(balanceable.iter().all(|key| !is_ratio_key(*key)));
+    }
+
+    /// Balancing with a ratio key as a target poisons the solve: an ingredient with zero water
+    /// (Sucrose) makes [`CompKey::StabilizersPerWater`] `NaN`, which contaminates the matrix. nnls
+    /// returns finite-but-meaningless amounts, yet the *achieved* value for the key is `NaN` — so
+    /// the result is unusable. This is why [`get_balanceable_comp_keys`] excludes ratio keys.
+    #[test]
+    fn ratio_key_target_poisons_nnls_achieved_value() {
+        let comps = comps_from_names(DAIRY_SUGAR_ING); // Sucrose has zero water
+        let targets = [(CompKey::StabilizersPerWater, 0.5)];
+
+        let balanced = balance_compositions_nnls(&comps, &targets).unwrap();
+
+        assert_false!(achieved_value(&balanced, CompKey::StabilizersPerWater).is_finite());
+    }
+
+    /// The same ratio-key poisoning makes nalgebra's SVD panic outright on the `NaN` matrix (does
+    /// not return an `Err`) — an even stronger reason to keep ratio keys out of balancing targets.
+    #[test]
+    #[should_panic(expected = "Singular value was NaN")] // nalgebra-internal panic on the NaN matrix
+    fn ratio_key_target_panics_nalgebra() {
+        let comps = comps_from_names(DAIRY_SUGAR_ING);
+        let targets = [(CompKey::StabilizersPerWater, 0.5)];
+
+        let _result = balance_compositions_nalgebra(&comps, &targets);
+    }
+
+    // --- Solver behavior and edge cases ---
+
+    /// nalgebra's plain least squares can return negative amounts on an over-constrained system,
+    /// whereas nnls clamps them to be non-negative — the documented difference between the two.
+    #[test]
+    fn nalgebra_allows_negative_amounts_while_nnls_does_not() {
+        let comps = comps_from_names(BOOZY_ING);
+
+        let nalgebra = balance_compositions_nalgebra(&comps, &BOOZY_DISPARATE_TARGETS).unwrap();
+        let nnls = balance_compositions_nnls(&comps, &BOOZY_DISPARATE_TARGETS).unwrap();
+
+        assert_true!(nalgebra.iter().any(|(_, amount)| *amount < 0.0));
+        assert_true!(nnls.iter().all(|(_, amount)| *amount >= -TESTS_EPSILON),);
+    }
+
+    /// An under-determined system (more ingredients than targets) has many exact solutions; both
+    /// solvers should still return a combination that sums to 1 and hits the single target.
+    #[test]
+    fn balance_underdetermined_system_hits_target() {
+        let comps = comps_from_names(DAIRY_ING); // 3 comps
+        let targets = [(CompKey::MilkFat, 10.0)]; // 1 target
+
+        let solvers: [SolverFn; 2] = [balance_compositions_nalgebra, balance_compositions_nnls];
+        for solve in solvers {
+            assert_balance_compositions(&comps, &targets, solve, Epsilons::default(), &KeyCeiling::exact());
+        }
     }
 }
