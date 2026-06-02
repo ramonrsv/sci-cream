@@ -82,6 +82,12 @@
 - [ ] When per-key target priority lands, make balancing-issue severity priority-aware by carrying
       the priority on the issue and deriving `severity()` from it (not a stored tag); also split
       advisory severity from the hard solve-gate so a strict-but-unreachable target flags an error.
+- [ ] Add subset-sum dominance to balancing validation: flag when multiple "part" targets together
+      exceed a "whole" that bounds their sum (e.g. `Sucrose 10 + Fructose 10` vs `TotalSugars 15`).
+- [ ] Reject degenerate inputs in `validate_balancing_targets` / `balance_compositions`: empty
+      palette or empty targets makes the solve meaningless; flag as an error before solving.
+- [ ] Reject negative targets in balancing: every balanceable `CompKey` is non-negative, so a
+      target `< 0` is unreachable; flag it with an explicit error, not `UnreachableTarget`.
 
 ## Completed
 
