@@ -10,32 +10,32 @@ targets:
 
 [nalgebra]
   [           ingredient           | qty ]
-  3.25% Milk                        71.98
-  40% Cream                         15.83
-  Skimmed Milk Powder                2.82
-  Sucrose                            9.37
+  3.25% Milk                        60.33
+  40% Cream                         25.46
+  Skimmed Milk Powder                4.21
+  Sucrose                            9.99
 
   [    key     | target | achieved |  error  ]
-  Energy         150.00    150.81      0.54 pp
-  MilkFat         16.00      8.67     45.81 pp
-  MSNF            11.00      9.86     10.36 pp
-  TotalSugars     18.00     14.74     18.10 pp
+  Energy         150.00    187.64     25.09 pp
+  MilkFat         16.00     12.15     24.09 pp
+  MSNF            11.00     10.72      2.58 pp
+  TotalSugars     18.00     15.83     12.05 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     1.0000        0      45.81 pp    25.17 pp
+     1.0000        0      25.09 pp    18.45 pp
 
 [nnls]
   [           ingredient           | qty ]
-  3.25% Milk                        71.98
-  40% Cream                         15.83
-  Skimmed Milk Powder                2.82
-  Sucrose                            9.37
+  3.25% Milk                        60.33
+  40% Cream                         25.46
+  Skimmed Milk Powder                4.21
+  Sucrose                            9.99
 
   [    key     | target | achieved |  error  ]
-  Energy         150.00    150.81      0.54 pp
-  MilkFat         16.00      8.67     45.81 pp
-  MSNF            11.00      9.86     10.36 pp
-  TotalSugars     18.00     14.74     18.10 pp
+  Energy         150.00    187.64     25.09 pp
+  MilkFat         16.00     12.15     24.09 pp
+  MSNF            11.00     10.72      2.58 pp
+  TotalSugars     18.00     15.83     12.05 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     1.0000        0      45.81 pp    25.17 pp
+     1.0000        0      25.09 pp    18.45 pp

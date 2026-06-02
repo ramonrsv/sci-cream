@@ -11,34 +11,34 @@ targets:
 
 [nalgebra]
   [           ingredient           | qty ]
-  Water                             71.41
-  Sucrose                           10.82
-  Dextrose                          12.92
-  Underbelly Sorbet Stabilizer...    4.85
+  Water                             77.70
+  Sucrose                            3.62
+  Dextrose                          18.27
+  Underbelly Sorbet Stabilizer...    0.40
 
   [    key     | target | achieved |  error  ]
-  TotalSolids     32.00     27.55     13.89 pp
-  TotalSugars     26.00     22.71     12.66 pp
-  PACtotal        32.00     33.41      4.40 pp
-  POD             14.00     20.33     45.22 pp
-  Stabilizers      0.40      4.85   1111.47 pp
+  TotalSolids     32.00     20.83     34.89 pp
+  TotalSugars     26.00     20.43     21.42 pp
+  PACtotal        32.00     35.56     11.14 pp
+  POD             14.00     17.07     21.93 pp
+  Stabilizers      0.40      0.40      0.44 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     1.0000        0    1111.47 pp   497.55 pp
+     1.0000        0      34.89 pp    21.36 pp
 
 [nnls]
   [           ingredient           | qty ]
-  Water                             71.41
-  Sucrose                           10.82
-  Dextrose                          12.92
-  Underbelly Sorbet Stabilizer...    4.85
+  Water                             77.70
+  Sucrose                            3.62
+  Dextrose                          18.27
+  Underbelly Sorbet Stabilizer...    0.40
 
   [    key     | target | achieved |  error  ]
-  TotalSolids     32.00     27.55     13.89 pp
-  TotalSugars     26.00     22.71     12.66 pp
-  PACtotal        32.00     33.41      4.40 pp
-  POD             14.00     20.33     45.22 pp
-  Stabilizers      0.40      4.85   1111.47 pp
+  TotalSolids     32.00     20.83     34.89 pp
+  TotalSugars     26.00     20.43     21.42 pp
+  PACtotal        32.00     35.56     11.14 pp
+  POD             14.00     17.07     21.93 pp
+  Stabilizers      0.40      0.40      0.44 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     1.0000        0    1111.47 pp   497.55 pp
+     1.0000        0      34.89 pp    21.36 pp

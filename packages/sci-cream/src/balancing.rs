@@ -24,15 +24,29 @@ use crate::{
     error::{Error, Result},
 };
 
-/// Balances the given compositions to match target values for the specified keys, using nalgebra
+/// How target rows are weighted when assembling the least-squares system.
 ///
-/// This function solves the least squares problem to find the optimal combination of the given
-/// compositions that matches the target values for the specified keys. It returns a vector of
-/// compositions and their corresponding amounts in the balanced combination, normalized to sum 1.
+/// Plain least squares minimizes *absolute* squared error, so a residual of `0.1` counts the same
+/// against a target of `1` (a 10% miss) as against a target of `100` (a 0.1% miss). In balancing we
+/// care about *relative* error, so small targets (salt, stabilizer) are not swamped by large ones
+/// (energy, water). [`Weighting::Relative`] expresses that as a weighted least-squares problem.
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum Weighting {
+    /// Every target row has weight 1 — the textbook absolute-error objective.
+    Absolute,
+    /// Each target row is scaled by `1 / max(|target|, RELATIVE_WEIGHT_FLOOR)`, so the solver
+    /// minimizes relative rather than absolute error, preventing various numerical issues.
+    Relative,
+}
+
+/// Balances the given compositions to match target values for the specified keys, using nalgebra.
 ///
-/// **Note**: This function does not enforce non-negativity constraints on the amounts, so it may
-/// return negative values. If non-negativity is required, consider using
-/// [`balance_compositions_nnls`] instead.
+/// Solves the (weighted) least squares problem for the combination of `comps` that best matches
+/// `targets`, returning each composition with its amount, normalized to sum 1. `weighting` selects
+/// the weighting; `None` defaults to [`Weighting::Relative`] (relative error).
+///
+/// **Note**: This does not enforce non-negativity, so amounts may be negative. Use
+/// [`balance_compositions_nnls`] if non-negativity is required.
 ///
 /// # Errors
 ///
@@ -41,9 +55,13 @@ use crate::{
 pub fn balance_compositions_nalgebra(
     comps: &[Composition],
     targets: &[(CompKey, f64)],
+    weighting: Option<Weighting>,
 ) -> Result<Vec<(Composition, f64)>> {
-    let flat_a = make_matrix_a(comps, targets);
-    let flat_y = make_vector_y(targets);
+    let targets = constrainable_targets(comps, targets);
+    let weights = row_weights(&targets, weighting.unwrap_or(Weighting::Relative));
+
+    let flat_a = make_matrix_a(comps, &targets, &weights);
+    let flat_y = make_vector_y(&targets, &weights);
 
     let a = DMatrix::from_row_slice(targets.len() + 1, comps.len(), &flat_a);
     let y = DVector::from_vec(flat_y);
@@ -57,56 +75,116 @@ pub fn balance_compositions_nalgebra(
     Ok(x.iter().enumerate().map(|(i, amount)| (comps[i], *amount)).collect())
 }
 
-/// Balances the given compositions to match target values for the specified keys, using nnls
+/// Balances the given compositions to match target values for the specified keys, using nnls.
 ///
-/// This function solves the non-negative least squares problem to find the optimal combination of
-/// the given compositions that matches the target values for the specified keys. It returns a
-/// vector of compositions and their corresponding amounts, normalized to sum 1.
+/// Solves the non-negative (weighted) least squares problem for the combination of `comps` that
+/// best matches `targets`, returning each composition with its amount, normalized to sum 1.
+/// `weighting` selects the weighting; `None` defaults to [`Weighting::Relative`] (relative error).
 ///
 /// # Errors
 ///
 /// Returns an error if the non-negative least squares problem cannot be solved, e.g. due to
 /// incompatible compositions and targets, numerical issues, etc.
-pub fn balance_compositions_nnls(comps: &[Composition], targets: &[(CompKey, f64)]) -> Result<Vec<(Composition, f64)>> {
-    let a = Array2::from_shape_vec((targets.len() + 1, comps.len()), make_matrix_a(comps, targets))
+pub fn balance_compositions_nnls(
+    comps: &[Composition],
+    targets: &[(CompKey, f64)],
+    weighting: Option<Weighting>,
+) -> Result<Vec<(Composition, f64)>> {
+    let targets = constrainable_targets(comps, targets);
+    let weights = row_weights(&targets, weighting.unwrap_or(Weighting::Relative));
+
+    let a = Array2::from_shape_vec((targets.len() + 1, comps.len()), make_matrix_a(comps, &targets, &weights))
         .map_err(|e| Error::FailedToBalanceCompositions(e.to_string()))?;
 
-    let y = Array1::from_vec(make_vector_y(targets));
+    let y = Array1::from_vec(make_vector_y(&targets, &weights));
 
     let (x, _residual) = nnls(a.view(), y.view());
 
     Ok(x.iter().enumerate().map(|(i, amount)| (comps[i], *amount)).collect())
 }
 
-/// Helper function to construct the matrix A for the least squares problem
+/// Drops targets that no ingredient can affect — those whose column is exactly zero across `comps`.
 ///
-/// Each row corresponds to a target key in `targets`, the last row corresponds to the total sum
-/// constraint, and each column corresponds to a composition in `comps`.
+/// Such a row is `0*x = target`; all zero rows can cause issues for solvers. Since they only add a
+/// constant to the least-squares objective, they don't change the optimum and we can safely drop
+/// them without affecting the result.
+///
+/// A non-zero — including `NaN`, as a ratio key yields on a zero denominator — value keeps the
+/// target, so the ratio-key poisoning [`get_balanceable_comp_keys`] guards against stays intact.
+#[allow(clippy::float_cmp)] // exact structural zero (no ingredient contributes the key) is intended
+fn constrainable_targets(comps: &[Composition], targets: &[(CompKey, f64)]) -> Vec<(CompKey, f64)> {
+    targets
+        .iter()
+        .copied()
+        .filter(|(key, _)| comps.iter().any(|comp| comp.get(*key) != 0.0))
+        .collect()
+}
+
+/// Floor applied to a target's magnitude before inverting it for [`Weighting::Relative`], so a zero
+/// or near-zero target (e.g. a recipe with no cocoa or stabilizer) yields a large-but-finite weight
+/// instead of dividing by zero.
+const RELATIVE_WEIGHT_FLOOR: f64 = 0.1;
+
+/// Fixed weight on the total-sum (mass-balance) row under [`Weighting::Relative`].
+///
+/// Relative weighting scales every target row to roughly unit magnitude (each is divided by its own
+/// target), so a single fixed weight well above 1 uniformly dominates them and keeps the balanced
+/// amounts summing to 1 — independent of the target magnitudes.
+const SUM_CONSTRAINT_WEIGHT: f64 = 1.0e3;
+
+/// Per-row weights for the least-squares system: one per target row, then the total-sum row.
+///
+/// Under [`Weighting::Absolute`] every weight is 1. Under [`Weighting::Relative`] each target row
+/// is weighted by `1 / max(|target|, RELATIVE_WEIGHT_FLOOR)`, and the trailing sum row by the fixed
+/// [`SUM_CONSTRAINT_WEIGHT`] so mass balance stays dominant.
+fn row_weights(targets: &[(CompKey, f64)], weighting: Weighting) -> Vec<f64> {
+    match weighting {
+        Weighting::Absolute => vec![1.0; targets.len() + 1],
+        Weighting::Relative => {
+            let mut weights: Vec<f64> = targets
+                .iter()
+                .map(|(_, target)| 1.0 / target.abs().max(RELATIVE_WEIGHT_FLOOR))
+                .collect();
+
+            weights.push(SUM_CONSTRAINT_WEIGHT);
+
+            weights
+        }
+    }
+}
+
+/// Helper function to construct the (row-weighted) matrix A for the least squares problem.
+///
+/// Each row corresponds to a target key in `targets`, the last row to the total sum constraint, and
+/// each column to a composition in `comps`. Every row `i` is scaled by `weights[i]` (see
+/// [`row_weights`]).
 ///
 /// [3.25, 40,    0]
 /// [8.71,  5.4, 97]
 /// [1,     1,    1]
-fn make_matrix_a(comps: &[Composition], targets: &[(CompKey, f64)]) -> Vec<f64> {
+fn make_matrix_a(comps: &[Composition], targets: &[(CompKey, f64)], weights: &[f64]) -> Vec<f64> {
     targets
         .iter()
-        .flat_map(|t| comps.iter().map(|comp| comp.get(t.0)))
-        .chain(std::iter::repeat_n(1.0, comps.len()))
+        .zip(weights)
+        .flat_map(|(&(key, _), &weight)| comps.iter().map(move |comp| comp.get(key) * weight))
+        .chain(std::iter::repeat_n(weights[targets.len()], comps.len()))
         .collect::<Vec<_>>()
 }
 
-/// Helper function to construct the matrix Y for the least squares problem
+/// Helper function to construct the (row-weighted) vector Y for the least squares problem.
 ///
-/// Each element corresponds to a target value for the specified keys in `targets`, and the last
-/// element corresponds to the total sum constraint.
+/// Each element corresponds to a target value in `targets`, and the last element to the total sum
+/// constraint (1). Every element `i` is scaled by `weights[i]` (see [`row_weights`]).
 ///
 /// \[16\]  // Milk Fat
 /// \[11\]  // MSNF
 ///  \[1\]  // Total sums to 100%
-fn make_vector_y(targets: &[(CompKey, f64)]) -> Vec<f64> {
+fn make_vector_y(targets: &[(CompKey, f64)], weights: &[f64]) -> Vec<f64> {
     targets
         .iter()
-        .map(|(_, amount)| *amount)
-        .chain(std::iter::once(1.0))
+        .zip(weights)
+        .map(|(&(_, target), &weight)| target * weight)
+        .chain(std::iter::once(weights[targets.len()]))
         .collect::<Vec<_>>()
 }
 
@@ -151,7 +229,7 @@ mod tests {
     };
 
     /// A balancing function pointer (e.g. [`balance_compositions_nalgebra`]).
-    type SolverFn = fn(&[Composition], &[(CompKey, f64)]) -> Result<Vec<(Composition, f64)>>;
+    type SolverFn = fn(&[Composition], &[(CompKey, f64)], Option<Weighting>) -> Result<Vec<(Composition, f64)>>;
 
     /// A labelled balancing function, so several solvers can be run side-by-side in one report.
     type LabeledSolver = (&'static str, SolverFn);
@@ -228,6 +306,15 @@ mod tests {
         (achieved - target).abs() / target.abs().max(BALANCE_REL_FLOOR) * 100.0
     }
 
+    /// The largest [`balance_rel_error_pp`] across all `targets` — the worst-case relative miss, a
+    /// single summary of how well a balanced result hits its targets.
+    fn max_rel_error(balanced: &[(Composition, f64)], targets: &[(CompKey, f64)]) -> f64 {
+        targets
+            .iter()
+            .map(|(key, target)| balance_rel_error_pp(achieved_value(balanced, *key), *target))
+            .fold(0.0_f64, f64::max)
+    }
+
     /// Epsilon values for different types of assertions in the balance composition tests
     ///
     /// If specified as [`None`], then tests will not check that condition at all, e.g. if `amount`
@@ -274,9 +361,9 @@ mod tests {
         epsilons: Epsilons,
         ceiling: &KeyCeiling,
     ) where
-        F: Fn(&[Composition], &[(CompKey, f64)]) -> Result<Vec<(Composition, f64)>>,
+        F: Fn(&[Composition], &[(CompKey, f64)], Option<Weighting>) -> Result<Vec<(Composition, f64)>>,
     {
-        let balanced = solve(comps, targets).unwrap();
+        let balanced = solve(comps, targets, None).unwrap();
         assert_eq!(balanced.len(), comps.len());
 
         let amount_sum: f64 = balanced.iter().map(|(_, amount)| *amount).sum();
@@ -343,7 +430,7 @@ mod tests {
         for (label, solve) in solvers {
             lines.push(String::new());
 
-            let balanced = match solve(comps, targets) {
+            let balanced = match solve(comps, targets, None) {
                 Ok(balanced) => balanced,
                 Err(error) => {
                     lines.push(format!("[{label}] FAILED: {error}"));
@@ -623,13 +710,8 @@ mod tests {
         ];
 
         for palette in two_sugar_palettes {
-            let balanced = balance_compositions_nnls(&comps_from_names(palette), &SUGAR_BLEND_TARGETS).unwrap();
-
-            let max_error = SUGAR_BLEND_TARGETS
-                .iter()
-                .map(|(key, target)| balance_rel_error_pp(achieved_value(&balanced, *key), *target))
-                .fold(0.0_f64, f64::max);
-
+            let balanced = balance_compositions_nnls(&comps_from_names(palette), &SUGAR_BLEND_TARGETS, None).unwrap();
+            let max_error = max_rel_error(&balanced, &SUGAR_BLEND_TARGETS);
             assert_gt!(max_error, 10.0);
         }
     }
@@ -678,8 +760,6 @@ mod tests {
         );
     }
 
-    // Good example of extreme magnitude skew, blowing up the stabilizers to >100% to
-    // satisfy other targets that are larger in absolute terms, e.g. `TotalSolids`.
     #[test]
     fn balance_sorbet_sweetness_vs_hardness() {
         assert_balance_compositions(
@@ -687,13 +767,23 @@ mod tests {
             &SORBET_DISPARATE_TARGETS,
             balance_compositions_nnls,
             Epsilons::default(),
-            &KeyCeiling::new(1200.0),
+            &KeyCeiling::new(35.0),
         );
     }
 
-    // Completely breaks down the balancer, not respecting the total quantity constraint
+    // Good example of extreme magnitude skew under absolute weighting, blowing up the stabilizers
+    // to >100% to satisfy other targets that are larger in absolute terms, e.g. `TotalSolids`.
     #[test]
-    #[should_panic(expected = "amount_sum")] // @todo Remove once the balancer is improved
+    fn balance_sorbet_sweetness_vs_hardness_absolute_weighting() {
+        let comps = comps_from_names(SORBET_ING);
+        let targets = SORBET_DISPARATE_TARGETS.clone();
+        let weighting = Weighting::Absolute;
+
+        let balanced = balance_compositions_nnls(&comps, &targets, Some(weighting)).unwrap();
+        assert_gt!(max_rel_error(&balanced, &targets), 1100.0);
+    }
+
+    #[test]
     fn balance_boozy_abv_vs_pac() {
         assert_balance_compositions(
             &comps_from_names(BOOZY_ING),
@@ -702,6 +792,19 @@ mod tests {
             Epsilons::default(),
             &KeyCeiling::new(50.0),
         );
+    }
+
+    // Over-constrained: hitting the ABV target needs the liqueur, which also drives PACtotal, so
+    // the two can't both be met exactly. With absolute weighting the solver system breaks down and
+    // collapses the total amount (must sum to 1) to ~0.29 to meet the larger ABV and PAC targets.
+    #[test]
+    fn balance_boozy_abv_vs_pac_absolute_weighting() {
+        let comps = comps_from_names(BOOZY_ING);
+        let targets = BOOZY_DISPARATE_TARGETS.clone();
+        let weighting = Weighting::Absolute;
+
+        let balanced = balance_compositions_nnls(&comps, &targets, Some(weighting)).unwrap();
+        assert_lt!(balanced.iter().map(|(_, amount)| *amount).sum::<f64>(), 0.3);
     }
 
     // --- Balance quality reports ---
@@ -802,7 +905,7 @@ mod tests {
         let comps = comps_from_names(DAIRY_SUGAR_ING); // Sucrose has zero water
         let targets = [(CompKey::StabilizersPerWater, 0.5)];
 
-        let balanced = balance_compositions_nnls(&comps, &targets).unwrap();
+        let balanced = balance_compositions_nnls(&comps, &targets, None).unwrap();
 
         assert_false!(achieved_value(&balanced, CompKey::StabilizersPerWater).is_finite());
     }
@@ -815,7 +918,7 @@ mod tests {
         let comps = comps_from_names(DAIRY_SUGAR_ING);
         let targets = [(CompKey::StabilizersPerWater, 0.5)];
 
-        let _result = balance_compositions_nalgebra(&comps, &targets);
+        let _result = balance_compositions_nalgebra(&comps, &targets, None);
     }
 
     // --- Solver behavior and edge cases ---
@@ -826,8 +929,8 @@ mod tests {
     fn nalgebra_allows_negative_amounts_while_nnls_does_not() {
         let comps = comps_from_names(BOOZY_ING);
 
-        let nalgebra = balance_compositions_nalgebra(&comps, &BOOZY_DISPARATE_TARGETS).unwrap();
-        let nnls = balance_compositions_nnls(&comps, &BOOZY_DISPARATE_TARGETS).unwrap();
+        let nalgebra = balance_compositions_nalgebra(&comps, &BOOZY_DISPARATE_TARGETS, None).unwrap();
+        let nnls = balance_compositions_nnls(&comps, &BOOZY_DISPARATE_TARGETS, None).unwrap();
 
         assert_true!(nalgebra.iter().any(|(_, amount)| *amount < 0.0));
         assert_true!(nnls.iter().all(|(_, amount)| *amount >= -TESTS_EPSILON),);
@@ -844,5 +947,24 @@ mod tests {
         for solve in solvers {
             assert_balance_compositions(&comps, &targets, solve, Epsilons::default(), &KeyCeiling::exact());
         }
+    }
+
+    /// On an over-determined system, relative weighting beats absolute weighting: the worst relative
+    /// miss is smaller, because a large target (Energy) no longer crowds out small ones (POD). This
+    /// is the core improvement, and also exercises [`Weighting::Absolute`] for the comparison.
+    #[test]
+    fn relative_weighting_beats_absolute_on_disparate_targets() {
+        let comps = comps_from_names(DAIRY_ING);
+        let targets: &[(CompKey, f64)] = &DAIRY_DISPARATE_TARGETS;
+
+        let max_error_for = |weighting| {
+            let balanced = balance_compositions_nnls(&comps, targets, weighting).unwrap();
+            max_rel_error(&balanced, targets)
+        };
+
+        let absolute = max_error_for(Some(Weighting::Absolute));
+        let relative = max_error_for(None);
+
+        assert_true!(relative < absolute);
     }
 }

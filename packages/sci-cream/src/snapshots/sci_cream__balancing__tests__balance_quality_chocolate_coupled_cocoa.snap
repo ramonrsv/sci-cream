@@ -9,30 +9,30 @@ targets:
 
 [nalgebra]
   [           ingredient           | qty ]
-  3.25% Milk                        37.68
-  40% Cream                         38.07
-  Ghirardelli 100% Unsweetened...    7.15
-  Sucrose                           17.09
+  3.25% Milk                        38.02
+  40% Cream                         38.42
+  Ghirardelli 100% Unsweetened...    6.49
+  Sucrose                           17.06
 
   [    key     | target | achieved |  error  ]
-  CocoaSolids      6.00      5.96      0.64 pp
-  CocoaButter      1.00      1.19     19.26 pp
+  CocoaSolids      6.00      5.41      9.85 pp
+  CocoaButter      1.00      1.08      8.21 pp
   TotalSugars     20.00     20.00      0.00 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     1.0000        0      19.26 pp    11.12 pp
+     1.0000        0       9.85 pp     7.40 pp
 
 [nnls]
   [           ingredient           | qty ]
   3.25% Milk                         0.00
-  40% Cream                         75.05
-  Ghirardelli 100% Unsweetened...    7.15
-  Sucrose                           17.79
+  40% Cream                         75.74
+  Ghirardelli 100% Unsweetened...    6.49
+  Sucrose                           17.77
 
   [    key     | target | achieved |  error  ]
-  CocoaSolids      6.00      5.96      0.64 pp
-  CocoaButter      1.00      1.19     19.26 pp
+  CocoaSolids      6.00      5.41      9.85 pp
+  CocoaButter      1.00      1.08      8.21 pp
   TotalSugars     20.00     20.00      0.00 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     1.0000        0      19.26 pp    11.12 pp
+     1.0000        0       9.85 pp     7.40 pp

@@ -9,28 +9,28 @@ targets:
 
 [nalgebra]
   [           ingredient           | qty ]
-  3.25% Milk                        73.79
-  40% Cream                         19.00
-  Skimmed Milk Powder                7.20
+  3.25% Milk                        78.21
+  40% Cream                         18.65
+  Skimmed Milk Powder                3.14
 
   [    key     | target | achieved |  error  ]
-  MSNF            16.00     14.44      9.77 pp
-  Lactose          5.00      7.87     57.36 pp
+  MSNF            16.00     10.86     32.11 pp
+  Lactose          5.00      5.92     18.41 pp
   MilkFat         10.00     10.00      0.00 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     1.0000        0      57.36 pp    33.59 pp
+     1.0000        0      32.11 pp    21.37 pp
 
 [nnls]
   [           ingredient           | qty ]
-  3.25% Milk                        73.79
-  40% Cream                         19.00
-  Skimmed Milk Powder                7.20
+  3.25% Milk                        78.21
+  40% Cream                         18.65
+  Skimmed Milk Powder                3.14
 
   [    key     | target | achieved |  error  ]
-  MSNF            16.00     14.44      9.77 pp
-  Lactose          5.00      7.87     57.36 pp
+  MSNF            16.00     10.86     32.11 pp
+  Lactose          5.00      5.92     18.41 pp
   MilkFat         10.00     10.00      0.00 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     1.0000        0      57.36 pp    33.59 pp
+     1.0000        0      32.11 pp    21.37 pp

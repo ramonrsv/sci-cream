@@ -10,30 +10,30 @@ targets:
 
 [nalgebra]
   [           ingredient           | qty ]
-  3.25% Milk                        56.10
-  40% Cream                         40.51
-  Skimmed Milk Powder                3.39
+  3.25% Milk                        72.96
+  40% Cream                         28.36
+  Skimmed Milk Powder               -1.32
 
   [    key     | target | achieved |  error  ]
-  Energy         200.00    199.33      0.33 pp
-  MilkFat         12.00     18.03     50.22 pp
-  MSNF             8.00     10.36     29.52 pp
-  POD              0.50      0.90     80.71 pp
+  Energy         200.00    147.08     26.46 pp
+  MilkFat         12.00     13.71     14.29 pp
+  MSNF             8.00      6.61     17.43 pp
+  POD              0.50      0.58     15.21 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     1.0000        0      80.71 pp    49.77 pp
+     1.0000        1      26.46 pp    18.97 pp
 
 [nnls]
   [           ingredient           | qty ]
-  3.25% Milk                        56.10
-  40% Cream                         40.51
-  Skimmed Milk Powder                3.39
+  3.25% Milk                        70.37
+  40% Cream                         29.63
+  Skimmed Milk Powder                0.00
 
   [    key     | target | achieved |  error  ]
-  Energy         200.00    199.33      0.33 pp
-  MilkFat         12.00     18.03     50.22 pp
-  MSNF             8.00     10.36     29.52 pp
-  POD              0.50      0.90     80.71 pp
+  Energy         200.00    154.92     22.54 pp
+  MilkFat         12.00     14.14     17.83 pp
+  MSNF             8.00      7.73      3.41 pp
+  POD              0.50      0.67     34.77 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     1.0000        0      80.71 pp    49.77 pp
+     1.0000        0      34.77 pp    22.62 pp

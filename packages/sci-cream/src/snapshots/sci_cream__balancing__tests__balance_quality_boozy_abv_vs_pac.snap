@@ -25,14 +25,14 @@ targets:
 [nnls]
   [           ingredient           | qty ]
   3.25% Milk                         0.00
-  40% Cream                          8.30
-  Sucrose                           15.38
-  Grand Marnier Cordon Rouge         4.92
+  40% Cream                         81.57
+  Sucrose                           10.46
+  Grand Marnier Cordon Rouge         7.97
 
   [    key     | target | achieved |  error  ]
-  TotalSugars     17.00     16.66      2.01 pp
-  PACtotal        28.00     28.35      1.25 pp
-  ABV              4.00      1.97     50.84 pp
+  TotalSugars     17.00     14.53     14.52 pp
+  PACtotal        28.00     34.84     24.42 pp
+  ABV              4.00      3.19     20.31 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     0.2859        0      50.84 pp    29.39 pp
+     1.0000        0      24.42 pp    20.16 pp

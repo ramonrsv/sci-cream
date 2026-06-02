@@ -191,6 +191,7 @@ impl Recipe {
                 .collect::<Vec<_>>()
                 .as_slice(),
             targets,
+            None,
         )?;
 
         Ok(Self {
