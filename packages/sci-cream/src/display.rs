@@ -118,7 +118,7 @@ impl KeyAsStrings for PropKey {
 
 impl fmt::Display for BalancingIssue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match *self {
+        match self {
             Self::RatioKeyTarget { key } => {
                 write!(f, "'{}' is a ratio key and cannot be used as a balancing target", key.as_med_str())
             }
@@ -148,6 +148,25 @@ impl fmt::Display for BalancingIssue {
                 lesser = lesser.as_med_str(),
                 greater = greater.as_med_str(),
             ),
+            Self::AdditiveDominanceViolation {
+                whole,
+                parts,
+                parts_target_sum,
+                whole_target,
+            } => {
+                let parts = parts
+                    .iter()
+                    .map(|key| format!("'{}'", key.as_med_str()))
+                    .collect::<Vec<_>>()
+                    .join(" + ");
+                write!(
+                    f,
+                    "targets {parts} sum to {parts_target_sum:.2}, exceeding the target for '{whole}' \
+                     ({whole_target:.2}), but no non-negative ingredient mix can satisfy them all — every \
+                     ingredient's parts sum to ≤ its '{whole}'",
+                    whole = whole.as_med_str(),
+                )
+            }
         }
     }
 }
@@ -312,7 +331,7 @@ mod tests {
     }
 
     #[test]
-    fn balancing_issue_display_messages() {
+    fn balancing_issue_display_message_dominance_violation() {
         let dominance = BalancingIssue::DominanceViolation {
             lesser: CompKey::Sucrose,
             greater: CompKey::TotalSugars,
@@ -322,7 +341,23 @@ mod tests {
         let text = dominance.to_string();
         assert_true!(text.contains("Sucrose"));
         assert_true!(text.contains("T. Sugars"));
+    }
 
+    #[test]
+    fn balancing_issue_display_message_additive_dominance_violation() {
+        let additive = BalancingIssue::AdditiveDominanceViolation {
+            whole: CompKey::TotalSugars,
+            parts: vec![CompKey::Sucrose, CompKey::Fructose],
+            parts_target_sum: 20.0,
+            whole_target: 15.0,
+        };
+        let text = additive.to_string();
+        assert_true!(text.contains("'Sucrose' + 'Fructose'"));
+        assert_true!(text.contains("T. Sugars"));
+    }
+
+    #[test]
+    fn balancing_issue_display_message_ratio_key_target() {
         assert_true!(
             BalancingIssue::RatioKeyTarget { key: CompKey::AbsPAC }
                 .to_string()

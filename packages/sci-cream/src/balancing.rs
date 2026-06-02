@@ -90,7 +90,7 @@ pub enum Severity {
 }
 
 /// A single problem detected in a set of balancing inputs by [`validate_balancing_targets`].
-#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+#[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum BalancingIssue {
     /// A ratio key (e.g. [`CompKey::AbsPAC`]) was given as a target. Ratio keys cannot be balanced
     /// and poison the solve (see [`is_ratio_key`]).
@@ -153,6 +153,23 @@ pub enum BalancingIssue {
         /// The target requested for `greater`.
         greater_target: f64,
     },
+    /// Several targets are infeasible together: their compositions sum to no more than a
+    /// "whole" key's composition in every ingredient, yet their targets sum above the whole's
+    /// target, so no non-negative combination can satisfy them all. The additive (subset-sum)
+    /// generalization of [`DominanceViolation`](Self::DominanceViolation) — which is the
+    /// single-part case. Palette-derived, with no hardcoded key relationships.
+    ///
+    /// Severity: [`Severity::Warning`].
+    AdditiveDominanceViolation {
+        /// The "whole" key whose target the parts collectively exceed.
+        whole: CompKey,
+        /// The "part" keys whose compositions sum under `whole` in every composition (always >= 2).
+        parts: Vec<CompKey>,
+        /// The sum of the parts' targets (infeasibly greater than `whole_target`).
+        parts_target_sum: f64,
+        /// The target requested for `whole`.
+        whole_target: f64,
+    },
 }
 
 impl BalancingIssue {
@@ -164,9 +181,10 @@ impl BalancingIssue {
             Self::RatioKeyTarget { .. } | Self::NonFiniteTarget { .. } | Self::DuplicateTarget { .. } => {
                 Severity::Error
             }
-            Self::UnaffectableTarget { .. } | Self::UnreachableTarget { .. } | Self::DominanceViolation { .. } => {
-                Severity::Warning
-            }
+            Self::UnaffectableTarget { .. }
+            | Self::UnreachableTarget { .. }
+            | Self::DominanceViolation { .. }
+            | Self::AdditiveDominanceViolation { .. } => Severity::Warning,
         }
     }
 }
@@ -230,7 +248,7 @@ impl BalancingReport {
 /// The checks are:
 /// - **Error** — ratio-key targets ([`is_ratio_key`]), non-finite target values, duplicates, etc.
 /// - **Warning** — targets no composition affects, targets outside the palette's reachable range,
-///   infeasible target pairs (dominance check; see [`BalancingIssue::DominanceViolation`]), etc.
+///   infeasible target pairs (dominance check) and part/whole groups (additive check), etc.
 ///
 /// The range and dominance warnings assume the non-negative, normalized (summing to one) solution
 /// that [`balance_compositions`] targets.
@@ -274,6 +292,9 @@ pub fn validate_balancing_targets(comps: &[Composition], targets: &[(CompKey, f6
     // Pairwise warning checks: palette-derived dominance infeasibilities.
     append_pairwise_issues(comps, targets, &mut issues);
 
+    // Additive (subset-sum) dominance: parts that together exceed a whole that bounds their sum.
+    append_additive_dominance_issues(comps, targets, &mut issues);
+
     BalancingReport { issues }
 }
 
@@ -301,20 +322,23 @@ fn dominates(comps: &[Composition], greater: CompKey, lesser: CompKey) -> bool {
     !comps.is_empty() && comps.iter().all(|comp| is_subset(comp.get(lesser), comp.get(greater)))
 }
 
+/// Returns `true` if `key`/`target` is a meaningful target to compare against others in the
+/// dominance checks: not a ratio key, finite, and affected by at least one composition. Targets
+/// failing this are reported by their own error/warning checks, so the comparisons skip them.
+fn is_checkable_target(comps: &[Composition], key: CompKey, target: f64) -> bool {
+    !is_ratio_key(key) && target.is_finite() && !is_unaffectable(comps, key)
+}
+
 /// Appends the pairwise dominance infeasibility warnings for `targets`.
 ///
-/// Pairs involving a ratio key, a non-finite target, or an unaffectable key are skipped — those are
-/// reported by their own checks and would only add noise here.
+/// Ignores non-[`is_checkable_target`]s - those have their own checks and would add noise here.
 fn append_pairwise_issues(comps: &[Composition], targets: &[(CompKey, f64)], issues: &mut Vec<BalancingIssue>) {
-    let checkable =
-        |key: CompKey, target: f64| !is_ratio_key(key) && target.is_finite() && !is_unaffectable(comps, key);
-
     for (index, &(key_a, target_a)) in targets.iter().enumerate() {
-        if !checkable(key_a, target_a) {
+        if !is_checkable_target(comps, key_a, target_a) {
             continue;
         }
         for &(key_b, target_b) in &targets[index + 1..] {
-            if !checkable(key_b, target_b) {
+            if !is_checkable_target(comps, key_b, target_b) {
                 continue;
             }
 
@@ -335,6 +359,62 @@ fn append_pairwise_issues(comps: &[Composition], targets: &[(CompKey, f64)], iss
                     greater_target: target_a,
                 });
             }
+        }
+    }
+}
+
+/// Appends additive (subset-sum) dominance warnings: cases where several "part" targets together
+/// exceed a "whole" target whose composition bounds their sum in every composition.
+///
+/// For each candidate `whole` target, greedily accumulates the other checkable targets whose
+/// running per-composition sum stays `<= whole`'s composition across all compositions
+/// (epsilon-aware). If two or more parts accumulate and their targets sum above `whole`'s target,
+/// the combination is infeasible for a non-negative normalized mix.
+///
+/// Single-part cases are left to [`append_pairwise_issues`]; this only flags `parts.len() >= 2`.
+/// The accumulation is greedy — sound (never false-positive) but not exhaustive, so it may miss
+/// some violating subsets, which is acceptable for a best-effort warning.
+fn append_additive_dominance_issues(
+    comps: &[Composition],
+    targets: &[(CompKey, f64)],
+    issues: &mut Vec<BalancingIssue>,
+) {
+    for &(whole, whole_target) in targets {
+        if !is_checkable_target(comps, whole, whole_target) {
+            continue;
+        }
+
+        // Greedily accumulate parts whose running per-composition sum stays under `whole`'s.
+        let mut running = vec![0.0_f64; comps.len()];
+        let mut parts = Vec::new();
+        let mut parts_target_sum = 0.0;
+
+        for &(part, part_target) in targets {
+            if part == whole || !is_checkable_target(comps, part, part_target) {
+                continue;
+            }
+
+            let fits = comps
+                .iter()
+                .zip(&running)
+                .all(|(comp, &acc)| is_subset(acc + comp.get(part), comp.get(whole)));
+
+            if fits {
+                for (comp, acc) in comps.iter().zip(&mut running) {
+                    *acc += comp.get(part);
+                }
+                parts.push(part);
+                parts_target_sum += part_target;
+            }
+        }
+
+        if parts.len() >= 2 && !is_subset(parts_target_sum, whole_target) {
+            issues.push(BalancingIssue::AdditiveDominanceViolation {
+                whole,
+                parts,
+                parts_target_sum,
+                whole_target,
+            });
         }
     }
 }
@@ -1372,7 +1452,7 @@ mod tests {
     #[test]
     fn validate_flags_dominance_for_sucrose_over_total_sugars() {
         // Every ingredient has Sucrose <= TotalSugars, so a Sucrose target above the TotalSugars
-        // target is provably infeasible — the palette-derived dominance check catches it.
+        // target is verifiably infeasible — the palette-derived dominance check catches it.
         let comps = comps_from_names(DAIRY_SUGAR_ING);
         let targets = [(CompKey::Sucrose, 20.0), (CompKey::TotalSugars, 15.0)];
         let report = validate_balancing_targets(&comps, &targets);
@@ -1386,6 +1466,37 @@ mod tests {
                 lesser_target: 20.0,
                 greater_target: 15.0,
             }
+        )));
+    }
+
+    #[test]
+    fn validate_flags_additive_dominance_for_sugars_over_total_sugars() {
+        // Each individual sugar target (10) is <= the TotalSugars target (15), so the pairwise
+        // check stays silent. But Sucrose + Fructose sum under TotalSugars in every ingredient, so
+        // their targets summing to 20 > 15 is infeasible — caught only by the additive check.
+        let comps = comps_from_names(SUGAR_BLEND_ING);
+        let targets = [
+            (CompKey::Sucrose, 10.0),
+            (CompKey::Fructose, 10.0),
+            (CompKey::TotalSugars, 15.0),
+        ];
+        let report = validate_balancing_targets(&comps, &targets);
+
+        assert_false!(report.has_errors());
+        // The pairwise check must NOT fire here (that's the point of the additive generalization).
+        assert_false!(
+            report
+                .warnings()
+                .any(|i| matches!(i, BalancingIssue::DominanceViolation { .. }))
+        );
+        assert_true!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::AdditiveDominanceViolation {
+                whole: CompKey::TotalSugars,
+                parts_target_sum,
+                whole_target,
+                ..
+            } if *parts_target_sum == 20.0 && *whole_target == 15.0
         )));
     }
 
