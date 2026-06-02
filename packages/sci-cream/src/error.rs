@@ -61,6 +61,9 @@ pub enum Error {
     /// Invalid ingredient spec, e.g. due to missing required fields, invalid values, etc.
     #[error("Invalid ingredient spec: {0}")]
     InvalidSpec(String),
+    /// Balancing targets are invalid, e.g. ratio keys, non-finite values, or duplicate keys.
+    #[error("Invalid balancing targets: {0}")]
+    InvalidBalancingTargets(String),
     /// Failed to balance compositions to target values.
     #[error("Failed to balance compositions: {0}")]
     FailedToBalanceCompositions(String),

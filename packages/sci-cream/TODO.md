@@ -76,6 +76,12 @@
       `serde_wasm_bindgen`-tunneled paths) accept numeric values, dropping the TS string mapping.
 - [ ] Add a stable string-based serialization path for `CompKey`/`FpdKey`/`PropKey` for permanent
       storage; the numeric `serde_repr` above is unsafe for persistence (discriminant drift).
+- [ ] Revisit a curated `CompKey` hierarchy check for balancing target validation (prototyped then
+      dropped as redundant with the `DominanceViolation` check) if palette-independent validation is
+      ever wanted, e.g. flagging `Sucrose > TotalSugars` before any ingredients are chosen.
+- [ ] When per-key target priority lands, make balancing-issue severity priority-aware by carrying
+      the priority on the issue and deriving `severity()` from it (not a stored tag); also split
+      advisory severity from the hard solve-gate so a strict-but-unreachable target flags an error.
 
 ## Completed
 

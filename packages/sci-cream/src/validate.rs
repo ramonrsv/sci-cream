@@ -107,17 +107,35 @@ pub fn verify_is_100_percent(value: f64) -> Result<()> {
     }
 }
 
+/// Checks whether the given subset value is less than or equal to the superset value.
+///
+/// The comparison is epsilon-aware: a `subset` that exceeds `superset` by no more than
+/// [`COMPOSITION_EPSILON`] is still considered a subset.
+#[must_use]
+pub fn is_subset(subset: f64, superset: f64) -> bool {
+    subset <= superset || subset.abs_diff_eq(&superset, COMPOSITION_EPSILON)
+}
+
 /// Verifies that the given subset value is less than or equal to the superset value.
 ///
 /// # Errors
 ///
 /// Return [`Error::InvalidComposition`] if the subset value is greater than the superset value.
 pub fn verify_is_subset(subset: f64, superset: f64, description: &str) -> Result<()> {
-    if subset <= superset || subset.abs_diff_eq(&superset, COMPOSITION_EPSILON) {
+    if is_subset(subset, superset) {
         Ok(())
     } else {
         Err(Error::InvalidComposition(format!("{description}: {subset} > {superset}")))
     }
+}
+
+/// Checks whether `value` lies within the inclusive range `[min, max]`.
+///
+/// Each bound is compared with [`is_subset`], so the check is epsilon-aware: a `value` outside the
+/// range by no more than [`COMPOSITION_EPSILON`] is still considered within it.
+#[must_use]
+pub fn is_within_range(value: f64, min: f64, max: f64) -> bool {
+    is_subset(min, value) && is_subset(value, max)
 }
 
 #[cfg(test)]
@@ -273,6 +291,72 @@ mod tests {
     fn verify_is_100_percent_err_for_beyond_epsilon() {
         // 100.0 + 1e-12 exceeds COMPOSITION_EPSILON (1e-13)
         assert!(matches!(verify_is_100_percent(100.0 + 1e-12), Err(Error::CompositionNot100Percent(_))));
+    }
+
+    // --- is_subset ---
+
+    #[test]
+    fn is_subset_true_when_less_than_superset() {
+        assert_true!(is_subset(10.0, 20.0));
+    }
+
+    #[test]
+    fn is_subset_true_when_equal_to_superset() {
+        assert_true!(is_subset(20.0, 20.0));
+    }
+
+    #[test]
+    fn is_subset_true_when_exceeds_superset_within_epsilon() {
+        // subset is 1e-14 greater than superset, which is within COMPOSITION_EPSILON (1e-13)
+        assert_true!(is_subset(20.0 + 1e-14, 20.0));
+    }
+
+    #[test]
+    fn is_subset_false_when_greater_than_superset() {
+        assert_false!(is_subset(30.0, 20.0));
+    }
+
+    #[test]
+    fn is_subset_false_when_exceeds_superset_beyond_epsilon() {
+        // subset is 1e-12 greater than superset, which exceeds COMPOSITION_EPSILON (1e-13)
+        assert_false!(is_subset(20.0 + 1e-12, 20.0));
+    }
+
+    // --- is_within_range ---
+
+    #[test]
+    fn is_within_range_true_for_value_inside() {
+        assert_true!(is_within_range(15.0, 10.0, 20.0));
+    }
+
+    #[test]
+    fn is_within_range_true_at_bounds() {
+        assert_true!(is_within_range(10.0, 10.0, 20.0));
+        assert_true!(is_within_range(20.0, 10.0, 20.0));
+    }
+
+    #[test]
+    fn is_within_range_true_just_outside_within_epsilon() {
+        // 1e-14 beyond either bound is within COMPOSITION_EPSILON (1e-13)
+        assert_true!(is_within_range(10.0 - 1e-14, 10.0, 20.0));
+        assert_true!(is_within_range(20.0 + 1e-14, 10.0, 20.0));
+    }
+
+    #[test]
+    fn is_within_range_false_below_min() {
+        assert_false!(is_within_range(5.0, 10.0, 20.0));
+    }
+
+    #[test]
+    fn is_within_range_false_above_max() {
+        assert_false!(is_within_range(25.0, 10.0, 20.0));
+    }
+
+    #[test]
+    fn is_within_range_false_just_outside_beyond_epsilon() {
+        // 1e-12 beyond either bound exceeds COMPOSITION_EPSILON (1e-13)
+        assert_false!(is_within_range(10.0 - 1e-12, 10.0, 20.0));
+        assert_false!(is_within_range(20.0 + 1e-12, 10.0, 20.0));
     }
 
     // --- verify_is_subset ---

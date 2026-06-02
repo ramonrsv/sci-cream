@@ -17,11 +17,13 @@
 use nalgebra::{DMatrix, DVector, SVD};
 use ndarray::{Array1, Array2};
 use nnls::nnls;
+use serde::{Deserialize, Serialize};
 use strum::IntoEnumIterator;
 
 use crate::{
     composition::{CompKey, Composition},
     error::{Error, Result},
+    validate::{is_subset, is_within_range},
 };
 
 /// How target rows are weighted when assembling the least-squares system.
@@ -37,6 +39,304 @@ pub enum Weighting {
     /// Each target row is scaled by `1 / max(|target|, RELATIVE_WEIGHT_FLOOR)`, so the solver
     /// minimizes relative rather than absolute error, preventing various numerical issues.
     Relative,
+}
+
+/// A balancing solver function pointer, e.g. [`balance_compositions_nnls`].
+type SolverFn = fn(&[Composition], &[(CompKey, f64)], Option<Weighting>) -> Result<Vec<(Composition, f64)>>;
+
+/// Balances the given compositions to match target values — the validated public entry point.
+///
+/// This is the recommended way to balance: it first validates the inputs via
+/// [`validate_balancing_targets`], returning an [`Error::InvalidBalancingTargets`] if any
+/// error-severity issue is present (ratio-key targets, non-finite target values, or duplicate
+/// target keys), then solves with an automatically chosen solver. `weighting` selects the row
+/// weighting; `None` defaults to [`Weighting::Relative`].
+///
+/// The chosen solver is currently always [`balance_compositions_nnls`] (non-negative): negative
+/// ingredient amounts are not meaningful for real recipes, so the [`balance_compositions_nalgebra`]
+/// path is reserved for internal verification and benchmarking and is not used here.
+///
+/// Warning-severity issues (e.g. unreachable or illogical targets) do **not** prevent balancing;
+/// call [`validate_balancing_targets`] directly to inspect them.
+///
+/// # Errors
+///
+/// Returns [`Error::InvalidBalancingTargets`] if the inputs contain an error-severity issue, or any
+/// error forwarded from the chosen solver if the underlying solve fails.
+pub fn balance_compositions(
+    comps: &[Composition],
+    targets: &[(CompKey, f64)],
+    weighting: Option<Weighting>,
+) -> Result<Vec<(Composition, f64)>> {
+    validate_balancing_targets(comps, targets).into_result()?;
+    choose_solver(comps, targets)(comps, targets, weighting)
+}
+
+/// Selects the underlying solver for [`balance_compositions`].
+///
+/// Centralizes the choice of solver so it can evolve independently of callers. Currently always
+/// returns [`balance_compositions_nnls`], the non-negative solver used in production.
+const fn choose_solver(_comps: &[Composition], _targets: &[(CompKey, f64)]) -> SolverFn {
+    balance_compositions_nnls
+}
+
+/// The severity of a [`BalancingIssue`]: whether it makes balancing unsound or merely suspect.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Serialize, Deserialize)]
+pub enum Severity {
+    /// The issue makes balancing unsound (e.g. it would panic or produce `NaN`); it is rejected.
+    Error,
+    /// The issue is suspicious, but balancing can still proceed on a best-effort basis.
+    Warning,
+}
+
+/// A single problem detected in a set of balancing inputs by [`validate_balancing_targets`].
+#[derive(Debug, Clone, Copy, PartialEq, Serialize, Deserialize)]
+pub enum BalancingIssue {
+    /// A ratio key (e.g. [`CompKey::AbsPAC`]) was given as a target. Ratio keys cannot be balanced
+    /// and poison the solve (see [`is_ratio_key`]).
+    ///
+    /// Severity: [`Severity::Error`].
+    RatioKeyTarget {
+        /// The offending ratio key.
+        key: CompKey,
+    },
+    /// A target value is not finite (`NaN` or infinite), which would poison the solve.
+    ///
+    /// Severity: [`Severity::Error`].
+    NonFiniteTarget {
+        /// The key whose target value is not finite.
+        key: CompKey,
+        /// The offending non-finite value.
+        value: f64,
+    },
+    /// The same key appears more than once in the targets, which is contradictory or ambiguous.
+    ///
+    /// Severity: [`Severity::Error`].
+    DuplicateTarget {
+        /// The key that appears more than once.
+        key: CompKey,
+    },
+    /// No composition in the palette contributes to this key (its row is entirely zero), so no
+    /// combination can move it away from zero.
+    ///
+    /// Severity: [`Severity::Warning`].
+    UnaffectableTarget {
+        /// The key that no composition affects.
+        key: CompKey,
+    },
+    /// The target lies outside the `[min, max]` range achievable from the palette, so no normalized
+    /// (non-negative, summing to one) combination can reach it.
+    ///
+    /// Severity: [`Severity::Warning`].
+    UnreachableTarget {
+        /// The key whose target is out of range.
+        key: CompKey,
+        /// The requested target value.
+        target: f64,
+        /// The smallest value any single composition has for this key.
+        min: f64,
+        /// The largest value any single composition has for this key.
+        max: f64,
+    },
+    /// Two targets are infeasible together: every composition has `lesser <= greater` for these
+    /// keys, yet `lesser`'s target exceeds `greater`'s, so no non-negative combination can satisfy
+    /// both. Derived from the palette, with no hardcoded key relationships.
+    ///
+    /// Severity: [`Severity::Warning`].
+    DominanceViolation {
+        /// The key whose target is (infeasibly) the larger of the two.
+        lesser: CompKey,
+        /// The key that dominates `lesser` across every composition.
+        greater: CompKey,
+        /// The target requested for `lesser`.
+        lesser_target: f64,
+        /// The target requested for `greater`.
+        greater_target: f64,
+    },
+}
+
+impl BalancingIssue {
+    /// The [`Severity`] of this issue: [`Severity::Error`] for issues that make balancing unsound,
+    /// [`Severity::Warning`] otherwise, for issues that are suspicious but balancing can proceed.
+    #[must_use]
+    pub const fn severity(&self) -> Severity {
+        match self {
+            Self::RatioKeyTarget { .. } | Self::NonFiniteTarget { .. } | Self::DuplicateTarget { .. } => {
+                Severity::Error
+            }
+            Self::UnaffectableTarget { .. } | Self::UnreachableTarget { .. } | Self::DominanceViolation { .. } => {
+                Severity::Warning
+            }
+        }
+    }
+}
+
+/// The result of validating balancing inputs: the full list of detected [`BalancingIssue`]s.
+///
+/// Use [`errors`](Self::errors) / [`warnings`](Self::warnings) to partition by [`Severity`], or
+/// [`into_result`](Self::into_result) to turn any error-severity issues into an [`Error`].
+#[derive(Debug, Clone, Default, Serialize, Deserialize)]
+pub struct BalancingReport {
+    /// Every issue detected, in the order the checks were run; may mix errors and warnings.
+    pub issues: Vec<BalancingIssue>,
+}
+
+impl BalancingReport {
+    /// Iterates the error-severity issues (those that make balancing unsound).
+    pub fn errors(&self) -> impl Iterator<Item = &BalancingIssue> {
+        self.issues.iter().filter(|issue| issue.severity() == Severity::Error)
+    }
+
+    /// Iterates the warning-severity issues (suspicious, but balancing can still proceed).
+    pub fn warnings(&self) -> impl Iterator<Item = &BalancingIssue> {
+        self.issues.iter().filter(|issue| issue.severity() == Severity::Warning)
+    }
+
+    /// Returns `true` if any error-severity issue was detected.
+    #[must_use]
+    pub fn has_errors(&self) -> bool {
+        self.errors().next().is_some()
+    }
+
+    /// Returns `true` if no issues were detected at all.
+    #[must_use]
+    pub const fn is_empty(&self) -> bool {
+        self.issues.is_empty()
+    }
+
+    /// Converts the report into a [`Result`]: `Err` if any error-severity issue is present.
+    ///
+    /// The error message summarizes every error-severity issue. Warnings never produce an `Err`.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::InvalidBalancingTargets`] if [`has_errors`](Self::has_errors) is `true`.
+    pub fn into_result(self) -> Result<()> {
+        if self.has_errors() {
+            let summary = self.errors().map(ToString::to_string).collect::<Vec<_>>().join("; ");
+            Err(Error::InvalidBalancingTargets(summary))
+        } else {
+            Ok(())
+        }
+    }
+}
+
+/// Validates balancing inputs, returning every detected [`BalancingIssue`] (errors and warnings).
+///
+/// This is the inspection counterpart to [`balance_compositions`]: it never solves and never
+/// errors, but reports all issues so a caller can surface them. [`balance_compositions`] calls
+/// [`BalancingReport::into_result`] on this to reject error-severity inputs before solving.
+///
+/// The checks are:
+/// - **Error** — ratio-key targets ([`is_ratio_key`]), non-finite target values, duplicates, etc.
+/// - **Warning** — targets no composition affects, targets outside the palette's reachable range,
+///   infeasible target pairs (dominance check; see [`BalancingIssue::DominanceViolation`]), etc.
+///
+/// The range and dominance warnings assume the non-negative, normalized (summing to one) solution
+/// that [`balance_compositions`] targets.
+#[must_use]
+pub fn validate_balancing_targets(comps: &[Composition], targets: &[(CompKey, f64)]) -> BalancingReport {
+    let mut issues = Vec::new();
+
+    // Error-severity checks: ratio keys, non-finite values, and duplicate keys.
+    let mut seen: Vec<CompKey> = Vec::with_capacity(targets.len());
+    for &(key, value) in targets {
+        if is_ratio_key(key) {
+            issues.push(BalancingIssue::RatioKeyTarget { key });
+        }
+        if !value.is_finite() {
+            issues.push(BalancingIssue::NonFiniteTarget { key, value });
+        }
+        if seen.contains(&key) {
+            issues.push(BalancingIssue::DuplicateTarget { key });
+        } else {
+            seen.push(key);
+        }
+    }
+
+    // Per-target warning checks: unaffectable and unreachable targets. Ratio keys and non-finite
+    // values are skipped — they are reported as errors above and make this comparison meaningless.
+    for &(key, target) in targets {
+        if is_ratio_key(key) || !target.is_finite() {
+            continue;
+        }
+        if is_unaffectable(comps, key) {
+            issues.push(BalancingIssue::UnaffectableTarget { key });
+            continue; // range checks add only noise for an all-zero row
+        }
+        if let Some((min, max)) = reachable_range(comps, key)
+            && !is_within_range(target, min, max)
+        {
+            issues.push(BalancingIssue::UnreachableTarget { key, target, min, max });
+        }
+    }
+
+    // Pairwise warning checks: palette-derived dominance infeasibilities.
+    append_pairwise_issues(comps, targets, &mut issues);
+
+    BalancingReport { issues }
+}
+
+/// Returns `true` if no composition contributes to `key` (its row is entirely zero).
+///
+/// The shared predicate for "no ingredient can affect this key": [`constrainable_targets`] uses it
+/// to drop such targets before solving, and [`validate_balancing_targets`] to flag as warnings.
+fn is_unaffectable(comps: &[Composition], key: CompKey) -> bool {
+    comps.iter().all(|comp| comp.get(key) == 0.0)
+}
+
+/// The `[min, max]` range of per-composition values for `key`, or `None` if `comps` is empty.
+///
+/// Any normalized (non-negative, summing to one) combination of the compositions yields a value for
+/// `key` within this range, so a target outside it is unreachable.
+fn reachable_range(comps: &[Composition], key: CompKey) -> Option<(f64, f64)> {
+    let mut values = comps.iter().map(|comp| comp.get(key));
+    let first = values.next()?;
+    Some(values.fold((first, first), |(min, max), value| (min.min(value), max.max(value))))
+}
+
+/// Returns `true` if `greater` dominates `lesser` across `comps`: every composition has
+/// `lesser <= greater` for these keys (epsilon-aware). Vacuously false for an empty palette.
+fn dominates(comps: &[Composition], greater: CompKey, lesser: CompKey) -> bool {
+    !comps.is_empty() && comps.iter().all(|comp| is_subset(comp.get(lesser), comp.get(greater)))
+}
+
+/// Appends the pairwise dominance infeasibility warnings for `targets`.
+///
+/// Pairs involving a ratio key, a non-finite target, or an unaffectable key are skipped — those are
+/// reported by their own checks and would only add noise here.
+fn append_pairwise_issues(comps: &[Composition], targets: &[(CompKey, f64)], issues: &mut Vec<BalancingIssue>) {
+    let checkable =
+        |key: CompKey, target: f64| !is_ratio_key(key) && target.is_finite() && !is_unaffectable(comps, key);
+
+    for (index, &(key_a, target_a)) in targets.iter().enumerate() {
+        if !checkable(key_a, target_a) {
+            continue;
+        }
+        for &(key_b, target_b) in &targets[index + 1..] {
+            if !checkable(key_b, target_b) {
+                continue;
+            }
+
+            // Palette-derived dominance check: if one key dominates the other across all comps but
+            // carries the smaller target, no non-negative mix can satisfy both.
+            if dominates(comps, key_b, key_a) && !is_subset(target_a, target_b) {
+                issues.push(BalancingIssue::DominanceViolation {
+                    lesser: key_a,
+                    greater: key_b,
+                    lesser_target: target_a,
+                    greater_target: target_b,
+                });
+            } else if dominates(comps, key_a, key_b) && !is_subset(target_b, target_a) {
+                issues.push(BalancingIssue::DominanceViolation {
+                    lesser: key_b,
+                    greater: key_a,
+                    lesser_target: target_b,
+                    greater_target: target_a,
+                });
+            }
+        }
+    }
 }
 
 /// Balances the given compositions to match target values for the specified keys, using nalgebra.
@@ -103,7 +403,7 @@ pub fn balance_compositions_nnls(
     Ok(x.iter().enumerate().map(|(i, amount)| (comps[i], *amount)).collect())
 }
 
-/// Drops targets that no ingredient can affect — those whose column is exactly zero across `comps`.
+/// Drops targets that no ingredient can affect — those whose row is exactly zero across `comps`.
 ///
 /// Such a row is `0*x = target`; all zero rows can cause issues for solvers. Since they only add a
 /// constant to the least-squares objective, they don't change the optimum and we can safely drop
@@ -111,12 +411,11 @@ pub fn balance_compositions_nnls(
 ///
 /// A non-zero — including `NaN`, as a ratio key yields on a zero denominator — value keeps the
 /// target, so the ratio-key poisoning [`get_balanceable_comp_keys`] guards against stays intact.
-#[allow(clippy::float_cmp)] // exact structural zero (no ingredient contributes the key) is intended
 fn constrainable_targets(comps: &[Composition], targets: &[(CompKey, f64)]) -> Vec<(CompKey, f64)> {
     targets
         .iter()
         .copied()
-        .filter(|(key, _)| comps.iter().any(|comp| comp.get(*key) != 0.0))
+        .filter(|(key, _)| !is_unaffectable(comps, *key))
         .collect()
 }
 
@@ -227,9 +526,6 @@ mod tests {
         recipe::{OwnedLightRecipe, Recipe},
         resolution::IngredientGetter,
     };
-
-    /// A balancing function pointer (e.g. [`balance_compositions_nalgebra`]).
-    type SolverFn = fn(&[Composition], &[(CompKey, f64)], Option<Weighting>) -> Result<Vec<(Composition, f64)>>;
 
     /// A labelled balancing function, so several solvers can be run side-by-side in one report.
     type LabeledSolver = (&'static str, SolverFn);
@@ -966,5 +1262,197 @@ mod tests {
         let relative = max_error_for(None);
 
         assert_true!(relative < absolute);
+    }
+
+    // --- balance_compositions entry point ---
+
+    #[test]
+    fn balance_compositions_rejects_ratio_key_target() {
+        let comps = comps_from_names(DAIRY_SUGAR_ING);
+        let result = balance_compositions(&comps, &[(CompKey::StabilizersPerWater, 0.5)], None);
+        assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
+    }
+
+    #[test]
+    fn balance_compositions_rejects_duplicate_target() {
+        let comps = comps_from_names(DAIRY_ING);
+        let result = balance_compositions(&comps, &[(CompKey::MilkFat, 16.0), (CompKey::MilkFat, 12.0)], None);
+        assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
+    }
+
+    #[test]
+    fn balance_compositions_rejects_non_finite_target() {
+        let comps = comps_from_names(DAIRY_ING);
+        let result = balance_compositions(&comps, &[(CompKey::MilkFat, f64::NAN)], None);
+        assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
+    }
+
+    #[test]
+    fn balance_compositions_recovers_feasible_targets() {
+        assert_balance_compositions(
+            &comps_from_names(DAIRY_ING),
+            &DAIRY_TRIVIAL_TARGETS,
+            balance_compositions,
+            Epsilons::default(),
+            &KeyCeiling::exact(),
+        );
+    }
+
+    #[test]
+    fn balance_compositions_proceeds_despite_warnings() {
+        // A Sucrose > TotalSugars pair only warns; the solve still returns a best-effort result.
+        let comps = comps_from_names(DAIRY_SUGAR_ING);
+        let targets = [(CompKey::Sucrose, 20.0), (CompKey::TotalSugars, 15.0)];
+        assert!(balance_compositions(&comps, &targets, None).is_ok());
+    }
+
+    // --- validate_balancing_targets: error-severity issues ---
+
+    #[test]
+    fn validate_flags_ratio_key_as_error() {
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(CompKey::AbsPAC, 9.0)]);
+        assert_true!(report.has_errors());
+        assert_true!(
+            report
+                .errors()
+                .any(|issue| matches!(issue, BalancingIssue::RatioKeyTarget { key: CompKey::AbsPAC }))
+        );
+    }
+
+    #[test]
+    fn validate_flags_non_finite_target_as_error() {
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, f64::INFINITY)]);
+        assert_true!(
+            report
+                .errors()
+                .any(|issue| matches!(issue, BalancingIssue::NonFiniteTarget { .. }))
+        );
+    }
+
+    #[test]
+    fn validate_flags_duplicate_target_as_error() {
+        let targets = [(CompKey::MilkFat, 16.0), (CompKey::MilkFat, 12.0)];
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &targets);
+        assert_true!(
+            report
+                .errors()
+                .any(|issue| matches!(issue, BalancingIssue::DuplicateTarget { key: CompKey::MilkFat }))
+        );
+    }
+
+    // --- validate_balancing_targets: warning-severity issues ---
+
+    #[test]
+    fn validate_flags_unaffectable_target_as_warning() {
+        // Plain dairy has no alcohol source, so no combination can move an Alcohol target off zero.
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::Alcohol, 5.0)]);
+        assert_false!(report.has_errors());
+        assert_true!(
+            report
+                .warnings()
+                .any(|issue| matches!(issue, BalancingIssue::UnaffectableTarget { key: CompKey::Alcohol }))
+        );
+    }
+
+    #[test]
+    fn validate_flags_unreachable_target_as_warning() {
+        // The richest dairy ingredient is 40% cream, so a 50% milk-fat target is out of reach.
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, 50.0)]);
+        assert_true!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::UnreachableTarget {
+                key: CompKey::MilkFat,
+                target: 50.0,
+                min: 0.0,
+                max: 40.0,
+            }
+        )));
+    }
+
+    #[test]
+    fn validate_flags_dominance_for_sucrose_over_total_sugars() {
+        // Every ingredient has Sucrose <= TotalSugars, so a Sucrose target above the TotalSugars
+        // target is provably infeasible — the palette-derived dominance check catches it.
+        let comps = comps_from_names(DAIRY_SUGAR_ING);
+        let targets = [(CompKey::Sucrose, 20.0), (CompKey::TotalSugars, 15.0)];
+        let report = validate_balancing_targets(&comps, &targets);
+
+        assert_false!(report.has_errors());
+        assert_true!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::DominanceViolation {
+                lesser: CompKey::Sucrose,
+                greater: CompKey::TotalSugars,
+                lesser_target: 20.0,
+                greater_target: 15.0,
+            }
+        )));
+    }
+
+    #[test]
+    fn validate_clean_targets_yield_empty_report() {
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &DAIRY_TRIVIAL_TARGETS);
+        assert_true!(report.is_empty());
+        assert_false!(report.has_errors());
+    }
+
+    // --- BalancingReport ---
+
+    #[test]
+    fn balancing_report_partitions_errors_and_warnings() {
+        let comps = comps_from_names(DAIRY_SUGAR_ING);
+        let targets = [
+            (CompKey::AbsPAC, 9.0),       // error: ratio key
+            (CompKey::Sucrose, 20.0),     // warning pair with TotalSugars
+            (CompKey::TotalSugars, 15.0), //
+        ];
+        let report = validate_balancing_targets(&comps, &targets);
+
+        assert_true!(report.has_errors());
+        assert_false!(report.is_empty());
+        assert_eq!(report.errors().count(), 1);
+        assert_true!(
+            report
+                .warnings()
+                .any(|i| matches!(i, BalancingIssue::DominanceViolation { .. }))
+        );
+    }
+
+    #[test]
+    fn balancing_report_into_result_errors_on_error_severity() {
+        let targets = [(CompKey::MilkFat, 16.0), (CompKey::MilkFat, 12.0)];
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &targets);
+        assert!(matches!(report.into_result(), Err(Error::InvalidBalancingTargets(_))));
+    }
+
+    #[test]
+    fn balancing_report_into_result_ok_on_warnings_only() {
+        // An unreachable target is only a warning, so into_result stays Ok.
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, 50.0)]);
+        assert_true!(report.warnings().count() >= 1);
+        assert!(report.into_result().is_ok());
+    }
+
+    // --- Internal check helpers ---
+
+    #[test]
+    fn is_unaffectable_detects_zero_row() {
+        let comps = comps_from_names(DAIRY_ING);
+        assert_true!(is_unaffectable(&comps, CompKey::Alcohol));
+        assert_false!(is_unaffectable(&comps, CompKey::MilkFat));
+    }
+
+    #[test]
+    fn dominates_reflects_per_ingredient_inequality() {
+        let comps = comps_from_names(DAIRY_SUGAR_ING);
+        // Every ingredient has Sucrose <= TotalSugars, so TotalSugars dominates Sucrose.
+        assert_true!(dominates(&comps, CompKey::TotalSugars, CompKey::Sucrose));
+        // The reverse does not hold (milk carries lactose but no sucrose).
+        assert_false!(dominates(&comps, CompKey::Sucrose, CompKey::TotalSugars));
+    }
+
+    #[test]
+    fn dominates_is_false_for_empty_palette() {
+        assert_false!(dominates(&[], CompKey::TotalSugars, CompKey::Sucrose));
     }
 }

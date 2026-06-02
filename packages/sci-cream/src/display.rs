@@ -4,10 +4,17 @@
 //! display, as well as functions to compute composition values in various formats for displaying.
 //! This module is not necessary for core computations but is useful for UI and reporting purposes.
 
+use std::fmt;
+
 #[cfg(feature = "wasm")]
 use wasm_bindgen::prelude::*;
 
-use crate::{composition::CompKey, fpd::FpdKey, properties::PropKey};
+use crate::{
+    balancing::{BalancingIssue, BalancingReport, Severity},
+    composition::CompKey,
+    fpd::FpdKey,
+    properties::PropKey,
+};
 
 /// Trait to convert keys to display-friendly strings at varying levels of verbosity.
 pub trait KeyAsStrings {
@@ -106,6 +113,61 @@ impl KeyAsStrings for PropKey {
             Self::CompKey(comp_key) => comp_key.as_med_str(),
             Self::FpdKey(fpd_key) => fpd_key.as_med_str(),
         }
+    }
+}
+
+impl fmt::Display for BalancingIssue {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match *self {
+            Self::RatioKeyTarget { key } => {
+                write!(f, "'{}' is a ratio key and cannot be used as a balancing target", key.as_med_str())
+            }
+            Self::NonFiniteTarget { key, value } => {
+                write!(f, "target for '{}' is not finite ({value})", key.as_med_str())
+            }
+            Self::DuplicateTarget { key } => {
+                write!(f, "'{}' appears more than once in the targets", key.as_med_str())
+            }
+            Self::UnaffectableTarget { key } => {
+                write!(f, "no ingredient contributes to '{}', so its target cannot be affected", key.as_med_str())
+            }
+            Self::UnreachableTarget { key, target, min, max } => write!(
+                f,
+                "target for '{}' ({target:.2}) is outside the reachable range [{min:.2}, {max:.2}]",
+                key.as_med_str()
+            ),
+            Self::DominanceViolation {
+                lesser,
+                greater,
+                lesser_target,
+                greater_target,
+            } => write!(
+                f,
+                "target for '{lesser}' ({lesser_target:.2}) exceeds target for '{greater}' ({greater_target:.2}), but \
+                 no non-negative ingredient mix can satisfy both — every ingredient's '{lesser}' ≤ its '{greater}'",
+                lesser = lesser.as_med_str(),
+                greater = greater.as_med_str(),
+            ),
+        }
+    }
+}
+
+impl fmt::Display for BalancingReport {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        if self.issues.is_empty() {
+            return write!(f, "no balancing issues");
+        }
+        for (index, issue) in self.issues.iter().enumerate() {
+            if index > 0 {
+                writeln!(f)?;
+            }
+            let label = match issue.severity() {
+                Severity::Error => "error",
+                Severity::Warning => "warning",
+            };
+            write!(f, "[{label}] {issue}")?;
+        }
+        Ok(())
     }
 }
 
@@ -247,6 +309,38 @@ mod tests {
     fn prop_keys_as_med_str() {
         assert_eq!(PropKey::CompKey(CompKey::MilkFat).as_med_str(), "Milk Fat");
         assert_eq!(PropKey::FpdKey(FpdKey::FPD).as_med_str(), "FPD");
+    }
+
+    #[test]
+    fn balancing_issue_display_messages() {
+        let dominance = BalancingIssue::DominanceViolation {
+            lesser: CompKey::Sucrose,
+            greater: CompKey::TotalSugars,
+            lesser_target: 20.0,
+            greater_target: 15.0,
+        };
+        let text = dominance.to_string();
+        assert_true!(text.contains("Sucrose"));
+        assert_true!(text.contains("T. Sugars"));
+
+        assert_true!(
+            BalancingIssue::RatioKeyTarget { key: CompKey::AbsPAC }
+                .to_string()
+                .contains("ratio key")
+        );
+    }
+
+    #[test]
+    fn balancing_report_display_lists_issues() {
+        let report = BalancingReport {
+            issues: vec![
+                BalancingIssue::RatioKeyTarget { key: CompKey::AbsPAC },
+                BalancingIssue::UnaffectableTarget { key: CompKey::Alcohol },
+            ],
+        };
+        let text = report.to_string();
+        assert_true!(text.contains("[error]"));
+        assert_true!(text.contains("[warning]"));
     }
 
     #[test]

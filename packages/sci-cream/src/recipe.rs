@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use crate::{database::IngredientDatabase, resolution::IngredientGetter};
 
 use crate::{
-    balancing::balance_compositions_nnls,
+    balancing::balance_compositions,
     composition::{CompKey, Composition},
     error::Result,
     fpd::FPD,
@@ -176,15 +176,16 @@ impl Recipe {
     ///
     /// The relative proportions of the ingredients in the recipe are adjusted to meet the target
     /// composition values as closely as possible, while keeping the total amount of the recipe
-    /// constant. The balancing is done via [`balance_compositions_nnls`]; see for more details.
+    /// constant. The balancing is done via [`balance_compositions`]; see for more details.
     ///
     /// # Errors
     ///
-    /// Forwards any errors from [`balance_compositions_nnls`] if balancing calculations fail.
+    /// Forwards any [`balance_compositions`] errors, including [`Error::InvalidBalancingTargets`]
+    /// if the targets are invalid (e.g. ratio keys or duplicates) and any error if the solve fails.
     pub fn balance(self, targets: &[(CompKey, f64)]) -> Result<Self> {
         let total_amount: f64 = self.lines.iter().map(|line| line.amount).sum();
 
-        let balanced = balance_compositions_nnls(
+        let balanced = balance_compositions(
             self.lines
                 .iter()
                 .map(|line| line.ingredient.composition)
