@@ -594,17 +594,17 @@ fn constrainable_targets(comps: &[Composition], targets: &[(CompKey, f64)]) -> V
 const RELATIVE_WEIGHT_FLOOR: f64 = 0.1;
 
 /// Row-weight multiplier for a [`Priority::High`] target.
-const HIGH_PRIORITY_WEIGHT: f64 = 5.0;
+pub const HIGH_PRIORITY_WEIGHT: f64 = 5.0;
 
 /// Row-weight multiplier for a [`Priority::Critical`] target.
-const CRITICAL_PRIORITY_WEIGHT: f64 = 25.0;
+pub const CRITICAL_PRIORITY_WEIGHT: f64 = 25.0;
 
 /// Fixed weight on the total-sum (mass-balance) row under [`Weighting::Relative`].
 ///
 /// Relative weighting scales every target row to roughly unit magnitude (each is divided by its own
 /// target), so a single fixed weight well above 1 uniformly dominates them and keeps the balanced
 /// amounts summing to 1 — independent of the target magnitudes.
-const SUM_CONSTRAINT_WEIGHT: f64 = 1.0e3;
+pub const SUM_CONSTRAINT_WEIGHT: f64 = 1.0e3;
 
 /// Per-row weights for the least-squares system: one per target row, then the total-sum row.
 ///
@@ -616,7 +616,8 @@ const SUM_CONSTRAINT_WEIGHT: f64 = 1.0e3;
 /// not listed default to a multiplier of 1; see [`Priority`]). The trailing sum row is never scaled
 /// by priority, so raising a target's priority can never weaken mass balance. An empty
 /// `priority_weights` therefore reproduces the unprioritized weights exactly.
-fn row_weights(targets: &[(CompKey, f64)], weighting: Weighting, priority_weights: &[(CompKey, f64)]) -> Vec<f64> {
+#[must_use]
+pub fn row_weights(targets: &[(CompKey, f64)], weighting: Weighting, priority_weights: &[(CompKey, f64)]) -> Vec<f64> {
     let priority_for = |key: CompKey| {
         priority_weights
             .iter()
