@@ -3,11 +3,11 @@ source: packages/sci-cream/src/balancing.rs
 expression: "report_balance_quality(&comps_from_names(SORBET_ING),\n&SORBET_DISPARATE_TARGETS, BOTH_SOLVERS, Some(SORBET_ING))"
 ---
 targets:
-  TotalSolids     32.00
-  TotalSugars     26.00
-  TotalPAC        32.00
-  POD             14.00
-  TotalStabilizers   0.40
+  TotalSolids         32.00
+  TotalSugars         26.00
+  TotalPAC            32.00
+  POD                 14.00
+  TotalStabilizers     0.40
 
 [nalgebra]
   [           ingredient           | qty ]
@@ -16,12 +16,12 @@ targets:
   Dextrose                          18.27
   Underbelly Sorbet Stabilizer...    0.40
 
-  [    key     | target | achieved |  error  ]
-  TotalSolids     32.00     20.83     34.89 pp
-  TotalSugars     26.00     20.43     21.42 pp
-  TotalPAC        32.00     35.56     11.14 pp
-  POD             14.00     17.07     21.93 pp
-  TotalStabilizers   0.40      0.40      0.44 pp
+  [      key       | target | achieved |  error  ]
+  TotalSolids         32.00     20.83     34.89 pp
+  TotalSugars         26.00     20.43     21.42 pp
+  TotalPAC            32.00     35.56     11.14 pp
+  POD                 14.00     17.07     21.93 pp
+  TotalStabilizers     0.40      0.40      0.44 pp
 
   [    sum     |  neg. |    max    |    rms  ]
      1.0000        0      34.89 pp    21.36 pp
@@ -33,12 +33,12 @@ targets:
   Dextrose                          18.27
   Underbelly Sorbet Stabilizer...    0.40
 
-  [    key     | target | achieved |  error  ]
-  TotalSolids     32.00     20.83     34.89 pp
-  TotalSugars     26.00     20.43     21.42 pp
-  TotalPAC        32.00     35.56     11.14 pp
-  POD             14.00     17.07     21.93 pp
-  TotalStabilizers   0.40      0.40      0.44 pp
+  [      key       | target | achieved |  error  ]
+  TotalSolids         32.00     20.83     34.89 pp
+  TotalSugars         26.00     20.43     21.42 pp
+  TotalPAC            32.00     35.56     11.14 pp
+  POD                 14.00     17.07     21.93 pp
+  TotalStabilizers     0.40      0.40      0.44 pp
 
   [    sum     |  neg. |    max    |    rms  ]
      1.0000        0      34.89 pp    21.36 pp

@@ -3,10 +3,10 @@ source: packages/sci-cream/src/balancing.rs
 expression: "report_balance_quality(&comps_from_names(DAIRY_SUGAR_ING),\n&LIGHT_PREMIUM_TARGETS, BOTH_SOLVERS, Some(DAIRY_SUGAR_ING))"
 ---
 targets:
-  Energy         150.00
-  MilkFat         16.00
-  MSNF            11.00
-  TotalSugars     18.00
+  Energy             150.00
+  MilkFat             16.00
+  MSNF                11.00
+  TotalSugars         18.00
 
 [nalgebra]
   [           ingredient           | qty ]
@@ -15,11 +15,11 @@ targets:
   Skimmed Milk Powder                4.21
   Sucrose                            9.99
 
-  [    key     | target | achieved |  error  ]
-  Energy         150.00    187.64     25.09 pp
-  MilkFat         16.00     12.15     24.09 pp
-  MSNF            11.00     10.72      2.58 pp
-  TotalSugars     18.00     15.83     12.05 pp
+  [      key       | target | achieved |  error  ]
+  Energy             150.00    187.64     25.09 pp
+  MilkFat             16.00     12.15     24.09 pp
+  MSNF                11.00     10.72      2.58 pp
+  TotalSugars         18.00     15.83     12.05 pp
 
   [    sum     |  neg. |    max    |    rms  ]
      1.0000        0      25.09 pp    18.45 pp
@@ -31,11 +31,11 @@ targets:
   Skimmed Milk Powder                4.21
   Sucrose                            9.99
 
-  [    key     | target | achieved |  error  ]
-  Energy         150.00    187.64     25.09 pp
-  MilkFat         16.00     12.15     24.09 pp
-  MSNF            11.00     10.72      2.58 pp
-  TotalSugars     18.00     15.83     12.05 pp
+  [      key       | target | achieved |  error  ]
+  Energy             150.00    187.64     25.09 pp
+  MilkFat             16.00     12.15     24.09 pp
+  MSNF                11.00     10.72      2.58 pp
+  TotalSugars         18.00     15.83     12.05 pp
 
   [    sum     |  neg. |    max    |    rms  ]
      1.0000        0      25.09 pp    18.45 pp

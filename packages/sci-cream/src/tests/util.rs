@@ -201,7 +201,7 @@ pub(crate) fn compare_compositions(sources: &[(&str, Composition)], keys: &[Comp
                     comp_b.get(key),
                     solids_denominator_for(key, comp_b),
                 );
-                lines.push(format!("{key_name:<14} {diff:>6.2} pp  ({label_a} vs {label_b})"));
+                lines.push(format!("{key_name:<18} {diff:>6.2} pp  ({label_a} vs {label_b})"));
             }
         }
     }

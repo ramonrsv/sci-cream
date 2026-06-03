@@ -3,9 +3,9 @@ source: packages/sci-cream/src/balancing.rs
 expression: "report_balance_quality(&comps_from_names(DAIRY_COCOA_ING),\n&CHOCOLATE_COUPLED_COCOA_TARGETS, BOTH_SOLVERS, Some(DAIRY_COCOA_ING))"
 ---
 targets:
-  CocoaSolids      6.00
-  CocoaButter      1.00
-  TotalSugars     20.00
+  CocoaSolids          6.00
+  CocoaButter          1.00
+  TotalSugars         20.00
 
 [nalgebra]
   [           ingredient           | qty ]
@@ -14,10 +14,10 @@ targets:
   Ghirardelli 100% Unsweetened...    6.49
   Sucrose                           17.06
 
-  [    key     | target | achieved |  error  ]
-  CocoaSolids      6.00      5.41      9.85 pp
-  CocoaButter      1.00      1.08      8.21 pp
-  TotalSugars     20.00     20.00      0.00 pp
+  [      key       | target | achieved |  error  ]
+  CocoaSolids          6.00      5.41      9.85 pp
+  CocoaButter          1.00      1.08      8.21 pp
+  TotalSugars         20.00     20.00      0.00 pp
 
   [    sum     |  neg. |    max    |    rms  ]
      1.0000        0       9.85 pp     7.40 pp
@@ -29,10 +29,10 @@ targets:
   Ghirardelli 100% Unsweetened...    6.49
   Sucrose                           17.77
 
-  [    key     | target | achieved |  error  ]
-  CocoaSolids      6.00      5.41      9.85 pp
-  CocoaButter      1.00      1.08      8.21 pp
-  TotalSugars     20.00     20.00      0.00 pp
+  [      key       | target | achieved |  error  ]
+  CocoaSolids          6.00      5.41      9.85 pp
+  CocoaButter          1.00      1.08      8.21 pp
+  TotalSugars         20.00     20.00      0.00 pp
 
   [    sum     |  neg. |    max    |    rms  ]
      1.0000        0       9.85 pp     7.40 pp

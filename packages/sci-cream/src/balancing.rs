@@ -798,7 +798,7 @@ mod tests {
 
         let header = targets
             .iter()
-            .map(|(key, value)| format!("  {:<14}{value:>7.2}", key_str(key)))
+            .map(|(key, value)| format!("  {:<18}{value:>7.2}", key_str(key)))
             .collect::<Vec<_>>()
             .join("\n");
         lines.append(&mut vec![format!("targets:\n{header}")]);
@@ -825,14 +825,14 @@ mod tests {
                 lines.push(String::new());
             }
 
-            lines.push("  [    key     | target | achieved |  error  ]".to_string());
+            lines.push("  [      key       | target | achieved |  error  ]".to_string());
 
             let mut errors = Vec::with_capacity(targets.len());
             for (key, target) in targets {
                 let achieved = achieved_value(&balanced, *key);
                 let error = balance_rel_error_pp(achieved, *target);
                 errors.push(error);
-                lines.push(format!("  {:<14}{target:>7.2}   {achieved:>7.2}   {error:>7.2} pp", key_str(key)));
+                lines.push(format!("  {:<18}{target:>7.2}   {achieved:>7.2}   {error:>7.2} pp", key_str(key)));
             }
 
             let amounts_sum: f64 = balanced.iter().map(|(_, amount)| *amount).sum();
