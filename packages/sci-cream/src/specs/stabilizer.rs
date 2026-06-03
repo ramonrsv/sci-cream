@@ -143,10 +143,10 @@ pub(crate) mod tests {
         let comp = ING_SPEC_STABILIZER_LOCUST_BEAN_GUM.spec.to_composition().unwrap();
 
         assert_eq!(comp.get(CompKey::Energy), 0.0);
-        assert_eq!(comp.get(CompKey::Fiber), 100.0);
+        assert_eq!(comp.get(CompKey::TotalFiber), 100.0);
         assert_eq!(comp.get(CompKey::OtherSNFS), 100.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 100.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 100.0);
 
         assert_eq!(comp.micro.stabilizers, Stabilizers::new().locust_bean_gum(100.0));
         assert_eq!(comp.texture.stabilization, 100.0);

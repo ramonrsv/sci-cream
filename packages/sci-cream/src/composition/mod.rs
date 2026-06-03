@@ -74,7 +74,7 @@
 //! assert_eq_float!(comp.get(CompKey::POD), 0.769_104);
 //! assert_eq_float!(comp.get(CompKey::PACsgr), 4.8069);
 //! assert_eq_float!(comp.get(CompKey::PACmlk), 3.2405);
-//! assert_eq_float!(comp.get(CompKey::PACtotal), 8.0474);
+//! assert_eq_float!(comp.get(CompKey::TotalPAC), 8.0474);
 //! # Ok(()) }
 //! ```
 

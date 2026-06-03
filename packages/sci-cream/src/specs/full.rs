@@ -128,11 +128,11 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::Lecithin), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq!(comp.get(CompKey::POD), 0.0);
-        assert_eq!(comp.get(CompKey::PACtotal), 0.0);
+        assert_eq!(comp.get(CompKey::TotalPAC), 0.0);
         assert_eq!(comp.get(CompKey::HF), 0.0);
     }
 

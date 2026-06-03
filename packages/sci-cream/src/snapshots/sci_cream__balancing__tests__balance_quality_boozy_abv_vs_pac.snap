@@ -4,7 +4,7 @@ expression: "report_balance_quality(&comps_from_names(BOOZY_ING), &BOOZY_DISPARA
 ---
 targets:
   TotalSugars     17.00
-  PACtotal        28.00
+  TotalPAC        28.00
   ABV              4.00
 
 [nalgebra]
@@ -16,7 +16,7 @@ targets:
 
   [    key     | target | achieved |  error  ]
   TotalSugars     17.00     17.00      0.00 pp
-  PACtotal        28.00     28.00      0.00 pp
+  TotalPAC        28.00     28.00      0.00 pp
   ABV              4.00      4.00      0.00 pp
 
   [    sum     |  neg. |    max    |    rms  ]
@@ -31,7 +31,7 @@ targets:
 
   [    key     | target | achieved |  error  ]
   TotalSugars     17.00     14.53     14.52 pp
-  PACtotal        28.00     34.84     24.42 pp
+  TotalPAC        28.00     34.84     24.42 pp
   ABV              4.00      3.19     20.31 pp
 
   [    sum     |  neg. |    max    |    rms  ]

@@ -57,7 +57,7 @@ use crate::composition::CompKey;
 /// assert_eq!(comp.get(CompKey::Energy), 570.3);
 /// assert_eq!(comp.get(CompKey::NutFat), 49.9);
 /// assert_eq!(comp.get(CompKey::TotalProteins), 21.2);
-/// assert_eq!(comp.get(CompKey::Fiber), 12.5);
+/// assert_eq!(comp.get(CompKey::TotalFiber), 12.5);
 /// assert_eq!(comp.get(CompKey::NutSNF), 41.34);
 /// assert_eq_float!(comp.get(CompKey::NutSolids), 91.24);
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 4.35);
@@ -205,7 +205,7 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::Energy), 570.3);
         assert_eq!(comp.get(CompKey::TotalProteins), 21.2);
-        assert_eq!(comp.get(CompKey::Fiber), 12.5);
+        assert_eq!(comp.get(CompKey::TotalFiber), 12.5);
 
         assert_eq!(comp.get(CompKey::NutFat), 49.9);
         assert_eq!(comp.get(CompKey::NutSNF), 41.34);

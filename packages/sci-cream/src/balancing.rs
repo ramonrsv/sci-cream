@@ -881,11 +881,11 @@ mod tests {
     const SORBET_ING: &[&str] = &["Water", "Sucrose", "Dextrose", "Underbelly Sorbet Stabilizer Blend"];
 
     /// A minimal booze-base palette: dairy, sucrose, and a liqueur. The liqueur's large
-    /// [`CompKey::PACtotal`] per gram makes a separate PAC target easy to over-constrain.
+    /// [`CompKey::TotalPAC`] per gram makes a separate PAC target easy to over-constrain.
     const BOOZY_ING: &[&str] = &["3.25% Milk", "40% Cream", "Sucrose", "Grand Marnier Cordon Rouge"];
 
     /// A multi-sugar palette whose sugars differ in POD:PAC ratio, giving the solver enough freedom
-    /// to hit a sweetness ([`CompKey::POD`]) and a hardness ([`CompKey::PACtotal`]) target at once.
+    /// to hit a sweetness ([`CompKey::POD`]) and a hardness ([`CompKey::TotalPAC`]) target at once.
     const SUGAR_BLEND_ING: &[&str] = &["Water", "Sucrose", "Dextrose", "Fructose"];
 
     // --- Exact balancing targets ---
@@ -894,26 +894,26 @@ mod tests {
     static DAIRY_TRIVIAL_TARGETS: LazyLock<Vec<(CompKey, f64)>> =
         LazyLock::new(|| vec![(CompKey::MilkFat, 16.0), (CompKey::MSNF, 11.0)]);
 
-    /// Dairy targets including a zero-valued [`CompKey::Stabilizers`] target, exercising the
+    /// Dairy targets including a zero-valued [`CompKey::TotalStabilizers`] target, exercising the
     /// relative-error floor path (i.e. that the result is finite, and no division by zero).
     static DAIRY_ZERO_TARGETS: LazyLock<Vec<(CompKey, f64)>> = LazyLock::new(|| {
         vec![
             (CompKey::MilkFat, 16.0),
             (CompKey::MSNF, 11.0),
-            (CompKey::Stabilizers, 0.0),
+            (CompKey::TotalStabilizers, 0.0),
         ]
     });
 
     /// Feasible targets for the [`SUGAR_BLEND_ING`] palette: the composition of a real blend
     /// (Water 68 / Sucrose 14 / Dextrose 10 / Fructose 8), so the solver can recover them exactly
-    /// while hitting a sweetness ([`CompKey::POD`]) and hardness ([`CompKey::PACtotal`]) target at
+    /// while hitting a sweetness ([`CompKey::POD`]) and hardness ([`CompKey::TotalPAC`]) target at
     /// once. These targets genuinely require all three sugars — any two-sugar subset misses by
     /// >10 pp (see [`balance_multi_sugar_needs_all_three_sugars`]).
     static SUGAR_BLEND_TARGETS: LazyLock<Vec<(CompKey, f64)>> = LazyLock::new(|| {
         vec![
             (CompKey::TotalSolids, 31.2),
             (CompKey::POD, 35.2),
-            (CompKey::PACtotal, 46.68),
+            (CompKey::TotalPAC, 46.68),
         ]
     });
 
@@ -968,24 +968,24 @@ mod tests {
         LazyLock::new(|| vec![(CompKey::MSNF, 16.0), (CompKey::Lactose, 5.0), (CompKey::MilkFat, 10.0)]);
 
     /// Sorbet sweetness vs. hardness: a restrained [`CompKey::POD`] (not too sweet) against a high
-    /// [`CompKey::PACtotal`] (soft, scoopable) target — opposed, since both rise with sugar. Spans
-    /// the large solids/sugar/PAC targets down to a trace [`CompKey::Stabilizers`].
+    /// [`CompKey::TotalPAC`] (soft, scoopable) target — opposed, since both rise with sugar. Spans
+    /// the large solids/sugar/PAC targets down to a trace [`CompKey::TotalStabilizers`].
     static SORBET_DISPARATE_TARGETS: LazyLock<Vec<(CompKey, f64)>> = LazyLock::new(|| {
         vec![
             (CompKey::TotalSolids, 32.0),
             (CompKey::TotalSugars, 26.0),
-            (CompKey::PACtotal, 32.0),
+            (CompKey::TotalPAC, 32.0),
             (CompKey::POD, 14.0),
-            (CompKey::Stabilizers, 0.40),
+            (CompKey::TotalStabilizers, 0.40),
         ]
     });
 
-    /// Booze base: a modest [`CompKey::ABV`] target plus a separate [`CompKey::PACtotal`] target,
+    /// Booze base: a modest [`CompKey::ABV`] target plus a separate [`CompKey::TotalPAC`] target,
     /// which the liqueur's outsized per-gram PAC contribution over-constrains.
     static BOOZY_DISPARATE_TARGETS: LazyLock<Vec<(CompKey, f64)>> = LazyLock::new(|| {
         vec![
             (CompKey::TotalSugars, 17.0),
-            (CompKey::PACtotal, 28.0),
+            (CompKey::TotalPAC, 28.0),
             (CompKey::ABV, 4.0),
         ]
     });
@@ -1170,7 +1170,7 @@ mod tests {
         );
     }
 
-    // Over-constrained: hitting the ABV target needs the liqueur, which also drives PACtotal, so
+    // Over-constrained: hitting the ABV target needs the liqueur, which also drives TotalPAC, so
     // the two can't both be met exactly. With absolute weighting the solver system breaks down and
     // collapses the total amount (must sum to 1) to ~0.29 to meet the larger ABV and PAC targets.
     #[test]
@@ -1258,7 +1258,7 @@ mod tests {
     fn is_ratio_key_rejects_extensive_keys() {
         assert_false!(is_ratio_key(CompKey::MilkFat));
         assert_false!(is_ratio_key(CompKey::Energy));
-        assert_false!(is_ratio_key(CompKey::PACtotal));
+        assert_false!(is_ratio_key(CompKey::TotalPAC));
         assert_false!(is_ratio_key(CompKey::Water));
     }
 

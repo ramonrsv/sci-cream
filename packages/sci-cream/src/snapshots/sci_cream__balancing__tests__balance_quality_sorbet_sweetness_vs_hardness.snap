@@ -5,9 +5,9 @@ expression: "report_balance_quality(&comps_from_names(SORBET_ING),\n&SORBET_DISP
 targets:
   TotalSolids     32.00
   TotalSugars     26.00
-  PACtotal        32.00
+  TotalPAC        32.00
   POD             14.00
-  Stabilizers      0.40
+  TotalStabilizers   0.40
 
 [nalgebra]
   [           ingredient           | qty ]
@@ -19,9 +19,9 @@ targets:
   [    key     | target | achieved |  error  ]
   TotalSolids     32.00     20.83     34.89 pp
   TotalSugars     26.00     20.43     21.42 pp
-  PACtotal        32.00     35.56     11.14 pp
+  TotalPAC        32.00     35.56     11.14 pp
   POD             14.00     17.07     21.93 pp
-  Stabilizers      0.40      0.40      0.44 pp
+  TotalStabilizers   0.40      0.40      0.44 pp
 
   [    sum     |  neg. |    max    |    rms  ]
      1.0000        0      34.89 pp    21.36 pp
@@ -36,9 +36,9 @@ targets:
   [    key     | target | achieved |  error  ]
   TotalSolids     32.00     20.83     34.89 pp
   TotalSugars     26.00     20.43     21.42 pp
-  PACtotal        32.00     35.56     11.14 pp
+  TotalPAC        32.00     35.56     11.14 pp
   POD             14.00     17.07     21.93 pp
-  Stabilizers      0.40      0.40      0.44 pp
+  TotalStabilizers   0.40      0.40      0.44 pp
 
   [    sum     |  neg. |    max    |    rms  ]
      1.0000        0      34.89 pp    21.36 pp

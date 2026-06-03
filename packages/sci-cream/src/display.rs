@@ -48,17 +48,17 @@ impl KeyAsStrings for CompKey {
             Self::OtherFats => "Other Fats",
             Self::OtherSNFS => "Other SNFS",
 
-            Self::TotalFats => "T. Fats",
-            Self::TotalSNF => "T. SNF",
-            Self::TotalSNFS => "T. SNFS",
-            Self::TotalProteins => "T. Proteins",
-            Self::TotalSolids => "T. Solids",
+            Self::TotalFats => "Fats",
+            Self::TotalSNF => "SNF",
+            Self::TotalSNFS => "SNFS",
+            Self::TotalProteins => "Proteins",
+            Self::TotalSolids => "Solids",
 
             Self::Water => "Water",
 
             Self::Inulin => "Inulin",
             Self::Oligofructose => "Oligofructose",
-            Self::Fiber => "Fiber",
+            Self::TotalFiber => "Fiber",
             Self::Glucose => "Glucose",
             Self::Fructose => "Fructose",
             Self::Galactose => "Galactose",
@@ -66,28 +66,28 @@ impl KeyAsStrings for CompKey {
             Self::Lactose => "Lactose",
             Self::Maltose => "Maltose",
             Self::Trehalose => "Trehalose",
-            Self::TotalSugars => "T. Sugars",
+            Self::TotalSugars => "Sugars",
             Self::Erythritol => "Erythritol",
             Self::Maltitol => "Maltitol",
             Self::Sorbitol => "Sorbitol",
             Self::Xylitol => "Xylitol",
-            Self::TotalPolyols => "T. Polyols",
+            Self::TotalPolyols => "Polyols",
             Self::Aspartame => "Aspartame",
             Self::Cyclamate => "Cyclamate",
             Self::Saccharin => "Saccharin",
             Self::Sucralose => "Sucralose",
             Self::Steviosides => "Steviosides",
             Self::Mogrosides => "Mogrosides",
-            Self::TotalArtificial => "T. Artificial",
-            Self::TotalSweeteners => "T. Sweeteners",
-            Self::TotalCarbohydrates => "T. Carbohydrates",
+            Self::TotalArtificial => "Artificial",
+            Self::TotalSweeteners => "Sweeteners",
+            Self::TotalCarbohydrates => "Carbohydrates",
 
             Self::Alcohol => "Alcohol",
             Self::ABV => "ABV",
 
             Self::Salt => "Salt",
             Self::Lecithin => "Lecithin",
-            Self::Emulsifiers => "Emulsifiers",
+            Self::TotalEmulsifiers => "Emulsifiers",
             Self::Cornstarch => "Cornstarch",
             Self::TapiocaStarch => "Tapioca Starch",
             Self::Pectin => "Pectin",
@@ -99,7 +99,7 @@ impl KeyAsStrings for CompKey {
             Self::XanthanGum => "Xanthan Gum",
             Self::SodiumAlginate => "Sodium Alginate",
             Self::TaraGum => "Tara Gum",
-            Self::Stabilizers => "Stabilizers",
+            Self::TotalStabilizers => "Stabilizers",
             Self::EmulsifiersPerFat => "Emul./Fat",
             Self::StabilizersPerWater => "Stab./Water",
 
@@ -109,7 +109,7 @@ impl KeyAsStrings for CompKey {
             Self::PACslt => "PACslt",
             Self::PACmlk => "PACmlk",
             Self::PACalc => "PACalc",
-            Self::PACtotal => "PAC",
+            Self::TotalPAC => "PAC",
             Self::AbsPAC => "Abs.PAC",
             Self::HF => "HF",
 
@@ -291,11 +291,11 @@ mod tests {
             "Egg Solids",
             "Other Fats",
             "Other SNFS",
-            "T. Fats",
-            "T. SNF",
-            "T. SNFS",
-            "T. Proteins",
-            "T. Solids",
+            "Fats",
+            "SNF",
+            "SNFS",
+            "Proteins",
+            "Solids",
             "Water",
             "Inulin",
             "Oligofructose",
@@ -307,21 +307,21 @@ mod tests {
             "Lactose",
             "Maltose",
             "Trehalose",
-            "T. Sugars",
+            "Sugars",
             "Erythritol",
             "Maltitol",
             "Sorbitol",
             "Xylitol",
-            "T. Polyols",
+            "Polyols",
             "Aspartame",
             "Cyclamate",
             "Saccharin",
             "Sucralose",
             "Steviosides",
             "Mogrosides",
-            "T. Artificial",
-            "T. Sweeteners",
-            "T. Carbohydrates",
+            "Artificial",
+            "Sweeteners",
+            "Carbohydrates",
             "Alcohol",
             "ABV",
             "Salt",
@@ -384,7 +384,7 @@ mod tests {
         };
         let text = dominance.to_string();
         assert_true!(text.contains("Sucrose"));
-        assert_true!(text.contains("T. Sugars"));
+        assert_true!(text.contains("Sugars"));
     }
 
     #[test]
@@ -397,7 +397,7 @@ mod tests {
         };
         let text = additive.to_string();
         assert_true!(text.contains("'Sucrose' + 'Fructose'"));
-        assert_true!(text.contains("T. Sugars"));
+        assert_true!(text.contains("Sugars"));
     }
 
     #[test]

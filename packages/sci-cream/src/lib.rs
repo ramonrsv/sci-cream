@@ -94,8 +94,8 @@ for (key, value) in [
     (PACsgr.into(), 27.633),
     (PACmlk.into(), 3.26),
     (PACalc.into(), 2.012),
-    (PACtotal.into(), 33.383),
-    (AbsPAC.into(), 56.63), // PACtotal / Water
+    (TotalPAC.into(), 33.383),
+    (AbsPAC.into(), 56.63), // TotalPAC / Water
     (HF.into(), 7.538),
     (FPD.into(), -3.604), // °C
     (ServingTemp.into(), -13.371), // °C
@@ -383,7 +383,7 @@ let stabilizer_blend_spec = CompositeSpec {
 };
 
 let comp = stabilizer_blend_spec.resolve_composition(&db)?;
-assert_eq!(comp.get(Stabilizers), 100.0);
+assert_eq!(comp.get(TotalStabilizers), 100.0);
 
 let stabs = comp.micro.stabilizers;
 assert_eq_float!(stabs.locust_bean_gum, 57.143);

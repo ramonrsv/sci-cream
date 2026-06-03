@@ -19,7 +19,7 @@ with, provide uniformity to the product and resistance to melting, produce smoot
 during consumption, etc. (Goff & Hartel, 2025, p. 76)[^20], (Raphaelson, 2023, January)[^37].
 
 The detailed breakdown of added stabilizers in a mix is tracked in [`Stabilizers`], with the total
-content accessible via [`CompKey::Stabilizers`]. The strength properties for all stabilizers
+content accessible via [`CompKey::TotalStabilizers`]. The strength properties for all stabilizers
 documented here can be found at [`constants::stabilization`](crate::constants::stabilization).
 
 - <a id="stabilizer-egg-yolk-solids"></a>**Egg Yolk Solids**, typically in the form of egg custards,

@@ -247,7 +247,7 @@ pub enum CompKey {
     /// [`Carbohydrates::fiber::oligofructose`](Fibers::oligofructose)
     Oligofructose,
     /// Total fiber content, as tracked in [`Carbohydrates::fiber`]
-    Fiber,
+    TotalFiber,
     /// Total free glucose content, i.e. glucose not part of disaccharides or polysaccharides
     Glucose,
     /// Total free fructose content, i.e. fructose not part of disaccharides or polysaccharides
@@ -320,7 +320,7 @@ pub enum CompKey {
     /// Total emulsifier content, including lecithin and others tracked in [`Micro::emulsifiers`]
     // @todo Introduce `Emulsification` as a separate key, representing the overall emulsification
     // strength of the mix from all sources, as tracked in [`Texture::emulsification`]
-    Emulsifiers,
+    TotalEmulsifiers,
     /// Total cornstarch content, a stabilizer tracked in [`Stabilizers::cornstarch`]
     Cornstarch,
     /// Total tapioca starch content, a stabilizer tracked in [`Stabilizers::tapioca_starch`]
@@ -347,7 +347,7 @@ pub enum CompKey {
     /// Total stabilizer content, e.g. from Locust Bean Gum, etc. tracked in [`Micro::stabilizers`]
     // @todo Introduce `Stabilization` as a separate key, representing the overall stabilization
     // strength of the mix from all sources, as tracked in [`Texture::stabilization`]
-    Stabilizers,
+    TotalStabilizers,
     /// Total emulsifier content per fat content, i.e. `Emulsifiers / TotalFats`, as a percentage
     EmulsifiersPerFat,
     /// Total stabilizer content per water content, i.e. `Stabilizers / Water`, as a percentage
@@ -368,8 +368,8 @@ pub enum CompKey {
     /// [Potere Anti-Cristallizzante (PAC)](crate::docs#pac) contributions from alcohol
     PACalc,
     /// Total [Potere Anti-Cristallizzante (PAC)](crate::docs#pac) of the ingredient or mix as whole
-    PACtotal,
-    /// [Absolute PAC](crate::docs#absolute-pac), i.e. `PACtotal / Water`, as a percentage
+    TotalPAC,
+    /// [Absolute PAC](crate::docs#absolute-pac), i.e. `TotalPAC / Water`, as a percentage
     AbsPAC,
     /// [Hardness Factor (HF)](crate::docs#corvitto-method-hardness-factor) of the ingredient or mix
     HF,
@@ -506,7 +506,7 @@ impl Composition {
         }
     }
 
-    /// Calculates [Absolute PAC](crate::docs#absolute-pac), i.e. `PACtotal / Water`, as a
+    /// Calculates [Absolute PAC](crate::docs#absolute-pac), i.e. `TotalPAC / Water`, as a
     /// percentage, excluding the hardness factor
     ///
     /// This is equivalent to [`get(CompKey::AbsPAC)`](Self::get).
@@ -556,7 +556,7 @@ impl Composition {
 
             CompKey::Inulin => self.solids.all().carbohydrates.fiber.inulin,
             CompKey::Oligofructose => self.solids.all().carbohydrates.fiber.oligofructose,
-            CompKey::Fiber => self.solids.all().carbohydrates.fiber.total(),
+            CompKey::TotalFiber => self.solids.all().carbohydrates.fiber.total(),
             CompKey::Glucose => self.solids.all().carbohydrates.sugars.glucose,
             CompKey::Fructose => self.solids.all().carbohydrates.sugars.fructose,
             CompKey::Galactose => self.solids.all().carbohydrates.sugars.galactose,
@@ -589,7 +589,7 @@ impl Composition {
 
             CompKey::Salt => self.micro.salt,
             CompKey::Lecithin => self.micro.emulsifiers.lecithin,
-            CompKey::Emulsifiers => self.micro.emulsifiers.total(),
+            CompKey::TotalEmulsifiers => self.micro.emulsifiers.total(),
             CompKey::Cornstarch => self.micro.stabilizers.cornstarch,
             CompKey::TapiocaStarch => self.micro.stabilizers.tapioca_starch,
             CompKey::Pectin => self.micro.stabilizers.pectin,
@@ -601,7 +601,7 @@ impl Composition {
             CompKey::XanthanGum => self.micro.stabilizers.xanthan_gum,
             CompKey::SodiumAlginate => self.micro.stabilizers.sodium_alginate,
             CompKey::TaraGum => self.micro.stabilizers.tara_gum,
-            CompKey::Stabilizers => self.micro.stabilizers.total(),
+            CompKey::TotalStabilizers => self.micro.stabilizers.total(),
             CompKey::EmulsifiersPerFat => self.emulsifiers_per_fat(),
             CompKey::StabilizersPerWater => self.stabilizers_per_water(),
 
@@ -611,7 +611,7 @@ impl Composition {
             CompKey::PACslt => self.pac.salt,
             CompKey::PACmlk => self.pac.msnf_ws_salts,
             CompKey::PACalc => self.pac.alcohol,
-            CompKey::PACtotal => self.pac.total(),
+            CompKey::TotalPAC => self.pac.total(),
             CompKey::AbsPAC => self.absolute_pac(),
             CompKey::HF => self.pac.hardness_factor,
 
@@ -850,7 +850,7 @@ mod tests {
             (CompKey::POD, 0.769_104),
             (CompKey::PACsgr, 4.8069),
             (CompKey::PACmlk, 3.2405),
-            (CompKey::PACtotal, 8.0474),
+            (CompKey::TotalPAC, 8.0474),
             (CompKey::AbsPAC, 9.02377),
             (CompKey::SaturatedFat, 1.3),
             (CompKey::TransFat, 0.07),
@@ -987,7 +987,7 @@ mod tests {
             // Carbohydrates
             (CompKey::Inulin,               0.4),
             (CompKey::Oligofructose,        0.6),
-            (CompKey::Fiber,                1.0),   // 0.4 (inulin) + 0.6 (oligofructose)
+            (CompKey::TotalFiber,                1.0),   // 0.4 (inulin) + 0.6 (oligofructose)
             (CompKey::Glucose,              1.0),
             (CompKey::Fructose,             1.0),
             (CompKey::Galactose,            1.0),
@@ -1015,7 +1015,7 @@ mod tests {
             (CompKey::ABV,                  abv),
             (CompKey::Salt,                 0.3),
             (CompKey::Lecithin,             0.6),
-            (CompKey::Emulsifiers,          0.6),
+            (CompKey::TotalEmulsifiers,          0.6),
             (CompKey::Cornstarch,           0.01),
             (CompKey::TapiocaStarch,        0.02),
             (CompKey::Pectin,               0.03),
@@ -1027,7 +1027,7 @@ mod tests {
             (CompKey::XanthanGum,           0.09),
             (CompKey::SodiumAlginate,       0.10),
             (CompKey::TaraGum,              0.11),
-            (CompKey::Stabilizers,          0.66),  // 0.01+0.02+...+0.11
+            (CompKey::TotalStabilizers,          0.66),  // 0.01+0.02+...+0.11
             (CompKey::EmulsifiersPerFat,    5.0),   // 0.6 / 12.0 * 100
             (CompKey::StabilizersPerWater,  0.66 / 59.0 * 100.0),  // stabilizers / water
             // POD and PAC
@@ -1036,7 +1036,7 @@ mod tests {
             (CompKey::PACslt,               1.0),
             (CompKey::PACmlk,               2.0),
             (CompKey::PACalc,               0.5),
-            (CompKey::PACtotal,             9.5),
+            (CompKey::TotalPAC,             9.5),
             (CompKey::AbsPAC,               abs_pac),
             (CompKey::HF,                   1.0),
             // Saturated and Trans Fat

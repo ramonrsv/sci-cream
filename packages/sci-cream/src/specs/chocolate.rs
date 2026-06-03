@@ -64,7 +64,7 @@ use crate::composition::CompKey;
 /// assert_eq!(comp.get(CompKey::Energy), 543.0);
 /// assert_eq!(comp.get(CompKey::TotalFats), 40.0);
 /// assert_eq!(comp.get(CompKey::TotalProteins), 7.35);
-/// assert_eq!(comp.get(CompKey::Fiber), 12.0);
+/// assert_eq!(comp.get(CompKey::TotalFiber), 12.0);
 /// # Ok(()) }
 /// ```
 ///
@@ -95,7 +95,7 @@ use crate::composition::CompKey;
 /// assert_eq!(comp.get(CompKey::Energy), 325.023);
 /// assert_eq!(comp.get(CompKey::TotalFats), 16.67);
 /// assert_eq_float!(comp.get(CompKey::TotalProteins), 20.4159);
-/// assert_eq_float!(comp.get(CompKey::Fiber), 33.332);
+/// assert_eq_float!(comp.get(CompKey::TotalFiber), 33.332);
 /// # Ok(()) }
 /// ```
 #[doc = include_str!("../../docs/references/index/107.md")]
@@ -251,7 +251,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Energy), 543.0);
         assert_eq!(comp.get(CompKey::TotalFats), 40.0);
         assert_eq!(comp.get(CompKey::TotalProteins), 7.35);
-        assert_eq!(comp.get(CompKey::Fiber), 12.0);
+        assert_eq!(comp.get(CompKey::TotalFiber), 12.0);
 
         assert_eq!(comp.get(CompKey::Sucrose), 30.0);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 30.0);
@@ -266,7 +266,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TotalSNFS), 30.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::POD), 30.0);
-        assert_eq!(comp.get(CompKey::PACtotal), 30.0);
+        assert_eq!(comp.get(CompKey::TotalPAC), 30.0);
         assert_eq!(comp.get(CompKey::HF), 90.0);
 
         assert_eq!(comp.get(CompKey::SaturatedFat), 24.0);
@@ -334,7 +334,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Energy), 608.25);
         assert_eq!(comp.get(CompKey::TotalFats), 57.5);
         assert_eq!(comp.get(CompKey::TotalProteins), 9.1875);
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 15.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 15.0);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 3.0);
 
         assert_eq!(comp.get(CompKey::CacaoSolids), 95.0);
@@ -347,7 +347,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TotalSNFS), 39.5);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::POD), 3.0);
-        assert_eq!(comp.get(CompKey::PACtotal), 3.0);
+        assert_eq!(comp.get(CompKey::TotalPAC), 3.0);
         assert_eq!(comp.get(CompKey::HF), 119.25);
 
         assert_eq!(comp.get(CompKey::SaturatedFat), 34.5);
@@ -407,7 +407,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Energy), 582.6);
         assert_eq!(comp.get(CompKey::TotalFats), 54.0);
         assert_eq!(comp.get(CompKey::TotalProteins), 11.27);
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 18.4);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 18.4);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
 
         assert_eq!(comp.get(CompKey::CacaoSolids), 100.0);
@@ -417,7 +417,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::POD), 0.0);
-        assert_eq!(comp.get(CompKey::PACtotal), 0.0);
+        assert_eq!(comp.get(CompKey::TotalPAC), 0.0);
         assert_eq!(comp.get(CompKey::HF), 131.4);
 
         assert_eq!(comp.get(CompKey::SaturatedFat), 32.4);
@@ -478,7 +478,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Energy), 325.023);
         assert_eq!(comp.get(CompKey::TotalFats), 16.67);
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 20.4159);
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 33.332);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 33.332);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
 
         assert_eq!(comp.get(CompKey::CacaoSolids), 100.0);
@@ -488,7 +488,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::POD), 0.0);
-        assert_eq!(comp.get(CompKey::PACtotal), 0.0);
+        assert_eq!(comp.get(CompKey::TotalPAC), 0.0);
         assert_eq!(comp.get(CompKey::HF), 164.997);
 
         assert_eq!(comp.get(CompKey::SaturatedFat), 10.002);
@@ -549,7 +549,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Energy), 542.31);
         assert_eq_flt_test!(comp.get(CompKey::TotalFats), 39.9);
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 7.3745);
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 12.04);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 12.04);
 
         assert_eq!(comp.get(CompKey::Sucrose), 30.0);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 30.0);
@@ -562,7 +562,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 30.1);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::POD), 30.0);
-        assert_eq!(comp.get(CompKey::PACtotal), 30.0);
+        assert_eq!(comp.get(CompKey::TotalPAC), 30.0);
         assert_eq_flt_test!(comp.get(CompKey::HF), 90.09);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 23.94);
@@ -623,7 +623,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Energy), 593.135);
         assert_eq_flt_test!(comp.get(CompKey::TotalFats), 54.15);
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 10.00825);
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 16.34);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 16.34);
 
         assert_eq!(comp.get(CompKey::Sucrose), 5.0);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 5.0);
@@ -636,7 +636,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::TotalSNFS), 40.85);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::POD), 5.0);
-        assert_eq!(comp.get(CompKey::PACtotal), 5.0);
+        assert_eq!(comp.get(CompKey::TotalPAC), 5.0);
         assert_eq_flt_test!(comp.get(CompKey::HF), 122.265);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 32.49);
@@ -692,7 +692,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Energy), 603.3);
         assert_eq_flt_test!(comp.get(CompKey::TotalFats), 57.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 10.535);
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 17.2);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 17.2);
         assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
 
         assert_eq_flt_test!(comp.get(CompKey::CacaoSolids), 100.0);
@@ -702,7 +702,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 100.0);
         assert_eq!(comp.get(CompKey::POD), 0.0);
-        assert_eq!(comp.get(CompKey::PACtotal), 0.0);
+        assert_eq!(comp.get(CompKey::TotalPAC), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::HF), 128.7);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 34.2);
@@ -766,7 +766,7 @@ pub(crate) mod tests {
         CompKey::CacaoSolids,
         CompKey::CocoaButter,
         CompKey::CocoaSolids,
-        CompKey::Fiber,
+        CompKey::TotalFiber,
         CompKey::TotalSugars,
         CompKey::TotalCarbohydrates,
         CompKey::OtherSNFS,
@@ -777,7 +777,7 @@ pub(crate) mod tests {
         CompKey::POD,
         CompKey::PACsgr,
         CompKey::HF,
-        CompKey::PACtotal,
+        CompKey::TotalPAC,
         CompKey::SaturatedFat,
         CompKey::TransFat,
     ];

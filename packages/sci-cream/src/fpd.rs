@@ -530,7 +530,7 @@ pub fn compute_fpd_curve_step_modified_goff_hartel_corvitto(
 
     // It's important to sum the PAC values before computing FPD, rather than computing FPD for
     // each PAC value separately and summing the FPDs. See [`get_fpd_from_pac_polynomial`]'s docs.
-    next.pac_exc_hf = composition.get(CompKey::PACtotal) / next.water * 100.0;
+    next.pac_exc_hf = composition.get(CompKey::TotalPAC) / next.water * 100.0;
     next.hf = composition.get(CompKey::HF) / next.water * 100.0;
     let pac_inc_hf = next.pac_exc_hf - next.hf;
 
@@ -793,7 +793,7 @@ mod tests {
         assert_eq!(comp.get(CompKey::Water), 60.0);
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 4.4088);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 26.5888);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 26.5888);
 
         let comp = *REF_COMP_WITH_ALCOHOL;
         assert_eq!(comp.get(CompKey::MSNF), 12.0);
@@ -803,7 +803,7 @@ mod tests {
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
         assert_eq!(comp.get(CompKey::PACalc), 14.8);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 4.4088);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 41.3888);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 41.3888);
 
         let comp = *REF_COMP_WITH_HF;
         assert_eq!(comp.get(CompKey::MSNF), 12.0);
@@ -812,8 +812,8 @@ mod tests {
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 4.4088);
         assert_eq!(comp.get(CompKey::HF), 10.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 26.5888);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal) - comp.get(CompKey::HF), 16.5888);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 26.5888);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF), 16.5888);
     }
 
     /// Reference freezing curve for [`REF_COMP`] (Goff & Hartel, 2013, Table 6.2, p. 184)[^2]
@@ -1040,12 +1040,12 @@ mod tests {
         let mut comp = *REF_COMP;
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
         assert_eq!(comp.get(CompKey::HF), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal) - comp.get(CompKey::HF), 26.5888);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF), 26.5888);
 
         comp.pac.hardness_factor = 30.0;
         assert_eq!(comp.get(CompKey::PACsgr), 22.18);
         assert_eq!(comp.get(CompKey::HF), 30.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal) - comp.get(CompKey::HF), -3.4112);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF), -3.4112);
 
         for (ref_step, _) in REF_COMP_FREEZING_CURVE_MODIFIED_GOFF_HARTEL_CORVITTO.iter() {
             let step_with_hf = compute_fpd_curve_step_modified_goff_hartel_corvitto(
@@ -1169,9 +1169,9 @@ mod tests {
         assert_eq!(comp.get(CompKey::TotalFats), 8.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 36.1);
         assert_eq!(comp.get(CompKey::PACsgr), 26.7);
-        assert_eq!(comp.get(CompKey::PACtotal), 26.7);
+        assert_eq!(comp.get(CompKey::TotalPAC), 26.7);
         assert_abs_diff_eq!(
-            super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::PACtotal)).unwrap(),
+            super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::TotalPAC)).unwrap(),
             -11.0,
             epsilon = 0.25
         );
@@ -1184,9 +1184,9 @@ mod tests {
         assert_eq!(comp.get(CompKey::TotalFats), 8.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 39.3);
         assert_eq!(comp.get(CompKey::PACsgr), 40.9);
-        assert_eq!(comp.get(CompKey::PACtotal), 40.9);
+        assert_eq!(comp.get(CompKey::TotalPAC), 40.9);
         assert_abs_diff_eq!(
-            super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::PACtotal)).unwrap(),
+            super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::TotalPAC)).unwrap(),
             -18.0,
             epsilon = 0.25
         );
@@ -1204,10 +1204,10 @@ mod tests {
         assert_eq!(comp.get(CompKey::TotalSweeteners), 3.4 + 17.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 38.2);
         assert_eq!(comp.get(CompKey::PACsgr), 37.3);
-        assert_eq!(comp.get(CompKey::PACtotal), 37.3);
+        assert_eq!(comp.get(CompKey::TotalPAC), 37.3);
         assert_eq!(comp.get(CompKey::HF), 9.7);
         assert_abs_diff_eq!(
-            super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::PACtotal) - comp.get(CompKey::HF)).unwrap(),
+            super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF)).unwrap(),
             -11.0,
             epsilon = 0.3
         );
@@ -1225,10 +1225,10 @@ mod tests {
         assert_eq!(comp.get(CompKey::TotalSweeteners), 4.1 + 22.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 43.2);
         assert_eq!(comp.get(CompKey::PACsgr), 50.9);
-        assert_eq!(comp.get(CompKey::PACtotal), 50.9);
+        assert_eq!(comp.get(CompKey::TotalPAC), 50.9);
         assert_eq!(comp.get(CompKey::HF), 9.7);
         assert_abs_diff_eq!(
-            super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::PACtotal) - comp.get(CompKey::HF)).unwrap(),
+            super::get_serving_temp_from_pac_corvitto(comp.get(CompKey::TotalPAC) - comp.get(CompKey::HF)).unwrap(),
             -18.0,
             epsilon = 0.3
         );
@@ -1292,7 +1292,7 @@ mod tests {
             *CORVITTO_REF_COMP_WITH_HF_18ST,
         ] {
             let expected_serving_temp =
-                super::get_serving_temp_from_pac_corvitto(ref_comp.get(CompKey::PACtotal) - ref_comp.get(CompKey::HF))
+                super::get_serving_temp_from_pac_corvitto(ref_comp.get(CompKey::TotalPAC) - ref_comp.get(CompKey::HF))
                     .unwrap();
             let fpd_curve_step_at_xx_fw =
                 compute_fpd_curve_step_modified_goff_hartel_corvitto(*ref_comp, 70.0, &get_fpd_from_pac_poly).unwrap();

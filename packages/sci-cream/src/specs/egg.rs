@@ -19,7 +19,7 @@ use crate::composition::CompKey;
 /// reference texts, e.g. _Ice Cream 7th Edition_ (Goff & Hartel, 2013, p. 49)[^2] or _The Science
 /// of Ice Cream_ (Clarke, 2004, p. 49)[^4]. Note that [`lecithin`](Self::lecithin) is a subset of
 /// [`fat`](Self::fat) and considered an emulsifier with relative strength of 100, specified in
-/// [`Composition`] via [`CompKey::Emulsifiers`]. The remaining portion of `100 - water - fat` is
+/// [`Composition`] via [`CompKey::TotalEmulsifiers`]. The remaining portion of `100 - water - fat` is
 /// assumed to be non-fat solids (snf), specified in [`Composition`] via [`CompKey::EggSNF`].
 ///
 /// # Examples
@@ -49,7 +49,7 @@ use crate::composition::CompKey;
 /// assert_eq!(comp.get(CompKey::TotalProteins), 16.0);
 /// assert_eq!(comp.get(CompKey::EggSNF), 19.0);
 /// assert_eq!(comp.get(CompKey::EggSolids), 49.0);
-/// assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
+/// assert_eq!(comp.get(CompKey::TotalEmulsifiers), 9.0);
 /// # Ok(()) }
 /// ```
 //
@@ -177,7 +177,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TotalProteins), 16.0);
         assert_eq!(comp.get(CompKey::TotalSNFS), 19.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 49.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 9.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 9.0);
         assert_eq!(comp.get(CompKey::Lecithin), 9.0);
         assert_eq!(comp.get(CompKey::SaturatedFat), 8.4);
         assert_eq!(comp.get(CompKey::TransFat), 0.0);

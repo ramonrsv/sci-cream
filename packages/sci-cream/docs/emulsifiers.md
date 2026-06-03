@@ -26,7 +26,7 @@ meltdown, and the development of coarse or icy textures, while contributing to a
 the frozen product (Goff & Hartel, 2025, pp. 84–85)[^20].
 
 The detailed breakdown of added emulsifiers in a mix is tracked in [`Emulsifiers`], with the total
-content accessible via [`CompKey::Emulsifiers`]. The strength properties for all emulsifiers
+content accessible via [`CompKey::TotalEmulsifiers`]. The strength properties for all emulsifiers
 documented here can be found at [`constants::emulsification`](crate::constants::emulsification).
 
 - <a id="emulsifier-casein-proteins"></a>**Casein proteins**, which make up ~80% of milk proteins

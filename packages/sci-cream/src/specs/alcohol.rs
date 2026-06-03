@@ -85,7 +85,7 @@ use crate::{composition::CompKey, constants};
 /// assert_eq!(comp.get(CompKey::POD), 18.0);
 /// assert_eq!(comp.get(CompKey::PACalc), 99.65859);
 /// assert_eq!(comp.get(CompKey::PACsgr), 18.0);
-/// assert_eq!(comp.get(CompKey::PACtotal), 117.65859);
+/// assert_eq!(comp.get(CompKey::TotalPAC), 117.65859);
 /// # Ok(()) }
 /// ```
 #[doc = include_str!("../../docs/references/index/8.md")]
@@ -184,7 +184,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
         assert_eq!(comp.get(CompKey::POD), 0.0);
         assert_eq!(comp.get(CompKey::PACalc), 234.4908);
-        assert_eq!(comp.get(CompKey::PACtotal), 234.4908);
+        assert_eq!(comp.get(CompKey::TotalPAC), 234.4908);
 
         assert_eq!(comp.alcohol.to_abv(), comp.get(CompKey::ABV));
         assert_eq!(comp.alcohol.by_weight, comp.get(CompKey::Alcohol));
@@ -228,7 +228,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::POD), 18.0);
         assert_eq!(comp.get(CompKey::PACalc), 99.65859);
         assert_eq!(comp.get(CompKey::PACsgr), 18.0);
-        assert_eq!(comp.get(CompKey::PACtotal), 117.65859);
+        assert_eq!(comp.get(CompKey::TotalPAC), 117.65859);
 
         assert_eq!(comp.alcohol.to_abv(), comp.get(CompKey::ABV));
         assert_eq!(comp.alcohol.by_weight, comp.get(CompKey::Alcohol));

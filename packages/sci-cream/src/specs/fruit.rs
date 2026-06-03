@@ -188,7 +188,7 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::TotalFats), 0.3);
         assert_eq!(comp.get(CompKey::TotalProteins), 0.67);
-        assert_eq!(comp.get(CompKey::Fiber), 2.0);
+        assert_eq!(comp.get(CompKey::TotalFiber), 2.0);
         assert_eq!(comp.get(CompKey::Glucose), 1.99);
         assert_eq!(comp.get(CompKey::Fructose), 2.44);
         assert_eq!(comp.get(CompKey::Sucrose), 0.47);
@@ -241,7 +241,7 @@ pub(crate) mod tests {
 
         assert_eq!(comp.get(CompKey::TotalFats), 0.15);
         assert_eq!(comp.get(CompKey::TotalProteins), 0.91);
-        assert_eq!(comp.get(CompKey::Fiber), 2.0);
+        assert_eq!(comp.get(CompKey::TotalFiber), 2.0);
         assert_eq!(comp.get(CompKey::Glucose), 2.02);
         assert_eq!(comp.get(CompKey::Fructose), 2.36);
         assert_eq!(comp.get(CompKey::Sucrose), 4.19);

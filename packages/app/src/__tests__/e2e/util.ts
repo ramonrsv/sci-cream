@@ -247,7 +247,7 @@ export async function getRecipeUpdateCheckElements(
   const ingNameInput = getIngredientNameInputAtIdx(page, ingIdx);
   const ingQtyInput = getIngredientQtyInputAtIdx(page, ingIdx);
   const propServingTemp = getMixPropertyValueElement(page, servingTempPropKey, recipeIdx);
-  const ingCompPac = await getCompositionValueElement(page, ingIdx, CompKey.PACtotal);
+  const ingCompPac = await getCompositionValueElement(page, ingIdx, CompKey.TotalPAC);
 
   return { ingIdx, ingNameInput, ingQtyInput, propServingTemp, ingCompPac };
 }
@@ -290,7 +290,7 @@ export function getExpectedRecipeUpdateValues(
   const servingTempVal = getMixProperty(mixProps, fpdToPropKey(FpdKey.ServingTemp));
 
   const ingComp = WASM_BRIDGE.get_ingredient_by_name(ingName).composition;
-  const ingCompPacVal = ingComp.get(CompKey.PACtotal);
+  const ingCompPacVal = ingComp.get(CompKey.TotalPAC);
 
   const servingTemp = formatCompositionValue(servingTempVal);
   const ingCompPac = applyQtyToggleAndFormat(

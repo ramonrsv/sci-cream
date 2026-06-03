@@ -1347,7 +1347,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Glucose), 2.94);
         assert_eq!(comp.get(CompKey::Fructose), 2.94);
         assert_eq!(comp.get(CompKey::Sucrose), 2.94);
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 89.18);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 89.18);
         assert_eq!(comp.get(CompKey::TotalSugars), 8.82);
         assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
         assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
@@ -1402,7 +1402,7 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 147.0);
 
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 98.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 98.0);
         assert_eq!(comp.get(CompKey::TotalSugars), 0.0);
         assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
         assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
@@ -1475,7 +1475,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Glucose), 1.6366);
         assert_eq_flt_test!(comp.get(CompKey::Fructose), 1.6366);
         assert_eq_flt_test!(comp.get(CompKey::Sucrose), 1.6268);
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 93.1);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 93.1);
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 4.9);
         assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
         assert_eq!(comp.get(CompKey::TotalArtificial), 0.0);
@@ -1553,7 +1553,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Energy), 374.72);
 
         assert_eq!(comp.get(CompKey::Glucose), 55.0);
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 55.0);
         assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
         assert_eq!(comp.get(CompKey::TotalArtificial), 1.32);
@@ -1637,7 +1637,7 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 19.98);
 
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 0.0);
         assert_eq!(comp.get(CompKey::TotalPolyols), 99.9);
         assert_eq!(comp.get(CompKey::TotalArtificial), 0.1);
@@ -1708,7 +1708,7 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 19.98);
 
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 0.0);
         assert_eq!(comp.get(CompKey::TotalPolyols), 99.9);
         assert_eq!(comp.get(CompKey::TotalArtificial), 0.1);
@@ -1789,7 +1789,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Glucose), 1.96);
         assert_eq!(comp.get(CompKey::Fructose), 1.96);
         assert_eq!(comp.get(CompKey::Sucrose), 1.96);
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 87.22);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 87.22);
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 5.88);
         assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
         assert_eq!(comp.get(CompKey::TotalArtificial), 4.9);
@@ -1860,7 +1860,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Energy), 244.0);
 
         assert_eq!(comp.get(CompKey::Glucose), 61.0);
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 61.0);
         assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
         assert_eq!(comp.get(CompKey::TotalArtificial), 33.0);
@@ -1947,7 +1947,7 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Energy), 356.0);
 
         assert_eq!(comp.get(CompKey::Glucose), 89.0);
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 89.0);
         assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
         assert_eq!(comp.get(CompKey::TotalArtificial), 3.4);
@@ -2034,7 +2034,7 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::Energy), 366.2);
 
-        assert_eq_flt_test!(comp.get(CompKey::Fiber), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalFiber), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::TotalSugars), 0.0);
         assert_eq!(comp.get(CompKey::TotalPolyols), 0.0);
         assert_eq!(comp.get(CompKey::TotalArtificial), 3.45);

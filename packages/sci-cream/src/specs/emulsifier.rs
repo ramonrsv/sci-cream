@@ -122,7 +122,7 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TotalFats), 100.0);
         assert_eq!(comp.get(CompKey::OtherSNFS), 0.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 100.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 100.0);
 
         assert_eq!(comp.micro.emulsifiers, Emulsifiers::new().lecithin(100.0));
         assert_eq!(comp.texture.emulsification, 100.0);

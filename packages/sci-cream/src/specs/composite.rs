@@ -460,9 +460,9 @@ pub(crate) mod tests {
         let combined_comp = Composition::from_combination(&combo).unwrap();
         assert_eq!(composite_comp, combined_comp);
 
-        assert_eq!(composite_comp.get(CompKey::Fiber), 100.0);
+        assert_eq!(composite_comp.get(CompKey::TotalFiber), 100.0);
         assert_eq!(composite_comp.get(CompKey::TotalSolids), 100.0);
-        assert_eq!(composite_comp.get(CompKey::Stabilizers), 100.0);
+        assert_eq!(composite_comp.get(CompKey::TotalStabilizers), 100.0);
     }
 
     pub(crate) static INGREDIENT_ASSETS_TABLE_COMPOSITE: LazyLock<Vec<(&str, IngredientSpec, Option<Composition>)>> =

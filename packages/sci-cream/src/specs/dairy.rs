@@ -389,15 +389,15 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Water), 91.0);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 0.7848);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.905);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.3066);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.2116);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 8.2116);
 
         assert_eq!(comp.get(CompKey::SaturatedFat), 0.0);
         assert_eq!(comp.get(CompKey::TransFat), 0.0);
@@ -457,15 +457,15 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Water), 89.18);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 0.769_104);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.8069);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.2405);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.0474);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 8.0474);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.3);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.07);
@@ -524,15 +524,15 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Water), 88.0425);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 0.7593);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.7456);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.1992);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 7.9448);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 7.9448);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 2.1125);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.11375);
@@ -592,15 +592,15 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Water), 54.6);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 0.47088);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 2.943);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 1.984);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 4.927);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 4.927);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 26.0);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 1.4);
@@ -663,15 +663,15 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Water), 89.18);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 3.485);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 9.1331);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.2405);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 12.3736);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 12.3736);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.3);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.07);
@@ -733,15 +733,15 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Water), 3.0);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 8.4584);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 52.865);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 35.6382);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 88.5032);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 88.5032);
 
         assert_eq!(comp.get(CompKey::SaturatedFat), 0.0);
         assert_eq!(comp.get(CompKey::TransFat), 0.0);
@@ -802,15 +802,15 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Water), 3.0);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 6.104);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 38.15);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 25.7183);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 63.8683);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 63.8683);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 17.55);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.945);
@@ -887,15 +887,15 @@ pub(crate) mod tests {
         assert_eq_flt_test!(relative_diff_percent(comp.get(CompKey::Water), 88.1), 0.3722);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 0.7696);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.81);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.3169);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.1269);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 8.1269);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.86);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.112);
@@ -970,15 +970,15 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Water), 87.2102);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 0.8072);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 5.04528);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.5050);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 8.5503);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 8.5503);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.9405);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.1164);
@@ -1058,15 +1058,15 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Water), 88.0760);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 1.7746);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.65063);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.1819);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 7.8325);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 7.8325);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 2.0397);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.1142);
@@ -1146,15 +1146,15 @@ pub(crate) mod tests {
         assert_eq_flt_test!(relative_diff_percent(comp.get(CompKey::Water), 78.0), 0.9085);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 1.784);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 11.15);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 7.6231);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 18.7731);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 18.7731);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.214);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.0686);
@@ -1234,15 +1234,15 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Water), 77.9402);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 0.9922);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 6.2016);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 5.0916);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 11.2931);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 11.2931);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.2403);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.07);
@@ -1331,15 +1331,15 @@ pub(crate) mod tests {
         assert_eq_flt_test!(relative_diff_percent(comp.get(CompKey::Water), 27.2), 0.8853);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 46.504);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 54.4);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 7.1059);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 61.5059);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 61.5059);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 5.486);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.3045);
@@ -1424,15 +1424,15 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Water), 28.9463);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 47.6656);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 56.4103);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 6.3787);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 62.7890);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 62.7890);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 5.1282);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.2692);
@@ -1511,15 +1511,15 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Water), 2.1453);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 7.68);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 48.0);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 34.4826);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 82.4826);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 82.4826);
 
         assert_eq!(comp.get(CompKey::SaturatedFat), 0.0);
         assert_eq!(comp.get(CompKey::TransFat), 0.0);
@@ -1596,15 +1596,15 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Water), 2.5698);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 5.8667);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 36.6667);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 25.9988);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 62.6655);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 62.6655);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 16.6667);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.9333);
@@ -1679,15 +1679,15 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Water), 2.0);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 8.512);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 53.2);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 35.5647);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 88.7647);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 88.7647);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 0.78);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.042);
@@ -1762,15 +1762,15 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Water), 2.0);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 6.272);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 39.2);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 25.1304);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 64.3304);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 64.3304);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 19.24);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 1.036);
@@ -1844,15 +1844,15 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Water), 2.0);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 0.4103);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 2.5641);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 35.5346);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 38.0987);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 38.0987);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 0.7692);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.0449);
@@ -1933,15 +1933,15 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Water), 2.0);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 0.528);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 3.3);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 34.2053);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 37.5053);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 37.5053);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.4);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.14);
@@ -2022,15 +2022,15 @@ pub(crate) mod tests {
         assert_eq_flt_test!(comp.get(CompKey::Water), 5.6111);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
-        assert_eq!(comp.get(CompKey::Emulsifiers), 0.0);
-        assert_eq!(comp.get(CompKey::Stabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::POD), 0.688);
 
         assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.3);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
         assert_eq_flt_test!(comp.get(CompKey::PACmlk), 31.5559);
-        assert_eq_flt_test!(comp.get(CompKey::PACtotal), 35.8559);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 35.8559);
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 1.1);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.063);
@@ -2059,7 +2059,7 @@ pub(crate) mod tests {
         CompKey::POD,
         CompKey::PACsgr,
         CompKey::PACmlk,
-        CompKey::PACtotal,
+        CompKey::TotalPAC,
         CompKey::SaturatedFat,
         CompKey::TransFat,
     ];
@@ -2127,15 +2127,15 @@ pub(crate) mod tests {
         .map(source_str_to_comp);
 
         // Sealtest's small 15ml serving rounds sugars coarsely (1g/15ml = 6.67g/100g), pulling
-        // Lactose, PACsgr, and PACtotal a few pp above the default ceiling. The exceptions are:
+        // Lactose, PACsgr, and TotalPAC a few pp above the default ceiling. The exceptions are:
         //    - Lactose        11.30 pp  (USDA vs Sealtest)
         //    - PACsgr         11.30 pp  (USDA vs Sealtest)
-        //    - PACtotal       14.70 pp  (USDA vs Sealtest)
+        //    - TotalPAC       14.70 pp  (USDA vs Sealtest)
         let ceiling = KeyCeiling::new(10.0)
             .with(CompKey::Energy, 21.0)
             .with(CompKey::Lactose, 12.0)
             .with(CompKey::PACsgr, 12.0)
-            .with(CompKey::PACtotal, 15.0);
+            .with(CompKey::TotalPAC, 15.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2150,13 +2150,13 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        // Sealtest's 15ml serving rounds sugars and saturated fat coarsely, pushing PACtotal
+        // Sealtest's 15ml serving rounds sugars and saturated fat coarsely, pushing TotalPAC
         // and SaturatedFat above the default ceiling. The exceptions are:
-        //    - PACtotal       12.76 pp  (USDA vs Sealtest)
+        //    - TotalPAC       12.76 pp  (USDA vs Sealtest)
         //    - SaturatedFat   10.97 pp  (Simple vs Sealtest)
         let ceiling = KeyCeiling::new(10.0)
             .with(CompKey::Energy, 40.0)
-            .with(CompKey::PACtotal, 13.0)
+            .with(CompKey::TotalPAC, 13.0)
             .with(CompKey::SaturatedFat, 11.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
@@ -2174,15 +2174,15 @@ pub(crate) mod tests {
 
         // USDA Heavy Cream is 35.6% fat; close enough to compare with the 35% Simple/Sealtest
         // entries. Sealtest's 15ml serving rounds the lactose label to 0g sugars at this fat
-        // level, which cascades through MilkSolids and PACtotal (missing lactose is exactly
+        // level, which cascades through MilkSolids and TotalPAC (missing lactose is exactly
         // missing solids). The exceptions are:
         //    - MilkSolids     15.56 pp  (Simple vs Sealtest)
         //    - MilkSolids     13.47 pp  (USDA vs Sealtest)
-        //    - PACtotal       11.15 pp  (Simple vs Sealtest)
+        //    - TotalPAC       11.15 pp  (Simple vs Sealtest)
         let ceiling = KeyCeiling::new(10.0)
             .with(CompKey::Energy, 45.0)
             .with(CompKey::MilkSolids, 16.0)
-            .with(CompKey::PACtotal, 12.0);
+            .with(CompKey::TotalPAC, 12.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2200,13 +2200,13 @@ pub(crate) mod tests {
         // between the 2g of total carbohydrates and 1g of sugars (i.e. 1.5g) causes a big
         // difference in Lactose content, which cascades into every lactose-derived field
         // (POD, PACsgr) and — via the MSNF-from-lactose+protein estimate — into MSNF,
-        // MilkSolids, PACmlk, and PACtotal. The exceptions are:
+        // MilkSolids, PACmlk, and TotalPAC. The exceptions are:
         //    - Lactose        20.99 pp  (USDA vs Carnation)
         //    - MSNF           28.55 pp  (USDA vs Carnation)
         //    - MilkSolids     28.11 pp  (USDA vs Carnation)
         //    - PACsgr         20.99 pp  (USDA vs Carnation)
         //    - PACmlk         10.49 pp  (USDA vs Carnation)
-        //    - PACtotal       31.48 pp  (USDA vs Carnation)
+        //    - TotalPAC       31.48 pp  (USDA vs Carnation)
         //
         // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
         // given how much cross-source consistency it bought us.
@@ -2217,7 +2217,7 @@ pub(crate) mod tests {
             .with(CompKey::MilkSolids, 29.0)
             .with(CompKey::PACsgr, 21.0)
             .with(CompKey::PACmlk, 11.0)
-            .with(CompKey::PACtotal, 32.0);
+            .with(CompKey::TotalPAC, 32.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
