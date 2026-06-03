@@ -51,7 +51,7 @@
     "bench": "pnpm bench:rust && pnpm bench:js",
     "bench:rust": "cargo criterion --all-features",
     "bench:js": "node --import tsx benches/ts/run-all.ts",
-    "doc": "cargo doc --all-features"
+    "doc": "cargo doc --all-features --document-private-items"
   },
   "dependencies": {
     "eslint-plugin-jsdoc": "^62.8.0",
