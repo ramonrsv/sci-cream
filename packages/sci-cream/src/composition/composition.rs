@@ -18,7 +18,7 @@ use wasm_bindgen::prelude::*;
 
 #[cfg(doc)]
 use crate::{
-    composition::{ArtificialSweeteners, Carbohydrates, Emulsifiers, Polyols, Sugars},
+    composition::{ArtificialSweeteners, Carbohydrates, Emulsifiers, Fibers, Polyols, Stabilizers, Sugars},
     error::Error,
     specs::{ChocolateSpec, CompositeSpec},
 };
@@ -240,6 +240,12 @@ pub enum CompKey {
     // Carbohydrates and Artificial Sweeteners
     // ---------------------------------------
     //
+    /// Total inulin content, a dietary fiber tracked in
+    /// [`Carbohydrates::fiber::inulin`](Fibers::inulin)
+    Inulin,
+    /// Total oligofructose content, a dietary fiber tracked in
+    /// [`Carbohydrates::fiber::oligofructose`](Fibers::oligofructose)
+    Oligofructose,
     /// Total fiber content, as tracked in [`Carbohydrates::fiber`]
     Fiber,
     /// Total free glucose content, i.e. glucose not part of disaccharides or polysaccharides
@@ -261,10 +267,31 @@ pub enum CompKey {
     /// Total erythritol content, as tracked in
     /// [`Carbohydrates::polyols::erythritol`](Polyols::erythritol)
     Erythritol,
+    /// Total maltitol content, as tracked in
+    /// [`Carbohydrates::polyols::maltitol`](Polyols::maltitol)
+    Maltitol,
+    /// Total sorbitol content, as tracked in
+    /// [`Carbohydrates::polyols::sorbitol`](Polyols::sorbitol)
+    Sorbitol,
+    /// Total xylitol content, as tracked in
+    /// [`Carbohydrates::polyols::xylitol`](Polyols::xylitol)
+    Xylitol,
     /// Total polyol content, including all polyols tracked in [`Carbohydrates::polyols`]
     TotalPolyols,
     /// Total carbohydrate content, including all sugars, polyols, and fiber in [`Carbohydrates`]
     TotalCarbohydrates,
+    /// Total aspartame content, as tracked in [`ArtificialSweeteners::aspartame`]
+    Aspartame,
+    /// Total cyclamate content, as tracked in [`ArtificialSweeteners::cyclamate`]
+    Cyclamate,
+    /// Total saccharin content, as tracked in [`ArtificialSweeteners::saccharin`]
+    Saccharin,
+    /// Total sucralose content, as tracked in [`ArtificialSweeteners::sucralose`]
+    Sucralose,
+    /// Total steviol glycosides content, as tracked in [`ArtificialSweeteners::steviosides`]
+    Steviosides,
+    /// Total mogrosides content, as tracked in [`ArtificialSweeteners::mogrosides`]
+    Mogrosides,
     /// Total artificial sweetener content, including all artificial sweeteners tracked in
     /// [`ArtificialSweeteners`]
     TotalArtificial,
@@ -294,6 +321,29 @@ pub enum CompKey {
     // @todo Introduce `Emulsification` as a separate key, representing the overall emulsification
     // strength of the mix from all sources, as tracked in [`Texture::emulsification`]
     Emulsifiers,
+    /// Total cornstarch content, a stabilizer tracked in [`Stabilizers::cornstarch`]
+    Cornstarch,
+    /// Total tapioca starch content, a stabilizer tracked in [`Stabilizers::tapioca_starch`]
+    TapiocaStarch,
+    /// Total pectin content, a stabilizer tracked in [`Stabilizers::pectin`]
+    Pectin,
+    /// Total gelatin content, a stabilizer tracked in [`Stabilizers::gelatin`]
+    Gelatin,
+    /// Total locust bean gum content, a stabilizer tracked in [`Stabilizers::locust_bean_gum`]
+    LocustBeanGum,
+    /// Total guar gum content, a stabilizer tracked in [`Stabilizers::guar_gum`]
+    GuarGum,
+    /// Total carrageenans content, a stabilizer tracked in [`Stabilizers::carrageenans`]
+    Carrageenans,
+    /// Total carboxymethyl cellulose content, a stabilizer tracked in
+    /// [`Stabilizers::carboxymethyl_cellulose`]
+    CarboxymethylCellulose,
+    /// Total xanthan gum content, a stabilizer tracked in [`Stabilizers::xanthan_gum`]
+    XanthanGum,
+    /// Total sodium alginate content, a stabilizer tracked in [`Stabilizers::sodium_alginate`]
+    SodiumAlginate,
+    /// Total tara gum content, a stabilizer tracked in [`Stabilizers::tara_gum`]
+    TaraGum,
     /// Total stabilizer content, e.g. from Locust Bean Gum, etc. tracked in [`Micro::stabilizers`]
     // @todo Introduce `Stabilization` as a separate key, representing the overall stabilization
     // strength of the mix from all sources, as tracked in [`Texture::stabilization`]
@@ -504,6 +554,8 @@ impl Composition {
 
             CompKey::Water => self.water(),
 
+            CompKey::Inulin => self.solids.all().carbohydrates.fiber.inulin,
+            CompKey::Oligofructose => self.solids.all().carbohydrates.fiber.oligofructose,
             CompKey::Fiber => self.solids.all().carbohydrates.fiber.total(),
             CompKey::Glucose => self.solids.all().carbohydrates.sugars.glucose,
             CompKey::Fructose => self.solids.all().carbohydrates.sugars.fructose,
@@ -514,8 +566,17 @@ impl Composition {
             CompKey::Trehalose => self.solids.all().carbohydrates.sugars.trehalose,
             CompKey::TotalSugars => self.solids.all().carbohydrates.sugars.total(),
             CompKey::Erythritol => self.solids.all().carbohydrates.polyols.erythritol,
+            CompKey::Maltitol => self.solids.all().carbohydrates.polyols.maltitol,
+            CompKey::Sorbitol => self.solids.all().carbohydrates.polyols.sorbitol,
+            CompKey::Xylitol => self.solids.all().carbohydrates.polyols.xylitol,
             CompKey::TotalPolyols => self.solids.all().carbohydrates.polyols.total(),
             CompKey::TotalCarbohydrates => self.solids.all().carbohydrates.total(),
+            CompKey::Aspartame => self.solids.all().artificial_sweeteners.aspartame,
+            CompKey::Cyclamate => self.solids.all().artificial_sweeteners.cyclamate,
+            CompKey::Saccharin => self.solids.all().artificial_sweeteners.saccharin,
+            CompKey::Sucralose => self.solids.all().artificial_sweeteners.sucralose,
+            CompKey::Steviosides => self.solids.all().artificial_sweeteners.steviosides,
+            CompKey::Mogrosides => self.solids.all().artificial_sweeteners.mogrosides,
             CompKey::TotalArtificial => self.solids.all().artificial_sweeteners.total(),
             CompKey::TotalSweeteners => {
                 self.solids.all().carbohydrates.sugars.total()
@@ -529,6 +590,17 @@ impl Composition {
             CompKey::Salt => self.micro.salt,
             CompKey::Lecithin => self.micro.emulsifiers.lecithin,
             CompKey::Emulsifiers => self.micro.emulsifiers.total(),
+            CompKey::Cornstarch => self.micro.stabilizers.cornstarch,
+            CompKey::TapiocaStarch => self.micro.stabilizers.tapioca_starch,
+            CompKey::Pectin => self.micro.stabilizers.pectin,
+            CompKey::Gelatin => self.micro.stabilizers.gelatin,
+            CompKey::LocustBeanGum => self.micro.stabilizers.locust_bean_gum,
+            CompKey::GuarGum => self.micro.stabilizers.guar_gum,
+            CompKey::Carrageenans => self.micro.stabilizers.carrageenans,
+            CompKey::CarboxymethylCellulose => self.micro.stabilizers.carboxymethyl_cellulose,
+            CompKey::XanthanGum => self.micro.stabilizers.xanthan_gum,
+            CompKey::SodiumAlginate => self.micro.stabilizers.sodium_alginate,
+            CompKey::TaraGum => self.micro.stabilizers.tara_gum,
             CompKey::Stabilizers => self.micro.stabilizers.total(),
             CompKey::EmulsifiersPerFat => self.emulsifiers_per_fat(),
             CompKey::StabilizersPerWater => self.stabilizers_per_water(),
@@ -830,10 +902,18 @@ mod tests {
                             .maltose(1.0)
                             .trehalose(1.0),
                     )
-                    .polyols(Polyols::new().erythritol(2.0))
-                    .fiber(Fibers::new().oligofructose(1.0)),
+                    .polyols(Polyols::new().erythritol(0.2).maltitol(0.4).sorbitol(0.6).xylitol(0.8))
+                    .fiber(Fibers::new().inulin(0.4).oligofructose(0.6)),
             )
-            .artificial_sweeteners(ArtificialSweeteners::new().aspartame(0.5))
+            .artificial_sweeteners(
+                ArtificialSweeteners::new()
+                    .aspartame(0.05)
+                    .cyclamate(0.06)
+                    .saccharin(0.07)
+                    .sucralose(0.08)
+                    .steviosides(0.09)
+                    .mogrosides(0.15),
+            )
             .proteins(0.5)
             .others(0.5);
 
@@ -844,7 +924,20 @@ mod tests {
                 Micro::new()
                     .salt(0.3)
                     .emulsifiers(Emulsifiers::new().lecithin(0.6))
-                    .stabilizers(Stabilizers::new().locust_bean_gum(0.59)),
+                    .stabilizers(
+                        Stabilizers::new()
+                            .cornstarch(0.01)
+                            .tapioca_starch(0.02)
+                            .pectin(0.03)
+                            .gelatin(0.04)
+                            .locust_bean_gum(0.05)
+                            .guar_gum(0.06)
+                            .carrageenans(0.07)
+                            .carboxymethyl_cellulose(0.08)
+                            .xanthan_gum(0.09)
+                            .sodium_alginate(0.10)
+                            .tara_gum(0.11),
+                    ),
             )
             .alcohol(Alcohol::new().by_weight(2.5))
             .pod(5.0)
@@ -892,7 +985,9 @@ mod tests {
             (CompKey::TotalSolids,          38.5),  // 13+4+7+4+10.5
             (CompKey::Water,                59.0),  // 100 - 38.5 - 2.5
             // Carbohydrates
-            (CompKey::Fiber,                1.0),   // oligofructose
+            (CompKey::Inulin,               0.4),
+            (CompKey::Oligofructose,        0.6),
+            (CompKey::Fiber,                1.0),   // 0.4 (inulin) + 0.6 (oligofructose)
             (CompKey::Glucose,              1.0),
             (CompKey::Fructose,             1.0),
             (CompKey::Galactose,            1.0),
@@ -901,10 +996,19 @@ mod tests {
             (CompKey::Maltose,              1.0),
             (CompKey::Trehalose,            1.0),
             (CompKey::TotalSugars,          12.0),  // 1+1+1+2+5+1+1
-            (CompKey::Erythritol,           2.0),
-            (CompKey::TotalPolyols,         2.0),
+            (CompKey::Erythritol,           0.2),
+            (CompKey::Maltitol,             0.4),
+            (CompKey::Sorbitol,             0.6),
+            (CompKey::Xylitol,              0.8),
+            (CompKey::TotalPolyols,         2.0),   // 0.2+0.4+0.6+0.8
             (CompKey::TotalCarbohydrates,   15.0),  // 12 (sugars) + 2 (polyols) + 1 (fiber)
-            (CompKey::TotalArtificial,      0.5),   // aspartame
+            (CompKey::Aspartame,            0.05),
+            (CompKey::Cyclamate,            0.06),
+            (CompKey::Saccharin,            0.07),
+            (CompKey::Sucralose,            0.08),
+            (CompKey::Steviosides,          0.09),
+            (CompKey::Mogrosides,           0.15),
+            (CompKey::TotalArtificial,      0.5),   // 0.05+0.06+0.07+0.08+0.09+0.15
             (CompKey::TotalSweeteners,      14.5),  // 12 + 2 + 0.5
             // Alcohol and Micro
             (CompKey::Alcohol,              2.5),
@@ -912,9 +1016,20 @@ mod tests {
             (CompKey::Salt,                 0.3),
             (CompKey::Lecithin,             0.6),
             (CompKey::Emulsifiers,          0.6),
-            (CompKey::Stabilizers,          0.59),
+            (CompKey::Cornstarch,           0.01),
+            (CompKey::TapiocaStarch,        0.02),
+            (CompKey::Pectin,               0.03),
+            (CompKey::Gelatin,              0.04),
+            (CompKey::LocustBeanGum,        0.05),
+            (CompKey::GuarGum,              0.06),
+            (CompKey::Carrageenans,         0.07),
+            (CompKey::CarboxymethylCellulose, 0.08),
+            (CompKey::XanthanGum,           0.09),
+            (CompKey::SodiumAlginate,       0.10),
+            (CompKey::TaraGum,              0.11),
+            (CompKey::Stabilizers,          0.66),  // 0.01+0.02+...+0.11
             (CompKey::EmulsifiersPerFat,    5.0),   // 0.6 / 12.0 * 100
-            (CompKey::StabilizersPerWater,  1.0),   // 0.59 / 59.0 * 100
+            (CompKey::StabilizersPerWater,  0.66 / 59.0 * 100.0),  // stabilizers / water
             // POD and PAC
             (CompKey::POD,                  5.0),
             (CompKey::PACsgr,               6.0),

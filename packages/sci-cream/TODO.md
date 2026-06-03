@@ -5,7 +5,6 @@
 - [ ] Add code example doc tests to all specs that don't already have them.
 - [ ] Add "Louis Francois Stab 2000" ingredient, which has stabilizer and emulsifier components.
 - [ ] Add a beginner-friendly overview of the core ice cream science concepts, e.g. FPD curves.
-- [ ] Consider whether to add `CompKey` for all polyols and artificial sweeteners.
 - [ ] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
 - [ ] Add TypeScript interface for the existing preliminary automatic balancing functionality.
@@ -89,6 +88,7 @@
 
 ## Completed
 
+- [x] Consider whether to add `CompKey` for all polyols and artificial sweeteners.
 - [x] Add subset-sum dominance to balancing validation: flag when multiple "part" targets together
       exceed a "whole" that bounds their sum (e.g. `Sucrose 10 + Fructose 10` vs `TotalSugars 15`).
 - [x] Add `compare_specs_*` tests for comparable chocolate ingredients, from std and label.
