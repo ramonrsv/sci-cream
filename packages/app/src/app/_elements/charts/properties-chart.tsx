@@ -51,6 +51,7 @@ import {
   getPropKeys as getPropKeysAll,
   getMixProperty,
   MixProperties,
+  prop_key_as_short_str,
   prop_key_as_med_str,
 } from "@workspace/sci-cream";
 
@@ -101,18 +102,18 @@ export function modifyMixPropertyForChart(rawValue: number, propKey: PropKey): n
 }
 
 /** Modify property key strings to match modifications done in `modifyMixPropertyForChart` */
-export function modifyPropKeyAsMedStrForChart(rawMedStr: string, propKey: PropKey): string {
+export function modifyPropKeyAsShortStrForChart(rawStr: string, propKey: PropKey): string {
   switch (propKey) {
     case fpdToPropKey(FpdKey.FPD):
     case fpdToPropKey(FpdKey.ServingTemp):
-      return "-" + rawMedStr;
+      return "-" + rawStr;
     case compToPropKey(CompKey.AbsPAC):
-      return rawMedStr + " / 2";
+      return rawStr + " / 2";
     case compToPropKey(CompKey.EmulsifiersPerFat):
     case compToPropKey(CompKey.StabilizersPerWater):
-      return rawMedStr + " * 100";
+      return rawStr + " * 100";
     default:
-      return rawMedStr;
+      return rawStr;
   }
 }
 
@@ -121,9 +122,9 @@ export function getModifiedMixProperty(mixProperties: MixProperties, propKey: Pr
   return modifyMixPropertyForChart(getMixProperty(mixProperties, propKey), propKey);
 }
 
-/** Forward to `prop_key_as_med_str` and `modifyPropKeyAsMedStrForChart` */
-export function propKeyAsModifiedMedStr(propKey: PropKey): string {
-  return modifyPropKeyAsMedStrForChart(prop_key_as_med_str(propKey), propKey);
+/** Forward to `prop_key_as_short_str` and `modifyPropKeyAsMedStrForChart` */
+export function propKeyAsModifiedShortStr(propKey: PropKey): string {
+  return modifyPropKeyAsShortStrForChart(prop_key_as_short_str(propKey), propKey);
 }
 
 /**
@@ -195,7 +196,7 @@ export function PropertiesBarChart({
     return getColor(getRangeColor(propVal, { min: range.yMin, max: range.yMax }));
   };
 
-  const labels = propKeys.map((propKey) => propKeyAsModifiedMedStr(propKey));
+  const labels = propKeys.map((propKey) => propKeyAsModifiedShortStr(propKey));
 
   const gridColor = getGridColor(theme);
   const legendColor = getLegendColor(theme);

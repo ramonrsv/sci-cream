@@ -1,8 +1,12 @@
 import {
   CompKey,
   FpdKey,
+  comp_key_as_short_str,
+  fpd_key_as_short_str,
   comp_key_as_med_str,
   fpd_key_as_med_str,
+  comp_key_as_long_str,
+  fpd_key_as_long_str,
   MixProperties,
 } from "../../wasm/index";
 
@@ -50,6 +54,22 @@ export function getPropKeys(): PropKey[] {
 }
 
 /**
+ * Returns the compact display string for the given `PropKey`.
+ *
+ * @see comp_key_as_short_str original implementation for `CompKey` values in Rust.
+ * @see fpd_key_as_short_str original implementation for `FpdKey` values in Rust.
+ */
+export function prop_key_as_short_str(prop_key: PropKey): string {
+  if (isCompKey(prop_key)) {
+    return comp_key_as_short_str(CompKey[prop_key as keyof typeof CompKey]);
+  } else if (isFpdKey(prop_key)) {
+    return fpd_key_as_short_str(FpdKey[prop_key as keyof typeof FpdKey]);
+  } else {
+    throw new Error("Invalid PropKey: " + prop_key);
+  }
+}
+
+/**
  * Returns the medium-length display string for the given `PropKey`.
  *
  * @see comp_key_as_med_str original implementation for `CompKey` values in Rust.
@@ -60,6 +80,22 @@ export function prop_key_as_med_str(prop_key: PropKey): string {
     return comp_key_as_med_str(CompKey[prop_key as keyof typeof CompKey]);
   } else if (isFpdKey(prop_key)) {
     return fpd_key_as_med_str(FpdKey[prop_key as keyof typeof FpdKey]);
+  } else {
+    throw new Error("Invalid PropKey: " + prop_key);
+  }
+}
+
+/**
+ * Returns the full-length display string for the given `PropKey`.
+ *
+ * @see comp_key_as_long_str original implementation for `CompKey` values in Rust.
+ * @see fpd_key_as_long_str original implementation for `FpdKey` values in Rust.
+ */
+export function prop_key_as_long_str(prop_key: PropKey): string {
+  if (isCompKey(prop_key)) {
+    return comp_key_as_long_str(CompKey[prop_key as keyof typeof CompKey]);
+  } else if (isFpdKey(prop_key)) {
+    return fpd_key_as_long_str(FpdKey[prop_key as keyof typeof FpdKey]);
   } else {
     throw new Error("Invalid PropKey: " + prop_key);
   }

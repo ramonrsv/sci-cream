@@ -18,11 +18,35 @@ use crate::{
 
 /// Trait to convert keys to display-friendly strings at varying levels of verbosity.
 pub trait KeyAsStrings {
+    /// Returns a compact string for space-constrained contexts (chart labels, narrow columns).
+    ///
+    /// Identical to [`as_med_str`](KeyAsStrings::as_med_str) for most keys; provides standard
+    /// industry abbreviations where they meaningfully reduce length (e.g. "CMC", "LBG", "Carbs").
+    fn as_short_str(&self) -> &'static str;
+
     /// Returns a medium verbosity string representation of the key.
     fn as_med_str(&self) -> &'static str;
+
+    /// Returns a full-length string for tooltips and verbose reports.
+    ///
+    /// Restores the "Total" prefix on aggregate keys and expands abbreviations: SNF → "Solids
+    /// Non-Fat", SNFS → "Solids Non-Fat Non-Sugar", FPD → "Freezing Point Depression", etc.
+    fn as_long_str(&self) -> &'static str;
 }
 
 impl KeyAsStrings for CompKey {
+    fn as_short_str(&self) -> &'static str {
+        match self {
+            Self::TotalCarbohydrates => "Carbs",
+            Self::LocustBeanGum => "LBG",
+            Self::CarboxymethylCellulose => "CMC",
+            Self::SaturatedFat => "Sat. Fat",
+            Self::EmulsifiersPerFat => "Emul./Fat",
+            Self::StabilizersPerWater => "Stab./Water",
+            _ => self.as_med_str(),
+        }
+    }
+
     fn as_med_str(&self) -> &'static str {
         match self {
             Self::Energy => "Energy",
@@ -100,8 +124,8 @@ impl KeyAsStrings for CompKey {
             Self::SodiumAlginate => "Sodium Alginate",
             Self::TaraGum => "Tara Gum",
             Self::TotalStabilizers => "Stabilizers",
-            Self::EmulsifiersPerFat => "Emul./Fat",
-            Self::StabilizersPerWater => "Stab./Water",
+            Self::EmulsifiersPerFat => "Emulsifiers/Fat",
+            Self::StabilizersPerWater => "Stabilizers/Water",
 
             Self::POD => "POD",
 
@@ -117,9 +141,45 @@ impl KeyAsStrings for CompKey {
             Self::TransFat => "Trans Fat",
         }
     }
+
+    fn as_long_str(&self) -> &'static str {
+        match self {
+            Self::MSNF => "Milk Solids Non-Fat",
+            Self::MilkSNFS => "Milk Solids Non-Fat Non-Sugar",
+            Self::NutSNF => "Nut Solids Non-Fat",
+            Self::EggSNF => "Egg Solids Non-Fat",
+            Self::OtherSNFS => "Other Solids Non-Fat Non-Sugar",
+            Self::TotalFats => "Total Fats",
+            Self::TotalSNF => "Total Solids Non-Fat",
+            Self::TotalSNFS => "Total Solids Non-Fat Non-Sugar",
+            Self::TotalProteins => "Total Proteins",
+            Self::TotalSolids => "Total Solids",
+            Self::TotalFiber => "Total Fiber",
+            Self::TotalSugars => "Total Sugars",
+            Self::TotalPolyols => "Total Polyols",
+            Self::TotalArtificial => "Total Artificial",
+            Self::TotalSweeteners => "Total Sweeteners",
+            Self::TotalCarbohydrates => "Total Carbohydrates",
+            Self::TotalEmulsifiers => "Total Emulsifiers",
+            Self::TotalStabilizers => "Total Stabilizers",
+            Self::TotalPAC => "Total PAC",
+            Self::PACsgr => "PAC (Sugars)",
+            Self::PACslt => "PAC (Salt)",
+            Self::PACmlk => "PAC (Milk)",
+            Self::PACalc => "PAC (Alcohol)",
+            Self::AbsPAC => "Absolute PAC",
+            Self::HF => "Hardness Factor",
+            Self::ABV => "Alcohol by Volume",
+            _ => self.as_med_str(),
+        }
+    }
 }
 
 impl KeyAsStrings for FpdKey {
+    fn as_short_str(&self) -> &'static str {
+        self.as_med_str()
+    }
+
     fn as_med_str(&self) -> &'static str {
         match self {
             Self::FPD => "FPD",
@@ -127,13 +187,35 @@ impl KeyAsStrings for FpdKey {
             Self::HardnessAt14C => "Hardness @-14°C",
         }
     }
+
+    fn as_long_str(&self) -> &'static str {
+        match self {
+            Self::FPD => "Freezing Point Depression",
+            Self::ServingTemp => "Serving Temperature",
+            Self::HardnessAt14C => "Hardness at -14°C",
+        }
+    }
 }
 
 impl KeyAsStrings for PropKey {
+    fn as_short_str(&self) -> &'static str {
+        match self {
+            Self::CompKey(comp_key) => comp_key.as_short_str(),
+            Self::FpdKey(fpd_key) => fpd_key.as_short_str(),
+        }
+    }
+
     fn as_med_str(&self) -> &'static str {
         match self {
             Self::CompKey(comp_key) => comp_key.as_med_str(),
             Self::FpdKey(fpd_key) => fpd_key.as_med_str(),
+        }
+    }
+
+    fn as_long_str(&self) -> &'static str {
+        match self {
+            Self::CompKey(comp_key) => comp_key.as_long_str(),
+            Self::FpdKey(fpd_key) => fpd_key.as_long_str(),
         }
     }
 }
@@ -272,6 +354,63 @@ mod tests {
     use super::*;
 
     #[test]
+    fn comp_keys_as_short_str() {
+        let some_expected = vec![
+            // keys that differ from as_med_str
+            ("Carbs", CompKey::TotalCarbohydrates),
+            ("LBG", CompKey::LocustBeanGum),
+            ("CMC", CompKey::CarboxymethylCellulose),
+            ("Sat. Fat", CompKey::SaturatedFat),
+            ("Emul./Fat", CompKey::EmulsifiersPerFat),
+            ("Stab./Water", CompKey::StabilizersPerWater),
+        ];
+        for (expected, key) in some_expected {
+            assert_eq!(key.as_short_str(), expected);
+        }
+    }
+
+    #[test]
+    fn comp_keys_as_long_str() {
+        let some_expected = vec![
+            // SNF / SNFS expansions
+            ("Milk Solids Non-Fat", CompKey::MSNF),
+            ("Milk Solids Non-Fat Non-Sugar", CompKey::MilkSNFS),
+            ("Nut Solids Non-Fat", CompKey::NutSNF),
+            ("Egg Solids Non-Fat", CompKey::EggSNF),
+            ("Other Solids Non-Fat Non-Sugar", CompKey::OtherSNFS),
+            ("Total Solids Non-Fat", CompKey::TotalSNF),
+            ("Total Solids Non-Fat Non-Sugar", CompKey::TotalSNFS),
+            // Total* prefix
+            ("Total Fats", CompKey::TotalFats),
+            ("Total Proteins", CompKey::TotalProteins),
+            ("Total Solids", CompKey::TotalSolids),
+            ("Total Fiber", CompKey::TotalFiber),
+            ("Total Sugars", CompKey::TotalSugars),
+            ("Total Polyols", CompKey::TotalPolyols),
+            ("Total Artificial", CompKey::TotalArtificial),
+            ("Total Sweeteners", CompKey::TotalSweeteners),
+            ("Total Carbohydrates", CompKey::TotalCarbohydrates),
+            ("Total Emulsifiers", CompKey::TotalEmulsifiers),
+            ("Total Stabilizers", CompKey::TotalStabilizers),
+            ("Total PAC", CompKey::TotalPAC),
+            // PAC sub-keys and other expanded acronyms
+            ("PAC (Sugars)", CompKey::PACsgr),
+            ("PAC (Salt)", CompKey::PACslt),
+            ("PAC (Milk)", CompKey::PACmlk),
+            ("PAC (Alcohol)", CompKey::PACalc),
+            ("Absolute PAC", CompKey::AbsPAC),
+            ("Hardness Factor", CompKey::HF),
+            ("Alcohol by Volume", CompKey::ABV),
+            // keys unchanged from as_med_str
+            ("Milk Fat", CompKey::MilkFat),
+            ("POD", CompKey::POD),
+        ];
+        for (expected, key) in some_expected {
+            assert_eq!(key.as_long_str(), expected);
+        }
+    }
+
+    #[test]
     fn comp_keys_as_med_str() {
         let some_expected = vec![
             "Energy",
@@ -339,8 +478,8 @@ mod tests {
             "Sodium Alginate",
             "Tara Gum",
             "Stabilizers",
-            "Emul./Fat",
-            "Stab./Water",
+            "Emulsifiers/Fat",
+            "Stabilizers/Water",
             "POD",
             "PACsgr",
             "PACslt",
@@ -361,10 +500,23 @@ mod tests {
     }
 
     #[test]
+    fn fpd_keys_as_short_str() {
+        let expected_vec = vec!["FPD", "Serving Temp", "Hardness @-14°C"];
+        let actual_vec: Vec<&'static str> = FpdKey::iter().map(|h| h.as_short_str()).collect();
+        assert_eq!(actual_vec, expected_vec);
+    }
+
+    #[test]
     fn fpd_keys_as_med_str() {
         let expected_vec = vec!["FPD", "Serving Temp", "Hardness @-14°C"];
-
         let actual_vec: Vec<&'static str> = FpdKey::iter().map(|h| h.as_med_str()).collect();
+        assert_eq!(actual_vec, expected_vec);
+    }
+
+    #[test]
+    fn fpd_keys_as_long_str() {
+        let expected_vec = vec!["Freezing Point Depression", "Serving Temperature", "Hardness at -14°C"];
+        let actual_vec: Vec<&'static str> = FpdKey::iter().map(|h| h.as_long_str()).collect();
         assert_eq!(actual_vec, expected_vec);
     }
 
@@ -372,6 +524,18 @@ mod tests {
     fn prop_keys_as_med_str() {
         assert_eq!(PropKey::CompKey(CompKey::MilkFat).as_med_str(), "Milk Fat");
         assert_eq!(PropKey::FpdKey(FpdKey::FPD).as_med_str(), "FPD");
+    }
+
+    #[test]
+    fn prop_keys_as_short_str() {
+        assert_eq!(PropKey::CompKey(CompKey::CarboxymethylCellulose).as_short_str(), "CMC");
+        assert_eq!(PropKey::FpdKey(FpdKey::ServingTemp).as_short_str(), "Serving Temp");
+    }
+
+    #[test]
+    fn prop_keys_as_long_str() {
+        assert_eq!(PropKey::CompKey(CompKey::TotalFats).as_long_str(), "Total Fats");
+        assert_eq!(PropKey::FpdKey(FpdKey::FPD).as_long_str(), "Freezing Point Depression");
     }
 
     #[test]

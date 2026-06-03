@@ -19,6 +19,8 @@ import {
   isFpdKey,
   getPropKeys,
   prop_key_as_med_str,
+  prop_key_as_short_str,
+  prop_key_as_long_str,
   getMixProperty,
 } from "./prop-key";
 
@@ -52,6 +54,16 @@ test("getPropKeys returns all PropKey values in correct order", () => {
   expect(propKeys).not.toStrictEqual(getTsEnumStringKeys(PropKeyObj));
 });
 
+test("prop_key_as_short_str works for all PropKey values", () => {
+  const propKeys = getPropKeys();
+
+  for (const propKey of propKeys) {
+    const shortStr = prop_key_as_short_str(propKey);
+    expect(typeof shortStr).toBe("string");
+    expect(shortStr.length).toBeGreaterThan(0);
+  }
+});
+
 test("prop_key_as_med_str works for all PropKey values", () => {
   const propKeys = getPropKeys();
 
@@ -59,6 +71,16 @@ test("prop_key_as_med_str works for all PropKey values", () => {
     const medStr = prop_key_as_med_str(propKey);
     expect(typeof medStr).toBe("string");
     expect(medStr.length).toBeGreaterThan(0);
+  }
+});
+
+test("prop_key_as_long_str works for all PropKey values", () => {
+  const propKeys = getPropKeys();
+
+  for (const propKey of propKeys) {
+    const longStr = prop_key_as_long_str(propKey);
+    expect(typeof longStr).toBe("string");
+    expect(longStr.length).toBeGreaterThan(0);
   }
 });
 

@@ -28,6 +28,7 @@ import {
   FpdKey,
   isCompKey,
   Bridge as WasmBridge,
+  prop_key_as_short_str,
 } from "@workspace/sci-cream";
 
 /** Map of `PropKey` to user-entered target value; sparse, only set entries are tracked */
@@ -184,8 +185,8 @@ export function WatcherCard({
         className="flex items-center justify-between px-1.5 py-0.5 font-semibold"
         style={{ backgroundColor: colorVarWithAlpha(headerColor, titleBackgroundOpacity) }}
       >
-        <span title={prop_key_as_med_str(propKey)} className="truncate">
-          {prop_key_as_med_str(propKey)}
+        <span title={prop_key_as_short_str(propKey)} className="truncate">
+          {prop_key_as_short_str(propKey)}
         </span>
         <button
           className="action-button -mr-0.5 ml-1 px-0.5 py-0"

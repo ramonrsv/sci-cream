@@ -4,6 +4,13 @@ use wasm_bindgen::prelude::*;
 
 use crate::{composition::CompKey, display::KeyAsStrings, fpd::FpdKey};
 
+/// WASM compatible wrapper for [`KeyAsStrings::as_short_str`] for [`CompKey`]
+#[wasm_bindgen]
+#[must_use]
+pub fn comp_key_as_short_str(key: CompKey) -> String {
+    key.as_short_str().to_string()
+}
+
 /// WASM compatible wrapper for [`KeyAsStrings::as_med_str`] for [`CompKey`]
 #[wasm_bindgen]
 #[must_use]
@@ -11,11 +18,32 @@ pub fn comp_key_as_med_str(key: CompKey) -> String {
     key.as_med_str().to_string()
 }
 
+/// WASM compatible wrapper for [`KeyAsStrings::as_long_str`] for [`CompKey`]
+#[wasm_bindgen]
+#[must_use]
+pub fn comp_key_as_long_str(key: CompKey) -> String {
+    key.as_long_str().to_string()
+}
+
+/// WASM compatible wrapper for [`KeyAsStrings::as_short_str`] for [`FpdKey`]
+#[wasm_bindgen]
+#[must_use]
+pub fn fpd_key_as_short_str(key: FpdKey) -> String {
+    key.as_short_str().to_string()
+}
+
 /// WASM compatible wrapper for [`KeyAsStrings::as_med_str`] for [`FpdKey`]
 #[wasm_bindgen]
 #[must_use]
 pub fn fpd_key_as_med_str(key: FpdKey) -> String {
     key.as_med_str().to_string()
+}
+
+/// WASM compatible wrapper for [`KeyAsStrings::as_long_str`] for [`FpdKey`]
+#[wasm_bindgen]
+#[must_use]
+pub fn fpd_key_as_long_str(key: FpdKey) -> String {
+    key.as_long_str().to_string()
 }
 
 #[cfg(test)]
@@ -30,6 +58,13 @@ mod tests {
     use super::*;
 
     #[test]
+    fn comp_key_as_short_str_matches_inner() {
+        for key in CompKey::iter() {
+            assert_eq!(comp_key_as_short_str(key), key.as_short_str());
+        }
+    }
+
+    #[test]
     fn comp_key_as_med_str_matches_inner() {
         for key in CompKey::iter() {
             assert_eq!(comp_key_as_med_str(key), key.as_med_str());
@@ -37,9 +72,30 @@ mod tests {
     }
 
     #[test]
+    fn comp_key_as_long_str_matches_inner() {
+        for key in CompKey::iter() {
+            assert_eq!(comp_key_as_long_str(key), key.as_long_str());
+        }
+    }
+
+    #[test]
+    fn fpd_key_as_short_str_matches_inner() {
+        for key in FpdKey::iter() {
+            assert_eq!(fpd_key_as_short_str(key), key.as_short_str());
+        }
+    }
+
+    #[test]
     fn fpd_key_as_med_str_matches_inner() {
         for key in FpdKey::iter() {
             assert_eq!(fpd_key_as_med_str(key), key.as_med_str());
+        }
+    }
+
+    #[test]
+    fn fpd_key_as_long_str_matches_inner() {
+        for key in FpdKey::iter() {
+            assert_eq!(fpd_key_as_long_str(key), key.as_long_str());
         }
     }
 }

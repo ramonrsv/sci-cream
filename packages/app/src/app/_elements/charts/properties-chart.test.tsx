@@ -10,7 +10,7 @@ import {
   PropertiesChartView,
   getPropKeys,
   getModifiedMixProperty,
-  propKeyAsModifiedMedStr,
+  propKeyAsModifiedShortStr,
 } from "@/app/_elements/charts/properties-chart";
 import { filterActiveSlots } from "@/lib/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
@@ -131,8 +131,8 @@ describe("Helper Functions", () => {
     expect(getModMixProp(compToPropKey(CompKey.StabilizersPerWater))).toBeCloseTo(0.3466 * 100);
   });
 
-  it("propKeyAsModifiedMedStr should modify specific key strings", () => {
-    const propKeyAsModStr = (propKey: PropKey) => propKeyAsModifiedMedStr(propKey);
+  it("propKeyAsModifiedShortStr should modify specific key strings", () => {
+    const propKeyAsModStr = (propKey: PropKey) => propKeyAsModifiedShortStr(propKey);
 
     expect(propKeyAsModStr(fpdToPropKey(FpdKey.FPD))).toBe("-FPD");
     expect(propKeyAsModStr(fpdToPropKey(FpdKey.ServingTemp))).toBe("-Serving Temp");
@@ -255,7 +255,7 @@ describe("PropertiesBarChart", () => {
     it("should render a label per provided propKey, modified for chart display", () => {
       const propKeys: PropKey[] = [compToPropKey(CompKey.AbsPAC), fpdToPropKey(FpdKey.FPD)];
       renderFromContext([], propKeys);
-      expect(capturedBarProps!.data.labels).toEqual(propKeys.map(propKeyAsModifiedMedStr));
+      expect(capturedBarProps!.data.labels).toEqual(propKeys.map(propKeyAsModifiedShortStr));
     });
   });
 });
@@ -340,8 +340,8 @@ describe("PropertiesChartView", () => {
 
       const EmulsPerFatPropKey = compToPropKey(CompKey.EmulsifiersPerFat);
       const AbsPACPropKey = compToPropKey(CompKey.AbsPAC);
-      const EmulsPerFatLabel = propKeyAsModifiedMedStr(EmulsPerFatPropKey);
-      const AbsPACLabel = propKeyAsModifiedMedStr(AbsPACPropKey);
+      const EmulsPerFatLabel = propKeyAsModifiedShortStr(EmulsPerFatPropKey);
+      const AbsPACLabel = propKeyAsModifiedShortStr(AbsPACPropKey);
 
       const data = capturedBarProps!.data;
       await waitFor(() => expect(data.labels.length).toBe(getPropKeysAll().length - 2));
@@ -372,7 +372,7 @@ describe("PropertiesChartView", () => {
         compToPropKey(CompKey.AbsPAC),
         fpdToPropKey(FpdKey.ServingTemp),
       ]) {
-        expect(data.labels).toContain(propKeyAsModifiedMedStr(key));
+        expect(data.labels).toContain(propKeyAsModifiedShortStr(key));
         expect(data.datasets[0].data[getPropIndex(data.labels, key)].y).toBeCloseTo(
           getModifiedMixProperty(recipeCtx.recipes[0].mixProperties!, key),
         );

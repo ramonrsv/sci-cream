@@ -3,7 +3,7 @@ import "@testing-library/jest-dom/vitest";
 import { expect } from "vitest";
 import { screen, fireEvent, waitFor, within } from "@testing-library/react";
 
-import { propKeyAsModifiedMedStr } from "@/app/_elements/charts/properties-chart";
+import { propKeyAsModifiedShortStr } from "@/app/_elements/charts/properties-chart";
 import { makeEmptyRecipe, makeEmptyRecipeContext } from "@/lib/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
@@ -67,7 +67,7 @@ export const getFpdLabel = (fpdKey: FpdKey) => prop_key_as_med_str(fpdToPropKey(
 
 /** Returns the index of the requested propKey in the list of displayed labels */
 export const getPropIndex = (labels: string[], propKey: PropKey) =>
-  labels.indexOf(propKeyAsModifiedMedStr(propKey));
+  labels.indexOf(propKeyAsModifiedShortStr(propKey));
 
 /** Finds a `RecipeSelect` element and selects the requested RecipeID */
 export async function setRecipeSelect(container: HTMLElement, optionValue: RecipeID) {
