@@ -41,16 +41,57 @@ pub enum Weighting {
     Relative,
 }
 
+/// The relative importance of a balancing target, on top of the [`Weighting`] mode.
+///
+/// Each target row in the least-squares system is multiplied by its priority's
+/// [`weight`](Self::weight), so higher-priority keys are fit more closely at the expense of
+/// lower-priority ones. Because least squares minimizes `(weight · residual)²`, a multiplier `m`
+/// scales a key's error emphasis by `m²`.
+///
+/// This is the abstract level accepted by [`balance_compositions`]; it translates each `Priority`
+/// to the numeric weight the solvers ([`balance_compositions_nnls`],
+/// [`balance_compositions_nalgebra`]) consume. [`Priority::Normal`] is the default and maps to a
+/// weight of 1 — the unprioritized behavior — so an empty priority list leaves the solve unchanged.
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+pub enum Priority {
+    /// Default priority; weight multiplier 1 (the unprioritized behavior).
+    #[default]
+    Normal,
+    /// Elevated priority; weight multiplier [`HIGH_PRIORITY_WEIGHT`].
+    High,
+    /// Highest priority; weight multiplier [`CRITICAL_PRIORITY_WEIGHT`].
+    Critical,
+}
+
+impl Priority {
+    /// The numeric row-weight multiplier this priority maps to (1 for [`Priority::Normal`]).
+    #[must_use]
+    pub const fn weight(self) -> f64 {
+        match self {
+            Self::Normal => 1.0,
+            Self::High => HIGH_PRIORITY_WEIGHT,
+            Self::Critical => CRITICAL_PRIORITY_WEIGHT,
+        }
+    }
+}
+
 /// A balancing solver function pointer, e.g. [`balance_compositions_nnls`].
-type SolverFn = fn(&[Composition], &[(CompKey, f64)], Option<Weighting>) -> Result<Vec<(Composition, f64)>>;
+type SolverFn =
+    fn(&[Composition], &[(CompKey, f64)], Option<Weighting>, &[(CompKey, f64)]) -> Result<Vec<(Composition, f64)>>;
 
 /// Balances the given compositions to match target values — the validated public entry point.
 ///
 /// This is the recommended way to balance: it first validates the inputs via
 /// [`validate_balancing_targets`], returning an [`Error::InvalidBalancingTargets`] if any
-/// error-severity issue is present (ratio-key targets, non-finite target values, or duplicate
-/// target keys), then solves with an automatically chosen solver. `weighting` selects the row
-/// weighting; `None` defaults to [`Weighting::Relative`].
+/// error-severity issue is present (ratio-key targets, non-finite target values, duplicate target
+/// keys, or duplicate priority keys), then solves with an automatically chosen solver. `weighting`
+/// selects the row weighting; `None` defaults to [`Weighting::Relative`].
+///
+/// `priorities` raises the relative importance of specific target keys: each listed key's row is
+/// weighted by its [`Priority::weight`], so the solver fits it more closely at the expense of the
+/// rest. Keys not listed default to [`Priority::Normal`] (weight 1), so an empty slice leaves the
+/// solve unchanged. The abstract priorities are translated to numeric weights here before reaching
+/// the solver.
 ///
 /// The chosen solver is currently always [`balance_compositions_nnls`] (non-negative): negative
 /// ingredient amounts are not meaningful for real recipes, so the [`balance_compositions_nalgebra`]
@@ -67,9 +108,14 @@ pub fn balance_compositions(
     comps: &[Composition],
     targets: &[(CompKey, f64)],
     weighting: Option<Weighting>,
+    priorities: &[(CompKey, Priority)],
 ) -> Result<Vec<(Composition, f64)>> {
-    validate_balancing_targets(comps, targets).into_result()?;
-    choose_solver(comps, targets)(comps, targets, weighting)
+    validate_balancing_targets(comps, targets, priorities).into_result()?;
+    let priority_weights: Vec<(CompKey, f64)> = priorities
+        .iter()
+        .map(|&(key, priority)| (key, priority.weight()))
+        .collect();
+    choose_solver(comps, targets)(comps, targets, weighting, &priority_weights)
 }
 
 /// Selects the underlying solver for [`balance_compositions`].
@@ -114,6 +160,14 @@ pub enum BalancingIssue {
     /// Severity: [`Severity::Error`].
     DuplicateTarget {
         /// The key that appears more than once.
+        key: CompKey,
+    },
+    /// The same key appears more than once in the priorities, which is contradictory or ambiguous —
+    /// it is unclear which level applies (only the first would take effect; see [`Priority`]).
+    ///
+    /// Severity: [`Severity::Error`].
+    DuplicatePriority {
+        /// The priority key that appears more than once.
         key: CompKey,
     },
     /// No composition in the palette contributes to this key (its row is entirely zero), so no
@@ -170,6 +224,14 @@ pub enum BalancingIssue {
         /// The target requested for `whole`.
         whole_target: f64,
     },
+    /// A priority was set for a key that is not among the targets, so it has no effect — the solver
+    /// only weights target rows. Likely a mistake: a forgotten target or a mistyped key.
+    ///
+    /// Severity: [`Severity::Warning`].
+    PriorityWithoutTarget {
+        /// The priority key that has no corresponding target.
+        key: CompKey,
+    },
 }
 
 impl BalancingIssue {
@@ -178,13 +240,15 @@ impl BalancingIssue {
     #[must_use]
     pub const fn severity(&self) -> Severity {
         match self {
-            Self::RatioKeyTarget { .. } | Self::NonFiniteTarget { .. } | Self::DuplicateTarget { .. } => {
-                Severity::Error
-            }
+            Self::RatioKeyTarget { .. }
+            | Self::NonFiniteTarget { .. }
+            | Self::DuplicateTarget { .. }
+            | Self::DuplicatePriority { .. } => Severity::Error,
             Self::UnaffectableTarget { .. }
             | Self::UnreachableTarget { .. }
             | Self::DominanceViolation { .. }
-            | Self::AdditiveDominanceViolation { .. } => Severity::Warning,
+            | Self::AdditiveDominanceViolation { .. }
+            | Self::PriorityWithoutTarget { .. } => Severity::Warning,
         }
     }
 }
@@ -246,14 +310,21 @@ impl BalancingReport {
 /// [`BalancingReport::into_result`] on this to reject error-severity inputs before solving.
 ///
 /// The checks are:
-/// - **Error** — ratio-key targets ([`is_ratio_key`]), non-finite target values, duplicates, etc.
+/// - **Error** — ratio-key targets ([`is_ratio_key`]), non-finite target values, duplicate target
+///   keys, and duplicate priority keys.
 /// - **Warning** — targets no composition affects, targets outside the palette's reachable range,
-///   infeasible target pairs (dominance check) and part/whole groups (additive check), etc.
+///   infeasible target pairs (dominance check), infeasible part/whole groups (additive check), and
+///   priorities whose key has no target.
 ///
 /// The range and dominance warnings assume the non-negative, normalized (summing to one) solution
-/// that [`balance_compositions`] targets.
+/// that [`balance_compositions`] targets. `priorities` is the same list [`balance_compositions`]
+/// accepts; only its keys are checked here (against duplicates and missing targets), not its levels.
 #[must_use]
-pub fn validate_balancing_targets(comps: &[Composition], targets: &[(CompKey, f64)]) -> BalancingReport {
+pub fn validate_balancing_targets(
+    comps: &[Composition],
+    targets: &[(CompKey, f64)],
+    priorities: &[(CompKey, Priority)],
+) -> BalancingReport {
     let mut issues = Vec::new();
 
     // Error-severity checks: ratio keys, non-finite values, and duplicate keys.
@@ -294,6 +365,20 @@ pub fn validate_balancing_targets(comps: &[Composition], targets: &[(CompKey, f6
 
     // Additive (subset-sum) dominance: parts that together exceed a whole that bounds their sum.
     append_additive_dominance_issues(comps, targets, &mut issues);
+
+    // Priority-list checks: duplicate priority keys (error, ambiguous) and priorities whose key is
+    // not among the targets (warning — a no-op, since only target rows are weighted).
+    let mut seen_priorities: Vec<CompKey> = Vec::with_capacity(priorities.len());
+    for &(key, _) in priorities {
+        if seen_priorities.contains(&key) {
+            issues.push(BalancingIssue::DuplicatePriority { key });
+            continue; // its target was already checked on the first sighting
+        }
+        seen_priorities.push(key);
+        if !targets.iter().any(|&(target_key, _)| target_key == key) {
+            issues.push(BalancingIssue::PriorityWithoutTarget { key });
+        }
+    }
 
     BalancingReport { issues }
 }
@@ -423,7 +508,8 @@ fn append_additive_dominance_issues(
 ///
 /// Solves the (weighted) least squares problem for the combination of `comps` that best matches
 /// `targets`, returning each composition with its amount, normalized to sum 1. `weighting` selects
-/// the weighting; `None` defaults to [`Weighting::Relative`] (relative error).
+/// the weighting; `None` defaults to [`Weighting::Relative`] (relative error). `priority_weights`
+/// maps target keys to row-weight multipliers (missing keys default to 1); see [`row_weights`].
 ///
 /// **Note**: This does not enforce non-negativity, so amounts may be negative. Use
 /// [`balance_compositions_nnls`] if non-negativity is required.
@@ -436,9 +522,10 @@ pub fn balance_compositions_nalgebra(
     comps: &[Composition],
     targets: &[(CompKey, f64)],
     weighting: Option<Weighting>,
+    priority_weights: &[(CompKey, f64)],
 ) -> Result<Vec<(Composition, f64)>> {
     let targets = constrainable_targets(comps, targets);
-    let weights = row_weights(&targets, weighting.unwrap_or(Weighting::Relative));
+    let weights = row_weights(&targets, weighting.unwrap_or(Weighting::Relative), priority_weights);
 
     let flat_a = make_matrix_a(comps, &targets, &weights);
     let flat_y = make_vector_y(&targets, &weights);
@@ -460,6 +547,7 @@ pub fn balance_compositions_nalgebra(
 /// Solves the non-negative (weighted) least squares problem for the combination of `comps` that
 /// best matches `targets`, returning each composition with its amount, normalized to sum 1.
 /// `weighting` selects the weighting; `None` defaults to [`Weighting::Relative`] (relative error).
+/// `priority_weights` maps target keys to row-weight multipliers (default 1); see [`row_weights`].
 ///
 /// # Errors
 ///
@@ -469,9 +557,10 @@ pub fn balance_compositions_nnls(
     comps: &[Composition],
     targets: &[(CompKey, f64)],
     weighting: Option<Weighting>,
+    priority_weights: &[(CompKey, f64)],
 ) -> Result<Vec<(Composition, f64)>> {
     let targets = constrainable_targets(comps, targets);
-    let weights = row_weights(&targets, weighting.unwrap_or(Weighting::Relative));
+    let weights = row_weights(&targets, weighting.unwrap_or(Weighting::Relative), priority_weights);
 
     let a = Array2::from_shape_vec((targets.len() + 1, comps.len()), make_matrix_a(comps, &targets, &weights))
         .map_err(|e| Error::FailedToBalanceCompositions(e.to_string()))?;
@@ -504,6 +593,12 @@ fn constrainable_targets(comps: &[Composition], targets: &[(CompKey, f64)]) -> V
 /// instead of dividing by zero.
 const RELATIVE_WEIGHT_FLOOR: f64 = 0.1;
 
+/// Row-weight multiplier for a [`Priority::High`] target.
+const HIGH_PRIORITY_WEIGHT: f64 = 5.0;
+
+/// Row-weight multiplier for a [`Priority::Critical`] target.
+const CRITICAL_PRIORITY_WEIGHT: f64 = 25.0;
+
 /// Fixed weight on the total-sum (mass-balance) row under [`Weighting::Relative`].
 ///
 /// Relative weighting scales every target row to roughly unit magnitude (each is divided by its own
@@ -513,23 +608,36 @@ const SUM_CONSTRAINT_WEIGHT: f64 = 1.0e3;
 
 /// Per-row weights for the least-squares system: one per target row, then the total-sum row.
 ///
-/// Under [`Weighting::Absolute`] every weight is 1. Under [`Weighting::Relative`] each target row
-/// is weighted by `1 / max(|target|, RELATIVE_WEIGHT_FLOOR)`, and the trailing sum row by the fixed
-/// [`SUM_CONSTRAINT_WEIGHT`] so mass balance stays dominant.
-fn row_weights(targets: &[(CompKey, f64)], weighting: Weighting) -> Vec<f64> {
-    match weighting {
-        Weighting::Absolute => vec![1.0; targets.len() + 1],
-        Weighting::Relative => {
-            let mut weights: Vec<f64> = targets
+/// Under [`Weighting::Absolute`] every base weight is 1. Under [`Weighting::Relative`] each target
+/// row's base weight is `1 / max(|target|, RELATIVE_WEIGHT_FLOOR)`, and the trailing sum row uses
+/// the fixed [`SUM_CONSTRAINT_WEIGHT`] so mass balance stays dominant.
+///
+/// Each target row's base weight is then multiplied by its key's entry in `priority_weights` (keys
+/// not listed default to a multiplier of 1; see [`Priority`]). The trailing sum row is never scaled
+/// by priority, so raising a target's priority can never weaken mass balance. An empty
+/// `priority_weights` therefore reproduces the unprioritized weights exactly.
+fn row_weights(targets: &[(CompKey, f64)], weighting: Weighting, priority_weights: &[(CompKey, f64)]) -> Vec<f64> {
+    let priority_for = |key: CompKey| {
+        priority_weights
+            .iter()
+            .find(|&&(other, _)| other == key)
+            .map_or(1.0, |&(_, weight)| weight)
+    };
+
+    let (mut weights, sum_row_weight): (Vec<f64>, f64) = match weighting {
+        Weighting::Absolute => (targets.iter().map(|&(key, _)| priority_for(key)).collect(), 1.0),
+        Weighting::Relative => (
+            targets
                 .iter()
-                .map(|(_, target)| 1.0 / target.abs().max(RELATIVE_WEIGHT_FLOOR))
-                .collect();
+                .map(|&(key, target)| priority_for(key) / target.abs().max(RELATIVE_WEIGHT_FLOOR))
+                .collect(),
+            SUM_CONSTRAINT_WEIGHT,
+        ),
+    };
 
-            weights.push(SUM_CONSTRAINT_WEIGHT);
+    weights.push(sum_row_weight);
 
-            weights
-        }
-    }
+    weights
 }
 
 /// Helper function to construct the (row-weighted) matrix A for the least squares problem.
@@ -730,16 +838,18 @@ mod tests {
     /// controls optional amount sum, negativity, and target value assertions. If an epsilon is
     /// `None`, then that check is skipped. [`KeyCeiling`] sets the maximum allowed relative error
     /// for each key; see [`balance_rel_error_pp`].
-    fn assert_balance_compositions<F>(
+    fn assert_balance_compositions<F, P>(
         comps: &[Composition],
         targets: &[(CompKey, f64)],
         solve: F,
         epsilons: Epsilons,
         ceiling: &KeyCeiling,
     ) where
-        F: Fn(&[Composition], &[(CompKey, f64)], Option<Weighting>) -> Result<Vec<(Composition, f64)>>,
+        F: Fn(&[Composition], &[(CompKey, f64)], Option<Weighting>, &[P]) -> Result<Vec<(Composition, f64)>>,
     {
-        let balanced = solve(comps, targets, None).unwrap();
+        // `P` is the solver's priority element type; the assertions always use the default (no
+        // priorities), so an empty slice serves both `&[(CompKey, f64)]` and `&[(CompKey, Priority)]`.
+        let balanced = solve(comps, targets, None, &[]).unwrap();
         assert_eq!(balanced.len(), comps.len());
 
         let amount_sum: f64 = balanced.iter().map(|(_, amount)| *amount).sum();
@@ -806,7 +916,7 @@ mod tests {
         for (label, solve) in solvers {
             lines.push(String::new());
 
-            let balanced = match solve(comps, targets, None) {
+            let balanced = match solve(comps, targets, None, &[]) {
                 Ok(balanced) => balanced,
                 Err(error) => {
                     lines.push(format!("[{label}] FAILED: {error}"));
@@ -1086,7 +1196,8 @@ mod tests {
         ];
 
         for palette in two_sugar_palettes {
-            let balanced = balance_compositions_nnls(&comps_from_names(palette), &SUGAR_BLEND_TARGETS, None).unwrap();
+            let balanced =
+                balance_compositions_nnls(&comps_from_names(palette), &SUGAR_BLEND_TARGETS, None, &[]).unwrap();
             let max_error = max_rel_error(&balanced, &SUGAR_BLEND_TARGETS);
             assert_gt!(max_error, 10.0);
         }
@@ -1155,7 +1266,7 @@ mod tests {
         let targets = SORBET_DISPARATE_TARGETS.clone();
         let weighting = Weighting::Absolute;
 
-        let balanced = balance_compositions_nnls(&comps, &targets, Some(weighting)).unwrap();
+        let balanced = balance_compositions_nnls(&comps, &targets, Some(weighting), &[]).unwrap();
         assert_gt!(max_rel_error(&balanced, &targets), 1100.0);
     }
 
@@ -1179,7 +1290,7 @@ mod tests {
         let targets = BOOZY_DISPARATE_TARGETS.clone();
         let weighting = Weighting::Absolute;
 
-        let balanced = balance_compositions_nnls(&comps, &targets, Some(weighting)).unwrap();
+        let balanced = balance_compositions_nnls(&comps, &targets, Some(weighting), &[]).unwrap();
         assert_lt!(balanced.iter().map(|(_, amount)| *amount).sum::<f64>(), 0.3);
     }
 
@@ -1281,7 +1392,7 @@ mod tests {
         let comps = comps_from_names(DAIRY_SUGAR_ING); // Sucrose has zero water
         let targets = [(CompKey::StabilizersPerWater, 0.5)];
 
-        let balanced = balance_compositions_nnls(&comps, &targets, None).unwrap();
+        let balanced = balance_compositions_nnls(&comps, &targets, None, &[]).unwrap();
 
         assert_false!(achieved_value(&balanced, CompKey::StabilizersPerWater).is_finite());
     }
@@ -1294,7 +1405,7 @@ mod tests {
         let comps = comps_from_names(DAIRY_SUGAR_ING);
         let targets = [(CompKey::StabilizersPerWater, 0.5)];
 
-        let _result = balance_compositions_nalgebra(&comps, &targets, None);
+        let _result = balance_compositions_nalgebra(&comps, &targets, None, &[]);
     }
 
     // --- Solver behavior and edge cases ---
@@ -1305,8 +1416,8 @@ mod tests {
     fn nalgebra_allows_negative_amounts_while_nnls_does_not() {
         let comps = comps_from_names(BOOZY_ING);
 
-        let nalgebra = balance_compositions_nalgebra(&comps, &BOOZY_DISPARATE_TARGETS, None).unwrap();
-        let nnls = balance_compositions_nnls(&comps, &BOOZY_DISPARATE_TARGETS, None).unwrap();
+        let nalgebra = balance_compositions_nalgebra(&comps, &BOOZY_DISPARATE_TARGETS, None, &[]).unwrap();
+        let nnls = balance_compositions_nnls(&comps, &BOOZY_DISPARATE_TARGETS, None, &[]).unwrap();
 
         assert_true!(nalgebra.iter().any(|(_, amount)| *amount < 0.0));
         assert_true!(nnls.iter().all(|(_, amount)| *amount >= -TESTS_EPSILON),);
@@ -1334,7 +1445,7 @@ mod tests {
         let targets: &[(CompKey, f64)] = &DAIRY_DISPARATE_TARGETS;
 
         let max_error_for = |weighting| {
-            let balanced = balance_compositions_nnls(&comps, targets, weighting).unwrap();
+            let balanced = balance_compositions_nnls(&comps, targets, weighting, &[]).unwrap();
             max_rel_error(&balanced, targets)
         };
 
@@ -1349,21 +1460,21 @@ mod tests {
     #[test]
     fn balance_compositions_rejects_ratio_key_target() {
         let comps = comps_from_names(DAIRY_SUGAR_ING);
-        let result = balance_compositions(&comps, &[(CompKey::StabilizersPerWater, 0.5)], None);
+        let result = balance_compositions(&comps, &[(CompKey::StabilizersPerWater, 0.5)], None, &[]);
         assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
     }
 
     #[test]
     fn balance_compositions_rejects_duplicate_target() {
         let comps = comps_from_names(DAIRY_ING);
-        let result = balance_compositions(&comps, &[(CompKey::MilkFat, 16.0), (CompKey::MilkFat, 12.0)], None);
+        let result = balance_compositions(&comps, &[(CompKey::MilkFat, 16.0), (CompKey::MilkFat, 12.0)], None, &[]);
         assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
     }
 
     #[test]
     fn balance_compositions_rejects_non_finite_target() {
         let comps = comps_from_names(DAIRY_ING);
-        let result = balance_compositions(&comps, &[(CompKey::MilkFat, f64::NAN)], None);
+        let result = balance_compositions(&comps, &[(CompKey::MilkFat, f64::NAN)], None, &[]);
         assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
     }
 
@@ -1383,14 +1494,135 @@ mod tests {
         // A Sucrose > TotalSugars pair only warns; the solve still returns a best-effort result.
         let comps = comps_from_names(DAIRY_SUGAR_ING);
         let targets = [(CompKey::Sucrose, 20.0), (CompKey::TotalSugars, 15.0)];
-        assert!(balance_compositions(&comps, &targets, None).is_ok());
+        assert!(balance_compositions(&comps, &targets, None, &[]).is_ok());
+    }
+
+    // --- Priority ---
+
+    #[test]
+    fn priority_weights_increase_with_level() {
+        assert_eq!(Priority::default(), Priority::Normal);
+        assert_eq!(Priority::Normal.weight(), 1.0);
+        assert_gt!(Priority::High.weight(), Priority::Normal.weight());
+        assert_gt!(Priority::Critical.weight(), Priority::High.weight());
+    }
+
+    #[test]
+    fn empty_priorities_match_explicit_normal() {
+        let comps = comps_from_names(DAIRY_ING);
+        let targets: &[(CompKey, f64)] = &DAIRY_DISPARATE_TARGETS;
+
+        let empty = balance_compositions(&comps, targets, None, &[]).unwrap();
+        let all_normal = balance_compositions(
+            &comps,
+            targets,
+            None,
+            &[
+                (CompKey::Energy, Priority::Normal),
+                (CompKey::MilkFat, Priority::Normal),
+                (CompKey::MSNF, Priority::Normal),
+                (CompKey::POD, Priority::Normal),
+            ],
+        )
+        .unwrap();
+
+        for ((_, empty_amount), (_, normal_amount)) in empty.iter().zip(all_normal.iter()) {
+            assert_eq!(*empty_amount, *normal_amount);
+        }
+    }
+
+    #[test]
+    fn priority_reduces_error_on_prioritized_key() {
+        let comps = comps_from_names(DAIRY_ING);
+        let targets: &[(CompKey, f64)] = &DAIRY_DISPARATE_TARGETS;
+        let pod_target = targets.iter().find(|(key, _)| *key == CompKey::POD).unwrap().1;
+
+        let baseline = balance_compositions_nnls(&comps, targets, None, &[]).unwrap();
+        let prioritized =
+            balance_compositions_nnls(&comps, targets, None, &[(CompKey::POD, Priority::Critical.weight())]).unwrap();
+
+        let pod_error =
+            |balanced: &[(Composition, f64)]| balance_rel_error_pp(achieved_value(balanced, CompKey::POD), pod_target);
+        assert_lt!(pod_error(&prioritized), pod_error(&baseline));
+
+        // Priority never scales the sum-constraint row, so mass balance is preserved.
+        let amount_sum: f64 = prioritized.iter().map(|(_, amount)| *amount).sum();
+        assert_abs_diff_eq!(amount_sum, 1.0, epsilon = TESTS_EPSILON);
+    }
+
+    #[test]
+    fn balance_compositions_threads_priorities() {
+        let comps = comps_from_names(DAIRY_ING);
+        let targets: &[(CompKey, f64)] = &DAIRY_DISPARATE_TARGETS;
+        let pod_target = targets.iter().find(|(key, _)| *key == CompKey::POD).unwrap().1;
+
+        let baseline = balance_compositions(&comps, targets, None, &[]).unwrap();
+        let prioritized = balance_compositions(&comps, targets, None, &[(CompKey::POD, Priority::Critical)]).unwrap();
+
+        let pod_error =
+            |balanced: &[(Composition, f64)]| balance_rel_error_pp(achieved_value(balanced, CompKey::POD), pod_target);
+        assert_lt!(pod_error(&prioritized), pod_error(&baseline));
+    }
+
+    #[test]
+    fn validate_flags_duplicate_priority_as_error() {
+        let comps = comps_from_names(DAIRY_ING);
+        let targets = [(CompKey::MilkFat, 16.0)];
+        let priorities = [
+            (CompKey::MilkFat, Priority::High),
+            (CompKey::MilkFat, Priority::Critical),
+        ];
+        let report = validate_balancing_targets(&comps, &targets, &priorities);
+
+        assert_true!(report.has_errors());
+        assert_true!(
+            report
+                .errors()
+                .any(|issue| matches!(issue, BalancingIssue::DuplicatePriority { key: CompKey::MilkFat }))
+        );
+    }
+
+    #[test]
+    fn validate_flags_priority_without_target_as_warning() {
+        let comps = comps_from_names(DAIRY_ING);
+        let targets = [(CompKey::MilkFat, 16.0)];
+        let priorities = [(CompKey::MSNF, Priority::High)]; // no MSNF target
+        let report = validate_balancing_targets(&comps, &targets, &priorities);
+
+        assert_false!(report.has_errors());
+        assert_true!(
+            report
+                .warnings()
+                .any(|issue| matches!(issue, BalancingIssue::PriorityWithoutTarget { key: CompKey::MSNF }))
+        );
+    }
+
+    #[test]
+    fn balance_compositions_rejects_duplicate_priority() {
+        let comps = comps_from_names(DAIRY_ING);
+        let targets = [(CompKey::MilkFat, 16.0), (CompKey::MSNF, 11.0)];
+        let priorities = [
+            (CompKey::MilkFat, Priority::High),
+            (CompKey::MilkFat, Priority::Critical),
+        ];
+        let result = balance_compositions(&comps, &targets, None, &priorities);
+        assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
+    }
+
+    #[test]
+    fn balance_compositions_proceeds_despite_priority_without_target() {
+        // A priority whose key has no target is only a warning; the solve still returns a result.
+        let comps = comps_from_names(DAIRY_ING);
+        let targets = [(CompKey::MilkFat, 16.0), (CompKey::MSNF, 11.0)];
+        let priorities = [(CompKey::TotalSugars, Priority::High)]; // no TotalSugars target
+        assert!(balance_compositions(&comps, &targets, None, &priorities).is_ok());
     }
 
     // --- validate_balancing_targets: error-severity issues ---
 
     #[test]
     fn validate_flags_ratio_key_as_error() {
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(CompKey::AbsPAC, 9.0)]);
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(CompKey::AbsPAC, 9.0)], &[]);
         assert_true!(report.has_errors());
         assert_true!(
             report
@@ -1401,7 +1633,8 @@ mod tests {
 
     #[test]
     fn validate_flags_non_finite_target_as_error() {
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, f64::INFINITY)]);
+        let report =
+            validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, f64::INFINITY)], &[]);
         assert_true!(
             report
                 .errors()
@@ -1412,7 +1645,7 @@ mod tests {
     #[test]
     fn validate_flags_duplicate_target_as_error() {
         let targets = [(CompKey::MilkFat, 16.0), (CompKey::MilkFat, 12.0)];
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &targets);
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &targets, &[]);
         assert_true!(
             report
                 .errors()
@@ -1425,7 +1658,7 @@ mod tests {
     #[test]
     fn validate_flags_unaffectable_target_as_warning() {
         // Plain dairy has no alcohol source, so no combination can move an Alcohol target off zero.
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::Alcohol, 5.0)]);
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::Alcohol, 5.0)], &[]);
         assert_false!(report.has_errors());
         assert_true!(
             report
@@ -1437,7 +1670,7 @@ mod tests {
     #[test]
     fn validate_flags_unreachable_target_as_warning() {
         // The richest dairy ingredient is 40% cream, so a 50% milk-fat target is out of reach.
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, 50.0)]);
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, 50.0)], &[]);
         assert_true!(report.warnings().any(|issue| matches!(
             issue,
             BalancingIssue::UnreachableTarget {
@@ -1455,7 +1688,7 @@ mod tests {
         // target is verifiably infeasible — the palette-derived dominance check catches it.
         let comps = comps_from_names(DAIRY_SUGAR_ING);
         let targets = [(CompKey::Sucrose, 20.0), (CompKey::TotalSugars, 15.0)];
-        let report = validate_balancing_targets(&comps, &targets);
+        let report = validate_balancing_targets(&comps, &targets, &[]);
 
         assert_false!(report.has_errors());
         assert_true!(report.warnings().any(|issue| matches!(
@@ -1480,7 +1713,7 @@ mod tests {
             (CompKey::Fructose, 10.0),
             (CompKey::TotalSugars, 15.0),
         ];
-        let report = validate_balancing_targets(&comps, &targets);
+        let report = validate_balancing_targets(&comps, &targets, &[]);
 
         assert_false!(report.has_errors());
         // The pairwise check must NOT fire here (that's the point of the additive generalization).
@@ -1502,7 +1735,7 @@ mod tests {
 
     #[test]
     fn validate_clean_targets_yield_empty_report() {
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &DAIRY_TRIVIAL_TARGETS);
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &DAIRY_TRIVIAL_TARGETS, &[]);
         assert_true!(report.is_empty());
         assert_false!(report.has_errors());
     }
@@ -1517,7 +1750,7 @@ mod tests {
             (CompKey::Sucrose, 20.0),     // warning pair with TotalSugars
             (CompKey::TotalSugars, 15.0), //
         ];
-        let report = validate_balancing_targets(&comps, &targets);
+        let report = validate_balancing_targets(&comps, &targets, &[]);
 
         assert_true!(report.has_errors());
         assert_false!(report.is_empty());
@@ -1532,14 +1765,14 @@ mod tests {
     #[test]
     fn balancing_report_into_result_errors_on_error_severity() {
         let targets = [(CompKey::MilkFat, 16.0), (CompKey::MilkFat, 12.0)];
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &targets);
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &targets, &[]);
         assert!(matches!(report.into_result(), Err(Error::InvalidBalancingTargets(_))));
     }
 
     #[test]
     fn balancing_report_into_result_ok_on_warnings_only() {
         // An unreachable target is only a warning, so into_result stays Ok.
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, 50.0)]);
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, 50.0)], &[]);
         assert_true!(report.warnings().count() >= 1);
         assert!(report.into_result().is_ok());
     }

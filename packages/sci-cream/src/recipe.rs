@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use crate::{database::IngredientDatabase, resolution::IngredientGetter};
 
 use crate::{
-    balancing::balance_compositions,
+    balancing::{Priority, balance_compositions},
     composition::{CompKey, Composition},
     error::Result,
     fpd::FPD,
@@ -178,11 +178,15 @@ impl Recipe {
     /// composition values as closely as possible, while keeping the total amount of the recipe
     /// constant. The balancing is done via [`balance_compositions`]; see for more details.
     ///
+    /// `priorities` raises the relative importance of specific target keys (keys not listed default
+    /// to [`Priority::Normal`], so an empty slice balances all targets equally); it is forwarded to
+    /// [`balance_compositions`].
+    ///
     /// # Errors
     ///
     /// Forwards any [`balance_compositions`] errors, including [`Error::InvalidBalancingTargets`]
     /// if the targets are invalid (e.g. ratio keys or duplicates) and any error if the solve fails.
-    pub fn balance(self, targets: &[(CompKey, f64)]) -> Result<Self> {
+    pub fn balance(self, targets: &[(CompKey, f64)], priorities: &[(CompKey, Priority)]) -> Result<Self> {
         let total_amount: f64 = self.lines.iter().map(|line| line.amount).sum();
 
         let balanced = balance_compositions(
@@ -193,6 +197,7 @@ impl Recipe {
                 .as_slice(),
             targets,
             None,
+            priorities,
         )?;
 
         Ok(Self {
@@ -316,7 +321,7 @@ mod tests {
         let original_names: Vec<_> = recipe.lines.iter().map(|line| line.ingredient.name.clone()).collect();
 
         let targets = [(CompKey::MilkFat, 16.0), (CompKey::MSNF, 11.0)];
-        let balanced = recipe.balance(&targets).unwrap();
+        let balanced = recipe.balance(&targets, &[]).unwrap();
 
         assert_eq!(balanced.name, Some("Dairy Base".into()));
         assert_eq!(balanced.lines.len(), original_names.len());
@@ -347,7 +352,7 @@ mod tests {
             (CompKey::TotalSugars, 17.0),
             (CompKey::TotalSolids, 41.0),
         ];
-        let balanced = recipe.balance(&targets).unwrap();
+        let balanced = recipe.balance(&targets, &[]).unwrap();
 
         assert_eq!(balanced.name, Some("Main Recipe".into()));
         assert_eq!(balanced.lines.len(), MAIN_RECIPE_LIGHT.len());
@@ -375,7 +380,7 @@ mod tests {
         .unwrap();
 
         let balanced = recipe
-            .balance(&[(CompKey::MilkFat, 12.0), (CompKey::MSNF, 10.0)])
+            .balance(&[(CompKey::MilkFat, 12.0), (CompKey::MSNF, 10.0)], &[])
             .unwrap();
 
         assert_eq!(balanced.name, None);
