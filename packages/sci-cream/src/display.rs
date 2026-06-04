@@ -223,9 +223,6 @@ impl KeyAsStrings for PropKey {
 impl fmt::Display for BalancingIssue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::RatioKeyTarget { key } => {
-                write!(f, "'{}' is a ratio key and cannot be used as a balancing target", key.as_med_str())
-            }
             Self::NonFiniteTarget { key, value } => {
                 write!(f, "target for '{}' is not finite ({value})", key.as_med_str())
             }
@@ -573,15 +570,6 @@ mod tests {
     }
 
     #[test]
-    fn balancing_issue_display_message_ratio_key_target() {
-        assert_true!(
-            BalancingIssue::RatioKeyTarget { key: CompKey::AbsPAC }
-                .to_string()
-                .contains("ratio key")
-        );
-    }
-
-    #[test]
     fn balancing_issue_display_message_duplicate_priority() {
         let text = BalancingIssue::DuplicatePriority { key: CompKey::MilkFat }.to_string();
         assert_true!(text.contains(CompKey::MilkFat.as_med_str()));
@@ -599,7 +587,7 @@ mod tests {
     fn balancing_report_display_lists_issues() {
         let report = BalancingReport {
             issues: vec![
-                BalancingIssue::RatioKeyTarget { key: CompKey::AbsPAC },
+                BalancingIssue::DuplicateTarget { key: CompKey::AbsPAC },
                 BalancingIssue::UnaffectableTarget { key: CompKey::Alcohol },
             ],
         };

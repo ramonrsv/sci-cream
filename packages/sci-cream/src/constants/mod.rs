@@ -1,5 +1,6 @@
 //! Constants and associated utilities for various ingredient properties
 
+pub mod balancing;
 pub mod composition;
 pub mod density;
 pub mod emulsification;

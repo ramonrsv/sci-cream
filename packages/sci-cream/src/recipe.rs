@@ -185,7 +185,8 @@ impl Recipe {
     /// # Errors
     ///
     /// Forwards any [`balance_compositions`] errors, including [`Error::InvalidBalancingTargets`]
-    /// if the targets are invalid (e.g. ratio keys or duplicates) and any error if the solve fails.
+    /// if the targets are invalid (e.g. non-finite values or duplicates) and any error if the solve
+    /// fails.
     pub fn balance(self, targets: &[(CompKey, f64)], priorities: &[(CompKey, Priority)]) -> Result<Self> {
         let total_amount: f64 = self.lines.iter().map(|line| line.amount).sum();
 

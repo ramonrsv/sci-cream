@@ -22,6 +22,10 @@ use strum::IntoEnumIterator;
 
 use crate::{
     composition::{CompKey, Composition},
+    constants::balancing::{
+        CRITICAL_PRIORITY_WEIGHT, HIGH_PRIORITY_WEIGHT, RATIO_DENOMINATOR_FLOOR, RATIO_REWEIGHT_TOLERANCE,
+        RELATIVE_WEIGHT_FLOOR, SUM_CONSTRAINT_WEIGHT, SVD_SOLVE_EPSILON, TYPICAL_MIX_FAT, TYPICAL_MIX_WATER,
+    },
     error::{Error, Result},
     validate::{is_subset, is_within_range},
 };
@@ -83,9 +87,9 @@ type SolverFn =
 ///
 /// This is the recommended way to balance: it first validates the inputs via
 /// [`validate_balancing_targets`], returning an [`Error::InvalidBalancingTargets`] if any
-/// error-severity issue is present (ratio-key targets, non-finite target values, duplicate target
-/// keys, or duplicate priority keys), then solves with an automatically chosen solver. `weighting`
-/// selects the row weighting; `None` defaults to [`Weighting::Relative`].
+/// error-severity issue is present (non-finite target values, duplicate target keys, or duplicate
+/// priority keys), then solves with an automatically chosen solver. `weighting` selects the row
+/// weighting; `None` defaults to [`Weighting::Relative`].
 ///
 /// `priorities` raises the relative importance of specific target keys: each listed key's row is
 /// weighted by its [`Priority::weight`], so the solver fits it more closely at the expense of the
@@ -138,14 +142,6 @@ pub enum Severity {
 /// A single problem detected in a set of balancing inputs by [`validate_balancing_targets`].
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 pub enum BalancingIssue {
-    /// A ratio key (e.g. [`CompKey::AbsPAC`]) was given as a target. Ratio keys cannot be balanced
-    /// and poison the solve (see [`is_ratio_key`]).
-    ///
-    /// Severity: [`Severity::Error`].
-    RatioKeyTarget {
-        /// The offending ratio key.
-        key: CompKey,
-    },
     /// A target value is not finite (`NaN` or infinite), which would poison the solve.
     ///
     /// Severity: [`Severity::Error`].
@@ -240,10 +236,9 @@ impl BalancingIssue {
     #[must_use]
     pub const fn severity(&self) -> Severity {
         match self {
-            Self::RatioKeyTarget { .. }
-            | Self::NonFiniteTarget { .. }
-            | Self::DuplicateTarget { .. }
-            | Self::DuplicatePriority { .. } => Severity::Error,
+            Self::NonFiniteTarget { .. } | Self::DuplicateTarget { .. } | Self::DuplicatePriority { .. } => {
+                Severity::Error
+            }
             Self::UnaffectableTarget { .. }
             | Self::UnreachableTarget { .. }
             | Self::DominanceViolation { .. }
@@ -310,8 +305,7 @@ impl BalancingReport {
 /// [`BalancingReport::into_result`] on this to reject error-severity inputs before solving.
 ///
 /// The checks are:
-/// - **Error** — ratio-key targets ([`is_ratio_key`]), non-finite target values, duplicate target
-///   keys, and duplicate priority keys.
+/// - **Error** — non-finite target values, duplicate target keys, and duplicate priority keys.
 /// - **Warning** — targets no composition affects, targets outside the palette's reachable range,
 ///   infeasible target pairs (dominance check), infeasible part/whole groups (additive check), and
 ///   priorities whose key has no target.
@@ -327,12 +321,10 @@ pub fn validate_balancing_targets(
 ) -> BalancingReport {
     let mut issues = Vec::new();
 
-    // Error-severity checks: ratio keys, non-finite values, and duplicate keys.
+    // Error-severity checks: non-finite values and duplicate keys. Ratio keys are accepted —
+    // they are encoded as homogeneous rows (see `ratio_key_parts`) and balance like any other key.
     let mut seen: Vec<CompKey> = Vec::with_capacity(targets.len());
     for &(key, value) in targets {
-        if is_ratio_key(key) {
-            issues.push(BalancingIssue::RatioKeyTarget { key });
-        }
         if !value.is_finite() {
             issues.push(BalancingIssue::NonFiniteTarget { key, value });
         }
@@ -343,15 +335,19 @@ pub fn validate_balancing_targets(
         }
     }
 
-    // Per-target warning checks: unaffectable and unreachable targets. Ratio keys and non-finite
-    // values are skipped — they are reported as errors above and make this comparison meaningless.
+    // Per-target warning checks: unaffectable and unreachable targets. Non-finite values are
+    // skipped (reported as errors above). Ratio keys get the unaffectable check but skip the range
+    // check, having no single-key magnitude to compare against the palette.
     for &(key, target) in targets {
-        if is_ratio_key(key) || !target.is_finite() {
+        if !target.is_finite() {
             continue;
         }
-        if is_unaffectable(comps, key) {
+        if is_unaffectable(comps, key, target) {
             issues.push(BalancingIssue::UnaffectableTarget { key });
             continue; // range checks add only noise for an all-zero row
+        }
+        if is_ratio_key(key) {
+            continue;
         }
         if let Some((min, max)) = reachable_range(comps, key)
             && !is_within_range(target, min, max)
@@ -383,11 +379,26 @@ pub fn validate_balancing_targets(
     BalancingReport { issues }
 }
 
-/// Returns `true` if no composition contributes to `key` (its row is entirely zero).
+/// Returns `true` if no composition can move `key`/`target` toward a meaningful value.
 ///
-/// The shared predicate for "no ingredient can affect this key": [`constrainable_targets`] uses it
-/// to drop such targets before solving, and [`validate_balancing_targets`] to flag as warnings.
-fn is_unaffectable(comps: &[Composition], key: CompKey) -> bool {
+/// The shared predicate for "no ingredient can affect this target": [`constrainable_targets`] uses
+/// it to drop such targets before solving, and [`validate_balancing_targets`] to flag as warnings.
+///
+/// For an extensive key this means every composition reads exactly zero for it. A ratio key is also
+/// unaffectable when either of its parts is (see [`ratio_key_parts`]) — a zero denominator leaves
+/// the ratio undefined, a zero numerator pins it to zero — or when its homogeneous row vanishes
+/// across the palette (already exactly on-ratio).
+fn is_unaffectable(comps: &[Composition], key: CompKey, target: f64) -> bool {
+    if let Some((numerator, denominator)) = ratio_key_parts(key) {
+        return is_key_unaffectable(comps, numerator)
+            || is_key_unaffectable(comps, denominator)
+            || comps.iter().all(|comp| target_row_coeff(key, target, comp) == 0.0);
+    }
+    is_key_unaffectable(comps, key)
+}
+
+/// Returns `true` if every composition reads exactly zero for the extensive `key`.
+fn is_key_unaffectable(comps: &[Composition], key: CompKey) -> bool {
     comps.iter().all(|comp| comp.get(key) == 0.0)
 }
 
@@ -408,10 +419,11 @@ fn dominates(comps: &[Composition], greater: CompKey, lesser: CompKey) -> bool {
 }
 
 /// Returns `true` if `key`/`target` is a meaningful target to compare against others in the
-/// dominance checks: not a ratio key, finite, and affected by at least one composition. Targets
-/// failing this are reported by their own error/warning checks, so the comparisons skip them.
+/// dominance checks: not a ratio key, finite, and affected by at least one composition. Ratio keys
+/// are skipped because their homogeneous row mixes two keys and has no single-key magnitude to
+/// compare; other failing targets are reported by their own error/warning checks.
 fn is_checkable_target(comps: &[Composition], key: CompKey, target: f64) -> bool {
-    !is_ratio_key(key) && target.is_finite() && !is_unaffectable(comps, key)
+    !is_ratio_key(key) && target.is_finite() && !is_unaffectable(comps, key, target)
 }
 
 /// Appends the pairwise dominance infeasibility warnings for `targets`.
@@ -524,22 +536,7 @@ pub fn balance_compositions_nalgebra(
     weighting: Option<Weighting>,
     priority_weights: &[(CompKey, f64)],
 ) -> Result<Vec<(Composition, f64)>> {
-    let targets = constrainable_targets(comps, targets);
-    let weights = row_weights(&targets, weighting.unwrap_or(Weighting::Relative), priority_weights);
-
-    let flat_a = make_matrix_a(comps, &targets, &weights);
-    let flat_y = make_vector_y(&targets, &weights);
-
-    let a = DMatrix::from_row_slice(targets.len() + 1, comps.len(), &flat_a);
-    let y = DVector::from_vec(flat_y);
-
-    let svd = SVD::new(a, true, true);
-
-    let x = svd
-        .solve(&y, 1e-10)
-        .map_err(|e| Error::FailedToBalanceCompositions(e.to_string()))?;
-
-    Ok(x.iter().enumerate().map(|(i, amount)| (comps[i], *amount)).collect())
+    balance_with_reweighting(comps, targets, weighting, priority_weights, solve_nalgebra_raw)
 }
 
 /// Balances the given compositions to match target values for the specified keys, using nnls.
@@ -559,84 +556,217 @@ pub fn balance_compositions_nnls(
     weighting: Option<Weighting>,
     priority_weights: &[(CompKey, f64)],
 ) -> Result<Vec<(Composition, f64)>> {
-    let targets = constrainable_targets(comps, targets);
-    let weights = row_weights(&targets, weighting.unwrap_or(Weighting::Relative), priority_weights);
+    balance_with_reweighting(comps, targets, weighting, priority_weights, solve_nnls_raw)
+}
 
-    let a = Array2::from_shape_vec((targets.len() + 1, comps.len()), make_matrix_a(comps, &targets, &weights))
+/// A raw linear solver over an already-assembled, row-weighted system: the flat row-major matrix
+/// `a` (`rows`×`cols`), the right-hand side `y` (`rows`), returning the `cols` amounts.
+pub type RawSolver = fn(a: &[f64], y: &[f64], rows: usize, cols: usize) -> Result<Vec<f64>>;
+
+/// Solves the assembled least-squares system with nalgebra's SVD (no non-negativity constraint).
+///
+/// # Errors
+///
+/// Returns [`Error::FailedToBalanceCompositions`] if the SVD solve fails.
+fn solve_nalgebra_raw(a: &[f64], y: &[f64], rows: usize, cols: usize) -> Result<Vec<f64>> {
+    let matrix = DMatrix::from_row_slice(rows, cols, a);
+    let rhs = DVector::from_column_slice(y);
+    let svd = SVD::new(matrix, true, true);
+    let x = svd
+        .solve(&rhs, SVD_SOLVE_EPSILON)
         .map_err(|e| Error::FailedToBalanceCompositions(e.to_string()))?;
+    Ok(x.iter().copied().collect())
+}
 
-    let y = Array1::from_vec(make_vector_y(&targets, &weights));
+/// Solves the assembled non-negative least-squares system with nnls (amounts clamped `>= 0`).
+///
+/// # Errors
+///
+/// Returns [`Error::FailedToBalanceCompositions`] if the matrix cannot be shaped for the solver.
+fn solve_nnls_raw(a: &[f64], y: &[f64], rows: usize, cols: usize) -> Result<Vec<f64>> {
+    let matrix = Array2::from_shape_vec((rows, cols), a.to_vec())
+        .map_err(|e| Error::FailedToBalanceCompositions(e.to_string()))?;
+    let rhs = Array1::from_vec(y.to_vec());
+    let (x, _residual) = nnls(matrix.view(), rhs.view());
+    Ok(x.to_vec())
+}
 
-    let (x, _residual) = nnls(a.view(), y.view());
+/// Shared balancing driver: assembles the weighted system, solves it with `solve`, and applies one
+/// conditional denominator-reweighting pass for ratio targets.
+///
+/// A ratio row's relative weight depends on its achieved denominator `D`, known only after solving
+/// (see [`row_weights`]). So this seeds each `D̂` from [`estimate_ratio_denominator`], solves once,
+/// then — under [`Weighting::Relative`] with at least one ratio target — re-solves with the ratio
+/// weights recomputed from the achieved denominators, unless every seed was already within
+/// [`RATIO_REWEIGHT_TOLERANCE`] (relative) of it.
+///
+/// One corrective pass, not iteration to a fixed point: a re-solve can shift `D` again, but `D` is
+/// mostly pinned by the mass-balance row and extensive targets, so the shift is small, and a small
+/// `D̂` error only mis-weights the ratio row slightly without invalidating the result (the
+/// approximation [`row_weights`] already accepts). Balances without ratio targets take one solve.
+///
+/// # Errors
+///
+/// Forwards any error from `solve`.
+pub fn balance_with_reweighting(
+    comps: &[Composition],
+    targets: &[(CompKey, f64)],
+    weighting: Option<Weighting>,
+    priority_weights: &[(CompKey, f64)],
+    solve: RawSolver,
+) -> Result<Vec<(Composition, f64)>> {
+    let weighting = weighting.unwrap_or(Weighting::Relative);
+    let targets = constrainable_targets(comps, targets);
 
-    Ok(x.iter().enumerate().map(|(i, amount)| (comps[i], *amount)).collect())
+    // Seed denominator estimates for the ratio targets, from the targets alone.
+    let mut ratio_denominators: Vec<(CompKey, f64)> = targets
+        .iter()
+        .filter_map(|&(key, _)| estimate_ratio_denominator(key, &targets).map(|denominator| (key, denominator)))
+        .collect();
+
+    let rows = targets.len() + 1;
+    let cols = comps.len();
+
+    let solve_once = |ratio_denominators: &[(CompKey, f64)]| -> Result<Vec<f64>> {
+        let weights = row_weights(&targets, weighting, priority_weights, ratio_denominators);
+        solve(&make_matrix_a(comps, &targets, &weights), &make_vector_y(&targets, &weights), rows, cols)
+    };
+
+    let amounts = solve_once(&ratio_denominators)?;
+    let balanced = comps.iter().copied().zip(amounts).collect::<Vec<_>>();
+
+    // Conditional reweight pass: correct each ratio target's seed denominator against the value the
+    // first solve actually achieved, and re-solve only if some seed was materially off.
+    if weighting == Weighting::Relative && !ratio_denominators.is_empty() {
+        let mut needs_reweight = false;
+
+        for (key, denominator) in &mut ratio_denominators {
+            if let Some((_, den)) = ratio_key_parts(*key) {
+                let achieved = achieved_value(&balanced, den);
+
+                needs_reweight = needs_reweight
+                    || (achieved - *denominator).abs()
+                        > RATIO_REWEIGHT_TOLERANCE * denominator.abs().max(RATIO_DENOMINATOR_FLOOR);
+
+                *denominator = achieved;
+            }
+        }
+
+        if needs_reweight {
+            let amounts = solve_once(&ratio_denominators)?;
+            return Ok(comps.iter().copied().zip(amounts).collect());
+        }
+    }
+
+    Ok(balanced)
 }
 
 /// Drops targets that no ingredient can affect — those whose row is exactly zero across `comps`.
 ///
-/// Such a row is `0*x = target`; all zero rows can cause issues for solvers. Since they only add a
+/// Such a row is `0*x = rhs`; all-zero rows can cause issues for solvers. Since they only add a
 /// constant to the least-squares objective, they don't change the optimum and we can safely drop
 /// them without affecting the result.
 ///
-/// A non-zero — including `NaN`, as a ratio key yields on a zero denominator — value keeps the
-/// target, so the ratio-key poisoning [`get_balanceable_comp_keys`] guards against stays intact.
+/// Affectability is evaluated through [`target_row_coeff`] (see [`is_unaffectable`]), so ratio
+/// targets use their homogeneous coefficients and never produce `f64::NAN`; a ratio row is dropped
+/// only when every composition lies exactly on the requested ratio (its row is genuinely zero).
 fn constrainable_targets(comps: &[Composition], targets: &[(CompKey, f64)]) -> Vec<(CompKey, f64)> {
     targets
         .iter()
         .copied()
-        .filter(|(key, _)| !is_unaffectable(comps, *key))
+        .filter(|(key, target)| !is_unaffectable(comps, *key, *target))
         .collect()
 }
 
-/// Floor applied to a target's magnitude before inverting it for [`Weighting::Relative`], so a zero
-/// or near-zero target (e.g. a recipe with no cocoa or stabilizer) yields a large-but-finite weight
-/// instead of dividing by zero.
-const RELATIVE_WEIGHT_FLOOR: f64 = 0.1;
-
-/// Row-weight multiplier for a [`Priority::High`] target.
-pub const HIGH_PRIORITY_WEIGHT: f64 = 5.0;
-
-/// Row-weight multiplier for a [`Priority::Critical`] target.
-pub const CRITICAL_PRIORITY_WEIGHT: f64 = 25.0;
-
-/// Fixed weight on the total-sum (mass-balance) row under [`Weighting::Relative`].
+/// Estimates the achieved denominator `D = Σ aᵢ·denᵢ` of a ratio target's homogeneous row, used to
+/// scale its relative weight (the residual scales with `D`; see [`row_weights`]).
 ///
-/// Relative weighting scales every target row to roughly unit magnitude (each is divided by its own
-/// target), so a single fixed weight well above 1 uniformly dominates them and keeps the balanced
-/// amounts summing to 1 — independent of the target magnitudes.
-pub const SUM_CONSTRAINT_WEIGHT: f64 = 1.0e3;
+/// Returns `None` when `key` is not a ratio key.
+///
+/// The true `D` is solution-dependent, so this picks the best available signal from `targets`:
+///   1. the denominator key is itself a target → its target value (exact intent);
+///   2. otherwise, for `Water`, inferred from a complementary `TotalSolids` target
+///      (`Water = 100 − TotalSolids − Alcohol`);
+///   3. otherwise a typical finished-mix constant ([`TYPICAL_MIX_WATER`] / [`TYPICAL_MIX_FAT`]).
+///
+/// This is only a seed: [`balance_with_reweighting`] corrects it against the achieved denominator
+/// from a first solve when the two differ materially.
+#[must_use]
+pub fn estimate_ratio_denominator(key: CompKey, targets: &[(CompKey, f64)]) -> Option<f64> {
+    let (_, den) = ratio_key_parts(key)?;
+    let target_value = |wanted: CompKey| targets.iter().find(|&&(k, _)| k == wanted).map(|&(_, v)| v);
+
+    // 1. The denominator key is itself a target.
+    if let Some(value) = target_value(den) {
+        return Some(value);
+    }
+
+    // 2. Infer `Water` from a complementary `TotalSolids` target.
+    // 3. Fall back to a typical-mix constant.
+    let estimate = match den {
+        CompKey::Water => target_value(CompKey::TotalSolids)
+            .map_or(TYPICAL_MIX_WATER, |solids| 100.0 - solids - target_value(CompKey::Alcohol).unwrap_or(0.0)),
+        CompKey::TotalFats => TYPICAL_MIX_FAT,
+        other => unreachable!("unsupported ratio denominator key {other:?} (see ratio_key_parts)"),
+    };
+    Some(estimate)
+}
 
 /// Per-row weights for the least-squares system: one per target row, then the total-sum row.
 ///
-/// Under [`Weighting::Absolute`] every base weight is 1. Under [`Weighting::Relative`] each target
-/// row's base weight is `1 / max(|target|, RELATIVE_WEIGHT_FLOOR)`, and the trailing sum row uses
-/// the fixed [`SUM_CONSTRAINT_WEIGHT`] so mass balance stays dominant.
+/// Under [`Weighting::Absolute`] every base weight is 1. Under [`Weighting::Relative`] each
+/// extensive target row's base weight is `1 / max(|target|, RELATIVE_WEIGHT_FLOOR)`, and the
+/// trailing sum row uses the fixed [`SUM_CONSTRAINT_WEIGHT`] so mass balance stays dominant.
+///
+/// A ratio target's row is homogeneous (`num − (R/100)·den = 0`, RHS 0), and its residual scales
+/// as `(D/100)·(R_achieved − R)` where `D = Σ aᵢ·denᵢ` is the achieved denominator. To make the
+/// weighted residual a relative ratio error, its relative weight is therefore
+/// `100 / (max(D̂, RATIO_DENOMINATOR_FLOOR) · max(|R|, RELATIVE_WEIGHT_FLOOR))`, where `D̂` is the
+/// denominator estimate looked up from `ratio_denominators` (keyed by the ratio key; missing keys
+/// fall back to the plain `1 / |target|` weight). Under [`Weighting::Absolute`] ratio rows are not
+/// scaled by `D̂`, matching the unscaled treatment of extensive rows.
 ///
 /// Each target row's base weight is then multiplied by its key's entry in `priority_weights` (keys
 /// not listed default to a multiplier of 1; see [`Priority`]). The trailing sum row is never scaled
 /// by priority, so raising a target's priority can never weaken mass balance. An empty
 /// `priority_weights` therefore reproduces the unprioritized weights exactly.
 #[must_use]
-pub fn row_weights(targets: &[(CompKey, f64)], weighting: Weighting, priority_weights: &[(CompKey, f64)]) -> Vec<f64> {
+pub fn row_weights(
+    targets: &[(CompKey, f64)],
+    weighting: Weighting,
+    priority_weights: &[(CompKey, f64)],
+    ratio_denominators: &[(CompKey, f64)],
+) -> Vec<f64> {
     let priority_for = |key: CompKey| {
         priority_weights
             .iter()
             .find(|&&(other, _)| other == key)
             .map_or(1.0, |&(_, weight)| weight)
     };
+    let denominator_for = |key: CompKey| ratio_denominators.iter().find(|&&(k, _)| k == key).map(|&(_, d)| d);
 
-    let (mut weights, sum_row_weight): (Vec<f64>, f64) = match weighting {
-        Weighting::Absolute => (targets.iter().map(|&(key, _)| priority_for(key)).collect(), 1.0),
-        Weighting::Relative => (
-            targets
-                .iter()
-                .map(|&(key, target)| priority_for(key) / target.abs().max(RELATIVE_WEIGHT_FLOOR))
-                .collect(),
-            SUM_CONSTRAINT_WEIGHT,
-        ),
+    let relative_weight = |key: CompKey, target: f64| {
+        let target = target.abs().max(RELATIVE_WEIGHT_FLOOR);
+
+        denominator_for(key)
+            .map_or_else(|| 1.0 / target, |denominator| 100.0 / (denominator.max(RATIO_DENOMINATOR_FLOOR) * target))
     };
 
-    weights.push(sum_row_weight);
+    let mut weights: Vec<f64> = targets
+        .iter()
+        .map(|&(key, target)| {
+            priority_for(key)
+                * match weighting {
+                    Weighting::Absolute => 1.0,
+                    Weighting::Relative => relative_weight(key, target),
+                }
+        })
+        .collect();
+
+    weights.push(match weighting {
+        Weighting::Absolute => 1.0,
+        Weighting::Relative => SUM_CONSTRAINT_WEIGHT,
+    });
 
     weights
 }
@@ -654,7 +784,11 @@ fn make_matrix_a(comps: &[Composition], targets: &[(CompKey, f64)], weights: &[f
     targets
         .iter()
         .zip(weights)
-        .flat_map(|(&(key, _), &weight)| comps.iter().map(move |comp| comp.get(key) * weight))
+        .flat_map(|(&(key, target), &weight)| {
+            comps
+                .iter()
+                .map(move |comp| target_row_coeff(key, target, comp) * weight)
+        })
         .chain(std::iter::repeat_n(weights[targets.len()], comps.len()))
         .collect::<Vec<_>>()
 }
@@ -671,30 +805,77 @@ fn make_vector_y(targets: &[(CompKey, f64)], weights: &[f64]) -> Vec<f64> {
     targets
         .iter()
         .zip(weights)
-        .map(|(&(_, target), &weight)| target * weight)
+        .map(|(&(key, target), &weight)| target_row_rhs(key, target) * weight)
         .chain(std::iter::once(weights[targets.len()]))
         .collect::<Vec<_>>()
 }
 
-/// Returns true if the given [`CompKey`] is a ratio key, e.g. [`CompKey::AbsPAC`], etc.
+/// Maps a ratio key to its `(numerator, denominator)` extensive [`CompKey`] parts, or `None` if
+/// `key` is not a ratio key.
+///
+/// A ratio key is `numerator / denominator * 100`; balancing encodes a ratio target `R` as the
+/// homogeneous row `numerator - (R / 100) * denominator = 0`, which never divides (so never `NaN`s
+/// on a zero denominator). The single source of truth for which keys are ratio keys —
+/// [`is_ratio_key`] is defined in terms of it.
 #[must_use]
-pub const fn is_ratio_key(key: CompKey) -> bool {
-    matches!(key, CompKey::AbsPAC | CompKey::StabilizersPerWater | CompKey::EmulsifiersPerFat)
+pub const fn ratio_key_parts(key: CompKey) -> Option<(CompKey, CompKey)> {
+    match key {
+        CompKey::AbsPAC => Some((CompKey::TotalPAC, CompKey::Water)),
+        CompKey::StabilizersPerWater => Some((CompKey::TotalStabilizers, CompKey::Water)),
+        CompKey::EmulsifiersPerFat => Some((CompKey::TotalEmulsifiers, CompKey::TotalFats)),
+        _ => None,
+    }
 }
 
-/// The [`CompKey`]s that can be used as balancing targets, i.e. every key except ratio keys.
+/// Returns true if the given [`CompKey`] is a ratio key, e.g. [`CompKey::AbsPAC`], etc.
 ///
-/// Ratio keys cannot be balanced directly, because they are a ratio of two other extensive keys,
-/// and so are not expressed as a weighted sum of the per-ingredient values, a requirement for this
-/// balancing model. They can also go `f64::NAN` on a zero denominator (e.g. no water / no fat),
-/// which poisons the whole SVD/NNLS solve. For now, these should simply be excluded from balancing.
+/// A ratio key is one that is a ratio of two extensive keys (see [`ratio_key_parts`]); as a
+/// balancing target it is encoded as a homogeneous row rather than a direct weighted-sum row.
+#[must_use]
+pub const fn is_ratio_key(key: CompKey) -> bool {
+    ratio_key_parts(key).is_some()
+}
+
+/// The per-composition least-squares coefficient for one balancing target.
 ///
-/// @todo It should be possible to balance these keys by adding a different row for them, e.g.
-/// `StabPerWater = R` es equivalent to the linear constraint `Stabilizers - R * Water = 0`, which
-/// can be added as a row to the matrix A.
+/// For an extensive key the coefficient is simply `comp.get(key)`. For a ratio key `R`, it is the
+/// homogeneous `comp.get(num) - (R / 100) * comp.get(den)` (see [`ratio_key_parts`]), which is
+/// always finite — the solver never evaluates the `NaN`-prone per-ingredient ratio.
+fn target_row_coeff(key: CompKey, target: f64, comp: &Composition) -> f64 {
+    match ratio_key_parts(key) {
+        Some((num, den)) => comp.get(num) - (target / 100.0) * comp.get(den),
+        None => comp.get(key),
+    }
+}
+
+/// The right-hand side for one target row: `0` for a ratio key (its row is homogeneous), else the
+/// target value itself.
+const fn target_row_rhs(key: CompKey, target: f64) -> f64 {
+    if is_ratio_key(key) { 0.0 } else { target }
+}
+
+/// The achieved value for `key` from a balanced result, summed without the renormalization that
+/// [`Composition::from_combination`] applies (trusting the raw fractions, keeping any negative
+/// amounts a non-negativity-free solver may return).
+///
+/// Ratio-aware: a ratio key yields its achieved ratio (a percentage) from its numerator and
+/// denominator parts (see [`ratio_key_parts`]) — those parts being extensive keys, they resolve
+/// via the base case below. An extensive key yields the plain weighted sum.
+fn achieved_value(balanced: &[(Composition, f64)], key: CompKey) -> f64 {
+    if let Some((num, den)) = ratio_key_parts(key) {
+        return achieved_value(balanced, num) / achieved_value(balanced, den) * 100.0;
+    }
+    balanced.iter().map(|(comp, amount)| *amount * comp.get(key)).sum()
+}
+
+/// The [`CompKey`]s that can be used as balancing targets — every key.
+///
+/// Ratio keys are balanceable too: a ratio target `R` is encoded as the homogeneous row
+/// `numerator - (R / 100) * denominator = 0` (see [`ratio_key_parts`]), so it never divides and
+/// never poisons the solve with `f64::NAN`. Extensive keys contribute their usual weighted-sum row.
 #[must_use]
 pub fn get_balanceable_comp_keys() -> Vec<CompKey> {
-    CompKey::iter().filter(|key| !is_ratio_key(*key)).collect()
+    CompKey::iter().collect()
 }
 
 #[cfg(test)]
@@ -771,15 +952,6 @@ mod tests {
     #[expect(unused)]
     fn filter_targets_for_keys(targets: &[(CompKey, f64)], keys: &[CompKey]) -> Vec<(CompKey, f64)> {
         targets.iter().filter(|(key, _)| keys.contains(key)).copied().collect()
-    }
-
-    /// The raw mix composition value for a key, summed without the renormalization that
-    /// [`Composition::from_combination`] applies.
-    ///
-    /// This faithfully reports the amount produced by a balancing operation, trusting the raw
-    /// fractions, and keeping any negative amounts a non-negativity-free solver may return.
-    fn achieved_value(balanced: &[(Composition, f64)], key: CompKey) -> f64 {
-        balanced.iter().map(|(comp, amount)| *amount * comp.get(key)).sum()
     }
 
     /// Relative error of an achieved value against its target, in percentage points.
@@ -999,6 +1171,12 @@ mod tests {
     /// to hit a sweetness ([`CompKey::POD`]) and a hardness ([`CompKey::TotalPAC`]) target at once.
     const SUGAR_BLEND_ING: &[&str] = &["Water", "Sucrose", "Dextrose", "Fructose"];
 
+    /// A palette with a stabilizer source plus a zero-water ingredient, for the ratio-key tests.
+    ///
+    /// Sucrose contributes zero water (which used to make `StabilizersPerWater` `NaN` and poison
+    /// the solve), while Stabilizer Blend keeps a positive-water ratio reachable.
+    const STABILIZER_AND_SUCROSE_ING: &[&str] = &["3.25% Milk", "40% Cream", "Stabilizer Blend", "Sucrose"];
+
     // --- Exact balancing targets ---
 
     /// Trivial dairy targets that the dairy compositions can match exactly, used for sanity checks.
@@ -1103,12 +1281,23 @@ mod tests {
 
     // --- Balancing tests ---
 
+    /// All balanceable targets of a reference recipe, dropping any whose value is non-finite. A
+    /// ratio key (e.g. [`CompKey::EmulsifiersPerFat`]) is `NaN` when the recipe's denominator is
+    /// zero (e.g. a fat-free sorbet has no [`CompKey::TotalFats`]), and such an undefined target
+    /// cannot be recovered; every finite key, ratio keys included, is kept.
+    fn finite_balanceable_targets(light_recipe: &OwnedLightRecipe) -> Vec<(CompKey, f64)> {
+        get_targets_from_light_recipe(light_recipe, &get_balanceable_comp_keys())
+            .into_iter()
+            .filter(|(_, value)| value.is_finite())
+            .collect()
+    }
+
     #[test]
     fn balance_compositions_nalgebra_ref_recipes_all_targets() {
         for light_recipe in REF_LIGHT_RECIPES.iter() {
             assert_balance_compositions(
                 &comps_from_light_recipe(light_recipe),
-                &get_targets_from_light_recipe(light_recipe, &get_balanceable_comp_keys()),
+                &finite_balanceable_targets(light_recipe),
                 balance_compositions_nalgebra,
                 Epsilons::default(),
                 &KeyCeiling::exact(),
@@ -1121,7 +1310,7 @@ mod tests {
         for light_recipe in REF_LIGHT_RECIPES.iter() {
             assert_balance_compositions(
                 &comps_from_light_recipe(light_recipe),
-                &get_targets_from_light_recipe(light_recipe, &get_balanceable_comp_keys()),
+                &finite_balanceable_targets(light_recipe),
                 balance_compositions_nnls,
                 Epsilons::default(),
                 &KeyCeiling::exact(),
@@ -1359,6 +1548,15 @@ mod tests {
 
     // --- Ratio keys ---
 
+    /// An equal-parts mix of `comps`, expressed as a balanced result so [`achieved_value`] can
+    /// read it. Any value it yields is reachable by the palette, which makes it a robust source of
+    /// feasible ratio targets for recovery tests.
+    fn equal_parts_reference(comps: &[Composition]) -> Vec<(Composition, f64)> {
+        #[allow(clippy::cast_precision_loss)] // Ingredient counts stay far below f64's exact range
+        let amount = 1.0 / comps.len() as f64;
+        comps.iter().map(|comp| (*comp, amount)).collect()
+    }
+
     #[test]
     fn is_ratio_key_identifies_ratio_keys() {
         assert_true!(is_ratio_key(CompKey::AbsPAC));
@@ -1375,38 +1573,106 @@ mod tests {
     }
 
     #[test]
-    fn get_balanceable_comp_keys_excludes_exactly_the_ratio_keys() {
-        let balanceable = get_balanceable_comp_keys();
-        let ratio_count = CompKey::iter().filter(|key| is_ratio_key(*key)).count();
-
-        assert_eq!(ratio_count, 3);
-        assert_eq!(balanceable.len(), CompKey::iter().count() - ratio_count);
-        assert_true!(balanceable.iter().all(|key| !is_ratio_key(*key)));
+    fn ratio_key_parts_maps_each_ratio_key_to_its_extensive_parts() {
+        assert_eq!(ratio_key_parts(CompKey::AbsPAC), Some((CompKey::TotalPAC, CompKey::Water)));
+        assert_eq!(ratio_key_parts(CompKey::StabilizersPerWater), Some((CompKey::TotalStabilizers, CompKey::Water)));
+        assert_eq!(ratio_key_parts(CompKey::EmulsifiersPerFat), Some((CompKey::TotalEmulsifiers, CompKey::TotalFats)));
+        assert_eq!(ratio_key_parts(CompKey::MilkFat), None);
     }
 
-    /// Balancing with a ratio key as a target poisons the solve: an ingredient with zero water
-    /// (Sucrose) makes [`CompKey::StabilizersPerWater`] `NaN`, which contaminates the matrix. nnls
-    /// returns finite-but-meaningless amounts, yet the *achieved* value for the key is `NaN` — so
-    /// the result is unusable. This is why [`get_balanceable_comp_keys`] excludes ratio keys.
     #[test]
-    fn ratio_key_target_poisons_nnls_achieved_value() {
-        let comps = comps_from_names(DAIRY_SUGAR_ING); // Sucrose has zero water
-        let targets = [(CompKey::StabilizersPerWater, 0.5)];
+    fn target_row_coeff_and_rhs_encode_ratio_as_homogeneous_row() {
+        let milk = comp_by_name("3.25% Milk"); // has both Water and TotalPAC
+
+        // Common case: a ratio key with non-zero numerator and denominator yields the homogeneous
+        // combination `num - (R/100)*den` — a finite, non-zero coefficient.
+        let r = 9.0;
+        let abs_pac_coeff = target_row_coeff(CompKey::AbsPAC, r, &milk);
+        assert_true!(abs_pac_coeff.is_finite() && abs_pac_coeff != 0.0);
+        assert_eq!(abs_pac_coeff, milk.get(CompKey::TotalPAC) - (r / 100.0) * milk.get(CompKey::Water));
+        assert_eq!(target_row_rhs(CompKey::AbsPAC, r), 0.0);
+
+        // Degenerate case: a zero denominator (Sucrose has no water) stays finite — no division.
+        let sucrose = comp_by_name("Sucrose");
+        let stab_coeff = target_row_coeff(CompKey::StabilizersPerWater, 0.5, &sucrose);
+        assert_true!(stab_coeff.is_finite());
+        assert_eq!(stab_coeff, 0.0); // zero stabilizers and zero water → zero homogeneous coefficient
+        assert_eq!(target_row_rhs(CompKey::StabilizersPerWater, 0.5), 0.0);
+
+        // Extensive key: coefficient is comp.get(key), RHS is the target itself.
+        assert_eq!(target_row_coeff(CompKey::MilkFat, 16.0, &milk), milk.get(CompKey::MilkFat));
+        assert_eq!(target_row_rhs(CompKey::MilkFat, 16.0), 16.0);
+    }
+
+    #[test]
+    fn get_balanceable_comp_keys_includes_ratio_keys() {
+        let balanceable = get_balanceable_comp_keys();
+        assert_eq!(balanceable.len(), CompKey::iter().count());
+        assert_true!(balanceable.contains(&CompKey::AbsPAC));
+        assert_true!(balanceable.contains(&CompKey::StabilizersPerWater));
+        assert_true!(balanceable.contains(&CompKey::EmulsifiersPerFat));
+    }
+
+    #[test]
+    fn ratio_key_zero_denominator_ingredient_stays_finite() {
+        let comps = comps_from_names(STABILIZER_AND_SUCROSE_ING);
+        let target = achieved_value(&equal_parts_reference(&comps), CompKey::StabilizersPerWater);
+
+        let balanced = balance_compositions_nnls(&comps, &[(CompKey::StabilizersPerWater, target)], None, &[]).unwrap();
+
+        assert_true!(balanced.iter().all(|(_, amount)| amount.is_finite()));
+        assert_true!(achieved_value(&balanced, CompKey::StabilizersPerWater).is_finite());
+    }
+
+    #[test]
+    fn ratio_key_target_nalgebra_does_not_panic() {
+        let comps = comps_from_names(STABILIZER_AND_SUCROSE_ING);
+        let target = achieved_value(&equal_parts_reference(&comps), CompKey::StabilizersPerWater);
+
+        let balanced =
+            balance_compositions_nalgebra(&comps, &[(CompKey::StabilizersPerWater, target)], None, &[]).unwrap();
+        assert_true!(achieved_value(&balanced, CompKey::StabilizersPerWater).is_finite());
+    }
+
+    #[test]
+    fn balance_recovers_stabilizers_per_water_ratio() {
+        let comps = comps_from_names(DAIRY_STABILIZER_ING);
+        let target = achieved_value(&equal_parts_reference(&comps), CompKey::StabilizersPerWater);
+
+        let balanced = balance_compositions_nnls(&comps, &[(CompKey::StabilizersPerWater, target)], None, &[]).unwrap();
+        assert_eq_flt_test!(achieved_value(&balanced, CompKey::StabilizersPerWater), target);
+    }
+
+    #[test]
+    fn balance_recovers_abs_pac_ratio() {
+        let comps = comps_from_names(SORBET_ING);
+        let target = achieved_value(&equal_parts_reference(&comps), CompKey::AbsPAC);
+
+        let balanced = balance_compositions_nnls(&comps, &[(CompKey::AbsPAC, target)], None, &[]).unwrap();
+        assert_eq_flt_test!(achieved_value(&balanced, CompKey::AbsPAC), target);
+    }
+
+    #[test]
+    fn balance_recovers_emulsifiers_per_fat_ratio() {
+        let comps = comps_from_names(&["3.25% Milk", "40% Cream", "Soy Lecithin"]);
+        let target = achieved_value(&equal_parts_reference(&comps), CompKey::EmulsifiersPerFat);
+
+        let balanced = balance_compositions_nnls(&comps, &[(CompKey::EmulsifiersPerFat, target)], None, &[]).unwrap();
+        assert_eq_flt_test!(achieved_value(&balanced, CompKey::EmulsifiersPerFat), target);
+    }
+
+    #[test]
+    fn balance_ratio_target_with_extensive_target() {
+        let comps = comps_from_names(DAIRY_STABILIZER_ING);
+        let reference = equal_parts_reference(&comps);
+        let milk_fat = achieved_value(&reference, CompKey::MilkFat);
+        let ratio = achieved_value(&reference, CompKey::StabilizersPerWater);
+        let targets = [(CompKey::MilkFat, milk_fat), (CompKey::StabilizersPerWater, ratio)];
 
         let balanced = balance_compositions_nnls(&comps, &targets, None, &[]).unwrap();
 
-        assert_false!(achieved_value(&balanced, CompKey::StabilizersPerWater).is_finite());
-    }
-
-    /// The same ratio-key poisoning makes nalgebra's SVD panic outright on the `NaN` matrix (does
-    /// not return an `Err`) — an even stronger reason to keep ratio keys out of balancing targets.
-    #[test]
-    #[should_panic(expected = "Singular value was NaN")] // nalgebra-internal panic on the NaN matrix
-    fn ratio_key_target_panics_nalgebra() {
-        let comps = comps_from_names(DAIRY_SUGAR_ING);
-        let targets = [(CompKey::StabilizersPerWater, 0.5)];
-
-        let _result = balance_compositions_nalgebra(&comps, &targets, None, &[]);
+        assert_eq_flt_test!(achieved_value(&balanced, CompKey::MilkFat), milk_fat);
+        assert_eq_flt_test!(achieved_value(&balanced, CompKey::StabilizersPerWater), ratio);
     }
 
     // --- Solver behavior and edge cases ---
@@ -1459,10 +1725,10 @@ mod tests {
     // --- balance_compositions entry point ---
 
     #[test]
-    fn balance_compositions_rejects_ratio_key_target() {
+    fn balance_compositions_accepts_ratio_key_target() {
         let comps = comps_from_names(DAIRY_SUGAR_ING);
         let result = balance_compositions(&comps, &[(CompKey::StabilizersPerWater, 0.5)], None, &[]);
-        assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
+        assert!(result.is_ok());
     }
 
     #[test]
@@ -1622,14 +1888,10 @@ mod tests {
     // --- validate_balancing_targets: error-severity issues ---
 
     #[test]
-    fn validate_flags_ratio_key_as_error() {
+    fn validate_does_not_flag_ratio_key_target() {
+        // Ratio keys are now balanceable (encoded as homogeneous rows), so they are not an error.
         let report = validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(CompKey::AbsPAC, 9.0)], &[]);
-        assert_true!(report.has_errors());
-        assert_true!(
-            report
-                .errors()
-                .any(|issue| matches!(issue, BalancingIssue::RatioKeyTarget { key: CompKey::AbsPAC }))
-        );
+        assert_false!(report.has_errors());
     }
 
     #[test]
@@ -1666,6 +1928,36 @@ mod tests {
                 .warnings()
                 .any(|issue| matches!(issue, BalancingIssue::UnaffectableTarget { key: CompKey::Alcohol }))
         );
+    }
+
+    #[test]
+    fn validate_flags_ratio_key_with_unaffectable_numerator_as_warning() {
+        // No stabilizer source in the palette → the StabilizersPerWater numerator is unaffectable,
+        // so the only reachable ratio is zero and a nonzero target cannot be met. Flag (warning).
+        let report =
+            validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(CompKey::StabilizersPerWater, 0.5)], &[]);
+        assert_false!(report.has_errors());
+        assert_true!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::UnaffectableTarget {
+                key: CompKey::StabilizersPerWater
+            }
+        )));
+    }
+
+    #[test]
+    fn validate_flags_ratio_key_with_unaffectable_denominator_as_warning() {
+        // A fat-free sorbet palette → the EmulsifiersPerFat denominator (TotalFats) is
+        // unaffectable, so the ratio is undefined and cannot be balanced. Flagged (warning).
+        let report =
+            validate_balancing_targets(&comps_from_names(SORBET_ING), &[(CompKey::EmulsifiersPerFat, 1.0)], &[]);
+        assert_false!(report.has_errors());
+        assert_true!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::UnaffectableTarget {
+                key: CompKey::EmulsifiersPerFat
+            }
+        )));
     }
 
     #[test]
@@ -1747,7 +2039,7 @@ mod tests {
     fn balancing_report_partitions_errors_and_warnings() {
         let comps = comps_from_names(DAIRY_SUGAR_ING);
         let targets = [
-            (CompKey::AbsPAC, 9.0),       // error: ratio key
+            (CompKey::Energy, f64::NAN),  // error: non-finite target
             (CompKey::Sucrose, 20.0),     // warning pair with TotalSugars
             (CompKey::TotalSugars, 15.0), //
         ];
@@ -1783,8 +2075,23 @@ mod tests {
     #[test]
     fn is_unaffectable_detects_zero_row() {
         let comps = comps_from_names(DAIRY_ING);
-        assert_true!(is_unaffectable(&comps, CompKey::Alcohol));
-        assert_false!(is_unaffectable(&comps, CompKey::MilkFat));
+        assert_true!(is_unaffectable(&comps, CompKey::Alcohol, 5.0));
+        assert_false!(is_unaffectable(&comps, CompKey::MilkFat, 16.0));
+    }
+
+    #[test]
+    fn is_unaffectable_for_ratio_key_detects_unaffectable_parts() {
+        // No stabilizer source → StabilizersPerWater numerator unaffectable.
+        let no_stabilizer = comps_from_names(DAIRY_SUGAR_ING);
+        assert_true!(is_unaffectable(&no_stabilizer, CompKey::StabilizersPerWater, 0.5));
+
+        // No fat source → EmulsifiersPerFat denominator unaffectable.
+        let no_fat = comps_from_names(SORBET_ING);
+        assert_true!(is_unaffectable(&no_fat, CompKey::EmulsifiersPerFat, 1.0));
+
+        // Both parts affectable (stabilizer + water present) → not unaffectable.
+        let stabilizer_and_water = comps_from_names(DAIRY_STABILIZER_ING);
+        assert_false!(is_unaffectable(&stabilizer_and_water, CompKey::StabilizersPerWater, 0.5));
     }
 
     #[test]

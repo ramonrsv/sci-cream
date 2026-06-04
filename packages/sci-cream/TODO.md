@@ -85,8 +85,13 @@
       advisory severity from the hard solve-gate so a strict-but-unreachable target flags an error.
 - [ ] Reject degenerate inputs in `validate_balancing_targets` / `balance_compositions`: empty
       palette or empty targets makes the solve meaningless; flag as an error before solving.
-- [ ] Reject negative targets in balancing: every balanceable `CompKey` is non-negative, so a
-      target `< 0` is unreachable; flag it with an explicit error, not `UnreachableTarget`.
+- [ ] Reject negative targets in balancing: every balanceable `CompKey` is non-negative, so a target
+      `< 0` is unreachable. Add an explicit `NegativeTarget` error-severity `BalancingIssue` in
+      (sibling to `NonFiniteTarget`), then remove the now-unnecessary `.abs()` in `row_weights` /
+      `balance_rel_error_pp` that currently silently floors negative targets, hiding likely bugs.
+- [ ] Return balancing internals (`row_weights`, `ratio_key_parts`, `estimate_ratio_denominator`,
+      `balance_with_reweighting`, `RawSolver`) to private. They were made `pub` only so doc links
+      resolve under `cargo doc --document-private-items -D warnings`; de-link or relax rustdoc.
 
 ## Completed
 
