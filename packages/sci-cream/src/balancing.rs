@@ -87,9 +87,9 @@ type SolverFn =
 ///
 /// This is the recommended way to balance: it first validates the inputs via
 /// [`validate_balancing_targets`], returning an [`Error::InvalidBalancingTargets`] if any
-/// error-severity issue is present (non-finite target values, duplicate target keys, or duplicate
-/// priority keys), then solves with an automatically chosen solver. `weighting` selects the row
-/// weighting; `None` defaults to [`Weighting::Relative`].
+/// error-severity issue is present (non-finite or negative target values, duplicate target keys, or
+/// duplicate priority keys), then solves with an automatically chosen solver. `weighting` selects
+/// the row weighting; `None` defaults to [`Weighting::Relative`].
 ///
 /// `priorities` raises the relative importance of specific target keys: each listed key's row is
 /// weighted by its [`Priority::weight`], so the solver fits it more closely at the expense of the
@@ -149,6 +149,16 @@ pub enum BalancingIssue {
         /// The key whose target value is not finite.
         key: CompKey,
         /// The offending non-finite value.
+        value: f64,
+    },
+    /// A target value is negative. Every balanceable [`CompKey`] is non-negative, so a target
+    /// `< 0` is unreachable and almost certainly a caller bug.
+    ///
+    /// Severity: [`Severity::Error`].
+    NegativeTarget {
+        /// The key whose target value is negative.
+        key: CompKey,
+        /// The offending negative value.
         value: f64,
     },
     /// The same key appears more than once in the targets, which is contradictory or ambiguous.
@@ -236,9 +246,10 @@ impl BalancingIssue {
     #[must_use]
     pub const fn severity(&self) -> Severity {
         match self {
-            Self::NonFiniteTarget { .. } | Self::DuplicateTarget { .. } | Self::DuplicatePriority { .. } => {
-                Severity::Error
-            }
+            Self::NonFiniteTarget { .. }
+            | Self::NegativeTarget { .. }
+            | Self::DuplicateTarget { .. }
+            | Self::DuplicatePriority { .. } => Severity::Error,
             Self::UnaffectableTarget { .. }
             | Self::UnreachableTarget { .. }
             | Self::DominanceViolation { .. }
@@ -305,7 +316,7 @@ impl BalancingReport {
 /// [`BalancingReport::into_result`] on this to reject error-severity inputs before solving.
 ///
 /// The checks are:
-/// - **Error** — non-finite target values, duplicate target keys, and duplicate priority keys.
+/// - **Error** — non-finite or negative target values, duplicate target keys or priority keys.
 /// - **Warning** — targets no composition affects, targets outside the palette's reachable range,
 ///   infeasible target pairs (dominance check), infeasible part/whole groups (additive check), and
 ///   priorities whose key has no target.
@@ -321,12 +332,14 @@ pub fn validate_balancing_targets(
 ) -> BalancingReport {
     let mut issues = Vec::new();
 
-    // Error-severity checks: non-finite values and duplicate keys. Ratio keys are accepted —
+    // Error-severity checks: non-finite/negative values and duplicate keys. Ratio keys are OK —
     // they are encoded as homogeneous rows (see `ratio_key_parts`) and balance like any other key.
     let mut seen: Vec<CompKey> = Vec::with_capacity(targets.len());
     for &(key, value) in targets {
         if !value.is_finite() {
             issues.push(BalancingIssue::NonFiniteTarget { key, value });
+        } else if value < 0.0 {
+            issues.push(BalancingIssue::NegativeTarget { key, value });
         }
         if seen.contains(&key) {
             issues.push(BalancingIssue::DuplicateTarget { key });
@@ -335,11 +348,11 @@ pub fn validate_balancing_targets(
         }
     }
 
-    // Per-target warning checks: unaffectable and unreachable targets. Non-finite values are
-    // skipped (reported as errors above). Ratio keys get the unaffectable check but skip the range
-    // check, having no single-key magnitude to compare against the palette.
+    // Per-target warning checks: unaffectable and unreachable targets. Non-finite and negative
+    // values are skipped (reported as errors above). Ratio keys get the unaffectable check but skip
+    // the range check, having no single-key magnitude to compare against the palette.
     for &(key, target) in targets {
-        if !target.is_finite() {
+        if !target.is_finite() || target < 0.0 {
             continue;
         }
         if is_unaffectable(comps, key, target) {
@@ -418,12 +431,11 @@ fn dominates(comps: &[Composition], greater: CompKey, lesser: CompKey) -> bool {
     !comps.is_empty() && comps.iter().all(|comp| is_subset(comp.get(lesser), comp.get(greater)))
 }
 
-/// Returns `true` if `key`/`target` is a meaningful target to compare against others in the
-/// dominance checks: not a ratio key, finite, and affected by at least one composition. Ratio keys
-/// are skipped because their homogeneous row mixes two keys and has no single-key magnitude to
-/// compare; other failing targets are reported by their own error/warning checks.
+/// Returns `true` if `key`/`target` is a meaningful target to compare in the dominance checks: not
+/// a ratio key (its homogeneous row has no single-key magnitude), finite, non-negative, and
+/// affected by at least one composition. Non-finite and negative targets have their own checks.
 fn is_checkable_target(comps: &[Composition], key: CompKey, target: f64) -> bool {
-    !is_ratio_key(key) && target.is_finite() && !is_unaffectable(comps, key, target)
+    !is_ratio_key(key) && target.is_finite() && target >= 0.0 && !is_unaffectable(comps, key, target)
 }
 
 /// Appends the pairwise dominance infeasibility warnings for `targets`.
@@ -591,6 +603,17 @@ fn solve_nnls_raw(a: &[f64], y: &[f64], rows: usize, cols: usize) -> Result<Vec<
     Ok(x.to_vec())
 }
 
+/// Debug-only precondition check for the raw balancing path: panics if `targets` carry any
+/// error-severity [`BalancingIssue`] (non-finite/negative values or duplicate keys).
+///
+/// The raw solvers assume pre-validated targets; user input is validated once by
+/// [`balance_compositions`], so a bad target reaching here is a programming bug.
+#[cfg(debug_assertions)]
+fn debug_assert_targets_validated(comps: &[Composition], targets: &[(CompKey, f64)]) {
+    let report = validate_balancing_targets(comps, targets, &[]);
+    assert!(!report.has_errors(), "raw balancing path requires validated targets: {report}");
+}
+
 /// Shared balancing driver: assembles the weighted system, solves it with `solve`, and applies one
 /// conditional denominator-reweighting pass for ratio targets.
 ///
@@ -605,6 +628,9 @@ fn solve_nnls_raw(a: &[f64], y: &[f64], rows: usize, cols: usize) -> Result<Vec<
 /// `D̂` error only mis-weights the ratio row slightly without invalidating the result (the
 /// approximation [`row_weights`] already accepts). Balances without ratio targets take one solve.
 ///
+/// Targets are assumed pre-validated (finite, non-negative, no duplicate keys); Callers should
+/// route user input through [`balance_compositions`], which validates before solving.
+///
 /// # Errors
 ///
 /// Forwards any error from `solve`.
@@ -615,6 +641,9 @@ pub fn balance_with_reweighting(
     priority_weights: &[(CompKey, f64)],
     solve: RawSolver,
 ) -> Result<Vec<(Composition, f64)>> {
+    #[cfg(debug_assertions)]
+    debug_assert_targets_validated(comps, targets);
+
     let weighting = weighting.unwrap_or(Weighting::Relative);
     let targets = constrainable_targets(comps, targets);
 
@@ -746,7 +775,7 @@ pub fn row_weights(
     let denominator_for = |key: CompKey| ratio_denominators.iter().find(|&&(k, _)| k == key).map(|&(_, d)| d);
 
     let relative_weight = |key: CompKey, target: f64| {
-        let target = target.abs().max(RELATIVE_WEIGHT_FLOOR);
+        let target = target.max(RELATIVE_WEIGHT_FLOOR);
 
         denominator_for(key)
             .map_or_else(|| 1.0 / target, |denominator| 100.0 / (denominator.max(RATIO_DENOMINATOR_FLOOR) * target))
@@ -985,7 +1014,7 @@ mod tests {
     /// [`BALANCE_REL_FLOOR`]. The floor keeps a zero target (e.g. a recipe with no cocoa or
     /// stabilizer) from producing a non-finite result.
     fn balance_rel_error_pp(achieved: f64, target: f64) -> f64 {
-        (achieved - target).abs() / target.abs().max(BALANCE_REL_FLOOR) * 100.0
+        (achieved - target).abs() / target.max(BALANCE_REL_FLOOR) * 100.0
     }
 
     /// The largest [`balance_rel_error_pp`] across all `targets` — the worst-case relative miss, a
@@ -1918,6 +1947,23 @@ mod tests {
     }
 
     #[test]
+    fn balance_compositions_rejects_negative_target() {
+        let comps = comps_from_names(DAIRY_ING);
+        let result = balance_compositions(&comps, &[(CompKey::MilkFat, -1.0)], None, &[]);
+        assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
+    }
+
+    #[test]
+    #[cfg(debug_assertions)]
+    #[should_panic(expected = "validated targets")]
+    fn raw_solver_debug_asserts_on_unvalidated_target() {
+        // The raw solvers assume pre-validated targets; in debug builds a negative target (a caller
+        // bug, since `balance_compositions` would have rejected it) trips the precondition assert.
+        let comps = comps_from_names(DAIRY_ING);
+        drop(balance_compositions_nnls(&comps, &[(CompKey::MilkFat, -1.0)], None, &[]));
+    }
+
+    #[test]
     fn balance_compositions_recovers_feasible_targets() {
         assert_balance_compositions(
             &comps_from_names(DAIRY_ING),
@@ -2147,6 +2193,50 @@ mod tests {
             report
                 .errors()
                 .any(|issue| matches!(issue, BalancingIssue::NonFiniteTarget { .. }))
+        );
+    }
+
+    #[test]
+    fn validate_flags_negative_target_as_error() {
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, -5.0)], &[]);
+        assert_true!(report.errors().any(|issue| matches!(
+            issue,
+            BalancingIssue::NegativeTarget {
+                key: CompKey::MilkFat,
+                ..
+            }
+        )));
+    }
+
+    #[test]
+    fn validate_flags_negative_ratio_target_as_error() {
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(CompKey::AbsPAC, -1.0)], &[]);
+        assert_true!(report.errors().any(|issue| matches!(
+            issue,
+            BalancingIssue::NegativeTarget {
+                key: CompKey::AbsPAC,
+                ..
+            }
+        )));
+    }
+
+    #[test]
+    fn validate_does_not_double_flag_negative_target() {
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, -5.0)], &[]);
+        assert_false!(
+            report
+                .warnings()
+                .any(|issue| matches!(issue, BalancingIssue::UnreachableTarget { .. }))
+        );
+    }
+
+    #[test]
+    fn validate_does_not_flag_zero_target_as_negative() {
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, 0.0)], &[]);
+        assert_false!(
+            report
+                .errors()
+                .any(|issue| matches!(issue, BalancingIssue::NegativeTarget { .. }))
         );
     }
 

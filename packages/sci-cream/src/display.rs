@@ -226,6 +226,9 @@ impl fmt::Display for BalancingIssue {
             Self::NonFiniteTarget { key, value } => {
                 write!(f, "target for '{}' is not finite ({value})", key.as_med_str())
             }
+            Self::NegativeTarget { key, value } => {
+                write!(f, "target for '{}' is negative ({value}), but it cannot be below zero", key.as_med_str())
+            }
             Self::DuplicateTarget { key } => {
                 write!(f, "'{}' appears more than once in the targets", key.as_med_str())
             }
@@ -567,6 +570,17 @@ mod tests {
         let text = additive.to_string();
         assert_true!(text.contains("'Sucrose' + 'Fructose'"));
         assert_true!(text.contains("Sugars"));
+    }
+
+    #[test]
+    fn balancing_issue_display_message_negative_target() {
+        let text = BalancingIssue::NegativeTarget {
+            key: CompKey::MilkFat,
+            value: -5.0,
+        }
+        .to_string();
+        assert_true!(text.contains(CompKey::MilkFat.as_med_str()));
+        assert_true!(text.contains("negative"));
     }
 
     #[test]
