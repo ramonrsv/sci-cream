@@ -312,7 +312,7 @@ impl BalancingReport {
 ///
 /// The range and dominance warnings assume the non-negative, normalized (summing to one) solution
 /// that [`balance_compositions`] targets. `priorities` is the same list [`balance_compositions`]
-/// accepts; only its keys are checked here (against duplicates and missing targets), not its levels.
+/// accepts; only its keys are checked (against duplicates and missing targets), not its levels.
 #[must_use]
 pub fn validate_balancing_targets(
     comps: &[Composition],
@@ -897,17 +897,42 @@ mod tests {
         resolution::IngredientGetter,
     };
 
-    /// A labelled balancing function, so several solvers can be run side-by-side in one report.
-    type LabeledSolver = (&'static str, SolverFn);
+    /// A labelled balancing run: a name, the solver to use, and the priority weights to apply. This
+    /// lets several runs — different solvers and/or priority levels — be shown side-by-side in one
+    /// report (an empty priority slice reproduces the unprioritized solve exactly).
+    type LabeledRun = (&'static str, SolverFn, &'static [(CompKey, f64)]);
 
-    /// Both solvers, paired for side-by-side quality reports.
-    const BOTH_SOLVERS: &[LabeledSolver] = &[
-        ("nalgebra", balance_compositions_nalgebra),
-        ("nnls", balance_compositions_nnls),
+    /// Both solvers, unprioritized, paired for side-by-side quality reports.
+    const BOTH_SOLVERS: &[LabeledRun] = &[
+        ("nalgebra", balance_compositions_nalgebra, &[]),
+        ("nnls", balance_compositions_nnls, &[]),
+    ];
+
+    /// An unprioritized nnls run, for single-column quality reports (e.g. ratio-key targets):
+    /// nnls is the production solver, and the axis of interest is the targets, not the solver.
+    const NNLS_ONLY: &[LabeledRun] = &[("nnls", balance_compositions_nnls, &[])];
+
+    /// nnls under increasing [`Priority`] on [`CompKey::POD`], for the priority-tradeoff report:
+    /// each column tightens POD harder, visibly trading off against the competing targets.
+    const POD_PRIORITY_RUNS: &[LabeledRun] = &[
+        ("baseline", balance_compositions_nnls, &[]),
+        ("POD High", balance_compositions_nnls, &[(CompKey::POD, Priority::High.weight())]),
+        ("POD Critical", balance_compositions_nnls, &[(CompKey::POD, Priority::Critical.weight())]),
+    ];
+
+    /// nnls with and without a [`Priority::Critical`] on the ratio key [`CompKey::AbsPAC`], for the
+    /// cross-feature report: prioritizing a ratio target tightens it against the extensive ones.
+    const ABS_PAC_PRIORITY_RUNS: &[LabeledRun] = &[
+        ("baseline", balance_compositions_nnls, &[]),
+        ("AbsPAC Critical", balance_compositions_nnls, &[(CompKey::AbsPAC, Priority::Critical.weight())]),
     ];
 
     /// Denominator floor for relative-error reporting, so zero / near-zero targets stay finite.
     const BALANCE_REL_FLOOR: f64 = 0.1;
+
+    /// Minimum relative-error change (pp) for a priority effect to count as real rather than
+    /// [`TESTS_EPSILON`] noise — actual shifts are far larger, so this catches a priority no-op.
+    const MIN_PRIORITY_EFFECT_PP: f64 = 10.0;
 
     /// A shared ingredient database for all tests, seeded with embedded data
     static DATABASE: LazyLock<IngredientDatabase> = LazyLock::new(IngredientDatabase::new_seeded_from_embedded_data);
@@ -1020,8 +1045,8 @@ mod tests {
     ) where
         F: Fn(&[Composition], &[(CompKey, f64)], Option<Weighting>, &[P]) -> Result<Vec<(Composition, f64)>>,
     {
-        // `P` is the solver's priority element type; the assertions always use the default (no
-        // priorities), so an empty slice serves both `&[(CompKey, f64)]` and `&[(CompKey, Priority)]`.
+        // `P` is the solver's priority element type; the assertions use no priorities, so an empty
+        // slice serves both the `&[(CompKey, f64)]` and `&[(CompKey, Priority)]` solver signatures.
         let balanced = solve(comps, targets, None, &[]).unwrap();
         assert_eq!(balanced.len(), comps.len());
 
@@ -1057,14 +1082,14 @@ mod tests {
 
     /// Builds a deterministic, human-readable balance-quality report for `insta` snapshots.
     ///
-    /// Runs every solver in `solvers` against the same `comps` / `targets` and, per solver, lists
+    /// Runs every labelled run in `runs` against the same `comps` / `targets` and, per run, lists
     /// each target's `target`, achieved value, and [`balance_rel_error_pp`], followed by a summary
-    /// line (amount sum, negative-amount count, max and RMS relative error). A solver that errors
-    /// renders a stable `FAILED` line instead of panicking, so infeasible systems still snapshot.
+    /// line (amount sum, negative-amount count, max and RMS relative error). A run whose solve
+    /// fails renders a stable `FAILED` line instead of panicking, so infeasible systems snapshot.
     fn report_balance_quality(
         comps: &[Composition],
         targets: &[(CompKey, f64)],
-        solvers: &[LabeledSolver],
+        runs: &[LabeledRun],
         names: Option<&[&str]>,
     ) -> String {
         let key_str = |key| format!("{key:?}");
@@ -1086,10 +1111,10 @@ mod tests {
             .join("\n");
         lines.append(&mut vec![format!("targets:\n{header}")]);
 
-        for (label, solve) in solvers {
+        for &(label, solve, priorities) in runs {
             lines.push(String::new());
 
-            let balanced = match solve(comps, targets, None, &[]) {
+            let balanced = match solve(comps, targets, None, priorities) {
                 Ok(balanced) => balanced,
                 Err(error) => {
                     lines.push(format!("[{label}] FAILED: {error}"));
@@ -1176,6 +1201,10 @@ mod tests {
     /// Sucrose contributes zero water (which used to make `StabilizersPerWater` `NaN` and poison
     /// the solve), while Stabilizer Blend keeps a positive-water ratio reachable.
     const STABILIZER_AND_SUCROSE_ING: &[&str] = &["3.25% Milk", "40% Cream", "Stabilizer Blend", "Sucrose"];
+
+    /// Dairy plus an emulsifier source, for [`CompKey::EmulsifiersPerFat`] (fat-denominated) ratio
+    /// tests: Soy Lecithin supplies emulsifier while milk and cream supply the fat denominator.
+    const EMULSIFIER_ING: &[&str] = &["3.25% Milk", "40% Cream", "Soy Lecithin"];
 
     // --- Exact balancing targets ---
 
@@ -1279,6 +1308,19 @@ mod tests {
         ]
     });
 
+    // --- Ratio-key balancing targets ---
+
+    /// A water-denominated [`CompKey::AbsPAC`] target in conflict with its [`CompKey::TotalPAC`]
+    /// one (over-determining the palette), plus [`CompKey::POD`] and [`CompKey::TotalSolids`].
+    static SORBET_ABS_PAC_TARGETS: LazyLock<Vec<(CompKey, f64)>> = LazyLock::new(|| {
+        vec![
+            (CompKey::AbsPAC, 45.0),
+            (CompKey::TotalPAC, 20.0),
+            (CompKey::POD, 14.0),
+            (CompKey::TotalSolids, 32.0),
+        ]
+    });
+
     // --- Balancing tests ---
 
     /// All balanceable targets of a reference recipe, dropping any whose value is non-finite. A
@@ -1373,9 +1415,8 @@ mod tests {
         );
     }
 
-    /// The companion to [`balance_multi_sugar_pod_and_pac`]: the same targets cannot be hit without
-    /// all three sugars. Dropping *any* one of them leaves an over-determined system whose best fit
-    /// misses by over 10 pp, confirming each of the three sugars is individually load-bearing.
+    /// Companion to [`balance_multi_sugar_pod_and_pac`]: dropping any one sugar leaves an
+    /// over-determined system that misses by over 10 pp, so each sugar is load-bearing.
     #[test]
     fn balance_multi_sugar_needs_all_three_sugars() {
         // Each palette is water plus two of the three sugars (i.e. one sugar dropped).
@@ -1546,6 +1587,36 @@ mod tests {
         ));
     }
 
+    #[test]
+    fn balance_quality_priority_pod_tradeoff() {
+        insta::assert_snapshot!(report_balance_quality(
+            &comps_from_names(DAIRY_ING),
+            &DAIRY_DISPARATE_TARGETS,
+            POD_PRIORITY_RUNS,
+            Some(DAIRY_ING)
+        ));
+    }
+
+    #[test]
+    fn balance_quality_sorbet_abs_pac_vs_sweetness() {
+        insta::assert_snapshot!(report_balance_quality(
+            &comps_from_names(SORBET_ING),
+            &SORBET_ABS_PAC_TARGETS,
+            NNLS_ONLY,
+            Some(SORBET_ING)
+        ));
+    }
+
+    #[test]
+    fn balance_quality_priority_abs_pac() {
+        insta::assert_snapshot!(report_balance_quality(
+            &comps_from_names(SORBET_ING),
+            &SORBET_ABS_PAC_TARGETS,
+            ABS_PAC_PRIORITY_RUNS,
+            Some(SORBET_ING)
+        ));
+    }
+
     // --- Ratio keys ---
 
     /// An equal-parts mix of `comps`, expressed as a balanced result so [`achieved_value`] can
@@ -1596,7 +1667,8 @@ mod tests {
         let sucrose = comp_by_name("Sucrose");
         let stab_coeff = target_row_coeff(CompKey::StabilizersPerWater, 0.5, &sucrose);
         assert_true!(stab_coeff.is_finite());
-        assert_eq!(stab_coeff, 0.0); // zero stabilizers and zero water → zero homogeneous coefficient
+        // Zero stabilizers and zero water → a zero homogeneous coefficient.
+        assert_eq!(stab_coeff, 0.0);
         assert_eq!(target_row_rhs(CompKey::StabilizersPerWater, 0.5), 0.0);
 
         // Extensive key: coefficient is comp.get(key), RHS is the target itself.
@@ -1654,7 +1726,7 @@ mod tests {
 
     #[test]
     fn balance_recovers_emulsifiers_per_fat_ratio() {
-        let comps = comps_from_names(&["3.25% Milk", "40% Cream", "Soy Lecithin"]);
+        let comps = comps_from_names(EMULSIFIER_ING);
         let target = achieved_value(&equal_parts_reference(&comps), CompKey::EmulsifiersPerFat);
 
         let balanced = balance_compositions_nnls(&comps, &[(CompKey::EmulsifiersPerFat, target)], None, &[]).unwrap();
@@ -1662,7 +1734,7 @@ mod tests {
     }
 
     #[test]
-    fn balance_ratio_target_with_extensive_target() {
+    fn balance_recovers_stabilizers_per_water_with_extensive_target() {
         let comps = comps_from_names(DAIRY_STABILIZER_ING);
         let reference = equal_parts_reference(&comps);
         let milk_fat = achieved_value(&reference, CompKey::MilkFat);
@@ -1675,10 +1747,113 @@ mod tests {
         assert_eq_flt_test!(achieved_value(&balanced, CompKey::StabilizersPerWater), ratio);
     }
 
+    #[test]
+    fn balance_recovers_emulsifiers_per_fat_with_extensive_target() {
+        let comps = comps_from_names(EMULSIFIER_ING);
+        let reference = equal_parts_reference(&comps);
+        let milk_fat = achieved_value(&reference, CompKey::MilkFat);
+        let ratio = achieved_value(&reference, CompKey::EmulsifiersPerFat);
+        let targets = [(CompKey::MilkFat, milk_fat), (CompKey::EmulsifiersPerFat, ratio)];
+
+        let balanced = balance_compositions_nnls(&comps, &targets, None, &[]).unwrap();
+
+        assert_eq_flt_test!(achieved_value(&balanced, CompKey::MilkFat), milk_fat);
+        assert_eq_flt_test!(achieved_value(&balanced, CompKey::EmulsifiersPerFat), ratio);
+    }
+
+    #[test]
+    fn estimate_ratio_denominator_uses_denominator_target_exactly() {
+        // When the denominator key (Water for AbsPAC, TotalFats for EmulsifiersPerFat) is itself a
+        // target, that exact value is used — it is the most direct statement of intent.
+        assert_eq!(estimate_ratio_denominator(CompKey::AbsPAC, &[(CompKey::Water, 70.0)]), Some(70.0));
+        assert_eq!(estimate_ratio_denominator(CompKey::StabilizersPerWater, &[(CompKey::Water, 55.0)]), Some(55.0));
+        assert_eq!(estimate_ratio_denominator(CompKey::EmulsifiersPerFat, &[(CompKey::TotalFats, 12.0)]), Some(12.0));
+    }
+
+    #[test]
+    fn estimate_ratio_denominator_infers_water_from_total_solids() {
+        // Absent a Water target, Water is inferred as 100 − TotalSolids − Alcohol.
+        assert_eq!(estimate_ratio_denominator(CompKey::AbsPAC, &[(CompKey::TotalSolids, 30.0)]), Some(70.0));
+        assert_eq!(
+            estimate_ratio_denominator(CompKey::AbsPAC, &[(CompKey::TotalSolids, 30.0), (CompKey::Alcohol, 5.0)]),
+            Some(65.0)
+        );
+    }
+
+    #[test]
+    fn estimate_ratio_denominator_falls_back_to_typical_mix_constants() {
+        use crate::constants::balancing::{TYPICAL_MIX_FAT, TYPICAL_MIX_WATER};
+
+        // No denominator signal → the typical-mix constant for that denominator.
+        assert_eq!(estimate_ratio_denominator(CompKey::AbsPAC, &[]), Some(TYPICAL_MIX_WATER));
+        assert_eq!(
+            estimate_ratio_denominator(CompKey::StabilizersPerWater, &[(CompKey::MilkFat, 12.0)]),
+            Some(TYPICAL_MIX_WATER)
+        );
+        // TotalFats has no inference path, so even a TotalSolids target leaves the fat fallback.
+        assert_eq!(
+            estimate_ratio_denominator(CompKey::EmulsifiersPerFat, &[(CompKey::TotalSolids, 30.0)]),
+            Some(TYPICAL_MIX_FAT)
+        );
+    }
+
+    #[test]
+    fn estimate_ratio_denominator_returns_none_for_extensive_key() {
+        assert_eq!(estimate_ratio_denominator(CompKey::MilkFat, &[]), None);
+        assert_eq!(estimate_ratio_denominator(CompKey::Energy, &[(CompKey::Energy, 200.0)]), None);
+    }
+
+    #[test]
+    fn ratio_reweighting_recovers_despite_off_seed() {
+        use crate::constants::balancing::{RATIO_REWEIGHT_TOLERANCE, TYPICAL_MIX_WATER};
+
+        let comps = comps_from_names(DAIRY_STABILIZER_ING);
+        let target = achieved_value(&equal_parts_reference(&comps), CompKey::StabilizersPerWater);
+
+        // With only a ratio target, the seed denominator falls back to TYPICAL_MIX_WATER, far
+        // above the dairy base's actual water, so the corrective reweighting pass must run.
+        let balanced = balance_compositions_nnls(&comps, &[(CompKey::StabilizersPerWater, target)], None, &[]).unwrap();
+
+        let achieved_water = achieved_value(&balanced, CompKey::Water);
+        assert_gt!(
+            (achieved_water - TYPICAL_MIX_WATER).abs() / TYPICAL_MIX_WATER,
+            RATIO_REWEIGHT_TOLERANCE,
+            "seed denominator should be materially off, so the reweighting pass is exercised"
+        );
+        assert_eq_flt_test!(achieved_value(&balanced, CompKey::StabilizersPerWater), target);
+    }
+
+    #[test]
+    fn balance_over_constrained_ratio_yields_valid_mix() {
+        // An over-constrained ratio + extensive system (sorbet AbsPAC) must still yield a usable
+        // mix — finite, non-negative, summing to 1; the loose ceiling only rejects a blow-up.
+        assert_balance_compositions(
+            &comps_from_names(SORBET_ING),
+            &SORBET_ABS_PAC_TARGETS,
+            balance_compositions_nnls,
+            Epsilons::default(),
+            &KeyCeiling::new(500.0),
+        );
+    }
+
+    #[test]
+    fn priority_tightens_ratio_key() {
+        let comps = comps_from_names(SORBET_ING);
+        let targets: &[(CompKey, f64)] = &SORBET_ABS_PAC_TARGETS;
+        let abs_pac_target = targets.iter().find(|(key, _)| *key == CompKey::AbsPAC).unwrap().1;
+
+        let baseline = balance_compositions(&comps, targets, None, &[]).unwrap();
+        let prioritized =
+            balance_compositions(&comps, targets, None, &[(CompKey::AbsPAC, Priority::Critical)]).unwrap();
+
+        let abs_pac_error = |balanced: &[(Composition, f64)]| {
+            balance_rel_error_pp(achieved_value(balanced, CompKey::AbsPAC), abs_pac_target)
+        };
+        assert_lt!(abs_pac_error(&prioritized), abs_pac_error(&baseline) - MIN_PRIORITY_EFFECT_PP);
+    }
+
     // --- Solver behavior and edge cases ---
 
-    /// nalgebra's plain least squares can return negative amounts on an over-constrained system,
-    /// whereas nnls clamps them to be non-negative — the documented difference between the two.
     #[test]
     fn nalgebra_allows_negative_amounts_while_nnls_does_not() {
         let comps = comps_from_names(BOOZY_ING);
@@ -1703,9 +1878,6 @@ mod tests {
         }
     }
 
-    /// On an over-determined system, relative weighting beats absolute weighting: the worst relative
-    /// miss is smaller, because a large target (Energy) no longer crowds out small ones (POD). This
-    /// is the core improvement, and also exercises [`Weighting::Absolute`] for the comparison.
     #[test]
     fn relative_weighting_beats_absolute_on_disparate_targets() {
         let comps = comps_from_names(DAIRY_ING);
@@ -1810,7 +1982,7 @@ mod tests {
 
         let pod_error =
             |balanced: &[(Composition, f64)]| balance_rel_error_pp(achieved_value(balanced, CompKey::POD), pod_target);
-        assert_lt!(pod_error(&prioritized), pod_error(&baseline));
+        assert_lt!(pod_error(&prioritized), pod_error(&baseline) - MIN_PRIORITY_EFFECT_PP);
 
         // Priority never scales the sum-constraint row, so mass balance is preserved.
         let amount_sum: f64 = prioritized.iter().map(|(_, amount)| *amount).sum();
@@ -1828,7 +2000,80 @@ mod tests {
 
         let pod_error =
             |balanced: &[(Composition, f64)]| balance_rel_error_pp(achieved_value(balanced, CompKey::POD), pod_target);
-        assert_lt!(pod_error(&prioritized), pod_error(&baseline));
+        assert_lt!(pod_error(&prioritized), pod_error(&baseline) - MIN_PRIORITY_EFFECT_PP);
+    }
+
+    #[test]
+    fn priority_weight_values_match_documented_constants() {
+        assert_eq!(Priority::Normal.weight(), 1.0);
+        assert_eq!(Priority::High.weight(), 5.0);
+        assert_eq!(Priority::Critical.weight(), 25.0);
+    }
+
+    #[test]
+    fn priority_error_decreases_monotonically_with_level() {
+        let comps = comps_from_names(DAIRY_ING);
+        let targets: &[(CompKey, f64)] = &DAIRY_DISPARATE_TARGETS;
+        let pod_target = targets.iter().find(|(key, _)| *key == CompKey::POD).unwrap().1;
+
+        let pod_error = |priorities: &[(CompKey, f64)]| {
+            let balanced = balance_compositions_nnls(&comps, targets, None, priorities).unwrap();
+            balance_rel_error_pp(achieved_value(&balanced, CompKey::POD), pod_target)
+        };
+
+        let normal = pod_error(&[]);
+        let high = pod_error(&[(CompKey::POD, Priority::High.weight())]);
+        let critical = pod_error(&[(CompKey::POD, Priority::Critical.weight())]);
+
+        assert_lt!(high, normal - MIN_PRIORITY_EFFECT_PP);
+        assert_lt!(critical, high - MIN_PRIORITY_EFFECT_PP);
+    }
+
+    #[test]
+    fn priority_trades_off_competing_key() {
+        let comps = comps_from_names(DAIRY_ING);
+        let targets: &[(CompKey, f64)] = &DAIRY_DISPARATE_TARGETS;
+
+        let baseline = balance_compositions_nnls(&comps, targets, None, &[]).unwrap();
+        let prioritized =
+            balance_compositions_nnls(&comps, targets, None, &[(CompKey::POD, Priority::Critical.weight())]).unwrap();
+
+        let worsened = targets
+            .iter()
+            .filter(|(key, _)| *key != CompKey::POD)
+            .any(|&(key, target)| {
+                let baseline_error = balance_rel_error_pp(achieved_value(&baseline, key), target);
+                let prioritized_error = balance_rel_error_pp(achieved_value(&prioritized, key), target);
+                prioritized_error > baseline_error + MIN_PRIORITY_EFFECT_PP
+            });
+        assert_true!(worsened, "prioritizing POD should materially worsen a competing target");
+    }
+
+    /// Mixed priority levels act per key, checked ceteris paribus (vary one key's level, hold the
+    /// other's fixed) since two prioritized keys also trade off against each other.
+    #[test]
+    fn priority_mixed_levels_tighten_each_key() {
+        let comps = comps_from_names(DAIRY_ING);
+        let targets: &[(CompKey, f64)] = &DAIRY_DISPARATE_TARGETS;
+        let error_for = |priorities: &[(CompKey, f64)], key: CompKey| {
+            let target = targets.iter().find(|(k, _)| *k == key).unwrap().1;
+            let balanced = balance_compositions_nnls(&comps, targets, None, priorities).unwrap();
+            balance_rel_error_pp(achieved_value(&balanced, key), target)
+        };
+
+        let msnf_high = (CompKey::MSNF, Priority::High.weight());
+        let pod_critical = (CompKey::POD, Priority::Critical.weight());
+
+        // Raising POD Normal→Critical (MSNF held High) tightens POD by a wide margin.
+        let pod_before = error_for(&[msnf_high], CompKey::POD);
+        let pod_after = error_for(&[pod_critical, msnf_high], CompKey::POD);
+        assert_lt!(pod_after, pod_before - MIN_PRIORITY_EFFECT_PP);
+
+        // Raising MSNF Normal→High (POD held Critical) slightly tightens MSNF: its own priority
+        // pulls the right way, but only a little here, since POD's Critical dominates the solve.
+        let msnf_before = error_for(&[pod_critical], CompKey::MSNF);
+        let msnf_after = error_for(&[pod_critical, msnf_high], CompKey::MSNF);
+        assert_le!(msnf_after, msnf_before - 0.4);
     }
 
     #[test]

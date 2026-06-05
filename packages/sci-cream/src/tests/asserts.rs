@@ -8,7 +8,6 @@
 // @todo Investigating using `all_asserts::{assert_range, assert_nrange}` for range checks.
 pub(crate) use all_asserts::{assert_false, assert_true};
 
-#[expect(unused_imports)]
 pub(crate) use more_asserts::{assert_ge, assert_gt, assert_le, assert_lt};
 
 /// These `assert_eq` and `assert_ne` re-exports are actually never used, since glob imports are not

@@ -1,0 +1,25 @@
+---
+source: packages/sci-cream/src/balancing.rs
+expression: "report_balance_quality(&comps_from_names(SORBET_ING), &SORBET_ABS_PAC_TARGETS,\nNNLS_ONLY, Some(SORBET_ING))"
+---
+targets:
+  AbsPAC              45.00
+  TotalPAC            20.00
+  POD                 14.00
+  TotalSolids         32.00
+
+[nnls]
+  [           ingredient           | qty ]
+  Water                             64.14
+  Sucrose                            7.64
+  Dextrose                           8.64
+  Underbelly Sorbet Stabilizer...   19.57
+
+  [      key       | target | achieved |  error  ]
+  AbsPAC              45.00     35.08     22.04 pp
+  TotalPAC            20.00     22.75     13.73 pp
+  POD                 14.00     14.00      0.00 pp
+  TotalSolids         32.00     35.16      9.89 pp
+
+  [    sum     |  neg. |    max    |    rms  ]
+     1.0000        0      22.04 pp    13.89 pp
