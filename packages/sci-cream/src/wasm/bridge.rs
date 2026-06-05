@@ -108,7 +108,7 @@ impl Bridge {
     /// [`Recipe::balance`](RustRecipe::balance) if balancing calculations fail.
     pub fn balance_recipe(&self, recipe: &LightRecipe, targets: &[(CompKey, f64)]) -> Result<OwnedLightRecipe> {
         RustRecipe::from_light_recipe(None, recipe, &self.db)?
-            .balance(targets, &[])
+            .balance(targets, &[], None)
             .map(Into::into)
     }
 

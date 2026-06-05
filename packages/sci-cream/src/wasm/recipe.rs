@@ -119,7 +119,7 @@ impl Recipe {
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
 
         RustRecipe::from(self.clone())
-            .balance(&targets, &[])
+            .balance(&targets, &[], None)
             .map(Into::into)
             .map_err(Into::into)
     }

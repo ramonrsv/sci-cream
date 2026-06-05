@@ -175,20 +175,26 @@ impl Recipe {
     /// Balance the recipe to meet the given target composition values
     ///
     /// The relative proportions of the ingredients in the recipe are adjusted to meet the target
-    /// composition values as closely as possible, while keeping the total amount of the recipe
-    /// constant. The balancing is done via [`balance_compositions`]; see for more details.
+    /// composition values as closely as possible. Balancing is done via [`balance_compositions`];
+    /// see its documentation for more details.
     ///
     /// `priorities` raises the relative importance of specific target keys (keys not listed default
-    /// to [`Priority::Normal`], so an empty slice balances all targets equally); it is forwarded to
-    /// [`balance_compositions`].
+    /// to [`Priority::Normal`], so an empty slice balances all targets equally);
+    ///
+    /// `total_amount` sets the total amount, in grams, of the balanced recipe; if `None`, the
+    /// recipe's current total amount is used, keeping it constant.
     ///
     /// # Errors
     ///
     /// Forwards any [`balance_compositions`] errors, including [`Error::InvalidBalancingTargets`]
-    /// if the targets are invalid (e.g. non-finite values or duplicates) and any error if the solve
-    /// fails.
-    pub fn balance(self, targets: &[(CompKey, f64)], priorities: &[(CompKey, Priority)]) -> Result<Self> {
-        let total_amount: f64 = self.lines.iter().map(|line| line.amount).sum();
+    /// if the targets are invalid (e.g. non-finite values) and any error if the solve fails.
+    pub fn balance(
+        self,
+        targets: &[(CompKey, f64)],
+        priorities: &[(CompKey, Priority)],
+        total_amount: Option<f64>,
+    ) -> Result<Self> {
+        let total_amount = total_amount.unwrap_or_else(|| self.lines.iter().map(|line| line.amount).sum());
 
         let balanced = balance_compositions(
             self.lines
@@ -232,8 +238,9 @@ impl From<Recipe> for OwnedLightRecipe {
 mod tests {
     use std::sync::LazyLock;
 
-    use crate::tests::asserts::shadow_asserts::assert_eq;
+    use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
     use crate::tests::asserts::*;
+
     use crate::tests::assets::MAIN_RECIPE_LIGHT;
 
     use super::*;
@@ -307,81 +314,71 @@ mod tests {
     }
 
     #[test]
-    fn recipe_balance_dairy() {
-        let recipe = Recipe::from_const_recipe(
-            Some("Dairy Base".into()),
-            &[
-                ("3.25% Milk", 400.0),
-                ("40% Cream", 100.0),
-                ("Skimmed Milk Powder", 50.0),
-            ],
-            &DB,
-        )
-        .unwrap();
-        let original_total: f64 = recipe.lines.iter().map(|line| line.amount).sum();
-        let original_names: Vec<_> = recipe.lines.iter().map(|line| line.ingredient.name.clone()).collect();
+    fn recipe_balance_forwards_inputs_to_balance_compositions() {
+        let recipe = Recipe::from_light_recipe(Some("Main Recipe".into()), &MAIN_RECIPE_LIGHT, &DB).unwrap();
 
-        let targets = [(CompKey::MilkFat, 16.0), (CompKey::MSNF, 11.0)];
-        let balanced = recipe.balance(&targets, &[]).unwrap();
+        let total_amount: f64 = recipe.lines.iter().map(|line| line.amount).sum();
+        let compositions: Vec<_> = recipe.lines.iter().map(|line| line.ingredient.composition).collect();
+        let names: Vec<_> = recipe.lines.iter().map(|line| line.ingredient.name.clone()).collect();
 
-        assert_eq!(balanced.name, Some("Dairy Base".into()));
-        assert_eq!(balanced.lines.len(), original_names.len());
+        // Disparate targets with a priority on the conflicting key, so dropping or reordering any
+        // input would change the solution and make the comparison below fail.
+        let targets = [
+            (CompKey::Energy, 200.0),
+            (CompKey::MilkFat, 12.0),
+            (CompKey::MSNF, 8.0),
+            (CompKey::POD, 0.5),
+        ];
+        let priorities = [(CompKey::POD, Priority::Critical)];
 
-        let balanced_total: f64 = balanced.lines.iter().map(|line| line.amount).sum();
-        assert_eq_flt_test!(balanced_total, original_total);
+        let balanced = recipe.balance(&targets, &priorities, None).unwrap();
+        let expected = balance_compositions(&compositions, &targets, None, &priorities).unwrap();
 
-        let balanced_names: Vec<_> = balanced.lines.iter().map(|line| line.ingredient.name.clone()).collect();
-        assert_eq!(balanced_names, original_names);
+        assert_eq!(balanced.name, Some("Main Recipe".into()));
+        assert_eq!(balanced.lines.len(), expected.len());
 
-        for line in &balanced.lines {
-            assert_true!(line.amount >= 0.0);
+        for ((line, name), (_, fraction)) in balanced.lines.iter().zip(names.iter()).zip(expected.iter()) {
+            assert_eq!(line.ingredient.name, *name);
+            assert_eq_flt_test!(line.amount, total_amount * *fraction);
         }
-
-        let comp = balanced.calculate_composition().unwrap();
-        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 16.0);
-        assert_eq_flt_test!(comp.get(CompKey::MSNF), 11.0);
     }
 
     #[test]
-    fn recipe_balance_main_recipe_important_targets() {
-        let recipe = Recipe::from_light_recipe(Some("Main Recipe".into()), &MAIN_RECIPE_LIGHT, &DB).unwrap();
+    fn recipe_balance_explicit_total_amount() {
+        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &DB).unwrap();
+
         let original_total: f64 = recipe.lines.iter().map(|line| line.amount).sum();
+        let target_total = 1000.0;
+        assert_ne!(target_total, original_total);
 
-        let targets = [
-            (CompKey::MilkFat, 14.0),
-            (CompKey::MSNF, 10.0),
-            (CompKey::TotalSugars, 17.0),
-            (CompKey::TotalSolids, 41.0),
-        ];
-        let balanced = recipe.balance(&targets, &[]).unwrap();
+        let targets = [(CompKey::MilkFat, 16.0), (CompKey::MSNF, 11.0)];
+        let default_balanced = recipe.clone().balance(&targets, &[], None).unwrap();
+        let scaled_balanced = recipe.balance(&targets, &[], Some(target_total)).unwrap();
 
-        assert_eq!(balanced.name, Some("Main Recipe".into()));
-        assert_eq!(balanced.lines.len(), MAIN_RECIPE_LIGHT.len());
+        let scaled_total: f64 = scaled_balanced.lines.iter().map(|line| line.amount).sum();
+        assert_eq_flt_test!(scaled_total, target_total);
 
-        let balanced_total: f64 = balanced.lines.iter().map(|line| line.amount).sum();
-        assert_eq_flt_test!(balanced_total, original_total);
+        for line in &scaled_balanced.lines {
+            assert_true!(line.amount >= 0.0);
+        }
 
-        let comp = balanced.calculate_composition().unwrap();
-        for (key, target_amount) in &targets {
-            assert_eq_flt_test!(comp.get(*key), *target_amount);
+        let comp = scaled_balanced.calculate_composition().unwrap();
+        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 16.0);
+        assert_eq_flt_test!(comp.get(CompKey::MSNF), 11.0);
+
+        let scale = target_total / original_total;
+        for (scaled, default) in scaled_balanced.lines.iter().zip(default_balanced.lines.iter()) {
+            assert_eq!(scaled.ingredient.name, default.ingredient.name);
+            assert_eq_flt_test!(scaled.amount, default.amount * scale);
         }
     }
 
     #[test]
     fn recipe_balance_preserves_none_name() {
-        let recipe = Recipe::from_const_recipe(
-            None,
-            &[
-                ("3.25% Milk", 200.0),
-                ("40% Cream", 100.0),
-                ("Skimmed Milk Powder", 25.0),
-            ],
-            &DB,
-        )
-        .unwrap();
+        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &DB).unwrap();
 
         let balanced = recipe
-            .balance(&[(CompKey::MilkFat, 12.0), (CompKey::MSNF, 10.0)], &[])
+            .balance(&[(CompKey::MilkFat, 12.0), (CompKey::MSNF, 10.0)], &[], None)
             .unwrap();
 
         assert_eq!(balanced.name, None);
