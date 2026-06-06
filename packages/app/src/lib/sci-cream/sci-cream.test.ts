@@ -1,39 +1,16 @@
 import { describe, it, expect } from "vitest";
 
-import { CompKey, FpdKey, PropKey, compToPropKey, fpdToPropKey } from "@workspace/sci-cream";
+import {
+  CompKey,
+  RatioKey,
+  FpdKey,
+  PropKey,
+  compToPropKey,
+  ratioToPropKey,
+  fpdToPropKey,
+} from "@workspace/sci-cream";
 
-import { isCompKeyQuantity, isPropKeyQuantity, getAcceptablePropertyRange } from "./sci-cream";
-
-// ---------------------------------------------------------------------------
-// isCompKeyQuantity
-// ---------------------------------------------------------------------------
-
-describe("isCompKeyQuantity", () => {
-  it("returns true for quantity CompKeys", () => {
-    const qtyKeys: CompKey[] = [
-      CompKey.TotalFats,
-      CompKey.MilkFat,
-      CompKey.Water,
-      CompKey.TotalSolids,
-    ];
-
-    for (const key of qtyKeys) {
-      expect(isCompKeyQuantity(key as CompKey)).toBe(true);
-    }
-  });
-
-  it("returns false for ratio CompKeys", () => {
-    const ratioKeys: CompKey[] = [
-      CompKey.AbsPAC,
-      CompKey.EmulsifiersPerFat,
-      CompKey.StabilizersPerWater,
-    ];
-
-    for (const key of ratioKeys) {
-      expect(isCompKeyQuantity(key as CompKey)).toBe(false);
-    }
-  });
-});
+import { isPropKeyQuantity, isPropKeyMixScope, getAcceptablePropertyRange } from "./sci-cream";
 
 // ---------------------------------------------------------------------------
 // isPropKeyQuantity
@@ -53,11 +30,11 @@ describe("isPropKeyQuantity", () => {
     }
   });
 
-  it("returns false for PropKeys derived from ratio CompKeys and FpdKeys", () => {
+  it("returns false for PropKeys derived from RatioKeys and FpdKeys", () => {
     const nonQtyPropKeys: PropKey[] = [
-      compToPropKey(CompKey.AbsPAC),
-      compToPropKey(CompKey.EmulsifiersPerFat),
-      compToPropKey(CompKey.StabilizersPerWater),
+      ratioToPropKey(RatioKey.AbsPAC),
+      ratioToPropKey(RatioKey.EmulsifiersPerFat),
+      ratioToPropKey(RatioKey.StabilizersPerWater),
       fpdToPropKey(FpdKey.FPD),
       fpdToPropKey(FpdKey.ServingTemp),
       fpdToPropKey(FpdKey.HardnessAt14C),
@@ -66,6 +43,24 @@ describe("isPropKeyQuantity", () => {
     for (const key of nonQtyPropKeys) {
       expect(isPropKeyQuantity(key as PropKey)).toBe(false);
     }
+  });
+});
+
+// ---------------------------------------------------------------------------
+// isPropKeyMixScope
+// ---------------------------------------------------------------------------
+
+describe("isPropKeyMixScope", () => {
+  it("returns true for non-ratio keys", () => {
+    expect(isPropKeyMixScope(compToPropKey(CompKey.MilkFat))).toBe(true);
+    expect(isPropKeyMixScope(fpdToPropKey(FpdKey.FPD))).toBe(true);
+  });
+
+  it("returns true for the current (mix-scoped) ratio keys", () => {
+    // The current ratio keys are all mix-scoped, so none are filtered from the mix composition
+    expect(isPropKeyMixScope(ratioToPropKey(RatioKey.AbsPAC))).toBe(true);
+    expect(isPropKeyMixScope(ratioToPropKey(RatioKey.EmulsifiersPerFat))).toBe(true);
+    expect(isPropKeyMixScope(ratioToPropKey(RatioKey.StabilizersPerWater))).toBe(true);
   });
 });
 

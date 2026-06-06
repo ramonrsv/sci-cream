@@ -10,20 +10,27 @@ import {
 } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle, QtyToggleSelect } from "@/app/_elements/selects/qty-toggle-select";
 import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
-import { isPropKeyQuantity } from "@/lib/sci-cream/sci-cream";
+import { isPropKeyQuantity, isPropKeyMixScope } from "@/lib/sci-cream/sci-cream";
 import { STATE_VAL } from "@/lib/util";
 
 import {
   CompKey,
+  RatioKey,
   FpdKey,
   PropKey,
   compToPropKey,
+  ratioToPropKey,
   fpdToPropKey,
   getPropKeys,
   getMixProperty,
   MixProperties,
   prop_key_as_med_str,
 } from "@workspace/sci-cream";
+
+/** Mix-scope property keys: all `getPropKeys`, minus ingredient-only ratio keys. */
+function getMixScopePropKeys(): PropKey[] {
+  return getPropKeys().filter(isPropKeyMixScope);
+}
 
 /** Default set of property keys shown when the Custom key filter is first initialized */
 export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
@@ -44,7 +51,7 @@ export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   compToPropKey(CompKey.TotalSugars),
   compToPropKey(CompKey.TotalArtificial),
   compToPropKey(CompKey.TotalPAC),
-  compToPropKey(CompKey.AbsPAC),
+  ratioToPropKey(RatioKey.AbsPAC),
   fpdToPropKey(FpdKey.FPD),
   fpdToPropKey(FpdKey.ServingTemp),
   fpdToPropKey(FpdKey.HardnessAt14C),
@@ -153,7 +160,7 @@ export function PropertiesView({
     return getEnabledKeys(
       propsFilterState[STATE_VAL],
       selectedPropsState[STATE_VAL],
-      getPropKeys,
+      getMixScopePropKeys,
       isPropEmpty,
       autoHeuristic,
     );
@@ -170,7 +177,7 @@ export function PropertiesView({
         <KeyFilterSelect
           keyFilterState={propsFilterState}
           selectedKeysState={selectedPropsState}
-          getKeys={getPropKeys}
+          getKeys={getMixScopePropKeys}
           key_as_med_str={prop_key_as_med_str}
         />
       </div>

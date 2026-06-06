@@ -1,25 +1,34 @@
 import {
   CompKey,
   FpdKey,
+  RatioKey,
   comp_key_as_short_str,
-  fpd_key_as_short_str,
   comp_key_as_med_str,
-  fpd_key_as_med_str,
   comp_key_as_long_str,
+  ratio_key_as_short_str,
+  ratio_key_as_med_str,
+  ratio_key_as_long_str,
+  fpd_key_as_short_str,
+  fpd_key_as_med_str,
   fpd_key_as_long_str,
   MixProperties,
 } from "../../wasm/index";
 
 import { getTsEnumStringKeys } from "./util";
 
-/** Union of all `CompKey` and `FpdKey` enum members, used as a unified property key type. */
-export const PropKeyObj = { ...CompKey, ...FpdKey } as const;
+/** Union of all `CompKey`, `RatioKey`, and `FpdKey` enum members, used as a unified property key*/
+export const PropKeyObj = { ...CompKey, ...RatioKey, ...FpdKey } as const;
 
 export type PropKey = keyof typeof PropKeyObj;
 
 /** Converts a `CompKey` enum value to its equivalent `PropKey`. */
 export function compToPropKey(comp_key: CompKey): PropKey {
   return CompKey[comp_key] as PropKey;
+}
+
+/** Converts a `RatioKey` enum value to its equivalent `PropKey`. */
+export function ratioToPropKey(ratio_key: RatioKey): PropKey {
+  return RatioKey[ratio_key] as PropKey;
 }
 
 /** Converts an `FpdKey` enum value to its equivalent `PropKey`. */
@@ -32,16 +41,21 @@ export function isCompKey(prop_key: PropKey): boolean {
   return getTsEnumStringKeys(CompKey).includes(prop_key as keyof typeof CompKey);
 }
 
+/** Returns true if the given `PropKey` corresponds to a `RatioKey`. */
+export function isRatioKey(prop_key: PropKey): boolean {
+  return getTsEnumStringKeys(RatioKey).includes(prop_key as keyof typeof RatioKey);
+}
+
 /** Returns true if the given `PropKey` corresponds to an `FpdKey`. */
 export function isFpdKey(prop_key: PropKey): boolean {
   return getTsEnumStringKeys(FpdKey).includes(prop_key as keyof typeof FpdKey);
 }
 
 /**
- * Returns all `PropKey`s in the correct order: `CompKey` values first, then `FpdKey` values.
+ * Returns all `PropKey`s in the correct order: `CompKey`, then `RatioKey`, then `FpdKey` values.
  *
  * It's necessary to use this function instead of `Object.keys(PropKeyObj)` in order to maintain
- * the correct order of the keys as given by `getTsEnumStringKeys(CompKey)` and `(FpdKey)` enums.
+ * the correct order of the keys as given by the `getTsEnumStringKeys` of each enum.
  *
  * **Note**: This function uses `getTsEnumStringKeys` on each enum separately rather than
  * `Object.keys(PropKeyObj)` to preserve the correct ordering. `getTsEnumStringKeys(PropKeyObj)`
@@ -50,18 +64,25 @@ export function isFpdKey(prop_key: PropKey): boolean {
  * for any logic that relies on the order of the keys (e.g. consistent display order in UI).
  */
 export function getPropKeys(): PropKey[] {
-  return [...getTsEnumStringKeys(CompKey), ...getTsEnumStringKeys(FpdKey)] as PropKey[];
+  return [
+    ...getTsEnumStringKeys(CompKey),
+    ...getTsEnumStringKeys(RatioKey),
+    ...getTsEnumStringKeys(FpdKey),
+  ] as PropKey[];
 }
 
 /**
  * Returns the compact display string for the given `PropKey`.
  *
  * @see comp_key_as_short_str original implementation for `CompKey` values in Rust.
+ * @see ratio_key_as_short_str original implementation for `RatioKey` values in Rust.
  * @see fpd_key_as_short_str original implementation for `FpdKey` values in Rust.
  */
 export function prop_key_as_short_str(prop_key: PropKey): string {
   if (isCompKey(prop_key)) {
     return comp_key_as_short_str(CompKey[prop_key as keyof typeof CompKey]);
+  } else if (isRatioKey(prop_key)) {
+    return ratio_key_as_short_str(RatioKey[prop_key as keyof typeof RatioKey]);
   } else if (isFpdKey(prop_key)) {
     return fpd_key_as_short_str(FpdKey[prop_key as keyof typeof FpdKey]);
   } else {
@@ -73,11 +94,14 @@ export function prop_key_as_short_str(prop_key: PropKey): string {
  * Returns the medium-length display string for the given `PropKey`.
  *
  * @see comp_key_as_med_str original implementation for `CompKey` values in Rust.
+ * @see ratio_key_as_med_str original implementation for `RatioKey` values in Rust.
  * @see fpd_key_as_med_str original implementation for `FpdKey` values in Rust.
  */
 export function prop_key_as_med_str(prop_key: PropKey): string {
   if (isCompKey(prop_key)) {
     return comp_key_as_med_str(CompKey[prop_key as keyof typeof CompKey]);
+  } else if (isRatioKey(prop_key)) {
+    return ratio_key_as_med_str(RatioKey[prop_key as keyof typeof RatioKey]);
   } else if (isFpdKey(prop_key)) {
     return fpd_key_as_med_str(FpdKey[prop_key as keyof typeof FpdKey]);
   } else {
@@ -89,11 +113,14 @@ export function prop_key_as_med_str(prop_key: PropKey): string {
  * Returns the full-length display string for the given `PropKey`.
  *
  * @see comp_key_as_long_str original implementation for `CompKey` values in Rust.
+ * @see ratio_key_as_long_str original implementation for `RatioKey` values in Rust.
  * @see fpd_key_as_long_str original implementation for `FpdKey` values in Rust.
  */
 export function prop_key_as_long_str(prop_key: PropKey): string {
   if (isCompKey(prop_key)) {
     return comp_key_as_long_str(CompKey[prop_key as keyof typeof CompKey]);
+  } else if (isRatioKey(prop_key)) {
+    return ratio_key_as_long_str(RatioKey[prop_key as keyof typeof RatioKey]);
   } else if (isFpdKey(prop_key)) {
     return fpd_key_as_long_str(FpdKey[prop_key as keyof typeof FpdKey]);
   } else {
@@ -105,6 +132,8 @@ export function prop_key_as_long_str(prop_key: PropKey): string {
 export function getMixProperty(mixProperties: MixProperties, prop_key: PropKey): number {
   if (isCompKey(prop_key)) {
     return mixProperties.composition.get(CompKey[prop_key as keyof typeof CompKey]);
+  } else if (isRatioKey(prop_key)) {
+    return mixProperties.composition.get_ratio(RatioKey[prop_key as keyof typeof RatioKey]);
   } else if (isFpdKey(prop_key)) {
     return mixProperties.fpd.get(FpdKey[prop_key as keyof typeof FpdKey]);
   } else {

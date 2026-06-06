@@ -6,8 +6,8 @@ use serde::{Deserialize, Serialize};
 use crate::{database::IngredientDatabase, resolution::IngredientGetter};
 
 use crate::{
-    balancing::{Priority, balance_compositions},
-    composition::{CompKey, Composition},
+    balancing::{BalanceKey, Priority, balance_compositions},
+    composition::Composition,
     error::Result,
     fpd::FPD,
     ingredient::Ingredient,
@@ -190,8 +190,8 @@ impl Recipe {
     /// if the targets are invalid (e.g. non-finite values) and any error if the solve fails.
     pub fn balance(
         self,
-        targets: &[(CompKey, f64)],
-        priorities: &[(CompKey, Priority)],
+        targets: &[(BalanceKey, f64)],
+        priorities: &[(BalanceKey, Priority)],
         total_amount: Option<f64>,
     ) -> Result<Self> {
         let total_amount = total_amount.unwrap_or_else(|| self.lines.iter().map(|line| line.amount).sum());
@@ -244,7 +244,12 @@ mod tests {
     use crate::tests::assets::MAIN_RECIPE_LIGHT;
 
     use super::*;
-    use crate::{composition::CompKey, constants::COMPOSITION_EPSILON, database::IngredientDatabase, fpd::FpdKey};
+    use crate::{
+        composition::{CompKey, RatioKey},
+        constants::COMPOSITION_EPSILON,
+        database::IngredientDatabase,
+        fpd::FpdKey,
+    };
 
     static DB: LazyLock<IngredientDatabase> = LazyLock::new(IngredientDatabase::new_seeded_from_embedded_data);
 
@@ -294,7 +299,7 @@ mod tests {
 
         assert_eq_flt_test!(mix_properties.get(CompKey::MilkFat.into()), 13.6024);
         assert_eq_flt_test!(mix_properties.get(CompKey::TotalPAC.into()), 33.3832);
-        assert_eq_flt_test!(mix_properties.get(CompKey::AbsPAC.into()), 56.6292);
+        assert_eq_flt_test!(mix_properties.get(RatioKey::AbsPAC.into()), 56.6292);
         assert_eq_flt_test!(mix_properties.get(FpdKey::FPD.into()), -3.604);
         assert_eq_flt_test!(mix_properties.get(FpdKey::ServingTemp.into()), -13.3711);
         assert_eq_flt_test!(mix_properties.get(FpdKey::HardnessAt14C.into()), 76.2678);
@@ -324,12 +329,12 @@ mod tests {
         // Disparate targets with a priority on the conflicting key, so dropping or reordering any
         // input would change the solution and make the comparison below fail.
         let targets = [
-            (CompKey::Energy, 200.0),
-            (CompKey::MilkFat, 12.0),
-            (CompKey::MSNF, 8.0),
-            (CompKey::POD, 0.5),
+            (CompKey::Energy.into(), 200.0),
+            (CompKey::MilkFat.into(), 12.0),
+            (CompKey::MSNF.into(), 8.0),
+            (CompKey::POD.into(), 0.5),
         ];
-        let priorities = [(CompKey::POD, Priority::Critical)];
+        let priorities = [(CompKey::POD.into(), Priority::Critical)];
 
         let balanced = recipe.balance(&targets, &priorities, None).unwrap();
         let expected = balance_compositions(&compositions, &targets, None, &priorities).unwrap();
@@ -351,7 +356,7 @@ mod tests {
         let target_total = 1000.0;
         assert_ne!(target_total, original_total);
 
-        let targets = [(CompKey::MilkFat, 16.0), (CompKey::MSNF, 11.0)];
+        let targets = [(CompKey::MilkFat.into(), 16.0), (CompKey::MSNF.into(), 11.0)];
         let default_balanced = recipe.clone().balance(&targets, &[], None).unwrap();
         let scaled_balanced = recipe.balance(&targets, &[], Some(target_total)).unwrap();
 
@@ -378,7 +383,7 @@ mod tests {
         let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &DB).unwrap();
 
         let balanced = recipe
-            .balance(&[(CompKey::MilkFat, 12.0), (CompKey::MSNF, 10.0)], &[], None)
+            .balance(&[(CompKey::MilkFat.into(), 12.0), (CompKey::MSNF.into(), 10.0)], &[], None)
             .unwrap();
 
         assert_eq!(balanced.name, None);

@@ -4,6 +4,7 @@ import { getTsEnumNumberKeys, getTsEnumStringKeys, getTsEnumStrings, getWasmEnum
 
 import {
   CompKey,
+  RatioKey,
   FpdKey,
   MixProperties,
   comp_key_as_med_str,
@@ -16,6 +17,7 @@ import {
   compToPropKey,
   fpdToPropKey,
   isCompKey,
+  isRatioKey,
   isFpdKey,
   getPropKeys,
   prop_key_as_med_str,
@@ -28,12 +30,17 @@ test("Import from sci-cream wasm package, at sci-cream", () => {
   expect(comp_key_as_med_str(CompKey.MilkFat)).toBe("Milk Fat");
 });
 
-test("PropKeyObj enum contains all CompKey and FpdKey values", () => {
+test("PropKeyObj enum contains all CompKey, RatioKey, and FpdKey values", () => {
   const compStrKeys = getTsEnumStringKeys(CompKey);
+  const ratioStrKeys = getTsEnumStringKeys(RatioKey);
   const fpdStrKeys = getTsEnumStringKeys(FpdKey);
 
   for (const compStrKey of compStrKeys) {
     expect(Object.keys(PropKeyObj)).toContain(compStrKey);
+  }
+
+  for (const ratioStrKey of ratioStrKeys) {
+    expect(Object.keys(PropKeyObj)).toContain(ratioStrKey);
   }
 
   for (const fpdStrKey of fpdStrKeys) {
@@ -44,8 +51,9 @@ test("PropKeyObj enum contains all CompKey and FpdKey values", () => {
 test("getPropKeys returns all PropKey values in correct order", () => {
   const compKeys = getTsEnumStrings(CompKey);
   const fpdKeys = getTsEnumStrings(FpdKey);
+  const ratioKeys = getTsEnumStrings(RatioKey);
 
-  const expectedPropKeys = compKeys.concat(fpdKeys) as PropKey[];
+  const expectedPropKeys = compKeys.concat(ratioKeys).concat(fpdKeys) as PropKey[];
   const propKeys = getPropKeys();
 
   expect(propKeys).toStrictEqual(expectedPropKeys);
@@ -84,8 +92,9 @@ test("prop_key_as_long_str works for all PropKey values", () => {
   }
 });
 
-test("isCompKey and isFpdKey work correctly", () => {
+test("isCompKey, isFpdKey, and isRatioKey work correctly", () => {
   const compKeys = getTsEnumStringKeys(CompKey);
+  const ratioKeys = getTsEnumStringKeys(RatioKey);
   const fpdKeys = getTsEnumStringKeys(FpdKey);
 
   const propKeys = getPropKeys();
@@ -94,11 +103,17 @@ test("isCompKey and isFpdKey work correctly", () => {
     if (isCompKey(propKey)) {
       expect(compKeys).toContain(propKey);
       expect(isFpdKey(propKey)).toBe(false);
+      expect(isRatioKey(propKey)).toBe(false);
+    } else if (isRatioKey(propKey)) {
+      expect(ratioKeys).toContain(propKey);
+      expect(isCompKey(propKey)).toBe(false);
+      expect(isFpdKey(propKey)).toBe(false);
     } else if (isFpdKey(propKey)) {
       expect(fpdKeys).toContain(propKey);
       expect(isCompKey(propKey)).toBe(false);
+      expect(isRatioKey(propKey)).toBe(false);
     } else {
-      throw new Error(`PropKey ${String(propKey)} is neither CompKey nor FpdKey`);
+      throw new Error(`PropKey ${String(propKey)} is neither CompKey, RatioKey, nor FpdKey`);
     }
   }
 });

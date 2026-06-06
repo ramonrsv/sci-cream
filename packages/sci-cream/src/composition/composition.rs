@@ -7,7 +7,7 @@ use struct_iterable::Iterable;
 use strum_macros::EnumIter;
 
 use crate::{
-    composition::{Alcohol, Micro, PAC, Solids, Texture},
+    composition::{Alcohol, Micro, PAC, RatioKey, Solids, Texture},
     error::Result,
     resolution::IngredientGetter,
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
@@ -348,10 +348,6 @@ pub enum CompKey {
     // @todo Introduce `Stabilization` as a separate key, representing the overall stabilization
     // strength of the mix from all sources, as tracked in [`Texture::stabilization`]
     TotalStabilizers,
-    /// Total emulsifier content per fat content, i.e. `Emulsifiers / TotalFats`, as a percentage
-    EmulsifiersPerFat,
-    /// Total stabilizer content per water content, i.e. `Stabilizers / Water`, as a percentage
-    StabilizersPerWater,
 
     // POD, PAC, and Hardness Factor
     // -----------------------------
@@ -369,8 +365,6 @@ pub enum CompKey {
     PACalc,
     /// Total [Potere Anti-Cristallizzante (PAC)](crate::docs#pac) of the ingredient or mix as whole
     TotalPAC,
-    /// [Absolute PAC](crate::docs#absolute-pac), i.e. `TotalPAC / Water`, as a percentage
-    AbsPAC,
     /// [Hardness Factor (HF)](crate::docs#corvitto-method-hardness-factor) of the ingredient or mix
     HF,
 
@@ -480,42 +474,45 @@ impl Composition {
 
     /// Calculates the emulsifier per fat content, i.e. `Emulsifiers / TotalFats`, as a percentage
     ///
-    /// This is equivalent to [`get(CompKey::EmulsifiersPerFat)`](Self::get).
+    /// This is equivalent to [`get_ratio(RatioKey::EmulsifiersPerFat)`](Self::get_ratio).
     ///
     /// Note that [`f64::NAN`] is a valid result, if there are no fats.
     #[must_use]
     pub fn emulsifiers_per_fat(&self) -> f64 {
-        if self.solids.all().fats.total > 0.0 {
-            (self.micro.emulsifiers.total() / self.solids.all().fats.total) * 100.0
-        } else {
-            f64::NAN
-        }
+        self.get_ratio(RatioKey::EmulsifiersPerFat)
     }
 
     /// Calculates the stabilizer per water content, i.e. `Stabilizers / Water`, as a percentage
     ///
-    /// This is equivalent to [`get(CompKey::StabilizersPerWater)`](Self::get).
+    /// This is equivalent to [`get_ratio(RatioKey::StabilizersPerWater)`](Self::get_ratio).
     ///
     /// Note that [`f64::NAN`] is a valid result, if there is no water
     #[must_use]
     pub fn stabilizers_per_water(&self) -> f64 {
-        if self.water() > 0.0 {
-            (self.micro.stabilizers.total() / self.water()) * 100.0
-        } else {
-            f64::NAN
-        }
+        self.get_ratio(RatioKey::StabilizersPerWater)
     }
 
     /// Calculates [Absolute PAC](crate::docs#absolute-pac), i.e. `TotalPAC / Water`, as a
     /// percentage, excluding the hardness factor
     ///
-    /// This is equivalent to [`get(CompKey::AbsPAC)`](Self::get).
+    /// This is equivalent to [`get_ratio(RatioKey::AbsPAC)`](Self::get_ratio).
     ///
     /// Note that [`f64::NAN`] is a valid result, if there is no water
     #[must_use]
     pub fn absolute_pac(&self) -> f64 {
-        if self.water() > 0.0 {
-            (self.pac.total() / self.water()) * 100.0
+        self.get_ratio(RatioKey::AbsPAC)
+    }
+
+    /// Gets a specific intensive ratio value by [`RatioKey`], i.e. `numerator / denominator * 100`
+    /// of its two extensive [`CompKey`] parts (see [`RatioKey::parts`]).
+    ///
+    /// Returns [`f64::NAN`] when the denominator is zero (e.g. `EmulsifiersPerFat` with no fat).
+    #[must_use]
+    pub fn get_ratio(&self, key: RatioKey) -> f64 {
+        let (num_key, den_key) = key.parts();
+        let denominator = self.get(den_key);
+        if denominator > 0.0 {
+            (self.get(num_key) / denominator) * 100.0
         } else {
             f64::NAN
         }
@@ -602,8 +599,6 @@ impl Composition {
             CompKey::SodiumAlginate => self.micro.stabilizers.sodium_alginate,
             CompKey::TaraGum => self.micro.stabilizers.tara_gum,
             CompKey::TotalStabilizers => self.micro.stabilizers.total(),
-            CompKey::EmulsifiersPerFat => self.emulsifiers_per_fat(),
-            CompKey::StabilizersPerWater => self.stabilizers_per_water(),
 
             CompKey::POD => self.pod,
 
@@ -612,7 +607,6 @@ impl Composition {
             CompKey::PACmlk => self.pac.msnf_ws_salts,
             CompKey::PACalc => self.pac.alcohol,
             CompKey::TotalPAC => self.pac.total(),
-            CompKey::AbsPAC => self.absolute_pac(),
             CompKey::HF => self.pac.hardness_factor,
 
             CompKey::SaturatedFat => self.solids.all().fats.saturated,
@@ -788,17 +782,17 @@ mod tests {
         assert_eq!(comp.get(CompKey::Water), 100.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 0.0);
         assert_eq!(comp.get(CompKey::TotalFats), 0.0);
-        assert!(comp.get(CompKey::EmulsifiersPerFat).is_nan());
-        assert_eq!(comp.get(CompKey::StabilizersPerWater), 0.0);
-        assert_eq!(comp.get(CompKey::AbsPAC), 0.0);
+        assert!(comp.get_ratio(RatioKey::EmulsifiersPerFat).is_nan());
+        assert_eq!(comp.get_ratio(RatioKey::StabilizersPerWater), 0.0);
+        assert_eq!(comp.get_ratio(RatioKey::AbsPAC), 0.0);
 
         let comp = Composition::new().solids(Solids::new().other(SolidsBreakdown::new().others(100.0)));
 
         assert_eq!(comp.get(CompKey::Water), 0.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 100.0);
-        assert!(comp.get(CompKey::EmulsifiersPerFat).is_nan());
-        assert!(comp.get(CompKey::StabilizersPerWater).is_nan());
-        assert!(comp.get(CompKey::AbsPAC).is_nan());
+        assert!(comp.get_ratio(RatioKey::EmulsifiersPerFat).is_nan());
+        assert!(comp.get_ratio(RatioKey::StabilizersPerWater).is_nan());
+        assert!(comp.get_ratio(RatioKey::AbsPAC).is_nan());
     }
 
     #[test]
@@ -851,12 +845,12 @@ mod tests {
             (CompKey::PACsgr, 4.8069),
             (CompKey::PACmlk, 3.2405),
             (CompKey::TotalPAC, 8.0474),
-            (CompKey::AbsPAC, 9.02377),
             (CompKey::SaturatedFat, 1.3),
             (CompKey::TransFat, 0.07),
         ]);
 
         CompKey::iter().for_each(|key| assert_eq_flt_test!(COMP_2_MILK.get(key), *expected.get(&key).unwrap_or(&0.0)));
+        assert_eq_flt_test!(COMP_2_MILK.get_ratio(RatioKey::AbsPAC), 9.02377);
     }
 
     #[allow(clippy::too_many_lines)]
@@ -1028,8 +1022,6 @@ mod tests {
             (CompKey::SodiumAlginate,       0.10),
             (CompKey::TaraGum,              0.11),
             (CompKey::TotalStabilizers,          0.66),  // 0.01+0.02+...+0.11
-            (CompKey::EmulsifiersPerFat,    5.0),   // 0.6 / 12.0 * 100
-            (CompKey::StabilizersPerWater,  0.66 / 59.0 * 100.0),  // stabilizers / water
             // POD and PAC
             (CompKey::POD,                  5.0),
             (CompKey::PACsgr,               6.0),
@@ -1037,7 +1029,6 @@ mod tests {
             (CompKey::PACmlk,               2.0),
             (CompKey::PACalc,               0.5),
             (CompKey::TotalPAC,             9.5),
-            (CompKey::AbsPAC,               abs_pac),
             (CompKey::HF,                   1.0),
             // Saturated and Trans Fat
             (CompKey::SaturatedFat,         5.64),  // 2.6 + 0.56 + 1.8 + 0.18 + 0.5
@@ -1046,6 +1037,11 @@ mod tests {
 
         // unwrap (not unwrap_or) so that any newly added CompKey not in the map panics the test
         CompKey::iter().for_each(|key| assert_eq_flt_test!(c.get(key), *expected.get(&key).unwrap()));
+
+        // Ratio keys are read via `get_ratio`, not `get`; assert them separately.
+        assert_eq_flt_test!(c.get_ratio(RatioKey::EmulsifiersPerFat), 5.0); // 0.6 / 12.0 * 100
+        assert_eq_flt_test!(c.get_ratio(RatioKey::StabilizersPerWater), 0.66 / 59.0 * 100.0);
+        assert_eq_flt_test!(c.get_ratio(RatioKey::AbsPAC), abs_pac);
     }
 
     #[test]

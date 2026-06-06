@@ -11,15 +11,13 @@ import {
 import { QtyToggle, QtyToggleSelect } from "@/app/_elements/selects/qty-toggle-select";
 import { RecipeSelect } from "@/app/_elements/selects/recipe-select";
 import { applyQtyToggleAndFormat, formatCompositionValue } from "@/lib/comp-value-format";
-import { isCompKeyQuantity } from "@/lib/sci-cream/sci-cream";
 import { STATE_VAL } from "@/lib/util";
 
 import { CompKey, comp_key_as_med_str, getWasmEnums } from "@workspace/sci-cream";
 
-/** Returns all `CompKey` values that represent a measurable quantity (excludes ratio properties) */
+/** Returns all `CompKey` values — every one is an additive quantity (ratios are `RatioKey`). */
 export function getCompKeys(): CompKey[] {
-  // Some values, e.g. ratio properties, aren't very meaningful in a per-ingredient breakdown
-  return getWasmEnums(CompKey).filter((key) => isCompKeyQuantity(key));
+  return getWasmEnums(CompKey);
 }
 
 /** Default set of composition keys shown when the Custom key filter is first initialized */
@@ -54,7 +52,7 @@ export function CompositionBreakdown({
       recipe.mixTotal,
       recipe.mixTotal,
       qtyToggle,
-      isCompKeyQuantity(compKey),
+      true,
     );
   };
 
@@ -69,7 +67,7 @@ export function CompositionBreakdown({
           row.quantity,
           recipe.mixTotal,
           qtyToggle,
-          isCompKeyQuantity(compKey),
+          true,
         )
       : "";
   };

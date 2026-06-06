@@ -17,9 +17,11 @@ import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 
 import {
   CompKey,
+  RatioKey,
   FpdKey,
   PropKey,
   compToPropKey,
+  ratioToPropKey,
   fpdToPropKey,
   getPropKeys as getPropKeysAll,
   getMixProperty,
@@ -125,10 +127,10 @@ describe("Helper Functions", () => {
     expect(getModMixProp(fpdToPropKey(FpdKey.FPD))).toBeCloseTo(3.6);
     expect(getModMixProp(fpdToPropKey(FpdKey.ServingTemp))).toBeCloseTo(13.37);
 
-    expect(getModMixProp(compToPropKey(CompKey.AbsPAC))).toBeCloseTo(56.63 / 2);
+    expect(getModMixProp(ratioToPropKey(RatioKey.AbsPAC))).toBeCloseTo(56.63 / 2);
 
-    expect(getModMixProp(compToPropKey(CompKey.EmulsifiersPerFat))).toBeCloseTo(1.735 * 100);
-    expect(getModMixProp(compToPropKey(CompKey.StabilizersPerWater))).toBeCloseTo(0.3466 * 100);
+    expect(getModMixProp(ratioToPropKey(RatioKey.EmulsifiersPerFat))).toBeCloseTo(1.735 * 100);
+    expect(getModMixProp(ratioToPropKey(RatioKey.StabilizersPerWater))).toBeCloseTo(0.3466 * 100);
   });
 
   it("propKeyAsModifiedShortStr should modify specific key strings", () => {
@@ -137,10 +139,10 @@ describe("Helper Functions", () => {
     expect(propKeyAsModStr(fpdToPropKey(FpdKey.FPD))).toBe("-FPD");
     expect(propKeyAsModStr(fpdToPropKey(FpdKey.ServingTemp))).toBe("-Serving Temp");
 
-    expect(propKeyAsModStr(compToPropKey(CompKey.AbsPAC))).toBe("Abs.PAC / 2");
+    expect(propKeyAsModStr(ratioToPropKey(RatioKey.AbsPAC))).toBe("Abs.PAC / 2");
 
-    expect(propKeyAsModStr(compToPropKey(CompKey.EmulsifiersPerFat))).toBe("Emul./Fat * 100");
-    expect(propKeyAsModStr(compToPropKey(CompKey.StabilizersPerWater))).toBe("Stab./Water * 100");
+    expect(propKeyAsModStr(ratioToPropKey(RatioKey.EmulsifiersPerFat))).toBe("Emul./Fat * 100");
+    expect(propKeyAsModStr(ratioToPropKey(RatioKey.StabilizersPerWater))).toBe("Stab./Water * 100");
   });
 });
 
@@ -253,7 +255,7 @@ describe("PropertiesBarChart", () => {
 
   describe("Labels", () => {
     it("should render a label per provided propKey, modified for chart display", () => {
-      const propKeys: PropKey[] = [compToPropKey(CompKey.AbsPAC), fpdToPropKey(FpdKey.FPD)];
+      const propKeys: PropKey[] = [ratioToPropKey(RatioKey.AbsPAC), fpdToPropKey(FpdKey.FPD)];
       renderFromContext([], propKeys);
       expect(capturedBarProps!.data.labels).toEqual(propKeys.map(propKeyAsModifiedShortStr));
     });
@@ -338,8 +340,8 @@ describe("PropertiesChartView", () => {
 
       await configCustomKeysAll(container);
 
-      const EmulsPerFatPropKey = compToPropKey(CompKey.EmulsifiersPerFat);
-      const AbsPACPropKey = compToPropKey(CompKey.AbsPAC);
+      const EmulsPerFatPropKey = ratioToPropKey(RatioKey.EmulsifiersPerFat);
+      const AbsPACPropKey = ratioToPropKey(RatioKey.AbsPAC);
       const EmulsPerFatLabel = propKeyAsModifiedShortStr(EmulsPerFatPropKey);
       const AbsPACLabel = propKeyAsModifiedShortStr(AbsPACPropKey);
 
@@ -349,8 +351,8 @@ describe("PropertiesChartView", () => {
       expect(data.labels).toContain(AbsPACLabel);
 
       const mixProps = recipeCtx.recipes[0].mixProperties!;
-      expect(mixProps.composition.get(CompKey.EmulsifiersPerFat)).toBeNaN();
-      expect(mixProps.composition.get(CompKey.AbsPAC)).toBe(0);
+      expect(mixProps.composition.get_ratio(RatioKey.EmulsifiersPerFat)).toBeNaN();
+      expect(mixProps.composition.get_ratio(RatioKey.AbsPAC)).toBe(0);
       expect(getMixProperty(mixProps, EmulsPerFatPropKey)).toBeNaN();
       expect(getMixProperty(mixProps, AbsPACPropKey)).toBe(0);
 
@@ -367,9 +369,9 @@ describe("PropertiesChartView", () => {
       await waitFor(() => expect(data.labels.length).toBe(getPropKeysAll().length - 2));
 
       for (const key of [
-        compToPropKey(CompKey.EmulsifiersPerFat),
-        compToPropKey(CompKey.StabilizersPerWater),
-        compToPropKey(CompKey.AbsPAC),
+        ratioToPropKey(RatioKey.EmulsifiersPerFat),
+        ratioToPropKey(RatioKey.StabilizersPerWater),
+        ratioToPropKey(RatioKey.AbsPAC),
         fpdToPropKey(FpdKey.ServingTemp),
       ]) {
         expect(data.labels).toContain(propKeyAsModifiedShortStr(key));

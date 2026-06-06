@@ -1,7 +1,7 @@
 use std::sync::LazyLock;
 
 use crate::{
-    composition::CompKey,
+    composition::{CompKey, RatioKey},
     fpd::FpdKey,
     properties::PropKey,
     recipe::{ConstRecipe, OwnedLightRecipe},
@@ -71,6 +71,7 @@ pub(crate) static REF_B_RECIPE_LIGHT: LazyLock<OwnedLightRecipe> =
 pub(crate) static MAIN_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyLock::new(|| {
     use CompKey::*;
     use FpdKey::*;
+    use RatioKey::*;
 
     vec![
         (Energy.into(), 228.865),
@@ -109,6 +110,7 @@ pub(crate) static MAIN_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyLo
 pub(crate) static REF_A_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyLock::new(|| {
     use CompKey::*;
     use FpdKey::*;
+    use RatioKey::*;
 
     vec![
         (Energy.into(), 236.387),
@@ -147,6 +149,7 @@ pub(crate) static REF_A_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyL
 pub(crate) static REF_B_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyLock::new(|| {
     use CompKey::*;
     use FpdKey::*;
+    use RatioKey::*;
 
     vec![
         (Energy.into(), 228.753),

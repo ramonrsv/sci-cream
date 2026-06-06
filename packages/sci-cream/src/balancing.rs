@@ -21,7 +21,7 @@ use serde::{Deserialize, Serialize};
 use strum::IntoEnumIterator;
 
 use crate::{
-    composition::{CompKey, Composition},
+    composition::{CompKey, Composition, RatioKey},
     constants::balancing::{
         CRITICAL_PRIORITY_WEIGHT, HIGH_PRIORITY_WEIGHT, RATIO_DENOMINATOR_FLOOR, RATIO_REWEIGHT_TOLERANCE,
         RELATIVE_WEIGHT_FLOOR, SUM_CONSTRAINT_WEIGHT, SVD_SOLVE_EPSILON, TYPICAL_MIX_FAT, TYPICAL_MIX_WATER,
@@ -29,6 +29,60 @@ use crate::{
     error::{Error, Result},
     validate::{is_subset, is_within_range},
 };
+
+/// A key usable as a balancing target: either an extensive [`CompKey`] or an intensive [`RatioKey`]
+///
+/// Balancing accepts both kinds of key but treats them differently — an extensive key contributes a
+/// direct weighted-sum row, a ratio key a homogeneous row (see [`target_row_coeff`]). This union is
+/// the balancing-facing counterpart of [`PropKey`](crate::properties::PropKey) (which additionally
+/// carries [`FpdKey`](crate::fpd::FpdKey), which is not currently a supported balancing target).
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
+pub enum BalanceKey {
+    /// An extensive composition key (additive, scalable by quantity).
+    Comp(CompKey),
+    /// An intensive ratio key (`numerator / denominator`, non-additive).
+    Ratio(RatioKey),
+}
+
+impl From<CompKey> for BalanceKey {
+    fn from(key: CompKey) -> Self {
+        Self::Comp(key)
+    }
+}
+
+impl From<RatioKey> for BalanceKey {
+    fn from(key: RatioKey) -> Self {
+        Self::Ratio(key)
+    }
+}
+
+impl BalanceKey {
+    /// Returns `true` if this is a ratio key (encoded as a homogeneous row when balancing).
+    #[must_use]
+    pub const fn is_ratio(self) -> bool {
+        matches!(self, Self::Ratio(_))
+    }
+
+    /// The `(numerator, denominator)` extensive [`CompKey`] parts if this is a ratio key, else
+    /// `None` (see [`RatioKey::parts`]).
+    #[must_use]
+    pub const fn ratio_parts(self) -> Option<(CompKey, CompKey)> {
+        match self {
+            Self::Ratio(key) => Some(key.parts()),
+            Self::Comp(_) => None,
+        }
+    }
+
+    /// This key's value for a single composition: the extensive reading [`Composition::get`] for an
+    /// extensive key, or the intensive [`Composition::get_ratio`] for a ratio key.
+    #[must_use]
+    pub fn value(self, comp: &Composition) -> f64 {
+        match self {
+            Self::Comp(key) => comp.get(key),
+            Self::Ratio(key) => comp.get_ratio(key),
+        }
+    }
+}
 
 /// How target rows are weighted when assembling the least-squares system.
 ///
@@ -80,8 +134,12 @@ impl Priority {
 }
 
 /// A balancing solver function pointer, e.g. [`balance_compositions_nnls`].
-type SolverFn =
-    fn(&[Composition], &[(CompKey, f64)], Option<Weighting>, &[(CompKey, f64)]) -> Result<Vec<(Composition, f64)>>;
+type SolverFn = fn(
+    &[Composition],
+    &[(BalanceKey, f64)],
+    Option<Weighting>,
+    &[(BalanceKey, f64)],
+) -> Result<Vec<(Composition, f64)>>;
 
 /// Balances the given compositions to match target values — the validated public entry point.
 ///
@@ -110,12 +168,12 @@ type SolverFn =
 /// error forwarded from the chosen solver if the underlying solve fails.
 pub fn balance_compositions(
     comps: &[Composition],
-    targets: &[(CompKey, f64)],
+    targets: &[(BalanceKey, f64)],
     weighting: Option<Weighting>,
-    priorities: &[(CompKey, Priority)],
+    priorities: &[(BalanceKey, Priority)],
 ) -> Result<Vec<(Composition, f64)>> {
     validate_balancing_targets(comps, targets, priorities).into_result()?;
-    let priority_weights: Vec<(CompKey, f64)> = priorities
+    let priority_weights: Vec<(BalanceKey, f64)> = priorities
         .iter()
         .map(|&(key, priority)| (key, priority.weight()))
         .collect();
@@ -126,7 +184,7 @@ pub fn balance_compositions(
 ///
 /// Centralizes the choice of solver so it can evolve independently of callers. Currently always
 /// returns [`balance_compositions_nnls`], the non-negative solver used in production.
-const fn choose_solver(_comps: &[Composition], _targets: &[(CompKey, f64)]) -> SolverFn {
+const fn choose_solver(_comps: &[Composition], _targets: &[(BalanceKey, f64)]) -> SolverFn {
     balance_compositions_nnls
 }
 
@@ -147,17 +205,17 @@ pub enum BalancingIssue {
     /// Severity: [`Severity::Error`].
     NonFiniteTarget {
         /// The key whose target value is not finite.
-        key: CompKey,
+        key: BalanceKey,
         /// The offending non-finite value.
         value: f64,
     },
-    /// A target value is negative. Every balanceable [`CompKey`] is non-negative, so a target
-    /// `< 0` is unreachable and almost certainly a caller bug.
+    /// A target value is negative. Every balanceable key is non-negative, so a target `< 0` is
+    /// unreachable and almost certainly a caller bug.
     ///
     /// Severity: [`Severity::Error`].
     NegativeTarget {
         /// The key whose target value is negative.
-        key: CompKey,
+        key: BalanceKey,
         /// The offending negative value.
         value: f64,
     },
@@ -166,7 +224,7 @@ pub enum BalancingIssue {
     /// Severity: [`Severity::Error`].
     DuplicateTarget {
         /// The key that appears more than once.
-        key: CompKey,
+        key: BalanceKey,
     },
     /// The same key appears more than once in the priorities, which is contradictory or ambiguous —
     /// it is unclear which level applies (only the first would take effect; see [`Priority`]).
@@ -174,7 +232,7 @@ pub enum BalancingIssue {
     /// Severity: [`Severity::Error`].
     DuplicatePriority {
         /// The priority key that appears more than once.
-        key: CompKey,
+        key: BalanceKey,
     },
     /// No composition in the palette contributes to this key (its row is entirely zero), so no
     /// combination can move it away from zero.
@@ -182,7 +240,7 @@ pub enum BalancingIssue {
     /// Severity: [`Severity::Warning`].
     UnaffectableTarget {
         /// The key that no composition affects.
-        key: CompKey,
+        key: BalanceKey,
     },
     /// The target lies outside the `[min, max]` range achievable from the palette, so no normalized
     /// (non-negative, summing to one) combination can reach it.
@@ -190,7 +248,7 @@ pub enum BalancingIssue {
     /// Severity: [`Severity::Warning`].
     UnreachableTarget {
         /// The key whose target is out of range.
-        key: CompKey,
+        key: BalanceKey,
         /// The requested target value.
         target: f64,
         /// The smallest value any single composition has for this key.
@@ -205,9 +263,9 @@ pub enum BalancingIssue {
     /// Severity: [`Severity::Warning`].
     DominanceViolation {
         /// The key whose target is (infeasibly) the larger of the two.
-        lesser: CompKey,
+        lesser: BalanceKey,
         /// The key that dominates `lesser` across every composition.
-        greater: CompKey,
+        greater: BalanceKey,
         /// The target requested for `lesser`.
         lesser_target: f64,
         /// The target requested for `greater`.
@@ -222,9 +280,9 @@ pub enum BalancingIssue {
     /// Severity: [`Severity::Warning`].
     AdditiveDominanceViolation {
         /// The "whole" key whose target the parts collectively exceed.
-        whole: CompKey,
+        whole: BalanceKey,
         /// The "part" keys whose compositions sum under `whole` in every composition (always >= 2).
-        parts: Vec<CompKey>,
+        parts: Vec<BalanceKey>,
         /// The sum of the parts' targets (infeasibly greater than `whole_target`).
         parts_target_sum: f64,
         /// The target requested for `whole`.
@@ -236,7 +294,7 @@ pub enum BalancingIssue {
     /// Severity: [`Severity::Warning`].
     PriorityWithoutTarget {
         /// The priority key that has no corresponding target.
-        key: CompKey,
+        key: BalanceKey,
     },
 }
 
@@ -327,20 +385,21 @@ impl BalancingReport {
 #[must_use]
 pub fn validate_balancing_targets(
     comps: &[Composition],
-    targets: &[(CompKey, f64)],
-    priorities: &[(CompKey, Priority)],
+    targets: &[(BalanceKey, f64)],
+    priorities: &[(BalanceKey, Priority)],
 ) -> BalancingReport {
     let mut issues = Vec::new();
 
     // Error-severity checks: non-finite/negative values and duplicate keys. Ratio keys are OK —
-    // they are encoded as homogeneous rows (see `ratio_key_parts`) and balance like any other key.
-    let mut seen: Vec<CompKey> = Vec::with_capacity(targets.len());
+    // they are encoded as homogeneous rows (see `RatioKey::parts`) and balance like any other key.
+    let mut seen: Vec<BalanceKey> = Vec::with_capacity(targets.len());
     for &(key, value) in targets {
         if !value.is_finite() {
             issues.push(BalancingIssue::NonFiniteTarget { key, value });
         } else if value < 0.0 {
             issues.push(BalancingIssue::NegativeTarget { key, value });
         }
+
         if seen.contains(&key) {
             issues.push(BalancingIssue::DuplicateTarget { key });
         } else {
@@ -355,14 +414,15 @@ pub fn validate_balancing_targets(
         if !target.is_finite() || target < 0.0 {
             continue;
         }
+
         if is_unaffectable(comps, key, target) {
             issues.push(BalancingIssue::UnaffectableTarget { key });
             continue; // range checks add only noise for an all-zero row
         }
-        if is_ratio_key(key) {
-            continue;
-        }
-        if let Some((min, max)) = reachable_range(comps, key)
+
+        // Ratio keys skip the range check, having no single-key magnitude to compare.
+        if let BalanceKey::Comp(comp_key) = key
+            && let Some((min, max)) = reachable_range(comps, comp_key)
             && !is_within_range(target, min, max)
         {
             issues.push(BalancingIssue::UnreachableTarget { key, target, min, max });
@@ -370,14 +430,14 @@ pub fn validate_balancing_targets(
     }
 
     // Pairwise warning checks: palette-derived dominance infeasibilities.
-    append_pairwise_issues(comps, targets, &mut issues);
+    append_pairwise_dominance_issues(comps, targets, &mut issues);
 
     // Additive (subset-sum) dominance: parts that together exceed a whole that bounds their sum.
     append_additive_dominance_issues(comps, targets, &mut issues);
 
     // Priority-list checks: duplicate priority keys (error, ambiguous) and priorities whose key is
     // not among the targets (warning — a no-op, since only target rows are weighted).
-    let mut seen_priorities: Vec<CompKey> = Vec::with_capacity(priorities.len());
+    let mut seen_priorities: Vec<BalanceKey> = Vec::with_capacity(priorities.len());
     for &(key, _) in priorities {
         if seen_priorities.contains(&key) {
             issues.push(BalancingIssue::DuplicatePriority { key });
@@ -398,16 +458,19 @@ pub fn validate_balancing_targets(
 /// it to drop such targets before solving, and [`validate_balancing_targets`] to flag as warnings.
 ///
 /// For an extensive key this means every composition reads exactly zero for it. A ratio key is also
-/// unaffectable when either of its parts is (see [`ratio_key_parts`]) — a zero denominator leaves
+/// unaffectable when either of its parts is (see [`RatioKey::parts`]) — a zero denominator leaves
 /// the ratio undefined, a zero numerator pins it to zero — or when its homogeneous row vanishes
 /// across the palette (already exactly on-ratio).
-fn is_unaffectable(comps: &[Composition], key: CompKey, target: f64) -> bool {
-    if let Some((numerator, denominator)) = ratio_key_parts(key) {
-        return is_key_unaffectable(comps, numerator)
-            || is_key_unaffectable(comps, denominator)
-            || comps.iter().all(|comp| target_row_coeff(key, target, comp) == 0.0);
+fn is_unaffectable(comps: &[Composition], key: BalanceKey, target: f64) -> bool {
+    match key {
+        BalanceKey::Ratio(ratio) => {
+            let (numerator, denominator) = ratio.parts();
+            is_key_unaffectable(comps, numerator)
+                || is_key_unaffectable(comps, denominator)
+                || comps.iter().all(|comp| target_row_coeff(key, target, comp) == 0.0)
+        }
+        BalanceKey::Comp(comp_key) => is_key_unaffectable(comps, comp_key),
     }
-    is_key_unaffectable(comps, key)
 }
 
 /// Returns `true` if every composition reads exactly zero for the extensive `key`.
@@ -434,39 +497,46 @@ fn dominates(comps: &[Composition], greater: CompKey, lesser: CompKey) -> bool {
 /// Returns `true` if `key`/`target` is a meaningful target to compare in the dominance checks: not
 /// a ratio key (its homogeneous row has no single-key magnitude), finite, non-negative, and
 /// affected by at least one composition. Non-finite and negative targets have their own checks.
-fn is_checkable_target(comps: &[Composition], key: CompKey, target: f64) -> bool {
-    !is_ratio_key(key) && target.is_finite() && target >= 0.0 && !is_unaffectable(comps, key, target)
+fn is_dominance_checkable_target(comps: &[Composition], key: BalanceKey, target: f64) -> bool {
+    !key.is_ratio() && target.is_finite() && target >= 0.0 && !is_unaffectable(comps, key, target)
 }
 
 /// Appends the pairwise dominance infeasibility warnings for `targets`.
 ///
-/// Ignores non-[`is_checkable_target`]s - those have their own checks and would add noise here.
-fn append_pairwise_issues(comps: &[Composition], targets: &[(CompKey, f64)], issues: &mut Vec<BalancingIssue>) {
+/// Ignores non-[`is_dominance_checkable_target`]s - those have their own checks and would add noise
+/// here. Such dominance checkable targets are always extensive ([`BalanceKey::Comp`]), so the
+/// dominance comparison operates on their [`CompKey`] magnitudes.
+fn append_pairwise_dominance_issues(
+    comps: &[Composition],
+    targets: &[(BalanceKey, f64)],
+    issues: &mut Vec<BalancingIssue>,
+) {
     for (index, &(key_a, target_a)) in targets.iter().enumerate() {
-        if !is_checkable_target(comps, key_a, target_a) {
-            continue;
-        }
-        for &(key_b, target_b) in &targets[index + 1..] {
-            if !is_checkable_target(comps, key_b, target_b) {
-                continue;
-            }
-
-            // Palette-derived dominance check: if one key dominates the other across all comps but
-            // carries the smaller target, no non-negative mix can satisfy both.
-            if dominates(comps, key_b, key_a) && !is_subset(target_a, target_b) {
-                issues.push(BalancingIssue::DominanceViolation {
-                    lesser: key_a,
-                    greater: key_b,
-                    lesser_target: target_a,
-                    greater_target: target_b,
-                });
-            } else if dominates(comps, key_a, key_b) && !is_subset(target_b, target_a) {
-                issues.push(BalancingIssue::DominanceViolation {
-                    lesser: key_b,
-                    greater: key_a,
-                    lesser_target: target_b,
-                    greater_target: target_a,
-                });
+        if let BalanceKey::Comp(comp_a) = key_a
+            && is_dominance_checkable_target(comps, key_a, target_a)
+        {
+            for &(key_b, target_b) in &targets[index + 1..] {
+                if let BalanceKey::Comp(comp_b) = key_b
+                    && is_dominance_checkable_target(comps, key_b, target_b)
+                {
+                    // Palette-derived dominance check: if one key dominates the other across all
+                    // comps but carries the smaller target, no non-negative mix can satisfy both.
+                    if dominates(comps, comp_b, comp_a) && !is_subset(target_a, target_b) {
+                        issues.push(BalancingIssue::DominanceViolation {
+                            lesser: key_a,
+                            greater: key_b,
+                            lesser_target: target_a,
+                            greater_target: target_b,
+                        });
+                    } else if dominates(comps, comp_a, comp_b) && !is_subset(target_b, target_a) {
+                        issues.push(BalancingIssue::DominanceViolation {
+                            lesser: key_b,
+                            greater: key_a,
+                            lesser_target: target_b,
+                            greater_target: target_a,
+                        });
+                    }
+                }
             }
         }
     }
@@ -480,50 +550,50 @@ fn append_pairwise_issues(comps: &[Composition], targets: &[(CompKey, f64)], iss
 /// (epsilon-aware). If two or more parts accumulate and their targets sum above `whole`'s target,
 /// the combination is infeasible for a non-negative normalized mix.
 ///
-/// Single-part cases are left to [`append_pairwise_issues`]; this only flags `parts.len() >= 2`.
-/// The accumulation is greedy — sound (never false-positive) but not exhaustive, so it may miss
-/// some violating subsets, which is acceptable for a best-effort warning.
+/// Single-part cases are left to [`append_pairwise_dominance_issues`]; this only flags
+/// `parts.len() >= 2`. The accumulation is greedy — sound (never false-positive) but not
+/// exhaustive, so it may miss some violating subsets, which is acceptable for best-effort warnings.
 fn append_additive_dominance_issues(
     comps: &[Composition],
-    targets: &[(CompKey, f64)],
+    targets: &[(BalanceKey, f64)],
     issues: &mut Vec<BalancingIssue>,
 ) {
     for &(whole, whole_target) in targets {
-        if !is_checkable_target(comps, whole, whole_target) {
-            continue;
-        }
+        if let BalanceKey::Comp(whole_comp) = whole
+            && is_dominance_checkable_target(comps, whole, whole_target)
+        {
+            // Greedily accumulate parts whose running per-composition sum stays under `whole`'s.
+            let mut running = vec![0.0_f64; comps.len()];
+            let mut parts = Vec::new();
+            let mut parts_target_sum = 0.0;
 
-        // Greedily accumulate parts whose running per-composition sum stays under `whole`'s.
-        let mut running = vec![0.0_f64; comps.len()];
-        let mut parts = Vec::new();
-        let mut parts_target_sum = 0.0;
+            for &(part, part_target) in targets {
+                if let BalanceKey::Comp(part_comp) = part
+                    && is_dominance_checkable_target(comps, part, part_target)
+                {
+                    let fits = comps
+                        .iter()
+                        .zip(&running)
+                        .all(|(comp, &acc)| is_subset(acc + comp.get(part_comp), comp.get(whole_comp)));
 
-        for &(part, part_target) in targets {
-            if part == whole || !is_checkable_target(comps, part, part_target) {
-                continue;
-            }
-
-            let fits = comps
-                .iter()
-                .zip(&running)
-                .all(|(comp, &acc)| is_subset(acc + comp.get(part), comp.get(whole)));
-
-            if fits {
-                for (comp, acc) in comps.iter().zip(&mut running) {
-                    *acc += comp.get(part);
+                    if fits {
+                        for (comp, acc) in comps.iter().zip(&mut running) {
+                            *acc += comp.get(part_comp);
+                        }
+                        parts.push(part);
+                        parts_target_sum += part_target;
+                    }
                 }
-                parts.push(part);
-                parts_target_sum += part_target;
             }
-        }
 
-        if parts.len() >= 2 && !is_subset(parts_target_sum, whole_target) {
-            issues.push(BalancingIssue::AdditiveDominanceViolation {
-                whole,
-                parts,
-                parts_target_sum,
-                whole_target,
-            });
+            if parts.len() >= 2 && !is_subset(parts_target_sum, whole_target) {
+                issues.push(BalancingIssue::AdditiveDominanceViolation {
+                    whole,
+                    parts,
+                    parts_target_sum,
+                    whole_target,
+                });
+            }
         }
     }
 }
@@ -544,9 +614,9 @@ fn append_additive_dominance_issues(
 /// compositions and targets, numerical issues, etc.
 pub fn balance_compositions_nalgebra(
     comps: &[Composition],
-    targets: &[(CompKey, f64)],
+    targets: &[(BalanceKey, f64)],
     weighting: Option<Weighting>,
-    priority_weights: &[(CompKey, f64)],
+    priority_weights: &[(BalanceKey, f64)],
 ) -> Result<Vec<(Composition, f64)>> {
     balance_with_reweighting(comps, targets, weighting, priority_weights, solve_nalgebra_raw)
 }
@@ -564,9 +634,9 @@ pub fn balance_compositions_nalgebra(
 /// incompatible compositions and targets, numerical issues, etc.
 pub fn balance_compositions_nnls(
     comps: &[Composition],
-    targets: &[(CompKey, f64)],
+    targets: &[(BalanceKey, f64)],
     weighting: Option<Weighting>,
-    priority_weights: &[(CompKey, f64)],
+    priority_weights: &[(BalanceKey, f64)],
 ) -> Result<Vec<(Composition, f64)>> {
     balance_with_reweighting(comps, targets, weighting, priority_weights, solve_nnls_raw)
 }
@@ -609,7 +679,7 @@ fn solve_nnls_raw(a: &[f64], y: &[f64], rows: usize, cols: usize) -> Result<Vec<
 /// The raw solvers assume pre-validated targets; user input is validated once by
 /// [`balance_compositions`], so a bad target reaching here is a programming bug.
 #[cfg(debug_assertions)]
-fn debug_assert_targets_validated(comps: &[Composition], targets: &[(CompKey, f64)]) {
+fn debug_assert_targets_validated(comps: &[Composition], targets: &[(BalanceKey, f64)]) {
     let report = validate_balancing_targets(comps, targets, &[]);
     assert!(!report.has_errors(), "raw balancing path requires validated targets: {report}");
 }
@@ -636,9 +706,9 @@ fn debug_assert_targets_validated(comps: &[Composition], targets: &[(CompKey, f6
 /// Forwards any error from `solve`.
 pub fn balance_with_reweighting(
     comps: &[Composition],
-    targets: &[(CompKey, f64)],
+    targets: &[(BalanceKey, f64)],
     weighting: Option<Weighting>,
-    priority_weights: &[(CompKey, f64)],
+    priority_weights: &[(BalanceKey, f64)],
     solve: RawSolver,
 ) -> Result<Vec<(Composition, f64)>> {
     #[cfg(debug_assertions)]
@@ -648,7 +718,7 @@ pub fn balance_with_reweighting(
     let targets = constrainable_targets(comps, targets);
 
     // Seed denominator estimates for the ratio targets, from the targets alone.
-    let mut ratio_denominators: Vec<(CompKey, f64)> = targets
+    let mut ratio_denominators: Vec<(BalanceKey, f64)> = targets
         .iter()
         .filter_map(|&(key, _)| estimate_ratio_denominator(key, &targets).map(|denominator| (key, denominator)))
         .collect();
@@ -656,7 +726,7 @@ pub fn balance_with_reweighting(
     let rows = targets.len() + 1;
     let cols = comps.len();
 
-    let solve_once = |ratio_denominators: &[(CompKey, f64)]| -> Result<Vec<f64>> {
+    let solve_once = |ratio_denominators: &[(BalanceKey, f64)]| -> Result<Vec<f64>> {
         let weights = row_weights(&targets, weighting, priority_weights, ratio_denominators);
         solve(&make_matrix_a(comps, &targets, &weights), &make_vector_y(&targets, &weights), rows, cols)
     };
@@ -670,7 +740,7 @@ pub fn balance_with_reweighting(
         let mut needs_reweight = false;
 
         for (key, denominator) in &mut ratio_denominators {
-            if let Some((_, den)) = ratio_key_parts(*key) {
+            if let Some((_, den)) = key.ratio_parts() {
                 let achieved = achieved_value(&balanced, den);
 
                 needs_reweight = needs_reweight
@@ -699,7 +769,7 @@ pub fn balance_with_reweighting(
 /// Affectability is evaluated through [`target_row_coeff`] (see [`is_unaffectable`]), so ratio
 /// targets use their homogeneous coefficients and never produce `f64::NAN`; a ratio row is dropped
 /// only when every composition lies exactly on the requested ratio (its row is genuinely zero).
-fn constrainable_targets(comps: &[Composition], targets: &[(CompKey, f64)]) -> Vec<(CompKey, f64)> {
+fn constrainable_targets(comps: &[Composition], targets: &[(BalanceKey, f64)]) -> Vec<(BalanceKey, f64)> {
     targets
         .iter()
         .copied()
@@ -721,9 +791,14 @@ fn constrainable_targets(comps: &[Composition], targets: &[(CompKey, f64)]) -> V
 /// This is only a seed: [`balance_with_reweighting`] corrects it against the achieved denominator
 /// from a first solve when the two differ materially.
 #[must_use]
-pub fn estimate_ratio_denominator(key: CompKey, targets: &[(CompKey, f64)]) -> Option<f64> {
-    let (_, den) = ratio_key_parts(key)?;
-    let target_value = |wanted: CompKey| targets.iter().find(|&&(k, _)| k == wanted).map(|&(_, v)| v);
+pub fn estimate_ratio_denominator(key: BalanceKey, targets: &[(BalanceKey, f64)]) -> Option<f64> {
+    let (_, den) = key.ratio_parts()?;
+    let target_value = |wanted: CompKey| {
+        targets
+            .iter()
+            .find(|&&(k, _)| k == BalanceKey::Comp(wanted))
+            .map(|&(_, v)| v)
+    };
 
     // 1. The denominator key is itself a target.
     if let Some(value) = target_value(den) {
@@ -736,7 +811,7 @@ pub fn estimate_ratio_denominator(key: CompKey, targets: &[(CompKey, f64)]) -> O
         CompKey::Water => target_value(CompKey::TotalSolids)
             .map_or(TYPICAL_MIX_WATER, |solids| 100.0 - solids - target_value(CompKey::Alcohol).unwrap_or(0.0)),
         CompKey::TotalFats => TYPICAL_MIX_FAT,
-        other => unreachable!("unsupported ratio denominator key {other:?} (see ratio_key_parts)"),
+        other => unreachable!("unsupported ratio denominator key {other:?} (see RatioKey::parts)"),
     };
     Some(estimate)
 }
@@ -761,20 +836,20 @@ pub fn estimate_ratio_denominator(key: CompKey, targets: &[(CompKey, f64)]) -> O
 /// `priority_weights` therefore reproduces the unprioritized weights exactly.
 #[must_use]
 pub fn row_weights(
-    targets: &[(CompKey, f64)],
+    targets: &[(BalanceKey, f64)],
     weighting: Weighting,
-    priority_weights: &[(CompKey, f64)],
-    ratio_denominators: &[(CompKey, f64)],
+    priority_weights: &[(BalanceKey, f64)],
+    ratio_denominators: &[(BalanceKey, f64)],
 ) -> Vec<f64> {
-    let priority_for = |key: CompKey| {
+    let priority_for = |key: BalanceKey| {
         priority_weights
             .iter()
             .find(|&&(other, _)| other == key)
             .map_or(1.0, |&(_, weight)| weight)
     };
-    let denominator_for = |key: CompKey| ratio_denominators.iter().find(|&&(k, _)| k == key).map(|&(_, d)| d);
+    let denominator_for = |key: BalanceKey| ratio_denominators.iter().find(|&&(k, _)| k == key).map(|&(_, d)| d);
 
-    let relative_weight = |key: CompKey, target: f64| {
+    let relative_weight = |key: BalanceKey, target: f64| {
         let target = target.max(RELATIVE_WEIGHT_FLOOR);
 
         denominator_for(key)
@@ -809,7 +884,7 @@ pub fn row_weights(
 /// [3.25, 40,    0]
 /// [8.71,  5.4, 97]
 /// [1,     1,    1]
-fn make_matrix_a(comps: &[Composition], targets: &[(CompKey, f64)], weights: &[f64]) -> Vec<f64> {
+fn make_matrix_a(comps: &[Composition], targets: &[(BalanceKey, f64)], weights: &[f64]) -> Vec<f64> {
     targets
         .iter()
         .zip(weights)
@@ -830,7 +905,7 @@ fn make_matrix_a(comps: &[Composition], targets: &[(CompKey, f64)], weights: &[f
 /// \[16\]  // Milk Fat
 /// \[11\]  // MSNF
 ///  \[1\]  // Total sums to 100%
-fn make_vector_y(targets: &[(CompKey, f64)], weights: &[f64]) -> Vec<f64> {
+fn make_vector_y(targets: &[(BalanceKey, f64)], weights: &[f64]) -> Vec<f64> {
     targets
         .iter()
         .zip(weights)
@@ -839,48 +914,26 @@ fn make_vector_y(targets: &[(CompKey, f64)], weights: &[f64]) -> Vec<f64> {
         .collect::<Vec<_>>()
 }
 
-/// Maps a ratio key to its `(numerator, denominator)` extensive [`CompKey`] parts, or `None` if
-/// `key` is not a ratio key.
-///
-/// A ratio key is `numerator / denominator * 100`; balancing encodes a ratio target `R` as the
-/// homogeneous row `numerator - (R / 100) * denominator = 0`, which never divides (so never `NaN`s
-/// on a zero denominator). The single source of truth for which keys are ratio keys —
-/// [`is_ratio_key`] is defined in terms of it.
-#[must_use]
-pub const fn ratio_key_parts(key: CompKey) -> Option<(CompKey, CompKey)> {
-    match key {
-        CompKey::AbsPAC => Some((CompKey::TotalPAC, CompKey::Water)),
-        CompKey::StabilizersPerWater => Some((CompKey::TotalStabilizers, CompKey::Water)),
-        CompKey::EmulsifiersPerFat => Some((CompKey::TotalEmulsifiers, CompKey::TotalFats)),
-        _ => None,
-    }
-}
-
-/// Returns true if the given [`CompKey`] is a ratio key, e.g. [`CompKey::AbsPAC`], etc.
-///
-/// A ratio key is one that is a ratio of two extensive keys (see [`ratio_key_parts`]); as a
-/// balancing target it is encoded as a homogeneous row rather than a direct weighted-sum row.
-#[must_use]
-pub const fn is_ratio_key(key: CompKey) -> bool {
-    ratio_key_parts(key).is_some()
-}
-
 /// The per-composition least-squares coefficient for one balancing target.
 ///
 /// For an extensive key the coefficient is simply `comp.get(key)`. For a ratio key `R`, it is the
-/// homogeneous `comp.get(num) - (R / 100) * comp.get(den)` (see [`ratio_key_parts`]), which is
+/// homogeneous `comp.get(num) - (R / 100) * comp.get(den)` (see [`RatioKey::parts`]), which is
 /// always finite — the solver never evaluates the `NaN`-prone per-ingredient ratio.
-fn target_row_coeff(key: CompKey, target: f64, comp: &Composition) -> f64 {
-    match ratio_key_parts(key) {
-        Some((num, den)) => comp.get(num) - (target / 100.0) * comp.get(den),
-        None => comp.get(key),
+#[must_use]
+pub fn target_row_coeff(key: BalanceKey, target: f64, comp: &Composition) -> f64 {
+    match key {
+        BalanceKey::Ratio(ratio) => {
+            let (num_key, den_key) = ratio.parts();
+            comp.get(num_key) - (target / 100.0) * comp.get(den_key)
+        }
+        BalanceKey::Comp(comp_key) => comp.get(comp_key),
     }
 }
 
 /// The right-hand side for one target row: `0` for a ratio key (its row is homogeneous), else the
 /// target value itself.
-const fn target_row_rhs(key: CompKey, target: f64) -> f64 {
-    if is_ratio_key(key) { 0.0 } else { target }
+const fn target_row_rhs(key: BalanceKey, target: f64) -> f64 {
+    if key.is_ratio() { 0.0 } else { target }
 }
 
 /// The achieved value for `key` from a balanced result, summed without the renormalization that
@@ -888,23 +941,30 @@ const fn target_row_rhs(key: CompKey, target: f64) -> f64 {
 /// amounts a non-negativity-free solver may return).
 ///
 /// Ratio-aware: a ratio key yields its achieved ratio (a percentage) from its numerator and
-/// denominator parts (see [`ratio_key_parts`]) — those parts being extensive keys, they resolve
-/// via the base case below. An extensive key yields the plain weighted sum.
-fn achieved_value(balanced: &[(Composition, f64)], key: CompKey) -> f64 {
-    if let Some((num, den)) = ratio_key_parts(key) {
-        return achieved_value(balanced, num) / achieved_value(balanced, den) * 100.0;
+/// denominator parts (see [`RatioKey::parts`]) — those parts being extensive keys, they resolve
+/// via the base case below. An extensive key yields the plain weighted sum. Accepts any key kind
+/// via [`Into<BalanceKey>`], so callers can pass a bare [`CompKey`] or [`RatioKey`].
+fn achieved_value<K: Into<BalanceKey>>(balanced: &[(Composition, f64)], key: K) -> f64 {
+    match key.into() {
+        BalanceKey::Ratio(ratio) => {
+            let (num_key, den_key) = ratio.parts();
+            achieved_value(balanced, num_key) / achieved_value(balanced, den_key) * 100.0
+        }
+        BalanceKey::Comp(comp_key) => balanced.iter().map(|(comp, amount)| *amount * comp.get(comp_key)).sum(),
     }
-    balanced.iter().map(|(comp, amount)| *amount * comp.get(key)).sum()
 }
 
-/// The [`CompKey`]s that can be used as balancing targets — every key.
+/// The keys that can be used as balancing targets — all [`CompKey`]s and [`RatioKey`]s.
 ///
 /// Ratio keys are balanceable too: a ratio target `R` is encoded as the homogeneous row
-/// `numerator - (R / 100) * denominator = 0` (see [`ratio_key_parts`]), so it never divides and
+/// `numerator - (R / 100) * denominator = 0` (see [`RatioKey::parts`]), so it never divides and
 /// never poisons the solve with `f64::NAN`. Extensive keys contribute their usual weighted-sum row.
 #[must_use]
-pub fn get_balanceable_comp_keys() -> Vec<CompKey> {
-    CompKey::iter().collect()
+pub fn get_balanceable_keys() -> Vec<BalanceKey> {
+    CompKey::iter()
+        .map(BalanceKey::Comp)
+        .chain(RatioKey::iter().map(BalanceKey::Ratio))
+        .collect()
 }
 
 #[cfg(test)]
@@ -929,7 +989,7 @@ mod tests {
     /// A labelled balancing run: a name, the solver to use, and the priority weights to apply. This
     /// lets several runs — different solvers and/or priority levels — be shown side-by-side in one
     /// report (an empty priority slice reproduces the unprioritized solve exactly).
-    type LabeledRun = (&'static str, SolverFn, &'static [(CompKey, f64)]);
+    type LabeledRun = (&'static str, SolverFn, &'static [(BalanceKey, f64)]);
 
     /// Both solvers, unprioritized, paired for side-by-side quality reports.
     const BOTH_SOLVERS: &[LabeledRun] = &[
@@ -945,15 +1005,23 @@ mod tests {
     /// each column tightens POD harder, visibly trading off against the competing targets.
     const POD_PRIORITY_RUNS: &[LabeledRun] = &[
         ("baseline", balance_compositions_nnls, &[]),
-        ("POD High", balance_compositions_nnls, &[(CompKey::POD, Priority::High.weight())]),
-        ("POD Critical", balance_compositions_nnls, &[(CompKey::POD, Priority::Critical.weight())]),
+        ("POD High", balance_compositions_nnls, &[(BalanceKey::Comp(CompKey::POD), Priority::High.weight())]),
+        (
+            "POD Critical",
+            balance_compositions_nnls,
+            &[(BalanceKey::Comp(CompKey::POD), Priority::Critical.weight())],
+        ),
     ];
 
-    /// nnls with and without a [`Priority::Critical`] on the ratio key [`CompKey::AbsPAC`], for the
+    /// nnls with and without a [`Priority::Critical`] on the ratio key [`RatioKey::AbsPAC`], for the
     /// cross-feature report: prioritizing a ratio target tightens it against the extensive ones.
     const ABS_PAC_PRIORITY_RUNS: &[LabeledRun] = &[
         ("baseline", balance_compositions_nnls, &[]),
-        ("AbsPAC Critical", balance_compositions_nnls, &[(CompKey::AbsPAC, Priority::Critical.weight())]),
+        (
+            "AbsPAC Critical",
+            balance_compositions_nnls,
+            &[(BalanceKey::Ratio(RatioKey::AbsPAC), Priority::Critical.weight())],
+        ),
     ];
 
     /// Denominator floor for relative-error reporting, so zero / near-zero targets stay finite.
@@ -987,12 +1055,12 @@ mod tests {
     }
 
     /// Helper function to extract target pairs from a Composition for specified keys
-    fn get_targets_from_composition(composition: &Composition, keys: &[CompKey]) -> Vec<(CompKey, f64)> {
-        keys.iter().map(|key| (*key, composition.get(*key))).collect()
+    fn get_targets_from_composition(composition: &Composition, keys: &[BalanceKey]) -> Vec<(BalanceKey, f64)> {
+        keys.iter().map(|key| (*key, key.value(composition))).collect()
     }
 
     /// Helper function to extract target pairs from a light recipe's calculated composition
-    fn get_targets_from_light_recipe(light_recipe: &OwnedLightRecipe, keys: &[CompKey]) -> Vec<(CompKey, f64)> {
+    fn get_targets_from_light_recipe(light_recipe: &OwnedLightRecipe, keys: &[BalanceKey]) -> Vec<(BalanceKey, f64)> {
         get_targets_from_composition(
             &Recipe::from_light_recipe(None, light_recipe, &DATABASE)
                 .unwrap()
@@ -1002,9 +1070,9 @@ mod tests {
         )
     }
 
-    /// Helper function to filter a list of CompKey-value pairs to only include specified keys
+    /// Helper function to filter a list of key-value pairs to only include specified keys
     #[expect(unused)]
-    fn filter_targets_for_keys(targets: &[(CompKey, f64)], keys: &[CompKey]) -> Vec<(CompKey, f64)> {
+    fn filter_targets_for_keys(targets: &[(BalanceKey, f64)], keys: &[BalanceKey]) -> Vec<(BalanceKey, f64)> {
         targets.iter().filter(|(key, _)| keys.contains(key)).copied().collect()
     }
 
@@ -1019,7 +1087,7 @@ mod tests {
 
     /// The largest [`balance_rel_error_pp`] across all `targets` — the worst-case relative miss, a
     /// single summary of how well a balanced result hits its targets.
-    fn max_rel_error(balanced: &[(Composition, f64)], targets: &[(CompKey, f64)]) -> f64 {
+    fn max_rel_error(balanced: &[(Composition, f64)], targets: &[(BalanceKey, f64)]) -> f64 {
         targets
             .iter()
             .map(|(key, target)| balance_rel_error_pp(achieved_value(balanced, *key), *target))
@@ -1067,15 +1135,15 @@ mod tests {
     /// for each key; see [`balance_rel_error_pp`].
     fn assert_balance_compositions<F, P>(
         comps: &[Composition],
-        targets: &[(CompKey, f64)],
+        targets: &[(BalanceKey, f64)],
         solve: F,
         epsilons: Epsilons,
         ceiling: &KeyCeiling,
     ) where
-        F: Fn(&[Composition], &[(CompKey, f64)], Option<Weighting>, &[P]) -> Result<Vec<(Composition, f64)>>,
+        F: Fn(&[Composition], &[(BalanceKey, f64)], Option<Weighting>, &[P]) -> Result<Vec<(Composition, f64)>>,
     {
         // `P` is the solver's priority element type; the assertions use no priorities, so an empty
-        // slice serves both the `&[(CompKey, f64)]` and `&[(CompKey, Priority)]` solver signatures.
+        // slice serves both the `&[(BalanceKey, f64)]` and `&[(BalanceKey, Priority)]` signatures.
         let balanced = solve(comps, targets, None, &[]).unwrap();
         assert_eq!(balanced.len(), comps.len());
 
@@ -1095,7 +1163,7 @@ mod tests {
             assert_true!(achieved.is_finite(), "Non-finite achieved value for {:?}: {}", key, achieved);
 
             let error = balance_rel_error_pp(achieved, *target);
-            let limit = ceiling.for_key(*key);
+            let limit = ceiling.for_balance_key(*key);
 
             assert_true!(
                 error <= limit,
@@ -1117,11 +1185,16 @@ mod tests {
     /// fails renders a stable `FAILED` line instead of panicking, so infeasible systems snapshot.
     fn report_balance_quality(
         comps: &[Composition],
-        targets: &[(CompKey, f64)],
+        targets: &[(BalanceKey, f64)],
         runs: &[LabeledRun],
         names: Option<&[&str]>,
     ) -> String {
-        let key_str = |key| format!("{key:?}");
+        // Print the inner variant name (e.g. "MilkFat", "AbsPAC") so snapshots stay stable across
+        // the `CompKey` -> `BalanceKey` migration.
+        let key_str = |key: &BalanceKey| match key {
+            BalanceKey::Comp(comp) => format!("{comp:?}"),
+            BalanceKey::Ratio(ratio) => format!("{ratio:?}"),
+        };
 
         let truncate_to = |name: &str, length: usize| {
             if name.len() > length {
@@ -1231,23 +1304,23 @@ mod tests {
     /// the solve), while Stabilizer Blend keeps a positive-water ratio reachable.
     const STABILIZER_AND_SUCROSE_ING: &[&str] = &["3.25% Milk", "40% Cream", "Stabilizer Blend", "Sucrose"];
 
-    /// Dairy plus an emulsifier source, for [`CompKey::EmulsifiersPerFat`] (fat-denominated) ratio
+    /// Dairy plus an emulsifier source, for [`RatioKey::EmulsifiersPerFat`] (fat-denominated) ratio
     /// tests: Soy Lecithin supplies emulsifier while milk and cream supply the fat denominator.
     const EMULSIFIER_ING: &[&str] = &["3.25% Milk", "40% Cream", "Soy Lecithin"];
 
     // --- Exact balancing targets ---
 
     /// Trivial dairy targets that the dairy compositions can match exactly, used for sanity checks.
-    static DAIRY_TRIVIAL_TARGETS: LazyLock<Vec<(CompKey, f64)>> =
-        LazyLock::new(|| vec![(CompKey::MilkFat, 16.0), (CompKey::MSNF, 11.0)]);
+    static DAIRY_TRIVIAL_TARGETS: LazyLock<Vec<(BalanceKey, f64)>> =
+        LazyLock::new(|| vec![(CompKey::MilkFat.into(), 16.0), (CompKey::MSNF.into(), 11.0)]);
 
     /// Dairy targets including a zero-valued [`CompKey::TotalStabilizers`] target, exercising the
     /// relative-error floor path (i.e. that the result is finite, and no division by zero).
-    static DAIRY_ZERO_TARGETS: LazyLock<Vec<(CompKey, f64)>> = LazyLock::new(|| {
+    static DAIRY_ZERO_TARGETS: LazyLock<Vec<(BalanceKey, f64)>> = LazyLock::new(|| {
         vec![
-            (CompKey::MilkFat, 16.0),
-            (CompKey::MSNF, 11.0),
-            (CompKey::TotalStabilizers, 0.0),
+            (CompKey::MilkFat.into(), 16.0),
+            (CompKey::MSNF.into(), 11.0),
+            (CompKey::TotalStabilizers.into(), 0.0),
         ]
     });
 
@@ -1256,11 +1329,11 @@ mod tests {
     /// while hitting a sweetness ([`CompKey::POD`]) and hardness ([`CompKey::TotalPAC`]) target at
     /// once. These targets genuinely require all three sugars — any two-sugar subset misses by
     /// >10 pp (see [`balance_multi_sugar_needs_all_three_sugars`]).
-    static SUGAR_BLEND_TARGETS: LazyLock<Vec<(CompKey, f64)>> = LazyLock::new(|| {
+    static SUGAR_BLEND_TARGETS: LazyLock<Vec<(BalanceKey, f64)>> = LazyLock::new(|| {
         vec![
-            (CompKey::TotalSolids, 31.2),
-            (CompKey::POD, 35.2),
-            (CompKey::TotalPAC, 46.68),
+            (CompKey::TotalSolids.into(), 31.2),
+            (CompKey::POD.into(), 35.2),
+            (CompKey::TotalPAC.into(), 46.68),
         ]
     });
 
@@ -1275,35 +1348,35 @@ mod tests {
     /// The [`CompKey::MilkFat`] and [`CompKey::MSNF`] targets result in ~150 kcal/100g, which is
     /// incompatible with the 200 kcal/100g [`CompKey::Energy`] target. It includes a large
     /// [`CompKey::Energy`] down to a small [`CompKey::POD`] target to exercise the magnitude skew.
-    static DAIRY_DISPARATE_TARGETS: LazyLock<Vec<(CompKey, f64)>> = LazyLock::new(|| {
+    static DAIRY_DISPARATE_TARGETS: LazyLock<Vec<(BalanceKey, f64)>> = LazyLock::new(|| {
         vec![
-            (CompKey::Energy, 200.0),
-            (CompKey::MilkFat, 12.0),
-            (CompKey::MSNF, 8.0),
-            (CompKey::POD, 0.5),
+            (CompKey::Energy.into(), 200.0),
+            (CompKey::MilkFat.into(), 12.0),
+            (CompKey::MSNF.into(), 8.0),
+            (CompKey::POD.into(), 0.5),
         ]
     });
 
     /// "Light premium" paradox: a rich [`CompKey::MilkFat`] target against a capped
     /// [`CompKey::Energy`] target — physically opposed, since milk fat is ~9 kcal/g, so 16% fat
     /// alone already exceeds the 150 kcal/100g [`CompKey::Energy`] target.
-    static LIGHT_PREMIUM_TARGETS: LazyLock<Vec<(CompKey, f64)>> = LazyLock::new(|| {
+    static LIGHT_PREMIUM_TARGETS: LazyLock<Vec<(BalanceKey, f64)>> = LazyLock::new(|| {
         vec![
-            (CompKey::Energy, 150.0),
-            (CompKey::MilkFat, 16.0),
-            (CompKey::MSNF, 11.0),
-            (CompKey::TotalSugars, 18.0),
+            (CompKey::Energy.into(), 150.0),
+            (CompKey::MilkFat.into(), 16.0),
+            (CompKey::MSNF.into(), 11.0),
+            (CompKey::TotalSugars.into(), 18.0),
         ]
     });
 
     /// Chocolate intensity vs. lean: high [`CompKey::CocoaSolids`] and low [`CompKey::CocoaButter`]
     /// targets, which the single cocoa source cannot satisfy independently (the two are coupled by
     /// its fixed solids:butter ratio).
-    static CHOCOLATE_COUPLED_COCOA_TARGETS: LazyLock<Vec<(CompKey, f64)>> = LazyLock::new(|| {
+    static CHOCOLATE_COUPLED_COCOA_TARGETS: LazyLock<Vec<(BalanceKey, f64)>> = LazyLock::new(|| {
         vec![
-            (CompKey::CocoaSolids, 6.0),
-            (CompKey::CocoaButter, 1.0),
-            (CompKey::TotalSugars, 20.0),
+            (CompKey::CocoaSolids.into(), 6.0),
+            (CompKey::CocoaButter.into(), 1.0),
+            (CompKey::TotalSugars.into(), 20.0),
         ]
     });
 
@@ -1311,53 +1384,58 @@ mod tests {
     /// [`CompKey::Lactose`] target capped low to avoid lactose crystallization — opposed, because
     /// dairy ties lactose to MSNF at a roughly fixed ratio (~0.5). With only the three dairy comps
     /// the capped lactose cannot be held while MSNF is pushed high, so the system is infeasible.
-    static DAIRY_HIGH_MSNF_TARGETS: LazyLock<Vec<(CompKey, f64)>> =
-        LazyLock::new(|| vec![(CompKey::MSNF, 16.0), (CompKey::Lactose, 5.0), (CompKey::MilkFat, 10.0)]);
+    static DAIRY_HIGH_MSNF_TARGETS: LazyLock<Vec<(BalanceKey, f64)>> = LazyLock::new(|| {
+        vec![
+            (CompKey::MSNF.into(), 16.0),
+            (CompKey::Lactose.into(), 5.0),
+            (CompKey::MilkFat.into(), 10.0),
+        ]
+    });
 
     /// Sorbet sweetness vs. hardness: a restrained [`CompKey::POD`] (not too sweet) against a high
     /// [`CompKey::TotalPAC`] (soft, scoopable) target — opposed, since both rise with sugar. Spans
     /// the large solids/sugar/PAC targets down to a trace [`CompKey::TotalStabilizers`].
-    static SORBET_DISPARATE_TARGETS: LazyLock<Vec<(CompKey, f64)>> = LazyLock::new(|| {
+    static SORBET_DISPARATE_TARGETS: LazyLock<Vec<(BalanceKey, f64)>> = LazyLock::new(|| {
         vec![
-            (CompKey::TotalSolids, 32.0),
-            (CompKey::TotalSugars, 26.0),
-            (CompKey::TotalPAC, 32.0),
-            (CompKey::POD, 14.0),
-            (CompKey::TotalStabilizers, 0.40),
+            (CompKey::TotalSolids.into(), 32.0),
+            (CompKey::TotalSugars.into(), 26.0),
+            (CompKey::TotalPAC.into(), 32.0),
+            (CompKey::POD.into(), 14.0),
+            (CompKey::TotalStabilizers.into(), 0.40),
         ]
     });
 
     /// Booze base: a modest [`CompKey::ABV`] target plus a separate [`CompKey::TotalPAC`] target,
     /// which the liqueur's outsized per-gram PAC contribution over-constrains.
-    static BOOZY_DISPARATE_TARGETS: LazyLock<Vec<(CompKey, f64)>> = LazyLock::new(|| {
+    static BOOZY_DISPARATE_TARGETS: LazyLock<Vec<(BalanceKey, f64)>> = LazyLock::new(|| {
         vec![
-            (CompKey::TotalSugars, 17.0),
-            (CompKey::TotalPAC, 28.0),
-            (CompKey::ABV, 4.0),
+            (CompKey::TotalSugars.into(), 17.0),
+            (CompKey::TotalPAC.into(), 28.0),
+            (CompKey::ABV.into(), 4.0),
         ]
     });
 
     // --- Ratio-key balancing targets ---
 
-    /// A water-denominated [`CompKey::AbsPAC`] target in conflict with its [`CompKey::TotalPAC`]
+    /// A water-denominated [`RatioKey::AbsPAC`] target in conflict with its [`CompKey::TotalPAC`]
     /// one (over-determining the palette), plus [`CompKey::POD`] and [`CompKey::TotalSolids`].
-    static SORBET_ABS_PAC_TARGETS: LazyLock<Vec<(CompKey, f64)>> = LazyLock::new(|| {
+    static SORBET_ABS_PAC_TARGETS: LazyLock<Vec<(BalanceKey, f64)>> = LazyLock::new(|| {
         vec![
-            (CompKey::AbsPAC, 45.0),
-            (CompKey::TotalPAC, 20.0),
-            (CompKey::POD, 14.0),
-            (CompKey::TotalSolids, 32.0),
+            (RatioKey::AbsPAC.into(), 45.0),
+            (CompKey::TotalPAC.into(), 20.0),
+            (CompKey::POD.into(), 14.0),
+            (CompKey::TotalSolids.into(), 32.0),
         ]
     });
 
     // --- Balancing tests ---
 
     /// All balanceable targets of a reference recipe, dropping any whose value is non-finite. A
-    /// ratio key (e.g. [`CompKey::EmulsifiersPerFat`]) is `NaN` when the recipe's denominator is
+    /// ratio key (e.g. [`RatioKey::EmulsifiersPerFat`]) is `NaN` when the recipe's denominator is
     /// zero (e.g. a fat-free sorbet has no [`CompKey::TotalFats`]), and such an undefined target
     /// cannot be recovered; every finite key, ratio keys included, is kept.
-    fn finite_balanceable_targets(light_recipe: &OwnedLightRecipe) -> Vec<(CompKey, f64)> {
-        get_targets_from_light_recipe(light_recipe, &get_balanceable_comp_keys())
+    fn finite_balanceable_targets(light_recipe: &OwnedLightRecipe) -> Vec<(BalanceKey, f64)> {
+        get_targets_from_light_recipe(light_recipe, &get_balanceable_keys())
             .into_iter()
             .filter(|(_, value)| value.is_finite())
             .collect()
@@ -1658,26 +1736,27 @@ mod tests {
     }
 
     #[test]
-    fn is_ratio_key_identifies_ratio_keys() {
-        assert_true!(is_ratio_key(CompKey::AbsPAC));
-        assert_true!(is_ratio_key(CompKey::StabilizersPerWater));
-        assert_true!(is_ratio_key(CompKey::EmulsifiersPerFat));
+    fn balance_key_is_ratio_identifies_ratio_keys() {
+        assert_true!(BalanceKey::from(RatioKey::AbsPAC).is_ratio());
+        assert_true!(BalanceKey::from(RatioKey::StabilizersPerWater).is_ratio());
+        assert_true!(BalanceKey::from(RatioKey::EmulsifiersPerFat).is_ratio());
     }
 
     #[test]
-    fn is_ratio_key_rejects_extensive_keys() {
-        assert_false!(is_ratio_key(CompKey::MilkFat));
-        assert_false!(is_ratio_key(CompKey::Energy));
-        assert_false!(is_ratio_key(CompKey::TotalPAC));
-        assert_false!(is_ratio_key(CompKey::Water));
+    fn balance_key_is_ratio_rejects_extensive_keys() {
+        assert_false!(BalanceKey::from(CompKey::MilkFat).is_ratio());
+        assert_false!(BalanceKey::from(CompKey::Energy).is_ratio());
+        assert_false!(BalanceKey::from(CompKey::TotalPAC).is_ratio());
+        assert_false!(BalanceKey::from(CompKey::Water).is_ratio());
     }
 
     #[test]
-    fn ratio_key_parts_maps_each_ratio_key_to_its_extensive_parts() {
-        assert_eq!(ratio_key_parts(CompKey::AbsPAC), Some((CompKey::TotalPAC, CompKey::Water)));
-        assert_eq!(ratio_key_parts(CompKey::StabilizersPerWater), Some((CompKey::TotalStabilizers, CompKey::Water)));
-        assert_eq!(ratio_key_parts(CompKey::EmulsifiersPerFat), Some((CompKey::TotalEmulsifiers, CompKey::TotalFats)));
-        assert_eq!(ratio_key_parts(CompKey::MilkFat), None);
+    fn balance_key_ratio_parts_maps_each_ratio_key_to_its_extensive_parts() {
+        assert_eq!(RatioKey::AbsPAC.parts(), (CompKey::TotalPAC, CompKey::Water));
+        assert_eq!(RatioKey::StabilizersPerWater.parts(), (CompKey::TotalStabilizers, CompKey::Water));
+        assert_eq!(RatioKey::EmulsifiersPerFat.parts(), (CompKey::TotalEmulsifiers, CompKey::TotalFats));
+        assert_eq!(BalanceKey::from(RatioKey::AbsPAC).ratio_parts(), Some((CompKey::TotalPAC, CompKey::Water)));
+        assert_eq!(BalanceKey::from(CompKey::MilkFat).ratio_parts(), None);
     }
 
     #[test]
@@ -1687,79 +1766,83 @@ mod tests {
         // Common case: a ratio key with non-zero numerator and denominator yields the homogeneous
         // combination `num - (R/100)*den` — a finite, non-zero coefficient.
         let r = 9.0;
-        let abs_pac_coeff = target_row_coeff(CompKey::AbsPAC, r, &milk);
+        let abs_pac_coeff = target_row_coeff(RatioKey::AbsPAC.into(), r, &milk);
         assert_true!(abs_pac_coeff.is_finite() && abs_pac_coeff != 0.0);
         assert_eq!(abs_pac_coeff, milk.get(CompKey::TotalPAC) - (r / 100.0) * milk.get(CompKey::Water));
-        assert_eq!(target_row_rhs(CompKey::AbsPAC, r), 0.0);
+        assert_eq!(target_row_rhs(RatioKey::AbsPAC.into(), r), 0.0);
 
         // Degenerate case: a zero denominator (Sucrose has no water) stays finite — no division.
         let sucrose = comp_by_name("Sucrose");
-        let stab_coeff = target_row_coeff(CompKey::StabilizersPerWater, 0.5, &sucrose);
+        let stab_coeff = target_row_coeff(RatioKey::StabilizersPerWater.into(), 0.5, &sucrose);
         assert_true!(stab_coeff.is_finite());
         // Zero stabilizers and zero water → a zero homogeneous coefficient.
         assert_eq!(stab_coeff, 0.0);
-        assert_eq!(target_row_rhs(CompKey::StabilizersPerWater, 0.5), 0.0);
+        assert_eq!(target_row_rhs(RatioKey::StabilizersPerWater.into(), 0.5), 0.0);
 
         // Extensive key: coefficient is comp.get(key), RHS is the target itself.
-        assert_eq!(target_row_coeff(CompKey::MilkFat, 16.0, &milk), milk.get(CompKey::MilkFat));
-        assert_eq!(target_row_rhs(CompKey::MilkFat, 16.0), 16.0);
+        assert_eq!(target_row_coeff(CompKey::MilkFat.into(), 16.0, &milk), milk.get(CompKey::MilkFat));
+        assert_eq!(target_row_rhs(CompKey::MilkFat.into(), 16.0), 16.0);
     }
 
     #[test]
-    fn get_balanceable_comp_keys_includes_ratio_keys() {
-        let balanceable = get_balanceable_comp_keys();
-        assert_eq!(balanceable.len(), CompKey::iter().count());
-        assert_true!(balanceable.contains(&CompKey::AbsPAC));
-        assert_true!(balanceable.contains(&CompKey::StabilizersPerWater));
-        assert_true!(balanceable.contains(&CompKey::EmulsifiersPerFat));
+    fn get_balanceable_keys_includes_ratio_keys() {
+        let balanceable = get_balanceable_keys();
+        assert_eq!(balanceable.len(), CompKey::iter().count() + RatioKey::iter().count());
+        assert_true!(balanceable.contains(&BalanceKey::from(RatioKey::AbsPAC)));
+        assert_true!(balanceable.contains(&BalanceKey::from(RatioKey::StabilizersPerWater)));
+        assert_true!(balanceable.contains(&BalanceKey::from(RatioKey::EmulsifiersPerFat)));
     }
 
     #[test]
     fn ratio_key_zero_denominator_ingredient_stays_finite() {
         let comps = comps_from_names(STABILIZER_AND_SUCROSE_ING);
-        let target = achieved_value(&equal_parts_reference(&comps), CompKey::StabilizersPerWater);
+        let target = achieved_value(&equal_parts_reference(&comps), RatioKey::StabilizersPerWater);
 
-        let balanced = balance_compositions_nnls(&comps, &[(CompKey::StabilizersPerWater, target)], None, &[]).unwrap();
+        let balanced =
+            balance_compositions_nnls(&comps, &[(RatioKey::StabilizersPerWater.into(), target)], None, &[]).unwrap();
 
         assert_true!(balanced.iter().all(|(_, amount)| amount.is_finite()));
-        assert_true!(achieved_value(&balanced, CompKey::StabilizersPerWater).is_finite());
+        assert_true!(achieved_value(&balanced, RatioKey::StabilizersPerWater).is_finite());
     }
 
     #[test]
     fn ratio_key_target_nalgebra_does_not_panic() {
         let comps = comps_from_names(STABILIZER_AND_SUCROSE_ING);
-        let target = achieved_value(&equal_parts_reference(&comps), CompKey::StabilizersPerWater);
+        let target = achieved_value(&equal_parts_reference(&comps), RatioKey::StabilizersPerWater);
 
         let balanced =
-            balance_compositions_nalgebra(&comps, &[(CompKey::StabilizersPerWater, target)], None, &[]).unwrap();
-        assert_true!(achieved_value(&balanced, CompKey::StabilizersPerWater).is_finite());
+            balance_compositions_nalgebra(&comps, &[(RatioKey::StabilizersPerWater.into(), target)], None, &[])
+                .unwrap();
+        assert_true!(achieved_value(&balanced, RatioKey::StabilizersPerWater).is_finite());
     }
 
     #[test]
     fn balance_recovers_stabilizers_per_water_ratio() {
         let comps = comps_from_names(DAIRY_STABILIZER_ING);
-        let target = achieved_value(&equal_parts_reference(&comps), CompKey::StabilizersPerWater);
+        let target = achieved_value(&equal_parts_reference(&comps), RatioKey::StabilizersPerWater);
 
-        let balanced = balance_compositions_nnls(&comps, &[(CompKey::StabilizersPerWater, target)], None, &[]).unwrap();
-        assert_eq_flt_test!(achieved_value(&balanced, CompKey::StabilizersPerWater), target);
+        let balanced =
+            balance_compositions_nnls(&comps, &[(RatioKey::StabilizersPerWater.into(), target)], None, &[]).unwrap();
+        assert_eq_flt_test!(achieved_value(&balanced, RatioKey::StabilizersPerWater), target);
     }
 
     #[test]
     fn balance_recovers_abs_pac_ratio() {
         let comps = comps_from_names(SORBET_ING);
-        let target = achieved_value(&equal_parts_reference(&comps), CompKey::AbsPAC);
+        let target = achieved_value(&equal_parts_reference(&comps), RatioKey::AbsPAC);
 
-        let balanced = balance_compositions_nnls(&comps, &[(CompKey::AbsPAC, target)], None, &[]).unwrap();
-        assert_eq_flt_test!(achieved_value(&balanced, CompKey::AbsPAC), target);
+        let balanced = balance_compositions_nnls(&comps, &[(RatioKey::AbsPAC.into(), target)], None, &[]).unwrap();
+        assert_eq_flt_test!(achieved_value(&balanced, RatioKey::AbsPAC), target);
     }
 
     #[test]
     fn balance_recovers_emulsifiers_per_fat_ratio() {
         let comps = comps_from_names(EMULSIFIER_ING);
-        let target = achieved_value(&equal_parts_reference(&comps), CompKey::EmulsifiersPerFat);
+        let target = achieved_value(&equal_parts_reference(&comps), RatioKey::EmulsifiersPerFat);
 
-        let balanced = balance_compositions_nnls(&comps, &[(CompKey::EmulsifiersPerFat, target)], None, &[]).unwrap();
-        assert_eq_flt_test!(achieved_value(&balanced, CompKey::EmulsifiersPerFat), target);
+        let balanced =
+            balance_compositions_nnls(&comps, &[(RatioKey::EmulsifiersPerFat.into(), target)], None, &[]).unwrap();
+        assert_eq_flt_test!(achieved_value(&balanced, RatioKey::EmulsifiersPerFat), target);
     }
 
     #[test]
@@ -1767,13 +1850,16 @@ mod tests {
         let comps = comps_from_names(DAIRY_STABILIZER_ING);
         let reference = equal_parts_reference(&comps);
         let milk_fat = achieved_value(&reference, CompKey::MilkFat);
-        let ratio = achieved_value(&reference, CompKey::StabilizersPerWater);
-        let targets = [(CompKey::MilkFat, milk_fat), (CompKey::StabilizersPerWater, ratio)];
+        let ratio = achieved_value(&reference, RatioKey::StabilizersPerWater);
+        let targets = [
+            (CompKey::MilkFat.into(), milk_fat),
+            (RatioKey::StabilizersPerWater.into(), ratio),
+        ];
 
         let balanced = balance_compositions_nnls(&comps, &targets, None, &[]).unwrap();
 
         assert_eq_flt_test!(achieved_value(&balanced, CompKey::MilkFat), milk_fat);
-        assert_eq_flt_test!(achieved_value(&balanced, CompKey::StabilizersPerWater), ratio);
+        assert_eq_flt_test!(achieved_value(&balanced, RatioKey::StabilizersPerWater), ratio);
     }
 
     #[test]
@@ -1781,30 +1867,45 @@ mod tests {
         let comps = comps_from_names(EMULSIFIER_ING);
         let reference = equal_parts_reference(&comps);
         let milk_fat = achieved_value(&reference, CompKey::MilkFat);
-        let ratio = achieved_value(&reference, CompKey::EmulsifiersPerFat);
-        let targets = [(CompKey::MilkFat, milk_fat), (CompKey::EmulsifiersPerFat, ratio)];
+        let ratio = achieved_value(&reference, RatioKey::EmulsifiersPerFat);
+        let targets = [
+            (CompKey::MilkFat.into(), milk_fat),
+            (RatioKey::EmulsifiersPerFat.into(), ratio),
+        ];
 
         let balanced = balance_compositions_nnls(&comps, &targets, None, &[]).unwrap();
 
         assert_eq_flt_test!(achieved_value(&balanced, CompKey::MilkFat), milk_fat);
-        assert_eq_flt_test!(achieved_value(&balanced, CompKey::EmulsifiersPerFat), ratio);
+        assert_eq_flt_test!(achieved_value(&balanced, RatioKey::EmulsifiersPerFat), ratio);
     }
 
     #[test]
     fn estimate_ratio_denominator_uses_denominator_target_exactly() {
         // When the denominator key (Water for AbsPAC, TotalFats for EmulsifiersPerFat) is itself a
         // target, that exact value is used — it is the most direct statement of intent.
-        assert_eq!(estimate_ratio_denominator(CompKey::AbsPAC, &[(CompKey::Water, 70.0)]), Some(70.0));
-        assert_eq!(estimate_ratio_denominator(CompKey::StabilizersPerWater, &[(CompKey::Water, 55.0)]), Some(55.0));
-        assert_eq!(estimate_ratio_denominator(CompKey::EmulsifiersPerFat, &[(CompKey::TotalFats, 12.0)]), Some(12.0));
+        assert_eq!(estimate_ratio_denominator(RatioKey::AbsPAC.into(), &[(CompKey::Water.into(), 70.0)]), Some(70.0));
+        assert_eq!(
+            estimate_ratio_denominator(RatioKey::StabilizersPerWater.into(), &[(CompKey::Water.into(), 55.0)]),
+            Some(55.0)
+        );
+        assert_eq!(
+            estimate_ratio_denominator(RatioKey::EmulsifiersPerFat.into(), &[(CompKey::TotalFats.into(), 12.0)]),
+            Some(12.0)
+        );
     }
 
     #[test]
     fn estimate_ratio_denominator_infers_water_from_total_solids() {
         // Absent a Water target, Water is inferred as 100 − TotalSolids − Alcohol.
-        assert_eq!(estimate_ratio_denominator(CompKey::AbsPAC, &[(CompKey::TotalSolids, 30.0)]), Some(70.0));
         assert_eq!(
-            estimate_ratio_denominator(CompKey::AbsPAC, &[(CompKey::TotalSolids, 30.0), (CompKey::Alcohol, 5.0)]),
+            estimate_ratio_denominator(RatioKey::AbsPAC.into(), &[(CompKey::TotalSolids.into(), 30.0)]),
+            Some(70.0)
+        );
+        assert_eq!(
+            estimate_ratio_denominator(
+                RatioKey::AbsPAC.into(),
+                &[(CompKey::TotalSolids.into(), 30.0), (CompKey::Alcohol.into(), 5.0)]
+            ),
             Some(65.0)
         );
     }
@@ -1814,22 +1915,22 @@ mod tests {
         use crate::constants::balancing::{TYPICAL_MIX_FAT, TYPICAL_MIX_WATER};
 
         // No denominator signal → the typical-mix constant for that denominator.
-        assert_eq!(estimate_ratio_denominator(CompKey::AbsPAC, &[]), Some(TYPICAL_MIX_WATER));
+        assert_eq!(estimate_ratio_denominator(RatioKey::AbsPAC.into(), &[]), Some(TYPICAL_MIX_WATER));
         assert_eq!(
-            estimate_ratio_denominator(CompKey::StabilizersPerWater, &[(CompKey::MilkFat, 12.0)]),
+            estimate_ratio_denominator(RatioKey::StabilizersPerWater.into(), &[(CompKey::MilkFat.into(), 12.0)]),
             Some(TYPICAL_MIX_WATER)
         );
         // TotalFats has no inference path, so even a TotalSolids target leaves the fat fallback.
         assert_eq!(
-            estimate_ratio_denominator(CompKey::EmulsifiersPerFat, &[(CompKey::TotalSolids, 30.0)]),
+            estimate_ratio_denominator(RatioKey::EmulsifiersPerFat.into(), &[(CompKey::TotalSolids.into(), 30.0)]),
             Some(TYPICAL_MIX_FAT)
         );
     }
 
     #[test]
     fn estimate_ratio_denominator_returns_none_for_extensive_key() {
-        assert_eq!(estimate_ratio_denominator(CompKey::MilkFat, &[]), None);
-        assert_eq!(estimate_ratio_denominator(CompKey::Energy, &[(CompKey::Energy, 200.0)]), None);
+        assert_eq!(estimate_ratio_denominator(CompKey::MilkFat.into(), &[]), None);
+        assert_eq!(estimate_ratio_denominator(CompKey::Energy.into(), &[(CompKey::Energy.into(), 200.0)]), None);
     }
 
     #[test]
@@ -1837,11 +1938,12 @@ mod tests {
         use crate::constants::balancing::{RATIO_REWEIGHT_TOLERANCE, TYPICAL_MIX_WATER};
 
         let comps = comps_from_names(DAIRY_STABILIZER_ING);
-        let target = achieved_value(&equal_parts_reference(&comps), CompKey::StabilizersPerWater);
+        let target = achieved_value(&equal_parts_reference(&comps), RatioKey::StabilizersPerWater);
 
         // With only a ratio target, the seed denominator falls back to TYPICAL_MIX_WATER, far
         // above the dairy base's actual water, so the corrective reweighting pass must run.
-        let balanced = balance_compositions_nnls(&comps, &[(CompKey::StabilizersPerWater, target)], None, &[]).unwrap();
+        let balanced =
+            balance_compositions_nnls(&comps, &[(RatioKey::StabilizersPerWater.into(), target)], None, &[]).unwrap();
 
         let achieved_water = achieved_value(&balanced, CompKey::Water);
         assert_gt!(
@@ -1849,7 +1951,7 @@ mod tests {
             RATIO_REWEIGHT_TOLERANCE,
             "seed denominator should be materially off, so the reweighting pass is exercised"
         );
-        assert_eq_flt_test!(achieved_value(&balanced, CompKey::StabilizersPerWater), target);
+        assert_eq_flt_test!(achieved_value(&balanced, RatioKey::StabilizersPerWater), target);
     }
 
     #[test]
@@ -1868,15 +1970,19 @@ mod tests {
     #[test]
     fn priority_tightens_ratio_key() {
         let comps = comps_from_names(SORBET_ING);
-        let targets: &[(CompKey, f64)] = &SORBET_ABS_PAC_TARGETS;
-        let abs_pac_target = targets.iter().find(|(key, _)| *key == CompKey::AbsPAC).unwrap().1;
+        let targets: &[(BalanceKey, f64)] = &SORBET_ABS_PAC_TARGETS;
+        let abs_pac_target = targets
+            .iter()
+            .find(|(key, _)| *key == BalanceKey::from(RatioKey::AbsPAC))
+            .unwrap()
+            .1;
 
         let baseline = balance_compositions(&comps, targets, None, &[]).unwrap();
         let prioritized =
-            balance_compositions(&comps, targets, None, &[(CompKey::AbsPAC, Priority::Critical)]).unwrap();
+            balance_compositions(&comps, targets, None, &[(RatioKey::AbsPAC.into(), Priority::Critical)]).unwrap();
 
         let abs_pac_error = |balanced: &[(Composition, f64)]| {
-            balance_rel_error_pp(achieved_value(balanced, CompKey::AbsPAC), abs_pac_target)
+            balance_rel_error_pp(achieved_value(balanced, RatioKey::AbsPAC), abs_pac_target)
         };
         assert_lt!(abs_pac_error(&prioritized), abs_pac_error(&baseline) - MIN_PRIORITY_EFFECT_PP);
     }
@@ -1899,7 +2005,7 @@ mod tests {
     #[test]
     fn balance_underdetermined_system_hits_target() {
         let comps = comps_from_names(DAIRY_ING); // 3 comps
-        let targets = [(CompKey::MilkFat, 10.0)]; // 1 target
+        let targets = [(CompKey::MilkFat.into(), 10.0)]; // 1 target
 
         let solvers: [SolverFn; 2] = [balance_compositions_nalgebra, balance_compositions_nnls];
         for solve in solvers {
@@ -1910,7 +2016,7 @@ mod tests {
     #[test]
     fn relative_weighting_beats_absolute_on_disparate_targets() {
         let comps = comps_from_names(DAIRY_ING);
-        let targets: &[(CompKey, f64)] = &DAIRY_DISPARATE_TARGETS;
+        let targets: &[(BalanceKey, f64)] = &DAIRY_DISPARATE_TARGETS;
 
         let max_error_for = |weighting| {
             let balanced = balance_compositions_nnls(&comps, targets, weighting, &[]).unwrap();
@@ -1928,28 +2034,33 @@ mod tests {
     #[test]
     fn balance_compositions_accepts_ratio_key_target() {
         let comps = comps_from_names(DAIRY_SUGAR_ING);
-        let result = balance_compositions(&comps, &[(CompKey::StabilizersPerWater, 0.5)], None, &[]);
+        let result = balance_compositions(&comps, &[(RatioKey::StabilizersPerWater.into(), 0.5)], None, &[]);
         assert!(result.is_ok());
     }
 
     #[test]
     fn balance_compositions_rejects_duplicate_target() {
         let comps = comps_from_names(DAIRY_ING);
-        let result = balance_compositions(&comps, &[(CompKey::MilkFat, 16.0), (CompKey::MilkFat, 12.0)], None, &[]);
+        let result = balance_compositions(
+            &comps,
+            &[(CompKey::MilkFat.into(), 16.0), (CompKey::MilkFat.into(), 12.0)],
+            None,
+            &[],
+        );
         assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
     }
 
     #[test]
     fn balance_compositions_rejects_non_finite_target() {
         let comps = comps_from_names(DAIRY_ING);
-        let result = balance_compositions(&comps, &[(CompKey::MilkFat, f64::NAN)], None, &[]);
+        let result = balance_compositions(&comps, &[(CompKey::MilkFat.into(), f64::NAN)], None, &[]);
         assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
     }
 
     #[test]
     fn balance_compositions_rejects_negative_target() {
         let comps = comps_from_names(DAIRY_ING);
-        let result = balance_compositions(&comps, &[(CompKey::MilkFat, -1.0)], None, &[]);
+        let result = balance_compositions(&comps, &[(CompKey::MilkFat.into(), -1.0)], None, &[]);
         assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
     }
 
@@ -1960,7 +2071,7 @@ mod tests {
         // The raw solvers assume pre-validated targets; in debug builds a negative target (a caller
         // bug, since `balance_compositions` would have rejected it) trips the precondition assert.
         let comps = comps_from_names(DAIRY_ING);
-        drop(balance_compositions_nnls(&comps, &[(CompKey::MilkFat, -1.0)], None, &[]));
+        drop(balance_compositions_nnls(&comps, &[(CompKey::MilkFat.into(), -1.0)], None, &[]));
     }
 
     #[test]
@@ -1978,7 +2089,7 @@ mod tests {
     fn balance_compositions_proceeds_despite_warnings() {
         // A Sucrose > TotalSugars pair only warns; the solve still returns a best-effort result.
         let comps = comps_from_names(DAIRY_SUGAR_ING);
-        let targets = [(CompKey::Sucrose, 20.0), (CompKey::TotalSugars, 15.0)];
+        let targets = [(CompKey::Sucrose.into(), 20.0), (CompKey::TotalSugars.into(), 15.0)];
         assert!(balance_compositions(&comps, &targets, None, &[]).is_ok());
     }
 
@@ -1995,7 +2106,7 @@ mod tests {
     #[test]
     fn empty_priorities_match_explicit_normal() {
         let comps = comps_from_names(DAIRY_ING);
-        let targets: &[(CompKey, f64)] = &DAIRY_DISPARATE_TARGETS;
+        let targets: &[(BalanceKey, f64)] = &DAIRY_DISPARATE_TARGETS;
 
         let empty = balance_compositions(&comps, targets, None, &[]).unwrap();
         let all_normal = balance_compositions(
@@ -2003,10 +2114,10 @@ mod tests {
             targets,
             None,
             &[
-                (CompKey::Energy, Priority::Normal),
-                (CompKey::MilkFat, Priority::Normal),
-                (CompKey::MSNF, Priority::Normal),
-                (CompKey::POD, Priority::Normal),
+                (CompKey::Energy.into(), Priority::Normal),
+                (CompKey::MilkFat.into(), Priority::Normal),
+                (CompKey::MSNF.into(), Priority::Normal),
+                (CompKey::POD.into(), Priority::Normal),
             ],
         )
         .unwrap();
@@ -2019,12 +2130,17 @@ mod tests {
     #[test]
     fn priority_reduces_error_on_prioritized_key() {
         let comps = comps_from_names(DAIRY_ING);
-        let targets: &[(CompKey, f64)] = &DAIRY_DISPARATE_TARGETS;
-        let pod_target = targets.iter().find(|(key, _)| *key == CompKey::POD).unwrap().1;
+        let targets: &[(BalanceKey, f64)] = &DAIRY_DISPARATE_TARGETS;
+        let pod_target = targets
+            .iter()
+            .find(|(key, _)| *key == BalanceKey::from(CompKey::POD))
+            .unwrap()
+            .1;
 
         let baseline = balance_compositions_nnls(&comps, targets, None, &[]).unwrap();
         let prioritized =
-            balance_compositions_nnls(&comps, targets, None, &[(CompKey::POD, Priority::Critical.weight())]).unwrap();
+            balance_compositions_nnls(&comps, targets, None, &[(CompKey::POD.into(), Priority::Critical.weight())])
+                .unwrap();
 
         let pod_error =
             |balanced: &[(Composition, f64)]| balance_rel_error_pp(achieved_value(balanced, CompKey::POD), pod_target);
@@ -2038,11 +2154,16 @@ mod tests {
     #[test]
     fn balance_compositions_threads_priorities() {
         let comps = comps_from_names(DAIRY_ING);
-        let targets: &[(CompKey, f64)] = &DAIRY_DISPARATE_TARGETS;
-        let pod_target = targets.iter().find(|(key, _)| *key == CompKey::POD).unwrap().1;
+        let targets: &[(BalanceKey, f64)] = &DAIRY_DISPARATE_TARGETS;
+        let pod_target = targets
+            .iter()
+            .find(|(key, _)| *key == BalanceKey::from(CompKey::POD))
+            .unwrap()
+            .1;
 
         let baseline = balance_compositions(&comps, targets, None, &[]).unwrap();
-        let prioritized = balance_compositions(&comps, targets, None, &[(CompKey::POD, Priority::Critical)]).unwrap();
+        let prioritized =
+            balance_compositions(&comps, targets, None, &[(CompKey::POD.into(), Priority::Critical)]).unwrap();
 
         let pod_error =
             |balanced: &[(Composition, f64)]| balance_rel_error_pp(achieved_value(balanced, CompKey::POD), pod_target);
@@ -2059,17 +2180,21 @@ mod tests {
     #[test]
     fn priority_error_decreases_monotonically_with_level() {
         let comps = comps_from_names(DAIRY_ING);
-        let targets: &[(CompKey, f64)] = &DAIRY_DISPARATE_TARGETS;
-        let pod_target = targets.iter().find(|(key, _)| *key == CompKey::POD).unwrap().1;
+        let targets: &[(BalanceKey, f64)] = &DAIRY_DISPARATE_TARGETS;
+        let pod_target = targets
+            .iter()
+            .find(|(key, _)| *key == BalanceKey::from(CompKey::POD))
+            .unwrap()
+            .1;
 
-        let pod_error = |priorities: &[(CompKey, f64)]| {
+        let pod_error = |priorities: &[(BalanceKey, f64)]| {
             let balanced = balance_compositions_nnls(&comps, targets, None, priorities).unwrap();
             balance_rel_error_pp(achieved_value(&balanced, CompKey::POD), pod_target)
         };
 
         let normal = pod_error(&[]);
-        let high = pod_error(&[(CompKey::POD, Priority::High.weight())]);
-        let critical = pod_error(&[(CompKey::POD, Priority::Critical.weight())]);
+        let high = pod_error(&[(CompKey::POD.into(), Priority::High.weight())]);
+        let critical = pod_error(&[(CompKey::POD.into(), Priority::Critical.weight())]);
 
         assert_lt!(high, normal - MIN_PRIORITY_EFFECT_PP);
         assert_lt!(critical, high - MIN_PRIORITY_EFFECT_PP);
@@ -2078,15 +2203,16 @@ mod tests {
     #[test]
     fn priority_trades_off_competing_key() {
         let comps = comps_from_names(DAIRY_ING);
-        let targets: &[(CompKey, f64)] = &DAIRY_DISPARATE_TARGETS;
+        let targets: &[(BalanceKey, f64)] = &DAIRY_DISPARATE_TARGETS;
 
         let baseline = balance_compositions_nnls(&comps, targets, None, &[]).unwrap();
         let prioritized =
-            balance_compositions_nnls(&comps, targets, None, &[(CompKey::POD, Priority::Critical.weight())]).unwrap();
+            balance_compositions_nnls(&comps, targets, None, &[(CompKey::POD.into(), Priority::Critical.weight())])
+                .unwrap();
 
         let worsened = targets
             .iter()
-            .filter(|(key, _)| *key != CompKey::POD)
+            .filter(|(key, _)| *key != BalanceKey::from(CompKey::POD))
             .any(|&(key, target)| {
                 let baseline_error = balance_rel_error_pp(achieved_value(&baseline, key), target);
                 let prioritized_error = balance_rel_error_pp(achieved_value(&prioritized, key), target);
@@ -2100,68 +2226,70 @@ mod tests {
     #[test]
     fn priority_mixed_levels_tighten_each_key() {
         let comps = comps_from_names(DAIRY_ING);
-        let targets: &[(CompKey, f64)] = &DAIRY_DISPARATE_TARGETS;
-        let error_for = |priorities: &[(CompKey, f64)], key: CompKey| {
+        let targets: &[(BalanceKey, f64)] = &DAIRY_DISPARATE_TARGETS;
+        let error_for = |priorities: &[(BalanceKey, f64)], key: BalanceKey| {
             let target = targets.iter().find(|(k, _)| *k == key).unwrap().1;
             let balanced = balance_compositions_nnls(&comps, targets, None, priorities).unwrap();
             balance_rel_error_pp(achieved_value(&balanced, key), target)
         };
 
-        let msnf_high = (CompKey::MSNF, Priority::High.weight());
-        let pod_critical = (CompKey::POD, Priority::Critical.weight());
+        let msnf_high = (CompKey::MSNF.into(), Priority::High.weight());
+        let pod_critical = (CompKey::POD.into(), Priority::Critical.weight());
 
         // Raising POD Normal→Critical (MSNF held High) tightens POD by a wide margin.
-        let pod_before = error_for(&[msnf_high], CompKey::POD);
-        let pod_after = error_for(&[pod_critical, msnf_high], CompKey::POD);
+        let pod_before = error_for(&[msnf_high], CompKey::POD.into());
+        let pod_after = error_for(&[pod_critical, msnf_high], CompKey::POD.into());
         assert_lt!(pod_after, pod_before - MIN_PRIORITY_EFFECT_PP);
 
         // Raising MSNF Normal→High (POD held Critical) slightly tightens MSNF: its own priority
         // pulls the right way, but only a little here, since POD's Critical dominates the solve.
-        let msnf_before = error_for(&[pod_critical], CompKey::MSNF);
-        let msnf_after = error_for(&[pod_critical, msnf_high], CompKey::MSNF);
+        let msnf_before = error_for(&[pod_critical], CompKey::MSNF.into());
+        let msnf_after = error_for(&[pod_critical, msnf_high], CompKey::MSNF.into());
         assert_le!(msnf_after, msnf_before - 0.4);
     }
 
     #[test]
     fn validate_flags_duplicate_priority_as_error() {
         let comps = comps_from_names(DAIRY_ING);
-        let targets = [(CompKey::MilkFat, 16.0)];
+        let targets = [(CompKey::MilkFat.into(), 16.0)];
         let priorities = [
-            (CompKey::MilkFat, Priority::High),
-            (CompKey::MilkFat, Priority::Critical),
+            (CompKey::MilkFat.into(), Priority::High),
+            (CompKey::MilkFat.into(), Priority::Critical),
         ];
         let report = validate_balancing_targets(&comps, &targets, &priorities);
 
         assert_true!(report.has_errors());
-        assert_true!(
-            report
-                .errors()
-                .any(|issue| matches!(issue, BalancingIssue::DuplicatePriority { key: CompKey::MilkFat }))
-        );
+        assert_true!(report.errors().any(|issue| matches!(
+            issue,
+            BalancingIssue::DuplicatePriority {
+                key: BalanceKey::Comp(CompKey::MilkFat)
+            }
+        )));
     }
 
     #[test]
     fn validate_flags_priority_without_target_as_warning() {
         let comps = comps_from_names(DAIRY_ING);
-        let targets = [(CompKey::MilkFat, 16.0)];
-        let priorities = [(CompKey::MSNF, Priority::High)]; // no MSNF target
+        let targets = [(CompKey::MilkFat.into(), 16.0)];
+        let priorities = [(CompKey::MSNF.into(), Priority::High)]; // no MSNF target
         let report = validate_balancing_targets(&comps, &targets, &priorities);
 
         assert_false!(report.has_errors());
-        assert_true!(
-            report
-                .warnings()
-                .any(|issue| matches!(issue, BalancingIssue::PriorityWithoutTarget { key: CompKey::MSNF }))
-        );
+        assert_true!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::PriorityWithoutTarget {
+                key: BalanceKey::Comp(CompKey::MSNF)
+            }
+        )));
     }
 
     #[test]
     fn balance_compositions_rejects_duplicate_priority() {
         let comps = comps_from_names(DAIRY_ING);
-        let targets = [(CompKey::MilkFat, 16.0), (CompKey::MSNF, 11.0)];
+        let targets = [(CompKey::MilkFat.into(), 16.0), (CompKey::MSNF.into(), 11.0)];
         let priorities = [
-            (CompKey::MilkFat, Priority::High),
-            (CompKey::MilkFat, Priority::Critical),
+            (CompKey::MilkFat.into(), Priority::High),
+            (CompKey::MilkFat.into(), Priority::Critical),
         ];
         let result = balance_compositions(&comps, &targets, None, &priorities);
         assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
@@ -2171,8 +2299,8 @@ mod tests {
     fn balance_compositions_proceeds_despite_priority_without_target() {
         // A priority whose key has no target is only a warning; the solve still returns a result.
         let comps = comps_from_names(DAIRY_ING);
-        let targets = [(CompKey::MilkFat, 16.0), (CompKey::MSNF, 11.0)];
-        let priorities = [(CompKey::TotalSugars, Priority::High)]; // no TotalSugars target
+        let targets = [(CompKey::MilkFat.into(), 16.0), (CompKey::MSNF.into(), 11.0)];
+        let priorities = [(CompKey::TotalSugars.into(), Priority::High)]; // no TotalSugars target
         assert!(balance_compositions(&comps, &targets, None, &priorities).is_ok());
     }
 
@@ -2181,14 +2309,15 @@ mod tests {
     #[test]
     fn validate_does_not_flag_ratio_key_target() {
         // Ratio keys are now balanceable (encoded as homogeneous rows), so they are not an error.
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(CompKey::AbsPAC, 9.0)], &[]);
+        let report =
+            validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(RatioKey::AbsPAC.into(), 9.0)], &[]);
         assert_false!(report.has_errors());
     }
 
     #[test]
     fn validate_flags_non_finite_target_as_error() {
         let report =
-            validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, f64::INFINITY)], &[]);
+            validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), f64::INFINITY)], &[]);
         assert_true!(
             report
                 .errors()
@@ -2198,11 +2327,11 @@ mod tests {
 
     #[test]
     fn validate_flags_negative_target_as_error() {
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, -5.0)], &[]);
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), -5.0)], &[]);
         assert_true!(report.errors().any(|issue| matches!(
             issue,
             BalancingIssue::NegativeTarget {
-                key: CompKey::MilkFat,
+                key: BalanceKey::Comp(CompKey::MilkFat),
                 ..
             }
         )));
@@ -2210,11 +2339,12 @@ mod tests {
 
     #[test]
     fn validate_flags_negative_ratio_target_as_error() {
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(CompKey::AbsPAC, -1.0)], &[]);
+        let report =
+            validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(RatioKey::AbsPAC.into(), -1.0)], &[]);
         assert_true!(report.errors().any(|issue| matches!(
             issue,
             BalancingIssue::NegativeTarget {
-                key: CompKey::AbsPAC,
+                key: BalanceKey::Ratio(RatioKey::AbsPAC),
                 ..
             }
         )));
@@ -2222,7 +2352,7 @@ mod tests {
 
     #[test]
     fn validate_does_not_double_flag_negative_target() {
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, -5.0)], &[]);
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), -5.0)], &[]);
         assert_false!(
             report
                 .warnings()
@@ -2232,7 +2362,7 @@ mod tests {
 
     #[test]
     fn validate_does_not_flag_zero_target_as_negative() {
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, 0.0)], &[]);
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), 0.0)], &[]);
         assert_false!(
             report
                 .errors()
@@ -2242,13 +2372,14 @@ mod tests {
 
     #[test]
     fn validate_flags_duplicate_target_as_error() {
-        let targets = [(CompKey::MilkFat, 16.0), (CompKey::MilkFat, 12.0)];
+        let targets = [(CompKey::MilkFat.into(), 16.0), (CompKey::MilkFat.into(), 12.0)];
         let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &targets, &[]);
-        assert_true!(
-            report
-                .errors()
-                .any(|issue| matches!(issue, BalancingIssue::DuplicateTarget { key: CompKey::MilkFat }))
-        );
+        assert_true!(report.errors().any(|issue| matches!(
+            issue,
+            BalancingIssue::DuplicateTarget {
+                key: BalanceKey::Comp(CompKey::MilkFat)
+            }
+        )));
     }
 
     // --- validate_balancing_targets: warning-severity issues ---
@@ -2256,26 +2387,30 @@ mod tests {
     #[test]
     fn validate_flags_unaffectable_target_as_warning() {
         // Plain dairy has no alcohol source, so no combination can move an Alcohol target off zero.
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::Alcohol, 5.0)], &[]);
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::Alcohol.into(), 5.0)], &[]);
         assert_false!(report.has_errors());
-        assert_true!(
-            report
-                .warnings()
-                .any(|issue| matches!(issue, BalancingIssue::UnaffectableTarget { key: CompKey::Alcohol }))
-        );
+        assert_true!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::UnaffectableTarget {
+                key: BalanceKey::Comp(CompKey::Alcohol)
+            }
+        )));
     }
 
     #[test]
     fn validate_flags_ratio_key_with_unaffectable_numerator_as_warning() {
         // No stabilizer source in the palette → the StabilizersPerWater numerator is unaffectable,
         // so the only reachable ratio is zero and a nonzero target cannot be met. Flag (warning).
-        let report =
-            validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(CompKey::StabilizersPerWater, 0.5)], &[]);
+        let report = validate_balancing_targets(
+            &comps_from_names(DAIRY_SUGAR_ING),
+            &[(RatioKey::StabilizersPerWater.into(), 0.5)],
+            &[],
+        );
         assert_false!(report.has_errors());
         assert_true!(report.warnings().any(|issue| matches!(
             issue,
             BalancingIssue::UnaffectableTarget {
-                key: CompKey::StabilizersPerWater
+                key: BalanceKey::Ratio(RatioKey::StabilizersPerWater)
             }
         )));
     }
@@ -2284,13 +2419,16 @@ mod tests {
     fn validate_flags_ratio_key_with_unaffectable_denominator_as_warning() {
         // A fat-free sorbet palette → the EmulsifiersPerFat denominator (TotalFats) is
         // unaffectable, so the ratio is undefined and cannot be balanced. Flagged (warning).
-        let report =
-            validate_balancing_targets(&comps_from_names(SORBET_ING), &[(CompKey::EmulsifiersPerFat, 1.0)], &[]);
+        let report = validate_balancing_targets(
+            &comps_from_names(SORBET_ING),
+            &[(RatioKey::EmulsifiersPerFat.into(), 1.0)],
+            &[],
+        );
         assert_false!(report.has_errors());
         assert_true!(report.warnings().any(|issue| matches!(
             issue,
             BalancingIssue::UnaffectableTarget {
-                key: CompKey::EmulsifiersPerFat
+                key: BalanceKey::Ratio(RatioKey::EmulsifiersPerFat)
             }
         )));
     }
@@ -2298,11 +2436,11 @@ mod tests {
     #[test]
     fn validate_flags_unreachable_target_as_warning() {
         // The richest dairy ingredient is 40% cream, so a 50% milk-fat target is out of reach.
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, 50.0)], &[]);
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), 50.0)], &[]);
         assert_true!(report.warnings().any(|issue| matches!(
             issue,
             BalancingIssue::UnreachableTarget {
-                key: CompKey::MilkFat,
+                key: BalanceKey::Comp(CompKey::MilkFat),
                 target: 50.0,
                 min: 0.0,
                 max: 40.0,
@@ -2315,15 +2453,15 @@ mod tests {
         // Every ingredient has Sucrose <= TotalSugars, so a Sucrose target above the TotalSugars
         // target is verifiably infeasible — the palette-derived dominance check catches it.
         let comps = comps_from_names(DAIRY_SUGAR_ING);
-        let targets = [(CompKey::Sucrose, 20.0), (CompKey::TotalSugars, 15.0)];
+        let targets = [(CompKey::Sucrose.into(), 20.0), (CompKey::TotalSugars.into(), 15.0)];
         let report = validate_balancing_targets(&comps, &targets, &[]);
 
         assert_false!(report.has_errors());
         assert_true!(report.warnings().any(|issue| matches!(
             issue,
             BalancingIssue::DominanceViolation {
-                lesser: CompKey::Sucrose,
-                greater: CompKey::TotalSugars,
+                lesser: BalanceKey::Comp(CompKey::Sucrose),
+                greater: BalanceKey::Comp(CompKey::TotalSugars),
                 lesser_target: 20.0,
                 greater_target: 15.0,
             }
@@ -2337,9 +2475,9 @@ mod tests {
         // their targets summing to 20 > 15 is infeasible — caught only by the additive check.
         let comps = comps_from_names(SUGAR_BLEND_ING);
         let targets = [
-            (CompKey::Sucrose, 10.0),
-            (CompKey::Fructose, 10.0),
-            (CompKey::TotalSugars, 15.0),
+            (CompKey::Sucrose.into(), 10.0),
+            (CompKey::Fructose.into(), 10.0),
+            (CompKey::TotalSugars.into(), 15.0),
         ];
         let report = validate_balancing_targets(&comps, &targets, &[]);
 
@@ -2353,7 +2491,7 @@ mod tests {
         assert_true!(report.warnings().any(|issue| matches!(
             issue,
             BalancingIssue::AdditiveDominanceViolation {
-                whole: CompKey::TotalSugars,
+                whole: BalanceKey::Comp(CompKey::TotalSugars),
                 parts_target_sum,
                 whole_target,
                 ..
@@ -2374,9 +2512,9 @@ mod tests {
     fn balancing_report_partitions_errors_and_warnings() {
         let comps = comps_from_names(DAIRY_SUGAR_ING);
         let targets = [
-            (CompKey::Energy, f64::NAN),  // error: non-finite target
-            (CompKey::Sucrose, 20.0),     // warning pair with TotalSugars
-            (CompKey::TotalSugars, 15.0), //
+            (CompKey::Energy.into(), f64::NAN),  // error: non-finite target
+            (CompKey::Sucrose.into(), 20.0),     // warning pair with TotalSugars
+            (CompKey::TotalSugars.into(), 15.0), //
         ];
         let report = validate_balancing_targets(&comps, &targets, &[]);
 
@@ -2392,7 +2530,7 @@ mod tests {
 
     #[test]
     fn balancing_report_into_result_errors_on_error_severity() {
-        let targets = [(CompKey::MilkFat, 16.0), (CompKey::MilkFat, 12.0)];
+        let targets = [(CompKey::MilkFat.into(), 16.0), (CompKey::MilkFat.into(), 12.0)];
         let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &targets, &[]);
         assert!(matches!(report.into_result(), Err(Error::InvalidBalancingTargets(_))));
     }
@@ -2400,7 +2538,7 @@ mod tests {
     #[test]
     fn balancing_report_into_result_ok_on_warnings_only() {
         // An unreachable target is only a warning, so into_result stays Ok.
-        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat, 50.0)], &[]);
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), 50.0)], &[]);
         assert_true!(report.warnings().count() >= 1);
         assert!(report.into_result().is_ok());
     }
@@ -2410,23 +2548,23 @@ mod tests {
     #[test]
     fn is_unaffectable_detects_zero_row() {
         let comps = comps_from_names(DAIRY_ING);
-        assert_true!(is_unaffectable(&comps, CompKey::Alcohol, 5.0));
-        assert_false!(is_unaffectable(&comps, CompKey::MilkFat, 16.0));
+        assert_true!(is_unaffectable(&comps, CompKey::Alcohol.into(), 5.0));
+        assert_false!(is_unaffectable(&comps, CompKey::MilkFat.into(), 16.0));
     }
 
     #[test]
     fn is_unaffectable_for_ratio_key_detects_unaffectable_parts() {
         // No stabilizer source → StabilizersPerWater numerator unaffectable.
         let no_stabilizer = comps_from_names(DAIRY_SUGAR_ING);
-        assert_true!(is_unaffectable(&no_stabilizer, CompKey::StabilizersPerWater, 0.5));
+        assert_true!(is_unaffectable(&no_stabilizer, RatioKey::StabilizersPerWater.into(), 0.5));
 
         // No fat source → EmulsifiersPerFat denominator unaffectable.
         let no_fat = comps_from_names(SORBET_ING);
-        assert_true!(is_unaffectable(&no_fat, CompKey::EmulsifiersPerFat, 1.0));
+        assert_true!(is_unaffectable(&no_fat, RatioKey::EmulsifiersPerFat.into(), 1.0));
 
         // Both parts affectable (stabilizer + water present) → not unaffectable.
         let stabilizer_and_water = comps_from_names(DAIRY_STABILIZER_ING);
-        assert_false!(is_unaffectable(&stabilizer_and_water, CompKey::StabilizersPerWater, 0.5));
+        assert_false!(is_unaffectable(&stabilizer_and_water, RatioKey::StabilizersPerWater.into(), 0.5));
     }
 
     #[test]

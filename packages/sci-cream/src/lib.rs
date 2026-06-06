@@ -69,7 +69,7 @@ appropriate keys from either [`CompKey`] or [`FpdKey`].
 ```
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
 # use sci_cream::docs::{assert_eq_float, main_recipe};
-# use sci_cream::{CompKey::*, FpdKey::*, IngredientDatabase, Recipe};
+# use sci_cream::{CompKey::*, FpdKey::*, RatioKey::*, IngredientDatabase, Recipe};
 # let db = IngredientDatabase::new_seeded_from_embedded_data();
 # let recipe = Recipe::from_light_recipe(None, &main_recipe!(), &db)?;
 let mix_properties = recipe.calculate_mix_properties()?;
@@ -542,7 +542,7 @@ pub mod diesel;
 pub mod wasm;
 
 pub use {
-    composition::{CompKey, Composition},
+    composition::{CompKey, Composition, KeyScope, RatioKey},
     fpd::{FPD, FpdKey},
     ingredient::{Category, Ingredient},
     properties::{MixProperties, PropKey},

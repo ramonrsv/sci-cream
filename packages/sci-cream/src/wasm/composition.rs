@@ -1,9 +1,11 @@
-//! Newtype [`Composition`](RustComposition) wrapper for WASM interoperability, exposing only the
-//! [`get(CompKey)`](RustComposition::get) method and leaving the internals opaque.
+//! Newtype [`Composition`](RustComposition) wrapper for WASM interoperability.
+//!
+//! Exposes only the [`get(CompKey)`](RustComposition::get) and
+//! [`get_ratio(RatioKey)`](RustComposition::get_ratio) methods, leaving the internals opaque.
 
 use wasm_bindgen::prelude::*;
 
-use crate::composition::{CompKey, Composition as RustComposition};
+use crate::composition::{CompKey, Composition as RustComposition, RatioKey};
 
 /// Newtype wrapper around [`Composition`](RustComposition) for WASM interoperability.
 #[derive(PartialEq, Debug, Copy, Clone)]
@@ -26,6 +28,12 @@ impl Composition {
     pub fn get(&self, key: CompKey) -> f64 {
         self.0.get(key)
     }
+
+    /// Newtype forwarder for the [`Composition::get_ratio`](RustComposition::get_ratio) method
+    #[must_use]
+    pub fn get_ratio(&self, key: RatioKey) -> f64 {
+        self.0.get_ratio(key)
+    }
 }
 
 impl From<RustComposition> for Composition {
@@ -45,11 +53,11 @@ impl From<Composition> for RustComposition {
 #[allow(clippy::float_cmp)]
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
-    #[expect(unused)]
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::composition::CompKey;
+
+    use crate::composition::{Emulsifiers, Fats, Micro, PAC, Solids, SolidsBreakdown, Stabilizers};
 
     #[test]
     fn new_returns_default_composition() {
@@ -57,26 +65,63 @@ mod tests {
         assert_eq!(comp.get(CompKey::Energy), 0.0);
         assert_eq!(comp.get(CompKey::MilkFat), 0.0);
         assert_eq!(comp.get(CompKey::Water), 100.0);
+
+        assert_eq!(comp.get_ratio(RatioKey::StabilizersPerWater), 0.0);
+        assert_true!(comp.get_ratio(RatioKey::EmulsifiersPerFat).is_nan());
+    }
+
+    fn sample_rust_composition() -> RustComposition {
+        RustComposition::new()
+            .energy(150.0)
+            .solids(
+                Solids::new()
+                    .milk(SolidsBreakdown::new().fats(Fats::new().total(10.0)))
+                    .other(SolidsBreakdown::new().others(12.0)),
+            )
+            .micro(
+                Micro::new()
+                    .stabilizers(Stabilizers::new().locust_bean_gum(5.0))
+                    .emulsifiers(Emulsifiers::new().lecithin(7.0)),
+            )
+            .pac(PAC::new().sugars(15.0))
+            .pod(25.0)
     }
 
     #[test]
     fn get_forwards_to_inner_composition() {
-        let inner = RustComposition::new().energy(42.0);
+        let inner = sample_rust_composition();
         let comp = Composition::from(inner);
-        assert_eq!(comp.get(CompKey::Energy), 42.0);
+        assert_eq!(comp.get(CompKey::Energy), 150.0);
+        assert_eq!(comp.get(CompKey::MilkFat), 10.0);
+        assert_eq!(comp.get(CompKey::TotalSolids), 22.0);
+        assert_eq!(comp.get(CompKey::Water), 78.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 5.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 7.0);
+        assert_eq!(comp.get(CompKey::TotalPAC), 15.0);
+        assert_eq!(comp.get(CompKey::POD), 25.0);
+    }
+
+    #[test]
+    fn get_ratio_forwards_to_inner_composition() {
+        let inner = sample_rust_composition();
+        let comp = Composition::from(inner);
+        assert_eq!(comp.get_ratio(RatioKey::AbsPAC), (15.0 / 78.0) * 100.0);
+        assert_eq!(comp.get_ratio(RatioKey::StabilizersPerWater), (5.0 / 78.0) * 100.0);
+        assert_eq!(comp.get_ratio(RatioKey::EmulsifiersPerFat), (7.0 / 10.0) * 100.0);
     }
 
     #[test]
     fn from_rust_composition_preserves_values() {
-        let inner = RustComposition::new().energy(10.0).pod(3.0);
+        let inner = sample_rust_composition();
         let comp = Composition::from(inner);
-        assert_eq!(comp.get(CompKey::Energy), 10.0);
-        assert_eq!(comp.get(CompKey::POD), 3.0);
+        assert_eq!(comp.get(CompKey::Energy), 150.0);
+        assert_eq!(comp.get(CompKey::POD), 25.0);
+        assert_eq!(comp.get_ratio(RatioKey::AbsPAC), (15.0 / 78.0) * 100.0);
     }
 
     #[test]
     fn from_composition_into_rust_composition_round_trips() {
-        let inner = RustComposition::new().energy(7.5);
+        let inner = sample_rust_composition();
         let comp = Composition::from(inner);
         let back = RustComposition::from(comp);
         assert_eq!(inner, back);

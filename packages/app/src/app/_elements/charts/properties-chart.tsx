@@ -40,13 +40,19 @@ import {
   addOrUpdateAlpha,
 } from "@/lib/styles/colors";
 
-import { isPropKeyQuantity, getAcceptablePropertyRange } from "@/lib/sci-cream/sci-cream";
+import {
+  isPropKeyQuantity,
+  isPropKeyMixScope,
+  getAcceptablePropertyRange,
+} from "@/lib/sci-cream/sci-cream";
 
 import {
   CompKey,
+  RatioKey,
   FpdKey,
   PropKey,
   compToPropKey,
+  ratioToPropKey,
   fpdToPropKey,
   getPropKeys as getPropKeysAll,
   getMixProperty,
@@ -71,12 +77,17 @@ ChartJS.register(
  *
  * Some property keys are excluded from the list because their values would make the scale difficult
  * to read, e.g. `PropKey.Water` and `FpdKey.HardnessAt14C`, whose values are in the ~50-80 range,
- * while most others top out at ~30. All keys are still available for selection in the
- * `KeyFilterSelect` above the chart.
+ * while most others top out at ~30. It also excludes ingredient-only ratio keys via
+ * `isPropKeyMixScope` since they are not meaningful in the context of a mix composition chart.
+ *
+ * Keys are available for selection in the `KeyFilterSelect`.
  */
 export function getPropKeys(): PropKey[] {
   return getPropKeysAll().filter(
-    (key) => key !== compToPropKey(CompKey.Water) && key !== fpdToPropKey(FpdKey.HardnessAt14C),
+    (key) =>
+      isPropKeyMixScope(key) &&
+      key !== compToPropKey(CompKey.Water) &&
+      key !== fpdToPropKey(FpdKey.HardnessAt14C),
   );
 }
 
@@ -91,10 +102,10 @@ export function modifyMixPropertyForChart(rawValue: number, propKey: PropKey): n
     case fpdToPropKey(FpdKey.FPD):
     case fpdToPropKey(FpdKey.ServingTemp):
       return -rawValue;
-    case compToPropKey(CompKey.AbsPAC):
+    case ratioToPropKey(RatioKey.AbsPAC):
       return rawValue / 2;
-    case compToPropKey(CompKey.EmulsifiersPerFat):
-    case compToPropKey(CompKey.StabilizersPerWater):
+    case ratioToPropKey(RatioKey.EmulsifiersPerFat):
+    case ratioToPropKey(RatioKey.StabilizersPerWater):
       return rawValue * 100;
     default:
       return rawValue;
@@ -107,10 +118,10 @@ export function modifyPropKeyAsShortStrForChart(rawStr: string, propKey: PropKey
     case fpdToPropKey(FpdKey.FPD):
     case fpdToPropKey(FpdKey.ServingTemp):
       return "-" + rawStr;
-    case compToPropKey(CompKey.AbsPAC):
+    case ratioToPropKey(RatioKey.AbsPAC):
       return rawStr + " / 2";
-    case compToPropKey(CompKey.EmulsifiersPerFat):
-    case compToPropKey(CompKey.StabilizersPerWater):
+    case ratioToPropKey(RatioKey.EmulsifiersPerFat):
+    case ratioToPropKey(RatioKey.StabilizersPerWater):
       return rawStr + " * 100";
     default:
       return rawStr;
@@ -300,10 +311,10 @@ export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   compToPropKey(CompKey.TotalSolids),
   compToPropKey(CompKey.Water),
   compToPropKey(CompKey.TotalSugars),
-  compToPropKey(CompKey.StabilizersPerWater),
+  ratioToPropKey(RatioKey.StabilizersPerWater),
   compToPropKey(CompKey.POD),
   compToPropKey(CompKey.TotalPAC),
-  compToPropKey(CompKey.AbsPAC),
+  ratioToPropKey(RatioKey.AbsPAC),
   fpdToPropKey(FpdKey.ServingTemp),
 ] as PropKey[]);
 

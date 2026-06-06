@@ -11,7 +11,11 @@ import {
 } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
-import { getAcceptablePropertyRange, isPropKeyQuantity } from "@/lib/sci-cream/sci-cream";
+import {
+  getAcceptablePropertyRange,
+  isPropKeyQuantity,
+  isPropKeyMixScope,
+} from "@/lib/sci-cream/sci-cream";
 import { Color, colorVar, colorVarWithAlpha, getRangeColor } from "@/lib/styles/colors";
 import { getLocalStorage, setLocalStorage, STORAGE_KEYS } from "@/lib/local-storage";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
@@ -24,15 +28,23 @@ import {
   prop_key_as_med_str,
   compToPropKey,
   CompKey,
+  ratioToPropKey,
+  RatioKey,
   fpdToPropKey,
   FpdKey,
   isCompKey,
+  isRatioKey,
   Bridge as WasmBridge,
   prop_key_as_short_str,
 } from "@workspace/sci-cream";
 
 /** Map of `PropKey` to user-entered target value; sparse, only set entries are tracked */
 export type TargetsMap = Partial<Record<PropKey, number>>;
+
+/** Mix-scope property keys: all `getPropKeys`, minus ingredient-only ratio keys. */
+function getMixScopePropKeys(): PropKey[] {
+  return getPropKeys().filter(isPropKeyMixScope);
+}
 
 /** Default set of property keys shown when the Custom key filter is first initialized */
 export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
@@ -42,9 +54,9 @@ export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
   compToPropKey(CompKey.TotalSolids),
   compToPropKey(CompKey.Water),
   compToPropKey(CompKey.TotalSugars),
-  compToPropKey(CompKey.StabilizersPerWater),
+  ratioToPropKey(RatioKey.StabilizersPerWater),
   compToPropKey(CompKey.POD),
-  compToPropKey(CompKey.AbsPAC),
+  ratioToPropKey(RatioKey.AbsPAC),
   fpdToPropKey(FpdKey.ServingTemp),
 ] as PropKey[]);
 
@@ -90,19 +102,23 @@ function formatRange(range: { min: number; max: number }): string {
 }
 
 /**
- * Filter a `TargetsMap` to CompKey-derived entries that are currently watched (in `enabledSet`),
- * as `[variantName, value][]` expected by `Bridge.balance_recipe` for serde <-> JsValue boundary.
+ * Filter a `TargetsMap` to balanceable entries that are currently watched (in `enabledSet`), as
+ * `[keyName, value][]` expected by `Bridge.balance_recipe` for the flat name <-> JsValue boundary.
  *
- * A CompKey-derived `PropKey` is literally the CompKey variant name string (see `compToPropKey`),
- * so the propKey passes through as the serde tag with no conversion needed. Restricting to
- * `enabledSet` keeps the balancer aligned with what the user sees — targets persisted in
- * localStorage but filtered out of view aren't silently applied.
+ * Balanceable keys are the extensive `CompKey`s and the intensive `RatioKey`s (not `FpdKey`). A
+ * `PropKey` for either is its variant name string (see `compToPropKey` / `ratioToPropKey`), which
+ * is what the Bridge expects, so the propKey passes through with no conversion.
+ *
+ * Restricting to `enabledSet` keeps the balancer aligned with what the user sees — targets
+ * persisted in localStorage but filtered out of view aren't silently applied.
  */
 function targetsToBalanceArgs(targets: TargetsMap, enabledSet: Set<PropKey>): [string, number][] {
   return Object.entries(targets)
     .filter(
       ([propKey, val]) =>
-        isUsableNumber(val) && isCompKey(propKey as PropKey) && enabledSet.has(propKey as PropKey),
+        isUsableNumber(val) &&
+        (isCompKey(propKey as PropKey) || isRatioKey(propKey as PropKey)) &&
+        enabledSet.has(propKey as PropKey),
     )
     .map(([propKey, val]) => [propKey, val as number]);
 }
@@ -404,7 +420,7 @@ export function WatchersView({
     return getEnabledKeys(
       propsFilterState[STATE_VAL],
       selectedPropsState[STATE_VAL],
-      getPropKeys,
+      getMixScopePropKeys,
       isPropEmpty,
       autoHeuristic,
     );
@@ -494,7 +510,7 @@ export function WatchersView({
           supportedKeyFilters={[KeyFilter.Auto, KeyFilter.Custom]}
           keyFilterState={propsFilterState}
           selectedKeysState={selectedPropsState}
-          getKeys={getPropKeys}
+          getKeys={getMixScopePropKeys}
           key_as_med_str={prop_key_as_med_str}
         />
         {(wasmBridge !== undefined || nonEmptyRefs.length > 0) && (

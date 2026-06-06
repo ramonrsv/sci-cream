@@ -14,7 +14,6 @@ import { getCompKeys } from "@/app/_elements/tables/composition-breakdown";
 import { STATE_VAL } from "@/lib/util";
 
 import { CompKey, Composition, comp_key_as_med_str } from "@workspace/sci-cream";
-import { isCompKeyQuantity } from "@/lib/sci-cream/sci-cream";
 
 /**
  * Bare presentational table showing the composition values of a single ingredient.
@@ -35,7 +34,7 @@ export function CompositionTable({
       undefined,
       undefined,
       QtyToggle.Composition,
-      isCompKeyQuantity(compKey),
+      true,
     );
   };
 

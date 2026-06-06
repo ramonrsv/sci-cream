@@ -3,7 +3,8 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    composition::{CompKey, Composition as RustComposition},
+    balancing::BalanceKey,
+    composition::Composition as RustComposition,
     database::IngredientDatabase,
     error::Result,
     ingredient::{Category, Ingredient as RustIngredient, ResolveIntoIngredient},
@@ -106,7 +107,7 @@ impl Bridge {
     /// [`Error::IngredientNotFound`] if any ingredient name in the [`LightRecipe`] is not found in
     /// the provided [`IngredientDatabase`]. It also forwards any errors from
     /// [`Recipe::balance`](RustRecipe::balance) if balancing calculations fail.
-    pub fn balance_recipe(&self, recipe: &LightRecipe, targets: &[(CompKey, f64)]) -> Result<OwnedLightRecipe> {
+    pub fn balance_recipe(&self, recipe: &LightRecipe, targets: &[(BalanceKey, f64)]) -> Result<OwnedLightRecipe> {
         RustRecipe::from_light_recipe(None, recipe, &self.db)?
             .balance(targets, &[], None)
             .map(Into::into)
@@ -460,10 +461,10 @@ pub(crate) mod tests {
         let original_total: f64 = recipe.iter().map(|(_, g)| *g).sum();
 
         let targets = [
-            (CompKey::MilkFat, 14.0),
-            (CompKey::MSNF, 10.0),
-            (CompKey::TotalSugars, 17.0),
-            (CompKey::TotalSolids, 41.0),
+            (CompKey::MilkFat.into(), 14.0),
+            (CompKey::MSNF.into(), 10.0),
+            (CompKey::TotalSugars.into(), 17.0),
+            (CompKey::TotalSolids.into(), 41.0),
         ];
 
         let balanced = bridge.balance_recipe(&recipe, &targets).unwrap();
@@ -479,7 +480,7 @@ pub(crate) mod tests {
 
         let comp = bridge.calculate_recipe_composition(&balanced).unwrap();
         for (key, target) in &targets {
-            assert_eq_flt_test!(comp.get(*key), *target);
+            assert_eq_flt_test!(key.value(&comp), *target);
         }
     }
 
@@ -487,7 +488,7 @@ pub(crate) mod tests {
     fn bridge_balance_recipe_ingredient_not_found() {
         let bridge = Bridge::new(make_seeded_db());
         let result =
-            bridge.balance_recipe(&[("Nonexistent Ingredient".to_string(), 100.0)], &[(CompKey::MilkFat, 10.0)]);
+            bridge.balance_recipe(&[("Nonexistent Ingredient".to_string(), 100.0)], &[(CompKey::MilkFat.into(), 10.0)]);
         assert!(
             matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")
         );

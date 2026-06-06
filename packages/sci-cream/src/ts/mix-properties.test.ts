@@ -2,7 +2,9 @@ import { expect, test } from "vitest";
 
 import {
   CompKey,
+  RatioKey,
   compToPropKey,
+  ratioToPropKey,
   MixProperties,
   getMixProperty,
   new_ingredient_database_seeded_from_embedded_data,
@@ -15,9 +17,9 @@ test("MixProperties NaN values", () => {
     expect(getMixProperty(mixProperties, compToPropKey(CompKey.Water))).toBe(100);
     expect(getMixProperty(mixProperties, compToPropKey(CompKey.TotalSolids))).toBe(0);
     expect(getMixProperty(mixProperties, compToPropKey(CompKey.TotalFats))).toBe(0);
-    expect(getMixProperty(mixProperties, compToPropKey(CompKey.EmulsifiersPerFat))).toBe(NaN);
-    expect(getMixProperty(mixProperties, compToPropKey(CompKey.StabilizersPerWater))).toBe(0);
-    expect(getMixProperty(mixProperties, compToPropKey(CompKey.AbsPAC))).toBe(0);
+    expect(getMixProperty(mixProperties, ratioToPropKey(RatioKey.EmulsifiersPerFat))).toBe(NaN);
+    expect(getMixProperty(mixProperties, ratioToPropKey(RatioKey.StabilizersPerWater))).toBe(0);
+    expect(getMixProperty(mixProperties, ratioToPropKey(RatioKey.AbsPAC))).toBe(0);
   }
 
   {
@@ -28,8 +30,8 @@ test("MixProperties NaN values", () => {
     expect(getMixProperty(mixProperties, compToPropKey(CompKey.Water))).toBe(0);
     expect(getMixProperty(mixProperties, compToPropKey(CompKey.TotalSolids))).toBe(100);
     expect(getMixProperty(mixProperties, compToPropKey(CompKey.TotalFats))).toBe(0);
-    expect(getMixProperty(mixProperties, compToPropKey(CompKey.EmulsifiersPerFat))).toBe(NaN);
-    expect(getMixProperty(mixProperties, compToPropKey(CompKey.StabilizersPerWater))).toBe(NaN);
-    expect(getMixProperty(mixProperties, compToPropKey(CompKey.AbsPAC))).toBe(NaN);
+    expect(getMixProperty(mixProperties, ratioToPropKey(RatioKey.EmulsifiersPerFat))).toBe(NaN);
+    expect(getMixProperty(mixProperties, ratioToPropKey(RatioKey.StabilizersPerWater))).toBe(NaN);
+    expect(getMixProperty(mixProperties, ratioToPropKey(RatioKey.AbsPAC))).toBe(NaN);
   }
 });

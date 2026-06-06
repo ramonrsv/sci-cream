@@ -4,6 +4,7 @@ use approx::AbsDiffEq;
 use struct_iterable::Iterable;
 
 use crate::{
+    balancing::BalanceKey,
     composition::{CompKey, Composition},
     util::iter_fields_as,
 };
@@ -144,6 +145,20 @@ impl KeyCeiling {
             .iter()
             .find(|(overridden, _)| *overridden == key)
             .map_or(self.default_pp, |(_, pp)| *pp)
+    }
+
+    /// Returns the ceiling that applies to a [`BalanceKey`]
+    ///
+    /// This is equivalent to [`for_key`] if [`BalanceKey::Comp`], else it's the default, since
+    /// ratio keys (i.e. [`BalanceKey::Ratio`]) don't support per-[`CompKey`] overrides.
+    //
+    // @todo Add support for [`BalanceKey`] overrides, maybe via a generic parameter.
+    pub(crate) fn for_balance_key(&self, key: BalanceKey) -> f64 {
+        if let BalanceKey::Comp(comp_key) = key {
+            self.for_key(comp_key)
+        } else {
+            self.default_pp
+        }
     }
 }
 

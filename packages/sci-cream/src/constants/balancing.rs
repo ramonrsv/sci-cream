@@ -4,7 +4,7 @@
 #[cfg(doc)]
 use crate::{
     balancing::{Priority, Weighting, balance_with_reweighting},
-    composition::CompKey,
+    composition::{CompKey, RatioKey},
 };
 
 /// Floor applied to a target's magnitude before inverting it for [`Weighting::Relative`]
@@ -37,7 +37,7 @@ pub const RATIO_REWEIGHT_TOLERANCE: f64 = 0.05;
 /// Typical water content (g/100g) of a finished mix
 ///
 /// This is used as the last-resort denominator estimate for water-denominated ratio targets
-/// ([`CompKey::AbsPAC`], [`CompKey::StabilizersPerWater`]) when neither the denominator (`Water`)
+/// ([`RatioKey::AbsPAC`], [`RatioKey::StabilizersPerWater`]) when neither the denominator (`Water`)
 /// nor a complementary `TotalSolids` target is given to infer it.
 //
 // @todo Find sources for this value.
@@ -45,7 +45,7 @@ pub const TYPICAL_MIX_WATER: f64 = 62.0;
 
 /// Typical total fat content (g/100g) of a finished mix
 ///
-/// This is used as the last-resort denominator estimate for [`CompKey::EmulsifiersPerFat`] when
+/// This is used as the last-resort denominator estimate for [`RatioKey::EmulsifiersPerFat`] when
 /// neither `TotalFats` nor any component-fat target is given to infer it.
 //
 // @todo Find sources for this value.

@@ -1,29 +1,37 @@
 import {
   CompKey,
+  RatioKey,
   FpdKey,
+  KeyScope,
   PropKey,
   compToPropKey,
   fpdToPropKey,
   isCompKey,
+  isRatioKey,
+  ratio_key_scope,
 } from "@workspace/sci-cream";
 
-/** Returns `true` when a `CompKey` represents a quantity (g) rather than a dimensionless ratio */
-export function isCompKeyQuantity(prop_key: CompKey): boolean {
-  return (
-    prop_key !== CompKey.AbsPAC &&
-    prop_key !== CompKey.EmulsifiersPerFat &&
-    prop_key !== CompKey.StabilizersPerWater
-  );
+/**
+ * Returns `true` when a `PropKey` is a quantity (g, additive and scalable by ingredient amount).
+ *
+ * Every `CompKey` is extensive (additive), so this is exactly `isCompKey`: `FpdKey` and `RatioKey`
+ * prop keys are non-additive (intensive), not grams, and never multiplied by an ingredient amount.
+ */
+export function isPropKeyQuantity(prop_key: PropKey): boolean {
+  return isCompKey(prop_key);
 }
 
-/** Returns `true` when a `PropKey` is for a quantity `CompKey` (excludes FPD & ratio comp keys) */
-export function isPropKeyQuantity(prop_key: PropKey): boolean {
-  return (
-    isCompKey(prop_key) &&
-    prop_key !== compToPropKey(CompKey.AbsPAC) &&
-    prop_key !== compToPropKey(CompKey.EmulsifiersPerFat) &&
-    prop_key !== compToPropKey(CompKey.StabilizersPerWater)
-  );
+/**
+ * Returns `true` when a `PropKey` is meaningful in a whole-mix context, not per-ingredient.
+ *
+ * Non-ratio keys are always mix-meaningful. A ratio key is filtered out only when its
+ * `KeyScope` is `Ingredient` (e.g. sweetener-classification ratios like PAC:POD that describe a
+ * single ingredient, not a mix). Used to filter property/target dropdowns for mix composition.
+ */
+export function isPropKeyMixScope(prop_key: PropKey): boolean {
+  if (!isRatioKey(prop_key)) return true;
+  const ratioKey = RatioKey[prop_key as keyof typeof RatioKey];
+  return ratio_key_scope(ratioKey) !== KeyScope.Ingredient;
 }
 
 /**

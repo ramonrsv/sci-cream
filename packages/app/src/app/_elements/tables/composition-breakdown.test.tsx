@@ -11,7 +11,6 @@ import {
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
-import { isCompKeyQuantity } from "@/lib/sci-cream/sci-cream";
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 
 import { CompKey, comp_key_as_med_str } from "@workspace/sci-cream";
@@ -295,7 +294,7 @@ describe("CompositionBreakdown", () => {
         firstRow.quantity,
         recipeCtx.recipes[0].mixTotal,
         QtyToggle.Quantity,
-        isCompKeyQuantity(CompKey.MilkFat),
+        true,
       );
       expect(cell.textContent).toBe(expected);
     });
@@ -322,7 +321,7 @@ describe("CompositionBreakdown", () => {
         firstRow.quantity,
         recipeCtx.recipes[0].mixTotal,
         QtyToggle.Composition,
-        isCompKeyQuantity(CompKey.MilkFat),
+        true,
       );
       expect(cell.textContent).toBe(expected);
     });
@@ -350,7 +349,7 @@ describe("CompositionBreakdown", () => {
         mixTotal,
         mixTotal,
         QtyToggle.Quantity,
-        isCompKeyQuantity(CompKey.MilkFat),
+        true,
       );
       expect(cell.textContent).toBe(expected);
     });

@@ -4,10 +4,14 @@
 //! cases that build their own [`Ingredient`]s and [`Recipe`]s, instead of going through the
 //! higher-level [`Bridge`] interface, perhaps for performance reasons.
 
+use strum::IntoEnumIterator;
+
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    composition::CompKey,
+    balancing::BalanceKey,
+    composition::{CompKey, RatioKey},
+    error::Error,
     ingredient::Ingredient as RustIngredient,
     recipe::{OwnedLightRecipe, Recipe as RustRecipe},
     wasm::{Composition, Ingredient, JsResult, MixProperties},
@@ -59,13 +63,42 @@ pub fn light_recipe_from_jsvalue(recipe: JsValue) -> JsResult<OwnedLightRecipe> 
     serde_wasm_bindgen::from_value::<OwnedLightRecipe>(recipe).map_err(Into::into)
 }
 
-/// Create a list of balancing targets from a JavaScript list of comp key and target value pairs.
+/// Resolves a flat key name (the [`CompKey`]/[`RatioKey`] variant name, e.g. `"MilkFat"` or
+/// `"AbsPAC"`) to its [`BalanceKey`], or `None` if no key has that name.
+///
+/// The two key spaces have disjoint variant names, so the lookup is unambiguous. Used at the
+/// WASM boundary to keep the JS balancing-target wire format a flat `[name, value]` pair rather
+/// than the tagged serde representation of [`BalanceKey`].
+#[must_use]
+pub fn balance_key_from_name(name: &str) -> Option<BalanceKey> {
+    CompKey::iter()
+        .find(|key| format!("{key:?}") == name)
+        .map(BalanceKey::Comp)
+        .or_else(|| {
+            RatioKey::iter()
+                .find(|key| format!("{key:?}") == name)
+                .map(BalanceKey::Ratio)
+        })
+}
+
+/// Create a list of balancing targets from a JavaScript list of key name and target value pairs.
+///
+/// Each target is a flat `[name, value]` pair, where `name` is a [`CompKey`] or [`RatioKey`]
+/// variant name (resolved via [`balance_key_from_name`]).
 ///
 /// # Errors
 ///
-/// Returns a `serde::Error` if the input cannot be deserialized into an `Vec<(CompKey, f64)>`.
-pub fn balancing_targets_from_jsvalue(targets: JsValue) -> JsResult<Vec<(CompKey, f64)>> {
-    serde_wasm_bindgen::from_value::<Vec<(CompKey, f64)>>(targets).map_err(Into::into)
+/// Returns a `serde::Error` if the input cannot be deserialized into a `Vec<(String, f64)>`, or an
+/// [`Error::InvalidBalancingTargets`] if any name does not match a known balancing key.
+pub fn balancing_targets_from_jsvalue(targets: JsValue) -> JsResult<Vec<(BalanceKey, f64)>> {
+    serde_wasm_bindgen::from_value::<Vec<(String, f64)>>(targets)?
+        .into_iter()
+        .map(|(name, value)| {
+            balance_key_from_name(&name)
+                .map(|key| (key, value))
+                .ok_or_else(|| Error::InvalidBalancingTargets(format!("unknown balancing key '{name}'")).into())
+        })
+        .collect()
 }
 
 #[wasm_bindgen]

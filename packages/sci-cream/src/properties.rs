@@ -3,28 +3,35 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{CompKey, Composition},
+    composition::{CompKey, Composition, RatioKey},
     fpd::{FPD, FpdKey},
 };
 
 /// Keys for accessing specific property values from [`MixProperties`] via [`MixProperties::get()`]
 ///
-/// This enum wraps both [`CompKey`] and [`FpdKey`] to allow accessing all properties from a single
-/// interface, which is helpful in downstream applications, to have a single flattened list of keys.
-/// There are [`From`] implementations for both key types to facilitate easy conversion.
+/// This enum wraps [`CompKey`], [`RatioKey`], and [`FpdKey`] to allow accessing all properties from
+/// a single interface, which is helpful in downstream applications, to have a single flattened list
+/// of keys. There are [`From`] implementations for all three key types for easy conversion.
+///
+/// The three arms mirror the three kinds of property: extensive composition values ([`CompKey`]),
+/// intensive ratios ([`RatioKey`]), and freezing-point-derived values ([`FpdKey`]).
+/// Only [`CompKey`] is additive/scalable; the other two are non-additive derived properties.
 ///
 /// # Example
 ///
 /// ```
-/// use sci_cream::{CompKey, FpdKey, PropKey, MixProperties};
+/// use sci_cream::{CompKey, RatioKey, FpdKey, PropKey, MixProperties};
 /// let mix_props = MixProperties::empty();
 /// assert_eq!(mix_props.get(CompKey::MilkFat.into()), 0.0);
+/// assert_eq!(mix_props.get(RatioKey::AbsPAC.into()), 0.0);
 /// assert_eq!(mix_props.get(FpdKey::FPD.into()), 0.0);
 /// ```
 #[derive(Hash, PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum PropKey {
-    /// [`CompKey`] for [`Composition`] properties from [`MixProperties::composition`]
+    /// [`CompKey`] for extensive [`Composition`] properties from [`MixProperties::composition`]
     CompKey(CompKey),
+    /// [`RatioKey`] for intensive [`Composition`] ratios from [`MixProperties::composition`]
+    RatioKey(RatioKey),
     /// [`FpdKey`] for [`FPD`] properties from [`MixProperties::fpd`]
     FpdKey(FpdKey),
 }
@@ -32,6 +39,12 @@ pub enum PropKey {
 impl From<CompKey> for PropKey {
     fn from(key: CompKey) -> Self {
         Self::CompKey(key)
+    }
+}
+
+impl From<RatioKey> for PropKey {
+    fn from(key: RatioKey) -> Self {
+        Self::RatioKey(key)
     }
 }
 
@@ -74,6 +87,7 @@ impl MixProperties {
     pub fn get(&self, key: PropKey) -> f64 {
         match key {
             PropKey::CompKey(comp_key) => self.composition.get(comp_key),
+            PropKey::RatioKey(ratio_key) => self.composition.get_ratio(ratio_key),
             PropKey::FpdKey(fpd_key) => self.fpd.get(fpd_key),
         }
     }
@@ -106,6 +120,12 @@ mod tests {
     }
 
     #[test]
+    fn prop_key_from_ratio_key() {
+        let key: PropKey = RatioKey::AbsPAC.into();
+        assert_eq!(key, PropKey::RatioKey(RatioKey::AbsPAC));
+    }
+
+    #[test]
     fn prop_key_from_fpd_key() {
         let key: PropKey = FpdKey::FPD.into();
         assert_eq!(key, PropKey::FpdKey(FpdKey::FPD));
@@ -114,18 +134,22 @@ mod tests {
     #[test]
     fn prop_key_equality_same_variant() {
         assert_eq!(PropKey::CompKey(CompKey::MilkFat), PropKey::CompKey(CompKey::MilkFat));
+        assert_eq!(PropKey::RatioKey(RatioKey::AbsPAC), PropKey::RatioKey(RatioKey::AbsPAC));
         assert_eq!(PropKey::FpdKey(FpdKey::ServingTemp), PropKey::FpdKey(FpdKey::ServingTemp));
     }
 
     #[test]
     fn prop_key_inequality_different_inner_key() {
         assert_ne!(PropKey::CompKey(CompKey::MilkFat), PropKey::CompKey(CompKey::MSNF));
+        assert_ne!(PropKey::RatioKey(RatioKey::AbsPAC), PropKey::RatioKey(RatioKey::EmulsifiersPerFat));
         assert_ne!(PropKey::FpdKey(FpdKey::FPD), PropKey::FpdKey(FpdKey::ServingTemp));
     }
 
     #[test]
     fn prop_key_inequality_different_outer_variant() {
         assert_ne!(PropKey::CompKey(CompKey::MilkFat), PropKey::FpdKey(FpdKey::FPD));
+        assert_ne!(PropKey::RatioKey(RatioKey::AbsPAC), PropKey::FpdKey(FpdKey::FPD));
+        assert_ne!(PropKey::CompKey(CompKey::MilkFat), PropKey::RatioKey(RatioKey::AbsPAC));
     }
 
     // --- MixProperties::empty / new / default ---

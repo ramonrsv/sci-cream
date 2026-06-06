@@ -10,8 +10,8 @@ use std::fmt;
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    balancing::{BalancingIssue, BalancingReport, Severity},
-    composition::CompKey,
+    balancing::{BalanceKey, BalancingIssue, BalancingReport, Severity},
+    composition::{CompKey, RatioKey},
     fpd::FpdKey,
     properties::PropKey,
 };
@@ -41,8 +41,6 @@ impl KeyAsStrings for CompKey {
             Self::LocustBeanGum => "LBG",
             Self::CarboxymethylCellulose => "CMC",
             Self::SaturatedFat => "Sat. Fat",
-            Self::EmulsifiersPerFat => "Emul./Fat",
-            Self::StabilizersPerWater => "Stab./Water",
             _ => self.as_med_str(),
         }
     }
@@ -124,8 +122,6 @@ impl KeyAsStrings for CompKey {
             Self::SodiumAlginate => "Sodium Alginate",
             Self::TaraGum => "Tara Gum",
             Self::TotalStabilizers => "Stabilizers",
-            Self::EmulsifiersPerFat => "Emulsifiers/Fat",
-            Self::StabilizersPerWater => "Stabilizers/Water",
 
             Self::POD => "POD",
 
@@ -134,7 +130,6 @@ impl KeyAsStrings for CompKey {
             Self::PACmlk => "PACmlk",
             Self::PACalc => "PACalc",
             Self::TotalPAC => "PAC",
-            Self::AbsPAC => "Abs.PAC",
             Self::HF => "HF",
 
             Self::SaturatedFat => "Saturated Fat",
@@ -167,9 +162,33 @@ impl KeyAsStrings for CompKey {
             Self::PACslt => "PAC (Salt)",
             Self::PACmlk => "PAC (Milk)",
             Self::PACalc => "PAC (Alcohol)",
-            Self::AbsPAC => "Absolute PAC",
             Self::HF => "Hardness Factor",
             Self::ABV => "Alcohol by Volume",
+            _ => self.as_med_str(),
+        }
+    }
+}
+
+impl KeyAsStrings for RatioKey {
+    fn as_short_str(&self) -> &'static str {
+        match self {
+            Self::EmulsifiersPerFat => "Emul./Fat",
+            Self::StabilizersPerWater => "Stab./Water",
+            Self::AbsPAC => self.as_med_str(),
+        }
+    }
+
+    fn as_med_str(&self) -> &'static str {
+        match self {
+            Self::AbsPAC => "Abs.PAC",
+            Self::EmulsifiersPerFat => "Emulsifiers/Fat",
+            Self::StabilizersPerWater => "Stabilizers/Water",
+        }
+    }
+
+    fn as_long_str(&self) -> &'static str {
+        match self {
+            Self::AbsPAC => "Absolute PAC",
             _ => self.as_med_str(),
         }
     }
@@ -197,11 +216,35 @@ impl KeyAsStrings for FpdKey {
     }
 }
 
+impl KeyAsStrings for BalanceKey {
+    fn as_short_str(&self) -> &'static str {
+        match self {
+            Self::Comp(comp_key) => comp_key.as_short_str(),
+            Self::Ratio(ratio_key) => ratio_key.as_short_str(),
+        }
+    }
+
+    fn as_med_str(&self) -> &'static str {
+        match self {
+            Self::Comp(comp_key) => comp_key.as_med_str(),
+            Self::Ratio(ratio_key) => ratio_key.as_med_str(),
+        }
+    }
+
+    fn as_long_str(&self) -> &'static str {
+        match self {
+            Self::Comp(comp_key) => comp_key.as_long_str(),
+            Self::Ratio(ratio_key) => ratio_key.as_long_str(),
+        }
+    }
+}
+
 impl KeyAsStrings for PropKey {
     fn as_short_str(&self) -> &'static str {
         match self {
             Self::CompKey(comp_key) => comp_key.as_short_str(),
             Self::FpdKey(fpd_key) => fpd_key.as_short_str(),
+            Self::RatioKey(ratio_key) => ratio_key.as_short_str(),
         }
     }
 
@@ -209,6 +252,7 @@ impl KeyAsStrings for PropKey {
         match self {
             Self::CompKey(comp_key) => comp_key.as_med_str(),
             Self::FpdKey(fpd_key) => fpd_key.as_med_str(),
+            Self::RatioKey(ratio_key) => ratio_key.as_med_str(),
         }
     }
 
@@ -216,6 +260,7 @@ impl KeyAsStrings for PropKey {
         match self {
             Self::CompKey(comp_key) => comp_key.as_long_str(),
             Self::FpdKey(fpd_key) => fpd_key.as_long_str(),
+            Self::RatioKey(ratio_key) => ratio_key.as_long_str(),
         }
     }
 }
@@ -369,52 +414,9 @@ mod tests {
             ("LBG", CompKey::LocustBeanGum),
             ("CMC", CompKey::CarboxymethylCellulose),
             ("Sat. Fat", CompKey::SaturatedFat),
-            ("Emul./Fat", CompKey::EmulsifiersPerFat),
-            ("Stab./Water", CompKey::StabilizersPerWater),
         ];
         for (expected, key) in some_expected {
             assert_eq!(key.as_short_str(), expected);
-        }
-    }
-
-    #[test]
-    fn comp_keys_as_long_str() {
-        let some_expected = vec![
-            // SNF / SNFS expansions
-            ("Milk Solids Non-Fat", CompKey::MSNF),
-            ("Milk Solids Non-Fat Non-Sugar", CompKey::MilkSNFS),
-            ("Nut Solids Non-Fat", CompKey::NutSNF),
-            ("Egg Solids Non-Fat", CompKey::EggSNF),
-            ("Other Solids Non-Fat Non-Sugar", CompKey::OtherSNFS),
-            ("Total Solids Non-Fat", CompKey::TotalSNF),
-            ("Total Solids Non-Fat Non-Sugar", CompKey::TotalSNFS),
-            // Total* prefix
-            ("Total Fats", CompKey::TotalFats),
-            ("Total Proteins", CompKey::TotalProteins),
-            ("Total Solids", CompKey::TotalSolids),
-            ("Total Fiber", CompKey::TotalFiber),
-            ("Total Sugars", CompKey::TotalSugars),
-            ("Total Polyols", CompKey::TotalPolyols),
-            ("Total Artificial", CompKey::TotalArtificial),
-            ("Total Sweeteners", CompKey::TotalSweeteners),
-            ("Total Carbohydrates", CompKey::TotalCarbohydrates),
-            ("Total Emulsifiers", CompKey::TotalEmulsifiers),
-            ("Total Stabilizers", CompKey::TotalStabilizers),
-            ("Total PAC", CompKey::TotalPAC),
-            // PAC sub-keys and other expanded acronyms
-            ("PAC (Sugars)", CompKey::PACsgr),
-            ("PAC (Salt)", CompKey::PACslt),
-            ("PAC (Milk)", CompKey::PACmlk),
-            ("PAC (Alcohol)", CompKey::PACalc),
-            ("Absolute PAC", CompKey::AbsPAC),
-            ("Hardness Factor", CompKey::HF),
-            ("Alcohol by Volume", CompKey::ABV),
-            // keys unchanged from as_med_str
-            ("Milk Fat", CompKey::MilkFat),
-            ("POD", CompKey::POD),
-        ];
-        for (expected, key) in some_expected {
-            assert_eq!(key.as_long_str(), expected);
         }
     }
 
@@ -486,15 +488,12 @@ mod tests {
             "Sodium Alginate",
             "Tara Gum",
             "Stabilizers",
-            "Emulsifiers/Fat",
-            "Stabilizers/Water",
             "POD",
             "PACsgr",
             "PACslt",
             "PACmlk",
             "PACalc",
             "PAC",
-            "Abs.PAC",
             "HF",
             "Saturated Fat",
             "Trans Fat",
@@ -505,6 +504,77 @@ mod tests {
         for expected in some_expected {
             assert_true!(actual_set.contains(expected));
         }
+    }
+
+    #[test]
+    fn comp_keys_as_long_str() {
+        let some_expected = vec![
+            // SNF / SNFS expansions
+            ("Milk Solids Non-Fat", CompKey::MSNF),
+            ("Milk Solids Non-Fat Non-Sugar", CompKey::MilkSNFS),
+            ("Nut Solids Non-Fat", CompKey::NutSNF),
+            ("Egg Solids Non-Fat", CompKey::EggSNF),
+            ("Other Solids Non-Fat Non-Sugar", CompKey::OtherSNFS),
+            ("Total Solids Non-Fat", CompKey::TotalSNF),
+            ("Total Solids Non-Fat Non-Sugar", CompKey::TotalSNFS),
+            // Total* prefix
+            ("Total Fats", CompKey::TotalFats),
+            ("Total Proteins", CompKey::TotalProteins),
+            ("Total Solids", CompKey::TotalSolids),
+            ("Total Fiber", CompKey::TotalFiber),
+            ("Total Sugars", CompKey::TotalSugars),
+            ("Total Polyols", CompKey::TotalPolyols),
+            ("Total Artificial", CompKey::TotalArtificial),
+            ("Total Sweeteners", CompKey::TotalSweeteners),
+            ("Total Carbohydrates", CompKey::TotalCarbohydrates),
+            ("Total Emulsifiers", CompKey::TotalEmulsifiers),
+            ("Total Stabilizers", CompKey::TotalStabilizers),
+            ("Total PAC", CompKey::TotalPAC),
+            // PAC sub-keys and other expanded acronyms
+            ("PAC (Sugars)", CompKey::PACsgr),
+            ("PAC (Salt)", CompKey::PACslt),
+            ("PAC (Milk)", CompKey::PACmlk),
+            ("PAC (Alcohol)", CompKey::PACalc),
+            ("Hardness Factor", CompKey::HF),
+            ("Alcohol by Volume", CompKey::ABV),
+            // keys unchanged from as_med_str
+            ("Milk Fat", CompKey::MilkFat),
+            ("POD", CompKey::POD),
+        ];
+        for (expected, key) in some_expected {
+            assert_eq!(key.as_long_str(), expected);
+        }
+    }
+
+    #[test]
+    fn ratio_keys_as_short_str() {
+        let expected = vec![
+            ("Abs.PAC", RatioKey::AbsPAC),
+            ("Emul./Fat", RatioKey::EmulsifiersPerFat),
+            ("Stab./Water", RatioKey::StabilizersPerWater),
+        ];
+        for (expected, key) in expected {
+            assert_eq!(key.as_short_str(), expected);
+        }
+    }
+
+    #[test]
+    fn ratio_keys_as_med_str() {
+        let expected = vec![
+            ("Abs.PAC", RatioKey::AbsPAC),
+            ("Emulsifiers/Fat", RatioKey::EmulsifiersPerFat),
+            ("Stabilizers/Water", RatioKey::StabilizersPerWater),
+        ];
+        for (expected, key) in expected {
+            assert_eq!(key.as_med_str(), expected);
+        }
+    }
+
+    #[test]
+    fn ratio_keys_as_long_str() {
+        assert_eq!(RatioKey::AbsPAC.as_long_str(), "Absolute PAC");
+        assert_eq!(RatioKey::EmulsifiersPerFat.as_long_str(), "Emulsifiers/Fat");
+        assert_eq!(RatioKey::StabilizersPerWater.as_long_str(), "Stabilizers/Water");
     }
 
     #[test]
@@ -529,15 +599,15 @@ mod tests {
     }
 
     #[test]
-    fn prop_keys_as_med_str() {
-        assert_eq!(PropKey::CompKey(CompKey::MilkFat).as_med_str(), "Milk Fat");
-        assert_eq!(PropKey::FpdKey(FpdKey::FPD).as_med_str(), "FPD");
-    }
-
-    #[test]
     fn prop_keys_as_short_str() {
         assert_eq!(PropKey::CompKey(CompKey::CarboxymethylCellulose).as_short_str(), "CMC");
         assert_eq!(PropKey::FpdKey(FpdKey::ServingTemp).as_short_str(), "Serving Temp");
+    }
+
+    #[test]
+    fn prop_keys_as_med_str() {
+        assert_eq!(PropKey::CompKey(CompKey::MilkFat).as_med_str(), "Milk Fat");
+        assert_eq!(PropKey::FpdKey(FpdKey::FPD).as_med_str(), "FPD");
     }
 
     #[test]
@@ -549,8 +619,8 @@ mod tests {
     #[test]
     fn balancing_issue_display_message_dominance_violation() {
         let dominance = BalancingIssue::DominanceViolation {
-            lesser: CompKey::Sucrose,
-            greater: CompKey::TotalSugars,
+            lesser: CompKey::Sucrose.into(),
+            greater: CompKey::TotalSugars.into(),
             lesser_target: 20.0,
             greater_target: 15.0,
         };
@@ -562,8 +632,8 @@ mod tests {
     #[test]
     fn balancing_issue_display_message_additive_dominance_violation() {
         let additive = BalancingIssue::AdditiveDominanceViolation {
-            whole: CompKey::TotalSugars,
-            parts: vec![CompKey::Sucrose, CompKey::Fructose],
+            whole: CompKey::TotalSugars.into(),
+            parts: vec![CompKey::Sucrose.into(), CompKey::Fructose.into()],
             parts_target_sum: 20.0,
             whole_target: 15.0,
         };
@@ -575,7 +645,7 @@ mod tests {
     #[test]
     fn balancing_issue_display_message_negative_target() {
         let text = BalancingIssue::NegativeTarget {
-            key: CompKey::MilkFat,
+            key: CompKey::MilkFat.into(),
             value: -5.0,
         }
         .to_string();
@@ -585,14 +655,20 @@ mod tests {
 
     #[test]
     fn balancing_issue_display_message_duplicate_priority() {
-        let text = BalancingIssue::DuplicatePriority { key: CompKey::MilkFat }.to_string();
+        let text = BalancingIssue::DuplicatePriority {
+            key: CompKey::MilkFat.into(),
+        }
+        .to_string();
         assert_true!(text.contains(CompKey::MilkFat.as_med_str()));
         assert_true!(text.contains("priorities"));
     }
 
     #[test]
     fn balancing_issue_display_message_priority_without_target() {
-        let text = BalancingIssue::PriorityWithoutTarget { key: CompKey::MSNF }.to_string();
+        let text = BalancingIssue::PriorityWithoutTarget {
+            key: CompKey::MSNF.into(),
+        }
+        .to_string();
         assert_true!(text.contains(CompKey::MSNF.as_med_str()));
         assert_true!(text.contains("no effect"));
     }
@@ -601,8 +677,12 @@ mod tests {
     fn balancing_report_display_lists_issues() {
         let report = BalancingReport {
             issues: vec![
-                BalancingIssue::DuplicateTarget { key: CompKey::AbsPAC },
-                BalancingIssue::UnaffectableTarget { key: CompKey::Alcohol },
+                BalancingIssue::DuplicateTarget {
+                    key: RatioKey::AbsPAC.into(),
+                },
+                BalancingIssue::UnaffectableTarget {
+                    key: CompKey::Alcohol.into(),
+                },
             ],
         };
         let text = report.to_string();

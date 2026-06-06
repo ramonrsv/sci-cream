@@ -63,10 +63,6 @@
       Underbelly, Dana, etc. and compare the recommended concentrations of different stabilizers.
 - [ ] Encode (in)dependent specs in different enums; don't implement `ToIngredient` for dependents.
 - [ ] Add `resolution` support for validating a spec collection for reference sanity, etc.
-- [ ] Implement a ratios system that calculates important ratios from a `Composition`. Maybe it can
-      be added to `MixProperties` for ratios like Stabilizers/Water, Emulsifiers/Fat, etc. It also
-      needs to support `Ingredient`s, primarily for sweeteners, with ratios like PAC:POD,
-      Solids:POD, etc. A crude implementation currently is at `data::tests::sweeteners_by_ratio`.
 - [ ] Add Abs.POD property; looks for literature sources for it, I think I saw it in Goff & Hartel.
 - [ ] Consider dropping WASM support for `Recipe`, rely only on `Bridge` and `IngredientDatabase`.
 - [ ] Look into `wasm_bindgen_test` and `wasm-pack test --headless --chrome` for testing `JsValue`.
@@ -89,6 +85,10 @@
 
 ## Completed
 
+- [x] Implement a ratios system that calculates important ratios from a `Composition`. Maybe it can
+      be added to `MixProperties` for ratios like Stabilizers/Water, Emulsifiers/Fat, etc. It also
+      needs to support `Ingredient`s, primarily for sweeteners, with ratios like PAC:POD,
+      Solids:POD, etc. A crude implementation currently is at `data::tests::sweeteners_by_ratio`.
 - [x] Look into adding '-D warnings' to `run-local-test-suite.sh` and `package.json`, to prevent
       warnings slipping through and breaking CI. Unfortunately, this causes a lot of recompilation.
 - [x] Reject negative targets in balancing: every balanceable `CompKey` is non-negative, so a target
