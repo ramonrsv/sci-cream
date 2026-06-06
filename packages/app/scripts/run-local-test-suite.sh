@@ -36,11 +36,12 @@ function execute() {
 }
 
 execute pnpm build:deps
+execute pnpm prettier
+execute pnpm lint
+
 execute pnpm build
 execute pnpm seed-db
 execute env CI=true pnpm test
-execute pnpm lint
-execute pnpm prettier
 execute pnpm doc
 execute pnpm coverage
 

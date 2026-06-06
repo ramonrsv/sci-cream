@@ -36,8 +36,6 @@
 - [ ] Add whey and casein concentrate products, e.g. "Whey Powder", "Whey Protein Concentrate 80%",
       "Whey Protein Isolate 90%", "Sodium Caseinate", "Buttermilk Powder", etc.
 - [ ] FPD properties cannot be balanced, so add some way to convert them to (PAC-HF)/Water.
-- [ ] Look into adding '-D warnings' to `run-local-test-suite.sh` and `package.json`, to prevent
-      warnings slipping through and breaking CI. Unfortunately, this causes a lot of recompilation.
 
 ## Backlog
 
@@ -91,6 +89,8 @@
 
 ## Completed
 
+- [x] Look into adding '-D warnings' to `run-local-test-suite.sh` and `package.json`, to prevent
+      warnings slipping through and breaking CI. Unfortunately, this causes a lot of recompilation.
 - [x] Reject negative targets in balancing: every balanceable `CompKey` is non-negative, so a target
       `< 0` is unreachable. Added an explicit `NegativeTarget` error-severity `BalancingIssue`
       (sibling to `NonFiniteTarget`), then removed the now-unnecessary `.abs()` in `row_weights` /

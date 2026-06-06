@@ -35,11 +35,18 @@ function execute() {
     fi
 }
 
+export RUSTFLAGS="-D warnings"
+export RUSTDOCFLAGS="-D warnings"
+
 execute pnpm build:package
-execute pnpm test
-execute pnpm lint
 execute pnpm fmt:check
+execute pnpm lint
+
+execute pnpm test
 execute pnpm doc
+execute pnpm doc:examples
+
+export RUSTFLAGS="-A unstable_features"
 execute pnpm coverage
 
 if [[ "$SKIP_BENCH" == false ]]; then
