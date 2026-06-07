@@ -569,6 +569,7 @@ use crate::{
 mod tests;
 
 // Silence unused_crate_dependencies lint scenarios with false positives or out of our control
+#[doc(hidden)]
 mod _lint {
     // [dev-dependencies] used in /benches and /examples.
     #[cfg(test)]
