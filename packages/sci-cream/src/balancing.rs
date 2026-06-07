@@ -36,11 +36,17 @@ use crate::{
 /// direct weighted-sum row, a ratio key a homogeneous row (see [`target_row_coeff`]). This union is
 /// the balancing-facing counterpart of [`PropKey`](crate::properties::PropKey) (which additionally
 /// carries [`FpdKey`](crate::fpd::FpdKey), which is not currently a supported balancing target).
+///
+/// **Note**: The different variants all use `#[serde(untagged)]` to allow a flat list of keys in
+/// the WASM-facing balancing API, in line with how the TypeScript wrappers handle `PropKey`. This
+/// requires that all variant names be unique across all the underlying key types.
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Serialize, Deserialize)]
 pub enum BalanceKey {
     /// An extensive composition key (additive, scalable by quantity).
+    #[serde(untagged)]
     Comp(CompKey),
     /// An intensive ratio key (`numerator / denominator`, non-additive).
+    #[serde(untagged)]
     Ratio(RatioKey),
 }
 
