@@ -3,7 +3,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    balancing::BalanceKey,
+    balancing::{BalanceKey, Priority},
     composition::Composition as RustComposition,
     database::IngredientDatabase,
     error::Result,
@@ -13,8 +13,8 @@ use crate::{
     resolution::IngredientGetter,
     specs::entry::SpecEntry,
     wasm::{
-        Composition, Ingredient, JsResult, MixProperties, balancing_targets_from_jsvalue, light_recipe_from_jsvalue,
-        spec_entry_from_jsvalue,
+        Composition, Ingredient, JsResult, MixProperties, balancing_priorities_from_jsvalue,
+        balancing_targets_from_jsvalue, light_recipe_from_jsvalue, spec_entry_from_jsvalue,
     },
 };
 
@@ -107,9 +107,14 @@ impl Bridge {
     /// [`Error::IngredientNotFound`] if any ingredient name in the [`LightRecipe`] is not found in
     /// the provided [`IngredientDatabase`]. It also forwards any errors from
     /// [`Recipe::balance`](RustRecipe::balance) if balancing calculations fail.
-    pub fn balance_recipe(&self, recipe: &LightRecipe, targets: &[(BalanceKey, f64)]) -> Result<OwnedLightRecipe> {
+    pub fn balance_recipe(
+        &self,
+        recipe: &LightRecipe,
+        targets: &[(BalanceKey, f64)],
+        priorities: &[(BalanceKey, Priority)],
+    ) -> Result<OwnedLightRecipe> {
         RustRecipe::from_light_recipe(None, recipe, &self.db)?
-            .balance(targets, &[], None)
+            .balance(targets, priorities, None)
             .map(Into::into)
     }
 
@@ -226,14 +231,20 @@ impl Bridge {
     /// # Errors
     ///
     /// Returns a `serde::Error` if the `JsValue` inputs cannot be deserialized into an
-    /// [`OwnedLightRecipe`] or a `(CompKey, f64)[]`. Forwards any errors from the forwarded-to
-    /// method. See [`Bridge::balance_recipe`] for more details on the forwarded errors.
+    /// [`OwnedLightRecipe`], `(BalanceKey, f64)[]`, or `(BalanceKey, Priority)[]`. Forwards any
+    /// errors from the forwarded-to method. See [`Bridge::balance_recipe`] for more details.
     #[wasm_bindgen(js_name = "balance_recipe")]
-    pub fn balance_recipe_wasm(&self, recipe: Box<[JsValue]>, targets: Box<[JsValue]>) -> JsResult<Box<[JsValue]>> {
+    pub fn balance_recipe_wasm(
+        &self,
+        recipe: Box<[JsValue]>,
+        targets: Box<[JsValue]>,
+        priorities: Box<[JsValue]>,
+    ) -> JsResult<Box<[JsValue]>> {
         let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
+        let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
 
-        self.balance_recipe(&light_recipe, &targets)
+        self.balance_recipe(&light_recipe, &targets, &priorities)
             .map_err(Into::<JsValue>::into)?
             .into_iter()
             .map(|line| serde_wasm_bindgen::to_value(&line).map_err(Into::into))
@@ -295,8 +306,11 @@ pub(crate) mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
+    use crate::balancing::tests::balance_rel_error_pp;
+
     use super::*;
     use crate::{
+        balancing::Priority,
         composition::CompKey,
         data::{get_all_independent_ingredient_specs, get_all_spec_entries},
         ingredient::{Ingredient, IntoIngredient, ResolveIntoIngredient},
@@ -467,7 +481,7 @@ pub(crate) mod tests {
             (CompKey::TotalSolids.into(), 41.0),
         ];
 
-        let balanced = bridge.balance_recipe(&recipe, &targets).unwrap();
+        let balanced = bridge.balance_recipe(&recipe, &targets, &[]).unwrap();
 
         assert_eq!(balanced.len(), recipe.len());
         for (i, (name, amount)) in balanced.iter().enumerate() {
@@ -487,11 +501,39 @@ pub(crate) mod tests {
     #[test]
     fn bridge_balance_recipe_ingredient_not_found() {
         let bridge = Bridge::new(make_seeded_db());
-        let result =
-            bridge.balance_recipe(&[("Nonexistent Ingredient".to_string(), 100.0)], &[(CompKey::MilkFat.into(), 10.0)]);
+        let result = bridge.balance_recipe(
+            &[("Nonexistent Ingredient".to_string(), 100.0)],
+            &[(CompKey::MilkFat.into(), 10.0)],
+            &[],
+        );
         assert!(
             matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")
         );
+    }
+
+    #[test]
+    fn bridge_balance_recipe_applies_priorities() {
+        let bridge = Bridge::new(make_seeded_db());
+        let recipe = light_recipe_to_owned(LIGHT_RECIPE);
+
+        let targets = [
+            (CompKey::Energy.into(), 200.0),
+            (CompKey::MilkFat.into(), 12.0),
+            (CompKey::MSNF.into(), 8.0),
+            (CompKey::POD.into(), 0.5),
+        ];
+        let priorities = [(CompKey::POD.into(), Priority::Critical)];
+
+        let default_balanced = bridge.balance_recipe(&recipe, &targets, &[]).unwrap();
+        let prioritized_balanced = bridge.balance_recipe(&recipe, &targets, &priorities).unwrap();
+
+        let default_comp = bridge.calculate_recipe_composition(&default_balanced).unwrap();
+        let prioritized_comp = bridge.calculate_recipe_composition(&prioritized_balanced).unwrap();
+
+        let default_error = balance_rel_error_pp(default_comp.get(CompKey::POD), 0.5);
+        let prioritized_error = balance_rel_error_pp(prioritized_comp.get(CompKey::POD), 0.5);
+
+        assert_true!(prioritized_error < default_error);
     }
 
     #[test]

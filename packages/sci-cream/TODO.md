@@ -7,7 +7,6 @@
 - [ ] Add a beginner-friendly overview of the core ice cream science concepts, e.g. FPD curves.
 - [ ] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
-- [ ] Add TypeScript interface for the existing preliminary automatic balancing functionality.
 - [ ] Add more ultra-filtered milk products, e.g. `Fairlife Whole Ultra-Filtered Lactose-Free Milk`.
 - [ ] Add evaporated and condensed milk products from Goff & Hartel, as references for comparison.
 - [ ] Add USDA chocolate ingredients and include them in `compare_specs_*` tests vs simple & lindt.
@@ -28,7 +27,6 @@
 - [ ] Implement a feature in the `sci-cream` crate to provide acceptable ranges for key properties
       of a mix, e.g. total solids, MSNF, serving temperature, etc. It should probably support
       category presets for different kinds of frozen desserts, e.g. ice-cream, sherbet, sorbet, etc.
-- [ ] Add balancer functionality to automatically balance recipes and component substitutions.
 - [ ] Consider adding support for `Composition` to also return `Unit` instead of just `f64`.
 - [ ] Add support for `data` to resolve `AliasSpec` and `CompositeSpec` on per-spec requests.
 - [ ] Add more reference recipes from Underbelly, Dana, Corvitto, Ice Cream Science, etc.
@@ -67,10 +65,6 @@
 - [ ] Consider dropping WASM support for `Recipe`, rely only on `Bridge` and `IngredientDatabase`.
 - [ ] Look into `wasm_bindgen_test` and `wasm-pack test --headless --chrome` for testing `JsValue`.
 - [ ] Fix `wasm` module code coverage gap, mostly by disabling anything with a `JsValue`.
-- [ ] Adopt `serde_repr` on `CompKey`/`FpdKey` so `bridge.balance_recipe` (and other
-      `serde_wasm_bindgen`-tunneled paths) accept numeric values, dropping the TS string mapping.
-- [ ] Add a stable string-based serialization path for `CompKey`/`FpdKey`/`PropKey` for permanent
-      storage; the numeric `serde_repr` above is unsafe for persistence (discriminant drift).
 - [ ] Revisit a curated `CompKey` hierarchy check for balancing target validation (prototyped then
       dropped as redundant with the `DominanceViolation` check) if palette-independent validation is
       ever wanted, e.g. flagging `Sucrose > TotalSugars` before any ingredients are chosen.
@@ -85,6 +79,8 @@
 
 ## Completed
 
+- [x] Add balancer functionality to automatically balance recipes and component substitutions.
+- [x] Add TypeScript interface for the existing preliminary automatic balancing functionality.
 - [x] Implement a ratios system that calculates important ratios from a `Composition`. Maybe it can
       be added to `MixProperties` for ratios like Stabilizers/Water, Emulsifiers/Fat, etc. It also
       needs to support `Ingredient`s, primarily for sweeteners, with ratios like PAC:POD,

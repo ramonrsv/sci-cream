@@ -7,7 +7,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    balancing::BalanceKey,
+    balancing::{BalanceKey, Priority},
     ingredient::Ingredient as RustIngredient,
     recipe::{OwnedLightRecipe, Recipe as RustRecipe},
     wasm::{Composition, Ingredient, JsResult, MixProperties},
@@ -76,6 +76,18 @@ pub fn balancing_targets_from_jsvalue(targets: JsValue) -> JsResult<Vec<(Balance
     serde_wasm_bindgen::from_value::<Vec<(BalanceKey, f64)>>(targets).map_err(Into::into)
 }
 
+/// Create a list of balancing priorities from a JavaScript list of key and priority pairs.
+///
+/// Each priority is a flat `[name, level]` pair, where `name` is a [`CompKey`] or [`RatioKey`]
+/// and `level` is a [`Priority`] variant name, e.g. `"Critical"`.
+///
+/// # Errors
+///
+/// Returns a `serde::Error` if the input cannot be deserialized into `Vec<(BalanceKey, Priority)>`.
+pub fn balancing_priorities_from_jsvalue(priorities: JsValue) -> JsResult<Vec<(BalanceKey, Priority)>> {
+    serde_wasm_bindgen::from_value::<Vec<(BalanceKey, Priority)>>(priorities).map_err(Into::into)
+}
+
 #[wasm_bindgen]
 impl Recipe {
     /// Creates a new [`Recipe`] with the optional given name and list of [`RecipeLine`]s.
@@ -120,14 +132,16 @@ impl Recipe {
     ///
     /// # Errors
     ///
-    /// Returns a `serde::Error` if the `JsValue` input cannot be deserialized into a `(CompKey,
-    /// f64)[]`. Forwards any errors from internal balancing calculations; see [`crate::balancing`].
+    /// Returns a `serde::Error` if the `JsValue` inputs cannot be deserialized into a
+    /// `(BalanceKey, f64)[]` or `(BalanceKey, Priority)[]`. Forwards any errors from internal
+    /// balancing calculations; see [`Recipe::balance`](RustRecipe::balance).
     #[wasm_bindgen(js_name = "balance")]
-    pub fn balance_wasm(&self, targets: Box<[JsValue]>) -> JsResult<Self> {
+    pub fn balance_wasm(&self, targets: Box<[JsValue]>, priorities: Box<[JsValue]>) -> JsResult<Self> {
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
+        let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
 
         RustRecipe::from(self.clone())
-            .balance(&targets, &[], None)
+            .balance(&targets, &priorities, None)
             .map(Into::into)
             .map_err(Into::into)
     }

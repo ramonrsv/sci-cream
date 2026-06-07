@@ -10,9 +10,6 @@
 //!   [1,     1,    1]   \[x3\]    \[1\]  // Total sums to 100%
 //!
 //! Where x1, x2, x3 are the amounts of each composition/ingredient to use.
-//!
-//! @todo This is a work in progress, and the API and implementation may change significantly in the
-//! near future. For now, it's mostly intended for benchmarking and testing different approaches.
 
 use nalgebra::{DMatrix, DVector, SVD};
 use ndarray::{Array1, Array2};
@@ -116,7 +113,7 @@ pub enum Weighting {
 /// to the numeric weight the solvers ([`balance_compositions_nnls`],
 /// [`balance_compositions_nalgebra`]) consume. [`Priority::Normal`] is the default and maps to a
 /// weight of 1 — the unprioritized behavior — so an empty priority list leaves the solve unchanged.
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
+#[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Priority {
     /// Default priority; weight multiplier 1 (the unprioritized behavior).
     #[default]
@@ -976,7 +973,7 @@ pub fn get_balanceable_keys() -> Vec<BalanceKey> {
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::float_cmp, clippy::unwrap_used)]
-mod tests {
+pub(crate) mod tests {
     use std::sync::LazyLock;
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
@@ -1087,7 +1084,7 @@ mod tests {
     /// `|achieved − target| / max(|target|, FLOOR) × 100`, where `FLOOR` is
     /// [`BALANCE_REL_FLOOR`]. The floor keeps a zero target (e.g. a recipe with no cocoa or
     /// stabilizer) from producing a non-finite result.
-    fn balance_rel_error_pp(achieved: f64, target: f64) -> f64 {
+    pub(crate) fn balance_rel_error_pp(achieved: f64, target: f64) -> f64 {
         (achieved - target).abs() / target.max(BALANCE_REL_FLOOR) * 100.0
     }
 

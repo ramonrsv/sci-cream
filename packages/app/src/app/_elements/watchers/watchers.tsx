@@ -467,7 +467,10 @@ export function WatchersView({
 
     try {
       const lightRecipe = makeLightRecipe(main, (n) => wasmBridge.has_ingredient(n));
-      const balanced = wasmBridge.balance_recipe(lightRecipe, balanceTargets) as [string, number][];
+      const balanced = wasmBridge.balance_recipe(lightRecipe, balanceTargets, []) as [
+        string,
+        number,
+      ][];
 
       setBalanceError(undefined);
       onApplyBalancedMain(balanced);
