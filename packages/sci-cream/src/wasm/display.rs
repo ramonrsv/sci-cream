@@ -8,67 +8,30 @@ use crate::{
     fpd::FpdKey,
 };
 
-/// WASM compatible wrapper for [`KeyAsStrings::as_short_str`] for [`CompKey`]
-#[wasm_bindgen]
-#[must_use]
-pub fn comp_key_as_short_str(key: CompKey) -> String {
-    key.as_short_str().to_string()
+macro_rules! key_str_wrappers {
+    ($($fn:ident => ($key:ty, $method:ident, $label:literal)),+ $(,)?) => {
+        $(
+            #[doc = concat!(
+                "WASM compatible wrapper for [`KeyAsStrings::", stringify!($method), "`] for [`", $label, "`]")]
+            #[wasm_bindgen]
+            #[must_use]
+            pub fn $fn(key: $key) -> String {
+                key.$method().to_string()
+            }
+        )+
+    };
 }
 
-/// WASM compatible wrapper for [`KeyAsStrings::as_med_str`] for [`CompKey`]
-#[wasm_bindgen]
-#[must_use]
-pub fn comp_key_as_med_str(key: CompKey) -> String {
-    key.as_med_str().to_string()
-}
-
-/// WASM compatible wrapper for [`KeyAsStrings::as_long_str`] for [`CompKey`]
-#[wasm_bindgen]
-#[must_use]
-pub fn comp_key_as_long_str(key: CompKey) -> String {
-    key.as_long_str().to_string()
-}
-
-/// WASM compatible wrapper for [`KeyAsStrings::as_short_str`] for [`RatioKey`]
-#[wasm_bindgen]
-#[must_use]
-pub fn ratio_key_as_short_str(key: RatioKey) -> String {
-    key.as_short_str().to_string()
-}
-
-/// WASM compatible wrapper for [`KeyAsStrings::as_med_str`] for [`RatioKey`]
-#[wasm_bindgen]
-#[must_use]
-pub fn ratio_key_as_med_str(key: RatioKey) -> String {
-    key.as_med_str().to_string()
-}
-
-/// WASM compatible wrapper for [`KeyAsStrings::as_long_str`] for [`RatioKey`]
-#[wasm_bindgen]
-#[must_use]
-pub fn ratio_key_as_long_str(key: RatioKey) -> String {
-    key.as_long_str().to_string()
-}
-
-/// WASM compatible wrapper for [`KeyAsStrings::as_short_str`] for [`FpdKey`]
-#[wasm_bindgen]
-#[must_use]
-pub fn fpd_key_as_short_str(key: FpdKey) -> String {
-    key.as_short_str().to_string()
-}
-
-/// WASM compatible wrapper for [`KeyAsStrings::as_med_str`] for [`FpdKey`]
-#[wasm_bindgen]
-#[must_use]
-pub fn fpd_key_as_med_str(key: FpdKey) -> String {
-    key.as_med_str().to_string()
-}
-
-/// WASM compatible wrapper for [`KeyAsStrings::as_long_str`] for [`FpdKey`]
-#[wasm_bindgen]
-#[must_use]
-pub fn fpd_key_as_long_str(key: FpdKey) -> String {
-    key.as_long_str().to_string()
+key_str_wrappers! {
+    comp_key_as_short_str  => (CompKey,  as_short_str, "CompKey"),
+    comp_key_as_med_str    => (CompKey,  as_med_str,   "CompKey"),
+    comp_key_as_long_str   => (CompKey,  as_long_str,  "CompKey"),
+    ratio_key_as_short_str => (RatioKey, as_short_str, "RatioKey"),
+    ratio_key_as_med_str   => (RatioKey, as_med_str,   "RatioKey"),
+    ratio_key_as_long_str  => (RatioKey, as_long_str,  "RatioKey"),
+    fpd_key_as_short_str   => (FpdKey,   as_short_str, "FpdKey"),
+    fpd_key_as_med_str     => (FpdKey,   as_med_str,   "FpdKey"),
+    fpd_key_as_long_str    => (FpdKey,   as_long_str,  "FpdKey"),
 }
 
 /// WASM compatible wrapper for [`RatioKey::scope`]
@@ -90,67 +53,29 @@ mod tests {
 
     use super::*;
 
-    #[test]
-    fn comp_key_as_short_str_matches_inner() {
-        for key in CompKey::iter() {
-            assert_eq!(comp_key_as_short_str(key), key.as_short_str());
-        }
+    macro_rules! key_str_wrapper_tests {
+        ($($test:ident => ($fn:ident, $iter:expr, $method:ident)),+ $(,)?) => {
+            $(
+                #[test]
+                fn $test() {
+                    for key in $iter {
+                        assert_eq!($fn(key), key.$method());
+                    }
+                }
+            )+
+        };
     }
 
-    #[test]
-    fn comp_key_as_med_str_matches_inner() {
-        for key in CompKey::iter() {
-            assert_eq!(comp_key_as_med_str(key), key.as_med_str());
-        }
-    }
-
-    #[test]
-    fn comp_key_as_long_str_matches_inner() {
-        for key in CompKey::iter() {
-            assert_eq!(comp_key_as_long_str(key), key.as_long_str());
-        }
-    }
-
-    #[test]
-    fn ratio_key_as_short_str_matches_inner() {
-        for key in RatioKey::iter() {
-            assert_eq!(ratio_key_as_short_str(key), key.as_short_str());
-        }
-    }
-
-    #[test]
-    fn ratio_key_as_med_str_matches_inner() {
-        for key in RatioKey::iter() {
-            assert_eq!(ratio_key_as_med_str(key), key.as_med_str());
-        }
-    }
-
-    #[test]
-    fn ratio_key_as_long_str_matches_inner() {
-        for key in RatioKey::iter() {
-            assert_eq!(ratio_key_as_long_str(key), key.as_long_str());
-        }
-    }
-
-    #[test]
-    fn fpd_key_as_short_str_matches_inner() {
-        for key in FpdKey::iter() {
-            assert_eq!(fpd_key_as_short_str(key), key.as_short_str());
-        }
-    }
-
-    #[test]
-    fn fpd_key_as_med_str_matches_inner() {
-        for key in FpdKey::iter() {
-            assert_eq!(fpd_key_as_med_str(key), key.as_med_str());
-        }
-    }
-
-    #[test]
-    fn fpd_key_as_long_str_matches_inner() {
-        for key in FpdKey::iter() {
-            assert_eq!(fpd_key_as_long_str(key), key.as_long_str());
-        }
+    key_str_wrapper_tests! {
+        comp_key_as_short_str_matches_inner  => (comp_key_as_short_str,  CompKey::iter(),  as_short_str),
+        comp_key_as_med_str_matches_inner    => (comp_key_as_med_str,    CompKey::iter(),  as_med_str),
+        comp_key_as_long_str_matches_inner   => (comp_key_as_long_str,   CompKey::iter(),  as_long_str),
+        ratio_key_as_short_str_matches_inner => (ratio_key_as_short_str, RatioKey::iter(), as_short_str),
+        ratio_key_as_med_str_matches_inner   => (ratio_key_as_med_str,   RatioKey::iter(), as_med_str),
+        ratio_key_as_long_str_matches_inner  => (ratio_key_as_long_str,  RatioKey::iter(), as_long_str),
+        fpd_key_as_short_str_matches_inner   => (fpd_key_as_short_str,   FpdKey::iter(),   as_short_str),
+        fpd_key_as_med_str_matches_inner     => (fpd_key_as_med_str,     FpdKey::iter(),   as_med_str),
+        fpd_key_as_long_str_matches_inner    => (fpd_key_as_long_str,    FpdKey::iter(),   as_long_str),
     }
 
     #[test]

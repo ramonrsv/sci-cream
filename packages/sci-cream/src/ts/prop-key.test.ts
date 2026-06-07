@@ -15,6 +15,7 @@ import {
   PropKey,
   PropKeyObj,
   compToPropKey,
+  ratioToPropKey,
   fpdToPropKey,
   isCompKey,
   isRatioKey,
@@ -24,6 +25,9 @@ import {
   prop_key_as_short_str,
   prop_key_as_long_str,
   getMixProperty,
+  propToCompKey,
+  propToRatioKey,
+  propToFpdKey,
 } from "./prop-key";
 
 test("Import from sci-cream wasm package, at sci-cream", () => {
@@ -187,4 +191,58 @@ test("prop_key_as_med_str throws for invalid PropKey", () => {
 test("getMixProperty throws for invalid PropKey", () => {
   const mixProperties = new MixProperties();
   expect(() => getMixProperty(mixProperties, "InvalidPropKey" as PropKey)).toThrow();
+});
+
+test("propToCompKey returns the correct CompKey for all CompKey PropKeys", () => {
+  expect(propToCompKey("MilkFat")).toBe(CompKey.MilkFat);
+
+  for (const key of getWasmEnums(CompKey)) {
+    const propKey = compToPropKey(key);
+    expect(propToCompKey(propKey)).toBe(key);
+  }
+});
+
+test("propToCompKey throws for non-CompKey PropKeys", () => {
+  for (const key of getWasmEnums(RatioKey)) {
+    expect(() => propToCompKey(ratioToPropKey(key))).toThrow("PropKey is not a CompKey");
+  }
+  for (const key of getWasmEnums(FpdKey)) {
+    expect(() => propToCompKey(fpdToPropKey(key))).toThrow("PropKey is not a CompKey");
+  }
+});
+
+test("propToRatioKey returns the correct RatioKey for all RatioKey PropKeys", () => {
+  expect(propToRatioKey("AbsPAC")).toBe(RatioKey.AbsPAC);
+
+  for (const key of getWasmEnums(RatioKey)) {
+    const propKey = ratioToPropKey(key);
+    expect(propToRatioKey(propKey)).toBe(key);
+  }
+});
+
+test("propToRatioKey throws for non-RatioKey PropKeys", () => {
+  for (const key of getWasmEnums(CompKey)) {
+    expect(() => propToRatioKey(compToPropKey(key))).toThrow("PropKey is not a RatioKey");
+  }
+  for (const key of getWasmEnums(FpdKey)) {
+    expect(() => propToRatioKey(fpdToPropKey(key))).toThrow("PropKey is not a RatioKey");
+  }
+});
+
+test("propToFpdKey returns the correct FpdKey for all FpdKey PropKeys", () => {
+  expect(propToFpdKey("FPD")).toBe(FpdKey.FPD);
+
+  for (const key of getWasmEnums(FpdKey)) {
+    const propKey = fpdToPropKey(key);
+    expect(propToFpdKey(propKey)).toBe(key);
+  }
+});
+
+test("propToFpdKey throws for non-FpdKey PropKeys", () => {
+  for (const key of getWasmEnums(CompKey)) {
+    expect(() => propToFpdKey(compToPropKey(key))).toThrow("PropKey is not an FpdKey");
+  }
+  for (const key of getWasmEnums(RatioKey)) {
+    expect(() => propToFpdKey(ratioToPropKey(key))).toThrow("PropKey is not an FpdKey");
+  }
 });

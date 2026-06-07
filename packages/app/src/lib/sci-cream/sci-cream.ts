@@ -1,6 +1,5 @@
 import {
   CompKey,
-  RatioKey,
   FpdKey,
   KeyScope,
   PropKey,
@@ -8,6 +7,7 @@ import {
   fpdToPropKey,
   isCompKey,
   isRatioKey,
+  propToRatioKey,
   ratio_key_scope,
 } from "@workspace/sci-cream";
 
@@ -29,9 +29,7 @@ export function isPropKeyQuantity(prop_key: PropKey): boolean {
  * single ingredient, not a mix). Used to filter property/target dropdowns for mix composition.
  */
 export function isPropKeyMixScope(prop_key: PropKey): boolean {
-  if (!isRatioKey(prop_key)) return true;
-  const ratioKey = RatioKey[prop_key as keyof typeof RatioKey];
-  return ratio_key_scope(ratioKey) !== KeyScope.Ingredient;
+  return !isRatioKey(prop_key) || ratio_key_scope(propToRatioKey(prop_key)) !== KeyScope.Ingredient;
 }
 
 /**

@@ -51,6 +51,24 @@ export function isFpdKey(prop_key: PropKey): boolean {
   return getTsEnumStringKeys(FpdKey).includes(prop_key as keyof typeof FpdKey);
 }
 
+/** Converts a `PropKey` to its equivalent `CompKey` value, throwing if it's not a `CompKey`. */
+export function propToCompKey(prop_key: PropKey): CompKey {
+  if (isCompKey(prop_key)) return CompKey[prop_key as keyof typeof CompKey];
+  throw new Error("PropKey is not a CompKey: " + prop_key);
+}
+
+/** Converts a `PropKey` to its equivalent `RatioKey` value, throwing if it's not a `RatioKey`. */
+export function propToRatioKey(prop_key: PropKey): RatioKey {
+  if (isRatioKey(prop_key)) return RatioKey[prop_key as keyof typeof RatioKey];
+  throw new Error("PropKey is not a RatioKey: " + prop_key);
+}
+
+/** Converts a `PropKey` to its equivalent `FpdKey` value, throwing if it's not an `FpdKey`. */
+export function propToFpdKey(prop_key: PropKey): FpdKey {
+  if (isFpdKey(prop_key)) return FpdKey[prop_key as keyof typeof FpdKey];
+  throw new Error("PropKey is not an FpdKey: " + prop_key);
+}
+
 /**
  * Returns all `PropKey`s in the correct order: `CompKey`, then `RatioKey`, then `FpdKey` values.
  *
@@ -71,6 +89,19 @@ export function getPropKeys(): PropKey[] {
   ] as PropKey[];
 }
 
+/** Dispatches a `PropKey` to the matching typed callback, throwing if the key is unrecognized. */
+function dispatchPropKey<T>(
+  prop_key: PropKey,
+  onComp: (k: CompKey) => T,
+  onRatio: (k: RatioKey) => T,
+  onFpd: (k: FpdKey) => T,
+): T {
+  if (isCompKey(prop_key)) return onComp(CompKey[prop_key as keyof typeof CompKey]);
+  if (isRatioKey(prop_key)) return onRatio(RatioKey[prop_key as keyof typeof RatioKey]);
+  if (isFpdKey(prop_key)) return onFpd(FpdKey[prop_key as keyof typeof FpdKey]);
+  throw new Error("Invalid PropKey: " + prop_key);
+}
+
 /**
  * Returns the compact display string for the given `PropKey`.
  *
@@ -79,15 +110,12 @@ export function getPropKeys(): PropKey[] {
  * @see fpd_key_as_short_str original implementation for `FpdKey` values in Rust.
  */
 export function prop_key_as_short_str(prop_key: PropKey): string {
-  if (isCompKey(prop_key)) {
-    return comp_key_as_short_str(CompKey[prop_key as keyof typeof CompKey]);
-  } else if (isRatioKey(prop_key)) {
-    return ratio_key_as_short_str(RatioKey[prop_key as keyof typeof RatioKey]);
-  } else if (isFpdKey(prop_key)) {
-    return fpd_key_as_short_str(FpdKey[prop_key as keyof typeof FpdKey]);
-  } else {
-    throw new Error("Invalid PropKey: " + prop_key);
-  }
+  return dispatchPropKey(
+    prop_key,
+    comp_key_as_short_str,
+    ratio_key_as_short_str,
+    fpd_key_as_short_str,
+  );
 }
 
 /**
@@ -98,15 +126,7 @@ export function prop_key_as_short_str(prop_key: PropKey): string {
  * @see fpd_key_as_med_str original implementation for `FpdKey` values in Rust.
  */
 export function prop_key_as_med_str(prop_key: PropKey): string {
-  if (isCompKey(prop_key)) {
-    return comp_key_as_med_str(CompKey[prop_key as keyof typeof CompKey]);
-  } else if (isRatioKey(prop_key)) {
-    return ratio_key_as_med_str(RatioKey[prop_key as keyof typeof RatioKey]);
-  } else if (isFpdKey(prop_key)) {
-    return fpd_key_as_med_str(FpdKey[prop_key as keyof typeof FpdKey]);
-  } else {
-    throw new Error("Invalid PropKey: " + prop_key);
-  }
+  return dispatchPropKey(prop_key, comp_key_as_med_str, ratio_key_as_med_str, fpd_key_as_med_str);
 }
 
 /**
@@ -117,26 +137,20 @@ export function prop_key_as_med_str(prop_key: PropKey): string {
  * @see fpd_key_as_long_str original implementation for `FpdKey` values in Rust.
  */
 export function prop_key_as_long_str(prop_key: PropKey): string {
-  if (isCompKey(prop_key)) {
-    return comp_key_as_long_str(CompKey[prop_key as keyof typeof CompKey]);
-  } else if (isRatioKey(prop_key)) {
-    return ratio_key_as_long_str(RatioKey[prop_key as keyof typeof RatioKey]);
-  } else if (isFpdKey(prop_key)) {
-    return fpd_key_as_long_str(FpdKey[prop_key as keyof typeof FpdKey]);
-  } else {
-    throw new Error("Invalid PropKey: " + prop_key);
-  }
+  return dispatchPropKey(
+    prop_key,
+    comp_key_as_long_str,
+    ratio_key_as_long_str,
+    fpd_key_as_long_str,
+  );
 }
 
 /** Returns the numeric value of the given `PropKey` from the provided `MixProperties`. */
 export function getMixProperty(mixProperties: MixProperties, prop_key: PropKey): number {
-  if (isCompKey(prop_key)) {
-    return mixProperties.composition.get(CompKey[prop_key as keyof typeof CompKey]);
-  } else if (isRatioKey(prop_key)) {
-    return mixProperties.composition.get_ratio(RatioKey[prop_key as keyof typeof RatioKey]);
-  } else if (isFpdKey(prop_key)) {
-    return mixProperties.fpd.get(FpdKey[prop_key as keyof typeof FpdKey]);
-  } else {
-    throw new Error("Invalid PropKey: " + prop_key);
-  }
+  return dispatchPropKey(
+    prop_key,
+    (k) => mixProperties.composition.get(k),
+    (k) => mixProperties.composition.get_ratio(k),
+    (k) => mixProperties.fpd.get(k),
+  );
 }
