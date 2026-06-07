@@ -21,6 +21,10 @@ export const PropKeyObj = { ...CompKey, ...RatioKey, ...FpdKey } as const;
 
 export type PropKey = keyof typeof PropKeyObj;
 
+const COMP_KEY_SET: ReadonlySet<string> = new Set(getTsEnumStringKeys(CompKey));
+const RATIO_KEY_SET: ReadonlySet<string> = new Set(getTsEnumStringKeys(RatioKey));
+const FPD_KEY_SET: ReadonlySet<string> = new Set(getTsEnumStringKeys(FpdKey));
+
 /** Converts a `CompKey` enum value to its equivalent `PropKey`. */
 export function compToPropKey(comp_key: CompKey): PropKey {
   return CompKey[comp_key] as PropKey;
@@ -38,17 +42,17 @@ export function fpdToPropKey(fpd_key: FpdKey): PropKey {
 
 /** Returns true if the given `PropKey` corresponds to a `CompKey`. */
 export function isCompKey(prop_key: PropKey): boolean {
-  return getTsEnumStringKeys(CompKey).includes(prop_key as keyof typeof CompKey);
+  return COMP_KEY_SET.has(prop_key as string);
 }
 
 /** Returns true if the given `PropKey` corresponds to a `RatioKey`. */
 export function isRatioKey(prop_key: PropKey): boolean {
-  return getTsEnumStringKeys(RatioKey).includes(prop_key as keyof typeof RatioKey);
+  return RATIO_KEY_SET.has(prop_key as string);
 }
 
 /** Returns true if the given `PropKey` corresponds to an `FpdKey`. */
 export function isFpdKey(prop_key: PropKey): boolean {
-  return getTsEnumStringKeys(FpdKey).includes(prop_key as keyof typeof FpdKey);
+  return FPD_KEY_SET.has(prop_key as string);
 }
 
 /** Converts a `PropKey` to its equivalent `CompKey` value, throwing if it's not a `CompKey`. */
