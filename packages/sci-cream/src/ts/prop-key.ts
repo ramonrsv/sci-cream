@@ -94,7 +94,7 @@ export function getPropKeys(): PropKey[] {
 }
 
 /** Dispatches a `PropKey` to the matching typed callback, throwing if the key is unrecognized. */
-function dispatchPropKey<T>(
+function dispatchPropKeyCallback<T>(
   prop_key: PropKey,
   onComp: (k: CompKey) => T,
   onRatio: (k: RatioKey) => T,
@@ -114,7 +114,7 @@ function dispatchPropKey<T>(
  * @see fpd_key_as_short_str original implementation for `FpdKey` values in Rust.
  */
 export function prop_key_as_short_str(prop_key: PropKey): string {
-  return dispatchPropKey(
+  return dispatchPropKeyCallback(
     prop_key,
     comp_key_as_short_str,
     ratio_key_as_short_str,
@@ -130,7 +130,12 @@ export function prop_key_as_short_str(prop_key: PropKey): string {
  * @see fpd_key_as_med_str original implementation for `FpdKey` values in Rust.
  */
 export function prop_key_as_med_str(prop_key: PropKey): string {
-  return dispatchPropKey(prop_key, comp_key_as_med_str, ratio_key_as_med_str, fpd_key_as_med_str);
+  return dispatchPropKeyCallback(
+    prop_key,
+    comp_key_as_med_str,
+    ratio_key_as_med_str,
+    fpd_key_as_med_str,
+  );
 }
 
 /**
@@ -141,7 +146,7 @@ export function prop_key_as_med_str(prop_key: PropKey): string {
  * @see fpd_key_as_long_str original implementation for `FpdKey` values in Rust.
  */
 export function prop_key_as_long_str(prop_key: PropKey): string {
-  return dispatchPropKey(
+  return dispatchPropKeyCallback(
     prop_key,
     comp_key_as_long_str,
     ratio_key_as_long_str,
@@ -151,7 +156,7 @@ export function prop_key_as_long_str(prop_key: PropKey): string {
 
 /** Returns the numeric value of the given `PropKey` from the provided `MixProperties`. */
 export function getMixProperty(mixProperties: MixProperties, prop_key: PropKey): number {
-  return dispatchPropKey(
+  return dispatchPropKeyCallback(
     prop_key,
     (k) => mixProperties.composition.get(k),
     (k) => mixProperties.composition.get_ratio(k),
