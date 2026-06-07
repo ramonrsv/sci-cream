@@ -442,6 +442,8 @@ export async function pasteRecipeAndWaitForUpdate(
  * so it may not leave components in the same state that they were before the function call.
  */
 export async function fillRecipeIntoGrid(page: Page, recipeId: RecipeID) {
+  await waitForRecipeEditorHydrationReady(page);
+
   const recipeGridRecipeSelect = getRecipeGridRecipeSelector(page);
   await recipeGridRecipeSelect.selectOption(recipeIdToOption(recipeId));
 
@@ -452,6 +454,33 @@ export async function fillRecipeIntoGrid(page: Page, recipeId: RecipeID) {
     await ingNameInput.fill(name as string);
     await ingQtyInput.fill(String(qty));
   }
+}
+
+/**
+ * Wait until recipe-editor hydration from local storage has settled.
+ *
+ * `RecipeEditor` mounts with empty rows, then rehydrates from storage in a `useEffect`. If a test
+ * starts typing during that window, the hydration update can overwrite user input and produce
+ * flaky assertions. We treat hydration as "ready" once the first row's name/qty inputs stay
+ * unchanged for a short stability window.
+ */
+export async function waitForRecipeEditorHydrationReady(page: Page) {
+  const nameInput = getIngredientNameInputAtIdx(page, 0);
+  const qtyInput = getIngredientQtyInputAtIdx(page, 0);
+
+  await expect(nameInput).toBeVisible();
+  await expect(qtyInput).toBeVisible();
+
+  const stableWindowMs = 300;
+  const maxWaitMs = 5000;
+
+  await expect(async () => {
+    const valuesBefore = await Promise.all([nameInput.inputValue(), qtyInput.inputValue()]);
+    await page.waitForTimeout(stableWindowMs);
+    const valuesAfter = await Promise.all([nameInput.inputValue(), qtyInput.inputValue()]);
+
+    expect(valuesBefore).toEqual(valuesAfter);
+  }).toPass({ timeout: maxWaitMs });
 }
 
 /**
