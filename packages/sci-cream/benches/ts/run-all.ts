@@ -10,9 +10,10 @@ console.log("Starting TypeScript benchmarks for @workspace/sci-cream\n");
     "get_ingredients.bench.ts",
     "has_ingredient.bench.ts",
     "into_ingredient_from_spec.bench.ts",
-    "recipe-wasm-bridge.bench.ts",
+    "is-key-type.bench.ts",
     "key-accesses.bench.ts",
     "key-as-str.bench.ts",
+    "recipe-wasm-bridge.bench.ts",
     // Run last to avoid interference from WASM memory accumulation
     "free-vs-no-free-wasm.bench.ts",
   ]) {
