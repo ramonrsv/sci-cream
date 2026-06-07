@@ -1138,7 +1138,7 @@ mod tests {
         targets: &[(BalanceKey, f64)],
         solve: F,
         epsilons: Epsilons,
-        ceiling: &KeyCeiling,
+        ceiling: &KeyCeiling<BalanceKey>,
     ) where
         F: Fn(&[Composition], &[(BalanceKey, f64)], Option<Weighting>, &[P]) -> Result<Vec<(Composition, f64)>>,
     {
@@ -1163,7 +1163,7 @@ mod tests {
             assert_true!(achieved.is_finite(), "Non-finite achieved value for {:?}: {}", key, achieved);
 
             let error = balance_rel_error_pp(achieved, *target);
-            let limit = ceiling.for_balance_key(*key);
+            let limit = ceiling.for_key(*key);
 
             assert_true!(
                 error <= limit,

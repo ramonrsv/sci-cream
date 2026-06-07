@@ -4,7 +4,6 @@ use approx::AbsDiffEq;
 use struct_iterable::Iterable;
 
 use crate::{
-    balancing::BalanceKey,
     composition::{CompKey, Composition},
     util::iter_fields_as,
 };
@@ -108,17 +107,17 @@ fn solids_denominator_for(key: CompKey, comp: &Composition) -> f64 {
     }
 }
 
-/// A per-[`CompKey`] tolerance table: a single default ceiling plus optional per-key overrides.
+/// A per-key tolerance table: a single default ceiling plus optional per-key overrides.
 ///
 /// The unit of the ceiling is defined by whatever metric the caller compares against it (e.g.
 /// percentage points of solids composition for [`assert_compositions_consistent`], or relative
 /// error for balancing backstops) — this type only stores and looks up the per-key value.
-pub(crate) struct KeyCeiling {
+pub(crate) struct KeyCeiling<K> {
     default_pp: f64,
-    overrides: Vec<(CompKey, f64)>,
+    overrides: Vec<(K, f64)>,
 }
 
-impl KeyCeiling {
+impl<K: PartialEq + Copy> KeyCeiling<K> {
     /// Creates a ceiling where every key allows up to `default_pp`.
     pub(crate) const fn new(default_pp: f64) -> Self {
         Self {
@@ -134,31 +133,17 @@ impl KeyCeiling {
 
     /// Overrides the ceiling for a single key, e.g. for a value with known wide variance.
     #[must_use]
-    pub(crate) fn with(mut self, key: CompKey, pp: f64) -> Self {
+    pub(crate) fn with(mut self, key: K, pp: f64) -> Self {
         self.overrides.push((key, pp));
         self
     }
 
     /// Returns the ceiling that applies to `key`.
-    pub(crate) fn for_key(&self, key: CompKey) -> f64 {
+    pub(crate) fn for_key(&self, key: K) -> f64 {
         self.overrides
             .iter()
             .find(|(overridden, _)| *overridden == key)
             .map_or(self.default_pp, |(_, pp)| *pp)
-    }
-
-    /// Returns the ceiling that applies to a [`BalanceKey`]
-    ///
-    /// This is equivalent to [`for_key`] if [`BalanceKey::Comp`], else it's the default, since
-    /// ratio keys (i.e. [`BalanceKey::Ratio`]) don't support per-[`CompKey`] overrides.
-    //
-    // @todo Add support for [`BalanceKey`] overrides, maybe via a generic parameter.
-    pub(crate) fn for_balance_key(&self, key: BalanceKey) -> f64 {
-        if let BalanceKey::Comp(comp_key) = key {
-            self.for_key(comp_key)
-        } else {
-            self.default_pp
-        }
     }
 }
 
@@ -169,7 +154,11 @@ impl KeyCeiling {
 /// exceeds its [`KeyCeiling`] entry fails the assertion. This is a deliberately loose backstop
 /// against regressions — the precise per-key discrepancies are recorded separately by
 /// [`compare_compositions`] snapshots.
-pub(crate) fn assert_compositions_consistent(sources: &[(&str, Composition)], keys: &[CompKey], ceiling: &KeyCeiling) {
+pub(crate) fn assert_compositions_consistent(
+    sources: &[(&str, Composition)],
+    keys: &[CompKey],
+    ceiling: &KeyCeiling<CompKey>,
+) {
     for &key in keys {
         let limit = ceiling.for_key(key);
 
