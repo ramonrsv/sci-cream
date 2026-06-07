@@ -4,6 +4,8 @@ import {
   getIndependentIngredientSpecByName,
   Bridge,
   new_ingredient_database_seeded_from_embedded_data,
+  getMixProperty,
+  getBalanceableKeys,
 } from "../../dist/index.js";
 
 import {
@@ -22,6 +24,12 @@ const specLines = LIGHT_RECIPE.map(([name, quantity]) => ({
 const recipeLines = makeRecipeLines(specLines);
 const recipe = makeRecipeFromMadeLines(specLines);
 const bridge = new Bridge(new_ingredient_database_seeded_from_embedded_data());
+
+const mixProps = recipe.calculate_mix_properties();
+const targets = getBalanceableKeys().map((key) => [key, getMixProperty(mixProps, key)]) as [
+  string,
+  number,
+][];
 
 // These benchmark suite shows that creating new RecipeLine instances from scratch is generally
 // faster (up to ~10x) than cloning existing ones, likely due to the overhead of more JS <-> WASM
@@ -79,6 +87,12 @@ suite
   })
   .add("recipe.calculate_mix_properties", () => {
     recipe.calculate_mix_properties().free();
+  })
+  .add("bridge.balance_recipe", () => {
+    bridge.balance_recipe(LIGHT_RECIPE, targets, []);
+  })
+  .add("recipe.balance", () => {
+    recipe.balance(targets, []).free();
   })
   .on("cycle", (event: Benchmark.Event) => {
     console.log(String(event.target));

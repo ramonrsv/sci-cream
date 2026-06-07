@@ -76,6 +76,8 @@
 - [ ] Return balancing internals (`row_weights`, `ratio_key_parts`, `estimate_ratio_denominator`,
       `balance_with_reweighting`, `RawSolver`) to private. They were made `pub` only so doc links
       resolve under `cargo doc --document-private-items -D warnings`; de-link or relax rustdoc.
+- [ ] Look into running only some TS-side benchmarks in every CI run; after an initial analysis
+      there is no need to constantly track those. Still good to run them on a nightly/weekly sanity.
 
 ## Completed
 

@@ -1,3 +1,5 @@
+import { PropKey, isFpdKey, getPropKeys } from "./prop-key";
+
 /**
  * Represents the priority levels for balancing recipe properties
  *
@@ -8,4 +10,9 @@ export enum Priority {
   Normal = "Normal",
   High = "High",
   Critical = "Critical",
+}
+
+/** Returns all `PropKey`s that are balanceable, currently all except `FpdKey`s */
+export function getBalanceableKeys(): PropKey[] {
+  return getPropKeys().filter((key) => !isFpdKey(key)) as PropKey[];
 }
