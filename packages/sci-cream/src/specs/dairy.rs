@@ -60,6 +60,7 @@ pub struct DairySimpleSpec {
     ///
     /// It is necessary to specify `msnf` for milk powders and other condensed or dried dairy
     /// products, as they do not adhere to the standard milk and cream composition ratios.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub msnf: Option<f64>,
     /// Whether the dairy product is lactose-free, which affects the detailed sugars composition
     ///
@@ -68,6 +69,7 @@ pub struct DairySimpleSpec {
     /// instead assumed to be a 50/50 glucose and galactose mixture, the two monosaccharides that
     /// make up lactose, which is typical of lactose-free dairy products where lactose is
     /// enzymatically broken down into its constituent sugars.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub lactose_free: Option<bool>,
 }
 
@@ -143,6 +145,7 @@ pub struct DairyLabelSpec {
     /// See [`constants::density::dairy_milliliters_to_grams`].
     pub serving_size: Unit,
     /// Energy per serving, in kcal; calculated based on macronutrients composition if unspecified
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub energy: Option<f64>,
     /// Total fat content per serving; it can be given in grams or as a percentage of serving size
     ///
@@ -156,6 +159,7 @@ pub struct DairyLabelSpec {
     /// [`total_fat`](Self::total_fat). Nutrition tables sometimes list this as zero, particularly
     /// for small serving sizes, in which cases it's usually more accurate to not specify it and
     /// instead have it internally calculated from the total fat content.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub saturated_fat: Option<f64>,
     /// Trans fat content per serving, in grams; it must be a subset of total fat.
     ///
@@ -163,6 +167,7 @@ pub struct DairyLabelSpec {
     /// [`total_fat`](Self::total_fat). Nutrition tables sometimes list this as zero, particularly
     /// for small serving sizes, in which cases it's usually more accurate to not specify it and
     /// instead have it internally calculated from the total fat content.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub trans_fat: Option<f64>,
     /// Total carbohydrate content per serving, in grams; a superset of [`sugars`](Self::sugars).
     ///
@@ -175,6 +180,7 @@ pub struct DairyLabelSpec {
     /// more accurate estimation of the composition solids breakdown, water content, etc.
     ///
     /// Note that any difference is included under [`Solids::other`], not under [`Solids::milk`].
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub carbohydrates: Option<f64>,
     /// Sugars content per serving, in grams; the detailed composition is determined by
     /// [`lactose_free`](Self::lactose_free) and [`sucrose`](Self::sucrose).
@@ -196,6 +202,7 @@ pub struct DairyLabelSpec {
     /// into its constituent sugars.
     ///
     /// See [`sucrose`](Self::sucrose) for the possibility of other types of sugars.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub lactose_free: Option<bool>,
     /// Sucrose content per serving, in grams, assumed to be zero if not specified
     ///
@@ -206,10 +213,12 @@ pub struct DairyLabelSpec {
     ///
     /// See [`lactose_free`](Self::sucrose) for the possibility of different natural sugar
     /// compositions in lactose-free products.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sucrose: Option<f64>,
     /// Source of the solids non-fat in this product, [`SolidsSource::Milk`] if unspecified
     ///
     /// This affects the detailed protein and mineral composition of the solids non-fat.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub solids_source: Option<SolidsSource>,
 }
 

@@ -82,6 +82,7 @@ pub struct NutSpec {
     ///
     /// If not specified, it is assumed to be a standard proportion of total fat for nuts, defined
     /// by [`constants::composition::STD_SATURATED_FAT_IN_NUT_FAT`].
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub saturated_fat: Option<f64>,
     /// Carbohydrate content as percentage of total weight
     pub carbohydrate: f64,

@@ -514,7 +514,7 @@ pub(crate) mod tests {
         let json = serde_json::to_string(&ING_SPEC_COMPOSITE_INLINE_CREAM_BLEND.clone()).unwrap();
         assert_eq!(
             json,
-            "{\"name\":\"Inline Cream Blend\",\"category\":\"Dairy\",\"CompositeSpec\":{\"ByParts\":[[\"2% Milk\",4.0],[{\"DairySimpleSpec\":{\"fat\":40.0,\"msnf\":null,\"lactose_free\":null}},1.0]]}}"
+            "{\"name\":\"Inline Cream Blend\",\"category\":\"Dairy\",\"CompositeSpec\":{\"ByParts\":[[\"2% Milk\",4.0],[{\"DairySimpleSpec\":{\"fat\":40.0}},1.0]]}}"
         );
     }
 

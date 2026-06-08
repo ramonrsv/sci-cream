@@ -59,6 +59,7 @@ pub struct StabilizerSpec {
     /// field [`Stabilizers::other`](field@Stabilizers::other) is populated, then this field must be
     /// populated, since the strength of unspecified stabilizers is unknown. See
     /// [`constants::stabilization`] for reference strength values of known stabilizer components.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub strength: Option<f64>,
 }
 

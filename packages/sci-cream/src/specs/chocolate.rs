@@ -110,16 +110,19 @@ pub struct ChocolateSpec {
     ///
     /// If not specified, it is calculated from [`cacao_solids`](Self::cacao_solids) and the
     /// standard composition [`cacao::STD_COCOA_BUTTER_IN_CACAO_SOLIDS_OF_CHOCOLATE_NON_POWDER`].
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub cocoa_butter: Option<f64>,
     /// Sugars content as a percentage of the product as a whole, usually from nutrition facts.
     ///
     /// Assumed to be zero if not specified, as some products (e.g. Unsweetened Chocolate) and most
     /// chocolate powders do not contain any added sugars.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sugars: Option<f64>,
     /// Other solids content as a percentage of the product as a whole, usually from nutrition facts
     ///
     /// Assumed to be zero if not specified, and represents other non-sugar, non-fats solids, e.g.
     /// emulsifiers, impurities in demerara sugar, etc.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub other_solids: Option<f64>,
 }
 

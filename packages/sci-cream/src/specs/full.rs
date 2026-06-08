@@ -25,19 +25,23 @@ pub struct FullSpec {
     /// Detailed specification of the solids and their breakdown into subcategories
     pub solids: Option<Solids>,
     /// Specification of the micro ingredients or components, like salt, emulsifiers, etc.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub micro: Option<Micro>,
     /// Alcohol by volume (ABV) (2025)[^8] of the ingredient as a whole.
     #[doc= include_str!("../../docs/references/index/8.md")]
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub abv: Option<f64>,
     /// [Potere Dolcificante (POD)](crate::docs#pod) of the ingredient as a whole.
     ///
     /// If not provided, it will be internally calculated from the composition of the solids and
     /// known POD values of the underlying components, e.g. carbohydrates and artificial sweeteners.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub pod: Option<f64>,
     /// [Potere Anti-Congelante (PAC)](crate::docs#pac) of the ingredient as a whole.
     ///
     /// If not provided, it will be internally calculated from the composition of the solids, the
     /// micro components, the alcohol content, and known PAC values of the underlying components.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub pac: Option<PAC>,
 }
 

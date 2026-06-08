@@ -96,10 +96,13 @@ pub struct AlcoholSpec {
     #[doc = include_str!("../../docs/references/index/8.md")]
     pub abv: f64,
     /// Sugars content by weight, typically zero for spirits, and up to ~40% for liqueurs.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub sugars: Option<f64>,
     /// Fat content by weight, typically zero for spirits and liqueurs, and up to ~15% for creams.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub fat: Option<f64>,
     /// Total solids content by weight, calculated as `sugars + fat` if not specified.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub solids: Option<f64>,
 }
 

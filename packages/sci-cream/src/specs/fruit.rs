@@ -73,16 +73,21 @@ pub struct FruitSpec {
     /// Water content as percentage of total weight
     pub water: f64,
     /// Energy content in kcal per 100g, optional, automatically calculated if not specified
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub energy: Option<f64>,
     /// Protein content as percentage of total weight, optional, assumed zero if not specified
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub protein: Option<f64>,
     /// Fat content as percentage of total weight, optional, assumed zero if not specified
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub fat: Option<f64>,
     /// Carbohydrate content as percentage of total weight, optional, assumed to be
     /// `fiber + sugars` if not specified.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub carbohydrate: Option<f64>,
     /// Fiber content as percentage of total weight, optional, assumed zero if not specified. Fiber
     /// is a subset of carbohydrates.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub fiber: Option<f64>,
     /// Composition and detailed breakdown of the sugars present in the fruit, as percentage of
     /// total weight. Sugars are a subset of carbohydrates.

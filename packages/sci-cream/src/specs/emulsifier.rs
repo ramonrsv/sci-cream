@@ -50,6 +50,7 @@ pub struct EmulsifierSpec {
     /// populated, since the strength of unspecified emulsifiers is unknown. See
     /// [`constants::emulsification`](crate::constants::emulsification) for reference strength
     /// values of known emulsifier components.
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub strength: Option<f64>,
 }
 
