@@ -2082,7 +2082,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_skim_milk_simple_vs_usda_vs_sealtest() {
+    fn compare_specs_skim_milk() {
         let sources = [
             ("Simple", "0% Milk"),
             ("USDA", "USDA Fat-Free (Skim) Milk"),
@@ -2097,7 +2097,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_2_milk_simple_vs_usda_vs_sealtest() {
+    fn compare_specs_2_milk() {
         let sources = [
             ("Simple", "2% Milk"),
             ("USDA", "USDA 2% Reduced-Fat Milk"),
@@ -2112,7 +2112,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_whole_milk_simple_vs_usda_vs_sealtest() {
+    fn compare_specs_whole_milk() {
         let sources = [
             ("Simple", "3.25% Milk"),
             ("USDA", "USDA Whole Milk"),
@@ -2127,7 +2127,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_half_and_half_simple_vs_usda_vs_sealtest() {
+    fn compare_specs_half_and_half() {
         let sources = [
             ("Simple", "10% Cream"),
             ("USDA", "USDA Half and Half Cream"),
@@ -2151,7 +2151,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_light_cream_simple_vs_usda_vs_sealtest() {
+    fn compare_specs_light_cream() {
         let sources = [
             ("Simple", "18% Cream"),
             ("USDA", "USDA Light Cream"),
@@ -2173,7 +2173,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_whipping_cream_simple_vs_usda_vs_sealtest() {
+    fn compare_specs_whipping_cream() {
         let sources = [
             ("Simple", "35% Cream"),
             ("USDA", "USDA Heavy Cream"),
@@ -2198,7 +2198,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_evaporated_milk_usda_vs_carnation() {
+    fn compare_specs_evaporated_milk() {
         let sources = [
             ("USDA", "USDA 2% Reduced-Fat Evaporated Milk"),
             ("Carnation", "Carnation 2% Evaporated Partly Skimmed Milk"),
@@ -2233,7 +2233,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_sweetened_condensed_usda_vs_milk_eagle() {
+    fn compare_specs_sweetened_condensed_milk() {
         let sources = [
             ("USDA", "USDA Sweetened Condensed Milk"),
             ("Eagle Brand", "Eagle Brand Original Sweetened Condensed Milk"),
@@ -2253,7 +2253,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_skim_milk_powder_simple_vs_medallion_vs_theland() {
+    fn compare_specs_skim_milk_powder() {
         let sources = [
             ("Simple", "Skimmed Milk Powder"),
             ("Medallion", "Medallion Skim Milk Powder"),
@@ -2268,7 +2268,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_whole_milk_powder_simple_vs_medallion_vs_theland() {
+    fn compare_specs_whole_milk_powder() {
         let sources = [
             ("Simple", "Whole Milk Powder"),
             ("Medallion", "Medallion Whole Milk Powder"),
@@ -2283,7 +2283,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_whey_protein_myprotein_vs_optimum_nutrition() {
+    fn compare_specs_whey_protein() {
         let sources = [
             ("MyProtein", "MyProtein Impact Whey Protein"),
             ("Optimum Nutrition", "Optimum Nutrition Gold Standard 100% Whey"),
@@ -2297,7 +2297,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_whey_isolate_bulk_barn_vs_leanfit_vs_myprotein_vs_optimum_nutrition() {
+    fn compare_specs_whey_isolate() {
         let sources = [
             ("Bulk Barn", "Bulk Barn Whey Protein Isolate 90%"),
             ("Leanfit", "Leanfit Sport Whey Isolate"),
@@ -2320,7 +2320,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_casein_california_gold_vs_myprotein_vs_optimum_nutrition() {
+    fn compare_specs_casein() {
         let sources = [
             ("California Gold", "California Gold Nutrition, Sport, Micellar Casein"),
             ("MyProtein", "MyProtein Slow-Release Casein"),

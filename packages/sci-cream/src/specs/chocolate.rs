@@ -794,7 +794,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_chocolate_70_simple_vs_lindt() {
+    fn compare_specs_chocolate_70() {
         let sources = [
             ("Simple", "70% Dark Chocolate"),
             ("Lindt", "Lindt EXCELLENCE 70% Cacao Dark Chocolate"),
@@ -808,7 +808,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_chocolate_85_simple_vs_lindt() {
+    fn compare_specs_chocolate_85() {
         let sources = [
             ("Simple", "85% Dark Chocolate"),
             ("Lindt", "Lindt EXCELLENCE 85% Cacao Dark Chocolate"),
@@ -822,7 +822,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_chocolate_95_simple_vs_lindt() {
+    fn compare_specs_chocolate_95() {
         let sources = [
             ("Simple", "95% Dark Chocolate"),
             ("Lindt", "Lindt EXCELLENCE 95% Cacao Dark Chocolate"),
@@ -838,7 +838,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_chocolate_100_simple_vs_lindt() {
+    fn compare_specs_chocolate_100() {
         let sources = [
             ("Simple", "100% Dark Chocolate"),
             ("Lindt", "Lindt EXCELLENCE 100% Cacao Dark Chocolate"),
@@ -852,7 +852,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_cocoa_powder_17_fat_simple_vs_ghirardelli() {
+    fn compare_specs_cocoa_powder_17_fat() {
         let sources = [
             ("Simple", "Cocoa Powder, 17% Fat"),
             ("Ghirardelli", "Ghirardelli 100% Unsweetened Cocoa Powder"),
