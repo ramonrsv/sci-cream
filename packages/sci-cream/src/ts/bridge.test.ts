@@ -13,14 +13,7 @@ import {
 } from "../../dist/index";
 
 import { getMixProperty, PropKey, propToCompKey, propToRatioKey } from "./prop-key";
-import {
-  Priority,
-  BalancingReport,
-  NegativeTargetError,
-  PriorityWithoutTargetWarning,
-  getBalancingErrors,
-  getBalancingWarnings,
-} from "./balancing";
+import { Priority, BalancingReport } from "./balancing";
 
 const lightRecipe = [
   ["Whole Milk", 245],
@@ -174,9 +167,9 @@ test("Bridge.validate_recipe_targets reports NegativeTarget error", () => {
   const report = bridge.validate_recipe_targets(lightRecipe, targets, []) as BalancingReport;
 
   expect(report).toBeDefined();
-  expect(getBalancingErrors(report).length).toBeGreaterThan(0);
-  expect(report.issues[0]).toHaveProperty("NegativeTarget");
-  expect((report.issues[0] as NegativeTargetError).NegativeTarget.value).toBe(-5);
+  expect(report.issues.filter((i) => i.severity === "error").length).toBeGreaterThan(0);
+  expect(report.issues[0].severity).toBe("error");
+  expect(report.issues[0].message).toContain("-5");
 });
 
 test("Bridge.validate_recipe_targets reports PriorityWithoutTarget warning", () => {
@@ -191,12 +184,10 @@ test("Bridge.validate_recipe_targets reports PriorityWithoutTarget warning", () 
   ) as BalancingReport;
 
   expect(report).toBeDefined();
-  expect(getBalancingErrors(report)).toHaveLength(0);
-  expect(getBalancingWarnings(report).length).toBeGreaterThan(0);
-  expect(report.issues[0]).toHaveProperty("PriorityWithoutTarget");
-  expect((report.issues[0] as PriorityWithoutTargetWarning).PriorityWithoutTarget.key).toBe(
-    compToPropKey(CompKey.MSNF),
-  );
+  expect(report.issues.filter((i) => i.severity === "error")).toHaveLength(0);
+  expect(report.issues.filter((i) => i.severity === "warning").length).toBeGreaterThan(0);
+  expect(report.issues[0].severity).toBe("warning");
+  expect(report.issues[0].keys).toContain(compToPropKey(CompKey.MSNF));
 });
 
 test("Bridge.validate_recipe_targets throws on unknown ingredient", () => {

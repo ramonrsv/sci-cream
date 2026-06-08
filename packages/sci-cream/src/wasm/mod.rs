@@ -17,6 +17,7 @@
 //! [`Bridge`] is a higher-level abstraction that provides a convenient, ergonomic, and consolidated
 //! interface for JavaScript users, which obviates the need to use the above interfaces directly.
 
+pub mod balancing;
 #[cfg(feature = "database")]
 pub mod bridge;
 pub mod composition;
@@ -32,6 +33,7 @@ pub mod log;
 pub mod properties;
 pub mod recipe;
 
+pub use balancing::*;
 #[cfg(feature = "database")]
 pub use bridge::*;
 pub use composition::*;

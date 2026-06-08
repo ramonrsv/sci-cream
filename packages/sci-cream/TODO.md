@@ -64,6 +64,9 @@
 - [ ] Consider dropping WASM support for `Recipe`, rely only on `Bridge` and `IngredientDatabase`.
 - [ ] Look into `wasm_bindgen_test` and `wasm-pack test --headless --chrome` for testing `JsValue`.
 - [ ] Fix `wasm` module code coverage gap, mostly by disabling anything with a `JsValue`.
+- [ ] Codegen TypeScript types for serde WASM payloads from Rust (`ts-rs` / `tsify` / `typeshare`)
+      instead of hand-mirroring in `ts/balancing.ts` — would let the flattened `BalancingIssue` be
+      re-expanded to the rich union maintenance-free. Needs `build:package` wiring `any` override.
 - [ ] Revisit a curated `CompKey` hierarchy check for balancing target validation (prototyped then
       dropped as redundant with the `DominanceViolation` check) if palette-independent validation is
       ever wanted, e.g. flagging `Sucrose > TotalSugars` before any ingredients are chosen.

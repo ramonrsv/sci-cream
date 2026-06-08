@@ -13,13 +13,13 @@ use crate::{
     resolution::IngredientGetter,
     specs::entry::SpecEntry,
     wasm::{
-        Composition, Ingredient, JsResult, MixProperties, balancing_priorities_from_jsvalue,
+        BalancingReportView, Composition, Ingredient, JsResult, MixProperties, balancing_priorities_from_jsvalue,
         balancing_targets_from_jsvalue, light_recipe_from_jsvalue, spec_entry_from_jsvalue,
     },
 };
 
 #[cfg(doc)]
-use crate::error::Error;
+use crate::{balancing::BalancingIssue, error::Error, wasm::balancing::BalancingIssueView};
 
 /// WASM Bridge for calculating recipe compositions and mix properties
 ///
@@ -275,6 +275,10 @@ impl Bridge {
 
     /// WASM compatible wrapper for [`Bridge::validate_recipe_targets`]
     ///
+    /// Returns the report flattened to a JS-facing view: an `issues` array where each entry carries
+    /// `severity` as string, the affected `keys`, and a human-readable `message`. This keeps the TS
+    /// side from mirroring the [`BalancingIssue`] variants (see [`BalancingIssueView`]).
+    ///
     /// # Errors
     ///
     /// Returns a `serde::Error` if the `JsValue` inputs cannot be deserialized into an
@@ -292,7 +296,7 @@ impl Bridge {
         let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
 
         self.validate_recipe_targets(&light_recipe, &targets, &priorities)
-            .map(|report| serde_wasm_bindgen::to_value(&report).map_err(Into::into))?
+            .map(|report| serde_wasm_bindgen::to_value(&BalancingReportView::from(&report)).map_err(Into::into))?
     }
 
     /// WASM compatible wrapper for [`Bridge::seed`]

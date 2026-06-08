@@ -318,6 +318,22 @@ impl BalancingIssue {
             | Self::PriorityWithoutTarget { .. } => Severity::Warning,
         }
     }
+
+    /// The [`BalanceKey`]s this issue concerns, for relating it back to the offending target(s).
+    #[must_use]
+    pub fn affected_keys(&self) -> Vec<BalanceKey> {
+        match self {
+            Self::NonFiniteTarget { key, .. }
+            | Self::NegativeTarget { key, .. }
+            | Self::DuplicateTarget { key }
+            | Self::DuplicatePriority { key }
+            | Self::UnaffectableTarget { key }
+            | Self::UnreachableTarget { key, .. }
+            | Self::PriorityWithoutTarget { key } => vec![*key],
+            Self::DominanceViolation { lesser, greater, .. } => vec![*lesser, *greater],
+            Self::AdditiveDominanceViolation { whole, parts, .. } => [&[*whole], parts.as_slice()].concat(),
+        }
+    }
 }
 
 /// The result of validating balancing inputs: the full list of detected [`BalancingIssue`]s.
@@ -2507,6 +2523,52 @@ pub(crate) mod tests {
         let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &DAIRY_TRIVIAL_TARGETS, &[]);
         assert_true!(report.is_empty());
         assert_false!(report.has_errors());
+    }
+
+    // --- BalancingIssue::affected_keys ---
+
+    #[test]
+    fn affected_keys_single_key_variants() {
+        let key = BalanceKey::Comp(CompKey::MilkFat);
+        assert_eq!(BalancingIssue::NegativeTarget { key, value: -1.0 }.affected_keys(), vec![key]);
+        assert_eq!(BalancingIssue::UnaffectableTarget { key }.affected_keys(), vec![key]);
+        assert_eq!(
+            BalancingIssue::UnreachableTarget {
+                key,
+                target: 9.0,
+                min: 0.0,
+                max: 5.0
+            }
+            .affected_keys(),
+            vec![key]
+        );
+        assert_eq!(BalancingIssue::PriorityWithoutTarget { key }.affected_keys(), vec![key]);
+    }
+
+    #[test]
+    fn affected_keys_dominance_names_both_keys() {
+        let lesser = BalanceKey::Comp(CompKey::Sucrose);
+        let greater = BalanceKey::Comp(CompKey::TotalSugars);
+        let issue = BalancingIssue::DominanceViolation {
+            lesser,
+            greater,
+            lesser_target: 20.0,
+            greater_target: 15.0,
+        };
+        assert_eq!(issue.affected_keys(), vec![lesser, greater]);
+    }
+
+    #[test]
+    fn affected_keys_additive_dominance_names_whole_then_parts() {
+        let whole = BalanceKey::Comp(CompKey::TotalSugars);
+        let parts = vec![BalanceKey::Comp(CompKey::Sucrose), BalanceKey::Comp(CompKey::Fructose)];
+        let issue = BalancingIssue::AdditiveDominanceViolation {
+            whole,
+            parts: parts.clone(),
+            parts_target_sum: 20.0,
+            whole_target: 15.0,
+        };
+        assert_eq!(issue.affected_keys(), vec![whole, parts[0], parts[1]]);
     }
 
     // --- BalancingReport ---
