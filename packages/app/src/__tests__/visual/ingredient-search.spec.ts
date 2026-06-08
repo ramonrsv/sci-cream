@@ -48,8 +48,8 @@ test.describe("Visual Regression: Ingredient Search", () => {
     await expect(page.getByRole("button", { name: "Load" })).toHaveCount(0);
 
     const detailPanel = page.locator(".search-detail-panel");
-    // The JSON pre redacts the comments value; the full text renders as a paragraph below
-    await expect(detailPanel.locator("pre")).toContainText('"comments": "..."');
+    // The 'comments' field is removed; the full text renders as a paragraph below
+    await expect(detailPanel.locator("pre")).not.toContainText('"comments"');
     // The URL in the comments should be auto-linked
     await expect(detailPanel.getByRole("link")).toBeVisible();
 

@@ -229,11 +229,11 @@ describe("IngredientSearch", () => {
   });
 
   describe("comments rendering", () => {
-    it('redacts the comments value to "..." inside the JSON pre block', () => {
+    it("does not render the comments field inside the JSON pre block", () => {
       const { container } = render(<IngredientSearch />);
       fireEvent.click(screen.getByRole("button", { name: /Sealtest 3.25% Milk/ }));
       const pre = container.querySelector(".search-detail-panel pre") as HTMLElement;
-      expect(pre.textContent).toContain('"comments": "..."');
+      expect(pre.textContent).not.toContain('"comments"');
       expect(pre.textContent).not.toContain("https://example.com/sealtest");
     });
 

@@ -13,7 +13,6 @@
 - [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
 - [ ] In `/ingredients`, the composition panel does not scroll when the key exceed the height.
 - [ ] There is a weird horizontal line in `/ingredient-search-detail-panel-visual-linux.png`
-- [ ] Remove the '"comments": "..."' placeholder in `/ingredients`, just remove the field.
 - [ ] Fix typo in welcome blog post, "you will **find** areas where it goes well beyond...".
 - [ ] Look into single `props` argument or spread out arguments for Next.js components.
 - [ ] When a recipe is deleted, the UI does not update, it still showed the deleted recipe.
@@ -96,6 +95,7 @@
 
 ## Completed
 
+- [x] Remove the '"comments": "..."' placeholder in `/ingredients`, just remove the field.
 - [x] Closing a `WatcherCard` when on `Auto` doesn't do anything; this needs a fix.
 - [x] Add a button to set all currently selected watcher targets from a reference recipe.
 - [x] Add a `Balance` button to `WatchersPanel`, with some indicator that is a beta feature.

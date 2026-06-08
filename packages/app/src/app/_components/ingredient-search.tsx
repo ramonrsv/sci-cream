@@ -48,14 +48,12 @@ function getEntryComments(entry: SpecEntryJson): string | undefined {
 }
 
 /**
- * Pretty-print an entry as JSON, omitting the EntitySearch `_source` tag. When the entry has a
- * non-empty `comments` field, the value is redacted to `"..."` in the JSON — the full text is
- * rendered separately under the spec via {@link autoLink}.
+ * Pretty-print an entry as JSON, omitting the EntitySearch `_source` tag and the `comments` field
+ * from the spec — the full text is rendered separately under the spec via {@link autoLink}.
  */
 function stringifyEntry(entry: Tagged<SpecEntryJson>): string {
-  const { _source, ...spec } = entry; // eslint-disable-line @typescript-eslint/no-unused-vars
-  const display: Record<string, unknown> =
-    getEntryComments(entry) !== undefined ? { ...spec, comments: "..." } : spec;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { _source, comments, ...display } = entry as Tagged<SpecEntryJson> & { comments?: unknown };
   return JSON.stringify(display, null, 2);
 }
 
