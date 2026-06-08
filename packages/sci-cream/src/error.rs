@@ -47,6 +47,9 @@ pub enum Error {
     /// Composition unit is not supported for this operation.
     #[error("Composition unit is not supported for this operation: {0}")]
     UnsupportedCompositionUnit(Unit),
+    /// Composition is not supported in a certain context.
+    #[error("Unsupported composition: {0}")]
+    UnsupportedComposition(String),
     /// Ingredient not found in database or embedded list.
     #[error("Ingredient not found: {0}")]
     IngredientNotFound(String),

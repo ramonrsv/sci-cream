@@ -493,7 +493,9 @@ pub(crate) mod tests {
                     TaggedSpec::from(DairySimpleSpec {
                         fat: 40.0,
                         msnf: None,
+                        protein: None,
                         lactose_free: None,
+                        solids_source: None,
                     })
                     .into(),
                     1.0,
@@ -526,14 +528,18 @@ pub(crate) mod tests {
         let milk_spec: TaggedSpec = DairySimpleSpec {
             fat: 2.0,
             msnf: None,
+            protein: None,
             lactose_free: None,
+            solids_source: None,
         }
         .into();
 
         let cream_spec: TaggedSpec = DairySimpleSpec {
             fat: 40.0,
             msnf: None,
+            protein: None,
             lactose_free: None,
+            solids_source: None,
         }
         .into();
 
@@ -558,7 +564,9 @@ pub(crate) mod tests {
         let cream_spec = DairySimpleSpec {
             fat: 40.0,
             msnf: None,
+            protein: None,
             lactose_free: None,
+            solids_source: None,
         };
 
         // ByParts [4, 1] normalizes to an 80%:20% split of the named milk and the inline cream.
@@ -597,7 +605,9 @@ pub(crate) mod tests {
                 TaggedSpec::from(DairySimpleSpec {
                     fat: 200.0,
                     msnf: None,
+                    protein: None,
                     lactose_free: None,
+                    solids_source: None,
                 })
                 .into(),
                 100.0,

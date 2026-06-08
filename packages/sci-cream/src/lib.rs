@@ -264,7 +264,14 @@ composition is equivalent to the one constructed in the [previous example](#comp
 # use sci_cream::docs::assert_eq_float;
 use sci_cream::{CompKey::*, composition::ToComposition, specs::DairySimpleSpec};
 
-let dairy_spec = DairySimpleSpec { fat: 2.0, msnf: None, lactose_free: None };
+let dairy_spec = DairySimpleSpec {
+    fat: 2.0,
+    msnf: None,
+    protein: None,
+    lactose_free: None,
+    solids_source: None,
+};
+
 let comp = dairy_spec.to_composition()?;
 
 assert_eq_float!(comp.get(Energy), 49.576);

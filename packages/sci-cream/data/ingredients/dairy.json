@@ -83,6 +83,102 @@
     "DairySimpleSpec": { "fat": 27, "msnf": 70 }
   },
   {
+    "name": "Goff & Hartel Skim Milk",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 0, "msnf": 8.6, "protein": 3.2 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
+    "name": "Goff & Hartel 3% Milk",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 3, "msnf": 8.33, "protein": 3.1 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
+    "name": "Goff & Hartel 4% Milk",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 4, "msnf": 8.79, "protein": 3.2 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
+    "name": "Goff & Hartel 5% Milk",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 5, "msnf": 9.1, "protein": 3.3 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
+    "name": "Goff & Hartel 18% Cream",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 18, "msnf": 7.31, "protein": 2.6 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
+    "name": "Goff & Hartel 30% Cream",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 30, "msnf": 6.24, "protein": 2.2 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
+    "name": "Goff & Hartel 35% Cream",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 35, "msnf": 5.69, "protein": 2.1 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
+    "name": "Goff & Hartel 40% Cream",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 40, "msnf": 5.35, "protein": 1.9 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
+    "name": "Goff & Hartel 50% Cream",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 50, "msnf": 4.45, "protein": 1.6 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
+    "name": "Goff & Hartel Evaporated Milk",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 10, "msnf": 23, "protein": 8.6 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
+    "name": "Goff & Hartel 8% Condensed Milk",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 8, "msnf": 22, "protein": 8.2 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
+    "name": "Goff & Hartel 10% Condensed Milk",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 10, "msnf": 26, "protein": 9.7 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
+    "name": "Goff & Hartel Condensed Skim Milk, 20% MSNF",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 0, "msnf": 20, "protein": 7.4 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
+    "name": "Goff & Hartel Condensed Skim Milk, 30% MSNF",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 0, "msnf": 30, "protein": 11.1 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
+    "name": "Goff & Hartel Skim Milk Powder",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 0.7, "msnf": 96.3, "protein": 36 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
+    "name": "Goff & Hartel Whole Milk Powder",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 26, "msnf": 72, "protein": 27 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^2]"
+  },
+  {
     "name": "USDA Fat-Free (Skim) Milk",
     "category": "Dairy",
     "DairyLabelSpec": {

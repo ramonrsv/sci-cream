@@ -592,7 +592,9 @@ pub(crate) mod tests {
             spec: DairySimpleSpec {
                 fat: -10.0,
                 msnf: None,
+                protein: None,
                 lactose_free: None,
+                solids_source: None,
             }
             .into(),
         });

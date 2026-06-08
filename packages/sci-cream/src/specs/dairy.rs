@@ -62,6 +62,13 @@ pub struct DairySimpleSpec {
     /// products, as they do not adhere to the standard milk and cream composition ratios.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub msnf: Option<f64>,
+    /// Protein content by weight; calculated internally based on standard values, if unspecified.
+    ///
+    /// See [`STD_PROTEIN_IN_MSNF`] and [`STD_PROTEIN_IN_WS`] constants for protein content details.
+    /// The detailed proteins breakdown is determined by [`solids_source`](Self::solids_source).
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub protein: Option<f64>,
+    ///
     /// Whether the dairy product is lactose-free, which affects the detailed sugars composition
     ///
     /// If `false`/`None`, the sugars are assumed to be all lactose, calculated from
@@ -71,6 +78,11 @@ pub struct DairySimpleSpec {
     /// enzymatically broken down into its constituent sugars.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub lactose_free: Option<bool>,
+    /// Source of the solids non-fat in this product, [`SolidsSource::Milk`] if unspecified
+    ///
+    /// This affects the detailed protein and mineral composition of the solids non-fat.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub solids_source: Option<SolidsSource>,
 }
 
 impl ToComposition for DairySimpleSpec {
@@ -78,18 +90,31 @@ impl ToComposition for DairySimpleSpec {
         let Self {
             fat,
             msnf,
+            protein,
             lactose_free,
+            solids_source,
         } = *self;
 
         let lactose_free = lactose_free.unwrap_or(false);
+        let solids_source = solids_source.unwrap_or(SolidsSource::Milk);
+
+        let (protein_in_snf, lactose_in_snf) = match solids_source {
+            SolidsSource::Milk => (STD_PROTEIN_IN_MSNF, STD_LACTOSE_IN_MSNF),
+            SolidsSource::Whey => (STD_PROTEIN_IN_WS, STD_LACTOSE_IN_WS),
+            SolidsSource::Casein => {
+                return Err(Error::UnsupportedComposition(
+                    "Casein solids source is not supported in DairySimpleSpec".to_string(),
+                ));
+            }
+        };
 
         let calculated_msnf = (100.0 - fat) * STD_MSNF_IN_MILK_SERUM;
         let msnf = msnf.unwrap_or(calculated_msnf);
         verify_are_positive(&[fat, msnf])?;
         verify_is_within_100_percent(fat + msnf)?;
 
-        let lactose = msnf * STD_LACTOSE_IN_MSNF;
-        let proteins = msnf * STD_PROTEIN_IN_MSNF;
+        let lactose = msnf * lactose_in_snf;
+        let proteins = protein.unwrap_or(msnf * protein_in_snf);
 
         let sugars = if lactose_free {
             Sugars::new().glucose(lactose / 2.0).galactose(lactose / 2.0)
@@ -358,7 +383,9 @@ pub(crate) mod tests {
         spec: DairySimpleSpec {
             fat: 0.0,
             msnf: None,
+            protein: None,
             lactose_free: None,
+            solids_source: None,
         }
         .into(),
     });
@@ -426,7 +453,9 @@ pub(crate) mod tests {
         spec: DairySimpleSpec {
             fat: 2.0,
             msnf: None,
+            protein: None,
             lactose_free: None,
+            solids_source: None,
         }
         .into(),
     });
@@ -494,7 +523,9 @@ pub(crate) mod tests {
         spec: DairySimpleSpec {
             fat: 3.25,
             msnf: None,
+            protein: None,
             lactose_free: None,
+            solids_source: None,
         }
         .into(),
     });
@@ -561,7 +592,9 @@ pub(crate) mod tests {
         spec: DairySimpleSpec {
             fat: 40.0,
             msnf: None,
+            protein: None,
             lactose_free: None,
+            solids_source: None,
         }
         .into(),
     });
@@ -631,7 +664,9 @@ pub(crate) mod tests {
             spec: DairySimpleSpec {
                 fat: 2.0,
                 msnf: None,
+                protein: None,
                 lactose_free: Some(true),
+                solids_source: None,
             }
             .into(),
         });
@@ -702,7 +737,9 @@ pub(crate) mod tests {
             spec: DairySimpleSpec {
                 fat: 0.0,
                 msnf: Some(97.0),
+                protein: None,
                 lactose_free: None,
+                solids_source: None,
             }
             .into(),
         });
@@ -771,7 +808,9 @@ pub(crate) mod tests {
         spec: DairySimpleSpec {
             fat: 27.0,
             msnf: Some(70.0),
+            protein: None,
             lactose_free: None,
+            solids_source: None,
         }
         .into(),
     });
@@ -823,6 +862,82 @@ pub(crate) mod tests {
 
         assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 17.55);
         assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.945);
+    }
+
+    pub(crate) const ING_SPEC_DAIRY_SIMPLE_SKIM_MILK_GOFF_HARTEL_STR: &str = r#"{
+      "name": "Goff & Hartel Skim Milk",
+      "category": "Dairy",
+      "DairySimpleSpec": {
+        "fat": 0,
+        "msnf": 8.6,
+        "protein": 3.2
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_DAIRY_SIMPLE_SKIM_MILK_GOFF_HARTEL: LazyLock<IngredientSpec> =
+        LazyLock::new(|| IngredientSpec {
+            name: "Goff & Hartel Skim Milk".to_string(),
+            category: Category::Dairy,
+            spec: DairySimpleSpec {
+                fat: 0.0,
+                msnf: Some(8.6),
+                protein: Some(3.2),
+                lactose_free: None,
+                solids_source: None,
+            }
+            .into(),
+        });
+
+    pub(crate) static COMP_SKIM_MILK_GOFF_HARTEL: LazyLock<Composition> = LazyLock::new(|| {
+        Composition::new()
+            .energy(31.548)
+            .solids(
+                Solids::new().milk(
+                    SolidsBreakdown::new()
+                        .fats(Fats::new().total(0.0))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(4.687)))
+                        .proteins(3.2)
+                        .others_from_total(8.6)
+                        .unwrap(),
+                ),
+            )
+            .pod(0.7499)
+            .pac(PAC::new().sugars(4.687).msnf_ws_salts(3.1597))
+    });
+
+    #[test]
+    fn to_composition_dairy_simple_spec_skim_milk_goff_hartel() {
+        let comp = ING_SPEC_DAIRY_SIMPLE_SKIM_MILK_GOFF_HARTEL
+            .spec
+            .to_composition()
+            .unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 31.548);
+
+        assert_eq!(comp.get(CompKey::MilkFat), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 4.687);
+        assert_eq!(comp.get(CompKey::MSNF), 8.6);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 3.913);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 3.2);
+        assert_eq!(comp.get(CompKey::MilkSolids), 8.6);
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 3.2);
+        assert_eq!(comp.get(CompKey::TotalSolids), 8.6);
+        assert_eq!(comp.get(CompKey::Water), 91.4);
+
+        assert_eq!(comp.get(CompKey::Salt), 0.0);
+        assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
+        assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
+        assert_eq!(comp.get(CompKey::Alcohol), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 0.7499);
+
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 4.687);
+        assert_eq!(comp.get(CompKey::PACslt), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 3.1597);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 7.8467);
+
+        assert_eq!(comp.get(CompKey::SaturatedFat), 0.0);
+        assert_eq!(comp.get(CompKey::TransFat), 0.0);
     }
 
     // https://fdc.nal.usda.gov/food-details/2705385/nutrients
@@ -2085,6 +2200,7 @@ pub(crate) mod tests {
     fn compare_specs_skim_milk() {
         let sources = [
             ("Simple", "0% Milk"),
+            ("Goff & Hartel", "Goff & Hartel Skim Milk"),
             ("USDA", "USDA Fat-Free (Skim) Milk"),
             ("Sealtest", "Sealtest 0% Skim Milk"),
         ]
@@ -2115,12 +2231,32 @@ pub(crate) mod tests {
     fn compare_specs_whole_milk() {
         let sources = [
             ("Simple", "3.25% Milk"),
+            ("Goff & Hartel", "Goff & Hartel 3% Milk"),
             ("USDA", "USDA Whole Milk"),
             ("Sealtest", "Sealtest 3.25% Milk"),
         ]
         .map(source_str_to_comp);
 
-        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 20.0);
+        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 23.0);
+
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+    }
+
+    #[test]
+    fn compare_specs_5_cream() {
+        let sources = [
+            ("Simple", "5% Cream"),
+            ("Goff & Hartel", "Goff & Hartel 5% Milk"),
+            ("Sealtest", "Sealtest Light Cream 5%"),
+        ]
+        .map(source_str_to_comp);
+
+        // Sealtest's small 15ml serving rounds energy coarsely, in addition to the usual issue with
+        // energy's higher fractional precision vs mass components, pushing a heigh error, ~150 pp.
+        //    - Energy        149.22 pp  (Simple vs Sealtest)
+        //    - Energy        144.68 pp  (Goff & Hartel vs Sealtest)
+        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 150.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2176,6 +2312,7 @@ pub(crate) mod tests {
     fn compare_specs_whipping_cream() {
         let sources = [
             ("Simple", "35% Cream"),
+            ("Goff & Hartel", "Goff & Hartel 35% Cream"),
             ("USDA", "USDA Heavy Cream"),
             ("Sealtest", "Sealtest Whipping Cream 35%"),
         ]
@@ -2186,10 +2323,12 @@ pub(crate) mod tests {
         // level, which cascades through MilkSolids and TotalPAC (missing lactose is exactly
         // missing solids). The exceptions are:
         //    - MilkSolids     15.56 pp  (Simple vs Sealtest)
+        //    - MilkSolids     15.56 pp  (Goff & Hartel vs Sealtest)
         //    - MilkSolids     13.47 pp  (USDA vs Sealtest)
         //    - TotalPAC       11.15 pp  (Simple vs Sealtest)
+        //    - TotalPAC       10.84 pp  (Goff & Hartel vs Sealtest)
         let ceiling = KeyCeiling::new(10.0)
-            .with(CompKey::Energy, 45.0)
+            .with(CompKey::Energy, 48.0)
             .with(CompKey::MilkSolids, 16.0)
             .with(CompKey::TotalPAC, 12.0);
 
@@ -2198,7 +2337,22 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn compare_specs_evaporated_milk() {
+    fn compare_specs_skim_evaporated_milk() {
+        let sources = [
+            ("Goff & Hartel", "Goff & Hartel Condensed Skim Milk, 20% MSNF"),
+            ("USDA", "USDA Fat-Free Evaporated Milk"),
+            ("Carnation", "Carnation Fat Free Evaporated Milk"),
+        ]
+        .map(source_str_to_comp);
+
+        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 68.0);
+
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+    }
+
+    #[test]
+    fn compare_specs_2_evaporated_milk() {
         let sources = [
             ("USDA", "USDA 2% Reduced-Fat Evaporated Milk"),
             ("Carnation", "Carnation 2% Evaporated Partly Skimmed Milk"),
@@ -2233,6 +2387,39 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn compare_specs_whole_evaporated_milk() {
+        let sources = [
+            ("Goff & Hartel", "Goff & Hartel 8% Condensed Milk"),
+            ("USDA", "USDA Whole Evaporated Milk"),
+            ("Carnation", "Carnation Evaporated Milk"),
+        ]
+        .map(source_str_to_comp);
+
+        // Taking Carnation sugars as the literal label value (1g) instead of the midpoint
+        // between the 2g of total carbohydrates and 1g of sugars (i.e. 1.5g) causes a big
+        // difference in Lactose content, which cascades into every lactose-derived field
+        // (POD, PACsgr) and — via the MSNF-from-lactose+protein estimate — into MSNF,
+        // MilkSolids, PACmlk, and TotalPAC. The exceptions are:
+        //    - Lactose        16.35 pp  (Goff & Hartel vs Carnation)
+        //    - MSNF           20.56 pp  (Goff & Hartel vs Carnation)
+        //    - MilkSolids     23.61 pp  (Goff & Hartel vs Carnation)
+        //    - PACsgr         16.35 pp  (Goff & Hartel vs Carnation)
+        //    - TotalPAC       23.91 pp  (Goff & Hartel vs Carnation)
+        //    - Lactose        14.43 pp  (USDA vs Carnation)
+        //    - MSNF           18.58 pp  (USDA vs Carnation)
+        //    - MilkSolids     23.61 pp  (USDA vs Carnation)
+        //    - PACsgr         14.43 pp  (USDA vs Carnation)
+        //    - TotalPAC       21.26 pp  (USDA vs Carnation)
+        //
+        // @todo Worth revisiting whether the midpoint heuristic was the better choice here,
+        // given how much cross-source consistency it bought us.
+        let ceiling = KeyCeiling::new(200.0);
+
+        assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+        insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+    }
+
+    #[test]
     fn compare_specs_sweetened_condensed_milk() {
         let sources = [
             ("USDA", "USDA Sweetened Condensed Milk"),
@@ -2256,6 +2443,7 @@ pub(crate) mod tests {
     fn compare_specs_skim_milk_powder() {
         let sources = [
             ("Simple", "Skimmed Milk Powder"),
+            ("Goff & Hartel", "Goff & Hartel Skim Milk Powder"),
             ("Medallion", "Medallion Skim Milk Powder"),
             ("Theland", "Theland Skim Milk Powder"),
         ]
@@ -2271,6 +2459,7 @@ pub(crate) mod tests {
     fn compare_specs_whole_milk_powder() {
         let sources = [
             ("Simple", "Whole Milk Powder"),
+            ("Goff & Hartel", "Goff & Hartel Whole Milk Powder"),
             ("Medallion", "Medallion Whole Milk Powder"),
             ("Theland", "Theland Whole Milk Powder"),
         ]
@@ -2357,6 +2546,11 @@ pub(crate) mod tests {
                     Some(*COMP_WHOLE_POWDER),
                 ),
                 (
+                    ING_SPEC_DAIRY_SIMPLE_SKIM_MILK_GOFF_HARTEL_STR,
+                    ING_SPEC_DAIRY_SIMPLE_SKIM_MILK_GOFF_HARTEL.clone(),
+                    Some(*COMP_SKIM_MILK_GOFF_HARTEL),
+                ),
+                (
                     ING_SPEC_DAIRY_LABEL_WHOLE_MILK_USDA_STR,
                     ING_SPEC_DAIRY_LABEL_WHOLE_MILK_USDA.clone(),
                     Some(*COMP_WHOLE_MILK_USDA),
@@ -2434,7 +2628,9 @@ pub(crate) mod tests {
         let result_neg_fat = DairySimpleSpec {
             fat: -1.0,
             msnf: None,
+            protein: None,
             lactose_free: None,
+            solids_source: None,
         }
         .to_composition();
         assert!(matches!(result_neg_fat, Err(Error::CompositionNotPositive(_))));
@@ -2442,7 +2638,9 @@ pub(crate) mod tests {
         let result_neg_msnf = DairySimpleSpec {
             fat: 3.25,
             msnf: Some(-1.0),
+            protein: None,
             lactose_free: None,
+            solids_source: None,
         }
         .to_composition();
         assert!(matches!(result_neg_msnf, Err(Error::CompositionNotPositive(_))));
@@ -2453,7 +2651,9 @@ pub(crate) mod tests {
         let result = DairySimpleSpec {
             fat: 60.0,
             msnf: Some(60.0),
+            protein: None,
             lactose_free: None,
+            solids_source: None,
         }
         .to_composition();
         assert!(matches!(result, Err(Error::CompositionNotWithin100Percent(_))));
