@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode, useEffect, useState } from "react";
-import { ArrowDown, X } from "lucide-react";
+import { ArrowDown, ArrowUp, ChevronsUp, ChevronUp, X } from "lucide-react";
 
 import { Recipe, RecipeSummary, isRecipeEmpty, makeLightRecipe } from "@/lib/recipe";
 import {
@@ -36,10 +36,53 @@ import {
   isRatioKey,
   Bridge as WasmBridge,
   prop_key_as_short_str,
+  Priority,
 } from "@workspace/sci-cream";
 
 /** Map of `PropKey` to user-entered target value; sparse, only set entries are tracked */
 export type TargetsMap = Partial<Record<PropKey, number>>;
+
+/**
+ * Map of `PropKey` to user-chosen balancing {@link Priority}; sparse, only entries the user has
+ * raised above {@link Priority.Normal} (the default) are tracked.
+ */
+export type PrioritiesMap = Partial<Record<PropKey, Priority>>;
+
+/** Ordered priority cycle for the click-to-cycle control: Normal → High → Critical → Normal. */
+const PRIORITY_CYCLE = [Priority.Normal, Priority.High, Priority.Critical] as const;
+
+/** The next priority in {@link PRIORITY_CYCLE}, wrapping back to Normal after Critical. */
+function nextPriority(priority: Priority): Priority {
+  const i = PRIORITY_CYCLE.indexOf(priority);
+  return PRIORITY_CYCLE[(i + 1) % PRIORITY_CYCLE.length];
+}
+
+/**
+ * Glyph for the per-target balancing {@link Priority}, conveying level by both shape and color:
+ * a faint dot at `Normal` (recedes into the background), an amber single up-chevron at `High`, and
+ * a red double up-chevron at `Critical`. Inline `color` is set via SSR-safe {@link colorVar}.
+ */
+function PriorityMarker({ priority }: { priority: Priority }) {
+  const size = COMPONENT_ACTION_ICON_SIZE;
+
+  switch (priority) {
+    case Priority.High:
+      return (
+        <ChevronUp size={size} strokeWidth={4} style={{ color: colorVar(Color.GraphOrange) }} />
+      );
+    case Priority.Critical:
+      return (
+        <ChevronsUp size={size} strokeWidth={3} style={{ color: colorVar(Color.GraphRedDull) }} />
+      );
+    default:
+      return (
+        <span
+          className="inline-block h-1.25 w-1.25 rounded-full bg-current opacity-60"
+          aria-hidden
+        />
+      );
+  }
+}
 
 /** Mix-scope property keys: all `getPropKeys`, minus ingredient-only ratio keys. */
 function getMixScopePropKeys(): PropKey[] {
@@ -77,21 +120,6 @@ function formatDelta(delta: number | undefined): string {
 }
 
 /**
- * Returns a CSS `var(...)` color reference for a delta value's sign: green for positive, red for
- * negative, `undefined` for zero/NaN/undefined (which falls back to the inherited text color).
- *
- * The colors are intentionally non-semantic w.r.t. "good/bad" — neither direction is inherently
- * better in formulation context. They serve purely as a directional readability cue.
- *
- * Returns a `var(...)` reference rather than a resolved color string to avoid SSR/client
- * hydration mismatches on inline `style` attributes; see {@link colorVar}.
- */
-function getDeltaColor(delta: number | undefined): string | undefined {
-  if (!isUsableNumber(delta) || delta === 0) return undefined;
-  return colorVar(delta > 0 ? Color.GraphGreen : Color.GraphRedDull);
-}
-
-/**
  * Format an acceptable `{ min, max }` range as `[min, max]`.
  *
  * Bracket + comma notation chosen over a dash separator so it remains unambiguous when one or
@@ -121,6 +149,27 @@ function targetsToBalanceArgs(targets: TargetsMap, enabledSet: Set<PropKey>): [s
         enabledSet.has(propKey as PropKey),
     )
     .map(([propKey, val]) => [propKey, val as number]);
+}
+
+/**
+ * Build the `[keyName, Priority][]` priority list expected by `Bridge.balance_recipe`, from the
+ * `PrioritiesMap`, restricted to keys that actually carry a balanced target (`balanceTargets`).
+ *
+ * Entries are emitted only for non-`Normal` priorities on keys with a target: `Normal` is the
+ * solver default (weight 1) so listing it is a no-op, and a priority on a key without a target
+ * would trip the crate's `PriorityWithoutTarget` validation warning.
+ */
+function prioritiesToBalanceArgs(
+  priorities: PrioritiesMap,
+  balanceTargets: [string, number][],
+): [string, Priority][] {
+  const targetKeys = new Set(balanceTargets.map(([keyName]) => keyName));
+  return Object.entries(priorities)
+    .filter(
+      ([propKey, priority]) =>
+        priority !== undefined && priority !== Priority.Normal && targetKeys.has(propKey),
+    )
+    .map(([propKey, priority]) => [propKey, priority as Priority]);
 }
 
 /**
@@ -155,10 +204,16 @@ function getDisplayValue(propKey: PropKey, recipe: RecipeSummary): number | unde
 /**
  * Bare presentational card for a single watched `PropKey`.
  *
- * Shows the main recipe value (large), per-reference value + delta rows, the acceptable range, and
- * a user-fillable target with optional import buttons from each active reference. The header
- * background is color-coded by where the main value sits within the acceptable range; absent range
- * or invalid value renders a neutral header.
+ * Shows the main recipe value (large), the acceptable range, a user-fillable target row with a
+ * click-to-cycle balancing-priority marker ({@link PriorityMarker}, defaulting to
+ * {@link Priority.Normal}), and per-reference value + delta rows below it (each with an import
+ * button). The header background is color-coded by where the main value sits within the acceptable
+ * range; absent range or invalid value renders a neutral header. Deltas are monochrome — direction
+ * is signed (`+`/`−`) but uncolored, as neither direction is inherently good/bad in formulation.
+ *
+ * The remove (✕) button is shown only when `removable` (default `true`); callers hide it where
+ * removal has no effect — e.g. under the `Auto` key filter, which derives its key set from a
+ * heuristic and ignores the user selection, so removing a key would not hide the card.
  *
  * Toolbar/grid chrome and state ownership belong to the caller; this is pure props in, JSX out.
  */
@@ -167,14 +222,20 @@ export function WatcherCard({
   main,
   refs = [],
   target,
+  priority = Priority.Normal,
+  removable = true,
   onTargetChange,
+  onPriorityChange,
   onRemove,
 }: {
   propKey: PropKey;
   main: RecipeSummary;
   refs?: RecipeSummary[];
   target: number | undefined;
+  priority?: Priority;
+  removable?: boolean;
   onTargetChange: (val: number | undefined) => void;
+  onPriorityChange: (priority: Priority) => void;
   onRemove: () => void;
 }) {
   const range = getAcceptablePropertyRange(propKey);
@@ -204,14 +265,16 @@ export function WatcherCard({
         <span title={prop_key_as_short_str(propKey)} className="truncate">
           {prop_key_as_short_str(propKey)}
         </span>
-        <button
-          className="action-button -mr-0.5 ml-1 px-0.5 py-0"
-          onClick={onRemove}
-          title="Remove from watchers"
-          data-testid={`watcher-card-${String(propKey)}-remove`}
-        >
-          <X size={COMPONENT_ACTION_ICON_SIZE - 6} />
-        </button>
+        {removable && (
+          <button
+            className="action-button -mr-0.5 ml-1 px-0.5 py-0"
+            onClick={onRemove}
+            title="Remove from watchers"
+            data-testid={`watcher-card-${String(propKey)}-remove`}
+          >
+            <X size={COMPONENT_ACTION_ICON_SIZE - 6} />
+          </button>
+        )}
       </div>
 
       {/* Body */}
@@ -225,6 +288,42 @@ export function WatcherCard({
           {range && (
             <span className="text-secondary text-[11px]" title="Acceptable range">
               {formatRange(range)}
+            </span>
+          )}
+        </div>
+
+        {/* Target row: priority cycle button + input + (optional) inline delta-from-current */}
+        <div className="flex items-center gap-0.5" title="Target value">
+          <button
+            type="button"
+            className="action-button flex h-5 w-5 shrink-0 items-center justify-center p-0"
+            onClick={() => onPriorityChange(nextPriority(priority))}
+            title={`Balancing priority: ${priority} (click to change)`}
+            aria-label={`Balancing priority: ${priority}`}
+            data-priority={priority}
+            data-testid={`watcher-card-${String(propKey)}-priority`}
+          >
+            <PriorityMarker priority={priority} />
+          </button>
+          <input
+            type="number"
+            step={targetStep}
+            className="select-input comp-val w-16 px-0.5 py-0"
+            value={target ?? ""}
+            placeholder="—"
+            onChange={(e) => {
+              const v = e.target.value;
+              onTargetChange(v === "" ? undefined : parseFloat(v));
+            }}
+            data-testid={`watcher-card-${String(propKey)}-target`}
+          />
+          {target !== undefined && mainHasValue && (
+            <span
+              className="comp-val w-12 text-right text-[11px]"
+              title="Delta from current to target"
+              data-testid={`watcher-card-${String(propKey)}-target-delta`}
+            >
+              {formatDelta(target - mainValue)}
             </span>
           )}
         </div>
@@ -257,13 +356,12 @@ export function WatcherCard({
                   data-testid={`watcher-card-${String(propKey)}-fill-${ref.id}`}
                   style={{ visibility: refHasValue ? "visible" : "hidden" }}
                 >
-                  <ArrowDown size={COMPONENT_ACTION_ICON_SIZE - 10} />
+                  <ArrowUp size={COMPONENT_ACTION_ICON_SIZE - 10} />
                   <span className="text-[11px] font-semibold">{refLetter}</span>
                 </button>
                 <span className="comp-val">{formatCompositionValue(refValue)}</span>
                 <span
                   className="comp-val w-12 text-right text-[11px]"
-                  style={{ color: getDeltaColor(delta) }}
                   data-testid={`watcher-card-${String(propKey)}-ref-${ref.id}-delta`}
                 >
                   {formatDelta(delta || undefined)}
@@ -271,33 +369,6 @@ export function WatcherCard({
               </div>
             );
           })}
-
-        {/* Target row: input + (optional) inline delta-from-current */}
-        <div className="flex items-center gap-0.5" title="Target value">
-          <span className="comp-val text-txt-sec-lt dark:text-txt-sec-dk">{"▸"}</span>
-          <input
-            type="number"
-            step={targetStep}
-            className="select-input comp-val w-16 px-0.5 py-0"
-            value={target ?? ""}
-            placeholder="—"
-            onChange={(e) => {
-              const v = e.target.value;
-              onTargetChange(v === "" ? undefined : parseFloat(v));
-            }}
-            data-testid={`watcher-card-${String(propKey)}-target`}
-          />
-          {target !== undefined && mainHasValue && (
-            <span
-              className="comp-val w-12 text-right text-[11px]"
-              title="Delta from current to target"
-              style={{ color: getDeltaColor(target - mainValue) }}
-              data-testid={`watcher-card-${String(propKey)}-target-delta`}
-            >
-              {formatDelta(target - mainValue)}
-            </span>
-          )}
-        </div>
       </div>
     </div>
   );
@@ -305,22 +376,29 @@ export function WatcherCard({
 
 /**
  * Bare grid of {@link WatcherCard}s, laid out via CSS auto-fill so the cards reflow to fill the
- * available width. Caller controls which property keys are shown, the target map, and the per-card
- * change/remove handlers.
+ * available width. Caller controls which property keys are shown, the target and priority maps, and
+ * the per-card change/remove handlers. `removable` (default `true`) is forwarded to every card to
+ * toggle its remove button.
  */
 export function WatchersGrid({
   propKeys,
   main,
   refs = [],
   targets,
+  priorities,
+  removable = true,
   onTargetChange,
+  onPriorityChange,
   onRemove,
 }: {
   propKeys: PropKey[];
   main: RecipeSummary;
   refs?: RecipeSummary[];
   targets: TargetsMap;
+  priorities: PrioritiesMap;
+  removable?: boolean;
   onTargetChange: (propKey: PropKey, val: number | undefined) => void;
+  onPriorityChange: (propKey: PropKey, priority: Priority) => void;
   onRemove: (propKey: PropKey) => void;
 }) {
   return (
@@ -335,7 +413,10 @@ export function WatchersGrid({
           main={main}
           refs={refs}
           target={targets[propKey]}
+          priority={priorities[propKey] ?? Priority.Normal}
+          removable={removable}
           onTargetChange={(val) => onTargetChange(propKey, val)}
+          onPriorityChange={(priority) => onPriorityChange(propKey, priority)}
           onRemove={() => onRemove(propKey)}
         />
       ))}
@@ -344,18 +425,20 @@ export function WatchersGrid({
 }
 
 /**
- * Watchers grid with an attached toolbar (`KeyFilterSelect`) that owns toolbar and target state.
+ * Watchers grid with an attached toolbar (`KeyFilterSelect`) that owns toolbar, target, and
+ * per-target priority state.
  *
- * Selection and targets are persisted to `localStorage` on every change; on mount, initial values
- * are hydrated from storage when present (default selection used otherwise).
+ * Selection, targets, and priorities are persisted to `localStorage` on every change; on mount,
+ * initial values are hydrated from storage when present (default selection used otherwise).
  *
  * `toolbarPrefix` is rendered inside the toolbar's flex row before the controls; used by the panel
  * wrapper to inject a drag handle without breaking the toolbar layout.
  *
  * The toolbar's right-side action group has a Balance button (runs the WASM balancer using
- * watched CompKey-derived targets, then calls `onApplyBalancedMain`) and one Fill-from-Ref
- * button per non-empty reference (fills currently-watched targets from that reference's values).
- * Both are inert without `wasmBridge` and `onApplyBalancedMain`, so bare renders stay read-only.
+ * watched CompKey-derived targets and their priorities, then calls `onApplyBalancedMain`) and one
+ * Fill-from-Ref button per non-empty reference (fills currently-watched targets from that
+ * reference's values). Both are inert without `wasmBridge` and `onApplyBalancedMain`, so bare
+ * renders stay read-only.
  */
 export function WatchersView({
   main,
@@ -376,15 +459,19 @@ export function WatchersView({
   const selectedPropsState = useState<Set<PropKey>>(defaultSelected);
   const [, setSelectedProps] = selectedPropsState;
   const [targets, setTargets] = useState<TargetsMap>({});
+  const [priorities, setPriorities] = useState<PrioritiesMap>({});
   const [balanceError, setBalanceError] = useState<string | undefined>(undefined);
 
-  // Hydrate selection + targets from localStorage on mount (client-only, after SSR pass)
+  // Hydrate selection + targets + priorities from localStorage on mount (client-only, post-SSR)
   useEffect(() => {
     const stored = getLocalStorage<PropKey[]>(STORAGE_KEYS.watcherSelectedProps);
     if (stored) setSelectedProps(new Set(stored));
 
     const storedTargets = getLocalStorage<TargetsMap>(STORAGE_KEYS.watcherTargets);
     if (storedTargets) setTargets(storedTargets);
+
+    const storedPriorities = getLocalStorage<PrioritiesMap>(STORAGE_KEYS.watcherPriorities);
+    if (storedPriorities) setPriorities(storedPriorities);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -397,6 +484,11 @@ export function WatchersView({
   useEffect(() => {
     setLocalStorage(STORAGE_KEYS.watcherTargets, targets);
   }, [targets]);
+
+  // Persist priorities to localStorage on change
+  useEffect(() => {
+    setLocalStorage(STORAGE_KEYS.watcherPriorities, priorities);
+  }, [priorities]);
 
   /** Returns `true` when every recipe has a zero/NaN value for the given property key */
   const isPropEmpty = (propKey: PropKey) => {
@@ -435,7 +527,20 @@ export function WatchersView({
     });
   };
 
-  /** Remove a property key from the watch list and drop its target entry, if any */
+  /** Set one target's balancing priority; `Normal` (the default) drops the entry to stay sparse */
+  const onPriorityChange = (propKey: PropKey, priority: Priority) => {
+    setPriorities((prev) => {
+      const next = { ...prev };
+      if (priority === Priority.Normal) {
+        delete next[propKey];
+      } else {
+        next[propKey] = priority;
+      }
+      return next;
+    });
+  };
+
+  /** Remove a property key from the watch list and drop its target and priority entries, if any */
   const onRemove = (propKey: PropKey) => {
     setSelectedProps((prev) => {
       const next = new Set(prev);
@@ -449,10 +554,22 @@ export function WatchersView({
       delete next[propKey];
       return next;
     });
+
+    setPriorities((prev) => {
+      if (!(propKey in prev)) return prev;
+      const next = { ...prev };
+      delete next[propKey];
+      return next;
+    });
   };
 
   const enabledProps = getEnabledProps();
   const balanceTargets = targetsToBalanceArgs(targets, new Set(enabledProps));
+  const balancePriorities = prioritiesToBalanceArgs(priorities, balanceTargets);
+
+  // Removal only takes effect under the Custom filter (which derives its keys from the selection);
+  // under Auto, the heuristic ignores the selection, so the remove button is hidden there.
+  const removable = propsFilterState[STATE_VAL] === KeyFilter.Custom;
 
   /**
    * Balance the main recipe to the current targets, passing the result to `onApplyBalancedMain`.
@@ -467,10 +584,12 @@ export function WatchersView({
 
     try {
       const lightRecipe = makeLightRecipe(main, (n) => wasmBridge.has_ingredient(n));
-      const balanced = wasmBridge.balance_recipe(lightRecipe, balanceTargets, []) as [
-        string,
-        number,
-      ][];
+
+      const balanced = wasmBridge.balance_recipe(
+        lightRecipe,
+        balanceTargets,
+        balancePriorities,
+      ) as [string, number][];
 
       setBalanceError(undefined);
       onApplyBalancedMain(balanced);
@@ -560,7 +679,10 @@ export function WatchersView({
             main={main}
             refs={refs}
             targets={targets}
+            priorities={priorities}
+            removable={removable}
             onTargetChange={onTargetChange}
+            onPriorityChange={onPriorityChange}
             onRemove={onRemove}
           />
         </div>

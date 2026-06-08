@@ -55,6 +55,7 @@ async function locateWatchersViewAndExpectVisible(page: Page) {
  * If definitions change in the future that alter those behaviors, then the invariant check below
  * will fail loudly so the test choices can be updated.
  */
+const KEY_IN_AUTO_FILTER = compToPropKey(CompKey.MSNF);
 const KEY_WITH_RANGE = compToPropKey(CompKey.MSNF);
 const KEY_WITHOUT_RANGE = compToPropKey(CompKey.MilkFat);
 const KEY_MIXED_REF_VALS = compToPropKey(CompKey.ABV);
@@ -149,4 +150,22 @@ test.describe("Visual Regression: WatchersView", () => {
   testWatchersView([RecipeID.RefA]);
   testWatchersView([RecipeID.RefB]);
   testWatchersView([RecipeID.RefA, RecipeID.RefB]);
+});
+
+test.describe("Visual Regression: WatcherCard remove button by key filter", () => {
+  test("hidden under Auto, shown under Custom", async ({ page }) => {
+    await presetWatcherSelection(page, [KEY_IN_AUTO_FILTER]);
+    await goToPageAndWaitFor(page);
+
+    const removeButton = page.locator(`[data-testid="watcher-card-${KEY_IN_AUTO_FILTER}-remove"]`);
+
+    let card = await locateWatcherCardByKeyAndExpectVisible(page, KEY_IN_AUTO_FILTER);
+    await expect(removeButton).toHaveCount(0);
+    await expect(card).toHaveScreenshot("watcher-card-auto-filter.png");
+
+    await selectKeyFilterCustom(page);
+    card = await locateWatcherCardByKeyAndExpectVisible(page, KEY_IN_AUTO_FILTER);
+    await expect(removeButton).toBeVisible();
+    await expect(card).toHaveScreenshot("watcher-card-custom-filter.png");
+  });
 });

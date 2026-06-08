@@ -4,6 +4,7 @@ export const STORAGE_KEYS = {
   sidebarCollapsed: "sidebar-collapsed",
   watcherSelectedProps: "watcher-selected-props",
   watcherTargets: "watcher-targets",
+  watcherPriorities: "watcher-priorities",
   calculatorLayouts: "calculator-layouts",
 } as const;
 

@@ -16,7 +16,6 @@
 - [ ] Remove the '"comments": "..."' placeholder in `/ingredients`, just remove the field.
 - [ ] Fix typo in welcome blog post, "you will **find** areas where it goes well beyond...".
 - [ ] Look into single `props` argument or spread out arguments for Next.js components.
-- [ ] Closing a `WatcherCard` when on `Auto` doesn't do anything; this needs a fix.
 - [ ] When a recipe is deleted, the UI does not update, it still showed the deleted recipe.
 - [ ] Add end-to-end tests for balancing functionality; check surfacing of balancing errors?
 
@@ -36,10 +35,8 @@
 - [ ] Add automatic links to specs, docs, etc. in `/ingredients`, based on the loaded spec.
 - [ ] Add support for showing recipe diffs between versions of a recipe in `/recipes`.
 - [ ] Add some visual feedback for when a recipe matches targets within a given precision.
-- [ ] Add a button to set all currently selected watcher targets from a reference recipe.
 - [ ] On mobile, change ingredients comp table height to fit, with max, and move comments below it.
 - [ ] Double check the calculator mobile layouts, `FpdGraphPanel` looks too tall on Pixel 8 Pro.
-- [ ] Add a `Balance` button to `WatchersPanel`, with some indicator that is a beta feature.
 - [ ] Add support for `RecipeEditor` to display fewer lines than the internal fixed number of lines,
       and to dynamically adjust the number based on the panel size, only showing a scrollbar if the
       any filled lines would be hidden. This may cause issues with `CompositionBreakdown`, which
@@ -99,6 +96,9 @@
 
 ## Completed
 
+- [x] Closing a `WatcherCard` when on `Auto` doesn't do anything; this needs a fix.
+- [x] Add a button to set all currently selected watcher targets from a reference recipe.
+- [x] Add a `Balance` button to `WatchersPanel`, with some indicator that is a beta feature.
 - [x] Add `Watchers` component where users can select what properties to watch. It should probably
       support displaying deltas between the main and reference recipes, and target min-max ranges.
 - [x] Fix the `WatcherCard` diff calculation, it should be main's delta compared to references.

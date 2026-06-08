@@ -14,6 +14,7 @@ import {
   Bridge as WasmBridge,
   CompKey,
   FpdKey,
+  Priority,
   compToPropKey,
   fpdToPropKey,
 } from "@workspace/sci-cream";
@@ -54,6 +55,7 @@ describe("WatcherCard", () => {
         main={main}
         target={undefined}
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -68,6 +70,7 @@ describe("WatcherCard", () => {
         main={main}
         target={undefined}
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -84,6 +87,7 @@ describe("WatcherCard", () => {
         main={main}
         target={undefined}
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -101,6 +105,7 @@ describe("WatcherCard", () => {
         refs={[refA, refB]}
         target={undefined}
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -116,6 +121,7 @@ describe("WatcherCard", () => {
         main={main}
         target={undefined}
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -140,6 +146,7 @@ describe("WatcherCard", () => {
         main={main}
         target={undefined}
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -158,6 +165,7 @@ describe("WatcherCard", () => {
         main={main}
         target={undefined}
         onTargetChange={onTargetChange}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -175,6 +183,7 @@ describe("WatcherCard", () => {
         main={main}
         target={9.5}
         onTargetChange={onTargetChange}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -193,6 +202,7 @@ describe("WatcherCard", () => {
         refs={[refA]}
         target={undefined}
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -210,6 +220,7 @@ describe("WatcherCard", () => {
         refs={[refA]}
         target={undefined}
         onTargetChange={onTargetChange}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -234,6 +245,7 @@ describe("WatcherCard", () => {
         refs={[refA]}
         target={undefined}
         onTargetChange={onTargetChange}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -251,11 +263,80 @@ describe("WatcherCard", () => {
         main={main}
         target={undefined}
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={onRemove}
       />,
     );
     fireEvent.click(screen.getByTestId(`watcher-card-${String(MSNF)}-remove`));
     expect(onRemove).toHaveBeenCalledTimes(1);
+  });
+
+  it("hides the remove button when removable is false", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        target={undefined}
+        removable={false}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(screen.queryByTestId(`watcher-card-${String(MSNF)}-remove`)).not.toBeInTheDocument();
+  });
+
+  it("reflects the current priority via the cycle button's data-priority attribute", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        target={9.5}
+        priority={Priority.Critical}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    const button = screen.getByTestId(`watcher-card-${String(MSNF)}-priority`);
+    expect(button).toHaveAttribute("data-priority", Priority.Critical);
+  });
+
+  it("cycles to the next priority (Normal → High) when the button is clicked", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const onPriorityChange = vi.fn();
+    render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        target={9.5}
+        onTargetChange={vi.fn()}
+        onPriorityChange={onPriorityChange}
+        onRemove={vi.fn()}
+      />,
+    );
+    fireEvent.click(screen.getByTestId(`watcher-card-${String(MSNF)}-priority`));
+    expect(onPriorityChange).toHaveBeenCalledWith(Priority.High);
+  });
+
+  it("wraps the priority cycle back to Normal after Critical", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const onPriorityChange = vi.fn();
+    render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        target={9.5}
+        priority={Priority.Critical}
+        onTargetChange={vi.fn()}
+        onPriorityChange={onPriorityChange}
+        onRemove={vi.fn()}
+      />,
+    );
+    fireEvent.click(screen.getByTestId(`watcher-card-${String(MSNF)}-priority`));
+    expect(onPriorityChange).toHaveBeenCalledWith(Priority.Normal);
   });
 
   it("renders a placeholder value when the recipe is empty", () => {
@@ -266,6 +347,7 @@ describe("WatcherCard", () => {
         main={emptyMain}
         target={undefined}
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -300,6 +382,7 @@ describe("WatcherCard delta", () => {
         refs={[refA]}
         target={undefined}
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -332,6 +415,7 @@ describe("WatcherCard delta", () => {
         refs={[emptyRef]}
         target={undefined}
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -352,6 +436,7 @@ describe("WatcherCard delta", () => {
         refs={[stubRef]}
         target={undefined}
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -373,6 +458,7 @@ describe("WatcherCard delta", () => {
         refs={[refA]}
         target={undefined}
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -390,6 +476,7 @@ describe("WatcherCard delta", () => {
         main={main}
         target={undefined}
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -406,6 +493,7 @@ describe("WatcherCard delta", () => {
         main={emptyMain}
         target={9.5}
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -414,7 +502,7 @@ describe("WatcherCard delta", () => {
     ).toBeNull();
   });
 
-  it("renders a positive target delta with a green color when target exceeds current", () => {
+  it("renders a signed positive target delta in monochrome when target exceeds current", () => {
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(
       <WatcherCard
@@ -422,6 +510,7 @@ describe("WatcherCard delta", () => {
         main={main}
         target={100} // far above Main's MSNF (~8.87)
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -430,10 +519,11 @@ describe("WatcherCard delta", () => {
     ) as HTMLElement;
     expect(delta).not.toBeNull();
     expect(delta.textContent!.startsWith("+")).toBe(true);
-    expect(delta.style.color).toContain(Color.GraphGreen);
+    // Monochrome: no inline color override (neither green/red), so it inherits the text color.
+    expect(delta.style.color).toBe("");
   });
 
-  it("renders a negative target delta with unicode minus and a red color when target is below current", () => {
+  it("renders a negative target delta with a unicode minus in monochrome when below current", () => {
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(
       <WatcherCard
@@ -441,6 +531,7 @@ describe("WatcherCard delta", () => {
         main={main}
         target={0} // below Main's MSNF (~8.87)
         onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
       />,
     );
@@ -451,7 +542,8 @@ describe("WatcherCard delta", () => {
     // Uses the unicode minus sign (U+2212), not the hyphen-minus (U+002D)
     expect(delta.textContent![0]).toBe("−");
     expect(delta.textContent![0]).not.toBe("-");
-    expect(delta.style.color).toContain(Color.GraphRedDull);
+    // Monochrome: no inline color override (neither green/red), so it inherits the text color.
+    expect(delta.style.color).toBe("");
   });
 });
 
@@ -495,9 +587,12 @@ describe("WatchersView", () => {
     expect(input.value).toBe("9.5");
   });
 
-  it("persists the selection to localStorage after removal", () => {
+  it("persists the selection to localStorage after removal (Custom filter)", () => {
     const main = makeMockRecipe(RecipeID.Main);
-    render(<WatchersView main={main} />);
+    const { container } = render(<WatchersView main={main} />);
+    // Removal only applies under the Custom filter, where the remove button is shown.
+    const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
+    fireEvent.change(select, { target: { value: KeyFilter.Custom } });
     fireEvent.click(screen.getByTestId(`watcher-card-${String(MSNF)}-remove`));
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherSelectedProps) ?? "[]");
     expect(stored).not.toContain(MSNF);
@@ -511,6 +606,58 @@ describe("WatchersView", () => {
     fireEvent.change(input, { target: { value: "9.5" } });
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherTargets) ?? "{}");
     expect(stored[MSNF]).toBe(9.5);
+  });
+
+  it("hydrates priorities from localStorage on mount", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherPriorities, JSON.stringify({ [MSNF]: Priority.High }));
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} />);
+    const button = screen.getByTestId(`watcher-card-${String(MSNF)}-priority`);
+    expect(button).toHaveAttribute("data-priority", Priority.High);
+  });
+
+  it("persists priority changes to localStorage when the cycle button is clicked", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} />);
+    // Default is Normal; one click cycles to High.
+    fireEvent.click(screen.getByTestId(`watcher-card-${String(MSNF)}-priority`));
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherPriorities) ?? "{}");
+    expect(stored[MSNF]).toBe(Priority.High);
+  });
+
+  it("drops the priority entry when cycled back to Normal, keeping the map sparse", () => {
+    localStorage.setItem(
+      STORAGE_KEYS.watcherPriorities,
+      JSON.stringify({ [MSNF]: Priority.Critical }),
+    );
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} />);
+    // Hydrated as Critical; one click wraps back to Normal, which drops the entry.
+    fireEvent.click(screen.getByTestId(`watcher-card-${String(MSNF)}-priority`));
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherPriorities) ?? "{}");
+    expect(MSNF in stored).toBe(false);
+  });
+
+  it("drops a removed key's priority entry from localStorage (Custom filter)", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherPriorities, JSON.stringify({ [MSNF]: Priority.High }));
+    const main = makeMockRecipe(RecipeID.Main);
+    const { container } = render(<WatchersView main={main} />);
+    const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
+    fireEvent.change(select, { target: { value: KeyFilter.Custom } });
+    fireEvent.click(screen.getByTestId(`watcher-card-${String(MSNF)}-remove`));
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherPriorities) ?? "{}");
+    expect(MSNF in stored).toBe(false);
+  });
+
+  it("hides remove buttons under the Auto filter and shows them under Custom", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const { container } = render(<WatchersView main={main} />);
+    // Default filter is Auto: removal is a no-op there, so no remove buttons are rendered.
+    expect(screen.queryByTestId(`watcher-card-${String(MSNF)}-remove`)).not.toBeInTheDocument();
+
+    const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
+    fireEvent.change(select, { target: { value: KeyFilter.Custom } });
+    expect(screen.getByTestId(`watcher-card-${String(MSNF)}-remove`)).toBeInTheDocument();
   });
 
   it("passes the active reference recipes to each card", () => {
@@ -607,6 +754,38 @@ describe("WatchersView Balance", () => {
       expect(typeof grams).toBe("number");
       expect(grams).toBeGreaterThanOrEqual(0);
     }
+  });
+
+  it("forwards only non-Normal priorities for keys that have a target to balance_recipe", () => {
+    localStorage.setItem(
+      STORAGE_KEYS.watcherTargets,
+      JSON.stringify({ [MSNF]: 10, [TOTAL_SOLIDS]: 41 }),
+    );
+    // MSNF is raised to Critical; TOTAL_SOLIDS stays Normal (default) → must not be forwarded.
+    localStorage.setItem(
+      STORAGE_KEYS.watcherPriorities,
+      JSON.stringify({ [MSNF]: Priority.Critical }),
+    );
+    const main = makeMockRecipe(RecipeID.Main);
+    const balanceSpy = vi.fn<
+      (
+        recipe: unknown,
+        targets: [string, number][],
+        priorities: [string, Priority][],
+      ) => [string, number][]
+    >(() => []);
+    const spyBridge = {
+      has_ingredient: () => true,
+      balance_recipe: balanceSpy,
+    } as unknown as WasmBridge;
+
+    render(<WatchersView main={main} wasmBridge={spyBridge} onApplyBalancedMain={vi.fn()} />);
+    fireEvent.click(screen.getByTestId("watchers-balance-button"));
+
+    expect(balanceSpy).toHaveBeenCalledTimes(1);
+    const priorities = balanceSpy.mock.calls[0][2];
+    expect(priorities).toContainEqual([String(MSNF), Priority.Critical]);
+    expect(priorities).toHaveLength(1);
   });
 
   it("surfaces a balance error and does not invoke onApplyBalancedMain when the bridge throws", () => {
