@@ -3,7 +3,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    balancing::{BalanceKey, Priority},
+    balancing::{BalanceKey, BalancingReport, Priority, validate_balancing_targets},
     composition::Composition as RustComposition,
     database::IngredientDatabase,
     error::Result,
@@ -116,6 +116,27 @@ impl Bridge {
         RustRecipe::from_light_recipe(None, recipe, &self.db)?
             .balance(targets, priorities, None)
             .map(Into::into)
+    }
+
+    /// Validates balancing targets against the compositions derived from `recipe`.
+    ///
+    /// Extracts compositions from the resolved recipe lines, then forwards to
+    /// [`validate_balancing_targets`]. Never errors on input validation — issues are reported in
+    /// the returned [`BalancingReport`].
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::IngredientNotFound`] if any ingredient name in `recipe` is not in the DB.
+    /// Forwards any errors from [`Recipe::from_light_recipe`](RustRecipe::from_light_recipe).
+    pub fn validate_recipe_targets(
+        &self,
+        recipe: &LightRecipe,
+        targets: &[(BalanceKey, f64)],
+        priorities: &[(BalanceKey, Priority)],
+    ) -> Result<BalancingReport> {
+        let rust_recipe = RustRecipe::from_light_recipe(None, recipe, &self.db)?;
+        let comps: Vec<RustComposition> = rust_recipe.lines.iter().map(|l| l.ingredient.composition).collect();
+        Ok(validate_balancing_targets(&comps, targets, priorities))
     }
 
     /// Forwards to [`IngredientDatabase::seed`], seeding the db with the provided [`Ingredient`]s.
@@ -252,6 +273,28 @@ impl Bridge {
             .map(Vec::into_boxed_slice)
     }
 
+    /// WASM compatible wrapper for [`Bridge::validate_recipe_targets`]
+    ///
+    /// # Errors
+    ///
+    /// Returns a `serde::Error` if the `JsValue` inputs cannot be deserialized into an
+    /// [`OwnedLightRecipe`], `(BalanceKey, f64)[]`, or `(BalanceKey, Priority)[]`. Forwards any
+    /// errors from the forwarded-to method. See [`Bridge::validate_recipe_targets`] for details.
+    #[wasm_bindgen(js_name = "validate_recipe_targets")]
+    pub fn validate_recipe_targets_wasm(
+        &self,
+        recipe: Box<[JsValue]>,
+        targets: Box<[JsValue]>,
+        priorities: Box<[JsValue]>,
+    ) -> JsResult<JsValue> {
+        let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
+        let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
+        let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
+
+        self.validate_recipe_targets(&light_recipe, &targets, &priorities)
+            .map(|report| serde_wasm_bindgen::to_value(&report).map_err(Into::into))?
+    }
+
     /// WASM compatible wrapper for [`Bridge::seed`]
     ///
     /// # Errors
@@ -310,7 +353,7 @@ pub(crate) mod tests {
 
     use super::*;
     use crate::{
-        balancing::Priority,
+        balancing::{BalancingIssue, Priority},
         composition::CompKey,
         data::{get_all_independent_ingredient_specs, get_all_spec_entries},
         ingredient::{Ingredient, IntoIngredient, ResolveIntoIngredient},
@@ -534,6 +577,70 @@ pub(crate) mod tests {
         let prioritized_error = balance_rel_error_pp(prioritized_comp.get(CompKey::POD), 0.5);
 
         assert_true!(prioritized_error < default_error);
+    }
+
+    #[test]
+    fn bridge_validate_recipe_targets_clean() {
+        let bridge = Bridge::new(make_seeded_db());
+        let recipe = light_recipe_to_owned(LIGHT_RECIPE);
+        let targets = [
+            (CompKey::MilkFat.into(), 14.0),
+            (CompKey::MSNF.into(), 10.0),
+            (CompKey::TotalSugars.into(), 17.0),
+        ];
+        let report = bridge.validate_recipe_targets(&recipe, &targets, &[]).unwrap();
+        assert_true!(report.is_empty());
+    }
+
+    #[test]
+    fn bridge_validate_recipe_targets_error_negative() {
+        let bridge = Bridge::new(make_seeded_db());
+        let recipe = light_recipe_to_owned(LIGHT_RECIPE);
+        let targets = [(CompKey::MilkFat.into(), -5.0)];
+        let report = bridge.validate_recipe_targets(&recipe, &targets, &[]).unwrap();
+        assert_true!(report.has_errors());
+        assert_eq!(report.issues.len(), 1);
+        assert!(matches!(
+            report.issues[0],
+            BalancingIssue::NegativeTarget {
+                key: BalanceKey::Comp(CompKey::MilkFat),
+                ..
+            }
+        ));
+    }
+
+    #[test]
+    fn bridge_validate_recipe_targets_error_duplicate() {
+        let bridge = Bridge::new(make_seeded_db());
+        let recipe = light_recipe_to_owned(LIGHT_RECIPE);
+        let targets = [(CompKey::MilkFat.into(), 10.0), (CompKey::MilkFat.into(), 12.0)];
+        let report = bridge.validate_recipe_targets(&recipe, &targets, &[]).unwrap();
+        assert_true!(report.has_errors());
+        assert!(matches!(report.errors().next().unwrap(), BalancingIssue::DuplicateTarget { .. }));
+    }
+
+    #[test]
+    fn bridge_validate_recipe_targets_warning_priority_without_target() {
+        let bridge = Bridge::new(make_seeded_db());
+        let recipe = light_recipe_to_owned(LIGHT_RECIPE);
+        let targets = [(CompKey::MilkFat.into(), 10.0)];
+        let priorities = [(CompKey::MSNF.into(), Priority::High)];
+        let report = bridge.validate_recipe_targets(&recipe, &targets, &priorities).unwrap();
+        assert_false!(report.has_errors());
+        assert!(matches!(report.warnings().next().unwrap(), BalancingIssue::PriorityWithoutTarget { .. }));
+    }
+
+    #[test]
+    fn bridge_validate_recipe_targets_ingredient_not_found() {
+        let bridge = Bridge::new(make_seeded_db());
+        let result = bridge.validate_recipe_targets(
+            &[("Nonexistent Ingredient".to_string(), 100.0)],
+            &[(CompKey::MilkFat.into(), 10.0)],
+            &[],
+        );
+        assert!(
+            matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")
+        );
     }
 
     #[test]

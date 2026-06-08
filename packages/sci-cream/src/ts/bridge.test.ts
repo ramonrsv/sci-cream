@@ -13,7 +13,14 @@ import {
 } from "../../dist/index";
 
 import { getMixProperty, PropKey, propToCompKey, propToRatioKey } from "./prop-key";
-import { Priority } from "./balancing";
+import {
+  Priority,
+  BalancingReport,
+  NegativeTargetError,
+  PriorityWithoutTargetWarning,
+  getBalancingErrors,
+  getBalancingWarnings,
+} from "./balancing";
 
 const lightRecipe = [
   ["Whole Milk", 245],
@@ -144,4 +151,58 @@ test("Bridge.balance_recipe throws on unknown ingredient", () => {
   const targets = [[compToPropKey(CompKey.MilkFat), 10]];
 
   expect(() => bridge.balance_recipe(badRecipe, targets, [])).toThrow();
+});
+
+test("Bridge.validate_recipe_targets returns empty report for valid targets", () => {
+  const bridge = new Bridge(make_seeded_db());
+  const targets: [PropKey, number][] = [
+    [compToPropKey(CompKey.MilkFat), 14],
+    [compToPropKey(CompKey.MSNF), 10],
+    [compToPropKey(CompKey.TotalSugars), 17],
+  ];
+
+  const report = bridge.validate_recipe_targets(lightRecipe, targets, []) as BalancingReport;
+
+  expect(report).toBeDefined();
+  expect(report.issues).toEqual([]);
+});
+
+test("Bridge.validate_recipe_targets reports NegativeTarget error", () => {
+  const bridge = new Bridge(make_seeded_db());
+  const targets: [PropKey, number][] = [[compToPropKey(CompKey.MilkFat), -5]];
+
+  const report = bridge.validate_recipe_targets(lightRecipe, targets, []) as BalancingReport;
+
+  expect(report).toBeDefined();
+  expect(getBalancingErrors(report).length).toBeGreaterThan(0);
+  expect(report.issues[0]).toHaveProperty("NegativeTarget");
+  expect((report.issues[0] as NegativeTargetError).NegativeTarget.value).toBe(-5);
+});
+
+test("Bridge.validate_recipe_targets reports PriorityWithoutTarget warning", () => {
+  const bridge = new Bridge(make_seeded_db());
+  const targets: [PropKey, number][] = [[compToPropKey(CompKey.MilkFat), 14]];
+  const priorities: [PropKey, Priority][] = [[compToPropKey(CompKey.MSNF), Priority.High]];
+
+  const report = bridge.validate_recipe_targets(
+    lightRecipe,
+    targets,
+    priorities,
+  ) as BalancingReport;
+
+  expect(report).toBeDefined();
+  expect(getBalancingErrors(report)).toHaveLength(0);
+  expect(getBalancingWarnings(report).length).toBeGreaterThan(0);
+  expect(report.issues[0]).toHaveProperty("PriorityWithoutTarget");
+  expect((report.issues[0] as PriorityWithoutTargetWarning).PriorityWithoutTarget.key).toBe(
+    compToPropKey(CompKey.MSNF),
+  );
+});
+
+test("Bridge.validate_recipe_targets throws on unknown ingredient", () => {
+  const bridge = new Bridge(make_seeded_db());
+  const badRecipe = [["Nonexistent Ingredient", 100]];
+  const targets: [PropKey, number][] = [[compToPropKey(CompKey.MilkFat), 14]];
+
+  expect(() => bridge.validate_recipe_targets(badRecipe, targets, [])).toThrow();
 });

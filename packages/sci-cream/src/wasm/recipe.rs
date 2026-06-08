@@ -7,7 +7,8 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    balancing::{BalanceKey, Priority},
+    balancing::{BalanceKey, Priority, validate_balancing_targets},
+    composition::Composition as RustComposition,
     ingredient::Ingredient as RustIngredient,
     recipe::{OwnedLightRecipe, Recipe as RustRecipe},
     wasm::{Composition, Ingredient, JsResult, MixProperties},
@@ -144,6 +145,26 @@ impl Recipe {
             .balance(&targets, &priorities, None)
             .map(Into::into)
             .map_err(Into::into)
+    }
+
+    /// WASM compatible wrapper for [`validate_balancing_targets`]
+    ///
+    /// Validates `targets` and `priorities` against the compositions of this recipe's ingredients,
+    /// returning a serialized [`BalancingReport`](crate::balancing::BalancingReport). Never errors
+    /// on the validation itself — all issues (errors and warnings) are reported in the returned
+    /// object's `issues` array.
+    ///
+    /// # Errors
+    ///
+    /// Returns a `serde::Error` if the `JsValue` inputs cannot be deserialized into a
+    /// `(BalanceKey, f64)[]` or `(BalanceKey, Priority)[]`, or if the result cannot be serialized.
+    #[wasm_bindgen(js_name = "validate_targets")]
+    pub fn validate_targets_wasm(&self, targets: Box<[JsValue]>, priorities: Box<[JsValue]>) -> JsResult<JsValue> {
+        let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
+        let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
+        let comps: Vec<RustComposition> = self.lines.iter().map(|l| l.ingredient.composition.into()).collect();
+
+        serde_wasm_bindgen::to_value(&validate_balancing_targets(&comps, &targets, &priorities)).map_err(Into::into)
     }
 }
 
