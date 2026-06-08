@@ -110,11 +110,13 @@ impl ToComposition for DairySimpleSpec {
 
         let calculated_msnf = (100.0 - fat) * STD_MSNF_IN_MILK_SERUM;
         let msnf = msnf.unwrap_or(calculated_msnf);
-        verify_are_positive(&[fat, msnf])?;
+        let proteins = protein.unwrap_or(msnf * protein_in_snf);
+
+        verify_are_positive(&[fat, msnf, proteins])?;
         verify_is_within_100_percent(fat + msnf)?;
+        verify_is_subset(proteins, msnf, "proteins <= msnf")?;
 
         let lactose = msnf * lactose_in_snf;
-        let proteins = protein.unwrap_or(msnf * protein_in_snf);
 
         let sugars = if lactose_free {
             Sugars::new().glucose(lactose / 2.0).galactose(lactose / 2.0)
