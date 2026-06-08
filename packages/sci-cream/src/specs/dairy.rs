@@ -50,7 +50,7 @@ pub enum SolidsSource {
 /// calculated from standard values, notably [`STD_MSNF_IN_MILK_SERUM`], [`STD_LACTOSE_IN_MSNF`],
 /// [`STD_PROTEIN_IN_MSNF`], and [`STD_SATURATED_FAT_IN_MILK_FAT`]. For milk powder ingredients it's
 /// necessary to specify the `msnf`, e.g. 97 for Skimmed Milk Powder - 3% water, no fat, the rest is
-/// milk solids non-fat, or 70 for Whole Milk Powder - 3% water, 27% fat, the rest is `msnf`.
+/// milk solids non-fat, or 72 for Whole Milk Powder - 2% water, 26% fat, the rest is `msnf`.
 #[derive(PartialEq, Serialize, Deserialize, Copy, Clone, Debug)]
 #[serde(deny_unknown_fields)]
 pub struct DairySimpleSpec {
@@ -725,8 +725,8 @@ pub(crate) mod tests {
       "name": "Skimmed Milk Powder",
       "category": "Dairy",
       "DairySimpleSpec": {
-        "fat": 0,
-        "msnf": 97
+        "fat": 1,
+        "msnf": 96
       }
     }"#;
 
@@ -735,8 +735,8 @@ pub(crate) mod tests {
             name: "Skimmed Milk Powder".to_string(),
             category: Category::Dairy,
             spec: DairySimpleSpec {
-                fat: 0.0,
-                msnf: Some(97.0),
+                fat: 1.0,
+                msnf: Some(96.0),
                 protein: None,
                 lactose_free: None,
                 solids_source: None,
@@ -746,35 +746,35 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_SKIMMED_POWDER: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
-            .energy(347.26)
+            .energy(352.68)
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
-                        .fats(Fats::new().total(0.0))
-                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(52.865)))
-                        .proteins(33.95)
+                        .fats(Fats::new().total(1.0).saturated(0.65).trans(0.035))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(52.32)))
+                        .proteins(33.6)
                         .others_from_total(97.0)
                         .unwrap(),
                 ),
             )
-            .pod(8.4584)
-            .pac(PAC::new().sugars(52.865).msnf_ws_salts(35.6382))
+            .pod(8.3712)
+            .pac(PAC::new().sugars(52.32).msnf_ws_salts(35.2708))
     });
 
     #[test]
     fn to_composition_dairy_simple_spec_skimmed_powder() {
         let comp = ING_SPEC_DAIRY_SIMPLE_SKIMMED_POWDER.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 347.26);
+        assert_eq!(comp.get(CompKey::Energy), 352.68);
 
-        assert_eq!(comp.get(CompKey::MilkFat), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::Lactose), 52.865);
-        assert_eq!(comp.get(CompKey::MSNF), 97.0);
-        assert_eq!(comp.get(CompKey::MilkSNFS), 44.135);
-        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 33.95);
+        assert_eq!(comp.get(CompKey::MilkFat), 1.0);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 52.32);
+        assert_eq!(comp.get(CompKey::MSNF), 96.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 43.68);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 33.6);
         assert_eq!(comp.get(CompKey::MilkSolids), 97.0);
 
-        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 33.95);
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 33.6);
         assert_eq!(comp.get(CompKey::TotalSolids), 97.0);
         assert_eq!(comp.get(CompKey::Water), 3.0);
 
@@ -782,23 +782,23 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
         assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 8.4584);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 8.3712);
 
-        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 52.865);
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 52.32);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 35.6382);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 88.5032);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 35.2708);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 87.5908);
 
-        assert_eq!(comp.get(CompKey::SaturatedFat), 0.0);
-        assert_eq!(comp.get(CompKey::TransFat), 0.0);
+        assert_eq!(comp.get(CompKey::SaturatedFat), 0.65);
+        assert_eq!(comp.get(CompKey::TransFat), 0.035);
     }
 
     pub(crate) const ING_SPEC_DAIRY_SIMPLE_WHOLE_POWDER_STR: &str = r#"{
       "name": "Whole Milk Powder",
       "category": "Dairy",
       "DairySimpleSpec": {
-        "fat": 27,
-        "msnf": 70
+        "fat": 26,
+        "msnf": 72
       }
     }"#;
 
@@ -806,8 +806,8 @@ pub(crate) mod tests {
         name: "Whole Milk Powder".to_string(),
         category: Category::Dairy,
         spec: DairySimpleSpec {
-            fat: 27.0,
-            msnf: Some(70.0),
+            fat: 26.0,
+            msnf: Some(72.0),
             protein: None,
             lactose_free: None,
             solids_source: None,
@@ -817,51 +817,51 @@ pub(crate) mod tests {
 
     pub(crate) static COMP_WHOLE_POWDER: LazyLock<Composition> = LazyLock::new(|| {
         Composition::new()
-            .energy(493.6)
+            .energy(491.76)
             .solids(
                 Solids::new().milk(
                     SolidsBreakdown::new()
-                        .fats(Fats::new().total(27.0).saturated(17.55).trans(0.945))
-                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(38.15)))
-                        .proteins(24.5)
-                        .others_from_total(97.0)
+                        .fats(Fats::new().total(26.0).saturated(16.9).trans(0.91))
+                        .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(39.24)))
+                        .proteins(25.2)
+                        .others_from_total(98.0)
                         .unwrap(),
                 ),
             )
-            .pod(6.104)
-            .pac(PAC::new().sugars(38.15).msnf_ws_salts(25.7183))
+            .pod(6.2784)
+            .pac(PAC::new().sugars(39.24).msnf_ws_salts(26.4531))
     });
 
     #[test]
     fn to_composition_dairy_simple_spec_whole_powder() {
         let comp = ING_SPEC_DAIRY_SIMPLE_WHOLE_POWDER.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 493.6);
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 491.76);
 
-        assert_eq!(comp.get(CompKey::MilkFat), 27.0);
-        assert_eq_flt_test!(comp.get(CompKey::Lactose), 38.15);
-        assert_eq!(comp.get(CompKey::MSNF), 70.0);
-        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 31.85);
-        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 24.5);
-        assert_eq!(comp.get(CompKey::MilkSolids), 97.0);
+        assert_eq!(comp.get(CompKey::MilkFat), 26.0);
+        assert_eq_flt_test!(comp.get(CompKey::Lactose), 39.24);
+        assert_eq!(comp.get(CompKey::MSNF), 72.0);
+        assert_eq_flt_test!(comp.get(CompKey::MilkSNFS), 32.76);
+        assert_eq_flt_test!(comp.get(CompKey::MilkProteins), 25.2);
+        assert_eq!(comp.get(CompKey::MilkSolids), 98.0);
 
-        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 24.5);
-        assert_eq!(comp.get(CompKey::TotalSolids), 97.0);
-        assert_eq!(comp.get(CompKey::Water), 3.0);
+        assert_eq_flt_test!(comp.get(CompKey::TotalProteins), 25.2);
+        assert_eq!(comp.get(CompKey::TotalSolids), 98.0);
+        assert_eq!(comp.get(CompKey::Water), 2.0);
 
         assert_eq!(comp.get(CompKey::Salt), 0.0);
         assert_eq!(comp.get(CompKey::TotalEmulsifiers), 0.0);
         assert_eq!(comp.get(CompKey::TotalStabilizers), 0.0);
         assert_eq!(comp.get(CompKey::Alcohol), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::POD), 6.104);
+        assert_eq_flt_test!(comp.get(CompKey::POD), 6.2784);
 
-        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 38.15);
+        assert_eq_flt_test!(comp.get(CompKey::PACsgr), 39.24);
         assert_eq!(comp.get(CompKey::PACslt), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 25.7183);
-        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 63.8683);
+        assert_eq_flt_test!(comp.get(CompKey::PACmlk), 26.4531);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 65.6931);
 
-        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 17.55);
-        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.945);
+        assert_eq_flt_test!(comp.get(CompKey::SaturatedFat), 16.9);
+        assert_eq_flt_test!(comp.get(CompKey::TransFat), 0.91);
     }
 
     pub(crate) const ING_SPEC_DAIRY_SIMPLE_SKIM_MILK_GOFF_HARTEL_STR: &str = r#"{
@@ -2449,7 +2449,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 18.0);
+        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 12.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
@@ -2465,7 +2465,7 @@ pub(crate) mod tests {
         ]
         .map(source_str_to_comp);
 
-        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 26.0);
+        let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 33.0);
 
         assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
         insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));

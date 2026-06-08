@@ -2445,7 +2445,7 @@ pub(crate) mod tests {
             BalancingIssue::UnreachableTarget {
                 key: BalanceKey::Comp(CompKey::MilkFat),
                 target: 50.0,
-                min: 0.0,
+                min: 1.0,
                 max: 40.0,
             }
         )));

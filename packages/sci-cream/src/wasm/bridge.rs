@@ -437,7 +437,7 @@ pub(crate) mod tests {
             .calculate_recipe_composition(&light_recipe_to_owned(LIGHT_RECIPE))
             .unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 13.6024);
+        assert_eq_flt_test!(comp.get(CompKey::MilkFat), 13.6367);
     }
 
     #[test]
@@ -456,7 +456,7 @@ pub(crate) mod tests {
             .calculate_recipe_mix_properties(&light_recipe_to_owned(LIGHT_RECIPE))
             .unwrap();
 
-        assert_eq_flt_test!(mix_properties.get(CompKey::MilkFat.into()), 13.6024);
+        assert_eq_flt_test!(mix_properties.get(CompKey::MilkFat.into()), 13.6367);
     }
 
     #[test]

@@ -44,19 +44,19 @@ test("example, without using WasmBridge", () => {
   const mix_properties = recipe.calculate_mix_properties();
 
   const comp = mix_properties.composition;
-  expect(comp.get(CompKey.Energy)).toBeCloseTo(228.865);
-  expect(comp.get(CompKey.MilkFat)).toBeCloseTo(13.602);
-  expect(comp.get(CompKey.Lactose)).toBeCloseTo(4.836);
+  expect(comp.get(CompKey.Energy)).toBeCloseTo(229.051);
+  expect(comp.get(CompKey.MilkFat)).toBeCloseTo(13.637);
+  expect(comp.get(CompKey.Lactose)).toBeCloseTo(4.817);
   // ...
 
   const fpd = mix_properties.fpd;
-  expect(fpd.get(FpdKey.FPD)).toBeCloseTo(-3.604);
-  expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.371);
-  expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(76.268);
+  expect(fpd.get(FpdKey.FPD)).toBeCloseTo(-3.6);
+  expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.357);
+  expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(76.296);
 
   // Via prop keys:
-  expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(228.865);
-  expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.604);
+  expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(229.051);
+  expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.6);
 });
 
 import {
@@ -68,12 +68,12 @@ test("example, using WasmBridge", () => {
   const bridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
   const mix_properties = bridge.calculate_recipe_mix_properties(RECIPE);
 
-  expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(228.865);
+  expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(229.051);
   // ...
-  expect(mix_properties.fpd.get(FpdKey.FPD)).toBeCloseTo(-3.604);
+  expect(mix_properties.fpd.get(FpdKey.FPD)).toBeCloseTo(-3.6);
   // ...
 
   // Via prop keys:
-  expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(228.865);
-  expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.604);
+  expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(229.051);
+  expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.6);
 });

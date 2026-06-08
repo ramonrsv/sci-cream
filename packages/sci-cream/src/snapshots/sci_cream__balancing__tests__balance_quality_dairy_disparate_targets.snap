@@ -10,9 +10,9 @@ targets:
 
 [nalgebra]
   [           ingredient           | qty ]
-  3.25% Milk                        72.96
-  40% Cream                         28.36
-  Skimmed Milk Powder               -1.32
+  3.25% Milk                        72.94
+  40% Cream                         28.39
+  Skimmed Milk Powder               -1.33
 
   [      key       | target | achieved |  error  ]
   Energy             200.00    147.08     26.46 pp

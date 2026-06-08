@@ -75,31 +75,31 @@ appropriate keys from either [`CompKey`] or [`FpdKey`].
 let mix_properties = recipe.calculate_mix_properties()?;
 
 for (key, value) in [
-    (Energy.into(), 228.865), // kcal per 100g
-    (MilkFat.into(), 13.602), // grams per 100g
-    (Lactose.into(), 4.836), // ...
-    (MSNF.into(), 8.873),
-    (MilkProteins.into(), 3.106),
+    (Energy.into(), 229.051), // kcal per 100g
+    (MilkFat.into(), 13.637), // grams per 100g
+    (Lactose.into(), 4.817), // ...
+    (MSNF.into(), 8.839),
+    (MilkProteins.into(), 3.094),
     (MilkSolids.into(), 22.475),
     (CocoaButter.into(), 0.778),
     (CocoaSolids.into(), 3.799),
     (Glucose.into(), 6.767),
     (Fructose.into(), 5.23),
-    (TotalSugars.into(), 16.834),
+    (TotalSugars.into(), 16.815),
     (ABV.into(), 0.343), // Alcohol-by-volume %
     (Salt.into(), 0.082),
     (TotalSolids.into(), 40.779),
     (Water.into(), 58.95),
-    (POD.into(), 15.237),
-    (PACsgr.into(), 27.633),
-    (PACmlk.into(), 3.26),
+    (POD.into(), 15.234),
+    (PACsgr.into(), 27.614),
+    (PACmlk.into(), 3.247),
     (PACalc.into(), 2.012),
-    (TotalPAC.into(), 33.383),
-    (AbsPAC.into(), 56.63), // TotalPAC / Water
+    (TotalPAC.into(), 33.352),
+    (AbsPAC.into(), 56.576), // TotalPAC / Water
     (HF.into(), 7.538),
-    (FPD.into(), -3.604), // °C
-    (ServingTemp.into(), -13.371), // °C
-    (HardnessAt14C.into(), 76.268), // [0, 100] scale
+    (FPD.into(), -3.6), // °C
+    (ServingTemp.into(), -13.357), // °C
+    (HardnessAt14C.into(), 76.296), // [0, 100] scale
 ] {
     assert_eq_float!(mix_properties.get(key), value);
 }
@@ -474,19 +474,19 @@ const recipe = new Recipe("Chocolate Ice Cream", recipeLines);
 const mix_properties = recipe.calculate_mix_properties();
 
 const comp = mix_properties.composition;
-expect(comp.get(CompKey.Energy)).toBeCloseTo(228.865);
-expect(comp.get(CompKey.MilkFat)).toBeCloseTo(13.602);
-expect(comp.get(CompKey.Lactose)).toBeCloseTo(4.836);
+expect(comp.get(CompKey.Energy)).toBeCloseTo(229.051);
+expect(comp.get(CompKey.MilkFat)).toBeCloseTo(13.637);
+expect(comp.get(CompKey.Lactose)).toBeCloseTo(4.817);
 // ...
 
 const fpd = mix_properties.fpd;
-expect(fpd.get(FpdKey.FPD)).toBeCloseTo(-3.604);
-expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.371);
-expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(76.268);
+expect(fpd.get(FpdKey.FPD)).toBeCloseTo(-3.6);
+expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.357);
+expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(76.296);
 
 // Via prop keys:
-expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(228.865);
-expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.604);
+expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(229.051);
+expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.6);
 ```
 
 <br>
@@ -510,9 +510,9 @@ import {
 const bridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
 const mix_properties = bridge.calculate_recipe_mix_properties(RECIPE);
 
-expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(228.865);
+expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(229.051);
 // ...
-expect(mix_properties.fpd.get(FpdKey.FPD)).toBeCloseTo(-3.604);
+expect(mix_properties.fpd.get(FpdKey.FPD)).toBeCloseTo(-3.6);
 // ...
 ```
 

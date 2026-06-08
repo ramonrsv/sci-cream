@@ -9,9 +9,9 @@ targets:
 
 [nalgebra]
   [           ingredient           | qty ]
-  3.25% Milk                        78.21
-  40% Cream                         18.65
-  Skimmed Milk Powder                3.14
+  3.25% Milk                        78.27
+  40% Cream                         18.56
+  Skimmed Milk Powder                3.17
 
   [      key       | target | achieved |  error  ]
   MSNF                16.00     10.86     32.11 pp
@@ -23,9 +23,9 @@ targets:
 
 [nnls]
   [           ingredient           | qty ]
-  3.25% Milk                        78.21
-  40% Cream                         18.65
-  Skimmed Milk Powder                3.14
+  3.25% Milk                        78.27
+  40% Cream                         18.56
+  Skimmed Milk Powder                3.17
 
   [      key       | target | achieved |  error  ]
   MSNF                16.00     10.86     32.11 pp

@@ -125,11 +125,11 @@ describe("Helper Functions", () => {
     const getModMixProp = (propKey: PropKey) => getModifiedMixProperty(mixProperties, propKey);
 
     expect(getModMixProp(fpdToPropKey(FpdKey.FPD))).toBeCloseTo(3.6);
-    expect(getModMixProp(fpdToPropKey(FpdKey.ServingTemp))).toBeCloseTo(13.37);
+    expect(getModMixProp(fpdToPropKey(FpdKey.ServingTemp))).toBeCloseTo(13.357);
 
-    expect(getModMixProp(ratioToPropKey(RatioKey.AbsPAC))).toBeCloseTo(56.63 / 2);
+    expect(getModMixProp(ratioToPropKey(RatioKey.AbsPAC))).toBeCloseTo(56.576 / 2);
 
-    expect(getModMixProp(ratioToPropKey(RatioKey.EmulsifiersPerFat))).toBeCloseTo(1.735 * 100);
+    expect(getModMixProp(ratioToPropKey(RatioKey.EmulsifiersPerFat))).toBeCloseTo(1.7311 * 100);
     expect(getModMixProp(ratioToPropKey(RatioKey.StabilizersPerWater))).toBeCloseTo(0.3466 * 100);
   });
 

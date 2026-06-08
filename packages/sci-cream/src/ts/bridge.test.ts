@@ -50,7 +50,7 @@ test("Bridge.seed_from_specs", () => {
 
   const comp = bridge.calculate_recipe_composition(lightRecipe);
   expect(comp).toBeDefined();
-  expect(comp.get(CompKey.MilkFat)).toBeCloseTo(13.6024, 4);
+  expect(comp.get(CompKey.MilkFat)).toBeCloseTo(13.6367, 4);
 });
 
 test("Bridge.calculate_recipe_composition", () => {
@@ -58,7 +58,7 @@ test("Bridge.calculate_recipe_composition", () => {
   const composition = bridge.calculate_recipe_composition(lightRecipe);
   expect(composition).toBeDefined();
   expect(composition).toBeInstanceOf(Composition);
-  expect(composition.get(CompKey.MilkFat)).toBeCloseTo(13.6024, 4);
+  expect(composition.get(CompKey.MilkFat)).toBeCloseTo(13.6367, 4);
 });
 
 test("Bridge.calculate_recipe_mix_properties", () => {
@@ -66,7 +66,7 @@ test("Bridge.calculate_recipe_mix_properties", () => {
   const mix_properties = bridge.calculate_recipe_mix_properties(lightRecipe);
   expect(mix_properties).toBeDefined();
   expect(mix_properties).toBeInstanceOf(MixProperties);
-  expect(getMixProperty(mix_properties, compToPropKey(CompKey.MilkFat))).toBeCloseTo(13.6024, 4);
+  expect(getMixProperty(mix_properties, compToPropKey(CompKey.MilkFat))).toBeCloseTo(13.6367, 4);
 });
 
 test("Bridge.balance_recipe", () => {

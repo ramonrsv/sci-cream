@@ -10,9 +10,9 @@ targets:
 
 [nalgebra]
   [           ingredient           | qty ]
-  3.25% Milk                        60.33
-  40% Cream                         25.46
-  Skimmed Milk Powder                4.21
+  3.25% Milk                        60.40
+  40% Cream                         25.35
+  Skimmed Milk Powder                4.26
   Sucrose                            9.99
 
   [      key       | target | achieved |  error  ]
@@ -26,9 +26,9 @@ targets:
 
 [nnls]
   [           ingredient           | qty ]
-  3.25% Milk                        60.33
-  40% Cream                         25.46
-  Skimmed Milk Powder                4.21
+  3.25% Milk                        60.40
+  40% Cream                         25.35
+  Skimmed Milk Powder                4.26
   Sucrose                            9.99
 
   [      key       | target | achieved |  error  ]

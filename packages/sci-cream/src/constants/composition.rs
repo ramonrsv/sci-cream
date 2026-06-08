@@ -32,10 +32,10 @@ pub const STD_WHEY_PROTEIN_IN_MSNF_PROTEIN: f64 = 0.2;
 #[doc = include_str!("../../docs/references/index/20.md")]
 pub const STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN: f64 = 0.8;
 
-/// Percentage of water typically found in milk powder (Goff & Hartel, 2025, Table 3.2, p. 48)[^2]
+/// Percentage of water typically found in milk powder (Goff & Hartel, 2025, Table 3.2, p. 48)[^20]
 ///
 /// Skim milk powder and whole milk powder listed as having 97% and 98% total solids, respectively.
-#[doc = include_str!("../../docs/references/index/2.md")]
+#[doc = include_str!("../../docs/references/index/20.md")]
 pub const STD_MIN_WATER_CONTENT_IN_MILK_POWDER: f64 = 0.02;
 
 /// Percentage of saturated fats typical of milk fat (Board on Agriculture.., 1974, p. 203)[^12]
