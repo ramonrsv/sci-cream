@@ -70,14 +70,12 @@ export function KeyFilterSelect<Key>({
 
   const [keySelectVisible, setKeySelectVisible] = useState<boolean>(false);
   const buttonRef = useRef<HTMLSelectElement>(null);
-  const [popupPosition, setPopupPosition] = useState<{ top: number; right: number } | undefined>(
-    undefined,
-  );
+  const [popupPos, setPopupPos] = useState<{ top: number; right: number } | undefined>(undefined);
 
   useEffect(() => {
     if (keySelectVisible && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
-      setPopupPosition({ top: rect.top + window.scrollY, right: rect.right + window.scrollX });
+      setPopupPos({ top: rect.top + window.scrollY, right: rect.right + window.scrollX });
     }
   }, [keySelectVisible]);
 
@@ -137,11 +135,11 @@ export function KeyFilterSelect<Key>({
         )}
       </div>
       {keySelectVisible &&
-        popupPosition &&
+        popupPos &&
         createPortal(
           <div
             className="popup absolute z-50 h-100 w-fit overflow-x-auto pr-2 pl-1 whitespace-nowrap"
-            style={{ top: `${popupPosition.top}px`, left: `${popupPosition.right + 5}px` }}
+            style={{ top: `${popupPos.top}px`, left: `${popupPos.right + 5}px` }}
           >
             <button
               className="action-button sticky top-0 z-10 float-right -mr-1 pt-px"

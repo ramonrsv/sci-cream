@@ -1,7 +1,15 @@
 "use client";
 
-import { ReactNode, useEffect, useState } from "react";
-import { ArrowDown, ArrowUp, ChevronsUp, ChevronUp, X } from "lucide-react";
+import { ReactNode, useEffect, useMemo, useState } from "react";
+import {
+  AlertCircle,
+  AlertTriangle,
+  ArrowDown,
+  ArrowUp,
+  ChevronsUp,
+  ChevronUp,
+  X,
+} from "lucide-react";
 
 import { Recipe, RecipeSummary, isRecipeEmpty, makeLightRecipe } from "@/lib/recipe";
 import {
@@ -37,7 +45,10 @@ import {
   Bridge as WasmBridge,
   prop_key_as_short_str,
   Priority,
+  BalancingReport,
 } from "@workspace/sci-cream";
+
+import { WatcherIssues, KeyIssue } from "@/app/_elements/watchers/watcher-issues";
 
 /** Map of `PropKey` to user-entered target value; sparse, only set entries are tracked */
 export type TargetsMap = Partial<Record<PropKey, number>>;
@@ -215,6 +226,9 @@ function getDisplayValue(propKey: PropKey, recipe: RecipeSummary): number | unde
  * removal has no effect — e.g. under the `Auto` key filter, which derives its key set from a
  * heuristic and ignores the user selection, so removing a key would not hide the card.
  *
+ * When `issue` is set, the card is outlined (red for an error, amber for a warning) and a matching
+ * icon appears in the header, its tooltip carrying the issue message(s).
+ *
  * Toolbar/grid chrome and state ownership belong to the caller; this is pure props in, JSX out.
  */
 export function WatcherCard({
@@ -223,6 +237,7 @@ export function WatcherCard({
   refs = [],
   target,
   priority = Priority.Normal,
+  issue,
   removable = true,
   onTargetChange,
   onPriorityChange,
@@ -233,6 +248,7 @@ export function WatcherCard({
   refs?: RecipeSummary[];
   target: number | undefined;
   priority?: Priority;
+  issue?: KeyIssue;
   removable?: boolean;
   onTargetChange: (val: number | undefined) => void;
   onPriorityChange: (priority: Priority) => void;
@@ -251,13 +267,18 @@ export function WatcherCard({
   const titleBackgroundOpacity = 0.6;
   const refRowOpacity = 0.8;
 
+  // Outline + header-icon color for a validation issue on this key (red error, amber warning),
+  // via the `issue-border-*` / `issue-text-*` severity-accent classes in globals.css.
+  const borderClass = issue ? `issue-border-${issue.severity}` : "border-brd-lt dark:border-brd-dk";
+  const issueTextClass = issue ? `issue-text-${issue.severity}` : "";
+
   return (
     <div
-      className="border-brd-lt dark:border-brd-dk flex flex-col overflow-hidden rounded-md border text-sm"
+      className={`${borderClass} flex flex-col overflow-hidden rounded-md border text-sm`}
       data-testid={`watcher-card-${String(propKey)}`}
       data-prop-key={String(propKey)}
     >
-      {/* Header: property name + color-coded background + remove button */}
+      {/* Header: property name + color-coded background + optional issue icon + remove button */}
       <div
         className="flex items-center justify-between px-1.5 py-0.5 font-semibold"
         style={{ backgroundColor: colorVarWithAlpha(headerColor, titleBackgroundOpacity) }}
@@ -265,16 +286,32 @@ export function WatcherCard({
         <span title={prop_key_as_short_str(propKey)} className="truncate">
           {prop_key_as_short_str(propKey)}
         </span>
-        {removable && (
-          <button
-            className="action-button -mr-0.5 ml-1 px-0.5 py-0"
-            onClick={onRemove}
-            title="Remove from watchers"
-            data-testid={`watcher-card-${String(propKey)}-remove`}
-          >
-            <X size={COMPONENT_ACTION_ICON_SIZE - 6} />
-          </button>
-        )}
+        <div className="ml-1 flex shrink-0 items-center gap-0.5">
+          {issue && (
+            <span
+              className={`flex items-center ${issueTextClass}`}
+              title={issue.titles.join("\n")}
+              data-testid={`watcher-card-${String(propKey)}-issue`}
+              data-severity={issue.severity}
+            >
+              {issue.severity === "error" ? (
+                <AlertCircle size={COMPONENT_ACTION_ICON_SIZE - 6} />
+              ) : (
+                <AlertTriangle size={COMPONENT_ACTION_ICON_SIZE - 6} />
+              )}
+            </span>
+          )}
+          {removable && (
+            <button
+              className="action-button -mr-0.5 px-0.5 py-0"
+              onClick={onRemove}
+              title="Remove from watchers"
+              data-testid={`watcher-card-${String(propKey)}-remove`}
+            >
+              <X size={COMPONENT_ACTION_ICON_SIZE - 6} />
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Body */}
@@ -376,9 +413,9 @@ export function WatcherCard({
 
 /**
  * Bare grid of {@link WatcherCard}s, laid out via CSS auto-fill so the cards reflow to fill the
- * available width. Caller controls which property keys are shown, the target and priority maps, and
- * the per-card change/remove handlers. `removable` (default `true`) is forwarded to every card to
- * toggle its remove button.
+ * available width. Caller controls which property keys are shown, the target and priority maps, the
+ * per-key validation issues (`issuesByKey`), and the per-card change/remove handlers. `removable`
+ * (default `true`) is forwarded to every card to toggle its remove button.
  */
 export function WatchersGrid({
   propKeys,
@@ -386,6 +423,7 @@ export function WatchersGrid({
   refs = [],
   targets,
   priorities,
+  issuesByKey = {},
   removable = true,
   onTargetChange,
   onPriorityChange,
@@ -396,6 +434,7 @@ export function WatchersGrid({
   refs?: RecipeSummary[];
   targets: TargetsMap;
   priorities: PrioritiesMap;
+  issuesByKey?: Partial<Record<PropKey, KeyIssue>>;
   removable?: boolean;
   onTargetChange: (propKey: PropKey, val: number | undefined) => void;
   onPriorityChange: (propKey: PropKey, priority: Priority) => void;
@@ -414,6 +453,7 @@ export function WatchersGrid({
           refs={refs}
           target={targets[propKey]}
           priority={priorities[propKey] ?? Priority.Normal}
+          issue={issuesByKey[propKey]}
           removable={removable}
           onTargetChange={(val) => onTargetChange(propKey, val)}
           onPriorityChange={(priority) => onPriorityChange(propKey, priority)}
@@ -439,6 +479,11 @@ export function WatchersGrid({
  * Fill-from-Ref button per non-empty reference (fills currently-watched targets from that
  * reference's values). Both are inert without `wasmBridge` and `onApplyBalancedMain`, so bare
  * renders stay read-only.
+ *
+ * When a `wasmBridge` is present, targets are validated live via `validate_recipe_targets`: a
+ * {@link WatcherIssues} chip in the toolbar summarizes any errors and warnings (its popover lists
+ * the messages), the affected cards are marked, and the Balance button is disabled while any error
+ * stands (warnings are advisory).
  */
 export function WatchersView({
   main,
@@ -567,6 +612,55 @@ export function WatchersView({
   const balanceTargets = targetsToBalanceArgs(targets, new Set(enabledProps));
   const balancePriorities = prioritiesToBalanceArgs(priorities, balanceTargets);
 
+  // Validate targets live (cheap, no solve) so issues surface before the user clicks Balance.
+  // `JSON.stringify` of the small target/priority arrays gives stable memo deps.
+  const report = useMemo<BalancingReport | undefined>(() => {
+    if (!wasmBridge || isRecipeEmpty(main) || balanceTargets.length === 0) {
+      return undefined;
+    }
+
+    try {
+      const lightRecipe = makeLightRecipe(main, (n) => wasmBridge.has_ingredient(n));
+      return wasmBridge.validate_recipe_targets(
+        lightRecipe,
+        balanceTargets,
+        balancePriorities,
+      ) as BalancingReport;
+    } catch (err) {
+      console.error("validate failed:", err);
+      return undefined;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [wasmBridge, main, JSON.stringify(balanceTargets), JSON.stringify(balancePriorities)]);
+
+  const issues = report?.issues ?? [];
+  const errorCount = issues.filter((issue) => issue.severity === "error").length;
+  const hasErrors = errorCount > 0;
+
+  // Per-key issue marks for the cards: an issue may touch several keys, and a key may collect
+  // several issues; error severity wins over warning on any key they share.
+  const issuesByKey = useMemo(() => {
+    const map: Partial<Record<PropKey, KeyIssue>> = {};
+    for (const { severity, keys, message } of report?.issues ?? []) {
+      for (const key of keys) {
+        const existing = map[key as PropKey];
+        if (existing) {
+          existing.titles.push(message);
+          if (severity === "error") existing.severity = "error";
+        } else {
+          map[key as PropKey] = { severity, titles: [message] };
+        }
+      }
+    }
+    return map;
+  }, [report]);
+
+  // Drop a stale runtime balance error once the inputs change, so a prior failure doesn't linger.
+  useEffect(() => {
+    setBalanceError(undefined);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [JSON.stringify(balanceTargets), JSON.stringify(balancePriorities), main]);
+
   // Removal only takes effect under the Custom filter (which derives its keys from the selection);
   // under Auto, the heuristic ignores the selection, so the remove button is hidden there.
   const removable = propsFilterState[STATE_VAL] === KeyFilter.Custom;
@@ -614,18 +708,24 @@ export function WatchersView({
   };
 
   const balanceDisabled =
-    !wasmBridge || !onApplyBalancedMain || isRecipeEmpty(main) || balanceTargets.length === 0;
+    !wasmBridge ||
+    !onApplyBalancedMain ||
+    isRecipeEmpty(main) ||
+    balanceTargets.length === 0 ||
+    hasErrors;
 
   const balanceTitle = balanceError
     ? `Balance failed: ${balanceError}`
-    : balanceTargets.length === 0
-      ? "Set at least one composition target to balance"
-      : "Balance the recipe to meet current targets";
+    : hasErrors
+      ? `Fix ${errorCount === 1 ? "the error" : `${errorCount} errors`} to balance`
+      : balanceTargets.length === 0
+        ? "Set at least one composition target to balance"
+        : "Balance the recipe to meet current targets";
 
   const nonEmptyRefs = refs.filter((r) => !isRecipeEmpty(r));
 
   return (
-    <>
+    <div className="flex h-full flex-col">
       <div className="flex items-center">
         {toolbarPrefix}
         <KeyFilterSelect
@@ -637,6 +737,9 @@ export function WatchersView({
         />
         {(wasmBridge !== undefined || nonEmptyRefs.length > 0) && (
           <div className="ml-auto flex shrink-0 items-center">
+            {(issues.length > 0 || balanceError !== undefined) && (
+              <WatcherIssues issues={issues} extraError={balanceError} className="mr-1" />
+            )}
             {nonEmptyRefs.map((ref) => {
               const letter = ref.id.replace(/^Ref\s*/, "").trim() || ref.id;
               const hasAnyFillable = enabledProps.some((k) =>
@@ -659,7 +762,7 @@ export function WatchersView({
             {wasmBridge !== undefined && onApplyBalancedMain !== undefined && (
               <button
                 className={`action-button mr-1 px-1.5 py-0.5 text-sm font-semibold ${
-                  balanceError ? "border-rd-lt dark:border-rd-dk border" : ""
+                  balanceError ? "issue-border-error border" : ""
                 }`}
                 onClick={onBalance}
                 disabled={balanceDisabled}
@@ -672,21 +775,20 @@ export function WatchersView({
           </div>
         )}
       </div>
-      <div className="flex h-[calc(100%-33px)] flex-col">
-        <div className="flex-1 overflow-y-auto">
-          <WatchersGrid
-            propKeys={enabledProps}
-            main={main}
-            refs={refs}
-            targets={targets}
-            priorities={priorities}
-            removable={removable}
-            onTargetChange={onTargetChange}
-            onPriorityChange={onPriorityChange}
-            onRemove={onRemove}
-          />
-        </div>
+      <div className="min-h-0 flex-1 overflow-y-auto">
+        <WatchersGrid
+          propKeys={enabledProps}
+          main={main}
+          refs={refs}
+          targets={targets}
+          priorities={priorities}
+          issuesByKey={issuesByKey}
+          removable={removable}
+          onTargetChange={onTargetChange}
+          onPriorityChange={onPriorityChange}
+          onRemove={onRemove}
+        />
       </div>
-    </>
+    </div>
   );
 }

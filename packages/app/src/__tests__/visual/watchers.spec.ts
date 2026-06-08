@@ -59,6 +59,7 @@ const KEY_IN_AUTO_FILTER = compToPropKey(CompKey.MSNF);
 const KEY_WITH_RANGE = compToPropKey(CompKey.MSNF);
 const KEY_WITHOUT_RANGE = compToPropKey(CompKey.MilkFat);
 const KEY_MIXED_REF_VALS = compToPropKey(CompKey.ABV);
+const KEY_UNAFFECTABLE = compToPropKey(CompKey.Sucralose);
 
 test("KEY_WITH_RANGE and KEY_WITHOUT_RANGE match the current range definitions", () => {
   expect(getAcceptablePropertyRange(KEY_WITH_RANGE)).toBeDefined();
@@ -127,7 +128,7 @@ test.describe("Visual Regression: WatcherCard, Main and Reference Recipes Popula
   }
 });
 
-test.describe("Visual Regression: WatchersView", () => {
+test.describe("Visual Regression: WatchersView, Main and Reference Recipes Populated", () => {
   const testWatchersView = (recipeIds: RecipeID[]) => {
     test(makeRecipesTestName("WatchersView", recipeIds), async ({ page, browserName }) => {
       test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
@@ -136,8 +137,8 @@ test.describe("Visual Regression: WatchersView", () => {
       await goToPageAndPasteRecipes(page, browserName, recipeIds);
       await selectKeyFilterCustom(page);
 
-      const card = await locateWatchersViewAndExpectVisible(page);
-      await expect(card).toHaveScreenshot(
+      const view = await locateWatchersViewAndExpectVisible(page);
+      await expect(view).toHaveScreenshot(
         makeRecipesScreenshotFilename("watchers-view", recipeIds),
       );
     });
@@ -152,8 +153,8 @@ test.describe("Visual Regression: WatchersView", () => {
   testWatchersView([RecipeID.RefA, RecipeID.RefB]);
 });
 
-test.describe("Visual Regression: WatcherCard remove button by key filter", () => {
-  test("hidden under Auto, shown under Custom", async ({ page }) => {
+test.describe("Visual Regression: WatcherCard remove button, highlights", () => {
+  test("remove button hidden under Auto, shown under Custom", async ({ page }) => {
     await presetWatcherSelection(page, [KEY_IN_AUTO_FILTER]);
     await goToPageAndWaitFor(page);
 
@@ -167,5 +168,48 @@ test.describe("Visual Regression: WatcherCard remove button by key filter", () =
     card = await locateWatcherCardByKeyAndExpectVisible(page, KEY_IN_AUTO_FILTER);
     await expect(removeButton).toBeVisible();
     await expect(card).toHaveScreenshot("watcher-card-custom-filter.png");
+  });
+
+  test("highlights for warnings and errors", async ({ page, browserName }) => {
+    test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
+
+    await presetWatcherSelection(page, [KEY_UNAFFECTABLE]);
+    await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main]);
+    await selectKeyFilterCustom(page);
+
+    const card = await locateWatcherCardByKeyAndExpectVisible(page, KEY_UNAFFECTABLE);
+    const input = card.getByTestId(`watcher-card-${KEY_UNAFFECTABLE}-target`);
+
+    await input.fill("2");
+    await expect(card).toHaveScreenshot("watcher-card-warning-highlight.png");
+
+    await input.fill("-2");
+    await expect(card).toHaveScreenshot("watcher-card-error-highlight.png");
+  });
+});
+
+test.describe("Visual Regression: WatchersView balancing issues", () => {
+  test("warnings and errors hint and dropdown", async ({ page, browserName }) => {
+    test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
+
+    await presetWatcherSelection(page, [KEY_WITH_RANGE, KEY_UNAFFECTABLE]);
+    await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main]);
+    await selectKeyFilterCustom(page);
+
+    let card = await locateWatcherCardByKeyAndExpectVisible(page, KEY_WITH_RANGE);
+    let input = card.getByTestId(`watcher-card-${KEY_WITH_RANGE}-target`);
+    await input.fill("-2");
+
+    card = await locateWatcherCardByKeyAndExpectVisible(page, KEY_UNAFFECTABLE);
+    input = card.getByTestId(`watcher-card-${KEY_UNAFFECTABLE}-target`);
+    await input.fill("2");
+
+    const view = await locateWatchersViewAndExpectVisible(page);
+    await expect(view).toHaveScreenshot("watchers-view-warnings-and-error-highlights.png");
+
+    await view.getByTestId("watcher-issues-toggle").click();
+    const popup = page.locator(`[data-testid="watcher-issues-popup"]`);
+    await expect(popup).toBeVisible();
+    await expect(popup).toHaveScreenshot("watcher-issues-popup.png");
   });
 });

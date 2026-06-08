@@ -777,6 +777,7 @@ describe("WatchersView Balance", () => {
     const spyBridge = {
       has_ingredient: () => true,
       balance_recipe: balanceSpy,
+      validate_recipe_targets: () => ({ issues: [] }),
     } as unknown as WasmBridge;
 
     render(<WatchersView main={main} wasmBridge={spyBridge} onApplyBalancedMain={vi.fn()} />);
@@ -799,6 +800,7 @@ describe("WatchersView Balance", () => {
       balance_recipe: () => {
         throw new Error("infeasible");
       },
+      validate_recipe_targets: () => ({ issues: [] }),
     } as unknown as WasmBridge;
 
     render(<WatchersView main={main} wasmBridge={throwingBridge} onApplyBalancedMain={onApply} />);
@@ -808,7 +810,11 @@ describe("WatchersView Balance", () => {
     expect(onApply).not.toHaveBeenCalled();
     expect(consoleErrorSpy).toHaveBeenCalled();
     expect(button.title).toContain("infeasible");
-    expect(button.className).toContain("border-rd");
+    // The error border now uses the real `issue-border-error` accent class (backed by theme
+    // tokens), unlike the former dead `border-rd-lt`; jsdom can't compute the color, so assert
+    // the class is applied alongside the `border` width.
+    expect(button.className).toContain("border");
+    expect(button.className).toContain("issue-border-error");
 
     consoleErrorSpy.mockRestore();
   });
@@ -891,5 +897,70 @@ describe("WatchersView Fill from Ref", () => {
     fireEvent.click(screen.getByTestId("watchers-fill-all-Ref A"));
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherTargets) ?? "{}");
     expect(typeof stored[MSNF]).toBe("number");
+  });
+});
+
+describe("WatchersView validation", () => {
+  const MILK_FAT = compToPropKey(CompKey.MilkFat);
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  /** A bridge whose `validate_recipe_targets` returns a fixed report, decoupled from the solver. */
+  const makeValidatingBridge = (issues: unknown[]): WasmBridge =>
+    ({
+      has_ingredient: () => true,
+      balance_recipe: () => [],
+      validate_recipe_targets: () => ({ issues }),
+    }) as unknown as WasmBridge;
+
+  it("disables Balance and marks the card when validation reports an error", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MILK_FAT]: 10 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    const bridge = makeValidatingBridge([
+      { severity: "error", keys: [MILK_FAT], message: "Milk Fat target -2 is negative" },
+    ]);
+    render(<WatchersView main={main} wasmBridge={bridge} onApplyBalancedMain={vi.fn()} />);
+
+    expect(screen.getByTestId("watchers-balance-button")).toBeDisabled();
+    expect(screen.getByTestId("watcher-issues")).toBeInTheDocument();
+    expect(screen.getByTestId("watcher-issues-toggle")).toHaveAccessibleName(/1 error/);
+    const mark = screen.getByTestId(`watcher-card-${String(MILK_FAT)}-issue`);
+    expect(mark).toHaveAttribute("data-severity", "error");
+  });
+
+  it("keeps Balance enabled and marks the card for a warning-only report", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MILK_FAT]: 10 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    const bridge = makeValidatingBridge([
+      {
+        severity: "warning",
+        keys: [MILK_FAT],
+        message: "Milk Fat target 99 is outside the reachable range [0, 40]",
+      },
+    ]);
+    render(<WatchersView main={main} wasmBridge={bridge} onApplyBalancedMain={vi.fn()} />);
+
+    expect(screen.getByTestId("watchers-balance-button")).not.toBeDisabled();
+    expect(screen.getByTestId("watcher-issues-toggle")).toHaveAccessibleName(/1 warning/);
+    const mark = screen.getByTestId(`watcher-card-${String(MILK_FAT)}-issue`);
+    expect(mark).toHaveAttribute("data-severity", "warning");
+  });
+
+  it("shows no issues strip and leaves Balance enabled for an empty report", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MILK_FAT]: 10 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    const bridge = makeValidatingBridge([]);
+    render(<WatchersView main={main} wasmBridge={bridge} onApplyBalancedMain={vi.fn()} />);
+
+    expect(screen.queryByTestId("watcher-issues")).not.toBeInTheDocument();
+    expect(screen.queryByTestId(`watcher-card-${String(MILK_FAT)}-issue`)).not.toBeInTheDocument();
+    expect(screen.getByTestId("watchers-balance-button")).not.toBeDisabled();
   });
 });
