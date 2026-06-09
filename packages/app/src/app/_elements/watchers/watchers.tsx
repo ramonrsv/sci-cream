@@ -345,7 +345,7 @@ export function WatcherCard({
           <input
             type="number"
             step={targetStep}
-            className="select-input comp-val w-16 px-0.5 py-0"
+            className="boxed-input comp-val w-16 px-0.5 py-0"
             value={target ?? ""}
             placeholder="—"
             onChange={(e) => {

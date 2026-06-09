@@ -167,12 +167,23 @@ body {
   }
 }
 
-.select-input {
+/* A standalone bordered, rounded editable input box (not inside a framed table cell). */
+.boxed-input {
   @apply my-1 rounded-lg border px-0.5;
 
   @apply border-brd-lt bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt;
   @variant dark {
     @apply border-brd-dk bg-surface-dk text-txt-prim-dk hover:border-brd-hov-dk;
+  }
+}
+
+/* A single option row inside the Headless UI `ThemeSelect` popup, highlighted on focus/selection. */
+.select-option {
+  @apply flex cursor-pointer items-center gap-1 px-2 py-1.5;
+
+  @apply hover:bg-gray-100 data-focus:bg-gray-100 data-selected:bg-blue-100;
+  @variant dark {
+    @apply hover:bg-gray-700 data-focus:bg-gray-700 data-selected:bg-blue-900;
   }
 }
 

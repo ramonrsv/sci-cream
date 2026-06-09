@@ -9,6 +9,7 @@ export default defineConfig({
   test: {
     environment: "jsdom",
     reporters: "verbose",
+    setupFiles: ["./vitest.setup.ts"],
     exclude: [
       ...configDefaults.exclude,
       "**/__tests__/e2e/**",

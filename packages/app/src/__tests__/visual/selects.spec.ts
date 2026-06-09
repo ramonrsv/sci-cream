@@ -1,17 +1,16 @@
 import { test, expect } from "@playwright/test";
 
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
-import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
+import { QtyToggle, qtyToggleToShortStr } from "@/app/_elements/selects/qty-toggle-select";
 import { RecipeID, recipeIdToOption } from "@/__tests__/assets";
 import {
   goToPageAndWaitFor,
   getRecipeEditorPanelRecipeSelector,
   getPropertiesPanelKeyFilterSelectInput,
   getCompositionBreakdownPanelQtyToggleSelectInput,
-  getThemeSelectButton,
-  getThemeSelectOptions,
   expandNavbar,
 } from "@/__tests__/e2e/util";
+import { getSelectControl, getOpenSelectMenu, selectOption } from "@/__tests__/e2e/select";
 
 // ---------------------------------------------------------------------------
 // QtyToggleSelect
@@ -24,13 +23,13 @@ test.describe("Visual Regression: QtyToggleSelect", () => {
     const selector = getCompositionBreakdownPanelQtyToggleSelectInput(page);
     await expect(selector).toBeVisible();
 
-    await selector.selectOption(QtyToggle.Composition);
+    await selectOption(page, selector, qtyToggleToShortStr(QtyToggle.Composition));
     await expect(selector).toHaveScreenshot("qty-toggle-select-comp.png");
 
-    await selector.selectOption(QtyToggle.Quantity);
+    await selectOption(page, selector, qtyToggleToShortStr(QtyToggle.Quantity));
     await expect(selector).toHaveScreenshot("qty-toggle-select-qty.png");
 
-    await selector.selectOption(QtyToggle.Percentage);
+    await selectOption(page, selector, qtyToggleToShortStr(QtyToggle.Percentage));
     await expect(selector).toHaveScreenshot("qty-toggle-select-percentage.png");
   });
 
@@ -43,6 +42,7 @@ test.describe("Visual Regression: QtyToggleSelect", () => {
     await selector.click();
     await expect(selector).toHaveScreenshot("qty-toggle-select-clicked.png");
 
+    await page.keyboard.press("Escape");
     await selector.hover();
     await expect(selector).toHaveScreenshot("qty-toggle-select-hovered.png");
   });
@@ -59,16 +59,16 @@ test.describe("Visual Regression: KeyFilterSelect", () => {
     const selector = getPropertiesPanelKeyFilterSelectInput(page);
     await expect(selector).toBeVisible();
 
-    await selector.selectOption(KeyFilter.Auto);
+    await selectOption(page, selector, KeyFilter.Auto);
     await expect(selector).toHaveScreenshot("key-filter-select-auto.png");
 
-    await selector.selectOption(KeyFilter.NonZero);
+    await selectOption(page, selector, KeyFilter.NonZero);
     await expect(selector).toHaveScreenshot("key-filter-select-nonzero.png");
 
-    await selector.selectOption(KeyFilter.All);
+    await selectOption(page, selector, KeyFilter.All);
     await expect(selector).toHaveScreenshot("key-filter-select-all.png");
 
-    await selector.selectOption(KeyFilter.Custom);
+    await selectOption(page, selector, KeyFilter.Custom);
     await expect(selector).toHaveScreenshot("key-filter-select-custom.png");
   });
 
@@ -81,6 +81,7 @@ test.describe("Visual Regression: KeyFilterSelect", () => {
     await selector.click();
     await expect(selector).toHaveScreenshot("key-filter-select-clicked.png");
 
+    await page.keyboard.press("Escape");
     await selector.hover();
     await expect(selector).toHaveScreenshot("key-filter-select-hovered.png");
   });
@@ -90,7 +91,7 @@ test.describe("Visual Regression: KeyFilterSelect", () => {
 
     const selector = getPropertiesPanelKeyFilterSelectInput(page);
     await expect(selector).toBeVisible();
-    await selector.selectOption(KeyFilter.Custom);
+    await selectOption(page, selector, KeyFilter.Custom);
 
     await page.locator("#properties-panel #customize-keys-button").click();
     const popup = page.locator(".popup").first();
@@ -114,13 +115,13 @@ test.describe("Visual Regression: RecipeSelect", () => {
     const selector = getRecipeEditorPanelRecipeSelector(page);
     await expect(selector).toBeVisible();
 
-    await selector.selectOption(recipeIdToOption(RecipeID.Main));
+    await selectOption(page, selector, recipeIdToOption(RecipeID.Main));
     await expect(selector).toHaveScreenshot("recipe-select-main.png");
 
-    await selector.selectOption(recipeIdToOption(RecipeID.RefA));
+    await selectOption(page, selector, recipeIdToOption(RecipeID.RefA));
     await expect(selector).toHaveScreenshot("recipe-select-ref-a.png");
 
-    await selector.selectOption(recipeIdToOption(RecipeID.RefB));
+    await selectOption(page, selector, recipeIdToOption(RecipeID.RefB));
     await expect(selector).toHaveScreenshot("recipe-select-ref-b.png");
   });
 
@@ -133,6 +134,7 @@ test.describe("Visual Regression: RecipeSelect", () => {
     await selector.click();
     await expect(selector).toHaveScreenshot("recipe-select-clicked.png");
 
+    await page.keyboard.press("Escape");
     await selector.hover();
     await expect(selector).toHaveScreenshot("recipe-select-hovered.png");
   });
@@ -147,48 +149,41 @@ test.describe("Visual Regression: ThemeSelect", () => {
     await goToPageAndWaitFor(page);
     await expandNavbar(page);
 
-    const button = getThemeSelectButton(page);
-    const options = getThemeSelectOptions(page);
+    const selector = getSelectControl(page, "#theme-select");
 
-    await button.click();
-    await expect(options).toBeVisible();
-    await options.getByText("Light").click();
-    await expect(button).toHaveScreenshot("theme-select-light.png");
+    await selectOption(page, selector, "Light");
+    await expect(selector).toHaveScreenshot("theme-select-light.png");
 
-    await button.click();
-    await expect(options).toBeVisible();
-    await options.getByText("Dark").click();
-    await expect(button).toHaveScreenshot("theme-select-dark.png");
+    await selectOption(page, selector, "Dark");
+    await expect(selector).toHaveScreenshot("theme-select-dark.png");
 
-    await button.click();
-    await expect(options).toBeVisible();
-    await options.getByText("System").click();
-    await expect(button).toHaveScreenshot("theme-select-system.png");
+    await selectOption(page, selector, "System");
+    await expect(selector).toHaveScreenshot("theme-select-system.png");
   });
 
   test("Popup open", async ({ page }) => {
     await goToPageAndWaitFor(page);
     await expandNavbar(page);
 
-    const button = getThemeSelectButton(page);
-    await button.click();
+    const selector = getSelectControl(page, "#theme-select");
+    await selector.click();
 
-    const options = getThemeSelectOptions(page);
-    await expect(options).toBeVisible();
-    await expect(options).toHaveScreenshot("theme-select-popup.png");
+    const menu = getOpenSelectMenu(page);
+    await expect(menu).toBeVisible();
+    await expect(menu).toHaveScreenshot("theme-select-popup.png");
   });
 
   test("Clicked, hovered", async ({ page }) => {
     await goToPageAndWaitFor(page);
     await expandNavbar(page);
 
-    const button = getThemeSelectButton(page);
+    const selector = getSelectControl(page, "#theme-select");
 
-    await button.click();
-    await expect(button).toHaveScreenshot("theme-select-clicked.png");
+    await selector.click();
+    await expect(selector).toHaveScreenshot("theme-select-clicked.png");
 
     await page.keyboard.press("Escape");
-    await button.hover();
-    await expect(button).toHaveScreenshot("theme-select-hovered.png");
+    await selector.hover();
+    await expect(selector).toHaveScreenshot("theme-select-hovered.png");
   });
 });

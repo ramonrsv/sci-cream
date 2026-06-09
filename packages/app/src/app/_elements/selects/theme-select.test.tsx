@@ -14,14 +14,7 @@ import { ThemeSelect } from "./theme-select";
 // Test helpers, mocks, and setup
 // ---------------------------------------------------------------------------
 
-/** Mock implementation of ResizeObserver for testing purposes, used by headlessui v2 */
-class ResizeObserverMock {
-  observe = vi.fn();
-  unobserve = vi.fn();
-  disconnect = vi.fn();
-}
-
-vi.stubGlobal("ResizeObserver", ResizeObserverMock);
+// `ResizeObserver` (needed by Headless UI v2) is stubbed globally in `vitest.setup.ts`.
 
 /** Mocks the window.matchMedia function for testing purposes */
 function mockMatchMedia(prefersDark: boolean) {

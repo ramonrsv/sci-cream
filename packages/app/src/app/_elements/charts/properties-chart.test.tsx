@@ -14,6 +14,7 @@ import {
 } from "@/app/_elements/charts/properties-chart";
 import { filterActiveSlots } from "@/lib/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
+import { getSelectedOptionLabel } from "@/__tests__/unit/select";
 
 import {
   CompKey,
@@ -303,9 +304,7 @@ describe("PropertiesChartView", () => {
   describe("Property Key Filtering", () => {
     it("should default to KeyFilter.Auto", () => {
       const { container } = renderViewFromContext([RecipeID.Main]);
-      const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-      expect(select).toBeInTheDocument();
-      expect(select.value).toBe(KeyFilter.Auto);
+      expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.Auto);
     });
 
     it("should have some property keys selected by default", () => {

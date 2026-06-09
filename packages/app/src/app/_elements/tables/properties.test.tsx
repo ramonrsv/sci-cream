@@ -1,7 +1,13 @@
 import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup, fireEvent, within } from "@testing-library/react";
+import { render, screen, cleanup, within } from "@testing-library/react";
+
+import {
+  getSelectedOptionLabel,
+  getSelectOptionLabels,
+  selectOption,
+} from "@/__tests__/unit/select";
 
 import {
   PropertiesTable,
@@ -9,7 +15,7 @@ import {
   DEFAULT_SELECTED_PROPERTIES,
 } from "@/app/_elements/tables/properties";
 import { RecipeSummary, filterActiveSlots } from "@/lib/recipe";
-import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
+import { QtyToggle, qtyToggleToShortStr } from "@/app/_elements/selects/qty-toggle-select";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
 import { isPropKeyQuantity } from "@/lib/sci-cream/sci-cream";
@@ -275,20 +281,20 @@ describe("PropertiesView", () => {
   describe("QtyToggle Integration", () => {
     it("should default to QtyToggle.Percentage", () => {
       const { container } = render(<PropertiesView recipes={[]} />);
-      const select = container.querySelector("#qty-toggle-select select") as HTMLSelectElement;
-      expect(select.value).toBe(QtyToggle.Percentage);
+      expect(getSelectedOptionLabel(container, "#qty-toggle-select")).toBe(
+        qtyToggleToShortStr(QtyToggle.Percentage),
+      );
     });
 
-    it("should support Quantity and Percentage options but not Composition", () => {
+    it("should support Quantity and Percentage options but not Composition", async () => {
       const { container } = render(<PropertiesView recipes={[]} />);
-      const select = container.querySelector("#qty-toggle-select select") as HTMLSelectElement;
-      const options = Array.from(select.options).map((o) => o.value);
-      expect(options).toContain(QtyToggle.Quantity);
-      expect(options).toContain(QtyToggle.Percentage);
-      expect(options).not.toContain(QtyToggle.Composition);
+      const labels = await getSelectOptionLabels(container, "#qty-toggle-select");
+      expect(labels).toContain(qtyToggleToShortStr(QtyToggle.Quantity));
+      expect(labels).toContain(qtyToggleToShortStr(QtyToggle.Percentage));
+      expect(labels).not.toContain(qtyToggleToShortStr(QtyToggle.Composition));
     });
 
-    it("should update cell values when toggled from Percentage to Quantity", () => {
+    it("should update cell values when toggled from Percentage to Quantity", async () => {
       const recipes = filterActiveSlots(makeMockRecipeContext([RecipeID.Main]).recipes);
       const { container } = render(<PropertiesView recipes={recipes} />);
 
@@ -297,8 +303,7 @@ describe("PropertiesView", () => {
 
       const percentageValues = getCellTexts();
 
-      const select = container.querySelector("#qty-toggle-select select") as HTMLSelectElement;
-      fireEvent.change(select, { target: { value: QtyToggle.Quantity } });
+      await selectOption(container, "#qty-toggle-select", qtyToggleToShortStr(QtyToggle.Quantity));
 
       expect(getCellTexts()).not.toEqual(percentageValues);
     });
@@ -307,30 +312,26 @@ describe("PropertiesView", () => {
   describe("KeyFilter Integration", () => {
     it("should default to KeyFilter.Auto", () => {
       const { container } = render(<PropertiesView recipes={[]} />);
-      const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-      expect(select.value).toBe(KeyFilter.Auto);
+      expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.Auto);
     });
 
-    it("should show all prop keys when filter is set to All", () => {
+    it("should show all prop keys when filter is set to All", async () => {
       const { container } = render(<PropertiesView recipes={[]} />);
-      const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-      fireEvent.change(select, { target: { value: KeyFilter.All } });
+      await selectOption(container, "#key-filter-select", KeyFilter.All);
       expect(container.querySelectorAll("tbody tr")).toHaveLength(getPropKeys().length);
     });
 
-    it("should show no rows with NonZero filter when all recipes are empty", () => {
+    it("should show no rows with NonZero filter when all recipes are empty", async () => {
       const recipes = filterActiveSlots(makeMockRecipeContext([]).recipes);
       const { container } = render(<PropertiesView recipes={recipes} />);
-      const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-      fireEvent.change(select, { target: { value: KeyFilter.NonZero } });
+      await selectOption(container, "#key-filter-select", KeyFilter.NonZero);
       expect(container.querySelectorAll("tbody tr")).toHaveLength(0);
     });
 
-    it("should show NonZero rows for a non-empty recipe", () => {
+    it("should show NonZero rows for a non-empty recipe", async () => {
       const recipes = filterActiveSlots(makeMockRecipeContext([RecipeID.Main]).recipes);
       const { container } = render(<PropertiesView recipes={recipes} />);
-      const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-      fireEvent.change(select, { target: { value: KeyFilter.NonZero } });
+      await selectOption(container, "#key-filter-select", KeyFilter.NonZero);
       expect(container.querySelectorAll("tbody tr").length).toBeGreaterThan(0);
     });
   });

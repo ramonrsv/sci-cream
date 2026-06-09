@@ -5,6 +5,7 @@ import { getAcceptablePropertyRange } from "@/lib/sci-cream/sci-cream";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 
 import { goToPageAndWaitFor, goToPageAndPasteRecipes } from "@/__tests__/e2e/util";
+import { getSelectControl, selectOption } from "@/__tests__/e2e/select";
 import { makeRecipesTestName, makeRecipesScreenshotFilename } from "@/__tests__/visual/assets";
 import { RecipeID, getLightRecipe } from "@/__tests__/assets";
 import { WASM_BRIDGE } from "@/__tests__/util";
@@ -26,10 +27,8 @@ export async function presetWatcherSelection(page: Page, propKeys: PropKey[]) {
 
 /** Select `KeyFilter.Custom` to make the watcher-selection in `localStorage` visible */
 async function selectKeyFilterCustom(page: Page) {
-  await page
-    .locator("#watchers-panel #key-filter-select select")
-    .first()
-    .selectOption(KeyFilter.Custom);
+  const control = getSelectControl(page, "#watchers-panel #key-filter-select");
+  await selectOption(page, control, KeyFilter.Custom);
 }
 
 /** Locate a watcher card by its `PropKey` and assert that it is visible. */

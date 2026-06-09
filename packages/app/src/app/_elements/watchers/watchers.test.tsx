@@ -20,6 +20,7 @@ import {
 } from "@workspace/sci-cream";
 
 import { makeMockRecipe, makeMockRecipeContext } from "@/__tests__/unit/util";
+import { selectOption } from "@/__tests__/unit/select";
 import { RecipeID } from "@/__tests__/assets";
 import { WASM_BRIDGE } from "@/__tests__/util";
 
@@ -566,14 +567,13 @@ describe("WatchersView", () => {
     expect(screen.getByTestId(`watcher-card-${String(SERVING_TEMP)}`)).toBeInTheDocument();
   });
 
-  it("hydrates the selection from localStorage on mount", () => {
+  it("hydrates the selection from localStorage on mount", async () => {
     localStorage.setItem(STORAGE_KEYS.watcherSelectedProps, JSON.stringify([TOTAL_FATS]));
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(<WatchersView main={main} />);
 
     // Default filter is Auto (ignores selection); switch to Custom to observe the hydrated set
-    const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-    fireEvent.change(select, { target: { value: KeyFilter.Custom } });
+    await selectOption(container, "#key-filter-select", KeyFilter.Custom);
 
     expect(screen.getByTestId(`watcher-card-${String(TOTAL_FATS)}`)).toBeInTheDocument();
     expect(screen.queryByTestId(`watcher-card-${String(MSNF)}`)).not.toBeInTheDocument();
@@ -587,12 +587,11 @@ describe("WatchersView", () => {
     expect(input.value).toBe("9.5");
   });
 
-  it("persists the selection to localStorage after removal (Custom filter)", () => {
+  it("persists the selection to localStorage after removal (Custom filter)", async () => {
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(<WatchersView main={main} />);
     // Removal only applies under the Custom filter, where the remove button is shown.
-    const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-    fireEvent.change(select, { target: { value: KeyFilter.Custom } });
+    await selectOption(container, "#key-filter-select", KeyFilter.Custom);
     fireEvent.click(screen.getByTestId(`watcher-card-${String(MSNF)}-remove`));
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherSelectedProps) ?? "[]");
     expect(stored).not.toContain(MSNF);
@@ -638,25 +637,23 @@ describe("WatchersView", () => {
     expect(MSNF in stored).toBe(false);
   });
 
-  it("drops a removed key's priority entry from localStorage (Custom filter)", () => {
+  it("drops a removed key's priority entry from localStorage (Custom filter)", async () => {
     localStorage.setItem(STORAGE_KEYS.watcherPriorities, JSON.stringify({ [MSNF]: Priority.High }));
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(<WatchersView main={main} />);
-    const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-    fireEvent.change(select, { target: { value: KeyFilter.Custom } });
+    await selectOption(container, "#key-filter-select", KeyFilter.Custom);
     fireEvent.click(screen.getByTestId(`watcher-card-${String(MSNF)}-remove`));
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherPriorities) ?? "{}");
     expect(MSNF in stored).toBe(false);
   });
 
-  it("hides remove buttons under the Auto filter and shows them under Custom", () => {
+  it("hides remove buttons under the Auto filter and shows them under Custom", async () => {
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(<WatchersView main={main} />);
     // Default filter is Auto: removal is a no-op there, so no remove buttons are rendered.
     expect(screen.queryByTestId(`watcher-card-${String(MSNF)}-remove`)).not.toBeInTheDocument();
 
-    const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-    fireEvent.change(select, { target: { value: KeyFilter.Custom } });
+    await selectOption(container, "#key-filter-select", KeyFilter.Custom);
     expect(screen.getByTestId(`watcher-card-${String(MSNF)}-remove`)).toBeInTheDocument();
   });
 

@@ -2,9 +2,15 @@ import "@testing-library/jest-dom/vitest";
 
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, cleanup, fireEvent } from "@testing-library/react";
+import { render, cleanup } from "@testing-library/react";
 import { useEffect, useState } from "react";
 
+import {
+  getSelectControl,
+  getSelectedOptionLabel,
+  getSelectOptionLabels,
+  selectOption,
+} from "@/__tests__/unit/select";
 import { QtyToggle, QtyToggleSelect, qtyToggleToShortStr } from "./qty-toggle-select";
 
 // ---------------------------------------------------------------------------
@@ -73,49 +79,45 @@ describe("QtyToggleSelect", () => {
     await vi.waitFor(() => {}, { timeout: 100 });
   });
 
-  it("renders a select inside #qty-toggle-select", () => {
+  it("renders a select control inside #qty-toggle-select", () => {
     const { container } = render(<TestWrapper />);
-    const wrapper = container.querySelector("#qty-toggle-select");
-    expect(wrapper).toBeInTheDocument();
-    expect(wrapper!.querySelector("select")).toBeInTheDocument();
+    expect(container.querySelector("#qty-toggle-select")).toBeInTheDocument();
+    expect(getSelectControl(container, "#qty-toggle-select")).toBeInTheDocument();
   });
 
-  it("shows short labels as option text for all supported toggles", () => {
+  it("shows short labels as options for all supported toggles", async () => {
     const { container } = render(<TestWrapper />);
-    const select = container.querySelector("#qty-toggle-select select") as HTMLSelectElement;
-    const optionTexts = Array.from(select.options).map((o) => o.text);
-    expect(optionTexts).toEqual(Object.values(QtyToggle).map(qtyToggleToShortStr));
+    expect(await getSelectOptionLabels(container, "#qty-toggle-select")).toEqual(
+      Object.values(QtyToggle).map(qtyToggleToShortStr),
+    );
   });
 
-  it("reflects the initial toggle value in the select", () => {
+  it("reflects the initial toggle value in the selected label", () => {
     const { container } = render(<TestWrapper initialQtyToggle={QtyToggle.Quantity} />);
-    const select = container.querySelector("#qty-toggle-select select") as HTMLSelectElement;
-    expect(select.value).toBe(QtyToggle.Quantity);
+    expect(getSelectedOptionLabel(container, "#qty-toggle-select")).toBe(
+      qtyToggleToShortStr(QtyToggle.Quantity),
+    );
   });
 
-  it("renders only the supplied supportedQtyToggles options", () => {
+  it("renders only the supplied supportedQtyToggles options", async () => {
     const supported = [QtyToggle.Composition, QtyToggle.Percentage];
     const { container } = render(<TestWrapper supportedQtyToggles={supported} />);
-    const select = container.querySelector("#qty-toggle-select select") as HTMLSelectElement;
-    const optionValues = Array.from(select.options).map((o) => o.value);
-    expect(optionValues).toEqual(supported);
+    expect(await getSelectOptionLabels(container, "#qty-toggle-select")).toEqual(
+      supported.map(qtyToggleToShortStr),
+    );
   });
 
-  it("updates the state when the user changes the selection", () => {
+  it("updates the state when the user changes the selection", async () => {
     const { container } = render(<TestWrapper />);
-    const select = container.querySelector("#qty-toggle-select select") as HTMLSelectElement;
-    fireEvent.change(select, { target: { value: QtyToggle.Percentage } });
-    expect(select.value).toBe(QtyToggle.Percentage);
+    await selectOption(container, "#qty-toggle-select", qtyToggleToShortStr(QtyToggle.Percentage));
     expect(currentQtyToggle).toBe(QtyToggle.Percentage);
   });
 
-  it("cycles through all toggle values and updates state correctly", () => {
+  it("cycles through all toggle values and updates state correctly", async () => {
     const { container } = render(<TestWrapper />);
-    const select = container.querySelector("#qty-toggle-select select") as HTMLSelectElement;
 
     for (const toggle of Object.values(QtyToggle)) {
-      fireEvent.change(select, { target: { value: toggle } });
-      expect(select.value).toBe(toggle);
+      await selectOption(container, "#qty-toggle-select", qtyToggleToShortStr(toggle));
       expect(currentQtyToggle).toBe(toggle);
     }
   });

@@ -1,5 +1,7 @@
 "use client";
 
+import { Select, type SelectOption } from "./select";
+
 /** Controls how ingredient and mix quantity composition values are displayed */
 export enum QtyToggle {
   /// The raw composition value as stored in the Ingredient, independent of quantity
@@ -34,19 +36,14 @@ export function QtyToggleSelect({
 }) {
   const [qtyToggle, setQtyToggle] = qtyToggleState;
 
+  const options: SelectOption<QtyToggle>[] = supportedQtyToggles.map((qt) => ({
+    value: qt,
+    label: qtyToggleToShortStr(qt),
+  }));
+
   return (
     <div id="qty-toggle-select" className="mx-1">
-      <select
-        className="select-input"
-        value={qtyToggle}
-        onChange={(e) => setQtyToggle(e.target.value as QtyToggle)}
-      >
-        {supportedQtyToggles.map((qt) => (
-          <option key={qt} value={qt} className="table-inner-cell">
-            {qtyToggleToShortStr(qt)}
-          </option>
-        ))}
-      </select>
+      <Select value={qtyToggle} onChange={setQtyToggle} options={options} />
     </div>
   );
 }

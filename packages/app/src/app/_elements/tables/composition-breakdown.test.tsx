@@ -8,8 +8,9 @@ import {
   CompositionBreakdownView,
   getCompKeys,
 } from "@/app/_elements/tables/composition-breakdown";
-import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
+import { QtyToggle, qtyToggleToShortStr } from "@/app/_elements/selects/qty-toggle-select";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
+import { getSelectedOptionLabel, getSelectOptionLabels } from "@/__tests__/unit/select";
 import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 
@@ -405,18 +406,18 @@ describe("CompositionBreakdownView", () => {
     it("should default to QtyToggle.Quantity", () => {
       const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<CompositionBreakdownView recipes={recipeCtx.recipes} />);
-      const select = container.querySelector("#qty-toggle-select select") as HTMLSelectElement;
-      expect(select.value).toBe(QtyToggle.Quantity);
+      expect(getSelectedOptionLabel(container, "#qty-toggle-select")).toBe(
+        qtyToggleToShortStr(QtyToggle.Quantity),
+      );
     });
 
-    it("should offer Composition, Quantity, and Percentage options", () => {
+    it("should offer Composition, Quantity, and Percentage options", async () => {
       const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<CompositionBreakdownView recipes={recipeCtx.recipes} />);
-      const select = container.querySelector("#qty-toggle-select select") as HTMLSelectElement;
-      const options = Array.from(select.options).map((o) => o.value);
-      expect(options).toContain(QtyToggle.Composition);
-      expect(options).toContain(QtyToggle.Quantity);
-      expect(options).toContain(QtyToggle.Percentage);
+      const labels = await getSelectOptionLabels(container, "#qty-toggle-select");
+      expect(labels).toContain(qtyToggleToShortStr(QtyToggle.Composition));
+      expect(labels).toContain(qtyToggleToShortStr(QtyToggle.Quantity));
+      expect(labels).toContain(qtyToggleToShortStr(QtyToggle.Percentage));
     });
 
     it("should update ingredient qty cells when toggled to Percentage", async () => {
@@ -454,8 +455,7 @@ describe("CompositionBreakdownView", () => {
     it("should default to KeyFilter.Auto", () => {
       const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<CompositionBreakdownView recipes={recipeCtx.recipes} />);
-      const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-      expect(select.value).toBe(KeyFilter.Auto);
+      expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.Auto);
     });
 
     it("should show no composition columns in Auto mode when the recipe is empty", () => {
@@ -512,21 +512,19 @@ describe("CompositionBreakdownView", () => {
       expect(container.querySelector("#recipe-selection")).toBeInTheDocument();
     });
 
-    it("should list non-empty recipe names in RecipeSelect", () => {
+    it("should list non-empty recipe names in RecipeSelect", async () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]);
       const { container } = render(<CompositionBreakdownView recipes={recipeCtx.recipes} />);
-      const recipeSelect = container.querySelector("#recipe-selection select") as HTMLSelectElement;
-      const options = Array.from(recipeSelect.options).map((o) => o.text);
+      const options = await getSelectOptionLabels(container, "#recipe-selection");
       expect(options).toContain("Recipe");
       expect(options).toContain("Ref A");
       expect(options).not.toContain("Ref B");
     });
 
-    it("if shown, RecipeSelect should list the main recipe even if empty", () => {
+    it("if shown, RecipeSelect should list the main recipe even if empty", async () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.RefB]);
       const { container } = render(<CompositionBreakdownView recipes={recipeCtx.recipes} />);
-      const recipeSelect = container.querySelector("#recipe-selection select") as HTMLSelectElement;
-      const options = Array.from(recipeSelect.options).map((o) => o.text);
+      const options = await getSelectOptionLabels(container, "#recipe-selection");
       expect(options).toContain("Recipe");
       expect(options).not.toContain("Ref A");
       expect(options).toContain("Ref B");

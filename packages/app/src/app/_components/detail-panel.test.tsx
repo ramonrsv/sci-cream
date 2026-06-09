@@ -10,6 +10,7 @@ import {
   LoadAction,
 } from "@/app/_components/detail-panel";
 import { EntitySource } from "@/app/_components/entity-search";
+import { getSelectOptionLabelsByLabel, selectOptionByLabel } from "@/__tests__/unit/select";
 
 afterEach(() => cleanup());
 
@@ -79,25 +80,26 @@ describe("LoadAction", () => {
 
   it("does not show a slot picker when slots is undefined", () => {
     render(<LoadAction onLoad={vi.fn()} />);
-    expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Target slot" })).not.toBeInTheDocument();
   });
 
   it("does not show a slot picker when slots has a single entry", () => {
     render(<LoadAction onLoad={vi.fn()} slots={[0]} />);
-    expect(screen.queryByRole("combobox")).not.toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Target slot" })).not.toBeInTheDocument();
   });
 
-  it("shows a slot picker when slots has more than one entry", () => {
+  it("shows a slot picker when slots has more than one entry", async () => {
     render(<LoadAction onLoad={vi.fn()} slots={[0, 1, 2]} slotLabel={(s) => `Slot ${s}`} />);
-    expect(screen.getByRole("option", { name: "Slot 0" })).toBeInTheDocument();
-    expect(screen.getByRole("option", { name: "Slot 1" })).toBeInTheDocument();
-    expect(screen.getByRole("option", { name: "Slot 2" })).toBeInTheDocument();
+    expect(await getSelectOptionLabelsByLabel("Target slot")).toEqual([
+      "Slot 0",
+      "Slot 1",
+      "Slot 2",
+    ]);
   });
 
-  it("falls back to the numeric slot value when slotLabel is not provided", () => {
+  it("falls back to the numeric slot value when slotLabel is not provided", async () => {
     render(<LoadAction onLoad={vi.fn()} slots={[0, 1]} />);
-    expect(screen.getByRole("option", { name: "0" })).toBeInTheDocument();
-    expect(screen.getByRole("option", { name: "1" })).toBeInTheDocument();
+    expect(await getSelectOptionLabelsByLabel("Target slot")).toEqual(["0", "1"]);
   });
 
   it("calls onLoad with the first slot by default", () => {
@@ -107,10 +109,10 @@ describe("LoadAction", () => {
     expect(onLoad).toHaveBeenCalledWith(3);
   });
 
-  it("calls onLoad with the user-selected slot after they change the picker", () => {
+  it("calls onLoad with the user-selected slot after they change the picker", async () => {
     const onLoad = vi.fn();
     render(<LoadAction onLoad={onLoad} slots={[0, 1, 2]} />);
-    fireEvent.change(screen.getByRole("combobox"), { target: { value: "2" } });
+    await selectOptionByLabel("Target slot", "2");
     fireEvent.click(screen.getByRole("button", { name: "Load" }));
     expect(onLoad).toHaveBeenCalledWith(2);
   });

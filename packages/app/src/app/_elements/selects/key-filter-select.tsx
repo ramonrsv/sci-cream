@@ -6,6 +6,8 @@ import { X, Settings } from "lucide-react";
 
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 
+import { Select, type SelectOption } from "./select";
+
 /** Controls which subset of keys is shown in composition/property tables and charts */
 export enum KeyFilter {
   /// Automatically determine which keys to show based on internal heuristics
@@ -69,12 +71,12 @@ export function KeyFilterSelect<Key>({
   const [allKeysSelected, setAllKeysSelected] = useState<boolean>(false);
 
   const [keySelectVisible, setKeySelectVisible] = useState<boolean>(false);
-  const buttonRef = useRef<HTMLSelectElement>(null);
+  const triggerRef = useRef<HTMLDivElement>(null);
   const [popupPos, setPopupPos] = useState<{ top: number; right: number } | undefined>(undefined);
 
   useEffect(() => {
-    if (keySelectVisible && buttonRef.current) {
-      const rect = buttonRef.current.getBoundingClientRect();
+    if (keySelectVisible && triggerRef.current) {
+      const rect = triggerRef.current.getBoundingClientRect();
       setPopupPos({ top: rect.top + window.scrollY, right: rect.right + window.scrollX });
     }
   }, [keySelectVisible]);
@@ -108,21 +110,17 @@ export function KeyFilterSelect<Key>({
     }
   };
 
+  const options: SelectOption<KeyFilter>[] = supportedKeyFilters.map((kf) => ({
+    value: kf,
+    label: kf,
+  }));
+
   return (
     <div id="key-filter-select" className="mx-1">
       <div className="flex items-center">
-        <select
-          ref={buttonRef}
-          className="select-input"
-          value={keyFilter}
-          onChange={(e) => setKeyFilter(e.target.value as KeyFilter)}
-        >
-          {supportedKeyFilters.map((kf) => (
-            <option key={kf} value={kf} className="table-inner-cell">
-              {kf}
-            </option>
-          ))}
-        </select>
+        <div ref={triggerRef}>
+          <Select value={keyFilter} onChange={setKeyFilter} options={options} />
+        </div>
         {keyFilter === KeyFilter.Custom && (
           <button
             id="customize-keys-button"

@@ -9,6 +9,7 @@ import {
 } from "@workspace/sci-cream";
 
 import { makeRecipeId, type Recipe } from "@/lib/recipe";
+import { Select, type SelectOption } from "@/app/_elements/selects/select";
 import { RecipeTable } from "@/app/_elements/tables/recipe";
 import { PropertiesView } from "@/app/_elements/tables/properties";
 import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
@@ -192,6 +193,11 @@ function RecipeDetailPanel({
   const [selectedVersionIdx, setSelectedVersionIdx] = useState<number>(latestIdx);
   const selectedVersion = entry.versions[selectedVersionIdx] ?? entry.versions[latestIdx];
 
+  const versionOptions: SelectOption<number>[] = entry.versions.map((v, idx) => ({
+    value: idx,
+    label: formatVersionOption(v, idx === latestIdx),
+  }));
+
   const recipe = useMemo<Recipe>(
     () => makeRecipeFromRows(entry.name, selectedVersion?.recipe ?? null, bridge),
     [entry, selectedVersion, bridge, wasmUpdateIdx], // eslint-disable-line react-hooks/exhaustive-deps
@@ -248,22 +254,14 @@ function RecipeDetailPanel({
       {/* Version selector (only when there's more than one version) */}
       {hasMultipleVersions && (
         <div className="flex items-center gap-2">
-          <label className="text-secondary text-xs" htmlFor="recipe-version-select">
-            Version
-          </label>
-          <select
-            id="recipe-version-select"
+          <span className="text-secondary text-xs">Version</span>
+          <Select
             value={selectedVersionIdx}
-            onChange={(e) => setSelectedVersionIdx(parseInt(e.target.value))}
-            className="select-input text-sm"
-            aria-label="Recipe version"
-          >
-            {entry.versions.map((v, idx) => (
-              <option key={v.version} value={idx}>
-                {formatVersionOption(v, idx === latestIdx)}
-              </option>
-            ))}
-          </select>
+            onChange={setSelectedVersionIdx}
+            options={versionOptions}
+            ariaLabel="Recipe version"
+            className="text-sm"
+          />
           {deleteVersionEnabled && (
             <DeleteAction
               onDelete={() => onDeleteSavedRecipeVersion(entry, selectedVersion)}

@@ -17,6 +17,8 @@ import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 
 import { verify } from "@/lib/util";
 
+import { getSelectControl, selectOption } from "@/__tests__/e2e/select";
+
 import {
   LightRecipe,
   RecipeID,
@@ -34,16 +36,6 @@ declare global {
   }
 }
 
-/** Get `ThemeSelect`'s trigger button in the header */
-export function getThemeSelectButton(page: Page) {
-  return page.locator("#theme-select button").first();
-}
-
-/** Get `ThemeSelect`'s open options popup */
-export function getThemeSelectOptions(page: Page) {
-  return page.locator("#theme-select-options");
-}
-
 /**
  * Expand the sidebar navbar so the hidden buttons, e.g. `ThemeSelect`, are visible and not clipped.
  * The navbar is collapsed by default (`DEFAULT_COLLAPSED_NAVBAR = true`), behind `overflow-hidden`.
@@ -55,7 +47,7 @@ export async function expandNavbar(page: Page) {
 
 /** Get `RecipeEditorPanel`'s recipe selector element, in `RecipeSelect` */
 export function getRecipeEditorPanelRecipeSelector(page: Page) {
-  return page.locator("#recipe-editor-panel #recipe-selection select").first();
+  return getSelectControl(page, "#recipe-editor-panel #recipe-selection");
 }
 
 /** Get ingredient name search input element at the given index */
@@ -70,27 +62,27 @@ export function getIngredientQtyInputAtIdx(page: Page, index: number) {
 
 /** Get `PropertiesPanel`'s `QtyToggle` select input element, in `QtyToggleSelect` */
 export function getPropertiesPanelQtyToggleSelectInput(page: Page) {
-  return page.locator("#properties-panel #qty-toggle-select select").first();
+  return getSelectControl(page, "#properties-panel #qty-toggle-select");
 }
 
 /** Get `PropertiesPanel`'s `KeyFilter` select input element, in `KeyFilterSelect` */
 export function getPropertiesPanelKeyFilterSelectInput(page: Page) {
-  return page.locator("#properties-panel #key-filter-select select").first();
+  return getSelectControl(page, "#properties-panel #key-filter-select");
 }
 
 /** Get `CompositionBreakdownPanel`'s recipe selector element, in `RecipeSelect` */
 export function getCompositionBreakdownPanelRecipeSelector(page: Page) {
-  return page.locator("#composition-breakdown-panel #recipe-selection select").first();
+  return getSelectControl(page, "#composition-breakdown-panel #recipe-selection");
 }
 
 /** Get `CompositionBreakdownPanel`'s `QtyToggle` select input element, in `QtyToggleSelect` */
 export function getCompositionBreakdownPanelQtyToggleSelectInput(page: Page) {
-  return page.locator("#composition-breakdown-panel #qty-toggle-select select").first();
+  return getSelectControl(page, "#composition-breakdown-panel #qty-toggle-select");
 }
 
 /** Get `CompositionBreakdownPanel`'s `KeyFilter` select input element, in `KeyFilterSelect` */
 export function getCompositionBreakdownPanelKeyFilterSelectInput(page: Page) {
-  return page.locator("#composition-breakdown-panel #key-filter-select select").first();
+  return getSelectControl(page, "#composition-breakdown-panel #key-filter-select");
 }
 
 /** Get `PropertiesPanel`'s value cell element for the given property key and recipe index */
@@ -285,15 +277,15 @@ export async function configureComponentsForRecipeUpdateCheck(page: Page, recipe
   const compRecipeSelect = getCompositionBreakdownPanelRecipeSelector(page);
   const compKeyFilterSelect = getCompositionBreakdownPanelKeyFilterSelectInput(page);
 
-  await editorRecipeSelect.selectOption(recipeIdToOption(recipeId));
-  await compKeyFilterSelect.selectOption(KeyFilter.All);
+  await selectOption(page, editorRecipeSelect, recipeIdToOption(recipeId));
+  await selectOption(page, compKeyFilterSelect, KeyFilter.All);
 
   // `CompBreakdownPanel`'s recipe-select is not rendered if it was previously set to Main and only
-  // the main recipe is non-empty. In that case, it's already in the correct state and we can safely
-  // skip selecting the recipe, so we catch and ignore a timeout trying to select the recipe.
-  try {
-    await compRecipeSelect.selectOption(recipeIdToOption(recipeId), { timeout: 100 });
-  } catch {}
+  // the main recipe is non-empty. In that case, it's already in the correct state, so we skip
+  // selecting the recipe when its trigger is absent.
+  if (await compRecipeSelect.isVisible()) {
+    await selectOption(page, compRecipeSelect, recipeIdToOption(recipeId));
+  }
 }
 
 /** Expected values for a recipe update after paste or quantity change */
@@ -434,7 +426,7 @@ export async function expectRecipePasteCompleted(
  */
 export async function pasteRecipeIntoEditor(page: Page, browserName: string, recipeId: RecipeID) {
   const editorRecipeSelect = getRecipeEditorPanelRecipeSelector(page);
-  await editorRecipeSelect.selectOption(recipeIdToOption(recipeId));
+  await selectOption(page, editorRecipeSelect, recipeIdToOption(recipeId));
 
   await pasteToClipboard(page, browserName, getRecipeText(recipeId));
   const pasteButton = getPasteButton(page);
@@ -476,7 +468,7 @@ export async function pasteRecipeAndWaitForUpdate(
  */
 export async function fillRecipeIntoEditor(page: Page, recipeId: RecipeID) {
   const editorRecipeSelect = getRecipeEditorPanelRecipeSelector(page);
-  await editorRecipeSelect.selectOption(recipeIdToOption(recipeId));
+  await selectOption(page, editorRecipeSelect, recipeIdToOption(recipeId));
 
   await waitForRecipeEditorHydrationReady(page);
 
@@ -542,7 +534,7 @@ export async function clearRecipeAndWaitForUpdate(page: Page, recipeId: RecipeID
   const editorRecipeSelect = getRecipeEditorPanelRecipeSelector(page);
   const clearButton = getClearButton(page);
 
-  await editorRecipeSelect.selectOption(recipeIdToOption(recipeId));
+  await selectOption(page, editorRecipeSelect, recipeIdToOption(recipeId));
   await clearButton.click();
 
   const elements = await getRecipeUpdateCheckElements(page, recipeId, ingIdx);

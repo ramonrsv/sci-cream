@@ -11,6 +11,7 @@ import {
   goToPageAndWaitFor,
   goToPageAndPasteRecipes,
 } from "@/__tests__/e2e/util";
+import { selectOption } from "@/__tests__/e2e/select";
 
 /** Waits a timeout for charts to finish rendering; helps with screenshot stability */
 function waitForChartsToRender(page: Page) {
@@ -229,7 +230,7 @@ test.describe("Visual Regression: Component Variations", () => {
     await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
 
     const keyFilter = getPropertiesPanelKeyFilterSelectInput(page);
-    await keyFilter.selectOption(KeyFilter.All);
+    await selectOption(page, keyFilter, KeyFilter.All);
 
     const propertiesGrid = page.locator("#properties-panel");
 

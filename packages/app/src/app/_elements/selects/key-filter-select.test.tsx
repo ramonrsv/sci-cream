@@ -8,6 +8,11 @@ import { useState, useEffect } from "react";
 import { KeyFilter, KeyFilterSelect, getEnabledKeys } from "./key-filter-select";
 
 import { openCustomKeyFilters } from "@/__tests__/unit/util";
+import {
+  getSelectedOptionLabel,
+  getSelectOptionLabels,
+  selectOption,
+} from "@/__tests__/unit/select";
 
 // ---------------------------------------------------------------------------
 // Test helpers, mocks, and setup
@@ -151,36 +156,30 @@ describe("KeyFilterSelect", () => {
 
   // ---- Rendering --------------------------------------------------------------------------------
 
-  it("renders a select with all KeyFilter options by default", () => {
+  it("renders all KeyFilter options by default", async () => {
     const { container } = render(<TestWrapper />);
-    const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-    expect(select).toBeInTheDocument();
-    Object.values(KeyFilter).forEach((kf) => {
-      expect(within(select).getByRole("option", { name: kf })).toBeInTheDocument();
-    });
+    expect(await getSelectOptionLabels(container, "#key-filter-select")).toEqual(
+      Object.values(KeyFilter),
+    );
   });
 
-  it("reflects the current filter value in the select", () => {
+  it("reflects the current filter value in the selected label", () => {
     const { container } = render(<TestWrapper initialFilter={KeyFilter.NonZero} />);
-    const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-    expect(select.value).toBe(KeyFilter.NonZero);
+    expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.NonZero);
   });
 
-  it("renders only the supported options when supportedKeyFilters is provided", () => {
+  it("renders only the supported options when supportedKeyFilters is provided", async () => {
     const supported = [KeyFilter.All, KeyFilter.NonZero];
     const { container } = render(<TestWrapper supportedKeyFilters={supported} />);
-    const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-    const options = Array.from(select.options).map((o) => o.value);
-    expect(options).toEqual(supported);
+    expect(await getSelectOptionLabels(container, "#key-filter-select")).toEqual(supported);
   });
 
   // ---- Filter select interaction ----------------------------------------------------------------
 
-  it("updates the displayed filter and state when the select value changes", () => {
+  it("updates the displayed filter and state when the selection changes", async () => {
     const { container } = render(<TestWrapper initialFilter={KeyFilter.Auto} />);
-    const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-    fireEvent.change(select, { target: { value: KeyFilter.All } });
-    expect(select.value).toBe(KeyFilter.All);
+    await selectOption(container, "#key-filter-select", KeyFilter.All);
+    expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.All);
     expect(currentFilter).toBe(KeyFilter.All);
   });
 
@@ -201,8 +200,7 @@ describe("KeyFilterSelect", () => {
 
   it("shows the settings button after switching to Custom filter", async () => {
     const { container } = render(<TestWrapper initialFilter={KeyFilter.Auto} />);
-    const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-    fireEvent.change(select, { target: { value: KeyFilter.Custom } });
+    await selectOption(container, "#key-filter-select", KeyFilter.Custom);
     await waitFor(() =>
       expect(container.querySelector("#customize-keys-button")).toBeInTheDocument(),
     );
@@ -210,8 +208,7 @@ describe("KeyFilterSelect", () => {
 
   it("hides the settings button after switching away from Custom filter", async () => {
     const { container } = render(<TestWrapper initialFilter={KeyFilter.Custom} />);
-    const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-    fireEvent.change(select, { target: { value: KeyFilter.All } });
+    await selectOption(container, "#key-filter-select", KeyFilter.All);
     await waitFor(() =>
       expect(container.querySelector("#customize-keys-button")).not.toBeInTheDocument(),
     );

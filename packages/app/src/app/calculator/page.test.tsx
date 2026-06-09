@@ -6,6 +6,7 @@ import { render, waitFor, cleanup } from "@testing-library/react";
 import CalculatorPage from "./page";
 
 import { TEST_USER_A } from "@/lib/database/assets";
+import { getSelectedOptionLabel } from "@/__tests__/unit/select";
 
 // ---------------------------------------------------------------------------
 // Test helpers, mocks, and setup
@@ -147,26 +148,30 @@ describe("Calculator Page", () => {
       mockUseSearchParams.mockReturnValue(new URLSearchParams());
     });
 
-    const recipeSelect = (container: HTMLElement) =>
-      container.querySelector("#recipe-selection select") as HTMLSelectElement;
+    const recipeLabel = (container: HTMLElement) =>
+      getSelectedOptionLabel(container, "#recipe-selection");
 
     it("defaults to slot 0 when no slot param is given", () => {
       const { container } = render(<CalculatorPage />);
-      expect(recipeSelect(container)?.value).toBe("0");
+      expect(recipeLabel(container)).toBe("Recipe");
     });
 
-    it.each([0, 1, 2])("selects slot %i when valid ?slot=%i", (slot) => {
+    it.each([
+      [0, "Recipe"],
+      [1, "Ref A"],
+      [2, "Ref B"],
+    ])("selects slot %i when valid ?slot=%i", (slot, label) => {
       mockUseSearchParams.mockReturnValue(new URLSearchParams(`slot=${slot}`));
 
       const { container } = render(<CalculatorPage />);
-      expect(recipeSelect(container)?.value).toBe(String(slot));
+      expect(recipeLabel(container)).toBe(label);
     });
 
     it.each([-1, 3, 99, "abc"])("defaults to slot 0 for invalid slot %s", (slot) => {
       mockUseSearchParams.mockReturnValue(new URLSearchParams(`slot=${slot}`));
 
       const { container } = render(<CalculatorPage />);
-      expect(recipeSelect(container)?.value).toBe("0");
+      expect(recipeLabel(container)).toBe("Recipe");
     });
   });
 });

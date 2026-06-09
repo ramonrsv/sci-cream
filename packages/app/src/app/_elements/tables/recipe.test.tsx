@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/vitest";
 
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach, type Mock } from "vitest";
-import { render, screen, cleanup, waitFor, within, fireEvent } from "@testing-library/react";
+import { render, screen, cleanup, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { type SetStateAction, useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
@@ -29,6 +29,7 @@ import {
 
 import { RecipeID, getLightRecipe } from "@/__tests__/assets";
 import { makeMockRecipe } from "@/__tests__/unit/util";
+import { getSelectedOptionLabel, selectOption } from "@/__tests__/unit/select";
 
 vi.mock("@workspace/sci-cream", async () => {
   const actual = await vi.importActual("@workspace/sci-cream");
@@ -203,18 +204,14 @@ describe("RecipeEditor", () => {
   it("should render recipe selector", () => {
     const { container } = render(<RecipeEditor props={makeRecipeEditorProps([0, 1])} />);
 
-    const select = container.querySelector("select") as HTMLSelectElement;
-    expect(select).toBeInTheDocument();
-    expect(select).toHaveValue("0");
-    expect(within(select).getByText("Recipe")).toBeInTheDocument();
+    expect(getSelectedOptionLabel(container, "#recipe-selection")).toBe("Recipe");
   });
 
   it("should select the slot given by initialRecipeIdx on first render", () => {
     const { container } = render(
       <RecipeEditor props={{ ...makeRecipeEditorProps([0, 1, 2]), initialRecipeIdx: 2 }} />,
     );
-    const select = container.querySelector("select") as HTMLSelectElement;
-    expect(select).toHaveValue("2");
+    expect(getSelectedOptionLabel(container, "#recipe-selection")).toBe("Ref B");
   });
 
   it("should render action buttons", () => {
@@ -363,8 +360,6 @@ describe("RecipeEditor", () => {
     recipeContext.recipes[1].ingredientRows[0].name = "Ingredient B";
     recipeContext.recipes[1].ingredientRows[0].quantity = 20;
 
-    const user = userEvent.setup();
-
     const { container } = render(<RecipeEditorWithSpy />);
 
     /** Get the first ingredient name search input element within the container */
@@ -381,17 +376,14 @@ describe("RecipeEditor", () => {
       ) as HTMLInputElement;
     }
 
-    const select = container.querySelector("select") as HTMLSelectElement;
-    expect(select).toHaveValue("0");
-    expect(screen.queryByText("Recipe")).toBeInTheDocument();
+    expect(getSelectedOptionLabel(container, "#recipe-selection")).toBe("Recipe");
     await waitFor(() => {
       expect(getFirstSearchInputElement().value).toBe("Ingredient A");
       expect(getFirstQuantityInputElement().value).toBe("10");
     });
 
-    await user.selectOptions(select, "1");
-    expect(select).toHaveValue("1");
-    expect(screen.queryByText("Ref A")).toBeInTheDocument();
+    await selectOption(container, "#recipe-selection", "Ref A");
+    expect(getSelectedOptionLabel(container, "#recipe-selection")).toBe("Ref A");
     await waitFor(() => {
       expect(getFirstSearchInputElement().value).toBe("Ingredient B");
       expect(getFirstQuantityInputElement().value).toBe("20");

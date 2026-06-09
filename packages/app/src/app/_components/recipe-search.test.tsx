@@ -8,6 +8,11 @@ import { type RecipeEntryJson } from "@workspace/sci-cream";
 import { makeWasmResources, useSeededWasmResources } from "@/lib/wasm-resources";
 import { RecipeSearch, recipeMatchesQuery, type GroupedRecipe } from "./recipe-search";
 import type { SavedRecipeJson } from "@/lib/data";
+import {
+  getSelectOptionLabelsByLabel,
+  getSelectedOptionLabelByLabel,
+  selectOptionByLabel,
+} from "@/__tests__/unit/select";
 
 // ---------------------------------------------------------------------------
 // Global stubs
@@ -268,18 +273,17 @@ describe("RecipeSearch", () => {
       expect(screen.queryByRole("option", { name: "Ref A" })).not.toBeInTheDocument();
     });
 
-    it("shows the slot select when multiple slots are provided", () => {
+    it("shows the slot select when multiple slots are provided", async () => {
       render(<RecipeSearch onLoadRecipe={vi.fn()} slots={[0, 1, 2]} />);
       fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
-      expect(screen.getByRole("option", { name: "Ref A" })).toBeInTheDocument();
+      expect(await getSelectOptionLabelsByLabel("Target slot")).toContain("Ref A");
     });
 
-    it("calls onLoadRecipe with the slot selected in the combobox", () => {
+    it("calls onLoadRecipe with the slot selected in the picker", async () => {
       const onLoadRecipe = vi.fn();
       render(<RecipeSearch onLoadRecipe={onLoadRecipe} slots={[0, 1, 2]} />);
       fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
-      const slotSelect = screen.getByRole("option", { name: "Recipe" }).closest("select")!;
-      fireEvent.change(slotSelect, { target: { value: "1" } });
+      await selectOptionByLabel("Target slot", "Ref A");
       fireEvent.click(screen.getByRole("button", { name: "Load" }));
       expect(onLoadRecipe).toHaveBeenCalledWith(
         expect.objectContaining({ name: "Standard Base" }),
@@ -388,20 +392,19 @@ describe("RecipeSearch", () => {
     it("defaults to the latest version (last in the list)", () => {
       render(<RecipeSearch savedRecipes={[multiVersionEntry]} />);
       fireEvent.click(screen.getByRole("button", { name: /Iterated Recipe/ }));
-      const select = screen.getByLabelText("Recipe version") as HTMLSelectElement;
-      // Last option is index 1 (v2)
-      expect(select.value).toBe("1");
-      // The latest version's comments are pre-filled in the comments textarea (when callback provided)
+      // The latest version (v2) is selected, shown as the trigger label with the "latest" marker.
+      const selectedLabel = getSelectedOptionLabelByLabel("Recipe version");
+      expect(selectedLabel).toContain("v2");
+      expect(selectedLabel).toContain("latest");
     });
 
-    it("loads the selected version when Load is clicked", () => {
+    it("loads the selected version when Load is clicked", async () => {
       const onLoadRecipe = vi.fn();
       render(
         <RecipeSearch savedRecipes={[multiVersionEntry]} onLoadRecipe={onLoadRecipe} slots={[0]} />,
       );
       fireEvent.click(screen.getByRole("button", { name: /Iterated Recipe/ }));
-      const select = screen.getByLabelText("Recipe version") as HTMLSelectElement;
-      fireEvent.change(select, { target: { value: "0" } });
+      await selectOptionByLabel("Recipe version", /^v1\b/);
       fireEvent.click(screen.getByRole("button", { name: "Load" }));
       expect(onLoadRecipe).toHaveBeenCalledWith(
         expect.objectContaining({ name: "Iterated Recipe" }),
@@ -451,7 +454,7 @@ describe("RecipeSearch", () => {
       expect(textarea.value).toBe("After sweetener tweak.");
     });
 
-    it("re-seeds the textarea when switching versions", () => {
+    it("re-seeds the textarea when switching versions", async () => {
       render(
         <RecipeSearch
           savedRecipes={[savedWithVersions]}
@@ -459,8 +462,7 @@ describe("RecipeSearch", () => {
         />,
       );
       fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
-      const versionSelect = screen.getByLabelText("Recipe version") as HTMLSelectElement;
-      fireEvent.change(versionSelect, { target: { value: "0" } });
+      await selectOptionByLabel("Recipe version", /^v1\b/);
       const textarea = screen.getByLabelText("Recipe comments") as HTMLTextAreaElement;
       expect(textarea.value).toBe("Tart but smooth.");
     });

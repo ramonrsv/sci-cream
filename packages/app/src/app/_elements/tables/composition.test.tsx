@@ -1,7 +1,9 @@
 import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi, afterEach } from "vitest";
-import { render, screen, cleanup, fireEvent } from "@testing-library/react";
+import { render, screen, cleanup } from "@testing-library/react";
+
+import { getSelectedOptionLabel, selectOption } from "@/__tests__/unit/select";
 
 import { CompositionTable, CompositionView } from "@/app/_elements/tables/composition";
 import { getCompKeys } from "@/app/_elements/tables/composition-breakdown";
@@ -168,26 +170,23 @@ describe("CompositionView", () => {
   describe("KeyFilter Integration", () => {
     it("should default to KeyFilter.NonZero", () => {
       const { container } = render(<CompositionView composition={new Composition()} />);
-      const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-      expect(select.value).toBe(KeyFilter.NonZero);
+      expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.NonZero);
     });
 
-    it("should show all comp keys when filter is set to All", () => {
+    it("should show all comp keys when filter is set to All", async () => {
       const { container } = render(<CompositionView composition={new Composition()} />);
-      const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-      fireEvent.change(select, { target: { value: KeyFilter.All } });
+      await selectOption(container, "#key-filter-select", KeyFilter.All);
       expect(container.querySelectorAll("tbody tr")).toHaveLength(getCompKeys().length);
     });
 
-    it("should show fewer rows than All when some keys are zero", () => {
+    it("should show fewer rows than All when some keys are zero", async () => {
       const composition = getWholeMilkComposition();
       const { container } = render(<CompositionView composition={composition} />);
-      const select = container.querySelector("#key-filter-select select") as HTMLSelectElement;
 
-      fireEvent.change(select, { target: { value: KeyFilter.All } });
+      await selectOption(container, "#key-filter-select", KeyFilter.All);
       const allRowCount = container.querySelectorAll("tbody tr").length;
 
-      fireEvent.change(select, { target: { value: KeyFilter.NonZero } });
+      await selectOption(container, "#key-filter-select", KeyFilter.NonZero);
       const nonZeroRowCount = container.querySelectorAll("tbody tr").length;
 
       expect(nonZeroRowCount).toBeGreaterThan(0);

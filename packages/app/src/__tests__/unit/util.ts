@@ -6,7 +6,8 @@ import { screen, fireEvent, waitFor, within } from "@testing-library/react";
 import { propKeyAsModifiedShortStr } from "@/app/_elements/charts/properties-chart";
 import { makeEmptyRecipe, makeEmptyRecipeContext } from "@/lib/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
-import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
+import { QtyToggle, qtyToggleToShortStr } from "@/app/_elements/selects/qty-toggle-select";
+import { selectOption } from "@/__tests__/unit/select";
 
 import {
   CompKey,
@@ -18,7 +19,7 @@ import {
   prop_key_as_med_str,
 } from "@workspace/sci-cream";
 
-import { RecipeID, getLightRecipe, recipeIdToIdx } from "@/__tests__/assets";
+import { RecipeID, getLightRecipe, recipeIdToIdx, recipeIdToOption } from "@/__tests__/assets";
 import { WASM_BRIDGE } from "@/__tests__/util";
 
 /** Builds a Recipe using the recipe asset for the requested RecipeID, at the corresponding idx */
@@ -71,27 +72,17 @@ export const getPropIndex = (labels: string[], propKey: PropKey) =>
 
 /** Finds a `RecipeSelect` element and selects the requested RecipeID */
 export async function setRecipeSelect(container: HTMLElement, optionValue: RecipeID) {
-  const recipeIdx = recipeIdToIdx(optionValue);
-  const recipeSelect = container.querySelector("#recipe-selection select") as HTMLSelectElement;
-  expect(recipeSelect).toBeInTheDocument();
-  fireEvent.change(recipeSelect, { target: { value: recipeIdx } });
-  await waitFor(() => expect(recipeSelect.value).toBe(recipeIdx.toString()));
+  await selectOption(container, "#recipe-selection", recipeIdToOption(optionValue));
 }
 
 /** Find a `KeyFilterSelect` element and select the requested key filter option. */
 export async function setKeyFilterSelect(container: HTMLElement, optionValue: KeyFilter) {
-  const filterSelect = container.querySelector("#key-filter-select select") as HTMLSelectElement;
-  expect(filterSelect).toBeInTheDocument();
-  fireEvent.change(filterSelect, { target: { value: optionValue } });
-  await waitFor(() => expect(filterSelect.value).toBe(optionValue));
+  await selectOption(container, "#key-filter-select", optionValue);
 }
 
 /** Find a `QtyToggle` element and select the requested quantity toggle option. */
 export async function setQtyToggle(container: HTMLElement, optionValue: QtyToggle) {
-  const qtyToggle = container.querySelector("#qty-toggle-select select") as HTMLSelectElement;
-  expect(qtyToggle).toBeInTheDocument();
-  fireEvent.change(qtyToggle, { target: { value: optionValue } });
-  await waitFor(() => expect(qtyToggle.value).toBe(optionValue));
+  await selectOption(container, "#qty-toggle-select", qtyToggleToShortStr(optionValue));
 }
 
 /** Find the 'Clear' button in `RecipeGrid` */

@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
+import { QtyToggle, qtyToggleToShortStr } from "@/app/_elements/selects/qty-toggle-select";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { CompKey, comp_key_as_med_str, compToPropKey } from "@workspace/sci-cream";
 
@@ -28,6 +28,7 @@ import {
   loginAsTestUserWithCredentials,
 } from "@/__tests__/e2e/util";
 
+import { selectOption } from "@/__tests__/e2e/select";
 import { formatTimeBenchmarkResultForUpload } from "@/__benches__/util";
 import {
   allBenchmarkResultsForUpload,
@@ -86,7 +87,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.waitForLoadState("networkidle");
 
       const compGridQtyToggle = getCompositionBreakdownPanelQtyToggleSelectInput(page);
-      await compGridQtyToggle.selectOption(QtyToggle.Composition);
+      await selectOption(page, compGridQtyToggle, qtyToggleToShortStr(QtyToggle.Composition));
 
       const ingNameInput = getIngredientNameInputAtIdx(page, 0);
       const milkFatStr = comp_key_as_med_str(CompKey.MilkFat);
@@ -124,7 +125,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.waitForLoadState("networkidle");
 
       const propsGridQtyToggle = getPropertiesPanelQtyToggleSelectInput(page);
-      await propsGridQtyToggle.selectOption(QtyToggle.Quantity);
+      await selectOption(page, propsGridQtyToggle, qtyToggleToShortStr(QtyToggle.Quantity));
 
       const ingNameInput = getIngredientNameInputAtIdx(page, 0);
       await ingNameInput.fill("2% Milk");
@@ -148,7 +149,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.waitForLoadState("networkidle");
 
       const compGridKeyFilterSelect = getCompositionBreakdownPanelKeyFilterSelectInput(page);
-      await compGridKeyFilterSelect.selectOption(KeyFilter.All);
+      await selectOption(page, compGridKeyFilterSelect, KeyFilter.All);
 
       const elements = await getRecipeUpdateCheckElements(page, RecipeID.Main);
       const expected = getExpectedRecipeUpdateValues(getLightRecipe(RecipeID.Main));
@@ -180,8 +181,8 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       const expected = getExpectedRecipeUpdateValues(getLightRecipe(RecipeID.Main));
 
       return timeExecution(async () => {
-        await compGridRecipeSelect.selectOption(RecipeID.Main);
-        await recipeGridRecipeSelect.selectOption(RecipeID.Main);
+        await selectOption(page, compGridRecipeSelect, RecipeID.Main);
+        await selectOption(page, recipeGridRecipeSelect, RecipeID.Main);
         await expectRecipeElementsToHaveExpected(elements, expected);
       });
     });

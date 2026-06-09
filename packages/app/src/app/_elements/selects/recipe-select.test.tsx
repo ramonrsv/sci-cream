@@ -2,10 +2,17 @@ import "@testing-library/jest-dom/vitest";
 
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, cleanup, fireEvent } from "@testing-library/react";
+import { render, cleanup } from "@testing-library/react";
 import { useState, useEffect } from "react";
 
 import { type Recipe } from "@/lib/recipe";
+import {
+  getSelectControl,
+  getSelectedOptionLabel,
+  getSelectOptionLabels,
+  selectOption,
+} from "@/__tests__/unit/select";
+
 import { RecipeSelect, recipeSlotOrDefault } from "./recipe-select";
 
 // ---------------------------------------------------------------------------
@@ -68,64 +75,61 @@ describe("RecipeSelect", () => {
     await vi.waitFor(() => {}, { timeout: 100 });
   });
 
-  it("renders a select inside #recipe-selection", () => {
+  it("renders a select control inside #recipe-selection", () => {
     const { container } = render(<TestWrapper />);
-    const wrapper = container.querySelector("#recipe-selection");
-    expect(wrapper).toBeInTheDocument();
-    expect(wrapper!.querySelector("select")).toBeInTheDocument();
+    expect(container.querySelector("#recipe-selection")).toBeInTheDocument();
+    expect(getSelectControl(container, "#recipe-selection")).toBeInTheDocument();
   });
 
-  it("shows recipe names as option text for enabled recipes", () => {
+  it("shows recipe names as options for enabled recipes", async () => {
     const { container } = render(<TestWrapper enabledRecipeIndices={[0, 1, 2]} />);
-    const select = container.querySelector("#recipe-selection select") as HTMLSelectElement;
-    const optionTexts = Array.from(select.options).map((o) => o.text);
-    expect(optionTexts).toEqual(["Recipe", "Ref A", "Ref B"]);
+    expect(await getSelectOptionLabels(container, "#recipe-selection")).toEqual([
+      "Recipe",
+      "Ref A",
+      "Ref B",
+    ]);
   });
 
-  it("renders only enabled recipe options, not all recipes", () => {
+  it("renders only enabled recipe options, not all recipes", async () => {
     const { container } = render(<TestWrapper enabledRecipeIndices={[0, 2]} />);
-    const select = container.querySelector("#recipe-selection select") as HTMLSelectElement;
-    const optionTexts = Array.from(select.options).map((o) => o.text);
-    expect(optionTexts).toEqual(["Recipe", "Ref B"]);
-    expect(optionTexts).not.toContain("Ref A");
+    const labels = await getSelectOptionLabels(container, "#recipe-selection");
+    expect(labels).toEqual(["Recipe", "Ref B"]);
+    expect(labels).not.toContain("Ref A");
   });
 
-  it("reflects the initial recipe index as the selected value", () => {
+  it("reflects the initial recipe index in the selected label", () => {
     const { container } = render(<TestWrapper initialIdx={1} />);
-    const select = container.querySelector("#recipe-selection select") as HTMLSelectElement;
-    expect(select.value).toBe("1");
+    expect(getSelectedOptionLabel(container, "#recipe-selection")).toBe("Ref A");
   });
 
-  it("uses the recipe index as the option value", () => {
+  it("maps recipe indices to the corresponding option labels", async () => {
     const { container } = render(<TestWrapper enabledRecipeIndices={[0, 2]} />);
-    const select = container.querySelector("#recipe-selection select") as HTMLSelectElement;
-    const optionValues = Array.from(select.options).map((o) => o.value);
-    expect(optionValues).toEqual(["0", "2"]);
+    const labels = await getSelectOptionLabels(container, "#recipe-selection");
+    expect(labels).toEqual(["Recipe", "Ref B"]);
   });
 
-  it("updates state when the user changes the selection", () => {
+  it("updates state when the user changes the selection", async () => {
     const { container } = render(<TestWrapper />);
-    const select = container.querySelector("#recipe-selection select") as HTMLSelectElement;
-    fireEvent.change(select, { target: { value: "1" } });
-    expect(select.value).toBe("1");
+    await selectOption(container, "#recipe-selection", "Ref A");
     expect(currentRecipeIdx).toBe(1);
   });
 
-  it("cycles through all enabled recipes and updates state correctly", () => {
+  it("cycles through all enabled recipes and updates state correctly", async () => {
     const { container } = render(<TestWrapper enabledRecipeIndices={[0, 1, 2]} />);
-    const select = container.querySelector("#recipe-selection select") as HTMLSelectElement;
 
-    for (const idx of [0, 1, 2]) {
-      fireEvent.change(select, { target: { value: String(idx) } });
-      expect(select.value).toBe(String(idx));
+    for (const [idx, label] of [
+      [0, "Recipe"],
+      [1, "Ref A"],
+      [2, "Ref B"],
+    ] as const) {
+      await selectOption(container, "#recipe-selection", label);
       expect(currentRecipeIdx).toBe(idx);
     }
   });
 
-  it("renders no options when enabledRecipeIndices is empty", () => {
+  it("renders no options when enabledRecipeIndices is empty", async () => {
     const { container } = render(<TestWrapper enabledRecipeIndices={[]} />);
-    const select = container.querySelector("#recipe-selection select") as HTMLSelectElement;
-    expect(select.options).toHaveLength(0);
+    expect(await getSelectOptionLabels(container, "#recipe-selection")).toEqual([]);
   });
 });
 

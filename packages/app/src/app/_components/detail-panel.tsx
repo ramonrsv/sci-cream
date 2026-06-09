@@ -4,6 +4,7 @@ import { ReactNode, useState } from "react";
 import { Trash } from "lucide-react";
 
 import { EntitySource } from "@/app/_components/entity-search";
+import { Select, type SelectOption } from "@/app/_elements/selects/select";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 
 /**
@@ -57,21 +58,22 @@ export function LoadAction({
   label?: string;
 }) {
   const [targetSlot, setTargetSlot] = useState<number>(slots?.[0] ?? 0);
+
+  const slotOptions: SelectOption<number>[] = (slots ?? []).map((slot) => ({
+    value: slot,
+    label: slotLabel?.(slot) ?? slot,
+  }));
+
   return (
     <>
       {slots && slots.length > 1 && (
-        <select
+        <Select
           value={targetSlot}
-          onChange={(e) => setTargetSlot(parseInt(e.target.value))}
-          className="select-input text-sm"
-          aria-label="Target slot"
-        >
-          {slots.map((slot) => (
-            <option key={slot} value={slot}>
-              {slotLabel?.(slot) ?? slot}
-            </option>
-          ))}
-        </select>
+          onChange={setTargetSlot}
+          options={slotOptions}
+          ariaLabel="Target slot"
+          className="text-sm"
+        />
       )}
       <button onClick={() => onLoad(targetSlot)} className="action-button px-2 py-0.5 text-sm">
         {label}
