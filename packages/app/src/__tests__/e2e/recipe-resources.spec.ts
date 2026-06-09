@@ -5,7 +5,7 @@ import { RecipeID, getLightRecipe } from "@/__tests__/assets";
 import {
   getExpectedRecipeUpdateValues,
   getRecipeUpdateCheckElements,
-  pasteRecipeIntoGrid,
+  pasteRecipeIntoEditor,
   expectRecipePasteCompleted,
   loginAsTestUserWithCredentials,
   goToPageAndWaitFor,
@@ -56,7 +56,7 @@ test.describe("Recipe Resources", () => {
 
     const pasteStart = Date.now();
     for (const recipeId of [RecipeID.Main, RecipeID.RefA, RecipeID.RefB]) {
-      await pasteRecipeIntoGrid(page, browserName, recipeId);
+      await pasteRecipeIntoEditor(page, browserName, recipeId);
     }
     const pasteEnd = Date.now();
 
@@ -99,7 +99,7 @@ test.describe("Recipe Resources", () => {
       RecipeID.RefAWithUserDefined,
       RecipeID.RefBWithUserDefined,
     ]) {
-      await pasteRecipeIntoGrid(page, browserName, recipeId);
+      await pasteRecipeIntoEditor(page, browserName, recipeId);
 
       const expected = getExpectedRecipeUpdateValues(getLightRecipe(recipeId));
       const elements = await getRecipeUpdateCheckElements(page, recipeId);

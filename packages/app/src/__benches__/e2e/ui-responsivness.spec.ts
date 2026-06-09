@@ -9,13 +9,13 @@ import { RecipeID, getRecipeText, getLightRecipe } from "@/__tests__/assets";
 import {
   getIngredientNameInputAtIdx,
   getIngredientQtyInputAtIdx,
-  getRecipeGridRecipeSelector,
-  getMixPropertiesQtyToggleSelectInput,
-  getMixPropertyValueElement,
-  getCompositionGridRecipeSelector,
-  getCompositionGridQtyToggleSelectInput,
-  getCompositionGridKeyFilterSelectInput,
-  getCompositionValueElement,
+  getRecipeEditorPanelRecipeSelector,
+  getPropertiesPanelQtyToggleSelectInput,
+  getPropertiesPanelValueElement,
+  getCompositionBreakdownPanelRecipeSelector,
+  getCompositionBreakdownPanelQtyToggleSelectInput,
+  getCompositionBreakdownPanelKeyFilterSelectInput,
+  getCompositionBreakdownTableValueElement,
   pasteToClipboard,
   getPasteButton,
   getRecipeUpdateCheckElements,
@@ -85,7 +85,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      const compGridQtyToggle = getCompositionGridQtyToggleSelectInput(page);
+      const compGridQtyToggle = getCompositionBreakdownPanelQtyToggleSelectInput(page);
       await compGridQtyToggle.selectOption(QtyToggle.Composition);
 
       const ingNameInput = getIngredientNameInputAtIdx(page, 0);
@@ -94,7 +94,11 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       return timeExecution(async () => {
         await ingNameInput.fill("2% Milk");
         await page.getByRole("columnheader", { name: milkFatStr }).waitFor();
-        const milkFatCompValue = await getCompositionValueElement(page, 0, CompKey.MilkFat);
+        const milkFatCompValue = await getCompositionBreakdownTableValueElement(
+          page,
+          0,
+          CompKey.MilkFat,
+        );
         await expect(milkFatCompValue).toHaveText("2");
       });
     });
@@ -119,7 +123,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      const propsGridQtyToggle = getMixPropertiesQtyToggleSelectInput(page);
+      const propsGridQtyToggle = getPropertiesPanelQtyToggleSelectInput(page);
       await propsGridQtyToggle.selectOption(QtyToggle.Quantity);
 
       const ingNameInput = getIngredientNameInputAtIdx(page, 0);
@@ -127,7 +131,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await expect(ingNameInput).toHaveValue("2% Milk");
 
       const ingQtyInput = getIngredientQtyInputAtIdx(page, 0);
-      const milkFatPropValue = getMixPropertyValueElement(page, compToPropKey(CompKey.MilkFat));
+      const milkFatPropValue = getPropertiesPanelValueElement(page, compToPropKey(CompKey.MilkFat));
 
       return timeExecution(async () => {
         await ingQtyInput.fill("100");
@@ -143,7 +147,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.goto("");
       await page.waitForLoadState("networkidle");
 
-      const compGridKeyFilterSelect = getCompositionGridKeyFilterSelectInput(page);
+      const compGridKeyFilterSelect = getCompositionBreakdownPanelKeyFilterSelectInput(page);
       await compGridKeyFilterSelect.selectOption(KeyFilter.All);
 
       const elements = await getRecipeUpdateCheckElements(page, RecipeID.Main);
@@ -169,8 +173,8 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
       await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.RefA);
 
-      const recipeGridRecipeSelect = getRecipeGridRecipeSelector(page);
-      const compGridRecipeSelect = getCompositionGridRecipeSelector(page);
+      const recipeGridRecipeSelect = getRecipeEditorPanelRecipeSelector(page);
+      const compGridRecipeSelect = getCompositionBreakdownPanelRecipeSelector(page);
 
       const elements = await getRecipeUpdateCheckElements(page, RecipeID.Main);
       const expected = getExpectedRecipeUpdateValues(getLightRecipe(RecipeID.Main));

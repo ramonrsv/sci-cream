@@ -6,7 +6,7 @@ import { RecipeID } from "@/__tests__/assets";
 import { makeRecipesTestName, makeRecipesScreenshotFilename } from "@/__tests__/visual/assets";
 import {
   getIngredientNameInputAtIdx,
-  getMixPropertiesKeyFilterSelectInput,
+  getPropertiesPanelKeyFilterSelectInput,
   pasteRecipeAndWaitForUpdate,
   goToPageAndWaitFor,
   goToPageAndPasteRecipes,
@@ -228,7 +228,7 @@ test.describe("Visual Regression: Component Variations", () => {
 
     await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
 
-    const keyFilter = getMixPropertiesKeyFilterSelectInput(page);
+    const keyFilter = getPropertiesPanelKeyFilterSelectInput(page);
     await keyFilter.selectOption(KeyFilter.All);
 
     const propertiesGrid = page.locator("#properties-panel");

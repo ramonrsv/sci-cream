@@ -5,9 +5,9 @@ import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { RecipeID, recipeIdToOption } from "@/__tests__/assets";
 import {
   goToPageAndWaitFor,
-  getRecipeGridRecipeSelector,
-  getMixPropertiesKeyFilterSelectInput,
-  getCompositionGridQtyToggleSelectInput,
+  getRecipeEditorPanelRecipeSelector,
+  getPropertiesPanelKeyFilterSelectInput,
+  getCompositionBreakdownPanelQtyToggleSelectInput,
 } from "@/__tests__/e2e/util";
 
 // ---------------------------------------------------------------------------
@@ -18,7 +18,7 @@ test.describe("Visual Regression: QtyToggleSelect", () => {
   test("Select Comp, Qty(g), Qty(%)", async ({ page }) => {
     await goToPageAndWaitFor(page);
 
-    const selector = getCompositionGridQtyToggleSelectInput(page);
+    const selector = getCompositionBreakdownPanelQtyToggleSelectInput(page);
     await expect(selector).toBeVisible();
 
     await selector.selectOption(QtyToggle.Composition);
@@ -34,7 +34,7 @@ test.describe("Visual Regression: QtyToggleSelect", () => {
   test("Clicked, hovered", async ({ page }) => {
     await goToPageAndWaitFor(page);
 
-    const selector = getCompositionGridQtyToggleSelectInput(page);
+    const selector = getCompositionBreakdownPanelQtyToggleSelectInput(page);
     await expect(selector).toBeVisible();
 
     await selector.click();
@@ -53,7 +53,7 @@ test.describe("Visual Regression: KeyFilterSelect", () => {
   test("Select Auto, Non-Zero, All, Custom", async ({ page }) => {
     await goToPageAndWaitFor(page);
 
-    const selector = getMixPropertiesKeyFilterSelectInput(page);
+    const selector = getPropertiesPanelKeyFilterSelectInput(page);
     await expect(selector).toBeVisible();
 
     await selector.selectOption(KeyFilter.Auto);
@@ -72,7 +72,7 @@ test.describe("Visual Regression: KeyFilterSelect", () => {
   test("Clicked, hovered", async ({ page }) => {
     await goToPageAndWaitFor(page);
 
-    const selector = getMixPropertiesKeyFilterSelectInput(page);
+    const selector = getPropertiesPanelKeyFilterSelectInput(page);
     await expect(selector).toBeVisible();
 
     await selector.click();
@@ -85,7 +85,7 @@ test.describe("Visual Regression: KeyFilterSelect", () => {
   test("Custom popup open", async ({ page }) => {
     await goToPageAndWaitFor(page);
 
-    const selector = getMixPropertiesKeyFilterSelectInput(page);
+    const selector = getPropertiesPanelKeyFilterSelectInput(page);
     await expect(selector).toBeVisible();
     await selector.selectOption(KeyFilter.Custom);
 
@@ -108,7 +108,7 @@ test.describe("Visual Regression: RecipeSelect", () => {
   test("Select Main, RefA, RefB", async ({ page }) => {
     await goToPageAndWaitFor(page);
 
-    const selector = getRecipeGridRecipeSelector(page);
+    const selector = getRecipeEditorPanelRecipeSelector(page);
     await expect(selector).toBeVisible();
 
     await selector.selectOption(recipeIdToOption(RecipeID.Main));
@@ -124,7 +124,7 @@ test.describe("Visual Regression: RecipeSelect", () => {
   test("Clicked, hovered", async ({ page }) => {
     await goToPageAndWaitFor(page);
 
-    const selector = getRecipeGridRecipeSelector(page);
+    const selector = getRecipeEditorPanelRecipeSelector(page);
     await expect(selector).toBeVisible();
 
     await selector.click();
