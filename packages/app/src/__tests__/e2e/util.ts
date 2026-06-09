@@ -34,6 +34,25 @@ declare global {
   }
 }
 
+/** Get `ThemeSelect`'s trigger button in the header */
+export function getThemeSelectButton(page: Page) {
+  return page.locator("#theme-select button").first();
+}
+
+/** Get `ThemeSelect`'s open options popup */
+export function getThemeSelectOptions(page: Page) {
+  return page.locator("#theme-select-options");
+}
+
+/**
+ * Expand the sidebar navbar so the hidden buttons, e.g. `ThemeSelect`, are visible and not clipped.
+ * The navbar is collapsed by default (`DEFAULT_COLLAPSED_NAVBAR = true`), behind `overflow-hidden`.
+ */
+export async function expandNavbar(page: Page) {
+  await page.locator("#expand-sidebar-button").click();
+  await expect(page.locator("#collapse-sidebar-button")).toBeVisible();
+}
+
 /** Get `RecipeEditorPanel`'s recipe selector element, in `RecipeSelect` */
 export function getRecipeEditorPanelRecipeSelector(page: Page) {
   return page.locator("#recipe-editor-panel #recipe-selection select").first();

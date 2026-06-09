@@ -8,6 +8,9 @@ import {
   getRecipeEditorPanelRecipeSelector,
   getPropertiesPanelKeyFilterSelectInput,
   getCompositionBreakdownPanelQtyToggleSelectInput,
+  getThemeSelectButton,
+  getThemeSelectOptions,
+  expandNavbar,
 } from "@/__tests__/e2e/util";
 
 // ---------------------------------------------------------------------------
@@ -132,5 +135,60 @@ test.describe("Visual Regression: RecipeSelect", () => {
 
     await selector.hover();
     await expect(selector).toHaveScreenshot("recipe-select-hovered.png");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// ThemeSelect
+// ---------------------------------------------------------------------------
+
+test.describe("Visual Regression: ThemeSelect", () => {
+  test("Select Light, Dark, System", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+    await expandNavbar(page);
+
+    const button = getThemeSelectButton(page);
+    const options = getThemeSelectOptions(page);
+
+    await button.click();
+    await expect(options).toBeVisible();
+    await options.getByText("Light").click();
+    await expect(button).toHaveScreenshot("theme-select-light.png");
+
+    await button.click();
+    await expect(options).toBeVisible();
+    await options.getByText("Dark").click();
+    await expect(button).toHaveScreenshot("theme-select-dark.png");
+
+    await button.click();
+    await expect(options).toBeVisible();
+    await options.getByText("System").click();
+    await expect(button).toHaveScreenshot("theme-select-system.png");
+  });
+
+  test("Popup open", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+    await expandNavbar(page);
+
+    const button = getThemeSelectButton(page);
+    await button.click();
+
+    const options = getThemeSelectOptions(page);
+    await expect(options).toBeVisible();
+    await expect(options).toHaveScreenshot("theme-select-popup.png");
+  });
+
+  test("Clicked, hovered", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+    await expandNavbar(page);
+
+    const button = getThemeSelectButton(page);
+
+    await button.click();
+    await expect(button).toHaveScreenshot("theme-select-clicked.png");
+
+    await page.keyboard.press("Escape");
+    await button.hover();
+    await expect(button).toHaveScreenshot("theme-select-hovered.png");
   });
 });
