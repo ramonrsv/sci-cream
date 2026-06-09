@@ -269,10 +269,10 @@ impl fmt::Display for BalancingIssue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             Self::NonFiniteTarget { key, value } => {
-                write!(f, "target for '{}' is not finite ({value})", key.as_med_str())
+                write!(f, "Target for '{}' is not finite ({value})", key.as_med_str())
             }
             Self::NegativeTarget { key, value } => {
-                write!(f, "target for '{}' is negative ({value}), but it cannot be below zero", key.as_med_str())
+                write!(f, "Target for '{}' is negative ({value}), but it cannot be below zero", key.as_med_str())
             }
             Self::DuplicateTarget { key } => {
                 write!(f, "'{}' appears more than once in the targets", key.as_med_str())
@@ -281,11 +281,11 @@ impl fmt::Display for BalancingIssue {
                 write!(f, "'{}' appears more than once in the priorities", key.as_med_str())
             }
             Self::UnaffectableTarget { key } => {
-                write!(f, "no ingredient contributes to '{}', so its target cannot be affected", key.as_med_str())
+                write!(f, "No ingredient contributes to '{}', so its target cannot be affected", key.as_med_str())
             }
             Self::UnreachableTarget { key, target, min, max } => write!(
                 f,
-                "target for '{}' ({target:.2}) is outside the reachable range [{min:.2}, {max:.2}]",
+                "Target for '{}' ({target:.2}) is outside the reachable range [{min:.2}, {max:.2}]",
                 key.as_med_str()
             ),
             Self::DominanceViolation {
@@ -295,7 +295,7 @@ impl fmt::Display for BalancingIssue {
                 greater_target,
             } => write!(
                 f,
-                "target for '{lesser}' ({lesser_target:.2}) exceeds target for '{greater}' ({greater_target:.2}), but \
+                "Target for '{lesser}' ({lesser_target:.2}) exceeds target for '{greater}' ({greater_target:.2}), but \
                  no non-negative ingredient mix can satisfy both — every ingredient's '{lesser}' ≤ its '{greater}'",
                 lesser = lesser.as_med_str(),
                 greater = greater.as_med_str(),
@@ -313,7 +313,7 @@ impl fmt::Display for BalancingIssue {
                     .join(" + ");
                 write!(
                     f,
-                    "targets {parts} sum to {parts_target_sum:.2}, exceeding the target for '{whole}' \
+                    "Targets {parts} sum to {parts_target_sum:.2}, exceeding the target for '{whole}' \
                      ({whole_target:.2}), but no non-negative ingredient mix can satisfy them all — every \
                      ingredient's parts sum to ≤ its '{whole}'",
                     whole = whole.as_med_str(),
@@ -321,7 +321,7 @@ impl fmt::Display for BalancingIssue {
             }
             Self::PriorityWithoutTarget { key } => write!(
                 f,
-                "priority set for '{}', which is not among the targets, so it has no effect",
+                "Priority set for '{}', which is not among the targets, so it has no effect",
                 key.as_med_str()
             ),
         }
