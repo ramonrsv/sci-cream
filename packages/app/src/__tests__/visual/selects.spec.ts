@@ -1,0 +1,136 @@
+import { test, expect } from "@playwright/test";
+
+import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
+import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
+import { RecipeID, recipeIdToOption } from "@/__tests__/assets";
+import {
+  goToPageAndWaitFor,
+  getRecipeGridRecipeSelector,
+  getMixPropertiesKeyFilterSelectInput,
+  getCompositionGridQtyToggleSelectInput,
+} from "@/__tests__/e2e/util";
+
+// ---------------------------------------------------------------------------
+// QtyToggleSelect
+// ---------------------------------------------------------------------------
+
+test.describe("Visual Regression: QtyToggleSelect", () => {
+  test("Select Comp, Qty(g), Qty(%)", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+
+    const selector = getCompositionGridQtyToggleSelectInput(page);
+    await expect(selector).toBeVisible();
+
+    await selector.selectOption(QtyToggle.Composition);
+    await expect(selector).toHaveScreenshot("qty-toggle-select-comp.png");
+
+    await selector.selectOption(QtyToggle.Quantity);
+    await expect(selector).toHaveScreenshot("qty-toggle-select-qty.png");
+
+    await selector.selectOption(QtyToggle.Percentage);
+    await expect(selector).toHaveScreenshot("qty-toggle-select-percentage.png");
+  });
+
+  test("Clicked, hovered", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+
+    const selector = getCompositionGridQtyToggleSelectInput(page);
+    await expect(selector).toBeVisible();
+
+    await selector.click();
+    await expect(selector).toHaveScreenshot("qty-toggle-select-clicked.png");
+
+    await selector.hover();
+    await expect(selector).toHaveScreenshot("qty-toggle-select-hovered.png");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// KeyFilterSelect
+// ---------------------------------------------------------------------------
+
+test.describe("Visual Regression: KeyFilterSelect", () => {
+  test("Select Auto, Non-Zero, All, Custom", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+
+    const selector = getMixPropertiesKeyFilterSelectInput(page);
+    await expect(selector).toBeVisible();
+
+    await selector.selectOption(KeyFilter.Auto);
+    await expect(selector).toHaveScreenshot("key-filter-select-auto.png");
+
+    await selector.selectOption(KeyFilter.NonZero);
+    await expect(selector).toHaveScreenshot("key-filter-select-nonzero.png");
+
+    await selector.selectOption(KeyFilter.All);
+    await expect(selector).toHaveScreenshot("key-filter-select-all.png");
+
+    await selector.selectOption(KeyFilter.Custom);
+    await expect(selector).toHaveScreenshot("key-filter-select-custom.png");
+  });
+
+  test("Clicked, hovered", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+
+    const selector = getMixPropertiesKeyFilterSelectInput(page);
+    await expect(selector).toBeVisible();
+
+    await selector.click();
+    await expect(selector).toHaveScreenshot("key-filter-select-clicked.png");
+
+    await selector.hover();
+    await expect(selector).toHaveScreenshot("key-filter-select-hovered.png");
+  });
+
+  test("Custom popup open", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+
+    const selector = getMixPropertiesKeyFilterSelectInput(page);
+    await expect(selector).toBeVisible();
+    await selector.selectOption(KeyFilter.Custom);
+
+    await page.locator("#properties-panel #customize-keys-button").click();
+    const popup = page.locator(".popup").first();
+    await expect(popup).toBeVisible();
+    await expect(popup).toHaveScreenshot("key-filter-select-custom-popup.png");
+
+    await popup.evaluate((el) => (el.scrollTop = el.scrollHeight / 2));
+    await page.waitForTimeout(200);
+    await expect(popup).toHaveScreenshot("key-filter-select-custom-popup-scrolled.png");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// RecipeSelect
+// ---------------------------------------------------------------------------
+
+test.describe("Visual Regression: RecipeSelect", () => {
+  test("Select Main, RefA, RefB", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+
+    const selector = getRecipeGridRecipeSelector(page);
+    await expect(selector).toBeVisible();
+
+    await selector.selectOption(recipeIdToOption(RecipeID.Main));
+    await expect(selector).toHaveScreenshot("recipe-select-main.png");
+
+    await selector.selectOption(recipeIdToOption(RecipeID.RefA));
+    await expect(selector).toHaveScreenshot("recipe-select-ref-a.png");
+
+    await selector.selectOption(recipeIdToOption(RecipeID.RefB));
+    await expect(selector).toHaveScreenshot("recipe-select-ref-b.png");
+  });
+
+  test("Clicked, hovered", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+
+    const selector = getRecipeGridRecipeSelector(page);
+    await expect(selector).toBeVisible();
+
+    await selector.click();
+    await expect(selector).toHaveScreenshot("recipe-select-clicked.png");
+
+    await selector.hover();
+    await expect(selector).toHaveScreenshot("recipe-select-hovered.png");
+  });
+});

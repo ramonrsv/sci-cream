@@ -4,7 +4,6 @@
 
 - [ ] Add support for `MixPropertiesGrid` to show deltas between the main recipe and the references.
 - [ ] Add `height` prop to `MixPropertiesGrid` so that it can adapt the number of properties shown.
-- [ ] Add a visual regression test for the custom filter settings button and checkbox menu.
 - [ ] Add support for comments in blog posts, maybe also in documentation posts.
 - [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
 - [ ] Add a home page with a quick intro and overview, pointing to user guide, docs, etc.
@@ -95,6 +94,7 @@
 
 ## Completed
 
+- [x] Add a visual regression test for the custom filter settings button and checkbox menu.
 - [x] Remove the '"comments": "..."' placeholder in `/ingredients`, just remove the field.
 - [x] Closing a `WatcherCard` when on `Auto` doesn't do anything; this needs a fix.
 - [x] Add a button to set all currently selected watcher targets from a reference recipe.
