@@ -17,6 +17,11 @@ const RECIPE_IDS_WITH_USER_DEFINED = [
   RecipeID.RefBWithUserDefined,
 ];
 
+// Use a generous timeout for the paste/fill updates to complete, as it involves multiple fetches
+// and UI updates. This is mostly to accommodate parallel runs in local underpowered devices. This
+// is ok since these are correctness tests; benchmarks track performance regressions separately.
+const EXPECT_TIMEOUT_MS = 12000;
+
 test.describe("Recipe Paste and Fill", () => {
   test("recipe paste should function correctly for all recipes without user-defined ingredients", async ({
     page,
@@ -27,7 +32,7 @@ test.describe("Recipe Paste and Fill", () => {
     await goToPageAndWaitFor(page);
 
     for (const recipeId of RECIPE_IDS_WITHOUT_USER_DEFINED)
-      await pasteRecipeAndWaitForUpdate(page, browserName, recipeId);
+      await pasteRecipeAndWaitForUpdate(page, browserName, recipeId, undefined, EXPECT_TIMEOUT_MS);
   });
 
   test("recipe fill should function correctly for all recipes without user-defined ingredients", async ({
@@ -36,7 +41,7 @@ test.describe("Recipe Paste and Fill", () => {
     await goToPageAndWaitFor(page);
 
     for (const recipeId of RECIPE_IDS_WITHOUT_USER_DEFINED)
-      await fillRecipeAndWaitForUpdate(page, recipeId);
+      await fillRecipeAndWaitForUpdate(page, recipeId, EXPECT_TIMEOUT_MS);
   });
 
   test("recipe paste should function correctly for all recipes with user-defined ingredients", async ({
@@ -50,7 +55,7 @@ test.describe("Recipe Paste and Fill", () => {
     await loginAsTestUserWithCredentials(page, TEST_USER_B);
 
     for (const recipeId of RECIPE_IDS_WITH_USER_DEFINED)
-      await pasteRecipeAndWaitForUpdate(page, browserName, recipeId);
+      await pasteRecipeAndWaitForUpdate(page, browserName, recipeId, undefined, EXPECT_TIMEOUT_MS);
   });
 
   test("recipe fill should function correctly for recipes with user-defined ingredients", async ({
@@ -61,6 +66,6 @@ test.describe("Recipe Paste and Fill", () => {
     await loginAsTestUserWithCredentials(page, TEST_USER_B);
 
     for (const recipeId of RECIPE_IDS_WITH_USER_DEFINED)
-      await fillRecipeAndWaitForUpdate(page, recipeId);
+      await fillRecipeAndWaitForUpdate(page, recipeId, EXPECT_TIMEOUT_MS);
   });
 });

@@ -457,9 +457,10 @@ export async function pasteRecipeAndWaitForUpdate(
   browserName: string,
   recipeId: RecipeID,
   populatedRecipeIds?: RecipeID[],
+  timeout?: number,
 ) {
   await pasteRecipeIntoEditor(page, browserName, recipeId);
-  await expectRecipePasteCompleted(page, recipeId, populatedRecipeIds);
+  await expectRecipePasteCompleted(page, recipeId, populatedRecipeIds, timeout);
 }
 
 /**
@@ -524,9 +525,9 @@ export async function waitForRecipeEditorHydrationReady(page: Page) {
  * **Note:** This function modifies selectors to fill recipes in corresponding slots in
  * `RecipeEditor`, so it may not leave components in the same state that they were before the call.
  */
-export async function fillRecipeAndWaitForUpdate(page: Page, recipeId: RecipeID) {
+export async function fillRecipeAndWaitForUpdate(page: Page, recipeId: RecipeID, timeout?: number) {
   await fillRecipeIntoEditor(page, recipeId);
-  await expectRecipePasteCompleted(page, recipeId);
+  await expectRecipePasteCompleted(page, recipeId, undefined, timeout);
 }
 
 /**
