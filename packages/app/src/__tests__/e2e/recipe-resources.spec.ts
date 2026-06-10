@@ -17,6 +17,10 @@ import { sleep_ms } from "@/lib/util";
 import { TEST_USER_B } from "@/lib/database/assets";
 
 test.describe("Recipe Resources", () => {
+  // These tests are wall-clock-time sensitive, so we run them serially to avoid flaky failures from
+  // parallel test contention; mostly a concern when running locally, as CI runs serially already.
+  test.describe.configure({ mode: "serial", timeout: 30000 });
+
   test("valid-ingredients datalist is present and has options", async ({ page }) => {
     await goToPageAndWaitFor(page);
 
@@ -49,31 +53,31 @@ test.describe("Recipe Resources", () => {
   }) => {
     test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
 
-    await simulateSlowFetchApiResponse(page, 2000);
+    // Use a long stall (8000ms) so the threshold below has room to absorb UI driving and parallel
+    // worker contention without getting close to a real stall: this path makes no server action, so
+    // the delay never fires here — it only sets how slow a *regressed* (stalling) run would be.
+    await simulateSlowFetchApiResponse(page, 8000);
 
     const gotoStart = Date.now();
     await goToPageAndWaitFor(page, "", LoadState.DomContentLoaded);
 
-    const pasteStart = Date.now();
     for (const recipeId of [RecipeID.Main, RecipeID.RefA, RecipeID.RefB]) {
       await pasteRecipeIntoEditor(page, browserName, recipeId);
     }
-    const pasteEnd = Date.now();
 
     for (const recipeId of [RecipeID.Main, RecipeID.RefA, RecipeID.RefB]) {
       await expectRecipePasteCompleted(page, recipeId);
     }
-    const updateEnd = Date.now();
+    const updateTime = Date.now() - gotoStart;
 
-    const pasteTime = pasteEnd - pasteStart;
-    const updateTime = updateEnd - gotoStart;
-
-    expect(pasteTime).toBeLessThan(2000);
-    expect(updateTime).toBeLessThan(2000);
+    // A healthy no-stall run (UI driving + worker contention) is ~2-4.5s; a single stalled fetch
+    // would add 8000ms (~10s+). 6000ms sits comfortably between the two, so it still proves no
+    // server-action stall reached the no-user-defined path while tolerating contention swings.
+    expect(updateTime).toBeLessThan(6000);
   });
 
   // Simulates slow fetch API calls to ensure that recipe paste remains responsive and that the UI
-  // updates correctly once the data is available. It should fail if the `useEffect` in `RecipeGrid`
+  // updates correctly once the data is available. Should fail if the `useEffect` in `RecipeEditor`
   // to "Prevent stale ingredient rows if pasted quickly whilst... still loading..." is removed.
   test("recipe with user-defined ingredients should be resilient to slow fetches", async ({
     page,
@@ -85,7 +89,10 @@ test.describe("Recipe Resources", () => {
       console.log(`${msg.text()}`);
     });
 
-    await simulateSlowFetchApiResponse(page, 2000);
+    // Use a long stall (8000ms, greater than the threshold in the test with no user-defined
+    // ingredients) to ensure tha the test can only succeed once the data from an fetch API request
+    // for user-defined ingredients has returned, and not just by a slow but non-stalling run.
+    await simulateSlowFetchApiResponse(page, 8000);
 
     await goToPageAndWaitFor(page);
     await loginAsTestUserWithCredentials(page, TEST_USER_B);
@@ -93,7 +100,6 @@ test.describe("Recipe Resources", () => {
     const gotoStart = Date.now();
     await goToPageAndWaitFor(page, "", LoadState.DomContentLoaded);
 
-    const pasteStart = Date.now();
     for (const recipeId of [
       RecipeID.MainWithUserDefined,
       RecipeID.RefAWithUserDefined,
@@ -108,21 +114,22 @@ test.describe("Recipe Resources", () => {
       await expect(elements.propServingTemp).toBeVisible();
       await expect(elements.propServingTemp).not.toHaveText(expected.servingTemp);
     }
-    const pasteEnd = Date.now();
+    const pasteTime = Date.now() - gotoStart;
 
     for (const recipeId of [
       RecipeID.MainWithUserDefined,
       RecipeID.RefAWithUserDefined,
       RecipeID.RefBWithUserDefined,
     ]) {
-      await expectRecipePasteCompleted(page, recipeId);
+      await expectRecipePasteCompleted(page, recipeId, undefined, 12000);
     }
-    const updateEnd = Date.now();
+    const updateTime = Date.now() - gotoStart;
 
-    const pasteTime = pasteEnd - pasteStart;
-    const updateTime = updateEnd - gotoStart;
+    // The paste action itself should remain responsive, as it doesn't depend on the fetched data
+    expect(pasteTime).toBeLessThan(5000);
 
-    expect(pasteTime).toBeLessThan(2000);
-    expect(updateTime).toBeGreaterThan(2000);
+    // The update must only pass after the fetch API returns, as the correct calculation values
+    // depend on the user-defined ingredient data that only becomes available after the response.
+    expect(updateTime).toBeGreaterThan(8000);
   });
 });

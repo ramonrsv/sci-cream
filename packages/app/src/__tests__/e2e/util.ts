@@ -363,11 +363,12 @@ export function makePerRecipeQtyUpdatesExpectedValues(
 export async function expectRecipeElementsToHaveExpected(
   elements: RecipeUpdateCheckElements,
   expected: ExpectedRecipeUpdate,
+  timeout?: number,
 ) {
-  await expect(elements.ingNameInput).toHaveValue(expected.ingName);
-  await expect(elements.ingQtyInput).toHaveValue(expected.ingQty);
-  await expect(elements.propServingTemp).toHaveText(expected.servingTemp);
-  await expect(elements.ingCompPac).toHaveText(expected.ingCompPac);
+  await expect(elements.ingNameInput).toHaveValue(expected.ingName, { timeout });
+  await expect(elements.ingQtyInput).toHaveValue(expected.ingQty, { timeout });
+  await expect(elements.propServingTemp).toHaveText(expected.servingTemp, { timeout });
+  await expect(elements.ingCompPac).toHaveText(expected.ingCompPac, { timeout });
 }
 
 /**
@@ -381,6 +382,7 @@ export async function expectRecipeUpdateCompleted(
   recipeId: RecipeID,
   expected: ExpectedRecipeUpdate,
   populatedRecipeIds?: RecipeID[],
+  timeout?: number,
 ) {
   await configureComponentsForRecipeUpdateCheck(page, recipeId);
 
@@ -390,7 +392,7 @@ export async function expectRecipeUpdateCompleted(
     expected.ingIdx,
     populatedRecipeIds,
   );
-  await expectRecipeElementsToHaveExpected(elements, expected);
+  await expectRecipeElementsToHaveExpected(elements, expected, timeout);
 }
 
 /**
@@ -410,12 +412,13 @@ export async function expectRecipePasteCompleted(
   page: Page,
   recipeId: RecipeID,
   populatedRecipeIds?: RecipeID[],
+  timeout?: number,
 ) {
   const lightRecipe = getLightRecipe(recipeId);
   const ingIdx = PASTE_CHECK_DEFAULT_ING_IDX;
 
   const expected = getExpectedRecipeUpdateValues(lightRecipe, ingIdx);
-  await expectRecipeUpdateCompleted(page, recipeId, expected, populatedRecipeIds);
+  await expectRecipeUpdateCompleted(page, recipeId, expected, populatedRecipeIds, timeout);
 }
 
 /**
@@ -435,6 +438,8 @@ export async function pasteRecipeIntoEditor(page: Page, browserName: string, rec
 
   await pasteToClipboard(page, browserName, getRecipeText(recipeId));
   const pasteButton = getPasteButton(page);
+
+  await waitForRecipeEditorHydrationReady(page);
   await pasteButton.click();
 }
 
@@ -469,10 +474,10 @@ export async function pasteRecipeAndWaitForUpdate(
  * so it may not leave components in the same state that they were before the function call.
  */
 export async function fillRecipeIntoEditor(page: Page, recipeId: RecipeID) {
-  await waitForRecipeEditorHydrationReady(page);
-
   const editorRecipeSelect = getRecipeEditorPanelRecipeSelector(page);
   await editorRecipeSelect.selectOption(recipeIdToOption(recipeId));
+
+  await waitForRecipeEditorHydrationReady(page);
 
   for (const [ingIdx, [name, qty]] of getLightRecipe(recipeId).entries()) {
     const ingNameInput = getIngredientNameInputAtIdx(page, ingIdx);
