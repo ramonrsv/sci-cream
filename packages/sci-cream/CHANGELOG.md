@@ -11,6 +11,55 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- Support for reference recipe `data`, similar to ingredients; include standard Underbelly recipes.
+- `DairySimpleSpec::lactose_free` field and "Lactose-Free" ingredients to `ingredients/dairy.json`.
+- More dairy ingredients, including evaporated milks, branded milk and protein powders, etc.
+- `DairyLabelSpec::sucrose` field, to define dairy with added sugar, e.g. sweetened condensed milk.
+- Cross-source ingredient composition comparison tests, including snapshots with the `insta` crate.
+- USDA reference dairy ingredients, used to validate other dairy ingredients in snapshot tests.
+- `DairySimpleSpec::protein` and `solids_source` fields, allowing definitions from Goff & Hartel.
+- `CompKey`s for all polyols, artificial sweeteners, stabilizers, emulsifiers, fibers, etc.
+- `CompKey`s for `SaturatedFat` and `TransFat`, now internally estimated on most ingredient specs.
+- `KeyAsString::as_short_str` and `as_long_str`, along with implementations and TS-side helpers.
+- `isCompKey/isRatioKey/isFpdKey` benchmarks and a `Set` optimization that showed great improvement.
+- `wasm::Bridge::get_all_ingredient_names`, which obviates the need for JS consumers to `.free()`.
+- Support for inline specs in `CompositeSpec`, in addition to named refs, resolved with no lookup.
+- Optional `DairyLabelSpec::carbohydrates` field, for some labels where it is greater than `sugars`.
+- Name aliases for dairy ingredients with common names, e.g. "Half and Half", "Table Cream", etc.
+- Significant expansion of automatic recipe balancing quality, customization, WASM support, etc.:
+  - Relative-error weighting of each row by `1 / target`, so the solver minimizes relative error.
+  - Balancing quality reports for best-effort disparate targets, including snapshots with `insta`.
+  - Support for `RatioKey`s as balancing targets, encoded as homogeneous `num - (R/100)*den` rows.
+  - Support for per-target priorities, Normal/High/Critical translates to row weights 1/5/25.
+  - Balancing target validation, reporting errors/warnings, e.g. negative and unaffectable targets.
+  - `Recipe` and `wasm::Bridge` support for balancing, including priorities, target validation, etc.
+  - TS-side benchmarks for `Recipe.balance` and `Bridge.balance_recipe`, similar to the Rust ones.
+
+### Changed
+
+- Make `ChocolateSpec::cocoa_butter` field optional; use standard composition values if unspecified.
+- Make `DairyLabelSpec::saturated_fat` and `trans_fat` optional, use standard composition values.
+- Estimate MSNF in `DairyLabelSpec` as `(dairy_sugars + protein) / (1 - minerals_fraction)`.
+- Replace hand-maintained embedded-data counts with name-list snapshots using the `insta` crate.
+- Slightly modify simple milk powder ingredients to match Goff & Hartel and reference bulk products.
+- Unify naming of aggregate `CompKey`s, now all have a `Total` suffix, e.g. `Fiber` -> `TotalFiber`.
+- Extract ratio keys from `CompKey` and into new `RatioKey` for ratio-specific support and handling.
+- Enable codecov for `wasm` modules, now showing a legitimate coverage gap that should be filled.
+- Add `RUST(DOC)FLAGS="-D warnings"` to `scripts/run-local-test-suite.sh`, to catch issues locally.
+- Use `#[serde(untagged)]` in `PropKey` and `BalanceKey`, to allow a flat list of keys in WASM API.
+- Add `#[serde(skip_ser*_if = "Option::is_none")]` to all optional spec fields; matches definitions.
+- Simplify `nalgebra` least-squares impl; don't need to solve `(A^t * A) * (A^t * Y)` with SVD.
+
+### Fixed
+
+- Incorrect footnote indices in `.md` and `.rs` docs, e.g. EU source should be \[^10\], not \[^9\].
+
+### Removed
+
+- Dairy ingredient definitions where sugars was taken as the average of label sugars/carbohydrates.
+
 ## [0.0.4] - 2026-05-06
 
 ### Added
