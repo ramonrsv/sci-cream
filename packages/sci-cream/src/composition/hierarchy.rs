@@ -17,13 +17,17 @@
 use std::collections::HashMap;
 use std::sync::LazyLock;
 
+use serde::Serialize;
+
 use crate::composition::CompKey;
 
 #[cfg(doc)]
 use crate::composition::{Composition, Solids, SolidsBreakdown};
 
 /// A node in the composition hierarchy: a key and its direct children, each a node of the same kind.
-#[derive(Debug, Clone, Copy)]
+///
+/// `Serialize` flattens to `{ key, children }`, which is how the WASM layer hands the forest to JS.
+#[derive(Debug, Clone, Copy, Serialize)]
 pub struct HierarchyNode<K: 'static> {
     /// The key at this node.
     pub key: K,
