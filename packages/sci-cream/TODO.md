@@ -9,7 +9,6 @@
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
 - [ ] Add more ultra-filtered milk products, e.g. `Fairlife Whole Ultra-Filtered Lactose-Free Milk`.
 - [ ] Add USDA chocolate ingredients and include them in `compare_specs_*` tests vs simple & lindt.
-- [ ] Add top-level `lib.rs` and `README.md` docs and code examples for balancing functionality.
 - [ ] Add TS-side unit tests for the `wasm::Recipe` functionality; it's independent from `Bridge`.
 
 ## Up Next
@@ -83,6 +82,7 @@
 
 ## Completed
 
+- [x] Add top-level `lib.rs` and `README.md` docs and code examples for balancing functionality.
 - [x] Add evaporated and condensed milk products from Goff & Hartel, as references for comparison.
 - [x] Add balancer functionality to automatically balance recipes and component substitutions.
 - [x] Add TypeScript interface for the existing preliminary automatic balancing functionality.

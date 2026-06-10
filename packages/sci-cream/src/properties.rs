@@ -3,6 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    balancing::BalanceKey,
     composition::{CompKey, Composition, RatioKey},
     fpd::{FPD, FpdKey},
 };
@@ -34,30 +35,39 @@ use crate::{
 pub enum PropKey {
     /// [`CompKey`] for extensive [`Composition`] properties from [`MixProperties::composition`]
     #[serde(untagged)]
-    CompKey(CompKey),
+    Comp(CompKey),
     /// [`RatioKey`] for intensive [`Composition`] ratios from [`MixProperties::composition`]
     #[serde(untagged)]
-    RatioKey(RatioKey),
+    Ratio(RatioKey),
     /// [`FpdKey`] for [`FPD`] properties from [`MixProperties::fpd`]
     #[serde(untagged)]
-    FpdKey(FpdKey),
+    Fpd(FpdKey),
 }
 
 impl From<CompKey> for PropKey {
     fn from(key: CompKey) -> Self {
-        Self::CompKey(key)
+        Self::Comp(key)
     }
 }
 
 impl From<RatioKey> for PropKey {
     fn from(key: RatioKey) -> Self {
-        Self::RatioKey(key)
+        Self::Ratio(key)
     }
 }
 
 impl From<FpdKey> for PropKey {
     fn from(key: FpdKey) -> Self {
-        Self::FpdKey(key)
+        Self::Fpd(key)
+    }
+}
+
+impl From<BalanceKey> for PropKey {
+    fn from(key: BalanceKey) -> Self {
+        match key {
+            BalanceKey::Comp(comp_key) => Self::Comp(comp_key),
+            BalanceKey::Ratio(ratio_key) => Self::Ratio(ratio_key),
+        }
     }
 }
 
@@ -93,9 +103,9 @@ impl MixProperties {
     #[must_use]
     pub fn get(&self, key: PropKey) -> f64 {
         match key {
-            PropKey::CompKey(comp_key) => self.composition.get(comp_key),
-            PropKey::RatioKey(ratio_key) => self.composition.get_ratio(ratio_key),
-            PropKey::FpdKey(fpd_key) => self.fpd.get(fpd_key),
+            PropKey::Comp(comp_key) => self.composition.get(comp_key),
+            PropKey::Ratio(ratio_key) => self.composition.get_ratio(ratio_key),
+            PropKey::Fpd(fpd_key) => self.fpd.get(fpd_key),
         }
     }
 }
@@ -123,40 +133,40 @@ mod tests {
     #[test]
     fn prop_key_from_comp_key() {
         let key: PropKey = CompKey::MilkFat.into();
-        assert_eq!(key, PropKey::CompKey(CompKey::MilkFat));
+        assert_eq!(key, PropKey::Comp(CompKey::MilkFat));
     }
 
     #[test]
     fn prop_key_from_ratio_key() {
         let key: PropKey = RatioKey::AbsPAC.into();
-        assert_eq!(key, PropKey::RatioKey(RatioKey::AbsPAC));
+        assert_eq!(key, PropKey::Ratio(RatioKey::AbsPAC));
     }
 
     #[test]
     fn prop_key_from_fpd_key() {
         let key: PropKey = FpdKey::FPD.into();
-        assert_eq!(key, PropKey::FpdKey(FpdKey::FPD));
+        assert_eq!(key, PropKey::Fpd(FpdKey::FPD));
     }
 
     #[test]
     fn prop_key_equality_same_variant() {
-        assert_eq!(PropKey::CompKey(CompKey::MilkFat), PropKey::CompKey(CompKey::MilkFat));
-        assert_eq!(PropKey::RatioKey(RatioKey::AbsPAC), PropKey::RatioKey(RatioKey::AbsPAC));
-        assert_eq!(PropKey::FpdKey(FpdKey::ServingTemp), PropKey::FpdKey(FpdKey::ServingTemp));
+        assert_eq!(PropKey::Comp(CompKey::MilkFat), PropKey::Comp(CompKey::MilkFat));
+        assert_eq!(PropKey::Ratio(RatioKey::AbsPAC), PropKey::Ratio(RatioKey::AbsPAC));
+        assert_eq!(PropKey::Fpd(FpdKey::ServingTemp), PropKey::Fpd(FpdKey::ServingTemp));
     }
 
     #[test]
     fn prop_key_inequality_different_inner_key() {
-        assert_ne!(PropKey::CompKey(CompKey::MilkFat), PropKey::CompKey(CompKey::MSNF));
-        assert_ne!(PropKey::RatioKey(RatioKey::AbsPAC), PropKey::RatioKey(RatioKey::EmulsifiersPerFat));
-        assert_ne!(PropKey::FpdKey(FpdKey::FPD), PropKey::FpdKey(FpdKey::ServingTemp));
+        assert_ne!(PropKey::Comp(CompKey::MilkFat), PropKey::Comp(CompKey::MSNF));
+        assert_ne!(PropKey::Ratio(RatioKey::AbsPAC), PropKey::Ratio(RatioKey::EmulsifiersPerFat));
+        assert_ne!(PropKey::Fpd(FpdKey::FPD), PropKey::Fpd(FpdKey::ServingTemp));
     }
 
     #[test]
     fn prop_key_inequality_different_outer_variant() {
-        assert_ne!(PropKey::CompKey(CompKey::MilkFat), PropKey::FpdKey(FpdKey::FPD));
-        assert_ne!(PropKey::RatioKey(RatioKey::AbsPAC), PropKey::FpdKey(FpdKey::FPD));
-        assert_ne!(PropKey::CompKey(CompKey::MilkFat), PropKey::RatioKey(RatioKey::AbsPAC));
+        assert_ne!(PropKey::Comp(CompKey::MilkFat), PropKey::Fpd(FpdKey::FPD));
+        assert_ne!(PropKey::Ratio(RatioKey::AbsPAC), PropKey::Fpd(FpdKey::FPD));
+        assert_ne!(PropKey::Comp(CompKey::MilkFat), PropKey::Ratio(RatioKey::AbsPAC));
     }
 
     // --- MixProperties::empty / new / default ---

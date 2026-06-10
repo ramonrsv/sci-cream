@@ -50,6 +50,28 @@ macro_rules! main_recipe {
     };
 }
 
+/// Sample recipe for balancing in doc tests
+#[macro_export]
+macro_rules! recipe_for_balancing {
+    () => {
+        [
+            ("Whole Milk", 0.0),
+            ("Whipping Cream", 0.0),
+            ("Cocoa Powder, 17% Fat", 0.0),
+            ("95% Dark Chocolate", 0.0),
+            ("Skimmed Milk Powder", 0.0),
+            ("Egg Yolk", 0.0),
+            ("Dextrose", 0.0),
+            ("Fructose", 0.0),
+            ("Salt", 0.0),
+            ("Stabilizer Blend", 0.0),
+            ("Vanilla Extract", 0.0),
+        ]
+        .map(|(name, amount)| (name.to_string(), amount))
+    };
+}
+
 // @todo See if it's possible to export only for doc tests
 pub use assert_eq_float;
 pub use main_recipe;
+pub use recipe_for_balancing;

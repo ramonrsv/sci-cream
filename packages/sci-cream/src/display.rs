@@ -242,25 +242,25 @@ impl KeyAsStrings for BalanceKey {
 impl KeyAsStrings for PropKey {
     fn as_short_str(&self) -> &'static str {
         match self {
-            Self::CompKey(comp_key) => comp_key.as_short_str(),
-            Self::FpdKey(fpd_key) => fpd_key.as_short_str(),
-            Self::RatioKey(ratio_key) => ratio_key.as_short_str(),
+            Self::Comp(comp_key) => comp_key.as_short_str(),
+            Self::Fpd(fpd_key) => fpd_key.as_short_str(),
+            Self::Ratio(ratio_key) => ratio_key.as_short_str(),
         }
     }
 
     fn as_med_str(&self) -> &'static str {
         match self {
-            Self::CompKey(comp_key) => comp_key.as_med_str(),
-            Self::FpdKey(fpd_key) => fpd_key.as_med_str(),
-            Self::RatioKey(ratio_key) => ratio_key.as_med_str(),
+            Self::Comp(comp_key) => comp_key.as_med_str(),
+            Self::Fpd(fpd_key) => fpd_key.as_med_str(),
+            Self::Ratio(ratio_key) => ratio_key.as_med_str(),
         }
     }
 
     fn as_long_str(&self) -> &'static str {
         match self {
-            Self::CompKey(comp_key) => comp_key.as_long_str(),
-            Self::FpdKey(fpd_key) => fpd_key.as_long_str(),
-            Self::RatioKey(ratio_key) => ratio_key.as_long_str(),
+            Self::Comp(comp_key) => comp_key.as_long_str(),
+            Self::Fpd(fpd_key) => fpd_key.as_long_str(),
+            Self::Ratio(ratio_key) => ratio_key.as_long_str(),
         }
     }
 }
@@ -600,20 +600,20 @@ mod tests {
 
     #[test]
     fn prop_keys_as_short_str() {
-        assert_eq!(PropKey::CompKey(CompKey::CarboxymethylCellulose).as_short_str(), "CMC");
-        assert_eq!(PropKey::FpdKey(FpdKey::ServingTemp).as_short_str(), "Serving Temp");
+        assert_eq!(PropKey::Comp(CompKey::CarboxymethylCellulose).as_short_str(), "CMC");
+        assert_eq!(PropKey::Fpd(FpdKey::ServingTemp).as_short_str(), "Serving Temp");
     }
 
     #[test]
     fn prop_keys_as_med_str() {
-        assert_eq!(PropKey::CompKey(CompKey::MilkFat).as_med_str(), "Milk Fat");
-        assert_eq!(PropKey::FpdKey(FpdKey::FPD).as_med_str(), "FPD");
+        assert_eq!(PropKey::Comp(CompKey::MilkFat).as_med_str(), "Milk Fat");
+        assert_eq!(PropKey::Fpd(FpdKey::FPD).as_med_str(), "FPD");
     }
 
     #[test]
     fn prop_keys_as_long_str() {
-        assert_eq!(PropKey::CompKey(CompKey::TotalFats).as_long_str(), "Total Fats");
-        assert_eq!(PropKey::FpdKey(FpdKey::FPD).as_long_str(), "Freezing Point Depression");
+        assert_eq!(PropKey::Comp(CompKey::TotalFats).as_long_str(), "Total Fats");
+        assert_eq!(PropKey::Fpd(FpdKey::FPD).as_long_str(), "Freezing Point Depression");
     }
 
     #[test]

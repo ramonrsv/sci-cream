@@ -4,12 +4,13 @@ their properties. It includes a comprehensive system to represent the [compositi
 and ice cream mixes](#ingredientmix-composition), a system to [define ingredients via user-friendly
 specifications](#ingredient-specifications), an expansive collection of [ingredient
 definitions][data/ingredients] that can optionally be included as embedded data, an in-memory
-ingredient database that can be used to look up ingredient definitions, and a system to calculate
-the properties of ice cream mixes based on their composition. It has [support for
-WebAssembly](#wasm-interoperability), including TypeScript bindings and utilities to facilitate
-JS <-> WASM interoperability, allowing it to be used in web applications. Lastly, it includes
-[documentation and literature references](crate::docs) for ice cream science concepts which are
-useful for understanding this library.
+ingredient database that can be used to look up ingredient definitions, a system to calculate
+the properties of ice cream mixes based on their composition, and an [automatic recipe balancing
+feature](crate::docs#automatic-recipe-balancing) that facilitates formulating mixes to meet specific
+compositional targets. It has [support for WebAssembly](#wasm-interoperability), including
+TypeScript bindings and utilities to facilitate JS <-> WASM interoperability, allowing it to be used
+in web applications. Lastly, it includes [documentation and literature references](crate::docs) for
+ice cream science concepts which are useful for understanding this library.
 
 # Usage
 
@@ -418,6 +419,100 @@ These specs can also be easily defined in JSON format. The equivalent of the abo
 }
 ```
 
+# Automatic Recipe Balancing
+
+The library includes functionality to automatically balance recipes to meet specified targets for
+certain [`CompKey`] and [`RatioKey`] properties. This greatly simplifies the process of formulating
+recipes to meet specific compositional targets, e.g. a certain percentage of MSNF, POD, PAC, milk
+and total fat contents, etc. Often the desired targets for a recipe are disparate and cannot be met
+exactly within the constraints of the ingredients being used, in which case the balancing algorithm
+tries to minimize the overall relative error to the targets.
+
+The balancing tradeoffs can be configured by assigning different [`Priority`]s to different targets,
+which the algorithm takes into account, sacrificing lower priority targets more if needed to meet
+higher priority ones. Sometimes balancing targets can be unsound, e.g. asking for a milk fat content
+higher than the fat content of the fattiest ingredient being used. These issues can be detected
+via [`validate_balancing_targets`], which returns a full [`BalancingReport`] detailing any issues
+found with the targets and ingredients being used.
+
+See the [`balancing`] module and its documentation for more details about the balancing feature. As
+an example, the code snippet below shows how to balance a dark chocolate ice cream recipe, which is
+typically a tricky recipe to balance and requires careful tradeoffs to meet common targets:
+
+```
+# fn main() -> Result<(), Box<dyn std::error::Error>> {
+# use approx::assert_abs_diff_eq;
+#
+# use sci_cream::docs::{assert_eq_float, recipe_for_balancing};
+# use sci_cream::{
+#   CompKey::*, RatioKey::*, FpdKey::*,
+#   IngredientDatabase, Recipe, BalanceKey, Priority::*};
+#
+# let db = IngredientDatabase::new_seeded_from_embedded_data();
+# let recipe = Recipe::from_light_recipe(None, &recipe_for_balancing!(), &db)?;
+#
+# let not_total_fats = |key: &BalanceKey| !matches!(key, BalanceKey::Comp(TotalFats));
+# let assert_recipe_matches = |recipe: &Recipe, expected: &[(&str, f64)]| {
+#     assert_eq!(recipe.lines.len(), expected.len());
+#     for (line, (name, amount)) in recipe.lines.iter().zip(expected.iter()) {
+#         assert_eq!(line.ingredient.name.as_str(), *name);
+#         assert_abs_diff_eq!(line.amount, *amount, epsilon = 0.5);
+#     }
+# };
+#
+let targets: Vec<(BalanceKey, f64)> = vec![
+    (MSNF.into(), 7.0),
+    (CocoaButter.into(), 2.0),
+    (CocoaSolids.into(), 6.0),
+    (ABV.into(), 0.4),
+    (Salt.into(), 0.08),
+    (TotalFats.into(), 16.0),
+    (TotalSolids.into(), 41.0),
+    (EmulsifiersPerFat.into(), 1.7),
+    (StabilizersPerWater.into(), 0.35),
+    (POD.into(), 15.0),
+    (AbsPAC.into(), 65.0),
+];
+
+let priorities = vec![
+    (CocoaSolids.into(), Critical),
+    (CocoaButter.into(), High),
+    (TotalSolids.into(), Critical),
+    (AbsPAC.into(), High),
+];
+
+let balanced = recipe.balance(&targets, &priorities, Some(1000.0))?;
+
+assert_recipe_matches(
+    &balanced,
+    &[
+        ("Whole Milk", 472.0),
+        ("Whipping Cream", 235.0),
+        ("Cocoa Powder, 17% Fat", 64.0),
+        ("95% Dark Chocolate", 17.0),
+        ("Skimmed Milk Powder", 12.0),
+        ("Egg Yolk", 23.0),
+        ("Dextrose", 138.0),
+        ("Fructose", 24.0),
+        ("Salt", 0.8),
+        ("Stabilizer Blend", 2.0),
+        ("Vanilla Extract", 12.0),
+    ],
+);
+
+let balanced_properties = balanced.calculate_mix_properties()?;
+assert_abs_diff_eq!(balanced_properties.total_amount, 1000.0, epsilon = 0.1);
+assert_eq_float!(balanced_properties.get(ServingTemp.into()), -13.0983);
+
+for (key, value) in targets.iter().filter(|(key, _)| not_total_fats(key)) {
+    assert_abs_diff_eq!(balanced_properties.get((*key).into()), *value, epsilon = 0.7);
+}
+
+// With disparate targets, some non-priority ones can drift to accommodate the priorities
+assert_eq_float!(balanced_properties.get(TotalFats.into()), 12.4758);
+# Ok(()) }
+```
+
 # WASM Interoperability
 
 If the `wasm` feature is enabled, the library can be compiled to WebAssembly - target
@@ -549,6 +644,7 @@ pub mod diesel;
 pub mod wasm;
 
 pub use {
+    balancing::{BalanceKey, Priority},
     composition::{CompKey, Composition, KeyScope, RatioKey},
     fpd::{FPD, FpdKey},
     ingredient::{Category, Ingredient},
@@ -561,6 +657,7 @@ pub use database::IngredientDatabase;
 
 #[cfg(doc)]
 use crate::{
+    balancing::{BalancingReport, validate_balancing_targets},
     composition::{Carbohydrates, Fats, ResolveComposition, SolidsBreakdown, Sugars, Sweeteners},
     constants::composition::{STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM},
     fpd::Curves,
