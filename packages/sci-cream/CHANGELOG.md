@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+## [0.0.5] - 2026-06-10
+
 ### Added
 
 - Support for reference recipe `data`, similar to ingredients; include standard Underbelly recipes.
@@ -169,7 +171,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-url -->
 
-[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.4...HEAD
+[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.5...HEAD
+[0.0.5]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.4...sci-cream-v0.0.5
 [0.0.4]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.3...sci-cream-v0.0.4
 [0.0.3]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.2...sci-cream-v0.0.3
 [0.0.2]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.1...sci-cream-v0.0.2
