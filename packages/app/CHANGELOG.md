@@ -11,6 +11,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- `WatchersPanel` of compact `WatcherCard`s, with current/ref values, ranges, targets, deltas, etc.
+- Large mobile (Pixel 8 Pro) viewports to visual regression tests, to catch issues at those sizes.
+- Full-content visual regression snapshots, with `captureFullContent` to capture scrollable content.
+- Visual regression tests for `ThemeSelect`, `RecipeSelect`, `KeyFilterSelect`, & `QtyToggleSelect`.
+- Bundle size benchmarks to App CI, tracking several per-route gzipped JS bundle sizes, in KB.
+- Save the user's `react-grid-layout` customizations to `localStorage`; persists across reloads.
+- Support for saved recipe versions, modifiable in `RecipeEditor` and `RecipeSearch` details panel.
+- Recipe balancing functionality in `WatchersPanel`, setting the balanced recipe in `RecipeEditor`.
+  - Balancing targets and priorities can be set for properties in their respective  `WatcherCard`s.
+  - Balancing targets can be filled from reference recipe per-property or bulk from the toolbar.
+  - Surface balancing validation errors and warnings in cards and as a popup in the panel toolbar.
+
+### Changed
+
+- Make `RecipeEditorPanel` horizontally resizable in the `/calculator` react-grid-layout.
+- Remove the redacted '"comments": "..."' from JSON spec in `/ingredients` details panel.
+- Expand panel visual tests across recipe subsets and restrict allowed pixel diff for layout tests.
+- Consolidate benchmark utilities into shared module at `__benches__/util.ts` for bundle and e2e.
+- Use `verify/verifyDefined` for precondition checks; now takes `unknown` and `asserts condition`.
+- Refactor `EntitySearch` into shell and atoms, used by `Ingredient/RecipeSearch` independently.
+
+### Fixed
+
+- CI sort mismatch in `fetchAll*`, by using COLLATE "C" so Postgres and `Array.sort()` match.
+- Prevent a race in the e2e fill path by adding a hydration stability check before paste/fill.
+- Make the recipe paste/fill and wall-clock-sensitive e2e tests more resilient to slowdowns.
+- Add stable scrollbar gutter to `app-content`; prevents unstable `react-grid-layout` breakpoints.
+- Stabilize the `react-chartjs-2` charts by passing unique dataset `id`s via `datasetIdKey`.
+- Work around drizzle-kit unique constraint bug, reorder constraint to match table definition order.
+
 ## [0.0.2] - 2026-05-14
 
 ### Added
