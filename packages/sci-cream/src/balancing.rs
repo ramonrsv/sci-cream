@@ -1757,6 +1757,7 @@ pub(crate) mod tests {
     #[test]
     fn balance_key_is_ratio_identifies_ratio_keys() {
         assert_true!(BalanceKey::from(RatioKey::AbsPAC).is_ratio());
+        assert_true!(BalanceKey::from(RatioKey::AbsNetPAC).is_ratio());
         assert_true!(BalanceKey::from(RatioKey::StabilizersPerWater).is_ratio());
         assert_true!(BalanceKey::from(RatioKey::EmulsifiersPerFat).is_ratio());
     }
@@ -1766,12 +1767,14 @@ pub(crate) mod tests {
         assert_false!(BalanceKey::from(CompKey::MilkFat).is_ratio());
         assert_false!(BalanceKey::from(CompKey::Energy).is_ratio());
         assert_false!(BalanceKey::from(CompKey::TotalPAC).is_ratio());
+        assert_false!(BalanceKey::from(CompKey::NetPAC).is_ratio());
         assert_false!(BalanceKey::from(CompKey::Water).is_ratio());
     }
 
     #[test]
     fn balance_key_ratio_parts_maps_each_ratio_key_to_its_extensive_parts() {
         assert_eq!(RatioKey::AbsPAC.parts(), (CompKey::TotalPAC, CompKey::Water));
+        assert_eq!(RatioKey::AbsNetPAC.parts(), (CompKey::NetPAC, CompKey::Water));
         assert_eq!(RatioKey::StabilizersPerWater.parts(), (CompKey::TotalStabilizers, CompKey::Water));
         assert_eq!(RatioKey::EmulsifiersPerFat.parts(), (CompKey::TotalEmulsifiers, CompKey::TotalFats));
         assert_eq!(BalanceKey::from(RatioKey::AbsPAC).ratio_parts(), Some((CompKey::TotalPAC, CompKey::Water)));
@@ -1808,6 +1811,8 @@ pub(crate) mod tests {
         let balanceable = get_balanceable_keys();
         assert_eq!(balanceable.len(), CompKey::iter().count() + RatioKey::iter().count());
         assert_true!(balanceable.contains(&BalanceKey::from(RatioKey::AbsPAC)));
+        assert_true!(balanceable.contains(&BalanceKey::from(RatioKey::AbsNetPAC)));
+        assert_true!(balanceable.contains(&BalanceKey::from(CompKey::NetPAC)));
         assert_true!(balanceable.contains(&BalanceKey::from(RatioKey::StabilizersPerWater)));
         assert_true!(balanceable.contains(&BalanceKey::from(RatioKey::EmulsifiersPerFat)));
     }
@@ -1852,6 +1857,61 @@ pub(crate) mod tests {
 
         let balanced = balance_compositions_nnls(&comps, &[(RatioKey::AbsPAC.into(), target)], None, &[]).unwrap();
         assert_eq_flt_test!(achieved_value(&balanced, RatioKey::AbsPAC), target);
+    }
+
+    /// A realistically-proportioned chocolate reference over [`DAIRY_COCOA_ING`]: enough cocoa to
+    /// keep `NetPAC` below `TotalPAC`, but little enough that it stays positive — unlike an
+    /// equal-parts mix (see [`balance_compositions_rejects_negative_net_pac_target`]).
+    fn chocolate_reference() -> Vec<(Composition, f64)> {
+        comps_from_names(DAIRY_COCOA_ING)
+            .into_iter()
+            .zip([0.50, 0.20, 0.05, 0.25]) // Milk, Cream, Cocoa, Sucrose — sums to 1
+            .collect()
+    }
+
+    #[test]
+    fn balance_recovers_abs_net_pac_ratio() {
+        // Cocoa carries a non-zero hardness factor, so NetPAC (= TotalPAC − HF) — and hence the
+        // AbsNetPAC ratio — is genuinely distinct from AbsPAC for this palette, not an alias of it.
+        let comps = comps_from_names(DAIRY_COCOA_ING);
+        let target = achieved_value(&chocolate_reference(), RatioKey::AbsNetPAC);
+        assert_gt!(target, 0.0); // guard: the reference keeps NetPAC (and so the ratio) positive
+
+        let balanced = balance_compositions_nnls(&comps, &[(RatioKey::AbsNetPAC.into(), target)], None, &[]).unwrap();
+        assert_eq_flt_test!(achieved_value(&balanced, RatioKey::AbsNetPAC), target);
+    }
+
+    #[test]
+    fn balance_recovers_net_pac_distinct_from_total_pac() {
+        // Cocoa's hardness factor keeps NetPAC strictly below TotalPAC; recovering both at once
+        // proves NetPAC is its own HF-subtracted extensive key, not an alias of TotalPAC.
+        let comps = comps_from_names(DAIRY_COCOA_ING);
+        let reference = chocolate_reference();
+        let total_pac = achieved_value(&reference, CompKey::TotalPAC);
+        let net_pac = achieved_value(&reference, CompKey::NetPAC);
+
+        // The hardness factor separates the two keys, yet NetPAC stays positive for this mix.
+        assert_gt!(net_pac, 0.0);
+        assert_lt!(net_pac, total_pac);
+
+        let targets = [(CompKey::TotalPAC.into(), total_pac), (CompKey::NetPAC.into(), net_pac)];
+        let balanced = balance_compositions_nnls(&comps, &targets, None, &[]).unwrap();
+
+        assert_eq_flt_test!(achieved_value(&balanced, CompKey::TotalPAC), total_pac);
+        assert_eq_flt_test!(achieved_value(&balanced, CompKey::NetPAC), net_pac);
+    }
+
+    #[test]
+    fn balance_compositions_rejects_negative_net_pac_target() {
+        // NetPAC can legitimately be negative (HF > TotalPAC), yet balancing still rejects a
+        // negative target (see `BalancingIssue::NegativeTarget`). A 25%-cocoa equal-parts mix has
+        // enough hardness factor to push its own NetPAC below zero, making it an invalid target.
+        let comps = comps_from_names(DAIRY_COCOA_ING);
+        let net_pac = achieved_value(&equal_parts_reference(&comps), CompKey::NetPAC);
+        assert_lt!(net_pac, 0.0); // the equal-parts cocoa mix drives NetPAC below zero
+
+        let result = balance_compositions(&comps, &[(CompKey::NetPAC.into(), net_pac)], None, &[]);
+        assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
     }
 
     #[test]
@@ -1918,6 +1978,11 @@ pub(crate) mod tests {
         // Absent a Water target, Water is inferred as 100 − TotalSolids − Alcohol.
         assert_eq!(
             estimate_ratio_denominator(RatioKey::AbsPAC.into(), &[(CompKey::TotalSolids.into(), 30.0)]),
+            Some(70.0)
+        );
+        // AbsNetPAC is also Water-denominated, so it shares the same inference path.
+        assert_eq!(
+            estimate_ratio_denominator(RatioKey::AbsNetPAC.into(), &[(CompKey::TotalSolids.into(), 30.0)]),
             Some(70.0)
         );
         assert_eq!(
