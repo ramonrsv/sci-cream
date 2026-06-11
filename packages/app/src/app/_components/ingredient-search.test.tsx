@@ -1,5 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 
+import { StrictMode } from "react";
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup, within } from "@testing-library/react";
@@ -352,6 +353,31 @@ describe("IngredientSearch", () => {
         target: { value: "zzz-nope" },
       });
       expect(screen.getByText("No ingredients found.")).toBeInTheDocument();
+    });
+  });
+
+  describe("Ingredient WASM lifetime (StrictMode)", () => {
+    it("does not crash on re-render after a StrictMode mount cycle", () => {
+      // StrictMode's setup → cleanup → setup mount cycle frees the live Ingredient under the old
+      // effect-cleanup code; a bare render() runs the effect once, so the other tests never hit it.
+      render(
+        <StrictMode>
+          <IngredientSearch />
+        </StrictMode>,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /1% Milk/ }));
+
+      // Typing re-renders the detail body, re-reading `ingredient.composition`; before the fix that
+      // hit the freed object and threw "null pointer passed to rust".
+      expect(() =>
+        fireEvent.change(screen.getByPlaceholderText("Search by name or category…"), {
+          target: { value: "1% Mil" },
+        }),
+      ).not.toThrow();
+
+      // Composition table re-rendered, proving the read hit a live object.
+      const detailPanel = document.querySelector(".search-detail-panel") as HTMLElement;
+      expect(detailPanel.querySelector("#key-filter-select")).toBeInTheDocument();
     });
   });
 });

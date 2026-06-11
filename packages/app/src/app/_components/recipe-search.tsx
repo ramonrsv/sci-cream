@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
   allRecipeEntries,
   type RecipeEntryJson,
@@ -13,7 +13,7 @@ import { Select, type SelectOption } from "@/app/_elements/selects/select";
 import { RecipeTable } from "@/app/_elements/tables/recipe";
 import { PropertiesView } from "@/app/_elements/tables/properties";
 import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
-import { useSeededWasmResources } from "@/lib/wasm-resources";
+import { useFreeOnReplace, useSeededWasmResources } from "@/lib/wasm-resources";
 import { STATE_VAL } from "@/lib/util";
 import { autoLink } from "@/lib/text";
 import {
@@ -203,16 +203,9 @@ function RecipeDetailPanel({
     [entry, selectedVersion, bridge, wasmUpdateIdx], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
-  useEffect(
-    () => () => {
-      try {
-        recipe.mixProperties.free();
-      } catch {
-        // React Strict Mode fires effect cleanups twice; second free would be a double-free.
-      }
-    },
-    [recipe],
-  );
+  // Free the prior `MixProperties` once a new recipe replaces it, never the live one (see
+  // `useFreeOnReplace` for why freeing in an effect cleanup is unsafe under Strict Mode).
+  useFreeOnReplace(recipe.mixProperties);
 
   const deleteRecipeEnabled = isSaved && !!onDeleteSavedRecipe;
 

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo } from "react";
+import { useMemo } from "react";
 
 import {
   allSpecEntries,
@@ -16,7 +16,7 @@ import { EntitySearch, Tagged } from "@/app/_components/entity-search";
 import { DetailPanelHeader } from "@/app/_components/detail-panel";
 import { CompositionView } from "@/app/_elements/tables/composition";
 import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
-import { useSeededWasmResources } from "@/lib/wasm-resources";
+import { useFreeOnReplace, useSeededWasmResources } from "@/lib/wasm-resources";
 import { STATE_VAL } from "@/lib/util";
 import { autoLink } from "@/lib/text";
 
@@ -72,17 +72,9 @@ function IngredientDetailBody({
     return bridge.has_ingredient(name) ? bridge.get_ingredient_by_name(name) : undefined;
   }, [entry, wasmUpdateIdx, bridge]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  useEffect(
-    () => () => {
-      try {
-        ingredient?.free();
-      } catch {
-        // React Strict Mode fires effect cleanups twice (mount → cleanup → remount), so the first
-        // cleanup frees the object and the second would double-free. Safe to swallow in production.
-      }
-    },
-    [ingredient],
-  );
+  // Free the prior `Ingredient` once a new entry replaces it, never the live one still read by
+  // `ingredient.composition` below (see `useFreeOnReplace` for why an effect cleanup is unsafe).
+  useFreeOnReplace(ingredient);
 
   return (
     <div className="@container flex flex-wrap items-start gap-6">

@@ -1,5 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 
+import { StrictMode } from "react";
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup, within } from "@testing-library/react";
@@ -492,6 +493,31 @@ describe("RecipeSearch", () => {
       fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
       expect(screen.queryByLabelText("Recipe comments")).not.toBeInTheDocument();
       expect(screen.getByText(/A classic base recipe/)).toBeInTheDocument();
+    });
+  });
+
+  describe("MixProperties WASM lifetime (StrictMode)", () => {
+    it("does not crash on re-render after a StrictMode mount cycle", () => {
+      // StrictMode's setup → cleanup → setup mount cycle frees the live mixProperties under the old
+      // effect-cleanup code; a bare render() runs the effect once, so the other tests never hit it.
+      render(
+        <StrictMode>
+          <RecipeSearch />
+        </StrictMode>,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
+
+      // Typing re-renders PropertiesView, re-reading recipe.mixProperties; before the fix that hit
+      // the freed object and threw "null pointer passed to rust" (the reported crash).
+      expect(() =>
+        fireEvent.change(screen.getByPlaceholderText("Search by name, author, or ingredient…"), {
+          target: { value: "stand" },
+        }),
+      ).not.toThrow();
+
+      // Properties table re-rendered (its "Property" header is present), proving a live object.
+      const detailPanel = document.querySelector(".search-detail-panel") as HTMLElement;
+      expect(within(detailPanel).getByText("Property")).toBeInTheDocument();
     });
   });
 });

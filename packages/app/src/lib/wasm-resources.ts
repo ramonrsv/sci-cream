@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 
 import { fetchAllUserIngredientSpecs } from "@/lib/data";
@@ -65,4 +65,38 @@ export function useSeededWasmResources(): WasmResourcesState {
   }, [session?.user?.email]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return resourcesState;
+}
+
+/** A wasm-bindgen object that owns a native pointer freed via `.free()` */
+interface Freeable {
+  free(): void;
+}
+
+/**
+ * Deterministically free a wasm-bindgen object once a new instance supersedes it, never freeing the
+ * instance currently being rendered.
+ *
+ * Freeing such objects in an effect *cleanup* is unsafe under React Strict Mode: its
+ * setup → cleanup → setup mount cycle runs the cleanup without recomputing the `useMemo` that
+ * produced the object, so it frees the live value that render still reads — surfacing as a
+ * "null pointer passed to rust" crash on the next re-render. Instead this frees only the previous
+ * value once a different one replaces it; the final instance is reclaimed by wasm-bindgen's
+ * `FinalizationRegistry` when the component unmounts.
+ *
+ * `value` is compared by reference, so it must be stable across renders (typically from `useMemo`).
+ */
+export function useFreeOnReplace(value: Freeable | null | undefined): void {
+  const prev = useRef<Freeable | null | undefined>(undefined);
+
+  useEffect(() => {
+    const previous = prev.current;
+    prev.current = value;
+    if (previous && previous !== value) {
+      try {
+        previous.free();
+      } catch {
+        // Already freed elsewhere (e.g. a concurrent update); the double-free is a no-op for us.
+      }
+    }
+  }, [value]);
 }
