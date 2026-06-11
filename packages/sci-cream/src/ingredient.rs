@@ -67,6 +67,8 @@ pub enum Category {
     Stabilizer,
     /// Emulsifier ingredients, e.g. lecithin, mono- and diglycerides, etc.
     Emulsifier,
+    /// Flavouring ingredients, e.g. vanilla extract, essential oils, etc.
+    Flavouring,
     /// Miscellaneous ingredients that do not fit into other categories
     Miscellaneous,
 }
@@ -143,6 +145,7 @@ mod tests {
         assert_eq!(Category::Alcohol.to_string(), "Alcohol");
         assert_eq!(Category::Stabilizer.to_string(), "Stabilizer");
         assert_eq!(Category::Emulsifier.to_string(), "Emulsifier");
+        assert_eq!(Category::Flavouring.to_string(), "Flavouring");
         assert_eq!(Category::Miscellaneous.to_string(), "Miscellaneous");
     }
 
@@ -158,6 +161,7 @@ mod tests {
             Category::Alcohol,
             Category::Stabilizer,
             Category::Emulsifier,
+            Category::Flavouring,
             Category::Miscellaneous,
         ] {
             let ser = serde_json::to_string(&cat).unwrap();

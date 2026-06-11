@@ -37,6 +37,7 @@ const EMBEDDED_INGREDIENTS_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
     ("dairy.json", include_str!("../../data/ingredients/dairy.json")),
     ("eggs.json", include_str!("../../data/ingredients/eggs.json")),
     ("emulsifiers.json", include_str!("../../data/ingredients/emulsifiers.json")),
+    ("flavourings.json", include_str!("../../data/ingredients/flavourings.json")),
     ("fruits.json", include_str!("../../data/ingredients/fruits.json")),
     ("miscellaneous.json", include_str!("../../data/ingredients/miscellaneous.json")),
     ("nuts.json", include_str!("../../data/ingredients/nuts.json")),

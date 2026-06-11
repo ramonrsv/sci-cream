@@ -24,5 +24,6 @@ export const SchemaCategory = Object.freeze({
   Alcohol: "Alcohol",
   Stabilizer: "Stabilizer",
   Emulsifier: "Emulsifier",
+  Flavouring: "Flavouring",
   Miscellaneous: "Miscellaneous",
 });

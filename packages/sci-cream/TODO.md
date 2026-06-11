@@ -5,7 +5,6 @@
 - [ ] Add code example doc tests to all specs that don't already have them.
 - [ ] Add "Louis Francois Stab 2000" ingredient, which has stabilizer and emulsifier components.
 - [ ] Add a beginner-friendly overview of the core ice cream science concepts, e.g. FPD curves.
-- [ ] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
 - [ ] Add more ultra-filtered milk products, e.g. `Fairlife Whole Ultra-Filtered Lactose-Free Milk`.
 - [ ] Add USDA chocolate ingredients and include them in `compare_specs_*` tests vs simple & lindt.
@@ -82,6 +81,7 @@
 
 ## Completed
 
+- [x] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [x] Add top-level `lib.rs` and `README.md` docs and code examples for balancing functionality.
 - [x] Add evaporated and condensed milk products from Goff & Hartel, as references for comparison.
 - [x] Add balancer functionality to automatically balance recipes and component substitutions.
