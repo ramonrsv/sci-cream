@@ -260,7 +260,6 @@ function RecipeDetailPanel({
             onChange={setSelectedVersionIdx}
             options={versionOptions}
             ariaLabel="Recipe version"
-            className="text-sm"
           />
           {deleteVersionEnabled && (
             <DeleteAction

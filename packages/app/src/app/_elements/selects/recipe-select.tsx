@@ -29,12 +29,7 @@ export function RecipeSelect({
 
   return (
     <div id="recipe-selection" className="float-left mx-1">
-      <Select
-        value={currentRecipeIdx}
-        onChange={setCurrentRecipeIdx}
-        options={options}
-        className="w-fit text-center"
-      />
+      <Select value={currentRecipeIdx} onChange={setCurrentRecipeIdx} options={options} />
     </div>
   );
 }

@@ -72,7 +72,6 @@ export function LoadAction({
           onChange={setTargetSlot}
           options={slotOptions}
           ariaLabel="Target slot"
-          className="text-sm"
         />
       )}
       <button onClick={() => onLoad(targetSlot)} className="action-button px-2 py-0.5 text-sm">
