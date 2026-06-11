@@ -12,8 +12,8 @@ import { Select, type SelectOption } from "./select";
 export enum KeyFilter {
   /// Automatically determine which keys to show based on internal heuristics
   Auto = "Auto",
-  /// Show only keys whose values are non-zero for at least one ingredient in at least one recipe
-  NonZero = "Non-Zero",
+  /// Show only keys with a non-zero, finite value (excludes zero, NaN, and +/-INF)
+  Active = "Active",
   /// Show all keys regardless of value
   All = "All",
   /// Show only keys that the user has manually selected
@@ -25,7 +25,7 @@ export enum KeyFilter {
  *
  * - `All` — every key returned by `getKeys`
  * - `Auto` — keys passing `autoHeuristic`
- * - `NonZero` — keys for which `isKeyEmpty` returns `false`
+ * - `Active` — keys for which `isKeyEmpty` returns `false`
  * - `Custom` — only keys present in `selectedKeysState`
  */
 export function getEnabledKeys<Key>(
@@ -45,7 +45,7 @@ export function getEnabledKeys<Key>(
       return getKeys();
     case KeyFilter.Auto:
       return getKeys().filter((key) => autoHeuristic(key));
-    case KeyFilter.NonZero:
+    case KeyFilter.Active:
       return getKeys().filter((key) => !isKeyEmpty(key));
     case KeyFilter.Custom:
       return getKeys().filter((key) => isKeySelected(key));

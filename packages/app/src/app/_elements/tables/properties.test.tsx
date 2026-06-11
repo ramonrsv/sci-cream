@@ -321,17 +321,17 @@ describe("PropertiesView", () => {
       expect(container.querySelectorAll("tbody tr")).toHaveLength(getPropKeys().length);
     });
 
-    it("should show no rows with NonZero filter when all recipes are empty", async () => {
+    it("should show no rows with Active filter when all recipes are empty", async () => {
       const recipes = filterActiveSlots(makeMockRecipeContext([]).recipes);
       const { container } = render(<PropertiesView recipes={recipes} />);
-      await selectOption(container, "#key-filter-select", KeyFilter.NonZero);
+      await selectOption(container, "#key-filter-select", KeyFilter.Active);
       expect(container.querySelectorAll("tbody tr")).toHaveLength(0);
     });
 
-    it("should show NonZero rows for a non-empty recipe", async () => {
+    it("should show Active rows for a non-empty recipe", async () => {
       const recipes = filterActiveSlots(makeMockRecipeContext([RecipeID.Main]).recipes);
       const { container } = render(<PropertiesView recipes={recipes} />);
-      await selectOption(container, "#key-filter-select", KeyFilter.NonZero);
+      await selectOption(container, "#key-filter-select", KeyFilter.Active);
       expect(container.querySelectorAll("tbody tr").length).toBeGreaterThan(0);
     });
   });

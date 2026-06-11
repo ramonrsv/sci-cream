@@ -168,9 +168,9 @@ describe("CompositionView", () => {
   });
 
   describe("KeyFilter Integration", () => {
-    it("should default to KeyFilter.NonZero", () => {
+    it("should default to KeyFilter.Active", () => {
       const { container } = render(<CompositionView composition={new Composition()} />);
-      expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.NonZero);
+      expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.Active);
     });
 
     it("should show all comp keys when filter is set to All", async () => {
@@ -186,11 +186,11 @@ describe("CompositionView", () => {
       await selectOption(container, "#key-filter-select", KeyFilter.All);
       const allRowCount = container.querySelectorAll("tbody tr").length;
 
-      await selectOption(container, "#key-filter-select", KeyFilter.NonZero);
-      const nonZeroRowCount = container.querySelectorAll("tbody tr").length;
+      await selectOption(container, "#key-filter-select", KeyFilter.Active);
+      const activeRowCount = container.querySelectorAll("tbody tr").length;
 
-      expect(nonZeroRowCount).toBeGreaterThan(0);
-      expect(nonZeroRowCount).toBeLessThan(allRowCount);
+      expect(activeRowCount).toBeGreaterThan(0);
+      expect(activeRowCount).toBeLessThan(allRowCount);
     });
   });
 });

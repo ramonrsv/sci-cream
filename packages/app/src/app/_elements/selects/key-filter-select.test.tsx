@@ -65,9 +65,9 @@ describe("getEnabledKeys", () => {
     expect(result).toEqual([TestKey.Fat, TestKey.Sugar]);
   });
 
-  it("returns non-empty keys for KeyFilter.NonZero", () => {
+  it("returns non-empty keys for KeyFilter.Active", () => {
     const result = getEnabledKeys(
-      KeyFilter.NonZero,
+      KeyFilter.Active,
       new Set<TestKey>(),
       getAllKeys,
       isKeyEmpty,
@@ -164,12 +164,12 @@ describe("KeyFilterSelect", () => {
   });
 
   it("reflects the current filter value in the selected label", () => {
-    const { container } = render(<TestWrapper initialFilter={KeyFilter.NonZero} />);
-    expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.NonZero);
+    const { container } = render(<TestWrapper initialFilter={KeyFilter.Active} />);
+    expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.Active);
   });
 
   it("renders only the supported options when supportedKeyFilters is provided", async () => {
-    const supported = [KeyFilter.All, KeyFilter.NonZero];
+    const supported = [KeyFilter.All, KeyFilter.Active];
     const { container } = render(<TestWrapper supportedKeyFilters={supported} />);
     expect(await getSelectOptionLabels(container, "#key-filter-select")).toEqual(supported);
   });
@@ -186,7 +186,7 @@ describe("KeyFilterSelect", () => {
   // ---- Settings button visibility ---------------------------------------------------------------
 
   it("does not show the settings button for non-Custom filters", () => {
-    [KeyFilter.Auto, KeyFilter.All, KeyFilter.NonZero].forEach((filter) => {
+    [KeyFilter.Auto, KeyFilter.All, KeyFilter.Active].forEach((filter) => {
       const { container, unmount } = render(<TestWrapper initialFilter={filter} />);
       expect(container.querySelector("#customize-keys-button")).not.toBeInTheDocument();
       unmount();

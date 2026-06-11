@@ -76,7 +76,7 @@ export function CompositionView({
   toolbarPrefix?: ReactNode;
   defaultSelected?: Set<CompKey>;
 }) {
-  const compsFilterState = useState<KeyFilter>(KeyFilter.NonZero);
+  const compsFilterState = useState<KeyFilter>(KeyFilter.Active);
   const selectedCompsState = useState<Set<CompKey>>(defaultSelected);
 
   /** Returns `true` when the composition value for the given key is zero or NaN */
@@ -101,7 +101,7 @@ export function CompositionView({
       <div className="flex items-center">
         {toolbarPrefix}
         <KeyFilterSelect
-          supportedKeyFilters={[KeyFilter.NonZero, KeyFilter.All, KeyFilter.Custom]}
+          supportedKeyFilters={[KeyFilter.Active, KeyFilter.All, KeyFilter.Custom]}
           keyFilterState={compsFilterState}
           selectedKeysState={selectedCompsState}
           getKeys={getCompKeys}

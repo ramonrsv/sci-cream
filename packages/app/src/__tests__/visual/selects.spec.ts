@@ -54,7 +54,7 @@ test.describe("Visual Regression: QtyToggleSelect", () => {
 // ---------------------------------------------------------------------------
 
 test.describe("Visual Regression: KeyFilterSelect", () => {
-  test("Select Auto, Non-Zero, All, Custom", async ({ page }) => {
+  test("Select Auto, Active, All, Custom", async ({ page }) => {
     await goToPageAndWaitFor(page);
 
     const selector = getPropertiesPanelKeyFilterSelectInput(page);
@@ -63,8 +63,8 @@ test.describe("Visual Regression: KeyFilterSelect", () => {
     await selectOption(page, selector, KeyFilter.Auto);
     await expect(selector).toHaveScreenshot("key-filter-select-auto.png");
 
-    await selectOption(page, selector, KeyFilter.NonZero);
-    await expect(selector).toHaveScreenshot("key-filter-select-nonzero.png");
+    await selectOption(page, selector, KeyFilter.Active);
+    await expect(selector).toHaveScreenshot("key-filter-select-active.png");
 
     await selectOption(page, selector, KeyFilter.All);
     await expect(selector).toHaveScreenshot("key-filter-select-all.png");

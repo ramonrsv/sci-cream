@@ -488,10 +488,10 @@ describe("CompositionBreakdownView", () => {
       expect(headers).toHaveLength(getCompKeys().length);
     });
 
-    it("should show no columns with NonZero filter when the recipe is empty", async () => {
+    it("should show no columns with Active filter when the recipe is empty", async () => {
       const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<CompositionBreakdownView recipes={recipeCtx.recipes} />);
-      await setKeyFilterSelect(container, KeyFilter.NonZero);
+      await setKeyFilterSelect(container, KeyFilter.Active);
       const headers = container.querySelectorAll(
         "#composition-breakdown-table thead tr:first-child th",
       );
