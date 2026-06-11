@@ -14,11 +14,11 @@ import { DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
 export function FpdGraphPanel({ recipes }: { recipes: Recipe[] }) {
   const active = filterActiveSlots(recipes);
   return (
-    <div id="fpd-graph-panel" className="grid-component relative h-full w-full">
+    <div id="fpd-graph-panel" className="grid-component relative flex h-full w-full flex-col">
       <div className="flex items-center">
         <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />
       </div>
-      <div className="h-[calc(100%-33px)] px-2 pb-2">
+      <div className="min-h-0 flex-1 px-2 pb-2">
         <FpdGraph main={active[0]} refs={active.slice(1)} />
       </div>
     </div>

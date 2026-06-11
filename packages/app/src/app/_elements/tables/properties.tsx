@@ -167,7 +167,7 @@ export function PropertiesView({
   };
 
   return (
-    <>
+    <div className="flex h-full flex-col">
       <div className="flex items-center">
         {toolbarPrefix}
         <QtyToggleSelect
@@ -181,13 +181,13 @@ export function PropertiesView({
           key_as_med_str={prop_key_as_med_str}
         />
       </div>
-      <div className="h-[calc(100%-33px)] overflow-y-auto whitespace-nowrap">
+      <div className="min-h-0 flex-1 overflow-y-auto whitespace-nowrap">
         <PropertiesTable
           recipes={recipes}
           propKeys={getEnabledProps()}
           qtyToggle={qtyToggleState[STATE_VAL]}
         />
       </div>
-    </>
+    </div>
   );
 }

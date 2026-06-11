@@ -367,7 +367,7 @@ export function PropertiesChartView({
   };
 
   return (
-    <>
+    <div className="flex h-full flex-col">
       <div className="flex items-center">
         {toolbarPrefix}
         <KeyFilterSelect
@@ -378,9 +378,9 @@ export function PropertiesChartView({
           key_as_med_str={prop_key_as_med_str}
         />
       </div>
-      <div className="h-[calc(100%-33px)] px-2 pb-2">
+      <div className="min-h-0 flex-1 px-2 pb-2">
         <PropertiesBarChart main={main} refs={refs} propKeys={getEnabledProps()} />
       </div>
-    </>
+    </div>
   );
 }

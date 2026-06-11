@@ -97,7 +97,7 @@ export function CompositionView({
   };
 
   return (
-    <>
+    <div className="flex h-full flex-col">
       <div className="flex items-center">
         {toolbarPrefix}
         <KeyFilterSelect
@@ -108,9 +108,9 @@ export function CompositionView({
           key_as_med_str={comp_key_as_med_str}
         />
       </div>
-      <div className="h-[calc(100%-33px)] overflow-y-auto whitespace-nowrap">
+      <div className="min-h-0 flex-1 overflow-y-auto whitespace-nowrap">
         <CompositionTable composition={composition} compKeys={getEnabledComps()} />
       </div>
-    </>
+    </div>
   );
 }
