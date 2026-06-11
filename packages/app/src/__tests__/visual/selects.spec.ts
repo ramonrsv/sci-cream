@@ -11,6 +11,7 @@ import {
   expandNavbar,
 } from "@/__tests__/e2e/util";
 import { getSelectControl, getOpenSelectMenu, selectOption } from "@/__tests__/e2e/select";
+import { expandToFullHeight } from "@/__tests__/visual/util";
 
 // ---------------------------------------------------------------------------
 // QtyToggleSelect
@@ -101,6 +102,21 @@ test.describe("Visual Regression: KeyFilterSelect", () => {
     await popup.evaluate((el) => (el.scrollTop = el.scrollHeight / 2));
     await page.waitForTimeout(200);
     await expect(popup).toHaveScreenshot("key-filter-select-custom-popup-scrolled.png");
+  });
+
+  test("Custom popup full content", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+
+    const selector = getPropertiesPanelKeyFilterSelectInput(page);
+    await expect(selector).toBeVisible();
+    await selectOption(page, selector, KeyFilter.Custom);
+
+    await page.locator("#properties-panel #customize-keys-button").click();
+    const popup = page.locator(".popup").first();
+    await expect(popup).toBeVisible();
+
+    await expandToFullHeight(popup);
+    await expect(popup).toHaveScreenshot("key-filter-select-custom-popup-full.png");
   });
 });
 

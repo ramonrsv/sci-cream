@@ -1,7 +1,23 @@
-import { Page } from "@playwright/test";
+import { Page, Locator } from "@playwright/test";
 import sharp from "sharp";
 
 import { sleep_ms } from "@/lib/util";
+
+/**
+ * Drops a fixed-height element's height (and max-height) constraints so it grows to fit all its
+ * content, letting a single element screenshot capture the whole thing.
+ *
+ * Suited to small, fixed-height overflow containers such as popups and menus. Unlike
+ * {@link captureFullContent}, it captures in one shot, so sticky descendants appear once instead of
+ * repeating — but it resizes the element, so it's unsuitable for viewport-adaptive components.
+ */
+export async function expandToFullHeight(locator: Locator) {
+  await locator.evaluate((el) => {
+    const style = (el as HTMLElement).style;
+    style.height = "auto";
+    style.maxHeight = "none";
+  });
+}
 
 /** Scrolls to the bottom of the page and waits for a short period to allow lazy-loaded content. */
 export async function scrollToBottomOfPage(page: Page) {
