@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useRef, useEffect } from "react";
-import { createPortal } from "react-dom";
+import { useState } from "react";
 import { X, Settings } from "lucide-react";
 
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
+import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";
 
 import { Select, type SelectOption } from "./select";
 
@@ -70,17 +70,6 @@ export function KeyFilterSelect<Key>({
   const [selectedKeys, setSelectedKeys] = selectedKeysState;
   const [allKeysSelected, setAllKeysSelected] = useState<boolean>(false);
 
-  const [keySelectVisible, setKeySelectVisible] = useState<boolean>(false);
-  const triggerRef = useRef<HTMLDivElement>(null);
-  const [popupPos, setPopupPos] = useState<{ top: number; right: number } | undefined>(undefined);
-
-  useEffect(() => {
-    if (keySelectVisible && triggerRef.current) {
-      const rect = triggerRef.current.getBoundingClientRect();
-      setPopupPos({ top: rect.top + window.scrollY, right: rect.right + window.scrollX });
-    }
-  }, [keySelectVisible]);
-
   /** Returns `true` when the given key is in the current custom selection */
   const isKeySelected = (key: Key) => {
     return selectedKeys.has(key);
@@ -118,60 +107,58 @@ export function KeyFilterSelect<Key>({
   return (
     <div id="key-filter-select" className="mx-1">
       <div className="flex items-center">
-        <div ref={triggerRef}>
-          <Select value={keyFilter} onChange={setKeyFilter} options={options} />
-        </div>
+        <Select value={keyFilter} onChange={setKeyFilter} options={options} />
         {keyFilter === KeyFilter.Custom && (
-          <button
-            id="customize-keys-button"
-            className="action-button ml-0.5 px-1 py-0.75"
-            onClick={() => setKeySelectVisible(true)}
-            title="Customize properties"
-          >
-            <Settings size={COMPONENT_ACTION_ICON_SIZE - 3} />
-          </button>
+          <Popover>
+            <PopoverButton
+              id="customize-keys-button"
+              className="action-button ml-0.5 px-1 py-0.75"
+              title="Customize properties"
+            >
+              <Settings size={COMPONENT_ACTION_ICON_SIZE - 3} />
+            </PopoverButton>
+            <PopupPanel
+              anchor={{ to: "right start", gap: 5, padding: 5 }}
+              className="h-100 w-fit overflow-x-auto pr-2 pl-1 whitespace-nowrap"
+            >
+              {({ close }) => (
+                <>
+                  <button
+                    className="action-button sticky top-0 z-10 float-right -mr-1 pt-px"
+                    onClick={() => close()}
+                  >
+                    <X size={COMPONENT_ACTION_ICON_SIZE} />
+                  </button>
+                  <ul className="bg-inherit">
+                    <li
+                      key="All"
+                      className="border-brd-lt dark:border-brd-dk sticky top-0 min-w-33 border-b bg-inherit py-0.5 font-semibold"
+                    >
+                      <input
+                        id="all-properties-checkbox"
+                        type="checkbox"
+                        checked={allKeysSelected}
+                        onChange={updateAllKeysSelected}
+                      />
+                      {" All Properties"}
+                    </li>
+                    {getKeys().map((key) => (
+                      <li key={String(key)}>
+                        <input
+                          type="checkbox"
+                          checked={isKeySelected(key)}
+                          onChange={() => updateSelectedKey(key)}
+                        />
+                        {" " + key_as_med_str(key)}
+                      </li>
+                    ))}
+                  </ul>
+                </>
+              )}
+            </PopupPanel>
+          </Popover>
         )}
       </div>
-      {keySelectVisible &&
-        popupPos &&
-        createPortal(
-          <div
-            className="popup absolute z-50 h-100 w-fit overflow-x-auto pr-2 pl-1 whitespace-nowrap"
-            style={{ top: `${popupPos.top}px`, left: `${popupPos.right + 5}px` }}
-          >
-            <button
-              className="action-button sticky top-0 z-10 float-right -mr-1 pt-px"
-              onClick={() => setKeySelectVisible(false)}
-            >
-              <X size={COMPONENT_ACTION_ICON_SIZE} />
-            </button>
-            <ul className="bg-inherit">
-              <li
-                key="All"
-                className="border-brd-lt dark:border-brd-dk sticky top-0 min-w-33 border-b bg-inherit py-0.5 font-semibold"
-              >
-                <input
-                  id="all-properties-checkbox"
-                  type="checkbox"
-                  checked={allKeysSelected}
-                  onChange={updateAllKeysSelected}
-                />
-                {" All Properties"}
-              </li>
-              {getKeys().map((key) => (
-                <li key={String(key)}>
-                  <input
-                    type="checkbox"
-                    checked={isKeySelected(key)}
-                    onChange={() => updateSelectedKey(key)}
-                  />
-                  {" " + key_as_med_str(key)}
-                </li>
-              ))}
-            </ul>
-          </div>,
-          document.body,
-        )}
     </div>
   );
 }

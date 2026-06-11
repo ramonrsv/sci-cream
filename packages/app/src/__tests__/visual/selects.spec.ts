@@ -115,7 +115,7 @@ test.describe("Visual Regression: KeyFilterSelect", () => {
     const popup = page.locator(".popup").first();
     await expect(popup).toBeVisible();
 
-    await expandToFullHeight(popup);
+    await expandToFullHeight(page, popup);
     await expect(popup).toHaveScreenshot("key-filter-select-custom-popup-full.png");
   });
 });

@@ -3,42 +3,46 @@ import sharp from "sharp";
 
 import { sleep_ms } from "@/lib/util";
 
-/**
- * Drops a fixed-height element's height (and max-height) constraints so it grows to fit all its
- * content, letting a single element screenshot capture the whole thing.
- *
- * Suited to small, fixed-height overflow containers such as popups and menus. Unlike
- * {@link captureFullContent}, it captures in one shot, so sticky descendants appear once instead of
- * repeating — but it resizes the element, so it's unsuitable for viewport-adaptive components.
- */
-export async function expandToFullHeight(locator: Locator) {
-  await locator.evaluate((el) => {
-    const style = (el as HTMLElement).style;
-    style.height = "auto";
-    style.maxHeight = "none";
-  });
-}
-
 /** Scrolls to the bottom of the page and waits for a short period to allow lazy-loaded content. */
 export async function scrollToBottomOfPage(page: Page) {
   await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   await sleep_ms(500); // Wait for any lazy-loaded content to load
 }
 
+/** Vertical overflow (hidden scrollable height, `scrollHeight - clientHeight`) of `locator`. */
+export async function getOverflow(locator: Locator): Promise<number> {
+  return locator.evaluate((el) => el.scrollHeight - el.clientHeight);
+}
+
 /**
- * Gets the vertical overflow of the scroll container identified by `scrollTargetTestId`.
- *
- * Defaults to the app shell's main content area (`[data-testid='app-content']`).
+ * Grows the viewport height by `extraHeight` pixels (width unchanged) so content that overflows the
+ * current viewport can be captured in a single screenshot. Shared grow primitive behind
+ * {@link setViewportHeightForAllAppContentScreenshot} and {@link expandToFullHeight}.
  */
-export async function getContentOverflow(
-  page: Page,
-  scrollTargetTestId = "app-content",
-): Promise<number> {
-  return page.evaluate((testId) => {
-    const el = document.querySelector(`[data-testid='${testId}']`);
-    if (!el) return 0;
-    return el.scrollHeight - el.clientHeight;
-  }, scrollTargetTestId);
+async function growViewportHeight(page: Page, extraHeight: number) {
+  const viewport = page.viewportSize();
+  if (!viewport) {
+    throw new Error("Viewport size is not set");
+  }
+  await page.setViewportSize({ width: viewport.width, height: viewport.height + extraHeight });
+}
+
+/**
+ * Expands an overflow container (popup, menu) so one element screenshot captures all its content,
+ * with sticky descendants appearing once (unlike {@link captureFullContent}). Clears the element's
+ * fixed `height` (e.g. `h-100`) so it grows, then grows the viewport: a Floating-UI-anchored
+ * Headless UI popup re-clamps its inline `max-height` to the viewport on every resize, so enlarging
+ * the viewport — not overriding the style — is what lets it fit.
+ */
+export async function expandToFullHeight(page: Page, locator: Locator) {
+  await locator.evaluate((el) => ((el as HTMLElement).style.height = "auto"));
+
+  const overflow = await getOverflow(locator);
+  if (overflow <= 0) return;
+
+  // Grow by the hidden overflow (plus clearance) so the popup's recomputed max-height fits it all.
+  await growViewportHeight(page, overflow + 16);
+  await sleep_ms(100); // Let Floating UI's size middleware re-clamp to the taller viewport.
 }
 
 /**
@@ -54,16 +58,8 @@ export async function getContentOverflow(
  *
  * This function adds 10px to the viewport height for visual clearance at the bottom edge.
  */
-export async function setViewportHeightForAllContentScreenshot(page: Page) {
-  const currentViewport = page.viewportSize();
-  if (!currentViewport) {
-    throw new Error("Viewport size is not set");
-  }
-  const overflow = await getContentOverflow(page);
-  await page.setViewportSize({
-    width: currentViewport.width,
-    height: currentViewport.height + overflow + 10,
-  });
+export async function setViewportHeightForAllAppContentScreenshot(page: Page) {
+  await growViewportHeight(page, (await getOverflow(page.getByTestId("app-content"))) + 10);
 }
 
 /**
@@ -73,7 +69,7 @@ export async function setViewportHeightForAllContentScreenshot(page: Page) {
  * `app-content`, the app shell's main content area). Useful for capturing nested scrollers, e.g.
  * the search list or detail panel inside `EntitySearch`.
  *
- * Unlike {@link setViewportHeightForAllContentScreenshot}, this keeps the viewport at its natural
+ * Unlike {@link setViewportHeightForAllAppContentScreenshot}, this keeps the viewport at its natural
  * size so viewport-adaptive components (`flex-1`, charts that observe their box, etc.) render at
  * the size a real user would see. Each viewport-sized frame is captured at successive scroll
  * positions of the target scroller, then cropped to the scroller's bounding box, trimmed for

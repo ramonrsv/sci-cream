@@ -9,8 +9,8 @@ import {
 import { VIEWPORTS, VIEWPORT_DESKTOP_DEFAULT } from "@/__tests__/visual/assets";
 import {
   captureFullContent,
-  getContentOverflow,
-  setViewportHeightForAllContentScreenshot,
+  getOverflow,
+  setViewportHeightForAllAppContentScreenshot,
 } from "@/__tests__/visual/util";
 
 /** Waits for a short period to allow any layout shifts or animations to complete. */
@@ -47,20 +47,20 @@ async function takeViewportAndFullContentScreenshots(
   await waitForLayoutStability();
   await expect(page).toHaveScreenshot(`${screenshot}.png`, { maxDiffPixelRatio, maxDiffPixels });
 
-  const scrollTargetTestId = "app-content";
+  const appContentTestId = "app-content";
 
   // Skip the all-content snapshot if the scroll container has no overflow — e.g. layouts that
   // fix the page to the viewport and rely on internal scrollers (`EntitySearch` at `md+`). The
   // viewport screenshot above already represents everything visible to the user.
-  if ((await getContentOverflow(page, scrollTargetTestId)) === 0) return;
+  if ((await getOverflow(page.getByTestId(appContentTestId))) === 0) return;
 
   if (fullContent === "stitch") {
-    expect(await captureFullContent(page, scrollTargetTestId)).toMatchSnapshot(
+    expect(await captureFullContent(page, appContentTestId)).toMatchSnapshot(
       `${screenshot}-all-content-stitched.png`,
       { maxDiffPixels, maxDiffPixelRatio },
     );
   } else {
-    await setViewportHeightForAllContentScreenshot(page);
+    await setViewportHeightForAllAppContentScreenshot(page);
     await waitForLayoutStability();
 
     await expect(page).toHaveScreenshot(`${screenshot}-all-content.png`, {
