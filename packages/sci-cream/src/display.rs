@@ -131,6 +131,7 @@ impl KeyAsStrings for CompKey {
             Self::PACalc => "PACalc",
             Self::TotalPAC => "PAC",
             Self::HF => "HF",
+            Self::NetPAC => "Net PAC",
 
             Self::SaturatedFat => "Saturated Fat",
             Self::TransFat => "Trans Fat",
@@ -174,13 +175,14 @@ impl KeyAsStrings for RatioKey {
         match self {
             Self::EmulsifiersPerFat => "Emul./Fat",
             Self::StabilizersPerWater => "Stab./Water",
-            Self::AbsPAC => self.as_med_str(),
+            _ => self.as_med_str(),
         }
     }
 
     fn as_med_str(&self) -> &'static str {
         match self {
             Self::AbsPAC => "Abs.PAC",
+            Self::AbsNetPAC => "Abs.Net PAC",
             Self::EmulsifiersPerFat => "Emulsifiers/Fat",
             Self::StabilizersPerWater => "Stabilizers/Water",
         }
@@ -189,6 +191,7 @@ impl KeyAsStrings for RatioKey {
     fn as_long_str(&self) -> &'static str {
         match self {
             Self::AbsPAC => "Absolute PAC",
+            Self::AbsNetPAC => "Absolute Net PAC",
             _ => self.as_med_str(),
         }
     }

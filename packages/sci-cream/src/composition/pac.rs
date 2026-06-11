@@ -85,6 +85,14 @@ impl PAC {
     pub fn total(&self) -> f64 {
         self.sugars + self.salt + self.msnf_ws_salts + self.alcohol
     }
+
+    /// Calculates the total PAC contributions from all sources, subtracting hardness factor
+    ///
+    /// **Warning**: This value can go negative if the hardness factor exceeds the total PAC.
+    #[must_use]
+    pub fn net_total(&self) -> f64 {
+        self.total() - self.hardness_factor
+    }
 }
 
 impl Validate for PAC {

@@ -367,6 +367,12 @@ pub enum CompKey {
     TotalPAC,
     /// [Hardness Factor (HF)](crate::docs#corvitto-method-hardness-factor) of the ingredient or mix
     HF,
+    /// Net [Potere Anti-Cristallizzante (PAC)](crate::docs#pac-afp-fpdf-se), i.e. `TotalPAC - HF`,
+    /// representing the effective PAC after accounting for the hardness factor
+    ///
+    /// **Warning**: Unlike all other composition values, this value can go negative, if the HF
+    /// exceeds the total PAC; unlikely for a full mix, but possible for individual ingredients.
+    NetPAC,
 
     // Nutritional Properties
     // ----------------------
@@ -608,6 +614,7 @@ impl Composition {
             CompKey::PACalc => self.pac.alcohol,
             CompKey::TotalPAC => self.pac.total(),
             CompKey::HF => self.pac.hardness_factor,
+            CompKey::NetPAC => self.pac.net_total(),
 
             CompKey::SaturatedFat => self.solids.all().fats.saturated,
             CompKey::TransFat => self.solids.all().fats.trans,
@@ -845,6 +852,7 @@ mod tests {
             (CompKey::PACsgr, 4.8069),
             (CompKey::PACmlk, 3.2405),
             (CompKey::TotalPAC, 8.0474),
+            (CompKey::NetPAC, 8.0474),
             (CompKey::SaturatedFat, 1.3),
             (CompKey::TransFat, 0.07),
         ]);
@@ -945,17 +953,16 @@ mod tests {
             );
 
         let abv = c.alcohol.to_abv(); // 2.5 / ABV_TO_ABW_RATIO
-        let abs_pac = c.absolute_pac(); // (6+1+2+0.5) / 59.0 * 100
 
         #[rustfmt::skip]
         let expected = HashMap::from([
-            (CompKey::Energy,               100.0),
+            (CompKey::Energy,             100.0),
             // Milk
             (CompKey::MilkFat,              4.0),
             (CompKey::MSNF,                 9.0),   // milk.snf()  = 13 - 4
             (CompKey::MilkSNFS,             4.0),   // milk.snfs() = 9 - 5 (lactose)
             (CompKey::MilkProteins,         3.0),
-            (CompKey::MilkSolids,           13.0),
+            (CompKey::MilkSolids,          13.0),
             // Cocoa
             (CompKey::CocoaButter,          3.0),
             (CompKey::CocoaSolids,          2.0),   // cocoa.snfs() = (7-3) - 2 (sucrose)
@@ -972,16 +979,16 @@ mod tests {
             (CompKey::OtherFats,            1.0),
             (CompKey::OtherSNFS,            4.5),   // other.snfs() = (10.5-1) - 5.0 (sugars)
             // Totals
-            (CompKey::TotalFats,            12.0),  // 4+2+3+2+1
-            (CompKey::TotalSNF,             26.5),  // 38.5 - 12.0
-            (CompKey::TotalSNFS,            14.5),  // 26.5 - 12.0 (TotalSugars)
+            (CompKey::TotalFats,           12.0),  // 4+2+3+2+1
+            (CompKey::TotalSNF,            26.5),  // 38.5 - 12.0
+            (CompKey::TotalSNFS,           14.5),  // 26.5 - 12.0 (TotalSugars)
             (CompKey::TotalProteins,        6.5),   // 3+1+1+1+0.5
-            (CompKey::TotalSolids,          38.5),  // 13+4+7+4+10.5
-            (CompKey::Water,                59.0),  // 100 - 38.5 - 2.5
+            (CompKey::TotalSolids,         38.5),  // 13+4+7+4+10.5
+            (CompKey::Water,               59.0),  // 100 - 38.5 - 2.5
             // Carbohydrates
             (CompKey::Inulin,               0.4),
             (CompKey::Oligofructose,        0.6),
-            (CompKey::TotalFiber,                1.0),   // 0.4 (inulin) + 0.6 (oligofructose)
+            (CompKey::TotalFiber,           1.0),   // 0.4 (inulin) + 0.6 (oligofructose)
             (CompKey::Glucose,              1.0),
             (CompKey::Fructose,             1.0),
             (CompKey::Galactose,            1.0),
@@ -989,13 +996,13 @@ mod tests {
             (CompKey::Lactose,              5.0),
             (CompKey::Maltose,              1.0),
             (CompKey::Trehalose,            1.0),
-            (CompKey::TotalSugars,          12.0),  // 1+1+1+2+5+1+1
+            (CompKey::TotalSugars,         12.0),  // 1+1+1+2+5+1+1
             (CompKey::Erythritol,           0.2),
             (CompKey::Maltitol,             0.4),
             (CompKey::Sorbitol,             0.6),
             (CompKey::Xylitol,              0.8),
             (CompKey::TotalPolyols,         2.0),   // 0.2+0.4+0.6+0.8
-            (CompKey::TotalCarbohydrates,   15.0),  // 12 (sugars) + 2 (polyols) + 1 (fiber)
+            (CompKey::TotalCarbohydrates,  15.0),  // 12 (sugars) + 2 (polyols) + 1 (fiber)
             (CompKey::Aspartame,            0.05),
             (CompKey::Cyclamate,            0.06),
             (CompKey::Saccharin,            0.07),
@@ -1003,7 +1010,7 @@ mod tests {
             (CompKey::Steviosides,          0.09),
             (CompKey::Mogrosides,           0.15),
             (CompKey::TotalArtificial,      0.5),   // 0.05+0.06+0.07+0.08+0.09+0.15
-            (CompKey::TotalSweeteners,      14.5),  // 12 + 2 + 0.5
+            (CompKey::TotalSweeteners,     14.5),  // 12 + 2 + 0.5
             // Alcohol and Micro
             (CompKey::Alcohol,              2.5),
             (CompKey::ABV,                  abv),
@@ -1021,7 +1028,7 @@ mod tests {
             (CompKey::XanthanGum,           0.09),
             (CompKey::SodiumAlginate,       0.10),
             (CompKey::TaraGum,              0.11),
-            (CompKey::TotalStabilizers,          0.66),  // 0.01+0.02+...+0.11
+            (CompKey::TotalStabilizers,     0.66),  // 0.01+0.02+...+0.11
             // POD and PAC
             (CompKey::POD,                  5.0),
             (CompKey::PACsgr,               6.0),
@@ -1030,6 +1037,7 @@ mod tests {
             (CompKey::PACalc,               0.5),
             (CompKey::TotalPAC,             9.5),
             (CompKey::HF,                   1.0),
+            (CompKey::NetPAC,               8.5),   // TotalPAC - HF
             // Saturated and Trans Fat
             (CompKey::SaturatedFat,         5.64),  // 2.6 + 0.56 + 1.8 + 0.18 + 0.5
             (CompKey::TransFat,             1.14),  // 0.14 + 0.1 + 0.2 + 0.3 + 0.4
@@ -1041,7 +1049,7 @@ mod tests {
         // Ratio keys are read via `get_ratio`, not `get`; assert them separately.
         assert_eq_flt_test!(c.get_ratio(RatioKey::EmulsifiersPerFat), 5.0); // 0.6 / 12.0 * 100
         assert_eq_flt_test!(c.get_ratio(RatioKey::StabilizersPerWater), 0.66 / 59.0 * 100.0);
-        assert_eq_flt_test!(c.get_ratio(RatioKey::AbsPAC), abs_pac);
+        assert_eq_flt_test!(c.get_ratio(RatioKey::AbsPAC), 9.5 / 59.0 * 100.0);
     }
 
     #[test]

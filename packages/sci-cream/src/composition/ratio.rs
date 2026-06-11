@@ -33,6 +33,8 @@ use crate::{balancing::BalanceKey, composition::Composition, fpd::FpdKey, proper
 pub enum RatioKey {
     /// [Absolute PAC](crate::docs#absolute-pac), i.e. `TotalPAC / Water`, as a percentage.
     AbsPAC,
+    /// Absolute net [PAC](crate::docs#pac), i.e. `(TotalPAC - HF) / Water`, as a percentage.
+    AbsNetPAC,
     /// Total emulsifier content per fat content, i.e. `TotalEmulsifiers / TotalFats`, as a
     /// percentage.
     EmulsifiersPerFat,
@@ -67,6 +69,7 @@ impl RatioKey {
     pub const fn parts(self) -> (CompKey, CompKey) {
         match self {
             Self::AbsPAC => (CompKey::TotalPAC, CompKey::Water),
+            Self::AbsNetPAC => (CompKey::NetPAC, CompKey::Water),
             Self::StabilizersPerWater => (CompKey::TotalStabilizers, CompKey::Water),
             Self::EmulsifiersPerFat => (CompKey::TotalEmulsifiers, CompKey::TotalFats),
         }
@@ -76,7 +79,7 @@ impl RatioKey {
     #[must_use]
     pub const fn scope(self) -> KeyScope {
         match self {
-            Self::AbsPAC | Self::EmulsifiersPerFat | Self::StabilizersPerWater => KeyScope::Mix,
+            Self::AbsPAC | Self::AbsNetPAC | Self::EmulsifiersPerFat | Self::StabilizersPerWater => KeyScope::Mix,
         }
     }
 }
