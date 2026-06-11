@@ -15,6 +15,7 @@ import {
 import { EntitySearch, Tagged } from "@/app/_components/entity-search";
 import { DetailPanelHeader } from "@/app/_components/detail-panel";
 import { CompositionView } from "@/app/_elements/tables/composition";
+import { ToolbarSpacer } from "@/app/_elements/selects/toolbar-spacer";
 import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
 import { useFreeOnReplace, useSeededWasmResources } from "@/lib/wasm-resources";
 import { STATE_VAL } from "@/lib/util";
@@ -79,7 +80,11 @@ function IngredientDetailBody({
   return (
     <div className="@container flex flex-wrap items-start gap-6">
       <div className="min-w-50 flex-1 basis-65">
-        <pre className="code-block @[484px]:mt-8.25">{stringifyEntry(entry)}</pre>
+        {/* Reserve the adjacent view's toolbar height so the JSON spec lines up with it. */}
+        <div className="hidden @[484px]:block">
+          <ToolbarSpacer />
+        </div>
+        <pre className="code-block">{stringifyEntry(entry)}</pre>
       </div>
       <div
         className="max-w-65 min-w-50 flex-1 basis-35"

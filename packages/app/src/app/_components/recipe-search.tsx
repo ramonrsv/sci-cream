@@ -10,6 +10,7 @@ import {
 
 import { makeRecipeId, type Recipe } from "@/lib/recipe";
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
+import { ToolbarSpacer } from "@/app/_elements/selects/toolbar-spacer";
 import { RecipeTable } from "@/app/_elements/tables/recipe";
 import { PropertiesView } from "@/app/_elements/tables/properties";
 import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
@@ -267,7 +268,11 @@ function RecipeDetailPanel({
 
       {/* Body: ingredient table + mix properties */}
       <div className="@container flex flex-wrap items-start gap-6">
-        <div className="min-w-50 flex-1 basis-65 @[484px]:mt-8.25">
+        <div className="min-w-50 flex-1 basis-65">
+          {/* Reserve the properties view's toolbar height so the recipe table lines up with it. */}
+          <div className="hidden @[484px]:block">
+            <ToolbarSpacer />
+          </div>
           <RecipeTable recipe={recipe} isValidIngredient={(name) => bridge.has_ingredient(name)} />
         </div>
         <div
