@@ -3,8 +3,6 @@ export const MAX_RECIPES = 3;
 /** Number of ingredient rows per recipe. */
 export const RECIPE_TOTAL_ROWS = 20;
 
-/** Icon size (px) used in the navbar. */
-export const NAVBAR_ICON_SIZE = 20;
 /** Icon size (px) for grid drag handles. */
 export const DRAG_HANDLE_ICON_SIZE = 17;
 /** Icon size (px) for component action buttons. */
@@ -14,8 +12,17 @@ export const DETAIL_PANEL_ACTION_ICON_SIZE = 14;
 /** Font size (px) for graph titles. */
 export const GRAPH_TITLE_FONT_SIZE = 15;
 
+/** Icon size (px) used in the header. */
+export const HEADER_ICON_SIZE = 20;
+/** Icon size (px) used in the navbar. */
+export const NAVBAR_ICON_SIZE = 20;
+
 /** Whether the navbar is collapsed by default. */
 export const DEFAULT_COLLAPSED_NAVBAR = true;
+/** Tailwind width classes for the collapsed sidebar (and matching header section). */
+export const SIDEBAR_W_COLLAPSED = "w-14 sm:w-18";
+/** Tailwind width classes for the expanded sidebar (and matching header section). */
+export const SIDEBAR_W_EXPANDED = "w-54 sm:w-58";
 
 // ----  Fixed sizes for react-grid-layout components ----------------------------------------------
 

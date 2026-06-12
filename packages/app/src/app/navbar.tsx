@@ -19,7 +19,13 @@ import {
   RotateCcw,
 } from "lucide-react";
 
-import { NAVBAR_ICON_SIZE, DEFAULT_COLLAPSED_NAVBAR } from "@/lib/styles/sizes";
+import {
+  HEADER_ICON_SIZE,
+  NAVBAR_ICON_SIZE,
+  DEFAULT_COLLAPSED_NAVBAR,
+  SIDEBAR_W_COLLAPSED,
+  SIDEBAR_W_EXPANDED,
+} from "@/lib/styles/sizes";
 import { ThemeSelect } from "@/app/_elements/selects/theme-select";
 import { setLocalStorage, getLocalStorage, STORAGE_KEYS } from "@/lib/local-storage";
 import { clearStoredLayouts, dispatchLayoutReset } from "@/lib/calculator-layout";
@@ -93,7 +99,7 @@ export function Header() {
   const [hoveringLogo, setHoveringLogo] = useState(false);
 
   const pageTitle = navItems.find(({ href }) => isNavActive(pathname, href))?.label || "Sci-Cream";
-  const iconSize = NAVBAR_ICON_SIZE;
+  const iconSize = HEADER_ICON_SIZE;
   const logoSize = iconSize + 2;
 
   if (!mounted) return <header className="navbar h-12 shrink-0" />;
@@ -111,9 +117,9 @@ export function Header() {
     <header id="header" className="navbar flex h-12 shrink-0 items-center justify-between">
       {/* Logo and collapse/expand button */}
       <div
-        className={`navbar-trans-width flex shrink-0 ${collapsed ? "w-14 sm:w-18" : "w-48 sm:w-52"}`}
+        className={`navbar-trans-width flex shrink-0 ${collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W_EXPANDED}`}
       >
-        <div className="flex w-48 shrink-0 items-center overflow-hidden sm:w-52">
+        <div className={`flex ${SIDEBAR_W_EXPANDED} shrink-0 items-center overflow-hidden`}>
           <button
             title="Expand sidebar"
             id="expand-sidebar-button"
@@ -165,14 +171,14 @@ export function Sidebar() {
   const pathname = usePathname();
   const { collapsed, mounted } = useContext(NavbarContext);
 
-  if (!mounted) return <aside className="navbar w-14 shrink-0 sm:w-18" />;
+  if (!mounted) return <aside className={`navbar ${SIDEBAR_W_COLLAPSED} shrink-0`} />;
 
   const iconSize = NAVBAR_ICON_SIZE;
 
   return (
     <aside
       id="sidebar"
-      className={`navbar navbar-trans-width flex shrink-0 flex-col ${collapsed ? "w-14 sm:w-18" : "w-48 sm:w-52"}`}
+      className={`navbar navbar-trans-width flex shrink-0 flex-col ${collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W_EXPANDED}`}
     >
       {/* Nav links */}
       <nav className="mt-1 flex flex-1 flex-col gap-1 px-2">
