@@ -14,8 +14,12 @@ console.log("Starting TypeScript benchmarks for @workspace/sci-cream\n");
     "key-accesses.bench.ts",
     "key-as-str.bench.ts",
     "recipe-wasm-bridge.bench.ts",
+
+    // Disable for now to avoid spurious CI failures; this benchmark was part of an investigation
+    // into specific issues with WASM .free() calls, but is not valuable as an ongoing benchmark.
+    //
     // Run last to avoid interference from WASM memory accumulation
-    "free-vs-no-free-wasm.bench.ts",
+    // "free-vs-no-free-wasm.bench.ts",
   ]) {
     try {
       console.log(`Running ${bench} benchmarks...`);
