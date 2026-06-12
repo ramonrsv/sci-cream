@@ -11,29 +11,23 @@ import {
   getSelectOptionLabels,
   selectOption,
 } from "@/__tests__/unit/select";
-import { QtyToggle, QtyToggleSelect, qtyToggleToShortStr } from "./qty-toggle-select";
+import { QtyToggle, QtyToggleSelect, QTY_TOGGLE_SHORT_LABELS } from "./qty-toggle-select";
 
 // ---------------------------------------------------------------------------
 // Helper functions
 // ---------------------------------------------------------------------------
 
-describe("qtyToggleToShortStr", () => {
-  it("returns short label for Composition", () => {
-    expect(qtyToggleToShortStr(QtyToggle.Composition)).toBe("Comp.");
+describe("QTY_TOGGLE_SHORT_LABELS", () => {
+  it("maps Composition to its short label", () => {
+    expect(QTY_TOGGLE_SHORT_LABELS[QtyToggle.Composition]).toBe("Comp.");
   });
 
-  it("returns short label for Quantity", () => {
-    expect(qtyToggleToShortStr(QtyToggle.Quantity)).toBe("Qty (g)");
+  it("maps Quantity to its short label", () => {
+    expect(QTY_TOGGLE_SHORT_LABELS[QtyToggle.Quantity]).toBe("Qty (g)");
   });
 
-  it("returns short label for Percentage", () => {
-    expect(qtyToggleToShortStr(QtyToggle.Percentage)).toBe("Qty (%)");
-  });
-
-  it("throws for an unsupported value", () => {
-    expect(() => qtyToggleToShortStr("Unknown" as QtyToggle)).toThrow(
-      "Unsupported QtyToggle value",
-    );
+  it("maps Percentage to its short label", () => {
+    expect(QTY_TOGGLE_SHORT_LABELS[QtyToggle.Percentage]).toBe("Qty (%)");
   });
 });
 
@@ -88,14 +82,14 @@ describe("QtyToggleSelect", () => {
   it("shows short labels as options for all supported toggles", async () => {
     const { container } = render(<TestWrapper />);
     expect(await getSelectOptionLabels(container, "#qty-toggle-select")).toEqual(
-      Object.values(QtyToggle).map(qtyToggleToShortStr),
+      Object.values(QtyToggle).map((qt) => QTY_TOGGLE_SHORT_LABELS[qt]),
     );
   });
 
   it("reflects the initial toggle value in the selected label", () => {
     const { container } = render(<TestWrapper initialQtyToggle={QtyToggle.Quantity} />);
     expect(getSelectedOptionLabel(container, "#qty-toggle-select")).toBe(
-      qtyToggleToShortStr(QtyToggle.Quantity),
+      QTY_TOGGLE_SHORT_LABELS[QtyToggle.Quantity],
     );
   });
 
@@ -103,13 +97,17 @@ describe("QtyToggleSelect", () => {
     const supported = [QtyToggle.Composition, QtyToggle.Percentage];
     const { container } = render(<TestWrapper supportedQtyToggles={supported} />);
     expect(await getSelectOptionLabels(container, "#qty-toggle-select")).toEqual(
-      supported.map(qtyToggleToShortStr),
+      supported.map((qt) => QTY_TOGGLE_SHORT_LABELS[qt]),
     );
   });
 
   it("updates the state when the user changes the selection", async () => {
     const { container } = render(<TestWrapper />);
-    await selectOption(container, "#qty-toggle-select", qtyToggleToShortStr(QtyToggle.Percentage));
+    await selectOption(
+      container,
+      "#qty-toggle-select",
+      QTY_TOGGLE_SHORT_LABELS[QtyToggle.Percentage],
+    );
     expect(currentQtyToggle).toBe(QtyToggle.Percentage);
   });
 
@@ -117,7 +115,7 @@ describe("QtyToggleSelect", () => {
     const { container } = render(<TestWrapper />);
 
     for (const toggle of Object.values(QtyToggle)) {
-      await selectOption(container, "#qty-toggle-select", qtyToggleToShortStr(toggle));
+      await selectOption(container, "#qty-toggle-select", QTY_TOGGLE_SHORT_LABELS[toggle]);
       expect(currentQtyToggle).toBe(toggle);
     }
   });

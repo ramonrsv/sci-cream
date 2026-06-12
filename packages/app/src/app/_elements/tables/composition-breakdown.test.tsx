@@ -8,7 +8,7 @@ import {
   CompositionBreakdownView,
   getCompKeys,
 } from "@/app/_elements/tables/composition-breakdown";
-import { QtyToggle, qtyToggleToShortStr } from "@/app/_elements/selects/qty-toggle-select";
+import { QtyToggle, QTY_TOGGLE_SHORT_LABELS } from "@/app/_elements/selects/qty-toggle-select";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { getSelectedOptionLabel, getSelectOptionLabels } from "@/__tests__/unit/select";
 import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
@@ -407,7 +407,7 @@ describe("CompositionBreakdownView", () => {
       const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<CompositionBreakdownView recipes={recipeCtx.recipes} />);
       expect(getSelectedOptionLabel(container, "#qty-toggle-select")).toBe(
-        qtyToggleToShortStr(QtyToggle.Quantity),
+        QTY_TOGGLE_SHORT_LABELS[QtyToggle.Quantity],
       );
     });
 
@@ -415,9 +415,9 @@ describe("CompositionBreakdownView", () => {
       const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<CompositionBreakdownView recipes={recipeCtx.recipes} />);
       const labels = await getSelectOptionLabels(container, "#qty-toggle-select");
-      expect(labels).toContain(qtyToggleToShortStr(QtyToggle.Composition));
-      expect(labels).toContain(qtyToggleToShortStr(QtyToggle.Quantity));
-      expect(labels).toContain(qtyToggleToShortStr(QtyToggle.Percentage));
+      expect(labels).toContain(QTY_TOGGLE_SHORT_LABELS[QtyToggle.Composition]);
+      expect(labels).toContain(QTY_TOGGLE_SHORT_LABELS[QtyToggle.Quantity]);
+      expect(labels).toContain(QTY_TOGGLE_SHORT_LABELS[QtyToggle.Percentage]);
     });
 
     it("should update ingredient qty cells when toggled to Percentage", async () => {

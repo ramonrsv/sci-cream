@@ -27,6 +27,7 @@ import {
   SIDEBAR_W_EXPANDED,
 } from "@/lib/styles/sizes";
 import { ThemeSelect } from "@/app/_elements/selects/theme-select";
+import { GroupBySelect } from "@/app/_elements/selects/group-by-select";
 import { setLocalStorage, getLocalStorage, STORAGE_KEYS } from "@/lib/local-storage";
 import { clearStoredLayouts, dispatchLayoutReset } from "@/lib/calculator-layout";
 
@@ -43,6 +44,9 @@ const navItems = [
 function isNavActive(pathname: string, href: string): boolean {
   return pathname.startsWith(href);
 }
+
+/** Routes whose pages render groupable key lists, where the global Group-by control is shown. */
+const GROUP_BY_ROUTES = ["/calculator", "/recipes", "/ingredients"];
 
 /** Context providing the sidebar collapsed state and mount status to child components */
 const NavbarContext = createContext<{
@@ -106,6 +110,7 @@ export function Header() {
 
   const showExpandButton = collapsed && hoveringLogo;
   const onCalculator = pathname === "/calculator";
+  const showGroupBy = GROUP_BY_ROUTES.some((route) => pathname.startsWith(route));
 
   const handleResetLayout = () => {
     if (!window.confirm("Reset the calculator layout to its default arrangement?")) return;
@@ -146,6 +151,7 @@ export function Header() {
               <RotateCcw size={iconSize} />
             </button>
           )}
+          {showGroupBy && <GroupBySelect />}
           <ThemeSelect />
           <button
             title="Collapse sidebar"
@@ -160,7 +166,9 @@ export function Header() {
       {/* Page title and account button */}
       <div className="navbar flex w-full items-center justify-between">
         <h1 className="m-4 text-lg font-bold">{pageTitle}</h1>
-        <AccountButton iconSize={iconSize} />
+        <div className="flex items-center gap-1">
+          <AccountButton iconSize={iconSize} />
+        </div>
       </div>
     </header>
   );

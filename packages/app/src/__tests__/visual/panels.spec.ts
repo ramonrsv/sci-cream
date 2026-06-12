@@ -1,17 +1,21 @@
 import { test, expect, Page } from "@playwright/test";
 
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
+import { GroupBy, GROUP_BY_LABELS } from "@/lib/group-by";
 
 import { RecipeID } from "@/__tests__/assets";
 import { makeRecipesTestName, makeRecipesScreenshotFilename } from "@/__tests__/visual/assets";
 import {
   getIngredientNameInputAtIdx,
   getPropertiesPanelKeyFilterSelectInput,
+  getGroupBySelectInput,
   pasteRecipeAndWaitForUpdate,
   goToPageAndWaitFor,
   goToPageAndPasteRecipes,
+  expandNavbar,
 } from "@/__tests__/e2e/util";
 import { selectOption } from "@/__tests__/e2e/select";
+import { captureFullContent } from "@/__tests__/visual/util";
 
 /** Waits a timeout for charts to finish rendering; helps with screenshot stability */
 function waitForChartsToRender(page: Page) {
@@ -183,6 +187,32 @@ test.describe("Visual Regression: Main and Reference Recipes Populated", () => {
     testFunc([RecipeID.RefB]);
     testFunc([RecipeID.RefA, RecipeID.RefB]);
   }
+});
+
+test.describe("Visual Regression: Properties Group-by Modes", () => {
+  const testGroupedMode = (mode: GroupBy, keyFilter: KeyFilter, filenameSuffix: string) => {
+    test(`PropertiesTable grouped (${filenameSuffix})`, async ({ page, browserName }) => {
+      await initializePageAndPasteRecipes(page, browserName, [RecipeID.Main]);
+      await locatePanelAndExpectVisible(page, "#properties-panel");
+
+      await expandNavbar(page);
+
+      await selectOption(page, getPropertiesPanelKeyFilterSelectInput(page), keyFilter);
+      await selectOption(page, getGroupBySelectInput(page), GROUP_BY_LABELS[mode]);
+
+      // captureFullContent crops to the pane's box, which overflows if it spills below the fold.
+      await page.getByTestId("properties-table-pane").scrollIntoViewIfNeeded();
+
+      expect(await captureFullContent(page, "properties-table-pane")).toMatchSnapshot(
+        `properties-table-grouped-${filenameSuffix}.png`,
+      );
+    });
+  };
+
+  testGroupedMode(GroupBy.GroupedOnce, KeyFilter.All, "once-all");
+  testGroupedMode(GroupBy.GroupedRepeat, KeyFilter.All, "repeat-all");
+  testGroupedMode(GroupBy.GroupedOnce, KeyFilter.Active, "once-active");
+  testGroupedMode(GroupBy.GroupedRepeat, KeyFilter.Active, "repeat-active");
 });
 
 test.describe("Visual Regression: Interactive States", () => {

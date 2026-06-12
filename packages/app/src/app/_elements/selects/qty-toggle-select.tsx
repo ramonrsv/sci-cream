@@ -12,19 +12,12 @@ export enum QtyToggle {
   Percentage = "Quantity (%)",
 }
 
-/** Gets short labels for the QtyToggle options to show in the UI */
-export function qtyToggleToShortStr(qt: QtyToggle): string {
-  switch (qt) {
-    case QtyToggle.Composition:
-      return "Comp.";
-    case QtyToggle.Quantity:
-      return "Qty (g)";
-    case QtyToggle.Percentage:
-      return "Qty (%)";
-    default:
-      throw new Error("Unsupported QtyToggle value");
-  }
-}
+/** Short label for each `QtyToggle` option, shown in the UI. */
+export const QTY_TOGGLE_SHORT_LABELS: Record<QtyToggle, string> = {
+  [QtyToggle.Composition]: "Comp.",
+  [QtyToggle.Quantity]: "Qty (g)",
+  [QtyToggle.Percentage]: "Qty (%)",
+};
 
 /** Select element for switching between `QtyToggle` display modes */
 export function QtyToggleSelect({
@@ -38,7 +31,7 @@ export function QtyToggleSelect({
 
   const options: SelectOption<QtyToggle>[] = supportedQtyToggles.map((qt) => ({
     value: qt,
-    label: qtyToggleToShortStr(qt),
+    label: QTY_TOGGLE_SHORT_LABELS[qt],
   }));
 
   return (

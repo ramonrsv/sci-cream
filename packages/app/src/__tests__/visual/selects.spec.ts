@@ -1,12 +1,14 @@
 import { test, expect } from "@playwright/test";
 
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
-import { QtyToggle, qtyToggleToShortStr } from "@/app/_elements/selects/qty-toggle-select";
+import { QtyToggle, QTY_TOGGLE_SHORT_LABELS } from "@/app/_elements/selects/qty-toggle-select";
+import { GroupBy, GROUP_BY_LABELS } from "@/lib/group-by";
 import { RecipeID, recipeIdToOption } from "@/__tests__/assets";
 import {
   goToPageAndWaitFor,
   getRecipeEditorPanelRecipeSelector,
   getPropertiesPanelKeyFilterSelectInput,
+  getGroupBySelectInput,
   getCompositionBreakdownPanelQtyToggleSelectInput,
   expandNavbar,
 } from "@/__tests__/e2e/util";
@@ -24,13 +26,13 @@ test.describe("Visual Regression: QtyToggleSelect", () => {
     const selector = getCompositionBreakdownPanelQtyToggleSelectInput(page);
     await expect(selector).toBeVisible();
 
-    await selectOption(page, selector, qtyToggleToShortStr(QtyToggle.Composition));
+    await selectOption(page, selector, QTY_TOGGLE_SHORT_LABELS[QtyToggle.Composition]);
     await expect(selector).toHaveScreenshot("qty-toggle-select-comp.png");
 
-    await selectOption(page, selector, qtyToggleToShortStr(QtyToggle.Quantity));
+    await selectOption(page, selector, QTY_TOGGLE_SHORT_LABELS[QtyToggle.Quantity]);
     await expect(selector).toHaveScreenshot("qty-toggle-select-qty.png");
 
-    await selectOption(page, selector, qtyToggleToShortStr(QtyToggle.Percentage));
+    await selectOption(page, selector, QTY_TOGGLE_SHORT_LABELS[QtyToggle.Percentage]);
     await expect(selector).toHaveScreenshot("qty-toggle-select-percentage.png");
   });
 
@@ -117,6 +119,56 @@ test.describe("Visual Regression: KeyFilterSelect", () => {
 
     await expandToFullHeight(page, popup);
     await expect(popup).toHaveScreenshot("key-filter-select-custom-popup-full.png");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// GroupBySelect
+// ---------------------------------------------------------------------------
+
+test.describe("Visual Regression: GroupBySelect", () => {
+  test("Select Flat, Grouped once, Grouped repeat", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+    await expandNavbar(page);
+
+    const selector = getGroupBySelectInput(page);
+    await expect(selector).toBeVisible();
+
+    await selectOption(page, selector, GROUP_BY_LABELS[GroupBy.Ungrouped]);
+    await expect(selector).toHaveScreenshot("group-by-select-ungrouped.png");
+
+    await selectOption(page, selector, GROUP_BY_LABELS[GroupBy.GroupedOnce]);
+    await expect(selector).toHaveScreenshot("group-by-select-grouped-once.png");
+
+    await selectOption(page, selector, GROUP_BY_LABELS[GroupBy.GroupedRepeat]);
+    await expect(selector).toHaveScreenshot("group-by-select-grouped-repeat.png");
+  });
+
+  test("Popup open", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+    await expandNavbar(page);
+
+    const selector = getGroupBySelectInput(page);
+    await selector.click();
+
+    const menu = getOpenSelectMenu(page);
+    await expect(menu).toBeVisible();
+    await expect(menu).toHaveScreenshot("group-by-select-popup.png");
+  });
+
+  test("Clicked, hovered", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+    await expandNavbar(page);
+
+    const selector = getGroupBySelectInput(page);
+    await expect(selector).toBeVisible();
+
+    await selector.click();
+    await expect(selector).toHaveScreenshot("group-by-select-clicked.png");
+
+    await page.keyboard.press("Escape");
+    await selector.hover();
+    await expect(selector).toHaveScreenshot("group-by-select-hovered.png");
   });
 });
 

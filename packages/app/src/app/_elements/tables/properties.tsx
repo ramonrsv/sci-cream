@@ -9,6 +9,7 @@ import {
   getEnabledKeys,
 } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle, QtyToggleSelect } from "@/app/_elements/selects/qty-toggle-select";
+import { isGrouped, groupsWithDuplicates, useGroupBy } from "@/lib/group-by";
 import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
 import { isPropKeyQuantity, isPropKeyMixScope } from "@/lib/sci-cream/sci-cream";
 import { STATE_VAL } from "@/lib/util";
@@ -18,10 +19,12 @@ import {
   RatioKey,
   FpdKey,
   PropKey,
+  OrderedKey,
   compToPropKey,
   ratioToPropKey,
   fpdToPropKey,
   getPropKeys,
+  groupEnabledKeys,
   getMixProperty,
   MixProperties,
   prop_key_as_med_str,
@@ -67,10 +70,16 @@ export function PropertiesTable({
   recipes,
   propKeys,
   qtyToggle,
+  rowMeta,
 }: {
   recipes: RecipeSummary[];
   propKeys: PropKey[];
   qtyToggle: QtyToggle;
+  /**
+   * Optional per-row hierarchy metadata, parallel to `propKeys`. When present, labels indent by
+   * `depth` and roll-up rows are emphasized; when absent, rows render flat and centered.
+   */
+  rowMeta?: ReadonlyArray<{ depth: number; isRollup: boolean }>;
 }) {
   const formattedCell = (propKey: PropKey, mixProperties: MixProperties, mixTotal: number) => {
     return applyQtyToggleAndFormat(
@@ -80,6 +89,20 @@ export function PropertiesTable({
       qtyToggle,
       isPropKeyQuantity(propKey),
     );
+  };
+
+  /** Class + style for a property label cell, indenting/emphasizing grouped rows when grouped. */
+  const labelCell = (meta: { depth: number; isRollup: boolean } | undefined) => {
+    if (meta === undefined) {
+      return { className: "table-header w-full px-1.25 text-center", style: undefined };
+    }
+    return {
+      className: "table-header w-full pr-1.25 text-left",
+      style: {
+        paddingLeft: `${meta.depth * 1 + 0.5}rem`,
+        fontWeight: meta.isRollup ? undefined : "normal",
+      },
+    };
   };
 
   return (
@@ -95,18 +118,21 @@ export function PropertiesTable({
         </tr>
       </thead>
       <tbody>
-        {propKeys.map((propKey) => (
-          <tr key={String(propKey)} className="h-6.25">
-            <td className="table-header w-full px-1.25 text-center">
-              {prop_key_as_med_str(propKey)}
-            </td>
-            {recipes.map((recipe) => (
-              <td key={recipe.id} className="table-inner-cell comp-val px-1.25">
-                {formattedCell(propKey, recipe.mixProperties, recipe.mixTotal!)}
+        {propKeys.map((propKey, i) => {
+          const { className, style } = labelCell(rowMeta?.[i]);
+          return (
+            <tr key={`${String(propKey)}-${i}`} className="h-6.25">
+              <td className={className} style={style}>
+                {prop_key_as_med_str(propKey)}
               </td>
-            ))}
-          </tr>
-        ))}
+              {recipes.map((recipe) => (
+                <td key={recipe.id} className="table-inner-cell comp-val px-1.25">
+                  {formattedCell(propKey, recipe.mixProperties, recipe.mixTotal!)}
+                </td>
+              ))}
+            </tr>
+          );
+        })}
       </tbody>
     </table>
   );
@@ -131,6 +157,7 @@ export function PropertiesView({
   const qtyToggleState = useState<QtyToggle>(QtyToggle.Percentage);
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(defaultSelected);
+  const { groupBy } = useGroupBy();
 
   /**
    * Returns `true` when the given property key has a zero/NaN value across all provided recipes.
@@ -166,6 +193,19 @@ export function PropertiesView({
     );
   };
 
+  const enabledProps = getEnabledProps();
+
+  // Reorders a key list into hierarchy order (honoring once/repeat); undefined when ungrouped.
+  // Shared by the table (enabled keys) and the customize popup (full key set) so both stay in sync.
+  const orderKeys = isGrouped(groupBy)
+    ? (keys: PropKey[]): OrderedKey[] =>
+        groupEnabledKeys(keys, { duplicates: groupsWithDuplicates(groupBy) })
+    : undefined;
+
+  const orderedProps = orderKeys?.(enabledProps);
+  const propKeys = orderedProps ? orderedProps.map((row) => row.key) : enabledProps;
+  const rowMeta = orderedProps?.map((row) => ({ depth: row.depth, isRollup: row.isRollup }));
+
   return (
     <div className="flex h-full flex-col">
       <div className="toolbar">
@@ -181,11 +221,15 @@ export function PropertiesView({
           key_as_med_str={prop_key_as_med_str}
         />
       </div>
-      <div className="min-h-0 flex-1 overflow-y-auto whitespace-nowrap">
+      <div
+        data-testid="properties-table-pane"
+        className="min-h-0 flex-1 overflow-y-auto whitespace-nowrap"
+      >
         <PropertiesTable
           recipes={recipes}
-          propKeys={getEnabledProps()}
+          propKeys={propKeys}
           qtyToggle={qtyToggleState[STATE_VAL]}
+          rowMeta={rowMeta}
         />
       </div>
     </div>

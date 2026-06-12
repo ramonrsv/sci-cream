@@ -70,6 +70,11 @@ export function getPropertiesPanelKeyFilterSelectInput(page: Page) {
   return getSelectControl(page, "#properties-panel #key-filter-select");
 }
 
+/** Get the global `GroupBy` listbox control in the navbar `GroupBySelect`. */
+export function getGroupBySelectInput(page: Page) {
+  return getSelectControl(page, "#group-by-select");
+}
+
 /** Get `CompositionBreakdownPanel`'s recipe selector element, in `RecipeSelect` */
 export function getCompositionBreakdownPanelRecipeSelector(page: Page) {
   return getSelectControl(page, "#composition-breakdown-panel #recipe-selection");

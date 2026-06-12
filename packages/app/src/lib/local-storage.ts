@@ -6,6 +6,7 @@ export const STORAGE_KEYS = {
   watcherTargets: "watcher-targets",
   watcherPriorities: "watcher-priorities",
   calculatorLayouts: "calculator-layouts",
+  groupBy: "group-by",
 } as const;
 
 /** Read and deserialize a value from `localStorage`; returns `null` when absent or malformed */

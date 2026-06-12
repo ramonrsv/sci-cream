@@ -1,6 +1,6 @@
 import { test, expect } from "@playwright/test";
 
-import { QtyToggle, qtyToggleToShortStr } from "@/app/_elements/selects/qty-toggle-select";
+import { QtyToggle, QTY_TOGGLE_SHORT_LABELS } from "@/app/_elements/selects/qty-toggle-select";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { CompKey, comp_key_as_med_str, compToPropKey } from "@workspace/sci-cream";
 
@@ -87,7 +87,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.waitForLoadState("networkidle");
 
       const compGridQtyToggle = getCompositionBreakdownPanelQtyToggleSelectInput(page);
-      await selectOption(page, compGridQtyToggle, qtyToggleToShortStr(QtyToggle.Composition));
+      await selectOption(page, compGridQtyToggle, QTY_TOGGLE_SHORT_LABELS[QtyToggle.Composition]);
 
       const ingNameInput = getIngredientNameInputAtIdx(page, 0);
       const milkFatStr = comp_key_as_med_str(CompKey.MilkFat);
@@ -125,7 +125,7 @@ test.describe("UI Responsiveness Performance Benchmarks", () => {
       await page.waitForLoadState("networkidle");
 
       const propsGridQtyToggle = getPropertiesPanelQtyToggleSelectInput(page);
-      await selectOption(page, propsGridQtyToggle, qtyToggleToShortStr(QtyToggle.Quantity));
+      await selectOption(page, propsGridQtyToggle, QTY_TOGGLE_SHORT_LABELS[QtyToggle.Quantity]);
 
       const ingNameInput = getIngredientNameInputAtIdx(page, 0);
       await ingNameInput.fill("2% Milk");

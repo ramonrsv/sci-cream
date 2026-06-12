@@ -15,7 +15,7 @@ import {
   DEFAULT_SELECTED_PROPERTIES,
 } from "@/app/_elements/tables/properties";
 import { RecipeSummary, filterActiveSlots } from "@/lib/recipe";
-import { QtyToggle, qtyToggleToShortStr } from "@/app/_elements/selects/qty-toggle-select";
+import { QtyToggle, QTY_TOGGLE_SHORT_LABELS } from "@/app/_elements/selects/qty-toggle-select";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
 import { isPropKeyQuantity } from "@/lib/sci-cream/sci-cream";
@@ -282,16 +282,16 @@ describe("PropertiesView", () => {
     it("should default to QtyToggle.Percentage", () => {
       const { container } = render(<PropertiesView recipes={[]} />);
       expect(getSelectedOptionLabel(container, "#qty-toggle-select")).toBe(
-        qtyToggleToShortStr(QtyToggle.Percentage),
+        QTY_TOGGLE_SHORT_LABELS[QtyToggle.Percentage],
       );
     });
 
     it("should support Quantity and Percentage options but not Composition", async () => {
       const { container } = render(<PropertiesView recipes={[]} />);
       const labels = await getSelectOptionLabels(container, "#qty-toggle-select");
-      expect(labels).toContain(qtyToggleToShortStr(QtyToggle.Quantity));
-      expect(labels).toContain(qtyToggleToShortStr(QtyToggle.Percentage));
-      expect(labels).not.toContain(qtyToggleToShortStr(QtyToggle.Composition));
+      expect(labels).toContain(QTY_TOGGLE_SHORT_LABELS[QtyToggle.Quantity]);
+      expect(labels).toContain(QTY_TOGGLE_SHORT_LABELS[QtyToggle.Percentage]);
+      expect(labels).not.toContain(QTY_TOGGLE_SHORT_LABELS[QtyToggle.Composition]);
     });
 
     it("should update cell values when toggled from Percentage to Quantity", async () => {
@@ -303,7 +303,11 @@ describe("PropertiesView", () => {
 
       const percentageValues = getCellTexts();
 
-      await selectOption(container, "#qty-toggle-select", qtyToggleToShortStr(QtyToggle.Quantity));
+      await selectOption(
+        container,
+        "#qty-toggle-select",
+        QTY_TOGGLE_SHORT_LABELS[QtyToggle.Quantity],
+      );
 
       expect(getCellTexts()).not.toEqual(percentageValues);
     });

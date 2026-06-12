@@ -34,7 +34,7 @@ export function ThemeSelect() {
         <ListboxButton className="header-button flex items-center">
           <selectedOption.icon size={iconSize} />
         </ListboxButton>
-        <ListboxOptions anchor="bottom start" className="popup z-50 w-32">
+        <ListboxOptions anchor="bottom start" className="popup z-50 w-23">
           {themeOptions.map((option) => (
             <ListboxOption key={option.value} value={option.value} className="select-option">
               <option.icon size={iconSize} />
