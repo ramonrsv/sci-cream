@@ -78,7 +78,8 @@ export function RecipeTable({
           return (
             <tr key={row.index} className="h-6.25">
               <td
-                className={`table-inner-cell px-2 whitespace-nowrap ${invalid ? "-outline-offset-2 outline-red-400 outline-solid" : ""}`}
+                title={row.name}
+                className={`table-inner-cell max-w-0 truncate px-2 ${invalid ? "-outline-offset-2 outline-red-400 outline-solid" : ""}`}
               >
                 {row.name}
               </td>

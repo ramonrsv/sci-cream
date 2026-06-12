@@ -114,6 +114,19 @@ test.describe("Visual Regression: Recipe Search", () => {
     );
   });
 
+  test("saved recipe with long ingredient name - table truncates, layout intact", async ({
+    page,
+  }) => {
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
+    await goToRecipesPage(page);
+    await selectRecipeByName(page, "Recipe with Long Ingredient Name");
+
+    await expect(page.locator(".search-detail-panel")).toBeVisible();
+    await expect(page.locator(".search-detail-panel")).toHaveScreenshot(
+      "recipe-search-long-ingredient-name.png",
+    );
+  });
+
   test("saved recipe - editable comments textarea pre-filled from seed", async ({ page }) => {
     await loginAsTestUserWithCredentials(page, TEST_USER_B);
     await goToRecipesPage(page);

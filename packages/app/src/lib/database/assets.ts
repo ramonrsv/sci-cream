@@ -34,6 +34,16 @@ export const RECIPE_INVALID_INGREDIENT: [string, number][] = [
   ["Stabilizer Blend (invalid)", 0.84],
 ];
 
+/**
+ * Example recipe containing a valid ingredient with an unusually long name, used to verify that the
+ * recipe table truncates the name instead of widening the table and breaking the layout.
+ */
+export const RECIPE_LONG_INGREDIENT_NAME: [string, number][] = [
+  ["Whole Milk", 500],
+  ["Eagle Brand Dulce de Leche Caramel Flavoured Sauce", 100],
+  ["Sucrose", 80],
+];
+
 /** Shape of a recipe in the seed/test asset set: one identity with one or more versions */
 export type SeedRecipeAsset = {
   name: string;
@@ -74,4 +84,5 @@ export const TEST_USER_B_RECIPES: SeedRecipeAsset[] = [
     versions: [{ recipe: getLightRecipe(RecipeID.RefBWithUserDefined) }],
   },
   { name: "Recipe with Invalid Ingredients", versions: [{ recipe: RECIPE_INVALID_INGREDIENT }] },
+  { name: "Recipe with Long Ingredient Name", versions: [{ recipe: RECIPE_LONG_INGREDIENT_NAME }] },
 ];

@@ -39,6 +39,9 @@
       and to dynamically adjust the number based on the panel size, only showing a scrollbar if the
       any filled lines would be hidden. This may cause issues with `CompositionBreakdown`, which
       currently relies on a fixed number of rows, and won't be easy to make vertically scrollable.
+- [ ] Look into how layouts make tables too narrow or too wide, and consider setting maximum table
+      widths so that they don't look too wide on some layouts; may look bad in narrow scrollable?
+- [ ] In `/recipes`, there is a fetch for user ingredients every time a recipe is selected.
 
 ## Backlog
 

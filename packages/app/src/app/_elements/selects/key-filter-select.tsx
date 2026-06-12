@@ -112,10 +112,10 @@ export function KeyFilterSelect<Key>({
           <Popover>
             <PopoverButton
               id="customize-keys-button"
-              className="action-button ml-0.5 px-1 py-0.75"
+              className="action-button ml-0.5 px-0.5 py-0.5"
               title="Customize properties"
             >
-              <Settings size={COMPONENT_ACTION_ICON_SIZE - 3} />
+              <Settings size={COMPONENT_ACTION_ICON_SIZE - 5} />
             </PopoverButton>
             <PopupPanel
               anchor={{ to: "right start", gap: 5, padding: 5 }}
