@@ -6,6 +6,11 @@ import {
   new_ingredient_database_seeded_from_embedded_data,
   getMixProperty,
   getBalanceableKeys,
+  CompKey,
+  RatioKey,
+  compToPropKey,
+  ratioToPropKey,
+  Priority,
 } from "../../dist/index.js";
 
 import {
@@ -30,6 +35,12 @@ const targets = getBalanceableKeys().map((key) => [key, getMixProperty(mixProps,
   string,
   number,
 ][];
+
+const priorities = [
+  [compToPropKey(CompKey.MilkFat), Priority.High],
+  [compToPropKey(CompKey.MSNF), Priority.High],
+  [ratioToPropKey(RatioKey.AbsNetPAC), Priority.Critical],
+] as [string, Priority][];
 
 // These benchmark suite shows that creating new RecipeLine instances from scratch is generally
 // faster (up to ~10x) than cloning existing ones, likely due to the overhead of more JS <-> WASM
@@ -93,6 +104,12 @@ suite
   })
   .add("recipe.balance", () => {
     recipe.balance(targets, []).free();
+  })
+  .add("bridge.validate_recipe_targets", () => {
+    bridge.validate_recipe_targets(LIGHT_RECIPE, targets, priorities);
+  })
+  .add("recipe.validate_targets", () => {
+    recipe.validate_targets(targets, priorities);
   })
   .on("cycle", (event: Benchmark.Event) => {
     console.log(String(event.target));

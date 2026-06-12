@@ -10,6 +10,7 @@ mod balance_compositions;
 mod bridge_calculate_recipe;
 mod recipe_calculate;
 mod spec_to_composition;
+mod validate_balancing_targets;
 
 use criterion::criterion_main;
 
@@ -18,4 +19,5 @@ criterion_main! {
     recipe_calculate::benches,
     spec_to_composition::benches,
     balance_compositions::benches,
+    validate_balancing_targets::benches,
 }
