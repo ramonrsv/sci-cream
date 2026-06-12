@@ -726,7 +726,7 @@ export function WatchersView({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center">
+      <div className="toolbar">
         {toolbarPrefix}
         <KeyFilterSelect
           supportedKeyFilters={[KeyFilter.Auto, KeyFilter.Custom]}

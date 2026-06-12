@@ -200,7 +200,7 @@ export function CompositionBreakdownView({
 
   return (
     <>
-      <div className="flex items-center">
+      <div className="toolbar">
         {toolbarPrefix}
         {(enabledRecipes.length > 1 || currentRecipeIdx !== 0) && (
           <RecipeSelect

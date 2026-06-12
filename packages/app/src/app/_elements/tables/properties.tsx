@@ -168,7 +168,7 @@ export function PropertiesView({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex items-center">
+      <div className="toolbar">
         {toolbarPrefix}
         <QtyToggleSelect
           supportedQtyToggles={[QtyToggle.Quantity, QtyToggle.Percentage]}

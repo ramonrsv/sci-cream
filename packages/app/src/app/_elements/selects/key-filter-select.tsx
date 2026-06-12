@@ -105,7 +105,7 @@ export function KeyFilterSelect<Key>({
   }));
 
   return (
-    <div id="key-filter-select" className="mx-1">
+    <div id="key-filter-select">
       <div className="flex items-center">
         <Select value={keyFilter} onChange={setKeyFilter} options={options} />
         {keyFilter === KeyFilter.Custom && (

@@ -28,7 +28,7 @@ export function RecipeSelect({
   }));
 
   return (
-    <div id="recipe-selection" className="float-left mx-1">
+    <div id="recipe-selection">
       <Select value={currentRecipeIdx} onChange={setCurrentRecipeIdx} options={options} />
     </div>
   );

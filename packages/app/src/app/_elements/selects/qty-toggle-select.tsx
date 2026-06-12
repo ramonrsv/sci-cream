@@ -42,7 +42,7 @@ export function QtyToggleSelect({
   }));
 
   return (
-    <div id="qty-toggle-select" className="mx-1">
+    <div id="qty-toggle-select">
       <Select value={qtyToggle} onChange={setQtyToggle} options={options} />
     </div>
   );

@@ -198,7 +198,11 @@ body {
 }
 
 .drag-handle {
-  @apply my-2 -ml-1 cursor-move;
+  @apply -mx-1 my-2 cursor-move;
+}
+
+.toolbar {
+  @apply flex items-center gap-2;
 }
 
 /* Grid Components */
