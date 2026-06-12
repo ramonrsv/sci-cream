@@ -1,6 +1,6 @@
 import { expect, test } from "vitest";
 
-import { getCompHierarchy, groupEnabledKeys, type HierarchyTree } from "./hierarchy";
+import { getDisplayHierarchy, groupEnabledKeys, type HierarchyTree } from "./hierarchy";
 import { PropKey } from "./prop-key";
 
 /** Depth-first search for the first node with `key` anywhere in `forest`. */
@@ -18,8 +18,8 @@ function childKeys(node: HierarchyTree | undefined): PropKey[] {
   return node?.children.map((child) => child.key) ?? [];
 }
 
-test("getCompHierarchy returns nested trees with roll-ups containing their parts", () => {
-  const forest = getCompHierarchy();
+test("getDisplayHierarchy returns nested trees with roll-ups containing their parts", () => {
+  const forest = getDisplayHierarchy();
 
   // TotalSolids ▸ TotalFats ▸ MilkFat nests as a chain.
   const totalSolids = forest.find((root) => root.key === "TotalSolids");
@@ -31,8 +31,8 @@ test("getCompHierarchy returns nested trees with roll-ups containing their parts
   expect(findNode(forest, "MilkFat")?.children).toHaveLength(0); // leaf
 });
 
-test("getCompHierarchy returns every tree in the forest, sharing keys faithfully", () => {
-  const forest = getCompHierarchy();
+test("getDisplayHierarchy returns every tree in the forest, sharing keys faithfully", () => {
+  const forest = getDisplayHierarchy();
 
   // The source roll-ups are their own roots alongside the macronutrient trees.
   const milkSolids = forest.find((root) => root.key === "MilkSolids");
@@ -51,12 +51,12 @@ test("groupEnabledKeys reorders into hierarchy order and keeps every key exactly
   expect(new Set(grouped.map((g) => g.key))).toEqual(new Set(enabled));
   expect(grouped).toHaveLength(enabled.length);
 
-  // TotalFats precedes its child MilkFat after reordering.
+  // Source-axis first: MilkFat's first occurrence is under MilkSolids, so it precedes TotalFats.
   const order = grouped.map((g) => g.key);
-  expect(order.indexOf("TotalFats")).toBeLessThan(order.indexOf("MilkFat"));
+  expect(order.indexOf("MilkFat")).toBeLessThan(order.indexOf("TotalFats"));
 
-  // Energy does not participate in the hierarchy: trailing "other" bucket at depth 0.
-  expect(grouped[grouped.length - 1]).toEqual({ key: "Energy", depth: 0, isRollup: false });
+  // Energy is the first hierarchy root, so it leads the grouped output.
+  expect(grouped[0]).toEqual({ key: "Energy", depth: 0, isRollup: false });
 });
 
 test("groupEnabledKeys repeats a shared key under each enabled roll-up when asked", () => {
@@ -72,17 +72,18 @@ test("groupEnabledKeys repeats a shared key under each enabled roll-up when aske
 });
 
 test("groupEnabledKeys depth counts only enabled ancestors", () => {
-  // TotalSolids enabled but TotalFats not: MilkFat indents one level (under TotalSolids only).
-  const withIntermediate = groupEnabledKeys(["TotalSolids", "TotalFats", "MilkFat"]);
+  // The milk chain MilkSolids ▸ MSNF ▸ MilkSNFS ▸ MilkProteins is unambiguous (no source/total
+  // duplication). With MSNF enabled but MilkSNFS not, MilkProteins indents only two levels.
+  const withIntermediate = groupEnabledKeys(["MilkSolids", "MSNF", "MilkProteins"]);
   expect(withIntermediate).toEqual([
-    { key: "TotalSolids", depth: 0, isRollup: true },
-    { key: "TotalFats", depth: 1, isRollup: true },
-    { key: "MilkFat", depth: 2, isRollup: false },
+    { key: "MilkSolids", depth: 0, isRollup: true },
+    { key: "MSNF", depth: 1, isRollup: true },
+    { key: "MilkProteins", depth: 2, isRollup: false },
   ]);
 
-  const withoutIntermediate = groupEnabledKeys(["TotalSolids", "MilkFat"]);
+  const withoutIntermediate = groupEnabledKeys(["MilkSolids", "MilkProteins"]);
   expect(withoutIntermediate).toEqual([
-    { key: "TotalSolids", depth: 0, isRollup: true },
-    { key: "MilkFat", depth: 1, isRollup: false },
+    { key: "MilkSolids", depth: 0, isRollup: true },
+    { key: "MilkProteins", depth: 1, isRollup: false },
   ]);
 });

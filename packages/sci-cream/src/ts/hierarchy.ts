@@ -1,8 +1,8 @@
-import { comp_hierarchy } from "../../wasm/index";
+import { display_hierarchy, structural_hierarchy } from "../../wasm/index";
 
 import { PropKey } from "./prop-key";
 
-/** A node in the composition's part/whole hierarchy forest. */
+/** A node in the display composition hierarchy forest. */
 export interface HierarchyTree {
   /** The property key at this node. */
   key: PropKey;
@@ -11,12 +11,22 @@ export interface HierarchyTree {
 }
 
 /**
- * Returns the whole composition hierarchy as a forest of nested {@link HierarchyTree}s, in one WASM
- * call. Faithful to the underlying DAG — a key shared by several roll-ups appears under each — so
- * choosing how to display it (one tree, another, or both) is the caller's job.
+ * Returns the structural composition hierarchy as a forest of nested {@link HierarchyTree}s.
+ *
+ * Contains only additive part/whole identities over `CompKey`s. Use this for correctness checks
+ * and roll-up math; use {@link getDisplayHierarchy} for rendering.
  */
-export function getCompHierarchy(): HierarchyTree[] {
-  return comp_hierarchy() as HierarchyTree[];
+export function getStructuralHierarchy(): HierarchyTree[] {
+  return structural_hierarchy() as HierarchyTree[];
+}
+
+/**
+ * Returns the display composition hierarchy as a forest of nested {@link HierarchyTree}s, in one
+ * WASM call. Faithful to the underlying DAG — a key shared by several roll-ups appears under each
+ * — so choosing how to display it (one tree, another, or both) is the caller's job.
+ */
+export function getDisplayHierarchy(): HierarchyTree[] {
+  return display_hierarchy() as HierarchyTree[];
 }
 
 /** An enabled key placed in hierarchy display order, carrying its (enabled-relative) depth. */
@@ -63,7 +73,7 @@ export function groupEnabledKeys(
     for (const child of node.children) walk(child, childDepth);
   };
 
-  for (const root of getCompHierarchy()) walk(root, 0);
+  for (const root of getDisplayHierarchy()) walk(root, 0);
 
   const ungrouped: OrderedKey[] = enabledKeys
     .filter((key) => !emitted.has(key))

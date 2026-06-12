@@ -131,6 +131,14 @@ pub enum CompKey {
     /// Total energy content in kilocalories (kcal) per 100g of ingredient/mix
     Energy,
 
+    // Milk
+    // ----
+    //
+    /// Total solids from milk ingredients
+    ///
+    /// Ths includes fats, lactose, proteins, and minerals. It is the sum of both
+    /// [`CompKey::MilkFat`] and [`CompKey::MSNF`].
+    MilkSolids,
     /// Milk Fats, the fat content of dairy ingredients, e.g. 2% in 2% milk, etc.
     ///
     /// This is a key component of ice cream mixes, contributing to creaminess and mouthfeel.
@@ -140,18 +148,30 @@ pub enum CompKey {
     /// This includes lactose, proteins, and minerals. It is a key component in the analysis of ice
     /// cream mixes, contributing to freezing point depression, body, and texture.
     MSNF,
+    /// Milk Sugars, typically Lactose, but can be Glucose and Galactose if lactose-free products.
+    ///
+    /// Particularly [`CompKey::Lactose`] is a significant contributor to Freezing Point Depression
+    /// whilst contributing almost nothing to sweetness, given its low POD.
+    MilkSugars,
     /// Milk Solids Non-Fat Non-Sugar (SNFS), the non-fat non-lactose content of dairy ingredients
     ///
-    /// This includes proteins and minerals; and is equivalent to [`CompKey::MSNF`] minus lactose.
+    /// Includes proteins and minerals; equivalent to [`CompKey::MSNF`] less [`CompKey::MilkSugars`].
     MilkSNFS,
-    /// Protein content from milk ingredients, i.e. casein and whey proteins
+    /// Protein content from milk ingredients, i.e. casein and whey proteins.
     MilkProteins,
-    /// Total solids from milk ingredients
-    ///
-    /// Ths includes fats, lactose, proteins, and minerals. It is the sum of both
-    /// [`CompKey::MilkFat`] and [`CompKey::MSNF`].
-    MilkSolids,
 
+    // Cacao
+    // -----
+    //
+    /// _Cacao_ solids, the total dry matter content derived from the cacao bean
+    ///
+    /// This includes both cocoa butter (fat) [`CompKey::CocoaButter`] and cocoa solids (non-fat
+    /// solids) [`CompKey::CocoaSolids`]. See the [chocolate documentation](crate::docs#chocolate)
+    /// for more details.
+    ///
+    /// **Note**: This does not include any sugar content that may be present in chocolate
+    /// ingredients; that is accounted for separately via [`CompKey::TotalSugars`].
+    CacaoSolids,
     /// Cocoa butter, the fat component extracted from cacao solids [`CompKey::CacaoSolids`].
     ///
     /// Sometimes referred to as "cocoa fat"; see the [chocolate
@@ -162,16 +182,19 @@ pub enum CompKey {
     /// Sometimes referred to as "cocoa powder" or "cocoa fiber", i.e. cacao solids minus cocoa
     /// butter; see the [chocolate documentation](crate::docs#chocolate) for more details.
     CocoaSolids,
-    /// _Cacao_ solids, the total dry matter content derived from the cacao bean
-    ///
-    /// This includes both cocoa butter (fat) [`CompKey::CocoaButter`] and cocoa solids (non-fat
-    /// solids) [`CompKey::CocoaSolids`]. See the [chocolate documentation](crate::docs#chocolate)
-    /// for more details.
-    ///
-    /// **Note**: This does not include any sugar content that may be present in chocolate
-    /// ingredients; that is accounted for separately via [`CompKey::TotalSugars`].
-    CacaoSolids,
 
+    // Nuts
+    // ----
+    //
+    /// Nut Solids, the total solid content of nut ingredients
+    ///
+    /// This generally includes fats, proteins, fibers, and minerals. It includes both
+    /// [`CompKey::NutFat`] and [`CompKey::NutSNF`], and is roughly equivalent to
+    /// [`CompKey::CacaoSolids`] if cacao were treated as a nut.
+    ///
+    /// **Note**: This does not include any sugar content that may be present in nut ingredients;
+    /// that is accounted for separately via [`CompKey::TotalSugars`].
+    NutSolids,
     /// Nut Fats, the fat content of nut ingredients
     ///
     /// It is roughly equivalent to [`CompKey::CocoaButter`] if cacao were treated as a nut.
@@ -187,16 +210,15 @@ pub enum CompKey {
     /// that is accounted for separately via [`CompKey::TotalSugars`]. As such, it would be
     /// equivalent to a hypothetical `NutSNFS` (Nut Solids Non-Fat Non-Sugar).
     NutSNF,
-    /// Nut Solids, the total solid content of nut ingredients
-    ///
-    /// This generally includes fats, proteins, fibers, and minerals. It includes both
-    /// [`CompKey::NutFat`] and [`CompKey::NutSNF`], and is roughly equivalent to
-    /// [`CompKey::CacaoSolids`] if cacao were treated as a nut.
-    ///
-    /// **Note**: This does not include any sugar content that may be present in nut ingredients;
-    /// that is accounted for separately via [`CompKey::TotalSugars`].
-    NutSolids,
 
+    // Eggs
+    // ----
+    //
+    /// Egg Solids, the total solid content of egg ingredients
+    ///
+    /// **Note**: This does not include any added sugar content that may be present in egg
+    /// ingredients; that is accounted for separately via [`CompKey::TotalSugars`].
+    EggSolids,
     /// Egg Fats, the fat content of egg ingredients
     EggFat,
     /// Egg Solids Non-Fat (SNF), the non-fat solid content of egg ingredients
@@ -205,18 +227,23 @@ pub enum CompKey {
     /// that is accounted for separately via [`CompKey::TotalSugars`]. As such, it would be
     /// equivalent to a hypothetical `EggSNFS` (Egg Solids Non-Fat Non-Sugar).
     EggSNF,
-    /// Egg Solids, the total solid content of egg ingredients
-    ///
-    /// **Note**: This does not include any sugar content that may be present in egg ingredients;
-    /// that is accounted for separately via [`CompKey::TotalSugars`].
-    EggSolids,
+    /// Egg Proteins, the protein content of egg ingredients
+    EggProteins,
 
+    // Others
+    // ------
+    //
     /// Other Fats, the fat content of other ingredients not milk, cocoa, nut, or egg
     OtherFats,
     /// Other Solids Non-Fat Non-Sugar (SNFS), the non-fat, non-sugar solid content of other
     /// ingredients not milk, cocoa, nut, or egg
     OtherSNFS,
 
+    // Totals
+    // ------
+    //
+    /// Total Solids, sum of all solid components
+    TotalSolids,
     /// Total Fats, sum of all fat components
     ///
     /// This is a key component of ice cream mixes, contributing to creaminess and mouthfeel.
@@ -231,23 +258,26 @@ pub enum CompKey {
     TotalSNFS,
     /// Total Proteins, sum of all protein components
     TotalProteins,
-    /// Total Solids, sum of all solid components
-    TotalSolids,
-
     /// Water content, `100 - TotalSolids - Alcohol.by_weight`
     Water,
 
-    // Carbohydrates and Artificial Sweeteners
-    // ---------------------------------------
+    // Carbohydrates
+    // -------------
     //
+    /// Total carbohydrate content, including all sugars, polyols, and fiber in [`Carbohydrates`]
+    TotalCarbohydrates,
+
+    /// Total fiber content, as tracked in [`Carbohydrates::fiber`]
+    TotalFiber,
     /// Total inulin content, a dietary fiber tracked in
     /// [`Carbohydrates::fiber::inulin`](Fibers::inulin)
     Inulin,
     /// Total oligofructose content, a dietary fiber tracked in
     /// [`Carbohydrates::fiber::oligofructose`](Fibers::oligofructose)
     Oligofructose,
-    /// Total fiber content, as tracked in [`Carbohydrates::fiber`]
-    TotalFiber,
+
+    /// Total sugar content, including all mono/disaccharides tracked in [`Carbohydrates::sugars`]
+    TotalSugars,
     /// Total free glucose content, i.e. glucose not part of disaccharides or polysaccharides
     Glucose,
     /// Total free fructose content, i.e. fructose not part of disaccharides or polysaccharides
@@ -262,8 +292,9 @@ pub enum CompKey {
     Maltose,
     /// Total trehalose content, tracked in [`Carbohydrates::sugars::trehalose`](Sugars::trehalose)
     Trehalose,
-    /// Total sugar content, including all mono/disaccharides tracked in [`Carbohydrates::sugars`]
-    TotalSugars,
+
+    /// Total polyol content, including all polyols tracked in [`Carbohydrates::polyols`]
+    TotalPolyols,
     /// Total erythritol content, as tracked in
     /// [`Carbohydrates::polyols::erythritol`](Polyols::erythritol)
     Erythritol,
@@ -276,10 +307,13 @@ pub enum CompKey {
     /// Total xylitol content, as tracked in
     /// [`Carbohydrates::polyols::xylitol`](Polyols::xylitol)
     Xylitol,
-    /// Total polyol content, including all polyols tracked in [`Carbohydrates::polyols`]
-    TotalPolyols,
-    /// Total carbohydrate content, including all sugars, polyols, and fiber in [`Carbohydrates`]
-    TotalCarbohydrates,
+
+    // Artificial Sweeteners
+    // ---------------------
+    //
+    /// Total artificial sweetener content, including all artificial sweeteners tracked in
+    /// [`ArtificialSweeteners`]
+    TotalArtificial,
     /// Total aspartame content, as tracked in [`ArtificialSweeteners::aspartame`]
     Aspartame,
     /// Total cyclamate content, as tracked in [`ArtificialSweeteners::cyclamate`]
@@ -292,21 +326,17 @@ pub enum CompKey {
     Steviosides,
     /// Total mogrosides content, as tracked in [`ArtificialSweeteners::mogrosides`]
     Mogrosides,
-    /// Total artificial sweetener content, including all artificial sweeteners tracked in
-    /// [`ArtificialSweeteners`]
-    TotalArtificial,
+
+    // Sweeteners
+    // ----------
+    //
     /// Total sweetener content, including all sugars, polyols, and artificial sweeteners, but
     /// excluding fiber and other carbohydrates not contributing to sweetness
     TotalSweeteners,
 
-    // Alcohol and Micro Components
-    // ----------------------------
+    // Salt
+    // ----
     //
-    /// Total alcohol content, as grams of alcohol per 100g of ingredient/mix
-    Alcohol,
-    /// Total alcohol by volume (ABV) content, calculated from the alcohol content by weight
-    ABV,
-
     /// Total salt content, excluding salts from milk ingredients, as tracked in [`Micro::salt`]
     ///
     /// This includes any salt added as an ingredient, as well as any salt that is part of other
@@ -315,12 +345,15 @@ pub enum CompKey {
     ///
     /// Note that this is a subset of [`CompKey::TotalSolids`].
     Salt,
-    /// Total lecithin content, a subset of emulsifiers, tracked in [`Emulsifiers`]
-    Lecithin,
-    /// Total emulsifier content, including lecithin and others tracked in [`Micro::emulsifiers`]
-    // @todo Introduce `Emulsification` as a separate key, representing the overall emulsification
-    // strength of the mix from all sources, as tracked in [`Texture::emulsification`]
-    TotalEmulsifiers,
+
+    // Stabilizers
+    // -----------
+    //
+    /// Total stabilizer content, e.g. from Locust Bean Gum, etc. tracked in [`Micro::stabilizers`]
+    //
+    // @todo Introduce `Stabilization` as a separate key, representing the overall stabilization
+    // strength of the mix from all sources, as tracked in [`Texture::stabilization`]
+    TotalStabilizers,
     /// Total cornstarch content, a stabilizer tracked in [`Stabilizers::cornstarch`]
     Cornstarch,
     /// Total tapioca starch content, a stabilizer tracked in [`Stabilizers::tapioca_starch`]
@@ -344,17 +377,43 @@ pub enum CompKey {
     SodiumAlginate,
     /// Total tara gum content, a stabilizer tracked in [`Stabilizers::tara_gum`]
     TaraGum,
-    /// Total stabilizer content, e.g. from Locust Bean Gum, etc. tracked in [`Micro::stabilizers`]
-    // @todo Introduce `Stabilization` as a separate key, representing the overall stabilization
-    // strength of the mix from all sources, as tracked in [`Texture::stabilization`]
-    TotalStabilizers,
 
-    // POD, PAC, and Hardness Factor
-    // -----------------------------
+    // Emulsifiers
+    // -----------
+    //
+    /// Total emulsifier content, including lecithin and others tracked in [`Micro::emulsifiers`]
+    //
+    // @todo Introduce `Emulsification` as a separate key, representing the overall emulsification
+    // strength of the mix from all sources, as tracked in [`Texture::emulsification`]
+    TotalEmulsifiers,
+    /// Total lecithin content, a subset of emulsifiers, tracked in [`Emulsifiers`]
+    Lecithin,
+
+    // Alcohol
+    // -------
+    //
+    /// Total alcohol content, as grams of alcohol per 100g of ingredient/mix
+    Alcohol,
+    /// Total alcohol by volume (ABV) content, calculated from the alcohol content by weight
+    ABV,
+
+    // POD
+    // ---
     //
     /// [Potere Dolcificante (POD)](crate::docs#pod) of the ingredient or mix as a whole
     POD,
 
+    // PAC and Hardness Factor
+    // ----------------------
+    //
+    /// Net [Potere Anti-Cristallizzante (PAC)](crate::docs#pac-afp-fpdf-se), i.e. `TotalPAC - HF`,
+    /// representing the effective PAC after accounting for the hardness factor
+    ///
+    /// **Warning**: Unlike all other composition values, this value can go negative, if the HF
+    /// exceeds the total PAC; unlikely for a full mix, but possible for individual ingredients.
+    NetPAC,
+    /// Total [Potere Anti-Cristallizzante (PAC)](crate::docs#pac) of the ingredient or mix as whole
+    TotalPAC,
     /// [Potere Anti-Cristallizzante (PAC)](crate::docs#pac) contributions from sugars and polyols
     PACsgr,
     /// [Potere Anti-Cristallizzante (PAC)](crate::docs#pac) contributions from [`CompKey::Salt`]
@@ -363,16 +422,8 @@ pub enum CompKey {
     PACmlk,
     /// [Potere Anti-Cristallizzante (PAC)](crate::docs#pac) contributions from alcohol
     PACalc,
-    /// Total [Potere Anti-Cristallizzante (PAC)](crate::docs#pac) of the ingredient or mix as whole
-    TotalPAC,
     /// [Hardness Factor (HF)](crate::docs#corvitto-method-hardness-factor) of the ingredient or mix
     HF,
-    /// Net [Potere Anti-Cristallizzante (PAC)](crate::docs#pac-afp-fpdf-se), i.e. `TotalPAC - HF`,
-    /// representing the effective PAC after accounting for the hardness factor
-    ///
-    /// **Warning**: Unlike all other composition values, this value can go negative, if the HF
-    /// exceeds the total PAC; unlikely for a full mix, but possible for individual ingredients.
-    NetPAC,
 
     // Nutritional Properties
     // ----------------------
@@ -530,36 +581,44 @@ impl Composition {
         match key {
             CompKey::Energy => self.energy,
 
+            CompKey::MilkSolids => self.solids.milk.total(),
             CompKey::MilkFat => self.solids.milk.fats.total,
             CompKey::MSNF => self.solids.milk.snf(),
+            CompKey::MilkSugars => self.solids.milk.carbohydrates.sugars.total(),
             CompKey::MilkSNFS => self.solids.milk.snfs(),
             CompKey::MilkProteins => self.solids.milk.proteins,
-            CompKey::MilkSolids => self.solids.milk.total(),
 
+            CompKey::CacaoSolids => self.solids.cocoa.total() - self.solids.cocoa.carbohydrates.sugars.total(),
             CompKey::CocoaButter => self.solids.cocoa.fats.total,
             CompKey::CocoaSolids => self.solids.cocoa.snfs(),
-            CompKey::CacaoSolids => self.solids.cocoa.total() - self.solids.cocoa.carbohydrates.sugars.total(),
+
+            CompKey::NutSolids => self.solids.nut.total() - self.solids.nut.carbohydrates.sugars.total(),
             CompKey::NutFat => self.solids.nut.fats.total,
             CompKey::NutSNF => self.solids.nut.snfs(),
-            CompKey::NutSolids => self.solids.nut.total() - self.solids.nut.carbohydrates.sugars.total(),
 
+            CompKey::EggSolids => self.solids.egg.total() - self.solids.egg.carbohydrates.sugars.total(),
             CompKey::EggFat => self.solids.egg.fats.total,
             CompKey::EggSNF => self.solids.egg.snfs(),
-            CompKey::EggSolids => self.solids.egg.total() - self.solids.egg.carbohydrates.sugars.total(),
+            CompKey::EggProteins => self.solids.egg.proteins,
+
             CompKey::OtherFats => self.solids.other.fats.total,
             CompKey::OtherSNFS => self.solids.other.snfs(),
 
+            CompKey::TotalSolids => self.solids.total(),
             CompKey::TotalFats => self.solids.all().fats.total,
             CompKey::TotalSNF => self.solids.all().snf(),
             CompKey::TotalSNFS => self.solids.all().snfs(),
             CompKey::TotalProteins => self.solids.all().proteins,
-            CompKey::TotalSolids => self.solids.total(),
 
             CompKey::Water => self.water(),
 
+            CompKey::TotalCarbohydrates => self.solids.all().carbohydrates.total(),
+
+            CompKey::TotalFiber => self.solids.all().carbohydrates.fiber.total(),
             CompKey::Inulin => self.solids.all().carbohydrates.fiber.inulin,
             CompKey::Oligofructose => self.solids.all().carbohydrates.fiber.oligofructose,
-            CompKey::TotalFiber => self.solids.all().carbohydrates.fiber.total(),
+
+            CompKey::TotalSugars => self.solids.all().carbohydrates.sugars.total(),
             CompKey::Glucose => self.solids.all().carbohydrates.sugars.glucose,
             CompKey::Fructose => self.solids.all().carbohydrates.sugars.fructose,
             CompKey::Galactose => self.solids.all().carbohydrates.sugars.galactose,
@@ -567,32 +626,33 @@ impl Composition {
             CompKey::Lactose => self.solids.all().carbohydrates.sugars.lactose,
             CompKey::Maltose => self.solids.all().carbohydrates.sugars.maltose,
             CompKey::Trehalose => self.solids.all().carbohydrates.sugars.trehalose,
-            CompKey::TotalSugars => self.solids.all().carbohydrates.sugars.total(),
+
+            CompKey::TotalPolyols => self.solids.all().carbohydrates.polyols.total(),
             CompKey::Erythritol => self.solids.all().carbohydrates.polyols.erythritol,
             CompKey::Maltitol => self.solids.all().carbohydrates.polyols.maltitol,
             CompKey::Sorbitol => self.solids.all().carbohydrates.polyols.sorbitol,
             CompKey::Xylitol => self.solids.all().carbohydrates.polyols.xylitol,
-            CompKey::TotalPolyols => self.solids.all().carbohydrates.polyols.total(),
-            CompKey::TotalCarbohydrates => self.solids.all().carbohydrates.total(),
+
+            CompKey::TotalArtificial => self.solids.all().artificial_sweeteners.total(),
             CompKey::Aspartame => self.solids.all().artificial_sweeteners.aspartame,
             CompKey::Cyclamate => self.solids.all().artificial_sweeteners.cyclamate,
             CompKey::Saccharin => self.solids.all().artificial_sweeteners.saccharin,
             CompKey::Sucralose => self.solids.all().artificial_sweeteners.sucralose,
             CompKey::Steviosides => self.solids.all().artificial_sweeteners.steviosides,
             CompKey::Mogrosides => self.solids.all().artificial_sweeteners.mogrosides,
-            CompKey::TotalArtificial => self.solids.all().artificial_sweeteners.total(),
+
             CompKey::TotalSweeteners => {
                 self.solids.all().carbohydrates.sugars.total()
                     + self.solids.all().carbohydrates.polyols.total()
                     + self.solids.all().artificial_sweeteners.total()
             }
 
-            CompKey::Alcohol => self.alcohol.by_weight,
-            CompKey::ABV => self.alcohol.to_abv(),
-
             CompKey::Salt => self.micro.salt,
-            CompKey::Lecithin => self.micro.emulsifiers.lecithin,
+
             CompKey::TotalEmulsifiers => self.micro.emulsifiers.total(),
+            CompKey::Lecithin => self.micro.emulsifiers.lecithin,
+
+            CompKey::TotalStabilizers => self.micro.stabilizers.total(),
             CompKey::Cornstarch => self.micro.stabilizers.cornstarch,
             CompKey::TapiocaStarch => self.micro.stabilizers.tapioca_starch,
             CompKey::Pectin => self.micro.stabilizers.pectin,
@@ -604,17 +664,19 @@ impl Composition {
             CompKey::XanthanGum => self.micro.stabilizers.xanthan_gum,
             CompKey::SodiumAlginate => self.micro.stabilizers.sodium_alginate,
             CompKey::TaraGum => self.micro.stabilizers.tara_gum,
-            CompKey::TotalStabilizers => self.micro.stabilizers.total(),
+
+            CompKey::Alcohol => self.alcohol.by_weight,
+            CompKey::ABV => self.alcohol.to_abv(),
 
             CompKey::POD => self.pod,
 
+            CompKey::NetPAC => self.pac.net_total(),
+            CompKey::TotalPAC => self.pac.total(),
             CompKey::PACsgr => self.pac.sugars,
             CompKey::PACslt => self.pac.salt,
             CompKey::PACmlk => self.pac.msnf_ws_salts,
             CompKey::PACalc => self.pac.alcohol,
-            CompKey::TotalPAC => self.pac.total(),
             CompKey::HF => self.pac.hardness_factor,
-            CompKey::NetPAC => self.pac.net_total(),
 
             CompKey::SaturatedFat => self.solids.all().fats.saturated,
             CompKey::TransFat => self.solids.all().fats.trans,
@@ -844,6 +906,7 @@ mod tests {
             (CompKey::TotalSolids, 10.82),
             (CompKey::Water, 89.18),
             (CompKey::Lactose, 4.8069),
+            (CompKey::MilkSugars, 4.8069),
             (CompKey::TotalSugars, 4.8069),
             (CompKey::TotalArtificial, 0.0),
             (CompKey::TotalSweeteners, 4.8069),
@@ -960,6 +1023,7 @@ mod tests {
             // Milk
             (CompKey::MilkFat,              4.0),
             (CompKey::MSNF,                 9.0),   // milk.snf()  = 13 - 4
+            (CompKey::MilkSugars,           5.0),   // lactose
             (CompKey::MilkSNFS,             4.0),   // milk.snfs() = 9 - 5 (lactose)
             (CompKey::MilkProteins,         3.0),
             (CompKey::MilkSolids,          13.0),
@@ -974,6 +1038,7 @@ mod tests {
             // Egg
             (CompKey::EggFat,               2.0),
             (CompKey::EggSNF,               2.0),   // egg.snfs() = (4-2) - 0
+            (CompKey::EggProteins,          1.0),
             (CompKey::EggSolids,            4.0),   // egg.total() - egg.sugars = 4 - 0
             // Other
             (CompKey::OtherFats,            1.0),

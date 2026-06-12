@@ -49,38 +49,44 @@ impl KeyAsStrings for CompKey {
         match self {
             Self::Energy => "Energy",
 
+            Self::MilkSolids => "Milk Solids",
             Self::MilkFat => "Milk Fat",
             Self::MSNF => "MSNF",
+            Self::MilkSugars => "Milk Sugars",
             Self::MilkSNFS => "Milk SNFS",
             Self::MilkProteins => "Milk Proteins",
-            Self::MilkSolids => "Milk Solids",
 
+            Self::CacaoSolids => "Cacao Solids",
             Self::CocoaButter => "Cocoa Butter",
             Self::CocoaSolids => "Cocoa Solids",
-            Self::CacaoSolids => "Cacao Solids",
 
+            Self::NutSolids => "Nut Solids",
             Self::NutFat => "Nut Fat",
             Self::NutSNF => "Nut SNF",
-            Self::NutSolids => "Nut Solids",
 
+            Self::EggSolids => "Egg Solids",
             Self::EggFat => "Egg Fat",
             Self::EggSNF => "Egg SNF",
-            Self::EggSolids => "Egg Solids",
+            Self::EggProteins => "Egg Proteins",
 
             Self::OtherFats => "Other Fats",
             Self::OtherSNFS => "Other SNFS",
 
+            Self::TotalSolids => "Solids",
             Self::TotalFats => "Fats",
             Self::TotalSNF => "SNF",
             Self::TotalSNFS => "SNFS",
             Self::TotalProteins => "Proteins",
-            Self::TotalSolids => "Solids",
 
             Self::Water => "Water",
 
+            Self::TotalCarbohydrates => "Carbohydrates",
+
+            Self::TotalFiber => "Fiber",
             Self::Inulin => "Inulin",
             Self::Oligofructose => "Oligofructose",
-            Self::TotalFiber => "Fiber",
+
+            Self::TotalSugars => "Sugars",
             Self::Glucose => "Glucose",
             Self::Fructose => "Fructose",
             Self::Galactose => "Galactose",
@@ -88,28 +94,26 @@ impl KeyAsStrings for CompKey {
             Self::Lactose => "Lactose",
             Self::Maltose => "Maltose",
             Self::Trehalose => "Trehalose",
-            Self::TotalSugars => "Sugars",
+
+            Self::TotalPolyols => "Polyols",
             Self::Erythritol => "Erythritol",
             Self::Maltitol => "Maltitol",
             Self::Sorbitol => "Sorbitol",
             Self::Xylitol => "Xylitol",
-            Self::TotalPolyols => "Polyols",
+
+            Self::TotalArtificial => "Artificial",
             Self::Aspartame => "Aspartame",
             Self::Cyclamate => "Cyclamate",
             Self::Saccharin => "Saccharin",
             Self::Sucralose => "Sucralose",
             Self::Steviosides => "Steviosides",
             Self::Mogrosides => "Mogrosides",
-            Self::TotalArtificial => "Artificial",
-            Self::TotalSweeteners => "Sweeteners",
-            Self::TotalCarbohydrates => "Carbohydrates",
 
-            Self::Alcohol => "Alcohol",
-            Self::ABV => "ABV",
+            Self::TotalSweeteners => "Sweeteners",
 
             Self::Salt => "Salt",
-            Self::Lecithin => "Lecithin",
-            Self::TotalEmulsifiers => "Emulsifiers",
+
+            Self::TotalStabilizers => "Stabilizers",
             Self::Cornstarch => "Cornstarch",
             Self::TapiocaStarch => "Tapioca Starch",
             Self::Pectin => "Pectin",
@@ -121,17 +125,23 @@ impl KeyAsStrings for CompKey {
             Self::XanthanGum => "Xanthan Gum",
             Self::SodiumAlginate => "Sodium Alginate",
             Self::TaraGum => "Tara Gum",
-            Self::TotalStabilizers => "Stabilizers",
+
+            Self::TotalEmulsifiers => "Emulsifiers",
+            Self::Lecithin => "Lecithin",
+
+            Self::Alcohol => "Alcohol",
+            Self::ABV => "ABV",
 
             Self::POD => "POD",
 
+            Self::NetPAC => "Net PAC",
+            Self::TotalPAC => "PAC",
             Self::PACsgr => "PACsgr",
             Self::PACslt => "PACslt",
             Self::PACmlk => "PACmlk",
             Self::PACalc => "PACalc",
-            Self::TotalPAC => "PAC",
+
             Self::HF => "HF",
-            Self::NetPAC => "Net PAC",
 
             Self::SaturatedFat => "Saturated Fat",
             Self::TransFat => "Trans Fat",
@@ -145,26 +155,26 @@ impl KeyAsStrings for CompKey {
             Self::NutSNF => "Nut Solids Non-Fat",
             Self::EggSNF => "Egg Solids Non-Fat",
             Self::OtherSNFS => "Other Solids Non-Fat Non-Sugar",
+            Self::TotalSolids => "Total Solids",
             Self::TotalFats => "Total Fats",
             Self::TotalSNF => "Total Solids Non-Fat",
             Self::TotalSNFS => "Total Solids Non-Fat Non-Sugar",
             Self::TotalProteins => "Total Proteins",
-            Self::TotalSolids => "Total Solids",
+            Self::TotalCarbohydrates => "Total Carbohydrates",
             Self::TotalFiber => "Total Fiber",
             Self::TotalSugars => "Total Sugars",
             Self::TotalPolyols => "Total Polyols",
             Self::TotalArtificial => "Total Artificial",
             Self::TotalSweeteners => "Total Sweeteners",
-            Self::TotalCarbohydrates => "Total Carbohydrates",
-            Self::TotalEmulsifiers => "Total Emulsifiers",
             Self::TotalStabilizers => "Total Stabilizers",
+            Self::TotalEmulsifiers => "Total Emulsifiers",
+            Self::ABV => "Alcohol by Volume",
             Self::TotalPAC => "Total PAC",
             Self::PACsgr => "PAC (Sugars)",
             Self::PACslt => "PAC (Salt)",
             Self::PACmlk => "PAC (Milk)",
             Self::PACalc => "PAC (Alcohol)",
             Self::HF => "Hardness Factor",
-            Self::ABV => "Alcohol by Volume",
             _ => self.as_med_str(),
         }
     }
@@ -173,25 +183,25 @@ impl KeyAsStrings for CompKey {
 impl KeyAsStrings for RatioKey {
     fn as_short_str(&self) -> &'static str {
         match self {
-            Self::EmulsifiersPerFat => "Emul./Fat",
             Self::StabilizersPerWater => "Stab./Water",
+            Self::EmulsifiersPerFat => "Emul./Fat",
             _ => self.as_med_str(),
         }
     }
 
     fn as_med_str(&self) -> &'static str {
         match self {
-            Self::AbsPAC => "Abs.PAC",
-            Self::AbsNetPAC => "Abs.Net PAC",
-            Self::EmulsifiersPerFat => "Emulsifiers/Fat",
             Self::StabilizersPerWater => "Stabilizers/Water",
+            Self::EmulsifiersPerFat => "Emulsifiers/Fat",
+            Self::AbsNetPAC => "Abs.Net PAC",
+            Self::AbsPAC => "Abs.PAC",
         }
     }
 
     fn as_long_str(&self) -> &'static str {
         match self {
-            Self::AbsPAC => "Absolute PAC",
             Self::AbsNetPAC => "Absolute Net PAC",
+            Self::AbsPAC => "Absolute PAC",
             _ => self.as_med_str(),
         }
     }

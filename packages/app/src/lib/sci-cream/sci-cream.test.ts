@@ -109,9 +109,9 @@ describe("groupEnabledCompKeys", () => {
   });
 
   it("orders a roll-up before its enabled parts and marks it as a roll-up", () => {
-    const ordered = groupEnabledCompKeys([CompKey.MilkFat, CompKey.TotalFats]);
+    const ordered = groupEnabledCompKeys([CompKey.MilkFat, CompKey.MilkSolids]);
 
-    const rollupIdx = ordered.findIndex((row) => row.key === CompKey.TotalFats);
+    const rollupIdx = ordered.findIndex((row) => row.key === CompKey.MilkSolids);
     const partIdx = ordered.findIndex((row) => row.key === CompKey.MilkFat);
 
     expect(rollupIdx).toBeGreaterThanOrEqual(0);

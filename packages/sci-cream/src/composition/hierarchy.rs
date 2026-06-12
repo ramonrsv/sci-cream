@@ -1,188 +1,323 @@
 //! The composition hierarchy: how [`CompKey`] roll-ups decompose into their parts.
 //!
-//! Part/whole relationships overlap: [`CompKey::MilkFat`] is a part of both [`CompKey::TotalFats`]
-//! (by macronutrient) and [`CompKey::MilkSolids`] (by source), because the composition decomposes
-//! along two orthogonal axes (see [`Solids`] and [`SolidsBreakdown`]). So a key can have more than
-//! one parent — the relation is a DAG. It is encoded here as a forest of [`HierarchyNode`] literals
-//! in which a shared key simply appears under each of its parents.
+//! A key can have more than one parent — [`CompKey::MilkFat`] is a part of both
+//! [`CompKey::TotalFats`] (macronutrient) and [`CompKey::MilkSolids`] (source) — so the relation is
+//! a DAG, encoded as a forest of [`HierarchyNode`]s; shared key appears under each of its parents.
 //!
-//! [`CompKey::children`] and [`CompKey::parents`] expose the edges (a roll-up's parts never exceed
-//! it in any [`Composition`] — exactly, when residual-free); [`comp_hierarchy`] and the flattened
-//! [`comp_hierarchy_ordered`] give the tree itself. How to project it — for instance keeping a
-//! shared key's first occurrence so a UI renders each key once — is left to the caller.
+//! There are two forests, because the additive math and the UI want different shapes:
 //!
-//! [`HierarchyNode`] is generic over the key type, so other keys (ratios, FPD, future nutrient
-//! keys) can later form additional groupings.
+//! - The structural forest (over [`CompKey`], via [`structural_hierarchy`]) holds only **additive**
+//!   part/whole identities — a roll-up's parts never exceed it in any [`Composition`] — so it is
+//!   the trustworthy basis for the sum invariants and balancing dominance check.
+//!   [`CompKey::children`] / [`CompKey::parents`] / [`CompKey::is_rollup`] read its edges.
+//! - The display forest (over [`PropKey`], via [`display_hierarchy`]) is what the UI groups by. It
+//!   reuses the structural subtrees and adds visual-only groupings (ratios, an FPD group, `Energy`,
+//!   `TotalSNFS` beside `TotalSNF`), so it is **not** a supertree of the structural forest.
+//!
+//! Each forest is built once behind a [`LazyLock`], sharing subtree builders so a part list (the
+//! seven sugars, the eleven stabilizers, …) is written exactly once.
 
 use std::collections::HashMap;
+use std::hash::Hash;
 use std::sync::LazyLock;
 
 use serde::Serialize;
 
-use crate::composition::CompKey;
+use crate::{composition::CompKey, properties::PropKey};
 
 #[cfg(doc)]
-use crate::composition::{Composition, Solids, SolidsBreakdown};
+use crate::composition::Composition;
 
 /// A node in the composition hierarchy: a key and its direct children, each a node of the same kind.
 ///
 /// `Serialize` flattens to `{ key, children }`, which is how the WASM layer hands the forest to JS.
-#[derive(Debug, Clone, Copy, Serialize)]
-pub struct HierarchyNode<K: 'static> {
+#[derive(Debug, Clone, Serialize)]
+pub struct HierarchyNode<K> {
     /// The key at this node.
     pub key: K,
     /// The node's direct children, in display order. Empty for a leaf.
-    pub children: &'static [Self],
+    pub children: Vec<Self>,
 }
 
-impl<K: 'static> HierarchyNode<K> {
+impl<K> HierarchyNode<K> {
     /// A roll-up branch node with the given direct children.
     #[must_use]
-    pub const fn br(key: K, children: &'static [Self]) -> Self {
+    pub const fn br(key: K, children: Vec<Self>) -> Self {
         Self { key, children }
     }
 
     /// A leaf node (no children).
     #[must_use]
     pub const fn lf(key: K) -> Self {
-        Self { key, children: &[] }
+        Self {
+            key,
+            children: Vec::new(),
+        }
     }
 }
 
-use HierarchyNode as N;
-
-/// The composition hierarchy, as a forest of [`HierarchyNode`]s over [`CompKey`].
-///
-/// A DAG: keys shared between the macronutrient and source decompositions (the per-source fats and
-/// milk proteins) appear in both. The macronutrient trees come first, so a shared key's first
-/// occurrence is its macronutrient one.
-static FOREST: &[HierarchyNode<CompKey>] = &[
-    // Macronutrient decomposition.
-    N::br(
-        CompKey::TotalSolids,
-        &[
-            N::br(
-                CompKey::TotalFats,
-                &[
-                    N::lf(CompKey::MilkFat),
-                    N::lf(CompKey::CocoaButter),
-                    N::lf(CompKey::NutFat),
-                    N::lf(CompKey::EggFat),
-                    N::lf(CompKey::OtherFats),
-                ],
-            ),
-            N::br(
-                CompKey::TotalSNF,
-                &[
-                    N::br(
-                        CompKey::TotalCarbohydrates,
-                        &[
-                            N::br(
-                                CompKey::TotalSugars,
-                                &[
-                                    N::lf(CompKey::Glucose),
-                                    N::lf(CompKey::Fructose),
-                                    N::lf(CompKey::Galactose),
-                                    N::lf(CompKey::Sucrose),
-                                    N::lf(CompKey::Lactose),
-                                    N::lf(CompKey::Maltose),
-                                    N::lf(CompKey::Trehalose),
-                                ],
-                            ),
-                            N::br(
-                                CompKey::TotalPolyols,
-                                &[
-                                    N::lf(CompKey::Erythritol),
-                                    N::lf(CompKey::Maltitol),
-                                    N::lf(CompKey::Sorbitol),
-                                    N::lf(CompKey::Xylitol),
-                                ],
-                            ),
-                            N::br(CompKey::TotalFiber, &[N::lf(CompKey::Inulin), N::lf(CompKey::Oligofructose)]),
-                        ],
-                    ),
-                    N::br(CompKey::TotalProteins, &[N::lf(CompKey::MilkProteins)]),
-                    N::br(
-                        CompKey::TotalArtificial,
-                        &[
-                            N::lf(CompKey::Aspartame),
-                            N::lf(CompKey::Cyclamate),
-                            N::lf(CompKey::Saccharin),
-                            N::lf(CompKey::Sucralose),
-                            N::lf(CompKey::Steviosides),
-                            N::lf(CompKey::Mogrosides),
-                        ],
-                    ),
-                ],
-            ),
-        ],
-    ),
-    N::br(
-        CompKey::TotalSweeteners,
-        &[
-            N::lf(CompKey::TotalSugars),
-            N::lf(CompKey::TotalPolyols),
-            N::lf(CompKey::TotalArtificial),
-        ],
-    ),
-    N::br(
-        CompKey::TotalPAC,
-        &[
-            N::lf(CompKey::PACsgr),
-            N::lf(CompKey::PACslt),
-            N::lf(CompKey::PACmlk),
-            N::lf(CompKey::PACalc),
-        ],
-    ),
-    N::br(
-        CompKey::TotalStabilizers,
-        &[
-            N::lf(CompKey::Cornstarch),
-            N::lf(CompKey::TapiocaStarch),
-            N::lf(CompKey::Pectin),
-            N::lf(CompKey::Gelatin),
-            N::lf(CompKey::LocustBeanGum),
-            N::lf(CompKey::GuarGum),
-            N::lf(CompKey::Carrageenans),
-            N::lf(CompKey::CarboxymethylCellulose),
-            N::lf(CompKey::XanthanGum),
-            N::lf(CompKey::SodiumAlginate),
-            N::lf(CompKey::TaraGum),
-        ],
-    ),
-    N::br(CompKey::TotalEmulsifiers, &[N::lf(CompKey::Lecithin)]),
-    //
-    // Ingredient-source decomposition: per-source part/whole identities. Shared keys repeat from
-    // the macronutrient trees above — every occurrence is a real edge.
-    N::br(
-        CompKey::MilkSolids,
-        &[
-            N::lf(CompKey::MilkFat),
-            N::br(CompKey::MSNF, &[N::br(CompKey::MilkSNFS, &[N::lf(CompKey::MilkProteins)])]),
-        ],
-    ),
-    N::br(CompKey::CacaoSolids, &[N::lf(CompKey::CocoaButter), N::lf(CompKey::CocoaSolids)]),
-    N::br(CompKey::NutSolids, &[N::lf(CompKey::NutFat), N::lf(CompKey::NutSNF)]),
-    N::br(CompKey::EggSolids, &[N::lf(CompKey::EggFat), N::lf(CompKey::EggSNF)]),
-];
-
-/// Lazily-derived lookups over a forest (see [`Index::build`]).
-struct Index {
-    /// Each roll-up's direct parts, gathered from every occurrence.
-    children: HashMap<CompKey, Vec<CompKey>>,
-    /// Each key's parents (roll-ups listing it), in forest order.
-    parents: HashMap<CompKey, Vec<CompKey>>,
-    /// A pre-order of the forest: every node, paired with its depth (a shared key recurs).
-    ordered: Vec<(CompKey, u32)>,
-    /// The forest's top-level keys, in order.
-    roots: Vec<CompKey>,
+/// Lifts a structural ([`CompKey`]) node into the display forest's [`PropKey`] space, wrapping each
+/// key as [`PropKey::Comp`] and recursing into its children.
+impl From<HierarchyNode<CompKey>> for HierarchyNode<PropKey> {
+    fn from(node: HierarchyNode<CompKey>) -> Self {
+        Self {
+            key: PropKey::Comp(node.key),
+            children: node.children.into_iter().map(Into::into).collect(),
+        }
+    }
 }
 
-static INDEX: LazyLock<Index> = LazyLock::new(|| Index::build(FOREST));
+/// A row of leaf nodes from a key list (the common case for a roll-up's direct parts).
+fn leaves<K: Copy>(keys: &[K]) -> Vec<HierarchyNode<K>> {
+    keys.iter().copied().map(HierarchyNode::lf).collect()
+}
 
-impl Index {
+/// Lifts any rollup into a new rollup with the `extras` prepended to its children.
+fn prefix_extras<KA, KB, KD>(extras: Vec<HierarchyNode<KB>>, rollup: HierarchyNode<KA>) -> HierarchyNode<KD>
+where
+    KA: Copy,
+    KB: Copy,
+    KD: Copy,
+    HierarchyNode<KA>: Into<HierarchyNode<KD>>,
+    HierarchyNode<KB>: Into<HierarchyNode<KD>>,
+{
+    let mut node: HierarchyNode<KD> = rollup.into();
+    node.children = [extras.into_iter().map(Into::into).collect(), node.children].concat();
+    node
+}
+
+/// Lifts any rollup into a new rollup with the `extras` appended to its children.
+fn suffix_extras<KA, KB, KD>(rollup: HierarchyNode<KA>, extras: Vec<HierarchyNode<KB>>) -> HierarchyNode<KD>
+where
+    KA: Copy,
+    KB: Copy,
+    KD: Copy,
+    HierarchyNode<KA>: Into<HierarchyNode<KD>>,
+    HierarchyNode<KB>: Into<HierarchyNode<KD>>,
+{
+    let mut node: HierarchyNode<KD> = rollup.into();
+    node.children = [node.children, extras.into_iter().map(Into::into).collect()].concat();
+    node
+}
+
+// -------------------------------------------------------------------------------------------------
+// Shared subtrees
+//
+// Each returns a `CompKey` node, written once and reused by both forests. The display forest lifts
+// subtrees via `.into()` (`CompKey` → `PropKey`) and augments some with visual-only children.
+// -------------------------------------------------------------------------------------------------
+
+pub(crate) mod subtrees {
+    // Glob imports used inside `subtrees` module to simplify the builder code
+    #[allow(clippy::enum_glob_use)]
+    use crate::composition::CompKey::{self, *};
+
+    use super::{HierarchyNode as N, leaves};
+
+    // === Ingredient sources ===================
+
+    // --- Milk ---------------------------------
+    pub(crate) fn milk_solids() -> N<CompKey> {
+        N::br(
+            MilkSolids,
+            vec![
+                N::lf(MilkFat),
+                N::br(MSNF, vec![N::lf(MilkSugars), N::br(MilkSNFS, leaves(&[MilkProteins]))]),
+            ],
+        )
+    }
+
+    // --- Cacao --------------------------------
+    pub(crate) fn cacao_solids() -> N<CompKey> {
+        N::br(CacaoSolids, leaves(&[CocoaButter, CocoaSolids]))
+    }
+
+    // --- Nuts ---------------------------------
+    pub(crate) fn nut_solids() -> N<CompKey> {
+        N::br(NutSolids, leaves(&[NutFat, NutSNF]))
+    }
+
+    // --- Eggs ---------------------------------
+    pub(crate) fn egg_solids() -> N<CompKey> {
+        N::br(EggSolids, vec![N::lf(EggFat), N::br(EggSNF, vec![N::lf(EggProteins)])])
+    }
+
+    // === Macronutrients =======================
+
+    // --- Totals -------------------------------
+    pub(crate) fn total_solids() -> N<CompKey> {
+        N::br(TotalSolids, vec![total_fats(), total_snf()])
+    }
+
+    pub(crate) fn total_fats() -> N<CompKey> {
+        N::br(TotalFats, leaves(&[MilkFat, CocoaButter, NutFat, EggFat, OtherFats]))
+    }
+
+    pub(crate) fn total_snf() -> N<CompKey> {
+        N::br(TotalSNF, vec![total_carbohydrates(), total_proteins(), total_artificial()])
+    }
+
+    pub(crate) fn total_snfs() -> N<CompKey> {
+        N::br(TotalSNFS, leaves(&[MilkSNFS, CocoaSolids, NutSNF, EggSNF, OtherSNFS]))
+    }
+
+    pub(crate) fn total_proteins() -> N<CompKey> {
+        N::br(TotalProteins, leaves(&[MilkProteins, EggProteins]))
+    }
+
+    // --- Carbohydrates ------------------------
+    pub(crate) fn total_carbohydrates() -> N<CompKey> {
+        N::br(TotalCarbohydrates, vec![total_sugars(), total_polyols(), total_fiber()])
+    }
+
+    pub(crate) fn total_fiber() -> N<CompKey> {
+        N::br(TotalFiber, leaves(&[Inulin, Oligofructose]))
+    }
+
+    pub(crate) fn total_sugars() -> N<CompKey> {
+        N::br(TotalSugars, leaves(&[Glucose, Fructose, Galactose, Sucrose, Lactose, Maltose, Trehalose]))
+    }
+
+    pub(crate) fn total_polyols() -> N<CompKey> {
+        N::br(TotalPolyols, leaves(&[Erythritol, Maltitol, Sorbitol, Xylitol]))
+    }
+
+    // --- Artificial sweeteners ----------------
+    pub(crate) fn total_artificial() -> N<CompKey> {
+        N::br(TotalArtificial, leaves(&[Aspartame, Cyclamate, Saccharin, Sucralose, Steviosides, Mogrosides]))
+    }
+
+    // --- Sweeteners ---------------------------
+    pub(crate) fn total_sweeteners() -> N<CompKey> {
+        N::br(TotalSweeteners, leaves(&[TotalSugars, TotalPolyols, TotalArtificial]))
+    }
+
+    // === Other functional groups ==============
+
+    // --- PACs ---------------------------------
+    pub(crate) fn total_pac() -> N<CompKey> {
+        N::br(TotalPAC, leaves(&[PACsgr, PACslt, PACmlk, PACalc]))
+    }
+
+    // --- Stabilizers --------------------------
+    pub(crate) fn total_stabilizers() -> N<CompKey> {
+        N::br(
+            TotalStabilizers,
+            leaves(&[
+                Cornstarch,
+                TapiocaStarch,
+                Pectin,
+                Gelatin,
+                LocustBeanGum,
+                GuarGum,
+                Carrageenans,
+                CarboxymethylCellulose,
+                XanthanGum,
+                SodiumAlginate,
+                TaraGum,
+            ]),
+        )
+    }
+
+    // --- Emulsifiers --------------------------
+    pub(crate) fn total_emulsifiers() -> N<CompKey> {
+        N::br(TotalEmulsifiers, leaves(&[Lecithin]))
+    }
+}
+
+// -------------------------------------------------------------------------------------------------
+// Forests
+//
+// ...
+// -------------------------------------------------------------------------------------------------
+
+mod forests {
+    // Glob imports used inside `forests` module to simplify the builder code
+    #[allow(clippy::enum_glob_use, clippy::wildcard_imports)]
+    use crate::{
+        composition::{
+            CompKey::{self, *},
+            RatioKey::*,
+            hierarchy::subtrees::*,
+        },
+        fpd::FpdKey::*,
+        properties::PropKey::{self, *},
+    };
+
+    use super::{HierarchyNode as N, prefix_extras, suffix_extras};
+
+    /// The structural composition hierarchy: a forest of strictly **additive** part/whole
+    /// identities over [`CompKey`], used by correctness checks. See the [module docs](self).
+    pub(crate) fn structural_forest() -> Vec<N<CompKey>> {
+        vec![
+            // Ingredient-source axis
+            milk_solids(),
+            cacao_solids(),
+            nut_solids(),
+            egg_solids(),
+            // Macronutrient axis
+            total_solids(), // total_snf() is already a child of total_solids()
+            total_snfs(),
+            total_sweeteners(),
+            total_pac(),
+            total_stabilizers(),
+            total_emulsifiers(),
+        ]
+    }
+
+    /// The display composition hierarchy over [`PropKey`]. See the [module docs](self).
+    ///
+    /// These groupings are purely visual; the math is still based on the structural forest.
+    pub(crate) fn display_forest() -> Vec<N<PropKey>> {
+        vec![
+            N::lf(Comp(Energy)),
+            // Ingredient-source axis
+            milk_solids().into(),
+            cacao_solids().into(),
+            nut_solids().into(),
+            egg_solids().into(),
+            // Macronutrient axis, with visual-only groupings for ratios and FPDs
+            prefix_extras(vec![N::lf(Comp(POD))], total_sweeteners()),
+            total_solids().into(),
+            total_snfs().into(),
+            N::lf(Comp(Salt)),
+            prefix_extras(vec![N::lf(Ratio(StabilizersPerWater))], total_stabilizers()),
+            prefix_extras(vec![N::lf(Ratio(EmulsifiersPerFat))], total_emulsifiers()),
+            N::br(Comp(Alcohol), vec![N::lf(Comp(ABV))]),
+            suffix_extras(
+                prefix_extras(vec![N::lf(Ratio(AbsPAC)), N::lf(Ratio(AbsNetPAC)), N::lf(Comp(NetPAC))], total_pac()),
+                vec![N::lf(Comp(HF))],
+            ),
+            // Other functional groups
+            N::br(Fpd(FPD), vec![N::lf(Fpd(ServingTemp)), N::lf(Fpd(HardnessAt14C))]),
+            N::lf(Comp(Water)),
+            N::lf(Comp(SaturatedFat)),
+            N::lf(Comp(TransFat)),
+        ]
+    }
+}
+
+/// The structural forest, built once. Source of truth for the additive invariants.
+static STRUCTURAL: LazyLock<Vec<HierarchyNode<CompKey>>> = LazyLock::new(forests::structural_forest);
+
+/// The display forest, built once. Serialized to JS by [`display_hierarchy`].
+static DISPLAY: LazyLock<Vec<HierarchyNode<PropKey>>> = LazyLock::new(forests::display_forest);
+
+/// Lazily-derived lookups over a forest (see [`Index::build`]).
+struct Index<K: 'static> {
+    /// Each roll-up's direct parts, gathered from every occurrence.
+    children: HashMap<K, Vec<K>>,
+    /// Each key's parents (roll-ups listing it), in forest order.
+    parents: HashMap<K, Vec<K>>,
+    /// A pre-order of the forest: every node, paired with its depth (a shared key recurs).
+    ordered: Vec<(K, u32)>,
+    /// The forest's top-level keys, in order.
+    roots: Vec<K>,
+}
+
+impl<K: 'static + Eq + Hash + Copy> Index<K> {
     /// Walks `forest` once to populate every lookup.
-    fn build(forest: &[HierarchyNode<CompKey>]) -> Self {
+    fn build(forest: &[HierarchyNode<K>]) -> Self {
         let mut index = Self {
             children: HashMap::new(),
             parents: HashMap::new(),
@@ -196,40 +331,46 @@ impl Index {
 
     /// Records both directions of every part/whole edge: a roll-up's parts and each part's parents
     /// (the latter in forest order).
-    fn collect_edges(&mut self, nodes: &[HierarchyNode<CompKey>]) {
+    fn collect_edges(&mut self, nodes: &[HierarchyNode<K>]) {
         for node in nodes {
             if !node.children.is_empty() {
                 let parts = node.children.iter().map(|child| child.key).collect();
                 let _unused = self.children.insert(node.key, parts);
-                for child in node.children {
+                for child in &node.children {
                     self.parents.entry(child.key).or_default().push(node.key);
                 }
-                self.collect_edges(node.children);
+                self.collect_edges(&node.children);
             }
         }
     }
 
     /// Records a pre-order of `nodes`: every node paired with its depth (shared keys recur). The
     /// top-level keys (depth 0) are also collected as the forest's roots.
-    fn collect_preorder(&mut self, nodes: &[HierarchyNode<CompKey>], depth: u32) {
+    fn collect_preorder(&mut self, nodes: &[HierarchyNode<K>], depth: u32) {
         for node in nodes {
             self.ordered.push((node.key, depth));
             if depth == 0 {
                 self.roots.push(node.key);
             }
-            self.collect_preorder(node.children, depth + 1);
+            self.collect_preorder(&node.children, depth + 1);
         }
     }
 }
 
+/// Edge lookups over the additive [`STRUCTURAL`] forest, backing [`CompKey`]'s hierarchy methods.
+static STRUCTURAL_INDEX: LazyLock<Index<CompKey>> = LazyLock::new(|| Index::build(&STRUCTURAL));
+
+/// Pre-order + roots over the [`DISPLAY`] forest, backing the public `display_hierarchy_*` accessors.
+static DISPLAY_INDEX: LazyLock<Index<PropKey>> = LazyLock::new(|| Index::build(&DISPLAY));
+
 impl CompKey {
-    /// The direct parts of this key in the composition hierarchy, in canonical order.
+    /// The direct parts of this key in the structural composition hierarchy, in canonical order.
     ///
     /// Empty for a non-roll-up. The parts sum to no more than this key in any [`Composition`]
     /// (exactly, for residual-free roll-ups).
     #[must_use]
     pub fn children(self) -> &'static [Self] {
-        match INDEX.children.get(&self) {
+        match STRUCTURAL_INDEX.children.get(&self) {
             Some(children) => children,
             None => &[],
         }
@@ -242,38 +383,44 @@ impl CompKey {
     /// first occurrence in the forest. Empty for a top-level key or one absent from the hierarchy.
     #[must_use]
     pub fn parents(self) -> &'static [Self] {
-        match INDEX.parents.get(&self) {
+        match STRUCTURAL_INDEX.parents.get(&self) {
             Some(parents) => parents,
             None => &[],
         }
     }
 
-    /// Whether this key is a roll-up (has parts) in the composition hierarchy.
+    /// Whether this key is a roll-up (has parts) in the structural composition hierarchy.
     #[must_use]
     pub fn is_rollup(self) -> bool {
-        INDEX.children.contains_key(&self)
+        STRUCTURAL_INDEX.children.contains_key(&self)
     }
 }
 
-/// The composition hierarchy forest. See the [module docs](self) for how it is read.
+/// The structural composition hierarchy forest. See the [module docs](self) for how it is read.
 #[must_use]
-pub const fn comp_hierarchy() -> &'static [HierarchyNode<CompKey>] {
-    FOREST
+pub fn structural_hierarchy() -> &'static [HierarchyNode<CompKey>] {
+    &STRUCTURAL
 }
 
-/// A pre-order traversal of the forest, pairing each node with its depth.
+/// The display composition hierarchy forest. See the [module docs](self) for how it is read.
+#[must_use]
+pub fn display_hierarchy() -> &'static [HierarchyNode<PropKey>] {
+    &DISPLAY
+}
+
+/// A pre-order traversal of the display forest, pairing each node with its depth.
 ///
 /// Every node is listed, so a key shared by several roll-ups recurs — once under each parent, at
 /// that parent's depth. Callers that render each key once de-duplicate as they see fit.
 #[must_use]
-pub fn comp_hierarchy_ordered() -> &'static [(CompKey, u32)] {
-    &INDEX.ordered
+pub fn display_hierarchy_ordered() -> &'static [(PropKey, u32)] {
+    &DISPLAY_INDEX.ordered
 }
 
-/// The forest's top-level keys (those with no parents), in [`comp_hierarchy`] order.
+/// The display forest's top-level keys (those with no parents), in [`display_hierarchy`] order.
 #[must_use]
-pub fn comp_hierarchy_roots() -> &'static [CompKey] {
-    &INDEX.roots
+pub fn display_hierarchy_roots() -> &'static [PropKey] {
+    &DISPLAY_INDEX.roots
 }
 
 #[cfg(all(test, feature = "database"))]
@@ -283,127 +430,159 @@ mod tests {
     use std::collections::{HashMap, HashSet};
     use std::sync::LazyLock;
 
-    use approx::assert_abs_diff_eq;
     use strum::IntoEnumIterator;
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::composition::Composition;
-    use crate::constants::COMPOSITION_EPSILON;
-    use crate::database::IngredientDatabase;
-    use crate::recipe::Recipe;
+    use crate::{
+        composition::{CompKey::*, Composition, RatioKey},
+        constants::COMPOSITION_EPSILON,
+        data::get_all_recipe_entries,
+        database::IngredientDatabase,
+        fpd::FpdKey,
+        ingredient::Category,
+        properties::PropKey::{self, *},
+        recipe::Recipe,
+    };
 
     static DB: LazyLock<IngredientDatabase> = LazyLock::new(IngredientDatabase::new_seeded_from_embedded_data);
 
-    /// A composition spanning every ingredient source and many components, so that roll-up keys and
-    /// their parts are all non-zero and the part/whole invariants are meaningfully exercised.
-    static MIXED_COMP: LazyLock<Composition> = LazyLock::new(|| {
-        Recipe::from_const_recipe(
-            None,
-            &[
-                ("2% Milk", 50.0),
-                ("70% Dark Chocolate", 10.0),
-                ("Almond", 10.0),
-                ("Egg Yolk", 8.0),
-                ("Sucrose", 12.0),
-                ("Erythritol", 4.0),
-                ("Inulin Powder", 3.0),
-                ("Cornstarch", 1.0),
-                ("Guar Gum", 0.5),
-                ("Salt", 0.3),
-                ("40% ABV Spirit", 5.0),
-            ],
-            &DB,
-        )
-        .unwrap()
-        .calculate_composition()
-        .unwrap()
+    // Compositions of all embedded ingredients
+    static ING_COMPS: LazyLock<Vec<Composition>> = LazyLock::new(|| {
+        DB.get_all_ingredients()
+            .into_iter()
+            .map(|ing| ing.composition)
+            .collect()
     });
 
-    /// Every roll-up's parts sum to no more than the roll-up itself — the fundamental part/whole
-    /// (additive) invariant, across every edge in the DAG.
+    // Compositions of all embedded dairy ingredients
+    static DAIRY_COMPS: LazyLock<Vec<Composition>> = LazyLock::new(|| {
+        DB.get_ingredients_by_category(Category::Dairy)
+            .into_iter()
+            .map(|ing| ing.composition)
+            .collect()
+    });
+
+    // Compositions of all embedded recipes
+    static RECIPE_COMPS: LazyLock<Vec<Composition>> = LazyLock::new(|| {
+        get_all_recipe_entries()
+            .into_iter()
+            .map(|entry| {
+                Recipe::from_light_recipe(None, &entry.recipe, &DB)
+                    .unwrap()
+                    .calculate_composition()
+                    .unwrap()
+            })
+            .collect()
+    });
+
+    // Every available composition from ingredients and recipes
+    static ALL_COMPS: LazyLock<Vec<Composition>> =
+        LazyLock::new(|| ING_COMPS.iter().chain(RECIPE_COMPS.iter()).copied().collect());
+
     #[test]
     fn children_never_exceed_their_rollup() {
-        let comp = &*MIXED_COMP;
-        for key in CompKey::iter().filter(|key| key.is_rollup()) {
-            let children_sum: f64 = key.children().iter().map(|&part| comp.get(part)).sum();
-            assert!(
-                children_sum <= comp.get(key) + COMPOSITION_EPSILON,
-                "{key:?} parts sum {children_sum} exceeds roll-up {}",
-                comp.get(key),
-            );
+        for comp in &*ALL_COMPS {
+            for key in CompKey::iter().filter(|key| key.is_rollup()) {
+                let children_sum: f64 = key.children().iter().map(|&part| comp.get(part)).sum();
+                assert!(
+                    children_sum <= comp.get(key) + COMPOSITION_EPSILON,
+                    "{key:?} parts sum {children_sum} exceeds roll-up {}",
+                    comp.get(key),
+                );
+            }
         }
     }
 
-    /// Residual-free roll-ups equal the sum of their hierarchy parts exactly (the rest are only
-    /// bounded by them; see `children_never_exceed_their_rollup`). The parts come from
-    /// [`CompKey::children`], so only *which* roll-ups are residual-free is stated here.
     #[test]
     fn exact_rollups_equal_their_children() {
-        let comp = &*MIXED_COMP;
-        let exact = [
-            CompKey::TotalSolids,
-            CompKey::TotalFats,
-            CompKey::TotalPAC,
-            CompKey::MilkSolids,
-            CompKey::CacaoSolids,
-            CompKey::NutSolids,
-            CompKey::EggSolids,
-        ];
-        for rollup in exact {
-            let parts_sum: f64 = rollup.children().iter().map(|&part| comp.get(part)).sum();
-            assert_abs_diff_eq!(comp.get(rollup), parts_sum, epsilon = COMPOSITION_EPSILON);
+        for comp in &*ALL_COMPS {
+            // This list encodes which roll-ups are residual-free
+            let exact = [
+                TotalSolids,
+                TotalFats,
+                TotalSugars,
+                TotalPolyols,
+                TotalArtificial,
+                TotalSweeteners,
+                TotalSNFS,
+                TotalPAC,
+                TotalStabilizers,
+                TotalEmulsifiers,
+                MilkSolids,
+                MSNF,
+                CacaoSolids,
+                NutSolids,
+                EggSolids,
+            ];
+            for rollup in exact {
+                let parts_sum: f64 = rollup.children().iter().map(|&part| comp.get(part)).sum();
+                assert!(
+                    (comp.get(rollup) - parts_sum).abs() <= COMPOSITION_EPSILON,
+                    "{rollup:?}: get {} != parts sum {parts_sum}",
+                    comp.get(rollup),
+                );
+            }
         }
     }
 
-    /// A key shared by two roll-ups lists both as parents, in forest order (macronutrient first),
-    /// while [`children`] keeps both part/whole edges.
     #[test]
     fn shared_key_lists_all_its_parents() {
-        // MilkFat is a part of both TotalFats (macronutrient) and MilkSolids (source).
-        assert!(CompKey::TotalFats.children().contains(&CompKey::MilkFat));
-        assert!(CompKey::MilkSolids.children().contains(&CompKey::MilkFat));
-        assert_eq!(CompKey::MilkFat.parents(), &[CompKey::TotalFats, CompKey::MilkSolids]);
+        // MilkFat is a part of both MilkSolids (source) and TotalFats (macronutrient).
+        assert!(TotalFats.children().contains(&MilkFat));
+        assert!(MilkSolids.children().contains(&MilkFat));
+        assert_eq!(MilkFat.parents(), &[MilkSolids, TotalFats]);
 
-        // MilkProteins is a part of both TotalProteins (macronutrient) and MilkSNFS (source).
-        assert_eq!(CompKey::MilkProteins.parents(), &[CompKey::TotalProteins, CompKey::MilkSNFS]);
+        // MilkProteins is a part of both MilkSNFS (source) and TotalProteins (macronutrient).
+        assert_eq!(MilkProteins.parents(), &[MilkSNFS, TotalProteins]);
     }
 
-    /// Milk's non-fat sub-components nest as a subset chain under [`CompKey::MilkSolids`]: each
-    /// link carries a residual (milk sugars, then minerals), so they are non-exact subsets.
+    /// Milk's non-fat solids split exactly (`MSNF = MilkSugars + MilkSNFS`, checked across every
+    /// dairy ingredient), then [`CompKey::MilkSNFS`] keeps a mineral residual beyond
+    /// [`CompKey::MilkProteins`]. The strict-subset relations need non-zero lactose (whey isolates
+    /// and label-rounded creams have none), so they are shown on lactose > 0 ingredients.
     #[test]
     fn milk_subcomponents_nest_under_milk_solids() {
-        assert_eq!(CompKey::MilkSolids.children(), &[CompKey::MilkFat, CompKey::MSNF]);
-        assert_eq!(CompKey::MSNF.children(), &[CompKey::MilkSNFS]);
-        assert_eq!(CompKey::MilkSNFS.children(), &[CompKey::MilkProteins]);
+        assert_eq!(MilkSolids.children(), &[MilkFat, MSNF]);
+        assert_eq!(MSNF.children(), &[MilkSugars, MilkSNFS]);
+        assert_eq!(MilkSNFS.children(), &[MilkProteins]);
 
-        let comp = &*MIXED_COMP;
-        assert_lt!(comp.get(CompKey::MilkSNFS), comp.get(CompKey::MSNF));
-        assert_lt!(comp.get(CompKey::MilkProteins), comp.get(CompKey::MilkSNFS));
+        // MSNF splits exactly into its two siblings for every dairy ingredient.
+        for milk in &*DAIRY_COMPS {
+            assert_abs_diff_eq!(
+                milk.get(MSNF),
+                milk.get(MilkSugars) + milk.get(MilkSNFS),
+                epsilon = COMPOSITION_EPSILON
+            );
+        }
+
+        // On an ordinary milk, the sugars are a proper subset of MSNF
+        for milk in DAIRY_COMPS.iter().filter(|comp| comp.get(Lactose) > 0.0) {
+            assert_lt!(milk.get(MilkSugars), milk.get(MSNF));
+            assert_lt!(milk.get(MilkSNFS), milk.get(MSNF));
+            assert_lt!(milk.get(MilkProteins), milk.get(MilkSNFS));
+        }
     }
 
-    /// Each key appears as a roll-up (branch) at most once, so [`CompKey::children`] is
-    /// unambiguous, even though leaves may repeat across groups.
     #[test]
     fn each_key_is_a_branch_at_most_once() {
         fn count_branches(nodes: &[HierarchyNode<CompKey>], counts: &mut HashMap<CompKey, u32>) {
             for node in nodes {
                 if !node.children.is_empty() {
                     *counts.entry(node.key).or_default() += 1;
-                    count_branches(node.children, counts);
+                    count_branches(&node.children, counts);
                 }
             }
         }
         let mut counts: HashMap<CompKey, u32> = HashMap::new();
-        count_branches(comp_hierarchy(), &mut counts);
+        count_branches(&STRUCTURAL, &mut counts);
         for (key, count) in counts {
             assert_le!(count, 1, "{key:?} is a roll-up in {count} places");
         }
     }
 
-    /// Roll-up parts are unique and never include the roll-up itself.
     #[test]
     fn children_are_unique_and_non_self() {
         for key in CompKey::iter() {
@@ -414,31 +593,53 @@ mod tests {
         }
     }
 
-    /// `comp_hierarchy_ordered` is a faithful pre-order: a shared key recurs (once per parent), the
-    /// roots are exactly its depth-0 entries, and depth never jumps up by more than one step.
+    /// `display_hierarchy_ordered` is a faithful pre-order: shared keys recur (once per parent),
+    /// roots are its depth-0 entries, and depth never jumps up by more than one.
     #[test]
     fn ordered_is_a_faithful_preorder() {
-        let ordered = comp_hierarchy_ordered();
+        let ordered = display_hierarchy_ordered();
 
-        // MilkFat recurs: under TotalFats (depth 2) then MilkSolids (depth 1).
+        // MilkFat recurs: under MilkSolids (depth 1) then TotalFats (depth 2).
+        let milk_fat = Comp(MilkFat);
         let milk_fat_depths: Vec<u32> = ordered
             .iter()
-            .filter(|(key, _)| *key == CompKey::MilkFat)
+            .filter(|(key, _)| *key == milk_fat)
             .map(|&(_, depth)| depth)
             .collect();
-        assert_eq!(milk_fat_depths, vec![2, 1]);
+        assert_eq!(milk_fat_depths, vec![1, 2]);
 
         // The roots are exactly the depth-0 entries, in order.
-        let depth_zero: Vec<CompKey> = ordered
+        let depth_zero: Vec<PropKey> = ordered
             .iter()
             .filter(|(_, depth)| *depth == 0)
             .map(|&(key, _)| key)
             .collect();
-        assert_eq!(comp_hierarchy_roots(), depth_zero.as_slice());
+        assert_eq!(display_hierarchy_roots(), depth_zero.as_slice());
 
         // Pre-order shape: each step descends by at most one level.
         for pair in ordered.windows(2) {
             assert_le!(pair[1].1, pair[0].1 + 1, "depth jumps from {} to {}", pair[0].1, pair[1].1);
         }
+    }
+
+    #[test]
+    fn display_forest_contains_every_prop_key() {
+        fn collect(nodes: &[HierarchyNode<PropKey>], seen: &mut HashSet<PropKey>) {
+            for node in nodes {
+                let _ = seen.insert(node.key);
+                collect(&node.children, seen);
+            }
+        }
+        let mut seen = HashSet::new();
+        collect(display_hierarchy(), &mut seen);
+
+        let missing: Vec<PropKey> = CompKey::iter()
+            .map(Comp)
+            .chain(RatioKey::iter().map(Ratio))
+            .chain(FpdKey::iter().map(Fpd))
+            .filter(|key| !seen.contains(key))
+            .collect();
+
+        assert!(missing.is_empty(), "display forest is missing {} key(s): {missing:?}", missing.len());
     }
 }
