@@ -27,6 +27,7 @@ import {
   getEnabledKeys,
 } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
+import { useOrderKeys } from "@/lib/group-by";
 import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
 import { GRAPH_TITLE_FONT_SIZE } from "@/lib/styles/sizes";
 import { STATE_VAL } from "@/lib/util";
@@ -56,6 +57,7 @@ import {
   fpdToPropKey,
   getPropKeys as getPropKeysAll,
   getMixProperty,
+  groupEnabledKeys,
   MixProperties,
   prop_key_as_short_str,
   prop_key_as_med_str,
@@ -337,6 +339,7 @@ export function PropertiesChartView({
 }) {
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(defaultSelected);
+  const orderKeys = useOrderKeys<PropKey>(groupEnabledKeys);
 
   /** Returns `true` when every recipe has a zero/NaN value for the given property key */
   const isPropEmpty = (propKey: PropKey) => {
@@ -376,6 +379,7 @@ export function PropertiesChartView({
           selectedKeysState={selectedPropsState}
           getKeys={getPropKeys}
           key_as_med_str={prop_key_as_med_str}
+          orderKeys={orderKeys}
         />
       </div>
       <div className="min-h-0 flex-1 px-2 pb-2">

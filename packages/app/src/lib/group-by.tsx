@@ -2,6 +2,8 @@
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 
+import type { GroupOptions } from "@workspace/sci-cream";
+
 import { getLocalStorage, setLocalStorage, STORAGE_KEYS } from "@/lib/local-storage";
 
 /**
@@ -35,6 +37,31 @@ export function isGrouped(groupBy: GroupBy): boolean {
 /** Whether `groupBy` repeats a shared key under each roll-up it belongs to. */
 export function groupsWithDuplicates(groupBy: GroupBy): boolean {
   return groupBy === GroupBy.GroupedRepeat;
+}
+
+/** An enabled key placed in hierarchy display order, carrying its depth and roll-up flag. */
+export interface OrderedKeyRow<Key> {
+  /** The key. */
+  key: Key;
+  /** Indentation depth, counting only enabled ancestors so nesting stays contiguous. */
+  depth: number;
+  /** Whether this key is a roll-up (has enabled descendants) — a group-heading row. */
+  isRollup: boolean;
+}
+
+/**
+ * Builds the current grouping's key-ordering callback, or `undefined` when {@link GroupBy} is flat.
+ *
+ * `groupKeys` adapts the shared `groupEnabledKeys` to the caller's key space (`PropKey` directly,
+ * `CompKey` via a small adapter), keeping this hook agnostic of the key type a view renders.
+ */
+export function useOrderKeys<Key>(
+  groupKeys: (keys: Key[], options: GroupOptions) => OrderedKeyRow<Key>[],
+): ((keys: Key[]) => OrderedKeyRow<Key>[]) | undefined {
+  const { groupBy } = useGroupBy();
+  return isGrouped(groupBy)
+    ? (keys) => groupKeys(keys, { duplicates: groupsWithDuplicates(groupBy) })
+    : undefined;
 }
 
 /** Returns `true` when `value` is a valid {@link GroupBy} enum value. */

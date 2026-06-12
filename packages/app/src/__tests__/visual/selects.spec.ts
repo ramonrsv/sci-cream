@@ -120,6 +120,34 @@ test.describe("Visual Regression: KeyFilterSelect", () => {
     await expandToFullHeight(page, popup);
     await expect(popup).toHaveScreenshot("key-filter-select-custom-popup-full.png");
   });
+
+  test("Custom popup grouped by hierarchy", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+    await expandNavbar(page);
+
+    const selector = getPropertiesPanelKeyFilterSelectInput(page);
+    await expect(selector).toBeVisible();
+    await selectOption(page, selector, KeyFilter.Custom);
+
+    const modes: [GroupBy, string][] = [
+      [GroupBy.GroupedOnce, "grouped-once"],
+      [GroupBy.GroupedRepeat, "grouped-repeat"],
+    ];
+
+    for (const [mode, suffix] of modes) {
+      await selectOption(page, getGroupBySelectInput(page), GROUP_BY_LABELS[mode]);
+
+      await page.locator("#properties-panel #customize-keys-button").click();
+      const popup = page.locator(".popup").first();
+      await expect(popup).toBeVisible();
+
+      await expandToFullHeight(page, popup);
+      await expect(popup).toHaveScreenshot(`key-filter-select-custom-popup-${suffix}.png`);
+
+      // Close before switching modes so the next iteration re-opens the popup fresh.
+      await page.keyboard.press("Escape");
+    }
+  });
 });
 
 // ---------------------------------------------------------------------------

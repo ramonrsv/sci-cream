@@ -59,12 +59,18 @@ export function KeyFilterSelect<Key>({
   selectedKeysState,
   getKeys,
   key_as_med_str,
+  orderKeys,
 }: {
   supportedKeyFilters?: KeyFilter[];
   keyFilterState: [KeyFilter, React.Dispatch<React.SetStateAction<KeyFilter>>];
   selectedKeysState: [Set<Key>, React.Dispatch<React.SetStateAction<Set<Key>>>];
   getKeys: () => Key[];
   key_as_med_str: (key: Key) => string;
+  /**
+   * Optional reordering of the customize list into hierarchy order, indenting members by `depth`
+   * and emphasizing roll-ups. When absent, the list renders flat in `getKeys` order.
+   */
+  orderKeys?: (keys: Key[]) => { key: Key; depth: number; isRollup: boolean }[];
 }) {
   const [keyFilter, setKeyFilter] = keyFilterState;
   const [selectedKeys, setSelectedKeys] = selectedKeysState;
@@ -142,8 +148,15 @@ export function KeyFilterSelect<Key>({
                       />
                       {" All Properties"}
                     </li>
-                    {getKeys().map((key) => (
-                      <li key={String(key)}>
+                    {(orderKeys
+                      ? orderKeys(getKeys())
+                      : getKeys().map((key) => ({ key, depth: 0, isRollup: false }))
+                    ).map(({ key, depth, isRollup }, i) => (
+                      <li
+                        key={`${String(key)}-${i}`}
+                        className={isRollup ? "font-semibold" : undefined}
+                        style={depth > 0 ? { paddingLeft: `${depth * 0.75}rem` } : undefined}
+                      >
                         <input
                           type="checkbox"
                           checked={isKeySelected(key)}

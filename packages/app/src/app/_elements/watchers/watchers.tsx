@@ -18,6 +18,7 @@ import {
   getEnabledKeys,
 } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
+import { useOrderKeys } from "@/lib/group-by";
 import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
 import {
   getAcceptablePropertyRange,
@@ -33,6 +34,7 @@ import {
   PropKey,
   getPropKeys,
   getMixProperty,
+  groupEnabledKeys,
   prop_key_as_med_str,
   compToPropKey,
   CompKey,
@@ -506,6 +508,7 @@ export function WatchersView({
   const [targets, setTargets] = useState<TargetsMap>({});
   const [priorities, setPriorities] = useState<PrioritiesMap>({});
   const [balanceError, setBalanceError] = useState<string | undefined>(undefined);
+  const orderKeys = useOrderKeys<PropKey>(groupEnabledKeys);
 
   // Hydrate selection + targets + priorities from localStorage on mount (client-only, post-SSR)
   useEffect(() => {
@@ -734,6 +737,7 @@ export function WatchersView({
           selectedKeysState={selectedPropsState}
           getKeys={getMixScopePropKeys}
           key_as_med_str={prop_key_as_med_str}
+          orderKeys={orderKeys}
         />
         {(wasmBridge !== undefined || nonEmptyRefs.length > 0) && (
           <div className="ml-auto flex shrink-0 items-center">

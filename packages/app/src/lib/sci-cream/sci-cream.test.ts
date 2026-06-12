@@ -10,7 +10,12 @@ import {
   fpdToPropKey,
 } from "@workspace/sci-cream";
 
-import { isPropKeyQuantity, isPropKeyMixScope, getAcceptablePropertyRange } from "./sci-cream";
+import {
+  isPropKeyQuantity,
+  isPropKeyMixScope,
+  getAcceptablePropertyRange,
+  groupEnabledCompKeys,
+} from "./sci-cream";
 
 // ---------------------------------------------------------------------------
 // isPropKeyQuantity
@@ -85,5 +90,34 @@ describe("getAcceptablePropertyRange", () => {
     expect(getAcceptablePropertyRange(compToPropKey(CompKey.MilkFat))).toBeUndefined();
     expect(getAcceptablePropertyRange(compToPropKey(CompKey.Water))).toBeUndefined();
     expect(getAcceptablePropertyRange(fpdToPropKey(FpdKey.FPD))).toBeUndefined();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// groupEnabledCompKeys
+// ---------------------------------------------------------------------------
+
+describe("groupEnabledCompKeys", () => {
+  it("returns CompKeys and preserves the input key set (no duplicates)", () => {
+    const input = [CompKey.MilkFat, CompKey.TotalFats, CompKey.MSNF];
+    const ordered = groupEnabledCompKeys(input);
+
+    // Every result key is one of the inputs, and the set is preserved exactly.
+    for (const { key } of ordered) expect(input).toContain(key);
+    expect(new Set(ordered.map((row) => row.key))).toEqual(new Set(input));
+    expect(ordered).toHaveLength(input.length);
+  });
+
+  it("orders a roll-up before its enabled parts and marks it as a roll-up", () => {
+    const ordered = groupEnabledCompKeys([CompKey.MilkFat, CompKey.TotalFats]);
+
+    const rollupIdx = ordered.findIndex((row) => row.key === CompKey.TotalFats);
+    const partIdx = ordered.findIndex((row) => row.key === CompKey.MilkFat);
+
+    expect(rollupIdx).toBeGreaterThanOrEqual(0);
+    expect(partIdx).toBeGreaterThan(rollupIdx);
+    expect(ordered[rollupIdx].isRollup).toBe(true);
+    expect(ordered[partIdx].isRollup).toBe(false);
+    expect(ordered[partIdx].depth).toBe(ordered[rollupIdx].depth + 1);
   });
 });

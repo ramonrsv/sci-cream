@@ -10,7 +10,9 @@ import {
 } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle, QtyToggleSelect } from "@/app/_elements/selects/qty-toggle-select";
 import { RecipeSelect } from "@/app/_elements/selects/recipe-select";
+import { useOrderKeys } from "@/lib/group-by";
 import { applyQtyToggleAndFormat, formatCompositionValue } from "@/lib/comp-value-format";
+import { groupEnabledCompKeys } from "@/lib/sci-cream/sci-cream";
 import { STATE_VAL } from "@/lib/util";
 
 import { CompKey, comp_key_as_med_str, getWasmEnums } from "@workspace/sci-cream";
@@ -169,6 +171,7 @@ export function CompositionBreakdownView({
   const compsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedCompsState = useState<Set<CompKey>>(defaultSelected);
   const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(0);
+  const orderKeys = useOrderKeys<CompKey>(groupEnabledCompKeys);
 
   /** Returns `true` if every ingredient row has a zero (or absent) value for the given comp key */
   const isPropEmpty = (compKey: CompKey) => {
@@ -218,6 +221,7 @@ export function CompositionBreakdownView({
           selectedKeysState={selectedCompsState}
           getKeys={getCompKeys}
           key_as_med_str={comp_key_as_med_str}
+          orderKeys={orderKeys}
         />
       </div>
       <CompositionBreakdown recipe={recipe} compKeys={getEnabledComps()} qtyToggle={qtyToggle} />

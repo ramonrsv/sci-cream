@@ -116,10 +116,12 @@ describe("KeyFilterSelect", () => {
     supportedKeyFilters,
     initialFilter = KeyFilter.Auto,
     initialSelected = new Set<TestKey>(),
+    orderKeys,
   }: {
     supportedKeyFilters?: KeyFilter[];
     initialFilter?: KeyFilter;
     initialSelected?: Set<TestKey>;
+    orderKeys?: (keys: TestKey[]) => { key: TestKey; depth: number; isRollup: boolean }[];
   }) {
     const [filter, setFilter] = useState<KeyFilter>(initialFilter ?? KeyFilter.Auto);
     const [selectedKeys, setSelectedKeys] = useState<Set<TestKey>>(
@@ -140,6 +142,7 @@ describe("KeyFilterSelect", () => {
         selectedKeysState={[selectedKeys, setSelectedKeys]}
         getKeys={getAllKeys}
         key_as_med_str={key_as_med_str}
+        orderKeys={orderKeys}
       />
     );
   }
@@ -244,6 +247,29 @@ describe("KeyFilterSelect", () => {
     ALL_KEYS.forEach((key) => {
       expect(screen.getByText(key_as_med_str(key))).toBeInTheDocument();
     });
+  });
+
+  it("orderKeys reorders the popup list and indents/emphasizes rows", async () => {
+    // Group Fat (rollup) with Sugar indented under it; Water and Protein stay flat afterwards.
+    const orderKeys = (keys: TestKey[]) =>
+      keys.map((key) => ({
+        key,
+        depth: key === TestKey.Sugar ? 1 : 0,
+        isRollup: key === TestKey.Fat,
+      }));
+    const { container } = render(
+      <TestWrapper initialFilter={KeyFilter.Custom} orderKeys={orderKeys} />,
+    );
+    await openCustomKeyFilters(container);
+
+    const popup = document.querySelector(".popup") as HTMLElement;
+    const items = within(popup).getAllByRole("listitem");
+    // First <li> is "All Properties"; the rest follow orderKeys order.
+    const fatItem = items.find((li) => li.textContent?.includes(key_as_med_str(TestKey.Fat)))!;
+    const sugarItem = items.find((li) => li.textContent?.includes(key_as_med_str(TestKey.Sugar)))!;
+    expect(fatItem).toHaveClass("font-semibold");
+    expect(sugarItem).toHaveStyle({ paddingLeft: "0.75rem" });
+    expect(fatItem).not.toHaveStyle({ paddingLeft: "0.75rem" });
   });
 
   it("key checkboxes reflect the current selectedKeys set", async () => {

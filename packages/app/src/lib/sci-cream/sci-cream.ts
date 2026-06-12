@@ -5,11 +5,16 @@ import {
   PropKey,
   compToPropKey,
   fpdToPropKey,
+  getWasmEnums,
+  groupEnabledKeys,
   isCompKey,
   isRatioKey,
   propToRatioKey,
   ratio_key_scope,
+  type GroupOptions,
 } from "@workspace/sci-cream";
+
+import type { OrderedKeyRow } from "@/lib/group-by";
 
 /**
  * Returns `true` when a `PropKey` is a quantity (g, additive and scalable by ingredient amount).
@@ -30,6 +35,25 @@ export function isPropKeyQuantity(prop_key: PropKey): boolean {
  */
 export function isPropKeyMixScope(prop_key: PropKey): boolean {
   return !isRatioKey(prop_key) || ratio_key_scope(propToRatioKey(prop_key)) !== KeyScope.Ingredient;
+}
+
+/** `PropKey`→`CompKey` inverse of `compToPropKey` over every `CompKey`; stable, so built once. */
+const PROP_TO_COMP_KEY = new Map<PropKey, CompKey>(
+  getWasmEnums(CompKey).map((key) => [compToPropKey(key), key]),
+);
+
+/**
+ * `CompKey`-space wrapper around `groupEnabledKeys` (which lives in `PropKey` space): groups the
+ * keys as `PropKey`s, then maps each result back to its `CompKey` via the shared inverse map.
+ */
+export function groupEnabledCompKeys(
+  keys: CompKey[],
+  options: GroupOptions = {},
+): OrderedKeyRow<CompKey>[] {
+  return groupEnabledKeys(keys.map(compToPropKey), options).flatMap(({ key, depth, isRollup }) => {
+    const comp = PROP_TO_COMP_KEY.get(key);
+    return comp === undefined ? [] : [{ key: comp, depth, isRollup }];
+  });
 }
 
 /**

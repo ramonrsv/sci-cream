@@ -9,7 +9,7 @@ import {
   getEnabledKeys,
 } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle, QtyToggleSelect } from "@/app/_elements/selects/qty-toggle-select";
-import { isGrouped, groupsWithDuplicates, useGroupBy } from "@/lib/group-by";
+import { useOrderKeys } from "@/lib/group-by";
 import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
 import { isPropKeyQuantity, isPropKeyMixScope } from "@/lib/sci-cream/sci-cream";
 import { STATE_VAL } from "@/lib/util";
@@ -19,7 +19,6 @@ import {
   RatioKey,
   FpdKey,
   PropKey,
-  OrderedKey,
   compToPropKey,
   ratioToPropKey,
   fpdToPropKey,
@@ -157,7 +156,7 @@ export function PropertiesView({
   const qtyToggleState = useState<QtyToggle>(QtyToggle.Percentage);
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(defaultSelected);
-  const { groupBy } = useGroupBy();
+  const orderKeys = useOrderKeys<PropKey>(groupEnabledKeys);
 
   /**
    * Returns `true` when the given property key has a zero/NaN value across all provided recipes.
@@ -195,13 +194,6 @@ export function PropertiesView({
 
   const enabledProps = getEnabledProps();
 
-  // Reorders a key list into hierarchy order (honoring once/repeat); undefined when ungrouped.
-  // Shared by the table (enabled keys) and the customize popup (full key set) so both stay in sync.
-  const orderKeys = isGrouped(groupBy)
-    ? (keys: PropKey[]): OrderedKey[] =>
-        groupEnabledKeys(keys, { duplicates: groupsWithDuplicates(groupBy) })
-    : undefined;
-
   const orderedProps = orderKeys?.(enabledProps);
   const propKeys = orderedProps ? orderedProps.map((row) => row.key) : enabledProps;
   const rowMeta = orderedProps?.map((row) => ({ depth: row.depth, isRollup: row.isRollup }));
@@ -219,6 +211,7 @@ export function PropertiesView({
           selectedKeysState={selectedPropsState}
           getKeys={getMixScopePropKeys}
           key_as_med_str={prop_key_as_med_str}
+          orderKeys={orderKeys}
         />
       </div>
       <div
