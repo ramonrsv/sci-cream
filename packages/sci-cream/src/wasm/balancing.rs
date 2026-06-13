@@ -1,11 +1,14 @@
 //! WASM/JS-facing view of balancing reports and issues.
 
 use serde::Serialize;
+use serde_wasm_bindgen::Serializer;
 
-use crate::balancing::{BalanceKey, BalancingReport, Severity};
+use wasm_bindgen::prelude::*;
+
+use crate::balancing::{BalanceKey, BalancingReport, Severity, get_all_balanceable_keys, get_typical_balancing_keys};
 
 #[cfg(doc)]
-use crate::balancing::BalancingIssue;
+use crate::{balancing::BalancingIssue, properties::PropKey};
 
 /// A single balancing issue, flattened for the WASM/JS boundary.
 ///
@@ -46,4 +49,35 @@ impl From<&BalancingReport> for BalancingReportView {
             .collect();
         Self { issues }
     }
+}
+
+fn serialize_balance_key(key: BalanceKey) -> JsValue {
+    key.serialize(&Serializer::json_compatible())
+        .expect("BalanceKey should be serializable to JSON-compatible JS value")
+}
+
+/// WASM compatible wrapper for [`get_all_balanceable_keys`], returning an array of JS `PropKey`s.
+///
+/// **Note**: This function returns enums as strings, directly usable as `PropKey`s on the JS
+/// side; [`BalanceKey`]s, like [`PropKey`]s, cannot be directly represented in TypeScript.
+#[wasm_bindgen(js_name = "get_all_balanceable_keys")]
+#[must_use]
+pub fn get_all_balanceable_keys_wasm() -> Vec<JsValue> {
+    get_all_balanceable_keys()
+        .into_iter()
+        .map(serialize_balance_key)
+        .collect()
+}
+
+/// WASM compatible wrapper for [`get_typical_balancing_keys`], returning an array of JS `PropKey`s.
+///
+/// **Note**: This function returns enums as strings, directly usable as `PropKey`s on the JS
+/// side; [`BalanceKey`]s, like [`PropKey`]s, cannot be directly represented in TypeScript.
+#[wasm_bindgen(js_name = "get_typical_balancing_keys")]
+#[must_use]
+pub fn get_typical_balancing_keys_wasm() -> Vec<JsValue> {
+    get_typical_balancing_keys()
+        .into_iter()
+        .map(serialize_balance_key)
+        .collect()
 }

@@ -973,17 +973,44 @@ fn achieved_value<K: Into<BalanceKey>>(balanced: &[(Composition, f64)], key: K) 
     }
 }
 
-/// The keys that can be used as balancing targets — all [`CompKey`]s and [`RatioKey`]s.
+/// All keys that can be used as balancing targets — all [`CompKey`]s and [`RatioKey`]s.
 ///
 /// Ratio keys are balanceable too: a ratio target `R` is encoded as the homogeneous row
 /// `numerator - (R / 100) * denominator = 0` (see [`RatioKey::parts`]), so it never divides and
 /// never poisons the solve with `f64::NAN`. Extensive keys contribute their usual weighted-sum row.
 #[must_use]
-pub fn get_balanceable_keys() -> Vec<BalanceKey> {
+pub fn get_all_balanceable_keys() -> Vec<BalanceKey> {
     CompKey::iter()
         .map(BalanceKey::Comp)
         .chain(RatioKey::iter().map(BalanceKey::Ratio))
         .collect()
+}
+
+/// A subset of balanceable keys that adequately balances most typical ice cream mixes.
+///
+/// These keys target most of the critical attributes of an ice cream mix, including formulations
+/// with chocolate, nuts, and eggs. Balancing a set of ingredients to these targets from a reference
+/// recipe should typically succeed in producing a mix that closely matches the reference's key
+/// properties. More complex formulations, e.g. sugar-free, lactose-free, sorbets, etc., likely
+/// require more careful targeting and adjustment, so this is not a one-size-fits-all set.
+#[must_use]
+pub fn get_typical_balancing_keys() -> Vec<BalanceKey> {
+    vec![
+        CompKey::MilkFat.into(),
+        CompKey::MSNF.into(),
+        CompKey::CocoaButter.into(),
+        CompKey::CocoaSolids.into(),
+        CompKey::NutSNF.into(),
+        CompKey::EggSNF.into(),
+        CompKey::POD.into(),
+        CompKey::TotalSolids.into(),
+        CompKey::TotalFats.into(),
+        CompKey::Salt.into(),
+        RatioKey::StabilizersPerWater.into(),
+        RatioKey::EmulsifiersPerFat.into(),
+        CompKey::ABV.into(),
+        RatioKey::AbsNetPAC.into(),
+    ]
 }
 
 #[cfg(test)]
@@ -1000,6 +1027,7 @@ pub(crate) mod tests {
 
     use super::*;
     use crate::{
+        data::{get_all_recipe_entries, get_recipe_entry_by_id},
         database::IngredientDatabase,
         recipe::{OwnedLightRecipe, Recipe},
         resolution::IngredientGetter,
@@ -1066,6 +1094,11 @@ pub(crate) mod tests {
             .iter()
             .map(|line| line.ingredient.composition)
             .collect()
+    }
+
+    /// Helper function to fetch a light recipe from its name and optional author, from [`data`].
+    fn get_light_recipe_by_id(name: &str, author: Option<&str>) -> OwnedLightRecipe {
+        get_recipe_entry_by_id(name, author).unwrap().recipe
     }
 
     /// Helper function to extract compositions from a list of ingredient names, via [`DATABASE`]
@@ -1281,10 +1314,25 @@ pub(crate) mod tests {
     /// Reference recipes' mix compositions are used as balancing targets to check that the
     /// balancing function can at least recover the original recipe, a basic sanity check.
     static REF_LIGHT_RECIPES: LazyLock<Vec<OwnedLightRecipe>> = LazyLock::new(|| {
-        vec![
+        let mut recipes = vec![
             MAIN_RECIPE_LIGHT.clone(),
             REF_A_RECIPE_LIGHT.clone(),
             REF_B_RECIPE_LIGHT.clone(),
+        ];
+        recipes.extend(get_all_recipe_entries().into_iter().map(|entry| entry.recipe));
+        recipes
+    });
+
+    /// Subset of [`REF_LIGHT_RECIPES`] that excludes non-typical formulations, e.g. `REF_B`'s
+    /// artificial sweeteners, for tests that need typical balancing keys to be feasible.
+    static REF_LIGHT_RECIPES_FOR_TYPICAL_BALANCING_KEYS: LazyLock<Vec<OwnedLightRecipe>> = LazyLock::new(|| {
+        vec![
+            MAIN_RECIPE_LIGHT.clone(),
+            REF_A_RECIPE_LIGHT.clone(),
+            // Exclude REF_B since it includes artificial sweeteners
+            get_light_recipe_by_id("Standard Base", Some("Underbelly")),
+            get_light_recipe_by_id("French Variation", Some("Underbelly")),
+            get_light_recipe_by_id("Light Variation", Some("Underbelly")),
         ]
     });
 
@@ -1454,7 +1502,7 @@ pub(crate) mod tests {
     /// zero (e.g. a fat-free sorbet has no [`CompKey::TotalFats`]), and such an undefined target
     /// cannot be recovered; every finite key, ratio keys included, is kept.
     fn finite_balanceable_targets(light_recipe: &OwnedLightRecipe) -> Vec<(BalanceKey, f64)> {
-        get_targets_from_light_recipe(light_recipe, &get_balanceable_keys())
+        get_targets_from_light_recipe(light_recipe, &get_all_balanceable_keys())
             .into_iter()
             .filter(|(_, value)| value.is_finite())
             .collect()
@@ -1808,7 +1856,7 @@ pub(crate) mod tests {
 
     #[test]
     fn get_balanceable_keys_includes_ratio_keys() {
-        let balanceable = get_balanceable_keys();
+        let balanceable = get_all_balanceable_keys();
         assert_eq!(balanceable.len(), CompKey::iter().count() + RatioKey::iter().count());
         assert_true!(balanceable.contains(&BalanceKey::from(RatioKey::AbsPAC)));
         assert_true!(balanceable.contains(&BalanceKey::from(RatioKey::AbsNetPAC)));
@@ -2709,5 +2757,34 @@ pub(crate) mod tests {
     #[test]
     fn dominates_is_false_for_empty_palette() {
         assert_false!(dominates(&[], CompKey::TotalSugars, CompKey::Sucrose));
+    }
+
+    // --- Typical balancing keys ---
+
+    #[test]
+    fn typical_balancing_keys_recover_full_reference_composition() {
+        // Balancing to only the typical key subset still recovers the full reference
+        // composition, except the individual stabilizer-gum breakdown, which the typical
+        // keys pin only in aggregate (StabilizersPerWater), not per gum.
+        let ceiling = KeyCeiling::exact()
+            .with(CompKey::LocustBeanGum.into(), 110.0)
+            .with(CompKey::GuarGum.into(), 65.0)
+            .with(CompKey::Carrageenans.into(), 44.0);
+
+        for light_recipe in &*REF_LIGHT_RECIPES_FOR_TYPICAL_BALANCING_KEYS {
+            let comps = comps_from_light_recipe(light_recipe);
+            let typical_targets = get_targets_from_light_recipe(light_recipe, &get_typical_balancing_keys());
+            // Deliberately unfiltered: a non-finite balanceable target means a recipe in this
+            // list is no longer typical/well-conditioned, so fail loudly rather than skip it.
+            let all_targets = get_targets_from_light_recipe(light_recipe, &get_all_balanceable_keys());
+
+            assert_balance_compositions::<_, (BalanceKey, f64)>(
+                &comps,
+                &all_targets,
+                |comps, _, _, _| balance_compositions_nnls(comps, &typical_targets, None, &[]),
+                Epsilons::default(),
+                &ceiling,
+            );
+        }
     }
 }

@@ -25,16 +25,19 @@ pub struct RecipeEntry {
     pub recipe: OwnedLightRecipe,
 }
 
+/// Helper to generate a recipe ID from name and optional author, as "Name" or "Author: Name"
+fn make_recipe_id(name: &str, author: Option<&str>) -> String {
+    author.map_or_else(|| name.to_string(), |author| format!("{author}: {name}"))
+}
+
 impl RecipeEntry {
-    /// Generates an ID for the recipe entry, as "Name" or "Author - Name" if an author is present
+    /// Generates an ID for the recipe entry, as "Name" or "Author: Name" if an author is present
     ///
     /// This is used as the key for storing the recipe entry in the map of embedded recipes,
     /// reducing name collision risk for common recipe names from different sources.
     #[must_use]
     pub fn gen_id(&self) -> String {
-        self.author
-            .as_ref()
-            .map_or_else(|| self.name.clone(), |author| format!("{}: {}", author, self.name))
+        make_recipe_id(&self.name, self.author.as_deref())
     }
 }
 
@@ -86,6 +89,13 @@ pub fn get_all_recipe_entry_ids() -> Vec<String> {
 /// Retrieves all embedded recipe entries as [`Vec<RecipeEntry>`].
 pub fn get_all_recipe_entries() -> Vec<RecipeEntry> {
     PARSED_EMBEDDED_RECIPE_ENTRIES.values().cloned().collect()
+}
+
+/// Retrieves a specific embedded recipe entry by its name and optional author; `None` if not found.
+pub fn get_recipe_entry_by_id(name: &str, author: Option<&str>) -> Option<RecipeEntry> {
+    PARSED_EMBEDDED_RECIPE_ENTRIES
+        .get(&make_recipe_id(name, author))
+        .cloned()
 }
 
 #[cfg(test)]
@@ -198,6 +208,30 @@ pub(crate) mod tests {
     #[test]
     fn parse_invalid_json_returns_error() {
         assert_true!(parse_recipe_entries_from_json_string("not valid json").is_err());
+    }
+
+    // --- get_recipe_entry_by_id ---
+
+    #[test]
+    fn get_recipe_entry_by_id_with_author_found() {
+        let entry = get_recipe_entry_by_id("Standard Base", Some("Underbelly")).unwrap();
+        assert_eq!(entry.name, "Standard Base");
+        assert_eq!(entry.author.as_deref(), Some("Underbelly"));
+    }
+
+    #[test]
+    fn get_recipe_entry_by_id_no_author_when_author_expected_returns_none() {
+        assert_true!(get_recipe_entry_by_id("Standard Base", None).is_none());
+    }
+
+    #[test]
+    fn get_recipe_entry_by_id_wrong_author_returns_none() {
+        assert_true!(get_recipe_entry_by_id("Standard Base", Some("Unknown Author")).is_none());
+    }
+
+    #[test]
+    fn get_recipe_entry_by_id_unknown_name_returns_none() {
+        assert_true!(get_recipe_entry_by_id("Nonexistent Recipe", Some("Underbelly")).is_none());
     }
 
     // --- get_all_recipe_entry_ids ---

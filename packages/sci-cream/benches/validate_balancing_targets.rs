@@ -1,7 +1,7 @@
 use criterion::{BatchSize, Criterion, criterion_group};
 
 use sci_cream::{
-    balancing::{Priority, get_balanceable_keys, validate_balancing_targets},
+    balancing::{Priority, get_all_balanceable_keys, get_typical_balancing_keys, validate_balancing_targets},
     composition::{CompKey, RatioKey},
 };
 
@@ -16,7 +16,13 @@ pub(crate) fn bench_validate_balancing_targets(c: &mut Criterion) {
         .map(|line| line.ingredient.composition)
         .collect::<Vec<_>>();
 
-    let targets = get_balanceable_keys()
+    let all_targets = get_all_balanceable_keys()
+        .iter()
+        .map(|key| (*key, key.value(&mix_comp)))
+        .filter(|(_, value)| value.is_finite())
+        .collect::<Vec<_>>();
+
+    let typical_targets = get_typical_balancing_keys()
         .iter()
         .map(|key| (*key, key.value(&mix_comp)))
         .filter(|(_, value)| value.is_finite())
@@ -28,8 +34,20 @@ pub(crate) fn bench_validate_balancing_targets(c: &mut Criterion) {
         (RatioKey::AbsNetPAC.into(), Priority::Critical),
     ];
 
-    let _ = c.bench_function("validate_balancing_targets", |b| {
-        b.iter_batched(|| (), |()| validate_balancing_targets(&comps, &targets, &priorities), BatchSize::SmallInput);
+    let _ = c.bench_function("validate_balancing_targets(all_keys)", |b| {
+        b.iter_batched(
+            || (),
+            |()| validate_balancing_targets(&comps, &all_targets, &priorities),
+            BatchSize::SmallInput,
+        );
+    });
+
+    let _ = c.bench_function("validate_balancing_targets(typical_keys)", |b| {
+        b.iter_batched(
+            || (),
+            |()| validate_balancing_targets(&comps, &typical_targets, &priorities),
+            BatchSize::SmallInput,
+        );
     });
 }
 

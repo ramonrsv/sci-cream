@@ -1,4 +1,6 @@
-import { PropKey, isFpdKey, getPropKeys } from "./prop-key";
+import { get_all_balanceable_keys, get_typical_balancing_keys } from "../../wasm/index";
+
+import { PropKey } from "./prop-key";
 
 /**
  * Represents the priority levels for balancing recipe properties
@@ -18,9 +20,14 @@ export type BalanceTargets = [PropKey, number][];
 /** A set of [PropKey, Priority] tuples representing the priority levels for balancing. */
 export type BalancePriorities = [PropKey, Priority][];
 
-/** Returns all `PropKey`s that are balanceable, currently all except `FpdKey`s */
-export function getBalanceableKeys(): PropKey[] {
-  return getPropKeys().filter((key) => !isFpdKey(key)) as PropKey[];
+/** Returns all keys from `get_all_balanceable_keys` as `PropKey`s */
+export function getAllBalanceableKeys(): PropKey[] {
+  return get_all_balanceable_keys() as PropKey[];
+}
+
+/** Returns all keys from `get_typical_balancing_keys` as `PropKey`s */
+export function getTypicalBalancingKeys(): PropKey[] {
+  return get_typical_balancing_keys() as PropKey[];
 }
 
 /** Severity of a balancing issue: `error` blocks balancing, `warning` is advisory only. */

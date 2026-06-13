@@ -5,12 +5,15 @@ import {
   Bridge,
   new_ingredient_database_seeded_from_embedded_data,
   getMixProperty,
-  getBalanceableKeys,
   CompKey,
   RatioKey,
   compToPropKey,
   ratioToPropKey,
   Priority,
+  BalanceTargets,
+  BalancePriorities,
+  getAllBalanceableKeys,
+  getTypicalBalancingKeys,
 } from "../../dist/index.js";
 
 import {
@@ -31,16 +34,22 @@ const recipe = makeRecipeFromMadeLines(specLines);
 const bridge = new Bridge(new_ingredient_database_seeded_from_embedded_data());
 
 const mixProps = recipe.calculate_mix_properties();
-const targets = getBalanceableKeys().map((key) => [key, getMixProperty(mixProps, key)]) as [
-  string,
-  number,
-][];
+
+const all_targets = getAllBalanceableKeys().map((key) => [
+  key,
+  getMixProperty(mixProps, key),
+]) as BalanceTargets;
+
+const typical_targets = getTypicalBalancingKeys().map((key) => [
+  key,
+  getMixProperty(mixProps, key),
+]) as BalanceTargets;
 
 const priorities = [
   [compToPropKey(CompKey.MilkFat), Priority.High],
   [compToPropKey(CompKey.MSNF), Priority.High],
   [ratioToPropKey(RatioKey.AbsNetPAC), Priority.Critical],
-] as [string, Priority][];
+] as BalancePriorities;
 
 // These benchmark suite shows that creating new RecipeLine instances from scratch is generally
 // faster (up to ~10x) than cloning existing ones, likely due to the overhead of more JS <-> WASM
@@ -100,16 +109,22 @@ suite
     recipe.calculate_mix_properties().free();
   })
   .add("bridge.balance_recipe", () => {
-    bridge.balance_recipe(LIGHT_RECIPE, targets, []);
+    bridge.balance_recipe(LIGHT_RECIPE, all_targets, []);
   })
   .add("recipe.balance", () => {
-    recipe.balance(targets, []).free();
+    recipe.balance(all_targets, []).free();
   })
-  .add("bridge.validate_recipe_targets", () => {
-    bridge.validate_recipe_targets(LIGHT_RECIPE, targets, priorities);
+  .add("bridge.validate_recipe_targets(all_keys)", () => {
+    bridge.validate_recipe_targets(LIGHT_RECIPE, all_targets, priorities);
   })
-  .add("recipe.validate_targets", () => {
-    recipe.validate_targets(targets, priorities);
+  .add("recipe.validate_targets(all_keys)", () => {
+    recipe.validate_targets(all_targets, priorities);
+  })
+  .add("bridge.validate_recipe_targets(typical_keys)", () => {
+    bridge.validate_recipe_targets(LIGHT_RECIPE, typical_targets, priorities);
+  })
+  .add("recipe.validate_targets(typical_keys)", () => {
+    recipe.validate_targets(typical_targets, priorities);
   })
   .on("cycle", (event: Benchmark.Event) => {
     console.log(String(event.target));
