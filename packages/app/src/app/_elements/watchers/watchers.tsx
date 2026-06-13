@@ -48,6 +48,9 @@ import {
   prop_key_as_short_str,
   Priority,
   BalancingReport,
+  type LightRecipe,
+  type BalanceTargets,
+  type BalancePriorities,
 } from "@workspace/sci-cream";
 
 import { WatcherIssues, KeyIssue } from "@/app/_elements/watchers/watcher-issues";
@@ -153,7 +156,7 @@ function formatRange(range: { min: number; max: number }): string {
  * Restricting to `enabledSet` keeps the balancer aligned with what the user sees — targets
  * persisted in localStorage but filtered out of view aren't silently applied.
  */
-function targetsToBalanceArgs(targets: TargetsMap, enabledSet: Set<PropKey>): [string, number][] {
+function targetsToBalanceArgs(targets: TargetsMap, enabledSet: Set<PropKey>): BalanceTargets {
   return Object.entries(targets)
     .filter(
       ([propKey, val]) =>
@@ -161,11 +164,11 @@ function targetsToBalanceArgs(targets: TargetsMap, enabledSet: Set<PropKey>): [s
         (isCompKey(propKey as PropKey) || isRatioKey(propKey as PropKey)) &&
         enabledSet.has(propKey as PropKey),
     )
-    .map(([propKey, val]) => [propKey, val as number]);
+    .map(([propKey, val]) => [propKey as PropKey, val as number]);
 }
 
 /**
- * Build the `[keyName, Priority][]` priority list expected by `Bridge.balance_recipe`, from the
+ * Build the `BalancePriorities` list expected by `Bridge.balance_recipe`, from the
  * `PrioritiesMap`, restricted to keys that actually carry a balanced target (`balanceTargets`).
  *
  * Entries are emitted only for non-`Normal` priorities on keys with a target: `Normal` is the
@@ -174,15 +177,15 @@ function targetsToBalanceArgs(targets: TargetsMap, enabledSet: Set<PropKey>): [s
  */
 function prioritiesToBalanceArgs(
   priorities: PrioritiesMap,
-  balanceTargets: [string, number][],
-): [string, Priority][] {
-  const targetKeys = new Set(balanceTargets.map(([keyName]) => keyName));
+  balanceTargets: BalanceTargets,
+): BalancePriorities {
+  const targetKeys = new Set(balanceTargets.map(([keyName]) => String(keyName)));
   return Object.entries(priorities)
     .filter(
       ([propKey, priority]) =>
         priority !== undefined && priority !== Priority.Normal && targetKeys.has(propKey),
     )
-    .map(([propKey, priority]) => [propKey, priority as Priority]);
+    .map(([propKey, priority]) => [propKey as PropKey, priority as Priority]);
 }
 
 /**
@@ -500,7 +503,7 @@ export function WatchersView({
   toolbarPrefix?: ReactNode;
   defaultSelected?: Set<PropKey>;
   wasmBridge?: WasmBridge;
-  onApplyBalancedMain?: (balanced: [string, number][]) => void;
+  onApplyBalancedMain?: (balanced: LightRecipe) => void;
 }) {
   const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
   const selectedPropsState = useState<Set<PropKey>>(defaultSelected);
@@ -686,7 +689,7 @@ export function WatchersView({
         lightRecipe,
         balanceTargets,
         balancePriorities,
-      ) as [string, number][];
+      ) as LightRecipe;
 
       setBalanceError(undefined);
       onApplyBalancedMain(balanced);

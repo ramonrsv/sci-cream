@@ -8,6 +8,7 @@ import {
   PropKey,
   prop_key_as_med_str,
   getMixProperty,
+  type LightRecipe,
 } from "@workspace/sci-cream";
 
 import { Metric } from "@/app/_elements/web-vitals";
@@ -20,7 +21,6 @@ import { verify } from "@/lib/util";
 import { getSelectControl, selectOption } from "@/__tests__/e2e/select";
 
 import {
-  LightRecipe,
   RecipeID,
   getLightRecipe,
   getRecipeText,

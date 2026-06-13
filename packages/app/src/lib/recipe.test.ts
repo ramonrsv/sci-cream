@@ -33,6 +33,7 @@ import {
   RecipeLine,
   Bridge as WasmBridge,
   new_ingredient_database_seeded_from_embedded_data,
+  type LightRecipe,
 } from "@workspace/sci-cream";
 
 vi.mock("@workspace/sci-cream", async () => {
@@ -293,7 +294,7 @@ describe("Recipe Helper Functions", () => {
     });
 
     it("returns a `rows` array with one entry per eligible row (== balanced.length)", () => {
-      const balanced: [string, number][] = [
+      const balanced: LightRecipe = [
         ["Whole Milk", 60],
         ["Sucrose", 20],
       ];
@@ -303,7 +304,7 @@ describe("Recipe Helper Functions", () => {
     });
 
     it("writes balanced quantities onto eligible rows by index", () => {
-      const balanced: [string, number][] = [
+      const balanced: LightRecipe = [
         ["Whole Milk", 60],
         ["Sucrose", 20],
       ];
@@ -318,7 +319,7 @@ describe("Recipe Helper Functions", () => {
       // None should appear in updates.rows, so makeUpdatedRecipe leaves them untouched.
       recipe.ingredientRows[2].name = "Definitely Not An Ingredient";
       recipe.ingredientRows[2].quantity = 10;
-      const balanced: [string, number][] = [
+      const balanced: LightRecipe = [
         ["Whole Milk", 60],
         ["Sucrose", 20],
       ];
@@ -335,7 +336,7 @@ describe("Recipe Helper Functions", () => {
       recipe.ingredientRows[2].quantity = 10;
       recipe.ingredientRows[3].name = "Egg Yolk";
       recipe.ingredientRows[3].quantity = 20;
-      const balanced: [string, number][] = [
+      const balanced: LightRecipe = [
         ["Whole Milk", 60],
         ["Sucrose", 20],
         ["Egg Yolk", 15],
@@ -351,7 +352,7 @@ describe("Recipe Helper Functions", () => {
       // balanced array must have 3 entries and its third value should be written to that row.
       recipe.ingredientRows[2].name = "Egg Yolk";
       recipe.ingredientRows[2].quantity = undefined;
-      const balanced: [string, number][] = [
+      const balanced: LightRecipe = [
         ["Whole Milk", 60],
         ["Sucrose", 20],
         ["Egg Yolk", 15],
@@ -362,7 +363,7 @@ describe("Recipe Helper Functions", () => {
     });
 
     it("preserves ingredient names on updated rows", () => {
-      const balanced: [string, number][] = [
+      const balanced: LightRecipe = [
         ["Whole Milk", 60],
         ["Sucrose", 20],
       ];
@@ -376,7 +377,7 @@ describe("Recipe Helper Functions", () => {
       //   (a naive `.toFixed(1)` would give 8.4)
       // standardInputStepByPercent(4.3) = "0.25" → snap to nearest 0.25 → 4.25
       //   (a naive `.toFixed(2)` would give 4.30)
-      const balanced: [string, number][] = [
+      const balanced: LightRecipe = [
         ["Whole Milk", 8.4],
         ["Sucrose", 4.3],
       ];

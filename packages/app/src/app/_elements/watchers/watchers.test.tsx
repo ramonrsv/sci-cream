@@ -17,6 +17,9 @@ import {
   Priority,
   compToPropKey,
   fpdToPropKey,
+  type LightRecipe,
+  type BalanceTargets,
+  type BalancePriorities,
 } from "@workspace/sci-cream";
 
 import { makeMockRecipe, makeMockRecipeContext } from "@/__tests__/unit/util";
@@ -728,7 +731,7 @@ describe("WatchersView Balance", () => {
     expect(screen.getByTestId("watchers-balance-button")).toBeDisabled();
   });
 
-  it("clicking Balance invokes onApplyBalancedMain with a same-length [string, number][]", () => {
+  it("clicking Balance invokes onApplyBalancedMain with a same-length LightRecipe", () => {
     localStorage.setItem(
       STORAGE_KEYS.watcherTargets,
       JSON.stringify({
@@ -743,7 +746,7 @@ describe("WatchersView Balance", () => {
     render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={onApply} />);
     fireEvent.click(screen.getByTestId("watchers-balance-button"));
     expect(onApply).toHaveBeenCalledTimes(1);
-    const arg = onApply.mock.calls[0][0] as [string, number][];
+    const arg = onApply.mock.calls[0][0] as LightRecipe;
     expect(Array.isArray(arg)).toBe(true);
     expect(arg.length).toBe(main.ingredientRows.filter((r) => r.quantity !== undefined).length);
     for (const [name, grams] of arg) {
@@ -765,11 +768,7 @@ describe("WatchersView Balance", () => {
     );
     const main = makeMockRecipe(RecipeID.Main);
     const balanceSpy = vi.fn<
-      (
-        recipe: unknown,
-        targets: [string, number][],
-        priorities: [string, Priority][],
-      ) => [string, number][]
+      (recipe: unknown, targets: BalanceTargets, priorities: BalancePriorities) => LightRecipe
     >(() => []);
     const spyBridge = {
       has_ingredient: () => true,

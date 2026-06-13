@@ -1,3 +1,5 @@
+import type { LightRecipe } from "@workspace/sci-cream";
+
 import { getLightRecipe, RecipeID } from "@/__tests__/assets";
 
 /** Credentials for test user A, used in seeding and integration tests. */
@@ -22,7 +24,7 @@ export const USER_DEFINED_FRUCTOSE_SPEC = {
 };
 
 /** Example recipe with an invalid ingredient, used in seeding and integration tests. */
-export const RECIPE_INVALID_INGREDIENT: [string, number][] = [
+export const RECIPE_INVALID_INGREDIENT: LightRecipe = [
   ["Whole Milk", 230],
   ["Whipping Cream", 235],
   ["Skimmed Milk Powder", 35],
@@ -38,7 +40,7 @@ export const RECIPE_INVALID_INGREDIENT: [string, number][] = [
  * Example recipe containing a valid ingredient with an unusually long name, used to verify that the
  * recipe table truncates the name instead of widening the table and breaking the layout.
  */
-export const RECIPE_LONG_INGREDIENT_NAME: [string, number][] = [
+export const RECIPE_LONG_INGREDIENT_NAME: LightRecipe = [
   ["Whole Milk", 500],
   ["Eagle Brand Dulce de Leche Caramel Flavoured Sauce", 100],
   ["Sucrose", 80],
@@ -47,7 +49,7 @@ export const RECIPE_LONG_INGREDIENT_NAME: [string, number][] = [
 /** Shape of a recipe in the seed/test asset set: one identity with one or more versions */
 export type SeedRecipeAsset = {
   name: string;
-  versions: { recipe: [string, number][]; comments?: string; label?: string }[];
+  versions: { recipe: LightRecipe; comments?: string; label?: string }[];
 };
 
 /** Example recipes for TEST_USER_B, used in seeding and integration tests. */
@@ -63,7 +65,7 @@ export const TEST_USER_B_RECIPES: SeedRecipeAsset[] = [
       {
         recipe: getLightRecipe(RecipeID.Main).map(([n, q]) =>
           n === "Sucrose" ? [n, q + 5] : [n, q],
-        ) as [string, number][],
+        ) as LightRecipe,
         comments: "Slightly sweeter — bumped sucrose by 5g for a less bitter finish.",
         label: "sweeter tweak",
       },

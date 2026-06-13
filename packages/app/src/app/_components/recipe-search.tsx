@@ -6,6 +6,7 @@ import {
   type RecipeEntryJson,
   Bridge as WasmBridge,
   MixProperties,
+  type LightRecipe,
 } from "@workspace/sci-cream";
 
 import { makeRecipeId, type Recipe } from "@/lib/recipe";
@@ -137,11 +138,7 @@ interface RecipeDetailPanelProps extends Pick<
  * Creates a `Recipe` object from a flat `[name, qty][]` recipe and `WasmBridge`, without WASM
  * `Ingredient`s. Used by the detail panel to render the currently selected version.
  */
-function makeRecipeFromRows(
-  name: string,
-  rows: [string, number][] | null,
-  bridge: WasmBridge,
-): Recipe {
+function makeRecipeFromRows(name: string, rows: LightRecipe | null, bridge: WasmBridge): Recipe {
   return {
     index: 0,
     id: "Value",

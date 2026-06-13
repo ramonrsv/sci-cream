@@ -24,6 +24,7 @@ import {
   Composition,
   Bridge as WasmBridge,
   IngredientDatabase,
+  type LightRecipe,
 } from "@workspace/sci-cream";
 
 import { RecipeID, getLightRecipe } from "@/../src/__tests__/assets";
@@ -136,7 +137,7 @@ describe("fetchAllUserIngredientSpecs", () => {
   });
 });
 
-/** Helper to assert that every version of a saved recipe has valid [string, number] recipe rows */
+/** Helper to assert that every version of a saved recipe has valid `LightRecipe` rows */
 function expectAllVersionsToBeValid(entry: SavedRecipeJson) {
   expect(entry.versions.length).toBeGreaterThan(0);
   for (const v of entry.versions) {
@@ -223,7 +224,7 @@ describe("createUserRecipe", () => {
   test("creates a new recipe with version 1, round-trips, cleans up at the end", async () => {
     const user = await getTestUserB();
     const name = "Create Round-trip Test Recipe";
-    const rows: [string, number][] = [["Whole Milk", 200]];
+    const rows: LightRecipe = [["Whole Milk", 200]];
 
     const created = await createUserRecipe(TEST_USER_B.email, name, rows, {
       comments: "first",
@@ -266,12 +267,12 @@ describe("createUserRecipeVersion", () => {
 
   test("appends successive versions with monotonically-increasing numbers", async () => {
     const name = "Version Append Test Recipe";
-    const v1: [string, number][] = [["Whole Milk", 100]];
-    const v2: [string, number][] = [
+    const v1: LightRecipe = [["Whole Milk", 100]];
+    const v2: LightRecipe = [
       ["Whole Milk", 100],
       ["Sucrose", 25],
     ];
-    const v3: [string, number][] = [
+    const v3: LightRecipe = [
       ["Whole Milk", 90],
       ["Sucrose", 30],
     ];
@@ -314,8 +315,8 @@ describe("updateUserRecipeVersion", () => {
 
   test("partially updates recipe rows, comments, label; clears with null", async () => {
     const name = "Partial Update Test Recipe";
-    const initial: [string, number][] = [["Whole Milk", 100]];
-    const updatedRows: [string, number][] = [
+    const initial: LightRecipe = [["Whole Milk", 100]];
+    const updatedRows: LightRecipe = [
       ["Whole Milk", 150],
       ["Dextrose", 10],
     ];

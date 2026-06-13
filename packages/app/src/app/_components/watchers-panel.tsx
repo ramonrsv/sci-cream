@@ -6,7 +6,7 @@ import { Recipe, filterActiveSlots } from "@/lib/recipe";
 import { WatchersView } from "@/app/_elements/watchers/watchers";
 import { DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
 
-import { Bridge as WasmBridge } from "@workspace/sci-cream";
+import { Bridge as WasmBridge, type LightRecipe } from "@workspace/sci-cream";
 
 /**
  * Calculator-page panel wrapping {@link WatchersView} with grid-layout chrome and a drag handle.
@@ -24,7 +24,7 @@ export function WatchersPanel({
 }: {
   recipes: Recipe[];
   wasmBridge?: WasmBridge;
-  onApplyBalancedMain?: (balanced: [string, number][]) => void;
+  onApplyBalancedMain?: (balanced: LightRecipe) => void;
 }) {
   const active = filterActiveSlots(recipes);
   return (

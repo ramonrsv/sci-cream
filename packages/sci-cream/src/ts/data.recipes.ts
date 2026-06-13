@@ -1,9 +1,11 @@
 import underbellyJson from "../../data/recipes/underbelly.json";
 
+import { LightRecipe } from "./light-recipe";
+
 export type RecipeEntryJson = {
   name: string;
   author?: string;
-  recipe: [string, number][];
+  recipe: LightRecipe;
   [key: string]: unknown;
 };
 
@@ -18,7 +20,7 @@ type InferredRecipeEntryJson = (typeof underbellyJson)[number];
 function flattenLists(jsonLists: InferredRecipeEntryJson[][]): RecipeEntryJson[] {
   return jsonLists
     .reduce((acc, list) => acc.concat(list), [])
-    .map(({ recipe, ...rest }) => ({ ...rest, recipe: recipe as [string, number][] }));
+    .map(({ recipe, ...rest }) => ({ ...rest, recipe: recipe as LightRecipe }));
 }
 
 /** All built-in recipe entries aggregated from every recipe JSON file. */

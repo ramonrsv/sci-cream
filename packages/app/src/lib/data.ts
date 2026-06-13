@@ -4,6 +4,8 @@ import "dotenv/config";
 import { drizzle } from "drizzle-orm/node-postgres";
 import { eq, and, sql } from "drizzle-orm";
 
+import type { LightRecipe } from "@workspace/sci-cream";
+
 import { getDatabaseUrl } from "./database/util";
 import {
   UserSelect,
@@ -26,7 +28,7 @@ export type IngredientTransfer = IngredientDb;
 /** One snapshot of a saved recipe; the `recipe` is the same `[name, qty]` payload as embedded */
 export type SavedRecipeVersionJson = {
   version: number;
-  recipe: [string, number][];
+  recipe: LightRecipe;
   comments?: string;
   label?: string;
   /** ISO 8601 timestamp; created server-side and surfaced as a string for client serialization */
@@ -49,7 +51,7 @@ function toSavedRecipeVersionJson(row: {
 }): SavedRecipeVersionJson {
   return {
     version: row.version,
-    recipe: row.recipe as [string, number][],
+    recipe: row.recipe as LightRecipe,
     ...(row.comments != null && { comments: row.comments }),
     ...(row.label != null && { label: row.label }),
     createdAt: row.createdAt.toISOString(),
@@ -213,7 +215,7 @@ export async function fetchAllUserSavedRecipes(
 /** Internal: insert a new version row for the given recipe with `version = max(version) + 1` */
 async function insertNextVersion(
   recipeId: number,
-  recipe: [string, number][],
+  recipe: LightRecipe,
   meta: RecipeVersionMeta = {},
 ): Promise<SavedRecipeVersionJson> {
   // Compute next version number from existing rows; defaults to 1 when none exist yet
@@ -247,7 +249,7 @@ async function insertNextVersion(
 export async function createUserRecipe(
   userEmail: string,
   name: string,
-  recipe: [string, number][],
+  recipe: LightRecipe,
   meta: RecipeVersionMeta = {},
 ): Promise<{ recipeId: number; version: SavedRecipeVersionJson } | undefined> {
   console.log(`[${await FetchCounter.get()}] createUserRecipe("${name}")`);
@@ -272,7 +274,7 @@ export async function createUserRecipe(
 export async function createUserRecipeVersion(
   userEmail: string,
   recipeId: number,
-  recipe: [string, number][],
+  recipe: LightRecipe,
   meta: RecipeVersionMeta = {},
 ): Promise<SavedRecipeVersionJson | undefined> {
   console.log(`[${await FetchCounter.get()}] createUserRecipeVersion(${recipeId})`);
@@ -301,7 +303,7 @@ export async function updateUserRecipeVersion(
   userEmail: string,
   recipeId: number,
   version: number,
-  updates: { recipe?: [string, number][] } & RecipeVersionMeta,
+  updates: { recipe?: LightRecipe } & RecipeVersionMeta,
 ): Promise<SavedRecipeVersionJson | undefined> {
   console.log(`[${await FetchCounter.get()}] updateUserRecipeVersion(${recipeId}, v${version})`);
 

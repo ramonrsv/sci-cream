@@ -12,10 +12,11 @@ import {
   IngredientDatabase,
 } from "../../dist/index";
 
-import { getMixProperty, PropKey, propToCompKey, propToRatioKey } from "./prop-key";
-import { Priority, BalancingReport } from "./balancing";
+import { getMixProperty, propToCompKey, propToRatioKey } from "./prop-key";
+import { Priority, BalancingReport, BalanceTargets, BalancePriorities } from "./balancing";
+import { LightRecipe } from "./light-recipe";
 
-const lightRecipe = [
+const lightRecipe: LightRecipe = [
   ["Whole Milk", 245],
   ["Whipping Cream", 215],
   ["Cocoa Powder, 17% Fat", 28],
@@ -72,16 +73,16 @@ test("Bridge.calculate_recipe_mix_properties", () => {
 test("Bridge.balance_recipe", () => {
   const bridge = new Bridge(make_seeded_db());
 
-  const targets: [PropKey, number][] = [
+  const targets: BalanceTargets = [
     [compToPropKey(CompKey.MilkFat), 14],
     [compToPropKey(CompKey.MSNF), 10],
     [compToPropKey(CompKey.TotalSugars), 17],
     [compToPropKey(CompKey.TotalSolids), 41],
   ];
 
-  const priorities: [PropKey, Priority][] = [];
+  const priorities: BalancePriorities = [];
 
-  const balanced = bridge.balance_recipe(lightRecipe, targets, priorities) as [string, number][];
+  const balanced = bridge.balance_recipe(lightRecipe, targets, priorities) as LightRecipe;
 
   expect(balanced).toBeDefined();
   expect(balanced.length).toEqual(lightRecipe.length);
@@ -91,7 +92,7 @@ test("Bridge.balance_recipe", () => {
     expect(balanced[i][1]).toBeGreaterThanOrEqual(0);
   }
 
-  const originalTotal = lightRecipe.reduce((sum, line) => sum + (line[1] as number), 0);
+  const originalTotal = lightRecipe.reduce((sum, line) => sum + line[1], 0);
   const balancedTotal = balanced.reduce((sum, line) => sum + line[1], 0);
   expect(balancedTotal).toBeCloseTo(originalTotal, 4);
 
@@ -109,25 +110,27 @@ test("Bridge.balance_recipe", () => {
 test("Bridge.balance_recipe applies priorities", () => {
   const bridge = new Bridge(make_seeded_db());
 
-  const targets: [PropKey, number][] = [
+  const targets: BalanceTargets = [
     [compToPropKey(CompKey.Energy), 200],
     [compToPropKey(CompKey.MilkFat), 12],
     [compToPropKey(CompKey.MSNF), 8],
     [compToPropKey(CompKey.POD), 0.5],
   ];
 
-  const priorities: [PropKey, Priority][] = [[compToPropKey(CompKey.POD), Priority.Critical]];
-  const emptyPriorities: [PropKey, Priority][] = [];
+  const priorities: BalancePriorities = [[compToPropKey(CompKey.POD), Priority.Critical]];
+  const emptyPriorities: BalancePriorities = [];
 
-  const defaultBalanced = bridge.balance_recipe(lightRecipe, targets, emptyPriorities) as [
-    string,
-    number,
-  ][];
+  const defaultBalanced = bridge.balance_recipe(
+    lightRecipe,
+    targets,
+    emptyPriorities,
+  ) as LightRecipe;
 
-  const prioritizedBalanced = bridge.balance_recipe(lightRecipe, targets, priorities) as [
-    string,
-    number,
-  ][];
+  const prioritizedBalanced = bridge.balance_recipe(
+    lightRecipe,
+    targets,
+    priorities,
+  ) as LightRecipe;
 
   const defaultComp = bridge.calculate_recipe_composition(defaultBalanced);
   const prioritizedComp = bridge.calculate_recipe_composition(prioritizedBalanced);
@@ -140,15 +143,15 @@ test("Bridge.balance_recipe applies priorities", () => {
 
 test("Bridge.balance_recipe throws on unknown ingredient", () => {
   const bridge = new Bridge(make_seeded_db());
-  const badRecipe = [["Nonexistent Ingredient", 100]];
-  const targets = [[compToPropKey(CompKey.MilkFat), 10]];
+  const badRecipe: LightRecipe = [["Nonexistent Ingredient", 100]];
+  const targets: BalanceTargets = [[compToPropKey(CompKey.MilkFat), 10]];
 
   expect(() => bridge.balance_recipe(badRecipe, targets, [])).toThrow();
 });
 
 test("Bridge.validate_recipe_targets returns empty report for valid targets", () => {
   const bridge = new Bridge(make_seeded_db());
-  const targets: [PropKey, number][] = [
+  const targets: BalanceTargets = [
     [compToPropKey(CompKey.MilkFat), 14],
     [compToPropKey(CompKey.MSNF), 10],
     [compToPropKey(CompKey.TotalSugars), 17],
@@ -162,7 +165,7 @@ test("Bridge.validate_recipe_targets returns empty report for valid targets", ()
 
 test("Bridge.validate_recipe_targets reports NegativeTarget error", () => {
   const bridge = new Bridge(make_seeded_db());
-  const targets: [PropKey, number][] = [[compToPropKey(CompKey.MilkFat), -5]];
+  const targets: BalanceTargets = [[compToPropKey(CompKey.MilkFat), -5]];
 
   const report = bridge.validate_recipe_targets(lightRecipe, targets, []) as BalancingReport;
 
@@ -174,8 +177,8 @@ test("Bridge.validate_recipe_targets reports NegativeTarget error", () => {
 
 test("Bridge.validate_recipe_targets reports PriorityWithoutTarget warning", () => {
   const bridge = new Bridge(make_seeded_db());
-  const targets: [PropKey, number][] = [[compToPropKey(CompKey.MilkFat), 14]];
-  const priorities: [PropKey, Priority][] = [[compToPropKey(CompKey.MSNF), Priority.High]];
+  const targets: BalanceTargets = [[compToPropKey(CompKey.MilkFat), 14]];
+  const priorities: BalancePriorities = [[compToPropKey(CompKey.MSNF), Priority.High]];
 
   const report = bridge.validate_recipe_targets(
     lightRecipe,
@@ -192,8 +195,8 @@ test("Bridge.validate_recipe_targets reports PriorityWithoutTarget warning", () 
 
 test("Bridge.validate_recipe_targets throws on unknown ingredient", () => {
   const bridge = new Bridge(make_seeded_db());
-  const badRecipe = [["Nonexistent Ingredient", 100]];
-  const targets: [PropKey, number][] = [[compToPropKey(CompKey.MilkFat), 14]];
+  const badRecipe: LightRecipe = [["Nonexistent Ingredient", 100]];
+  const targets: BalanceTargets = [[compToPropKey(CompKey.MilkFat), 14]];
 
   expect(() => bridge.validate_recipe_targets(badRecipe, targets, [])).toThrow();
 });

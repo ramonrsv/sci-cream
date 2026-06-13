@@ -5,6 +5,7 @@ import {
   into_ingredient_from_spec,
   Recipe,
   RecipeLine,
+  LightRecipe,
   CompKey,
   FpdKey,
   compToPropKey,
@@ -12,7 +13,7 @@ import {
   getMixProperty,
 } from "../../dist/index";
 
-const RECIPE = [
+const RECIPE: LightRecipe = [
   ["Whole Milk", 245],
   ["Whipping Cream", 215],
   ["Cocoa Powder, 17% Fat", 28],
@@ -35,8 +36,8 @@ test("example, without using WasmBridge", () => {
   const recipeLines = NEW_RECIPE.map(
     ([name, quantity]) =>
       new RecipeLine(
-        into_ingredient_from_spec(getIndependentIngredientSpecByName(name as string)!),
-        quantity as number,
+        into_ingredient_from_spec(getIndependentIngredientSpecByName(name)!),
+        quantity,
       ),
   );
 

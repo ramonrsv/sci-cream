@@ -10,6 +10,7 @@ import {
   type LayoutItem,
   type ResizeHandleAxis,
 } from "react-grid-layout";
+import type { LightRecipe } from "@workspace/sci-cream";
 
 import { CompositionBreakdownPanel } from "@/app/_components/composition-breakdown-panel";
 import { PropertiesPanel } from "@/app/_components/properties-panel";
@@ -61,7 +62,7 @@ function CalculatorContent() {
   };
 
   /** Apply a balanced light recipe (from `Bridge.balance_recipe`) onto the main recipe (slot 0) */
-  const onApplyBalancedMain = (balanced: [string, number][]) => {
+  const onApplyBalancedMain = (balanced: LightRecipe) => {
     const current = recipeContext.recipes[0];
     const updates = makeBalancedRecipeUpdates(current, balanced, wasmResources.hasIngredient);
     const updated = makeUpdatedRecipe(current, updates, wasmResources);

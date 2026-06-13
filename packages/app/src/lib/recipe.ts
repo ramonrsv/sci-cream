@@ -8,6 +8,8 @@ import {
   MixProperties,
   RecipeLine,
   Recipe as SciCreamRecipe,
+  type LightRecipe,
+  type LightRecipeLine,
 } from "@workspace/sci-cream";
 
 /** A single row in the recipe grid, holding the name, quantity, and resolved WASM `Ingredient` */
@@ -194,10 +196,10 @@ export function isLightRecipeEligible(
 export function makeLightRecipe(
   recipe: Recipe,
   hasIngredient: (name: string) => boolean,
-): [string, number][] {
+): LightRecipe {
   return recipe.ingredientRows
     .filter((row) => isLightRecipeEligible(row, hasIngredient))
-    .map((row) => [row.name, row.quantity ?? 0] as [string, number]);
+    .map((row) => [row.name, row.quantity ?? 0] as LightRecipeLine);
 }
 
 /**
@@ -458,7 +460,7 @@ export function makeUpdatedRecipeFromStore(
  */
 export function makeBalancedRecipeUpdates(
   recipe: Recipe,
-  balanced: [string, number][],
+  balanced: LightRecipe,
   hasIngredient: (name: string) => boolean,
 ): RecipeUpdates {
   const eligibleIndices = recipe.ingredientRows.flatMap((row, i) =>

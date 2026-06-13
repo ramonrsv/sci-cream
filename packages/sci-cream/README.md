@@ -489,6 +489,7 @@ import {
   into_ingredient_from_spec,
   Recipe,
   RecipeLine,
+  LightRecipe,
   CompKey,
   FpdKey,
   compToPropKey,
@@ -496,7 +497,7 @@ import {
   getMixProperty,
 } from "@workspace/sci-cream";
 
-const RECIPE = [
+const RECIPE: LightRecipe = [
   ["Whole Milk", 245],
   ["Whipping Cream", 215],
   ["Cocoa Powder, 17% Fat", 28],
@@ -518,8 +519,8 @@ NEW_RECIPE[8][0] = "Locust Bean Gum";
 const recipeLines = NEW_RECIPE.map(
   ([name, quantity]) =>
     new RecipeLine(
-      into_ingredient_from_spec(getIngredientSpecByName(name as string)!),
-      quantity as number,
+      into_ingredient_from_spec(getIndependentIngredientSpecByName(name)!),
+      quantity,
     ),
 );
 

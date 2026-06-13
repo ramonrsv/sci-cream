@@ -12,6 +12,12 @@ export enum Priority {
   Critical = "Critical",
 }
 
+/** A set of [PropKey, number] tuples representing the target values for balancing. */
+export type BalanceTargets = [PropKey, number][];
+
+/** A set of [PropKey, Priority] tuples representing the priority levels for balancing. */
+export type BalancePriorities = [PropKey, Priority][];
+
 /** Returns all `PropKey`s that are balanceable, currently all except `FpdKey`s */
 export function getBalanceableKeys(): PropKey[] {
   return getPropKeys().filter((key) => !isFpdKey(key)) as PropKey[];
