@@ -278,6 +278,92 @@ impl KeyAsStrings for PropKey {
     }
 }
 
+/// Joins balance keys as a quoted, ` + `-separated list (e.g. `'Sucrose' + 'Fructose'`)
+fn join_keys(keys: &[BalanceKey]) -> String {
+    keys.iter()
+        .map(|key| format!("'{}'", key.as_med_str()))
+        .collect::<Vec<_>>()
+        .join(" + ")
+}
+
+/// Formats a number with up to two decimal places, dropping trailing zeros and any trailing decimal
+/// point — e.g. `20.00 → "20"`, `0.40 → "0.4"`. An infinite value renders as `"∞"` / `"-∞"`.
+fn round2(value: f64) -> String {
+    if value.is_infinite() {
+        return if value < 0.0 {
+            "-∞".to_owned()
+        } else {
+            "∞".to_owned()
+        };
+    }
+
+    format!("{value:.2}")
+        .trim_end_matches('0')
+        .trim_end_matches('.')
+        .to_owned()
+}
+
+/// Writes the palette-derived [`DominanceViolation`](BalancingIssue::DominanceViolation) message,
+/// using the pairwise wording for a single `lesser` key and the additive wording for several.
+fn fmt_dominance(
+    f: &mut fmt::Formatter<'_>,
+    lesser: &[BalanceKey],
+    greater: BalanceKey,
+    lesser_target_sum: f64,
+    greater_target: f64,
+) -> fmt::Result {
+    let greater = greater.as_med_str();
+    let lesser_target_sum = round2(lesser_target_sum);
+    let greater_target = round2(greater_target);
+    if let [only] = lesser {
+        write!(
+            f,
+            "Target for '{lesser}' ({lesser_target_sum}) exceeds target for '{greater}' \
+             ({greater_target}), but no ingredient mix can satisfy both — every ingredient's \
+             '{lesser}' ≤ its '{greater}'",
+            lesser = only.as_med_str(),
+        )
+    } else {
+        write!(
+            f,
+            "Targets {parts} sum to {lesser_target_sum}, exceeding the target for '{greater}' \
+             ({greater_target}), but no ingredient mix can satisfy them all — every ingredient's \
+             parts sum to ≤ its '{greater}'",
+            parts = join_keys(lesser),
+        )
+    }
+}
+
+/// Writes the palette-independent
+/// [`StructuralDominanceViolation`](BalancingIssue::StructuralDominanceViolation) message, using
+/// the pairwise wording for a single `part` and the additive wording for several.
+fn fmt_structural_dominance(
+    f: &mut fmt::Formatter<'_>,
+    parts: &[BalanceKey],
+    whole: BalanceKey,
+    parts_target_sum: f64,
+    whole_target: f64,
+) -> fmt::Result {
+    let whole = whole.as_med_str();
+    let parts_target_sum = round2(parts_target_sum);
+    let whole_target = round2(whole_target);
+    if let [only] = parts {
+        write!(
+            f,
+            "Target for '{part}' ({parts_target_sum}) exceeds target for '{whole}' \
+             ({whole_target}), but '{part}' is part of '{whole}', so it can never be larger",
+            part = only.as_med_str(),
+        )
+    } else {
+        write!(
+            f,
+            "Targets {parts} sum to {parts_target_sum}, exceeding the target for '{whole}' \
+             ({whole_target}), but they are parts of '{whole}', so cannot sum above it",
+            parts = join_keys(parts),
+        )
+    }
+}
+
 impl fmt::Display for BalancingIssue {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
@@ -285,7 +371,7 @@ impl fmt::Display for BalancingIssue {
                 write!(f, "Target for '{}' is not finite ({value})", key.as_med_str())
             }
             Self::NegativeTarget { key, value } => {
-                write!(f, "Target for '{}' is negative ({value}), but it cannot be below zero", key.as_med_str())
+                write!(f, "Target for '{}' is negative ({value})", key.as_med_str())
             }
             Self::DuplicateTarget { key } => {
                 write!(f, "'{}' appears more than once in the targets", key.as_med_str())
@@ -298,44 +384,67 @@ impl fmt::Display for BalancingIssue {
             }
             Self::UnreachableTarget { key, target, min, max } => write!(
                 f,
-                "Target for '{}' ({target:.2}) is outside the reachable range [{min:.2}, {max:.2}]",
-                key.as_med_str()
+                "Target for '{}' ({}) is outside the reachable range [{}, {}]",
+                key.as_med_str(),
+                round2(*target),
+                round2(*min),
+                round2(*max),
             ),
             Self::DominanceViolation {
                 lesser,
                 greater,
-                lesser_target,
+                lesser_target_sum,
                 greater_target,
+            } => fmt_dominance(f, lesser, *greater, *lesser_target_sum, *greater_target),
+            Self::RatioInfeasibility {
+                numerator,
+                denominator,
+                target_ratio,
+                min_ratio,
+                max_ratio,
             } => write!(
                 f,
-                "Target for '{lesser}' ({lesser_target:.2}) exceeds target for '{greater}' ({greater_target:.2}), but \
-                 no non-negative ingredient mix can satisfy both — every ingredient's '{lesser}' ≤ its '{greater}'",
-                lesser = lesser.as_med_str(),
-                greater = greater.as_med_str(),
+                "Target ratio {numerator} : '{denominator}' ({target_ratio}) is outside the range \
+                 [{min_ratio}, {max_ratio}] the ingredients allow",
+                numerator = join_keys(numerator),
+                denominator = denominator.as_med_str(),
+                target_ratio = round2(*target_ratio),
+                min_ratio = round2(*min_ratio),
+                max_ratio = round2(*max_ratio),
             ),
-            Self::AdditiveDominanceViolation {
+            Self::StructuralDominanceViolation {
+                parts,
+                whole,
+                parts_target_sum,
+                whole_target,
+            } => fmt_structural_dominance(f, parts, *whole, *parts_target_sum, *whole_target),
+            Self::RollupSumMismatch {
                 whole,
                 parts,
                 parts_target_sum,
                 whole_target,
-            } => {
-                let parts = parts
-                    .iter()
-                    .map(|key| format!("'{}'", key.as_med_str()))
-                    .collect::<Vec<_>>()
-                    .join(" + ");
-                write!(
-                    f,
-                    "Targets {parts} sum to {parts_target_sum:.2}, exceeding the target for '{whole}' \
-                     ({whole_target:.2}), but no non-negative ingredient mix can satisfy them all — every \
-                     ingredient's parts sum to ≤ its '{whole}'",
-                    whole = whole.as_med_str(),
-                )
-            }
+            } => write!(
+                f,
+                "'{whole}' is exactly the sum of {parts}, so its target ({whole_target}) is inconsistent \
+                 with theirs (summing to {parts_target_sum})",
+                whole = whole.as_med_str(),
+                parts = join_keys(parts),
+                whole_target = round2(*whole_target),
+                parts_target_sum = round2(*parts_target_sum),
+            ),
             Self::PriorityWithoutTarget { key } => write!(
                 f,
                 "Priority set for '{}', which is not among the targets, so it has no effect",
                 key.as_med_str()
+            ),
+            Self::OverDetermined {
+                target_count,
+                ingredient_count,
+            } => write!(
+                f,
+                "{target_count} targets with only {ingredient_count} ingredients: at most {} can be met exactly, \
+                 so the balance is a best-fit compromise",
+                ingredient_count.saturating_sub(1),
             ),
         }
     }
@@ -353,6 +462,7 @@ impl fmt::Display for BalancingReport {
             let label = match issue.severity() {
                 Severity::Error => "error",
                 Severity::Warning => "warning",
+                Severity::Info => "information",
             };
             write!(f, "[{label}] {issue}")?;
         }
@@ -631,28 +741,121 @@ mod tests {
 
     #[test]
     fn balancing_issue_display_message_dominance_violation() {
+        // A single "lesser" key uses the pairwise wording.
         let dominance = BalancingIssue::DominanceViolation {
-            lesser: CompKey::Sucrose.into(),
+            lesser: vec![CompKey::Sucrose.into()],
             greater: CompKey::TotalSugars.into(),
-            lesser_target: 20.0,
+            lesser_target_sum: 20.0,
             greater_target: 15.0,
         };
         let text = dominance.to_string();
         assert_true!(text.contains("Sucrose"));
         assert_true!(text.contains("Sugars"));
+        assert_true!(text.contains("exceeds"));
     }
 
     #[test]
-    fn balancing_issue_display_message_additive_dominance_violation() {
-        let additive = BalancingIssue::AdditiveDominanceViolation {
-            whole: CompKey::TotalSugars.into(),
-            parts: vec![CompKey::Sucrose.into(), CompKey::Fructose.into()],
-            parts_target_sum: 20.0,
-            whole_target: 15.0,
+    fn balancing_issue_display_message_grouped_dominance_violation() {
+        // Several "lesser" keys use the additive (summing) wording.
+        let additive = BalancingIssue::DominanceViolation {
+            lesser: vec![CompKey::Sucrose.into(), CompKey::Fructose.into()],
+            greater: CompKey::TotalSugars.into(),
+            lesser_target_sum: 20.0,
+            greater_target: 15.0,
         };
         let text = additive.to_string();
         assert_true!(text.contains("'Sucrose' + 'Fructose'"));
+        assert_true!(text.contains("sum to"));
         assert_true!(text.contains("Sugars"));
+    }
+
+    #[test]
+    fn balancing_issue_display_message_ratio_infeasibility() {
+        let ratio = BalancingIssue::RatioInfeasibility {
+            numerator: vec![CompKey::CocoaButter.into()],
+            denominator: CompKey::CocoaSolids.into(),
+            target_ratio: 0.5,
+            min_ratio: 0.2,
+            max_ratio: 0.2,
+        };
+        let text = ratio.to_string();
+        assert_true!(text.contains("Cocoa Butter"));
+        assert_true!(text.contains("range"));
+    }
+
+    #[test]
+    fn balancing_issue_display_message_ratio_infeasibility_infinite_upper() {
+        // An unbounded-above band renders the upper bound as ∞ rather than a number.
+        let ratio = BalancingIssue::RatioInfeasibility {
+            numerator: vec![CompKey::CocoaButter.into()],
+            denominator: CompKey::CocoaSolids.into(),
+            target_ratio: 0.0,
+            min_ratio: 1.0,
+            max_ratio: f64::INFINITY,
+        };
+        assert_true!(ratio.to_string().contains('∞'));
+    }
+
+    #[test]
+    fn balancing_issue_display_message_ratio_infeasibility_multi_key_numerator() {
+        // join_keys renders multiple numerator keys with " + " between them.
+        let ratio = BalancingIssue::RatioInfeasibility {
+            numerator: vec![CompKey::MilkFat.into(), CompKey::CocoaButter.into()],
+            denominator: CompKey::TotalFats.into(),
+            target_ratio: 0.9,
+            min_ratio: 0.2,
+            max_ratio: 0.8,
+        };
+        let text = ratio.to_string();
+        assert_true!(text.contains("Milk Fat"));
+        assert_true!(text.contains("Cocoa Butter"));
+        assert_true!(text.contains('+'));
+    }
+
+    #[test]
+    fn balancing_issue_display_message_structural_dominance_violation() {
+        let structural = BalancingIssue::StructuralDominanceViolation {
+            parts: vec![CompKey::MilkFat.into()],
+            whole: CompKey::TotalFats.into(),
+            parts_target_sum: 20.0,
+            whole_target: 15.0,
+        };
+        let text = structural.to_string();
+        assert_true!(text.contains("Milk Fat"));
+        assert_true!(text.contains("part of"));
+    }
+
+    #[test]
+    fn balancing_issue_display_message_rollup_sum_mismatch() {
+        let mismatch = BalancingIssue::RollupSumMismatch {
+            whole: CompKey::MilkSolids.into(),
+            parts: vec![CompKey::MilkFat.into(), CompKey::MSNF.into()],
+            parts_target_sum: 15.0,
+            whole_target: 20.0,
+        };
+        let text = mismatch.to_string();
+        assert_true!(text.contains("inconsistent"));
+        assert_true!(text.contains("'Milk Fat' + 'MSNF'"));
+    }
+
+    #[test]
+    fn round2_drops_trailing_zeros_and_handles_infinity() {
+        assert_eq!(round2(20.0), "20"); // "20.00" → "20"
+        assert_eq!(round2(0.4), "0.4"); // "0.40" → "0.4"
+        assert_eq!(round2(15.25), "15.25"); // already two decimals, unchanged
+        assert_eq!(round2(16.666), "16.67"); // rounds to two decimals
+        assert_eq!(round2(f64::INFINITY), "∞");
+    }
+
+    #[test]
+    fn balancing_issue_display_message_over_determined() {
+        let issue = BalancingIssue::OverDetermined {
+            target_count: 4,
+            ingredient_count: 3,
+        };
+        let text = issue.to_string();
+        assert_true!(text.contains("4 targets"));
+        assert_true!(text.contains("compromise"));
     }
 
     #[test]
@@ -701,6 +904,17 @@ mod tests {
         let text = report.to_string();
         assert_true!(text.contains("[error]"));
         assert_true!(text.contains("[warning]"));
+    }
+
+    #[test]
+    fn balancing_report_display_labels_information() {
+        let report = BalancingReport {
+            issues: vec![BalancingIssue::OverDetermined {
+                target_count: 4,
+                ingredient_count: 3,
+            }],
+        };
+        assert_true!(report.to_string().contains("[information]"));
     }
 
     #[test]

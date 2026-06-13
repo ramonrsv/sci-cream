@@ -69,4 +69,21 @@ describe("WatcherIssues", () => {
     expect(lines[0]).toHaveTextContent("infeasible");
     expect(lines[0]).toHaveAttribute("data-severity", "error");
   });
+
+  it("surfaces information notes after errors and warnings, counted as notes", () => {
+    const infoIssue: BalancingIssueView = {
+      severity: "information",
+      keys: [MILK_FAT],
+      message: "3 targets with only 2 ingredients: at most 1 can be met exactly",
+    };
+    render(<WatcherIssues issues={[errorIssue, warningIssue, infoIssue]} />);
+    const toggle = screen.getByTestId("watcher-issues-toggle");
+    expect(toggle).toHaveAccessibleName(/1 error, 1 warning, 1 note/);
+
+    fireEvent.click(toggle);
+    const lines = screen.getAllByTestId("watcher-issue");
+    expect(lines).toHaveLength(3);
+    expect(lines[2]).toHaveAttribute("data-severity", "information");
+    expect(lines[2]).toHaveTextContent(infoIssue.message);
+  });
 });

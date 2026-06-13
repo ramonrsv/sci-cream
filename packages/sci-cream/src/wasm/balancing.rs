@@ -12,13 +12,13 @@ use crate::{balancing::BalancingIssue, properties::PropKey};
 
 /// A single balancing issue, flattened for the WASM/JS boundary.
 ///
-/// Carries the issue's [`Severity`] as a string ("error" or "warning"), the [`BalanceKey`]s it
-/// concerns (from [`BalancingIssue::affected_keys`]), and the human-readable text (from the issue's
-/// [`Display`](std::fmt::Display) impl). Flattening here keeps the TS side from having to mirror
-/// the Rust [`BalancingIssue`] variants — it renders this view directly.
+/// Carries the issue's [`Severity`] as a string ("error", "warning", or "information"), the
+/// [`BalanceKey`]s it concerns (from [`BalancingIssue::affected_keys`]), and the human-readable text
+/// (from the issue's [`Display`](std::fmt::Display) impl). Flattening here keeps the TS side from
+/// having to mirror the Rust [`BalancingIssue`] variants — it renders this view directly.
 #[derive(Serialize, Debug)]
 pub struct BalancingIssueView {
-    /// The severity of the issue, as a string ("error" or "warning").
+    /// The severity of the issue, as a string ("error", "warning", or "information").
     pub severity: &'static str,
     /// The keys this issue concerns, for relating it back to the offending target(s).
     pub keys: Vec<BalanceKey>,
@@ -42,6 +42,7 @@ impl From<&BalancingReport> for BalancingReportView {
                 severity: match issue.severity() {
                     Severity::Error => "error",
                     Severity::Warning => "warning",
+                    Severity::Info => "information",
                 },
                 keys: issue.affected_keys(),
                 message: issue.to_string(),

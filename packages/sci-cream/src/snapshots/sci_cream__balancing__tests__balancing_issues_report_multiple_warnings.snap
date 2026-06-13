@@ -13,6 +13,6 @@ targets:
   TotalSugars            15.00
   CocoaSolids             5.00
 
-[warning] Target for 'Milk Fat' (50.00) is outside the reachable range [0.00, 40.00]
 [warning] No ingredient contributes to 'Cocoa Solids', so its target cannot be affected
-[warning] Target for 'Sucrose' (20.00) exceeds target for 'Sugars' (15.00), but no non-negative ingredient mix can satisfy both — every ingredient's 'Sucrose' ≤ its 'Sugars'
+[warning] Target for 'Milk Fat' (50) is outside the reachable range [0, 40]
+[warning] Target for 'Sucrose' (20) exceeds target for 'Sugars' (15), but 'Sucrose' is part of 'Sugars', so it can never be larger

@@ -31,8 +31,11 @@ export function getTypicalBalancingKeys(): PropKey[] {
   return get_typical_balancing_keys() as PropKey[];
 }
 
-/** Severity of a balancing issue: `error` blocks balancing, `warning` is advisory only. */
-export type IssueSeverity = "error" | "warning";
+/**
+ * Severity of a balancing issue: `error` blocks balancing, `warning` is a best-effort caution, and
+ * `information` is a purely advisory note (e.g. over-determination) that never blocks the solve.
+ */
+export type IssueSeverity = "error" | "warning" | "information";
 
 /**
  * A single issue detected by `validate_recipe_targets`, flattened for rendering.

@@ -75,15 +75,19 @@
   --color-foc-lt: var(--color-focus-light);
   --color-foc-dk: var(--color-focus-dark);
 
-  /* Status colors: error (red) / warning (amber) — foreground + outline border */
+  /* Status colors: error (red) / warning (amber) / information (blue) — foreground + outline border */
   --color-err-lt: var(--color-red-700);
   --color-err-dk: var(--color-red-300);
   --color-warn-lt: var(--color-amber-700);
   --color-warn-dk: var(--color-amber-300);
+  --color-info-lt: var(--color-blue-700);
+  --color-info-dk: var(--color-blue-300);
   --color-err-brd-lt: var(--color-red-400);
   --color-err-brd-dk: var(--color-red-600);
   --color-warn-brd-lt: var(--color-amber-400);
   --color-warn-brd-dk: var(--color-amber-500);
+  --color-info-brd-lt: var(--color-blue-400);
+  --color-info-brd-dk: var(--color-blue-600);
 }
 
 body {
@@ -305,6 +309,13 @@ body {
   }
 }
 
+.issue-text-information {
+  @apply text-info-lt;
+  @variant dark {
+    @apply text-info-dk;
+  }
+}
+
 .issue-border-error {
   @apply border-err-brd-lt;
   @variant dark {
@@ -334,6 +345,15 @@ body {
   @apply text-warn-lt border-amber-300 bg-amber-50;
   @variant dark {
     @apply text-warn-dk border-amber-800 bg-amber-950;
+  }
+}
+
+.msg-information {
+  @apply rounded border text-sm;
+
+  @apply text-info-lt border-blue-300 bg-blue-50;
+  @variant dark {
+    @apply text-info-dk border-blue-800 bg-blue-950;
   }
 }
 

@@ -25,7 +25,7 @@ use crate::{
         SVD_SOLVE_EPSILON, TYPICAL_MIX_FAT, TYPICAL_MIX_WATER,
     },
     error::{Error, Result},
-    validate::{is_subset, is_within_range},
+    validate::{are_equal_within_epsilon, is_subset, is_within_range},
 };
 
 /// A key usable as a balancing target: either an extensive [`CompKey`] or an intensive [`RatioKey`]
@@ -205,6 +205,8 @@ pub enum Severity {
     Error,
     /// The issue is suspicious, but balancing can still proceed on a best-effort basis.
     Warning,
+    /// Advisory only — an observation about the solve that never blocks it.
+    Info,
 }
 
 /// A single problem detected in a set of balancing inputs by [`validate_balancing_targets`].
@@ -219,8 +221,7 @@ pub enum BalancingIssue {
         /// The offending non-finite value.
         value: f64,
     },
-    /// A target value is negative. Every balanceable key is non-negative, so a target `< 0` is
-    /// unreachable and almost certainly a caller bug.
+    /// A target value is negative. Every balanceable key is non-negative, so a target must be >= 0.
     ///
     /// Severity: [`Severity::Error`].
     NegativeTarget {
@@ -236,24 +237,21 @@ pub enum BalancingIssue {
         /// The key that appears more than once.
         key: BalanceKey,
     },
-    /// The same key appears more than once in the priorities, which is contradictory or ambiguous —
-    /// it is unclear which level applies (only the first would take effect; see [`Priority`]).
+    /// The same key appears more than once in the priorities, which is contradictory or ambiguous.
     ///
     /// Severity: [`Severity::Error`].
     DuplicatePriority {
         /// The priority key that appears more than once.
         key: BalanceKey,
     },
-    /// No composition in the palette contributes to this key (its row is entirely zero), so no
-    /// combination can move it away from zero.
+    /// No composition in the palette contributes to this key (its row is entirely zero).
     ///
     /// Severity: [`Severity::Warning`].
     UnaffectableTarget {
         /// The key that no composition affects.
         key: BalanceKey,
     },
-    /// The target lies outside the `[min, max]` range achievable from the palette, so no normalized
-    /// (non-negative, summing to one) combination can reach it.
+    /// The target lies outside the `[min, max]` range achievable from the palette.
     ///
     /// Severity: [`Severity::Warning`].
     UnreachableTarget {
@@ -266,45 +264,83 @@ pub enum BalancingIssue {
         /// The largest value any single composition has for this key.
         max: f64,
     },
-    /// Two targets are infeasible together: every composition has `lesser <= greater` for these
-    /// keys, yet `lesser`'s target exceeds `greater`'s, so no non-negative combination can satisfy
-    /// both. Derived from the palette, with no hardcoded key relationships.
+    /// Palette-derived infeasibility: the `lesser` targets sum above `greater`'s target, yet every
+    /// composition has `Σ lesser <= greater`. One `lesser` key is pairwise; several, additive.
     ///
     /// Severity: [`Severity::Warning`].
     DominanceViolation {
-        /// The key whose target is (infeasibly) the larger of the two.
-        lesser: BalanceKey,
-        /// The key that dominates `lesser` across every composition.
+        /// The "lesser" keys whose compositions sum under `greater` in every composition (>= 1).
+        lesser: Vec<BalanceKey>,
+        /// The key that dominates the `lesser` group across every composition.
         greater: BalanceKey,
-        /// The target requested for `lesser`.
-        lesser_target: f64,
+        /// The sum of the `lesser` targets (infeasibly greater than `greater_target`).
+        lesser_target_sum: f64,
         /// The target requested for `greater`.
         greater_target: f64,
     },
-    /// Several targets are infeasible together: their compositions sum to no more than a
-    /// "whole" key's composition in every ingredient, yet their targets sum above the whole's
-    /// target, so no non-negative combination can satisfy them all. The additive (subset-sum)
-    /// generalization of [`DominanceViolation`](Self::DominanceViolation) — which is the
-    /// single-part case. Palette-derived, with no hardcoded key relationships.
+    /// Palette-derived infeasibility: the target `Σ numerator / denominator` ratio lies outside the
+    /// `[min_ratio, max_ratio]` band the palette can reach. Also catches a pinned ratio (a lone
+    /// ingredient fixing `numerator : denominator`). One numerator key is pairwise.
     ///
     /// Severity: [`Severity::Warning`].
-    AdditiveDominanceViolation {
-        /// The "whole" key whose target the parts collectively exceed.
-        whole: BalanceKey,
-        /// The "part" keys whose compositions sum under `whole` in every composition (always >= 2).
+    RatioInfeasibility {
+        /// The numerator keys, summed for the ratio (>= 1).
+        numerator: Vec<BalanceKey>,
+        /// The denominator key of the ratio.
+        denominator: BalanceKey,
+        /// The requested `Σ numerator targets / denominator target` ratio.
+        target_ratio: f64,
+        /// The smallest `Σ numerator / denominator` ratio any composition has.
+        min_ratio: f64,
+        /// The largest such ratio any composition has (infinite when some has a zero denominator).
+        max_ratio: f64,
+    },
+    /// Palette-independent contradiction: the `parts` targets sum above `whole`'s, but each part is
+    /// structurally part of `whole` (see [`CompKey::is_part_of`]), so `Σ parts <= whole` by
+    /// definition. A single part is the pairwise case (e.g. a `MilkFat` target above `TotalFats`).
+    ///
+    /// Severity: [`Severity::Warning`].
+    StructuralDominanceViolation {
+        /// The structural part keys whose targets exceed `whole` (each is a part of `whole`; >= 1).
         parts: Vec<BalanceKey>,
-        /// The sum of the parts' targets (infeasibly greater than `whole_target`).
+        /// The whole key the `parts` belong to in the composition hierarchy.
+        whole: BalanceKey,
+        /// The sum of the `parts` targets (infeasibly greater than `whole_target`).
         parts_target_sum: f64,
         /// The target requested for `whole`.
         whole_target: f64,
     },
-    /// A priority was set for a key that is not among the targets, so it has no effect — the solver
-    /// only weights target rows. Likely a mistake: a forgotten target or a mistyped key.
+    /// Palette-independent contradiction: `whole` is a residual-free roll-up that equals its parts'
+    /// sum in every composition (see [`CompKey::is_residual_free_rollup`]), yet the targets for
+    /// `whole` and all its parts disagree. Also catches a `whole` target too *large* for its parts.
+    ///
+    /// Severity: [`Severity::Warning`].
+    RollupSumMismatch {
+        /// The residual-free roll-up key whose target disagrees with its parts' targets.
+        whole: BalanceKey,
+        /// The roll-up's parts, all of which are targets (their values must sum to `whole`).
+        parts: Vec<BalanceKey>,
+        /// The sum of the `parts` targets (not equal to `whole_target`).
+        parts_target_sum: f64,
+        /// The target requested for `whole`.
+        whole_target: f64,
+    },
+    /// A priority names a key with no target, so it has no effect — only target rows are weighted.
     ///
     /// Severity: [`Severity::Warning`].
     PriorityWithoutTarget {
         /// The priority key that has no corresponding target.
         key: BalanceKey,
+    },
+    /// More targets than the palette can independently satisfy: the sum-to-one constraint leaves
+    /// only `ingredient_count - 1` free dimensions, so the solve is a best-fit compromise.
+    ///
+    /// Severity: [`Severity::Info`].
+    OverDetermined {
+        /// The number of targets at least one composition can move (the rest are dropped first).
+        target_count: usize,
+        /// The number of ingredients (compositions) in the palette.
+        ingredient_count: usize,
     },
 }
 
@@ -321,12 +357,18 @@ impl BalancingIssue {
             Self::UnaffectableTarget { .. }
             | Self::UnreachableTarget { .. }
             | Self::DominanceViolation { .. }
-            | Self::AdditiveDominanceViolation { .. }
+            | Self::RatioInfeasibility { .. }
+            | Self::StructuralDominanceViolation { .. }
+            | Self::RollupSumMismatch { .. }
             | Self::PriorityWithoutTarget { .. } => Severity::Warning,
+            Self::OverDetermined { .. } => Severity::Info,
         }
     }
 
     /// The [`BalanceKey`]s this issue concerns, for relating it back to the offending target(s).
+    ///
+    /// Group issues list the single "whole"/"greater"/"denominator" key first, then its group. The
+    /// palette-wide [`OverDetermined`](Self::OverDetermined) issue concerns no specific key.
     #[must_use]
     pub fn affected_keys(&self) -> Vec<BalanceKey> {
         match self {
@@ -337,19 +379,25 @@ impl BalancingIssue {
             | Self::UnaffectableTarget { key }
             | Self::UnreachableTarget { key, .. }
             | Self::PriorityWithoutTarget { key } => vec![*key],
-            Self::DominanceViolation { lesser, greater, .. } => vec![*lesser, *greater],
-            Self::AdditiveDominanceViolation { whole, parts, .. } => [&[*whole], parts.as_slice()].concat(),
+            Self::DominanceViolation { lesser, greater, .. } => [&[*greater], lesser.as_slice()].concat(),
+            Self::RatioInfeasibility {
+                numerator, denominator, ..
+            } => [&[*denominator], numerator.as_slice()].concat(),
+            Self::StructuralDominanceViolation { parts, whole, .. } | Self::RollupSumMismatch { whole, parts, .. } => {
+                [&[*whole], parts.as_slice()].concat()
+            }
+            Self::OverDetermined { .. } => vec![],
         }
     }
 }
 
 /// The result of validating balancing inputs: the full list of detected [`BalancingIssue`]s.
 ///
-/// Use [`errors`](Self::errors) / [`warnings`](Self::warnings) to partition by [`Severity`], or
-/// [`into_result`](Self::into_result) to turn any error-severity issues into an [`Error`].
+/// Use [`errors`](Self::errors), [`warnings`](Self::warnings), [`infos`](Self::infos) to partition
+/// by [`Severity`], or [`into_result`](Self::into_result) to turn any error-severity into [`Error`]
 #[derive(Debug, Clone, Default, Serialize, Deserialize)]
 pub struct BalancingReport {
-    /// Every issue detected, in the order the checks were run; may mix errors and warnings.
+    /// Every issue detected, in the order the checks were run; may mix errors, warnings, and infos.
     pub issues: Vec<BalancingIssue>,
 }
 
@@ -362,6 +410,11 @@ impl BalancingReport {
     /// Iterates the warning-severity issues (suspicious, but balancing can still proceed).
     pub fn warnings(&self) -> impl Iterator<Item = &BalancingIssue> {
         self.issues.iter().filter(|issue| issue.severity() == Severity::Warning)
+    }
+
+    /// Iterates the information-severity issues (advisory observations that never block the solve).
+    pub fn infos(&self) -> impl Iterator<Item = &BalancingIssue> {
+        self.issues.iter().filter(|issue| issue.severity() == Severity::Info)
     }
 
     /// Returns `true` if any error-severity issue was detected.
@@ -401,13 +454,15 @@ impl BalancingReport {
 ///
 /// The checks are:
 /// - **Error** — non-finite or negative target values, duplicate target keys or priority keys.
-/// - **Warning** — targets no composition affects, targets outside the palette's reachable range,
-///   infeasible target pairs (dominance check), infeasible part/whole groups (additive check), and
-///   priorities whose key has no target.
+/// - **Warning** — targets no composition affects; targets outside the palette's reachable range
+///   (including ratio-key targets); palette-derived dominance and ratio-band infeasibilities
+///   (pairwise and additive); palette-independent structural contradictions (a part target above
+///   its whole, or a residual-free roll-up disagreeing with its parts); and target-less priorities.
+/// - **Information** — over-determination (more targets than the palette can independently satisfy)
 ///
-/// The range and dominance warnings assume the non-negative, normalized (summing to one) solution
-/// that [`balance_compositions`] targets. `priorities` is the same list [`balance_compositions`]
-/// accepts; only its keys are checked (against duplicates and missing targets), not its levels.
+/// The reachability, dominance, and ratio warnings assume the non-negative, normalized (summing to
+/// one) solution that [`balance_compositions`] targets. `priorities` is the same list
+/// [`balance_compositions`] accepts; keys are checked (against duplicates and missing targets).
 #[must_use]
 pub fn validate_balancing_targets(
     comps: &[Composition],
@@ -475,27 +530,17 @@ fn append_input_warning_issues(
     // skipped (reported as errors). Ratio keys get the unaffectable check but skip the range check,
     // having no single-key magnitude to compare against the palette.
     for &(key, target) in targets {
-        if !target.is_finite() || target < 0.0 {
-            continue;
-        }
-
-        if is_unaffectable(comps, key, target) {
+        if target.is_finite() && target >= 0.0 && is_unaffectable(comps, key, target) {
             issues.push(BalancingIssue::UnaffectableTarget { key });
-            continue; // range checks add only noise for an all-zero row
-        }
-
-        // Ratio keys skip the range check, having no single-key magnitude to compare.
-        if let BalanceKey::Comp(comp_key) = key
-            && let Some((min, max)) = reachable_range(comps, comp_key)
-            && !is_within_range(target, min, max)
-        {
-            issues.push(BalancingIssue::UnreachableTarget { key, target, min, max });
         }
     }
 
-    // Palette-derived dominance infeasibilities: pairwise, then additive (subset-sum) groups.
-    append_pairwise_dominance_issues(comps, targets, issues);
-    append_additive_dominance_issues(comps, targets, issues);
+    append_reachability_issues(comps, targets, issues);
+    append_structural_issues(targets, issues);
+    append_palette_pairwise_issues(comps, targets, issues);
+    append_palette_additive_issues(comps, targets, issues);
+    append_palette_multi_ratio_issues(comps, targets, issues);
+    append_over_determination_issue(comps, targets, issues);
 
     // A priority whose key is not among the targets is a no-op: only target rows are weighted.
     // Duplicates are reported as errors elsewhere, so each distinct key is checked once.
@@ -537,35 +582,169 @@ fn is_key_unaffectable(comps: &[Composition], key: CompKey) -> bool {
     comps.iter().all(|comp| comp.get(key) == 0.0)
 }
 
-/// The `[min, max]` range of per-composition values for `key`, or `None` if `comps` is empty.
+/// The sum of a composition's values over a group of keys.
+fn group_value(comp: &Composition, keys: &[CompKey]) -> f64 {
+    keys.iter().map(|&key| comp.get(key)).sum()
+}
+
+/// The `[min, max]` band of the achievable group ratio `Σ num / Σ den` across `comps`, or `None`
+/// when no composition has a positive denominator (the ratio is everywhere undefined).
 ///
-/// Any normalized (non-negative, summing to one) combination of the compositions yields a value for
-/// `key` within this range, so a target outside it is unreachable.
-fn reachable_range(comps: &[Composition], key: CompKey) -> Option<(f64, f64)> {
-    let mut values = comps.iter().map(|comp| comp.get(key));
-    let first = values.next()?;
-    Some(values.fold((first, first), |(min, max), value| (min.min(value), max.max(value))))
+/// The single primitive behind every reachability, dominance, and ratio check. Because the
+/// achievable mixes form the convex hull of `comps`, the achievable `Σ num / Σ den` is a convex
+/// combination of the per-composition ratios and therefore lies in this band, so a target ratio
+/// outside it is unreachable by any non-negative normalized mix.
+///
+/// An empty `den` denotes the implicit sum-to-one total (`Σ den = 1`), reducing the band to the
+/// reachable range of the absolute quantity `Σ num` (the magnitude check). `max` is
+/// [`f64::INFINITY`] when some composition has a zero denominator but a positive numerator.
+fn ratio_band(comps: &[Composition], num: &[CompKey], den: &[CompKey]) -> Option<(f64, f64)> {
+    let mut band: Option<(f64, f64)> = None;
+    let mut unbounded_above = false;
+
+    for comp in comps {
+        let numerator = group_value(comp, num);
+        let denominator = if den.is_empty() { 1.0 } else { group_value(comp, den) };
+        if denominator > 0.0 {
+            let ratio = numerator / denominator;
+            band = Some(band.map_or((ratio, ratio), |(min, max)| (min.min(ratio), max.max(ratio))));
+        } else if numerator > 0.0 {
+            unbounded_above = true;
+        }
+    }
+
+    band.map(|(min, max)| (min, if unbounded_above { f64::INFINITY } else { max }))
+}
+
+/// Pushes the issue built by `emit(min, max)` when `ratio` falls outside the band `(min, max)`.
+///
+/// The shared comparator for the ratio-band checks. Epsilon-aware via [`is_within_range`]; an
+/// infinite `max` leaves the upper bound always satisfied. `emit` lets each caller attach the
+/// simplest issue for its shape (reachability, dominance, or ratio).
+fn push_if_off_band(
+    ratio: f64,
+    (min, max): (f64, f64),
+    issues: &mut Vec<BalancingIssue>,
+    emit: impl FnOnce(f64, f64) -> BalancingIssue,
+) {
+    if !is_within_range(ratio, min, max) {
+        issues.push(emit(min, max));
+    }
 }
 
 /// Returns `true` if `greater` dominates `lesser` across `comps`: every composition has
 /// `lesser <= greater` for these keys (epsilon-aware). Vacuously false for an empty palette.
+///
+/// The subtraction-based classifier for the `max <= 1` band corner, kept distinct from
+/// [`ratio_band`] because it is robust where a denominator vanishes.
 fn dominates(comps: &[Composition], greater: CompKey, lesser: CompKey) -> bool {
     !comps.is_empty() && comps.iter().all(|comp| is_subset(comp.get(lesser), comp.get(greater)))
 }
 
-/// Returns `true` if `key`/`target` is a meaningful target to compare in the dominance checks: not
-/// a ratio key (its homogeneous row has no single-key magnitude), finite, non-negative, and
-/// affected by at least one composition. Non-finite and negative targets have their own checks.
+/// Returns `true` if `key`/`target` is a meaningful target to compare in the dominance/ratio
+/// checks: not a ratio key (its homogeneous row has no single-key magnitude), finite, non-negative,
+/// and affected by at least one composition. Non-finite and negative targets have their own checks.
 fn is_dominance_checkable_target(comps: &[Composition], key: BalanceKey, target: f64) -> bool {
     !key.is_ratio() && target.is_finite() && target >= 0.0 && !is_unaffectable(comps, key, target)
 }
 
-/// Appends the pairwise dominance infeasibility warnings for `targets`.
+/// Returns `true` if `target` is a meaningful target to compare against the ratio band.
+fn is_finite_non_negative(target: f64) -> bool {
+    target.is_finite() && target >= 0.0
+}
+
+/// Returns the target value for `key` from `targets`, or `None` if it is not a target.
+fn value_of(targets: &[(CompKey, f64)], key: CompKey) -> Option<f64> {
+    targets.iter().find_map(|&(k, v)| (k == key).then_some(v))
+}
+
+/// Appends the reachability warnings: a target outside the band the palette can reach.
 ///
-/// Ignores non-[`is_dominance_checkable_target`]s - those have their own checks and would add noise
-/// here. Such dominance checkable targets are always extensive ([`BalanceKey::Comp`]), so the
-/// dominance comparison operates on their [`CompKey`] magnitudes.
-fn append_pairwise_dominance_issues(
+/// For an extensive key this is the absolute magnitude band ([`ratio_band`] with an empty
+/// denominator); for a ratio key it is its numerator/denominator band scaled to a percentage,
+/// Unaffectable and non-finite or negative targets are handled elsewhere and skipped here.
+fn append_reachability_issues(comps: &[Composition], targets: &[(BalanceKey, f64)], issues: &mut Vec<BalancingIssue>) {
+    for &(key, target) in targets {
+        if is_finite_non_negative(target) && !is_unaffectable(comps, key, target) {
+            let emit = |min, max| BalancingIssue::UnreachableTarget { key, target, min, max };
+
+            if let Some(band) = match key {
+                BalanceKey::Comp(comp_key) => ratio_band(comps, &[comp_key], &[]),
+                BalanceKey::Ratio(ratio) => {
+                    let (num, den) = ratio.parts();
+                    ratio_band(comps, &[num], &[den]).map(|(min, max)| (min * 100.0, max * 100.0))
+                }
+            } {
+                push_if_off_band(target, band, issues, emit);
+            }
+        }
+    }
+}
+
+/// Appends the palette-independent structural coherence warnings.
+///
+/// Two checks, both derived from the composition hierarchy and true regardless of the palette:
+///   - **ordering** — a part may not exceed a whole it is part of (see [`CompKey::is_part_of`]);
+///   - **completeness** — when every direct child of a residual-free roll-up (see
+///     [`CompKey::is_residual_free_rollup`]) is a target, children must sum to the whole exactly.
+///
+/// Only extensive, finite, non-negative targets participate.
+fn append_structural_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<BalancingIssue>) {
+    let comp_targets: Vec<(CompKey, f64)> = targets
+        .iter()
+        .filter_map(|&(key, target)| match key {
+            BalanceKey::Comp(comp_key) if is_finite_non_negative(target) => Some((comp_key, target)),
+            _ => None,
+        })
+        .collect();
+
+    // Ordering: a part target above the target of a whole it belongs to is a contradiction.
+    for &(part, part_target) in &comp_targets {
+        for &(whole, whole_target) in &comp_targets {
+            if part.is_part_of(whole) && !is_subset(part_target, whole_target) {
+                issues.push(BalancingIssue::StructuralDominanceViolation {
+                    parts: vec![part.into()],
+                    whole: whole.into(),
+                    parts_target_sum: part_target,
+                    whole_target,
+                });
+            }
+        }
+    }
+
+    // Completeness: a residual-free roll-up's children, if all targeted, must sum to its target.
+    for &(whole, whole_target) in &comp_targets {
+        if whole.is_residual_free_rollup() {
+            let children = whole.children();
+
+            if let Some(child_targets) = children
+                .iter()
+                .map(|&child| value_of(&comp_targets, child))
+                .collect::<Option<Vec<f64>>>()
+            {
+                let parts_target_sum: f64 = child_targets.iter().sum();
+                if !are_equal_within_epsilon(parts_target_sum, whole_target) {
+                    issues.push(BalancingIssue::RollupSumMismatch {
+                        whole: whole.into(),
+                        parts: children.iter().map(|&child| child.into()).collect(),
+                        parts_target_sum,
+                        whole_target,
+                    });
+                }
+            }
+        }
+    }
+}
+
+#[cfg(doc)]
+use BalancingIssue::{DominanceViolation, RatioInfeasibility};
+
+/// Appends the palette-derived pairwise infeasibilities for non-structural key pairs.
+///
+/// For each [`is_dominance_checkable_target`] pair the `max <= 1` band corner is reported as the
+/// clearer [`DominanceViolation`]; otherwise the general ratio band catches pinned or off-band
+/// ratios as [`RatioInfeasibility`]. Structural part/whole pairs: [`append_structural_issues`].
+fn append_palette_pairwise_issues(
     comps: &[Composition],
     targets: &[(BalanceKey, f64)],
     issues: &mut Vec<BalancingIssue>,
@@ -578,22 +757,28 @@ fn append_pairwise_dominance_issues(
                 if let BalanceKey::Comp(comp_b) = key_b
                     && is_dominance_checkable_target(comps, key_b, target_b)
                 {
-                    // Palette-derived dominance check: if one key dominates the other across all
-                    // comps but carries the smaller target, no non-negative mix can satisfy both.
+                    // Structural ordering is owned by `append_structural_issues`; for part/whole
+                    // pairs suppress the palette dominance issue, but still let the ratio band
+                    // catch off-pin ratios the ordering check can't see.
+                    let structural = comp_a.is_part_of(comp_b) || comp_b.is_part_of(comp_a);
+
+                    let mut push = |lesser, greater, lesser_target_sum, greater_target| {
+                        if !structural {
+                            issues.push(BalancingIssue::DominanceViolation {
+                                lesser: vec![lesser],
+                                greater,
+                                lesser_target_sum,
+                                greater_target,
+                            });
+                        }
+                    };
+
                     if dominates(comps, comp_b, comp_a) && !is_subset(target_a, target_b) {
-                        issues.push(BalancingIssue::DominanceViolation {
-                            lesser: key_a,
-                            greater: key_b,
-                            lesser_target: target_a,
-                            greater_target: target_b,
-                        });
+                        push(key_a, key_b, target_a, target_b);
                     } else if dominates(comps, comp_a, comp_b) && !is_subset(target_b, target_a) {
-                        issues.push(BalancingIssue::DominanceViolation {
-                            lesser: key_b,
-                            greater: key_a,
-                            lesser_target: target_b,
-                            greater_target: target_a,
-                        });
+                        push(key_b, key_a, target_b, target_a);
+                    } else {
+                        append_pairwise_ratio_issue(comps, issues, (comp_a, target_a), (comp_b, target_b));
                     }
                 }
             }
@@ -601,18 +786,56 @@ fn append_pairwise_dominance_issues(
     }
 }
 
-/// Appends additive (subset-sum) dominance warnings: cases where several "part" targets together
-/// exceed a "whole" target whose composition bounds their sum in every composition.
+/// Appends the palette-derived pairwise ratio infeasibility  warnings.
+///
+/// Appends a [`RatioInfeasibility`] when the target ratio of two extensive keys falls outside the
+/// band their palette can reach. Orients the ratio so the denominator's target is positive (the
+/// feasibility is equivalent); a pair with both targets zero constrains nothing and is skipped.
+fn append_pairwise_ratio_issue(
+    comps: &[Composition],
+    issues: &mut Vec<BalancingIssue>,
+    a: (CompKey, f64),
+    b: (CompKey, f64),
+) {
+    let (num, den) = if b.1 > 0.0 {
+        (a, b)
+    } else if a.1 > 0.0 {
+        (b, a)
+    } else {
+        return;
+    };
+
+    let ((num_key, num_target), (den_key, den_target)) = (num, den);
+
+    if let Some(band) = ratio_band(comps, &[num_key], &[den_key]) {
+        let ratio = num_target / den_target;
+
+        push_if_off_band(ratio, band, issues, |min, max| BalancingIssue::RatioInfeasibility {
+            numerator: vec![num_key.into()],
+            denominator: den_key.into(),
+            target_ratio: ratio,
+            min_ratio: min,
+            max_ratio: max,
+        });
+    }
+}
+
+/// Appends the palette-derived warnings for a subset-sum group of "part" targets measured against a
+/// "whole" target whose composition bounds their sum in every composition.
 ///
 /// For each candidate `whole` target, greedily accumulates the other checkable targets whose
 /// running per-composition sum stays `<= whole`'s composition across all compositions
-/// (epsilon-aware). If two or more parts accumulate and their targets sum above `whole`'s target,
-/// the combination is infeasible for a non-negative normalized mix.
+/// (epsilon-aware), giving a group whose `Σ parts / whole` band has `max <= 1`. The upper corner —
+/// the parts' targets summing past the whole — is the friendlier [`DominanceViolation`]; otherwise
+/// the combined target share is checked against the band and a [`RatioInfeasibility`] is emitted
+/// when it falls below what the palette can reach (e.g. parts the palette pins to nearly all of the
+/// whole, yet targeted well under that share). Single-part pairs are left to
+/// [`append_palette_pairwise_issues`], and the complete-children case of a residual-free roll-up to
+/// [`append_structural_issues`]; this flags `parts.len() >= 2` otherwise.
 ///
-/// Single-part cases are left to [`append_pairwise_dominance_issues`]; this only flags
-/// `parts.len() >= 2`. The accumulation is greedy — sound (never false-positive) but not
-/// exhaustive, so it may miss some violating subsets, which is acceptable for best-effort warnings.
-fn append_additive_dominance_issues(
+/// The accumulation is greedy — sound (never false-positive) but not exhaustive, so it may miss
+/// some violating subsets, which is acceptable for best-effort warnings.
+fn append_palette_additive_issues(
     comps: &[Composition],
     targets: &[(BalanceKey, f64)],
     issues: &mut Vec<BalancingIssue>,
@@ -623,11 +846,12 @@ fn append_additive_dominance_issues(
         {
             // Greedily accumulate parts whose running per-composition sum stays under `whole`'s.
             let mut running = vec![0.0_f64; comps.len()];
-            let mut parts = Vec::new();
+            let mut part_comps: Vec<CompKey> = Vec::new();
             let mut parts_target_sum = 0.0;
 
             for &(part, part_target) in targets {
                 if let BalanceKey::Comp(part_comp) = part
+                    && part != whole
                     && is_dominance_checkable_target(comps, part, part_target)
                 {
                     let fits = comps
@@ -639,20 +863,129 @@ fn append_additive_dominance_issues(
                         for (comp, acc) in comps.iter().zip(&mut running) {
                             *acc += comp.get(part_comp);
                         }
-                        parts.push(part);
+
+                        part_comps.push(part_comp);
                         parts_target_sum += part_target;
                     }
                 }
             }
 
-            if parts.len() >= 2 && !is_subset(parts_target_sum, whole_target) {
-                issues.push(BalancingIssue::AdditiveDominanceViolation {
-                    whole,
-                    parts,
-                    parts_target_sum,
-                    whole_target,
-                });
+            // The complete set of a residual-free roll-up's children is owned by the structural
+            // completeness check (`RollupSumMismatch`), so skip here to avoid double-reporting.
+            let owned_by_completeness = whole_comp.is_residual_free_rollup()
+                && whole_comp.children().iter().all(|child| part_comps.contains(child));
+
+            if part_comps.len() >= 2 && !owned_by_completeness {
+                if !is_subset(parts_target_sum, whole_target) {
+                    // Upper corner: the parts' targets sum past the whole that bounds them.
+                    issues.push(BalancingIssue::DominanceViolation {
+                        lesser: part_comps.iter().map(|&comp| comp.into()).collect(),
+                        greater: whole,
+                        lesser_target_sum: parts_target_sum,
+                        greater_target: whole_target,
+                    });
+                } else if whole_target > 0.0
+                    && let Some((min, max)) = ratio_band(comps, &part_comps, &[whole_comp])
+                {
+                    // Lower corner: the combined share `Σ parts / whole` must lie in the palette's
+                    // band; target below its minimum is unreachable even when each part fits alone.
+                    let target_ratio = parts_target_sum / whole_target;
+                    push_if_off_band(target_ratio, (min, max), issues, |min_r, max_r| {
+                        BalancingIssue::RatioInfeasibility {
+                            numerator: part_comps.iter().map(|&comp| comp.into()).collect(),
+                            denominator: whole,
+                            target_ratio,
+                            min_ratio: min_r,
+                            max_ratio: max_r,
+                        }
+                    });
+                }
             }
+        }
+    }
+}
+
+/// Appends palette-derived infeasibility warnings for pairs of numerator keys summed against a
+/// denominator.
+///
+/// For each ordered pair of target keys `(key_a, key_b)` and each remaining target `key_den`,
+/// checks whether the palette-reachable band for `(key_a + key_b) / key_den` contains the target
+/// ratio. This catches cases that the pairwise check misses: the combined ratio can exceed the
+/// combined band maximum even when each individual ratio stays within its own pairwise band,
+/// because the per-ingredient compositions that achieve the individual maxima may differ.
+///
+/// Only fires when `band.max > 1`; the `max ≤ 1` case (the combined numerator never exceeds the
+/// denominator across the palette) is the additive dominance scenario owned by
+/// [`append_palette_additive_issues`]. A numerator pair where one key is a structural part of the
+/// other is skipped (its sum double-counts the lesser); a structural denominator is kept, since the
+/// `max > 1` guard already excludes the ordering corner [`append_structural_issues`] owns.
+fn append_palette_multi_ratio_issues(
+    comps: &[Composition],
+    targets: &[(BalanceKey, f64)],
+    issues: &mut Vec<BalancingIssue>,
+) {
+    for (i, &(key_a, target_a)) in targets.iter().enumerate() {
+        if let BalanceKey::Comp(comp_a) = key_a
+            && is_dominance_checkable_target(comps, key_a, target_a)
+        {
+            for &(key_b, target_b) in &targets[i + 1..] {
+                if let BalanceKey::Comp(comp_b) = key_b
+                    && is_dominance_checkable_target(comps, key_b, target_b)
+                    // Skip pairs where one numerator is a structural part of the other;
+                    // their sum double-counts the lesser and has no clear interpretation.
+                    && !comp_a.is_part_of(comp_b)
+                    && !comp_b.is_part_of(comp_a)
+                {
+                    for &(key_den, target_den) in targets {
+                        if let BalanceKey::Comp(comp_den) = key_den
+                            && key_den != key_a
+                            && key_den != key_b
+                            && is_dominance_checkable_target(comps, key_den, target_den)
+                            && target_den > 0.0
+                            && let Some((min, max)) = ratio_band(comps, &[comp_a, comp_b], &[comp_den])
+                            // The max <= 1 case (combined numerator never exceeds denominator) is the
+                            // additive dominance scenario owned by append_palette_additive_issues.
+                            && !is_subset(max, 1.0)
+                        {
+                            let ratio = (target_a + target_b) / target_den;
+                            push_if_off_band(ratio, (min, max), issues, |min_r, max_r| {
+                                BalancingIssue::RatioInfeasibility {
+                                    numerator: vec![key_a, key_b],
+                                    denominator: key_den,
+                                    target_ratio: ratio,
+                                    min_ratio: min_r,
+                                    max_ratio: max_r,
+                                }
+                            });
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
+
+/// Appends the over-determination information notice.
+///
+/// With `n` ingredients the sum-to-one constraint leaves `n - 1` degrees of freedom, so more than
+/// `n - 1` movable targets must be met approximately. A degrees-of-freedom heuristic that ignores
+/// linear dependence among target rows — hence [`Severity::Info`], not a warning.
+fn append_over_determination_issue(
+    comps: &[Composition],
+    targets: &[(BalanceKey, f64)],
+    issues: &mut Vec<BalancingIssue>,
+) {
+    if !comps.is_empty() {
+        let target_count = targets
+            .iter()
+            .filter(|&&(key, target)| is_dominance_checkable_target(comps, key, target))
+            .count();
+
+        if target_count > comps.len() - 1 {
+            issues.push(BalancingIssue::OverDetermined {
+                target_count,
+                ingredient_count: comps.len(),
+            });
         }
     }
 }
@@ -2788,9 +3121,9 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn validate_flags_dominance_for_sucrose_over_total_sugars() {
-        // Every ingredient has Sucrose <= TotalSugars, so a Sucrose target above the TotalSugars
-        // target is verifiably infeasible — the palette-derived dominance check catches it.
+    fn validate_flags_structural_dominance_for_sucrose_over_total_sugars() {
+        // Sucrose is structurally part of TotalSugars, so a Sucrose target above the TotalSugars
+        // target is a logical contradiction the palette-independent structural check catches first
         let comps = comps_from_names(DAIRY_SUGAR_ING);
         let targets = [(CompKey::Sucrose.into(), 20.0), (CompKey::TotalSugars.into(), 15.0)];
         let report = validate_balancing_targets(&comps, &targets, &[]);
@@ -2798,20 +3131,28 @@ pub(crate) mod tests {
         assert_false!(report.has_errors());
         assert_true!(report.warnings().any(|issue| matches!(
             issue,
-            BalancingIssue::DominanceViolation {
-                lesser: BalanceKey::Comp(CompKey::Sucrose),
-                greater: BalanceKey::Comp(CompKey::TotalSugars),
-                lesser_target: 20.0,
-                greater_target: 15.0,
-            }
+            BalancingIssue::StructuralDominanceViolation {
+                whole: BalanceKey::Comp(CompKey::TotalSugars),
+                parts_target_sum,
+                whole_target,
+                parts,
+            } if parts.as_slice() == [BalanceKey::Comp(CompKey::Sucrose)]
+                && *parts_target_sum == 20.0
+                && *whole_target == 15.0
         )));
+
+        // The palette dominance check must not also fire for this structural pair (no duplicate).
+        assert_false!(
+            report
+                .warnings()
+                .any(|issue| matches!(issue, BalancingIssue::DominanceViolation { .. }))
+        );
     }
 
     #[test]
     fn validate_flags_additive_dominance_for_sugars_over_total_sugars() {
-        // Each individual sugar target (10) is <= the TotalSugars target (15), so the pairwise
-        // check stays silent. But Sucrose + Fructose sum under TotalSugars in every ingredient, so
-        // their targets summing to 20 > 15 is infeasible — caught only by the additive check.
+        // Sucrose + Fructose sum under TotalSugars in every ingredient, yet their targets sum to
+        // 20 > 15 — infeasible only as a group (no single sugar exceeds TotalSugars).
         let comps = comps_from_names(SUGAR_BLEND_ING);
         let targets = [
             (CompKey::Sucrose.into(), 10.0),
@@ -2821,20 +3162,19 @@ pub(crate) mod tests {
         let report = validate_balancing_targets(&comps, &targets, &[]);
 
         assert_false!(report.has_errors());
-        // The pairwise check must NOT fire here (that's the point of the additive generalization).
-        assert_false!(
-            report
-                .warnings()
-                .any(|i| matches!(i, BalancingIssue::DominanceViolation { .. }))
-        );
+        // No single-part (pairwise) dominance: every individual sugar target is within TotalSugars.
+        assert_false!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::DominanceViolation { lesser, .. } if lesser.len() == 1
+        )));
         assert_true!(report.warnings().any(|issue| matches!(
             issue,
-            BalancingIssue::AdditiveDominanceViolation {
-                whole: BalanceKey::Comp(CompKey::TotalSugars),
-                parts_target_sum,
-                whole_target,
-                ..
-            } if *parts_target_sum == 20.0 && *whole_target == 15.0
+            BalancingIssue::DominanceViolation {
+                greater: BalanceKey::Comp(CompKey::TotalSugars),
+                lesser,
+                lesser_target_sum,
+                greater_target,
+            } if lesser.len() == 2 && *lesser_target_sum == 20.0 && *greater_target == 15.0
         )));
     }
 
@@ -2864,7 +3204,7 @@ pub(crate) mod tests {
 
         assert_false!(report.warnings().any(|issue| matches!(
             issue,
-            BalancingIssue::DominanceViolation { lesser, greater, .. } if lesser == greater
+            BalancingIssue::DominanceViolation { lesser, greater, .. } if lesser.first() == Some(greater)
         )));
     }
 
@@ -2873,6 +3213,231 @@ pub(crate) mod tests {
         let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &DAIRY_TRIVIAL_TARGETS, &[]);
         assert_true!(report.is_empty());
         assert_false!(report.has_errors());
+    }
+
+    #[test]
+    fn validate_flags_ratio_infeasibility_for_pinned_cocoa_ratio() {
+        // The only cocoa source pins CocoaButter : CocoaSolids ≈ 0.2. A 2 : 5 (0.4) target is off
+        // that pin yet keeps CocoaButter <= CocoaSolids, so only the ratio-band check catches it.
+        let comps = comps_from_names(DAIRY_COCOA_ING);
+        let targets = [(CompKey::CocoaButter.into(), 2.0), (CompKey::CocoaSolids.into(), 5.0)];
+        let report = validate_balancing_targets(&comps, &targets, &[]);
+
+        assert_false!(report.has_errors());
+        assert_true!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::RatioInfeasibility {
+                numerator,
+                denominator: BalanceKey::Comp(CompKey::CocoaSolids),
+                target_ratio,
+                ..
+            } if numerator.as_slice() == [BalanceKey::Comp(CompKey::CocoaButter)]
+                && (*target_ratio - 0.4).abs() < TESTS_EPSILON
+        )));
+
+        // It is an off-band ratio, not a dominance violation (CocoaButter <= CocoaSolids holds).
+        assert_false!(
+            report
+                .warnings()
+                .any(|issue| matches!(issue, BalancingIssue::DominanceViolation { .. }))
+        );
+    }
+
+    #[test]
+    fn validate_flags_ratio_infeasibility_from_multiple_sources() {
+        // All three dairy ingredients pin MilkProteins : MSNF ≈ 0.35. A target of 3 : 10 = 0.30
+        // is off-band even though multiple sources agree on the same pinned value.
+        let comps = comps_from_names(DAIRY_ING);
+        // MilkProteins is listed first so it becomes the numerator in the pairwise check.
+        let targets = [(CompKey::MilkProteins.into(), 3.0), (CompKey::MSNF.into(), 10.0)];
+        let report = validate_balancing_targets(&comps, &targets, &[]);
+
+        assert_false!(report.has_errors());
+        assert_true!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::RatioInfeasibility {
+                numerator,
+                denominator: BalanceKey::Comp(CompKey::MSNF),
+                target_ratio,
+                ..
+            } if numerator.as_slice() == [BalanceKey::Comp(CompKey::MilkProteins)]
+                && (*target_ratio - 0.3).abs() < TESTS_EPSILON
+        )));
+    }
+
+    #[test]
+    fn validate_flags_multi_ratio_infeasibility_from_multiple_sources() {
+        // Every sugar in these two milks is a named one (Sealtest is all lactose, lactose-free is
+        // all glucose + galactose), so the palette pins (Lactose + Glucose + Galactose) / TotalSugars
+        // at 1. Each part fits individually, but the combined target share 2.0 / 4.7 ≈ 0.43 is below
+        // that pin — infeasible only as a group, which only the grouped ratio band catches.
+        let comps = comps_from_names(&["Sealtest 0% Skim Milk", "Lactose-Free 0% Milk"]);
+        let targets = [
+            (CompKey::TotalSugars.into(), 4.7),
+            (CompKey::Lactose.into(), 1.0),
+            (CompKey::Glucose.into(), 0.5),
+            (CompKey::Galactose.into(), 0.5),
+        ];
+        let report = validate_balancing_targets(&comps, &targets, &[]);
+
+        assert_false!(report.has_errors());
+        assert_true!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::RatioInfeasibility {
+                numerator,
+                denominator: BalanceKey::Comp(CompKey::TotalSugars),
+                target_ratio,
+                ..
+            } if numerator.len() == 3
+                && numerator.contains(&BalanceKey::Comp(CompKey::Lactose))
+                && numerator.contains(&BalanceKey::Comp(CompKey::Glucose))
+                && numerator.contains(&BalanceKey::Comp(CompKey::Galactose))
+                && (*target_ratio - 2.0 / 4.7).abs() < TESTS_EPSILON
+        )));
+    }
+
+    #[test]
+    fn validate_flags_multi_ratio_infeasibility_when_combined_exceeds_band_max() {
+        // In DAIRY_ING, the (MilkFat + MSNF) / Water band is approximately [0.136, 32.33].
+        // The individual pairwise bands for MilkFat/Water ≈ [0.037, 0.733] and
+        // MSNF/Water ≈ [0.099, 32] are each satisfied by these targets, but the combined band
+        // max (32.33) is lower than the sum of the individual maxima (32.73), so targets can
+        // exceed the combined max without triggering either pairwise check.
+        let comps = comps_from_names(DAIRY_ING);
+        let targets = [
+            (CompKey::MilkFat.into(), 1.5), // MilkFat/Water = 0.5 — within [0.037, 0.733]
+            (CompKey::MSNF.into(), 96.0),   // MSNF/Water   = 32  — within [0.099, 32]
+            (CompKey::Water.into(), 3.0),   // combined     = 32.5 — above 32.33
+        ];
+        let report = validate_balancing_targets(&comps, &targets, &[]);
+
+        assert_false!(report.has_errors());
+        assert_true!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::RatioInfeasibility {
+                numerator,
+                denominator: BalanceKey::Comp(CompKey::Water),
+                ..
+            } if numerator.len() == 2
+                && numerator.contains(&BalanceKey::Comp(CompKey::MilkFat))
+                && numerator.contains(&BalanceKey::Comp(CompKey::MSNF))
+        )));
+
+        // No pairwise ratio issue fires — both individual ratios are within their bands.
+        assert_false!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::RatioInfeasibility { numerator, .. } if numerator.len() == 1
+        )));
+    }
+
+    #[test]
+    fn validate_no_multi_ratio_issue_when_combined_within_band() {
+        // Same palette; combined ratio of 32 is within the [0.136, 32.33] band.
+        let comps = comps_from_names(DAIRY_ING);
+        let targets = [
+            (CompKey::MilkFat.into(), 1.0),
+            (CompKey::MSNF.into(), 95.0),
+            (CompKey::Water.into(), 3.0),
+        ];
+        let report = validate_balancing_targets(&comps, &targets, &[]);
+
+        assert_false!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::RatioInfeasibility { numerator, .. } if numerator.len() == 2
+        )));
+    }
+
+    #[test]
+    fn validate_flags_palette_dominance_for_non_structural_pair() {
+        // CocoaButter and CocoaSolids are siblings, and the lone cocoa source pins CocoaButter <=
+        // CocoaSolids, so a higher CocoaButter target is a palette dominance violation.
+        let comps = comps_from_names(DAIRY_COCOA_ING);
+        let targets = [(CompKey::CocoaButter.into(), 10.0), (CompKey::CocoaSolids.into(), 5.0)];
+        let report = validate_balancing_targets(&comps, &targets, &[]);
+
+        assert_false!(report.has_errors());
+        assert_true!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::DominanceViolation {
+                greater: BalanceKey::Comp(CompKey::CocoaSolids),
+                lesser,
+                lesser_target_sum,
+                greater_target,
+            } if lesser.as_slice() == [BalanceKey::Comp(CompKey::CocoaButter)]
+                && *lesser_target_sum == 10.0
+                && *greater_target == 5.0
+        )));
+
+        // Siblings, not a part/whole pair, so the structural check stays silent.
+        assert_false!(
+            report
+                .warnings()
+                .any(|issue| matches!(issue, BalancingIssue::StructuralDominanceViolation { .. }))
+        );
+    }
+
+    #[test]
+    fn validate_flags_rollup_sum_mismatch_for_incomplete_milk_solids() {
+        // MilkSolids is a residual-free roll-up of MilkFat + MSNF, so both children targets must
+        // sum to it. 10 + 5 = 15 != 20 contradicts the palette-independent completeness check.
+        let comps = comps_from_names(DAIRY_ING);
+        let targets = [
+            (CompKey::MilkFat.into(), 10.0),
+            (CompKey::MSNF.into(), 5.0),
+            (CompKey::MilkSolids.into(), 20.0),
+        ];
+        let report = validate_balancing_targets(&comps, &targets, &[]);
+
+        assert_false!(report.has_errors());
+        assert_true!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::RollupSumMismatch {
+                whole: BalanceKey::Comp(CompKey::MilkSolids),
+                parts,
+                parts_target_sum,
+                whole_target,
+            } if parts.as_slice() == [BalanceKey::Comp(CompKey::MilkFat), BalanceKey::Comp(CompKey::MSNF)]
+                && *parts_target_sum == 15.0
+                && *whole_target == 20.0
+        )));
+    }
+
+    #[test]
+    fn validate_flags_unreachable_ratio_key_target() {
+        // Ratio keys now get a reachability check: every dairy ingredient has positive water, so
+        // AbsPAC (TotalPAC / Water) has a finite band an enormous target overshoots.
+        let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(RatioKey::AbsPAC.into(), 1.0e9)], &[]);
+
+        assert_false!(report.has_errors());
+        assert_true!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::UnreachableTarget {
+                key: BalanceKey::Ratio(RatioKey::AbsPAC),
+                ..
+            }
+        )));
+    }
+
+    #[test]
+    fn validate_flags_over_determination_as_information() {
+        // Three movable targets with only three ingredients: the sum-to-one constraint leaves two
+        // free dimensions, so the system is over-determined. Advisory only — never blocks.
+        let comps = comps_from_names(DAIRY_ING);
+        let targets = [
+            (CompKey::MilkFat.into(), 16.0),
+            (CompKey::MSNF.into(), 11.0),
+            (CompKey::Lactose.into(), 5.0),
+        ];
+        let report = validate_balancing_targets(&comps, &targets, &[]);
+
+        assert_false!(report.has_errors());
+        assert_true!(report.infos().any(|issue| matches!(
+            issue,
+            BalancingIssue::OverDetermined {
+                target_count: 3,
+                ingredient_count: 3,
+            }
+        )));
     }
 
     // --- BalancingIssue::affected_keys ---
@@ -2896,29 +3461,70 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn affected_keys_dominance_names_both_keys() {
+    fn affected_keys_dominance_names_greater_then_lesser() {
         let lesser = BalanceKey::Comp(CompKey::Sucrose);
         let greater = BalanceKey::Comp(CompKey::TotalSugars);
         let issue = BalancingIssue::DominanceViolation {
-            lesser,
+            lesser: vec![lesser],
             greater,
-            lesser_target: 20.0,
+            lesser_target_sum: 20.0,
             greater_target: 15.0,
         };
-        assert_eq!(issue.affected_keys(), vec![lesser, greater]);
+        // The single "greater" key comes first, then the "lesser" group.
+        assert_eq!(issue.affected_keys(), vec![greater, lesser]);
     }
 
     #[test]
-    fn affected_keys_additive_dominance_names_whole_then_parts() {
-        let whole = BalanceKey::Comp(CompKey::TotalSugars);
-        let parts = vec![BalanceKey::Comp(CompKey::Sucrose), BalanceKey::Comp(CompKey::Fructose)];
-        let issue = BalancingIssue::AdditiveDominanceViolation {
-            whole,
-            parts: parts.clone(),
-            parts_target_sum: 20.0,
-            whole_target: 15.0,
+    fn affected_keys_grouped_dominance_names_greater_then_parts() {
+        let greater = BalanceKey::Comp(CompKey::TotalSugars);
+        let lesser = vec![BalanceKey::Comp(CompKey::Sucrose), BalanceKey::Comp(CompKey::Fructose)];
+        let issue = BalancingIssue::DominanceViolation {
+            lesser: lesser.clone(),
+            greater,
+            lesser_target_sum: 20.0,
+            greater_target: 15.0,
         };
-        assert_eq!(issue.affected_keys(), vec![whole, parts[0], parts[1]]);
+        assert_eq!(issue.affected_keys(), vec![greater, lesser[0], lesser[1]]);
+    }
+
+    #[test]
+    fn affected_keys_ratio_infeasibility_names_denominator_then_numerator() {
+        let denominator = BalanceKey::Comp(CompKey::CocoaSolids);
+        let numerator = vec![BalanceKey::Comp(CompKey::CocoaButter)];
+        let issue = BalancingIssue::RatioInfeasibility {
+            numerator: numerator.clone(),
+            denominator,
+            target_ratio: 0.5,
+            min_ratio: 0.2,
+            max_ratio: 0.2,
+        };
+        assert_eq!(issue.affected_keys(), vec![denominator, numerator[0]]);
+    }
+
+    #[test]
+    fn affected_keys_ratio_infeasibility_multi_key_numerator_lists_all_keys() {
+        let denominator = BalanceKey::Comp(CompKey::TotalFats);
+        let numerator = vec![
+            BalanceKey::Comp(CompKey::MilkFat),
+            BalanceKey::Comp(CompKey::CocoaButter),
+        ];
+        let issue = BalancingIssue::RatioInfeasibility {
+            numerator: numerator.clone(),
+            denominator,
+            target_ratio: 0.9,
+            min_ratio: 0.2,
+            max_ratio: 0.8,
+        };
+        assert_eq!(issue.affected_keys(), vec![denominator, numerator[0], numerator[1]]);
+    }
+
+    #[test]
+    fn affected_keys_over_determined_names_no_key() {
+        let issue = BalancingIssue::OverDetermined {
+            target_count: 4,
+            ingredient_count: 3,
+        };
+        assert_eq!(issue.affected_keys(), Vec::<BalanceKey>::new());
     }
 
     // --- BalancingReport ---
@@ -2936,10 +3542,12 @@ pub(crate) mod tests {
         assert_true!(report.has_errors());
         assert_false!(report.is_empty());
         assert_eq!(report.errors().count(), 1);
+
+        // Sucrose is part of TotalSugars, so the infeasible pair surfaces as a structural warning.
         assert_true!(
             report
                 .warnings()
-                .any(|i| matches!(i, BalancingIssue::DominanceViolation { .. }))
+                .any(|i| matches!(i, BalancingIssue::StructuralDominanceViolation { .. }))
         );
     }
 
@@ -3023,5 +3631,39 @@ pub(crate) mod tests {
                 &ceiling,
             );
         }
+    }
+
+    #[test]
+    fn ratio_band_with_empty_denominator_is_the_value_range() {
+        // An empty denominator gives the absolute magnitude band — the reachable value range.
+        let comps = comps_from_names(DAIRY_ING);
+        let (min, max) = ratio_band(&comps, &[CompKey::MilkFat], &[]).unwrap();
+        let values: Vec<f64> = comps.iter().map(|comp| comp.get(CompKey::MilkFat)).collect();
+        assert_eq!(min, values.iter().copied().fold(f64::INFINITY, f64::min));
+        assert_eq!(max, values.iter().copied().fold(f64::NEG_INFINITY, f64::max));
+    }
+
+    #[test]
+    fn ratio_band_pins_a_single_source_ratio() {
+        // Only cocoa has CocoaSolids > 0, so CocoaButter : CocoaSolids is pinned to its 16.7 : 83.3
+        let comps = comps_from_names(DAIRY_COCOA_ING);
+        let (min, max) = ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSolids]).unwrap();
+        assert_true!((min - max).abs() < TESTS_EPSILON);
+        assert_true!((min - 16.67 / 83.33).abs() < 1e-3);
+    }
+
+    #[test]
+    fn ratio_band_is_unbounded_above_with_zero_denominator_source() {
+        // Sucrose has TotalPAC with zero Water, so TotalPAC : Water is unbounded above.
+        let comps = comps_from_names(DAIRY_SUGAR_ING);
+        let (_, max) = ratio_band(&comps, &[CompKey::TotalPAC], &[CompKey::Water]).unwrap();
+        assert_true!(max.is_infinite());
+    }
+
+    #[test]
+    fn ratio_band_is_none_when_denominator_never_positive() {
+        // No cocoa source → CocoaSolids is zero everywhere, so the ratio is undefined.
+        let comps = comps_from_names(DAIRY_ING);
+        assert!(ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSolids]).is_none());
     }
 }

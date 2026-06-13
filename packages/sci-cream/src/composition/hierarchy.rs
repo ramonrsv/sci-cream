@@ -394,6 +394,45 @@ impl CompKey {
     pub fn is_rollup(self) -> bool {
         STRUCTURAL_INDEX.children.contains_key(&self)
     }
+
+    /// Whether this key is a transitive part of `whole` — i.e. `whole` is an ancestor roll-up
+    /// reachable by following [`parents`](Self::parents). A key is **not** a part of itself.
+    ///
+    /// Because a part never exceeds its roll-up in any [`Composition`] (see
+    /// [`children`](Self::children)), `self.is_part_of(whole)` implies `self <= whole` always.
+    #[must_use]
+    pub fn is_part_of(self, whole: Self) -> bool {
+        self.parents()
+            .iter()
+            .any(|&parent| parent == whole || parent.is_part_of(whole))
+    }
+
+    /// Whether this key is a residual-free (exact) roll-up: its value equals the sum of its
+    /// [`children`](Self::children) exactly in every [`Composition`], with no residual.
+    ///
+    /// The remaining roll-ups (e.g. [`CompKey::TotalSNF`], [`CompKey::MilkSNFS`]) keep a residual
+    /// beyond their listed parts, so for them the parts only sum to *no more than* the whole.
+    #[must_use]
+    pub const fn is_residual_free_rollup(self) -> bool {
+        matches!(
+            self,
+            Self::TotalSolids
+                | Self::TotalFats
+                | Self::TotalSugars
+                | Self::TotalPolyols
+                | Self::TotalArtificial
+                | Self::TotalSweeteners
+                | Self::TotalSNFS
+                | Self::TotalPAC
+                | Self::TotalStabilizers
+                | Self::TotalEmulsifiers
+                | Self::MilkSolids
+                | Self::MSNF
+                | Self::CacaoSolids
+                | Self::NutSolids
+                | Self::EggSolids
+        )
+    }
 }
 
 /// The structural composition hierarchy forest. See the [module docs](self) for how it is read.
@@ -499,25 +538,7 @@ mod tests {
     #[test]
     fn exact_rollups_equal_their_children() {
         for comp in &*ALL_COMPS {
-            // This list encodes which roll-ups are residual-free
-            let exact = [
-                TotalSolids,
-                TotalFats,
-                TotalSugars,
-                TotalPolyols,
-                TotalArtificial,
-                TotalSweeteners,
-                TotalSNFS,
-                TotalPAC,
-                TotalStabilizers,
-                TotalEmulsifiers,
-                MilkSolids,
-                MSNF,
-                CacaoSolids,
-                NutSolids,
-                EggSolids,
-            ];
-            for rollup in exact {
+            for rollup in CompKey::iter().filter(|key| key.is_residual_free_rollup()) {
                 let parts_sum: f64 = rollup.children().iter().map(|&part| comp.get(part)).sum();
                 assert!(
                     (comp.get(rollup) - parts_sum).abs() <= COMPOSITION_EPSILON,
@@ -526,6 +547,28 @@ mod tests {
                 );
             }
         }
+    }
+
+    #[test]
+    fn residual_free_rollups_are_rollups() {
+        // A residual-free roll-up must actually be a roll-up; guards against a typo in the list.
+        for key in CompKey::iter().filter(|key| key.is_residual_free_rollup()) {
+            assert!(key.is_rollup(), "{key:?} is marked residual-free but is not a roll-up");
+        }
+    }
+
+    #[test]
+    fn is_part_of_is_transitive_and_strict() {
+        // Direct parts.
+        assert!(MilkFat.is_part_of(MilkSolids));
+        assert!(MilkProteins.is_part_of(MilkSNFS));
+        // Transitive: MilkFat -> TotalFats -> TotalSolids.
+        assert!(MilkFat.is_part_of(TotalSolids));
+        // Siblings are not in a part/whole relationship.
+        assert!(!CocoaButter.is_part_of(CocoaSolids));
+        // A key is not a part of itself, and an ancestor is not a part of its descendant.
+        assert!(!MilkFat.is_part_of(MilkFat));
+        assert!(!TotalSolids.is_part_of(MilkFat));
     }
 
     #[test]
