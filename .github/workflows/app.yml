@@ -20,6 +20,9 @@ on:
     branches: ["main"]
 
 env:
+  # Prevents `github-action-benchmark`'s internal `git checkout -` from smudging unneeded LFS files
+  GIT_LFS_SKIP_SMUDGE: "1"
+
   AUTH_SECRET: 66ab177cbeb0cb863edc40b69fcfbf4081c5bb37dd89bca026b30ef4393dace1
 
 defaults:
@@ -69,6 +72,9 @@ jobs:
           - 5434:5432
     env:
       POSTGRES_URL: postgres://postgres:password@localhost:5434/sci_cream
+      # Override the workflow-level skip: this is the only job that needs LFS
+      # file contents (visual regression snapshots), checked out via `lfs: true`.
+      GIT_LFS_SKIP_SMUDGE: "0"
     steps:
       - uses: actions/checkout@v5
         with:
