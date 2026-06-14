@@ -37,7 +37,6 @@
 - [ ] Look into implementing a derive macro to automatically define all field-update methods.
 - [ ] Remove `Composition` functions for calculating ratios, `get_ratio` already handles that.
 - [ ] Add the inverse of `compKeyToPropKey`, etc., that is `propKeyToCompKey` for str -> enum.
-- [ ] Add support for a `Low` balancing `Priority`, which is a similar factor below `Normal`.
 - [ ] If all children of a key have a target, we can infer the parent's target and use it in checks.
 
 ## Backlog
@@ -90,6 +89,7 @@
 
 ## Completed
 
+- [x] Add support for a `Low` balancing `Priority`, which is a similar factor below `Normal`.
 - [x] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [x] Add top-level `lib.rs` and `README.md` docs and code examples for balancing functionality.
 - [x] Add evaporated and condensed milk products from Goff & Hartel, as references for comparison.

@@ -9,6 +9,7 @@ import { PropKey } from "./prop-key";
  * the same manner as the `PropKey` and `BalanceKey` enums, which also use string values in TS.
  */
 export enum Priority {
+  Low = "Low",
   Normal = "Normal",
   High = "High",
   Critical = "Critical",

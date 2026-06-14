@@ -325,10 +325,10 @@ describe("WatcherCard", () => {
     expect(onPriorityChange).toHaveBeenCalledWith(Priority.High);
   });
 
-  it("wraps the priority cycle back to Normal after Critical", () => {
+  it("wraps the priority cycle: Critical → Low → Normal", () => {
     const main = makeMockRecipe(RecipeID.Main);
     const onPriorityChange = vi.fn();
-    render(
+    const { rerender } = render(
       <WatcherCard
         propKey={MSNF}
         main={main}
@@ -340,7 +340,21 @@ describe("WatcherCard", () => {
       />,
     );
     fireEvent.click(screen.getByTestId(`watcher-card-${String(MSNF)}-priority`));
-    expect(onPriorityChange).toHaveBeenCalledWith(Priority.Normal);
+    expect(onPriorityChange).toHaveBeenLastCalledWith(Priority.Low);
+
+    rerender(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        target={9.5}
+        priority={Priority.Low}
+        onTargetChange={vi.fn()}
+        onPriorityChange={onPriorityChange}
+        onRemove={vi.fn()}
+      />,
+    );
+    fireEvent.click(screen.getByTestId(`watcher-card-${String(MSNF)}-priority`));
+    expect(onPriorityChange).toHaveBeenLastCalledWith(Priority.Normal);
   });
 
   it("renders a placeholder value when the recipe is empty", () => {
@@ -628,13 +642,10 @@ describe("WatchersView", () => {
   });
 
   it("drops the priority entry when cycled back to Normal, keeping the map sparse", () => {
-    localStorage.setItem(
-      STORAGE_KEYS.watcherPriorities,
-      JSON.stringify({ [MSNF]: Priority.Critical }),
-    );
+    localStorage.setItem(STORAGE_KEYS.watcherPriorities, JSON.stringify({ [MSNF]: Priority.Low }));
     const main = makeMockRecipe(RecipeID.Main);
     render(<WatchersView main={main} />);
-    // Hydrated as Critical; one click wraps back to Normal, which drops the entry.
+    // Hydrated as Low; one click advances to Normal, which drops the entry.
     fireEvent.click(screen.getByTestId(`watcher-card-${String(MSNF)}-priority`));
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherPriorities) ?? "{}");
     expect(MSNF in stored).toBe(false);

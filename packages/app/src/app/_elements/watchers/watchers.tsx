@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   ArrowDown,
   ArrowUp,
+  ChevronDown,
   ChevronsUp,
   ChevronUp,
   X,
@@ -58,15 +59,16 @@ import { WatcherIssues, KeyIssue } from "@/app/_elements/watchers/watcher-issues
 export type TargetsMap = Partial<Record<PropKey, number>>;
 
 /**
- * Map of `PropKey` to user-chosen balancing {@link Priority}; sparse, only entries the user has
- * raised above {@link Priority.Normal} (the default) are tracked.
+ * Map of `PropKey` to user-chosen balancing {@link Priority}; sparse, only
+ * non-{@link Priority.Normal} entries are tracked — both above-Normal ({@link Priority.High},
+ * {@link Priority.Critical}) and below-Normal ({@link Priority.Low}).
  */
 export type PrioritiesMap = Partial<Record<PropKey, Priority>>;
 
-/** Ordered priority cycle for the click-to-cycle control: Normal → High → Critical → Normal. */
-const PRIORITY_CYCLE = [Priority.Normal, Priority.High, Priority.Critical] as const;
+/** Ordered priority cycle for the click-to-cycle control: Low → Normal → High → Critical → Low. */
+const PRIORITY_CYCLE = [Priority.Low, Priority.Normal, Priority.High, Priority.Critical] as const;
 
-/** The next priority in {@link PRIORITY_CYCLE}, wrapping back to Normal after Critical. */
+/** The next priority in {@link PRIORITY_CYCLE}, wrapping back to Low after Critical. */
 function nextPriority(priority: Priority): Priority {
   const i = PRIORITY_CYCLE.indexOf(priority);
   return PRIORITY_CYCLE[(i + 1) % PRIORITY_CYCLE.length];
@@ -81,6 +83,10 @@ function PriorityMarker({ priority }: { priority: Priority }) {
   const size = COMPONENT_ACTION_ICON_SIZE;
 
   switch (priority) {
+    case Priority.Low:
+      return (
+        <ChevronDown size={size} strokeWidth={4} style={{ color: colorVar(Color.GraphBlue) }} />
+      );
     case Priority.High:
       return (
         <ChevronUp size={size} strokeWidth={4} style={{ color: colorVar(Color.GraphOrange) }} />

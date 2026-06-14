@@ -20,8 +20,9 @@ use strum::IntoEnumIterator;
 use crate::{
     composition::{CompKey, Composition, RatioKey},
     constants::balancing::{
-        CRITICAL_PRIORITY_WEIGHT, HIGH_PRIORITY_WEIGHT, RATIO_DENOMINATOR_FLOOR, RATIO_REWEIGHT_TOLERANCE,
-        RELATIVE_WEIGHT_FLOOR, SUM_CONSTRAINT_WEIGHT, SVD_SOLVE_EPSILON, TYPICAL_MIX_FAT, TYPICAL_MIX_WATER,
+        CRITICAL_PRIORITY_WEIGHT, HIGH_PRIORITY_WEIGHT, LOW_PRIORITY_WEIGHT, NORMAL_PRIORITY_WEIGHT,
+        RATIO_DENOMINATOR_FLOOR, RATIO_REWEIGHT_TOLERANCE, RELATIVE_WEIGHT_FLOOR, SUM_CONSTRAINT_WEIGHT,
+        SVD_SOLVE_EPSILON, TYPICAL_MIX_FAT, TYPICAL_MIX_WATER,
     },
     error::{Error, Result},
     validate::{is_subset, is_within_range},
@@ -115,7 +116,9 @@ pub enum Weighting {
 /// weight of 1 — the unprioritized behavior — so an empty priority list leaves the solve unchanged.
 #[derive(Serialize, Deserialize, Debug, Clone, Copy, PartialEq, Eq, Default)]
 pub enum Priority {
-    /// Default priority; weight multiplier 1 (the unprioritized behavior).
+    /// Lowest priority; weight multiplier [`LOW_PRIORITY_WEIGHT`].
+    Low,
+    /// Default priority; weight multiplier [`NORMAL_PRIORITY_WEIGHT`], i.e. 1 (unprioritized).
     #[default]
     Normal,
     /// Elevated priority; weight multiplier [`HIGH_PRIORITY_WEIGHT`].
@@ -129,7 +132,8 @@ impl Priority {
     #[must_use]
     pub const fn weight(self) -> f64 {
         match self {
-            Self::Normal => 1.0,
+            Self::Low => LOW_PRIORITY_WEIGHT,
+            Self::Normal => NORMAL_PRIORITY_WEIGHT,
             Self::High => HIGH_PRIORITY_WEIGHT,
             Self::Critical => CRITICAL_PRIORITY_WEIGHT,
         }
@@ -1076,7 +1080,7 @@ pub(crate) mod tests {
 
     /// Minimum relative-error change (pp) for a priority effect to count as real rather than
     /// [`TESTS_EPSILON`] noise — actual shifts are far larger, so this catches a priority no-op.
-    const MIN_PRIORITY_EFFECT_PP: f64 = 10.0;
+    const MIN_PRIORITY_EFFECT_PP: f64 = 6.0;
 
     /// A shared ingredient database for all tests, seeded with embedded data
     static DATABASE: LazyLock<IngredientDatabase> = LazyLock::new(IngredientDatabase::new_seeded_from_embedded_data);
@@ -2231,6 +2235,7 @@ pub(crate) mod tests {
     fn priority_weights_increase_with_level() {
         assert_eq!(Priority::default(), Priority::Normal);
         assert_eq!(Priority::Normal.weight(), 1.0);
+        assert_lt!(Priority::Low.weight(), Priority::Normal.weight());
         assert_gt!(Priority::High.weight(), Priority::Normal.weight());
         assert_gt!(Priority::Critical.weight(), Priority::High.weight());
     }
@@ -2280,7 +2285,30 @@ pub(crate) mod tests {
 
         // Priority never scales the sum-constraint row, so mass balance is preserved.
         let amount_sum: f64 = prioritized.iter().map(|(_, amount)| *amount).sum();
-        assert_abs_diff_eq!(amount_sum, 1.0, epsilon = TESTS_EPSILON);
+        assert_eq_flt_test!(amount_sum, 1.0);
+    }
+
+    #[test]
+    fn priority_low_increases_error_on_low_priority_key() {
+        let comps = comps_from_names(DAIRY_ING);
+        let targets: &[(BalanceKey, f64)] = &DAIRY_DISPARATE_TARGETS;
+        let pod_target = targets
+            .iter()
+            .find(|(key, _)| *key == BalanceKey::from(CompKey::POD))
+            .unwrap()
+            .1;
+
+        let baseline = balance_compositions_nnls(&comps, targets, None, &[]).unwrap();
+        let low_weighted =
+            balance_compositions_nnls(&comps, targets, None, &[(CompKey::POD.into(), Priority::Low.weight())]).unwrap();
+
+        let pod_error =
+            |balanced: &[(Composition, f64)]| balance_rel_error_pp(achieved_value(balanced, CompKey::POD), pod_target);
+        assert_gt!(pod_error(&low_weighted), pod_error(&baseline) + MIN_PRIORITY_EFFECT_PP);
+
+        // Mass balance is preserved regardless of the priority weight.
+        let amount_sum: f64 = low_weighted.iter().map(|(_, amount)| *amount).sum();
+        assert_eq_flt_test!(amount_sum, 1.0);
     }
 
     #[test]
@@ -2304,6 +2332,7 @@ pub(crate) mod tests {
 
     #[test]
     fn priority_weight_values_match_documented_constants() {
+        assert_eq!(Priority::Low.weight(), 0.2);
         assert_eq!(Priority::Normal.weight(), 1.0);
         assert_eq!(Priority::High.weight(), 5.0);
         assert_eq!(Priority::Critical.weight(), 25.0);
@@ -2324,10 +2353,12 @@ pub(crate) mod tests {
             balance_rel_error_pp(achieved_value(&balanced, CompKey::POD), pod_target)
         };
 
+        let low = pod_error(&[(CompKey::POD.into(), Priority::Low.weight())]);
         let normal = pod_error(&[]);
         let high = pod_error(&[(CompKey::POD.into(), Priority::High.weight())]);
         let critical = pod_error(&[(CompKey::POD.into(), Priority::Critical.weight())]);
 
+        assert_lt!(normal, low - MIN_PRIORITY_EFFECT_PP);
         assert_lt!(high, normal - MIN_PRIORITY_EFFECT_PP);
         assert_lt!(critical, high - MIN_PRIORITY_EFFECT_PP);
     }

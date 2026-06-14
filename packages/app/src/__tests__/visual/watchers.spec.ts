@@ -187,6 +187,30 @@ test.describe("Visual Regression: WatcherCard remove button, highlights", () => 
   });
 });
 
+test.describe("Visual Regression: WatcherCard priority toggle", () => {
+  test("priority marker at each of the four priority states", async ({ page }) => {
+    await presetWatcherSelection(page, [KEY_WITH_RANGE]);
+    await goToPageAndWaitFor(page);
+    await selectKeyFilterCustom(page);
+
+    const card = await locateWatcherCardByKeyAndExpectVisible(page, KEY_WITH_RANGE);
+    const priorityButton = card.getByTestId(`watcher-card-${KEY_WITH_RANGE}-priority`);
+
+    await expect(card).toHaveScreenshot("watcher-card-priority-normal.png");
+
+    // Using .dispatchEvent("click") instead of .click() to avoid hover state styling
+
+    await priorityButton.dispatchEvent("click");
+    await expect(card).toHaveScreenshot("watcher-card-priority-high.png");
+
+    await priorityButton.dispatchEvent("click");
+    await expect(card).toHaveScreenshot("watcher-card-priority-critical.png");
+
+    await priorityButton.dispatchEvent("click");
+    await expect(card).toHaveScreenshot("watcher-card-priority-low.png");
+  });
+});
+
 test.describe("Visual Regression: WatchersView balancing issues", () => {
   test("warnings and errors hint and dropdown", async ({ page, browserName }) => {
     test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");

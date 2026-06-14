@@ -13,11 +13,20 @@ use crate::{
 /// large-but-finite weight instead of dividing by zero.
 pub const RELATIVE_WEIGHT_FLOOR: f64 = 0.1;
 
+/// Factor by which a priority level increases from the previous one
+pub const PRIORITY_LEVEL_FACTOR: f64 = 5.0;
+
+/// Row-weight multiplier for a [`Priority::Low`] target.
+pub const LOW_PRIORITY_WEIGHT: f64 = NORMAL_PRIORITY_WEIGHT / PRIORITY_LEVEL_FACTOR;
+
+/// Row-weight multiplier for a [`Priority::Normal`] target.
+pub const NORMAL_PRIORITY_WEIGHT: f64 = 1.0;
+
 /// Row-weight multiplier for a [`Priority::High`] target.
-pub const HIGH_PRIORITY_WEIGHT: f64 = 5.0;
+pub const HIGH_PRIORITY_WEIGHT: f64 = NORMAL_PRIORITY_WEIGHT * PRIORITY_LEVEL_FACTOR;
 
 /// Row-weight multiplier for a [`Priority::Critical`] target.
-pub const CRITICAL_PRIORITY_WEIGHT: f64 = 25.0;
+pub const CRITICAL_PRIORITY_WEIGHT: f64 = HIGH_PRIORITY_WEIGHT * PRIORITY_LEVEL_FACTOR;
 
 /// Fixed weight on the total-sum (mass-balance) row under [`Weighting::Relative`].
 ///
