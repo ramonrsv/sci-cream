@@ -11,7 +11,6 @@
 - [ ] Add TS-side unit tests for the `wasm::Recipe` functionality; it's independent from `Bridge`.
 - [ ] Add a list of typical balancing targets that achieve a successful balance, and export it.
 - [ ] Only check error-severity issues in `balance_compositions`; warnings are discarded and costly.
-- [ ] Add snapshot tests for the balancing issue reports, for various synthetic and real scenarios.
 
 ## Up Next
 
@@ -89,6 +88,7 @@
 
 ## Completed
 
+- [x] Add snapshot tests for the balancing issue reports, for various synthetic and real scenarios.
 - [x] Add support for a `Low` balancing `Priority`, which is a similar factor below `Normal`.
 - [x] Consider introducing something like a `Flavouring` spec for extracts, e.g. vanilla extract.
 - [x] Add top-level `lib.rs` and `README.md` docs and code examples for balancing functionality.

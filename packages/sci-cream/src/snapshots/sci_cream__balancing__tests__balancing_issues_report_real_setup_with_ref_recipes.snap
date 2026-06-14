@@ -1,0 +1,24 @@
+---
+source: packages/sci-cream/src/balancing.rs
+expression: "report_balancing_issues(&comps, &targets, &[], None)"
+---
+targets:
+  MilkFat                15.37
+  MSNF                   11.36
+  CocoaButter             2.00
+  CocoaSolids             6.00
+  NutSNF                  0.00
+  EggSNF                  0.74
+  POD                    12.16
+  TotalSolids            40.24
+  TotalFats              16.54
+  Salt                    0.08
+  StabilizersPerWater     0.25
+  EmulsifiersPerFat       2.12
+  ABV                     0.00
+  AbsNetPAC              42.54
+
+[warning] No ingredient contributes to 'Cocoa Butter', so its target cannot be affected
+[warning] No ingredient contributes to 'Cocoa Solids', so its target cannot be affected
+[warning] No ingredient contributes to 'Nut SNF', so its target cannot be affected
+[warning] No ingredient contributes to 'ABV', so its target cannot be affected

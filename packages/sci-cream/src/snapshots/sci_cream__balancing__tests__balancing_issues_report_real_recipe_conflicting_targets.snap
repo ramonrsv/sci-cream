@@ -1,0 +1,11 @@
+---
+source: packages/sci-cream/src/balancing.rs
+expression: "report_balancing_issues(&comps, &targets, &[], None)"
+---
+targets:
+  MilkFat                45.00
+  Sucrose                25.00
+  TotalSugars            18.00
+
+[warning] Target for 'Milk Fat' (45.00) is outside the reachable range [0.00, 36.00]
+[warning] Target for 'Sucrose' (25.00) exceeds target for 'Sugars' (18.00), but no non-negative ingredient mix can satisfy both — every ingredient's 'Sucrose' ≤ its 'Sugars'

@@ -1233,6 +1233,17 @@ pub(crate) mod tests {
         }
     }
 
+    /// Renders a [`BalanceKey`] as its inner variant name (e.g. `MilkFat`, `AbsPAC`).
+    ///
+    /// Used in snapshot headers so they stay stable across the `CompKey` -> `BalanceKey` migration
+    /// and read like the source enums (the user-facing report itself uses the friendlier labels).
+    fn balance_key_label(key: BalanceKey) -> String {
+        match key {
+            BalanceKey::Comp(comp) => format!("{comp:?}"),
+            BalanceKey::Ratio(ratio) => format!("{ratio:?}"),
+        }
+    }
+
     /// Builds a deterministic, human-readable balance-quality report for `insta` snapshots.
     ///
     /// Runs every labelled run in `runs` against the same `comps` / `targets` and, per run, lists
@@ -1245,13 +1256,6 @@ pub(crate) mod tests {
         runs: &[LabeledRun],
         names: Option<&[&str]>,
     ) -> String {
-        // Print the inner variant name (e.g. "MilkFat", "AbsPAC") so snapshots stay stable across
-        // the `CompKey` -> `BalanceKey` migration.
-        let key_str = |key: &BalanceKey| match key {
-            BalanceKey::Comp(comp) => format!("{comp:?}"),
-            BalanceKey::Ratio(ratio) => format!("{ratio:?}"),
-        };
-
         let truncate_to = |name: &str, length: usize| {
             if name.len() > length {
                 format!("{}...", &name[..length - 3])
@@ -1264,7 +1268,7 @@ pub(crate) mod tests {
 
         let header = targets
             .iter()
-            .map(|(key, value)| format!("  {:<18}{value:>7.2}", key_str(key)))
+            .map(|(key, value)| format!("  {:<18}{value:>7.2}", balance_key_label(*key)))
             .collect::<Vec<_>>()
             .join("\n");
         lines.append(&mut vec![format!("targets:\n{header}")]);
@@ -1298,7 +1302,10 @@ pub(crate) mod tests {
                 let achieved = achieved_value(&balanced, *key);
                 let error = balance_rel_error_pp(achieved, *target);
                 errors.push(error);
-                lines.push(format!("  {:<18}{target:>7.2}   {achieved:>7.2}   {error:>7.2} pp", key_str(key)));
+                lines.push(format!(
+                    "  {:<18}{target:>7.2}   {achieved:>7.2}   {error:>7.2} pp",
+                    balance_key_label(*key)
+                ));
             }
 
             let amounts_sum: f64 = balanced.iter().map(|(_, amount)| *amount).sum();
@@ -1309,6 +1316,44 @@ pub(crate) mod tests {
             lines.push("\n  [    sum     |  neg. |    max    |    rms  ]".to_string());
             lines.push(format!("    {amounts_sum:>7.4}      {neg_count:>3}    {max:>7.2} pp  {rms:>7.2} pp"));
         }
+
+        lines.join("\n")
+    }
+
+    /// Builds a deterministic, human-readable balancing-issues report for `insta` snapshots.
+    ///
+    /// Echoes the scenario inputs (palette `names` when given, `targets`, and any `priorities`),
+    /// then the user-facing [`BalancingReport`] rendering from [`validate_balancing_targets`] — the
+    /// same text that crosses the WASM boundary as `BalancingIssueView.message`. Snapshotting it
+    /// keeps the wording under review: clear, correctly attributed to keys, and free of spurious or
+    /// duplicate issues.
+    fn report_balancing_issues(
+        comps: &[Composition],
+        targets: &[(BalanceKey, f64)],
+        priorities: &[(BalanceKey, Priority)],
+        names: Option<&[&str]>,
+    ) -> String {
+        let mut lines = Vec::new();
+
+        if let Some(names) = names {
+            lines.push("palette:".to_string());
+            lines.extend(names.iter().map(|name| format!("  {name}")));
+        }
+
+        lines.push("targets:".to_string());
+        for (key, value) in targets {
+            lines.push(format!("  {:<20}{value:>8.2}", balance_key_label(*key)));
+        }
+
+        if !priorities.is_empty() {
+            lines.push("priorities:".to_string());
+            for (key, priority) in priorities {
+                lines.push(format!("  {:<20}{priority:?}", balance_key_label(*key)));
+            }
+        }
+
+        lines.push(String::new());
+        lines.push(validate_balancing_targets(comps, targets, priorities).to_string());
 
         lines.join("\n")
     }
@@ -1793,6 +1838,101 @@ pub(crate) mod tests {
             ABS_PAC_PRIORITY_RUNS,
             Some(SORBET_ING)
         ));
+    }
+
+    // --- Balancing issue reports ---
+    //
+    // Snapshots of the user-facing `validate_balancing_targets` report for scenarios that raise
+    // *several* issues at once, where reading the set as a whole is what catches spurious or
+    // unhelpful wording. Single-issue cases are covered by the `validate_flags_*` assertions above.
+
+    #[test]
+    fn balancing_issues_report_input_errors() {
+        // A grab-bag of caller mistakes: a non-finite and a negative target, a duplicated target
+        // key, a duplicated priority key, and a priority for a key that is not a target. Shows how
+        // an error-heavy report reads and how errors and warnings interleave.
+        let targets = [
+            (CompKey::MilkFat.into(), f64::NAN),
+            (CompKey::MSNF.into(), -3.0),
+            (CompKey::TotalSolids.into(), 30.0),
+            (CompKey::TotalSolids.into(), 32.0),
+        ];
+        let priorities = [
+            (CompKey::MilkFat.into(), Priority::High),
+            (CompKey::MilkFat.into(), Priority::Critical),
+            (CompKey::POD.into(), Priority::High),
+        ];
+        insta::assert_snapshot!(report_balancing_issues(
+            &comps_from_names(DAIRY_ING),
+            &targets,
+            &priorities,
+            Some(DAIRY_ING),
+        ));
+    }
+
+    #[test]
+    fn balancing_issues_report_multiple_warnings() {
+        // One over-ambitious target set that trips three different warnings at once: an
+        // out-of-range fat target, a sugar dominance conflict, and a cocoa target no ingredient
+        // can supply. Confirms a multi-warning report stays informative rather than spurious.
+        insta::assert_snapshot!(report_balancing_issues(
+            &comps_from_names(DAIRY_SUGAR_ING),
+            &[
+                (CompKey::MilkFat.into(), 50.0),
+                (CompKey::Sucrose.into(), 20.0),
+                (CompKey::TotalSugars.into(), 15.0),
+                (CompKey::CocoaSolids.into(), 5.0),
+            ],
+            &[],
+            Some(DAIRY_SUGAR_ING),
+        ));
+    }
+
+    #[test]
+    fn balancing_issues_report_real_recipe_typical_self_targets() {
+        // A real recipe validated against its own typical-key composition. The mix is a feasible
+        // point of its own palette, so reachability/dominance stay silent; this captures how the
+        // validator treats a genuine recipe — including any typical key the recipe leaves at zero.
+        let recipe = get_light_recipe_by_id("Standard Base", Some("Underbelly"));
+        let comps = comps_from_light_recipe(&recipe);
+        let targets = get_targets_from_light_recipe(&recipe, &get_typical_balancing_keys());
+        insta::assert_snapshot!(report_balancing_issues(&comps, &targets, &[], None));
+    }
+
+    #[test]
+    fn balancing_issues_report_real_recipe_conflicting_targets() {
+        // A real recipe's ingredient palette asked for targets it cannot meet: a fat level beyond
+        // any single ingredient and a sugar dominance conflict. Shows the report a user would see
+        // when pushing a real base past what its ingredients allow.
+        let recipe = get_light_recipe_by_id("Standard Base", Some("Underbelly"));
+        let comps = comps_from_light_recipe(&recipe);
+        let targets = [
+            (CompKey::MilkFat.into(), 45.0),
+            (CompKey::Sucrose.into(), 25.0),
+            (CompKey::TotalSugars.into(), 18.0),
+        ];
+        insta::assert_snapshot!(report_balancing_issues(&comps, &targets, &[], None));
+    }
+
+    #[test]
+    fn balancing_issues_report_real_setup_with_ref_recipes() {
+        // A typical scenario: balance a chocolate recipe to a reference base + cocoa targets.
+        let recipe = get_light_recipe_by_id("Standard Base", Some("Underbelly"));
+        let comps = comps_from_light_recipe(&recipe);
+
+        let targets = get_targets_from_light_recipe(&recipe, &get_typical_balancing_keys())
+            .iter()
+            .map(|&(key, value)| match key {
+                BalanceKey::Comp(comp_key) => match comp_key {
+                    CompKey::CocoaSolids => (CompKey::CocoaSolids.into(), 6.0),
+                    CompKey::CocoaButter => (CompKey::CocoaButter.into(), 2.0),
+                    _ => (key, value),
+                },
+                BalanceKey::Ratio(_) => (key, value),
+            })
+            .collect::<Vec<_>>();
+
+        insta::assert_snapshot!(report_balancing_issues(&comps, &targets, &[], None));
     }
 
     // --- Ratio keys ---
@@ -2659,6 +2799,36 @@ pub(crate) mod tests {
                 whole_target,
                 ..
             } if *parts_target_sum == 20.0 && *whole_target == 15.0
+        )));
+    }
+
+    #[ignore = "TODO: This currently documents an implementation gap, enable once fixed"]
+    #[test]
+    fn validate_does_not_flag_unaffectable_for_zero_target() {
+        // A zero target for a key no ingredient supplies is trivially satisfied
+        let report =
+            validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::CocoaSolids.into(), 0.0)], &[]);
+
+        assert_false!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::UnaffectableTarget {
+                key: BalanceKey::Comp(CompKey::CocoaSolids)
+            }
+        )));
+    }
+
+    #[ignore = "TODO: This currently documents an implementation gap, enable once fixed"]
+    #[test]
+    fn validate_does_not_flag_self_dominance_for_duplicate_target() {
+        // A duplicated target key is already an error (`DuplicateTarget`); the dominance check must
+        // not additionally compare the key against itself and emit a nonsensical "X exceeds X"
+        let comps = comps_from_names(DAIRY_ING);
+        let targets = [(CompKey::TotalSolids.into(), 30.0), (CompKey::TotalSolids.into(), 32.0)];
+        let report = validate_balancing_targets(&comps, &targets, &[]);
+
+        assert_false!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::DominanceViolation { lesser, greater, .. } if lesser == greater
         )));
     }
 
