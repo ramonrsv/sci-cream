@@ -4,7 +4,7 @@ import wasm from "vite-plugin-wasm";
 import dts from "vite-plugin-dts";
 
 export default defineConfig({
-  plugins: [wasm(), dts({ rollupTypes: true, tsconfigPath: "./tsconfig.json" })],
+  plugins: [wasm(), dts({ bundleTypes: true, tsconfigPath: "./tsconfig.json" })],
   build: {
     lib: {
       entry: path.resolve(__dirname, "src/ts/index.ts"),

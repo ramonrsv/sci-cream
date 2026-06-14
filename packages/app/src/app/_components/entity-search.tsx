@@ -144,7 +144,7 @@ export function EntitySearch<E>({
       {/* Two-column layout */}
       <div className="flex flex-col gap-4 md:h-[75vh] md:flex-row">
         {/* Left: list */}
-        <div className="flex h-[20vh] shrink-0 flex-col gap-1.5 overflow-y-auto pr-1 [scrollbar-gutter:stable] md:h-auto md:w-60">
+        <div className="flex h-[20vh] shrink-0 scrollbar-gutter-stable flex-col gap-1.5 overflow-y-auto pr-1 md:h-auto md:w-60">
           {filtered.length === 0 ? (
             <p className="text-secondary text-sm">{emptyResultsText}</p>
           ) : (

@@ -2,9 +2,10 @@ import fs from "fs";
 import path from "path";
 
 import matter from "gray-matter";
+import rehypeSlug from "rehype-slug";
+import rehypeStringify from "rehype-stringify";
 import { remark } from "remark";
-import html from "remark-html";
-import remarkSlug from "remark-slug";
+import remarkRehype from "remark-rehype";
 
 const contentRoot = path.join(process.cwd(), "content");
 
@@ -78,8 +79,11 @@ export function getMarkdownSummaries(section: string): MarkdownPage[] {
 export async function getMarkdownPage(section: string, slug: string): Promise<MarkdownPage> {
   const { data, content } = matter(readFileFromContentRoot(section, `${slug}.md`));
 
-  // @ts-expect-error: unified version mismatch between remark-slug@7 and remark@15
-  const processed = await remark().use(remarkSlug).use(html, { sanitize: false }).process(content);
+  const processed = await remark()
+    .use(remarkRehype, { allowDangerousHtml: true })
+    .use(rehypeSlug)
+    .use(rehypeStringify, { allowDangerousHtml: true })
+    .process(content);
 
   return { slug, frontmatter: data as Frontmatter, contentHtml: processed.toString() };
 }

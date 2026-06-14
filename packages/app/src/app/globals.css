@@ -400,7 +400,7 @@ body {
 }
 
 .search-detail-panel {
-  @apply flex flex-1 flex-col gap-4 overflow-y-auto rounded-lg border p-4 [scrollbar-gutter:stable];
+  @apply flex flex-1 scrollbar-gutter-stable flex-col gap-4 overflow-y-auto rounded-lg border p-4;
 
   @apply border-brd-lt;
   @variant dark {
