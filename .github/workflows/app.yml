@@ -61,7 +61,7 @@ jobs:
       - name: Run app unit tests with Vitest
         run: pnpm test:unit
 
-  e2e_and_visual_tests:
+  e2e_tests:
     runs-on: ubuntu-latest
     services:
       postgres:
@@ -72,6 +72,30 @@ jobs:
           - 5434:5432
     env:
       POSTGRES_URL: postgres://postgres:password@localhost:5434/sci_cream
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-rust
+        with:
+          cargo-installs: wasm-pack
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/sci-cream-package
+      - uses: ./.github/actions/build-and-seed-database
+      - uses: ./.github/actions/setup-playwright
+
+      - name: Run app end-to-end tests with Playwright
+        run: PORT=3001 pnpm test:e2e
+
+  visual_tests:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env: *postgres-env
+        options: *postgres-options
+        ports:
+          - 5435:5432
+    env:
+      POSTGRES_URL: postgres://postgres:password@localhost:5435/sci_cream
       # Override the workflow-level skip: this is the only job that needs LFS
       # file contents (visual regression snapshots), checked out via `lfs: true`.
       GIT_LFS_SKIP_SMUDGE: "0"
@@ -87,11 +111,8 @@ jobs:
       - uses: ./.github/actions/build-and-seed-database
       - uses: ./.github/actions/setup-playwright
 
-      - name: Run app end-to-end tests with Playwright
-        run: PORT=3001 pnpm test:e2e
-
       - name: Run app visual regression tests with Playwright
-        run: PORT=3001 pnpm test:visual
+        run: PORT=3002 pnpm test:visual
 
   eslint:
     runs-on: ubuntu-latest
@@ -132,9 +153,9 @@ jobs:
         env: *postgres-env
         options: *postgres-options
         ports:
-          - 5435:5432
+          - 5436:5432
     env:
-      POSTGRES_URL: postgres://postgres:password@localhost:5435/sci_cream
+      POSTGRES_URL: postgres://postgres:password@localhost:5436/sci_cream
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-rust
@@ -229,9 +250,9 @@ jobs:
         env: *postgres-env
         options: *postgres-options
         ports:
-          - 5436:5432
+          - 5437:5432
     env:
-      POSTGRES_URL: postgres://postgres:password@localhost:5436/sci_cream
+      POSTGRES_URL: postgres://postgres:password@localhost:5437/sci_cream
     steps:
       - uses: actions/checkout@v5
       - uses: ./.github/actions/setup-rust
