@@ -28,5 +28,5 @@ runs:
       run: |
         IFS=',' read -ra PACKAGES <<< "${{ inputs.cargo-installs }}"
         for package in "${PACKAGES[@]}"; do
-          cargo install "$package"
+          cargo install --locked "$package"
         done
