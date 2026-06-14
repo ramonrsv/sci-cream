@@ -69,3 +69,5 @@ next-env.d.ts
 /packages/app/dist
 /packages/app/docs
 
+# Temp Claude plans
+/.claude/plans/tmp
