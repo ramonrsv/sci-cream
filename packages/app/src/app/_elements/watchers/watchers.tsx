@@ -38,8 +38,6 @@ import {
   prop_key_as_med_str,
   compToPropKey,
   CompKey,
-  ratioToPropKey,
-  RatioKey,
   fpdToPropKey,
   FpdKey,
   isCompKey,
@@ -51,6 +49,7 @@ import {
   type LightRecipe,
   type BalanceTargets,
   type BalancePriorities,
+  getTypicalBalancingKeys,
 } from "@workspace/sci-cream";
 
 import { WatcherIssues, KeyIssue } from "@/app/_elements/watchers/watcher-issues";
@@ -106,18 +105,11 @@ function getMixScopePropKeys(): PropKey[] {
 }
 
 /** Default set of property keys shown when the Custom key filter is first initialized */
-export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
-  compToPropKey(CompKey.MilkFat),
-  compToPropKey(CompKey.TotalFats),
-  compToPropKey(CompKey.MSNF),
-  compToPropKey(CompKey.TotalSolids),
-  compToPropKey(CompKey.Water),
-  compToPropKey(CompKey.TotalSugars),
-  ratioToPropKey(RatioKey.StabilizersPerWater),
-  compToPropKey(CompKey.POD),
-  ratioToPropKey(RatioKey.AbsPAC),
-  fpdToPropKey(FpdKey.ServingTemp),
-] as PropKey[]);
+export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set(
+  getTypicalBalancingKeys()
+    .concat([fpdToPropKey(FpdKey.ServingTemp), fpdToPropKey(FpdKey.HardnessAt14C)])
+    .filter((key) => key !== compToPropKey(CompKey.ABV)),
+);
 
 /** Type predicate: `val` is a defined, non-NaN number (i.e. a real computed numeric result). */
 function isUsableNumber(val: number | undefined): val is number {
