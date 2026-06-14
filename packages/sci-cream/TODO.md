@@ -9,6 +9,9 @@
 - [ ] Add more ultra-filtered milk products, e.g. `Fairlife Whole Ultra-Filtered Lactose-Free Milk`.
 - [ ] Add USDA chocolate ingredients and include them in `compare_specs_*` tests vs simple & lindt.
 - [ ] Add TS-side unit tests for the `wasm::Recipe` functionality; it's independent from `Bridge`.
+- [ ] Add a list of typical balancing targets that achieve a successful balance, and export it.
+- [ ] Only check error-severity issues in `balance_compositions`; warnings are discarded and costly.
+- [ ] Add snapshot tests for the balancing issue reports, for various synthetic and real scenarios.
 
 ## Up Next
 
@@ -31,6 +34,11 @@
 - [ ] Add whey and casein concentrate products, e.g. "Whey Powder", "Whey Protein Concentrate 80%",
       "Whey Protein Isolate 90%", "Sodium Caseinate", "Buttermilk Powder", etc.
 - [ ] FPD properties cannot be balanced, so add some way to convert them to (PAC-HF)/Water.
+- [ ] Look into implementing a derive macro to automatically define all field-update methods.
+- [ ] Remove `Composition` functions for calculating ratios, `get_ratio` already handles that.
+- [ ] Add the inverse of `compKeyToPropKey`, etc., that is `propKeyToCompKey` for str -> enum.
+- [ ] Add support for a `Low` balancing `Priority`, which is a similar factor below `Normal`.
+- [ ] If all children of a key have a target, we can infer the parent's target and use it in checks.
 
 ## Backlog
 
@@ -78,6 +86,7 @@
       resolve under `cargo doc --document-private-items -D warnings`; de-link or relax rustdoc.
 - [ ] Look into running only some TS-side benchmarks in every CI run; after an initial analysis
       there is no need to constantly track those. Still good to run them on a nightly/weekly sanity.
+- [ ] Use a specific-version link for badges, replace in `release.toml`; the wildcards have issues.
 
 ## Completed
 

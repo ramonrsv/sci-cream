@@ -16,6 +16,10 @@
 - [ ] Look into single `props` argument or spread out arguments for Next.js components.
 - [ ] When a recipe is deleted, the UI does not update, it still showed the deleted recipe.
 - [ ] Add end-to-end tests for balancing functionality; check surfacing of balancing errors?
+- [ ] Recipe validation errors/warnings do not show unless a recipe has some non-zero qty value.
+- [ ] `FpdKey`s don't support balancing, so they should not have a target, but should be watchable.
+- [ ] `/calculator` layout persistence reset when navigating from `/recipes`; not when reloading.
+- [ ] Add visual regression tests for the priority toggle in watchers cards, in all priority states.
 
 ## Up Next
 
@@ -42,6 +46,18 @@
 - [ ] Look into how layouts make tables too narrow or too wide, and consider setting maximum table
       widths so that they don't look too wide on some layouts; may look bad in narrow scrollable?
 - [ ] In `/recipes`, there is a fetch for user ingredients every time a recipe is selected.
+- [ ] When a user is logged in and has user-defined there are "ingredient name not unique" errors.
+      This should be handled gracefully, overriding and showing a warning that it shadows built-in.
+- [ ] The delete recipe version button moves around with the version name length, which is jarring.
+- [ ] Add visual regression tests for dark mode; not everything, just routes & some key elements.
+- [ ] Add support for automatically flipping direction of `PropertiesChart` based on layout.
+- [ ] Add support for row highlighting on hover to all table components, e.g. `PropertiesTable`.
+- [ ] `WatcherCard` needs to display a color based on position with an acceptable property range,
+      and based on proximity to the balancing target. Figure out how to handle overlapping concerns.
+- [ ] Add support for displaying balancing targets in `PropertiesBarChart`; move up to context?
+- [ ] Add some checkmark-style visual feedback if a balance operation meets target within tolerance.
+- [ ] `WatcherCard`, and eventually `PropertiesView`, show deltas between reference and current, and
+      to balancing targets. These could be absolute (qty or %), or a relative %; how to handle this?
 
 ## Backlog
 
@@ -94,6 +110,8 @@
 - [ ] Explore options for a UI system to communicate errors/notification; popups, text bar?
 - [ ] Explore undo/redo system - necessary now that automatic balancing has been enabled.
 - [ ] Explore adding support for a total mix amount input/slider and balancing target.
+- [ ] Use a specific-version link for badges, replace in `release.sh`; the wildcards have issues.
+- [ ] Add support for user configurations, e.g. to control units, beta features, dev features, etc.
 
 ## Completed
 
