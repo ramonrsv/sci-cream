@@ -33,7 +33,6 @@
 - [ ] FPD properties cannot be balanced, so add some way to convert them to (PAC-HF)/Water.
 - [ ] Look into implementing a derive macro to automatically define all field-update methods.
 - [ ] Remove `Composition` functions for calculating ratios, `get_ratio` already handles that.
-- [ ] Add the inverse of `compKeyToPropKey`, etc., that is `propKeyToCompKey` for str -> enum.
 - [ ] If all children of a key have a target, we can infer the parent's target and use it in checks.
 
 ## Backlog
@@ -86,6 +85,7 @@
 
 ## Completed
 
+- [x] Add the inverse of `compKeyToPropKey`, etc., that is `propKeyToCompKey` for str -> enum.
 - [x] Only check error-severity issues in `balance_compositions`; warnings are discarded and costly.
 - [x] Add snapshot tests for the balancing issue reports, for various synthetic and real scenarios.
 - [x] Add support for a `Low` balancing `Priority`, which is a similar factor below `Normal`.
