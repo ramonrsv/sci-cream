@@ -150,24 +150,23 @@ type SolverFn = fn(
 
 /// Balances the given compositions to match target values — the validated public entry point.
 ///
-/// This is the recommended way to balance: it first validates the inputs via
-/// [`validate_balancing_targets`], returning an [`Error::InvalidBalancingTargets`] if any
-/// error-severity issue is present (non-finite or negative target values, duplicate target keys, or
-/// duplicate priority keys), then solves with an automatically chosen solver. `weighting` selects
-/// the row weighting; `None` defaults to [`Weighting::Relative`].
+/// This is the recommended way to balance: it first checks the inputs for error-severity issues,
+/// returning an [`Error::InvalidBalancingTargets`] if any is present (non-finite or negative target
+/// values, duplicate target keys, or duplicate priority keys), then solves with an automatically
+/// chosen solver. `weighting` sets the row weighting; `None` defaults to [`Weighting::Relative`].
+///
+/// Only error-severity issues gate the solve, as only they make it unsound. The warning-severity
+/// checks (e.g. unreachable or illogical targets) scan every composition without affecting the
+/// result, so [`validate_balancing_targets`] handles them, reporting the full set for inspection.
 ///
 /// `priorities` raises the relative importance of specific target keys: each listed key's row is
 /// weighted by its [`Priority::weight`], so the solver fits it more closely at the expense of the
 /// rest. Keys not listed default to [`Priority::Normal`] (weight 1), so an empty slice leaves the
-/// solve unchanged. The abstract priorities are translated to numeric weights here before reaching
-/// the solver.
+/// solve unchanged. The abstract priorities are translated to numeric weights here before solving.
 ///
 /// The chosen solver is currently always [`balance_compositions_nnls`] (non-negative): negative
 /// ingredient amounts are not meaningful for real recipes, so the [`balance_compositions_nalgebra`]
 /// path is reserved for internal verification and benchmarking and is not used here.
-///
-/// Warning-severity issues (e.g. unreachable or illogical targets) do **not** prevent balancing;
-/// call [`validate_balancing_targets`] directly to inspect them.
 ///
 /// # Errors
 ///
@@ -179,7 +178,11 @@ pub fn balance_compositions(
     weighting: Option<Weighting>,
     priorities: &[(BalanceKey, Priority)],
 ) -> Result<Vec<(Composition, f64)>> {
-    validate_balancing_targets(comps, targets, priorities).into_result()?;
+    // Gate on the cheap error checks only; `balance_compositions` discards warnings, so the
+    // composition-scanning warning checks are wasted work (see `append_input_warning_issues`).
+    let mut issues = Vec::new();
+    append_input_error_issues(targets, priorities, &mut issues);
+    BalancingReport { issues }.into_result()?;
     let priority_weights: Vec<(BalanceKey, f64)> = priorities
         .iter()
         .map(|&(key, priority)| (key, priority.weight()))
@@ -412,9 +415,24 @@ pub fn validate_balancing_targets(
     priorities: &[(BalanceKey, Priority)],
 ) -> BalancingReport {
     let mut issues = Vec::new();
+    append_input_error_issues(targets, priorities, &mut issues);
+    append_input_warning_issues(comps, targets, priorities, &mut issues);
+    BalancingReport { issues }
+}
 
-    // Error-severity checks: non-finite/negative values and duplicate keys. Ratio keys are OK —
-    // they are encoded as homogeneous rows (see `RatioKey::parts`) and balance like any other key.
+/// Appends the error-severity input issues: non-finite or negative target values, duplicate target
+/// keys, and duplicate priority keys.
+///
+/// These are the only checks that gate the solve and they require no composition data, so
+/// [`balance_compositions`] runs just these and skips the costlier [`append_input_warning_issues`]
+/// that [`validate_balancing_targets`] adds for inspection.
+fn append_input_error_issues(
+    targets: &[(BalanceKey, f64)],
+    priorities: &[(BalanceKey, Priority)],
+    issues: &mut Vec<BalancingIssue>,
+) {
+    // Non-finite/negative values and duplicate keys. Ratio keys are OK — they are encoded as
+    // homogeneous rows (see `RatioKey::parts`) and balance like any other key.
     let mut seen: Vec<BalanceKey> = Vec::with_capacity(targets.len());
     for &(key, value) in targets {
         if !value.is_finite() {
@@ -430,9 +448,32 @@ pub fn validate_balancing_targets(
         }
     }
 
-    // Per-target warning checks: unaffectable and unreachable targets. Non-finite and negative
-    // values are skipped (reported as errors above). Ratio keys get the unaffectable check but skip
-    // the range check, having no single-key magnitude to compare against the palette.
+    // Duplicate priority keys are ambiguous (which weight wins?), so they are an error.
+    let mut seen_priorities: Vec<BalanceKey> = Vec::with_capacity(priorities.len());
+    for &(key, _) in priorities {
+        if seen_priorities.contains(&key) {
+            issues.push(BalancingIssue::DuplicatePriority { key });
+        } else {
+            seen_priorities.push(key);
+        }
+    }
+}
+
+/// Appends the warning-severity input issues: unaffectable or unreachable targets, infeasible
+/// target combinations (pairwise and additive dominance), and priorities without a target.
+///
+/// Every check here scans the compositions, so these are best-effort diagnostics that do not gate
+/// the solve. [`balance_compositions`] skips them; only [`validate_balancing_targets`] runs them to
+/// surface the full report.
+fn append_input_warning_issues(
+    comps: &[Composition],
+    targets: &[(BalanceKey, f64)],
+    priorities: &[(BalanceKey, Priority)],
+    issues: &mut Vec<BalancingIssue>,
+) {
+    // Per-target checks: unaffectable and unreachable targets. Non-finite and negative values are
+    // skipped (reported as errors). Ratio keys get the unaffectable check but skip the range check,
+    // having no single-key magnitude to compare against the palette.
     for &(key, target) in targets {
         if !target.is_finite() || target < 0.0 {
             continue;
@@ -452,27 +493,22 @@ pub fn validate_balancing_targets(
         }
     }
 
-    // Pairwise warning checks: palette-derived dominance infeasibilities.
-    append_pairwise_dominance_issues(comps, targets, &mut issues);
+    // Palette-derived dominance infeasibilities: pairwise, then additive (subset-sum) groups.
+    append_pairwise_dominance_issues(comps, targets, issues);
+    append_additive_dominance_issues(comps, targets, issues);
 
-    // Additive (subset-sum) dominance: parts that together exceed a whole that bounds their sum.
-    append_additive_dominance_issues(comps, targets, &mut issues);
-
-    // Priority-list checks: duplicate priority keys (error, ambiguous) and priorities whose key is
-    // not among the targets (warning — a no-op, since only target rows are weighted).
+    // A priority whose key is not among the targets is a no-op: only target rows are weighted.
+    // Duplicates are reported as errors elsewhere, so each distinct key is checked once.
     let mut seen_priorities: Vec<BalanceKey> = Vec::with_capacity(priorities.len());
     for &(key, _) in priorities {
         if seen_priorities.contains(&key) {
-            issues.push(BalancingIssue::DuplicatePriority { key });
-            continue; // its target was already checked on the first sighting
+            continue;
         }
         seen_priorities.push(key);
         if !targets.iter().any(|&(target_key, _)| target_key == key) {
             issues.push(BalancingIssue::PriorityWithoutTarget { key });
         }
     }
-
-    BalancingReport { issues }
 }
 
 /// Returns `true` if no composition can move `key`/`target` toward a meaningful value.
@@ -1064,8 +1100,8 @@ pub(crate) mod tests {
         ),
     ];
 
-    /// nnls with and without a [`Priority::Critical`] on the ratio key [`RatioKey::AbsPAC`], for the
-    /// cross-feature report: prioritizing a ratio target tightens it against the extensive ones.
+    /// nnls with and without a [`Priority::Critical`] on the ratio key [`RatioKey::AbsPAC`], for
+    /// the cross-feature report: prioritizing a ratio target tightens it against extensive ones.
     const ABS_PAC_PRIORITY_RUNS: &[LabeledRun] = &[
         ("baseline", balance_compositions_nnls, &[]),
         (
