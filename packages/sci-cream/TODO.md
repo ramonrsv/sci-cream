@@ -79,6 +79,16 @@
 - [ ] Return balancing internals (`row_weights`, `ratio_key_parts`, `estimate_ratio_denominator`,
       `balance_with_reweighting`, `RawSolver`) to private. They were made `pub` only so doc links
       resolve under `cargo doc --document-private-items -D warnings`; de-link or relax rustdoc.
+- [ ] Teach balancing-issue deduplication that a minimal part-group claim subsumes the larger sets
+      containing it, so a structural full-children violation and a palette minimal-subset issue for
+      one overshoot don't both report (`group_claim` in `validate_balancing_targets`).
+- [ ] Enable group (multi-key) denominators in `append_palette_ratio_issues` past
+      `MAX_DENOMINATOR_GROUP_SIZE = 1` to catch a numerator pinned against a sum of targeted parts;
+      bench-gate it, and let the issue variants carry a multi-key denominator.
+- [ ] Consider folding the empty-denominator magnitude case (`UnreachableTarget`) into the unified
+      `append_palette_ratio_issues` search; it's handled separately by `append_reachability_issues`.
+- [ ] Make `append_over_determination_issue` rank-aware instead of a degrees-of-freedom count that
+      ignores linear dependence among target rows (currently a heuristic `Severity::Info` notice).
 - [ ] Look into running only some TS-side benchmarks in every CI run; after an initial analysis
       there is no need to constantly track those. Still good to run them on a nightly/weekly sanity.
 - [ ] Look into possible optimizations using the new `FastComposition`, including on the JS side.

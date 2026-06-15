@@ -22,6 +22,3 @@ targets:
 [warning] No ingredient contributes to 'ABV', so its target cannot be affected
 [warning] Targets 'Milk Fat' + 'Cocoa Butter' sum to 17.37, exceeding the target for 'Fats' (16.54), but they are parts of 'Fats', so cannot sum above it
 [warning] Target ratio 'Cocoa Butter' : 'Cocoa Solids' (0.33) is outside the range [0.2, 0.2] the ingredients allow
-[warning] Targets 'Milk Fat' + 'Cocoa Butter' + 'Egg SNF' sum to 18.11, exceeding the target for 'Fats' (16.54), but no ingredient mix can satisfy them all — every ingredient's parts sum to ≤ its 'Fats'
-[warning] Target ratio 'Cocoa Solids' + 'Egg SNF' : 'Cocoa Butter' (3.37) is outside the range [4.88, ∞] the ingredients allow
-[warning] Target ratio 'Cocoa Solids' + 'Salt' : 'Cocoa Butter' (3.04) is outside the range [4.88, ∞] the ingredients allow
