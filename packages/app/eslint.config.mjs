@@ -5,6 +5,7 @@ import jsdoc from "eslint-plugin-jsdoc";
 const eslintConfig = [
   ...nextCoreWebVitals,
   ...nextTypescript,
+  { settings: { react: { version: "19" } } },
   jsdoc.configs["flat/recommended-typescript-error"],
   {
     rules: {
