@@ -28,7 +28,7 @@ use crate::{composition::CompKey, properties::PropKey};
 #[cfg(doc)]
 use crate::composition::Composition;
 
-/// A node in the composition hierarchy: a key and its direct children, each a node of the same kind.
+/// A node in the composition hierarchy: a key and its children, each a node of the same kind.
 ///
 /// `Serialize` flattens to `{ key, children }`, which is how the WASM layer hands the forest to JS.
 #[derive(Debug, Clone, Serialize)]
@@ -360,7 +360,7 @@ impl<K: 'static + Eq + Hash + Copy> Index<K> {
 /// Edge lookups over the additive [`STRUCTURAL`] forest, backing [`CompKey`]'s hierarchy methods.
 static STRUCTURAL_INDEX: LazyLock<Index<CompKey>> = LazyLock::new(|| Index::build(&STRUCTURAL));
 
-/// Pre-order + roots over the [`DISPLAY`] forest, backing the public `display_hierarchy_*` accessors.
+/// Pre-order + roots over the [`DISPLAY`] forest, backing the `display_hierarchy_*` accessors.
 static DISPLAY_INDEX: LazyLock<Index<PropKey>> = LazyLock::new(|| Index::build(&DISPLAY));
 
 impl CompKey {
@@ -484,6 +484,7 @@ mod tests {
         ingredient::Category,
         properties::PropKey::{self, *},
         recipe::Recipe,
+        validate::{are_equal, is_subset},
     };
 
     static DB: LazyLock<IngredientDatabase> = LazyLock::new(IngredientDatabase::new_seeded_from_embedded_data);
@@ -527,7 +528,7 @@ mod tests {
             for key in CompKey::iter().filter(|key| key.is_rollup()) {
                 let children_sum: f64 = key.children().iter().map(|&part| comp.get(part)).sum();
                 assert!(
-                    children_sum <= comp.get(key) + COMPOSITION_EPSILON,
+                    is_subset(children_sum, comp.get(key)),
                     "{key:?} parts sum {children_sum} exceeds roll-up {}",
                     comp.get(key),
                 );
@@ -541,7 +542,7 @@ mod tests {
             for rollup in CompKey::iter().filter(|key| key.is_residual_free_rollup()) {
                 let parts_sum: f64 = rollup.children().iter().map(|&part| comp.get(part)).sum();
                 assert!(
-                    (comp.get(rollup) - parts_sum).abs() <= COMPOSITION_EPSILON,
+                    are_equal(comp.get(rollup), parts_sum),
                     "{rollup:?}: get {} != parts sum {parts_sum}",
                     comp.get(rollup),
                 );

@@ -63,14 +63,14 @@ pub trait Validate {
 
 /// Checks whether two floating point values are equal within a [`COMPOSITION_EPSILON`] tolerance.
 #[must_use]
-pub fn are_equal_within_epsilon(a: f64, b: f64) -> bool {
+pub fn are_equal(a: f64, b: f64) -> bool {
     a.abs_diff_eq(&b, COMPOSITION_EPSILON)
 }
 
 /// Checks whether the given value is positive, within a [`COMPOSITION_EPSILON`] tolerance for zero.
 #[must_use]
 pub fn is_positive(value: f64) -> bool {
-    value >= 0.0 || are_equal_within_epsilon(value, 0.0)
+    value >= 0.0 || are_equal(value, 0.0)
 }
 
 /// Verifies that all values in the given slice are positive (greater than or equal to zero).
@@ -164,33 +164,33 @@ mod tests {
         verify_is_within_100_percent(50.0);
     }
 
-    // --- are_equal_within_epsilon ---
+    // --- are_equal ---
 
     #[test]
-    fn are_equal_within_epsilon_true_for_equal_values() {
-        assert_true!(are_equal_within_epsilon(1.0, 1.0));
+    fn are_equal_true_for_equal_values() {
+        assert_true!(are_equal(1.0, 1.0));
     }
 
     #[test]
-    fn are_equal_within_epsilon_true_for_both_zero() {
-        assert_true!(are_equal_within_epsilon(0.0, 0.0));
+    fn are_equal_true_for_both_zero() {
+        assert_true!(are_equal(0.0, 0.0));
     }
 
     #[test]
-    fn are_equal_within_epsilon_true_within_epsilon() {
+    fn are_equal_true_within_epsilon() {
         // 1e-14 difference is within COMPOSITION_EPSILON (1e-13)
-        assert_true!(are_equal_within_epsilon(1.0, 1.0 + 1e-14));
+        assert_true!(are_equal(1.0, 1.0 + 1e-14));
     }
 
     #[test]
-    fn are_equal_within_epsilon_false_beyond_epsilon() {
+    fn are_equal_false_beyond_epsilon() {
         // 1e-12 difference exceeds COMPOSITION_EPSILON (1e-13)
-        assert_false!(are_equal_within_epsilon(1.0, 1.0 + 1e-12));
+        assert_false!(are_equal(1.0, 1.0 + 1e-12));
     }
 
     #[test]
-    fn are_equal_within_epsilon_false_for_clearly_different_values() {
-        assert_false!(are_equal_within_epsilon(1.0, 2.0));
+    fn are_equal_false_for_clearly_different_values() {
+        assert_false!(are_equal(1.0, 2.0));
     }
 
     // --- is_positive ---

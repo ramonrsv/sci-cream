@@ -25,7 +25,7 @@ use crate::{
         SVD_SOLVE_EPSILON, TYPICAL_MIX_FAT, TYPICAL_MIX_WATER,
     },
     error::{Error, Result},
-    validate::{are_equal_within_epsilon, is_subset, is_within_range},
+    validate::{are_equal, is_subset, is_within_range},
 };
 
 /// A key usable as a balancing target: either an extensive [`CompKey`] or an intensive [`RatioKey`]
@@ -389,6 +389,81 @@ impl BalancingIssue {
             Self::OverDetermined { .. } => vec![],
         }
     }
+
+    /// Returns `true` if this issue is a duplicate of `other`.
+    ///
+    /// That is, if they are the same issue, or different issues that flag the same underlying
+    /// problem: a `StructuralViolation`, `DominanceViolation`, `RollupSumMismatch`, or
+    /// `RatioInfeasibility` that make the same part-group-versus-whole claim (see [`group_claim`]),
+    /// or an `UnaffectableTarget` and an `UnreachableTarget` for the same zero-row target. Each
+    /// check emits every issue it can find; this collapses the overlaps so the report stays concise
+    /// and actionable.
+    #[must_use]
+    pub fn are_duplicates(&self, other: &Self) -> bool {
+        self == other || are_dup_unaffectable_unreachable(self, other) || are_dup_group_claim(self, other)
+    }
+}
+
+/// Returns `true` if `a` and `b` are an unaffectable/unreachable pair for the same target — two
+/// framings of "this single target can't be met". The or-pattern matches either ordering.
+fn are_dup_unaffectable_unreachable(a: &BalancingIssue, b: &BalancingIssue) -> bool {
+    use BalancingIssue::{UnaffectableTarget, UnreachableTarget};
+    matches!(
+        (a, b),
+        (UnaffectableTarget { key: x }, UnreachableTarget { key: y, .. })
+            | (UnreachableTarget { key: x, .. }, UnaffectableTarget { key: y })
+        if x == y
+    )
+}
+
+/// The "this part-group is infeasible against this whole" claim shared by the structural, roll-up,
+/// dominance, and ratio issues.
+///
+/// The `whole`/denominator key, the part keys (as a set), and whether the parts overshoot the whole
+/// (`true`) or are pinned below it (`false`). Two issues with equal claims describe the same
+/// contradiction — whichever check produced them — so [`are_dup_group_claim`] treats them as
+/// duplicates; an overshoot and an undershoot of the same group stay distinct. Returns `None` for
+/// issues that make no such claim.
+#[must_use]
+pub fn group_claim(issue: &BalancingIssue) -> Option<(BalanceKey, &[BalanceKey], bool)> {
+    match issue {
+        BalancingIssue::StructuralViolation { whole, parts, .. } => Some((*whole, parts, true)),
+        BalancingIssue::RollupSumMismatch { whole, parts, .. } => Some((*whole, parts, false)),
+        BalancingIssue::DominanceViolation { greater, lesser, .. } => Some((*greater, lesser, true)),
+        BalancingIssue::RatioInfeasibility {
+            denominator,
+            numerator,
+            target_ratio,
+            min_ratio,
+            max_ratio,
+        } => {
+            if *target_ratio > *max_ratio {
+                Some((*denominator, numerator, true))
+            } else if *target_ratio < *min_ratio {
+                Some((*denominator, numerator, false))
+            } else {
+                None
+            }
+        }
+        _ => None,
+    }
+}
+
+/// Returns `true` if `a` and `b` make the same part-group-versus-whole claim (see [`group_claim`]).
+#[must_use]
+pub fn are_dup_group_claim(a: &BalancingIssue, b: &BalancingIssue) -> bool {
+    match (group_claim(a), group_claim(b)) {
+        (Some((whole_a, parts_a, over_a)), Some((whole_b, parts_b, over_b))) => {
+            whole_a == whole_b && over_a == over_b && same_key_set(parts_a, parts_b)
+        }
+        _ => false,
+    }
+}
+
+/// Returns `true` if `a` and `b` hold the same keys, regardless of order. Targets carry distinct
+/// keys, so equal length plus containment is set equality without needing to dedup either side.
+fn same_key_set(a: &[BalanceKey], b: &[BalanceKey]) -> bool {
+    a.len() == b.len() && a.iter().all(|key| b.contains(key))
 }
 
 /// The result of validating balancing inputs: the full list of detected [`BalancingIssue`]s.
@@ -472,7 +547,19 @@ pub fn validate_balancing_targets(
     let mut issues = Vec::new();
     append_input_error_issues(targets, priorities, &mut issues);
     append_input_warning_issues(comps, targets, priorities, &mut issues);
-    BalancingReport { issues }
+
+    // Each check emits every issue it can detect, so the same underlying problem may surface as
+    // several issues (e.g. a part/whole contradiction seen by both the structural and the palette
+    // dominance check). Collapse those: keep the first of each duplicate group, which — because the
+    // checks run from most to least fundamental — is the simplest, most actionable framing.
+    let mut deduplicated: Vec<BalancingIssue> = Vec::new();
+    for issue in issues {
+        if !deduplicated.iter().any(|kept| kept.are_duplicates(&issue)) {
+            deduplicated.push(issue);
+        }
+    }
+
+    BalancingReport { issues: deduplicated }
 }
 
 /// Appends the error-severity input issues: non-finite or negative target values, duplicate target
@@ -526,11 +613,9 @@ fn append_input_warning_issues(
     priorities: &[(BalanceKey, Priority)],
     issues: &mut Vec<BalancingIssue>,
 ) {
-    // Per-target checks: unaffectable and unreachable targets. Non-finite and negative values are
-    // skipped (reported as errors). Ratio keys get the unaffectable check but skip the range check,
-    // having no single-key magnitude to compare against the palette.
+    // Checks unaffectable targets. Non-finite and negative values are skipped (reported as errors).
     for &(key, target) in targets {
-        if target.is_finite() && target >= 0.0 && is_unaffectable(comps, key, target) {
+        if is_finite_non_negative(target) && is_unaffectable(comps, key, target) {
             issues.push(BalancingIssue::UnaffectableTarget { key });
         }
     }
@@ -684,11 +769,15 @@ fn append_reachability_issues(comps: &[Composition], targets: &[(BalanceKey, f64
 /// Appends the palette-independent structural coherence warnings.
 ///
 /// Two checks, both derived from the composition hierarchy and true regardless of the palette:
-///   - **ordering** — a part may not exceed a whole it is part of (see [`CompKey::is_part_of`]);
-///   - **completeness** — when every direct child of a residual-free roll-up (see
+///   - **ordering** — the targeted parts of a roll-up may not sum above the roll-up's own target
+///     (see [`CompKey::children`]); symmetrically, a part may not exceed a targeted whole it
+///     belongs to (see [`CompKey::parents`]). Even a strict subset of the children over-summing the
+///     whole is a contradiction, since the remaining siblings can only add more.
+///   - **completeness** — when *every* direct child of a residual-free roll-up (see
 ///     [`CompKey::is_residual_free_rollup`]) is a target, children must sum to the whole exactly.
 ///
-/// Only extensive, finite, non-negative targets participate.
+/// Only extensive, finite, non-negative targets participate. The checks emit independently of any
+/// palette overlap; [`validate_balancing_targets`] deduplicates against palette dominance issues.
 fn append_structural_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<BalancingIssue>) {
     let comp_targets: Vec<(CompKey, f64)> = targets
         .iter()
@@ -698,37 +787,48 @@ fn append_structural_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<Bala
         })
         .collect();
 
-    // Ordering: a part target above the target of a whole it belongs to is a contradiction.
-    for &(part, part_target) in &comp_targets {
-        for &(whole, whole_target) in &comp_targets {
-            if part.is_part_of(whole) && !is_subset(part_target, whole_target) {
+    for &(key, target) in &comp_targets {
+        if key.is_rollup() {
+            let children = key.children();
+
+            let active_children = children
+                .iter()
+                .filter(|&&child| value_of(&comp_targets, child).is_some())
+                .collect::<Vec<_>>();
+
+            let children_sum: f64 = active_children
+                .iter()
+                .filter_map(|&&child| value_of(&comp_targets, child))
+                .sum();
+
+            if !is_subset(children_sum, target) {
                 issues.push(BalancingIssue::StructuralViolation {
-                    parts: vec![part.into()],
-                    whole: whole.into(),
-                    parts_target_sum: part_target,
-                    whole_target,
+                    parts: active_children.iter().map(|&&child| child.into()).collect(),
+                    whole: key.into(),
+                    parts_target_sum: children_sum,
+                    whole_target: target,
+                });
+            } else if key.is_residual_free_rollup()
+                && children.len() == active_children.len()
+                && !are_equal(children_sum, target)
+            {
+                issues.push(BalancingIssue::RollupSumMismatch {
+                    whole: key.into(),
+                    parts: active_children.iter().map(|&&child| child.into()).collect(),
+                    parts_target_sum: children_sum,
+                    whole_target: target,
                 });
             }
-        }
-    }
-
-    // Completeness: a residual-free roll-up's children, if all targeted, must sum to its target.
-    for &(whole, whole_target) in &comp_targets {
-        if whole.is_residual_free_rollup() {
-            let children = whole.children();
-
-            if let Some(child_targets) = children
-                .iter()
-                .map(|&child| value_of(&comp_targets, child))
-                .collect::<Option<Vec<f64>>>()
-            {
-                let parts_target_sum: f64 = child_targets.iter().sum();
-                if !are_equal_within_epsilon(parts_target_sum, whole_target) {
-                    issues.push(BalancingIssue::RollupSumMismatch {
-                        whole: whole.into(),
-                        parts: children.iter().map(|&child| child.into()).collect(),
-                        parts_target_sum,
-                        whole_target,
+        } else {
+            for parent in key.parents() {
+                if let Some(parent_target) = value_of(&comp_targets, *parent)
+                    && !is_subset(target, parent_target)
+                {
+                    issues.push(BalancingIssue::StructuralViolation {
+                        parts: vec![key.into()],
+                        whole: (*parent).into(),
+                        parts_target_sum: target,
+                        whole_target: parent_target,
                     });
                 }
             }
@@ -739,11 +839,13 @@ fn append_structural_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<Bala
 #[cfg(doc)]
 use BalancingIssue::{DominanceViolation, RatioInfeasibility};
 
-/// Appends the palette-derived pairwise infeasibilities for non-structural key pairs.
+/// Appends the palette-derived pairwise infeasibilities for every checkable key pair.
 ///
 /// For each [`is_dominance_checkable_target`] pair the `max <= 1` band corner is reported as the
 /// clearer [`DominanceViolation`]; otherwise the general ratio band catches pinned or off-band
-/// ratios as [`RatioInfeasibility`]. Structural part/whole pairs: [`append_structural_issues`].
+/// ratios as [`RatioInfeasibility`]. Structural part/whole pairs are emitted here too (when the
+/// palette affects both keys) and deduplicated against [`append_structural_issues`] in
+/// [`validate_balancing_targets`], which keeps the palette-independent structural framing.
 fn append_palette_pairwise_issues(
     comps: &[Composition],
     targets: &[(BalanceKey, f64)],
@@ -757,20 +859,13 @@ fn append_palette_pairwise_issues(
                 if let BalanceKey::Comp(comp_b) = key_b
                     && is_dominance_checkable_target(comps, key_b, target_b)
                 {
-                    // Structural ordering is owned by `append_structural_issues`; for part/whole
-                    // pairs suppress the palette dominance issue, but still let the ratio band
-                    // catch off-pin ratios the ordering check can't see.
-                    let structural = comp_a.is_part_of(comp_b) || comp_b.is_part_of(comp_a);
-
                     let mut push = |lesser, greater, lesser_target_sum, greater_target| {
-                        if !structural {
-                            issues.push(BalancingIssue::DominanceViolation {
-                                lesser: vec![lesser],
-                                greater,
-                                lesser_target_sum,
-                                greater_target,
-                            });
-                        }
+                        issues.push(BalancingIssue::DominanceViolation {
+                            lesser: vec![lesser],
+                            greater,
+                            lesser_target_sum,
+                            greater_target,
+                        });
                     };
 
                     if dominates(comps, comp_b, comp_a) && !is_subset(target_a, target_b) {
@@ -870,12 +965,10 @@ fn append_palette_additive_issues(
                 }
             }
 
-            // The complete set of a residual-free roll-up's children is owned by the structural
-            // completeness check (`RollupSumMismatch`), so skip here to avoid double-reporting.
-            let owned_by_completeness = whole_comp.is_residual_free_rollup()
-                && whole_comp.children().iter().all(|child| part_comps.contains(child));
-
-            if part_comps.len() >= 2 && !owned_by_completeness {
+            // Emit unconditionally; an overlap with the structural completeness check
+            // (`RollupSumMismatch`) over a residual-free roll-up's children is deduplicated by
+            // `validate_balancing_targets` via the shared part-group claim (see `group_claim`).
+            if part_comps.len() >= 2 {
                 if !is_subset(parts_target_sum, whole_target) {
                     // Upper corner: the parts' targets sum past the whole that bounds them.
                     issues.push(BalancingIssue::DominanceViolation {
@@ -914,11 +1007,11 @@ fn append_palette_additive_issues(
 /// combined band maximum even when each individual ratio stays within its own pairwise band,
 /// because the per-ingredient compositions that achieve the individual maxima may differ.
 ///
-/// Only fires when `band.max > 1`; the `max ≤ 1` case (the combined numerator never exceeds the
-/// denominator across the palette) is the additive dominance scenario owned by
-/// [`append_palette_additive_issues`]. A numerator pair where one key is a structural part of the
-/// other is skipped (its sum double-counts the lesser); a structural denominator is kept, since the
-/// `max > 1` guard already excludes the ordering corner [`append_structural_issues`] owns.
+/// Fires for any band. When `max ≤ 1` (the combined numerator never exceeds the denominator across
+/// the palette) an overshoot restates the additive-dominance or structural framing and is
+/// deduplicated by [`validate_balancing_targets`] via the shared part-group claim (see
+/// [`group_claim`]). A numerator pair where one key is a structural part of the other is still
+/// skipped: its sum double-counts the lesser and has no clear interpretation.
 fn append_palette_multi_ratio_issues(
     comps: &[Composition],
     targets: &[(BalanceKey, f64)],
@@ -943,9 +1036,6 @@ fn append_palette_multi_ratio_issues(
                             && is_dominance_checkable_target(comps, key_den, target_den)
                             && target_den > 0.0
                             && let Some((min, max)) = ratio_band(comps, &[comp_a, comp_b], &[comp_den])
-                            // The max <= 1 case (combined numerator never exceeds denominator) is the
-                            // additive dominance scenario owned by append_palette_additive_issues.
-                            && !is_subset(max, 1.0)
                         {
                             let ratio = (target_a + target_b) / target_den;
                             push_if_off_band(ratio, (min, max), issues, |min_r, max_r| {
@@ -1477,6 +1567,15 @@ pub(crate) mod tests {
     /// Helper function to extract compositions from a list of ingredient names, via [`DATABASE`]
     fn comps_from_names(names: &[&str]) -> Vec<Composition> {
         names.iter().map(|name| comp_by_name(name)).collect()
+    }
+
+    /// Runs a single issue generator and returns what it emits, before any deduplication. Lets a
+    /// test assert that each underlying check independently produces its issue, separately from how
+    /// [`validate_balancing_targets`] later collapses the overlaps.
+    fn raw_issues(append: impl FnOnce(&mut Vec<BalancingIssue>)) -> Vec<BalancingIssue> {
+        let mut issues = Vec::new();
+        append(&mut issues);
+        issues
     }
 
     /// Helper function to extract target pairs from a Composition for specified keys
@@ -3142,22 +3241,31 @@ pub(crate) mod tests {
         )));
     }
 
-    #[ignore = "TODO: This currently documents an implementation gap, enable once fixed"]
     #[test]
     fn validate_flags_structural_violation_from_combined_non_exhaustive_children() {
         // MilkFat and CocoaButter are structurally part of TotalFats, so their sum (12) must not
         // exceed the TotalFats target (10), which must be flagged. Individually they are fine, and
         // they are not all the children so an exact rollup violation cannot be flagged.
-        let report = validate_balancing_targets(
-            &comps_from_names(DAIRY_SUGAR_ING),
-            &[
-                (CompKey::TotalFats.into(), 10.0),
-                (CompKey::MilkFat.into(), 6.0),
-                (CompKey::CocoaButter.into(), 6.0),
-            ],
-            &[],
-        );
+        let comps = comps_from_names(DAIRY_SUGAR_ING);
+        let targets = [
+            (CompKey::TotalFats.into(), 10.0),
+            (CompKey::MilkFat.into(), 6.0),
+            (CompKey::CocoaButter.into(), 6.0),
+        ];
 
+        // Raw generators: no ingredient supplies CocoaButter, so the palette checks skip the pair
+        // entirely — only the palette-independent structural check sees the over-sum.
+        let structural = raw_issues(|o| append_structural_issues(&targets, o));
+        assert_true!(
+            structural
+                .iter()
+                .any(|i| matches!(i, BalancingIssue::StructuralViolation { .. }))
+        );
+        assert_true!(raw_issues(|o| append_palette_additive_issues(&comps, &targets, o)).is_empty());
+        assert_true!(raw_issues(|o| append_palette_multi_ratio_issues(&comps, &targets, o)).is_empty());
+
+        // Deduplicated report: the structural over-sum, with nothing to deduplicate against.
+        let report = validate_balancing_targets(&comps, &targets, &[]);
         assert_true!(report.warnings().any(|issue| matches!(
             issue,
             BalancingIssue::StructuralViolation {
@@ -3177,9 +3285,24 @@ pub(crate) mod tests {
         // target is a logical contradiction the palette-independent structural check catches first
         let comps = comps_from_names(DAIRY_SUGAR_ING);
         let targets = [(CompKey::Sucrose.into(), 20.0), (CompKey::TotalSugars.into(), 15.0)];
-        let report = validate_balancing_targets(&comps, &targets, &[]);
 
+        // Raw generators: structural and palette pairwise both flag the single part over its whole.
+        let structural = raw_issues(|o| append_structural_issues(&targets, o));
+        let pairwise = raw_issues(|o| append_palette_pairwise_issues(&comps, &targets, o));
+        assert_true!(
+            structural
+                .iter()
+                .any(|i| matches!(i, BalancingIssue::StructuralViolation { .. }))
+        );
+        assert_true!(
+            pairwise
+                .iter()
+                .any(|i| matches!(i, BalancingIssue::DominanceViolation { .. }))
+        );
+
+        let report = validate_balancing_targets(&comps, &targets, &[]);
         assert_false!(report.has_errors());
+        // Deduplicated report: the structural framing survives, the palette dominance is collapsed.
         assert_true!(report.warnings().any(|issue| matches!(
             issue,
             BalancingIssue::StructuralViolation {
@@ -3191,8 +3314,6 @@ pub(crate) mod tests {
                 && *parts_target_sum == 20.0
                 && *whole_target == 15.0
         )));
-
-        // The palette dominance check must not also fire for this structural pair (no duplicate).
         assert_false!(
             report
                 .warnings()
@@ -3201,31 +3322,65 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn validate_flags_additive_dominance_for_sugars_over_total_sugars() {
-        // Sucrose + Fructose sum under TotalSugars in every ingredient, yet their targets sum to
-        // 20 > 15 — infeasible only as a group (no single sugar exceeds TotalSugars).
+    fn validate_flags_structural_violation_for_sugar_group_over_total_sugars() {
+        // Sucrose + Fructose are both parts of TotalSugars, yet their targets sum to 20 > 15 —
+        // infeasible only as a group (no single sugar exceeds TotalSugars). The palette-independent
+        // structural check owns this part-group-over-whole contradiction; the additive palette
+        // dominance that also detects it is deduplicated away (no duplicate report).
         let comps = comps_from_names(SUGAR_BLEND_ING);
         let targets = [
             (CompKey::Sucrose.into(), 10.0),
             (CompKey::Fructose.into(), 10.0),
             (CompKey::TotalSugars.into(), 15.0),
         ];
-        let report = validate_balancing_targets(&comps, &targets, &[]);
 
+        // Raw generators: structural, additive dominance, and the max≤1 multi-ratio each flag the
+        // group over its whole, before any deduplication.
+        let structural = raw_issues(|o| append_structural_issues(&targets, o));
+        let additive = raw_issues(|o| append_palette_additive_issues(&comps, &targets, o));
+        let multi_ratio = raw_issues(|o| append_palette_multi_ratio_issues(&comps, &targets, o));
+        assert_true!(
+            structural
+                .iter()
+                .any(|i| matches!(i, BalancingIssue::StructuralViolation { .. }))
+        );
+        assert_true!(
+            additive
+                .iter()
+                .any(|i| matches!(i, BalancingIssue::DominanceViolation { .. }))
+        );
+        assert_true!(
+            multi_ratio
+                .iter()
+                .any(|i| matches!(i, BalancingIssue::RatioInfeasibility { .. }))
+        );
+
+        let report = validate_balancing_targets(&comps, &targets, &[]);
         assert_false!(report.has_errors());
-        // No single-part (pairwise) dominance: every individual sugar target is within TotalSugars.
+        // No single-part contradiction: every individual sugar target is within TotalSugars.
         assert_false!(report.warnings().any(|issue| matches!(
             issue,
-            BalancingIssue::DominanceViolation { lesser, .. } if lesser.len() == 1
+            BalancingIssue::StructuralViolation { parts, .. } if parts.len() == 1
         )));
+        // The group is reported once, as a structural violation over the two targeted parts.
         assert_true!(report.warnings().any(|issue| matches!(
             issue,
-            BalancingIssue::DominanceViolation {
-                greater: BalanceKey::Comp(CompKey::TotalSugars),
-                lesser,
-                lesser_target_sum,
-                greater_target,
-            } if lesser.len() == 2 && *lesser_target_sum == 20.0 && *greater_target == 15.0
+            BalancingIssue::StructuralViolation {
+                whole: BalanceKey::Comp(CompKey::TotalSugars),
+                parts,
+                parts_target_sum,
+                whole_target,
+            } if parts.len() == 2
+                && parts.contains(&BalanceKey::Comp(CompKey::Sucrose))
+                && parts.contains(&BalanceKey::Comp(CompKey::Fructose))
+                && *parts_target_sum == 20.0
+                && *whole_target == 15.0
+        )));
+        // The additive dominance and the max≤1 multi-ratio infeasibility for the same group are
+        // both emitted by their checks, then deduplicated — neither should appear in the report.
+        assert_false!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::DominanceViolation { .. } | BalancingIssue::RatioInfeasibility { .. }
         )));
     }
 
@@ -3283,7 +3438,7 @@ pub(crate) mod tests {
                 target_ratio,
                 ..
             } if numerator.as_slice() == [BalanceKey::Comp(CompKey::CocoaButter)]
-                && (*target_ratio - 0.4).abs() < TESTS_EPSILON
+                && are_eq_flt_test(*target_ratio, 0.4)
         )));
 
         // It is an off-band ratio, not a dominance violation (CocoaButter <= CocoaSolids holds).
@@ -3312,16 +3467,16 @@ pub(crate) mod tests {
                 target_ratio,
                 ..
             } if numerator.as_slice() == [BalanceKey::Comp(CompKey::MilkProteins)]
-                && (*target_ratio - 0.3).abs() < TESTS_EPSILON
+                && are_eq_flt_test(*target_ratio, 0.3)
         )));
     }
 
     #[test]
     fn validate_flags_multi_ratio_infeasibility_from_multiple_sources() {
         // Every sugar in these two milks is a named one (Sealtest is all lactose, lactose-free is
-        // all glucose + galactose), so the palette pins (Lactose + Glucose + Galactose) / TotalSugars
-        // at 1. Each part fits individually, but the combined target share 2.0 / 4.7 ≈ 0.43 is below
-        // that pin — infeasible only as a group, which only the grouped ratio band catches.
+        // all glucose + galactose), so the palette pins their combined share of TotalSugars at 1.
+        // Each part fits individually, but the target share 2.0 / 4.7 ≈ 0.43 is below that pin —
+        // infeasible only as a group, which only the grouped ratio band catches.
         let comps = comps_from_names(&["Sealtest 0% Skim Milk", "Lactose-Free 0% Milk"]);
         let targets = [
             (CompKey::TotalSugars.into(), 4.7),
@@ -3343,7 +3498,7 @@ pub(crate) mod tests {
                 && numerator.contains(&BalanceKey::Comp(CompKey::Lactose))
                 && numerator.contains(&BalanceKey::Comp(CompKey::Glucose))
                 && numerator.contains(&BalanceKey::Comp(CompKey::Galactose))
-                && (*target_ratio - 2.0 / 4.7).abs() < TESTS_EPSILON
+                && are_eq_flt_test(*target_ratio, 2.0 / 4.7)
         )));
     }
 
@@ -3404,8 +3559,19 @@ pub(crate) mod tests {
         // CocoaSolids, so a higher CocoaButter target is a palette dominance violation.
         let comps = comps_from_names(DAIRY_COCOA_ING);
         let targets = [(CompKey::CocoaButter.into(), 10.0), (CompKey::CocoaSolids.into(), 5.0)];
-        let report = validate_balancing_targets(&comps, &targets, &[]);
 
+        // Raw generators: a sibling pair is not a part/whole relation, so structural stays silent
+        // and only the palette pairwise check flags the dominance — nothing to deduplicate against.
+        let structural = raw_issues(|o| append_structural_issues(&targets, o));
+        let pairwise = raw_issues(|o| append_palette_pairwise_issues(&comps, &targets, o));
+        assert_true!(structural.is_empty());
+        assert_true!(
+            pairwise
+                .iter()
+                .any(|i| matches!(i, BalancingIssue::DominanceViolation { .. }))
+        );
+
+        let report = validate_balancing_targets(&comps, &targets, &[]);
         assert_false!(report.has_errors());
         assert_true!(report.warnings().any(|issue| matches!(
             issue,
@@ -3437,8 +3603,24 @@ pub(crate) mod tests {
             (CompKey::MSNF.into(), 5.0),
             (CompKey::MilkSolids.into(), 20.0),
         ];
-        let report = validate_balancing_targets(&comps, &targets, &[]);
 
+        // Raw generators: structural emits the roll-up mismatch; the additive lower corner emits a
+        // ratio infeasibility for the same children (their band is pinned at 1 by the residual-free
+        // roll-up). Both make the same undershoot claim, so the report keeps only the mismatch.
+        let structural = raw_issues(|o| append_structural_issues(&targets, o));
+        let additive = raw_issues(|o| append_palette_additive_issues(&comps, &targets, o));
+        assert_true!(
+            structural
+                .iter()
+                .any(|i| matches!(i, BalancingIssue::RollupSumMismatch { .. }))
+        );
+        assert_true!(
+            additive
+                .iter()
+                .any(|i| matches!(i, BalancingIssue::RatioInfeasibility { .. }))
+        );
+
+        let report = validate_balancing_targets(&comps, &targets, &[]);
         assert_false!(report.has_errors());
         assert_true!(report.warnings().any(|issue| matches!(
             issue,
@@ -3451,6 +3633,12 @@ pub(crate) mod tests {
                 && *parts_target_sum == 15.0
                 && *whole_target == 20.0
         )));
+        // The ratio framing of the same mismatch is deduplicated — only the mismatch remains.
+        assert_false!(
+            report
+                .warnings()
+                .any(|issue| matches!(issue, BalancingIssue::RatioInfeasibility { .. }))
+        );
     }
 
     #[test]
@@ -3699,8 +3887,8 @@ pub(crate) mod tests {
         // Only cocoa has CocoaSolids > 0, so CocoaButter : CocoaSolids is pinned to its 16.7 : 83.3
         let comps = comps_from_names(DAIRY_COCOA_ING);
         let (min, max) = ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSolids]).unwrap();
-        assert_true!((min - max).abs() < TESTS_EPSILON);
-        assert_true!((min - 16.67 / 83.33).abs() < 1e-3);
+        assert_eq_flt_test!(min, max);
+        assert_abs_diff_eq!(min, 16.67 / 83.33, epsilon = 1e-3);
     }
 
     #[test]

@@ -22,10 +22,21 @@ pub(crate) mod shadow_asserts {
     pub(crate) use pretty_assertions::{assert_eq, assert_ne};
 }
 
+use approx::AbsDiffEq;
 pub(crate) use approx::assert_abs_diff_eq;
 pub(crate) use approx::assert_abs_diff_ne;
 
 pub(crate) const TESTS_EPSILON: f64 = 0.0001;
+
+#[cfg(doc)]
+use crate::constants::COMPOSITION_EPSILON;
+
+/// The boolean form of [`assert_eq_flt_test!`]: whether floats are equal within [`TESTS_EPSILON`].
+///
+/// Mirrors [`crate::validate::are_equal`], which uses the much tighter [`COMPOSITION_EPSILON`].
+pub(crate) fn are_eq_flt_test(a: f64, b: f64) -> bool {
+    a.abs_diff_eq(&b, TESTS_EPSILON)
+}
 
 /// `assert_eq_flt_test!` that forwards to `assert_abs_diff_eq!` with a predefined epsilon for tests
 ///
