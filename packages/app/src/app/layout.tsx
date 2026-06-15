@@ -34,8 +34,8 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
           </ThemeProvider>
         </SessionProvider>
         <WebVitals />
-        <Analytics />
-        <SpeedInsights />
+        {process.env.VERCEL && <Analytics />}
+        {process.env.VERCEL && <SpeedInsights />}
       </body>
     </html>
   );

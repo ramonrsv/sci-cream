@@ -54,7 +54,7 @@ describe("RootLayout", () => {
     expect(screen.getByRole("heading", { name: "Ice Cream Calculator" })).toBeInTheDocument();
   });
 
-  it("includes WebVitals, Analytics, and SpeedInsights", () => {
+  it("always includes WebVitals", () => {
     render(
       <RootLayout>
         <div />
@@ -63,6 +63,30 @@ describe("RootLayout", () => {
     );
 
     expect(screen.getByTestId("web-vitals")).toBeInTheDocument();
+  });
+
+  it("omits Analytics and SpeedInsights outside Vercel", () => {
+    render(
+      <RootLayout>
+        <div />
+      </RootLayout>,
+      { container: document },
+    );
+
+    expect(screen.queryByTestId("analytics")).not.toBeInTheDocument();
+    expect(screen.queryByTestId("speed-insights")).not.toBeInTheDocument();
+  });
+
+  it("includes Analytics and SpeedInsights on Vercel", () => {
+    vi.stubEnv("VERCEL", "1");
+    render(
+      <RootLayout>
+        <div />
+      </RootLayout>,
+      { container: document },
+    );
+    vi.unstubAllEnvs();
+
     expect(screen.getByTestId("analytics")).toBeInTheDocument();
     expect(screen.getByTestId("speed-insights")).toBeInTheDocument();
   });
