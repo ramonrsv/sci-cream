@@ -2284,10 +2284,32 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn balancing_issues_report_real_setup_with_ref_recipes() {
+    fn balancing_issues_report_real_setup_with_ref_recipes_chocolate() {
         // A typical scenario: balance a chocolate recipe to a reference base + cocoa targets.
         let recipe = get_light_recipe_by_id("Standard Base", Some("Underbelly"));
         let comps = comps_from_light_recipe(&recipe);
+
+        let targets = get_targets_from_light_recipe(&recipe, &get_typical_balancing_keys())
+            .iter()
+            .map(|&(key, value)| match key {
+                BalanceKey::Comp(comp_key) => match comp_key {
+                    CompKey::CocoaSolids => (CompKey::CocoaSolids.into(), 6.0),
+                    CompKey::CocoaButter => (CompKey::CocoaButter.into(), 2.0),
+                    _ => (key, value),
+                },
+                BalanceKey::Ratio(_) => (key, value),
+            })
+            .collect::<Vec<_>>();
+
+        insta::assert_snapshot!(report_balancing_issues(&comps, &targets, &[], None));
+    }
+
+    #[test]
+    fn balancing_issues_report_real_setup_with_ref_recipes_chocolate_powder_only() {
+        // A typical scenario: balance a chocolate recipe to a reference base + cocoa targets.
+        // Adding only cocoa powder produces many warnings that are redundant and confusing.
+        let recipe = get_light_recipe_by_id("Standard Base", Some("Underbelly"));
+        let comps = comps_from_light_recipe(&[recipe.clone(), vec![("Cocoa Powder, 17% Fat".into(), 0.0)]].concat());
 
         let targets = get_targets_from_light_recipe(&recipe, &get_typical_balancing_keys())
             .iter()
