@@ -156,7 +156,7 @@ jobs:
 
       - if: vars.ACT != 'true'
         name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark@v1
+        uses: benchmark-action/github-action-benchmark@v1.22.1
         with:
           name: "sci-cream Rust benchmarks"
           tool: "cargo"
@@ -188,7 +188,7 @@ jobs:
 
       - if: vars.ACT != 'true'
         name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark@v1
+        uses: benchmark-action/github-action-benchmark@v1.22.1
         with:
           name: "sci-cream JS benchmarks"
           tool: "benchmarkjs"

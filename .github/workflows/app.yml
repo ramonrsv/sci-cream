@@ -194,7 +194,7 @@ jobs:
 
       - if: vars.ACT != 'true'
         name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark@v1
+        uses: benchmark-action/github-action-benchmark@v1.22.1
         with:
           name: "App JS benchmarks"
           tool: "benchmarkjs"
@@ -229,7 +229,7 @@ jobs:
 
       - if: vars.ACT != 'true'
         name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark@v1
+        uses: benchmark-action/github-action-benchmark@v1.22.1
         with:
           name: "App Bundle Size Benchmarks"
           tool: "customSmallerIsBetter"
@@ -268,7 +268,7 @@ jobs:
 
       - if: vars.ACT != 'true'
         name: Store benchmark result
-        uses: benchmark-action/github-action-benchmark@v1
+        uses: benchmark-action/github-action-benchmark@v1.22.1
         with:
           name: "App UI Benchmarks"
           tool: "customSmallerIsBetter"
