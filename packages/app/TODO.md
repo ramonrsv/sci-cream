@@ -112,6 +112,7 @@
 - [ ] Explore adding support for a total mix amount input/slider and balancing target.
 - [ ] Use a specific-version link for badges, replace in `release.sh`; the wildcards have issues.
 - [ ] Add support for user configurations, e.g. to control units, beta features, dev features, etc.
+- [ ] Look into possible optimizations for the many `PropKey` accesses; `getMixProperty` is slow.
 
 ## Completed
 

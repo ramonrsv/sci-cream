@@ -4,7 +4,7 @@
 use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
-use strum_macros::EnumIter;
+use strum_macros::{EnumCount, EnumIter};
 
 use crate::{
     composition::{Alcohol, Micro, PAC, RatioKey, Solids, Texture},
@@ -126,7 +126,7 @@ pub struct Composition {
 /// to include more components, which makes direct field access cumbersome and error-prone. This
 /// enum provides a more stable and convenient interface for accessing specific composition values.
 #[cfg_attr(feature = "wasm", wasm_bindgen)]
-#[derive(EnumIter, Hash, PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
+#[derive(EnumCount, EnumIter, Hash, PartialEq, Eq, Serialize, Deserialize, Copy, Clone, Debug)]
 pub enum CompKey {
     /// Total energy content in kilocalories (kcal) per 100g of ingredient/mix
     Energy,
