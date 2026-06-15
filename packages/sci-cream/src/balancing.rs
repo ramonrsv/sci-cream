@@ -3142,6 +3142,35 @@ pub(crate) mod tests {
         )));
     }
 
+    #[ignore = "TODO: This currently documents an implementation gap, enable once fixed"]
+    #[test]
+    fn validate_flags_structural_violation_from_combined_non_exhaustive_children() {
+        // MilkFat and CocoaButter are structurally part of TotalFats, so their sum (12) must not
+        // exceed the TotalFats target (10), which must be flagged. Individually they are fine, and
+        // they are not all the children so an exact rollup violation cannot be flagged.
+        let report = validate_balancing_targets(
+            &comps_from_names(DAIRY_SUGAR_ING),
+            &[
+                (CompKey::TotalFats.into(), 10.0),
+                (CompKey::MilkFat.into(), 6.0),
+                (CompKey::CocoaButter.into(), 6.0),
+            ],
+            &[],
+        );
+
+        assert_true!(report.warnings().any(|issue| matches!(
+            issue,
+            BalancingIssue::StructuralViolation {
+                whole: BalanceKey::Comp(CompKey::TotalFats),
+                parts_target_sum,
+                whole_target,
+                parts,
+            } if parts.as_slice() == [BalanceKey::Comp(CompKey::MilkFat), BalanceKey::Comp(CompKey::CocoaButter)]
+                && *parts_target_sum == 12.0
+                && *whole_target == 10.0
+        )));
+    }
+
     #[test]
     fn validate_flags_structural_dominance_for_sucrose_over_total_sugars() {
         // Sucrose is structurally part of TotalSugars, so a Sucrose target above the TotalSugars
