@@ -334,9 +334,8 @@ fn fmt_dominance(
     }
 }
 
-/// Writes the palette-independent
-/// [`StructuralDominanceViolation`](BalancingIssue::StructuralDominanceViolation) message, using
-/// the pairwise wording for a single `part` and the additive wording for several.
+/// Writes the palette-independent [`StructuralViolation`](BalancingIssue::StructuralViolation)
+/// message, using the pairwise wording for a single `part` and the additive wording for several.
 fn fmt_structural_dominance(
     f: &mut fmt::Formatter<'_>,
     parts: &[BalanceKey],
@@ -412,7 +411,7 @@ impl fmt::Display for BalancingIssue {
                 min_ratio = round2(*min_ratio),
                 max_ratio = round2(*max_ratio),
             ),
-            Self::StructuralDominanceViolation {
+            Self::StructuralViolation {
                 parts,
                 whole,
                 parts_target_sum,
@@ -814,7 +813,7 @@ mod tests {
 
     #[test]
     fn balancing_issue_display_message_structural_dominance_violation() {
-        let structural = BalancingIssue::StructuralDominanceViolation {
+        let structural = BalancingIssue::StructuralViolation {
             parts: vec![CompKey::MilkFat.into()],
             whole: CompKey::TotalFats.into(),
             parts_target_sum: 20.0,

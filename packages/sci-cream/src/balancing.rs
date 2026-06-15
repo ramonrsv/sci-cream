@@ -264,6 +264,36 @@ pub enum BalancingIssue {
         /// The largest value any single composition has for this key.
         max: f64,
     },
+    /// Palette-independent contradiction: the `parts` targets sum above `whole`'s, but each part is
+    /// structurally part of `whole` (see [`CompKey::is_part_of`]), so `Σ parts <= whole` by
+    /// definition. A single part is the pairwise case (e.g. a `MilkFat` target above `TotalFats`).
+    ///
+    /// Severity: [`Severity::Warning`].
+    StructuralViolation {
+        /// The structural part keys whose targets exceed `whole` (each is a part of `whole`; >= 1).
+        parts: Vec<BalanceKey>,
+        /// The whole key the `parts` belong to in the composition hierarchy.
+        whole: BalanceKey,
+        /// The sum of the `parts` targets (infeasibly greater than `whole_target`).
+        parts_target_sum: f64,
+        /// The target requested for `whole`.
+        whole_target: f64,
+    },
+    /// Palette-independent contradiction: `whole` is a residual-free roll-up that equals its parts'
+    /// sum in every composition (see [`CompKey::is_residual_free_rollup`]), yet the targets for
+    /// `whole` and all its parts disagree. Also catches a `whole` target too *large* for its parts.
+    ///
+    /// Severity: [`Severity::Warning`].
+    RollupSumMismatch {
+        /// The residual-free roll-up key whose target disagrees with its parts' targets.
+        whole: BalanceKey,
+        /// The roll-up's parts, all of which are targets (their values must sum to `whole`).
+        parts: Vec<BalanceKey>,
+        /// The sum of the `parts` targets (not equal to `whole_target`).
+        parts_target_sum: f64,
+        /// The target requested for `whole`.
+        whole_target: f64,
+    },
     /// Palette-derived infeasibility: the `lesser` targets sum above `greater`'s target, yet every
     /// composition has `Σ lesser <= greater`. One `lesser` key is pairwise; several, additive.
     ///
@@ -294,36 +324,6 @@ pub enum BalancingIssue {
         min_ratio: f64,
         /// The largest such ratio any composition has (infinite when some has a zero denominator).
         max_ratio: f64,
-    },
-    /// Palette-independent contradiction: the `parts` targets sum above `whole`'s, but each part is
-    /// structurally part of `whole` (see [`CompKey::is_part_of`]), so `Σ parts <= whole` by
-    /// definition. A single part is the pairwise case (e.g. a `MilkFat` target above `TotalFats`).
-    ///
-    /// Severity: [`Severity::Warning`].
-    StructuralDominanceViolation {
-        /// The structural part keys whose targets exceed `whole` (each is a part of `whole`; >= 1).
-        parts: Vec<BalanceKey>,
-        /// The whole key the `parts` belong to in the composition hierarchy.
-        whole: BalanceKey,
-        /// The sum of the `parts` targets (infeasibly greater than `whole_target`).
-        parts_target_sum: f64,
-        /// The target requested for `whole`.
-        whole_target: f64,
-    },
-    /// Palette-independent contradiction: `whole` is a residual-free roll-up that equals its parts'
-    /// sum in every composition (see [`CompKey::is_residual_free_rollup`]), yet the targets for
-    /// `whole` and all its parts disagree. Also catches a `whole` target too *large* for its parts.
-    ///
-    /// Severity: [`Severity::Warning`].
-    RollupSumMismatch {
-        /// The residual-free roll-up key whose target disagrees with its parts' targets.
-        whole: BalanceKey,
-        /// The roll-up's parts, all of which are targets (their values must sum to `whole`).
-        parts: Vec<BalanceKey>,
-        /// The sum of the `parts` targets (not equal to `whole_target`).
-        parts_target_sum: f64,
-        /// The target requested for `whole`.
-        whole_target: f64,
     },
     /// A priority names a key with no target, so it has no effect — only target rows are weighted.
     ///
@@ -356,10 +356,10 @@ impl BalancingIssue {
             | Self::DuplicatePriority { .. } => Severity::Error,
             Self::UnaffectableTarget { .. }
             | Self::UnreachableTarget { .. }
+            | Self::StructuralViolation { .. }
+            | Self::RollupSumMismatch { .. }
             | Self::DominanceViolation { .. }
             | Self::RatioInfeasibility { .. }
-            | Self::StructuralDominanceViolation { .. }
-            | Self::RollupSumMismatch { .. }
             | Self::PriorityWithoutTarget { .. } => Severity::Warning,
             Self::OverDetermined { .. } => Severity::Info,
         }
@@ -379,13 +379,13 @@ impl BalancingIssue {
             | Self::UnaffectableTarget { key }
             | Self::UnreachableTarget { key, .. }
             | Self::PriorityWithoutTarget { key } => vec![*key],
+            Self::StructuralViolation { parts, whole, .. } | Self::RollupSumMismatch { whole, parts, .. } => {
+                [&[*whole], parts.as_slice()].concat()
+            }
             Self::DominanceViolation { lesser, greater, .. } => [&[*greater], lesser.as_slice()].concat(),
             Self::RatioInfeasibility {
                 numerator, denominator, ..
             } => [&[*denominator], numerator.as_slice()].concat(),
-            Self::StructuralDominanceViolation { parts, whole, .. } | Self::RollupSumMismatch { whole, parts, .. } => {
-                [&[*whole], parts.as_slice()].concat()
-            }
             Self::OverDetermined { .. } => vec![],
         }
     }
@@ -702,7 +702,7 @@ fn append_structural_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<Bala
     for &(part, part_target) in &comp_targets {
         for &(whole, whole_target) in &comp_targets {
             if part.is_part_of(whole) && !is_subset(part_target, whole_target) {
-                issues.push(BalancingIssue::StructuralDominanceViolation {
+                issues.push(BalancingIssue::StructuralViolation {
                     parts: vec![part.into()],
                     whole: whole.into(),
                     parts_target_sum: part_target,
@@ -2284,7 +2284,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn balancing_issues_report_real_setup_with_ref_recipes_chocolate() {
+    fn balancing_issues_report_real_setup_with_ref_recipes_chocolate_no_ing() {
         // A typical scenario: balance a chocolate recipe to a reference base + cocoa targets.
         let recipe = get_light_recipe_by_id("Standard Base", Some("Underbelly"));
         let comps = comps_from_light_recipe(&recipe);
@@ -3153,7 +3153,7 @@ pub(crate) mod tests {
         assert_false!(report.has_errors());
         assert_true!(report.warnings().any(|issue| matches!(
             issue,
-            BalancingIssue::StructuralDominanceViolation {
+            BalancingIssue::StructuralViolation {
                 whole: BalanceKey::Comp(CompKey::TotalSugars),
                 parts_target_sum,
                 whole_target,
@@ -3394,7 +3394,7 @@ pub(crate) mod tests {
         assert_false!(
             report
                 .warnings()
-                .any(|issue| matches!(issue, BalancingIssue::StructuralDominanceViolation { .. }))
+                .any(|issue| matches!(issue, BalancingIssue::StructuralViolation { .. }))
         );
     }
 
@@ -3569,7 +3569,7 @@ pub(crate) mod tests {
         assert_true!(
             report
                 .warnings()
-                .any(|i| matches!(i, BalancingIssue::StructuralDominanceViolation { .. }))
+                .any(|i| matches!(i, BalancingIssue::StructuralViolation { .. }))
         );
     }
 
