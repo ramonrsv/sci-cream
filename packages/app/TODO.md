@@ -113,6 +113,8 @@
 - [ ] Use a specific-version link for badges, replace in `release.sh`; the wildcards have issues.
 - [ ] Add support for user configurations, e.g. to control units, beta features, dev features, etc.
 - [ ] Look into possible optimizations for the many `PropKey` accesses; `getMixProperty` is slow.
+- [ ] Investigate why updating pnpm dependencies in 275a906 degraded the performance of `is*Key`.
+      275a906: Update /sci-cream & /app pnpm deps to latest
 
 ## Completed
 
