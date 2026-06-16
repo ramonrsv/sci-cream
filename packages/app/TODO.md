@@ -107,7 +107,6 @@
 - [ ] Explore options for a UI system to communicate errors/notification; popups, text bar?
 - [ ] Explore undo/redo system - necessary now that automatic balancing has been enabled.
 - [ ] Explore adding support for a total mix amount input/slider and balancing target.
-- [ ] Use a specific-version link for badges, replace in `release.sh`; the wildcards have issues.
 - [ ] Add support for user configurations, e.g. to control units, beta features, dev features, etc.
 - [ ] Look into possible optimizations for the many `PropKey` accesses; `getMixProperty` is slow.
 - [ ] Investigate why updating pnpm dependencies in 275a906 degraded the performance of `is*Key`.

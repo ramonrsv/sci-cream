@@ -81,7 +81,6 @@
       resolve under `cargo doc --document-private-items -D warnings`; de-link or relax rustdoc.
 - [ ] Look into running only some TS-side benchmarks in every CI run; after an initial analysis
       there is no need to constantly track those. Still good to run them on a nightly/weekly sanity.
-- [ ] Use a specific-version link for badges, replace in `release.toml`; the wildcards have issues.
 - [ ] Look into possible optimizations using the new `FastComposition`, including on the JS side.
 
 ## Completed
