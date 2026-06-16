@@ -159,9 +159,15 @@ export function PropertiesView({
   defaultSelected?: Set<PropKey>;
   persistKey?: string;
 }) {
-  const qtyToggleState = useQtyToggleState(persistKey, QtyToggle.Percentage);
-  const { keyFilterState: propsFilterState, selectedKeysState: selectedPropsState } =
-    useKeyFilterState<PropKey>(persistKey, { defaultSelected, getKeys: getMixScopePropKeys });
+  const [qtyToggle, setQtyToggle, supportedQtyToggles] = useQtyToggleState(persistKey, {
+    supportedQtyToggles: [QtyToggle.Quantity, QtyToggle.Percentage],
+    defaultValue: QtyToggle.Percentage,
+  });
+  const {
+    keyFilterState: propsFilterState,
+    selectedKeysState: selectedPropsState,
+    supportedKeyFilters,
+  } = useKeyFilterState(persistKey, { defaultSelected, getKeys: getMixScopePropKeys });
 
   const orderKeys = useOrderKeys<PropKey>(groupEnabledKeys);
 
@@ -210,10 +216,11 @@ export function PropertiesView({
       <div className="toolbar">
         {toolbarPrefix}
         <QtyToggleSelect
-          supportedQtyToggles={[QtyToggle.Quantity, QtyToggle.Percentage]}
-          qtyToggleState={qtyToggleState}
+          supportedQtyToggles={supportedQtyToggles}
+          qtyToggleState={[qtyToggle, setQtyToggle]}
         />
         <KeyFilterSelect
+          supportedKeyFilters={supportedKeyFilters}
           keyFilterState={propsFilterState}
           selectedKeysState={selectedPropsState}
           getKeys={getMixScopePropKeys}
@@ -228,7 +235,7 @@ export function PropertiesView({
         <PropertiesTable
           recipes={recipes}
           propKeys={propKeys}
-          qtyToggle={qtyToggleState[STATE_VAL]}
+          qtyToggle={qtyToggle}
           rowMeta={rowMeta}
         />
       </div>

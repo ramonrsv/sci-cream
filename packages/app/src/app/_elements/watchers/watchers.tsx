@@ -507,8 +507,15 @@ export function WatchersView({
   onApplyBalancedMain?: (balanced: LightRecipe) => void;
   persistKey?: string;
 }) {
-  const { keyFilterState: propsFilterState, selectedKeysState: selectedPropsState } =
-    useKeyFilterState<PropKey>(persistKey, { defaultSelected, getKeys: getMixScopePropKeys });
+  const {
+    keyFilterState: propsFilterState,
+    selectedKeysState: selectedPropsState,
+    supportedKeyFilters,
+  } = useKeyFilterState(persistKey, {
+    defaultSelected,
+    getKeys: getMixScopePropKeys,
+    supportedKeyFilters: [KeyFilter.Auto, KeyFilter.Custom],
+  });
 
   const [targets, setTargets] = usePersistedState<TargetsMap>(STORAGE_KEYS.watcherTargets, {});
   const [priorities, setPriorities] = usePersistedState<PrioritiesMap>(
@@ -713,7 +720,7 @@ export function WatchersView({
       <div className="toolbar">
         {toolbarPrefix}
         <KeyFilterSelect
-          supportedKeyFilters={[KeyFilter.Auto, KeyFilter.Custom]}
+          supportedKeyFilters={supportedKeyFilters}
           keyFilterState={propsFilterState}
           selectedKeysState={selectedPropsState}
           getKeys={getMixScopePropKeys}

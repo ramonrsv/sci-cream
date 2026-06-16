@@ -54,37 +54,42 @@ export function getEnabledKeys<Key>(
   }
 }
 
-/** Returns `true` when `value` is a valid {@link KeyFilter} enum member. */
-export function isKeyFilter(value: unknown): value is KeyFilter {
-  return (Object.values(KeyFilter) as unknown[]).includes(value);
-}
-
 /**
- * Persisted `{ keyFilterState, selectedKeysState }` tuples for a {@link KeyFilter} toolbar pair.
+ * Persisted `{ keyFilterState, selectedKeysState, supportedKeyFilters }` for a {@link KeyFilter}.
+ *
+ * `supportedKeyFilters` constrains which `KeyFilter` values are valid for this site — stored values
+ * outside that list are rejected and fall back to `defaultFilter`. Defaults to all `KeyFilter`
+ * values when omitted. `defaultFilter` is typed as `Filters[number]` (a compile-time error if it
+ * is not in `supportedKeyFilters`), and defaults to the first supported filter.
  *
  * When `persistKey` is `undefined`, both states fall back to plain `useState`.
  * Stored leaf keys: `${persistKey}:filter` and `${persistKey}:selected`.
  *
  * The `isValid` callback rejects stored key sets whose members are no longer in `getKeys()`, so a
  * changed WASM key universe always falls back gracefully to `defaultSelected`.
- *
- * `defaultFilter` defaults to `KeyFilter.Auto`, so a new filters start in a reasonable mode.
  */
-export function useKeyFilterState<Key>(
+export function useKeyFilterState<Key, const Filters extends [KeyFilter, ...KeyFilter[]]>(
   persistKey: string | undefined,
   {
     defaultSelected,
     getKeys,
-    defaultFilter = KeyFilter.Auto,
-  }: { defaultSelected: Set<Key>; getKeys: () => Key[]; defaultFilter?: KeyFilter },
+    supportedKeyFilters = Object.values(KeyFilter) as unknown as Filters,
+    defaultFilter = supportedKeyFilters[0],
+  }: {
+    defaultSelected: Set<Key>;
+    getKeys: () => Key[];
+    supportedKeyFilters?: Filters;
+    defaultFilter?: Filters[number];
+  },
 ): {
   keyFilterState: [KeyFilter, Dispatch<SetStateAction<KeyFilter>>];
   selectedKeysState: [Set<Key>, Dispatch<SetStateAction<Set<Key>>>];
+  supportedKeyFilters: Filters;
 } {
   const keyFilterState = usePersistedState<KeyFilter>(
     leafKey(persistKey, "filter"),
     defaultFilter,
-    { isValid: isKeyFilter },
+    { isValid: (v) => (supportedKeyFilters as KeyFilter[]).includes(v) },
   );
 
   const selectedKeysState = usePersistedState<Set<Key>>(
@@ -100,7 +105,7 @@ export function useKeyFilterState<Key>(
     },
   );
 
-  return { keyFilterState, selectedKeysState };
+  return { keyFilterState, selectedKeysState, supportedKeyFilters };
 }
 
 /** Select element for choosing a `KeyFilter` mode, with an optional settings popup for `Custom` */

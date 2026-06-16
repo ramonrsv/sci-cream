@@ -79,12 +79,15 @@ export function CompositionView({
   defaultSelected?: Set<CompKey>;
   persistKey?: string;
 }) {
-  const { keyFilterState: compsFilterState, selectedKeysState: selectedCompsState } =
-    useKeyFilterState<CompKey>(persistKey, {
-      defaultSelected,
-      getKeys: getCompKeys,
-      defaultFilter: KeyFilter.Active,
-    });
+  const {
+    keyFilterState: compsFilterState,
+    selectedKeysState: selectedCompsState,
+    supportedKeyFilters,
+  } = useKeyFilterState(persistKey, {
+    defaultSelected,
+    getKeys: getCompKeys,
+    supportedKeyFilters: [KeyFilter.Active, KeyFilter.All, KeyFilter.Custom],
+  });
 
   /** Returns `true` when the composition value for the given key is zero or NaN */
   const isPropEmpty = (compKey: CompKey) => {
@@ -108,7 +111,7 @@ export function CompositionView({
       <div className="toolbar">
         {toolbarPrefix}
         <KeyFilterSelect
-          supportedKeyFilters={[KeyFilter.Active, KeyFilter.All, KeyFilter.Custom]}
+          supportedKeyFilters={supportedKeyFilters}
           keyFilterState={compsFilterState}
           selectedKeysState={selectedCompsState}
           getKeys={getCompKeys}

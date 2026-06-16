@@ -173,11 +173,15 @@ export function CompositionBreakdownView({
   defaultSelected?: Set<CompKey>;
   persistKey?: string;
 }) {
-  const [qtyToggle, setQtyToggle] = useQtyToggleState(persistKey, QtyToggle.Quantity);
-  const { keyFilterState: compsFilterState, selectedKeysState: selectedCompsState } =
-    useKeyFilterState<CompKey>(persistKey, { defaultSelected, getKeys: getCompKeys });
-  const [currentRecipeIdx, setCurrentRecipeIdx] = useRecipeIdxState(persistKey);
+  const [qtyToggle, setQtyToggle, supportedQtyToggles] = useQtyToggleState(persistKey, {
+    supportedQtyToggles: [QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage],
+    defaultValue: QtyToggle.Quantity,
+  });
 
+  const { keyFilterState: compsFilterState, selectedKeysState: selectedCompsState } =
+    useKeyFilterState(persistKey, { defaultSelected, getKeys: getCompKeys });
+
+  const [currentRecipeIdx, setCurrentRecipeIdx] = useRecipeIdxState(persistKey);
   const orderKeys = useOrderKeys<CompKey>(groupEnabledCompKeys);
 
   /** Returns `true` if every ingredient row has a zero (or absent) value for the given comp key */
@@ -220,7 +224,7 @@ export function CompositionBreakdownView({
           />
         )}
         <QtyToggleSelect
-          supportedQtyToggles={[QtyToggle.Composition, QtyToggle.Quantity, QtyToggle.Percentage]}
+          supportedQtyToggles={supportedQtyToggles}
           qtyToggleState={[qtyToggle, setQtyToggle]}
         />
         <KeyFilterSelect

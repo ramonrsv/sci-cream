@@ -343,8 +343,15 @@ export function PropertiesChartView({
   defaultSelected?: Set<PropKey>;
   persistKey?: string;
 }) {
-  const { keyFilterState: propsFilterState, selectedKeysState: selectedPropsState } =
-    useKeyFilterState<PropKey>(persistKey, { defaultSelected, getKeys: getPropKeys });
+  const {
+    keyFilterState: propsFilterState,
+    selectedKeysState: selectedPropsState,
+    supportedKeyFilters,
+  } = useKeyFilterState(persistKey, {
+    defaultSelected,
+    getKeys: getPropKeys,
+    supportedKeyFilters: [KeyFilter.Auto, KeyFilter.Custom],
+  });
 
   const orderKeys = useOrderKeys<PropKey>(groupEnabledKeys);
 
@@ -381,7 +388,7 @@ export function PropertiesChartView({
       <div className="toolbar">
         {toolbarPrefix}
         <KeyFilterSelect
-          supportedKeyFilters={[KeyFilter.Auto, KeyFilter.Custom]}
+          supportedKeyFilters={supportedKeyFilters}
           keyFilterState={propsFilterState}
           selectedKeysState={selectedPropsState}
           getKeys={getPropKeys}

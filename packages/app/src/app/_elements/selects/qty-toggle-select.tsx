@@ -21,22 +21,29 @@ export const QTY_TOGGLE_SHORT_LABELS: Record<QtyToggle, string> = {
   [QtyToggle.Percentage]: "Qty (%)",
 };
 
-/** Returns `true` when `value` is a valid {@link QtyToggle} enum member. */
-function isQtyToggle(value: unknown): value is QtyToggle {
-  return (Object.values(QtyToggle) as unknown[]).includes(value);
-}
-
 /**
- * Persisted `[value, setter]` tuple for a {@link QtyToggle} selection.
+ * Persisted `[value, setter, supportedQtyToggles]` tuple for a {@link QtyToggle} selection.
+ *
+ * `supportedQtyToggles` constrains which `QtyToggle` values are valid for this site — stored values
+ * outside that list are rejected and fall back to `defaultValue`. Defaults to all `QtyToggle`
+ * values when omitted. `defaultValue` is typed as `Toggles[number]` (a compile-time error if it is
+ * not in `supportedQtyToggles`), and defaults to the first supported toggle.
  *
  * When `persistKey` is `undefined`, it behaves as a plain `useState` (no storage touched). The
- * stored leaf key is `${persistKey}:qty`. Stored values are validated via {@link isQtyToggle}.
+ * stored leaf key is `${persistKey}:qty`.
  */
-export function useQtyToggleState(
+export function useQtyToggleState<const Toggles extends [QtyToggle, ...QtyToggle[]]>(
   persistKey: string | undefined,
-  defaultValue: QtyToggle = QtyToggle.Percentage,
-): [QtyToggle, React.Dispatch<React.SetStateAction<QtyToggle>>] {
-  return usePersistedState(leafKey(persistKey, "qty"), defaultValue, { isValid: isQtyToggle });
+  {
+    supportedQtyToggles = Object.values(QtyToggle) as unknown as Toggles,
+    defaultValue = supportedQtyToggles[0],
+  }: { supportedQtyToggles?: Toggles; defaultValue?: Toggles[number] } = {},
+): [QtyToggle, React.Dispatch<React.SetStateAction<QtyToggle>>, Toggles] {
+  const [value, setValue] = usePersistedState(leafKey(persistKey, "qty"), defaultValue, {
+    isValid: (v) => (supportedQtyToggles as QtyToggle[]).includes(v),
+  });
+
+  return [value, setValue, supportedQtyToggles];
 }
 
 /** Select element for switching between `QtyToggle` display modes */
