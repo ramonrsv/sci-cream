@@ -1,12 +1,14 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type Dispatch, type SetStateAction } from "react";
 import { X, Settings } from "lucide-react";
+
+import { leafKey, usePersistedState } from "@/lib/use-persisted-state";
 
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";
 
-import { Select, type SelectOption } from "./select";
+import { Select, type SelectOption } from "@/app/_elements/selects/select";
 
 /** Controls which subset of keys is shown in composition/property tables and charts */
 export enum KeyFilter {
@@ -50,6 +52,55 @@ export function getEnabledKeys<Key>(
     case KeyFilter.Custom:
       return getKeys().filter((key) => isKeySelected(key));
   }
+}
+
+/** Returns `true` when `value` is a valid {@link KeyFilter} enum member. */
+export function isKeyFilter(value: unknown): value is KeyFilter {
+  return (Object.values(KeyFilter) as unknown[]).includes(value);
+}
+
+/**
+ * Persisted `{ keyFilterState, selectedKeysState }` tuples for a {@link KeyFilter} toolbar pair.
+ *
+ * When `persistKey` is `undefined`, both states fall back to plain `useState`.
+ * Stored leaf keys: `${persistKey}:filter` and `${persistKey}:selected`.
+ *
+ * The `isValid` callback rejects stored key sets whose members are no longer in `getKeys()`, so a
+ * changed WASM key universe always falls back gracefully to `defaultSelected`.
+ *
+ * `defaultFilter` defaults to `KeyFilter.Auto`, so a new filters start in a reasonable mode.
+ */
+export function useKeyFilterState<Key>(
+  persistKey: string | undefined,
+  {
+    defaultSelected,
+    getKeys,
+    defaultFilter = KeyFilter.Auto,
+  }: { defaultSelected: Set<Key>; getKeys: () => Key[]; defaultFilter?: KeyFilter },
+): {
+  keyFilterState: [KeyFilter, Dispatch<SetStateAction<KeyFilter>>];
+  selectedKeysState: [Set<Key>, Dispatch<SetStateAction<Set<Key>>>];
+} {
+  const keyFilterState = usePersistedState<KeyFilter>(
+    leafKey(persistKey, "filter"),
+    defaultFilter,
+    { isValid: isKeyFilter },
+  );
+
+  const selectedKeysState = usePersistedState<Set<Key>>(
+    leafKey(persistKey, "selected"),
+    defaultSelected,
+    {
+      serialize: (set) => Array.from(set),
+      deserialize: (raw) => new Set(Array.isArray(raw) ? (raw as Key[]) : []),
+      isValid: (set) => {
+        const validKeys = new Set(getKeys());
+        return [...set].every((k) => validKeys.has(k));
+      },
+    },
+  );
+
+  return { keyFilterState, selectedKeysState };
 }
 
 /** Select element for choosing a `KeyFilter` mode, with an optional settings popup for `Custom` */

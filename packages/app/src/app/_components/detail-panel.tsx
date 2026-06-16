@@ -5,6 +5,8 @@ import { Trash } from "lucide-react";
 
 import { EntitySource } from "@/app/_components/entity-search";
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
+import { leafKey, usePersistedState } from "@/lib/use-persisted-state";
+import { isValidSlotStore } from "@/app/_elements/selects/recipe-select";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 
 /**
@@ -51,13 +53,19 @@ export function LoadAction({
   slots,
   slotLabel,
   label = "Load",
+  persistKey,
 }: {
   onLoad: (slot: number) => void;
   slots?: number[];
   slotLabel?: (slot: number) => string;
   label?: string;
+  persistKey?: string;
 }) {
-  const [targetSlot, setTargetSlot] = useState<number>(slots?.[0] ?? 0);
+  const [targetSlot, setTargetSlot] = usePersistedState<number>(
+    leafKey(persistKey, "slot"),
+    slots?.[0] ?? 0,
+    { isValid: isValidSlotStore },
+  );
 
   const slotOptions: SelectOption<number>[] = (slots ?? []).map((slot) => ({
     value: slot,

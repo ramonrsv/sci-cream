@@ -3,11 +3,15 @@ import "@testing-library/jest-dom/vitest";
 import { StrictMode } from "react";
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, cleanup, within } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup, within, act } from "@testing-library/react";
 
 import type { IngredientSpecJson, SpecEntryJson } from "@workspace/sci-cream";
 import { makeWasmResources, useSeededWasmResources } from "@/lib/wasm-resources";
 import { IngredientSearch, ingredientMatchesQuery } from "./ingredient-search";
+import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
+import { STORAGE_KEYS } from "@/lib/local-storage";
+import { setKeyFilterSelect } from "@/__tests__/unit/util";
+import { getSelectedOptionLabel } from "@/__tests__/unit/select";
 
 // ---------------------------------------------------------------------------
 // Global stubs
@@ -108,6 +112,7 @@ describe("ingredientMatchesQuery", () => {
 describe("IngredientSearch", () => {
   beforeEach(async () => {
     vi.clearAllMocks();
+    localStorage.clear();
     setupVitestCanvasMock();
 
     const { Bridge, new_ingredient_database_seeded_from_embedded_data } =
@@ -353,6 +358,30 @@ describe("IngredientSearch", () => {
         target: { value: "zzz-nope" },
       });
       expect(screen.getByText("No ingredients found.")).toBeInTheDocument();
+    });
+  });
+
+  describe("Select persistence", () => {
+    const FILTER_KEY = `${STORAGE_KEYS.ingredientSearchCompositionView}:filter`;
+
+    it("writes the KeyFilter leaf key when the select changes", async () => {
+      const { container } = render(<IngredientSearch />);
+      fireEvent.click(screen.getByRole("button", { name: /1% Milk/ }));
+      await act(async () => {});
+
+      await setKeyFilterSelect(container, KeyFilter.All);
+      await act(async () => {});
+
+      expect(localStorage.getItem(FILTER_KEY)).toBe(JSON.stringify(KeyFilter.All));
+    });
+
+    it("restores the KeyFilter value on remount", async () => {
+      localStorage.setItem(FILTER_KEY, JSON.stringify(KeyFilter.All));
+      const { container } = render(<IngredientSearch />);
+      fireEvent.click(screen.getByRole("button", { name: /1% Milk/ }));
+      await act(async () => {});
+
+      expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.All);
     });
   });
 

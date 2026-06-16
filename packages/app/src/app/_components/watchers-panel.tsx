@@ -7,6 +7,7 @@ import { WatchersView } from "@/app/_elements/watchers/watchers";
 import { DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
 
 import { Bridge as WasmBridge, type LightRecipe } from "@workspace/sci-cream";
+import { STORAGE_KEYS } from "@/lib/local-storage";
 
 /**
  * Calculator-page panel wrapping {@link WatchersView} with grid-layout chrome and a drag handle.
@@ -35,6 +36,7 @@ export function WatchersPanel({
         toolbarPrefix={<GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />}
         wasmBridge={wasmBridge}
         onApplyBalancedMain={onApplyBalancedMain}
+        persistKey={STORAGE_KEYS.watchersPanelView}
       />
     </div>
   );

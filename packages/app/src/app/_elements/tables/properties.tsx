@@ -1,14 +1,18 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 
 import { RecipeSummary, isRecipeEmpty } from "@/lib/recipe";
 import {
-  KeyFilter,
   KeyFilterSelect,
   getEnabledKeys,
+  useKeyFilterState,
 } from "@/app/_elements/selects/key-filter-select";
-import { QtyToggle, QtyToggleSelect } from "@/app/_elements/selects/qty-toggle-select";
+import {
+  QtyToggle,
+  QtyToggleSelect,
+  useQtyToggleState,
+} from "@/app/_elements/selects/qty-toggle-select";
 import { useOrderKeys } from "@/lib/group-by";
 import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
 import { isPropKeyQuantity, isPropKeyMixScope } from "@/lib/sci-cream/sci-cream";
@@ -148,14 +152,17 @@ export function PropertiesView({
   recipes,
   toolbarPrefix,
   defaultSelected = DEFAULT_SELECTED_PROPERTIES,
+  persistKey,
 }: {
   recipes: RecipeSummary[];
   toolbarPrefix?: ReactNode;
   defaultSelected?: Set<PropKey>;
+  persistKey?: string;
 }) {
-  const qtyToggleState = useState<QtyToggle>(QtyToggle.Percentage);
-  const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
-  const selectedPropsState = useState<Set<PropKey>>(defaultSelected);
+  const qtyToggleState = useQtyToggleState(persistKey, QtyToggle.Percentage);
+  const { keyFilterState: propsFilterState, selectedKeysState: selectedPropsState } =
+    useKeyFilterState<PropKey>(persistKey, { defaultSelected, getKeys: getMixScopePropKeys });
+
   const orderKeys = useOrderKeys<PropKey>(groupEnabledKeys);
 
   /**

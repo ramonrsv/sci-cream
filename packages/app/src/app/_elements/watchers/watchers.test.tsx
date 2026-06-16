@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup, fireEvent } from "@testing-library/react";
+import { render, screen, cleanup, fireEvent, act } from "@testing-library/react";
 
 import { WatcherCard, WatchersView } from "@/app/_elements/watchers/watchers";
 import { STORAGE_KEYS } from "@/lib/local-storage";
@@ -585,9 +585,11 @@ describe("WatchersView", () => {
   });
 
   it("hydrates the selection from localStorage on mount", async () => {
-    localStorage.setItem(STORAGE_KEYS.watcherSelectedProps, JSON.stringify([TOTAL_FATS]));
+    const persistKey = "test-watcher-view";
+    localStorage.setItem(`${persistKey}:selected`, JSON.stringify([TOTAL_FATS]));
     const main = makeMockRecipe(RecipeID.Main);
-    const { container } = render(<WatchersView main={main} />);
+    const { container } = render(<WatchersView main={main} persistKey={persistKey} />);
+    await act(async () => {});
 
     // Default filter is Auto (ignores selection); switch to Custom to observe the hydrated set
     await selectOption(container, "#key-filter-select", KeyFilter.Custom);
@@ -605,12 +607,14 @@ describe("WatchersView", () => {
   });
 
   it("persists the selection to localStorage after removal (Custom filter)", async () => {
+    const persistKey = "test-watcher-view";
     const main = makeMockRecipe(RecipeID.Main);
-    const { container } = render(<WatchersView main={main} />);
+    const { container } = render(<WatchersView main={main} persistKey={persistKey} />);
     // Removal only applies under the Custom filter, where the remove button is shown.
     await selectOption(container, "#key-filter-select", KeyFilter.Custom);
     fireEvent.click(screen.getByTestId(`watcher-card-${String(MSNF)}-remove`));
-    const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherSelectedProps) ?? "[]");
+    await act(async () => {});
+    const stored = JSON.parse(localStorage.getItem(`${persistKey}:selected`) ?? "[]");
     expect(stored).not.toContain(MSNF);
     expect(stored).toContain(TOTAL_SOLIDS);
   });

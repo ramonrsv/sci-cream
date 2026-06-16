@@ -2,12 +2,15 @@ import "@testing-library/jest-dom/vitest";
 
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, cleanup } from "@testing-library/react";
+import { render, cleanup, act } from "@testing-library/react";
 
 import { PropertiesChartPanel } from "@/app/_components/properties-chart-panel";
 
+import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
+import { STORAGE_KEYS } from "@/lib/local-storage";
 import { RecipeID } from "@/__tests__/assets";
-import { makeMockRecipeContext } from "@/__tests__/unit/util";
+import { makeMockRecipeContext, setKeyFilterSelect } from "@/__tests__/unit/util";
+import { getSelectedOptionLabel } from "@/__tests__/unit/select";
 
 /** Mock implementation of ResizeObserver for testing purposes */
 class ResizeObserverMock {
@@ -53,12 +56,39 @@ describe("PropertiesChartPanel", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     capturedBarProps = null;
+    localStorage.clear();
     setupVitestCanvasMock();
   });
 
   afterEach(async () => {
     cleanup();
     await vi.waitFor(() => {}, { timeout: 100 });
+  });
+
+  // ---- Select persistence ---------------------------------------------------------------------
+
+  describe("Select persistence", () => {
+    const FILTER_KEY = `${STORAGE_KEYS.propertiesChartPanelView}:filter`;
+
+    it("writes the KeyFilter leaf key when the select changes", async () => {
+      const recipeCtx = makeMockRecipeContext([]);
+      const { container } = render(<PropertiesChartPanel recipes={recipeCtx.recipes} />);
+      await act(async () => {});
+
+      await setKeyFilterSelect(container, KeyFilter.Custom);
+      await act(async () => {});
+
+      expect(localStorage.getItem(FILTER_KEY)).toBe(JSON.stringify(KeyFilter.Custom));
+    });
+
+    it("restores the KeyFilter value on remount", async () => {
+      localStorage.setItem(FILTER_KEY, JSON.stringify(KeyFilter.Custom));
+      const recipeCtx = makeMockRecipeContext([]);
+      const { container } = render(<PropertiesChartPanel recipes={recipeCtx.recipes} />);
+      await act(async () => {});
+
+      expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.Custom);
+    });
   });
 
   // ---- Panel Chrome ---------------------------------------------------------------------------

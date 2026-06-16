@@ -3,7 +3,7 @@ import "@testing-library/jest-dom/vitest";
 import { StrictMode } from "react";
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, cleanup, within } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup, within, act } from "@testing-library/react";
 
 import { type RecipeEntryJson } from "@workspace/sci-cream";
 import { makeWasmResources, useSeededWasmResources } from "@/lib/wasm-resources";
@@ -11,9 +11,13 @@ import { RecipeSearch, recipeMatchesQuery, type GroupedRecipe } from "./recipe-s
 import type { SavedRecipeJson } from "@/lib/data";
 import {
   getSelectOptionLabelsByLabel,
+  getSelectedOptionLabel,
   getSelectedOptionLabelByLabel,
   selectOptionByLabel,
 } from "@/__tests__/unit/select";
+import { QtyToggle, QTY_TOGGLE_SHORT_LABELS } from "@/app/_elements/selects/qty-toggle-select";
+import { STORAGE_KEYS } from "@/lib/local-storage";
+import { setQtyToggle } from "@/__tests__/unit/util";
 
 // ---------------------------------------------------------------------------
 // Global stubs
@@ -142,6 +146,7 @@ describe("recipeMatchesQuery", () => {
 describe("RecipeSearch", () => {
   beforeEach(async () => {
     vi.clearAllMocks();
+    localStorage.clear();
     setupVitestCanvasMock();
 
     const { Bridge, new_ingredient_database_seeded_from_embedded_data } =
@@ -493,6 +498,53 @@ describe("RecipeSearch", () => {
       fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
       expect(screen.queryByLabelText("Recipe comments")).not.toBeInTheDocument();
       expect(screen.getByText(/A classic base recipe/)).toBeInTheDocument();
+    });
+  });
+
+  describe("Select persistence", () => {
+    const SLOT_KEY = `${STORAGE_KEYS.recipeSearchLoadAction}:slot`;
+    const QTY_KEY = `${STORAGE_KEYS.recipeSearchPropertiesView}:qty`;
+
+    it("writes the slot leaf key when the target slot changes", async () => {
+      render(<RecipeSearch onLoadRecipe={vi.fn()} slots={[0, 1, 2]} />);
+      fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
+      await act(async () => {});
+
+      await selectOptionByLabel("Target slot", "Ref A");
+      await act(async () => {});
+
+      expect(localStorage.getItem(SLOT_KEY)).toBe(JSON.stringify(1));
+    });
+
+    it("restores the target slot on remount", async () => {
+      localStorage.setItem(SLOT_KEY, JSON.stringify(1));
+      render(<RecipeSearch onLoadRecipe={vi.fn()} slots={[0, 1, 2]} />);
+      fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
+      await act(async () => {});
+
+      expect(getSelectedOptionLabelByLabel("Target slot")).toContain("Ref A");
+    });
+
+    it("writes the QtyToggle leaf key when the PropertiesView select changes", async () => {
+      const { container } = render(<RecipeSearch />);
+      fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
+      await act(async () => {});
+
+      await setQtyToggle(container, QtyToggle.Quantity);
+      await act(async () => {});
+
+      expect(localStorage.getItem(QTY_KEY)).toBe(JSON.stringify(QtyToggle.Quantity));
+    });
+
+    it("restores the QtyToggle value in PropertiesView on remount", async () => {
+      localStorage.setItem(QTY_KEY, JSON.stringify(QtyToggle.Quantity));
+      const { container } = render(<RecipeSearch />);
+      fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
+      await act(async () => {});
+
+      expect(getSelectedOptionLabel(container, "#qty-toggle-select")).toBe(
+        QTY_TOGGLE_SHORT_LABELS[QtyToggle.Quantity],
+      );
     });
   });
 

@@ -207,9 +207,9 @@ describe("RecipeEditor", () => {
     expect(getSelectedOptionLabel(container, "#recipe-selection")).toBe("Recipe");
   });
 
-  it("should select the slot given by initialRecipeIdx on first render", () => {
+  it("should select the slot given by urlSlot on first render", () => {
     const { container } = render(
-      <RecipeEditor props={{ ...makeRecipeEditorProps([0, 1, 2]), initialRecipeIdx: 2 }} />,
+      <RecipeEditor props={{ ...makeRecipeEditorProps([0, 1, 2]), urlSlot: 2 }} />,
     );
     expect(getSelectedOptionLabel(container, "#recipe-selection")).toBe("Ref B");
   });
@@ -636,7 +636,7 @@ describe("RecipeEditor", () => {
       recipeContext.recipes[1].ingredientRows[0].name = "Whole Milk";
       recipeContext.recipes[1].ingredientRows[0].quantity = 500;
       recipeContext.recipes[1].mixTotal = 500;
-      render(<RecipeEditor props={{ ...makeRecipeEditorProps([0, 1]), initialRecipeIdx: 1 }} />);
+      render(<RecipeEditor props={{ ...makeRecipeEditorProps([0, 1]), urlSlot: 1 }} />);
       // Both Save and Save-as-new-version share this disabled-state tooltip; verify both
       screen
         .getAllByTitle("Select main recipe to save")

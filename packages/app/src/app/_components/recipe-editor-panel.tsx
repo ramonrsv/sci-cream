@@ -6,6 +6,7 @@ import { RecipeContextState } from "@/lib/recipe";
 import { WasmResourcesState } from "@/lib/wasm-resources";
 import { RecipeEditor } from "@/app/_elements/tables/recipe";
 import { STD_COMPONENT_H_PX, DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
+import { STORAGE_KEYS } from "@/lib/local-storage";
 
 /**
  * Calculator-page panel wrapping {@link RecipeEditor} with grid-layout chrome and a drag handle.
@@ -16,7 +17,7 @@ export function RecipeEditorPanel({
   props: {
     recipeCtxState: RecipeContextState;
     wasmResourcesState: WasmResourcesState;
-    initialRecipeIdx?: number;
+    urlSlot?: number;
   };
 }) {
   return (
@@ -28,6 +29,7 @@ export function RecipeEditorPanel({
       <RecipeEditor
         props={{
           ...props,
+          persistKey: STORAGE_KEYS.recipeEditorPanel,
           toolbarPrefix: <GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />,
         }}
       />

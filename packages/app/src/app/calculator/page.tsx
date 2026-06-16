@@ -26,7 +26,7 @@ import {
 import { RecipeEditorPanel } from "@/app/_components/recipe-editor-panel";
 import { useSeededWasmResources } from "@/lib/wasm-resources";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
-import { recipeSlotOrDefault } from "@/app/_elements/selects/recipe-select";
+import { slotFromParam } from "@/app/_elements/selects/recipe-select";
 import { loadStoredLayouts, onLayoutReset, saveLayouts } from "@/lib/calculator-layout";
 
 /**
@@ -44,7 +44,7 @@ import { loadStoredLayouts, onLayoutReset, saveLayouts } from "@/lib/calculator-
  */
 function CalculatorContent() {
   const searchParams = useSearchParams();
-  const recipeEditorRecipeIdx = recipeSlotOrDefault(parseInt(searchParams.get("slot") ?? ""));
+  const urlSlot = slotFromParam(searchParams.get("slot"));
 
   // `measureBeforeMount: true` keeps `mounted` false until the real width is measured, so the
   // `{mounted && ...}` gate defers the grid's first render until width measurement and layout
@@ -60,11 +60,7 @@ function CalculatorContent() {
   const wasmResourcesState = useSeededWasmResources();
   const [wasmResources] = wasmResourcesState;
 
-  const recipeGridProps = {
-    recipeCtxState,
-    wasmResourcesState,
-    initialRecipeIdx: recipeEditorRecipeIdx,
-  };
+  const recipeGridProps = { recipeCtxState, wasmResourcesState, urlSlot };
 
   /** Apply a balanced light recipe (from `Bridge.balance_recipe`) onto the main recipe (slot 0) */
   const onApplyBalancedMain = (balanced: LightRecipe) => {

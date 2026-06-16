@@ -1,12 +1,28 @@
-/** All `localStorage` keys used by the app */
+/**
+ * All `localStorage` keys used by the app.
+ *
+ * Per-view persistence uses a root key plus a colon-separated suffix, e.g.
+ * `${root}:qty`, `${root}:filter`, `${root}:selected`, `${root}:recipeIdx`.
+ * Roots are listed below; the full leaf keys are derived inside the colocated
+ * hooks (`useQtyToggleState`, `useKeyFilterState`, `useRecipeIdxState`).
+ */
 export const STORAGE_KEYS = {
   recipeStores: "recipe-stores",
   sidebarCollapsed: "sidebar-collapsed",
-  watcherSelectedProps: "watcher-selected-props",
-  watcherTargets: "watcher-targets",
-  watcherPriorities: "watcher-priorities",
   calculatorLayouts: "calculator-layouts",
   groupBy: "group-by",
+  // Watcher state — targets and priorities, keys are handled by useKeyFilterState
+  watcherTargets: "watcher-targets",
+  watcherPriorities: "watcher-priorities",
+  // Per-view persistence roots (leaf keys: ${root}:qty | :filter | :selected | :recipeIdx)
+  propertiesPanelView: "properties-panel-view",
+  compositionBreakdownPanelView: "composition-breakdown-panel-view",
+  propertiesChartPanelView: "properties-chart-panel-view",
+  watchersPanelView: "watchers-panel-view",
+  recipeEditorPanel: "recipe-editor-panel",
+  recipeSearchLoadAction: "recipe-search-load-action",
+  recipeSearchPropertiesView: "recipe-search-properties-view",
+  ingredientSearchCompositionView: "ingredient-search-composition-view",
 } as const;
 
 /** Read and deserialize a value from `localStorage`; returns `null` when absent or malformed */

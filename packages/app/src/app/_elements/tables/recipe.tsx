@@ -35,7 +35,7 @@ import {
 } from "@/lib/data";
 
 import { WasmResourcesState } from "@/lib/wasm-resources";
-import { RecipeSelect } from "@/app/_elements/selects/recipe-select";
+import { RecipeSelect, useRecipeIdxState } from "@/app/_elements/selects/recipe-select";
 import { formatCompositionValue } from "@/lib/comp-value-format";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { standardInputStepByPercent, verify } from "@/lib/util";
@@ -199,27 +199,31 @@ enum SaveStatus {
  * resolution, localStorage persistence, and clipboard interactions — and writes through to the
  * shared `RecipeContext` via the provided state setter.
  *
- * `toolbarPrefix` is rendered inside the toolbar's left-aligned group (alongside `RecipeSelect`);
- * used by the panel wrapper to inject a drag handle.
+ * `urlSlot` is the recipe slot from the `?slot=` URL param; present = override display, absent =
+ * restore stored. `toolbarPrefix` is rendered inside the toolbar's left-aligned group (alongside
+ * `RecipeSelect`); used by the panel wrapper to inject a drag handle.
  */
 export function RecipeEditor({
   props: {
     recipeCtxState: [recipeContext, setRecipeContext],
     wasmResourcesState: [wasmResources],
-    initialRecipeIdx = 0,
+    urlSlot,
+    persistKey,
     toolbarPrefix,
   },
 }: {
   props: {
     recipeCtxState: RecipeContextState;
     wasmResourcesState: WasmResourcesState;
-    initialRecipeIdx?: number;
+    urlSlot?: number;
+    persistKey?: string;
     toolbarPrefix?: ReactNode;
   };
 }) {
   const { wasmBridge } = wasmResources;
   const { recipes: allRecipes } = recipeContext;
-  const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(initialRecipeIdx);
+
+  const [currentRecipeIdx, setCurrentRecipeIdx] = useRecipeIdxState(persistKey, 0, { urlSlot });
   const [saveStatus, setSaveStatus] = useState<SaveStatus>(SaveStatus.Idle);
 
   const { data: session } = useSession();

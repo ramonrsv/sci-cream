@@ -1,10 +1,11 @@
 "use client";
 
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useContext } from "react";
 
 import type { GroupOptions } from "@workspace/sci-cream";
 
-import { getLocalStorage, setLocalStorage, STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/local-storage";
+import { usePersistedState } from "@/lib/use-persisted-state";
 
 /**
  * How a property/composition list is grouped under its roll-up headings.
@@ -87,18 +88,11 @@ export function useGroupBy() {
  * the persisted choice in mount effect; applying it during render would risk a hydration mismatch.
  */
 export function GroupByProvider({ children }: { children: React.ReactNode }) {
-  const [groupBy, setGroupByState] = useState<GroupBy>(GroupBy.Ungrouped);
-
-  useEffect(() => {
-    const stored = getLocalStorage<GroupBy>(STORAGE_KEYS.groupBy);
-    // eslint-disable-next-line react-hooks/set-state-in-effect -- hydration-safe restore
-    if (isGroupBy(stored)) setGroupByState(stored);
-  }, []);
-
-  const setGroupBy = useCallback((value: GroupBy) => {
-    setGroupByState(value);
-    setLocalStorage(STORAGE_KEYS.groupBy, value);
-  }, []);
+  const [groupBy, setGroupBy] = usePersistedState<GroupBy>(
+    STORAGE_KEYS.groupBy,
+    GroupBy.Ungrouped,
+    { isValid: isGroupBy },
+  );
 
   return <GroupByContext value={{ groupBy, setGroupBy }}>{children}</GroupByContext>;
 }

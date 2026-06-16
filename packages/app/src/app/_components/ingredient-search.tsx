@@ -17,6 +17,7 @@ import { DetailPanelHeader } from "@/app/_components/detail-panel";
 import { CompositionView } from "@/app/_elements/tables/composition";
 import { ToolbarSpacer } from "@/app/_elements/selects/toolbar-spacer";
 import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
+import { STORAGE_KEYS } from "@/lib/local-storage";
 import { useFreeOnReplace, useSeededWasmResources } from "@/lib/wasm-resources";
 import { STATE_VAL } from "@/lib/util";
 import { autoLink } from "@/lib/text";
@@ -91,7 +92,10 @@ function IngredientDetailBody({
         style={{ height: `${STD_COMPONENT_H_PX}px` }}
       >
         {ingredient ? (
-          <CompositionView composition={ingredient.composition} />
+          <CompositionView
+            composition={ingredient.composition}
+            persistKey={STORAGE_KEYS.ingredientSearchCompositionView}
+          />
         ) : (
           <p className="text-secondary text-sm">No composition available.</p>
         )}

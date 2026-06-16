@@ -1,12 +1,13 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import {
   KeyFilter,
   KeyFilterSelect,
   getEnabledKeys,
+  useKeyFilterState,
 } from "@/app/_elements/selects/key-filter-select";
 
 import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
@@ -71,13 +72,19 @@ export function CompositionView({
   composition,
   toolbarPrefix,
   defaultSelected = new Set(),
+  persistKey,
 }: {
   composition: Composition;
   toolbarPrefix?: ReactNode;
   defaultSelected?: Set<CompKey>;
+  persistKey?: string;
 }) {
-  const compsFilterState = useState<KeyFilter>(KeyFilter.Active);
-  const selectedCompsState = useState<Set<CompKey>>(defaultSelected);
+  const { keyFilterState: compsFilterState, selectedKeysState: selectedCompsState } =
+    useKeyFilterState<CompKey>(persistKey, {
+      defaultSelected,
+      getKeys: getCompKeys,
+      defaultFilter: KeyFilter.Active,
+    });
 
   /** Returns `true` when the composition value for the given key is zero or NaN */
   const isPropEmpty = (compKey: CompKey) => {

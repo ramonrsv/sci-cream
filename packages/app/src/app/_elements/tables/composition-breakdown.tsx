@@ -1,15 +1,19 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 
 import { IngredientRow, Recipe, isRecipeEmpty, getRecipeIndices } from "@/lib/recipe";
 import {
-  KeyFilter,
   KeyFilterSelect,
   getEnabledKeys,
+  useKeyFilterState,
 } from "@/app/_elements/selects/key-filter-select";
-import { QtyToggle, QtyToggleSelect } from "@/app/_elements/selects/qty-toggle-select";
-import { RecipeSelect } from "@/app/_elements/selects/recipe-select";
+import {
+  QtyToggle,
+  QtyToggleSelect,
+  useQtyToggleState,
+} from "@/app/_elements/selects/qty-toggle-select";
+import { RecipeSelect, useRecipeIdxState } from "@/app/_elements/selects/recipe-select";
 import { useOrderKeys } from "@/lib/group-by";
 import { applyQtyToggleAndFormat, formatCompositionValue } from "@/lib/comp-value-format";
 import { groupEnabledCompKeys } from "@/lib/sci-cream/sci-cream";
@@ -162,15 +166,18 @@ export function CompositionBreakdownView({
   recipes: allRecipes,
   toolbarPrefix,
   defaultSelected = DEFAULT_SELECTED_COMPS,
+  persistKey,
 }: {
   recipes: Recipe[];
   toolbarPrefix?: ReactNode;
   defaultSelected?: Set<CompKey>;
+  persistKey?: string;
 }) {
-  const [qtyToggle, setQtyToggle] = useState<QtyToggle>(QtyToggle.Quantity);
-  const compsFilterState = useState<KeyFilter>(KeyFilter.Auto);
-  const selectedCompsState = useState<Set<CompKey>>(defaultSelected);
-  const [currentRecipeIdx, setCurrentRecipeIdx] = useState<number>(0);
+  const [qtyToggle, setQtyToggle] = useQtyToggleState(persistKey, QtyToggle.Quantity);
+  const { keyFilterState: compsFilterState, selectedKeysState: selectedCompsState } =
+    useKeyFilterState<CompKey>(persistKey, { defaultSelected, getKeys: getCompKeys });
+  const [currentRecipeIdx, setCurrentRecipeIdx] = useRecipeIdxState(persistKey);
+
   const orderKeys = useOrderKeys<CompKey>(groupEnabledCompKeys);
 
   /** Returns `true` if every ingredient row has a zero (or absent) value for the given comp key */

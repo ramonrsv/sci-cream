@@ -17,11 +17,13 @@ import { STORAGE_KEYS } from "@/lib/local-storage";
  * mount-time hydration picks it up. Use to control which cards appear in screenshot tests.
  */
 export async function presetWatcherSelection(page: Page, propKeys: PropKey[]) {
+  const key = `${STORAGE_KEYS.watchersPanelView}:selected`;
+
   await page.addInitScript(
-    ([key, keys]) => {
-      localStorage.setItem(key, JSON.stringify(keys.map(String)));
+    ([k, keys]) => {
+      localStorage.setItem(k, JSON.stringify(keys));
     },
-    [STORAGE_KEYS.watcherSelectedProps, propKeys] as const,
+    [key, propKeys.map(String)] as const,
   );
 }
 

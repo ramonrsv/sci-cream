@@ -5,6 +5,7 @@ import { GripVertical } from "lucide-react";
 import { Recipe, filterActiveSlots } from "@/lib/recipe";
 import { PropertiesView } from "@/app/_elements/tables/properties";
 import { DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
+import { STORAGE_KEYS } from "@/lib/local-storage";
 
 /**
  * Calculator-page panel wrapping {@link PropertiesView} with grid-layout chrome and a drag handle.
@@ -17,6 +18,7 @@ export function PropertiesPanel({ recipes }: { recipes: Recipe[] }) {
       <PropertiesView
         recipes={filterActiveSlots(recipes)}
         toolbarPrefix={<GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />}
+        persistKey={STORAGE_KEYS.propertiesPanelView}
       />
     </div>
   );

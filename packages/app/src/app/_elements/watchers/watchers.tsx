@@ -17,6 +17,7 @@ import {
   KeyFilter,
   KeyFilterSelect,
   getEnabledKeys,
+  useKeyFilterState,
 } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { useOrderKeys } from "@/lib/group-by";
@@ -27,9 +28,10 @@ import {
   isPropKeyMixScope,
 } from "@/lib/sci-cream/sci-cream";
 import { Color, colorVar, colorVarWithAlpha, getRangeColor } from "@/lib/styles/colors";
-import { getLocalStorage, setLocalStorage, STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/local-storage";
+import { usePersistedState } from "@/lib/use-persisted-state";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
-import { STATE_VAL, roundToStep, standardInputStepByPercent, verify } from "@/lib/util";
+import { STATE_VAL, STATE_SET, roundToStep, standardInputStepByPercent, verify } from "@/lib/util";
 
 import {
   PropKey,
@@ -495,6 +497,7 @@ export function WatchersView({
   defaultSelected = DEFAULT_SELECTED_PROPERTIES,
   wasmBridge,
   onApplyBalancedMain,
+  persistKey,
 }: {
   main: Recipe;
   refs?: RecipeSummary[];
@@ -502,42 +505,19 @@ export function WatchersView({
   defaultSelected?: Set<PropKey>;
   wasmBridge?: WasmBridge;
   onApplyBalancedMain?: (balanced: LightRecipe) => void;
+  persistKey?: string;
 }) {
-  const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
-  const selectedPropsState = useState<Set<PropKey>>(defaultSelected);
-  const [, setSelectedProps] = selectedPropsState;
-  const [targets, setTargets] = useState<TargetsMap>({});
-  const [priorities, setPriorities] = useState<PrioritiesMap>({});
+  const { keyFilterState: propsFilterState, selectedKeysState: selectedPropsState } =
+    useKeyFilterState<PropKey>(persistKey, { defaultSelected, getKeys: getMixScopePropKeys });
+
+  const [targets, setTargets] = usePersistedState<TargetsMap>(STORAGE_KEYS.watcherTargets, {});
+  const [priorities, setPriorities] = usePersistedState<PrioritiesMap>(
+    STORAGE_KEYS.watcherPriorities,
+    {},
+  );
+
   const [balanceError, setBalanceError] = useState<string | undefined>(undefined);
   const orderKeys = useOrderKeys<PropKey>(groupEnabledKeys);
-
-  // Hydrate selection + targets + priorities from localStorage on mount (client-only, post-SSR)
-  useEffect(() => {
-    const stored = getLocalStorage<PropKey[]>(STORAGE_KEYS.watcherSelectedProps);
-    if (stored) setSelectedProps(new Set(stored));
-
-    const storedTargets = getLocalStorage<TargetsMap>(STORAGE_KEYS.watcherTargets);
-    if (storedTargets) setTargets(storedTargets);
-
-    const storedPriorities = getLocalStorage<PrioritiesMap>(STORAGE_KEYS.watcherPriorities);
-    if (storedPriorities) setPriorities(storedPriorities);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  // Persist selection to localStorage on change
-  useEffect(() => {
-    setLocalStorage(STORAGE_KEYS.watcherSelectedProps, Array.from(selectedPropsState[STATE_VAL]));
-  }, [selectedPropsState]);
-
-  // Persist targets to localStorage on change
-  useEffect(() => {
-    setLocalStorage(STORAGE_KEYS.watcherTargets, targets);
-  }, [targets]);
-
-  // Persist priorities to localStorage on change
-  useEffect(() => {
-    setLocalStorage(STORAGE_KEYS.watcherPriorities, priorities);
-  }, [priorities]);
 
   /** Returns `true` when every recipe has a zero/NaN value for the given property key */
   const isPropEmpty = (propKey: PropKey) => {
@@ -591,7 +571,7 @@ export function WatchersView({
 
   /** Remove a property key from the watch list and drop its target and priority entries, if any */
   const onRemove = (propKey: PropKey) => {
-    setSelectedProps((prev) => {
+    selectedPropsState[STATE_SET]((prev) => {
       const next = new Set(prev);
       next.delete(propKey);
       return next;

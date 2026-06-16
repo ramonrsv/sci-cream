@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useState } from "react";
+import { ReactNode } from "react";
 import { Chart } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -25,6 +25,7 @@ import {
   KeyFilter,
   KeyFilterSelect,
   getEnabledKeys,
+  useKeyFilterState,
 } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { useOrderKeys } from "@/lib/group-by";
@@ -334,14 +335,17 @@ export function PropertiesChartView({
   refs = [],
   toolbarPrefix,
   defaultSelected = DEFAULT_SELECTED_PROPERTIES,
+  persistKey,
 }: {
   main: RecipeSummary;
   refs?: RecipeSummary[];
   toolbarPrefix?: ReactNode;
   defaultSelected?: Set<PropKey>;
+  persistKey?: string;
 }) {
-  const propsFilterState = useState<KeyFilter>(KeyFilter.Auto);
-  const selectedPropsState = useState<Set<PropKey>>(defaultSelected);
+  const { keyFilterState: propsFilterState, selectedKeysState: selectedPropsState } =
+    useKeyFilterState<PropKey>(persistKey, { defaultSelected, getKeys: getPropKeys });
+
   const orderKeys = useOrderKeys<PropKey>(groupEnabledKeys);
 
   /** Returns `true` when every recipe has a zero/NaN value for the given property key */

@@ -15,6 +15,7 @@ import { ToolbarSpacer } from "@/app/_elements/selects/toolbar-spacer";
 import { RecipeTable } from "@/app/_elements/tables/recipe";
 import { PropertiesView } from "@/app/_elements/tables/properties";
 import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
+import { STORAGE_KEYS } from "@/lib/local-storage";
 import { useFreeOnReplace, useSeededWasmResources } from "@/lib/wasm-resources";
 import { STATE_VAL } from "@/lib/util";
 import { autoLink } from "@/lib/text";
@@ -238,6 +239,7 @@ function RecipeDetailPanel({
             onLoad={(slot) => onLoadRecipe(entry, selectedVersion, slot)}
             slots={slots}
             slotLabel={makeRecipeId}
+            persistKey={STORAGE_KEYS.recipeSearchLoadAction}
           />
         )}
       </DetailPanelHeader>
@@ -276,7 +278,7 @@ function RecipeDetailPanel({
           className="max-w-65 min-w-50 flex-1 basis-35"
           style={{ height: `${STD_COMPONENT_H_PX}px` }}
         >
-          <PropertiesView recipes={[recipe]} />
+          <PropertiesView recipes={[recipe]} persistKey={STORAGE_KEYS.recipeSearchPropertiesView} />
         </div>
       </div>
 

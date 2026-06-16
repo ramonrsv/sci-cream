@@ -1,14 +1,16 @@
 import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup, fireEvent } from "@testing-library/react";
+import { render, screen, cleanup, fireEvent, act } from "@testing-library/react";
 
 import { WatchersPanel } from "@/app/_components/watchers-panel";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 
 import { CompKey, FpdKey, compToPropKey, fpdToPropKey } from "@workspace/sci-cream";
+import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 
-import { makeMockRecipeContext } from "@/__tests__/unit/util";
+import { makeMockRecipeContext, setKeyFilterSelect } from "@/__tests__/unit/util";
+import { getSelectedOptionLabel } from "@/__tests__/unit/select";
 import { RecipeID } from "@/__tests__/assets";
 import { WASM_BRIDGE } from "@/__tests__/util";
 
@@ -32,6 +34,32 @@ describe("WatchersPanel", () => {
 
   afterEach(() => {
     cleanup();
+  });
+
+  // ---- Select persistence ---------------------------------------------------------------------
+
+  describe("Select persistence", () => {
+    const FILTER_KEY = `${STORAGE_KEYS.watchersPanelView}:filter`;
+
+    it("writes the KeyFilter leaf key when the select changes", async () => {
+      const recipeCtx = makeMockRecipeContext([]);
+      const { container } = render(<WatchersPanel recipes={recipeCtx.recipes} />);
+      await act(async () => {});
+
+      await setKeyFilterSelect(container, KeyFilter.Custom);
+      await act(async () => {});
+
+      expect(localStorage.getItem(FILTER_KEY)).toBe(JSON.stringify(KeyFilter.Custom));
+    });
+
+    it("restores the KeyFilter value on remount", async () => {
+      localStorage.setItem(FILTER_KEY, JSON.stringify(KeyFilter.Custom));
+      const recipeCtx = makeMockRecipeContext([]);
+      const { container } = render(<WatchersPanel recipes={recipeCtx.recipes} />);
+      await act(async () => {});
+
+      expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.Custom);
+    });
   });
 
   // ---- Panel Chrome ---------------------------------------------------------------------------

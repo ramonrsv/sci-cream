@@ -1,6 +1,8 @@
 "use client";
 
-import { Select, type SelectOption } from "./select";
+import { leafKey, usePersistedState } from "@/lib/use-persisted-state";
+
+import { Select, type SelectOption } from "@/app/_elements/selects/select";
 
 /** Controls how ingredient and mix quantity composition values are displayed */
 export enum QtyToggle {
@@ -18,6 +20,24 @@ export const QTY_TOGGLE_SHORT_LABELS: Record<QtyToggle, string> = {
   [QtyToggle.Quantity]: "Qty (g)",
   [QtyToggle.Percentage]: "Qty (%)",
 };
+
+/** Returns `true` when `value` is a valid {@link QtyToggle} enum member. */
+function isQtyToggle(value: unknown): value is QtyToggle {
+  return (Object.values(QtyToggle) as unknown[]).includes(value);
+}
+
+/**
+ * Persisted `[value, setter]` tuple for a {@link QtyToggle} selection.
+ *
+ * When `persistKey` is `undefined`, it behaves as a plain `useState` (no storage touched). The
+ * stored leaf key is `${persistKey}:qty`. Stored values are validated via {@link isQtyToggle}.
+ */
+export function useQtyToggleState(
+  persistKey: string | undefined,
+  defaultValue: QtyToggle = QtyToggle.Percentage,
+): [QtyToggle, React.Dispatch<React.SetStateAction<QtyToggle>>] {
+  return usePersistedState(leafKey(persistKey, "qty"), defaultValue, { isValid: isQtyToggle });
+}
 
 /** Select element for switching between `QtyToggle` display modes */
 export function QtyToggleSelect({

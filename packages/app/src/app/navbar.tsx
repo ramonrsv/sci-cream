@@ -1,6 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
+import { usePersistedState } from "@/lib/use-persisted-state";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -28,7 +29,7 @@ import {
 } from "@/lib/styles/sizes";
 import { ThemeSelect } from "@/app/_elements/selects/theme-select";
 import { GroupBySelect } from "@/app/_elements/selects/group-by-select";
-import { setLocalStorage, getLocalStorage, STORAGE_KEYS } from "@/lib/local-storage";
+import { STORAGE_KEYS } from "@/lib/local-storage";
 import { clearStoredLayouts, dispatchLayoutReset } from "@/lib/calculator-layout";
 
 /** Primary navigation links shown in the sidebar */
@@ -60,23 +61,18 @@ export function useNavbarContext() {
   return useContext(NavbarContext);
 }
 
-/** Read the sidebar collapsed state from `localStorage`, default `DEFAULT_COLLAPSED_NAVBAR` */
-function getInitialCollapsedState(): boolean {
-  return getLocalStorage<boolean>(STORAGE_KEYS.sidebarCollapsed) ?? DEFAULT_COLLAPSED_NAVBAR;
-}
-
 /** Root layout shell with the `NavbarContext`, top header, collapsible sidebar, and main area */
 export function Navbar({ children }: { children: React.ReactNode }) {
-  const [collapsed, setCollapsed] = useState(() => getInitialCollapsedState());
+  const [collapsed, setCollapsed] = usePersistedState<boolean>(
+    STORAGE_KEYS.sidebarCollapsed,
+    DEFAULT_COLLAPSED_NAVBAR,
+  );
+
   const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
     setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
   }, []);
-
-  useEffect(() => {
-    setLocalStorage(STORAGE_KEYS.sidebarCollapsed, collapsed);
-  }, [collapsed]);
 
   return (
     <NavbarContext value={{ collapsed, setCollapsed, mounted }}>
