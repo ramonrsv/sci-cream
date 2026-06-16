@@ -12,15 +12,6 @@ import { RecipeID } from "@/__tests__/assets";
 import { makeMockRecipeContext, setKeyFilterSelect } from "@/__tests__/unit/util";
 import { getSelectedOptionLabel } from "@/__tests__/unit/select";
 
-/** Mock implementation of ResizeObserver for testing purposes */
-class ResizeObserverMock {
-  observe = vi.fn();
-  unobserve = vi.fn();
-  disconnect = vi.fn();
-}
-
-vi.stubGlobal("ResizeObserver", ResizeObserverMock);
-
 vi.mock("chart.js", () => ({
   Chart: { register: vi.fn() },
   CategoryScale: vi.fn(),

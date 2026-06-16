@@ -11,15 +11,6 @@ import { FpdGraphPanel } from "@/app/_components/fpd-graph-panel";
 import { RecipeID } from "@/__tests__/assets";
 import { makeMockRecipeContext } from "@/__tests__/unit/util";
 
-/** Mock implementation of ResizeObserver for testing purposes */
-class ResizeObserverMock {
-  observe = vi.fn();
-  unobserve = vi.fn();
-  disconnect = vi.fn();
-}
-
-vi.stubGlobal("ResizeObserver", ResizeObserverMock);
-
 vi.mock("chart.js", () => ({
   Chart: { register: vi.fn() },
   CategoryScale: vi.fn(),

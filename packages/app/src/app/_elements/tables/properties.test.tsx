@@ -34,15 +34,6 @@ import {
 import { makeMockRecipeContext } from "@/__tests__/unit/util";
 import { RecipeID } from "@/__tests__/assets";
 
-/** Mock implementation of ResizeObserver for testing purposes */
-class ResizeObserverMock {
-  observe = vi.fn();
-  unobserve = vi.fn();
-  disconnect = vi.fn();
-}
-
-vi.stubGlobal("ResizeObserver", ResizeObserverMock);
-
 const SAMPLE_PROP_KEYS: PropKey[] = [
   compToPropKey(CompKey.MilkFat),
   compToPropKey(CompKey.TotalFats),

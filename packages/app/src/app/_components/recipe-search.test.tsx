@@ -20,18 +20,6 @@ import { STORAGE_KEYS } from "@/lib/local-storage";
 import { setQtyToggle } from "@/__tests__/unit/util";
 
 // ---------------------------------------------------------------------------
-// Global stubs
-// ---------------------------------------------------------------------------
-
-/** Mock implementation of ResizeObserver for testing purposes */
-class ResizeObserverMock {
-  observe = vi.fn();
-  unobserve = vi.fn();
-  disconnect = vi.fn();
-}
-vi.stubGlobal("ResizeObserver", ResizeObserverMock);
-
-// ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
 

@@ -64,15 +64,6 @@ vi.mock("@/lib/data", () => ({
     .mockResolvedValue({ id: 42, name: "renamed", user: 1, createdAt: new Date() }),
 }));
 
-/** Mock implementation of ResizeObserver for testing purposes */
-class ResizeObserverMock {
-  observe = vi.fn();
-  unobserve = vi.fn();
-  disconnect = vi.fn();
-}
-
-vi.stubGlobal("ResizeObserver", ResizeObserverMock);
-
 // ---------------------------------------------------------------------------
 // RecipeTable (bare, read-only)
 // ---------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 
-import { describe, it, expect, vi, afterEach } from "vitest";
+import { describe, it, expect, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 
 import { getSelectedOptionLabel, selectOption } from "@/__tests__/unit/select";
@@ -13,15 +13,6 @@ import { formatCompositionValue } from "@/lib/comp-value-format";
 import { CompKey, Composition, comp_key_as_med_str } from "@workspace/sci-cream";
 
 import { WASM_BRIDGE } from "@/__tests__/util";
-
-/** Mock implementation of ResizeObserver for testing purposes */
-class ResizeObserverMock {
-  observe = vi.fn();
-  unobserve = vi.fn();
-  disconnect = vi.fn();
-}
-
-vi.stubGlobal("ResizeObserver", ResizeObserverMock);
 
 /** Returns the composition of a known embedded ingredient (Whole Milk via alias) */
 function getWholeMilkComposition(): Composition {

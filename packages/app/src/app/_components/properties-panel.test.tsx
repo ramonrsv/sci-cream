@@ -12,15 +12,6 @@ import { setQtyToggle } from "@/__tests__/unit/util";
 import { QtyToggle, QTY_TOGGLE_SHORT_LABELS } from "@/app/_elements/selects/qty-toggle-select";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 
-/** Mock implementation of ResizeObserver for testing purposes */
-class ResizeObserverMock {
-  observe = vi.fn();
-  unobserve = vi.fn();
-  disconnect = vi.fn();
-}
-
-vi.stubGlobal("ResizeObserver", ResizeObserverMock);
-
 describe("PropertiesPanel", () => {
   beforeEach(() => {
     vi.clearAllMocks();

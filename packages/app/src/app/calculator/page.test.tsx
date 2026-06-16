@@ -12,13 +12,6 @@ import { getSelectedOptionLabel } from "@/__tests__/unit/select";
 // Test helpers, mocks, and setup
 // ---------------------------------------------------------------------------
 
-/** Mock implementation of ResizeObserver for testing purposes */
-class ResizeObserverMock {
-  observe = vi.fn();
-  unobserve = vi.fn();
-  disconnect = vi.fn();
-}
-
 const matchMediaMock = vi
   .fn()
   .mockImplementation((query) => ({
@@ -30,7 +23,6 @@ const matchMediaMock = vi
     dispatchEvent: vi.fn(),
   }));
 
-vi.stubGlobal("ResizeObserver", ResizeObserverMock);
 vi.stubGlobal("matchMedia", matchMediaMock);
 
 vi.mock("@workspace/sci-cream", async () => {

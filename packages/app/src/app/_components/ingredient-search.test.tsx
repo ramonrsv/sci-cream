@@ -14,18 +14,6 @@ import { setKeyFilterSelect } from "@/__tests__/unit/util";
 import { getSelectedOptionLabel } from "@/__tests__/unit/select";
 
 // ---------------------------------------------------------------------------
-// Global stubs
-// ---------------------------------------------------------------------------
-
-/** Mock implementation of ResizeObserver for testing purposes */
-class ResizeObserverMock {
-  observe = vi.fn();
-  unobserve = vi.fn();
-  disconnect = vi.fn();
-}
-vi.stubGlobal("ResizeObserver", ResizeObserverMock);
-
-// ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
 

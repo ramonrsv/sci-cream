@@ -25,15 +25,6 @@ import {
   setQtyToggle,
 } from "@/__tests__/unit/util";
 
-/** Mock implementation of ResizeObserver for testing purposes */
-class ResizeObserverMock {
-  observe = vi.fn();
-  unobserve = vi.fn();
-  disconnect = vi.fn();
-}
-
-vi.stubGlobal("ResizeObserver", ResizeObserverMock);
-
 describe("CompositionBreakdown", () => {
   afterEach(() => {
     cleanup();

@@ -27,15 +27,6 @@ import { selectOption } from "@/__tests__/unit/select";
 import { RecipeID } from "@/__tests__/assets";
 import { WASM_BRIDGE } from "@/__tests__/util";
 
-/** Mock implementation of ResizeObserver for testing purposes */
-class ResizeObserverMock {
-  observe = vi.fn();
-  unobserve = vi.fn();
-  disconnect = vi.fn();
-}
-
-vi.stubGlobal("ResizeObserver", ResizeObserverMock);
-
 const MSNF = compToPropKey(CompKey.MSNF);
 const TOTAL_SOLIDS = compToPropKey(CompKey.TotalSolids);
 const SERVING_TEMP = fpdToPropKey(FpdKey.ServingTemp);
