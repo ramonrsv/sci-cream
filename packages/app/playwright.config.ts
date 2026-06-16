@@ -44,8 +44,13 @@ export default defineConfig({
       workers: 1 /* Single worker to avoid interference */,
     },
 
-    /* Visual regression testing */
-    { name: "visual", testDir: "./src/__tests__/visual", use: { ...devices["Desktop Chrome"] } },
+    /* Visual regression testing. `reducedMotion` disables Chart.js canvas animations (which
+       Playwright's screenshot animation-freezing can't touch) so snapshots are deterministic. */
+    {
+      name: "visual",
+      testDir: "./src/__tests__/visual",
+      use: { ...devices["Desktop Chrome"], contextOptions: { reducedMotion: "reduce" } },
+    },
   ],
 
   /* Run your local dev server before starting the tests */

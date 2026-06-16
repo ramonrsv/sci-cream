@@ -19,6 +19,7 @@ import {
 import { RecipeSummary } from "@/lib/recipe";
 import { useTheme } from "@/lib/theme";
 import { GRAPH_TITLE_FONT_SIZE } from "@/lib/styles/sizes";
+import { prefersReducedMotion } from "@/lib/styles/motion";
 
 import {
   Color,
@@ -128,6 +129,8 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    // Disable the canvas entry/resize animation under reduced motion so screenshots are stable;
+    animation: prefersReducedMotion() ? (false as const) : undefined,
     color: legendColor,
     plugins: {
       legend: {

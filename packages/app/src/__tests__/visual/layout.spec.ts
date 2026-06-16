@@ -2,18 +2,20 @@ import { test, expect, Page } from "@playwright/test";
 
 import {
   goToPageAndWaitFor,
+  pasteRecipeAndWaitForUpdate,
   selectIngredientByName,
   selectRecipeByName,
 } from "@/__tests__/e2e/util";
 
-import { VIEWPORTS, VIEWPORT_DESKTOP_DEFAULT } from "@/__tests__/visual/assets";
+import { RecipeID } from "@/__tests__/assets";
+import { VIEWPORTS } from "@/__tests__/visual/assets";
 import {
   captureFullContent,
   getOverflow,
   setViewportHeightForAllAppContentScreenshot,
 } from "@/__tests__/visual/util";
 
-/** Waits for a short period to allow any layout shifts or animations to complete. */
+/** Waits a short period to let the grid layout settle (width measurement, breakpoint changes). */
 function waitForLayoutStability() {
   return new Promise((resolve) => setTimeout(resolve, 300));
 }
@@ -33,19 +35,15 @@ async function takeViewportAndFullContentScreenshots(
   viewport: { width: number; height: number },
   screenshot: string,
   pageSetup: (page: Page) => Promise<void>,
-  options?: {
-    maxDiffPixelRatio?: number;
-    maxDiffPixels?: number;
-    fullContent?: "resize" | "stitch";
-  },
+  options?: { fullContent?: "resize" | "stitch" },
 ) {
-  const { maxDiffPixelRatio, maxDiffPixels, fullContent = "resize" } = options ?? {};
+  const { fullContent = "resize" } = options ?? {};
 
   await page.setViewportSize(viewport);
 
   await pageSetup(page);
   await waitForLayoutStability();
-  await expect(page).toHaveScreenshot(`${screenshot}.png`, { maxDiffPixelRatio, maxDiffPixels });
+  await expect(page).toHaveScreenshot(`${screenshot}.png`);
 
   const appContentTestId = "app-content";
 
@@ -57,35 +55,30 @@ async function takeViewportAndFullContentScreenshots(
   if (fullContent === "stitch") {
     expect(await captureFullContent(page, appContentTestId)).toMatchSnapshot(
       `${screenshot}-all-content-stitched.png`,
-      { maxDiffPixels, maxDiffPixelRatio },
     );
   } else {
     await setViewportHeightForAllAppContentScreenshot(page);
     await waitForLayoutStability();
 
-    await expect(page).toHaveScreenshot(`${screenshot}-all-content.png`, {
-      maxDiffPixelRatio,
-      maxDiffPixels,
-    });
+    await expect(page).toHaveScreenshot(`${screenshot}-all-content.png`);
   }
 }
 
 test.describe("Visual Regression: Responsive Layout, calculator page", () => {
   for (const { name, viewport, screenshot } of VIEWPORTS) {
-    // Allow a small pixel difference to account for anti-aliasing and rendering variations,
-    // particularly on large viewports. This causes some of these tests to miss catching minor
-    // component changes, but it's necessary to prevent false positives in layout tests, and
-    // other component-level visual regression tests should catch those minor component changes.
-    const maxDiffPixels =
-      viewport.height >= VIEWPORT_DESKTOP_DEFAULT.viewport.height ? 208 : undefined;
-
-    test(name, async ({ page }) => {
+    test(name, async ({ page, browserName }) => {
       await takeViewportAndFullContentScreenshots(
         page,
         viewport,
         `calculator-${screenshot}`,
-        async (page) => await goToPageAndWaitFor(page, "/calculator"),
-        { maxDiffPixels },
+        async (page) => {
+          await goToPageAndWaitFor(page, "/calculator");
+
+          // In addition to providing a better visual representation of the layout, particularly
+          // size variable components like Watchers, it also makes chart snapshots deterministic.
+          await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
+          await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.RefA);
+        },
       );
     });
   }

@@ -30,6 +30,7 @@ import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { useOrderKeys } from "@/lib/group-by";
 import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
 import { GRAPH_TITLE_FONT_SIZE } from "@/lib/styles/sizes";
+import { prefersReducedMotion } from "@/lib/styles/motion";
 import { STATE_VAL } from "@/lib/util";
 import {
   Color,
@@ -269,6 +270,8 @@ export function PropertiesBarChart({
   const options = {
     responsive: true,
     maintainAspectRatio: false,
+    // Disable the canvas entry/resize animation under reduced motion so screenshots are stable;
+    animation: prefersReducedMotion() ? (false as const) : undefined,
     plugins: {
       legend: {
         display: refs.length > 0,
