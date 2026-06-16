@@ -22,8 +22,8 @@ import {
   type BalancePriorities,
 } from "@workspace/sci-cream";
 
-import { makeMockRecipe, makeMockRecipeContext } from "@/__tests__/unit/util";
-import { selectOption } from "@/__tests__/unit/select";
+import { makeMockRecipe, makeMockRecipeContext, setKeyFilterSelect } from "@/__tests__/unit/util";
+import { selectOption, getSelectedOptionLabel } from "@/__tests__/unit/select";
 import { RecipeID } from "@/__tests__/assets";
 import { WASM_BRIDGE } from "@/__tests__/util";
 
@@ -671,6 +671,36 @@ describe("WatchersView", () => {
     render(<WatchersView main={ctx.recipes[0]} refs={[ctx.recipes[2]]} />);
     expect(screen.getByTestId(`watcher-card-${String(MSNF)}-ref-Ref B`)).toBeInTheDocument();
     expect(screen.queryByTestId(`watcher-card-${String(MSNF)}-ref-Ref A`)).not.toBeInTheDocument();
+  });
+
+  // ---- Select persistence -----------------------------------------------------------------
+
+  describe("Select persistence", () => {
+    const FILTER_KEY = `${STORAGE_KEYS.watchersPanelView}:filter`;
+
+    it("writes the KeyFilter leaf key when the select changes", async () => {
+      const recipeCtx = makeMockRecipeContext([]);
+      const { container } = render(
+        <WatchersView main={recipeCtx.recipes[0]} persistKey={STORAGE_KEYS.watchersPanelView} />,
+      );
+      await act(async () => {});
+
+      await setKeyFilterSelect(container, KeyFilter.Custom);
+      await act(async () => {});
+
+      expect(localStorage.getItem(FILTER_KEY)).toBe(JSON.stringify(KeyFilter.Custom));
+    });
+
+    it("restores the KeyFilter value on remount", async () => {
+      localStorage.setItem(FILTER_KEY, JSON.stringify(KeyFilter.Custom));
+      const recipeCtx = makeMockRecipeContext([]);
+      const { container } = render(
+        <WatchersView main={recipeCtx.recipes[0]} persistKey={STORAGE_KEYS.watchersPanelView} />,
+      );
+      await act(async () => {});
+
+      expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.Custom);
+    });
   });
 });
 

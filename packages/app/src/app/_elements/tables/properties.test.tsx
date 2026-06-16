@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup, within } from "@testing-library/react";
+import { render, screen, cleanup, within, act } from "@testing-library/react";
 
 import {
   getSelectedOptionLabel,
@@ -31,7 +31,9 @@ import {
   prop_key_as_med_str,
 } from "@workspace/sci-cream";
 
-import { makeMockRecipeContext } from "@/__tests__/unit/util";
+import { STORAGE_KEYS } from "@/lib/local-storage";
+
+import { makeMockRecipeContext, setQtyToggle } from "@/__tests__/unit/util";
 import { RecipeID } from "@/__tests__/assets";
 
 const SAMPLE_PROP_KEYS: PropKey[] = [
@@ -339,6 +341,68 @@ describe("PropertiesView", () => {
       valueCells.forEach((cell) => {
         expect(cell.textContent?.trim()).toMatch(/^(-?)$/);
       });
+    });
+  });
+
+  // ---- Select persistence -----------------------------------------------------------------
+
+  describe("Select persistence", () => {
+    const QTY_KEY = `${STORAGE_KEYS.propertiesPanelView}:qty`;
+
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    it("writes the QtyToggle leaf key when the select changes", async () => {
+      const recipeCtx = makeMockRecipeContext([]);
+      const { container } = render(
+        <PropertiesView
+          recipes={recipeCtx.recipes}
+          persistKey={STORAGE_KEYS.propertiesPanelView}
+        />,
+      );
+      await act(async () => {});
+
+      await setQtyToggle(container, QtyToggle.Quantity);
+      await act(async () => {});
+
+      expect(localStorage.getItem(QTY_KEY)).toBe(JSON.stringify(QtyToggle.Quantity));
+    });
+
+    it("restores the QtyToggle value on remount", async () => {
+      localStorage.setItem(QTY_KEY, JSON.stringify(QtyToggle.Quantity));
+      const recipeCtx = makeMockRecipeContext([]);
+      const { container } = render(
+        <PropertiesView
+          recipes={recipeCtx.recipes}
+          persistKey={STORAGE_KEYS.propertiesPanelView}
+        />,
+      );
+      await act(async () => {});
+
+      expect(localStorage.getItem(QTY_KEY)).toBe(JSON.stringify(QtyToggle.Quantity));
+      const select = container.querySelector("#qty-toggle-select select") as HTMLSelectElement;
+      expect(select.options[select.selectedIndex].textContent).toBe(
+        QTY_TOGGLE_SHORT_LABELS[QtyToggle.Quantity],
+      );
+    });
+
+    it("two PropertiesView instances with different persistKey have no cross-talk", async () => {
+      const recipeCtx = makeMockRecipeContext([]);
+      const recipes = recipeCtx.recipes;
+
+      const { container: c1 } = render(<PropertiesView recipes={recipes} persistKey="view-a" />);
+      await act(async () => {});
+      await setQtyToggle(c1, QtyToggle.Quantity);
+      await act(async () => {});
+
+      expect(localStorage.getItem("view-a:qty")).toBe(JSON.stringify(QtyToggle.Quantity));
+
+      render(<PropertiesView recipes={recipes} persistKey="view-b" />);
+      await act(async () => {});
+
+      expect(localStorage.getItem("view-b:qty")).toBeNull();
+      expect(localStorage.getItem("view-a:qty")).toBe(JSON.stringify(QtyToggle.Quantity));
     });
   });
 });

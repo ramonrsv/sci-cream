@@ -2,7 +2,7 @@ import "@testing-library/jest-dom/vitest";
 
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup, waitFor } from "@testing-library/react";
+import { render, screen, cleanup, waitFor, act } from "@testing-library/react";
 
 import { Color, getColor, addOrUpdateAlpha } from "@/lib/styles/colors";
 import {
@@ -28,6 +28,8 @@ import {
   getMixProperty,
 } from "@workspace/sci-cream";
 
+import { STORAGE_KEYS } from "@/lib/local-storage";
+
 import { RecipeID, getLightRecipe } from "@/__tests__/assets";
 import { WASM_BRIDGE } from "@/__tests__/util";
 import {
@@ -36,6 +38,7 @@ import {
   getFpdLabel,
   getPropIndex,
   configCustomKeysAll,
+  setKeyFilterSelect,
 } from "@/__tests__/unit/util";
 
 vi.mock("chart.js", () => ({
@@ -369,6 +372,42 @@ describe("PropertiesChartView", () => {
           getModifiedMixProperty(recipeCtx.recipes[0].mixProperties!, key),
         );
       }
+    });
+  });
+
+  // ---- Select persistence -----------------------------------------------------------------
+
+  describe("Select persistence", () => {
+    const FILTER_KEY = `${STORAGE_KEYS.propertiesChartPanelView}:filter`;
+
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    it("writes the KeyFilter leaf key when the select changes", async () => {
+      const recipeCtx = makeMockRecipeContext([]);
+      const active = filterActiveSlots(recipeCtx.recipes);
+      const { container } = render(
+        <PropertiesChartView main={active[0]} persistKey={STORAGE_KEYS.propertiesChartPanelView} />,
+      );
+      await act(async () => {});
+
+      await setKeyFilterSelect(container, KeyFilter.Custom);
+      await act(async () => {});
+
+      expect(localStorage.getItem(FILTER_KEY)).toBe(JSON.stringify(KeyFilter.Custom));
+    });
+
+    it("restores the KeyFilter value on remount", async () => {
+      localStorage.setItem(FILTER_KEY, JSON.stringify(KeyFilter.Custom));
+      const recipeCtx = makeMockRecipeContext([]);
+      const active = filterActiveSlots(recipeCtx.recipes);
+      const { container } = render(
+        <PropertiesChartView main={active[0]} persistKey={STORAGE_KEYS.propertiesChartPanelView} />,
+      );
+      await act(async () => {});
+
+      expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.Custom);
     });
   });
 });
