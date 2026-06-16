@@ -18,7 +18,7 @@ use serde::{Deserialize, Serialize};
 use strum::IntoEnumIterator;
 
 use crate::{
-    composition::{CompKey, Composition, RatioKey},
+    composition::{CompKey, Composition, CompositionValues, FastComposition, RatioKey},
     constants::balancing::{
         CRITICAL_PRIORITY_WEIGHT, HIGH_PRIORITY_WEIGHT, LOW_PRIORITY_WEIGHT, NORMAL_PRIORITY_WEIGHT,
         RATIO_DENOMINATOR_FLOOR, RATIO_REWEIGHT_TOLERANCE, RELATIVE_WEIGHT_FLOOR, SUM_CONSTRAINT_WEIGHT,
@@ -546,7 +546,10 @@ pub fn validate_balancing_targets(
 ) -> BalancingReport {
     let mut issues = Vec::new();
     append_input_error_issues(targets, priorities, &mut issues);
-    append_input_warning_issues(comps, targets, priorities, &mut issues);
+    // Snapshot each composition once so the repeated, nested affectability and ratio-band scans
+    // below index a flat array instead of recomputing `Composition::get` (see `FastComposition`).
+    let fast: Vec<FastComposition> = comps.iter().map(Composition::to_fast).collect();
+    append_input_warning_issues(&fast, targets, priorities, &mut issues);
 
     // Each check emits every issue it can detect, so the same underlying problem may surface as
     // several issues (e.g. a part/whole contradiction seen by both the structural and the palette
@@ -608,7 +611,7 @@ fn append_input_error_issues(
 /// the solve. [`balance_compositions`] skips them; only [`validate_balancing_targets`] runs them to
 /// surface the full report.
 fn append_input_warning_issues(
-    comps: &[Composition],
+    comps: &[impl CompositionValues],
     targets: &[(BalanceKey, f64)],
     priorities: &[(BalanceKey, Priority)],
     issues: &mut Vec<BalancingIssue>,
@@ -650,7 +653,7 @@ fn append_input_warning_issues(
 /// unaffectable when either of its parts is (see [`RatioKey::parts`]) — a zero denominator leaves
 /// the ratio undefined, a zero numerator pins it to zero — or when its homogeneous row vanishes
 /// across the palette (already exactly on-ratio).
-fn is_unaffectable(comps: &[Composition], key: BalanceKey, target: f64) -> bool {
+fn is_unaffectable(comps: &[impl CompositionValues], key: BalanceKey, target: f64) -> bool {
     match key {
         BalanceKey::Ratio(ratio) => {
             let (numerator, denominator) = ratio.parts();
@@ -663,12 +666,12 @@ fn is_unaffectable(comps: &[Composition], key: BalanceKey, target: f64) -> bool 
 }
 
 /// Returns `true` if every composition reads exactly zero for the extensive `key`.
-fn is_key_unaffectable(comps: &[Composition], key: CompKey) -> bool {
+fn is_key_unaffectable(comps: &[impl CompositionValues], key: CompKey) -> bool {
     comps.iter().all(|comp| comp.get(key) == 0.0)
 }
 
 /// The sum of a composition's values over a group of keys.
-fn group_value(comp: &Composition, keys: &[CompKey]) -> f64 {
+fn group_value(comp: &impl CompositionValues, keys: &[CompKey]) -> f64 {
     keys.iter().map(|&key| comp.get(key)).sum()
 }
 
@@ -683,7 +686,7 @@ fn group_value(comp: &Composition, keys: &[CompKey]) -> f64 {
 /// An empty `den` denotes the implicit sum-to-one total (`Σ den = 1`), reducing the band to the
 /// reachable range of the absolute quantity `Σ num` (the magnitude check). `max` is
 /// [`f64::INFINITY`] when some composition has a zero denominator but a positive numerator.
-fn ratio_band(comps: &[Composition], num: &[CompKey], den: &[CompKey]) -> Option<(f64, f64)> {
+fn ratio_band(comps: &[impl CompositionValues], num: &[CompKey], den: &[CompKey]) -> Option<(f64, f64)> {
     let mut band: Option<(f64, f64)> = None;
     let mut unbounded_above = false;
 
@@ -722,14 +725,14 @@ fn push_if_off_band(
 ///
 /// The subtraction-based classifier for the `max <= 1` band corner, kept distinct from
 /// [`ratio_band`] because it is robust where a denominator vanishes.
-fn dominates(comps: &[Composition], greater: CompKey, lesser: CompKey) -> bool {
+fn dominates(comps: &[impl CompositionValues], greater: CompKey, lesser: CompKey) -> bool {
     !comps.is_empty() && comps.iter().all(|comp| is_subset(comp.get(lesser), comp.get(greater)))
 }
 
 /// Returns `true` if `key`/`target` is a meaningful target to compare in the dominance/ratio
 /// checks: not a ratio key (its homogeneous row has no single-key magnitude), finite, non-negative,
 /// and affected by at least one composition. Non-finite and negative targets have their own checks.
-fn is_dominance_checkable_target(comps: &[Composition], key: BalanceKey, target: f64) -> bool {
+fn is_dominance_checkable_target(comps: &[impl CompositionValues], key: BalanceKey, target: f64) -> bool {
     !key.is_ratio() && target.is_finite() && target >= 0.0 && !is_unaffectable(comps, key, target)
 }
 
@@ -748,7 +751,11 @@ fn value_of(targets: &[(CompKey, f64)], key: CompKey) -> Option<f64> {
 /// For an extensive key this is the absolute magnitude band ([`ratio_band`] with an empty
 /// denominator); for a ratio key it is its numerator/denominator band scaled to a percentage,
 /// Unaffectable and non-finite or negative targets are handled elsewhere and skipped here.
-fn append_reachability_issues(comps: &[Composition], targets: &[(BalanceKey, f64)], issues: &mut Vec<BalancingIssue>) {
+fn append_reachability_issues(
+    comps: &[impl CompositionValues],
+    targets: &[(BalanceKey, f64)],
+    issues: &mut Vec<BalancingIssue>,
+) {
     for &(key, target) in targets {
         if is_finite_non_negative(target) && !is_unaffectable(comps, key, target) {
             let emit = |min, max| BalancingIssue::UnreachableTarget { key, target, min, max };
@@ -847,7 +854,7 @@ use BalancingIssue::{DominanceViolation, RatioInfeasibility};
 /// palette affects both keys) and deduplicated against [`append_structural_issues`] in
 /// [`validate_balancing_targets`], which keeps the palette-independent structural framing.
 fn append_palette_pairwise_issues(
-    comps: &[Composition],
+    comps: &[impl CompositionValues],
     targets: &[(BalanceKey, f64)],
     issues: &mut Vec<BalancingIssue>,
 ) {
@@ -887,7 +894,7 @@ fn append_palette_pairwise_issues(
 /// band their palette can reach. Orients the ratio so the denominator's target is positive (the
 /// feasibility is equivalent); a pair with both targets zero constrains nothing and is skipped.
 fn append_pairwise_ratio_issue(
-    comps: &[Composition],
+    comps: &[impl CompositionValues],
     issues: &mut Vec<BalancingIssue>,
     a: (CompKey, f64),
     b: (CompKey, f64),
@@ -931,7 +938,7 @@ fn append_pairwise_ratio_issue(
 /// The accumulation is greedy — sound (never false-positive) but not exhaustive, so it may miss
 /// some violating subsets, which is acceptable for best-effort warnings.
 fn append_palette_additive_issues(
-    comps: &[Composition],
+    comps: &[impl CompositionValues],
     targets: &[(BalanceKey, f64)],
     issues: &mut Vec<BalancingIssue>,
 ) {
@@ -1013,7 +1020,7 @@ fn append_palette_additive_issues(
 /// [`group_claim`]). A numerator pair where one key is a structural part of the other is still
 /// skipped: its sum double-counts the lesser and has no clear interpretation.
 fn append_palette_multi_ratio_issues(
-    comps: &[Composition],
+    comps: &[impl CompositionValues],
     targets: &[(BalanceKey, f64)],
     issues: &mut Vec<BalancingIssue>,
 ) {
@@ -1061,7 +1068,7 @@ fn append_palette_multi_ratio_issues(
 /// `n - 1` movable targets must be met approximately. A degrees-of-freedom heuristic that ignores
 /// linear dependence among target rows — hence [`Severity::Info`], not a warning.
 fn append_over_determination_issue(
-    comps: &[Composition],
+    comps: &[impl CompositionValues],
     targets: &[(BalanceKey, f64)],
     issues: &mut Vec<BalancingIssue>,
 ) {
@@ -1197,7 +1204,10 @@ pub fn balance_with_reweighting(
     debug_assert_targets_validated(comps, targets);
 
     let weighting = weighting.unwrap_or(Weighting::Relative);
-    let targets = constrainable_targets(comps, targets);
+    // Snapshot once: the affectability filter and the matrix assembly below (the latter possibly
+    // twice, via the reweight pass) read these compositions by key (see `FastComposition`).
+    let fast: Vec<FastComposition> = comps.iter().map(Composition::to_fast).collect();
+    let targets = constrainable_targets(&fast, targets);
 
     // Seed denominator estimates for the ratio targets, from the targets alone.
     let mut ratio_denominators: Vec<(BalanceKey, f64)> = targets
@@ -1210,7 +1220,7 @@ pub fn balance_with_reweighting(
 
     let solve_once = |ratio_denominators: &[(BalanceKey, f64)]| -> Result<Vec<f64>> {
         let weights = row_weights(&targets, weighting, priority_weights, ratio_denominators);
-        solve(&make_matrix_a(comps, &targets, &weights), &make_vector_y(&targets, &weights), rows, cols)
+        solve(&make_matrix_a(&fast, &targets, &weights), &make_vector_y(&targets, &weights), rows, cols)
     };
 
     let amounts = solve_once(&ratio_denominators)?;
@@ -1251,7 +1261,7 @@ pub fn balance_with_reweighting(
 /// Affectability is evaluated through [`target_row_coeff`] (see [`is_unaffectable`]), so ratio
 /// targets use their homogeneous coefficients and never produce `f64::NAN`; a ratio row is dropped
 /// only when every composition lies exactly on the requested ratio (its row is genuinely zero).
-fn constrainable_targets(comps: &[Composition], targets: &[(BalanceKey, f64)]) -> Vec<(BalanceKey, f64)> {
+fn constrainable_targets(comps: &[impl CompositionValues], targets: &[(BalanceKey, f64)]) -> Vec<(BalanceKey, f64)> {
     targets
         .iter()
         .copied()
@@ -1366,7 +1376,7 @@ pub fn row_weights(
 /// [3.25, 40,    0]
 /// [8.71,  5.4, 97]
 /// [1,     1,    1]
-fn make_matrix_a(comps: &[Composition], targets: &[(BalanceKey, f64)], weights: &[f64]) -> Vec<f64> {
+fn make_matrix_a(comps: &[impl CompositionValues], targets: &[(BalanceKey, f64)], weights: &[f64]) -> Vec<f64> {
     targets
         .iter()
         .zip(weights)
@@ -1402,7 +1412,7 @@ fn make_vector_y(targets: &[(BalanceKey, f64)], weights: &[f64]) -> Vec<f64> {
 /// homogeneous `comp.get(num) - (R / 100) * comp.get(den)` (see [`RatioKey::parts`]), which is
 /// always finite — the solver never evaluates the `NaN`-prone per-ingredient ratio.
 #[must_use]
-pub fn target_row_coeff(key: BalanceKey, target: f64, comp: &Composition) -> f64 {
+pub fn target_row_coeff(key: BalanceKey, target: f64, comp: &impl CompositionValues) -> f64 {
     match key {
         BalanceKey::Ratio(ratio) => {
             let (num_key, den_key) = ratio.parts();
@@ -3840,7 +3850,8 @@ pub(crate) mod tests {
 
     #[test]
     fn dominates_is_false_for_empty_palette() {
-        assert_false!(dominates(&[], CompKey::TotalSugars, CompKey::Sucrose));
+        let empty: &[Composition] = &[];
+        assert_false!(dominates(empty, CompKey::TotalSugars, CompKey::Sucrose));
     }
 
     // --- Typical balancing keys ---
