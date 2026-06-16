@@ -46,7 +46,12 @@ function CalculatorContent() {
   const searchParams = useSearchParams();
   const recipeEditorRecipeIdx = recipeSlotOrDefault(parseInt(searchParams.get("slot") ?? ""));
 
-  const { width, containerRef, mounted } = useContainerWidth();
+  // `measureBeforeMount: true` keeps `mounted` false until the real width is measured, so the
+  // `{mounted && ...}` gate defers the grid's first render until width measurement and layout
+  // hydration have batched. Otherwise the grid mounts at the placeholder width with default
+  // layouts and races a width change against stored-layout adoption, which a client-side
+  // navigation (unlike a full refresh) can settle back to defaults.
+  const { width, containerRef, mounted } = useContainerWidth({ measureBeforeMount: true });
 
   const recipeCtxState = useState(() => makeEmptyRecipeContext());
   const [recipeContext, setRecipeContext] = recipeCtxState;
