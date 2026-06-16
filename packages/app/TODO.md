@@ -10,7 +10,7 @@
 - [ ] Figure out how to show `sci-cream`'s beginner-friendly overview to new users of the app.
 - [ ] Fix issue where version lists in `RecipeSearch` do not visually update when one is deleted.
 - [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
-- [ ] In `/ingredients`, the composition panel does not scroll when the key exceed the height.
+- [ ] In `/ingredients`, the composition table does not have a bottom border; shows when scroll.
 - [ ] There is a weird horizontal line in `/ingredient-search-detail-panel-visual-linux.png`
 - [ ] Fix typo in welcome blog post, "you will **find** areas where it goes well beyond...".
 - [ ] Look into single `props` argument or spread out arguments for Next.js components.
@@ -18,8 +18,6 @@
 - [ ] Add end-to-end tests for balancing functionality; check surfacing of balancing errors?
 - [ ] Recipe validation errors/warnings do not show unless a recipe has some non-zero qty value.
 - [ ] `FpdKey`s don't support balancing, so they should not have a target, but should be watchable.
-- [ ] `/calculator` layout persistence reset when navigating from `/recipes`; not when reloading.
-- [ ] Add visual regression tests for the priority toggle in watchers cards, in all priority states.
 
 ## Up Next
 
@@ -105,7 +103,6 @@
 - [ ] Figure out how to do visual regression tests of animations, e.g. navbar expand/collapse.
 - [ ] Look for opportunities to optimize bundle size, particularly in `/ingredients` and `/recipes`.
 - [ ] Add an app "tour" to show users the main components of the app, where to go for docs, etc.
-- [ ] Add support for every instance of `KeySelect` to independently store custom keys in local.
 - [ ] Add feature to show different ranges around serving temp in `FpdGraph`, like a 'zoom'.
 - [ ] Explore options for a UI system to communicate errors/notification; popups, text bar?
 - [ ] Explore undo/redo system - necessary now that automatic balancing has been enabled.
@@ -118,6 +115,9 @@
 
 ## Completed
 
+- [x] Add support for every instance of `KeySelect` to independently store custom keys in local.
+- [x] `/calculator` layout persistence reset when navigating from `/recipes`; not when reloading.
+- [x] Add visual regression tests for the priority toggle in watchers cards, in all priority states.
 - [x] Add a visual regression test for the custom filter settings button and checkbox menu.
 - [x] Remove the '"comments": "..."' placeholder in `/ingredients`, just remove the field.
 - [x] Closing a `WatcherCard` when on `Auto` doesn't do anything; this needs a fix.
