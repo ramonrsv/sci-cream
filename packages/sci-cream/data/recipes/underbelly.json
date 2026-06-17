@@ -52,5 +52,44 @@
       ["Salt", 0.7]
     ],
     "comments": "Underbelly's Light Variation recipe, posted 2016-05-25, visited 2026-05-7. Source: https://under-belly.org/basic-ice-cream-recipe-examples/. 'Whole Milk' is quoted as 3.3%, which I assume is 3.25% rounded up, consistent with Sci-Cream's definition. 'Heavy Cream' is quoted as 36%, consistent with Sci-Cream's definition. The stabilizers are a 4:3:2 blend, total 1.8g, and 2g of 'Soy Lecithin'. This is inconsistent with 'Underbelly Eggless Ice Cream Stabilizer Blend', which uses a 4:2:1 blend, and 4 'Soy Lecithin'. It's also inconsistent with the 2.1g of stabilizers in the composition table, and with the stated 4.5g of 'Soy Lecithin' in the discussion. The stabilizer blends were both ostensibly edited on 2018-10, but they are inconsistent with each other. The 15g of 'Invert Sugar' can be replaced by 6g each of 'Dextrose' and 'Fructose', as per https://under-belly.org/basic-ice-cream-recipe-examples/#comment-12, which is much easier to work with."
+  },
+  {
+    "name": "\"Double Origin\" Chocolate Ice Cream",
+    "author": "Underbelly",
+    "recipe": [
+      ["Whole Milk", 470],
+      ["Heavy Cream", 240],
+      ["Cocoa Powder, 22% Fat", 70],
+      ["70% Dark Chocolate", 90],
+      ["Dextrose", 84],
+      ["Fructose", 29],
+      ["Soy Lecithin", 2],
+      ["Locust Bean Gum", 0.8],
+      ["Guar Gum", 0.6],
+      ["Lambda Carrageenan", 0.4],
+      ["Salt", 1.2],
+      ["Vanilla Extract", 10]
+    ],
+    "comments": "Underbelly's \"Double Origin\" Chocolate Ice Cream recipe, posted 2018-09-25, visited 2026-06-16. Source: https://under-belly.org/ice-cream-flavor-chocolate/. Cocoa powder is assumed to be 22% fat, typical of the brands mentioned, e.g. Valrhona, and agrees with the stated total fat content. Chocolate is assumed to be 70% dark chocolate, in the middle of the stated 67-72% range. The stabilizers are a 4:3:2 blend, total 1.8g, and 2g of 'Soy Lecithin' - this does not match any of Underbelly's listed stabilizer blends, though it does match the 'Light Variation' blend. The resulting composition agrees with the stated 'Analysis' - except POD and PAC."
+  },
+  {
+    "name": "Single Origin Cocoa Ice Cream",
+    "author": "Underbelly",
+    "recipe": [
+      ["Whole Milk", 395],
+      ["Heavy Cream", 310],
+      ["Skimmed Milk Powder", 30],
+      ["Cocoa Powder, 17% Fat", 110],
+      ["Sucrose", 80],
+      ["Dextrose", 50],
+      ["Fructose", 12],
+      ["Soy Lecithin", 2],
+      ["Locust Bean Gum", 0.8],
+      ["Guar Gum", 0.6],
+      ["Lambda Carrageenan", 0.4],
+      ["Salt", 1.2],
+      ["Vanilla Extract", 10]
+    ],
+    "comments": "Underbelly's \"Single Origin Cocoa Ice Cream\" recipe, posted 2018-09-25, visited 2026-06-16. Source: https://under-belly.org/ice-cream-flavor-chocolate/. Cocoa powder is taken as 17% fat, in the middle of the stated 15-20% range. The stabilizers are a 4:3:2 blend, total 1.8g, and 2g of 'Soy Lecithin' - this does not match any of Underbelly's listed stabilizer blends, though it does match the 'Light Variation' blend. The resulting composition agrees with the stated 'Analysis'."
   }
 ]
