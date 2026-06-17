@@ -5,7 +5,8 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
 
 import { makeEmptyRecipeContext, type RecipeContext, RecipeContextState } from "@/lib/recipe";
-import { makeWasmResources, WasmResourcesState, WasmResources } from "@/lib/wasm-resources";
+import { makeWasmResources, WasmResources } from "@/lib/wasm-resources";
+import { useSessionResources, type SessionResources } from "@/lib/session-resources";
 import { RecipeEditorPanel } from "./recipe-editor-panel";
 
 import {
@@ -19,6 +20,8 @@ vi.mock("next-auth/react", () => ({
 
 vi.mock("@/lib/data", () => ({ upsertUserRecipe: vi.fn() }));
 
+vi.mock("@/lib/session-resources", () => ({ useSessionResources: vi.fn() }));
+
 describe("RecipeEditorPanel", () => {
   let recipeContext: RecipeContext;
   let wasmResources: WasmResources;
@@ -31,6 +34,14 @@ describe("RecipeEditorPanel", () => {
     wasmResources = makeWasmResources(
       new WasmBridge(new_ingredient_database_seeded_from_embedded_data()),
     );
+
+    vi.mocked(useSessionResources).mockReturnValue({
+      wasmResourcesState: [wasmResources, vi.fn()],
+      savedRecipes: [],
+      userIngredientSpecs: [],
+      refreshUserRecipes: vi.fn().mockResolvedValue(undefined),
+      refreshUserIngredients: vi.fn().mockResolvedValue(undefined),
+    } satisfies SessionResources);
   });
 
   afterEach(async () => {
@@ -38,10 +49,7 @@ describe("RecipeEditorPanel", () => {
     await vi.waitFor(() => {}, { timeout: 100 });
   });
 
-  const makePanelProps = () => ({
-    recipeCtxState: [recipeContext, vi.fn()] as RecipeContextState,
-    wasmResourcesState: [wasmResources, vi.fn()] as WasmResourcesState,
-  });
+  const makePanelProps = () => ({ recipeCtxState: [recipeContext, vi.fn()] as RecipeContextState });
 
   describe("Panel Chrome", () => {
     it("should render with the correct id", () => {

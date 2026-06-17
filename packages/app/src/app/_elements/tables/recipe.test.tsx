@@ -9,7 +9,8 @@ import { useSession } from "next-auth/react";
 
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import { makeEmptyRecipeContext, type RecipeContext, RecipeContextState } from "@/lib/recipe";
-import { makeWasmResources, WasmResourcesState, WasmResources } from "@/lib/wasm-resources";
+import { makeWasmResources, WasmResources } from "@/lib/wasm-resources";
+import { useSessionResources, type SessionResources } from "@/lib/session-resources";
 import {
   createUserRecipe,
   createUserRecipeVersion,
@@ -45,6 +46,8 @@ vi.mock("@workspace/sci-cream", async () => {
 vi.mock("next-auth/react", () => ({
   useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
 }));
+
+vi.mock("@/lib/session-resources", () => ({ useSessionResources: vi.fn() }));
 
 vi.mock("@/lib/data", () => ({
   createUserRecipe: vi
@@ -123,32 +126,31 @@ describe("RecipeEditor", () => {
   let recipeContext: RecipeContext;
   let wasmResources: WasmResources;
   let setRecipeContext: Mock<(value: SetStateAction<RecipeContext>) => void>;
-  let setWasmResources: Mock<(value: SetStateAction<WasmResources>) => void>;
+  let refreshUserRecipes: Mock<() => Promise<void>>;
 
-  /** Wrapper component that wires spy mocks into `useState` so updates are reflected in the DOM */
+  /** Point the (mocked) session-resources context at the current `wasmResources` and spies. */
+  function mockSessionResources() {
+    vi.mocked(useSessionResources).mockReturnValue({
+      wasmResourcesState: [wasmResources, vi.fn()],
+      savedRecipes: [],
+      userIngredientSpecs: [],
+      refreshUserRecipes,
+      refreshUserIngredients: vi.fn().mockResolvedValue(undefined),
+    } satisfies SessionResources);
+  }
+
+  /** Wrapper component that wires the recipe-context spy into `useState` so edits reflect in DOM */
   function RecipeEditorWithSpy() {
     const [recipeCtx, _setRecipeContext] = useState(recipeContext);
-    const [resources, _setWasmResources] = useState(wasmResources);
 
     useEffect(() => {
       setRecipeContext.mockImplementation((value: SetStateAction<RecipeContext>) => {
         recipeContext = value instanceof Function ? value(recipeContext) : value;
         _setRecipeContext(recipeContext);
       });
-      setWasmResources.mockImplementation((value: SetStateAction<WasmResources>) => {
-        wasmResources = value instanceof Function ? value(wasmResources) : value;
-        _setWasmResources(wasmResources);
-      });
     }, []);
 
-    return (
-      <RecipeEditor
-        props={{
-          recipeCtxState: [recipeCtx, setRecipeContext],
-          wasmResourcesState: [resources, setWasmResources],
-        }}
-      />
-    );
+    return <RecipeEditor props={{ recipeCtxState: [recipeCtx, setRecipeContext] }} />;
   }
 
   /** Get the ingredient name search input element at the given row index within a container */
@@ -175,7 +177,8 @@ describe("RecipeEditor", () => {
     );
 
     setRecipeContext = vi.fn();
-    setWasmResources = vi.fn();
+    refreshUserRecipes = vi.fn().mockResolvedValue(undefined);
+    mockSessionResources();
   });
 
   afterEach(async () => {
@@ -186,7 +189,6 @@ describe("RecipeEditor", () => {
   /** Build `RecipeEditor` props with the given enabled recipe indices and the current spy state */
   const makeRecipeEditorProps = (indices: number[]) => ({
     recipeCtxState: [recipeContext, setRecipeContext] as RecipeContextState,
-    wasmResourcesState: [wasmResources, setWasmResources] as WasmResourcesState,
     enabledRecipeIndices: indices,
   });
 

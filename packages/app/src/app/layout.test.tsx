@@ -35,6 +35,10 @@ vi.mock("next-auth/react", () => ({
   SessionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
+vi.mock("@/lib/session-resources", () => ({
+  SessionResourcesProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
+}));
+
 const { default: RootLayout, metadata } = await import("./layout");
 
 // ---------------------------------------------------------------------------

@@ -1,10 +1,10 @@
 "use client";
 
-import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 import { RecipeSearch, type GroupedRecipe } from "@/app/_components/recipe-search";
+import { useSessionResources } from "@/lib/session-resources";
 import { MAX_RECIPES } from "@/lib/styles/sizes";
 
 import {
@@ -17,9 +17,7 @@ import { verify } from "@/lib/util";
 import {
   deleteUserRecipe,
   deleteUserRecipeVersion,
-  fetchAllUserSavedRecipes,
   updateUserRecipeVersion,
-  type SavedRecipeJson,
   type SavedRecipeVersionJson,
 } from "@/lib/data";
 
@@ -27,17 +25,9 @@ import {
 export default function RecipesPage() {
   const router = useRouter();
   const { data: session } = useSession();
-  const [savedRecipes, setSavedRecipes] = useState<SavedRecipeJson[]>([]);
+  const { savedRecipes, refreshUserRecipes } = useSessionResources();
 
   const userEmail = session?.user?.email;
-
-  useEffect(() => {
-    if (userEmail) {
-      fetchAllUserSavedRecipes(userEmail).then((recipes) => {
-        if (recipes) setSavedRecipes(recipes);
-      });
-    }
-  }, [userEmail]);
 
   /**
    * Write the chosen version into the given localStorage slot and navigate to the calculator.
@@ -74,8 +64,7 @@ export default function RecipesPage() {
     );
 
     await deleteUserRecipe(userEmail, entry.recipeId);
-    const recipes = await fetchAllUserSavedRecipes(userEmail);
-    if (recipes) setSavedRecipes(recipes);
+    await refreshUserRecipes();
   }
 
   /** Delete a single version of a saved recipe and refresh the list */
@@ -89,8 +78,7 @@ export default function RecipesPage() {
     );
 
     await deleteUserRecipeVersion(userEmail, entry.recipeId, version.version);
-    const recipes = await fetchAllUserSavedRecipes(userEmail);
-    if (recipes) setSavedRecipes(recipes);
+    await refreshUserRecipes();
   }
 
   /** Update the comments on a saved recipe's version and refresh the list */
@@ -107,8 +95,7 @@ export default function RecipesPage() {
     await updateUserRecipeVersion(userEmail, entry.recipeId, version.version, {
       comments: comments === "" ? null : comments,
     });
-    const recipes = await fetchAllUserSavedRecipes(userEmail);
-    if (recipes) setSavedRecipes(recipes);
+    await refreshUserRecipes();
   }
 
   const slots = Array.from({ length: MAX_RECIPES }, (_, idx) => idx);

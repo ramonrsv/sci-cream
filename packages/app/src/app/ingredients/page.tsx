@@ -1,12 +1,11 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useSession } from "next-auth/react";
+import { useMemo } from "react";
 
 import type { IngredientSpecJson } from "@workspace/sci-cream";
 
 import { IngredientSearch } from "@/app/_components/ingredient-search";
-import { fetchAllUserIngredientSpecs } from "@/lib/data";
+import { useSessionResources } from "@/lib/session-resources";
 
 /**
  * Coerce a DB row's `spec` field (JSON column) into an `IngredientSpecJson`.
@@ -39,21 +38,15 @@ function safeJsonParse(value: string): unknown {
 
 /** Ingredients page: browse and inspect specs from embedded data and the user's saved library */
 export default function IngredientsPage() {
-  const { data: session } = useSession();
-  const [savedSpecs, setSavedSpecs] = useState<IngredientSpecJson[]>([]);
+  const { userIngredientSpecs } = useSessionResources();
 
-  const userEmail = session?.user?.email;
-
-  useEffect(() => {
-    if (!userEmail) return;
-    fetchAllUserIngredientSpecs(userEmail).then((rows) => {
-      if (!rows) return;
-      const specs = rows
-        .map((r) => toSpecJson(r.spec))
-        .filter((s): s is IngredientSpecJson => s !== undefined);
-      setSavedSpecs(specs);
-    });
-  }, [userEmail]);
+  const savedSpecs = useMemo(
+    () =>
+      userIngredientSpecs
+        .map((row) => toSpecJson(row.spec))
+        .filter((s): s is IngredientSpecJson => s !== undefined),
+    [userIngredientSpecs],
+  );
 
   return (
     <div className="mx-auto mt-4 max-w-5xl px-1 md:px-4">

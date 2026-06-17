@@ -1,15 +1,16 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import { useSession } from "next-auth/react";
+import { useEffect, useRef } from "react";
 
-import { fetchAllUserIngredientSpecs } from "@/lib/data";
 import {
   IngredientDatabase,
   new_ingredient_database_seeded_from_embedded_data,
   Bridge as WasmBridge,
-  OnConflict,
 } from "@workspace/sci-cream";
+
+// `useSeededWasmResources` is defined in session-resources (it reads the shared resources from
+// `SessionResourcesProvider`); re-exported here so it sits alongside the other resource helpers.
+export { useSeededWasmResources } from "@/lib/session-resources";
 
 /** Shared WASM resources: the bridge used for ingredient lookups and mix-property calculations */
 export interface WasmResources {
@@ -41,35 +42,6 @@ export function makeEmptyWasmResources(): WasmResources {
 /** Create a `WasmResources` backed by the embedded (bundled) ingredient database */
 export function makeWasmResourcesFromEmbeddedData(): WasmResources {
   return makeWasmResources(new WasmBridge(new_ingredient_database_seeded_from_embedded_data()));
-}
-
-/**
- * Creates a {@link WasmResources} backed by the embedded ingredient database, then seeds it
- * with any user-defined specs once a session is available.
- *
- * Returns the state tuple so callers can pass it directly to components that accept
- * {@link WasmResourcesState}, and so that downstream components re-render after seeding via the
- * incremented `updateIdx`.
- */
-export function useSeededWasmResources(): WasmResourcesState {
-  const { data: session } = useSession();
-  const resourcesState = useState(makeWasmResourcesFromEmbeddedData);
-  const [resources, setResources] = resourcesState;
-
-  useEffect(() => {
-    if (session?.user?.email) {
-      fetchAllUserIngredientSpecs(session.user.email).then((userSpecs) => {
-        resources.wasmBridge.seed_from_specs(
-          (userSpecs ?? []).map((s) => s.spec),
-          OnConflict.Reject,
-        );
-
-        setResources((prev) => ({ ...prev, updateIdx: prev.updateIdx + 1 }));
-      });
-    }
-  }, [session?.user?.email]); // eslint-disable-line react-hooks/exhaustive-deps
-
-  return resourcesState;
 }
 
 /** A wasm-bindgen object that owns a native pointer freed via `.free()` */

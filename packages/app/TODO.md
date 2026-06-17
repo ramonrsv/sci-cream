@@ -43,9 +43,6 @@
       currently relies on a fixed number of rows, and won't be easy to make vertically scrollable.
 - [ ] Look into how layouts make tables too narrow or too wide, and consider setting maximum table
       widths so that they don't look too wide on some layouts; may look bad in narrow scrollable?
-- [ ] In `/recipes`, there is a fetch for user ingredients every time a recipe is selected.
-- [ ] When a user is logged in and has user-defined there are "ingredient name not unique" errors.
-      This should be handled gracefully, overriding and showing a warning that it shadows built-in.
 - [ ] The delete recipe version button moves around with the version name length, which is jarring.
 - [ ] Add visual regression tests for dark mode; not everything, just routes & some key elements.
 - [ ] Add support for automatically flipping direction of `PropertiesChart` based on layout.
@@ -114,6 +111,9 @@
 
 ## Completed
 
+- [x] In `/recipes`, there is a fetch for user ingredients every time a recipe is selected.
+- [x] When a user is logged in and has user-defined there are "ingredient name not unique" errors.
+      This should be handled gracefully, overriding and showing a warning that it shadows built-in.
 - [x] Add support for every instance of `KeySelect` to independently store custom keys in local.
 - [x] `/calculator` layout persistence reset when navigating from `/recipes`; not when reloading.
 - [x] Add visual regression tests for the priority toggle in watchers cards, in all priority states.

@@ -3,7 +3,6 @@
 import { GripVertical } from "lucide-react";
 
 import { RecipeContextState } from "@/lib/recipe";
-import { WasmResourcesState } from "@/lib/wasm-resources";
 import { RecipeEditor } from "@/app/_elements/tables/recipe";
 import { STD_COMPONENT_H_PX, DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
 import { STORAGE_KEYS } from "@/lib/local-storage";
@@ -14,11 +13,7 @@ import { STORAGE_KEYS } from "@/lib/local-storage";
 export function RecipeEditorPanel({
   props,
 }: {
-  props: {
-    recipeCtxState: RecipeContextState;
-    wasmResourcesState: WasmResourcesState;
-    urlSlot?: number;
-  };
+  props: { recipeCtxState: RecipeContextState; urlSlot?: number };
 }) {
   return (
     <div

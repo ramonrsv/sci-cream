@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, cleanup, waitFor } from "@testing-library/react";
+import { render, cleanup } from "@testing-library/react";
 
 import { MAX_RECIPES } from "@/lib/styles/sizes";
 import {
@@ -13,10 +13,12 @@ import { useSession } from "next-auth/react";
 import {
   deleteUserRecipe,
   deleteUserRecipeVersion,
-  fetchAllUserSavedRecipes,
   updateUserRecipeVersion,
+  type SavedRecipeJson,
   type SavedRecipeVersionJson,
 } from "@/lib/data";
+import { useSessionResources, type SessionResources } from "@/lib/session-resources";
+import type { WasmResourcesState } from "@/lib/wasm-resources";
 
 import RecipesPage from "./page";
 import { STORAGE_KEYS } from "@/lib/local-storage";
@@ -32,15 +34,30 @@ vi.mock("next-auth/react", () => ({
   useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
 }));
 vi.mock("@/lib/data", () => ({
-  fetchAllUserSavedRecipes: vi.fn().mockResolvedValue(undefined),
   deleteUserRecipe: vi.fn().mockResolvedValue(undefined),
   deleteUserRecipeVersion: vi.fn().mockResolvedValue(undefined),
   updateUserRecipeVersion: vi.fn().mockResolvedValue(undefined),
 }));
+vi.mock("@/lib/session-resources", () => ({ useSessionResources: vi.fn() }));
 vi.mock("@/app/_components/recipe-search", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/app/_components/recipe-search")>();
   return { ...actual, RecipeSearch: vi.fn(() => null) };
 });
+
+/** Spy for the shared-cache refresh the page invokes after a recipe mutation. */
+const refreshUserRecipes = vi.fn().mockResolvedValue(undefined);
+
+/** Drive the page's saved-recipes source via the (mocked) session-resources context. */
+function mockSessionResources(savedRecipes: SavedRecipeJson[] = []) {
+  vi.mocked(useSessionResources).mockReturnValue({
+    // The recipes page only reads `savedRecipes` and `refreshUserRecipes`.
+    wasmResourcesState: [] as unknown as WasmResourcesState,
+    savedRecipes,
+    userIngredientSpecs: [],
+    refreshUserRecipes,
+    refreshUserIngredients: vi.fn().mockResolvedValue(undefined),
+  } satisfies SessionResources);
+}
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -76,6 +93,7 @@ describe("RecipesPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
+    mockSessionResources();
     // mockReturnValue overrides persist across tests; reset to the unauthenticated default
     vi.mocked(useSession).mockReturnValue({
       data: null,
@@ -112,22 +130,18 @@ describe("RecipesPage", () => {
       expect(capturedProps().onDeleteSavedRecipe).toBeDefined();
     });
 
-    it("invoking onDeleteSavedRecipe calls deleteUserRecipe with the recipe id, then refetches", async () => {
+    it("invoking onDeleteSavedRecipe calls deleteUserRecipe with the recipe id, then refreshes the shared cache", async () => {
       vi.mocked(useSession).mockReturnValue({
         data: { user: { email: "a@b.c" }, expires: "" },
         status: "authenticated",
         update: vi.fn(),
       });
-      vi.mocked(fetchAllUserSavedRecipes).mockResolvedValue([]);
 
       render(<RecipesPage />);
       await capturedProps().onDeleteSavedRecipe!(entry);
 
       expect(deleteUserRecipe).toHaveBeenCalledWith("a@b.c", 42);
-      await waitFor(() => {
-        // mount + post-delete = 2 calls
-        expect(fetchAllUserSavedRecipes).toHaveBeenCalledTimes(2);
-      });
+      expect(refreshUserRecipes).toHaveBeenCalled();
     });
   });
 
@@ -138,7 +152,6 @@ describe("RecipesPage", () => {
         status: "authenticated",
         update: vi.fn(),
       });
-      vi.mocked(fetchAllUserSavedRecipes).mockResolvedValue([]);
 
       render(<RecipesPage />);
       await capturedProps().onDeleteSavedRecipeVersion!(entry, version);
@@ -169,15 +182,12 @@ describe("RecipesPage", () => {
         status: "authenticated",
         update: vi.fn(),
       });
-      vi.mocked(fetchAllUserSavedRecipes).mockResolvedValue([]);
 
       render(<RecipesPage />);
       await capturedProps().onUpdateSavedRecipeVersionComments!(entry, version, "Tasty.");
 
       expect(updateUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 42, 1, { comments: "Tasty." });
-      await waitFor(() => {
-        expect(fetchAllUserSavedRecipes).toHaveBeenCalledTimes(2);
-      });
+      expect(refreshUserRecipes).toHaveBeenCalled();
     });
 
     it("passes null for empty-string comments so the field is cleared in the DB", async () => {
@@ -186,7 +196,6 @@ describe("RecipesPage", () => {
         status: "authenticated",
         update: vi.fn(),
       });
-      vi.mocked(fetchAllUserSavedRecipes).mockResolvedValue([]);
 
       render(<RecipesPage />);
       await capturedProps().onUpdateSavedRecipeVersionComments!(entry, version, "");

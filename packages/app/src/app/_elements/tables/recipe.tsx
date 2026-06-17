@@ -34,7 +34,7 @@ import {
   updateUserRecipeVersion,
 } from "@/lib/data";
 
-import { WasmResourcesState } from "@/lib/wasm-resources";
+import { useSessionResources } from "@/lib/session-resources";
 import { RecipeSelect, useRecipeIdxState } from "@/app/_elements/selects/recipe-select";
 import { formatCompositionValue } from "@/lib/comp-value-format";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
@@ -206,7 +206,6 @@ enum SaveStatus {
 export function RecipeEditor({
   props: {
     recipeCtxState: [recipeContext, setRecipeContext],
-    wasmResourcesState: [wasmResources],
     urlSlot,
     persistKey,
     toolbarPrefix,
@@ -214,13 +213,16 @@ export function RecipeEditor({
 }: {
   props: {
     recipeCtxState: RecipeContextState;
-    wasmResourcesState: WasmResourcesState;
     urlSlot?: number;
     persistKey?: string;
     toolbarPrefix?: ReactNode;
   };
 }) {
-  const { wasmBridge } = wasmResources;
+  const {
+    wasmResourcesState: [wasmResources],
+    refreshUserRecipes,
+  } = useSessionResources();
+
   const { recipes: allRecipes } = recipeContext;
 
   const [currentRecipeIdx, setCurrentRecipeIdx] = useRecipeIdxState(persistKey, 0, { urlSlot });
@@ -351,6 +353,9 @@ export function RecipeEditor({
       }
       updateRecipes([withRecipeIdentity(recipe, newRef)]);
       setSaveStatus(SaveStatus.Saved);
+
+      // Refresh the shared saved-recipes cache so other routes (e.g. the recipes list) see it.
+      await refreshUserRecipes();
     } catch (err) {
       console.error("save failed:", err);
       setSaveStatus(SaveStatus.Error);
@@ -465,7 +470,7 @@ export function RecipeEditor({
   }, [saveStatus]);
 
   const currentRecipe = allRecipes[currentRecipeIdx];
-  const validIngredients = wasmBridge.get_all_ingredient_names();
+  const validIngredients = wasmResources.wasmBridge.get_all_ingredient_names();
 
   const iconSize = COMPONENT_ACTION_ICON_SIZE;
 

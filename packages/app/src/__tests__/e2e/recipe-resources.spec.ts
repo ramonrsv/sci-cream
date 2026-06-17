@@ -9,7 +9,9 @@ import {
   expectRecipePasteCompleted,
   loginAsTestUserWithCredentials,
   goToPageAndWaitFor,
+  expandNavbar,
   LoadState,
+  fillRecipeAndWaitForUpdate,
 } from "@/__tests__/e2e/util";
 
 import { sleep_ms } from "@/lib/util";
@@ -131,5 +133,53 @@ test.describe("Recipe Resources", () => {
     // The update must only pass after the fetch API returns, as the correct calculation values
     // depend on the user-defined ingredient data that only becomes available after the response.
     expect(updateTime).toBeGreaterThan(8000);
+  });
+
+  test("client-side navigation between routes issues no further user-data fetches", async ({
+    page,
+  }) => {
+    // Count server-action POSTs (`next-action` header), i.e. the user-data fetches. The provider
+    // fetches once per session, so navigation and reads should add none (RSC GETs aren't actions).
+    let serverActionCount = 0;
+    page.on("request", (req) => {
+      if (req.method() === "POST" && req.headers()["next-action"]) serverActionCount++;
+    });
+
+    // Sign in and land on the calculator; the provider fetches once per session here. Reset the
+    // counter afterward so we measure only what navigation and interaction trigger.
+    await goToPageAndWaitFor(page);
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
+    await goToPageAndWaitFor(page);
+
+    expect(serverActionCount).toBeGreaterThan(0);
+    serverActionCount = 0;
+
+    await expandNavbar(page);
+
+    /** Click a sidebar nav link (client-side navigation, not a full reload) and await the route. */
+    const navigateTo = async (href: string) => {
+      await page.locator(`#sidebar a[href="${href}"]`).click();
+      await page.waitForURL(`**${href}`);
+    };
+
+    /** Select the first search entry, opening its detail panel (which reads the shared bridge). */
+    const selectFirstEntry = async () => {
+      await page.locator(".search-list-item").first().click();
+      await expect(page.locator(".search-detail-panel")).toBeVisible();
+    };
+
+    // Navigate and interact with calc -> recipes -> ingredients -> calc; none should fetch.
+    await navigateTo("/recipes");
+    await selectFirstEntry();
+
+    await navigateTo("/ingredients");
+    await selectFirstEntry();
+
+    await navigateTo("/calculator");
+    await fillRecipeAndWaitForUpdate(page, RecipeID.RefAWithUserDefined);
+
+    // Let any (regressed) navigation- or interaction-triggered fetch fire before asserting.
+    await page.waitForLoadState("networkidle");
+    expect(serverActionCount).toBe(0);
   });
 });

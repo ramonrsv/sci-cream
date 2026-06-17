@@ -7,6 +7,7 @@ import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
 
 import { Navbar } from "@/app/navbar";
+import { SessionResourcesProvider } from "@/lib/session-resources";
 import { GroupByProvider } from "@/lib/group-by";
 import { WebVitals } from "@/app/_elements/web-vitals";
 import { Analytics } from "@vercel/analytics/next";
@@ -27,11 +28,13 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en" suppressHydrationWarning>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <SessionProvider>
-          <ThemeProvider attribute="class">
-            <GroupByProvider>
-              <Navbar>{children}</Navbar>
-            </GroupByProvider>
-          </ThemeProvider>
+          <SessionResourcesProvider>
+            <ThemeProvider attribute="class">
+              <GroupByProvider>
+                <Navbar>{children}</Navbar>
+              </GroupByProvider>
+            </ThemeProvider>
+          </SessionResourcesProvider>
         </SessionProvider>
         <WebVitals />
         {process.env.VERCEL && <Analytics />}

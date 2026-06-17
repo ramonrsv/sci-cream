@@ -7,7 +7,6 @@ import {
   Ingredient,
   IngredientSpecJson,
   SpecEntryJson,
-  Bridge as WasmBridge,
   isSpecEntryAlias,
   specEntryName,
 } from "@workspace/sci-cream";
@@ -60,19 +59,13 @@ function stringifyEntry(entry: Tagged<SpecEntryJson>): string {
 }
 
 /** Detail-panel body for an ingredient: JSON spec + resolved composition side-by-side */
-function IngredientDetailBody({
-  entry,
-  bridge,
-}: {
-  entry: Tagged<SpecEntryJson>;
-  bridge: WasmBridge;
-}) {
-  const { updateIdx: wasmUpdateIdx } = useSeededWasmResources()[STATE_VAL];
+function IngredientDetailBody({ entry }: { entry: Tagged<SpecEntryJson> }) {
+  const { wasmBridge, updateIdx: wasmUpdateIdx } = useSeededWasmResources()[STATE_VAL];
 
   const ingredient = useMemo<Ingredient | undefined>(() => {
     const name = specEntryName(entry);
-    return bridge.has_ingredient(name) ? bridge.get_ingredient_by_name(name) : undefined;
-  }, [entry, wasmUpdateIdx, bridge]); // eslint-disable-line react-hooks/exhaustive-deps
+    return wasmBridge.has_ingredient(name) ? wasmBridge.get_ingredient_by_name(name) : undefined;
+  }, [entry, wasmUpdateIdx, wasmBridge]); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Free the prior `Ingredient` once a new entry replaces it, never the live one still read by
   // `ingredient.composition` below (see `useFreeOnReplace` for why an effect cleanup is unsafe).
@@ -105,13 +98,7 @@ function IngredientDetailBody({
 }
 
 /** Full detail panel for an ingredient: header (with category/alias meta) + body + comments */
-function IngredientDetailPanel({
-  entry,
-  bridge,
-}: {
-  entry: Tagged<SpecEntryJson>;
-  bridge: WasmBridge;
-}) {
+function IngredientDetailPanel({ entry }: { entry: Tagged<SpecEntryJson> }) {
   const isAlias = isSpecEntryAlias(entry);
   const category = isAlias ? aliasTargetCategory(entry.for) : entry.category;
   const comments = getEntryComments(entry);
@@ -128,7 +115,7 @@ function IngredientDetailPanel({
           </>
         }
       />
-      <IngredientDetailBody entry={entry} bridge={bridge} />
+      <IngredientDetailBody entry={entry} />
       {comments && <p className="text-secondary text-sm leading-relaxed">{autoLink(comments)}</p>}
     </>
   );
@@ -140,8 +127,6 @@ function IngredientDetailPanel({
  * Clicking an entry opens its raw JSON spec alongside its resolved composition in a side panel.
  */
 export function IngredientSearch({ savedSpecs = [] }: IngredientSearchProps) {
-  const { wasmBridge } = useSeededWasmResources()[STATE_VAL];
-
   /**
    * Subtitle line under each list-item title: the entry's category for specs, the resolved
    * target's category plus an "Alias" badge for aliases. Truncates the category text on overflow
@@ -169,7 +154,7 @@ export function IngredientSearch({ savedSpecs = [] }: IngredientSearchProps) {
       emptyDetailText="Select an ingredient to see details"
       emptyResultsText="No ingredients found."
       renderListItemSubtitle={renderListItemSubtitle}
-      renderDetailPanel={(entry) => <IngredientDetailPanel entry={entry} bridge={wasmBridge} />}
+      renderDetailPanel={(entry) => <IngredientDetailPanel entry={entry} />}
     />
   );
 }

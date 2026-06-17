@@ -53,14 +53,13 @@ function CalculatorContent() {
   // navigation (unlike a full refresh) can settle back to defaults.
   const { width, containerRef, mounted } = useContainerWidth({ measureBeforeMount: true });
 
+  const [wasmResources] = useSeededWasmResources();
+
   const recipeCtxState = useState(() => makeEmptyRecipeContext());
   const [recipeContext, setRecipeContext] = recipeCtxState;
   const recipes = recipeContext.recipes;
 
-  const wasmResourcesState = useSeededWasmResources();
-  const [wasmResources] = wasmResourcesState;
-
-  const recipeGridProps = { recipeCtxState, wasmResourcesState, urlSlot };
+  const recipeGridProps = { recipeCtxState, urlSlot };
 
   /** Apply a balanced light recipe (from `Bridge.balance_recipe`) onto the main recipe (slot 0) */
   const onApplyBalancedMain = (balanced: LightRecipe) => {

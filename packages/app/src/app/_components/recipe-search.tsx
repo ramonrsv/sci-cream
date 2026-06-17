@@ -132,7 +132,6 @@ interface RecipeDetailPanelProps extends Pick<
   | "onUpdateSavedRecipeVersionComments"
 > {
   entry: TaggedGroupedRecipe;
-  bridge: WasmBridge;
 }
 
 /**
@@ -177,14 +176,14 @@ function formatVersionOption(v: SavedRecipeVersionJson, isLatest: boolean): stri
  */
 function RecipeDetailPanel({
   entry,
-  bridge,
   slots,
   onLoadRecipe,
   onDeleteSavedRecipe,
   onDeleteSavedRecipeVersion,
   onUpdateSavedRecipeVersionComments,
 }: RecipeDetailPanelProps) {
-  const { updateIdx: wasmUpdateIdx } = useSeededWasmResources()[STATE_VAL];
+  const { wasmBridge, updateIdx: wasmUpdateIdx } = useSeededWasmResources()[STATE_VAL];
+
   const isSaved = entry._source === EntitySource.Saved;
   const hasMultipleVersions = entry.versions.length > 1;
 
@@ -198,8 +197,8 @@ function RecipeDetailPanel({
   }));
 
   const recipe = useMemo<Recipe>(
-    () => makeRecipeFromRows(entry.name, selectedVersion?.recipe ?? null, bridge),
-    [entry, selectedVersion, bridge, wasmUpdateIdx], // eslint-disable-line react-hooks/exhaustive-deps
+    () => makeRecipeFromRows(entry.name, selectedVersion?.recipe ?? null, wasmBridge),
+    [entry, selectedVersion, wasmBridge, wasmUpdateIdx], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
   // Free the prior `MixProperties` once a new recipe replaces it, never the live one (see
@@ -272,7 +271,10 @@ function RecipeDetailPanel({
           <div className="hidden @[484px]:block">
             <ToolbarSpacer />
           </div>
-          <RecipeTable recipe={recipe} isValidIngredient={(name) => bridge.has_ingredient(name)} />
+          <RecipeTable
+            recipe={recipe}
+            isValidIngredient={(name) => wasmBridge.has_ingredient(name)}
+          />
         </div>
         <div
           className="max-w-65 min-w-50 flex-1 basis-35"
@@ -318,8 +320,6 @@ export function RecipeSearch({
   onDeleteSavedRecipeVersion,
   onUpdateSavedRecipeVersionComments,
 }: RecipeSearchProps) {
-  const { wasmBridge } = useSeededWasmResources()[STATE_VAL];
-
   const embeddedGrouped = useMemo(() => allRecipeEntries.map(adaptEmbeddedToGrouped), []);
   const savedGrouped = useMemo(() => savedRecipes.map(adaptSavedToGrouped), [savedRecipes]);
 
@@ -344,7 +344,6 @@ export function RecipeSearch({
           // Remount on entry change so internal state (selected version, comments) resets cleanly
           key={`${entry._source}-${entry.id}`}
           entry={entry}
-          bridge={wasmBridge}
           slots={slots}
           onLoadRecipe={onLoadRecipe}
           onDeleteSavedRecipe={onDeleteSavedRecipe}
