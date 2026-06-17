@@ -1,1 +1,45 @@
-[{ "name": "Vanilla Extract", "category": "Flavouring", "AlcoholSpec": { "abv": 35.0 } }]
+[
+  { "name": "Vanilla Extract", "category": "Flavouring", "AlcoholSpec": { "abv": 35.0 } },
+  {
+    "name": "Lemon Zest",
+    "category": "Flavouring",
+    "FruitSpec": {
+      "water": 81.6,
+      "energy": 47,
+      "protein": 1.5,
+      "fat": 0.3,
+      "fiber": 10.6,
+      "carbohydrate": 16,
+      "sugars": { "glucose": 1.39, "fructose": 1.39, "sucrose": 1.39 }
+    },
+    "comments": "USDA FoodData Central - SR Legacy - Lemon peel, raw (https://fdc.nal.usda.gov/food-details/167749/nutrients). 'Total Sugars' is listed as 4.17g with no breakdown, so assume equal parts glucose, fructose, and sucrose."
+  },
+  {
+    "name": "Fresh Peppermint",
+    "category": "Flavouring",
+    "FruitSpec": {
+      "water": 78.6,
+      "energy": 70,
+      "protein": 3.75,
+      "fat": 0.94,
+      "fiber": 8,
+      "carbohydrate": 14.9,
+      "sugars": {}
+    },
+    "comments": "USDA FoodData Central - SR Legacy - Peppermint, fresh (https://fdc.nal.usda.gov/food-details/173474/nutrients)."
+  },
+  {
+    "name": "Fresh Spearmint",
+    "category": "Flavouring",
+    "FruitSpec": {
+      "water": 85.6,
+      "energy": 44,
+      "protein": 3.29,
+      "fat": 0.73,
+      "fiber": 6.8,
+      "carbohydrate": 8.41,
+      "sugars": {}
+    },
+    "comments": "USDA FoodData Central - SR Legacy - Spearmint, fresh (https://fdc.nal.usda.gov/food-details/173475/nutrients)."
+  }
+]

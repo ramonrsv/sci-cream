@@ -24,5 +24,19 @@
       "sugars": { "glucose": 2.02, "fructose": 2.36, "sucrose": 4.19 }
     },
     "comments": "USDA FoodData Central - Foundation - Oranges, raw, navels (https://fdc.nal.usda.gov/food-details/746771/nutrients)."
+  },
+  {
+    "name": "Lemon Juice",
+    "category": "Fruit",
+    "FruitSpec": {
+      "water": 92.31,
+      "energy": 22,
+      "protein": 0.35,
+      "fat": 0.24,
+      "fiber": 0.3,
+      "carbohydrate": 6.9,
+      "sugars": { "glucose": 0.99, "fructose": 1.1, "sucrose": 0.43 }
+    },
+    "comments": "USDA FoodData Central - SR Legacy - Lemon juice, raw (https://fdc.nal.usda.gov/food-details/167747/nutrients)."
   }
 ]
