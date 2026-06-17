@@ -5,7 +5,7 @@ use wasm_bindgen::prelude::*;
 use crate::{
     balancing::{BalanceKey, BalancingReport, Priority, validate_balancing_targets},
     composition::Composition as RustComposition,
-    database::IngredientDatabase,
+    database::{IngredientDatabase, OnConflict},
     error::Result,
     ingredient::{Category, Ingredient as RustIngredient, ResolveIntoIngredient},
     properties::MixProperties as RustMixProperties,
@@ -139,13 +139,18 @@ impl Bridge {
         Ok(validate_balancing_targets(&comps, targets, priorities))
     }
 
+    /// Forwards to [`IngredientDatabase::clear`], emptying the internal database.
+    pub fn clear(&self) {
+        self.db.clear();
+    }
+
     /// Forwards to [`IngredientDatabase::seed`], seeding the db with the provided [`Ingredient`]s.
     ///
     /// # Errors
     ///
     /// It forwards any errors from [`IngredientDatabase::seed`]; see that method for more details.
-    pub fn seed(&self, ingredients: &[RustIngredient]) -> Result<()> {
-        self.db.seed(ingredients)
+    pub fn seed(&self, ingredients: &[RustIngredient], on_conflict: OnConflict) -> Result<()> {
+        self.db.seed(ingredients, on_conflict)
     }
 
     /// Forwards to [`IngredientDatabase::seed_from_specs`], seeding with the [`SpecEntry`]s.
@@ -153,8 +158,21 @@ impl Bridge {
     /// # Errors
     ///
     /// It forwards any errors from [`IngredientDatabase::seed_from_specs`]; see more details.
-    pub fn seed_from_specs(&self, specs: &[SpecEntry]) -> Result<()> {
-        self.db.seed_from_specs(specs)
+    pub fn seed_from_specs(&self, specs: &[SpecEntry], on_conflict: OnConflict) -> Result<()> {
+        self.db.seed_from_specs(specs, on_conflict)
+    }
+
+    /// Forwards to [`IngredientDatabase::seed_from_embedded_data`], seeding the embedded specs.
+    ///
+    /// This function requires the `data` feature to be enabled.
+    ///
+    /// # Errors
+    ///
+    /// It forwards any errors from [`IngredientDatabase::seed_from_embedded_data`]; see more
+    /// details.
+    #[cfg(feature = "data")]
+    pub fn seed_from_embedded_data(&self, on_conflict: OnConflict) -> Result<()> {
+        self.db.seed_from_embedded_data(on_conflict)
     }
 
     /// Resolves an ingredient from a [`SpecEntry`] using the internal database
@@ -299,6 +317,12 @@ impl Bridge {
             .map(|report| serde_wasm_bindgen::to_value(&BalancingReportView::from(&report)).map_err(Into::into))?
     }
 
+    /// WASM compatible wrapper for [`Bridge::clear`]
+    #[wasm_bindgen(js_name = "clear")]
+    pub fn clear_wasm(&self) {
+        self.db.clear();
+    }
+
     /// WASM compatible wrapper for [`Bridge::seed`]
     ///
     /// # Errors
@@ -306,9 +330,9 @@ impl Bridge {
     /// It forwards any errors from [`IngredientDatabase::seed`]; see for more details.
     #[wasm_bindgen(js_name = "seed")]
     #[allow(clippy::needless_pass_by_value)]
-    pub fn seed_wasm(&self, ingredients: Box<[Ingredient]>) -> JsResult<()> {
+    pub fn seed_wasm(&self, ingredients: Box<[Ingredient]>, on_conflict: OnConflict) -> JsResult<()> {
         self.db
-            .seed(&ingredients.into_iter().map(Into::into).collect::<Vec<_>>())
+            .seed(&ingredients.into_iter().map(Into::into).collect::<Vec<_>>(), on_conflict)
             .map_err(Into::into)
     }
 
@@ -319,8 +343,21 @@ impl Bridge {
     /// It forwards any errors from [`IngredientDatabase::seed_from_specs`]; see for details.
     #[wasm_bindgen(js_name = "seed_from_specs")]
     #[allow(clippy::needless_pass_by_value)]
-    pub fn seed_from_specs_wasm(&self, specs: Box<[JsValue]>) -> JsResult<()> {
-        self.db.seed_from_specs_wasm(specs)
+    pub fn seed_from_specs_wasm(&self, specs: Box<[JsValue]>, on_conflict: OnConflict) -> JsResult<()> {
+        self.db.seed_from_specs_wasm(specs, on_conflict)
+    }
+
+    /// WASM compatible wrapper for [`Bridge::seed_from_embedded_data`]
+    ///
+    /// This function requires the `data` feature to be enabled.
+    ///
+    /// # Errors
+    ///
+    /// It forwards any errors from [`IngredientDatabase::seed_from_embedded_data`]; see for more.
+    #[cfg(feature = "data")]
+    #[wasm_bindgen(js_name = "seed_from_embedded_data")]
+    pub fn seed_from_embedded_data_wasm(&self, on_conflict: OnConflict) -> JsResult<()> {
+        self.db.seed_from_embedded_data_wasm(on_conflict)
     }
 
     /// WASM compatible wrapper for [`Bridge::resolve_into_ingredient_from_spec`]
@@ -410,11 +447,14 @@ pub(crate) mod tests {
         assert_false!(bridge.has_ingredient("Whole Milk"));
 
         bridge
-            .seed(&[Ingredient {
-                name: "Whole Milk".to_string(),
-                category: Category::Dairy,
-                composition: RustComposition::new(),
-            }])
+            .seed(
+                &[Ingredient {
+                    name: "Whole Milk".to_string(),
+                    category: Category::Dairy,
+                    composition: RustComposition::new(),
+                }],
+                OnConflict::Reject,
+            )
             .unwrap();
         assert_true!(bridge.has_ingredient("Whole Milk"));
     }
@@ -657,7 +697,7 @@ pub(crate) mod tests {
             .map(|spec| spec.clone().into_ingredient().unwrap())
             .collect::<Vec<Ingredient>>();
 
-        bridge.seed(&ingredients).unwrap();
+        bridge.seed(&ingredients, OnConflict::Reject).unwrap();
         assert_eq!(bridge.get_all_ingredients().len(), 10);
 
         for ingredient in ingredients {
@@ -673,7 +713,7 @@ pub(crate) mod tests {
 
         let specs = get_all_spec_entries();
 
-        bridge.seed_from_specs(&specs).unwrap();
+        bridge.seed_from_specs(&specs, OnConflict::Reject).unwrap();
         assert_eq!(bridge.get_all_ingredients().len(), specs.len());
 
         let db = IngredientDatabase::new_seeded_from_specs(&specs).unwrap();
@@ -710,8 +750,51 @@ pub(crate) mod tests {
             .into(),
         });
 
-        let result = bridge.seed_from_specs(&[invalid_spec]);
+        let result = bridge.seed_from_specs(&[invalid_spec], OnConflict::Reject);
         assert!(matches!(result, Err(crate::error::Error::CompositionNotPositive(_))));
+    }
+
+    #[test]
+    #[cfg(feature = "data")]
+    fn bridge_clear_seed_embedded_then_overwrite() {
+        let bridge = Bridge::new(IngredientDatabase::new_seeded_from_embedded_data());
+        let embedded_len = bridge.get_all_ingredients().len();
+        let embedded_name = bridge.get_all_ingredient_names().into_iter().next().unwrap();
+
+        let make_spec = |name: &str, fat: f64| {
+            SpecEntry::Ingredient(IngredientSpec {
+                name: name.to_string(),
+                category: Category::Dairy,
+                spec: DairySimpleSpec {
+                    fat,
+                    msnf: None,
+                    protein: None,
+                    lactose_free: None,
+                    solids_source: None,
+                }
+                .into(),
+            })
+        };
+
+        // Reset to the embedded baseline, then overlay specs overwriting any name collisions.
+        let reseed = |specs: &[SpecEntry]| {
+            bridge.clear();
+            bridge.seed_from_embedded_data(OnConflict::Reject).unwrap();
+            bridge.seed_from_specs(specs, OnConflict::Overwrite).unwrap();
+        };
+
+        reseed(&[make_spec("My Custom Cream", 30.0)]);
+        assert_eq!(bridge.get_all_ingredients().len(), embedded_len + 1);
+        assert_true!(bridge.has_ingredient("My Custom Cream"));
+
+        reseed(&[make_spec("Another Custom", 12.0)]);
+        assert_eq!(bridge.get_all_ingredients().len(), embedded_len + 1);
+        assert_false!(bridge.has_ingredient("My Custom Cream"));
+        assert_true!(bridge.has_ingredient("Another Custom"));
+
+        reseed(&[make_spec(&embedded_name, 50.0)]);
+        assert_eq!(bridge.get_all_ingredients().len(), embedded_len);
+        assert_true!(bridge.has_ingredient(&embedded_name));
     }
 
     #[test]
@@ -726,7 +809,9 @@ pub(crate) mod tests {
     fn has_ingredient_wasm_delegates() {
         let bridge = Bridge::new(IngredientDatabase::new());
         assert_false!(bridge.has_ingredient_wasm("Whole Milk"));
-        bridge.seed_wasm(Box::new([WHOLE_MILK_ING.clone()])).unwrap();
+        bridge
+            .seed_wasm(Box::new([WHOLE_MILK_ING.clone()]), OnConflict::Reject)
+            .unwrap();
         assert_true!(bridge.has_ingredient_wasm("Whole Milk"));
     }
 
@@ -739,7 +824,9 @@ pub(crate) mod tests {
     #[test]
     fn get_all_ingredient_names_single_ingredient() {
         let bridge = Bridge::new(IngredientDatabase::new());
-        bridge.seed_wasm(Box::new([WHOLE_MILK_ING.clone()])).unwrap();
+        bridge
+            .seed_wasm(Box::new([WHOLE_MILK_ING.clone()]), OnConflict::Reject)
+            .unwrap();
         let names = bridge.get_all_ingredient_names();
         assert_eq!(names, vec!["Whole Milk".to_string()]);
     }
@@ -760,7 +847,9 @@ pub(crate) mod tests {
     #[test]
     fn get_all_ingredients_wasm_returns_wasm_types() {
         let bridge = Bridge::new(IngredientDatabase::new());
-        bridge.seed_wasm(Box::new([WHOLE_MILK_ING.clone()])).unwrap();
+        bridge
+            .seed_wasm(Box::new([WHOLE_MILK_ING.clone()]), OnConflict::Reject)
+            .unwrap();
         let wasm_ingredients = bridge.get_all_ingredients_wasm();
         assert_eq!(wasm_ingredients.len(), 1);
         assert_eq!(wasm_ingredients[0], *WHOLE_MILK_ING);
@@ -782,7 +871,9 @@ pub(crate) mod tests {
     #[test]
     fn get_ingredient_by_name_wasm_found() {
         let bridge = Bridge::new(IngredientDatabase::new());
-        bridge.seed_wasm(Box::new([WHOLE_MILK_ING.clone()])).unwrap();
+        bridge
+            .seed_wasm(Box::new([WHOLE_MILK_ING.clone()]), OnConflict::Reject)
+            .unwrap();
         let result = bridge.get_ingredient_by_name_wasm("Whole Milk");
         assert_true!(result.is_ok());
         assert_eq!(result.unwrap(), *WHOLE_MILK_ING);
@@ -791,7 +882,7 @@ pub(crate) mod tests {
     #[test]
     fn seed_wasm_adds_wasm_ingredients() {
         let bridge = Bridge::new(IngredientDatabase::new());
-        let result = bridge.seed_wasm(Box::new([WHOLE_MILK_ING.clone()]));
+        let result = bridge.seed_wasm(Box::new([WHOLE_MILK_ING.clone()]), OnConflict::Reject);
         assert_true!(result.is_ok());
         assert_eq!(bridge.get_all_ingredients().len(), 1);
         assert_eq!(bridge.get_all_ingredients()[0].name, "Whole Milk");

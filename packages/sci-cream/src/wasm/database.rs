@@ -3,7 +3,7 @@
 use wasm_bindgen::prelude::*;
 
 use crate::{
-    database::IngredientDatabase,
+    database::{IngredientDatabase, OnConflict},
     ingredient::Category,
     resolution::IngredientGetter,
     specs::SpecEntry,
@@ -51,6 +51,12 @@ impl IngredientDatabase {
             .collect()
     }
 
+    /// WASM compatible wrapper for [`IngredientDatabase::clear`]
+    #[wasm_bindgen(js_name = "clear")]
+    pub fn clear_wasm(&self) {
+        self.clear();
+    }
+
     /// WASM compatible wrapper for [`IngredientDatabase::seed`]
     ///
     /// # Errors
@@ -58,8 +64,8 @@ impl IngredientDatabase {
     /// It forwards any errors from [`IngredientDatabase::seed`]; see for more details.
     #[wasm_bindgen(js_name = "seed")]
     #[allow(clippy::needless_pass_by_value)]
-    pub fn seed_wasm(&self, ingredients: Box<[Ingredient]>) -> JsResult<()> {
-        self.seed(&ingredients.into_iter().map(Into::into).collect::<Vec<_>>())
+    pub fn seed_wasm(&self, ingredients: Box<[Ingredient]>, on_conflict: OnConflict) -> JsResult<()> {
+        self.seed(&ingredients.into_iter().map(Into::into).collect::<Vec<_>>(), on_conflict)
             .map_err(Into::into)
     }
 
@@ -72,8 +78,23 @@ impl IngredientDatabase {
     /// deserialized into [`SpecEntry`]s.
     #[wasm_bindgen(js_name = "seed_from_specs")]
     #[allow(clippy::needless_pass_by_value)]
-    pub fn seed_from_specs_wasm(&self, specs: Box<[JsValue]>) -> JsResult<()> {
-        self.seed_from_specs(&specs_from_jsvalues(&specs)?).map_err(Into::into)
+    pub fn seed_from_specs_wasm(&self, specs: Box<[JsValue]>, on_conflict: OnConflict) -> JsResult<()> {
+        self.seed_from_specs(&specs_from_jsvalues(&specs)?, on_conflict)
+            .map_err(Into::into)
+    }
+
+    /// WASM compatible wrapper for [`IngredientDatabase::seed_from_embedded_data`]
+    ///
+    /// This function requires the `data` feature to be enabled.
+    ///
+    /// # Errors
+    ///
+    /// It forwards any errors from [`IngredientDatabase::seed_from_embedded_data`]; see that
+    /// method for more details.
+    #[cfg(feature = "data")]
+    #[wasm_bindgen(js_name = "seed_from_embedded_data")]
+    pub fn seed_from_embedded_data_wasm(&self, on_conflict: OnConflict) -> JsResult<()> {
+        self.seed_from_embedded_data(on_conflict).map_err(Into::into)
     }
 
     /// WASM compatible wrapper for [`IngredientDatabase::get_ingredient_by_name`]
@@ -144,14 +165,16 @@ mod tests {
         let db = IngredientDatabase::new_wasm();
         assert_false!(db.has_ingredient_wasm("Whole Milk"));
 
-        db.seed_wasm(Box::new([WHOLE_MILK_ING.clone()])).unwrap();
+        db.seed_wasm(Box::new([WHOLE_MILK_ING.clone()]), OnConflict::Reject)
+            .unwrap();
         assert_true!(db.has_ingredient_wasm("Whole Milk"));
     }
 
     #[test]
     fn get_all_ingredients_wasm_returns_wasm_types() {
         let db = IngredientDatabase::new_wasm();
-        db.seed_wasm(Box::new([WHOLE_MILK_ING.clone()])).unwrap();
+        db.seed_wasm(Box::new([WHOLE_MILK_ING.clone()]), OnConflict::Reject)
+            .unwrap();
 
         let ingredients = db.get_all_ingredients_wasm();
         assert_eq!(ingredients.len(), 1);
@@ -163,7 +186,7 @@ mod tests {
         let db = IngredientDatabase::new_wasm();
         let dairy = WHOLE_MILK_ING.clone();
         let sweetener = SUCROSE_ING.clone();
-        db.seed_wasm(Box::new([dairy, sweetener])).unwrap();
+        db.seed_wasm(Box::new([dairy, sweetener]), OnConflict::Reject).unwrap();
 
         let dairy_results = db.get_ingredients_by_category_wasm(Category::Dairy);
         assert_eq!(dairy_results.len(), 1);
@@ -178,7 +201,7 @@ mod tests {
     fn seed_wasm_adds_ingredients() {
         let db = IngredientDatabase::new_wasm();
 
-        let result = db.seed_wasm(Box::new([WHOLE_MILK_ING.clone()]));
+        let result = db.seed_wasm(Box::new([WHOLE_MILK_ING.clone()]), OnConflict::Reject);
         assert_true!(result.is_ok());
         assert_eq!(db.get_all_ingredients_wasm().len(), 1);
     }
@@ -186,7 +209,8 @@ mod tests {
     #[test]
     fn get_ingredient_by_name_wasm_found() {
         let db = IngredientDatabase::new_wasm();
-        db.seed_wasm(Box::new([WHOLE_MILK_ING.clone()])).unwrap();
+        db.seed_wasm(Box::new([WHOLE_MILK_ING.clone()]), OnConflict::Reject)
+            .unwrap();
 
         let result = db.get_ingredient_by_name_wasm("Whole Milk");
         assert_true!(result.is_ok());

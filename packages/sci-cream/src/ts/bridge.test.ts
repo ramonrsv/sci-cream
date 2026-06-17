@@ -10,6 +10,7 @@ import {
   isCompKey,
   compToPropKey,
   IngredientDatabase,
+  OnConflict,
 } from "../../dist/index";
 
 import { getMixProperty, propToCompKey, propToRatioKey } from "./prop-key";
@@ -45,13 +46,76 @@ test("Bridge.seed_from_specs", () => {
   const bridge = new Bridge(new IngredientDatabase());
   expect(bridge.has_ingredient("Whole Milk")).toBe(false);
 
-  bridge.seed_from_specs(get_all_spec_entries());
+  bridge.seed_from_specs(get_all_spec_entries(), OnConflict.Reject);
   expect(bridge.has_ingredient("Whole Milk")).toBe(true);
   expect(bridge.get_ingredient_by_name("Whole Milk")).toBeDefined();
 
   const comp = bridge.calculate_recipe_composition(lightRecipe);
   expect(comp).toBeDefined();
   expect(comp.get(CompKey.MilkFat)).toBeCloseTo(13.6367, 4);
+});
+
+/** Build a minimal user-defined dairy spec entry (the shape the app stores and seeds). */
+function makeUserSpec(name: string, fat: number) {
+  return { name, category: "Dairy", DairySimpleSpec: { fat } };
+}
+
+test("Bridge.clear empties the database", () => {
+  const bridge = new Bridge(make_seeded_db());
+  expect(bridge.get_all_ingredients().length).toBeGreaterThan(0);
+
+  bridge.clear();
+  expect(bridge.get_all_ingredients().length).toBe(0);
+  expect(bridge.has_ingredient("Whole Milk")).toBe(false);
+});
+
+test("Bridge.seed_from_embedded_data seeds the baseline", () => {
+  const bridge = new Bridge(new IngredientDatabase());
+  expect(bridge.get_all_ingredients().length).toBe(0);
+
+  bridge.seed_from_embedded_data(OnConflict.Reject);
+  expect(bridge.get_all_ingredients().length).toBe(get_all_spec_entries().length);
+});
+
+test("Bridge.seed_from_specs rejects vs. overwrites duplicates by OnConflict", () => {
+  const bridge = new Bridge(new IngredientDatabase());
+  bridge.seed_from_specs([makeUserSpec("My Custom Cream", 30)], OnConflict.Reject);
+  expect(bridge.get_all_ingredients().length).toBe(1);
+
+  // A colliding name is rejected, but accepted (replaced in place) when overwriting.
+  expect(() =>
+    bridge.seed_from_specs([makeUserSpec("My Custom Cream", 40)], OnConflict.Reject),
+  ).toThrow();
+  expect(() =>
+    bridge.seed_from_specs([makeUserSpec("My Custom Cream", 40)], OnConflict.Overwrite),
+  ).not.toThrow();
+  expect(bridge.get_all_ingredients().length).toBe(1);
+});
+
+test("Bridge reseed dance overlays user specs and drops stale ones", () => {
+  const bridge = new Bridge(make_seeded_db());
+  const embeddedLen = bridge.get_all_ingredients().length;
+  const embeddedName = bridge.get_all_ingredient_names()[0];
+
+  // The app's reseed: reset to the embedded baseline, then overlay user specs overwriting conflicts
+  const reseed = (specs: ReturnType<typeof makeUserSpec>[]) => {
+    bridge.clear();
+    bridge.seed_from_embedded_data(OnConflict.Reject);
+    bridge.seed_from_specs(specs, OnConflict.Overwrite);
+  };
+
+  reseed([makeUserSpec("My Custom Cream", 30)]);
+  expect(bridge.get_all_ingredients().length).toBe(embeddedLen + 1);
+  expect(bridge.has_ingredient("My Custom Cream")).toBe(true);
+
+  reseed([makeUserSpec("Another Custom", 12)]);
+  expect(bridge.get_all_ingredients().length).toBe(embeddedLen + 1);
+  expect(bridge.has_ingredient("My Custom Cream")).toBe(false);
+  expect(bridge.has_ingredient("Another Custom")).toBe(true);
+
+  reseed([makeUserSpec(embeddedName, 50)]);
+  expect(bridge.get_all_ingredients().length).toBe(embeddedLen);
+  expect(bridge.has_ingredient(embeddedName)).toBe(true);
 });
 
 test("Bridge.calculate_recipe_composition", () => {

@@ -8,6 +8,7 @@ import {
   IngredientDatabase,
   new_ingredient_database_seeded_from_embedded_data,
   Bridge as WasmBridge,
+  OnConflict,
 } from "@workspace/sci-cream";
 
 /** Shared WASM resources: the bridge used for ingredient lookups and mix-property calculations */
@@ -58,7 +59,11 @@ export function useSeededWasmResources(): WasmResourcesState {
   useEffect(() => {
     if (session?.user?.email) {
       fetchAllUserIngredientSpecs(session.user.email).then((userSpecs) => {
-        resources.wasmBridge.seed_from_specs((userSpecs ?? []).map((s) => s.spec));
+        resources.wasmBridge.seed_from_specs(
+          (userSpecs ?? []).map((s) => s.spec),
+          OnConflict.Reject,
+        );
+
         setResources((prev) => ({ ...prev, updateIdx: prev.updateIdx + 1 }));
       });
     }

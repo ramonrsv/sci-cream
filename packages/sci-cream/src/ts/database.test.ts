@@ -5,6 +5,7 @@ import {
   get_all_spec_entries,
   get_all_independent_ingredient_specs,
   IngredientDatabase,
+  OnConflict,
   new_ingredient_database_seeded,
   new_ingredient_database_seeded_from_specs,
   new_ingredient_database_seeded_from_embedded_data,
@@ -93,4 +94,53 @@ test("IngredientDatabase.get_ingredient_by_name", () => {
       expect(ing.category).toBe(Category[jsonSpec.category as keyof typeof Category]);
     }
   }
+});
+
+/** Build a minimal user-defined dairy spec entry (the shape the app stores and seeds). */
+function makeUserSpec(name: string, fat: number) {
+  return { name, category: "Dairy", DairySimpleSpec: { fat } };
+}
+
+test("IngredientDatabase.clear empties the database", () => {
+  const db = new_ingredient_database_seeded_from_embedded_data();
+  expect(db.get_all_ingredients().length).toBeGreaterThan(0);
+
+  db.clear();
+  expect(db.get_all_ingredients().length).toBe(0);
+});
+
+test("IngredientDatabase.seed_from_embedded_data seeds the baseline", () => {
+  const db = new IngredientDatabase();
+  expect(db.get_all_ingredients().length).toBe(0);
+
+  db.seed_from_embedded_data(OnConflict.Reject);
+  expect(db.get_all_ingredients().length).toBe(SPEC_ENTRY_COUNT);
+});
+
+test("IngredientDatabase.seed rejects vs. overwrites duplicates by OnConflict", () => {
+  const db = new IngredientDatabase();
+  db.seed([into_ingredient_from_spec(makeUserSpec("My Custom Cream", 30))], OnConflict.Reject);
+  expect(db.get_all_ingredients().length).toBe(1);
+
+  // A colliding name is rejected, but accepted (replaced in place) when overwriting.
+  expect(() =>
+    db.seed([into_ingredient_from_spec(makeUserSpec("My Custom Cream", 40))], OnConflict.Reject),
+  ).toThrow();
+  expect(() =>
+    db.seed([into_ingredient_from_spec(makeUserSpec("My Custom Cream", 40))], OnConflict.Overwrite),
+  ).not.toThrow();
+  expect(db.get_all_ingredients().length).toBe(1);
+});
+
+test("IngredientDatabase.seed_from_specs rejects vs. overwrites duplicates by OnConflict", () => {
+  const db = new IngredientDatabase();
+  const specs = get_all_spec_entries();
+
+  db.seed_from_specs(specs, OnConflict.Reject);
+  expect(db.get_all_ingredients().length).toBe(SPEC_ENTRY_COUNT);
+
+  // Re-seeding the same specs collides on every: rejected wholesale, re-applied when overwriting
+  expect(() => db.seed_from_specs(specs, OnConflict.Reject)).toThrow();
+  expect(() => db.seed_from_specs(specs, OnConflict.Overwrite)).not.toThrow();
+  expect(db.get_all_ingredients().length).toBe(SPEC_ENTRY_COUNT);
 });

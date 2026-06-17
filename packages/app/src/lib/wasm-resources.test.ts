@@ -2,7 +2,12 @@ import { describe, it, expect, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
 
 import { makeEmptyWasmResources, useFreeOnReplace } from "./wasm-resources";
-import { Bridge as WasmBridge, allSpecEntries, specEntryName } from "@workspace/sci-cream";
+import {
+  OnConflict,
+  Bridge as WasmBridge,
+  allSpecEntries,
+  specEntryName,
+} from "@workspace/sci-cream";
 
 describe("WasmResources", () => {
   // ---- makeEmptyWasmResources -----------------------------------------------------------------
@@ -29,11 +34,14 @@ describe("WasmResources", () => {
 
     it("should return true for ingredients present in wasmBridge", () => {
       const resources = makeEmptyWasmResources();
-      resources.wasmBridge.seed_from_specs([
-        allSpecEntries.find((spec) => specEntryName(spec) === "3.25% Milk"),
-        allSpecEntries.find((spec) => specEntryName(spec) === "Whole Milk"),
-        allSpecEntries.find((spec) => specEntryName(spec) === "Sucrose"),
-      ]);
+      resources.wasmBridge.seed_from_specs(
+        [
+          allSpecEntries.find((spec) => specEntryName(spec) === "3.25% Milk"),
+          allSpecEntries.find((spec) => specEntryName(spec) === "Whole Milk"),
+          allSpecEntries.find((spec) => specEntryName(spec) === "Sucrose"),
+        ],
+        OnConflict.Reject,
+      );
       expect(resources.hasIngredient("3.25% Milk")).toBe(true);
       expect(resources.hasIngredient("Whole Milk")).toBe(true);
       expect(resources.hasIngredient("Sucrose")).toBe(true);

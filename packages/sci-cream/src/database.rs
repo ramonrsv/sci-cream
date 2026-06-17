@@ -47,6 +47,16 @@ pub struct IngredientDatabase {
 type ReadLock<'a> = RwLockReadGuard<'a, HashMap<String, Ingredient>>;
 type WriteLock<'a> = RwLockWriteGuard<'a, HashMap<String, Ingredient>>;
 
+/// Policy for how an [`IngredientDatabase`] seed handles an ingredient whose name already exists.
+#[cfg_attr(feature = "wasm", wasm_bindgen)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub enum OnConflict {
+    /// Reject the seed with an [`Error::IngredientNameNotUnique`] if the name already exists.
+    Reject,
+    /// Replace the existing ingredient of the same name in place.
+    Overwrite,
+}
+
 impl IngredientDatabase {
     /// Creates a new, empty [`IngredientDatabase`].
     #[must_use]
@@ -87,14 +97,17 @@ impl IngredientDatabase {
             .collect()
     }
 
-    /// Seeds a single [`Ingredient`] into the database, using a passed write lock, ensuring the
-    /// ingredient name is unique across the database.
+    /// Seeds a single [`Ingredient`] into the database, using a passed write lock.
+    ///
+    /// `on_conflict` selects whether an existing ingredient of the same name is rejected or
+    /// replaced; see [`OnConflict`].
     ///
     /// # Errors
     ///
-    /// Returns an [`Error::IngredientNameNotUnique`] if the name is already present in the database.
-    fn seed_unique_ingredient(write_lock: &mut WriteLock<'_>, ingredient: Ingredient) -> Result<()> {
-        if write_lock.contains_key(&ingredient.name) {
+    /// Returns an [`Error::IngredientNameNotUnique`] if `on_conflict` is [`OnConflict::Reject`] and
+    /// the name is already present in the database.
+    fn seed_ingredient(write_lock: &mut WriteLock<'_>, ingredient: Ingredient, on_conflict: OnConflict) -> Result<()> {
+        if on_conflict == OnConflict::Reject && write_lock.contains_key(&ingredient.name) {
             return Err(Error::IngredientNameNotUnique(ingredient.name));
         }
 
@@ -102,17 +115,25 @@ impl IngredientDatabase {
         Ok(())
     }
 
+    /// Removes all [`Ingredient`]s from the database, leaving it empty.
+    pub fn clear(&self) {
+        self.acquire_write_lock().clear();
+    }
+
     /// Seeds the database with the provided [`Ingredient`]s.
+    ///
+    /// `on_conflict` selects how a name that already exists is handled; see [`OnConflict`].
     ///
     /// # Errors
     ///
-    /// Returns an [`Error::IngredientNameNotUnique`] if any of the provided ingredients have a name
-    /// that is not unique across the provided list and the ingredients already in the database.
-    pub fn seed(&self, ingredients: &[Ingredient]) -> Result<()> {
+    /// Returns an [`Error::IngredientNameNotUnique`] if `on_conflict` is [`OnConflict::Reject`] and
+    /// any of the provided ingredients have a name that is not unique across the provided list and
+    /// the ingredients already in the database.
+    pub fn seed(&self, ingredients: &[Ingredient], on_conflict: OnConflict) -> Result<()> {
         let mut db = self.acquire_write_lock();
 
         for ingredient in ingredients {
-            Self::seed_unique_ingredient(&mut db, ingredient.clone())?;
+            Self::seed_ingredient(&mut db, ingredient.clone(), on_conflict)?;
         }
 
         Ok(())
@@ -131,7 +152,9 @@ impl IngredientDatabase {
     /// [`Composition`] due to invalid values, e.g. negative percentages, not summing to 100%, etc.
     /// It also returns an error if any of the provided specs are [`AliasSpec`] or [`CompositeSpec`]
     /// entries that reference specs not present in the database or the provided list of specs.
-    pub fn seed_from_specs(&self, specs: &[SpecEntry]) -> Result<()> {
+    ///
+    /// `on_conflict` selects how a name that already exists is handled; see [`OnConflict`].
+    pub fn seed_from_specs(&self, specs: &[SpecEntry], on_conflict: OnConflict) -> Result<()> {
         let mut ingredients = Vec::new();
         let mut composites = Vec::new();
         let mut aliases = Vec::new();
@@ -151,7 +174,7 @@ impl IngredientDatabase {
         {
             let mut db = self.acquire_write_lock();
             for ingredient in ingredients {
-                Self::seed_unique_ingredient(&mut db, ingredient)?;
+                Self::seed_ingredient(&mut db, ingredient, on_conflict)?;
             }
         }
 
@@ -168,7 +191,7 @@ impl IngredientDatabase {
         {
             let mut db = self.acquire_write_lock();
             for composite in resolved_composites {
-                Self::seed_unique_ingredient(&mut db, composite)?;
+                Self::seed_ingredient(&mut db, composite, on_conflict)?;
             }
         }
 
@@ -182,11 +205,25 @@ impl IngredientDatabase {
         {
             let mut db = self.acquire_write_lock();
             for alias in resolved_aliases {
-                Self::seed_unique_ingredient(&mut db, alias)?;
+                Self::seed_ingredient(&mut db, alias, on_conflict)?;
             }
         }
 
         Ok(())
+    }
+
+    /// Seeds the database with all embedded ingredient specifications.
+    ///
+    /// `on_conflict` selects how a name that already exists is handled; see [`OnConflict`]. This
+    /// function requires the `data` feature to be enabled.
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error`] if seeding the embedded specs fails; see
+    /// [`IngredientDatabase::seed_from_specs`] for the failure modes.
+    #[cfg(feature = "data")]
+    pub fn seed_from_embedded_data(&self, on_conflict: OnConflict) -> Result<()> {
+        self.seed_from_specs(&crate::data::get_all_spec_entries(), on_conflict)
     }
 
     /// Creates a new [`IngredientDatabase`] seeded with the provided [`Ingredient`]s.
@@ -197,7 +234,7 @@ impl IngredientDatabase {
     /// that is not unique across the provided list and the ingredients already in the database.
     pub fn new_seeded(ingredients: &[Ingredient]) -> Result<Self> {
         let db = Self::new();
-        db.seed(ingredients)?;
+        db.seed(ingredients, OnConflict::Reject)?;
         Ok(db)
     }
 
@@ -212,7 +249,7 @@ impl IngredientDatabase {
     /// entries that reference specs not present in the database or the provided list of specs.
     pub fn new_seeded_from_specs(specs: &[SpecEntry]) -> Result<Self> {
         let db = Self::new();
-        db.seed_from_specs(specs)?;
+        db.seed_from_specs(specs, OnConflict::Reject)?;
         Ok(db)
     }
 
@@ -253,6 +290,7 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
+    use crate::composition::Composition;
     use crate::data::{get_all_independent_ingredient_specs, get_all_spec_entries};
 
     #[test]
@@ -301,7 +339,7 @@ pub(crate) mod tests {
             .map(|spec| spec.clone().into_ingredient().unwrap())
             .collect::<Vec<Ingredient>>();
 
-        db.seed(&ingredients).unwrap();
+        db.seed(&ingredients, OnConflict::Reject).unwrap();
         assert_eq!(db.get_all_ingredients().len(), ingredients.len());
 
         for ingredient in ingredients {
@@ -317,7 +355,7 @@ pub(crate) mod tests {
 
         let specs = get_all_spec_entries();
 
-        db.seed_from_specs(&specs).unwrap();
+        db.seed_from_specs(&specs, OnConflict::Reject).unwrap();
         assert_eq!(db.get_all_ingredients().len(), specs.len());
 
         for spec in specs {
@@ -325,6 +363,35 @@ pub(crate) mod tests {
             let ingredient = spec.resolve_into_ingredient(&db).unwrap();
             assert_eq!(fetched_ingredient, ingredient);
         }
+    }
+
+    #[test]
+    fn ingredient_database_seed_reject_errors_on_duplicate() {
+        let db = IngredientDatabase::new();
+        let make = || Ingredient::new("X".to_string(), Category::Dairy, Composition::new());
+
+        db.seed(&[make()], OnConflict::Reject).unwrap();
+        let result = db.seed(&[make()], OnConflict::Reject);
+        assert!(matches!(result, Err(Error::IngredientNameNotUnique(name)) if name == "X"));
+    }
+
+    #[test]
+    fn ingredient_database_seed_overwrite_replaces_existing() {
+        let db = IngredientDatabase::new();
+        let make = |category| Ingredient::new("X".to_string(), category, Composition::new());
+
+        db.seed(&[make(Category::Dairy)], OnConflict::Reject).unwrap();
+        db.seed(&[make(Category::Sweetener)], OnConflict::Overwrite).unwrap();
+
+        assert_eq!(db.get_all_ingredients().len(), 1);
+        assert_eq!(db.get_ingredient_by_name("X").unwrap().category, Category::Sweetener);
+    }
+
+    #[test]
+    fn ingredient_database_seed_from_embedded_data_seeds_baseline() {
+        let db = IngredientDatabase::new();
+        db.seed_from_embedded_data(OnConflict::Reject).unwrap();
+        assert_eq!(db.get_all_ingredients().len(), get_all_spec_entries().len());
     }
 
     #[test]

@@ -25,6 +25,7 @@ import {
   Bridge as WasmBridge,
   IngredientDatabase,
   type LightRecipe,
+  OnConflict,
 } from "@workspace/sci-cream";
 
 import { RecipeID, getLightRecipe } from "@/../src/__tests__/assets";
@@ -87,7 +88,7 @@ describe("fetchUserIngredientSpecByName", () => {
     const specDrizzle = await fetchUserIngredientSpecByName(TEST_USER_B.email, spec.name);
     expectDrizzleSpecToMatch(specDrizzle, spec, user);
 
-    bridge.seed_from_specs([specDrizzle!.spec]);
+    bridge.seed_from_specs([specDrizzle!.spec], OnConflict.Reject);
     expect(bridge.has_ingredient(spec.name)).toBe(true);
     expectParsedIngredientToMatchSpec(bridge.get_ingredient_by_name(spec.name), spec);
   });
@@ -121,7 +122,10 @@ describe("fetchAllUserIngredientSpecs", () => {
     const specDrizzle = specsDrizzle!.find((s) => s.name === spec.name);
     expectDrizzleSpecToMatch(specDrizzle, spec, user);
 
-    bridge.seed_from_specs(specsDrizzle!.map((s) => s.spec));
+    bridge.seed_from_specs(
+      specsDrizzle!.map((s) => s.spec),
+      OnConflict.Reject,
+    );
     expect(bridge.get_all_ingredients().length).toBeGreaterThan(0);
     expect(bridge.has_ingredient(spec.name)).toBe(true);
     expectParsedIngredientToMatchSpec(bridge.get_ingredient_by_name(spec.name), spec);
