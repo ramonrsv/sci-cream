@@ -3,7 +3,7 @@
 
 #[cfg(doc)]
 use crate::{
-    balancing::{Priority, Weighting, balance_with_reweighting},
+    balancing::{Priority, Weighting, append_palette_ratio_issues, balance_with_reweighting},
     composition::{CompKey, RatioKey},
 };
 
@@ -65,3 +65,28 @@ pub const TYPICAL_MIX_FAT: f64 = 10.0;
 /// Passed as the `eps` argument to nalgebra's `SVD::solve`: any singular value at or below it is
 /// treated as zero (dropped from the inverse) when solving the least-squares system.
 pub const SVD_SOLVE_EPSILON: f64 = 1e-10;
+
+/// Cap on numerator subset size in [`append_palette_ratio_issues`]; lets it catch >= 3-key
+/// infeasibilities that no pair alone reveals.
+///
+/// **Note:** Reasonable target counts of ~20 keys or less run in < 160 µs with a cap of 3, and
+/// under ~0.5 ms with no cap, i.e. the exhaustive search is manageable for typical use cases.
+//
+// @todo Investigate if there are any benefits to raising this > 3, e.g. if there are common 4-key
+// conflicts that it would catch and would be useful to an end-user; try to find example cases.
+pub const MAX_NUM_GROUP_SIZE_FOR_TYPICAL: usize = 6;
+
+/// Cap on numerator subset size in [`append_palette_ratio_issues`] when the number of checkable
+/// targets exceeds [`HIGHER_ORDER_CANDIDATE_LIMIT`].
+///
+/// This lets it catch  3-key infeasibilities that no pair alone reveals, while keeping the runtime
+/// manageable for the worst-case scenario cases of ~80 keys.
+///
+/// **Note:** The exhaustive search grows as `O(n^k)`, so increasing this number can be
+/// prohibitively expensive for higher target counts. With a cap of 3, the worst-case scenario of
+/// ~80 keys runs in ~85 ms. That increases to ~1.1s with a cap of 4.
+pub const MAX_NUM_GROUP_SIZE_FOR_HIGHER_ORDER: usize = 3;
+
+/// The number of checkable targets above which the numerator subset-size cap in
+/// [`append_palette_ratio_issues`] is set to [`MAX_NUM_GROUP_SIZE_FOR_HIGHER_ORDER`].
+pub const HIGHER_ORDER_CANDIDATE_LIMIT: usize = 20;

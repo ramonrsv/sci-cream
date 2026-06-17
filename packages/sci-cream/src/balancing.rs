@@ -20,7 +20,8 @@ use strum::IntoEnumIterator;
 use crate::{
     composition::{CompKey, Composition, CompositionValues, FastComposition, RatioKey},
     constants::balancing::{
-        CRITICAL_PRIORITY_WEIGHT, HIGH_PRIORITY_WEIGHT, LOW_PRIORITY_WEIGHT, NORMAL_PRIORITY_WEIGHT,
+        CRITICAL_PRIORITY_WEIGHT, HIGH_PRIORITY_WEIGHT, HIGHER_ORDER_CANDIDATE_LIMIT, LOW_PRIORITY_WEIGHT,
+        MAX_NUM_GROUP_SIZE_FOR_HIGHER_ORDER, MAX_NUM_GROUP_SIZE_FOR_TYPICAL, NORMAL_PRIORITY_WEIGHT,
         RATIO_DENOMINATOR_FLOOR, RATIO_REWEIGHT_TOLERANCE, RELATIVE_WEIGHT_FLOOR, SUM_CONSTRAINT_WEIGHT,
         SVD_SOLVE_EPSILON, TYPICAL_MIX_FAT, TYPICAL_MIX_WATER,
     },
@@ -785,7 +786,7 @@ fn append_reachability_issues(
 ///
 /// Only extensive, finite, non-negative targets participate. The checks emit independently of any
 /// palette overlap; [`validate_balancing_targets`] deduplicates against palette dominance issues.
-fn append_structural_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<BalancingIssue>) {
+pub fn append_structural_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<BalancingIssue>) {
     let comp_targets: Vec<(CompKey, f64)> = targets
         .iter()
         .filter_map(|&(key, target)| match key {
@@ -846,17 +847,6 @@ fn append_structural_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<Bala
 #[cfg(doc)]
 use BalancingIssue::{DominanceViolation, OverDetermined, RatioInfeasibility};
 
-/// Cap on numerator subset size for [`append_palette_ratio_issues`] when the higher-order search
-/// runs; this is what lets it catch >= 3-key infeasibilities no pair reveals.
-const MAX_NUMERATOR_GROUP_SIZE: usize = 3;
-
-/// Above this many checkable targets the higher-order (>= 3-key) numerator search is skipped and
-/// the unified search falls back to exact pairwise. The exhaustive subset search grows as `O(n^k)`,
-/// and a palette asked to hit this many targets is already badly over-determined (the
-/// [`OverDetermined`] notice fires), so pinpointing higher-order conflicts there adds little.
-/// Realistic target sets stay well under the limit and keep the full search.
-const HIGHER_ORDER_CANDIDATE_LIMIT: usize = 20;
-
 /// The verdict for a candidate numerator subset against a fixed denominator.
 enum RatioVerdict {
     /// The target ratio lies within the achievable band — keep extending the subset.
@@ -869,7 +859,8 @@ enum RatioVerdict {
 }
 
 /// Per-denominator state for the unified palette ratio search (one fixed single-key denominator).
-struct RatioSearch<'a, C> {
+#[derive(Debug)]
+pub struct RatioSearch<'a, C> {
     candidates: &'a [(CompKey, f64)],
     /// The palette, read via [`CompositionValues`]; a [`FastComposition`] snapshot upstream makes
     /// each read an array index, keeping the band loop cheap.
@@ -877,7 +868,10 @@ struct RatioSearch<'a, C> {
     den_index: usize,
     den_key: CompKey,
     den_target: f64,
-    /// The numerator subset-size cap for this run (see [`HIGHER_ORDER_CANDIDATE_LIMIT`]).
+    /// The numerator subset-size cap for this run.
+    ///
+    /// See [`MAX_NUM_GROUP_SIZE_FOR_TYPICAL`], [`MAX_NUM_GROUP_SIZE_FOR_HIGHER_ORDER`], and
+    /// [`HIGHER_ORDER_CANDIDATE_LIMIT`] for the rationale behind these caps.
     max_numerator: usize,
 }
 
@@ -991,11 +985,12 @@ impl<C: CompositionValues> RatioSearch<'_, C> {
 /// off-band ratio as [`RatioInfeasibility`]. Structural part/whole ordering stays owned by
 /// [`append_structural_issues`].
 ///
-/// The numerator subset size is capped at [`MAX_NUMERATOR_GROUP_SIZE`], or `2` if checkable targets
-/// exceed [`HIGHER_ORDER_CANDIDATE_LIMIT`] (where the exhaustive search would be too costly).
+/// The numerator subset size is capped at [`MAX_NUM_GROUP_SIZE_FOR_TYPICAL`], or
+/// [`MAX_NUM_GROUP_SIZE_FOR_HIGHER_ORDER`] if checkable targets exceed
+/// [`HIGHER_ORDER_CANDIDATE_LIMIT`] (where the exhaustive search would be too costly).
 ///
 /// @todo Group (multi-key) denominators are a follow-up — issue variants carry a single den key.
-fn append_palette_ratio_issues(
+pub fn append_palette_ratio_issues(
     comps: &[impl CompositionValues],
     targets: &[(BalanceKey, f64)],
     issues: &mut Vec<BalancingIssue>,
@@ -1009,9 +1004,9 @@ fn append_palette_ratio_issues(
         .collect();
 
     let max_numerator = if candidates.len() <= HIGHER_ORDER_CANDIDATE_LIMIT {
-        MAX_NUMERATOR_GROUP_SIZE
+        MAX_NUM_GROUP_SIZE_FOR_TYPICAL
     } else {
-        2
+        MAX_NUM_GROUP_SIZE_FOR_HIGHER_ORDER
     };
 
     for (den_index, &(den_key, den_target)) in candidates.iter().enumerate() {
