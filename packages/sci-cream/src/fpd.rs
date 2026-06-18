@@ -28,7 +28,7 @@ use crate::{
         },
     },
     error::{Error, Result},
-    util::iter_all_abs_diff_eq,
+    util::{fast_interpolate_pairs, interpolate_pairs, iter_all_abs_diff_eq},
 };
 
 #[cfg(doc)]
@@ -267,32 +267,11 @@ pub fn compute_fpd_curves(
 ///
 /// Returns an [`Error::NegativePacValue`] if the provided PAC value is negative.
 pub fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
-    if pac < 0.0 {
-        return Err(Error::NegativePacValue(pac));
-    }
-
-    let (step, max_pac) = (PAC_TO_FPD_TABLE[1].0, PAC_TO_FPD_TABLE.last().unwrap_or_else(|| unreachable!()).0);
-
-    #[expect(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
-    let (floor_pac, ceil_pac) =
-        (((pac / f64::from(step)).floor() as u32 * step), ((pac / f64::from(step)).ceil() as u32 * step));
-
-    let (floor_pac, ceil_pac) = if ceil_pac <= max_pac {
-        (floor_pac, ceil_pac)
+    if pac >= 0.0 {
+        Ok(-fast_interpolate_pairs(&PAC_TO_FPD_TABLE, pac))
     } else {
-        (max_pac - step, max_pac)
-    };
-
-    let idx_floor_pac = floor_pac / step;
-    let idx_ceil_pac = ceil_pac / step;
-
-    let floor_fpd = PAC_TO_FPD_TABLE[idx_floor_pac as usize].1;
-    let ceil_fpd = PAC_TO_FPD_TABLE[idx_ceil_pac as usize].1;
-
-    let run = pac - f64::from(floor_pac);
-    let slope = (ceil_fpd - floor_fpd) / f64::from(step);
-
-    Ok(-(floor_fpd + slope * run))
+        Err(Error::NegativePacValue(pac))
+    }
 }
 
 /// Compute FPD from PAC using a polynomial equation with given coefficients
@@ -366,19 +345,11 @@ pub fn get_pac_from_fpd_polynomial(fpd: f64, coeffs: Option<[f64; 3]>) -> Result
 ///
 /// Returns an [`Error::NegativePacValue`] if the provided PAC value is negative.
 pub fn get_serving_temp_from_pac_corvitto(pac: f64) -> Result<f64> {
-    if pac < 0.0 {
-        return Err(Error::NegativePacValue(pac));
+    if pac >= 0.0 {
+        Ok(interpolate_pairs(&CORVITTO_PAC_TO_SERVING_TEMP_TABLE, pac, |p| p.0, |p| p.1))
+    } else {
+        Err(Error::NegativePacValue(pac))
     }
-
-    let first = CORVITTO_PAC_TO_SERVING_TEMP_TABLE[0];
-    let last = CORVITTO_PAC_TO_SERVING_TEMP_TABLE
-        .last()
-        .unwrap_or_else(|| unreachable!());
-
-    let slope = (first.1 - last.1) / (first.0 - last.0);
-    let run = pac - first.0;
-
-    Ok(slope * run + first.1)
 }
 
 /// A step in an FPD curve using the Goff & Hartel method
