@@ -1,3 +1,5 @@
+use std::hint::black_box;
+
 use criterion::{BatchSize, Criterion, criterion_group};
 
 use crate::assets::REF_LIGHT_RECIPE;
@@ -11,7 +13,7 @@ pub(crate) fn bench_bridge_calculate_recipe(c: &mut Criterion) {
     let _ = c.bench_function("bridge.calculate_recipe_composition", |b| {
         b.iter_batched(
             || (),
-            |()| bridge.calculate_recipe_composition(&ref_light_recipe).unwrap(),
+            |()| black_box(bridge.calculate_recipe_composition(&ref_light_recipe).unwrap()),
             BatchSize::SmallInput,
         );
     });
@@ -19,7 +21,7 @@ pub(crate) fn bench_bridge_calculate_recipe(c: &mut Criterion) {
     let _ = c.bench_function("bridge.calculate_recipe_mix_properties", |b| {
         b.iter_batched(
             || (),
-            |()| bridge.calculate_recipe_mix_properties(&ref_light_recipe).unwrap(),
+            |()| black_box(bridge.calculate_recipe_mix_properties(&ref_light_recipe).unwrap()),
             BatchSize::SmallInput,
         );
     });

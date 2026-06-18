@@ -1,3 +1,5 @@
+use std::hint::black_box;
+
 use criterion::{BatchSize, Criterion, criterion_group};
 
 use sci_cream::{
@@ -37,7 +39,7 @@ pub(crate) fn bench_validate_balancing_targets(c: &mut Criterion) {
     let _ = c.bench_function("validate_balancing_targets(all_keys)", |b| {
         b.iter_batched(
             || (),
-            |()| validate_balancing_targets(&comps, &all_targets, &priorities),
+            |()| black_box(validate_balancing_targets(&comps, &all_targets, &priorities)),
             BatchSize::SmallInput,
         );
     });
@@ -45,7 +47,7 @@ pub(crate) fn bench_validate_balancing_targets(c: &mut Criterion) {
     let _ = c.bench_function("validate_balancing_targets(typical_keys)", |b| {
         b.iter_batched(
             || (),
-            |()| validate_balancing_targets(&comps, &typical_targets, &priorities),
+            |()| black_box(validate_balancing_targets(&comps, &typical_targets, &priorities)),
             BatchSize::SmallInput,
         );
     });

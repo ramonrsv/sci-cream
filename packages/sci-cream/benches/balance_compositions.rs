@@ -1,3 +1,5 @@
+use std::hint::black_box;
+
 use criterion::{BatchSize, Criterion, criterion_group};
 
 use sci_cream::balancing::{balance_compositions_nalgebra, balance_compositions_nnls, get_all_balanceable_keys};
@@ -22,7 +24,7 @@ pub(crate) fn bench_balance_main_recipe_compositions(c: &mut Criterion) {
     let _ = c.bench_function("balance_compositions_nalgebra(recipe...)", |b| {
         b.iter_batched(
             || (comps.clone(), targets.clone()),
-            |(comps, targets)| balance_compositions_nalgebra(&comps, &targets, None, &[]).unwrap(),
+            |(comps, targets)| black_box(balance_compositions_nalgebra(&comps, &targets, None, &[]).unwrap()),
             BatchSize::SmallInput,
         );
     });
@@ -30,7 +32,7 @@ pub(crate) fn bench_balance_main_recipe_compositions(c: &mut Criterion) {
     let _ = c.bench_function("balance_compositions_nnls(recipe...)", |b| {
         b.iter_batched(
             || (comps.clone(), targets.clone()),
-            |(comps, targets)| balance_compositions_nnls(&comps, &targets, None, &[]).unwrap(),
+            |(comps, targets)| black_box(balance_compositions_nnls(&comps, &targets, None, &[]).unwrap()),
             BatchSize::SmallInput,
         );
     });
