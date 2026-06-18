@@ -8,6 +8,7 @@
 mod assets;
 mod balance_compositions;
 mod bridge_calculate_recipe;
+mod compute_fpd_curves;
 mod fast_composition;
 mod recipe_calculate;
 mod spec_to_composition;
@@ -22,4 +23,5 @@ criterion_main! {
     balance_compositions::benches,
     validate_balancing_targets::benches,
     fast_composition::benches,
+    compute_fpd_curves::benches,
 }
