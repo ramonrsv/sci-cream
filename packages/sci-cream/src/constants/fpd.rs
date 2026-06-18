@@ -33,7 +33,7 @@ pub const FPD_CONST_FOR_MSNF_WS_SALTS: f64 = -2.37;
 /// Table of empirical measurements, referenced from  _Freezing point depression (°C) below 0°C
 /// of sucrose solutions (g/100g water)_ (Goff & Hartel, 2013, Table 6.1, p. 182)[^2]
 #[doc = include_str!("../../docs/references/index/2.md")]
-pub const PAC_TO_FPD_TABLE: [(usize, f64); 61] = [
+pub const PAC_TO_FPD_TABLE: [(u32, f64); 61] = [
     // (g Sucrose/100g water, FPD (°C))
     (0, 0.00),
     (3, 0.18),
@@ -119,3 +119,52 @@ pub const CORVITTO_PAC_TO_SERVING_TEMP_TABLE: [(f64, f64); 9] = [
     (39.0, -17.0),
     (41.0, -18.0),
 ];
+
+#[cfg(test)]
+#[cfg_attr(coverage, coverage(off))]
+#[expect(clippy::float_cmp)]
+mod tests {
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    use crate::tests::asserts::*;
+
+    use super::*;
+
+    use crate::util::{
+        fast_interpolate_pairs, interpolate_pairs, table_supports_fast_interpolation, table_supports_interpolation,
+    };
+
+    #[test]
+    fn pac_to_fpd_table_supports_fast_interpolation() {
+        assert_true!(table_supports_interpolation(&PAC_TO_FPD_TABLE, |p| p.0.into()));
+        assert_true!(table_supports_fast_interpolation(&PAC_TO_FPD_TABLE));
+    }
+
+    #[test]
+    fn interpolate_pairs_recovers_pac_to_fpd_table() {
+        for (pac, expected_fpd) in &PAC_TO_FPD_TABLE {
+            assert_eq!(interpolate_pairs(&PAC_TO_FPD_TABLE, (*pac).into(), |p| p.0.into(), |p| p.1), *expected_fpd);
+        }
+    }
+
+    #[test]
+    fn fast_interpolate_pairs_recovers_pac_to_fpd_table() {
+        for (pac, expected_fpd) in &PAC_TO_FPD_TABLE {
+            assert_eq!(fast_interpolate_pairs(&PAC_TO_FPD_TABLE, (*pac).into()), *expected_fpd);
+        }
+    }
+
+    #[test]
+    fn corvitto_pac_to_serving_temp_table_supports_interpolation() {
+        assert_true!(table_supports_interpolation(&CORVITTO_PAC_TO_SERVING_TEMP_TABLE, |p| p.0));
+    }
+
+    #[test]
+    fn interpolate_pairs_recovers_corvitto_pac_to_serving_temp_table() {
+        for (pac, expected_serving_temp) in &CORVITTO_PAC_TO_SERVING_TEMP_TABLE {
+            assert_eq!(
+                interpolate_pairs(&CORVITTO_PAC_TO_SERVING_TEMP_TABLE, *pac, |p| p.0, |p| p.1),
+                *expected_serving_temp,
+            );
+        }
+    }
+}

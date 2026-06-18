@@ -89,9 +89,100 @@ pub fn round_to_decimals(value: f64, decimals: u32) -> f64 {
     (value * factor).round() / factor
 }
 
+/// Checks if a lookup table of `(T, U)` pairs supports interpolation via [`interpolate_pairs`].
+///
+/// The table must have at least 2 entries, and `from` values must be in strictly ascending order.
+#[must_use]
+pub fn table_supports_interpolation<T, U>(table: &[(T, U)], from: fn(&(T, U)) -> f64) -> bool {
+    table.len() >= 2 && table.windows(2).all(|pair| from(&pair[1]) > from(&pair[0]))
+}
+
+/// Piecewise-linear interpolation of `x` over a lookup table of `(T, U)` pairs.
+///
+/// The columns are read via the `from` and `to` functions, allowing for interpolation in either
+/// direction of a lookup table. The table must be sorted in ascending order of the `from` values.
+/// If `x` is outside the bounds of the table, the function will perform linear extrapolation based
+/// on the slope of the nearest segment. This function runs in O(n) time. For tables with evenly
+/// spaced `from` values of `usize` type, see [`fast_interpolate_pairs`] which runs in O(1).
+///
+/// **Warning**: This function does not check preconditions such as table length or ordering. It's
+/// up to the caller to validate via [`table_supports_interpolation`] before using this function.
+#[must_use]
+pub fn interpolate_pairs<T, U>(table: &[(T, U)], x: f64, from: fn(&(T, U)) -> f64, to: fn(&(T, U)) -> f64) -> f64 {
+    let slope = |lhs: &(T, U), rhs: &(T, U)| (to(rhs) - to(lhs)) / (from(rhs) - from(lhs));
+    let inter = |x: f64, lhs: &(T, U), rhs: &(T, U)| to(lhs) + slope(lhs, rhs) * (x - from(lhs));
+
+    let (first, last) = (&table[0], &table[table.len() - 1]);
+
+    if x <= from(first) {
+        return inter(x, first, &table[1]);
+    }
+
+    for pair in table.windows(2) {
+        let (lo, hi) = (&pair[0], &pair[1]);
+        if x <= from(hi) {
+            return inter(x, lo, hi);
+        }
+    }
+
+    inter(x, &table[table.len() - 2], last)
+}
+
+/// Checks if a `(usize, f64)` lookup table supports interpolation via [`fast_interpolate_pairs`].
+///
+/// The table must have at least 2 entries, `u32` values must be in strictly ascending order, and
+/// the `u32` values must be evenly spaced across the full range(i.e. have a constant step size).
+#[must_use]
+pub fn table_supports_fast_interpolation(table: &[(u32, f64)]) -> bool {
+    if table_supports_interpolation(table, |pair| f64::from(pair.0)) {
+        let step = table[1].0 - table[0].0;
+        table.windows(2).all(|pair| (pair[1].0 - pair[0].0) == step)
+    } else {
+        false
+    }
+}
+
+/// Fast piecewise-linear interpolation of `x` over a lookup table of `(u32, f64)` pairs with
+/// evenly spaced `u32` values.
+///
+/// The table must be sorted in ascending order of the `u32` values, and the `u32` values must
+/// be evenly spaced across the full range. If `x` is outside the bounds of the table, the function
+/// will perform linear extrapolation based on the slope of the nearest segment. This function runs
+/// in O(1) time. For tables that do not meet these preconditions, see [`interpolate_pairs`].
+///
+/// **Warning**: This function does not check preconditions such as table length, ordering, or
+/// spacing. It's up to the caller to validate the input table via
+/// [`table_supports_fast_interpolation`] before using this function.
+#[expect(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
+#[must_use]
+pub fn fast_interpolate_pairs(table: &[(u32, f64)], x: f64) -> f64 {
+    let slope = |lhs: &(u32, f64), rhs: &(u32, f64)| (rhs.1 - lhs.1) / (f64::from(rhs.0 - lhs.0));
+    let inter = |x: f64, lhs: &(u32, f64), rhs: &(u32, f64)| lhs.1 + slope(lhs, rhs) * (x - f64::from(lhs.0));
+
+    let (first, last) = (&table[0], &table[table.len() - 1]);
+
+    if x <= f64::from(first.0) {
+        return inter(x, first, &table[1]);
+    } else if x > f64::from(last.0) {
+        return inter(x, &table[table.len() - 2], last);
+    }
+
+    let step_usize = table[1].0 - table[0].0;
+    let step_f64 = f64::from(step_usize);
+    let (x_floor, x_ceil) = ((x / step_f64).floor() as u32 * step_usize, (x / step_f64).ceil() as u32 * step_usize);
+    let (low_idx, high_idx) = (x_floor / step_usize, x_ceil / step_usize);
+    let (low, high) = (&table[low_idx as usize], &table[high_idx as usize]);
+
+    if low_idx == high_idx {
+        table[low_idx as usize].1
+    } else {
+        inter(x, low, high)
+    }
+}
+
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
-#[allow(clippy::float_cmp)]
+#[allow(clippy::float_cmp, clippy::cast_precision_loss)]
 mod tests {
     use struct_iterable::Iterable;
 
@@ -284,5 +375,140 @@ mod tests {
         assert_eq!(super::round_to_decimals(1.5, 1), 1.5); // no change
         assert_eq!(super::round_to_decimals(-3.145, 2), -3.15); // negative
         assert_eq!(super::round_to_decimals(0.0, 5), 0.0); // zero
+    }
+
+    // -- table interpolation tests ---
+
+    const SAMPLE_F64_TABLE: &[(f64, f64)] = &[
+        (0.0, 1.0),
+        (1.5, 3.0),
+        (2.0, 4.0),
+        (2.5, 5.0),
+        (3.0, 4.0),
+        (4.0, 3.0),
+        (4.5, 2.0),
+        (5.0, 1.5),
+    ];
+
+    const SAMPLE_U32_TABLE: &[(u32, f64)] = &[
+        (0, 1.0),
+        (2, 3.0),
+        (4, 5.0),
+        (6, 7.0),
+        (8, 9.0),
+        (10, 5.0),
+        (12, 3.0),
+        (14, 1.5),
+    ];
+
+    fn x<T: Copy + Into<f64>>(p: &(T, f64)) -> f64 {
+        p.0.into()
+    }
+
+    fn y<T: Copy + Into<f64>>(p: &(T, f64)) -> f64 {
+        p.1
+    }
+
+    // --- table_supports_interpolation ---
+
+    #[test]
+    fn table_supports_interpolation() {
+        let table_expected_support: &[(&[(f64, f64)], bool)] = &[
+            (&[], false),                                              // empty
+            (&[(1.0, 0.0)], false),                                    // single entry
+            (&[(0.0, 0.0), (1.0, 1.0)], true),                         // two, ascending
+            (&[(0.0, 0.0), (1.0, 1.0), (2.0, 4.0), (3.0, 9.0)], true), // multiple, ascending
+            (&[(0.0, 0.0), (1.0, 1.0), (1.0, 2.0)], false),            // duplicate x
+            (&[(2.0, 0.0), (1.0, 1.0)], false),                        // descending x
+            (&[(1.0, 2.0), (2.0, 1.0)], true),                         // descending y
+        ];
+
+        for (table, expected) in table_expected_support {
+            assert_eq!(super::table_supports_interpolation(table, |pair| pair.0), *expected);
+        }
+    }
+
+    // --- interpolate_pairs ---
+
+    #[test]
+    fn interpolate_pairs_f64_table() {
+        let table = SAMPLE_F64_TABLE;
+        assert_eq!(interpolate_pairs(table, 0.0, x, y), 1.0); // at first point
+        assert_eq!(interpolate_pairs(table, 5.0, x, y), 1.5); // at last point
+        assert_eq!(interpolate_pairs(table, 2.5, x, y), 5.0); // at interior point
+        assert_eq!(interpolate_pairs(table, 3.5, x, y), 3.5); // half between points
+        assert_eq!(interpolate_pairs(table, 0.5, x, y), 1.0 + 2.0 / 3.0); // third between points
+    }
+
+    #[test]
+    fn interpolate_pairs_u32_table() {
+        let table = SAMPLE_U32_TABLE;
+        assert_eq!(interpolate_pairs(table, 0.0, x, y), 1.0); // at first point
+        assert_eq!(interpolate_pairs(table, 14.0, x, y), 1.5); // at last point
+        assert_eq!(interpolate_pairs(table, 4.0, x, y), 5.0); // at interior point
+        assert_eq!(interpolate_pairs(table, 1.0, x, y), 2.0); // midpoint of first segment
+        assert_eq!(interpolate_pairs(table, 5.0, x, y), 6.0); // midpoint of interior segment
+        assert_eq!(interpolate_pairs(table, 11.0, x, y), 4.0); // midpoint of last segment
+    }
+
+    #[test]
+    fn extrapolate_pairs_out_of_bounds() {
+        let table = SAMPLE_F64_TABLE;
+        assert_eq!(interpolate_pairs(table, -1.5, x, y), -1.0); // left extrapolation
+        assert_eq!(interpolate_pairs(table, 6.0, x, y), 0.5); // right extrapolation
+    }
+
+    #[test]
+    fn interpolate_pairs_reversed_columns() {
+        let table = &[(0.0_f64, 0.0_f64), (2.0, 4.0)];
+        assert_eq!(interpolate_pairs(table, 2.0, y, x), 1.0);
+    }
+
+    // --- table_supports_fast_interpolation ---
+
+    #[test]
+    fn table_supports_fast_interpolation() {
+        let table_expected_support: &[(&[(u32, f64)], bool)] = &[
+            (&[], false),                             // empty
+            (&[(0, 1.0)], false),                     // single entry
+            (&[(0, 0.0), (1, 2.0), (2, 0.0)], true),  // valid, unit step
+            (&[(0, 0.0), (2, 4.0), (4, 0.0)], true),  // valid, step 2
+            (&[(0, 0.0), (1, 1.0), (3, 4.0)], false), // uneven spacing
+            (&[(2, 0.0), (1, 1.0)], false),           // descending keys
+            (&[(1, 0.0), (1, 1.0)], false),           // equal keys
+            (&[(1, 1.0), (2, 0.0)], true),            // descending values
+        ];
+
+        for (table, expected) in table_expected_support {
+            assert_eq!(super::table_supports_fast_interpolation(table), *expected);
+        }
+    }
+
+    // --- fast_interpolate_pairs ---
+
+    #[test]
+    fn fast_interpolate_pairs_u32_table() {
+        let table = SAMPLE_U32_TABLE;
+        assert_eq!(fast_interpolate_pairs(table, 0.0), 1.0); // at first node
+        assert_eq!(fast_interpolate_pairs(table, 14.0), 1.5); // at last node
+        assert_eq!(fast_interpolate_pairs(table, 4.0), 5.0); // at interior node
+        assert_eq!(fast_interpolate_pairs(table, 1.0), 2.0); // midpoint of first segment
+        assert_eq!(fast_interpolate_pairs(table, 5.0), 6.0); // midpoint of interior segment
+        assert_eq!(fast_interpolate_pairs(table, 11.0), 4.0); // midpoint of last segment
+    }
+
+    #[test]
+    fn fast_interpolate_pairs_out_of_bounds() {
+        let table = SAMPLE_U32_TABLE;
+        assert_eq!(fast_interpolate_pairs(table, -1.0), 0.0); // left extrapolation
+        assert_eq!(fast_interpolate_pairs(table, 16.0), 0.0); // right extrapolation
+    }
+
+    #[test]
+    fn fast_interpolate_pairs_matches_interpolate_pairs() {
+        let table = SAMPLE_U32_TABLE;
+        for x_val in [0.5, 1.0, 3.5, 7.0, 8.0, 10.5] {
+            assert_eq!(fast_interpolate_pairs(table, x_val), interpolate_pairs(table, x_val, x, y),);
+        }
     }
 }

@@ -273,13 +273,9 @@ pub fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
 
     let (step, max_pac) = (PAC_TO_FPD_TABLE[1].0, PAC_TO_FPD_TABLE.last().unwrap_or_else(|| unreachable!()).0);
 
-    #[expect(
-        clippy::cast_precision_loss,
-        clippy::cast_possible_truncation,
-        clippy::cast_sign_loss
-    )]
+    #[expect(clippy::cast_possible_truncation, clippy::cast_sign_loss)]
     let (floor_pac, ceil_pac) =
-        (((pac / step as f64).floor() as usize * step), ((pac / step as f64).ceil() as usize * step));
+        (((pac / f64::from(step)).floor() as u32 * step), ((pac / f64::from(step)).ceil() as u32 * step));
 
     let (floor_pac, ceil_pac) = if ceil_pac <= max_pac {
         (floor_pac, ceil_pac)
@@ -290,13 +286,11 @@ pub fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
     let idx_floor_pac = floor_pac / step;
     let idx_ceil_pac = ceil_pac / step;
 
-    let floor_fpd = PAC_TO_FPD_TABLE[idx_floor_pac].1;
-    let ceil_fpd = PAC_TO_FPD_TABLE[idx_ceil_pac].1;
+    let floor_fpd = PAC_TO_FPD_TABLE[idx_floor_pac as usize].1;
+    let ceil_fpd = PAC_TO_FPD_TABLE[idx_ceil_pac as usize].1;
 
-    #[expect(clippy::cast_precision_loss)]
-    let run = pac - floor_pac as f64;
-    #[expect(clippy::cast_precision_loss)]
-    let slope = (ceil_fpd - floor_fpd) / step as f64;
+    let run = pac - f64::from(floor_pac);
+    let slope = (ceil_fpd - floor_fpd) / f64::from(step);
 
     Ok(-(floor_fpd + slope * run))
 }
@@ -621,10 +615,9 @@ mod tests {
 
     /// Using [`PAC_TO_FPD_TABLE`] as f64 for testing `get_fpd_from_pac_*` functions
     static PAC_TO_FPD_TABLE_FLOAT: LazyLock<Vec<(f64, f64)>> = LazyLock::new(|| {
-        #[expect(clippy::cast_precision_loss)]
         PAC_TO_FPD_TABLE
             .iter()
-            .map(|(pac, fpd)| (*pac as f64, -*fpd))
+            .map(|(pac, fpd)| (f64::from(*pac), -*fpd))
             .collect::<Vec<(f64, f64)>>()
     });
 

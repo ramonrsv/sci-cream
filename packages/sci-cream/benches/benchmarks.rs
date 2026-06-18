@@ -10,6 +10,7 @@ mod balance_compositions;
 mod bridge_calculate_recipe;
 mod compute_fpd_curves;
 mod fast_composition;
+mod interpolate_pairs;
 mod recipe_calculate;
 mod spec_to_composition;
 mod validate_balancing_targets;
@@ -24,4 +25,5 @@ criterion_main! {
     validate_balancing_targets::benches,
     fast_composition::benches,
     compute_fpd_curves::benches,
+    interpolate_pairs::benches,
 }
