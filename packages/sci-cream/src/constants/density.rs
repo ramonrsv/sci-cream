@@ -1,14 +1,10 @@
 //! Constants and utilities for density and conversions between volume and weight
 
-use crate::util::interpolate_pairs;
-
-/// Ratio to convert Alcohol by Volume (ABV) to Alcohol by Weight (ABW)
-///
-/// _"Because of the miscibility of alcohol and water, the conversion factor is not constant but
-/// rather depends upon the concentration of alcohol."_ ("Alcohol by volume", 2025)[^8] However,
-/// for typical ice cream alcohol contents the approximation of 0.789 is sufficiently accurate.
-#[doc = include_str!("../../docs/references/index/8.md")]
-pub const ABV_TO_ABW_RATIO: f64 = 0.789;
+use crate::{
+    error::Result,
+    util::{fast_interpolate_pairs, interpolate_pairs},
+    validate::{verify_are_positive, verify_is_100_percent},
+};
 
 /// Density (g/mL) of pure water at 20°C
 ///
@@ -21,6 +17,64 @@ pub const WATER: f64 = 0.99823;
 /// (Perry & Green, 2008, Table 2-112, p. 2-117)[^53]
 #[doc = include_str!("../../docs/references/index/53.md")]
 pub const ETHANOL: f64 = 0.78934;
+
+/// Densities (g/mL) for crystalline mono- and disaccharides at 20°C
+pub mod sugars {
+    /// Density (g/mL) of crystalline glucose at 20°C
+    ///
+    /// (PubChem, "Glucose", 2026)[^55]
+    #[expect(clippy::doc_markdown)] // false positive on 'PubChem'
+    #[doc = include_str!("../../docs/references/index/55.md")]
+    pub const GLUCOSE: f64 = 1.54;
+
+    /// Density (g/mL) of crystalline fructose at 20°C
+    ///
+    /// (PubChem, "Fructose", 2026)[^56]
+    #[expect(clippy::doc_markdown)] // false positive on 'PubChem'
+    #[doc = include_str!("../../docs/references/index/56.md")]
+    pub const FRUCTOSE: f64 = 1.694;
+
+    /// Density (g/mL) of crystalline galactose at 20°C
+    ///
+    /// (PubChem, "Galactose", 2026)[^57]
+    #[expect(clippy::doc_markdown)] // false positive on 'PubChem'
+    #[doc = include_str!("../../docs/references/index/57.md")]
+    pub const GALACTOSE: f64 = 1.5;
+
+    /// Density (g/mL) of crystalline sucrose at 20°C
+    ///
+    /// (PubChem, "Sucrose", 2026)[^58]
+    #[expect(clippy::doc_markdown)] // false positive on 'PubChem'
+    #[doc = include_str!("../../docs/references/index/58.md")]
+    pub const SUCROSE: f64 = 1.587;
+
+    /// Density (g/mL) of crystalline lactose at 20°C
+    ///
+    /// (PubChem, "Lactose", 2026)[^59]
+    #[expect(clippy::doc_markdown)] // false positive on 'PubChem'
+    #[doc = include_str!("../../docs/references/index/59.md")]
+    pub const LACTOSE: f64 = 1.525;
+
+    /// Density (g/mL) of crystalline maltose at 20°C
+    ///
+    /// (PubChem, "Maltose", 2026)[^60]
+    #[expect(clippy::doc_markdown)] // false positive on 'PubChem'
+    #[doc = include_str!("../../docs/references/index/60.md")]
+    pub const MALTOSE: f64 = 1.54;
+
+    /// Density (g/mL) of crystalline trehalose at 20°C
+    ///
+    /// (PubChem, "Trehalose", 2026)[^61]
+    #[expect(clippy::doc_markdown)] // false positive on 'PubChem'
+    #[doc = include_str!("../../docs/references/index/61.md")]
+    pub const TREHALOSE: f64 = 1.58;
+}
+
+/// Approximate density (g/mL) of other dissolved solids (fiber, milk/cocoa SNFS).
+///
+/// **Warning:** This is a rough guess, but it should only apply to small fractions of other solids
+/// non-fat non-sugars, so it shouldn't have a large impact on the overall density estimate.
+pub const OTHER_DISSOLVED_SOLIDS: f64 = 1.5;
 
 /// Alcohol by weight (ABW, % w/w) and solution density (g/mL) to alcohol by volume (ABV, % v/v)
 ///
@@ -43,8 +97,8 @@ fn abw_to_f64(abw: &(u32, f64)) -> f64 {
 /// Interpolates the ABV implied by each `(ABW, density)` row of [`ETHANOL_SOLUTIONS_DENSITY`]
 /// via `ABV = ABW · ρ_solution / ρ_ethanol`; the exact inverse of [`abv_to_abw`].
 ///
-/// **Note:** This could use [`fast_interpolate_pairs`](crate::util::fast_interpolate_pairs) since
-/// the table is keyed by ABW, but then [`abv_to_abw`] would not be an exact inverse.
+/// **Note:** This could use [`fast_interpolate_pairs`] since the table is keyed by ABW, but then
+/// [`abv_to_abw`] would not be an exact inverse.
 #[must_use]
 pub fn abw_to_abv(abw: f64) -> f64 {
     interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, abw, abw_to_f64, abv_from_abw_and_density)
@@ -57,6 +111,72 @@ pub fn abw_to_abv(abw: f64) -> f64 {
 #[must_use]
 pub fn abv_to_abw(abv: f64) -> f64 {
     interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, abv, abv_from_abw_and_density, abw_to_f64)
+}
+
+/// Density (g/mL) of an ethanol-water solution at the given alcohol by weight (ABW, % w/w), 20°C.
+///
+/// Interpolates the solution density tabulated in [`ETHANOL_SOLUTIONS_DENSITY`], which is keyed by
+/// weight percent, so [`fast_interpolate_pairs`] applies.
+#[must_use]
+pub fn ethanol_solution_density(abw: f64) -> f64 {
+    fast_interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, abw)
+}
+
+/// Parameters for estimating the density of an aqueous mixture
+#[derive(Copy, Clone, Debug)]
+pub struct MixDensityParams {
+    /// Mass (g) of ethanol in the mixture, per 100g of mixture, i.e. ABW
+    pub ethanol: f64,
+    /// Mass (g) of water in the mixture, per 100g of mixture, i.e. 100 - ABW - others
+    pub water: f64,
+    /// Mass (g) of sugar in the mixture, per 100g of mixture, modeled as sucrose
+    pub sugar: f64,
+    /// Mass (g) of fat in the mixture, per 100g of mixture, and its density (g/mL)
+    pub fat: Option<(f64, f64)>,
+    /// Mass (g) of other dissolved solids in the mixture, per 100g of mixture
+    pub other_solids: f64,
+}
+
+/// Estimate the density (g/mL) of an aqueous mixture from its component masses and `fat_density`.
+///
+/// `ethanol` and `water` are combined at their real (non-additive) [`ethanol_solution_density`];
+/// `sugar` ([`sugars::SUCROSE`]), `fat` (`fat_density`), and `other_solids`
+/// ([`OTHER_DISSOLVED_SOLIDS`]) then add by volume. Masses may be on any consistent basis (e.g.
+/// grams per 100g). The mixture must have an ethanol-water base, i.e. `ethanol + water > 0`.
+///
+/// **Note:** This uses the density of [`sugars::SUCROSE`] for all sugars, so it may not be accurate
+/// for other mono and disaccharides, but it should be close enough in most cases since they all
+/// have similar densities and sucrose sits close to the average between them.
+///
+/// # Errors
+///
+/// Errors if the total mass of all components does not sum to 100g, i.e. if the mixture is not
+/// fully specified on a per-100g basis, or if there are other compositional inconsistencies.
+pub fn mixture_density(mix_params: MixDensityParams) -> Result<f64> {
+    let MixDensityParams {
+        ethanol,
+        water,
+        sugar,
+        fat,
+        other_solids,
+    } = mix_params;
+
+    let (fat, fat_density) = fat.unwrap_or((0.0, 1.0));
+
+    verify_are_positive(&[ethanol, water, sugar, fat, fat_density, other_solids])?;
+    verify_is_100_percent(ethanol + water + sugar + fat + other_solids)?;
+
+    let eth_sol_mass = ethanol + water;
+    let eth_sol_vol = eth_sol_mass / ethanol_solution_density(100.0 * ethanol / eth_sol_mass);
+
+    let sugar_vol = sugar / sugars::SUCROSE;
+    let fat_vol = fat / fat_density;
+    let other_solids_vol = other_solids / OTHER_DISSOLVED_SOLIDS;
+
+    let volume = eth_sol_vol + sugar_vol + fat_vol + other_solids_vol;
+    let mass = eth_sol_mass + sugar + fat + other_solids;
+
+    Ok(mass / volume)
 }
 
 /// Density (g/mL) of milk with 2% fat content
@@ -229,7 +349,7 @@ pub const ETHANOL_SOLUTIONS_DENSITY: [(u32, f64); 101] = [
 
 #[cfg(test)]
 #[cfg_attr(coverage, coverage(off))]
-#[allow(clippy::float_cmp)]
+#[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
@@ -385,5 +505,44 @@ mod tests {
                 interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, x, abw_to_f64, |&(_, density)| density),
             );
         }
+    }
+
+    #[test]
+    fn ethanol_solution_density() {
+        assert_eq_flt_test!(super::ethanol_solution_density(0.0), WATER);
+        assert_eq_flt_test!(super::ethanol_solution_density(100.0), ETHANOL);
+        assert_eq_flt_test!(super::ethanol_solution_density(33.0), 0.94860);
+    }
+
+    #[test]
+    fn mixture_density() {
+        let abw = super::abv_to_abw(40.0);
+        let water = 100.0 - abw;
+
+        // With no added solids the mixture is just the ethanol-water solution.
+        assert_eq_flt_test!(
+            super::mixture_density(MixDensityParams {
+                ethanol: abw,
+                water,
+                sugar: 0.0,
+                fat: None,
+                other_solids: 0.0,
+            })
+            .unwrap(),
+            super::ethanol_solution_density(abw)
+        );
+
+        // Dissolving sucrose (denser than the solution) raises the density.
+        assert_gt!(
+            super::mixture_density(MixDensityParams {
+                ethanol: abw,
+                water: water - 10.0,
+                sugar: 10.0,
+                fat: None,
+                other_solids: 0.0,
+            })
+            .unwrap(),
+            super::ethanol_solution_density(abw)
+        );
     }
 }

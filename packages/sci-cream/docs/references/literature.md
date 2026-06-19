@@ -68,7 +68,7 @@
 
 [^33]: Merrill, A. L, Watt, B. K. (1973). _Energy Value of Foods ...basis and derivation_ Agriculture Handbook No. 74. Agricultural Research Service, United States Department of Agriculture. <https://www.ars.usda.gov/ARSUserFiles/80400525/Data/Classics/ah74.pdf>
 
-[^34]: Higdon, et al. (2019, March). _Fiber_. Oregon State University, Linux Pauling Institute, Micronutrient Information Center. <https://lpi.oregonstate.edu/mic/other-nutrients/fiber>
+[^34]: Higdon, et al. (2019, March). _Fiber_. Oregon State University, Linus Pauling Institute, Micronutrient Information Center. <https://lpi.oregonstate.edu/mic/other-nutrients/fiber>
 
 [^35]: Raphaelson, Paul. (2019, July). _Sample Sorbet Recipe: Strawberry_. <https://under-belly.org/sample-sorbet-recipe/>
 
@@ -110,3 +110,17 @@ and microscopical attributes of sweetened condensed milk_. Food Science and Tech
 [^53]: Perry, R. H., & Green, D. W. (2008). _Perry's Chemical Engineers' Handbook_ (8th ed.). McGraw-Hill
 
 [^54]: Mini Industry. (2026, June). _Ethanol density table for ethanol water mixture at 20C_. <https://www.miniindustry.com/d/ethanol-density-20c>
+
+[^55]: PubChem, US National Library of Medicine. _Glucose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/5793>
+
+[^56]: PubChem, US National Library of Medicine. _Fructose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/2723872>
+
+[^57]: PubChem, US National Library of Medicine. _Galactose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/6036>
+
+[^58]: PubChem, US National Library of Medicine. _Sucrose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/5988>
+
+[^59]: PubChem, US National Library of Medicine. _Lactose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/440995>
+
+[^60]: PubChem, US National Library of Medicine. _Maltose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/439186>
+
+[^61]: PubChem, US National Library of Medicine. _Trehalose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/7427>
