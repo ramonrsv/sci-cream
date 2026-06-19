@@ -80,41 +80,6 @@ pub mod sugars {
     pub const TREHALOSE: f64 = 1.58;
 }
 
-/// Densities (g/mL) of various diary ingredients with varying fat and sugar contents
-pub mod dairy {
-    /// Density (g/mL) of milk with 2% fat content
-    ///
-    /// _Milk, liquid, partially skimmed_ (Charrondiere et al., 2011, p. 2)[^14]
-    #[doc = include_str!("../../docs/references/index/14.md")]
-    pub const MILK_2: f64 = 1.034;
-
-    /// Density (g/mL) of milk with 3.5% fat content
-    ///
-    /// _Milk, liquid, whole_ (Charrondiere et al., 2011, p. 2)[^14]
-    #[doc = include_str!("../../docs/references/index/14.md")]
-    pub const MILK_3_5: f64 = 1.03;
-
-    /// Density (g/mL) of cream with 40% fat content
-    ///
-    /// _Cream, whipping (about 40% fat)_ (Charrondiere et al., 2011, p. 2)[^14]
-    #[doc = include_str!("../../docs/references/index/14.md")]
-    pub const CREAM_40: f64 = 0.96;
-
-    /// Density (g/mL) of evaporated milk
-    ///
-    /// _Milk, evaporated_ (Charrondiere et al., 2011, p. 3)[^14], (Lewis, 2023, Chapter 23.7)[^49]
-    #[doc = include_str!("../../docs/references/index/14.md")]
-    #[doc = include_str!("../../docs/references/index/49.md")]
-    pub const EVAPORATED_MILK: f64 = 1.075;
-
-    /// Density (g/mL) of sweetened condensed milk
-    ///
-    /// (Rodrigues, 2017)[^50], (Moro, 1985)[^51]
-    #[doc = include_str!("../../docs/references/index/50.md")]
-    #[doc = include_str!("../../docs/references/index/51.md")]
-    pub const SWEETENED_CONDENSED_MILK: f64 = 1.3;
-}
-
 /// Parameters for estimating the density of an aqueous mixture
 #[derive(Copy, Clone, Debug)]
 pub struct MixDensityParams {
@@ -174,27 +139,19 @@ pub fn mixture_density(mix_params: MixDensityParams) -> Result<f64> {
 
 /// Convert dairy volume in milliliters to grams based on fat content percentage
 ///
-/// Interpolates density between known values for milk/cream of different fat contents; see
-/// [`MILK_2`](dairy::MILK_2), [`MILK_3_5`](dairy::MILK_3_5), and [`CREAM_40`](dairy::CREAM_40).
+/// Uses a quadratic polynomial fit over the densities in [`DAIRY_DENSITIES_BY_FAT`].
 ///
 /// # Panics
 ///
 /// Panics if `fat_content` is negative or greater than 100.
 #[must_use]
-pub const fn dairy_milliliters_to_grams(ml: f64, fat_content: f64) -> f64 {
-    use dairy::{CREAM_40, MILK_2, MILK_3_5};
-
-    let less_than_2 = MILK_2;
-    let between_2_and_3_5 = ((MILK_3_5 - MILK_2) / (3.5 - 2.0) * (fat_content - 2.0)) + MILK_2;
-    let between_3_5_and_40 = ((CREAM_40 - MILK_3_5) / (40.0 - 3.5) * (fat_content - 3.5)) + MILK_3_5;
-    let more_than_40 = CREAM_40;
+pub fn dairy_milliliters_to_grams(ml: f64, fat_content: f64) -> f64 {
+    let [a, b, c] = DAIRY_FAT_TO_DENSITY_POLY_COEFFS;
+    let density = a * fat_content.powi(2) + b * fat_content + c;
 
     match fat_content {
-        0.0..=2.0 => ml * less_than_2,
-        2.0..=3.5 => ml * between_2_and_3_5,
-        3.5..=40.0 => ml * between_3_5_and_40,
-        40.0..=100.0 => ml * more_than_40,
-        _ => panic!("Invalid fat content"),
+        0.0..=100.0 => ml * density,
+        _ => panic!("Invalid fat content {fat_content}"),
     }
 }
 
@@ -243,6 +200,58 @@ fn abv_from_abw_and_density(abw_density: &(u32, f64)) -> f64 {
 fn abw_to_f64(abw: &(u32, f64)) -> f64 {
     f64::from(abw.0)
 }
+
+/// Coefficients for a quadratic polynomial line of best fit over [`DAIRY_DENSITIES_BY_FAT`].
+///
+/// The table is a bit choppy, particularly at low fat contents, so this helps smooth out the
+/// density estimates for intermediate fat contents. The function is almost linear, with a very
+/// small quadratic term, and is a pretty good fit with a maximum error of about 0.0017 g/mL.
+pub const DAIRY_FAT_TO_DENSITY_POLY_COEFFS: [f64; 3] = [5.167_207_107e-6, -1.303_663_837e-3, 1.036_675_490];
+
+/// Densities (g/mL) of various natural dairy ingredients at different fat contents
+///
+/// The elements are in ascending order of fat content, so this table support [`interpolate_pairs`]
+/// for density lookup by fat content percentage; _not_ [`fast_interpolate_pairs`], no-equal steps.
+///
+/// These values are from Ice Cream 8th ed. (Goff & Hartel, 2025, Table 3.2, p. 48)[^20], but are
+/// also roughly corroborated by various sources in FAO/INFOODS Density Database version 1.0 (July
+/// 2011) (Charrondiere et al., 2011, p. 3)[^14].
+#[doc = include_str!("../../docs/references/index/14.md")]
+#[doc = include_str!("../../docs/references/index/20.md")]
+pub const DAIRY_DENSITIES_BY_FAT: [(f64, f64); 9] = [
+    (0.0, 1.036),  // Skim milk
+    (3.0, 1.032),  // Milk 3%
+    (4.0, 1.032),  // Milk 4%
+    (5.0, 1.032),  // Milk 5%
+    (18.0, 1.014), // Cream 18%
+    (30.0, 1.002), // Cream 30%
+    (35.0, 0.997), // Cream 35%
+    (40.0, 0.994), // Cream 40%
+    (50.0, 0.984), // Cream 50%
+];
+
+/// Properties of natural and condensed dairy ingredients: [Fat, MSNF, Sucrose, Protein, Density]
+///
+/// (Goff & Hartel, 2025, Table 3.2, p. 48)[^20]
+#[doc = include_str!("../../docs/references/index/20.md")]
+pub const DAIRY_INGREDIENTS: [(f64, f64, f64, f64, f64); 16] = [
+    (0.0, 8.60, 0.0, 3.2, 1.036),    // Skim milk
+    (3.0, 8.33, 0.0, 3.1, 1.032),    // Milk 3%
+    (4.0, 8.79, 0.0, 3.2, 1.032),    // Milk 4%
+    (5.0, 9.10, 0.0, 3.3, 1.032),    // Milk 5%
+    (18.0, 7.31, 0.0, 2.6, 1.014),   // Cream 18%
+    (30.0, 6.24, 0.0, 2.2, 1.002),   // Cream 30%
+    (35.0, 5.69, 0.0, 2.1, 0.997),   // Cream 35%
+    (40.0, 5.35, 0.0, 1.9, 0.994),   // Cream 40%
+    (50.0, 4.45, 0.0, 1.6, 0.984),   // Cream 50%
+    (10.0, 23.00, 0.0, 8.5, 1.104),  // Evaporated milk, bulk
+    (8.0, 22.00, 0.0, 8.2, 1.079),   // Condensed milk, 8% fat, 22% MSNF
+    (10.0, 26.00, 0.0, 9.7, 1.080),  // Condensed milk, 10% fat, 26% MSNF
+    (0.0, 20.00, 0.0, 7.4, 1.078),   // Condensed skim milk, 20% MSNF
+    (0.0, 30.00, 0.0, 11.1, 1.122),  // Condensed skim milk, 30% MSNF
+    (8.0, 23.00, 42.0, 8.5, 1.305),  // Condensed milk, sweetened
+    (0.5, 30.00, 42.0, 11.1, 1.321), // Condensed skim milk, sweetened
+];
 
 /// Density (g/mL) of ethanol aqueous solutions at various concentrations, at 20°C
 ///
@@ -366,16 +375,49 @@ mod tests {
     };
 
     #[test]
+    fn dairy_densities_by_fat_supports_interpolation() {
+        assert_true!(table_supports_interpolation(&DAIRY_DENSITIES_BY_FAT, |(f, _)| *f));
+    }
+
+    #[test]
+    fn dairy_density_polynomial_fit_coeffs() {
+        use polyfit_rs::polyfit_rs::polyfit;
+
+        let xs: Vec<f64> = DAIRY_DENSITIES_BY_FAT.iter().map(|(f, _)| *f).collect();
+        let ys: Vec<f64> = DAIRY_DENSITIES_BY_FAT.iter().map(|(_, d)| *d).collect();
+
+        let coeffs = polyfit(&xs, &ys, 2).unwrap();
+        assert_abs_diff_eq!(coeffs[2], DAIRY_FAT_TO_DENSITY_POLY_COEFFS[0], epsilon = 1e-10);
+        assert_abs_diff_eq!(coeffs[1], DAIRY_FAT_TO_DENSITY_POLY_COEFFS[1], epsilon = 1e-10);
+        assert_abs_diff_eq!(coeffs[0], DAIRY_FAT_TO_DENSITY_POLY_COEFFS[2], epsilon = 1e-10);
+    }
+
+    #[test]
+    fn dairy_density_polynomial_fit_max_error() {
+        let [a, b, c] = DAIRY_FAT_TO_DENSITY_POLY_COEFFS;
+
+        // eprintln!("{:>8}  {:>8}  {:>8}  {:>8}", "fat%", "actual", "fit", "error");
+        for (fat, actual) in &DAIRY_DENSITIES_BY_FAT {
+            let fit = a * fat.powi(2) + b * fat + c;
+            assert_abs_diff_eq!(*actual, fit, epsilon = 0.0018);
+            // eprintln!("{fat:>8.1}  {actual:>8.4}  {fit:>8.4}  {:>+8.4}", actual - fit);
+        }
+    }
+
+    #[test]
     fn dairy_milliliters_to_grams() {
         let expected_conversions = [
-            (0.0, 1.034),
-            (2.0, 1.034),
-            (3.0, 1.0313_333),
-            (3.5, 1.03),
-            (5.0, 1.0271_233),
-            (35.0, 0.969_589),
-            (40.0, 0.96),
-            (50.0, 0.96),
+            (0.0, 1.036_675),
+            (2.0, 1.034_089),
+            (3.0, 1.032_811),
+            (3.5, 1.032_176),
+            (5.0, 1.030_286),
+            (10.0, 1.024_156),
+            (18.0, 1.014_884),
+            (30.0, 1.002_216),
+            (35.0, 0.997_377),
+            (40.0, 0.992_796),
+            (50.0, 0.984_410),
         ];
 
         for (fat_content, expected_density) in expected_conversions {

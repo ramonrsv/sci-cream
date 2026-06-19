@@ -15,8 +15,7 @@ pub const SERVING_TEMP_X_AXIS: usize = 75;
 /// PAC to FPD polynomial coefficients, a*x^2 + b*x + c => [a, b, c]
 ///
 /// _Polynominal equation with intercept through zero derived from regression model where g
-/// sucrose/100 g water is graphed against FPD °C._ (Goff & Hartel, 2013, Table 6.3.c, p.
-/// 186)[^2]
+/// sucrose/100 g water is graphed against FPD °C._ (Goff & Hartel, 2013, Table 6.3.c, p. 186)[^2]
 #[doc = include_str!("../../docs/references/index/2.md")]
 pub const PAC_TO_FPD_POLY_COEFFS: [f64; 3] = [-0.00009, -0.0612, 0.0];
 
