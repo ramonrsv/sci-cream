@@ -104,3 +104,9 @@
 and microscopical attributes of sweetened condensed milk_. Food Science and Technology. <https://www.researchgate.net/publication/320627963_Characterization_of_physicochemical_composition_microbiology_sensory_evaluation_and_microscopical_attributes_of_sweetened_condensed_milk>
 
 [^51]: Moro, et al.(1985). _Total Solids and Density Measurements of Dulce de Leche, a Typical Argentine Dairy Product_. Dairy Foods Research Papers.
+
+[^52]: U.S. Food & Drug Administration. _CFR - Code of Federal Regulations Title 21_. <https://www.ecfr.gov/>
+
+[^53]: Perry, R. H., & Green, D. W. (2008). _Perry's Chemical Engineers' Handbook_ (8th ed.). McGraw-Hill
+
+[^54]: Mini Industry. (2026, June). _Ethanol density table for ethanol water mixture at 20C_. <https://www.miniindustry.com/d/ethanol-density-20c>

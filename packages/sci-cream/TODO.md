@@ -48,6 +48,8 @@
 - [ ] Add `PropKey::TotalAmount` and figure out how to handle it on the JavasScript side.
 - [ ] Find a source for the 10% lactose concentration limit, can't find it on Underbelly's blog.
 - [ ] Look into the solubility curves for lactose, trehalose, etc. to determine a limit.
+- [ ] Find a second independent source (OIML, NIST, CRC) to validate `ETHANOL_SOLUTIONS_DENSITY`;
+      it is the only empirical content, since ABV is defined as `ABW * density / pure_ethanol`.
 - [ ] Consider replacing `serde::Error` in docs with links to types, e.g. [`serde_json::Error`].
 - [ ] Consider making `ScaleComponents` private so that it can only be used internally and cannot
       be misused by users; this should not present an extensibility issue with the current design.
