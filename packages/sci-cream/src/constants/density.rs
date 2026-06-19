@@ -18,6 +18,16 @@ pub const WATER: f64 = 0.99823;
 #[doc = include_str!("../../docs/references/index/53.md")]
 pub const ETHANOL: f64 = 0.78934;
 
+/// Grams of sugar in one teaspoon (US) of granulated sugar (Anderson, 2020)[^31]
+#[doc = include_str!("../../docs/references/index/31.md")]
+pub const GRAMS_IN_TEASPOON_OF_SUGAR: f64 = 4.2;
+
+/// Approximate density (g/mL) of other dissolved solids (fiber, milk/cocoa SNFS).
+///
+/// **Warning:** This is a rough guess, but it should only apply to small fractions of other solids
+/// non-fat non-sugars, so it shouldn't have a large impact on the overall density estimate.
+pub const OTHER_DISSOLVED_SOLIDS: f64 = 1.5;
+
 /// Densities (g/mL) for crystalline mono- and disaccharides at 20°C
 pub mod sugars {
     /// Density (g/mL) of crystalline glucose at 20°C
@@ -70,56 +80,39 @@ pub mod sugars {
     pub const TREHALOSE: f64 = 1.58;
 }
 
-/// Approximate density (g/mL) of other dissolved solids (fiber, milk/cocoa SNFS).
-///
-/// **Warning:** This is a rough guess, but it should only apply to small fractions of other solids
-/// non-fat non-sugars, so it shouldn't have a large impact on the overall density estimate.
-pub const OTHER_DISSOLVED_SOLIDS: f64 = 1.5;
+/// Densities (g/mL) of various diary ingredients with varying fat and sugar contents
+pub mod dairy {
+    /// Density (g/mL) of milk with 2% fat content
+    ///
+    /// _Milk, liquid, partially skimmed_ (Charrondiere et al., 2011, p. 2)[^14]
+    #[doc = include_str!("../../docs/references/index/14.md")]
+    pub const MILK_2: f64 = 1.034;
 
-/// Alcohol by weight (ABW, % w/w) and solution density (g/mL) to alcohol by volume (ABV, % v/v)
-///
-/// Direct conversion using the formula `ABV = ABW · ρ_solution / ρ_ethanol`. Internal function;
-/// parameters are `(u32, f64)` pairs of `(ABW, density)` to match [`ETHANOL_SOLUTIONS_DENSITY`].
-#[must_use]
-fn abv_from_abw_and_density(abw_density: &(u32, f64)) -> f64 {
-    let (abw, density) = *abw_density;
-    f64::from(abw) * density / ETHANOL
-}
+    /// Density (g/mL) of milk with 3.5% fat content
+    ///
+    /// _Milk, liquid, whole_ (Charrondiere et al., 2011, p. 2)[^14]
+    #[doc = include_str!("../../docs/references/index/14.md")]
+    pub const MILK_3_5: f64 = 1.03;
 
-/// Trivial `u32` to `f64` conversion for the `(u32, f64)` pairs of [`ETHANOL_SOLUTIONS_DENSITY`]
-#[must_use]
-fn abw_to_f64(abw: &(u32, f64)) -> f64 {
-    f64::from(abw.0)
-}
+    /// Density (g/mL) of cream with 40% fat content
+    ///
+    /// _Cream, whipping (about 40% fat)_ (Charrondiere et al., 2011, p. 2)[^14]
+    #[doc = include_str!("../../docs/references/index/14.md")]
+    pub const CREAM_40: f64 = 0.96;
 
-/// Convert alcohol by weight (ABW, % w/w) to alcohol by volume (ABV, % v/v) at 20°C.
-///
-/// Interpolates the ABV implied by each `(ABW, density)` row of [`ETHANOL_SOLUTIONS_DENSITY`]
-/// via `ABV = ABW · ρ_solution / ρ_ethanol`; the exact inverse of [`abv_to_abw`].
-///
-/// **Note:** This could use [`fast_interpolate_pairs`] since the table is keyed by ABW, but then
-/// [`abv_to_abw`] would not be an exact inverse.
-#[must_use]
-pub fn abw_to_abv(abw: f64) -> f64 {
-    interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, abw, abw_to_f64, abv_from_abw_and_density)
-}
+    /// Density (g/mL) of evaporated milk
+    ///
+    /// _Milk, evaporated_ (Charrondiere et al., 2011, p. 3)[^14], (Lewis, 2023, Chapter 23.7)[^49]
+    #[doc = include_str!("../../docs/references/index/14.md")]
+    #[doc = include_str!("../../docs/references/index/49.md")]
+    pub const EVAPORATED_MILK: f64 = 1.075;
 
-/// Convert alcohol by volume (ABV, % v/v) to alcohol by weight (ABW, % w/w) at 20°C.
-///
-/// Inverts [`abw_to_abv`] by interpolating against the ABV implied by each `(ABW, density)`
-/// row in [`ETHANOL_SOLUTIONS_DENSITY`], since the table is keyed by weight percent.
-#[must_use]
-pub fn abv_to_abw(abv: f64) -> f64 {
-    interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, abv, abv_from_abw_and_density, abw_to_f64)
-}
-
-/// Density (g/mL) of an ethanol-water solution at the given alcohol by weight (ABW, % w/w), 20°C.
-///
-/// Interpolates the solution density tabulated in [`ETHANOL_SOLUTIONS_DENSITY`], which is keyed by
-/// weight percent, so [`fast_interpolate_pairs`] applies.
-#[must_use]
-pub fn ethanol_solution_density(abw: f64) -> f64 {
-    fast_interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, abw)
+    /// Density (g/mL) of sweetened condensed milk
+    ///
+    /// (Rodrigues, 2017)[^50], (Moro, 1985)[^51]
+    #[doc = include_str!("../../docs/references/index/50.md")]
+    #[doc = include_str!("../../docs/references/index/51.md")]
+    pub const SWEETENED_CONDENSED_MILK: f64 = 1.3;
 }
 
 /// Parameters for estimating the density of an aqueous mixture
@@ -179,48 +172,18 @@ pub fn mixture_density(mix_params: MixDensityParams) -> Result<f64> {
     Ok(mass / volume)
 }
 
-/// Density (g/mL) of milk with 2% fat content
-///
-/// _Milk, liquid, partially skimmed_ (Charrondiere et al., 2011, p. 2)[^14]
-#[doc = include_str!("../../docs/references/index/14.md")]
-pub const MILK_2: f64 = 1.034;
-
-/// Density (g/mL) of milk with 3.5% fat content
-///
-/// _Milk, liquid, whole_ (Charrondiere et al., 2011, p. 2)[^14]
-#[doc = include_str!("../../docs/references/index/14.md")]
-pub const MILK_3_5: f64 = 1.03;
-
-/// Density (g/mL) of cream with 40% fat content
-///
-/// _Cream, whipping (about 40% fat)_ (Charrondiere et al., 2011, p. 2)[^14]
-#[doc = include_str!("../../docs/references/index/14.md")]
-pub const CREAM_40: f64 = 0.96;
-
-/// Density (g/mL) of evaporated milk
-///
-/// _Milk, evaporated_ (Charrondiere et al., 2011, p. 3)[^14], (Lewis, 2023, Chapter 23.7)[^49]
-#[doc = include_str!("../../docs/references/index/14.md")]
-#[doc = include_str!("../../docs/references/index/49.md")]
-pub const EVAPORATED_MILK: f64 = 1.075;
-
-/// Density (g/mL) of sweetened condensed milk
-///
-/// (Rodrigues, 2017)[^50], (Moro, 1985)[^51]
-#[doc = include_str!("../../docs/references/index/50.md")]
-#[doc = include_str!("../../docs/references/index/51.md")]
-pub const SWEETENED_CONDENSED_MILK: f64 = 1.3;
-
 /// Convert dairy volume in milliliters to grams based on fat content percentage
 ///
-/// Interpolates density between known values for milk/cream of different fat contents;
-/// see [`MILK_2`], [`MILK_3_5`], and [`CREAM_40`].
+/// Interpolates density between known values for milk/cream of different fat contents; see
+/// [`MILK_2`](dairy::MILK_2), [`MILK_3_5`](dairy::MILK_3_5), and [`CREAM_40`](dairy::CREAM_40).
 ///
 /// # Panics
 ///
 /// Panics if `fat_content` is negative or greater than 100.
 #[must_use]
 pub const fn dairy_milliliters_to_grams(ml: f64, fat_content: f64) -> f64 {
+    use dairy::{CREAM_40, MILK_2, MILK_3_5};
+
     let less_than_2 = MILK_2;
     let between_2_and_3_5 = ((MILK_3_5 - MILK_2) / (3.5 - 2.0) * (fat_content - 2.0)) + MILK_2;
     let between_3_5_and_40 = ((CREAM_40 - MILK_3_5) / (40.0 - 3.5) * (fat_content - 3.5)) + MILK_3_5;
@@ -235,9 +198,51 @@ pub const fn dairy_milliliters_to_grams(ml: f64, fat_content: f64) -> f64 {
     }
 }
 
-/// Grams of sugar in one teaspoon (US) of granulated sugar (Anderson, 2020)[^31]
-#[doc = include_str!("../../docs/references/index/31.md")]
-pub const GRAMS_IN_TEASPOON_OF_SUGAR: f64 = 4.2;
+/// Convert alcohol by weight (ABW, % w/w) to alcohol by volume (ABV, % v/v) at 20°C.
+///
+/// Interpolates the ABV implied by each `(ABW, density)` row of [`ETHANOL_SOLUTIONS_DENSITY`]
+/// via `ABV = ABW · ρ_solution / ρ_ethanol`; the exact inverse of [`abv_to_abw`].
+///
+/// **Note:** This could use [`fast_interpolate_pairs`] since the table is keyed by ABW, but then
+/// [`abv_to_abw`] would not be an exact inverse.
+#[must_use]
+pub fn abw_to_abv(abw: f64) -> f64 {
+    interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, abw, abw_to_f64, abv_from_abw_and_density)
+}
+
+/// Convert alcohol by volume (ABV, % v/v) to alcohol by weight (ABW, % w/w) at 20°C.
+///
+/// Inverts [`abw_to_abv`] by interpolating against the ABV implied by each `(ABW, density)`
+/// row in [`ETHANOL_SOLUTIONS_DENSITY`], since the table is keyed by weight percent.
+#[must_use]
+pub fn abv_to_abw(abv: f64) -> f64 {
+    interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, abv, abv_from_abw_and_density, abw_to_f64)
+}
+
+/// Density (g/mL) of an ethanol-water solution at the given alcohol by weight (ABW, % w/w), 20°C.
+///
+/// Interpolates the solution density tabulated in [`ETHANOL_SOLUTIONS_DENSITY`], which is keyed by
+/// weight percent, so [`fast_interpolate_pairs`] applies.
+#[must_use]
+pub fn ethanol_solution_density(abw: f64) -> f64 {
+    fast_interpolate_pairs(&ETHANOL_SOLUTIONS_DENSITY, abw)
+}
+
+/// Alcohol by weight (ABW, % w/w) and solution density (g/mL) to alcohol by volume (ABV, % v/v)
+///
+/// Direct conversion using the formula `ABV = ABW · ρ_solution / ρ_ethanol`. Internal function;
+/// parameters are `(u32, f64)` pairs of `(ABW, density)` to match [`ETHANOL_SOLUTIONS_DENSITY`].
+#[must_use]
+fn abv_from_abw_and_density(abw_density: &(u32, f64)) -> f64 {
+    let (abw, density) = *abw_density;
+    f64::from(abw) * density / ETHANOL
+}
+
+/// Trivial `u32` to `f64` conversion for the `(u32, f64)` pairs of [`ETHANOL_SOLUTIONS_DENSITY`]
+#[must_use]
+fn abw_to_f64(abw: &(u32, f64)) -> f64 {
+    f64::from(abw.0)
+}
 
 /// Density (g/mL) of ethanol aqueous solutions at various concentrations, at 20°C
 ///
