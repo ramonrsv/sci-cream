@@ -119,13 +119,13 @@ describe("Helper Functions", () => {
     );
     const getModMixProp = (propKey: PropKey) => getModifiedMixProperty(mixProperties, propKey);
 
-    expect(getModMixProp(fpdToPropKey(FpdKey.FPD))).toBeCloseTo(3.6);
-    expect(getModMixProp(fpdToPropKey(FpdKey.ServingTemp))).toBeCloseTo(13.357);
+    expect(getModMixProp(fpdToPropKey(FpdKey.FPD))).toBeCloseTo(3.612);
+    expect(getModMixProp(fpdToPropKey(FpdKey.ServingTemp))).toBeCloseTo(13.402);
 
-    expect(getModMixProp(ratioToPropKey(RatioKey.AbsPAC))).toBeCloseTo(56.576 / 2);
+    expect(getModMixProp(ratioToPropKey(RatioKey.AbsPAC))).toBeCloseTo(28.374);
 
     expect(getModMixProp(ratioToPropKey(RatioKey.EmulsifiersPerFat))).toBeCloseTo(1.7311 * 100);
-    expect(getModMixProp(ratioToPropKey(RatioKey.StabilizersPerWater))).toBeCloseTo(0.3466 * 100);
+    expect(getModMixProp(ratioToPropKey(RatioKey.StabilizersPerWater))).toBeCloseTo(0.3467 * 100);
   });
 
   it("propKeyAsModifiedShortStr should modify specific key strings", () => {

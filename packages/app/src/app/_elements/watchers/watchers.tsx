@@ -116,7 +116,7 @@ function getMixScopePropKeys(): PropKey[] {
 export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set(
   getTypicalBalancingKeys()
     .concat([fpdToPropKey(FpdKey.ServingTemp), fpdToPropKey(FpdKey.HardnessAt14C)])
-    .filter((key) => key !== compToPropKey(CompKey.ABV)),
+    .filter((key) => key !== compToPropKey(CompKey.Alcohol)),
 );
 
 /** Type predicate: `val` is a defined, non-NaN number (i.e. a real computed numeric result). */

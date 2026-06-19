@@ -1416,7 +1416,10 @@ fn achieved_value<K: Into<BalanceKey>>(balanced: &[(Composition, f64)], key: K) 
 /// never poisons the solve with `f64::NAN`. Extensive keys contribute their usual weighted-sum row.
 #[must_use]
 pub fn get_all_balanceable_keys() -> Vec<BalanceKey> {
+    // @todo `ABV` is intensive (non-additive), so it cannot be a direct additive balancing row;
+    // exclude it until the intensive->extensive translation layer (ABV -> Alcohol) lands.
     CompKey::iter()
+        .filter(|key| *key != CompKey::ABV)
         .map(BalanceKey::Comp)
         .chain(RatioKey::iter().map(BalanceKey::Ratio))
         .collect()
@@ -1444,7 +1447,9 @@ pub fn get_typical_balancing_keys() -> Vec<BalanceKey> {
         CompKey::Salt.into(),
         RatioKey::StabilizersPerWater.into(),
         RatioKey::EmulsifiersPerFat.into(),
-        CompKey::ABV.into(),
+        // @todo Restore the `ABV` target once the intensive->extensive translation layer lands;
+        // balance the additive `Alcohol` (by_weight) proxy for now. See TODO.md.
+        CompKey::Alcohol.into(),
         RatioKey::AbsNetPAC.into(),
     ]
 }
@@ -1968,7 +1973,9 @@ pub(crate) mod tests {
         vec![
             (CompKey::TotalSugars.into(), 17.0),
             (CompKey::TotalPAC.into(), 28.0),
-            (CompKey::ABV.into(), 4.0),
+            // @todo Target `ABV` (4.0) directly once the intensive->extensive translation layer
+            // lands; `ABV` is non-additive, so balance its additive `Alcohol` proxy for now.
+            (CompKey::Alcohol.into(), crate::constants::density::abv_to_abw(4.0)),
         ]
     });
 
@@ -2186,7 +2193,7 @@ pub(crate) mod tests {
         let weighting = Weighting::Absolute;
 
         let balanced = balance_compositions_nnls(&comps, &targets, Some(weighting), &[]).unwrap();
-        assert_lt!(balanced.iter().map(|(_, amount)| *amount).sum::<f64>(), 0.3);
+        assert_lt!(balanced.iter().map(|(_, amount)| *amount).sum::<f64>(), 0.6);
     }
 
     // --- Balance quality reports ---
@@ -2464,7 +2471,9 @@ pub(crate) mod tests {
     #[test]
     fn get_balanceable_keys_includes_ratio_keys() {
         let balanceable = get_all_balanceable_keys();
-        assert_eq!(balanceable.len(), CompKey::iter().count() + RatioKey::iter().count());
+        // `ABV` is intensive and excluded until the translation layer lands; the rest remain.
+        assert_eq!(balanceable.len(), CompKey::iter().count() - 1 + RatioKey::iter().count());
+        assert_false!(balanceable.contains(&BalanceKey::from(CompKey::ABV)));
         assert_true!(balanceable.contains(&BalanceKey::from(RatioKey::AbsPAC)));
         assert_true!(balanceable.contains(&BalanceKey::from(RatioKey::AbsNetPAC)));
         assert_true!(balanceable.contains(&BalanceKey::from(CompKey::NetPAC)));

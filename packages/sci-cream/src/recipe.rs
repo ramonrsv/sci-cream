@@ -298,11 +298,11 @@ mod tests {
         assert_eq_flt_test!(mix_properties.get(CompKey::HF.into()), 7.5384);
 
         assert_eq_flt_test!(mix_properties.get(CompKey::MilkFat.into()), 13.6367);
-        assert_eq_flt_test!(mix_properties.get(CompKey::TotalPAC.into()), 33.3519);
-        assert_eq_flt_test!(mix_properties.get(RatioKey::AbsPAC.into()), 56.5761);
-        assert_eq_flt_test!(mix_properties.get(FpdKey::FPD.into()), -3.6003);
-        assert_eq_flt_test!(mix_properties.get(FpdKey::ServingTemp.into()), -13.3569);
-        assert_eq_flt_test!(mix_properties.get(FpdKey::HardnessAt14C.into()), 76.296);
+        assert_eq_flt_test!(mix_properties.get(CompKey::TotalPAC.into()), 33.4463);
+        assert_eq_flt_test!(mix_properties.get(RatioKey::AbsPAC.into()), 56.7484);
+        assert_eq_flt_test!(mix_properties.get(FpdKey::FPD.into()), -3.6124);
+        assert_eq_flt_test!(mix_properties.get(FpdKey::ServingTemp.into()), -13.4021);
+        assert_eq_flt_test!(mix_properties.get(FpdKey::HardnessAt14C.into()), 76.2061);
     }
 
     #[test]

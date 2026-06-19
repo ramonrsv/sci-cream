@@ -1015,7 +1015,7 @@ mod tests {
                     .hardness_factor(1.0),
             );
 
-        let abv = c.alcohol.to_abv(); // 2.5 / ABV_TO_ABW_RATIO
+        let abv = c.alcohol.to_abv(); // abw_to_abv(2.5)
 
         #[rustfmt::skip]
         let expected = HashMap::from([

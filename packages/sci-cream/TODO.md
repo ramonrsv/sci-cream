@@ -31,6 +31,9 @@
 - [ ] Add whey and casein concentrate products, e.g. "Whey Powder", "Whey Protein Concentrate 80%",
       "Whey Protein Isolate 90%", "Sodium Caseinate", "Buttermilk Powder", etc.
 - [ ] FPD properties cannot be balanced, so add some way to convert them to (PAC-HF)/Water.
+- [ ] Add an intensive->extensive translation layer for balancing: solve non-additive targets via
+      an additive proxy (`ABV` -> `Alcohol`, later `ServingTemp` -> `AbsNetPAC`). Classify keys
+      Intensive/Extensive and error on target/proxy clashes. Interim: `ABV` -> `Alochol`, @todos.
 - [ ] Look into implementing a derive macro to automatically define all field-update methods.
 - [ ] Remove `Composition` functions for calculating ratios, `get_ratio` already handles that.
 - [ ] If all children of a key have a target, we can infer the parent's target and use it in checks.

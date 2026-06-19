@@ -5,19 +5,19 @@ expression: "report_balance_quality(&comps_from_names(BOOZY_ING), &BOOZY_DISPARA
 targets:
   TotalSugars         17.00
   TotalPAC            28.00
-  ABV                  4.00
+  Alcohol              3.18
 
 [nalgebra]
   [           ingredient           | qty ]
-  3.25% Milk                      -1116.92
-  40% Cream                       1173.55
-  Sucrose                           33.37
-  Grand Marnier Cordon Rouge        10.00
+  3.25% Milk                      -1132.73
+  40% Cream                       1189.44
+  Sucrose                           33.74
+  Grand Marnier Cordon Rouge         9.55
 
   [      key       | target | achieved |  error  ]
   TotalSugars         17.00     17.00      0.00 pp
   TotalPAC            28.00     28.00      0.00 pp
-  ABV                  4.00      4.00      0.00 pp
+  Alcohol              3.18      3.18      0.00 pp
 
   [    sum     |  neg. |    max    |    rms  ]
      1.0000        1       0.00 pp     0.00 pp
@@ -25,14 +25,14 @@ targets:
 [nnls]
   [           ingredient           | qty ]
   3.25% Milk                         0.00
-  40% Cream                         81.57
-  Sucrose                           10.46
-  Grand Marnier Cordon Rouge         7.97
+  40% Cream                         81.91
+  Sucrose                           10.51
+  Grand Marnier Cordon Rouge         7.58
 
   [      key       | target | achieved |  error  ]
-  TotalSugars         17.00     14.53     14.52 pp
-  TotalPAC            28.00     34.84     24.42 pp
-  ABV                  4.00      3.19     20.31 pp
+  TotalSugars         17.00     14.51     14.64 pp
+  TotalPAC            28.00     34.89     24.62 pp
+  Alcohol              3.18      2.52     20.65 pp
 
   [    sum     |  neg. |    max    |    rms  ]
-     1.0000        0      24.42 pp    20.16 pp
+     1.0000        0      24.62 pp    20.39 pp

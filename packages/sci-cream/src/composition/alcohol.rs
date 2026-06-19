@@ -47,7 +47,7 @@ impl Alcohol {
     #[must_use]
     pub fn from_abv(abv: f64) -> Self {
         Self {
-            by_weight: abv * constants::density::ABV_TO_ABW_RATIO,
+            by_weight: constants::density::abv_to_abw(abv),
         }
     }
 
@@ -60,7 +60,7 @@ impl Alcohol {
     /// Converts the alcohol content from percentage by weight to percentage by volume (ABV)
     #[must_use]
     pub fn to_abv(&self) -> f64 {
-        self.by_weight / constants::density::ABV_TO_ABW_RATIO
+        constants::density::abw_to_abv(self.by_weight)
     }
 
     /// Calculates the PAC contribution of the alcohol content, in terms of sucrose equivalence
@@ -141,7 +141,7 @@ mod tests {
     fn alcohol_by_weight() {
         let alcohol = Alcohol::new().by_weight(5.0);
         assert_eq!(alcohol.by_weight, 5.0);
-        assert_eq_flt_test!(alcohol.to_abv(), 6.3371);
+        assert_eq_flt_test!(alcohol.to_abv(), 6.267_135);
         assert_eq!(alcohol.energy(), 34.65);
         assert_eq!(alcohol.to_pac(), 37.15);
     }
@@ -149,10 +149,10 @@ mod tests {
     #[test]
     fn alcohol_from_abv() {
         let alcohol = Alcohol::from_abv(5.0);
-        assert_eq_flt_test!(alcohol.by_weight, 3.945);
+        assert_eq_flt_test!(alcohol.by_weight, 3.982_330);
         assert_eq_flt_test!(alcohol.to_abv(), 5.0);
-        assert_eq_flt_test!(alcohol.energy(), 27.3389);
-        assert_eq_flt_test!(alcohol.to_pac(), 29.3114);
+        assert_eq_flt_test!(alcohol.energy(), 27.597_549);
+        assert_eq_flt_test!(alcohol.to_pac(), 29.588_714);
     }
 
     #[test]

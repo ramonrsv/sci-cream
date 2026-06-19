@@ -74,7 +74,7 @@ pub(crate) static MAIN_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyLo
     use RatioKey::*;
 
     vec![
-        (Energy.into(), 229.051),
+        (Energy.into(), 229.140),
         (MilkFat.into(), 13.637),
         (Lactose.into(), 4.817),
         (MSNF.into(), 8.839),
@@ -85,11 +85,11 @@ pub(crate) static MAIN_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyLo
         (Glucose.into(), 6.767),
         (Fructose.into(), 5.23),
         (TotalSugars.into(), 16.815),
-        (ABV.into(), 0.343),
+        (ABV.into(), 0.358),
         (Salt.into(), 0.082),
         (TotalFats.into(), 15.2975),
         (TotalSolids.into(), 40.779),
-        (Water.into(), 58.95),
+        (Water.into(), 58.938),
         (TotalEmulsifiers.into(), 0.2648),
         (EmulsifiersPerFat.into(), 1.731),
         (TotalStabilizers.into(), 0.2043),
@@ -97,13 +97,13 @@ pub(crate) static MAIN_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyLo
         (POD.into(), 15.234),
         (PACsgr.into(), 27.614),
         (PACmlk.into(), 3.247),
-        (PACalc.into(), 2.012),
-        (TotalPAC.into(), 33.352),
-        (AbsPAC.into(), 56.576),
+        (PACalc.into(), 2.107),
+        (TotalPAC.into(), 33.446),
+        (AbsPAC.into(), 56.748),
         (HF.into(), 7.538),
-        (FPD.into(), -3.6),
-        (ServingTemp.into(), -13.357),
-        (HardnessAt14C.into(), 76.296),
+        (FPD.into(), -3.612),
+        (ServingTemp.into(), -13.402),
+        (HardnessAt14C.into(), 76.206),
     ]
 });
 
@@ -152,7 +152,7 @@ pub(crate) static REF_B_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyL
     use RatioKey::*;
 
     vec![
-        (Energy.into(), 229.068),
+        (Energy.into(), 230.132),
         (MilkFat.into(), 14.376),
         (Lactose.into(), 6.045),
         (MSNF.into(), 11.091),
@@ -163,11 +163,11 @@ pub(crate) static REF_B_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyL
         (Glucose.into(), 0.790),
         (Fructose.into(), 0.675),
         (TotalSugars.into(), 11.062),
-        (ABV.into(), 3.520),
+        (ABV.into(), 3.687),
         (Salt.into(), 0.083),
         (TotalSolids.into(), 33.910),
         (TotalFats.into(), 16.17),
-        (Water.into(), 63.312),
+        (Water.into(), 63.158),
         (TotalEmulsifiers.into(), 0.5380),
         (EmulsifiersPerFat.into(), 3.3273),
         (TotalStabilizers.into(), 0.1495),
@@ -175,13 +175,13 @@ pub(crate) static REF_B_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyL
         (POD.into(), 10.336),
         (PACsgr.into(), 12.419),
         (PACmlk.into(), 4.075),
-        (PACalc.into(), 20.638),
-        (TotalPAC.into(), 37.617),
-        (AbsPAC.into(), 59.415),
+        (PACalc.into(), 21.778),
+        (TotalPAC.into(), 38.758),
+        (AbsPAC.into(), 61.366),
         (HF.into(), 0.0),
-        (FPD.into(), -3.807),
-        (ServingTemp.into(), -17.524),
-        (HardnessAt14C.into(), 67.845),
+        (FPD.into(), -3.964),
+        (ServingTemp.into(), -18.044),
+        (HardnessAt14C.into(), 66.789),
     ]
 });
 

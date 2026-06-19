@@ -78,7 +78,7 @@ properties can be accessed via `MixProperties::get`, using the appropriate keys 
 let mix_properties = recipe.calculate_mix_properties()?;
 
 for (key, value) in [
-    (Energy.into(), 229.051), // kcal per 100g
+    (Energy.into(), 229.140), // kcal per 100g
     (MilkFat.into(), 13.637), // grams per 100g
     (Lactose.into(), 4.817), // ...
     (MSNF.into(), 8.839),
@@ -89,20 +89,20 @@ for (key, value) in [
     (Glucose.into(), 6.767),
     (Fructose.into(), 5.23),
     (TotalSugars.into(), 16.815),
-    (ABV.into(), 0.343), // Alcohol-by-volume %
+    (ABV.into(), 0.358), // Alcohol-by-volume %
     (Salt.into(), 0.082),
     (TotalSolids.into(), 40.779),
-    (Water.into(), 58.95),
+    (Water.into(), 58.938),
     (POD.into(), 15.234),
     (PACsgr.into(), 27.614),
     (PACmlk.into(), 3.247),
-    (PACalc.into(), 2.012),
-    (TotalPAC.into(), 33.352),
-    (AbsPAC.into(), 56.576), // TotalPAC / Water
+    (PACalc.into(), 2.107),
+    (TotalPAC.into(), 33.446),
+    (AbsPAC.into(), 56.748), // TotalPAC / Water
     (HF.into(), 7.538),
-    (FPD.into(), -3.6), // °C
-    (ServingTemp.into(), -13.357), // °C
-    (HardnessAt14C.into(), 76.296), // [0, 100] scale
+    (FPD.into(), -3.612), // °C
+    (ServingTemp.into(), -13.402), // °C
+    (HardnessAt14C.into(), 76.206), // [0, 100] scale
 ] {
     assert_eq_float!(mix_properties.get(key), value);
 }
@@ -423,7 +423,8 @@ let targets: Vec<(BalanceKey, f64)> = vec![
     (MSNF.into(), 7.0),
     (CocoaButter.into(), 2.0),
     (CocoaSolids.into(), 6.0),
-    (ABV.into(), 0.4),
+    // @todo ABV is non-additive; target its additive Alcohol (by_weight) proxy until supported
+    (Alcohol.into(), 0.3169),
     (Salt.into(), 0.08),
     (TotalFats.into(), 16.0),
     (TotalSolids.into(), 41.0),
@@ -455,7 +456,7 @@ assert_recipe_matches(
         ("Fructose", 24.0),
         ("Salt", 0.8),
         ("Stabilizer Blend", 2.0),
-        ("Vanilla Extract", 12.0),
+        ("Vanilla Extract", 11.0),
     ],
 );
 
@@ -468,7 +469,7 @@ for (key, value) in targets.iter().filter(|(key, _)| not_total_fats(key)) {
 }
 
 // With disparate targets, some non-priority ones can drift to accommodate the priorities
-assert_eq_float!(balanced_properties.get(TotalFats.into()), 12.4758);
+assert_eq_float!(balanced_properties.get(TotalFats.into()), 12.4807);
 ```
 
 ## WASM Interoperability
@@ -528,19 +529,19 @@ const recipe = new Recipe("Chocolate Ice Cream", recipeLines);
 const mix_properties = recipe.calculate_mix_properties();
 
 const comp = mix_properties.composition;
-expect(comp.get(CompKey.Energy)).toBeCloseTo(229.051);
+expect(comp.get(CompKey.Energy)).toBeCloseTo(229.14);
 expect(comp.get(CompKey.MilkFat)).toBeCloseTo(13.637);
 expect(comp.get(CompKey.Lactose)).toBeCloseTo(4.817);
 // ...
 
 const fpd = mix_properties.fpd;
-expect(fpd.get(FpdKey.FPD)).toBeCloseTo(-3.6);
-expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.357);
-expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(76.296);
+expect(fpd.get(FpdKey.FPD)).toBeCloseTo(-3.612);
+expect(fpd.get(FpdKey.ServingTemp)).toBeCloseTo(-13.402);
+expect(fpd.get(FpdKey.HardnessAt14C)).toBeCloseTo(76.206);
 
 // Via prop keys:
-expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(229.051);
-expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.6);
+expect(getMixProperty(mix_properties, compToPropKey(CompKey.Energy))).toBeCloseTo(229.14);
+expect(getMixProperty(mix_properties, fpdToPropKey(FpdKey.FPD))).toBeCloseTo(-3.612);
 ```
 
 <br>
@@ -564,9 +565,9 @@ import {
 const bridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
 const mix_properties = bridge.calculate_recipe_mix_properties(RECIPE);
 
-expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(229.051);
+expect(mix_properties.composition.get(CompKey.Energy)).toBeCloseTo(229.14);
 // ...
-expect(mix_properties.fpd.get(FpdKey.FPD)).toBeCloseTo(-3.6);
+expect(mix_properties.fpd.get(FpdKey.FPD)).toBeCloseTo(-3.612);
 // ...
 ```
 

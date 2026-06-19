@@ -15,7 +15,7 @@ use crate::{composition::CompKey, constants};
 ///
 /// The composition of spirits is trivial, consisting of only the [`ABV`](Self::abv) ("Alcohol by
 /// volume", 2025)[^8]) that is always present on the label, and is internally converted to `ABW`
-/// (Alcohol by weight) via [`constants::density::ABV_TO_ABW_RATIO`]. Liqueurs, creams, and other
+/// (Alcohol by weight) via [`constants::density::abv_to_abw`]. Liqueurs, creams, and other
 /// alcohol ingredients may also contain sugar, fat, and other solids. These can be tricky to find,
 /// since nutrition facts tables are not usually mandated for alcoholic beverages. The best approach
 /// is to find a nutrition facts table from the manufacturer if available, otherwise to look for
@@ -49,13 +49,13 @@ use crate::{composition::CompKey, constants};
 ///    solids: None,
 /// }.to_composition()?;
 ///
-/// assert_eq!(comp.get(CompKey::Energy), 218.7108);
-/// assert_eq!(comp.get(CompKey::ABV), 40.0);
-/// assert_eq_float!(comp.get(CompKey::Alcohol), 31.56);
+/// assert_eq_float!(comp.get(CompKey::Energy), 230.7978);
+/// assert_eq_float!(comp.get(CompKey::ABV), 40.0);
+/// assert_eq_float!(comp.get(CompKey::Alcohol), 33.3042);
 /// assert_eq!(comp.get(CompKey::TotalSolids), 0.0);
-/// assert_eq_float!(comp.get(CompKey::Water), 68.44);
+/// assert_eq_float!(comp.get(CompKey::Water), 66.6959);
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
-/// assert_eq!(comp.get(CompKey::PACalc), 234.4908);
+/// assert_eq_float!(comp.get(CompKey::PACalc), 247.4498);
 /// # Ok(()) }
 /// ```
 ///
@@ -76,16 +76,16 @@ use crate::{composition::CompKey, constants};
 ///    solids: None,
 /// }.to_composition()?;
 ///
-/// assert_eq_float!(comp.get(CompKey::Energy), 287.3521);
-/// assert_eq!(comp.get(CompKey::ABV), 17.0);
-/// assert_eq_float!(comp.get(CompKey::Alcohol), 13.413);
+/// assert_eq_float!(comp.get(CompKey::Energy), 289.605);
+/// assert_eq_float!(comp.get(CompKey::ABV), 17.0);
+/// assert_eq_float!(comp.get(CompKey::Alcohol), 13.7381);
 /// assert_eq_float!(comp.get(CompKey::TotalSolids), 31.6);
-/// assert_eq_float!(comp.get(CompKey::Water), 54.987);
+/// assert_eq_float!(comp.get(CompKey::Water), 54.6619);
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 18.0);
 /// assert_eq!(comp.get(CompKey::POD), 18.0);
-/// assert_eq!(comp.get(CompKey::PACalc), 99.65859);
+/// assert_eq_float!(comp.get(CompKey::PACalc), 102.07403);
 /// assert_eq!(comp.get(CompKey::PACsgr), 18.0);
-/// assert_eq!(comp.get(CompKey::TotalPAC), 117.65859);
+/// assert_eq_float!(comp.get(CompKey::TotalPAC), 120.07403);
 /// # Ok(()) }
 /// ```
 #[doc = include_str!("../../docs/references/index/8.md")]
@@ -177,17 +177,17 @@ pub(crate) mod tests {
     fn to_composition_alcohol_spec_40_abv_spirit() {
         let comp = ING_SPEC_ALCOHOL_40_ABV_SPIRIT.spec.to_composition().unwrap();
 
-        assert_eq!(comp.get(CompKey::Energy), 218.7108);
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 230.7978);
 
-        assert_eq!(comp.get(CompKey::ABV), 40.0);
-        assert_eq_flt_test!(comp.get(CompKey::Alcohol), 31.56);
+        assert_eq_flt_test!(comp.get(CompKey::ABV), 40.0);
+        assert_eq_flt_test!(comp.get(CompKey::Alcohol), 33.3042);
         assert_eq!(comp.get(CompKey::TotalSolids), 0.0);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 68.44);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 66.6959);
 
         assert_eq!(comp.get(CompKey::TotalSweeteners), 0.0);
         assert_eq!(comp.get(CompKey::POD), 0.0);
-        assert_eq!(comp.get(CompKey::PACalc), 234.4908);
-        assert_eq!(comp.get(CompKey::TotalPAC), 234.4908);
+        assert_eq_flt_test!(comp.get(CompKey::PACalc), 247.4498);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 247.4498);
 
         assert_eq!(comp.alcohol.to_abv(), comp.get(CompKey::ABV));
         assert_eq!(comp.alcohol.by_weight, comp.get(CompKey::Alcohol));
@@ -221,17 +221,17 @@ pub(crate) mod tests {
     fn to_composition_alcohol_spec_baileys_irish_cream() {
         let comp = ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.spec.to_composition().unwrap();
 
-        assert_eq_flt_test!(comp.get(CompKey::Energy), 287.3521);
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 289.605);
 
-        assert_eq_flt_test!(comp.get(CompKey::Alcohol), 13.413);
+        assert_eq_flt_test!(comp.get(CompKey::Alcohol), 13.7381);
         assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 31.6);
-        assert_eq_flt_test!(comp.get(CompKey::Water), 54.987);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 54.6619);
 
         assert_eq!(comp.get(CompKey::TotalSweeteners), 18.0);
         assert_eq!(comp.get(CompKey::POD), 18.0);
-        assert_eq!(comp.get(CompKey::PACalc), 99.65859);
+        assert_eq_flt_test!(comp.get(CompKey::PACalc), 102.074);
         assert_eq!(comp.get(CompKey::PACsgr), 18.0);
-        assert_eq!(comp.get(CompKey::TotalPAC), 117.65859);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 120.074);
 
         assert_eq!(comp.alcohol.to_abv(), comp.get(CompKey::ABV));
         assert_eq!(comp.alcohol.by_weight, comp.get(CompKey::Alcohol));
