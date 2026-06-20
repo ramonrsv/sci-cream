@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 190  (non-alias: 172, independent: 168)
+"total: 199  (non-alias: 181, independent: 175)
 
             0% Milk
             1% Milk
@@ -132,6 +132,15 @@ exports[`Embedded spec entries 1`] = `
             MyProtein Impact Whey Protein
             MyProtein Slow-Release Casein
             Navel Orange
+            Nielsen-Massey Pure Almond Extract
+            Nielsen-Massey Pure Chocolate Extract
+            Nielsen-Massey Pure Coffee Extract
+            Nielsen-Massey Pure Lemon Extract
+            Nielsen-Massey Pure Orange Extract
+            Nielsen-Massey Pure Peppermint Extract
+[composite] Nielsen-Massey Pure Vanilla Bean Paste
+            Nielsen-Massey Pure Vanilla Extract
+[composite] Nielsen-Massey Pure Vanilla Powder
             Oligofructose Powder
             Optimum Nutrition Gold Standard 100% Casein
             Optimum Nutrition Gold Standard 100% Isolate

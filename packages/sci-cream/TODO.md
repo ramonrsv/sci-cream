@@ -5,7 +5,6 @@
 - [ ] Add code example doc tests to all specs that don't already have them.
 - [ ] Add "Louis Francois Stab 2000" ingredient, which has stabilizer and emulsifier components.
 - [ ] Add a beginner-friendly overview of the core ice cream science concepts, e.g. FPD curves.
-- [ ] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
 - [ ] Add more ultra-filtered milk products, e.g. `Fairlife Whole Ultra-Filtered Lactose-Free Milk`.
 - [ ] Add USDA chocolate ingredients and include them in `compare_specs_*` tests vs simple & lindt.
 - [ ] Add TS-side unit tests for the `wasm::Recipe` functionality; it's independent from `Bridge`.
@@ -101,6 +100,7 @@
 
 ## Completed
 
+- [x] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
 - [x] Add the inverse of `compKeyToPropKey`, etc., that is `propKeyToCompKey` for str -> enum.
 - [x] Only check error-severity issues in `balance_compositions`; warnings are discarded and costly.
 - [x] Add snapshot tests for the balancing issue reports, for various synthetic and real scenarios.

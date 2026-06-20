@@ -1,10 +1,12 @@
 use std::sync::LazyLock;
 
 use crate::{
-    composition::{CompKey, RatioKey},
+    composition::{CompKey, Composition, RatioKey},
+    database::IngredientDatabase,
     fpd::FpdKey,
     properties::PropKey,
     recipe::{ConstRecipe, OwnedLightRecipe},
+    resolution::IngredientGetter,
 };
 
 pub(crate) use crate::specs::{
@@ -12,6 +14,18 @@ pub(crate) use crate::specs::{
     emulsifier::tests::*, fruit::tests::*, full::tests::*, ingredient::tests::*, micro::tests::*, nut::tests::*,
     stabilizer::tests::*, sweetener::tests::*,
 };
+
+/// Database seeded once from the compiled-in embedded JSON, shared by tests across the crate.
+pub(crate) static EMBEDDED_DB: LazyLock<IngredientDatabase> =
+    LazyLock::new(IngredientDatabase::new_seeded_from_embedded_data);
+
+/// Resolve an embedded ingredient's composition by name, panicking if it is absent.
+pub(crate) fn composition(name: &str) -> Composition {
+    EMBEDDED_DB
+        .get_ingredient_by_name(name)
+        .unwrap_or_else(|e| panic!("missing ingredient '{name}': {e}"))
+        .composition
+}
 
 fn make_light_recipe_from_const(const_recipe: &ConstRecipe) -> OwnedLightRecipe {
     const_recipe

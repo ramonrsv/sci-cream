@@ -126,3 +126,13 @@ and microscopical attributes of sweetened condensed milk_. Food Science and Tech
 [^61]: PubChem, US National Library of Medicine. _Trehalose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/7427>
 
 [^62]: Goff, H. D. & Hill, A. & Ferrer, M. A. _Dairy Science and Technology eBook_. University of Guelph. Retrieved 2026, June. <https://books.lib.uoguelph.ca/dairyscienceandtechnologyebook/front-matter/334/>
+
+[^63]: PubChem, US National Library of Medicine. _Limonene_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/22311>
+
+[^64]: PubChem, US National Library of Medicine._Benzaldehyde_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/240>
+
+[^65]: European Pharmacopoeia. _Peppermint oil (04/2008:0405)_. Retrieved 2026, June. <http://www.uspbpep.com/ep60/peppermint%20oil%200405e.pdf>
+
+[^66]: Ontario Wealth. _Cocoa Butter_. Retrieved 2026, June. <https://ontariowealth.ca/product/cocoa-butter/>
+
+[^67]: Ariga, S. R. & Aisyah, Y. & Patria, A. & Arpi, N. & Yunita, D. (2018) _Physicochemical Characterization of Oil from Roasted Coffee_. Proceeding of the 8th AIC: Health and Life Sciences, Syiah Kuala University, pages 94-102. Retrieved 2026, June. <https://www.academia.edu/75282549/Physicochemical_Characterization_of_Oil_from_Roasted_Coffee>

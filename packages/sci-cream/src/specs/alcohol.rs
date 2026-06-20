@@ -238,6 +238,48 @@ pub(crate) mod tests {
         assert_eq!(comp.alcohol.to_pac(), comp.get(CompKey::PACalc));
     }
 
+    pub(crate) const ING_SPEC_ALCOHOL_ALMOND_EXTRACT_STR: &str = r#"{
+      "name": "Nielsen-Massey Pure Almond Extract",
+      "category": "Flavouring",
+      "AlcoholSpec": {
+        "abv": 90,
+        "fat": 5
+      }
+    }"#;
+
+    pub(crate) static ING_SPEC_ALCOHOL_ALMOND_EXTRACT: LazyLock<IngredientSpec> = LazyLock::new(|| IngredientSpec {
+        name: "Nielsen-Massey Pure Almond Extract".to_string(),
+        category: Category::Flavouring,
+        spec: AlcoholSpec {
+            abv: 90.0,
+            sugars: None,
+            fat: Some(5.0),
+            solids: None,
+        }
+        .into(),
+    });
+
+    #[test]
+    fn to_composition_alcohol_spec_almond_extract() {
+        let comp = ING_SPEC_ALCOHOL_ALMOND_EXTRACT.spec.to_composition().unwrap();
+
+        assert_eq_flt_test!(comp.get(CompKey::Energy), 638.6936);
+
+        assert_eq_flt_test!(comp.get(CompKey::ABV), 90.0);
+        assert_eq_flt_test!(comp.get(CompKey::Alcohol), 85.67);
+        assert_eq_flt_test!(comp.get(CompKey::TotalSolids), 5.0);
+        assert_eq!(comp.get(CompKey::TotalFats), 5.0);
+        assert_eq_flt_test!(comp.get(CompKey::Water), 9.33);
+
+        assert_eq!(comp.get(CompKey::POD), 0.0);
+        assert_eq_flt_test!(comp.get(CompKey::PACalc), 636.5286);
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC), 636.5286);
+
+        assert_eq!(comp.alcohol.to_abv(), comp.get(CompKey::ABV));
+        assert_eq!(comp.alcohol.by_weight, comp.get(CompKey::Alcohol));
+        assert_eq!(comp.alcohol.to_pac(), comp.get(CompKey::PACalc));
+    }
+
     #[test]
     fn json_field_null_same_as_missing() {
         let spec_str_with_missing = r#"{
@@ -279,6 +321,7 @@ pub(crate) mod tests {
             vec![
                 (ING_SPEC_ALCOHOL_40_ABV_SPIRIT_STR, ING_SPEC_ALCOHOL_40_ABV_SPIRIT.clone(), None),
                 (ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM_STR, ING_SPEC_ALCOHOL_BAILEYS_IRISH_CREAM.clone(), None),
+                (ING_SPEC_ALCOHOL_ALMOND_EXTRACT_STR, ING_SPEC_ALCOHOL_ALMOND_EXTRACT.clone(), None),
             ]
         });
 

@@ -1,5 +1,11 @@
 [
-  { "name": "Vanilla Extract", "category": "Flavouring", "AlcoholSpec": { "abv": 35.0 } },
+  {
+    "name": "Vanilla Extract",
+    "category": "Flavouring",
+    "AlcoholSpec": { "abv": 35.0 },
+    "comments": "FDA CFR Title 21 - 169.175 Vanilla Extract: \"In vanilla extract the content of ethyl alcohol is not less than 35 percent by volume...\"(https://www.ecfr.gov/current/title-21/section-169.175)."
+  },
+
   {
     "name": "Lemon Zest",
     "category": "Flavouring",
@@ -41,5 +47,66 @@
       "sugars": {}
     },
     "comments": "USDA FoodData Central - SR Legacy - Spearmint, fresh (https://fdc.nal.usda.gov/food-details/173475/nutrients)."
+  },
+  {
+    "name": "Nielsen-Massey Pure Vanilla Extract",
+    "category": "Flavouring",
+    "AlcoholSpec": { "abv": 35, "sugars": 9 },
+    "comments": "Ingredients: Water, Alcohol (35%), Sugar, Vanilla Bean Extractives. Label: 15kcal, 0g fat, 0g sugar per 1 tsp (5ml). Sources: https://www.nielsen-massey.nl/consumer/products-pure-vanilla-extract.php, https://nielsenmassey.com/products/pure-vanilla-extract/. Sugar is present (3rd ingredient), but must be under 0.5g/serving since the label states 0g sugar, so it is capped at under 10% (0.5g/5ml). This doesn't quite reach the label's 15kcal/5ml."
+  },
+  {
+    "name": "Nielsen-Massey Pure Vanilla Bean Paste",
+    "category": "Flavouring",
+    "CompositeSpec": {
+      "ByPercentage": [
+        ["Sucrose", 50],
+        ["Water", 25],
+        ["Vanilla Extract", 24.5],
+        ["Guar Gum", 0.5]
+      ]
+    },
+    "comments": "Ingredients: Sugar, Water, Vanilla Extract, Vanilla Beans, Gum Tragacanth (a natural thickener). 17kcal per 1 tsp (5ml) serving. \"To replace vanilla extract in a recipe, simply measure the same amount of our Pure Vanilla Bean Paste and add. Or, replace one tablespoon of paste for every one whole vanilla bean.\" Sources: https://www.nielsen-massey.nl/consumer/products-pure-vanilla-bean-paste.php, https://nielsenmassey.com/products/pure-vanilla-bean-paste/. The sources state 9g of sugar per tbsp (~15ml), or 3g per tsp (5ml) on the nutrition facts table. With a sucrose density of 1.59g/ml that works out to ~50% sucrose by weight. Assuming the 'Vanilla Extract' used is 35% ABV, a ~50/25/25 breakdown of sucrose, water, and 'Vanilla Extract' works out to ~15kcal per 1 tsp (5ml), which is consistent with the label ordering but doesn't quite reach 17kcal. I tested a 1% Guar Gum solution and it looked about the same as the paste, but that was without 50% sugar, so using 0.5% Guar Gum (strength: 200) as a proxy for Gum Tragacanth."
+  },
+  {
+    "name": "Nielsen-Massey Pure Vanilla Powder",
+    "category": "Flavouring",
+    "CompositeSpec": { "ByPercentage": [["Maltodextrin 10 DE", 100]] },
+    "comments": "Ingredients: Maltodextrin (a modified cornstarch), Vanilla Extract. 20kcal, 5g total carbohydrate, 0g sugar per 1 tsp (5ml). \"...alcohol and sugar-free powder...\". Sources: https://www.nielsen-massey.nl/consumer/products-pure-vanilla-powder.php, https://nielsenmassey.com/products/pure-vanilla-powder/. Stated alcohol- and sugar-free, so modeled as 100% Maltodextrin. 5g of carbohydrates at ~4kcal/g reproduces the 20kcal per serving - disregarding the powder's low bulk density and volume-based serving size."
+  },
+  {
+    "name": "Nielsen-Massey Pure Almond Extract",
+    "category": "Flavouring",
+    "AlcoholSpec": { "abv": 90, "fat": 5 },
+    "comments": "Ingredients: Cane Alcohol (90%), Bitter Almond Oil, Water. 25kcal, 0g fat per 1 tsp (5ml). Sources: https://www.nielsen-massey.nl/consumer/products-pure-almond-extract.php, https://nielsenmassey.com/products/pure-almond-extract/. At 90% ABV the alcohol alone is ~24kcal/5ml; a little bitter almond oil (benzaldehyde), modeled as 5% fat (~0.2g/serving, rounds to the label's 0g), brings it to ~25kcal."
+  },
+  {
+    "name": "Nielsen-Massey Pure Chocolate Extract",
+    "category": "Flavouring",
+    "AlcoholSpec": { "abv": 37, "fat": 10 },
+    "comments": "Ingredients: Water, Alcohol (37%), Cocoa Extract. 15kcal, 0g fat, 0g sugar per 1 tsp (5ml). \"1 Tbs. Chocolate Extract = 1 Tbs. Unsweetened Cocoa Powder.\". Sources: https://www.nielsen-massey.nl/consumer/products-pure-chocolate-extract.php, https://nielsenmassey.com/products/pure-chocolate-extract/. At 37% ABV the alcohol is ~10kcal/5ml; cocoa butter carried by the cocoa extract, modeled as 10% fat (~0.46g/serving, rounds to the label's 0g), brings it to ~15kcal."
+  },
+  {
+    "name": "Nielsen-Massey Pure Coffee Extract",
+    "category": "Flavouring",
+    "AlcoholSpec": { "abv": 35, "fat": 10 },
+    "comments": "Ingredients: Water, Alcohol (35%), Coffee Extract. 20kcal, 0g fat, 0g carbohydrate per 1 tsp (5ml). \"1 tsp. Coffee Extract = 1 tsp. Dry Espresso Powder.\". Sources: https://www.nielsen-massey.nl/consumer/products-pure-coffee-extract.php, https://nielsenmassey.com/products/pure-coffee-extract/. At 35% ABV the alcohol is ~10kcal/5ml; coffee oils modeled as 10% fat (~0.47g/serving, rounds to the label's 0g) bring it to ~14kcal. The label's 20kcal is not reproducible at 35% ABV with all-zero macros (reaching 17.5kcal would need ~19% fat, ~0.9g/serving showing as 1g), so it appears rounded up."
+  },
+  {
+    "name": "Nielsen-Massey Pure Lemon Extract",
+    "category": "Flavouring",
+    "AlcoholSpec": { "abv": 90, "fat": 11 },
+    "comments": "Ingredients: Cane Alcohol (90%), Lemon Oil, Water. 30kcal, 0g fat per 1 tsp (5ml). Sources: https://www.nielsen-massey.nl/consumer/products-pure-lemon-extract.php, https://nielsenmassey.com/products/pure-lemon-extract/. Lemon oil (d-limonene) is listed before water, so it is a notable fraction; modeled as 11% fat (~0.44g/serving, just under the 0.5g threshold so it rounds to the label's 0g). With 90% ABV alcohol (~24kcal) plus the oil this works out to ~28kcal/5ml (rounds to 30)."
+  },
+  {
+    "name": "Nielsen-Massey Pure Orange Extract",
+    "category": "Flavouring",
+    "AlcoholSpec": { "abv": 90, "fat": 11 },
+    "comments": "Ingredients: Cane Alcohol (90%), Orange Oil, Water. 30kcal, 0g fat per 1 tsp (5ml). Sources: https://www.nielsen-massey.nl/consumer/products-pure-orange-extract.php, https://nielsenmassey.com/products/pure-orange-extract/. Orange oil (d-limonene)is listed before water, so it is a notable fraction; modeled as 11% fat (~0.44g/serving, just under the 0.5g threshold so it rounds to the label's 0g). With 90% ABV alcohol (~24kcal) plus the oil this works out to ~28kcal/5ml (rounds to 30)."
+  },
+  {
+    "name": "Nielsen-Massey Pure Peppermint Extract",
+    "category": "Flavouring",
+    "AlcoholSpec": { "abv": 90, "fat": 11 },
+    "comments": "Ingredients: Cane Alcohol, Peppermint Oil (no water). 30kcal, 0g fat per 1 tsp (5ml). Sources: https://www.nielsen-massey.nl/consumer/products-pure-peppermint-extract.php, https://nielsenmassey.com/products/pure-peppermint-extract-2/. No water in the ingredients implies a high-proof base, so ABV is estimated at 90% (the label does not specify). Peppermint oil modeled as 11% fat (~0.44g/serving, rounds to the label's 0g); with the alcohol this works out to ~28kcal/5ml (rounds to 30)."
   }
 ]

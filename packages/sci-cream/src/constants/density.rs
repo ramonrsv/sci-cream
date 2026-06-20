@@ -109,6 +109,45 @@ pub mod dairy {
     pub const CONCENTRATED_DAIRY_MSNF_THRESHOLD: f64 = 12.0;
 }
 
+/// Densities (g/mL) of oils fats and oils
+///
+/// Flavor oils are each approximated by their principal aroma compound where the oil itself is not
+/// directly tabulated, e.g. "d-limonene" for citrus oil. Used to estimate serving mass of extracts.
+pub mod oils {
+    /// Density (g/mL) of cold-pressed citrus (lemon/orange) oil, approximated by its principal
+    /// component d-limonene, which makes up up to 90% of citrus oil.
+    ///
+    /// (PubChem, "Limonene", 2026)[^63]
+    #[expect(clippy::doc_markdown)] // false positive on 'PubChem'
+    #[doc = include_str!("../../docs/references/index/63.md")]
+    pub const CITRUS: f64 = 0.84;
+
+    /// Density (g/mL) of bitter almond oil, approximated by benzaldehyde, a common component of it
+    ///
+    /// (PubChem, "Benzaldehyde", 2026)[^64]
+    #[expect(clippy::doc_markdown)] // false positive on 'PubChem'
+    #[doc = include_str!("../../docs/references/index/64.md")]
+    pub const BITTER_ALMOND: f64 = 1.04;
+
+    /// Density (g/mL) of peppermint oil;
+    ///
+    /// Average of density 0.900-0.916 (European Pharmacopoeia, "Peppermint oil", 2008)[^65]
+    #[doc = include_str!("../../docs/references/index/65.md")]
+    pub const PEPPERMINT: f64 = 0.91;
+
+    /// Density (g/mL) of cocoa butter, also used to model the lipid in cocoa extract.
+    ///
+    /// Average of density 0.91-0.95 (Ontario Wealth, "Cocoa Butter", 2026)[^66]
+    #[doc = include_str!("../../docs/references/index/66.md")]
+    pub const COCOA_BUTTER: f64 = 0.93;
+
+    /// Density (g/mL) of coffee oil, modeling the lipid in coffee extract.
+    ///
+    /// Average of specific gravity 0.93-0.97 across roasts (Ariga et al., 2018)[^67]
+    #[doc = include_str!("../../docs/references/index/67.md")]
+    pub const COFFEE: f64 = 0.95;
+}
+
 /// Parameters for estimating the density of an aqueous mixture
 #[derive(Copy, Clone, Debug)]
 pub struct MixDensityParams {
