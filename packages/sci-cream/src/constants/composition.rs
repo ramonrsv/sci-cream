@@ -20,6 +20,21 @@ pub const STD_PROTEIN_IN_MSNF: f64 = 0.35;
 #[doc = include_str!("../../docs/references/index/2.md")]
 pub const STD_PROTEIN_IN_WS: f64 = 0.12;
 
+/// Percentage of minerals typical of milk solids non-fat (MSNF)
+///
+/// Calculates as the remainder of 100% - [`STD_LACTOSE_IN_MSNF`] - [`STD_PROTEIN_IN_MSNF`].
+pub const STD_MINERALS_IN_MSNF: f64 = 1.0 - STD_LACTOSE_IN_MSNF - STD_PROTEIN_IN_MSNF;
+
+/// Percentage of minerals typical of whey solids (WS)
+///
+/// Calculates as the remainder of 100% - [`STD_LACTOSE_IN_WS`] - [`STD_PROTEIN_IN_WS`].
+pub const STD_MINERALS_IN_WS: f64 = 1.0 - STD_LACTOSE_IN_WS - STD_PROTEIN_IN_WS;
+
+/// Percentage of minerals typical of casein solids (CS)
+//
+// 10% guess, @todo find a reference for this value
+pub const STD_MINERALS_IN_CASEIN: f64 = 0.1;
+
 /// Proportion of proteins in milk solids that is whey (Clarke, 2004, p. 40)[^4], (Goff & Hartel,
 /// 2025, p. 315)[^20].
 #[doc = include_str!("../../docs/references/index/4.md")]

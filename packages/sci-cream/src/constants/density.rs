@@ -3,7 +3,7 @@
 use crate::{
     error::Result,
     util::{fast_interpolate_pairs, interpolate_pairs},
-    validate::{verify_are_positive, verify_is_100_percent},
+    validate::{verify_are_positive, verify_is_100_percent, verify_is_within_100_percent},
 };
 
 /// Density (g/mL) of pure water at 20°C
@@ -80,6 +80,25 @@ pub mod sugars {
     pub const TREHALOSE: f64 = 1.58;
 }
 
+/// Densities (g/mL) of various milk components, e.g. milk fat, MSNF
+pub mod dairy {
+    /// Density (g/mL) of milk fat (butterfat) at 20°C, i.e. 915 kg/m³
+    ///
+    /// (Goff & Hill & Ferrer, 2026, Chapter 8)[^62]
+    #[doc = include_str!("../../docs/references/index/62.md")]
+    pub const MILK_FAT: f64 = 0.915;
+
+    /// Observed apparent density (g/mL) of milk solids-non-fat (MSNF)
+    ///
+    /// Derived by least-squares over the dairy-density fit set (see
+    /// [`DAIRY_INGREDIENTS`](super::DAIRY_INGREDIENTS)), holding fat at [`MILK_FAT`], sugar at
+    /// [`SUCROSE`](super::sugars::SUCROSE), and water at [`WATER`](super::WATER).
+    ///
+    /// This is a fitted apparent density, not a textbook reference; used only by a volume-additive
+    /// sanity-check test via [`mixture_density`](super::mixture_density).
+    pub const MSNF: f64 = 1.577_997_137_942_653_6;
+}
+
 /// Parameters for estimating the density of an aqueous mixture
 #[derive(Copy, Clone, Debug)]
 pub struct MixDensityParams {
@@ -87,24 +106,21 @@ pub struct MixDensityParams {
     pub ethanol: f64,
     /// Mass (g) of water in the mixture, per 100g of mixture, i.e. 100 - ABW - others
     pub water: f64,
-    /// Mass (g) of sugar in the mixture, per 100g of mixture, modeled as sucrose
-    pub sugar: f64,
+    /// Mass (g) of sugar in the mixture, per 100g of mixture, and its density (g/mL)
+    pub sugar: Option<(f64, f64)>,
     /// Mass (g) of fat in the mixture, per 100g of mixture, and its density (g/mL)
     pub fat: Option<(f64, f64)>,
-    /// Mass (g) of other dissolved solids in the mixture, per 100g of mixture
-    pub other_solids: f64,
+    /// Mass (g) of other dissolved solids per 100g of mixture, and its density (g/mL)
+    pub other_solids: Option<(f64, f64)>,
 }
 
-/// Estimate the density (g/mL) of an aqueous mixture from its component masses and `fat_density`.
+/// Estimate the density (g/mL) of an aqueous mixture from its component masses and densities.
 ///
 /// `ethanol` and `water` are combined at their real (non-additive) [`ethanol_solution_density`];
-/// `sugar` ([`sugars::SUCROSE`]), `fat` (`fat_density`), and `other_solids`
-/// ([`OTHER_DISSOLVED_SOLIDS`]) then add by volume. Masses may be on any consistent basis (e.g.
-/// grams per 100g). The mixture must have an ethanol-water base, i.e. `ethanol + water > 0`.
-///
-/// **Note:** This uses the density of [`sugars::SUCROSE`] for all sugars, so it may not be accurate
-/// for other mono and disaccharides, but it should be close enough in most cases since they all
-/// have similar densities and sucrose sits close to the average between them.
+/// `sugar` (at its own density, commonly [`sugars::SUCROSE`]), `fat` (at its own density, commonly
+/// [`dairy::MILK_FAT`]), and `other_solids` (at its own density, commonly
+/// [`OTHER_DISSOLVED_SOLIDS`], or [`dairy::MSNF`]) then add by volume. Masses are in grams per
+/// 100g. The mixture must have an ethanol-water base, i.e. `ethanol + water > 0`.
 ///
 /// # Errors
 ///
@@ -119,17 +135,19 @@ pub fn mixture_density(mix_params: MixDensityParams) -> Result<f64> {
         other_solids,
     } = mix_params;
 
-    let (fat, fat_density) = fat.unwrap_or((0.0, 1.0));
+    let (sugar, sugar_d) = sugar.unwrap_or((0.0, 1.0));
+    let (fat, fat_d) = fat.unwrap_or((0.0, 1.0));
+    let (other_solids, other_solids_d) = other_solids.unwrap_or((0.0, 1.0));
 
-    verify_are_positive(&[ethanol, water, sugar, fat, fat_density, other_solids])?;
+    verify_are_positive(&[ethanol, water, sugar, sugar_d, fat, fat_d, other_solids, other_solids_d])?;
     verify_is_100_percent(ethanol + water + sugar + fat + other_solids)?;
 
     let eth_sol_mass = ethanol + water;
     let eth_sol_vol = eth_sol_mass / ethanol_solution_density(100.0 * ethanol / eth_sol_mass);
 
-    let sugar_vol = sugar / sugars::SUCROSE;
-    let fat_vol = fat / fat_density;
-    let other_solids_vol = other_solids / OTHER_DISSOLVED_SOLIDS;
+    let sugar_vol = sugar / sugar_d;
+    let fat_vol = fat / fat_d;
+    let other_solids_vol = other_solids / other_solids_d;
 
     let volume = eth_sol_vol + sugar_vol + fat_vol + other_solids_vol;
     let mass = eth_sol_mass + sugar + fat + other_solids;
@@ -137,22 +155,51 @@ pub fn mixture_density(mix_params: MixDensityParams) -> Result<f64> {
     Ok(mass / volume)
 }
 
-/// Convert dairy volume in milliliters to grams based on fat content percentage
+/// Convert dairy volume in milliliters to grams based on fat, msnf, and sucrose content.
 ///
-/// Uses a quadratic polynomial fit over the densities in [`DAIRY_DENSITIES_BY_FAT`].
+/// Calculates the density with [`fresh_dairy_density`] if `msnf` and `sucrose` are both [`None`],
+/// otherwise with [`dairy_density`], which is slightly less accurate for fresh dairy products.
 ///
-/// # Panics
+/// # Errors
 ///
-/// Panics if `fat_content` is negative or greater than 100.
-#[must_use]
-pub fn dairy_milliliters_to_grams(ml: f64, fat_content: f64) -> f64 {
-    let [a, b, c] = DAIRY_FAT_TO_DENSITY_POLY_COEFFS;
-    let density = a * fat_content.powi(2) + b * fat_content + c;
+/// Returns an error if any of the inputs are negative or if their sum exceeds 100.
+pub fn dairy_ml_to_g(ml: f64, fat: f64, msnf: Option<f64>, sucrose: Option<f64>) -> Result<f64> {
+    let msnf = msnf.unwrap_or(0.0);
+    let sucrose = sucrose.unwrap_or(0.0);
 
-    match fat_content {
-        0.0..=100.0 => ml * density,
-        _ => panic!("Invalid fat content {fat_content}"),
-    }
+    verify_are_positive(&[ml, fat, msnf, sucrose])?;
+    verify_is_within_100_percent(fat + msnf + sucrose)?;
+
+    let density = if msnf > 0.0 || sucrose > 0.0 {
+        dairy_density(fat, msnf, sucrose)
+    } else {
+        fresh_dairy_density(fat)
+    };
+
+    Ok(ml * density)
+}
+
+/// Estimate the density (g/mL) of a fresh dairy ingredient from its fat content.
+///
+/// Evaluates the quadratic fit [`FRESH_DAIRY_DENSITY_COEFFS`] (`a·fat^2 + b·fat + c`).
+///
+/// This is a pure evaluation and does not validate its inputs.
+#[must_use]
+pub fn fresh_dairy_density(fat: f64) -> f64 {
+    let [a, b, c] = FRESH_DAIRY_DENSITY_COEFFS;
+    a * fat.powi(2) + b * fat + c
+}
+
+/// Estimate the density (g/mL) of a dairy ingredient from its fat, MSNF, and sucrose content.
+///
+/// Evaluates the linear fit [`DAIRY_DENSITY_COEFFS`] (`c0 + a·fat + b·msnf + d·sucrose`).
+/// Inputs are grams per 100g of ingredient; each should be non-negative and sum to at most 100.
+///
+/// This is a pure evaluation and does not validate its inputs.
+#[must_use]
+pub fn dairy_density(fat: f64, msnf: f64, sucrose: f64) -> f64 {
+    let [c0, a, b, d] = DAIRY_DENSITY_COEFFS;
+    c0 + a * fat + b * msnf + d * sucrose
 }
 
 /// Convert alcohol by weight (ABW, % w/w) to alcohol by volume (ABV, % v/v) at 20°C.
@@ -201,14 +248,33 @@ fn abw_to_f64(abw: &(u32, f64)) -> f64 {
     f64::from(abw.0)
 }
 
-/// Coefficients for a quadratic polynomial line of best fit over [`DAIRY_DENSITIES_BY_FAT`].
+/// Coefficients for a quadratic polynomial line of best fit over [`FRESH_DAIRY_DENSITIES`].
 ///
 /// The table is a bit choppy, particularly at low fat contents, so this helps smooth out the
 /// density estimates for intermediate fat contents. The function is almost linear, with a very
-/// small quadratic term, and is a pretty good fit with a maximum error of about 0.0017 g/mL.
-pub const DAIRY_FAT_TO_DENSITY_POLY_COEFFS: [f64; 3] = [5.167_207_107e-6, -1.303_663_837e-3, 1.036_675_490];
+/// small quadratic term, and is a pretty good fit for the 9-point table covering 0–50% fat.
+///
+/// See [`fresh_dairy_density`] for a function doing the computation with these coefficients.
+///
+/// Maximum error over the fit set is about 0.17%.
+pub const FRESH_DAIRY_DENSITY_COEFFS: [f64; 3] = [5.167_207_107e-6, -1.303_663_837e-3, 1.036_675_490];
 
-/// Densities (g/mL) of various natural dairy ingredients at different fat contents
+/// Coefficients `[c0, fat, msnf, sucrose]` for a linear-density fit over [`DAIRY_INGREDIENTS`]
+///
+/// Fit by least-squares over the 15-row fit set (the [`DAIRY_INGREDIENTS`] rows, with the two
+/// mutually inconsistent entries averaged into one). Inputs are grams per 100g; output is g/mL.
+///
+/// See [`dairy_density`] for a function doing the computation with these coefficients.
+///
+/// Maximum error over the fit set is about 0.65%.
+pub const DAIRY_DENSITY_COEFFS: [f64; 4] = [
+    1.000_121_061_970_323_8,
+    -6.968_449_312_670_108e-4,
+    3.952_891_715_097_246e-3,
+    5.025_926_155_654_383_5e-3,
+];
+
+/// Densities (g/mL) of various fresh dairy ingredients at different fat contents
 ///
 /// The elements are in ascending order of fat content, so this table support [`interpolate_pairs`]
 /// for density lookup by fat content percentage; _not_ [`fast_interpolate_pairs`], no-equal steps.
@@ -218,7 +284,7 @@ pub const DAIRY_FAT_TO_DENSITY_POLY_COEFFS: [f64; 3] = [5.167_207_107e-6, -1.303
 /// 2011) (Charrondiere et al., 2011, p. 3)[^14].
 #[doc = include_str!("../../docs/references/index/14.md")]
 #[doc = include_str!("../../docs/references/index/20.md")]
-pub const DAIRY_DENSITIES_BY_FAT: [(f64, f64); 9] = [
+pub const FRESH_DAIRY_DENSITIES: [(f64, f64); 9] = [
     (0.0, 1.036),  // Skim milk
     (3.0, 1.032),  // Milk 3%
     (4.0, 1.032),  // Milk 4%
@@ -230,9 +296,13 @@ pub const DAIRY_DENSITIES_BY_FAT: [(f64, f64); 9] = [
     (50.0, 0.984), // Cream 50%
 ];
 
-/// Properties of natural and condensed dairy ingredients: [Fat, MSNF, Sucrose, Protein, Density]
+/// Properties of fresh and condensed dairy ingredients: [Fat, MSNF, Sucrose, Protein, Density]
 ///
 /// (Goff & Hartel, 2025, Table 3.2, p. 48)[^20]
+///
+/// The `Evaporated milk, bulk` and `Condensed milk, 10% fat, 26% MSNF` rows are mutually
+/// inconsistent (less MSNF yet higher density), so the dairy-density fits ([`dairy_density`],
+/// [`dairy::MSNF`]) average them into a single row rather than using them directly.
 #[doc = include_str!("../../docs/references/index/20.md")]
 pub const DAIRY_INGREDIENTS: [(f64, f64, f64, f64, f64); 16] = [
     (0.0, 8.60, 0.0, 3.2, 1.036),    // Skim milk
@@ -370,34 +440,35 @@ mod tests {
 
     use super::*;
 
+    use crate::tests::util::relative_diff_percent;
     use crate::util::{
         fast_interpolate_pairs, interpolate_pairs, table_supports_fast_interpolation, table_supports_interpolation,
     };
 
     #[test]
-    fn dairy_densities_by_fat_supports_interpolation() {
-        assert_true!(table_supports_interpolation(&DAIRY_DENSITIES_BY_FAT, |(f, _)| *f));
+    fn fresh_dairy_densities_by_fat_supports_interpolation() {
+        assert_true!(table_supports_interpolation(&FRESH_DAIRY_DENSITIES, |(f, _)| *f));
     }
 
     #[test]
-    fn dairy_density_polynomial_fit_coeffs() {
+    fn fresh_dairy_density_polynomial_fit_coeffs() {
         use polyfit_rs::polyfit_rs::polyfit;
 
-        let xs: Vec<f64> = DAIRY_DENSITIES_BY_FAT.iter().map(|(f, _)| *f).collect();
-        let ys: Vec<f64> = DAIRY_DENSITIES_BY_FAT.iter().map(|(_, d)| *d).collect();
+        let xs: Vec<f64> = FRESH_DAIRY_DENSITIES.iter().map(|(f, _)| *f).collect();
+        let ys: Vec<f64> = FRESH_DAIRY_DENSITIES.iter().map(|(_, d)| *d).collect();
 
         let coeffs = polyfit(&xs, &ys, 2).unwrap();
-        assert_abs_diff_eq!(coeffs[2], DAIRY_FAT_TO_DENSITY_POLY_COEFFS[0], epsilon = 1e-10);
-        assert_abs_diff_eq!(coeffs[1], DAIRY_FAT_TO_DENSITY_POLY_COEFFS[1], epsilon = 1e-10);
-        assert_abs_diff_eq!(coeffs[0], DAIRY_FAT_TO_DENSITY_POLY_COEFFS[2], epsilon = 1e-10);
+        assert_abs_diff_eq!(coeffs[2], FRESH_DAIRY_DENSITY_COEFFS[0], epsilon = 1e-10);
+        assert_abs_diff_eq!(coeffs[1], FRESH_DAIRY_DENSITY_COEFFS[1], epsilon = 1e-10);
+        assert_abs_diff_eq!(coeffs[0], FRESH_DAIRY_DENSITY_COEFFS[2], epsilon = 1e-10);
     }
 
     #[test]
-    fn dairy_density_polynomial_fit_max_error() {
-        let [a, b, c] = DAIRY_FAT_TO_DENSITY_POLY_COEFFS;
+    fn fresh_dairy_density_polynomial_fit_max_error() {
+        let [a, b, c] = FRESH_DAIRY_DENSITY_COEFFS;
 
         // eprintln!("{:>8}  {:>8}  {:>8}  {:>8}", "fat%", "actual", "fit", "error");
-        for (fat, actual) in &DAIRY_DENSITIES_BY_FAT {
+        for (fat, actual) in &FRESH_DAIRY_DENSITIES {
             let fit = a * fat.powi(2) + b * fat + c;
             assert_abs_diff_eq!(*actual, fit, epsilon = 0.0018);
             // eprintln!("{fat:>8.1}  {actual:>8.4}  {fit:>8.4}  {:>+8.4}", actual - fit);
@@ -421,7 +492,7 @@ mod tests {
         ];
 
         for (fat_content, expected_density) in expected_conversions {
-            let grams = super::dairy_milliliters_to_grams(100.0, fat_content);
+            let grams = dairy_ml_to_g(100.0, fat_content, None, None).unwrap();
             let expected_grams = 100.0 * expected_density;
             assert_eq_flt_test!(grams, expected_grams);
         }
@@ -571,9 +642,9 @@ mod tests {
             super::mixture_density(MixDensityParams {
                 ethanol: abw,
                 water,
-                sugar: 0.0,
+                sugar: None,
                 fat: None,
-                other_solids: 0.0,
+                other_solids: None,
             })
             .unwrap(),
             super::ethanol_solution_density(abw)
@@ -584,12 +655,116 @@ mod tests {
             super::mixture_density(MixDensityParams {
                 ethanol: abw,
                 water: water - 10.0,
-                sugar: 10.0,
+                sugar: Some((10.0, sugars::SUCROSE)),
                 fat: None,
-                other_solids: 0.0,
+                other_solids: None,
             })
             .unwrap(),
             super::ethanol_solution_density(abw)
         );
+    }
+
+    /// The 15-row dairy-density fit set: every [`DAIRY_INGREDIENTS`] row except the two mutually
+    /// inconsistent ones (evaporated milk and condensed 10%/26%), plus one row averaging those two.
+    ///
+    /// Their density residuals are equal-and-opposite, so the average is the best single estimate.
+    ///
+    /// Rows are `(fat, msnf, sucrose, density)`.
+    fn dairy_density_fit_set() -> Vec<(f64, f64, f64, f64)> {
+        const EVAP: usize = 9;
+        const COND_10_26: usize = 11;
+
+        let mut rows: Vec<(f64, f64, f64, f64)> = DAIRY_INGREDIENTS
+            .iter()
+            .enumerate()
+            .filter(|(i, _)| *i != EVAP && *i != COND_10_26)
+            .map(|(_, &(fat, msnf, sucrose, _, density))| (fat, msnf, sucrose, density))
+            .collect();
+
+        let (ef, em, es, _, ed) = DAIRY_INGREDIENTS[EVAP];
+        let (cf, cm, cs, _, cd) = DAIRY_INGREDIENTS[COND_10_26];
+        rows.push((f64::midpoint(ef, cf), f64::midpoint(em, cm), f64::midpoint(es, cs), f64::midpoint(ed, cd)));
+        rows
+    }
+
+    #[test]
+    fn dairy_density_linear_fit_coeffs() {
+        use nalgebra::{DMatrix, DVector, SVD};
+
+        let fit = dairy_density_fit_set();
+        let mut a = Vec::with_capacity(fit.len() * 4);
+        let mut y = Vec::with_capacity(fit.len());
+        for (fat, msnf, sucrose, density) in &fit {
+            a.extend_from_slice(&[1.0, *fat, *msnf, *sucrose]);
+            y.push(*density);
+        }
+
+        let matrix = DMatrix::from_row_slice(fit.len(), 4, &a);
+        let rhs = DVector::from_column_slice(&y);
+        let coeffs = SVD::new(matrix, true, true).solve(&rhs, 1e-12).unwrap();
+
+        for (fit_coeff, expected) in coeffs.iter().zip(DAIRY_DENSITY_COEFFS) {
+            assert_abs_diff_eq!(*fit_coeff, expected, epsilon = 1e-9);
+        }
+    }
+
+    #[test]
+    fn dairy_density_msnf_density_fit() {
+        use nalgebra::{DMatrix, DVector, SVD};
+
+        let fit = dairy_density_fit_set();
+        let mut a = Vec::with_capacity(fit.len());
+        let mut y = Vec::with_capacity(fit.len());
+        for (fat, msnf, sucrose, density) in &fit {
+            let water = 100.0 - fat - msnf - sucrose;
+
+            let fat_vol = fat / dairy::MILK_FAT;
+            let sucrose_vol = sucrose / sugars::SUCROSE;
+            let water_vol = water / WATER;
+
+            let msnf_vol = 100.0 / density - fat_vol - sucrose_vol - water_vol;
+            a.push(*msnf);
+            y.push(msnf_vol);
+        }
+
+        let matrix = DMatrix::from_row_slice(fit.len(), 1, &a);
+        let rhs = DVector::from_column_slice(&y);
+        let specific_volume = SVD::new(matrix, true, true).solve(&rhs, 1e-12).unwrap()[0];
+
+        assert_abs_diff_eq!(1.0 / specific_volume, dairy::MSNF, epsilon = 1e-9);
+    }
+
+    #[test]
+    fn dairy_density_linear_max_error() {
+        for (fat, msnf, sucrose, density) in dairy_density_fit_set() {
+            assert_lt!(relative_diff_percent(dairy_density(fat, msnf, sucrose), density), 0.7);
+        }
+    }
+
+    /// Volume-additive dairy density via [`mixture_density`]; test only, see [`dairy_density`].
+    ///
+    /// Milk fat as `fat`, MSNF as `other_solids`, sucrose as `sugar`, all using their respective
+    /// densities from [`dairy::MILK_FAT`], [`dairy::MSNF`], and [`sugars::SUCROSE`].
+    fn dairy_density_volume_additive(fat: f64, msnf: f64, sucrose: f64) -> Result<f64> {
+        super::mixture_density(MixDensityParams {
+            ethanol: 0.0,
+            water: 100.0 - fat - msnf - sucrose,
+            sugar: Some((sucrose, sugars::SUCROSE)),
+            fat: Some((fat, dairy::MILK_FAT)),
+            other_solids: Some((msnf, dairy::MSNF)),
+        })
+    }
+
+    #[test]
+    fn dairy_density_volume_additive_matches_table() {
+        // Physically-referenced densities track the table to ~1.5%, except sweetened condensed
+        // skim (~2.8%), where crystalline sucrose over-predicts density in a 42%-sugar system.
+        // High-fat cream is the next miss (~1.4%; apparent fat density exceeds pure milk fat).
+        for (fat, msnf, sucrose, density) in dairy_density_fit_set() {
+            let predicted = dairy_density_volume_additive(fat, msnf, sucrose).unwrap();
+            let sweetened_skim = sucrose > 40.0 && fat < 1.0;
+            let tolerance = if sweetened_skim { 3.0 } else { 1.5 };
+            assert_lt!(relative_diff_percent(predicted, density), tolerance);
+        }
     }
 }

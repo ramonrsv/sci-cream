@@ -124,3 +124,5 @@ and microscopical attributes of sweetened condensed milk_. Food Science and Tech
 [^60]: PubChem, US National Library of Medicine. _Maltose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/439186>
 
 [^61]: PubChem, US National Library of Medicine. _Trehalose_. Retrieved 2026, June. <https://pubchem.ncbi.nlm.nih.gov/compound/7427>
+
+[^62]: Goff, H. D. & Hill, A. & Ferrer, M. A. _Dairy Science and Technology eBook_. University of Guelph. Retrieved 2026, June. <https://books.lib.uoguelph.ca/dairyscienceandtechnologyebook/front-matter/334/>

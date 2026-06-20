@@ -10,10 +10,11 @@ use crate::{
     constants::{
         self,
         composition::{
-            STD_LACTOSE_IN_MSNF, STD_LACTOSE_IN_WS, STD_MIN_WATER_CONTENT_IN_MILK_POWDER, STD_MSNF_IN_MILK_SERUM,
-            STD_PROTEIN_IN_MSNF, STD_PROTEIN_IN_WS, STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
+            STD_LACTOSE_IN_MSNF, STD_LACTOSE_IN_WS, STD_MIN_WATER_CONTENT_IN_MILK_POWDER, STD_MINERALS_IN_CASEIN,
+            STD_MINERALS_IN_MSNF, STD_MINERALS_IN_WS, STD_MSNF_IN_MILK_SERUM, STD_PROTEIN_IN_MSNF, STD_PROTEIN_IN_WS,
+            STD_SATURATED_FAT_IN_MILK_FAT, STD_TRANS_FAT_IN_MILK_FAT,
         },
-        density::dairy_milliliters_to_grams,
+        density::dairy_ml_to_g,
     },
     error::{Error, Result},
     specs::units::Unit,
@@ -169,7 +170,7 @@ impl ToComposition for DairySimpleSpec {
 pub struct DairyLabelSpec {
     /// Serving size in grams; if given in ml, it is converted to grams based on fat content
     ///
-    /// See [`constants::density::dairy_milliliters_to_grams`].
+    /// See [`constants::density::dairy_ml_to_g`].
     pub serving_size: Unit,
     /// Energy per serving, in kcal; calculated based on macronutrients composition if unspecified
     #[serde(skip_serializing_if = "Option::is_none")]
@@ -272,16 +273,22 @@ impl ToComposition for DairyLabelSpec {
         let other_carbohydrates = carbohydrates - sugars - sucrose;
         let solids_source = solids_source.unwrap_or(SolidsSource::Milk);
 
+        let std_minerals_in_snf = match solids_source {
+            SolidsSource::Milk => STD_MINERALS_IN_MSNF,
+            SolidsSource::Whey => STD_MINERALS_IN_WS,
+            SolidsSource::Casein => STD_MINERALS_IN_CASEIN,
+        };
+
         let (serving_size, total_fat) = match total_fat {
             Unit::Grams(fat_grams) => match serving_size {
                 Unit::Grams(size_grams) => (size_grams, fat_grams),
-                Unit::Milliliters(size_ml) => (dairy_milliliters_to_grams(size_ml, fat_grams), fat_grams),
+                Unit::Milliliters(size_ml) => (dairy_ml_to_g(size_ml, fat_grams, None, None)?, fat_grams),
                 _ => Err(Error::UnsupportedCompositionUnit(serving_size))?,
             },
             Unit::Percent(fat_percent) => match serving_size {
                 Unit::Grams(size_grams) => (size_grams, size_grams * fat_percent / 100.0),
                 Unit::Milliliters(size_ml) => {
-                    let size_grams = dairy_milliliters_to_grams(size_ml, fat_percent);
+                    let size_grams = dairy_ml_to_g(size_ml, fat_percent, None, None)?;
                     (size_grams, size_grams * fat_percent / 100.0)
                 }
                 _ => Err(Error::UnsupportedCompositionUnit(serving_size))?,
@@ -289,19 +296,13 @@ impl ToComposition for DairyLabelSpec {
             _ => Err(Error::UnsupportedCompositionUnit(serving_size))?,
         };
 
-        let saturated_fat = saturated_fat.unwrap_or(STD_SATURATED_FAT_IN_MILK_FAT * total_fat);
-        let trans_fat = trans_fat.unwrap_or(STD_TRANS_FAT_IN_MILK_FAT * total_fat);
-
-        let std_minerals_in_snf = match solids_source {
-            SolidsSource::Milk => 1.0 - STD_LACTOSE_IN_MSNF - STD_PROTEIN_IN_MSNF,
-            SolidsSource::Whey => 1.0 - STD_LACTOSE_IN_WS - STD_PROTEIN_IN_WS,
-            SolidsSource::Casein => 0.1, // 10% guess, @todo find a reference for this value
-        };
-
         let snf = f64::min(
             (dairy_sugars + protein) / (1.0 - std_minerals_in_snf),
             (1.0 - STD_MIN_WATER_CONTENT_IN_MILK_POWDER) * serving_size - total_fat - sucrose - other_carbohydrates,
         );
+
+        let saturated_fat = saturated_fat.unwrap_or(STD_SATURATED_FAT_IN_MILK_FAT * total_fat);
+        let trans_fat = trans_fat.unwrap_or(STD_TRANS_FAT_IN_MILK_FAT * total_fat);
 
         verify_are_positive(&[
             serving_size,
