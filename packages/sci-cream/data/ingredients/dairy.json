@@ -425,19 +425,19 @@
     "name": "Carnation Fat Free Evaporated Milk",
     "category": "Dairy",
     "DairyLabelSpec": {
-      "serving_size": { "grams": 16.125 },
+      "serving_size": { "ml": 15 },
       "energy": 10,
       "total_fat": { "grams": 0 },
       "sugars": 2,
       "protein": 1
     },
-    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/fat-free-skim. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]."
+    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/fat-free-skim"
   },
   {
     "name": "Carnation 2% Evaporated Partly Skimmed Milk",
     "category": "Dairy",
     "DairyLabelSpec": {
-      "serving_size": { "grams": 16.125 },
+      "serving_size": { "ml": 15 },
       "energy": 15,
       "total_fat": { "percent": 2 },
       "saturated_fat": 0.2,
@@ -445,13 +445,13 @@
       "sugars": 1,
       "protein": 1
     },
-    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/2-partly-skimmed. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]."
+    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/2-partly-skimmed"
   },
   {
     "name": "Carnation Evaporated Milk",
     "category": "Dairy",
     "DairyLabelSpec": {
-      "serving_size": { "grams": 16.125 },
+      "serving_size": { "ml": 15 },
       "energy": 20,
       "total_fat": { "grams": 1 },
       "saturated_fat": 0.5,
@@ -459,7 +459,7 @@
       "sugars": 1,
       "protein": 1
     },
-    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/evaporated-milk. Serving size is 15ml at 1.075 g/ml [constants::density::EVAPORATED_MILK]."
+    "comments": "From nutrition facts table: https://www.carnationmilk.ca/en/products/evaporated-milk"
   },
   {
     "name": "USDA Sweetened Condensed Milk",
@@ -479,7 +479,7 @@
     "name": "Eagle Brand Original Sweetened Condensed Milk",
     "category": "Dairy",
     "DairyLabelSpec": {
-      "serving_size": { "grams": 19.5 },
+      "serving_size": { "ml": 15 },
       "energy": 70,
       "total_fat": { "grams": 1.5 },
       "saturated_fat": 1.0,
@@ -487,13 +487,13 @@
       "protein": 1,
       "sucrose": 8.97
     },
-    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/original. Serving size is 15ml at 1.3 g/ml [constants::density::SWEETENED_CONDENSED_MILK]. The label does not specify lactose content, so it is assumed as 46% of total weight (Sweetened condensed milk, 2026)[^117], (Moros, 1985)[^51]."
+    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/original. The label does not specify lactose content, so it is assumed as 46% of total weight (Sweetened condensed milk, 2026)[^117], (Moros, 1985)[^51]."
   },
   {
     "name": "Eagle Brand Low Fat Sweetened Condensed Milk",
     "category": "Dairy",
     "DairyLabelSpec": {
-      "serving_size": { "grams": 19.5 },
+      "serving_size": { "ml": 15 },
       "energy": 70,
       "total_fat": { "grams": 1 },
       "saturated_fat": 0.5,
@@ -501,13 +501,13 @@
       "protein": 2,
       "sucrose": 8.97
     },
-    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/low-fat. Serving size is 15ml at 1.3 g/ml [constants::density::SWEETENED_CONDENSED_MILK]. The label does not specify lactose content, so it is assumed as 46% of total weight (Sweetened condensed milk, 2026)[^117], (Moros, 1985)[^51]."
+    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/low-fat. The label does not specify lactose content, so it is assumed as 46% of total weight (Sweetened condensed milk, 2026)[^117], (Moros, 1985)[^51]."
   },
   {
     "name": "Eagle Brand Dulce de Leche Caramel Flavoured Sauce",
     "category": "Dairy",
     "DairyLabelSpec": {
-      "serving_size": { "grams": 19.5 },
+      "serving_size": { "ml": 15 },
       "energy": 70,
       "total_fat": { "grams": 1.5 },
       "saturated_fat": 0.5,
@@ -516,7 +516,7 @@
       "protein": 2,
       "sucrose": 8.2
     },
-    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/dulce-de-leche. Serving size is 15ml at 1.3 g/ml [constants::density::SWEETENED_CONDENSED_MILK]."
+    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/dulce-de-leche"
   },
   {
     "name": "Medallion Skim Milk Powder",

@@ -1,5 +1,7 @@
 //! Constants and utilities for density and conversions between volume and weight
 
+use approx::AbsDiffEq;
+
 use crate::{
     error::Result,
     util::{fast_interpolate_pairs, interpolate_pairs},
@@ -97,6 +99,14 @@ pub mod dairy {
     /// This is a fitted apparent density, not a textbook reference; used only by a volume-additive
     /// sanity-check test via [`mixture_density`](super::mixture_density).
     pub const MSNF: f64 = 1.577_997_137_942_653_6;
+
+    /// MSNF (g/100g) at or above which dairy is treated as concentrated for density model selection
+    ///
+    /// Fresh milk and cream compute to at most ~10 g/100g of MSNF and concentrated (evaporated or
+    /// condensed) dairy to ~14 or more, so any threshold in that gap routes fresh dairy to
+    /// [`fresh_dairy_density`](super::fresh_dairy_density) and concentrated to
+    /// [`dairy_density`](super::dairy_density), without its exact value affecting a real product.
+    pub const CONCENTRATED_DAIRY_MSNF_THRESHOLD: f64 = 12.0;
 }
 
 /// Parameters for estimating the density of an aqueous mixture
@@ -157,26 +167,32 @@ pub fn mixture_density(mix_params: MixDensityParams) -> Result<f64> {
 
 /// Convert dairy volume in milliliters to grams based on fat, msnf, and sucrose content.
 ///
-/// Calculates the density with [`fresh_dairy_density`] if `msnf` and `sucrose` are both [`None`],
-/// otherwise with [`dairy_density`], which is slightly less accurate for fresh dairy products.
+/// The density is chosen by [`select_dairy_density`]. Inputs are grams per 100g of product.
 ///
 /// # Errors
 ///
 /// Returns an error if any of the inputs are negative or if their sum exceeds 100.
-pub fn dairy_ml_to_g(ml: f64, fat: f64, msnf: Option<f64>, sucrose: Option<f64>) -> Result<f64> {
-    let msnf = msnf.unwrap_or(0.0);
-    let sucrose = sucrose.unwrap_or(0.0);
-
+pub fn dairy_ml_to_g(ml: f64, fat: f64, msnf: f64, sucrose: f64) -> Result<f64> {
     verify_are_positive(&[ml, fat, msnf, sucrose])?;
     verify_is_within_100_percent(fat + msnf + sucrose)?;
 
-    let density = if msnf > 0.0 || sucrose > 0.0 {
+    Ok(ml * select_dairy_density(fat, msnf, sucrose))
+}
+
+/// Estimate the density (g/mL) of a dairy ingredient, picking the model from its composition.
+///
+/// Uses the fat-only [`fresh_dairy_density`] for fresh dairy, which is more accurate there, and the
+/// [`dairy_density`] `(fat, msnf, sucrose)` model for concentrated or sweetened dairy, i.e. when
+/// `sucrose` is present or `msnf` reaches [`dairy::CONCENTRATED_DAIRY_MSNF_THRESHOLD`].
+///
+/// Inputs are grams per 100g. This is a pure evaluation and does not validate its inputs.
+#[must_use]
+pub fn select_dairy_density(fat: f64, msnf: f64, sucrose: f64) -> f64 {
+    if sucrose > 0.0 || msnf >= dairy::CONCENTRATED_DAIRY_MSNF_THRESHOLD {
         dairy_density(fat, msnf, sucrose)
     } else {
         fresh_dairy_density(fat)
-    };
-
-    Ok(ml * density)
+    }
 }
 
 /// Estimate the density (g/mL) of a fresh dairy ingredient from its fat content.
@@ -200,6 +216,50 @@ pub fn fresh_dairy_density(fat: f64) -> f64 {
 pub fn dairy_density(fat: f64, msnf: f64, sucrose: f64) -> f64 {
     let [c0, a, b, d] = DAIRY_DENSITY_COEFFS;
     c0 + a * fat + b * msnf + d * sucrose
+}
+
+/// Iteration cap for the dairy serving-size fixed point; real should converge far sooner.
+const DAIRY_SERVING_SOLVER_ITERS: usize = 50;
+
+/// Convergence tolerance (g) for the dairy serving-size fixed point; far below the precision
+/// of any composition value derived from the serving size, so it does not perturb the results.
+const DAIRY_SERVING_SOLVER_TOLERANCE: f64 = 1e-9;
+
+/// Solve a dairy serving size in grams from a volume in ml via the density fixed point.
+///
+/// The ml -> g density depends on the fat, MSNF, and sucrose fractions, which themselves depend on
+/// the serving size in grams, so this iterates `serving = ml · density(serving)` to convergence
+/// (see [`select_dairy_density`]). `msnf` and `sucrose` are constant masses (g) across the serving
+/// range; `fat_at` returns the fat mass (g) for a candidate serving size.
+///
+/// # Errors
+///
+/// Returns an error if any of the inputs are negative or if their sum exceeds 100.
+pub fn solve_dairy_serving_grams(ml: f64, sucrose: f64, msnf: f64, fat_at: impl Fn(f64) -> f64) -> Result<f64> {
+    verify_are_positive(&[ml, sucrose, msnf, fat_at(ml)])?;
+    verify_is_within_100_percent(fat_at(ml) + msnf + sucrose)?;
+
+    Ok(solve_dairy_serving_grams_iters(ml, sucrose, msnf, fat_at).0)
+}
+
+/// [`solve_dairy_serving_grams`] but also returning the fixed-point iteration count, for testing.
+fn solve_dairy_serving_grams_iters(ml: f64, sucrose: f64, msnf: f64, fat_at: impl Fn(f64) -> f64) -> (f64, usize) {
+    let mut serving_size = ml;
+
+    for iters in 1..=DAIRY_SERVING_SOLVER_ITERS {
+        let density = select_dairy_density(
+            100.0 * fat_at(serving_size) / serving_size,
+            100.0 * msnf / serving_size,
+            100.0 * sucrose / serving_size,
+        );
+        let next = ml * density;
+
+        if next.abs_diff_eq(&serving_size, DAIRY_SERVING_SOLVER_TOLERANCE) {
+            return (next, iters);
+        }
+        serving_size = next;
+    }
+    (serving_size, DAIRY_SERVING_SOLVER_ITERS)
 }
 
 /// Convert alcohol by weight (ABW, % w/w) to alcohol by volume (ABV, % v/v) at 20°C.
@@ -438,11 +498,14 @@ mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
-    use super::*;
-
     use crate::tests::util::relative_diff_percent;
-    use crate::util::{
-        fast_interpolate_pairs, interpolate_pairs, table_supports_fast_interpolation, table_supports_interpolation,
+
+    use super::*;
+    use crate::{
+        constants::composition::STD_MINERALS_IN_MSNF,
+        util::{
+            fast_interpolate_pairs, interpolate_pairs, table_supports_fast_interpolation, table_supports_interpolation,
+        },
     };
 
     #[test]
@@ -492,10 +555,28 @@ mod tests {
         ];
 
         for (fat_content, expected_density) in expected_conversions {
-            let grams = dairy_ml_to_g(100.0, fat_content, None, None).unwrap();
+            let grams = dairy_ml_to_g(100.0, fat_content, 0.0, 0.0).unwrap();
             let expected_grams = 100.0 * expected_density;
             assert_eq_flt_test!(grams, expected_grams);
         }
+    }
+
+    #[test]
+    fn dairy_serving_fixed_point_converges_well_within_cap() {
+        // Sweetened condensed milk (grams fat) is the slowest case: dense (~1.30 g/mL). Eagle
+        // Brand's 15mL serving: 1.5g fat, 8.97g sucrose, MSNF from its 2.03g lactose + 1g protein.
+        let scm_msnf = (2.03 + 1.0) / (1.0 - STD_MINERALS_IN_MSNF);
+        let (grams, iters) = solve_dairy_serving_grams_iters(15.0, 8.97, scm_msnf, |_| 1.5);
+        assert_eq_flt_test!(grams, 19.4338);
+        assert_lt!(iters, DAIRY_SERVING_SOLVER_ITERS);
+        assert_le!(iters, 20);
+
+        // Fresh milk (percentage fat) converges almost immediately: its density barely varies with
+        // serving size. A 250mL whole-milk serving: 3.25% fat, MSNF from 13g lactose + 9g protein.
+        let milk_msnf = (13.0 + 9.0) / (1.0 - STD_MINERALS_IN_MSNF);
+        let (grams, fresh_iters) = solve_dairy_serving_grams_iters(250.0, 0.0, milk_msnf, |size| size * 3.25 / 100.0);
+        assert_eq_flt_test!(grams, 258.1233);
+        assert_le!(fresh_iters, 3);
     }
 
     #[test]
