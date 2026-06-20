@@ -369,6 +369,33 @@
     "comments": "From nutrition facts table: https://www.sealtest.ca/en/products/creams/whipping-cream-35."
   },
   {
+    "name": "Fairlife Fat Free Ultra-Filtered Lactose-Free Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "ml": 240 },
+      "energy": 80,
+      "total_fat": { "grams": 0 },
+      "sugars": 6,
+      "protein": 13,
+      "lactose_free": true
+    },
+    "comments": "From nutrition facts table: https://fairlife.com/ultra-filtered-milk/fat-free-skim-milk/"
+  },
+  {
+    "name": "Fairlife 2% Reduced Fat Ultra-Filtered Lactose-Free Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "ml": 240 },
+      "energy": 120,
+      "total_fat": { "grams": 4.5 },
+      "saturated_fat": 3,
+      "sugars": 6,
+      "protein": 13,
+      "lactose_free": true
+    },
+    "comments": "From nutrition facts table: https://fairlife.com/ultra-filtered-milk/reduced-fat-2-percent-milk/"
+  },
+  {
     "name": "Fairlife Whole Ultra-Filtered Lactose-Free Milk",
     "category": "Dairy",
     "DairyLabelSpec": {

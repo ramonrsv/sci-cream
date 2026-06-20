@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 188  (non-alias: 170, independent: 166)
+"total: 190  (non-alias: 172, independent: 168)
 
             0% Milk
             1% Milk
@@ -53,6 +53,8 @@ exports[`Embedded spec entries 1`] = `
             Egg Yolk
 [alias]     Eggless Ice Cream Stabilizer Blend
             Erythritol
+            Fairlife 2% Reduced Fat Ultra-Filtered Lactose-Free Milk
+            Fairlife Fat Free Ultra-Filtered Lactose-Free Milk
             Fairlife Whole Ultra-Filtered Lactose-Free Milk
             Fancy Molasses
             Fresh Peppermint

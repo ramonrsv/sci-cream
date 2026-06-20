@@ -16,6 +16,7 @@
       in `composition::Stabilizers`, then we may need to differentiate those from stabilizer
       ingredients like gums, gelatin, etc. If they are not included, then that would be inconsistent
       with how `Emulsifiers` is populated, and it would make it harder to calculate `Texture`.
+- [ ] Add more independent egg ingredients, including powder, and add `compare_specs_*` snapshots.
 - [ ] Modify `EggSpec`, `Dairy*Spec`, etc. to populate `Stabilizers` and `Emulsifiers` with
       appropriate sub-components, e.g. lecithin, egg proteins, whey/casein proteins, etc.
 - [ ] Add support for tracking milk casein/whey proteins and egg yolk/white proteins. This may need
