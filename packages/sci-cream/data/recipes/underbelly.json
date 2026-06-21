@@ -90,6 +90,48 @@
       ["Salt", 1.2],
       ["Vanilla Extract", 10]
     ],
-    "comments": "Underbelly's \"Single Origin Cocoa Ice Cream\" recipe, posted 2018-09-25, visited 2026-06-16. Source: https://under-belly.org/ice-cream-flavor-chocolate/. Cocoa powder is taken as 17% fat, in the middle of the stated 15-20% range. The stabilizers are a 4:3:2 blend, total 1.8g, and 2g of 'Soy Lecithin' - this does not match any of Underbelly's listed stabilizer blends, though it does match the 'Light Variation' blend. The resulting composition agrees with the stated 'Analysis'."
+    "comments": "Underbelly's Single Origin Cocoa Ice Cream recipe, posted 2018-09-25, visited 2026-06-16. Source: https://under-belly.org/ice-cream-flavor-chocolate/. Cocoa powder is taken as 17% fat, in the middle of the stated 15-20% range. The stabilizers are a 4:3:2 blend, total 1.8g, and 2g of 'Soy Lecithin' - this does not match any of Underbelly's listed stabilizer blends, though it does match the 'Light Variation' blend. The resulting composition agrees with the stated 'Analysis'."
+  },
+  {
+    "name": "Grand Marnier Ice Cream",
+    "author": "Underbelly",
+    "recipe": [
+      ["Whole Milk", 360],
+      ["Heavy Cream", 360],
+      ["Skimmed Milk Powder", 55],
+      ["Egg Yolk", 36],
+      ["Sucrose", 70],
+      ["Invert Sugar", 5],
+      ["Honey", 7],
+      ["Locust Bean Gum", 1],
+      ["Guar Gum", 0.4],
+      ["Lambda Carrageenan", 0.2],
+      ["Salt", 0.7],
+      ["Grand Marnier", 60]
+    ],
+    "comments": "Underbelly's Grand Marnier Ice Cream recipe, posted 2016-12-16, visited 2026-06-21. Source: https://under-belly.org/booze-flavored-ice-cream/. The recipe specifies 'Chestnut Honey'. The stabilizers are a unique 5:2:1 blend, total 1.6g"
+  },
+  {
+    "name": "Bourbon Smash Ice Cream",
+    "author": "Underbelly",
+    "recipe": [
+      ["Whole Milk", 340],
+      ["Heavy Cream", 360],
+      ["Skimmed Milk Powder", 55],
+      ["Egg Yolk", 36],
+      ["Sucrose", 85],
+      ["Invert Sugar", 12],
+      ["Locust Bean Gum", 0.8],
+      ["Guar Gum", 0.4],
+      ["Lambda Carrageenan", 0.2],
+      ["Salt", 1],
+      ["Lemon Zest", 4],
+      ["Lemon Juice", 24],
+      ["Bourbon Whiskey", 65],
+      ["Angostura Aromatic Bitters", 2],
+      ["Fresh Spearmint", 12],
+      ["Peppermint Essential Oil", 0.1]
+    ],
+    "comments": "Underbelly's Bourbon Smash Ice Cream recipe, posted 2016-12-16, visited 2026-06-21. Source: https://under-belly.org/booze-flavored-ice-cream/. The stabilizers are the 4:2:1 'Underbelly General Purpose Stabilizer Blend', total 1.4g. 'Lemon Zest' and 'Fresh Spearmint' may only partially contribute to the composition, depending on the preparation, e.g. if the mint is infused rather than blended into the mix. 'Bourbon' is listed as 43%, which Sci-Cream's 'Bourbon Whiskey' matches, but other bourbons can range from 40-45% ABV; one can substitute in 'X% ABV Spirit' to match the specific bourbon used. The recipe states \"very fresh mint leaves\" and \"mint essential oil\" without specifying a variety - spearmint is commonly used in cocktails, and peppermint essential oil is most common."
   }
 ]

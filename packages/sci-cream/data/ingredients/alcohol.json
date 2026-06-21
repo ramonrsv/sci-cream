@@ -1,7 +1,9 @@
 [
   { "name": "40% ABV Spirit", "category": "Alcohol", "AlcoholSpec": { "abv": 40 } },
+  { "name": "43% ABV Spirit", "category": "Alcohol", "AlcoholSpec": { "abv": 43 } },
+  { "name": "45% ABV Spirit", "category": "Alcohol", "AlcoholSpec": { "abv": 45 } },
   { "name": "Dark Rum", "category": "Alcohol", "AlcoholSpec": { "abv": 40 } },
-  { "name": "Bourbon Whiskey", "category": "Alcohol", "AlcoholSpec": { "abv": 40 } },
+  { "name": "Bourbon Whiskey", "category": "Alcohol", "AlcoholSpec": { "abv": 43 } },
   { "name": "Gin", "category": "Alcohol", "AlcoholSpec": { "abv": 40 } },
   { "name": "Vodka", "category": "Alcohol", "AlcoholSpec": { "abv": 40 } },
   { "name": "White Rum", "category": "Alcohol", "AlcoholSpec": { "abv": 40 } },
@@ -12,6 +14,7 @@
     "AlcoholSpec": { "abv": 40, "sugars": 21 },
     "comments": "There is no official nutrition facts table, but various unofficial sources agree on a sugar content of between ~20-22%. (https://shop.frankfurt-airport.com/en-US/product/grand-marnier-cordon-rouge-liqueur-40-1l_ce87c22e7fdf2934, https://www.myfooddiary.com/foods/4707492/grand-marnier-cognac-and-orange-liqueur, https://www.recipal.com/ingredients/49490-nutrition-facts-calories-protein-carbs-fat-grand-marnier)"
   },
+  { "alias": "Grand Marnier", "for": "Grand Marnier Cordon Rouge" },
   {
     "name": "Kahlua Coffee Liqueur",
     "category": "Alcohol",

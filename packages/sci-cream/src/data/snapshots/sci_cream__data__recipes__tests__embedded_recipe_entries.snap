@@ -2,10 +2,12 @@
 source: packages/sci-cream/src/data/recipes.rs
 expression: embedded_recipe_entries_report()
 ---
-total: 5
+total: 7
 
 Underbelly: "Double Origin" Chocolate Ice Cream
+Underbelly: Bourbon Smash Ice Cream
 Underbelly: French Variation
+Underbelly: Grand Marnier Ice Cream
 Underbelly: Light Variation
 Underbelly: Single Origin Cocoa Ice Cream
 Underbelly: Standard Base
