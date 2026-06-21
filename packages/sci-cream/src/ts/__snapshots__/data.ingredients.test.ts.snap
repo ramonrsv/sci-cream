@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 199  (non-alias: 181, independent: 175)
+"total: 200  (non-alias: 182, independent: 176)
 
             0% Milk
             1% Milk
@@ -26,7 +26,8 @@ exports[`Embedded spec entries 1`] = `
             90% Dark Chocolate
             95% Dark Chocolate
             Almond
-            Angostura Bitters
+            Angostura Aromatic Bitters
+            Angostura Orange Bitters
             Appleton Estate 8-year Rum
             Baileys Irish Cream
             Bourbon Whiskey

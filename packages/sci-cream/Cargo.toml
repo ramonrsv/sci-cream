@@ -32,7 +32,7 @@ default = ["data", "database"]
 # does not currently support a `--crate-type` flag. See `scripts/set-crate-type.sh`.
 # See: https://github.com/drager/wasm-pack/issues/1297, https://github.com/trunk-rs/trunk
 [lib]
-crate-type = ["rlib"]
+crate-type = ["cdylib"]
 
 [dependencies]
 serde = { version = "1.0.228", features = ["derive"] }

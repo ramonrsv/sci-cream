@@ -108,5 +108,23 @@
     "category": "Flavouring",
     "AlcoholSpec": { "abv": 90, "fat": 11 },
     "comments": "Ingredients: Cane Alcohol, Peppermint Oil (no water). 30kcal, 0g fat per 1 tsp (5ml). Sources: https://www.nielsen-massey.nl/consumer/products-pure-peppermint-extract.php, https://nielsenmassey.com/products/pure-peppermint-extract-2/. No water in the ingredients implies a high-proof base, so ABV is estimated at 90% (the label does not specify). Peppermint oil modeled as 11% fat (~0.44g/serving, rounds to the label's 0g); with the alcohol this works out to ~28kcal/5ml (rounds to 30)."
+  },
+  {
+    "name": "Angostura Aromatic Bitters",
+    "category": "Flavouring",
+    "AlcoholSpec": { "abv": 44.7, "sugars": 3 },
+    "comments": "Ingredients: Water, alcohol, spices, natural aromas, sugar, colorant: Caramel E150a. Source: https://angosturabitters.com/portfolio/aromatic-bitters/. 3% sugars is a guess; it should be very little since it's listed after the spices and aromas."
+  },
+  {
+    "name": "Angostura Orange Bitters",
+    "category": "Flavouring",
+    "AlcoholSpec": { "abv": 28 },
+    "comments": "Ingredients: Water, glycerine, alcohol, natural flavors, beta-carotene (color). Source: https://angosturabitters.com/portfolio/orange-bitters/"
+  },
+  {
+    "name": "Dillon's Orange Bitters",
+    "category": "Flavouring",
+    "AlcoholSpec": { "abv": 50, "sugars": 10 },
+    "comments": "Ingredients: Alcohol, Water, Sugar, Orange peel, Natural flavour, Spices. Source: https://shop.dillons.ca/orange-bitters.html. 10% sugars is a guess, in line with similar products that list 'Sugar' as the 3rd ingredient."
   }
 ]
