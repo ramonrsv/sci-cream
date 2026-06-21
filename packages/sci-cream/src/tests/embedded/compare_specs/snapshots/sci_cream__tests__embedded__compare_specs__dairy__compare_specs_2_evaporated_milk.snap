@@ -1,5 +1,5 @@
 ---
-source: packages/sci-cream/src/specs/dairy.rs
+source: packages/sci-cream/src/tests/embedded/compare_specs/dairy.rs
 expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
 ---
 sources: USDA, Carnation

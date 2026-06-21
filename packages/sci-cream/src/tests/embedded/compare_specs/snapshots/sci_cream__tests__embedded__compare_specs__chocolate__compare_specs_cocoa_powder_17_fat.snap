@@ -1,5 +1,5 @@
 ---
-source: packages/sci-cream/src/specs/chocolate.rs
+source: packages/sci-cream/src/tests/embedded/compare_specs/chocolate.rs
 expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
 ---
 sources: Simple, Ghirardelli

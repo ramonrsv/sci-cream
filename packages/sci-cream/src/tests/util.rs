@@ -11,6 +11,8 @@ use crate::{
 use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
 use crate::tests::asserts::*;
 
+use crate::tests::assets::get_comp_by_name;
+
 /// Asserts that two composition values for a key are equal within a given percentage tolerance.
 pub(crate) fn assert_comp_eq_percent(lhs: &Composition, rhs: &Composition, key: CompKey, tolerance_percent: f64) {
     let lhs = lhs.get(key);
@@ -211,6 +213,12 @@ pub(crate) fn compare_compositions(sources: &[(&str, Composition)], keys: &[Comp
     }
 
     lines.join("\n")
+}
+
+/// Pairs a source label with the named ingredient's embedded composition, for the cross-source
+/// `compare_specs` suites that line up several labelled sources of one conceptual ingredient.
+pub(crate) fn source_str_to_comp(names: (&'static str, &str)) -> (&'static str, Composition) {
+    (names.0, get_comp_by_name(names.1))
 }
 
 #[cfg(test)]
