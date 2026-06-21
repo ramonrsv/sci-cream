@@ -51,10 +51,10 @@ pub(crate) mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     #[expect(unused_imports)]
     use crate::tests::asserts::*;
+
     use crate::tests::assets::*;
 
     use super::*;
-    use crate::database::IngredientDatabase;
 
     pub(crate) static SPEC_ENTRIES: LazyLock<Vec<(&str, SpecEntry)>> = LazyLock::new(|| {
         let ingredients = INGREDIENT_ASSETS_TABLE
@@ -92,14 +92,14 @@ pub(crate) mod tests {
 
     #[test]
     fn resolve_spec_entry_into_ingredient() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
+        let db = &*EMBEDDED_DB;
 
         SPEC_ENTRIES.iter().for_each(|(_, entry)| {
             let expected_ingredient = match entry {
                 SpecEntry::Ingredient(spec) => db.get_ingredient_by_name(&spec.name).unwrap(),
                 SpecEntry::Alias(alias_spec) => db.get_ingredient_by_name(&alias_spec.for_name).unwrap(),
             };
-            let resolved_ingredient = entry.clone().resolve_into_ingredient(&db).unwrap();
+            let resolved_ingredient = entry.clone().resolve_into_ingredient(db).unwrap();
             assert_eq!(resolved_ingredient.name, entry.name());
             assert_eq!(resolved_ingredient.category, expected_ingredient.category);
             assert_eq!(resolved_ingredient.composition, expected_ingredient.composition);

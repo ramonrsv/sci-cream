@@ -474,12 +474,13 @@ mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
+    use crate::tests::assets::EMBEDDED_DB;
+
     use super::*;
     use crate::{
         composition::{CompKey::*, Composition, RatioKey},
         constants::COMPOSITION_EPSILON,
         data::get_all_recipe_entries,
-        database::IngredientDatabase,
         fpd::FpdKey,
         ingredient::Category,
         properties::PropKey::{self, *},
@@ -487,11 +488,10 @@ mod tests {
         validate::{are_equal, is_subset},
     };
 
-    static DB: LazyLock<IngredientDatabase> = LazyLock::new(IngredientDatabase::new_seeded_from_embedded_data);
-
     // Compositions of all embedded ingredients
     static ING_COMPS: LazyLock<Vec<Composition>> = LazyLock::new(|| {
-        DB.get_all_ingredients()
+        EMBEDDED_DB
+            .get_all_ingredients()
             .into_iter()
             .map(|ing| ing.composition)
             .collect()
@@ -499,7 +499,8 @@ mod tests {
 
     // Compositions of all embedded dairy ingredients
     static DAIRY_COMPS: LazyLock<Vec<Composition>> = LazyLock::new(|| {
-        DB.get_ingredients_by_category(Category::Dairy)
+        EMBEDDED_DB
+            .get_ingredients_by_category(Category::Dairy)
             .into_iter()
             .map(|ing| ing.composition)
             .collect()
@@ -510,7 +511,7 @@ mod tests {
         get_all_recipe_entries()
             .into_iter()
             .map(|entry| {
-                Recipe::from_light_recipe(None, &entry.recipe, &DB)
+                Recipe::from_light_recipe(None, &entry.recipe, &EMBEDDED_DB)
                     .unwrap()
                     .calculate_composition()
                     .unwrap()

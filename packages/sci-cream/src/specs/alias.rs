@@ -55,8 +55,9 @@ pub(crate) mod tests {
     #[expect(unused_imports)]
     use crate::tests::asserts::*;
 
+    use crate::tests::assets::EMBEDDED_DB;
+
     use super::*;
-    use crate::database::IngredientDatabase;
 
     pub(crate) static ALIAS_SPECS: LazyLock<Vec<(&str, AliasSpec)>> = LazyLock::new(|| {
         vec![
@@ -92,21 +93,21 @@ pub(crate) mod tests {
 
     #[test]
     fn resolve_alias_spec_composition() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
+        let db = &*EMBEDDED_DB;
 
         ALIAS_SPECS.iter().for_each(|(_, alias_spec)| {
             let expected_comp = db.get_ingredient_by_name(&alias_spec.for_name).unwrap().composition;
-            assert_eq!(alias_spec.resolve_composition(&db).unwrap(), expected_comp);
+            assert_eq!(alias_spec.resolve_composition(db).unwrap(), expected_comp);
         });
     }
 
     #[test]
     fn resolve_alias_spec_into_ingredient() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
+        let db = &*EMBEDDED_DB;
 
         ALIAS_SPECS.iter().for_each(|(_, alias_spec)| {
             let expected_ingredient = db.get_ingredient_by_name(&alias_spec.for_name).unwrap();
-            let resolved_ingredient = alias_spec.clone().resolve_into_ingredient(&db).unwrap();
+            let resolved_ingredient = alias_spec.clone().resolve_into_ingredient(db).unwrap();
             assert_eq!(resolved_ingredient.name, alias_spec.alias);
             assert_eq!(resolved_ingredient.category, expected_ingredient.category);
             assert_eq!(resolved_ingredient.composition, expected_ingredient.composition);

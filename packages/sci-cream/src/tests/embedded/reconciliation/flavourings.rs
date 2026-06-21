@@ -13,7 +13,7 @@
 use super::util::*;
 use crate::composition::CompKey;
 use crate::constants::density::oils;
-use crate::tests::assets::composition;
+use crate::tests::assets::get_comp_by_name;
 
 #[test]
 fn nielsen_massey_extracts_reconcile() {
@@ -35,7 +35,7 @@ fn nielsen_massey_extracts_reconcile() {
     let exp_fat = 0.0;
 
     for (name, oil_density, exp_kcal, exp_sugar) in cases {
-        let comp = composition(name);
+        let comp = get_comp_by_name(name);
         let mass = serving_mass_g(&comp, oil_density, 5.0).unwrap();
 
         let kcal = fda_round_calories(comp.get(CompKey::Energy) * mass / 100.0);
@@ -50,7 +50,7 @@ fn nielsen_massey_extracts_reconcile() {
 
 #[test]
 fn nielsen_massey_vanilla_powder_reconciles() {
-    let comp = composition("Nielsen-Massey Pure Vanilla Powder");
+    let comp = get_comp_by_name("Nielsen-Massey Pure Vanilla Powder");
 
     // A dry powder: reconcile its "5mL" serving as a ~5g, which agrees with the label's 5g total
     // carbohydrate, and 20 kcal per serving - disregard maltodextrin's bulk density.

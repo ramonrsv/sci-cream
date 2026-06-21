@@ -104,9 +104,10 @@ pub fn get_recipe_entry_by_id(name: &str, author: Option<&str>) -> Option<Recipe
 pub(crate) mod tests {
     use std::sync::LazyLock;
 
-    use crate::IngredientDatabase;
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
+
+    use crate::tests::assets::EMBEDDED_DB;
 
     use super::*;
 
@@ -256,7 +257,7 @@ pub(crate) mod tests {
 
     #[test]
     fn all_recipe_ingredients_are_known() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
+        let db = &*EMBEDDED_DB;
 
         for entry in get_all_recipe_entries() {
             for (ingredient, _) in &entry.recipe {

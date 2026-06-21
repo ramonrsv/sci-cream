@@ -236,28 +236,23 @@ impl From<Recipe> for OwnedLightRecipe {
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
-    use std::sync::LazyLock;
-
     use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
     use crate::tests::asserts::*;
 
-    use crate::tests::assets::MAIN_RECIPE_LIGHT;
+    use crate::tests::assets::{EMBEDDED_DB, MAIN_RECIPE_LIGHT};
 
     use super::*;
     use crate::{
         composition::{CompKey, RatioKey},
         constants::COMPOSITION_EPSILON,
-        database::IngredientDatabase,
         fpd::FpdKey,
     };
-
-    static DB: LazyLock<IngredientDatabase> = LazyLock::new(IngredientDatabase::new_seeded_from_embedded_data);
 
     #[test]
     fn recipe_from_light_recipe() {
         let light_recipe = MAIN_RECIPE_LIGHT.clone();
 
-        let recipe = Recipe::from_light_recipe(None, &light_recipe, &DB).unwrap();
+        let recipe = Recipe::from_light_recipe(None, &light_recipe, &EMBEDDED_DB).unwrap();
 
         assert_eq!(recipe.lines.len(), light_recipe.len());
 
@@ -269,7 +264,7 @@ mod tests {
 
     #[test]
     fn recipe_calculate_composition() {
-        let recipe = Recipe::from_const_recipe(None, &[("2% Milk", 50.0), ("Sucrose", 50.0)], &DB).unwrap();
+        let recipe = Recipe::from_const_recipe(None, &[("2% Milk", 50.0), ("Sucrose", 50.0)], &EMBEDDED_DB).unwrap();
 
         let mix_comp = recipe.calculate_composition().unwrap();
 
@@ -290,7 +285,7 @@ mod tests {
 
     #[test]
     fn recipe_calculate_mix_properties_with_hf() {
-        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &DB).unwrap();
+        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
 
         let mix_properties = recipe.calculate_mix_properties().unwrap();
 
@@ -307,7 +302,7 @@ mod tests {
 
     #[test]
     fn floating_point_edge_case_zero_water_near_epsilon() {
-        let recipe = Recipe::from_const_recipe(None, &[("Fructose", 10.0), ("Salt", 0.54)], &DB).unwrap();
+        let recipe = Recipe::from_const_recipe(None, &[("Fructose", 10.0), ("Salt", 0.54)], &EMBEDDED_DB).unwrap();
         let mix_properties = recipe.calculate_mix_properties().unwrap();
 
         assert_abs_diff_eq!(mix_properties.get(CompKey::Water.into()), 0.0, epsilon = COMPOSITION_EPSILON);
@@ -320,7 +315,7 @@ mod tests {
 
     #[test]
     fn recipe_balance_forwards_inputs_to_balance_compositions() {
-        let recipe = Recipe::from_light_recipe(Some("Main Recipe".into()), &MAIN_RECIPE_LIGHT, &DB).unwrap();
+        let recipe = Recipe::from_light_recipe(Some("Main Recipe".into()), &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
 
         let total_amount: f64 = recipe.lines.iter().map(|line| line.amount).sum();
         let compositions: Vec<_> = recipe.lines.iter().map(|line| line.ingredient.composition).collect();
@@ -350,7 +345,7 @@ mod tests {
 
     #[test]
     fn recipe_balance_explicit_total_amount() {
-        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &DB).unwrap();
+        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
 
         let original_total: f64 = recipe.lines.iter().map(|line| line.amount).sum();
         let target_total = 1000.0;
@@ -380,7 +375,7 @@ mod tests {
 
     #[test]
     fn recipe_balance_preserves_none_name() {
-        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &DB).unwrap();
+        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
 
         let balanced = recipe
             .balance(&[(CompKey::MilkFat.into(), 12.0), (CompKey::MSNF.into(), 10.0)], &[], None)
@@ -392,7 +387,7 @@ mod tests {
     #[test]
     fn recipe_into_owned_light_recipe() {
         let const_recipe: &ConstRecipe = &[("Whole Milk", 245.0), ("Sucrose", 50.0), ("Egg Yolk", 18.0)];
-        let recipe = Recipe::from_const_recipe(Some("Test".into()), const_recipe, &DB).unwrap();
+        let recipe = Recipe::from_const_recipe(Some("Test".into()), const_recipe, &EMBEDDED_DB).unwrap();
 
         let light: OwnedLightRecipe = recipe.into();
 

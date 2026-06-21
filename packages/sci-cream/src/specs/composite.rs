@@ -119,6 +119,8 @@ pub(crate) mod tests {
     #[expect(unused_imports)]
     use crate::tests::asserts::*;
 
+    use crate::tests::assets::{EMBEDDED_DB, get_comp_by_name};
+
     use super::*;
     use crate::{
         composition::{CompKey, Composition},
@@ -216,17 +218,19 @@ pub(crate) mod tests {
 
     #[test]
     fn resolve_composite_spec() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
+        let milk = get_comp_by_name("2% Milk");
+        let cream = get_comp_by_name("40% Cream");
 
-        let milk = db.get_ingredient_by_name("2% Milk").unwrap().composition;
-        let cream = db.get_ingredient_by_name("40% Cream").unwrap().composition;
-
-        let composite_comp = ING_SPEC_COMPOSITE_MILK_CREAM_50_50.resolve_composition(&db).unwrap();
+        let composite_comp = ING_SPEC_COMPOSITE_MILK_CREAM_50_50
+            .resolve_composition(&*EMBEDDED_DB)
+            .unwrap();
         let combined_comp = Composition::from_combination(&[(milk, 50.0), (cream, 50.0)]).unwrap();
         assert_eq!(composite_comp, combined_comp);
         assert_eq!(composite_comp.get(CompKey::MilkFat), 21.0);
 
-        let composite_comp = ING_SPEC_COMPOSITE_MILK_CREAM_80_20.resolve_composition(&db).unwrap();
+        let composite_comp = ING_SPEC_COMPOSITE_MILK_CREAM_80_20
+            .resolve_composition(&*EMBEDDED_DB)
+            .unwrap();
         let combined_comp = Composition::from_combination(&[(milk, 80.0), (cream, 20.0)]).unwrap();
         assert_eq!(composite_comp, combined_comp);
         assert_eq!(composite_comp.get(CompKey::MilkFat), 9.6);
@@ -234,37 +238,31 @@ pub(crate) mod tests {
 
     #[test]
     fn resolve_composite_spec_err_when_component_not_found() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
-
         let spec = CompositeSpec {
             components: Basis::ByPercentage(vec![("Nonexistent Ingredient".into(), 100.0)]),
         };
 
-        let err = spec.resolve_composition(&db).unwrap_err();
+        let err = spec.resolve_composition(&*EMBEDDED_DB).unwrap_err();
         assert_eq!(err.to_string(), "Ingredient not found: Nonexistent Ingredient");
     }
 
     #[test]
     fn resolve_composite_spec_err_negative_percentage() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
-
         let spec = CompositeSpec {
             components: Basis::ByPercentage(vec![("2% Milk".into(), -50.0), ("40% Cream".into(), 150.0)]),
         };
 
-        let err = spec.resolve_composition(&db).unwrap_err();
+        let err = spec.resolve_composition(&*EMBEDDED_DB).unwrap_err();
         assert_eq!(err.to_string(), "Composition value is not positive: -50");
     }
 
     #[test]
     fn resolve_composite_spec_err_percentage_not_100() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
-
         let spec = CompositeSpec {
             components: Basis::ByPercentage(vec![("2% Milk".into(), 30.0), ("40% Cream".into(), 50.0)]),
         };
 
-        let err = spec.resolve_composition(&db).unwrap_err();
+        let err = spec.resolve_composition(&*EMBEDDED_DB).unwrap_err();
         assert_eq!(err.to_string(), "Composition does not sum to 100%: 80");
     }
 
@@ -356,14 +354,12 @@ pub(crate) mod tests {
 
     #[test]
     fn resolve_composite_spec_by_parts() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
-
-        let milk = db.get_ingredient_by_name("2% Milk").unwrap().composition;
-        let cream = db.get_ingredient_by_name("40% Cream").unwrap().composition;
+        let milk = get_comp_by_name("2% Milk");
+        let cream = get_comp_by_name("40% Cream");
 
         // parts 1:1 should normalize to the same result as a 50%:50% split
         let parts_comp = ING_SPEC_COMPOSITE_MILK_CREAM_1_1_PARTS
-            .resolve_composition(&db)
+            .resolve_composition(&*EMBEDDED_DB)
             .unwrap();
         let combined_comp = Composition::from_combination(&[(milk, 50.0), (cream, 50.0)]).unwrap();
         assert_eq!(parts_comp, combined_comp);
@@ -371,7 +367,7 @@ pub(crate) mod tests {
 
         // parts 4:1 should normalize to the same result as an 80%:20% split
         let parts_comp = ING_SPEC_COMPOSITE_MILK_CREAM_4_1_PARTS
-            .resolve_composition(&db)
+            .resolve_composition(&*EMBEDDED_DB)
             .unwrap();
         let combined_comp = Composition::from_combination(&[(milk, 80.0), (cream, 20.0)]).unwrap();
         assert_eq!(parts_comp, combined_comp);
@@ -380,39 +376,33 @@ pub(crate) mod tests {
 
     #[test]
     fn resolve_composite_spec_by_parts_does_not_require_sum_to_100() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
-
         // ByParts [2, 1] sums to 3, not 100, but should resolve successfully unlike ByPercentage
         let spec = CompositeSpec {
             components: Basis::ByParts(vec![("2% Milk".into(), 2.0), ("40% Cream".into(), 1.0)]),
         };
-        assert!(spec.resolve_composition(&db).is_ok());
+        assert!(spec.resolve_composition(&*EMBEDDED_DB).is_ok());
 
         let pct_spec = CompositeSpec {
             components: Basis::ByPercentage(vec![("2% Milk".into(), 2.0), ("40% Cream".into(), 1.0)]),
         };
-        assert!(pct_spec.resolve_composition(&db).is_err());
+        assert!(pct_spec.resolve_composition(&*EMBEDDED_DB).is_err());
     }
 
     #[test]
     fn resolve_composite_spec_by_parts_err_negative_weight() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
-
         let spec = CompositeSpec {
             components: Basis::ByParts(vec![("2% Milk".into(), -1.0), ("40% Cream".into(), 2.0)]),
         };
-        let err = spec.resolve_composition(&db).unwrap_err();
+        let err = spec.resolve_composition(&*EMBEDDED_DB).unwrap_err();
         assert_eq!(err.to_string(), "Composition value is not positive: -1");
     }
 
     #[test]
     fn resolve_composite_spec_by_parts_err_component_not_found() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
-
         let spec = CompositeSpec {
             components: Basis::ByParts(vec![("Nonexistent Ingredient".into(), 1.0)]),
         };
-        let err = spec.resolve_composition(&db).unwrap_err();
+        let err = spec.resolve_composition(&*EMBEDDED_DB).unwrap_err();
         assert_eq!(err.to_string(), "Ingredient not found: Nonexistent Ingredient");
     }
 
@@ -446,17 +436,17 @@ pub(crate) mod tests {
 
     #[test]
     fn resolve_composition_composite_spec_underbelly_gp_sb() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
-
         let combo = [
             ("Locust Bean Gum".to_string(), 4.0 / 7.0 * 100.0),
             ("Guar Gum".to_string(), 2.0 / 7.0 * 100.0),
             ("Lambda Carrageenan".to_string(), 1.0 / 7.0 * 100.0),
         ]
-        .map(|(name, weight)| (db.get_ingredient_by_name(&name).unwrap().composition, weight))
+        .map(|(name, weight)| (get_comp_by_name(&name), weight))
         .to_vec();
 
-        let composite_comp = ING_SPEC_COMPOSITE_UNDERBELLY_GP_SB.resolve_composition(&db).unwrap();
+        let composite_comp = ING_SPEC_COMPOSITE_UNDERBELLY_GP_SB
+            .resolve_composition(&*EMBEDDED_DB)
+            .unwrap();
         let combined_comp = Composition::from_combination(&combo).unwrap();
         assert_eq!(composite_comp, combined_comp);
 
@@ -558,9 +548,7 @@ pub(crate) mod tests {
 
     #[test]
     fn resolve_composite_spec_mixed_named_and_inline() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
-
-        let milk = db.get_ingredient_by_name("2% Milk").unwrap().composition;
+        let milk = get_comp_by_name("2% Milk");
         let cream_spec = DairySimpleSpec {
             fat: 40.0,
             msnf: None,
@@ -570,7 +558,9 @@ pub(crate) mod tests {
         };
 
         // ByParts [4, 1] normalizes to an 80%:20% split of the named milk and the inline cream.
-        let resolved = ING_SPEC_COMPOSITE_INLINE_CREAM_BLEND.resolve_composition(&db).unwrap();
+        let resolved = ING_SPEC_COMPOSITE_INLINE_CREAM_BLEND
+            .resolve_composition(&*EMBEDDED_DB)
+            .unwrap();
         let expected =
             Composition::from_combination(&[(milk, 80.0), (cream_spec.to_composition().unwrap(), 20.0)]).unwrap();
         assert_eq!(resolved, expected);
@@ -578,8 +568,6 @@ pub(crate) mod tests {
 
     #[test]
     fn resolve_composite_spec_err_inline_nested_composite() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
-
         // An inline component may not itself be a CompositeSpec (flat only).
         let nested: TaggedSpec = CompositeSpec {
             components: Basis::ByParts(vec![("2% Milk".into(), 1.0)]),
@@ -590,7 +578,7 @@ pub(crate) mod tests {
             components: Basis::ByPercentage(vec![(nested.into(), 100.0)]),
         };
 
-        let err = spec.resolve_composition(&db).unwrap_err();
+        let err = spec.resolve_composition(&*EMBEDDED_DB).unwrap_err();
         assert!(matches!(err, Error::UnsupportedSpec(_)));
     }
 

@@ -20,13 +20,14 @@ pub(crate) static EMBEDDED_DB: LazyLock<IngredientDatabase> =
     LazyLock::new(IngredientDatabase::new_seeded_from_embedded_data);
 
 /// Resolve an embedded ingredient's composition by name, panicking if it is absent.
-pub(crate) fn composition(name: &str) -> Composition {
+pub(crate) fn get_comp_by_name(name: &str) -> Composition {
     EMBEDDED_DB
         .get_ingredient_by_name(name)
         .unwrap_or_else(|e| panic!("missing ingredient '{name}': {e}"))
         .composition
 }
 
+/// Make a [`OwnedLightRecipe`] from a [`ConstRecipe`] (a `&[(&str, f64)]`).
 fn make_light_recipe_from_const(const_recipe: &ConstRecipe) -> OwnedLightRecipe {
     const_recipe
         .iter()
@@ -205,12 +206,12 @@ pub(crate) static REF_B_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyL
 mod tests {
     use super::*;
 
-    use crate::{IngredientDatabase, Recipe, docs::assert_eq_float};
+    use crate::{Recipe, docs::assert_eq_float};
 
     #[test]
     fn main_recipe() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
-        let recipe = Recipe::from_light_recipe(Some("Chocolate Ice Cream".into()), &MAIN_RECIPE_LIGHT, &db).unwrap();
+        let recipe =
+            Recipe::from_light_recipe(Some("Chocolate Ice Cream".into()), &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
         let mix_props = recipe.calculate_mix_properties().unwrap();
 
         assert_eq!(mix_props.total_amount, 611.75);
@@ -222,8 +223,8 @@ mod tests {
 
     #[test]
     fn ref_a_recipe() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
-        let recipe = Recipe::from_light_recipe(Some("Standard Base".into()), &REF_A_RECIPE_LIGHT, &db).unwrap();
+        let recipe =
+            Recipe::from_light_recipe(Some("Standard Base".into()), &REF_A_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
         let mix_props = recipe.calculate_mix_properties().unwrap();
 
         assert_eq!(mix_props.total_amount, 603.34);
@@ -235,8 +236,8 @@ mod tests {
 
     #[test]
     fn ref_b_recipe() {
-        let db = IngredientDatabase::new_seeded_from_embedded_data();
-        let recipe = Recipe::from_light_recipe(Some("Grand Marnier".into()), &REF_B_RECIPE_LIGHT, &db).unwrap();
+        let recipe =
+            Recipe::from_light_recipe(Some("Grand Marnier".into()), &REF_B_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
         let mix_props = recipe.calculate_mix_properties().unwrap();
 
         assert_eq_float!(mix_props.total_amount, 602.2);

@@ -188,13 +188,11 @@ pub(crate) mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
+    use crate::tests::assets::get_comp_by_name;
     use crate::tests::util::{KeyCeiling, assert_compositions_consistent, compare_compositions};
 
     use super::*;
-    use crate::{
-        composition::CompKey, database::IngredientDatabase, error::Error, ingredient::Category,
-        resolution::IngredientGetter, specs::IngredientSpec,
-    };
+    use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
 
     pub(crate) const ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE_STR: &str = r#"{
       "name": "Lindt EXCELLENCE 70% Cacao Dark Chocolate",
@@ -785,12 +783,9 @@ pub(crate) mod tests {
         CompKey::TransFat,
     ];
 
-    /// Embedded database used to compare database specs not mirrored in this test file
-    static EMBEDDED_DB: LazyLock<IngredientDatabase> = LazyLock::new(IngredientDatabase::new_seeded_from_embedded_data);
-
     /// Convert a tuple of source name and ingredient name to a tuple of source name and composition
     fn source_str_to_comp(names: (&'static str, &str)) -> (&'static str, Composition) {
-        (names.0, EMBEDDED_DB.get_ingredient_by_name(names.1).unwrap().composition)
+        (names.0, get_comp_by_name(names.1))
     }
 
     #[test]

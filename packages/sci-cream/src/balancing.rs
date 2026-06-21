@@ -1463,15 +1463,15 @@ pub(crate) mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
-    use crate::tests::assets::*;
-    use crate::tests::util::{KeyCeiling, root_mean_square};
+    use crate::tests::{
+        assets::*,
+        util::{KeyCeiling, root_mean_square},
+    };
 
     use super::*;
     use crate::{
         data::{get_all_recipe_entries, get_recipe_entry_by_id},
-        database::IngredientDatabase,
         recipe::{OwnedLightRecipe, Recipe},
-        resolution::IngredientGetter,
     };
 
     /// A labelled balancing run: a name, the solver to use, and the priority weights to apply. This
@@ -1519,17 +1519,9 @@ pub(crate) mod tests {
     /// [`TESTS_EPSILON`] noise — actual shifts are far larger, so this catches a priority no-op.
     const MIN_PRIORITY_EFFECT_PP: f64 = 6.0;
 
-    /// A shared ingredient database for all tests, seeded with embedded data
-    static DATABASE: LazyLock<IngredientDatabase> = LazyLock::new(IngredientDatabase::new_seeded_from_embedded_data);
-
-    /// Helper function to fetch an ingredient's composition from the shared [`DATABASE`] by name.
-    fn comp_by_name(name: &str) -> Composition {
-        DATABASE.get_ingredient_by_name(name).unwrap().composition
-    }
-
-    /// Helper function to extract compositions from a light recipe, via [`DATABASE`] lookups
+    /// Helper function to extract compositions from a light recipe, via [`EMBEDDED_DB`] lookups
     fn comps_from_light_recipe(light_recipe: &OwnedLightRecipe) -> Vec<Composition> {
-        Recipe::from_light_recipe(None, light_recipe, &DATABASE)
+        Recipe::from_light_recipe(None, light_recipe, &EMBEDDED_DB)
             .unwrap()
             .lines
             .iter()
@@ -1542,9 +1534,9 @@ pub(crate) mod tests {
         get_recipe_entry_by_id(name, author).unwrap().recipe
     }
 
-    /// Helper function to extract compositions from a list of ingredient names, via [`DATABASE`]
+    /// Helper function to extract compositions from a list of ingredient names, via [`EMBEDDED_DB`]
     fn comps_from_names(names: &[&str]) -> Vec<Composition> {
-        names.iter().map(|name| comp_by_name(name)).collect()
+        names.iter().map(|name| get_comp_by_name(name)).collect()
     }
 
     /// Runs a single issue generator and returns what it emits, before any deduplication. Lets a
@@ -1564,7 +1556,7 @@ pub(crate) mod tests {
     /// Helper function to extract target pairs from a light recipe's calculated composition
     fn get_targets_from_light_recipe(light_recipe: &OwnedLightRecipe, keys: &[BalanceKey]) -> Vec<(BalanceKey, f64)> {
         get_targets_from_composition(
-            &Recipe::from_light_recipe(None, light_recipe, &DATABASE)
+            &Recipe::from_light_recipe(None, light_recipe, &EMBEDDED_DB)
                 .unwrap()
                 .calculate_composition()
                 .unwrap(),
@@ -2445,7 +2437,7 @@ pub(crate) mod tests {
 
     #[test]
     fn target_row_coeff_and_rhs_encode_ratio_as_homogeneous_row() {
-        let milk = comp_by_name("3.25% Milk"); // has both Water and TotalPAC
+        let milk = get_comp_by_name("3.25% Milk"); // has both Water and TotalPAC
 
         // Common case: a ratio key with non-zero numerator and denominator yields the homogeneous
         // combination `num - (R/100)*den` — a finite, non-zero coefficient.
@@ -2456,7 +2448,7 @@ pub(crate) mod tests {
         assert_eq!(target_row_rhs(RatioKey::AbsPAC.into(), r), 0.0);
 
         // Degenerate case: a zero denominator (Sucrose has no water) stays finite — no division.
-        let sucrose = comp_by_name("Sucrose");
+        let sucrose = get_comp_by_name("Sucrose");
         let stab_coeff = target_row_coeff(RatioKey::StabilizersPerWater.into(), 0.5, &sucrose);
         assert_true!(stab_coeff.is_finite());
         // Zero stabilizers and zero water → a zero homogeneous coefficient.
