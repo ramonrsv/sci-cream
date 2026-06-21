@@ -126,6 +126,12 @@
     "AlcoholSpec": { "abv": 90, "fat": 11 },
     "comments": "Ingredients: Cane Alcohol, Peppermint Oil (no water). 30kcal, 0g fat per 1 tsp (5ml). Sources: https://www.nielsen-massey.nl/consumer/products-pure-peppermint-extract.php, https://nielsenmassey.com/products/pure-peppermint-extract-2/. No water in the ingredients implies a high-proof base, so ABV is estimated at 90% (the label does not specify). Peppermint oil modeled as 11% fat (~0.44g/serving, rounds to the label's 0g); with the alcohol this works out to ~28kcal/5ml (rounds to 30)."
   },
+  { "alias": "Almond Extract", "for": "Nielsen-Massey Pure Almond Extract" },
+  { "alias": "Chocolate Extract", "for": "Nielsen-Massey Pure Chocolate Extract" },
+  { "alias": "Coffee Extract", "for": "Nielsen-Massey Pure Coffee Extract" },
+  { "alias": "Lemon Extract", "for": "Nielsen-Massey Pure Lemon Extract" },
+  { "alias": "Orange Extract", "for": "Nielsen-Massey Pure Orange Extract" },
+  { "alias": "Peppermint Extract", "for": "Nielsen-Massey Pure Peppermint Extract" },
   {
     "name": "Angostura Aromatic Bitters",
     "category": "Flavouring",
@@ -143,5 +149,18 @@
     "category": "Flavouring",
     "AlcoholSpec": { "abv": 50, "sugars": 10 },
     "comments": "Ingredients: Alcohol, Water, Sugar, Orange peel, Natural flavour, Spices. Source: https://shop.dillons.ca/orange-bitters.html. 10% sugars is a guess, in line with similar products that list 'Sugar' as the 3rd ingredient."
-  }
+  },
+  {
+    "name": "Essential Oil",
+    "category": "Flavouring",
+    "AlcoholSpec": { "abv": 0 },
+    "comments": "This is a generic entry for pure essential oils, which are highly concentrated aromatic extracts derived from plants. They are typically composed of volatile compounds like terpenes, terpenoids, phenols, aldehydes, esters, etc. It's not currently possible to model these complex compositions in this library, but essential oils are used in such minute quantities that their composition is negligible in the formulation."
+  },
+  { "alias": "Peppermint Essential Oil", "for": "Essential Oil" },
+  { "alias": "Spearmint Essential Oil", "for": "Essential Oil" },
+  { "alias": "Lemon Essential Oil", "for": "Essential Oil" },
+  { "alias": "Orange Essential Oil", "for": "Essential Oil" },
+  { "alias": "Lavender Essential Oil", "for": "Essential Oil" },
+  { "alias": "Eucalyptus Essential Oil", "for": "Essential Oil" },
+  { "alias": "Rose Essential Oil", "for": "Essential Oil" }
 ]
