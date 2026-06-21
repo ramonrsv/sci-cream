@@ -1,5 +1,5 @@
 ---
-source: packages/sci-cream/src/balancing.rs
+source: packages/sci-cream/src/balancing/tests.rs
 expression: "report_balance_quality(&comps_from_names(DAIRY_SUGAR_ING),\n&LIGHT_PREMIUM_TARGETS, BOTH_SOLVERS, Some(DAIRY_SUGAR_ING))"
 ---
 targets:

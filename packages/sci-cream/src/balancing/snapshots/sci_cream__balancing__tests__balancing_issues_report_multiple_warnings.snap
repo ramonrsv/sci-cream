@@ -1,5 +1,5 @@
 ---
-source: packages/sci-cream/src/balancing.rs
+source: packages/sci-cream/src/balancing/tests.rs
 expression: "report_balancing_issues(&comps_from_names(DAIRY_SUGAR_ING),\n&[(CompKey::MilkFat.into(), 50.0), (CompKey::Sucrose.into(), 20.0),\n(CompKey::TotalSugars.into(), 15.0), (CompKey::CocoaSolids.into(), 5.0),],\n&[], Some(DAIRY_SUGAR_ING),)"
 ---
 palette:

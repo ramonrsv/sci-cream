@@ -1,5 +1,5 @@
 ---
-source: packages/sci-cream/src/balancing.rs
+source: packages/sci-cream/src/balancing/tests.rs
 expression: "report_balancing_issues(&comps, &targets, &[], None)"
 ---
 targets:

@@ -1,5 +1,5 @@
 ---
-source: packages/sci-cream/src/balancing.rs
+source: packages/sci-cream/src/balancing/tests.rs
 expression: "report_balance_quality(&comps_from_names(SORBET_ING), &SORBET_ABS_PAC_TARGETS,\nNNLS_ONLY, Some(SORBET_ING))"
 ---
 targets:

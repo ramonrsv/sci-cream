@@ -97,6 +97,7 @@
 - [ ] Look into running only some TS-side benchmarks in every CI run; after an initial analysis
       there is no need to constantly track those. Still good to run them on a nightly/weekly sanity.
 - [ ] Look into possible optimizations using the new `FastComposition`, including on the JS side.
+- [ ] Split the coupled `balancing::tests` module, should go into separate `solve` and `validate`.
 
 ## Completed
 

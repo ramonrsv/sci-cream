@@ -1,5 +1,5 @@
 ---
-source: packages/sci-cream/src/balancing.rs
+source: packages/sci-cream/src/balancing/tests.rs
 expression: "report_balance_quality(&comps_from_names(BOOZY_ING), &BOOZY_DISPARATE_TARGETS,\nBOTH_SOLVERS, Some(BOOZY_ING))"
 ---
 targets:
