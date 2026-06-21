@@ -3,9 +3,26 @@
     "name": "Vanilla Extract",
     "category": "Flavouring",
     "AlcoholSpec": { "abv": 35.0 },
-    "comments": "FDA CFR Title 21 - 169.175 Vanilla Extract: \"In vanilla extract the content of ethyl alcohol is not less than 35 percent by volume...\"(https://www.ecfr.gov/current/title-21/section-169.175)."
+    "comments": "FDA CFR Title 21 - 169.175 Vanilla Extract: \"In vanilla extract the content of ethyl alcohol is not less than 35 percent by volume...\"(https://www.ecfr.gov/current/title-21/section-169.175). The lack of sugars is intentional; many similar products don't have 'Sugar' listed in the ingredients."
   },
-
+  {
+    "name": "USDA Vanilla Extract",
+    "category": "Flavouring",
+    "AlcoholSpec": { "abv": 34.4, "sugars": 12.6, "fat": 0.06 },
+    "comments": "USDA FoodData Central - SR Legacy - Vanilla extract (https://fdc.nal.usda.gov/food-details/173471/nutrients)."
+  },
+  {
+    "name": "USDA Imitation Vanilla Extract",
+    "category": "Flavouring",
+    "AlcoholSpec": { "abv": 32.9 },
+    "comments": "USDA FoodData Central - SR Legacy - Vanilla extract, imitation, alcohol (https://fdc.nal.usda.gov/food-details/172235/nutrients). It lists 'Carbohydrate, by difference' as 2.41g, but no 'Total Sugars', which the other vanilla extract entries do list, so I didn't include any sugars here."
+  },
+  {
+    "name": "USDA No-Alcohol Imitation Vanilla Extract",
+    "category": "Flavouring",
+    "FruitSpec": { "water": 85.6, "sugars": { "sucrose": 14.4 } },
+    "comments": "USDA FoodData Central - SR Legacy - Vanilla extract, imitation, no alcohol (https://fdc.nal.usda.gov/food-details/172236/nutrients)."
+  },
   {
     "name": "Lemon Zest",
     "category": "Flavouring",

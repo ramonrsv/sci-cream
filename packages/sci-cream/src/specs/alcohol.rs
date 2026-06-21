@@ -151,7 +151,12 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
+    use crate::{
+        composition::CompKey,
+        error::Error,
+        ingredient::Category,
+        specs::{FruitSpec, IngredientSpec},
+    };
 
     pub(crate) const ING_SPEC_ALCOHOL_40_ABV_SPIRIT_STR: &str = r#"{
       "name": "40% ABV Spirit",
@@ -278,6 +283,31 @@ pub(crate) mod tests {
         assert_eq!(comp.alcohol.to_abv(), comp.get(CompKey::ABV));
         assert_eq!(comp.alcohol.by_weight, comp.get(CompKey::Alcohol));
         assert_eq!(comp.alcohol.to_pac(), comp.get(CompKey::PACalc));
+    }
+
+    #[test]
+    fn zero_abv_alcohol_spec_is_equivalent_to_fruit_spec() {
+        let alcohol_spec = AlcoholSpec {
+            abv: 0.0,
+            sugars: Some(10.0),
+            fat: Some(5.0),
+            solids: None,
+        };
+
+        let fruit_spec = FruitSpec {
+            water: 85.0,
+            energy: None,
+            protein: None,
+            fat: Some(5.0),
+            carbohydrate: None,
+            fiber: None,
+            sugars: Sugars::new().sucrose(10.0),
+        };
+
+        let alcohol_spec_comp = alcohol_spec.to_composition().unwrap();
+        let fruit_spec_comp = fruit_spec.to_composition().unwrap();
+
+        assert_eq!(alcohol_spec_comp, fruit_spec_comp);
     }
 
     #[test]

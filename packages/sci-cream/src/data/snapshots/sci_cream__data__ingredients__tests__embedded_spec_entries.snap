@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 200  (non-alias: 182, independent: 176)
+total: 203  (non-alias: 185, independent: 179)
 
             0% Milk
             1% Milk
@@ -186,8 +186,11 @@ total: 200  (non-alias: 182, independent: 176)
             USDA Fat-Free Evaporated Milk
             USDA Half and Half Cream
             USDA Heavy Cream
+            USDA Imitation Vanilla Extract
             USDA Light Cream
+            USDA No-Alcohol Imitation Vanilla Extract
             USDA Sweetened Condensed Milk
+            USDA Vanilla Extract
             USDA Whole Evaporated Milk
             USDA Whole Milk
 [composite] Underbelly Easy-to-find Stabilizer Blend
