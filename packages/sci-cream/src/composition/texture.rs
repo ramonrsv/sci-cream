@@ -7,6 +7,7 @@ use struct_iterable::Iterable;
 
 use crate::{
     composition::ScaleComponents,
+    composition::field_update::field_update_methods,
     error::Result,
     util::{collect_fields_copied_as, iter_all_abs_diff_eq},
     validate::{Validate, verify_are_positive},
@@ -75,16 +76,9 @@ impl Texture {
         Self::empty()
     }
 
-    /// Field-update method for [`stabilization`](Self::stabilization).
-    #[must_use]
-    pub const fn stabilization(self, stabilization: f64) -> Self {
-        Self { stabilization, ..self }
-    }
-
-    /// Field-update method for [`emulsification`](Self::emulsification).
-    #[must_use]
-    pub const fn emulsification(self, emulsification: f64) -> Self {
-        Self { emulsification, ..self }
+    field_update_methods! {
+        stabilization: f64,
+        emulsification: f64,
     }
 }
 

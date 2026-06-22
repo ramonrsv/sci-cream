@@ -7,6 +7,7 @@ use struct_iterable::Iterable;
 
 use crate::{
     composition::ScaleComponents,
+    composition::field_update::field_update_methods,
     constants,
     error::Result,
     util::{collect_fields_copied_as, iter_all_abs_diff_eq},
@@ -42,22 +43,10 @@ impl Fats {
         Self::empty()
     }
 
-    /// Field-update method for [`total`](Self::total)
-    #[must_use]
-    pub const fn total(self, total: f64) -> Self {
-        Self { total, ..self }
-    }
-
-    /// Field-update method for [`saturated`](Self::saturated)
-    #[must_use]
-    pub const fn saturated(self, saturated: f64) -> Self {
-        Self { saturated, ..self }
-    }
-
-    /// Field-update method for [`trans`](Self::trans)
-    #[must_use]
-    pub const fn trans(self, trans: f64) -> Self {
-        Self { trans, ..self }
+    field_update_methods! {
+        total: f64,
+        saturated: f64,
+        trans: f64,
     }
 
     /// Calculates the total energy contributed by the fats, in kcal per 100g of mix

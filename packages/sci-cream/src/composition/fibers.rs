@@ -7,6 +7,7 @@ use struct_iterable::Iterable;
 
 use crate::{
     composition::ScaleComponents,
+    composition::field_update::field_update_methods,
     constants,
     error::Result,
     util::{collect_fields_copied_as, iter_all_abs_diff_eq, iter_fields_as},
@@ -54,22 +55,10 @@ impl Fibers {
         Self::empty()
     }
 
-    /// Field-update method for [`inulin`](Fibers::inulin)
-    #[must_use]
-    pub const fn inulin(self, inulin: f64) -> Self {
-        Self { inulin, ..self }
-    }
-
-    /// Field-update method for [`oligofructose`](Fibers::oligofructose)
-    #[must_use]
-    pub const fn oligofructose(self, oligofructose: f64) -> Self {
-        Self { oligofructose, ..self }
-    }
-
-    /// Field-update method for [`other`](Fibers::other)
-    #[must_use]
-    pub const fn other(self, other: f64) -> Self {
-        Self { other, ..self }
+    field_update_methods! {
+        inulin: f64,
+        oligofructose: f64,
+        other: f64,
     }
 
     /// Calculates the total fiber content, in grams per 100g of mix, by summing all the fields

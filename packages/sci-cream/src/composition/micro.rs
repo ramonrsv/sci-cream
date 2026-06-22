@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
 use crate::{
+    composition::field_update::field_update_methods,
     composition::{Emulsifiers, ScaleComponents, Stabilizers},
     error::Result,
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
@@ -54,22 +55,10 @@ impl Micro {
         Self::empty()
     }
 
-    /// Field-update method for [`salt`](Self::salt).
-    #[must_use]
-    pub const fn salt(self, salt: f64) -> Self {
-        Self { salt, ..self }
-    }
-
-    /// Field-update method for [`stabilizers`](Self::stabilizers).
-    #[must_use]
-    pub const fn stabilizers(self, stabilizers: Stabilizers) -> Self {
-        Self { stabilizers, ..self }
-    }
-
-    /// Field-update method for [`emulsifiers`](Self::emulsifiers).
-    #[must_use]
-    pub const fn emulsifiers(self, emulsifiers: Emulsifiers) -> Self {
-        Self { emulsifiers, ..self }
+    field_update_methods! {
+        salt: f64,
+        stabilizers: Stabilizers,
+        emulsifiers: Emulsifiers,
     }
 }
 

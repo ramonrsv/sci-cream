@@ -7,6 +7,7 @@ use struct_iterable::Iterable;
 use strum_macros::{EnumCount, EnumIter};
 
 use crate::{
+    composition::field_update::field_update_methods,
     composition::{Alcohol, Micro, PAC, ProteinComponents, RatioKey, Solids, Texture},
     error::Result,
     resolution::IngredientGetter,
@@ -473,46 +474,14 @@ impl Composition {
         Self::empty()
     }
 
-    /// Field-update method for [`energy`](Self::energy)
-    #[must_use]
-    pub const fn energy(self, energy: f64) -> Self {
-        Self { energy, ..self }
-    }
-
-    /// Field-update method for [`solids`](Self::solids)
-    #[must_use]
-    pub const fn solids(self, solids: Solids) -> Self {
-        Self { solids, ..self }
-    }
-
-    /// Field-update method for [`micro`](Self::micro)
-    #[must_use]
-    pub const fn micro(self, micro: Micro) -> Self {
-        Self { micro, ..self }
-    }
-
-    /// Field-update method for [`alcohol`](Self::alcohol)
-    #[must_use]
-    pub const fn alcohol(self, alcohol: Alcohol) -> Self {
-        Self { alcohol, ..self }
-    }
-
-    /// Field-update method for [`pod`](Self::pod)
-    #[must_use]
-    pub const fn pod(self, pod: f64) -> Self {
-        Self { pod, ..self }
-    }
-
-    /// Field-update method for [`pac`](Self::pac)
-    #[must_use]
-    pub const fn pac(self, pac: PAC) -> Self {
-        Self { pac, ..self }
-    }
-
-    /// Field-update method for [`texture`](Self::texture)
-    #[must_use]
-    pub const fn texture(self, texture: Texture) -> Self {
-        Self { texture, ..self }
+    field_update_methods! {
+        energy: f64,
+        solids: Solids,
+        micro: Micro,
+        alcohol: Alcohol,
+        pod: f64,
+        pac: PAC,
+        texture: Texture,
     }
 
     /// Calculates the composition of a mix from a weighted combination of its ingredients

@@ -7,6 +7,7 @@ use struct_iterable::Iterable;
 
 use crate::{
     composition::ScaleComponents,
+    composition::field_update::field_update_methods,
     error::Result,
     util::{collect_fields_copied_as, iter_all_abs_diff_eq},
     validate::{Validate, verify_are_positive},
@@ -47,37 +48,12 @@ impl PAC {
         Self::empty()
     }
 
-    /// Field-update method for [`sugars`](Self::sugars)
-    #[must_use]
-    pub const fn sugars(self, sugars: f64) -> Self {
-        Self { sugars, ..self }
-    }
-
-    /// Field-update method for [`salt`](Self::salt)
-    #[must_use]
-    pub const fn salt(self, salt: f64) -> Self {
-        Self { salt, ..self }
-    }
-
-    /// Field-update method for [`msnf_ws_salts`](Self::msnf_ws_salts)
-    #[must_use]
-    pub const fn msnf_ws_salts(self, msnf_ws_salts: f64) -> Self {
-        Self { msnf_ws_salts, ..self }
-    }
-
-    /// Field-update method for [`alcohol`](Self::alcohol)
-    #[must_use]
-    pub const fn alcohol(self, alcohol: f64) -> Self {
-        Self { alcohol, ..self }
-    }
-
-    /// Field-update method for [`hardness_factor`](Self::hardness_factor)
-    #[must_use]
-    pub const fn hardness_factor(self, hardness_factor: f64) -> Self {
-        Self {
-            hardness_factor,
-            ..self
-        }
+    field_update_methods! {
+        sugars: f64,
+        salt: f64,
+        msnf_ws_salts: f64,
+        alcohol: f64,
+        hardness_factor: f64,
     }
 
     /// Calculates the total PAC contributions from all sources, excluding hardness factor

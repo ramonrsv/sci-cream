@@ -5,6 +5,7 @@ use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    composition::field_update::field_update_methods,
     composition::{ArtificialSweeteners, Polyols, ScaleComponents, Sugars},
     error::Result,
     validate::{Validate, verify_is_within_100_percent},
@@ -46,22 +47,10 @@ impl Sweeteners {
         Self::empty()
     }
 
-    /// Field-update method for [`sugars`](Self::sugars)
-    #[must_use]
-    pub const fn sugars(self, sugars: Sugars) -> Self {
-        Self { sugars, ..self }
-    }
-
-    /// Field-update method for [`polyols`](Self::polyols)
-    #[must_use]
-    pub const fn polyols(self, polyols: Polyols) -> Self {
-        Self { polyols, ..self }
-    }
-
-    /// Field-update method for [`artificial`](Self::artificial)
-    #[must_use]
-    pub const fn artificial(self, artificial: ArtificialSweeteners) -> Self {
-        Self { artificial, ..self }
+    field_update_methods! {
+        sugars: Sugars,
+        polyols: Polyols,
+        artificial: ArtificialSweeteners,
     }
 
     /// Calculates the total sweetener content by weight, by summing all the fields

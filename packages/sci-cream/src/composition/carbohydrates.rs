@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
 use crate::{
+    composition::field_update::field_update_methods,
     composition::{Fibers, Polyols, ScaleComponents, Sugars},
     constants,
     error::{Error, Result},
@@ -46,28 +47,11 @@ impl Carbohydrates {
         Self::empty()
     }
 
-    /// Field-update method for [`fiber`](Carbohydrates::fiber)
-    #[must_use]
-    pub const fn fiber(self, fiber: Fibers) -> Self {
-        Self { fiber, ..self }
-    }
-
-    /// Field-update method for [`sugars`](Carbohydrates::sugars)
-    #[must_use]
-    pub const fn sugars(self, sugars: Sugars) -> Self {
-        Self { sugars, ..self }
-    }
-
-    /// Field-update method for [`polyols`](Carbohydrates::polyols)
-    #[must_use]
-    pub const fn polyols(self, polyols: Polyols) -> Self {
-        Self { polyols, ..self }
-    }
-
-    /// Field-update method for [`others`](Carbohydrates::others)
-    #[must_use]
-    pub const fn others(self, others: f64) -> Self {
-        Self { others, ..self }
+    field_update_methods! {
+        fiber: Fibers,
+        sugars: Sugars,
+        polyols: Polyols,
+        others: f64,
     }
 
     /// Sets `others = total - (fiber + sugars.total() + polyols.total())`

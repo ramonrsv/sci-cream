@@ -85,6 +85,8 @@
 #[allow(clippy::module_inception)]
 pub mod composition;
 
+mod field_update;
+
 pub mod alcohol;
 pub mod artificial_sweeteners;
 pub mod carbohydrates;

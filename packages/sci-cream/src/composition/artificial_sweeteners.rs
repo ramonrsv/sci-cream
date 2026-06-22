@@ -7,6 +7,7 @@ use struct_iterable::Iterable;
 
 use crate::{
     composition::ScaleComponents,
+    composition::field_update::field_update_methods,
     constants,
     error::{Error, Result},
     util::{collect_fields_copied_as, iter_all_abs_diff_eq, iter_fields_as},
@@ -83,46 +84,14 @@ impl ArtificialSweeteners {
         Self::empty()
     }
 
-    /// Field-update method for [`aspartame`](Self::aspartame)
-    #[must_use]
-    pub const fn aspartame(self, aspartame: f64) -> Self {
-        Self { aspartame, ..self }
-    }
-
-    /// Field-update method for [`cyclamate`](Self::cyclamate)
-    #[must_use]
-    pub const fn cyclamate(self, cyclamate: f64) -> Self {
-        Self { cyclamate, ..self }
-    }
-
-    /// Field-update method for [`saccharin`](Self::saccharin)
-    #[must_use]
-    pub const fn saccharin(self, saccharin: f64) -> Self {
-        Self { saccharin, ..self }
-    }
-
-    /// Field-update method for [`sucralose`](Self::sucralose)
-    #[must_use]
-    pub const fn sucralose(self, sucralose: f64) -> Self {
-        Self { sucralose, ..self }
-    }
-
-    /// Field-update method for [`steviosides`](Self::steviosides)
-    #[must_use]
-    pub const fn steviosides(self, steviosides: f64) -> Self {
-        Self { steviosides, ..self }
-    }
-
-    /// Field-update method for [`mogrosides`](Self::mogrosides)
-    #[must_use]
-    pub const fn mogrosides(self, mogrosides: f64) -> Self {
-        Self { mogrosides, ..self }
-    }
-
-    /// Field-update method for [`other`](Self::other)
-    #[must_use]
-    pub const fn other(self, other: f64) -> Self {
-        Self { other, ..self }
+    field_update_methods! {
+        aspartame: f64,
+        cyclamate: f64,
+        saccharin: f64,
+        sucralose: f64,
+        steviosides: f64,
+        mogrosides: f64,
+        other: f64,
     }
 
     /// Calculates the total artificial sweetener content by weight, by summing all the fields

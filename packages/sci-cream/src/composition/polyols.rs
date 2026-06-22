@@ -7,6 +7,7 @@ use struct_iterable::Iterable;
 
 use crate::{
     composition::ScaleComponents,
+    composition::field_update::field_update_methods,
     constants,
     error::{Error, Result},
     util::{collect_fields_copied_as, iter_all_abs_diff_eq, iter_fields_as},
@@ -72,34 +73,12 @@ impl Polyols {
         Self::empty()
     }
 
-    /// Field-update method for [`erythritol`](Polyols::erythritol)
-    #[must_use]
-    pub const fn erythritol(self, erythritol: f64) -> Self {
-        Self { erythritol, ..self }
-    }
-
-    /// Field-update method for [`maltitol`](Polyols::maltitol)
-    #[must_use]
-    pub const fn maltitol(self, maltitol: f64) -> Self {
-        Self { maltitol, ..self }
-    }
-
-    /// Field-update method for [`sorbitol`](Polyols::sorbitol)
-    #[must_use]
-    pub const fn sorbitol(self, sorbitol: f64) -> Self {
-        Self { sorbitol, ..self }
-    }
-
-    /// Field-update method for [`xylitol`](Polyols::xylitol)
-    #[must_use]
-    pub const fn xylitol(self, xylitol: f64) -> Self {
-        Self { xylitol, ..self }
-    }
-
-    /// Field-update method for [`other`](Polyols::other)
-    #[must_use]
-    pub const fn other(self, other: f64) -> Self {
-        Self { other, ..self }
+    field_update_methods! {
+        erythritol: f64,
+        maltitol: f64,
+        sorbitol: f64,
+        xylitol: f64,
+        other: f64,
     }
 
     /// Calculates the total polyol content, in grams per 100g of mix, by summing all the fields

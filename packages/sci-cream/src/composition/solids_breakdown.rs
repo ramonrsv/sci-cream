@@ -5,6 +5,7 @@ use approx::AbsDiffEq;
 use serde::{Deserialize, Serialize};
 
 use crate::{
+    composition::field_update::field_update_methods,
     composition::{ArtificialSweeteners, Carbohydrates, Fats, ProteinComponents, ScaleComponents, SimpleProteins},
     constants,
     error::{Error, Result},
@@ -67,37 +68,12 @@ impl<P: ProteinComponents> SolidsBreakdown<P> {
         Self::empty()
     }
 
-    /// Field-update method for [`fats`](Self::fats)
-    #[must_use]
-    pub const fn fats(self, fats: Fats) -> Self {
-        Self { fats, ..self }
-    }
-
-    /// Field-update method for [`carbohydrates`](Self::carbohydrates)
-    #[must_use]
-    pub const fn carbohydrates(self, carbohydrates: Carbohydrates) -> Self {
-        Self { carbohydrates, ..self }
-    }
-
-    /// Field-update method for [`proteins`](Self::proteins)
-    #[must_use]
-    pub const fn proteins(self, proteins: P) -> Self {
-        Self { proteins, ..self }
-    }
-
-    /// Field-update method for [`artificial_sweeteners`](Self::artificial_sweeteners)
-    #[must_use]
-    pub const fn artificial_sweeteners(self, artificial_sweeteners: ArtificialSweeteners) -> Self {
-        Self {
-            artificial_sweeteners,
-            ..self
-        }
-    }
-
-    /// Field-update method for [`others`](Self::others)
-    #[must_use]
-    pub const fn others(self, others: f64) -> Self {
-        Self { others, ..self }
+    field_update_methods! {
+        fats: Fats,
+        carbohydrates: Carbohydrates,
+        proteins: P,
+        artificial_sweeteners: ArtificialSweeteners,
+        others: f64,
     }
 
     /// Sets `others = total - (fats + carbohydrates + proteins + artificial_sweeteners)`

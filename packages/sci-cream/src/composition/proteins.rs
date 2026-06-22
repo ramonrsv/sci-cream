@@ -12,6 +12,7 @@ use struct_iterable::Iterable;
 
 use crate::{
     composition::ScaleComponents,
+    composition::field_update::field_update_methods,
     error::Result,
     util::{collect_fields_copied_as, iter_all_abs_diff_eq},
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
@@ -66,16 +67,9 @@ impl MilkProteins {
         Self::empty()
     }
 
-    /// Field-update method for [`casein`](Self::casein)
-    #[must_use]
-    pub const fn casein(self, casein: f64) -> Self {
-        Self { casein, ..self }
-    }
-
-    /// Field-update method for [`whey`](Self::whey)
-    #[must_use]
-    pub const fn whey(self, whey: f64) -> Self {
-        Self { whey, ..self }
+    field_update_methods! {
+        casein: f64,
+        whey: f64,
     }
 }
 
@@ -154,16 +148,9 @@ impl EggProteins {
         Self::empty()
     }
 
-    /// Field-update method for [`white`](Self::white)
-    #[must_use]
-    pub const fn white(self, white: f64) -> Self {
-        Self { white, ..self }
-    }
-
-    /// Field-update method for [`yolk`](Self::yolk)
-    #[must_use]
-    pub const fn yolk(self, yolk: f64) -> Self {
-        Self { yolk, ..self }
+    field_update_methods! {
+        white: f64,
+        yolk: f64,
     }
 }
 

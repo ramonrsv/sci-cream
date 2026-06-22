@@ -7,6 +7,7 @@ use struct_iterable::Iterable;
 
 use crate::{
     composition::ScaleComponents,
+    composition::field_update::field_update_methods,
     constants,
     error::{Error, Result},
     util::{collect_fields_copied_as, iter_all_abs_diff_eq, iter_fields_as},
@@ -84,52 +85,15 @@ impl Sugars {
         Self::empty()
     }
 
-    /// Field-update method for [`glucose`](Self::glucose)
-    #[must_use]
-    pub const fn glucose(self, glucose: f64) -> Self {
-        Self { glucose, ..self }
-    }
-
-    /// Field-update method for [`fructose`](Self::fructose)
-    #[must_use]
-    pub const fn fructose(self, fructose: f64) -> Self {
-        Self { fructose, ..self }
-    }
-
-    /// Field-update method for [`galactose`](Self::galactose)
-    #[must_use]
-    pub const fn galactose(self, galactose: f64) -> Self {
-        Self { galactose, ..self }
-    }
-
-    /// Field-update method for [`sucrose`](Self::sucrose)
-    #[must_use]
-    pub const fn sucrose(self, sucrose: f64) -> Self {
-        Self { sucrose, ..self }
-    }
-
-    /// Field-update method for [`lactose`](Self::lactose)
-    #[must_use]
-    pub const fn lactose(self, lactose: f64) -> Self {
-        Self { lactose, ..self }
-    }
-
-    /// Field-update method for [`maltose`](Self::maltose)
-    #[must_use]
-    pub const fn maltose(self, maltose: f64) -> Self {
-        Self { maltose, ..self }
-    }
-
-    /// Field-update method for [`trehalose`](Self::trehalose)
-    #[must_use]
-    pub const fn trehalose(self, trehalose: f64) -> Self {
-        Self { trehalose, ..self }
-    }
-
-    /// Field-update method for [`other`](Self::other)
-    #[must_use]
-    pub const fn other(self, other: f64) -> Self {
-        Self { other, ..self }
+    field_update_methods! {
+        glucose: f64,
+        fructose: f64,
+        galactose: f64,
+        sucrose: f64,
+        lactose: f64,
+        maltose: f64,
+        trehalose: f64,
+        other: f64,
     }
 
     /// Calculates the total sugar content, in grams per 100g of mix, by summing all the fields

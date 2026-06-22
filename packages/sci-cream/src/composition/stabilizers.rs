@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
 use crate::{
+    composition::field_update::field_update_methods,
     composition::{ScaleComponents, Texture},
     constants::stabilization::{
         STABILIZER_STRENGTH_CARBOXYMETHYL_CELLULOSE, STABILIZER_STRENGTH_CARRAGEENANS, STABILIZER_STRENGTH_CORNSTARCH,
@@ -114,85 +115,19 @@ impl Stabilizers {
         Self::empty()
     }
 
-    /// Field-update method for [`cornstarch`](Self::cornstarch).
-    #[must_use]
-    pub const fn cornstarch(self, cornstarch: f64) -> Self {
-        Self { cornstarch, ..self }
-    }
-
-    /// Field-update method for [`tapioca_starch`](Self::tapioca_starch).
-    #[must_use]
-    pub const fn tapioca_starch(self, tapioca_starch: f64) -> Self {
-        Self { tapioca_starch, ..self }
-    }
-
-    /// Field-update method for [`pectin`](Self::pectin).
-    #[must_use]
-    pub const fn pectin(self, pectin: f64) -> Self {
-        Self { pectin, ..self }
-    }
-
-    /// Field-update method for [`gelatin`](Self::gelatin).
-    #[must_use]
-    pub const fn gelatin(self, gelatin: f64) -> Self {
-        Self { gelatin, ..self }
-    }
-
-    /// Field-update method for [`locust_bean_gum`](Self::locust_bean_gum).
-    #[must_use]
-    pub const fn locust_bean_gum(self, locust_bean_gum: f64) -> Self {
-        Self {
-            locust_bean_gum,
-            ..self
-        }
-    }
-
-    /// Field-update method for [`guar_gum`](Self::guar_gum).
-    #[must_use]
-    pub const fn guar_gum(self, guar_gum: f64) -> Self {
-        Self { guar_gum, ..self }
-    }
-
-    /// Field-update method for [`carrageenans`](Self::carrageenans).
-    #[must_use]
-    pub const fn carrageenans(self, carrageenans: f64) -> Self {
-        Self { carrageenans, ..self }
-    }
-
-    /// Field-update method for [`carboxymethyl_cellulose`](Self::carboxymethyl_cellulose).
-    #[must_use]
-    pub const fn carboxymethyl_cellulose(self, carboxymethyl_cellulose: f64) -> Self {
-        Self {
-            carboxymethyl_cellulose,
-            ..self
-        }
-    }
-
-    /// Field-update method for [`xanthan_gum`](Self::xanthan_gum).
-    #[must_use]
-    pub const fn xanthan_gum(self, xanthan_gum: f64) -> Self {
-        Self { xanthan_gum, ..self }
-    }
-
-    /// Field-update method for [`sodium_alginate`](Self::sodium_alginate).
-    #[must_use]
-    pub const fn sodium_alginate(self, sodium_alginate: f64) -> Self {
-        Self {
-            sodium_alginate,
-            ..self
-        }
-    }
-
-    /// Field-update method for [`tara_gum`](Self::tara_gum).
-    #[must_use]
-    pub const fn tara_gum(self, tara_gum: f64) -> Self {
-        Self { tara_gum, ..self }
-    }
-
-    /// Field-update method for [`other`](Self::other).
-    #[must_use]
-    pub const fn other(self, other: f64) -> Self {
-        Self { other, ..self }
+    field_update_methods! {
+        cornstarch: f64,
+        tapioca_starch: f64,
+        pectin: f64,
+        gelatin: f64,
+        locust_bean_gum: f64,
+        guar_gum: f64,
+        carrageenans: f64,
+        carboxymethyl_cellulose: f64,
+        xanthan_gum: f64,
+        sodium_alginate: f64,
+        tara_gum: f64,
+        other: f64,
     }
 
     /// Calculates the total stabilizer content, in grams per 100g of mix, by summing all the fields

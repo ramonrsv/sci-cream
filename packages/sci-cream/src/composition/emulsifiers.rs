@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
 use crate::{
+    composition::field_update::field_update_methods,
     composition::{ScaleComponents, Texture},
     constants::emulsification::{
         EMULSIFIER_STRENGTH_DISTILLED_MONOGLYCERIDES, EMULSIFIER_STRENGTH_GUM_ARABIC, EMULSIFIER_STRENGTH_LECITHIN,
@@ -85,46 +86,13 @@ impl Emulsifiers {
         Self::empty()
     }
 
-    /// Field-update method for [`lecithin`](Self::lecithin).
-    #[must_use]
-    pub const fn lecithin(self, lecithin: f64) -> Self {
-        Self { lecithin, ..self }
-    }
-
-    /// Field-update method for [`gum_arabic`](Self::gum_arabic).
-    #[must_use]
-    pub const fn gum_arabic(self, gum_arabic: f64) -> Self {
-        Self { gum_arabic, ..self }
-    }
-
-    /// Field-update method for [`mono_and_diglycerides`](Self::mono_and_diglycerides).
-    #[must_use]
-    pub const fn mono_and_diglycerides(self, mono_and_diglycerides: f64) -> Self {
-        Self {
-            mono_and_diglycerides,
-            ..self
-        }
-    }
-
-    /// Field-update method for [`distilled_monoglycerides`](Self::distilled_monoglycerides).
-    #[must_use]
-    pub const fn distilled_monoglycerides(self, distilled_monoglycerides: f64) -> Self {
-        Self {
-            distilled_monoglycerides,
-            ..self
-        }
-    }
-
-    /// Field-update method for [`polysorbate_80`](Self::polysorbate_80).
-    #[must_use]
-    pub const fn polysorbate_80(self, polysorbate_80: f64) -> Self {
-        Self { polysorbate_80, ..self }
-    }
-
-    /// Field-update method for [`other`](Self::other).
-    #[must_use]
-    pub const fn other(self, other: f64) -> Self {
-        Self { other, ..self }
+    field_update_methods! {
+        lecithin: f64,
+        gum_arabic: f64,
+        mono_and_diglycerides: f64,
+        distilled_monoglycerides: f64,
+        polysorbate_80: f64,
+        other: f64,
     }
 
     /// Calculates the total emulsifier content, in grams per 100g of mix, by summing all the fields

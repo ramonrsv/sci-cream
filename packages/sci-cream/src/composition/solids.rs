@@ -6,6 +6,7 @@ use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
 use crate::{
+    composition::field_update::field_update_methods,
     composition::{EggProteins, MilkProteins, ScaleComponents, SimpleProteins, SolidsBreakdown},
     error::Result,
     validate::{Validate, verify_is_within_100_percent},
@@ -77,34 +78,12 @@ impl Solids {
         Self::empty()
     }
 
-    /// Field-update method for [`milk`](Self::milk)
-    #[must_use]
-    pub const fn milk(self, milk: MilkSolids) -> Self {
-        Self { milk, ..self }
-    }
-
-    /// Field-update method for [`egg`](Self::egg)
-    #[must_use]
-    pub const fn egg(self, egg: EggSolids) -> Self {
-        Self { egg, ..self }
-    }
-
-    /// Field-update method for [`cocoa`](Self::cocoa)
-    #[must_use]
-    pub const fn cocoa(self, cocoa: SimpleSolids) -> Self {
-        Self { cocoa, ..self }
-    }
-
-    /// Field-update method for [`nut`](Self::nut)
-    #[must_use]
-    pub const fn nut(self, nut: SimpleSolids) -> Self {
-        Self { nut, ..self }
-    }
-
-    /// Field-update method for [`other`](Self::other)
-    #[must_use]
-    pub const fn other(self, other: SimpleSolids) -> Self {
-        Self { other, ..self }
+    field_update_methods! {
+        milk: MilkSolids,
+        egg: EggSolids,
+        cocoa: SimpleSolids,
+        nut: SimpleSolids,
+        other: SimpleSolids,
     }
 
     /// Calculates the total solids content of the mix, independent of ingredient category
