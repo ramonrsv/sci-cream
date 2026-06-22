@@ -278,3 +278,43 @@ jobs:
           fail-on-alert: true
           comment-on-alert: true
           alert-comment-cc-users: "@ramonrsv"
+
+  web_vitals_benchmarks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    services:
+      postgres:
+        image: postgres:16
+        env: *postgres-env
+        options: *postgres-options
+        ports:
+          - 5438:5432
+    env:
+      POSTGRES_URL: postgres://postgres:password@localhost:5438/sci_cream
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-rust
+        with:
+          cargo-installs: wasm-pack
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/sci-cream-package
+      - uses: ./.github/actions/build-and-seed-database
+      - uses: ./.github/actions/setup-playwright
+
+      - name: Run app web vitals benchmarks
+        run: PORT=3003 pnpm bench:web-vitals
+
+      - if: vars.ACT != 'true'
+        name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1.22.1
+        with:
+          name: "App Web Vitals"
+          tool: "customSmallerIsBetter"
+          output-file-path: packages/app/bench-results/bench_output_web_vitals.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          # Web vitals are noisier than the deterministic benches, so this job is track-only
+          fail-on-alert: false
+          comment-on-alert: true
+          alert-comment-cc-users: "@ramonrsv"

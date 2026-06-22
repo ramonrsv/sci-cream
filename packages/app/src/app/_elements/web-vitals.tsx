@@ -3,6 +3,8 @@
 import { useReportWebVitals } from "next/web-vitals";
 import { useEffect } from "react";
 
+import { HYDRATION_MARK } from "@/app/_elements/web-vitals-mark";
+
 /** Callback signature accepted by `useReportWebVitals` */
 type ReportWebVitalsCallback = Parameters<typeof useReportWebVitals>[0];
 /** A single Web Vitals metric report produced by Next.js */
@@ -34,6 +36,9 @@ export function WebVitals() {
     if (typeof window !== "undefined" && !window.__webVitals) {
       window.__webVitals = {};
     }
+
+    // This root effect runs just after the initial client commit — an approximate hydration end.
+    performance.mark?.(HYDRATION_MARK);
   }, []);
 
   return null;

@@ -53,6 +53,25 @@ export function formatByteSizeBenchmarkResultForUpload(result: BenchmarkResult, 
   };
 }
 
+/**
+ * Format a web-vital benchmark result for upload, tagging it with the metric's unit
+ *
+ * Unlike the time/byte formatters, web vitals span units (timings in "ms", CLS a unitless "score"),
+ * so the caller passes the `unit` per metric. `decimals` controls value/range precision.
+ */
+export function formatWebVitalResultForUpload(
+  result: BenchmarkResult,
+  unit: string,
+  decimals: number = 2,
+) {
+  return {
+    name: result.name,
+    unit,
+    value: result.avg.toFixed(decimals),
+    ...(result.stdDev !== undefined ? { range: result.stdDev.toFixed(decimals) } : {}),
+  };
+}
+
 /** Write an array of benchmark results to a JSON file in the `bench-results` directory */
 export function writeBenchmarkResultsToFile(results: BenchmarkResultForUpload[], filename: string) {
   const outputDir = path.join(process.cwd(), "bench-results");
