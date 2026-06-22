@@ -36,7 +36,7 @@
 //! let lactose = msnf * STD_LACTOSE_IN_MSNF;
 //! let proteins = msnf * STD_PROTEIN_IN_MSNF;
 //!
-//! let milk_solids = SolidsBreakdown::new()
+//! let milk_solids = MilkSolids::new()
 //!     .fats(
 //!         Fats::new()
 //!             .total(2.0)
@@ -44,7 +44,11 @@
 //!             .trans(2.0 * STD_TRANS_FAT_IN_MILK_FAT),
 //!     )
 //!     .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(lactose)))
-//!     .proteins(proteins)
+//!     .proteins(
+//!         MilkProteins::new()
+//!             .casein(proteins * STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN)
+//!             .whey(proteins * STD_WHEY_PROTEIN_IN_MSNF_PROTEIN),
+//!     )
 //!     .others(msnf - lactose - proteins);
 //!
 //! let pod = milk_solids.carbohydrates.to_pod()?;
@@ -92,6 +96,7 @@ pub mod hierarchy;
 pub mod micro;
 pub mod pac;
 pub mod polyols;
+pub mod proteins;
 pub mod ratio;
 pub mod solids;
 pub mod solids_breakdown;
@@ -112,6 +117,7 @@ pub use hierarchy::*;
 pub use micro::*;
 pub use pac::*;
 pub use polyols::*;
+pub use proteins::*;
 pub use ratio::*;
 pub use solids::*;
 pub use solids_breakdown::*;

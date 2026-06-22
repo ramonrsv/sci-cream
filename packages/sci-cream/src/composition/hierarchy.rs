@@ -122,7 +122,13 @@ pub(crate) mod subtrees {
             MilkSolids,
             vec![
                 N::lf(MilkFat),
-                N::br(MSNF, vec![N::lf(MilkSugars), N::br(MilkSNFS, leaves(&[MilkProteins]))]),
+                N::br(
+                    MSNF,
+                    vec![
+                        N::lf(MilkSugars),
+                        N::br(MilkSNFS, vec![N::br(MilkProteins, leaves(&[Casein, Whey]))]),
+                    ],
+                ),
             ],
         )
     }
@@ -139,7 +145,13 @@ pub(crate) mod subtrees {
 
     // --- Eggs ---------------------------------
     pub(crate) fn egg_solids() -> N<CompKey> {
-        N::br(EggSolids, vec![N::lf(EggFat), N::br(EggSNF, vec![N::lf(EggProteins)])])
+        N::br(
+            EggSolids,
+            vec![
+                N::lf(EggFat),
+                N::br(EggSNF, vec![N::br(EggProteins, leaves(&[WhiteProteins, YolkProteins]))]),
+            ],
+        )
     }
 
     // === Macronutrients =======================
@@ -428,9 +440,11 @@ impl CompKey {
                 | Self::TotalEmulsifiers
                 | Self::MilkSolids
                 | Self::MSNF
+                | Self::MilkProteins
                 | Self::CacaoSolids
                 | Self::NutSolids
                 | Self::EggSolids
+                | Self::EggProteins
         )
     }
 }
@@ -582,6 +596,12 @@ mod tests {
 
         // MilkProteins is a part of both MilkSNFS (source) and TotalProteins (macronutrient).
         assert_eq!(MilkProteins.parents(), &[MilkSNFS, TotalProteins]);
+
+        // The per-source protein subcomponents nest only under their source's protein roll-up.
+        assert_eq!(MilkProteins.children(), &[Casein, Whey]);
+        assert_eq!(EggProteins.children(), &[WhiteProteins, YolkProteins]);
+        assert_eq!(Casein.parents(), &[MilkProteins]);
+        assert_eq!(YolkProteins.parents(), &[EggProteins]);
     }
 
     /// Milk's non-fat solids split exactly (`MSNF = MilkSugars + MilkSNFS`, checked across every
@@ -599,6 +619,15 @@ mod tests {
             assert_abs_diff_eq!(
                 milk.get(MSNF),
                 milk.get(MilkSugars) + milk.get(MilkSNFS),
+                epsilon = COMPOSITION_EPSILON
+            );
+        }
+
+        // Milk protein splits exactly into casein and whey for every dairy ingredient.
+        for milk in &*DAIRY_COMPS {
+            assert_abs_diff_eq!(
+                milk.get(MilkProteins),
+                milk.get(Casein) + milk.get(Whey),
                 epsilon = COMPOSITION_EPSILON
             );
         }

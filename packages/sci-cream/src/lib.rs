@@ -200,13 +200,13 @@ from the [`constants`] module, e.g. [`STD_MSNF_IN_MILK_SERUM`], [`STD_LACTOSE_IN
 ```
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
 # use sci_cream::docs::assert_eq_float;
-use sci_cream::{CompKey::*, composition::*, constants::{composition::*, pac}};
+use sci_cream::{CompKey, composition::*, constants::{composition::*, pac}};
 
 let msnf = (100.0 - 2.0) * STD_MSNF_IN_MILK_SERUM;
 let lactose = msnf * STD_LACTOSE_IN_MSNF;
 let proteins = msnf * STD_PROTEIN_IN_MSNF;
 
-let milk_solids = SolidsBreakdown::new()
+let milk_solids = MilkSolids::new()
     .fats(
         Fats::new()
             .total(2.0)
@@ -214,7 +214,11 @@ let milk_solids = SolidsBreakdown::new()
             .trans(2.0 * STD_TRANS_FAT_IN_MILK_FAT),
     )
     .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(lactose)))
-    .proteins(proteins)
+    .proteins(
+        MilkProteins::new()
+            .casein(proteins * STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN)
+            .whey(proteins * STD_WHEY_PROTEIN_IN_MSNF_PROTEIN),
+    )
     .others(msnf - lactose - proteins);
 
 let pod = milk_solids.carbohydrates.to_pod()?;
@@ -229,11 +233,11 @@ let comp = Composition::new()
     .pod(pod)
     .pac(pac);
 
-assert_eq_float!(comp.get(Energy), 49.576);
-assert_eq_float!(comp.get(MilkFat), 2.0);
-assert_eq_float!(comp.get(Lactose), 4.807);
-assert_eq_float!(comp.get(MSNF), 8.82);
-assert_eq_float!(comp.get(MilkProteins), 3.087);
+assert_eq_float!(comp.get(CompKey::Energy), 49.576);
+assert_eq_float!(comp.get(CompKey::MilkFat), 2.0);
+assert_eq_float!(comp.get(CompKey::Lactose), 4.807);
+assert_eq_float!(comp.get(CompKey::MSNF), 8.82);
+assert_eq_float!(comp.get(CompKey::MilkProteins), 3.087);
 // ...
 # Ok(()) }
 ```

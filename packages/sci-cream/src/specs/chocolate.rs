@@ -3,7 +3,9 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Carbohydrates, Composition, Fats, Fibers, PAC, Solids, SolidsBreakdown, Sugars, ToComposition},
+    composition::{
+        Carbohydrates, Composition, Fats, Fibers, PAC, SimpleProteins, SimpleSolids, Solids, Sugars, ToComposition,
+    },
     constants::{self, composition::cacao},
     error::Result,
     validate::{Validate, verify_are_positive, verify_is_100_percent, verify_is_subset},
@@ -148,13 +150,13 @@ impl ToComposition for ChocolateSpec {
         let cocoa_snf = cacao_solids - cocoa_butter;
         let sugars = Sugars::new().sucrose(sugars);
 
-        let cocoa_solids = SolidsBreakdown::new()
+        let cocoa_solids = SimpleSolids::new()
             .fats(
                 Fats::new()
                     .total(cocoa_butter)
                     .saturated(cocoa_butter * cacao::STD_SATURATED_FAT_IN_COCOA_BUTTER),
             )
-            .proteins(cocoa_snf * cacao::STD_PROTEIN_IN_COCOA_SOLIDS)
+            .proteins(SimpleProteins::from_total(cocoa_snf * cacao::STD_PROTEIN_IN_COCOA_SOLIDS))
             .carbohydrates(
                 Carbohydrates::new()
                     .fiber(Fibers::new().other(cocoa_snf * cacao::STD_FIBER_IN_COCOA_SOLIDS))
@@ -162,7 +164,7 @@ impl ToComposition for ChocolateSpec {
             )
             .others(cocoa_snf * cacao::STD_ASH_IN_COCOA_SOLIDS);
 
-        let other_solids = SolidsBreakdown::new()
+        let other_solids = SimpleSolids::new()
             .carbohydrates(Carbohydrates::new().sugars(sugars))
             .others(other_solids);
 
@@ -189,7 +191,12 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
+    use crate::{
+        composition::{CompKey, SolidsBreakdown},
+        error::Error,
+        ingredient::Category,
+        specs::IngredientSpec,
+    };
 
     pub(crate) const ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE_STR: &str = r#"{
       "name": "Lindt EXCELLENCE 70% Cacao Dark Chocolate",
@@ -228,7 +235,7 @@ pub(crate) mod tests {
                                     .others_from_total(20.4)
                                     .unwrap(),
                             )
-                            .proteins(7.35)
+                            .proteins(SimpleProteins::from_total(7.35))
                             .others(2.25),
                     )
                     .other(
@@ -309,7 +316,7 @@ pub(crate) mod tests {
                                     .others_from_total(25.5)
                                     .unwrap(),
                             )
-                            .proteins(9.1875)
+                            .proteins(SimpleProteins::from_total(9.1875))
                             .others(2.8125),
                     )
                     .other(
@@ -387,7 +394,7 @@ pub(crate) mod tests {
                                 .others_from_total(31.28)
                                 .unwrap(),
                         )
-                        .proteins(11.27)
+                        .proteins(SimpleProteins::from_total(11.27))
                         .others(3.45),
                 ),
             )
@@ -457,7 +464,7 @@ pub(crate) mod tests {
                                 .others_from_total(56.6644)
                                 .unwrap(),
                         )
-                        .proteins(20.4159)
+                        .proteins(SimpleProteins::from_total(20.4159))
                         .others(6.2498),
                 ),
             )
@@ -529,7 +536,7 @@ pub(crate) mod tests {
                                     .others_from_total(20.468)
                                     .unwrap(),
                             )
-                            .proteins(7.3745)
+                            .proteins(SimpleProteins::from_total(7.3745))
                             .others(2.2575),
                     )
                     .other(
@@ -603,7 +610,7 @@ pub(crate) mod tests {
                                     .others_from_total(27.778)
                                     .unwrap(),
                             )
-                            .proteins(10.00825)
+                            .proteins(SimpleProteins::from_total(10.00825))
                             .others(3.06375),
                     )
                     .other(
@@ -675,7 +682,7 @@ pub(crate) mod tests {
                                 .others_from_total(29.24)
                                 .unwrap(),
                         )
-                        .proteins(10.535)
+                        .proteins(SimpleProteins::from_total(10.535))
                         .others(3.225),
                 ),
             )

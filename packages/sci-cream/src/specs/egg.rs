@@ -3,7 +3,7 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Composition, Emulsifiers, Fats, Micro, Solids, SolidsBreakdown, ToComposition},
+    composition::{Composition, EggProteins, EggSolids, Emulsifiers, Fats, Micro, Solids, ToComposition},
     constants,
     error::Result,
     validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
@@ -54,8 +54,10 @@ use crate::composition::CompKey;
 /// ```
 //
 // @todo Egg yolk and egg white solids have significantly different properties with regards to
-// stabilization, emulsification, and texture, therefore they should be tracked separately. This
-// spec needs to be updated to allow specifying the egg yolk and egg white breakdown of solids.
+// stabilization, emulsification, and texture, therefore they should be tracked separately. The
+// composition now distinguishes egg white and yolk proteins (see [`EggProteins`]), but this spec
+// still attributes all protein to yolk; it should be updated to let the white/yolk protein split,
+// and the corresponding fat and emulsification breakdown, be specified.
 #[allow(clippy::doc_markdown)] // _FoodData_ false positive
 #[doc = include_str!("../../docs/references/index/2.md")]
 #[doc = include_str!("../../docs/references/index/4.md")]
@@ -90,13 +92,14 @@ impl ToComposition for EggSpec {
         // the 2-3% of other solids (snf) that are typically present in egg ingredients. Should
         // there be a sanity check that the other solids are within a reasonable range, e.g. 0-10%?
 
-        let egg_solids = SolidsBreakdown::new()
+        let egg_solids = EggSolids::new()
             .fats(
                 Fats::new()
                     .total(fat)
                     .saturated(fat * constants::composition::STD_SATURATED_FAT_IN_EGG_FAT),
             )
-            .proteins(protein)
+            // @todo Provisionally recorded as all yolk until white/yolk splitting is supported.
+            .proteins(EggProteins::new().yolk(protein))
             .others_from_total(100.0 - water)?;
 
         let micro = Micro::new().emulsifiers(Emulsifiers::new().lecithin(lecithin));
@@ -123,7 +126,7 @@ pub(crate) mod tests {
 
     use super::*;
     use crate::{
-        composition::{CompKey, Texture},
+        composition::{CompKey, SolidsBreakdown, Texture},
         error::Error,
         ingredient::Category,
         specs::IngredientSpec,
@@ -159,7 +162,7 @@ pub(crate) mod tests {
                 Solids::new().egg(
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(30.0).saturated(8.4))
-                        .proteins(16.0)
+                        .proteins(EggProteins::new().yolk(16.0))
                         .others(3.0),
                 ),
             )
@@ -174,6 +177,10 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::Energy), 334.0);
         assert_eq!(comp.get(CompKey::EggFat), 30.0);
         assert_eq!(comp.get(CompKey::EggSNF), 19.0);
+        assert_eq!(comp.get(CompKey::EggProteins), 16.0);
+        // @todo EggSpec attributes all protein to yolk; whites aren't split out yet.
+        assert_eq!(comp.get(CompKey::WhiteProteins), 0.0);
+        assert_eq!(comp.get(CompKey::YolkProteins), 16.0);
         assert_eq!(comp.get(CompKey::TotalProteins), 16.0);
         assert_eq!(comp.get(CompKey::TotalSNFS), 19.0);
         assert_eq!(comp.get(CompKey::TotalSolids), 49.0);

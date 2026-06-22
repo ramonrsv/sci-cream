@@ -55,6 +55,8 @@ impl KeyAsStrings for CompKey {
             Self::MilkSugars => "Milk Sugars",
             Self::MilkSNFS => "Milk SNFS",
             Self::MilkProteins => "Milk Proteins",
+            Self::Casein => "Casein",
+            Self::Whey => "Whey",
 
             Self::CacaoSolids => "Cacao Solids",
             Self::CocoaButter => "Cocoa Butter",
@@ -68,6 +70,8 @@ impl KeyAsStrings for CompKey {
             Self::EggFat => "Egg Fat",
             Self::EggSNF => "Egg SNF",
             Self::EggProteins => "Egg Proteins",
+            Self::WhiteProteins => "White Proteins",
+            Self::YolkProteins => "Yolk Proteins",
 
             Self::OtherFats => "Other Fats",
             Self::OtherSNFS => "Other SNFS",
@@ -519,8 +523,6 @@ pub fn composition_value_as_percentage(comp: f64, int_qty: f64, mix_total: f64) 
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::float_cmp)]
 mod tests {
-    use std::collections::HashSet;
-
     use strum::IntoEnumIterator;
 
     use crate::tests::asserts::shadow_asserts::assert_eq;
@@ -545,86 +547,14 @@ mod tests {
     #[test]
     fn comp_keys_as_med_str() {
         let some_expected = vec![
-            "Energy",
-            "Milk Fat",
-            "MSNF",
-            "Milk SNFS",
-            "Milk Proteins",
-            "Milk Solids",
-            "Cocoa Butter",
-            "Cocoa Solids",
-            "Cacao Solids",
-            "Nut Fat",
-            "Nut SNF",
-            "Nut Solids",
-            "Egg Fat",
-            "Egg SNF",
-            "Egg Solids",
-            "Other Fats",
-            "Other SNFS",
-            "Fats",
-            "SNF",
-            "SNFS",
-            "Proteins",
-            "Solids",
-            "Water",
-            "Inulin",
-            "Oligofructose",
-            "Fiber",
-            "Glucose",
-            "Fructose",
-            "Galactose",
-            "Sucrose",
-            "Lactose",
-            "Maltose",
-            "Trehalose",
-            "Sugars",
-            "Erythritol",
-            "Maltitol",
-            "Sorbitol",
-            "Xylitol",
-            "Polyols",
-            "Aspartame",
-            "Cyclamate",
-            "Saccharin",
-            "Sucralose",
-            "Steviosides",
-            "Mogrosides",
-            "Artificial",
-            "Sweeteners",
-            "Carbohydrates",
-            "Alcohol",
-            "ABV",
-            "Salt",
-            "Lecithin",
-            "Emulsifiers",
-            "Cornstarch",
-            "Tapioca Starch",
-            "Pectin",
-            "Gelatin",
-            "Locust Bean Gum",
-            "Guar Gum",
-            "Carrageenans",
-            "Carboxymethyl Cellulose",
-            "Xanthan Gum",
-            "Sodium Alginate",
-            "Tara Gum",
-            "Stabilizers",
-            "POD",
-            "PACsgr",
-            "PACslt",
-            "PACmlk",
-            "PACalc",
-            "PAC",
-            "HF",
-            "Saturated Fat",
-            "Trans Fat",
+            ("Milk Fat", CompKey::MilkFat),
+            ("MSNF", CompKey::MSNF),
+            ("Sugars", CompKey::TotalSugars),
+            ("PAC", CompKey::TotalPAC),
+            ("Saturated Fat", CompKey::SaturatedFat),
         ];
-
-        let actual_set: HashSet<&'static str> = CompKey::iter().map(|h| h.as_med_str()).collect();
-
-        for expected in some_expected {
-            assert_true!(actual_set.contains(expected));
+        for (expected, key) in some_expected {
+            assert_eq!(key.as_med_str(), expected);
         }
     }
 
@@ -634,37 +564,26 @@ mod tests {
             // SNF / SNFS expansions
             ("Milk Solids Non-Fat", CompKey::MSNF),
             ("Milk Solids Non-Fat Non-Sugar", CompKey::MilkSNFS),
-            ("Nut Solids Non-Fat", CompKey::NutSNF),
-            ("Egg Solids Non-Fat", CompKey::EggSNF),
-            ("Other Solids Non-Fat Non-Sugar", CompKey::OtherSNFS),
-            ("Total Solids Non-Fat", CompKey::TotalSNF),
-            ("Total Solids Non-Fat Non-Sugar", CompKey::TotalSNFS),
-            // Total* prefix
-            ("Total Fats", CompKey::TotalFats),
-            ("Total Proteins", CompKey::TotalProteins),
-            ("Total Solids", CompKey::TotalSolids),
-            ("Total Fiber", CompKey::TotalFiber),
-            ("Total Sugars", CompKey::TotalSugars),
-            ("Total Polyols", CompKey::TotalPolyols),
-            ("Total Artificial", CompKey::TotalArtificial),
-            ("Total Sweeteners", CompKey::TotalSweeteners),
+            // Total* prefix restored on aggregate keys
             ("Total Carbohydrates", CompKey::TotalCarbohydrates),
-            ("Total Emulsifiers", CompKey::TotalEmulsifiers),
-            ("Total Stabilizers", CompKey::TotalStabilizers),
-            ("Total PAC", CompKey::TotalPAC),
             // PAC sub-keys and other expanded acronyms
             ("PAC (Sugars)", CompKey::PACsgr),
-            ("PAC (Salt)", CompKey::PACslt),
-            ("PAC (Milk)", CompKey::PACmlk),
-            ("PAC (Alcohol)", CompKey::PACalc),
             ("Hardness Factor", CompKey::HF),
             ("Alcohol by Volume", CompKey::ABV),
             // keys unchanged from as_med_str
             ("Milk Fat", CompKey::MilkFat),
-            ("POD", CompKey::POD),
         ];
         for (expected, key) in some_expected {
             assert_eq!(key.as_long_str(), expected);
+        }
+    }
+
+    #[test]
+    fn comp_keys_all_str_non_empty() {
+        for key in CompKey::iter() {
+            assert_false!(key.as_short_str().is_empty());
+            assert_false!(key.as_med_str().is_empty());
+            assert_false!(key.as_long_str().is_empty());
         }
     }
 

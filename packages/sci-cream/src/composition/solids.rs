@@ -6,11 +6,29 @@ use serde::{Deserialize, Serialize};
 use struct_iterable::Iterable;
 
 use crate::{
-    composition::{ScaleComponents, SolidsBreakdown},
+    composition::{EggProteins, MilkProteins, ScaleComponents, SimpleProteins, SolidsBreakdown},
     error::Result,
-    util::{iter_all_abs_diff_eq, iter_fields_as},
     validate::{Validate, verify_is_within_100_percent},
 };
+
+/// A milk [`SolidsBreakdown`], carrying the casein/whey protein split ([`MilkProteins`]).
+///
+/// A concise alias for [`SolidsBreakdown<MilkProteins>`], e.g. `MilkSolids::new()`. Note it shadows
+/// [`CompKey::MilkSolids`](crate::composition::CompKey::MilkSolids) under a `use CompKey::*` plus
+/// `use composition::*` dual glob; qualify the key (`CompKey::MilkSolids`) to disambiguate.
+pub type MilkSolids = SolidsBreakdown<MilkProteins>;
+
+/// An egg [`SolidsBreakdown`], carrying the white/yolk protein split ([`EggProteins`]).
+///
+/// A concise alias for [`SolidsBreakdown<EggProteins>`], e.g. `EggSolids::new()`. Note it shadows
+/// [`CompKey::EggSolids`](crate::composition::CompKey::EggSolids) under a `use CompKey::*` plus
+/// `use composition::*` dual glob; qualify the key (`CompKey::EggSolids`) to disambiguate.
+pub type EggSolids = SolidsBreakdown<EggProteins>;
+
+/// A [`SolidsBreakdown`] for a source with no finer protein breakdown ([`SimpleProteins`]).
+///
+/// A concise alias for [`SolidsBreakdown<SimpleProteins>`], used for cocoa, nut, and other solids.
+pub type SimpleSolids = SolidsBreakdown<SimpleProteins>;
 
 /// Solid Components of an ingredient or mix broken down by key ingredient categories
 ///
@@ -29,15 +47,15 @@ use crate::{
 #[serde(default, deny_unknown_fields)]
 pub struct Solids {
     /// Breakdown of solid components from milk, cream, and other dairy ingredients
-    pub milk: SolidsBreakdown,
+    pub milk: MilkSolids,
     /// Breakdown of solid components from eggs and egg products
-    pub egg: SolidsBreakdown,
+    pub egg: EggSolids,
     /// Breakdown of solid components from cocoa and chocolate ingredients
-    pub cocoa: SolidsBreakdown,
+    pub cocoa: SimpleSolids,
     /// Breakdown of solid components from nuts and nut products
-    pub nut: SolidsBreakdown,
+    pub nut: SimpleSolids,
     /// Breakdown of solid components from other ingredients not included in the above categories
-    pub other: SolidsBreakdown,
+    pub other: SimpleSolids,
 }
 
 impl Solids {
@@ -61,69 +79,68 @@ impl Solids {
 
     /// Field-update method for [`milk`](Self::milk)
     #[must_use]
-    pub const fn milk(self, milk: SolidsBreakdown) -> Self {
+    pub const fn milk(self, milk: MilkSolids) -> Self {
         Self { milk, ..self }
     }
 
     /// Field-update method for [`egg`](Self::egg)
     #[must_use]
-    pub const fn egg(self, egg: SolidsBreakdown) -> Self {
+    pub const fn egg(self, egg: EggSolids) -> Self {
         Self { egg, ..self }
     }
 
     /// Field-update method for [`cocoa`](Self::cocoa)
     #[must_use]
-    pub const fn cocoa(self, cocoa: SolidsBreakdown) -> Self {
+    pub const fn cocoa(self, cocoa: SimpleSolids) -> Self {
         Self { cocoa, ..self }
     }
 
     /// Field-update method for [`nut`](Self::nut)
     #[must_use]
-    pub const fn nut(self, nut: SolidsBreakdown) -> Self {
+    pub const fn nut(self, nut: SimpleSolids) -> Self {
         Self { nut, ..self }
     }
 
     /// Field-update method for [`other`](Self::other)
     #[must_use]
-    pub const fn other(self, other: SolidsBreakdown) -> Self {
+    pub const fn other(self, other: SimpleSolids) -> Self {
         Self { other, ..self }
-    }
-
-    /// Iterate over all field across ingredient categories as [`SolidsBreakdown`]s
-    fn iter_fields_as_solids_breakdown(&self) -> impl Iterator<Item = &SolidsBreakdown> {
-        iter_fields_as::<SolidsBreakdown, _>(self)
-    }
-
-    /// Sum a specific field across all ingredient categories, e.g. [`SolidsBreakdown::total`], etc.
-    fn sum_solid_breakdowns_field(&self, f: fn(&SolidsBreakdown) -> f64) -> f64 {
-        self.iter_fields_as_solids_breakdown().map(f).sum::<f64>()
     }
 
     /// Calculates the total solids content of the mix, independent of ingredient category
     #[must_use]
     pub fn total(&self) -> f64 {
-        // @todo Should be equivalent to .all().total(); add unit test to verify this,
-        // and benchmarks to evaluate if it's worth having a separate implementation
-        self.sum_solid_breakdowns_field(SolidsBreakdown::total)
+        self.milk.total() + self.egg.total() + self.cocoa.total() + self.nut.total() + self.other.total()
     }
 
     /// Calculates the overall breakdown of solid components, independent of ingredient category
     ///
-    /// This function returns a [`SolidsBreakdown`] that represents the overall breakdown of solid
-    /// components in a mix, as if they had not been tracked by ingredient category, by summing the
-    /// contributions from all ingredient categories. It is useful for accessing overall properties
-    /// of the solids, e.g. total fat content, total carbohydrate content, total solids, etc.
-    /// without needing to manually sum contributions across ingredient categories.
+    /// This function returns a [`SolidsBreakdown<SimpleProteins>`] that represents the overall
+    /// breakdown of solid components in a mix, as if they had not been tracked by ingredient
+    /// category, by summing the contributions from all ingredient categories. It is useful for
+    /// accessing overall properties of the solids, e.g. total fat content, total carbohydrate
+    /// content, total solids, etc. without needing to manually sum contributions across categories.
+    ///
+    /// The per-source protein breakdowns differ by type, so they are reduced to their totals via
+    /// [`SolidsBreakdown::to_simple`]; the aggregate carries only the combined protein total.
     #[must_use]
-    pub fn all(&self) -> SolidsBreakdown {
-        self.iter_fields_as_solids_breakdown()
-            .fold(SolidsBreakdown::empty(), |acc, b| acc.add(b))
+    pub fn all(&self) -> SolidsBreakdown<SimpleProteins> {
+        self.milk
+            .to_simple()
+            .add(&self.egg.to_simple())
+            .add(&self.cocoa.to_simple())
+            .add(&self.nut.to_simple())
+            .add(&self.other.to_simple())
     }
 }
 
 impl Validate for Solids {
     fn validate(&self) -> Result<()> {
-        iter_fields_as::<SolidsBreakdown, _>(self).try_for_each(Validate::validate)?;
+        self.milk.validate()?;
+        self.egg.validate()?;
+        self.cocoa.validate()?;
+        self.nut.validate()?;
+        self.other.validate()?;
         verify_is_within_100_percent(self.total())?;
         Ok(())
     }
@@ -159,7 +176,11 @@ impl AbsDiffEq for Solids {
     }
 
     fn abs_diff_eq(&self, other: &Self, epsilon: Self::Epsilon) -> bool {
-        iter_all_abs_diff_eq::<f64, SolidsBreakdown, Self>(self, other, epsilon)
+        self.milk.abs_diff_eq(&other.milk, epsilon)
+            && self.egg.abs_diff_eq(&other.egg, epsilon)
+            && self.cocoa.abs_diff_eq(&other.cocoa, epsilon)
+            && self.nut.abs_diff_eq(&other.nut, epsilon)
+            && self.other.abs_diff_eq(&other.other, epsilon)
     }
 }
 
@@ -182,7 +203,7 @@ mod tests {
 
     const FIELD_MODIFIERS: [fn(&mut Solids, f64); 5] = [
         |s, v| s.milk.fats.total += v,
-        |s, v| s.egg.proteins += v,
+        |s, v| s.egg.proteins.yolk += v,
         |s, v| s.cocoa.carbohydrates.sugars.sucrose += v,
         |s, v| s.nut.others += v,
         |s, v| s.other.artificial_sweeteners.aspartame += v,
@@ -216,7 +237,7 @@ mod tests {
     #[test]
     fn solids_field_update_methods() {
         let milk = SolidsBreakdown::new().fats(Fats::new().total(5.0));
-        let egg = SolidsBreakdown::new().proteins(4.0);
+        let egg = SolidsBreakdown::new().proteins(EggProteins::new().yolk(4.0));
         let cocoa = SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0)));
         let nut = SolidsBreakdown::new().others(2.0);
         let other = SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0));
@@ -234,7 +255,7 @@ mod tests {
     fn solids_total() {
         let s = Solids::new()
             .milk(SolidsBreakdown::new().fats(Fats::new().total(5.0)))
-            .egg(SolidsBreakdown::new().proteins(4.0))
+            .egg(SolidsBreakdown::new().proteins(EggProteins::new().yolk(4.0)))
             .cocoa(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0))))
             .nut(SolidsBreakdown::new().others(2.0))
             .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0)));
@@ -246,14 +267,14 @@ mod tests {
     fn solids_all() {
         let s = Solids::new()
             .milk(SolidsBreakdown::new().fats(Fats::new().total(5.0)))
-            .egg(SolidsBreakdown::new().proteins(4.0))
+            .egg(SolidsBreakdown::new().proteins(EggProteins::new().yolk(4.0)))
             .cocoa(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0))))
             .nut(SolidsBreakdown::new().others(2.0))
             .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0)));
 
         let all = s.all();
         assert_eq!(all.fats.total, 5.0);
-        assert_eq!(all.proteins, 4.0);
+        assert_eq!(all.proteins.total(), 4.0);
         assert_eq!(all.carbohydrates.sugars.sucrose, 3.0);
         assert_eq!(all.others, 2.0);
         assert_eq!(all.artificial_sweeteners.aspartame, 1.0);
@@ -262,10 +283,9 @@ mod tests {
 
     #[test]
     fn solids_total_equals_all_total() {
-        // Verifies the claim in the @todo comment on total()
         let s = Solids::new()
             .milk(SolidsBreakdown::new().fats(Fats::new().total(5.0)))
-            .egg(SolidsBreakdown::new().proteins(4.0))
+            .egg(SolidsBreakdown::new().proteins(EggProteins::new().yolk(4.0)))
             .cocoa(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0))))
             .nut(SolidsBreakdown::new().others(2.0))
             .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0)));
@@ -277,7 +297,7 @@ mod tests {
     fn solids_scale() {
         let s = Solids::new()
             .milk(SolidsBreakdown::new().fats(Fats::new().total(5.0)))
-            .egg(SolidsBreakdown::new().proteins(4.0))
+            .egg(SolidsBreakdown::new().proteins(EggProteins::new().yolk(4.0)))
             .cocoa(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0))))
             .nut(SolidsBreakdown::new().others(2.0))
             .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0)));
@@ -285,7 +305,7 @@ mod tests {
 
         let scaled = s.scale(0.5);
         assert_eq!(scaled.milk.fats.total, 2.5);
-        assert_eq!(scaled.egg.proteins, 2.0);
+        assert_eq!(scaled.egg.proteins.total(), 2.0);
         assert_eq!(scaled.cocoa.carbohydrates.sugars.sucrose, 1.5);
         assert_eq!(scaled.nut.others, 1.0);
         assert_eq!(scaled.other.artificial_sweeteners.aspartame, 0.5);
@@ -296,13 +316,13 @@ mod tests {
     fn solids_add() {
         let a = Solids::new()
             .milk(SolidsBreakdown::new().fats(Fats::new().total(5.0)))
-            .egg(SolidsBreakdown::new().proteins(4.0))
+            .egg(SolidsBreakdown::new().proteins(EggProteins::new().yolk(4.0)))
             .cocoa(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0))))
             .nut(SolidsBreakdown::new().others(2.0))
             .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0)));
         let b = Solids::new()
             .milk(SolidsBreakdown::new().fats(Fats::new().total(2.5)))
-            .egg(SolidsBreakdown::new().proteins(2.0))
+            .egg(SolidsBreakdown::new().proteins(EggProteins::new().yolk(2.0)))
             .cocoa(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(1.5))))
             .nut(SolidsBreakdown::new().others(1.0))
             .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(0.5)));
@@ -311,7 +331,7 @@ mod tests {
 
         let sum = a.add(&b);
         assert_eq!(sum.milk.fats.total, 7.5);
-        assert_eq!(sum.egg.proteins, 6.0);
+        assert_eq!(sum.egg.proteins.total(), 6.0);
         assert_eq!(sum.cocoa.carbohydrates.sugars.sucrose, 4.5);
         assert_eq!(sum.nut.others, 3.0);
         assert_eq!(sum.other.artificial_sweeteners.aspartame, 1.5);
@@ -323,7 +343,7 @@ mod tests {
     fn solids_abs_diff_eq() {
         let a = Solids::new()
             .milk(SolidsBreakdown::new().fats(Fats::new().total(5.0)))
-            .egg(SolidsBreakdown::new().proteins(4.0))
+            .egg(SolidsBreakdown::new().proteins(EggProteins::new().yolk(4.0)))
             .cocoa(SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(3.0))))
             .nut(SolidsBreakdown::new().others(2.0))
             .other(SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(1.0)));
@@ -332,7 +352,7 @@ mod tests {
 
         for v in [a, b, c] {
             assert_ne!(v.milk.fats.total, 0.0);
-            assert_ne!(v.egg.proteins, 0.0);
+            assert_ne!(v.egg.proteins.total(), 0.0);
             assert_ne!(v.cocoa.carbohydrates.sugars.sucrose, 0.0);
             assert_ne!(v.nut.others, 0.0);
             assert_ne!(v.other.artificial_sweeteners.aspartame, 0.0);
@@ -361,7 +381,7 @@ mod tests {
     fn validate_ok_for_valid_values() {
         let s = Solids::new()
             .milk(SolidsBreakdown::new().fats(Fats::new().total(10.0)))
-            .egg(SolidsBreakdown::new().proteins(5.0));
+            .egg(SolidsBreakdown::new().proteins(EggProteins::new().yolk(5.0)));
         assert!(s.validate().is_ok());
     }
 
@@ -378,7 +398,7 @@ mod tests {
     fn validate_err_when_total_exceeds_100() {
         let s = Solids::new()
             .milk(SolidsBreakdown::new().fats(Fats::new().total(60.0)))
-            .egg(SolidsBreakdown::new().proteins(41.0));
+            .egg(SolidsBreakdown::new().proteins(EggProteins::new().yolk(41.0)));
         assert!(matches!(s.validate(), Err(Error::CompositionNotWithin100Percent(_))));
     }
 
@@ -386,7 +406,7 @@ mod tests {
     fn validate_err_on_invalid_nested_breakdown() {
         let milk = SolidsBreakdown::new().fats(Fats::new().total(10.0).saturated(11.0));
         let egg = SolidsBreakdown::new().carbohydrates(Carbohydrates::new().others(-1.0));
-        let cocoa = SolidsBreakdown::new().proteins(101.0);
+        let cocoa = SolidsBreakdown::new().proteins(SimpleProteins::from_total(101.0));
         let nut = SolidsBreakdown::new().artificial_sweeteners(ArtificialSweeteners::new().aspartame(-1.0));
         let other = SolidsBreakdown::new().others(-1.0);
 
@@ -408,17 +428,17 @@ mod tests {
 
     #[test]
     fn validate_into_returns_self_when_valid() {
-        let s = Solids::new().egg(SolidsBreakdown::new().proteins(5.0));
+        let s = Solids::new().egg(SolidsBreakdown::new().proteins(EggProteins::new().yolk(5.0)));
         let result = s.validate_into();
         assert!(result.is_ok());
-        assert_eq!(result.unwrap().egg.proteins, 5.0);
+        assert_eq!(result.unwrap().egg.proteins.total(), 5.0);
     }
 
     #[test]
     fn validate_into_returns_err_when_invalid() {
         assert!(
             Solids::new()
-                .egg(SolidsBreakdown::new().proteins(-1.0))
+                .egg(SolidsBreakdown::new().proteins(EggProteins::new().yolk(-1.0)))
                 .validate_into()
                 .is_err()
         );

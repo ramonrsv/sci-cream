@@ -3,7 +3,9 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Carbohydrates, Composition, Fats, Fibers, PAC, Solids, SolidsBreakdown, Sugars, ToComposition},
+    composition::{
+        Carbohydrates, Composition, Fats, Fibers, PAC, SimpleProteins, SimpleSolids, Solids, Sugars, ToComposition,
+    },
     constants::{self},
     error::Result,
     validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
@@ -118,10 +120,10 @@ impl ToComposition for NutSpec {
             .fiber(Fibers::new().other(fiber))
             .others_from_total(carbohydrate)?;
 
-        let nut_solids = SolidsBreakdown::new()
+        let nut_solids = SimpleSolids::new()
             .fats(Fats::new().total(fat).saturated(saturated_fat))
             .carbohydrates(carbohydrates)
-            .proteins(protein)
+            .proteins(SimpleProteins::from_total(protein))
             .others_from_total(100.0 - water)?;
 
         Composition::new()
@@ -147,7 +149,12 @@ pub(crate) mod tests {
     use crate::tests::asserts::*;
 
     use super::*;
-    use crate::{composition::CompKey, error::Error, ingredient::Category, specs::IngredientSpec};
+    use crate::{
+        composition::{CompKey, SolidsBreakdown},
+        error::Error,
+        ingredient::Category,
+        specs::IngredientSpec,
+    };
 
     pub(crate) const ING_SPEC_NUT_ALMOND_STR: &str = r#"{
       "name": "Almond",
@@ -185,7 +192,7 @@ pub(crate) mod tests {
                 Solids::new().nut(
                     SolidsBreakdown::new()
                         .fats(Fats::new().total(49.9).saturated(3.8))
-                        .proteins(21.2)
+                        .proteins(SimpleProteins::from_total(21.2))
                         .carbohydrates(
                             Carbohydrates::new()
                                 .fiber(Fibers::new().other(12.5))

@@ -230,7 +230,7 @@ mod tests {
         assert_f64_fields_ne_zero, compare_compositions, relative_diff_percent, root_mean_square,
         solids_fraction_diff_pp,
     };
-    use crate::composition::{CompKey, Composition, Solids, SolidsBreakdown};
+    use crate::composition::{CompKey, Composition, MilkProteins, Solids, SolidsBreakdown};
     use crate::tests::asserts::{assert_eq_flt_test, assert_true};
 
     #[derive(Iterable)]
@@ -239,12 +239,11 @@ mod tests {
         b: f64,
     }
 
-    /// Builds a stub composition with a target [`CompKey::TotalSolids`] by putting all of it
-    /// under `milk.proteins`. Used by the assertion tests below where the value of
-    /// [`CompKey::TotalSolids`] itself is what's being compared (so the metric reduces to a
-    /// direct percentage-point diff).
+    /// Builds a stub composition with [`CompKey::TotalSolids`] equal to `ts`, all under
+    /// `milk.proteins`. Used by the assertion tests below that compare [`CompKey::TotalSolids`]
+    /// itself, so the metric reduces to a direct percentage-point diff.
     fn comp_ts(ts: f64) -> Composition {
-        Composition::new().solids(Solids::new().milk(SolidsBreakdown::new().proteins(ts)))
+        Composition::new().solids(Solids::new().milk(SolidsBreakdown::new().proteins(MilkProteins::new().casein(ts))))
     }
 
     // --- relative_diff_percent ---

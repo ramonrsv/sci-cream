@@ -7,7 +7,7 @@ use struct_iterable::Iterable;
 use strum_macros::{EnumCount, EnumIter};
 
 use crate::{
-    composition::{Alcohol, Micro, PAC, RatioKey, Solids, Texture},
+    composition::{Alcohol, Micro, PAC, ProteinComponents, RatioKey, Solids, Texture},
     error::Result,
     resolution::IngredientGetter,
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
@@ -159,6 +159,20 @@ pub enum CompKey {
     MilkSNFS,
     /// Protein content from milk ingredients, i.e. casein and whey proteins.
     MilkProteins,
+    /// Casein protein content from milk ingredients, which make up about ~80% of milk proteins
+    ///
+    /// Casein proteins are the primary emulsifying agents in milk and cream. They play a key role
+    /// in the texture and stability of ice cream mixes. See the [casein
+    /// documentation](crate::docs#emulsifier-casein-proteins) for more details.
+    Casein,
+    /// Whey protein content from milk ingredients, which make up about ~20% of milk proteins
+    ///
+    /// When partially denatured by heat, whey proteins have both an emulsifying and stabilizing
+    /// effect on ice cream mixes. They play a crucial role in the texture and stability of ice
+    /// cream mixes. See the whey documentation on
+    /// [emulsification](crate::docs#emulsifier-whey-proteins) and
+    /// [stabilization](crate::docs#stabilizer-whey-proteins) for more details.
+    Whey,
 
     // Cacao
     // -----
@@ -227,8 +241,12 @@ pub enum CompKey {
     /// that is accounted for separately via [`CompKey::TotalSugars`]. As such, it would be
     /// equivalent to a hypothetical `EggSNFS` (Egg Solids Non-Fat Non-Sugar).
     EggSNF,
-    /// Egg Proteins, the protein content of egg ingredients
+    /// Egg Proteins, the total protein content of egg ingredients
     EggProteins,
+    /// Egg White Proteins, the protein content from egg whites (albumen)
+    WhiteProteins,
+    /// Egg Yolk Proteins, the protein content from egg yolks
+    YolkProteins,
 
     // Others
     // ------
@@ -586,7 +604,9 @@ impl Composition {
             CompKey::MSNF => self.solids.milk.snf(),
             CompKey::MilkSugars => self.solids.milk.carbohydrates.sugars.total(),
             CompKey::MilkSNFS => self.solids.milk.snfs(),
-            CompKey::MilkProteins => self.solids.milk.proteins,
+            CompKey::MilkProteins => self.solids.milk.proteins.total(),
+            CompKey::Casein => self.solids.milk.proteins.casein,
+            CompKey::Whey => self.solids.milk.proteins.whey,
 
             CompKey::CacaoSolids => self.solids.cocoa.total() - self.solids.cocoa.carbohydrates.sugars.total(),
             CompKey::CocoaButter => self.solids.cocoa.fats.total,
@@ -599,7 +619,9 @@ impl Composition {
             CompKey::EggSolids => self.solids.egg.total() - self.solids.egg.carbohydrates.sugars.total(),
             CompKey::EggFat => self.solids.egg.fats.total,
             CompKey::EggSNF => self.solids.egg.snfs(),
-            CompKey::EggProteins => self.solids.egg.proteins,
+            CompKey::EggProteins => self.solids.egg.proteins.total(),
+            CompKey::WhiteProteins => self.solids.egg.proteins.white,
+            CompKey::YolkProteins => self.solids.egg.proteins.yolk,
 
             CompKey::OtherFats => self.solids.other.fats.total,
             CompKey::OtherSNFS => self.solids.other.snfs(),
@@ -608,7 +630,7 @@ impl Composition {
             CompKey::TotalFats => self.solids.all().fats.total,
             CompKey::TotalSNF => self.solids.all().snf(),
             CompKey::TotalSNFS => self.solids.all().snfs(),
-            CompKey::TotalProteins => self.solids.all().proteins,
+            CompKey::TotalProteins => self.solids.all().proteins.total,
 
             CompKey::Water => self.water(),
 
@@ -898,6 +920,8 @@ mod tests {
             (CompKey::MSNF, 8.82),
             (CompKey::MilkSNFS, 4.0131),
             (CompKey::MilkProteins, 3.087),
+            (CompKey::Casein, 2.4696),
+            (CompKey::Whey, 0.6174),
             (CompKey::MilkSolids, 10.82),
             (CompKey::TotalFats, 2.0),
             (CompKey::TotalSNF, 8.82),
@@ -936,23 +960,23 @@ mod tests {
         let milk = SolidsBreakdown::new()
             .fats(Fats::new().total(4.0).saturated(2.6).trans(0.14))
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().lactose(5.0)))
-            .proteins(3.0)
+            .proteins(MilkProteins::new().casein(2.4).whey(0.6))
             .others(1.0);
 
         let egg = SolidsBreakdown::new()
             .fats(Fats::new().total(2.0).saturated(0.56).trans(0.1))
-            .proteins(1.0)
+            .proteins(EggProteins::new().yolk(1.0))
             .others(1.0);
 
         let cocoa = SolidsBreakdown::new()
             .fats(Fats::new().total(3.0).saturated(1.8).trans(0.2))
             .carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(2.0)))
-            .proteins(1.0)
+            .proteins(SimpleProteins::from_total(1.0))
             .others(1.0);
 
         let nut = SolidsBreakdown::new()
             .fats(Fats::new().total(2.0).saturated(0.18).trans(0.3))
-            .proteins(1.0)
+            .proteins(SimpleProteins::from_total(1.0))
             .others(1.0);
 
         let other = SolidsBreakdown::new()
@@ -979,7 +1003,7 @@ mod tests {
                     .steviosides(0.09)
                     .mogrosides(0.15),
             )
-            .proteins(0.5)
+            .proteins(SimpleProteins::from_total(0.5))
             .others(0.5);
 
         let c = Composition::new()
@@ -1026,6 +1050,8 @@ mod tests {
             (CompKey::MilkSugars,           5.0),   // lactose
             (CompKey::MilkSNFS,             4.0),   // milk.snfs() = 9 - 5 (lactose)
             (CompKey::MilkProteins,         3.0),
+            (CompKey::Casein,           2.4),
+            (CompKey::Whey,             0.6),
             (CompKey::MilkSolids,          13.0),
             // Cocoa
             (CompKey::CocoaButter,          3.0),
@@ -1039,6 +1065,8 @@ mod tests {
             (CompKey::EggFat,               2.0),
             (CompKey::EggSNF,               2.0),   // egg.snfs() = (4-2) - 0
             (CompKey::EggProteins,          1.0),
+            (CompKey::WhiteProteins,     0.0),
+            (CompKey::YolkProteins,      1.0),
             (CompKey::EggSolids,            4.0),   // egg.total() - egg.sugars = 4 - 0
             // Other
             (CompKey::OtherFats,            1.0),
@@ -1189,7 +1217,7 @@ mod tests {
             .texture(Texture::new().stabilization(0.5));
         let b = Composition::new()
             .energy(50.0)
-            .solids(Solids::new().milk(SolidsBreakdown::new().proteins(5.0)))
+            .solids(Solids::new().milk(SolidsBreakdown::new().proteins(MilkProteins::new().casein(5.0))))
             .micro(Micro::new().stabilizers(Stabilizers::new().locust_bean_gum(0.2)))
             .alcohol(Alcohol::new().by_weight(1.0))
             .pod(1.0)
@@ -1199,7 +1227,7 @@ mod tests {
         let sum = a.add(&b);
         assert_eq!(sum.energy, 150.0);
         assert_eq!(sum.solids.other.others, 20.0);
-        assert_eq!(sum.solids.milk.proteins, 5.0);
+        assert_eq!(sum.solids.milk.proteins.total(), 5.0);
         assert_eq!(sum.micro.salt, 1.0);
         assert_eq!(sum.micro.stabilizers.locust_bean_gum, 0.2);
         assert_eq!(sum.alcohol.by_weight, 5.0);

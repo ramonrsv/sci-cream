@@ -3,7 +3,9 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Carbohydrates, Composition, Fats, Fibers, PAC, Solids, SolidsBreakdown, Sugars, ToComposition},
+    composition::{
+        Carbohydrates, Composition, Fats, Fibers, PAC, SimpleProteins, SimpleSolids, Solids, Sugars, ToComposition,
+    },
     error::Result,
     validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
@@ -115,7 +117,7 @@ impl ToComposition for FruitSpec {
         verify_are_positive(&[water, protein, fat, carbohydrate, fiber, sugars.total()])?;
         verify_is_within_100_percent(water + protein + fat + carbohydrate)?;
 
-        let solids = SolidsBreakdown::new()
+        let solids = SimpleSolids::new()
             .fats(Fats::new().total(fat))
             .carbohydrates(
                 Carbohydrates::new()
@@ -123,7 +125,7 @@ impl ToComposition for FruitSpec {
                     .fiber(Fibers::new().other(fiber))
                     .others_from_total(carbohydrate)?,
             )
-            .proteins(protein)
+            .proteins(SimpleProteins::from_total(protein))
             .others_from_total(100.0 - water)?;
 
         let energy = energy.unwrap_or(solids.energy()?);

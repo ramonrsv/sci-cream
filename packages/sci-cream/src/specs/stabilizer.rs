@@ -3,7 +3,9 @@
 use serde::{Deserialize, Serialize};
 
 use crate::{
-    composition::{Carbohydrates, Composition, Fibers, Micro, Solids, SolidsBreakdown, Stabilizers, ToComposition},
+    composition::{
+        Carbohydrates, Composition, Fibers, Micro, SimpleProteins, SimpleSolids, Solids, Stabilizers, ToComposition,
+    },
     error::{Error, Result},
     util::collect_fields_copied_as,
     validate::{Validate, verify_are_positive, verify_is_100_percent},
@@ -88,8 +90,8 @@ impl ToComposition for StabilizerSpec {
         let other_snfs = other;
         let fiber = self.stabilizers.total() - proteins - starches - other_snfs;
 
-        let solids = SolidsBreakdown::new()
-            .proteins(proteins)
+        let solids = SimpleSolids::new()
+            .proteins(SimpleProteins::from_total(proteins))
             .carbohydrates(Carbohydrates::new().others(starches).fiber(Fibers::new().other(fiber)))
             .others(other_snfs);
 

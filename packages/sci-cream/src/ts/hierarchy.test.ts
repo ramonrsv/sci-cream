@@ -74,16 +74,17 @@ test("groupEnabledKeys repeats a shared key under each enabled roll-up when aske
 test("groupEnabledKeys depth counts only enabled ancestors", () => {
   // The milk chain MilkSolids ▸ MSNF ▸ MilkSNFS ▸ MilkProteins is unambiguous (no source/total
   // duplication). With MSNF enabled but MilkSNFS not, MilkProteins indents only two levels.
+  // MilkProteins is itself a roll-up (it splits into casein and whey), so isRollup is true.
   const withIntermediate = groupEnabledKeys(["MilkSolids", "MSNF", "MilkProteins"]);
   expect(withIntermediate).toEqual([
     { key: "MilkSolids", depth: 0, isRollup: true },
     { key: "MSNF", depth: 1, isRollup: true },
-    { key: "MilkProteins", depth: 2, isRollup: false },
+    { key: "MilkProteins", depth: 2, isRollup: true },
   ]);
 
   const withoutIntermediate = groupEnabledKeys(["MilkSolids", "MilkProteins"]);
   expect(withoutIntermediate).toEqual([
     { key: "MilkSolids", depth: 0, isRollup: true },
-    { key: "MilkProteins", depth: 1, isRollup: false },
+    { key: "MilkProteins", depth: 1, isRollup: true },
   ]);
 });

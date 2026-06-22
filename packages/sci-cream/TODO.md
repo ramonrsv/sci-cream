@@ -18,8 +18,6 @@
 - [ ] Add more independent egg ingredients, including powder, and add `compare_specs_*` snapshots.
 - [ ] Modify `EggSpec`, `Dairy*Spec`, etc. to populate `Stabilizers` and `Emulsifiers` with
       appropriate sub-components, e.g. lecithin, egg proteins, whey/casein proteins, etc.
-- [ ] Add support for tracking milk casein/whey proteins and egg yolk/white proteins. This may need
-      modifications to `Composition`, and the specs need to be modified to allow more specificity.
 - [ ] Add unit tests for `to_texture` methods, stabilizer/emulsifier strength values, etc.
 - [ ] Implement a feature in the `sci-cream` crate to provide acceptable ranges for key properties
       of a mix, e.g. total solids, MSNF, serving temperature, etc. It should probably support
@@ -101,6 +99,8 @@
 
 ## Completed
 
+- [x] Add support for tracking milk casein/whey proteins and egg yolk/white proteins. This may need
+      modifications to `Composition`, and the specs need to be modified to allow more specificity.
 - [x] Add extract ingredients, notably Nielsen-Massey ones, as well as angostura bitters, etc.
 - [x] Add the inverse of `compKeyToPropKey`, etc., that is `propKeyToCompKey` for str -> enum.
 - [x] Only check error-severity issues in `balance_compositions`; warnings are discarded and costly.
