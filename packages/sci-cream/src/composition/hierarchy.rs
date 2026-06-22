@@ -499,7 +499,7 @@ mod tests {
         ingredient::Category,
         properties::PropKey::{self, *},
         recipe::Recipe,
-        validate::{are_equal, is_subset},
+        tests::util::verify_structural_consistency,
     };
 
     // Compositions of all embedded ingredients
@@ -538,30 +538,9 @@ mod tests {
         LazyLock::new(|| ING_COMPS.iter().chain(RECIPE_COMPS.iter()).copied().collect());
 
     #[test]
-    fn children_never_exceed_their_rollup() {
+    fn compositions_satisfy_structural_invariants() {
         for comp in &*ALL_COMPS {
-            for key in CompKey::iter().filter(|key| key.is_rollup()) {
-                let children_sum: f64 = key.children().iter().map(|&part| comp.get(part)).sum();
-                assert!(
-                    is_subset(children_sum, comp.get(key)),
-                    "{key:?} parts sum {children_sum} exceeds roll-up {}",
-                    comp.get(key),
-                );
-            }
-        }
-    }
-
-    #[test]
-    fn exact_rollups_equal_their_children() {
-        for comp in &*ALL_COMPS {
-            for rollup in CompKey::iter().filter(|key| key.is_residual_free_rollup()) {
-                let parts_sum: f64 = rollup.children().iter().map(|&part| comp.get(part)).sum();
-                assert!(
-                    are_equal(comp.get(rollup), parts_sum),
-                    "{rollup:?}: get {} != parts sum {parts_sum}",
-                    comp.get(rollup),
-                );
-            }
+            verify_structural_consistency(comp).unwrap();
         }
     }
 

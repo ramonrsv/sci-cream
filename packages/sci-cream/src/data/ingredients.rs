@@ -53,12 +53,23 @@ const EMBEDDED_INGREDIENTS_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
 pub fn parse_spec_entries_from_json_string(
     file_content: &str,
 ) -> std::result::Result<HashMap<String, SpecEntry>, serde_json::Error> {
+    use serde::de::Error as _;
+
     let entries = serde_json::from_str::<Vec<serde_json::Value>>(file_content)?;
 
     entries
         .into_iter()
-        .map(|entry_serde| {
-            serde_json::from_value(entry_serde).map(|entry: SpecEntry| (entry.name().to_string(), entry))
+        .enumerate()
+        .map(|(index, entry_value)| {
+            let identifier = entry_value
+                .get("name")
+                .or_else(|| entry_value.get("alias"))
+                .and_then(serde_json::Value::as_str)
+                .map_or_else(|| format!("entry at index {index}"), |name| format!("entry '{name}'"));
+
+            SpecEntry::from_json_value(entry_value)
+                .map(|entry| (entry.name().to_string(), entry))
+                .map_err(|e| serde_json::Error::custom(format!("{identifier}: {e}")))
         })
         .collect()
 }
@@ -181,6 +192,29 @@ pub(crate) mod tests {
             let specs = super::parse_spec_entries_from_json_string(file_content).unwrap();
             assert_false!(specs.is_empty(), "Failed to parse spec entry from file: {}", filename);
         }
+    }
+
+    #[test]
+    fn parse_spec_entries_error_names_failing_entry() {
+        // The second entry has a non-numeric fat; the error should name the bad entry "Bad Milk"
+        let json = r#"[
+            { "name": "Good Milk", "category": "Dairy", "DairySimpleSpec": { "fat": 2 } },
+            { "name": "Bad Milk", "category": "Dairy", "DairySimpleSpec": { "fat": "lots" } }
+        ]"#;
+        let err = super::parse_spec_entries_from_json_string(json)
+            .unwrap_err()
+            .to_string();
+        assert!(err.contains("Bad Milk"), "error did not name the failing entry: {err}");
+    }
+
+    #[test]
+    fn parse_spec_entries_error_falls_back_to_index_without_name() {
+        // An entry with neither `name` nor `alias` can't be named, so the error cites its index.
+        let json = r#"[{ "category": "Dairy", "DairySimpleSpec": { "fat": 2 } }]"#;
+        let err = super::parse_spec_entries_from_json_string(json)
+            .unwrap_err()
+            .to_string();
+        assert!(err.contains("index 0"), "error did not cite the entry index: {err}");
     }
 
     // --- embedded spec entries snapshot ---

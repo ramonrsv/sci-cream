@@ -2,16 +2,35 @@
 
 use approx::AbsDiffEq;
 use struct_iterable::Iterable;
+use strum::IntoEnumIterator;
 
 use crate::{
     composition::{CompKey, Composition},
+    error::Result,
     util::iter_fields_as,
+    validate::{verify_are_equal, verify_is_subset},
 };
 
 use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
 use crate::tests::asserts::*;
 
 use crate::tests::assets::get_comp_by_name;
+
+/// Checks that `comp` satisfies the structural forest's additive invariants: every roll-up's parts
+/// sum to no more than the roll-up, and residual-free roll-ups equal their parts exactly.
+pub(crate) fn verify_structural_consistency(comp: &Composition) -> Result<()> {
+    for key in CompKey::iter().filter(|key| key.is_rollup()) {
+        let parts_sum: f64 = key.children().iter().map(|&part| comp.get(part)).sum();
+        let whole = comp.get(key);
+
+        if key.is_residual_free_rollup() {
+            verify_are_equal(whole, parts_sum)?;
+        } else {
+            verify_is_subset(parts_sum, whole, &format!("{key:?} parts sum"))?;
+        }
+    }
+    Ok(())
+}
 
 /// Asserts that two composition values for a key are equal within a given percentage tolerance.
 pub(crate) fn assert_comp_eq_percent(lhs: &Composition, rhs: &Composition, key: CompKey, tolerance_percent: f64) {

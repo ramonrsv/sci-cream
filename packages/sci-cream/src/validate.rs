@@ -67,6 +67,19 @@ pub fn are_equal(a: f64, b: f64) -> bool {
     a.abs_diff_eq(&b, COMPOSITION_EPSILON)
 }
 
+/// Verifies that two values are equal within a [`COMPOSITION_EPSILON`] tolerance.
+///
+/// # Errors
+///
+/// Return [`Error::InvalidComposition`] if the values are not equal.
+pub fn verify_are_equal(a: f64, b: f64) -> Result<()> {
+    if are_equal(a, b) {
+        Ok(())
+    } else {
+        Err(Error::InvalidComposition(format!("{a} != {b}")))
+    }
+}
+
 /// Checks whether the given value is positive, within a [`COMPOSITION_EPSILON`] tolerance for zero.
 #[must_use]
 pub fn is_positive(value: f64) -> bool {
@@ -463,6 +476,39 @@ mod tests {
     fn verify_is_subset_err_message_contains_values() {
         let result = verify_is_subset(30.0, 20.0, "desc");
         assert!(matches!(result, Err(Error::InvalidComposition(ref msg)) if msg.contains("30") && msg.contains("20")));
+    }
+
+    // --- verify_are_equal ---
+
+    #[test]
+    fn verify_are_equal_ok_for_equal_values() {
+        assert!(verify_are_equal(20.0, 20.0).is_ok());
+    }
+
+    #[test]
+    fn verify_are_equal_ok_within_epsilon() {
+        // 1e-14 difference is within COMPOSITION_EPSILON (1e-13)
+        assert!(verify_are_equal(20.0, 20.0 + 1e-14).is_ok());
+    }
+
+    #[test]
+    fn verify_are_equal_err_when_not_equal() {
+        assert!(matches!(verify_are_equal(20.0, 30.0), Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn verify_are_equal_err_beyond_epsilon() {
+        // 1e-12 difference exceeds COMPOSITION_EPSILON (1e-13)
+        assert!(matches!(verify_are_equal(20.0, 20.0 + 1e-12), Err(Error::InvalidComposition(_))));
+    }
+
+    #[test]
+    fn verify_are_equal_err_message_contains_description_and_values() {
+        let result = verify_are_equal(20.0, 30.0);
+        assert!(matches!(
+            result,
+            Err(Error::InvalidComposition(ref msg)) if msg.contains("20 != 30")
+        ));
     }
 
     // --- Validate trait ---

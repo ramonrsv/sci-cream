@@ -31,6 +31,24 @@ impl SpecEntry {
             Self::Alias(alias_spec) => &alias_spec.alias,
         }
     }
+
+    /// Deserializes one [`SpecEntry`] from a raw JSON value, explicitly choosing the variant
+    ///
+    /// Unlike the derived `#[serde(untagged)]` [`Deserialize`], which collapses any failure to an
+    /// opaque "no variant matched", this parses the chosen variant directly and surfaces the
+    /// underlying field-level error (a missing or mistyped field, incorrect type, etc.).
+    ///
+    /// # Errors
+    ///
+    /// Returns a [`serde_json::Error`] if `value` does not deserialize into the chosen variant.
+    #[cfg(feature = "data")]
+    pub fn from_json_value(value: serde_json::Value) -> serde_json::Result<Self> {
+        if value.get("alias").is_some() {
+            serde_json::from_value::<AliasSpec>(value).map(Self::Alias)
+        } else {
+            serde_json::from_value::<IngredientSpec>(value).map(Self::Ingredient)
+        }
+    }
 }
 
 impl ResolveIntoIngredient for SpecEntry {
@@ -77,6 +95,27 @@ pub(crate) mod tests {
                 *entry
             );
         });
+    }
+
+    #[test]
+    fn from_json_value_dispatches_to_variant() {
+        let ingredient: serde_json::Value =
+            serde_json::from_str(r#"{ "name": "0% Milk", "category": "Dairy", "DairySimpleSpec": { "fat": 0 } }"#)
+                .unwrap();
+        assert!(matches!(SpecEntry::from_json_value(ingredient).unwrap(), SpecEntry::Ingredient(_)));
+
+        let alias: serde_json::Value = serde_json::from_str(r#"{ "alias": "Skim Milk", "for": "0% Milk" }"#).unwrap();
+        assert!(matches!(SpecEntry::from_json_value(alias).unwrap(), SpecEntry::Alias(_)));
+    }
+
+    #[test]
+    fn from_json_value_surfaces_field_level_error() {
+        let bad: serde_json::Value =
+            serde_json::from_str(r#"{ "name": "Bad", "category": "Dairy", "DairySimpleSpec": { "fat": "lots" } }"#)
+                .unwrap();
+        let err = SpecEntry::from_json_value(bad).unwrap_err().to_string();
+        assert!(!err.contains("no variant matched"));
+        assert!(err.contains("lots"));
     }
 
     #[test]
