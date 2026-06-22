@@ -87,10 +87,6 @@ test.describe("Recipe Resources", () => {
   }) => {
     test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
 
-    page.on("console", (msg) => {
-      console.log(`${msg.text()}`);
-    });
-
     // Use a long stall (8000ms, greater than the threshold in the test with no user-defined
     // ingredients) to ensure tha the test can only succeed once the data from an fetch API request
     // for user-defined ingredients has returned, and not just by a slow but non-stalling run.
