@@ -4,6 +4,8 @@
 //! produces, plus every feasibility, structural, dominance, and ratio check that flags suspect or
 //! unsound targets.
 
+use std::collections::HashSet;
+
 use serde::{Deserialize, Serialize};
 
 use crate::{
@@ -404,9 +406,7 @@ pub(crate) fn append_input_error_issues(
     priorities: &[(BalanceKey, Priority)],
     issues: &mut Vec<BalancingIssue>,
 ) {
-    // Non-finite/negative values and duplicate keys. Ratio keys are OK — they are encoded as
-    // homogeneous rows (see `RatioKey::parts`) and balance like any other key.
-    let mut seen: Vec<BalanceKey> = Vec::with_capacity(targets.len());
+    let mut seen_targets: HashSet<BalanceKey> = HashSet::with_capacity(targets.len());
     for &(key, value) in targets {
         if !value.is_finite() {
             issues.push(BalancingIssue::NonFiniteTarget { key, value });
@@ -414,20 +414,17 @@ pub(crate) fn append_input_error_issues(
             issues.push(BalancingIssue::NegativeTarget { key, value });
         }
 
-        if seen.contains(&key) {
+        // Duplicate target keys are ambiguous, so they are an error
+        if !seen_targets.insert(key) {
             issues.push(BalancingIssue::DuplicateTarget { key });
-        } else {
-            seen.push(key);
         }
     }
 
-    // Duplicate priority keys are ambiguous (which weight wins?), so they are an error.
-    let mut seen_priorities: Vec<BalanceKey> = Vec::with_capacity(priorities.len());
+    // Duplicate priority keys are ambiguous, so they are an error.
+    let mut seen_priorities: HashSet<BalanceKey> = HashSet::with_capacity(priorities.len());
     for &(key, _) in priorities {
-        if seen_priorities.contains(&key) {
+        if !seen_priorities.insert(key) {
             issues.push(BalancingIssue::DuplicatePriority { key });
-        } else {
-            seen_priorities.push(key);
         }
     }
 }

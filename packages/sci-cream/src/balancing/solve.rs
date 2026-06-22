@@ -220,8 +220,10 @@ fn solve_nnls_raw(a: &[f64], y: &[f64], rows: usize, cols: usize) -> Result<Vec<
 /// The raw solvers assume pre-validated targets; user input is validated once by
 /// [`balance_compositions`], so a bad target reaching here is a programming bug.
 #[cfg(debug_assertions)]
-fn debug_assert_targets_validated(comps: &[Composition], targets: &[(BalanceKey, f64)]) {
-    let report = crate::balancing::validate::validate_balancing_targets(comps, targets, &[]);
+fn debug_assert_targets_error_validated(targets: &[(BalanceKey, f64)]) {
+    let mut issues = Vec::new();
+    append_input_error_issues(targets, &[], &mut issues);
+    let report = BalancingReport { issues };
     assert!(!report.has_errors(), "raw balancing path requires validated targets: {report}");
 }
 
@@ -253,7 +255,7 @@ pub fn balance_with_reweighting(
     solve: RawSolver,
 ) -> Result<Vec<(Composition, f64)>> {
     #[cfg(debug_assertions)]
-    debug_assert_targets_validated(comps, targets);
+    debug_assert_targets_error_validated(targets);
 
     let weighting = weighting.unwrap_or(Weighting::Relative);
     // Snapshot once: the affectability filter and the matrix assembly below (the latter possibly
