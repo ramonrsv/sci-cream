@@ -119,8 +119,8 @@ function main(): void {
   const sharedGz = sumGzip(sharedChunks);
 
   // Pack a byte-valued metric into a `BenchmarkResult`. File sizes are deterministic, so there's
-  // no min/max/stdDev — only `name` and `avg` (the gzipped byte count).
-  const metric = (name: string, bytes: number) => ({ name, avg: bytes });
+  // no min/max/spread — only `name` and `central` (the gzipped byte count).
+  const metric = (name: string, bytes: number) => ({ name, central: bytes });
 
   const results: BenchmarkResult[] = [metric("Shared framework JS (gzip)", sharedGz)];
 
@@ -143,7 +143,7 @@ function main(): void {
 
   console.log("Bundle size benchmarks:");
   for (const r of results)
-    console.log(`  ${r.name.padEnd(48)} ${(r.avg / 1024).toFixed(2).padStart(7)} KB`);
+    console.log(`  ${r.name.padEnd(48)} ${(r.central / 1024).toFixed(2).padStart(7)} KB`);
 
   writeBenchmarkResultsToFile(
     results.map((r) => formatByteSizeBenchmarkResultForUpload(r, "KB")),

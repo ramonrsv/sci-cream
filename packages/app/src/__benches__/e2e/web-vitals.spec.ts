@@ -19,7 +19,8 @@ declare global {
 
 const OUTPUT_FILENAME = "bench_output_web_vitals.json";
 
-const COUNT_RUNS = 10; // Page-load cycles to average each metric value over
+const COUNT_RUNS = 10; // Recorded page-load cycles per metric (warmup runs are extra and dropped)
+const WARMUP_RUNS = 1; // Leading cold loads discarded before recording, to prime caches/JIT/server
 
 // CLS is a unitless cumulative layout-shift score; every other metric we track is a millisecond
 // timing. CLS values are small, so its score gets more decimal places than the millisecond timings.
@@ -102,8 +103,11 @@ test.describe("Web Vitals Benchmarks", () => {
 
     const samples = new Map<string, number[]>();
 
-    for (let i = 0; i < COUNT_RUNS; i++) {
-      for (const [name, value] of Object.entries(await collectMetrics(page))) {
+    for (let i = 0; i < WARMUP_RUNS + COUNT_RUNS; i++) {
+      const metrics = await collectMetrics(page);
+      if (i < WARMUP_RUNS) continue;
+
+      for (const [name, value] of Object.entries(metrics)) {
         const values = samples.get(name) ?? [];
         values.push(value);
         samples.set(name, values);
@@ -113,19 +117,21 @@ test.describe("Web Vitals Benchmarks", () => {
     // Fail loudly rather than upload an empty file if web-vitals reporting silently breaks.
     expect(samples.size, "no web vitals were captured").toBeGreaterThan(0);
 
-    console.log(`Web Vitals — ${COUNT_RUNS} runs each, [min, avg, max]:`);
+    console.log(`Web Vitals — ${COUNT_RUNS} runs each (+${WARMUP_RUNS} warmup), [min, avg, max]:`);
 
     const results: BenchmarkResultForUpload[] = [];
     for (const [name, values] of [...samples].sort(([a], [b]) => a.localeCompare(b))) {
-      const { avg, min, max, stdDev } = analyzeMeasurements(values);
+      const { central, min, max, spread } = analyzeMeasurements(values);
       const { unit, decimalsForUpload, decimalsForDisplay } = metricUnitAndDecimals(name);
 
       const fmt = (v: number) => v.toFixed(decimalsForDisplay).padStart(6);
       console.log(
-        `  ${displayName(name).padEnd(34)} [${fmt(min)}, ${fmt(avg)}, ${fmt(max)}] ${unit}`,
+        `  ${displayName(name).padEnd(34)} [${fmt(min)}, ${fmt(central)}, ${fmt(max)}] ${unit}`,
       );
 
-      results.push(formatWebVitalResultForUpload({ name, avg, stdDev }, unit, decimalsForUpload));
+      results.push(
+        formatWebVitalResultForUpload({ name, central, spread }, unit, decimalsForUpload),
+      );
     }
 
     writeBenchmarkResultsToFile(results, OUTPUT_FILENAME);

@@ -19,7 +19,10 @@ import {
   doBenchmarkMemoryMeasurements as doBenchmarkMemoryMeasurementsGeneric,
 } from "@/__benches__/e2e/util";
 
-const COUNT_MEMORY_RUNS = 2; // Number of runs for each memory usage benchmark
+// No warmup here (unlike the timing benches): peak-heap noise is GC-timing jitter, which the median
+// of 3 already absorbs, and a memory run is too expensive to spend one on what the median discards.
+const COUNT_MEMORY_RUNS = 3;
+
 const COUNT_OPERATION_LOOPS = 5; // Number of times to loop an operation sequence
 const COUNT_QTY_UPDATES_PER_LOOP = 30; // Number of times to update ingredient quantity per loop
 
@@ -38,7 +41,7 @@ const PER_RECIPE_QTY_UPDATES_EXPECTED_VALUES = makePerRecipeQtyUpdatesExpectedVa
  * runs, automatically formatting results for upload, and storing them in a shared array for output.
  */
 function doBenchmarkMemoryMeasurements(name: string, run: () => Promise<number>) {
-  return doBenchmarkMemoryMeasurementsGeneric(COUNT_MEMORY_RUNS, name, run).then((result) => {
+  return doBenchmarkMemoryMeasurementsGeneric(COUNT_MEMORY_RUNS, name, run, 0).then((result) => {
     allBenchmarkResultsForUpload.push(formatByteSizeBenchmarkResultForUpload(result, "MB"));
     return result;
   });
@@ -48,7 +51,7 @@ test("should measure peak memory usage during typical operations", async ({
   page,
   browserName,
 }) => {
-  test.setTimeout(5 * 60 * 1000);
+  test.setTimeout(8 * 60 * 1000);
 
   await doBenchmarkMemoryMeasurements("Peak memory usage during typical ops", async () => {
     await page.goto("");

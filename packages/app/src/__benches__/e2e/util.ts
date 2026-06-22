@@ -16,28 +16,31 @@ export const allBenchmarkResultsForUpload: Array<BenchmarkResultForUpload> = [];
  * This function runs the provided async function `countRuns` times, collects the time measurements,
  * analyzes them, and returns a computed average, minimum, maximum, and standard deviation.
  *
- * @param countRuns - The number of times to run the benchmarked function
+ * @param countRuns - The number of recorded runs (warmup runs are extra and discarded)
  * @param name - A descriptive name for the benchmark, used for logging and result identification
  * @param run - An async function that performs the benchmark and returns a time measurement in
  * milliseconds; usually the benchmarked code will be wrapped in a call to {@link timeExecution}.
+ * @param warmupRuns - Leading runs discarded before recording, to prime cold caches/JIT/server.
  */
 export async function doBenchmarkTimeMeasurements(
   countRuns: number,
   name: string,
   run: () => Promise<number>,
+  warmupRuns: number = 1,
 ) {
   const measurements: number[] = [];
 
-  for (let i = 0; i < countRuns; i++) {
-    measurements.push(await run());
+  for (let i = 0; i < warmupRuns + countRuns; i++) {
+    const value = await run();
+    if (i >= warmupRuns) measurements.push(value);
   }
 
-  const { avg, min, max, stdDev } = analyzeMeasurements(measurements);
+  const { central, min, max, spread } = analyzeMeasurements(measurements);
 
   const fmtTime = (t: number) => `${Math.round(t).toFixed(0).padStart(4)}ms`;
-  console.log(`${name.padEnd(45)} time:   [${fmtTime(min)}, ${fmtTime(avg)}, ${fmtTime(max)}]`);
+  console.log(`${name.padEnd(45)} time:   [${fmtTime(min)}, ${fmtTime(central)}, ${fmtTime(max)}]`);
 
-  return { name, avg, min, max, stdDev };
+  return { name, central, min, max, spread };
 }
 
 /**
@@ -46,31 +49,34 @@ export async function doBenchmarkTimeMeasurements(
  * This function runs the provided async function `countRuns` times, collects the memory usage
  * measurements, analyzes them, and returns a computed average, min, max, and standard deviation.
  *
- * @param countRuns - The number of times to run the benchmarked function
+ * @param countRuns - The number of recorded runs (warmup runs are extra and discarded)
  * @param name - A descriptive name for the benchmark, used for logging and result identification
  * @param run - An async function that performs the benchmark and returns a memory usage in bytes.
+ * @param warmupRuns - Leading runs discarded before recording, to prime one-time allocations.
  */
 export async function doBenchmarkMemoryMeasurements(
   countRuns: number,
   name: string,
   run: () => Promise<number>,
+  warmupRuns: number = 1,
 ) {
   const measurements: number[] = [];
 
-  for (let i = 0; i < countRuns; i++) {
-    measurements.push(await run());
+  for (let i = 0; i < warmupRuns + countRuns; i++) {
+    const value = await run();
+    if (i >= warmupRuns) measurements.push(value);
   }
 
-  const { avg, min, max, stdDev } = analyzeMeasurements(measurements);
+  const { central, min, max, spread } = analyzeMeasurements(measurements);
 
   const fmtMem = (m: number) =>
     `${Math.round(m / 1024 / 1024)
       .toFixed(0)
       .padStart(4)} MB`;
 
-  console.log(`${name.padEnd(45)} memory: [${fmtMem(min)}, ${fmtMem(avg)}, ${fmtMem(max)}]`);
+  console.log(`${name.padEnd(45)} memory: [${fmtMem(min)}, ${fmtMem(central)}, ${fmtMem(max)}]`);
 
-  return { name, avg, min, max, stdDev };
+  return { name, central, min, max, spread };
 }
 
 /** Helper function to measure the execution time of an async function in milliseconds */
