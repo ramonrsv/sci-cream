@@ -87,22 +87,73 @@ export function colorVarWithAlpha(color: Color, alpha: number): string {
 }
 
 /**
- * Returns a `Color` representing how `value` sits within the acceptable `{ min, max }` range:
- *
- * - Green — within the inner 70% of the range (ideal band)
- * - Yellow — within the range but outside the ideal band
- * - Orange — within 15% outside the range on either side
- * - RedDull — further out than 15% beyond the range
+ * Rank a status `Color` by severity: Green=0, Yellow=1, Orange=2, RedDull=3; throw for non-status.
+ * Used by {@link worseStatusColor} to pick the higher-severity of two status colors.
  */
-export function getRangeColor(value: number, range: { min: number; max: number }): Color {
-  const span = range.max - range.min;
-  const idealMin = range.min + span * 0.15;
-  const idealMax = range.max - span * 0.15;
-  const expandedMin = range.min - span * 0.15;
-  const expandedMax = range.max + span * 0.15;
+export function statusColorRank(color: Color): number {
+  switch (color) {
+    case Color.GraphGreen:
+      return 0;
+    case Color.GraphYellow:
+      return 1;
+    case Color.GraphOrange:
+      return 2;
+    case Color.GraphRedDull:
+      return 3;
+    default:
+      throw new Error(`Invalid status color: ${color}`);
+  }
+}
 
-  if (value > idealMin && value < idealMax) return Color.GraphGreen;
-  if (value > range.min && value < range.max) return Color.GraphYellow;
-  if (value > expandedMin && value < expandedMax) return Color.GraphOrange;
+/** Returns whichever of `a` or `b` has the higher severity rank (ties go to `a`). */
+export function worseStatusColor(a: Color, b: Color): Color {
+  return statusColorRank(a) >= statusColorRank(b) ? a : b;
+}
+
+/**
+ * Returns a `Color` representing how close `value` is to `target` as a relative delta percentage,
+ * with the regions delineated by `stepPercent` as percentage points (default 5%):
+ *
+ * - Green — delta <= (target * stepPercent), default within 5% of target
+ * - Yellow — delta <= (target * 2 * stepPercent), default within 10% of target
+ * - Orange — delta <= (target * 3 * stepPercent), default within 15% of target
+ * - RedDull — delta > (target * 3 * stepPercent), default more than 15% away from target
+ *
+ * Note: A `stepPercent` of zero yields a pure Green/Red split at the exact `target` threshold,
+ * which should not be used as it is susceptible to floating-point precision issues.
+ */
+export function getTargetColor(value: number, target: number, stepPercent: number = 0.05): Color {
+  const delta = Math.abs(value - target) / target;
+  if (delta <= stepPercent) return Color.GraphGreen;
+  if (delta <= 2 * stepPercent) return Color.GraphYellow;
+  if (delta <= 3 * stepPercent) return Color.GraphOrange;
+  return Color.GraphRedDull;
+}
+
+/**
+ * Returns a `Color` representing how `value` sits within the acceptable `{ min, max }` range, with
+ * the regions delineated by `stepPercent` as a percentage of the total range span (default 15%):
+ *
+ * - Green — within the inner ideal band `{min + span * stepPercent, max - span * stepPercent}`
+ * - Yellow — within the range but outside the ideal band
+ * - Orange — within `{min - span * stepPercent, min}` or `{max, max + span * stepPercent}`
+ * - RedDull — below `min - span * stepPercent` or above `max + span * stepPercent`
+ *
+ * Note: A `stepPercent` of zero yields a pure Green/Red split at the `min` and `max` thresholds.
+ */
+export function getRangeColor(
+  value: number,
+  range: { min: number; max: number },
+  stepPercent: number = 0.15,
+): Color {
+  const span = range.max - range.min;
+  const idealMin = range.min + span * stepPercent;
+  const idealMax = range.max - span * stepPercent;
+  const expandedMin = range.min - span * stepPercent;
+  const expandedMax = range.max + span * stepPercent;
+
+  if (value >= idealMin && value <= idealMax) return Color.GraphGreen;
+  if (value >= range.min && value <= range.max) return Color.GraphYellow;
+  if (value >= expandedMin && value <= expandedMax) return Color.GraphOrange;
   return Color.GraphRedDull;
 }
