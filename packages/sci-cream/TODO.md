@@ -6,7 +6,6 @@
 - [ ] Add "Louis Francois Stab 2000" ingredient, which has stabilizer and emulsifier components.
 - [ ] Add a beginner-friendly overview of the core ice cream science concepts, e.g. FPD curves.
 - [ ] Add more ultra-filtered milk products, e.g. `Fairlife Whole Ultra-Filtered Lactose-Free Milk`.
-- [ ] Add USDA chocolate ingredients and include them in `compare_specs_*` tests vs simple & lindt.
 - [ ] Add TS-side unit tests for the `wasm::Recipe` functionality; it's independent from `Bridge`.
 
 ## Up Next
@@ -98,6 +97,7 @@
 
 ## Completed
 
+- [x] Add USDA chocolate ingredients and include them in `compare_specs_*` tests vs simple & lindt.
 - [x] Add more independent egg ingredients, including powder, and add `compare_specs_*` snapshots.
 - [x] Add support for tracking milk casein/whey proteins and egg yolk/white proteins. This may need
       modifications to `Composition`, and the specs need to be modified to allow more specificity.

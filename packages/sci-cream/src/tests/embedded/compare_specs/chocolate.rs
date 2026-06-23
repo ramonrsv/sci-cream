@@ -39,6 +39,20 @@ const COMPARABLE_CHOCOLATE_KEYS: &[CompKey] = &[
 ];
 
 #[test]
+fn compare_specs_chocolate_65() {
+    let sources = [
+        ("Simple", "65% Dark Chocolate"),
+        ("USDA", "USDA Dark Chocolate, 60-69% Cacao Solids"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(3.0).with(CompKey::Energy, 12.0).with(CompKey::HF, 4.5);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
+
+#[test]
 fn compare_specs_chocolate_70() {
     let sources = [
         ("Simple", "70% Dark Chocolate"),
@@ -91,6 +105,20 @@ fn compare_specs_chocolate_100() {
     .map(source_str_to_comp);
 
     let ceiling = KeyCeiling::new(4.0).with(CompKey::Energy, 21.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));
+}
+
+#[test]
+fn compare_specs_cocoa_powder_13_fat() {
+    let sources = [
+        ("Simple", "Cocoa Powder, 13% Fat"),
+        ("USDA", "USDA Unsweetened Cocoa Powder"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(1.0).with(CompKey::Energy, 5.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_CHOCOLATE_KEYS, &ceiling);
     insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS));

@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 232  (non-alias: 200, independent: 194)
+"total: 237  (non-alias: 205, independent: 199)
 
             0% Milk
             1% Milk
@@ -45,6 +45,7 @@ exports[`Embedded spec entries 1`] = `
 [alias]     Chocolate Extract
             Clarke Egg Yolk
             Cocoa Powder, 10% Fat
+            Cocoa Powder, 13% Fat
             Cocoa Powder, 15% Fat
             Cocoa Powder, 17% Fat
             Cocoa Powder, 20% Fat
@@ -201,6 +202,9 @@ exports[`Embedded spec entries 1`] = `
             Trehalose
             USDA 2% Reduced-Fat Evaporated Milk
             USDA 2% Reduced-Fat Milk
+            USDA Dark Chocolate, 45-59% Cacao Solids
+            USDA Dark Chocolate, 60-69% Cacao Solids
+            USDA Dark Chocolate, 70-85% Cacao Solids
             USDA Dried Egg White
             USDA Dried Egg Yolk
             USDA Dried Whole Egg
@@ -218,6 +222,7 @@ exports[`Embedded spec entries 1`] = `
             USDA Raw Egg Yolk
             USDA Raw Whole Egg
             USDA Sweetened Condensed Milk
+            USDA Unsweetened Cocoa Powder
             USDA Vanilla Extract
             USDA Whole Evaporated Milk
             USDA Whole Milk

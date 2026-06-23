@@ -1,0 +1,25 @@
+---
+source: packages/sci-cream/src/tests/embedded/compare_specs/chocolate.rs
+expression: "compare_compositions(&sources, COMPARABLE_CHOCOLATE_KEYS)"
+---
+sources: Simple, USDA
+
+Energy               4.83 pp  (Simple vs USDA)
+TotalFats            0.70 pp  (Simple vs USDA)
+CacaoSolids          0.00 pp  (Simple vs USDA)
+CocoaButter          0.70 pp  (Simple vs USDA)
+CocoaSolids          0.70 pp  (Simple vs USDA)
+TotalFiber           0.28 pp  (Simple vs USDA)
+TotalSugars          0.00 pp  (Simple vs USDA)
+TotalCarbohydrates   0.48 pp  (Simple vs USDA)
+OtherSNFS            0.00 pp  (Simple vs USDA)
+TotalSNFS            0.70 pp  (Simple vs USDA)
+TotalProteins        0.17 pp  (Simple vs USDA)
+TotalSolids          0.00 pp  (Simple vs USDA)
+Water                0.00 pp  (Simple vs USDA)
+POD                  0.00 pp  (Simple vs USDA)
+PACsgr               0.00 pp  (Simple vs USDA)
+HF                   0.63 pp  (Simple vs USDA)
+TotalPAC             0.00 pp  (Simple vs USDA)
+SaturatedFat         0.42 pp  (Simple vs USDA)
+TransFat             0.00 pp  (Simple vs USDA)

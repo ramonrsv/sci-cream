@@ -50,6 +50,11 @@
     "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 10 }
   },
   {
+    "name": "Cocoa Powder, 13% Fat",
+    "category": "Chocolate",
+    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 13 }
+  },
+  {
     "name": "Cocoa Powder, 15% Fat",
     "category": "Chocolate",
     "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 15 }
@@ -68,6 +73,24 @@
     "name": "Cocoa Powder, 22% Fat",
     "category": "Chocolate",
     "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 22 }
+  },
+  {
+    "name": "USDA Dark Chocolate, 45-59% Cacao Solids",
+    "category": "Chocolate",
+    "ChocolateSpec": { "cacao_solids": 52.1, "cocoa_butter": 31.3, "sugars": 47.9 },
+    "comments": "USDA FoodData Central - SR Legacy - Chocolate, dark, 45-59% cacao solids (https://fdc.nal.usda.gov/food-details/170271/nutrients)"
+  },
+  {
+    "name": "USDA Dark Chocolate, 60-69% Cacao Solids",
+    "category": "Chocolate",
+    "ChocolateSpec": { "cacao_solids": 63.3, "cocoa_butter": 38.3, "sugars": 36.7 },
+    "comments": "USDA FoodData Central - SR Legacy - Chocolate, dark, 60-69% cacao solids (https://fdc.nal.usda.gov/food-details/170272/nutrients)"
+  },
+  {
+    "name": "USDA Dark Chocolate, 70-85% Cacao Solids",
+    "category": "Chocolate",
+    "ChocolateSpec": { "cacao_solids": 76, "cocoa_butter": 42.6, "sugars": 24 },
+    "comments": "USDA FoodData Central - SR Legacy - Chocolate, dark, 70-85% cacao solids (https://fdc.nal.usda.gov/food-details/170273/nutrients)"
   },
   {
     "name": "Lindt EXCELLENCE 70% Cacao Dark Chocolate",
@@ -92,6 +115,12 @@
     "category": "Chocolate",
     "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 54 },
     "comments": "100% cocoa solids from the label. From the nutrition facts table: 27g/50g fat => 54% cocoa butter, 0g sugars (https://www.lindt.ca/en/lindt-excellence-100-cacao-bar-50g)."
+  },
+  {
+    "name": "USDA Unsweetened Cocoa Powder",
+    "category": "Chocolate",
+    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 13.7 },
+    "comments": "USDA FoodData Central - SR Legacy - Cocoa, dry powder, unsweetened (https://fdc.nal.usda.gov/food-details/169593/nutrients)"
   },
   {
     "name": "Ghirardelli 100% Unsweetened Cocoa Powder",
