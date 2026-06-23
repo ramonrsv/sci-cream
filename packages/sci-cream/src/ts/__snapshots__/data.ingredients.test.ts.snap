@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 220  (non-alias: 188, independent: 182)
+"total: 232  (non-alias: 200, independent: 194)
 
             0% Milk
             1% Milk
@@ -43,6 +43,7 @@ exports[`Embedded spec entries 1`] = `
             Carnation Fat Free Evaporated Milk
 [alias]     Casein
 [alias]     Chocolate Extract
+            Clarke Egg Yolk
             Cocoa Powder, 10% Fat
             Cocoa Powder, 15% Fat
             Cocoa Powder, 17% Fat
@@ -86,6 +87,8 @@ exports[`Embedded spec entries 1`] = `
             Goff & Hartel 8% Condensed Milk
             Goff & Hartel Condensed Skim Milk, 20% MSNF
             Goff & Hartel Condensed Skim Milk, 30% MSNF
+            Goff & Hartel Dry Egg Yolk
+            Goff & Hartel Egg Yolk
             Goff & Hartel Evaporated Milk
             Goff & Hartel Skim Milk
             Goff & Hartel Skim Milk Powder
@@ -198,13 +201,22 @@ exports[`Embedded spec entries 1`] = `
             Trehalose
             USDA 2% Reduced-Fat Evaporated Milk
             USDA 2% Reduced-Fat Milk
+            USDA Dried Egg White
+            USDA Dried Egg Yolk
+            USDA Dried Whole Egg
             USDA Fat-Free (Skim) Milk
             USDA Fat-Free Evaporated Milk
+            USDA Frozen Pasteurized Raw Egg White
+            USDA Frozen Pasteurized Raw Egg Yolk
+            USDA Frozen Pasteurized Raw Whole Egg
             USDA Half and Half Cream
             USDA Heavy Cream
             USDA Imitation Vanilla Extract
             USDA Light Cream
             USDA No-Alcohol Imitation Vanilla Extract
+            USDA Raw Egg White
+            USDA Raw Egg Yolk
+            USDA Raw Whole Egg
             USDA Sweetened Condensed Milk
             USDA Vanilla Extract
             USDA Whole Evaporated Milk

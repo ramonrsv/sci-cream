@@ -136,3 +136,9 @@ and microscopical attributes of sweetened condensed milk_. Food Science and Tech
 [^66]: Ontario Wealth. _Cocoa Butter_. Retrieved 2026, June. <https://ontariowealth.ca/product/cocoa-butter/>
 
 [^67]: Ariga, S. R. & Aisyah, Y. & Patria, A. & Arpi, N. & Yunita, D. (2018) _Physicochemical Characterization of Oil from Roasted Coffee_. Proceeding of the 8th AIC: Health and Life Sciences, Syiah Kuala University, pages 94-102. Retrieved 2026, June. <https://www.academia.edu/75282549/Physicochemical_Characterization_of_Oil_from_Roasted_Coffee>
+
+[^68]: Manley, D. (2000) _Technology of Biscuits, Crackers and Cookies_ (3rd ed.). Woodhead Publishing
+
+[^69]: Zhao, F. & Li, R. & Liu, Y. & Chen, H. (2023) _Perspectives on lecithin from egg yolk: Extraction, physicochemical properties, modification, and applications_. <https://pmc.ncbi.nlm.nih.gov/articles/PMC9853391/#B3>
+
+[^70]: Palacios, L. E. & Wang, T. (2005) _Egg-Yolk Lipid Fractionation and Lecithin Characterization_. Department of Food Science and Human Nutrition, Center for Crops Utilization Research, Iowa State University.

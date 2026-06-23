@@ -492,7 +492,7 @@ assert_recipe_matches(
     &balanced,
     &[
         ("Whole Milk", 472.0),
-        ("Whipping Cream", 235.0),
+        ("Whipping Cream", 236.0),
         ("Cocoa Powder, 17% Fat", 64.0),
         ("95% Dark Chocolate", 17.0),
         ("Skimmed Milk Powder", 12.0),
@@ -514,7 +514,7 @@ for (key, value) in targets.iter().filter(|(key, _)| not_total_fats(key)) {
 }
 
 // With disparate targets, some non-priority ones can drift to accommodate the priorities
-assert_eq_float!(balanced_properties.get(TotalFats.into()), 12.4807);
+assert_eq_float!(balanced_properties.get(TotalFats.into()), 12.4937);
 # Ok(()) }
 ```
 

@@ -37,3 +37,5 @@
 [^116]: Perfected Guar Gum. (2026). In _Modernist Pantry_. <https://modernistpantry.com/products/perfected-guar-gum.html>
 
 [^117]: Sweetened condensed milk. (2026). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/2758990/nutrients>
+
+[^118]: Eggs, Grade A, Large, egg white. In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/747997/nutrients>
