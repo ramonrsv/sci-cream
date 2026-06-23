@@ -41,7 +41,7 @@ execute pnpm lint
 
 execute pnpm build
 execute pnpm seed-db
-execute env CI=true pnpm test
+execute pnpm test
 execute pnpm doc
 execute pnpm coverage
 
