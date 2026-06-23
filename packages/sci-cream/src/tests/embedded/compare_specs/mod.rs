@@ -4,3 +4,4 @@
 
 mod chocolate;
 mod dairy;
+mod egg;
