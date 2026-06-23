@@ -541,7 +541,7 @@ mod tests {
 
     use super::*;
     use crate::{
-        constants::composition::STD_MINERALS_IN_MSNF,
+        constants::composition::dairy::STD_MINERALS_IN_MSNF,
         util::{
             fast_interpolate_pairs, interpolate_pairs, table_supports_fast_interpolation, table_supports_interpolation,
         },

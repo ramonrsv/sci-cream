@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 
 use crate::{
     composition::{Composition, EggProteins, EggSolids, Emulsifiers, Fats, Micro, Solids, ToComposition},
-    constants::composition::{
+    constants::composition::egg::{
         STD_LECITHIN_IN_EGG_YOLK_SOLIDS, STD_SATURATED_FAT_IN_EGG_FAT, STD_WHITE_PROTEIN_IN_WHOLE_EGG_PROTEIN,
         STD_WHITE_SOLIDS_IN_WHOLE_EGG_SOLIDS, STD_YOLK_PROTEIN_IN_WHOLE_EGG_PROTEIN,
         STD_YOLK_SOLIDS_IN_WHOLE_EGG_SOLIDS,

@@ -17,7 +17,9 @@ use crate::{
     composition::{ArtificialSweeteners, CompKey, Composition, Emulsifiers, Fibers, Polyols, Stabilizers, Sugars},
     constants::{
         self,
-        composition::{STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_PROTEIN_IN_MSNF, STD_WHEY_PROTEIN_IN_MSNF_PROTEIN},
+        composition::dairy::{
+            STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_PROTEIN_IN_MSNF, STD_WHEY_PROTEIN_IN_MSNF_PROTEIN,
+        },
     },
     specs::ChocolateSpec,
 };

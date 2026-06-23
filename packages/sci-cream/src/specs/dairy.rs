@@ -10,7 +10,7 @@ use crate::{
     },
     constants::{
         self,
-        composition::{
+        composition::dairy::{
             STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_LACTOSE_IN_MSNF, STD_LACTOSE_IN_WS,
             STD_MIN_WATER_CONTENT_IN_MILK_POWDER, STD_MINERALS_IN_CASEIN, STD_MINERALS_IN_MSNF, STD_MINERALS_IN_WS,
             STD_MSNF_IN_MILK_SERUM, STD_PROTEIN_IN_MSNF, STD_PROTEIN_IN_WS, STD_SATURATED_FAT_IN_MILK_FAT,

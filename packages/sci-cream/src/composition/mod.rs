@@ -30,7 +30,7 @@
 //!
 //! ```
 //! # fn main() -> Result<(), Box<dyn std::error::Error>> {
-//! use sci_cream::{composition::*, constants::{composition::*, pac}, docs::assert_eq_float};
+//! use sci_cream::{composition::*, constants::{composition::dairy::*, pac}, docs::assert_eq_float};
 //!
 //! let msnf = (100.0 - 2.0) * STD_MSNF_IN_MILK_SERUM;
 //! let lactose = msnf * STD_LACTOSE_IN_MSNF;

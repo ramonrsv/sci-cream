@@ -570,7 +570,7 @@ mod tests {
     use crate::{
         composition::{Carbohydrates, CompKey, Composition, Fats, PAC, Solids, SolidsBreakdown, Sugars},
         constants::{
-            composition::{STD_LACTOSE_IN_MSNF, STD_LACTOSE_IN_WS},
+            composition::dairy::{STD_LACTOSE_IN_MSNF, STD_LACTOSE_IN_WS},
             fpd::{CORVITTO_PAC_TO_SERVING_TEMP_TABLE, FPD_CONST_FOR_MSNF_WS_SALTS},
             pac,
         },

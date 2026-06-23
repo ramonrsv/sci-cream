@@ -21,7 +21,7 @@ use crate::{
 #[cfg(doc)]
 use crate::{
     composition::{Fats, Solids, SolidsBreakdown, Sugars},
-    constants::composition::{STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_WHEY_PROTEIN_IN_MSNF_PROTEIN},
+    constants::composition::dairy::{STD_CASEIN_PROTEIN_IN_MSNF_PROTEIN, STD_WHEY_PROTEIN_IN_MSNF_PROTEIN},
 };
 
 /// Protein breakdown for a single solid source, e.g. [`MilkProteins`], [`EggProteins`].

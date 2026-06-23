@@ -6,7 +6,7 @@ use crate::{
     composition::{
         Carbohydrates, Composition, Fats, Fibers, PAC, SimpleProteins, SimpleSolids, Solids, Sugars, ToComposition,
     },
-    constants::{self},
+    constants::{self, composition::nut::STD_SATURATED_FAT_IN_NUT_FAT},
     error::Result,
     validate::{Validate, verify_are_positive, verify_is_subset, verify_is_within_100_percent},
 };
@@ -83,7 +83,7 @@ pub struct NutSpec {
     /// not specified.
     ///
     /// If not specified, it is assumed to be a standard proportion of total fat for nuts, defined
-    /// by [`constants::composition::STD_SATURATED_FAT_IN_NUT_FAT`].
+    /// by [`constants::composition::nut::STD_SATURATED_FAT_IN_NUT_FAT`].
     #[serde(skip_serializing_if = "Option::is_none")]
     pub saturated_fat: Option<f64>,
     /// Carbohydrate content as percentage of total weight
@@ -110,7 +110,7 @@ impl ToComposition for NutSpec {
         verify_is_within_100_percent(water + protein + fat + carbohydrate)?;
         verify_is_subset(fiber + sugars, carbohydrate, "fiber + sugars <= carbohydrate")?;
 
-        let saturated_fat = saturated_fat.unwrap_or(fat * constants::composition::STD_SATURATED_FAT_IN_NUT_FAT);
+        let saturated_fat = saturated_fat.unwrap_or(fat * STD_SATURATED_FAT_IN_NUT_FAT);
         verify_is_subset(saturated_fat, fat, "saturated_fat <= fat")?;
 
         let sugars = Sugars::new().sucrose(sugars);

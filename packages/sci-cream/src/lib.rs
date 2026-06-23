@@ -200,7 +200,7 @@ from the [`constants`] module, e.g. [`STD_MSNF_IN_MILK_SERUM`], [`STD_LACTOSE_IN
 ```
 # fn main() -> Result<(), Box<dyn std::error::Error>> {
 # use sci_cream::docs::assert_eq_float;
-use sci_cream::{CompKey, composition::*, constants::{composition::*, pac}};
+use sci_cream::{CompKey, composition::*, constants::{composition::dairy::*, pac}};
 
 let msnf = (100.0 - 2.0) * STD_MSNF_IN_MILK_SERUM;
 let lactose = msnf * STD_LACTOSE_IN_MSNF;
@@ -665,7 +665,7 @@ pub use database::IngredientDatabase;
 use crate::{
     balancing::{BalancingReport, validate_balancing_targets},
     composition::{Carbohydrates, Fats, ResolveComposition, SolidsBreakdown, Sugars, Sweeteners},
-    constants::composition::{STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM},
+    constants::composition::dairy::{STD_LACTOSE_IN_MSNF, STD_MSNF_IN_MILK_SERUM},
     fpd::Curves,
     ingredient::ResolveIntoIngredient,
     resolution::IngredientGetter,
