@@ -1,4 +1,4 @@
-import { test, expect, Page } from "@playwright/test";
+import { test, expect, Page, Request } from "@playwright/test";
 
 import { RecipeID, getLightRecipe } from "@/__tests__/assets";
 
@@ -17,6 +17,10 @@ import {
 import { sleep_ms } from "@/lib/util";
 
 import { TEST_USER_B } from "@/lib/database/assets";
+
+/** True for a Next.js server-action POST: the user-data fetch the stall simulates as slow. */
+const isUserDataServerAction = (req: Request) =>
+  req.method() === "POST" && Boolean(req.headers()["next-action"]);
 
 test.describe("Recipe Resources", () => {
   // These tests are wall-clock-time sensitive, so we run them serially to avoid flaky failures from
@@ -38,10 +42,7 @@ test.describe("Recipe Resources", () => {
    */
   const simulateSlowFetchApiResponse = async (page: Page, delayMs: number) => {
     await page.route("**/*", async (route) => {
-      const method = route.request().method();
-      const headers = route.request().headers();
-
-      if (method === "POST" && headers["next-action"]) {
+      if (isUserDataServerAction(route.request())) {
         await sleep_ms(delayMs);
       }
 
@@ -60,6 +61,12 @@ test.describe("Recipe Resources", () => {
     // the delay never fires here — it only sets how slow a *regressed* (stalling) run would be.
     await simulateSlowFetchApiResponse(page, 8000);
 
+    // Count server-action POSTs; this path uses no user-defined ingredients, so it must issue none
+    let serverActionCount = 0;
+    page.on("request", (req) => {
+      if (isUserDataServerAction(req)) serverActionCount++;
+    });
+
     const gotoStart = Date.now();
     await goToPageAndWaitFor(page, "", LoadState.DomContentLoaded);
 
@@ -76,6 +83,10 @@ test.describe("Recipe Resources", () => {
     // would add 8000ms (~10s+). 6000ms sits comfortably between the two, so it still proves no
     // server-action stall reached the no-user-defined path while tolerating contention swings.
     expect(updateTime).toBeLessThan(6000);
+
+    // No user-data fetch should have fired on this path; let any (regressed) one register first.
+    await page.waitForLoadState("networkidle");
+    expect(serverActionCount).toBe(0);
   });
 
   // Simulates slow fetch API calls to ensure that recipe paste remains responsive and that the UI
@@ -95,8 +106,12 @@ test.describe("Recipe Resources", () => {
     await goToPageAndWaitFor(page);
     await loginAsTestUserWithCredentials(page, TEST_USER_B);
 
-    const gotoStart = Date.now();
+    // Anchor timing to the stalled POST's issuance (stall start), not the reload, to exclude
+    // page-load jitter. Arm after login so it matches the reload's POST, not the login's.
+    const userDataPost = page.waitForRequest(isUserDataServerAction);
     await goToPageAndWaitFor(page, "", LoadState.DomContentLoaded);
+    await userDataPost;
+    const stallStart = Date.now();
 
     for (const recipeId of [
       RecipeID.MainWithUserDefined,
@@ -112,7 +127,7 @@ test.describe("Recipe Resources", () => {
       await expect(elements.propServingTemp).toBeVisible();
       await expect(elements.propServingTemp).not.toHaveText(expected.servingTemp);
     }
-    const pasteTime = Date.now() - gotoStart;
+    const pasteTime = Date.now() - stallStart;
 
     for (const recipeId of [
       RecipeID.MainWithUserDefined,
@@ -121,7 +136,7 @@ test.describe("Recipe Resources", () => {
     ]) {
       await expectRecipePasteCompleted(page, recipeId, undefined, 12000);
     }
-    const updateTime = Date.now() - gotoStart;
+    const updateTime = Date.now() - stallStart;
 
     // The paste action itself should remain responsive, as it doesn't depend on the fetched data
     expect(pasteTime).toBeLessThan(5000);
@@ -138,7 +153,7 @@ test.describe("Recipe Resources", () => {
     // fetches once per session, so navigation and reads should add none (RSC GETs aren't actions).
     let serverActionCount = 0;
     page.on("request", (req) => {
-      if (req.method() === "POST" && req.headers()["next-action"]) serverActionCount++;
+      if (isUserDataServerAction(req)) serverActionCount++;
     });
 
     // Sign in and land on the calculator; the provider fetches once per session here. Reset the
