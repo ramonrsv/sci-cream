@@ -1,35 +1,5 @@
 [
   {
-    "name": "Lindt EXCELLENCE 70% Cacao Dark Chocolate",
-    "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 70, "cocoa_butter": 40, "sugars": 30 },
-    "comments": "70% cocoa solids from the label. From nutrition facts table: 16g/40g fat => 40% cocoa butter, 12g/40g sugars => 30% sugar (https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g)."
-  },
-  {
-    "name": "Lindt EXCELLENCE 85% Cacao Dark Chocolate",
-    "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 85, "cocoa_butter": 45, "sugars": 15 },
-    "comments": "85% cocoa solids from the label. From nutrition facts table: 18g/40g fat => 45% cocoa butter, 6g/40g sugars => 15% sugar (https://www.lindt.ca/en/lindt-excellence-85-cacao-dark-chocolate-bar-100g)."
-  },
-  {
-    "name": "Lindt EXCELLENCE 95% Cacao Dark Chocolate",
-    "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 95, "cocoa_butter": 57.5, "sugars": 3, "other_solids": 2 },
-    "comments": "95% cocoa solids from the label. From nutrition facts table: 23g/40g fat => 57.5% cocoa butter, 1g/40g sugars => ~3% sugar, other solids 2% by difference (https://www.lindt.ca/en/lindt-excellence-95-cacao-dark-chocolate-bar-80g)."
-  },
-  {
-    "name": "Lindt EXCELLENCE 100% Cacao Dark Chocolate",
-    "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 54 },
-    "comments": "100% cocoa solids from the label. From the nutrition facts table: 27g/50g fat => 54% cocoa butter, 0g sugars (https://www.lindt.ca/en/lindt-excellence-100-cacao-bar-50g)."
-  },
-  {
-    "name": "Ghirardelli 100% Unsweetened Cocoa Powder",
-    "category": "Chocolate",
-    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 16.67 },
-    "comments": "100% cocoa solids from the label. From the nutrition facts table: 1g/6g fat => 16.67% cocoa butter, 0g sugars (https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs)."
-  },
-  {
     "name": "60% Dark Chocolate",
     "category": "Chocolate",
     "ChocolateSpec": { "cacao_solids": 60, "sugars": 40 }
@@ -98,5 +68,35 @@
     "name": "Cocoa Powder, 22% Fat",
     "category": "Chocolate",
     "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 22 }
+  },
+  {
+    "name": "Lindt EXCELLENCE 70% Cacao Dark Chocolate",
+    "category": "Chocolate",
+    "ChocolateSpec": { "cacao_solids": 70, "cocoa_butter": 40, "sugars": 30 },
+    "comments": "70% cocoa solids from the label. From nutrition facts table: 16g/40g fat => 40% cocoa butter, 12g/40g sugars => 30% sugar (https://www.lindt.ca/en/lindt-excellence-70-cacao-dark-chocolate-bar-100g)."
+  },
+  {
+    "name": "Lindt EXCELLENCE 85% Cacao Dark Chocolate",
+    "category": "Chocolate",
+    "ChocolateSpec": { "cacao_solids": 85, "cocoa_butter": 45, "sugars": 15 },
+    "comments": "85% cocoa solids from the label. From nutrition facts table: 18g/40g fat => 45% cocoa butter, 6g/40g sugars => 15% sugar (https://www.lindt.ca/en/lindt-excellence-85-cacao-dark-chocolate-bar-100g)."
+  },
+  {
+    "name": "Lindt EXCELLENCE 95% Cacao Dark Chocolate",
+    "category": "Chocolate",
+    "ChocolateSpec": { "cacao_solids": 95, "cocoa_butter": 57.5, "sugars": 3, "other_solids": 2 },
+    "comments": "95% cocoa solids from the label. From nutrition facts table: 23g/40g fat => 57.5% cocoa butter, 1g/40g sugars => ~3% sugar, other solids 2% by difference (https://www.lindt.ca/en/lindt-excellence-95-cacao-dark-chocolate-bar-80g)."
+  },
+  {
+    "name": "Lindt EXCELLENCE 100% Cacao Dark Chocolate",
+    "category": "Chocolate",
+    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 54 },
+    "comments": "100% cocoa solids from the label. From the nutrition facts table: 27g/50g fat => 54% cocoa butter, 0g sugars (https://www.lindt.ca/en/lindt-excellence-100-cacao-bar-50g)."
+  },
+  {
+    "name": "Ghirardelli 100% Unsweetened Cocoa Powder",
+    "category": "Chocolate",
+    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 16.67 },
+    "comments": "100% cocoa solids from the label. From the nutrition facts table: 1g/6g fat => 16.67% cocoa butter, 0g sugars (https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs)."
   }
 ]
