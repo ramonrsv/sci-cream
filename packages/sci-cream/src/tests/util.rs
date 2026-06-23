@@ -18,6 +18,9 @@ use crate::tests::assets::get_comp_by_name;
 
 /// Checks that `comp` satisfies the structural forest's additive invariants: every roll-up's parts
 /// sum to no more than the roll-up, and residual-free roll-ups equal their parts exactly.
+///
+/// It also pins the per-source SNFS residual the forest leaves unverified: `TotalSNFS` must equal
+/// the sum of every source's sugar-free non-fat solids exactly.
 pub(crate) fn verify_structural_consistency(comp: &Composition) -> Result<()> {
     for key in CompKey::iter().filter(|key| key.is_rollup()) {
         let parts_sum: f64 = key.children().iter().map(|&part| comp.get(part)).sum();
@@ -29,6 +32,14 @@ pub(crate) fn verify_structural_consistency(comp: &Composition) -> Result<()> {
             verify_is_subset(parts_sum, whole, &format!("{key:?} parts sum"))?;
         }
     }
+
+    let snfs_by_source = comp.solids.milk.snfs()
+        + comp.solids.cocoa.snfs()
+        + comp.solids.nut.snfs()
+        + comp.solids.egg.snfs()
+        + comp.solids.other.snfs();
+    verify_are_equal(comp.get(CompKey::TotalSNFS), snfs_by_source)?;
+
     Ok(())
 }
 

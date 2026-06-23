@@ -170,7 +170,7 @@ pub(crate) mod subtrees {
     }
 
     pub(crate) fn total_snfs() -> N<CompKey> {
-        N::br(TotalSNFS, leaves(&[MilkSNFS, CocoaSolids, NutSNF, EggSNF, OtherSNFS]))
+        N::br(TotalSNFS, leaves(&[MilkSNFS, OtherSNFS]))
     }
 
     pub(crate) fn total_proteins() -> N<CompKey> {
@@ -434,7 +434,6 @@ impl CompKey {
                 | Self::TotalPolyols
                 | Self::TotalArtificial
                 | Self::TotalSweeteners
-                | Self::TotalSNFS
                 | Self::TotalPAC
                 | Self::TotalStabilizers
                 | Self::TotalEmulsifiers

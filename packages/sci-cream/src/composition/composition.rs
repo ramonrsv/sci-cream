@@ -184,7 +184,7 @@ pub enum CompKey {
     /// solids) [`CompKey::CocoaSolids`]. See the [chocolate documentation](crate::docs#chocolate)
     /// for more details.
     ///
-    /// **Note**: This does not include any sugar content that may be present in chocolate
+    /// **Note**: This does not include any added sugar content that may be present in chocolate
     /// ingredients; that is accounted for separately via [`CompKey::TotalSugars`].
     CacaoSolids,
     /// Cocoa butter, the fat component extracted from cacao solids [`CompKey::CacaoSolids`].
@@ -203,27 +203,24 @@ pub enum CompKey {
     //
     /// Nut Solids, the total solid content of nut ingredients
     ///
-    /// This generally includes fats, proteins, fibers, and minerals. It includes both
-    /// [`CompKey::NutFat`] and [`CompKey::NutSNF`], and is roughly equivalent to
-    /// [`CompKey::CacaoSolids`] if cacao were treated as a nut.
+    /// This generally includes fats, proteins, fibers, minerals, and small amounts of sugars
+    /// naturally present in nuts. It includes both [`CompKey::NutFat`] and [`CompKey::NutSNF`],
+    /// and is roughly equivalent to [`CompKey::CacaoSolids`] if cacao were treated as a nut.
     ///
-    /// **Note**: This does not include any sugar content that may be present in nut ingredients;
-    /// that is accounted for separately via [`CompKey::TotalSugars`].
+    /// **Note**: This does not include any added sugar content that may be present in nut
+    /// ingredients; that is accounted for separately via [`CompKey::TotalSugars`].
     NutSolids,
     /// Nut Fats, the fat content of nut ingredients
     ///
     /// It is roughly equivalent to [`CompKey::CocoaButter`] if cacao were treated as a nut.
     /// This component affects the texture of ice creams by hardening the frozen product.
     NutFat,
-    /// Nut Solids Non-Fat Non-Sugar (SNFS), the non-fat, non-sugar solid content of nuts
+    /// Nut Solids Non-Fat (SNF), the non-fat solid content of nut ingredients
     ///
-    /// This generally includes proteins, fibers, and minerals. It is roughly equivalent to
-    /// [`CompKey::CocoaSolids`] if cacao were treated as a nut. For nut flavored ice cream recipes,
-    /// this value directly correlates with the perceived intensity of the nut flavor.
-    ///
-    /// **Note**: This does not include any sugar content that may be present in nut ingredients;
-    /// that is accounted for separately via [`CompKey::TotalSugars`]. As such, it would be
-    /// equivalent to a hypothetical `NutSNFS` (Nut Solids Non-Fat Non-Sugar).
+    /// This generally includes proteins, fibers, minerals, and small amounts of sugars naturally
+    /// present in nuts. It is roughly equivalent to [`CompKey::CocoaSolids`] if cacao were treated
+    /// as a nut. For nut flavored ice cream recipes, this value directly correlates with the
+    /// perceived intensity of the nut flavor.
     NutSNF,
 
     // Eggs
@@ -237,10 +234,6 @@ pub enum CompKey {
     /// Egg Fats, the fat content of egg ingredients
     EggFat,
     /// Egg Solids Non-Fat (SNF), the non-fat solid content of egg ingredients
-    ///
-    /// **Note**: This does not include any sugar content that may be present in egg ingredients;
-    /// that is accounted for separately via [`CompKey::TotalSugars`]. As such, it would be
-    /// equivalent to a hypothetical `EggSNFS` (Egg Solids Non-Fat Non-Sugar).
     EggSNF,
     /// Egg Proteins, the total protein content of egg ingredients
     EggProteins,
@@ -577,17 +570,17 @@ impl Composition {
             CompKey::Casein => self.solids.milk.proteins.casein,
             CompKey::Whey => self.solids.milk.proteins.whey,
 
-            CompKey::CacaoSolids => self.solids.cocoa.total() - self.solids.cocoa.carbohydrates.sugars.total(),
+            CompKey::CacaoSolids => self.solids.cocoa.total(),
             CompKey::CocoaButter => self.solids.cocoa.fats.total,
-            CompKey::CocoaSolids => self.solids.cocoa.snfs(),
+            CompKey::CocoaSolids => self.solids.cocoa.snf(),
 
-            CompKey::NutSolids => self.solids.nut.total() - self.solids.nut.carbohydrates.sugars.total(),
+            CompKey::NutSolids => self.solids.nut.total(),
             CompKey::NutFat => self.solids.nut.fats.total,
-            CompKey::NutSNF => self.solids.nut.snfs(),
+            CompKey::NutSNF => self.solids.nut.snf(),
 
-            CompKey::EggSolids => self.solids.egg.total() - self.solids.egg.carbohydrates.sugars.total(),
+            CompKey::EggSolids => self.solids.egg.total(),
             CompKey::EggFat => self.solids.egg.fats.total,
-            CompKey::EggSNF => self.solids.egg.snfs(),
+            CompKey::EggSNF => self.solids.egg.snf(),
             CompKey::EggProteins => self.solids.egg.proteins.total(),
             CompKey::WhiteProteins => self.solids.egg.proteins.white,
             CompKey::YolkProteins => self.solids.egg.proteins.yolk,
@@ -1019,24 +1012,24 @@ mod tests {
             (CompKey::MilkSugars,           5.0),   // lactose
             (CompKey::MilkSNFS,             4.0),   // milk.snfs() = 9 - 5 (lactose)
             (CompKey::MilkProteins,         3.0),
-            (CompKey::Casein,           2.4),
-            (CompKey::Whey,             0.6),
+            (CompKey::Casein,               2.4),
+            (CompKey::Whey,                 0.6),
             (CompKey::MilkSolids,          13.0),
             // Cocoa
             (CompKey::CocoaButter,          3.0),
-            (CompKey::CocoaSolids,          2.0),   // cocoa.snfs() = (7-3) - 2 (sucrose)
-            (CompKey::CacaoSolids,          5.0),   // cocoa.total() - cocoa.sugars = 7 - 2
+            (CompKey::CocoaSolids,          4.0),   // cocoa.snf() = 7-3
+            (CompKey::CacaoSolids,          7.0),   // cocoa.total()
             // Nut
             (CompKey::NutFat,               2.0),
-            (CompKey::NutSNF,               2.0),   // nut.snfs() = (4-2) - 0
-            (CompKey::NutSolids,            4.0),   // nut.total() - nut.sugars = 4 - 0
+            (CompKey::NutSNF,               2.0),   // nut.snf() = 4-2
+            (CompKey::NutSolids,            4.0),   // nut.total()
             // Egg
             (CompKey::EggFat,               2.0),
-            (CompKey::EggSNF,               2.0),   // egg.snfs() = (4-2) - 0
+            (CompKey::EggSNF,               2.0),   // egg.snf() = 4-2
             (CompKey::EggProteins,          1.0),
-            (CompKey::WhiteProteins,     0.0),
-            (CompKey::YolkProteins,      1.0),
-            (CompKey::EggSolids,            4.0),   // egg.total() - egg.sugars = 4 - 0
+            (CompKey::WhiteProteins,        0.0),
+            (CompKey::YolkProteins,         1.0),
+            (CompKey::EggSolids,            4.0),   // egg.total()
             // Other
             (CompKey::OtherFats,            1.0),
             (CompKey::OtherSNFS,            4.5),   // other.snfs() = (10.5-1) - 5.0 (sugars)

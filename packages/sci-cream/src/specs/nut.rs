@@ -60,8 +60,8 @@ use crate::composition::CompKey;
 /// assert_eq!(comp.get(CompKey::NutFat), 49.9);
 /// assert_eq!(comp.get(CompKey::TotalProteins), 21.2);
 /// assert_eq!(comp.get(CompKey::TotalFiber), 12.5);
-/// assert_eq!(comp.get(CompKey::NutSNF), 41.34);
-/// assert_eq_float!(comp.get(CompKey::NutSolids), 91.24);
+/// assert_eq_float!(comp.get(CompKey::NutSNF), 45.69);
+/// assert_eq_float!(comp.get(CompKey::NutSolids), 95.59);
 /// assert_eq!(comp.get(CompKey::TotalSweeteners), 4.35);
 /// assert_eq!(comp.get(CompKey::TotalSolids), 95.59);
 /// assert_eq!(comp.get(CompKey::POD), 4.35);
@@ -216,13 +216,8 @@ pub(crate) mod tests {
         assert_eq!(comp.get(CompKey::TotalFiber), 12.5);
 
         assert_eq!(comp.get(CompKey::NutFat), 49.9);
-        assert_eq!(comp.get(CompKey::NutSNF), 41.34);
-        assert_eq_flt_test!(comp.get(CompKey::NutSolids), 91.24);
-
-        // Sugar in nuts is considered part of total sweeteners, not part of Nut Solids
-        assert_eq!(comp.get(CompKey::TotalSweeteners), 4.35);
-        assert_eq!(comp.get(CompKey::NutSolids), comp.get(CompKey::NutFat) + comp.get(CompKey::NutSNF));
-        assert_eq!(comp.get(CompKey::NutSolids), comp.get(CompKey::TotalSolids) - comp.get(CompKey::TotalSweeteners));
+        assert_eq_flt_test!(comp.get(CompKey::NutSNF), 45.69);
+        assert_eq_flt_test!(comp.get(CompKey::NutSolids), 95.59);
 
         assert_eq!(comp.get(CompKey::TotalSolids), 95.59);
         assert_eq_flt_test!(comp.get(CompKey::Water), 4.41);
