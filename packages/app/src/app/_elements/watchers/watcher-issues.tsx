@@ -59,14 +59,14 @@ export function WatcherIssues({
   const warningCount = warnings.length;
   const infoCount = infos.length;
 
-  const iconSize = COMPONENT_ACTION_ICON_SIZE - 6;
+  const iconSize = COMPONENT_ACTION_ICON_SIZE - 5;
 
   return (
     <div className={`flex items-center ${className}`} data-testid="watcher-issues">
       <Popover className="flex items-center">
         <PopoverButton
           type="button"
-          className="action-button flex items-center gap-1 px-1 py-0.5 text-sm"
+          className="action-button flex items-center gap-1 px-1 py-0.5"
           aria-label={`Balancing issues: ${summarize(errorCount, warningCount, infoCount)}`}
           title={summarize(errorCount, warningCount, infoCount)}
           data-testid="watcher-issues-toggle"

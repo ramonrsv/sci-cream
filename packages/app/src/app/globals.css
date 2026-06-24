@@ -201,6 +201,18 @@ body {
   }
 }
 
+/* Filled accent button for a panel's primary action (e.g. the watchers Balance button). */
+.btn-primary {
+  @apply cursor-pointer rounded-xl border border-transparent text-sm leading-tight font-semibold shadow-sm;
+  @apply focus-visible:ring-2 focus-visible:outline-none;
+  @apply disabled:cursor-not-allowed disabled:opacity-40;
+
+  @apply focus-visible:ring-foc-lt bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800;
+  @variant dark {
+    @apply focus-visible:ring-foc-dk bg-blue-500 text-white hover:bg-blue-400 active:bg-blue-600;
+  }
+}
+
 .drag-handle {
   @apply -mx-1 my-2 cursor-move;
 }
@@ -217,6 +229,54 @@ body {
   @variant dark {
     @apply bg-surface-dk shadow-lg;
   }
+}
+
+/* Self-contained rounded data tile (e.g. a panel surface). */
+.data-card {
+  @apply overflow-hidden rounded-lg border;
+
+  @apply border-brd-lt bg-surface-lt text-txt-prim-lt;
+  @variant dark {
+    @apply border-brd-dk bg-surface-dk text-txt-prim-dk;
+  }
+}
+
+/* Square tile for a flush, gapless grid: neighbors collapse borders via negative margins */
+.data-card-flat {
+  @apply overflow-hidden border;
+
+  @apply border-brd-lt bg-surface-lt text-txt-prim-lt;
+  @variant dark {
+    @apply border-brd-dk bg-surface-dk text-txt-prim-dk;
+  }
+}
+
+/* Horizontal gauge: band, current marker, and target/reference ticks positioned by inline
+   left/right %, with marker/tick colors set inline via colorVar. */
+.range-meter {
+  @apply relative h-1.5 w-full rounded-full;
+
+  @apply bg-brd-lt;
+  @variant dark {
+    @apply bg-brd-dk;
+  }
+}
+
+.range-meter-band {
+  @apply bg-graph-green/25 absolute inset-y-0 rounded-full;
+}
+
+.range-meter-marker {
+  @apply absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-1;
+
+  @apply ring-surface-lt;
+  @variant dark {
+    @apply ring-surface-dk;
+  }
+}
+
+.range-meter-tick {
+  @apply absolute top-1/2 h-3 w-0.5 -translate-x-1/2 -translate-y-1/2 rounded-full;
 }
 
 /* Navigation Shell */
@@ -293,8 +353,7 @@ body {
   }
 }
 
-/* Severity accents (foreground + outline border) for the watcher chip and card marks.
-   Selected by issue severity, e.g. `issue-text-${severity}` / `issue-border-${severity}`. */
+/* Severity accents selected by `issue-text-${severity}` / `issue-border-${severity}`. */
 .issue-text-error {
   @apply text-err-lt;
   @variant dark {
@@ -327,6 +386,25 @@ body {
   @apply border-warn-brd-lt;
   @variant dark {
     @apply border-warn-brd-dk;
+  }
+}
+
+/* Card-level issue emphasis. The inset ring frames all sides. */
+.issue-card-error {
+  @apply ring-2 ring-inset;
+
+  @apply border-err-brd-lt ring-err-brd-lt;
+  @variant dark {
+    @apply border-err-brd-dk ring-err-brd-dk;
+  }
+}
+
+.issue-card-warning {
+  @apply ring-2 ring-inset;
+
+  @apply border-warn-brd-lt ring-warn-brd-lt;
+  @variant dark {
+    @apply border-warn-brd-dk ring-warn-brd-dk;
   }
 }
 

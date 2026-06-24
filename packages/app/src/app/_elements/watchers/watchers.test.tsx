@@ -57,7 +57,7 @@ describe("WatcherCard", () => {
     expect(screen.getByText("MSNF")).toBeInTheDocument();
   });
 
-  it("renders the acceptable range inline next to the main value when defined", () => {
+  it("renders the acceptable range as a meter flanked by min/max labels when defined", () => {
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(
       <WatcherCard
@@ -69,12 +69,16 @@ describe("WatcherCard", () => {
         onRemove={vi.fn()}
       />,
     );
-    // MSNF range is { min: 5, max: 15 } → rendered as "[5, 15]"
-    const rangeEl = container.querySelector('[title="Acceptable range"]');
-    expect(rangeEl?.textContent).toBe("[5, 15]");
+    // MSNF range is { min: 5, max: 15 }: shown as a meter, with the bounds as flanking labels and
+    // in the row's title.
+    expect(screen.getByTestId(`watcher-card-${String(MSNF)}-meter`)).toBeInTheDocument();
+    const meterRow = container.querySelector('[title^="Acceptable range"]');
+    expect(meterRow?.getAttribute("title")).toBe("Acceptable range [5, 15]");
+    expect(meterRow?.textContent).toContain("5");
+    expect(meterRow?.textContent).toContain("15");
   });
 
-  it("omits the range element when no range is defined", () => {
+  it("omits the range meter when no range is defined", () => {
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(
       <WatcherCard
@@ -86,7 +90,9 @@ describe("WatcherCard", () => {
         onRemove={vi.fn()}
       />,
     );
-    expect(container.querySelector('[title="Acceptable range"]')).toBeNull();
+    expect(
+      container.querySelector(`[data-testid="watcher-card-${String(TOTAL_FATS)}-meter"]`),
+    ).toBeNull();
   });
 
   it("renders one ref row per reference, omitting empty ones via caller filter", () => {
@@ -125,7 +131,7 @@ describe("WatcherCard", () => {
     ).toBeNull();
   });
 
-  it("color-codes the header background based on the value's position in the range", () => {
+  it("color-codes the status rail based on the value's position in the range", () => {
     const main = makeMockRecipe(RecipeID.Main);
 
     // Sanity-check via the underlying helper to confirm the test recipe falls in a known band
@@ -145,10 +151,16 @@ describe("WatcherCard", () => {
         onRemove={vi.fn()}
       />,
     );
-    // The first child of the card root is the header; expect an inline backgroundColor
+    // The first child of the card root is the status rail; expect an inline backgroundColor.
     const card = container.querySelector(`[data-testid="watcher-card-${String(MSNF)}"]`)!;
-    const header = card.firstElementChild as HTMLElement;
-    expect(header.style.backgroundColor).not.toBe("");
+    const rail = card.firstElementChild as HTMLElement;
+    expect(rail.style.backgroundColor).not.toBe("");
+
+    // The range-meter current marker carries the same range-derived status color.
+    const marker = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-meter-current"]`,
+    ) as HTMLElement;
+    expect(marker.style.backgroundColor).not.toBe("");
   });
 
   it("calls onTargetChange when the user types a target value", () => {
@@ -364,10 +376,10 @@ describe("WatcherCard", () => {
     const valueCell = container.querySelector('[title="Current value"]');
     expect(valueCell?.textContent).toBe(" ");
 
-    // Header is still rendered with an inline backgroundColor (neutral when no value)
+    // Status rail is still rendered with an inline backgroundColor (neutral gray when no value).
     const card = container.querySelector(`[data-testid="watcher-card-${String(MSNF)}"]`)!;
-    const header = card.firstElementChild as HTMLElement;
-    expect(header.style.backgroundColor).not.toBe("");
+    const rail = card.firstElementChild as HTMLElement;
+    expect(rail.style.backgroundColor).not.toBe("");
   });
 });
 
@@ -381,7 +393,7 @@ describe("WatcherCard delta", () => {
     cleanup();
   });
 
-  it("renders the ref delta as mainValue minus refValue with matching sign and magnitude", () => {
+  it("renders the ref's value and no per-reference delta", () => {
     const main = makeMockRecipe(RecipeID.Main);
     const refA = makeMockRecipe(RecipeID.RefA);
     const { container } = render(
@@ -396,22 +408,16 @@ describe("WatcherCard delta", () => {
       />,
     );
 
-    const mainNum = parseFloat(container.querySelector('[title="Current value"]')!.textContent!);
+    // The ref cell shows the fill button then the ref's value; no delta is rendered.
     const refRow = container.querySelector(
       `[data-testid="watcher-card-${String(MSNF)}-ref-Ref A"]`,
     )!;
     const refNum = parseFloat((refRow.children[1] as HTMLElement).textContent!);
-    const deltaText = container.querySelector(
-      `[data-testid="watcher-card-${String(MSNF)}-ref-Ref A-delta"]`,
-    )!.textContent!;
-
-    expect(Number.isFinite(mainNum)).toBe(true);
     expect(Number.isFinite(refNum)).toBe(true);
 
-    const expected = mainNum - refNum;
-    expect(deltaText[0]).toBe(expected > 0 ? "+" : "−");
-    const renderedMagnitude = parseFloat(deltaText.slice(1));
-    expect(renderedMagnitude).toBeCloseTo(Math.abs(expected), 1);
+    expect(
+      container.querySelector(`[data-testid="watcher-card-${String(MSNF)}-ref-Ref A-delta"]`),
+    ).toBeNull();
   });
 
   it("filters out fully empty ref recipes entirely (no row rendered)", () => {
@@ -457,27 +463,9 @@ describe("WatcherCard delta", () => {
     expect(row.getAttribute("aria-hidden")).toBe("true");
   });
 
-  it("renders an empty ref delta when the main recipe has no value", () => {
-    const emptyMain = makeEmptyRecipe(0);
-    const refA = makeMockRecipe(RecipeID.RefA);
-    const { container } = render(
-      <WatcherCard
-        propKey={MSNF}
-        main={emptyMain}
-        refs={[refA]}
-        target={undefined}
-        onTargetChange={vi.fn()}
-        onPriorityChange={vi.fn()}
-        onRemove={vi.fn()}
-      />,
-    );
-    const deltaEl = container.querySelector(
-      `[data-testid="watcher-card-${String(MSNF)}-ref-Ref A-delta"]`,
-    );
-    expect(deltaEl?.textContent).toBe("");
-  });
-
-  it("does not render the target delta when target is undefined", () => {
+  it("renders the target delta slot empty when target is undefined", () => {
+    // The slot is always present (fixed-width) so the input doesn't shift as a target comes and
+    // goes; with no target there is nothing to compare, so it renders empty.
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(
       <WatcherCard
@@ -489,12 +477,14 @@ describe("WatcherCard delta", () => {
         onRemove={vi.fn()}
       />,
     );
-    expect(
-      container.querySelector(`[data-testid="watcher-card-${String(MSNF)}-target-delta"]`),
-    ).toBeNull();
+    const delta = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-target-delta"]`,
+    ) as HTMLElement;
+    expect(delta).not.toBeNull();
+    expect(delta.textContent).toBe("");
   });
 
-  it("does not render the target delta when the main recipe has no value", () => {
+  it("renders the target delta slot empty when the main recipe has no value", () => {
     const emptyMain = makeEmptyRecipe(0);
     const { container } = render(
       <WatcherCard
@@ -506,12 +496,50 @@ describe("WatcherCard delta", () => {
         onRemove={vi.fn()}
       />,
     );
-    expect(
-      container.querySelector(`[data-testid="watcher-card-${String(MSNF)}-target-delta"]`),
-    ).toBeNull();
+    const delta = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-target-delta"]`,
+    ) as HTMLElement;
+    expect(delta).not.toBeNull();
+    expect(delta.textContent).toBe("");
   });
 
-  it("renders a signed positive target delta in monochrome when target exceeds current", () => {
+  it("renders a met indicator (no arrow/magnitude) when the target matches the current value", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const { container, rerender } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        target={undefined}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    // Setting the target to the displayed current value makes the delta round to zero (the residual
+    // is within display precision), which is the "target met" condition.
+    const current = parseFloat(container.querySelector('[title="Current value"]')!.textContent!);
+    rerender(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        target={current}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+
+    expect(
+      container.querySelector(`[data-testid="watcher-card-${String(MSNF)}-target-met"]`),
+    ).not.toBeNull();
+    // The slot holds only the icon — no arrow glyph or magnitude text.
+    const delta = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-target-delta"]`,
+    ) as HTMLElement;
+    expect(delta.textContent).toBe("");
+  });
+
+  it("renders an up-triangle and magnitude in monochrome when target exceeds current", () => {
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(
       <WatcherCard
@@ -527,12 +555,14 @@ describe("WatcherCard delta", () => {
       `[data-testid="watcher-card-${String(MSNF)}-target-delta"]`,
     ) as HTMLElement;
     expect(delta).not.toBeNull();
-    expect(delta.textContent!.startsWith("+")).toBe(true);
+    // Direction is an up-triangle; the magnitude is unsigned (no "+").
+    expect(delta.textContent!.startsWith("▲")).toBe(true);
+    expect(delta.textContent).not.toContain("+");
     // Monochrome: no inline color override (neither green/red), so it inherits the text color.
     expect(delta.style.color).toBe("");
   });
 
-  it("renders a negative target delta with a unicode minus in monochrome when below current", () => {
+  it("renders a down-triangle and magnitude in monochrome when below current", () => {
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(
       <WatcherCard
@@ -548,9 +578,10 @@ describe("WatcherCard delta", () => {
       `[data-testid="watcher-card-${String(MSNF)}-target-delta"]`,
     ) as HTMLElement;
     expect(delta).not.toBeNull();
-    // Uses the unicode minus sign (U+2212), not the hyphen-minus (U+002D)
-    expect(delta.textContent![0]).toBe("−");
-    expect(delta.textContent![0]).not.toBe("-");
+    // Direction is a down-triangle; the magnitude is unsigned (no minus sign of any kind).
+    expect(delta.textContent!.startsWith("▼")).toBe(true);
+    expect(delta.textContent).not.toContain("−");
+    expect(delta.textContent).not.toContain("-");
     // Monochrome: no inline color override (neither green/red), so it inherits the text color.
     expect(delta.style.color).toBe("");
   });

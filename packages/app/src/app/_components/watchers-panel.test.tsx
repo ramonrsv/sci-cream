@@ -72,17 +72,28 @@ describe("WatchersPanel", () => {
     it("should show only non-empty reference rows", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.RefB]);
       render(<WatchersPanel recipes={recipeCtx.recipes} />);
-      expect(screen.getByTestId(`watcher-card-${String(MSNF)}-ref-Ref B`)).toBeInTheDocument();
-      expect(
-        screen.queryByTestId(`watcher-card-${String(MSNF)}-ref-Ref A`),
-      ).not.toBeInTheDocument();
+
+      const refB = screen.getByTestId(`watcher-card-${String(MSNF)}-ref-Ref B`);
+      expect(refB).toBeInTheDocument();
+      expect(refB).toBeVisible();
+
+      // Ref A is empty, so it should be hidden (but still present in the DOM for layout stability)
+      const refA = screen.queryByTestId(`watcher-card-${String(MSNF)}-ref-Ref A`);
+      expect(refA).toBeInTheDocument();
+      expect(refA).not.toBeVisible();
     });
 
     it("should show both reference rows when both are populated", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.RefA, RecipeID.RefB]);
       render(<WatchersPanel recipes={recipeCtx.recipes} />);
-      expect(screen.getByTestId(`watcher-card-${String(MSNF)}-ref-Ref A`)).toBeInTheDocument();
-      expect(screen.getByTestId(`watcher-card-${String(MSNF)}-ref-Ref B`)).toBeInTheDocument();
+
+      const refA = screen.getByTestId(`watcher-card-${String(MSNF)}-ref-Ref A`);
+      expect(refA).toBeInTheDocument();
+      expect(refA).toBeVisible();
+
+      const refB = screen.getByTestId(`watcher-card-${String(MSNF)}-ref-Ref B`);
+      expect(refB).toBeInTheDocument();
+      expect(refB).toBeVisible();
     });
   });
 

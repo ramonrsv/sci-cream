@@ -6,6 +6,7 @@ import {
   AlertTriangle,
   ArrowDown,
   ArrowUp,
+  Check,
   ChevronDown,
   ChevronsUp,
   ChevronUp,
@@ -27,7 +28,7 @@ import {
   isPropKeyQuantity,
   isPropKeyMixScope,
 } from "@/lib/sci-cream/sci-cream";
-import { Color, colorVar, colorVarWithAlpha, getRangeColor } from "@/lib/styles/colors";
+import { Color, colorVar, getRangeColor } from "@/lib/styles/colors";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { usePersistedState } from "@/lib/use-persisted-state";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
@@ -124,15 +125,22 @@ function isUsableNumber(val: number | undefined): val is number {
   return val !== undefined && !Number.isNaN(val);
 }
 
-/** Format a numeric delta as a signed string (e.g. `+0.58`, `−0.47`); returns "" for NaN/undef */
-function formatDelta(delta: number | undefined): string {
-  if (!isUsableNumber(delta)) return "";
+/**
+ * How a target delta should display: `met` when the value matches the target to display precision
+ * (magnitude rounds to zero), otherwise a direction arrow (▲ up / ▼ down) and formatted magnitude,
+ * the arrow split out so it can render at its own smaller size beside the digits.
+ */
+type DeltaDisplay = { met: true } | { met: false; arrow: string; magnitude: string };
 
-  const formatted = formatCompositionValue(Math.abs(delta)).trim();
-  if (formatted === "" || formatted === "-") return "";
+/** Resolve a numeric delta to its {@link DeltaDisplay}; null for NaN/undefined. */
+function formatDelta(delta: number | undefined): DeltaDisplay | null {
+  if (!isUsableNumber(delta)) return null;
 
-  const sign = delta > 0 ? "+" : delta < 0 ? "−" : " ";
-  return `${sign}${formatted}`;
+  const magnitude = formatCompositionValue(Math.abs(delta)).trim();
+  if (magnitude === "" || magnitude === "-") return null;
+  if (magnitude === "0") return { met: true };
+
+  return { met: false, arrow: delta > 0 ? "▲" : "▼", magnitude };
 }
 
 /**
@@ -143,6 +151,23 @@ function formatDelta(delta: number | undefined): string {
  */
 function formatRange(range: { min: number; max: number }): string {
   return `[${formatCompositionValue(range.min).trim()}, ${formatCompositionValue(range.max).trim()}]`;
+}
+
+/**
+ * Position (0–100) of `value` along the range-meter track. The track's domain is `range` padded by
+ * `padFrac` of its width on each side, so the acceptable band occupies the centre and out-of-range
+ * values land near (and clamp to) the edges. Status color, not position, conveys severity past the
+ * edge, so clamping rather than overflowing is fine.
+ */
+function valueToMeterPct(
+  value: number,
+  range: { min: number; max: number },
+  padFrac = 0.2,
+): number {
+  const pad = (range.max - range.min) * padFrac;
+  const lo = range.min - pad;
+  const hi = range.max + pad;
+  return Math.max(0, Math.min(1, (value - lo) / (hi - lo))) * 100;
 }
 
 /**
@@ -224,8 +249,8 @@ function getDisplayValue(propKey: PropKey, recipe: RecipeSummary): number | unde
  * click-to-cycle balancing-priority marker ({@link PriorityMarker}, defaulting to
  * {@link Priority.Normal}), and per-reference value + delta rows below it (each with an import
  * button). The header background is color-coded by where the main value sits within the acceptable
- * range; absent range or invalid value renders a neutral header. Deltas are monochrome — direction
- * is signed (`+`/`−`) but uncolored, as neither direction is inherently good/bad in formulation.
+ * range; absent range or invalid value renders a neutral header. The target delta is an uncolored
+ * direction triangle (▲/▼) + magnitude, or a green check when the target is met (delta ≈ 0).
  *
  * The remove (✕) button is shown only when `removable` (default `true`); callers hide it where
  * removal has no effect — e.g. under the `Auto` key filter, which derives its key set from a
@@ -269,76 +294,35 @@ export function WatcherCard({
 
   const targetStep = getTargetStep(target, mainValue);
 
-  const titleBackgroundOpacity = 0.6;
+  const targetDelta = target !== undefined && mainHasValue ? formatDelta(target - mainValue) : null;
+
   const refRowOpacity = 0.8;
 
-  // Outline + header-icon color for a validation issue on this key (red error, amber warning),
-  // via the `issue-border-*` / `issue-text-*` severity-accent classes in globals.css.
-  const borderClass = issue ? `issue-border-${issue.severity}` : "border-brd-lt dark:border-brd-dk";
+  const meterRange = range && range.max > range.min ? range : undefined;
+  const nonEmptyRefs = refs.filter((ref) => !isRecipeEmpty(ref));
+
+  const issueBorderClass = issue ? `issue-card-${issue.severity}` : "";
   const issueTextClass = issue ? `issue-text-${issue.severity}` : "";
 
   return (
     <div
-      className={`${borderClass} flex flex-col overflow-hidden rounded-md border text-sm`}
+      className={`data-card-flat flex flex-col text-sm ${issueBorderClass}`}
       data-testid={`watcher-card-${String(propKey)}`}
       data-prop-key={String(propKey)}
     >
-      {/* Header: property name + color-coded background + optional issue icon + remove button */}
+      {/* Slim status rail: at-a-glance range status, color-coded like the meter marker below. */}
       <div
-        className="flex items-center justify-between px-1.5 py-0.5 font-semibold"
-        style={{ backgroundColor: colorVarWithAlpha(headerColor, titleBackgroundOpacity) }}
-      >
-        <span title={prop_key_as_short_str(propKey)} className="truncate">
-          {prop_key_as_short_str(propKey)}
-        </span>
-        <div className="ml-1 flex shrink-0 items-center gap-0.5">
-          {issue && (
-            <span
-              className={`flex items-center ${issueTextClass}`}
-              title={issue.titles.join("\n")}
-              data-testid={`watcher-card-${String(propKey)}-issue`}
-              data-severity={issue.severity}
-            >
-              {issue.severity === "error" ? (
-                <AlertCircle size={COMPONENT_ACTION_ICON_SIZE - 6} />
-              ) : (
-                <AlertTriangle size={COMPONENT_ACTION_ICON_SIZE - 6} />
-              )}
-            </span>
-          )}
-          {removable && (
-            <button
-              className="action-button -mr-0.5 px-0.5 py-0"
-              onClick={onRemove}
-              title="Remove from watchers"
-              data-testid={`watcher-card-${String(propKey)}-remove`}
-            >
-              <X size={COMPONENT_ACTION_ICON_SIZE - 6} />
-            </button>
-          )}
-        </div>
-      </div>
+        className="h-1.5 w-full"
+        style={{ backgroundColor: colorVar(headerColor) }}
+        aria-hidden
+      />
 
-      {/* Body */}
-      <div className="flex flex-col gap-0.5 px-1.5 py-1">
-        {/* Main value + (optional) acceptable range, centered as a group */}
-        <div className="flex items-baseline justify-center gap-1.5">
-          <span className="comp-val text-lg" title="Current value">
-            {/* Show a placeholder whitespace value to keep layouts consistent */}
-            {formatCompositionValue(mainValue) || "\u00A0"}
-          </span>
-          {range && (
-            <span className="text-secondary text-[11px]" title="Acceptable range">
-              {formatRange(range)}
-            </span>
-          )}
-        </div>
-
-        {/* Target row: priority cycle button + input + (optional) inline delta-from-current */}
-        <div className="flex items-center gap-0.5" title="Target value">
+      {/* Header: priority toggle + property name (left), issue icon + remove button (right). */}
+      <div className="flex items-center justify-between px-1.5 pt-1 pb-0.5">
+        <div className="flex min-w-0 items-center gap-1">
           <button
             type="button"
-            className="action-button flex h-5 w-5 shrink-0 items-center justify-center p-0"
+            className="action-button -mr-0.75 -ml-1 flex h-5 w-5 shrink-0 items-center justify-center p-0"
             onClick={() => onPriorityChange(nextPriority(priority))}
             title={`Balancing priority: ${priority} (click to change)`}
             aria-label={`Balancing priority: ${priority}`}
@@ -347,70 +331,182 @@ export function WatcherCard({
           >
             <PriorityMarker priority={priority} />
           </button>
-          <input
-            type="number"
-            step={targetStep}
-            className="boxed-input comp-val w-16 px-0.5 py-0"
-            value={target ?? ""}
-            placeholder="—"
-            onChange={(e) => {
-              const v = e.target.value;
-              onTargetChange(v === "" ? undefined : parseFloat(v));
-            }}
-            data-testid={`watcher-card-${String(propKey)}-target`}
-          />
-          {target !== undefined && mainHasValue && (
+          <span
+            title={prop_key_as_short_str(propKey)}
+            className="text-secondary truncate text-xs font-medium tracking-wide uppercase"
+          >
+            {prop_key_as_short_str(propKey)}
+          </span>
+        </div>
+        <div className="mx-1 flex shrink-0 items-center gap-0.5">
+          {issue && (
             <span
-              className="comp-val w-12 text-right text-[11px]"
-              title="Delta from current to target"
-              data-testid={`watcher-card-${String(propKey)}-target-delta`}
+              className={`flex items-center ${issueTextClass}`}
+              title={issue.titles.join("\n")}
+              data-testid={`watcher-card-${String(propKey)}-issue`}
+              data-severity={issue.severity}
             >
-              {formatDelta(target - mainValue)}
+              {issue.severity === "error" ? (
+                <AlertCircle size={COMPONENT_ACTION_ICON_SIZE - 5} />
+              ) : (
+                <AlertTriangle size={COMPONENT_ACTION_ICON_SIZE - 5} />
+              )}
             </span>
           )}
+          {removable && (
+            <button
+              className="action-button -mr-1.5 px-0.5 py-0"
+              onClick={onRemove}
+              title="Remove from watchers"
+              data-testid={`watcher-card-${String(propKey)}-remove`}
+            >
+              <X size={COMPONENT_ACTION_ICON_SIZE - 5} />
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* Body fills the card height (cards in a grid row are stretched equal) so the refs can
+          be pinned to the bottom and line up across cards with and without a range meter. */}
+      <div className="flex flex-1 flex-col gap-1 px-1.5 pb-1.5">
+        {/* Fixed-width pieces keep the row layout identical on every card, full or empty. */}
+        <div className="flex items-center justify-evenly">
+          <span className="comp-val -ml-2 w-14 text-lg leading-none" title="Current value">
+            {/* Placeholder whitespace keeps empty cards the same height. */}
+            {formatCompositionValue(mainValue).trim() || "\u00A0"}
+          </span>
+          <div className="flex items-center gap-0.5" title="Target value">
+            <input
+              type="number"
+              step={targetStep}
+              className="boxed-input comp-val w-14 px-0.5 py-0"
+              value={target ?? ""}
+              placeholder={"\u2014"}
+              onChange={(e) => {
+                const v = e.target.value;
+                onTargetChange(v === "" ? undefined : parseFloat(v));
+              }}
+              data-testid={`watcher-card-${String(propKey)}-target`}
+            />
+            {/* Reserve the delta slot so the input doesn't shift as the target changes. */}
+            <span
+              className="comp-val text-secondary -mr-3 w-9 text-left text-[11px]"
+              title={targetDelta?.met ? "Target met" : "Delta from current to target"}
+              data-testid={`watcher-card-${String(propKey)}-target-delta`}
+            >
+              {targetDelta &&
+                (targetDelta.met ? (
+                  <Check
+                    size={COMPONENT_ACTION_ICON_SIZE - 5}
+                    className="inline align-text-bottom"
+                    style={{ color: colorVar(Color.GraphGreen) }}
+                    aria-label="Target met"
+                    data-testid={`watcher-card-${String(propKey)}-target-met`}
+                  />
+                ) : (
+                  <>
+                    {/* Arrow sized in `em` so it scales with the digits but stays smaller. */}
+                    <span className="mr-px text-[0.7em]">{targetDelta.arrow}</span>
+                    {targetDelta.magnitude}
+                  </>
+                ))}
+            </span>
+          </div>
         </div>
 
-        {/* Reference rows: letter doubles as a fill-target button, then value + delta. */}
-        {refs
-          .filter((ref) => !isRecipeEmpty(ref))
-          .map((ref) => {
-            // Always render a row for non-empty ref recipes, to keep vertical layout consistent,
-            // but hide the content when the mix properties don't have a value for the watched key.
-
-            const refValue = getDisplayValue(propKey, ref);
-            const refHasValue = isUsableNumber(refValue);
-            const delta = mainHasValue && refHasValue ? mainValue - refValue : undefined;
-            const refLetter = ref.id.replace(/^Ref\s*/, "").trim() || ref.id;
-
-            return (
+        {/* Range meter (signature): acceptable band + current marker + target/reference ticks */}
+        {meterRange && (
+          <div
+            className="flex items-center gap-1"
+            aria-hidden
+            title={`Acceptable range ${formatRange(meterRange)}`}
+          >
+            <span className="text-secondary text-[10px] leading-none">
+              {formatCompositionValue(meterRange.min).trim()}
+            </span>
+            <div className="range-meter" data-testid={`watcher-card-${String(propKey)}-meter`}>
               <div
-                key={ref.id}
-                className="flex items-center justify-between"
-                style={{ opacity: refRowOpacity, visibility: refHasValue ? "visible" : "hidden" }}
-                title={`${ref.id} value (delta from current)`}
-                data-testid={`watcher-card-${String(propKey)}-ref-${ref.id}`}
-                aria-hidden={!refHasValue}
-              >
-                <button
-                  className="action-button flex items-center px-0.5 py-0"
-                  onClick={() => onTargetChange(roundToStep(refValue!, targetStep))}
-                  title={`Fill target from ${ref.id}`}
-                  data-testid={`watcher-card-${String(propKey)}-fill-${ref.id}`}
-                  style={{ visibility: refHasValue ? "visible" : "hidden" }}
-                >
-                  <ArrowUp size={COMPONENT_ACTION_ICON_SIZE - 10} />
-                  <span className="text-[11px] font-semibold">{refLetter}</span>
-                </button>
-                <span className="comp-val">{formatCompositionValue(refValue)}</span>
+                className="range-meter-band"
+                style={{
+                  left: `${valueToMeterPct(meterRange.min, meterRange)}%`,
+                  right: `${100 - valueToMeterPct(meterRange.max, meterRange)}%`,
+                }}
+              />
+              {nonEmptyRefs.map((ref) => {
+                const refValue = getDisplayValue(propKey, ref);
+                return isUsableNumber(refValue) ? (
+                  <span
+                    key={ref.id}
+                    className="range-meter-tick opacity-60"
+                    style={{
+                      left: `${valueToMeterPct(refValue, meterRange)}%`,
+                      height: "0.5rem",
+                      backgroundColor: colorVar(Color.GraphGray),
+                    }}
+                  />
+                ) : null;
+              })}
+              {isUsableNumber(target) && (
                 <span
-                  className="comp-val w-12 text-right text-[11px]"
-                  data-testid={`watcher-card-${String(propKey)}-ref-${ref.id}-delta`}
+                  className="range-meter-tick"
+                  style={{
+                    left: `${valueToMeterPct(target, meterRange)}%`,
+                    backgroundColor: colorVar(Color.GraphBlue),
+                  }}
+                />
+              )}
+              {isUsableNumber(mainValue) && (
+                <span
+                  className="range-meter-marker"
+                  style={{
+                    left: `${valueToMeterPct(mainValue, meterRange)}%`,
+                    backgroundColor: colorVar(headerColor),
+                  }}
+                  data-testid={`watcher-card-${String(propKey)}-meter-current`}
+                />
+              )}
+            </div>
+            <span className="text-secondary text-[10px] leading-none">
+              {formatCompositionValue(meterRange.max).trim()}
+            </span>
+          </div>
+        )}
+
+        {/* Reference values side by side: each letter doubles as a fill-target button. `mt-auto`
+            pins it to the bottom of the card so refs line up across cards (meter or not). */}
+        {nonEmptyRefs.length > 0 && (
+          <div className="mt-auto grid grid-cols-2 gap-x-0 gap-y-0.5">
+            {refs.map((ref) => {
+              // A cell per ref keeps the layout stable; hidden when it lacks the key.
+              const refValue = getDisplayValue(propKey, ref);
+              const refHasValue = isUsableNumber(refValue);
+              const refLetter = ref.id.replace(/^Ref\s*/, "").trim() || ref.id;
+
+              return (
+                <div
+                  key={ref.id}
+                  className="flex items-center justify-center gap-1"
+                  style={{ opacity: refRowOpacity, visibility: refHasValue ? "visible" : "hidden" }}
+                  title={`${ref.id} value`}
+                  data-testid={`watcher-card-${String(propKey)}-ref-${ref.id}`}
+                  aria-hidden={!refHasValue}
                 >
-                  {formatDelta(delta || undefined)}
-                </span>
-              </div>
-            );
-          })}
+                  <button
+                    className="action-button flex items-center px-0.5"
+                    onClick={() => onTargetChange(roundToStep(refValue!, targetStep))}
+                    title={`Fill target from ${ref.id}`}
+                    data-testid={`watcher-card-${String(propKey)}-fill-${ref.id}`}
+                    style={{ visibility: refHasValue ? "visible" : "hidden" }}
+                  >
+                    <ArrowUp size={COMPONENT_ACTION_ICON_SIZE - 10} />
+                    <span className="pt-0.5 text-[11px] font-semibold">{refLetter}</span>
+                  </button>
+                  <span className="comp-val">{formatCompositionValue(refValue).trim()}</span>
+                </div>
+              );
+            })}
+          </div>
+        )}
       </div>
     </div>
   );
@@ -447,8 +543,8 @@ export function WatchersGrid({
 }) {
   return (
     <div
-      className="grid gap-2 p-1"
-      style={{ gridTemplateColumns: "repeat(auto-fill, minmax(120px, 1fr))" }}
+      className="border-brd-lt dark:border-brd-dk grid overflow-hidden border-t border-l *:-mt-px *:-ml-px"
+      style={{ gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))" }}
     >
       {propKeys.map((propKey) => (
         <WatcherCard
@@ -728,9 +824,9 @@ export function WatchersView({
           orderKeys={orderKeys}
         />
         {(wasmBridge !== undefined || nonEmptyRefs.length > 0) && (
-          <div className="ml-auto flex shrink-0 items-center">
+          <div className="ml-auto flex shrink-0 items-center gap-1 pr-0.5">
             {(issues.length > 0 || balanceError !== undefined) && (
-              <WatcherIssues issues={issues} extraError={balanceError} className="mr-1" />
+              <WatcherIssues issues={issues} extraError={balanceError} />
             )}
             {nonEmptyRefs.map((ref) => {
               const letter = ref.id.replace(/^Ref\s*/, "").trim() || ref.id;
@@ -753,7 +849,7 @@ export function WatchersView({
             })}
             {wasmBridge !== undefined && onApplyBalancedMain !== undefined && (
               <button
-                className={`action-button mr-1 px-1.5 py-0.5 text-sm font-semibold ${
+                className={`btn-primary mr-1 px-2 py-0.5 ${
                   balanceError ? "issue-border-error border" : ""
                 }`}
                 onClick={onBalance}
