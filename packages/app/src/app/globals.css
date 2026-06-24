@@ -252,7 +252,7 @@ body {
 }
 
 /* Horizontal gauge: band, current marker, and target/reference ticks positioned by inline
-   left/right %, with marker/tick colors set inline via colorVar. */
+   left/right %, with marker/tick colors set inline. */
 .range-meter {
   @apply relative h-1.5 w-full rounded-full;
 

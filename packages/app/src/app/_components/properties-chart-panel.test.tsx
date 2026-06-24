@@ -22,20 +22,16 @@ vi.mock("chart.js", () => ({
   Filler: vi.fn(),
 }));
 
-vi.mock("chartjs-chart-error-bars", () => ({
-  BarWithErrorBarsController: vi.fn(),
-  BarWithErrorBar: vi.fn(),
-}));
-
 interface CapturedChartProps {
   data: { datasets: Array<{ label: string }> };
+  options: { plugins: { rangeMeter: { refMarkers: Array<{ label: string }> } } };
 }
 
 let capturedBarProps: CapturedChartProps | null = null;
 
 vi.mock("react-chartjs-2", () => ({
-  Chart: ({ data }: CapturedChartProps) => {
-    capturedBarProps = { data };
+  Bar: ({ data, options }: CapturedChartProps) => {
+    capturedBarProps = { data, options };
     return <div data-testid="bar-chart">Mocked Bar Chart</div>;
   },
 }));
@@ -83,22 +79,26 @@ describe("PropertiesChartPanel", () => {
       render(<PropertiesChartPanel recipes={recipeCtx.recipes} />);
       expect(capturedBarProps!.data.datasets).toHaveLength(1);
       expect(capturedBarProps!.data.datasets[0].label).toBe("Recipe");
+      expect(capturedBarProps!.options.plugins.rangeMeter.refMarkers).toHaveLength(0);
     });
 
     it("should display main recipe and non-empty reference recipes", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.RefB]);
       render(<PropertiesChartPanel recipes={recipeCtx.recipes} />);
-      expect(capturedBarProps!.data.datasets).toHaveLength(2);
+      // The main recipe is the only bar dataset; references ride along as tick markers.
+      expect(capturedBarProps!.data.datasets).toHaveLength(1);
       expect(capturedBarProps!.data.datasets[0].label).toBe("Recipe");
-      expect(capturedBarProps!.data.datasets[1].label).toBe("Ref B");
+      const refMarkers = capturedBarProps!.options.plugins.rangeMeter.refMarkers;
+      expect(refMarkers.map((r) => r.label)).toEqual(["Ref B"]);
     });
 
     it("should exclude empty reference recipes", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefB]);
       render(<PropertiesChartPanel recipes={recipeCtx.recipes} />);
-      expect(capturedBarProps!.data.datasets).toHaveLength(2);
-      const labels = capturedBarProps!.data.datasets.map((d) => d.label);
-      expect(labels).not.toContain("Ref A");
+      expect(capturedBarProps!.data.datasets).toHaveLength(1);
+      const refLabels = capturedBarProps!.options.plugins.rangeMeter.refMarkers.map((r) => r.label);
+      expect(refLabels).not.toContain("Ref A");
+      expect(refLabels).toEqual(["Ref B"]);
     });
   });
 });

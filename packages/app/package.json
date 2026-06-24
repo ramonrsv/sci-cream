@@ -37,7 +37,6 @@
     "@workspace/sci-cream": "workspace:*",
     "bcryptjs": "^3.0.3",
     "chart.js": "^4.5.1",
-    "chartjs-chart-error-bars": "^4.4.5",
     "colord": "^2.9.3",
     "docdash": "^2.0.2",
     "dotenv": "^17.4.2",

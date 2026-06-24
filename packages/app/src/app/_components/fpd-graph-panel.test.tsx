@@ -24,11 +24,6 @@ vi.mock("chart.js", () => ({
   Filler: vi.fn(),
 }));
 
-vi.mock("chartjs-chart-error-bars", () => ({
-  BarWithErrorBarsController: vi.fn(),
-  BarWithErrorBar: vi.fn(),
-}));
-
 interface LineDataset {
   label: string;
 }

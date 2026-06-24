@@ -1,7 +1,7 @@
 "use client";
 
 import { ReactNode } from "react";
-import { Chart } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
   CategoryScale,
@@ -10,14 +10,13 @@ import {
   Title,
   Tooltip,
   Legend,
+  type ChartType,
+  type ChartOptions,
+  type LegendItem,
+  type Plugin,
+  type ScriptableContext,
   type TooltipItem,
 } from "chart.js";
-
-import {
-  BarWithErrorBarsController,
-  BarWithErrorBar,
-  type IErrorBarYDataPoint,
-} from "chartjs-chart-error-bars";
 
 import { RecipeSummary, isRecipeEmpty } from "@/lib/recipe";
 import { useTheme } from "@/lib/theme";
@@ -30,7 +29,6 @@ import {
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { useOrderKeys } from "@/lib/group-by";
 import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
-import { GRAPH_TITLE_FONT_SIZE } from "@/lib/styles/sizes";
 import { prefersReducedMotion } from "@/lib/styles/motion";
 import { STATE_VAL } from "@/lib/util";
 import {
@@ -39,7 +37,7 @@ import {
   getGridColor,
   getLegendColor,
   getRangeColor,
-  getReferenceOpacity,
+  getThemeCssColorVariable,
   addOrUpdateAlpha,
 } from "@/lib/styles/colors";
 
@@ -65,16 +63,129 @@ import {
   prop_key_as_med_str,
 } from "@workspace/sci-cream";
 
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  BarElement,
-  Title,
-  Tooltip,
-  Legend,
-  BarWithErrorBarsController,
-  BarWithErrorBar,
-);
+ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
+
+/** A vertical band marking the acceptable range for one property, in chart (modified) units. */
+type BandRange = { yMin: number; yMax: number } | null;
+
+/**
+ * A reference recipe rendered as horizontal tick markers across the bars. `values` is aligned to
+ * the chart's labels (one entry per property), `null` where the reference lacks a usable value.
+ */
+interface RefMarker {
+  label: string;
+  color: string;
+  dash: number[];
+  values: (number | null)[];
+}
+
+/** Per-instance options the {@link rangeMeterPlugin} reads from `options.plugins.rangeMeter`. */
+interface RangeMeterOptions {
+  bandRanges: BandRange[];
+  bandColor: string;
+  refMarkers: RefMarker[];
+}
+
+declare module "chart.js" {
+  // The `TType` parameter is unused here but must mirror the augmented interface's signature.
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  interface PluginOptionsByType<TType extends ChartType> {
+    rangeMeter?: RangeMeterOptions;
+  }
+}
+
+/** Corner radius (px) for the acceptable-range band rectangles. */
+const BAND_CORNER_RADIUS = 6;
+/** Band width as a multiple of the bar width, so the band frames the bar. */
+const BAND_WIDTH_FACTOR = 1.5;
+/** Reference tick overhang (px) past each side of the bar, so a tick reads over the bar. */
+const REF_TICK_OVERHANG = 2;
+/** Line width (px) of a reference tick marker. */
+const REF_TICK_WIDTH = 2;
+
+/** Clip subsequent canvas drawing to the chart's plot area. */
+function clipToChartArea(
+  ctx: CanvasRenderingContext2D,
+  area: { left: number; top: number; right: number; bottom: number },
+): void {
+  ctx.beginPath();
+  ctx.rect(area.left, area.top, area.right - area.left, area.bottom - area.top);
+  ctx.clip();
+}
+
+/**
+ * Draws the signature range-meter overlay: a soft acceptable-range band behind each bar
+ * (`beforeDatasetsDraw`) and the reference recipes as horizontal tick markers on top of the bars
+ * (`afterDatasetsDraw`). Geometry comes from the main bar elements, so bands and ticks track the
+ * bars exactly. Reads its data from `options.plugins.rangeMeter`.
+ */
+const rangeMeterPlugin: Plugin<"bar", RangeMeterOptions> = {
+  id: "rangeMeter",
+
+  beforeDatasetsDraw(chart, _args, options) {
+    if (!options?.bandRanges) return;
+
+    const { ctx, chartArea } = chart;
+    const meta = chart.getDatasetMeta(0);
+    const y = chart.scales.y;
+
+    ctx.save();
+    clipToChartArea(ctx, chartArea);
+    ctx.fillStyle = options.bandColor;
+
+    options.bandRanges.forEach((range, i) => {
+      const el = meta.data[i];
+      if (!range || !el) return;
+
+      const { x: cx, width } = el.getProps(["x", "width"], true) as { x: number; width: number };
+      const bandWidth = width * BAND_WIDTH_FACTOR;
+      const half = bandWidth / 2;
+      const top = y.getPixelForValue(range.yMax);
+      const height = y.getPixelForValue(range.yMin) - top;
+      const radius = Math.min(BAND_CORNER_RADIUS, half, Math.abs(height) / 2);
+
+      ctx.beginPath();
+      ctx.roundRect(cx - half, top, bandWidth, height, radius);
+      ctx.fill();
+    });
+
+    ctx.restore();
+  },
+
+  afterDatasetsDraw(chart, _args, options) {
+    if (!options?.refMarkers?.length) return;
+
+    const { ctx, chartArea } = chart;
+    const meta = chart.getDatasetMeta(0);
+    const y = chart.scales.y;
+
+    ctx.save();
+    clipToChartArea(ctx, chartArea);
+    ctx.lineWidth = REF_TICK_WIDTH;
+
+    options.refMarkers.forEach((ref) => {
+      ctx.strokeStyle = ref.color;
+      ctx.setLineDash(ref.dash);
+
+      ref.values.forEach((value, i) => {
+        const el = meta.data[i];
+        if (value === null || !el) return;
+        const py = y.getPixelForValue(value);
+        if (py < chartArea.top || py > chartArea.bottom) return;
+
+        const { x: cx, width } = el.getProps(["x", "width"], true) as { x: number; width: number };
+        const half = width / 2 + REF_TICK_OVERHANG;
+
+        ctx.beginPath();
+        ctx.moveTo(cx - half, py);
+        ctx.lineTo(cx + half, py);
+        ctx.stroke();
+      });
+    });
+
+    ctx.restore();
+  },
+};
 
 /**
  * Returns all `PropKey` values suitable for chart display.
@@ -146,14 +257,12 @@ export function propKeyAsModifiedShortStr(propKey: PropKey): string {
  * Modify acceptable property range to match modifications done in `modifyMixPropertyForChart`
  *
  * This function also maps the sci-cream range `{ min: number; max: number }` to the format needed
- * for error bars in the chart, `{ yMin: number; yMax: number }`, and may do additional
+ * for the chart's range band, `{ yMin: number; yMax: number }`, and may do additional
  * modifications such as inverting the range for FPD and ServingTemp to match their negation.
  */
-export function getModifiedAcceptablePropertyRange(
-  propKey: PropKey,
-): { yMin: number; yMax: number } | undefined {
+export function getModifiedAcceptablePropertyRange(propKey: PropKey): BandRange {
   const sciRange = getAcceptablePropertyRange(propKey);
-  if (!sciRange) return undefined;
+  if (!sciRange) return null;
   let range: { yMin: number; yMax: number } = { yMin: sciRange.min, yMax: sciRange.max };
 
   switch (propKey) {
@@ -169,9 +278,10 @@ export function getModifiedAcceptablePropertyRange(
 }
 
 /**
- * Bare bar chart displaying key mix property values for the main recipe and zero or more
- * reference recipes, with acceptable-range error bars on the main recipe's bars and color coding
- * based on the position relative to the range.
+ * Bare bar chart displaying key mix property values. Each property is a vertical range-meter: a
+ * soft acceptable-range band sits behind a single status-colored bar for the main recipe (colored
+ * by where its value sits in the range), and each reference recipe is drawn as a horizontal tick
+ * marker across the bar at its own value.
  *
  * Consumer is responsible for sizing the chart via a parent container.
  */
@@ -216,97 +326,170 @@ export function PropertiesBarChart({
   const gridColor = getGridColor(theme);
   const legendColor = getLegendColor(theme);
 
-  /** All recipes in display order: main first, then refs */
-  const allRecipes: { recipe: RecipeSummary; isMain: boolean; refIdx: number }[] = [
-    { recipe: main, isMain: true, refIdx: -1 },
-    ...refs.map((r, i) => ({ recipe: r, isMain: false, refIdx: i })),
-  ];
+  const tickColor = getThemeCssColorVariable(
+    "--color-text-secondary-light",
+    "--color-text-secondary-dark",
+    theme,
+  );
+  const surfaceColor = getThemeCssColorVariable(
+    "--color-surface-light",
+    "--color-surface-dark",
+    theme,
+  );
 
-  const totalRecipes = allRecipes.length;
+  const mainColor = getColor(Color.GraphGreen);
+  const noRangeBarColor = addOrUpdateAlpha(getColor(Color.GraphGray), 0.9);
 
-  /** Chart.js dataset configuration built from the recipes' mix property values */
+  /** Per-bar base color: within-range status color, or a lighter gray when the key has no range. */
+  const mainBarColors = propKeys.map((propKey) => {
+    const val = getPropertyValue(propKey, main.mixProperties, main.mixTotal!);
+    const range = getModifiedAcceptablePropertyRange(propKey);
+    return !range ? noRangeBarColor : getMainBarColor(val, range);
+  });
+
+  const mainData = propKeys.map((propKey) =>
+    getPropertyValue(propKey, main.mixProperties, main.mixTotal!),
+  );
+
+  /** Acceptable-range bands (chart units) per property, drawn behind the bars by the plugin. */
+  const bandRanges: BandRange[] = propKeys.map((propKey) =>
+    getModifiedAcceptablePropertyRange(propKey),
+  );
+
+  /** Soft tint for the acceptable-range band, matching WatcherCard's `.range-meter-band`. */
+  const bandColor = addOrUpdateAlpha(mainColor, 0.16);
+
+  /**
+   * Reference recipes as tick markers: solid for the first, dashed for the second so they stay
+   * distinguishable over the bars; zero/NaN values are dropped (`null`) so no tick is drawn.
+   */
+  const refMarkers: RefMarker[] = refs.map((ref, i) => ({
+    label: ref.name || ref.id,
+    color: addOrUpdateAlpha(legendColor, 0.7),
+    dash: i === 0 ? [] : [4, 3],
+    values: propKeys.map((propKey) => {
+      const val = getPropertyValue(propKey, ref.mixProperties, ref.mixTotal!);
+      return Number.isNaN(val) || val === 0 ? null : val;
+    }),
+  }));
+
+  // Cap the y-axis on the tallest drawn element, not just the bars: range bands and reference
+  // ticks can rise above the bar values, and Chart.js's auto-scale (bar-data only) would clip
+  // their tops. Round up to the next multiple of 5 for clean tick labels plus a little headroom.
+  const drawnValues = [
+    ...mainData,
+    ...bandRanges.flatMap((range) => (range ? [range.yMax] : [])),
+    ...refMarkers.flatMap((ref) => ref.values),
+  ].filter((value): value is number => value !== null && Number.isFinite(value));
+
+  const yMax = drawnValues.length > 0 ? Math.ceil(Math.max(...drawnValues) / 5) * 5 : undefined;
+
+  /** Chart.js dataset: a single status-colored bar per property for the main recipe. */
   const chartData = {
     labels,
-    datasets: allRecipes.map(({ recipe, isMain, refIdx }) => {
-      const mainColor = getColor(Color.GraphGreen);
-      const grayColor = getColor(Color.GraphGray);
-      const refOpacity = getReferenceOpacity(refIdx);
+    datasets: [
+      {
+        // Stable dataset identity for react-chartjs-2: keying on `main.id` (the slot id) rather
+        // than the default `label` keeps chart from re-animating the bars with every name edit.
+        id: main.id,
+        label: main.name || main.id,
+        data: mainData,
+        backgroundColor: (ctx: ScriptableContext<"bar">) => {
+          const color = mainBarColors[ctx.dataIndex] ?? mainColor;
+          const area = ctx.chart.chartArea;
+          if (!area) return color;
 
-      const mainBarColors = propKeys.map((propKey) => {
-        const val = getPropertyValue(propKey, recipe.mixProperties, recipe.mixTotal!);
-        const range = getModifiedAcceptablePropertyRange(propKey);
-        return !range ? mainColor : getMainBarColor(val, range);
-      });
-
-      return {
-        // Stable identity for react-chartjs-2 dataset matching across renders. Using `recipe.id`
-        // (slot id, e.g. "Recipe" / "Ref A") instead of relying on the default `label` keeps the
-        // chart from treating live name edits as a brand-new dataset and re-animating the bars.
-        id: recipe.id,
-        label: recipe.name || recipe.id,
-        data: propKeys.map(
-          (propKey) =>
-            ({
-              y: getPropertyValue(propKey, recipe.mixProperties, recipe.mixTotal!),
-              ...(isMain ? getModifiedAcceptablePropertyRange(propKey) : {}),
-            }) as IErrorBarYDataPoint,
-        ),
-        backgroundColor: isMain ? mainBarColors! : addOrUpdateAlpha(grayColor, refOpacity),
-        borderColor: isMain ? mainColor : addOrUpdateAlpha(grayColor, refOpacity + 0.2),
-        borderWidth: isMain ? 0 : 1,
-        borderRadius: 3,
-        maxBarThickness: 40,
-        categoryPercentage: 0.6,
-        barPercentage: 0.8,
-        errorBarLineWidth: isMain ? 2 : 0,
-        errorBarColor: legendColor,
-        errorBarWhiskerLineWidth: isMain ? 4 : 0,
-        errorBarWhiskerColor: legendColor,
-        errorBarWhiskerRatio: totalRecipes === 1 ? 0.4 : totalRecipes === 2 ? 0.6 : 1,
-      };
-    }),
+          const gradient = ctx.chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
+          gradient.addColorStop(0, addOrUpdateAlpha(color, 0.65));
+          gradient.addColorStop(1, color);
+          return gradient;
+        },
+        borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 },
+        borderWidth: 0,
+        maxBarThickness: 48,
+        categoryPercentage: 0.8,
+        barPercentage: 0.72,
+      },
+    ],
   };
 
-  /** Chart.js options controlling layout, legend, tooltip, and axis configuration */
-  const options = {
+  /** Legend entries: a filled chip for the main recipe and a line swatch per reference. */
+  const legendLabels: LegendItem[] = [
+    {
+      text: main.name || main.id,
+      fillStyle: mainColor,
+      strokeStyle: mainColor,
+      lineWidth: 0,
+      fontColor: legendColor,
+      hidden: false,
+    },
+    ...refMarkers.map((ref) => ({
+      text: ref.label,
+      fillStyle: "rgba(0, 0, 0, 0)",
+      strokeStyle: ref.color,
+      lineWidth: 2,
+      lineDash: ref.dash,
+      fontColor: legendColor,
+      hidden: false,
+    })),
+  ];
+
+  /** Chart.js options controlling layout, legend, tooltip, axis, and the range-meter overlay. */
+  const options: ChartOptions<"bar"> = {
     responsive: true,
     maintainAspectRatio: false,
-    // Disable the canvas entry/resize animation under reduced motion so screenshots are stable;
-    animation: prefersReducedMotion() ? (false as const) : undefined,
+    // Disable the canvas entry/resize animation under reduced motion so screenshots are stable.
+    animation: prefersReducedMotion() ? false : undefined,
+    // No chart title: the panel context already names the chart, and dropping it reclaims height.
+    layout: { padding: { top: 12 } },
     plugins: {
+      rangeMeter: { bandRanges, bandColor, refMarkers },
       legend: {
         display: refs.length > 0,
-        position: "chartArea" as const,
-        align: "start" as const,
-        labels: { color: legendColor, usePointStyle: true, pointStyle: "rectRounded" },
-        title: { display: true, padding: { top: 30 } },
-      },
-      title: {
-        display: true,
-        text: "Mix Properties Chart",
-        color: legendColor,
-        font: { size: GRAPH_TITLE_FONT_SIZE },
+        position: "chartArea",
+        align: "start",
+        onClick: () => undefined,
+        labels: { color: legendColor, generateLabels: () => legendLabels },
       },
       tooltip: {
+        backgroundColor: surfaceColor,
+        borderColor: gridColor,
+        borderWidth: 1,
+        titleColor: legendColor,
+        bodyColor: legendColor,
+        cornerRadius: 8,
+        padding: 10,
+        bodyFont: { family: "ui-monospace, SFMono-Regular, Menlo, monospace" },
         callbacks: {
-          label: (context: TooltipItem<"barWithErrorBars">) => {
-            return formatCompositionValue(context.parsed.y ?? undefined);
+          title: (items: TooltipItem<"bar">[]) => items[0]?.label ?? "",
+          label: (context: TooltipItem<"bar">) =>
+            `${main.name || main.id}: ${formatCompositionValue(context.parsed.y ?? undefined).trim()}`,
+          afterBody: (items: TooltipItem<"bar">[]) => {
+            const idx = items[0]?.dataIndex;
+            if (idx === undefined) return [];
+
+            return refMarkers.flatMap((ref) => {
+              const val = ref.values[idx];
+              return val === null ? [] : [`${ref.label}: ${formatCompositionValue(val).trim()}`];
+            });
           },
         },
       },
     },
     scales: {
-      x: { grid: { color: gridColor }, ticks: { color: legendColor } },
+      x: { grid: { display: false }, border: { display: false }, ticks: { color: tickColor } },
       y: {
         beginAtZero: true,
-        title: { display: true, text: qtyToggle, color: legendColor },
+        max: yMax,
+        title: { display: true, text: qtyToggle, color: tickColor },
         grid: { color: gridColor },
-        ticks: { color: legendColor },
+        border: { display: false },
+        ticks: { color: tickColor },
       },
     },
   };
 
-  return <Chart type="barWithErrorBars" data={chartData} options={options} datasetIdKey="id" />;
+  return <Bar data={chartData} options={options} plugins={[rangeMeterPlugin]} datasetIdKey="id" />;
 }
 
 /** Default set of property keys shown when the Custom key filter is first initialized */

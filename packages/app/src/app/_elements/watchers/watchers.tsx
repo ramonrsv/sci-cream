@@ -312,7 +312,7 @@ export function WatcherCard({
     >
       {/* Slim status rail: at-a-glance range status, color-coded like the meter marker below. */}
       <div
-        className="h-1.5 w-full"
+        className={`h-1.5 w-full ${headerColor === Color.GraphGray ? "opacity-90" : ""}`}
         style={{ backgroundColor: colorVar(headerColor) }}
         aria-hidden
       />
@@ -441,7 +441,7 @@ export function WatcherCard({
                     style={{
                       left: `${valueToMeterPct(refValue, meterRange)}%`,
                       height: "0.5rem",
-                      backgroundColor: colorVar(Color.GraphGray),
+                      backgroundColor: "currentColor",
                     }}
                   />
                 ) : null;

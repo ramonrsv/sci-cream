@@ -4,12 +4,14 @@ import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, waitFor, act } from "@testing-library/react";
 
-import { Color, getColor, addOrUpdateAlpha } from "@/lib/styles/colors";
+import { Color, getColor, addOrUpdateAlpha, getLegendColor } from "@/lib/styles/colors";
+import { Theme } from "@/lib/theme";
 import {
   PropertiesBarChart,
   PropertiesChartView,
   getPropKeys,
   getModifiedMixProperty,
+  getModifiedAcceptablePropertyRange,
   propKeyAsModifiedShortStr,
 } from "@/app/_elements/charts/properties-chart";
 import { filterActiveSlots } from "@/lib/recipe";
@@ -54,27 +56,33 @@ vi.mock("chart.js", () => ({
   Filler: vi.fn(),
 }));
 
-vi.mock("chartjs-chart-error-bars", () => ({
-  BarWithErrorBarsController: vi.fn(),
-  BarWithErrorBar: vi.fn(),
-}));
+type ScriptableColor = (ctx: { dataIndex: number; chart: { chartArea?: unknown } }) => string;
+
+interface RangeMeterOptions {
+  bandRanges: ({ yMin: number; yMax: number } | null)[];
+  bandColor: string;
+  refMarkers: Array<{ label: string; color: string; dash: number[]; values: (number | null)[] }>;
+}
 
 interface ChartOptions {
   responsive: boolean;
   maintainAspectRatio: boolean;
-  plugins: { legend: { display: boolean }; title: { display: boolean; text: string } };
+  plugins: {
+    rangeMeter: RangeMeterOptions;
+    legend: { display: boolean };
+    title?: { display: boolean; text: string };
+  };
   scales: { y: { beginAtZero: boolean; title: { display: boolean; text: string } } };
 }
 
 interface CapturedChartProps {
-  type: string;
   data: {
     labels: string[];
     datasets: Array<{
+      id: string;
       label: string;
-      data: Array<{ y: number; yMin: number; yMax: number }>;
-      backgroundColor: string | string[];
-      borderColor: string;
+      data: number[];
+      backgroundColor: string | ScriptableColor;
       maxBarThickness?: number;
       categoryPercentage?: number;
       barPercentage?: number;
@@ -86,8 +94,8 @@ interface CapturedChartProps {
 let capturedBarProps: CapturedChartProps | null = null;
 
 vi.mock("react-chartjs-2", () => ({
-  Chart: ({ type, data, options }: CapturedChartProps) => {
-    capturedBarProps = { type, data, options };
+  Bar: ({ data, options }: CapturedChartProps) => {
+    capturedBarProps = { data, options };
     return <div data-testid="bar-chart">Mocked Bar Chart</div>;
   },
 }));
@@ -176,12 +184,12 @@ describe("PropertiesBarChart", () => {
       expect(capturedBarProps!.data.datasets[0].label).toBe("Recipe");
     });
 
-    it("should produce one dataset per recipe (main + refs)", () => {
+    it("should keep one main dataset and carry references as tick markers", () => {
       renderFromContext([RecipeID.Main, RecipeID.RefA, RecipeID.RefB]);
-      expect(capturedBarProps!.data.datasets).toHaveLength(3);
+      expect(capturedBarProps!.data.datasets).toHaveLength(1);
       expect(capturedBarProps!.data.datasets[0].label).toBe("Recipe");
-      expect(capturedBarProps!.data.datasets[1].label).toBe("Ref A");
-      expect(capturedBarProps!.data.datasets[2].label).toBe("Ref B");
+      const refMarkers = capturedBarProps!.options.plugins.rangeMeter.refMarkers;
+      expect(refMarkers.map((r) => r.label)).toEqual(["Ref A", "Ref B"]);
     });
   });
 
@@ -191,36 +199,61 @@ describe("PropertiesBarChart", () => {
     it("should configure datasets with correct bar styling", () => {
       renderFromContext([]);
       const dataset = capturedBarProps!.data.datasets[0];
-      expect(dataset.maxBarThickness).toBe(40);
-      expect(dataset.categoryPercentage).toBe(0.6);
-      expect(dataset.barPercentage).toBe(0.8);
+      expect(dataset.maxBarThickness).toBe(48);
+      expect(dataset.categoryPercentage).toBe(0.8);
+      expect(dataset.barPercentage).toBe(0.72);
     });
 
     it("should set dataset colors for main recipe and reference recipes", () => {
-      renderFromContext([RecipeID.Main, RecipeID.RefA, RecipeID.RefB]);
+      // Pick a range-bearing key and a range-less key to exercise both bar-color branches.
+      const keys = getPropKeys();
+      const rangeKey = keys.find((k) => getModifiedAcceptablePropertyRange(k) !== null)!;
+      const noRangeKey = keys.find((k) => getModifiedAcceptablePropertyRange(k) === null)!;
+      renderFromContext([RecipeID.Main, RecipeID.RefA, RecipeID.RefB], [rangeKey, noRangeKey]);
+
       const datasets = capturedBarProps!.data.datasets;
-      const gray = getColor(Color.GraphGray);
-      const green = getColor(Color.GraphGreen);
-      // Main recipe: per-bar colors array, all green (empty recipe has no out-of-range values)
-      expect(datasets[0].backgroundColor).toBeInstanceOf(Array);
-      expect((datasets[0].backgroundColor as string[]).every((c) => c === green)).toBe(true);
-      expect(datasets[0].borderColor).toBe(green);
-      // Ref A: gray at 0.6 opacity
-      expect(datasets[1].backgroundColor).toBe(addOrUpdateAlpha(gray, 0.6));
-      expect(datasets[1].borderColor).toBe(addOrUpdateAlpha(gray, 0.8));
-      // Ref B: gray at 0.3 opacity
-      expect(datasets[2].backgroundColor).toBe(addOrUpdateAlpha(gray, 0.3));
-      expect(datasets[2].borderColor).toBe(addOrUpdateAlpha(gray, 0.5));
+      // Single dataset: the main recipe, with a scriptable per-bar color.
+      expect(datasets).toHaveLength(1);
+      const bg = datasets[0].backgroundColor;
+      expect(typeof bg).toBe("function");
+
+      // Without a chartArea (as in this mocked render) the scriptable returns the flat bar color;
+      // in jsdom every CSS color var resolves to the same fallback, so we assert the applied alpha.
+      const colorAt = (i: number) =>
+        (bg as ScriptableColor)({ dataIndex: i, chart: { chartArea: undefined } });
+      // Range-bearing key: the status color from getRangeColor (resolved fallback, full alpha).
+      expect(colorAt(0)).toBe(getColor(Color.GraphGreen));
+      // Range-less key: a lighter neutral gray at 0.9 alpha.
+      expect(colorAt(1)).toBe(addOrUpdateAlpha(getColor(Color.GraphGray), 0.9));
+
+      // References are tick markers, not datasets: the legend (primary-text) color at 0.7 alpha,
+      // solid for the first and dashed for the second so they stay distinguishable over the bars.
+      const expectedRefColor = addOrUpdateAlpha(getLegendColor(Theme.Light), 0.7);
+      const refMarkers = capturedBarProps!.options.plugins.rangeMeter.refMarkers;
+      expect(refMarkers).toHaveLength(2);
+      expect(refMarkers[0].color).toBe(expectedRefColor);
+      expect(refMarkers[0].dash).toEqual([]);
+      expect(refMarkers[1].color).toBe(expectedRefColor);
+      expect(refMarkers[1].dash).toEqual([4, 3]);
+    });
+
+    it("should pass acceptable-range bands aligned to the labels", () => {
+      const propKeys: PropKey[] = [compToPropKey(CompKey.MSNF), ratioToPropKey(RatioKey.AbsPAC)];
+      renderFromContext([RecipeID.Main], propKeys);
+      const { bandRanges } = capturedBarProps!.options.plugins.rangeMeter;
+      expect(bandRanges).toHaveLength(propKeys.length);
+      propKeys.forEach((key, i) => {
+        expect(bandRanges[i]).toEqual(getModifiedAcceptablePropertyRange(key) ?? null);
+      });
     });
   });
 
   // ---- Chart Configuration --------------------------------------------------------------------
 
   describe("Chart Configuration", () => {
-    it("should configure chart with correct title", () => {
+    it("should not display a chart title", () => {
       renderFromContext([]);
-      expect(capturedBarProps!.options.plugins.title.display).toBe(true);
-      expect(capturedBarProps!.options.plugins.title.text).toBe("Mix Properties Chart");
+      expect(capturedBarProps!.options.plugins.title).toBeUndefined();
     });
 
     it("should configure chart with responsive and maintainAspectRatio settings", () => {
@@ -349,8 +382,8 @@ describe("PropertiesChartView", () => {
       expect(getMixProperty(mixProps, EmulsPerFatPropKey)).toBeNaN();
       expect(getMixProperty(mixProps, AbsPACPropKey)).toBe(0);
 
-      expect(data.datasets[0].data[getPropIndex(data.labels, EmulsPerFatPropKey)].y).toBeNaN();
-      expect(data.datasets[0].data[getPropIndex(data.labels, AbsPACPropKey)].y).toBe(0);
+      expect(data.datasets[0].data[getPropIndex(data.labels, EmulsPerFatPropKey)]).toBeNaN();
+      expect(data.datasets[0].data[getPropIndex(data.labels, AbsPACPropKey)]).toBe(0);
     });
 
     it("should have modified values and strings", async () => {
@@ -368,7 +401,7 @@ describe("PropertiesChartView", () => {
         fpdToPropKey(FpdKey.ServingTemp),
       ]) {
         expect(data.labels).toContain(propKeyAsModifiedShortStr(key));
-        expect(data.datasets[0].data[getPropIndex(data.labels, key)].y).toBeCloseTo(
+        expect(data.datasets[0].data[getPropIndex(data.labels, key)]).toBeCloseTo(
           getModifiedMixProperty(recipeCtx.recipes[0].mixProperties!, key),
         );
       }
