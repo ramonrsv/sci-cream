@@ -4,7 +4,9 @@ import {
   CompKey,
   RatioKey,
   Composition,
+  get_ratio_key_parts,
   new_ingredient_database_seeded_from_embedded_data,
+  compToPropKey,
 } from "../../dist/index";
 
 test("Composition NaN values", () => {
@@ -30,4 +32,11 @@ test("Composition NaN values", () => {
     expect(composition.get_ratio(RatioKey.StabilizersPerWater)).toBe(NaN);
     expect(composition.get_ratio(RatioKey.AbsPAC)).toBe(NaN);
   }
+});
+
+test("get_ratio_key_parts returns the expected CompKey parts, as (PropKey, PropKey)", () => {
+  const parts = [compToPropKey(CompKey.TotalEmulsifiers), compToPropKey(CompKey.TotalFats)];
+  const wasm_parts = get_ratio_key_parts(RatioKey.EmulsifiersPerFat);
+
+  expect(wasm_parts).toEqual(parts);
 });

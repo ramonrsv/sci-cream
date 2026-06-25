@@ -13,6 +13,7 @@ import { RecipeID } from "@/__tests__/assets";
 import { WASM_BRIDGE } from "@/__tests__/util";
 
 const MSNF = compToPropKey(CompKey.MSNF);
+const TOTAL_SOLIDS = compToPropKey(CompKey.TotalSolids);
 const SERVING_TEMP = fpdToPropKey(FpdKey.ServingTemp);
 
 describe("WatchersPanel", () => {
@@ -49,8 +50,8 @@ describe("WatchersPanel", () => {
     it("should render the underlying watchers view", () => {
       const recipeCtx = makeMockRecipeContext([]);
       render(<WatchersPanel recipes={recipeCtx.recipes} />);
-      // At least the MSNF card from the default selection should be visible
-      expect(screen.getByTestId(`watcher-card-${String(MSNF)}`)).toBeInTheDocument();
+      // At least the TOTAL_SOLIDS card from the default selection should be visible
+      expect(screen.getByTestId(`watcher-card-${String(TOTAL_SOLIDS)}`)).toBeInTheDocument();
       expect(screen.getByTestId(`watcher-card-${String(SERVING_TEMP)}`)).toBeInTheDocument();
     });
   });

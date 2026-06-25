@@ -18,7 +18,7 @@ import {
   type TooltipItem,
 } from "chart.js";
 
-import { RecipeSummary, isRecipeEmpty } from "@/lib/recipe";
+import { Recipe, RecipeSummary, isRecipeEmpty } from "@/lib/recipe";
 import { useTheme } from "@/lib/theme";
 import {
   KeyFilter,
@@ -45,8 +45,10 @@ import {
 
 import {
   isPropKeyQuantity,
-  isPropKeyMixScope,
+  getMixScopePropKeys,
   getAcceptablePropertyRange,
+  DEFAULT_SELECTED_PROPERTIES,
+  makeAutoHeuristicFunction,
 } from "@/lib/sci-cream/sci-cream";
 
 import {
@@ -57,7 +59,6 @@ import {
   compToPropKey,
   ratioToPropKey,
   fpdToPropKey,
-  getPropKeys as getPropKeysAll,
   getMixProperty,
   groupEnabledKeys,
   MixProperties,
@@ -209,25 +210,6 @@ const rangeMeterPlugin: Plugin<"bar", RangeMeterOptions> = {
 };
 
 /**
- * Returns all `PropKey` values suitable for chart display.
- *
- * Some property keys are excluded from the list because their values would make the scale difficult
- * to read, e.g. `PropKey.Water` and `FpdKey.HardnessAt14C`, whose values are in the ~50-80 range,
- * while most others top out at ~30. It also excludes ingredient-only ratio keys via
- * `isPropKeyMixScope` since they are not meaningful in the context of a mix composition chart.
- *
- * Keys are available for selection in the `KeyFilterSelect`.
- */
-export function getPropKeys(): PropKey[] {
-  return getPropKeysAll().filter(
-    (key) =>
-      isPropKeyMixScope(key) &&
-      key !== compToPropKey(CompKey.Water) &&
-      key !== fpdToPropKey(FpdKey.HardnessAt14C),
-  );
-}
-
-/**
  * Modify some property values to be more suitable for chart display
  *
  * For example, invert FPD and ServingTemp to be positive, convert AbsPAC to a smaller range,
@@ -238,9 +220,17 @@ export function modifyMixPropertyForChart(rawValue: number, propKey: PropKey): n
     case fpdToPropKey(FpdKey.FPD):
     case fpdToPropKey(FpdKey.ServingTemp):
       return -rawValue;
+    case compToPropKey(CompKey.Water):
     case ratioToPropKey(RatioKey.AbsPAC):
+    case fpdToPropKey(FpdKey.HardnessAt14C):
       return rawValue / 2;
+    case ratioToPropKey(RatioKey.AbsNetPAC):
+      return rawValue / 3;
+    case compToPropKey(CompKey.EggSNF):
+    case compToPropKey(CompKey.Alcohol):
     case ratioToPropKey(RatioKey.EmulsifiersPerFat):
+      return rawValue * 10;
+    case compToPropKey(CompKey.Salt):
     case ratioToPropKey(RatioKey.StabilizersPerWater):
       return rawValue * 100;
     default:
@@ -254,9 +244,17 @@ export function modifyPropKeyAsShortStrForChart(rawStr: string, propKey: PropKey
     case fpdToPropKey(FpdKey.FPD):
     case fpdToPropKey(FpdKey.ServingTemp):
       return "-" + rawStr;
+    case compToPropKey(CompKey.Water):
     case ratioToPropKey(RatioKey.AbsPAC):
+    case fpdToPropKey(FpdKey.HardnessAt14C):
       return rawStr + " / 2";
+    case ratioToPropKey(RatioKey.AbsNetPAC):
+      return rawStr + " / 3";
+    case compToPropKey(CompKey.EggSNF):
+    case compToPropKey(CompKey.Alcohol):
     case ratioToPropKey(RatioKey.EmulsifiersPerFat):
+      return rawStr + " * 10";
+    case compToPropKey(CompKey.Salt):
     case ratioToPropKey(RatioKey.StabilizersPerWater):
       return rawStr + " * 100";
     default:
@@ -513,21 +511,6 @@ export function PropertiesBarChart({
   return <Bar data={chartData} options={options} plugins={[rangeMeterPlugin]} datasetIdKey="id" />;
 }
 
-/** Default set of property keys shown when the Custom key filter is first initialized */
-export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
-  compToPropKey(CompKey.MilkFat),
-  compToPropKey(CompKey.TotalFats),
-  compToPropKey(CompKey.MSNF),
-  compToPropKey(CompKey.TotalSolids),
-  compToPropKey(CompKey.Water),
-  compToPropKey(CompKey.TotalSugars),
-  ratioToPropKey(RatioKey.StabilizersPerWater),
-  compToPropKey(CompKey.POD),
-  compToPropKey(CompKey.TotalPAC),
-  ratioToPropKey(RatioKey.AbsPAC),
-  fpdToPropKey(FpdKey.ServingTemp),
-] as PropKey[]);
-
 /**
  * Properties bar chart with an attached toolbar (KeyFilter) that owns its own toolbar state.
  *
@@ -541,7 +524,7 @@ export function PropertiesChartView({
   defaultSelected = DEFAULT_SELECTED_PROPERTIES,
   persistKey,
 }: {
-  main: RecipeSummary;
+  main: Recipe;
   refs?: RecipeSummary[];
   toolbarPrefix?: ReactNode;
   defaultSelected?: Set<PropKey>;
@@ -553,7 +536,7 @@ export function PropertiesChartView({
     supportedKeyFilters,
   } = useKeyFilterState(persistKey, {
     defaultSelected,
-    getKeys: getPropKeys,
+    getKeys: getMixScopePropKeys,
     supportedKeyFilters: [KeyFilter.Auto, KeyFilter.Custom],
   });
 
@@ -573,15 +556,20 @@ export function PropertiesChartView({
     return true;
   };
 
-  /** Auto-filter heuristic: includes a property key when it is part of the default selection */
-  const autoHeuristic = (propKey: PropKey) => defaultSelected.has(propKey);
+  /**
+   * Auto-filter heuristic: returns all active keys from `DEFAULT_SELECTED_PROPERTIES`.
+   *
+   * A key is active if it has a non-zero value in any reference recipe, or any ingredient in the
+   * main recipe; see {@link makeAutoHeuristicFunction}. Kept in sync with {@link WatchersView}.
+   */
+  const autoHeuristic = makeAutoHeuristicFunction(main, refs);
 
   /** Returns the list of property keys to display, based on the current filter and selection */
   const getEnabledProps = () => {
     return getEnabledKeys(
       propsFilterState[STATE_VAL],
       selectedPropsState[STATE_VAL],
-      getPropKeys,
+      getMixScopePropKeys,
       isPropEmpty,
       autoHeuristic,
     );
@@ -595,7 +583,7 @@ export function PropertiesChartView({
           supportedKeyFilters={supportedKeyFilters}
           keyFilterState={propsFilterState}
           selectedKeysState={selectedPropsState}
-          getKeys={getPropKeys}
+          getKeys={getMixScopePropKeys}
           key_as_med_str={prop_key_as_med_str}
           orderKeys={orderKeys}
         />

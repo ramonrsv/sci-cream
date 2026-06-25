@@ -56,7 +56,7 @@ async function locateWatchersViewAndExpectVisible(page: Page) {
  * If definitions change in the future that alter those behaviors, then the invariant check below
  * will fail loudly so the test choices can be updated.
  */
-const KEY_IN_AUTO_FILTER = compToPropKey(CompKey.MSNF);
+const KEY_IN_AUTO_FILTER = compToPropKey(CompKey.TotalSolids);
 const KEY_WITH_RANGE = compToPropKey(CompKey.MSNF);
 const KEY_WITHOUT_RANGE = compToPropKey(CompKey.MilkFat);
 const KEY_MIXED_REF_VALS = compToPropKey(CompKey.ABV);

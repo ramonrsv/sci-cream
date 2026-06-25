@@ -11,6 +11,7 @@ import {
   fpd_key_as_short_str,
   fpd_key_as_med_str,
   fpd_key_as_long_str,
+  get_ratio_key_parts,
   MixProperties,
 } from "../../wasm/index";
 
@@ -71,6 +72,11 @@ export function propToRatioKey(prop_key: PropKey): RatioKey {
 export function propToFpdKey(prop_key: PropKey): FpdKey {
   if (isFpdKey(prop_key)) return FpdKey[prop_key as keyof typeof FpdKey];
   throw new Error("PropKey is not an FpdKey: " + prop_key);
+}
+
+/** Returns a `RatioKey`'s `(numerator, denominator)` parts as [`PropKey`, `PropKey`]. */
+export function getRatioKeyParts(ratio_key: RatioKey): [PropKey, PropKey] {
+  return get_ratio_key_parts(ratio_key) as [PropKey, PropKey];
 }
 
 /**

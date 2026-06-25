@@ -15,7 +15,6 @@ import {
 import {
   PropertiesBarChart,
   PropertiesChartView,
-  getPropKeys,
   getModifiedMixProperty,
   getModifiedAcceptablePropertyRange,
   propKeyAsModifiedShortStr,
@@ -23,6 +22,7 @@ import {
 import { filterActiveSlots } from "@/lib/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { getSelectedOptionLabel } from "@/__tests__/unit/select";
+import { getMixScopePropKeys, UNCONDITIONAL_AUTO_PROPERTIES } from "@/lib/sci-cream/sci-cream";
 
 import {
   CompKey,
@@ -32,7 +32,6 @@ import {
   compToPropKey,
   ratioToPropKey,
   fpdToPropKey,
-  getPropKeys as getPropKeysAll,
   getMixProperty,
 } from "@workspace/sci-cream";
 
@@ -43,7 +42,6 @@ import { WASM_BRIDGE } from "@/__tests__/util";
 import {
   makeMockRecipeContext,
   getCompLabel,
-  getFpdLabel,
   getPropIndex,
   configCustomKeysAll,
   setKeyFilterSelect,
@@ -107,7 +105,7 @@ vi.mock("react-chartjs-2", () => ({
 }));
 
 /** Convenience: build active recipes from a mock context and render the bar chart with them */
-function renderFromContext(recipeIds: RecipeID[], propKeys: PropKey[] = getPropKeys()) {
+function renderFromContext(recipeIds: RecipeID[], propKeys: PropKey[] = getMixScopePropKeys()) {
   const recipeCtx = makeMockRecipeContext(recipeIds);
   const active = filterActiveSlots(recipeCtx.recipes);
   return {
@@ -121,12 +119,6 @@ function renderFromContext(recipeIds: RecipeID[], propKeys: PropKey[] = getPropK
 // ---------------------------------------------------------------------------
 
 describe("Helper Functions", () => {
-  it("getPropKeys should exclude Water and HardnessAt14C", () => {
-    expect(getPropKeys().length).toBe(getPropKeysAll().length - 2);
-    expect(getPropKeys()).not.toContain(compToPropKey(CompKey.Water));
-    expect(getPropKeys()).not.toContain(fpdToPropKey(FpdKey.HardnessAt14C));
-  });
-
   it("getModifiedMixProperty should modify specific property values", () => {
     const mixProperties = WASM_BRIDGE.calculate_recipe_mix_properties(
       getLightRecipe(RecipeID.Main),
@@ -137,9 +129,28 @@ describe("Helper Functions", () => {
     expect(getModMixProp(fpdToPropKey(FpdKey.ServingTemp))).toBeCloseTo(13.402);
 
     expect(getModMixProp(ratioToPropKey(RatioKey.AbsPAC))).toBeCloseTo(28.374);
+    expect(getModMixProp(compToPropKey(CompKey.Water))).toBeCloseTo(
+      getMixProperty(mixProperties, compToPropKey(CompKey.Water)) / 2,
+    );
+    expect(getModMixProp(fpdToPropKey(FpdKey.HardnessAt14C))).toBeCloseTo(
+      getMixProperty(mixProperties, fpdToPropKey(FpdKey.HardnessAt14C)) / 2,
+    );
 
-    expect(getModMixProp(ratioToPropKey(RatioKey.EmulsifiersPerFat))).toBeCloseTo(1.7907 * 100);
+    expect(getModMixProp(ratioToPropKey(RatioKey.EmulsifiersPerFat))).toBeCloseTo(1.7907 * 10);
     expect(getModMixProp(ratioToPropKey(RatioKey.StabilizersPerWater))).toBeCloseTo(0.3467 * 100);
+
+    expect(getModMixProp(ratioToPropKey(RatioKey.AbsNetPAC))).toBeCloseTo(
+      getMixProperty(mixProperties, ratioToPropKey(RatioKey.AbsNetPAC)) / 3,
+    );
+    expect(getModMixProp(compToPropKey(CompKey.EggSNF))).toBeCloseTo(
+      getMixProperty(mixProperties, compToPropKey(CompKey.EggSNF)) * 10,
+    );
+    expect(getModMixProp(compToPropKey(CompKey.Alcohol))).toBeCloseTo(
+      getMixProperty(mixProperties, compToPropKey(CompKey.Alcohol)) * 10,
+    );
+    expect(getModMixProp(compToPropKey(CompKey.Salt))).toBeCloseTo(
+      getMixProperty(mixProperties, compToPropKey(CompKey.Salt)) * 100,
+    );
   });
 
   it("propKeyAsModifiedShortStr should modify specific key strings", () => {
@@ -149,9 +160,16 @@ describe("Helper Functions", () => {
     expect(propKeyAsModStr(fpdToPropKey(FpdKey.ServingTemp))).toBe("-Serving Temp");
 
     expect(propKeyAsModStr(ratioToPropKey(RatioKey.AbsPAC))).toBe("Abs.PAC / 2");
+    expect(propKeyAsModStr(compToPropKey(CompKey.Water))).toBe("Water / 2");
+    expect(propKeyAsModStr(fpdToPropKey(FpdKey.HardnessAt14C))).toBe("Hardness @-14°C / 2");
 
-    expect(propKeyAsModStr(ratioToPropKey(RatioKey.EmulsifiersPerFat))).toBe("Emul./Fat * 100");
+    expect(propKeyAsModStr(ratioToPropKey(RatioKey.EmulsifiersPerFat))).toBe("Emul./Fat * 10");
     expect(propKeyAsModStr(ratioToPropKey(RatioKey.StabilizersPerWater))).toBe("Stab./Water * 100");
+
+    expect(propKeyAsModStr(ratioToPropKey(RatioKey.AbsNetPAC))).toBe("Abs.Net PAC / 3");
+    expect(propKeyAsModStr(compToPropKey(CompKey.EggSNF))).toBe("Egg SNF * 10");
+    expect(propKeyAsModStr(compToPropKey(CompKey.Alcohol))).toBe("Alcohol * 10");
+    expect(propKeyAsModStr(compToPropKey(CompKey.Salt))).toBe("Salt * 100");
   });
 });
 
@@ -212,7 +230,7 @@ describe("PropertiesBarChart", () => {
 
     it("should set dataset colors for main recipe and reference recipes", () => {
       // Pick a range-bearing key and a range-less key to exercise both bar-color branches.
-      const keys = getPropKeys();
+      const keys = getMixScopePropKeys();
       const rangeKey = keys.find((k) => getModifiedAcceptablePropertyRange(k) !== null)!;
       const noRangeKey = keys.find((k) => getModifiedAcceptablePropertyRange(k) === null)!;
       renderFromContext([RecipeID.Main, RecipeID.RefA, RecipeID.RefB], [rangeKey, noRangeKey]);
@@ -347,13 +365,6 @@ describe("PropertiesChartView", () => {
       expect(labels).toContain(getCompLabel(CompKey.MilkFat));
     });
 
-    it("should filter out Water and HardnessAt14C", () => {
-      renderViewFromContext([RecipeID.Main]);
-      const labels = capturedBarProps!.data.labels;
-      expect(labels).not.toContain(getCompLabel(CompKey.Water));
-      expect(labels).not.toContain(getFpdLabel(FpdKey.HardnessAt14C));
-    });
-
     it("should show all labels if explicitly selected", async () => {
       const { container } = renderViewFromContext([]);
       expect(capturedBarProps!.data.labels.length).toBeGreaterThan(0);
@@ -361,8 +372,27 @@ describe("PropertiesChartView", () => {
       await configCustomKeysAll(container);
 
       await waitFor(() => {
-        expect(capturedBarProps!.data.labels.length).toBe(getPropKeys().length);
+        expect(capturedBarProps!.data.labels.length).toBe(getMixScopePropKeys().length);
       });
+    });
+
+    it("Auto filter hides default keys that are inactive in the recipe", () => {
+      renderViewFromContext([RecipeID.Main]);
+      const labels = capturedBarProps!.data.labels;
+      expect(labels).toContain(propKeyAsModifiedShortStr(compToPropKey(CompKey.MilkFat)));
+
+      // NutSNF is a default key but inactive (no nuts in the main recipe), so it is filtered out.
+      expect(labels).not.toContain(propKeyAsModifiedShortStr(compToPropKey(CompKey.NutSNF)));
+    });
+
+    it("Auto filter shows unconditional keys but no inactive keys for an empty recipe", () => {
+      renderViewFromContext([]);
+      const labels = capturedBarProps!.data.labels;
+      for (const key of UNCONDITIONAL_AUTO_PROPERTIES) {
+        expect(labels).toContain(propKeyAsModifiedShortStr(key));
+      }
+      // MilkFat is a default key, but inactive in an empty recipe and not unconditional.
+      expect(labels).not.toContain(propKeyAsModifiedShortStr(compToPropKey(CompKey.MilkFat)));
     });
   });
 
@@ -378,7 +408,7 @@ describe("PropertiesChartView", () => {
       const AbsPACLabel = propKeyAsModifiedShortStr(AbsPACPropKey);
 
       const data = capturedBarProps!.data;
-      await waitFor(() => expect(data.labels.length).toBe(getPropKeysAll().length - 2));
+      await waitFor(() => expect(data.labels.length).toBe(getMixScopePropKeys().length));
       expect(data.labels).toContain(EmulsPerFatLabel);
       expect(data.labels).toContain(AbsPACLabel);
 
@@ -398,7 +428,7 @@ describe("PropertiesChartView", () => {
       await configCustomKeysAll(container);
 
       const data = capturedBarProps!.data;
-      await waitFor(() => expect(data.labels.length).toBe(getPropKeysAll().length - 2));
+      await waitFor(() => expect(data.labels.length).toBe(getMixScopePropKeys().length));
 
       for (const key of [
         ratioToPropKey(RatioKey.EmulsifiersPerFat),

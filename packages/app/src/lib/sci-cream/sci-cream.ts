@@ -5,14 +5,21 @@ import {
   PropKey,
   compToPropKey,
   fpdToPropKey,
+  getTypicalBalancingKeys,
   getWasmEnums,
   groupEnabledKeys,
   isCompKey,
   isRatioKey,
   propToRatioKey,
+  getMixProperty,
   ratio_key_scope,
   type GroupOptions,
+  propToCompKey,
+  getPropKeys,
+  getRatioKeyParts,
 } from "@workspace/sci-cream";
+
+import { Recipe, RecipeSummary } from "@/lib/recipe";
 
 import type { OrderedKeyRow } from "@/lib/group-by";
 
@@ -35,6 +42,11 @@ export function isPropKeyQuantity(prop_key: PropKey): boolean {
  */
 export function isPropKeyMixScope(prop_key: PropKey): boolean {
   return !isRatioKey(prop_key) || ratio_key_scope(propToRatioKey(prop_key)) !== KeyScope.Ingredient;
+}
+
+/** Mix-scope property keys: all `getPropKeys`, minus ingredient-only ratio keys. */
+export function getMixScopePropKeys(): PropKey[] {
+  return getPropKeys().filter(isPropKeyMixScope);
 }
 
 /** `PropKey`→`CompKey` inverse of `compToPropKey` over every `CompKey`; stable, so built once. */
@@ -75,4 +87,76 @@ export function getAcceptablePropertyRange(
     default:
       return undefined;
   }
+}
+
+/**
+ * Default set of property keys shown when the Custom key filter is first initialized.
+ *
+ * This is used by {@link PropertiesChartView} and {@link WatchersView} to determine which
+ * properties to show by default when the user has not yet selected any custom properties. The set
+ * is sci-cream's "typical" balancing keys, plus the serving temperature and hardness at 14°C.
+ */
+export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set(
+  getTypicalBalancingKeys().concat([
+    fpdToPropKey(FpdKey.ServingTemp),
+    fpdToPropKey(FpdKey.HardnessAt14C),
+  ]),
+);
+
+/**
+ * Keys that are always considered active for the auto heuristic - shown for empty recipes
+ *
+ * These keys will be shown in the {@link PropertiesChartView} and {@link WatchersView} even if all
+ * recipe slots are empty. This ensures that there are always some display elements visible in the
+ * chart and watchers view, as opposed to a blank panel.
+ */
+export const UNCONDITIONAL_AUTO_PROPERTIES: Set<PropKey> = new Set([
+  compToPropKey(CompKey.TotalSolids),
+  compToPropKey(CompKey.POD),
+  fpdToPropKey(FpdKey.ServingTemp),
+  fpdToPropKey(FpdKey.HardnessAt14C),
+]);
+
+/**
+ * Make a function that returns `true` for all active keys in `DEFAULT_SELECTED_PROPERTIES`.
+ *
+ * This can be used to create an `autoHeuristic` function for {@link getEnabledKeys} that will
+ * filter out inactive keys from the default selection, to avoid cluttering the UI. A key is active
+ * if it has a non-zero value in any reference recipe, or in any ingredient in the main recipe.
+ * {@link RatioKey}s are also considered active if the numerator and denominator keys are active.
+ * Keys in {@link UNCONDITIONAL_AUTO_PROPERTIES} are always unconditionally considered active.
+ *
+ * See {@link PropertiesChartView} and {@link WatchersView} for current users of this function.
+ */
+export function makeAutoHeuristicFunction(
+  main: Recipe,
+  refs: RecipeSummary[],
+): (propKey: PropKey) => boolean {
+  const isActiveValue = (value: number) => !Number.isNaN(value) && value !== 0;
+
+  const isCompKeyActive = (propKey: PropKey) =>
+    main.ingredientRows.some((row) =>
+      isActiveValue(row.ingredient?.composition.get(propToCompKey(propKey)) ?? NaN),
+    );
+
+  const isRatioKeyActive = (propKey: PropKey) => {
+    const [num, den] = getRatioKeyParts(propToRatioKey(propKey));
+    return isCompKeyActive(num) && isCompKeyActive(den);
+  };
+
+  const isActive = (propKey: PropKey) => {
+    return (
+      UNCONDITIONAL_AUTO_PROPERTIES.has(propKey) ||
+      (isCompKey(propKey)
+        ? isCompKeyActive(propKey)
+        : isRatioKey(propKey)
+          ? isRatioKeyActive(propKey)
+          : true) ||
+      refs.some((ref) => isActiveValue(getMixProperty(ref.mixProperties, propKey)))
+    );
+  };
+
+  return (propKey: PropKey) => {
+    return DEFAULT_SELECTED_PROPERTIES.has(propKey) && isActive(propKey);
+  };
 }

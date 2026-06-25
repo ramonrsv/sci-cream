@@ -30,7 +30,9 @@ import {
 import {
   getAcceptablePropertyRange,
   isPropKeyQuantity,
-  isPropKeyMixScope,
+  getMixScopePropKeys,
+  DEFAULT_SELECTED_PROPERTIES,
+  makeAutoHeuristicFunction,
 } from "@/lib/sci-cream/sci-cream";
 import {
   Color,
@@ -46,14 +48,9 @@ import { STATE_VAL, STATE_SET, standardInputStepByPercent, verify } from "@/lib/
 
 import {
   PropKey,
-  getPropKeys,
   getMixProperty,
   groupEnabledKeys,
   prop_key_as_med_str,
-  compToPropKey,
-  CompKey,
-  fpdToPropKey,
-  FpdKey,
   isCompKey,
   isRatioKey,
   Bridge as WasmBridge,
@@ -63,7 +60,6 @@ import {
   type LightRecipe,
   type BalanceTargets,
   type BalancePriorities,
-  getTypicalBalancingKeys,
 } from "@workspace/sci-cream";
 
 import { WatcherIssues, KeyIssue } from "@/app/_elements/watchers/watcher-issues";
@@ -127,18 +123,6 @@ function PriorityMarker({ priority }: { priority: Priority }) {
       );
   }
 }
-
-/** Mix-scope property keys: all `getPropKeys`, minus ingredient-only ratio keys. */
-function getMixScopePropKeys(): PropKey[] {
-  return getPropKeys().filter(isPropKeyMixScope);
-}
-
-/** Default set of property keys shown when the Custom key filter is first initialized */
-export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set(
-  getTypicalBalancingKeys()
-    .concat([fpdToPropKey(FpdKey.ServingTemp), fpdToPropKey(FpdKey.HardnessAt14C)])
-    .filter((key) => key !== compToPropKey(CompKey.Alcohol)),
-);
 
 /** Type predicate: `val` is a defined, non-NaN number (i.e. a real computed numeric result). */
 function isUsableNumber(val: number | undefined): val is number {
@@ -675,8 +659,13 @@ export function WatchersView({
     return true;
   };
 
-  /** Auto-filter heuristic: includes a property key when it is part of the default selection */
-  const autoHeuristic = (propKey: PropKey) => defaultSelected.has(propKey);
+  /**
+   * Auto-filter heuristic: returns all active keys from `DEFAULT_SELECTED_PROPERTIES`.
+   *
+   * A key is active if it has a non-zero value in any reference recipe, or any ingredient in the
+   * main recipe; see {@link makeAutoHeuristicFunction}. In sync with {@link PropertiesChartView}.
+   */
+  const autoHeuristic = makeAutoHeuristicFunction(main, refs);
 
   /** Returns the list of property keys to display, based on the current filter and selection */
   const getEnabledProps = () => {

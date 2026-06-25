@@ -13,9 +13,11 @@ import {
   Bridge as WasmBridge,
   CompKey,
   FpdKey,
+  RatioKey,
   Priority,
   compToPropKey,
   fpdToPropKey,
+  ratioToPropKey,
   type LightRecipe,
   type BalanceTargets,
   type BalancePriorities,
@@ -31,6 +33,9 @@ const MSNF = compToPropKey(CompKey.MSNF);
 const TOTAL_SOLIDS = compToPropKey(CompKey.TotalSolids);
 const SERVING_TEMP = fpdToPropKey(FpdKey.ServingTemp);
 const TOTAL_FATS = compToPropKey(CompKey.TotalFats); // no defined range
+const MILK_FAT = compToPropKey(CompKey.MilkFat); // default key, active in the main test recipe
+const NUT_SNF = compToPropKey(CompKey.NutSNF); // default key, inactive (no nuts in the recipe)
+const EMULS_PER_FAT = ratioToPropKey(RatioKey.EmulsifiersPerFat); // default ratio key
 
 describe("WatcherCard", () => {
   beforeEach(() => {
@@ -604,6 +609,27 @@ describe("WatchersView", () => {
     expect(screen.getByTestId(`watcher-card-${String(MSNF)}`)).toBeInTheDocument();
     expect(screen.getByTestId(`watcher-card-${String(TOTAL_SOLIDS)}`)).toBeInTheDocument();
     expect(screen.getByTestId(`watcher-card-${String(SERVING_TEMP)}`)).toBeInTheDocument();
+  });
+
+  it("Auto filter hides default keys that are inactive in the recipe", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} />);
+    expect(screen.getByTestId(`watcher-card-${String(MILK_FAT)}`)).toBeInTheDocument();
+
+    // NutSNF is a default key but inactive (no nuts in the recipe), so it is filtered out by Auto
+    expect(screen.queryByTestId(`watcher-card-${String(NUT_SNF)}`)).not.toBeInTheDocument();
+  });
+
+  it("Auto filter ignores empty unfiltered ref slots", () => {
+    // Empty ref slots reach the view unfiltered; their zero/NaN values must not activate keys.
+    render(
+      <WatchersView main={makeEmptyRecipe(0)} refs={[makeEmptyRecipe(1), makeEmptyRecipe(2)]} />,
+    );
+    expect(screen.queryByTestId(`watcher-card-${String(EMULS_PER_FAT)}`)).not.toBeInTheDocument();
+    expect(screen.queryByTestId(`watcher-card-${String(MILK_FAT)}`)).not.toBeInTheDocument();
+
+    // Unconditional keys still render so the panel is never blank.
+    expect(screen.getByTestId(`watcher-card-${String(TOTAL_SOLIDS)}`)).toBeInTheDocument();
   });
 
   it("hydrates the selection from localStorage on mount", async () => {

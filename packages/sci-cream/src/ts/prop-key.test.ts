@@ -28,6 +28,7 @@ import {
   propToCompKey,
   propToRatioKey,
   propToFpdKey,
+  getRatioKeyParts,
 } from "./prop-key";
 
 test("Import from sci-cream wasm package, at sci-cream", () => {
@@ -244,5 +245,23 @@ test("propToFpdKey throws for non-FpdKey PropKeys", () => {
   }
   for (const key of getWasmEnums(RatioKey)) {
     expect(() => propToFpdKey(ratioToPropKey(key))).toThrow("PropKey is not an FpdKey");
+  }
+});
+
+test("getRatioKeyParts returns each ratio key's numerator and denominator as PropKeys", () => {
+  expect(getRatioKeyParts(RatioKey.EmulsifiersPerFat)).toEqual([
+    compToPropKey(CompKey.TotalEmulsifiers),
+    compToPropKey(CompKey.TotalFats),
+  ]);
+  expect(getRatioKeyParts(RatioKey.StabilizersPerWater)).toEqual([
+    compToPropKey(CompKey.TotalStabilizers),
+    compToPropKey(CompKey.Water),
+  ]);
+
+  // Every part is a valid CompKey-derived PropKey.
+  for (const key of getWasmEnums(RatioKey)) {
+    for (const part of getRatioKeyParts(key)) {
+      expect(isCompKey(part)).toBe(true);
+    }
   }
 });

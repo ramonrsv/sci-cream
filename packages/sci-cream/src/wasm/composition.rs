@@ -5,7 +5,10 @@
 
 use wasm_bindgen::prelude::*;
 
-use crate::composition::{CompKey, Composition as RustComposition, RatioKey};
+use crate::{
+    composition::{CompKey, Composition as RustComposition, RatioKey},
+    wasm::error::JsResult,
+};
 
 /// Newtype wrapper around [`Composition`](RustComposition) for WASM interoperability.
 #[derive(PartialEq, Debug, Copy, Clone)]
@@ -46,6 +49,16 @@ impl From<Composition> for RustComposition {
     fn from(comp: Composition) -> Self {
         comp.0
     }
+}
+
+/// WASM compatible forwarder for [`RatioKey::parts`](RatioKey::parts)
+///
+/// # Errors
+///
+/// Returns a `serde::Error` if the input cannot be deserialized into a `RatioKey`.
+#[wasm_bindgen(js_name = "get_ratio_key_parts")]
+pub fn get_ratio_key_parts_wasm(key: RatioKey) -> JsResult<JsValue> {
+    serde_wasm_bindgen::to_value(&key.parts()).map_err(Into::into)
 }
 
 #[cfg(test)]
