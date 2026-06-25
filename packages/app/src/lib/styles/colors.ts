@@ -2,7 +2,10 @@ import { colord } from "colord";
 
 import { Theme } from "@/lib/theme";
 
-/** CSS custom property names for chart and UI colors */
+/**
+ * Theme-independent palette colors: a single CSS custom property with no light/dark variant. Read
+ * in JS with {@link getColor} or referenced in markup with {@link getCssColor}.
+ */
 export enum Color {
   GraphBlue = "--color-graph-blue",
   GraphGreen = "--color-graph-green",
@@ -12,17 +15,41 @@ export enum Color {
   GraphGray = "--color-graph-gray",
   GraphGreenDull = "--color-graph-green-dull",
   GraphRedDull = "--color-graph-red-dull",
-  Grid = "--color-grid",
-  Legend = "--color-legend",
-  GridDark = "--color-grid-dark",
-  LegendDark = "--color-legend-dark",
+}
+
+/**
+ * Semantic colors that vary by theme. Each value is a base token name; the `-light` / `-dark`
+ * variant exists in `globals.css` and is selected by {@link getJsColor} (canvas) or by the
+ * Tailwind utilities (DOM). Not usable with {@link getColor} (the bare name is not a real var).
+ */
+export enum ThemeColor {
+  Surface = "--color-surface",
+  TextPrimary = "--color-text-primary",
+  TextSecondary = "--color-text-secondary",
+  Border = "--color-border",
 }
 
 /** Fallback color returned when running server-side (no `window.getComputedStyle` available) */
 const SSR_DEFAULT_COLOR = "rgba(0, 0, 0, 1)";
 
-/** Descending opacity so each successive reference is lighter */
-export const REFERENCE_OPACITIES = [0.6, 0.3] as const;
+/**
+ * Alpha for the soft acceptable-range band tint drawn behind a chart bar. Mirrors the
+ * `.range-meter-band` `/25` alpha in `globals.css` so the canvas chart and the DOM range meter
+ * read identically; keep the two in sync.
+ */
+export const RANGE_BAND_ALPHA = 0.25;
+
+/** Alpha for a neutral gray fill where a property has no acceptable range (chart bar / status). */
+export const NO_RANGE_GRAY_ALPHA = 0.9;
+
+/**
+ * Alpha for reference-recipe tick markers: the chart ticks drawn over bars and the watcher range
+ * meter's reference ticks. Applied as color alpha (chart) or element opacity (meter); same value.
+ */
+export const REFERENCE_TICK_ALPHA = 0.7;
+
+/** Alpha at the top of a chart bar's vertical fill gradient (fades to full color at the base). */
+export const BAR_GRADIENT_TOP_ALPHA = 0.65;
 
 /**
  * Read a CSS custom color property value from the document root
@@ -35,33 +62,19 @@ export function getCssColorVariable(name: string): string {
   return styles.getPropertyValue(name) || SSR_DEFAULT_COLOR;
 }
 
-/** Resolve a CSS custom property using the light or dark variant depending on the current theme */
-export function getThemeCssColorVariable(
-  lightName: string,
-  darkName: string,
-  theme: Theme,
-): string {
-  return getCssColorVariable(theme === Theme.Light ? lightName : darkName);
-}
-
-/** Resolve a `Color` enum value to its current CSS color string */
+/** Resolve a theme-independent `Color` to its current CSS color string (computed value, for JS). */
 export function getColor(color: Color): string {
   return getCssColorVariable(color);
 }
 
-/** Returns the legend text color for the given theme */
-export function getLegendColor(theme: Theme): string {
-  return getThemeCssColorVariable(Color.Legend, Color.LegendDark, theme);
-}
-
-/** Returns the chart grid line color for the given theme */
-export function getGridColor(theme: Theme): string {
-  return getThemeCssColorVariable(Color.Grid, Color.GridDark, theme);
-}
-
-/** Returns the opacity for a reference recipe bar at the given zero-based index; fallback 0.2 */
-export function getReferenceOpacity(index: number): number {
-  return REFERENCE_OPACITIES[index] ?? 0.2;
+/**
+ * Resolve a theme-dependent {@link ThemeColor} to its computed color string for `theme`, by reading
+ * the matching `-light` / `-dark` token. For JS/canvas consumers that can't ride the CSS cascade
+ * (e.g. Chart.js painting into a `<canvas>`); pass the current `theme` from `useTheme()` so the
+ * value recomputes — and the canvas repaints — whenever the theme changes.
+ */
+export function getJsColor(color: ThemeColor, theme: Theme): string {
+  return getCssColorVariable(`${color}-${theme === Theme.Light ? "light" : "dark"}`);
 }
 
 /** Add or update the alpha value of a CSS color string (e.g. hex, rgb, hsl) */
@@ -70,20 +83,12 @@ export function addOrUpdateAlpha(colorStr: string, opacity: number): string {
 }
 
 /**
- * Returns a CSS `var(...)` reference for the given `Color` — SSR-safe replacement for
- * {@link getColor} when assigning to an inline `style` attribute (whose resolved value would
- * differ between server and client and trigger a hydration mismatch).
+ * Returns a CSS `var(...)` reference for the given `Color`, for use in an inline `style` attribute
+ * or a Tailwind arbitrary value. SSR-safe replacement for {@link getColor} in markup: a resolved
+ * computed value would differ between server and client and trigger a hydration mismatch.
  */
-export function colorVar(color: Color): string {
+export function getCssColor(color: Color): string {
   return `var(${color})`;
-}
-
-/**
- * Returns a CSS `color-mix(...)` expression that applies `alpha` (0–1) to the given `Color`
- * variable, suitable for use in inline `style` attributes. SSR-safe, like {@link colorVar}.
- */
-export function colorVarWithAlpha(color: Color, alpha: number): string {
-  return `color-mix(in srgb, var(${color}) ${alpha * 100}%, transparent)`;
 }
 
 /**

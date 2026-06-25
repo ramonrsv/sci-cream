@@ -25,8 +25,10 @@ test("worseStatusColor returns the color with higher severity", () => {
 });
 
 test("worseStatusColor throws for non-status colors", () => {
-  expect(() => worseStatusColor(Color.Grid, Color.Legend)).toThrow("Invalid status color");
-  expect(() => worseStatusColor(Color.Grid, Color.GraphYellow)).toThrow("Invalid status color");
+  expect(() => worseStatusColor(Color.GraphBlue, Color.GraphGray)).toThrow("Invalid status color");
+  expect(() => worseStatusColor(Color.GraphBlue, Color.GraphYellow)).toThrow(
+    "Invalid status color",
+  );
 });
 
 test("getTargetColor returns correct colors based on value's position relative to target", () => {

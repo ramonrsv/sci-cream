@@ -1,5 +1,6 @@
 "use client";
 
+import { useMemo } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -21,13 +22,7 @@ import { useTheme } from "@/lib/theme";
 import { GRAPH_TITLE_FONT_SIZE } from "@/lib/styles/sizes";
 import { prefersReducedMotion } from "@/lib/styles/motion";
 
-import {
-  Color,
-  getColor,
-  addOrUpdateAlpha,
-  getLegendColor,
-  getGridColor,
-} from "@/lib/styles/colors";
+import { Color, ThemeColor, getColor, getJsColor, addOrUpdateAlpha } from "@/lib/styles/colors";
 
 ChartJS.register(
   CategoryScale,
@@ -40,6 +35,28 @@ ChartJS.register(
   Filler,
 );
 
+/** Line width (px) for the main recipe's curves (wider than references for emphasis). */
+const MAIN_LINE_WIDTH = 4;
+/** Line width (px) for reference recipes' curves. */
+const REF_LINE_WIDTH = 3;
+/** Dash pattern for the "Frozen Water" curve, distinguishing it from the solid "Hardness" line. */
+const FROZEN_WATER_DASH = [3, 3];
+/** Alpha at the top of the main curve's area fill gradient (fades to transparent below). */
+const FILL_GRADIENT_TOP_ALPHA = 0.3;
+/** Gradient stop (0–1) at which the area fill has faded fully to transparent. */
+const FILL_GRADIENT_FADE_STOP = 0.9;
+/** Radius (px) of the highlighted ideal-serving point marker. */
+const HIGHLIGHT_POINT_RADIUS = 6;
+/** Border width (px) for point markers. */
+const POINT_BORDER_WIDTH = 2;
+/** Line width (px) for the custom legend swatches. */
+const LEGEND_LINE_WIDTH = 2;
+/** Draw an x-axis grid line and tick label only on multiples of this interval. */
+const GRID_TICK_INTERVAL = 5;
+/** Y-axis bounds (°C): the chart shows the sub-zero freezing range. */
+const Y_AXIS_MIN = -30;
+const Y_AXIS_MAX = 0;
+
 /**
  * Bare line chart visualizing FPD curves (hardness and frozen water) for a main recipe plus zero
  * or more reference recipes. The main recipe is drawn with a wider, filled blue line and the
@@ -49,6 +66,17 @@ ChartJS.register(
  */
 export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: RecipeSummary[] }) {
   const { theme } = useTheme();
+
+  // Canvas can't ride the CSS cascade (`var()`), so the theme-dependent colors are read from
+  // computed styles for the current `theme`; the read recomputes (and the canvas repaints) whenever
+  // `theme` changes, which `getJsColor` makes an explicit dependency.
+  const { gridColor, legendColor } = useMemo(
+    () => ({
+      gridColor: getJsColor(ThemeColor.Border, theme),
+      legendColor: getJsColor(ThemeColor.TextPrimary, theme),
+    }),
+    [theme],
+  );
 
   /** Ideal serving 'hardness' value, in [0, 100], used to place a highlight point */
   const highlightedHardnessPercent = 75;
@@ -71,13 +99,13 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
       const recipeColor = isMain ? getColor(Color.GraphBlue) : getColor(Color.GraphGray);
 
       const curves = recipe.mixProperties.fpd!.curves!;
-      const borderWidth = isMain ? 4 : 3;
+      const borderWidth = isMain ? MAIN_LINE_WIDTH : REF_LINE_WIDTH;
       const borderColor = recipeColor;
       const recipeLabel = isMain ? "" : ` (${recipe.name || recipe.id})`;
 
       const lines = [
         { lineLabel: "Hardness", curve: curves.hardness },
-        { lineLabel: "Frozen Water", borderDash: [3, 3], curve: curves.frozen_water },
+        { lineLabel: "Frozen Water", borderDash: FROZEN_WATER_DASH, curve: curves.frozen_water },
       ];
 
       return lines.map(({ lineLabel, borderDash, curve }) => ({
@@ -96,30 +124,29 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
 
           const gradient = ctx.createLinearGradient(ca.right, ca.top, ca.left, ca.bottom);
 
-          gradient.addColorStop(0, addOrUpdateAlpha(borderColor, 0.3));
-          gradient.addColorStop(0.9, addOrUpdateAlpha(borderColor, 0));
+          gradient.addColorStop(0, addOrUpdateAlpha(borderColor, FILL_GRADIENT_TOP_ALPHA));
+          gradient.addColorStop(FILL_GRADIENT_FADE_STOP, addOrUpdateAlpha(borderColor, 0));
 
           return gradient;
         },
         borderDash: borderDash,
         fill: isMain && lineLabel === "Hardness" ? "start" : false,
-        pointRadius: curve.map((_, i) => (shouldHighlight(lineLabel, i) ? 6 : 0)),
+        pointRadius: curve.map((_, i) =>
+          shouldHighlight(lineLabel, i) ? HIGHLIGHT_POINT_RADIUS : 0,
+        ),
         pointBackgroundColor: curve.map((_, i) =>
           shouldHighlight(lineLabel, i) ? "#fff" : borderColor,
         ),
         pointBorderColor: borderColor,
-        pointBorderWidth: 2,
+        pointBorderWidth: POINT_BORDER_WIDTH,
       }));
     }),
   };
 
-  const gridColor = getGridColor(theme);
-  const legendColor = getLegendColor(theme);
-
   /** Shared legend label style applied to all custom legend entries */
   const labelProps = {
     hidden: false,
-    lineWidth: 2,
+    lineWidth: LEGEND_LINE_WIDTH,
     strokeStyle: legendColor,
     fillStyle: "rgba(0, 0, 0, 0)",
     fontColor: legendColor,
@@ -142,7 +169,7 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
           generateLabels: () => {
             return [
               { text: "Hardness", ...labelProps },
-              { text: "Frozen Water", lineDash: [3, 3], ...labelProps },
+              { text: "Frozen Water", lineDash: FROZEN_WATER_DASH, ...labelProps },
             ];
           },
         },
@@ -176,7 +203,7 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
           autoSkip: false,
           callback: function (value: string | number) {
             const numValue = Number(value);
-            return numValue % 5 === 0 ? numValue : "";
+            return numValue % GRID_TICK_INTERVAL === 0 ? numValue : "";
           },
         },
         grid: {
@@ -184,13 +211,13 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
           display: true,
           drawOnChartArea: true,
           lineWidth: function (context: ScriptableScaleContext) {
-            return context.tick.value % 5 === 0 ? 1 : 0;
+            return context.tick.value % GRID_TICK_INTERVAL === 0 ? 1 : 0;
           },
         },
       },
       y: {
-        min: -30,
-        max: 0,
+        min: Y_AXIS_MIN,
+        max: Y_AXIS_MAX,
         ticks: { color: legendColor },
         title: { display: true, text: "Temperature (°C)", color: legendColor },
         grid: { color: gridColor },

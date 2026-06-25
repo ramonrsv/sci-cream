@@ -48,13 +48,6 @@
   --color-graph-green-dull: rgb(37, 130, 89);
   --color-graph-red-dull: rgb(208, 43, 48);
 
-  /* Chart colors */
-  --color-legend: var(--color-text-primary-light);
-  --color-grid: var(--color-border-light);
-
-  --color-legend-dark: var(--color-text-primary-dark);
-  --color-grid-dark: var(--color-border-dark);
-
   /* Short names */
   --color-page-lt: var(--color-bg-page-light);
   --color-page-dk: var(--color-bg-page-dark);
@@ -262,6 +255,8 @@ body {
   }
 }
 
+/* Soft acceptable-range band tint. The `/25` alpha is mirrored by `RANGE_BAND_ALPHA` in
+   `lib/styles/colors.ts` for the canvas chart's matching band; keep the two in sync. */
 .range-meter-band {
   @apply bg-graph-green/25 absolute inset-y-0 rounded-full;
 }

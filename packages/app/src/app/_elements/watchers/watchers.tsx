@@ -28,7 +28,13 @@ import {
   isPropKeyQuantity,
   isPropKeyMixScope,
 } from "@/lib/sci-cream/sci-cream";
-import { Color, colorVar, getRangeColor } from "@/lib/styles/colors";
+import {
+  Color,
+  getCssColor,
+  getRangeColor,
+  NO_RANGE_GRAY_ALPHA,
+  REFERENCE_TICK_ALPHA,
+} from "@/lib/styles/colors";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { usePersistedState } from "@/lib/use-persisted-state";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
@@ -68,6 +74,11 @@ export type TargetsMap = Partial<Record<PropKey, number>>;
  */
 export type PrioritiesMap = Partial<Record<PropKey, Priority>>;
 
+/** Opacity for the faint Normal-priority dot, so it recedes into the background. */
+const PRIORITY_NORMAL_OPACITY = 0.6;
+/** Opacity for the reference value rows, de-emphasized relative to the main value above them. */
+const REF_ROW_OPACITY = 0.8;
+
 /** Ordered priority cycle for the click-to-cycle control: Low → Normal → High → Critical → Low. */
 const PRIORITY_CYCLE = [Priority.Low, Priority.Normal, Priority.High, Priority.Critical] as const;
 
@@ -80,7 +91,7 @@ function nextPriority(priority: Priority): Priority {
 /**
  * Glyph for the per-target balancing {@link Priority}, conveying level by both shape and color:
  * a faint dot at `Normal` (recedes into the background), an amber single up-chevron at `High`, and
- * a red double up-chevron at `Critical`. Inline `color` is set via SSR-safe {@link colorVar}.
+ * a red double up-chevron at `Critical`. Inline `color` is set via SSR-safe {@link getCssColor}.
  */
 function PriorityMarker({ priority }: { priority: Priority }) {
   const size = COMPONENT_ACTION_ICON_SIZE;
@@ -88,20 +99,25 @@ function PriorityMarker({ priority }: { priority: Priority }) {
   switch (priority) {
     case Priority.Low:
       return (
-        <ChevronDown size={size} strokeWidth={4} style={{ color: colorVar(Color.GraphBlue) }} />
+        <ChevronDown size={size} strokeWidth={4} style={{ color: getCssColor(Color.GraphBlue) }} />
       );
     case Priority.High:
       return (
-        <ChevronUp size={size} strokeWidth={4} style={{ color: colorVar(Color.GraphOrange) }} />
+        <ChevronUp size={size} strokeWidth={4} style={{ color: getCssColor(Color.GraphOrange) }} />
       );
     case Priority.Critical:
       return (
-        <ChevronsUp size={size} strokeWidth={3} style={{ color: colorVar(Color.GraphRedDull) }} />
+        <ChevronsUp
+          size={size}
+          strokeWidth={3}
+          style={{ color: getCssColor(Color.GraphRedDull) }}
+        />
       );
     default:
       return (
         <span
-          className="inline-block h-1.25 w-1.25 rounded-full bg-current opacity-60"
+          className="inline-block h-1.25 w-1.25 rounded-full bg-current"
+          style={{ opacity: PRIORITY_NORMAL_OPACITY }}
           aria-hidden
         />
       );
@@ -296,8 +312,6 @@ export function WatcherCard({
 
   const targetDelta = target !== undefined && mainHasValue ? formatDelta(target - mainValue) : null;
 
-  const refRowOpacity = 0.8;
-
   const meterRange = range && range.max > range.min ? range : undefined;
   const nonEmptyRefs = refs.filter((ref) => !isRecipeEmpty(ref));
 
@@ -312,8 +326,11 @@ export function WatcherCard({
     >
       {/* Slim status rail: at-a-glance range status, color-coded like the meter marker below. */}
       <div
-        className={`h-1.5 w-full ${headerColor === Color.GraphGray ? "opacity-90" : ""}`}
-        style={{ backgroundColor: colorVar(headerColor) }}
+        className="h-1.5 w-full"
+        style={{
+          backgroundColor: getCssColor(headerColor),
+          opacity: headerColor === Color.GraphGray ? NO_RANGE_GRAY_ALPHA : undefined,
+        }}
         aria-hidden
       />
 
@@ -399,7 +416,7 @@ export function WatcherCard({
                   <Check
                     size={COMPONENT_ACTION_ICON_SIZE - 5}
                     className="inline align-text-bottom"
-                    style={{ color: colorVar(Color.GraphGreen) }}
+                    style={{ color: getCssColor(Color.GraphGreen) }}
                     aria-label="Target met"
                     data-testid={`watcher-card-${String(propKey)}-target-met`}
                   />
@@ -437,11 +454,12 @@ export function WatcherCard({
                 return isUsableNumber(refValue) ? (
                   <span
                     key={ref.id}
-                    className="range-meter-tick opacity-60"
+                    className="range-meter-tick"
                     style={{
                       left: `${valueToMeterPct(refValue, meterRange)}%`,
                       height: "0.5rem",
                       backgroundColor: "currentColor",
+                      opacity: REFERENCE_TICK_ALPHA,
                     }}
                   />
                 ) : null;
@@ -451,7 +469,7 @@ export function WatcherCard({
                   className="range-meter-tick"
                   style={{
                     left: `${valueToMeterPct(target, meterRange)}%`,
-                    backgroundColor: colorVar(Color.GraphBlue),
+                    backgroundColor: getCssColor(Color.GraphBlue),
                   }}
                 />
               )}
@@ -460,7 +478,7 @@ export function WatcherCard({
                   className="range-meter-marker"
                   style={{
                     left: `${valueToMeterPct(mainValue, meterRange)}%`,
-                    backgroundColor: colorVar(headerColor),
+                    backgroundColor: getCssColor(headerColor),
                   }}
                   data-testid={`watcher-card-${String(propKey)}-meter-current`}
                 />
@@ -486,7 +504,10 @@ export function WatcherCard({
                 <div
                   key={ref.id}
                   className="flex items-center justify-center gap-1"
-                  style={{ opacity: refRowOpacity, visibility: refHasValue ? "visible" : "hidden" }}
+                  style={{
+                    opacity: REF_ROW_OPACITY,
+                    visibility: refHasValue ? "visible" : "hidden",
+                  }}
                   title={`${ref.id} value`}
                   data-testid={`watcher-card-${String(propKey)}-ref-${ref.id}`}
                   aria-hidden={!refHasValue}

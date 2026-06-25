@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useMemo } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -33,12 +33,15 @@ import { prefersReducedMotion } from "@/lib/styles/motion";
 import { STATE_VAL } from "@/lib/util";
 import {
   Color,
+  ThemeColor,
   getColor,
-  getGridColor,
-  getLegendColor,
+  getJsColor,
   getRangeColor,
-  getThemeCssColorVariable,
   addOrUpdateAlpha,
+  RANGE_BAND_ALPHA,
+  NO_RANGE_GRAY_ALPHA,
+  REFERENCE_TICK_ALPHA,
+  BAR_GRADIENT_TOP_ALPHA,
 } from "@/lib/styles/colors";
 
 import {
@@ -102,6 +105,25 @@ const BAND_WIDTH_FACTOR = 1.5;
 const REF_TICK_OVERHANG = 2;
 /** Line width (px) of a reference tick marker. */
 const REF_TICK_WIDTH = 2;
+
+/** Top corner radius (px) for the main recipe bars. */
+const BAR_CORNER_RADIUS = 6;
+/** Maximum bar thickness (px), so bars don't grow unwieldy with few categories. */
+const MAX_BAR_THICKNESS = 48;
+/** Fraction of each category slot occupied by its bar group (Chart.js `categoryPercentage`). */
+const BAR_CATEGORY_PERCENTAGE = 0.8;
+/** Fraction of the category-group width occupied by the bar itself (Chart.js `barPercentage`). */
+const BAR_PERCENTAGE = 0.72;
+/** Round the y-axis max up to the next multiple of this for clean tick labels plus headroom. */
+const Y_AXIS_TICK_STEP = 5;
+/** Top padding (px) reserved above the plot area for the in-area legend. */
+const CHART_TOP_PADDING = 12;
+/** Tooltip corner radius (px). */
+const TOOLTIP_CORNER_RADIUS = 8;
+/** Tooltip inner padding (px). */
+const TOOLTIP_PADDING = 10;
+/** Tooltip border width (px). */
+const TOOLTIP_BORDER_WIDTH = 1;
 
 /** Clip subsequent canvas drawing to the chart's plot area. */
 function clipToChartArea(
@@ -296,6 +318,19 @@ export function PropertiesBarChart({
 }) {
   const { theme } = useTheme();
 
+  // Canvas can't ride the CSS cascade (`var()`), so the theme-dependent chart colors are read from
+  // computed styles for the current `theme`; the read recomputes (and the canvas repaints) whenever
+  // `theme` changes, which `getJsColor` makes an explicit dependency.
+  const { gridColor, legendColor, tickColor, surfaceColor } = useMemo(
+    () => ({
+      gridColor: getJsColor(ThemeColor.Border, theme),
+      legendColor: getJsColor(ThemeColor.TextPrimary, theme),
+      tickColor: getJsColor(ThemeColor.TextSecondary, theme),
+      surfaceColor: getJsColor(ThemeColor.Surface, theme),
+    }),
+    [theme],
+  );
+
   /** Always display properties as percentages in the chart */
   const qtyToggle = QtyToggle.Percentage;
 
@@ -323,22 +358,8 @@ export function PropertiesBarChart({
 
   const labels = propKeys.map((propKey) => propKeyAsModifiedShortStr(propKey));
 
-  const gridColor = getGridColor(theme);
-  const legendColor = getLegendColor(theme);
-
-  const tickColor = getThemeCssColorVariable(
-    "--color-text-secondary-light",
-    "--color-text-secondary-dark",
-    theme,
-  );
-  const surfaceColor = getThemeCssColorVariable(
-    "--color-surface-light",
-    "--color-surface-dark",
-    theme,
-  );
-
   const mainColor = getColor(Color.GraphGreen);
-  const noRangeBarColor = addOrUpdateAlpha(getColor(Color.GraphGray), 0.9);
+  const noRangeBarColor = addOrUpdateAlpha(getColor(Color.GraphGray), NO_RANGE_GRAY_ALPHA);
 
   /** Per-bar base color: within-range status color, or a lighter gray when the key has no range. */
   const mainBarColors = propKeys.map((propKey) => {
@@ -357,7 +378,7 @@ export function PropertiesBarChart({
   );
 
   /** Soft tint for the acceptable-range band, matching WatcherCard's `.range-meter-band`. */
-  const bandColor = addOrUpdateAlpha(mainColor, 0.16);
+  const bandColor = addOrUpdateAlpha(mainColor, RANGE_BAND_ALPHA);
 
   /**
    * Reference recipes as tick markers: solid for the first, dashed for the second so they stay
@@ -365,7 +386,7 @@ export function PropertiesBarChart({
    */
   const refMarkers: RefMarker[] = refs.map((ref, i) => ({
     label: ref.name || ref.id,
-    color: addOrUpdateAlpha(legendColor, 0.7),
+    color: addOrUpdateAlpha(legendColor, REFERENCE_TICK_ALPHA),
     dash: i === 0 ? [] : [4, 3],
     values: propKeys.map((propKey) => {
       const val = getPropertyValue(propKey, ref.mixProperties, ref.mixTotal!);
@@ -375,14 +396,17 @@ export function PropertiesBarChart({
 
   // Cap the y-axis on the tallest drawn element, not just the bars: range bands and reference
   // ticks can rise above the bar values, and Chart.js's auto-scale (bar-data only) would clip
-  // their tops. Round up to the next multiple of 5 for clean tick labels plus a little headroom.
+  // their tops. Round up to the next Y_AXIS_TICK_STEP for clean tick labels plus a little headroom.
   const drawnValues = [
     ...mainData,
     ...bandRanges.flatMap((range) => (range ? [range.yMax] : [])),
     ...refMarkers.flatMap((ref) => ref.values),
   ].filter((value): value is number => value !== null && Number.isFinite(value));
 
-  const yMax = drawnValues.length > 0 ? Math.ceil(Math.max(...drawnValues) / 5) * 5 : undefined;
+  const yMax =
+    drawnValues.length > 0
+      ? Math.ceil(Math.max(...drawnValues) / Y_AXIS_TICK_STEP) * Y_AXIS_TICK_STEP
+      : undefined;
 
   /** Chart.js dataset: a single status-colored bar per property for the main recipe. */
   const chartData = {
@@ -400,15 +424,20 @@ export function PropertiesBarChart({
           if (!area) return color;
 
           const gradient = ctx.chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
-          gradient.addColorStop(0, addOrUpdateAlpha(color, 0.65));
+          gradient.addColorStop(0, addOrUpdateAlpha(color, BAR_GRADIENT_TOP_ALPHA));
           gradient.addColorStop(1, color);
           return gradient;
         },
-        borderRadius: { topLeft: 6, topRight: 6, bottomLeft: 0, bottomRight: 0 },
+        borderRadius: {
+          topLeft: BAR_CORNER_RADIUS,
+          topRight: BAR_CORNER_RADIUS,
+          bottomLeft: 0,
+          bottomRight: 0,
+        },
         borderWidth: 0,
-        maxBarThickness: 48,
-        categoryPercentage: 0.8,
-        barPercentage: 0.72,
+        maxBarThickness: MAX_BAR_THICKNESS,
+        categoryPercentage: BAR_CATEGORY_PERCENTAGE,
+        barPercentage: BAR_PERCENTAGE,
       },
     ],
   };
@@ -441,7 +470,7 @@ export function PropertiesBarChart({
     // Disable the canvas entry/resize animation under reduced motion so screenshots are stable.
     animation: prefersReducedMotion() ? false : undefined,
     // No chart title: the panel context already names the chart, and dropping it reclaims height.
-    layout: { padding: { top: 12 } },
+    layout: { padding: { top: CHART_TOP_PADDING } },
     plugins: {
       rangeMeter: { bandRanges, bandColor, refMarkers },
       legend: {
@@ -454,11 +483,11 @@ export function PropertiesBarChart({
       tooltip: {
         backgroundColor: surfaceColor,
         borderColor: gridColor,
-        borderWidth: 1,
+        borderWidth: TOOLTIP_BORDER_WIDTH,
         titleColor: legendColor,
         bodyColor: legendColor,
-        cornerRadius: 8,
-        padding: 10,
+        cornerRadius: TOOLTIP_CORNER_RADIUS,
+        padding: TOOLTIP_PADDING,
         bodyFont: { family: "ui-monospace, SFMono-Regular, Menlo, monospace" },
         callbacks: {
           title: (items: TooltipItem<"bar">[]) => items[0]?.label ?? "",

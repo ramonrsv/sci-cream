@@ -4,7 +4,15 @@ import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, waitFor, act } from "@testing-library/react";
 
-import { Color, getColor, addOrUpdateAlpha, getLegendColor } from "@/lib/styles/colors";
+import {
+  Color,
+  ThemeColor,
+  getColor,
+  getJsColor,
+  addOrUpdateAlpha,
+  NO_RANGE_GRAY_ALPHA,
+  REFERENCE_TICK_ALPHA,
+} from "@/lib/styles/colors";
 import { Theme } from "@/lib/theme";
 import {
   PropertiesBarChart,
@@ -217,18 +225,18 @@ describe("PropertiesBarChart", () => {
       const bg = datasets[0].backgroundColor;
       expect(typeof bg).toBe("function");
 
-      // Without a chartArea (as in this mocked render) the scriptable returns the flat bar color;
-      // in jsdom every CSS color var resolves to the same fallback, so we assert the applied alpha.
+      // Without a chartArea the scriptable returns the flat bar color; in jsdom every var resolves
+      // to the same fallback, so we assert the applied alpha.
       const colorAt = (i: number) =>
         (bg as ScriptableColor)({ dataIndex: i, chart: { chartArea: undefined } });
-      // Range-bearing key: the status color from getRangeColor (resolved fallback, full alpha).
       expect(colorAt(0)).toBe(getColor(Color.GraphGreen));
-      // Range-less key: a lighter neutral gray at 0.9 alpha.
-      expect(colorAt(1)).toBe(addOrUpdateAlpha(getColor(Color.GraphGray), 0.9));
+      expect(colorAt(1)).toBe(addOrUpdateAlpha(getColor(Color.GraphGray), NO_RANGE_GRAY_ALPHA));
 
-      // References are tick markers, not datasets: the legend (primary-text) color at 0.7 alpha,
-      // solid for the first and dashed for the second so they stay distinguishable over the bars.
-      const expectedRefColor = addOrUpdateAlpha(getLegendColor(Theme.Light), 0.7);
+      // References are tick markers, not datasets; solid first, dashed second.
+      const expectedRefColor = addOrUpdateAlpha(
+        getJsColor(ThemeColor.TextPrimary, Theme.Light),
+        REFERENCE_TICK_ALPHA,
+      );
       const refMarkers = capturedBarProps!.options.plugins.rangeMeter.refMarkers;
       expect(refMarkers).toHaveLength(2);
       expect(refMarkers[0].color).toBe(expectedRefColor);
