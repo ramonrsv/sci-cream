@@ -10,35 +10,7 @@
   --font-sans: var(--font-geist-sans);
   --font-mono: var(--font-geist-mono);
 
-  /* Semantic color variables */
-  --color-bg-page-light: rgb(246, 245, 243);
-  --color-bg-page-dark: rgb(25, 25, 23);
-
-  --color-surface-light: rgb(255, 255, 255);
-  --color-surface-dark: rgb(34, 34, 32);
-
-  --color-text-primary-light: rgb(33, 32, 28);
-  --color-text-primary-dark: rgb(255, 255, 255);
-
-  --color-text-secondary-light: rgb(118, 116, 115);
-  --color-text-secondary-dark: rgb(152, 151, 146);
-
-  --color-border-light: rgb(233, 229, 226);
-  --color-border-dark: rgb(52, 51, 47);
-
-  --color-border-hover-light: rgb(236, 232, 229);
-  --color-border-hover-dark: rgb(73, 72, 70);
-
-  --color-bg-hover-light: rgb(220, 217, 214);
-  --color-bg-hover-dark: rgb(42, 42, 40);
-
-  --color-bg-active-light: rgb(246, 245, 243);
-  --color-bg-active-dark: rgb(25, 25, 24);
-
-  --color-focus-light: var(--color-blue-500);
-  --color-focus-dark: var(--color-blue-400);
-
-  /* Graph colors */
+  /* Graph colors — theme-independent, one token each. */
   --color-graph-blue: rgb(0, 162, 200);
   --color-graph-green: rgb(49, 164, 109);
   --color-graph-yellow: rgb(201, 187, 77);
@@ -47,40 +19,58 @@
   --color-graph-gray: rgb(144, 140, 137);
   --color-graph-green-dull: rgb(37, 130, 89);
   --color-graph-red-dull: rgb(208, 43, 48);
+}
 
-  /* Short names */
-  --color-page-lt: var(--color-bg-page-light);
-  --color-page-dk: var(--color-bg-page-dark);
-  --color-surface-lt: var(--color-surface-light);
-  --color-surface-dk: var(--color-surface-dark);
-  --color-txt-prim-lt: var(--color-text-primary-light);
-  --color-txt-prim-dk: var(--color-text-primary-dark);
-  --color-txt-sec-lt: var(--color-text-secondary-light);
-  --color-txt-sec-dk: var(--color-text-secondary-dark);
-  --color-brd-lt: var(--color-border-light);
-  --color-brd-dk: var(--color-border-dark);
-  --color-brd-hov-lt: var(--color-border-hover-light);
-  --color-brd-hov-dk: var(--color-border-hover-dark);
-  --color-hov-lt: var(--color-bg-hover-light);
-  --color-hov-dk: var(--color-bg-hover-dark);
-  --color-act-lt: var(--color-bg-active-light);
-  --color-act-dk: var(--color-bg-active-dark);
-  --color-foc-lt: var(--color-focus-light);
-  --color-foc-dk: var(--color-focus-dark);
+/* Semantic colors: one token per role, light default here, dark override in `.dark` below. Plain
+   `@theme` (not inline) so utilities reference `var()` and follow the cascade. Short aliases resolve
+   to their canonical token lazily, so only the canonical needs a `.dark` override. */
+@theme {
+  --color-bg-page: rgb(246, 245, 243);
+  --color-surface: rgb(255, 255, 255);
+  --color-text-primary: rgb(33, 32, 28);
+  --color-text-secondary: rgb(118, 116, 115);
+  --color-border: rgb(233, 229, 226);
+  --color-border-hover: rgb(236, 232, 229);
+  --color-bg-hover: rgb(220, 217, 214);
+  --color-bg-active: rgb(246, 245, 243);
+  --color-focus: var(--color-blue-500);
 
-  /* Status colors: error (red) / warning (amber) / information (blue) — foreground + outline border */
-  --color-err-lt: var(--color-red-700);
-  --color-err-dk: var(--color-red-300);
-  --color-warn-lt: var(--color-amber-700);
-  --color-warn-dk: var(--color-amber-300);
-  --color-info-lt: var(--color-blue-700);
-  --color-info-dk: var(--color-blue-300);
-  --color-err-brd-lt: var(--color-red-400);
-  --color-err-brd-dk: var(--color-red-600);
-  --color-warn-brd-lt: var(--color-amber-400);
-  --color-warn-brd-dk: var(--color-amber-500);
-  --color-info-brd-lt: var(--color-blue-400);
-  --color-info-brd-dk: var(--color-blue-600);
+  /* Short aliases */
+  --color-page: var(--color-bg-page);
+  --color-txt-prim: var(--color-text-primary);
+  --color-txt-sec: var(--color-text-secondary);
+  --color-brd: var(--color-border);
+  --color-brd-hov: var(--color-border-hover);
+  --color-hov: var(--color-bg-hover);
+  --color-act: var(--color-bg-active);
+  --color-foc: var(--color-focus);
+
+  /* Status colors: error (red) / warning (amber) / information (blue) — text + outline border. */
+  --color-err: var(--color-red-700);
+  --color-warn: var(--color-amber-700);
+  --color-info: var(--color-blue-700);
+  --color-err-brd: var(--color-red-400);
+  --color-warn-brd: var(--color-amber-400);
+  --color-info-brd: var(--color-blue-400);
+}
+
+.dark {
+  --color-bg-page: rgb(25, 25, 23);
+  --color-surface: rgb(34, 34, 32);
+  --color-text-primary: rgb(255, 255, 255);
+  --color-text-secondary: rgb(152, 151, 146);
+  --color-border: rgb(52, 51, 47);
+  --color-border-hover: rgb(73, 72, 70);
+  --color-bg-hover: rgb(42, 42, 40);
+  --color-bg-active: rgb(25, 25, 24);
+  --color-focus: var(--color-blue-400);
+
+  --color-err: var(--color-red-300);
+  --color-warn: var(--color-amber-300);
+  --color-info: var(--color-blue-300);
+  --color-err-brd: var(--color-red-600);
+  --color-warn-brd: var(--color-amber-500);
+  --color-info-brd: var(--color-blue-600);
 }
 
 body {
@@ -94,53 +84,32 @@ body {
     "Arial",
     sans-serif;
 
-  @apply bg-page-lt text-txt-prim-lt;
-  @variant dark {
-    @apply bg-page-dk text-txt-prim-dk;
-  }
+  @apply bg-page text-txt-prim;
 }
 
 /* Global Styles */
 .text-primary {
-  @apply text-txt-prim-lt;
-  @variant dark {
-    @apply text-txt-prim-dk;
-  }
+  @apply text-txt-prim;
 }
 
 .text-secondary {
-  @apply text-txt-sec-lt;
-  @variant dark {
-    @apply text-txt-sec-dk;
-  }
+  @apply text-txt-sec;
 }
 
 /* Table Components */
 .table-header {
   @apply border text-sm font-semibold;
-
-  @apply border-brd-lt bg-surface-lt text-txt-prim-lt;
-  @variant dark {
-    @apply border-brd-dk bg-surface-dk text-txt-prim-dk;
-  }
+  @apply border-brd bg-surface text-txt-prim;
 }
 
 .table-inner-cell {
   @apply border text-sm;
-
-  @apply border-brd-lt bg-surface-lt text-txt-sec-lt;
-  @variant dark {
-    @apply border-brd-dk bg-surface-dk text-txt-sec-dk;
-  }
+  @apply border-brd bg-surface text-txt-sec;
 }
 
 .table-fillable-input {
   @apply focus:ring-2 focus:outline-none focus:ring-inset;
-
-  @apply hover:bg-hov-lt focus:ring-foc-lt;
-  @variant dark {
-    @apply hover:bg-hov-dk focus:ring-foc-dk;
-  }
+  @apply hover:bg-hov focus:ring-foc;
 }
 
 /* Typography */
@@ -157,24 +126,16 @@ body {
 /* UI Components */
 .popup {
   @apply rounded-lg border text-sm shadow-lg;
-
-  @apply border-brd-lt bg-surface-lt text-txt-prim-lt;
-  @variant dark {
-    @apply border-brd-dk bg-surface-dk text-txt-prim-dk;
-  }
+  @apply border-brd bg-surface text-txt-prim;
 }
 
 /* A standalone bordered, rounded editable input box (not inside a framed table cell). */
 .boxed-input {
   @apply my-1 rounded-lg border px-0.5;
-
-  @apply border-brd-lt bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt;
-  @variant dark {
-    @apply border-brd-dk bg-surface-dk text-txt-prim-dk hover:border-brd-hov-dk;
-  }
+  @apply border-brd bg-surface text-txt-prim hover:border-brd-hov;
 }
 
-/* A single option row inside the Headless UI `ThemeSelect` popup, highlighted on focus/selection. */
+/* A single option row in the Headless UI `ThemeSelect` popup, highlighted on focus/selection. */
 .select-option {
   @apply flex cursor-pointer items-center gap-1 px-2 py-1.5;
 
@@ -187,11 +148,7 @@ body {
 .action-button {
   @apply cursor-pointer rounded-xl border border-transparent text-sm leading-tight hover:border hover:shadow-sm;
   @apply disabled:cursor-not-allowed disabled:opacity-40;
-
-  @apply bg-surface-lt text-txt-prim-lt hover:border-brd-hov-lt active:bg-act-lt;
-  @variant dark {
-    @apply bg-surface-dk text-txt-prim-dk hover:border-brd-hov-dk active:bg-act-dk;
-  }
+  @apply bg-surface text-txt-prim hover:border-brd-hov active:bg-act;
 }
 
 /* Filled accent button for a panel's primary action (e.g. the watchers Balance button). */
@@ -200,9 +157,9 @@ body {
   @apply focus-visible:ring-2 focus-visible:outline-none;
   @apply disabled:cursor-not-allowed disabled:opacity-40;
 
-  @apply focus-visible:ring-foc-lt bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800;
+  @apply focus-visible:ring-foc bg-blue-600 text-white hover:bg-blue-700 active:bg-blue-800;
   @variant dark {
-    @apply focus-visible:ring-foc-dk bg-blue-500 text-white hover:bg-blue-400 active:bg-blue-600;
+    @apply bg-blue-500 hover:bg-blue-400 active:bg-blue-600;
   }
 }
 
@@ -218,41 +175,29 @@ body {
 .grid-component {
   @apply rounded-lg border border-transparent;
 
-  @apply bg-surface-lt shadow-md;
+  @apply bg-surface shadow-md;
   @variant dark {
-    @apply bg-surface-dk shadow-lg;
+    @apply shadow-lg;
   }
 }
 
 /* Self-contained rounded data tile (e.g. a panel surface). */
 .data-card {
   @apply overflow-hidden rounded-lg border;
-
-  @apply border-brd-lt bg-surface-lt text-txt-prim-lt;
-  @variant dark {
-    @apply border-brd-dk bg-surface-dk text-txt-prim-dk;
-  }
+  @apply border-brd bg-surface text-txt-prim;
 }
 
 /* Square tile for a flush, gapless grid: neighbors collapse borders via negative margins */
 .data-card-flat {
   @apply overflow-hidden border;
-
-  @apply border-brd-lt bg-surface-lt text-txt-prim-lt;
-  @variant dark {
-    @apply border-brd-dk bg-surface-dk text-txt-prim-dk;
-  }
+  @apply border-brd bg-surface text-txt-prim;
 }
 
 /* Horizontal gauge: band, current marker, and target/reference ticks positioned by inline
    left/right %, with marker/tick colors set inline. */
 .range-meter {
   @apply relative h-1.5 w-full rounded-full;
-
-  @apply bg-brd-lt;
-  @variant dark {
-    @apply bg-brd-dk;
-  }
+  @apply bg-brd;
 }
 
 /* Soft acceptable-range band tint. The `/25` alpha is mirrored by `RANGE_BAND_ALPHA` in
@@ -263,11 +208,7 @@ body {
 
 .range-meter-marker {
   @apply absolute top-1/2 h-2.5 w-2.5 -translate-x-1/2 -translate-y-1/2 rounded-full ring-1;
-
-  @apply ring-surface-lt;
-  @variant dark {
-    @apply ring-surface-dk;
-  }
+  @apply ring-surface;
 }
 
 .range-meter-tick {
@@ -276,10 +217,7 @@ body {
 
 /* Navigation Shell */
 .navbar {
-  @apply bg-page-lt;
-  @variant dark {
-    @apply bg-page-dk;
-  }
+  @apply bg-page;
 }
 
 .navbar-trans-width {
@@ -288,46 +226,27 @@ body {
 
 .sidebar-item {
   @apply flex items-center rounded-lg py-2 text-sm font-medium;
-
-  @apply text-txt-sec-lt hover:bg-hov-lt active:text-txt-prim-lt active:bg-hov-lt;
-  @variant dark {
-    @apply text-txt-sec-dk hover:bg-hov-dk active:text-txt-prim-dk active:bg-hov-dk;
-  }
+  @apply text-txt-sec hover:bg-hov active:text-txt-prim active:bg-hov;
 }
 
 .sidebar-item-active {
-  @apply text-txt-prim-lt bg-hov-lt;
-  @variant dark {
-    @apply text-txt-prim-dk bg-hov-dk;
-  }
+  @apply text-txt-prim bg-hov;
 }
 
 .header-button {
   @apply rounded-full border border-transparent p-2 text-sm leading-tight;
-
-  @apply hover:border-brd-lt hover:bg-surface-lt text-txt-prim-lt active:bg-act-lt;
-  @variant dark {
-    @apply hover:border-brd-dk hover:bg-surface-dk text-txt-prim-dk active:bg-act-dk;
-  }
+  @apply hover:border-brd hover:bg-surface text-txt-prim active:bg-act;
 }
 
 /* Sign-in Page */
 .signin-container {
   @apply rounded-xl border shadow-md;
-
-  @apply bg-surface-lt border-brd-lt;
-  @variant dark {
-    @apply bg-surface-dk border-brd-dk;
-  }
+  @apply bg-surface border-brd;
 }
 
 .signin-provider {
   @apply rounded-lg border text-sm font-medium;
-
-  @apply border-brd-lt hover:bg-hov-lt active:bg-act-lt;
-  @variant dark {
-    @apply border-brd-dk hover:bg-hov-dk active:bg-act-dk;
-  }
+  @apply border-brd hover:bg-hov active:bg-act;
 }
 
 .signin-failed {
@@ -350,100 +269,70 @@ body {
 
 /* Severity accents selected by `issue-text-${severity}` / `issue-border-${severity}`. */
 .issue-text-error {
-  @apply text-err-lt;
-  @variant dark {
-    @apply text-err-dk;
-  }
+  @apply text-err;
 }
 
 .issue-text-warning {
-  @apply text-warn-lt;
-  @variant dark {
-    @apply text-warn-dk;
-  }
+  @apply text-warn;
 }
 
 .issue-text-information {
-  @apply text-info-lt;
-  @variant dark {
-    @apply text-info-dk;
-  }
+  @apply text-info;
 }
 
 .issue-border-error {
-  @apply border-err-brd-lt;
-  @variant dark {
-    @apply border-err-brd-dk;
-  }
+  @apply border-err-brd;
 }
 
 .issue-border-warning {
-  @apply border-warn-brd-lt;
-  @variant dark {
-    @apply border-warn-brd-dk;
-  }
+  @apply border-warn-brd;
 }
 
 /* Card-level issue emphasis. The inset ring frames all sides. */
 .issue-card-error {
   @apply ring-2 ring-inset;
-
-  @apply border-err-brd-lt ring-err-brd-lt;
-  @variant dark {
-    @apply border-err-brd-dk ring-err-brd-dk;
-  }
+  @apply border-err-brd ring-err-brd;
 }
 
 .issue-card-warning {
   @apply ring-2 ring-inset;
-
-  @apply border-warn-brd-lt ring-warn-brd-lt;
-  @variant dark {
-    @apply border-warn-brd-dk ring-warn-brd-dk;
-  }
+  @apply border-warn-brd ring-warn-brd;
 }
 
 .msg-error {
   @apply rounded border text-sm;
 
-  @apply text-err-lt border-red-300 bg-red-50;
+  @apply text-err border-red-300 bg-red-50;
   @variant dark {
-    @apply text-err-dk border-red-800 bg-red-950;
+    @apply border-red-800 bg-red-950;
   }
 }
 
 .msg-warning {
   @apply rounded border text-sm;
 
-  @apply text-warn-lt border-amber-300 bg-amber-50;
+  @apply text-warn border-amber-300 bg-amber-50;
   @variant dark {
-    @apply text-warn-dk border-amber-800 bg-amber-950;
+    @apply border-amber-800 bg-amber-950;
   }
 }
 
 .msg-information {
   @apply rounded border text-sm;
 
-  @apply text-info-lt border-blue-300 bg-blue-50;
+  @apply text-info border-blue-300 bg-blue-50;
   @variant dark {
-    @apply text-info-dk border-blue-800 bg-blue-950;
+    @apply border-blue-800 bg-blue-950;
   }
 }
 
 .signin-input {
   @apply rounded-lg border text-sm outline-none;
-
-  @apply border-brd-lt bg-surface-lt text-txt-prim-lt focus:border-foc-lt;
-  @variant dark {
-    @apply border-brd-dk bg-surface-dk text-txt-prim-dk focus:border-foc-dk;
-  }
+  @apply border-brd bg-surface text-txt-prim focus:border-foc;
 }
 
 .signin-divider {
-  @apply bg-brd-lt;
-  @variant dark {
-    @apply bg-brd-dk;
-  }
+  @apply bg-brd;
 }
 
 /* Blog and Documentation pages */
@@ -458,63 +347,36 @@ body {
 /* Search Components */
 .search-list-item {
   @apply w-full rounded-lg border px-3 py-2 text-left transition-colors;
-
-  @apply border-brd-lt bg-surface-lt hover:bg-hov-lt;
-  @variant dark {
-    @apply border-brd-dk bg-surface-dk hover:bg-hov-dk;
-  }
+  @apply border-brd bg-surface hover:bg-hov;
 }
 
 .search-list-item-active {
-  @apply bg-hov-lt border-blue-400;
-  @variant dark {
-    @apply bg-hov-dk;
-  }
+  @apply bg-hov border-blue-400;
 }
 
 .search-detail-panel {
   @apply flex flex-1 scrollbar-gutter-stable flex-col gap-4 overflow-y-auto rounded-lg border p-4;
-
-  @apply border-brd-lt;
-  @variant dark {
-    @apply border-brd-dk;
-  }
+  @apply border-brd;
 }
 
 .search-empty {
   @apply flex flex-1 items-center justify-center rounded-lg border text-sm;
-
-  @apply border-brd-lt text-txt-sec-lt;
-  @variant dark {
-    @apply border-brd-dk text-txt-sec-dk;
-  }
+  @apply border-brd text-txt-sec;
 }
 
 .meta-tag {
   @apply rounded px-1.5 py-0.5 text-xs;
-
-  @apply bg-hov-lt text-txt-sec-lt;
-  @variant dark {
-    @apply bg-hov-dk text-txt-sec-dk;
-  }
+  @apply bg-hov text-txt-sec;
 }
 
 /* Code Display */
 .code-block {
   @apply overflow-auto rounded-lg border p-2 font-mono text-sm leading-snug;
-
-  @apply border-brd-lt text-txt-sec-lt bg-surface-lt;
-  @variant dark {
-    @apply border-brd-dk text-txt-sec-dk bg-surface-dk;
-  }
+  @apply border-brd text-txt-sec bg-surface;
 }
 
 /* Scrollbar Styles */
 * {
   scrollbar-width: thin;
-  scrollbar-color: var(--color-brd-lt) var(--color-surface-lt);
-
-  @variant dark {
-    scrollbar-color: var(--color-brd-dk) var(--color-surface-dk);
-  }
+  scrollbar-color: var(--color-brd) var(--color-surface);
 }

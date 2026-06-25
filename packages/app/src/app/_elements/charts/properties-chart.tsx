@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useMemo } from "react";
+import { ReactNode } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -35,7 +35,6 @@ import {
   Color,
   ThemeColor,
   getColor,
-  getJsColor,
   getRangeColor,
   addOrUpdateAlpha,
   RANGE_BAND_ALPHA,
@@ -316,20 +315,13 @@ export function PropertiesBarChart({
   refs?: RecipeSummary[];
   propKeys: PropKey[];
 }) {
-  const { theme } = useTheme();
+  // Subscribe to the theme so the canvas re-reads the cascaded colors and repaints when it flips.
+  useTheme();
 
-  // Canvas can't ride the CSS cascade (`var()`), so the theme-dependent chart colors are read from
-  // computed styles for the current `theme`; the read recomputes (and the canvas repaints) whenever
-  // `theme` changes, which `getJsColor` makes an explicit dependency.
-  const { gridColor, legendColor, tickColor, surfaceColor } = useMemo(
-    () => ({
-      gridColor: getJsColor(ThemeColor.Border, theme),
-      legendColor: getJsColor(ThemeColor.TextPrimary, theme),
-      tickColor: getJsColor(ThemeColor.TextSecondary, theme),
-      surfaceColor: getJsColor(ThemeColor.Surface, theme),
-    }),
-    [theme],
-  );
+  const gridColor = getColor(ThemeColor.Border);
+  const legendColor = getColor(ThemeColor.TextPrimary);
+  const tickColor = getColor(ThemeColor.TextSecondary);
+  const surfaceColor = getColor(ThemeColor.Surface);
 
   /** Always display properties as percentages in the chart */
   const qtyToggle = QtyToggle.Percentage;

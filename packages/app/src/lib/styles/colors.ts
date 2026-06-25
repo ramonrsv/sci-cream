@@ -1,10 +1,8 @@
 import { colord } from "colord";
 
-import { Theme } from "@/lib/theme";
-
 /**
- * Theme-independent palette colors: a single CSS custom property with no light/dark variant. Read
- * in JS with {@link getColor} or referenced in markup with {@link getCssColor}.
+ * Theme-independent palette colors: a single CSS custom property with no light/dark variant.
+ * Read in JS with {@link getColor} or referenced in markup with {@link getCssColor}.
  */
 export enum Color {
   GraphBlue = "--color-graph-blue",
@@ -18,9 +16,9 @@ export enum Color {
 }
 
 /**
- * Semantic colors that vary by theme. Each value is a base token name; the `-light` / `-dark`
- * variant exists in `globals.css` and is selected by {@link getJsColor} (canvas) or by the
- * Tailwind utilities (DOM). Not usable with {@link getColor} (the bare name is not a real var).
+ * Semantic colors that vary by theme. Each is a single token overridden under `.dark` in
+ * `globals.css`, so the CSS cascade picks the value — read identically via {@link getColor} /
+ * {@link getCssColor}. Canvas consumers must re-render on theme change to re-read (see chart code).
  */
 export enum ThemeColor {
   Surface = "--color-surface",
@@ -28,6 +26,9 @@ export enum ThemeColor {
   TextSecondary = "--color-text-secondary",
   Border = "--color-border",
 }
+
+/** Any color token readable by {@link getColor} / {@link getCssColor}. */
+export type ColorToken = Color | ThemeColor;
 
 /** Fallback color returned when running server-side (no `window.getComputedStyle` available) */
 const SSR_DEFAULT_COLOR = "rgba(0, 0, 0, 1)";
@@ -62,19 +63,13 @@ export function getCssColorVariable(name: string): string {
   return styles.getPropertyValue(name) || SSR_DEFAULT_COLOR;
 }
 
-/** Resolve a theme-independent `Color` to its current CSS color string (computed value, for JS). */
-export function getColor(color: Color): string {
-  return getCssColorVariable(color);
-}
-
 /**
- * Resolve a theme-dependent {@link ThemeColor} to its computed color string for `theme`, by reading
- * the matching `-light` / `-dark` token. For JS/canvas consumers that can't ride the CSS cascade
- * (e.g. Chart.js painting into a `<canvas>`); pass the current `theme` from `useTheme()` so the
- * value recomputes — and the canvas repaints — whenever the theme changes.
+ * Resolve a color token to its current computed CSS color string (for JS/canvas). For a
+ * {@link ThemeColor} this returns the cascaded value, so callers that paint to a canvas must
+ * re-render on theme change to re-read it (the cascade alone can't repaint a canvas).
  */
-export function getJsColor(color: ThemeColor, theme: Theme): string {
-  return getCssColorVariable(`${color}-${theme === Theme.Light ? "light" : "dark"}`);
+export function getColor(color: ColorToken): string {
+  return getCssColorVariable(color);
 }
 
 /** Add or update the alpha value of a CSS color string (e.g. hex, rgb, hsl) */
@@ -83,11 +78,11 @@ export function addOrUpdateAlpha(colorStr: string, opacity: number): string {
 }
 
 /**
- * Returns a CSS `var(...)` reference for the given `Color`, for use in an inline `style` attribute
- * or a Tailwind arbitrary value. SSR-safe replacement for {@link getColor} in markup: a resolved
- * computed value would differ between server and client and trigger a hydration mismatch.
+ * Returns a CSS `var(...)` reference for a color token, for an inline `style` or Tailwind arbitrary
+ * value. The cascade resolves it (incl. `.dark`), so it is SSR-safe — unlike {@link getColor},
+ * whose resolved value would differ between server and client and trigger a hydration mismatch.
  */
-export function getCssColor(color: Color): string {
+export function getCssColor(color: ColorToken): string {
   return `var(${color})`;
 }
 

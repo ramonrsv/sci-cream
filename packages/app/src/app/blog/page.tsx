@@ -15,11 +15,7 @@ export default function BlogPage() {
       <ul className="space-y-5">
         {posts.map(({ slug, frontmatter }) => (
           <li key={slug}>
-            {frontmatter.date && (
-              <time className="text-txt-sec-lt dark:text-txt-sec-dk text-sm">
-                {frontmatter.date}
-              </time>
-            )}
+            {frontmatter.date && <time className="text-txt-sec text-sm">{frontmatter.date}</time>}
             <div>
               <Link
                 href={`/blog/${slug}`}
@@ -29,9 +25,7 @@ export default function BlogPage() {
               </Link>
             </div>
             {frontmatter.description && (
-              <p className="text-txt-sec-lt dark:text-txt-sec-dk text-sm">
-                {frontmatter.description}
-              </p>
+              <p className="text-txt-sec text-sm">{frontmatter.description}</p>
             )}
           </li>
         ))}

@@ -564,7 +564,7 @@ export function WatchersGrid({
 }) {
   return (
     <div
-      className="border-brd-lt dark:border-brd-dk grid overflow-hidden border-t border-l *:-mt-px *:-ml-px"
+      className="border-brd grid overflow-hidden border-t border-l *:-mt-px *:-ml-px"
       style={{ gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))" }}
     >
       {propKeys.map((propKey) => (

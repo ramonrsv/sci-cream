@@ -79,7 +79,7 @@ export function CompositionBreakdown({
   };
 
   return (
-    <div className="border-brd-lt dark:border-brd-dk border-r">
+    <div className="border-brd border-r">
       {/* Ingredient & Qty Table */}
       <div id="composition-breakdown-recipe-table">
         <table className="float-left">

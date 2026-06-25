@@ -1,6 +1,5 @@
 "use client";
 
-import { useMemo } from "react";
 import { Line } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -22,7 +21,7 @@ import { useTheme } from "@/lib/theme";
 import { GRAPH_TITLE_FONT_SIZE } from "@/lib/styles/sizes";
 import { prefersReducedMotion } from "@/lib/styles/motion";
 
-import { Color, ThemeColor, getColor, getJsColor, addOrUpdateAlpha } from "@/lib/styles/colors";
+import { Color, ThemeColor, getColor, addOrUpdateAlpha } from "@/lib/styles/colors";
 
 ChartJS.register(
   CategoryScale,
@@ -65,18 +64,11 @@ const Y_AXIS_MAX = 0;
  * Consumer is responsible for sizing the chart via a parent container.
  */
 export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: RecipeSummary[] }) {
-  const { theme } = useTheme();
+  // Subscribe to the theme so the canvas re-reads the cascaded colors and repaints when it flips.
+  useTheme();
 
-  // Canvas can't ride the CSS cascade (`var()`), so the theme-dependent colors are read from
-  // computed styles for the current `theme`; the read recomputes (and the canvas repaints) whenever
-  // `theme` changes, which `getJsColor` makes an explicit dependency.
-  const { gridColor, legendColor } = useMemo(
-    () => ({
-      gridColor: getJsColor(ThemeColor.Border, theme),
-      legendColor: getJsColor(ThemeColor.TextPrimary, theme),
-    }),
-    [theme],
-  );
+  const gridColor = getColor(ThemeColor.Border);
+  const legendColor = getColor(ThemeColor.TextPrimary);
 
   /** Ideal serving 'hardness' value, in [0, 100], used to place a highlight point */
   const highlightedHardnessPercent = 75;

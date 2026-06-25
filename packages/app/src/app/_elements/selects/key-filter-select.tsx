@@ -194,7 +194,7 @@ export function KeyFilterSelect<Key>({
                   <ul className="bg-inherit">
                     <li
                       key="All"
-                      className="border-brd-lt dark:border-brd-dk sticky top-0 min-w-33 border-b bg-inherit py-0.5 font-semibold"
+                      className="border-brd sticky top-0 min-w-33 border-b bg-inherit py-0.5 font-semibold"
                     >
                       <input
                         id="all-properties-checkbox"

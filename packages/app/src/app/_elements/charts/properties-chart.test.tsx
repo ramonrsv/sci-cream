@@ -8,12 +8,10 @@ import {
   Color,
   ThemeColor,
   getColor,
-  getJsColor,
   addOrUpdateAlpha,
   NO_RANGE_GRAY_ALPHA,
   REFERENCE_TICK_ALPHA,
 } from "@/lib/styles/colors";
-import { Theme } from "@/lib/theme";
 import {
   PropertiesBarChart,
   PropertiesChartView,
@@ -234,7 +232,7 @@ describe("PropertiesBarChart", () => {
 
       // References are tick markers, not datasets; solid first, dashed second.
       const expectedRefColor = addOrUpdateAlpha(
-        getJsColor(ThemeColor.TextPrimary, Theme.Light),
+        getColor(ThemeColor.TextPrimary),
         REFERENCE_TICK_ALPHA,
       );
       const refMarkers = capturedBarProps!.options.plugins.rangeMeter.refMarkers;

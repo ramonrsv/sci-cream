@@ -35,9 +35,7 @@ export default async function BlogSlugPage({ params }: Props) {
   return (
     <div className="blog-post">
       {page.frontmatter.date && (
-        <time className="text-txt-sec-lt dark:text-txt-sec-dk mb-2 block text-sm">
-          {page.frontmatter.date}
-        </time>
+        <time className="text-txt-sec mb-2 block text-sm">{page.frontmatter.date}</time>
       )}
       <article
         className="prose dark:prose-invert max-w-5xl"

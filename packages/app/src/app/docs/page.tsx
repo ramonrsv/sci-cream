@@ -22,9 +22,7 @@ export default function DocsPage() {
               {frontmatter.title}
             </Link>
             {frontmatter.description && (
-              <p className="text-txt-sec-lt dark:text-txt-sec-dk text-sm">
-                {frontmatter.description}
-              </p>
+              <p className="text-txt-sec text-sm">{frontmatter.description}</p>
             )}
           </li>
         ))}

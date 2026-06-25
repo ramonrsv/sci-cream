@@ -132,7 +132,7 @@ export function EntitySearch<E>({
               key={value}
               onClick={() => setSource(value)}
               className={`action-button px-2 py-0.5 text-sm ${
-                source === value ? "border-brd-lt dark:border-brd-dk font-medium" : ""
+                source === value ? "border-brd font-medium" : ""
               }`}
             >
               {label}
