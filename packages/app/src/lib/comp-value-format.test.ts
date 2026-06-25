@@ -5,6 +5,7 @@ import {
   applyQtyToggleAndFormat,
   formatCompositionValue,
   padToFixedDecimalPosition,
+  roundToCompositionValueFormat,
 } from "./comp-value-format";
 
 import { QtyToggle } from "../app/_elements/selects/qty-toggle-select";
@@ -95,6 +96,50 @@ describe("formatCompositionValue", () => {
 
   test("applies k formatting after rounding to units", () => {
     expect(formatCompositionValue(999.6)).toBe("  1k  ");
+  });
+
+  test("formats negative values < -10 with one decimal place", () => {
+    expect(formatCompositionValue(-10.5)).toBe("-10.5 ");
+    expect(formatCompositionValue(-10.56)).toBe("-10.6 ");
+    expect(formatCompositionValue(-99.9)).toBe("-99.9 ");
+  });
+
+  test("formats negative values > -10 with up to two decimal places", () => {
+    expect(formatCompositionValue(-5.12)).toBe(" -5.12");
+    expect(formatCompositionValue(-5.1)).toBe(" -5.1 ");
+    expect(formatCompositionValue(-5.556)).toBe(" -5.56");
+  });
+
+  test("applies tens formatting after rounding negative values to units", () => {
+    expect(formatCompositionValue(-9.99)).toBe("-10   ");
+  });
+});
+
+describe("roundToCompositionValueFormat", () => {
+  test("returns NaN for NaN", () => {
+    expect(roundToCompositionValueFormat(NaN)).toBeNaN();
+  });
+
+  test("snaps sub-10 values to two decimal places", () => {
+    expect(roundToCompositionValueFormat(5.123)).toBe(5.12);
+    expect(roundToCompositionValueFormat(5.556)).toBe(5.56);
+  });
+
+  test("snaps tens values to one decimal place", () => {
+    expect(roundToCompositionValueFormat(10.56)).toBe(10.6);
+    expect(roundToCompositionValueFormat(99.94)).toBe(99.9);
+  });
+
+  test("snaps across the sub-10 to tens boundary", () => {
+    expect(roundToCompositionValueFormat(9.999)).toBe(10);
+  });
+
+  test("snaps negative sub-10 values to two decimal places", () => {
+    expect(roundToCompositionValueFormat(-5.123)).toBe(-5.12);
+  });
+
+  test("snaps negative tens values to one decimal place", () => {
+    expect(roundToCompositionValueFormat(-10.56)).toBe(-10.6);
   });
 });
 

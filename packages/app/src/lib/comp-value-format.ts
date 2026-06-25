@@ -75,17 +75,29 @@ function formatThousands(num: number) {
  * @param num - The composition value (g/100g), or `undefined` for an empty cell.
  */
 export function formatCompositionValue(num: number | undefined) {
-  const numInt = num ? Math.round(num) : num;
+  const numIntAbs = num ? Math.abs(Math.round(num)) : num;
 
   return num === undefined
     ? ""
     : Number.isNaN(num)
       ? "-"
-      : numInt! >= 1000
+      : numIntAbs! >= 1000
         ? formatThousands(num)
-        : numInt! < 10
+        : numIntAbs! < 10
           ? padToFixedDecimalPosition(num, 2, 3, 2)
           : padToFixedDecimalPosition(num, 1, 3, 2);
+}
+
+/**
+ * Rounds a number to the nearest value that matches the composition value format.
+ *
+ * Snaps a number (e.g. one carrying floating-point noise) to its displayed precision, for example
+ * so a {@link WatcherCard} target matches the value shown and balancing can hit it exactly.
+ *
+ * @param num - The number to round.
+ */
+export function roundToCompositionValueFormat(num: number) {
+  return parseFloat(formatCompositionValue(num));
 }
 
 /**
