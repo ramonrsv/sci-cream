@@ -22,7 +22,11 @@ import {
 } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { useOrderKeys } from "@/lib/group-by";
-import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
+import {
+  applyQtyToggle,
+  formatCompositionValue,
+  roundToCompositionValueFormat,
+} from "@/lib/comp-value-format";
 import {
   getAcceptablePropertyRange,
   isPropKeyQuantity,
@@ -38,7 +42,7 @@ import {
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { usePersistedState } from "@/lib/use-persisted-state";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
-import { STATE_VAL, STATE_SET, roundToStep, standardInputStepByPercent, verify } from "@/lib/util";
+import { STATE_VAL, STATE_SET, standardInputStepByPercent, verify } from "@/lib/util";
 
 import {
   PropKey,
@@ -157,6 +161,17 @@ function formatDelta(delta: number | undefined): DeltaDisplay | null {
   if (magnitude === "0") return { met: true };
 
   return { met: false, arrow: delta > 0 ? "▲" : "▼", magnitude };
+}
+
+/** Calculate the delta between two composition values, rounded to the composition value format. */
+function calculateCompositionFormatDelta(
+  lhs: number | undefined,
+  rhs: number | undefined,
+): number | undefined {
+  if (!isUsableNumber(lhs) || !isUsableNumber(rhs)) return undefined;
+  const roundedLhs = roundToCompositionValueFormat(lhs);
+  const roundedRhs = roundToCompositionValueFormat(rhs);
+  return roundedLhs - roundedRhs;
 }
 
 /**
@@ -310,7 +325,10 @@ export function WatcherCard({
 
   const targetStep = getTargetStep(target, mainValue);
 
-  const targetDelta = target !== undefined && mainHasValue ? formatDelta(target - mainValue) : null;
+  const targetDelta =
+    target !== undefined && mainHasValue
+      ? formatDelta(calculateCompositionFormatDelta(target, mainValue))
+      : null;
 
   const meterRange = range && range.max > range.min ? range : undefined;
   const nonEmptyRefs = refs.filter((ref) => !isRecipeEmpty(ref));
@@ -514,7 +532,7 @@ export function WatcherCard({
                 >
                   <button
                     className="action-button flex items-center px-0.5"
-                    onClick={() => onTargetChange(roundToStep(refValue!, targetStep))}
+                    onClick={() => onTargetChange(roundToCompositionValueFormat(refValue!))}
                     title={`Fill target from ${ref.id}`}
                     data-testid={`watcher-card-${String(propKey)}-fill-${ref.id}`}
                     style={{ visibility: refHasValue ? "visible" : "hidden" }}
@@ -801,14 +819,13 @@ export function WatchersView({
     }
   };
 
-  /** Mirror watched targets from `ref` (rounded to the input's step); clear keys `ref` lacks. */
+  /** Mirror watched targets from `ref` (rounded to comp value format); clear keys `ref` lacks. */
   const onFillTargetsFromRef = (ref: RecipeSummary) => {
     setTargets((prev) => {
       const next = { ...prev };
       for (const propKey of enabledProps) {
         const refVal = getDisplayValue(propKey, ref);
-        const step = getTargetStep(prev[propKey], getDisplayValue(propKey, main));
-        const val = isUsableNumber(refVal) ? roundToStep(refVal, step) : undefined;
+        const val = isUsableNumber(refVal) ? roundToCompositionValueFormat(refVal) : undefined;
         setOrClearTarget(next, propKey, val);
       }
       return next;

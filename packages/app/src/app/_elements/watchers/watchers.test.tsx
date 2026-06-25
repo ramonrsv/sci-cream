@@ -8,7 +8,6 @@ import { STORAGE_KEYS } from "@/lib/local-storage";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { makeEmptyRecipe } from "@/lib/recipe";
 import { getRangeColor, Color } from "@/lib/styles/colors";
-import { roundToStep } from "@/lib/util";
 
 import {
   Bridge as WasmBridge,
@@ -26,6 +25,7 @@ import { makeMockRecipe, makeMockRecipeContext, setKeyFilterSelect } from "@/__t
 import { selectOption, getSelectedOptionLabel } from "@/__tests__/unit/select";
 import { RecipeID } from "@/__tests__/assets";
 import { WASM_BRIDGE } from "@/__tests__/util";
+import { roundToCompositionValueFormat } from "@/lib/comp-value-format";
 
 const MSNF = compToPropKey(CompKey.MSNF);
 const TOTAL_SOLIDS = compToPropKey(CompKey.TotalSolids);
@@ -941,7 +941,7 @@ describe("WatchersView Fill from Ref", () => {
     expect(msnfInput.value).not.toBe("99");
   });
 
-  it("snaps imported values to the target input's step boundaries", () => {
+  it("snaps imported values to the target composition value format", () => {
     const ctx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]);
     render(<WatchersView main={ctx.recipes[0]} refs={[ctx.recipes[1]]} />);
     fireEvent.click(screen.getByTestId("watchers-fill-all-Ref A"));
@@ -951,7 +951,7 @@ describe("WatchersView Fill from Ref", () => {
     // would pass a `toFixed(1)` check but isn't a multiple of 0.5).
     const msnfInput = screen.getByTestId(`watcher-card-${String(MSNF)}-target`) as HTMLInputElement;
     const parsed = parseFloat(msnfInput.value);
-    expect(parsed).toBe(roundToStep(parsed, msnfInput.step));
+    expect(parsed).toBe(roundToCompositionValueFormat(parsed));
   });
 
   it("persists filled targets to localStorage", () => {
