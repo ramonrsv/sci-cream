@@ -373,17 +373,17 @@ describe("Recipe Helper Functions", () => {
     });
 
     it("snaps NNLS-derived floats to the input's sub-unit step (per standardInputStepByPercent)", () => {
-      // standardInputStepByPercent(8.4) = "0.5"  → snap to nearest 0.5  → 8.5
-      //   (a naive `.toFixed(1)` would give 8.4)
-      // standardInputStepByPercent(4.3) = "0.25" → snap to nearest 0.25 → 4.25
-      //   (a naive `.toFixed(2)` would give 4.30)
+      // standardInputStepByPercent(201.25, 1, 2) = "2"  → snap to nearest 2 → 202
+      //   (a naive `.toFixed(0)` would give 200)
+      // standardInputStepByPercent(4.37, 1, 2) = "0.05" → snap to nearest 0.05 → 4.35
+      //   (a naive `.toFixed(1)` would give 4.4, and .toFixed(2) would give 4.37)
       const balanced: LightRecipe = [
-        ["Whole Milk", 8.4],
-        ["Sucrose", 4.3],
+        ["Whole Milk", 201.25],
+        ["Sucrose", 4.37],
       ];
       const updates = makeBalancedRecipeUpdates(recipe, balanced, hasIngredient);
-      expect(updates.rows![0].quantity).toBe(8.5);
-      expect(updates.rows![1].quantity).toBe(4.25);
+      expect(updates.rows![0].quantity).toBe(202);
+      expect(updates.rows![1].quantity).toBe(4.35);
     });
   });
 

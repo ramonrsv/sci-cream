@@ -475,7 +475,10 @@ export function makeBalancedRecipeUpdates(
   return {
     rows: eligibleIndices.map((i, balIdx) => ({
       ...recipe.ingredientRows[i],
-      quantity: roundToStep(balanced[balIdx][1], standardInputStepByPercent(balanced[balIdx][1])),
+      quantity: roundToStep(
+        balanced[balIdx][1],
+        standardInputStepByPercent(balanced[balIdx][1], 1, 2),
+      ),
     })),
   };
 }
