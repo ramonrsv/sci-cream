@@ -45,6 +45,7 @@ import {
   getMixProperty,
   getMixScopePropKeys,
   getAcceptablePropertyRange,
+  isBalanceableKey,
   isPropKeyQuantity,
   groupEnabledKeys,
   prop_key_as_med_str,
@@ -317,6 +318,9 @@ export function WatcherCard({
   const issueBorderClass = issue ? `issue-card-${issue.severity}` : "";
   const issueTextClass = issue ? `issue-text-${issue.severity}` : "";
 
+  // Disable the target input and fill-from-ref for unbalanceable keys (e.g. FpdKey)
+  const disableInput = !isBalanceableKey(propKey);
+
   return (
     <div
       className={`data-card-flat flex flex-col text-sm ${issueBorderClass}`}
@@ -395,20 +399,23 @@ export function WatcherCard({
             <input
               type="number"
               step={targetStep}
-              className="boxed-input comp-val w-14 px-0.5 py-0"
+              className={`boxed-input comp-val w-14 px-0.5 py-0`}
               value={target ?? ""}
               placeholder={"\u2014"}
+              tabIndex={disableInput ? -1 : undefined}
               onChange={(e) => {
                 const v = e.target.value;
                 onTargetChange(v === "" ? undefined : parseFloat(v));
               }}
               data-testid={`watcher-card-${String(propKey)}-target`}
+              style={{ visibility: disableInput ? "hidden" : "visible" }}
             />
             {/* Reserve the delta slot so the input doesn't shift as the target changes. */}
             <span
-              className="comp-val text-secondary -mr-3 w-9 text-left text-[11px]"
+              className={`comp-val text-secondary -mr-3 w-9 text-left text-[11px]`}
               title={targetDelta?.met ? "Target met" : "Delta from current to target"}
               data-testid={`watcher-card-${String(propKey)}-target-delta`}
+              style={{ visibility: disableInput ? "hidden" : "visible" }}
             >
               {targetDelta &&
                 (targetDelta.met ? (
@@ -517,6 +524,7 @@ export function WatcherCard({
                     title={`Fill target from ${ref.id}`}
                     data-testid={`watcher-card-${String(propKey)}-fill-${ref.id}`}
                     style={{ visibility: refHasValue ? "visible" : "hidden" }}
+                    disabled={disableInput}
                   >
                     <ArrowUp size={COMPONENT_ACTION_ICON_SIZE - 10} />
                     <span className="pt-0.5 text-[11px] font-semibold">{refLetter}</span>
@@ -810,9 +818,12 @@ export function WatchersView({
     setTargets((prev) => {
       const next = { ...prev };
       for (const propKey of enabledProps) {
-        const refVal = getDisplayValue(propKey, ref);
-        const val = isUsableNumber(refVal) ? roundToCompositionValueFormat(refVal) : undefined;
-        setOrClearTarget(next, propKey, val);
+        // Do not set targets for unbalanceable keys (e.g. FpdKey) since the balancer ignores them
+        if (isBalanceableKey(propKey)) {
+          const refVal = getDisplayValue(propKey, ref);
+          const val = isUsableNumber(refVal) ? roundToCompositionValueFormat(refVal) : undefined;
+          setOrClearTarget(next, propKey, val);
+        }
       }
       return next;
     });

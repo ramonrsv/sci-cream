@@ -3,9 +3,14 @@ import { test, expect, Page } from "@playwright/test";
 import {
   CompKey,
   compToPropKey,
+  FpdKey,
+  fpdToPropKey,
   getAcceptablePropertyRange,
   getMixProperty,
+  isBalanceableKey,
   PropKey,
+  LightRecipe,
+  propToCompKey,
 } from "@workspace/sci-cream";
 
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
@@ -66,6 +71,7 @@ const KEY_WITH_RANGE = compToPropKey(CompKey.MSNF);
 const KEY_WITHOUT_RANGE = compToPropKey(CompKey.MilkFat);
 const KEY_MIXED_REF_VALS = compToPropKey(CompKey.ABV);
 const KEY_UNAFFECTABLE = compToPropKey(CompKey.Sucralose);
+const KEY_UNBALANCEABLE = fpdToPropKey(FpdKey.ServingTemp);
 
 test("KEY_WITH_RANGE and KEY_WITHOUT_RANGE match the current range definitions", () => {
   expect(getAcceptablePropertyRange(KEY_WITH_RANGE)).toBeDefined();
@@ -77,6 +83,23 @@ test("KEY_MIXED_REF_VALS has a value for Ref B but not Ref A recipes", () => {
   const refBProps = WASM_BRIDGE.calculate_recipe_mix_properties(getLightRecipe(RecipeID.RefB));
   expect(getMixProperty(refAProps, KEY_MIXED_REF_VALS)).toBe(0);
   expect(getMixProperty(refBProps, KEY_MIXED_REF_VALS)).toBeGreaterThan(0);
+});
+
+test("KEY_UNAFFECTABLE is not affected by any recipe changes", () => {
+  const isUnaffectable = (propKey: PropKey, recipe: LightRecipe) =>
+    recipe.every(([name]) => {
+      const val = WASM_BRIDGE.get_ingredient_by_name(name).composition.get(propToCompKey(propKey));
+      return Number.isNaN(val) || val === 0;
+    });
+
+  // It's affectable in RefB, so make sure to only test Main and RefA
+  for (const recipeId of [RecipeID.Main, RecipeID.RefA]) {
+    expect(isUnaffectable(KEY_UNAFFECTABLE, getLightRecipe(recipeId))).toBe(true);
+  }
+});
+
+test("KEY_UNBALANCEABLE is not balanceable", () => {
+  expect(isBalanceableKey(KEY_UNBALANCEABLE)).toBe(false);
 });
 
 test.describe("Visual Regression: WatcherCard, Empty State", () => {
@@ -98,6 +121,16 @@ test.describe("Visual Regression: WatcherCard, Empty State", () => {
 
     const card = await locateWatcherCardByKeyAndExpectVisible(page, KEY_WITHOUT_RANGE);
     await expect(card).toHaveScreenshot("watcher-card-no-range-empty.png");
+  });
+
+  test("unbalanceable, empty", async ({ page }) => {
+    await presetWatcherSelection(page, [KEY_UNBALANCEABLE]);
+
+    await goToPageAndWaitFor(page);
+    await selectKeyFilterCustom(page);
+
+    const card = await locateWatcherCardByKeyAndExpectVisible(page, KEY_UNBALANCEABLE);
+    await expect(card).toHaveScreenshot("watcher-card-unbalanceable-empty.png");
   });
 });
 
@@ -121,6 +154,7 @@ test.describe("Visual Regression: WatcherCard, Main and Reference Recipes Popula
     ["with range", KEY_WITH_RANGE],
     ["no range", KEY_WITHOUT_RANGE],
     ["mixed ref vals", KEY_MIXED_REF_VALS],
+    ["unbalanceable", KEY_UNBALANCEABLE],
   ];
 
   for (const [prefix, propKey] of testCases) {
@@ -138,7 +172,12 @@ test.describe("Visual Regression: WatchersView, Main and Reference Recipes Popul
   const testWatchersView = (recipeIds: RecipeID[]) => {
     test(makeRecipesTestName("WatchersView", recipeIds), async ({ page, browserName }) => {
       test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
-      await presetWatcherSelection(page, [KEY_WITH_RANGE, KEY_WITHOUT_RANGE, KEY_MIXED_REF_VALS]);
+      await presetWatcherSelection(page, [
+        KEY_WITH_RANGE,
+        KEY_WITHOUT_RANGE,
+        KEY_MIXED_REF_VALS,
+        KEY_UNBALANCEABLE,
+      ]);
 
       await goToPageAndPasteRecipes(page, browserName, recipeIds);
       await selectKeyFilterCustom(page);
