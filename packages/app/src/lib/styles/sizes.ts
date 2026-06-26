@@ -9,8 +9,6 @@ export const DRAG_HANDLE_ICON_SIZE = 17;
 export const COMPONENT_ACTION_ICON_SIZE = 20;
 /** Icon size (px) for action buttons inside an entity-search detail panel. */
 export const DETAIL_PANEL_ACTION_ICON_SIZE = 14;
-/** Font size (px) for graph titles. */
-export const GRAPH_TITLE_FONT_SIZE = 15;
 
 /** Icon size (px) used in the header. */
 export const HEADER_ICON_SIZE = 20;
@@ -41,3 +39,16 @@ export const REACT_GRID_COMPONENT_HEIGHT = 11;
 export const REACT_GRID_ROW_HEIGHT = 36;
 /** Standard fixed height (px) for full-height grid components such as `RecipeGrid` */
 export const STD_COMPONENT_H_PX = 596;
+
+// ----  Shared chart chrome (tooltip + layout) ----------------------------------------------------
+
+/** Top padding (px) reserved above the plot area for the in-area legend. */
+export const CHART_TOP_PADDING = 12;
+/** Tooltip corner radius (px). */
+export const TOOLTIP_CORNER_RADIUS = 8;
+/** Tooltip inner padding (px). */
+export const TOOLTIP_PADDING = 10;
+/** Tooltip border width (px). */
+export const TOOLTIP_BORDER_WIDTH = 1;
+/** Monospace font family for tooltip body text, so numeric columns align. */
+export const TOOLTIP_BODY_FONT = "ui-monospace, SFMono-Regular, Menlo, monospace";

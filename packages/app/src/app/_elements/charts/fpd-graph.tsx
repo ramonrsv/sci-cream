@@ -18,10 +18,23 @@ import {
 
 import { RecipeSummary } from "@/lib/recipe";
 import { useTheme } from "@/lib/theme";
-import { GRAPH_TITLE_FONT_SIZE } from "@/lib/styles/sizes";
+import {
+  CHART_TOP_PADDING,
+  TOOLTIP_CORNER_RADIUS,
+  TOOLTIP_PADDING,
+  TOOLTIP_BORDER_WIDTH,
+  TOOLTIP_BODY_FONT,
+} from "@/lib/styles/sizes";
 import { prefersReducedMotion } from "@/lib/styles/motion";
 
-import { Color, ThemeColor, getColor, addOrUpdateAlpha } from "@/lib/styles/colors";
+import {
+  Color,
+  ThemeColor,
+  getColor,
+  addOrUpdateAlpha,
+  flattenAlphaOnto,
+  REFERENCE_TICK_ALPHA,
+} from "@/lib/styles/colors";
 
 ChartJS.register(
   CategoryScale,
@@ -46,6 +59,8 @@ const FILL_GRADIENT_TOP_ALPHA = 0.3;
 const FILL_GRADIENT_FADE_STOP = 0.9;
 /** Radius (px) of the highlighted ideal-serving point marker. */
 const HIGHLIGHT_POINT_RADIUS = 6;
+/** Invisible hover hit area (px) around every point, so any point along a line is easy to hover. */
+const POINT_HIT_RADIUS = 10;
 /** Border width (px) for point markers. */
 const POINT_BORDER_WIDTH = 2;
 /** Line width (px) for the custom legend swatches. */
@@ -69,6 +84,8 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
 
   const gridColor = getColor(ThemeColor.Border);
   const legendColor = getColor(ThemeColor.TextPrimary);
+  const tickColor = getColor(ThemeColor.TextSecondary);
+  const surfaceColor = getColor(ThemeColor.Surface);
 
   /** Ideal serving 'hardness' value, in [0, 100], used to place a highlight point */
   const highlightedHardnessPercent = 75;
@@ -84,11 +101,27 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
     ...refs.map((r) => ({ recipe: r, isMain: false })),
   ];
 
+  /**
+   * Per-dataset metadata in `graphData.datasets` order (two lines per recipe), indexed by
+   * `datasetIndex` so the tooltip titles the popup with the recipe name, like `PropertiesBarChart`.
+   */
+  const datasetMeta = recipes.flatMap(({ recipe, isMain }) =>
+    ["Hardness", "Frozen Water"].map((lineType) => ({
+      recipeName: recipe.name || recipe.id,
+      lineType,
+      isMain,
+    })),
+  );
+
   /** Chart.js dataset configuration built from the active recipes' FPD curves */
   const graphData = {
     labels: Array.from({ length: 101 }, (_, i) => i),
     datasets: recipes.flatMap(({ recipe, isMain }) => {
-      const recipeColor = isMain ? getColor(Color.GraphBlue) : getColor(Color.GraphGray);
+      // References use an opaque muted gray: the alpha is flattened onto the surface so a ref's
+      // coincident Hardness/Frozen-Water lines don't composite into a false dashed look.
+      const recipeColor = isMain
+        ? getColor(Color.GraphBlue)
+        : flattenAlphaOnto(getColor(Color.GraphGray), surfaceColor, REFERENCE_TICK_ALPHA);
 
       const curves = recipe.mixProperties.fpd!.curves!;
       const borderWidth = isMain ? MAIN_LINE_WIDTH : REF_LINE_WIDTH;
@@ -127,10 +160,11 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
           shouldHighlight(lineLabel, i) ? HIGHLIGHT_POINT_RADIUS : 0,
         ),
         pointBackgroundColor: curve.map((_, i) =>
-          shouldHighlight(lineLabel, i) ? "#fff" : borderColor,
+          shouldHighlight(lineLabel, i) ? surfaceColor : borderColor,
         ),
         pointBorderColor: borderColor,
         pointBorderWidth: POINT_BORDER_WIDTH,
+        pointHitRadius: POINT_HIT_RADIUS,
       }));
     }),
   };
@@ -151,11 +185,15 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
     // Disable the canvas entry/resize animation under reduced motion so screenshots are stable;
     animation: prefersReducedMotion() ? (false as const) : undefined,
     color: legendColor,
+    // No chart title: the panel context already names the chart, and dropping it reclaims height.
+    layout: { padding: { top: CHART_TOP_PADDING } },
     plugins: {
       legend: {
         display: true,
         position: "chartArea" as const,
         align: "end" as const,
+        // Fixed Hardness/Frozen-Water swatches, not per-recipe — disable click-to-toggle.
+        onClick: () => undefined,
         labels: {
           color: legendColor,
           generateLabels: () => {
@@ -166,24 +204,31 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
           },
         },
       },
-      title: {
-        display: true,
-        text: "FPD Graph",
-        color: legendColor,
-        font: { size: GRAPH_TITLE_FONT_SIZE },
-      },
       tooltip: {
+        backgroundColor: surfaceColor,
+        borderColor: gridColor,
+        borderWidth: TOOLTIP_BORDER_WIDTH,
+        titleColor: legendColor,
+        bodyColor: legendColor,
+        cornerRadius: TOOLTIP_CORNER_RADIUS,
+        padding: TOOLTIP_PADDING,
+        bodyFont: { family: TOOLTIP_BODY_FONT },
         callbacks: {
+          title: function (items: TooltipItem<"line">[]) {
+            const idx = items[0]?.datasetIndex;
+            return idx === undefined ? "" : (datasetMeta[idx]?.recipeName ?? "");
+          },
           label: function (context: TooltipItem<"line">) {
-            const lineName = context.dataset.label;
+            const meta = datasetMeta[context.datasetIndex];
+            const lineType = meta?.lineType ?? "";
+            const percent = context.parsed.x;
             const temp = context.parsed.y?.toFixed(1);
-            const frozenWaterPercent = context.parsed.x;
+            const ideal =
+              meta?.isMain && shouldHighlight(lineType, context.dataIndex)
+                ? " (Ideal Serving Temp)"
+                : "";
 
-            return `${temp}°C @${frozenWaterPercent}% ${
-              shouldHighlight(lineName ?? "", context.dataIndex)
-                ? " (Ideal Serving Temperature)"
-                : ""
-            }`;
+            return `${lineType}: ${percent}% at ${temp}°C${ideal}`;
           },
         },
       },
@@ -191,13 +236,14 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
     scales: {
       x: {
         ticks: {
-          color: legendColor,
+          color: tickColor,
           autoSkip: false,
           callback: function (value: string | number) {
             const numValue = Number(value);
             return numValue % GRID_TICK_INTERVAL === 0 ? numValue : "";
           },
         },
+        border: { display: false },
         grid: {
           color: gridColor,
           display: true,
@@ -210,8 +256,9 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
       y: {
         min: Y_AXIS_MIN,
         max: Y_AXIS_MAX,
-        ticks: { color: legendColor },
-        title: { display: true, text: "Temperature (°C)", color: legendColor },
+        ticks: { color: tickColor },
+        title: { display: true, text: "Temperature (°C)", color: tickColor },
+        border: { display: false },
         grid: { color: gridColor },
       },
     },

@@ -6,7 +6,13 @@ import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 
-import { Color, getColor } from "@/lib/styles/colors";
+import {
+  Color,
+  ThemeColor,
+  getColor,
+  flattenAlphaOnto,
+  REFERENCE_TICK_ALPHA,
+} from "@/lib/styles/colors";
 import { FpdGraph } from "@/app/_elements/charts/fpd-graph";
 import { filterActiveSlots } from "@/lib/recipe";
 
@@ -38,6 +44,7 @@ interface LineDataset {
   pointBackgroundColor: (string | undefined)[];
   pointBorderColor: string;
   pointBorderWidth: number;
+  pointHitRadius: number;
 }
 
 interface CapturedLineProps {
@@ -48,8 +55,17 @@ interface CapturedLineProps {
     color: string;
     plugins: {
       legend: { display: boolean; position: string; align: string };
-      title: { display: boolean; text: string; color: string };
-      tooltip: unknown;
+      title?: { display: boolean; text: string; color: string };
+      tooltip: {
+        callbacks: {
+          title: (items: { datasetIndex: number }[]) => string;
+          label: (context: {
+            datasetIndex: number;
+            dataIndex: number;
+            parsed: { x: number; y: number };
+          }) => string;
+        };
+      };
     };
     scales: {
       x: { ticks: unknown; grid: unknown };
@@ -149,13 +165,17 @@ describe("FpdGraph", () => {
       });
     });
 
-    it("should use GraphGray for reference recipe datasets", () => {
+    it("should use an opaque muted GraphGray for reference recipe datasets", () => {
       renderFromContext([RecipeID.Main, RecipeID.RefA]);
 
       const refDatasets = capturedLineProps!.data.datasets.filter((d) =>
         d.label.includes("(Ref A)"),
       );
-      const expectedColor = getColor(Color.GraphGray);
+      const expectedColor = flattenAlphaOnto(
+        getColor(Color.GraphGray),
+        getColor(ThemeColor.Surface),
+        REFERENCE_TICK_ALPHA,
+      );
       expect(refDatasets).toHaveLength(2);
       refDatasets.forEach((dataset) => {
         expect(dataset.borderColor).toBe(expectedColor);
@@ -194,6 +214,15 @@ describe("FpdGraph", () => {
 
       mainDatasets.forEach((d) => expect(d.borderWidth).toBe(4));
       refDatasets.forEach((d) => expect(d.borderWidth).toBe(3));
+    });
+
+    it("should not dash any reference recipe's Hardness curve", () => {
+      renderFromContext([RecipeID.Main, RecipeID.RefA, RecipeID.RefB]);
+      const refHardness = capturedLineProps!.data.datasets.filter((d) =>
+        d.label.startsWith("Hardness ("),
+      );
+      expect(refHardness).toHaveLength(2);
+      refHardness.forEach((d) => expect(d.borderDash).toBeUndefined());
     });
   });
 
@@ -296,16 +325,22 @@ describe("FpdGraph", () => {
   // ---- Chart Options --------------------------------------------------------------------------
 
   describe("Chart Options", () => {
-    it("should configure the chart title as 'FPD Graph'", () => {
+    it("should not render an in-chart title (the panel names the chart)", () => {
       renderFromContext([RecipeID.Main]);
-      expect(capturedLineProps!.options.plugins.title.display).toBe(true);
-      expect(capturedLineProps!.options.plugins.title.text).toBe("FPD Graph");
+      expect(capturedLineProps!.options.plugins.title).toBeUndefined();
     });
 
     it("should configure the chart as responsive without fixed aspect ratio", () => {
       renderFromContext([RecipeID.Main]);
       expect(capturedLineProps!.options.responsive).toBe(true);
       expect(capturedLineProps!.options.maintainAspectRatio).toBe(false);
+    });
+
+    it("should enlarge each point's hover hit area so non-highlighted points are easy to hover", () => {
+      renderFromContext([RecipeID.Main, RecipeID.RefA]);
+      capturedLineProps!.data.datasets.forEach((dataset) => {
+        expect(dataset.pointHitRadius).toBeGreaterThan(0);
+      });
     });
 
     it("should configure the y-axis with min -30 and max 0", () => {
@@ -318,6 +353,46 @@ describe("FpdGraph", () => {
       renderFromContext([RecipeID.Main]);
       expect(capturedLineProps!.options.scales.y.title.display).toBe(true);
       expect(capturedLineProps!.options.scales.y.title.text).toBe("Temperature (°C)");
+    });
+  });
+
+  // ---- Tooltip --------------------------------------------------------------------------------
+
+  describe("Tooltip", () => {
+    it("should title the tooltip with the recipe name (datasets are two lines per recipe)", () => {
+      const recipeCtx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]);
+      const active = filterActiveSlots(recipeCtx.recipes);
+      render(<FpdGraph main={active[0]} refs={active.slice(1)} />);
+
+      const { title } = capturedLineProps!.options.plugins.tooltip.callbacks;
+      // datasetIndex 0/1 = main Hardness/Frozen Water; 2/3 = the first reference's two lines.
+      expect(title([{ datasetIndex: 0 }])).toBe(active[0].name || active[0].id);
+      expect(title([{ datasetIndex: 2 }])).toBe(active[1].name || active[1].id);
+    });
+
+    it("should label tooltip rows with the line type and temperature", () => {
+      renderFromContext([RecipeID.Main]);
+      const { label } = capturedLineProps!.options.plugins.tooltip.callbacks;
+
+      const text = label({ datasetIndex: 0, dataIndex: 10, parsed: { x: 10, y: -5 } });
+      expect(text).toBe("Hardness: 10% at -5.0°C");
+    });
+
+    it("should annotate the main recipe's ideal serving point at index 75", () => {
+      renderFromContext([RecipeID.Main]);
+      const { label } = capturedLineProps!.options.plugins.tooltip.callbacks;
+
+      const text = label({ datasetIndex: 0, dataIndex: 75, parsed: { x: 75, y: -12 } });
+      expect(text).toContain("(Ideal Serving Temp)");
+    });
+
+    it("should not annotate a reference recipe's point at index 75", () => {
+      renderFromContext([RecipeID.Main, RecipeID.RefA]);
+      const { label } = capturedLineProps!.options.plugins.tooltip.callbacks;
+
+      // datasetIndex 2 = the first reference's Hardness line.
+      const text = label({ datasetIndex: 2, dataIndex: 75, parsed: { x: 75, y: -12 } });
+      expect(text).not.toContain("(Ideal Serving Temperature)");
     });
   });
 });

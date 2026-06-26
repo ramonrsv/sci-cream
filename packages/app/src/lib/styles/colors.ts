@@ -1,4 +1,7 @@
-import { colord } from "colord";
+import { colord, extend } from "colord";
+import mixPlugin from "colord/plugins/mix";
+
+extend([mixPlugin]);
 
 /**
  * Theme-independent palette colors: a single CSS custom property with no light/dark variant.
@@ -75,6 +78,16 @@ export function getColor(color: ColorToken): string {
 /** Add or update the alpha value of a CSS color string (e.g. hex, rgb, hsl) */
 export function addOrUpdateAlpha(colorStr: string, opacity: number): string {
   return colord(colorStr).alpha(opacity).toRgbString();
+}
+
+/**
+ * Flatten a translucent color into the opaque color that looks identical to `colorStr` painted at
+ * `alpha` over `backgroundStr`. Prefer this over {@link addOrUpdateAlpha} when two translucent
+ * strokes overlap and would otherwise composite into a visible artifact — e.g. a solid and a dashed
+ * chart line that coincide reading as a single dashed line.
+ */
+export function flattenAlphaOnto(colorStr: string, backgroundStr: string, alpha: number): string {
+  return colord(backgroundStr).mix(colorStr, alpha).toRgbString();
 }
 
 /**

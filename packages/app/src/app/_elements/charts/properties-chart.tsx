@@ -30,6 +30,13 @@ import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { useOrderKeys } from "@/lib/group-by";
 import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
 import { prefersReducedMotion } from "@/lib/styles/motion";
+import {
+  CHART_TOP_PADDING,
+  TOOLTIP_CORNER_RADIUS,
+  TOOLTIP_PADDING,
+  TOOLTIP_BORDER_WIDTH,
+  TOOLTIP_BODY_FONT,
+} from "@/lib/styles/sizes";
 import { STATE_VAL } from "@/lib/util";
 import {
   Color,
@@ -113,14 +120,6 @@ const BAR_CATEGORY_PERCENTAGE = 0.8;
 const BAR_PERCENTAGE = 0.72;
 /** Round the y-axis max up to the next multiple of this for clean tick labels plus headroom. */
 const Y_AXIS_TICK_STEP = 5;
-/** Top padding (px) reserved above the plot area for the in-area legend. */
-const CHART_TOP_PADDING = 12;
-/** Tooltip corner radius (px). */
-const TOOLTIP_CORNER_RADIUS = 8;
-/** Tooltip inner padding (px). */
-const TOOLTIP_PADDING = 10;
-/** Tooltip border width (px). */
-const TOOLTIP_BORDER_WIDTH = 1;
 
 /** Clip subsequent canvas drawing to the chart's plot area. */
 function clipToChartArea(
@@ -475,7 +474,7 @@ export function PropertiesBarChart({
         bodyColor: legendColor,
         cornerRadius: TOOLTIP_CORNER_RADIUS,
         padding: TOOLTIP_PADDING,
-        bodyFont: { family: "ui-monospace, SFMono-Regular, Menlo, monospace" },
+        bodyFont: { family: TOOLTIP_BODY_FONT },
         callbacks: {
           title: (items: TooltipItem<"bar">[]) => items[0]?.label ?? "",
           label: (context: TooltipItem<"bar">) =>
