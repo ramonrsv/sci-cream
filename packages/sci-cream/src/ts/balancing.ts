@@ -31,6 +31,13 @@ export function getTypicalBalancingKeys(): PropKey[] {
   return get_typical_balancing_keys() as PropKey[];
 }
 
+const ALL_BALANCEABLE_KEYS: ReadonlySet<PropKey> = new Set(getAllBalanceableKeys());
+
+/** Returns whether a given `PropKey` is balanceable. */
+export function isBalanceableKey(prop_key: PropKey): boolean {
+  return ALL_BALANCEABLE_KEYS.has(prop_key);
+}
+
 /**
  * Severity of a balancing issue: `error` blocks balancing, `warning` is a best-effort caution, and
  * `information` is a purely advisory note (e.g. over-determination) that never blocks the solve.

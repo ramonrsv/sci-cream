@@ -9,7 +9,9 @@ import {
   getTsEnumStringKeys,
 } from "../../dist/index";
 
-import { getAllBalanceableKeys, getTypicalBalancingKeys } from "./balancing";
+import { fpdToPropKey } from "./prop-key";
+import { getAllBalanceableKeys, getTypicalBalancingKeys, isBalanceableKey } from "./balancing";
+import { getWasmEnums } from "./util";
 
 test("getAllBalanceableKeys returns valid PropKey values", () => {
   const balanceableKeys = getAllBalanceableKeys();
@@ -37,4 +39,26 @@ test("getTypicalBalancingKeys is a subset of getAllBalanceableKeys", () => {
   for (const key of getTypicalBalancingKeys()) {
     expect(balanceableKeys).toContain(key);
   }
+});
+
+test("isBalanceableKey returns true for every key in getAllBalanceableKeys", () => {
+  for (const key of getAllBalanceableKeys()) {
+    expect(isBalanceableKey(key)).toBe(true);
+  }
+});
+
+test("isBalanceableKey returns false for every FpdKey", () => {
+  for (const key of getWasmEnums(FpdKey)) {
+    expect(isBalanceableKey(fpdToPropKey(key))).toBe(false);
+  }
+});
+
+test("isBalanceableKey returns true for known balanceable keys", () => {
+  expect(isBalanceableKey(compToPropKey(CompKey.MilkFat))).toBe(true);
+  expect(isBalanceableKey(compToPropKey(CompKey.MSNF))).toBe(true);
+  expect(isBalanceableKey(ratioToPropKey(RatioKey.AbsNetPAC))).toBe(true);
+});
+
+test("isBalanceableKey returns false for known non-balanceable keys", () => {
+  expect(isBalanceableKey(compToPropKey(CompKey.ABV))).toBe(false);
 });
