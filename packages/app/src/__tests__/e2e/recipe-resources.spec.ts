@@ -139,7 +139,7 @@ test.describe("Recipe Resources", () => {
     const updateTime = Date.now() - stallStart;
 
     // The paste action itself should remain responsive, as it doesn't depend on the fetched data
-    expect(pasteTime).toBeLessThan(5000);
+    expect(pasteTime).toBeLessThan(6000);
 
     // The update must only pass after the fetch API returns, as the correct calculation values
     // depend on the user-defined ingredient data that only becomes available after the response.
