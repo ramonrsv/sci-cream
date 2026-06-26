@@ -29,6 +29,9 @@ import {
   propToRatioKey,
   propToFpdKey,
   getRatioKeyParts,
+  isPropKeyQuantity,
+  isPropKeyMixScope,
+  getMixScopePropKeys,
 } from "./prop-key";
 
 test("Import from sci-cream wasm package, at sci-cream", () => {
@@ -264,4 +267,52 @@ test("getRatioKeyParts returns each ratio key's numerator and denominator as Pro
       expect(isCompKey(part)).toBe(true);
     }
   }
+});
+
+test("isPropKeyQuantity returns true for PropKeys derived from quantity CompKeys", () => {
+  const qtyPropKeys: PropKey[] = [
+    compToPropKey(CompKey.TotalFats),
+    compToPropKey(CompKey.MilkFat),
+    compToPropKey(CompKey.Water),
+    compToPropKey(CompKey.TotalSolids),
+  ];
+
+  for (const key of qtyPropKeys) {
+    expect(isPropKeyQuantity(key)).toBe(true);
+  }
+});
+
+test("isPropKeyQuantity returns false for PropKeys derived from RatioKeys and FpdKeys", () => {
+  const nonQtyPropKeys: PropKey[] = [
+    ratioToPropKey(RatioKey.AbsPAC),
+    ratioToPropKey(RatioKey.EmulsifiersPerFat),
+    ratioToPropKey(RatioKey.StabilizersPerWater),
+    fpdToPropKey(FpdKey.FPD),
+    fpdToPropKey(FpdKey.ServingTemp),
+    fpdToPropKey(FpdKey.HardnessAt14C),
+  ];
+
+  for (const key of nonQtyPropKeys) {
+    expect(isPropKeyQuantity(key)).toBe(false);
+  }
+});
+
+test("isPropKeyMixScope returns true for non-ratio keys", () => {
+  expect(isPropKeyMixScope(compToPropKey(CompKey.MilkFat))).toBe(true);
+  expect(isPropKeyMixScope(fpdToPropKey(FpdKey.FPD))).toBe(true);
+});
+
+test("isPropKeyMixScope returns true for the current (mix-scoped) ratio keys", () => {
+  // The current ratio keys are all mix-scoped, so none are filtered from the mix composition
+  expect(isPropKeyMixScope(ratioToPropKey(RatioKey.AbsPAC))).toBe(true);
+  expect(isPropKeyMixScope(ratioToPropKey(RatioKey.EmulsifiersPerFat))).toBe(true);
+  expect(isPropKeyMixScope(ratioToPropKey(RatioKey.StabilizersPerWater))).toBe(true);
+});
+
+test("getMixScopePropKeys returns the mix-scoped subset of getPropKeys", () => {
+  const mixScopeKeys = getMixScopePropKeys();
+  const allKeys = getPropKeys();
+
+  expect(mixScopeKeys).toEqual(allKeys.filter(isPropKeyMixScope));
+  for (const key of mixScopeKeys) expect(isPropKeyMixScope(key)).toBe(true);
 });

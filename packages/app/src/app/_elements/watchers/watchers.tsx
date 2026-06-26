@@ -27,13 +27,7 @@ import {
   formatCompositionValue,
   roundToCompositionValueFormat,
 } from "@/lib/comp-value-format";
-import {
-  getAcceptablePropertyRange,
-  isPropKeyQuantity,
-  getMixScopePropKeys,
-  DEFAULT_SELECTED_PROPERTIES,
-  makeAutoHeuristicFunction,
-} from "@/lib/sci-cream/sci-cream";
+import { DEFAULT_SELECTED_PROPERTIES, makeAutoHeuristicFunction } from "@/lib/sci-cream/sci-cream";
 import {
   Color,
   getCssColor,
@@ -49,6 +43,9 @@ import { STATE_VAL, STATE_SET, standardInputStepByPercent, verify } from "@/lib/
 import {
   PropKey,
   getMixProperty,
+  getMixScopePropKeys,
+  getAcceptablePropertyRange,
+  isPropKeyQuantity,
   groupEnabledKeys,
   prop_key_as_med_str,
   isCompKey,

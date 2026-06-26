@@ -15,7 +15,6 @@ import {
 } from "@/app/_elements/selects/qty-toggle-select";
 import { useOrderKeys } from "@/lib/group-by";
 import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
-import { isPropKeyQuantity, isPropKeyMixScope } from "@/lib/sci-cream/sci-cream";
 import { STATE_VAL } from "@/lib/util";
 
 import {
@@ -26,17 +25,13 @@ import {
   compToPropKey,
   ratioToPropKey,
   fpdToPropKey,
-  getPropKeys,
+  getMixScopePropKeys,
+  isPropKeyQuantity,
   groupEnabledKeys,
   getMixProperty,
   MixProperties,
   prop_key_as_med_str,
 } from "@workspace/sci-cream";
-
-/** Mix-scope property keys: all `getPropKeys`, minus ingredient-only ratio keys. */
-function getMixScopePropKeys(): PropKey[] {
-  return getPropKeys().filter(isPropKeyMixScope);
-}
 
 /** Default set of property keys shown when the Custom key filter is first initialized */
 export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([

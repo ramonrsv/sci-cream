@@ -2,6 +2,7 @@ import {
   CompKey,
   FpdKey,
   RatioKey,
+  KeyScope,
   comp_key_as_short_str,
   comp_key_as_med_str,
   comp_key_as_long_str,
@@ -12,6 +13,7 @@ import {
   fpd_key_as_med_str,
   fpd_key_as_long_str,
   get_ratio_key_parts,
+  ratio_key_scope,
   MixProperties,
 } from "../../wasm/index";
 
@@ -168,4 +170,30 @@ export function getMixProperty(mixProperties: MixProperties, prop_key: PropKey):
     (k) => mixProperties.composition.get_ratio(k),
     (k) => mixProperties.fpd.get(k),
   );
+}
+
+/**
+ * Returns `true` when a `PropKey` is a quantity (g, additive and scalable by ingredient amount).
+ *
+ * Every `CompKey` is extensive (additive), so this is exactly `isCompKey`: `FpdKey` and `RatioKey`
+ * prop keys are non-additive (intensive), not grams, and never multiplied by an ingredient amount.
+ */
+export function isPropKeyQuantity(prop_key: PropKey): boolean {
+  return isCompKey(prop_key);
+}
+
+/**
+ * Returns `true` when a `PropKey` is meaningful in a whole-mix context, not per-ingredient.
+ *
+ * Non-ratio keys are always mix-meaningful. A ratio key is filtered out only when its
+ * `KeyScope` is `Ingredient` (e.g. sweetener-classification ratios like PAC:POD that describe a
+ * single ingredient, not a mix). Used to filter property/target dropdowns for mix composition.
+ */
+export function isPropKeyMixScope(prop_key: PropKey): boolean {
+  return !isRatioKey(prop_key) || ratio_key_scope(propToRatioKey(prop_key)) !== KeyScope.Ingredient;
+}
+
+/** Mix-scope property keys: all `getPropKeys`, minus ingredient-only ratio keys. */
+export function getMixScopePropKeys(): PropKey[] {
+  return getPropKeys().filter(isPropKeyMixScope);
 }

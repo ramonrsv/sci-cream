@@ -1,9 +1,14 @@
 import { test, expect, Page } from "@playwright/test";
 
-import { CompKey, compToPropKey, getMixProperty, PropKey } from "@workspace/sci-cream";
-import { getAcceptablePropertyRange } from "@/lib/sci-cream/sci-cream";
-import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
+import {
+  CompKey,
+  compToPropKey,
+  getAcceptablePropertyRange,
+  getMixProperty,
+  PropKey,
+} from "@workspace/sci-cream";
 
+import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { goToPageAndWaitFor, goToPageAndPasteRecipes } from "@/__tests__/e2e/util";
 import { getSelectControl, selectOption } from "@/__tests__/e2e/select";
 import { makeRecipesTestName, makeRecipesScreenshotFilename } from "@/__tests__/visual/assets";

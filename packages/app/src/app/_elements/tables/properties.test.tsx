@@ -18,7 +18,6 @@ import { RecipeSummary, filterActiveSlots } from "@/lib/recipe";
 import { QtyToggle, QTY_TOGGLE_SHORT_LABELS } from "@/app/_elements/selects/qty-toggle-select";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
-import { isPropKeyQuantity } from "@/lib/sci-cream/sci-cream";
 
 import {
   CompKey,
@@ -28,6 +27,7 @@ import {
   fpdToPropKey,
   getPropKeys,
   getMixProperty,
+  isPropKeyQuantity,
   prop_key_as_med_str,
 } from "@workspace/sci-cream";
 

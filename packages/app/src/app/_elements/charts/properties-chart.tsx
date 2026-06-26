@@ -43,13 +43,7 @@ import {
   BAR_GRADIENT_TOP_ALPHA,
 } from "@/lib/styles/colors";
 
-import {
-  isPropKeyQuantity,
-  getMixScopePropKeys,
-  getAcceptablePropertyRange,
-  DEFAULT_SELECTED_PROPERTIES,
-  makeAutoHeuristicFunction,
-} from "@/lib/sci-cream/sci-cream";
+import { DEFAULT_SELECTED_PROPERTIES, makeAutoHeuristicFunction } from "@/lib/sci-cream/sci-cream";
 
 import {
   CompKey,
@@ -60,6 +54,9 @@ import {
   ratioToPropKey,
   fpdToPropKey,
   getMixProperty,
+  getMixScopePropKeys,
+  getAcceptablePropertyRange,
+  isPropKeyQuantity,
   groupEnabledKeys,
   MixProperties,
   prop_key_as_short_str,

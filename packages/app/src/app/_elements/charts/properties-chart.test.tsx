@@ -22,7 +22,7 @@ import {
 import { filterActiveSlots } from "@/lib/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { getSelectedOptionLabel } from "@/__tests__/unit/select";
-import { getMixScopePropKeys, UNCONDITIONAL_AUTO_PROPERTIES } from "@/lib/sci-cream/sci-cream";
+import { UNCONDITIONAL_AUTO_PROPERTIES } from "@/lib/sci-cream/sci-cream";
 
 import {
   CompKey,
@@ -33,6 +33,7 @@ import {
   ratioToPropKey,
   fpdToPropKey,
   getMixProperty,
+  getMixScopePropKeys,
 } from "@workspace/sci-cream";
 
 import { STORAGE_KEYS } from "@/lib/local-storage";

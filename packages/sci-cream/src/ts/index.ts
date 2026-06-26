@@ -7,4 +7,5 @@ export * from "./hierarchy";
 export * from "./light-recipe";
 export * from "./optimizations";
 export * from "./prop-key";
+export * from "./ranges";
 export * from "./util";
