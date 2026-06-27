@@ -147,6 +147,10 @@ export async function getCompositionBreakdownTableValueElement(
 
 /** Write text to the clipboard, using browser-appropriate permissions */
 export async function pasteToClipboard(page: Page, browserName: string, text: string) {
+  if (browserName === "webkit") {
+    throw new Error("Clipboard API not supported in WebKit/Safari");
+  }
+
   const permissions = browserName === "firefox" ? [] : ["clipboard-read", "clipboard-write"];
   page.context().grantPermissions(permissions);
 

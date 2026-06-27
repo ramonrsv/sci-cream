@@ -29,16 +29,6 @@ async function locatePanelAndExpectVisible(page: Page, panelId: string) {
   return panel;
 }
 
-/** Initialize the page and paste the given recipes */
-async function initializePageAndPasteRecipes(
-  page: Page,
-  browserName: string,
-  recipeIds: RecipeID[],
-) {
-  test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
-  await goToPageAndPasteRecipes(page, browserName, recipeIds);
-}
-
 test.describe("Visual Regression: Panels, Empty State", () => {
   test("initial page load - empty recipe grid", async ({ page }) => {
     await goToPageAndWaitFor(page);
@@ -88,7 +78,7 @@ test.describe("Visual Regression: Panels, Empty State", () => {
 test.describe("Visual Regression: Panels, Main and Reference Recipes Populated", () => {
   const testRecipeEditorPanel = async (recipeIds: RecipeID[]) => {
     test(makeRecipesTestName("RecipeEditorPanel", recipeIds), async ({ page, browserName }) => {
-      await initializePageAndPasteRecipes(page, browserName, recipeIds);
+      await goToPageAndPasteRecipes(page, browserName, recipeIds);
       const panel = await locatePanelAndExpectVisible(page, "#recipe-editor-panel");
 
       await expect(panel).toHaveScreenshot(
@@ -99,7 +89,7 @@ test.describe("Visual Regression: Panels, Main and Reference Recipes Populated",
 
   const testPropertiesPanel = async (recipeIds: RecipeID[]) => {
     test(makeRecipesTestName("PropertiesPanel", recipeIds), async ({ page, browserName }) => {
-      await initializePageAndPasteRecipes(page, browserName, recipeIds);
+      await goToPageAndPasteRecipes(page, browserName, recipeIds);
       const panel = await locatePanelAndExpectVisible(page, "#properties-panel");
 
       await panel.locator("div").nth(1).scrollIntoViewIfNeeded();
@@ -113,7 +103,7 @@ test.describe("Visual Regression: Panels, Main and Reference Recipes Populated",
     test(
       makeRecipesTestName("CompositionBreakdownPanel", recipeIds),
       async ({ page, browserName }) => {
-        await initializePageAndPasteRecipes(page, browserName, recipeIds);
+        await goToPageAndPasteRecipes(page, browserName, recipeIds);
         const panel = await locatePanelAndExpectVisible(page, "#composition-breakdown-panel");
 
         await panel.locator("div").nth(1).scrollIntoViewIfNeeded();
@@ -126,7 +116,7 @@ test.describe("Visual Regression: Panels, Main and Reference Recipes Populated",
 
   const testPropertiesChartPanel = async (recipeIds: RecipeID[]) => {
     test(makeRecipesTestName("PropertiesChartPanel", recipeIds), async ({ page, browserName }) => {
-      await initializePageAndPasteRecipes(page, browserName, recipeIds);
+      await goToPageAndPasteRecipes(page, browserName, recipeIds);
       const panel = await locatePanelAndExpectVisible(page, "#properties-chart-panel");
 
       await expect(panel).toHaveScreenshot(
@@ -137,7 +127,7 @@ test.describe("Visual Regression: Panels, Main and Reference Recipes Populated",
 
   const testFpdGraphPanel = async (recipeIds: RecipeID[]) => {
     test(makeRecipesTestName("FpdGraphPanel", recipeIds), async ({ page, browserName }) => {
-      await initializePageAndPasteRecipes(page, browserName, recipeIds);
+      await goToPageAndPasteRecipes(page, browserName, recipeIds);
       const panel = await locatePanelAndExpectVisible(page, "#fpd-graph-panel");
 
       await expect(panel).toHaveScreenshot(
@@ -148,7 +138,7 @@ test.describe("Visual Regression: Panels, Main and Reference Recipes Populated",
 
   const testWatchersPanel = async (recipeIds: RecipeID[]) => {
     test(makeRecipesTestName("WatchersPanel", recipeIds), async ({ page, browserName }) => {
-      await initializePageAndPasteRecipes(page, browserName, recipeIds);
+      await goToPageAndPasteRecipes(page, browserName, recipeIds);
       const panel = await locatePanelAndExpectVisible(page, "#watchers-panel");
 
       await panel.scrollIntoViewIfNeeded();
@@ -180,7 +170,7 @@ test.describe("Visual Regression: Panels, Main and Reference Recipes Populated",
 test.describe("Visual Regression: Panels, Properties Group-by Modes", () => {
   const testGroupedMode = (mode: GroupBy, keyFilter: KeyFilter, filenameSuffix: string) => {
     test(`PropertiesTable grouped (${filenameSuffix})`, async ({ page, browserName }) => {
-      await initializePageAndPasteRecipes(page, browserName, [RecipeID.Main]);
+      await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main]);
       await locatePanelAndExpectVisible(page, "#properties-panel");
 
       await expandNavbar(page);
@@ -241,8 +231,6 @@ test.describe("Visual Regression: Panels, Interactive States", () => {
 
 test.describe("Visual Regression: Panels, Component Variations", () => {
   test("properties grid - scrolled state", async ({ page, browserName }) => {
-    test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
-
     await goToPageAndWaitFor(page);
 
     await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);

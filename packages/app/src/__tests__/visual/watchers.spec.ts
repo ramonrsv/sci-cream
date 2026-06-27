@@ -137,7 +137,6 @@ test.describe("Visual Regression: WatcherCard, Empty State", () => {
 test.describe("Visual Regression: WatcherCard, Main and Reference Recipes Populated", () => {
   const testWatcherCard = (prefix: string, propKey: PropKey, recipeIds: RecipeID[]) => {
     test(makeRecipesTestName(prefix, recipeIds), async ({ page, browserName }) => {
-      test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
       await presetWatcherSelection(page, [propKey]);
 
       await goToPageAndPasteRecipes(page, browserName, recipeIds);
@@ -171,7 +170,6 @@ test.describe("Visual Regression: WatcherCard, Main and Reference Recipes Popula
 test.describe("Visual Regression: WatchersView, Main and Reference Recipes Populated", () => {
   const testWatchersView = (recipeIds: RecipeID[]) => {
     test(makeRecipesTestName("WatchersView", recipeIds), async ({ page, browserName }) => {
-      test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
       await presetWatcherSelection(page, [
         KEY_WITH_RANGE,
         KEY_WITHOUT_RANGE,
@@ -216,8 +214,6 @@ test.describe("Visual Regression: WatcherCard remove button, highlights", () => 
   });
 
   test("highlights for warnings and errors", async ({ page, browserName }) => {
-    test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
-
     await presetWatcherSelection(page, [KEY_UNAFFECTABLE]);
     await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main]);
     await selectKeyFilterCustom(page);
@@ -259,8 +255,6 @@ test.describe("Visual Regression: WatcherCard priority toggle", () => {
 
 test.describe("Visual Regression: WatchersView balancing issues", () => {
   test("warnings and errors hint and dropdown", async ({ page, browserName }) => {
-    test.skip(browserName === "webkit", "Clipboard API not supported in WebKit/Safari");
-
     await presetWatcherSelection(page, [KEY_WITH_RANGE, KEY_UNAFFECTABLE]);
     await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main]);
     await selectKeyFilterCustom(page);
