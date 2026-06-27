@@ -30,19 +30,19 @@ async function locatePanelAndExpectVisible(page: Page, panelId: string) {
 }
 
 test.describe("Visual Regression: Panels, Empty State", () => {
-  test("initial page load - empty recipe grid", async ({ page }) => {
+  test("initial page load - empty recipe panel", async ({ page }) => {
     await goToPageAndWaitFor(page);
     const panel = await locatePanelAndExpectVisible(page, "#recipe-editor-panel");
     await expect(panel).toHaveScreenshot("recipe-editor-panel-empty.png");
   });
 
-  test("empty properties grid", async ({ page }) => {
+  test("empty properties panel", async ({ page }) => {
     await goToPageAndWaitFor(page);
     const panel = await locatePanelAndExpectVisible(page, "#properties-panel");
     await expect(panel).toHaveScreenshot("properties-panel-empty.png");
   });
 
-  test("empty composition grid", async ({ page }) => {
+  test("empty composition panel", async ({ page }) => {
     await goToPageAndWaitFor(page);
     const panel = await locatePanelAndExpectVisible(page, "#composition-breakdown-panel");
     await expect(panel).toHaveScreenshot("composition-breakdown-panel-empty.png");
@@ -230,7 +230,7 @@ test.describe("Visual Regression: Panels, Interactive States", () => {
 });
 
 test.describe("Visual Regression: Panels, Component Variations", () => {
-  test("properties grid - scrolled state", async ({ page, browserName }) => {
+  test("properties panel - scrolled state", async ({ page, browserName }) => {
     await goToPageAndWaitFor(page);
 
     await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
@@ -238,14 +238,14 @@ test.describe("Visual Regression: Panels, Component Variations", () => {
     const keyFilter = getPropertiesPanelKeyFilterSelectInput(page);
     await selectOption(page, keyFilter, KeyFilter.All);
 
-    const propertiesGrid = page.locator("#properties-panel");
+    const propertiesPanel = page.locator("#properties-panel");
 
     // Target the scrollable container with overflow-y-auto class
-    const scrollableDiv = propertiesGrid.locator("div.overflow-y-auto");
+    const scrollableDiv = propertiesPanel.locator("div.overflow-y-auto");
     // Scroll to middle of properties list
     await scrollableDiv.evaluate((el) => (el.scrollTop = el.scrollHeight / 2));
     await page.waitForTimeout(200);
 
-    await expect(propertiesGrid).toHaveScreenshot("properties-panel-scrolled.png");
+    await expect(propertiesPanel).toHaveScreenshot("properties-panel-scrolled.png");
   });
 });

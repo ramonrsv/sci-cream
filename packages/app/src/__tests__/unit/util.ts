@@ -85,7 +85,7 @@ export async function setQtyToggle(container: HTMLElement, optionValue: QtyToggl
   await selectOption(container, "#qty-toggle-select", QTY_TOGGLE_SHORT_LABELS[optionValue]);
 }
 
-/** Find the 'Clear' button in `RecipeGrid` */
+/** Find the 'Clear' button in `RecipeEditor` */
 export async function getClearRecipeButton(container: HTMLElement) {
   const button = within(container).getByRole("button", { name: /Clear/i });
   expect(button).toBeInTheDocument();

@@ -17,7 +17,7 @@ export enum RecipeID {
  *
  * **Note:** The variants with user-defined ingredients share the same index as their base recipe,
  * since they only differ by the presence of user-defined ingredients, but are input into the app
- * using the same `RecipeGrid` slot, and so are displayed in the same position in other components.
+ * with the same `RecipeEditor` slot, and so are displayed in the same position in other components.
  */
 export function recipeIdToIdx(recipeId: RecipeID): number {
   switch (recipeId) {
