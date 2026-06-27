@@ -174,3 +174,49 @@ export function applyQtyToggleAndFormat(
     includePlusSign,
   );
 }
+
+/**
+ * Computes the `main − reference` delta between two recipes' values for one property.
+ *
+ * Both values are first converted through {@link applyQtyToggle}, so the delta is expressed in the
+ * active display units (g, %, or the raw value for non-quantity properties).
+ *
+ * - `isRelative` — whether the delta is an absolute difference or a relative percent change.
+ * - When the difference is `0`, returns `undefined` (zero values are not displayed).
+ * - Returns `NaN` when the reference value is `0` and `isRelative` is `true`, since it's not
+ *   possible to compute a relative change in this case; this is displayed as `"-"` in the UI.
+ */
+export function computeDelta(
+  mainComp: number,
+  mainTotal: number | undefined,
+  refComp: number,
+  refTotal: number | undefined,
+  qtyToggle: QtyToggle,
+  isQty: boolean,
+  isRelative: boolean,
+): number | undefined {
+  const mainVal = applyQtyToggle(mainComp, mainTotal, mainTotal, qtyToggle, isQty) ?? 0;
+  const refVal = applyQtyToggle(refComp, refTotal, refTotal, qtyToggle, isQty) ?? 0;
+  const diff = mainVal - refVal;
+
+  return diff === 0 ? undefined : isRelative ? (refVal === 0 ? NaN : (diff / refVal) * 100) : diff;
+}
+
+/**
+ * Convenience wrapper that computes a delta via {@link computeDelta} and formats the result
+ * with {@link formatCompositionValue} in a single call.
+ */
+export function computeDeltaAndFormat(
+  mainComp: number,
+  mainTotal: number | undefined,
+  refComp: number,
+  refTotal: number | undefined,
+  qtyToggle: QtyToggle,
+  isQty: boolean,
+  isRelative: boolean,
+) {
+  return formatCompositionValue(
+    computeDelta(mainComp, mainTotal, refComp, refTotal, qtyToggle, isQty, isRelative),
+    true,
+  );
+}

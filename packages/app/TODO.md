@@ -2,7 +2,6 @@
 
 ## Next Release
 
-- [ ] Add support for `MixPropertiesGrid` to show deltas between the main recipe and the references.
 - [ ] Add `height` prop to `MixPropertiesGrid` so that it can adapt the number of properties shown.
 - [ ] Add support for comments in blog posts, maybe also in documentation posts.
 - [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
@@ -17,7 +16,7 @@
 - [ ] When a recipe is deleted, the UI does not update, it still showed the deleted recipe.
 - [ ] Add end-to-end tests for balancing functionality; check surfacing of balancing errors?
 - [ ] Recipe validation errors/warnings do not show unless a recipe has some non-zero qty value.
-- [ ] `FpdKey`s don't support balancing, so they should not have a target, but should be watchable.
+- [ ] Some layouts cause some toolbars to overflow. See if the look of overflowing can be improved.
 
 ## Up Next
 
@@ -111,6 +110,8 @@
 
 ## Completed
 
+- [x] Add support for `MixPropertiesGrid` to show deltas between the main recipe and the references.
+- [x] `FpdKey`s don't support balancing, so they should not have a target, but should be watchable.
 - [x] In `/recipes`, there is a fetch for user ingredients every time a recipe is selected.
 - [x] When a user is logged in and has user-defined there are "ingredient name not unique" errors.
       This should be handled gracefully, overriding and showing a warning that it shadows built-in.

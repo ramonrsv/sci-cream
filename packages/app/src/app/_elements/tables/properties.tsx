@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { Fragment, ReactNode } from "react";
 
 import { RecipeSummary, isRecipeEmpty } from "@/lib/recipe";
 import {
@@ -13,8 +13,13 @@ import {
   QtyToggleSelect,
   useQtyToggleState,
 } from "@/app/_elements/selects/qty-toggle-select";
+import {
+  DeltaToggle,
+  DeltaToggleSelect,
+  useDeltaToggleState,
+} from "@/app/_elements/selects/delta-toggle-select";
 import { useOrderKeys } from "@/lib/group-by";
-import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
+import { applyQtyToggleAndFormat, computeDeltaAndFormat } from "@/lib/comp-value-format";
 import { STATE_VAL } from "@/lib/util";
 
 import {
@@ -63,29 +68,51 @@ export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set([
  *
  * Columns are the provided recipes (header: `recipe.id`), rows are the provided `propKeys`. The
  * caller owns recipe/key filtering, toolbar state, and any scroll/size chrome.
+ *
+ * When `deltaToggle` is not `Off`, the first recipe (`recipes[0]`) is the baseline: every later
+ * (reference) recipe gains an adjacent delta column showing `main − ref`, as absolute or relative.
  */
 export function PropertiesTable({
   recipes,
   propKeys,
   qtyToggle,
+  deltaToggle = DeltaToggle.Off,
   rowMeta,
 }: {
   recipes: RecipeSummary[];
   propKeys: PropKey[];
   qtyToggle: QtyToggle;
+  deltaToggle?: DeltaToggle;
   /**
    * Optional per-row hierarchy metadata, parallel to `propKeys`. When present, labels indent by
    * `depth` and roll-up rows are emphasized; when absent, rows render flat and centered.
    */
   rowMeta?: ReadonlyArray<{ depth: number; isRollup: boolean }>;
 }) {
-  const formattedCell = (propKey: PropKey, mixProperties: MixProperties, mixTotal: number) => {
+  const main = recipes[0];
+  const showDelta = deltaToggle !== DeltaToggle.Off;
+
+  /** Formats a main cell for the given property and mix. */
+  const formatCompCell = (propKey: PropKey, mixProperties: MixProperties, mixTotal: number) => {
     return applyQtyToggleAndFormat(
       getMixProperty(mixProperties, propKey),
       mixTotal,
       mixTotal,
       qtyToggle,
       isPropKeyQuantity(propKey),
+    );
+  };
+
+  /** Formats a reference cell as a `main − reference` delta for the given property. */
+  const formatDeltaCell = (propKey: PropKey, recipe: RecipeSummary) => {
+    return computeDeltaAndFormat(
+      getMixProperty(main.mixProperties, propKey),
+      main.mixTotal,
+      getMixProperty(recipe.mixProperties, propKey),
+      recipe.mixTotal,
+      qtyToggle,
+      isPropKeyQuantity(propKey),
+      deltaToggle === DeltaToggle.Relative,
     );
   };
 
@@ -108,10 +135,15 @@ export function PropertiesTable({
       <thead>
         <tr className="h-6.25">
           <th className="table-header w-full px-1.25">Property</th>
-          {recipes.map((recipe) => (
-            <th key={recipe.id} className="table-header px-1.25 text-center">
-              {recipe.id}
-            </th>
+          {recipes.map((recipe, i) => (
+            <Fragment key={recipe.id}>
+              <th className="table-header px-1.25 text-center">{recipe.id}</th>
+              {showDelta && i > 0 && (
+                <th className="table-header px-1.25 text-center">
+                  {`Δ${deltaToggle === DeltaToggle.Relative ? " %" : ""}`}
+                </th>
+              )}
+            </Fragment>
           ))}
         </tr>
       </thead>
@@ -123,10 +155,17 @@ export function PropertiesTable({
               <td className={className} style={style}>
                 {prop_key_as_med_str(propKey)}
               </td>
-              {recipes.map((recipe) => (
-                <td key={recipe.id} className="table-inner-cell comp-val px-1.25">
-                  {formattedCell(propKey, recipe.mixProperties, recipe.mixTotal!)}
-                </td>
+              {recipes.map((recipe, i) => (
+                <Fragment key={recipe.id}>
+                  <td className="table-inner-cell comp-val px-1.25">
+                    {formatCompCell(propKey, recipe.mixProperties, recipe.mixTotal!)}
+                  </td>
+                  {showDelta && i > 0 && (
+                    <td className="table-inner-cell comp-val px-1.25">
+                      {formatDeltaCell(propKey, recipe)}
+                    </td>
+                  )}
+                </Fragment>
               ))}
             </tr>
           );
@@ -157,6 +196,9 @@ export function PropertiesView({
   const [qtyToggle, setQtyToggle, supportedQtyToggles] = useQtyToggleState(persistKey, {
     supportedQtyToggles: [QtyToggle.Quantity, QtyToggle.Percentage],
     defaultValue: QtyToggle.Percentage,
+  });
+  const [deltaToggle, setDeltaToggle, supportedDeltaToggles] = useDeltaToggleState(persistKey, {
+    defaultValue: DeltaToggle.Off,
   });
   const {
     keyFilterState: propsFilterState,
@@ -214,6 +256,12 @@ export function PropertiesView({
           supportedQtyToggles={supportedQtyToggles}
           qtyToggleState={[qtyToggle, setQtyToggle]}
         />
+        {recipes.length > 1 && (
+          <DeltaToggleSelect
+            supportedDeltaToggles={supportedDeltaToggles}
+            deltaToggleState={[deltaToggle, setDeltaToggle]}
+          />
+        )}
         <KeyFilterSelect
           supportedKeyFilters={supportedKeyFilters}
           keyFilterState={propsFilterState}
@@ -231,6 +279,7 @@ export function PropertiesView({
           recipes={recipes}
           propKeys={propKeys}
           qtyToggle={qtyToggle}
+          deltaToggle={deltaToggle}
           rowMeta={rowMeta}
         />
       </div>

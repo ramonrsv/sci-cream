@@ -1,6 +1,10 @@
 import { test, expect, Page } from "@playwright/test";
 
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
+import {
+  DeltaToggle,
+  DELTA_TOGGLE_SHORT_LABELS,
+} from "@/app/_elements/selects/delta-toggle-select";
 import { GroupBy, GROUP_BY_LABELS } from "@/lib/group-by";
 
 import { RecipeID } from "@/__tests__/assets";
@@ -8,6 +12,7 @@ import { makeRecipesTestName, makeRecipesScreenshotFilename } from "@/__tests__/
 import {
   getIngredientNameInputAtIdx,
   getPropertiesPanelKeyFilterSelectInput,
+  getPropertiesPanelDeltaToggleSelectInput,
   getGroupBySelectInput,
   pasteRecipeAndWaitForUpdate,
   goToPageAndWaitFor,
@@ -191,6 +196,31 @@ test.describe("Visual Regression: Panels, Properties Group-by Modes", () => {
   testGroupedMode(GroupBy.GroupedRepeat, KeyFilter.All, "repeat-all");
   testGroupedMode(GroupBy.GroupedOnce, KeyFilter.Active, "once-active");
   testGroupedMode(GroupBy.GroupedRepeat, KeyFilter.Active, "repeat-active");
+});
+
+test.describe("Visual Regression: Panels, Properties Delta Modes", () => {
+  const testDeltaMode = (deltaToggle: DeltaToggle, filenameSuffix: string) => {
+    test(`PropertiesTable delta (${filenameSuffix})`, async ({ page, browserName }) => {
+      await goToPageAndPasteRecipes(page, browserName, [
+        RecipeID.Main,
+        RecipeID.RefA,
+        RecipeID.RefB,
+      ]);
+      const panel = await locatePanelAndExpectVisible(page, "#properties-panel");
+
+      await selectOption(
+        page,
+        getPropertiesPanelDeltaToggleSelectInput(page),
+        DELTA_TOGGLE_SHORT_LABELS[deltaToggle],
+      );
+
+      await panel.locator("div").nth(1).scrollIntoViewIfNeeded();
+      await expect(panel).toHaveScreenshot(`properties-panel-delta-${filenameSuffix}.png`);
+    });
+  };
+
+  testDeltaMode(DeltaToggle.Absolute, "absolute");
+  testDeltaMode(DeltaToggle.Relative, "relative");
 });
 
 test.describe("Visual Regression: Panels, Interactive States", () => {

@@ -71,6 +71,11 @@ export function getPropertiesPanelKeyFilterSelectInput(page: Page) {
   return getSelectControl(page, "#properties-panel #key-filter-select");
 }
 
+/** Get `PropertiesPanel`'s `DeltaToggle` select input element, in `DeltaToggleSelect` */
+export function getPropertiesPanelDeltaToggleSelectInput(page: Page) {
+  return getSelectControl(page, "#properties-panel #delta-toggle-select");
+}
+
 /** Get the global `GroupBy` listbox control in the navbar `GroupBySelect`. */
 export function getGroupBySelectInput(page: Page) {
   return getSelectControl(page, "#group-by-select");

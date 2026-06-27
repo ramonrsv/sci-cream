@@ -7,6 +7,10 @@ import { propKeyAsModifiedShortStr } from "@/app/_elements/charts/properties-cha
 import { makeEmptyRecipe, makeEmptyRecipeContext } from "@/lib/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle, QTY_TOGGLE_SHORT_LABELS } from "@/app/_elements/selects/qty-toggle-select";
+import {
+  DeltaToggle,
+  DELTA_TOGGLE_SHORT_LABELS,
+} from "@/app/_elements/selects/delta-toggle-select";
 import { selectOption } from "@/__tests__/unit/select";
 
 import {
@@ -83,6 +87,11 @@ export async function setKeyFilterSelect(container: HTMLElement, optionValue: Ke
 /** Find a `QtyToggle` element and select the requested quantity toggle option. */
 export async function setQtyToggle(container: HTMLElement, optionValue: QtyToggle) {
   await selectOption(container, "#qty-toggle-select", QTY_TOGGLE_SHORT_LABELS[optionValue]);
+}
+
+/** Find a `DeltaToggle` element and select the requested delta toggle option. */
+export async function setDeltaToggle(container: HTMLElement, optionValue: DeltaToggle) {
+  await selectOption(container, "#delta-toggle-select", DELTA_TOGGLE_SHORT_LABELS[optionValue]);
 }
 
 /** Find the 'Clear' button in `RecipeEditor` */

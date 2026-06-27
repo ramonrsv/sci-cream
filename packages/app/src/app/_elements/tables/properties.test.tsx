@@ -16,8 +16,12 @@ import {
 } from "@/app/_elements/tables/properties";
 import { RecipeSummary, filterActiveSlots } from "@/lib/recipe";
 import { QtyToggle, QTY_TOGGLE_SHORT_LABELS } from "@/app/_elements/selects/qty-toggle-select";
+import {
+  DeltaToggle,
+  DELTA_TOGGLE_SHORT_LABELS,
+} from "@/app/_elements/selects/delta-toggle-select";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
-import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
+import { applyQtyToggleAndFormat, computeDeltaAndFormat } from "@/lib/comp-value-format";
 
 import {
   CompKey,
@@ -33,7 +37,7 @@ import {
 
 import { STORAGE_KEYS } from "@/lib/local-storage";
 
-import { makeMockRecipeContext, setQtyToggle } from "@/__tests__/unit/util";
+import { makeMockRecipeContext, setQtyToggle, setDeltaToggle } from "@/__tests__/unit/util";
 import { RecipeID } from "@/__tests__/assets";
 
 const SAMPLE_PROP_KEYS: PropKey[] = [
@@ -202,6 +206,115 @@ describe("PropertiesTable", () => {
       expect(row.querySelector("td.comp-val")!.textContent?.trim()).toBe(expected);
     });
   });
+
+  describe("Delta Mode", () => {
+    const DELTA_PROP_KEY = compToPropKey(CompKey.TotalFats);
+
+    /** Returns the value cells of the row for `propKey`, as trimmed strings. */
+    const getRowCells = (propKey: PropKey) => {
+      const row = screen.getByText(prop_key_as_med_str(propKey)).closest("tr")!;
+      return Array.from(row.querySelectorAll("td.comp-val")).map((td) => td.textContent?.trim());
+    };
+
+    /** Computed absolute display value for a recipe's `DELTA_PROP_KEY` cell. */
+    const expectedValue = (recipe: RecipeSummary) =>
+      applyQtyToggleAndFormat(
+        getMixProperty(recipe.mixProperties, DELTA_PROP_KEY),
+        recipe.mixTotal!,
+        recipe.mixTotal!,
+        QtyToggle.Percentage,
+        isPropKeyQuantity(DELTA_PROP_KEY),
+      ).trim();
+
+    /** Computed `main − reference` delta for `DELTA_PROP_KEY`, absolute or relative. */
+    const expectedDelta = (main: RecipeSummary, ref: RecipeSummary, relative: boolean) =>
+      computeDeltaAndFormat(
+        getMixProperty(main.mixProperties, DELTA_PROP_KEY),
+        main.mixTotal!,
+        getMixProperty(ref.mixProperties, DELTA_PROP_KEY),
+        ref.mixTotal!,
+        QtyToggle.Percentage,
+        isPropKeyQuantity(DELTA_PROP_KEY),
+        relative,
+      ).trim();
+
+    it("shows only value columns when deltaToggle is Off", () => {
+      const recipes = filterActiveSlots(
+        makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]).recipes,
+      );
+      render(
+        <PropertiesTable
+          recipes={recipes}
+          propKeys={SAMPLE_PROP_KEYS}
+          qtyToggle={QtyToggle.Percentage}
+          deltaToggle={DeltaToggle.Off}
+        />,
+      );
+
+      const cells = getRowCells(DELTA_PROP_KEY);
+      expect(cells).toHaveLength(2);
+      expect(cells[0]).toBe(expectedValue(recipes[0]));
+      expect(cells[1]).toBe(expectedValue(recipes[1]));
+    });
+
+    it("keeps reference value columns and adds an adjacent absolute delta column", () => {
+      const recipes = filterActiveSlots(
+        makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]).recipes,
+      );
+      render(
+        <PropertiesTable
+          recipes={recipes}
+          propKeys={SAMPLE_PROP_KEYS}
+          qtyToggle={QtyToggle.Percentage}
+          deltaToggle={DeltaToggle.Absolute}
+        />,
+      );
+
+      const cells = getRowCells(DELTA_PROP_KEY);
+      // main value | ref value | ref delta
+      expect(cells).toHaveLength(3);
+      expect(cells[0]).toBe(expectedValue(recipes[0]));
+      expect(cells[1]).toBe(expectedValue(recipes[1]));
+      expect(cells[2]).toBe(expectedDelta(recipes[0], recipes[1], false));
+    });
+
+    it("renders relative deltas with a percent suffix in the delta column", () => {
+      const recipes = filterActiveSlots(
+        makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]).recipes,
+      );
+      render(
+        <PropertiesTable
+          recipes={recipes}
+          propKeys={SAMPLE_PROP_KEYS}
+          qtyToggle={QtyToggle.Percentage}
+          deltaToggle={DeltaToggle.Relative}
+        />,
+      );
+
+      expect(getRowCells(DELTA_PROP_KEY)[2]).toBe(expectedDelta(recipes[0], recipes[1], true));
+    });
+
+    it("adds a Δ header beside each reference value header when delta mode is active", () => {
+      const recipes = filterActiveSlots(
+        makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]).recipes,
+      );
+      const { container } = render(
+        <PropertiesTable
+          recipes={recipes}
+          propKeys={SAMPLE_PROP_KEYS}
+          qtyToggle={QtyToggle.Percentage}
+          deltaToggle={DeltaToggle.Absolute}
+        />,
+      );
+
+      const thead = container.querySelector("thead")!;
+      // Property | Recipe | Ref A | Δ
+      expect(thead.querySelectorAll("th")).toHaveLength(4);
+      expect(within(thead).getByText("Recipe")).toBeInTheDocument();
+      expect(within(thead).getByText("Ref A")).toBeInTheDocument();
+      expect(within(thead).getByText("Δ")).toBeInTheDocument();
+    });
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -306,6 +419,50 @@ describe("PropertiesView", () => {
     });
   });
 
+  describe("DeltaToggle Integration", () => {
+    it("should not render the delta select with a single recipe", () => {
+      const recipes = filterActiveSlots(makeMockRecipeContext([RecipeID.Main]).recipes);
+      const { container } = render(<PropertiesView recipes={recipes} />);
+      expect(container.querySelector("#delta-toggle-select")).not.toBeInTheDocument();
+    });
+
+    it("should render the delta select when a reference recipe is present", () => {
+      const recipes = filterActiveSlots(
+        makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]).recipes,
+      );
+      const { container } = render(<PropertiesView recipes={recipes} />);
+      expect(container.querySelector("#delta-toggle-select")).toBeInTheDocument();
+    });
+
+    it("should default to DeltaToggle.Off", () => {
+      const recipes = filterActiveSlots(
+        makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]).recipes,
+      );
+      const { container } = render(<PropertiesView recipes={recipes} />);
+      expect(getSelectedOptionLabel(container, "#delta-toggle-select")).toBe(
+        DELTA_TOGGLE_SHORT_LABELS[DeltaToggle.Off],
+      );
+    });
+
+    it("should add a delta column when switched to Absolute", async () => {
+      const recipes = filterActiveSlots(
+        makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]).recipes,
+      );
+      const { container } = render(<PropertiesView recipes={recipes} />);
+
+      const firstRowCellCount = () =>
+        container.querySelector("tbody tr")!.querySelectorAll("td.comp-val").length;
+
+      // Off: main value + ref value only.
+      expect(firstRowCellCount()).toBe(2);
+
+      await setDeltaToggle(container, DeltaToggle.Absolute);
+
+      // Absolute: main value + ref value + ref delta.
+      expect(firstRowCellCount()).toBe(3);
+    });
+  });
+
   describe("KeyFilter Integration", () => {
     it("should default to KeyFilter.Auto", () => {
       const { container } = render(<PropertiesView recipes={[]} />);
@@ -348,9 +505,25 @@ describe("PropertiesView", () => {
 
   describe("Select persistence", () => {
     const QTY_KEY = `${STORAGE_KEYS.propertiesPanelView}:qty`;
+    const DELTA_KEY = `${STORAGE_KEYS.propertiesPanelView}:delta`;
 
     beforeEach(() => {
       localStorage.clear();
+    });
+
+    it("writes the DeltaToggle leaf key when the select changes", async () => {
+      const recipes = filterActiveSlots(
+        makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]).recipes,
+      );
+      const { container } = render(
+        <PropertiesView recipes={recipes} persistKey={STORAGE_KEYS.propertiesPanelView} />,
+      );
+      await act(async () => {});
+
+      await setDeltaToggle(container, DeltaToggle.Relative);
+      await act(async () => {});
+
+      expect(localStorage.getItem(DELTA_KEY)).toBe(JSON.stringify(DeltaToggle.Relative));
     });
 
     it("writes the QtyToggle leaf key when the select changes", async () => {

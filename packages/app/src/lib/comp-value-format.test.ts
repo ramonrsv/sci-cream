@@ -3,6 +3,7 @@ import { expect, test, describe } from "vitest";
 import {
   applyQtyToggle,
   applyQtyToggleAndFormat,
+  computeDelta,
   formatCompositionValue,
   padToFixedDecimalPosition,
   roundToCompositionValueFormat,
@@ -260,5 +261,42 @@ describe("applyQtyToggleAndFormat", () => {
 
   test("returns empty string when comp is 0", () => {
     expect(applyQtyToggleAndFormat(0, 100, 500, QtyToggle.Composition, true)).toBe("");
+  });
+});
+
+describe("computeDelta", () => {
+  test("absolute delta is main minus reference in the active units", () => {
+    // Composition mode passes comp through, so the delta is the raw difference.
+    expect(computeDelta(10, 100, 7, 100, QtyToggle.Composition, true, false)).toBeCloseTo(3);
+    expect(computeDelta(7, 100, 10, 100, QtyToggle.Composition, true, false)).toBeCloseTo(-3);
+  });
+
+  test("absolute delta in Quantity mode uses each recipe's own mixTotal", () => {
+    // 2g/100g over 1000g main = 20g; 2g/100g over 500g ref = 10g; delta = +10g.
+    expect(computeDelta(2, 1000, 2, 500, QtyToggle.Quantity, true, false)).toBeCloseTo(10);
+  });
+
+  test("relative delta is the difference as a percent of the reference", () => {
+    // main 12, ref 10 → +2 over 10 → +20%.
+    expect(computeDelta(12, 100, 10, 100, QtyToggle.Composition, true, true)).toBeCloseTo(20);
+  });
+
+  test("non-quantity properties difference regardless of qtyToggle", () => {
+    // Temperatures pass through unchanged; main -15, ref -18 → +3.
+    expect(
+      computeDelta(-15, undefined, -18, undefined, QtyToggle.Percentage, false, false),
+    ).toBeCloseTo(3);
+  });
+
+  test("returns undefined when the difference is zero", () => {
+    expect(computeDelta(5, 100, 5, 100, QtyToggle.Composition, true, false)).toBeUndefined();
+  });
+
+  test("relative delta is NaN when the reference value is zero", () => {
+    expect(computeDelta(5, 100, 0, 100, QtyToggle.Composition, true, true)).toBeNaN();
+  });
+
+  test("treats a zero reference component as 0 for an absolute delta", () => {
+    expect(computeDelta(5, 100, 0, 100, QtyToggle.Composition, true, false)).toBeCloseTo(5);
   });
 });
