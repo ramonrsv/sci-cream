@@ -21,17 +21,23 @@ import { verify, verifyAreNotNegative } from "./util";
  * @param decimals - Number of decimal places to round to. Must be ≤ `decimal_pad_digits`.
  * @param unit_pad_digits - Minimum width of the integer part (left-padded with spaces).
  * @param decimal_pad_digits - Minimum width of the fractional part (right-padded with spaces).
+ * @param includePlusSign - Whether to include a `+` sign for positive values.
  */
 export function padToFixedDecimalPosition(
   num: number,
   decimals: number,
   unit_pad_digits: number,
   decimal_pad_digits: number,
+  includePlusSign: boolean = false,
 ) {
   verifyAreNotNegative(decimals, unit_pad_digits, decimal_pad_digits);
   verify(decimal_pad_digits >= decimals, "decimal_pad_digits must be >= decimals");
 
   const parts = Number(num.toFixed(decimals)).toString().split(".");
+  if (includePlusSign && num > 0) {
+    parts[0] = "+" + parts[0];
+  }
+
   parts[0] = parts[0].padStart(unit_pad_digits, " ");
   if (parts.length === 1) {
     return parts[0] + " ".repeat(decimal_pad_digits + 1);
@@ -50,15 +56,22 @@ export function padToFixedDecimalPosition(
  * integer (e.g. `"  2k  "`), otherwise one decimal place is shown (e.g. `"  2.5k"`).
  *
  * @param num - The number to format. Must round to ≥ 1000.
+ * @param includePlusSign - Whether to include a `+` sign for positive values.
  */
-function formatThousands(num: number) {
+function formatThousands(num: number, includePlusSign: boolean = false) {
   const numInt = num ? Math.round(num) : num;
+  const numIntAbs = numInt ? Math.abs(numInt) : numInt;
 
-  verify(numInt! >= 1000, () => `num ${num} must round to >= 1000 for formatThousands`);
+  verify(
+    numIntAbs! >= 1000,
+    () => `abs(num) ${Math.abs(num)} must round to >= 1000 for formatThousands`,
+  );
 
-  return numInt! % 1000 > 0
-    ? padToFixedDecimalPosition(num / 1000, 1, 3, 1) + "k"
-    : (numInt / 1000).toString().padStart(3, " ") + "k  ";
+  const optPlusSign = includePlusSign && num > 0 ? "+" : "";
+
+  return numIntAbs! % 1000 > 0
+    ? padToFixedDecimalPosition(num / 1000, 1, 3, 1, includePlusSign) + "k"
+    : (optPlusSign + (numInt / 1000).toString()).padStart(3, " ") + "k  ";
 }
 
 /**
@@ -73,8 +86,12 @@ function formatThousands(num: number) {
  * All branches produce a fixed-width string suitable for monospace column alignment.
  *
  * @param num - The composition value (g/100g), or `undefined` for an empty cell.
+ * @param includePlusSign - Whether to include a `+` sign for positive values.
  */
-export function formatCompositionValue(num: number | undefined) {
+export function formatCompositionValue(
+  num: number | undefined,
+  includePlusSign: boolean = false,
+): string {
   const numIntAbs = num ? Math.abs(Math.round(num)) : num;
 
   return num === undefined
@@ -82,10 +99,10 @@ export function formatCompositionValue(num: number | undefined) {
     : Number.isNaN(num)
       ? "-"
       : numIntAbs! >= 1000
-        ? formatThousands(num)
+        ? formatThousands(num, includePlusSign)
         : numIntAbs! < 10
-          ? padToFixedDecimalPosition(num, 2, 3, 2)
-          : padToFixedDecimalPosition(num, 1, 3, 2);
+          ? padToFixedDecimalPosition(num, 2, 3, 2, includePlusSign)
+          : padToFixedDecimalPosition(num, 1, 3, 2, includePlusSign);
 }
 
 /**
@@ -150,6 +167,10 @@ export function applyQtyToggleAndFormat(
   mixTotal: number | undefined,
   qtyToggle: QtyToggle,
   isQty: boolean,
+  includePlusSign: boolean = false,
 ): string {
-  return formatCompositionValue(applyQtyToggle(comp, ingQty, mixTotal, qtyToggle, isQty));
+  return formatCompositionValue(
+    applyQtyToggle(comp, ingQty, mixTotal, qtyToggle, isQty),
+    includePlusSign,
+  );
 }

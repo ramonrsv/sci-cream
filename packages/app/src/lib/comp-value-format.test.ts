@@ -113,6 +113,57 @@ describe("formatCompositionValue", () => {
   test("applies tens formatting after rounding negative values to units", () => {
     expect(formatCompositionValue(-9.99)).toBe("-10   ");
   });
+
+  test("formats negative values rounded to >= 1000 with k suffix and negative sign", () => {
+    expect(formatCompositionValue(-2500)).toBe(" -2.5k");
+    expect(formatCompositionValue(-1500)).toBe(" -1.5k");
+  });
+
+  test("formats exact negative k-suffix values with negative sign", () => {
+    expect(formatCompositionValue(-1000)).toBe(" -1k  ");
+    expect(formatCompositionValue(-3000)).toBe(" -3k  ");
+  });
+
+  test("applies k formatting after rounding negative values to units", () => {
+    expect(formatCompositionValue(-999.6)).toBe(" -1k  ");
+  });
+
+  describe("with includePlusSign: true", () => {
+    test("prefixes positive sub-10 values with +", () => {
+      expect(formatCompositionValue(5.12, true)).toBe(" +5.12");
+      expect(formatCompositionValue(5.1, true)).toBe(" +5.1 ");
+      expect(formatCompositionValue(5, true)).toBe(" +5   ");
+      expect(formatCompositionValue(5.556, true)).toBe(" +5.56");
+    });
+
+    test("prefixes positive tens values with +", () => {
+      expect(formatCompositionValue(10.5, true)).toBe("+10.5 ");
+      expect(formatCompositionValue(99.9, true)).toBe("+99.9 ");
+    });
+
+    test("zero is not prefixed with +", () => {
+      expect(formatCompositionValue(0, true)).toBe("  0   ");
+    });
+
+    test("negative values are not affected by includePlusSign", () => {
+      expect(formatCompositionValue(-5.12, true)).toBe(" -5.12");
+      expect(formatCompositionValue(-10.5, true)).toBe("-10.5 ");
+    });
+
+    test("k-suffix values with a decimal part get + prefix", () => {
+      expect(formatCompositionValue(2500, true)).toBe(" +2.5k");
+    });
+
+    test("exact k-suffix values (no decimal part) get + prefix", () => {
+      expect(formatCompositionValue(1000, true)).toBe(" +1k  ");
+      expect(formatCompositionValue(3000, true)).toBe(" +3k  ");
+    });
+
+    test("NaN and undefined are unaffected by includePlusSign", () => {
+      expect(formatCompositionValue(NaN, true)).toBe("-");
+      expect(formatCompositionValue(undefined, true)).toBe("");
+    });
+  });
 });
 
 describe("roundToCompositionValueFormat", () => {
