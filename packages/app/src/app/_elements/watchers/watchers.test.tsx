@@ -28,6 +28,7 @@ import { selectOption, getSelectedOptionLabel } from "@/__tests__/unit/select";
 import { RecipeID } from "@/__tests__/assets";
 import { WASM_BRIDGE } from "@/__tests__/util";
 import { roundToCompositionValueFormat } from "@/lib/comp-value-format";
+import { DeltaToggle } from "../selects/delta-toggle-select";
 
 const MSNF = compToPropKey(CompKey.MSNF);
 const TOTAL_SOLIDS = compToPropKey(CompKey.TotalSolids);
@@ -53,6 +54,7 @@ describe("WatcherCard", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -68,6 +70,7 @@ describe("WatcherCard", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -89,6 +92,7 @@ describe("WatcherCard", () => {
       <WatcherCard
         propKey={TOTAL_FATS}
         main={main}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -109,6 +113,7 @@ describe("WatcherCard", () => {
         propKey={MSNF}
         main={main}
         refs={[refA, refB]}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -125,6 +130,7 @@ describe("WatcherCard", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -150,6 +156,7 @@ describe("WatcherCard", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -175,6 +182,7 @@ describe("WatcherCard", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={onTargetChange}
         onPriorityChange={vi.fn()}
@@ -193,6 +201,7 @@ describe("WatcherCard", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Off}
         target={9.5}
         onTargetChange={onTargetChange}
         onPriorityChange={vi.fn()}
@@ -212,6 +221,7 @@ describe("WatcherCard", () => {
         propKey={MSNF}
         main={main}
         refs={[refA]}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -230,6 +240,7 @@ describe("WatcherCard", () => {
         propKey={MSNF}
         main={main}
         refs={[refA]}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={onTargetChange}
         onPriorityChange={vi.fn()}
@@ -255,6 +266,7 @@ describe("WatcherCard", () => {
         propKey={MSNF}
         main={main}
         refs={[refA]}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={onTargetChange}
         onPriorityChange={vi.fn()}
@@ -273,6 +285,7 @@ describe("WatcherCard", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -289,6 +302,7 @@ describe("WatcherCard", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         removable={false}
         onTargetChange={vi.fn()}
@@ -305,6 +319,7 @@ describe("WatcherCard", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Off}
         target={9.5}
         priority={Priority.Critical}
         onTargetChange={vi.fn()}
@@ -323,6 +338,7 @@ describe("WatcherCard", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Off}
         target={9.5}
         onTargetChange={vi.fn()}
         onPriorityChange={onPriorityChange}
@@ -340,6 +356,7 @@ describe("WatcherCard", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Off}
         target={9.5}
         priority={Priority.Critical}
         onTargetChange={vi.fn()}
@@ -354,6 +371,7 @@ describe("WatcherCard", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Off}
         target={9.5}
         priority={Priority.Low}
         onTargetChange={vi.fn()}
@@ -371,6 +389,7 @@ describe("WatcherCard", () => {
       <WatcherCard
         propKey={MSNF}
         main={emptyMain}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -406,6 +425,7 @@ describe("WatcherCard delta", () => {
         propKey={MSNF}
         main={main}
         refs={[refA]}
+        deltaToggle={DeltaToggle.Absolute}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -433,6 +453,7 @@ describe("WatcherCard delta", () => {
         propKey={MSNF}
         main={main}
         refs={[emptyRef]}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -454,6 +475,7 @@ describe("WatcherCard delta", () => {
         propKey={MSNF}
         main={main}
         refs={[stubRef]}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -476,6 +498,7 @@ describe("WatcherCard delta", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Absolute}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -495,6 +518,7 @@ describe("WatcherCard delta", () => {
       <WatcherCard
         propKey={MSNF}
         main={emptyMain}
+        deltaToggle={DeltaToggle.Absolute}
         target={9.5}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -514,6 +538,7 @@ describe("WatcherCard delta", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Absolute}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -527,6 +552,7 @@ describe("WatcherCard delta", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Absolute}
         target={current}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -550,6 +576,7 @@ describe("WatcherCard delta", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Absolute}
         target={100} // far above Main's MSNF (~8.87)
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -574,6 +601,7 @@ describe("WatcherCard delta", () => {
       <WatcherCard
         propKey={MSNF}
         main={main}
+        deltaToggle={DeltaToggle.Absolute}
         target={0} // below Main's MSNF (~8.87)
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -589,6 +617,129 @@ describe("WatcherCard delta", () => {
     expect(delta.textContent).not.toContain("+");
     // Monochrome: no inline color override (neither green/red), so it inherits the text color.
     expect(delta.style.color).toBe("");
+  });
+});
+
+describe("WatcherCard delta (relative)", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  /** Reads the target-delta slot's text for MSNF on a card rendered with the given props. */
+  const renderDeltaText = (deltaToggle: DeltaToggle, target: number | undefined) => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        deltaToggle={deltaToggle}
+        target={target}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    const delta = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-target-delta"]`,
+    ) as HTMLElement;
+    expect(delta).not.toBeNull();
+    return delta.textContent ?? "";
+  };
+
+  it("suffixes the relative magnitude with a percent sign", () => {
+    // target=100 is far above Main's MSNF (~8.87); a non-zero relative magnitude is shown.
+    expect(renderDeltaText(DeltaToggle.Relative, 100)).toContain("%");
+  });
+
+  it("renders a down-triangle when the target exceeds the current value", () => {
+    // Same direction convention as absolute mode: target above current points down (▼).
+    expect(renderDeltaText(DeltaToggle.Relative, 100).startsWith("▼")).toBe(true);
+  });
+
+  it("renders an up-triangle when the target is below the current value", () => {
+    // target=5 is below Main's MSNF (~8.87) and non-zero (avoids the divide-by-zero edge).
+    expect(renderDeltaText(DeltaToggle.Relative, 5).startsWith("▲")).toBe(true);
+  });
+
+  it("points the arrow the same way as absolute mode for the same target", () => {
+    // The arrow conveys direction-to-target; switching the magnitude between absolute and relative
+    // must not flip it. Compare the leading glyph across both modes for an identical target.
+    const absoluteArrow = renderDeltaText(DeltaToggle.Absolute, 100).charAt(0);
+    const relativeArrow = renderDeltaText(DeltaToggle.Relative, 100).charAt(0);
+    expect(relativeArrow).toBe(absoluteArrow);
+  });
+
+  it("shows the met indicator (no arrow/magnitude) when the relative delta rounds to zero", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const current = parseFloat(
+      (() => {
+        const { container } = render(
+          <WatcherCard
+            propKey={MSNF}
+            main={main}
+            deltaToggle={DeltaToggle.Relative}
+            target={undefined}
+            onTargetChange={vi.fn()}
+            onPriorityChange={vi.fn()}
+            onRemove={vi.fn()}
+          />,
+        );
+        const value = container.querySelector('[title="Current value"]')!.textContent!;
+        cleanup();
+        return value;
+      })(),
+    );
+
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        deltaToggle={DeltaToggle.Relative}
+        target={current}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(
+      container.querySelector(`[data-testid="watcher-card-${String(MSNF)}-target-met"]`),
+    ).not.toBeNull();
+    const delta = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-target-delta"]`,
+    ) as HTMLElement;
+    expect(delta.textContent).toBe("");
+  });
+
+  it("renders '-%' with no arrow when the relative target is zero", () => {
+    // A relative diff against a zero target is undefined; it shows the NaN dash with the percent
+    // suffix and no direction arrow, matching how NaN renders elsewhere.
+    const text = renderDeltaText(DeltaToggle.Relative, 0);
+    expect(text).toBe("-%");
+    expect(text).not.toContain("▲");
+    expect(text).not.toContain("▼");
+  });
+
+  it("omits the target-delta slot entirely when the delta toggle is Off", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        deltaToggle={DeltaToggle.Off}
+        target={9.5}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(
+      container.querySelector(`[data-testid="watcher-card-${String(MSNF)}-target-delta"]`),
+    ).toBeNull();
   });
 });
 
@@ -608,6 +759,7 @@ describe("WatcherCard non-balanceable key", () => {
       <WatcherCard
         propKey={SERVING_TEMP}
         main={main}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -627,6 +779,7 @@ describe("WatcherCard non-balanceable key", () => {
       <WatcherCard
         propKey={SERVING_TEMP}
         main={main}
+        deltaToggle={DeltaToggle.Absolute}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -640,12 +793,32 @@ describe("WatcherCard non-balanceable key", () => {
     expect(delta.style.visibility).toBe("hidden");
   });
 
+  it("removes the delta span from the DOM when the delta toggle is Off (non-balanceable key)", () => {
+    // Off removal takes precedence over the hidden-slot path: the span is absent, not just hidden.
+    const main = makeMockRecipe(RecipeID.Main);
+    const { container } = render(
+      <WatcherCard
+        propKey={SERVING_TEMP}
+        main={main}
+        deltaToggle={DeltaToggle.Off}
+        target={undefined}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(
+      container.querySelector(`[data-testid="watcher-card-${String(SERVING_TEMP)}-target-delta"]`),
+    ).toBeNull();
+  });
+
   it("sets tabIndex=-1 on the target input for a non-balanceable key", () => {
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(
       <WatcherCard
         propKey={SERVING_TEMP}
         main={main}
+        deltaToggle={DeltaToggle.Absolute}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
@@ -666,6 +839,7 @@ describe("WatcherCard non-balanceable key", () => {
         propKey={SERVING_TEMP}
         main={main}
         refs={[refA]}
+        deltaToggle={DeltaToggle.Off}
         target={undefined}
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}

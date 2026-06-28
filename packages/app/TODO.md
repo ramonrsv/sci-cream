@@ -50,8 +50,6 @@
       and based on proximity to the balancing target. Figure out how to handle overlapping concerns.
 - [ ] Add support for displaying balancing targets in `PropertiesBarChart`; move up to context?
 - [ ] Add some checkmark-style visual feedback if a balance operation meets target within tolerance.
-- [ ] `WatcherCard`, and eventually `PropertiesView`, show deltas between reference and current, and
-      to balancing targets. These could be absolute (qty or %), or a relative %; how to handle this?
 - [ ] Look into whether setting targets from reference should also set zero targets for active keys.
 - [ ] Looking into adding functionality to show recipe diffs (ingredient, quantities). Maybe useful
       to compare recipe versions. Comparing ingredient lines may be tricky, similar to a git diff.
@@ -125,6 +123,8 @@
 
 ## Completed
 
+- [x] `WatcherCard`, and eventually `PropertiesView`, show deltas between reference and current, and
+      to balancing targets. These could be absolute (qty or %), or a relative %; how to handle this?
 - [x] Add support for `MixPropertiesGrid` to show deltas between the main recipe and the references.
 - [x] `FpdKey`s don't support balancing, so they should not have a target, but should be watchable.
 - [x] In `/recipes`, there is a fetch for user ingredients every time a recipe is selected.

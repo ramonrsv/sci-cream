@@ -62,6 +62,11 @@ import {
 } from "@workspace/sci-cream";
 
 import { WatcherIssues, KeyIssue } from "@/app/_elements/watchers/watcher-issues";
+import {
+  DeltaToggle,
+  DeltaToggleSelect,
+  useDeltaToggleState,
+} from "../selects/delta-toggle-select";
 
 /** Map of `PropKey` to user-entered target value; sparse, only set entries are tracked */
 export type TargetsMap = Partial<Record<PropKey, number>>;
@@ -135,16 +140,21 @@ type DeltaDisplay = { arrow: string; magnitude: string };
 function computeTargetDeltaAndFormat(
   mainValue: number | undefined,
   target: number | undefined,
+  isRelative: boolean,
 ): DeltaDisplay | undefined {
   if (!isUsableNumber(mainValue) || !isUsableNumber(target)) return undefined;
 
   const roundedMain = roundToCompositionValueFormat(mainValue);
   const roundedTarget = roundToCompositionValueFormat(target);
-  const delta = roundedMain - roundedTarget;
+  const delta = isRelative
+    ? roundedTarget === 0
+      ? NaN
+      : ((roundedTarget - roundedMain) / roundedTarget) * 100
+    : roundedTarget - roundedMain;
 
   return {
-    arrow: delta < 0 ? "▼" : "▲",
-    magnitude: formatCompositionValue(Math.abs(delta)).trim(),
+    arrow: Number.isNaN(delta) ? "" : delta < 0 ? "▲" : "▼",
+    magnitude: formatCompositionValue(Math.abs(delta), false, isRelative ? 1 : 2).trim(),
   };
 }
 
@@ -272,6 +282,7 @@ export function WatcherCard({
   propKey,
   main,
   refs = [],
+  deltaToggle,
   target,
   priority = Priority.Normal,
   issue,
@@ -283,6 +294,7 @@ export function WatcherCard({
   propKey: PropKey;
   main: RecipeSummary;
   refs?: RecipeSummary[];
+  deltaToggle: DeltaToggle;
   target: number | undefined;
   priority?: Priority;
   issue?: KeyIssue;
@@ -301,7 +313,11 @@ export function WatcherCard({
 
   const targetStep = getTargetStep(target, mainValue);
 
-  const targetDelta = computeTargetDeltaAndFormat(mainValue, target);
+  const targetDelta = computeTargetDeltaAndFormat(
+    mainValue,
+    target,
+    deltaToggle === DeltaToggle.Relative,
+  );
   const targetMet = targetDelta?.magnitude === "0";
 
   const meterRange = range && range.max > range.min ? range : undefined;
@@ -403,29 +419,31 @@ export function WatcherCard({
               style={{ visibility: disableInput ? "hidden" : "visible" }}
             />
             {/* Reserve the delta slot so the input doesn't shift as the target changes. */}
-            <span
-              className={`comp-val text-secondary -mr-3 w-9 text-left text-[11px]`}
-              title={targetMet ? "Target met" : "Delta from current to target"}
-              data-testid={`watcher-card-${String(propKey)}-target-delta`}
-              style={{ visibility: disableInput ? "hidden" : "visible" }}
-            >
-              {targetDelta &&
-                (targetMet ? (
-                  <Check
-                    size={COMPONENT_ACTION_ICON_SIZE - 5}
-                    className="inline align-text-bottom"
-                    style={{ color: getCssColor(Color.GraphGreen) }}
-                    aria-label="Target met"
-                    data-testid={`watcher-card-${String(propKey)}-target-met`}
-                  />
-                ) : (
-                  <>
-                    {/* Arrow sized in `em` so it scales with the digits but stays smaller. */}
-                    <span className="mr-px text-[0.7em]">{targetDelta.arrow}</span>
-                    {targetDelta.magnitude}
-                  </>
-                ))}
-            </span>
+            {deltaToggle !== DeltaToggle.Off && (
+              <span
+                className={`comp-val text-secondary -mr-3 w-9 text-left text-[11px]`}
+                title={targetMet ? "Target met" : "Delta from current to target"}
+                data-testid={`watcher-card-${String(propKey)}-target-delta`}
+                style={{ visibility: disableInput ? "hidden" : "visible" }}
+              >
+                {targetDelta &&
+                  (targetMet ? (
+                    <Check
+                      size={COMPONENT_ACTION_ICON_SIZE - 5}
+                      className="inline align-text-bottom"
+                      style={{ color: getCssColor(Color.GraphGreen) }}
+                      aria-label="Target met"
+                      data-testid={`watcher-card-${String(propKey)}-target-met`}
+                    />
+                  ) : (
+                    <>
+                      {/* Arrow sized in `em` so it scales with the digits but stays smaller. */}
+                      <span className="mr-px text-[0.7em]">{targetDelta.arrow}</span>
+                      {`${targetDelta.magnitude}${deltaToggle === DeltaToggle.Relative ? "%" : ""}`}
+                    </>
+                  ))}
+              </span>
+            )}
           </div>
         </div>
 
@@ -542,6 +560,7 @@ export function WatchersGrid({
   propKeys,
   main,
   refs = [],
+  deltaToggle,
   targets,
   priorities,
   issuesByKey = {},
@@ -553,6 +572,7 @@ export function WatchersGrid({
   propKeys: PropKey[];
   main: RecipeSummary;
   refs?: RecipeSummary[];
+  deltaToggle: DeltaToggle;
   targets: TargetsMap;
   priorities: PrioritiesMap;
   issuesByKey?: Partial<Record<PropKey, KeyIssue>>;
@@ -572,6 +592,7 @@ export function WatchersGrid({
           propKey={propKey}
           main={main}
           refs={refs}
+          deltaToggle={deltaToggle}
           target={targets[propKey]}
           priority={priorities[propKey] ?? Priority.Normal}
           issue={issuesByKey[propKey]}
@@ -623,6 +644,10 @@ export function WatchersView({
   onApplyBalancedMain?: (balanced: LightRecipe) => void;
   persistKey?: string;
 }) {
+  const [deltaToggle, setDeltaToggle, supportedDeltaToggles] = useDeltaToggleState(persistKey, {
+    defaultValue: DeltaToggle.Absolute,
+  });
+
   const {
     keyFilterState: propsFilterState,
     selectedKeysState: selectedPropsState,
@@ -842,6 +867,10 @@ export function WatchersView({
     <div className="flex h-full flex-col">
       <div className="toolbar">
         {toolbarPrefix}
+        <DeltaToggleSelect
+          supportedDeltaToggles={supportedDeltaToggles}
+          deltaToggleState={[deltaToggle, setDeltaToggle]}
+        />
         <KeyFilterSelect
           supportedKeyFilters={supportedKeyFilters}
           keyFilterState={propsFilterState}
@@ -895,6 +924,7 @@ export function WatchersView({
           propKeys={enabledProps}
           main={main}
           refs={refs}
+          deltaToggle={deltaToggle}
           targets={targets}
           priorities={priorities}
           issuesByKey={issuesByKey}

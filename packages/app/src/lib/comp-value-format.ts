@@ -91,8 +91,12 @@ function formatThousands(num: number, includePlusSign: boolean = false) {
 export function formatCompositionValue(
   num: number | undefined,
   includePlusSign: boolean = false,
+  maxDecimalPlaces: number = 2,
 ): string {
+  verify(maxDecimalPlaces === 2 || maxDecimalPlaces === 1, "maxDecimalPlaces must be in [1, 2]");
+
   const numIntAbs = num ? Math.abs(Math.round(num)) : num;
+  const decAdj = 2 - maxDecimalPlaces;
 
   return num === undefined
     ? ""
@@ -101,8 +105,8 @@ export function formatCompositionValue(
       : numIntAbs! >= 1000
         ? formatThousands(num, includePlusSign)
         : numIntAbs! < 10
-          ? padToFixedDecimalPosition(num, 2, 3, 2, includePlusSign)
-          : padToFixedDecimalPosition(num, 1, 3, 2, includePlusSign);
+          ? padToFixedDecimalPosition(num, 2 - decAdj, 3, 2 - decAdj, includePlusSign)
+          : padToFixedDecimalPosition(num, 1 - decAdj, 3, 2 - decAdj, includePlusSign);
 }
 
 /**
@@ -205,9 +209,15 @@ export function computeDelta(
 ): number | undefined {
   const mainVal = applyQtyToggle(mainComp, mainTotal, mainTotal, qtyToggle, isQty) ?? 0;
   const refVal = applyQtyToggle(refComp, refTotal, refTotal, qtyToggle, isQty) ?? 0;
-  const diff = mainVal - refVal;
+  const delta = mainVal - refVal;
 
-  return diff === 0 ? undefined : isRelative ? (refVal === 0 ? NaN : (diff / refVal) * 100) : diff;
+  return delta === 0
+    ? undefined
+    : isRelative
+      ? refVal === 0
+        ? NaN
+        : (delta / refVal) * 100
+      : delta;
 }
 
 /**
