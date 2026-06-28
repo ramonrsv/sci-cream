@@ -29,6 +29,7 @@ import {
 } from "@/__tests__/assets";
 
 import { WASM_BRIDGE } from "@/__tests__/util";
+import { STORAGE_KEYS } from "@/lib/local-storage";
 
 declare global {
   interface Window {
@@ -638,4 +639,26 @@ export async function goToPageAndPasteRecipes(
     populated.push(recipeId);
     await pasteRecipeAndWaitForUpdate(page, browserName, recipeId, populated);
   }
+}
+
+/**
+ * Inject a watcher-selection list into `localStorage` before navigation, so that `WatchersView`'s
+ * mount-time hydration picks it up. Use to control which cards appear in screenshot tests.
+ */
+export async function presetWatcherSelection(page: Page, propKeys: PropKey[]) {
+  const key = `${STORAGE_KEYS.watchersPanelView}:selected`;
+
+  await page.addInitScript(
+    ([k, keys]) => {
+      localStorage.setItem(k, JSON.stringify(keys));
+    },
+    [key, propKeys.map(String)] as const,
+  );
+}
+
+/** Locate a watcher card by its `PropKey` and assert that it is visible. */
+export async function locateWatcherCardByKeyAndExpectVisible(page: Page, propKey: PropKey) {
+  const card = page.locator(`[data-testid="watcher-card-${propKey}"]`);
+  await expect(card).toBeVisible();
+  return card;
 }

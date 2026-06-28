@@ -14,40 +14,21 @@ import {
 } from "@workspace/sci-cream";
 
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
-import { goToPageAndWaitFor, goToPageAndPasteRecipes } from "@/__tests__/e2e/util";
+import {
+  goToPageAndWaitFor,
+  goToPageAndPasteRecipes,
+  presetWatcherSelection,
+  locateWatcherCardByKeyAndExpectVisible,
+} from "@/__tests__/e2e/util";
 import { getSelectControl, selectOption } from "@/__tests__/e2e/select";
 import { makeRecipesTestName, makeRecipesScreenshotFilename } from "@/__tests__/visual/assets";
 import { RecipeID, getLightRecipe } from "@/__tests__/assets";
 import { WASM_BRIDGE } from "@/__tests__/util";
 
-import { STORAGE_KEYS } from "@/lib/local-storage";
-
-/**
- * Inject a watcher-selection list into `localStorage` before navigation, so that `WatchersView`'s
- * mount-time hydration picks it up. Use to control which cards appear in screenshot tests.
- */
-export async function presetWatcherSelection(page: Page, propKeys: PropKey[]) {
-  const key = `${STORAGE_KEYS.watchersPanelView}:selected`;
-
-  await page.addInitScript(
-    ([k, keys]) => {
-      localStorage.setItem(k, JSON.stringify(keys));
-    },
-    [key, propKeys.map(String)] as const,
-  );
-}
-
 /** Select `KeyFilter.Custom` to make the watcher-selection in `localStorage` visible */
 async function selectKeyFilterCustom(page: Page) {
   const control = getSelectControl(page, "#watchers-panel #key-filter-select");
   await selectOption(page, control, KeyFilter.Custom);
-}
-
-/** Locate a watcher card by its `PropKey` and assert that it is visible. */
-async function locateWatcherCardByKeyAndExpectVisible(page: Page, propKey: PropKey) {
-  const card = page.locator(`[data-testid="watcher-card-${propKey}"]`);
-  await expect(card).toBeVisible();
-  return card;
 }
 
 /** Locate the `WatchersView` and assert that it is visible. */
