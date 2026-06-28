@@ -544,7 +544,7 @@ describe("WatcherCard delta", () => {
     expect(delta.textContent).toBe("");
   });
 
-  it("renders an up-triangle and magnitude in monochrome when target exceeds current", () => {
+  it("renders a down-triangle and magnitude in monochrome when target exceeds current", () => {
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(
       <WatcherCard
@@ -560,14 +560,15 @@ describe("WatcherCard delta", () => {
       `[data-testid="watcher-card-${String(MSNF)}-target-delta"]`,
     ) as HTMLElement;
     expect(delta).not.toBeNull();
-    // Direction is an up-triangle; the magnitude is unsigned (no "+").
-    expect(delta.textContent!.startsWith("▲")).toBe(true);
-    expect(delta.textContent).not.toContain("+");
+    // Direction is a down-triangle; the magnitude is unsigned (no "+").
+    expect(delta.textContent!.startsWith("▼")).toBe(true);
+    expect(delta.textContent).not.toContain("−");
+    expect(delta.textContent).not.toContain("-");
     // Monochrome: no inline color override (neither green/red), so it inherits the text color.
     expect(delta.style.color).toBe("");
   });
 
-  it("renders a down-triangle and magnitude in monochrome when below current", () => {
+  it("renders an up-triangle and magnitude in monochrome when below current", () => {
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(
       <WatcherCard
@@ -583,10 +584,9 @@ describe("WatcherCard delta", () => {
       `[data-testid="watcher-card-${String(MSNF)}-target-delta"]`,
     ) as HTMLElement;
     expect(delta).not.toBeNull();
-    // Direction is a down-triangle; the magnitude is unsigned (no minus sign of any kind).
-    expect(delta.textContent!.startsWith("▼")).toBe(true);
-    expect(delta.textContent).not.toContain("−");
-    expect(delta.textContent).not.toContain("-");
+    // Direction is an up-triangle; the magnitude is unsigned (no minus sign of any kind).
+    expect(delta.textContent!.startsWith("▲")).toBe(true);
+    expect(delta.textContent).not.toContain("+");
     // Monochrome: no inline color override (neither green/red), so it inherits the text color.
     expect(delta.style.color).toBe("");
   });

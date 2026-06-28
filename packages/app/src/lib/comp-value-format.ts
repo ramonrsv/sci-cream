@@ -117,6 +117,14 @@ export function roundToCompositionValueFormat(num: number) {
   return parseFloat(formatCompositionValue(num));
 }
 
+/** Get the step size for a composition value so that it matches the displayed precision. */
+export function compositionFormatStep(num: number | undefined): number {
+  if (num === undefined || Number.isNaN(num)) return 1;
+
+  const numIntAbs = Math.abs(Math.round(num));
+  return numIntAbs >= 1000 ? 1 : numIntAbs < 10 ? 0.01 : 0.1;
+}
+
 /**
  * Converts a raw composition value according to the active {@link QtyToggle} mode.
  *

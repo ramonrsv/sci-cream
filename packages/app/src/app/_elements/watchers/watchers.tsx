@@ -26,6 +26,7 @@ import {
   applyQtyToggle,
   formatCompositionValue,
   roundToCompositionValueFormat,
+  compositionFormatStep,
 } from "@/lib/comp-value-format";
 import { DEFAULT_SELECTED_PROPERTIES, makeAutoHeuristicFunction } from "@/lib/sci-cream/sci-cream";
 import {
@@ -38,7 +39,7 @@ import {
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { usePersistedState } from "@/lib/use-persisted-state";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
-import { STATE_VAL, STATE_SET, standardInputStepByPercent, verify } from "@/lib/util";
+import { STATE_VAL, STATE_SET, verify } from "@/lib/util";
 
 import {
   PropKey,
@@ -127,33 +128,24 @@ function isUsableNumber(val: number | undefined): val is number {
   return val !== undefined && !Number.isNaN(val);
 }
 
-/**
- * How a target delta should display: `met` when the value matches the target to display precision
- * (magnitude rounds to zero), otherwise a direction arrow (▲ up / ▼ down) and formatted magnitude,
- * the arrow split out so it can render at its own smaller size beside the digits.
- */
-type DeltaDisplay = { met: true } | { met: false; arrow: string; magnitude: string };
+/** How a target delta should display: a direction arrow (▲ up / ▼ down) and a formatted magnitude */
+type DeltaDisplay = { arrow: string; magnitude: string };
 
-/** Resolve a numeric delta to its {@link DeltaDisplay}; null for NaN/undefined. */
-function formatDelta(delta: number | undefined): DeltaDisplay | null {
-  if (!isUsableNumber(delta)) return null;
+/** Compute the delta to a target value and format it for display */
+function computeTargetDeltaAndFormat(
+  mainValue: number | undefined,
+  target: number | undefined,
+): DeltaDisplay | undefined {
+  if (!isUsableNumber(mainValue) || !isUsableNumber(target)) return undefined;
 
-  const magnitude = formatCompositionValue(Math.abs(delta)).trim();
-  if (magnitude === "" || magnitude === "-") return null;
-  if (magnitude === "0") return { met: true };
+  const roundedMain = roundToCompositionValueFormat(mainValue);
+  const roundedTarget = roundToCompositionValueFormat(target);
+  const delta = roundedMain - roundedTarget;
 
-  return { met: false, arrow: delta > 0 ? "▲" : "▼", magnitude };
-}
-
-/** Calculate the delta between two composition values, rounded to the composition value format. */
-function calculateCompositionFormatDelta(
-  lhs: number | undefined,
-  rhs: number | undefined,
-): number | undefined {
-  if (!isUsableNumber(lhs) || !isUsableNumber(rhs)) return undefined;
-  const roundedLhs = roundToCompositionValueFormat(lhs);
-  const roundedRhs = roundToCompositionValueFormat(rhs);
-  return roundedLhs - roundedRhs;
+  return {
+    arrow: delta < 0 ? "▼" : "▲",
+    magnitude: formatCompositionValue(Math.abs(delta)).trim(),
+  };
 }
 
 /**
@@ -240,7 +232,9 @@ function setOrClearTarget(targets: TargetsMap, propKey: PropKey, val: number | u
 
 /** Step for a target input, scaled to `target` if set, else `mainValue` (NaN-safe). */
 function getTargetStep(target: number | undefined, mainValue: number | undefined): string {
-  return standardInputStepByPercent(target ?? (isUsableNumber(mainValue) ? mainValue : undefined));
+  return compositionFormatStep(
+    target ?? (isUsableNumber(mainValue) ? mainValue : undefined),
+  ).toString();
 }
 
 /** Compute the display value for a `PropKey` on a recipe, using the `Percentage` qty toggle */
@@ -307,10 +301,8 @@ export function WatcherCard({
 
   const targetStep = getTargetStep(target, mainValue);
 
-  const targetDelta =
-    target !== undefined && mainHasValue
-      ? formatDelta(calculateCompositionFormatDelta(target, mainValue))
-      : null;
+  const targetDelta = computeTargetDeltaAndFormat(mainValue, target);
+  const targetMet = targetDelta?.magnitude === "0";
 
   const meterRange = range && range.max > range.min ? range : undefined;
   const nonEmptyRefs = refs.filter((ref) => !isRecipeEmpty(ref));
@@ -413,12 +405,12 @@ export function WatcherCard({
             {/* Reserve the delta slot so the input doesn't shift as the target changes. */}
             <span
               className={`comp-val text-secondary -mr-3 w-9 text-left text-[11px]`}
-              title={targetDelta?.met ? "Target met" : "Delta from current to target"}
+              title={targetMet ? "Target met" : "Delta from current to target"}
               data-testid={`watcher-card-${String(propKey)}-target-delta`}
               style={{ visibility: disableInput ? "hidden" : "visible" }}
             >
               {targetDelta &&
-                (targetDelta.met ? (
+                (targetMet ? (
                   <Check
                     size={COMPONENT_ACTION_ICON_SIZE - 5}
                     className="inline align-text-bottom"
