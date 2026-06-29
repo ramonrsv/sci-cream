@@ -8,10 +8,8 @@ import { render, screen } from "@testing-library/react";
 vi.mock("./globals.css", () => ({ default: {} }));
 
 // Mock dependencies used by layout.tsx
-vi.mock("next/font/google", () => ({
-  Geist: () => ({ variable: "--font-geist-sans" }),
-  Geist_Mono: () => ({ variable: "--font-geist-mono" }),
-}));
+vi.mock("geist/font/sans", () => ({ GeistSans: { variable: "--font-geist-sans" } }));
+vi.mock("geist/font/mono", () => ({ GeistMono: { variable: "--font-geist-mono" } }));
 
 vi.mock("@/app/_elements/web-vitals", () => ({
   WebVitals: () => <div data-testid="web-vitals" />,

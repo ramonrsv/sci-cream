@@ -14,11 +14,20 @@ export enum DeltaToggle {
   Relative = "Relative",
 }
 
+/**
+ * The delta glyph used in delta-mode labels and headers.
+ *
+ * This is ∆ U+2206 INCREMENT, not Δ U+0394 GREEK CAPITAL DELTA. The self-hosted Geist font ships
+ * U+2206 but not U+0394, so U+2206 renders from the font itself in every environment. U+0394 would
+ * fall back to a system font, making visual snapshots non-deterministic across local and CI.
+ */
+export const DELTA_GLYPH = "∆";
+
 /** Short label for each `DeltaToggle` option, shown in the UI. */
 export const DELTA_TOGGLE_SHORT_LABELS: Record<DeltaToggle, string> = {
-  [DeltaToggle.Off]: "Δ Off",
-  [DeltaToggle.Absolute]: "Δ Abs",
-  [DeltaToggle.Relative]: "Δ Rel",
+  [DeltaToggle.Off]: `${DELTA_GLYPH} Off`,
+  [DeltaToggle.Absolute]: `${DELTA_GLYPH} Abs`,
+  [DeltaToggle.Relative]: `${DELTA_GLYPH} Rel`,
 };
 
 /**

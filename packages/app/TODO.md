@@ -111,6 +111,8 @@
 - [ ] Refine performance benchmarks; some of them may not be measuring what they claim to measure.
 - [ ] Figure out how to do visual regression tests of animations, e.g. navbar expand/collapse.
 - [ ] Look for opportunities to optimize bundle size, particularly in `/ingredients` and `/recipes`.
+- [ ] Self-hosted Geist variable woff2 ships full Unicode coverage (~138 KB vs ~51 KB latin-only).
+      Consider subsetting to latin + U+2206 (the `∆` glyph) to reclaim ~86 KB of font payload.
 - [ ] Add an app "tour" to show users the main components of the app, where to go for docs, etc.
 - [ ] Add feature to show different ranges around serving temp in `FpdGraph`, like a 'zoom'.
 - [ ] Explore options for a UI system to communicate errors/notification; popups, text bar?

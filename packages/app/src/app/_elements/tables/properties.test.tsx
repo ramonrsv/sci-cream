@@ -294,7 +294,7 @@ describe("PropertiesTable", () => {
       expect(getRowCells(DELTA_PROP_KEY)[2]).toBe(expectedDelta(recipes[0], recipes[1], true));
     });
 
-    it("adds a Δ header beside each reference value header when delta mode is active", () => {
+    it("adds a ∆ header beside each reference value header when delta mode is active", () => {
       const recipes = filterActiveSlots(
         makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]).recipes,
       );
@@ -308,11 +308,11 @@ describe("PropertiesTable", () => {
       );
 
       const thead = container.querySelector("thead")!;
-      // Property | Recipe | Ref A | Δ
+      // Property | Recipe | Ref A | ∆
       expect(thead.querySelectorAll("th")).toHaveLength(4);
       expect(within(thead).getByText("Recipe")).toBeInTheDocument();
       expect(within(thead).getByText("Ref A")).toBeInTheDocument();
-      expect(within(thead).getByText("Δ")).toBeInTheDocument();
+      expect(within(thead).getByText("∆")).toBeInTheDocument();
     });
   });
 });

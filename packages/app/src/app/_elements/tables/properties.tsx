@@ -16,6 +16,7 @@ import {
 import {
   DeltaToggle,
   DeltaToggleSelect,
+  DELTA_GLYPH,
   useDeltaToggleState,
 } from "@/app/_elements/selects/delta-toggle-select";
 import { useOrderKeys } from "@/lib/group-by";
@@ -140,7 +141,7 @@ export function PropertiesTable({
               <th className="table-header px-1.25 text-center">{recipe.id}</th>
               {showDelta && i > 0 && (
                 <th className="table-header px-1.25 text-center">
-                  {`Δ${deltaToggle === DeltaToggle.Relative ? " %" : ""}`}
+                  {`${DELTA_GLYPH}${deltaToggle === DeltaToggle.Relative ? " %" : ""}`}
                 </th>
               )}
             </Fragment>

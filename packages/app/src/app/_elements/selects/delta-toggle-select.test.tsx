@@ -14,6 +14,7 @@ import {
 import {
   DeltaToggle,
   DeltaToggleSelect,
+  DELTA_GLYPH,
   DELTA_TOGGLE_SHORT_LABELS,
   useDeltaToggleState,
 } from "./delta-toggle-select";
@@ -22,17 +23,31 @@ import {
 // DELTA_TOGGLE_SHORT_LABELS
 // ---------------------------------------------------------------------------
 
+describe("DELTA_GLYPH", () => {
+  // Must stay U+2206 INCREMENT (not U+0394 GREEK CAPITAL DELTA): the self-hosted Geist font ships
+  // U+2206 but not U+0394, so only U+2206 renders deterministically across local and CI snapshots.
+  it("is ∆ U+2206 INCREMENT, not Δ U+0394 GREEK CAPITAL DELTA", () => {
+    expect(DELTA_GLYPH.codePointAt(0)).toBe(0x2206);
+  });
+});
+
 describe("DELTA_TOGGLE_SHORT_LABELS", () => {
+  it("prefixes every label with the DELTA_GLYPH (U+2206)", () => {
+    for (const label of Object.values(DELTA_TOGGLE_SHORT_LABELS)) {
+      expect(label.codePointAt(0)).toBe(0x2206);
+    }
+  });
+
   it("maps Off to its short label", () => {
-    expect(DELTA_TOGGLE_SHORT_LABELS[DeltaToggle.Off]).toBe("Δ Off");
+    expect(DELTA_TOGGLE_SHORT_LABELS[DeltaToggle.Off]).toBe("∆ Off");
   });
 
   it("maps Absolute to its short label", () => {
-    expect(DELTA_TOGGLE_SHORT_LABELS[DeltaToggle.Absolute]).toBe("Δ Abs");
+    expect(DELTA_TOGGLE_SHORT_LABELS[DeltaToggle.Absolute]).toBe("∆ Abs");
   });
 
   it("maps Relative to its short label", () => {
-    expect(DELTA_TOGGLE_SHORT_LABELS[DeltaToggle.Relative]).toBe("Δ Rel");
+    expect(DELTA_TOGGLE_SHORT_LABELS[DeltaToggle.Relative]).toBe("∆ Rel");
   });
 });
 

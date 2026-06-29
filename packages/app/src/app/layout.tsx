@@ -1,7 +1,8 @@
 import "./globals.css";
 
 import type { Metadata } from "next";
-import { Geist, Geist_Mono } from "next/font/google";
+import { GeistSans } from "geist/font/sans";
+import { GeistMono } from "geist/font/mono";
 
 import { SessionProvider } from "next-auth/react";
 import { ThemeProvider } from "next-themes";
@@ -13,9 +14,6 @@ import { WebVitals } from "@/app/_elements/web-vitals";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 
-const geistSans = Geist({ variable: "--font-geist-sans", subsets: ["latin"] });
-const geistMono = Geist_Mono({ variable: "--font-geist-mono", subsets: ["latin"] });
-
 /** Next.js metadata for the application */
 export const metadata: Metadata = {
   title: "Ice Cream Calculator",
@@ -26,7 +24,7 @@ export const metadata: Metadata = {
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+      <body className={`${GeistSans.variable} ${GeistMono.variable} antialiased`}>
         <SessionProvider>
           <SessionResourcesProvider>
             <ThemeProvider attribute="class">
