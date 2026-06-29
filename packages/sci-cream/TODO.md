@@ -33,6 +33,9 @@
 - [ ] Look into implementing a derive macro to automatically define all field-update methods.
 - [ ] Remove `Composition` functions for calculating ratios, `get_ratio` already handles that.
 - [ ] If all children of a key have a target, we can infer the parent's target and use it in checks.
+- [ ] Add a Nutella Sweetened Hazelnut Cocoa Spread ingredient; not very useful, but it's common.
+- [ ] Look into adding delta/epsilon tolerance support to `validate_balancing_targets`, to prevent
+      spurious warnings due to app-side target input rounding; implement mirror rounding function.
 
 ## Backlog
 

@@ -52,6 +52,19 @@
 - [ ] Add some checkmark-style visual feedback if a balance operation meets target within tolerance.
 - [ ] `WatcherCard`, and eventually `PropertiesView`, show deltas between reference and current, and
       to balancing targets. These could be absolute (qty or %), or a relative %; how to handle this?
+- [ ] Look into whether setting targets from reference should also set zero targets for active keys.
+- [ ] Looking into adding functionality to show recipe diffs (ingredient, quantities). Maybe useful
+      to compare recipe versions. Comparing ingredient lines may be tricky, similar to a git diff.
+- [ ] In `/recipes`, when `KeyFilterSelect` is `Active/All`, there is a quick flicker when switch.
+- [ ] Add support for `PropertiesChart` to auto-rotate orientation based on the pane aspect ratio.
+- [ ] Add button in `WatchersView` for clearing all targets, and maybe also for each watcher card?
+- [ ] Add a button to set current recipe values as its balancing target; useful for small changes.
+- [ ] Add toggle buttons for enabling/disabling the range bar, target, and ref values in watchers.
+- [ ] Composition values < 0.005 display `0` instead of empty. Look into where and how to handle.
+- [ ] When toolbars overflow, the vertical spacing between items doesn't look right, needs fixing.
+- [ ] Add support for coloring bars and watchers based on a value's proximity to the current target.
+- [ ] Add a lock-auto-balancing toggle to automatically balance a recipe whenever any target change
+      is made, since balancing is fast to run. It button should untoggle if recipe changes are made.
 
 ## Backlog
 
