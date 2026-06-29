@@ -10,13 +10,19 @@
  * (Turbopack) production build; `pnpm build:analyze` forces Webpack - next/bundle-analyzer doesn't
  * support Turbopack - to provide a treemap, but may report slightly different chunk sizes.
  *
- * Metrics tracked (all gzip-compressed, level 9):
+ * Metrics tracked (JS/CSS gzip-compressed at level 9; fonts measured raw — see below):
  *  - Shared framework JS: chunks loaded on every route (`rootMainFiles` + `polyfillFiles`).
  *  - `<route>` route-only JS: chunks referenced by that route's client modules, excluding shared.
  *  - `<route>` first-load JS: shared + route-only — what a user downloads on first visit.
  *  - Total static JS / CSS: walks every file under `.next/static/chunks/`. A lazy chunk added via
  *    `next/dynamic` shows up here but not in any route's first-load number — that delta is the
  *    payoff for code-splitting heavy deps (markdown, syntax highlighting, etc.).
+ *  - Total fonts (raw): font files under `.next/static/media/`. On the preload critical path and
+ *    low-noise, so gated alongside the JS/CSS metrics. Measured raw — woff2 is already compressed.
+ *
+ * Also emits a separate `bench_output_media.json` with one raw-byte metric for everything under
+ * `.next/static/media/` (fonts, statically-imported images, icons). Its own file lets the CI step
+ * report it track-only — a legitimate new image import grows it without gating the build.
  */
 
 import * as fs from "node:fs";
@@ -32,7 +38,12 @@ import {
 const APP_DIR = process.cwd();
 const NEXT_DIR = path.join(APP_DIR, ".next");
 const STATIC_CHUNKS_DIR = path.join(NEXT_DIR, "static", "chunks");
+const STATIC_MEDIA_DIR = path.join(NEXT_DIR, "static", "media");
 const OUTPUT_FILENAME = "bench_output_bundle.json";
+const MEDIA_OUTPUT_FILENAME = "bench_output_media.json";
+
+/** Font file extensions emitted under `.next/static/media`, for the gated fonts-only metric */
+const FONT_EXTS = [".woff2", ".woff", ".ttf", ".otf", ".eot"];
 
 /**
  * Routes whose per-route first-load JS we surface as individual metrics. Curated rather than
@@ -106,6 +117,19 @@ function walkSumGzip(dir: string, exts: string[]): number {
   return total;
 }
 
+/** Recursively walk `dir`, summing raw bytes of files, filtered to `exts` when provided */
+function walkSumRaw(dir: string, exts?: string[]): number {
+  if (!fs.existsSync(dir)) return 0;
+  let total = 0;
+  for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+    const fp = path.join(dir, entry.name);
+    if (entry.isDirectory()) total += walkSumRaw(fp, exts);
+    else if (entry.isFile() && (!exts || exts.some((e) => entry.name.endsWith(e))))
+      total += fs.statSync(fp).size;
+  }
+  return total;
+}
+
 /** Compute every tracked bundle-size metric and write the results JSON for CI to upload */
 function main(): void {
   if (!fs.existsSync(NEXT_DIR)) {
@@ -140,14 +164,24 @@ function main(): void {
 
   results.push(metric("Total static JS (gzip)", walkSumGzip(STATIC_CHUNKS_DIR, [".js"])));
   results.push(metric("Total static CSS (gzip)", walkSumGzip(STATIC_CHUNKS_DIR, [".css"])));
+  results.push(metric("Total fonts (raw)", walkSumRaw(STATIC_MEDIA_DIR, FONT_EXTS)));
+
+  // Full `.next/static/media` tree (fonts, images, icons), already compressed so measured raw.
+  const mediaResults: BenchmarkResult[] = [
+    metric("Total static media (raw)", walkSumRaw(STATIC_MEDIA_DIR)),
+  ];
 
   console.log("Bundle size benchmarks:");
-  for (const r of results)
+  for (const r of [...results, ...mediaResults])
     console.log(`  ${r.name.padEnd(48)} ${(r.central / 1024).toFixed(2).padStart(7)} KB`);
 
   writeBenchmarkResultsToFile(
     results.map((r) => formatByteSizeBenchmarkResultForUpload(r, "KB")),
     OUTPUT_FILENAME,
+  );
+  writeBenchmarkResultsToFile(
+    mediaResults.map((r) => formatByteSizeBenchmarkResultForUpload(r, "KB")),
+    MEDIA_OUTPUT_FILENAME,
   );
 }
 

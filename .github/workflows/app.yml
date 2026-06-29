@@ -240,6 +240,20 @@ jobs:
           comment-on-alert: true
           alert-comment-cc-users: "@ramonrsv"
 
+      - if: vars.ACT != 'true'
+        name: Store media size benchmark result
+        uses: benchmark-action/github-action-benchmark@v1.22.1
+        with:
+          name: "App Media Sizes"
+          tool: "customSmallerIsBetter"
+          output-file-path: packages/app/bench-results/bench_output_media.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          # Track-only: a legitimate new image/font import grows media, so don't gate the build.
+          fail-on-alert: false
+          comment-on-alert: true
+          alert-comment-cc-users: "@ramonrsv"
+
   e2e_benchmarks:
     runs-on: ubuntu-latest
     permissions:
