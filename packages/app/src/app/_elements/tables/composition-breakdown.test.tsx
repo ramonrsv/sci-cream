@@ -35,7 +35,7 @@ describe("CompositionBreakdown", () => {
   // ---- Structure --------------------------------------------------------------------------
 
   describe("Structure", () => {
-    it("should render the ingredient quantity table", () => {
+    it("should render the pinned ingredient and quantity columns", () => {
       const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(
         <CompositionBreakdown
@@ -44,7 +44,9 @@ describe("CompositionBreakdown", () => {
           qtyToggle={QtyToggle.Quantity}
         />,
       );
-      expect(container.querySelector("#composition-breakdown-recipe-table")).toBeInTheDocument();
+      const table = container.querySelector("#composition-breakdown-table")! as HTMLElement;
+      expect(within(table).getByText("Ingredient")).toBeInTheDocument();
+      expect(within(table).getByText("Qty (g)")).toBeInTheDocument();
     });
 
     it("should render the ingredient composition table", () => {
@@ -72,9 +74,7 @@ describe("CompositionBreakdown", () => {
           qtyToggle={QtyToggle.Quantity}
         />,
       );
-      const thead = container.querySelector(
-        "#composition-breakdown-recipe-table thead",
-      )! as HTMLElement;
+      const thead = container.querySelector("#composition-breakdown-table thead")! as HTMLElement;
       expect(within(thead).getByText("Ingredient")).toBeInTheDocument();
     });
 
@@ -87,9 +87,7 @@ describe("CompositionBreakdown", () => {
           qtyToggle={QtyToggle.Quantity}
         />,
       );
-      const thead = container.querySelector(
-        "#composition-breakdown-recipe-table thead",
-      )! as HTMLElement;
+      const thead = container.querySelector("#composition-breakdown-table thead")! as HTMLElement;
       expect(within(thead).getByText("Qty (g)")).toBeInTheDocument();
     });
 
@@ -102,9 +100,7 @@ describe("CompositionBreakdown", () => {
           qtyToggle={QtyToggle.Percentage}
         />,
       );
-      const thead = container.querySelector(
-        "#composition-breakdown-recipe-table thead",
-      )! as HTMLElement;
+      const thead = container.querySelector("#composition-breakdown-table thead")! as HTMLElement;
       expect(within(thead).getByText("Qty (%)")).toBeInTheDocument();
     });
 
@@ -132,7 +128,7 @@ describe("CompositionBreakdown", () => {
       const expectedTotal = recipeCtx.recipes[0].mixTotal!.toFixed(0);
       expect(expectedTotal).toBe("612");
       const totalQtyCell = container.querySelector(
-        "#composition-breakdown-recipe-table thead tr:nth-child(2) td.comp-val",
+        "#composition-breakdown-table thead tr:nth-child(2) td.comp-val:not([data-comp-key])",
       )!;
       expect(totalQtyCell.textContent).toBe(expectedTotal);
     });
@@ -147,7 +143,7 @@ describe("CompositionBreakdown", () => {
         />,
       );
       const totalQtyCell = container.querySelector(
-        "#composition-breakdown-recipe-table thead tr:nth-child(2) td.comp-val",
+        "#composition-breakdown-table thead tr:nth-child(2) td.comp-val:not([data-comp-key])",
       )!;
       expect(totalQtyCell.textContent).toBe("");
     });
@@ -162,7 +158,7 @@ describe("CompositionBreakdown", () => {
         />,
       );
       const totalQtyCell = container.querySelector(
-        "#composition-breakdown-recipe-table thead tr:nth-child(2) td.comp-val",
+        "#composition-breakdown-table thead tr:nth-child(2) td.comp-val:not([data-comp-key])",
       )!;
       expect(totalQtyCell.textContent?.trim()).toBe("100");
     });
@@ -176,7 +172,7 @@ describe("CompositionBreakdown", () => {
           qtyToggle={QtyToggle.Quantity}
         />,
       );
-      const tbody = container.querySelector("#composition-breakdown-recipe-table tbody")!;
+      const tbody = container.querySelector("#composition-breakdown-table tbody")!;
       expect(tbody.querySelectorAll("tr")).toHaveLength(RECIPE_TOTAL_ROWS);
     });
 
@@ -189,9 +185,7 @@ describe("CompositionBreakdown", () => {
           qtyToggle={QtyToggle.Quantity}
         />,
       );
-      const ingTable = within(
-        container.querySelector("#composition-breakdown-recipe-table tbody")!,
-      );
+      const ingTable = within(container.querySelector("#composition-breakdown-table tbody")!);
       const lightRecipe = getLightRecipe(RecipeID.Main);
       for (const [name] of lightRecipe) {
         expect(ingTable.getByText(name as string)).toBeInTheDocument();
@@ -213,7 +207,7 @@ describe("CompositionBreakdown", () => {
         />,
       );
       const headers = container.querySelectorAll(
-        "#composition-breakdown-table thead tr:first-child th",
+        "#composition-breakdown-table thead tr:first-child th[data-comp-key]",
       );
       expect(headers).toHaveLength(compKeys.length);
     });
@@ -228,7 +222,7 @@ describe("CompositionBreakdown", () => {
         />,
       );
       const headers = container.querySelectorAll(
-        "#composition-breakdown-table thead tr:first-child th",
+        "#composition-breakdown-table thead tr:first-child th[data-comp-key]",
       );
       expect(headers).toHaveLength(0);
     });
@@ -246,7 +240,9 @@ describe("CompositionBreakdown", () => {
           qtyToggle={QtyToggle.Quantity}
         />,
       );
-      const cells = container.querySelectorAll("#composition-breakdown-table tbody td.comp-val");
+      const cells = container.querySelectorAll(
+        "#composition-breakdown-table tbody td[data-comp-key]",
+      );
       cells.forEach((cell) => expect(cell.textContent).toBe(""));
     });
 
@@ -259,7 +255,9 @@ describe("CompositionBreakdown", () => {
           qtyToggle={QtyToggle.Quantity}
         />,
       );
-      const cells = container.querySelectorAll("#composition-breakdown-table tbody td.comp-val");
+      const cells = container.querySelectorAll(
+        "#composition-breakdown-table tbody td[data-comp-key]",
+      );
       const nonEmptyCells = Array.from(cells).filter((c) => c.textContent?.trim() !== "");
       expect(nonEmptyCells.length).toBeGreaterThan(0);
     });
@@ -280,7 +278,7 @@ describe("CompositionBreakdown", () => {
       const firstIngRow = container.querySelector(
         "#composition-breakdown-table tbody tr:first-child",
       )!;
-      const cell = firstIngRow.querySelectorAll("td.comp-val")[colIdx];
+      const cell = firstIngRow.querySelectorAll("td[data-comp-key]")[colIdx];
 
       const firstRow = recipeCtx.recipes[0].ingredientRows[0];
       const expected = applyQtyToggleAndFormat(
@@ -307,7 +305,7 @@ describe("CompositionBreakdown", () => {
       const firstIngRow = container.querySelector(
         "#composition-breakdown-table tbody tr:first-child",
       )!;
-      const cell = firstIngRow.querySelectorAll("td.comp-val")[colIdx];
+      const cell = firstIngRow.querySelectorAll("td[data-comp-key]")[colIdx];
 
       const firstRow = recipeCtx.recipes[0].ingredientRows[0];
       const expected = applyQtyToggleAndFormat(
@@ -334,7 +332,7 @@ describe("CompositionBreakdown", () => {
       const totalRow = container.querySelector(
         "#composition-breakdown-table thead tr:nth-child(2)",
       )!;
-      const cell = totalRow.querySelectorAll("td.comp-val")[colIdx];
+      const cell = totalRow.querySelectorAll("td[data-comp-key]")[colIdx];
 
       const mixProps = recipeCtx.recipes[0].mixProperties;
       const mixTotal = recipeCtx.recipes[0].mixTotal;
@@ -376,11 +374,12 @@ describe("CompositionBreakdownView", () => {
       expect(container.querySelector("#key-filter-select")).toBeInTheDocument();
     });
 
-    it("should render the underlying breakdown tables", () => {
+    it("should render the underlying breakdown table", () => {
       const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<CompositionBreakdownView recipes={recipeCtx.recipes} />);
-      expect(container.querySelector("#composition-breakdown-recipe-table")).toBeInTheDocument();
-      expect(container.querySelector("#composition-breakdown-table")).toBeInTheDocument();
+      const table = container.querySelector("#composition-breakdown-table")! as HTMLElement;
+      expect(table).toBeInTheDocument();
+      expect(within(table).getByText("Ingredient")).toBeInTheDocument();
     });
 
     it("should render the toolbarPrefix inside the toolbar row", () => {
@@ -419,7 +418,9 @@ describe("CompositionBreakdownView", () => {
 
       const getQtyCells = () =>
         Array.from(
-          container.querySelectorAll("#composition-breakdown-recipe-table tbody td.comp-val"),
+          container.querySelectorAll(
+            "#composition-breakdown-table tbody td.comp-val:not([data-comp-key])",
+          ),
         ).map((td) => td.textContent);
 
       const quantityValues = getQtyCells();
@@ -434,7 +435,7 @@ describe("CompositionBreakdownView", () => {
 
       const getCompCells = () =>
         Array.from(
-          container.querySelectorAll("#composition-breakdown-table tbody td.comp-val"),
+          container.querySelectorAll("#composition-breakdown-table tbody td[data-comp-key]"),
         ).map((td) => td.textContent);
 
       const quantityValues = getCompCells();
@@ -455,7 +456,7 @@ describe("CompositionBreakdownView", () => {
       const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<CompositionBreakdownView recipes={recipeCtx.recipes} />);
       const headers = container.querySelectorAll(
-        "#composition-breakdown-table thead tr:first-child th",
+        "#composition-breakdown-table thead tr:first-child th[data-comp-key]",
       );
       expect(headers).toHaveLength(0);
     });
@@ -464,7 +465,7 @@ describe("CompositionBreakdownView", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
       const { container } = render(<CompositionBreakdownView recipes={recipeCtx.recipes} />);
       const headers = container.querySelectorAll(
-        "#composition-breakdown-table thead tr:first-child th",
+        "#composition-breakdown-table thead tr:first-child th[data-comp-key]",
       );
       expect(headers.length).toBeGreaterThan(0);
       const headerTexts = Array.from(headers).map((th) => th.textContent);
@@ -476,7 +477,7 @@ describe("CompositionBreakdownView", () => {
       const { container } = render(<CompositionBreakdownView recipes={recipeCtx.recipes} />);
       await setKeyFilterSelect(container, KeyFilter.All);
       const headers = container.querySelectorAll(
-        "#composition-breakdown-table thead tr:first-child th",
+        "#composition-breakdown-table thead tr:first-child th[data-comp-key]",
       );
       expect(headers).toHaveLength(getCompKeys().length);
     });
@@ -486,7 +487,7 @@ describe("CompositionBreakdownView", () => {
       const { container } = render(<CompositionBreakdownView recipes={recipeCtx.recipes} />);
       await setKeyFilterSelect(container, KeyFilter.Active);
       const headers = container.querySelectorAll(
-        "#composition-breakdown-table thead tr:first-child th",
+        "#composition-breakdown-table thead tr:first-child th[data-comp-key]",
       );
       expect(headers).toHaveLength(0);
     });
@@ -529,7 +530,7 @@ describe("CompositionBreakdownView", () => {
 
       const totalQtyCell = () =>
         container.querySelector(
-          "#composition-breakdown-recipe-table thead tr:nth-child(2) td.comp-val",
+          "#composition-breakdown-table thead tr:nth-child(2) td.comp-val:not([data-comp-key])",
         )!;
       expect(totalQtyCell().textContent).toBe("");
 

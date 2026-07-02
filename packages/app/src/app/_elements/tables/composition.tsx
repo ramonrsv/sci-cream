@@ -40,17 +40,17 @@ export function CompositionTable({
   };
 
   return (
-    <table>
-      <thead>
-        <tr className="h-6.25">
-          <th className="table-header w-full px-1.25">Property</th>
-          <th className="table-header px-1.25 text-center">g / 100g</th>
+    <table className="border-separate border-spacing-0">
+      <thead className="table-sticky-head">
+        <tr className="h-6.5">
+          <th className="table-col-header w-full px-1.25">Property</th>
+          <th className="table-col-header px-1.25 text-center">g / 100g</th>
         </tr>
       </thead>
       <tbody>
         {compKeys.map((compKey) => (
           <tr key={String(compKey)} className="h-6.25">
-            <td className="table-header w-full px-1.25 text-center">
+            <td className="table-emphasis w-full px-1.25 text-center">
               {comp_key_as_med_str(compKey)}
             </td>
             <td className="table-inner-cell comp-val px-1.25">{formattedCell(compKey)}</td>

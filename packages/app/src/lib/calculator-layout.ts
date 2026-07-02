@@ -14,7 +14,7 @@ import {
  * defaults). Adding or removing a panel does NOT require a bump — the fingerprint check below
  * handles that automatically.
  */
-export const LAYOUT_VERSION = 1;
+export const LAYOUT_VERSION = 3;
 
 interface StoredLayouts {
   version: number;

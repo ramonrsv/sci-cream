@@ -38,9 +38,9 @@ const DEFAULT_SELECTED_COMPS: Set<CompKey> = new Set([
 /**
  * Bare presentational breakdown of a recipe's composition.
  *
- * Renders two side-by-side tables: an ingredient/quantity table on the left and a
- * composition-per-ingredient matrix on the right, with a shared totals row at the top. The caller
- * owns the qty-toggle and comp-key selection; the breakdown just renders what it's told.
+ * Renders one horizontally-scrollable table: pinned (sticky-left) Ingredient and Qty columns, then
+ * a composition-per-ingredient column for each comp key, with a totals row beneath the header. The
+ * caller owns the qty-toggle and comp-key selection; the breakdown just renders what it's told.
  */
 export function CompositionBreakdown({
   recipe,
@@ -78,76 +78,89 @@ export function CompositionBreakdown({
       : "";
   };
 
+  // Freeze both axes: `.table-sticky-head` sticks the `<thead>` (header + totals as one layer) and
+  // the pin classes stick Ingredient/Qty left. The Ingredient column is `w-48` (192px) plus its two
+  // 1px side borders, so Qty pins at 194px to stay flush.
+  const ingPinHead = "table-pin-head left-0";
+  const qtyPinHead = "table-pin-head left-[194px]";
+  const ingPinCell = "table-pin-cell left-0";
+  const qtyPinCell = "table-pin-cell left-[194px]";
+
   return (
-    <div className="border-brd border-r">
-      {/* Ingredient & Qty Table */}
-      <div id="composition-breakdown-recipe-table">
-        <table className="float-left">
-          <thead>
-            <tr className="h-6.25">
-              <th className="table-header w-fit px-1.25">Ingredient</th>
-              <th className="table-header w-fit px-1.25">{`Qty (${qtyToggle == QtyToggle.Percentage ? "%" : "g"})`}</th>
-            </tr>
-            <tr className="h-6.25">
-              <td className="table-header w-fit px-1.25 text-center">Total</td>
-              <td className="table-header comp-val w-fit px-1.25">
-                {qtyToggle === QtyToggle.Percentage
-                  ? "100   "
-                  : recipe.mixTotal
-                    ? recipe.mixTotal.toFixed(0)
-                    : ""}
+    <div
+      id="composition-breakdown-table"
+      className="min-h-0 flex-1 overflow-auto whitespace-nowrap"
+    >
+      <table className="border-separate border-spacing-0">
+        <thead className="table-sticky-head">
+          {/* Ingredient, Qty, and CompKey headers */}
+          <tr className="h-6.5">
+            <th className={`table-col-header ${ingPinHead}`}>
+              <div className="w-48 truncate px-2 text-center">Ingredient</div>
+            </th>
+            <th className={`table-col-header ${qtyPinHead} px-3`}>
+              {`Qty (${qtyToggle == QtyToggle.Percentage ? "%" : "g"})`}
+            </th>
+            {compKeys.map((compKey) => (
+              <th
+                key={compKey}
+                data-comp-key={String(compKey)}
+                className="table-col-header px-1 text-center"
+              >
+                {comp_key_as_med_str(compKey)}
+              </th>
+            ))}
+          </tr>
+          {/* Totals row */}
+          <tr className="h-6.25">
+            <td className={`table-emphasis ${ingPinHead} px-1.25 text-center`}>Total</td>
+            <td className={`table-emphasis comp-val ${qtyPinHead} px-1.25`}>
+              {qtyToggle === QtyToggle.Percentage
+                ? "100   "
+                : recipe.mixTotal
+                  ? recipe.mixTotal.toFixed(0)
+                  : ""}
+            </td>
+            {compKeys.map((compKey) => (
+              <td
+                key={compKey}
+                data-comp-key={String(compKey)}
+                className="table-emphasis comp-val px-1"
+              >
+                {formattedTotalCell(compKey)}
               </td>
-            </tr>
-          </thead>
-          <tbody>
-            {recipe.ingredientRows.map((row) => (
-              <tr key={row.index} className="h-6.25">
-                <td className="table-inner-cell w-fit px-2">{row.name}</td>
-                <td className="table-inner-cell comp-val w-17 px-2">
-                  {row.quantity && recipe.mixTotal
-                    ? qtyToggle === QtyToggle.Percentage
-                      ? formatCompositionValue((row.quantity / recipe.mixTotal) * 100)
-                      : row.quantity
-                    : ""}
-                </td>
-              </tr>
             ))}
-          </tbody>
-        </table>
-      </div>
-      {/* Composition Table */}
-      {/* @todo The table doesn't fully align to the right, and its parent's div is ~2px too tall */}
-      <div id="composition-breakdown-table" className="overflow-x-auto whitespace-nowrap">
-        <table>
-          <thead>
-            <tr className="h-6.25">
+          </tr>
+        </thead>
+        {/* Ingredients, quantities, and composition values */}
+        <tbody>
+          {recipe.ingredientRows.map((row) => (
+            <tr key={row.index} className="h-6.25">
+              <td className={`table-inner-cell ${ingPinCell} p-0`}>
+                <div className="w-48 truncate px-2" title={row.name}>
+                  {row.name}
+                </div>
+              </td>
+              <td className={`table-inner-cell comp-val ${qtyPinCell} px-2`}>
+                {row.quantity && recipe.mixTotal
+                  ? qtyToggle === QtyToggle.Percentage
+                    ? formatCompositionValue((row.quantity / recipe.mixTotal) * 100)
+                    : row.quantity
+                  : ""}
+              </td>
               {compKeys.map((compKey) => (
-                <th key={compKey} className="table-header w-fit px-1 text-center">
-                  {comp_key_as_med_str(compKey)}
-                </th>
-              ))}
-            </tr>
-            <tr className="h-6.25">
-              {compKeys.map((compKey) => (
-                <td key={compKey} className="table-header comp-val px-1">
-                  {formattedTotalCell(compKey)}
+                <td
+                  key={compKey}
+                  data-comp-key={String(compKey)}
+                  className="table-inner-cell comp-val px-1"
+                >
+                  {formattedCompCell(row, compKey)}
                 </td>
               ))}
             </tr>
-          </thead>
-          <tbody>
-            {recipe.ingredientRows.map((row) => (
-              <tr key={row.index} className="h-6.25">
-                {compKeys.map((compKey) => (
-                  <td key={compKey} className="table-inner-cell comp-val px-1">
-                    {formattedCompCell(row, compKey)}
-                  </td>
-                ))}
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -213,7 +226,7 @@ export function CompositionBreakdownView({
   const recipe = allRecipes[currentRecipeIdx];
 
   return (
-    <>
+    <div className="flex h-full flex-col">
       <div className="toolbar">
         {toolbarPrefix}
         {(enabledRecipes.length > 1 || currentRecipeIdx !== 0) && (
@@ -236,6 +249,6 @@ export function CompositionBreakdownView({
         />
       </div>
       <CompositionBreakdown recipe={recipe} compKeys={getEnabledComps()} qtyToggle={qtyToggle} />
-    </>
+    </div>
   );
 }

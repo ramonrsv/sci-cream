@@ -33,9 +33,9 @@ import { loadStoredLayouts, onLayoutReset, saveLayouts } from "@/lib/calculator-
  * Main calculator page: responsive drag-and-drop grid of recipe and major display components
  *
  * The layout is defined as a set of breakpoint-specific configurations, which are passed to
- * `ResponsiveGridLayout` to automatically switch between them based on the container width. Most
- * grid items can be resized horizontally and vertically, with some exceptions (e.g. the recipe
- * input grid has a fixed dimension, and the composition grid is only resizable horizontally).
+ * `ResponsiveGridLayout` to automatically switch between them based on the container width.
+ *
+ * All grid items can be resized horizontally and vertically.
  *
  * On initial load, the calculator checks for a `slot` query parameter in the URL, which indicates
  * the initial recipe index to select in `RecipeEditor`'s `RecipeSelect`; default is 0 ('Recipe').
@@ -84,18 +84,17 @@ function CalculatorContent() {
   const h = REACT_GRID_COMPONENT_HEIGHT;
   const fullW = (bp: keyof typeof cols) => cols[bp];
 
-  const horiz = ["e", "w"] as ResizeHandleAxis[];
   const horizVert = ["e", "w", "s"] as ResizeHandleAxis[];
 
   /** Base layout item configuration shared across all breakpoint layouts */
   // prettier-ignore
   const base = {
-    "recipe":      { i: "recipe",      h, resizeHandles: horiz, minW: 5 },
+    "recipe":      { i: "recipe",      h, resizeHandles: horizVert, minW: 5 },
     "watchers":    { i: "watchers",    h, resizeHandles: horizVert, minW: 4 },
     "props-chart": { i: "props-chart", h, resizeHandles: horizVert },
     "properties":  { i: "properties",  h, resizeHandles: horizVert, minW: 4 },
     "fpd-graph":   { i: "fpd-graph",   h, resizeHandles: horizVert },
-    "composition": { i: "composition", h, resizeHandles: horiz, minW: 5 },
+    "composition": { i: "composition", h, resizeHandles: horizVert, minW: 5 },
   };
 
   /** Merge override properties into a base layout item, producing a fully-typed `LayoutItem` */

@@ -120,10 +120,13 @@ export function PropertiesTable({
   /** Class + style for a property label cell, indenting/emphasizing grouped rows when grouped. */
   const labelCell = (meta: { depth: number; isRollup: boolean } | undefined) => {
     if (meta === undefined) {
-      return { className: "table-header w-full px-1.25 text-center", style: undefined };
+      return {
+        className: "table-emphasis table-pin-cell left-0 w-full px-1.25 text-center",
+        style: undefined,
+      };
     }
     return {
-      className: "table-header w-full pr-1.25 text-left",
+      className: "table-emphasis table-pin-cell left-0 w-full pr-1.25 text-left",
       style: {
         paddingLeft: `${meta.depth * 1 + 0.5}rem`,
         fontWeight: meta.isRollup ? undefined : "normal",
@@ -132,15 +135,15 @@ export function PropertiesTable({
   };
 
   return (
-    <table>
-      <thead>
-        <tr className="h-6.25">
-          <th className="table-header w-full px-1.25">Property</th>
+    <table className="border-separate border-spacing-0">
+      <thead className="table-sticky-head">
+        <tr className="h-6.5">
+          <th className="table-col-header table-pin-head left-0 w-full px-1.25">Property</th>
           {recipes.map((recipe, i) => (
             <Fragment key={recipe.id}>
-              <th className="table-header px-1.25 text-center">{recipe.id}</th>
+              <th className="table-col-header px-1.25 text-center">{recipe.id}</th>
               {showDelta && i > 0 && (
-                <th className="table-header px-1.25 text-center">
+                <th className="table-col-header px-1.25 text-center">
                   {`${DELTA_GLYPH}${deltaToggle === DeltaToggle.Relative ? " %" : ""}`}
                 </th>
               )}
@@ -274,7 +277,7 @@ export function PropertiesView({
       </div>
       <div
         data-testid="properties-table-pane"
-        className="min-h-0 flex-1 overflow-y-auto whitespace-nowrap"
+        className="min-h-0 flex-1 overflow-auto whitespace-nowrap"
       >
         <PropertiesTable
           recipes={recipes}

@@ -65,40 +65,55 @@ export async function setViewportHeightForAllAppContentScreenshot(page: Page) {
 /**
  * Captures a scroll container's full content as a single stitched PNG.
  *
- * `scrollTargetTestId` identifies the scroll container by `data-testid` (defaults to
- * `app-content`, the app shell's main content area). Useful for capturing nested scrollers, e.g.
- * the search list or detail panel inside `EntitySearch`.
+ * `scrollTargetTestId` identifies the scroll container by `data-testid` (defaults to `app-content`,
+ * the app shell's main content area). Useful for capturing nested scrollers, e.g. the search list
+ * or detail panel inside `EntitySearch`.
  *
- * Unlike {@link setViewportHeightForAllAppContentScreenshot}, this keeps the viewport at its natural
- * size so viewport-adaptive components (`flex-1`, charts that observe their box, etc.) render at
- * the size a real user would see. Each viewport-sized frame is captured at successive scroll
- * positions of the target scroller, then cropped to the scroller's bounding box, trimmed for
+ * Unlike {@link setViewportHeightForAllAppContentScreenshot}, this keeps the viewport at its
+ * natural size so viewport-adaptive components (`flex-1`, charts that observe their box, etc.)
+ * render at the size a real user would see. Each viewport-sized frame is captured at successive
+ * scroll positions of the target scroller, then cropped to the scroller's bounding box, trimmed for
  * overlap, and composited vertically with `sharp`.
  *
- * Sticky elements inside the scroll container will repeat across the stitched output, since they
- * appear at the same on-screen position in every frame. Chrome outside the scroller (e.g. the
+ * A `stickyHeader` locator (e.g. a sticky `<thead>`) is kept in the first frame and cropped from
+ * every later one, so it appears once instead of repeating at each seam; the scroll step also
+ * shrinks by its height, since a sticky header occludes the content behind it (which would
+ * otherwise be lost). Other sticky elements still repeat. Chrome outside the scroller (e.g. the
  * navbar `Header`) is excluded.
  */
 export async function captureFullContent(
   page: Page,
   scrollTargetTestId = "app-content",
+  { stickyHeader }: { stickyHeader?: Locator } = {},
 ): Promise<Buffer> {
   const scroller = page.getByTestId(scrollTargetTestId);
   const box = await scroller.boundingBox();
   if (!box) throw new Error(`'${scrollTargetTestId}' scroller has no bounding box`);
 
+  const headerHeight = stickyHeader ? ((await stickyHeader.boundingBox())?.height ?? 0) : 0;
+  if (headerHeight >= box.height) {
+    throw new Error("stickyHeader is taller than the scroll viewport; cannot stitch");
+  }
+
   const dpr = await page.evaluate(() => window.devicePixelRatio);
   const totalHeight = await scroller.evaluate((el) => el.scrollHeight);
 
+  // Advance by the below-header area so content hidden behind the sticky header in one frame is
+  // revealed in the next; with no sticky header this is the full viewport (unchanged behavior).
+  const step = box.height - headerHeight;
   const positions: number[] = [];
-  for (let y = 0; y < totalHeight; y += box.height) {
+  for (let y = 0; y < totalHeight; y += step) {
     positions.push(Math.min(y, totalHeight - box.height));
   }
   const uniquePositions = [...new Set(positions)];
 
+  // Park the cursor at (0,0) — off the scrollable content, at the navbar which is cropped out
+  // — so scrolling content doesn't trigger `:hover` row highlights beneath a stationary cursor
+  await page.mouse.move(0, 0);
+
   const pieces: { buf: Buffer; height: number }[] = [];
   let prevBottom = 0;
-  for (const top of uniquePositions) {
+  for (const [i, top] of uniquePositions.entries()) {
     await scroller.evaluate(
       (el, t) => el.scrollTo({ top: t, behavior: "instant" as ScrollBehavior }),
       top,
@@ -106,9 +121,10 @@ export async function captureFullContent(
     await sleep_ms(100);
     const shot = await page.screenshot();
 
-    const overlap = Math.max(0, prevBottom - top);
-    const cropTopPx = Math.round((box.y + overlap) * dpr);
-    const cropHeightPx = Math.round((box.height - overlap) * dpr);
+    // Skip the already-captured overlap and, after the first frame, the repeated sticky header.
+    const skipTop = Math.max(i === 0 ? 0 : headerHeight, prevBottom - top);
+    const cropTopPx = Math.round((box.y + skipTop) * dpr);
+    const cropHeightPx = Math.round((box.height - skipTop) * dpr);
     if (cropHeightPx <= 0) continue;
 
     const piece = await sharp(shot)

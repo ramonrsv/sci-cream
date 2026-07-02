@@ -186,9 +186,11 @@ test.describe("Visual Regression: Panels, Properties Group-by Modes", () => {
       // captureFullContent crops to the pane's box, which overflows if it spills below the fold.
       await page.getByTestId("properties-table-pane").scrollIntoViewIfNeeded();
 
-      expect(await captureFullContent(page, "properties-table-pane")).toMatchSnapshot(
-        `properties-table-grouped-${filenameSuffix}.png`,
-      );
+      expect(
+        await captureFullContent(page, "properties-table-pane", {
+          stickyHeader: page.getByTestId("properties-table-pane").locator("thead"),
+        }),
+      ).toMatchSnapshot(`properties-table-grouped-${filenameSuffix}.png`);
     });
   };
 
@@ -270,8 +272,8 @@ test.describe("Visual Regression: Panels, Component Variations", () => {
 
     const propertiesPanel = page.locator("#properties-panel");
 
-    // Target the scrollable container with overflow-y-auto class
-    const scrollableDiv = propertiesPanel.locator("div.overflow-y-auto");
+    // Target the scrollable properties-table pane
+    const scrollableDiv = propertiesPanel.getByTestId("properties-table-pane");
     // Scroll to middle of properties list
     await scrollableDiv.evaluate((el) => (el.scrollTop = el.scrollHeight / 2));
     await page.waitForTimeout(200);

@@ -4,7 +4,7 @@ import { GripVertical } from "lucide-react";
 
 import { Recipe } from "@/lib/recipe";
 import { CompositionBreakdownView } from "@/app/_elements/tables/composition-breakdown";
-import { STD_COMPONENT_H_PX, DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
+import { DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 
 /**
@@ -14,11 +14,7 @@ import { STORAGE_KEYS } from "@/lib/local-storage";
  */
 export function CompositionBreakdownPanel({ recipes }: { recipes: Recipe[] }) {
   return (
-    <div
-      id="composition-breakdown-panel"
-      className="grid-component w-full min-w-50"
-      style={{ height: `${STD_COMPONENT_H_PX}px` }}
-    >
+    <div id="composition-breakdown-panel" className="grid-component h-full w-full min-w-50">
       <CompositionBreakdownView
         recipes={recipes}
         toolbarPrefix={<GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />}

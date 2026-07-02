@@ -58,17 +58,17 @@ export function RecipeTable({
   const rows = recipe.ingredientRows.filter((row) => row.name !== "" || row.quantity !== undefined);
 
   return (
-    <table className="w-full">
+    <table className="w-full border-separate border-spacing-0">
       <thead>
-        <tr className="h-6.25 text-center">
-          <th className="table-header">Ingredient</th>
-          <th className="table-header w-15">Qty (g)</th>
-          <th className="table-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
+        <tr className="h-6.5 text-center">
+          <th className="table-col-header">Ingredient</th>
+          <th className="table-col-header w-15">Qty (g)</th>
+          <th className="table-col-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
         </tr>
         <tr className="h-6.25">
-          <td className="table-header px-1 text-center">Total</td>
-          <td className="table-header comp-val px-3.75">{mixTotal ? mixTotal.toFixed(0) : ""}</td>
-          <td className="table-header comp-val px-1">{mixTotal ? "100   " : ""}</td>
+          <td className="table-emphasis px-1 text-center">Total</td>
+          <td className="table-emphasis comp-val px-3.75">{mixTotal ? mixTotal.toFixed(0) : ""}</td>
+          <td className="table-emphasis comp-val px-1">{mixTotal ? "100   " : ""}</td>
         </tr>
       </thead>
       <tbody>
@@ -130,17 +130,19 @@ export function RecipeEditorTable({
           <option key={name} value={name} />
         ))}
       </datalist>
-      <table className="w-full">
-        <thead>
-          <tr className="h-6.25 text-center">
-            <th className="table-header">Ingredient</th>
-            <th className="table-header w-15">Qty (g)</th>
-            <th className="table-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
+      <table className="w-full border-separate border-spacing-0">
+        <thead className="table-sticky-head">
+          <tr className="h-6.5 text-center">
+            <th className="table-col-header">Ingredient</th>
+            <th className="table-col-header w-15">Qty (g)</th>
+            <th className="table-col-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
           </tr>
           <tr className="h-6.25">
-            <td className="table-header px-1 text-center">Total</td>
-            <td className="table-header comp-val px-3.75">{mixTotal ? mixTotal.toFixed(0) : ""}</td>
-            <td className="table-header comp-val px-1">{mixTotal ? "100   " : ""}</td>
+            <td className="table-emphasis px-1 text-center">Total</td>
+            <td className="table-emphasis comp-val px-3.75">
+              {mixTotal ? mixTotal.toFixed(0) : ""}
+            </td>
+            <td className="table-emphasis comp-val px-1">{mixTotal ? "100   " : ""}</td>
           </tr>
         </thead>
         <tbody>
@@ -525,8 +527,8 @@ export function RecipeEditor({
           : undefined;
 
   return (
-    <>
-      <div className="flex items-center gap-1">
+    <div className="flex h-full flex-col">
+      <div className="flex shrink-0 items-center gap-1">
         <div className="toolbar shrink-0">
           {toolbarPrefix}
           <RecipeSelect
@@ -609,13 +611,15 @@ export function RecipeEditor({
           ))}
         </div>
       </div>
-      <RecipeEditorTable
-        recipe={currentRecipe}
-        validIngredients={validIngredients}
-        hasIngredient={wasmResources.hasIngredient}
-        onNameChange={updateCurrentIngredientRowName}
-        onQuantityChange={updateCurrentIngredientRowQuantity}
-      />
-    </>
+      <div className="min-h-0 flex-1 overflow-auto">
+        <RecipeEditorTable
+          recipe={currentRecipe}
+          validIngredients={validIngredients}
+          hasIngredient={wasmResources.hasIngredient}
+          onNameChange={updateCurrentIngredientRowName}
+          onQuantityChange={updateCurrentIngredientRowQuantity}
+        />
+      </div>
+    </div>
   );
 }

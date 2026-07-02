@@ -41,7 +41,6 @@ describe("CompositionBreakdownPanel", () => {
     it("should render the underlying view", () => {
       const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(<CompositionBreakdownPanel recipes={recipeCtx.recipes} />);
-      expect(container.querySelector("#composition-breakdown-recipe-table")).toBeInTheDocument();
       expect(container.querySelector("#composition-breakdown-table")).toBeInTheDocument();
     });
   });
