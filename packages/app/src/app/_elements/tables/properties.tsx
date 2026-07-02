@@ -247,7 +247,6 @@ export function PropertiesView({
   };
 
   const enabledProps = getEnabledProps();
-
   const orderedProps = orderKeys?.(enabledProps);
   const propKeys = orderedProps ? orderedProps.map((row) => row.key) : enabledProps;
   const rowMeta = orderedProps?.map((row) => ({ depth: row.depth, isRollup: row.isRollup }));
