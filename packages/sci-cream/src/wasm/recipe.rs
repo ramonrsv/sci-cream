@@ -159,12 +159,18 @@ impl Recipe {
     /// Returns a `serde::Error` if the `JsValue` inputs cannot be deserialized into a
     /// `(BalanceKey, f64)[]` or `(BalanceKey, Priority)[]`, or if the result cannot be serialized.
     #[wasm_bindgen(js_name = "validate_targets")]
-    pub fn validate_targets_wasm(&self, targets: Box<[JsValue]>, priorities: Box<[JsValue]>) -> JsResult<JsValue> {
+    pub fn validate_targets_wasm(
+        &self,
+        targets: Box<[JsValue]>,
+        priorities: Box<[JsValue]>,
+        rel_tol: Option<f64>,
+    ) -> JsResult<JsValue> {
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
         let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
         let comps: Vec<RustComposition> = self.lines.iter().map(|l| l.ingredient.composition.into()).collect();
 
-        serde_wasm_bindgen::to_value(&validate_balancing_targets(&comps, &targets, &priorities)).map_err(Into::into)
+        serde_wasm_bindgen::to_value(&validate_balancing_targets(&comps, &targets, &priorities, rel_tol))
+            .map_err(Into::into)
     }
 }
 

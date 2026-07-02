@@ -121,6 +121,18 @@ export function roundToCompositionValueFormat(num: number) {
   return parseFloat(formatCompositionValue(num));
 }
 
+/**
+ * Relative tolerance for the balancer's target-feasibility warnings, matched to the display
+ * precision {@link roundToCompositionValueFormat} rounds targets to.
+ *
+ * Targets are shown — and stored — at ~2–3 significant figures (0.01 below 10, 0.1 for 10–999), so
+ * a target can never sit exactly on a narrow or pinned reachable band. Passed to the WASM
+ * `validate_recipe_targets` as its relative tolerance so a target within this fraction of the band
+ * is treated as feasible instead of raising a spurious warning. ~1% comfortably covers the coarsest
+ * rounding for values above ~0.5; it is an engineering estimate, not a sourced constant.
+ */
+export const TARGET_FEASIBILITY_REL_TOL = 0.01;
+
 /** Get the step size for a composition value so that it matches the displayed precision. */
 export function compositionFormatStep(num: number | undefined): number {
   if (num === undefined || Number.isNaN(num)) return 1;

@@ -1,0 +1,28 @@
+---
+source: packages/sci-cream/src/balancing/tests.rs
+expression: "rounded_self_targets_report(&recipe, &get_typical_balancing_keys())"
+---
+=== exact ===
+targets:
+  MilkFat                 1.95
+  MSNF                    5.22
+  POD                    15.50
+  TotalSolids            22.20
+  TotalFats               1.95
+  AbsNetPAC              25.40
+
+[warning] Target ratio 'Milk Fat' : 'MSNF' (0.37) is outside the range [0.37, 0.37] the ingredients allow
+[warning] Target ratio 'Milk Fat' + 'MSNF' : 'Fats' (3.68) is outside the range [3.68, 3.68] the ingredients allow
+[warning] Target ratio 'MSNF' : 'Fats' (2.68) is outside the range [2.68, 2.68] the ingredients allow
+[information] 5 targets with only 3 ingredients: at most 2 can be met exactly, so the balance is a best-fit compromise
+
+=== tolerant (rel_tol = 0.01) ===
+targets:
+  MilkFat                 1.95
+  MSNF                    5.22
+  POD                    15.50
+  TotalSolids            22.20
+  TotalFats               1.95
+  AbsNetPAC              25.40
+
+[information] 5 targets with only 3 ingredients: at most 2 can be met exactly, so the balance is a best-fit compromise

@@ -114,6 +114,21 @@ fn filter_targets_for_keys(targets: &[(BalanceKey, f64)], keys: &[BalanceKey]) -
     targets.iter().filter(|(key, _)| keys.contains(key)).copied().collect()
 }
 
+/// Snaps `value` to the precision it is displayed at, mirroring the app's
+/// `roundToCompositionValueFormat` (`comp-value-format.ts`): 2 dp below 10, 1 dp for 10–999, and —
+/// via the `k` suffix that `parseFloat` reads back as thousands — nearest 100 (in thousands) at
+/// >= 1000. Balanceable values stay well below 1000, so the last branch is only for completeness.
+fn round_to_display_format(value: f64) -> f64 {
+    let magnitude = value.abs().round();
+    if magnitude >= 1000.0 {
+        (value / 100.0).round() / 10.0
+    } else if magnitude < 10.0 {
+        (value * 100.0).round() / 100.0
+    } else {
+        (value * 10.0).round() / 10.0
+    }
+}
+
 /// Relative error of an achieved value against its target, in percentage points.
 ///
 /// `|achieved − target| / max(|target|, FLOOR) × 100`, where `FLOOR` is
@@ -312,6 +327,18 @@ fn report_balancing_issues(
     priorities: &[(BalanceKey, Priority)],
     names: Option<&[&str]>,
 ) -> String {
+    report_balancing_issues_rel(comps, targets, priorities, names, None)
+}
+
+/// As [`report_balancing_issues`], but taking an explicit `rel_tol` (see
+/// [`validate_balancing_targets`]) so a snapshot can contrast exact validation with the tolerance.
+fn report_balancing_issues_rel(
+    comps: &[Composition],
+    targets: &[(BalanceKey, f64)],
+    priorities: &[(BalanceKey, Priority)],
+    names: Option<&[&str]>,
+    rel_tol: Option<f64>,
+) -> String {
     let mut lines = Vec::new();
 
     if let Some(names) = names {
@@ -332,7 +359,7 @@ fn report_balancing_issues(
     }
 
     lines.push(String::new());
-    lines.push(validate_balancing_targets(comps, targets, priorities).to_string());
+    lines.push(validate_balancing_targets(comps, targets, priorities, rel_tol).to_string());
 
     lines.join("\n")
 }
@@ -877,6 +904,45 @@ fn balancing_issues_report_real_recipe_typical_self_targets() {
     let comps = comps_from_light_recipe(&recipe);
     let targets = get_targets_from_light_recipe(&recipe, &get_typical_balancing_keys());
     insta::assert_snapshot!(report_balancing_issues(&comps, &targets, &[], None));
+}
+
+/// Builds the rounded-self-targets snapshot body for `recipe` over `keys`.
+///
+/// Fills each target from the recipe's own value (dropping the zero/NaN keys the app's
+/// `getDisplayValue` skips), rounds it to shown precision with `round_to_display_format`, then
+/// reports validation both exact and with the app's display tolerance (`0.01`).
+fn rounded_self_targets_report(recipe: &OwnedLightRecipe, keys: &[BalanceKey]) -> String {
+    let comps = comps_from_light_recipe(recipe);
+    let targets: Vec<(BalanceKey, f64)> = get_targets_from_light_recipe(recipe, keys)
+        .into_iter()
+        .filter(|(_, value)| value.is_finite() && *value != 0.0)
+        .map(|(key, value)| (key, round_to_display_format(value)))
+        .collect();
+
+    let exact = report_balancing_issues_rel(&comps, &targets, &[], None, None);
+    let tolerant = report_balancing_issues_rel(&comps, &targets, &[], None, Some(0.01));
+    format!("=== exact ===\n{exact}\n\n=== tolerant (rel_tol = 0.01) ===\n{tolerant}")
+}
+
+#[test]
+fn balancing_issues_report_rounded_self_targets() {
+    // A single dairy source pins MSNF:MilkFat and the other milk-sourced ratios to one value no
+    // rounded self-target can sit on: exact validation flags the drift, the tolerance clears it.
+    let recipe: OwnedLightRecipe = vec![
+        ("3.25% Milk".into(), 60.0),
+        ("Sucrose".into(), 15.0),
+        ("Water".into(), 25.0),
+    ];
+    insta::assert_snapshot!(rounded_self_targets_report(&recipe, &get_typical_balancing_keys()));
+}
+
+#[test]
+fn balancing_issues_report_rounded_self_targets_all_keys() {
+    // A full recipe's many pinned and narrow ratios flood exact validation with rounding-drift
+    // warnings; the tolerance clears them, bar a few against tiny quantities like Salt whose
+    // rounding error exceeds it.
+    let recipe = get_light_recipe_by_id("Standard Base", Some("Underbelly"));
+    insta::assert_snapshot!(rounded_self_targets_report(&recipe, &get_all_balanceable_keys()));
 }
 
 #[test]
@@ -1558,7 +1624,7 @@ fn validate_flags_duplicate_priority_as_error() {
         (CompKey::MilkFat.into(), Priority::High),
         (CompKey::MilkFat.into(), Priority::Critical),
     ];
-    let report = validate_balancing_targets(&comps, &targets, &priorities);
+    let report = validate_balancing_targets(&comps, &targets, &priorities, None);
 
     assert_true!(report.has_errors());
     assert_true!(report.errors().any(|issue| matches!(
@@ -1574,7 +1640,7 @@ fn validate_flags_priority_without_target_as_warning() {
     let comps = comps_from_names(DAIRY_ING);
     let targets = [(CompKey::MilkFat.into(), 16.0)];
     let priorities = [(CompKey::MSNF.into(), Priority::High)]; // no MSNF target
-    let report = validate_balancing_targets(&comps, &targets, &priorities);
+    let report = validate_balancing_targets(&comps, &targets, &priorities, None);
 
     assert_false!(report.has_errors());
     assert_true!(report.warnings().any(|issue| matches!(
@@ -1611,14 +1677,19 @@ fn balance_compositions_proceeds_despite_priority_without_target() {
 #[test]
 fn validate_does_not_flag_ratio_key_target() {
     // Ratio keys are now balanceable (encoded as homogeneous rows), so they are not an error.
-    let report = validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(RatioKey::AbsPAC.into(), 9.0)], &[]);
+    let report =
+        validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(RatioKey::AbsPAC.into(), 9.0)], &[], None);
     assert_false!(report.has_errors());
 }
 
 #[test]
 fn validate_flags_non_finite_target_as_error() {
-    let report =
-        validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), f64::INFINITY)], &[]);
+    let report = validate_balancing_targets(
+        &comps_from_names(DAIRY_ING),
+        &[(CompKey::MilkFat.into(), f64::INFINITY)],
+        &[],
+        None,
+    );
     assert_true!(
         report
             .errors()
@@ -1628,7 +1699,8 @@ fn validate_flags_non_finite_target_as_error() {
 
 #[test]
 fn validate_flags_negative_target_as_error() {
-    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), -5.0)], &[]);
+    let report =
+        validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), -5.0)], &[], None);
     assert_true!(report.errors().any(|issue| matches!(
         issue,
         BalancingIssue::NegativeTarget {
@@ -1641,7 +1713,7 @@ fn validate_flags_negative_target_as_error() {
 #[test]
 fn validate_flags_negative_ratio_target_as_error() {
     let report =
-        validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(RatioKey::AbsPAC.into(), -1.0)], &[]);
+        validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(RatioKey::AbsPAC.into(), -1.0)], &[], None);
     assert_true!(report.errors().any(|issue| matches!(
         issue,
         BalancingIssue::NegativeTarget {
@@ -1653,7 +1725,8 @@ fn validate_flags_negative_ratio_target_as_error() {
 
 #[test]
 fn validate_does_not_double_flag_negative_target() {
-    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), -5.0)], &[]);
+    let report =
+        validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), -5.0)], &[], None);
     assert_false!(
         report
             .warnings()
@@ -1663,7 +1736,7 @@ fn validate_does_not_double_flag_negative_target() {
 
 #[test]
 fn validate_does_not_flag_zero_target_as_negative() {
-    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), 0.0)], &[]);
+    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), 0.0)], &[], None);
     assert_false!(
         report
             .errors()
@@ -1674,7 +1747,7 @@ fn validate_does_not_flag_zero_target_as_negative() {
 #[test]
 fn validate_flags_duplicate_target_as_error() {
     let targets = [(CompKey::MilkFat.into(), 16.0), (CompKey::MilkFat.into(), 12.0)];
-    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &targets, &[]);
+    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &targets, &[], None);
     assert_true!(report.errors().any(|issue| matches!(
         issue,
         BalancingIssue::DuplicateTarget {
@@ -1688,7 +1761,7 @@ fn validate_flags_duplicate_target_as_error() {
 #[test]
 fn validate_flags_unaffectable_target_as_warning() {
     // Plain dairy has no alcohol source, so no combination can move an Alcohol target off zero.
-    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::Alcohol.into(), 5.0)], &[]);
+    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::Alcohol.into(), 5.0)], &[], None);
     assert_false!(report.has_errors());
     assert_true!(report.warnings().any(|issue| matches!(
         issue,
@@ -1706,6 +1779,7 @@ fn validate_flags_ratio_key_with_unaffectable_numerator_as_warning() {
         &comps_from_names(DAIRY_SUGAR_ING),
         &[(RatioKey::StabilizersPerWater.into(), 0.5)],
         &[],
+        None,
     );
     assert_false!(report.has_errors());
     assert_true!(report.warnings().any(|issue| matches!(
@@ -1720,8 +1794,12 @@ fn validate_flags_ratio_key_with_unaffectable_numerator_as_warning() {
 fn validate_flags_ratio_key_with_unaffectable_denominator_as_warning() {
     // A fat-free sorbet palette → the EmulsifiersPerFat denominator (TotalFats) is
     // unaffectable, so the ratio is undefined and cannot be balanced. Flagged (warning).
-    let report =
-        validate_balancing_targets(&comps_from_names(SORBET_ING), &[(RatioKey::EmulsifiersPerFat.into(), 1.0)], &[]);
+    let report = validate_balancing_targets(
+        &comps_from_names(SORBET_ING),
+        &[(RatioKey::EmulsifiersPerFat.into(), 1.0)],
+        &[],
+        None,
+    );
     assert_false!(report.has_errors());
     assert_true!(report.warnings().any(|issue| matches!(
         issue,
@@ -1734,7 +1812,8 @@ fn validate_flags_ratio_key_with_unaffectable_denominator_as_warning() {
 #[test]
 fn validate_flags_unreachable_target_as_warning() {
     // The richest dairy ingredient is 40% cream, so a 50% milk-fat target is out of reach.
-    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), 50.0)], &[]);
+    let report =
+        validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), 50.0)], &[], None);
     assert_true!(report.warnings().any(|issue| matches!(
         issue,
         BalancingIssue::UnreachableTarget {
@@ -1744,6 +1823,64 @@ fn validate_flags_unreachable_target_as_warning() {
             max: 40.0,
         }
     )));
+}
+
+#[test]
+fn ratio_tolerance_suppresses_pinned_ratio_off_by_rounding() {
+    // Cocoa is the sole source of both CocoaButter and CocoaSolids, so their ratio is pinned; a
+    // feasible target rounded to its shown precision drifts just off that single value.
+    let comps = comps_from_names(DAIRY_COCOA_ING);
+    let (pin, pin_max) = ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSolids]).unwrap();
+    assert_eq_flt_test!(pin, pin_max); // pinned: the band is a single point
+
+    // A feasible point, with CocoaButter rounded to 2 dp as shown.
+    let cocoa_solids = 4.0;
+    let cocoa_butter = (cocoa_solids * pin * 100.0).round() / 100.0;
+    let targets = [
+        (CompKey::CocoaSolids.into(), cocoa_solids),
+        (CompKey::CocoaButter.into(), cocoa_butter),
+    ];
+
+    let strict = validate_balancing_targets(&comps, &targets, &[], None);
+    assert_true!(
+        strict
+            .issues
+            .iter()
+            .any(|i| matches!(i, BalancingIssue::RatioInfeasibility { .. }))
+    );
+
+    let tolerant = validate_balancing_targets(&comps, &targets, &[], Some(0.01));
+    assert_false!(
+        tolerant
+            .issues
+            .iter()
+            .any(|i| matches!(i, BalancingIssue::RatioInfeasibility { .. }))
+    );
+}
+
+#[test]
+fn structural_tolerance_suppresses_rollup_over_sum_off_by_rounding() {
+    // MilkFat and CocoaButter are children of TotalFats, so their targets may not sum above it;
+    // rounding each part to its shown precision can nudge that sum a hair over the whole.
+    let targets = [
+        (CompKey::TotalFats.into(), 6.0),
+        (CompKey::MilkFat.into(), 3.0),
+        (CompKey::CocoaButter.into(), 3.01),
+    ];
+
+    let strict = raw_issues(|o| append_structural_issues(&targets, 0.0, o));
+    assert_true!(
+        strict
+            .iter()
+            .any(|i| matches!(i, BalancingIssue::StructuralViolation { .. }))
+    );
+
+    let tolerant = raw_issues(|o| append_structural_issues(&targets, 0.01, o));
+    assert_false!(
+        tolerant
+            .iter()
+            .any(|i| matches!(i, BalancingIssue::StructuralViolation { .. }))
+    );
 }
 
 #[test]
@@ -1761,13 +1898,13 @@ fn validate_flags_structural_violation_from_combined_non_exhaustive_children() {
     // Raw generators: CocoaButter is unaffectable (no ingredient supplies it), so the unified
     // palette search can never reference it and thus cannot see the over-sum — only the
     // palette-independent structural check flags MilkFat + CocoaButter exceeding TotalFats.
-    let structural = raw_issues(|o| append_structural_issues(&targets, o));
+    let structural = raw_issues(|o| append_structural_issues(&targets, 0.0, o));
     assert_true!(
         structural
             .iter()
             .any(|i| matches!(i, BalancingIssue::StructuralViolation { .. }))
     );
-    let palette = raw_issues(|o| append_palette_ratio_issues(&comps, &targets, o));
+    let palette = raw_issues(|o| append_palette_ratio_issues(&comps, &targets, 0.0, o));
     assert_false!(
         palette
             .iter()
@@ -1775,7 +1912,7 @@ fn validate_flags_structural_violation_from_combined_non_exhaustive_children() {
     );
 
     // Deduplicated report: the structural over-sum, with nothing to deduplicate against.
-    let report = validate_balancing_targets(&comps, &targets, &[]);
+    let report = validate_balancing_targets(&comps, &targets, &[], None);
     assert_true!(report.warnings().any(|issue| matches!(
         issue,
         BalancingIssue::StructuralViolation {
@@ -1798,8 +1935,8 @@ fn validate_flags_structural_dominance_for_sucrose_over_total_sugars() {
 
     // Raw generators: structural and the unified palette search both flag the single part over
     // its whole — structural as a StructuralViolation, the palette as a DominanceViolation.
-    let structural = raw_issues(|o| append_structural_issues(&targets, o));
-    let palette = raw_issues(|o| append_palette_ratio_issues(&comps, &targets, o));
+    let structural = raw_issues(|o| append_structural_issues(&targets, 0.0, o));
+    let palette = raw_issues(|o| append_palette_ratio_issues(&comps, &targets, 0.0, o));
     assert_true!(
         structural
             .iter()
@@ -1811,7 +1948,7 @@ fn validate_flags_structural_dominance_for_sucrose_over_total_sugars() {
             .any(|i| matches!(i, BalancingIssue::DominanceViolation { .. }))
     );
 
-    let report = validate_balancing_targets(&comps, &targets, &[]);
+    let report = validate_balancing_targets(&comps, &targets, &[], None);
     assert_false!(report.has_errors());
     // Deduplicated report: the structural framing is the only flag for this part/whole pair.
     assert_true!(report.warnings().any(|issue| matches!(
@@ -1841,11 +1978,11 @@ fn validate_flags_transitive_part_over_distant_whole() {
     // the case the removed structural-ownership skip used to drop on its transitive branch.
     let comps = comps_from_names(DAIRY_ING);
     let targets = [(CompKey::MilkFat.into(), 50.0), (CompKey::TotalSolids.into(), 40.0)];
-    let report = validate_balancing_targets(&comps, &targets, &[]);
+    let report = validate_balancing_targets(&comps, &targets, &[], None);
 
     assert_false!(report.has_errors());
     // The structural check stays silent: neither of MilkFat's direct wholes is a target.
-    assert_true!(raw_issues(|o| append_structural_issues(&targets, o)).is_empty());
+    assert_true!(raw_issues(|o| append_structural_issues(&targets, 0.0, o)).is_empty());
     // The palette dominance is reported, not lost.
     assert_true!(report.warnings().any(|issue| matches!(
         issue,
@@ -1873,8 +2010,8 @@ fn validate_flags_structural_violation_for_sugar_group_over_total_sugars() {
     // Raw generators: the structural check and the unified palette search both flag the group
     // over its whole — structural as a StructuralViolation, the palette search as the minimal
     // off-band pair (a max≤1 overshoot, so the friendlier DominanceViolation).
-    let structural = raw_issues(|o| append_structural_issues(&targets, o));
-    let palette = raw_issues(|o| append_palette_ratio_issues(&comps, &targets, o));
+    let structural = raw_issues(|o| append_structural_issues(&targets, 0.0, o));
+    let palette = raw_issues(|o| append_palette_ratio_issues(&comps, &targets, 0.0, o));
     assert_true!(
         structural
             .iter()
@@ -1886,7 +2023,7 @@ fn validate_flags_structural_violation_for_sugar_group_over_total_sugars() {
             .any(|i| matches!(i, BalancingIssue::DominanceViolation { .. }))
     );
 
-    let report = validate_balancing_targets(&comps, &targets, &[]);
+    let report = validate_balancing_targets(&comps, &targets, &[], None);
     assert_false!(report.has_errors());
     // No single-part contradiction: every individual sugar target is within TotalSugars.
     assert_false!(report.warnings().any(|issue| matches!(
@@ -1919,7 +2056,8 @@ fn validate_flags_structural_violation_for_sugar_group_over_total_sugars() {
 #[test]
 fn validate_does_not_flag_unaffectable_for_zero_target() {
     // A zero target for a key no ingredient supplies is trivially satisfied
-    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::CocoaSolids.into(), 0.0)], &[]);
+    let report =
+        validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::CocoaSolids.into(), 0.0)], &[], None);
 
     assert_false!(report.warnings().any(|issue| matches!(
         issue,
@@ -1936,7 +2074,7 @@ fn validate_does_not_flag_self_dominance_for_duplicate_target() {
     // not additionally compare the key against itself and emit a nonsensical "X exceeds X"
     let comps = comps_from_names(DAIRY_ING);
     let targets = [(CompKey::TotalSolids.into(), 30.0), (CompKey::TotalSolids.into(), 32.0)];
-    let report = validate_balancing_targets(&comps, &targets, &[]);
+    let report = validate_balancing_targets(&comps, &targets, &[], None);
 
     assert_false!(report.warnings().any(|issue| matches!(
         issue,
@@ -1946,7 +2084,7 @@ fn validate_does_not_flag_self_dominance_for_duplicate_target() {
 
 #[test]
 fn validate_clean_targets_yield_empty_report() {
-    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &DAIRY_TRIVIAL_TARGETS, &[]);
+    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &DAIRY_TRIVIAL_TARGETS, &[], None);
     assert_true!(report.is_empty());
     assert_false!(report.has_errors());
 }
@@ -1957,7 +2095,7 @@ fn validate_flags_ratio_infeasibility_for_pinned_cocoa_ratio() {
     // that pin yet keeps CocoaButter <= CocoaSolids, so only the ratio-band check catches it.
     let comps = comps_from_names(DAIRY_COCOA_ING);
     let targets = [(CompKey::CocoaButter.into(), 2.0), (CompKey::CocoaSolids.into(), 5.0)];
-    let report = validate_balancing_targets(&comps, &targets, &[]);
+    let report = validate_balancing_targets(&comps, &targets, &[], None);
 
     assert_false!(report.has_errors());
     assert_true!(report.warnings().any(|issue| matches!(
@@ -1986,7 +2124,7 @@ fn validate_flags_ratio_infeasibility_from_multiple_sources() {
     let comps = comps_from_names(DAIRY_ING);
     // MilkProteins is listed first so it becomes the numerator in the pairwise check.
     let targets = [(CompKey::MilkProteins.into(), 3.0), (CompKey::MSNF.into(), 10.0)];
-    let report = validate_balancing_targets(&comps, &targets, &[]);
+    let report = validate_balancing_targets(&comps, &targets, &[], None);
 
     assert_false!(report.has_errors());
     assert_true!(report.warnings().any(|issue| matches!(
@@ -2014,7 +2152,7 @@ fn validate_flags_multi_ratio_infeasibility_from_multiple_sources() {
         (CompKey::Glucose.into(), 0.5),
         (CompKey::Galactose.into(), 0.5),
     ];
-    let report = validate_balancing_targets(&comps, &targets, &[]);
+    let report = validate_balancing_targets(&comps, &targets, &[], None);
 
     assert_false!(report.has_errors());
     assert_true!(report.warnings().any(|issue| matches!(
@@ -2060,7 +2198,7 @@ fn validate_flags_three_key_overshoot_that_no_pair_catches() {
         (CompKey::EggFat.into(), 3.0),
         (CompKey::Salt.into(), 3.0),
     ];
-    let report = validate_balancing_targets(&comps, &targets, &[]);
+    let report = validate_balancing_targets(&comps, &targets, &[], None);
 
     assert_false!(report.has_errors());
     // Each single and pair is in-band, so no 1- or 2-key numerator is flagged — the overshoot
@@ -2095,7 +2233,7 @@ fn validate_flags_multi_ratio_infeasibility_when_combined_exceeds_band_max() {
         (CompKey::MSNF.into(), 96.0),   // MSNF/Water   = 32  — within [0.099, 32]
         (CompKey::Water.into(), 3.0),   // combined     = 32.5 — above 32.33
     ];
-    let report = validate_balancing_targets(&comps, &targets, &[]);
+    let report = validate_balancing_targets(&comps, &targets, &[], None);
 
     assert_false!(report.has_errors());
     assert_true!(report.warnings().any(|issue| matches!(
@@ -2125,7 +2263,7 @@ fn validate_no_multi_ratio_issue_when_combined_within_band() {
         (CompKey::MSNF.into(), 95.0),
         (CompKey::Water.into(), 3.0),
     ];
-    let report = validate_balancing_targets(&comps, &targets, &[]);
+    let report = validate_balancing_targets(&comps, &targets, &[], None);
 
     assert_false!(report.warnings().any(|issue| matches!(
         issue,
@@ -2142,8 +2280,8 @@ fn validate_flags_palette_dominance_for_non_structural_pair() {
 
     // Raw generators: a sibling pair is not a part/whole relation, so structural stays silent
     // and only the unified palette search flags the dominance — nothing to deduplicate against.
-    let structural = raw_issues(|o| append_structural_issues(&targets, o));
-    let palette = raw_issues(|o| append_palette_ratio_issues(&comps, &targets, o));
+    let structural = raw_issues(|o| append_structural_issues(&targets, 0.0, o));
+    let palette = raw_issues(|o| append_palette_ratio_issues(&comps, &targets, 0.0, o));
     assert_true!(structural.is_empty());
     assert_true!(
         palette
@@ -2151,7 +2289,7 @@ fn validate_flags_palette_dominance_for_non_structural_pair() {
             .any(|i| matches!(i, BalancingIssue::DominanceViolation { .. }))
     );
 
-    let report = validate_balancing_targets(&comps, &targets, &[]);
+    let report = validate_balancing_targets(&comps, &targets, &[], None);
     assert_false!(report.has_errors());
     assert_true!(report.warnings().any(|issue| matches!(
         issue,
@@ -2187,8 +2325,8 @@ fn validate_flags_rollup_sum_mismatch_for_incomplete_milk_solids() {
     // Raw generators: structural emits the roll-up mismatch; the unified palette search emits a
     // ratio infeasibility for the same children (their band is pinned at 1 by the residual-free
     // roll-up). Both make the same undershoot claim, so the report keeps only the mismatch.
-    let structural = raw_issues(|o| append_structural_issues(&targets, o));
-    let palette = raw_issues(|o| append_palette_ratio_issues(&comps, &targets, o));
+    let structural = raw_issues(|o| append_structural_issues(&targets, 0.0, o));
+    let palette = raw_issues(|o| append_palette_ratio_issues(&comps, &targets, 0.0, o));
     assert_true!(
         structural
             .iter()
@@ -2200,7 +2338,7 @@ fn validate_flags_rollup_sum_mismatch_for_incomplete_milk_solids() {
             .any(|i| matches!(i, BalancingIssue::RatioInfeasibility { .. }))
     );
 
-    let report = validate_balancing_targets(&comps, &targets, &[]);
+    let report = validate_balancing_targets(&comps, &targets, &[], None);
     assert_false!(report.has_errors());
     assert_true!(report.warnings().any(|issue| matches!(
         issue,
@@ -2225,7 +2363,8 @@ fn validate_flags_rollup_sum_mismatch_for_incomplete_milk_solids() {
 fn validate_flags_unreachable_ratio_key_target() {
     // Ratio keys now get a reachability check: every dairy ingredient has positive water, so
     // AbsPAC (TotalPAC / Water) has a finite band an enormous target overshoots.
-    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(RatioKey::AbsPAC.into(), 1.0e9)], &[]);
+    let report =
+        validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(RatioKey::AbsPAC.into(), 1.0e9)], &[], None);
 
     assert_false!(report.has_errors());
     assert_true!(report.warnings().any(|issue| matches!(
@@ -2247,7 +2386,7 @@ fn validate_flags_over_determination_as_information() {
         (CompKey::MSNF.into(), 11.0),
         (CompKey::Lactose.into(), 5.0),
     ];
-    let report = validate_balancing_targets(&comps, &targets, &[]);
+    let report = validate_balancing_targets(&comps, &targets, &[], None);
 
     assert_false!(report.has_errors());
     assert_true!(report.infos().any(|issue| matches!(
@@ -2356,7 +2495,7 @@ fn balancing_report_partitions_errors_and_warnings() {
         (CompKey::Sucrose.into(), 20.0),     // warning pair with TotalSugars
         (CompKey::TotalSugars.into(), 15.0), //
     ];
-    let report = validate_balancing_targets(&comps, &targets, &[]);
+    let report = validate_balancing_targets(&comps, &targets, &[], None);
 
     assert_true!(report.has_errors());
     assert_false!(report.is_empty());
@@ -2373,14 +2512,15 @@ fn balancing_report_partitions_errors_and_warnings() {
 #[test]
 fn balancing_report_into_result_errors_on_error_severity() {
     let targets = [(CompKey::MilkFat.into(), 16.0), (CompKey::MilkFat.into(), 12.0)];
-    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &targets, &[]);
+    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &targets, &[], None);
     assert!(matches!(report.into_result(), Err(Error::InvalidBalancingTargets(_))));
 }
 
 #[test]
 fn balancing_report_into_result_ok_on_warnings_only() {
     // An unreachable target is only a warning, so into_result stays Ok.
-    let report = validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), 50.0)], &[]);
+    let report =
+        validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), 50.0)], &[], None);
     assert_true!(report.warnings().count() >= 1);
     assert!(report.into_result().is_ok());
 }

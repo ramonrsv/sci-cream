@@ -27,6 +27,7 @@ import {
   formatCompositionValue,
   roundToCompositionValueFormat,
   compositionFormatStep,
+  TARGET_FEASIBILITY_REL_TOL,
 } from "@/lib/comp-value-format";
 import { DEFAULT_SELECTED_PROPERTIES, makeAutoHeuristicFunction } from "@/lib/sci-cream/sci-cream";
 import {
@@ -762,6 +763,7 @@ export function WatchersView({
         lightRecipe,
         balanceTargets,
         balancePriorities,
+        TARGET_FEASIBILITY_REL_TOL,
       ) as BalancingReport;
     } catch (err) {
       console.error("validate failed:", err);

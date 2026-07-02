@@ -39,7 +39,7 @@ pub(crate) fn bench_validate_balancing_targets(c: &mut Criterion) {
     let _ = c.bench_function("validate_balancing_targets(all_keys)", |b| {
         b.iter_batched(
             || (),
-            |()| black_box(validate_balancing_targets(&comps, &all_targets, &priorities)),
+            |()| black_box(validate_balancing_targets(&comps, &all_targets, &priorities, None)),
             BatchSize::SmallInput,
         );
     });
@@ -47,7 +47,7 @@ pub(crate) fn bench_validate_balancing_targets(c: &mut Criterion) {
     let _ = c.bench_function("validate_balancing_targets(typical_keys)", |b| {
         b.iter_batched(
             || (),
-            |()| black_box(validate_balancing_targets(&comps, &typical_targets, &priorities)),
+            |()| black_box(validate_balancing_targets(&comps, &typical_targets, &priorities, None)),
             BatchSize::SmallInput,
         );
     });

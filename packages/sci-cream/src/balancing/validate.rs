@@ -18,7 +18,7 @@ use crate::{
         HIGHER_ORDER_CANDIDATE_LIMIT, MAX_NUM_GROUP_SIZE_FOR_HIGHER_ORDER, MAX_NUM_GROUP_SIZE_FOR_TYPICAL,
     },
     error::{Error, Result},
-    validate::{are_equal, is_subset, is_within_range},
+    validate::{are_equal_rel, is_subset, is_subset_rel, is_within_range_rel},
 };
 
 // Referenced only in doc comments (the validated entry point lives in `solve`).
@@ -368,18 +368,24 @@ impl BalancingReport {
 /// The reachability, dominance, and ratio warnings assume the non-negative, normalized (summing to
 /// one) solution that [`balance_compositions`] targets. `priorities` is the same list
 /// [`balance_compositions`] accepts; keys are checked (against duplicates and missing targets).
+///
+/// `rel_tol` is the relative tolerance for the warning checks only: a target off a band or
+/// structural equality by no more than `rel_tol` times the compared magnitudes is treated as
+/// feasible. `None` (or `0.0`) is exact; a consumer of display-rounded targets passes a small value
+/// matched to its precision so rounding a target does not raise a spurious warning.
 #[must_use]
 pub fn validate_balancing_targets(
     comps: &[Composition],
     targets: &[(BalanceKey, f64)],
     priorities: &[(BalanceKey, Priority)],
+    rel_tol: Option<f64>,
 ) -> BalancingReport {
     let mut issues = Vec::new();
     append_input_error_issues(targets, priorities, &mut issues);
     // Snapshot each composition once so the repeated, nested affectability and ratio-band scans
     // below index a flat array instead of recomputing `Composition::get` (see `FastComposition`).
     let fast: Vec<FastComposition> = comps.iter().map(Composition::to_fast).collect();
-    append_input_warning_issues(&fast, targets, priorities, &mut issues);
+    append_input_warning_issues(&fast, targets, priorities, rel_tol.unwrap_or(0.0), &mut issues);
 
     // Each check emits every issue it can detect, so the same underlying problem may surface as
     // several issues (e.g. a part/whole contradiction seen by both the structural and the palette
@@ -439,6 +445,7 @@ fn append_input_warning_issues(
     comps: &[impl CompositionValues],
     targets: &[(BalanceKey, f64)],
     priorities: &[(BalanceKey, Priority)],
+    rel_tol: f64,
     issues: &mut Vec<BalancingIssue>,
 ) {
     // Checks unaffectable targets. Non-finite and negative values are skipped (reported as errors).
@@ -448,9 +455,9 @@ fn append_input_warning_issues(
         }
     }
 
-    append_reachability_issues(comps, targets, issues);
-    append_structural_issues(targets, issues);
-    append_palette_ratio_issues(comps, targets, issues);
+    append_reachability_issues(comps, targets, rel_tol, issues);
+    append_structural_issues(targets, rel_tol, issues);
+    append_palette_ratio_issues(comps, targets, rel_tol, issues);
     append_over_determination_issue(comps, targets, issues);
 
     // A priority whose key is not among the targets is a no-op: only target rows are weighted.
@@ -540,16 +547,17 @@ fn band_over(per_composition: impl Iterator<Item = (f64, f64)>) -> Option<(f64, 
 
 /// Pushes the issue built by `emit(min, max)` when `ratio` falls outside the band `(min, max)`.
 ///
-/// The shared comparator for the ratio-band checks. Epsilon-aware via [`is_within_range`]; an
+/// The shared comparator for the ratio-band checks. Tolerance-aware via [`is_within_range_rel`]; an
 /// infinite `max` leaves the upper bound always satisfied. `emit` lets each caller attach the
 /// simplest issue for its shape (reachability, dominance, or ratio).
 fn push_if_off_band(
     ratio: f64,
     (min, max): (f64, f64),
+    rel_tol: f64,
     issues: &mut Vec<BalancingIssue>,
     emit: impl FnOnce(f64, f64) -> BalancingIssue,
 ) {
-    if !is_within_range(ratio, min, max) {
+    if !is_within_range_rel(ratio, min, max, rel_tol) {
         issues.push(emit(min, max));
     }
 }
@@ -579,6 +587,7 @@ fn value_of(targets: &[(CompKey, f64)], key: CompKey) -> Option<f64> {
 fn append_reachability_issues(
     comps: &[impl CompositionValues],
     targets: &[(BalanceKey, f64)],
+    rel_tol: f64,
     issues: &mut Vec<BalancingIssue>,
 ) {
     for &(key, target) in targets {
@@ -592,7 +601,7 @@ fn append_reachability_issues(
                     ratio_band(comps, &[num], &[den]).map(|(min, max)| (min * 100.0, max * 100.0))
                 }
             } {
-                push_if_off_band(target, band, issues, emit);
+                push_if_off_band(target, band, rel_tol, issues, emit);
             }
         }
     }
@@ -610,7 +619,7 @@ fn append_reachability_issues(
 ///
 /// Only extensive, finite, non-negative targets participate. The checks emit independently of any
 /// palette overlap; [`validate_balancing_targets`] deduplicates against palette dominance issues.
-pub fn append_structural_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<BalancingIssue>) {
+pub fn append_structural_issues(targets: &[(BalanceKey, f64)], rel_tol: f64, issues: &mut Vec<BalancingIssue>) {
     let comp_targets: Vec<(CompKey, f64)> = targets
         .iter()
         .filter_map(|&(key, target)| match key {
@@ -633,7 +642,7 @@ pub fn append_structural_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<
                 .filter_map(|&&child| value_of(&comp_targets, child))
                 .sum();
 
-            if !is_subset(children_sum, target) {
+            if !is_subset_rel(children_sum, target, rel_tol) {
                 issues.push(BalancingIssue::StructuralViolation {
                     parts: active_children.iter().map(|&&child| child.into()).collect(),
                     whole: key.into(),
@@ -642,7 +651,7 @@ pub fn append_structural_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<
                 });
             } else if key.is_residual_free_rollup()
                 && children.len() == active_children.len()
-                && !are_equal(children_sum, target)
+                && !are_equal_rel(children_sum, target, rel_tol)
             {
                 issues.push(BalancingIssue::RollupSumMismatch {
                     whole: key.into(),
@@ -654,7 +663,7 @@ pub fn append_structural_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<
         } else {
             for parent in key.parents() {
                 if let Some(parent_target) = value_of(&comp_targets, *parent)
-                    && !is_subset(target, parent_target)
+                    && !is_subset_rel(target, parent_target, rel_tol)
                 {
                     issues.push(BalancingIssue::StructuralViolation {
                         parts: vec![key.into()],
@@ -697,6 +706,8 @@ pub struct RatioSearch<'a, C> {
     /// See [`MAX_NUM_GROUP_SIZE_FOR_TYPICAL`], [`MAX_NUM_GROUP_SIZE_FOR_HIGHER_ORDER`], and
     /// [`HIGHER_ORDER_CANDIDATE_LIMIT`] for the rationale behind these caps.
     max_numerator: usize,
+    /// Relative tolerance for the in-band target check (see [`validate_balancing_targets`]).
+    rel_tol: f64,
 }
 
 impl<C: CompositionValues> RatioSearch<'_, C> {
@@ -756,7 +767,7 @@ impl<C: CompositionValues> RatioSearch<'_, C> {
         let target_sum: f64 = subset.iter().map(|&i| self.candidates[i].1).sum();
         let target = target_sum / self.den_target;
 
-        if is_within_range(target, min, max) {
+        if is_within_range_rel(target, min, max, self.rel_tol) {
             return RatioVerdict::InBand;
         }
 
@@ -804,7 +815,7 @@ impl<C: CompositionValues> RatioSearch<'_, C> {
 /// Appends every palette-derived dominance and ratio infeasibility as one unified search.
 ///
 /// For each single-key denominator it runs a depth-capped DFS ([`RatioSearch`]) over numerator
-/// subsets, feeding the shared [`is_within_range`] primitive and reporting the minimal off-band
+/// subsets, feeding the shared [`is_within_range_rel`] primitive and reporting the minimal off-band
 /// subset: the `max <= 1` ordering corner as the friendlier [`DominanceViolation`], any other
 /// off-band ratio as [`RatioInfeasibility`]. Structural part/whole ordering stays owned by
 /// [`append_structural_issues`].
@@ -817,6 +828,7 @@ impl<C: CompositionValues> RatioSearch<'_, C> {
 pub fn append_palette_ratio_issues(
     comps: &[impl CompositionValues],
     targets: &[(BalanceKey, f64)],
+    rel_tol: f64,
     issues: &mut Vec<BalancingIssue>,
 ) {
     let candidates: Vec<(CompKey, f64)> = targets
@@ -843,6 +855,7 @@ pub fn append_palette_ratio_issues(
                 den_key,
                 den_target,
                 max_numerator,
+                rel_tol,
             };
             search.search(0, &mut Vec::new(), issues);
         }

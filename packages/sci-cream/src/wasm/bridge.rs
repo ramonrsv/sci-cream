@@ -133,10 +133,11 @@ impl Bridge {
         recipe: &LightRecipe,
         targets: &[(BalanceKey, f64)],
         priorities: &[(BalanceKey, Priority)],
+        rel_tol: Option<f64>,
     ) -> Result<BalancingReport> {
         let rust_recipe = RustRecipe::from_light_recipe(None, recipe, &self.db)?;
         let comps: Vec<RustComposition> = rust_recipe.lines.iter().map(|l| l.ingredient.composition).collect();
-        Ok(validate_balancing_targets(&comps, targets, priorities))
+        Ok(validate_balancing_targets(&comps, targets, priorities, rel_tol))
     }
 
     /// Forwards to [`IngredientDatabase::clear`], emptying the internal database.
@@ -308,12 +309,13 @@ impl Bridge {
         recipe: Box<[JsValue]>,
         targets: Box<[JsValue]>,
         priorities: Box<[JsValue]>,
+        rel_tol: Option<f64>,
     ) -> JsResult<JsValue> {
         let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
         let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
 
-        self.validate_recipe_targets(&light_recipe, &targets, &priorities)
+        self.validate_recipe_targets(&light_recipe, &targets, &priorities, rel_tol)
             .map(|report| serde_wasm_bindgen::to_value(&BalancingReportView::from(&report)).map_err(Into::into))?
     }
 
@@ -632,7 +634,7 @@ pub(crate) mod tests {
             (CompKey::MSNF.into(), 10.0),
             (CompKey::TotalSugars.into(), 17.0),
         ];
-        let report = bridge.validate_recipe_targets(&recipe, &targets, &[]).unwrap();
+        let report = bridge.validate_recipe_targets(&recipe, &targets, &[], None).unwrap();
         assert_true!(report.is_empty());
     }
 
@@ -641,7 +643,7 @@ pub(crate) mod tests {
         let bridge = Bridge::new(make_seeded_db());
         let recipe = light_recipe_to_owned(LIGHT_RECIPE);
         let targets = [(CompKey::MilkFat.into(), -5.0)];
-        let report = bridge.validate_recipe_targets(&recipe, &targets, &[]).unwrap();
+        let report = bridge.validate_recipe_targets(&recipe, &targets, &[], None).unwrap();
         assert_true!(report.has_errors());
         assert_eq!(report.issues.len(), 1);
         assert!(matches!(
@@ -658,7 +660,7 @@ pub(crate) mod tests {
         let bridge = Bridge::new(make_seeded_db());
         let recipe = light_recipe_to_owned(LIGHT_RECIPE);
         let targets = [(CompKey::MilkFat.into(), 10.0), (CompKey::MilkFat.into(), 12.0)];
-        let report = bridge.validate_recipe_targets(&recipe, &targets, &[]).unwrap();
+        let report = bridge.validate_recipe_targets(&recipe, &targets, &[], None).unwrap();
         assert_true!(report.has_errors());
         assert!(matches!(report.errors().next().unwrap(), BalancingIssue::DuplicateTarget { .. }));
     }
@@ -669,7 +671,9 @@ pub(crate) mod tests {
         let recipe = light_recipe_to_owned(LIGHT_RECIPE);
         let targets = [(CompKey::MilkFat.into(), 10.0)];
         let priorities = [(CompKey::MSNF.into(), Priority::High)];
-        let report = bridge.validate_recipe_targets(&recipe, &targets, &priorities).unwrap();
+        let report = bridge
+            .validate_recipe_targets(&recipe, &targets, &priorities, None)
+            .unwrap();
         assert_false!(report.has_errors());
         assert!(matches!(report.warnings().next().unwrap(), BalancingIssue::PriorityWithoutTarget { .. }));
     }
@@ -681,6 +685,7 @@ pub(crate) mod tests {
             &[("Nonexistent Ingredient".to_string(), 100.0)],
             &[(CompKey::MilkFat.into(), 10.0)],
             &[],
+            None,
         );
         assert!(
             matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")

@@ -30,12 +30,9 @@
 - [ ] Add an intensive->extensive translation layer for balancing: solve non-additive targets via
       an additive proxy (`ABV` -> `Alcohol`, later `ServingTemp` -> `AbsNetPAC`). Classify keys
       Intensive/Extensive and error on target/proxy clashes. Interim: `ABV` -> `Alochol`, @todos.
-- [ ] Look into implementing a derive macro to automatically define all field-update methods.
 - [ ] Remove `Composition` functions for calculating ratios, `get_ratio` already handles that.
 - [ ] If all children of a key have a target, we can infer the parent's target and use it in checks.
 - [ ] Add a Nutella Sweetened Hazelnut Cocoa Spread ingredient; not very useful, but it's common.
-- [ ] Look into adding delta/epsilon tolerance support to `validate_balancing_targets`, to prevent
-      spurious warnings due to app-side target input rounding; implement mirror rounding function.
 
 ## Backlog
 
@@ -100,6 +97,9 @@
 
 ## Completed
 
+- [x] Look into adding delta/epsilon tolerance support to `validate_balancing_targets`, to prevent
+      spurious warnings due to app-side target input rounding; implement mirror rounding function.
+- [x] Look into implementing a derive macro to automatically define all field-update methods.
 - [x] Add USDA chocolate ingredients and include them in `compare_specs_*` tests vs simple & lindt.
 - [x] Add more independent egg ingredients, including powder, and add `compare_specs_*` snapshots.
 - [x] Add support for tracking milk casein/whey proteins and egg yolk/white proteins. This may need

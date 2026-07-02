@@ -257,6 +257,34 @@ test("Bridge.validate_recipe_targets reports PriorityWithoutTarget warning", () 
   expect(report.issues[0].keys).toContain(compToPropKey(CompKey.MSNF));
 });
 
+test("Bridge.validate_recipe_targets tolerates a display-rounded target on a pinned ratio", () => {
+  const bridge = new Bridge(make_seeded_db());
+  // Whole Milk is the only MSNF/MilkFat source, so MSNF:MilkFat is pinned to its ratio; the sugars
+  // dilute the mix (keeping the magnitudes mid-range and reachable) without moving that ratio.
+  const recipe: LightRecipe = [
+    ["Whole Milk", 60],
+    ["Dextrose", 30],
+    ["Fructose", 20],
+  ];
+  const comp = bridge.calculate_recipe_composition(recipe);
+  // Round each part to display precision, as the app does, so the implied ratio drifts off the pin.
+  const round2 = (x: number) => Math.round(x * 100) / 100;
+  const targets: BalanceTargets = [
+    [compToPropKey(CompKey.MSNF), round2(comp.get(CompKey.MSNF))],
+    [compToPropKey(CompKey.MilkFat), round2(comp.get(CompKey.MilkFat))],
+  ];
+
+  // The RatioInfeasibility message is the only one carrying "the ingredients allow".
+  const hasRatioIssue = (report: BalancingReport) =>
+    report.issues.some((i) => i.message.includes("the ingredients allow"));
+
+  const strict = bridge.validate_recipe_targets(recipe, targets, []) as BalancingReport;
+  const tolerant = bridge.validate_recipe_targets(recipe, targets, [], 0.01) as BalancingReport;
+
+  expect(hasRatioIssue(strict)).toBe(true);
+  expect(hasRatioIssue(tolerant)).toBe(false);
+});
+
 test("Bridge.validate_recipe_targets throws on unknown ingredient", () => {
   const bridge = new Bridge(make_seeded_db());
   const badRecipe: LightRecipe = [["Nonexistent Ingredient", 100]];

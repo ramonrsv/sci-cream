@@ -61,10 +61,31 @@ pub trait Validate {
     }
 }
 
+/// The absolute slack allowed for a relative-tolerance comparison at the given `scale`.
+///
+/// The fixed [`COMPOSITION_EPSILON`] floor plus a `rel_tol`-scaled term, so `rel_tol = 0.0` yields
+/// only the strict floor and a non-zero `rel_tol` tolerates a deviation proportional to `scale`.
+///
+/// An infinite `scale` (an unbounded band edge) makes the `rel_tol`-scaled term `0.0 * ∞ = NaN` at
+/// `rel_tol = 0.0`, so callers must short-circuit the ordinary in-bounds case before reaching here.
+fn rel_slack(rel_tol: f64, scale: f64) -> f64 {
+    COMPOSITION_EPSILON + rel_tol * scale
+}
+
 /// Checks whether two floating point values are equal within a [`COMPOSITION_EPSILON`] tolerance.
 #[must_use]
 pub fn are_equal(a: f64, b: f64) -> bool {
-    a.abs_diff_eq(&b, COMPOSITION_EPSILON)
+    are_equal_rel(a, b, 0.0)
+}
+
+/// Like [`are_equal`], but additionally tolerates a relative deviation of `rel_tol` times the
+/// larger operand magnitude, on top of the fixed [`COMPOSITION_EPSILON`] floor.
+///
+/// `rel_tol = 0.0` reduces exactly to [`are_equal`]. Used to compare inputs that carry more than
+/// numerical noise, such as display-rounded balancing targets.
+#[must_use]
+pub fn are_equal_rel(a: f64, b: f64, rel_tol: f64) -> bool {
+    (a - b).abs() <= rel_slack(rel_tol, a.abs().max(b.abs()))
 }
 
 /// Verifies that two values are equal within a [`COMPOSITION_EPSILON`] tolerance.
@@ -138,7 +159,19 @@ pub fn verify_is_100_percent(value: f64) -> Result<()> {
 /// [`COMPOSITION_EPSILON`] is still considered a subset.
 #[must_use]
 pub fn is_subset(subset: f64, superset: f64) -> bool {
-    subset <= superset || subset.abs_diff_eq(&superset, COMPOSITION_EPSILON)
+    is_subset_rel(subset, superset, 0.0)
+}
+
+/// Like [`is_subset`], but additionally tolerates `subset` exceeding `superset` by `rel_tol` times
+/// the larger operand magnitude, on top of the fixed [`COMPOSITION_EPSILON`] floor.
+///
+/// `rel_tol = 0.0` reduces exactly to [`is_subset`]. Used to compare inputs that carry more than
+/// numerical noise, such as display-rounded balancing targets.
+#[must_use]
+pub fn is_subset_rel(subset: f64, superset: f64, rel_tol: f64) -> bool {
+    // Short-circuit the ordinary in-bounds case so an infinite `superset` never reaches the
+    // slack term (`0.0 * ∞ = NaN`); the slack only widens the boundary for a finite overshoot.
+    subset <= superset || subset - superset <= rel_slack(rel_tol, subset.abs().max(superset.abs()))
 }
 
 /// Verifies that the given subset value is less than or equal to the superset value.
@@ -160,7 +193,19 @@ pub fn verify_is_subset(subset: f64, superset: f64, description: &str) -> Result
 /// range by no more than [`COMPOSITION_EPSILON`] is still considered within it.
 #[must_use]
 pub fn is_within_range(value: f64, min: f64, max: f64) -> bool {
-    is_subset(min, value) && is_subset(value, max)
+    is_within_range_rel(value, min, max, 0.0)
+}
+
+/// Like [`is_within_range`], but tolerant of a relative deviation from the bounds.
+///
+/// Each bound is compared with [`is_subset_rel`], so a `value` outside `[min, max]` by no more than
+/// the fixed floor plus `rel_tol` times the compared magnitudes is still considered within range.
+///
+/// `rel_tol = 0.0` reduces exactly to [`is_within_range`]. Used to compare inputs that carry more
+/// than numerical noise, such as display-rounded targets against a palette-reachable band.
+#[must_use]
+pub fn is_within_range_rel(value: f64, min: f64, max: f64, rel_tol: f64) -> bool {
+    is_subset_rel(min, value, rel_tol) && is_subset_rel(value, max, rel_tol)
 }
 
 #[cfg(test)]
@@ -440,6 +485,45 @@ mod tests {
         // 1e-12 beyond either bound exceeds COMPOSITION_EPSILON (1e-13)
         assert_false!(is_within_range(10.0 - 1e-12, 10.0, 20.0));
         assert_false!(is_within_range(20.0 + 1e-12, 10.0, 20.0));
+    }
+
+    // --- relative-tolerance variants ---
+
+    #[test]
+    fn rel_variants_match_strict_at_zero_tolerance() {
+        // rel_tol = 0.0 must reduce the relative variants exactly to their strict counterparts.
+        assert_true!(is_subset_rel(20.0 + 1e-14, 20.0, 0.0));
+        assert_false!(is_subset_rel(20.0 + 1e-12, 20.0, 0.0));
+        assert_true!(is_within_range_rel(20.0 + 1e-14, 10.0, 20.0, 0.0));
+        assert_false!(is_within_range_rel(20.0 + 1e-12, 10.0, 20.0, 0.0));
+        assert_true!(are_equal_rel(20.0, 20.0 + 1e-14, 0.0));
+        assert_false!(are_equal_rel(20.0, 20.0 + 1e-12, 0.0));
+    }
+
+    #[test]
+    fn is_subset_rel_tolerates_proportional_overshoot() {
+        // 1% of 20 is 0.2, so a subset up to 20.2 is tolerated at rel_tol = 0.01, but not beyond.
+        assert_true!(is_subset_rel(20.1, 20.0, 0.01));
+        assert_false!(is_subset_rel(20.1, 20.0, 0.0));
+        assert_false!(is_subset_rel(25.0, 20.0, 0.01));
+    }
+
+    #[test]
+    fn is_within_range_rel_tolerates_pinned_band_drift() {
+        // A pinned band [r, r] no rounded value lands on: the strict check rejects the small drift,
+        // a relative tolerance scaled to the band accepts it, and a large miss is still rejected.
+        let r = 0.2;
+        assert_false!(is_within_range_rel(r + 5e-5, r, r, 0.0));
+        assert_true!(is_within_range_rel(r + 5e-5, r, r, 0.01));
+        assert_false!(is_within_range_rel(r + 0.05, r, r, 0.01));
+    }
+
+    #[test]
+    fn are_equal_rel_tolerates_proportional_gap() {
+        // 1% of 6 is 0.06, so a 0.05 gap is equal at rel_tol = 0.01 but not at rel_tol = 0.0.
+        assert_true!(are_equal_rel(6.0, 6.05, 0.01));
+        assert_false!(are_equal_rel(6.0, 6.05, 0.0));
+        assert_false!(are_equal_rel(6.0, 7.0, 0.01));
     }
 
     // --- verify_is_subset ---
