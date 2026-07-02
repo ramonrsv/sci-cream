@@ -4,7 +4,6 @@
 
 - [ ] Add `height` prop to `MixPropertiesGrid` so that it can adapt the number of properties shown.
 - [ ] Fix issue where version lists in `RecipeSearch` do not visually update when one is deleted.
-- [ ] Fix typo in welcome blog post, "you will **find** areas where it goes well beyond...".
 - [ ] When a recipe is deleted, the UI does not update, it still showed the deleted recipe.
 - [ ] Recipe validation errors/warnings do not show unless a recipe has some non-zero qty value.
 - [ ] Add make-recipe link, to click off ingredients that have been measured out for one or more
@@ -116,6 +115,7 @@
 
 ## Completed
 
+- [x] Fix typo in welcome blog post, "you will **find** areas where it goes well beyond...".
 - [x] In `/recipes`, when `KeyFilterSelect` is `Active/All`, there is a quick flicker when switch.
 - [x] Add some checkmark-style visual feedback if a balance operation meets target within tolerance.
 - [x] Add support for row highlighting on hover to all table components, e.g. `PropertiesTable`.
