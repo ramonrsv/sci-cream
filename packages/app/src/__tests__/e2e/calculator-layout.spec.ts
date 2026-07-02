@@ -8,15 +8,15 @@ function readStoredLayout(page: Page) {
   return page.evaluate((key) => localStorage.getItem(key), STORAGE_KEYS.calculatorLayouts);
 }
 
-/** Resize the recipe panel by `dx` pixels via its east resize handle (positive = wider) */
-async function resizeRecipePanelEast(page: Page, dx: number) {
+/** Drag the recipe panel's `axis` resize handle by (`dx`, `dy`) pixels. */
+async function resizeRecipePanel(page: Page, axis: "e" | "s", dx: number, dy: number) {
   // The resize handle is a sibling of `#recipe-editor-panel` inside the `.react-grid-item`
   // wrapper, not a descendant — scope via `:has`
   const handle = page.locator(
-    ".react-grid-item:has(#recipe-editor-panel) > .react-resizable-handle-e",
+    `.react-grid-item:has(#recipe-editor-panel) > .react-resizable-handle-${axis}`,
   );
   const box = await handle.boundingBox();
-  if (!box) throw new Error("east resize handle has no bounding box");
+  if (!box) throw new Error(`${axis} resize handle has no bounding box`);
 
   const startX = box.x + box.width / 2;
   const startY = box.y + box.height / 2;
@@ -25,8 +25,18 @@ async function resizeRecipePanelEast(page: Page, dx: number) {
   // detect a drag — a single mouse.move call won't trigger one
   await page.mouse.move(startX, startY);
   await page.mouse.down();
-  await page.mouse.move(startX + dx, startY, { steps: 10 });
+  await page.mouse.move(startX + dx, startY + dy, { steps: 10 });
   await page.mouse.up();
+}
+
+/** Resize the recipe panel by `dx` pixels via its east resize handle (positive = wider) */
+async function resizeRecipePanelEast(page: Page, dx: number) {
+  await resizeRecipePanel(page, "e", dx, 0);
+}
+
+/** Resize the recipe panel by `dy` pixels via its south resize handle (positive = taller) */
+async function resizeRecipePanelSouth(page: Page, dy: number) {
+  await resizeRecipePanel(page, "s", 0, dy);
 }
 
 test.describe("Calculator Layout Persistence", () => {
@@ -42,8 +52,7 @@ test.describe("Calculator Layout Persistence", () => {
     page,
     browserName,
   }) => {
-    // Resizing via Playwright's mouse API is timing-sensitive and unreliable in WebKit; the same
-    // user flow is covered by the chromium/firefox runs
+    // Resizing via Playwright's mouse API is timing-sensitive and unreliable in WebKit
     test.skip(browserName === "webkit", "resize-handle drag timing is unreliable in WebKit");
 
     // Wide viewport keeps the calculator panel comfortably in `md`+ breakpoint with room for
@@ -99,5 +108,41 @@ test.describe("Calculator Layout Persistence", () => {
         return Math.abs((box?.width ?? 0) - defaultBox!.width) < 20;
       })
       .toBe(true);
+  });
+
+  test("the recipe panel can be resized vertically via its newly-enabled south handle", async ({
+    page,
+    browserName,
+  }) => {
+    // Resizing via Playwright's mouse API is timing-sensitive and unreliable in WebKit
+    test.skip(browserName === "webkit", "resize-handle drag timing is unreliable in WebKit");
+
+    await page.setViewportSize({ width: 1600, height: 1000 });
+    await goToPageAndWaitFor(page, "/calculator");
+
+    const panel = page.locator("#recipe-editor-panel");
+    const defaultBox = await panel.boundingBox();
+    expect(defaultBox).not.toBeNull();
+
+    // Drag the south handle down — vertical resize is new for the recipe panel (it was
+    // horizontal-only before), so this exercises the newly-added `s` axis
+    await resizeRecipePanelSouth(page, 150);
+
+    // The save fires from the layout-change callback; poll storage until it appears
+    await expect.poll(() => readStoredLayout(page)).not.toBeNull();
+
+    const tallerBox = await panel.boundingBox();
+    expect(tallerBox).not.toBeNull();
+    // Should be visibly taller — give slack for row snapping (~36px per grid row)
+    expect(tallerBox!.height).toBeGreaterThan(defaultBox!.height + 30);
+
+    // The taller height re-hydrates from storage on reload
+    await page.reload();
+    await page.waitForLoadState("networkidle");
+
+    const reloadedBox = await panel.boundingBox();
+    expect(reloadedBox).not.toBeNull();
+    expect(Math.abs(reloadedBox!.height - tallerBox!.height)).toBeLessThan(30);
+    expect(reloadedBox!.height).toBeGreaterThan(defaultBox!.height + 30);
   });
 });

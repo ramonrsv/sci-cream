@@ -1,4 +1,4 @@
-import { test, expect, Page } from "@playwright/test";
+import { test, expect, Page, Locator } from "@playwright/test";
 
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import {
@@ -13,8 +13,8 @@ import {
   getIngredientNameInputAtIdx,
   getPropertiesPanelKeyFilterSelectInput,
   getPropertiesPanelDeltaToggleSelectInput,
+  getCompositionBreakdownPanelKeyFilterSelectInput,
   getGroupBySelectInput,
-  pasteRecipeAndWaitForUpdate,
   goToPageAndWaitFor,
   goToPageAndPasteRecipes,
   expandNavbar,
@@ -261,23 +261,113 @@ test.describe("Visual Regression: Panels, Interactive States", () => {
   });
 });
 
-test.describe("Visual Regression: Panels, Component Variations", () => {
-  test("properties panel - scrolled state", async ({ page, browserName }) => {
-    await goToPageAndWaitFor(page);
+/**
+ * Force a table's scroll container to a fixed viewport size and scroll offset, then screenshot it.
+ *
+ * Pins the sticky `<thead>` / pinned columns against scrolled content so their z-order, opaque
+ * backgrounds, and edges can be regression-checked mid-scroll. The fixed size makes the shot
+ * deterministic and guarantees overflow regardless of how far the data spills at the test viewport
+ * (e.g. the breakdown's handful of ingredient rows don't otherwise overflow vertically).
+ */
+async function captureScrollState(
+  page: Page,
+  container: Locator,
+  size: { width: number; height: number },
+  offset: { left: number; top: number },
+  snapshot: string,
+) {
+  await container.evaluate((el, s) => {
+    const style = (el as HTMLElement).style;
+    style.flex = "none";
+    style.width = `${s.width}px`;
+    style.height = `${s.height}px`;
+    style.maxWidth = "none";
+    style.maxHeight = "none";
+  }, size);
+  await container.evaluate((el, o) => {
+    el.scrollLeft = o.left;
+    el.scrollTop = o.top;
+  }, offset);
+  await page.waitForTimeout(200);
+  await expect(container).toHaveScreenshot(snapshot);
+}
 
-    await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
+test.describe("Visual Regression: Panels, Table Scroll States", () => {
+  test("recipe editor - vertical scroll freezes header", async ({ page, browserName }) => {
+    await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main]);
 
-    const keyFilter = getPropertiesPanelKeyFilterSelectInput(page);
-    await selectOption(page, keyFilter, KeyFilter.All);
+    await captureScrollState(
+      page,
+      page.getByTestId("recipe-editor-table-pane"),
+      { width: 340, height: 200 },
+      { left: 0, top: 100 },
+      "recipe-editor-scroll-vertical.png",
+    );
+  });
 
-    const propertiesPanel = page.locator("#properties-panel");
+  test("properties table - vertical scroll freezes header", async ({ page, browserName }) => {
+    await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main]);
+    await selectOption(page, getPropertiesPanelKeyFilterSelectInput(page), KeyFilter.All);
 
-    // Target the scrollable properties-table pane
-    const scrollableDiv = propertiesPanel.getByTestId("properties-table-pane");
-    // Scroll to middle of properties list
-    await scrollableDiv.evaluate((el) => (el.scrollTop = el.scrollHeight / 2));
-    await page.waitForTimeout(200);
+    await captureScrollState(
+      page,
+      page.getByTestId("properties-table-pane"),
+      { width: 300, height: 240 },
+      { left: 0, top: 200 },
+      "properties-table-scroll-vertical.png",
+    );
+  });
 
-    await expect(propertiesPanel).toHaveScreenshot("properties-panel-scrolled.png");
+  test("properties table - horizontal scroll pins Property column", async ({
+    page,
+    browserName,
+  }) => {
+    // Multiple recipes plus a delta column give the table enough columns to overflow horizontally
+    await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main, RecipeID.RefA, RecipeID.RefB]);
+    await selectOption(
+      page,
+      getPropertiesPanelDeltaToggleSelectInput(page),
+      DELTA_TOGGLE_SHORT_LABELS[DeltaToggle.Relative],
+    );
+
+    await captureScrollState(
+      page,
+      page.getByTestId("properties-table-pane"),
+      { width: 300, height: 240 },
+      { left: 140, top: 0 },
+      "properties-table-scroll-horizontal.png",
+    );
+  });
+
+  test("composition breakdown - horizontal scroll pins Ingredient/Qty", async ({
+    page,
+    browserName,
+  }) => {
+    await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main]);
+    await selectOption(page, getCompositionBreakdownPanelKeyFilterSelectInput(page), KeyFilter.All);
+
+    await captureScrollState(
+      page,
+      page.locator("#composition-breakdown-table"),
+      { width: 360, height: 220 },
+      { left: 180, top: 0 },
+      "composition-breakdown-scroll-horizontal.png",
+    );
+  });
+
+  test("composition breakdown - vertical scroll freezes header/totals", async ({
+    page,
+    browserName,
+  }) => {
+    await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main]);
+    await selectOption(page, getCompositionBreakdownPanelKeyFilterSelectInput(page), KeyFilter.All);
+
+    await captureScrollState(
+      page,
+      page.locator("#composition-breakdown-table"),
+      { width: 360, height: 220 },
+      { left: 0, top: 120 },
+      "composition-breakdown-scroll-vertical.png",
+    );
   });
 });

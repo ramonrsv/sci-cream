@@ -611,7 +611,7 @@ export function RecipeEditor({
           ))}
         </div>
       </div>
-      <div className="min-h-0 flex-1 overflow-auto">
+      <div data-testid="recipe-editor-table-pane" className="min-h-0 flex-1 overflow-auto">
         <RecipeEditorTable
           recipe={currentRecipe}
           validIngredients={validIngredients}
