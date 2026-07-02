@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo } from "react";
 import {
   allRecipeEntries,
   type RecipeEntryJson,
@@ -10,6 +10,7 @@ import {
 } from "@workspace/sci-cream";
 
 import { makeRecipeId, type Recipe } from "@/lib/recipe";
+import { useResetOnChange } from "@/lib/use-reset-on-change";
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
 import { ToolbarSpacer } from "@/app/_elements/selects/toolbar-spacer";
 import { RecipeTable } from "@/app/_elements/tables/recipe";
@@ -170,9 +171,9 @@ function formatVersionOption(v: SavedRecipeVersionJson, isLatest: boolean): stri
 }
 
 /**
- * Stateful detail panel for a grouped recipe; owns the selected-version state. The parent renders
- * this with `key={entry.id}` so React remounts it on entry change, which naturally resets the
- * selected-version state without a setState-in-effect.
+ * Stateful detail panel for a grouped recipe. On entry change the selection resets to the latest
+ * version via {@link useResetOnChange} rather than by remounting, so the persisted selects and rows
+ * in {@link PropertiesView} keep their restored values instead of flashing defaults.
  */
 function RecipeDetailPanel({
   entry,
@@ -188,7 +189,9 @@ function RecipeDetailPanel({
   const hasMultipleVersions = entry.versions.length > 1;
 
   const latestIdx = entry.versions.length - 1;
-  const [selectedVersionIdx, setSelectedVersionIdx] = useState<number>(latestIdx);
+
+  const entryKey = `${entry._source}-${entry.id}`;
+  const [selectedVersionIdx, setSelectedVersionIdx] = useResetOnChange(entryKey, latestIdx);
   const selectedVersion = entry.versions[selectedVersionIdx] ?? entry.versions[latestIdx];
 
   const versionOptions: SelectOption<number>[] = entry.versions.map((v, idx) => ({
@@ -341,8 +344,6 @@ export function RecipeSearch({
       }
       renderDetailPanel={(entry) => (
         <RecipeDetailPanel
-          // Remount on entry change so internal state (selected version, comments) resets cleanly
-          key={`${entry._source}-${entry.id}`}
           entry={entry}
           slots={slots}
           onLoadRecipe={onLoadRecipe}

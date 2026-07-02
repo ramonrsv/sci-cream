@@ -414,6 +414,27 @@ describe("RecipeSearch", () => {
       fireEvent.click(screen.getByRole("button", { name: /Iterated Recipe/ }));
       expect(screen.getByLabelText("Delete this version")).toBeInTheDocument();
     });
+
+    it("resets to the latest version when switching to a different entry", async () => {
+      const other: SavedRecipeJson = {
+        id: 7,
+        name: "Other Recipe",
+        versions: [{ version: 1, recipe: [["Whole Milk", 50]], createdAt: "" }],
+      };
+      render(<RecipeSearch savedRecipes={[multiVersionEntry, other]} />);
+
+      // Select the multi-version entry and pick a non-latest version.
+      fireEvent.click(screen.getByRole("button", { name: /Iterated Recipe/ }));
+      await selectOptionByLabel("Recipe version", /^v1\b/);
+      expect(getSelectedOptionLabelByLabel("Recipe version")).toContain("v1");
+
+      // Switch away and back; the selection must return to the latest version, not persist v1.
+      fireEvent.click(screen.getByRole("button", { name: /Other Recipe/ }));
+      fireEvent.click(screen.getByRole("button", { name: /Iterated Recipe/ }));
+      const selectedLabel = getSelectedOptionLabelByLabel("Recipe version");
+      expect(selectedLabel).toContain("v2");
+      expect(selectedLabel).toContain("latest");
+    });
   });
 
   describe("editable comments (per-version)", () => {
