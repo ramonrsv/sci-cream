@@ -113,8 +113,8 @@ export function CompositionBreakdown({
           </tr>
           {/* Totals row */}
           <tr className="h-6.25">
-            <td className={`table-emphasis ${ingPinHead} px-1.25 text-center`}>Total</td>
-            <td className={`table-emphasis comp-val ${qtyPinHead} px-1.25`}>
+            <td className={`table-total ${ingPinHead} px-1.25 text-center`}>Total</td>
+            <td className={`table-total comp-val ${qtyPinHead} px-1.25`}>
               {qtyToggle === QtyToggle.Percentage
                 ? "100   "
                 : recipe.mixTotal
@@ -125,7 +125,7 @@ export function CompositionBreakdown({
               <td
                 key={compKey}
                 data-comp-key={String(compKey)}
-                className="table-emphasis comp-val px-1"
+                className="table-total comp-val px-1"
               >
                 {formattedTotalCell(compKey)}
               </td>

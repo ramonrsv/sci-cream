@@ -66,9 +66,9 @@ export function RecipeTable({
           <th className="table-col-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
         </tr>
         <tr className="h-6.25">
-          <td className="table-emphasis px-1 text-center">Total</td>
-          <td className="table-emphasis comp-val px-3.75">{mixTotal ? mixTotal.toFixed(0) : ""}</td>
-          <td className="table-emphasis comp-val px-1">{mixTotal ? "100   " : ""}</td>
+          <td className="table-total px-1 text-center">Total</td>
+          <td className="table-total comp-val px-3.75">{mixTotal ? mixTotal.toFixed(0) : ""}</td>
+          <td className="table-total comp-val px-1">{mixTotal ? "100   " : ""}</td>
         </tr>
       </thead>
       <tbody>
@@ -138,11 +138,9 @@ export function RecipeEditorTable({
             <th className="table-col-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
           </tr>
           <tr className="h-6.25">
-            <td className="table-emphasis px-1 text-center">Total</td>
-            <td className="table-emphasis comp-val px-3.75">
-              {mixTotal ? mixTotal.toFixed(0) : ""}
-            </td>
-            <td className="table-emphasis comp-val px-1">{mixTotal ? "100   " : ""}</td>
+            <td className="table-total px-1 text-center">Total</td>
+            <td className="table-total comp-val px-3.75">{mixTotal ? mixTotal.toFixed(0) : ""}</td>
+            <td className="table-total comp-val px-1">{mixTotal ? "100   " : ""}</td>
           </tr>
         </thead>
         <tbody>

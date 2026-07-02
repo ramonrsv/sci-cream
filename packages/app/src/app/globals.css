@@ -96,13 +96,18 @@ body {
   @apply text-txt-sec;
 }
 
-/* Table Components: a 1px cell grid (bottom + right on all, top on the header row, left on first
-   column). The header's top edge is a zero-layout inset shadow, not a border, so it doesn't shorten
-   the cell's content box or detach on scroll (a frozen header sticks its own `<thead>`). */
+/* Table Components: a 1px cell grid under a borderless typographic header band. */
+
+/* Column headers: borderless uppercase tracked label with a bottom rule. */
 .table-col-header {
+  @apply border-b text-xs font-medium tracking-wide uppercase;
+  @apply border-brd bg-surface text-txt-sec;
+}
+
+/* Totals row: bold summary band on a recessed page fill, sharing the data cells' grid borders. */
+.table-total {
   @apply border-r border-b text-sm font-semibold;
-  @apply border-brd bg-surface text-txt-prim;
-  box-shadow: inset 0 1px 0 var(--color-brd);
+  @apply border-brd bg-page text-txt-prim;
 }
 
 /* Frozen header & columns. `.table-sticky-head` sticks the `<thead>`; the pin classes freeze a
@@ -117,7 +122,7 @@ body {
   @apply sticky z-10;
 }
 
-/* Row-label / total cells: emphasized text sharing the data cells' grid borders. */
+/* Row-label cells: emphasized text sharing the data cells' grid borders. */
 .table-emphasis {
   @apply border-r border-b text-sm font-semibold;
   @apply border-brd bg-surface text-txt-prim;
@@ -128,8 +133,8 @@ body {
   @apply border-brd bg-surface text-txt-sec;
 }
 
-/* Left outer edge on each row's first cell so a pinned-left column keeps it on scroll. */
-tr > .table-col-header:first-child,
+/* Left outer edge on each row's first cell so a pinned-left column keeps it on scroll */
+tr > .table-total:first-child,
 tr > .table-emphasis:first-child,
 tr > .table-inner-cell:first-child {
   @apply border-l;
