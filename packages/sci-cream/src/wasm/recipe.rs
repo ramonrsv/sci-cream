@@ -137,12 +137,17 @@ impl Recipe {
     /// `(BalanceKey, f64)[]` or `(BalanceKey, Priority)[]`. Forwards any errors from internal
     /// balancing calculations; see [`Recipe::balance`](RustRecipe::balance).
     #[wasm_bindgen(js_name = "balance")]
-    pub fn balance_wasm(&self, targets: Box<[JsValue]>, priorities: Box<[JsValue]>) -> JsResult<Self> {
+    pub fn balance_wasm(
+        &self,
+        targets: Box<[JsValue]>,
+        priorities: Box<[JsValue]>,
+        total_amount: Option<f64>,
+    ) -> JsResult<Self> {
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
         let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
 
         RustRecipe::from(self.clone())
-            .balance(&targets, &priorities, None)
+            .balance(&targets, &priorities, total_amount)
             .map(Into::into)
             .map_err(Into::into)
     }

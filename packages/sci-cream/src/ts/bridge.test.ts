@@ -171,6 +171,56 @@ test("Bridge.balance_recipe", () => {
   }
 });
 
+test("Bridge.balance_recipe scales to an explicit total_amount", () => {
+  const bridge = new Bridge(make_seeded_db());
+
+  const targets: BalanceTargets = [
+    [compToPropKey(CompKey.MilkFat), 14],
+    [compToPropKey(CompKey.MSNF), 10],
+    [compToPropKey(CompKey.TotalSugars), 17],
+    [compToPropKey(CompKey.TotalSolids), 41],
+  ];
+
+  const balanced = bridge.balance_recipe(lightRecipe, targets, [], 1000) as LightRecipe;
+
+  // The balanced recipe is scaled to the requested total mass...
+  const balancedTotal = balanced.reduce((sum, line) => sum + line[1], 0);
+  expect(balancedTotal).toBeCloseTo(1000, 4);
+
+  // ...while still hitting the (scale-invariant) composition targets.
+  const comp = bridge.calculate_recipe_composition(balanced);
+  for (const [key, value] of targets) {
+    const balanceValue = isCompKey(key)
+      ? comp.get(propToCompKey(key))
+      : comp.get_ratio(propToRatioKey(key));
+    expect(balanceValue).toBeCloseTo(value, 2);
+  }
+});
+
+test("Bridge.balance_recipe infers the current total when total_amount is omitted/undefined", () => {
+  const bridge = new Bridge(make_seeded_db());
+  const targets: BalanceTargets = [
+    [compToPropKey(CompKey.MilkFat), 14],
+    [compToPropKey(CompKey.MSNF), 10],
+  ];
+
+  const originalTotal = lightRecipe.reduce((sum, line) => sum + line[1], 0);
+
+  // Passing `undefined` for the optional param behaves identically to omitting it: total is kept.
+  const omitted = bridge.balance_recipe(lightRecipe, targets, []) as LightRecipe;
+  const explicitUndefined = bridge.balance_recipe(
+    lightRecipe,
+    targets,
+    [],
+    undefined,
+  ) as LightRecipe;
+
+  for (const balanced of [omitted, explicitUndefined]) {
+    const balancedTotal = balanced.reduce((sum, line) => sum + line[1], 0);
+    expect(balancedTotal).toBeCloseTo(originalTotal, 4);
+  }
+});
+
 test("Bridge.balance_recipe applies priorities", () => {
   const bridge = new Bridge(make_seeded_db());
 

@@ -100,6 +100,9 @@ impl Bridge {
     /// Forwards to [`Recipe::balance`](RustRecipe::balance), creating a [`Recipe`](RustRecipe) from
     /// [`LightRecipe`] and returning an [`OwnedLightRecipe`]
     ///
+    /// `total_amount` sets the total mass, in grams, of the balanced recipe; if `None`, the
+    /// recipe's current total amount is used, keeping it constant.
+    ///
     /// # Errors
     ///
     /// When converting the [`LightRecipe`] into a full [`Recipe`](RustRecipe) via
@@ -112,9 +115,10 @@ impl Bridge {
         recipe: &LightRecipe,
         targets: &[(BalanceKey, f64)],
         priorities: &[(BalanceKey, Priority)],
+        total_amount: Option<f64>,
     ) -> Result<OwnedLightRecipe> {
         RustRecipe::from_light_recipe(None, recipe, &self.db)?
-            .balance(targets, priorities, None)
+            .balance(targets, priorities, total_amount)
             .map(Into::into)
     }
 
@@ -279,12 +283,13 @@ impl Bridge {
         recipe: Box<[JsValue]>,
         targets: Box<[JsValue]>,
         priorities: Box<[JsValue]>,
+        total_amount: Option<f64>,
     ) -> JsResult<Box<[JsValue]>> {
         let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
         let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
 
-        self.balance_recipe(&light_recipe, &targets, &priorities)
+        self.balance_recipe(&light_recipe, &targets, &priorities, total_amount)
             .map_err(Into::<JsValue>::into)?
             .into_iter()
             .map(|line| serde_wasm_bindgen::to_value(&line).map_err(Into::into))
@@ -570,7 +575,7 @@ pub(crate) mod tests {
             (CompKey::TotalSolids.into(), 41.0),
         ];
 
-        let balanced = bridge.balance_recipe(&recipe, &targets, &[]).unwrap();
+        let balanced = bridge.balance_recipe(&recipe, &targets, &[], None).unwrap();
 
         assert_eq!(balanced.len(), recipe.len());
         for (i, (name, amount)) in balanced.iter().enumerate() {
@@ -578,12 +583,23 @@ pub(crate) mod tests {
             assert_true!(*amount >= 0.0);
         }
 
+        // `None` keeps the current total constant.
         let balanced_total: f64 = balanced.iter().map(|(_, g)| *g).sum();
         assert_eq_flt_test!(balanced_total, original_total);
 
         let comp = bridge.calculate_recipe_composition(&balanced).unwrap();
         for (key, target) in &targets {
             assert_eq_flt_test!(key.value(&comp), *target);
+        }
+
+        // An explicit `total_amount` scales the balanced recipe to that mass
+        let scaled = bridge.balance_recipe(&recipe, &targets, &[], Some(1000.0)).unwrap();
+        let scaled_total: f64 = scaled.iter().map(|(_, g)| *g).sum();
+        assert_eq_flt_test!(scaled_total, 1000.0);
+
+        let scaled_comp = bridge.calculate_recipe_composition(&scaled).unwrap();
+        for (key, target) in &targets {
+            assert_eq_flt_test!(key.value(&scaled_comp), *target);
         }
     }
 
@@ -594,6 +610,7 @@ pub(crate) mod tests {
             &[("Nonexistent Ingredient".to_string(), 100.0)],
             &[(CompKey::MilkFat.into(), 10.0)],
             &[],
+            None,
         );
         assert!(
             matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")
@@ -613,8 +630,8 @@ pub(crate) mod tests {
         ];
         let priorities = [(CompKey::POD.into(), Priority::Critical)];
 
-        let default_balanced = bridge.balance_recipe(&recipe, &targets, &[]).unwrap();
-        let prioritized_balanced = bridge.balance_recipe(&recipe, &targets, &priorities).unwrap();
+        let default_balanced = bridge.balance_recipe(&recipe, &targets, &[], None).unwrap();
+        let prioritized_balanced = bridge.balance_recipe(&recipe, &targets, &priorities, None).unwrap();
 
         let default_comp = bridge.calculate_recipe_composition(&default_balanced).unwrap();
         let prioritized_comp = bridge.calculate_recipe_composition(&prioritized_balanced).unwrap();
