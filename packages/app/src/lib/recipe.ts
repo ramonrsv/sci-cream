@@ -452,7 +452,10 @@ export function makeUpdatedRecipeFromStore(
 /**
  * Build a {@link RecipeUpdates} from a balanced light recipe (output of `Bridge.balance_recipe`),
  * zipping `[name, grams][]` back onto eligible rows by index (same filter as
- * {@link makeLightRecipe}) and rounding to the recipe input's step precision.
+ * {@link makeLightRecipe}) and rounding each to the recipe input's step precision.
+ *
+ * Independent per-row rounding can leave the summed total slightly off the balancer's target; an
+ * acceptable difference. An explicit total to `Bridge.balance_recipe` keeps a consistent result.
  *
  * Pass the result to {@link makeUpdatedRecipe} to recalculate mix properties.
  *

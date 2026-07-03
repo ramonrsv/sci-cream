@@ -1327,3 +1327,58 @@ describe("WatchersView validation", () => {
     expect(screen.getByTestId("watchers-balance-button")).not.toBeDisabled();
   });
 });
+
+describe("WatchersView Total amount", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("does not render the total input without balancing support", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} />);
+    expect(screen.queryByTestId("watchers-total-input")).not.toBeInTheDocument();
+  });
+
+  it("is empty when no total is set", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
+
+    expect(screen.getByTestId("watchers-total-input")).toHaveValue(null);
+  });
+
+  it("shows the persisted total", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTotal, JSON.stringify(1000));
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
+
+    expect(screen.getByTestId("watchers-total-input")).toHaveValue(1000);
+  });
+
+  it("persists a new total on change", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
+
+    const input = screen.getByTestId("watchers-total-input");
+    fireEvent.change(input, { target: { value: "1500" } });
+
+    expect(input).toHaveValue(1500);
+    expect(localStorage.getItem(STORAGE_KEYS.watcherTotal)).toBe(JSON.stringify(1500));
+  });
+
+  it("clears the total when the input is emptied", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTotal, JSON.stringify(1000));
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
+
+    const input = screen.getByTestId("watchers-total-input");
+    fireEvent.change(input, { target: { value: "" } });
+
+    expect(input).toHaveValue(null);
+    expect(localStorage.getItem(STORAGE_KEYS.watcherTotal)).not.toBe(JSON.stringify(1000));
+  });
+});

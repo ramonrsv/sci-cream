@@ -23,7 +23,6 @@
 - [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
       embedded into other websites. How to handle user-defined ingredients?
 - [ ] Add a visual warning indicator for user-defined ingredients that shadow built-in ones.
-- [ ] Explore adding support for a total mix amount input/slider and balancing target.
 
 ## Up Next
 
@@ -114,6 +113,7 @@
 
 ## Completed
 
+- [x] Explore adding support for a total mix amount input/slider and balancing target.
 - [x] Add support for `PropertiesChart` to auto-rotate orientation based on the pane aspect ratio.
 - [x] Fix typo in welcome blog post, "you will **find** areas where it goes well beyond...".
 - [x] In `/recipes`, when `KeyFilterSelect` is `Active/All`, there is a quick flicker when switch.

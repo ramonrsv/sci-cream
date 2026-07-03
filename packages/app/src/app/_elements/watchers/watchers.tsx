@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode, useEffect, useMemo, useState } from "react";
+import { ChangeEvent, ReactNode, useEffect, useMemo, useState } from "react";
 import {
   AlertCircle,
   AlertTriangle,
@@ -91,6 +91,12 @@ const PRIORITY_CYCLE = [Priority.Low, Priority.Normal, Priority.High, Priority.C
 function nextPriority(priority: Priority): Priority {
   const i = PRIORITY_CYCLE.indexOf(priority);
   return PRIORITY_CYCLE[(i + 1) % PRIORITY_CYCLE.length];
+}
+
+/** Parse a user-entered target value from an input event. */
+function parseInputTarget(e: ChangeEvent<HTMLInputElement, HTMLInputElement>): number | undefined {
+  const v = e.target.value;
+  return v === "" ? undefined : parseFloat(v);
 }
 
 /**
@@ -410,12 +416,9 @@ export function WatcherCard({
               step={targetStep}
               className={`boxed-input comp-val w-14 px-0.5 py-0`}
               value={target ?? ""}
-              placeholder={"\u2014"}
+              placeholder={"—"}
               tabIndex={disableInput ? -1 : undefined}
-              onChange={(e) => {
-                const v = e.target.value;
-                onTargetChange(v === "" ? undefined : parseFloat(v));
-              }}
+              onChange={(e) => onTargetChange(parseInputTarget(e))}
               data-testid={`watcher-card-${String(propKey)}-target`}
               style={{ visibility: disableInput ? "hidden" : "visible" }}
             />
@@ -617,11 +620,12 @@ export function WatchersGrid({
  * `toolbarPrefix` is rendered inside the toolbar's flex row before the controls; used by the panel
  * wrapper to inject a drag handle without breaking the toolbar layout.
  *
- * The toolbar's right-side action group has a Balance button (runs the WASM balancer using
- * watched CompKey-derived targets and their priorities, then calls `onApplyBalancedMain`) and one
- * Fill-from-Ref button per non-empty reference (fills currently-watched targets from that
- * reference's values). Both are inert without `wasmBridge` and `onApplyBalancedMain`, so bare
- * renders stay read-only.
+ * The toolbar's right-side action group has a {@link TotalAmountInput} (an optional target total
+ * that Balance sizes the recipe to, persisted alongside the targets), a Balance button (runs the
+ * WASM balancer using watched CompKey-derived targets and their priorities, then calls
+ * `onApplyBalancedMain`) and one Fill-from-Ref button per non-empty reference (fills
+ * currently-watched targets from that reference's values). The total input and Balance button need
+ * a `wasmBridge`, so bare renders stay read-only.
  *
  * When a `wasmBridge` is present, targets are validated live via `validate_recipe_targets`: a
  * {@link WatcherIssues} chip in the toolbar summarizes any errors and warnings (its popover lists
@@ -659,6 +663,10 @@ export function WatchersView({
     supportedKeyFilters: [KeyFilter.Auto, KeyFilter.Custom],
   });
 
+  const [pinnedTotal, setPinnedTotal] = usePersistedState<number | undefined>(
+    STORAGE_KEYS.watcherTotal,
+    undefined,
+  );
   const [targets, setTargets] = usePersistedState<TargetsMap>(STORAGE_KEYS.watcherTargets, {});
   const [priorities, setPriorities] = usePersistedState<PrioritiesMap>(
     STORAGE_KEYS.watcherPriorities,
@@ -822,6 +830,7 @@ export function WatchersView({
         lightRecipe,
         balanceTargets,
         balancePriorities,
+        pinnedTotal,
       ) as LightRecipe;
 
       setBalanceError(undefined);
@@ -848,12 +857,9 @@ export function WatchersView({
     });
   };
 
+  const balancingSupported = wasmBridge !== undefined && onApplyBalancedMain !== undefined;
   const balanceDisabled =
-    !wasmBridge ||
-    !onApplyBalancedMain ||
-    isRecipeEmpty(main) ||
-    balanceTargets.length === 0 ||
-    hasErrors;
+    !balancingSupported || isRecipeEmpty(main) || balanceTargets.length === 0 || hasErrors;
 
   const balanceTitle = balanceError
     ? `Balance failed: ${balanceError}`
@@ -881,11 +887,12 @@ export function WatchersView({
           key_as_med_str={prop_key_as_med_str}
           orderKeys={orderKeys}
         />
-        {(wasmBridge !== undefined || nonEmptyRefs.length > 0) && (
+        {(balancingSupported || nonEmptyRefs.length > 0) && (
           <div className="ml-auto flex shrink-0 items-center gap-1 pr-0.5">
             {(issues.length > 0 || balanceError !== undefined) && (
               <WatcherIssues issues={issues} extraError={balanceError} />
             )}
+            {/* Fill-from-refs buttons */}
             {nonEmptyRefs.map((ref) => {
               const letter = ref.id.replace(/^Ref\s*/, "").trim() || ref.id;
               const hasAnyFillable = enabledProps.some((k) =>
@@ -905,18 +912,38 @@ export function WatchersView({
                 </button>
               );
             })}
-            {wasmBridge !== undefined && onApplyBalancedMain !== undefined && (
-              <button
-                className={`btn-primary mr-1 px-2 py-0.5 ${
-                  balanceError ? "issue-border-error border" : ""
-                }`}
-                onClick={onBalance}
-                disabled={balanceDisabled}
-                title={balanceTitle}
-                data-testid="watchers-balance-button"
-              >
-                Balance
-              </button>
+            {balancingSupported && (
+              <>
+                {/* Total batch amount input */}
+                <div className="flex items-center gap-0.5" title="Target batch amount in grams">
+                  <span className="text-secondary text-xs font-medium tracking-wide uppercase">
+                    Total (g)
+                  </span>
+                  <input
+                    type="number"
+                    min={0}
+                    step={25}
+                    className="boxed-input comp-val ml-0.5 w-14 px-0.5 py-0 text-sm"
+                    value={pinnedTotal ?? ""}
+                    placeholder={"—"}
+                    onChange={(e) => setPinnedTotal(parseInputTarget(e))}
+                    aria-label="Total batch amount in grams"
+                    data-testid="watchers-total-input"
+                  />
+                </div>
+                {/* Balance button */}
+                <button
+                  className={`btn-primary mr-1 px-2 py-0.5 ${
+                    balanceError ? "issue-border-error border" : ""
+                  }`}
+                  onClick={onBalance}
+                  disabled={balanceDisabled}
+                  title={balanceTitle}
+                  data-testid="watchers-balance-button"
+                >
+                  Balance
+                </button>
+              </>
             )}
           </div>
         )}

@@ -11,9 +11,10 @@ export const STORAGE_KEYS = {
   sidebarCollapsed: "sidebar-collapsed",
   calculatorLayouts: "calculator-layouts",
   groupBy: "group-by",
-  // Watcher state — targets and priorities, keys are handled by useKeyFilterState
+  // Watcher state — targets, priorities, and pinned total; keys are handled by useKeyFilterState
   watcherTargets: "watcher-targets",
   watcherPriorities: "watcher-priorities",
+  watcherTotal: "watcher-total",
   // Per-view persistence roots (leaf keys: ${root}:qty | :filter | :selected | :recipeIdx)
   propertiesPanelView: "properties-panel-view",
   compositionBreakdownPanelView: "composition-breakdown-panel-view",
