@@ -67,17 +67,26 @@ interface RangeMeterOptions {
   bandRanges: ({ yMin: number; yMax: number } | null)[];
   bandColor: string;
   refMarkers: Array<{ label: string; color: string; dash: number[]; values: (number | null)[] }>;
+  horizontal: boolean;
+}
+
+interface ScaleConfig {
+  beginAtZero?: boolean;
+  max?: number;
+  title?: { display: boolean; text: string };
+  grid?: { display?: boolean; color?: string };
 }
 
 interface ChartOptions {
   responsive: boolean;
   maintainAspectRatio: boolean;
+  indexAxis?: "x" | "y";
   plugins: {
     rangeMeter: RangeMeterOptions;
     legend: { display: boolean };
     title?: { display: boolean; text: string };
   };
-  scales: { y: { beginAtZero: boolean; title: { display: boolean; text: string } } };
+  scales: { x: ScaleConfig; y: ScaleConfig };
 }
 
 interface CapturedChartProps {
@@ -103,6 +112,14 @@ vi.mock("react-chartjs-2", () => ({
     capturedBarProps = { data, options };
     return <div data-testid="bar-chart">Mocked Bar Chart</div>;
   },
+}));
+
+// Drive the chart's orientation by controlling the measured container size. `null` (the default)
+// leaves the chart at its unmeasured vertical orientation, matching production's first paint.
+let mockSize: { width: number; height: number } | null = null;
+
+vi.mock("@/lib/use-element-size", () => ({
+  useElementSize: () => ({ ref: { current: null }, size: mockSize }),
 }));
 
 /** Convenience: build active recipes from a mock context and render the bar chart with them */
@@ -182,6 +199,7 @@ describe("PropertiesBarChart", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     capturedBarProps = null;
+    mockSize = null;
     setupVitestCanvasMock();
   });
 
@@ -299,8 +317,33 @@ describe("PropertiesBarChart", () => {
 
     it("should configure y-axis title to Quantity (%)", () => {
       renderFromContext([]);
-      expect(capturedBarProps!.options.scales.y.title.display).toBe(true);
-      expect(capturedBarProps!.options.scales.y.title.text).toBe("Quantity (%)");
+      expect(capturedBarProps!.options.scales.y.title!.display).toBe(true);
+      expect(capturedBarProps!.options.scales.y.title!.text).toBe("Quantity (%)");
+    });
+  });
+
+  // ---- Orientation -----------------------------------------------------------------------------
+
+  describe("Orientation", () => {
+    it("defaults to vertical bars (value axis on y) when unmeasured", () => {
+      renderFromContext([RecipeID.Main]);
+      expect(capturedBarProps!.options.indexAxis).toBe("x");
+      expect(capturedBarProps!.options.plugins.rangeMeter.horizontal).toBe(false);
+      // Value scale (beginAtZero + title) sits on y; category scale (no title) on x.
+      expect(capturedBarProps!.options.scales.y.beginAtZero).toBe(true);
+      expect(capturedBarProps!.options.scales.y.title!.text).toBe("Quantity (%)");
+      expect(capturedBarProps!.options.scales.x.title).toBeUndefined();
+    });
+
+    it("rotates to horizontal bars when the container is portrait", () => {
+      mockSize = { width: 320, height: 560 };
+      renderFromContext([RecipeID.Main]);
+      expect(capturedBarProps!.options.indexAxis).toBe("y");
+      expect(capturedBarProps!.options.plugins.rangeMeter.horizontal).toBe(true);
+      // Orientation swaps the axis roles: the value scale moves to x, the category scale to y.
+      expect(capturedBarProps!.options.scales.x.beginAtZero).toBe(true);
+      expect(capturedBarProps!.options.scales.x.title!.text).toBe("Quantity (%)");
+      expect(capturedBarProps!.options.scales.y.title).toBeUndefined();
     });
   });
 
@@ -323,6 +366,7 @@ describe("PropertiesChartView", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     capturedBarProps = null;
+    mockSize = null;
     setupVitestCanvasMock();
   });
 

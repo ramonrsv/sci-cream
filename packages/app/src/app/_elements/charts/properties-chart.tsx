@@ -1,6 +1,6 @@
 "use client";
 
-import { ReactNode } from "react";
+import { ReactNode, useState } from "react";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -30,6 +30,7 @@ import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { useOrderKeys } from "@/lib/group-by";
 import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
 import { prefersReducedMotion } from "@/lib/styles/motion";
+import { useElementSize } from "@/lib/use-element-size";
 import {
   CHART_TOP_PADDING,
   TOOLTIP_CORNER_RADIUS,
@@ -91,6 +92,8 @@ interface RangeMeterOptions {
   bandRanges: BandRange[];
   bandColor: string;
   refMarkers: RefMarker[];
+  /** When `true`, bars run horizontally (`indexAxis: "y"`); the overlay geometry is mirrored. */
+  horizontal: boolean;
 }
 
 declare module "chart.js" {
@@ -118,8 +121,24 @@ const MAX_BAR_THICKNESS = 48;
 const BAR_CATEGORY_PERCENTAGE = 0.8;
 /** Fraction of the category-group width occupied by the bar itself (Chart.js `barPercentage`). */
 const BAR_PERCENTAGE = 0.72;
-/** Round the y-axis max up to the next multiple of this for clean tick labels plus headroom. */
+/** Round the value-axis max up to the next multiple of this for clean tick labels plus headroom. */
 const Y_AXIS_TICK_STEP = 5;
+
+/** Aspect ratio (width/height) at or below which bars switch to horizontal. */
+const HORIZONTAL_ASPECT_RATIO = 0.95;
+/** Aspect ratio (width/height) above which bars switch back to vertical. */
+const VERTICAL_ASPECT_RATIO = 1.15;
+
+/**
+ * Minimum category-label tilt (deg); 0 lets labels lie flat, higher values force a slant. Chart.js
+ * rotates labels between this and {@link CATEGORY_LABEL_MAX_ROTATION} as the axis gets cramped.
+ */
+const CATEGORY_LABEL_MIN_ROTATION = 0;
+/**
+ * Max category-label tilt (deg). 90 stands them fully upright, lower values for a slant. Chart.js
+ * rotates labels between  {@link CATEGORY_LABEL_MIN_ROTATION} and this as the axis gets cramped.
+ */
+const CATEGORY_LABEL_MAX_ROTATION = 90;
 
 /** Clip subsequent canvas drawing to the chart's plot area. */
 function clipToChartArea(
@@ -132,10 +151,41 @@ function clipToChartArea(
 }
 
 /**
- * Draws the signature range-meter overlay: a soft acceptable-range band behind each bar
- * (`beforeDatasetsDraw`) and the reference recipes as horizontal tick markers on top of the bars
- * (`afterDatasetsDraw`). Geometry comes from the main bar elements, so bands and ticks track the
- * bars exactly. Reads its data from `options.plugins.rangeMeter`.
+ * Pixel rect for a value-axis span `[lo, hi]` across a bar's cross-axis, given the bar `center`
+ * and `thickness`. The value span lies on x when `horizontal`, otherwise on y.
+ */
+function valueSpanRect(
+  horizontal: boolean,
+  valueScale: { getPixelForValue: (value: number) => number },
+  center: number,
+  thickness: number,
+  lo: number,
+  hi: number,
+): { x: number; y: number; w: number; h: number } {
+  const half = thickness / 2;
+  if (horizontal) {
+    const start = valueScale.getPixelForValue(lo);
+    const end = valueScale.getPixelForValue(hi);
+    return { x: start, y: center - half, w: end - start, h: thickness };
+  }
+  const top = valueScale.getPixelForValue(hi);
+  const bottom = valueScale.getPixelForValue(lo);
+  return { x: center - half, y: top, w: thickness, h: bottom - top };
+}
+
+/** Bar cross-axis center and thickness (px) for the current orientation, from a bar element. */
+function barCrossAxis(
+  el: { getProps: (props: string[], final: boolean) => Record<string, number> },
+  horizontal: boolean,
+): { center: number; thickness: number } {
+  const g = el.getProps(["x", "y", "width", "height"], true);
+  return horizontal ? { center: g.y, thickness: g.height } : { center: g.x, thickness: g.width };
+}
+
+/**
+ * Draws the range-meter overlay: a soft acceptable-range band behind each bar and each reference
+ * recipe as a tick marker across the bars. Geometry tracks the bar elements, mirrored when
+ * `options.horizontal`. Reads its data from `options.plugins.rangeMeter`.
  */
 const rangeMeterPlugin: Plugin<"bar", RangeMeterOptions> = {
   id: "rangeMeter",
@@ -145,7 +195,8 @@ const rangeMeterPlugin: Plugin<"bar", RangeMeterOptions> = {
 
     const { ctx, chartArea } = chart;
     const meta = chart.getDatasetMeta(0);
-    const y = chart.scales.y;
+    const horizontal = options.horizontal;
+    const valueScale = horizontal ? chart.scales.x : chart.scales.y;
 
     ctx.save();
     clipToChartArea(ctx, chartArea);
@@ -155,15 +206,19 @@ const rangeMeterPlugin: Plugin<"bar", RangeMeterOptions> = {
       const el = meta.data[i];
       if (!range || !el) return;
 
-      const { x: cx, width } = el.getProps(["x", "width"], true) as { x: number; width: number };
-      const bandWidth = width * BAND_WIDTH_FACTOR;
-      const half = bandWidth / 2;
-      const top = y.getPixelForValue(range.yMax);
-      const height = y.getPixelForValue(range.yMin) - top;
-      const radius = Math.min(BAND_CORNER_RADIUS, half, Math.abs(height) / 2);
+      const { center, thickness } = barCrossAxis(el, horizontal);
+      const r = valueSpanRect(
+        horizontal,
+        valueScale,
+        center,
+        thickness * BAND_WIDTH_FACTOR,
+        range.yMin,
+        range.yMax,
+      );
+      const radius = Math.min(BAND_CORNER_RADIUS, Math.abs(r.w) / 2, Math.abs(r.h) / 2);
 
       ctx.beginPath();
-      ctx.roundRect(cx - half, top, bandWidth, height, radius);
+      ctx.roundRect(r.x, r.y, r.w, r.h, radius);
       ctx.fill();
     });
 
@@ -175,7 +230,8 @@ const rangeMeterPlugin: Plugin<"bar", RangeMeterOptions> = {
 
     const { ctx, chartArea } = chart;
     const meta = chart.getDatasetMeta(0);
-    const y = chart.scales.y;
+    const horizontal = options.horizontal;
+    const valueScale = horizontal ? chart.scales.x : chart.scales.y;
 
     ctx.save();
     clipToChartArea(ctx, chartArea);
@@ -188,15 +244,24 @@ const rangeMeterPlugin: Plugin<"bar", RangeMeterOptions> = {
       ref.values.forEach((value, i) => {
         const el = meta.data[i];
         if (value === null || !el) return;
-        const py = y.getPixelForValue(value);
-        if (py < chartArea.top || py > chartArea.bottom) return;
 
-        const { x: cx, width } = el.getProps(["x", "width"], true) as { x: number; width: number };
-        const half = width / 2 + REF_TICK_OVERHANG;
+        const vp = valueScale.getPixelForValue(value);
+        const offArea = horizontal
+          ? vp < chartArea.left || vp > chartArea.right
+          : vp < chartArea.top || vp > chartArea.bottom;
+        if (offArea) return;
+
+        const { center, thickness } = barCrossAxis(el, horizontal);
+        const half = thickness / 2 + REF_TICK_OVERHANG;
 
         ctx.beginPath();
-        ctx.moveTo(cx - half, py);
-        ctx.lineTo(cx + half, py);
+        if (horizontal) {
+          ctx.moveTo(vp, center - half);
+          ctx.lineTo(vp, center + half);
+        } else {
+          ctx.moveTo(center - half, vp);
+          ctx.lineTo(center + half, vp);
+        }
         ctx.stroke();
       });
     });
@@ -312,6 +377,17 @@ export function PropertiesBarChart({
   // Subscribe to the theme so the canvas re-reads the cascaded colors and repaints when it flips.
   useTheme();
 
+  // Rotate to horizontal bars when the container is portrait-ish, so mobile panels stay readable
+  // (the ratio gap is hysteresis). State is adjusted during render, not in an effect.
+  const { ref: containerRef, size } = useElementSize<HTMLDivElement>();
+  const [horizontal, setHorizontal] = useState(false);
+
+  if (size && size.width > 0 && size.height > 0) {
+    const ratio = size.width / size.height;
+    const next = horizontal ? ratio <= VERTICAL_ASPECT_RATIO : ratio < HORIZONTAL_ASPECT_RATIO;
+    if (next !== horizontal) setHorizontal(next);
+  }
+
   const gridColor = getColor(ThemeColor.Border);
   const legendColor = getColor(ThemeColor.TextPrimary);
   const tickColor = getColor(ThemeColor.TextSecondary);
@@ -409,16 +485,21 @@ export function PropertiesBarChart({
           const area = ctx.chart.chartArea;
           if (!area) return color;
 
-          const gradient = ctx.chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
-          gradient.addColorStop(0, addOrUpdateAlpha(color, BAR_GRADIENT_TOP_ALPHA));
-          gradient.addColorStop(1, color);
+          // Solid at the value-axis origin, fading translucent toward the value end.
+          const gradient = horizontal
+            ? ctx.chart.ctx.createLinearGradient(area.left, 0, area.right, 0)
+            : ctx.chart.ctx.createLinearGradient(0, area.top, 0, area.bottom);
+          const [originStop, endStop] = horizontal ? [0, 1] : [1, 0];
+          gradient.addColorStop(originStop, color);
+          gradient.addColorStop(endStop, addOrUpdateAlpha(color, BAR_GRADIENT_TOP_ALPHA));
           return gradient;
         },
+        // Round only the value-end corners: the top for vertical bars, the right for horizontal.
         borderRadius: {
-          topLeft: BAR_CORNER_RADIUS,
+          topLeft: horizontal ? 0 : BAR_CORNER_RADIUS,
           topRight: BAR_CORNER_RADIUS,
           bottomLeft: 0,
-          bottomRight: 0,
+          bottomRight: horizontal ? BAR_CORNER_RADIUS : 0,
         },
         borderWidth: 0,
         maxBarThickness: MAX_BAR_THICKNESS,
@@ -449,19 +530,40 @@ export function PropertiesBarChart({
     })),
   ];
 
+  // Axis configs by role (not x/y): the value axis carries the scale/title/gridlines, the category
+  // axis is bare. They swap between x and y depending on orientation (see `scales` below).
+  const valueScaleConfig = {
+    beginAtZero: true,
+    max: yMax,
+    title: { display: true, text: qtyToggle, color: tickColor },
+    grid: { color: gridColor },
+    border: { display: false },
+    ticks: { color: tickColor },
+  };
+  const categoryScaleConfig = {
+    grid: { display: false },
+    border: { display: false },
+    ticks: {
+      color: tickColor,
+      minRotation: CATEGORY_LABEL_MIN_ROTATION,
+      maxRotation: CATEGORY_LABEL_MAX_ROTATION,
+    },
+  };
+
   /** Chart.js options controlling layout, legend, tooltip, axis, and the range-meter overlay. */
   const options: ChartOptions<"bar"> = {
     responsive: true,
     maintainAspectRatio: false,
+    indexAxis: horizontal ? "y" : "x",
     // Disable the canvas entry/resize animation under reduced motion so screenshots are stable.
     animation: prefersReducedMotion() ? false : undefined,
     // No chart title: the panel context already names the chart, and dropping it reclaims height.
     layout: { padding: { top: CHART_TOP_PADDING } },
     plugins: {
-      rangeMeter: { bandRanges, bandColor, refMarkers },
+      rangeMeter: { bandRanges, bandColor, refMarkers, horizontal },
       legend: {
         display: refs.length > 0,
-        position: "chartArea",
+        position: horizontal ? "top" : "chartArea",
         align: "start",
         onClick: () => undefined,
         labels: { color: legendColor, generateLabels: () => legendLabels },
@@ -477,8 +579,10 @@ export function PropertiesBarChart({
         bodyFont: { family: TOOLTIP_BODY_FONT },
         callbacks: {
           title: (items: TooltipItem<"bar">[]) => items[0]?.label ?? "",
-          label: (context: TooltipItem<"bar">) =>
-            `${main.name || main.id}: ${formatCompositionValue(context.parsed.y ?? undefined).trim()}`,
+          label: (context: TooltipItem<"bar">) => {
+            const value = context.parsed[horizontal ? "x" : "y"];
+            return `${main.name || main.id}: ${formatCompositionValue(value ?? undefined).trim()}`;
+          },
           afterBody: (items: TooltipItem<"bar">[]) => {
             const idx = items[0]?.dataIndex;
             if (idx === undefined) return [];
@@ -491,20 +595,16 @@ export function PropertiesBarChart({
         },
       },
     },
-    scales: {
-      x: { grid: { display: false }, border: { display: false }, ticks: { color: tickColor } },
-      y: {
-        beginAtZero: true,
-        max: yMax,
-        title: { display: true, text: qtyToggle, color: tickColor },
-        grid: { color: gridColor },
-        border: { display: false },
-        ticks: { color: tickColor },
-      },
-    },
+    scales: horizontal
+      ? { x: valueScaleConfig, y: categoryScaleConfig }
+      : { x: categoryScaleConfig, y: valueScaleConfig },
   };
 
-  return <Bar data={chartData} options={options} plugins={[rangeMeterPlugin]} datasetIdKey="id" />;
+  return (
+    <div ref={containerRef} className="relative h-full w-full">
+      <Bar data={chartData} options={options} plugins={[rangeMeterPlugin]} datasetIdKey="id" />
+    </div>
+  );
 }
 
 /**

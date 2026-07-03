@@ -371,3 +371,38 @@ test.describe("Visual Regression: Panels, Table Scroll States", () => {
     );
   });
 });
+
+/** Forced panel width (px) that makes the chart panel portrait, so the bars flip horizontal. */
+const HORIZONTAL_CHART_PANEL_WIDTH = 300;
+
+/**
+ * Shrink the chart panel to a portrait box to flip the bars horizontal. Only the width changes,
+ * so the panel stays inside its grid cell; then wait for the canvas to redraw.
+ */
+async function makePropertiesChartPanelPortrait(page: Page, panel: Locator) {
+  await panel.evaluate((el, width) => {
+    (el as HTMLElement).style.width = `${width}px`;
+  }, HORIZONTAL_CHART_PANEL_WIDTH);
+  await page.waitForTimeout(300);
+}
+
+test.describe("Visual Regression: Panels, Properties Chart Horizontal Orientation", () => {
+  const testPropertiesChartPanelHorizontal = (recipeIds: RecipeID[]) => {
+    test(
+      makeRecipesTestName("PropertiesChartPanel horizontal", recipeIds),
+      async ({ page, browserName }) => {
+        await goToPageAndPasteRecipes(page, browserName, recipeIds);
+        const panel = await locatePanelAndExpectVisible(page, "#properties-chart-panel");
+
+        await makePropertiesChartPanelPortrait(page, panel);
+
+        await expect(panel).toHaveScreenshot(
+          makeRecipesScreenshotFilename("properties-chart-panel-horizontal", recipeIds),
+        );
+      },
+    );
+  };
+
+  testPropertiesChartPanelHorizontal([RecipeID.Main]);
+  testPropertiesChartPanelHorizontal([RecipeID.Main, RecipeID.RefA, RecipeID.RefB]);
+});

@@ -9,7 +9,6 @@
 - [ ] Add make-recipe link, to click off ingredients that have been measured out for one or more
       recipes. Each recipe should be letter and color coded.
 - [ ] Add visual regression tests for dark mode; not everything, just routes & some key elements.
-- [ ] Add support for `PropertiesChart` to auto-rotate orientation based on the pane aspect ratio.
 - [ ] `WatcherCard` needs to display a color based on position with an acceptable property range,
       and based on proximity to the balancing target. Figure out how to handle overlapping concerns.
 - [ ] Add support for displaying balancing targets in `PropertiesBarChart`; move up to context?
@@ -115,6 +114,7 @@
 
 ## Completed
 
+- [x] Add support for `PropertiesChart` to auto-rotate orientation based on the pane aspect ratio.
 - [x] Fix typo in welcome blog post, "you will **find** areas where it goes well beyond...".
 - [x] In `/recipes`, when `KeyFilterSelect` is `Active/All`, there is a quick flicker when switch.
 - [x] Add some checkmark-style visual feedback if a balance operation meets target within tolerance.
