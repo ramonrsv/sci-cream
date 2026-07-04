@@ -150,7 +150,7 @@ describe("RecipeEditor", () => {
       });
     }, []);
 
-    return <RecipeEditor props={{ recipeCtxState: [recipeCtx, setRecipeContext] }} />;
+    return <RecipeEditor recipeCtxState={[recipeCtx, setRecipeContext]} />;
   }
 
   /** Get the ingredient name search input element at the given row index within a container */
@@ -195,20 +195,20 @@ describe("RecipeEditor", () => {
   // ---- Rendering --------------------------------------------------------------------------------
 
   it("should render recipe selector", () => {
-    const { container } = render(<RecipeEditor props={makeRecipeEditorProps([0, 1])} />);
+    const { container } = render(<RecipeEditor {...makeRecipeEditorProps([0, 1])} />);
 
     expect(getSelectedOptionLabel(container, "#recipe-selection")).toBe("Recipe");
   });
 
   it("should select the slot given by urlSlot on first render", () => {
     const { container } = render(
-      <RecipeEditor props={{ ...makeRecipeEditorProps([0, 1, 2]), urlSlot: 2 }} />,
+      <RecipeEditor {...makeRecipeEditorProps([0, 1, 2])} urlSlot={2} />,
     );
     expect(getSelectedOptionLabel(container, "#recipe-selection")).toBe("Ref B");
   });
 
   it("should render action buttons", () => {
-    render(<RecipeEditor props={makeRecipeEditorProps([0, 1])} />);
+    render(<RecipeEditor {...makeRecipeEditorProps([0, 1])} />);
 
     expect(screen.getByRole("button", { name: /copy/i })).toBeInTheDocument();
     expect(screen.getByRole("button", { name: /paste/i })).toBeInTheDocument();
@@ -216,7 +216,7 @@ describe("RecipeEditor", () => {
   });
 
   it("should render table with correct number of ingredient rows", () => {
-    const { container } = render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+    const { container } = render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
 
     const tbody = container.querySelector("tbody");
     const rows = tbody?.querySelectorAll("tr");
@@ -224,7 +224,7 @@ describe("RecipeEditor", () => {
   });
 
   it("should render table headers", () => {
-    render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+    render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
 
     expect(screen.getByText("Ingredient")).toBeInTheDocument();
     expect(screen.getByText("Qty (g)")).toBeInTheDocument();
@@ -293,7 +293,7 @@ describe("RecipeEditor", () => {
     const user = userEvent.setup();
     const onUserEdit = vi.fn();
     const { container } = render(
-      <RecipeEditor props={{ recipeCtxState: [recipeContext, setRecipeContext], onUserEdit }} />,
+      <RecipeEditor recipeCtxState={[recipeContext, setRecipeContext]} onUserEdit={onUserEdit} />,
     );
 
     await user.type(getIngredientQuantityElement(container, 0), "5");
@@ -304,7 +304,7 @@ describe("RecipeEditor", () => {
     const user = userEvent.setup();
     const onUserEdit = vi.fn();
     const { container } = render(
-      <RecipeEditor props={{ recipeCtxState: [recipeContext, setRecipeContext], onUserEdit }} />,
+      <RecipeEditor recipeCtxState={[recipeContext, setRecipeContext]} onUserEdit={onUserEdit} />,
     );
 
     await user.type(getIngredientNameElement(container, 0), "M");
@@ -315,7 +315,7 @@ describe("RecipeEditor", () => {
     const user = userEvent.setup();
     const onUserEdit = vi.fn();
     render(
-      <RecipeEditor props={{ recipeCtxState: [recipeContext, setRecipeContext], onUserEdit }} />,
+      <RecipeEditor recipeCtxState={[recipeContext, setRecipeContext]} onUserEdit={onUserEdit} />,
     );
 
     await user.click(screen.getByRole("button", { name: /clear/i }));
@@ -325,7 +325,7 @@ describe("RecipeEditor", () => {
   it("does not fire onUserEdit on mount (storage hydration is not a user edit)", () => {
     const onUserEdit = vi.fn();
     render(
-      <RecipeEditor props={{ recipeCtxState: [recipeContext, setRecipeContext], onUserEdit }} />,
+      <RecipeEditor recipeCtxState={[recipeContext, setRecipeContext]} onUserEdit={onUserEdit} />,
     );
     expect(onUserEdit).not.toHaveBeenCalled();
   });
@@ -348,7 +348,7 @@ describe("RecipeEditor", () => {
     recipeContext.recipes[0].ingredientRows[1].quantity = 30;
     recipeContext.recipes[0].mixTotal = 80;
 
-    const { container } = render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+    const { container } = render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
 
     const percentageCells = container.querySelectorAll("tbody td.comp-val");
     const firstRowPercent = percentageCells[0].textContent?.trim();
@@ -506,7 +506,7 @@ describe("RecipeEditor", () => {
   it("should show red outline for invalid ingredient names", () => {
     recipeContext.recipes[0].ingredientRows[0].name = "Invalid Ingredient";
 
-    const { container } = render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+    const { container } = render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
 
     expect(getIngredientNameElement(container, 0).className).toContain("outline-red-400");
   });
@@ -514,7 +514,7 @@ describe("RecipeEditor", () => {
   it("should show blue focus ring for valid ingredient names", () => {
     recipeContext.recipes[0].ingredientRows[0].name = "2% Milk";
 
-    const { container } = render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+    const { container } = render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
 
     const firstIngredientInput = getIngredientNameElement(container, 0);
     expect(firstIngredientInput.className).toContain("focus:ring-blue-400");
@@ -543,7 +543,7 @@ describe("RecipeEditor", () => {
 
     const user = userEvent.setup();
 
-    const { container } = render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+    const { container } = render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
 
     const firstIngredientInput = getIngredientNameElement(container, 0);
     expect(firstIngredientInput).toBeInTheDocument();
@@ -558,7 +558,7 @@ describe("RecipeEditor", () => {
   });
 
   it("should render datalist with valid ingredients", () => {
-    const { container } = render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+    const { container } = render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
 
     const datalist = container.querySelector("#valid-ingredients");
     expect(datalist).toBeInTheDocument();
@@ -603,7 +603,7 @@ describe("RecipeEditor", () => {
 
   describe("Recipe name input", () => {
     it("renders an editable recipe name input", () => {
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       expect(screen.getByLabelText("Recipe name")).toBeInTheDocument();
     });
 
@@ -636,7 +636,7 @@ describe("RecipeEditor", () => {
     }
 
     it("renders the Save button", () => {
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       // When signed out, both Save and Save-as-new-version share the "Sign in to save recipes"
       // tooltip, so exactly two buttons match the regex.
       expect(screen.getAllByTitle(/Sign in to save recipes|Save recipe/)).toHaveLength(2);
@@ -644,7 +644,7 @@ describe("RecipeEditor", () => {
 
     it("is disabled when the user is not signed in", () => {
       populateRecipe("My Recipe");
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       // Both Save and Save-as-new-version share this disabled-state tooltip; verify both
       screen
         .getAllByTitle("Sign in to save recipes")
@@ -654,14 +654,14 @@ describe("RecipeEditor", () => {
     it("is disabled when the recipe has no name", () => {
       mockSignedIn();
       populateRecipe("");
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       expect(screen.getByTitle("Enter a name to save")).toBeDisabled();
     });
 
     it("is disabled when the recipe is empty", () => {
       mockSignedIn();
       recipeContext.recipes[0].name = "My Recipe";
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       expect(screen.getByTitle("Add ingredients to save")).toBeDisabled();
     });
 
@@ -672,7 +672,7 @@ describe("RecipeEditor", () => {
       recipeContext.recipes[1].ingredientRows[0].name = "Whole Milk";
       recipeContext.recipes[1].ingredientRows[0].quantity = 500;
       recipeContext.recipes[1].mixTotal = 500;
-      render(<RecipeEditor props={{ ...makeRecipeEditorProps([0, 1]), urlSlot: 1 }} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0, 1])} urlSlot={1} />);
       // Both Save and Save-as-new-version share this disabled-state tooltip; verify both
       screen
         .getAllByTitle("Select main recipe to save")
@@ -682,7 +682,7 @@ describe("RecipeEditor", () => {
     it("calls createUserRecipe with the user email, name, and rows for a new recipe (no recipeId)", async () => {
       mockSignedIn();
       populateRecipe("My Recipe");
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
 
       fireEvent.click(screen.getByTitle("Save recipe"));
       await waitFor(() => {
@@ -696,7 +696,7 @@ describe("RecipeEditor", () => {
       // Mark the recipe as a loaded version of an existing saved recipe with a clean baseline
       recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 3 };
       recipeContext.recipes[0].baseline = { name: "My Recipe", serializedRows: "" };
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
 
       fireEvent.click(
         screen.getByTitle((value) => /Save changes to version 3|Saved — version 3/.test(value)),
@@ -714,7 +714,7 @@ describe("RecipeEditor", () => {
       recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 1 };
       // Baseline name differs from current name -> renameUserRecipe should be called
       recipeContext.recipes[0].baseline = { name: "Original Name", serializedRows: "" };
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
 
       fireEvent.click(
         screen.getByTitle((value) => /Save changes to version 1|Saved — version 1/.test(value)),
@@ -730,7 +730,7 @@ describe("RecipeEditor", () => {
     it("renders 'Save as new version' disabled for an anonymous recipe with no savedRef", () => {
       mockSignedIn();
       populateRecipe("My Recipe");
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       const button = screen.getByTitle(
         "Save the recipe at least once before creating a new version",
       );
@@ -742,7 +742,7 @@ describe("RecipeEditor", () => {
       mockSignedIn();
       populateRecipe("My Recipe");
       recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 1 };
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       const button = screen.getByTitle("Save as new version");
       expect(button).toBeInTheDocument();
       expect(button).not.toBeDisabled();
@@ -754,7 +754,7 @@ describe("RecipeEditor", () => {
       recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 1 };
       recipeContext.recipes[0].baseline = { name: "My Recipe", serializedRows: "" };
 
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       fireEvent.click(screen.getByRole("button", { name: "Save as new version" }));
       await waitFor(() => {
         expect(createUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, [["Whole Milk", 500]]);
@@ -778,7 +778,7 @@ describe("RecipeEditor", () => {
 
     it("does not show the unsaved-changes dot when the recipe matches baseline", () => {
       populateLoadedRecipeClean();
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       expect(screen.queryByLabelText("Unsaved changes")).not.toBeInTheDocument();
     });
 
@@ -787,14 +787,14 @@ describe("RecipeEditor", () => {
       recipeContext.recipes[0].ingredientRows[0].name = "Whole Milk";
       recipeContext.recipes[0].ingredientRows[0].quantity = 500;
       recipeContext.recipes[0].mixTotal = 500;
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       expect(screen.queryByLabelText("Unsaved changes")).not.toBeInTheDocument();
     });
 
     it("shows the unsaved-changes dot when a loaded recipe is renamed", () => {
       populateLoadedRecipeClean();
       recipeContext.recipes[0].name = "Loaded Recipe (edited)";
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       expect(screen.getByLabelText("Unsaved changes")).toBeInTheDocument();
     });
   });
@@ -803,13 +803,13 @@ describe("RecipeEditor", () => {
     it("shows the version badge for a loaded recipe", () => {
       recipeContext.recipes[0].name = "Loaded Recipe";
       recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 3 };
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       expect(screen.getByTitle("Editing version 3")).toBeInTheDocument();
     });
 
     it("does not show the version badge for an anonymous recipe", () => {
       recipeContext.recipes[0].name = "Anon Recipe";
-      render(<RecipeEditor props={makeRecipeEditorProps([0])} />);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       expect(screen.queryByTitle(/Editing version/)).not.toBeInTheDocument();
     });
   });

@@ -214,7 +214,7 @@ function CalculatorContent() {
           containerPadding={[0, 0]}
           dragConfig={{ handle: ".drag-handle" }}
         >
-          <div key="recipe">{<RecipeEditorPanel props={recipeGridProps} />}</div>
+          <div key="recipe">{<RecipeEditorPanel {...recipeGridProps} />}</div>
           <div key="properties">{<PropertiesPanel recipes={recipes} />}</div>
           <div key="composition">{<CompositionBreakdownPanel recipes={recipes} />}</div>
           <div key="props-chart">{<PropertiesChartPanel recipes={recipes} />}</div>

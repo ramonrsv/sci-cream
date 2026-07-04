@@ -204,22 +204,18 @@ enum SaveStatus {
  * `RecipeSelect`); used by the panel wrapper to inject a drag handle.
  */
 export function RecipeEditor({
-  props: {
-    recipeCtxState: [recipeContext, setRecipeContext],
-    urlSlot,
-    persistKey,
-    toolbarPrefix,
-    onUserEdit,
-  },
+  recipeCtxState: [recipeContext, setRecipeContext],
+  urlSlot,
+  persistKey,
+  toolbarPrefix,
+  onUserEdit,
 }: {
-  props: {
-    recipeCtxState: RecipeContextState;
-    urlSlot?: number;
-    persistKey?: string;
-    toolbarPrefix?: ReactNode;
-    /** Fired on any user-driven recipe content edit; used to cancel continuous-balance mode. */
-    onUserEdit?: () => void;
-  };
+  recipeCtxState: RecipeContextState;
+  urlSlot?: number;
+  persistKey?: string;
+  toolbarPrefix?: ReactNode;
+  /** Fired on any user-driven recipe content edit; used to cancel continuous-balance mode. */
+  onUserEdit?: () => void;
 }) {
   const {
     wasmResourcesState: [wasmResources],

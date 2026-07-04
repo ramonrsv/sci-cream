@@ -53,17 +53,17 @@ describe("RecipeEditorPanel", () => {
 
   describe("Panel Chrome", () => {
     it("should render with the correct id", () => {
-      const { container } = render(<RecipeEditorPanel props={makePanelProps()} />);
+      const { container } = render(<RecipeEditorPanel {...makePanelProps()} />);
       expect(container.querySelector("#recipe-editor-panel")).toBeInTheDocument();
     });
 
     it("should render with the grid-component class", () => {
-      const { container } = render(<RecipeEditorPanel props={makePanelProps()} />);
+      const { container } = render(<RecipeEditorPanel {...makePanelProps()} />);
       expect(container.querySelector(".grid-component")).toBeInTheDocument();
     });
 
     it("should render a drag handle", () => {
-      const { container } = render(<RecipeEditorPanel props={makePanelProps()} />);
+      const { container } = render(<RecipeEditorPanel {...makePanelProps()} />);
       expect(container.querySelector(".drag-handle")).toBeInTheDocument();
     });
   });

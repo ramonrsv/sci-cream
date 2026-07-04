@@ -51,7 +51,6 @@
 - [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
 - [ ] In `/ingredients`, the composition table does not have a bottom border; shows when scroll.
 - [ ] There is a weird horizontal line in `/ingredient-search-detail-panel-visual-linux.png`
-- [ ] Look into single `props` argument or spread out arguments for Next.js components.
 - [ ] Add end-to-end tests for balancing functionality; check surfacing of balancing errors?
 - [ ] Some layouts cause some toolbars to overflow. See if the look of overflowing can be improved.
 
@@ -111,6 +110,7 @@
 
 ## Completed
 
+- [x] Look into single `props` argument or spread out arguments for Next.js components.
 - [x] Add a lock-auto-balancing toggle to automatically balance a recipe whenever any target change
       is made, since balancing is fast to run. It button should untoggle if recipe changes are made.
 - [x] Explore adding support for a total mix amount input/slider and balancing target.
