@@ -928,35 +928,40 @@ export function WatchersView({
           orderKeys={orderKeys}
         />
         {(balancingSupported || nonEmptyRefs.length > 0) && (
-          <div className="ml-auto flex shrink-0 items-center gap-1 pr-0.5">
+          <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-1 pr-1.5">
+            {/* Issues cluster */}
             {(issues.length > 0 || balanceError !== undefined) && (
               <WatcherIssues issues={issues} extraError={balanceError} />
             )}
-            {/* Fill-from-refs buttons */}
-            {nonEmptyRefs.map((ref) => {
-              const letter = ref.id.replace(/^Ref\s*/, "").trim() || ref.id;
-              const hasAnyFillable = enabledProps.some((k) =>
-                isUsableNumber(getDisplayValue(k, ref)),
-              );
-              return (
-                <button
-                  key={ref.id}
-                  className="action-button flex items-center px-1"
-                  onClick={() => onFillTargetsFromRef(ref)}
-                  disabled={enabledProps.length === 0 || !hasAnyFillable}
-                  title={`Fill targets for all watched properties from ${ref.id}`}
-                  data-testid={`watchers-fill-all-${ref.id}`}
-                >
-                  <ArrowDown size={COMPONENT_ACTION_ICON_SIZE - 8} />
-                  <span className="pr-0.5 text-sm font-semibold">{letter}</span>
-                </button>
-              );
-            })}
+            {/* Fill-from-refs cluster */}
+            {nonEmptyRefs.length > 0 && (
+              <div className="flex items-center gap-1">
+                {nonEmptyRefs.map((ref) => {
+                  const letter = ref.id.replace(/^Ref\s*/, "").trim() || ref.id;
+                  const hasAnyFillable = enabledProps.some((k) =>
+                    isUsableNumber(getDisplayValue(k, ref)),
+                  );
+                  return (
+                    <button
+                      key={ref.id}
+                      className="action-button flex items-center px-1"
+                      onClick={() => onFillTargetsFromRef(ref)}
+                      disabled={enabledProps.length === 0 || !hasAnyFillable}
+                      title={`Fill targets for all watched properties from ${ref.id}`}
+                      data-testid={`watchers-fill-all-${ref.id}`}
+                    >
+                      <ArrowDown size={COMPONENT_ACTION_ICON_SIZE - 8} />
+                      <span className="pr-0.5 text-sm font-semibold">{letter}</span>
+                    </button>
+                  );
+                })}
+              </div>
+            )}
             {balancingSupported && (
               <>
-                {/* Total batch amount input */}
+                {/* Total cluster */}
                 <div className="flex items-center gap-0.5" title="Target batch amount in grams">
-                  <span className="text-secondary text-xs font-medium tracking-wide uppercase">
+                  <span className="text-secondary text-xs font-medium tracking-wide whitespace-nowrap uppercase">
                     Total (g)
                   </span>
                   <input
@@ -971,33 +976,36 @@ export function WatchersView({
                     data-testid="watchers-total-input"
                   />
                 </div>
-                {/* Auto-balance (continuous) toggle */}
-                {setAutoBalance !== undefined && (
+                {/* Auto-balance toggle + Balance cluster */}
+                <div className="flex items-center gap-1">
+                  {/* Auto-balance (continuous) toggle */}
+                  {setAutoBalance !== undefined && (
+                    <button
+                      className={`flex items-center gap-0.5 px-1 py-0.5 ${
+                        autoBalance ? "btn-primary" : "action-button"
+                      } ${autoBalancePaused ? "opacity-50" : ""}`}
+                      onClick={toggleAutoBalance}
+                      aria-pressed={autoBalance}
+                      title={autoBalanceTitle}
+                      data-testid="watchers-auto-balance-toggle"
+                      data-paused={autoBalancePaused}
+                    >
+                      <RefreshCw size={COMPONENT_ACTION_ICON_SIZE - 6} />
+                    </button>
+                  )}
+                  {/* Balance button */}
                   <button
-                    className={`flex items-center gap-0.5 px-1 py-0.5 ${
-                      autoBalance ? "btn-primary" : "action-button"
-                    } ${autoBalancePaused ? "opacity-50" : ""}`}
-                    onClick={toggleAutoBalance}
-                    aria-pressed={autoBalance}
-                    title={autoBalanceTitle}
-                    data-testid="watchers-auto-balance-toggle"
-                    data-paused={autoBalancePaused}
+                    className={`btn-primary px-2 py-0.5 ${
+                      balanceError ? "issue-border-error border" : ""
+                    } ${autoBalance ? "opacity-50" : ""}`}
+                    onClick={onBalance}
+                    disabled={balanceDisabled}
+                    title={balanceTitle}
+                    data-testid="watchers-balance-button"
                   >
-                    <RefreshCw size={COMPONENT_ACTION_ICON_SIZE - 6} />
+                    Balance
                   </button>
-                )}
-                {/* Balance button */}
-                <button
-                  className={`btn-primary mr-1 px-2 py-0.5 ${
-                    balanceError ? "issue-border-error border" : ""
-                  } ${autoBalance ? "opacity-50" : ""}`}
-                  onClick={onBalance}
-                  disabled={balanceDisabled}
-                  title={balanceTitle}
-                  data-testid="watchers-balance-button"
-                >
-                  Balance
-                </button>
+                </div>
               </>
             )}
           </div>

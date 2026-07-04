@@ -47,7 +47,6 @@
 - [ ] Look into how layouts make tables too narrow or too wide, and consider setting maximum table
       widths so that they don't look too wide on some layouts; may look bad in narrow scrollable?
 - [ ] The delete recipe version button moves around with the version name length, which is jarring.
-- [ ] When toolbars overflow, the vertical spacing between items doesn't look right, needs fixing.
 - [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
 - [ ] In `/ingredients`, the composition table does not have a bottom border; shows when scroll.
 - [ ] There is a weird horizontal line in `/ingredient-search-detail-panel-visual-linux.png`
@@ -110,6 +109,7 @@
 
 ## Completed
 
+- [x] When toolbars overflow, the vertical spacing between items doesn't look right, needs fixing.
 - [x] Look into single `props` argument or spread out arguments for Next.js components.
 - [x] Add a lock-auto-balancing toggle to automatically balance a recipe whenever any target change
       is made, since balancing is fast to run. It button should untoggle if recipe changes are made.

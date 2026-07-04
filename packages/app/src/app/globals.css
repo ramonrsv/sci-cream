@@ -207,7 +207,7 @@ tbody tr:hover > .table-emphasis {
 }
 
 .toolbar {
-  @apply flex flex-wrap items-center gap-1.5;
+  @apply flex flex-wrap items-center gap-x-1.5 gap-y-0;
 }
 
 /* Grid Components */
