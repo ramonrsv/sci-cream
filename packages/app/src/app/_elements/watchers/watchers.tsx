@@ -1,6 +1,15 @@
 "use client";
 
-import { ChangeEvent, ReactNode, useEffect, useMemo, useState } from "react";
+import {
+  ChangeEvent,
+  Dispatch,
+  ReactNode,
+  SetStateAction,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useState,
+} from "react";
 import {
   AlertCircle,
   AlertTriangle,
@@ -10,6 +19,7 @@ import {
   ChevronDown,
   ChevronsUp,
   ChevronUp,
+  RefreshCw,
   X,
 } from "lucide-react";
 
@@ -620,12 +630,10 @@ export function WatchersGrid({
  * `toolbarPrefix` is rendered inside the toolbar's flex row before the controls; used by the panel
  * wrapper to inject a drag handle without breaking the toolbar layout.
  *
- * The toolbar's right-side action group has a {@link TotalAmountInput} (an optional target total
- * that Balance sizes the recipe to, persisted alongside the targets), a Balance button (runs the
- * WASM balancer using watched CompKey-derived targets and their priorities, then calls
- * `onApplyBalancedMain`) and one Fill-from-Ref button per non-empty reference (fills
- * currently-watched targets from that reference's values). The total input and Balance button need
- * a `wasmBridge`, so bare renders stay read-only.
+ * The toolbar's right-side action group has a total-amount input (optional target total the
+ * balancer sizes to), an Auto toggle (continuous balancing via `autoBalanceState`), a Balance
+ * button (runs the WASM balancer, then calls `onApplyBalancedMain`), and a Fill-from-Ref button per
+ * non-empty reference. These need a `wasmBridge`, so bare renders stay read-only.
  *
  * When a `wasmBridge` is present, targets are validated live via `validate_recipe_targets`: a
  * {@link WatcherIssues} chip in the toolbar summarizes any errors and warnings (its popover lists
@@ -639,6 +647,7 @@ export function WatchersView({
   defaultSelected = DEFAULT_SELECTED_PROPERTIES,
   wasmBridge,
   onApplyBalancedMain,
+  autoBalanceState,
   persistKey,
 }: {
   main: Recipe;
@@ -647,6 +656,8 @@ export function WatchersView({
   defaultSelected?: Set<PropKey>;
   wasmBridge?: WasmBridge;
   onApplyBalancedMain?: (balanced: LightRecipe) => void;
+  /** Continuous-balance toggle `[on, setOn]`, caller-owned; absent renders never auto-balance. */
+  autoBalanceState?: [boolean, Dispatch<SetStateAction<boolean>>];
   persistKey?: string;
 }) {
   const [deltaToggle, setDeltaToggle, supportedDeltaToggles] = useDeltaToggleState(persistKey, {
@@ -667,6 +678,7 @@ export function WatchersView({
     STORAGE_KEYS.watcherTotal,
     undefined,
   );
+  const [autoBalance, setAutoBalance] = autoBalanceState ?? [false, undefined];
   const [targets, setTargets] = usePersistedState<TargetsMap>(STORAGE_KEYS.watcherTargets, {});
   const [priorities, setPriorities] = usePersistedState<PrioritiesMap>(
     STORAGE_KEYS.watcherPriorities,
@@ -861,13 +873,41 @@ export function WatchersView({
   const balanceDisabled =
     !balancingSupported || isRecipeEmpty(main) || balanceTargets.length === 0 || hasErrors;
 
+  // Stable string signatures of the small target/priority arrays, for use as effect deps.
+  const balanceTargetsKey = JSON.stringify(balanceTargets);
+  const balancePrioritiesKey = JSON.stringify(balancePriorities);
+
+  // Continuous (auto) balancing: while on, re-balance on target/priority/total change. Keyed on
+  // those inputs, not `main`, so the balancer's own write can't re-trigger it. `useLayoutEffect`
+  // flushes the re-balance before paint, avoiding a one-frame stale-delta flicker.
+  useLayoutEffect(() => {
+    if (!autoBalance || balanceDisabled) return;
+    onBalance();
+    // Suppress the `onBalance` missing-dep warning: listing it would re-run this every render.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [autoBalance, balanceDisabled, balanceTargetsKey, balancePrioritiesKey, pinnedTotal]);
+
   const balanceTitle = balanceError
     ? `Balance failed: ${balanceError}`
     : hasErrors
       ? `Fix ${errorCount === 1 ? "the error" : `${errorCount} errors`} to balance`
       : balanceTargets.length === 0
         ? "Set at least one composition target to balance"
-        : "Balance the recipe to meet current targets";
+        : autoBalance
+          ? "Auto-balancing is on — the recipe is continuously re-balanced"
+          : "Balance the recipe to meet current targets";
+
+  /** Toggle continuous-balance mode on/off (no-op when the caller supplied no state) */
+  const toggleAutoBalance = () => setAutoBalance?.((v) => !v);
+
+  // Auto is on but a validation error is stopping the effect — flag it so it isn't silent.
+  const autoBalancePaused = autoBalance && hasErrors;
+
+  const autoBalanceTitle = autoBalancePaused
+    ? `Auto-balancing paused — fix any errors to resume`
+    : autoBalance
+      ? "Auto-balancing on — click to stop; any recipe edit also stops it"
+      : "Auto-balance: continuously re-balance as targets change";
 
   const nonEmptyRefs = refs.filter((r) => !isRecipeEmpty(r));
 
@@ -931,11 +971,26 @@ export function WatchersView({
                     data-testid="watchers-total-input"
                   />
                 </div>
+                {/* Auto-balance (continuous) toggle */}
+                {setAutoBalance !== undefined && (
+                  <button
+                    className={`flex items-center gap-0.5 px-1 py-0.5 ${
+                      autoBalance ? "btn-primary" : "action-button"
+                    } ${autoBalancePaused ? "opacity-50" : ""}`}
+                    onClick={toggleAutoBalance}
+                    aria-pressed={autoBalance}
+                    title={autoBalanceTitle}
+                    data-testid="watchers-auto-balance-toggle"
+                    data-paused={autoBalancePaused}
+                  >
+                    <RefreshCw size={COMPONENT_ACTION_ICON_SIZE - 6} />
+                  </button>
+                )}
                 {/* Balance button */}
                 <button
                   className={`btn-primary mr-1 px-2 py-0.5 ${
                     balanceError ? "issue-border-error border" : ""
-                  }`}
+                  } ${autoBalance ? "opacity-50" : ""}`}
                   onClick={onBalance}
                   disabled={balanceDisabled}
                   title={balanceTitle}

@@ -1,5 +1,6 @@
 "use client";
 
+import type { Dispatch, SetStateAction } from "react";
 import { GripVertical } from "lucide-react";
 
 import { Recipe } from "@/lib/recipe";
@@ -19,10 +20,12 @@ export function WatchersPanel({
   recipes,
   wasmBridge,
   onApplyBalancedMain,
+  autoBalanceState,
 }: {
   recipes: Recipe[];
   wasmBridge?: WasmBridge;
   onApplyBalancedMain?: (balanced: LightRecipe) => void;
+  autoBalanceState?: [boolean, Dispatch<SetStateAction<boolean>>];
 }) {
   return (
     <div id="watchers-panel" className="grid-component relative h-full w-full">
@@ -32,6 +35,7 @@ export function WatchersPanel({
         toolbarPrefix={<GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />}
         wasmBridge={wasmBridge}
         onApplyBalancedMain={onApplyBalancedMain}
+        autoBalanceState={autoBalanceState}
         persistKey={STORAGE_KEYS.watchersPanelView}
       />
     </div>

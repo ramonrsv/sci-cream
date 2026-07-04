@@ -209,6 +209,7 @@ export function RecipeEditor({
     urlSlot,
     persistKey,
     toolbarPrefix,
+    onUserEdit,
   },
 }: {
   props: {
@@ -216,6 +217,8 @@ export function RecipeEditor({
     urlSlot?: number;
     persistKey?: string;
     toolbarPrefix?: ReactNode;
+    /** Fired on any user-driven recipe content edit; used to cancel continuous-balance mode. */
+    onUserEdit?: () => void;
   };
 }) {
   const {
@@ -255,13 +258,20 @@ export function RecipeEditor({
     return allRecipes[recipeIdx].ingredientRows[rowIdx];
   };
 
+  /** Signal a user-driven content edit (e.g. to cancel continuous-balance mode) */
+  const userEdit = () => onUserEdit?.();
+
   /** Update the name of the currently selected recipe */
   const updateCurrentRecipeName = (name: string) => {
+    userEdit();
+
     updateRecipe(currentRecipeIdx, { name });
   };
 
   /** Handle a name change for a row in the currently selected recipe */
   const updateCurrentIngredientRowName = (index: number, name: string) => {
+    userEdit();
+
     updateRecipe(currentRecipeIdx, {
       rows: [makeUpdatedRow(getRow(currentRecipeIdx, index), name, undefined, wasmResources)],
     });
@@ -269,6 +279,8 @@ export function RecipeEditor({
 
   /** Handle a quantity change for a row in the currently selected recipe */
   const updateCurrentIngredientRowQuantity = (index: number, qtyStr: string) => {
+    userEdit();
+
     updateRecipe(currentRecipeIdx, {
       rows: [makeUpdatedRow(getRow(currentRecipeIdx, index), undefined, qtyStr, wasmResources)],
     });
@@ -281,6 +293,8 @@ export function RecipeEditor({
    * (the editor switches to "anonymous" mode for that slot until the user saves it explicitly).
    */
   const pasteRecipe = async (recipeIdx: number, serializedRows: string) => {
+    userEdit();
+
     updateRecipes([
       clearRecipeIdentity(
         makeUpdatedRecipeFromStore(
@@ -297,6 +311,8 @@ export function RecipeEditor({
    * the slot returns to a clean "anonymous" state without a pending dirty flag.
    */
   const clearRecipe = (recipeIdx: number) => {
+    userEdit();
+
     const cleared = makeUpdatedRecipe(
       allRecipes[recipeIdx],
       {

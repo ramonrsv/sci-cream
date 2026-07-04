@@ -1,5 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 
+import { useState } from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent, act } from "@testing-library/react";
 
@@ -1380,5 +1381,204 @@ describe("WatchersView Total amount", () => {
 
     expect(input).toHaveValue(null);
     expect(localStorage.getItem(STORAGE_KEYS.watcherTotal)).not.toBe(JSON.stringify(1000));
+  });
+});
+
+describe("WatchersView Auto-balance", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("does not render the Auto toggle without autoBalanceState", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
+    expect(screen.queryByTestId("watchers-auto-balance-toggle")).not.toBeInTheDocument();
+  });
+
+  it("renders the Auto toggle when autoBalanceState is provided", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(
+      <WatchersView
+        main={main}
+        wasmBridge={WASM_BRIDGE}
+        onApplyBalancedMain={vi.fn()}
+        autoBalanceState={[false, vi.fn()]}
+      />,
+    );
+    expect(screen.getByTestId("watchers-auto-balance-toggle")).toBeInTheDocument();
+  });
+
+  it("balances on mount when auto is on and a target is set", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    const onApply = vi.fn();
+    render(
+      <WatchersView
+        main={main}
+        wasmBridge={WASM_BRIDGE}
+        onApplyBalancedMain={onApply}
+        autoBalanceState={[true, vi.fn()]}
+      />,
+    );
+
+    expect(onApply).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not balance when auto is off", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    const onApply = vi.fn();
+    render(
+      <WatchersView
+        main={main}
+        wasmBridge={WASM_BRIDGE}
+        onApplyBalancedMain={onApply}
+        autoBalanceState={[false, vi.fn()]}
+      />,
+    );
+
+    expect(onApply).not.toHaveBeenCalled();
+  });
+
+  it("re-balances when the total changes while auto is on", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    const onApply = vi.fn();
+    render(
+      <WatchersView
+        main={main}
+        wasmBridge={WASM_BRIDGE}
+        onApplyBalancedMain={onApply}
+        autoBalanceState={[true, vi.fn()]}
+      />,
+    );
+
+    onApply.mockClear(); // ignore the initial (mount) balance
+
+    fireEvent.change(screen.getByTestId("watchers-total-input"), { target: { value: "1200" } });
+    expect(onApply).toHaveBeenCalledTimes(1);
+  });
+
+  it("does not balance an empty main even when auto is on", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
+    const onApply = vi.fn();
+    render(
+      <WatchersView
+        main={makeEmptyRecipe(0)}
+        wasmBridge={WASM_BRIDGE}
+        onApplyBalancedMain={onApply}
+        autoBalanceState={[true, vi.fn()]}
+      />,
+    );
+
+    expect(onApply).not.toHaveBeenCalled();
+  });
+
+  it("does not balance while a target error stands", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    const balanceSpy = vi.fn(() => []);
+    const errorBridge = {
+      has_ingredient: () => true,
+      balance_recipe: balanceSpy,
+      validate_recipe_targets: () => ({
+        issues: [{ severity: "error", keys: [String(MSNF)], message: "infeasible" }],
+      }),
+    } as unknown as WasmBridge;
+
+    render(
+      <WatchersView
+        main={main}
+        wasmBridge={errorBridge}
+        onApplyBalancedMain={vi.fn()}
+        autoBalanceState={[true, vi.fn()]}
+      />,
+    );
+
+    expect(balanceSpy).not.toHaveBeenCalled();
+  });
+
+  it("grays out and flags the Auto toggle as paused when auto is on and a target error stands", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    const errorBridge = {
+      has_ingredient: () => true,
+      balance_recipe: vi.fn(() => []),
+      validate_recipe_targets: () => ({
+        issues: [{ severity: "error", keys: [String(MSNF)], message: "infeasible" }],
+      }),
+    } as unknown as WasmBridge;
+
+    render(
+      <WatchersView
+        main={main}
+        wasmBridge={errorBridge}
+        onApplyBalancedMain={vi.fn()}
+        autoBalanceState={[true, vi.fn()]}
+      />,
+    );
+
+    const toggle = screen.getByTestId("watchers-auto-balance-toggle");
+    expect(toggle).toHaveAttribute("data-paused", "true");
+    expect(toggle).toHaveClass("opacity-50");
+  });
+
+  it("does not flag the Auto toggle as paused when auto is off despite a target error", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    const errorBridge = {
+      has_ingredient: () => true,
+      balance_recipe: vi.fn(() => []),
+      validate_recipe_targets: () => ({
+        issues: [{ severity: "error", keys: [String(MSNF)], message: "infeasible" }],
+      }),
+    } as unknown as WasmBridge;
+
+    render(
+      <WatchersView
+        main={main}
+        wasmBridge={errorBridge}
+        onApplyBalancedMain={vi.fn()}
+        autoBalanceState={[false, vi.fn()]}
+      />,
+    );
+
+    const toggle = screen.getByTestId("watchers-auto-balance-toggle");
+    expect(toggle).toHaveAttribute("data-paused", "false");
+    expect(toggle).not.toHaveClass("opacity-50");
+  });
+
+  it("clicking the Auto toggle turns it on and de-emphasizes the Balance button", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
+    const main = makeMockRecipe(RecipeID.Main);
+
+    /** Owns the auto-balance toggle state so clicking the toggle updates it. */
+    function StatefulAutoView() {
+      const autoBalanceState = useState(false);
+      return (
+        <WatchersView
+          main={main}
+          wasmBridge={WASM_BRIDGE}
+          onApplyBalancedMain={vi.fn()}
+          autoBalanceState={autoBalanceState}
+        />
+      );
+    }
+    render(<StatefulAutoView />);
+
+    const toggle = screen.getByTestId("watchers-auto-balance-toggle");
+    const balance = screen.getByTestId("watchers-balance-button");
+    expect(toggle).toHaveAttribute("aria-pressed", "false");
+    expect(balance).not.toHaveClass("opacity-50");
+
+    act(() => fireEvent.click(toggle));
+
+    expect(toggle).toHaveAttribute("aria-pressed", "true");
+    expect(balance).toHaveClass("opacity-50");
   });
 });

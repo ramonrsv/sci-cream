@@ -18,8 +18,6 @@
 - [ ] Add toggle buttons for enabling/disabling the range bar, target, and ref values in watchers.
 - [ ] Composition values < 0.005 display `0` instead of empty. Look into where and how to handle.
 - [ ] Add support for coloring bars and watchers based on a value's proximity to the current target.
-- [ ] Add a lock-auto-balancing toggle to automatically balance a recipe whenever any target change
-      is made, since balancing is fast to run. It button should untoggle if recipe changes are made.
 - [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
       embedded into other websites. How to handle user-defined ingredients?
 - [ ] Add a visual warning indicator for user-defined ingredients that shadow built-in ones.
@@ -113,6 +111,8 @@
 
 ## Completed
 
+- [x] Add a lock-auto-balancing toggle to automatically balance a recipe whenever any target change
+      is made, since balancing is fast to run. It button should untoggle if recipe changes are made.
 - [x] Explore adding support for a total mix amount input/slider and balancing target.
 - [x] Add support for `PropertiesChart` to auto-rotate orientation based on the pane aspect ratio.
 - [x] Fix typo in welcome blog post, "you will **find** areas where it goes well beyond...".

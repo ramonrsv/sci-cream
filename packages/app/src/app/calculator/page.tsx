@@ -28,6 +28,7 @@ import { useSeededWasmResources } from "@/lib/wasm-resources";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
 import { slotFromParam } from "@/app/_elements/selects/recipe-select";
 import { loadStoredLayouts, onLayoutReset, saveLayouts } from "@/lib/calculator-layout";
+import { STATE_SET } from "@/lib/util";
 
 /**
  * Main calculator page: responsive drag-and-drop grid of recipe and major display components
@@ -59,7 +60,8 @@ function CalculatorContent() {
   const [recipeContext, setRecipeContext] = recipeCtxState;
   const recipes = recipeContext.recipes;
 
-  const recipeGridProps = { recipeCtxState, urlSlot };
+  // Continuous-balance mode: session-only, off by default; a RecipeEditor edit turns it off.
+  const autoBalanceState = useState(false);
 
   /** Apply a balanced light recipe (from `Bridge.balance_recipe`) onto the main recipe (slot 0) */
   const onApplyBalancedMain = (balanced: LightRecipe) => {
@@ -69,7 +71,18 @@ function CalculatorContent() {
     setRecipeContext((prev) => makeUpdatedRecipeContext(prev, [updated]));
   };
 
-  const watchersPanelProps = { recipes, wasmBridge: wasmResources.wasmBridge, onApplyBalancedMain };
+  const recipeGridProps = {
+    recipeCtxState,
+    urlSlot,
+    onUserEdit: () => autoBalanceState[STATE_SET](false),
+  };
+
+  const watchersPanelProps = {
+    recipes,
+    wasmBridge: wasmResources.wasmBridge,
+    onApplyBalancedMain,
+    autoBalanceState,
+  };
 
   // 2160p: 3840px, /2 = 1920px
   // 1440p: 2560px, /2 = 1280px

@@ -13,7 +13,7 @@ import { STORAGE_KEYS } from "@/lib/local-storage";
 export function RecipeEditorPanel({
   props,
 }: {
-  props: { recipeCtxState: RecipeContextState; urlSlot?: number };
+  props: { recipeCtxState: RecipeContextState; urlSlot?: number; onUserEdit?: () => void };
 }) {
   return (
     <div id="recipe-editor-panel" className="grid-component h-full w-full min-w-50">

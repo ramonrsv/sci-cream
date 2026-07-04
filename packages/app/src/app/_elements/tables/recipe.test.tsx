@@ -287,6 +287,49 @@ describe("RecipeEditor", () => {
     });
   });
 
+  // ---- onUserEdit (cancels continuous-balance mode) --------------------------------------------
+
+  it("fires onUserEdit when a quantity is edited", async () => {
+    const user = userEvent.setup();
+    const onUserEdit = vi.fn();
+    const { container } = render(
+      <RecipeEditor props={{ recipeCtxState: [recipeContext, setRecipeContext], onUserEdit }} />,
+    );
+
+    await user.type(getIngredientQuantityElement(container, 0), "5");
+    expect(onUserEdit).toHaveBeenCalled();
+  });
+
+  it("fires onUserEdit when an ingredient name is edited", async () => {
+    const user = userEvent.setup();
+    const onUserEdit = vi.fn();
+    const { container } = render(
+      <RecipeEditor props={{ recipeCtxState: [recipeContext, setRecipeContext], onUserEdit }} />,
+    );
+
+    await user.type(getIngredientNameElement(container, 0), "M");
+    expect(onUserEdit).toHaveBeenCalled();
+  });
+
+  it("fires onUserEdit when the recipe is cleared", async () => {
+    const user = userEvent.setup();
+    const onUserEdit = vi.fn();
+    render(
+      <RecipeEditor props={{ recipeCtxState: [recipeContext, setRecipeContext], onUserEdit }} />,
+    );
+
+    await user.click(screen.getByRole("button", { name: /clear/i }));
+    expect(onUserEdit).toHaveBeenCalled();
+  });
+
+  it("does not fire onUserEdit on mount (storage hydration is not a user edit)", () => {
+    const onUserEdit = vi.fn();
+    render(
+      <RecipeEditor props={{ recipeCtxState: [recipeContext, setRecipeContext], onUserEdit }} />,
+    );
+    expect(onUserEdit).not.toHaveBeenCalled();
+  });
+
   // ---- Display ----------------------------------------------------------------------------------
 
   it("should display mix total when ingredients have quantities", () => {
