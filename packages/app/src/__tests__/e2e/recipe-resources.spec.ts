@@ -160,7 +160,12 @@ test.describe("Recipe Resources", () => {
     // counter afterward so we measure only what navigation and interaction trigger.
     await goToPageAndWaitFor(page);
     await loginAsTestUserWithCredentials(page, TEST_USER_B);
+
+    // Await the provider's per-session fetch explicitly; networkidle can settle before hydration
+    // fires the POST under worker contention, leaving the count still 0 at the assert.
+    const userDataPost = page.waitForRequest(isUserDataServerAction);
     await goToPageAndWaitFor(page);
+    await userDataPost;
 
     expect(serverActionCount).toBeGreaterThan(0);
     serverActionCount = 0;
