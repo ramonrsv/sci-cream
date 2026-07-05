@@ -19,7 +19,11 @@ import {
   ChevronDown,
   ChevronsUp,
   ChevronUp,
+  Columns2,
+  Eraser,
   RefreshCw,
+  Ruler,
+  Target,
   X,
 } from "lucide-react";
 
@@ -48,7 +52,7 @@ import {
   REFERENCE_TICK_ALPHA,
 } from "@/lib/styles/colors";
 import { STORAGE_KEYS } from "@/lib/local-storage";
-import { usePersistedState } from "@/lib/use-persisted-state";
+import { leafKey, usePersistedState } from "@/lib/use-persisted-state";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { STATE_VAL, STATE_SET, verify } from "@/lib/util";
 
@@ -304,6 +308,9 @@ export function WatcherCard({
   priority = Priority.Normal,
   issue,
   removable = true,
+  showRange = true,
+  showTarget = true,
+  showRefs = true,
   onTargetChange,
   onPriorityChange,
   onRemove,
@@ -316,6 +323,9 @@ export function WatcherCard({
   priority?: Priority;
   issue?: KeyIssue;
   removable?: boolean;
+  showRange?: boolean;
+  showTarget?: boolean;
+  showRefs?: boolean;
   onTargetChange: (val: number | undefined) => void;
   onPriorityChange: (priority: Priority) => void;
   onRemove: () => void;
@@ -398,6 +408,16 @@ export function WatcherCard({
               )}
             </span>
           )}
+          {showTarget && target !== undefined && !disableInput && (
+            <button
+              className="action-button px-0.5 py-0"
+              onClick={() => onTargetChange(undefined)}
+              title="Clear target"
+              data-testid={`watcher-card-${String(propKey)}-clear-target`}
+            >
+              <Eraser size={COMPONENT_ACTION_ICON_SIZE - 5} />
+            </button>
+          )}
           {removable && (
             <button
               className="action-button -mr-1.5 px-0.5 py-0"
@@ -420,49 +440,51 @@ export function WatcherCard({
             {/* Placeholder whitespace keeps empty cards the same height. */}
             {formatCompositionValue(mainValue).trim() || "\u00A0"}
           </span>
-          <div className="flex items-center gap-0.5" title="Target value">
-            <input
-              type="number"
-              step={targetStep}
-              className={`boxed-input comp-val w-14 px-0.5 py-0`}
-              value={target ?? ""}
-              placeholder={"—"}
-              tabIndex={disableInput ? -1 : undefined}
-              onChange={(e) => onTargetChange(parseInputTarget(e))}
-              data-testid={`watcher-card-${String(propKey)}-target`}
-              style={{ visibility: disableInput ? "hidden" : "visible" }}
-            />
-            {/* Reserve the delta slot so the input doesn't shift as the target changes. */}
-            {deltaToggle !== DeltaToggle.Off && (
-              <span
-                className={`comp-val text-secondary -mr-3 w-9 text-left text-[11px]`}
-                title={targetMet ? "Target met" : "Delta from current to target"}
-                data-testid={`watcher-card-${String(propKey)}-target-delta`}
+          {showTarget && (
+            <div className="flex items-center gap-0.5" title="Target value">
+              <input
+                type="number"
+                step={targetStep}
+                className={`boxed-input comp-val w-14 px-0.5 py-0`}
+                value={target ?? ""}
+                placeholder={"—"}
+                tabIndex={disableInput ? -1 : undefined}
+                onChange={(e) => onTargetChange(parseInputTarget(e))}
+                data-testid={`watcher-card-${String(propKey)}-target`}
                 style={{ visibility: disableInput ? "hidden" : "visible" }}
-              >
-                {targetDelta &&
-                  (targetMet ? (
-                    <Check
-                      size={COMPONENT_ACTION_ICON_SIZE - 5}
-                      className="inline align-text-bottom"
-                      style={{ color: getCssColor(Color.GraphGreen) }}
-                      aria-label="Target met"
-                      data-testid={`watcher-card-${String(propKey)}-target-met`}
-                    />
-                  ) : (
-                    <>
-                      {/* Arrow sized in `em` so it scales with the digits but stays smaller. */}
-                      <span className="mr-px text-[0.7em]">{targetDelta.arrow}</span>
-                      {`${targetDelta.magnitude}${deltaToggle === DeltaToggle.Relative ? "%" : ""}`}
-                    </>
-                  ))}
-              </span>
-            )}
-          </div>
+              />
+              {/* Reserve the delta slot so the input doesn't shift as the target changes. */}
+              {deltaToggle !== DeltaToggle.Off && (
+                <span
+                  className={`comp-val text-secondary -mr-3 w-9 text-left text-[11px]`}
+                  title={targetMet ? "Target met" : "Delta from current to target"}
+                  data-testid={`watcher-card-${String(propKey)}-target-delta`}
+                  style={{ visibility: disableInput ? "hidden" : "visible" }}
+                >
+                  {targetDelta &&
+                    (targetMet ? (
+                      <Check
+                        size={COMPONENT_ACTION_ICON_SIZE - 5}
+                        className="inline align-text-bottom"
+                        style={{ color: getCssColor(Color.GraphGreen) }}
+                        aria-label="Target met"
+                        data-testid={`watcher-card-${String(propKey)}-target-met`}
+                      />
+                    ) : (
+                      <>
+                        {/* Arrow sized in `em` so it scales with the digits but stays smaller. */}
+                        <span className="mr-px text-[0.7em]">{targetDelta.arrow}</span>
+                        {`${targetDelta.magnitude}${deltaToggle === DeltaToggle.Relative ? "%" : ""}`}
+                      </>
+                    ))}
+                </span>
+              )}
+            </div>
+          )}
         </div>
 
         {/* Range meter (signature): acceptable band + current marker + target/reference ticks */}
-        {meterRange && (
+        {showRange && meterRange && (
           <div
             className="flex items-center gap-1"
             aria-hidden
@@ -479,22 +501,23 @@ export function WatcherCard({
                   right: `${100 - valueToMeterPct(meterRange.max, meterRange)}%`,
                 }}
               />
-              {nonEmptyRefs.map((ref) => {
-                const refValue = getDisplayValue(propKey, ref);
-                return isUsableNumber(refValue) ? (
-                  <span
-                    key={ref.id}
-                    className="range-meter-tick"
-                    style={{
-                      left: `${valueToMeterPct(refValue, meterRange)}%`,
-                      height: "0.5rem",
-                      backgroundColor: "currentColor",
-                      opacity: REFERENCE_TICK_ALPHA,
-                    }}
-                  />
-                ) : null;
-              })}
-              {isUsableNumber(target) && (
+              {showRefs &&
+                nonEmptyRefs.map((ref) => {
+                  const refValue = getDisplayValue(propKey, ref);
+                  return isUsableNumber(refValue) ? (
+                    <span
+                      key={ref.id}
+                      className="range-meter-tick"
+                      style={{
+                        left: `${valueToMeterPct(refValue, meterRange)}%`,
+                        height: "0.5rem",
+                        backgroundColor: "currentColor",
+                        opacity: REFERENCE_TICK_ALPHA,
+                      }}
+                    />
+                  ) : null;
+                })}
+              {showTarget && isUsableNumber(target) && (
                 <span
                   className="range-meter-tick"
                   style={{
@@ -522,7 +545,7 @@ export function WatcherCard({
 
         {/* Reference values side by side: each letter doubles as a fill-target button. `mt-auto`
             pins it to the bottom of the card so refs line up across cards (meter or not). */}
-        {nonEmptyRefs.length > 0 && (
+        {showRefs && nonEmptyRefs.length > 0 && (
           <div className="mt-auto grid grid-cols-2 gap-x-0 gap-y-0.5">
             {refs.map((ref) => {
               // A cell per ref keeps the layout stable; hidden when it lacks the key.
@@ -579,6 +602,9 @@ export function WatchersGrid({
   priorities,
   issuesByKey = {},
   removable = true,
+  showRange = true,
+  showTarget = true,
+  showRefs = true,
   onTargetChange,
   onPriorityChange,
   onRemove,
@@ -591,6 +617,9 @@ export function WatchersGrid({
   priorities: PrioritiesMap;
   issuesByKey?: Partial<Record<PropKey, KeyIssue>>;
   removable?: boolean;
+  showRange?: boolean;
+  showTarget?: boolean;
+  showRefs?: boolean;
   onTargetChange: (propKey: PropKey, val: number | undefined) => void;
   onPriorityChange: (propKey: PropKey, priority: Priority) => void;
   onRemove: (propKey: PropKey) => void;
@@ -611,6 +640,9 @@ export function WatchersGrid({
           priority={priorities[propKey] ?? Priority.Normal}
           issue={issuesByKey[propKey]}
           removable={removable}
+          showRange={showRange}
+          showTarget={showTarget}
+          showRefs={showRefs}
           onTargetChange={(val) => onTargetChange(propKey, val)}
           onPriorityChange={(priority) => onPriorityChange(propKey, priority)}
           onRemove={() => onRemove(propKey)}
@@ -673,6 +705,19 @@ export function WatchersView({
     getKeys: getMixScopePropKeys,
     supportedKeyFilters: [KeyFilter.Auto, KeyFilter.Custom],
   });
+
+  const [showRange, setShowRange] = usePersistedState(
+    leafKey(persistKey, STORAGE_KEYS.watcherShowRange),
+    true,
+  );
+  const [showTarget, setShowTarget] = usePersistedState(
+    leafKey(persistKey, STORAGE_KEYS.watcherShowTarget),
+    true,
+  );
+  const [showRefs, setShowRefs] = usePersistedState(
+    leafKey(persistKey, STORAGE_KEYS.watcherShowRefs),
+    true,
+  );
 
   const [pinnedTotal, setPinnedTotal] = usePersistedState<number | undefined>(
     STORAGE_KEYS.watcherTotal,
@@ -853,21 +898,24 @@ export function WatchersView({
     }
   };
 
-  /** Mirror watched targets from `ref` (rounded to comp value format); clear keys `ref` lacks. */
-  const onFillTargetsFromRef = (ref: RecipeSummary) => {
+  /** Mirror watched targets from `src` (rounded to comp value format); clear keys `src` lacks. */
+  const onFillTargetsFrom = (src: RecipeSummary) => {
     setTargets((prev) => {
       const next = { ...prev };
       for (const propKey of enabledProps) {
         // Do not set targets for unbalanceable keys (e.g. FpdKey) since the balancer ignores them
         if (isBalanceableKey(propKey)) {
-          const refVal = getDisplayValue(propKey, ref);
-          const val = isUsableNumber(refVal) ? roundToCompositionValueFormat(refVal) : undefined;
+          const srcVal = getDisplayValue(propKey, src);
+          const val = isUsableNumber(srcVal) ? roundToCompositionValueFormat(srcVal) : undefined;
           setOrClearTarget(next, propKey, val);
         }
       }
       return next;
     });
   };
+
+  /** Clear every target value; priorities and the pinned total are left untouched. */
+  const onClearAllTargets = () => setTargets({});
 
   const balancingSupported = wasmBridge !== undefined && onApplyBalancedMain !== undefined;
   const balanceDisabled =
@@ -927,41 +975,91 @@ export function WatchersView({
           key_as_med_str={prop_key_as_med_str}
           orderKeys={orderKeys}
         />
+        {/* Display-region toggles: range meter, target column, reference values. */}
+        <div className="flex items-center gap-0.5">
+          <button
+            className={`action-button flex items-center px-1 py-0.5 ${showRange ? "" : "text-secondary opacity-60"}`}
+            onClick={() => setShowRange((v) => !v)}
+            aria-pressed={showRange}
+            title={`${showRange ? "Hide" : "Show"} the range meter`}
+            data-testid="watchers-toggle-range"
+          >
+            <Ruler size={COMPONENT_ACTION_ICON_SIZE - 6} />
+          </button>
+          <button
+            className={`action-button flex items-center px-1 py-0.5 ${showTarget ? "" : "text-secondary opacity-60"}`}
+            onClick={() => setShowTarget((v) => !v)}
+            aria-pressed={showTarget}
+            title={`${showTarget ? "Hide" : "Show"} the target column`}
+            data-testid="watchers-toggle-target"
+          >
+            <Target size={COMPONENT_ACTION_ICON_SIZE - 6} />
+          </button>
+          <button
+            className={`action-button flex items-center px-1 py-0.5 ${showRefs ? "" : "text-secondary opacity-60"}`}
+            onClick={() => setShowRefs((v) => !v)}
+            aria-pressed={showRefs}
+            title={`${showRefs ? "Hide" : "Show"} reference values`}
+            data-testid="watchers-toggle-refs"
+          >
+            <Columns2 size={COMPONENT_ACTION_ICON_SIZE - 6} />
+          </button>
+        </div>
         {(balancingSupported || nonEmptyRefs.length > 0) && (
           <div className="ml-auto flex min-w-0 flex-wrap items-center justify-end gap-1 pr-1.5">
             {/* Issues cluster */}
             {(issues.length > 0 || balanceError !== undefined) && (
               <WatcherIssues issues={issues} extraError={balanceError} />
             )}
-            {/* Fill-from-refs cluster */}
-            {nonEmptyRefs.length > 0 && (
-              <div className="flex items-center gap-1">
-                {nonEmptyRefs.map((ref) => {
-                  const letter = ref.id.replace(/^Ref\s*/, "").trim() || ref.id;
-                  const hasAnyFillable = enabledProps.some((k) =>
-                    isUsableNumber(getDisplayValue(k, ref)),
-                  );
-                  return (
-                    <button
-                      key={ref.id}
-                      className="action-button flex items-center px-1"
-                      onClick={() => onFillTargetsFromRef(ref)}
-                      disabled={enabledProps.length === 0 || !hasAnyFillable}
-                      title={`Fill targets for all watched properties from ${ref.id}`}
-                      data-testid={`watchers-fill-all-${ref.id}`}
-                    >
-                      <ArrowDown size={COMPONENT_ACTION_ICON_SIZE - 8} />
-                      <span className="pr-0.5 text-sm font-semibold">{letter}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            )}
+            {/* Fill-targets cluster: fill targets from ref (A/B), from current (M), or clear */}
+            <div className="flex items-center">
+              <button
+                className="action-button flex items-center px-1"
+                onClick={() => onFillTargetsFrom(main)}
+                disabled={
+                  enabledProps.length === 0 ||
+                  !enabledProps.some((k) => isUsableNumber(getDisplayValue(k, main)))
+                }
+                title="Fill targets for all watched properties from the current recipe"
+                data-testid="watchers-fill-all-main"
+              >
+                <ArrowDown size={COMPONENT_ACTION_ICON_SIZE - 8} />
+                <span className="pr-0.5 text-sm font-semibold">M</span>
+              </button>
+              {nonEmptyRefs.map((ref) => {
+                const letter = ref.id.replace(/^Ref\s*/, "").trim() || ref.id;
+                const hasAnyFillable = enabledProps.some((k) =>
+                  isUsableNumber(getDisplayValue(k, ref)),
+                );
+                return (
+                  <button
+                    key={ref.id}
+                    className="action-button flex items-center px-1"
+                    onClick={() => onFillTargetsFrom(ref)}
+                    disabled={enabledProps.length === 0 || !hasAnyFillable}
+                    title={`Fill targets for all watched properties from ${ref.id}`}
+                    data-testid={`watchers-fill-all-${ref.id}`}
+                  >
+                    <ArrowDown size={COMPONENT_ACTION_ICON_SIZE - 8} />
+                    <span className="pr-0.5 text-sm font-semibold">{letter}</span>
+                  </button>
+                );
+              })}
+              <button
+                className="action-button flex items-center px-1"
+                onClick={onClearAllTargets}
+                disabled={Object.keys(targets).length === 0}
+                title="Clear all target values"
+                data-testid="watchers-clear-targets"
+              >
+                <Eraser size={COMPONENT_ACTION_ICON_SIZE - 5} />
+              </button>
+            </div>
             {balancingSupported && (
               <>
                 {/* Total cluster */}
                 <div className="flex items-center gap-0.5" title="Target batch amount in grams">
-                  <span className="text-secondary text-xs font-medium tracking-wide whitespace-nowrap uppercase">
+                  <span className="text-secondary ml-1 text-xs font-medium tracking-wide whitespace-nowrap uppercase">
                     Total (g)
                   </span>
                   <input
@@ -1021,6 +1119,9 @@ export function WatchersView({
           priorities={priorities}
           issuesByKey={issuesByKey}
           removable={removable}
+          showRange={showRange}
+          showTarget={showTarget}
+          showRefs={showRefs}
           onTargetChange={onTargetChange}
           onPriorityChange={onPriorityChange}
           onRemove={onRemove}

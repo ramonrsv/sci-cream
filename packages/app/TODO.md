@@ -13,9 +13,6 @@
       and based on proximity to the balancing target. Figure out how to handle overlapping concerns.
 - [ ] Add support for displaying balancing targets in `PropertiesBarChart`; move up to context?
 - [ ] Look into whether setting targets from reference should also set zero targets for active keys.
-- [ ] Add button in `WatchersView` for clearing all targets, and maybe also for each watcher card?
-- [ ] Add a button to set current recipe values as its balancing target; useful for small changes.
-- [ ] Add toggle buttons for enabling/disabling the range bar, target, and ref values in watchers.
 - [ ] Composition values < 0.005 display `0` instead of empty. Look into where and how to handle.
 - [ ] Add support for coloring bars and watchers based on a value's proximity to the current target.
 - [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
@@ -109,6 +106,9 @@
 
 ## Completed
 
+- [x] Add button in `WatchersView` for clearing all targets, and maybe also for each watcher card?
+- [x] Add a button to set current recipe values as its balancing target; useful for small changes.
+- [x] Add toggle buttons for enabling/disabling the range bar, target, and ref values in watchers.
 - [x] When toolbars overflow, the vertical spacing between items doesn't look right, needs fixing.
 - [x] Look into single `props` argument or spread out arguments for Next.js components.
 - [x] Add a lock-auto-balancing toggle to automatically balance a recipe whenever any target change

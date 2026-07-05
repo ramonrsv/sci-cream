@@ -1582,3 +1582,328 @@ describe("WatchersView Auto-balance", () => {
     expect(balance).toHaveClass("opacity-50");
   });
 });
+
+describe("WatcherCard visibility", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("hides the range meter when showRange is false", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        deltaToggle={DeltaToggle.Off}
+        target={undefined}
+        showRange={false}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(screen.queryByTestId(`watcher-card-${String(MSNF)}-meter`)).not.toBeInTheDocument();
+  });
+
+  it("hides the target input and its delta when showTarget is false", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        deltaToggle={DeltaToggle.Absolute}
+        target={9.5}
+        showTarget={false}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(screen.queryByTestId(`watcher-card-${String(MSNF)}-target`)).not.toBeInTheDocument();
+    expect(
+      screen.queryByTestId(`watcher-card-${String(MSNF)}-target-delta`),
+    ).not.toBeInTheDocument();
+  });
+
+  it("hides the reference rows when showRefs is false", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const refA = makeMockRecipe(RecipeID.RefA);
+    render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        refs={[refA]}
+        deltaToggle={DeltaToggle.Off}
+        target={undefined}
+        showRefs={false}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(screen.queryByTestId(`watcher-card-${String(MSNF)}-ref-Ref A`)).not.toBeInTheDocument();
+  });
+});
+
+describe("WatcherCard clear target", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("renders a clear-target button when a target is set", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        deltaToggle={DeltaToggle.Off}
+        target={9.5}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(screen.getByTestId(`watcher-card-${String(MSNF)}-clear-target`)).toBeInTheDocument();
+  });
+
+  it("calls onTargetChange(undefined) when the clear-target button is clicked", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const onTargetChange = vi.fn();
+    render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        deltaToggle={DeltaToggle.Off}
+        target={9.5}
+        onTargetChange={onTargetChange}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    fireEvent.click(screen.getByTestId(`watcher-card-${String(MSNF)}-clear-target`));
+    expect(onTargetChange).toHaveBeenCalledWith(undefined);
+  });
+
+  it("does not render the clear-target button when no target is set", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        deltaToggle={DeltaToggle.Off}
+        target={undefined}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(
+      screen.queryByTestId(`watcher-card-${String(MSNF)}-clear-target`),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not render the clear-target button for a non-balanceable key", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(
+      <WatcherCard
+        propKey={SERVING_TEMP}
+        main={main}
+        deltaToggle={DeltaToggle.Off}
+        target={9.5}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(
+      screen.queryByTestId(`watcher-card-${String(SERVING_TEMP)}-clear-target`),
+    ).not.toBeInTheDocument();
+  });
+
+  it("does not render the clear-target button when showTarget is false", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        deltaToggle={DeltaToggle.Off}
+        target={9.5}
+        showTarget={false}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(
+      screen.queryByTestId(`watcher-card-${String(MSNF)}-clear-target`),
+    ).not.toBeInTheDocument();
+  });
+});
+
+describe("WatchersView Set from current", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("renders the fill-from-current (M) button with balancing support", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
+    expect(screen.getByTestId("watchers-fill-all-main")).toBeInTheDocument();
+  });
+
+  it("populates targets for watched keys from the current recipe when clicked", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
+
+    const msnfInput = screen.getByTestId(`watcher-card-${String(MSNF)}-target`) as HTMLInputElement;
+    expect(msnfInput.value).toBe("");
+
+    fireEvent.click(screen.getByTestId("watchers-fill-all-main"));
+
+    // The filled value is a finite number snapped to the target composition-value format.
+    const parsed = parseFloat(msnfInput.value);
+    expect(Number.isFinite(parsed)).toBe(true);
+    expect(parsed).toBe(roundToCompositionValueFormat(parsed));
+  });
+
+  it("skips non-balanceable keys (FpdKey) when filling targets from the current recipe", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const { container } = render(
+      <WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />,
+    );
+    const servingTempInput = container.querySelector(
+      `[data-testid="watcher-card-${String(SERVING_TEMP)}-target"]`,
+    ) as HTMLInputElement;
+    expect(servingTempInput.value).toBe("");
+
+    fireEvent.click(screen.getByTestId("watchers-fill-all-main"));
+
+    expect(servingTempInput.value).toBe("");
+  });
+});
+
+describe("WatchersView Clear all targets", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("is disabled when no targets are set", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
+    expect(screen.getByTestId("watchers-clear-targets")).toBeDisabled();
+  });
+
+  it("clears every target and empties localStorage when clicked", () => {
+    localStorage.setItem(
+      STORAGE_KEYS.watcherTargets,
+      JSON.stringify({ [MSNF]: 9.5, [TOTAL_SOLIDS]: 40 }),
+    );
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
+
+    const msnfInput = screen.getByTestId(`watcher-card-${String(MSNF)}-target`) as HTMLInputElement;
+    expect(msnfInput.value).toBe("9.5");
+
+    fireEvent.click(screen.getByTestId("watchers-clear-targets"));
+
+    expect(msnfInput.value).toBe("");
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherTargets) ?? "{}");
+    expect(Object.keys(stored)).toHaveLength(0);
+  });
+
+  it("leaves priorities untouched when clearing targets", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 9.5 }));
+    localStorage.setItem(STORAGE_KEYS.watcherPriorities, JSON.stringify({ [MSNF]: Priority.High }));
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
+
+    fireEvent.click(screen.getByTestId("watchers-clear-targets"));
+
+    const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherPriorities) ?? "{}");
+    expect(stored[MSNF]).toBe(Priority.High);
+  });
+});
+
+describe("WatchersView visibility toggles", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+  });
+
+  afterEach(() => {
+    cleanup();
+  });
+
+  it("renders the three visibility toggle buttons", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} />);
+    expect(screen.getByTestId("watchers-toggle-range")).toBeInTheDocument();
+    expect(screen.getByTestId("watchers-toggle-target")).toBeInTheDocument();
+    expect(screen.getByTestId("watchers-toggle-refs")).toBeInTheDocument();
+  });
+
+  it("hides the range meter when the range toggle is turned off", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} />);
+    expect(screen.getByTestId(`watcher-card-${String(MSNF)}-meter`)).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("watchers-toggle-range"));
+    expect(screen.queryByTestId(`watcher-card-${String(MSNF)}-meter`)).not.toBeInTheDocument();
+  });
+
+  it("hides the target inputs when the target toggle is turned off", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} />);
+    expect(screen.getByTestId(`watcher-card-${String(MSNF)}-target`)).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("watchers-toggle-target"));
+    expect(screen.queryByTestId(`watcher-card-${String(MSNF)}-target`)).not.toBeInTheDocument();
+  });
+
+  it("hides the reference values when the refs toggle is turned off", () => {
+    const ctx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]);
+    render(<WatchersView main={ctx.recipes[0]} refs={[ctx.recipes[1]]} />);
+    expect(screen.getByTestId(`watcher-card-${String(MSNF)}-ref-Ref A`)).toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("watchers-toggle-refs"));
+    expect(screen.queryByTestId(`watcher-card-${String(MSNF)}-ref-Ref A`)).not.toBeInTheDocument();
+  });
+
+  it("persists a toggle change to its localStorage leaf key", async () => {
+    const persistKey = "test-watcher-view";
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} persistKey={persistKey} />);
+    fireEvent.click(screen.getByTestId("watchers-toggle-range"));
+    await act(async () => {});
+    expect(localStorage.getItem(`${persistKey}:${STORAGE_KEYS.watcherShowRange}`)).toBe(
+      JSON.stringify(false),
+    );
+  });
+
+  it("hydrates a toggle from localStorage on mount", async () => {
+    const persistKey = "test-watcher-view";
+    localStorage.setItem(`${persistKey}:${STORAGE_KEYS.watcherShowRange}`, JSON.stringify(false));
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} persistKey={persistKey} />);
+    await act(async () => {});
+    expect(screen.getByTestId("watchers-toggle-range")).toHaveAttribute("aria-pressed", "false");
+    expect(screen.queryByTestId(`watcher-card-${String(MSNF)}-meter`)).not.toBeInTheDocument();
+  });
+});
