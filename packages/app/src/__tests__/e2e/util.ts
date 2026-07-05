@@ -170,9 +170,9 @@ export function getPasteButton(page: Page) {
   return page.getByRole("button", { name: "Paste" });
 }
 
-/** Get the Clear button element */
+/** Get the recipe-editor Clear button element */
 export function getClearButton(page: Page) {
-  return page.getByRole("button", { name: "Clear" });
+  return page.getByRole("button", { name: "Clear recipe", exact: true });
 }
 
 /** Get signin page email input element */
