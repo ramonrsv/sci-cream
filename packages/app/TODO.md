@@ -2,34 +2,39 @@
 
 ## Next Release
 
-- [ ] Add `height` prop to `MixPropertiesGrid` so that it can adapt the number of properties shown.
-- [ ] Fix issue where version lists in `RecipeSearch` do not visually update when one is deleted.
 - [ ] When a recipe is deleted, the UI does not update, it still showed the deleted recipe.
+- [ ] Fix issue where version lists in `RecipeSearch` do not visually update when one is deleted.
+- [ ] The delete recipe version button moves around with the version name length, which is jarring.
 - [ ] Recipe validation errors/warnings do not show unless a recipe has some non-zero qty value.
-- [ ] Add make-recipe link, to click off ingredients that have been measured out for one or more
-      recipes. Each recipe should be letter and color coded.
-- [ ] Add visual regression tests for dark mode; not everything, just routes & some key elements.
+- [ ] Composition values < 0.005 display `0` instead of empty. Look into where and how to handle.
+- [ ] Add support for displaying balancing targets in `PropertiesBarChart`; lift targets state up
+      to the calculator page, threaded like the auto-balance state (no React context).
 - [ ] `WatcherCard` needs to display a color based on position with an acceptable property range,
       and based on proximity to the balancing target. Figure out how to handle overlapping concerns.
-- [ ] Add support for displaying balancing targets in `PropertiesBarChart`; move up to context?
-- [ ] Look into whether setting targets from reference should also set zero targets for active keys.
-- [ ] Composition values < 0.005 display `0` instead of empty. Look into where and how to handle.
 - [ ] Add support for coloring bars and watchers based on a value's proximity to the current target.
-- [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
-      embedded into other websites. How to handle user-defined ingredients?
+- [ ] Look into whether setting targets from reference should also set zero targets for active keys.
+- [ ] Add end-to-end tests for balancing functionality; check surfacing of balancing errors?
 - [ ] Add a visual warning indicator for user-defined ingredients that shadow built-in ones.
+- [ ] Add `height` prop to `PropertiesTable` so that it can adapt the number of properties shown.
+- [ ] Add visual regression tests for dark mode; not everything, just routes & some key elements.
+- [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
+- [ ] Add make-recipe link, to click off ingredients that have been measured out for one or more
+      recipes. Each recipe should be letter and color coded.
+- [ ] Write a design doc for recipe share links (openable by anyone, embeddable); cover URL
+      encoding and user-defined ingredients. Implementation is tracked in Up Next.
 
 ## Up Next
 
-- [ ] Looking into adding functionality to show recipe diffs (ingredient, quantities). Maybe useful
-      to compare recipe versions. Comparing ingredient lines may be tricky, similar to a git diff.
+- [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
+      embedded into other websites. How to handle user-defined ingredients?
+- [ ] Add support for showing recipe diffs (ingredient, quantities) between versions of a recipe
+      in `/recipes`. Comparing ingredient lines may be tricky, similar to a git diff.
 - [ ] Add support for `RecipeEditor` to display fewer lines than the internal fixed number of lines,
       and to dynamically adjust the number based on the panel size, only showing a scrollbar if the
       any filled lines would be hidden. This may cause issues with `CompositionBreakdown`, which
       currently relies on a fixed number of rows, and won't be easy to make vertically scrollable.
 - [ ] Add richer syntax highlighting of JSON ingredient specs in `/ingredients` details panel.
 - [ ] Add automatic links to specs, docs, etc. in `/ingredients`, based on the loaded spec.
-- [ ] Add support for showing recipe diffs between versions of a recipe in `/recipes`.
 - [ ] Add support for comments in blog posts, maybe also in documentation posts.
 - [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
 - [ ] Add a home page with a quick intro and overview, pointing to user guide, docs, etc.
@@ -43,11 +48,8 @@
 - [ ] Double check the calculator mobile layouts, `FpdGraphPanel` looks too tall on Pixel 8 Pro.
 - [ ] Look into how layouts make tables too narrow or too wide, and consider setting maximum table
       widths so that they don't look too wide on some layouts; may look bad in narrow scrollable?
-- [ ] The delete recipe version button moves around with the version name length, which is jarring.
-- [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
 - [ ] In `/ingredients`, the composition table does not have a bottom border; shows when scroll.
 - [ ] There is a weird horizontal line in `/ingredient-search-detail-panel-visual-linux.png`
-- [ ] Add end-to-end tests for balancing functionality; check surfacing of balancing errors?
 - [ ] Some layouts cause some toolbars to overflow. See if the look of overflowing can be improved.
 
 ## Backlog
@@ -62,23 +64,23 @@
       invalid-ingredient-name red before loading, etc.), so consider adding a loading screen to
       allow all those things to settle before displaying the main page (see how Monarch does it).
 - [ ] Look into Next.js's system for displaying component placeholders to avoid layout changes.
-- [ ] Add test to check that `MixPropertiesGrid` has no vertical scroll with default layout/filters.
-- [ ] When there are too many properties to show in `MixPropertiesChart`, it kind of silently crops
+- [ ] Add test to check that `PropertiesTable` has no vertical scroll with default layout/filters.
+- [ ] When there are too many properties to show in `PropertiesBarChart`, it kind of silently crops
       the properties being displayed. Look into a way to either indicate the cropping, or add
-      support for a horizontal scrollbar as an indicator of when `MixPropertiesChart` overflows.
+      support for a horizontal scrollbar as an indicator of when `PropertiesBarChart` overflows.
 - [ ] Use new [pnpm/action-setup](https://github.com/pnpm/action-setup) `cache: true` option once
       it's released. See: <https://github.com/pnpm/action-setup/issues/201>
 - [ ] There are various calls to `comp_key_as_med_str` and `prop_key_as_med_str` that are also
       JS <-> WASM. These might also benefit from doing a single WASM -> JS call to get a map, then
       subsequent lookups during component render are done within the JS side.
 - [ ] Investigate possible performance impact of `composition.get` and `mix_properties.get` calls
-      in `IngredientCompositionGrid` and `MixPropertiesGrid`; there may be a lot of them, which
+      in `CompositionBreakdown` and `PropertiesTable`; there may be a lot of them, which
       could be slow given that they are JS <-> WASM calls. Perhaps doing a single call to get a full
       map once and then doing `.get` calls on the JS side may be more performant.
 - [ ] Properly solve the `sslmode=no-verify` issue with `POSTGRES_URL`, see `db/util/getDatabaseUrl`
 - [ ] Investigate web workers and Progressive Web Apps (PWA) and their applicability to this app.
 - [ ] Add support for ingredient inventory and cost functionality; maybe affects balancing?
-- [ ] Consider whether to add support to `IngredientCompositionGrid` to show deltas between recipes.
+- [ ] Consider whether to add support to `CompositionBreakdown` to show deltas between recipes.
 - [ ] Investigate methods for performance analysis, including Chrome DevTools Protocol (CDP),
       playwright-performance, etc. Look into generating flamegraphs.
 - [ ] Add and/or verify support for C/C++ interoperability with FFI; look into `cxx` crate.
