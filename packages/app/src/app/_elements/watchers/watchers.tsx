@@ -654,10 +654,11 @@ export function WatchersGrid({
 
 /**
  * Watchers grid with an attached toolbar (`KeyFilterSelect`) that owns toolbar, target, and
- * per-target priority state.
+ * per-target priority state. Targets can instead be caller-owned via `targetsState` (the
+ * calculator page threads them here and to the properties chart); call also persists them.
  *
- * Selection, targets, and priorities are persisted to `localStorage` on every change; on mount,
- * initial values are hydrated from storage when present (default selection used otherwise).
+ * Selection, targets (when not caller-owned), and priorities are persisted to `localStorage` on
+ * every change; on mount, initial values are hydrated from storage when present (else default).
  *
  * `toolbarPrefix` is rendered inside the toolbar's flex row before the controls; used by the panel
  * wrapper to inject a drag handle without breaking the toolbar layout.
@@ -680,6 +681,7 @@ export function WatchersView({
   wasmBridge,
   onApplyBalancedMain,
   autoBalanceState,
+  targetsState,
   persistKey,
 }: {
   main: Recipe;
@@ -690,6 +692,8 @@ export function WatchersView({
   onApplyBalancedMain?: (balanced: LightRecipe) => void;
   /** Continuous-balance toggle `[on, setOn]`, caller-owned; absent renders never auto-balance. */
   autoBalanceState?: [boolean, Dispatch<SetStateAction<boolean>>];
+  /** Targets map `[targets, setTargets]`, caller-owned; absent uses local persisted state. */
+  targetsState?: [TargetsMap, Dispatch<SetStateAction<TargetsMap>>];
   persistKey?: string;
 }) {
   const [deltaToggle, setDeltaToggle, supportedDeltaToggles] = useDeltaToggleState(persistKey, {
@@ -724,7 +728,14 @@ export function WatchersView({
     undefined,
   );
   const [autoBalance, setAutoBalance] = autoBalanceState ?? [false, undefined];
-  const [targets, setTargets] = usePersistedState<TargetsMap>(STORAGE_KEYS.watcherTargets, {});
+
+  // Targets can be caller-owned via `targetState`, else they are persisted locally as a fallback.
+  const localTargetsState = usePersistedState<TargetsMap>(
+    targetsState === undefined ? STORAGE_KEYS.watcherTargets : undefined,
+    {},
+  );
+  const [targets, setTargets] = targetsState ?? localTargetsState;
+
   const [priorities, setPriorities] = usePersistedState<PrioritiesMap>(
     STORAGE_KEYS.watcherPriorities,
     {},

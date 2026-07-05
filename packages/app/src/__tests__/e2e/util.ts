@@ -661,6 +661,19 @@ export async function presetWatcherSelection(page: Page, propKeys: PropKey[]) {
   );
 }
 
+/**
+ * Inject a `PropKey`-to-target map into `localStorage` before navigation for the calculator page's
+ * mount-time hydration; drives the chart's target ticks (and the watchers) in screenshot tests.
+ */
+export async function presetWatcherTargets(page: Page, targets: Record<string, number>) {
+  await page.addInitScript(
+    ([k, t]) => {
+      localStorage.setItem(k, JSON.stringify(t));
+    },
+    [STORAGE_KEYS.watcherTargets, targets] as const,
+  );
+}
+
 /** Locate a watcher card by its `PropKey` and assert that it is visible. */
 export async function locateWatcherCardByKeyAndExpectVisible(page: Page, propKey: PropKey) {
   const card = page.locator(`[data-testid="watcher-card-${propKey}"]`);

@@ -4,7 +4,7 @@ import { useState } from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent, act } from "@testing-library/react";
 
-import { WatcherCard, WatchersView } from "@/app/_elements/watchers/watchers";
+import { WatcherCard, WatchersView, type TargetsMap } from "@/app/_elements/watchers/watchers";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { makeEmptyRecipe } from "@/lib/recipe";
@@ -933,6 +933,35 @@ describe("WatchersView", () => {
     fireEvent.change(input, { target: { value: "9.5" } });
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherTargets) ?? "{}");
     expect(stored[MSNF]).toBe(9.5);
+  });
+
+  it("renders caller-owned targets when targetsState is provided", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} targetsState={[{ [MSNF]: 7.5 }, vi.fn()]} />);
+    const input = screen.getByTestId(`watcher-card-${String(MSNF)}-target`) as HTMLInputElement;
+    expect(input.value).toBe("7.5");
+  });
+
+  it("routes target edits through the caller-owned setter, not localStorage", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const setTargets = vi.fn();
+    render(<WatchersView main={main} targetsState={[{}, setTargets]} />);
+    const input = screen.getByTestId(`watcher-card-${String(MSNF)}-target`) as HTMLInputElement;
+    fireEvent.change(input, { target: { value: "9.5" } });
+
+    expect(setTargets).toHaveBeenCalledTimes(1);
+    // The setter receives a functional updater; apply it to observe the new entry.
+    const updater = setTargets.mock.calls[0][0] as (prev: TargetsMap) => TargetsMap;
+    expect(updater({})).toEqual({ [MSNF]: 9.5 });
+    expect(localStorage.getItem(STORAGE_KEYS.watcherTargets)).toBeNull();
+  });
+
+  it("does not hydrate stored targets when targetsState is caller-owned", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 9.5 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    render(<WatchersView main={main} targetsState={[{}, vi.fn()]} />);
+    const input = screen.getByTestId(`watcher-card-${String(MSNF)}-target`) as HTMLInputElement;
+    expect(input.value).toBe("");
   });
 
   it("hydrates priorities from localStorage on mount", () => {

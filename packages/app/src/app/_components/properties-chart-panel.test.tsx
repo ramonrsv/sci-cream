@@ -6,6 +6,8 @@ import { render, cleanup } from "@testing-library/react";
 
 import { PropertiesChartPanel } from "@/app/_components/properties-chart-panel";
 
+import { CompKey, compToPropKey } from "@workspace/sci-cream";
+
 import { RecipeID } from "@/__tests__/assets";
 import { makeMockRecipeContext } from "@/__tests__/unit/util";
 
@@ -24,7 +26,7 @@ vi.mock("chart.js", () => ({
 
 interface CapturedChartProps {
   data: { datasets: Array<{ label: string }> };
-  options: { plugins: { rangeMeter: { refMarkers: Array<{ label: string }> } } };
+  options: { plugins: { rangeMeter: { tickMarkers: Array<{ label: string }> } } };
 }
 
 let capturedBarProps: CapturedChartProps | null = null;
@@ -79,7 +81,7 @@ describe("PropertiesChartPanel", () => {
       render(<PropertiesChartPanel recipes={recipeCtx.recipes} />);
       expect(capturedBarProps!.data.datasets).toHaveLength(1);
       expect(capturedBarProps!.data.datasets[0].label).toBe("Recipe");
-      expect(capturedBarProps!.options.plugins.rangeMeter.refMarkers).toHaveLength(0);
+      expect(capturedBarProps!.options.plugins.rangeMeter.tickMarkers).toHaveLength(0);
     });
 
     it("should display main recipe and non-empty reference recipes", () => {
@@ -88,17 +90,42 @@ describe("PropertiesChartPanel", () => {
       // The main recipe is the only bar dataset; references ride along as tick markers.
       expect(capturedBarProps!.data.datasets).toHaveLength(1);
       expect(capturedBarProps!.data.datasets[0].label).toBe("Recipe");
-      const refMarkers = capturedBarProps!.options.plugins.rangeMeter.refMarkers;
-      expect(refMarkers.map((r) => r.label)).toEqual(["Ref B"]);
+      const tickMarkers = capturedBarProps!.options.plugins.rangeMeter.tickMarkers;
+      expect(tickMarkers.map((r) => r.label)).toEqual(["Ref B"]);
     });
 
     it("should exclude empty reference recipes", () => {
       const recipeCtx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefB]);
       render(<PropertiesChartPanel recipes={recipeCtx.recipes} />);
       expect(capturedBarProps!.data.datasets).toHaveLength(1);
-      const refLabels = capturedBarProps!.options.plugins.rangeMeter.refMarkers.map((r) => r.label);
+      const refLabels = capturedBarProps!.options.plugins.rangeMeter.tickMarkers.map(
+        (r) => r.label,
+      );
       expect(refLabels).not.toContain("Ref A");
       expect(refLabels).toEqual(["Ref B"]);
+    });
+  });
+
+  // ---- Target Threading -----------------------------------------------------------------------
+
+  describe("Target Threading", () => {
+    it("should thread targets through to the chart as a tick-marker series", () => {
+      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
+      const targets = { [compToPropKey(CompKey.MilkFat)]: 10 };
+      render(<PropertiesChartPanel recipes={recipeCtx.recipes} targets={targets} />);
+      const markerLabels = capturedBarProps!.options.plugins.rangeMeter.tickMarkers.map(
+        (m) => m.label,
+      );
+      expect(markerLabels).toContain("Target");
+    });
+
+    it("should not add a target series when no targets are given", () => {
+      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
+      render(<PropertiesChartPanel recipes={recipeCtx.recipes} />);
+      const markerLabels = capturedBarProps!.options.plugins.rangeMeter.tickMarkers.map(
+        (m) => m.label,
+      );
+      expect(markerLabels).not.toContain("Target");
     });
   });
 });

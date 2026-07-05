@@ -1,5 +1,7 @@
 import { test, expect, Page, Locator } from "@playwright/test";
 
+import { CompKey, compToPropKey } from "@workspace/sci-cream";
+
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import {
   DeltaToggle,
@@ -17,6 +19,7 @@ import {
   getGroupBySelectInput,
   goToPageAndWaitFor,
   goToPageAndPasteRecipes,
+  presetWatcherTargets,
   expandNavbar,
 } from "@/__tests__/e2e/util";
 import { selectOption } from "@/__tests__/e2e/select";
@@ -405,4 +408,43 @@ test.describe("Visual Regression: Panels, Properties Chart Horizontal Orientatio
 
   testPropertiesChartPanelHorizontal([RecipeID.Main]);
   testPropertiesChartPanelHorizontal([RecipeID.Main, RecipeID.RefA, RecipeID.RefB]);
+});
+
+/** Targets (percentage units) on keys the Auto filter keeps for Main, offset so ticks stand out. */
+const CHART_TARGETS: Record<string, number> = {
+  [compToPropKey(CompKey.TotalSolids)]: 40,
+  [compToPropKey(CompKey.MSNF)]: 11,
+  [compToPropKey(CompKey.MilkFat)]: 14,
+};
+
+test.describe("Visual Regression: Panels, Properties Chart Balancing Targets", () => {
+  const testPropertiesChartPanelTargets = (recipeIds: RecipeID[]) => {
+    test(
+      makeRecipesTestName("PropertiesChartPanel targets", recipeIds),
+      async ({ page, browserName }) => {
+        await presetWatcherTargets(page, CHART_TARGETS);
+
+        await goToPageAndPasteRecipes(page, browserName, recipeIds);
+        const panel = await locatePanelAndExpectVisible(page, "#properties-chart-panel");
+
+        await expect(panel).toHaveScreenshot(
+          makeRecipesScreenshotFilename("properties-chart-panel-targets", recipeIds),
+        );
+      },
+    );
+  };
+
+  testPropertiesChartPanelTargets([RecipeID.Main]);
+  testPropertiesChartPanelTargets([RecipeID.Main, RecipeID.RefA, RecipeID.RefB]);
+
+  test("PropertiesChartPanel targets, horizontal orientation", async ({ page, browserName }) => {
+    await presetWatcherTargets(page, CHART_TARGETS);
+
+    await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main]);
+    const panel = await locatePanelAndExpectVisible(page, "#properties-chart-panel");
+
+    await makePropertiesChartPanelPortrait(page, panel);
+
+    await expect(panel).toHaveScreenshot("properties-chart-panel-targets-horizontal.png");
+  });
 });

@@ -2,10 +2,13 @@ import "@testing-library/jest-dom/vitest";
 
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, cleanup } from "@testing-library/react";
+import { render, screen, cleanup, fireEvent, act } from "@testing-library/react";
 import CalculatorPage from "./page";
 
+import { STORAGE_KEYS } from "@/lib/local-storage";
 import { getSelectedOptionLabel } from "@/__tests__/unit/select";
+
+import { CompKey, compToPropKey } from "@workspace/sci-cream";
 
 // ---------------------------------------------------------------------------
 // Test helpers, mocks, and setup
@@ -130,6 +133,36 @@ describe("Calculator Page", () => {
 
       const { container } = render(<CalculatorPage />);
       expect(recipeLabel(container)).toBe("Recipe");
+    });
+  });
+
+  // ---------------------------------------------------------------------------
+  // Balancing targets threading
+  // ---------------------------------------------------------------------------
+
+  describe("balancing targets", () => {
+    // TotalSolids is unconditionally shown, so its watcher card exists even for empty recipes.
+    const TOTAL_SOLIDS = compToPropKey(CompKey.TotalSolids);
+    const targetInput = () =>
+      screen.getByTestId(`watcher-card-${String(TOTAL_SOLIDS)}-target`) as HTMLInputElement;
+
+    beforeEach(() => {
+      localStorage.clear();
+    });
+
+    it("hydrates stored targets into the watchers panel", async () => {
+      localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [TOTAL_SOLIDS]: 30 }));
+      render(<CalculatorPage />);
+      await act(async () => {});
+      expect(targetInput().value).toBe("30");
+    });
+
+    it("persists watcher target edits to localStorage", async () => {
+      render(<CalculatorPage />);
+      fireEvent.change(targetInput(), { target: { value: "12" } });
+      await act(async () => {});
+      const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherTargets) ?? "{}");
+      expect(stored[TOTAL_SOLIDS]).toBe(12);
     });
   });
 });

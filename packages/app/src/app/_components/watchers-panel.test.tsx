@@ -134,4 +134,17 @@ describe("WatchersPanel", () => {
       expect(onApply).toHaveBeenCalledTimes(1);
     });
   });
+
+  // ---- Targets Wiring -------------------------------------------------------------------------
+
+  describe("Targets Wiring", () => {
+    it("forwards targetsState so the view renders the caller-owned targets", () => {
+      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
+      render(
+        <WatchersPanel recipes={recipeCtx.recipes} targetsState={[{ [MSNF]: 7.5 }, vi.fn()]} />,
+      );
+      const input = screen.getByTestId(`watcher-card-${String(MSNF)}-target`) as HTMLInputElement;
+      expect(input.value).toBe("7.5");
+    });
+  });
 });

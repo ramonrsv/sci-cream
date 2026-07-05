@@ -19,6 +19,7 @@ import {
 } from "chart.js";
 
 import { Recipe, RecipeSummary, isRecipeEmpty } from "@/lib/recipe";
+import type { TargetsMap } from "@/app/_elements/watchers/watchers";
 import { useTheme } from "@/lib/theme";
 import {
   KeyFilter,
@@ -77,10 +78,10 @@ ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend)
 type BandRange = { yMin: number; yMax: number } | null;
 
 /**
- * A reference recipe rendered as horizontal tick markers across the bars. `values` is aligned to
- * the chart's labels (one entry per property), `null` where the reference lacks a usable value.
+ * A series rendered as horizontal tick markers across the bars — a reference recipe or the
+ * balancing targets. `values` is aligned to the chart's labels (one entry per property).
  */
-interface RefMarker {
+interface TickMarker {
   label: string;
   color: string;
   dash: number[];
@@ -91,7 +92,7 @@ interface RefMarker {
 interface RangeMeterOptions {
   bandRanges: BandRange[];
   bandColor: string;
-  refMarkers: RefMarker[];
+  tickMarkers: TickMarker[];
   /** When `true`, bars run horizontally (`indexAxis: "y"`); the overlay geometry is mirrored. */
   horizontal: boolean;
 }
@@ -183,9 +184,9 @@ function barCrossAxis(
 }
 
 /**
- * Draws the range-meter overlay: a soft acceptable-range band behind each bar and each reference
- * recipe as a tick marker across the bars. Geometry tracks the bar elements, mirrored when
- * `options.horizontal`. Reads its data from `options.plugins.rangeMeter`.
+ * Draws the range-meter overlay: a soft acceptable-range band behind each bar and each tick-marker
+ * series (reference recipes, balancing targets) across the bars. Geometry tracks the bar elements,
+ * mirrored when `options.horizontal`. Reads its data from `options.plugins.rangeMeter`.
  */
 const rangeMeterPlugin: Plugin<"bar", RangeMeterOptions> = {
   id: "rangeMeter",
@@ -226,7 +227,7 @@ const rangeMeterPlugin: Plugin<"bar", RangeMeterOptions> = {
   },
 
   afterDatasetsDraw(chart, _args, options) {
-    if (!options?.refMarkers?.length) return;
+    if (!options?.tickMarkers?.length) return;
 
     const { ctx, chartArea } = chart;
     const meta = chart.getDatasetMeta(0);
@@ -237,11 +238,11 @@ const rangeMeterPlugin: Plugin<"bar", RangeMeterOptions> = {
     clipToChartArea(ctx, chartArea);
     ctx.lineWidth = REF_TICK_WIDTH;
 
-    options.refMarkers.forEach((ref) => {
-      ctx.strokeStyle = ref.color;
-      ctx.setLineDash(ref.dash);
+    options.tickMarkers.forEach((marker) => {
+      ctx.strokeStyle = marker.color;
+      ctx.setLineDash(marker.dash);
 
-      ref.values.forEach((value, i) => {
+      marker.values.forEach((value, i) => {
         const el = meta.data[i];
         if (value === null || !el) return;
 
@@ -361,7 +362,8 @@ export function getModifiedAcceptablePropertyRange(propKey: PropKey): BandRange 
  * Bare bar chart displaying key mix property values. Each property is a vertical range-meter: a
  * soft acceptable-range band sits behind a single status-colored bar for the main recipe (colored
  * by where its value sits in the range), and each reference recipe is drawn as a horizontal tick
- * marker across the bar at its own value.
+ * marker across the bar at its own value. Balancing `targets` are drawn as one more tick-marker
+ * series, in blue to match {@link WatcherCard}'s target tick.
  *
  * Consumer is responsible for sizing the chart via a parent container.
  */
@@ -369,10 +371,12 @@ export function PropertiesBarChart({
   main,
   refs = [],
   propKeys,
+  targets = {},
 }: {
   main: RecipeSummary;
   refs?: RecipeSummary[];
   propKeys: PropKey[];
+  targets?: TargetsMap;
 }) {
   // Subscribe to the theme so the canvas re-reads the cascaded colors and repaints when it flips.
   useTheme();
@@ -446,7 +450,7 @@ export function PropertiesBarChart({
    * Reference recipes as tick markers: solid for the first, dashed for the second so they stay
    * distinguishable over the bars; zero/NaN values are dropped (`null`) so no tick is drawn.
    */
-  const refMarkers: RefMarker[] = refs.map((ref, i) => ({
+  const refMarkers: TickMarker[] = refs.map((ref, i) => ({
     label: ref.name || ref.id,
     color: addOrUpdateAlpha(legendColor, REFERENCE_TICK_ALPHA),
     dash: i === 0 ? [] : [4, 3],
@@ -456,13 +460,36 @@ export function PropertiesBarChart({
     }),
   }));
 
-  // Cap the y-axis on the tallest drawn element, not just the bars: range bands and reference
-  // ticks can rise above the bar values, and Chart.js's auto-scale (bar-data only) would clip
-  // their tops. Round up to the next Y_AXIS_TICK_STEP for clean tick labels plus a little headroom.
+  /**
+   * Balancing target values per property, in chart (modified) units. Targets are stored in the
+   * same percentage display units as the bars, so only the chart modification applies. A zero
+   * target is deliberate and kept; unset/NaN entries are dropped (`null`).
+   */
+  const targetValues = propKeys.map((propKey) => {
+    const target = targets[propKey];
+    return target === undefined || Number.isNaN(target)
+      ? null
+      : modifyMixPropertyForChart(target, propKey);
+  });
+
+  /** All tick-marker series: references first, targets last so their ticks draw on top. */
+  const tickMarkers: TickMarker[] = [...refMarkers];
+  if (targetValues.some((value) => value !== null)) {
+    tickMarkers.push({
+      label: "Target",
+      color: getColor(Color.GraphBlue),
+      dash: [],
+      values: targetValues,
+    });
+  }
+
+  // Cap the y-axis on the tallest drawn element, not just the bars: range bands and tick markers
+  // can rise above the bar values, and Chart.js's auto-scale (bar-data only) would clip their
+  // tops. Round up to the next Y_AXIS_TICK_STEP for clean tick labels plus a little headroom.
   const drawnValues = [
     ...mainData,
     ...bandRanges.flatMap((range) => (range ? [range.yMax] : [])),
-    ...refMarkers.flatMap((ref) => ref.values),
+    ...tickMarkers.flatMap((marker) => marker.values),
   ].filter((value): value is number => value !== null && Number.isFinite(value));
 
   const yMax =
@@ -509,7 +536,7 @@ export function PropertiesBarChart({
     ],
   };
 
-  /** Legend entries: a filled chip for the main recipe and a line swatch per reference. */
+  /** Legend entries: a filled chip for the main recipe and a line swatch per tick-marker series. */
   const legendLabels: LegendItem[] = [
     {
       text: main.name || main.id,
@@ -519,12 +546,12 @@ export function PropertiesBarChart({
       fontColor: legendColor,
       hidden: false,
     },
-    ...refMarkers.map((ref) => ({
-      text: ref.label,
+    ...tickMarkers.map((marker) => ({
+      text: marker.label,
       fillStyle: "rgba(0, 0, 0, 0)",
-      strokeStyle: ref.color,
+      strokeStyle: marker.color,
       lineWidth: 2,
-      lineDash: ref.dash,
+      lineDash: marker.dash,
       fontColor: legendColor,
       hidden: false,
     })),
@@ -560,9 +587,9 @@ export function PropertiesBarChart({
     // No chart title: the panel context already names the chart, and dropping it reclaims height.
     layout: { padding: { top: CHART_TOP_PADDING } },
     plugins: {
-      rangeMeter: { bandRanges, bandColor, refMarkers, horizontal },
+      rangeMeter: { bandRanges, bandColor, tickMarkers, horizontal },
       legend: {
-        display: refs.length > 0,
+        display: tickMarkers.length > 0,
         position: horizontal ? "top" : "chartArea",
         align: "start",
         onClick: () => undefined,
@@ -587,9 +614,9 @@ export function PropertiesBarChart({
             const idx = items[0]?.dataIndex;
             if (idx === undefined) return [];
 
-            return refMarkers.flatMap((ref) => {
-              const val = ref.values[idx];
-              return val === null ? [] : [`${ref.label}: ${formatCompositionValue(val).trim()}`];
+            return tickMarkers.flatMap((marker) => {
+              const val = marker.values[idx];
+              return val === null ? [] : [`${marker.label}: ${formatCompositionValue(val).trim()}`];
             });
           },
         },
@@ -610,18 +637,23 @@ export function PropertiesBarChart({
 /**
  * Properties bar chart with an attached toolbar (KeyFilter) that owns its own toolbar state.
  *
+ * `targets` (optional, read-only) is forwarded to the bare chart to draw the balancing targets
+ * as tick markers; the calculator page owns the map and threads it from the watchers.
+ *
  * `toolbarPrefix` is rendered inside the toolbar's flex row before the controls; used by the
  * panel wrapper to inject a drag handle without breaking the toolbar layout.
  */
 export function PropertiesChartView({
   main,
   refs = [],
+  targets,
   toolbarPrefix,
   defaultSelected = DEFAULT_SELECTED_PROPERTIES,
   persistKey,
 }: {
   main: Recipe;
   refs?: RecipeSummary[];
+  targets?: TargetsMap;
   toolbarPrefix?: ReactNode;
   defaultSelected?: Set<PropKey>;
   persistKey?: string;
@@ -685,7 +717,12 @@ export function PropertiesChartView({
         />
       </div>
       <div className="min-h-0 flex-1 px-2 pb-2">
-        <PropertiesBarChart main={main} refs={refs} propKeys={getEnabledProps()} />
+        <PropertiesBarChart
+          main={main}
+          refs={refs}
+          propKeys={getEnabledProps()}
+          targets={targets}
+        />
       </div>
     </div>
   );

@@ -24,11 +24,14 @@ import {
   makeUpdatedRecipeContext,
 } from "@/lib/recipe";
 import { RecipeEditorPanel } from "@/app/_components/recipe-editor-panel";
+import type { TargetsMap } from "@/app/_elements/watchers/watchers";
 import { useSeededWasmResources } from "@/lib/wasm-resources";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
 import { slotFromParam } from "@/app/_elements/selects/recipe-select";
 import { loadStoredLayouts, onLayoutReset, saveLayouts } from "@/lib/calculator-layout";
-import { STATE_SET } from "@/lib/util";
+import { STORAGE_KEYS } from "@/lib/local-storage";
+import { usePersistedState } from "@/lib/use-persisted-state";
+import { STATE_VAL, STATE_SET } from "@/lib/util";
 
 /**
  * Main calculator page: responsive drag-and-drop grid of recipe and major display components
@@ -63,6 +66,9 @@ function CalculatorContent() {
   // Continuous-balance mode: session-only, off by default; a RecipeEditor edit turns it off.
   const autoBalanceState = useState(false);
 
+  // Balancing targets: persisted, edited by the watchers panel, read by the properties chart.
+  const targetsState = usePersistedState<TargetsMap>(STORAGE_KEYS.watcherTargets, {});
+
   /** Apply a balanced light recipe (from `Bridge.balance_recipe`) onto the main recipe (slot 0) */
   const onApplyBalancedMain = (balanced: LightRecipe) => {
     const current = recipeContext.recipes[0];
@@ -71,7 +77,7 @@ function CalculatorContent() {
     setRecipeContext((prev) => makeUpdatedRecipeContext(prev, [updated]));
   };
 
-  const recipeGridProps = {
+  const recipeEditorPanelProps = {
     recipeCtxState,
     urlSlot,
     onUserEdit: () => autoBalanceState[STATE_SET](false),
@@ -82,7 +88,10 @@ function CalculatorContent() {
     wasmBridge: wasmResources.wasmBridge,
     onApplyBalancedMain,
     autoBalanceState,
+    targetsState,
   };
+
+  const propertiesChartPanelProps = { recipes, targets: targetsState[STATE_VAL] };
 
   // 2160p: 3840px, /2 = 1920px
   // 1440p: 2560px, /2 = 1280px
@@ -214,10 +223,10 @@ function CalculatorContent() {
           containerPadding={[0, 0]}
           dragConfig={{ handle: ".drag-handle" }}
         >
-          <div key="recipe">{<RecipeEditorPanel {...recipeGridProps} />}</div>
+          <div key="recipe">{<RecipeEditorPanel {...recipeEditorPanelProps} />}</div>
           <div key="properties">{<PropertiesPanel recipes={recipes} />}</div>
           <div key="composition">{<CompositionBreakdownPanel recipes={recipes} />}</div>
-          <div key="props-chart">{<PropertiesChartPanel recipes={recipes} />}</div>
+          <div key="props-chart">{<PropertiesChartPanel {...propertiesChartPanelProps} />}</div>
           <div key="fpd-graph">{<FpdGraphPanel recipes={recipes} />}</div>
           <div key="watchers">{<WatchersPanel {...watchersPanelProps} />}</div>
         </ResponsiveGridLayout>

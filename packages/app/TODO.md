@@ -7,8 +7,6 @@
 - [ ] The delete recipe version button moves around with the version name length, which is jarring.
 - [ ] Recipe validation errors/warnings do not show unless a recipe has some non-zero qty value.
 - [ ] Composition values < 0.005 display `0` instead of empty. Look into where and how to handle.
-- [ ] Add support for displaying balancing targets in `PropertiesBarChart`; lift targets state up
-      to the calculator page, threaded like the auto-balance state (no React context).
 - [ ] `WatcherCard` needs to display a color based on position with an acceptable property range,
       and based on proximity to the balancing target. Figure out how to handle overlapping concerns.
 - [ ] Add support for coloring bars and watchers based on a value's proximity to the current target.
@@ -18,8 +16,8 @@
 - [ ] Add `height` prop to `PropertiesTable` so that it can adapt the number of properties shown.
 - [ ] Add visual regression tests for dark mode; not everything, just routes & some key elements.
 - [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
-- [ ] Add make-recipe link, to click off ingredients that have been measured out for one or more
-      recipes. Each recipe should be letter and color coded.
+- [ ] Add shareable make-recipe link, to click off ingredients that have been measured out for one
+      or more recipes. Each recipe should be letter and color coded.
 - [ ] Write a design doc for recipe share links (openable by anyone, embeddable); cover URL
       encoding and user-defined ingredients. Implementation is tracked in Up Next.
 
@@ -108,6 +106,8 @@
 
 ## Completed
 
+- [x] Add support for displaying balancing targets in `PropertiesBarChart`; lift targets state up
+      to the calculator page, threaded like the auto-balance state (no React context).
 - [x] Add button in `WatchersView` for clearing all targets, and maybe also for each watcher card?
 - [x] Add a button to set current recipe values as its balancing target; useful for small changes.
 - [x] Add toggle buttons for enabling/disabling the range bar, target, and ref values in watchers.

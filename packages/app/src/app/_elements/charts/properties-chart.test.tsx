@@ -19,6 +19,7 @@ import {
   getModifiedAcceptablePropertyRange,
   propKeyAsModifiedShortStr,
 } from "@/app/_elements/charts/properties-chart";
+import type { TargetsMap } from "@/app/_elements/watchers/watchers";
 import { filterActiveSlots } from "@/lib/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { getSelectedOptionLabel } from "@/__tests__/unit/select";
@@ -66,7 +67,7 @@ type ScriptableColor = (ctx: { dataIndex: number; chart: { chartArea?: unknown }
 interface RangeMeterOptions {
   bandRanges: ({ yMin: number; yMax: number } | null)[];
   bandColor: string;
-  refMarkers: Array<{ label: string; color: string; dash: number[]; values: (number | null)[] }>;
+  tickMarkers: Array<{ label: string; color: string; dash: number[]; values: (number | null)[] }>;
   horizontal: boolean;
 }
 
@@ -123,12 +124,23 @@ vi.mock("@/lib/use-element-size", () => ({
 }));
 
 /** Convenience: build active recipes from a mock context and render the bar chart with them */
-function renderFromContext(recipeIds: RecipeID[], propKeys: PropKey[] = getMixScopePropKeys()) {
+function renderFromContext(
+  recipeIds: RecipeID[],
+  propKeys: PropKey[] = getMixScopePropKeys(),
+  targets?: TargetsMap,
+) {
   const recipeCtx = makeMockRecipeContext(recipeIds);
   const active = filterActiveSlots(recipeCtx.recipes);
   return {
     recipeCtx,
-    ...render(<PropertiesBarChart main={active[0]} refs={active.slice(1)} propKeys={propKeys} />),
+    ...render(
+      <PropertiesBarChart
+        main={active[0]}
+        refs={active.slice(1)}
+        propKeys={propKeys}
+        targets={targets}
+      />,
+    ),
   };
 }
 
@@ -231,8 +243,8 @@ describe("PropertiesBarChart", () => {
       renderFromContext([RecipeID.Main, RecipeID.RefA, RecipeID.RefB]);
       expect(capturedBarProps!.data.datasets).toHaveLength(1);
       expect(capturedBarProps!.data.datasets[0].label).toBe("Recipe");
-      const refMarkers = capturedBarProps!.options.plugins.rangeMeter.refMarkers;
-      expect(refMarkers.map((r) => r.label)).toEqual(["Ref A", "Ref B"]);
+      const tickMarkers = capturedBarProps!.options.plugins.rangeMeter.tickMarkers;
+      expect(tickMarkers.map((r) => r.label)).toEqual(["Ref A", "Ref B"]);
     });
   });
 
@@ -272,12 +284,12 @@ describe("PropertiesBarChart", () => {
         getColor(ThemeColor.TextPrimary),
         REFERENCE_TICK_ALPHA,
       );
-      const refMarkers = capturedBarProps!.options.plugins.rangeMeter.refMarkers;
-      expect(refMarkers).toHaveLength(2);
-      expect(refMarkers[0].color).toBe(expectedRefColor);
-      expect(refMarkers[0].dash).toEqual([]);
-      expect(refMarkers[1].color).toBe(expectedRefColor);
-      expect(refMarkers[1].dash).toEqual([4, 3]);
+      const tickMarkers = capturedBarProps!.options.plugins.rangeMeter.tickMarkers;
+      expect(tickMarkers).toHaveLength(2);
+      expect(tickMarkers[0].color).toBe(expectedRefColor);
+      expect(tickMarkers[0].dash).toEqual([]);
+      expect(tickMarkers[1].color).toBe(expectedRefColor);
+      expect(tickMarkers[1].dash).toEqual([4, 3]);
     });
 
     it("should pass acceptable-range bands aligned to the labels", () => {
@@ -288,6 +300,48 @@ describe("PropertiesBarChart", () => {
       propKeys.forEach((key, i) => {
         expect(bandRanges[i]).toEqual(getModifiedAcceptablePropertyRange(key) ?? null);
       });
+    });
+  });
+
+  // ---- Target Markers -------------------------------------------------------------------------
+
+  describe("Target Markers", () => {
+    const MSNF = compToPropKey(CompKey.MSNF);
+    const SALT = compToPropKey(CompKey.Salt);
+    const ABS_PAC = ratioToPropKey(RatioKey.AbsPAC);
+
+    it("should carry targets as a blue solid tick-marker series aligned to the labels", () => {
+      renderFromContext([RecipeID.Main], [MSNF, SALT, ABS_PAC], { [MSNF]: 10, [SALT]: 0.2 });
+
+      const tickMarkers = capturedBarProps!.options.plugins.rangeMeter.tickMarkers;
+      expect(tickMarkers.map((m) => m.label)).toEqual(["Target"]);
+      expect(tickMarkers[0].color).toBe(getColor(Color.GraphBlue));
+      expect(tickMarkers[0].dash).toEqual([]);
+      // Values are modified for chart display (Salt * 100); keys without a target are null.
+      expect(tickMarkers[0].values).toEqual([10, 0.2 * 100, null]);
+    });
+
+    it("should draw the target series after (on top of) reference series", () => {
+      renderFromContext([RecipeID.Main, RecipeID.RefA], [MSNF], { [MSNF]: 10 });
+      const tickMarkers = capturedBarProps!.options.plugins.rangeMeter.tickMarkers;
+      expect(tickMarkers.map((m) => m.label)).toEqual(["Ref A", "Target"]);
+    });
+
+    it("should keep a zero target and drop NaN targets", () => {
+      renderFromContext([RecipeID.Main], [MSNF, SALT], { [MSNF]: 0, [SALT]: NaN });
+      const tickMarkers = capturedBarProps!.options.plugins.rangeMeter.tickMarkers;
+      expect(tickMarkers.map((m) => m.label)).toEqual(["Target"]);
+      expect(tickMarkers[0].values).toEqual([0, null]);
+    });
+
+    it("should not add a target series when no displayed key has a target", () => {
+      renderFromContext([RecipeID.Main], [MSNF], { [SALT]: 0.2 });
+      expect(capturedBarProps!.options.plugins.rangeMeter.tickMarkers).toHaveLength(0);
+    });
+
+    it("should display the legend when targets are present without references", () => {
+      renderFromContext([RecipeID.Main], [MSNF], { [MSNF]: 10 });
+      expect(capturedBarProps!.options.plugins.legend.display).toBe(true);
     });
   });
 
