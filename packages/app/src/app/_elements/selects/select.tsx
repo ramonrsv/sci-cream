@@ -20,6 +20,8 @@ export interface SelectProps<T> {
   options: SelectOption<T>[];
   /** Accessible name for the control, when there is no visible label nearby. */
   ariaLabel?: string;
+  /** Additional classes merged onto the `<select>`, e.g. to fix its width. */
+  className?: string;
 }
 
 /**
@@ -28,12 +30,12 @@ export interface SelectProps<T> {
  * Each `<option>` is keyed on its index and mapped back on change, so `T` need not be a string.
  * Backs the toolbar selects and recipe-search/detail-panel pickers; `ThemeSelect` doesn't use this.
  */
-export function Select<T>({ value, onChange, options, ariaLabel }: SelectProps<T>) {
+export function Select<T>({ value, onChange, options, ariaLabel, className = "" }: SelectProps<T>) {
   const selectedIndex = options.findIndex((opt) => opt.value === value);
 
   return (
     <select
-      className="boxed-input cursor-pointer text-sm"
+      className={`boxed-input cursor-pointer text-sm ${className}`}
       aria-label={ariaLabel}
       value={selectedIndex}
       onChange={(e) => onChange(options[Number(e.target.value)].value)}

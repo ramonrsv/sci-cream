@@ -189,4 +189,44 @@ describe("EntitySearch", () => {
       expect(screen.getByRole("button", { name: /Gamma/ })).toBeInTheDocument();
     });
   });
+
+  describe("stale selection", () => {
+    it("clears the selection once the selected entry drops out of the data (e.g. deleted)", () => {
+      const { rerender } = renderShell();
+      fireEvent.click(screen.getByRole("button", { name: /Gamma/ }));
+      expect(screen.getByTestId("panel")).toHaveTextContent("panel for Gamma");
+
+      // Simulate the parent refreshing its data after the entry is deleted server-side.
+      rerender(
+        <EntitySearch<Entry>
+          embeddedEntries={[builtinA, builtinB]}
+          savedEntries={[savedB]}
+          getId={getId}
+          matchesQuery={matchesQuery}
+          renderDetailPanel={(e) => <div data-testid="panel">panel for {e.name}</div>}
+        />,
+      );
+
+      expect(screen.queryByTestId("panel")).not.toBeInTheDocument();
+      expect(screen.getByText("Select an entry to see details")).toBeInTheDocument();
+    });
+
+    it("keeps the selection when the entry is still present after a data refresh", () => {
+      const { rerender } = renderShell();
+      fireEvent.click(screen.getByRole("button", { name: /Gamma/ }));
+      expect(screen.getByTestId("panel")).toHaveTextContent("panel for Gamma");
+
+      rerender(
+        <EntitySearch<Entry>
+          embeddedEntries={[builtinA, builtinB]}
+          savedEntries={[savedA, savedB]}
+          getId={getId}
+          matchesQuery={matchesQuery}
+          renderDetailPanel={(e) => <div data-testid="panel">panel for {e.name}</div>}
+        />,
+      );
+
+      expect(screen.getByTestId("panel")).toHaveTextContent("panel for Gamma");
+    });
+  });
 });

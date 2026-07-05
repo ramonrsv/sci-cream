@@ -25,6 +25,7 @@ import {
   EntitySource,
   filterTaggedEntries,
   Tagged,
+  getTaggedEntryKey,
 } from "@/app/_components/entity-search";
 import {
   DeleteAction,
@@ -187,11 +188,12 @@ function RecipeDetailPanel({
 
   const isSaved = entry._source === EntitySource.Saved;
   const hasMultipleVersions = entry.versions.length > 1;
-
   const latestIdx = entry.versions.length - 1;
 
-  const entryKey = `${entry._source}-${entry.id}`;
-  const [selectedVersionIdx, setSelectedVersionIdx] = useResetOnChange(entryKey, latestIdx);
+  const [selectedVersionIdx, setSelectedVersionIdx] = useResetOnChange(
+    getTaggedEntryKey(entry, (e) => `${e.id}-${latestIdx}`),
+    latestIdx,
+  );
   const selectedVersion = entry.versions[selectedVersionIdx] ?? entry.versions[latestIdx];
 
   const versionOptions: SelectOption<number>[] = entry.versions.map((v, idx) => ({
@@ -255,6 +257,7 @@ function RecipeDetailPanel({
             onChange={setSelectedVersionIdx}
             options={versionOptions}
             ariaLabel="Recipe version"
+            className="max-w-70 truncate"
           />
           {deleteVersionEnabled && (
             <DeleteAction
@@ -310,9 +313,9 @@ function RecipeDetailPanel({
 }
 
 /**
- * Searchable list of recipes from both the embedded sci-cream dataset and an optional collection
- * of user-saved recipes. Each recipe appears as a single list item regardless of how many versions
- * it has; the detail panel exposes a version selector when more than one version exists. Per-version
+ * Searchable list of recipes from both the embedded sci-cream dataset and an optional collection of
+ * user-saved recipes. Each recipe appears as a single list item regardless of how many versions it
+ * has; the detail panel exposes a version selector when more than one version exists. Per-version
  * comments are editable for saved versions; embedded entries display their `comments` read-only.
  */
 export function RecipeSearch({

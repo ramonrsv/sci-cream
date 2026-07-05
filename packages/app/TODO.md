@@ -2,9 +2,6 @@
 
 ## Next Release
 
-- [ ] When a recipe is deleted, the UI does not update, it still showed the deleted recipe.
-- [ ] Fix issue where version lists in `RecipeSearch` do not visually update when one is deleted.
-- [ ] The delete recipe version button moves around with the version name length, which is jarring.
 - [ ] Recipe validation errors/warnings do not show unless a recipe has some non-zero qty value.
 - [ ] Composition values < 0.005 display `0` instead of empty. Look into where and how to handle.
 - [ ] `WatcherCard` needs to display a color based on position with an acceptable property range,
@@ -16,15 +13,15 @@
 - [ ] Add `height` prop to `PropertiesTable` so that it can adapt the number of properties shown.
 - [ ] Add visual regression tests for dark mode; not everything, just routes & some key elements.
 - [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
-- [ ] Add shareable make-recipe link, to click off ingredients that have been measured out for one
-      or more recipes. Each recipe should be letter and color coded.
-- [ ] Write a design doc for recipe share links (openable by anyone, embeddable); cover URL
-      encoding and user-defined ingredients. Implementation is tracked in Up Next.
 
 ## Up Next
 
+- [ ] Write a design doc for recipe share links (openable by anyone, embeddable); cover URL
+      encoding and user-defined ingredients. Implementation is tracked in Up Next.
 - [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
       embedded into other websites. How to handle user-defined ingredients?
+- [ ] Add shareable make-recipe link, to click off ingredients that have been measured out for one
+      or more recipes. Each recipe should be letter and color coded.
 - [ ] Add support for showing recipe diffs (ingredient, quantities) between versions of a recipe
       in `/recipes`. Comparing ingredient lines may be tricky, similar to a git diff.
 - [ ] Add support for `RecipeEditor` to display fewer lines than the internal fixed number of lines,
@@ -106,6 +103,9 @@
 
 ## Completed
 
+- [x] When a recipe is deleted, the UI does not update, it still showed the deleted recipe.
+- [x] Fix issue where version lists in `RecipeSearch` do not visually update when one is deleted.
+- [x] The delete recipe version button moves around with the version name length, which is jarring.
 - [x] Add support for displaying balancing targets in `PropertiesBarChart`; lift targets state up
       to the calculator page, threaded like the auto-balance state (no React context).
 - [x] Add button in `WatchersView` for clearing all targets, and maybe also for each watcher card?

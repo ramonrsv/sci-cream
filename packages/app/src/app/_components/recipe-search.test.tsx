@@ -415,6 +415,33 @@ describe("RecipeSearch", () => {
       expect(screen.getByLabelText("Delete this version")).toBeInTheDocument();
     });
 
+    it("clamps to the new latest version when the selected version is deleted out from under it", () => {
+      const threeVersions: SavedRecipeJson = {
+        id: 42,
+        name: "Iterated Recipe",
+        versions: [
+          { version: 1, recipe: [["Whole Milk", 100]], createdAt: "2026-05-01T00:00:00.000Z" },
+          { version: 2, recipe: [["Whole Milk", 110]], createdAt: "2026-05-10T00:00:00.000Z" },
+          { version: 3, recipe: [["Whole Milk", 120]], createdAt: "2026-05-20T00:00:00.000Z" },
+        ],
+      };
+      const { rerender } = render(<RecipeSearch savedRecipes={[threeVersions]} />);
+      fireEvent.click(screen.getByRole("button", { name: /Iterated Recipe/ }));
+      expect(getSelectedOptionLabelByLabel("Recipe version")).toContain("v3");
+
+      // Same recipe id, but v3 (the previously selected, latest version) is now gone — the
+      // stored index would otherwise point past the end of the shrunk versions array.
+      const versionDeleted: SavedRecipeJson = {
+        ...threeVersions,
+        versions: threeVersions.versions.slice(0, 2),
+      };
+      rerender(<RecipeSearch savedRecipes={[versionDeleted]} />);
+
+      const selectedLabel = getSelectedOptionLabelByLabel("Recipe version");
+      expect(selectedLabel).toContain("v2");
+      expect(selectedLabel).toContain("latest");
+    });
+
     it("resets to the latest version when switching to a different entry", async () => {
       const other: SavedRecipeJson = {
         id: 7,

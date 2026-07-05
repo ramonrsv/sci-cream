@@ -13,6 +13,11 @@ export enum EntitySource {
 /** An entry tagged with its source (Embedded or Saved), used for source filtering and badging */
 export type Tagged<E> = E & { _source: EntitySource.Embedded | EntitySource.Saved };
 
+/** Get a stable key for an entry, including source, for React list keys and selection equality */
+export function getTaggedEntryKey<E>(entry: Tagged<E>, getId: (e: E) => string) {
+  return `${entry._source}:${getId(entry)}`;
+}
+
 /**
  * Merge, tag, and filter entries by source and a free-text query.
  *
@@ -72,7 +77,7 @@ export interface EntitySearchProps<E> {
 /**
  * Generic searchable two-column list/detail shell. Owns the search input, source-filter tabs,
  * list selection, and the detail-panel container; the consumer renders the panel content via
- * {@link EntitySearchProps.renderDetailPanel} (typically composing the atoms in `detail-panel.tsx`).
+ * {@link EntitySearchProps.renderDetailPanel} (typically composing the atoms in `detail-panel.tsx`)
  *
  * Used by {@link RecipeSearch} and {@link IngredientSearch}.
  */
@@ -91,12 +96,20 @@ export function EntitySearch<E>({
 }: EntitySearchProps<E>) {
   const [query, setQuery] = useState("");
   const [source, setSource] = useState<EntitySource>(EntitySource.All);
-  const [selectedEntry, setSelectedEntry] = useState<Tagged<E> | null>(null);
+  const [selectedEntryKey, setSelectedEntryKey] = useState<string | null>(null);
 
   const filtered = useMemo(
     () => filterTaggedEntries(embeddedEntries, savedEntries, source, query, matchesQuery),
     [embeddedEntries, savedEntries, source, query, matchesQuery],
   );
+
+  const getEntryKey = (entry: Tagged<E>) => getTaggedEntryKey(entry, getId);
+
+  // Looked up every render so it stays consistent with deleted entries/versions, updates, etc.
+  const selectedEntry =
+    selectedEntryKey === null
+      ? null
+      : (filtered.find((e) => getEntryKey(e) === selectedEntryKey) ?? null);
 
   const sourceOptions: { value: EntitySource; label: string }[] = [
     { value: EntitySource.All, label: "All" },
@@ -105,9 +118,7 @@ export function EntitySearch<E>({
   ];
 
   const isSelected = (entry: Tagged<E>) =>
-    selectedEntry !== null &&
-    selectedEntry._source === entry._source &&
-    getId(selectedEntry) === getId(entry);
+    selectedEntry !== null && getEntryKey(entry) === getEntryKey(selectedEntry);
 
   return (
     <div id={id} className="flex flex-col gap-3">
@@ -150,8 +161,8 @@ export function EntitySearch<E>({
           ) : (
             filtered.map((entry) => (
               <button
-                key={`${entry._source}-${getId(entry)}`}
-                onClick={() => setSelectedEntry(entry)}
+                key={getEntryKey(entry)}
+                onClick={() => setSelectedEntryKey(getEntryKey(entry))}
                 className={`search-list-item ${isSelected(entry) ? "search-list-item-active" : ""}`}
               >
                 <span className="text-primary block truncate text-sm font-medium">
