@@ -44,13 +44,8 @@ import {
   TARGET_FEASIBILITY_REL_TOL,
 } from "@/lib/comp-value-format";
 import { DEFAULT_SELECTED_PROPERTIES, makeAutoHeuristicFunction } from "@/lib/sci-cream/sci-cream";
-import {
-  Color,
-  getCssColor,
-  getRangeColor,
-  NO_RANGE_GRAY_ALPHA,
-  REFERENCE_TICK_ALPHA,
-} from "@/lib/styles/colors";
+import { RangeMeter } from "@/app/_elements/range-meter";
+import { Color, getCssColor, getRangeColor, NO_RANGE_GRAY_ALPHA } from "@/lib/styles/colors";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { leafKey, usePersistedState } from "@/lib/use-persisted-state";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
@@ -187,23 +182,6 @@ function computeTargetDeltaAndFormat(
  */
 function formatRange(range: { min: number; max: number }): string {
   return `[${formatCompositionValue(range.min).trim()}, ${formatCompositionValue(range.max).trim()}]`;
-}
-
-/**
- * Position (0–100) of `value` along the range-meter track. The track's domain is `range` padded by
- * `padFrac` of its width on each side, so the acceptable band occupies the centre and out-of-range
- * values land near (and clamp to) the edges. Status color, not position, conveys severity past the
- * edge, so clamping rather than overflowing is fine.
- */
-function valueToMeterPct(
-  value: number,
-  range: { min: number; max: number },
-  padFrac = 0.2,
-): number {
-  const pad = (range.max - range.min) * padFrac;
-  const lo = range.min - pad;
-  const hi = range.max + pad;
-  return Math.max(0, Math.min(1, (value - lo) / (hi - lo))) * 100;
 }
 
 /**
@@ -493,50 +471,21 @@ export function WatcherCard({
             <span className="text-secondary text-[10px] leading-none">
               {formatCompositionValue(meterRange.min).trim()}
             </span>
-            <div className="range-meter" data-testid={`watcher-card-${String(propKey)}-meter`}>
-              <div
-                className="range-meter-band"
-                style={{
-                  left: `${valueToMeterPct(meterRange.min, meterRange)}%`,
-                  right: `${100 - valueToMeterPct(meterRange.max, meterRange)}%`,
-                }}
-              />
-              {showRefs &&
-                nonEmptyRefs.map((ref) => {
-                  const refValue = getDisplayValue(propKey, ref);
-                  return isUsableNumber(refValue) ? (
-                    <span
-                      key={ref.id}
-                      className="range-meter-tick"
-                      style={{
-                        left: `${valueToMeterPct(refValue, meterRange)}%`,
-                        height: "0.5rem",
-                        backgroundColor: "currentColor",
-                        opacity: REFERENCE_TICK_ALPHA,
-                      }}
-                    />
-                  ) : null;
-                })}
-              {showTarget && isUsableNumber(target) && (
-                <span
-                  className="range-meter-tick"
-                  style={{
-                    left: `${valueToMeterPct(target, meterRange)}%`,
-                    backgroundColor: getCssColor(Color.GraphBlue),
-                  }}
-                />
-              )}
-              {isUsableNumber(mainValue) && (
-                <span
-                  className="range-meter-marker"
-                  style={{
-                    left: `${valueToMeterPct(mainValue, meterRange)}%`,
-                    backgroundColor: getCssColor(headerColor),
-                  }}
-                  data-testid={`watcher-card-${String(propKey)}-meter-current`}
-                />
-              )}
-            </div>
+            <RangeMeter
+              range={meterRange}
+              value={mainValue}
+              valueColor={getCssColor(headerColor)}
+              refs={
+                showRefs
+                  ? nonEmptyRefs.flatMap((ref) => {
+                      const refValue = getDisplayValue(propKey, ref);
+                      return isUsableNumber(refValue) ? [{ key: ref.id, value: refValue }] : [];
+                    })
+                  : []
+              }
+              target={showTarget ? target : undefined}
+              testIdPrefix={`watcher-card-${String(propKey)}`}
+            />
             <span className="text-secondary text-[10px] leading-none">
               {formatCompositionValue(meterRange.max).trim()}
             </span>
