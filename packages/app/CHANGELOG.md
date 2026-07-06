@@ -11,6 +11,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- Delta toggle (Off/Absolute/Relative) adding a main-vs-reference delta column to `PropertiesTable`.
+- Balancing target ticks in the properties bar chart, matching the `WatcherCard` target marker.
+- Global `Group-by` navbar toggle that groups tables and key-filter popups by roll-up hierarchy.
+- Persist toolbar select state (quantity, key filter, selected recipe) to `localStorage`.
+- Sticky table headers and pinned Ingredient/Qty columns that hold position while a panel scrolls.
+- Significantly expanded set of `Watchers` balancing functionality and convenient usability tools:
+  - Watchers `Auto` toggle that continuously re-balances the recipe as targets or the total change.
+  - `Total (g)` input in the Watchers toolbar to size the balanced recipe to a target batch weight.
+  - Watcher target tools: toolbar clear-all, per-card clear, `Set from current (M)` into targets.
+  - Toggles to hide/show the range meter, target input, and reference values in `WatcherCard`s.
+  - `Low` balancing priority level, below `Normal`, selectable per property in `WatcherCard`s.
+  - `Information` severity tier for balancing issues, shown in watcher cards and the issues popup.
+  - `DeltaToggle` in Watchers, with a relative mode shown as a percentage of the target.
+- Web Vitals benchmark to App CI, recording the standard web vitals and timing marks over time.
+- Static media and font size metrics to the bundle-size benchmark (fonts gated, media track-only).
+
+### Changed
+
+- Auto-rotate the properties bar chart between vertical and horizontal by container aspect ratio.
+- Make every calculator panel resizable on both axes and drop the fixed panel heights.
+- Unify the `Auto` property selection across the chart and watchers, showing more keys by default.
+- Rename the `Non-Zero` key filter to `Active`, which is simpler and a better semantic fit.
+- Unify all toolbar `Select` controls behind one shared component with consistent styling.
+- Significant visual overhaul of all the panels, adopting a more flat and stylish modern style:
+  - Redesign the `PropertiesChart`: single bar, acceptable-range band, references as tick markers.
+  - Redesign `WatcherCard` around a horizontal range-meter with status, target, and reference ticks.
+  - Restyle `FpdGraph` to match the redesigned bar chart and watcher cards; keep curves unchanged.
+  - Restyle calculator table headers and total rows (borderless headers, recessed bold totals band).
+- Switch popups to Headless UI `Popover`; they now stay in view and dismiss on outside-click/`Esc`.
+- Hide the target input and delta for non-balanceable (FPD) properties in Watchers.
+- Align Watcher targets/deltas to the displayed precision (input step, seeded targets, delta sign).
+- Reduce the step used when writing a balanced recipe's grams, so properties track targets closely.
+- Share one WASM bridge and user-saved recipes/ingredients across routes, fetched once per session.
+- Add warmup runs and outlier-robust stats (trimmed mean/median) to the e2e benchmark harness.
+- Self-host the Geist fonts and use ∆ (U+2206) so the delta glyph renders consistently everywhere.
+
+### Fixed
+
+- Recipe search showing a deleted entry after a refresh, and a stale version-selector index.
+- Recipe search flicker (default toolbar labels and rows for a frame) when switching entries.
+- WASM use-after-free crash in the search detail panels under React Strict Mode in `pnpm dev`.
+- Calculator layout occasionally reverting to defaults during hydration on client-side navigation.
+- Watchers/Properties toolbar controls overflowing off-screen and clipping the Balance button.
+- Spurious balancing feasibility warnings caused by targets rounded to display precision.
+- Truncate long recipe ingredient names in `RecipeTable` so they no longer break the layout.
+- Fix typo, add missing "find" word in the welcome blog post, in `blog/2026-04-27-welcome.md`.
+- ESLint crash from `eslint-plugin-react` calling a removed `getFilename()` API under ESLint 10.
+
 ## [0.0.3] - 2026-06-10
 
 ### Added
