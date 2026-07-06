@@ -33,7 +33,6 @@ import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format"
 import { prefersReducedMotion } from "@/lib/styles/motion";
 import { useElementSize } from "@/lib/use-element-size";
 import {
-  CHART_TOP_PADDING,
   TOOLTIP_CORNER_RADIUS,
   TOOLTIP_PADDING,
   TOOLTIP_BORDER_WIDTH,
@@ -53,15 +52,15 @@ import {
 } from "@/lib/styles/colors";
 
 import { DEFAULT_SELECTED_PROPERTIES, makeAutoHeuristicFunction } from "@/lib/sci-cream/sci-cream";
+import {
+  MeterRange,
+  computeMeterDomain,
+  valueToMeterPct,
+  isUsableNumber,
+} from "@/app/_elements/range-meter";
 
 import {
-  CompKey,
-  RatioKey,
-  FpdKey,
   PropKey,
-  compToPropKey,
-  ratioToPropKey,
-  fpdToPropKey,
   getMixProperty,
   getMixScopePropKeys,
   getAcceptablePropertyRange,
@@ -79,13 +78,15 @@ type BandRange = { yMin: number; yMax: number } | null;
 
 /**
  * A series rendered as horizontal tick markers across the bars — a reference recipe or the
- * balancing targets. `values` is aligned to the chart's labels (one entry per property).
+ * balancing targets. `values` (normalized track units, for drawing) and `trueValues` (real units,
+ * for the tooltip) are both aligned to the chart's labels, one entry per property.
  */
 interface TickMarker {
   label: string;
   color: string;
   dash: number[];
   values: (number | null)[];
+  trueValues: (number | null)[];
 }
 
 /** Per-instance options the {@link rangeMeterPlugin} reads from `options.plugins.rangeMeter`. */
@@ -122,8 +123,11 @@ const MAX_BAR_THICKNESS = 48;
 const BAR_CATEGORY_PERCENTAGE = 0.8;
 /** Fraction of the category-group width occupied by the bar itself (Chart.js `barPercentage`). */
 const BAR_PERCENTAGE = 0.72;
-/** Round the value-axis max up to the next multiple of this for clean tick labels plus headroom. */
-const Y_AXIS_TICK_STEP = 5;
+
+/** Full extent of the normalized value axis; every property's track spans this fixed range. */
+const NORMALIZED_AXIS_MAX = 100;
+/** Dataset index of the invisible target overlay; dataset 0 is the main recipe bar. */
+const TARGET_DATASET_INDEX = 1;
 
 /** Aspect ratio (width/height) at or below which bars switch to horizontal. */
 const HORIZONTAL_ASPECT_RATIO = 0.95;
@@ -272,98 +276,14 @@ const rangeMeterPlugin: Plugin<"bar", RangeMeterOptions> = {
 };
 
 /**
- * Modify some property values to be more suitable for chart display
+ * Bare bar chart displaying key mix property values, each self-normalized to its own track.
  *
- * For example, invert FPD and ServingTemp to be positive, convert AbsPAC to a smaller range,
- * convert emulsifier/stabilizer ratios to percentages, etc.
- */
-export function modifyMixPropertyForChart(rawValue: number, propKey: PropKey): number {
-  switch (propKey) {
-    case fpdToPropKey(FpdKey.FPD):
-    case fpdToPropKey(FpdKey.ServingTemp):
-      return -rawValue;
-    case compToPropKey(CompKey.Water):
-    case ratioToPropKey(RatioKey.AbsPAC):
-    case fpdToPropKey(FpdKey.HardnessAt14C):
-      return rawValue / 2;
-    case ratioToPropKey(RatioKey.AbsNetPAC):
-      return rawValue / 3;
-    case compToPropKey(CompKey.EggSNF):
-    case compToPropKey(CompKey.Alcohol):
-    case ratioToPropKey(RatioKey.EmulsifiersPerFat):
-      return rawValue * 10;
-    case compToPropKey(CompKey.Salt):
-    case ratioToPropKey(RatioKey.StabilizersPerWater):
-      return rawValue * 100;
-    default:
-      return rawValue;
-  }
-}
-
-/** Modify property key strings to match modifications done in `modifyMixPropertyForChart` */
-export function modifyPropKeyAsShortStrForChart(rawStr: string, propKey: PropKey): string {
-  switch (propKey) {
-    case fpdToPropKey(FpdKey.FPD):
-    case fpdToPropKey(FpdKey.ServingTemp):
-      return "-" + rawStr;
-    case compToPropKey(CompKey.Water):
-    case ratioToPropKey(RatioKey.AbsPAC):
-    case fpdToPropKey(FpdKey.HardnessAt14C):
-      return rawStr + " / 2";
-    case ratioToPropKey(RatioKey.AbsNetPAC):
-      return rawStr + " / 3";
-    case compToPropKey(CompKey.EggSNF):
-    case compToPropKey(CompKey.Alcohol):
-    case ratioToPropKey(RatioKey.EmulsifiersPerFat):
-      return rawStr + " * 10";
-    case compToPropKey(CompKey.Salt):
-    case ratioToPropKey(RatioKey.StabilizersPerWater):
-      return rawStr + " * 100";
-    default:
-      return rawStr;
-  }
-}
-
-/** Forward to `getMixProperty` and `modifyMixPropertyForChart` */
-export function getModifiedMixProperty(mixProperties: MixProperties, propKey: PropKey): number {
-  return modifyMixPropertyForChart(getMixProperty(mixProperties, propKey), propKey);
-}
-
-/** Forward to `prop_key_as_short_str` and `modifyPropKeyAsMedStrForChart` */
-export function propKeyAsModifiedShortStr(propKey: PropKey): string {
-  return modifyPropKeyAsShortStrForChart(prop_key_as_short_str(propKey), propKey);
-}
-
-/**
- * Modify acceptable property range to match modifications done in `modifyMixPropertyForChart`
- *
- * This function also maps the sci-cream range `{ min: number; max: number }` to the format needed
- * for the chart's range band, `{ yMin: number; yMax: number }`, and may do additional
- * modifications such as inverting the range for FPD and ServingTemp to match their negation.
- */
-export function getModifiedAcceptablePropertyRange(propKey: PropKey): BandRange {
-  const sciRange = getAcceptablePropertyRange(propKey);
-  if (!sciRange) return null;
-  let range: { yMin: number; yMax: number } = { yMin: sciRange.min, yMax: sciRange.max };
-
-  switch (propKey) {
-    case fpdToPropKey(FpdKey.FPD):
-    case fpdToPropKey(FpdKey.ServingTemp):
-      range = { yMin: range.yMax, yMax: range.yMin };
-  }
-
-  return {
-    yMin: modifyMixPropertyForChart(range.yMin, propKey),
-    yMax: modifyMixPropertyForChart(range.yMax, propKey),
-  };
-}
-
-/**
- * Bare bar chart displaying key mix property values. Each property is a vertical range-meter: a
- * soft acceptable-range band sits behind a single status-colored bar for the main recipe (colored
- * by where its value sits in the range), and each reference recipe is drawn as a horizontal tick
- * marker across the bar at its own value. Balancing `targets` are drawn as one more tick-marker
- * series, in blue to match {@link WatcherCard}'s target tick.
+ * Every property is normalized over the union of its acceptable range, main value, references, and
+ * target, so the acceptable-range band (drawn behind the bar) always lands on-screen and
+ * out-of-range values stay visible. The main recipe is a single status-colored bar (colored by
+ * where its value sits in the range); each reference recipe and the balancing `targets` ride along
+ * as tick markers across the bars — targets in blue to match {@link WatcherCard}'s target tick. Bar
+ * heights compare only within a property, not across, so the value axis is left unlabeled.
  *
  * Consumer is responsible for sizing the chart via a parent container.
  */
@@ -397,50 +317,72 @@ export function PropertiesBarChart({
   const tickColor = getColor(ThemeColor.TextSecondary);
   const surfaceColor = getColor(ThemeColor.Surface);
 
-  /** Always display properties as percentages in the chart */
+  /** Display properties as percentages before normalizing each onto its own 0–100 track. */
   const qtyToggle = QtyToggle.Percentage;
 
-  /** Returns the display-ready (modified + qty-toggled) numeric value for a property key */
+  /**
+   * Returns the qty-toggled true (unnormalized) value for a property key, or `undefined` when the
+   * property is absent or zero — an empty recipe, or a genuinely-zero property. `applyQtyToggle`
+   * returns `undefined` for an exact-zero composition, and `getMixProperty` yields `NaN` for an
+   * absent one; both draw no bar, matching {@link WatcherCard}'s range meter.
+   */
   const getPropertyValue = (
     propKey: PropKey,
     mixProperties: MixProperties,
     mixTotal: number,
-  ): number => {
-    return (
-      applyQtyToggle(
-        getModifiedMixProperty(mixProperties, propKey),
-        mixTotal,
-        mixTotal,
-        qtyToggle,
-        isPropKeyQuantity(propKey),
-      ) ?? 0
+  ): number | undefined => {
+    return applyQtyToggle(
+      getMixProperty(mixProperties, propKey),
+      mixTotal,
+      mixTotal,
+      qtyToggle,
+      isPropKeyQuantity(propKey),
     );
   };
 
-  /** Returns the bar color for the main recipe via the shared {@link getRangeColor} helper */
-  const getMainBarColor = (propVal: number, range: { yMin: number; yMax: number }): string => {
-    return getColor(getRangeColor(propVal, { min: range.yMin, max: range.yMax }));
-  };
-
-  const labels = propKeys.map((propKey) => propKeyAsModifiedShortStr(propKey));
+  const labels = propKeys.map((propKey) => prop_key_as_short_str(propKey));
 
   const mainColor = getColor(Color.GraphGreen);
   const noRangeBarColor = addOrUpdateAlpha(getColor(Color.GraphGray), NO_RANGE_GRAY_ALPHA);
 
-  /** Per-bar base color: within-range status color, or a lighter gray when the key has no range. */
-  const mainBarColors = propKeys.map((propKey) => {
-    const val = getPropertyValue(propKey, main.mixProperties, main.mixTotal!);
-    const range = getModifiedAcceptablePropertyRange(propKey);
-    return !range ? noRangeBarColor : getMainBarColor(val, range);
+  /**
+   * Per-property normalization bundle. Each property is self-normalized over the union of its
+   * acceptable range, main value, reference values, and target (its `domain`), so out-of-range
+   * values stay visible (the domain expands to include them) and the acceptable band is always
+   * on-screen. `mainValue`/`refValues`/`target` stay true (unnormalized) for tooltips; `color` is
+   * the within-range status color, or a lighter gray when the key has no range or no main value.
+   */
+  const meters = propKeys.map((propKey) => {
+    const range = getAcceptablePropertyRange(propKey) ?? undefined;
+    const mainValue = getPropertyValue(propKey, main.mixProperties, main.mixTotal!);
+    const refValues = refs.map((ref) =>
+      getPropertyValue(propKey, ref.mixProperties, ref.mixTotal!),
+    );
+    const rawTarget = targets[propKey];
+    const target = rawTarget === undefined || Number.isNaN(rawTarget) ? undefined : rawTarget;
+    const domain = computeMeterDomain([range?.min, range?.max, mainValue, ...refValues, target]);
+    const color =
+      range && isUsableNumber(mainValue)
+        ? getColor(getRangeColor(mainValue, range))
+        : noRangeBarColor;
+    return { range, domain, mainValue, refValues, target, color };
   });
 
-  const mainData = propKeys.map((propKey) =>
-    getPropertyValue(propKey, main.mixProperties, main.mixTotal!),
-  );
+  /** Normalizes a true value into its property's 0–100 track, or `NaN` when not drawable. */
+  const norm = (value: number | undefined, domain: MeterRange | undefined): number =>
+    domain === undefined || !isUsableNumber(value) ? NaN : valueToMeterPct(value, domain);
 
-  /** Acceptable-range bands (chart units) per property, drawn behind the bars by the plugin. */
-  const bandRanges: BandRange[] = propKeys.map((propKey) =>
-    getModifiedAcceptablePropertyRange(propKey),
+  const mainBarColors = meters.map((m) => m.color);
+  const mainData = meters.map((m) => norm(m.mainValue, m.domain));
+
+  /** Acceptable-range bands (normalized track units) per property, drawn behind the bars. */
+  const bandRanges: BandRange[] = meters.map((m) =>
+    m.range && m.domain
+      ? {
+          yMin: valueToMeterPct(m.range.min, m.domain),
+          yMax: valueToMeterPct(m.range.max, m.domain),
+        }
+      : null,
   );
 
   /** Soft tint for the acceptable-range band, matching WatcherCard's `.range-meter-band`. */
@@ -449,53 +391,47 @@ export function PropertiesBarChart({
   /**
    * Reference recipes as tick markers: solid for the first, dashed for the second so they stay
    * distinguishable over the bars; zero/NaN values are dropped (`null`) so no tick is drawn.
+   * `values` are normalized for drawing; `trueValues` carry the real numbers for the tooltip.
    */
-  const refMarkers: TickMarker[] = refs.map((ref, i) => ({
-    label: ref.name || ref.id,
-    color: addOrUpdateAlpha(legendColor, REFERENCE_TICK_ALPHA),
-    dash: i === 0 ? [] : [4, 3],
-    values: propKeys.map((propKey) => {
-      const val = getPropertyValue(propKey, ref.mixProperties, ref.mixTotal!);
-      return Number.isNaN(val) || val === 0 ? null : val;
-    }),
-  }));
+  const refMarkers: TickMarker[] = refs.map((ref, i) => {
+    const trueVals = meters.map((m) => {
+      const val = m.refValues[i];
+      return !isUsableNumber(val) || !m.domain ? null : val;
+    });
+
+    return {
+      label: ref.name || ref.id,
+      color: addOrUpdateAlpha(legendColor, REFERENCE_TICK_ALPHA),
+      dash: i === 0 ? [] : [4, 3],
+      values: trueVals.map((val, j) =>
+        val === null ? null : valueToMeterPct(val, meters[j].domain!),
+      ),
+      trueValues: trueVals,
+    };
+  });
 
   /**
-   * Balancing target values per property, in chart (modified) units. Targets are stored in the
-   * same percentage display units as the bars, so only the chart modification applies. A zero
-   * target is deliberate and kept; unset/NaN entries are dropped (`null`).
+   * Balancing targets as one more tick-marker series. A zero target is deliberate and kept; unset
+   * or NaN entries are dropped (`null`). `values` are normalized; `trueValues` are for the tooltip.
    */
-  const targetValues = propKeys.map((propKey) => {
-    const target = targets[propKey];
-    return target === undefined || Number.isNaN(target)
-      ? null
-      : modifyMixPropertyForChart(target, propKey);
-  });
+  const targetTrue = meters.map((m) => (m.target === undefined ? null : m.target));
+  const targetValues = meters.map((m) =>
+    m.target === undefined || !m.domain ? null : valueToMeterPct(m.target, m.domain),
+  );
+
+  const hasTarget = targetTrue.some((value) => value !== null);
 
   /** All tick-marker series: references first, targets last so their ticks draw on top. */
   const tickMarkers: TickMarker[] = [...refMarkers];
-  if (targetValues.some((value) => value !== null)) {
+  if (hasTarget) {
     tickMarkers.push({
       label: "Target",
       color: getColor(Color.GraphBlue),
       dash: [],
       values: targetValues,
+      trueValues: targetTrue,
     });
   }
-
-  // Cap the y-axis on the tallest drawn element, not just the bars: range bands and tick markers
-  // can rise above the bar values, and Chart.js's auto-scale (bar-data only) would clip their
-  // tops. Round up to the next Y_AXIS_TICK_STEP for clean tick labels plus a little headroom.
-  const drawnValues = [
-    ...mainData,
-    ...bandRanges.flatMap((range) => (range ? [range.yMax] : [])),
-    ...tickMarkers.flatMap((marker) => marker.values),
-  ].filter((value): value is number => value !== null && Number.isFinite(value));
-
-  const yMax =
-    drawnValues.length > 0
-      ? Math.ceil(Math.max(...drawnValues) / Y_AXIS_TICK_STEP) * Y_AXIS_TICK_STEP
-      : undefined;
 
   /** Chart.js dataset: a single status-colored bar per property for the main recipe. */
   const chartData = {
@@ -533,6 +469,19 @@ export function PropertiesBarChart({
         categoryPercentage: BAR_CATEGORY_PERCENTAGE,
         barPercentage: BAR_PERCENTAGE,
       },
+      // Invisible overlay giving the target a native tooltip item; the plugin draws its tick.
+      // `grouped: false` keeps it from shrinking the main bar's slot.
+      ...(hasTarget
+        ? [
+            {
+              id: "target",
+              label: "Target",
+              data: targetValues,
+              backgroundColor: "transparent",
+              grouped: false,
+            },
+          ]
+        : []),
     ],
   };
 
@@ -557,15 +506,16 @@ export function PropertiesBarChart({
     })),
   ];
 
-  // Axis configs by role (not x/y): the value axis carries the scale/title/gridlines, the category
-  // axis is bare. They swap between x and y depending on orientation (see `scales` below).
+  // Axis configs by role (not x/y): the value axis spans the fixed normalized 0–100 track and shows
+  // only grid lines — its numbers are per-property, so unlabeled. The category axis is bare. They
+  // swap between x and y depending on orientation (see `scales` below).
   const valueScaleConfig = {
     beginAtZero: true,
-    max: yMax,
-    title: { display: true, text: qtyToggle, color: tickColor },
+    min: 0,
+    max: NORMALIZED_AXIS_MAX,
     grid: { color: gridColor },
     border: { display: false },
-    ticks: { color: tickColor },
+    ticks: { display: false },
   };
   const categoryScaleConfig = {
     grid: { display: false },
@@ -582,15 +532,15 @@ export function PropertiesBarChart({
     responsive: true,
     maintainAspectRatio: false,
     indexAxis: horizontal ? "y" : "x",
+    // Index mode so the target overlay's tooltip item shows alongside the main recipe's.
+    interaction: { mode: "index", intersect: false },
     // Disable the canvas entry/resize animation under reduced motion so screenshots are stable.
     animation: prefersReducedMotion() ? false : undefined,
-    // No chart title: the panel context already names the chart, and dropping it reclaims height.
-    layout: { padding: { top: CHART_TOP_PADDING } },
     plugins: {
       rangeMeter: { bandRanges, bandColor, tickMarkers, horizontal },
       legend: {
         display: tickMarkers.length > 0,
-        position: horizontal ? "top" : "chartArea",
+        position: "top",
         align: "start",
         onClick: () => undefined,
         labels: { color: legendColor, generateLabels: () => legendLabels },
@@ -604,18 +554,36 @@ export function PropertiesBarChart({
         cornerRadius: TOOLTIP_CORNER_RADIUS,
         padding: TOOLTIP_PADDING,
         bodyFont: { family: TOOLTIP_BODY_FONT },
+        // Drop the empty target item for keys without a target; the main recipe always shows.
+        filter: (item: TooltipItem<"bar">) =>
+          item.datasetIndex !== TARGET_DATASET_INDEX || targetValues[item.dataIndex] !== null,
         callbacks: {
           title: (items: TooltipItem<"bar">[]) => items[0]?.label ?? "",
-          label: (context: TooltipItem<"bar">) => {
-            const value = context.parsed[horizontal ? "x" : "y"];
-            return `${main.name || main.id}: ${formatCompositionValue(value ?? undefined).trim()}`;
+          // Color box per body item: the main recipe's status color, and blue for the target
+          labelColor: (item: TooltipItem<"bar">) => {
+            const color =
+              item.datasetIndex === TARGET_DATASET_INDEX
+                ? getColor(Color.GraphBlue)
+                : (mainBarColors[item.dataIndex] ?? mainColor);
+            return { borderColor: color, backgroundColor: color, borderWidth: 0 };
+          },
+          label: (item: TooltipItem<"bar">) => {
+            // Show true values, not normalized bar heights. The target is the second body item.
+            if (item.datasetIndex === TARGET_DATASET_INDEX) {
+              const target = targetTrue[item.dataIndex];
+              return target === null ? "" : `Target: ${formatCompositionValue(target).trim()}`;
+            }
+            const value = meters[item.dataIndex]?.mainValue;
+            const shown = value === undefined || Number.isNaN(value) ? undefined : value;
+            return `${main.name || main.id}: ${formatCompositionValue(shown).trim()}`;
           },
           afterBody: (items: TooltipItem<"bar">[]) => {
             const idx = items[0]?.dataIndex;
             if (idx === undefined) return [];
 
-            return tickMarkers.flatMap((marker) => {
-              const val = marker.values[idx];
+            // References only; the target is a body item above (blue box, listed second).
+            return refMarkers.flatMap((marker) => {
+              const val = marker.trueValues[idx];
               return val === null ? [] : [`${marker.label}: ${formatCompositionValue(val).trim()}`];
             });
           },

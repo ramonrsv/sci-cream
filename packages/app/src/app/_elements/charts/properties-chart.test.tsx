@@ -12,16 +12,13 @@ import {
   NO_RANGE_GRAY_ALPHA,
   REFERENCE_TICK_ALPHA,
 } from "@/lib/styles/colors";
-import {
-  PropertiesBarChart,
-  PropertiesChartView,
-  getModifiedMixProperty,
-  getModifiedAcceptablePropertyRange,
-  propKeyAsModifiedShortStr,
-} from "@/app/_elements/charts/properties-chart";
+import { PropertiesBarChart, PropertiesChartView } from "@/app/_elements/charts/properties-chart";
+import { computeMeterDomain, valueToMeterPct } from "@/app/_elements/range-meter";
 import type { TargetsMap } from "@/app/_elements/watchers/watchers";
 import { filterActiveSlots } from "@/lib/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
+import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
+import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
 import { getSelectedOptionLabel } from "@/__tests__/unit/select";
 import { UNCONDITIONAL_AUTO_PROPERTIES } from "@/lib/sci-cream/sci-cream";
 
@@ -30,17 +27,20 @@ import {
   RatioKey,
   FpdKey,
   PropKey,
+  MixProperties,
   compToPropKey,
   ratioToPropKey,
   fpdToPropKey,
   getMixProperty,
   getMixScopePropKeys,
+  getAcceptablePropertyRange,
+  isPropKeyQuantity,
+  prop_key_as_short_str,
 } from "@workspace/sci-cream";
 
 import { STORAGE_KEYS } from "@/lib/local-storage";
 
-import { RecipeID, getLightRecipe } from "@/__tests__/assets";
-import { WASM_BRIDGE } from "@/__tests__/util";
+import { RecipeID } from "@/__tests__/assets";
 import {
   makeMockRecipeContext,
   getCompLabel,
@@ -64,18 +64,44 @@ vi.mock("chart.js", () => ({
 
 type ScriptableColor = (ctx: { dataIndex: number; chart: { chartArea?: unknown } }) => string;
 
+interface TickMarkerOpts {
+  label: string;
+  color: string;
+  dash: number[];
+  values: (number | null)[];
+  trueValues: (number | null)[];
+}
+
 interface RangeMeterOptions {
   bandRanges: ({ yMin: number; yMax: number } | null)[];
   bandColor: string;
-  tickMarkers: Array<{ label: string; color: string; dash: number[]; values: (number | null)[] }>;
+  tickMarkers: TickMarkerOpts[];
   horizontal: boolean;
 }
 
 interface ScaleConfig {
   beginAtZero?: boolean;
+  min?: number;
   max?: number;
   title?: { display: boolean; text: string };
   grid?: { display?: boolean; color?: string };
+  ticks?: { display?: boolean; color?: string };
+}
+
+interface TooltipCtx {
+  datasetIndex: number;
+  dataIndex: number;
+  label?: string;
+}
+
+interface TooltipConfig {
+  filter?: (item: TooltipCtx) => boolean;
+  callbacks: {
+    title: (items: TooltipCtx[]) => string;
+    label: (item: TooltipCtx) => string;
+    labelColor: (item: TooltipCtx) => { backgroundColor: string; borderColor: string };
+    afterBody: (items: TooltipCtx[]) => string[];
+  };
 }
 
 interface ChartOptions {
@@ -86,6 +112,7 @@ interface ChartOptions {
     rangeMeter: RangeMeterOptions;
     legend: { display: boolean };
     title?: { display: boolean; text: string };
+    tooltip: TooltipConfig;
   };
   scales: { x: ScaleConfig; y: ScaleConfig };
 }
@@ -123,6 +150,34 @@ vi.mock("@/lib/use-element-size", () => ({
   useElementSize: () => ({ ref: { current: null }, size: mockSize }),
 }));
 
+/**
+ * The qty-toggled true (unnormalized) value the chart uses before normalizing, or `undefined` when
+ * the property is absent or zero (`applyQtyToggle` returns `undefined` for an exact-zero value).
+ */
+function truePropValue(
+  mixProps: MixProperties,
+  mixTotal: number,
+  propKey: PropKey,
+): number | undefined {
+  return applyQtyToggle(
+    getMixProperty(mixProps, propKey),
+    mixTotal,
+    mixTotal,
+    QtyToggle.Percentage,
+    isPropKeyQuantity(propKey),
+  );
+}
+
+/** Expected normalized (0–100) main bar height for a single-recipe render — mirrors the chart. */
+function expectedMainNorm(mixProps: MixProperties, mixTotal: number, propKey: PropKey): number {
+  const range = getAcceptablePropertyRange(propKey) ?? undefined;
+  const value = truePropValue(mixProps, mixTotal, propKey);
+  const domain = computeMeterDomain([range?.min, range?.max, value]);
+  return domain === undefined || value === undefined || Number.isNaN(value)
+    ? NaN
+    : valueToMeterPct(value, domain);
+}
+
 /** Convenience: build active recipes from a mock context and render the bar chart with them */
 function renderFromContext(
   recipeIds: RecipeID[],
@@ -143,65 +198,6 @@ function renderFromContext(
     ),
   };
 }
-
-// ---------------------------------------------------------------------------
-// Helper functions
-// ---------------------------------------------------------------------------
-
-describe("Helper Functions", () => {
-  it("getModifiedMixProperty should modify specific property values", () => {
-    const mixProperties = WASM_BRIDGE.calculate_recipe_mix_properties(
-      getLightRecipe(RecipeID.Main),
-    );
-    const getModMixProp = (propKey: PropKey) => getModifiedMixProperty(mixProperties, propKey);
-
-    expect(getModMixProp(fpdToPropKey(FpdKey.FPD))).toBeCloseTo(3.612);
-    expect(getModMixProp(fpdToPropKey(FpdKey.ServingTemp))).toBeCloseTo(13.402);
-
-    expect(getModMixProp(ratioToPropKey(RatioKey.AbsPAC))).toBeCloseTo(28.374);
-    expect(getModMixProp(compToPropKey(CompKey.Water))).toBeCloseTo(
-      getMixProperty(mixProperties, compToPropKey(CompKey.Water)) / 2,
-    );
-    expect(getModMixProp(fpdToPropKey(FpdKey.HardnessAt14C))).toBeCloseTo(
-      getMixProperty(mixProperties, fpdToPropKey(FpdKey.HardnessAt14C)) / 2,
-    );
-
-    expect(getModMixProp(ratioToPropKey(RatioKey.EmulsifiersPerFat))).toBeCloseTo(1.7907 * 10);
-    expect(getModMixProp(ratioToPropKey(RatioKey.StabilizersPerWater))).toBeCloseTo(0.3467 * 100);
-
-    expect(getModMixProp(ratioToPropKey(RatioKey.AbsNetPAC))).toBeCloseTo(
-      getMixProperty(mixProperties, ratioToPropKey(RatioKey.AbsNetPAC)) / 3,
-    );
-    expect(getModMixProp(compToPropKey(CompKey.EggSNF))).toBeCloseTo(
-      getMixProperty(mixProperties, compToPropKey(CompKey.EggSNF)) * 10,
-    );
-    expect(getModMixProp(compToPropKey(CompKey.Alcohol))).toBeCloseTo(
-      getMixProperty(mixProperties, compToPropKey(CompKey.Alcohol)) * 10,
-    );
-    expect(getModMixProp(compToPropKey(CompKey.Salt))).toBeCloseTo(
-      getMixProperty(mixProperties, compToPropKey(CompKey.Salt)) * 100,
-    );
-  });
-
-  it("propKeyAsModifiedShortStr should modify specific key strings", () => {
-    const propKeyAsModStr = (propKey: PropKey) => propKeyAsModifiedShortStr(propKey);
-
-    expect(propKeyAsModStr(fpdToPropKey(FpdKey.FPD))).toBe("-FPD");
-    expect(propKeyAsModStr(fpdToPropKey(FpdKey.ServingTemp))).toBe("-Serving Temp");
-
-    expect(propKeyAsModStr(ratioToPropKey(RatioKey.AbsPAC))).toBe("Abs.PAC / 2");
-    expect(propKeyAsModStr(compToPropKey(CompKey.Water))).toBe("Water / 2");
-    expect(propKeyAsModStr(fpdToPropKey(FpdKey.HardnessAt14C))).toBe("Hardness @-14°C / 2");
-
-    expect(propKeyAsModStr(ratioToPropKey(RatioKey.EmulsifiersPerFat))).toBe("Emul./Fat * 10");
-    expect(propKeyAsModStr(ratioToPropKey(RatioKey.StabilizersPerWater))).toBe("Stab./Water * 100");
-
-    expect(propKeyAsModStr(ratioToPropKey(RatioKey.AbsNetPAC))).toBe("Abs.Net PAC / 3");
-    expect(propKeyAsModStr(compToPropKey(CompKey.EggSNF))).toBe("Egg SNF * 10");
-    expect(propKeyAsModStr(compToPropKey(CompKey.Alcohol))).toBe("Alcohol * 10");
-    expect(propKeyAsModStr(compToPropKey(CompKey.Salt))).toBe("Salt * 100");
-  });
-});
 
 // ---------------------------------------------------------------------------
 // PropertiesBarChart
@@ -262,8 +258,8 @@ describe("PropertiesBarChart", () => {
     it("should set dataset colors for main recipe and reference recipes", () => {
       // Pick a range-bearing key and a range-less key to exercise both bar-color branches.
       const keys = getMixScopePropKeys();
-      const rangeKey = keys.find((k) => getModifiedAcceptablePropertyRange(k) !== null)!;
-      const noRangeKey = keys.find((k) => getModifiedAcceptablePropertyRange(k) === null)!;
+      const rangeKey = keys.find((k) => getAcceptablePropertyRange(k))!;
+      const noRangeKey = keys.find((k) => !getAcceptablePropertyRange(k))!;
       renderFromContext([RecipeID.Main, RecipeID.RefA, RecipeID.RefB], [rangeKey, noRangeKey]);
 
       const datasets = capturedBarProps!.data.datasets;
@@ -292,14 +288,43 @@ describe("PropertiesBarChart", () => {
       expect(tickMarkers[1].dash).toEqual([4, 3]);
     });
 
-    it("should pass acceptable-range bands aligned to the labels", () => {
+    it("should normalize the main bar heights onto each property's own 0–100 track", () => {
       const propKeys: PropKey[] = [compToPropKey(CompKey.MSNF), ratioToPropKey(RatioKey.AbsPAC)];
-      renderFromContext([RecipeID.Main], propKeys);
+      const { recipeCtx } = renderFromContext([RecipeID.Main], propKeys);
+      const { mixProperties, mixTotal } = recipeCtx.recipes[0];
+      const data = capturedBarProps!.data.datasets[0].data;
+
+      expect(data).toHaveLength(propKeys.length);
+      propKeys.forEach((key, i) => {
+        const expected = expectedMainNorm(mixProperties!, mixTotal!, key);
+        expect(data[i]).toBeCloseTo(expected);
+        // Every drawn bar lands within the fixed normalized axis.
+        expect(data[i]).toBeGreaterThanOrEqual(0);
+        expect(data[i]).toBeLessThanOrEqual(100);
+      });
+    });
+
+    it("should draw a normalized acceptable-range band only for keys that have a range", () => {
+      const rangeKey = compToPropKey(CompKey.MSNF);
+      const noRangeKey = getMixScopePropKeys().find((k) => !getAcceptablePropertyRange(k))!;
+      const propKeys: PropKey[] = [rangeKey, noRangeKey];
+      const { recipeCtx } = renderFromContext([RecipeID.Main], propKeys);
+      const { mixProperties, mixTotal } = recipeCtx.recipes[0];
+
       const { bandRanges } = capturedBarProps!.options.plugins.rangeMeter;
       expect(bandRanges).toHaveLength(propKeys.length);
-      propKeys.forEach((key, i) => {
-        expect(bandRanges[i]).toEqual(getModifiedAcceptablePropertyRange(key) ?? null);
-      });
+
+      // The range key's band is the acceptable range mapped into its normalized domain.
+      const range = getAcceptablePropertyRange(rangeKey)!;
+      const value = truePropValue(mixProperties!, mixTotal!, rangeKey);
+      const domain = computeMeterDomain([range.min, range.max, value])!;
+      expect(bandRanges[0]).not.toBeNull();
+      expect(bandRanges[0]!.yMin).toBeCloseTo(valueToMeterPct(range.min, domain));
+      expect(bandRanges[0]!.yMax).toBeCloseTo(valueToMeterPct(range.max, domain));
+      expect(bandRanges[0]!.yMin).toBeLessThan(bandRanges[0]!.yMax);
+
+      // The range-less key has no band.
+      expect(bandRanges[1]).toBeNull();
     });
   });
 
@@ -317,8 +342,19 @@ describe("PropertiesBarChart", () => {
       expect(tickMarkers.map((m) => m.label)).toEqual(["Target"]);
       expect(tickMarkers[0].color).toBe(getColor(Color.GraphBlue));
       expect(tickMarkers[0].dash).toEqual([]);
-      // Values are modified for chart display (Salt * 100); keys without a target are null.
-      expect(tickMarkers[0].values).toEqual([10, 0.2 * 100, null]);
+      // trueValues carry the raw targets (no per-key scaling); keys without a target are null.
+      expect(tickMarkers[0].trueValues).toEqual([10, 0.2, null]);
+      // Drawn values are normalized: finite where a target exists, null otherwise.
+      const values = tickMarkers[0].values;
+      expect(values[0]).not.toBeNull();
+      expect(values[1]).not.toBeNull();
+      expect(values[2]).toBeNull();
+      values.forEach((v) => {
+        if (v !== null) {
+          expect(v).toBeGreaterThanOrEqual(0);
+          expect(v).toBeLessThanOrEqual(100);
+        }
+      });
     });
 
     it("should draw the target series after (on top of) reference series", () => {
@@ -331,7 +367,7 @@ describe("PropertiesBarChart", () => {
       renderFromContext([RecipeID.Main], [MSNF, SALT], { [MSNF]: 0, [SALT]: NaN });
       const tickMarkers = capturedBarProps!.options.plugins.rangeMeter.tickMarkers;
       expect(tickMarkers.map((m) => m.label)).toEqual(["Target"]);
-      expect(tickMarkers[0].values).toEqual([0, null]);
+      expect(tickMarkers[0].trueValues).toEqual([0, null]);
     });
 
     it("should not add a target series when no displayed key has a target", () => {
@@ -342,6 +378,57 @@ describe("PropertiesBarChart", () => {
     it("should display the legend when targets are present without references", () => {
       renderFromContext([RecipeID.Main], [MSNF], { [MSNF]: 10 });
       expect(capturedBarProps!.options.plugins.legend.display).toBe(true);
+    });
+  });
+
+  // ---- Tooltip --------------------------------------------------------------------------------
+
+  describe("Tooltip", () => {
+    const MSNF = compToPropKey(CompKey.MSNF);
+
+    it("adds the target as an invisible overlay dataset, second after the main recipe", () => {
+      renderFromContext([RecipeID.Main], [MSNF], { [MSNF]: 10 });
+      const datasets = capturedBarProps!.data.datasets;
+      expect(datasets).toHaveLength(2);
+      expect(datasets[0].label).toBe("Recipe");
+      expect(datasets[1].id).toBe("target");
+      // The overlay draws no bar; the visible tick is the rangeMeter plugin's job.
+      expect(datasets[1].backgroundColor).toBe("transparent");
+    });
+
+    it("omits the target overlay dataset when no displayed key has a target", () => {
+      renderFromContext([RecipeID.Main], [MSNF]);
+      expect(capturedBarProps!.data.datasets).toHaveLength(1);
+    });
+
+    it("labels the target second with a blue color box, like the main recipe's box", () => {
+      renderFromContext([RecipeID.Main], [MSNF], { [MSNF]: 10 });
+      const { callbacks } = capturedBarProps!.options.plugins.tooltip;
+
+      // Main recipe: body item 0, its own status-colored box.
+      expect(callbacks.label({ datasetIndex: 0, dataIndex: 0 })).toContain("Recipe:");
+      // Target: body item 1 (second), showing the true target value with a blue box.
+      expect(callbacks.label({ datasetIndex: 1, dataIndex: 0 })).toBe(
+        `Target: ${formatCompositionValue(10).trim()}`,
+      );
+      expect(callbacks.labelColor({ datasetIndex: 1, dataIndex: 0 }).backgroundColor).toBe(
+        getColor(Color.GraphBlue),
+      );
+    });
+
+    it("keeps references in afterBody (below the target), not the target itself", () => {
+      renderFromContext([RecipeID.Main, RecipeID.RefA], [MSNF], { [MSNF]: 10 });
+      const { callbacks } = capturedBarProps!.options.plugins.tooltip;
+      const afterBody = callbacks.afterBody([{ datasetIndex: 0, dataIndex: 0 }]);
+      expect(afterBody.some((line) => line.startsWith("Ref A:"))).toBe(true);
+      expect(afterBody.some((line) => line.startsWith("Target:"))).toBe(false);
+    });
+
+    it("filters out the empty target item for a key without a target", () => {
+      renderFromContext([RecipeID.Main], [MSNF], { [MSNF]: 10 });
+      const { filter } = capturedBarProps!.options.plugins.tooltip;
+      // A target exists at index 0, so the overlay item stays.
+      expect(filter!({ datasetIndex: 1, dataIndex: 0 })).toBe(true);
     });
   });
 
@@ -364,15 +451,15 @@ describe("PropertiesBarChart", () => {
       expect(capturedBarProps!.options.plugins.legend.display).toBe(false);
     });
 
-    it("should configure y-axis to begin at zero", () => {
+    it("should span the fixed normalized 0–100 value axis with hidden, unlabeled ticks", () => {
       renderFromContext([]);
-      expect(capturedBarProps!.options.scales.y.beginAtZero).toBe(true);
-    });
-
-    it("should configure y-axis title to Quantity (%)", () => {
-      renderFromContext([]);
-      expect(capturedBarProps!.options.scales.y.title!.display).toBe(true);
-      expect(capturedBarProps!.options.scales.y.title!.text).toBe("Quantity (%)");
+      const valueScale = capturedBarProps!.options.scales.y;
+      expect(valueScale.beginAtZero).toBe(true);
+      expect(valueScale.min).toBe(0);
+      expect(valueScale.max).toBe(100);
+      // The axis is per-property normalized, so its numbers are meaningless and left off.
+      expect(valueScale.title).toBeUndefined();
+      expect(valueScale.ticks!.display).toBe(false);
     });
   });
 
@@ -383,10 +470,10 @@ describe("PropertiesBarChart", () => {
       renderFromContext([RecipeID.Main]);
       expect(capturedBarProps!.options.indexAxis).toBe("x");
       expect(capturedBarProps!.options.plugins.rangeMeter.horizontal).toBe(false);
-      // Value scale (beginAtZero + title) sits on y; category scale (no title) on x.
-      expect(capturedBarProps!.options.scales.y.beginAtZero).toBe(true);
-      expect(capturedBarProps!.options.scales.y.title!.text).toBe("Quantity (%)");
-      expect(capturedBarProps!.options.scales.x.title).toBeUndefined();
+      // Value scale (normalized 0–100) sits on y; category scale (no such config) on x.
+      expect(capturedBarProps!.options.scales.y.max).toBe(100);
+      expect(capturedBarProps!.options.scales.y.ticks!.display).toBe(false);
+      expect(capturedBarProps!.options.scales.x.max).toBeUndefined();
     });
 
     it("rotates to horizontal bars when the container is portrait", () => {
@@ -395,19 +482,23 @@ describe("PropertiesBarChart", () => {
       expect(capturedBarProps!.options.indexAxis).toBe("y");
       expect(capturedBarProps!.options.plugins.rangeMeter.horizontal).toBe(true);
       // Orientation swaps the axis roles: the value scale moves to x, the category scale to y.
-      expect(capturedBarProps!.options.scales.x.beginAtZero).toBe(true);
-      expect(capturedBarProps!.options.scales.x.title!.text).toBe("Quantity (%)");
-      expect(capturedBarProps!.options.scales.y.title).toBeUndefined();
+      expect(capturedBarProps!.options.scales.x.max).toBe(100);
+      expect(capturedBarProps!.options.scales.x.ticks!.display).toBe(false);
+      expect(capturedBarProps!.options.scales.y.max).toBeUndefined();
     });
   });
 
   // ---- Labels ----------------------------------------------------------------------------------
 
   describe("Labels", () => {
-    it("should render a label per provided propKey, modified for chart display", () => {
+    it("should render a plain short-string label per provided propKey (no scale suffix)", () => {
       const propKeys: PropKey[] = [ratioToPropKey(RatioKey.AbsPAC), fpdToPropKey(FpdKey.FPD)];
       renderFromContext([], propKeys);
-      expect(capturedBarProps!.data.labels).toEqual(propKeys.map(propKeyAsModifiedShortStr));
+      expect(capturedBarProps!.data.labels).toEqual(propKeys.map(prop_key_as_short_str));
+      // No normalization suffixes leak into the labels.
+      capturedBarProps!.data.labels.forEach((label) => {
+        expect(label).not.toMatch(/ [*/] \d/);
+      });
     });
   });
 });
@@ -478,20 +569,20 @@ describe("PropertiesChartView", () => {
     it("Auto filter hides default keys that are inactive in the recipe", () => {
       renderViewFromContext([RecipeID.Main]);
       const labels = capturedBarProps!.data.labels;
-      expect(labels).toContain(propKeyAsModifiedShortStr(compToPropKey(CompKey.MilkFat)));
+      expect(labels).toContain(prop_key_as_short_str(compToPropKey(CompKey.MilkFat)));
 
       // NutSNF is a default key but inactive (no nuts in the main recipe), so it is filtered out.
-      expect(labels).not.toContain(propKeyAsModifiedShortStr(compToPropKey(CompKey.NutSNF)));
+      expect(labels).not.toContain(prop_key_as_short_str(compToPropKey(CompKey.NutSNF)));
     });
 
     it("Auto filter shows unconditional keys but no inactive keys for an empty recipe", () => {
       renderViewFromContext([]);
       const labels = capturedBarProps!.data.labels;
       for (const key of UNCONDITIONAL_AUTO_PROPERTIES) {
-        expect(labels).toContain(propKeyAsModifiedShortStr(key));
+        expect(labels).toContain(prop_key_as_short_str(key));
       }
       // MilkFat is a default key, but inactive in an empty recipe and not unconditional.
-      expect(labels).not.toContain(propKeyAsModifiedShortStr(compToPropKey(CompKey.MilkFat)));
+      expect(labels).not.toContain(prop_key_as_short_str(compToPropKey(CompKey.MilkFat)));
     });
   });
 
@@ -503,8 +594,8 @@ describe("PropertiesChartView", () => {
 
       const EmulsPerFatPropKey = ratioToPropKey(RatioKey.EmulsifiersPerFat);
       const AbsPACPropKey = ratioToPropKey(RatioKey.AbsPAC);
-      const EmulsPerFatLabel = propKeyAsModifiedShortStr(EmulsPerFatPropKey);
-      const AbsPACLabel = propKeyAsModifiedShortStr(AbsPACPropKey);
+      const EmulsPerFatLabel = prop_key_as_short_str(EmulsPerFatPropKey);
+      const AbsPACLabel = prop_key_as_short_str(AbsPACPropKey);
 
       const data = capturedBarProps!.data;
       await waitFor(() => expect(data.labels.length).toBe(getMixScopePropKeys().length));
@@ -517,11 +608,22 @@ describe("PropertiesChartView", () => {
       expect(getMixProperty(mixProps, EmulsPerFatPropKey)).toBeNaN();
       expect(getMixProperty(mixProps, AbsPACPropKey)).toBe(0);
 
+      // Neither draws a bar on an empty recipe: a NaN value is not drawable, and a zero value is
+      // treated as absent (`undefined`) — both normalize to NaN, matching WatcherCard's meter.
       expect(data.datasets[0].data[getPropIndex(data.labels, EmulsPerFatPropKey)]).toBeNaN();
-      expect(data.datasets[0].data[getPropIndex(data.labels, AbsPACPropKey)]).toBe(0);
+      expect(data.datasets[0].data[getPropIndex(data.labels, AbsPACPropKey)]).toBeNaN();
     });
 
-    it("should have modified values and strings", async () => {
+    it("draws no bars for an empty recipe, leaving only the acceptable-range bands", () => {
+      renderFromContext([]);
+      // Every property is absent or zero on an empty recipe, so no bar is drawn.
+      capturedBarProps!.data.datasets[0].data.forEach((v) => expect(v).toBeNaN());
+      // Keys that carry an acceptable range still render their band.
+      const { bandRanges } = capturedBarProps!.options.plugins.rangeMeter;
+      expect(bandRanges.some((band) => band !== null)).toBe(true);
+    });
+
+    it("should normalize values and use plain (unscaled) labels", async () => {
       const { container, recipeCtx } = renderViewFromContext([RecipeID.Main]);
 
       await configCustomKeysAll(container);
@@ -529,16 +631,22 @@ describe("PropertiesChartView", () => {
       const data = capturedBarProps!.data;
       await waitFor(() => expect(data.labels.length).toBe(getMixScopePropKeys().length));
 
+      const { mixProperties, mixTotal } = recipeCtx.recipes[0];
       for (const key of [
         ratioToPropKey(RatioKey.EmulsifiersPerFat),
         ratioToPropKey(RatioKey.StabilizersPerWater),
         ratioToPropKey(RatioKey.AbsPAC),
         fpdToPropKey(FpdKey.ServingTemp),
       ]) {
-        expect(data.labels).toContain(propKeyAsModifiedShortStr(key));
-        expect(data.datasets[0].data[getPropIndex(data.labels, key)]).toBeCloseTo(
-          getModifiedMixProperty(recipeCtx.recipes[0].mixProperties!, key),
-        );
+        expect(data.labels).toContain(prop_key_as_short_str(key));
+        const actual = data.datasets[0].data[getPropIndex(data.labels, key)];
+        const expected = expectedMainNorm(mixProperties!, mixTotal!, key);
+        // An absent/zero property yields no bar (NaN); a real value normalizes onto its track.
+        if (Number.isNaN(expected)) {
+          expect(actual).toBeNaN();
+        } else {
+          expect(actual).toBeCloseTo(expected);
+        }
       }
     });
   });

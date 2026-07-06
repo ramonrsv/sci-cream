@@ -7,20 +7,32 @@ export interface MeterRange {
 }
 
 /** Type predicate: `val` is a defined, non-NaN number (i.e. a real computed numeric result). */
-function isUsableNumber(val: number | undefined): val is number {
+export function isUsableNumber(val: number | undefined): val is number {
   return val !== undefined && !Number.isNaN(val);
+}
+
+/**
+ * Tightest `{ min, max }` over the usable (defined, non-NaN) points, or `undefined` if none. Used
+ * to self-normalize a meter over the union of its acceptable range, value, references, and target.
+ */
+export function computeMeterDomain(points: (number | undefined)[]): MeterRange | undefined {
+  const usable = points.filter(isUsableNumber);
+  if (usable.length === 0) return undefined;
+  return { min: Math.min(...usable), max: Math.max(...usable) };
 }
 
 /**
  * Position (0–100) of `value` along the range-meter track. The track's domain is `range` padded by
  * `padFrac` of its width on each side, so the acceptable band occupies the centre and out-of-range
  * values land near (and clamp to) the edges. Status color, not position, conveys severity past the
- * edge, so clamping rather than overflowing is fine.
+ * edge, so clamping rather than overflowing is fine. A degenerate `range` (`max <= min`) has no
+ * spread to position within, so the value centres at 50.
  */
 export function valueToMeterPct(value: number, range: MeterRange, padFrac = 0.2): number {
   const pad = (range.max - range.min) * padFrac;
   const lo = range.min - pad;
   const hi = range.max + pad;
+  if (hi <= lo) return 50;
   return Math.max(0, Math.min(1, (value - lo) / (hi - lo))) * 100;
 }
 
