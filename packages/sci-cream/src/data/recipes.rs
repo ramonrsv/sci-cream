@@ -11,8 +11,10 @@ use serde::{Deserialize, Serialize};
 use crate::recipe::OwnedLightRecipe;
 
 /// (filename, file content) tuples for all embedded recipes JSON data files
-const EMBEDDED_RECIPES_JSON_DATA_FILES_CONTENT: &[(&str, &str)] =
-    &[("underbelly.json", include_str!("../../data/recipes/underbelly.json"))];
+const EMBEDDED_RECIPES_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
+    ("underbelly.json", include_str!("../../data/recipes/underbelly.json")),
+    ("ice-cream-science.json", include_str!("../../data/recipes/ice-cream-science.json")),
+];
 
 /// Struct representing a recipe entry, deserialized from JSON.
 #[derive(PartialEq, Serialize, Deserialize, Debug, Clone)]

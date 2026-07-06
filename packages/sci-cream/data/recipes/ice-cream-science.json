@@ -1,0 +1,22 @@
+[
+  {
+    "name": "Ninja Creami NC301 Easy No-Cook Tres Leches (US)",
+    "author": "Ice Cream Science",
+    "recipe": [
+      ["Horizon Organic Heavy Whipping Cream", 183],
+      ["Organic Valley Organic Whole Milk", 179],
+      ["Carnation Sweetened Condensed Milk (US)", 165]
+    ],
+    "comments": "Source: https://www.icecreamscience.com/blog/ninja-creami-nc30-easy-no-cook-tres-leches-recipe, visited 2026-07-06. Sci-Cream's composition of the ingredients used in the recipe do not agree with Ice Cream Science's composition - milk is 3.23% vs 3.6% fat, cream is 33.4% vs 32.4% fat, and most importantly, sweetened condensed milk is 46% vs ~58% sucrose. As a result, the mix composition differs significantly from Ice Cream Science's composition, with total solids 41.1% vs 46.34%, MSNF 10.9% vs 12.16%, fat 15.5% vs 16.02%, and sucrose 14.5% vs 18.15%. This is the US version of the recipe; see \"Ninja Creami NC301 Easy No-Cook Tres Leches (UK)\" for the UK version. This is a no-cook recipe intended to be made using the Ninja Creami NC301 ice cream maker; I am not sure how it would perform in a standard ice cream maker."
+  },
+  {
+    "name": "Ninja Creami NC301 Easy No-Cook Tres Leches (UK)",
+    "author": "Ice Cream Science",
+    "recipe": [
+      ["Tesco British Double Cream", 125],
+      ["Tesco British Whole Milk", 188],
+      ["Carnation Condensed Milk (UK)", 213]
+    ],
+    "comments": "Source: https://www.icecreamscience.com/blog/ninja-creami-nc30-easy-no-cook-tres-leches-recipe, visited 2026-07-06. Sci-Cream's resulting mix composition matches Ice Cream Science's stated composition to within ~5%. This is the UK version of the recipe; see \"Ninja Creami NC301 Easy No-Cook Tres Leches (US)\" for the US version. This is a no-cook recipe intended to be made using the Ninja Creami NC301 ice cream maker; I am not sure how it would perform in a standard ice cream maker."
+  }
+]

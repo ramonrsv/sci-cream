@@ -1,4 +1,5 @@
 import underbellyJson from "../../data/recipes/underbelly.json";
+import iceCreamScienceJson from "../../data/recipes/ice-cream-science.json";
 
 import { LightRecipe } from "./light-recipe";
 
@@ -24,7 +25,7 @@ function flattenLists(jsonLists: InferredRecipeEntryJson[][]): RecipeEntryJson[]
 }
 
 /** All built-in recipe entries aggregated from every recipe JSON file. */
-export const allRecipeEntries = flattenLists([underbellyJson]);
+export const allRecipeEntries = flattenLists([underbellyJson, iceCreamScienceJson]);
 
 /** Returns the ID of a recipe entry, meant to match `RecipeEntry::gen_id`. */
 export function recipeEntryId(entry: RecipeEntryJson): string {
