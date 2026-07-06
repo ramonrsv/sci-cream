@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 237  (non-alias: 205, independent: 199)
+"total: 243  (non-alias: 211, independent: 205)
 
             0% Milk
             1% Milk
@@ -39,8 +39,10 @@ exports[`Embedded spec entries 1`] = `
             California Gold Nutrition, Sport, Micellar Casein
             Carboxymethyl Cellulose
             Carnation 2% Evaporated Partly Skimmed Milk
+            Carnation Condensed Milk (UK)
             Carnation Evaporated Milk
             Carnation Fat Free Evaporated Milk
+            Carnation Sweetened Condensed Milk (US)
 [alias]     Casein
 [alias]     Chocolate Extract
             Clarke Egg Yolk
@@ -103,6 +105,7 @@ exports[`Embedded spec entries 1`] = `
             Hazelnut
 [alias]     Heavy Cream
             Honey
+            Horizon Organic Heavy Whipping Cream
 [alias]     Ice Cream Stabilizer Blend
             Inulin Powder
             Invert Sugar
@@ -163,6 +166,7 @@ exports[`Embedded spec entries 1`] = `
             Optimum Nutrition Gold Standard 100% Whey
 [alias]     Orange Essential Oil
 [alias]     Orange Extract
+            Organic Valley Organic Whole Milk
             Pectin
 [alias]     Peppermint Essential Oil
 [alias]     Peppermint Extract
@@ -197,6 +201,8 @@ exports[`Embedded spec entries 1`] = `
 [alias]     Table Cream
             Tapioca Starch
             Tara Gum
+            Tesco British Double Cream
+            Tesco British Whole Milk
             Theland Skim Milk Powder
             Theland Whole Milk Powder
             Trehalose

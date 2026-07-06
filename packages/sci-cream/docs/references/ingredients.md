@@ -38,4 +38,6 @@
 
 [^117]: Sweetened condensed milk. (2026). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/2758990/nutrients>
 
-[^118]: Eggs, Grade A, Large, egg white. In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/747997/nutrients>
+[^118]: Eggs, Grade A, Large, egg white. (2019) In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/747997/nutrients>
+
+[^119]: Dulce de Leche. (2019) In _USDA FoodData Central - SR Legacy_. <https://fdc.nal.usda.gov/food-details/173461/nutrients>

@@ -7,6 +7,9 @@
 - [ ] Add a beginner-friendly overview of the core ice cream science concepts, e.g. FPD curves.
 - [ ] Add more ultra-filtered milk products, e.g. `Fairlife Whole Ultra-Filtered Lactose-Free Milk`.
 - [ ] Add TS-side unit tests for the `wasm::Recipe` functionality; it's independent from `Bridge`.
+- [ ] Add `sucrose` support to `DairySimpleSpec` and add Goff & Hartel 'sweetened condensed milk'.
+- [ ] Review 'USDA Sweetened Condensed Milk' ingredient, the 45% sucrose estimate may be incorrect.
+      Also review all of the dairy ingredients that derive their sucrose content from this estimate.
 
 ## Up Next
 

@@ -495,12 +495,12 @@
       "serving_size": { "grams": 100 },
       "energy": 321,
       "total_fat": { "grams": 8.7 },
-      "saturated_fat": 5.486,
+      "saturated_fat": 5.49,
       "sugars": 54.4,
       "protein": 7.91,
-      "sucrose": 45
+      "sucrose": 44.8
     },
-    "comments": "USDA FoodData Central - Survey (FNDDS) - Milk, condensed, sweetened: https://fdc.nal.usda.gov/food-details/2705402/nutrients. Lactose amount from USDA FoodData Central - Foundation - Sweetened condensed milk: https://fdc.nal.usda.gov/food-details/2758990/nutrients"
+    "comments": "USDA FoodData Central - SR Legacy - Milk, canned, condensed, sweetened: https://fdc.nal.usda.gov/food-details/171275/nutrients. Sucrose content from USDA FoodData Central - Foundation - Sweetened condensed milk: https://fdc.nal.usda.gov/food-details/2758990/nutrients"
   },
   {
     "name": "Eagle Brand Original Sweetened Condensed Milk",
@@ -512,9 +512,9 @@
       "saturated_fat": 1.0,
       "sugars": 11,
       "protein": 1,
-      "sucrose": 8.97
+      "sucrose": 8.81
     },
-    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/original. The label does not specify lactose content, so it is assumed as 46% of total weight (Sweetened condensed milk, 2026)[^117], (Moros, 1985)[^51]."
+    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/original. The label does not specify the lactose and sucrose breakdown, so sucrose is assumed to be 45% of total weight (USDA FoodData Central, 2026, \"Sweetened condensed milk\")[^117], total weight calculated at 1.305g/ml (Goff & Hartel, 2025, Table 3.2, p. 48)[^20]."
   },
   {
     "name": "Eagle Brand Low Fat Sweetened Condensed Milk",
@@ -526,9 +526,9 @@
       "saturated_fat": 0.5,
       "sugars": 12,
       "protein": 2,
-      "sucrose": 8.97
+      "sucrose": 8.92
     },
-    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/low-fat. The label does not specify lactose content, so it is assumed as 46% of total weight (Sweetened condensed milk, 2026)[^117], (Moros, 1985)[^51]."
+    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/low-fat. The label does not specify the lactose and sucrose breakdown, so sucrose is assumed to be 45% of total weight (USDA FoodData Central, 2026, \"Sweetened condensed milk\")[^117], total weight calculated at 1.321g/ml (Goff & Hartel, 2025, Table 3.2, p. 48)[^20]."
   },
   {
     "name": "Eagle Brand Dulce de Leche Caramel Flavoured Sauce",
@@ -541,9 +541,9 @@
       "carbohydrates": 11,
       "sugars": 10,
       "protein": 2,
-      "sucrose": 8.2
+      "sucrose": 8.22
     },
-    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/dulce-de-leche"
+    "comments": "From nutrition facts table: https://www.eaglebrand.ca/en/products/dulce-de-leche. The label does not specify the lactose and sucrose breakdown, so sucrose is assumed to be 42% of total weight (USDA FoodData Central, 2026, \"Dulce de Leche\")[^119], total weight calculated at 1.305g/ml (Goff & Hartel, 2025, Table 3.2, p. 48)[^20]."
   },
   {
     "name": "Medallion Skim Milk Powder",
@@ -726,5 +726,86 @@
     "comments": "From nutrition facts table (strawberry delight variant): https://www.optimumnutrition.com/products/gold-standard-100-casein-protein-powder-eu?variant=52105828106507. Label lists 1.4g of salt."
   },
   { "alias": "Whey Isolate", "for": "Leanfit Sport Whey Isolate" },
-  { "alias": "Casein", "for": "California Gold Nutrition, Sport, Micellar Casein" }
+  { "alias": "Casein", "for": "California Gold Nutrition, Sport, Micellar Casein" },
+  {
+    "name": "Organic Valley Organic Whole Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "ml": 240 },
+      "energy": 150,
+      "total_fat": { "grams": 8 },
+      "saturated_fat": 5,
+      "carbohydrates": 12,
+      "sugars": 11,
+      "protein": 8
+    },
+    "comments": "From nutrition facts table: https://www.organicvalley.coop/products/whole-milk/"
+  },
+  {
+    "name": "Horizon Organic Heavy Whipping Cream",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "ml": 15 },
+      "energy": 50,
+      "total_fat": { "grams": 5 },
+      "saturated_fat": 3.5,
+      "sugars": 0,
+      "protein": 1
+    },
+    "comments": "From nutrition facts table: https://horizon.com/organic-dairy-products/organic-heavy-whipping-cream/organic-heavy-whipping-cream/"
+  },
+  {
+    "name": "Carnation Sweetened Condensed Milk (US)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "ml": 30 },
+      "energy": 130,
+      "total_fat": { "grams": 3.5 },
+      "saturated_fat": 2,
+      "sugars": 22,
+      "protein": 2,
+      "sucrose": 18
+    },
+    "comments": "From nutrition facts table: https://www.verybestbaking.com/carnation/products/sweetened-condensed-milk/. \"Incl. 18g Added Sugars\""
+  },
+  {
+    "name": "Tesco British Whole Milk",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "ml": 200 },
+      "energy": 132,
+      "total_fat": { "grams": 7.4 },
+      "saturated_fat": 4.8,
+      "sugars": 9.4,
+      "protein": 6
+    },
+    "comments": "From nutrition facts table: https://www.tesco.com/shop/en-GB/products/252207566. Protein content estimated as 35% [STD_PROTEIN_IN_MSNF] of the MSNF, which itself is estimated as 1/54.5% [STD_LACTOSE_IN_MSNF] of the lactose content (Goff & Hartel, 2013, p.181)[^2]."
+  },
+  {
+    "name": "Tesco British Double Cream",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "ml": 30 },
+      "energy": 140,
+      "total_fat": { "grams": 15.2 },
+      "saturated_fat": 9.4,
+      "sugars": 0.5,
+      "protein": 0.3
+    },
+    "comments": "From nutrition facts table: https://www.tesco.com/shop/en-GB/products/262479533. Protein content estimated as 35% [STD_PROTEIN_IN_MSNF] of the MSNF, which itself is estimated as 1/54.5% [STD_LACTOSE_IN_MSNF] of the lactose content (Goff & Hartel, 2013, p.181)[^2]."
+  },
+  {
+    "name": "Carnation Condensed Milk (UK)",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 50 },
+      "energy": 161,
+      "total_fat": { "grams": 4 },
+      "saturated_fat": 2.5,
+      "sugars": 27.5,
+      "protein": 3.5,
+      "sucrose": 22.05
+    },
+    "comments": "From nutrition facts table: https://www.carnation.co.uk/products/condensed-milk-and-caramel/condensed-milk-tin/. \"Minimum 8% milk fat. 20% milk solids not fat.\" Protein content estimated as 35% [STD_PROTEIN_IN_MSNF] of the 20% milk solids not fat (Goff & Hartel, 2013, p.181)[^2]. Sucrose content estimated as `sugars - lactose`, with lactose estimated as 54.5% [STD_LACTOSE_IN_MSNF] of the 20% milk solids not fat (Goff & Hartel, 2013, p.181)[^2]"
+  }
 ]
