@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+## [0.0.4] - 2026-07-05
+
 ### Added
 
 - Delta toggle (Off/Absolute/Relative) adding a main-vs-reference delta column to `PropertiesTable`.
@@ -168,7 +170,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-url -->
 
-[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.3...HEAD
+[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.4...HEAD
+[0.0.4]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.3...app-v0.0.4
 [0.0.3]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.2...app-v0.0.3
 [0.0.2]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.1...app-v0.0.2
 [0.0.1]: https://github.com/ramonrsv/sci-cream/releases/tag/app-v0.0.1
