@@ -6,6 +6,7 @@ import { screen, fireEvent, waitFor, within } from "@testing-library/react";
 import { makeEmptyRecipe, makeEmptyRecipeContext } from "@/lib/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle, QTY_TOGGLE_SHORT_LABELS } from "@/app/_elements/selects/qty-toggle-select";
+import { NormMode, NORM_MODE_SHORT_LABELS } from "@/app/_elements/selects/normalize-toggle-select";
 import {
   DeltaToggle,
   DELTA_TOGGLE_SHORT_LABELS,
@@ -94,6 +95,11 @@ export async function setQtyToggle(container: HTMLElement, optionValue: QtyToggl
 /** Find a `DeltaToggle` element and select the requested delta toggle option. */
 export async function setDeltaToggle(container: HTMLElement, optionValue: DeltaToggle) {
   await selectOption(container, "#delta-toggle-select", DELTA_TOGGLE_SHORT_LABELS[optionValue]);
+}
+
+/** Find a `NormModeSelect` element and select the requested normalization mode. */
+export async function setNormModeSelect(container: HTMLElement, optionValue: NormMode) {
+  await selectOption(container, "#normalize-toggle-select", NORM_MODE_SHORT_LABELS[optionValue]);
 }
 
 /** Find the 'Clear' button in `RecipeEditor` */

@@ -28,6 +28,11 @@ import {
   useKeyFilterState,
 } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
+import {
+  NormMode,
+  NormModeSelect,
+  useNormModeState,
+} from "@/app/_elements/selects/normalize-toggle-select";
 import { useOrderKeys } from "@/lib/group-by";
 import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
 import { prefersReducedMotion } from "@/lib/styles/motion";
@@ -54,7 +59,7 @@ import {
 import { DEFAULT_SELECTED_PROPERTIES, makeAutoHeuristicFunction } from "@/lib/sci-cream/sci-cream";
 import {
   MeterRange,
-  computeMeterDomain,
+  resolveMeterDomain,
   valueToMeterPct,
   isUsableNumber,
 } from "@/app/_elements/range-meter";
@@ -278,12 +283,13 @@ const rangeMeterPlugin: Plugin<"bar", RangeMeterOptions> = {
 /**
  * Bare bar chart displaying key mix property values, each self-normalized to its own track.
  *
- * Every property is normalized over the union of its acceptable range, main value, references, and
- * target, so the acceptable-range band (drawn behind the bar) always lands on-screen and
- * out-of-range values stay visible. The main recipe is a single status-colored bar (colored by
- * where its value sits in the range); each reference recipe and the balancing `targets` ride along
- * as tick markers across the bars — targets in blue to match {@link WatcherCard}'s target tick. Bar
- * heights compare only within a property, not across, so the value axis is left unlabeled.
+ * Each property is normalized onto its 0–100 track by `normMode` (see {@link resolveMeterDomain}
+ * and {@link NormMode}); the default `FullSpread` frames it over the union of its acceptable range,
+ * main value, references, and target, so the acceptable-range band (drawn behind the bar) lands
+ * on-screen and out-of-range values stay visible. The main recipe is a single status-colored bar
+ * (colored by where its value sits in the range); each reference recipe and the balancing `targets`
+ * ride along as tick markers across the bars — targets in blue to match {@link WatcherCard}'s
+ * target tick. Bar heights compare only within a property, so the value axis is left unlabeled.
  *
  * Consumer is responsible for sizing the chart via a parent container.
  */
@@ -292,11 +298,13 @@ export function PropertiesBarChart({
   refs = [],
   propKeys,
   targets = {},
+  normMode = NormMode.FullSpread,
 }: {
   main: RecipeSummary;
   refs?: RecipeSummary[];
   propKeys: PropKey[];
   targets?: TargetsMap;
+  normMode?: NormMode;
 }) {
   // Subscribe to the theme so the canvas re-reads the cascaded colors and repaints when it flips.
   useTheme();
@@ -346,11 +354,11 @@ export function PropertiesBarChart({
   const noRangeBarColor = addOrUpdateAlpha(getColor(Color.GraphGray), NO_RANGE_GRAY_ALPHA);
 
   /**
-   * Per-property normalization bundle. Each property is self-normalized over the union of its
-   * acceptable range, main value, reference values, and target (its `domain`), so out-of-range
-   * values stay visible (the domain expands to include them) and the acceptable band is always
-   * on-screen. `mainValue`/`refValues`/`target` stay true (unnormalized) for tooltips; `color` is
-   * the within-range status color, or a lighter gray when the key has no range or no main value.
+   * Per-property normalization bundle. The `{ domain, padFrac }` come from
+   * {@link resolveMeterDomain} for the active {@link NormMode}; every value, band edge, and tick is
+   * then mapped through `valueToMeterPct(v, domain, padFrac)`, so they share one framing per
+   * property. `mainValue`/`refValues`/`target` stay true (unnormalized) for tooltips; `color`
+   * is the within-range status color, or a lighter gray when the key has no range or no main value.
    */
   const meters = propKeys.map((propKey) => {
     const range = getAcceptablePropertyRange(propKey) ?? undefined;
@@ -360,27 +368,36 @@ export function PropertiesBarChart({
     );
     const rawTarget = targets[propKey];
     const target = rawTarget === undefined || Number.isNaN(rawTarget) ? undefined : rawTarget;
-    const domain = computeMeterDomain([range?.min, range?.max, mainValue, ...refValues, target]);
+    const { domain, padFrac } = resolveMeterDomain(normMode, {
+      range,
+      mainValue,
+      refValues,
+      target,
+    });
     const color =
       range && isUsableNumber(mainValue)
         ? getColor(getRangeColor(mainValue, range))
         : noRangeBarColor;
-    return { range, domain, mainValue, refValues, target, color };
+    return { range, domain, padFrac, mainValue, refValues, target, color };
   });
 
   /** Normalizes a true value into its property's 0–100 track, or `NaN` when not drawable. */
-  const norm = (value: number | undefined, domain: MeterRange | undefined): number =>
-    domain === undefined || !isUsableNumber(value) ? NaN : valueToMeterPct(value, domain);
+  const norm = (
+    value: number | undefined,
+    domain: MeterRange | undefined,
+    padFrac: number,
+  ): number =>
+    domain === undefined || !isUsableNumber(value) ? NaN : valueToMeterPct(value, domain, padFrac);
 
   const mainBarColors = meters.map((m) => m.color);
-  const mainData = meters.map((m) => norm(m.mainValue, m.domain));
+  const mainData = meters.map((m) => norm(m.mainValue, m.domain, m.padFrac));
 
   /** Acceptable-range bands (normalized track units) per property, drawn behind the bars. */
   const bandRanges: BandRange[] = meters.map((m) =>
     m.range && m.domain
       ? {
-          yMin: valueToMeterPct(m.range.min, m.domain),
-          yMax: valueToMeterPct(m.range.max, m.domain),
+          yMin: valueToMeterPct(m.range.min, m.domain, m.padFrac),
+          yMax: valueToMeterPct(m.range.max, m.domain, m.padFrac),
         }
       : null,
   );
@@ -404,7 +421,7 @@ export function PropertiesBarChart({
       color: addOrUpdateAlpha(legendColor, REFERENCE_TICK_ALPHA),
       dash: i === 0 ? [] : [4, 3],
       values: trueVals.map((val, j) =>
-        val === null ? null : valueToMeterPct(val, meters[j].domain!),
+        val === null ? null : valueToMeterPct(val, meters[j].domain!, meters[j].padFrac),
       ),
       trueValues: trueVals,
     };
@@ -416,7 +433,7 @@ export function PropertiesBarChart({
    */
   const targetTrue = meters.map((m) => (m.target === undefined ? null : m.target));
   const targetValues = meters.map((m) =>
-    m.target === undefined || !m.domain ? null : valueToMeterPct(m.target, m.domain),
+    m.target === undefined || !m.domain ? null : valueToMeterPct(m.target, m.domain, m.padFrac),
   );
 
   const hasTarget = targetTrue.some((value) => value !== null);
@@ -603,7 +620,7 @@ export function PropertiesBarChart({
 }
 
 /**
- * Properties bar chart with an attached toolbar (KeyFilter) that owns its own toolbar state.
+ * Properties bar chart with an attached toolbar (KeyFilter + NormMode) that owns its own state.
  *
  * `targets` (optional, read-only) is forwarded to the bare chart to draw the balancing targets
  * as tick markers; the calculator page owns the map and threads it from the watchers.
@@ -635,6 +652,8 @@ export function PropertiesChartView({
     getKeys: getMixScopePropKeys,
     supportedKeyFilters: [KeyFilter.Auto, KeyFilter.Custom],
   });
+
+  const [normMode, setNormMode, supportedNormModes] = useNormModeState(persistKey);
 
   const orderKeys = useOrderKeys<PropKey>(groupEnabledKeys);
 
@@ -683,6 +702,10 @@ export function PropertiesChartView({
           key_as_med_str={prop_key_as_med_str}
           orderKeys={orderKeys}
         />
+        <NormModeSelect
+          supportedModes={supportedNormModes}
+          normModeState={[normMode, setNormMode]}
+        />
       </div>
       <div className="min-h-0 flex-1 px-2 pb-2">
         <PropertiesBarChart
@@ -690,6 +713,7 @@ export function PropertiesChartView({
           refs={refs}
           propKeys={getEnabledProps()}
           targets={targets}
+          normMode={normMode}
         />
       </div>
     </div>

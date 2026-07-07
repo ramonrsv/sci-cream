@@ -14,6 +14,7 @@ import {
 } from "@/lib/styles/colors";
 import { PropertiesBarChart, PropertiesChartView } from "@/app/_elements/charts/properties-chart";
 import { computeMeterDomain, valueToMeterPct } from "@/app/_elements/range-meter";
+import { NormMode, NORM_MODE_SHORT_LABELS } from "@/app/_elements/selects/normalize-toggle-select";
 import type { TargetsMap } from "@/app/_elements/watchers/watchers";
 import { filterActiveSlots } from "@/lib/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
@@ -47,6 +48,7 @@ import {
   getPropIndex,
   configCustomKeysAll,
   setKeyFilterSelect,
+  setNormModeSelect,
 } from "@/__tests__/unit/util";
 
 vi.mock("chart.js", () => ({
@@ -183,6 +185,7 @@ function renderFromContext(
   recipeIds: RecipeID[],
   propKeys: PropKey[] = getMixScopePropKeys(),
   targets?: TargetsMap,
+  normMode?: NormMode,
 ) {
   const recipeCtx = makeMockRecipeContext(recipeIds);
   const active = filterActiveSlots(recipeCtx.recipes);
@@ -194,6 +197,7 @@ function renderFromContext(
         refs={active.slice(1)}
         propKeys={propKeys}
         targets={targets}
+        normMode={normMode}
       />,
     ),
   };
@@ -432,6 +436,42 @@ describe("PropertiesBarChart", () => {
     });
   });
 
+  // ---- Normalization modes --------------------------------------------------------------------
+
+  describe("Normalization modes", () => {
+    const MSNF = compToPropKey(CompKey.MSNF);
+
+    it("FullSpread (default) frames each property over the union of its points", () => {
+      const { recipeCtx } = renderFromContext([RecipeID.Main], [MSNF], { [MSNF]: 10 });
+      const { mixProperties, mixTotal } = recipeCtx.recipes[0];
+      // The default matches the union-domain mirror used elsewhere.
+      expect(capturedBarProps!.data.datasets[0].data[0]).toBeCloseTo(
+        expectedMainNorm(mixProperties!, mixTotal!, MSNF),
+      );
+    });
+
+    it("TargetCentered maps the target to the middle of the track (50%)", () => {
+      renderFromContext([RecipeID.Main], [MSNF], { [MSNF]: 10 }, NormMode.TargetCentered);
+      const target = capturedBarProps!.options.plugins.rangeMeter.tickMarkers.find(
+        (m) => m.label === "Target",
+      )!;
+      expect(target.values[0]).toBeCloseTo(50);
+    });
+
+    it("ValueCentered maps the main value to the middle of the track (50%)", () => {
+      renderFromContext([RecipeID.Main], [MSNF], undefined, NormMode.ValueCentered);
+      expect(capturedBarProps!.data.datasets[0].data[0]).toBeCloseTo(50);
+    });
+
+    it("FillRange frames the acceptable range with symmetric padding on the track", () => {
+      renderFromContext([RecipeID.Main], [MSNF], undefined, NormMode.FillRange);
+      const band = capturedBarProps!.options.plugins.rangeMeter.bandRanges[0]!;
+      // domain === range, so the band sits at the padded range edges regardless of the values.
+      expect(band.yMin).toBeCloseTo(100 / 7);
+      expect(band.yMax).toBeCloseTo(600 / 7);
+    });
+  });
+
   // ---- Chart Configuration --------------------------------------------------------------------
 
   describe("Chart Configuration", () => {
@@ -539,6 +579,14 @@ describe("PropertiesChartView", () => {
     it("should render the underlying bar chart", () => {
       const { container } = renderViewFromContext([RecipeID.Main]);
       expect(container.querySelector('[data-testid="bar-chart"]')).toBeInTheDocument();
+    });
+
+    it("should render NormModeSelect defaulting to Full Spread", () => {
+      const { container } = renderViewFromContext([RecipeID.Main]);
+      expect(container.querySelector("#normalize-toggle-select")).toBeInTheDocument();
+      expect(getSelectedOptionLabel(container, "#normalize-toggle-select")).toBe(
+        NORM_MODE_SHORT_LABELS[NormMode.FullSpread],
+      );
     });
   });
 
@@ -655,6 +703,7 @@ describe("PropertiesChartView", () => {
 
   describe("Select persistence", () => {
     const FILTER_KEY = `${STORAGE_KEYS.propertiesChartPanelView}:filter`;
+    const NORM_KEY = `${STORAGE_KEYS.propertiesChartPanelView}:norm`;
 
     beforeEach(() => {
       localStorage.clear();
@@ -684,6 +733,34 @@ describe("PropertiesChartView", () => {
       await act(async () => {});
 
       expect(getSelectedOptionLabel(container, "#key-filter-select")).toBe(KeyFilter.Custom);
+    });
+
+    it("writes the NormMode leaf key when the select changes", async () => {
+      const recipeCtx = makeMockRecipeContext([]);
+      const active = filterActiveSlots(recipeCtx.recipes);
+      const { container } = render(
+        <PropertiesChartView main={active[0]} persistKey={STORAGE_KEYS.propertiesChartPanelView} />,
+      );
+      await act(async () => {});
+
+      await setNormModeSelect(container, NormMode.FillRange);
+      await act(async () => {});
+
+      expect(localStorage.getItem(NORM_KEY)).toBe(JSON.stringify(NormMode.FillRange));
+    });
+
+    it("restores the NormMode value on remount", async () => {
+      localStorage.setItem(NORM_KEY, JSON.stringify(NormMode.TargetCentered));
+      const recipeCtx = makeMockRecipeContext([]);
+      const active = filterActiveSlots(recipeCtx.recipes);
+      const { container } = render(
+        <PropertiesChartView main={active[0]} persistKey={STORAGE_KEYS.propertiesChartPanelView} />,
+      );
+      await act(async () => {});
+
+      expect(getSelectedOptionLabel(container, "#normalize-toggle-select")).toBe(
+        NORM_MODE_SHORT_LABELS[NormMode.TargetCentered],
+      );
     });
   });
 });

@@ -96,6 +96,11 @@ export function getCompositionBreakdownPanelKeyFilterSelectInput(page: Page) {
   return getSelectControl(page, "#composition-breakdown-panel #key-filter-select");
 }
 
+/** Get `PropertiesChartPanel`'s `NormMode` select input element, in `NormModeSelect` */
+export function getPropertiesChartPanelNormModeSelectInput(page: Page) {
+  return getSelectControl(page, "#properties-chart-panel #normalize-toggle-select");
+}
+
 /** Get `PropertiesPanel`'s value cell element for the given property key and recipe index */
 export function getPropertiesPanelValueElement(
   page: Page,

@@ -7,6 +7,7 @@ import {
   DeltaToggle,
   DELTA_TOGGLE_SHORT_LABELS,
 } from "@/app/_elements/selects/delta-toggle-select";
+import { NormMode, NORM_MODE_SHORT_LABELS } from "@/app/_elements/selects/normalize-toggle-select";
 import { GroupBy, GROUP_BY_LABELS } from "@/lib/group-by";
 
 import { RecipeID } from "@/__tests__/assets";
@@ -16,6 +17,7 @@ import {
   getPropertiesPanelKeyFilterSelectInput,
   getPropertiesPanelDeltaToggleSelectInput,
   getCompositionBreakdownPanelKeyFilterSelectInput,
+  getPropertiesChartPanelNormModeSelectInput,
   getGroupBySelectInput,
   goToPageAndWaitFor,
   goToPageAndPasteRecipes,
@@ -447,4 +449,34 @@ test.describe("Visual Regression: Panels, Properties Chart Balancing Targets", (
 
     await expect(panel).toHaveScreenshot("properties-chart-panel-targets-horizontal.png");
   });
+});
+
+/** Normalization modes to visually verify. */
+const NORM_MODE_CASES: [NormMode, string][] = [
+  [NormMode.FullSpread, "full-spread"],
+  [NormMode.TargetCentered, "target-centered"],
+  [NormMode.ValueCentered, "value-centered"],
+  [NormMode.FillRange, "fill-range"],
+];
+
+test.describe("Visual Regression: Panels, Properties Chart Normalization Modes", () => {
+  for (const [mode, suffix] of NORM_MODE_CASES) {
+    test(`PropertiesChartPanel normalization (${suffix})`, async ({ page, browserName }) => {
+      // Targets give TargetCentered an anchor (it falls back to FullSpread without one)
+      await presetWatcherTargets(page, CHART_TARGETS);
+
+      await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main, RecipeID.RefA]);
+      const panel = await locatePanelAndExpectVisible(page, "#properties-chart-panel");
+
+      await selectOption(
+        page,
+        getPropertiesChartPanelNormModeSelectInput(page),
+        NORM_MODE_SHORT_LABELS[mode],
+      );
+      // Let the canvas redraw at the new normalization before capturing.
+      await page.waitForTimeout(300);
+
+      await expect(panel).toHaveScreenshot(`properties-chart-panel-norm-${suffix}.png`);
+    });
+  }
 });
