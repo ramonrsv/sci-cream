@@ -45,7 +45,7 @@ import {
 } from "@/lib/comp-value-format";
 import { DEFAULT_SELECTED_PROPERTIES, makeAutoHeuristicFunction } from "@/lib/sci-cream/sci-cream";
 import { RangeMeter } from "@/app/_elements/range-meter";
-import { Color, getCssColor, NO_RANGE_GRAY_ALPHA } from "@/lib/styles/colors";
+import { Color, getCssColor, getTargetColor, NO_RANGE_GRAY_ALPHA } from "@/lib/styles/colors";
 import {
   ColorMode,
   ColorModeSelect,
@@ -98,6 +98,9 @@ export type PrioritiesMap = Partial<Record<PropKey, Priority>>;
 const PRIORITY_NORMAL_OPACITY = 0.6;
 /** Opacity for the reference value rows, de-emphasized relative to the main value above them. */
 const REF_ROW_OPACITY = 0.8;
+
+/** Alpha percent for the delta chip's tinted background — the graded color, subtle behind text. */
+const DELTA_TINT_PERCENT = 25;
 
 /** Ordered priority cycle for the click-to-cycle control: Low → Normal → High → Critical → Low. */
 const PRIORITY_CYCLE = [Priority.Low, Priority.Normal, Priority.High, Priority.Critical] as const;
@@ -328,6 +331,12 @@ export function WatcherCard({
     target,
   });
 
+  // The delta always grades by target proximity (the check's continuous extension).
+  const deltaColor: Color | undefined =
+    isUsableNumber(mainValue) && isUsableNumber(target) && target !== 0
+      ? getTargetColor(mainValue, target)
+      : undefined;
+
   const targetStep = getTargetStep(target, mainValue);
 
   const targetDelta = computeTargetDeltaAndFormat(
@@ -461,11 +470,24 @@ export function WatcherCard({
                         data-testid={`watcher-card-${String(propKey)}-target-met`}
                       />
                     ) : (
-                      <>
+                      // Graded target proximity as a subtle tint; no tint when there's no target.
+                      <span
+                        className="inline-block rounded px-1"
+                        data-testid={`watcher-card-${String(propKey)}-delta-chip`}
+                        style={
+                          deltaColor
+                            ? {
+                                backgroundColor: `color-mix(in srgb, ${getCssColor(
+                                  deltaColor,
+                                )} ${DELTA_TINT_PERCENT}%, transparent)`,
+                              }
+                            : undefined
+                        }
+                      >
                         {/* Arrow sized in `em` so it scales with the digits but stays smaller. */}
                         <span className="mr-px text-[0.7em]">{targetDelta.arrow}</span>
                         {`${targetDelta.magnitude}${deltaToggle === DeltaToggle.Relative ? "%" : ""}`}
-                      </>
+                      </span>
                     ))}
                 </span>
               )}

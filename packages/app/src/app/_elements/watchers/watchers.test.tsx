@@ -655,14 +655,34 @@ describe("WatcherCard delta", () => {
     expect(delta.textContent).toBe("");
   });
 
-  it("renders a down-triangle and magnitude in monochrome when target exceeds current", () => {
+  /** Reads the delta chip's inline background tint for MSNF on a card with the given target. */
+  const renderDeltaChipBg = (target: number | undefined) => {
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(
       <WatcherCard
         propKey={MSNF}
         main={main}
         deltaToggle={DeltaToggle.Absolute}
-        target={100} // far above Main's MSNF (~8.87)
+        target={target}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    const chip = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-delta-chip"]`,
+    ) as HTMLElement;
+    return chip.style.backgroundColor;
+  };
+
+  it("renders a down-triangle and grades the delta red when target far exceeds current", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        deltaToggle={DeltaToggle.Absolute}
+        target={100} // far above Main's MSNF (~9)
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
@@ -676,18 +696,21 @@ describe("WatcherCard delta", () => {
     expect(delta.textContent!.startsWith("▼")).toBe(true);
     expect(delta.textContent).not.toContain("−");
     expect(delta.textContent).not.toContain("-");
-    // Monochrome: no inline color override (neither green/red), so it inherits the text color.
-    expect(delta.style.color).toBe("");
+    // The chip grades by target proximity; a target this far off tints red.
+    const chip = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-delta-chip"]`,
+    ) as HTMLElement;
+    expect(chip.style.backgroundColor).toContain(getCssColor(Color.GraphRedDull));
   });
 
-  it("renders an up-triangle and magnitude in monochrome when below current", () => {
+  it("renders an up-triangle and leaves the delta untinted for a zero target", () => {
     const main = makeMockRecipe(RecipeID.Main);
     const { container } = render(
       <WatcherCard
         propKey={MSNF}
         main={main}
         deltaToggle={DeltaToggle.Absolute}
-        target={0} // below Main's MSNF (~8.87)
+        target={0} // below Main's MSNF (~9)
         onTargetChange={vi.fn()}
         onPriorityChange={vi.fn()}
         onRemove={vi.fn()}
@@ -700,8 +723,85 @@ describe("WatcherCard delta", () => {
     // Direction is an up-triangle; the magnitude is unsigned (no minus sign of any kind).
     expect(delta.textContent!.startsWith("▲")).toBe(true);
     expect(delta.textContent).not.toContain("+");
-    // Monochrome: no inline color override (neither green/red), so it inherits the text color.
-    expect(delta.style.color).toBe("");
+    // Relative proximity is undefined at a zero target, so the chip stays untinted.
+    const chip = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-delta-chip"]`,
+    ) as HTMLElement;
+    expect(chip.style.backgroundColor).toBe("");
+  });
+
+  it("grades the delta tint by proximity as the target nears the current value", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    // Read the displayed current value so targets can be set relative to it.
+    const probe = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        deltaToggle={DeltaToggle.Absolute}
+        target={undefined}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    const current = parseFloat(
+      probe.container.querySelector('[title="Current value"]')!.textContent!,
+    );
+    cleanup();
+
+    // Targets kept clear of the 5/10/15% band edges so display rounding can't tip the color over.
+    const cases: [number, Color][] = [
+      [current * 1.02, Color.GraphGreen], // within 5%
+      [current * 1.08, Color.GraphYellow], // within 10%
+      [current * 1.13, Color.GraphOrange], // within 15%
+      [current * 1.4, Color.GraphRedDull], // beyond 15%
+    ];
+    for (const [target, expected] of cases) {
+      const bg = renderDeltaChipBg(target);
+      expect(bg).toContain(getCssColor(expected));
+      cleanup();
+    }
+  });
+
+  it("leaves the met delta untinted (the green check conveys the met state)", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const current = parseFloat(
+      (() => {
+        const { container } = render(
+          <WatcherCard
+            propKey={MSNF}
+            main={main}
+            deltaToggle={DeltaToggle.Absolute}
+            target={undefined}
+            onTargetChange={vi.fn()}
+            onPriorityChange={vi.fn()}
+            onRemove={vi.fn()}
+          />,
+        );
+        const value = container.querySelector('[title="Current value"]')!.textContent!;
+        cleanup();
+        return value;
+      })(),
+    );
+
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        deltaToggle={DeltaToggle.Absolute}
+        target={current}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    // The met state shows the check, not the delta chip, so there is no tint element at all.
+    expect(
+      container.querySelector(`[data-testid="watcher-card-${String(MSNF)}-target-met"]`),
+    ).not.toBeNull();
+    expect(
+      container.querySelector(`[data-testid="watcher-card-${String(MSNF)}-delta-chip"]`),
+    ).toBeNull();
   });
 });
 
