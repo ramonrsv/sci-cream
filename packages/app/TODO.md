@@ -4,9 +4,6 @@
 
 - [ ] Recipe validation errors/warnings do not show unless a recipe has some non-zero qty value.
 - [ ] Composition values < 0.005 display `0` instead of empty. Look into where and how to handle.
-- [ ] `WatcherCard` needs to display a color based on position with an acceptable property range,
-      and based on proximity to the balancing target. Figure out how to handle overlapping concerns.
-- [ ] Add support for coloring bars and watchers based on a value's proximity to the current target.
 - [ ] Look into whether setting targets from reference should also set zero targets for active keys.
 - [ ] Add end-to-end tests for balancing functionality; check surfacing of balancing errors?
 - [ ] Add a visual warning indicator for user-defined ingredients that shadow built-in ones.
@@ -103,6 +100,9 @@
 
 ## Completed
 
+- [x] `WatcherCard` needs to display a color based on position with an acceptable property range,
+      and based on proximity to the balancing target. Figure out how to handle overlapping concerns.
+- [x] Add support for coloring bars and watchers based on a value's proximity to the current target.
 - [x] When a recipe is deleted, the UI does not update, it still showed the deleted recipe.
 - [x] Fix issue where version lists in `RecipeSearch` do not visually update when one is deleted.
 - [x] The delete recipe version button moves around with the version name length, which is jarring.

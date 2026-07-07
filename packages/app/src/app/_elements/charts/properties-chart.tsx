@@ -33,6 +33,12 @@ import {
   NormModeSelect,
   useNormModeState,
 } from "@/app/_elements/selects/normalize-toggle-select";
+import {
+  ColorMode,
+  ColorModeSelect,
+  resolveStatusColor,
+  useColorModeState,
+} from "@/app/_elements/selects/color-toggle-select";
 import { useOrderKeys } from "@/lib/group-by";
 import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
 import { prefersReducedMotion } from "@/lib/styles/motion";
@@ -48,7 +54,6 @@ import {
   Color,
   ThemeColor,
   getColor,
-  getRangeColor,
   addOrUpdateAlpha,
   RANGE_BAND_ALPHA,
   NO_RANGE_GRAY_ALPHA,
@@ -287,7 +292,7 @@ const rangeMeterPlugin: Plugin<"bar", RangeMeterOptions> = {
  * and {@link NormMode}); the default `FullSpread` frames it over the union of its acceptable range,
  * main value, references, and target, so the acceptable-range band (drawn behind the bar) lands
  * on-screen and out-of-range values stay visible. The main recipe is a single status-colored bar
- * (colored by where its value sits in the range); each reference recipe and the balancing `targets`
+ * (colored per `colorMode`; see {@link resolveStatusColor}); each reference recipe and `targets`
  * ride along as tick markers across the bars — targets in blue to match {@link WatcherCard}'s
  * target tick. Bar heights compare only within a property, so the value axis is left unlabeled.
  *
@@ -299,12 +304,14 @@ export function PropertiesBarChart({
   propKeys,
   targets = {},
   normMode = NormMode.FullSpread,
+  colorMode = ColorMode.Auto,
 }: {
   main: RecipeSummary;
   refs?: RecipeSummary[];
   propKeys: PropKey[];
   targets?: TargetsMap;
   normMode?: NormMode;
+  colorMode?: ColorMode;
 }) {
   // Subscribe to the theme so the canvas re-reads the cascaded colors and repaints when it flips.
   useTheme();
@@ -358,7 +365,7 @@ export function PropertiesBarChart({
    * {@link resolveMeterDomain} for the active {@link NormMode}; every value, band edge, and tick is
    * then mapped through `valueToMeterPct(v, domain, padFrac)`, so they share one framing per
    * property. `mainValue`/`refValues`/`target` stay true (unnormalized) for tooltips; `color`
-   * is the within-range status color, or a lighter gray when the key has no range or no main value.
+   * is the `colorMode` status color, or a lighter gray when that mode has nothing to score.
    */
   const meters = propKeys.map((propKey) => {
     const range = getAcceptablePropertyRange(propKey) ?? undefined;
@@ -374,10 +381,8 @@ export function PropertiesBarChart({
       refValues,
       target,
     });
-    const color =
-      range && isUsableNumber(mainValue)
-        ? getColor(getRangeColor(mainValue, range))
-        : noRangeBarColor;
+    const status = resolveStatusColor(colorMode, { range, value: mainValue, target });
+    const color = status === Color.GraphGray ? noRangeBarColor : getColor(status);
     return { range, domain, padFrac, mainValue, refValues, target, color };
   });
 
@@ -654,6 +659,7 @@ export function PropertiesChartView({
   });
 
   const [normMode, setNormMode, supportedNormModes] = useNormModeState(persistKey);
+  const [colorMode, setColorMode, supportedColorModes] = useColorModeState(persistKey);
 
   const orderKeys = useOrderKeys<PropKey>(groupEnabledKeys);
 
@@ -706,6 +712,10 @@ export function PropertiesChartView({
           supportedModes={supportedNormModes}
           normModeState={[normMode, setNormMode]}
         />
+        <ColorModeSelect
+          supportedModes={supportedColorModes}
+          colorModeState={[colorMode, setColorMode]}
+        />
       </div>
       <div className="min-h-0 flex-1 px-2 pb-2">
         <PropertiesBarChart
@@ -714,6 +724,7 @@ export function PropertiesChartView({
           propKeys={getEnabledProps()}
           targets={targets}
           normMode={normMode}
+          colorMode={colorMode}
         />
       </div>
     </div>

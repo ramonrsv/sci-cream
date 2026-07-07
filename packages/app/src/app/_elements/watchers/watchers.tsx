@@ -45,7 +45,13 @@ import {
 } from "@/lib/comp-value-format";
 import { DEFAULT_SELECTED_PROPERTIES, makeAutoHeuristicFunction } from "@/lib/sci-cream/sci-cream";
 import { RangeMeter } from "@/app/_elements/range-meter";
-import { Color, getCssColor, getRangeColor, NO_RANGE_GRAY_ALPHA } from "@/lib/styles/colors";
+import { Color, getCssColor, NO_RANGE_GRAY_ALPHA } from "@/lib/styles/colors";
+import {
+  ColorMode,
+  ColorModeSelect,
+  resolveStatusColor,
+  useColorModeState,
+} from "@/app/_elements/selects/color-toggle-select";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { leafKey, usePersistedState } from "@/lib/use-persisted-state";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
@@ -282,6 +288,7 @@ export function WatcherCard({
   main,
   refs = [],
   deltaToggle,
+  colorMode = ColorMode.Auto,
   target,
   priority = Priority.Normal,
   issue,
@@ -297,6 +304,7 @@ export function WatcherCard({
   main: RecipeSummary;
   refs?: RecipeSummary[];
   deltaToggle: DeltaToggle;
+  colorMode?: ColorMode;
   target: number | undefined;
   priority?: Priority;
   issue?: KeyIssue;
@@ -311,10 +319,14 @@ export function WatcherCard({
   const range = getAcceptablePropertyRange(propKey);
 
   const mainValue = getDisplayValue(propKey, main);
-  const mainHasValue = isUsableNumber(mainValue);
 
-  const headerColor: Color =
-    range && mainHasValue ? getRangeColor(mainValue, range) : Color.GraphGray;
+  // The rail follows the chosen `colorMode`; the meter marker always tracks range position.
+  const railColor: Color = resolveStatusColor(colorMode, { range, value: mainValue, target });
+  const markerColor: Color = resolveStatusColor(ColorMode.Range, {
+    range,
+    value: mainValue,
+    target,
+  });
 
   const targetStep = getTargetStep(target, mainValue);
 
@@ -340,12 +352,12 @@ export function WatcherCard({
       data-testid={`watcher-card-${String(propKey)}`}
       data-prop-key={String(propKey)}
     >
-      {/* Slim status rail: at-a-glance range status, color-coded like the meter marker below. */}
+      {/* Slim status rail: at-a-glance status, color-coded by the chosen `colorMode`. */}
       <div
         className="h-1.5 w-full"
         style={{
-          backgroundColor: getCssColor(headerColor),
-          opacity: headerColor === Color.GraphGray ? NO_RANGE_GRAY_ALPHA : undefined,
+          backgroundColor: getCssColor(railColor),
+          opacity: railColor === Color.GraphGray ? NO_RANGE_GRAY_ALPHA : undefined,
         }}
         aria-hidden
       />
@@ -474,7 +486,7 @@ export function WatcherCard({
             <RangeMeter
               range={meterRange}
               value={mainValue}
-              valueColor={getCssColor(headerColor)}
+              valueColor={getCssColor(markerColor)}
               refs={
                 showRefs
                   ? nonEmptyRefs.flatMap((ref) => {
@@ -547,6 +559,7 @@ export function WatchersGrid({
   main,
   refs = [],
   deltaToggle,
+  colorMode = ColorMode.Auto,
   targets,
   priorities,
   issuesByKey = {},
@@ -562,6 +575,7 @@ export function WatchersGrid({
   main: RecipeSummary;
   refs?: RecipeSummary[];
   deltaToggle: DeltaToggle;
+  colorMode?: ColorMode;
   targets: TargetsMap;
   priorities: PrioritiesMap;
   issuesByKey?: Partial<Record<PropKey, KeyIssue>>;
@@ -585,6 +599,7 @@ export function WatchersGrid({
           main={main}
           refs={refs}
           deltaToggle={deltaToggle}
+          colorMode={colorMode}
           target={targets[propKey]}
           priority={priorities[propKey] ?? Priority.Normal}
           issue={issuesByKey[propKey]}
@@ -648,6 +663,7 @@ export function WatchersView({
   const [deltaToggle, setDeltaToggle, supportedDeltaToggles] = useDeltaToggleState(persistKey, {
     defaultValue: DeltaToggle.Absolute,
   });
+  const [colorMode, setColorMode, supportedColorModes] = useColorModeState(persistKey);
 
   const {
     keyFilterState: propsFilterState,
@@ -927,6 +943,10 @@ export function WatchersView({
           supportedDeltaToggles={supportedDeltaToggles}
           deltaToggleState={[deltaToggle, setDeltaToggle]}
         />
+        <ColorModeSelect
+          supportedModes={supportedColorModes}
+          colorModeState={[colorMode, setColorMode]}
+        />
         <KeyFilterSelect
           supportedKeyFilters={supportedKeyFilters}
           keyFilterState={propsFilterState}
@@ -1078,6 +1098,7 @@ export function WatchersView({
           targets={targets}
           priorities={priorities}
           issuesByKey={issuesByKey}
+          colorMode={colorMode}
           removable={removable}
           showRange={showRange}
           showTarget={showTarget}

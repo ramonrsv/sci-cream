@@ -15,6 +15,7 @@ import {
 import { PropertiesBarChart, PropertiesChartView } from "@/app/_elements/charts/properties-chart";
 import { computeMeterDomain, valueToMeterPct } from "@/app/_elements/range-meter";
 import { NormMode, NORM_MODE_SHORT_LABELS } from "@/app/_elements/selects/normalize-toggle-select";
+import { ColorMode } from "@/app/_elements/selects/color-toggle-select";
 import type { TargetsMap } from "@/app/_elements/watchers/watchers";
 import { filterActiveSlots } from "@/lib/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
@@ -49,6 +50,7 @@ import {
   configCustomKeysAll,
   setKeyFilterSelect,
   setNormModeSelect,
+  setColorModeSelect,
 } from "@/__tests__/unit/util";
 
 vi.mock("chart.js", () => ({
@@ -704,6 +706,7 @@ describe("PropertiesChartView", () => {
   describe("Select persistence", () => {
     const FILTER_KEY = `${STORAGE_KEYS.propertiesChartPanelView}:filter`;
     const NORM_KEY = `${STORAGE_KEYS.propertiesChartPanelView}:norm`;
+    const COLOR_KEY = `${STORAGE_KEYS.propertiesChartPanelView}:color`;
 
     beforeEach(() => {
       localStorage.clear();
@@ -761,6 +764,20 @@ describe("PropertiesChartView", () => {
       expect(getSelectedOptionLabel(container, "#normalize-toggle-select")).toBe(
         NORM_MODE_SHORT_LABELS[NormMode.TargetCentered],
       );
+    });
+
+    it("writes the ColorMode leaf key when the select changes", async () => {
+      const recipeCtx = makeMockRecipeContext([]);
+      const active = filterActiveSlots(recipeCtx.recipes);
+      const { container } = render(
+        <PropertiesChartView main={active[0]} persistKey={STORAGE_KEYS.propertiesChartPanelView} />,
+      );
+      await act(async () => {});
+
+      await setColorModeSelect(container, ColorMode.Range);
+      await act(async () => {});
+
+      expect(localStorage.getItem(COLOR_KEY)).toBe(JSON.stringify(ColorMode.Range));
     });
   });
 });

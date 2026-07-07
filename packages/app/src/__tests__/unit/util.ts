@@ -7,6 +7,7 @@ import { makeEmptyRecipe, makeEmptyRecipeContext } from "@/lib/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle, QTY_TOGGLE_SHORT_LABELS } from "@/app/_elements/selects/qty-toggle-select";
 import { NormMode, NORM_MODE_SHORT_LABELS } from "@/app/_elements/selects/normalize-toggle-select";
+import { ColorMode, COLOR_MODE_SHORT_LABELS } from "@/app/_elements/selects/color-toggle-select";
 import {
   DeltaToggle,
   DELTA_TOGGLE_SHORT_LABELS,
@@ -100,6 +101,11 @@ export async function setDeltaToggle(container: HTMLElement, optionValue: DeltaT
 /** Find a `NormModeSelect` element and select the requested normalization mode. */
 export async function setNormModeSelect(container: HTMLElement, optionValue: NormMode) {
   await selectOption(container, "#normalize-toggle-select", NORM_MODE_SHORT_LABELS[optionValue]);
+}
+
+/** Find a `ColorModeSelect` element and select the requested color mode. */
+export async function setColorModeSelect(container: HTMLElement, optionValue: ColorMode) {
+  await selectOption(container, "#color-toggle-select", COLOR_MODE_SHORT_LABELS[optionValue]);
 }
 
 /** Find the 'Clear' button in `RecipeEditor` */

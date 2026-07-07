@@ -8,7 +8,8 @@ import { WatcherCard, WatchersView, type TargetsMap } from "@/app/_elements/watc
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { makeEmptyRecipe } from "@/lib/recipe";
-import { getRangeColor, Color } from "@/lib/styles/colors";
+import { getRangeColor, getCssColor, Color } from "@/lib/styles/colors";
+import { ColorMode } from "@/app/_elements/selects/color-toggle-select";
 
 import {
   Bridge as WasmBridge,
@@ -174,6 +175,89 @@ describe("WatcherCard", () => {
       `[data-testid="watcher-card-${String(MSNF)}-meter-current"]`,
     ) as HTMLElement;
     expect(marker.style.backgroundColor).not.toBe("");
+  });
+
+  /** The card's status rail is its root's first child; returns its inline background color. */
+  function railColor(container: HTMLElement): string {
+    const card = container.querySelector(`[data-testid="watcher-card-${String(MSNF)}"]`)!;
+    return (card.firstElementChild as HTMLElement).style.backgroundColor;
+  }
+
+  /** The range-meter current-value marker's inline background color. */
+  function markerColor(container: HTMLElement): string {
+    const marker = container.querySelector(
+      `[data-testid="watcher-card-${String(MSNF)}-meter-current"]`,
+    ) as HTMLElement;
+    return marker.style.backgroundColor;
+  }
+
+  it("colors the rail by range position under Range mode, ignoring the target", () => {
+    // MSNF value 10 is ideal within its { min: 5, max: 15 } range → green regardless of target.
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={makeMockRecipe(RecipeID.Main)}
+        deltaToggle={DeltaToggle.Off}
+        target={1000}
+        colorMode={ColorMode.Range}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(railColor(container)).toBe(getCssColor(Color.GraphGreen));
+  });
+
+  it("colors the rail by target proximity under Auto mode when a target is set", () => {
+    // A far-off target (1000) is poor proximity, so Auto pulls the rail off green.
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={makeMockRecipe(RecipeID.Main)}
+        deltaToggle={DeltaToggle.Off}
+        target={1000}
+        colorMode={ColorMode.Auto}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(railColor(container)).toBe(getCssColor(Color.GraphRedDull));
+  });
+
+  it("keeps the range-meter marker on range position even when the rail follows the target", () => {
+    // Under Auto with a far target the rail goes red, but the meter marker stays range-green (10 is
+    // ideal within { min: 5, max: 15 }) as the meter shows range position, not target proximity.
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={makeMockRecipe(RecipeID.Main)}
+        deltaToggle={DeltaToggle.Off}
+        target={1000}
+        colorMode={ColorMode.Auto}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(railColor(container)).toBe(getCssColor(Color.GraphRedDull));
+    expect(markerColor(container)).toBe(getCssColor(Color.GraphGreen));
+  });
+
+  it("shows a gray rail under Target mode with no target (no range fallback)", () => {
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={makeMockRecipe(RecipeID.Main)}
+        deltaToggle={DeltaToggle.Off}
+        target={undefined}
+        colorMode={ColorMode.Target}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    expect(railColor(container)).toBe(getCssColor(Color.GraphGray));
   });
 
   it("calls onTargetChange when the user types a target value", () => {
