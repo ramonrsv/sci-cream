@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 243  (non-alias: 211, independent: 205)
+"total: 249  (non-alias: 215, independent: 209)
 
             0% Milk
             1% Milk
@@ -18,7 +18,9 @@ exports[`Embedded spec entries 1`] = `
             40% Cream
             43% ABV Spirit
             45% ABV Spirit
+            48% Cream
             5% Cream
+            55% Cream
             60% Dark Chocolate
             65% Dark Chocolate
             70% Dark Chocolate
@@ -46,6 +48,7 @@ exports[`Embedded spec entries 1`] = `
 [alias]     Casein
 [alias]     Chocolate Extract
             Clarke Egg Yolk
+[alias]     Clotted Cream
             Cocoa Powder, 10% Fat
             Cocoa Powder, 13% Fat
             Cocoa Powder, 15% Fat
@@ -55,8 +58,11 @@ exports[`Embedded spec entries 1`] = `
 [alias]     Coffee Extract
             Cornstarch
             Dark Rum
+            Devon Cream Company Clotted Cream
+            Devon Cream Company Double Cream
             Dextrose
             Dillon's Orange Bitters
+[alias]     Double Cream
             Eagle Brand Dulce de Leche Caramel Flavoured Sauce
             Eagle Brand Low Fat Sweetened Condensed Milk
             Eagle Brand Original Sweetened Condensed Milk

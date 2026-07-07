@@ -1,0 +1,21 @@
+---
+source: packages/sci-cream/src/tests/embedded/compare_specs/dairy.rs
+expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
+---
+sources: Simple, Devon
+
+Energy              13.18 pp  (Simple vs Devon)
+MilkFat              0.31 pp  (Simple vs Devon)
+Lactose              0.02 pp  (Simple vs Devon)
+MSNF                 0.31 pp  (Simple vs Devon)
+MilkSNFS             0.33 pp  (Simple vs Devon)
+MilkProteins         0.30 pp  (Simple vs Devon)
+MilkSolids           0.00 pp  (Simple vs Devon)
+TotalSolids          0.20 pp  (Simple vs Devon)
+Water                0.20 pp  (Simple vs Devon)
+POD                  0.00 pp  (Simple vs Devon)
+PACsgr               0.02 pp  (Simple vs Devon)
+PACmlk               0.11 pp  (Simple vs Devon)
+TotalPAC             0.09 pp  (Simple vs Devon)
+SaturatedFat         0.96 pp  (Simple vs Devon)
+TransFat             0.01 pp  (Simple vs Devon)

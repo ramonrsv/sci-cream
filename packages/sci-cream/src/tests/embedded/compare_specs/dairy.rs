@@ -194,6 +194,38 @@ fn compare_specs_whipping_cream() {
 }
 
 #[test]
+fn compare_specs_double_cream() {
+    assert_true!(is_alias_for("Double Cream", "48% Cream"));
+
+    let sources = [
+        ("Simple", "Double Cream"),
+        ("Devon", "Devon Cream Company Double Cream"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(2.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
+fn compare_specs_clotted_cream() {
+    assert_true!(is_alias_for("Clotted Cream", "55% Cream"));
+
+    let sources = [
+        ("Simple", "Clotted Cream"),
+        ("Devon", "Devon Cream Company Clotted Cream"),
+    ]
+    .map(source_str_to_comp);
+
+    let ceiling = KeyCeiling::new(1.0).with(CompKey::Energy, 14.0);
+
+    assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);
+    insta::assert_snapshot!(compare_compositions(&sources, COMPARABLE_DAIRY_KEYS));
+}
+
+#[test]
 fn compare_specs_skim_evaporated_milk() {
     let sources = [
         ("Goff & Hartel", "Goff & Hartel Condensed Skim Milk, 20% MSNF"),

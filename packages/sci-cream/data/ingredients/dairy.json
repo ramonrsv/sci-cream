@@ -11,12 +11,16 @@
   { "name": "35% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 35 } },
   { "name": "36% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 36 } },
   { "name": "40% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 40 } },
+  { "name": "48% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 48 } },
+  { "name": "55% Cream", "category": "Dairy", "DairySimpleSpec": { "fat": 55 } },
   { "alias": "Skim Milk", "for": "0% Milk" },
   { "alias": "Whole Milk", "for": "3.25% Milk" },
   { "alias": "Half and Half", "for": "10% Cream" },
   { "alias": "Table Cream", "for": "18% Cream" },
   { "alias": "Whipping Cream", "for": "35% Cream" },
   { "alias": "Heavy Cream", "for": "36% Cream" },
+  { "alias": "Double Cream", "for": "48% Cream" },
+  { "alias": "Clotted Cream", "for": "55% Cream" },
   {
     "name": "Lactose-Free 0% Milk",
     "category": "Dairy",
@@ -807,5 +811,31 @@
       "sucrose": 22.05
     },
     "comments": "From nutrition facts table: https://www.carnation.co.uk/products/condensed-milk-and-caramel/condensed-milk-tin/. \"Minimum 8% milk fat. 20% milk solids not fat.\" Protein content estimated as 35% [STD_PROTEIN_IN_MSNF] of the 20% milk solids not fat (Goff & Hartel, 2013, p.181)[^2]. Sucrose content estimated as `sugars - lactose`, with lactose estimated as 54.5% [STD_LACTOSE_IN_MSNF] of the 20% milk solids not fat (Goff & Hartel, 2013, p.181)[^2]"
+  },
+  {
+    "name": "Devon Cream Company Double Cream",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 449,
+      "total_fat": { "grams": 48 },
+      "saturated_fat": 30.5,
+      "sugars": 2.6,
+      "protein": 1.7
+    },
+    "comments": "From nutrition facts table: https://www.coombecastle.com/product/double-cream/"
+  },
+  {
+    "name": "Devon Cream Company Clotted Cream",
+    "category": "Dairy",
+    "DairyLabelSpec": {
+      "serving_size": { "grams": 100 },
+      "energy": 519,
+      "total_fat": { "grams": 55 },
+      "saturated_fat": 35.3,
+      "sugars": 2.2,
+      "protein": 1.6
+    },
+    "comments": "From nutrition facts table: https://www.coombecastle.com/product/clotted-cream/"
   }
 ]
