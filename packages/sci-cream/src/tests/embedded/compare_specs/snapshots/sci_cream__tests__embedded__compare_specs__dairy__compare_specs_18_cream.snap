@@ -1,5 +1,6 @@
 ---
 source: packages/sci-cream/src/tests/embedded/compare_specs/dairy.rs
+assertion_line: 162
 expression: "compare_compositions(&sources, COMPARABLE_DAIRY_KEYS)"
 ---
 sources: Simple, USDA, Sealtest

@@ -6,7 +6,9 @@ use strum::IntoEnumIterator;
 
 use crate::{
     composition::{CompKey, Composition},
+    data::get_spec_entry_by_name,
     error::Result,
+    specs::{AliasSpec, SpecEntry},
     util::iter_fields_as,
     validate::{verify_are_equal, verify_is_subset},
 };
@@ -249,6 +251,15 @@ pub(crate) fn compare_compositions(sources: &[(&str, Composition)], keys: &[Comp
 /// `compare_specs` suites that line up several labelled sources of one conceptual ingredient.
 pub(crate) fn source_str_to_comp(names: (&'static str, &str)) -> (&'static str, Composition) {
     (names.0, get_comp_by_name(names.1))
+}
+
+/// Returns true if the given `alias` resolves to an [`AliasSpec`] whose `for_name` matches `name`.
+pub(crate) fn is_alias_for(alias: &str, name: &str) -> bool {
+    if let Ok(SpecEntry::Alias(AliasSpec { for_name, .. })) = get_spec_entry_by_name(alias) {
+        for_name == name
+    } else {
+        false
+    }
 }
 
 #[cfg(test)]

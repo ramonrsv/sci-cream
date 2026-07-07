@@ -4,8 +4,15 @@
 
 #![cfg_attr(coverage, coverage(off))]
 
+#[expect(unused)]
+use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
+use crate::tests::asserts::*;
+
 use crate::composition::CompKey;
-use crate::tests::util::{KeyCeiling, assert_compositions_consistent, compare_compositions, source_str_to_comp};
+
+use crate::tests::util::{
+    KeyCeiling, assert_compositions_consistent, compare_compositions, is_alias_for, source_str_to_comp,
+};
 
 /// Composition keys compared when cross-checking dairy ingredient data sources.
 ///
@@ -37,6 +44,8 @@ const COMPARABLE_DAIRY_KEYS: &[CompKey] = &[
 
 #[test]
 fn compare_specs_skim_milk() {
+    assert_true!(is_alias_for("Skim Milk", "0% Milk"));
+
     let sources = [
         ("Simple", "0% Milk"),
         ("Goff & Hartel", "Goff & Hartel Skim Milk"),
@@ -68,6 +77,8 @@ fn compare_specs_2_milk() {
 
 #[test]
 fn compare_specs_whole_milk() {
+    assert_true!(is_alias_for("Whole Milk", "3.25% Milk"));
+
     let sources = [
         ("Simple", "3.25% Milk"),
         ("Goff & Hartel", "Goff & Hartel 3% Milk"),
@@ -103,6 +114,8 @@ fn compare_specs_5_cream() {
 
 #[test]
 fn compare_specs_half_and_half() {
+    assert_true!(is_alias_for("Half and Half", "10% Cream"));
+
     let sources = [
         ("Simple", "10% Cream"),
         ("USDA", "USDA Half and Half Cream"),
@@ -126,7 +139,9 @@ fn compare_specs_half_and_half() {
 }
 
 #[test]
-fn compare_specs_light_cream() {
+fn compare_specs_18_cream() {
+    assert_true!(is_alias_for("Table Cream", "18% Cream"));
+
     let sources = [
         ("Simple", "18% Cream"),
         ("USDA", "USDA Light Cream"),
@@ -149,6 +164,8 @@ fn compare_specs_light_cream() {
 
 #[test]
 fn compare_specs_whipping_cream() {
+    assert_true!(is_alias_for("Whipping Cream", "35% Cream"));
+
     let sources = [
         ("Simple", "35% Cream"),
         ("Goff & Hartel", "Goff & Hartel 35% Cream"),
