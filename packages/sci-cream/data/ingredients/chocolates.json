@@ -127,5 +127,17 @@
     "category": "Chocolate",
     "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 16.67 },
     "comments": "100% cocoa solids from the label. From the nutrition facts table: 1g/6g fat => 16.67% cocoa butter, 0g sugars (https://www.ghirardelli.com/premium-baking-cocoa-100-unsweetened-cocoa-powder-6-bags-61703cs)."
+  },
+  {
+    "name": "Baker's Unsweetened Chocolate",
+    "category": "Chocolate",
+    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 53.3 },
+    "comments": "100% cacao solids from the ingredients list. From the nutrition facts table: 8g/15g fat => 53.3% cocoa butter, 0g sugars (https://www.kraftheinz.com/en-CA/bakers/products/00066188008405-100-pure-unsweetened-chocolate-baking-bar)."
+  },
+  {
+    "name": "Hershey's 100% Natural Unsweetened Cocoa Powder",
+    "category": "Chocolate",
+    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 10 },
+    "comments": "100% cocoa solids from the label. From the nutrition facts table: 0.5g/5g fat => 10% cocoa butter, 0g sugars (https://www.hersheyland.com/products/hersheys-cocoa-100-cacao-natural-unsweetened-8-oz-can.html)."
   }
 ]

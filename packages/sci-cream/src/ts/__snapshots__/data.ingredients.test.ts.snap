@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 258  (non-alias: 218, independent: 212)
+"total: 260  (non-alias: 220, independent: 214)
 
             0% Milk
             1% Milk
@@ -35,6 +35,7 @@ exports[`Embedded spec entries 1`] = `
             Angostura Orange Bitters
             Appleton Estate 8-year Rum
             Baileys Irish Cream
+            Baker's Unsweetened Chocolate
             Bourbon Whiskey
             Bulk Barn Whey Protein Isolate 90%
 [alias]     CMC
@@ -112,6 +113,7 @@ exports[`Embedded spec entries 1`] = `
 [alias]     Half and Half
             Hazelnut
 [alias]     Heavy Cream
+            Hershey's 100% Natural Unsweetened Cocoa Powder
             Honey
             Horizon Organic Heavy Whipping Cream
 [alias]     Ice Cream Stabilizer Blend

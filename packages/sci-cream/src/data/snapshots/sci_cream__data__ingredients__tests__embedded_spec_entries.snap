@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 258  (non-alias: 218, independent: 212)
+total: 260  (non-alias: 220, independent: 214)
 
             0% Milk
             1% Milk
@@ -36,6 +36,7 @@ total: 258  (non-alias: 218, independent: 212)
             Angostura Orange Bitters
             Appleton Estate 8-year Rum
             Baileys Irish Cream
+            Baker's Unsweetened Chocolate
             Bourbon Whiskey
             Bulk Barn Whey Protein Isolate 90%
 [alias]     CMC
@@ -113,6 +114,7 @@ total: 258  (non-alias: 218, independent: 212)
 [alias]     Half and Half
             Hazelnut
 [alias]     Heavy Cream
+            Hershey's 100% Natural Unsweetened Cocoa Powder
             Honey
             Horizon Organic Heavy Whipping Cream
 [alias]     Ice Cream Stabilizer Blend
