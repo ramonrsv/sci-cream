@@ -315,11 +315,17 @@ describe("Recipe Helper Functions", () => {
       expect(makeBalanceLocks(recipe, hasIngredient)).toEqual([]);
     });
 
-    it("skips a locked row that has no quantity to hold (stays free)", () => {
-      recipe.ingredientRows[0].quantity = undefined; // Whole Milk locked but no grams
+    it("skips a locked row with an unset (undefined) quantity (stays free)", () => {
+      recipe.ingredientRows[0].quantity = undefined; // Whole Milk locked but no amount set
       recipe.ingredientRows[0].locked = true;
       recipe.ingredientRows[1].locked = true; // Sucrose, 30
       expect(makeBalanceLocks(recipe, hasIngredient)).toEqual([[1, { Amount: 30 }]]);
+    });
+
+    it("emits { Amount: 0 } for a locked zero-amount row, pinning it out of the balance", () => {
+      recipe.ingredientRows[0].quantity = 0; // Whole Milk locked at 0 g
+      recipe.ingredientRows[0].locked = true;
+      expect(makeBalanceLocks(recipe, hasIngredient)).toEqual([[0, { Amount: 0 }]]);
     });
 
     it("emits an entry per locked row, preserving light-recipe order", () => {

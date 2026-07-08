@@ -354,6 +354,20 @@ describe("RecipeEditor", () => {
     expect(container.querySelector('[data-testid="recipe-row-0-lock"]')).toBeNull();
   });
 
+  it("shows a lock control on a zero-amount row (locking pins it out of the balance)", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<RecipeEditorWithSpy />);
+    await user.type(getIngredientNameElement(container, 0), "Whole Milk");
+    await user.type(getIngredientQuantityElement(container, 0), "0");
+
+    const lockButton = await screen.findByTestId("recipe-row-0-lock");
+    expect(lockButton).toHaveAttribute("aria-pressed", "false");
+    await user.click(lockButton);
+    await waitFor(() => {
+      expect(screen.getByTestId("recipe-row-0-lock")).toHaveAttribute("aria-pressed", "true");
+    });
+  });
+
   it("shows a lock control once a row has a valid ingredient and quantity, and toggles it", async () => {
     const user = userEvent.setup();
     const { container } = render(<RecipeEditorWithSpy />);

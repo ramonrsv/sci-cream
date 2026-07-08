@@ -470,6 +470,28 @@ mod tests {
     }
 
     #[test]
+    fn recipe_balance_locked_zero_amount_pins_line_out() {
+        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
+        let total: f64 = recipe.lines.iter().map(|line| line.amount).sum();
+
+        // A zero-amount lock pins the ingredient out: held at 0g while the rest rebalance.
+        let fructose_idx = recipe
+            .lines
+            .iter()
+            .position(|line| line.ingredient.name == "Fructose")
+            .unwrap();
+        let targets = [(CompKey::MilkFat.into(), 13.0), (CompKey::MSNF.into(), 10.0)];
+        let balanced = recipe
+            .balance(&targets, &[], None, &[(fructose_idx, Lock::Amount(0.0))])
+            .unwrap();
+
+        // The pinned line stays at 0g, and the freed mass is absorbed by the rest (total constant).
+        assert_eq_flt_test!(balanced.lines[fructose_idx].amount, 0.0);
+        let balanced_total: f64 = balanced.lines.iter().map(|line| line.amount).sum();
+        assert_eq_flt_test!(balanced_total, total);
+    }
+
+    #[test]
     fn recipe_balance_locked_line_exceeding_total_errors() {
         let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
         let vanilla_idx = recipe

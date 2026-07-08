@@ -21,6 +21,7 @@ import {
   clearRecipeIdentity,
   getRecipeIndices,
   isRecipeDirty,
+  isLockable,
   isRecipeEmpty,
   isRecipeRenamed,
   makeLightRecipe,
@@ -105,11 +106,6 @@ export function RecipeTable({
       </tbody>
     </table>
   );
-}
-
-/** Determine if a row is lockable: a resolved ingredient with an amount to hold. */
-function isLockable(row: IngredientRow, hasIngredient: (name: string) => boolean): boolean {
-  return hasIngredient(row.name) && !!row.quantity;
 }
 
 /**

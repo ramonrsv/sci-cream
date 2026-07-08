@@ -190,6 +190,18 @@ export function isLightRecipeEligible(
 }
 
 /**
+ * Returns `true` when a row can be locked for balancing: a known ingredient with a set amount.
+ * A zero amount qualifies (locking pins it out at 0 g); only an unset quantity does not. Shared by
+ * the editor lock control and {@link makeBalanceLocks}.
+ */
+export function isLockable(
+  row: IngredientRow,
+  hasIngredient: (name: string) => boolean,
+): row is IngredientRow & { quantity: number } {
+  return hasIngredient(row.name) && row.quantity !== undefined;
+}
+
+/**
  * Build a light recipe, i.e. a `[name, quantity]` array, from a `Recipe`, including only rows
  * eligible per {@link isLightRecipeEligible}. Rows with `quantity === undefined` are included
  * with a quantity of 0 — this lets the balancer fill them in via {@link makeBalancedRecipeUpdates}
@@ -208,15 +220,13 @@ export function makeLightRecipe(
 }
 
 /**
- * Build the {@link BalanceLocks} list for `Bridge.balance_recipe` / `validate_recipe_targets` from
- * a recipe's locked rows. Each entry is `[lightRecipeIndex, { Amount }]`, holding the row at its
- * current grams; the index is the row's position within {@link makeLightRecipe} (line identity is
- * positional), so both must apply the same {@link isLightRecipeEligible} filter.
+ * Build the {@link BalanceLocks} list for `Bridge.balance_recipe` / `validate_recipe_targets`: one
+ * `[lightRecipeIndex, { Amount }]` entry per locked, {@link isLockable} row. Indices are positions
+ * within {@link makeLightRecipe}, so this applies the same {@link isLightRecipeEligible} filter
+ * (line identity is positional). A locked zero-amount row pins the ingredient out at 0 g.
  *
- * `Amount` (absolute grams) is used over `Fraction` so a locked flavouring keeps its taste-chosen
- * amount even when the balancer resizes the batch to a pinned total.
- *
- * A lock needs grams to hold, so a locked row with no quantity contributes no lock — it stays free.
+ * `Amount` (absolute grams) over `Fraction` keeps a locked flavouring's taste-chosen grams when the
+ * balancer resizes the batch to a pinned total.
  */
 export function makeBalanceLocks(
   recipe: Recipe,
@@ -226,7 +236,9 @@ export function makeBalanceLocks(
   let lightIndex = 0;
   for (const row of recipe.ingredientRows) {
     if (!isLightRecipeEligible(row, hasIngredient)) continue;
-    if (row.locked && row.quantity) locks.push([lightIndex, { Amount: row.quantity }]);
+    if (row.locked && isLockable(row, hasIngredient)) {
+      locks.push([lightIndex, { Amount: row.quantity }]);
+    }
     lightIndex++;
   }
   return locks;
