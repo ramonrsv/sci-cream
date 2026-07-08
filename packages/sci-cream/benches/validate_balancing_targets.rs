@@ -15,7 +15,7 @@ pub(crate) fn bench_validate_balancing_targets(c: &mut Criterion) {
     let comps = REF_RECIPE
         .lines
         .iter()
-        .map(|line| line.ingredient.composition)
+        .map(|line| (line.ingredient.composition, None::<f64>))
         .collect::<Vec<_>>();
 
     let all_targets = get_all_balanceable_keys()

@@ -486,7 +486,7 @@ let priorities = vec![
     (AbsPAC.into(), High),
 ];
 
-let balanced = recipe.balance(&targets, &priorities, Some(1000.0))?;
+let balanced = recipe.balance(&targets, &priorities, Some(1000.0), &[])?;
 
 assert_recipe_matches(
     &balanced,

@@ -14,7 +14,13 @@ import {
 } from "../../dist/index";
 
 import { getMixProperty, propToCompKey, propToRatioKey } from "./prop-key";
-import { Priority, BalancingReport, BalanceTargets, BalancePriorities } from "./balancing";
+import {
+  Priority,
+  BalancingReport,
+  BalanceTargets,
+  BalancePriorities,
+  BalanceLocks,
+} from "./balancing";
 import { LightRecipe } from "./light-recipe";
 
 const lightRecipe: LightRecipe = [
@@ -253,6 +259,36 @@ test("Bridge.balance_recipe applies priorities", () => {
   const prioritizedError = Math.abs(prioritizedComp.get(CompKey.POD) - 0.5);
 
   expect(prioritizedError).toBeLessThan(defaultError);
+});
+
+test("Bridge.balance_recipe holds a locked line fixed", () => {
+  const bridge = new Bridge(make_seeded_db());
+
+  const targets: BalanceTargets = [
+    [compToPropKey(CompKey.MilkFat), 14],
+    [compToPropKey(CompKey.MSNF), 10],
+  ];
+
+  // Lock the Vanilla Extract line at its current amount: it must survive balancing untouched.
+  const vanillaIndex = lightRecipe.findIndex(([name]) => name === "Vanilla Extract");
+  const vanillaAmount = lightRecipe[vanillaIndex][1];
+  const locked: BalanceLocks = [[vanillaIndex, { Amount: vanillaAmount }]];
+
+  const balanced = bridge.balance_recipe(
+    lightRecipe,
+    targets,
+    [],
+    undefined,
+    locked,
+  ) as LightRecipe;
+
+  expect(balanced[vanillaIndex][0]).toEqual("Vanilla Extract");
+  expect(balanced[vanillaIndex][1]).toBeCloseTo(vanillaAmount, 6);
+
+  // The overall total is preserved; the free lines balanced around the locked one.
+  const originalTotal = lightRecipe.reduce((sum, line) => sum + line[1], 0);
+  const balancedTotal = balanced.reduce((sum, line) => sum + line[1], 0);
+  expect(balancedTotal).toBeCloseTo(originalTotal, 4);
 });
 
 test("Bridge.balance_recipe throws on unknown ingredient", () => {

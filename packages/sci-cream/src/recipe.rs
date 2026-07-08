@@ -8,14 +8,11 @@ use crate::{database::IngredientDatabase, resolution::IngredientGetter};
 use crate::{
     balancing::{BalanceKey, Priority, balance_compositions},
     composition::Composition,
-    error::Result,
+    error::{Error, Result},
     fpd::FPD,
     ingredient::Ingredient,
     properties::MixProperties,
 };
-
-#[cfg(doc)]
-use crate::error::Error;
 
 /// A simple `(String, f64)` tuple representing an ingredient name and its amount, in grams.
 ///
@@ -56,6 +53,59 @@ impl RecipeLine {
     pub const fn new(ingredient: Ingredient, amount: f64) -> Self {
         Self { ingredient, amount }
     }
+}
+
+/// How a locked recipe line is pinned during [`Recipe::balance`].
+///
+/// A lock fixes a recipe line rather than solving for it, while its composition still counts toward
+/// the balancing targets. The variant chooses what stays constant when the mix total changes.
+#[derive(Serialize, Deserialize, Clone, Copy, Debug, PartialEq)]
+pub enum Lock {
+    /// Hold the line at this fraction of the resulting mix. Grams scale with the total, so the
+    /// line's concentration is preserved across a change of total amount.
+    Fraction(f64),
+    /// Hold the line at this absolute amount, in grams; its concentration then varies with the
+    /// total. Divided by the mix total to get the fraction the solver holds.
+    Amount(f64),
+}
+
+/// Resolves per-line [`Lock`]s into fixed fractions of the mix, aligned to `line_count` lines:
+/// `Some(fraction)` for a locked line, `None` for a free one. A [`Lock::Amount`] is divided by
+/// `total_amount`; a [`Lock::Fraction`] is used as-is.
+///
+/// # Errors
+///
+/// Returns [`Error::InvalidBalancingTargets`] if a lock names an out-of-range or duplicated line
+/// index, or gives a [`Lock::Amount`] for a zero-total mix.
+pub(crate) fn resolve_line_locks(
+    line_count: usize,
+    total_amount: f64,
+    locked: &[(usize, Lock)],
+) -> Result<Vec<Option<f64>>> {
+    let mut fractions = vec![None; line_count];
+    for &(index, lock) in locked {
+        let slot = fractions.get_mut(index).ok_or_else(|| {
+            Error::InvalidBalancingTargets(format!(
+                "lock references line {index}, but the recipe has {line_count} lines"
+            ))
+        })?;
+        if slot.is_some() {
+            return Err(Error::InvalidBalancingTargets(format!("duplicate lock for line {index}")));
+        }
+        let fraction = match lock {
+            Lock::Fraction(fraction) => fraction,
+            Lock::Amount(amount) => {
+                if total_amount == 0.0 {
+                    return Err(Error::InvalidBalancingTargets(format!(
+                        "cannot lock line {index} to an absolute amount in a zero-total mix"
+                    )));
+                }
+                amount / total_amount
+            }
+        };
+        *slot = Some(fraction);
+    }
+    Ok(fractions)
 }
 
 /// A complete recipe, consisting of an optional name and a list of [`RecipeLine`]s.
@@ -184,28 +234,33 @@ impl Recipe {
     /// `total_amount` sets the total amount, in grams, of the balanced recipe; if `None`, the
     /// recipe's current total amount is used, keeping it constant.
     ///
+    /// `locked` pins chosen lines by index: `(i, lock)` fixes line `i` per its [`Lock`] (its
+    /// composition still counts toward the targets) while the rest balance around it. An empty
+    /// slice locks nothing. See `resolve_line_locks` for how a [`Lock`] maps to a mix fraction.
+    ///
     /// # Errors
     ///
-    /// Forwards any [`balance_compositions`] errors, including [`Error::InvalidBalancingTargets`]
-    /// if the targets are invalid (e.g. non-finite values) and any error if the solve fails.
+    /// Forwards any [`balance_compositions`] errors, and returns [`Error::InvalidBalancingTargets`]
+    /// for an out-of-range or duplicated lock index, a zero-total [`Lock::Amount`], or locked
+    /// fractions that exceed the whole mix.
     pub fn balance(
         self,
         targets: &[(BalanceKey, f64)],
         priorities: &[(BalanceKey, Priority)],
         total_amount: Option<f64>,
+        locked: &[(usize, Lock)],
     ) -> Result<Self> {
         let total_amount = total_amount.unwrap_or_else(|| self.lines.iter().map(|line| line.amount).sum());
+        let lock_fractions = resolve_line_locks(self.lines.len(), total_amount, locked)?;
 
-        let balanced = balance_compositions(
-            self.lines
-                .iter()
-                .map(|line| line.ingredient.composition)
-                .collect::<Vec<_>>()
-                .as_slice(),
-            targets,
-            None,
-            priorities,
-        )?;
+        let comps: Vec<(Composition, Option<f64>)> = self
+            .lines
+            .iter()
+            .zip(&lock_fractions)
+            .map(|(line, &lock)| (line.ingredient.composition, lock))
+            .collect();
+
+        let balanced = balance_compositions(&comps, targets, None, priorities)?;
 
         Ok(Self {
             name: self.name,
@@ -243,8 +298,10 @@ mod tests {
 
     use super::*;
     use crate::{
+        balancing::balance_compositions,
         composition::{CompKey, RatioKey},
         constants::COMPOSITION_EPSILON,
+        error::Error,
         fpd::FpdKey,
     };
 
@@ -318,7 +375,12 @@ mod tests {
         let recipe = Recipe::from_light_recipe(Some("Main Recipe".into()), &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
 
         let total_amount: f64 = recipe.lines.iter().map(|line| line.amount).sum();
-        let compositions: Vec<_> = recipe.lines.iter().map(|line| line.ingredient.composition).collect();
+        // Nothing locked, matching the `recipe.balance(.., &[])` call below.
+        let compositions: Vec<_> = recipe
+            .lines
+            .iter()
+            .map(|line| (line.ingredient.composition, None::<f64>))
+            .collect();
         let names: Vec<_> = recipe.lines.iter().map(|line| line.ingredient.name.clone()).collect();
 
         // Disparate targets with a priority on the conflicting key, so dropping or reordering any
@@ -331,7 +393,7 @@ mod tests {
         ];
         let priorities = [(CompKey::POD.into(), Priority::Critical)];
 
-        let balanced = recipe.balance(&targets, &priorities, None).unwrap();
+        let balanced = recipe.balance(&targets, &priorities, None, &[]).unwrap();
         let expected = balance_compositions(&compositions, &targets, None, &priorities).unwrap();
 
         assert_eq!(balanced.name, Some("Main Recipe".into()));
@@ -352,8 +414,8 @@ mod tests {
         assert_ne!(target_total, original_total);
 
         let targets = [(CompKey::MilkFat.into(), 16.0), (CompKey::MSNF.into(), 11.0)];
-        let default_balanced = recipe.clone().balance(&targets, &[], None).unwrap();
-        let scaled_balanced = recipe.balance(&targets, &[], Some(target_total)).unwrap();
+        let default_balanced = recipe.clone().balance(&targets, &[], None, &[]).unwrap();
+        let scaled_balanced = recipe.balance(&targets, &[], Some(target_total), &[]).unwrap();
 
         let scaled_total: f64 = scaled_balanced.lines.iter().map(|line| line.amount).sum();
         assert_eq_flt_test!(scaled_total, target_total);
@@ -378,10 +440,67 @@ mod tests {
         let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
 
         let balanced = recipe
-            .balance(&[(CompKey::MilkFat.into(), 12.0), (CompKey::MSNF.into(), 10.0)], &[], None)
+            .balance(&[(CompKey::MilkFat.into(), 12.0), (CompKey::MSNF.into(), 10.0)], &[], None, &[])
             .unwrap();
 
         assert_eq!(balanced.name, None);
+    }
+
+    #[test]
+    fn recipe_balance_holds_locked_line_amount() {
+        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
+        let total: f64 = recipe.lines.iter().map(|line| line.amount).sum();
+
+        // Lock the Vanilla Extract line: its amount must survive balancing untouched.
+        let vanilla_idx = recipe
+            .lines
+            .iter()
+            .position(|line| line.ingredient.name == "Vanilla Extract")
+            .unwrap();
+        let vanilla_amount = recipe.lines[vanilla_idx].amount;
+        let locked = [(vanilla_idx, Lock::Amount(vanilla_amount))];
+
+        let targets = [(CompKey::MilkFat.into(), 13.0), (CompKey::MSNF.into(), 10.0)];
+        let balanced = recipe.balance(&targets, &[], None, &locked).unwrap();
+
+        // The locked line keeps its grams, and `None` keeps the overall total constant.
+        assert_eq_flt_test!(balanced.lines[vanilla_idx].amount, vanilla_amount);
+        let balanced_total: f64 = balanced.lines.iter().map(|line| line.amount).sum();
+        assert_eq_flt_test!(balanced_total, total);
+    }
+
+    #[test]
+    fn recipe_balance_locked_line_exceeding_total_errors() {
+        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
+        let vanilla_idx = recipe
+            .lines
+            .iter()
+            .position(|line| line.ingredient.name == "Vanilla Extract")
+            .unwrap();
+        let vanilla_amount = recipe.lines[vanilla_idx].amount;
+
+        // A total below the locked line's amount makes its fixed fraction exceed the whole mix.
+        let locked = [(vanilla_idx, Lock::Amount(vanilla_amount))];
+        let result = recipe.balance(&[(CompKey::MilkFat.into(), 12.0)], &[], Some(1.0), &locked);
+        assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
+    }
+
+    #[test]
+    fn recipe_balance_locked_fraction_scales_with_total() {
+        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
+        let vanilla_idx = recipe
+            .lines
+            .iter()
+            .position(|line| line.ingredient.name == "Vanilla Extract")
+            .unwrap();
+
+        // A `Fraction` lock preserves concentration: at 1% of an explicit 2000g total the locked
+        // line comes out at 20g, regardless of its original amount.
+        let targets = [(CompKey::MilkFat.into(), 12.0)];
+        let balanced = recipe
+            .balance(&targets, &[], Some(2000.0), &[(vanilla_idx, Lock::Fraction(0.01))])
+            .unwrap();
+        assert_eq_flt_test!(balanced.lines[vanilla_idx].amount, 20.0);
     }
 
     #[test]

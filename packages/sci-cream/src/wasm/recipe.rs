@@ -10,7 +10,7 @@ use crate::{
     balancing::{BalanceKey, Priority, validate_balancing_targets},
     composition::Composition as RustComposition,
     ingredient::Ingredient as RustIngredient,
-    recipe::{OwnedLightRecipe, Recipe as RustRecipe},
+    recipe::{Lock, OwnedLightRecipe, Recipe as RustRecipe, resolve_line_locks},
     wasm::{Composition, Ingredient, JsResult, MixProperties},
 };
 
@@ -89,6 +89,18 @@ pub fn balancing_priorities_from_jsvalue(priorities: JsValue) -> JsResult<Vec<(B
     serde_wasm_bindgen::from_value::<Vec<(BalanceKey, Priority)>>(priorities).map_err(Into::into)
 }
 
+/// Create the per-line balancing locks from a JavaScript array of `[lineIndex, Lock]` pairs.
+///
+/// Each pair pins a recipe line by index per its [`Lock`] during balancing (see
+/// [`Recipe::balance`](RustRecipe::balance)).
+///
+/// # Errors
+///
+/// Returns a `serde::Error` if the input cannot be deserialized into a `Vec<(usize, Lock)>`.
+pub fn balancing_locks_from_jsvalue(locked: JsValue) -> JsResult<Vec<(usize, Lock)>> {
+    serde_wasm_bindgen::from_value::<Vec<(usize, Lock)>>(locked).map_err(Into::into)
+}
+
 #[wasm_bindgen]
 impl Recipe {
     /// Creates a new [`Recipe`] with the optional given name and list of [`RecipeLine`]s.
@@ -131,23 +143,29 @@ impl Recipe {
 
     /// WASM compatible wrapper for [`Recipe::balance`](RustRecipe::balance)
     ///
+    /// `locked` is an optional array of `[lineIndex, Lock]` pairs pinning lines during balancing.
+    ///
     /// # Errors
     ///
     /// Returns a `serde::Error` if the `JsValue` inputs cannot be deserialized into a
-    /// `(BalanceKey, f64)[]` or `(BalanceKey, Priority)[]`. Forwards any errors from internal
-    /// balancing calculations; see [`Recipe::balance`](RustRecipe::balance).
+    /// `(BalanceKey, f64)[]`, `(BalanceKey, Priority)[]`, or `[usize, Lock][]`. Forwards any errors
+    /// from internal balancing calculations; see [`Recipe::balance`](RustRecipe::balance).
     #[wasm_bindgen(js_name = "balance")]
     pub fn balance_wasm(
         &self,
         targets: Box<[JsValue]>,
         priorities: Box<[JsValue]>,
         total_amount: Option<f64>,
+        locked: Option<Box<[JsValue]>>,
     ) -> JsResult<Self> {
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
         let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
+        let locked = locked
+            .map(|l| balancing_locks_from_jsvalue(JsValue::from(l)))
+            .transpose()?;
 
         RustRecipe::from(self.clone())
-            .balance(&targets, &priorities, total_amount)
+            .balance(&targets, &priorities, total_amount, locked.as_deref().unwrap_or(&[]))
             .map(Into::into)
             .map_err(Into::into)
     }
@@ -157,22 +175,39 @@ impl Recipe {
     /// Validates `targets` and `priorities` against the compositions of this recipe's ingredients,
     /// returning a serialized [`BalancingReport`](crate::balancing::BalancingReport). Never errors
     /// on the validation itself — all issues (errors and warnings) are reported in the returned
-    /// object's `issues` array.
+    /// object's `issues` array. `locked` is an optional array of `[lineIndex, Lock]` pairs marking
+    /// the lines held fixed; omit it (or pass `null`) to lock nothing.
     ///
     /// # Errors
     ///
     /// Returns a `serde::Error` if the `JsValue` inputs cannot be deserialized into a
-    /// `(BalanceKey, f64)[]` or `(BalanceKey, Priority)[]`, or if the result cannot be serialized.
+    /// `(BalanceKey, f64)[]`, `(BalanceKey, Priority)[]`, or `[usize, Lock][]`, or if the result
+    /// cannot be serialized. Also errors on an out-of-range or duplicated lock index.
     #[wasm_bindgen(js_name = "validate_targets")]
     pub fn validate_targets_wasm(
         &self,
         targets: Box<[JsValue]>,
         priorities: Box<[JsValue]>,
         rel_tol: Option<f64>,
+        locked: Option<Box<[JsValue]>>,
     ) -> JsResult<JsValue> {
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
         let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
-        let comps: Vec<RustComposition> = self.lines.iter().map(|l| l.ingredient.composition.into()).collect();
+        let locked = locked
+            .map(|l| balancing_locks_from_jsvalue(JsValue::from(l)))
+            .transpose()?
+            .unwrap_or_default();
+
+        // Validation has no `total_amount`, so a `Lock::Amount` resolves against the current total.
+        let total: f64 = self.lines.iter().map(|l| l.amount).sum();
+        let lock_fractions = resolve_line_locks(self.lines.len(), total, &locked)?;
+
+        let comps: Vec<(RustComposition, Option<f64>)> = self
+            .lines
+            .iter()
+            .zip(&lock_fractions)
+            .map(|(line, &lock)| (line.ingredient.composition.into(), lock))
+            .collect();
 
         serde_wasm_bindgen::to_value(&validate_balancing_targets(&comps, &targets, &priorities, rel_tol))
             .map_err(Into::into)

@@ -12,7 +12,7 @@ use serde::{Deserialize, Serialize};
 use crate::{
     balancing::{
         keys::{BalanceKey, target_row_coeff, target_row_rhs},
-        validate::{BalancingReport, append_input_error_issues, is_unaffectable},
+        validate::{BalancingReport, append_input_error_issues, append_lock_error_issues, is_unaffectable},
     },
     composition::{CompKey, Composition, CompositionValues, FastComposition},
     constants::balancing::{
@@ -83,7 +83,7 @@ impl Priority {
 
 /// A balancing solver function pointer, e.g. [`balance_compositions_nnls`].
 pub(crate) type SolverFn = fn(
-    &[Composition],
+    &[(Composition, Option<f64>)],
     &[(BalanceKey, f64)],
     Option<Weighting>,
     &[(BalanceKey, f64)],
@@ -95,6 +95,12 @@ pub(crate) type SolverFn = fn(
 /// returning an [`Error::InvalidBalancingTargets`] if any is present (non-finite or negative target
 /// values, duplicate target keys, or duplicate priority keys), then solves with an automatically
 /// chosen solver. `weighting` sets the row weighting; `None` defaults to [`Weighting::Relative`].
+///
+/// Each entry pairs a composition with an optional **lock**: `(comp, Some(fraction))` holds it at
+/// `fraction` of the mix rather than solving for it, `(comp, None)` leaves it free. A locked
+/// composition still contributes to every target (folded in as a fixed offset) but is returned at
+/// that fraction unchanged — holding e.g. a flavouring constant while the rest balance around it.
+/// All-`None` is the ordinary balance; the result lists every input composition, in input order.
 ///
 /// Only error-severity issues gate the solve, as only they make it unsound. The warning-severity
 /// checks (e.g. unreachable or illogical targets) scan every composition without affecting the
@@ -111,19 +117,22 @@ pub(crate) type SolverFn = fn(
 ///
 /// # Errors
 ///
-/// Returns [`Error::InvalidBalancingTargets`] if the inputs contain an error-severity issue, or any
-/// error forwarded from the chosen solver if the underlying solve fails.
+/// Returns [`Error::InvalidBalancingTargets`] if the inputs contain an error-severity issue: a
+/// non-finite or negative target value, duplicate target or priority keys, or an invalid locked
+/// fraction or sum that exceeds 1. Also forwards any error from the chosen underlying solver.
 pub fn balance_compositions(
-    comps: &[Composition],
+    comps: &[(Composition, Option<f64>)],
     targets: &[(BalanceKey, f64)],
     weighting: Option<Weighting>,
     priorities: &[(BalanceKey, Priority)],
 ) -> Result<Vec<(Composition, f64)>> {
-    // Gate on the cheap error checks only; `balance_compositions` discards warnings, so the
-    // composition-scanning warning checks are wasted work (see `append_input_warning_issues`).
+    // Gate on the cheap error checks only; this path discards warnings, so the composition-scanning
+    // warning checks are wasted work (see `append_input_warning_issues`).
     let mut issues = Vec::new();
     append_input_error_issues(targets, priorities, &mut issues);
+    append_lock_error_issues(comps, &mut issues);
     BalancingReport { issues }.into_result()?;
+
     let priority_weights: Vec<(BalanceKey, f64)> = priorities
         .iter()
         .map(|&(key, priority)| (key, priority.weight()))
@@ -135,7 +144,7 @@ pub fn balance_compositions(
 ///
 /// Centralizes the choice of solver so it can evolve independently of callers. Currently always
 /// returns [`balance_compositions_nnls`], the non-negative solver used in production.
-const fn choose_solver(_comps: &[Composition], _targets: &[(BalanceKey, f64)]) -> SolverFn {
+const fn choose_solver(_comps: &[(Composition, Option<f64>)], _targets: &[(BalanceKey, f64)]) -> SolverFn {
     balance_compositions_nnls
 }
 
@@ -145,6 +154,7 @@ const fn choose_solver(_comps: &[Composition], _targets: &[(BalanceKey, f64)]) -
 /// `targets`, returning each composition with its amount, normalized to sum 1. `weighting` selects
 /// the weighting; `None` defaults to [`Weighting::Relative`] (relative error). `priority_weights`
 /// maps target keys to row-weight multipliers (missing keys default to 1); see [`row_weights`].
+/// Each `comps` carries an optional lock forwarded to the solve (see [`balance_with_reweighting`]).
 ///
 /// **Note**: This does not enforce non-negativity, so amounts may be negative. Use
 /// [`balance_compositions_nnls`] if non-negativity is required.
@@ -154,7 +164,7 @@ const fn choose_solver(_comps: &[Composition], _targets: &[(BalanceKey, f64)]) -
 /// Returns an error if the least squares problem cannot be solved, e.g. due to incompatible
 /// compositions and targets, numerical issues, etc.
 pub fn balance_compositions_nalgebra(
-    comps: &[Composition],
+    comps: &[(Composition, Option<f64>)],
     targets: &[(BalanceKey, f64)],
     weighting: Option<Weighting>,
     priority_weights: &[(BalanceKey, f64)],
@@ -168,13 +178,14 @@ pub fn balance_compositions_nalgebra(
 /// best matches `targets`, returning each composition with its amount, normalized to sum 1.
 /// `weighting` selects the weighting; `None` defaults to [`Weighting::Relative`] (relative error).
 /// `priority_weights` maps target keys to row-weight multipliers (default 1); see [`row_weights`].
+/// Each `comps` carries an optional lock forwarded to the solve (see [`balance_with_reweighting`]).
 ///
 /// # Errors
 ///
 /// Returns an error if the non-negative least squares problem cannot be solved, e.g. due to
 /// incompatible compositions and targets, numerical issues, etc.
 pub fn balance_compositions_nnls(
-    comps: &[Composition],
+    comps: &[(Composition, Option<f64>)],
     targets: &[(BalanceKey, f64)],
     weighting: Option<Weighting>,
     priority_weights: &[(BalanceKey, f64)],
@@ -244,11 +255,17 @@ fn debug_assert_targets_error_validated(targets: &[(BalanceKey, f64)]) {
 /// Targets are assumed pre-validated (finite, non-negative, no duplicate keys); Callers should
 /// route user input through [`balance_compositions`], which validates before solving.
 ///
+/// Each `comps` entry pairs a composition with an optional lock: `Some(fraction)` fixes it at that
+/// fraction of the mix, `None` leaves it free. A locked composition leaves the solved columns, its
+/// contribution moving to the target RHS so the free amounts sum to `1 - Σ locked` (see
+/// `make_vector_y`); its amount is returned unchanged, in input order. Lock fractions are assumed
+/// pre-validated (finite, non-negative, summing to <= 1) via [`balance_compositions`].
+///
 /// # Errors
 ///
 /// Forwards any error from `solve`.
 pub fn balance_with_reweighting(
-    comps: &[Composition],
+    comps: &[(Composition, Option<f64>)],
     targets: &[(BalanceKey, f64)],
     weighting: Option<Weighting>,
     priority_weights: &[(BalanceKey, f64)],
@@ -258,10 +275,36 @@ pub fn balance_with_reweighting(
     debug_assert_targets_error_validated(targets);
 
     let weighting = weighting.unwrap_or(Weighting::Relative);
-    // Snapshot once: the affectability filter and the matrix assembly below (the latter possibly
-    // twice, via the reweight pass) read these compositions by key (see `FastComposition`).
-    let fast: Vec<FastComposition> = comps.iter().map(Composition::to_fast).collect();
-    let targets = constrainable_targets(&fast, targets);
+
+    // A locked composition's amount is fixed, so it leaves the free-variable columns; the free
+    // amounts then fill `1 - locked_total`, with each locked contribution moved to the RHS below.
+    let locked_fraction = |index: usize| comps[index].1;
+    let locked_total: f64 = (0..comps.len()).filter_map(locked_fraction).sum();
+    let free_indices: Vec<usize> = (0..comps.len()).filter(|&i| locked_fraction(i).is_none()).collect();
+
+    // Snapshot free compositions once: they're read by key below (see `FastComposition`).
+    let free_fast: Vec<FastComposition> = free_indices.iter().map(|&i| comps[i].0.to_fast()).collect();
+
+    // Drop targets no *free* composition can move: they only add a constant to the objective.
+    let targets = constrainable_targets(&free_fast, targets);
+
+    // With every composition locked there are no free variables; the mix is fully determined.
+    if free_fast.is_empty() {
+        return Ok(reunite_locked(comps, &free_indices, &[]));
+    }
+
+    // Each target row's fixed locked contribution (`Σ locked fraction · row coefficient`),
+    // subtracted from the row's right-hand side so the free amounts solve for the remainder.
+    let locked_contributions: Vec<f64> = targets
+        .iter()
+        .map(|&(key, target)| {
+            (0..comps.len())
+                .filter_map(|i| {
+                    locked_fraction(i).map(|fraction| fraction * target_row_coeff(key, target, &comps[i].0))
+                })
+                .sum()
+        })
+        .collect();
 
     // Seed denominator estimates for the ratio targets, from the targets alone.
     let mut ratio_denominators: Vec<(BalanceKey, f64)> = targets
@@ -270,15 +313,20 @@ pub fn balance_with_reweighting(
         .collect();
 
     let rows = targets.len() + 1;
-    let cols = comps.len();
+    let cols = free_fast.len();
 
     let solve_once = |ratio_denominators: &[(BalanceKey, f64)]| -> Result<Vec<f64>> {
         let weights = row_weights(&targets, weighting, priority_weights, ratio_denominators);
-        solve(&make_matrix_a(&fast, &targets, &weights), &make_vector_y(&targets, &weights), rows, cols)
+        solve(
+            &make_matrix_a(&free_fast, &targets, &weights),
+            &make_vector_y(&targets, &weights, &locked_contributions, locked_total),
+            rows,
+            cols,
+        )
     };
 
-    let amounts = solve_once(&ratio_denominators)?;
-    let balanced = comps.iter().copied().zip(amounts).collect::<Vec<_>>();
+    let free_amounts = solve_once(&ratio_denominators)?;
+    let balanced = reunite_locked(comps, &free_indices, &free_amounts);
 
     // Conditional reweight pass: correct each ratio target's seed denominator against the value the
     // first solve actually achieved, and re-solve only if some seed was materially off.
@@ -298,12 +346,31 @@ pub fn balance_with_reweighting(
         }
 
         if needs_reweight {
-            let amounts = solve_once(&ratio_denominators)?;
-            return Ok(comps.iter().copied().zip(amounts).collect());
+            let free_amounts = solve_once(&ratio_denominators)?;
+            return Ok(reunite_locked(comps, &free_indices, &free_amounts));
         }
     }
 
     Ok(balanced)
+}
+
+/// Reassembles the full per-composition result in input order: locked compositions at their fixed
+/// fraction, free ones at their solved amount (`free_amounts`, aligned to `free_indices`).
+fn reunite_locked(
+    comps: &[(Composition, Option<f64>)],
+    free_indices: &[usize],
+    free_amounts: &[f64],
+) -> Vec<(Composition, f64)> {
+    let mut result: Vec<(Composition, f64)> = comps.iter().map(|&(comp, _)| (comp, 0.0)).collect();
+    for (index, &(_, lock)) in comps.iter().enumerate() {
+        if let Some(fraction) = lock {
+            result[index].1 = fraction;
+        }
+    }
+    for (&index, &amount) in free_indices.iter().zip(free_amounts) {
+        result[index].1 = amount;
+    }
+    result
 }
 
 /// Drops targets that no ingredient can affect — those whose row is exactly zero across `comps`.
@@ -448,18 +515,28 @@ fn make_matrix_a(comps: &[impl CompositionValues], targets: &[(BalanceKey, f64)]
 
 /// Helper function to construct the (row-weighted) vector Y for the least squares problem.
 ///
-/// Each element corresponds to a target value in `targets`, and the last element to the total sum
-/// constraint (1). Every element `i` is scaled by `weights[i]` (see [`row_weights`]).
+/// One element per target value plus a trailing total-sum element, each scaled by `weights[i]`
+/// (see [`row_weights`]). Each row's locked contribution is subtracted (`locked_contributions`,
+/// aligned to `targets`) and the sum row targets `1 - locked_total`, so the free amounts fill
+/// around the locks; with no locks both are zero, giving plain target values and a sum row of 1.
 ///
 /// \[16\]  // Milk Fat
 /// \[11\]  // MSNF
 ///  \[1\]  // Total sums to 100%
-fn make_vector_y(targets: &[(BalanceKey, f64)], weights: &[f64]) -> Vec<f64> {
+fn make_vector_y(
+    targets: &[(BalanceKey, f64)],
+    weights: &[f64],
+    locked_contributions: &[f64],
+    locked_total: f64,
+) -> Vec<f64> {
     targets
         .iter()
         .zip(weights)
-        .map(|(&(key, target), &weight)| target_row_rhs(key, target) * weight)
-        .chain(std::iter::once(weights[targets.len()]))
+        .zip(locked_contributions)
+        .map(|((&(key, target), &weight), &locked_contribution)| {
+            (target_row_rhs(key, target) - locked_contribution) * weight
+        })
+        .chain(std::iter::once((1.0 - locked_total) * weights[targets.len()]))
         .collect::<Vec<_>>()
 }
 

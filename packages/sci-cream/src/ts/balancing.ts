@@ -21,6 +21,18 @@ export type BalanceTargets = [PropKey, number][];
 /** A set of [PropKey, Priority] tuples representing the priority levels for balancing. */
 export type BalancePriorities = [PropKey, Priority][];
 
+/**
+ * How a locked recipe line is pinned, mirroring the Rust `Lock` enum: `{ Fraction }` holds it at
+ * that fraction of the resulting mix (concentration-preserving), `{ Amount }` at that many grams.
+ */
+export type Lock = { Fraction: number } | { Amount: number };
+
+/**
+ * Balancing locks: `[lineIndex, Lock]` pairs pinning lines while the rest balance around them (a
+ * locked line still counts toward the targets). For `balance_recipe` / `validate_recipe_targets`.
+ */
+export type BalanceLocks = [number, Lock][];
+
 /** Returns all keys from `get_all_balanceable_keys` as `PropKey`s */
 export function getAllBalanceableKeys(): PropKey[] {
   return get_all_balanceable_keys() as PropKey[];

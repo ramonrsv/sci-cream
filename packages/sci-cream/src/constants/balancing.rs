@@ -39,6 +39,12 @@ pub const SUM_CONSTRAINT_WEIGHT: f64 = 1.0e3;
 /// ratio target's homogeneous row, so a near-zero estimate yields a large-but-finite weight.
 pub const RATIO_DENOMINATOR_FLOOR: f64 = 1.0;
 
+/// Tolerance on the sum of locked fractions before it is reported as exceeding the whole mix.
+///
+/// Locked fractions are `amount / total`, so an all-locked mix sums to ~1; this small tolerance
+/// keeps floating-point noise at that boundary from spuriously flagging the mix as over-full.
+pub const LOCKED_TOTAL_TOLERANCE: f64 = 1.0e-6;
+
 /// Relative tolerance between a ratio target's seed and achieved denominator below which the second
 /// (reweighting) solve is skipped; see [`balance_with_reweighting`].
 pub const RATIO_REWEIGHT_TOLERANCE: f64 = 0.05;

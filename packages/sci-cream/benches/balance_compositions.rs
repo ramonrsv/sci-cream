@@ -12,7 +12,7 @@ pub(crate) fn bench_balance_main_recipe_compositions(c: &mut Criterion) {
     let comps = REF_RECIPE
         .lines
         .iter()
-        .map(|line| line.ingredient.composition)
+        .map(|line| (line.ingredient.composition, None::<f64>))
         .collect::<Vec<_>>();
 
     let targets = get_all_balanceable_keys()

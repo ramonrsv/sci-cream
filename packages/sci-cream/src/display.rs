@@ -449,6 +449,12 @@ impl fmt::Display for BalancingIssue {
                  so the balance is a best-fit compromise",
                 ingredient_count.saturating_sub(1),
             ),
+            Self::InvalidLockedFraction { index, fraction } => {
+                write!(f, "Locked ingredient at position {} has an invalid fraction ({})", index + 1, round2(*fraction))
+            }
+            Self::LockedFractionsExceedMix { locked_total } => {
+                write!(f, "Locked ingredients sum to {} of the mix, exceeding the whole (1.0)", round2(*locked_total))
+            }
         }
     }
 }

@@ -15,13 +15,14 @@ use crate::{
     },
     composition::{CompKey, Composition, CompositionValues, FastComposition},
     constants::balancing::{
-        HIGHER_ORDER_CANDIDATE_LIMIT, MAX_NUM_GROUP_SIZE_FOR_HIGHER_ORDER, MAX_NUM_GROUP_SIZE_FOR_TYPICAL,
+        HIGHER_ORDER_CANDIDATE_LIMIT, LOCKED_TOTAL_TOLERANCE, MAX_NUM_GROUP_SIZE_FOR_HIGHER_ORDER,
+        MAX_NUM_GROUP_SIZE_FOR_TYPICAL,
     },
     error::{Error, Result},
     validate::{are_equal_rel, is_subset, is_subset_rel, is_within_range_rel},
 };
 
-// Referenced only in doc comments (the validated entry point lives in `solve`).
+// Referenced only in doc comments (the validated entry points live in `solve`).
 #[cfg(doc)]
 use crate::{
     balancing::solve::{balance_compositions, constrainable_targets},
@@ -73,6 +74,24 @@ pub enum BalancingIssue {
     DuplicatePriority {
         /// The priority key that appears more than once.
         key: BalanceKey,
+    },
+    /// A locked composition's fraction is not finite (`NaN`/infinite) or is negative, so it cannot
+    /// be held at that fraction of the mix.
+    ///
+    /// Severity: [`Severity::Error`].
+    InvalidLockedFraction {
+        /// The index of the offending locked composition.
+        index: usize,
+        /// The offending fraction value.
+        fraction: f64,
+    },
+    /// The locked compositions' fractions sum above the whole mix (> 1), leaving no room for the
+    /// free compositions the solve would fill.
+    ///
+    /// Severity: [`Severity::Error`].
+    LockedFractionsExceedMix {
+        /// The sum of the locked fractions (infeasibly greater than 1).
+        locked_total: f64,
     },
     /// No composition in the palette contributes to this key (its row is entirely zero).
     ///
@@ -183,7 +202,9 @@ impl BalancingIssue {
             Self::NonFiniteTarget { .. }
             | Self::NegativeTarget { .. }
             | Self::DuplicateTarget { .. }
-            | Self::DuplicatePriority { .. } => Severity::Error,
+            | Self::DuplicatePriority { .. }
+            | Self::InvalidLockedFraction { .. }
+            | Self::LockedFractionsExceedMix { .. } => Severity::Error,
             Self::UnaffectableTarget { .. }
             | Self::UnreachableTarget { .. }
             | Self::StructuralViolation { .. }
@@ -216,7 +237,9 @@ impl BalancingIssue {
             Self::RatioInfeasibility {
                 numerator, denominator, ..
             } => [&[*denominator], numerator.as_slice()].concat(),
-            Self::OverDetermined { .. } => vec![],
+            Self::OverDetermined { .. }
+            | Self::InvalidLockedFraction { .. }
+            | Self::LockedFractionsExceedMix { .. } => vec![],
         }
     }
 
@@ -369,23 +392,36 @@ impl BalancingReport {
 /// one) solution that [`balance_compositions`] targets. `priorities` is the same list
 /// [`balance_compositions`] accepts; keys are checked (against duplicates and missing targets).
 ///
+/// Each entry carries an optional **lock** matching [`balance_compositions`]: `(comp, Some(f))`
+/// holds that composition at fraction `f`, `(comp, None)` leaves it free. This adds the lock
+/// input-error checks (a non-finite or negative fraction, or fractions summing above the mix).
+///
+/// **Note:** When any composition is locked, the palette-derived feasibility *warnings* (reachable
+/// range, dominance, ratio bands, over-determination) are not computed — they assume a fully free
+/// palette, so would mislead against a partially-locked one. The palette-independent error and
+/// structural checks are unaffected. Making the palette warnings lock-aware is a planned follow-up.
+///
 /// `rel_tol` is the relative tolerance for the warning checks only: a target off a band or
 /// structural equality by no more than `rel_tol` times the compared magnitudes is treated as
 /// feasible. `None` (or `0.0`) is exact; a consumer of display-rounded targets passes a small value
 /// matched to its precision so rounding a target does not raise a spurious warning.
 #[must_use]
 pub fn validate_balancing_targets(
-    comps: &[Composition],
+    comps: &[(Composition, Option<f64>)],
     targets: &[(BalanceKey, f64)],
     priorities: &[(BalanceKey, Priority)],
     rel_tol: Option<f64>,
 ) -> BalancingReport {
-    let mut issues = Vec::new();
-    append_input_error_issues(targets, priorities, &mut issues);
     // Snapshot each composition once so the repeated, nested affectability and ratio-band scans
     // below index a flat array instead of recomputing `Composition::get` (see `FastComposition`).
-    let fast: Vec<FastComposition> = comps.iter().map(Composition::to_fast).collect();
-    append_input_warning_issues(&fast, targets, priorities, rel_tol.unwrap_or(0.0), &mut issues);
+    let fast: Vec<FastComposition> = comps.iter().map(|&(comp, _)| comp.to_fast()).collect();
+
+    let locks_present = comps.iter().any(|&(_, lock)| lock.is_some());
+
+    let mut issues = Vec::new();
+    append_input_error_issues(targets, priorities, &mut issues);
+    append_lock_error_issues(comps, &mut issues);
+    append_input_warning_issues(&fast, targets, priorities, rel_tol.unwrap_or(0.0), locks_present, &mut issues);
 
     // Each check emits every issue it can detect, so the same underlying problem may surface as
     // several issues (e.g. a part/whole contradiction seen by both the structural and the palette
@@ -404,9 +440,8 @@ pub fn validate_balancing_targets(
 /// Appends the error-severity input issues: non-finite or negative target values, duplicate target
 /// keys, and duplicate priority keys.
 ///
-/// These are the only checks that gate the solve and they require no composition data, so
-/// [`balance_compositions`] runs just these and skips the costlier [`append_input_warning_issues`]
-/// that [`validate_balancing_targets`] adds for inspection.
+/// These and [`append_lock_error_issues`] are the cheap error checks that gate the solve, so
+/// [`balance_compositions`] runs them and skips the costly scan in [`validate_balancing_targets`].
 pub(crate) fn append_input_error_issues(
     targets: &[(BalanceKey, f64)],
     priorities: &[(BalanceKey, Priority)],
@@ -435,30 +470,63 @@ pub(crate) fn append_input_error_issues(
     }
 }
 
+/// Appends the error-severity lock issues: a locked fraction that is not finite or is negative, or
+/// locked fractions summing above the whole mix (> 1, within [`LOCKED_TOTAL_TOLERANCE`]).
+///
+/// Reads only each `comps` entry's lock (`Some(fraction)`); unlocked (`None`) entries are ignored.
+/// The lock half of the cheap solve-gating error checks; see [`append_input_error_issues`].
+pub(crate) fn append_lock_error_issues(comps: &[(Composition, Option<f64>)], issues: &mut Vec<BalancingIssue>) {
+    let mut locked_total = 0.0;
+    for (index, &(_, lock)) in comps.iter().enumerate() {
+        if let Some(fraction) = lock {
+            if !fraction.is_finite() || fraction < 0.0 {
+                issues.push(BalancingIssue::InvalidLockedFraction { index, fraction });
+            } else {
+                locked_total += fraction;
+            }
+        }
+    }
+
+    if locked_total > 1.0 + LOCKED_TOTAL_TOLERANCE {
+        issues.push(BalancingIssue::LockedFractionsExceedMix { locked_total });
+    }
+}
+
 /// Appends the warning-severity input issues: unaffectable or unreachable targets, infeasible
 /// target combinations (pairwise and additive dominance), and priorities without a target.
 ///
 /// Every check here scans the compositions, so these are best-effort diagnostics that do not gate
 /// the solve. [`balance_compositions`] skips them; only [`validate_balancing_targets`] runs them to
 /// surface the full report.
+///
+/// When `locks_present`, the palette-derived checks (unaffectable, reachability, dominance, ratio,
+/// over-determination) are skipped — they assume a free palette and would misreport a locked one
+/// (lock-aware versions are a follow-up); palette-independent structural and priority checks run.
 fn append_input_warning_issues(
     comps: &[impl CompositionValues],
     targets: &[(BalanceKey, f64)],
     priorities: &[(BalanceKey, Priority)],
     rel_tol: f64,
+    locks_present: bool,
     issues: &mut Vec<BalancingIssue>,
 ) {
-    // Checks unaffectable targets. Non-finite and negative values are skipped (reported as errors).
-    for &(key, target) in targets {
-        if is_finite_non_negative(target) && is_unaffectable(comps, key, target) {
-            issues.push(BalancingIssue::UnaffectableTarget { key });
+    if !locks_present {
+        // Checks unaffectable targets. Non-finite and negative values are skipped (errors).
+        for &(key, target) in targets {
+            if is_finite_non_negative(target) && is_unaffectable(comps, key, target) {
+                issues.push(BalancingIssue::UnaffectableTarget { key });
+            }
         }
+
+        append_reachability_issues(comps, targets, rel_tol, issues);
     }
 
-    append_reachability_issues(comps, targets, rel_tol, issues);
     append_structural_issues(targets, rel_tol, issues);
-    append_palette_ratio_issues(comps, targets, rel_tol, issues);
-    append_over_determination_issue(comps, targets, issues);
+
+    if !locks_present {
+        append_palette_ratio_issues(comps, targets, rel_tol, issues);
+        append_over_determination_issue(comps, targets, issues);
+    }
 
     // A priority whose key is not among the targets is a no-op: only target rows are weighted.
     // Duplicates are reported as errors elsewhere, so each distinct key is checked once.

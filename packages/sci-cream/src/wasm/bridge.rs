@@ -9,12 +9,13 @@ use crate::{
     error::Result,
     ingredient::{Category, Ingredient as RustIngredient, ResolveIntoIngredient},
     properties::MixProperties as RustMixProperties,
-    recipe::{LightRecipe, OwnedLightRecipe, Recipe as RustRecipe},
+    recipe::{LightRecipe, Lock, OwnedLightRecipe, Recipe as RustRecipe, resolve_line_locks},
     resolution::IngredientGetter,
     specs::entry::SpecEntry,
     wasm::{
-        BalancingReportView, Composition, Ingredient, JsResult, MixProperties, balancing_priorities_from_jsvalue,
-        balancing_targets_from_jsvalue, light_recipe_from_jsvalue, spec_entry_from_jsvalue,
+        BalancingReportView, Composition, Ingredient, JsResult, MixProperties, balancing_locks_from_jsvalue,
+        balancing_priorities_from_jsvalue, balancing_targets_from_jsvalue, light_recipe_from_jsvalue,
+        spec_entry_from_jsvalue,
     },
 };
 
@@ -101,7 +102,8 @@ impl Bridge {
     /// [`LightRecipe`] and returning an [`OwnedLightRecipe`]
     ///
     /// `total_amount` sets the total mass, in grams, of the balanced recipe; if `None`, the
-    /// recipe's current total amount is used, keeping it constant.
+    /// recipe's current total is used, keeping it constant. `locked` is a list of `(lineIdx, Lock)`
+    /// pairs pinning lines while the rest balance around them; an empty slice locks nothing.
     ///
     /// # Errors
     ///
@@ -116,31 +118,42 @@ impl Bridge {
         targets: &[(BalanceKey, f64)],
         priorities: &[(BalanceKey, Priority)],
         total_amount: Option<f64>,
+        locked: &[(usize, Lock)],
     ) -> Result<OwnedLightRecipe> {
         RustRecipe::from_light_recipe(None, recipe, &self.db)?
-            .balance(targets, priorities, total_amount)
+            .balance(targets, priorities, total_amount, locked)
             .map(Into::into)
     }
 
     /// Validates balancing targets against the compositions derived from `recipe`.
     ///
     /// Extracts compositions from the resolved recipe lines, then forwards to
-    /// [`validate_balancing_targets`]. Never errors on input validation — issues are reported in
-    /// the returned [`BalancingReport`].
+    /// [`validate_balancing_targets`]. `locked` is a list of `(lineIdx, Lock)` pairs marking the
+    /// lines held fixed (a [`Lock::Amount`] resolves against the recipe's current total); empty is
+    /// unlocked. Never errors on validation — issues are reported in the [`BalancingReport`].
     ///
     /// # Errors
     ///
     /// Returns [`Error::IngredientNotFound`] if any ingredient name in `recipe` is not in the DB.
-    /// Forwards any errors from [`Recipe::from_light_recipe`](RustRecipe::from_light_recipe).
+    /// Forwards any errors from [`Recipe::from_light_recipe`](RustRecipe::from_light_recipe), and
+    /// [`Error::InvalidBalancingTargets`] for an out-of-range or duplicated lock index.
     pub fn validate_recipe_targets(
         &self,
         recipe: &LightRecipe,
         targets: &[(BalanceKey, f64)],
         priorities: &[(BalanceKey, Priority)],
         rel_tol: Option<f64>,
+        locked: &[(usize, Lock)],
     ) -> Result<BalancingReport> {
         let rust_recipe = RustRecipe::from_light_recipe(None, recipe, &self.db)?;
-        let comps: Vec<RustComposition> = rust_recipe.lines.iter().map(|l| l.ingredient.composition).collect();
+        let total: f64 = rust_recipe.lines.iter().map(|l| l.amount).sum();
+        let lock_fractions = resolve_line_locks(rust_recipe.lines.len(), total, locked)?;
+        let comps: Vec<(RustComposition, Option<f64>)> = rust_recipe
+            .lines
+            .iter()
+            .zip(&lock_fractions)
+            .map(|(line, &lock)| (line.ingredient.composition, lock))
+            .collect();
         Ok(validate_balancing_targets(&comps, targets, priorities, rel_tol))
     }
 
@@ -272,11 +285,13 @@ impl Bridge {
 
     /// WASM compatible wrapper for [`Bridge::balance_recipe`]
     ///
+    /// `locked` is an optional array of `[lineIndex, Lock]` pairs pinning lines during balancing.
+    ///
     /// # Errors
     ///
     /// Returns a `serde::Error` if the `JsValue` inputs cannot be deserialized into an
-    /// [`OwnedLightRecipe`], `(BalanceKey, f64)[]`, or `(BalanceKey, Priority)[]`. Forwards any
-    /// errors from the forwarded-to method. See [`Bridge::balance_recipe`] for more details.
+    /// [`OwnedLightRecipe`], `(BalanceKey, f64)[]`, `(BalanceKey, Priority)[]`, or a `[usize,
+    /// Lock][]` locks list. Forwards any errors from the forwarded-to [`Bridge::balance_recipe`].
     #[wasm_bindgen(js_name = "balance_recipe")]
     pub fn balance_recipe_wasm(
         &self,
@@ -284,12 +299,16 @@ impl Bridge {
         targets: Box<[JsValue]>,
         priorities: Box<[JsValue]>,
         total_amount: Option<f64>,
+        locked: Option<Box<[JsValue]>>,
     ) -> JsResult<Box<[JsValue]>> {
         let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
         let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
+        let locked = locked
+            .map(|l| balancing_locks_from_jsvalue(JsValue::from(l)))
+            .transpose()?;
 
-        self.balance_recipe(&light_recipe, &targets, &priorities, total_amount)
+        self.balance_recipe(&light_recipe, &targets, &priorities, total_amount, locked.as_deref().unwrap_or(&[]))
             .map_err(Into::<JsValue>::into)?
             .into_iter()
             .map(|line| serde_wasm_bindgen::to_value(&line).map_err(Into::into))
@@ -303,11 +322,13 @@ impl Bridge {
     /// `severity` as string, the affected `keys`, and a human-readable `message`. This keeps the TS
     /// side from mirroring the [`BalancingIssue`] variants (see [`BalancingIssueView`]).
     ///
+    /// `locked` is an optional array of `[lineIndex, Lock]` pairs marking the lines held fixed.
+    ///
     /// # Errors
     ///
     /// Returns a `serde::Error` if the `JsValue` inputs cannot be deserialized into an
-    /// [`OwnedLightRecipe`], `(BalanceKey, f64)[]`, or `(BalanceKey, Priority)[]`. Forwards any
-    /// errors from the forwarded-to method. See [`Bridge::validate_recipe_targets`] for details.
+    /// [`OwnedLightRecipe`], `(BalanceKey, f64)[]`, `(BalanceKey, Priority)[]`, or a `[usize,
+    /// Lock][]` locks list. Forwards errors from forwarded-to [`Bridge::validate_recipe_targets`].
     #[wasm_bindgen(js_name = "validate_recipe_targets")]
     pub fn validate_recipe_targets_wasm(
         &self,
@@ -315,12 +336,16 @@ impl Bridge {
         targets: Box<[JsValue]>,
         priorities: Box<[JsValue]>,
         rel_tol: Option<f64>,
+        locked: Option<Box<[JsValue]>>,
     ) -> JsResult<JsValue> {
         let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
         let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
+        let locked = locked
+            .map(|l| balancing_locks_from_jsvalue(JsValue::from(l)))
+            .transpose()?;
 
-        self.validate_recipe_targets(&light_recipe, &targets, &priorities, rel_tol)
+        self.validate_recipe_targets(&light_recipe, &targets, &priorities, rel_tol, locked.as_deref().unwrap_or(&[]))
             .map(|report| serde_wasm_bindgen::to_value(&BalancingReportView::from(&report)).map_err(Into::into))?
     }
 
@@ -575,7 +600,7 @@ pub(crate) mod tests {
             (CompKey::TotalSolids.into(), 41.0),
         ];
 
-        let balanced = bridge.balance_recipe(&recipe, &targets, &[], None).unwrap();
+        let balanced = bridge.balance_recipe(&recipe, &targets, &[], None, &[]).unwrap();
 
         assert_eq!(balanced.len(), recipe.len());
         for (i, (name, amount)) in balanced.iter().enumerate() {
@@ -593,7 +618,9 @@ pub(crate) mod tests {
         }
 
         // An explicit `total_amount` scales the balanced recipe to that mass
-        let scaled = bridge.balance_recipe(&recipe, &targets, &[], Some(1000.0)).unwrap();
+        let scaled = bridge
+            .balance_recipe(&recipe, &targets, &[], Some(1000.0), &[])
+            .unwrap();
         let scaled_total: f64 = scaled.iter().map(|(_, g)| *g).sum();
         assert_eq_flt_test!(scaled_total, 1000.0);
 
@@ -611,6 +638,7 @@ pub(crate) mod tests {
             &[(CompKey::MilkFat.into(), 10.0)],
             &[],
             None,
+            &[],
         );
         assert!(
             matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")
@@ -630,8 +658,10 @@ pub(crate) mod tests {
         ];
         let priorities = [(CompKey::POD.into(), Priority::Critical)];
 
-        let default_balanced = bridge.balance_recipe(&recipe, &targets, &[], None).unwrap();
-        let prioritized_balanced = bridge.balance_recipe(&recipe, &targets, &priorities, None).unwrap();
+        let default_balanced = bridge.balance_recipe(&recipe, &targets, &[], None, &[]).unwrap();
+        let prioritized_balanced = bridge
+            .balance_recipe(&recipe, &targets, &priorities, None, &[])
+            .unwrap();
 
         let default_comp = bridge.calculate_recipe_composition(&default_balanced).unwrap();
         let prioritized_comp = bridge.calculate_recipe_composition(&prioritized_balanced).unwrap();
@@ -643,6 +673,36 @@ pub(crate) mod tests {
     }
 
     #[test]
+    fn bridge_balance_recipe_holds_locked_line() {
+        let bridge = Bridge::new(make_seeded_db());
+        let recipe = light_recipe_to_owned(LIGHT_RECIPE);
+
+        // Lock the Vanilla Extract line; balancing must leave its amount untouched.
+        let vanilla_idx = recipe.iter().position(|(name, _)| name == "Vanilla Extract").unwrap();
+        let vanilla_amount = recipe[vanilla_idx].1;
+        let locked = [(vanilla_idx, Lock::Amount(vanilla_amount))];
+
+        let targets = [(CompKey::MilkFat.into(), 14.0), (CompKey::MSNF.into(), 10.0)];
+        let balanced = bridge.balance_recipe(&recipe, &targets, &[], None, &locked).unwrap();
+
+        assert_eq!(balanced[vanilla_idx].0, recipe[vanilla_idx].0);
+        assert_eq_flt_test!(balanced[vanilla_idx].1, vanilla_amount);
+    }
+
+    #[test]
+    fn bridge_balance_recipe_locked_exceeding_total_errors() {
+        let bridge = Bridge::new(make_seeded_db());
+        let recipe = light_recipe_to_owned(LIGHT_RECIPE);
+        let vanilla_idx = recipe.iter().position(|(name, _)| name == "Vanilla Extract").unwrap();
+        let vanilla_amount = recipe[vanilla_idx].1;
+        let locked = [(vanilla_idx, Lock::Amount(vanilla_amount))];
+
+        // A total below the locked line's amount makes its fixed fraction exceed the whole mix.
+        let result = bridge.balance_recipe(&recipe, &[(CompKey::MilkFat.into(), 10.0)], &[], Some(3.0), &locked);
+        assert!(matches!(result, Err(crate::error::Error::InvalidBalancingTargets(_))));
+    }
+
+    #[test]
     fn bridge_validate_recipe_targets_clean() {
         let bridge = Bridge::new(make_seeded_db());
         let recipe = light_recipe_to_owned(LIGHT_RECIPE);
@@ -651,7 +711,9 @@ pub(crate) mod tests {
             (CompKey::MSNF.into(), 10.0),
             (CompKey::TotalSugars.into(), 17.0),
         ];
-        let report = bridge.validate_recipe_targets(&recipe, &targets, &[], None).unwrap();
+        let report = bridge
+            .validate_recipe_targets(&recipe, &targets, &[], None, &[])
+            .unwrap();
         assert_true!(report.is_empty());
     }
 
@@ -660,7 +722,9 @@ pub(crate) mod tests {
         let bridge = Bridge::new(make_seeded_db());
         let recipe = light_recipe_to_owned(LIGHT_RECIPE);
         let targets = [(CompKey::MilkFat.into(), -5.0)];
-        let report = bridge.validate_recipe_targets(&recipe, &targets, &[], None).unwrap();
+        let report = bridge
+            .validate_recipe_targets(&recipe, &targets, &[], None, &[])
+            .unwrap();
         assert_true!(report.has_errors());
         assert_eq!(report.issues.len(), 1);
         assert!(matches!(
@@ -677,7 +741,9 @@ pub(crate) mod tests {
         let bridge = Bridge::new(make_seeded_db());
         let recipe = light_recipe_to_owned(LIGHT_RECIPE);
         let targets = [(CompKey::MilkFat.into(), 10.0), (CompKey::MilkFat.into(), 12.0)];
-        let report = bridge.validate_recipe_targets(&recipe, &targets, &[], None).unwrap();
+        let report = bridge
+            .validate_recipe_targets(&recipe, &targets, &[], None, &[])
+            .unwrap();
         assert_true!(report.has_errors());
         assert!(matches!(report.errors().next().unwrap(), BalancingIssue::DuplicateTarget { .. }));
     }
@@ -689,7 +755,7 @@ pub(crate) mod tests {
         let targets = [(CompKey::MilkFat.into(), 10.0)];
         let priorities = [(CompKey::MSNF.into(), Priority::High)];
         let report = bridge
-            .validate_recipe_targets(&recipe, &targets, &priorities, None)
+            .validate_recipe_targets(&recipe, &targets, &priorities, None, &[])
             .unwrap();
         assert_false!(report.has_errors());
         assert!(matches!(report.warnings().next().unwrap(), BalancingIssue::PriorityWithoutTarget { .. }));
@@ -703,6 +769,7 @@ pub(crate) mod tests {
             &[(CompKey::MilkFat.into(), 10.0)],
             &[],
             None,
+            &[],
         );
         assert!(
             matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")

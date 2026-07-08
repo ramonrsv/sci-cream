@@ -18,10 +18,20 @@ use crate::{
     recipe::{OwnedLightRecipe, Recipe},
 };
 
+/// A solver over a plain unlocked composition list, matching the test-local shadows
+/// [`balance_compositions_nnls`] / [`balance_compositions_nalgebra`]. The crate's tuple-taking
+/// `SolverFn` covers locks; the tests run mostly unlocked side-by-side comparisons.
+type UnlockedSolverFn = fn(
+    &[Composition],
+    &[(BalanceKey, f64)],
+    Option<Weighting>,
+    &[(BalanceKey, f64)],
+) -> Result<Vec<(Composition, f64)>>;
+
 /// A labelled balancing run: a name, the solver to use, and the priority weights to apply. This
 /// lets several runs — different solvers and/or priority levels — be shown side-by-side in one
 /// report (an empty priority slice reproduces the unprioritized solve exactly).
-type LabeledRun = (&'static str, SolverFn, &'static [(BalanceKey, f64)]);
+type LabeledRun = (&'static str, UnlockedSolverFn, &'static [(BalanceKey, f64)]);
 
 /// Both solvers, unprioritized, paired for side-by-side quality reports.
 const BOTH_SOLVERS: &[LabeledRun] = &[
@@ -81,6 +91,60 @@ fn get_light_recipe_by_id(name: &str, author: Option<&str>) -> OwnedLightRecipe 
 /// Helper function to extract compositions from a list of ingredient names, via [`EMBEDDED_DB`]
 fn comps_from_names(names: &[&str]) -> Vec<Composition> {
     names.iter().map(|name| get_comp_by_name(name)).collect()
+}
+
+/// Pairs each composition with no lock, the balancing-input shape for an ordinary (unlocked) solve.
+fn unlocked(comps: &[Composition]) -> Vec<(Composition, Option<f64>)> {
+    comps.iter().map(|&comp| (comp, None)).collect()
+}
+
+/// Pairs compositions with an aligned lock list: `locked[i] == Some(f)` fixes composition `i` at
+/// fraction `f` of the mix (see [`balance_compositions`]).
+fn with_locks(comps: &[Composition], locked: &[Option<f64>]) -> Vec<(Composition, Option<f64>)> {
+    comps.iter().copied().zip(locked.iter().copied()).collect()
+}
+
+/// Test-local convenience wrapper (shadowing the crate function of the same name): the crate API
+/// takes `&[(Composition, Option<f64>)]`, but most tests balance a plain composition list with
+/// nothing locked, so this wraps that common case for readability. Lock-specific tests call
+/// [`crate::balancing::balance_compositions`] directly with an explicit lock list.
+fn balance_compositions(
+    comps: &[Composition],
+    targets: &[(BalanceKey, f64)],
+    weighting: Option<Weighting>,
+    priorities: &[(BalanceKey, Priority)],
+) -> Result<Vec<(Composition, f64)>> {
+    crate::balancing::balance_compositions(&unlocked(comps), targets, weighting, priorities)
+}
+
+/// Test-local shadow: forwards a plain unlocked `&[Composition]` to the crate solver.
+fn balance_compositions_nnls(
+    comps: &[Composition],
+    targets: &[(BalanceKey, f64)],
+    weighting: Option<Weighting>,
+    priority_weights: &[(BalanceKey, f64)],
+) -> Result<Vec<(Composition, f64)>> {
+    crate::balancing::balance_compositions_nnls(&unlocked(comps), targets, weighting, priority_weights)
+}
+
+/// Test-local shadow: forwards a plain unlocked `&[Composition]` to the crate solver.
+fn balance_compositions_nalgebra(
+    comps: &[Composition],
+    targets: &[(BalanceKey, f64)],
+    weighting: Option<Weighting>,
+    priority_weights: &[(BalanceKey, f64)],
+) -> Result<Vec<(Composition, f64)>> {
+    crate::balancing::balance_compositions_nalgebra(&unlocked(comps), targets, weighting, priority_weights)
+}
+
+/// Test-local convenience wrapper for unlocked [`crate::balancing::validate_balancing_targets`].
+fn validate_balancing_targets(
+    comps: &[Composition],
+    targets: &[(BalanceKey, f64)],
+    priorities: &[(BalanceKey, Priority)],
+    rel_tol: Option<f64>,
+) -> BalancingReport {
+    crate::balancing::validate_balancing_targets(&unlocked(comps), targets, priorities, rel_tol)
 }
 
 /// Runs a single issue generator and returns what it emits, before any deduplication. Lets a
@@ -1352,7 +1416,7 @@ fn balance_underdetermined_system_hits_target() {
     let comps = comps_from_names(DAIRY_ING); // 3 comps
     let targets = [(CompKey::MilkFat.into(), 10.0)]; // 1 target
 
-    let solvers: [SolverFn; 2] = [balance_compositions_nalgebra, balance_compositions_nnls];
+    let solvers: [UnlockedSolverFn; 2] = [balance_compositions_nalgebra, balance_compositions_nnls];
     for solve in solvers {
         assert_balance_compositions(&comps, &targets, solve, Epsilons::default(), &KeyCeiling::exact());
     }
@@ -2610,4 +2674,157 @@ fn ratio_band_is_none_when_denominator_never_positive() {
     // No cocoa source → CocoaSolids is zero everywhere, so the ratio is undefined.
     let comps = comps_from_names(DAIRY_ING);
     assert!(ratio_band(&comps, &[CompKey::CocoaButter], &[CompKey::CocoaSolids]).is_none());
+}
+
+// --- Locked-composition balancing ---------------------------------------------------------------
+
+/// Palette for the locked-balancing tests: three free dairy sources plus Vanilla Extract, the
+/// held-fixed ingredient standing in for one chosen outside the composition model.
+const LOCK_TEST_ING: &[&str] = &["Whole Milk", "Whipping Cream", "Skimmed Milk Powder", "Vanilla Extract"];
+
+/// Targets read off a feasible reference mix, so a lock at the reference fraction admits an
+/// exactly-determined solution — letting the assertions demand the targets be met exactly.
+fn lock_test_targets(comps: &[Composition]) -> ([(BalanceKey, f64); 2], [Option<f64>; 4]) {
+    let reference: Vec<(Composition, f64)> = comps.iter().copied().zip([0.60, 0.30, 0.094, 0.006]).collect();
+    let targets = [
+        (CompKey::MilkFat.into(), achieved_value(&reference, CompKey::MilkFat)),
+        (CompKey::MSNF.into(), achieved_value(&reference, CompKey::MSNF)),
+    ];
+    (targets, [None, None, None, Some(0.006)])
+}
+
+#[test]
+fn balance_holds_locked_composition_fixed() {
+    let comps = comps_from_names(LOCK_TEST_ING);
+    let (targets, locked) = lock_test_targets(&comps);
+
+    let balanced = crate::balancing::balance_compositions(&with_locks(&comps, &locked), &targets, None, &[]).unwrap();
+
+    // The locked composition keeps its exact fraction; amounts are non-negative and sum to 1.
+    assert_eq_flt_test!(balanced[3].1, 0.006);
+    let sum: f64 = balanced.iter().map(|(_, amount)| *amount).sum();
+    assert_abs_diff_eq!(sum, 1.0, epsilon = TESTS_EPSILON);
+    for (_, amount) in &balanced {
+        assert_gt!(*amount, 0.0);
+    }
+
+    // Targets are met — the locked flavouring's contribution is counted toward them, not ignored.
+    for (key, target) in &targets {
+        assert_eq_flt_test!(achieved_value(&balanced, *key), *target);
+    }
+}
+
+#[test]
+fn balance_all_none_locks_matches_unlocked() {
+    // An all-`None` lock slice locks nothing, so it must reproduce the plain unlocked solve.
+    let comps = comps_from_names(LOCK_TEST_ING);
+    let (targets, _) = lock_test_targets(&comps);
+
+    let baseline = balance_compositions(&comps, &targets, None, &[]).unwrap();
+    let all_none =
+        crate::balancing::balance_compositions(&with_locks(&comps, &[None, None, None, None]), &targets, None, &[])
+            .unwrap();
+
+    assert_eq!(baseline.len(), all_none.len());
+    for ((_, baseline_amount), (_, none_amount)) in baseline.iter().zip(&all_none) {
+        assert_eq_flt_test!(*none_amount, *baseline_amount);
+    }
+}
+
+#[test]
+fn balance_all_locked_returns_fixed_fractions() {
+    // With every composition locked there is nothing to solve; each keeps its fixed fraction.
+    let comps = comps_from_names(LOCK_TEST_ING);
+    let fractions = [0.5, 0.2, 0.2, 0.1];
+    let locked = fractions.map(Some);
+
+    let balanced = crate::balancing::balance_compositions(
+        &with_locks(&comps, &locked),
+        &[(CompKey::MilkFat.into(), 3.0)],
+        None,
+        &[],
+    )
+    .unwrap();
+
+    for (index, (_, amount)) in balanced.iter().enumerate() {
+        assert_eq_flt_test!(*amount, fractions[index]);
+    }
+}
+
+#[test]
+fn balance_locked_ratio_target_met_with_lock_held() {
+    // A ratio target (AbsPAC = TotalPAC : Water) alongside an extensive one, with the flavouring
+    // locked: the locked amount holds and both targets are met from the reference witness.
+    let comps = comps_from_names(&["Whole Milk", "Whipping Cream", "Sucrose", "Vanilla Extract"]);
+    let reference: Vec<(Composition, f64)> = comps.iter().copied().zip([0.55, 0.30, 0.144, 0.006]).collect();
+    let targets = [
+        (CompKey::TotalSolids.into(), achieved_value(&reference, CompKey::TotalSolids)),
+        (RatioKey::AbsPAC.into(), achieved_value(&reference, RatioKey::AbsPAC)),
+    ];
+    let locked = [None, None, None, Some(0.006)];
+
+    let balanced = crate::balancing::balance_compositions(&with_locks(&comps, &locked), &targets, None, &[]).unwrap();
+
+    assert_eq_flt_test!(balanced[3].1, 0.006);
+    for (key, target) in &targets {
+        // Ratio reweighting is approximate; a tenth of a percentage point is a comfortable margin.
+        assert_true!(balance_rel_error_pp(achieved_value(&balanced, *key), *target) < 0.1,);
+    }
+}
+
+#[test]
+fn balance_locked_fractions_exceeding_mix_is_error() {
+    let comps = comps_from_names(&["Whole Milk", "Whipping Cream"]);
+    let result = crate::balancing::balance_compositions(
+        &with_locks(&comps, &[Some(0.7), Some(0.6)]),
+        &[(CompKey::MilkFat.into(), 10.0)],
+        None,
+        &[],
+    );
+    assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
+}
+
+#[test]
+fn balance_negative_locked_fraction_is_error() {
+    let comps = comps_from_names(&["Whole Milk", "Whipping Cream"]);
+    let result = crate::balancing::balance_compositions(
+        &with_locks(&comps, &[Some(-0.1), None]),
+        &[(CompKey::MilkFat.into(), 10.0)],
+        None,
+        &[],
+    );
+    assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
+}
+
+#[test]
+fn validate_locked_fractions_exceeding_mix_reports_error() {
+    let comps = comps_from_names(&["Whole Milk", "Whipping Cream"]);
+    let report = crate::balancing::validate_balancing_targets(
+        &with_locks(&comps, &[Some(0.7), Some(0.6)]),
+        &[(CompKey::MilkFat.into(), 10.0)],
+        &[],
+        None,
+    );
+    assert_true!(report.has_errors());
+    assert!(
+        report
+            .errors()
+            .any(|issue| matches!(issue, BalancingIssue::LockedFractionsExceedMix { .. }))
+    );
+}
+
+#[test]
+fn validate_defers_palette_warnings_when_locked() {
+    // An out-of-reach MilkFat target warns for a free palette, but palette-derived warnings are
+    // deferred once any composition is locked, so none is reported here (errors still surface).
+    let comps = comps_from_names(&["Whole Milk", "Whipping Cream"]);
+    let targets = [(CompKey::MilkFat.into(), 50.0)];
+
+    let free = validate_balancing_targets(&comps, &targets, &[], None);
+    assert_true!(free.warnings().next().is_some(), "expected an unreachable-target warning without locks");
+
+    let locked =
+        crate::balancing::validate_balancing_targets(&with_locks(&comps, &[Some(0.1), None]), &targets, &[], None);
+    assert_true!(locked.warnings().next().is_none(), "palette warnings should be deferred under locks");
+    assert_false!(locked.has_errors());
 }

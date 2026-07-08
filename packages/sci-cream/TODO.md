@@ -36,6 +36,12 @@
 - [ ] Remove `Composition` functions for calculating ratios, `get_ratio` already handles that.
 - [ ] If all children of a key have a target, we can infer the parent's target and use it in checks.
 - [ ] Add a Nutella Sweetened Hazelnut Cocoa Spread ingredient; not very useful, but it's common.
+- [ ] Fold per-target priority into the balancing targets tuple
+      (`targets: &[(BalanceKey, f64, Option<Priority>)]`), dropping the parallel `priorities` list.
+      Removes `PriorityWithoutTarget` and `DuplicatePriority` (subsumed by `DuplicateTarget`).
+- [ ] Make the palette-derived balancing feasibility warnings (reachability, dominance, ratio-band,
+      over-determination) lock-aware; `validate_balancing_targets` currently skips them when any
+      composition is locked, as they assume a fully free palette.
 
 ## Backlog
 
