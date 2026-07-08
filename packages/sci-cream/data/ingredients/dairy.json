@@ -173,6 +173,18 @@
     "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^20]"
   },
   {
+    "name": "Goff & Hartel Sweetened Condensed Milk",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 8, "msnf": 23, "protein": 8.5, "sucrose": 42 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^20]"
+  },
+  {
+    "name": "Goff & Hartel Sweetened Condensed Skim Milk",
+    "category": "Dairy",
+    "DairySimpleSpec": { "fat": 0.5, "msnf": 30, "protein": 11.1, "sucrose": 42 },
+    "comments": "(Goff & Hartel, 2025, Table 3.2, p. 48)[^20]"
+  },
+  {
     "name": "Goff & Hartel Skim Milk Powder",
     "category": "Dairy",
     "DairySimpleSpec": { "fat": 0.7, "msnf": 96.3, "protein": 36 },

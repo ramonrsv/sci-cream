@@ -273,6 +273,7 @@ let dairy_spec = DairySimpleSpec {
     fat: 2.0,
     msnf: None,
     protein: None,
+    sucrose: None,
     lactose_free: None,
     solids_source: None,
 };

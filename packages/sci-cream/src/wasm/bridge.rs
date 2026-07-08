@@ -833,6 +833,7 @@ pub(crate) mod tests {
                 fat: -10.0,
                 msnf: None,
                 protein: None,
+                sucrose: None,
                 lactose_free: None,
                 solids_source: None,
             }
@@ -858,6 +859,7 @@ pub(crate) mod tests {
                     fat,
                     msnf: None,
                     protein: None,
+                    sucrose: None,
                     lactose_free: None,
                     solids_source: None,
                 }

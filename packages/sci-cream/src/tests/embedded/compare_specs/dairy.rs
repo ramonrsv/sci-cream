@@ -312,16 +312,19 @@ fn compare_specs_whole_evaporated_milk() {
 fn compare_specs_sweetened_condensed_milk() {
     let sources = [
         ("USDA", "USDA Sweetened Condensed Milk"),
+        ("Goff & Hartel", "Goff & Hartel Sweetened Condensed Milk"),
         ("Eagle Brand", "Eagle Brand Original Sweetened Condensed Milk"),
+        ("Carnation", "Carnation Sweetened Condensed Milk (US)"),
     ]
     .map(source_str_to_comp);
 
-    // Energy stands out at ~66 pp — high even for this suite — and likely flags a real
-    // disagreement in solids energy density: USDA's 321 kcal/100g vs Eagle Brand's
-    // 359 kcal/100g at similar TS. (Rodrigues, 2017)[^50] reports protein at 6.04g/100g,
-    // between Eagle Brand CA's 5.13g/100g (1g per 19.5g serving) and USDA's 7.91g/100g;
-    // Low-Fat Eagle Brand jumps to 10.2g/100g (1g -> 2g per serving on the label).
+    // Energy stands out at ~66 pp — high even for this suite — and likely flags a real disagreement
+    // in solids energy density: USDA's 321 kcal/100g vs Eagle Brand's 359 kcal/100g at similar TS.
     // @todo investigate which side has the more accurate energy density.
+    //
+    // (Rodrigues, 2017)[^50] reports protein at 6.04g/100g, Eagle Brand at 5.13g/100g (1g per 19.5g
+    // serving), USDA at 7.91g/100g, and Goff & Hartel at 8.5g/100g. Low-Fat Eagle Brand jumps to
+    // 10.2g/100g (1g -> 2g per serving), consistent with Goff & Hartel's 11.1g/100g for Skim Milk.
     let ceiling = KeyCeiling::new(10.0).with(CompKey::Energy, 66.0);
 
     assert_compositions_consistent(&sources, COMPARABLE_DAIRY_KEYS, &ceiling);

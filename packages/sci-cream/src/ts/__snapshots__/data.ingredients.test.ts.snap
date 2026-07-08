@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 256  (non-alias: 216, independent: 210)
+"total: 258  (non-alias: 218, independent: 212)
 
             0% Milk
             1% Milk
@@ -101,6 +101,8 @@ exports[`Embedded spec entries 1`] = `
             Goff & Hartel Evaporated Milk
             Goff & Hartel Skim Milk
             Goff & Hartel Skim Milk Powder
+            Goff & Hartel Sweetened Condensed Milk
+            Goff & Hartel Sweetened Condensed Skim Milk
             Goff & Hartel Whole Milk Powder
 [alias]     Grand Marnier
             Grand Marnier Cordon Rouge

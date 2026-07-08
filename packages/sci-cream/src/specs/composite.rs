@@ -484,6 +484,7 @@ pub(crate) mod tests {
                         fat: 40.0,
                         msnf: None,
                         protein: None,
+                        sucrose: None,
                         lactose_free: None,
                         solids_source: None,
                     })
@@ -519,6 +520,7 @@ pub(crate) mod tests {
             fat: 2.0,
             msnf: None,
             protein: None,
+            sucrose: None,
             lactose_free: None,
             solids_source: None,
         }
@@ -528,6 +530,7 @@ pub(crate) mod tests {
             fat: 40.0,
             msnf: None,
             protein: None,
+            sucrose: None,
             lactose_free: None,
             solids_source: None,
         }
@@ -553,6 +556,7 @@ pub(crate) mod tests {
             fat: 40.0,
             msnf: None,
             protein: None,
+            sucrose: None,
             lactose_free: None,
             solids_source: None,
         };
@@ -594,6 +598,7 @@ pub(crate) mod tests {
                     fat: 200.0,
                     msnf: None,
                     protein: None,
+                    sucrose: None,
                     lactose_free: None,
                     solids_source: None,
                 })

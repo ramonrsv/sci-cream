@@ -68,6 +68,16 @@ pub struct DairySimpleSpec {
     /// The detailed proteins breakdown is determined by [`solids_source`](Self::solids_source).
     #[serde(skip_serializing_if = "Option::is_none")]
     pub protein: Option<f64>,
+    /// Sucrose content by weight; optional, assumed to be zero if not specified.
+    ///
+    /// This accommodates dairy products with added sugars, e.g. sweetened condensed milk.
+    ///
+    /// Note that this is included under [`Solids::other`], not under [`Solids::milk`].
+    ///
+    /// See [`lactose_free`](Self::sucrose) for the possibility of different natural sugar
+    /// compositions in lactose-free products.
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub sucrose: Option<f64>,
     ///
     /// Whether the dairy product is lactose-free, which affects the detailed sugars composition
     ///
@@ -91,10 +101,12 @@ impl ToComposition for DairySimpleSpec {
             fat,
             msnf,
             protein,
+            sucrose,
             lactose_free,
             solids_source,
         } = *self;
 
+        let sucrose = sucrose.unwrap_or(0.0);
         let lactose_free = lactose_free.unwrap_or(false);
         let solids_source = solids_source.unwrap_or(SolidsSource::Milk);
 
@@ -112,12 +124,14 @@ impl ToComposition for DairySimpleSpec {
         let msnf = msnf.unwrap_or(calculated_msnf);
         let proteins = protein.unwrap_or(msnf * protein_in_snf);
 
-        verify_are_positive(&[fat, msnf, proteins])?;
-        verify_is_within_100_percent(fat + msnf)?;
+        verify_are_positive(&[fat, msnf, proteins, sucrose])?;
+        verify_is_within_100_percent(fat + msnf + sucrose)?;
         verify_is_subset(proteins, msnf, "proteins <= msnf")?;
 
         let lactose = msnf * lactose_in_snf;
         let dairy_sugars = make_dairy_sugars(lactose, lactose_free);
+        let other_sugars = Sugars::new().sucrose(sucrose);
+        let total_sugars = dairy_sugars.add(&other_sugars);
 
         let milk_solids = MilkSolids::new()
             .fats(
@@ -130,14 +144,16 @@ impl ToComposition for DairySimpleSpec {
             .proteins(make_milk_proteins(proteins, solids_source))
             .others_from_total(fat + msnf)?;
 
-        let pod = milk_solids.carbohydrates.to_pod()?;
+        let other_solids = SimpleSolids::new().carbohydrates(Carbohydrates::new().sugars(other_sugars));
+
+        let pod = total_sugars.to_pod()?;
         let pad = PAC::new()
-            .sugars(milk_solids.carbohydrates.to_pac()?)
+            .sugars(total_sugars.to_pac()?)
             .msnf_ws_salts(msnf * constants::pac::MSNF_WS_SALTS / 100.0);
 
         Composition::new()
-            .energy(milk_solids.energy()?)
-            .solids(Solids::new().milk(milk_solids))
+            .energy(milk_solids.energy()? + other_solids.energy()?)
+            .solids(Solids::new().milk(milk_solids).other(other_solids))
             .pod(pod)
             .pac(pad)
             .validate_into()
@@ -405,6 +421,7 @@ pub(crate) mod tests {
             fat: 0.0,
             msnf: None,
             protein: None,
+            sucrose: None,
             lactose_free: None,
             solids_source: None,
         }
@@ -477,6 +494,7 @@ pub(crate) mod tests {
             fat: 2.0,
             msnf: None,
             protein: None,
+            sucrose: None,
             lactose_free: None,
             solids_source: None,
         }
@@ -549,6 +567,7 @@ pub(crate) mod tests {
             fat: 3.25,
             msnf: None,
             protein: None,
+            sucrose: None,
             lactose_free: None,
             solids_source: None,
         }
@@ -620,6 +639,7 @@ pub(crate) mod tests {
             fat: 40.0,
             msnf: None,
             protein: None,
+            sucrose: None,
             lactose_free: None,
             solids_source: None,
         }
@@ -694,6 +714,7 @@ pub(crate) mod tests {
                 fat: 2.0,
                 msnf: None,
                 protein: None,
+                sucrose: None,
                 lactose_free: Some(true),
                 solids_source: None,
             }
@@ -769,6 +790,7 @@ pub(crate) mod tests {
                 fat: 1.0,
                 msnf: Some(96.0),
                 protein: None,
+                sucrose: None,
                 lactose_free: None,
                 solids_source: None,
             }
@@ -842,6 +864,7 @@ pub(crate) mod tests {
             fat: 26.0,
             msnf: Some(72.0),
             protein: None,
+            sucrose: None,
             lactose_free: None,
             solids_source: None,
         }
@@ -917,6 +940,7 @@ pub(crate) mod tests {
                 fat: 0.0,
                 msnf: Some(8.6),
                 protein: Some(3.2),
+                sucrose: None,
                 lactose_free: None,
                 solids_source: None,
             }
@@ -2326,37 +2350,49 @@ pub(crate) mod tests {
             ]
         });
 
-    #[test]
-    fn dairy_simple_spec_err_on_negative_field() {
-        let result_neg_fat = DairySimpleSpec {
-            fat: -1.0,
+    fn empty_dairy_simple_spec() -> DairySimpleSpec {
+        DairySimpleSpec {
+            fat: 0.0,
             msnf: None,
             protein: None,
+            sucrose: None,
             lactose_free: None,
             solids_source: None,
         }
-        .to_composition();
-        assert!(matches!(result_neg_fat, Err(Error::CompositionNotPositive(_))));
-
-        let result_neg_msnf = DairySimpleSpec {
-            fat: 3.25,
-            msnf: Some(-1.0),
-            protein: None,
-            lactose_free: None,
-            solids_source: None,
-        }
-        .to_composition();
-        assert!(matches!(result_neg_msnf, Err(Error::CompositionNotPositive(_))));
     }
 
     #[test]
-    fn dairy_simple_spec_err_when_fat_plus_msnf_exceeds_100() {
+    fn dairy_simple_spec_err_on_negative_field() {
+        let specs = [
+            DairySimpleSpec {
+                fat: -1.0,
+                ..empty_dairy_simple_spec()
+            },
+            DairySimpleSpec {
+                fat: 3.25,
+                msnf: Some(-1.0),
+                ..empty_dairy_simple_spec()
+            },
+            DairySimpleSpec {
+                fat: 3.25,
+                protein: Some(-1.0),
+                ..empty_dairy_simple_spec()
+            },
+        ];
+
+        for spec in specs {
+            let result = spec.to_composition();
+            assert!(matches!(result, Err(Error::CompositionNotPositive(_))));
+        }
+    }
+
+    #[test]
+    fn dairy_simple_spec_err_when_fat_plus_msnf_plus_sucrose_exceeds_100() {
         let result = DairySimpleSpec {
-            fat: 60.0,
-            msnf: Some(60.0),
-            protein: None,
-            lactose_free: None,
-            solids_source: None,
+            fat: 50.0,
+            msnf: Some(40.0),
+            sucrose: Some(15.0),
+            ..empty_dairy_simple_spec()
         }
         .to_composition();
         assert!(matches!(result, Err(Error::CompositionNotWithin100Percent(_))));
