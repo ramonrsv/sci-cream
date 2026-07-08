@@ -112,12 +112,13 @@ pub struct ChocolateSpec {
     ///
     /// If not specified, it is calculated from [`cacao_solids`](Self::cacao_solids) and the
     /// standard composition [`cacao::STD_COCOA_BUTTER_IN_CACAO_SOLIDS_OF_CHOCOLATE_NON_POWDER`].
+    /// It must be a subset of [`cacao_solids`](Self::cacao_solids) if both are specified.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub cocoa_butter: Option<f64>,
     /// Sugars content as a percentage of the product as a whole, usually from nutrition facts.
     ///
-    /// Assumed to be zero if not specified, as some products (e.g. Unsweetened Chocolate) and most
-    /// chocolate powders do not contain any added sugars.
+    /// Assumed to be zero if not specified, as some chocolate products (e.g. Unsweetened Chocolate,
+    /// 100% Dark Chocolate) and most chocolate powders do not contain any added sugars.
     #[serde(skip_serializing_if = "Option::is_none")]
     pub sugars: Option<f64>,
     /// Other solids content as a percentage of the product as a whole, usually from nutrition facts
@@ -198,6 +199,15 @@ pub(crate) mod tests {
         specs::IngredientSpec,
     };
 
+    fn empty_chocolate_spec() -> ChocolateSpec {
+        ChocolateSpec {
+            cacao_solids: 0.0,
+            cocoa_butter: None,
+            sugars: None,
+            other_solids: None,
+        }
+    }
+
     pub(crate) const ING_SPEC_CHOCOLATE_LINDT_70_DARK_CHOCOLATE_STR: &str = r#"{
       "name": "Lindt EXCELLENCE 70% Cacao Dark Chocolate",
       "category": "Chocolate",
@@ -216,7 +226,7 @@ pub(crate) mod tests {
                 cacao_solids: 70.0,
                 cocoa_butter: Some(40.0),
                 sugars: Some(30.0),
-                other_solids: None,
+                ..empty_chocolate_spec()
             }
             .into(),
         });
@@ -375,8 +385,7 @@ pub(crate) mod tests {
             spec: ChocolateSpec {
                 cacao_solids: 100.0,
                 cocoa_butter: Some(54.0),
-                sugars: None,
-                other_solids: None,
+                ..empty_chocolate_spec()
             }
             .into(),
         });
@@ -445,8 +454,7 @@ pub(crate) mod tests {
             spec: ChocolateSpec {
                 cacao_solids: 100.0,
                 cocoa_butter: Some(16.67),
-                sugars: None,
-                other_solids: None,
+                ..empty_chocolate_spec()
             }
             .into(),
         });
@@ -517,7 +525,7 @@ pub(crate) mod tests {
                 cacao_solids: 70.0,
                 cocoa_butter: None,
                 sugars: Some(30.0),
-                other_solids: None,
+                ..empty_chocolate_spec()
             }
             .into(),
         });
@@ -591,7 +599,7 @@ pub(crate) mod tests {
                 cacao_solids: 95.0,
                 cocoa_butter: None,
                 sugars: Some(5.0),
-                other_solids: None,
+                ..empty_chocolate_spec()
             }
             .into(),
         });
@@ -664,7 +672,7 @@ pub(crate) mod tests {
                 cacao_solids: 100.0,
                 cocoa_butter: None,
                 sugars: None,
-                other_solids: None,
+                ..empty_chocolate_spec()
             }
             .into(),
         });
@@ -761,26 +769,24 @@ pub(crate) mod tests {
             ChocolateSpec {
                 cacao_solids: -1.0,
                 cocoa_butter: Some(0.0),
-                sugars: None,
-                other_solids: None,
+                ..empty_chocolate_spec()
             },
             ChocolateSpec {
                 cacao_solids: 70.0,
                 cocoa_butter: Some(-1.0),
-                sugars: None,
-                other_solids: None,
+                ..empty_chocolate_spec()
             },
             ChocolateSpec {
                 cacao_solids: 70.0,
                 cocoa_butter: Some(40.0),
                 sugars: Some(-1.0),
-                other_solids: None,
+                ..empty_chocolate_spec()
             },
             ChocolateSpec {
                 cacao_solids: 70.0,
                 cocoa_butter: Some(40.0),
-                sugars: None,
                 other_solids: Some(-1.0),
+                ..empty_chocolate_spec()
             },
         ];
 
@@ -795,8 +801,7 @@ pub(crate) mod tests {
         let result = ChocolateSpec {
             cacao_solids: 40.0,
             cocoa_butter: Some(60.0),
-            sugars: None,
-            other_solids: None,
+            ..empty_chocolate_spec()
         }
         .to_composition();
         assert!(matches!(result, Err(Error::InvalidComposition(_))));
@@ -808,20 +813,19 @@ pub(crate) mod tests {
             ChocolateSpec {
                 cacao_solids: 50.0,
                 cocoa_butter: Some(20.0),
-                sugars: None,
-                other_solids: None,
+                ..empty_chocolate_spec()
             },
             ChocolateSpec {
                 cacao_solids: 70.0,
                 cocoa_butter: Some(40.0),
                 sugars: Some(35.0),
-                other_solids: None,
+                ..empty_chocolate_spec()
             },
             ChocolateSpec {
                 cacao_solids: 70.0,
                 cocoa_butter: Some(40.0),
-                sugars: None,
                 other_solids: Some(35.0),
+                ..empty_chocolate_spec()
             },
         ];
 

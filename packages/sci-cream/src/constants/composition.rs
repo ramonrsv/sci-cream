@@ -59,6 +59,16 @@ pub mod dairy {
     #[doc = include_str!("../../docs/references/index/20.md")]
     pub const STD_MIN_WATER_CONTENT_IN_MILK_POWDER: f64 = 0.02;
 
+    /// Percentage of butterfat typically found in whole milk powder
+    ///
+    /// (Goff & Hartel, 2025, Table 3.2, p. 48)[^20], (Parmalat Whole Milk Powder 26%, 2026,
+    /// PantryLot)[^120], (MMPA - Grade A Whole Milk Powder 26%, 2026, BulkMart)[^121]
+    #[expect(clippy::doc_markdown)] // _PantryLot_  and _BulkMart_ false positives
+    #[doc = include_str!("../../docs/references/index/20.md")]
+    #[doc = include_str!("../../docs/references/index/120.md")]
+    #[doc = include_str!("../../docs/references/index/121.md")]
+    pub const STD_BUTTERFAT_IN_WHOLE_MILK_POWDER: f64 = 0.26;
+
     /// Percentage of saturated fats typical of milk fat (Board on Agriculture.., 1974, p. 203)[^12]
     #[doc = include_str!("../../docs/references/index/12.md")]
     pub const STD_SATURATED_FAT_IN_MILK_FAT: f64 = 0.65;
@@ -66,7 +76,7 @@ pub mod dairy {
     /// Percentage of trans fats typically found in milk fat
     ///
     /// (Milk, whole, 3.25% milkfat, with added Vitamin D, 2019)[^103]
-    #[allow(clippy::doc_markdown)] // _FoodData_ false positive
+    #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/103.md")]
     pub const STD_TRANS_FAT_IN_MILK_FAT: f64 = 0.035;
 }
@@ -85,7 +95,7 @@ pub mod egg {
     ///
     /// (Clarke, 2004, p. 49)[^4], (Goff & Hartel, 2025, p. 48)[^20], (FoodData Central, 2019,
     /// "Eggs, Grade A, Large, egg yolk")[^100].
-    #[allow(clippy::doc_markdown)] // _FoodData_ false positive
+    #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/4.md")]
     #[doc = include_str!("../../docs/references/index/20.md")]
     #[doc = include_str!("../../docs/references/index/100.md")]
@@ -94,7 +104,7 @@ pub mod egg {
     /// Percentage of protein typically found in egg white
     ///
     /// (FoodData Central, 2019, "Eggs, Grade A, Large, egg white")[^118]
-    #[allow(clippy::doc_markdown)] // _FoodData_ false positive
+    #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/118.md")]
     pub const STD_PROTEIN_IN_EGG_WHITE: f64 = 0.11;
 
@@ -103,7 +113,7 @@ pub mod egg {
     /// Sources list the total solids content of egg yolks to be between 48-51% by weight; 50% is a
     /// reasonable average of these values (Clarke, 2004, p. 49)[^4], (Goff & Hartel, 2025, p.
     /// 48)[^20], (FoodData Central, 2019, "Eggs, Grade A, Large, egg yolk")[^100].
-    #[allow(clippy::doc_markdown)] // _FoodData_ false positive
+    #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/4.md")]
     #[doc = include_str!("../../docs/references/index/20.md")]
     #[doc = include_str!("../../docs/references/index/100.md")]
@@ -112,7 +122,7 @@ pub mod egg {
     /// Percentage of solids typically found in egg white
     ///
     /// (FoodData Central, 2019, "Eggs, Grade A, Large, egg white")[^118]
-    #[allow(clippy::doc_markdown)] // _FoodData_ false positive
+    #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/118.md")]
     pub const STD_SOLIDS_IN_EGG_WHITE: f64 = 0.14;
 
@@ -123,7 +133,7 @@ pub mod egg {
     /// 48)[^20], (FoodData Central, 2019, "Eggs, Grade A, Large, egg yolk")[^100].
     ///
     /// Consistent with [`STD_PROTEIN_IN_EGG_YOLK`] / [`STD_SOLIDS_IN_EGG_YOLK`].
-    #[allow(clippy::doc_markdown)] // _FoodData_ false positive
+    #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/4.md")]
     #[doc = include_str!("../../docs/references/index/20.md")]
     #[doc = include_str!("../../docs/references/index/100.md")]
@@ -134,7 +144,7 @@ pub mod egg {
     /// (FoodData Central, 2019, "Eggs, Grade A, Large, egg white")[^118]
     ///
     /// Consistent-ish with [`STD_PROTEIN_IN_EGG_WHITE`] / [`STD_SOLIDS_IN_EGG_WHITE`].
-    #[allow(clippy::doc_markdown)] // _FoodData_ false positive
+    #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/118.md")]
     pub const STD_PROTEIN_IN_EGG_WHITE_SOLIDS: f64 = 0.78;
 
@@ -182,7 +192,7 @@ pub mod egg {
     /// 49)[^4], (Goff & Hartel, 2025, p. 84)[^20], (Manley, 2000, 12.3.1 Lecithin)[^68], (Zhao, et
     /// al., 2023, 1. Introduction)[^69], (Palacios, et al., 2020)[^70], (FoodData Central, 2019,
     /// "Eggs, Grade A, Large, egg yolk")[^100]
-    #[allow(clippy::doc_markdown)] // _FoodData_ false positive
+    #[expect(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/4.md")]
     #[doc = include_str!("../../docs/references/index/20.md")]
     #[doc = include_str!("../../docs/references/index/68.md")]
@@ -199,7 +209,6 @@ pub mod nut {
     /// This value is an average compiled from the nutrient profiles of various nuts in the _USDA
     /// FoodData Central_ database (Nuts, almonds, 2019)[^102], (Nuts, pistachio nuts, raw,
     /// 2019)[^112], (Nuts, hazelnuts or filberts, 2019)[^113].
-    #[allow(clippy::doc_markdown)] // _FoodData_ false positive
     #[doc = include_str!("../../docs/references/index/102.md")]
     #[doc = include_str!("../../docs/references/index/112.md")]
     #[doc = include_str!("../../docs/references/index/113.md")]
@@ -219,7 +228,6 @@ pub mod nut {
 /// (Lindt 70% Cacao Dark Chocolate, 2025)[^107], (Lindt 85% Cacao Dark Chocolate, 2025)[^108],
 /// (Lindt 95% Cacao Dark Chocolate, 2025)[^109], (Lindt 100% Cacao Dark Chocolate, 2025)[^110],
 /// (Ghirardelli 100% Unsweetened Cocoa Powder, 2025)[^111].
-#[allow(clippy::doc_markdown)] // _FoodData_ false positive
 #[doc = include_str!("../../docs/references/index/104.md")]
 #[doc = include_str!("../../docs/references/index/105.md")]
 #[doc = include_str!("../../docs/references/index/106.md")]

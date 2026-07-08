@@ -38,6 +38,10 @@
 
 [^117]: Sweetened condensed milk. (2026). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/2758990/nutrients>
 
-[^118]: Eggs, Grade A, Large, egg white. (2019) In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/747997/nutrients>
+[^118]: Eggs, Grade A, Large, egg white. (2019). In _USDA FoodData Central - Foundation_. <https://fdc.nal.usda.gov/food-details/747997/nutrients>
 
-[^119]: Dulce de Leche. (2019) In _USDA FoodData Central - SR Legacy_. <https://fdc.nal.usda.gov/food-details/173461/nutrients>
+[^119]: Dulce de Leche. (2019). In _USDA FoodData Central - SR Legacy_. <https://fdc.nal.usda.gov/food-details/173461/nutrients>
+
+[^120]: Parmalat Whole Milk Powder 26%. (2026). In _PantryLot_. <https://www.pantrylot.com/products/whole-milk-powder-26-25-kg>
+
+[^121]: MMPA - Grade A Whole Milk Powder 26%. (2026). In _BulkMart_. <https://bulkmart.ca/products/mmpa-grade-a-whole-milk-powder-26-25-kg>
