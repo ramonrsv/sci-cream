@@ -24,7 +24,7 @@
     "comments": "USDA FoodData Central - SR Legacy - Vanilla extract, imitation, no alcohol (https://fdc.nal.usda.gov/food-details/172236/nutrients)."
   },
   {
-    "name": "Lemon Zest",
+    "name": "USDA Raw Lemon Peel",
     "category": "Flavouring",
     "FruitSpec": {
       "water": 81.6,
@@ -37,8 +37,9 @@
     },
     "comments": "USDA FoodData Central - SR Legacy - Lemon peel, raw (https://fdc.nal.usda.gov/food-details/167749/nutrients). 'Total Sugars' is listed as 4.17g with no breakdown, so assume equal parts glucose, fructose, and sucrose."
   },
+  { "alias": "Lemon Zest", "for": "USDA Raw Lemon Peel" },
   {
-    "name": "Fresh Peppermint",
+    "name": "USDA Fresh Peppermint",
     "category": "Flavouring",
     "FruitSpec": {
       "water": 78.6,
@@ -51,8 +52,9 @@
     },
     "comments": "USDA FoodData Central - SR Legacy - Peppermint, fresh (https://fdc.nal.usda.gov/food-details/173474/nutrients)."
   },
+  { "alias": "Fresh Peppermint", "for": "USDA Fresh Peppermint" },
   {
-    "name": "Fresh Spearmint",
+    "name": "USDA Fresh Spearmint",
     "category": "Flavouring",
     "FruitSpec": {
       "water": 85.6,
@@ -65,6 +67,7 @@
     },
     "comments": "USDA FoodData Central - SR Legacy - Spearmint, fresh (https://fdc.nal.usda.gov/food-details/173475/nutrients)."
   },
+  { "alias": "Fresh Spearmint", "for": "USDA Fresh Peppermint" },
   {
     "name": "Nielsen-Massey Pure Vanilla Extract",
     "category": "Flavouring",
@@ -90,6 +93,8 @@
     "CompositeSpec": { "ByPercentage": [["Maltodextrin 10 DE", 100]] },
     "comments": "Ingredients: Maltodextrin (a modified cornstarch), Vanilla Extract. 20kcal, 5g total carbohydrate, 0g sugar per 1 tsp (5ml). \"...alcohol and sugar-free powder...\". Sources: https://www.nielsen-massey.nl/consumer/products-pure-vanilla-powder.php, https://nielsenmassey.com/products/pure-vanilla-powder/. Stated alcohol- and sugar-free, so modeled as 100% Maltodextrin. 5g of carbohydrates at ~4kcal/g reproduces the 20kcal per serving - disregarding the powder's low bulk density and volume-based serving size."
   },
+  { "alias": "Vanilla Bean Paste", "for": "Nielsen-Massey Pure Vanilla Bean Paste" },
+  { "alias": "Vanilla Powder", "for": "Nielsen-Massey Pure Vanilla Powder" },
   {
     "name": "Nielsen-Massey Pure Almond Extract",
     "category": "Flavouring",
@@ -162,5 +167,19 @@
   { "alias": "Orange Essential Oil", "for": "Essential Oil" },
   { "alias": "Lavender Essential Oil", "for": "Essential Oil" },
   { "alias": "Eucalyptus Essential Oil", "for": "Essential Oil" },
-  { "alias": "Rose Essential Oil", "for": "Essential Oil" }
+  { "alias": "Rose Essential Oil", "for": "Essential Oil" },
+  {
+    "name": "USDA Instant Coffee Powder",
+    "category": "Flavouring",
+    "FruitSpec": {
+      "water": 3.1,
+      "energy": 353,
+      "protein": 12.2,
+      "fat": 0.5,
+      "carbohydrate": 75.4,
+      "sugars": {}
+    },
+    "comments": "USDA FoodData Central - SR Legacy - Beverages, coffee, instant, regular, powder (https://fdc.nal.usda.gov/food-details/171893/nutrients)."
+  },
+  { "alias": "Instant Coffee", "for": "USDA Instant Coffee Powder" }
 ]

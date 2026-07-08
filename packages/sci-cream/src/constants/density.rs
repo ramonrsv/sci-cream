@@ -750,6 +750,9 @@ mod tests {
         assert_eq_flt_test!(super::ethanol_solution_density(0.0), WATER);
         assert_eq_flt_test!(super::ethanol_solution_density(100.0), ETHANOL);
         assert_eq_flt_test!(super::ethanol_solution_density(33.0), 0.94860);
+        assert_eq_flt_test!(super::ethanol_solution_density(35.0), 0.94494);
+        assert_eq_flt_test!(super::ethanol_solution_density(40.0), 0.93518);
+        assert_eq_flt_test!(super::ethanol_solution_density(43.0), 0.92897);
     }
 
     #[test]

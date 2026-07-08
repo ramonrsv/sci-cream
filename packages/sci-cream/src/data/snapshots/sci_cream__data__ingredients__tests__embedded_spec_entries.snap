@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 249  (non-alias: 215, independent: 209)
+total: 256  (non-alias: 216, independent: 210)
 
             0% Milk
             1% Milk
@@ -76,8 +76,8 @@ total: 249  (non-alias: 215, independent: 209)
             Fairlife Fat Free Ultra-Filtered Lactose-Free Milk
             Fairlife Whole Ultra-Filtered Lactose-Free Milk
             Fancy Molasses
-            Fresh Peppermint
-            Fresh Spearmint
+[alias]     Fresh Peppermint
+[alias]     Fresh Spearmint
             Fructose
             Gelatin
             Ghirardelli 100% Unsweetened Cocoa Powder
@@ -114,6 +114,7 @@ total: 249  (non-alias: 215, independent: 209)
             Honey
             Horizon Organic Heavy Whipping Cream
 [alias]     Ice Cream Stabilizer Blend
+[alias]     Instant Coffee
             Inulin Powder
             Invert Sugar
             Iota Carrageenan
@@ -141,7 +142,7 @@ total: 249  (non-alias: 215, independent: 209)
 [alias]     Lemon Essential Oil
 [alias]     Lemon Extract
             Lemon Juice
-            Lemon Zest
+[alias]     Lemon Zest
             Lindt EXCELLENCE 100% Cacao Dark Chocolate
             Lindt EXCELLENCE 70% Cacao Dark Chocolate
             Lindt EXCELLENCE 85% Cacao Dark Chocolate
@@ -223,16 +224,20 @@ total: 249  (non-alias: 215, independent: 209)
             USDA Dried Whole Egg
             USDA Fat-Free (Skim) Milk
             USDA Fat-Free Evaporated Milk
+            USDA Fresh Peppermint
+            USDA Fresh Spearmint
             USDA Frozen Pasteurized Raw Egg White
             USDA Frozen Pasteurized Raw Egg Yolk
             USDA Frozen Pasteurized Raw Whole Egg
             USDA Half and Half Cream
             USDA Heavy Cream
             USDA Imitation Vanilla Extract
+            USDA Instant Coffee Powder
             USDA Light Cream
             USDA No-Alcohol Imitation Vanilla Extract
             USDA Raw Egg White
             USDA Raw Egg Yolk
+            USDA Raw Lemon Peel
             USDA Raw Whole Egg
             USDA Sweetened Condensed Milk
             USDA Unsweetened Cocoa Powder
@@ -243,7 +248,9 @@ total: 249  (non-alias: 215, independent: 209)
 [composite] Underbelly Eggless Ice Cream Stabilizer Blend
 [composite] Underbelly General Purpose Stabilizer Blend
 [composite] Underbelly Sorbet Stabilizer Blend
+[alias]     Vanilla Bean Paste
             Vanilla Extract
+[alias]     Vanilla Powder
             Vodka
             Water
 [alias]     Whey Isolate

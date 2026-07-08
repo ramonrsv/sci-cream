@@ -1,5 +1,39 @@
 [
   {
+    "name": "Chocolate Ice Cream (pre-evaporation)",
+    "author": "Ice Cream Science",
+    "recipe": [
+      ["Double Cream", 417],
+      ["Skim Milk", 319],
+      ["Skimmed Milk Powder", 46],
+      ["Sucrose", 140],
+      ["Egg Yolk", 78],
+      ["Cocoa Powder, 17% Fat", 30],
+      ["70% Dark Chocolate", 50],
+      ["Salt", 3],
+      ["Vanilla Extract", 5],
+      ["Instant Coffee", 1]
+    ],
+    "comments": "Source: https://www.icecreamscience.com/blog/chocolate-ice-cream-recipe, visited 2026-07-07. The preparation instructions ask for 15% of the dairy, sugar, and egg yolk mix to be evaporated out, which works out to 150g of water being subtracted from the mix. This recipe, as written, does not account for that, so it is not an accurate representation of the final mix composition. Use this recipe if you are following the preparation instructions that include evaporation. For the accurate post-evaporation composition, or if using a cooking method that limits evaporation, such as sous vide, refer to the \"Chocolate Ice Cream (post-evaporation)\" recipe. The recipe states '1 tsp vanilla extract', which is ~5g. The recipe asks for '3g whole coffee beans' to be heated with the mix and then strained out. This has a negligible effect on the mix composition; I suspect that it's equivalent to a tiny amount of instant coffee, so I have modeled it as 1g of instant coffee."
+  },
+  {
+    "name": "Chocolate Ice Cream (post-evaporation)",
+    "author": "Ice Cream Science",
+    "recipe": [
+      ["Double Cream", 417],
+      ["Skim Milk", 153],
+      ["Skimmed Milk Powder", 62],
+      ["Sucrose", 140],
+      ["Egg Yolk", 78],
+      ["Cocoa Powder, 17% Fat", 30],
+      ["70% Dark Chocolate", 50],
+      ["Salt", 3],
+      ["Vanilla Extract", 5],
+      ["Instant Coffee", 1]
+    ],
+    "comments": "Source: https://www.icecreamscience.com/blog/chocolate-ice-cream-recipe, visited 2026-07-07. The preparation instructions ask for 15% of the dairy, sugar, and egg yolk mix in the original recipe to be evaporated out, which works out to 150g of water being subtracted from the mix. This is a modified version of the original recipe, balanced to account for the 150g of evaporation, and so has an accurate post-evaporation composition - adding [\"Water\", 150] to this recipe results in an equivalent composition to the original. Use this recipe directly if using a cooking method that limits evaporation, such as sous vide, otherwise refer to the \"Chocolate Ice Cream (pre-evaporation)\" recipe and follow the preparation instructions. The recipe states '1 tsp vanilla extract', which is ~5g. The recipe asks for '3g whole coffee beans' to be heated with the mix and then strained out. This has a negligible effect on the mix composition; I suspect that it's equivalent to a tiny amount of instant coffee, so I have modeled it as 1g of instant coffee."
+  },
+  {
     "name": "Ninja Creami NC301 Easy No-Cook Tres Leches (US)",
     "author": "Ice Cream Science",
     "recipe": [
