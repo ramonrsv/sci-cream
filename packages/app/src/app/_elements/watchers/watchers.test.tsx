@@ -23,6 +23,7 @@ import {
   type LightRecipe,
   type BalanceTargets,
   type BalancePriorities,
+  type BalanceLocks,
 } from "@workspace/sci-cream";
 
 import { makeMockRecipe, makeMockRecipeContext, setKeyFilterSelect } from "@/__tests__/unit/util";
@@ -1348,6 +1349,39 @@ describe("WatchersView Balance", () => {
     const priorities = balanceSpy.mock.calls[0][2];
     expect(priorities).toContainEqual([String(MSNF), Priority.Critical]);
     expect(priorities).toHaveLength(1);
+  });
+
+  it("forwards a locked row to balance_recipe as [lightIndex, { Amount }]", () => {
+    localStorage.setItem(
+      STORAGE_KEYS.watcherTargets,
+      JSON.stringify({ [MSNF]: 10, [TOTAL_SOLIDS]: 41 }),
+    );
+    const main = makeMockRecipe(RecipeID.Main);
+    // Lock the second ingredient (Whipping Cream, 215 g); every mock row is eligible, so its
+    // light-recipe index matches its row index.
+    main.ingredientRows[1].locked = true;
+    const lockedAmount = main.ingredientRows[1].quantity;
+
+    const balanceSpy = vi.fn<
+      (
+        recipe: unknown,
+        targets: BalanceTargets,
+        priorities: BalancePriorities,
+        total: number | undefined,
+        locked: BalanceLocks,
+      ) => LightRecipe
+    >(() => []);
+    const spyBridge = {
+      has_ingredient: () => true,
+      balance_recipe: balanceSpy,
+      validate_recipe_targets: () => ({ issues: [] }),
+    } as unknown as WasmBridge;
+
+    render(<WatchersView main={main} wasmBridge={spyBridge} onApplyBalancedMain={vi.fn()} />);
+    fireEvent.click(screen.getByTestId("watchers-balance-button"));
+
+    expect(balanceSpy).toHaveBeenCalledTimes(1);
+    expect(balanceSpy.mock.calls[0][4]).toEqual([[1, { Amount: lockedAmount }]]);
   });
 
   it("surfaces a balance error and does not invoke onApplyBalancedMain when the bridge throws", () => {

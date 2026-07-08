@@ -2,7 +2,15 @@
 
 import { ReactNode, useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
-import { ClipboardCopy, ClipboardPaste, GitBranchPlus, Save, Trash } from "lucide-react";
+import {
+  ClipboardCopy,
+  ClipboardPaste,
+  GitBranchPlus,
+  Lock,
+  LockOpen,
+  Save,
+  Trash,
+} from "lucide-react";
 
 import {
   IngredientRow,
@@ -99,6 +107,11 @@ export function RecipeTable({
   );
 }
 
+/** Determine if a row is lockable: a resolved ingredient with an amount to hold. */
+function isLockable(row: IngredientRow, hasIngredient: (name: string) => boolean): boolean {
+  return hasIngredient(row.name) && !!row.quantity;
+}
+
 /**
  * Bare editable recipe table: a 3-column grid (Ingredient | Qty (g) | Qty (%)) with `<input>`
  * fields for the ingredient name and quantity, and a computed percentage cell. Renders every
@@ -114,14 +127,23 @@ export function RecipeEditorTable({
   hasIngredient,
   onNameChange,
   onQuantityChange,
+  onLockToggle,
+  onLockAllToggle,
 }: {
   recipe: Recipe;
   validIngredients: string[];
   hasIngredient: (name: string) => boolean;
   onNameChange: (rowIdx: number, name: string) => void;
   onQuantityChange: (rowIdx: number, qtyStr: string) => void;
+  /** Toggle a row's balancing lock (whether the balancer holds it fixed at its current amount) */
+  onLockToggle: (rowIdx: number) => void;
+  /** Lock or unlock every lockable row at once (the balancing "select all" for the totals row) */
+  onLockAllToggle: () => void;
 }) {
   const mixTotal = recipe.mixTotal;
+
+  const lockableRows = recipe.ingredientRows.filter((row) => isLockable(row, hasIngredient));
+  const allLocked = lockableRows.length > 0 && lockableRows.every((row) => row.locked);
 
   return (
     <>
@@ -138,7 +160,34 @@ export function RecipeEditorTable({
             <th className="table-col-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
           </tr>
           <tr className="h-6.25">
-            <td className="table-total px-1 text-center">Total</td>
+            <td className="table-total px-1">
+              <div className="flex items-center">
+                <span className="flex-1 text-center">Total</span>
+                {/* Lock-all: pins every lockable row, or unlocks them once all are locked. */}
+                {recipe.index === 0 && lockableRows.length > 0 && (
+                  <button
+                    type="button"
+                    className={`action-button mr-0.5 flex shrink-0 items-center px-0.5 py-0 ${
+                      allLocked ? "" : "opacity-60"
+                    }`}
+                    onClick={onLockAllToggle}
+                    aria-pressed={allLocked}
+                    title={
+                      allLocked
+                        ? "All ingredients held while balancing (click to unlock all)"
+                        : "Hold every ingredient at its current amount while balancing (click to lock all)"
+                    }
+                    data-testid="recipe-lock-all"
+                  >
+                    {allLocked ? (
+                      <Lock size={COMPONENT_ACTION_ICON_SIZE - 4} />
+                    ) : (
+                      <LockOpen size={COMPONENT_ACTION_ICON_SIZE - 4} />
+                    )}
+                  </button>
+                )}
+              </div>
+            </td>
             <td className="table-total comp-val px-3.75">{mixTotal ? mixTotal.toFixed(0) : ""}</td>
             <td className="table-total comp-val px-1">{mixTotal ? "100   " : ""}</td>
           </tr>
@@ -146,20 +195,48 @@ export function RecipeEditorTable({
         <tbody>
           {/* @todo The ingredient/input rows are not respecting < h-6/[25px]; not sure why yet */}
           {recipe.ingredientRows.map((row) => (
-            <tr key={row.index} className="h-6.25">
-              <td className="table-inner-cell">
-                <input
-                  type="search"
-                  value={row.name}
-                  onChange={(e) => onNameChange(row.index, e.target.value)}
-                  className={`table-fillable-input whitespace-nowrap ${
-                    row.name === "" || hasIngredient(row.name)
-                      ? "focus:ring-blue-400"
-                      : "-outline-offset-2 outline-red-400 outline-solid focus:ring-red-400"
-                  } w-full px-2`}
-                  placeholder=""
-                  list="valid-ingredients"
-                />
+            <tr key={row.index} className="group h-6.25">
+              <td className="table-inner-cell max-w-0">
+                <div className="flex items-center">
+                  <input
+                    type="search"
+                    value={row.name}
+                    onChange={(e) => onNameChange(row.index, e.target.value)}
+                    className={`table-fillable-input whitespace-nowrap ${
+                      row.name === "" || hasIngredient(row.name)
+                        ? "focus:ring-blue-400"
+                        : "-outline-offset-2 outline-red-400 outline-solid focus:ring-red-400"
+                    } min-w-0 flex-1 px-2`}
+                    placeholder=""
+                    list="valid-ingredients"
+                  />
+                  {/* Lock toggle, shown only for a resolved ingredient with an amount to hold.
+                      Unlocked, it reveals on row hover/focus; locked, it always shows. */}
+                  {recipe.index === 0 && isLockable(row, hasIngredient) && (
+                    <button
+                      type="button"
+                      className={`action-button mr-0.5 flex shrink-0 items-center px-0.5 py-0 ${
+                        row.locked
+                          ? ""
+                          : "opacity-0 group-hover:opacity-60 focus-visible:opacity-60"
+                      }`}
+                      onClick={() => onLockToggle(row.index)}
+                      aria-pressed={!!row.locked}
+                      title={
+                        row.locked
+                          ? "Locked — held at this amount while balancing (click to unlock)"
+                          : "Unlocked — the balancer may change this amount (click to lock)"
+                      }
+                      data-testid={`recipe-row-${row.index}-lock`}
+                    >
+                      {row.locked ? (
+                        <Lock size={COMPONENT_ACTION_ICON_SIZE - 4} />
+                      ) : (
+                        <LockOpen size={COMPONENT_ACTION_ICON_SIZE - 4} />
+                      )}
+                    </button>
+                  )}
+                </div>
               </td>
               <td className="table-inner-cell">
                 <input
@@ -280,6 +357,27 @@ export function RecipeEditor({
     updateRecipe(currentRecipeIdx, {
       rows: [makeUpdatedRow(getRow(currentRecipeIdx, index), undefined, qtyStr, wasmResources)],
     });
+  };
+
+  /**
+   * Toggle a row's balancing lock. Not a content edit — it doesn't cancel continuous-balance mode,
+   * so flipping a lock while Auto is on re-balances immediately with the new constraint.
+   */
+  const toggleCurrentIngredientRowLock = (index: number) => {
+    const row = getRow(currentRecipeIdx, index);
+    updateRecipe(currentRecipeIdx, { rows: [{ ...row, locked: !row.locked }] });
+  };
+
+  /**
+   * Lock or unlock every lockable row at once (a resolved ingredient with an amount). Locks all
+   * unless they are already all locked, in which case it unlocks. Does not disable auto-balance.
+   */
+  const toggleAllIngredientRowLocks = () => {
+    const lockable = allRecipes[currentRecipeIdx].ingredientRows.filter((row) =>
+      isLockable(row, wasmResources.hasIngredient),
+    );
+    const lockNext = !lockable.every((row) => row.locked);
+    updateRecipe(currentRecipeIdx, { rows: lockable.map((row) => ({ ...row, locked: lockNext })) });
   };
 
   /**
@@ -628,6 +726,8 @@ export function RecipeEditor({
           hasIngredient={wasmResources.hasIngredient}
           onNameChange={updateCurrentIngredientRowName}
           onQuantityChange={updateCurrentIngredientRowQuantity}
+          onLockToggle={toggleCurrentIngredientRowLock}
+          onLockAllToggle={toggleAllIngredientRowLocks}
         />
       </div>
     </div>

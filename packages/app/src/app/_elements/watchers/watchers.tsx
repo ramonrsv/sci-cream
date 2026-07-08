@@ -27,7 +27,13 @@ import {
   X,
 } from "lucide-react";
 
-import { Recipe, RecipeSummary, isRecipeEmpty, makeLightRecipe } from "@/lib/recipe";
+import {
+  Recipe,
+  RecipeSummary,
+  isRecipeEmpty,
+  makeBalanceLocks,
+  makeLightRecipe,
+} from "@/lib/recipe";
 import {
   KeyFilter,
   KeyFilterSelect,
@@ -75,6 +81,7 @@ import {
   type LightRecipe,
   type BalanceTargets,
   type BalancePriorities,
+  type BalanceLocks,
 } from "@workspace/sci-cream";
 
 import { WatcherIssues, KeyIssue } from "@/app/_elements/watchers/watcher-issues";
@@ -813,8 +820,17 @@ export function WatchersView({
   const balanceTargets = targetsToBalanceArgs(targets, new Set(enabledProps));
   const balancePriorities = prioritiesToBalanceArgs(priorities, balanceTargets);
 
-  // Validate targets live (cheap, no solve) so issues surface before the user clicks Balance.
-  // `JSON.stringify` of the small target/priority arrays gives stable memo deps.
+  // Rows pinned in the editor: held fixed while the rest balance around them. Derived from `main`.
+  const balanceLocks: BalanceLocks = wasmBridge
+    ? makeBalanceLocks(main, (n) => wasmBridge.has_ingredient(n))
+    : [];
+
+  // Stable string signatures of the small target/priority/lock arrays, for use as memo/effect deps.
+  const balanceTargetsKey = JSON.stringify(balanceTargets);
+  const balancePrioritiesKey = JSON.stringify(balancePriorities);
+  const balanceLocksKey = JSON.stringify(balanceLocks);
+
+  // Validate targets live so issues surface before the user clicks Balance.
   const report = useMemo<BalancingReport | undefined>(() => {
     if (!wasmBridge || isRecipeEmpty(main) || balanceTargets.length === 0) {
       return undefined;
@@ -827,13 +843,14 @@ export function WatchersView({
         balanceTargets,
         balancePriorities,
         TARGET_FEASIBILITY_REL_TOL,
+        balanceLocks,
       ) as BalancingReport;
     } catch (err) {
       console.error("validate failed:", err);
       return undefined;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wasmBridge, main, JSON.stringify(balanceTargets), JSON.stringify(balancePriorities)]);
+  }, [wasmBridge, main, balanceTargetsKey, balancePrioritiesKey, balanceLocksKey]);
 
   const issues = report?.issues ?? [];
   const errorCount = issues.filter((issue) => issue.severity === "error").length;
@@ -860,8 +877,7 @@ export function WatchersView({
   // Drop a stale runtime balance error once the inputs change, so a prior failure doesn't linger.
   useEffect(() => {
     setBalanceError(undefined);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [JSON.stringify(balanceTargets), JSON.stringify(balancePriorities), main]);
+  }, [balanceTargetsKey, balancePrioritiesKey, main]);
 
   // Removal only takes effect under the Custom filter (which derives its keys from the selection);
   // under Auto, the heuristic ignores the selection, so the remove button is hidden there.
@@ -886,6 +902,7 @@ export function WatchersView({
         balanceTargets,
         balancePriorities,
         pinnedTotal,
+        balanceLocks,
       ) as LightRecipe;
 
       setBalanceError(undefined);
@@ -919,10 +936,6 @@ export function WatchersView({
   const balanceDisabled =
     !balancingSupported || isRecipeEmpty(main) || balanceTargets.length === 0 || hasErrors;
 
-  // Stable string signatures of the small target/priority arrays, for use as effect deps.
-  const balanceTargetsKey = JSON.stringify(balanceTargets);
-  const balancePrioritiesKey = JSON.stringify(balancePriorities);
-
   // Continuous (auto) balancing: while on, re-balance on target/priority/total change. Keyed on
   // those inputs, not `main`, so the balancer's own write can't re-trigger it. `useLayoutEffect`
   // flushes the re-balance before paint, avoiding a one-frame stale-delta flicker.
@@ -931,7 +944,14 @@ export function WatchersView({
     onBalance();
     // Suppress the `onBalance` missing-dep warning: listing it would re-run this every render.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [autoBalance, balanceDisabled, balanceTargetsKey, balancePrioritiesKey, pinnedTotal]);
+  }, [
+    autoBalance,
+    balanceDisabled,
+    balanceTargetsKey,
+    balancePrioritiesKey,
+    balanceLocksKey,
+    pinnedTotal,
+  ]);
 
   const balanceTitle = balanceError
     ? `Balance failed: ${balanceError}`
@@ -980,7 +1000,7 @@ export function WatchersView({
         {/* Display-region toggles: range meter, target column, reference values. */}
         <div className="flex items-center gap-0.5">
           <button
-            className={`action-button flex items-center px-1 py-0.5 ${showRange ? "" : "text-secondary opacity-60"}`}
+            className={`action-button flex items-center px-1 py-0.5 ${showRange ? "" : "opacity-60"}`}
             onClick={() => setShowRange((v) => !v)}
             aria-pressed={showRange}
             title={`${showRange ? "Hide" : "Show"} the range meter`}
@@ -989,7 +1009,7 @@ export function WatchersView({
             <Ruler size={COMPONENT_ACTION_ICON_SIZE - 6} />
           </button>
           <button
-            className={`action-button flex items-center px-1 py-0.5 ${showTarget ? "" : "text-secondary opacity-60"}`}
+            className={`action-button flex items-center px-1 py-0.5 ${showTarget ? "" : "opacity-60"}`}
             onClick={() => setShowTarget((v) => !v)}
             aria-pressed={showTarget}
             title={`${showTarget ? "Hide" : "Show"} the target column`}
@@ -998,7 +1018,7 @@ export function WatchersView({
             <Target size={COMPONENT_ACTION_ICON_SIZE - 6} />
           </button>
           <button
-            className={`action-button flex items-center px-1 py-0.5 ${showRefs ? "" : "text-secondary opacity-60"}`}
+            className={`action-button flex items-center px-1 py-0.5 ${showRefs ? "" : "opacity-60"}`}
             onClick={() => setShowRefs((v) => !v)}
             aria-pressed={showRefs}
             title={`${showRefs ? "Hide" : "Show"} reference values`}

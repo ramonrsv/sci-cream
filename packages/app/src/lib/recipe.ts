@@ -8,6 +8,7 @@ import {
   MixProperties,
   RecipeLine,
   Recipe as SciCreamRecipe,
+  type BalanceLocks,
   type LightRecipe,
   type LightRecipeLine,
 } from "@workspace/sci-cream";
@@ -18,6 +19,8 @@ export interface IngredientRow {
   name: string;
   quantity?: number;
   ingredient?: Ingredient;
+  /** If `true`, the balancer holds the row at its current amount and balances the rest around it */
+  locked?: boolean;
 }
 
 /**
@@ -78,6 +81,8 @@ export interface RecipeStore {
   name: string;
   serializedRows: string;
   savedRef?: SavedRecipeRef;
+  /** Grid-row indices held fixed during balancing. Kept out of `serializedRows` (clipboard) */
+  lockedRows?: number[];
 }
 
 /** Top-level context holding all recipe slots; passed as shared state through the component tree */
@@ -200,6 +205,31 @@ export function makeLightRecipe(
   return recipe.ingredientRows
     .filter((row) => isLightRecipeEligible(row, hasIngredient))
     .map((row) => [row.name, row.quantity ?? 0] as LightRecipeLine);
+}
+
+/**
+ * Build the {@link BalanceLocks} list for `Bridge.balance_recipe` / `validate_recipe_targets` from
+ * a recipe's locked rows. Each entry is `[lightRecipeIndex, { Amount }]`, holding the row at its
+ * current grams; the index is the row's position within {@link makeLightRecipe} (line identity is
+ * positional), so both must apply the same {@link isLightRecipeEligible} filter.
+ *
+ * `Amount` (absolute grams) is used over `Fraction` so a locked flavouring keeps its taste-chosen
+ * amount even when the balancer resizes the batch to a pinned total.
+ *
+ * A lock needs grams to hold, so a locked row with no quantity contributes no lock — it stays free.
+ */
+export function makeBalanceLocks(
+  recipe: Recipe,
+  hasIngredient: (name: string) => boolean,
+): BalanceLocks {
+  const locks: BalanceLocks = [];
+  let lightIndex = 0;
+  for (const row of recipe.ingredientRows) {
+    if (!isLightRecipeEligible(row, hasIngredient)) continue;
+    if (row.locked && row.quantity) locks.push([lightIndex, { Amount: row.quantity }]);
+    lightIndex++;
+  }
+  return locks;
 }
 
 /**
@@ -327,12 +357,14 @@ export function updateMixProperties(recipe: Recipe, resources: WasmResources) {
         );
 }
 
-/** Serialize a `Recipe` to a `RecipeStore` object, preserving any saved-recipe identity */
+/** Serialize a `Recipe` to a `RecipeStore` object, preserving any saved-recipe identity and locks */
 export function stringifyRecipeToStore(recipe: Recipe): RecipeStore {
+  const lockedRows = recipe.ingredientRows.filter((row) => row.locked).map((row) => row.index);
   return {
     name: recipe.name,
     serializedRows: stringifyRecipe(recipe),
     ...(recipe.savedRef !== undefined && { savedRef: recipe.savedRef }),
+    ...(lockedRows.length > 0 && { lockedRows }),
   };
 }
 
@@ -433,9 +465,10 @@ export function makeUpdatedRecipeFromStore(
       `${currentRecipe.ingredientRows.length} available in the recipe grid.`,
   );
 
+  const lockedSet = new Set(recipeStore.lockedRows ?? []);
   const updatedRows = currentRecipe.ingredientRows.map((row, idx) => {
     const [name, qtyStr] = parsedLines[idx] || ["", ""];
-    return makeUpdatedRow(row, name, qtyStr, resources);
+    return { ...makeUpdatedRow(row, name, qtyStr, resources), locked: lockedSet.has(idx) };
   });
 
   const updated = makeUpdatedRecipe(
@@ -457,6 +490,9 @@ export function makeUpdatedRecipeFromStore(
  * Independent per-row rounding can leave the summed total slightly off the balancer's target; an
  * acceptable difference. An explicit total to `Bridge.balance_recipe` keeps a consistent result.
  *
+ * Locked rows keep their current quantity verbatim (the balancer returns them fixed), so
+ * re-rounding can't nudge them and a re-balance stays a fixed point.
+ *
  * Pass the result to {@link makeUpdatedRecipe} to recalculate mix properties.
  *
  * Throws on length mismatch — `balance_recipe`' guarantees equal length, so it'd be a bug.
@@ -476,12 +512,12 @@ export function makeBalancedRecipeUpdates(
   );
 
   return {
-    rows: eligibleIndices.map((i, balIdx) => ({
-      ...recipe.ingredientRows[i],
-      quantity: roundToStep(
-        balanced[balIdx][1],
-        standardInputStepByPercent(balanced[balIdx][1], 1, 2),
-      ),
-    })),
+    rows: eligibleIndices.map((i, balIdx) => {
+      const row = recipe.ingredientRows[i];
+      const quantity = row.locked
+        ? row.quantity
+        : roundToStep(balanced[balIdx][1], standardInputStepByPercent(balanced[balIdx][1], 1, 2));
+      return { ...row, quantity };
+    }),
   };
 }

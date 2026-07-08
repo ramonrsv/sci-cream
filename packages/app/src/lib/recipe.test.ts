@@ -10,6 +10,7 @@ import {
   calculateMixTotal,
   makeSciCreamRecipe,
   makeLightRecipe,
+  makeBalanceLocks,
   makeBalancedRecipeUpdates,
   makeUpdatedRecipeContext,
   makeEmptyRecipe,
@@ -270,6 +271,67 @@ describe("Recipe Helper Functions", () => {
     });
   });
 
+  // ---- makeBalanceLocks -------------------------------------------------------------------------
+
+  describe("makeBalanceLocks", () => {
+    let recipe: Recipe;
+    const wasmBridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
+    const hasIngredient = (name: string) => wasmBridge.has_ingredient(name);
+
+    beforeEach(() => {
+      recipe = makeEmptyRecipeContext().recipes[0];
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[0].quantity = 50;
+      recipe.ingredientRows[1].name = "Sucrose";
+      recipe.ingredientRows[1].quantity = 30;
+    });
+
+    it("returns an empty list when no rows are locked", () => {
+      expect(makeBalanceLocks(recipe, hasIngredient)).toEqual([]);
+    });
+
+    it("emits [lightIndex, { Amount }] holding a locked row at its current grams", () => {
+      recipe.ingredientRows[1].locked = true;
+      expect(makeBalanceLocks(recipe, hasIngredient)).toEqual([[1, { Amount: 30 }]]);
+    });
+
+    it("indexes by light-recipe position, skipping non-eligible rows before a locked one", () => {
+      // Row 1 has an unknown ingredient → not eligible, so it isn't a light-recipe line. The
+      // locked row 2 becomes light-recipe line 1, not 2.
+      recipe.ingredientRows[1] = { index: 1, name: "Definitely Not An Ingredient", quantity: 10 };
+      recipe.ingredientRows[2].name = "Egg Yolk";
+      recipe.ingredientRows[2].quantity = 20;
+      recipe.ingredientRows[2].locked = true;
+      expect(makeBalanceLocks(recipe, hasIngredient)).toEqual([[1, { Amount: 20 }]]);
+    });
+
+    it("omits a locked row that is not light-recipe eligible", () => {
+      recipe.ingredientRows[2] = {
+        index: 2,
+        name: "Definitely Not An Ingredient",
+        quantity: 10,
+        locked: true,
+      };
+      expect(makeBalanceLocks(recipe, hasIngredient)).toEqual([]);
+    });
+
+    it("skips a locked row that has no quantity to hold (stays free)", () => {
+      recipe.ingredientRows[0].quantity = undefined; // Whole Milk locked but no grams
+      recipe.ingredientRows[0].locked = true;
+      recipe.ingredientRows[1].locked = true; // Sucrose, 30
+      expect(makeBalanceLocks(recipe, hasIngredient)).toEqual([[1, { Amount: 30 }]]);
+    });
+
+    it("emits an entry per locked row, preserving light-recipe order", () => {
+      recipe.ingredientRows[0].locked = true;
+      recipe.ingredientRows[1].locked = true;
+      expect(makeBalanceLocks(recipe, hasIngredient)).toEqual([
+        [0, { Amount: 50 }],
+        [1, { Amount: 30 }],
+      ]);
+    });
+  });
+
   // ---- makeBalancedRecipeUpdates ----------------------------------------------------------------
 
   describe("makeBalancedRecipeUpdates", () => {
@@ -370,6 +432,17 @@ describe("Recipe Helper Functions", () => {
       const updates = makeBalancedRecipeUpdates(recipe, balanced, hasIngredient);
       expect(updates.rows![0].name).toBe("Whole Milk");
       expect(updates.rows![1].name).toBe("Sucrose");
+    });
+
+    it("leaves a locked row's quantity untouched, ignoring its balanced value", () => {
+      recipe.ingredientRows[1].locked = true; // Sucrose locked at 30
+      const balanced: LightRecipe = [
+        ["Whole Milk", 60],
+        ["Sucrose", 30.4], // balancer returns it fixed; must not be re-rounded onto the row
+      ];
+      const updates = makeBalancedRecipeUpdates(recipe, balanced, hasIngredient);
+      expect(updates.rows![0].quantity).toBe(60);
+      expect(updates.rows![1].quantity).toBe(30);
     });
 
     it("snaps NNLS-derived floats to the input's sub-unit step (per standardInputStepByPercent)", () => {
@@ -550,6 +623,26 @@ describe("Recipe Helper Functions", () => {
       expect(result.baseline).toBeUndefined();
       expect(isRecipeDirty(result)).toBe(false);
     });
+
+    it("restores the locked flag onto the rows named in the store's lockedRows", () => {
+      const result = makeUpdatedRecipeFromStore(
+        recipe,
+        { name: "Locked", serializedRows: "Whole Milk\t100\nSucrose\t20", lockedRows: [1] },
+        resources,
+      );
+      expect(result.ingredientRows[0].locked).toBe(false);
+      expect(result.ingredientRows[1].locked).toBe(true);
+    });
+
+    it("clears locks when the store carries no lockedRows (e.g. a fresh paste)", () => {
+      recipe.ingredientRows[0].locked = true;
+      const result = makeUpdatedRecipeFromStore(
+        recipe,
+        { name: "", serializedRows: "Whole Milk\t100" },
+        resources,
+      );
+      expect(result.ingredientRows[0].locked).toBe(false);
+    });
   });
 
   // ---- Baseline + dirty + identity helpers --------------------------------------------------------
@@ -716,6 +809,28 @@ describe("Recipe Helper Functions", () => {
 
       const store = stringifyRecipeToStore(recipe);
       expect("savedRef" in store).toBe(false);
+    });
+
+    it("records locked row indices in lockedRows, and keeps them out of serializedRows", () => {
+      const recipe = makeEmptyRecipeContext().recipes[0];
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[0].quantity = 100;
+      recipe.ingredientRows[2].name = "Sucrose";
+      recipe.ingredientRows[2].quantity = 20;
+      recipe.ingredientRows[2].locked = true;
+
+      const store = stringifyRecipeToStore(recipe);
+      expect(store.lockedRows).toEqual([2]);
+      expect(store.serializedRows).not.toMatch(/lock/i);
+    });
+
+    it("omits the lockedRows key entirely when no rows are locked", () => {
+      const recipe = makeEmptyRecipeContext().recipes[0];
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[0].quantity = 100;
+
+      const store = stringifyRecipeToStore(recipe);
+      expect("lockedRows" in store).toBe(false);
     });
   });
 });

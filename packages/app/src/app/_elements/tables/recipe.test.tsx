@@ -140,7 +140,7 @@ describe("RecipeEditor", () => {
   }
 
   /** Wrapper component that wires the recipe-context spy into `useState` so edits reflect in DOM */
-  function RecipeEditorWithSpy() {
+  function RecipeEditorWithSpy({ onUserEdit }: { onUserEdit?: () => void } = {}) {
     const [recipeCtx, _setRecipeContext] = useState(recipeContext);
 
     useEffect(() => {
@@ -150,7 +150,7 @@ describe("RecipeEditor", () => {
       });
     }, []);
 
-    return <RecipeEditor recipeCtxState={[recipeCtx, setRecipeContext]} />;
+    return <RecipeEditor recipeCtxState={[recipeCtx, setRecipeContext]} onUserEdit={onUserEdit} />;
   }
 
   /** Get the ingredient name search input element at the given row index within a container */
@@ -328,6 +328,104 @@ describe("RecipeEditor", () => {
       <RecipeEditor recipeCtxState={[recipeContext, setRecipeContext]} onUserEdit={onUserEdit} />,
     );
     expect(onUserEdit).not.toHaveBeenCalled();
+  });
+
+  // ---- Lock toggle ------------------------------------------------------------------------------
+
+  /** Type a valid ingredient + quantity into row 0 so its lock control becomes available */
+  async function fillRowZero(user: ReturnType<typeof userEvent.setup>, container: HTMLElement) {
+    await user.type(getIngredientNameElement(container, 0), "Whole Milk");
+    await user.type(getIngredientQuantityElement(container, 0), "100");
+  }
+
+  /** Type a valid ingredient + quantity into the given row so its lock control becomes available */
+  async function fillRow(
+    user: ReturnType<typeof userEvent.setup>,
+    container: HTMLElement,
+    index: number,
+    name: string,
+  ) {
+    await user.type(getIngredientNameElement(container, index), name);
+    await user.type(getIngredientQuantityElement(container, index), "100");
+  }
+
+  it("shows no lock control on an empty row", () => {
+    const { container } = render(<RecipeEditorWithSpy />);
+    expect(container.querySelector('[data-testid="recipe-row-0-lock"]')).toBeNull();
+  });
+
+  it("shows a lock control once a row has a valid ingredient and quantity, and toggles it", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<RecipeEditorWithSpy />);
+    await fillRowZero(user, container);
+
+    const lockButton = await screen.findByTestId("recipe-row-0-lock");
+    expect(lockButton).toHaveAttribute("aria-pressed", "false");
+
+    await user.click(lockButton);
+    await waitFor(() => {
+      expect(screen.getByTestId("recipe-row-0-lock")).toHaveAttribute("aria-pressed", "true");
+    });
+  });
+
+  it("does not fire onUserEdit when a lock is toggled (keeps continuous-balance mode on)", async () => {
+    const user = userEvent.setup();
+    const onUserEdit = vi.fn();
+    const { container } = render(<RecipeEditorWithSpy onUserEdit={onUserEdit} />);
+    await fillRowZero(user, container);
+    onUserEdit.mockClear(); // ignore the edits that set up the row
+
+    await user.click(await screen.findByTestId("recipe-row-0-lock"));
+    expect(onUserEdit).not.toHaveBeenCalled();
+  });
+
+  it("shows no lock-all control until at least one row is lockable", () => {
+    const { container } = render(<RecipeEditorWithSpy />);
+    expect(container.querySelector('[data-testid="recipe-lock-all"]')).toBeNull();
+  });
+
+  it("lock-all pins every lockable row, then unlocks them all", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<RecipeEditorWithSpy />);
+    await fillRow(user, container, 0, "Whole Milk");
+    await fillRow(user, container, 1, "Whipping Cream");
+
+    const lockAll = await screen.findByTestId("recipe-lock-all");
+    expect(lockAll).toHaveAttribute("aria-pressed", "false");
+
+    await user.click(lockAll);
+    await waitFor(() => {
+      expect(screen.getByTestId("recipe-lock-all")).toHaveAttribute("aria-pressed", "true");
+      expect(screen.getByTestId("recipe-row-0-lock")).toHaveAttribute("aria-pressed", "true");
+      expect(screen.getByTestId("recipe-row-1-lock")).toHaveAttribute("aria-pressed", "true");
+    });
+
+    await user.click(screen.getByTestId("recipe-lock-all"));
+    await waitFor(() => {
+      expect(screen.getByTestId("recipe-lock-all")).toHaveAttribute("aria-pressed", "false");
+      expect(screen.getByTestId("recipe-row-0-lock")).toHaveAttribute("aria-pressed", "false");
+      expect(screen.getByTestId("recipe-row-1-lock")).toHaveAttribute("aria-pressed", "false");
+    });
+  });
+
+  it("lock-all reads unlocked while only some rows are locked, then locks the rest", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<RecipeEditorWithSpy />);
+    await fillRow(user, container, 0, "Whole Milk");
+    await fillRow(user, container, 1, "Whipping Cream");
+
+    await user.click(await screen.findByTestId("recipe-row-0-lock")); // lock only row 0
+    await waitFor(() => {
+      expect(screen.getByTestId("recipe-row-0-lock")).toHaveAttribute("aria-pressed", "true");
+    });
+    // Not all rows are locked, so the totals toggle still reads unlocked.
+    expect(screen.getByTestId("recipe-lock-all")).toHaveAttribute("aria-pressed", "false");
+
+    await user.click(screen.getByTestId("recipe-lock-all"));
+    await waitFor(() => {
+      expect(screen.getByTestId("recipe-row-1-lock")).toHaveAttribute("aria-pressed", "true");
+      expect(screen.getByTestId("recipe-lock-all")).toHaveAttribute("aria-pressed", "true");
+    });
   });
 
   // ---- Display ----------------------------------------------------------------------------------
