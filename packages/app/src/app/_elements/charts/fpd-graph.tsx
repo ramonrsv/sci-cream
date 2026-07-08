@@ -19,7 +19,6 @@ import {
 import { RecipeSummary } from "@/lib/recipe";
 import { useTheme } from "@/lib/theme";
 import {
-  CHART_TOP_PADDING,
   TOOLTIP_CORNER_RADIUS,
   TOOLTIP_PADDING,
   TOOLTIP_BORDER_WIDTH,
@@ -185,8 +184,6 @@ export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: Reci
     // Disable the canvas entry/resize animation under reduced motion so screenshots are stable;
     animation: prefersReducedMotion() ? (false as const) : undefined,
     color: legendColor,
-    // No chart title: the panel context already names the chart, and dropping it reclaims height.
-    layout: { padding: { top: CHART_TOP_PADDING } },
     plugins: {
       legend: {
         display: true,

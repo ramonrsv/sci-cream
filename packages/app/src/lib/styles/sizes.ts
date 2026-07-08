@@ -42,8 +42,6 @@ export const STD_COMPONENT_H_PX = 596;
 
 // ----  Shared chart chrome (tooltip + layout) ----------------------------------------------------
 
-/** Top padding (px) reserved above the plot area for the in-area legend. */
-export const CHART_TOP_PADDING = 12;
 /** Tooltip corner radius (px). */
 export const TOOLTIP_CORNER_RADIUS = 8;
 /** Tooltip inner padding (px). */
