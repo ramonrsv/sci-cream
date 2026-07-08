@@ -67,7 +67,7 @@
     },
     "comments": "USDA FoodData Central - SR Legacy - Spearmint, fresh (https://fdc.nal.usda.gov/food-details/173475/nutrients)."
   },
-  { "alias": "Fresh Spearmint", "for": "USDA Fresh Peppermint" },
+  { "alias": "Fresh Spearmint", "for": "USDA Fresh Spearmint" },
   {
     "name": "Nielsen-Massey Pure Vanilla Extract",
     "category": "Flavouring",
