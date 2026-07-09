@@ -31,6 +31,8 @@ export type SavedRecipeVersionJson = {
   recipe: LightRecipe;
   comments?: string;
   label?: string;
+  /** Grams of water evaporated; set only by adapted embedded entries — the DB never stores it */
+  evaporation?: number;
   /** ISO 8601 timestamp; created server-side and surfaced as a string for client serialization */
   createdAt: string;
 };

@@ -844,6 +844,7 @@ export function WatchersView({
         balancePriorities,
         TARGET_FEASIBILITY_REL_TOL,
         balanceLocks,
+        main.evaporation,
       ) as BalancingReport;
     } catch (err) {
       console.error("validate failed:", err);
@@ -903,6 +904,7 @@ export function WatchersView({
         balancePriorities,
         pinnedTotal,
         balanceLocks,
+        main.evaporation,
       ) as LightRecipe;
 
       setBalanceError(undefined);

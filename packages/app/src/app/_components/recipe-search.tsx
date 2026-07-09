@@ -73,7 +73,13 @@ export function adaptEmbeddedToGrouped(entry: RecipeEntryJson): GroupedRecipe {
     name: entry.name,
     ...(entry.author !== undefined && { author: entry.author }),
     versions: [
-      { version: 1, recipe: entry.recipe, ...(comments != null && { comments }), createdAt: "" },
+      {
+        version: 1,
+        recipe: entry.recipe,
+        ...(comments != null && { comments }),
+        ...(entry.evaporation ? { evaporation: entry.evaporation } : {}),
+        createdAt: "",
+      },
     ],
   };
 }
@@ -140,15 +146,24 @@ interface RecipeDetailPanelProps extends Pick<
  * Creates a `Recipe` object from a flat `[name, qty][]` recipe and `WasmBridge`, without WASM
  * `Ingredient`s. Used by the detail panel to render the currently selected version.
  */
-function makeRecipeFromRows(name: string, rows: LightRecipe | null, bridge: WasmBridge): Recipe {
+function makeRecipeFromRows(
+  name: string,
+  rows: LightRecipe | null,
+  bridge: WasmBridge,
+  evaporation?: number,
+): Recipe {
   return {
     index: 0,
     id: "Value",
     name,
     ingredientRows: rows?.map(([n, quantity], idx) => ({ index: idx, name: n, quantity })) ?? [],
     mixTotal: rows?.reduce((sum, [, quantity]) => sum + quantity, 0) ?? 0,
+    evaporation,
     mixProperties: rows
-      ? bridge.calculate_recipe_mix_properties(rows.filter(([n]) => bridge.has_ingredient(n)))
+      ? bridge.calculate_recipe_mix_properties(
+          rows.filter(([n]) => bridge.has_ingredient(n)),
+          evaporation,
+        )
       : new MixProperties(),
   };
 }
@@ -202,7 +217,13 @@ function RecipeDetailPanel({
   }));
 
   const recipe = useMemo<Recipe>(
-    () => makeRecipeFromRows(entry.name, selectedVersion?.recipe ?? null, wasmBridge),
+    () =>
+      makeRecipeFromRows(
+        entry.name,
+        selectedVersion?.recipe ?? null,
+        wasmBridge,
+        selectedVersion?.evaporation,
+      ),
     [entry, selectedVersion, wasmBridge, wasmUpdateIdx], // eslint-disable-line react-hooks/exhaustive-deps
   );
 
@@ -273,9 +294,25 @@ function RecipeDetailPanel({
       {/* Body: ingredient table + mix properties */}
       <div className="@container flex flex-wrap items-start gap-6">
         <div className="min-w-50 flex-1 basis-65">
-          {/* Reserve the properties view's toolbar height so the recipe table lines up with it. */}
-          <div className="hidden @[484px]:block">
-            <ToolbarSpacer />
+          {/* A spacer reserves the properties view's toolbar height so the tables line up side by
+              side. When there's evaporation it stays at every width, overlaid by the readout. */}
+          <div className="relative">
+            <div className={recipe.evaporation ? "" : "hidden @[484px]:block"}>
+              <ToolbarSpacer />
+            </div>
+            {recipe.evaporation ? (
+              <div
+                className="absolute inset-0 flex items-center justify-end"
+                title="Grams of water evaporated during preparation"
+              >
+                <div className="bg-surface flex items-center rounded-t px-4 py-1.25">
+                  <span className="text-secondary text-xs font-medium tracking-wide whitespace-nowrap uppercase">
+                    Evap (g)
+                  </span>
+                  <span className="comp-val ml-0.5 text-sm">{recipe.evaporation.toFixed(0)}</span>
+                </div>
+              </div>
+            ) : null}
           </div>
           <RecipeTable
             recipe={recipe}

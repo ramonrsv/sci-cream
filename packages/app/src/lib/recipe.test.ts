@@ -8,10 +8,12 @@ import {
   makeEmptyRecipeContext,
   isRecipeEmpty,
   calculateMixTotal,
+  effectiveMixTotal,
   makeSciCreamRecipe,
   makeLightRecipe,
   makeBalanceLocks,
   makeBalancedRecipeUpdates,
+  makeUpdatedRecipe,
   makeUpdatedRecipeContext,
   makeEmptyRecipe,
   makeRecipeBaseline,
@@ -28,6 +30,7 @@ import type { WasmResources } from "./wasm-resources";
 
 import {
   Category,
+  CompKey,
   Ingredient,
   Composition,
   MixProperties,
@@ -837,6 +840,142 @@ describe("Recipe Helper Functions", () => {
 
       const store = stringifyRecipeToStore(recipe);
       expect("lockedRows" in store).toBe(false);
+    });
+
+    it("records evaporation as a sidecar, keeping it out of serializedRows", () => {
+      const recipe = makeEmptyRecipeContext().recipes[0];
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[0].quantity = 1000;
+      recipe.evaporation = 150;
+
+      const store = stringifyRecipeToStore(recipe);
+      expect(store.evaporation).toBe(150);
+      expect(store.serializedRows).not.toMatch(/150/);
+    });
+
+    it("omits the evaporation key when there is none (undefined or zero)", () => {
+      const recipe = makeEmptyRecipeContext().recipes[0];
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[0].quantity = 1000;
+
+      expect("evaporation" in stringifyRecipeToStore(recipe)).toBe(false);
+      recipe.evaporation = 0;
+      expect("evaporation" in stringifyRecipeToStore(recipe)).toBe(false);
+    });
+  });
+
+  // ---- effectiveMixTotal -------------------------------------------------------------------------
+
+  describe("effectiveMixTotal", () => {
+    let recipe: Recipe;
+
+    beforeEach(() => {
+      recipe = makeEmptyRecipeContext().recipes[0];
+      recipe.mixTotal = 1000;
+    });
+
+    it("returns undefined for an empty recipe (no mixTotal)", () => {
+      recipe.mixTotal = undefined;
+      expect(effectiveMixTotal(recipe)).toBeUndefined();
+    });
+
+    it("returns mixTotal unchanged when there is no evaporation", () => {
+      expect(effectiveMixTotal(recipe)).toBe(1000);
+    });
+
+    it("subtracts evaporated water from the ingredient sum (the final mix yield)", () => {
+      recipe.evaporation = 150;
+      expect(effectiveMixTotal(recipe)).toBe(850);
+    });
+  });
+
+  // ---- makeUpdatedRecipe (evaporation) ----------------------------------------------------------
+
+  describe("makeUpdatedRecipe evaporation handling", () => {
+    let recipe: Recipe;
+    let resources: WasmResources;
+
+    beforeEach(() => {
+      const bridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
+      resources = {
+        updateIdx: 0,
+        wasmBridge: bridge,
+        hasIngredient: (n) => bridge.has_ingredient(n),
+      };
+      recipe = makeUpdatedRecipeFromStore(
+        makeEmptyRecipeContext().recipes[0],
+        { name: "", serializedRows: "Whole Milk\t1000" },
+        resources,
+      );
+    });
+
+    it("applies a new evaporation value and recomputes the post-evaporation composition", () => {
+      const waterBefore = recipe.mixProperties.composition.get(CompKey.Water);
+
+      const updated = makeUpdatedRecipe(recipe, { evaporation: 150 }, resources);
+
+      expect(updated.evaporation).toBe(150);
+      // Removing water concentrates the mix, so per-100g water drops.
+      expect(updated.mixProperties.composition.get(CompKey.Water)).toBeLessThan(waterBefore);
+    });
+
+    it("leaves evaporation and mix properties untouched when the key is absent", () => {
+      const withEvap = makeUpdatedRecipe(recipe, { evaporation: 150 }, resources);
+      const renamed = makeUpdatedRecipe(withEvap, { name: "Renamed" }, resources);
+
+      expect(renamed.evaporation).toBe(150);
+      // No evaporation or row change, so the mix-properties object is reused, not recomputed.
+      expect(renamed.mixProperties).toBe(withEvap.mixProperties);
+    });
+
+    it("clears evaporation when set to 0 and recomputes", () => {
+      // Read the baseline before updating: makeUpdatedRecipe frees the input's old mix properties.
+      const baselineWater = recipe.mixProperties.composition.get(CompKey.Water);
+
+      const withEvap = makeUpdatedRecipe(recipe, { evaporation: 150 }, resources);
+      expect(withEvap.mixProperties.composition.get(CompKey.Water)).toBeLessThan(baselineWater);
+
+      const cleared = makeUpdatedRecipe(withEvap, { evaporation: 0 }, resources);
+      expect(cleared.evaporation).toBe(0);
+      expect(cleared.mixProperties.composition.get(CompKey.Water)).toBeCloseTo(baselineWater, 6);
+    });
+  });
+
+  // ---- makeUpdatedRecipeFromStore (evaporation round-trip) ---------------------------------------
+
+  describe("makeUpdatedRecipeFromStore evaporation", () => {
+    let resources: WasmResources;
+
+    beforeEach(() => {
+      const bridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
+      resources = {
+        updateIdx: 0,
+        wasmBridge: bridge,
+        hasIngredient: (n) => bridge.has_ingredient(n),
+      };
+    });
+
+    it("restores the stored evaporation onto the recipe", () => {
+      const result = makeUpdatedRecipeFromStore(
+        makeEmptyRecipeContext().recipes[0],
+        { name: "Evap", serializedRows: "Whole Milk\t1000", evaporation: 150 },
+        resources,
+      );
+      expect(result.evaporation).toBe(150);
+    });
+
+    it("clears evaporation when the store has none (e.g. a fresh paste)", () => {
+      const withEvap = makeUpdatedRecipeFromStore(
+        makeEmptyRecipeContext().recipes[0],
+        { name: "Evap", serializedRows: "Whole Milk\t1000", evaporation: 150 },
+        resources,
+      );
+      const pasted = makeUpdatedRecipeFromStore(
+        withEvap,
+        { name: "", serializedRows: "Whole Milk\t1000" },
+        resources,
+      );
+      expect(pasted.evaporation).toBe(0);
     });
   });
 });

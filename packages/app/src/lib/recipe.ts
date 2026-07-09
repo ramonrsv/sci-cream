@@ -37,6 +37,11 @@ export interface RecipeSummary {
   /** User-defined display name for this recipe, e.g. "Standard Base", etc., default "" */
   name: string;
   mixTotal?: number;
+  /**
+   * Grams of water evaporated during preparation (undefined/0 = none); the final mix mass is
+   * {@link effectiveMixTotal}, while `mixTotal` stays the unmodified ingredient lines sum.
+   */
+  evaporation?: number;
   mixProperties: MixProperties;
 }
 
@@ -83,6 +88,8 @@ export interface RecipeStore {
   savedRef?: SavedRecipeRef;
   /** Grid-row indices held fixed during balancing. Kept out of `serializedRows` (clipboard) */
   lockedRows?: number[];
+  /** Grams of water evaporated. Sidecar like `lockedRows` — kept out of `serializedRows` */
+  evaporation?: number;
 }
 
 /** Top-level context holding all recipe slots; passed as shared state through the component tree */
@@ -155,6 +162,14 @@ export function calculateMixTotal(recipe: Recipe) {
       sum === undefined && row.quantity == undefined ? undefined : (sum || 0) + (row.quantity || 0),
     undefined,
   );
+}
+
+/**
+ * Final mix mass in grams (`mixTotal − evaporation`), or `undefined` for an empty recipe. Use this,
+ * not `mixTotal`, as the denominator when converting a mix property's per-100g value to grams.
+ */
+export function effectiveMixTotal(recipe: RecipeSummary): number | undefined {
+  return recipe.mixTotal === undefined ? undefined : recipe.mixTotal - (recipe.evaporation ?? 0);
 }
 
 /**
@@ -366,6 +381,7 @@ export function updateMixProperties(recipe: Recipe, resources: WasmResources) {
       ? new MixProperties()
       : resources.wasmBridge.calculate_recipe_mix_properties(
           makeLightRecipe(recipe, resources.hasIngredient),
+          recipe.evaporation,
         );
 }
 
@@ -377,6 +393,7 @@ export function stringifyRecipeToStore(recipe: Recipe): RecipeStore {
     serializedRows: stringifyRecipe(recipe),
     ...(recipe.savedRef !== undefined && { savedRef: recipe.savedRef }),
     ...(lockedRows.length > 0 && { lockedRows }),
+    ...(recipe.evaporation ? { evaporation: recipe.evaporation } : {}),
   };
 }
 
@@ -393,10 +410,12 @@ export function getRecipeStoresFromStorage(): RecipeStore[] {
   );
 }
 
-/** Represents updates to a `Recipe`, including optional name and row updates */
+/** Represents updates to a `Recipe`, including optional name, row, and evaporation updates */
 export interface RecipeUpdates {
   name?: string;
   rows?: IngredientRow[];
+  /** New evaporation in grams; passing `0` clears it, `undefined` leaves it unchanged. */
+  evaporation?: number;
 }
 
 /**
@@ -417,6 +436,14 @@ export function makeUpdatedRecipe(
     const currentRow = newRecipe.ingredientRows[updatedRow.index];
     newRecipe.ingredientRows[updatedRow.index] = updatedRow;
     needsMixPropUpdate = needsMixPropUpdate || requiresMixPropsUpdate(currentRow, updatedRow);
+  }
+
+  if (
+    recipeUpdates.evaporation !== undefined &&
+    recipeUpdates.evaporation !== (newRecipe.evaporation ?? 0)
+  ) {
+    newRecipe.evaporation = recipeUpdates.evaporation;
+    needsMixPropUpdate = true;
   }
 
   newRecipe.mixTotal = calculateMixTotal(newRecipe);
@@ -485,7 +512,8 @@ export function makeUpdatedRecipeFromStore(
 
   const updated = makeUpdatedRecipe(
     { ...currentRecipe, savedRef: recipeStore.savedRef },
-    { rows: updatedRows, name },
+    // `?? 0` so a load/paste whose store carries no evaporation clears any stale value on the slot.
+    { rows: updatedRows, name, evaporation: recipeStore.evaporation ?? 0 },
     resources,
   );
 

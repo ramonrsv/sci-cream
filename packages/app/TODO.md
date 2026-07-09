@@ -10,6 +10,7 @@
 - [ ] Add `height` prop to `PropertiesTable` so that it can adapt the number of properties shown.
 - [ ] Add visual regression tests for dark mode; not everything, just routes & some key elements.
 - [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
+- [ ] Add water-based gating of the evaporation input, and properly handle sci-cream evap errors.
 
 ## Up Next
 

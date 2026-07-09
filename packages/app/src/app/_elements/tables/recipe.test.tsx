@@ -116,6 +116,24 @@ describe("RecipeTable", () => {
       });
     });
   });
+
+  describe("Evaporation", () => {
+    it("shows no yield readout when there is no evaporation", () => {
+      const recipe = makeMockRecipe(RecipeID.Main);
+      render(<RecipeTable recipe={recipe} />);
+      expect(screen.queryByTitle(/Yield/)).not.toBeInTheDocument();
+    });
+
+    it("shows the resulting yield inline in the Total row when evaporation is set", () => {
+      const recipe = makeMockRecipe(RecipeID.Main);
+      recipe.evaporation = recipe.mixTotal! * 0.1; // remove 10% of the ingredient mass as water
+      render(<RecipeTable recipe={recipe} />);
+
+      const yieldReadout = screen.getByTitle(/Yield/);
+      expect(yieldReadout.closest("td")).toHaveTextContent("Total");
+      expect(yieldReadout).toHaveTextContent((recipe.mixTotal! - recipe.evaporation).toFixed(0));
+    });
+  });
 });
 
 // ---------------------------------------------------------------------------
@@ -220,7 +238,8 @@ describe("RecipeEditor", () => {
 
     const tbody = container.querySelector("tbody");
     const rows = tbody?.querySelectorAll("tr");
-    expect(rows).toHaveLength(RECIPE_TOTAL_ROWS);
+    // @todo Temporarily filter out last row to avoid a scrollbar on default panel height
+    expect(rows).toHaveLength(RECIPE_TOTAL_ROWS - 1);
   });
 
   it("should render table headers", () => {
@@ -908,6 +927,67 @@ describe("RecipeEditor", () => {
       recipeContext.recipes[0].name = "Loaded Recipe (edited)";
       render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       expect(screen.getByLabelText("Unsaved changes")).toBeInTheDocument();
+    });
+  });
+
+  // ---- Evaporation ------------------------------------------------------------------------------
+
+  describe("Evaporation", () => {
+    /** Populate slot 0 with a single valid ingredient row and matching mix total */
+    function populateMainRecipe() {
+      recipeContext.recipes[0].ingredientRows[0].name = "Whole Milk";
+      recipeContext.recipes[0].ingredientRows[0].quantity = 1000;
+      recipeContext.recipes[0].mixTotal = 1000;
+    }
+
+    it("shows no evaporation input for an empty recipe", () => {
+      render(<RecipeEditorWithSpy />);
+      expect(screen.queryByTestId("recipe-evaporation-grams")).not.toBeInTheDocument();
+    });
+
+    it("stores grams entered in the Evap. field and shows the resulting yield", async () => {
+      const user = userEvent.setup();
+      populateMainRecipe();
+      render(<RecipeEditorWithSpy />);
+
+      await user.type(screen.getByTestId("recipe-evaporation-grams"), "150");
+      await waitFor(() => {
+        expect(recipeContext.recipes[0].evaporation).toBe(150);
+        // Yield readout beside the input: 1000 g − 150 g = 850 g
+        expect(screen.getByTitle(/Yield/)).toHaveTextContent("850");
+      });
+    });
+
+    it("does not show the yield readout until evaporation is set", () => {
+      populateMainRecipe();
+      render(<RecipeEditorWithSpy />);
+      expect(screen.queryByTitle(/Yield/)).not.toBeInTheDocument();
+
+      cleanup();
+      recipeContext.recipes[0].evaporation = 100;
+      render(<RecipeEditorWithSpy />);
+      expect(screen.getByTitle(/Yield/)).toHaveTextContent("900");
+    });
+
+    it("disables the de-evaporate button when there is no evaporation", () => {
+      populateMainRecipe();
+      render(<RecipeEditorWithSpy />);
+      expect(screen.getByTitle("No evaporation to remove")).toBeDisabled();
+    });
+
+    it("de-evaporates the recipe and clears its evaporation", async () => {
+      const user = userEvent.setup();
+      populateMainRecipe();
+      recipeContext.recipes[0].evaporation = 100;
+      render(<RecipeEditorWithSpy />);
+
+      const button = screen.getByTitle(/Reformulate as an equivalent recipe/);
+      expect(button).not.toBeDisabled();
+
+      await user.click(button);
+      await waitFor(() => {
+        expect(recipeContext.recipes[0].evaporation).toBe(0);
+      });
     });
   });
 

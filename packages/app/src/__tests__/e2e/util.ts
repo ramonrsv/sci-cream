@@ -58,7 +58,7 @@ export function getIngredientNameInputAtIdx(page: Page, index: number) {
 
 /** Get ingredient quantity number input element at the given index */
 export function getIngredientQtyInputAtIdx(page: Page, index: number) {
-  return page.locator('input[type="number"]').nth(index);
+  return page.locator('input[type="number"].table-fillable-input').nth(index);
 }
 
 /** Get `PropertiesPanel`'s `QtyToggle` select input element, in `QtyToggleSelect` */

@@ -2,7 +2,13 @@
 
 import { ReactNode } from "react";
 
-import { IngredientRow, Recipe, isRecipeEmpty, getRecipeIndices } from "@/lib/recipe";
+import {
+  IngredientRow,
+  Recipe,
+  effectiveMixTotal,
+  isRecipeEmpty,
+  getRecipeIndices,
+} from "@/lib/recipe";
 import {
   KeyFilterSelect,
   getEnabledKeys,
@@ -51,12 +57,14 @@ export function CompositionBreakdown({
   compKeys: CompKey[];
   qtyToggle: QtyToggle;
 }) {
+  const mixMass = effectiveMixTotal(recipe);
+
   /** Formats a totals-row cell value for the given comp key, applying the current qtyToggle */
   const formattedTotalCell = (compKey: CompKey) => {
     return applyQtyToggleAndFormat(
       recipe.mixProperties.composition.get(compKey),
-      recipe.mixTotal,
-      recipe.mixTotal,
+      mixMass,
+      mixMass,
       qtyToggle,
       true,
     );

@@ -7,7 +7,12 @@ import { render, screen, fireEvent, cleanup, within, act } from "@testing-librar
 
 import { type RecipeEntryJson } from "@workspace/sci-cream";
 import { makeWasmResources, useSeededWasmResources } from "@/lib/wasm-resources";
-import { RecipeSearch, recipeMatchesQuery, type GroupedRecipe } from "./recipe-search";
+import {
+  RecipeSearch,
+  adaptEmbeddedToGrouped,
+  recipeMatchesQuery,
+  type GroupedRecipe,
+} from "./recipe-search";
 import type { SavedRecipeJson } from "@/lib/data";
 import {
   getSelectOptionLabelsByLabel,
@@ -45,6 +50,7 @@ const MOCK_EMBEDDED_ENTRIES = vi.hoisted((): RecipeEntryJson[] => [
       ["Whole Milk", 400],
       ["Cocoa Powder, 17% Fat", 50],
     ],
+    evaporation: 150,
   },
 ]);
 
@@ -124,6 +130,29 @@ describe("recipeMatchesQuery", () => {
 
   it("returns false when no field matches", () => {
     expect(recipeMatchesQuery(groupedEmbedded1, "zzz-no-match")).toBe(false);
+  });
+});
+
+// ---------------------------------------------------------------------------
+// adaptEmbeddedToGrouped
+// ---------------------------------------------------------------------------
+
+describe("adaptEmbeddedToGrouped", () => {
+  it("carries an embedded entry's evaporation onto its single version", () => {
+    const grouped = adaptEmbeddedToGrouped({
+      name: "Chocolate Ice Cream",
+      recipe: [["Whole Milk", 1000]],
+      evaporation: 150,
+    } as RecipeEntryJson);
+    expect(grouped.versions[0].evaporation).toBe(150);
+  });
+
+  it("omits evaporation for an entry without any", () => {
+    const grouped = adaptEmbeddedToGrouped({
+      name: "Plain",
+      recipe: [["Whole Milk", 1000]],
+    } as RecipeEntryJson);
+    expect("evaporation" in grouped.versions[0]).toBe(false);
   });
 });
 
@@ -231,6 +260,25 @@ describe("RecipeSearch", () => {
       render(<RecipeSearch />);
       fireEvent.click(screen.getByRole("button", { name: /Chocolate Mix/ }));
       expect(screen.queryByText(/A classic base recipe/)).not.toBeInTheDocument();
+    });
+
+    it("surfaces the evaporation readout and the resulting yield for an evaporated recipe", () => {
+      const { container } = render(<RecipeSearch />);
+      fireEvent.click(screen.getByRole("button", { name: /Chocolate Mix/ }));
+      const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
+
+      // Evaporated amount rides in the reserved toolbar band; the yield (450 − 150 = 300 g) shows
+      // inline in the table's Total row.
+      expect(within(detailPanel).getByTitle(/water evaporated/)).toHaveTextContent("150");
+      expect(within(detailPanel).getByTitle(/Yield/)).toHaveTextContent("300");
+    });
+
+    it("shows no evaporation readout for a recipe without evaporation", () => {
+      const { container } = render(<RecipeSearch />);
+      fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
+      const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
+      expect(within(detailPanel).queryByTitle(/water evaporated/)).not.toBeInTheDocument();
+      expect(within(detailPanel).queryByTitle(/Yield/)).not.toBeInTheDocument();
     });
   });
 

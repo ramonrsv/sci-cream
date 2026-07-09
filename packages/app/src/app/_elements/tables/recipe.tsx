@@ -1,16 +1,19 @@
 "use client";
 
-import { ReactNode, useState, useEffect, useRef } from "react";
+import { ChangeEvent, ReactNode, useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import {
   ClipboardCopy,
   ClipboardPaste,
+  Droplets,
   GitBranchPlus,
   Lock,
   LockOpen,
   Save,
   Trash,
 } from "lucide-react";
+
+import type { LightRecipe } from "@workspace/sci-cream";
 
 import {
   IngredientRow,
@@ -24,6 +27,7 @@ import {
   isLockable,
   isRecipeEmpty,
   isRecipeRenamed,
+  makeBalancedRecipeUpdates,
   makeLightRecipe,
   makeUpdatedRecipe,
   makeUpdatedRecipeContext,
@@ -46,8 +50,14 @@ import {
 import { useSessionResources } from "@/lib/session-resources";
 import { RecipeSelect, useRecipeIdxState } from "@/app/_elements/selects/recipe-select";
 import { formatCompositionValue } from "@/lib/comp-value-format";
-import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
+import { COMPONENT_ACTION_ICON_SIZE, RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import { standardInputStepByPercent, verify } from "@/lib/util";
+
+/** Parse a user-entered evaporation grams value from an input event (empty → undefined). */
+function parseEvaporationInput(e: ChangeEvent<HTMLInputElement>): number | undefined {
+  const v = e.target.value;
+  return v === "" ? undefined : parseFloat(v);
+}
 
 /**
  * Bare read-only table of a recipe's ingredients, quantities (in grams), and per-row percentage
@@ -75,7 +85,18 @@ export function RecipeTable({
           <th className="table-col-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
         </tr>
         <tr className="h-6.25">
-          <td className="table-total px-1 text-center">Total</td>
+          <td className="table-total px-1 text-center">
+            Total
+            {/* Yield (final mix mass) shown inline when water is evaporated; mirrors the editor */}
+            {mixTotal && recipe.evaporation ? (
+              <span
+                className="text-secondary ml-1 text-xs font-normal whitespace-nowrap"
+                title="Yield: final mix mass after evaporation"
+              >
+                → {(mixTotal - recipe.evaporation).toFixed(0)} g
+              </span>
+            ) : null}
+          </td>
           <td className="table-total comp-val px-3.75">{mixTotal ? mixTotal.toFixed(0) : ""}</td>
           <td className="table-total comp-val px-1">{mixTotal ? "100   " : ""}</td>
         </tr>
@@ -158,7 +179,18 @@ export function RecipeEditorTable({
           <tr className="h-6.25">
             <td className="table-total px-1">
               <div className="flex items-center">
-                <span className="flex-1 text-center">Total</span>
+                <span className="flex-1 text-center">
+                  Total
+                  {/* Yield (final mix mass) shown inline once water is being evaporated */}
+                  {mixTotal && recipe.evaporation ? (
+                    <span
+                      className="text-secondary ml-1 text-xs font-normal whitespace-nowrap"
+                      title="Yield: final mix mass after evaporation"
+                    >
+                      → {(mixTotal - recipe.evaporation).toFixed(0)} g
+                    </span>
+                  ) : null}
+                </span>
                 {/* Lock-all: pins every lockable row, or unlocks them once all are locked. */}
                 {recipe.index === 0 && lockableRows.length > 0 && (
                   <button
@@ -190,68 +222,71 @@ export function RecipeEditorTable({
         </thead>
         <tbody>
           {/* @todo The ingredient/input rows are not respecting < h-6/[25px]; not sure why yet */}
-          {recipe.ingredientRows.map((row) => (
-            <tr key={row.index} className="group h-6.25">
-              <td className="table-inner-cell max-w-0">
-                <div className="flex items-center">
+          {/* @todo Temporarily filter out last row to avoid a scrollbar on default panel height */}
+          {recipe.ingredientRows
+            .filter((row) => row.index < RECIPE_TOTAL_ROWS - 1)
+            .map((row) => (
+              <tr key={row.index} className="group h-6.25">
+                <td className="table-inner-cell max-w-0">
+                  <div className="flex items-center">
+                    <input
+                      type="search"
+                      value={row.name}
+                      onChange={(e) => onNameChange(row.index, e.target.value)}
+                      className={`table-fillable-input whitespace-nowrap ${
+                        row.name === "" || hasIngredient(row.name)
+                          ? "focus:ring-blue-400"
+                          : "-outline-offset-2 outline-red-400 outline-solid focus:ring-red-400"
+                      } min-w-0 flex-1 px-2`}
+                      placeholder=""
+                      list="valid-ingredients"
+                    />
+                    {/* Lock toggle, shown only for a resolved ingredient with an amount to hold.
+                        Unlocked, it reveals on row hover/focus; locked, it always shows. */}
+                    {recipe.index === 0 && isLockable(row, hasIngredient) && (
+                      <button
+                        type="button"
+                        className={`action-button mr-0.5 flex shrink-0 items-center px-0.5 py-0 ${
+                          row.locked
+                            ? ""
+                            : "opacity-0 group-hover:opacity-60 focus-visible:opacity-60"
+                        }`}
+                        onClick={() => onLockToggle(row.index)}
+                        aria-pressed={!!row.locked}
+                        title={
+                          row.locked
+                            ? "Locked — held at this amount while balancing (click to unlock)"
+                            : "Unlocked — the balancer may change this amount (click to lock)"
+                        }
+                        data-testid={`recipe-row-${row.index}-lock`}
+                      >
+                        {row.locked ? (
+                          <Lock size={COMPONENT_ACTION_ICON_SIZE - 4} />
+                        ) : (
+                          <LockOpen size={COMPONENT_ACTION_ICON_SIZE - 4} />
+                        )}
+                      </button>
+                    )}
+                  </div>
+                </td>
+                <td className="table-inner-cell">
                   <input
-                    type="search"
-                    value={row.name}
-                    onChange={(e) => onNameChange(row.index, e.target.value)}
-                    className={`table-fillable-input whitespace-nowrap ${
-                      row.name === "" || hasIngredient(row.name)
-                        ? "focus:ring-blue-400"
-                        : "-outline-offset-2 outline-red-400 outline-solid focus:ring-red-400"
-                    } min-w-0 flex-1 px-2`}
+                    type="number"
+                    value={row.quantity?.toString() || ""}
+                    onChange={(e) => onQuantityChange(row.index, e.target.value)}
                     placeholder=""
-                    list="valid-ingredients"
+                    step={standardInputStepByPercent(row.quantity, 2.5, 10)}
+                    min={0}
+                    className="table-fillable-input w-full text-right font-mono"
                   />
-                  {/* Lock toggle, shown only for a resolved ingredient with an amount to hold.
-                      Unlocked, it reveals on row hover/focus; locked, it always shows. */}
-                  {recipe.index === 0 && isLockable(row, hasIngredient) && (
-                    <button
-                      type="button"
-                      className={`action-button mr-0.5 flex shrink-0 items-center px-0.5 py-0 ${
-                        row.locked
-                          ? ""
-                          : "opacity-0 group-hover:opacity-60 focus-visible:opacity-60"
-                      }`}
-                      onClick={() => onLockToggle(row.index)}
-                      aria-pressed={!!row.locked}
-                      title={
-                        row.locked
-                          ? "Locked — held at this amount while balancing (click to unlock)"
-                          : "Unlocked — the balancer may change this amount (click to lock)"
-                      }
-                      data-testid={`recipe-row-${row.index}-lock`}
-                    >
-                      {row.locked ? (
-                        <Lock size={COMPONENT_ACTION_ICON_SIZE - 4} />
-                      ) : (
-                        <LockOpen size={COMPONENT_ACTION_ICON_SIZE - 4} />
-                      )}
-                    </button>
-                  )}
-                </div>
-              </td>
-              <td className="table-inner-cell">
-                <input
-                  type="number"
-                  value={row.quantity?.toString() || ""}
-                  onChange={(e) => onQuantityChange(row.index, e.target.value)}
-                  placeholder=""
-                  step={standardInputStepByPercent(row.quantity, 2.5, 10)}
-                  min={0}
-                  className="table-fillable-input w-full text-right font-mono"
-                />
-              </td>
-              <td className="table-inner-cell comp-val px-1">
-                {row.quantity && mixTotal
-                  ? formatCompositionValue((row.quantity / mixTotal) * 100)
-                  : ""}
-              </td>
-            </tr>
-          ))}
+                </td>
+                <td className="table-inner-cell comp-val px-1">
+                  {row.quantity && mixTotal
+                    ? formatCompositionValue((row.quantity / mixTotal) * 100)
+                    : ""}
+                </td>
+              </tr>
+            ))}
         </tbody>
       </table>
     </>
@@ -299,6 +334,7 @@ export function RecipeEditor({
 
   const [currentRecipeIdx, setCurrentRecipeIdx] = useRecipeIdxState(persistKey, 0, { urlSlot });
   const [saveStatus, setSaveStatus] = useState<SaveStatus>(SaveStatus.Idle);
+  const [deevaporateError, setDeevaporateError] = useState<string | undefined>(undefined);
 
   const { data: session } = useSession();
   const userEmail = session?.user?.email ?? null;
@@ -353,6 +389,40 @@ export function RecipeEditor({
     updateRecipe(currentRecipeIdx, {
       rows: [makeUpdatedRow(getRow(currentRecipeIdx, index), undefined, qtyStr, wasmResources)],
     });
+  };
+
+  /** Set the currently selected recipe's evaporation (grams of water removed) */
+  const updateCurrentRecipeEvaporation = (grams: number | undefined) => {
+    userEdit();
+
+    // An empty field parses to `undefined`; map it to 0 so it clears rather than reading as no-op.
+    updateRecipe(currentRecipeIdx, { evaporation: grams ?? 0 });
+  };
+
+  /** De-evaporate: re-balance the ingredients to the post-evaporation mix properties. */
+  const deevaporateCurrentRecipe = () => {
+    const recipe = allRecipes[currentRecipeIdx];
+    verify(
+      !!recipe.evaporation && !isRecipeEmpty(recipe),
+      "deevaporateCurrentRecipe invoked while the button should be disabled ",
+    );
+
+    userEdit();
+
+    try {
+      const light = makeLightRecipe(recipe, wasmResources.hasIngredient);
+      const deevaporated = wasmResources.wasmBridge.deevaporate_recipe(
+        light,
+        recipe.evaporation,
+      ) as LightRecipe;
+
+      const updates = makeBalancedRecipeUpdates(recipe, deevaporated, wasmResources.hasIngredient);
+      setDeevaporateError(undefined);
+      updateRecipe(currentRecipeIdx, { ...updates, evaporation: 0 });
+    } catch (err) {
+      console.error("de-evaporate failed:", err);
+      setDeevaporateError(String(err));
+    }
   };
 
   /**
@@ -473,16 +543,14 @@ export function RecipeEditor({
    *
    * Two branches based on the recipe's current identity:
    * - No `savedRef`: creates a brand-new recipe with version 1.
-   * - Has `savedRef`: rewrites that version in-place (rename-on-save is honored when the in-editor
-   *   name differs from baseline).
+   * - Has `savedRef`: rewrites that version in-place (rename-on-save is honored when it differs)
    */
   const saveCurrentRecipe = async () => {
     const recipe = allRecipes[currentRecipeIdx];
 
     verify(
       userEmail && currentRecipeIdx === 0 && recipe.name.trim() !== "" && !isRecipeEmpty(recipe),
-      "saveCurrentRecipe invoked while the Save button should be disabled " +
-        "(missing auth, non-main slot, empty name, or empty recipe)",
+      "saveCurrentRecipe invoked while the Save button should be disabled",
     );
 
     await performSave(recipe, async () => {
@@ -516,8 +584,7 @@ export function RecipeEditor({
         recipe.savedRef !== undefined &&
         recipe.name.trim() !== "" &&
         !isRecipeEmpty(recipe),
-      "saveCurrentRecipeAsNewVersion invoked while the button should be disabled " +
-        "(missing auth, non-main slot, no loaded recipe, empty name, or empty recipe)",
+      "saveCurrentRecipeAsNewVersion invoked while the button should be disabled",
     );
 
     // Capture the narrowed savedRef for use inside the operation closure
@@ -575,6 +642,11 @@ export function RecipeEditor({
     return () => clearTimeout(id);
   }, [saveStatus]);
 
+  // Drop a stale de-evaporate error when switching recipe slots.
+  useEffect(() => {
+    setDeevaporateError(undefined);
+  }, [currentRecipeIdx]);
+
   const currentRecipe = allRecipes[currentRecipeIdx];
   const validIngredients = wasmResources.wasmBridge.get_all_ingredient_names();
 
@@ -588,6 +660,16 @@ export function RecipeEditor({
 
   // "Save as new version" only makes sense once the recipe has been saved at least once
   const canSaveAsNewVersion = canSave && currentRecipe.savedRef !== undefined;
+
+  const canDeevaporate = !!currentRecipe.evaporation && !isRecipeEmpty(currentRecipe);
+
+  const deevaporateTitle = deevaporateError
+    ? `De-evaporate failed: ${deevaporateError}`
+    : !currentRecipe.evaporation
+      ? "No evaporation to remove"
+      : isRecipeEmpty(currentRecipe)
+        ? "Add ingredients to de-evaporate"
+        : "Reformulate as an equivalent recipe that needs no evaporation step";
 
   const dirty = isRecipeDirty(currentRecipe);
 
@@ -632,7 +714,7 @@ export function RecipeEditor({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex shrink-0 items-center gap-1">
+      <div className="flex shrink-0 flex-wrap items-center gap-1">
         <div className="toolbar shrink-0">
           {toolbarPrefix}
           <RecipeSelect
@@ -641,79 +723,112 @@ export function RecipeEditor({
             currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
           />
         </div>
-        <div className="flex min-w-0 flex-1 items-center gap-1">
-          {/* Unsaved-changes dot, only when a saved recipe is loaded and edits are pending */}
+        <div className="ml-auto flex flex-wrap items-center justify-end gap-1">
+          {/* Evaporation input: grams of water removed, shown only for a non-empty recipe. */}
+          {currentRecipe.mixTotal ? (
+            <div
+              className="flex items-center gap-0.5"
+              title="Grams of water evaporated during preparation"
+            >
+              <span className="text-secondary ml-1 text-xs font-medium tracking-wide whitespace-nowrap uppercase">
+                Evap (g)
+              </span>
+              <input
+                type="number"
+                min={0}
+                step={standardInputStepByPercent(currentRecipe.evaporation)}
+                className="boxed-input comp-val ml-0.5 w-14 px-0.5 py-0 text-sm"
+                value={currentRecipe.evaporation || ""}
+                placeholder="—"
+                onChange={(e) => updateCurrentRecipeEvaporation(parseEvaporationInput(e))}
+                aria-label="Evaporation (g)"
+                data-testid="recipe-evaporation-grams"
+              />
+            </div>
+          ) : null}
+          <div className="flex shrink-0">
+            {[
+              {
+                label: (
+                  <Droplets
+                    size={iconSize}
+                    className={deevaporateError ? "text-red-500" : undefined}
+                  />
+                ),
+                action: deevaporateCurrentRecipe,
+                title: deevaporateTitle,
+                disabled: !canDeevaporate,
+              },
+              {
+                label: <ClipboardCopy size={iconSize} />,
+                action: copyCurrentRecipeToClipboard,
+                title: "Copy recipe to clipboard",
+                disabled: false,
+              },
+              {
+                label: <ClipboardPaste size={iconSize} />,
+                action: pasteCurrentRecipeFromClipboard,
+                title: "Paste recipe from clipboard",
+                disabled: false,
+              },
+              {
+                label: <Trash size={iconSize} />,
+                action: clearCurrentRecipe,
+                title: "Clear recipe",
+                disabled: false,
+              },
+              {
+                label: <Save size={iconSize} className={saveIconColorClass} />,
+                action: saveCurrentRecipe,
+                title: saveTitle,
+                disabled: !canSave || saveStatus === SaveStatus.Saving,
+              },
+              {
+                label: <GitBranchPlus size={iconSize} className={saveIconColorClass} />,
+                action: saveCurrentRecipeAsNewVersion,
+                title: saveAsNewVersionTitle,
+                disabled: !canSaveAsNewVersion || saveStatus === SaveStatus.Saving,
+              },
+            ].map(({ label, action, title, disabled }, idx) => (
+              <button
+                key={idx}
+                onClick={action}
+                title={title}
+                disabled={disabled}
+                className="action-button px-1 py-0.75"
+              >
+                {label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+      {/* Recipe name row, beneath the toolbar: unsaved-changes dot, name field, and version badge */}
+      <div className="flex shrink-0 items-center gap-1 px-2 py-0.5">
+        <span
+          className={`leading-none text-amber-500 ${dirty ? "" : "invisible"}`}
+          {...(dirty
+            ? { "aria-label": "Unsaved changes", title: "Unsaved changes" }
+            : { "aria-hidden": true })}
+        >
+          •
+        </span>
+        <input
+          type="text"
+          value={currentRecipe.name}
+          onChange={(e) => updateCurrentRecipeName(e.target.value)}
+          placeholder="Recipe name"
+          aria-label="Recipe name"
+          className="text-secondary table-fillable-input min-w-0 flex-1 truncate px-1 py-0 text-sm font-medium"
+        />
+        {currentRecipe.savedRef !== undefined && (
           <span
-            className={`leading-none text-amber-500 ${dirty ? "" : "invisible"}`}
-            {...(dirty
-              ? { "aria-label": "Unsaved changes", title: "Unsaved changes" }
-              : { "aria-hidden": true })}
+            className="text-secondary shrink-0 rounded-md border border-current/20 px-1 text-xs"
+            title={`Editing version ${currentRecipe.savedRef.versionNumber}`}
           >
-            •
+            v{currentRecipe.savedRef.versionNumber}
           </span>
-          {/* Editable recipe name field */}
-          <input
-            type="text"
-            value={currentRecipe.name}
-            onChange={(e) => updateCurrentRecipeName(e.target.value)}
-            placeholder="Recipe name"
-            aria-label="Recipe name"
-            className="text-secondary table-fillable-input min-w-0 flex-1 truncate px-1 py-0 text-sm font-medium"
-          />
-          {/* Version badge, only when a saved recipe version is loaded */}
-          {currentRecipe.savedRef !== undefined && (
-            <span
-              className="text-secondary shrink-0 rounded-md border border-current/20 px-1 text-xs"
-              title={`Editing version ${currentRecipe.savedRef.versionNumber}`}
-            >
-              v{currentRecipe.savedRef.versionNumber}
-            </span>
-          )}
-        </div>
-        <div className="flex shrink-0">
-          {[
-            {
-              label: <ClipboardCopy size={iconSize} />,
-              action: copyCurrentRecipeToClipboard,
-              title: "Copy recipe to clipboard",
-              disabled: false,
-            },
-            {
-              label: <ClipboardPaste size={iconSize} />,
-              action: pasteCurrentRecipeFromClipboard,
-              title: "Paste recipe from clipboard",
-              disabled: false,
-            },
-            {
-              label: <Trash size={iconSize} />,
-              action: clearCurrentRecipe,
-              title: "Clear recipe",
-              disabled: false,
-            },
-            {
-              label: <Save size={iconSize} className={saveIconColorClass} />,
-              action: saveCurrentRecipe,
-              title: saveTitle,
-              disabled: !canSave || saveStatus === SaveStatus.Saving,
-            },
-            {
-              label: <GitBranchPlus size={iconSize} className={saveIconColorClass} />,
-              action: saveCurrentRecipeAsNewVersion,
-              title: saveAsNewVersionTitle,
-              disabled: !canSaveAsNewVersion || saveStatus === SaveStatus.Saving,
-            },
-          ].map(({ label, action, title, disabled }, idx) => (
-            <button
-              key={idx}
-              onClick={action}
-              title={title}
-              disabled={disabled}
-              className="action-button px-1 py-0.75"
-            >
-              {label}
-            </button>
-          ))}
-        </div>
+        )}
       </div>
       <div data-testid="recipe-editor-table-pane" className="min-h-0 flex-1 overflow-auto">
         <RecipeEditorTable

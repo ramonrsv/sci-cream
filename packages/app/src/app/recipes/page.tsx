@@ -49,6 +49,7 @@ export default function RecipesPage() {
       ...(entry.recipeId !== undefined && {
         savedRef: { recipeId: entry.recipeId, versionNumber: version.version },
       }),
+      ...(version.evaporation ? { evaporation: version.evaporation } : {}),
     };
     stores[slotIndex] = store;
 

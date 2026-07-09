@@ -2,7 +2,7 @@
 
 import { Fragment, ReactNode } from "react";
 
-import { RecipeSummary, isRecipeEmpty } from "@/lib/recipe";
+import { RecipeSummary, effectiveMixTotal, isRecipeEmpty } from "@/lib/recipe";
 import {
   KeyFilterSelect,
   getEnabledKeys,
@@ -93,12 +93,12 @@ export function PropertiesTable({
   const main = recipes[0];
   const showDelta = deltaToggle !== DeltaToggle.Off;
 
-  /** Formats a main cell for the given property and mix. */
-  const formatCompCell = (propKey: PropKey, mixProperties: MixProperties, mixTotal: number) => {
+  /** Formats a main cell for the given property and mix; `mixMass` is the final post-evap mass. */
+  const formatCompCell = (propKey: PropKey, mixProperties: MixProperties, mixMass: number) => {
     return applyQtyToggleAndFormat(
       getMixProperty(mixProperties, propKey),
-      mixTotal,
-      mixTotal,
+      mixMass,
+      mixMass,
       qtyToggle,
       isPropKeyQuantity(propKey),
     );
@@ -108,9 +108,9 @@ export function PropertiesTable({
   const formatDeltaCell = (propKey: PropKey, recipe: RecipeSummary) => {
     return computeDeltaAndFormat(
       getMixProperty(main.mixProperties, propKey),
-      main.mixTotal,
+      effectiveMixTotal(main),
       getMixProperty(recipe.mixProperties, propKey),
-      recipe.mixTotal,
+      effectiveMixTotal(recipe),
       qtyToggle,
       isPropKeyQuantity(propKey),
       deltaToggle === DeltaToggle.Relative,
@@ -162,7 +162,7 @@ export function PropertiesTable({
               {recipes.map((recipe, i) => (
                 <Fragment key={recipe.id}>
                   <td className="table-inner-cell comp-val px-1.25">
-                    {formatCompCell(propKey, recipe.mixProperties, recipe.mixTotal!)}
+                    {formatCompCell(propKey, recipe.mixProperties, effectiveMixTotal(recipe)!)}
                   </td>
                   {showDelta && i > 0 && (
                     <td className="table-inner-cell comp-val px-1.25">
