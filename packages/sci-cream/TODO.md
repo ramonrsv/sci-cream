@@ -39,8 +39,11 @@
       (`targets: &[(BalanceKey, f64, Option<Priority>)]`), dropping the parallel `priorities` list.
       Removes `PriorityWithoutTarget` and `DuplicatePriority` (subsumed by `DuplicateTarget`).
 - [ ] Make the palette-derived balancing feasibility warnings (reachability, dominance, ratio-band,
-      over-determination) lock-aware; `validate_balancing_targets` currently skips them when any
-      composition is locked, as they assume a fully free palette.
+      over-determination) lock- and evaporation-aware; `validate_balancing_targets` currently skips
+      them when any comp is locked or mix evaporates, as they assume fully free, non-evaporated.
+- [ ] Explore `Recipe::deevaporate`'s target-key set: it targets all balanceable keys, up-weighting
+      the ratios' constituents. Test extensive-only vs. curated alternatives in degenerate cases,
+      tied into the extensive/intensive key classification.
 
 ## Backlog
 

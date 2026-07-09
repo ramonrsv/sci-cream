@@ -7,6 +7,8 @@ export type RecipeEntryJson = {
   name: string;
   author?: string;
   recipe: LightRecipe;
+  /** Grams of water evaporated during preparation, if any (mirrors `RecipeEntry::evaporation`). */
+  evaporation?: number;
   [key: string]: unknown;
 };
 

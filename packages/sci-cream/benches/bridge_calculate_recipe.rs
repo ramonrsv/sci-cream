@@ -13,7 +13,7 @@ pub(crate) fn bench_bridge_calculate_recipe(c: &mut Criterion) {
     let _ = c.bench_function("bridge.calculate_recipe_composition", |b| {
         b.iter_batched(
             || (),
-            |()| black_box(bridge.calculate_recipe_composition(&ref_light_recipe).unwrap()),
+            |()| black_box(bridge.calculate_recipe_composition(&ref_light_recipe, None).unwrap()),
             BatchSize::SmallInput,
         );
     });
@@ -21,7 +21,7 @@ pub(crate) fn bench_bridge_calculate_recipe(c: &mut Criterion) {
     let _ = c.bench_function("bridge.calculate_recipe_mix_properties", |b| {
         b.iter_batched(
             || (),
-            |()| black_box(bridge.calculate_recipe_mix_properties(&ref_light_recipe).unwrap()),
+            |()| black_box(bridge.calculate_recipe_mix_properties(&ref_light_recipe, None).unwrap()),
             BatchSize::SmallInput,
         );
     });

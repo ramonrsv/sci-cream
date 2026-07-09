@@ -378,3 +378,82 @@ test("Bridge.validate_recipe_targets throws on unknown ingredient", () => {
 
   expect(() => bridge.validate_recipe_targets(badRecipe, targets, [])).toThrow();
 });
+
+/** Ice Cream Science chocolate recipe: pre-evaporation amounts (1089 g), 150 g evaporated. */
+const chocolatePreEvaporation: LightRecipe = [
+  ["Double Cream", 417],
+  ["Skim Milk", 319],
+  ["Skimmed Milk Powder", 46],
+  ["Sucrose", 140],
+  ["Egg Yolk", 78],
+  ["Cocoa Powder, 17% Fat", 30],
+  ["70% Dark Chocolate", 50],
+  ["Salt", 3],
+  ["Vanilla Extract", 5],
+  ["Instant Coffee", 1],
+];
+
+test("Bridge.calculate_recipe_composition concentrates with evaporation", () => {
+  const bridge = new Bridge(make_seeded_db());
+
+  const plain = bridge.calculate_recipe_composition(chocolatePreEvaporation);
+  const evaporated = bridge.calculate_recipe_composition(chocolatePreEvaporation, 150);
+
+  expect(evaporated.get(CompKey.TotalSolids)).toBeGreaterThan(plain.get(CompKey.TotalSolids));
+  expect(evaporated.get(CompKey.Water)).toBeLessThan(plain.get(CompKey.Water));
+});
+
+test("Bridge.calculate_recipe_mix_properties reports the post-evaporation yield", () => {
+  const bridge = new Bridge(make_seeded_db());
+  const props = bridge.calculate_recipe_mix_properties(chocolatePreEvaporation, 150);
+  // Line total 1089 g minus 150 g evaporated is the 939 g final yield.
+  expect(props.total_amount).toBeCloseTo(939, 4);
+});
+
+test("Bridge.deevaporate_recipe clears evaporation and reproduces the mix", () => {
+  const bridge = new Bridge(make_seeded_db());
+
+  const postEvap = bridge.calculate_recipe_composition(chocolatePreEvaporation, 150);
+  const deevaporated = bridge.deevaporate_recipe(chocolatePreEvaporation, 150) as LightRecipe;
+
+  const deevapTotal = deevaporated.reduce((sum, line) => sum + line[1], 0);
+  expect(deevapTotal).toBeCloseTo(939, 1);
+
+  // The de-evaporated recipe (no evaporation) reproduces the post-evaporation composition.
+  const deevapComp = bridge.calculate_recipe_composition(deevaporated);
+  expect(deevapComp.get(CompKey.TotalSolids)).toBeCloseTo(postEvap.get(CompKey.TotalSolids), 1);
+  expect(deevapComp.get(CompKey.Water)).toBeCloseTo(postEvap.get(CompKey.Water), 1);
+
+  // Amounts track the hand-balanced fixture: Skim Milk drops, Skimmed Milk Powder rises.
+  const amountOf = (name: string) => deevaporated.find(([n]) => n === name)?.[1] ?? 0;
+  expect(amountOf("Skim Milk")).toBeLessThan(319);
+  expect(amountOf("Skimmed Milk Powder")).toBeGreaterThan(46);
+});
+
+test("Bridge.deevaporate_recipe throws without evaporation", () => {
+  const bridge = new Bridge(make_seeded_db());
+  expect(() => bridge.deevaporate_recipe(chocolatePreEvaporation, 0)).toThrow();
+});
+
+test("Bridge.balance_recipe with evaporation hits post-evaporation targets", () => {
+  const bridge = new Bridge(make_seeded_db());
+
+  const post = bridge.calculate_recipe_composition(chocolatePreEvaporation, 150);
+  const targets: BalanceTargets = [
+    [compToPropKey(CompKey.MilkFat), post.get(CompKey.MilkFat)],
+    [compToPropKey(CompKey.TotalSolids), post.get(CompKey.TotalSolids)],
+  ];
+
+  const balanced = bridge.balance_recipe(
+    chocolatePreEvaporation,
+    targets,
+    [],
+    undefined,
+    undefined,
+    150,
+  ) as LightRecipe;
+
+  const balancedPost = bridge.calculate_recipe_composition(balanced, 150);
+  expect(balancedPost.get(CompKey.MilkFat)).toBeCloseTo(post.get(CompKey.MilkFat), 1);
+  expect(balancedPost.get(CompKey.TotalSolids)).toBeCloseTo(post.get(CompKey.TotalSolids), 1);
+});

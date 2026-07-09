@@ -38,5 +38,6 @@ pub(crate) static REF_RECIPE: LazyLock<Recipe> = LazyLock::new(|| {
                 amount: *amount,
             })
             .collect::<Vec<RecipeLine>>(),
+        evaporation: 0.0,
     }
 });

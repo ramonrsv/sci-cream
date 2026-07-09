@@ -79,8 +79,17 @@ impl Bridge {
     /// the provided [`IngredientDatabase`]. It also forwards any errors from
     /// [`Recipe::calculate_composition`](RustRecipe::calculate_composition) if composition
     /// calculations fail.
-    pub fn calculate_recipe_composition(&self, recipe: &LightRecipe) -> Result<RustComposition> {
-        RustRecipe::from_light_recipe(None, recipe, &self.db)?.calculate_composition()
+    ///
+    /// `evaporation` is the grams of water evaporated during preparation (`None` or `0.0` for
+    /// none); the returned composition is that of the final, post-evaporation mix.
+    pub fn calculate_recipe_composition(
+        &self,
+        recipe: &LightRecipe,
+        evaporation: Option<f64>,
+    ) -> Result<RustComposition> {
+        RustRecipe::from_light_recipe(None, recipe, &self.db)?
+            .with_evaporation(evaporation.unwrap_or(0.0))
+            .calculate_composition()
     }
 
     /// Forwards to [`Recipe::calculate_mix_properties`](RustRecipe::calculate_mix_properties),
@@ -94,8 +103,17 @@ impl Bridge {
     /// the provided [`IngredientDatabase`]. It also forwards any errors from
     /// [`Recipe::calculate_mix_properties`](RustRecipe::calculate_mix_properties) if FPD
     /// calculations fail.
-    pub fn calculate_recipe_mix_properties(&self, recipe: &LightRecipe) -> Result<RustMixProperties> {
-        RustRecipe::from_light_recipe(None, recipe, &self.db)?.calculate_mix_properties()
+    ///
+    /// `evaporation` is the grams of water evaporated during preparation (`None` or `0` for none);
+    /// the `total_amount` is the final mix mass and the composition/FPD are post-evaporation.
+    pub fn calculate_recipe_mix_properties(
+        &self,
+        recipe: &LightRecipe,
+        evaporation: Option<f64>,
+    ) -> Result<RustMixProperties> {
+        RustRecipe::from_light_recipe(None, recipe, &self.db)?
+            .with_evaporation(evaporation.unwrap_or(0.0))
+            .calculate_mix_properties()
     }
 
     /// Forwards to [`Recipe::balance`](RustRecipe::balance), creating a [`Recipe`](RustRecipe) from
@@ -104,6 +122,10 @@ impl Bridge {
     /// `total_amount` sets the total mass, in grams, of the balanced recipe; if `None`, the
     /// recipe's current total is used, keeping it constant. `locked` is a list of `(lineIdx, Lock)`
     /// pairs pinning lines while the rest balance around them; an empty slice locks nothing.
+    ///
+    /// `evaporation` is the grams of water evaporated during preparation (`None` or `0.0` for
+    /// none); balancing then targets the post-evaporation mix (see
+    /// [`Recipe::balance`](RustRecipe::balance)) and the returned amounts are pre-evaporation.
     ///
     /// # Errors
     ///
@@ -119,9 +141,27 @@ impl Bridge {
         priorities: &[(BalanceKey, Priority)],
         total_amount: Option<f64>,
         locked: &[(usize, Lock)],
+        evaporation: Option<f64>,
     ) -> Result<OwnedLightRecipe> {
         RustRecipe::from_light_recipe(None, recipe, &self.db)?
+            .with_evaporation(evaporation.unwrap_or(0.0))
             .balance(targets, priorities, total_amount, locked)
+            .map(Into::into)
+    }
+
+    /// Forwards to [`Recipe::deevaporate`](RustRecipe::deevaporate), creating a
+    /// [`Recipe`](RustRecipe) from `recipe` with the given `evaporation` (grams) and returning the
+    /// de-evaporated recipe as an [`OwnedLightRecipe`] (which carries no evaporation).
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error::IngredientNotFound`] if any ingredient name in `recipe` is not in the
+    /// DB, and forwards any errors from [`Recipe::deevaporate`](RustRecipe::deevaporate) (including
+    /// [`Error::InvalidEvaporation`] when `evaporation <= 0`).
+    pub fn deevaporate_recipe(&self, recipe: &LightRecipe, evaporation: f64) -> Result<OwnedLightRecipe> {
+        RustRecipe::from_light_recipe(None, recipe, &self.db)?
+            .with_evaporation(evaporation)
+            .deevaporate()
             .map(Into::into)
     }
 
@@ -130,7 +170,8 @@ impl Bridge {
     /// Extracts compositions from the resolved recipe lines, then forwards to
     /// [`validate_balancing_targets`]. `locked` is a list of `(lineIdx, Lock)` pairs marking the
     /// lines held fixed (a [`Lock::Amount`] resolves against the recipe's current total); empty is
-    /// unlocked. Never errors on validation — issues are reported in the [`BalancingReport`].
+    /// unlocked. `evaporation` is the grams of water evaporated during preparation (`None` or `0.0`
+    /// for none). Never errors on validation — issues are reported in the [`BalancingReport`].
     ///
     /// # Errors
     ///
@@ -144,9 +185,10 @@ impl Bridge {
         priorities: &[(BalanceKey, Priority)],
         rel_tol: Option<f64>,
         locked: &[(usize, Lock)],
+        evaporation: Option<f64>,
     ) -> Result<BalancingReport> {
         let rust_recipe = RustRecipe::from_light_recipe(None, recipe, &self.db)?;
-        let total: f64 = rust_recipe.lines.iter().map(|l| l.amount).sum();
+        let total: f64 = rust_recipe.line_total();
         let lock_fractions = resolve_line_locks(rust_recipe.lines.len(), total, locked)?;
         let comps: Vec<(RustComposition, Option<f64>)> = rust_recipe
             .lines
@@ -154,7 +196,12 @@ impl Bridge {
             .zip(&lock_fractions)
             .map(|(line, &lock)| (line.ingredient.composition, lock))
             .collect();
-        Ok(validate_balancing_targets(&comps, targets, priorities, rel_tol))
+
+        // `validate_balancing_targets` takes evaporation as the fraction `E/T`. Zero grams is no
+        // evaporation, filtered out before dividing so a zero-total recipe can't produce a `NaN`.
+        let evap_fraction = evaporation.filter(|&grams| grams != 0.0).map(|grams| grams / total);
+
+        Ok(validate_balancing_targets(&comps, targets, priorities, rel_tol, evap_fraction))
     }
 
     /// Forwards to [`IngredientDatabase::clear`], emptying the internal database.
@@ -261,9 +308,13 @@ impl Bridge {
     /// [`OwnedLightRecipe`], and forwards any errors from the forwarded-to method. See
     /// [`Bridge::calculate_recipe_composition`] for more details on the forwarded errors.
     #[wasm_bindgen(js_name = "calculate_recipe_composition")]
-    pub fn calculate_recipe_composition_wasm(&self, recipe: Box<[JsValue]>) -> JsResult<Composition> {
+    pub fn calculate_recipe_composition_wasm(
+        &self,
+        recipe: Box<[JsValue]>,
+        evaporation: Option<f64>,
+    ) -> JsResult<Composition> {
         let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
-        self.calculate_recipe_composition(&light_recipe)
+        self.calculate_recipe_composition(&light_recipe, evaporation)
             .map(Into::into)
             .map_err(Into::into)
     }
@@ -276,9 +327,13 @@ impl Bridge {
     /// [`OwnedLightRecipe`], and forwards any errors from the forwarded-to method. See
     /// [`Bridge::calculate_recipe_mix_properties`] for more details on the forwarded errors.
     #[wasm_bindgen(js_name = "calculate_recipe_mix_properties")]
-    pub fn calculate_recipe_mix_properties_wasm(&self, recipe: Box<[JsValue]>) -> JsResult<MixProperties> {
+    pub fn calculate_recipe_mix_properties_wasm(
+        &self,
+        recipe: Box<[JsValue]>,
+        evaporation: Option<f64>,
+    ) -> JsResult<MixProperties> {
         let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
-        self.calculate_recipe_mix_properties(&light_recipe)
+        self.calculate_recipe_mix_properties(&light_recipe, evaporation)
             .map(Into::into)
             .map_err(Into::into)
     }
@@ -300,6 +355,7 @@ impl Bridge {
         priorities: Box<[JsValue]>,
         total_amount: Option<f64>,
         locked: Option<Box<[JsValue]>>,
+        evaporation: Option<f64>,
     ) -> JsResult<Box<[JsValue]>> {
         let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
@@ -308,7 +364,32 @@ impl Bridge {
             .map(|l| balancing_locks_from_jsvalue(JsValue::from(l)))
             .transpose()?;
 
-        self.balance_recipe(&light_recipe, &targets, &priorities, total_amount, locked.as_deref().unwrap_or(&[]))
+        self.balance_recipe(
+            &light_recipe,
+            &targets,
+            &priorities,
+            total_amount,
+            locked.as_deref().unwrap_or(&[]),
+            evaporation,
+        )
+        .map_err(Into::<JsValue>::into)?
+        .into_iter()
+        .map(|line| serde_wasm_bindgen::to_value(&line).map_err(Into::into))
+        .collect::<JsResult<Vec<JsValue>>>()
+        .map(Vec::into_boxed_slice)
+    }
+
+    /// WASM compatible wrapper for [`Bridge::deevaporate_recipe`]
+    ///
+    /// # Errors
+    ///
+    /// Returns a `serde::Error` if the `JsValue` input cannot be deserialized into an
+    /// [`OwnedLightRecipe`], and forwards any errors from [`Bridge::deevaporate_recipe`].
+    #[wasm_bindgen(js_name = "deevaporate_recipe")]
+    pub fn deevaporate_recipe_wasm(&self, recipe: Box<[JsValue]>, evaporation: f64) -> JsResult<Box<[JsValue]>> {
+        let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
+
+        self.deevaporate_recipe(&light_recipe, evaporation)
             .map_err(Into::<JsValue>::into)?
             .into_iter()
             .map(|line| serde_wasm_bindgen::to_value(&line).map_err(Into::into))
@@ -337,6 +418,7 @@ impl Bridge {
         priorities: Box<[JsValue]>,
         rel_tol: Option<f64>,
         locked: Option<Box<[JsValue]>>,
+        evaporation: Option<f64>,
     ) -> JsResult<JsValue> {
         let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
@@ -345,8 +427,15 @@ impl Bridge {
             .map(|l| balancing_locks_from_jsvalue(JsValue::from(l)))
             .transpose()?;
 
-        self.validate_recipe_targets(&light_recipe, &targets, &priorities, rel_tol, locked.as_deref().unwrap_or(&[]))
-            .map(|report| serde_wasm_bindgen::to_value(&BalancingReportView::from(&report)).map_err(Into::into))?
+        self.validate_recipe_targets(
+            &light_recipe,
+            &targets,
+            &priorities,
+            rel_tol,
+            locked.as_deref().unwrap_or(&[]),
+            evaporation,
+        )
+        .map(|report| serde_wasm_bindgen::to_value(&BalancingReportView::from(&report)).map_err(Into::into))?
     }
 
     /// WASM compatible wrapper for [`Bridge::clear`]
@@ -422,7 +511,11 @@ pub(crate) mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
-    use crate::balancing::tests::balance_rel_error_pp;
+    use crate::{
+        balancing::tests::balance_rel_error_pp,
+        tests::assets::{CHOCOLATE_PRE_EVAPORATION, MAIN_RECIPE_CONST},
+        wasm::ingredient::tests::WHOLE_MILK_ING,
+    };
 
     use super::*;
     use crate::{
@@ -431,21 +524,10 @@ pub(crate) mod tests {
         data::{get_all_independent_ingredient_specs, get_all_spec_entries},
         ingredient::{Ingredient, IntoIngredient, ResolveIntoIngredient},
         specs::{DairySimpleSpec, IngredientSpec},
-        wasm::ingredient::{Ingredient as WasmIngredient, tests::WHOLE_MILK_ING},
+        wasm::ingredient::Ingredient as WasmIngredient,
     };
 
-    const LIGHT_RECIPE: &[(&str, f64)] = &[
-        ("Whole Milk", 245.0),
-        ("Whipping Cream", 215.0),
-        ("Cocoa Powder, 17% Fat", 28.0),
-        ("Skimmed Milk Powder", 21.0),
-        ("Egg Yolk", 18.0),
-        ("Dextrose", 45.0),
-        ("Fructose", 32.0),
-        ("Salt", 0.5),
-        ("Stabilizer Blend", 1.25),
-        ("Vanilla Extract", 6.0),
-    ];
+    const LIGHT_RECIPE: &[(&str, f64)] = MAIN_RECIPE_CONST;
 
     fn make_seeded_db() -> IngredientDatabase {
         IngredientDatabase::new_seeded_from_specs(&get_all_spec_entries()).unwrap()
@@ -553,7 +635,7 @@ pub(crate) mod tests {
     fn bridge_calculate_recipe_composition() {
         let bridge = Bridge::new(make_seeded_db());
         let comp = bridge
-            .calculate_recipe_composition(&light_recipe_to_owned(LIGHT_RECIPE))
+            .calculate_recipe_composition(&light_recipe_to_owned(LIGHT_RECIPE), None)
             .unwrap();
 
         assert_eq_flt_test!(comp.get(CompKey::MilkFat), 13.6367);
@@ -562,7 +644,7 @@ pub(crate) mod tests {
     #[test]
     fn bridge_calculate_recipe_composition_ingredient_not_found() {
         let bridge = Bridge::new(make_seeded_db());
-        let result = bridge.calculate_recipe_composition(&[("Nonexistent Ingredient".to_string(), 100.0)]);
+        let result = bridge.calculate_recipe_composition(&[("Nonexistent Ingredient".to_string(), 100.0)], None);
         assert!(
             matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")
         );
@@ -572,7 +654,7 @@ pub(crate) mod tests {
     fn bridge_calculate_recipe_mix_properties() {
         let bridge = Bridge::new(make_seeded_db());
         let mix_properties = bridge
-            .calculate_recipe_mix_properties(&light_recipe_to_owned(LIGHT_RECIPE))
+            .calculate_recipe_mix_properties(&light_recipe_to_owned(LIGHT_RECIPE), None)
             .unwrap();
 
         assert_eq_flt_test!(mix_properties.get(CompKey::MilkFat.into()), 13.6367);
@@ -581,7 +663,7 @@ pub(crate) mod tests {
     #[test]
     fn bridge_calculate_recipe_mix_properties_ingredient_not_found() {
         let bridge = Bridge::new(make_seeded_db());
-        let result = bridge.calculate_recipe_mix_properties(&[("Nonexistent Ingredient".to_string(), 100.0)]);
+        let result = bridge.calculate_recipe_mix_properties(&[("Nonexistent Ingredient".to_string(), 100.0)], None);
         assert!(
             matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")
         );
@@ -600,7 +682,7 @@ pub(crate) mod tests {
             (CompKey::TotalSolids.into(), 41.0),
         ];
 
-        let balanced = bridge.balance_recipe(&recipe, &targets, &[], None, &[]).unwrap();
+        let balanced = bridge.balance_recipe(&recipe, &targets, &[], None, &[], None).unwrap();
 
         assert_eq!(balanced.len(), recipe.len());
         for (i, (name, amount)) in balanced.iter().enumerate() {
@@ -612,22 +694,99 @@ pub(crate) mod tests {
         let balanced_total: f64 = balanced.iter().map(|(_, g)| *g).sum();
         assert_eq_flt_test!(balanced_total, original_total);
 
-        let comp = bridge.calculate_recipe_composition(&balanced).unwrap();
+        let comp = bridge.calculate_recipe_composition(&balanced, None).unwrap();
         for (key, target) in &targets {
             assert_eq_flt_test!(key.value(&comp), *target);
         }
 
         // An explicit `total_amount` scales the balanced recipe to that mass
         let scaled = bridge
-            .balance_recipe(&recipe, &targets, &[], Some(1000.0), &[])
+            .balance_recipe(&recipe, &targets, &[], Some(1000.0), &[], None)
             .unwrap();
         let scaled_total: f64 = scaled.iter().map(|(_, g)| *g).sum();
         assert_eq_flt_test!(scaled_total, 1000.0);
 
-        let scaled_comp = bridge.calculate_recipe_composition(&scaled).unwrap();
+        let scaled_comp = bridge.calculate_recipe_composition(&scaled, None).unwrap();
         for (key, target) in &targets {
             assert_eq_flt_test!(key.value(&scaled_comp), *target);
         }
+    }
+
+    #[test]
+    fn bridge_calculate_recipe_composition_evaporation_concentrates() {
+        let bridge = Bridge::new(make_seeded_db());
+        let recipe = light_recipe_to_owned(CHOCOLATE_PRE_EVAPORATION);
+
+        let plain = bridge.calculate_recipe_composition(&recipe, None).unwrap();
+        let evaporated = bridge.calculate_recipe_composition(&recipe, Some(150.0)).unwrap();
+
+        // Evaporating water concentrates the mix: total solids rise, water falls.
+        assert_gt!(evaporated.get(CompKey::TotalSolids), plain.get(CompKey::TotalSolids));
+        assert_lt!(evaporated.get(CompKey::Water), plain.get(CompKey::Water));
+    }
+
+    #[test]
+    fn bridge_calculate_recipe_mix_properties_total_amount_is_post_evaporation() {
+        let bridge = Bridge::new(make_seeded_db());
+        let recipe = light_recipe_to_owned(CHOCOLATE_PRE_EVAPORATION);
+
+        let props = bridge.calculate_recipe_mix_properties(&recipe, Some(150.0)).unwrap();
+        // Line total 1089 g minus 150 g evaporated is the 939 g final yield.
+        assert_eq_flt_test!(props.total_amount, 939.0);
+    }
+
+    #[test]
+    fn bridge_deevaporate_recipe_clears_evaporation_and_reproduces_mix() {
+        use strum::IntoEnumIterator;
+
+        let bridge = Bridge::new(make_seeded_db());
+        let recipe = light_recipe_to_owned(CHOCOLATE_PRE_EVAPORATION);
+
+        let post_evap = bridge.calculate_recipe_composition(&recipe, Some(150.0)).unwrap();
+        let deevaporated = bridge.deevaporate_recipe(&recipe, 150.0).unwrap();
+
+        let deevap_total: f64 = deevaporated.iter().map(|(_, g)| *g).sum();
+        assert_eq_flt_test!(deevap_total, 939.0);
+
+        let deevap_comp = bridge.calculate_recipe_composition(&deevaporated, None).unwrap();
+        for key in CompKey::iter() {
+            assert_eq_flt_test!(deevap_comp.get(key), post_evap.get(key));
+        }
+    }
+
+    #[test]
+    fn bridge_deevaporate_recipe_without_evaporation_errors() {
+        let bridge = Bridge::new(make_seeded_db());
+        let recipe = light_recipe_to_owned(CHOCOLATE_PRE_EVAPORATION);
+        let result = bridge.deevaporate_recipe(&recipe, 0.0);
+        assert!(matches!(result, Err(crate::error::Error::InvalidEvaporation(_))));
+    }
+
+    #[test]
+    fn bridge_balance_recipe_with_evaporation_hits_post_evaporation_targets() {
+        let bridge = Bridge::new(make_seeded_db());
+        let recipe = light_recipe_to_owned(CHOCOLATE_PRE_EVAPORATION);
+
+        // Drawn from the recipe's own post-evap comp, including the water-denominated AbsPAC ratio.
+        let post = bridge.calculate_recipe_composition(&recipe, Some(150.0)).unwrap();
+        let targets = [
+            (CompKey::MilkFat.into(), post.get(CompKey::MilkFat)),
+            (CompKey::TotalSolids.into(), post.get(CompKey::TotalSolids)),
+            (crate::composition::RatioKey::AbsPAC.into(), post.get_ratio(crate::composition::RatioKey::AbsPAC)),
+        ];
+
+        let balanced = bridge
+            .balance_recipe(&recipe, &targets, &[], None, &[], Some(150.0))
+            .unwrap();
+        let balanced_post = bridge.calculate_recipe_composition(&balanced, Some(150.0)).unwrap();
+
+        // The recipe already meets its own targets, so balancing hits each to solver precision.
+        assert_eq_flt_test!(balanced_post.get(CompKey::MilkFat), post.get(CompKey::MilkFat));
+        assert_eq_flt_test!(balanced_post.get(CompKey::TotalSolids), post.get(CompKey::TotalSolids));
+        assert_eq_flt_test!(
+            balanced_post.get_ratio(crate::composition::RatioKey::AbsPAC),
+            post.get_ratio(crate::composition::RatioKey::AbsPAC)
+        );
     }
 
     #[test]
@@ -639,6 +798,7 @@ pub(crate) mod tests {
             &[],
             None,
             &[],
+            None,
         );
         assert!(
             matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")
@@ -658,13 +818,15 @@ pub(crate) mod tests {
         ];
         let priorities = [(CompKey::POD.into(), Priority::Critical)];
 
-        let default_balanced = bridge.balance_recipe(&recipe, &targets, &[], None, &[]).unwrap();
+        let default_balanced = bridge.balance_recipe(&recipe, &targets, &[], None, &[], None).unwrap();
         let prioritized_balanced = bridge
-            .balance_recipe(&recipe, &targets, &priorities, None, &[])
+            .balance_recipe(&recipe, &targets, &priorities, None, &[], None)
             .unwrap();
 
-        let default_comp = bridge.calculate_recipe_composition(&default_balanced).unwrap();
-        let prioritized_comp = bridge.calculate_recipe_composition(&prioritized_balanced).unwrap();
+        let default_comp = bridge.calculate_recipe_composition(&default_balanced, None).unwrap();
+        let prioritized_comp = bridge
+            .calculate_recipe_composition(&prioritized_balanced, None)
+            .unwrap();
 
         let default_error = balance_rel_error_pp(default_comp.get(CompKey::POD), 0.5);
         let prioritized_error = balance_rel_error_pp(prioritized_comp.get(CompKey::POD), 0.5);
@@ -683,7 +845,9 @@ pub(crate) mod tests {
         let locked = [(vanilla_idx, Lock::Amount(vanilla_amount))];
 
         let targets = [(CompKey::MilkFat.into(), 14.0), (CompKey::MSNF.into(), 10.0)];
-        let balanced = bridge.balance_recipe(&recipe, &targets, &[], None, &locked).unwrap();
+        let balanced = bridge
+            .balance_recipe(&recipe, &targets, &[], None, &locked, None)
+            .unwrap();
 
         assert_eq!(balanced[vanilla_idx].0, recipe[vanilla_idx].0);
         assert_eq_flt_test!(balanced[vanilla_idx].1, vanilla_amount);
@@ -698,7 +862,7 @@ pub(crate) mod tests {
         let locked = [(vanilla_idx, Lock::Amount(vanilla_amount))];
 
         // A total below the locked line's amount makes its fixed fraction exceed the whole mix.
-        let result = bridge.balance_recipe(&recipe, &[(CompKey::MilkFat.into(), 10.0)], &[], Some(3.0), &locked);
+        let result = bridge.balance_recipe(&recipe, &[(CompKey::MilkFat.into(), 10.0)], &[], Some(3.0), &locked, None);
         assert!(matches!(result, Err(crate::error::Error::InvalidBalancingTargets(_))));
     }
 
@@ -712,7 +876,7 @@ pub(crate) mod tests {
             (CompKey::TotalSugars.into(), 17.0),
         ];
         let report = bridge
-            .validate_recipe_targets(&recipe, &targets, &[], None, &[])
+            .validate_recipe_targets(&recipe, &targets, &[], None, &[], None)
             .unwrap();
         assert_true!(report.is_empty());
     }
@@ -723,7 +887,7 @@ pub(crate) mod tests {
         let recipe = light_recipe_to_owned(LIGHT_RECIPE);
         let targets = [(CompKey::MilkFat.into(), -5.0)];
         let report = bridge
-            .validate_recipe_targets(&recipe, &targets, &[], None, &[])
+            .validate_recipe_targets(&recipe, &targets, &[], None, &[], None)
             .unwrap();
         assert_true!(report.has_errors());
         assert_eq!(report.issues.len(), 1);
@@ -742,7 +906,7 @@ pub(crate) mod tests {
         let recipe = light_recipe_to_owned(LIGHT_RECIPE);
         let targets = [(CompKey::MilkFat.into(), 10.0), (CompKey::MilkFat.into(), 12.0)];
         let report = bridge
-            .validate_recipe_targets(&recipe, &targets, &[], None, &[])
+            .validate_recipe_targets(&recipe, &targets, &[], None, &[], None)
             .unwrap();
         assert_true!(report.has_errors());
         assert!(matches!(report.errors().next().unwrap(), BalancingIssue::DuplicateTarget { .. }));
@@ -755,7 +919,7 @@ pub(crate) mod tests {
         let targets = [(CompKey::MilkFat.into(), 10.0)];
         let priorities = [(CompKey::MSNF.into(), Priority::High)];
         let report = bridge
-            .validate_recipe_targets(&recipe, &targets, &priorities, None, &[])
+            .validate_recipe_targets(&recipe, &targets, &priorities, None, &[], None)
             .unwrap();
         assert_false!(report.has_errors());
         assert!(matches!(report.warnings().next().unwrap(), BalancingIssue::PriorityWithoutTarget { .. }));
@@ -770,6 +934,7 @@ pub(crate) mod tests {
             &[],
             None,
             &[],
+            None,
         );
         assert!(
             matches!(result, Err(crate::error::Error::IngredientNotFound(name)) if name == "Nonexistent Ingredient")

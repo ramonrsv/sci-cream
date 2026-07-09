@@ -111,6 +111,12 @@ pub(crate) type SolverFn = fn(
 /// rest. Keys not listed default to [`Priority::Normal`] (weight 1), so an empty slice leaves the
 /// solve unchanged. The abstract priorities are translated to numeric weights here before solving.
 ///
+/// `evaporation` is the fraction `E/T` of the *pre-evaporation* mix lost to preparation (gram-free,
+/// like the rest of this API); `None`/`0.0` is the ordinary solve. Targets keep their natural
+/// *post-evaporation* meaning for every key (including `Water` and the water-denominated ratios):
+/// it is injected as a synthetic locked pure-water line at fraction `−e/(1−e)`, added after lock
+/// validation and stripped from the result, which is in fractions of the post-evaporation mix.
+///
 /// The chosen solver is currently always [`balance_compositions_nnls`] (non-negative): negative
 /// ingredient amounts are not meaningful for real recipes, so the [`balance_compositions_nalgebra`]
 /// path is reserved for internal verification and benchmarking and is not used here.
@@ -119,12 +125,14 @@ pub(crate) type SolverFn = fn(
 ///
 /// Returns [`Error::InvalidBalancingTargets`] if the inputs contain an error-severity issue: a
 /// non-finite or negative target value, duplicate target or priority keys, or an invalid locked
-/// fraction or sum that exceeds 1. Also forwards any error from the chosen underlying solver.
+/// fraction or sum that exceeds 1. Returns [`Error::InvalidEvaporation`] if `evaporation` is
+/// non-finite, negative, or at least 1. Also forwards any error from the chosen underlying solver.
 pub fn balance_compositions(
     comps: &[(Composition, Option<f64>)],
     targets: &[(BalanceKey, f64)],
     weighting: Option<Weighting>,
     priorities: &[(BalanceKey, Priority)],
+    evaporation: Option<f64>,
 ) -> Result<Vec<(Composition, f64)>> {
     // Gate on the cheap error checks only; this path discards warnings, so the composition-scanning
     // warning checks are wasted work (see `append_input_warning_issues`).
@@ -133,11 +141,41 @@ pub fn balance_compositions(
     append_lock_error_issues(comps, &mut issues);
     BalancingReport { issues }.into_result()?;
 
+    let evaporation = validate_evaporation_fraction(evaporation)?;
+
     let priority_weights: Vec<(BalanceKey, f64)> = priorities
         .iter()
         .map(|&(key, priority)| (key, priority.weight()))
         .collect();
-    choose_solver(comps, targets)(comps, targets, weighting, &priority_weights)
+
+    if evaporation == 0.0 {
+        return choose_solver(comps, targets)(comps, targets, weighting, &priority_weights);
+    }
+
+    // Model evaporation as a synthetic locked pure-water line contributing the negative fraction
+    // `−e/(1−e)` of the post-evap mix. Injected after user-lock validation (which rejects negative
+    // fractions), it lets the solver keep post-evap target semantics for every key uniformly.
+    let mut comps = comps.to_vec();
+    comps.push((Composition::new(), Some(-evaporation / (1.0 - evaporation))));
+
+    let mut balanced = choose_solver(&comps, targets)(&comps, targets, weighting, &priority_weights)?;
+    balanced.truncate(comps.len());
+    Ok(balanced)
+}
+
+/// Validates the optional [`balance_compositions`] `evaporation` fraction; returns `0.0` if `None`.
+///
+/// # Errors
+///
+/// Returns [`Error::InvalidEvaporation`] if the fraction is non-finite, negative, or at least 1.
+fn validate_evaporation_fraction(evaporation: Option<f64>) -> Result<f64> {
+    let evaporation = evaporation.unwrap_or(0.0);
+    if !evaporation.is_finite() || !(0.0..1.0).contains(&evaporation) {
+        return Err(Error::InvalidEvaporation(format!(
+            "evaporation fraction must be finite and within [0, 1), got {evaporation}"
+        )));
+    }
+    Ok(evaporation)
 }
 
 /// Selects the underlying solver for [`balance_compositions`].

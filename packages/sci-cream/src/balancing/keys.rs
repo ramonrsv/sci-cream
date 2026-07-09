@@ -83,8 +83,7 @@ pub fn target_row_coeff(key: BalanceKey, target: f64, comp: &impl CompositionVal
     }
 }
 
-/// The right-hand side for one target row: `0` for a ratio key (its row is homogeneous), else the
-/// target value itself.
+/// The RHS for one target row: `0` for a ratio key (homogeneous row), else the target value itself.
 pub(crate) const fn target_row_rhs(key: BalanceKey, target: f64) -> f64 {
     if key.is_ratio() { 0.0 } else { target }
 }
@@ -103,6 +102,12 @@ pub fn get_all_balanceable_keys() -> Vec<BalanceKey> {
         .map(BalanceKey::Comp)
         .chain(RatioKey::iter().map(BalanceKey::Ratio))
         .collect()
+}
+
+/// Reads each `key`'s value from `comp` as a balancing target `(key, value)` pair.
+#[must_use]
+pub fn composition_balance_targets(comp: &Composition, keys: &[BalanceKey]) -> Vec<(BalanceKey, f64)> {
+    keys.iter().map(|&key| (key, key.value(comp))).collect()
 }
 
 /// A subset of balanceable keys that adequately balances most typical ice cream mixes.

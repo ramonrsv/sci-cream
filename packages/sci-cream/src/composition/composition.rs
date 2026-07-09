@@ -9,7 +9,8 @@ use strum_macros::{EnumCount, EnumIter};
 use crate::{
     composition::field_update::field_update_methods,
     composition::{Alcohol, Micro, PAC, ProteinComponents, RatioKey, Solids, Texture},
-    error::Result,
+    constants::COMPOSITION_EPSILON,
+    error::{Error, Result},
     resolution::IngredientGetter,
     validate::{Validate, verify_are_positive, verify_is_within_100_percent},
 };
@@ -20,7 +21,6 @@ use wasm_bindgen::prelude::*;
 #[cfg(doc)]
 use crate::{
     composition::{ArtificialSweeteners, Carbohydrates, Emulsifiers, Fibers, Polyols, Stabilizers, Sugars},
-    error::Error,
     specs::{ChocolateSpec, CompositeSpec},
 };
 
@@ -499,6 +499,38 @@ impl Composition {
         })
     }
 
+    /// Concentrates the composition by removing `water_removed` grams of water per 100 g of mix.
+    ///
+    /// Evaporating water shrinks the mix mass without changing the mass of any solid or alcohol
+    /// component, so every extensive value scales up by `100 / (100 - water_removed)`. Because the
+    /// derived [`water`](Self::water) content is `100 - solids - alcohol`, it falls out correctly
+    /// at the reduced level, as do all water-denominated ratios (`AbsPAC`, `StabsPerWater`, etc.).
+    ///
+    /// # Errors
+    ///
+    /// Returns an [`Error::InvalidEvaporation`] if `water_removed` is negative, non-finite, at
+    /// least `100`, or exceeds the available [`water`](Self::water). Removing exactly the available
+    /// water (within [`COMPOSITION_EPSILON`]) is allowed, yielding a fully dry composition.
+    pub fn evaporate(&self, water_removed: f64) -> Result<Self> {
+        if !water_removed.is_finite() || water_removed < 0.0 {
+            return Err(Error::InvalidEvaporation(format!(
+                "water removed per 100g must be finite and non-negative, got {water_removed}"
+            )));
+        }
+        if water_removed >= 100.0 {
+            return Err(Error::InvalidEvaporation(format!(
+                "water removed per 100g must be less than 100, got {water_removed}"
+            )));
+        }
+        if water_removed > self.water() + COMPOSITION_EPSILON {
+            return Err(Error::InvalidEvaporation(format!(
+                "water removed per 100g ({water_removed}) exceeds available water ({})",
+                self.water()
+            )));
+        }
+        Ok(self.scale(100.0 / (100.0 - water_removed)))
+    }
+
     /// Calculates the water content as `100 - TotalSolids - Alcohol`
     ///
     /// An empty composition would have `TotalSolids == 0` and `Alcohol == 0`, resulting in
@@ -872,6 +904,69 @@ mod tests {
             .solids(Solids::new().other(SolidsBreakdown::new().others(10.0)));
         // 9.0 / 90.0 * 100 == 10.0
         assert_eq!(c.absolute_pac(), 10.0);
+    }
+
+    /// A composition with 20g solids and 5g sugar-PAC per 100g (so 80g water), for evaporate tests.
+    fn evaporate_test_comp() -> Composition {
+        Composition::new()
+            .energy(120.0)
+            .pod(4.0)
+            .pac(PAC::new().sugars(5.0))
+            .solids(Solids::new().other(SolidsBreakdown::new().others(20.0)))
+    }
+
+    #[test]
+    fn evaporate_scales_extensive_fields_and_reduces_water() {
+        let c = evaporate_test_comp();
+        // Remove 10g water per 100g of mix: everything extensive scales by 100 / (100 - 10).
+        let k = 100.0 / 90.0;
+        let evaporated = c.evaporate(10.0).unwrap();
+
+        assert_eq_flt_test!(evaporated.get(CompKey::TotalSolids), 20.0 * k);
+        assert_eq_flt_test!(evaporated.get(CompKey::Energy), 120.0 * k);
+        assert_eq_flt_test!(evaporated.get(CompKey::POD), 4.0 * k);
+        assert_eq_flt_test!(evaporated.get(CompKey::TotalPAC), 5.0 * k);
+        // Water is derived, not scaled: (W - water_removed) · k == (80 - 10) · 100/90.
+        assert_eq_flt_test!(evaporated.get(CompKey::Water), 70.0 * k);
+    }
+
+    #[test]
+    fn evaporate_keeps_water_ratios_consistent() {
+        let c = evaporate_test_comp();
+        let evaporated = c.evaporate(10.0).unwrap();
+        // AbsPAC = TotalPAC / Water · 100, both taken at the concentrated level.
+        assert_eq_flt_test!(
+            evaporated.get_ratio(RatioKey::AbsPAC),
+            evaporated.get(CompKey::TotalPAC) / evaporated.get(CompKey::Water) * 100.0
+        );
+    }
+
+    #[test]
+    fn evaporate_zero_is_identity() {
+        let c = evaporate_test_comp();
+        assert_abs_diff_eq!(c.evaporate(0.0).unwrap(), c, epsilon = COMPOSITION_EPSILON);
+    }
+
+    #[test]
+    fn evaporate_to_exactly_available_water_is_dry() {
+        // Removing all 80g of water per 100g is allowed and yields a fully dry composition.
+        let evaporated = evaporate_test_comp().evaporate(80.0).unwrap();
+        assert_abs_diff_eq!(evaporated.get(CompKey::Water), 0.0, epsilon = COMPOSITION_EPSILON);
+    }
+
+    #[test]
+    fn evaporate_rejects_negative_non_finite_and_over_100() {
+        let c = evaporate_test_comp();
+        assert!(matches!(c.evaporate(-1.0), Err(Error::InvalidEvaporation(_))));
+        assert!(matches!(c.evaporate(f64::NAN), Err(Error::InvalidEvaporation(_))));
+        assert!(matches!(c.evaporate(100.0), Err(Error::InvalidEvaporation(_))));
+    }
+
+    #[test]
+    fn evaporate_rejects_removing_more_than_available_water() {
+        // Only 80g of water per 100g are present, so removing 80.1g is an error.
+        let c = evaporate_test_comp();
+        assert!(matches!(c.evaporate(80.1), Err(Error::InvalidEvaporation(_))));
     }
 
     #[test]

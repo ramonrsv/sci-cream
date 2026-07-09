@@ -209,7 +209,7 @@ impl Recipe {
             .map(|(line, &lock)| (line.ingredient.composition.into(), lock))
             .collect();
 
-        serde_wasm_bindgen::to_value(&validate_balancing_targets(&comps, &targets, &priorities, rel_tol))
+        serde_wasm_bindgen::to_value(&validate_balancing_targets(&comps, &targets, &priorities, rel_tol, None))
             .map_err(Into::into)
     }
 }
@@ -232,6 +232,8 @@ impl From<RustRecipe> for Recipe {
 
 impl From<Recipe> for RustRecipe {
     fn from(recipe: Recipe) -> Self {
+        // The WASM `Recipe` wrapper does not (yet) carry evaporation, so it maps to zero here.
+        // The evaporation-aware bridge methods drive the native `Recipe` directly.
         Self {
             name: recipe.name,
             lines: recipe
@@ -242,6 +244,7 @@ impl From<Recipe> for RustRecipe {
                     amount: line.amount,
                 })
                 .collect(),
+            evaporation: 0.0,
         }
     }
 }

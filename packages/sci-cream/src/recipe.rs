@@ -6,7 +6,7 @@ use serde::{Deserialize, Serialize};
 use crate::{database::IngredientDatabase, resolution::IngredientGetter};
 
 use crate::{
-    balancing::{BalanceKey, Priority, balance_compositions},
+    balancing::{BalanceKey, Priority, balance_compositions, composition_balance_targets, get_all_balanceable_keys},
     composition::Composition,
     error::{Error, Result},
     fpd::FPD,
@@ -119,13 +119,38 @@ pub struct Recipe {
     pub name: Option<String>,
     /// The lines of the recipe, each representing an ingredient and its amount.
     pub lines: Vec<RecipeLine>,
+    /// Grams of water evaporated from the recipe during preparation (e.g. cooking).
+    ///
+    /// The [`lines`](Self::lines) are pre-evaporation amounts; the final mix is their sum minus
+    /// this (default `0`). See [`Composition::evaporate`] for how it concentrates the composition.
+    #[serde(default)]
+    pub evaporation: f64,
 }
 
 impl Recipe {
-    /// Creates a new [`Recipe`] with the optional given name and list of [`RecipeLine`]s.
+    /// Creates a new [`Recipe`] with the optional given name and list of [`RecipeLine`]s, and no
+    /// evaporation. Use [`with_evaporation`](Self::with_evaporation) to set an evaporation amount.
     #[must_use]
     pub const fn new(name: Option<String>, lines: Vec<RecipeLine>) -> Self {
-        Self { name, lines }
+        Self {
+            name,
+            lines,
+            evaporation: 0.0,
+        }
+    }
+
+    /// Sets the recipe's [`evaporation`](Self::evaporation) amount, in grams, consuming `self`.
+    #[must_use]
+    pub const fn with_evaporation(mut self, grams: f64) -> Self {
+        self.evaporation = grams;
+        self
+    }
+
+    /// The total mass of the recipe's ingredient [`lines`](Self::lines), in grams — the total `T`
+    /// pre-evaporation. The final mix mass is this minus [`evaporation`](Self::evaporation).
+    #[must_use]
+    pub fn line_total(&self) -> f64 {
+        self.lines.iter().map(|line| line.amount).sum()
     }
 
     /// Create a new [`Recipe`] from a [`LightRecipe`] and an [`IngredientDatabase`].
@@ -156,7 +181,11 @@ impl Recipe {
             });
         }
 
-        Ok(Self { name, lines })
+        Ok(Self {
+            name,
+            lines,
+            evaporation: 0.0,
+        })
     }
 
     /// Create a new [`Recipe`] from a [`ConstRecipe`] and an [`IngredientDatabase`].
@@ -188,35 +217,71 @@ impl Recipe {
         )
     }
 
-    /// Calculate the composition of the recipe as the combination of the compositions of its
-    /// ingredients, weighted by their amounts.
+    /// The [`evaporation`](Self::evaporation) as a fraction `E/T` of the pre-evaporation total `T`,
+    /// the gram-free form the balancing solver and [`Composition::evaporate`] (as `× 100`) consume,
+    /// or `None` when the recipe has no evaporation, so callers reduce to their plain path.
     ///
     /// # Errors
     ///
-    /// Forwards any errors from [`Composition::from_combination`] if the recipe is not valid, e.g.
-    /// if any ingredient has a negative amount.
+    /// Returns [`Error::InvalidEvaporation`] when evaporation is non-zero but `total` is zero.
+    fn evaporation_fraction(&self, total: f64) -> Result<Option<f64>> {
+        if self.evaporation == 0.0 {
+            return Ok(None);
+        }
+        if total == 0.0 {
+            return Err(Error::InvalidEvaporation(format!(
+                "cannot evaporate {} g from a zero-total recipe",
+                self.evaporation
+            )));
+        }
+        Ok(Some(self.evaporation / total))
+    }
+
+    /// Calculate the composition of the recipe as the combination of the compositions of its
+    /// ingredients, weighted by their amounts.
+    ///
+    /// When [`evaporation`](Self::evaporation) is non-zero, the combined composition is
+    /// concentrated via [`Composition::evaporate`] to reflect the water lost during preparation, so
+    /// the returned composition is that of the final (post-evaporation) mix.
+    ///
+    /// # Errors
+    ///
+    /// Forwards any errors from [`Composition::from_combination`] if the recipe is invalid (e.g. a
+    /// negative amount). Returns an [`Error::InvalidEvaporation`] if evaporation is non-zero but
+    /// the line total is zero, or exceeds the available water (see [`Composition::evaporate`]).
     pub fn calculate_composition(&self) -> Result<Composition> {
-        Composition::from_combination(
+        let composition = Composition::from_combination(
             &self
                 .lines
                 .iter()
                 .map(|line| (line.ingredient.composition, line.amount))
                 .collect::<Vec<_>>(),
-        )
+        )?;
+
+        let Some(evap_fraction) = self.evaporation_fraction(self.line_total())? else {
+            return Ok(composition);
+        };
+        composition.evaporate(evap_fraction * 100.0)
     }
 
     /// Calculate the mix properties of the recipe, including total amount, composition, and FPD.
     ///
+    /// The reported `total_amount` is the final mix mass — the line total minus
+    /// [`evaporation`](Self::evaporation) — and the composition and FPD are those of the
+    /// post-evaporation mix (see [`calculate_composition`](Self::calculate_composition)).
+    ///
     /// # Errors
     ///
-    /// Forwards any errors from [`FPD::compute_from_composition`] if FPD calculation fails.
+    /// Forwards any errors from [`calculate_composition`](Self::calculate_composition) if
+    /// evaporation fails, and [`FPD::compute_from_composition`] if FPD calculation fails.
     pub fn calculate_mix_properties(&self) -> Result<MixProperties> {
-        let total_amount: f64 = self.lines.iter().map(|line| line.amount).sum();
+        let post_evap_total = self.line_total() - self.evaporation;
+
         let composition = self.calculate_composition()?;
         let fpd = FPD::compute_from_composition(composition)?;
 
         Ok(MixProperties {
-            total_amount,
+            total_amount: post_evap_total,
             composition,
             fpd,
         })
@@ -238,6 +303,11 @@ impl Recipe {
     /// composition still counts toward the targets) while the rest balance around it. An empty
     /// slice locks nothing. See `resolve_line_locks` for how a [`Lock`] maps to a mix fraction.
     ///
+    /// When the recipe has [`evaporation`](Self::evaporation), the targets describe the final,
+    /// post-evaporation mix, so balancing solves in that space. `total_amount` (and the current
+    /// line sum it defaults to) stays the pre-evaporation ingredient total: the balanced recipe's
+    /// line amounts sum back to it, and it keeps the same evaporation amount.
+    ///
     /// # Errors
     ///
     /// Forwards any [`balance_compositions`] errors, and returns [`Error::InvalidBalancingTargets`]
@@ -250,8 +320,19 @@ impl Recipe {
         total_amount: Option<f64>,
         locked: &[(usize, Lock)],
     ) -> Result<Self> {
-        let total_amount = total_amount.unwrap_or_else(|| self.lines.iter().map(|line| line.amount).sum());
-        let lock_fractions = resolve_line_locks(self.lines.len(), total_amount, locked)?;
+        let total_amount = total_amount.unwrap_or_else(|| self.line_total());
+        let post_evap_total = total_amount - self.evaporation;
+        let evap_fraction = self.evaporation_fraction(total_amount)?;
+
+        // User locks are expressed against the pre-evaporation total `T`; the solver works in the
+        // post-evap mix, so scale each resolved pre-evap fraction by `T / (T − E) = 1 / (1 − E/T)`.
+        // With no evaporation this is `1`, reducing to the plain path.
+        let pre_evap_scale = 1.0 / (1.0 - evap_fraction.unwrap_or(0.0));
+
+        let lock_fractions: Vec<Option<f64>> = resolve_line_locks(self.lines.len(), total_amount, locked)?
+            .into_iter()
+            .map(|fraction| fraction.map(|f| f * pre_evap_scale))
+            .collect();
 
         let comps: Vec<(Composition, Option<f64>)> = self
             .lines
@@ -260,7 +341,7 @@ impl Recipe {
             .map(|(line, &lock)| (line.ingredient.composition, lock))
             .collect();
 
-        let balanced = balance_compositions(&comps, targets, None, priorities)?;
+        let balanced = balance_compositions(&comps, targets, None, priorities, evap_fraction)?;
 
         Ok(Self {
             name: self.name,
@@ -270,10 +351,56 @@ impl Recipe {
                 .zip(balanced.into_iter().map(|(_, fraction)| fraction))
                 .map(|(line, fraction)| RecipeLine {
                     ingredient: line.ingredient,
-                    amount: total_amount * fraction,
+                    amount: post_evap_total * fraction,
                 })
                 .collect(),
+            evaporation: self.evaporation,
         })
+    }
+
+    /// Produce an equivalent recipe with no evaporation: the same final (post-evaporation) mix,
+    /// reformulated so the ingredient amounts are the final amounts and no water is removed.
+    ///
+    /// Useful for preparations that do not evaporate (e.g. sous vide): the returned recipe's lines
+    /// are re-balanced to hit the post-evaporation composition of `self` while summing to the final
+    /// mass `T − E`, with [`evaporation`](Self::evaporation) cleared to `0`. The balance is
+    /// overdetermined (all balanceable keys are targeted), but non-negative least squares recovers
+    /// the exact reformulation when one exists and the best non-negative fit otherwise.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`Error::InvalidEvaporation`] if the recipe has no evaporation (`==0`), and forwards
+    /// any error from [`calculate_composition`](Self::calculate_composition) or the balance.
+    pub fn deevaporate(self) -> Result<Self> {
+        if self.evaporation <= 0.0 {
+            return Err(Error::InvalidEvaporation(format!(
+                "cannot de-evaporate a recipe with no evaporation (evaporation = {})",
+                self.evaporation
+            )));
+        }
+
+        let post_evap_composition = self.calculate_composition()?;
+
+        // @todo All balanceable keys are targeted, up-weighting the ratios' constituents; an
+        // extensive-only or curated set may fit degenerate cases better. Revisit with tests.
+        let keys = get_all_balanceable_keys();
+
+        // A ratio key with a zero denominator (e.g. `EmulsifiersPerFat` on a fat-free mix) reads as
+        // `NaN` — undefined for this mix, so not a target the solver can accept; drop non-finites.
+        let targets: Vec<(BalanceKey, f64)> = composition_balance_targets(&post_evap_composition, &keys)
+            .into_iter()
+            .filter(|(_, value)| value.is_finite())
+            .collect();
+
+        let total_amount: f64 = self.line_total();
+        let post_evap_total = total_amount - self.evaporation;
+
+        Self {
+            name: self.name,
+            lines: self.lines,
+            evaporation: 0.0,
+        }
+        .balance(&targets, &[], Some(post_evap_total), &[])
     }
 }
 
@@ -291,6 +418,8 @@ impl From<Recipe> for OwnedLightRecipe {
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
+    use strum::IntoEnumIterator;
+
     use crate::tests::asserts::shadow_asserts::{assert_eq, assert_ne};
     use crate::tests::asserts::*;
 
@@ -374,7 +503,7 @@ mod tests {
     fn recipe_balance_forwards_inputs_to_balance_compositions() {
         let recipe = Recipe::from_light_recipe(Some("Main Recipe".into()), &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
 
-        let total_amount: f64 = recipe.lines.iter().map(|line| line.amount).sum();
+        let total_amount: f64 = recipe.line_total();
         // Nothing locked, matching the `recipe.balance(.., &[])` call below.
         let compositions: Vec<_> = recipe
             .lines
@@ -394,7 +523,7 @@ mod tests {
         let priorities = [(CompKey::POD.into(), Priority::Critical)];
 
         let balanced = recipe.balance(&targets, &priorities, None, &[]).unwrap();
-        let expected = balance_compositions(&compositions, &targets, None, &priorities).unwrap();
+        let expected = balance_compositions(&compositions, &targets, None, &priorities, None).unwrap();
 
         assert_eq!(balanced.name, Some("Main Recipe".into()));
         assert_eq!(balanced.lines.len(), expected.len());
@@ -409,7 +538,7 @@ mod tests {
     fn recipe_balance_explicit_total_amount() {
         let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
 
-        let original_total: f64 = recipe.lines.iter().map(|line| line.amount).sum();
+        let original_total: f64 = recipe.line_total();
         let target_total = 1000.0;
         assert_ne!(target_total, original_total);
 
@@ -417,7 +546,7 @@ mod tests {
         let default_balanced = recipe.clone().balance(&targets, &[], None, &[]).unwrap();
         let scaled_balanced = recipe.balance(&targets, &[], Some(target_total), &[]).unwrap();
 
-        let scaled_total: f64 = scaled_balanced.lines.iter().map(|line| line.amount).sum();
+        let scaled_total: f64 = scaled_balanced.line_total();
         assert_eq_flt_test!(scaled_total, target_total);
 
         for line in &scaled_balanced.lines {
@@ -449,7 +578,7 @@ mod tests {
     #[test]
     fn recipe_balance_holds_locked_line_amount() {
         let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
-        let total: f64 = recipe.lines.iter().map(|line| line.amount).sum();
+        let total: f64 = recipe.line_total();
 
         // Lock the Vanilla Extract line: its amount must survive balancing untouched.
         let vanilla_idx = recipe
@@ -465,14 +594,14 @@ mod tests {
 
         // The locked line keeps its grams, and `None` keeps the overall total constant.
         assert_eq_flt_test!(balanced.lines[vanilla_idx].amount, vanilla_amount);
-        let balanced_total: f64 = balanced.lines.iter().map(|line| line.amount).sum();
+        let balanced_total: f64 = balanced.line_total();
         assert_eq_flt_test!(balanced_total, total);
     }
 
     #[test]
     fn recipe_balance_locked_zero_amount_pins_line_out() {
         let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
-        let total: f64 = recipe.lines.iter().map(|line| line.amount).sum();
+        let total: f64 = recipe.line_total();
 
         // A zero-amount lock pins the ingredient out: held at 0g while the rest rebalance.
         let fructose_idx = recipe
@@ -487,7 +616,7 @@ mod tests {
 
         // The pinned line stays at 0g, and the freed mass is absorbed by the rest (total constant).
         assert_eq_flt_test!(balanced.lines[fructose_idx].amount, 0.0);
-        let balanced_total: f64 = balanced.lines.iter().map(|line| line.amount).sum();
+        let balanced_total: f64 = balanced.line_total();
         assert_eq_flt_test!(balanced_total, total);
     }
 
@@ -523,6 +652,135 @@ mod tests {
             .balance(&targets, &[], Some(2000.0), &[(vanilla_idx, Lock::Fraction(0.01))])
             .unwrap();
         assert_eq_flt_test!(balanced.lines[vanilla_idx].amount, 20.0);
+    }
+
+    #[test]
+    fn recipe_evaporated_composition_matches_manual_evaporate() {
+        let base = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
+        let total: f64 = base.line_total();
+        let recipe = base.clone().with_evaporation(50.0);
+
+        let manual = base
+            .calculate_composition()
+            .unwrap()
+            .evaporate(50.0 / total * 100.0)
+            .unwrap();
+
+        assert_abs_diff_eq!(recipe.calculate_composition().unwrap(), manual, epsilon = COMPOSITION_EPSILON);
+    }
+
+    #[test]
+    fn recipe_mix_properties_total_amount_is_post_evaporation() {
+        let base = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
+        let total: f64 = base.line_total();
+        let recipe = base.with_evaporation(50.0);
+
+        assert_eq_flt_test!(recipe.calculate_mix_properties().unwrap().total_amount, total - 50.0);
+    }
+
+    #[test]
+    fn recipe_zero_evaporation_matches_no_evaporation() {
+        let base = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
+        let with_zero = base.clone().with_evaporation(0.0);
+
+        assert_abs_diff_eq!(
+            with_zero.calculate_composition().unwrap(),
+            base.calculate_composition().unwrap(),
+            epsilon = COMPOSITION_EPSILON
+        );
+    }
+
+    #[test]
+    fn recipe_balance_with_evaporation_hits_post_evaporation_targets() {
+        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB)
+            .unwrap()
+            .with_evaporation(80.0);
+
+        // Targets from the recipe's own post-evap composition, including a `Water` comp target
+        // and the water-denominated `AbsPAC` ratio — cases naive target-scaling gets wrong.
+        let post = recipe.calculate_composition().unwrap();
+        let targets = [
+            (CompKey::MilkFat.into(), post.get(CompKey::MilkFat)),
+            (CompKey::MSNF.into(), post.get(CompKey::MSNF)),
+            (CompKey::Water.into(), post.get(CompKey::Water)),
+            (RatioKey::AbsPAC.into(), post.get_ratio(RatioKey::AbsPAC)),
+        ];
+
+        let balanced_post = recipe
+            .balance(&targets, &[], None, &[])
+            .unwrap()
+            .calculate_composition()
+            .unwrap();
+
+        assert_eq_flt_test!(balanced_post.get(CompKey::MilkFat), post.get(CompKey::MilkFat));
+        assert_eq_flt_test!(balanced_post.get(CompKey::Water), post.get(CompKey::Water));
+        assert_eq_flt_test!(balanced_post.get_ratio(RatioKey::AbsPAC), post.get_ratio(RatioKey::AbsPAC));
+    }
+
+    #[test]
+    fn recipe_balance_lock_amount_under_evaporation_holds_grams() {
+        let base = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
+        let total: f64 = base.line_total();
+        let recipe = base.with_evaporation(80.0);
+
+        let vanilla_idx = recipe
+            .lines
+            .iter()
+            .position(|line| line.ingredient.name == "Vanilla Extract")
+            .unwrap();
+        let vanilla_amount = recipe.lines[vanilla_idx].amount;
+
+        let targets = [(CompKey::MilkFat.into(), 12.0), (CompKey::MSNF.into(), 9.0)];
+        let balanced = recipe
+            .balance(&targets, &[], None, &[(vanilla_idx, Lock::Amount(vanilla_amount))])
+            .unwrap();
+
+        // A `Lock::Amount` holds the line's pre-evaporation grams, and the pre-evap line total
+        // (`T`) is preserved, even though the solver worked in post-evaporation space.
+        assert_eq_flt_test!(balanced.lines[vanilla_idx].amount, vanilla_amount);
+        let balanced_total: f64 = balanced.line_total();
+        assert_eq_flt_test!(balanced_total, total);
+    }
+
+    #[test]
+    fn recipe_deevaporate_reproduces_post_evaporation_composition() {
+        // Adding 100g of water and evaporating it back concentrates to the plain milk + sucrose
+        // mix, so an exact de-evaporation exists: the same lines with the water dropped to ~0g.
+        let recipe = Recipe::from_const_recipe(
+            None,
+            &[("Whole Milk", 200.0), ("Sucrose", 50.0), ("Water", 100.0)],
+            &EMBEDDED_DB,
+        )
+        .unwrap()
+        .with_evaporation(100.0);
+
+        let post = recipe.calculate_composition().unwrap();
+        let deevaporated = recipe.deevaporate().unwrap();
+
+        assert_eq_flt_test!(deevaporated.evaporation, 0.0);
+        let total: f64 = deevaporated.line_total();
+        assert_eq_flt_test!(total, 250.0);
+
+        let deevap_comp = deevaporated.calculate_composition().unwrap();
+        for key in CompKey::iter() {
+            assert_eq_flt_test!(deevap_comp.get(key), post.get(key));
+        }
+    }
+
+    #[test]
+    fn recipe_deevaporate_without_evaporation_is_error() {
+        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
+        assert!(matches!(recipe.deevaporate(), Err(Error::InvalidEvaporation(_))));
+    }
+
+    #[test]
+    fn recipe_balance_zero_total_with_evaporation_is_error() {
+        // An explicit zero total (or an all-zero recipe) cannot lose water; should error out.
+        let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB)
+            .unwrap()
+            .with_evaporation(50.0);
+        let result = recipe.balance(&[(CompKey::MilkFat.into(), 12.0)], &[], Some(0.0), &[]);
+        assert!(matches!(result, Err(Error::InvalidEvaporation(_))));
     }
 
     #[test]

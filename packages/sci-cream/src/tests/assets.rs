@@ -35,7 +35,7 @@ fn make_light_recipe_from_const(const_recipe: &ConstRecipe) -> OwnedLightRecipe 
         .collect::<OwnedLightRecipe>()
 }
 
-const MAIN_RECIPE_CONST: &[(&str, f64)] = &[
+pub(crate) const MAIN_RECIPE_CONST: &[(&str, f64)] = &[
     ("Whole Milk", 245.0),
     ("Whipping Cream", 215.0),
     ("Cocoa Powder, 17% Fat", 28.0),
@@ -48,7 +48,7 @@ const MAIN_RECIPE_CONST: &[(&str, f64)] = &[
     ("Vanilla Extract", 6.0),
 ];
 
-const REF_A_RECIPE_CONST: &[(&str, f64)] = &[
+pub(crate) const REF_A_RECIPE_CONST: &[(&str, f64)] = &[
     ("Whole Milk", 230.0),
     ("Whipping Cream", 235.0),
     ("Skimmed Milk Powder", 35.0),
@@ -60,7 +60,7 @@ const REF_A_RECIPE_CONST: &[(&str, f64)] = &[
     ("Stabilizer Blend", 0.84),
 ];
 
-const REF_B_RECIPE_CONST: &[(&str, f64)] = &[
+pub(crate) const REF_B_RECIPE_CONST: &[(&str, f64)] = &[
     ("Whole Milk", 230.0),
     ("Whipping Cream", 225.0),
     ("Skimmed Milk Powder", 35.0),
@@ -74,6 +74,36 @@ const REF_B_RECIPE_CONST: &[(&str, f64)] = &[
     ("Salt", 0.5),
     ("Stabilizer Blend", 0.9),
     ("Grand Marnier Cordon Rouge", 53.0),
+];
+
+/// Ice Cream Science chocolate recipe: pre-evaporation amounts (total 1089 g) expecting 150g of
+/// water evaporated in cooking. De-evaporating it should reproduce [`CHOCOLATE_POST_EVAPORATION`].
+pub(crate) const CHOCOLATE_PRE_EVAPORATION: &ConstRecipe = &[
+    ("Double Cream", 417.0),
+    ("Skim Milk", 319.0),
+    ("Skimmed Milk Powder", 46.0),
+    ("Sucrose", 140.0),
+    ("Egg Yolk", 78.0),
+    ("Cocoa Powder, 17% Fat", 30.0),
+    ("70% Dark Chocolate", 50.0),
+    ("Salt", 3.0),
+    ("Vanilla Extract", 5.0),
+    ("Instant Coffee", 1.0),
+];
+
+/// The hand-balanced post-evaporation formulation of the chocolate recipe (total 939 g), the
+/// reference for [`CHOCOLATE_PRE_EVAPORATION`]'s `evaporation: 150` behaviour, evaporating 150g.
+pub(crate) const CHOCOLATE_POST_EVAPORATION: &ConstRecipe = &[
+    ("Double Cream", 417.0),
+    ("Skim Milk", 153.55),
+    ("Skimmed Milk Powder", 61.45),
+    ("Sucrose", 140.0),
+    ("Egg Yolk", 78.0),
+    ("Cocoa Powder, 17% Fat", 30.0),
+    ("70% Dark Chocolate", 50.0),
+    ("Salt", 3.0),
+    ("Vanilla Extract", 5.0),
+    ("Instant Coffee", 1.0),
 ];
 
 pub(crate) static MAIN_RECIPE_LIGHT: LazyLock<OwnedLightRecipe> =
@@ -204,8 +234,16 @@ pub(crate) static REF_B_RECIPE_PROPERTIES: LazyLock<Vec<(PropKey, f64)>> = LazyL
 #[cfg_attr(coverage, coverage(off))]
 #[allow(clippy::unwrap_used, clippy::float_cmp)]
 mod tests {
-    use super::*;
+    use approx::assert_abs_diff_eq;
+    use strum::IntoEnumIterator;
 
+    use crate::tests::asserts::shadow_asserts::assert_eq;
+    #[expect(unused)]
+    use crate::tests::asserts::*;
+
+    use crate::tests::util::relative_diff_percent;
+
+    use super::*;
     use crate::{Recipe, docs::assert_eq_float};
 
     #[test]
@@ -244,6 +282,37 @@ mod tests {
 
         for (key, value) in REF_B_RECIPE_PROPERTIES.iter() {
             assert_eq_float!(mix_props.get(*key), *value);
+        }
+    }
+
+    #[test]
+    fn chocolate_evaporation_fixtures_have_expected_totals() {
+        let pre_total: f64 = CHOCOLATE_PRE_EVAPORATION.iter().map(|(_, g)| g).sum();
+        let post_total: f64 = CHOCOLATE_POST_EVAPORATION.iter().map(|(_, g)| g).sum();
+
+        assert_eq!(pre_total, 1089.0);
+        assert_eq!(post_total, 939.0);
+        assert_eq!(pre_total - post_total, 150.0);
+    }
+
+    #[test]
+    fn chocolate_post_evaporation_rehydrates_to_pre() {
+        let pre = Recipe::from_const_recipe(None, CHOCOLATE_PRE_EVAPORATION, &EMBEDDED_DB).unwrap();
+
+        let rehydrated_lines = [CHOCOLATE_POST_EVAPORATION, &[("Water", 150.0)]].concat();
+        let rehydrated = Recipe::from_const_recipe(None, &rehydrated_lines, &EMBEDDED_DB).unwrap();
+
+        assert_eq!(
+            rehydrated.calculate_mix_properties().unwrap().total_amount,
+            pre.calculate_mix_properties().unwrap().total_amount
+        );
+
+        let pre_comp = pre.calculate_composition().unwrap();
+        let rehydrated_comp = rehydrated.calculate_composition().unwrap();
+        for key in CompKey::iter() {
+            let (rehydrated_val, pre_val) = (rehydrated_comp.get(key), pre_comp.get(key));
+            assert_abs_diff_eq!(rehydrated_val, pre_val, epsilon = 0.11);
+            assert!(relative_diff_percent(rehydrated_val, pre_val) < 0.1);
         }
     }
 }

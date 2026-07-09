@@ -70,6 +70,9 @@ pub enum Error {
     /// Failed to balance compositions to target values.
     #[error("Failed to balance compositions: {0}")]
     FailedToBalanceCompositions(String),
+    /// Evaporation amount is invalid, e.g. negative, non-finite, or exceeding available water.
+    #[error("Invalid evaporation: {0}")]
+    InvalidEvaporation(String),
 }
 
 #[cfg_attr(coverage, coverage(off))]

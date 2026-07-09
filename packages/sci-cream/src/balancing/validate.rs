@@ -396,32 +396,39 @@ impl BalancingReport {
 /// holds that composition at fraction `f`, `(comp, None)` leaves it free. This adds the lock
 /// input-error checks (a non-finite or negative fraction, or fractions summing above the mix).
 ///
-/// **Note:** When any composition is locked, the palette-derived feasibility *warnings* (reachable
-/// range, dominance, ratio bands, over-determination) are not computed — they assume a fully free
-/// palette, so would mislead against a partially-locked one. The palette-independent error and
-/// structural checks are unaffected. Making the palette warnings lock-aware is a planned follow-up.
+/// **Note:** When any composition is locked, or the mix evaporates (`evaporation` non-zero), the
+/// palette-derived feasibility *warnings* (reachable range, dominance, ratio bands,
+/// over-determination) are not computed — they assume a fully free, non-evaporated palette, so
+/// would mislead otherwise (a locked palette isn't free; an evaporated palette reaches concentrated
+/// targets through the water loss). The palette-independent error and structural checks are
+/// unaffected. Making these warnings lock- and evaporation-aware is a planned follow-up.
 ///
 /// `rel_tol` is the relative tolerance for the warning checks only: a target off a band or
 /// structural equality by no more than `rel_tol` times the compared magnitudes is treated as
 /// feasible. `None` (or `0.0`) is exact; a consumer of display-rounded targets passes a small value
 /// matched to its precision so rounding a target does not raise a spurious warning.
+///
+/// `evaporation` is the fraction `E/T` of the pre-evaporation mix lost to preparation (`None`/`0.0`
+/// for none), matching [`balance_compositions`]; it only gates the palette-warning skip above.
 #[must_use]
 pub fn validate_balancing_targets(
     comps: &[(Composition, Option<f64>)],
     targets: &[(BalanceKey, f64)],
     priorities: &[(BalanceKey, Priority)],
     rel_tol: Option<f64>,
+    evaporation: Option<f64>,
 ) -> BalancingReport {
     // Snapshot each composition once so the repeated, nested affectability and ratio-band scans
     // below index a flat array instead of recomputing `Composition::get` (see `FastComposition`).
     let fast: Vec<FastComposition> = comps.iter().map(|&(comp, _)| comp.to_fast()).collect();
 
-    let locks_present = comps.iter().any(|&(_, lock)| lock.is_some());
+    // Palette-derived feasibility warnings assume a fully free, non-evaporated palette.
+    let skip_palette_checks = comps.iter().any(|&(_, lock)| lock.is_some()) || evaporation.is_some_and(|e| e != 0.0);
 
     let mut issues = Vec::new();
     append_input_error_issues(targets, priorities, &mut issues);
     append_lock_error_issues(comps, &mut issues);
-    append_input_warning_issues(&fast, targets, priorities, rel_tol.unwrap_or(0.0), locks_present, &mut issues);
+    append_input_warning_issues(&fast, targets, priorities, rel_tol.unwrap_or(0.0), skip_palette_checks, &mut issues);
 
     // Each check emits every issue it can detect, so the same underlying problem may surface as
     // several issues (e.g. a part/whole contradiction seen by both the structural and the palette
@@ -499,18 +506,18 @@ pub(crate) fn append_lock_error_issues(comps: &[(Composition, Option<f64>)], iss
 /// the solve. [`balance_compositions`] skips them; only [`validate_balancing_targets`] runs them to
 /// surface the full report.
 ///
-/// When `locks_present`, the palette-derived checks (unaffectable, reachability, dominance, ratio,
-/// over-determination) are skipped — they assume a free palette and would misreport a locked one
-/// (lock-aware versions are a follow-up); palette-independent structural and priority checks run.
+/// When `skip_palette_checks`, the palette-derived checks (unaffectable, reachability, dominance,
+/// ratio, over-determination) are skipped — they assume a fully free, non-evaporated palette and
+/// would misreport a locked or evaporated one (aware versions are a follow-up).
 fn append_input_warning_issues(
     comps: &[impl CompositionValues],
     targets: &[(BalanceKey, f64)],
     priorities: &[(BalanceKey, Priority)],
     rel_tol: f64,
-    locks_present: bool,
+    skip_palette_checks: bool,
     issues: &mut Vec<BalancingIssue>,
 ) {
-    if !locks_present {
+    if !skip_palette_checks {
         // Checks unaffectable targets. Non-finite and negative values are skipped (errors).
         for &(key, target) in targets {
             if is_finite_non_negative(target) && is_unaffectable(comps, key, target) {
@@ -523,7 +530,7 @@ fn append_input_warning_issues(
 
     append_structural_issues(targets, rel_tol, issues);
 
-    if !locks_present {
+    if !skip_palette_checks {
         append_palette_ratio_issues(comps, targets, rel_tol, issues);
         append_over_determination_issue(comps, targets, issues);
     }

@@ -10,6 +10,9 @@ use serde::{Deserialize, Serialize};
 
 use crate::recipe::OwnedLightRecipe;
 
+#[cfg(doc)]
+use crate::recipe::Recipe;
+
 /// (filename, file content) tuples for all embedded recipes JSON data files
 const EMBEDDED_RECIPES_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
     ("underbelly.json", include_str!("../../data/recipes/underbelly.json")),
@@ -25,6 +28,9 @@ pub struct RecipeEntry {
     pub author: Option<String>,
     /// The recipe data itself, as an [`OwnedLightRecipe`]
     pub recipe: OwnedLightRecipe,
+    /// Grams of water evaporated during preparation, if any (see [`Recipe::evaporation`]).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub evaporation: Option<f64>,
 }
 
 /// Helper to generate a recipe ID from name and optional author, as "Name" or "Author: Name"
@@ -109,7 +115,8 @@ pub(crate) mod tests {
     use crate::tests::asserts::shadow_asserts::assert_eq;
     use crate::tests::asserts::*;
 
-    use crate::tests::assets::EMBEDDED_DB;
+    use crate::tests::assets::{CHOCOLATE_POST_EVAPORATION, EMBEDDED_DB};
+    use crate::tests::util::relative_diff_percent;
 
     use super::*;
 
@@ -129,6 +136,7 @@ pub(crate) mod tests {
             ("Lambda Carrageenan".into(), 0.2),
             ("Salt".into(), 0.7),
         ],
+        evaporation: None,
     });
 
     fn find_entry(name: &str, author: Option<&str>) -> Option<RecipeEntry> {
@@ -165,6 +173,7 @@ pub(crate) mod tests {
             name: "Standard Base".into(),
             author: Some("Underbelly".into()),
             recipe: vec![],
+            evaporation: None,
         };
         assert_eq!(entry.gen_id(), "Underbelly: Standard Base");
     }
@@ -175,6 +184,7 @@ pub(crate) mod tests {
             name: "Standard Base".into(),
             author: None,
             recipe: vec![],
+            evaporation: None,
         };
         assert_eq!(entry.gen_id(), "Standard Base");
     }
@@ -270,5 +280,69 @@ pub(crate) mod tests {
                 );
             }
         }
+    }
+
+    // --- Ice Cream Science: Chocolate Ice Cream evaporation ---
+
+    fn embedded_chocolate_recipe() -> crate::recipe::Recipe {
+        let entry = get_recipe_entry_by_id("Chocolate Ice Cream", Some("Ice Cream Science")).unwrap();
+        crate::recipe::Recipe::from_light_recipe(Some(entry.name.clone()), &entry.recipe, &EMBEDDED_DB)
+            .unwrap()
+            .with_evaporation(entry.evaporation.unwrap())
+    }
+
+    #[test]
+    fn embedded_chocolate_entry_carries_150g_evaporation() {
+        let entry = get_recipe_entry_by_id("Chocolate Ice Cream", Some("Ice Cream Science")).unwrap();
+        assert_eq!(entry.evaporation, Some(150.0));
+        let pre_evap_total: f64 = entry.recipe.iter().map(|(_, amount)| amount).sum();
+        assert_eq!(pre_evap_total, 1089.0);
+    }
+
+    #[test]
+    fn embedded_chocolate_evaporated_composition_matches_hand_balanced_fixture() {
+        use strum::IntoEnumIterator;
+
+        let evaporated = embedded_chocolate_recipe().calculate_composition().unwrap();
+        let fixture = crate::recipe::Recipe::from_const_recipe(None, CHOCOLATE_POST_EVAPORATION, &EMBEDDED_DB)
+            .unwrap()
+            .calculate_composition()
+            .unwrap();
+
+        for key in crate::composition::CompKey::iter() {
+            let (evap, fix) = (evaporated.get(key), fixture.get(key));
+            assert_abs_diff_eq!(evap, fix, epsilon = 0.13);
+            assert!(relative_diff_percent(evap, fix) < 0.1);
+        }
+    }
+
+    #[test]
+    fn embedded_chocolate_deevaporates_to_hand_balanced_yield() {
+        use strum::IntoEnumIterator;
+
+        let deevaporated = embedded_chocolate_recipe().deevaporate().unwrap();
+        let fixture = crate::recipe::Recipe::from_const_recipe(None, CHOCOLATE_POST_EVAPORATION, &EMBEDDED_DB).unwrap();
+
+        assert_eq!(deevaporated.evaporation, 0.0);
+        assert_eq_flt_test!(deevaporated.line_total(), 939.0);
+
+        let deevap_comp = deevaporated.calculate_composition().unwrap();
+        let fixture_comp = fixture.calculate_composition().unwrap();
+        for key in crate::composition::CompKey::iter() {
+            let (dc, fc) = (deevap_comp.get(key), fixture_comp.get(key));
+            assert_abs_diff_eq!(dc, fc, epsilon = 0.13);
+            assert!(relative_diff_percent(dc, fc) < 0.1);
+        }
+
+        let amount_of = |name: &str| {
+            deevaporated
+                .lines
+                .iter()
+                .find(|line| line.ingredient.name == name)
+                .map(|line| line.amount)
+                .unwrap()
+        };
+        assert_abs_diff_eq!(amount_of("Skim Milk"), 153.55, epsilon = 0.5);
+        assert_abs_diff_eq!(amount_of("Skimmed Milk Powder"), 61.45, epsilon = 0.5);
     }
 }

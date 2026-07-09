@@ -1,5 +1,23 @@
 [
   {
+    "name": "Chocolate Ice Cream",
+    "author": "Ice Cream Science",
+    "recipe": [
+      ["Double Cream", 417],
+      ["Skim Milk", 319],
+      ["Skimmed Milk Powder", 46],
+      ["Sucrose", 140],
+      ["Egg Yolk", 78],
+      ["Cocoa Powder, 17% Fat", 30],
+      ["70% Dark Chocolate", 50],
+      ["Salt", 3],
+      ["Vanilla Extract", 5],
+      ["Instant Coffee", 1]
+    ],
+    "evaporation": 150,
+    "comments": "Source: https://www.icecreamscience.com/blog/chocolate-ice-cream-recipe, visited 2026-07-07. The amounts listed are the starting (pre-evaporation) ingredients, totalling 1089g. The preparation instructions ask for 15% of the dairy, sugar, and egg yolk mix to be evaporated out, which works out to 150g of water being subtracted from the mix, for a final yield of 939g; this is captured by the recipe's evaporation of 150g. For a preparation that limits evaporation, such as sous vide, de-evaporate this recipe to get an equivalent no-evaporation formulation (Skim Milk drops to ~153g and Skimmed Milk Powder rises to ~62g). The recipe states '1 tsp vanilla extract', which is ~5g. The recipe asks for '3g whole coffee beans' to be heated with the mix and then strained out. This has a negligible effect on the mix composition; I suspect that it's equivalent to a tiny amount of instant coffee, so I have modeled it as 1g of instant coffee."
+  },
+  {
     "name": "Chocolate Ice Cream (pre-evaporation)",
     "author": "Ice Cream Science",
     "recipe": [

@@ -1,8 +1,9 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded recipe entries 1`] = `
-"total: 11
+"total: 12
 
+Ice Cream Science: Chocolate Ice Cream
 Ice Cream Science: Chocolate Ice Cream (post-evaporation)
 Ice Cream Science: Chocolate Ice Cream (pre-evaporation)
 Ice Cream Science: Ninja Creami NC301 Easy No-Cook Tres Leches (UK)

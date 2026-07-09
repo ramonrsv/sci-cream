@@ -47,6 +47,16 @@ test("recipeEntryId returns just name when author is absent", () => {
   expect(recipeEntryId(entry)).toEqual("My Recipe");
 });
 
+test("Ice Cream Science chocolate entry carries 150 g evaporation", () => {
+  const chocolate = allRecipeEntries.find(
+    (entry) => recipeEntryId(entry) === "Ice Cream Science: Chocolate Ice Cream",
+  );
+  expect(chocolate).toBeDefined();
+  expect(chocolate?.evaporation).toBe(150);
+  const preEvapTotal = chocolate!.recipe.reduce((sum, [, amount]) => sum + amount, 0);
+  expect(preEvapTotal).toBe(1089);
+});
+
 // --- WASM API ---
 
 test("get_all_recipe_entry_ids", () => {
