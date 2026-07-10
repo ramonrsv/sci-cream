@@ -7,10 +7,30 @@
 - [ ] Look into whether setting targets from reference should also set zero targets for active keys.
 - [ ] Add end-to-end tests for balancing functionality; check surfacing of balancing errors?
 - [ ] Add a visual warning indicator for user-defined ingredients that shadow built-in ones.
-- [ ] Add `height` prop to `PropertiesTable` so that it can adapt the number of properties shown.
 - [ ] Add visual regression tests for dark mode; not everything, just routes & some key elements.
 - [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
 - [ ] Add water-based gating of the evaporation input, and properly handle sci-cream evap errors.
+- [ ] Add a leading emoji to some selects to make their purpose clearer; also add title/labels.
+- [ ] Make it so that only ingredient quantity - not names - updates un-toggle auto-balancing.
+- [ ] Add a way to edit saved recipe version labels; should be easier now that there is more space.
+- [ ] Add a recipe version quality signal and/or favorites; one/two thumbs up, thumb down, star?
+- [ ] Invalid ingredient names are not saved when saving a recipe. They should be, so need a fix.
+- [ ] Pasting a recipe from clipboard clears the name and DB reference; it probably shouldn't.
+- [ ] The All/Built-In/Saved selectors in `/ingredients` and `/recipes` are not persisted to local.
+- [ ] `RecipeEditor` does not update the ingredient name/version if the original is deleted.
+- [ ] Recipe versions are ordered in chronological order;should be in reverse chronological order.
+- [ ] Changing color theme does not update the charts until something triggers a re-render. This
+      bug was previously fixed and has re-surfaced, so make sure to implement a test to check it.
+- [ ] Increase the height of comments in `/recipes`; it's difficult to edit in such a short slot.
+- [ ] Add support for storing evaporation in the database; saved recipes currently don't support it.
+- [ ] Add `height` prop to `PropertiesTable` so that it can adapt the number of properties shown.
+- [ ] Add support for `RecipeEditor` and `CompositionBreakdown` to render the maximum of the number
+      of rows needed to fill the current height, and the current number of filled in rows + 1.
+- [ ] `autoLink` has a bug where it includes closing `),` in the produced links; fix or replace.
+- [ ] "Serving Temp." in `Watchers` sometimes shows a target, but it's not balanceable. Needs fix?
+- [ ] Targets not selected for balancing in `Watchers` can show in `PropertiesChart`; investigate.
+- [ ] Investigate relative delta behavior in `Watchers`, they seem to not be changing gradually.
+- [ ] In the `PropertiesChart` tooltip, move the numeric value to the left so it does not overflow.
 
 ## Up Next
 
@@ -44,6 +64,9 @@
 - [ ] In `/ingredients`, the composition table does not have a bottom border; shows when scroll.
 - [ ] There is a weird horizontal line in `/ingredient-search-detail-panel-visual-linux.png`
 - [ ] Some layouts cause some toolbars to overflow. See if the look of overflowing can be improved.
+- [ ] Investigate the use of a settings popover to declutter the toolbars with multiple selects.
+- [ ] Make the 'information' icon show in visual regression tests for toolbar space constraints.
+- [ ] Should `group-by.tsx`, `session-resources.tsx`, and other `*.tsx` go in `app`, not `lib`?
 
 ## Backlog
 

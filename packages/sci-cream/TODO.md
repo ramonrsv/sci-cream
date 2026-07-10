@@ -9,6 +9,10 @@
 - [ ] Add TS-side unit tests for the `wasm::Recipe` functionality; it's independent from `Bridge`.
 - [ ] Review 'USDA Sweetened Condensed Milk' ingredient, the 45% sucrose estimate may be incorrect.
       Also review all of the dairy ingredients that derive their sucrose content from this estimate.
+- [ ] Add optional `total_amount` input to `Bridge::validate_balancing_targets`, same as `balance`.
+- [ ] `assert_eq_flt_test`, with epsilon `TESTS_EPSILON = 0.0001`, is too loose for many use cases.
+      Consider tightening to `COMPOSITION_EPSILON` and/or adding a tighter/loser assert variant.
+- [ ] Add `CompKey`s and ingredient for the known emulsifiers, e.g. `gum_arabic`/"Gum Arabic".
 
 ## Up Next
 
@@ -31,10 +35,12 @@
 - [ ] FPD properties cannot be balanced, so add some way to convert them to (PAC-HF)/Water.
 - [ ] Add an intensive->extensive translation layer for balancing: solve non-additive targets via
       an additive proxy (`ABV` -> `Alcohol`, later `ServingTemp` -> `AbsNetPAC`). Classify keys
-      Intensive/Extensive and error on target/proxy clashes. Interim: `ABV` -> `Alochol`, @todos.
+      Intensive/Extensive and error on target/proxy clashes. Interim: `ABV` -> `Alcohol`, @todos.
+- [ ] Once supported, add keys for `Stabilization`, `Emulsification`, etc. Intensive, like ABV?
 - [ ] Remove `Composition` functions for calculating ratios, `get_ratio` already handles that.
 - [ ] If all children of a key have a target, we can infer the parent's target and use it in checks.
 - [ ] Add a Nutella Sweetened Hazelnut Cocoa Spread ingredient; not very useful, but it's common.
+- [ ] Add a Lindt Hazelnut Cocoa Spread ingredient; similar to Nutella, but less sugar, more useful.
 - [ ] Fold per-target priority into the balancing targets tuple
       (`targets: &[(BalanceKey, f64, Option<Priority>)]`), dropping the parallel `priorities` list.
       Removes `PriorityWithoutTarget` and `DuplicatePriority` (subsumed by `DuplicateTarget`).
@@ -44,6 +50,10 @@
 - [ ] Explore `Recipe::deevaporate`'s target-key set: it targets all balanceable keys, up-weighting
       the ratios' constituents. Test extensive-only vs. curated alternatives in degenerate cases,
       tied into the extensive/intensive key classification.
+- [ ] Consider adding support for step-aware balancing, to support whole unit ingredients (e.g. egg
+      yolks are 17g per unit), and to improve balancing drift due to app-side qty step rounding.
+- [ ] Should `isCompQuantity` return false for ABV? It's a bit confusing as a quantity percentage.
+- [ ] Consider adding an a `RatioKey::StabilizersPerEmulsifiers`; I saw Underbelly mention it.
 
 ## Backlog
 
