@@ -55,7 +55,7 @@ function doBenchmarkTimeMeasurements(name: string, run: () => Promise<number>) {
   });
 }
 
-test.describe("UI Responsiveness Performance Benchmarks", () => {
+test.describe("Recipe Responsiveness Performance Benchmarks", () => {
   test.setTimeout(10 * 60 * 1000);
 
   test("should measure initial page load time", async ({ page }) => {

@@ -8,6 +8,7 @@ import {
   PropKey,
   prop_key_as_med_str,
   getMixProperty,
+  getAllBalanceableKeys,
   type LightRecipe,
 } from "@workspace/sci-cream";
 
@@ -689,4 +690,84 @@ export async function locateWatcherCardByKeyAndExpectVisible(page: Page, propKey
   const card = page.locator(`[data-testid="watcher-card-${propKey}"]`);
   await expect(card).toBeVisible();
   return card;
+}
+
+/** Get the watchers toolbar's Balance button element. */
+export function getWatchersBalanceButton(page: Page) {
+  return page.locator('[data-testid="watchers-balance-button"]');
+}
+
+/** Get the watchers toolbar's continuous auto-balance toggle button element. */
+export function getWatchersAutoBalanceToggle(page: Page) {
+  return page.locator('[data-testid="watchers-auto-balance-toggle"]');
+}
+
+/** Get the watchers toolbar's fill-targets-from-current-recipe (M) button element. */
+export function getWatchersFillAllMainButton(page: Page) {
+  return page.locator('[data-testid="watchers-fill-all-main"]');
+}
+
+/** Get the watchers toolbar's pinned batch-total (grams) number input element. */
+export function getWatchersTotalInput(page: Page) {
+  return page.locator('[data-testid="watchers-total-input"]');
+}
+
+/** Get a watcher card's numeric target input element for the given `PropKey`. */
+export function getWatcherCardTargetInput(page: Page, propKey: PropKey) {
+  return page.locator(`[data-testid="watcher-card-${propKey}-target"]`);
+}
+
+/**
+ * Get a watcher card's per-key validation issue marker for `propKey`. Present (any severity) only
+ * when `validate_recipe_targets` flags that key, so it is gated on real validation output.
+ */
+export function getWatcherCardIssue(page: Page, propKey: PropKey) {
+  return page.locator(`[data-testid="watcher-card-${propKey}-issue"]`);
+}
+
+/** Select `KeyFilter.Custom` in the watchers panel so the preset watcher selection is honored. */
+export async function selectWatchersKeyFilterCustom(page: Page) {
+  const control = getSelectControl(page, "#watchers-panel #key-filter-select");
+  await selectOption(page, control, KeyFilter.Custom);
+}
+
+/** Concatenated values of the recipe editor's ingredient quantity inputs, as a change signal. */
+export async function getRecipeEditorQtyInputsSignature(page: Page): Promise<string> {
+  return page
+    .locator('#recipe-editor-panel input[type="number"].table-fillable-input')
+    .evaluateAll((els) => els.map((el) => (el as HTMLInputElement).value).join(","));
+}
+
+/**
+ * Which set of balancing targets to seed for a balancing benchmark:
+ * - `"auto"` — the app's default `KeyFilter.Auto` heuristic set (the typical real-world case).
+ * - `"all"` — every balanceable key selected via `KeyFilter.Custom` (the worst-case target count).
+ */
+export type WatcherTargetSet = "auto" | "all";
+
+/**
+ * Set up the watchers panel for a balancing benchmark
+ *
+ * Seed the target set (`"auto"` = the Auto heuristic, `"all"` = every balanceable key), paste
+ * `recipeId`, and fill targets from the current recipe (M button). Targets then equal current
+ * values — reachable and error-free — so Balance is enabled and `representativeKey`'s issue marker
+ * is clear; the caller reads that key's target back to derive perturbed values.
+ *
+ * **Note:** mutates panel selectors and leaves the page on the calculator with `recipeId` pasted.
+ */
+export async function setupWatchersForBalancing(
+  page: Page,
+  browserName: string,
+  targetSet: WatcherTargetSet,
+  representativeKey: PropKey,
+  recipeId: RecipeID = RecipeID.Main,
+) {
+  if (targetSet === "all") await presetWatcherSelection(page, getAllBalanceableKeys());
+
+  await goToPageAndPasteRecipes(page, browserName, [recipeId]);
+
+  if (targetSet === "all") await selectWatchersKeyFilterCustom(page);
+
+  await locateWatcherCardByKeyAndExpectVisible(page, representativeKey);
+  await getWatchersFillAllMainButton(page).click();
 }

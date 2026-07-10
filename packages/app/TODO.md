@@ -65,6 +65,10 @@
 - [ ] Investigate the use of a settings popover to declutter the toolbars with multiple selects.
 - [ ] Make the 'information' icon show in visual regression tests for toolbar space constraints.
 - [ ] Should `group-by.tsx`, `session-resources.tsx`, and other `*.tsx` go in `app`, not `lib`?
+- [ ] Explore a rapid target-update bench with auto-balance on for solve-under-load throughput.
+      Validation is costlier than the solve, so check for queuing/lag when solves outpace it.
+- [ ] Explore decoupling balancing from the synchronous re-validation it triggers: each balance
+      cycle waits for the solve and a costlier re-validation before the UI updates. Defer it?
 
 ## Backlog
 
