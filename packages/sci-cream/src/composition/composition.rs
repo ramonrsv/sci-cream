@@ -514,17 +514,17 @@ impl Composition {
     pub fn evaporate(&self, water_removed: f64) -> Result<Self> {
         if !water_removed.is_finite() || water_removed < 0.0 {
             return Err(Error::InvalidEvaporation(format!(
-                "water removed per 100g must be finite and non-negative, got {water_removed}"
+                "water removed per 100g must be finite and non-negative, got {water_removed:.2}"
             )));
         }
         if water_removed >= 100.0 {
             return Err(Error::InvalidEvaporation(format!(
-                "water removed per 100g must be less than 100, got {water_removed}"
+                "water removed per 100g must be less than 100, got {water_removed:.2}"
             )));
         }
         if water_removed > self.water() + COMPOSITION_EPSILON {
             return Err(Error::InvalidEvaporation(format!(
-                "water removed per 100g ({water_removed}) exceeds available water ({})",
+                "water removed per 100g ({water_removed:.2}) exceeds available water ({:.2})",
                 self.water()
             )));
         }

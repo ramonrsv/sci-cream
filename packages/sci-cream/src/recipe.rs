@@ -230,7 +230,7 @@ impl Recipe {
         }
         if total == 0.0 {
             return Err(Error::InvalidEvaporation(format!(
-                "cannot evaporate {} g from a zero-total recipe",
+                "cannot evaporate {:.2} g from a zero-total recipe",
                 self.evaporation
             )));
         }

@@ -172,7 +172,7 @@ fn validate_evaporation_fraction(evaporation: Option<f64>) -> Result<f64> {
     let evaporation = evaporation.unwrap_or(0.0);
     if !evaporation.is_finite() || !(0.0..1.0).contains(&evaporation) {
         return Err(Error::InvalidEvaporation(format!(
-            "evaporation fraction must be finite and within [0, 1), got {evaporation}"
+            "evaporation fraction must be finite and within [0, 1), got {evaporation:.2}"
         )));
     }
     Ok(evaporation)
