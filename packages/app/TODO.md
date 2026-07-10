@@ -9,7 +9,6 @@
 - [ ] Add a visual warning indicator for user-defined ingredients that shadow built-in ones.
 - [ ] Add visual regression tests for dark mode; not everything, just routes & some key elements.
 - [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
-- [ ] Add water-based gating of the evaporation input, and properly handle sci-cream evap errors.
 - [ ] Add a leading emoji to some selects to make their purpose clearer; also add title/labels.
 - [ ] Make it so that only ingredient quantity - not names - updates un-toggle auto-balancing.
 - [ ] Add a way to edit saved recipe version labels; should be easier now that there is more space.
@@ -65,8 +64,6 @@
 - [ ] Investigate the use of a settings popover to declutter the toolbars with multiple selects.
 - [ ] Make the 'information' icon show in visual regression tests for toolbar space constraints.
 - [ ] Should `group-by.tsx`, `session-resources.tsx`, and other `*.tsx` go in `app`, not `lib`?
-- [ ] Explore a rapid target-update bench with auto-balance on for solve-under-load throughput.
-      Validation is costlier than the solve, so check for queuing/lag when solves outpace it.
 - [ ] Explore decoupling balancing from the synchronous re-validation it triggers: each balance
       cycle waits for the solve and a costlier re-validation before the UI updates. Defer it?
 
@@ -126,6 +123,9 @@
 
 ## Completed
 
+- [x] Explore a rapid target-update bench with auto-balance on for solve-under-load throughput.
+      Validation is costlier than the solve, so check for queuing/lag when solves outpace it.
+- [x] Add water-based gating of the evaporation input, and properly handle sci-cream evap errors.
 - [x] Changing color theme does not update the charts until something triggers a re-render. This
       bug was previously fixed and has re-surfaced, so make sure to implement a test to check it.
 - [x] `WatcherCard` needs to display a color based on position with an acceptable property range,

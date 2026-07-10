@@ -32,6 +32,13 @@ const ERROR_TARGET = "999";
 const TOTAL_A = "1000";
 const TOTAL_B = "1200";
 
+/** Distinct pinned totals fired back-to-back to probe rapid auto-balance settle/coalescing. */
+const RAPID_TOTALS = Array.from({ length: 50 }, (_, i) => String(1000 + i * 10));
+
+/** The burst's final total, whose settled recipe each run awaits; plus a distinct reset total. */
+const RAPID_FINAL_TOTAL = RAPID_TOTALS[RAPID_TOTALS.length - 1];
+const RAPID_RESET_TOTAL = "1000";
+
 /** Settle wait for one balance/validation observable; generous to absorb WASM+render jitter. */
 const SETTLE_TIMEOUT = 15_000;
 
@@ -136,6 +143,54 @@ test.describe("Balancing Responsiveness Performance Benchmarks", () => {
           await expect
             .poll(() => getRecipeEditorQtyInputsSignature(page), { timeout: SETTLE_TIMEOUT })
             .not.toBe(before);
+        });
+      });
+    });
+
+    test(`should measure auto-balance rapid-update settle (${label})`, async ({
+      page,
+      browserName,
+    }) => {
+      await setupWatchersForBalancing(page, browserName, set, KEY);
+
+      const autoToggle = getWatchersAutoBalanceToggle(page);
+      await autoToggle.click();
+      await expect(autoToggle).toHaveAttribute("aria-pressed", "true");
+
+      const totalInput = getWatchersTotalInput(page);
+
+      // Capture settled signatures once so runs can await each by positive equality; a bare
+      // `.not.toBe` could match a transient mid-solve render. Guard that the two states differ.
+      const initialSig = await getRecipeEditorQtyInputsSignature(page);
+      await totalInput.fill(RAPID_FINAL_TOTAL);
+      await expect
+        .poll(() => getRecipeEditorQtyInputsSignature(page), { timeout: SETTLE_TIMEOUT })
+        .not.toBe(initialSig);
+      const finalSig = await getRecipeEditorQtyInputsSignature(page);
+
+      await totalInput.fill(RAPID_RESET_TOTAL);
+      await expect
+        .poll(() => getRecipeEditorQtyInputsSignature(page), { timeout: SETTLE_TIMEOUT })
+        .not.toBe(finalSig);
+      const resetSig = await getRecipeEditorQtyInputsSignature(page);
+
+      expect(resetSig).not.toBe(finalSig);
+
+      await doBenchmarkTimeMeasurements(`Auto-balance rapid updates (${label})`, async () => {
+        // Untimed: settle at the reset total so the timed run starts from a known state.
+        await totalInput.fill(RAPID_RESET_TOTAL);
+        await expect
+          .poll(() => getRecipeEditorQtyInputsSignature(page), { timeout: SETTLE_TIMEOUT })
+          .toBe(resetSig);
+
+        // Timed: fire the burst back-to-back (no await between fills, so intermediate solves may
+        // coalesce), then await the final settle. Reports total burst-to-settle, not per-update.
+        return timeExecution(async () => {
+          for (const total of RAPID_TOTALS) await totalInput.fill(total);
+
+          await expect
+            .poll(() => getRecipeEditorQtyInputsSignature(page), { timeout: SETTLE_TIMEOUT })
+            .toBe(finalSig);
         });
       });
     });
