@@ -1711,6 +1711,43 @@ describe("WatchersView Auto-balance", () => {
     expect(onApply).toHaveBeenCalledTimes(1);
   });
 
+  it("re-balances when the ingredient set changes while auto is on", () => {
+    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
+    const main = makeMockRecipe(RecipeID.Main);
+    const onApply = vi.fn();
+    const { rerender } = render(
+      <WatchersView
+        main={main}
+        wasmBridge={WASM_BRIDGE}
+        onApplyBalancedMain={onApply}
+        autoBalanceState={[true, vi.fn()]}
+      />,
+    );
+
+    onApply.mockClear(); // ignore the initial (mount) balance
+
+    // Add a valid ingredient to a previously empty row: the balanceable set changes.
+    const withAddedIngredient = { ...main, ingredientRows: [...main.ingredientRows] };
+    const emptyIdx = withAddedIngredient.ingredientRows.findIndex((r) => r.name === "");
+    withAddedIngredient.ingredientRows[emptyIdx] = {
+      index: emptyIdx,
+      name: "Sucrose",
+      quantity: 0,
+      ingredient: WASM_BRIDGE.get_ingredient_by_name("Sucrose"),
+    };
+
+    rerender(
+      <WatchersView
+        main={withAddedIngredient}
+        wasmBridge={WASM_BRIDGE}
+        onApplyBalancedMain={onApply}
+        autoBalanceState={[true, vi.fn()]}
+      />,
+    );
+
+    expect(onApply).toHaveBeenCalledTimes(1);
+  });
+
   it("does not balance an empty main even when auto is on", () => {
     localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
     const onApply = vi.fn();

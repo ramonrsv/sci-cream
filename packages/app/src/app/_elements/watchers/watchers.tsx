@@ -831,6 +831,14 @@ export function WatchersView({
   const balancePrioritiesKey = JSON.stringify(balancePriorities);
   const balanceLocksKey = JSON.stringify(balanceLocks);
 
+  // Names of the balanceable rows (not quantities): re-triggers the auto-balance effect when an
+  // ingredient is added/removed/renamed, but the balancer's quantity writes can't self-trigger.
+  const balanceIngredientsKey = wasmBridge
+    ? JSON.stringify(
+        makeLightRecipe(main, (n) => wasmBridge.has_ingredient(n)).map(([name]) => name),
+      )
+    : "";
+
   // Validate targets live so issues surface before the user clicks Balance.
   const report = useMemo<BalancingReport | undefined>(() => {
     if (!wasmBridge || !recipeHasIngredients(main) || balanceTargets.length === 0) {
@@ -939,9 +947,9 @@ export function WatchersView({
   const balanceDisabled =
     !balancingSupported || !recipeHasIngredients(main) || balanceTargets.length === 0 || hasErrors;
 
-  // Continuous (auto) balancing: while on, re-balance on target/priority/total/evap change. Keyed
-  // on those inputs, not `main`, so the balancer's own write can't re-trigger it. `useLayoutEffect`
-  // flushes the re-balance before paint, avoiding a one-frame stale-delta flicker.
+  // Continuous (auto) balancing: while on, re-balance on target/priority/lock/total/evap or
+  // ingredient-set change. Keyed on those, not `main`, so the balancer's own quantity write can't
+  // re-trigger it. `useLayoutEffect` runs before paint, avoiding a one-frame stale-delta flicker.
   useLayoutEffect(() => {
     if (!autoBalance || balanceDisabled) return;
     onBalance();
@@ -953,6 +961,7 @@ export function WatchersView({
     balanceTargetsKey,
     balancePrioritiesKey,
     balanceLocksKey,
+    balanceIngredientsKey,
     pinnedTotal,
     main.evaporation,
   ]);
