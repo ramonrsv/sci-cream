@@ -17,7 +17,7 @@ import {
 } from "chart.js";
 
 import { RecipeSummary } from "@/lib/recipe";
-import { useTheme } from "@/lib/theme";
+import { useThemeRepaint } from "@/lib/theme";
 import {
   TOOLTIP_CORNER_RADIUS,
   TOOLTIP_PADDING,
@@ -78,8 +78,8 @@ const Y_AXIS_MAX = 0;
  * Consumer is responsible for sizing the chart via a parent container.
  */
 export function FpdGraph({ main, refs = [] }: { main: RecipeSummary; refs?: RecipeSummary[] }) {
-  // Subscribe to the theme so the canvas re-reads the cascaded colors and repaints when it flips.
-  useTheme();
+  // Re-render on theme-class changes so the canvas re-reads the cascaded colors and repaints.
+  useThemeRepaint();
 
   const gridColor = getColor(ThemeColor.Border);
   const legendColor = getColor(ThemeColor.TextPrimary);

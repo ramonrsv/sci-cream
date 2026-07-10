@@ -20,7 +20,7 @@ import {
 
 import { Recipe, RecipeSummary, isRecipeEmpty } from "@/lib/recipe";
 import type { TargetsMap } from "@/app/_elements/watchers/watchers";
-import { useTheme } from "@/lib/theme";
+import { useThemeRepaint } from "@/lib/theme";
 import {
   KeyFilter,
   KeyFilterSelect,
@@ -313,8 +313,8 @@ export function PropertiesBarChart({
   normMode?: NormMode;
   colorMode?: ColorMode;
 }) {
-  // Subscribe to the theme so the canvas re-reads the cascaded colors and repaints when it flips.
-  useTheme();
+  // Re-render on theme-class changes so the canvas re-reads the cascaded colors and repaints.
+  useThemeRepaint();
 
   // Rotate to horizontal bars when the container is portrait-ish, so mobile panels stay readable
   // (the ratio gap is hysteresis). State is adjusted during render, not in an effect.

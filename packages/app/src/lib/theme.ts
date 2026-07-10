@@ -1,3 +1,4 @@
+import { useEffect, useReducer } from "react";
 import { useTheme as useThemeFromNextThemes } from "next-themes";
 
 /** Application-level theme enum, mapped from the `next-themes` resolved theme string */
@@ -25,6 +26,23 @@ export function appThemeToNextTheme(appTheme: Theme): string {
 export function useTheme() {
   const { resolvedTheme } = useThemeFromNextThemes();
   return { theme: resolvedNextThemeToAppTheme(resolvedTheme) };
+}
+
+/**
+ * Force the caller to re-render whenever the document root's class list changes.
+ *
+ * Canvas charts read cascaded CSS colors with {@link getColor} during render, so they must
+ * re-render to repaint after a theme flip. A `next-themes` `resolvedTheme` subscription fires too
+ * early: it applies the `.dark` class in a post-commit effect, so the re-render reads stale colors.
+ * Observing the class mutation re-renders after it lands (and covers OS-level system changes).
+ */
+export function useThemeRepaint(): void {
+  const [, forceRender] = useReducer((tick: number) => tick + 1, 0);
+  useEffect(() => {
+    const observer = new MutationObserver(() => forceRender());
+    observer.observe(document.documentElement, { attributes: true, attributeFilter: ["class"] });
+    return () => observer.disconnect();
+  }, []);
 }
 
 /** Returns `true` when the document root has the `dark` class applied; always `false` on server */

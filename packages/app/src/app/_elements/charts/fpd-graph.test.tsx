@@ -4,7 +4,7 @@ import "@testing-library/jest-dom/vitest";
 
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup } from "@testing-library/react";
+import { render, screen, cleanup, act, waitFor } from "@testing-library/react";
 
 import {
   Color,
@@ -393,6 +393,58 @@ describe("FpdGraph", () => {
       // datasetIndex 2 = the first reference's Hardness line.
       const text = label({ datasetIndex: 2, dataIndex: 75, parsed: { x: 75, y: -12 } });
       expect(text).not.toContain("(Ideal Serving Temperature)");
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Theme repaint (regression: chart must re-read cascaded colors on theme flip)
+// ---------------------------------------------------------------------------
+
+describe("FpdGraph theme repaint", () => {
+  const LIGHT_TEXT = "rgb(20, 20, 20)";
+  const DARK_TEXT = "rgb(235, 235, 235)";
+
+  let getComputedStyleSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    capturedLineProps = null;
+    // Resolve --color-text-primary to a value that depends on the root theme class, mimicking the
+    // CSS cascade's `.dark` override so getColor reads a different value once the class flips.
+    getComputedStyleSpy = vi
+      .spyOn(window, "getComputedStyle")
+      .mockImplementation(
+        () =>
+          ({
+            getPropertyValue: (name: string) =>
+              name === ThemeColor.TextPrimary
+                ? document.documentElement.classList.contains("dark")
+                  ? DARK_TEXT
+                  : LIGHT_TEXT
+                : "",
+          }) as unknown as CSSStyleDeclaration,
+      );
+  });
+
+  afterEach(() => {
+    getComputedStyleSpy.mockRestore();
+    document.documentElement.classList.remove("dark");
+    cleanup();
+  });
+
+  // next-themes applies the `.dark` class in a post-commit effect, so the chart cannot rely on a
+  // resolvedTheme subscription (it re-renders before the class lands). It must re-render off the
+  // class mutation itself; here we flip the class directly and assert the legend color updates.
+  it("re-reads cascaded colors when the root theme class changes", async () => {
+    renderFromContext([RecipeID.Main]);
+    expect(capturedLineProps!.options.color).toBe(LIGHT_TEXT);
+
+    act(() => {
+      document.documentElement.classList.add("dark");
+    });
+
+    await waitFor(() => {
+      expect(capturedLineProps!.options.color).toBe(DARK_TEXT);
     });
   });
 });

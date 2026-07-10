@@ -546,6 +546,59 @@ describe("PropertiesBarChart", () => {
 });
 
 // ---------------------------------------------------------------------------
+// Theme repaint (regression: charts must re-read cascaded colors on theme flip)
+// ---------------------------------------------------------------------------
+
+describe("PropertiesBarChart theme repaint", () => {
+  const LIGHT_BORDER = "rgb(220, 220, 220)";
+  const DARK_BORDER = "rgb(40, 40, 40)";
+
+  let getComputedStyleSpy: ReturnType<typeof vi.spyOn>;
+
+  beforeEach(() => {
+    capturedBarProps = null;
+    mockSize = null;
+    // Resolve --color-border to a value that depends on the root theme class, mimicking the CSS
+    // cascade's `.dark` override so getColor reads a different value once the class flips.
+    getComputedStyleSpy = vi
+      .spyOn(window, "getComputedStyle")
+      .mockImplementation(
+        () =>
+          ({
+            getPropertyValue: (name: string) =>
+              name === ThemeColor.Border
+                ? document.documentElement.classList.contains("dark")
+                  ? DARK_BORDER
+                  : LIGHT_BORDER
+                : "",
+          }) as unknown as CSSStyleDeclaration,
+      );
+  });
+
+  afterEach(() => {
+    getComputedStyleSpy.mockRestore();
+    document.documentElement.classList.remove("dark");
+    cleanup();
+  });
+
+  // next-themes applies the `.dark` class in a post-commit effect, so the chart cannot rely on a
+  // resolvedTheme subscription (it re-renders before the class lands). It must re-render off the
+  // class mutation itself; here we flip the class directly and assert the grid color updates.
+  it("re-reads cascaded colors when the root theme class changes", async () => {
+    renderFromContext([]);
+    expect(capturedBarProps!.options.scales.y.grid!.color).toBe(LIGHT_BORDER);
+
+    act(() => {
+      document.documentElement.classList.add("dark");
+    });
+
+    await waitFor(() => {
+      expect(capturedBarProps!.options.scales.y.grid!.color).toBe(DARK_BORDER);
+    });
+  });
+});
+
+// ---------------------------------------------------------------------------
 // PropertiesChartView (toolbar + bare)
 // ---------------------------------------------------------------------------
 

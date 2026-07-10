@@ -19,8 +19,6 @@
 - [ ] The All/Built-In/Saved selectors in `/ingredients` and `/recipes` are not persisted to local.
 - [ ] `RecipeEditor` does not update the ingredient name/version if the original is deleted.
 - [ ] Recipe versions are ordered in chronological order;should be in reverse chronological order.
-- [ ] Changing color theme does not update the charts until something triggers a re-render. This
-      bug was previously fixed and has re-surfaced, so make sure to implement a test to check it.
 - [ ] Increase the height of comments in `/recipes`; it's difficult to edit in such a short slot.
 - [ ] Add support for storing evaporation in the database; saved recipes currently don't support it.
 - [ ] Add `height` prop to `PropertiesTable` so that it can adapt the number of properties shown.
@@ -124,6 +122,8 @@
 
 ## Completed
 
+- [x] Changing color theme does not update the charts until something triggers a re-render. This
+      bug was previously fixed and has re-surfaced, so make sure to implement a test to check it.
 - [x] `WatcherCard` needs to display a color based on position with an acceptable property range,
       and based on proximity to the balancing target. Figure out how to handle overlapping concerns.
 - [x] Add support for coloring bars and watchers based on a value's proximity to the current target.
