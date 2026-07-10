@@ -737,30 +737,26 @@ export function RecipeEditor({
           />
         </div>
         <div className="ml-auto flex flex-wrap items-center justify-end gap-1">
-          {/* Evaporation input: grams of water removed, shown only for a non-empty recipe. */}
-          {currentRecipe.mixTotal ? (
-            <div className="flex items-center gap-0.5" title={evaporationTitle}>
-              <span className="text-secondary ml-1 text-xs font-medium tracking-wide whitespace-nowrap uppercase">
-                Evap (g)
-              </span>
-              <input
-                type="number"
-                min={0}
-                step={standardInputStepByPercent(currentRecipe.evaporation)}
-                className={`boxed-input comp-val ml-0.5 w-14 px-0.5 py-0 text-sm ${
-                  evaporationError
-                    ? "outline-2 -outline-offset-2 outline-red-400 outline-solid"
-                    : ""
-                }`}
-                value={currentRecipe.evaporation || ""}
-                placeholder="—"
-                onChange={(e) => updateCurrentRecipeEvaporation(parseEvaporationInput(e))}
-                aria-label="Evaporation (g)"
-                aria-invalid={evaporationError}
-                data-testid="recipe-evaporation-grams"
-              />
-            </div>
-          ) : null}
+          {/* Evaporation input: grams of water removed */}
+          <div className="flex items-center gap-0.5" title={evaporationTitle}>
+            <span className="text-secondary ml-1 text-xs font-medium tracking-wide whitespace-nowrap uppercase">
+              Evap (g)
+            </span>
+            <input
+              type="number"
+              min={0}
+              step={standardInputStepByPercent(currentRecipe.evaporation)}
+              className={`boxed-input comp-val ml-0.5 w-14 px-0.5 py-0 text-sm ${
+                evaporationError ? "outline-2 -outline-offset-2 outline-red-400 outline-solid" : ""
+              }`}
+              value={currentRecipe.evaporation || ""}
+              placeholder="—"
+              onChange={(e) => updateCurrentRecipeEvaporation(parseEvaporationInput(e))}
+              aria-label="Evaporation (g)"
+              aria-invalid={evaporationError}
+              data-testid="recipe-evaporation-grams"
+            />
+          </div>
           <div className="flex shrink-0">
             {[
               {

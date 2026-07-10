@@ -54,6 +54,10 @@
       yolks are 17g per unit), and to improve balancing drift due to app-side qty step rounding.
 - [ ] Should `isCompQuantity` return false for ABV? It's a bit confusing as a quantity percentage.
 - [ ] Consider adding an a `RatioKey::StabilizersPerEmulsifiers`; I saw Underbelly mention it.
+- [ ] Add milk solids support to `ChocolateSpec` and add milk chocolate Callebaut ingredients.
+- [ ] Rename 'HFCS 42' to 'High Fructose Corn Syrup 42 DE' and add 'HFCS 42' alias; same for others.
+- [ ] Add benchmarks for WASM binary size, which is relevant in the App for initial loading.
+- [ ] Explore ways to reduce WASM binary size, e.g. strip comments from embedded ingredient/recipes.
 
 ## Backlog
 

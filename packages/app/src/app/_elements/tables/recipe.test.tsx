@@ -971,9 +971,9 @@ describe("RecipeEditor", () => {
       recipeContext.recipes[0].mixTotal = 1000;
     }
 
-    it("shows no evaporation input for an empty recipe", () => {
+    it("always shows evaporation input", () => {
       render(<RecipeEditorWithSpy />);
-      expect(screen.queryByTestId("recipe-evaporation-grams")).not.toBeInTheDocument();
+      expect(screen.getByTestId("recipe-evaporation-grams")).toBeInTheDocument();
     });
 
     it("stores grams entered in the Evap. field and shows the resulting yield", async () => {
