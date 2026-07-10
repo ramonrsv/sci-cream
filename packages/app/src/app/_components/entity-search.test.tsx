@@ -188,6 +188,17 @@ describe("EntitySearch", () => {
       expect(screen.queryByRole("button", { name: /Alpha/ })).not.toBeInTheDocument();
       expect(screen.getByRole("button", { name: /Gamma/ })).toBeInTheDocument();
     });
+
+    it("persists the selected source across remounts when an id is given", () => {
+      localStorage.clear();
+      const { unmount } = renderShell({ id: "test-search" });
+      fireEvent.click(screen.getByRole("button", { name: "Saved" }));
+      unmount();
+
+      renderShell({ id: "test-search" });
+      expect(screen.queryByRole("button", { name: /Alpha/ })).not.toBeInTheDocument();
+      expect(screen.getByRole("button", { name: /Gamma/ })).toBeInTheDocument();
+    });
   });
 
   describe("stale selection", () => {

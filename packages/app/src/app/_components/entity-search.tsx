@@ -3,6 +3,8 @@
 import { ReactNode, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 
+import { leafKey, usePersistedState } from "@/lib/use-persisted-state";
+
 /** Sources of entries displayed by an {@link EntitySearch}, including `All` */
 export enum EntitySource {
   All = "all",
@@ -95,7 +97,11 @@ export function EntitySearch<E>({
   id,
 }: EntitySearchProps<E>) {
   const [query, setQuery] = useState("");
-  const [source, setSource] = useState<EntitySource>(EntitySource.All);
+  const [source, setSource] = usePersistedState<EntitySource>(
+    leafKey(id, "source"),
+    EntitySource.All,
+    { isValid: (v) => Object.values(EntitySource).includes(v) },
+  );
   const [selectedEntryKey, setSelectedEntryKey] = useState<string | null>(null);
 
   const filtered = useMemo(

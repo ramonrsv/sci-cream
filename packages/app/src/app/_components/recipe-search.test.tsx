@@ -440,6 +440,14 @@ describe("RecipeSearch", () => {
       expect(selectedLabel).toContain("latest");
     });
 
+    it("lists versions newest first (reverse chronological)", async () => {
+      render(<RecipeSearch savedRecipes={[multiVersionEntry]} />);
+      fireEvent.click(screen.getByRole("button", { name: /Iterated Recipe/ }));
+      const labels = await getSelectOptionLabelsByLabel("Recipe version");
+      expect(labels[0]).toContain("v2");
+      expect(labels[1]).toContain("v1");
+    });
+
     it("loads the selected version when Load is clicked", async () => {
       const onLoadRecipe = vi.fn();
       render(

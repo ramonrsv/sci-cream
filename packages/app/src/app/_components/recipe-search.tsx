@@ -211,10 +211,10 @@ function RecipeDetailPanel({
   );
   const selectedVersion = entry.versions[selectedVersionIdx] ?? entry.versions[latestIdx];
 
-  const versionOptions: SelectOption<number>[] = entry.versions.map((v, idx) => ({
-    value: idx,
-    label: formatVersionOption(v, idx === latestIdx),
-  }));
+  // Newest first: keep each option's index into `entry.versions`, only reverse display order.
+  const versionOptions: SelectOption<number>[] = entry.versions
+    .map((v, idx) => ({ value: idx, label: formatVersionOption(v, idx === latestIdx) }))
+    .reverse();
 
   const recipe = useMemo<Recipe>(
     () =>
