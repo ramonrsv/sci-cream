@@ -474,8 +474,8 @@ export function RecipeEditor({
   };
 
   /**
-   * Clear all ingredient rows in the given recipe slot. Also drops any saved-recipe identity so
-   * the slot returns to a clean "anonymous" state without a pending dirty flag.
+   * Clear all ingredient rows in the given recipe slot. Also clears evaporation and drops any
+   * saved-recipe identity so the slot returns to a clean "anonymous" state without a dirty flag.
    */
   const clearRecipe = (recipeIdx: number) => {
     userEdit();
@@ -487,6 +487,7 @@ export function RecipeEditor({
         rows: allRecipes[recipeIdx].ingredientRows.map((row) =>
           makeUpdatedRow(getRow(recipeIdx, row.index), "", "", wasmResources),
         ),
+        evaporation: 0,
       },
       wasmResources,
     );

@@ -645,6 +645,7 @@ describe("RecipeEditor", () => {
     const user = userEvent.setup();
     recipeContext.recipes[0].ingredientRows[0].name = "2% Milk";
     recipeContext.recipes[0].ingredientRows[0].quantity = 50;
+    recipeContext.recipes[0].evaporation = 20;
 
     render(<RecipeEditorWithSpy />);
 
@@ -659,6 +660,7 @@ describe("RecipeEditor", () => {
     expect(recipeContext.recipes[0].ingredientRows[0].quantity).toBeUndefined();
     expect(recipeContext.recipes[0].ingredientRows[0].ingredient).toBeUndefined();
     expect(recipeContext.recipes[0].mixTotal).toBeUndefined();
+    expect(recipeContext.recipes[0].evaporation).toBe(0);
   });
 
   // ---- Input validation elements ----------------------------------------------------------------
