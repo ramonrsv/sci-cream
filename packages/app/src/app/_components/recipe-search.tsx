@@ -309,7 +309,7 @@ function RecipeDetailPanel({
                   <span className="text-secondary text-xs font-medium tracking-wide whitespace-nowrap uppercase">
                     Evap (g)
                   </span>
-                  <span className="comp-val ml-0.5 text-sm">{recipe.evaporation.toFixed(0)}</span>
+                  <span className="comp-val ml-2 text-sm">{recipe.evaporation.toFixed(0)}</span>
                 </div>
               </div>
             ) : null}
