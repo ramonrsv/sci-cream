@@ -2,11 +2,9 @@
 source: packages/sci-cream/src/data/recipes.rs
 expression: embedded_recipe_entries_report()
 ---
-total: 12
+total: 10
 
 Ice Cream Science: Chocolate Ice Cream
-Ice Cream Science: Chocolate Ice Cream (post-evaporation)
-Ice Cream Science: Chocolate Ice Cream (pre-evaporation)
 Ice Cream Science: Ninja Creami NC301 Easy No-Cook Tres Leches (UK)
 Ice Cream Science: Ninja Creami NC301 Easy No-Cook Tres Leches (US)
 Underbelly: "Double Origin" Chocolate Ice Cream
