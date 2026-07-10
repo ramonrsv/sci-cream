@@ -63,6 +63,7 @@
 - [ ] Should `group-by.tsx`, `session-resources.tsx`, and other `*.tsx` go in `app`, not `lib`?
 - [ ] Explore decoupling balancing from the synchronous re-validation it triggers: each balance
       cycle waits for the solve and a costlier re-validation before the UI updates. Defer it?
+- [ ] Try to make the `RecipeEditor` toolbar fit in one row in large mobile portrait layouts.
 
 ## Backlog
 

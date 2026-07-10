@@ -17,6 +17,15 @@ import { CompKey, compToPropKey } from "@workspace/sci-cream";
 
 test.describe("Visual Regression: Toolbars, Space Constraints", () => {
   for (const { name, viewport, screenshot } of VIEWPORTS) {
+    test(`toolbar overflow - calculator - recipe editor - ${name}`, async ({ page }) => {
+      page.setViewportSize(viewport);
+
+      await goToPageAndWaitFor(page);
+
+      const toolbar = page.locator("#recipe-editor-panel .toolbar");
+      await expect(toolbar).toHaveScreenshot(`toolbar-calculator-recipe-editor-${screenshot}.png`);
+    });
+
     test(`toolbar overflow - calculator - properties view - ${name}`, async ({
       page,
       browserName,

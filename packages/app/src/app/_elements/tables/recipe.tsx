@@ -727,26 +727,24 @@ export function RecipeEditor({
 
   return (
     <div className="flex h-full flex-col">
-      <div className="flex shrink-0 flex-wrap items-center gap-1">
-        <div className="toolbar shrink-0">
-          {toolbarPrefix}
-          <RecipeSelect
-            allRecipes={allRecipes}
-            enabledRecipeIndices={getRecipeIndices(allRecipes)}
-            currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
-          />
-        </div>
+      <div className="toolbar">
+        {toolbarPrefix}
+        <RecipeSelect
+          allRecipes={allRecipes}
+          enabledRecipeIndices={getRecipeIndices(allRecipes)}
+          currentRecipeIdxState={[currentRecipeIdx, setCurrentRecipeIdx]}
+        />
         <div className="ml-auto flex flex-wrap items-center justify-end gap-1">
           {/* Evaporation input: grams of water removed */}
-          <div className="flex items-center gap-0.5" title={evaporationTitle}>
-            <span className="text-secondary ml-1 text-xs font-medium tracking-wide whitespace-nowrap uppercase">
+          <div className="flex items-center gap-1" title={evaporationTitle}>
+            <span className="text-secondary text-xs font-medium tracking-wide whitespace-nowrap uppercase">
               Evap (g)
             </span>
             <input
               type="number"
               min={0}
               step={standardInputStepByPercent(currentRecipe.evaporation)}
-              className={`boxed-input comp-val ml-0.5 w-14 px-0.5 py-0 text-sm ${
+              className={`boxed-input comp-val w-14 px-0.5 py-0 text-sm ${
                 evaporationError ? "outline-2 -outline-offset-2 outline-red-400 outline-solid" : ""
               }`}
               value={currentRecipe.evaporation || ""}
@@ -757,6 +755,7 @@ export function RecipeEditor({
               data-testid="recipe-evaporation-grams"
             />
           </div>
+          {/* Action buttons: de-evaporate, copy, paste, clear, save, save as new version */}
           <div className="flex shrink-0">
             {[
               {
@@ -814,7 +813,7 @@ export function RecipeEditor({
           </div>
         </div>
       </div>
-      {/* Recipe name row, beneath the toolbar: unsaved-changes dot, name field, and version badge */}
+      {/* Recipe name row, beneath the toolbar: unsaved-changes dot, name field, version badge */}
       <div className="flex shrink-0 items-center gap-1 px-2 py-0.5">
         <span
           className={`leading-none text-amber-500 ${dirty ? "" : "invisible"}`}
