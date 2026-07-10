@@ -14,6 +14,7 @@ import { RecipeID } from "@/__tests__/assets";
 import { makeRecipesTestName, makeRecipesScreenshotFilename } from "@/__tests__/visual/assets";
 import {
   getIngredientNameInputAtIdx,
+  getIngredientQtyInputAtIdx,
   getEvaporationInput,
   getPropertiesPanelKeyFilterSelectInput,
   getPropertiesPanelDeltaToggleSelectInput,
@@ -299,6 +300,44 @@ test.describe("Visual Regression: Panels, Interactive States", () => {
     await expect(evapInput).toHaveAttribute("aria-invalid", "true");
 
     await expect(evapInput).toHaveScreenshot("evaporation-input-invalid-unfocused.png");
+  });
+
+  test("valid quantity input focused", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+
+    const nameInput = getIngredientNameInputAtIdx(page, 0);
+    await nameInput.fill("Milk");
+
+    const qtyInput = getIngredientQtyInputAtIdx(page, 0);
+    await qtyInput.click();
+    await qtyInput.fill("100");
+    await expect(qtyInput).toHaveValue("100");
+
+    await expect(qtyInput).toHaveScreenshot("quantity-input-valid-focused.png");
+  });
+
+  test("orphan quantity input focused", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+
+    // A quantity on a row with no valid ingredient is an orphan: it isn't counted, so it's flagged.
+    const qtyInput = getIngredientQtyInputAtIdx(page, 0);
+    await qtyInput.click();
+    await qtyInput.fill("100");
+    await expect(qtyInput).toHaveValue("100");
+
+    await expect(qtyInput).toHaveScreenshot("quantity-input-orphan-focused.png");
+  });
+
+  test("orphan quantity input unfocused", async ({ page }) => {
+    await goToPageAndWaitFor(page);
+
+    const qtyInput = getIngredientQtyInputAtIdx(page, 0);
+    await qtyInput.click();
+    await qtyInput.fill("100");
+    await page.click("body");
+    await expect(qtyInput).toHaveValue("100");
+
+    await expect(qtyInput).toHaveScreenshot("quantity-input-orphan-unfocused.png");
   });
 });
 

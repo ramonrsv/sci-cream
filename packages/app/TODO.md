@@ -10,7 +10,6 @@
 - [ ] Add visual regression tests for dark mode; not everything, just routes & some key elements.
 - [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
 - [ ] Add a leading emoji to some selects to make their purpose clearer; also add title/labels.
-- [ ] Make it so that only ingredient quantity - not names - updates un-toggle auto-balancing.
 - [ ] Add a way to edit saved recipe version labels; should be easier now that there is more space.
 - [ ] Add a recipe version quality signal and/or favorites; one/two thumbs up, thumb down, star?
 - [ ] Invalid ingredient names are not saved when saving a recipe. They should be, so need a fix.
@@ -121,6 +120,7 @@
 
 ## Completed
 
+- [x] Make it so that only ingredient quantity - not names - updates un-toggle auto-balancing.
 - [x] Pasting a recipe from clipboard clears the name and DB reference; it probably shouldn't.
 - [x] The All/Built-In/Saved selectors in `/ingredients` and `/recipes` are not persisted to local.
 - [x] Recipe versions are ordered in chronological order;should be in reverse chronological order.

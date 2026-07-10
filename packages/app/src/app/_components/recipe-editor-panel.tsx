@@ -13,18 +13,18 @@ import { STORAGE_KEYS } from "@/lib/local-storage";
 export function RecipeEditorPanel({
   recipeCtxState,
   urlSlot,
-  onUserEdit,
+  onUserQuantityEdit,
 }: {
   recipeCtxState: RecipeContextState;
   urlSlot?: number;
-  onUserEdit?: () => void;
+  onUserQuantityEdit?: () => void;
 }) {
   return (
     <div id="recipe-editor-panel" className="grid-component h-full w-full min-w-50">
       <RecipeEditor
         recipeCtxState={recipeCtxState}
         urlSlot={urlSlot}
-        onUserEdit={onUserEdit}
+        onUserQuantityEdit={onUserQuantityEdit}
         persistKey={STORAGE_KEYS.recipeEditorPanel}
         toolbarPrefix={<GripVertical size={DRAG_HANDLE_ICON_SIZE} className="drag-handle" />}
       />

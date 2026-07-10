@@ -7,6 +7,7 @@ import {
   makeRecipeId,
   makeEmptyRecipeContext,
   isRecipeEmpty,
+  recipeHasIngredients,
   calculateMixTotal,
   effectiveMixTotal,
   makeSciCreamRecipe,
@@ -137,10 +138,60 @@ describe("Recipe Helper Functions", () => {
     });
   });
 
+  // ---- recipeHasIngredients ---------------------------------------------------------------------
+
+  describe("recipeHasIngredients", () => {
+    let recipe: Recipe;
+
+    // Mark a row as resolved to a valid ingredient.
+    const withIngredient = (index: number) => {
+      recipe.ingredientRows[index].ingredient = new Ingredient(
+        `Ingredient ${index}`,
+        Category.Dairy,
+        new Composition(),
+      );
+    };
+
+    beforeEach(() => {
+      recipe = makeEmptyRecipeContext().recipes[0];
+    });
+
+    it("should return false for an empty recipe", () => {
+      expect(recipeHasIngredients(recipe)).toBe(false);
+    });
+
+    it("should return true for a valid ingredient with a zero quantity", () => {
+      withIngredient(0);
+      recipe.ingredientRows[0].quantity = 0;
+      expect(recipeHasIngredients(recipe)).toBe(true);
+    });
+
+    it("should return true for a valid ingredient with no quantity", () => {
+      withIngredient(0);
+      recipe.ingredientRows[0].quantity = undefined;
+      expect(recipeHasIngredients(recipe)).toBe(true);
+    });
+
+    it("should return false when only orphan quantities are present", () => {
+      recipe.ingredientRows[0].quantity = 40;
+      recipe.ingredientRows[0].ingredient = undefined;
+      expect(recipeHasIngredients(recipe)).toBe(false);
+    });
+  });
+
   // ---- calculateMixTotal ------------------------------------------------------------------------
 
   describe("calculateMixTotal", () => {
     let recipe: Recipe;
+
+    // Mark a row as resolved to a valid ingredient so its quantity counts toward the mix total.
+    const withIngredient = (index: number) => {
+      recipe.ingredientRows[index].ingredient = new Ingredient(
+        `Ingredient ${index}`,
+        Category.Dairy,
+        new Composition(),
+      );
+    };
 
     beforeEach(() => {
       recipe = makeEmptyRecipeContext().recipes[0];
@@ -150,14 +201,16 @@ describe("Recipe Helper Functions", () => {
       expect(calculateMixTotal(recipe)).toBeUndefined();
     });
 
-    it("should sum all defined quantities", () => {
+    it("should sum all defined quantities of valid-ingredient rows", () => {
+      [0, 1, 2].forEach(withIngredient);
       recipe.ingredientRows[0].quantity = 50;
       recipe.ingredientRows[1].quantity = 30;
       recipe.ingredientRows[2].quantity = 20;
       expect(calculateMixTotal(recipe)).toBe(100);
     });
 
-    it("should treat undefined quantities as 0 when at least one is defined", () => {
+    it("should skip undefined quantities when at least one valid row is defined", () => {
+      [0, 1, 2].forEach(withIngredient);
       recipe.ingredientRows[0].quantity = 50;
       recipe.ingredientRows[1].quantity = undefined;
       recipe.ingredientRows[2].quantity = 30;
@@ -165,15 +218,31 @@ describe("Recipe Helper Functions", () => {
     });
 
     it("should handle decimal quantities", () => {
+      [0, 1].forEach(withIngredient);
       recipe.ingredientRows[0].quantity = 33.33;
       recipe.ingredientRows[1].quantity = 66.67;
       expect(calculateMixTotal(recipe)).toBeCloseTo(100, 2);
     });
 
     it("should handle zero quantities", () => {
+      [0, 1].forEach(withIngredient);
       recipe.ingredientRows[0].quantity = 0;
       recipe.ingredientRows[1].quantity = 100;
       expect(calculateMixTotal(recipe)).toBe(100);
+    });
+
+    it("should exclude orphan quantities (rows without a valid ingredient)", () => {
+      withIngredient(0);
+      recipe.ingredientRows[0].quantity = 60;
+      recipe.ingredientRows[1].quantity = 40;
+      recipe.ingredientRows[1].ingredient = undefined;
+      expect(calculateMixTotal(recipe)).toBe(60);
+    });
+
+    it("should return undefined when only orphan quantities are present", () => {
+      recipe.ingredientRows[0].quantity = 40;
+      recipe.ingredientRows[0].ingredient = undefined;
+      expect(calculateMixTotal(recipe)).toBeUndefined();
     });
   });
 

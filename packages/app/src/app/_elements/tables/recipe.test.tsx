@@ -158,7 +158,7 @@ describe("RecipeEditor", () => {
   }
 
   /** Wrapper component that wires the recipe-context spy into `useState` so edits reflect in DOM */
-  function RecipeEditorWithSpy({ onUserEdit }: { onUserEdit?: () => void } = {}) {
+  function RecipeEditorWithSpy({ onUserQuantityEdit }: { onUserQuantityEdit?: () => void } = {}) {
     const [recipeCtx, _setRecipeContext] = useState(recipeContext);
 
     useEffect(() => {
@@ -168,7 +168,12 @@ describe("RecipeEditor", () => {
       });
     }, []);
 
-    return <RecipeEditor recipeCtxState={[recipeCtx, setRecipeContext]} onUserEdit={onUserEdit} />;
+    return (
+      <RecipeEditor
+        recipeCtxState={[recipeCtx, setRecipeContext]}
+        onUserQuantityEdit={onUserQuantityEdit}
+      />
+    );
   }
 
   /** Get the ingredient name search input element at the given row index within a container */
@@ -184,6 +189,10 @@ describe("RecipeEditor", () => {
       `tbody tr:${index == 0 ? "first-child" : `nth-child(${index + 1})`} input[type="number"]`,
     ) as HTMLInputElement;
   }
+
+  /** A minimal stand-in for a resolved WASM `Ingredient`; `free` is a no-op (no real pointer). */
+  const stubIngredient = (name: string) =>
+    ({ name, composition: new Composition(), free: () => {} }) as unknown as Ingredient;
 
   beforeEach(() => {
     vi.clearAllMocks();
@@ -306,47 +315,87 @@ describe("RecipeEditor", () => {
     });
   });
 
-  // ---- onUserEdit (cancels continuous-balance mode) --------------------------------------------
+  // ---- onUserQuantityEdit (cancels continuous-balance mode) --------------------------------------------
 
-  it("fires onUserEdit when a quantity is edited", async () => {
+  it("fires onUserQuantityEdit when a quantity is edited", async () => {
     const user = userEvent.setup();
-    const onUserEdit = vi.fn();
+    const onUserQuantityEdit = vi.fn();
     const { container } = render(
-      <RecipeEditor recipeCtxState={[recipeContext, setRecipeContext]} onUserEdit={onUserEdit} />,
+      <RecipeEditor
+        recipeCtxState={[recipeContext, setRecipeContext]}
+        onUserQuantityEdit={onUserQuantityEdit}
+      />,
     );
 
     await user.type(getIngredientQuantityElement(container, 0), "5");
-    expect(onUserEdit).toHaveBeenCalled();
+    expect(onUserQuantityEdit).toHaveBeenCalled();
   });
 
-  it("fires onUserEdit when an ingredient name is edited", async () => {
+  it("does not fire onUserQuantityEdit when an ingredient name is edited", async () => {
     const user = userEvent.setup();
-    const onUserEdit = vi.fn();
+    const onUserQuantityEdit = vi.fn();
     const { container } = render(
-      <RecipeEditor recipeCtxState={[recipeContext, setRecipeContext]} onUserEdit={onUserEdit} />,
+      <RecipeEditor
+        recipeCtxState={[recipeContext, setRecipeContext]}
+        onUserQuantityEdit={onUserQuantityEdit}
+      />,
     );
 
     await user.type(getIngredientNameElement(container, 0), "M");
-    expect(onUserEdit).toHaveBeenCalled();
+    expect(onUserQuantityEdit).not.toHaveBeenCalled();
   });
 
-  it("fires onUserEdit when the recipe is cleared", async () => {
+  it("does not fire onUserQuantityEdit when evaporation is edited", async () => {
     const user = userEvent.setup();
-    const onUserEdit = vi.fn();
+    const onUserQuantityEdit = vi.fn();
     render(
-      <RecipeEditor recipeCtxState={[recipeContext, setRecipeContext]} onUserEdit={onUserEdit} />,
+      <RecipeEditor
+        recipeCtxState={[recipeContext, setRecipeContext]}
+        onUserQuantityEdit={onUserQuantityEdit}
+      />,
+    );
+
+    await user.type(screen.getByTestId("recipe-evaporation-grams"), "5");
+    expect(onUserQuantityEdit).not.toHaveBeenCalled();
+  });
+
+  it("does not fire onUserQuantityEdit when the recipe is cleared", async () => {
+    const user = userEvent.setup();
+    const onUserQuantityEdit = vi.fn();
+    render(
+      <RecipeEditor
+        recipeCtxState={[recipeContext, setRecipeContext]}
+        onUserQuantityEdit={onUserQuantityEdit}
+      />,
     );
 
     await user.click(screen.getByRole("button", { name: /clear/i }));
-    expect(onUserEdit).toHaveBeenCalled();
+    expect(onUserQuantityEdit).not.toHaveBeenCalled();
   });
 
-  it("does not fire onUserEdit on mount (storage hydration is not a user edit)", () => {
-    const onUserEdit = vi.fn();
+  it("fires onUserQuantityEdit when a recipe is pasted", async () => {
+    const user = userEvent.setup();
+    const onUserQuantityEdit = vi.fn();
+    vi.stubGlobal("navigator", {
+      clipboard: { readText: vi.fn(() => Promise.resolve("2% Milk\t100\nSucrose\t50")) },
+    });
+    render(<RecipeEditorWithSpy onUserQuantityEdit={onUserQuantityEdit} />);
+
+    await user.click(screen.getByRole("button", { name: /paste/i }));
+    await waitFor(() => expect(onUserQuantityEdit).toHaveBeenCalled());
+
+    vi.unstubAllGlobals();
+  });
+
+  it("does not fire onUserQuantityEdit on mount (storage hydration is not a user edit)", () => {
+    const onUserQuantityEdit = vi.fn();
     render(
-      <RecipeEditor recipeCtxState={[recipeContext, setRecipeContext]} onUserEdit={onUserEdit} />,
+      <RecipeEditor
+        recipeCtxState={[recipeContext, setRecipeContext]}
+        onUserQuantityEdit={onUserQuantityEdit}
+      />,
     );
-    expect(onUserEdit).not.toHaveBeenCalled();
+    expect(onUserQuantityEdit).not.toHaveBeenCalled();
   });
 
   // ---- Lock toggle ------------------------------------------------------------------------------
@@ -401,15 +450,15 @@ describe("RecipeEditor", () => {
     });
   });
 
-  it("does not fire onUserEdit when a lock is toggled (keeps continuous-balance mode on)", async () => {
+  it("does not fire onUserQuantityEdit when a lock is toggled (keeps continuous-balance mode on)", async () => {
     const user = userEvent.setup();
-    const onUserEdit = vi.fn();
-    const { container } = render(<RecipeEditorWithSpy onUserEdit={onUserEdit} />);
+    const onUserQuantityEdit = vi.fn();
+    const { container } = render(<RecipeEditorWithSpy onUserQuantityEdit={onUserQuantityEdit} />);
     await fillRowZero(user, container);
-    onUserEdit.mockClear(); // ignore the edits that set up the row
+    onUserQuantityEdit.mockClear(); // ignore the edits that set up the row
 
     await user.click(await screen.findByTestId("recipe-row-0-lock"));
-    expect(onUserEdit).not.toHaveBeenCalled();
+    expect(onUserQuantityEdit).not.toHaveBeenCalled();
   });
 
   it("shows no lock-all control until at least one row is lockable", () => {
@@ -475,8 +524,13 @@ describe("RecipeEditor", () => {
   });
 
   it("should display percentage for each ingredient row", () => {
-    recipeContext.recipes[0].ingredientRows[0].quantity = 50;
-    recipeContext.recipes[0].ingredientRows[1].quantity = 30;
+    const rows = recipeContext.recipes[0].ingredientRows;
+    rows[0].name = "Whole Milk";
+    rows[0].ingredient = stubIngredient("Whole Milk");
+    rows[0].quantity = 50;
+    rows[1].name = "Sucrose";
+    rows[1].ingredient = stubIngredient("Sucrose");
+    rows[1].quantity = 30;
     recipeContext.recipes[0].mixTotal = 80;
 
     const { container } = render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
@@ -490,9 +544,27 @@ describe("RecipeEditor", () => {
     expect(secondRowPercent).toContain("37.5");
   });
 
+  it("outlines an orphan quantity (no valid ingredient) and shows no percentage for it", async () => {
+    const user = userEvent.setup();
+    const { container } = render(<RecipeEditorWithSpy />);
+
+    // A quantity typed on a row with no valid ingredient name is an orphan: it isn't counted.
+    await user.type(getIngredientQuantityElement(container, 0), "50");
+
+    const quantityInput = getIngredientQuantityElement(container, 0);
+    await waitFor(() => expect(quantityInput.className).toContain("outline-red-400"));
+
+    const percentageCells = container.querySelectorAll("tbody td.comp-val");
+    expect(percentageCells[0].textContent?.trim()).toBe("");
+  });
+
   it("should update and display mix total on input", async () => {
     const user = userEvent.setup();
     const { container } = render(<RecipeEditorWithSpy />);
+
+    // Name each row so its quantity resolves to a valid ingredient and counts toward the total.
+    await user.type(getIngredientNameElement(container, 0), "Whole Milk");
+    await user.type(getIngredientNameElement(container, 1), "Sucrose");
 
     const firstQuantityInput = getIngredientQuantityElement(container, 0);
     const secondQuantityInput = getIngredientQuantityElement(container, 1);
@@ -966,8 +1038,10 @@ describe("RecipeEditor", () => {
   describe("Evaporation", () => {
     /** Populate slot 0 with a single valid ingredient row and matching mix total */
     function populateMainRecipe() {
-      recipeContext.recipes[0].ingredientRows[0].name = "Whole Milk";
-      recipeContext.recipes[0].ingredientRows[0].quantity = 1000;
+      const row = recipeContext.recipes[0].ingredientRows[0];
+      row.name = "Whole Milk";
+      row.ingredient = stubIngredient("Whole Milk");
+      row.quantity = 1000;
       recipeContext.recipes[0].mixTotal = 1000;
     }
 

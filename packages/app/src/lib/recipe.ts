@@ -142,6 +142,15 @@ export function isRecipeEmpty(recipe: RecipeSummary): boolean {
   return recipe.mixTotal === undefined || recipe.mixTotal === 0;
 }
 
+/**
+ * Returns `true` when a recipe has at least one row resolved to a valid WASM `Ingredient`,
+ * regardless of quantity. Use this — not {@link isRecipeEmpty} — to gate balancing and target
+ * validation, so a recipe with valid ingredients but zero/unset quantities is still balanceable.
+ */
+export function recipeHasIngredients(recipe: Recipe): boolean {
+  return recipe.ingredientRows.some((row) => row.ingredient !== undefined);
+}
+
 /** Extract the numeric indices from an array of `Recipe` objects */
 export function getRecipeIndices(recipes: Recipe[]): number[] {
   return recipes.map((recipe) => recipe.index);
@@ -157,14 +166,15 @@ export function filterActiveSlots(recipes: Recipe[]): Recipe[] {
 }
 
 /**
- * Sum the defined quantities across all ingredient rows.
+ * Sum the defined quantities across rows resolved to a valid ingredient. Quantities on orphan rows
+ * (blank or unknown ingredient name) are excluded, matching {@link makeLightRecipe}.
  *
- * Returns `undefined` when every row quantity is undefined (i.e. the recipe is completely empty).
+ * Returns `undefined` when no valid-ingredient row has a defined quantity; a `0` still counts.
  */
-export function calculateMixTotal(recipe: Recipe) {
-  return recipe.ingredientRows.reduce(
-    (sum: number | undefined, row) =>
-      sum === undefined && row.quantity == undefined ? undefined : (sum || 0) + (row.quantity || 0),
+export function calculateMixTotal(recipe: Recipe): number | undefined {
+  return recipe.ingredientRows.reduce<number | undefined>(
+    (sum, row) =>
+      row.ingredient === undefined || row.quantity === undefined ? sum : (sum ?? 0) + row.quantity,
     undefined,
   );
 }

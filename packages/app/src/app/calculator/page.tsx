@@ -63,7 +63,7 @@ function CalculatorContent() {
   const [recipeContext, setRecipeContext] = recipeCtxState;
   const recipes = recipeContext.recipes;
 
-  // Continuous-balance mode: session-only, off by default; a RecipeEditor edit turns it off.
+  // Continuous-balance mode: session-only, off by default; a quantity edit or paste stops it.
   const autoBalanceState = useState(false);
 
   // Balancing targets: persisted, edited by the watchers panel, read by the properties chart.
@@ -80,7 +80,7 @@ function CalculatorContent() {
   const recipeEditorPanelProps = {
     recipeCtxState,
     urlSlot,
-    onUserEdit: () => autoBalanceState[STATE_SET](false),
+    onUserQuantityEdit: () => autoBalanceState[STATE_SET](false),
   };
 
   const watchersPanelProps = {

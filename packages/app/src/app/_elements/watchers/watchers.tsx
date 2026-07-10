@@ -33,6 +33,7 @@ import {
   isRecipeEmpty,
   makeBalanceLocks,
   makeLightRecipe,
+  recipeHasIngredients,
 } from "@/lib/recipe";
 import {
   KeyFilter,
@@ -832,7 +833,7 @@ export function WatchersView({
 
   // Validate targets live so issues surface before the user clicks Balance.
   const report = useMemo<BalancingReport | undefined>(() => {
-    if (!wasmBridge || isRecipeEmpty(main) || balanceTargets.length === 0) {
+    if (!wasmBridge || !recipeHasIngredients(main) || balanceTargets.length === 0) {
       return undefined;
     }
 
@@ -892,7 +893,7 @@ export function WatchersView({
     // The 'Balance' button should not be enabled if any of these conditions aren't met
     verify(wasmBridge !== undefined, "wasmBridge undefined");
     verify(onApplyBalancedMain !== undefined, "onApplyBalancedMain undefined");
-    verify(!isRecipeEmpty(main), "main recipe is empty");
+    verify(recipeHasIngredients(main), "main recipe has no ingredients");
     verify(balanceTargets.length > 0, "no CompKey targets");
 
     try {
@@ -936,10 +937,10 @@ export function WatchersView({
 
   const balancingSupported = wasmBridge !== undefined && onApplyBalancedMain !== undefined;
   const balanceDisabled =
-    !balancingSupported || isRecipeEmpty(main) || balanceTargets.length === 0 || hasErrors;
+    !balancingSupported || !recipeHasIngredients(main) || balanceTargets.length === 0 || hasErrors;
 
-  // Continuous (auto) balancing: while on, re-balance on target/priority/total change. Keyed on
-  // those inputs, not `main`, so the balancer's own write can't re-trigger it. `useLayoutEffect`
+  // Continuous (auto) balancing: while on, re-balance on target/priority/total/evap change. Keyed
+  // on those inputs, not `main`, so the balancer's own write can't re-trigger it. `useLayoutEffect`
   // flushes the re-balance before paint, avoiding a one-frame stale-delta flicker.
   useLayoutEffect(() => {
     if (!autoBalance || balanceDisabled) return;
@@ -953,6 +954,7 @@ export function WatchersView({
     balancePrioritiesKey,
     balanceLocksKey,
     pinnedTotal,
+    main.evaporation,
   ]);
 
   const balanceTitle = balanceError
@@ -974,7 +976,7 @@ export function WatchersView({
   const autoBalanceTitle = autoBalancePaused
     ? `Auto-balancing paused — fix any errors to resume`
     : autoBalance
-      ? "Auto-balancing on — click to stop; any recipe edit also stops it"
+      ? "Auto-balancing on — click to stop; a manual quantity edit or paste also stops it"
       : "Auto-balance: continuously re-balance as targets change";
 
   const nonEmptyRefs = refs.filter((r) => !isRecipeEmpty(r));

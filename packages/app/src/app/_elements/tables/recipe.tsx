@@ -277,11 +277,15 @@ export function RecipeEditorTable({
                     placeholder=""
                     step={standardInputStepByPercent(row.quantity, 2.5, 10)}
                     min={0}
-                    className="table-fillable-input w-full text-right font-mono"
+                    className={`table-fillable-input w-full text-right font-mono ${
+                      row.quantity !== undefined && !(row.name !== "" && hasIngredient(row.name))
+                        ? "-outline-offset-2 outline-red-400 outline-solid focus:ring-red-400"
+                        : ""
+                    }`}
                   />
                 </td>
                 <td className="table-inner-cell comp-val px-1">
-                  {row.quantity && mixTotal
+                  {row.name !== "" && hasIngredient(row.name) && row.quantity && mixTotal
                     ? formatCompositionValue((row.quantity / mixTotal) * 100)
                     : ""}
                 </td>
@@ -316,14 +320,14 @@ export function RecipeEditor({
   urlSlot,
   persistKey,
   toolbarPrefix,
-  onUserEdit,
+  onUserQuantityEdit,
 }: {
   recipeCtxState: RecipeContextState;
   urlSlot?: number;
   persistKey?: string;
   toolbarPrefix?: ReactNode;
-  /** Fired on any user-driven recipe content edit; used to cancel continuous-balance mode. */
-  onUserEdit?: () => void;
+  /** Fired on any user-driven row quantity edit; used to cancel continuous-balance mode. */
+  onUserQuantityEdit?: () => void;
 }) {
   const {
     wasmResourcesState: [wasmResources],
@@ -363,20 +367,16 @@ export function RecipeEditor({
     return allRecipes[recipeIdx].ingredientRows[rowIdx];
   };
 
-  /** Signal a user-driven content edit (e.g. to cancel continuous-balance mode) */
-  const userEdit = () => onUserEdit?.();
+  /** Signal a user-driven row quantity edit (e.g. to cancel continuous-balance mode) */
+  const userQuantityEdit = () => onUserQuantityEdit?.();
 
   /** Update the name of the currently selected recipe */
   const updateCurrentRecipeName = (name: string) => {
-    userEdit();
-
     updateRecipe(currentRecipeIdx, { name });
   };
 
   /** Handle a name change for a row in the currently selected recipe */
   const updateCurrentIngredientRowName = (index: number, name: string) => {
-    userEdit();
-
     updateRecipe(currentRecipeIdx, {
       rows: [makeUpdatedRow(getRow(currentRecipeIdx, index), name, undefined, wasmResources)],
     });
@@ -384,7 +384,7 @@ export function RecipeEditor({
 
   /** Handle a quantity change for a row in the currently selected recipe */
   const updateCurrentIngredientRowQuantity = (index: number, qtyStr: string) => {
-    userEdit();
+    userQuantityEdit();
 
     updateRecipe(currentRecipeIdx, {
       rows: [makeUpdatedRow(getRow(currentRecipeIdx, index), undefined, qtyStr, wasmResources)],
@@ -393,8 +393,6 @@ export function RecipeEditor({
 
   /** Set the currently selected recipe's evaporation (grams of water removed) */
   const updateCurrentRecipeEvaporation = (grams: number | undefined) => {
-    userEdit();
-
     // An empty field parses to `undefined`; map it to 0 so it clears rather than reading as no-op.
     // sci-cream validates the amount; an excess surfaces as `mixError`, flagged on the input.
     updateRecipe(currentRecipeIdx, { evaporation: grams ?? 0 });
@@ -407,8 +405,6 @@ export function RecipeEditor({
       !!recipe.evaporation && !isRecipeEmpty(recipe),
       "deevaporateCurrentRecipe invoked while the button should be disabled ",
     );
-
-    userEdit();
 
     try {
       const light = makeLightRecipe(recipe, wasmResources.hasIngredient);
@@ -454,7 +450,7 @@ export function RecipeEditor({
    * a paste registers as an edit of the loaded recipe (dirty when it differs from the saved one).
    */
   const pasteRecipe = async (recipeIdx: number, serializedRows: string) => {
-    userEdit();
+    userQuantityEdit();
 
     const current = allRecipes[recipeIdx];
     const pasted = makeUpdatedRecipeFromStore(
@@ -478,8 +474,6 @@ export function RecipeEditor({
    * saved-recipe identity so the slot returns to a clean "anonymous" state without a dirty flag.
    */
   const clearRecipe = (recipeIdx: number) => {
-    userEdit();
-
     const cleared = makeUpdatedRecipe(
       allRecipes[recipeIdx],
       {
