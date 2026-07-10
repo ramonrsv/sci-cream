@@ -114,6 +114,24 @@ test.describe("Visual Regression: Recipe Search", () => {
     );
   });
 
+  test("built-in recipe with evaporation - table shows post-evaporation yield", async ({
+    page,
+  }) => {
+    await goToRecipesPage(page);
+    // Not logged in, so the built-in "Ice Cream Science: Chocolate Ice Cream" is the only match
+    await selectRecipeByName(page, "Chocolate Ice Cream");
+
+    await expect(page.getByTitle("Yield: final mix mass after evaporation")).toHaveText(/939 g/);
+    await expect(page.getByTitle("Grams of water evaporated during preparation")).toContainText(
+      "150",
+    );
+
+    await expect(page.locator(".search-detail-panel")).toBeVisible();
+    await expect(page.locator(".search-detail-panel")).toHaveScreenshot(
+      "recipe-search-evaporation-yield.png",
+    );
+  });
+
   test("saved recipe with long ingredient name - table truncates, layout intact", async ({
     page,
   }) => {
