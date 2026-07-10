@@ -612,6 +612,35 @@ describe("RecipeEditor", () => {
     await validatePaste("2% Milk\t100\nSucrose\t50");
   });
 
+  it("preserves the slot's name and saved identity when pasting", async () => {
+    const user = userEvent.setup();
+    vi.stubGlobal("navigator", {
+      clipboard: { readText: vi.fn(() => Promise.resolve("2% Milk\t100\nSucrose\t50")) },
+    });
+
+    const savedRef = { recipeId: 7, versionNumber: 2 };
+    const baseline = { name: "My Recipe", serializedRows: "Ingredient\tQty(g)\nWhole Milk\t500" };
+    recipeContext.recipes[0].name = "My Recipe";
+    recipeContext.recipes[0].savedRef = savedRef;
+    recipeContext.recipes[0].baseline = baseline;
+
+    render(<RecipeEditorWithSpy />);
+    await user.click(screen.getByRole("button", { name: /paste/i }));
+
+    await waitFor(() => {
+      expect(setRecipeContext).toHaveBeenCalled();
+    });
+
+    // Name and saved-recipe identity survive the paste; only the rows are replaced.
+    expect(recipeContext.recipes[0].name).toBe("My Recipe");
+    expect(recipeContext.recipes[0].savedRef).toEqual(savedRef);
+    expect(recipeContext.recipes[0].baseline).toEqual(baseline);
+    expect(recipeContext.recipes[0].ingredientRows[0].name).toBe("2% Milk");
+    expect(recipeContext.recipes[0].ingredientRows[1].name).toBe("Sucrose");
+
+    vi.unstubAllGlobals();
+  });
+
   it("should clear recipe when clear button clicked", async () => {
     const user = userEvent.setup();
     recipeContext.recipes[0].ingredientRows[0].name = "2% Milk";

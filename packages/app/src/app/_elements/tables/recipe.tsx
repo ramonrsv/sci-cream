@@ -448,23 +448,29 @@ export function RecipeEditor({
   };
 
   /**
-   * Parse and apply a tab-separated recipe string to the given recipe slot.
+   * Parse and apply a tab-separated recipe string (ingredient rows only) to the given recipe slot.
    *
-   * Pasted content has no saved-recipe identity, so any existing identity on the slot is dropped
-   * (the editor switches to "anonymous" mode for that slot until the user saves it explicitly).
+   * Only the rows change: the slot keeps its name, saved identity, evaporation, and baseline, so
+   * a paste registers as an edit of the loaded recipe (dirty when it differs from the saved one).
    */
   const pasteRecipe = async (recipeIdx: number, serializedRows: string) => {
     userEdit();
 
-    updateRecipes([
-      clearRecipeIdentity(
-        makeUpdatedRecipeFromStore(
-          allRecipes[recipeIdx],
-          { name: "", serializedRows },
-          wasmResources,
-        ),
-      ),
-    ]);
+    const current = allRecipes[recipeIdx];
+    const pasted = makeUpdatedRecipeFromStore(
+      current,
+      {
+        name: current.name,
+        serializedRows,
+        savedRef: current.savedRef,
+        evaporation: current.evaporation,
+      },
+      wasmResources,
+    );
+    // `makeUpdatedRecipeFromStore` recaptures the baseline from the pasted rows; restore the slot's
+    // original baseline so dirty-detection compares against the saved version, not the paste.
+    pasted.baseline = current.baseline;
+    updateRecipes([pasted]);
   };
 
   /**

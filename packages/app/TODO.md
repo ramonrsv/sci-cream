@@ -14,7 +14,6 @@
 - [ ] Add a way to edit saved recipe version labels; should be easier now that there is more space.
 - [ ] Add a recipe version quality signal and/or favorites; one/two thumbs up, thumb down, star?
 - [ ] Invalid ingredient names are not saved when saving a recipe. They should be, so need a fix.
-- [ ] Pasting a recipe from clipboard clears the name and DB reference; it probably shouldn't.
 - [ ] `RecipeEditor` does not update the ingredient name/version if the original is deleted.
 - [ ] Increase the height of comments in `/recipes`; it's difficult to edit in such a short slot.
 - [ ] Add support for storing evaporation in the database; saved recipes currently don't support it.
@@ -121,6 +120,7 @@
 
 ## Completed
 
+- [x] Pasting a recipe from clipboard clears the name and DB reference; it probably shouldn't.
 - [x] The All/Built-In/Saved selectors in `/ingredients` and `/recipes` are not persisted to local.
 - [x] Recipe versions are ordered in chronological order;should be in reverse chronological order.
 - [x] Explore a rapid target-update bench with auto-balance on for solve-under-load throughput.
