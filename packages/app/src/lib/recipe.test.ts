@@ -939,6 +939,32 @@ describe("Recipe Helper Functions", () => {
       expect(cleared.evaporation).toBe(0);
       expect(cleared.mixProperties.composition.get(CompKey.Water)).toBeCloseTo(baselineWater, 6);
     });
+
+    it("records `mixError` and empties mix properties when evaporation exceeds available water", () => {
+      // 1000 g of Whole Milk holds ~880 g of water; removing 950 g is impossible.
+      const updated = makeUpdatedRecipe(recipe, { evaporation: 950 }, resources);
+
+      expect(updated.evaporation).toBe(950);
+      expect(updated.mixError).toMatch(/invalid evaporation/i);
+      // Reset to a fresh, empty MixProperties — not the concentrated milk composition.
+      const empty = new MixProperties();
+      expect(updated.mixProperties).toBeInstanceOf(MixProperties);
+      expect(updated.mixProperties.composition.get(CompKey.Water)).toBe(
+        empty.composition.get(CompKey.Water),
+      );
+      expect(updated.mixProperties.composition.get(CompKey.TotalSolids)).toBe(
+        empty.composition.get(CompKey.TotalSolids),
+      );
+    });
+
+    it("clears `mixError` once evaporation returns to a valid amount", () => {
+      const errored = makeUpdatedRecipe(recipe, { evaporation: 950 }, resources);
+      expect(errored.mixError).toBeDefined();
+
+      const recovered = makeUpdatedRecipe(errored, { evaporation: 100 }, resources);
+      expect(recovered.mixError).toBeUndefined();
+      expect(recovered.mixProperties.composition.get(CompKey.Water)).toBeLessThan(100);
+    });
   });
 
   // ---- makeUpdatedRecipeFromStore (evaporation round-trip) ---------------------------------------

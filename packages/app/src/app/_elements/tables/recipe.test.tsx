@@ -975,6 +975,21 @@ describe("RecipeEditor", () => {
       expect(screen.getByTitle("No evaporation to remove")).toBeDisabled();
     });
 
+    it("flags the input and shows the sci-cream message when evaporation exceeds available water", async () => {
+      const user = userEvent.setup();
+      populateMainRecipe(); // 1000 g Whole Milk (~880 g water)
+      render(<RecipeEditorWithSpy />);
+
+      const input = screen.getByTestId("recipe-evaporation-grams");
+      await user.type(input, "950");
+      await waitFor(() => {
+        expect(recipeContext.recipes[0].mixError).toBeDefined();
+        expect(input).toHaveAttribute("aria-invalid", "true");
+      });
+      // The tooltip surfaces the crate's error text, not the default caption.
+      expect(screen.getByTitle(/invalid evaporation/i)).toBeInTheDocument();
+    });
+
     it("de-evaporates the recipe and clears its evaporation", async () => {
       const user = userEvent.setup();
       populateMainRecipe();

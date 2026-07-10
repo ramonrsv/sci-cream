@@ -14,6 +14,7 @@ import { RecipeID } from "@/__tests__/assets";
 import { makeRecipesTestName, makeRecipesScreenshotFilename } from "@/__tests__/visual/assets";
 import {
   getIngredientNameInputAtIdx,
+  getEvaporationInput,
   getPropertiesPanelKeyFilterSelectInput,
   getPropertiesPanelDeltaToggleSelectInput,
   getCompositionBreakdownPanelKeyFilterSelectInput,
@@ -263,6 +264,41 @@ test.describe("Visual Regression: Panels, Interactive States", () => {
     await expect(nameInput).toHaveValue("Invalid Ingredient");
 
     await expect(nameInput).toHaveScreenshot("ingredient-input-invalid-unfocused.png");
+  });
+
+  test("valid evaporation input focused", async ({ page, browserName }) => {
+    await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main]);
+
+    const evapInput = getEvaporationInput(page);
+    await evapInput.click();
+    await evapInput.fill("50");
+    await expect(evapInput).toHaveValue("50");
+
+    await expect(evapInput).toHaveScreenshot("evaporation-input-valid-focused.png");
+  });
+
+  test("invalid evaporation input focused", async ({ page, browserName }) => {
+    await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main]);
+
+    const evapInput = getEvaporationInput(page);
+    await evapInput.click();
+    // Far more than the mix's available water, so sci-cream rejects it and the input is flagged.
+    await evapInput.fill("999");
+    await expect(evapInput).toHaveAttribute("aria-invalid", "true");
+
+    await expect(evapInput).toHaveScreenshot("evaporation-input-invalid-focused.png");
+  });
+
+  test("invalid evaporation input unfocused", async ({ page, browserName }) => {
+    await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main]);
+
+    const evapInput = getEvaporationInput(page);
+    await evapInput.click();
+    await evapInput.fill("999");
+    await page.click("body");
+    await expect(evapInput).toHaveAttribute("aria-invalid", "true");
+
+    await expect(evapInput).toHaveScreenshot("evaporation-input-invalid-unfocused.png");
   });
 });
 

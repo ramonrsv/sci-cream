@@ -76,6 +76,11 @@ export interface Recipe extends RecipeSummary {
   ingredientRows: IngredientRow[];
   savedRef?: SavedRecipeRef;
   baseline?: RecipeBaseline;
+  /**
+   * Set when the last mix-property calculation threw (e.g. evaporation exceeds the mix's available
+   * water); {@link mixProperties} then falls back to empty. Cleared on the next valid calculation.
+   */
+  mixError?: string;
 }
 
 /**
@@ -367,6 +372,9 @@ export function requiresMixPropsUpdate(
  *
  * The previous `MixProperties` WASM object is freed first; any double-free errors for the
  * `MixProperties` object from concurrent React state updates are silently swallowed.
+ *
+ * A calculation that throws (e.g. evaporation exceeds the mix's available water) is caught: the
+ * recipe falls back to empty mix properties and records the message in {@link Recipe.mixError}.
  */
 export function updateMixProperties(recipe: Recipe, resources: WasmResources) {
   try {
@@ -376,13 +384,19 @@ export function updateMixProperties(recipe: Recipe, resources: WasmResources) {
     // object has already been freed elsewhere. In such cases, we can safely ignore the error.
   }
 
-  recipe.mixProperties =
-    isRecipeEmpty(recipe) || !resources.wasmBridge
-      ? new MixProperties()
-      : resources.wasmBridge.calculate_recipe_mix_properties(
-          makeLightRecipe(recipe, resources.hasIngredient),
-          recipe.evaporation,
-        );
+  try {
+    recipe.mixProperties =
+      isRecipeEmpty(recipe) || !resources.wasmBridge
+        ? new MixProperties()
+        : resources.wasmBridge.calculate_recipe_mix_properties(
+            makeLightRecipe(recipe, resources.hasIngredient),
+            recipe.evaporation,
+          );
+    recipe.mixError = undefined;
+  } catch (err) {
+    recipe.mixProperties = new MixProperties();
+    recipe.mixError = String(err);
+  }
 }
 
 /** Serialize a `Recipe` to a `RecipeStore` object, preserving any saved-recipe identity and locks */

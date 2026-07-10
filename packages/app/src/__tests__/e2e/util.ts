@@ -61,6 +61,11 @@ export function getIngredientQtyInputAtIdx(page: Page, index: number) {
   return page.locator('input[type="number"].table-fillable-input').nth(index);
 }
 
+/** Get the recipe editor's evaporation (grams of water removed) number input element. */
+export function getEvaporationInput(page: Page) {
+  return page.locator('[data-testid="recipe-evaporation-grams"]');
+}
+
 /** Get `PropertiesPanel`'s `QtyToggle` select input element, in `QtyToggleSelect` */
 export function getPropertiesPanelQtyToggleSelectInput(page: Page) {
   return getSelectControl(page, "#properties-panel #qty-toggle-select");
