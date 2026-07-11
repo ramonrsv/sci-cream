@@ -106,10 +106,10 @@ pub(crate) type SolverFn = fn(
 /// checks (e.g. unreachable or illogical targets) scan every composition without affecting the
 /// result, so [`validate_balancing_targets`] handles them, reporting the full set for inspection.
 ///
-/// `priorities` raises the relative importance of specific target keys: each listed key's row is
-/// weighted by its [`Priority::weight`], so the solver fits it more closely at the expense of the
-/// rest. Keys not listed default to [`Priority::Normal`] (weight 1), so an empty slice leaves the
-/// solve unchanged. The abstract priorities are translated to numeric weights here before solving.
+/// Each target carries an optional [`Priority`] raising its relative importance: its row is
+/// weighted by [`Priority::weight`], so the solver fits it more closely at the expense of the rest.
+/// `None` (or [`Priority::Normal`]) is the unprioritized default (weight 1), so all-`None` targets
+/// leave the solve unchanged. The priorities are translated to numeric weights here before solving.
 ///
 /// `evaporation` is the fraction `E/T` of the *pre-evaporation* mix lost to preparation (gram-free,
 /// like the rest of this API); `None`/`0.0` is the ordinary solve. Targets keep their natural
@@ -124,29 +124,30 @@ pub(crate) type SolverFn = fn(
 /// # Errors
 ///
 /// Returns [`Error::InvalidBalancingTargets`] if the inputs contain an error-severity issue: a
-/// non-finite or negative target value, duplicate target or priority keys, or an invalid locked
-/// fraction or sum that exceeds 1. Returns [`Error::InvalidEvaporation`] if `evaporation` is
-/// non-finite, negative, or at least 1. Also forwards any error from the chosen underlying solver.
+/// non-finite or negative target value, a duplicate target key, or an invalid locked fraction or
+/// sum that exceeds 1. Returns [`Error::InvalidEvaporation`] if `evaporation` is non-finite,
+/// negative, or at least 1. Also forwards any error from the chosen underlying solver.
 pub fn balance_compositions(
     comps: &[(Composition, Option<f64>)],
-    targets: &[(BalanceKey, f64)],
+    targets: &[(BalanceKey, f64, Option<Priority>)],
     weighting: Option<Weighting>,
-    priorities: &[(BalanceKey, Priority)],
     evaporation: Option<f64>,
 ) -> Result<Vec<(Composition, f64)>> {
-    // Gate on the cheap error checks only; this path discards warnings, so the composition-scanning
-    // warning checks are wasted work (see `append_input_warning_issues`).
+    // Split the fused targets into the plain `(key, value)` list and the numeric priority weights.
+    let plain_targets: Vec<(BalanceKey, f64)> = targets.iter().map(|&(key, value, _)| (key, value)).collect();
+    let priority_weights: Vec<(BalanceKey, f64)> = targets
+        .iter()
+        .filter_map(|&(key, _, priority)| priority.map(|p| (key, p.weight())))
+        .collect();
+    let targets = plain_targets.as_slice();
+
+    // Gate on the cheap error checks only; this path discards warnings (see the validate module).
     let mut issues = Vec::new();
-    append_input_error_issues(targets, priorities, &mut issues);
+    append_input_error_issues(targets, &mut issues);
     append_lock_error_issues(comps, &mut issues);
     BalancingReport { issues }.into_result()?;
 
     let evaporation = validate_evaporation_fraction(evaporation)?;
-
-    let priority_weights: Vec<(BalanceKey, f64)> = priorities
-        .iter()
-        .map(|&(key, priority)| (key, priority.weight()))
-        .collect();
 
     if evaporation == 0.0 {
         return choose_solver(comps, targets)(comps, targets, weighting, &priority_weights);
@@ -271,7 +272,7 @@ fn solve_nnls_raw(a: &[f64], y: &[f64], rows: usize, cols: usize) -> Result<Vec<
 #[cfg(debug_assertions)]
 fn debug_assert_targets_error_validated(targets: &[(BalanceKey, f64)]) {
     let mut issues = Vec::new();
-    append_input_error_issues(targets, &[], &mut issues);
+    append_input_error_issues(targets, &mut issues);
     let report = BalancingReport { issues };
     assert!(!report.has_errors(), "raw balancing path requires validated targets: {report}");
 }

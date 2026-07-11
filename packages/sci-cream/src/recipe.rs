@@ -293,8 +293,8 @@ impl Recipe {
     /// composition values as closely as possible. Balancing is done via [`balance_compositions`];
     /// see its documentation for more details.
     ///
-    /// `priorities` raises the relative importance of specific target keys (keys not listed default
-    /// to [`Priority::Normal`], so an empty slice balances all targets equally);
+    /// Each target carries an optional [`Priority`] raising its relative importance (`None` defaults
+    /// to [`Priority::Normal`], so all-`None` targets balance equally);
     ///
     /// `total_amount` sets the total amount, in grams, of the balanced recipe; if `None`, the
     /// recipe's current total amount is used, keeping it constant.
@@ -315,8 +315,7 @@ impl Recipe {
     /// fractions that exceed the whole mix.
     pub fn balance(
         self,
-        targets: &[(BalanceKey, f64)],
-        priorities: &[(BalanceKey, Priority)],
+        targets: &[(BalanceKey, f64, Option<Priority>)],
         total_amount: Option<f64>,
         locked: &[(usize, Lock)],
     ) -> Result<Self> {
@@ -341,7 +340,7 @@ impl Recipe {
             .map(|(line, &lock)| (line.ingredient.composition, lock))
             .collect();
 
-        let balanced = balance_compositions(&comps, targets, None, priorities, evap_fraction)?;
+        let balanced = balance_compositions(&comps, targets, None, evap_fraction)?;
 
         Ok(Self {
             name: self.name,
@@ -387,10 +386,12 @@ impl Recipe {
 
         // A ratio key with a zero denominator (e.g. `EmulsifiersPerFat` on a fat-free mix) reads as
         // `NaN` — undefined for this mix, so not a target the solver can accept; drop non-finites.
-        let targets: Vec<(BalanceKey, f64)> = composition_balance_targets(&post_evap_composition, &keys)
-            .into_iter()
-            .filter(|(_, value)| value.is_finite())
-            .collect();
+        let targets: Vec<(BalanceKey, f64, Option<Priority>)> =
+            composition_balance_targets(&post_evap_composition, &keys)
+                .into_iter()
+                .filter(|(_, value)| value.is_finite())
+                .map(|(key, value)| (key, value, None))
+                .collect();
 
         let total_amount: f64 = self.line_total();
         let post_evap_total = total_amount - self.evaporation;
@@ -400,7 +401,7 @@ impl Recipe {
             lines: self.lines,
             evaporation: 0.0,
         }
-        .balance(&targets, &[], Some(post_evap_total), &[])
+        .balance(&targets, Some(post_evap_total), &[])
     }
 }
 
@@ -433,6 +434,12 @@ mod tests {
         error::Error,
         fpd::FpdKey,
     };
+
+    /// Attaches the unprioritized default (`None`) to plain `(key, value)` targets, for the
+    /// `Recipe::balance` calls that don't exercise priority.
+    fn unprioritized(pairs: &[(BalanceKey, f64)]) -> Vec<(BalanceKey, f64, Option<Priority>)> {
+        pairs.iter().map(|&(key, value)| (key, value, None)).collect()
+    }
 
     #[test]
     fn recipe_from_light_recipe() {
@@ -515,15 +522,14 @@ mod tests {
         // Disparate targets with a priority on the conflicting key, so dropping or reordering any
         // input would change the solution and make the comparison below fail.
         let targets = [
-            (CompKey::Energy.into(), 200.0),
-            (CompKey::MilkFat.into(), 12.0),
-            (CompKey::MSNF.into(), 8.0),
-            (CompKey::POD.into(), 0.5),
+            (CompKey::Energy.into(), 200.0, None),
+            (CompKey::MilkFat.into(), 12.0, None),
+            (CompKey::MSNF.into(), 8.0, None),
+            (CompKey::POD.into(), 0.5, Some(Priority::Critical)),
         ];
-        let priorities = [(CompKey::POD.into(), Priority::Critical)];
 
-        let balanced = recipe.balance(&targets, &priorities, None, &[]).unwrap();
-        let expected = balance_compositions(&compositions, &targets, None, &priorities, None).unwrap();
+        let balanced = recipe.balance(&targets, None, &[]).unwrap();
+        let expected = balance_compositions(&compositions, &targets, None, None).unwrap();
 
         assert_eq!(balanced.name, Some("Main Recipe".into()));
         assert_eq!(balanced.lines.len(), expected.len());
@@ -542,9 +548,9 @@ mod tests {
         let target_total = 1000.0;
         assert_ne!(target_total, original_total);
 
-        let targets = [(CompKey::MilkFat.into(), 16.0), (CompKey::MSNF.into(), 11.0)];
-        let default_balanced = recipe.clone().balance(&targets, &[], None, &[]).unwrap();
-        let scaled_balanced = recipe.balance(&targets, &[], Some(target_total), &[]).unwrap();
+        let targets = unprioritized(&[(CompKey::MilkFat.into(), 16.0), (CompKey::MSNF.into(), 11.0)]);
+        let default_balanced = recipe.clone().balance(&targets, None, &[]).unwrap();
+        let scaled_balanced = recipe.balance(&targets, Some(target_total), &[]).unwrap();
 
         let scaled_total: f64 = scaled_balanced.line_total();
         assert_eq_flt_test!(scaled_total, target_total);
@@ -569,7 +575,7 @@ mod tests {
         let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB).unwrap();
 
         let balanced = recipe
-            .balance(&[(CompKey::MilkFat.into(), 12.0), (CompKey::MSNF.into(), 10.0)], &[], None, &[])
+            .balance(&unprioritized(&[(CompKey::MilkFat.into(), 12.0), (CompKey::MSNF.into(), 10.0)]), None, &[])
             .unwrap();
 
         assert_eq!(balanced.name, None);
@@ -589,8 +595,8 @@ mod tests {
         let vanilla_amount = recipe.lines[vanilla_idx].amount;
         let locked = [(vanilla_idx, Lock::Amount(vanilla_amount))];
 
-        let targets = [(CompKey::MilkFat.into(), 13.0), (CompKey::MSNF.into(), 10.0)];
-        let balanced = recipe.balance(&targets, &[], None, &locked).unwrap();
+        let targets = unprioritized(&[(CompKey::MilkFat.into(), 13.0), (CompKey::MSNF.into(), 10.0)]);
+        let balanced = recipe.balance(&targets, None, &locked).unwrap();
 
         // The locked line keeps its grams, and `None` keeps the overall total constant.
         assert_eq_flt_test!(balanced.lines[vanilla_idx].amount, vanilla_amount);
@@ -609,9 +615,9 @@ mod tests {
             .iter()
             .position(|line| line.ingredient.name == "Fructose")
             .unwrap();
-        let targets = [(CompKey::MilkFat.into(), 13.0), (CompKey::MSNF.into(), 10.0)];
+        let targets = unprioritized(&[(CompKey::MilkFat.into(), 13.0), (CompKey::MSNF.into(), 10.0)]);
         let balanced = recipe
-            .balance(&targets, &[], None, &[(fructose_idx, Lock::Amount(0.0))])
+            .balance(&targets, None, &[(fructose_idx, Lock::Amount(0.0))])
             .unwrap();
 
         // The pinned line stays at 0g, and the freed mass is absorbed by the rest (total constant).
@@ -632,7 +638,7 @@ mod tests {
 
         // A total below the locked line's amount makes its fixed fraction exceed the whole mix.
         let locked = [(vanilla_idx, Lock::Amount(vanilla_amount))];
-        let result = recipe.balance(&[(CompKey::MilkFat.into(), 12.0)], &[], Some(1.0), &locked);
+        let result = recipe.balance(&unprioritized(&[(CompKey::MilkFat.into(), 12.0)]), Some(1.0), &locked);
         assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
     }
 
@@ -647,9 +653,9 @@ mod tests {
 
         // A `Fraction` lock preserves concentration: at 1% of an explicit 2000g total the locked
         // line comes out at 20g, regardless of its original amount.
-        let targets = [(CompKey::MilkFat.into(), 12.0)];
+        let targets = unprioritized(&[(CompKey::MilkFat.into(), 12.0)]);
         let balanced = recipe
-            .balance(&targets, &[], Some(2000.0), &[(vanilla_idx, Lock::Fraction(0.01))])
+            .balance(&targets, Some(2000.0), &[(vanilla_idx, Lock::Fraction(0.01))])
             .unwrap();
         assert_eq_flt_test!(balanced.lines[vanilla_idx].amount, 20.0);
     }
@@ -699,15 +705,15 @@ mod tests {
         // Targets from the recipe's own post-evap composition, including a `Water` comp target
         // and the water-denominated `AbsPAC` ratio — cases naive target-scaling gets wrong.
         let post = recipe.calculate_composition().unwrap();
-        let targets = [
+        let targets = unprioritized(&[
             (CompKey::MilkFat.into(), post.get(CompKey::MilkFat)),
             (CompKey::MSNF.into(), post.get(CompKey::MSNF)),
             (CompKey::Water.into(), post.get(CompKey::Water)),
             (RatioKey::AbsPAC.into(), post.get_ratio(RatioKey::AbsPAC)),
-        ];
+        ]);
 
         let balanced_post = recipe
-            .balance(&targets, &[], None, &[])
+            .balance(&targets, None, &[])
             .unwrap()
             .calculate_composition()
             .unwrap();
@@ -730,9 +736,9 @@ mod tests {
             .unwrap();
         let vanilla_amount = recipe.lines[vanilla_idx].amount;
 
-        let targets = [(CompKey::MilkFat.into(), 12.0), (CompKey::MSNF.into(), 9.0)];
+        let targets = unprioritized(&[(CompKey::MilkFat.into(), 12.0), (CompKey::MSNF.into(), 9.0)]);
         let balanced = recipe
-            .balance(&targets, &[], None, &[(vanilla_idx, Lock::Amount(vanilla_amount))])
+            .balance(&targets, None, &[(vanilla_idx, Lock::Amount(vanilla_amount))])
             .unwrap();
 
         // A `Lock::Amount` holds the line's pre-evaporation grams, and the pre-evap line total
@@ -779,7 +785,7 @@ mod tests {
         let recipe = Recipe::from_light_recipe(None, &MAIN_RECIPE_LIGHT, &EMBEDDED_DB)
             .unwrap()
             .with_evaporation(50.0);
-        let result = recipe.balance(&[(CompKey::MilkFat.into(), 12.0)], &[], Some(0.0), &[]);
+        let result = recipe.balance(&unprioritized(&[(CompKey::MilkFat.into(), 12.0)]), Some(0.0), &[]);
         assert!(matches!(result, Err(Error::InvalidEvaporation(_))));
     }
 

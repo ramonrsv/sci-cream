@@ -22,7 +22,6 @@ import {
   ratioToPropKey,
   type LightRecipe,
   type BalanceTargets,
-  type BalancePriorities,
   type BalanceLocks,
 } from "@workspace/sci-cream";
 
@@ -1322,20 +1321,18 @@ describe("WatchersView Balance", () => {
     }
   });
 
-  it("forwards only non-Normal priorities for keys that have a target to balance_recipe", () => {
+  it("attaches only non-Normal priorities to the targets forwarded to balance_recipe", () => {
     localStorage.setItem(
       STORAGE_KEYS.watcherTargets,
       JSON.stringify({ [MSNF]: 10, [TOTAL_SOLIDS]: 41 }),
     );
-    // MSNF is raised to Critical; TOTAL_SOLIDS stays Normal (default) → must not be forwarded.
+    // MSNF is raised to Critical; TOTAL_SOLIDS stays Normal (default) → carries no priority.
     localStorage.setItem(
       STORAGE_KEYS.watcherPriorities,
       JSON.stringify({ [MSNF]: Priority.Critical }),
     );
     const main = makeMockRecipe(RecipeID.Main);
-    const balanceSpy = vi.fn<
-      (recipe: unknown, targets: BalanceTargets, priorities: BalancePriorities) => LightRecipe
-    >(() => []);
+    const balanceSpy = vi.fn<(recipe: unknown, targets: BalanceTargets) => LightRecipe>(() => []);
     const spyBridge = {
       has_ingredient: () => true,
       balance_recipe: balanceSpy,
@@ -1346,9 +1343,10 @@ describe("WatchersView Balance", () => {
     fireEvent.click(screen.getByTestId("watchers-balance-button"));
 
     expect(balanceSpy).toHaveBeenCalledTimes(1);
-    const priorities = balanceSpy.mock.calls[0][2];
-    expect(priorities).toContainEqual([String(MSNF), Priority.Critical]);
-    expect(priorities).toHaveLength(1);
+    const targets = balanceSpy.mock.calls[0][1];
+    // MSNF carries its Critical priority inline; TOTAL_SOLIDS is a plain 2-tuple (no priority).
+    expect(targets).toContainEqual([String(MSNF), 10, Priority.Critical]);
+    expect(targets).toContainEqual([String(TOTAL_SOLIDS), 41]);
   });
 
   it("forwards a locked row to balance_recipe as [lightIndex, { Amount }]", () => {
@@ -1366,7 +1364,6 @@ describe("WatchersView Balance", () => {
       (
         recipe: unknown,
         targets: BalanceTargets,
-        priorities: BalancePriorities,
         total: number | undefined,
         locked: BalanceLocks,
       ) => LightRecipe
@@ -1381,7 +1378,7 @@ describe("WatchersView Balance", () => {
     fireEvent.click(screen.getByTestId("watchers-balance-button"));
 
     expect(balanceSpy).toHaveBeenCalledTimes(1);
-    expect(balanceSpy.mock.calls[0][4]).toEqual([[1, { Amount: lockedAmount }]]);
+    expect(balanceSpy.mock.calls[0][3]).toEqual([[1, { Amount: lockedAmount }]]);
   });
 
   it("surfaces a balance error and does not invoke onApplyBalancedMain when the bridge throws", () => {

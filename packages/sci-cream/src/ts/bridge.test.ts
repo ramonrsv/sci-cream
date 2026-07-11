@@ -14,13 +14,7 @@ import {
 } from "../../dist/index";
 
 import { getMixProperty, propToCompKey, propToRatioKey } from "./prop-key";
-import {
-  Priority,
-  BalancingReport,
-  BalanceTargets,
-  BalancePriorities,
-  BalanceLocks,
-} from "./balancing";
+import { Priority, BalancingReport, BalanceTargets, BalanceLocks } from "./balancing";
 import { LightRecipe } from "./light-recipe";
 
 const lightRecipe: LightRecipe = [
@@ -150,9 +144,7 @@ test("Bridge.balance_recipe", () => {
     [compToPropKey(CompKey.TotalSolids), 41],
   ];
 
-  const priorities: BalancePriorities = [];
-
-  const balanced = bridge.balance_recipe(lightRecipe, targets, priorities) as LightRecipe;
+  const balanced = bridge.balance_recipe(lightRecipe, targets) as LightRecipe;
 
   expect(balanced).toBeDefined();
   expect(balanced.length).toEqual(lightRecipe.length);
@@ -187,7 +179,7 @@ test("Bridge.balance_recipe scales to an explicit total_amount", () => {
     [compToPropKey(CompKey.TotalSolids), 41],
   ];
 
-  const balanced = bridge.balance_recipe(lightRecipe, targets, [], 1000) as LightRecipe;
+  const balanced = bridge.balance_recipe(lightRecipe, targets, 1000) as LightRecipe;
 
   // The balanced recipe is scaled to the requested total mass...
   const balancedTotal = balanced.reduce((sum, line) => sum + line[1], 0);
@@ -213,13 +205,8 @@ test("Bridge.balance_recipe infers the current total when total_amount is omitte
   const originalTotal = lightRecipe.reduce((sum, line) => sum + line[1], 0);
 
   // Passing `undefined` for the optional param behaves identically to omitting it: total is kept.
-  const omitted = bridge.balance_recipe(lightRecipe, targets, []) as LightRecipe;
-  const explicitUndefined = bridge.balance_recipe(
-    lightRecipe,
-    targets,
-    [],
-    undefined,
-  ) as LightRecipe;
+  const omitted = bridge.balance_recipe(lightRecipe, targets) as LightRecipe;
+  const explicitUndefined = bridge.balance_recipe(lightRecipe, targets, undefined) as LightRecipe;
 
   for (const balanced of [omitted, explicitUndefined]) {
     const balancedTotal = balanced.reduce((sum, line) => sum + line[1], 0);
@@ -237,20 +224,16 @@ test("Bridge.balance_recipe applies priorities", () => {
     [compToPropKey(CompKey.POD), 0.5],
   ];
 
-  const priorities: BalancePriorities = [[compToPropKey(CompKey.POD), Priority.Critical]];
-  const emptyPriorities: BalancePriorities = [];
+  // Same targets, but with POD raised to Critical priority.
+  const prioritizedTargets: BalanceTargets = [
+    [compToPropKey(CompKey.Energy), 200],
+    [compToPropKey(CompKey.MilkFat), 12],
+    [compToPropKey(CompKey.MSNF), 8],
+    [compToPropKey(CompKey.POD), 0.5, Priority.Critical],
+  ];
 
-  const defaultBalanced = bridge.balance_recipe(
-    lightRecipe,
-    targets,
-    emptyPriorities,
-  ) as LightRecipe;
-
-  const prioritizedBalanced = bridge.balance_recipe(
-    lightRecipe,
-    targets,
-    priorities,
-  ) as LightRecipe;
+  const defaultBalanced = bridge.balance_recipe(lightRecipe, targets) as LightRecipe;
+  const prioritizedBalanced = bridge.balance_recipe(lightRecipe, prioritizedTargets) as LightRecipe;
 
   const defaultComp = bridge.calculate_recipe_composition(defaultBalanced);
   const prioritizedComp = bridge.calculate_recipe_composition(prioritizedBalanced);
@@ -274,13 +257,7 @@ test("Bridge.balance_recipe holds a locked line fixed", () => {
   const vanillaAmount = lightRecipe[vanillaIndex][1];
   const locked: BalanceLocks = [[vanillaIndex, { Amount: vanillaAmount }]];
 
-  const balanced = bridge.balance_recipe(
-    lightRecipe,
-    targets,
-    [],
-    undefined,
-    locked,
-  ) as LightRecipe;
+  const balanced = bridge.balance_recipe(lightRecipe, targets, undefined, locked) as LightRecipe;
 
   expect(balanced[vanillaIndex][0]).toEqual("Vanilla Extract");
   expect(balanced[vanillaIndex][1]).toBeCloseTo(vanillaAmount, 6);
@@ -296,7 +273,7 @@ test("Bridge.balance_recipe throws on unknown ingredient", () => {
   const badRecipe: LightRecipe = [["Nonexistent Ingredient", 100]];
   const targets: BalanceTargets = [[compToPropKey(CompKey.MilkFat), 10]];
 
-  expect(() => bridge.balance_recipe(badRecipe, targets, [])).toThrow();
+  expect(() => bridge.balance_recipe(badRecipe, targets)).toThrow();
 });
 
 test("Bridge.validate_recipe_targets returns empty report for valid targets", () => {
@@ -307,7 +284,7 @@ test("Bridge.validate_recipe_targets returns empty report for valid targets", ()
     [compToPropKey(CompKey.TotalSugars), 17],
   ];
 
-  const report = bridge.validate_recipe_targets(lightRecipe, targets, []) as BalancingReport;
+  const report = bridge.validate_recipe_targets(lightRecipe, targets) as BalancingReport;
 
   expect(report).toBeDefined();
   expect(report.issues).toEqual([]);
@@ -317,30 +294,12 @@ test("Bridge.validate_recipe_targets reports NegativeTarget error", () => {
   const bridge = new Bridge(make_seeded_db());
   const targets: BalanceTargets = [[compToPropKey(CompKey.MilkFat), -5]];
 
-  const report = bridge.validate_recipe_targets(lightRecipe, targets, []) as BalancingReport;
+  const report = bridge.validate_recipe_targets(lightRecipe, targets) as BalancingReport;
 
   expect(report).toBeDefined();
   expect(report.issues.filter((i) => i.severity === "error").length).toBeGreaterThan(0);
   expect(report.issues[0].severity).toBe("error");
   expect(report.issues[0].message).toContain("-5");
-});
-
-test("Bridge.validate_recipe_targets reports PriorityWithoutTarget warning", () => {
-  const bridge = new Bridge(make_seeded_db());
-  const targets: BalanceTargets = [[compToPropKey(CompKey.MilkFat), 14]];
-  const priorities: BalancePriorities = [[compToPropKey(CompKey.MSNF), Priority.High]];
-
-  const report = bridge.validate_recipe_targets(
-    lightRecipe,
-    targets,
-    priorities,
-  ) as BalancingReport;
-
-  expect(report).toBeDefined();
-  expect(report.issues.filter((i) => i.severity === "error")).toHaveLength(0);
-  expect(report.issues.filter((i) => i.severity === "warning").length).toBeGreaterThan(0);
-  expect(report.issues[0].severity).toBe("warning");
-  expect(report.issues[0].keys).toContain(compToPropKey(CompKey.MSNF));
 });
 
 test("Bridge.validate_recipe_targets tolerates a display-rounded target on a pinned ratio", () => {
@@ -364,8 +323,8 @@ test("Bridge.validate_recipe_targets tolerates a display-rounded target on a pin
   const hasRatioIssue = (report: BalancingReport) =>
     report.issues.some((i) => i.message.includes("the ingredients allow"));
 
-  const strict = bridge.validate_recipe_targets(recipe, targets, []) as BalancingReport;
-  const tolerant = bridge.validate_recipe_targets(recipe, targets, [], 0.01) as BalancingReport;
+  const strict = bridge.validate_recipe_targets(recipe, targets) as BalancingReport;
+  const tolerant = bridge.validate_recipe_targets(recipe, targets, 0.01) as BalancingReport;
 
   expect(hasRatioIssue(strict)).toBe(true);
   expect(hasRatioIssue(tolerant)).toBe(false);
@@ -376,7 +335,7 @@ test("Bridge.validate_recipe_targets throws on unknown ingredient", () => {
   const badRecipe: LightRecipe = [["Nonexistent Ingredient", 100]];
   const targets: BalanceTargets = [[compToPropKey(CompKey.MilkFat), 14]];
 
-  expect(() => bridge.validate_recipe_targets(badRecipe, targets, [])).toThrow();
+  expect(() => bridge.validate_recipe_targets(badRecipe, targets)).toThrow();
 });
 
 /** Ice Cream Science chocolate recipe: pre-evaporation amounts (1089 g), 150 g evaporated. */
@@ -447,7 +406,6 @@ test("Bridge.balance_recipe with evaporation hits post-evaporation targets", () 
   const balanced = bridge.balance_recipe(
     chocolatePreEvaporation,
     targets,
-    [],
     undefined,
     undefined,
     150,

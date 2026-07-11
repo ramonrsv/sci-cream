@@ -1,6 +1,6 @@
 ---
 source: packages/sci-cream/src/balancing/tests.rs
-expression: "report_balancing_issues(&comps_from_names(DAIRY_ING), &targets, &priorities,\nSome(DAIRY_ING),)"
+expression: "report_balancing_issues(&comps_from_names(DAIRY_ING),\n&fuse_targets(&targets, &[]), Some(DAIRY_ING),)"
 ---
 palette:
   3.25% Milk
@@ -11,14 +11,8 @@ targets:
   MSNF                   -3.00
   TotalSolids            30.00
   TotalSolids            32.00
-priorities:
-  MilkFat             High
-  MilkFat             Critical
-  POD                 High
 
 [error] Target for 'Milk Fat' is not finite (NaN)
 [error] Target for 'MSNF' is negative (-3)
 [error] 'Solids' appears more than once in the targets
-[error] 'Milk Fat' appears more than once in the priorities
 [warning] Target for 'Solids' (32) exceeds target for 'Solids' (30), but no ingredient mix can satisfy both — every ingredient's 'Solids' ≤ its 'Solids'
-[warning] Priority set for 'POD', which is not among the targets, so it has no effect

@@ -15,11 +15,11 @@ export enum Priority {
   Critical = "Critical",
 }
 
-/** A set of [PropKey, number] tuples representing the target values for balancing. */
-export type BalanceTargets = [PropKey, number][];
-
-/** A set of [PropKey, Priority] tuples representing the priority levels for balancing. */
-export type BalancePriorities = [PropKey, Priority][];
+/**
+ * A set of balancing targets: `[PropKey, value, Priority?]` tuples. The third target is an optional
+ * balancing relative priority; omit it (or pass `Priority.Normal`) for the unprioritized default.
+ */
+export type BalanceTargets = [PropKey, number, Priority?][];
 
 /**
  * How a locked recipe line is pinned, mirroring the Rust `Lock` enum: `{ Fraction }` holds it at

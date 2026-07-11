@@ -379,9 +379,6 @@ impl fmt::Display for BalancingIssue {
             Self::DuplicateTarget { key } => {
                 write!(f, "'{}' appears more than once in the targets", key.as_med_str())
             }
-            Self::DuplicatePriority { key } => {
-                write!(f, "'{}' appears more than once in the priorities", key.as_med_str())
-            }
             Self::UnaffectableTarget { key } => {
                 write!(f, "No ingredient contributes to '{}', so its target cannot be affected", key.as_med_str())
             }
@@ -434,11 +431,6 @@ impl fmt::Display for BalancingIssue {
                 parts = join_keys(parts),
                 whole_target = round2(*whole_target),
                 parts_target_sum = round2(*parts_target_sum),
-            ),
-            Self::PriorityWithoutTarget { key } => write!(
-                f,
-                "Priority set for '{}', which is not among the targets, so it has no effect",
-                key.as_med_str()
             ),
             Self::OverDetermined {
                 target_count,
@@ -791,26 +783,6 @@ mod tests {
         .to_string();
         assert_true!(text.contains(CompKey::MilkFat.as_med_str()));
         assert_true!(text.contains("negative"));
-    }
-
-    #[test]
-    fn balancing_issue_display_message_duplicate_priority() {
-        let text = BalancingIssue::DuplicatePriority {
-            key: CompKey::MilkFat.into(),
-        }
-        .to_string();
-        assert_true!(text.contains(CompKey::MilkFat.as_med_str()));
-        assert_true!(text.contains("priorities"));
-    }
-
-    #[test]
-    fn balancing_issue_display_message_priority_without_target() {
-        let text = BalancingIssue::PriorityWithoutTarget {
-            key: CompKey::MSNF.into(),
-        }
-        .to_string();
-        assert_true!(text.contains(CompKey::MSNF.as_med_str()));
-        assert_true!(text.contains("no effect"));
     }
 
     #[test]

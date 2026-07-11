@@ -14,8 +14,7 @@ use crate::{
     specs::entry::SpecEntry,
     wasm::{
         BalancingReportView, Composition, Ingredient, JsResult, MixProperties, balancing_locks_from_jsvalue,
-        balancing_priorities_from_jsvalue, balancing_targets_from_jsvalue, light_recipe_from_jsvalue,
-        spec_entry_from_jsvalue,
+        balancing_targets_from_jsvalue, light_recipe_from_jsvalue, spec_entry_from_jsvalue,
     },
 };
 
@@ -137,15 +136,14 @@ impl Bridge {
     pub fn balance_recipe(
         &self,
         recipe: &LightRecipe,
-        targets: &[(BalanceKey, f64)],
-        priorities: &[(BalanceKey, Priority)],
+        targets: &[(BalanceKey, f64, Option<Priority>)],
         total_amount: Option<f64>,
         locked: &[(usize, Lock)],
         evaporation: Option<f64>,
     ) -> Result<OwnedLightRecipe> {
         RustRecipe::from_light_recipe(None, recipe, &self.db)?
             .with_evaporation(evaporation.unwrap_or(0.0))
-            .balance(targets, priorities, total_amount, locked)
+            .balance(targets, total_amount, locked)
             .map(Into::into)
     }
 
@@ -181,8 +179,7 @@ impl Bridge {
     pub fn validate_recipe_targets(
         &self,
         recipe: &LightRecipe,
-        targets: &[(BalanceKey, f64)],
-        priorities: &[(BalanceKey, Priority)],
+        targets: &[(BalanceKey, f64, Option<Priority>)],
         rel_tol: Option<f64>,
         locked: &[(usize, Lock)],
         evaporation: Option<f64>,
@@ -201,7 +198,7 @@ impl Bridge {
         // evaporation, filtered out before dividing so a zero-total recipe can't produce a `NaN`.
         let evap_fraction = evaporation.filter(|&grams| grams != 0.0).map(|grams| grams / total);
 
-        Ok(validate_balancing_targets(&comps, targets, priorities, rel_tol, evap_fraction))
+        Ok(validate_balancing_targets(&comps, targets, rel_tol, evap_fraction))
     }
 
     /// Forwards to [`IngredientDatabase::clear`], emptying the internal database.
@@ -345,38 +342,29 @@ impl Bridge {
     /// # Errors
     ///
     /// Returns a `serde::Error` if the `JsValue` inputs cannot be deserialized into an
-    /// [`OwnedLightRecipe`], `(BalanceKey, f64)[]`, `(BalanceKey, Priority)[]`, or a `[usize,
-    /// Lock][]` locks list. Forwards any errors from the forwarded-to [`Bridge::balance_recipe`].
+    /// [`OwnedLightRecipe`], `(BalanceKey, f64, Priority | null)[]`, or a `[usize, Lock][]` locks
+    /// list. Forwards any errors from the forwarded-to [`Bridge::balance_recipe`].
     #[wasm_bindgen(js_name = "balance_recipe")]
     pub fn balance_recipe_wasm(
         &self,
         recipe: Box<[JsValue]>,
         targets: Box<[JsValue]>,
-        priorities: Box<[JsValue]>,
         total_amount: Option<f64>,
         locked: Option<Box<[JsValue]>>,
         evaporation: Option<f64>,
     ) -> JsResult<Box<[JsValue]>> {
         let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
-        let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
         let locked = locked
             .map(|l| balancing_locks_from_jsvalue(JsValue::from(l)))
             .transpose()?;
 
-        self.balance_recipe(
-            &light_recipe,
-            &targets,
-            &priorities,
-            total_amount,
-            locked.as_deref().unwrap_or(&[]),
-            evaporation,
-        )
-        .map_err(Into::<JsValue>::into)?
-        .into_iter()
-        .map(|line| serde_wasm_bindgen::to_value(&line).map_err(Into::into))
-        .collect::<JsResult<Vec<JsValue>>>()
-        .map(Vec::into_boxed_slice)
+        self.balance_recipe(&light_recipe, &targets, total_amount, locked.as_deref().unwrap_or(&[]), evaporation)
+            .map_err(Into::<JsValue>::into)?
+            .into_iter()
+            .map(|line| serde_wasm_bindgen::to_value(&line).map_err(Into::into))
+            .collect::<JsResult<Vec<JsValue>>>()
+            .map(Vec::into_boxed_slice)
     }
 
     /// WASM compatible wrapper for [`Bridge::deevaporate_recipe`]
@@ -408,34 +396,25 @@ impl Bridge {
     /// # Errors
     ///
     /// Returns a `serde::Error` if the `JsValue` inputs cannot be deserialized into an
-    /// [`OwnedLightRecipe`], `(BalanceKey, f64)[]`, `(BalanceKey, Priority)[]`, or a `[usize,
-    /// Lock][]` locks list. Forwards errors from forwarded-to [`Bridge::validate_recipe_targets`].
+    /// [`OwnedLightRecipe`], `(BalanceKey, f64, Priority | null)[]`, or a `[usize, Lock][]` locks
+    /// list. Forwards errors from forwarded-to [`Bridge::validate_recipe_targets`].
     #[wasm_bindgen(js_name = "validate_recipe_targets")]
     pub fn validate_recipe_targets_wasm(
         &self,
         recipe: Box<[JsValue]>,
         targets: Box<[JsValue]>,
-        priorities: Box<[JsValue]>,
         rel_tol: Option<f64>,
         locked: Option<Box<[JsValue]>>,
         evaporation: Option<f64>,
     ) -> JsResult<JsValue> {
         let light_recipe = light_recipe_from_jsvalue(JsValue::from(recipe))?;
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
-        let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
         let locked = locked
             .map(|l| balancing_locks_from_jsvalue(JsValue::from(l)))
             .transpose()?;
 
-        self.validate_recipe_targets(
-            &light_recipe,
-            &targets,
-            &priorities,
-            rel_tol,
-            locked.as_deref().unwrap_or(&[]),
-            evaporation,
-        )
-        .map(|report| serde_wasm_bindgen::to_value(&BalancingReportView::from(&report)).map_err(Into::into))?
+        self.validate_recipe_targets(&light_recipe, &targets, rel_tol, locked.as_deref().unwrap_or(&[]), evaporation)
+            .map(|report| serde_wasm_bindgen::to_value(&BalancingReportView::from(&report)).map_err(Into::into))?
     }
 
     /// WASM compatible wrapper for [`Bridge::clear`]
@@ -538,6 +517,11 @@ pub(crate) mod tests {
             .iter()
             .map(|(name, amount)| (name.to_string(), *amount))
             .collect()
+    }
+
+    /// Attaches the unprioritized default (`None`) to plain `(key, value)` targets.
+    fn unprioritized(pairs: &[(BalanceKey, f64)]) -> Vec<(BalanceKey, f64, Option<Priority>)> {
+        pairs.iter().map(|&(key, value)| (key, value, None)).collect()
     }
 
     #[test]
@@ -682,7 +666,9 @@ pub(crate) mod tests {
             (CompKey::TotalSolids.into(), 41.0),
         ];
 
-        let balanced = bridge.balance_recipe(&recipe, &targets, &[], None, &[], None).unwrap();
+        let balanced = bridge
+            .balance_recipe(&recipe, &unprioritized(&targets), None, &[], None)
+            .unwrap();
 
         assert_eq!(balanced.len(), recipe.len());
         for (i, (name, amount)) in balanced.iter().enumerate() {
@@ -701,7 +687,7 @@ pub(crate) mod tests {
 
         // An explicit `total_amount` scales the balanced recipe to that mass
         let scaled = bridge
-            .balance_recipe(&recipe, &targets, &[], Some(1000.0), &[], None)
+            .balance_recipe(&recipe, &unprioritized(&targets), Some(1000.0), &[], None)
             .unwrap();
         let scaled_total: f64 = scaled.iter().map(|(_, g)| *g).sum();
         assert_eq_flt_test!(scaled_total, 1000.0);
@@ -776,7 +762,7 @@ pub(crate) mod tests {
         ];
 
         let balanced = bridge
-            .balance_recipe(&recipe, &targets, &[], None, &[], Some(150.0))
+            .balance_recipe(&recipe, &unprioritized(&targets), None, &[], Some(150.0))
             .unwrap();
         let balanced_post = bridge.calculate_recipe_composition(&balanced, Some(150.0)).unwrap();
 
@@ -794,8 +780,7 @@ pub(crate) mod tests {
         let bridge = Bridge::new(make_seeded_db());
         let result = bridge.balance_recipe(
             &[("Nonexistent Ingredient".to_string(), 100.0)],
-            &[(CompKey::MilkFat.into(), 10.0)],
-            &[],
+            &unprioritized(&[(CompKey::MilkFat.into(), 10.0)]),
             None,
             &[],
             None,
@@ -816,12 +801,15 @@ pub(crate) mod tests {
             (CompKey::MSNF.into(), 8.0),
             (CompKey::POD.into(), 0.5),
         ];
-        let priorities = [(CompKey::POD.into(), Priority::Critical)];
 
-        let default_balanced = bridge.balance_recipe(&recipe, &targets, &[], None, &[], None).unwrap();
-        let prioritized_balanced = bridge
-            .balance_recipe(&recipe, &targets, &priorities, None, &[], None)
+        // Same targets, but with POD (the last entry) raised to Critical priority.
+        let mut prioritized = unprioritized(&targets);
+        prioritized.last_mut().unwrap().2 = Some(Priority::Critical);
+
+        let default_balanced = bridge
+            .balance_recipe(&recipe, &unprioritized(&targets), None, &[], None)
             .unwrap();
+        let prioritized_balanced = bridge.balance_recipe(&recipe, &prioritized, None, &[], None).unwrap();
 
         let default_comp = bridge.calculate_recipe_composition(&default_balanced, None).unwrap();
         let prioritized_comp = bridge
@@ -846,7 +834,7 @@ pub(crate) mod tests {
 
         let targets = [(CompKey::MilkFat.into(), 14.0), (CompKey::MSNF.into(), 10.0)];
         let balanced = bridge
-            .balance_recipe(&recipe, &targets, &[], None, &locked, None)
+            .balance_recipe(&recipe, &unprioritized(&targets), None, &locked, None)
             .unwrap();
 
         assert_eq!(balanced[vanilla_idx].0, recipe[vanilla_idx].0);
@@ -862,7 +850,13 @@ pub(crate) mod tests {
         let locked = [(vanilla_idx, Lock::Amount(vanilla_amount))];
 
         // A total below the locked line's amount makes its fixed fraction exceed the whole mix.
-        let result = bridge.balance_recipe(&recipe, &[(CompKey::MilkFat.into(), 10.0)], &[], Some(3.0), &locked, None);
+        let result = bridge.balance_recipe(
+            &recipe,
+            &unprioritized(&[(CompKey::MilkFat.into(), 10.0)]),
+            Some(3.0),
+            &locked,
+            None,
+        );
         assert!(matches!(result, Err(crate::error::Error::InvalidBalancingTargets(_))));
     }
 
@@ -876,7 +870,7 @@ pub(crate) mod tests {
             (CompKey::TotalSugars.into(), 17.0),
         ];
         let report = bridge
-            .validate_recipe_targets(&recipe, &targets, &[], None, &[], None)
+            .validate_recipe_targets(&recipe, &unprioritized(&targets), None, &[], None)
             .unwrap();
         assert_true!(report.is_empty());
     }
@@ -887,7 +881,7 @@ pub(crate) mod tests {
         let recipe = light_recipe_to_owned(LIGHT_RECIPE);
         let targets = [(CompKey::MilkFat.into(), -5.0)];
         let report = bridge
-            .validate_recipe_targets(&recipe, &targets, &[], None, &[], None)
+            .validate_recipe_targets(&recipe, &unprioritized(&targets), None, &[], None)
             .unwrap();
         assert_true!(report.has_errors());
         assert_eq!(report.issues.len(), 1);
@@ -906,23 +900,10 @@ pub(crate) mod tests {
         let recipe = light_recipe_to_owned(LIGHT_RECIPE);
         let targets = [(CompKey::MilkFat.into(), 10.0), (CompKey::MilkFat.into(), 12.0)];
         let report = bridge
-            .validate_recipe_targets(&recipe, &targets, &[], None, &[], None)
+            .validate_recipe_targets(&recipe, &unprioritized(&targets), None, &[], None)
             .unwrap();
         assert_true!(report.has_errors());
         assert!(matches!(report.errors().next().unwrap(), BalancingIssue::DuplicateTarget { .. }));
-    }
-
-    #[test]
-    fn bridge_validate_recipe_targets_warning_priority_without_target() {
-        let bridge = Bridge::new(make_seeded_db());
-        let recipe = light_recipe_to_owned(LIGHT_RECIPE);
-        let targets = [(CompKey::MilkFat.into(), 10.0)];
-        let priorities = [(CompKey::MSNF.into(), Priority::High)];
-        let report = bridge
-            .validate_recipe_targets(&recipe, &targets, &priorities, None, &[], None)
-            .unwrap();
-        assert_false!(report.has_errors());
-        assert!(matches!(report.warnings().next().unwrap(), BalancingIssue::PriorityWithoutTarget { .. }));
     }
 
     #[test]
@@ -930,8 +911,7 @@ pub(crate) mod tests {
         let bridge = Bridge::new(make_seeded_db());
         let result = bridge.validate_recipe_targets(
             &[("Nonexistent Ingredient".to_string(), 100.0)],
-            &[(CompKey::MilkFat.into(), 10.0)],
-            &[],
+            &unprioritized(&[(CompKey::MilkFat.into(), 10.0)]),
             None,
             &[],
             None,

@@ -424,29 +424,22 @@ an example, the code snippet below shows how to balance a dark chocolate ice cre
 typically a tricky recipe to balance and requires careful tradeoffs to meet common targets:
 
 ```rust
-let targets: Vec<(BalanceKey, f64)> = vec![
-    (MSNF.into(), 7.0),
-    (CocoaButter.into(), 2.0),
-    (CocoaSolids.into(), 6.0),
+let targets: Vec<(BalanceKey, f64, Option<Priority>)> = vec![
+    (MSNF.into(), 7.0, None),
+    (CocoaButter.into(), 2.0, Some(High)),
+    (CocoaSolids.into(), 6.0, Some(Critical)),
     // @todo ABV is non-additive; target its additive Alcohol (by_weight) proxy until supported
-    (Alcohol.into(), 0.3169),
-    (Salt.into(), 0.08),
-    (TotalFats.into(), 16.0),
-    (TotalSolids.into(), 41.0),
-    (EmulsifiersPerFat.into(), 1.7),
-    (StabilizersPerWater.into(), 0.35),
-    (POD.into(), 15.0),
-    (AbsPAC.into(), 65.0),
+    (Alcohol.into(), 0.3169, None),
+    (Salt.into(), 0.08, None),
+    (TotalFats.into(), 16.0, None),
+    (TotalSolids.into(), 41.0, Some(Critical)),
+    (EmulsifiersPerFat.into(), 1.7, None),
+    (StabilizersPerWater.into(), 0.35, None),
+    (POD.into(), 15.0, None),
+    (AbsPAC.into(), 65.0, Some(High)),
 ];
 
-let priorities = vec![
-    (CocoaSolids.into(), Critical),
-    (CocoaButter.into(), High),
-    (TotalSolids.into(), Critical),
-    (AbsPAC.into(), High),
-];
-
-let balanced = recipe.balance(&targets, &priorities, Some(1000.0), &[])?;
+let balanced = recipe.balance(&targets, Some(1000.0), &[])?;
 
 assert_recipe_matches(
     &balanced,
@@ -469,7 +462,7 @@ let balanced_properties = balanced.calculate_mix_properties()?;
 assert_abs_diff_eq!(balanced_properties.total_amount, 1000.0, epsilon = 0.1);
 assert_eq_float!(balanced_properties.get(ServingTemp.into()), -13.0983);
 
-for (key, value) in targets.iter().filter(|(key, _)| not_total_fats(key)) {
+for (key, value, _) in targets.iter().filter(|(key, _, _)| not_total_fats(key)) {
     assert_abs_diff_eq!(balanced_properties.get((*key).into()), *value, epsilon = 0.7);
 }
 

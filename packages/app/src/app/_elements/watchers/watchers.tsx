@@ -81,7 +81,6 @@ import {
   BalancingReport,
   type LightRecipe,
   type BalanceTargets,
-  type BalancePriorities,
   type BalanceLocks,
 } from "@workspace/sci-cream";
 
@@ -203,16 +202,23 @@ function formatRange(range: { min: number; max: number }): string {
 
 /**
  * Filter a `TargetsMap` to balanceable entries that are currently watched (in `enabledSet`), as
- * `[keyName, value][]` expected by `Bridge.balance_recipe` for the flat name <-> JsValue boundary.
+ * the `[keyName, value, priority?][]` expected by `Bridge.balance_recipe` for the flat name <-> JS.
  *
  * Balanceable keys are the extensive `CompKey`s and the intensive `RatioKey`s (not `FpdKey`). A
  * `PropKey` for either is its variant name string (see `compToPropKey` / `ratioToPropKey`), which
  * is what the Bridge expects, so the propKey passes through with no conversion.
  *
+ * Each target carries its `PrioritiesMap` priority as an optional third element, emitted only when
+ * non-`Normal` (`Normal` is the solver default, weight 1, so listing it is a no-op).
+ *
  * Restricting to `enabledSet` keeps the balancer aligned with what the user sees — targets
  * persisted in localStorage but filtered out of view aren't silently applied.
  */
-function targetsToBalanceArgs(targets: TargetsMap, enabledSet: Set<PropKey>): BalanceTargets {
+function targetsToBalanceArgs(
+  targets: TargetsMap,
+  priorities: PrioritiesMap,
+  enabledSet: Set<PropKey>,
+): BalanceTargets {
   return Object.entries(targets)
     .filter(
       ([propKey, val]) =>
@@ -220,28 +226,12 @@ function targetsToBalanceArgs(targets: TargetsMap, enabledSet: Set<PropKey>): Ba
         (isCompKey(propKey as PropKey) || isRatioKey(propKey as PropKey)) &&
         enabledSet.has(propKey as PropKey),
     )
-    .map(([propKey, val]) => [propKey as PropKey, val as number]);
-}
-
-/**
- * Build the `BalancePriorities` list expected by `Bridge.balance_recipe`, from the
- * `PrioritiesMap`, restricted to keys that actually carry a balanced target (`balanceTargets`).
- *
- * Entries are emitted only for non-`Normal` priorities on keys with a target: `Normal` is the
- * solver default (weight 1) so listing it is a no-op, and a priority on a key without a target
- * would trip the crate's `PriorityWithoutTarget` validation warning.
- */
-function prioritiesToBalanceArgs(
-  priorities: PrioritiesMap,
-  balanceTargets: BalanceTargets,
-): BalancePriorities {
-  const targetKeys = new Set(balanceTargets.map(([keyName]) => String(keyName)));
-  return Object.entries(priorities)
-    .filter(
-      ([propKey, priority]) =>
-        priority !== undefined && priority !== Priority.Normal && targetKeys.has(propKey),
-    )
-    .map(([propKey, priority]) => [propKey as PropKey, priority as Priority]);
+    .map(([propKey, val]): BalanceTargets[number] => {
+      const priority = priorities[propKey as PropKey];
+      return priority !== undefined && priority !== Priority.Normal
+        ? [propKey as PropKey, val as number, priority]
+        : [propKey as PropKey, val as number];
+    });
 }
 
 /**
@@ -818,17 +808,16 @@ export function WatchersView({
   };
 
   const enabledProps = getEnabledProps();
-  const balanceTargets = targetsToBalanceArgs(targets, new Set(enabledProps));
-  const balancePriorities = prioritiesToBalanceArgs(priorities, balanceTargets);
+  const balanceTargets = targetsToBalanceArgs(targets, priorities, new Set(enabledProps));
 
   // Rows pinned in the editor: held fixed while the rest balance around them. Derived from `main`.
   const balanceLocks: BalanceLocks = wasmBridge
     ? makeBalanceLocks(main, (n) => wasmBridge.has_ingredient(n))
     : [];
 
-  // Stable string signatures of the small target/priority/lock arrays, for use as memo/effect deps.
+  // Stable string signatures of the small target/lock arrays, for use as memo/effect deps. The
+  // target key captures priority changes too, since each target carries its priority inline.
   const balanceTargetsKey = JSON.stringify(balanceTargets);
-  const balancePrioritiesKey = JSON.stringify(balancePriorities);
   const balanceLocksKey = JSON.stringify(balanceLocks);
 
   // Names of the balanceable rows (not quantities): re-triggers the auto-balance effect when an
@@ -850,7 +839,6 @@ export function WatchersView({
       return wasmBridge.validate_recipe_targets(
         lightRecipe,
         balanceTargets,
-        balancePriorities,
         TARGET_FEASIBILITY_REL_TOL,
         balanceLocks,
         main.evaporation,
@@ -860,7 +848,7 @@ export function WatchersView({
       return undefined;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [wasmBridge, main, balanceTargetsKey, balancePrioritiesKey, balanceLocksKey]);
+  }, [wasmBridge, main, balanceTargetsKey, balanceLocksKey]);
 
   const issues = report?.issues ?? [];
   const errorCount = issues.filter((issue) => issue.severity === "error").length;
@@ -887,7 +875,7 @@ export function WatchersView({
   // Drop a stale runtime balance error once the inputs change, so a prior failure doesn't linger.
   useEffect(() => {
     setBalanceError(undefined);
-  }, [balanceTargetsKey, balancePrioritiesKey, main]);
+  }, [balanceTargetsKey, main]);
 
   // Removal only takes effect under the Custom filter (which derives its keys from the selection);
   // under Auto, the heuristic ignores the selection, so the remove button is hidden there.
@@ -910,7 +898,6 @@ export function WatchersView({
       const balanced = wasmBridge.balance_recipe(
         lightRecipe,
         balanceTargets,
-        balancePriorities,
         pinnedTotal,
         balanceLocks,
         main.evaporation,
@@ -959,7 +946,6 @@ export function WatchersView({
     autoBalance,
     balanceDisabled,
     balanceTargetsKey,
-    balancePrioritiesKey,
     balanceLocksKey,
     balanceIngredientsKey,
     pinnedTotal,

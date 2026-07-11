@@ -98,6 +98,18 @@ fn unlocked(comps: &[Composition]) -> Vec<(Composition, Option<f64>)> {
     comps.iter().map(|&comp| (comp, None)).collect()
 }
 
+/// Fuses separate `targets` and `priorities` into the crate's `(key, value, Option<Priority>)`
+/// tuples, so tests can express the two separately while the crate API takes them fused.
+fn fuse_targets(
+    targets: &[(BalanceKey, f64)],
+    priorities: &[(BalanceKey, Priority)],
+) -> Vec<(BalanceKey, f64, Option<Priority>)> {
+    targets
+        .iter()
+        .map(|&(key, value)| (key, value, priorities.iter().find(|&&(k, _)| k == key).map(|&(_, p)| p)))
+        .collect()
+}
+
 /// Pairs compositions with an aligned lock list: `locked[i] == Some(f)` fixes composition `i` at
 /// fraction `f` of the mix (see [`balance_compositions`]).
 fn with_locks(comps: &[Composition], locked: &[Option<f64>]) -> Vec<(Composition, Option<f64>)> {
@@ -114,7 +126,7 @@ fn balance_compositions(
     weighting: Option<Weighting>,
     priorities: &[(BalanceKey, Priority)],
 ) -> Result<Vec<(Composition, f64)>> {
-    crate::balancing::balance_compositions(&unlocked(comps), targets, weighting, priorities, None)
+    crate::balancing::balance_compositions(&unlocked(comps), &fuse_targets(targets, priorities), weighting, None)
 }
 
 /// Test-local shadow: forwards a plain unlocked `&[Composition]` to the crate solver.
@@ -144,7 +156,7 @@ fn validate_balancing_targets(
     priorities: &[(BalanceKey, Priority)],
     rel_tol: Option<f64>,
 ) -> BalancingReport {
-    crate::balancing::validate_balancing_targets(&unlocked(comps), targets, priorities, rel_tol, None)
+    crate::balancing::validate_balancing_targets(&unlocked(comps), &fuse_targets(targets, priorities), rel_tol, None)
 }
 
 /// Runs a single issue generator and returns what it emits, before any deduplication. Lets a
@@ -380,26 +392,24 @@ fn report_balance_quality(
 
 /// Builds a deterministic, human-readable balancing-issues report for `insta` snapshots.
 ///
-/// Echoes the scenario inputs (palette `names` when given, `targets`, and any `priorities`),
-/// then the user-facing [`BalancingReport`] rendering from [`validate_balancing_targets`] — the
-/// same text that crosses the WASM boundary as `BalancingIssueView.message`. Snapshotting it
-/// keeps the wording under review: clear, correctly attributed to keys, and free of spurious or
-/// duplicate issues.
+/// Echoes the scenario inputs (palette `names` when given, and each target's value with its
+/// [`Priority`] when set), then the user-facing [`BalancingReport`] rendering from
+/// [`validate_balancing_targets`] — the same text that crosses the WASM boundary as
+/// `BalancingIssueView.message`. Snapshotting it keeps the wording under review: clear, correctly
+/// attributed to keys, and free of spurious or duplicate issues.
 fn report_balancing_issues(
     comps: &[Composition],
-    targets: &[(BalanceKey, f64)],
-    priorities: &[(BalanceKey, Priority)],
+    targets: &[(BalanceKey, f64, Option<Priority>)],
     names: Option<&[&str]>,
 ) -> String {
-    report_balancing_issues_rel(comps, targets, priorities, names, None)
+    report_balancing_issues_rel(comps, targets, names, None)
 }
 
 /// As [`report_balancing_issues`], but taking an explicit `rel_tol` (see
 /// [`validate_balancing_targets`]) so a snapshot can contrast exact validation with the tolerance.
 fn report_balancing_issues_rel(
     comps: &[Composition],
-    targets: &[(BalanceKey, f64)],
-    priorities: &[(BalanceKey, Priority)],
+    targets: &[(BalanceKey, f64, Option<Priority>)],
     names: Option<&[&str]>,
     rel_tol: Option<f64>,
 ) -> String {
@@ -411,19 +421,13 @@ fn report_balancing_issues_rel(
     }
 
     lines.push("targets:".to_string());
-    for (key, value) in targets {
-        lines.push(format!("  {:<20}{value:>8.2}", balance_key_label(*key)));
-    }
-
-    if !priorities.is_empty() {
-        lines.push("priorities:".to_string());
-        for (key, priority) in priorities {
-            lines.push(format!("  {:<20}{priority:?}", balance_key_label(*key)));
-        }
+    for &(key, value, priority) in targets {
+        let suffix = priority.map_or_else(String::new, |p| format!("  {p:?}"));
+        lines.push(format!("  {:<20}{value:>8.2}{suffix}", balance_key_label(key)));
     }
 
     lines.push(String::new());
-    lines.push(validate_balancing_targets(comps, targets, priorities, rel_tol).to_string());
+    lines.push(crate::balancing::validate_balancing_targets(&unlocked(comps), targets, rel_tol, None).to_string());
 
     lines.join("\n")
 }
@@ -919,24 +923,17 @@ fn balance_quality_priority_abs_pac() {
 
 #[test]
 fn balancing_issues_report_input_errors() {
-    // A grab-bag of caller mistakes: a non-finite and a negative target, a duplicated target
-    // key, a duplicated priority key, and a priority for a key that is not a target. Shows how
-    // an error-heavy report reads and how errors and warnings interleave.
+    // A grab-bag of caller mistakes: a non-finite and a negative target, and a duplicated target
+    // key. Shows how an error-heavy report reads and how errors and warnings interleave.
     let targets = [
         (CompKey::MilkFat.into(), f64::NAN),
         (CompKey::MSNF.into(), -3.0),
         (CompKey::TotalSolids.into(), 30.0),
         (CompKey::TotalSolids.into(), 32.0),
     ];
-    let priorities = [
-        (CompKey::MilkFat.into(), Priority::High),
-        (CompKey::MilkFat.into(), Priority::Critical),
-        (CompKey::POD.into(), Priority::High),
-    ];
     insta::assert_snapshot!(report_balancing_issues(
         &comps_from_names(DAIRY_ING),
-        &targets,
-        &priorities,
+        &fuse_targets(&targets, &[]),
         Some(DAIRY_ING),
     ));
 }
@@ -948,13 +945,15 @@ fn balancing_issues_report_multiple_warnings() {
     // can supply. Confirms a multi-warning report stays informative rather than spurious.
     insta::assert_snapshot!(report_balancing_issues(
         &comps_from_names(DAIRY_SUGAR_ING),
-        &[
-            (CompKey::MilkFat.into(), 50.0),
-            (CompKey::Sucrose.into(), 20.0),
-            (CompKey::TotalSugars.into(), 15.0),
-            (CompKey::CocoaSolids.into(), 5.0),
-        ],
-        &[],
+        &fuse_targets(
+            &[
+                (CompKey::MilkFat.into(), 50.0),
+                (CompKey::Sucrose.into(), 20.0),
+                (CompKey::TotalSugars.into(), 15.0),
+                (CompKey::CocoaSolids.into(), 5.0),
+            ],
+            &[],
+        ),
         Some(DAIRY_SUGAR_ING),
     ));
 }
@@ -967,7 +966,7 @@ fn balancing_issues_report_real_recipe_typical_self_targets() {
     let recipe = get_light_recipe_by_id("Standard Base", Some("Underbelly"));
     let comps = comps_from_light_recipe(&recipe);
     let targets = get_targets_from_light_recipe(&recipe, &get_typical_balancing_keys());
-    insta::assert_snapshot!(report_balancing_issues(&comps, &targets, &[], None));
+    insta::assert_snapshot!(report_balancing_issues(&comps, &fuse_targets(&targets, &[]), None));
 }
 
 /// Builds the rounded-self-targets snapshot body for `recipe` over `keys`.
@@ -983,8 +982,8 @@ fn rounded_self_targets_report(recipe: &OwnedLightRecipe, keys: &[BalanceKey]) -
         .map(|(key, value)| (key, round_to_display_format(value)))
         .collect();
 
-    let exact = report_balancing_issues_rel(&comps, &targets, &[], None, None);
-    let tolerant = report_balancing_issues_rel(&comps, &targets, &[], None, Some(0.01));
+    let exact = report_balancing_issues_rel(&comps, &fuse_targets(&targets, &[]), None, None);
+    let tolerant = report_balancing_issues_rel(&comps, &fuse_targets(&targets, &[]), None, Some(0.01));
     format!("=== exact ===\n{exact}\n\n=== tolerant (rel_tol = 0.01) ===\n{tolerant}")
 }
 
@@ -1021,7 +1020,7 @@ fn balancing_issues_report_real_recipe_conflicting_targets() {
         (CompKey::Sucrose.into(), 25.0),
         (CompKey::TotalSugars.into(), 18.0),
     ];
-    insta::assert_snapshot!(report_balancing_issues(&comps, &targets, &[], None));
+    insta::assert_snapshot!(report_balancing_issues(&comps, &fuse_targets(&targets, &[]), None));
 }
 
 #[test]
@@ -1042,7 +1041,7 @@ fn balancing_issues_report_real_setup_with_ref_recipes_chocolate_no_ing() {
         })
         .collect::<Vec<_>>();
 
-    insta::assert_snapshot!(report_balancing_issues(&comps, &targets, &[], None));
+    insta::assert_snapshot!(report_balancing_issues(&comps, &fuse_targets(&targets, &[]), None));
 }
 
 #[test]
@@ -1064,7 +1063,7 @@ fn balancing_issues_report_real_setup_with_ref_recipes_chocolate_powder_only() {
         })
         .collect::<Vec<_>>();
 
-    insta::assert_snapshot!(report_balancing_issues(&comps, &targets, &[], None));
+    insta::assert_snapshot!(report_balancing_issues(&comps, &fuse_targets(&targets, &[]), None));
 }
 
 // --- Ratio keys ---
@@ -1694,62 +1693,6 @@ fn priority_mixed_levels_tighten_each_key() {
     let msnf_before = error_for(&[pod_critical], CompKey::MSNF.into());
     let msnf_after = error_for(&[pod_critical, msnf_high], CompKey::MSNF.into());
     assert_le!(msnf_after, msnf_before - 0.4);
-}
-
-#[test]
-fn validate_flags_duplicate_priority_as_error() {
-    let comps = comps_from_names(DAIRY_ING);
-    let targets = [(CompKey::MilkFat.into(), 16.0)];
-    let priorities = [
-        (CompKey::MilkFat.into(), Priority::High),
-        (CompKey::MilkFat.into(), Priority::Critical),
-    ];
-    let report = validate_balancing_targets(&comps, &targets, &priorities, None);
-
-    assert_true!(report.has_errors());
-    assert_true!(report.errors().any(|issue| matches!(
-        issue,
-        BalancingIssue::DuplicatePriority {
-            key: BalanceKey::Comp(CompKey::MilkFat)
-        }
-    )));
-}
-
-#[test]
-fn validate_flags_priority_without_target_as_warning() {
-    let comps = comps_from_names(DAIRY_ING);
-    let targets = [(CompKey::MilkFat.into(), 16.0)];
-    let priorities = [(CompKey::MSNF.into(), Priority::High)]; // no MSNF target
-    let report = validate_balancing_targets(&comps, &targets, &priorities, None);
-
-    assert_false!(report.has_errors());
-    assert_true!(report.warnings().any(|issue| matches!(
-        issue,
-        BalancingIssue::PriorityWithoutTarget {
-            key: BalanceKey::Comp(CompKey::MSNF)
-        }
-    )));
-}
-
-#[test]
-fn balance_compositions_rejects_duplicate_priority() {
-    let comps = comps_from_names(DAIRY_ING);
-    let targets = [(CompKey::MilkFat.into(), 16.0), (CompKey::MSNF.into(), 11.0)];
-    let priorities = [
-        (CompKey::MilkFat.into(), Priority::High),
-        (CompKey::MilkFat.into(), Priority::Critical),
-    ];
-    let result = balance_compositions(&comps, &targets, None, &priorities);
-    assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
-}
-
-#[test]
-fn balance_compositions_proceeds_despite_priority_without_target() {
-    // A priority whose key has no target is only a warning; the solve still returns a result.
-    let comps = comps_from_names(DAIRY_ING);
-    let targets = [(CompKey::MilkFat.into(), 16.0), (CompKey::MSNF.into(), 11.0)];
-    let priorities = [(CompKey::TotalSugars.into(), Priority::High)]; // no TotalSugars target
-    assert!(balance_compositions(&comps, &targets, None, &priorities).is_ok());
 }
 
 // --- validate_balancing_targets: error-severity issues ---
@@ -2495,7 +2438,6 @@ fn affected_keys_single_key_variants() {
         .affected_keys(),
         vec![key]
     );
-    assert_eq!(BalancingIssue::PriorityWithoutTarget { key }.affected_keys(), vec![key]);
 }
 
 #[test]
@@ -2715,7 +2657,8 @@ fn balance_holds_locked_composition_fixed() {
     let (targets, locked) = lock_test_targets(&comps);
 
     let balanced =
-        crate::balancing::balance_compositions(&with_locks(&comps, &locked), &targets, None, &[], None).unwrap();
+        crate::balancing::balance_compositions(&with_locks(&comps, &locked), &fuse_targets(&targets, &[]), None, None)
+            .unwrap();
 
     // The locked composition keeps its exact fraction; amounts are non-negative and sum to 1.
     assert_eq_flt_test!(balanced[3].1, 0.006);
@@ -2740,9 +2683,8 @@ fn balance_all_none_locks_matches_unlocked() {
     let baseline = balance_compositions(&comps, &targets, None, &[]).unwrap();
     let all_none = crate::balancing::balance_compositions(
         &with_locks(&comps, &[None, None, None, None]),
-        &targets,
+        &fuse_targets(&targets, &[]),
         None,
-        &[],
         None,
     )
     .unwrap();
@@ -2762,9 +2704,8 @@ fn balance_all_locked_returns_fixed_fractions() {
 
     let balanced = crate::balancing::balance_compositions(
         &with_locks(&comps, &locked),
-        &[(CompKey::MilkFat.into(), 3.0)],
+        &fuse_targets(&[(CompKey::MilkFat.into(), 3.0)], &[]),
         None,
-        &[],
         None,
     )
     .unwrap();
@@ -2787,7 +2728,8 @@ fn balance_locked_ratio_target_met_with_lock_held() {
     let locked = [None, None, None, Some(0.006)];
 
     let balanced =
-        crate::balancing::balance_compositions(&with_locks(&comps, &locked), &targets, None, &[], None).unwrap();
+        crate::balancing::balance_compositions(&with_locks(&comps, &locked), &fuse_targets(&targets, &[]), None, None)
+            .unwrap();
 
     assert_eq_flt_test!(balanced[3].1, 0.006);
     for (key, target) in &targets {
@@ -2801,9 +2743,8 @@ fn balance_locked_fractions_exceeding_mix_is_error() {
     let comps = comps_from_names(&["Whole Milk", "Whipping Cream"]);
     let result = crate::balancing::balance_compositions(
         &with_locks(&comps, &[Some(0.7), Some(0.6)]),
-        &[(CompKey::MilkFat.into(), 10.0)],
+        &fuse_targets(&[(CompKey::MilkFat.into(), 10.0)], &[]),
         None,
-        &[],
         None,
     );
     assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
@@ -2814,9 +2755,8 @@ fn balance_negative_locked_fraction_is_error() {
     let comps = comps_from_names(&["Whole Milk", "Whipping Cream"]);
     let result = crate::balancing::balance_compositions(
         &with_locks(&comps, &[Some(-0.1), None]),
-        &[(CompKey::MilkFat.into(), 10.0)],
+        &fuse_targets(&[(CompKey::MilkFat.into(), 10.0)], &[]),
         None,
-        &[],
         None,
     );
     assert!(matches!(result, Err(Error::InvalidBalancingTargets(_))));
@@ -2827,8 +2767,7 @@ fn validate_locked_fractions_exceeding_mix_reports_error() {
     let comps = comps_from_names(&["Whole Milk", "Whipping Cream"]);
     let report = crate::balancing::validate_balancing_targets(
         &with_locks(&comps, &[Some(0.7), Some(0.6)]),
-        &[(CompKey::MilkFat.into(), 10.0)],
-        &[],
+        &fuse_targets(&[(CompKey::MilkFat.into(), 10.0)], &[]),
         None,
         None,
     );
@@ -2852,8 +2791,7 @@ fn validate_defers_palette_warnings_when_locked() {
 
     let locked = crate::balancing::validate_balancing_targets(
         &with_locks(&comps, &[Some(0.1), None]),
-        &targets,
-        &[],
+        &fuse_targets(&targets, &[]),
         None,
         None,
     );
@@ -2871,7 +2809,8 @@ fn validate_defers_palette_warnings_under_evaporation() {
     let free = validate_balancing_targets(&comps, &targets, &[], None);
     assert_true!(free.warnings().next().is_some(), "expected an unreachable-target warning without evaporation");
 
-    let evaporated = crate::balancing::validate_balancing_targets(&unlocked(&comps), &targets, &[], None, Some(0.2));
+    let evaporated =
+        crate::balancing::validate_balancing_targets(&unlocked(&comps), &fuse_targets(&targets, &[]), None, Some(0.2));
     assert_true!(evaporated.warnings().next().is_none(), "palette warnings should be deferred under evaporation");
     assert_false!(evaporated.has_errors());
 }

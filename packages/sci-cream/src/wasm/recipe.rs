@@ -4,6 +4,7 @@
 //! cases that build their own [`Ingredient`]s and [`Recipe`]s, instead of going through the
 //! higher-level [`Bridge`] interface, perhaps for performance reasons.
 
+use serde::Deserialize;
 use wasm_bindgen::prelude::*;
 
 use crate::{
@@ -66,27 +67,23 @@ pub fn light_recipe_from_jsvalue(recipe: JsValue) -> JsResult<OwnedLightRecipe> 
     serde_wasm_bindgen::from_value::<OwnedLightRecipe>(recipe).map_err(Into::into)
 }
 
-/// Create a list of balancing targets from a JavaScript list of key name and target value pairs.
-///
-/// Each target is a flat `[name, value]` pair, where `name` is a [`CompKey`] or [`RatioKey`].
-///
-/// # Errors
-///
-/// Returns a `serde::Error` if the input cannot be deserialized into a `Vec<(BalanceKey, f64)>`.
-pub fn balancing_targets_from_jsvalue(targets: JsValue) -> JsResult<Vec<(BalanceKey, f64)>> {
-    serde_wasm_bindgen::from_value::<Vec<(BalanceKey, f64)>>(targets).map_err(Into::into)
-}
+/// A balancing target from JS: a flat `[name, value]` or `[name, value, priority]` tuple.
+/// `#[serde(default)]` defaults the optional [`Priority`] to `None` for a missing or `null` third.
+#[derive(Deserialize)]
+struct BalancingTarget(BalanceKey, f64, #[serde(default)] Option<Priority>);
 
-/// Create a list of balancing priorities from a JavaScript list of key and priority pairs.
+/// Create a list of balancing targets from a JavaScript list of key, value, and priority tuples.
 ///
-/// Each priority is a flat `[name, level]` pair, where `name` is a [`CompKey`] or [`RatioKey`]
-/// and `level` is a [`Priority`] variant name, e.g. `"Critical"`.
+/// Each target is a flat `[name, value]` or `[name, value, priority]` tuple: `name` a [`CompKey`]
+/// or [`RatioKey`], and the optional `priority` a [`Priority`] name (e.g. `"Critical"`) or `null`.
 ///
 /// # Errors
 ///
-/// Returns a `serde::Error` if the input cannot be deserialized into `Vec<(BalanceKey, Priority)>`.
-pub fn balancing_priorities_from_jsvalue(priorities: JsValue) -> JsResult<Vec<(BalanceKey, Priority)>> {
-    serde_wasm_bindgen::from_value::<Vec<(BalanceKey, Priority)>>(priorities).map_err(Into::into)
+/// Returns a `serde::Error` if the input cannot be deserialized into the target tuples.
+pub fn balancing_targets_from_jsvalue(targets: JsValue) -> JsResult<Vec<(BalanceKey, f64, Option<Priority>)>> {
+    serde_wasm_bindgen::from_value::<Vec<BalancingTarget>>(targets)
+        .map(|targets| targets.into_iter().map(|t| (t.0, t.1, t.2)).collect())
+        .map_err(Into::into)
 }
 
 /// Create the per-line balancing locks from a JavaScript array of `[lineIndex, Lock]` pairs.
@@ -148,51 +145,47 @@ impl Recipe {
     /// # Errors
     ///
     /// Returns a `serde::Error` if the `JsValue` inputs cannot be deserialized into a
-    /// `(BalanceKey, f64)[]`, `(BalanceKey, Priority)[]`, or `[usize, Lock][]`. Forwards any errors
-    /// from internal balancing calculations; see [`Recipe::balance`](RustRecipe::balance).
+    /// `(BalanceKey, f64, Priority | null)[]` or `[usize, Lock][]`. Forwards any errors from
+    /// internal balancing calculations; see [`Recipe::balance`](RustRecipe::balance).
     #[wasm_bindgen(js_name = "balance")]
     pub fn balance_wasm(
         &self,
         targets: Box<[JsValue]>,
-        priorities: Box<[JsValue]>,
         total_amount: Option<f64>,
         locked: Option<Box<[JsValue]>>,
     ) -> JsResult<Self> {
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
-        let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
         let locked = locked
             .map(|l| balancing_locks_from_jsvalue(JsValue::from(l)))
             .transpose()?;
 
         RustRecipe::from(self.clone())
-            .balance(&targets, &priorities, total_amount, locked.as_deref().unwrap_or(&[]))
+            .balance(&targets, total_amount, locked.as_deref().unwrap_or(&[]))
             .map(Into::into)
             .map_err(Into::into)
     }
 
     /// WASM compatible wrapper for [`validate_balancing_targets`]
     ///
-    /// Validates `targets` and `priorities` against the compositions of this recipe's ingredients,
-    /// returning a serialized [`BalancingReport`](crate::balancing::BalancingReport). Never errors
-    /// on the validation itself — all issues (errors and warnings) are reported in the returned
-    /// object's `issues` array. `locked` is an optional array of `[lineIndex, Lock]` pairs marking
-    /// the lines held fixed; omit it (or pass `null`) to lock nothing.
+    /// Validates `targets` against the compositions of this recipe's ingredients, returning a
+    /// serialized [`BalancingReport`](crate::balancing::BalancingReport). Never errors on the
+    /// validation itself — all issues (errors and warnings) are reported in the returned object's
+    /// `issues` array. `locked` is an optional array of `[lineIndex, Lock]` pairs marking the lines
+    /// held fixed; omit it (or pass `null`) to lock nothing.
     ///
     /// # Errors
     ///
     /// Returns a `serde::Error` if the `JsValue` inputs cannot be deserialized into a
-    /// `(BalanceKey, f64)[]`, `(BalanceKey, Priority)[]`, or `[usize, Lock][]`, or if the result
-    /// cannot be serialized. Also errors on an out-of-range or duplicated lock index.
+    /// `(BalanceKey, f64, Priority | null)[]` or `[usize, Lock][]`, or if the result cannot be
+    /// serialized. Also errors on an out-of-range or duplicated lock index.
     #[wasm_bindgen(js_name = "validate_targets")]
     pub fn validate_targets_wasm(
         &self,
         targets: Box<[JsValue]>,
-        priorities: Box<[JsValue]>,
         rel_tol: Option<f64>,
         locked: Option<Box<[JsValue]>>,
     ) -> JsResult<JsValue> {
         let targets = balancing_targets_from_jsvalue(JsValue::from(targets))?;
-        let priorities = balancing_priorities_from_jsvalue(JsValue::from(priorities))?;
         let locked = locked
             .map(|l| balancing_locks_from_jsvalue(JsValue::from(l)))
             .transpose()?
@@ -209,8 +202,7 @@ impl Recipe {
             .map(|(line, &lock)| (line.ingredient.composition.into(), lock))
             .collect();
 
-        serde_wasm_bindgen::to_value(&validate_balancing_targets(&comps, &targets, &priorities, rel_tol, None))
-            .map_err(Into::into)
+        serde_wasm_bindgen::to_value(&validate_balancing_targets(&comps, &targets, rel_tol, None)).map_err(Into::into)
     }
 }
 
