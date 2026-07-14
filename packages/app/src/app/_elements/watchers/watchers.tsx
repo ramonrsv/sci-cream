@@ -69,12 +69,9 @@ import {
   getMixProperty,
   getMixScopePropKeys,
   getAcceptablePropertyRange,
-  isBalanceableKey,
   isPropKeyQuantity,
   groupEnabledKeys,
   prop_key_as_med_str,
-  isCompKey,
-  isRatioKey,
   Bridge as WasmBridge,
   prop_key_as_short_str,
   Priority,
@@ -204,10 +201,6 @@ function formatRange(range: { min: number; max: number }): string {
  * Filter a `TargetsMap` to balanceable entries that are currently watched (in `enabledSet`), as
  * the `[keyName, value, priority?][]` expected by `Bridge.balance_recipe` for the flat name <-> JS.
  *
- * Balanceable keys are the extensive `CompKey`s and the intensive `RatioKey`s (not `FpdKey`). A
- * `PropKey` for either is its variant name string (see `compToPropKey` / `ratioToPropKey`), which
- * is what the Bridge expects, so the propKey passes through with no conversion.
- *
  * Each target carries its `PrioritiesMap` priority as an optional third element, emitted only when
  * non-`Normal` (`Normal` is the solver default, weight 1, so listing it is a no-op).
  *
@@ -220,12 +213,7 @@ function targetsToBalanceArgs(
   enabledSet: Set<PropKey>,
 ): BalanceTargets {
   return Object.entries(targets)
-    .filter(
-      ([propKey, val]) =>
-        isUsableNumber(val) &&
-        (isCompKey(propKey as PropKey) || isRatioKey(propKey as PropKey)) &&
-        enabledSet.has(propKey as PropKey),
-    )
+    .filter(([propKey, val]) => isUsableNumber(val) && enabledSet.has(propKey as PropKey))
     .map(([propKey, val]): BalanceTargets[number] => {
       const priority = priorities[propKey as PropKey];
       return priority !== undefined && priority !== Priority.Normal
@@ -350,9 +338,6 @@ export function WatcherCard({
   const issueBorderClass = issue ? `issue-card-${issue.severity}` : "";
   const issueTextClass = issue ? `issue-text-${issue.severity}` : "";
 
-  // Disable the target input and fill-from-ref for unbalanceable keys (e.g. FpdKey)
-  const disableInput = !isBalanceableKey(propKey);
-
   return (
     <div
       className={`data-card-flat flex flex-col text-sm ${issueBorderClass}`}
@@ -405,7 +390,7 @@ export function WatcherCard({
               )}
             </span>
           )}
-          {showTarget && target !== undefined && !disableInput && (
+          {showTarget && target !== undefined && (
             <button
               className="action-button px-0.5 py-0"
               onClick={() => onTargetChange(undefined)}
@@ -445,10 +430,8 @@ export function WatcherCard({
                 className={`boxed-input comp-val w-14 px-0.5 py-0`}
                 value={target ?? ""}
                 placeholder={"—"}
-                tabIndex={disableInput ? -1 : undefined}
                 onChange={(e) => onTargetChange(parseInputTarget(e))}
                 data-testid={`watcher-card-${String(propKey)}-target`}
-                style={{ visibility: disableInput ? "hidden" : "visible" }}
               />
               {/* Reserve the delta slot so the input doesn't shift as the target changes. */}
               {deltaToggle !== DeltaToggle.Off && (
@@ -456,7 +439,6 @@ export function WatcherCard({
                   className={`comp-val text-secondary -mr-3 w-9 text-left text-[11px]`}
                   title={targetMet ? "Target met" : "Delta from current to target"}
                   data-testid={`watcher-card-${String(propKey)}-target-delta`}
-                  style={{ visibility: disableInput ? "hidden" : "visible" }}
                 >
                   {targetDelta &&
                     (targetMet ? (
@@ -552,7 +534,6 @@ export function WatcherCard({
                     title={`Fill target from ${ref.id}`}
                     data-testid={`watcher-card-${String(propKey)}-fill-${ref.id}`}
                     style={{ visibility: refHasValue ? "visible" : "hidden" }}
-                    disabled={disableInput}
                   >
                     <ArrowUp size={COMPONENT_ACTION_ICON_SIZE - 10} />
                     <span className="pt-0.5 text-[11px] font-semibold">{refLetter}</span>
@@ -916,12 +897,9 @@ export function WatchersView({
     setTargets((prev) => {
       const next = { ...prev };
       for (const propKey of enabledProps) {
-        // Do not set targets for unbalanceable keys (e.g. FpdKey) since the balancer ignores them
-        if (isBalanceableKey(propKey)) {
-          const srcVal = getDisplayValue(propKey, src);
-          const val = isUsableNumber(srcVal) ? roundToCompositionValueFormat(srcVal) : undefined;
-          setOrClearTarget(next, propKey, val);
-        }
+        const srcVal = getDisplayValue(propKey, src);
+        const val = isUsableNumber(srcVal) ? roundToCompositionValueFormat(srcVal) : undefined;
+        setOrClearTarget(next, propKey, val);
       }
       return next;
     });

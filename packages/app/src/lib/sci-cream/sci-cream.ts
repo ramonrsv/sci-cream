@@ -43,15 +43,11 @@ export function groupEnabledCompKeys(
  * Default set of property keys shown when the Custom key filter is first initialized.
  *
  * This is used by {@link PropertiesChartView} and {@link WatchersView} to determine which
- * properties to show by default when the user has not yet selected any custom properties. The set
- * is sci-cream's "typical" balancing keys, plus the serving temperature and hardness at 14°C.
+ * properties to show by default when the user has not yet selected any custom properties.
+ *
+ * The set is sci-cream's "typical" balancing keys.
  */
-export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set(
-  getTypicalBalancingKeys().concat([
-    fpdToPropKey(FpdKey.ServingTemp),
-    fpdToPropKey(FpdKey.HardnessAt14C),
-  ]),
-);
+export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set(getTypicalBalancingKeys());
 
 /**
  * Keys that are always considered active for the auto heuristic - shown for empty recipes
@@ -63,8 +59,8 @@ export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set(
 export const UNCONDITIONAL_AUTO_PROPERTIES: Set<PropKey> = new Set([
   compToPropKey(CompKey.TotalSolids),
   compToPropKey(CompKey.POD),
+  fpdToPropKey(FpdKey.FPD),
   fpdToPropKey(FpdKey.ServingTemp),
-  fpdToPropKey(FpdKey.HardnessAt14C),
 ]);
 
 /**

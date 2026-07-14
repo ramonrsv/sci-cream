@@ -4,7 +4,7 @@ use criterion::{BatchSize, Criterion, criterion_group};
 
 use sci_cream::{
     balancing::{
-        BalanceKey, Priority, get_all_balanceable_keys, get_typical_balancing_keys, validate_balancing_targets,
+        BalanceKey, Priority, get_all_native_balancing_keys, get_typical_balancing_keys, validate_balancing_targets,
     },
     composition::{CompKey, RatioKey},
 };
@@ -33,13 +33,13 @@ pub(crate) fn bench_validate_balancing_targets(c: &mut Criterion) {
             .collect::<Vec<_>>()
     };
 
-    let all_targets = targets_for(get_all_balanceable_keys());
+    let native_targets = targets_for(get_all_native_balancing_keys());
     let typical_targets = targets_for(get_typical_balancing_keys());
 
-    let _ = c.bench_function("validate_balancing_targets(all_keys)", |b| {
+    let _ = c.bench_function("validate_balancing_targets(native_keys)", |b| {
         b.iter_batched(
             || (),
-            |()| black_box(validate_balancing_targets(&comps, &all_targets, None, None)),
+            |()| black_box(validate_balancing_targets(&comps, &native_targets, None, None)),
             BatchSize::SmallInput,
         );
     });

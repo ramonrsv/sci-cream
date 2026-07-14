@@ -12,7 +12,8 @@ use serde::{Deserialize, Serialize};
 use crate::{
     balancing::{
         keys::{BalanceKey, target_row_coeff, target_row_rhs},
-        validate::{BalancingReport, append_input_error_issues, append_lock_error_issues, is_unaffectable},
+        translate::translate_balancing_targets,
+        validate::{BalancingReport, append_lock_error_issues, is_unaffectable},
     },
     composition::{CompKey, Composition, CompositionValues, FastComposition},
     constants::balancing::{
@@ -22,6 +23,9 @@ use crate::{
     },
     error::{Error, Result},
 };
+
+#[cfg(debug_assertions)]
+use crate::balancing::validate::append_input_error_issues;
 
 #[cfg(doc)]
 use crate::{
@@ -111,6 +115,10 @@ pub(crate) type SolverFn = fn(
 /// `None` (or [`Priority::Normal`]) is the unprioritized default (weight 1), so all-`None` targets
 /// leave the solve unchanged. The priorities are translated to numeric weights here before solving.
 ///
+/// Targets on keys with a [`proxy`](BalanceKey::proxy) — [`CompKey::ABV`] and the FPD keys — are
+/// substituted with equivalent targets on that proxy before solving, each keeping its priority;
+/// see [`translate_balancing_targets`].
+///
 /// `evaporation` is the fraction `E/T` of the *pre-evaporation* mix lost to preparation (gram-free,
 /// like the rest of this API); `None`/`0.0` is the ordinary solve. Targets keep their natural
 /// *post-evaporation* meaning for every key (including `Water` and the water-denominated ratios):
@@ -124,28 +132,35 @@ pub(crate) type SolverFn = fn(
 /// # Errors
 ///
 /// Returns [`Error::InvalidBalancingTargets`] if the inputs contain an error-severity issue: a
-/// non-finite or negative target value, a duplicate target key, or an invalid locked fraction or
-/// sum that exceeds 1. Returns [`Error::InvalidEvaporation`] if `evaporation` is non-finite,
-/// negative, or at least 1. Also forwards any error from the chosen underlying solver.
+/// non-finite, negative, or untranslatable target value, duplicate or proxy-clashing target keys,
+/// or an invalid locked fraction or sum > 1. Returns [`Error::InvalidEvaporation`] if `evaporation`
+/// is non-finite, negative, or at least 1. Forwards any error from the chosen underlying solver.
 pub fn balance_compositions(
     comps: &[(Composition, Option<f64>)],
     targets: &[(BalanceKey, f64, Option<Priority>)],
     weighting: Option<Weighting>,
     evaporation: Option<f64>,
 ) -> Result<Vec<(Composition, f64)>> {
+    // Substitute proxy targets first; the translation issues include the input error checks
+    let translation = translate_balancing_targets(targets);
+
+    // Gate on the cheap error checks only; this path discards warnings (see the validate module).
+    let mut issues = translation.issues;
+    append_lock_error_issues(comps, &mut issues);
+    BalancingReport { issues }.into_result()?;
+
     // Split the fused targets into the plain `(key, value)` list and the numeric priority weights.
-    let plain_targets: Vec<(BalanceKey, f64)> = targets.iter().map(|&(key, value, _)| (key, value)).collect();
-    let priority_weights: Vec<(BalanceKey, f64)> = targets
+    let plain_targets: Vec<(BalanceKey, f64)> = translation
+        .targets
+        .iter()
+        .map(|&(key, value, _)| (key, value))
+        .collect();
+    let priority_weights: Vec<(BalanceKey, f64)> = translation
+        .targets
         .iter()
         .filter_map(|&(key, _, priority)| priority.map(|p| (key, p.weight())))
         .collect();
     let targets = plain_targets.as_slice();
-
-    // Gate on the cheap error checks only; this path discards warnings (see the validate module).
-    let mut issues = Vec::new();
-    append_input_error_issues(targets, &mut issues);
-    append_lock_error_issues(comps, &mut issues);
-    BalancingReport { issues }.into_result()?;
 
     let evaporation = validate_evaporation_fraction(evaporation)?;
 
@@ -265,9 +280,10 @@ fn solve_nnls_raw(a: &[f64], y: &[f64], rows: usize, cols: usize) -> Result<Vec<
 }
 
 /// Debug-only precondition check for the raw balancing path: panics if `targets` carry any
-/// error-severity [`BalancingIssue`] (non-finite/negative values or duplicate keys).
+/// error-severity [`BalancingIssue`] (non-finite/negative values or duplicate keys), or any key
+/// with a [`proxy`](BalanceKey::proxy) that [`translate_balancing_targets`] should have replaced.
 ///
-/// The raw solvers assume pre-validated targets; user input is validated once by
+/// The raw solvers assume pre-validated, translated targets; user input is validated once by
 /// [`balance_compositions`], so a bad target reaching here is a programming bug.
 #[cfg(debug_assertions)]
 fn debug_assert_targets_error_validated(targets: &[(BalanceKey, f64)]) {
@@ -275,6 +291,10 @@ fn debug_assert_targets_error_validated(targets: &[(BalanceKey, f64)]) {
     append_input_error_issues(targets, &mut issues);
     let report = BalancingReport { issues };
     assert!(!report.has_errors(), "raw balancing path requires validated targets: {report}");
+    assert!(
+        targets.iter().all(|(key, _)| key.proxy().is_none()),
+        "raw balancing path requires translated targets (no proxy keys)"
+    );
 }
 
 /// Shared balancing driver: assembles the weighted system, solves it with `solve`, and applies one
@@ -594,5 +614,6 @@ pub(crate) fn achieved_value<K: Into<BalanceKey>>(balanced: &[(Composition, f64)
             achieved_value(balanced, num_key) / achieved_value(balanced, den_key) * 100.0
         }
         BalanceKey::Comp(comp_key) => balanced.iter().map(|(comp, amount)| *amount * comp.get(comp_key)).sum(),
+        BalanceKey::Fpd(_) => unreachable!("FPD keys must be translated to their proxy before solving"),
     }
 }

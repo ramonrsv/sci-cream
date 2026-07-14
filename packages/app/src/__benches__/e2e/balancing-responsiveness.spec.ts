@@ -43,13 +43,12 @@ const RAPID_RESET_TOTAL = "1000";
 const SETTLE_TIMEOUT = 15_000;
 
 /**
- * Target sets to benchmark across: the typical Auto-heuristic selection, and the worst-case set of
- * every balanceable key. Both validation and the solve scale with the number of active targets, so
- * each bench runs once per set.
+ * Target sets to benchmark across: the typical Auto-heuristic selection, and the worst-case valid
+ * set of balanceable keys. Both validation and the solve scale with the number of active targets.
  */
 const TARGET_SETS: { label: string; set: WatcherTargetSet }[] = [
   { label: "auto", set: "auto" },
-  { label: "all targets", set: "all" },
+  { label: "worst-case", set: "worst" },
 ];
 
 /**

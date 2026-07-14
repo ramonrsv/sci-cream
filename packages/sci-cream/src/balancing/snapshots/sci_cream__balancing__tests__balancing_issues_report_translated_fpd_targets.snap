@@ -1,0 +1,14 @@
+---
+source: packages/sci-cream/src/balancing/tests.rs
+expression: "report_balancing_issues(&comps, &fuse_targets(&targets, &[]),\nSome(SORBET_ING))"
+---
+palette:
+  Water
+  Sucrose
+  Dextrose
+  Underbelly Sorbet Stabilizer Blend
+targets:
+  ServingTemp           -13.00
+  TotalSolids            32.00
+
+no balancing issues

@@ -927,114 +927,6 @@ describe("WatcherCard delta (relative)", () => {
     ).toBeNull();
   });
 });
-
-describe("WatcherCard non-balanceable key", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    localStorage.clear();
-  });
-
-  afterEach(() => {
-    cleanup();
-  });
-
-  it("keeps the target input in the DOM but invisible for a non-balanceable key (FpdKey)", () => {
-    const main = makeMockRecipe(RecipeID.Main);
-    const { container } = render(
-      <WatcherCard
-        propKey={SERVING_TEMP}
-        main={main}
-        deltaToggle={DeltaToggle.Off}
-        target={undefined}
-        onTargetChange={vi.fn()}
-        onPriorityChange={vi.fn()}
-        onRemove={vi.fn()}
-      />,
-    );
-    const input = container.querySelector(
-      `[data-testid="watcher-card-${String(SERVING_TEMP)}-target"]`,
-    ) as HTMLElement;
-    expect(input).not.toBeNull();
-    expect(input.style.visibility).toBe("hidden");
-  });
-
-  it("keeps the delta span in the DOM but invisible for a non-balanceable key", () => {
-    const main = makeMockRecipe(RecipeID.Main);
-    const { container } = render(
-      <WatcherCard
-        propKey={SERVING_TEMP}
-        main={main}
-        deltaToggle={DeltaToggle.Absolute}
-        target={undefined}
-        onTargetChange={vi.fn()}
-        onPriorityChange={vi.fn()}
-        onRemove={vi.fn()}
-      />,
-    );
-    const delta = container.querySelector(
-      `[data-testid="watcher-card-${String(SERVING_TEMP)}-target-delta"]`,
-    ) as HTMLElement;
-    expect(delta).not.toBeNull();
-    expect(delta.style.visibility).toBe("hidden");
-  });
-
-  it("removes the delta span from the DOM when the delta toggle is Off (non-balanceable key)", () => {
-    // Off removal takes precedence over the hidden-slot path: the span is absent, not just hidden.
-    const main = makeMockRecipe(RecipeID.Main);
-    const { container } = render(
-      <WatcherCard
-        propKey={SERVING_TEMP}
-        main={main}
-        deltaToggle={DeltaToggle.Off}
-        target={undefined}
-        onTargetChange={vi.fn()}
-        onPriorityChange={vi.fn()}
-        onRemove={vi.fn()}
-      />,
-    );
-    expect(
-      container.querySelector(`[data-testid="watcher-card-${String(SERVING_TEMP)}-target-delta"]`),
-    ).toBeNull();
-  });
-
-  it("sets tabIndex=-1 on the target input for a non-balanceable key", () => {
-    const main = makeMockRecipe(RecipeID.Main);
-    const { container } = render(
-      <WatcherCard
-        propKey={SERVING_TEMP}
-        main={main}
-        deltaToggle={DeltaToggle.Absolute}
-        target={undefined}
-        onTargetChange={vi.fn()}
-        onPriorityChange={vi.fn()}
-        onRemove={vi.fn()}
-      />,
-    );
-    const input = container.querySelector(
-      `[data-testid="watcher-card-${String(SERVING_TEMP)}-target"]`,
-    ) as HTMLInputElement;
-    expect(input.tabIndex).toBe(-1);
-  });
-
-  it("disables the fill-from-ref button for a non-balanceable key", () => {
-    const main = makeMockRecipe(RecipeID.Main);
-    const refA = makeMockRecipe(RecipeID.RefA);
-    render(
-      <WatcherCard
-        propKey={SERVING_TEMP}
-        main={main}
-        refs={[refA]}
-        deltaToggle={DeltaToggle.Off}
-        target={undefined}
-        onTargetChange={vi.fn()}
-        onPriorityChange={vi.fn()}
-        onRemove={vi.fn()}
-      />,
-    );
-    expect(screen.getByTestId(`watcher-card-${String(SERVING_TEMP)}-fill-Ref A`)).toBeDisabled();
-  });
-});
-
 describe("WatchersView", () => {
   beforeEach(() => {
     vi.clearAllMocks();
@@ -1261,13 +1153,6 @@ describe("WatchersView Balance", () => {
     expect(screen.getByTestId("watchers-balance-button")).toBeDisabled();
   });
 
-  it("Balance stays disabled when only an FpdKey target (e.g. ServingTemp) is set", () => {
-    localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [SERVING_TEMP]: -12 }));
-    const main = makeMockRecipe(RecipeID.Main);
-    render(<WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />);
-    expect(screen.getByTestId("watchers-balance-button")).toBeDisabled();
-  });
-
   it("Balance is enabled when at least one CompKey target is set on a non-empty main", () => {
     localStorage.setItem(STORAGE_KEYS.watcherTargets, JSON.stringify({ [MSNF]: 10 }));
     const main = makeMockRecipe(RecipeID.Main);
@@ -1489,22 +1374,6 @@ describe("WatchersView Fill from Ref", () => {
     fireEvent.click(screen.getByTestId("watchers-fill-all-Ref A"));
     const stored = JSON.parse(localStorage.getItem(STORAGE_KEYS.watcherTargets) ?? "{}");
     expect(typeof stored[MSNF]).toBe("number");
-  });
-
-  it("skips non-balanceable keys (FpdKey) when filling targets from ref", () => {
-    const ctx = makeMockRecipeContext([RecipeID.Main, RecipeID.RefA]);
-    const { container } = render(<WatchersView main={ctx.recipes[0]} refs={[ctx.recipes[1]]} />);
-
-    const servingTempInput = container.querySelector(
-      `[data-testid="watcher-card-${String(SERVING_TEMP)}-target"]`,
-    ) as HTMLInputElement;
-    expect(servingTempInput.value).toBe("");
-
-    fireEvent.click(screen.getByTestId("watchers-fill-all-Ref A"));
-
-    expect(servingTempInput.value).toBe("");
-    const msnfInput = screen.getByTestId(`watcher-card-${String(MSNF)}-target`) as HTMLInputElement;
-    expect(msnfInput.value).not.toBe("");
   });
 });
 
@@ -1992,25 +1861,6 @@ describe("WatcherCard clear target", () => {
       screen.queryByTestId(`watcher-card-${String(MSNF)}-clear-target`),
     ).not.toBeInTheDocument();
   });
-
-  it("does not render the clear-target button for a non-balanceable key", () => {
-    const main = makeMockRecipe(RecipeID.Main);
-    render(
-      <WatcherCard
-        propKey={SERVING_TEMP}
-        main={main}
-        deltaToggle={DeltaToggle.Off}
-        target={9.5}
-        onTargetChange={vi.fn()}
-        onPriorityChange={vi.fn()}
-        onRemove={vi.fn()}
-      />,
-    );
-    expect(
-      screen.queryByTestId(`watcher-card-${String(SERVING_TEMP)}-clear-target`),
-    ).not.toBeInTheDocument();
-  });
-
   it("does not render the clear-target button when showTarget is false", () => {
     const main = makeMockRecipe(RecipeID.Main);
     render(
@@ -2060,21 +1910,6 @@ describe("WatchersView Set from current", () => {
     const parsed = parseFloat(msnfInput.value);
     expect(Number.isFinite(parsed)).toBe(true);
     expect(parsed).toBe(roundToCompositionValueFormat(parsed));
-  });
-
-  it("skips non-balanceable keys (FpdKey) when filling targets from the current recipe", () => {
-    const main = makeMockRecipe(RecipeID.Main);
-    const { container } = render(
-      <WatchersView main={main} wasmBridge={WASM_BRIDGE} onApplyBalancedMain={vi.fn()} />,
-    );
-    const servingTempInput = container.querySelector(
-      `[data-testid="watcher-card-${String(SERVING_TEMP)}-target"]`,
-    ) as HTMLInputElement;
-    expect(servingTempInput.value).toBe("");
-
-    fireEvent.click(screen.getByTestId("watchers-fill-all-main"));
-
-    expect(servingTempInput.value).toBe("");
   });
 });
 

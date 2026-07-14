@@ -67,6 +67,7 @@ impl From<BalanceKey> for PropKey {
         match key {
             BalanceKey::Comp(comp_key) => Self::Comp(comp_key),
             BalanceKey::Ratio(ratio_key) => Self::Ratio(ratio_key),
+            BalanceKey::Fpd(fpd_key) => Self::Fpd(fpd_key),
         }
     }
 }

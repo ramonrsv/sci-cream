@@ -1,0 +1,17 @@
+---
+source: packages/sci-cream/src/balancing/tests.rs
+expression: "report_balancing_issues(&comps, &fuse_targets(&targets, &[]), Some(BOOZY_ING))"
+---
+palette:
+  3.25% Milk
+  40% Cream
+  Sucrose
+  Grand Marnier Cordon Rouge
+targets:
+  ABV                     4.00
+  Alcohol                 3.20
+  ServingTemp           -13.00
+  HardnessAt14C          72.00
+
+[error] Targets 'ABV' + 'Alcohol' each control 'Alcohol', so at most one can be targeted
+[error] Targets 'Serving Temp' + 'Hardness @-14°C' each control 'Abs.Net PAC', so at most one can be targeted

@@ -13,6 +13,7 @@
 - [ ] `assert_eq_flt_test`, with epsilon `TESTS_EPSILON = 0.0001`, is too loose for many use cases.
       Consider tightening to `COMPOSITION_EPSILON` and/or adding a tighter/loser assert variant.
 - [ ] Add `CompKey`s and ingredient for the known emulsifiers, e.g. `gum_arabic`/"Gum Arabic".
+- [ ] Switch the hard-coded FPD calculation `PacToFpdMethod` from `Interpolation` to `Polynomial`.
 
 ## Up Next
 
@@ -32,10 +33,9 @@
 - [ ] Consider adding `compare_specs_*` tests for simple and label lactose-free dairy products.
 - [ ] Add whey and casein concentrate products, e.g. "Whey Powder", "Whey Protein Concentrate 80%",
       "Whey Protein Isolate 90%", "Sodium Caseinate", "Buttermilk Powder", etc.
-- [ ] FPD properties cannot be balanced, so add some way to convert them to (PAC-HF)/Water.
-- [ ] Add an intensive->extensive translation layer for balancing: solve non-additive targets via
-      an additive proxy (`ABV` -> `Alcohol`, later `ServingTemp` -> `AbsNetPAC`). Classify keys
-      Intensive/Extensive and error on target/proxy clashes. Interim: `ABV` -> `Alcohol`, @todos.
+- [ ] Carry the original target key through proxy translation so downstream balancing warnings
+      (reachability, ratio bands, etc.) name what the user targeted (e.g. `ServingTemp`), not the
+      substituted proxy (e.g. `AbsNetPAC`); see `translate_balancing_targets`.
 - [ ] Once supported, add keys for `Stabilization`, `Emulsification`, etc. Intensive, like ABV?
 - [ ] Remove `Composition` functions for calculating ratios, `get_ratio` already handles that.
 - [ ] If all children of a key have a target, we can infer the parent's target and use it in checks.
@@ -122,6 +122,10 @@
 
 ## Completed
 
+- [x] FPD properties cannot be balanced, so add some way to convert them to (PAC-HF)/Water.
+- [x] Add an intensive->extensive translation layer for balancing: solve non-additive targets via
+      an additive proxy (`ABV` -> `Alcohol`, later `ServingTemp` -> `AbsNetPAC`). Classify keys
+      Intensive/Extensive and error on target/proxy clashes. Interim: `ABV` -> `Alcohol`, @todos.
 - [x] Add `sucrose` support to `DairySimpleSpec` and add Goff & Hartel 'sweetened condensed milk'.
 - [x] Look into adding delta/epsilon tolerance support to `validate_balancing_targets`, to prevent
       spurious warnings due to app-side target input rounding; implement mirror rounding function.

@@ -5,7 +5,10 @@ use serde_wasm_bindgen::Serializer;
 
 use wasm_bindgen::prelude::*;
 
-use crate::balancing::{BalanceKey, BalancingReport, Severity, get_all_balanceable_keys, get_typical_balancing_keys};
+use crate::balancing::{
+    BalanceKey, BalancingReport, Severity, get_all_balanceable_keys, get_all_native_balancing_keys,
+    get_typical_balancing_keys,
+};
 
 #[cfg(doc)]
 use crate::{balancing::BalancingIssue, properties::PropKey};
@@ -65,6 +68,19 @@ fn serialize_balance_key(key: BalanceKey) -> JsValue {
 #[must_use]
 pub fn get_all_balanceable_keys_wasm() -> Vec<JsValue> {
     get_all_balanceable_keys()
+        .into_iter()
+        .map(serialize_balance_key)
+        .collect()
+}
+
+/// WASM compatible wrapper for [`get_all_native_balancing_keys`], returning array of JS `PropKey`s.
+///
+/// **Note**: This function returns enums as strings, directly usable as `PropKey`s on the JS
+/// side; [`BalanceKey`]s, like [`PropKey`]s, cannot be directly represented in TypeScript.
+#[wasm_bindgen(js_name = "get_all_native_balancing_keys")]
+#[must_use]
+pub fn get_all_native_balancing_keys_wasm() -> Vec<JsValue> {
+    get_all_native_balancing_keys()
         .into_iter()
         .map(serialize_balance_key)
         .collect()

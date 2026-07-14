@@ -7,13 +7,14 @@ import {
   new_ingredient_database_seeded_from_specs,
   Bridge,
   CompKey,
+  FpdKey,
   isCompKey,
   compToPropKey,
   IngredientDatabase,
   OnConflict,
 } from "../../dist/index";
 
-import { getMixProperty, propToCompKey, propToRatioKey } from "./prop-key";
+import { fpdToPropKey, getMixProperty, propToCompKey, propToRatioKey } from "./prop-key";
 import { Priority, BalancingReport, BalanceTargets, BalanceLocks } from "./balancing";
 import { LightRecipe } from "./light-recipe";
 
@@ -274,6 +275,55 @@ test("Bridge.balance_recipe throws on unknown ingredient", () => {
   const targets: BalanceTargets = [[compToPropKey(CompKey.MilkFat), 10]];
 
   expect(() => bridge.balance_recipe(badRecipe, targets)).toThrow();
+});
+
+test("Bridge.balance_recipe translates a ServingTemp target to its ratio proxy", () => {
+  const bridge = new Bridge(make_seeded_db());
+
+  const targets: BalanceTargets = [
+    [fpdToPropKey(FpdKey.ServingTemp), -13],
+    [compToPropKey(CompKey.TotalSolids), 41],
+  ];
+
+  const balanced = bridge.balance_recipe(lightRecipe, targets) as LightRecipe;
+  const mixProperties = bridge.calculate_recipe_mix_properties(balanced);
+
+  expect(getMixProperty(mixProperties, fpdToPropKey(FpdKey.ServingTemp))).toBeCloseTo(-13, 2);
+  expect(getMixProperty(mixProperties, compToPropKey(CompKey.TotalSolids))).toBeCloseTo(41, 2);
+});
+
+test("Bridge.balance_recipe translates an ABV target to its Alcohol proxy", () => {
+  const bridge = new Bridge(make_seeded_db());
+  const boozyRecipe: LightRecipe = [
+    ["Whole Milk", 60],
+    ["Sucrose", 15],
+    ["Grand Marnier Cordon Rouge", 10],
+  ];
+
+  const targets: BalanceTargets = [[compToPropKey(CompKey.ABV), 4]];
+
+  const balanced = bridge.balance_recipe(boozyRecipe, targets) as LightRecipe;
+  const comp = bridge.calculate_recipe_composition(balanced);
+
+  expect(comp.get(CompKey.ABV)).toBeCloseTo(4, 4);
+});
+
+test("Bridge.validate_recipe_targets reports a proxy target clash", () => {
+  const bridge = new Bridge(make_seeded_db());
+  // ServingTemp and HardnessAt14C both translate to an AbsNetPAC target, so together they clash.
+  const targets: BalanceTargets = [
+    [fpdToPropKey(FpdKey.ServingTemp), -13],
+    [fpdToPropKey(FpdKey.HardnessAt14C), 70],
+  ];
+
+  const report = bridge.validate_recipe_targets(lightRecipe, targets) as BalancingReport;
+  const errors = report.issues.filter((issue) => issue.severity === "error");
+
+  expect(errors.length).toBe(1);
+  expect(errors[0].keys).toEqual([
+    fpdToPropKey(FpdKey.ServingTemp),
+    fpdToPropKey(FpdKey.HardnessAt14C),
+  ]);
 });
 
 test("Bridge.validate_recipe_targets returns empty report for valid targets", () => {

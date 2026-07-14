@@ -139,6 +139,11 @@ mod tests {
     }
 
     #[test]
+    fn pac_to_fpd_table_supports_inverse_interpolation() {
+        assert_true!(table_supports_interpolation(&PAC_TO_FPD_TABLE, |p| p.1));
+    }
+
+    #[test]
     fn interpolate_pairs_recovers_pac_to_fpd_table() {
         for (pac, expected_fpd) in &PAC_TO_FPD_TABLE {
             assert_eq!(interpolate_pairs(&PAC_TO_FPD_TABLE, (*pac).into(), |p| p.0.into(), |p| p.1), *expected_fpd);

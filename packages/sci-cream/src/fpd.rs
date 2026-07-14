@@ -274,6 +274,21 @@ pub fn get_fpd_from_pac_interpolation(pac: f64) -> Result<f64> {
     }
 }
 
+/// Compute PAC from FPD via inverse interpolation of [`PAC_TO_FPD_TABLE`]
+///
+/// This function is the inverse of [`get_fpd_from_pac_interpolation`].
+///
+/// # Errors
+///
+/// Returns an [`Error::PositiveFpdValue`] if the provided FPD value is positive.
+pub fn get_pac_from_fpd_interpolation(fpd: f64) -> Result<f64> {
+    if fpd <= 0.0 {
+        Ok(interpolate_pairs(&PAC_TO_FPD_TABLE, -fpd, |p| p.1, |p| f64::from(p.0)))
+    } else {
+        Err(Error::PositiveFpdValue(fpd))
+    }
+}
+
 /// Compute FPD from PAC using a polynomial equation with given coefficients
 ///
 /// The coefficients are in the form `[a, b, c]` for the polynomial equation `a*x^2 + b*x + c`.
@@ -696,6 +711,29 @@ mod tests {
         for (expected_pac, fpd) in PAC_TO_FPD_TABLE_POLY.as_slice() {
             assert_eq_flt_test!(super::get_pac_from_fpd_polynomial(*fpd, None).unwrap(), *expected_pac);
         }
+    }
+
+    #[test]
+    fn get_pac_from_fpd_interpolation() {
+        #[expect(
+            clippy::cast_precision_loss,
+            clippy::cast_possible_truncation,
+            clippy::cast_sign_loss
+        )]
+        // The grid extends past the last table row (PAC 180) to cover the extrapolated segment.
+        for pac_int in 0..=((200.0 / 0.25) as usize) {
+            let expected_pac = pac_int as f64 * 0.25;
+            let fpd = get_fpd_from_pac_inter(expected_pac).unwrap();
+            assert_eq_flt_test!(super::get_pac_from_fpd_interpolation(fpd).unwrap(), expected_pac);
+        }
+    }
+
+    #[test]
+    fn get_pac_from_fpd_interpolation_positive_fpd() {
+        assert_true!(matches!(
+            super::get_pac_from_fpd_interpolation(0.1),
+            Err(Error::PositiveFpdValue(fpd)) if fpd == 0.1
+        ));
     }
 
     #[test]

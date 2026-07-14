@@ -11,12 +11,14 @@
 //!
 //! Where x1, x2, x3 are the amounts of each composition/ingredient to use.
 //!
-//! The feature is organized into three submodules: [`keys`] defines the balanceable target keys and
-//! their least-squares row encoding, [`validate`] checks inputs and reports issues before a solve,
+//! The feature is organized into four submodules: [`keys`] defines the balanceable target keys and
+//! their least-squares row encoding, [`translate`] substitutes proxy targets for the keys the
+//! solver cannot encode natively, [`validate`] checks inputs and reports issues before a solve,
 //! and [`solve`] assembles and solves the weighted system. All public items are re-exported here.
 
 pub mod keys;
 pub mod solve;
+pub mod translate;
 pub mod validate;
 
 #[cfg(test)]
@@ -26,4 +28,5 @@ pub(crate) mod tests;
 
 pub use keys::*;
 pub use solve::*;
+pub use translate::*;
 pub use validate::*;

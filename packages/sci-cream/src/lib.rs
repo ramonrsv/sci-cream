@@ -469,8 +469,7 @@ let targets: Vec<(BalanceKey, f64, Option<Priority>)> = vec![
     (MSNF.into(), 7.0, None),
     (CocoaButter.into(), 2.0, Some(High)),
     (CocoaSolids.into(), 6.0, Some(Critical)),
-    // @todo ABV is non-additive; target its additive Alcohol (by_weight) proxy until supported
-    (Alcohol.into(), 0.3169, None),
+    (ABV.into(), 0.4, None),
     (Salt.into(), 0.08, None),
     (TotalFats.into(), 16.0, None),
     (TotalSolids.into(), 41.0, Some(Critical)),

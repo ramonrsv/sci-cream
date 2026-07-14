@@ -15,6 +15,7 @@ use crate::{
     composition::{CompKey, Composition, RatioKey},
     data::{get_all_recipe_entries, get_recipe_entry_by_id},
     error::{Error, Result},
+    fpd::{FPD, FpdKey},
     recipe::{OwnedLightRecipe, Recipe},
 };
 
@@ -314,6 +315,7 @@ fn balance_key_label(key: BalanceKey) -> String {
     match key {
         BalanceKey::Comp(comp) => format!("{comp:?}"),
         BalanceKey::Ratio(ratio) => format!("{ratio:?}"),
+        BalanceKey::Fpd(fpd) => format!("{fpd:?}"),
     }
 }
 
@@ -601,8 +603,8 @@ static BOOZY_DISPARATE_TARGETS: LazyLock<Vec<(BalanceKey, f64)>> = LazyLock::new
     vec![
         (CompKey::TotalSugars.into(), 17.0),
         (CompKey::TotalPAC.into(), 28.0),
-        // @todo Target `ABV` (4.0) directly once the intensive->extensive translation layer
-        // lands; `ABV` is non-additive, so balance its additive `Alcohol` proxy for now.
+        // The raw solvers do not translate, so target the additive `Alcohol` proxy of `ABV` (4.0)
+        // here; the validated entry point's direct `ABV` path is covered by the translation tests.
         (CompKey::Alcohol.into(), crate::constants::density::abv_to_abw(4.0)),
     ]
 });
@@ -622,12 +624,9 @@ static SORBET_ABS_PAC_TARGETS: LazyLock<Vec<(BalanceKey, f64)>> = LazyLock::new(
 
 // --- Balancing tests ---
 
-/// All balanceable targets of a reference recipe, dropping any whose value is non-finite. A
-/// ratio key (e.g. [`RatioKey::EmulsifiersPerFat`]) is `NaN` when the recipe's denominator is
-/// zero (e.g. a fat-free sorbet has no [`CompKey::TotalFats`]), and such an undefined target
-/// cannot be recovered; every finite key, ratio keys included, is kept.
+/// All native balancing targets of a reference recipe, dropping any whose value is non-finite.
 fn finite_balanceable_targets(light_recipe: &OwnedLightRecipe) -> Vec<(BalanceKey, f64)> {
-    get_targets_from_light_recipe(light_recipe, &get_all_balanceable_keys())
+    get_targets_from_light_recipe(light_recipe, &get_all_native_balancing_keys())
         .into_iter()
         .filter(|(_, value)| value.is_finite())
         .collect()
@@ -823,6 +822,205 @@ fn balance_boozy_abv_vs_pac_absolute_weighting() {
     assert_lt!(balanced.iter().map(|(_, amount)| *amount).sum::<f64>(), 0.6);
 }
 
+// --- Intensive->extensive target translation ---
+
+/// Validates `targets` against the unlocked `comps` — the translation-test shorthand.
+fn validation_report(comps: &[Composition], targets: &[(BalanceKey, f64)]) -> BalancingReport {
+    validate_balancing_targets(comps, targets, &[], None)
+}
+
+/// The composition of the mix balanced to `targets` through the validated (translating) entry
+/// point — the shared setup for the translation round-trip tests.
+fn balanced_mix(ingredients: &[&str], targets: &[(BalanceKey, f64)]) -> Composition {
+    let balanced = balance_compositions(&comps_from_names(ingredients), targets, None, &[]).unwrap();
+    Composition::from_combination(&balanced).unwrap()
+}
+
+#[test]
+fn balance_abv_target_round_trip() {
+    // `ABV` translates to its exact-inverse `Alcohol` proxy.
+    let mix = balanced_mix(BOOZY_ING, &[(CompKey::ABV.into(), 4.0), (CompKey::MilkFat.into(), 8.0)]);
+    assert_eq_flt_test!(mix.get(CompKey::ABV), 4.0);
+}
+
+#[test]
+fn balance_fpd_target_round_trip() {
+    // `FPD` translates to `AbsPAC` via the exact table inverse.
+    let mix = balanced_mix(SORBET_ING, &[(FpdKey::FPD.into(), -2.5)]);
+    assert_eq_flt_test!(FPD::compute_from_composition(mix).unwrap().fpd, -2.5);
+}
+
+#[test]
+fn balance_serving_temp_target_round_trip() {
+    // `ServingTemp` translates to `AbsNetPAC` via the exact table inverse.
+    let mix = balanced_mix(SORBET_ING, &[(FpdKey::ServingTemp.into(), -13.0)]);
+    assert_eq_flt_test!(FPD::compute_from_composition(mix).unwrap().serving_temp, -13.0);
+}
+
+#[test]
+fn balance_hardness_target_round_trip() {
+    // `HardnessAt14C` translates to `AbsNetPAC` via the exact table inverse. Integer targets
+    // are recovered exactly; non-integer targets may have non-zero linearization residuals.
+    let mix = balanced_mix(SORBET_ING, &[(FpdKey::HardnessAt14C.into(), 72.0)]);
+    assert_eq_flt_test!(FPD::compute_from_composition(mix).unwrap().hardness_at_14c, 72.0);
+
+    let mix = balanced_mix(SORBET_ING, &[(FpdKey::HardnessAt14C.into(), 72.5)]);
+    assert_abs_diff_eq!(FPD::compute_from_composition(mix).unwrap().hardness_at_14c, 72.5, epsilon = 0.01);
+}
+
+#[test]
+fn abv_priority_rides_to_the_alcohol_row() {
+    // A prioritized `ABV` target must solve identically to the equivalent prioritized `Alcohol`
+    let comps = unlocked(&comps_from_names(BOOZY_ING));
+
+    let with_abv = crate::balancing::balance_compositions(
+        &comps,
+        &[
+            (CompKey::ABV.into(), 4.0, Some(Priority::High)),
+            (CompKey::TotalPAC.into(), 28.0, None),
+        ],
+        None,
+        None,
+    )
+    .unwrap();
+
+    let with_alcohol = crate::balancing::balance_compositions(
+        &comps,
+        &[
+            (CompKey::Alcohol.into(), crate::constants::density::abv_to_abw(4.0), Some(Priority::High)),
+            (CompKey::TotalPAC.into(), 28.0, None),
+        ],
+        None,
+        None,
+    )
+    .unwrap();
+    assert_eq!(with_abv, with_alcohol);
+}
+
+#[test]
+fn proxy_target_clash_matrix() {
+    // Every combination of targets resolving to one solver key raises exactly one error-severity
+    // clash naming the original keys in input order, and gates the solve path.
+    let comps = comps_from_names(BOOZY_ING);
+    let abw = crate::constants::density::abv_to_abw(4.0);
+    let cases: &[(&[(BalanceKey, f64)], BalanceKey)] = &[
+        (&[(CompKey::ABV.into(), 4.0), (CompKey::Alcohol.into(), abw)], CompKey::Alcohol.into()),
+        (&[(FpdKey::FPD.into(), -2.5), (RatioKey::AbsPAC.into(), 40.0)], RatioKey::AbsPAC.into()),
+        (
+            &[
+                (FpdKey::ServingTemp.into(), -13.0),
+                (FpdKey::HardnessAt14C.into(), 72.0),
+            ],
+            RatioKey::AbsNetPAC.into(),
+        ),
+        (
+            &[(FpdKey::ServingTemp.into(), -13.0), (RatioKey::AbsNetPAC.into(), 45.0)],
+            RatioKey::AbsNetPAC.into(),
+        ),
+        (
+            &[(FpdKey::HardnessAt14C.into(), 72.0), (RatioKey::AbsNetPAC.into(), 45.0)],
+            RatioKey::AbsNetPAC.into(),
+        ),
+        (
+            &[
+                (FpdKey::ServingTemp.into(), -13.0),
+                (FpdKey::HardnessAt14C.into(), 72.0),
+                (RatioKey::AbsNetPAC.into(), 45.0),
+            ],
+            RatioKey::AbsNetPAC.into(),
+        ),
+    ];
+
+    for (targets, expected_proxy) in cases {
+        let report = validation_report(&comps, targets);
+        let clashes: Vec<&BalancingIssue> = report
+            .errors()
+            .filter(|issue| matches!(issue, BalancingIssue::ProxyTargetClash { .. }))
+            .collect();
+        assert_eq!(clashes.len(), 1, "expected one clash for {targets:?}");
+        let BalancingIssue::ProxyTargetClash { keys, proxy } = clashes[0] else {
+            unreachable!("filtered to clashes above");
+        };
+        assert_eq!(*proxy, *expected_proxy);
+        assert_eq!(*keys, targets.iter().map(|&(key, _)| key).collect::<Vec<_>>());
+
+        let error = balance_compositions(&comps, targets, None, &[]).unwrap_err();
+        assert_true!(matches!(error, Error::InvalidBalancingTargets(_)));
+    }
+}
+
+#[test]
+fn duplicate_intensive_target_is_a_duplicate_not_a_clash() {
+    // A same-key repeat stays a `DuplicateTarget`; clashes are only for distinct keys.
+    let comps = comps_from_names(BOOZY_ING);
+    let report = validation_report(&comps, &[(CompKey::ABV.into(), 4.0), (CompKey::ABV.into(), 4.0)]);
+    let errors: Vec<&BalancingIssue> = report.errors().collect();
+    assert_eq!(
+        errors,
+        vec![&BalancingIssue::DuplicateTarget {
+            key: CompKey::ABV.into()
+        }]
+    );
+}
+
+#[test]
+fn temperature_targets_bypass_the_negative_check() {
+    // Negative temperatures are the valid domain for `FPD`/`ServingTemp`, not `NegativeTarget`s.
+    let comps = comps_from_names(SORBET_ING);
+    let report = validation_report(&comps, &[(FpdKey::FPD.into(), -2.5), (FpdKey::ServingTemp.into(), -13.0)]);
+    assert_false!(report.has_errors());
+}
+
+#[test]
+fn untranslatable_and_negative_target_domains() {
+    // Out-of-domain intensive values are errors naming the original key: positive temperatures
+    // and a hardness above 100 are untranslatable, while negative `ABV`/`HardnessAt14C` values
+    // fall to the ordinary negative check and a non-finite value to the non-finite one.
+    let comps = comps_from_names(SORBET_ING);
+    let untranslatable = |key: BalanceKey, value: f64| BalancingIssue::UntranslatableTarget { key, value };
+    let negative = |key: BalanceKey, value: f64| BalancingIssue::NegativeTarget { key, value };
+    let cases: &[((BalanceKey, f64), BalancingIssue)] = &[
+        ((FpdKey::FPD.into(), 1.0), untranslatable(FpdKey::FPD.into(), 1.0)),
+        ((FpdKey::ServingTemp.into(), 1.0), untranslatable(FpdKey::ServingTemp.into(), 1.0)),
+        ((FpdKey::HardnessAt14C.into(), 105.0), untranslatable(FpdKey::HardnessAt14C.into(), 105.0)),
+        ((FpdKey::HardnessAt14C.into(), -5.0), negative(FpdKey::HardnessAt14C.into(), -5.0)),
+        ((CompKey::ABV.into(), -1.0), negative(CompKey::ABV.into(), -1.0)),
+    ];
+
+    for (target, expected) in cases {
+        let report = validation_report(&comps, &[*target]);
+        assert_eq!(report.errors().collect::<Vec<_>>(), vec![expected], "for target {target:?}");
+    }
+
+    let report = validation_report(&comps, &[(FpdKey::ServingTemp.into(), f64::NAN)]);
+    let errors: Vec<&BalancingIssue> = report.errors().collect();
+    assert_eq!(errors.len(), 1);
+    assert_true!(matches!(errors[0], BalancingIssue::NonFiniteTarget { key, .. }
+        if *key == BalanceKey::from(FpdKey::ServingTemp)));
+}
+
+#[test]
+fn balancing_issues_report_proxy_clashes() {
+    // One clash per shared solver key, each naming the original keys as passed.
+    let comps = comps_from_names(BOOZY_ING);
+    let targets = [
+        (CompKey::ABV.into(), 4.0),
+        (CompKey::Alcohol.into(), 3.2),
+        (FpdKey::ServingTemp.into(), -13.0),
+        (FpdKey::HardnessAt14C.into(), 72.0),
+    ];
+    insta::assert_snapshot!(report_balancing_issues(&comps, &fuse_targets(&targets, &[]), Some(BOOZY_ING)));
+}
+
+#[test]
+fn balancing_issues_report_translated_fpd_targets() {
+    // A clean translated validation: FPD-family and ABV targets are checked via their proxies,
+    // so any downstream warning names the proxy key (interim attribution; see TODO.md).
+    let comps = comps_from_names(SORBET_ING);
+    let targets = [(FpdKey::ServingTemp.into(), -13.0), (CompKey::TotalSolids.into(), 32.0)];
+    insta::assert_snapshot!(report_balancing_issues(&comps, &fuse_targets(&targets, &[]), Some(SORBET_ING)));
+}
+
 // --- Balance quality reports ---
 
 #[test]
@@ -1003,9 +1201,9 @@ fn balancing_issues_report_rounded_self_targets() {
 fn balancing_issues_report_rounded_self_targets_all_keys() {
     // A full recipe's many pinned and narrow ratios flood exact validation with rounding-drift
     // warnings; the tolerance clears them, bar a few against tiny quantities like Salt whose
-    // rounding error exceeds it.
+    // rounding error exceeds it. The native set: the full catalog self-clashes on shared proxies.
     let recipe = get_light_recipe_by_id("Standard Base", Some("Underbelly"));
-    insta::assert_snapshot!(rounded_self_targets_report(&recipe, &get_all_balanceable_keys()));
+    insta::assert_snapshot!(rounded_self_targets_report(&recipe, &get_all_native_balancing_keys()));
 }
 
 #[test]
@@ -1037,7 +1235,7 @@ fn balancing_issues_report_real_setup_with_ref_recipes_chocolate_no_ing() {
                 CompKey::CocoaButter => (CompKey::CocoaButter.into(), 2.0),
                 _ => (key, value),
             },
-            BalanceKey::Ratio(_) => (key, value),
+            BalanceKey::Ratio(_) | BalanceKey::Fpd(_) => (key, value),
         })
         .collect::<Vec<_>>();
 
@@ -1059,7 +1257,7 @@ fn balancing_issues_report_real_setup_with_ref_recipes_chocolate_powder_only() {
                 CompKey::CocoaButter => (CompKey::CocoaButter.into(), 2.0),
                 _ => (key, value),
             },
-            BalanceKey::Ratio(_) => (key, value),
+            BalanceKey::Ratio(_) | BalanceKey::Fpd(_) => (key, value),
         })
         .collect::<Vec<_>>();
 
@@ -1130,16 +1328,75 @@ fn target_row_coeff_and_rhs_encode_ratio_as_homogeneous_row() {
 }
 
 #[test]
-fn get_balanceable_keys_includes_ratio_keys() {
+fn get_balanceable_keys_includes_ratio_and_fpd_keys() {
     let balanceable = get_all_balanceable_keys();
-    // `ABV` is intensive and excluded until the translation layer lands; the rest remain.
-    assert_eq!(balanceable.len(), CompKey::iter().count() - 1 + RatioKey::iter().count());
-    assert_false!(balanceable.contains(&BalanceKey::from(CompKey::ABV)));
+    assert_eq!(balanceable.len(), CompKey::iter().count() + RatioKey::iter().count() + FpdKey::iter().count());
+    assert_true!(balanceable.contains(&BalanceKey::from(CompKey::ABV)));
     assert_true!(balanceable.contains(&BalanceKey::from(RatioKey::AbsPAC)));
     assert_true!(balanceable.contains(&BalanceKey::from(RatioKey::AbsNetPAC)));
     assert_true!(balanceable.contains(&BalanceKey::from(CompKey::NetPAC)));
     assert_true!(balanceable.contains(&BalanceKey::from(RatioKey::StabilizersPerWater)));
     assert_true!(balanceable.contains(&BalanceKey::from(RatioKey::EmulsifiersPerFat)));
+    assert_true!(balanceable.contains(&BalanceKey::from(FpdKey::ServingTemp)));
+}
+
+#[test]
+fn get_native_balancing_keys_excludes_proxied_keys() {
+    let native = get_all_native_balancing_keys();
+    // The maximal translation-free set: every key except `ABV` and the FPD keys, which have a
+    // proxy. No two native keys resolve to the same solver key, so the whole set is targetable.
+    assert_eq!(native.len(), CompKey::iter().count() - 1 + RatioKey::iter().count());
+    assert_true!(native.iter().all(|key| key.proxy().is_none()));
+    assert_false!(native.contains(&BalanceKey::from(CompKey::ABV)));
+    assert_true!(native.contains(&BalanceKey::from(CompKey::Alcohol)));
+    assert_true!(native.contains(&BalanceKey::from(RatioKey::AbsPAC)));
+}
+
+#[test]
+fn balance_key_extent_and_proxy_classification() {
+    // The full classification: `ABV`, ratio, and FPD keys are intensive, every other comp key
+    // extensive; only `ABV` and the FPD keys have a proxy (ratio keys solve natively).
+    for key in get_all_balanceable_keys() {
+        match key {
+            BalanceKey::Comp(CompKey::ABV) => {
+                assert_eq!(key.extent(), Extent::Intensive);
+                assert_eq!(key.proxy(), Some(BalanceKey::Comp(CompKey::Alcohol)));
+            }
+            BalanceKey::Comp(_) => {
+                assert_eq!(key.extent(), Extent::Extensive);
+                assert_eq!(key.proxy(), None);
+            }
+            BalanceKey::Ratio(_) => {
+                assert_eq!(key.extent(), Extent::Intensive);
+                assert_eq!(key.proxy(), None);
+            }
+            BalanceKey::Fpd(fpd_key) => {
+                assert_eq!(key.extent(), Extent::Intensive);
+                let expected = match fpd_key {
+                    FpdKey::FPD => RatioKey::AbsPAC,
+                    FpdKey::ServingTemp | FpdKey::HardnessAt14C => RatioKey::AbsNetPAC,
+                };
+                assert_eq!(key.proxy(), Some(BalanceKey::Ratio(expected)));
+            }
+        }
+        assert_eq!(key.negative_target_allowed(), matches!(key, BalanceKey::Fpd(FpdKey::FPD | FpdKey::ServingTemp)));
+    }
+}
+
+#[test]
+fn balance_key_serde_fpd_untagged() {
+    // FPD keys join the untagged flat-string encoding shared with `PropKey`.
+    let key: BalanceKey = serde_json::from_str("\"ServingTemp\"").unwrap();
+    assert_eq!(key, BalanceKey::Fpd(FpdKey::ServingTemp));
+    assert_eq!(serde_json::to_string(&key).unwrap(), "\"ServingTemp\"");
+}
+
+#[test]
+fn balance_key_value_reads_fpd_keys() {
+    // An empty composition is all water: FPD 0°C, and hardness undefined (`NaN`)
+    let comp = Composition::new();
+    assert_eq!(BalanceKey::from(FpdKey::FPD).value(&comp), 0.0);
+    assert_true!(BalanceKey::from(FpdKey::HardnessAt14C).value(&comp).is_nan());
 }
 
 #[test]
@@ -2588,12 +2845,13 @@ fn typical_balancing_keys_recover_full_reference_composition() {
         let typical_targets = get_targets_from_light_recipe(light_recipe, &get_typical_balancing_keys());
         // Deliberately unfiltered: a non-finite balanceable target means a recipe in this
         // list is no longer typical/well-conditioned, so fail loudly rather than skip it.
-        let all_targets = get_targets_from_light_recipe(light_recipe, &get_all_balanceable_keys());
+        let all_targets = get_targets_from_light_recipe(light_recipe, &get_all_native_balancing_keys());
 
+        // The typical keys include `ABV`, so solve through the validated, translating entry point.
         assert_balance_compositions::<_, (BalanceKey, f64)>(
             &comps,
             &all_targets,
-            |comps, _, _, _| balance_compositions_nnls(comps, &typical_targets, None, &[]),
+            |comps, _, _, _| balance_compositions(comps, &typical_targets, None, &[]),
             Epsilons::default(),
             &ceiling,
         );

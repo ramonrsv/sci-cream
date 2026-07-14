@@ -499,8 +499,9 @@ pub(crate) mod tests {
     use super::*;
     use crate::{
         balancing::{BalancingIssue, Priority},
-        composition::CompKey,
+        composition::{CompKey, RatioKey},
         data::{get_all_independent_ingredient_specs, get_all_spec_entries},
+        fpd::FpdKey,
         ingredient::{Ingredient, IntoIngredient, ResolveIntoIngredient},
         specs::{DairySimpleSpec, IngredientSpec},
         wasm::ingredient::Ingredient as WasmIngredient,
@@ -758,7 +759,7 @@ pub(crate) mod tests {
         let targets = [
             (CompKey::MilkFat.into(), post.get(CompKey::MilkFat)),
             (CompKey::TotalSolids.into(), post.get(CompKey::TotalSolids)),
-            (crate::composition::RatioKey::AbsPAC.into(), post.get_ratio(crate::composition::RatioKey::AbsPAC)),
+            (RatioKey::AbsPAC.into(), post.get_ratio(RatioKey::AbsPAC)),
         ];
 
         let balanced = bridge
@@ -769,10 +770,7 @@ pub(crate) mod tests {
         // The recipe already meets its own targets, so balancing hits each to solver precision.
         assert_eq_flt_test!(balanced_post.get(CompKey::MilkFat), post.get(CompKey::MilkFat));
         assert_eq_flt_test!(balanced_post.get(CompKey::TotalSolids), post.get(CompKey::TotalSolids));
-        assert_eq_flt_test!(
-            balanced_post.get_ratio(crate::composition::RatioKey::AbsPAC),
-            post.get_ratio(crate::composition::RatioKey::AbsPAC)
-        );
+        assert_eq_flt_test!(balanced_post.get_ratio(RatioKey::AbsPAC), post.get_ratio(RatioKey::AbsPAC));
     }
 
     #[test]
@@ -904,6 +902,44 @@ pub(crate) mod tests {
             .unwrap();
         assert_true!(report.has_errors());
         assert!(matches!(report.errors().next().unwrap(), BalancingIssue::DuplicateTarget { .. }));
+    }
+
+    #[test]
+    fn bridge_validate_recipe_targets_error_proxy_clash() {
+        let bridge = Bridge::new(make_seeded_db());
+        let recipe = light_recipe_to_owned(LIGHT_RECIPE);
+        let targets = [
+            (FpdKey::ServingTemp.into(), -13.0),
+            (FpdKey::HardnessAt14C.into(), 72.0),
+        ];
+        let report = bridge
+            .validate_recipe_targets(&recipe, &unprioritized(&targets), None, &[], None)
+            .unwrap();
+        assert_true!(report.has_errors());
+        assert!(matches!(
+            report.errors().next().unwrap(),
+            BalancingIssue::ProxyTargetClash { keys, proxy: BalanceKey::Ratio(RatioKey::AbsNetPAC) }
+                if *keys == vec![BalanceKey::from(FpdKey::ServingTemp), BalanceKey::from(FpdKey::HardnessAt14C)]
+        ));
+    }
+
+    #[test]
+    fn bridge_balance_recipe_translates_intensive_targets() {
+        // An FPD-family target flows through the intensive->extensive translation layer and comes
+        // back readable off the balanced recipe (`value` recomputes it from the FPD curves).
+        let bridge = Bridge::new(make_seeded_db());
+        let recipe = light_recipe_to_owned(LIGHT_RECIPE);
+        let targets = [
+            (BalanceKey::from(FpdKey::ServingTemp), -13.0),
+            (CompKey::TotalSolids.into(), 41.0),
+        ];
+        let balanced = bridge
+            .balance_recipe(&recipe, &unprioritized(&targets), None, &[], None)
+            .unwrap();
+        let comp = bridge.calculate_recipe_composition(&balanced, None).unwrap();
+        for (key, target) in &targets {
+            assert_eq_flt_test!(key.value(&comp), *target);
+        }
     }
 
     #[test]

@@ -12,6 +12,7 @@ use crate::{
     balancing::{
         keys::{BalanceKey, target_row_coeff},
         solve::Priority,
+        translate::translate_balancing_targets,
     },
     composition::{CompKey, Composition, CompositionValues, FastComposition},
     constants::balancing::{
@@ -52,7 +53,8 @@ pub enum BalancingIssue {
         /// The offending non-finite value.
         value: f64,
     },
-    /// A target value is negative. Every balanceable key is non-negative, so a target must be >= 0.
+    /// A target value is negative for a key that must be non-negative. Only the temperature-valued
+    /// FPD keys admit negative targets (see [`BalanceKey::negative_target_allowed`]).
     ///
     /// Severity: [`Severity::Error`].
     NegativeTarget {
@@ -61,12 +63,33 @@ pub enum BalancingIssue {
         /// The offending negative value.
         value: f64,
     },
+    /// A target's value is outside the domain its proxy translation is defined on: a positive
+    /// `FPD`/`ServingTemp` temperature, or a `HardnessAt14C` above 100.
+    ///
+    /// Severity: [`Severity::Error`].
+    UntranslatableTarget {
+        /// The key whose target cannot be translated to its proxy.
+        key: BalanceKey,
+        /// The offending out-of-domain value.
+        value: f64,
+    },
     /// The same key appears more than once in the targets, which is contradictory or ambiguous.
     ///
     /// Severity: [`Severity::Error`].
     DuplicateTarget {
         /// The key that appears more than once.
         key: BalanceKey,
+    },
+    /// Multiple targets resolve to the same solver key, which is contradictory or ambiguous — e.g.
+    /// `ABV` translates to an `Alcohol` target, so targeting both double-targets alcohol, and
+    /// `ServingTemp` and `HardnessAt14C` both translate to `AbsNetPAC`.
+    ///
+    /// Severity: [`Severity::Error`].
+    ProxyTargetClash {
+        /// The original target keys, as passed, that resolve to the same solver key (>= 2).
+        keys: Vec<BalanceKey>,
+        /// The solver key they all resolve to (a proxy, or the key itself when untranslated).
+        proxy: BalanceKey,
     },
     /// A locked composition's fraction is not finite (`NaN`/infinite) or is negative, so it cannot
     /// be held at that fraction of the mix.
@@ -187,7 +210,9 @@ impl BalancingIssue {
         match self {
             Self::NonFiniteTarget { .. }
             | Self::NegativeTarget { .. }
+            | Self::UntranslatableTarget { .. }
             | Self::DuplicateTarget { .. }
+            | Self::ProxyTargetClash { .. }
             | Self::InvalidLockedFraction { .. }
             | Self::LockedFractionsExceedMix { .. } => Severity::Error,
             Self::UnaffectableTarget { .. }
@@ -209,9 +234,11 @@ impl BalancingIssue {
         match self {
             Self::NonFiniteTarget { key, .. }
             | Self::NegativeTarget { key, .. }
+            | Self::UntranslatableTarget { key, .. }
             | Self::DuplicateTarget { key }
             | Self::UnaffectableTarget { key }
             | Self::UnreachableTarget { key, .. } => vec![*key],
+            Self::ProxyTargetClash { keys, .. } => keys.clone(),
             Self::StructuralViolation { parts, whole, .. } | Self::RollupSumMismatch { whole, parts, .. } => {
                 [&[*whole], parts.as_slice()].concat()
             }
@@ -363,7 +390,8 @@ impl BalancingReport {
 /// [`BalancingReport::into_result`] on this to reject error-severity inputs before solving.
 ///
 /// The checks are:
-/// - **Error** — non-finite or negative target values, duplicate target keys.
+/// - **Error** — non-finite or negative target values, untranslatable proxy-target values,
+///   duplicate target keys, targets clashing on solver key (see [`translate_balancing_targets`]).
 /// - **Warning** — targets no composition affects; targets outside the palette's reachable range
 ///   (including ratio-key targets); palette-derived dominance and ratio-band infeasibilities
 ///   (pairwise and additive); palette-independent structural contradictions (a part target above
@@ -373,6 +401,9 @@ impl BalancingReport {
 /// The reachability, dominance, and ratio warnings assume the non-negative, normalized (summing to
 /// one) solution that [`balance_compositions`] targets. Each target's optional [`Priority`] is
 /// accepted for signature parity with [`balance_compositions`] but does not affect validation.
+/// Warnings run on the translated, solver-ready targets, so a warning against a translated target
+/// names the proxy key (e.g. `AbsNetPAC`), not the original (e.g. `ServingTemp`); carrying the
+/// original key through to the warnings is a planned follow-up (see TODO.md).
 ///
 /// Each entry carries an optional **lock** matching [`balance_compositions`]: `(comp, Some(f))`
 /// holds that composition at fraction `f`, `(comp, None)` leaves it free. This adds the lock
@@ -399,8 +430,14 @@ pub fn validate_balancing_targets(
     rel_tol: Option<f64>,
     evaporation: Option<f64>,
 ) -> BalancingReport {
-    // Priority does not affect validation; drop it and check the plain `(key, value)` targets.
-    let targets: Vec<(BalanceKey, f64)> = targets.iter().map(|&(key, value, _)| (key, value)).collect();
+    // The translation issues include the input error checks, named on the original keys. The
+    // warning checks run on the translated targets' `(key, value)` projection (priority-free).
+    let translation = translate_balancing_targets(targets);
+    let targets: Vec<(BalanceKey, f64)> = translation
+        .targets
+        .iter()
+        .map(|&(key, value, _)| (key, value))
+        .collect();
     let targets = targets.as_slice();
 
     // Snapshot each composition once so the repeated, nested affectability and ratio-band scans
@@ -410,8 +447,7 @@ pub fn validate_balancing_targets(
     // Palette-derived feasibility warnings assume a fully free, non-evaporated palette.
     let skip_palette_checks = comps.iter().any(|&(_, lock)| lock.is_some()) || evaporation.is_some_and(|e| e != 0.0);
 
-    let mut issues = Vec::new();
-    append_input_error_issues(targets, &mut issues);
+    let mut issues = translation.issues;
     append_lock_error_issues(comps, &mut issues);
     append_input_warning_issues(&fast, targets, rel_tol.unwrap_or(0.0), skip_palette_checks, &mut issues);
 
@@ -438,7 +474,7 @@ pub(crate) fn append_input_error_issues(targets: &[(BalanceKey, f64)], issues: &
     for &(key, value) in targets {
         if !value.is_finite() {
             issues.push(BalancingIssue::NonFiniteTarget { key, value });
-        } else if value < 0.0 {
+        } else if value < 0.0 && !key.negative_target_allowed() {
             issues.push(BalancingIssue::NegativeTarget { key, value });
         }
 
@@ -525,6 +561,7 @@ pub(crate) fn is_unaffectable(comps: &[impl CompositionValues], key: BalanceKey,
                 || comps.iter().all(|comp| target_row_coeff(key, target, comp) == 0.0)
         }
         BalanceKey::Comp(comp_key) => is_key_unaffectable(comps, comp_key),
+        BalanceKey::Fpd(_) => unreachable!("FPD keys must be translated to their proxy before validation"),
     }
 }
 
@@ -633,6 +670,7 @@ fn append_reachability_issues(
                     let (num, den) = ratio.parts();
                     ratio_band(comps, &[num], &[den]).map(|(min, max)| (min * 100.0, max * 100.0))
                 }
+                BalanceKey::Fpd(_) => unreachable!("FPD keys must be translated to their proxy before validation"),
             } {
                 push_if_off_band(target, band, rel_tol, issues, emit);
             }

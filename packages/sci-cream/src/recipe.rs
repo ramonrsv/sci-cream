@@ -6,7 +6,9 @@ use serde::{Deserialize, Serialize};
 use crate::{database::IngredientDatabase, resolution::IngredientGetter};
 
 use crate::{
-    balancing::{BalanceKey, Priority, balance_compositions, composition_balance_targets, get_all_balanceable_keys},
+    balancing::{
+        BalanceKey, Priority, balance_compositions, composition_balance_targets, get_all_native_balancing_keys,
+    },
     composition::Composition,
     error::{Error, Result},
     fpd::FPD,
@@ -363,8 +365,8 @@ impl Recipe {
     /// Useful for preparations that do not evaporate (e.g. sous vide): the returned recipe's lines
     /// are re-balanced to hit the post-evaporation composition of `self` while summing to the final
     /// mass `T − E`, with [`evaporation`](Self::evaporation) cleared to `0`. The balance is
-    /// overdetermined (all balanceable keys are targeted), but non-negative least squares recovers
-    /// the exact reformulation when one exists and the best non-negative fit otherwise.
+    /// overdetermined (all native balancing keys are targeted), but non-negative least squares
+    /// recovers the exact reformulation when one exists and the best non-negative fit otherwise.
     ///
     /// # Errors
     ///
@@ -380,9 +382,9 @@ impl Recipe {
 
         let post_evap_composition = self.calculate_composition()?;
 
-        // @todo All balanceable keys are targeted, up-weighting the ratios' constituents; an
+        // @todo All native balancing keys are targeted, up-weighting the ratios' constituents; an
         // extensive-only or curated set may fit degenerate cases better. Revisit with tests.
-        let keys = get_all_balanceable_keys();
+        let keys = get_all_native_balancing_keys();
 
         // A ratio key with a zero denominator (e.g. `EmulsifiersPerFat` on a fat-free mix) reads as
         // `NaN` — undefined for this mix, so not a target the solver can accept; drop non-finites.

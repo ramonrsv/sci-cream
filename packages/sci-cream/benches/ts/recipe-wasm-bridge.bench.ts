@@ -11,9 +11,9 @@ import {
   ratioToPropKey,
   Priority,
   BalanceTargets,
-  BalancePriorities,
-  getAllBalanceableKeys,
+  getAllNativeBalancingKeys,
   getTypicalBalancingKeys,
+  PropKey,
 } from "../../dist/index.js";
 
 import {
@@ -35,21 +35,24 @@ const bridge = new Bridge(new_ingredient_database_seeded_from_embedded_data());
 
 const mixProps = recipe.calculate_mix_properties();
 
-const all_targets = getAllBalanceableKeys().map((key) => [
-  key,
-  getMixProperty(mixProps, key),
-]) as BalanceTargets;
+const priorities = new Map<PropKey, Priority>([
+  [compToPropKey(CompKey.MilkFat), Priority.High],
+  [compToPropKey(CompKey.MSNF), Priority.High],
+  [ratioToPropKey(RatioKey.AbsNetPAC), Priority.Critical],
+]);
+
+const native_targets = getAllNativeBalancingKeys()
+  .map((key) => [key, getMixProperty(mixProps, key)])
+  .map(([key, value]) => [
+    key,
+    value,
+    priorities.has(key) ? priorities.get(key) : Priority.Normal,
+  ]) as BalanceTargets;
 
 const typical_targets = getTypicalBalancingKeys().map((key) => [
   key,
   getMixProperty(mixProps, key),
 ]) as BalanceTargets;
-
-const priorities = [
-  [compToPropKey(CompKey.MilkFat), Priority.High],
-  [compToPropKey(CompKey.MSNF), Priority.High],
-  [ratioToPropKey(RatioKey.AbsNetPAC), Priority.Critical],
-] as BalancePriorities;
 
 // These benchmark suite shows that creating new RecipeLine instances from scratch is generally
 // faster (up to ~10x) than cloning existing ones, likely due to the overhead of more JS <-> WASM
@@ -109,22 +112,22 @@ suite
     recipe.calculate_mix_properties().free();
   })
   .add("bridge.balance_recipe", () => {
-    bridge.balance_recipe(LIGHT_RECIPE, all_targets, []);
+    bridge.balance_recipe(LIGHT_RECIPE, native_targets);
   })
   .add("recipe.balance", () => {
-    recipe.balance(all_targets, []).free();
+    recipe.balance(native_targets).free();
   })
-  .add("bridge.validate_recipe_targets(all_keys)", () => {
-    bridge.validate_recipe_targets(LIGHT_RECIPE, all_targets, priorities);
+  .add("bridge.validate_recipe_targets(native_keys)", () => {
+    bridge.validate_recipe_targets(LIGHT_RECIPE, native_targets);
   })
-  .add("recipe.validate_targets(all_keys)", () => {
-    recipe.validate_targets(all_targets, priorities);
+  .add("recipe.validate_targets(native_keys)", () => {
+    recipe.validate_targets(native_targets);
   })
   .add("bridge.validate_recipe_targets(typical_keys)", () => {
-    bridge.validate_recipe_targets(LIGHT_RECIPE, typical_targets, priorities);
+    bridge.validate_recipe_targets(LIGHT_RECIPE, typical_targets);
   })
   .add("recipe.validate_targets(typical_keys)", () => {
-    recipe.validate_targets(typical_targets, priorities);
+    recipe.validate_targets(typical_targets);
   })
   .on("cycle", (event: Benchmark.Event) => {
     console.log(String(event.target));

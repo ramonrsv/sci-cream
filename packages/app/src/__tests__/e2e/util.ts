@@ -8,7 +8,7 @@ import {
   PropKey,
   prop_key_as_med_str,
   getMixProperty,
-  getAllBalanceableKeys,
+  getAllNativeBalancingKeys,
   type LightRecipe,
 } from "@workspace/sci-cream";
 
@@ -741,17 +741,19 @@ export async function getRecipeEditorQtyInputsSignature(page: Page): Promise<str
 /**
  * Which set of balancing targets to seed for a balancing benchmark:
  * - `"auto"` — the app's default `KeyFilter.Auto` heuristic set (the typical real-world case).
- * - `"all"` — every balanceable key selected via `KeyFilter.Custom` (the worst-case target count).
+ * - `"worst"` — worst-case (largest count, most translations, etc.) set of balanceable keys
+ *               selected via `KeyFilter.Custom`; does not include all keys as some resolve to the
+ *               same underlying proxies and would clash if targeted simultaneously, a hard error.
  */
-export type WatcherTargetSet = "auto" | "all";
+export type WatcherTargetSet = "auto" | "worst";
 
 /**
  * Set up the watchers panel for a balancing benchmark
  *
- * Seed the target set (`"auto"` = the Auto heuristic, `"all"` = every balanceable key), paste
- * `recipeId`, and fill targets from the current recipe (M button). Targets then equal current
- * values — reachable and error-free — so Balance is enabled and `representativeKey`'s issue marker
- * is clear; the caller reads that key's target back to derive perturbed values.
+ * Seed the target set (`"auto"` = the Auto heuristic, `"worst"` = worst-case set of balanceable
+ * keys), paste `recipeId`, and fill targets from the current recipe (M button). Targets then equal
+ * current values — reachable and error-free — so Balance is enabled and `representativeKey`'s issue
+ * marker is clear; the caller reads that key's target back to derive perturbed values.
  *
  * **Note:** mutates panel selectors and leaves the page on the calculator with `recipeId` pasted.
  */
@@ -762,11 +764,11 @@ export async function setupWatchersForBalancing(
   representativeKey: PropKey,
   recipeId: RecipeID = RecipeID.Main,
 ) {
-  if (targetSet === "all") await presetWatcherSelection(page, getAllBalanceableKeys());
+  if (targetSet === "worst") await presetWatcherSelection(page, getAllNativeBalancingKeys());
 
   await goToPageAndPasteRecipes(page, browserName, [recipeId]);
 
-  if (targetSet === "all") await selectWatchersKeyFilterCustom(page);
+  if (targetSet === "worst") await selectWatchersKeyFilterCustom(page);
 
   await locateWatcherCardByKeyAndExpectVisible(page, representativeKey);
   await getWatchersFillAllMainButton(page).click();

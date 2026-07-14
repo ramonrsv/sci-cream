@@ -238,6 +238,7 @@ impl KeyAsStrings for BalanceKey {
         match self {
             Self::Comp(comp_key) => comp_key.as_short_str(),
             Self::Ratio(ratio_key) => ratio_key.as_short_str(),
+            Self::Fpd(fpd_key) => fpd_key.as_short_str(),
         }
     }
 
@@ -245,6 +246,7 @@ impl KeyAsStrings for BalanceKey {
         match self {
             Self::Comp(comp_key) => comp_key.as_med_str(),
             Self::Ratio(ratio_key) => ratio_key.as_med_str(),
+            Self::Fpd(fpd_key) => fpd_key.as_med_str(),
         }
     }
 
@@ -252,6 +254,7 @@ impl KeyAsStrings for BalanceKey {
         match self {
             Self::Comp(comp_key) => comp_key.as_long_str(),
             Self::Ratio(ratio_key) => ratio_key.as_long_str(),
+            Self::Fpd(fpd_key) => fpd_key.as_long_str(),
         }
     }
 }
@@ -376,9 +379,23 @@ impl fmt::Display for BalancingIssue {
             Self::NegativeTarget { key, value } => {
                 write!(f, "Target for '{}' is negative ({value})", key.as_med_str())
             }
+            Self::UntranslatableTarget { key, value } => {
+                let domain = if key.negative_target_allowed() {
+                    "must be 0 or below (°C)"
+                } else {
+                    "must be between 0 and 100"
+                };
+                write!(f, "Target for '{}' ({}) {domain}", key.as_med_str(), round2(*value))
+            }
             Self::DuplicateTarget { key } => {
                 write!(f, "'{}' appears more than once in the targets", key.as_med_str())
             }
+            Self::ProxyTargetClash { keys, proxy } => write!(
+                f,
+                "Targets {keys} each control '{proxy}', so at most one can be targeted",
+                keys = join_keys(keys),
+                proxy = proxy.as_med_str(),
+            ),
             Self::UnaffectableTarget { key } => {
                 write!(f, "No ingredient contributes to '{}', so its target cannot be affected", key.as_med_str())
             }

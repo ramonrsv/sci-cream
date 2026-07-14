@@ -1,4 +1,8 @@
-import { get_all_balanceable_keys, get_typical_balancing_keys } from "../../wasm/index";
+import {
+  get_all_balanceable_keys,
+  get_all_native_balancing_keys,
+  get_typical_balancing_keys,
+} from "../../wasm/index";
 
 import { PropKey } from "./prop-key";
 
@@ -36,6 +40,11 @@ export type BalanceLocks = [number, Lock][];
 /** Returns all keys from `get_all_balanceable_keys` as `PropKey`s */
 export function getAllBalanceableKeys(): PropKey[] {
   return get_all_balanceable_keys() as PropKey[];
+}
+
+/** Returns all keys from `get_all_native_balancing_keys` as `PropKey`s */
+export function getAllNativeBalancingKeys(): PropKey[] {
+  return get_all_native_balancing_keys() as PropKey[];
 }
 
 /** Returns all keys from `get_typical_balancing_keys` as `PropKey`s */

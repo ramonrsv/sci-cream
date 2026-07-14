@@ -9,7 +9,8 @@ targets:
   POD                    15.50
   TotalSolids            22.20
   TotalFats               1.95
-  AbsNetPAC              25.40
+  FPD                    -1.56
+  ServingTemp            -7.28
 
 [warning] Target ratio 'Milk Fat' : 'MSNF' (0.37) is outside the range [0.37, 0.37] the ingredients allow
 [warning] Target ratio 'Milk Fat' + 'MSNF' : 'Fats' (3.68) is outside the range [3.68, 3.68] the ingredients allow
@@ -23,6 +24,7 @@ targets:
   POD                    15.50
   TotalSolids            22.20
   TotalFats               1.95
-  AbsNetPAC              25.40
+  FPD                    -1.56
+  ServingTemp            -7.28
 
 [information] 5 targets with only 3 ingredients: at most 2 can be met exactly, so the balance is a best-fit compromise
