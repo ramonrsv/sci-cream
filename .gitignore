@@ -71,3 +71,6 @@ next-env.d.ts
 
 # Temp Claude plans
 /.claude/plans/tmp
+
+# Changelog release reports
+/packages/*/changes.log
