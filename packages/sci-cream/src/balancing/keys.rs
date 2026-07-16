@@ -102,17 +102,19 @@ impl BalanceKey {
     }
 
     /// The admissible interval for this key's target value; targets outside it are meaningless by
-    /// definition — a negative quantity or ratio, an above-freezing temperature, or a hardness
-    /// (percent frozen water) above 100. Bounds may be infinite.
+    /// definition — a negative quantity or ratio, a mass fraction above 100 g per 100 g, an
+    /// above-freezing temperature, or a hardness (percent frozen water) outside [0, 100]. Bounds
+    /// may be infinite; [`CompKey::target_domain`] classifies the composition keys.
     ///
     /// The key's intrinsic domain, independent of any palette; cf. the palette-derived reachable
     /// range of [`UnreachableTarget`](crate::balancing::BalancingIssue::UnreachableTarget).
     #[must_use]
     pub const fn target_domain(self) -> RangeInclusive<f64> {
         match self {
+            Self::Comp(key) => key.target_domain(),
+            Self::Ratio(_) => 0.0..=f64::INFINITY,
             Self::Fpd(FpdKey::FPD | FpdKey::ServingTemp) => f64::NEG_INFINITY..=0.0,
             Self::Fpd(FpdKey::HardnessAt14C) => 0.0..=100.0,
-            Self::Comp(_) | Self::Ratio(_) => 0.0..=f64::INFINITY,
         }
     }
 
@@ -138,6 +140,32 @@ impl BalanceKey {
             Self::Comp(key) => comp.get(key),
             Self::Ratio(key) => comp.get_ratio(key),
             Self::Fpd(key) => FPD::compute_from_composition(*comp).map_or(f64::NAN, |fpd| fpd.get(key)),
+        }
+    }
+}
+
+impl CompKey {
+    /// The admissible interval for a balancing target on this key — the composition-key arm of
+    /// [`BalanceKey::target_domain`].
+    ///
+    /// Mass-fraction keys (grams per 100 g of mix, plus the volume-fraction [`ABV`](Self::ABV))
+    /// admit `[0, 100]`. [`Energy`](Self::Energy) (kcal) and the sucrose-equivalence keys
+    /// ([`POD`](Self::POD) and the PAC family, including [`HF`](Self::HF)) are not bounded by the
+    /// mix mass and admit `[0, ∞)`. A negative [`NetPAC`](Self::NetPAC) reading is possible (HF
+    /// exceeding total PAC), but as a target it stays inadmissible.
+    #[must_use]
+    pub const fn target_domain(self) -> RangeInclusive<f64> {
+        match self {
+            Self::Energy
+            | Self::POD
+            | Self::TotalPAC
+            | Self::NetPAC
+            | Self::PACsgr
+            | Self::PACslt
+            | Self::PACmlk
+            | Self::PACalc
+            | Self::HF => 0.0..=f64::INFINITY,
+            _ => 0.0..=100.0,
         }
     }
 }

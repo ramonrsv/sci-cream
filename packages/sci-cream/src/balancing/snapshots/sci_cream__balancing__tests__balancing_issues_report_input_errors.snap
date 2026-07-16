@@ -14,5 +14,5 @@ targets:
 
 [error] Target for 'Milk Fat' is not finite (NaN)
 [error] 'Solids' appears more than once in the targets
-[error] Target for 'MSNF' (-3) must be at least 0
+[error] Target for 'MSNF' (-3) must be between 0 and 100
 [warning] Target for 'Solids' (32) exceeds target for 'Solids' (30), but no ingredient mix can satisfy both — every ingredient's 'Solids' ≤ its 'Solids'

@@ -803,8 +803,8 @@ mod tests {
         };
 
         // One case per domain shape: half-open below, half-open above, and fully bounded.
-        let negative = out_of_domain(CompKey::MilkFat.into(), -5.0);
-        assert_true!(negative.contains(CompKey::MilkFat.as_med_str()));
+        let negative = out_of_domain(CompKey::Energy.into(), -5.0);
+        assert_true!(negative.contains(CompKey::Energy.as_med_str()));
         assert_true!(negative.contains("must be at least 0"));
 
         let above_freezing = out_of_domain(FpdKey::ServingTemp.into(), 1.5);

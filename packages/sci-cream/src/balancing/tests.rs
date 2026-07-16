@@ -974,8 +974,9 @@ fn temperature_targets_admit_negative_values() {
 #[test]
 fn out_of_domain_target_values() {
     // A value outside its key's admissible domain is an error naming the original key and the
-    // violated bounds, whichever side it falls out on: positive temperatures, a hardness outside
-    // [0, 100], a negative `ABV`. A non-finite value falls to the non-finite check instead.
+    // violated bounds, whichever side it falls out on: positive temperatures, a hardness or mass
+    // fraction outside [0, 100], a negative `ABV`. A non-finite value falls to the non-finite
+    // check instead, and the unbounded keys (`Energy`, `POD`, PAC family) admit any positive value.
     let comps = comps_from_names(SORBET_ING);
     let out_of_domain = |key: BalanceKey, value: f64| {
         let domain = key.target_domain();
@@ -992,11 +993,18 @@ fn out_of_domain_target_values() {
         ((FpdKey::HardnessAt14C.into(), 105.0), out_of_domain(FpdKey::HardnessAt14C.into(), 105.0)),
         ((FpdKey::HardnessAt14C.into(), -5.0), out_of_domain(FpdKey::HardnessAt14C.into(), -5.0)),
         ((CompKey::ABV.into(), -1.0), out_of_domain(CompKey::ABV.into(), -1.0)),
+        ((CompKey::ABV.into(), 105.0), out_of_domain(CompKey::ABV.into(), 105.0)),
+        ((CompKey::MSNF.into(), 150.0), out_of_domain(CompKey::MSNF.into(), 150.0)),
     ];
 
     for (target, expected) in cases {
         let report = validation_report(&comps, &[*target]);
         assert_eq!(report.errors().collect::<Vec<_>>(), vec![expected], "for target {target:?}");
+    }
+
+    for key in [CompKey::Energy, CompKey::POD, CompKey::TotalPAC] {
+        let report = validation_report(&comps, &[(key.into(), 150.0)]);
+        assert!(!report.has_errors(), "150 should be in domain for {key:?}");
     }
 
     let report = validation_report(&comps, &[(FpdKey::ServingTemp.into(), f64::NAN)]);
@@ -2014,14 +2022,20 @@ fn validate_flags_negative_ratio_target_as_error() {
 }
 
 #[test]
-fn validate_does_not_double_flag_negative_target() {
-    let report =
-        validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), -5.0)], &[], None);
-    assert_false!(
-        report
-            .warnings()
-            .any(|issue| matches!(issue, BalancingIssue::UnreachableTarget { .. }))
-    );
+fn validate_does_not_double_flag_out_of_domain_target() {
+    // An out-of-domain target is dropped before the palette checks, so neither side of the
+    // domain also draws an `UnreachableTarget` warning.
+    for value in [-5.0, 150.0] {
+        let report =
+            validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), value)], &[], None);
+        assert!(report.has_errors(), "for target value {value}");
+        assert!(
+            !report
+                .warnings()
+                .any(|issue| matches!(issue, BalancingIssue::UnreachableTarget { .. })),
+            "for target value {value}"
+        );
+    }
 }
 
 #[test]
@@ -2698,7 +2712,7 @@ fn affected_keys_single_key_variants() {
             key,
             value: -1.0,
             min: 0.0,
-            max: f64::INFINITY
+            max: 100.0
         }
         .affected_keys(),
         vec![key]
