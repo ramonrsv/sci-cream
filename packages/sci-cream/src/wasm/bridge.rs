@@ -874,7 +874,7 @@ pub(crate) mod tests {
     }
 
     #[test]
-    fn bridge_validate_recipe_targets_error_negative() {
+    fn bridge_validate_recipe_targets_error_out_of_domain() {
         let bridge = Bridge::new(make_seeded_db());
         let recipe = light_recipe_to_owned(LIGHT_RECIPE);
         let targets = [(CompKey::MilkFat.into(), -5.0)];
@@ -885,7 +885,7 @@ pub(crate) mod tests {
         assert_eq!(report.issues.len(), 1);
         assert!(matches!(
             report.issues[0],
-            BalancingIssue::NegativeTarget {
+            BalancingIssue::OutOfDomainTarget {
                 key: BalanceKey::Comp(CompKey::MilkFat),
                 ..
             }

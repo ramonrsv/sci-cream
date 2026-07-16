@@ -20,7 +20,6 @@ use crate::{
         MAX_NUM_GROUP_SIZE_FOR_TYPICAL,
     },
     error::{Error, Result},
-    fpd::FpdKey,
     validate::{are_equal_rel, is_subset, is_subset_rel, is_within_range_rel},
 };
 
@@ -54,25 +53,19 @@ pub enum BalancingIssue {
         /// The offending non-finite value.
         value: f64,
     },
-    /// A target value is negative for a key that must be non-negative. Only the temperature-valued
-    /// FPD keys admit negative targets (see [`BalanceKey::negative_target_allowed`]).
+    /// A target value is outside its key's admissible domain (see [`BalanceKey::target_domain`]):
+    /// a negative value for a non-negative key, an above-freezing temp, or a hardness above 100.
     ///
     /// Severity: [`Severity::Error`].
-    NegativeTarget {
-        /// The key whose target value is negative.
-        key: BalanceKey,
-        /// The offending negative value.
-        value: f64,
-    },
-    /// A target's value is outside the domain its proxy translation is defined on: a positive
-    /// `FPD`/`ServingTemp` temperature, or a `HardnessAt14C` above 100.
-    ///
-    /// Severity: [`Severity::Error`].
-    UntranslatableTarget {
-        /// The key whose target cannot be translated to its proxy.
+    OutOfDomainTarget {
+        /// The key whose target value is out of domain.
         key: BalanceKey,
         /// The offending out-of-domain value.
         value: f64,
+        /// The domain's lower bound, possibly infinite.
+        min: f64,
+        /// The domain's upper bound, possibly infinite.
+        max: f64,
     },
     /// The same key appears more than once in the targets, which is contradictory or ambiguous.
     ///
@@ -210,8 +203,7 @@ impl BalancingIssue {
     pub const fn severity(&self) -> Severity {
         match self {
             Self::NonFiniteTarget { .. }
-            | Self::NegativeTarget { .. }
-            | Self::UntranslatableTarget { .. }
+            | Self::OutOfDomainTarget { .. }
             | Self::DuplicateTarget { .. }
             | Self::ProxyTargetClash { .. }
             | Self::InvalidLockedFraction { .. }
@@ -234,8 +226,7 @@ impl BalancingIssue {
     pub fn affected_keys(&self) -> Vec<BalanceKey> {
         match self {
             Self::NonFiniteTarget { key, .. }
-            | Self::NegativeTarget { key, .. }
-            | Self::UntranslatableTarget { key, .. }
+            | Self::OutOfDomainTarget { key, .. }
             | Self::DuplicateTarget { key }
             | Self::UnaffectableTarget { key }
             | Self::UnreachableTarget { key, .. } => vec![*key],
@@ -391,8 +382,7 @@ impl BalancingReport {
 /// [`BalancingReport::into_result`] on this to reject error-severity inputs before solving.
 ///
 /// The checks are:
-/// - **Error** — non-finite or negative target values, untranslatable proxy-target values,
-///   duplicate target keys, targets clashing on solver key, etc.
+/// - **Error** — non-finite or out-of-domain target values, duplicate target keys, proxy clashes.
 /// - **Warning** — targets no composition affects; targets outside the palette's reachable range
 ///   (including ratio-key targets); palette-derived dominance and ratio-band infeasibilities
 ///   (pairwise and additive); palette-independent structural contradictions (a part target above
@@ -474,16 +464,15 @@ pub fn validate_balancing_targets(
 }
 
 /// Appends every error-severity target issue in its fixed order: the input checks
-/// ([`append_input_error_issues`]), the translation domain checks
-/// ([`append_untranslatable_error_issues`]), and the proxy clashes
-/// ([`append_proxy_clash_error_issues`]).
+/// ([`append_input_error_issues`]), the domain checks ([`append_out_of_domain_error_issues`]),
+/// and the proxy clashes ([`append_proxy_clash_error_issues`]).
 ///
 /// The whole error-side gauntlet for balancing targets, run on the original (pre-translation) keys
 /// by both entry points ([`balance_compositions`] and [`validate_balancing_targets`]) before
 /// [`translate_balancing_targets`], so they apply identical checks in identical order.
 pub(crate) fn append_target_error_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<BalancingIssue>) {
     append_input_error_issues(targets, issues);
-    append_untranslatable_error_issues(targets, issues);
+    append_out_of_domain_error_issues(targets, issues);
     append_proxy_clash_error_issues(targets, issues);
 }
 
@@ -498,16 +487,16 @@ pub(crate) fn dropped_target_keys(issues: &[BalancingIssue]) -> HashSet<BalanceK
     issues
         .iter()
         .flat_map(|issue| match issue {
-            BalancingIssue::NonFiniteTarget { key, .. }
-            | BalancingIssue::NegativeTarget { key, .. }
-            | BalancingIssue::UntranslatableTarget { key, .. } => vec![*key],
+            BalancingIssue::NonFiniteTarget { key, .. } | BalancingIssue::OutOfDomainTarget { key, .. } => {
+                vec![*key]
+            }
             BalancingIssue::ProxyTargetClash { keys, .. } => keys.clone(),
             _ => vec![],
         })
         .collect()
 }
 
-/// Appends the error-severity input issues: non-finite or negative target values, duplicate keys.
+/// Appends the error-severity input issues: non-finite target values, duplicate keys.
 ///
 /// These and [`append_lock_error_issues`] are the cheap error checks that gate the solve, so
 /// [`balance_compositions`] runs them and skips the costly scan in [`validate_balancing_targets`].
@@ -516,8 +505,6 @@ pub(crate) fn append_input_error_issues(targets: &[(BalanceKey, f64)], issues: &
     for &(key, value) in targets {
         if !value.is_finite() {
             issues.push(BalancingIssue::NonFiniteTarget { key, value });
-        } else if value < 0.0 && !key.negative_target_allowed() {
-            issues.push(BalancingIssue::NegativeTarget { key, value });
         }
 
         // Duplicate target keys are ambiguous, so they are an error
@@ -527,27 +514,20 @@ pub(crate) fn append_input_error_issues(targets: &[(BalanceKey, f64)], issues: &
     }
 }
 
-/// Returns `true` if a finite `value` is outside the domain `key`'s proxy translation is defined
-/// on: a positive `FPD`/`ServingTemp` temperature, or a `HardnessAt14C` above 100.
-///
-/// Negative values for keys that must be non-negative (including `ABV` and `HardnessAt14C`) are
-/// already flagged as [`NegativeTarget`](BalancingIssue::NegativeTarget) by the input checks.
-const fn is_untranslatable(key: BalanceKey, value: f64) -> bool {
-    match key {
-        BalanceKey::Fpd(FpdKey::FPD | FpdKey::ServingTemp) => value > 0.0,
-        BalanceKey::Fpd(FpdKey::HardnessAt14C) => value > 100.0,
-        BalanceKey::Comp(_) | BalanceKey::Ratio(_) => false,
-    }
-}
-
-/// Appends an [`UntranslatableTarget`](BalancingIssue::UntranslatableTarget) for each finite
-/// target value outside its key's proxy translation domain (see [`is_untranslatable`]).
+/// Appends an [`OutOfDomainTarget`](BalancingIssue::OutOfDomainTarget) for each finite target
+/// value outside its key's admissible domain (see [`BalanceKey::target_domain`]).
 ///
 /// Non-finite values are skipped: they are already flagged by [`append_input_error_issues`].
-fn append_untranslatable_error_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<BalancingIssue>) {
+fn append_out_of_domain_error_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<BalancingIssue>) {
     for &(key, value) in targets {
-        if value.is_finite() && is_untranslatable(key, value) {
-            issues.push(BalancingIssue::UntranslatableTarget { key, value });
+        let domain = key.target_domain();
+        if value.is_finite() && !domain.contains(&value) {
+            issues.push(BalancingIssue::OutOfDomainTarget {
+                key,
+                value,
+                min: *domain.start(),
+                max: *domain.end(),
+            });
         }
     }
 }
@@ -746,7 +726,7 @@ fn value_of(targets: &[(CompKey, f64)], key: CompKey) -> Option<f64> {
 ///
 /// For an extensive key this is the absolute magnitude band ([`ratio_band`] with an empty
 /// denominator); for a ratio key it is its numerator/denominator band scaled to a percentage,
-/// Unaffectable and non-finite or negative targets are handled elsewhere and skipped here.
+/// Unaffectable and non-finite or out-of-domain targets are handled elsewhere and skipped here.
 fn append_reachability_issues(
     comps: &[impl CompositionValues],
     targets: &[(BalanceKey, f64)],

@@ -2,6 +2,8 @@
 //! ([`target_row_coeff`] and the crate-internal `target_row_rhs`), and the catalogs of
 //! balanceable keys.
 
+use std::ops::RangeInclusive;
+
 use serde::{Deserialize, Serialize};
 use strum::IntoEnumIterator;
 
@@ -99,13 +101,19 @@ impl BalanceKey {
         }
     }
 
-    /// Returns `true` if a negative target value is meaningful for this key.
+    /// The admissible interval for this key's target value; targets outside it are meaningless by
+    /// definition — a negative quantity or ratio, an above-freezing temperature, or a hardness
+    /// (percent frozen water) above 100. Bounds may be infinite.
     ///
-    /// Every natively solvable key is a non-negative quantity or ratio, but the temperature-valued
-    /// FPD keys are at or below 0°C by definition.
+    /// The key's intrinsic domain, independent of any palette; cf. the palette-derived reachable
+    /// range of [`UnreachableTarget`](crate::balancing::BalancingIssue::UnreachableTarget).
     #[must_use]
-    pub const fn negative_target_allowed(self) -> bool {
-        matches!(self, Self::Fpd(FpdKey::FPD | FpdKey::ServingTemp))
+    pub const fn target_domain(self) -> RangeInclusive<f64> {
+        match self {
+            Self::Fpd(FpdKey::FPD | FpdKey::ServingTemp) => f64::NEG_INFINITY..=0.0,
+            Self::Fpd(FpdKey::HardnessAt14C) => 0.0..=100.0,
+            Self::Comp(_) | Self::Ratio(_) => 0.0..=f64::INFINITY,
+        }
     }
 
     /// The `(numerator, denominator)` extensive [`CompKey`] parts if this is a ratio key, else

@@ -964,27 +964,34 @@ fn duplicate_intensive_target_is_a_duplicate_not_a_clash() {
 }
 
 #[test]
-fn temperature_targets_bypass_the_negative_check() {
-    // Negative temperatures are the valid domain for `FPD`/`ServingTemp`, not `NegativeTarget`s.
+fn temperature_targets_admit_negative_values() {
+    // Negative temperatures are inside the `FPD`/`ServingTemp` target domain, not errors.
     let comps = comps_from_names(SORBET_ING);
     let report = validation_report(&comps, &[(FpdKey::FPD.into(), -2.5), (FpdKey::ServingTemp.into(), -13.0)]);
     assert_false!(report.has_errors());
 }
 
 #[test]
-fn untranslatable_and_negative_target_domains() {
-    // Out-of-domain intensive values are errors naming the original key: positive temperatures
-    // and a hardness above 100 are untranslatable, while negative `ABV`/`HardnessAt14C` values
-    // fall to the ordinary negative check and a non-finite value to the non-finite one.
+fn out_of_domain_target_values() {
+    // A value outside its key's admissible domain is an error naming the original key and the
+    // violated bounds, whichever side it falls out on: positive temperatures, a hardness outside
+    // [0, 100], a negative `ABV`. A non-finite value falls to the non-finite check instead.
     let comps = comps_from_names(SORBET_ING);
-    let untranslatable = |key: BalanceKey, value: f64| BalancingIssue::UntranslatableTarget { key, value };
-    let negative = |key: BalanceKey, value: f64| BalancingIssue::NegativeTarget { key, value };
+    let out_of_domain = |key: BalanceKey, value: f64| {
+        let domain = key.target_domain();
+        BalancingIssue::OutOfDomainTarget {
+            key,
+            value,
+            min: *domain.start(),
+            max: *domain.end(),
+        }
+    };
     let cases: &[((BalanceKey, f64), BalancingIssue)] = &[
-        ((FpdKey::FPD.into(), 1.0), untranslatable(FpdKey::FPD.into(), 1.0)),
-        ((FpdKey::ServingTemp.into(), 1.0), untranslatable(FpdKey::ServingTemp.into(), 1.0)),
-        ((FpdKey::HardnessAt14C.into(), 105.0), untranslatable(FpdKey::HardnessAt14C.into(), 105.0)),
-        ((FpdKey::HardnessAt14C.into(), -5.0), negative(FpdKey::HardnessAt14C.into(), -5.0)),
-        ((CompKey::ABV.into(), -1.0), negative(CompKey::ABV.into(), -1.0)),
+        ((FpdKey::FPD.into(), 1.0), out_of_domain(FpdKey::FPD.into(), 1.0)),
+        ((FpdKey::ServingTemp.into(), 1.0), out_of_domain(FpdKey::ServingTemp.into(), 1.0)),
+        ((FpdKey::HardnessAt14C.into(), 105.0), out_of_domain(FpdKey::HardnessAt14C.into(), 105.0)),
+        ((FpdKey::HardnessAt14C.into(), -5.0), out_of_domain(FpdKey::HardnessAt14C.into(), -5.0)),
+        ((CompKey::ABV.into(), -1.0), out_of_domain(CompKey::ABV.into(), -1.0)),
     ];
 
     for (target, expected) in cases {
@@ -1379,7 +1386,10 @@ fn balance_key_extent_and_proxy_classification() {
                 assert_eq!(key.proxy(), Some(BalanceKey::Ratio(expected)));
             }
         }
-        assert_eq!(key.negative_target_allowed(), matches!(key, BalanceKey::Fpd(FpdKey::FPD | FpdKey::ServingTemp)));
+        assert_eq!(
+            *key.target_domain().start() < 0.0,
+            matches!(key, BalanceKey::Fpd(FpdKey::FPD | FpdKey::ServingTemp))
+        );
     }
 }
 
@@ -1501,7 +1511,7 @@ fn balance_recovers_net_pac_distinct_from_total_pac() {
 #[test]
 fn balance_compositions_rejects_negative_net_pac_target() {
     // NetPAC can legitimately be negative (HF > TotalPAC), yet balancing still rejects a
-    // negative target (see `BalancingIssue::NegativeTarget`). A 25%-cocoa equal-parts mix has
+    // negative target (see `BalancingIssue::OutOfDomainTarget`). A 25%-cocoa equal-parts mix has
     // enough hardness factor to push its own NetPAC below zero, making it an invalid target.
     let comps = comps_from_names(DAIRY_COCOA_ING);
     let net_pac = achieved_value(&equal_parts_reference(&comps), CompKey::NetPAC);
@@ -1983,7 +1993,7 @@ fn validate_flags_negative_target_as_error() {
         validate_balancing_targets(&comps_from_names(DAIRY_ING), &[(CompKey::MilkFat.into(), -5.0)], &[], None);
     assert_true!(report.errors().any(|issue| matches!(
         issue,
-        BalancingIssue::NegativeTarget {
+        BalancingIssue::OutOfDomainTarget {
             key: BalanceKey::Comp(CompKey::MilkFat),
             ..
         }
@@ -1996,7 +2006,7 @@ fn validate_flags_negative_ratio_target_as_error() {
         validate_balancing_targets(&comps_from_names(DAIRY_SUGAR_ING), &[(RatioKey::AbsPAC.into(), -1.0)], &[], None);
     assert_true!(report.errors().any(|issue| matches!(
         issue,
-        BalancingIssue::NegativeTarget {
+        BalancingIssue::OutOfDomainTarget {
             key: BalanceKey::Ratio(RatioKey::AbsPAC),
             ..
         }
@@ -2020,7 +2030,7 @@ fn validate_does_not_flag_zero_target_as_negative() {
     assert_false!(
         report
             .errors()
-            .any(|issue| matches!(issue, BalancingIssue::NegativeTarget { .. }))
+            .any(|issue| matches!(issue, BalancingIssue::OutOfDomainTarget { .. }))
     );
 }
 
@@ -2683,7 +2693,16 @@ fn validate_flags_over_determination_as_information() {
 #[test]
 fn affected_keys_single_key_variants() {
     let key = BalanceKey::Comp(CompKey::MilkFat);
-    assert_eq!(BalancingIssue::NegativeTarget { key, value: -1.0 }.affected_keys(), vec![key]);
+    assert_eq!(
+        BalancingIssue::OutOfDomainTarget {
+            key,
+            value: -1.0,
+            min: 0.0,
+            max: f64::INFINITY
+        }
+        .affected_keys(),
+        vec![key]
+    );
     assert_eq!(BalancingIssue::UnaffectableTarget { key }.affected_keys(), vec![key]);
     assert_eq!(
         BalancingIssue::UnreachableTarget {

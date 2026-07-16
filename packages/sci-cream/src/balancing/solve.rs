@@ -24,9 +24,6 @@ use crate::{
     error::{Error, Result},
 };
 
-#[cfg(debug_assertions)]
-use crate::balancing::validate::append_input_error_issues;
-
 #[cfg(doc)]
 use crate::{
     balancing::validate::{BalancingIssue, validate_balancing_targets},
@@ -96,8 +93,8 @@ pub(crate) type SolverFn = fn(
 /// Balances the given compositions to match target values — the validated public entry point.
 ///
 /// This is the recommended way to balance: it first checks the inputs for error-severity issues,
-/// returning an [`Error::InvalidBalancingTargets`] if any is present (non-finite or negative target
-/// values, duplicate target keys, or duplicate priority keys), then solves with an automatically
+/// returning an [`Error::InvalidBalancingTargets`] if any is present (non-finite or out-of-domain
+/// target values, duplicate or proxy-clashing target keys), then solves with an automatically
 /// chosen solver. `weighting` sets the row weighting; `None` defaults to [`Weighting::Relative`].
 ///
 /// Each entry pairs a composition with an optional **lock**: `(comp, Some(fraction))` holds it at
@@ -132,8 +129,8 @@ pub(crate) type SolverFn = fn(
 /// # Errors
 ///
 /// Returns [`Error::InvalidBalancingTargets`] if the inputs contain an error-severity issue: a
-/// non-finite, negative, or untranslatable target value, duplicate or proxy-clashing target keys,
-/// or an invalid locked fraction or sum > 1. Returns [`Error::InvalidEvaporation`] if `evaporation`
+/// non-finite or out-of-domain target value, duplicate or proxy-clashing target keys, or an
+/// invalid locked fraction or sum > 1. Returns [`Error::InvalidEvaporation`] if `evaporation`
 /// is non-finite, negative, or at least 1. Forwards any error from the chosen underlying solver.
 pub fn balance_compositions(
     comps: &[(Composition, Option<f64>)],
@@ -277,15 +274,15 @@ fn solve_nnls_raw(a: &[f64], y: &[f64], rows: usize, cols: usize) -> Result<Vec<
 }
 
 /// Debug-only precondition check for the raw balancing path: panics if `targets` carry any
-/// error-severity [`BalancingIssue`] (non-finite/negative values or duplicate keys), or any key
-/// with a [`proxy`](BalanceKey::proxy) that [`translate_balancing_targets`] should have replaced.
+/// error-severity [`BalancingIssue`] (non-finite/out-of-domain values or duplicate keys), or any
+/// key with a [`proxy`](BalanceKey::proxy) that [`translate_balancing_targets`] should've replaced.
 ///
 /// The raw solvers assume pre-validated, translated targets; user input is validated once by
 /// [`balance_compositions`], so a bad target reaching here is a programming bug.
 #[cfg(debug_assertions)]
 fn debug_assert_targets_error_validated(targets: &[(BalanceKey, f64)]) {
     let mut issues = Vec::new();
-    append_input_error_issues(targets, &mut issues);
+    append_target_error_issues(targets, &mut issues);
     let report = BalancingReport { issues };
     assert!(!report.has_errors(), "raw balancing path requires validated targets: {report}");
     assert!(

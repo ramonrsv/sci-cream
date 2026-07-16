@@ -376,14 +376,12 @@ impl fmt::Display for BalancingIssue {
             Self::NonFiniteTarget { key, value } => {
                 write!(f, "Target for '{}' is not finite ({value})", key.as_med_str())
             }
-            Self::NegativeTarget { key, value } => {
-                write!(f, "Target for '{}' is negative ({value})", key.as_med_str())
-            }
-            Self::UntranslatableTarget { key, value } => {
-                let domain = if key.negative_target_allowed() {
-                    "must be 0 or below (°C)"
-                } else {
-                    "must be between 0 and 100"
+            Self::OutOfDomainTarget { key, value, min, max } => {
+                let domain = match (min.is_finite(), max.is_finite()) {
+                    (true, true) => format!("must be between {min} and {max}"),
+                    (true, false) => format!("must be at least {min}"),
+                    (false, true) => format!("must be at most {max}"),
+                    (false, false) => unreachable!("no target domain is unbounded on both sides"),
                 };
                 write!(f, "Target for '{}' ({}) {domain}", key.as_med_str(), round2(*value))
             }
@@ -792,14 +790,30 @@ mod tests {
     }
 
     #[test]
-    fn balancing_issue_display_message_negative_target() {
-        let text = BalancingIssue::NegativeTarget {
-            key: CompKey::MilkFat.into(),
-            value: -5.0,
-        }
-        .to_string();
-        assert_true!(text.contains(CompKey::MilkFat.as_med_str()));
-        assert_true!(text.contains("negative"));
+    fn balancing_issue_display_message_out_of_domain_target() {
+        let out_of_domain = |key: BalanceKey, value: f64| {
+            let domain = key.target_domain();
+            BalancingIssue::OutOfDomainTarget {
+                key,
+                value,
+                min: *domain.start(),
+                max: *domain.end(),
+            }
+            .to_string()
+        };
+
+        // One case per domain shape: half-open below, half-open above, and fully bounded.
+        let negative = out_of_domain(CompKey::MilkFat.into(), -5.0);
+        assert_true!(negative.contains(CompKey::MilkFat.as_med_str()));
+        assert_true!(negative.contains("must be at least 0"));
+
+        let above_freezing = out_of_domain(FpdKey::ServingTemp.into(), 1.5);
+        assert_true!(above_freezing.contains(FpdKey::ServingTemp.as_med_str()));
+        assert_true!(above_freezing.contains("must be at most 0"));
+
+        let above_all_frozen = out_of_domain(FpdKey::HardnessAt14C.into(), 105.0);
+        assert_true!(above_all_frozen.contains(FpdKey::HardnessAt14C.as_med_str()));
+        assert_true!(above_all_frozen.contains("must be between 0 and 100"));
     }
 
     #[test]

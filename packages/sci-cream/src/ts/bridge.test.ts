@@ -340,7 +340,7 @@ test("Bridge.validate_recipe_targets returns empty report for valid targets", ()
   expect(report.issues).toEqual([]);
 });
 
-test("Bridge.validate_recipe_targets reports NegativeTarget error", () => {
+test("Bridge.validate_recipe_targets reports OutOfDomainTarget error", () => {
   const bridge = new Bridge(make_seeded_db());
   const targets: BalanceTargets = [[compToPropKey(CompKey.MilkFat), -5]];
 

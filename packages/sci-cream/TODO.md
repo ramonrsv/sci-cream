@@ -36,6 +36,9 @@
 - [ ] Carry the original target key through proxy translation so downstream balancing warnings
       (reachability, ratio bands, etc.) name what the user targeted (e.g. `ServingTemp`), not the
       substituted proxy (e.g. `AbsNetPAC`); see `translate_balancing_targets`.
+- [ ] Tighten `target_domain` to `[0, 100]` for `ABV` and every mass-fraction `CompKey`; `Energy`,
+      `POD`, the PAC family (incl. `HF`), and ratio keys stay `[0, inf)`. Classify on `CompKey`,
+      delegating from `BalanceKey`; impossible targets then error instead of warning unreachable.
 - [ ] Once supported, add keys for `Stabilization`, `Emulsification`, etc. Intensive, like ABV?
 - [ ] Remove `Composition` functions for calculating ratios, `get_ratio` already handles that.
 - [ ] If all children of a key have a target, we can infer the parent's target and use it in checks.
