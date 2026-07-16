@@ -42,6 +42,17 @@ test("getTargetColor returns correct colors based on value's position relative t
   expect(getTargetColor(120, 100)).toBe(Color.GraphRedDull);
 });
 
+test("getTargetColor handles negative targets (e.g. FPD) symmetrically with positive ones", () => {
+  expect(getTargetColor(-95, -100)).toBe(Color.GraphGreen);
+  expect(getTargetColor(-105, -100)).toBe(Color.GraphGreen);
+  expect(getTargetColor(-90, -100)).toBe(Color.GraphYellow);
+  expect(getTargetColor(-110, -100)).toBe(Color.GraphYellow);
+  expect(getTargetColor(-85, -100)).toBe(Color.GraphOrange);
+  expect(getTargetColor(-115, -100)).toBe(Color.GraphOrange);
+  expect(getTargetColor(-80, -100)).toBe(Color.GraphRedDull);
+  expect(getTargetColor(-120, -100)).toBe(Color.GraphRedDull);
+});
+
 test("getTargetColor with custom stepPercent", () => {
   expect(getTargetColor(90, 100, 0.1)).toBe(Color.GraphGreen);
   expect(getTargetColor(110, 100, 0.1)).toBe(Color.GraphGreen);

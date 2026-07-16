@@ -136,7 +136,7 @@ export function worseStatusColor(a: Color, b: Color): Color {
  * which should not be used as it is susceptible to floating-point precision issues.
  */
 export function getTargetColor(value: number, target: number, stepPercent: number = 0.05): Color {
-  const delta = Math.abs(value - target) / target;
+  const delta = Math.abs(value - target) / Math.abs(target);
   if (delta <= stepPercent) return Color.GraphGreen;
   if (delta <= 2 * stepPercent) return Color.GraphYellow;
   if (delta <= 3 * stepPercent) return Color.GraphOrange;
