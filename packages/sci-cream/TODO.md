@@ -14,6 +14,7 @@
       Consider tightening to `COMPOSITION_EPSILON` and/or adding a tighter/loser assert variant.
 - [ ] Add `CompKey`s and ingredient for the known emulsifiers, e.g. `gum_arabic`/"Gum Arabic".
 - [ ] Switch the hard-coded FPD calculation `PacToFpdMethod` from `Interpolation` to `Polynomial`.
+- [ ] Remove `FPD` as a typical balancing key, since it's redundant and competes with `ServingTemp`.
 
 ## Up Next
 
@@ -52,12 +53,17 @@
       tied into the extensive/intensive key classification.
 - [ ] Consider adding support for step-aware balancing, to support whole unit ingredients (e.g. egg
       yolks are 17g per unit), and to improve balancing drift due to app-side qty step rounding.
+- [ ] Consider adding support for balancing ceilings, e.g. 'Lactose' < 10%, but no specific target.
 - [ ] Should `isCompQuantity` return false for ABV? It's a bit confusing as a quantity percentage.
 - [ ] Consider adding an a `RatioKey::StabilizersPerEmulsifiers`; I saw Underbelly mention it.
 - [ ] Add milk solids support to `ChocolateSpec` and add milk chocolate Callebaut ingredients.
 - [ ] Rename 'HFCS 42' to 'High Fructose Corn Syrup 42 DE' and add 'HFCS 42' alias; same for others.
 - [ ] Add benchmarks for WASM binary size, which is relevant in the App for initial loading.
 - [ ] Explore ways to reduce WASM binary size, e.g. strip comments from embedded ingredient/recipes.
+- [ ] Add wine ingredients, and considered adding evaporated wine - how to handle, parametric?
+- [ ] Add support for parametric ingredients, e.g. 'Strawberry [Brix 9]', '* [Evap 15]', etc.
+- [ ] Investigate how to support markdown for the data recipe and ingredient comments. It's
+      difficult to do in JSON, but doing it in separate `.md` files would be a maintenance issues.
 
 ## Backlog
 

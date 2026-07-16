@@ -2,7 +2,6 @@
 
 ## Next Release
 
-- [ ] Recipe validation errors/warnings do not show unless a recipe has some non-zero qty value.
 - [ ] Composition values < 0.005 display `0` instead of empty. Look into where and how to handle.
 - [ ] Look into whether setting targets from reference should also set zero targets for active keys.
 - [ ] Add end-to-end tests for balancing functionality; check surfacing of balancing errors?
@@ -20,10 +19,12 @@
 - [ ] Add support for `RecipeEditor` and `CompositionBreakdown` to render the maximum of the number
       of rows needed to fill the current height, and the current number of filled in rows + 1.
 - [ ] `autoLink` has a bug where it includes closing `),` in the produced links; fix or replace.
-- [ ] "Serving Temp." in `Watchers` sometimes shows a target, but it's not balanceable. Needs fix?
 - [ ] Targets not selected for balancing in `Watchers` can show in `PropertiesChart`; investigate.
 - [ ] Investigate relative delta behavior in `Watchers`, they seem to not be changing gradually.
 - [ ] In the `PropertiesChart` tooltip, move the numeric value to the left so it does not overflow.
+- [ ] Add support for semver-like versions in `/recipes`, e.g. 3.1, 3-a, etc. Should be opt-in.
+- [ ] Add a reset option to the key selection when `KeySelect.Custom`, to reset to default custom.
+- [ ] Make the reference and target ticks in `PropertiesBarChart` more visible. Also in watchers?
 
 ## Up Next
 
@@ -41,6 +42,7 @@
       currently relies on a fixed number of rows, and won't be easy to make vertically scrollable.
 - [ ] Add richer syntax highlighting of JSON ingredient specs in `/ingredients` details panel.
 - [ ] Add automatic links to specs, docs, etc. in `/ingredients`, based on the loaded spec.
+- [ ] Add support for markdown with a preview tab in comments for `/recipes` and `/ingredients`.
 - [ ] Add support for comments in blog posts, maybe also in documentation posts.
 - [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
 - [ ] Add a home page with a quick intro and overview, pointing to user guide, docs, etc.
@@ -120,6 +122,8 @@
 
 ## Completed
 
+- [x] Recipe validation errors/warnings do not show unless a recipe has some non-zero qty value.
+- [x] "Serving Temp." in `Watchers` sometimes shows a target, but it's not balanceable. Needs fix?
 - [x] Make it so that only ingredient quantity - not names - updates un-toggle auto-balancing.
 - [x] Pasting a recipe from clipboard clears the name and DB reference; it probably shouldn't.
 - [x] The All/Built-In/Saved selectors in `/ingredients` and `/recipes` are not persisted to local.
