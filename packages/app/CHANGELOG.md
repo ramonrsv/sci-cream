@@ -11,6 +11,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- Water evaporation throughout the calculator, modeling cooking water loss as grams of lost water:
+  - `Evap (g)` input in the `RecipeEditor` toolbar, with post-evaporation yield in the Total row.
+  - De-evaporate button, rewriting the recipe to an equivalent one that needs no evaporation.
+  - Yield and evaporation readouts in the read-only `RecipeTable` and the recipe-search panels.
+  - Evaporation persists to `localStorage`, feeds balancing/validation, and clears with the slot.
+  - Errors (e.g. evaporation above the mix's water) flag the input and surface the message inline.
+- Ingredient lock toggles (per-row and lock-all) in the recipe editor, held fixed while balancing.
+- Balancing targets for `ABV` and the FPD keys (`FPD`, `ServingTemp`, `HardnessAt14C`) in Watchers.
+- `Color` toggle (Auto/Range/Target/Worst) driving `WatcherCard` status rails and chart bar colors.
+- Watcher target delta tinted by proximity, graded from green (within 5%) to red (past 15%).
+- `Norm` toggle on the properties chart: Full Spread (default), Target/Value centered, Fill Range.
+- Persist the All/Built-in/Saved source filter of `/ingredients` and `/recipes` across mounts.
+- Balancing benchmarks to App CI: target validation, balance, auto-balance, and rapid-update settle.
+
+### Changed
+
+- Overhaul how the properties chart scales, replacing ad-hoc per-key scaling with normalization:
+  - Each property self-normalizes over its range, value, references, and target onto a 0-100 track.
+  - Labels drop the "/ 2" and "* 10" suffixes; the value axis is a fixed, unlabeled 0-100 track.
+  - Tooltip gains a `Target` line colored to match the main recipe; the legend moves to the top.
+- Rework which recipe edits stop or trigger auto-balancing while `Auto` is on:
+  - Only manual quantity edits and paste stop it; name, ingredient, evaporation, and clear do not.
+  - Adding, removing, or renaming an ingredient re-balances, as does an evaporation change.
+- Default the `Custom` selection to the typical balancing keys; drop `HardnessAt14C` from `Auto`.
+- Paste replaces only the ingredient rows, keeping the slot's name, evaporation, and baseline.
+- Flatten the `RecipeEditor` toolbar into one row, matching the Properties and Composition views.
+- List recipe versions newest-first in the recipe version dropdown in `/recipes` details panel.
+
+### Fixed
+
+- Charts keeping the old palette after a theme change, until something else forced a re-render.
+- Recipes with zero or unset ingredient quantities not being balanceable or target-validated.
+- Orphan quantities (rows with no valid ingredient) counting toward the mix total; now outlined red.
+
 ## [0.0.4] - 2026-07-05
 
 ### Added
