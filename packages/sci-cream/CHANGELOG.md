@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+## [0.0.7] - 2026-07-16
+
 ### Added
 
 - Water evaporation as a `Recipe.evaporation` attribute, with `evaporate`/`deevaporate` support.
@@ -230,7 +232,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-url -->
 
-[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.6...HEAD
+[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.7...HEAD
+[0.0.7]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.6...sci-cream-v0.0.7
 [0.0.6]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.4...sci-cream-v0.0.6
 [0.0.4]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.3...sci-cream-v0.0.4
 [0.0.3]: https://github.com/ramonrsv/sci-cream/compare/sci-cream-v0.0.2...sci-cream-v0.0.3
