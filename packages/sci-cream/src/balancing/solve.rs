@@ -13,7 +13,7 @@ use crate::{
     balancing::{
         keys::{BalanceKey, target_row_coeff, target_row_rhs},
         translate::translate_balancing_targets,
-        validate::{BalancingReport, append_lock_error_issues, is_unaffectable},
+        validate::{BalancingReport, append_lock_error_issues, append_target_error_issues, is_unaffectable},
     },
     composition::{CompKey, Composition, CompositionValues, FastComposition},
     constants::balancing::{
@@ -141,22 +141,19 @@ pub fn balance_compositions(
     weighting: Option<Weighting>,
     evaporation: Option<f64>,
 ) -> Result<Vec<(Composition, f64)>> {
-    // Substitute proxy targets first; the translation issues include the input error checks
-    let translation = translate_balancing_targets(targets);
-
     // Gate on the cheap error checks only; this path discards warnings (see the validate module).
-    let mut issues = translation.issues;
+    let plain: Vec<(BalanceKey, f64)> = targets.iter().map(|&(key, value, _)| (key, value)).collect();
+    let mut issues = Vec::new();
+    append_target_error_issues(&plain, &mut issues);
     append_lock_error_issues(comps, &mut issues);
     BalancingReport { issues }.into_result()?;
 
+    // Past the gate every target is valid, so translation is pure proxy substitution.
+    let translated = translate_balancing_targets(targets);
+
     // Split the fused targets into the plain `(key, value)` list and the numeric priority weights.
-    let plain_targets: Vec<(BalanceKey, f64)> = translation
-        .targets
-        .iter()
-        .map(|&(key, value, _)| (key, value))
-        .collect();
-    let priority_weights: Vec<(BalanceKey, f64)> = translation
-        .targets
+    let plain_targets: Vec<(BalanceKey, f64)> = translated.iter().map(|&(key, value, _)| (key, value)).collect();
+    let priority_weights: Vec<(BalanceKey, f64)> = translated
         .iter()
         .filter_map(|&(key, _, priority)| priority.map(|p| (key, p.weight())))
         .collect();

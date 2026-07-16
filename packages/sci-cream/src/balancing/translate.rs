@@ -18,14 +18,8 @@
 //! precisely the proxy's ratio value: the total PAC for `AbsPAC` (frozen-water curve), and the
 //! PAC net of the hardness factor for `AbsNetPAC` (hardness curve).
 
-use std::collections::HashSet;
-
 use crate::{
-    balancing::{
-        keys::BalanceKey,
-        solve::Priority,
-        validate::{BalancingIssue, append_input_error_issues},
-    },
+    balancing::{keys::BalanceKey, solve::Priority},
     composition::CompKey,
     constants::{
         density::abv_to_abw,
@@ -37,113 +31,34 @@ use crate::{
 #[cfg(doc)]
 use crate::fpd::FPD;
 
-/// The result of [`translate_balancing_targets`]: solver-ready targets plus the error issues
-/// detected while translating.
-#[derive(Debug, Clone, PartialEq)]
-pub struct TranslatedTargets {
-    /// Solver-ready fused targets: proxies substituted (each priority riding along with its
-    /// target); targets flagged with a value issue or in a clashing group are dropped.
-    pub targets: Vec<(BalanceKey, f64, Option<Priority>)>,
-    /// Every error-severity issue found: input errors, domain errors, and proxy clashes.
-    pub issues: Vec<BalancingIssue>,
-}
-
-/// Validates and translates balancing targets into their solver-ready form.
+/// Translates balancing targets into their solver-ready form.
 ///
-/// The single shared front door for [`balance_compositions`](super::balance_compositions) and
-/// [`validate_balancing_targets`](super::validate_balancing_targets): both apply identical checks
-/// in identical order through it, and every issue names the keys and values the caller passed.
+/// Pure substitution: each target on a key with a [`proxy`](BalanceKey::proxy) is replaced with
+/// the equivalent target on that proxy per the module table, its priority riding along; native
+/// targets pass through unchanged. Callers run the error checks first
+/// (`append_target_error_issues` in the validate module) and exclude the flagged targets
+/// (`dropped_target_keys`).
 ///
-/// Runs in four phases: the input error checks (non-finite/negative values, duplicate keys), the
-/// translation domain checks ([`UntranslatableTarget`](BalancingIssue::UntranslatableTarget)),
-/// clash detection over the resolved solver keys
-/// ([`ProxyTargetClash`](BalancingIssue::ProxyTargetClash)), and finally the proxy value
-/// substitution per the module table.
+/// # Panics
+///
+/// Panics if a proxy key's target value is outside its translation domain (a check/translate
+/// ordering bug in the caller, not a reachable input error).
 #[must_use]
-pub fn translate_balancing_targets(targets: &[(BalanceKey, f64, Option<Priority>)]) -> TranslatedTargets {
-    let mut issues = Vec::new();
-
-    let plain: Vec<(BalanceKey, f64)> = targets.iter().map(|&(key, value, _)| (key, value)).collect();
-    append_input_error_issues(&plain, &mut issues);
-
-    for &(key, value) in &plain {
-        if value.is_finite() && is_untranslatable(key, value) {
-            issues.push(BalancingIssue::UntranslatableTarget { key, value });
-        }
-    }
-
-    append_proxy_clash_issues(&plain, &mut issues);
-
-    // Substitute proxies, dropping targets flagged with a value issue and every member of a
-    // clashing group (ambiguous — no member can be preferred, and any surviving pair would raise
-    // nonsense warnings against itself downstream). The flagged issues always gate the solve, so
-    // the drops only shape the report-only validation path, mirroring how the warning checks
-    // already skip non-finite targets. Same-key duplicates are kept, as before this layer.
-    let dropped: HashSet<BalanceKey> = issues
+pub fn translate_balancing_targets(
+    targets: &[(BalanceKey, f64, Option<Priority>)],
+) -> Vec<(BalanceKey, f64, Option<Priority>)> {
+    targets
         .iter()
-        .flat_map(|issue| match issue {
-            BalancingIssue::NonFiniteTarget { key, .. }
-            | BalancingIssue::NegativeTarget { key, .. }
-            | BalancingIssue::UntranslatableTarget { key, .. } => vec![*key],
-            BalancingIssue::ProxyTargetClash { keys, .. } => keys.clone(),
-            _ => vec![],
-        })
-        .collect();
-
-    let targets = targets
-        .iter()
-        .filter(|(key, _, _)| !dropped.contains(key))
         .map(|&(key, value, priority)| {
             key.proxy()
                 .map_or((key, value, priority), |proxy| (proxy, translate_target_value(key, value), priority))
         })
-        .collect();
-
-    TranslatedTargets { targets, issues }
-}
-
-/// Appends a [`ProxyTargetClash`](BalancingIssue::ProxyTargetClash) for each group of two or more
-/// distinct target keys resolving to the same solver key (`proxy()`, or the key itself).
-///
-/// Purely key-level; values are irrelevant. Same-key repeats are already `DuplicateTarget`s and do
-/// not additionally clash. Groups and their keys keep the input order.
-fn append_proxy_clash_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<BalancingIssue>) {
-    let mut groups: Vec<(BalanceKey, Vec<BalanceKey>)> = Vec::new();
-    for &(key, _) in targets {
-        let resolved = key.proxy().unwrap_or(key);
-        match groups.iter_mut().find(|(proxy, _)| *proxy == resolved) {
-            Some((_, keys)) => {
-                if !keys.contains(&key) {
-                    keys.push(key);
-                }
-            }
-            None => groups.push((resolved, vec![key])),
-        }
-    }
-
-    for (proxy, keys) in groups {
-        if keys.len() >= 2 {
-            issues.push(BalancingIssue::ProxyTargetClash { keys, proxy });
-        }
-    }
-}
-
-/// Returns `true` if a finite `value` is outside the domain `key`'s proxy translation is defined
-/// on: a positive `FPD`/`ServingTemp` temperature, or a `HardnessAt14C` above 100.
-///
-/// Negative values for keys that must be non-negative (including `ABV` and `HardnessAt14C`) are
-/// already flagged as [`NegativeTarget`](BalancingIssue::NegativeTarget) by the input checks.
-const fn is_untranslatable(key: BalanceKey, value: f64) -> bool {
-    match key {
-        BalanceKey::Fpd(FpdKey::FPD | FpdKey::ServingTemp) => value > 0.0,
-        BalanceKey::Fpd(FpdKey::HardnessAt14C) => value > 100.0,
-        BalanceKey::Comp(_) | BalanceKey::Ratio(_) => false,
-    }
+        .collect()
 }
 
 /// The proxy target value for a `key` with a [`proxy`](BalanceKey::proxy), per the module table.
 ///
-/// The value must already be domain-checked (see [`is_untranslatable`] and the input checks).
+/// The value must already be error-checked (see `append_target_error_issues` in the validate mod).
 fn translate_target_value(key: BalanceKey, value: f64) -> f64 {
     #[expect(clippy::cast_precision_loss, reason = "SERVING_TEMP_X_AXIS is a small constant")]
     const SERVING_TEMP_X: f64 = SERVING_TEMP_X_AXIS as f64;

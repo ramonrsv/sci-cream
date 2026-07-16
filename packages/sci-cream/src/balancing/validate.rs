@@ -20,6 +20,7 @@ use crate::{
         MAX_NUM_GROUP_SIZE_FOR_TYPICAL,
     },
     error::{Error, Result},
+    fpd::FpdKey,
     validate::{are_equal_rel, is_subset, is_subset_rel, is_within_range_rel},
 };
 
@@ -391,7 +392,7 @@ impl BalancingReport {
 ///
 /// The checks are:
 /// - **Error** — non-finite or negative target values, untranslatable proxy-target values,
-///   duplicate target keys, targets clashing on solver key (see [`translate_balancing_targets`]).
+///   duplicate target keys, targets clashing on solver key, etc.
 /// - **Warning** — targets no composition affects; targets outside the palette's reachable range
 ///   (including ratio-key targets); palette-derived dominance and ratio-band infeasibilities
 ///   (pairwise and additive); palette-independent structural contradictions (a part target above
@@ -430,11 +431,20 @@ pub fn validate_balancing_targets(
     rel_tol: Option<f64>,
     evaporation: Option<f64>,
 ) -> BalancingReport {
-    // The translation issues include the input error checks, named on the original keys. The
-    // warning checks run on the translated targets' `(key, value)` projection (priority-free).
-    let translation = translate_balancing_targets(targets);
-    let targets: Vec<(BalanceKey, f64)> = translation
-        .targets
+    // The error checks run on the original keys; the flagged targets are then excluded from the
+    // translation, whose priority-free `(key, value)` projection feeds the warning checks.
+    let plain: Vec<(BalanceKey, f64)> = targets.iter().map(|&(key, value, _)| (key, value)).collect();
+    let mut issues = Vec::new();
+    append_target_error_issues(&plain, &mut issues);
+    append_lock_error_issues(comps, &mut issues);
+
+    let dropped = dropped_target_keys(&issues);
+    let kept: Vec<(BalanceKey, f64, Option<Priority>)> = targets
+        .iter()
+        .filter(|(key, _, _)| !dropped.contains(key))
+        .copied()
+        .collect();
+    let targets: Vec<(BalanceKey, f64)> = translate_balancing_targets(&kept)
         .iter()
         .map(|&(key, value, _)| (key, value))
         .collect();
@@ -447,8 +457,6 @@ pub fn validate_balancing_targets(
     // Palette-derived feasibility warnings assume a fully free, non-evaporated palette.
     let skip_palette_checks = comps.iter().any(|&(_, lock)| lock.is_some()) || evaporation.is_some_and(|e| e != 0.0);
 
-    let mut issues = translation.issues;
-    append_lock_error_issues(comps, &mut issues);
     append_input_warning_issues(&fast, targets, rel_tol.unwrap_or(0.0), skip_palette_checks, &mut issues);
 
     // Each check emits every issue it can detect, so the same underlying problem may surface as
@@ -463,6 +471,40 @@ pub fn validate_balancing_targets(
     }
 
     BalancingReport { issues: deduplicated }
+}
+
+/// Appends every error-severity target issue in its fixed order: the input checks
+/// ([`append_input_error_issues`]), the translation domain checks
+/// ([`append_untranslatable_error_issues`]), and the proxy clashes
+/// ([`append_proxy_clash_error_issues`]).
+///
+/// The whole error-side gauntlet for balancing targets, run on the original (pre-translation) keys
+/// by both entry points ([`balance_compositions`] and [`validate_balancing_targets`]) before
+/// [`translate_balancing_targets`], so they apply identical checks in identical order.
+pub(crate) fn append_target_error_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<BalancingIssue>) {
+    append_input_error_issues(targets, issues);
+    append_untranslatable_error_issues(targets, issues);
+    append_proxy_clash_error_issues(targets, issues);
+}
+
+/// The target keys downstream processing must drop, per `issues`: keys flagged with a value issue
+/// and every member of a clashing group (ambiguous — no member can be preferred, and any surviving
+/// pair would raise nonsense warnings against itself downstream). Duplicate-key issues do not
+/// disqualify their key.
+///
+/// The flagged issues always gate the solve, so the drops only shape the report-only validation
+/// path, mirroring how the warning checks already skip non-finite targets.
+pub(crate) fn dropped_target_keys(issues: &[BalancingIssue]) -> HashSet<BalanceKey> {
+    issues
+        .iter()
+        .flat_map(|issue| match issue {
+            BalancingIssue::NonFiniteTarget { key, .. }
+            | BalancingIssue::NegativeTarget { key, .. }
+            | BalancingIssue::UntranslatableTarget { key, .. } => vec![*key],
+            BalancingIssue::ProxyTargetClash { keys, .. } => keys.clone(),
+            _ => vec![],
+        })
+        .collect()
 }
 
 /// Appends the error-severity input issues: non-finite or negative target values, duplicate keys.
@@ -481,6 +523,57 @@ pub(crate) fn append_input_error_issues(targets: &[(BalanceKey, f64)], issues: &
         // Duplicate target keys are ambiguous, so they are an error
         if !seen_targets.insert(key) {
             issues.push(BalancingIssue::DuplicateTarget { key });
+        }
+    }
+}
+
+/// Returns `true` if a finite `value` is outside the domain `key`'s proxy translation is defined
+/// on: a positive `FPD`/`ServingTemp` temperature, or a `HardnessAt14C` above 100.
+///
+/// Negative values for keys that must be non-negative (including `ABV` and `HardnessAt14C`) are
+/// already flagged as [`NegativeTarget`](BalancingIssue::NegativeTarget) by the input checks.
+const fn is_untranslatable(key: BalanceKey, value: f64) -> bool {
+    match key {
+        BalanceKey::Fpd(FpdKey::FPD | FpdKey::ServingTemp) => value > 0.0,
+        BalanceKey::Fpd(FpdKey::HardnessAt14C) => value > 100.0,
+        BalanceKey::Comp(_) | BalanceKey::Ratio(_) => false,
+    }
+}
+
+/// Appends an [`UntranslatableTarget`](BalancingIssue::UntranslatableTarget) for each finite
+/// target value outside its key's proxy translation domain (see [`is_untranslatable`]).
+///
+/// Non-finite values are skipped: they are already flagged by [`append_input_error_issues`].
+fn append_untranslatable_error_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<BalancingIssue>) {
+    for &(key, value) in targets {
+        if value.is_finite() && is_untranslatable(key, value) {
+            issues.push(BalancingIssue::UntranslatableTarget { key, value });
+        }
+    }
+}
+
+/// Appends a [`ProxyTargetClash`](BalancingIssue::ProxyTargetClash) for each group of two or more
+/// distinct target keys resolving to the same solver key (`proxy()`, or the key itself).
+///
+/// Purely key-level; values are irrelevant. Same-key repeats are already `DuplicateTarget`s and do
+/// not additionally clash. Groups and their keys keep the input order.
+fn append_proxy_clash_error_issues(targets: &[(BalanceKey, f64)], issues: &mut Vec<BalancingIssue>) {
+    let mut groups: Vec<(BalanceKey, Vec<BalanceKey>)> = Vec::new();
+    for &(key, _) in targets {
+        let resolved = key.proxy().unwrap_or(key);
+        match groups.iter_mut().find(|(proxy, _)| *proxy == resolved) {
+            Some((_, keys)) => {
+                if !keys.contains(&key) {
+                    keys.push(key);
+                }
+            }
+            None => groups.push((resolved, vec![key])),
+        }
+    }
+
+    for (proxy, keys) in groups {
+        if keys.len() >= 2 {
+            issues.push(BalancingIssue::ProxyTargetClash { keys, proxy });
         }
     }
 }
