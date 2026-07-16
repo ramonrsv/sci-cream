@@ -1,6 +1,23 @@
 //! Constants and utilities for [Freezing Point Depression
 //! (FPD)](crate::docs#freezing-point-depression) calculations
 
+use crate::fpd::{FpdCurvesMethod, PacToFpdMethod};
+
+#[cfg(doc)]
+use crate::fpd::{FPD, compute_pac_from_fpd_curve_point};
+
+/// The default [`PacToFpdMethod`], used by [`FPD::compute_from_composition`].
+///
+/// Also used by `balancing::translate::translate_target_value` to invert FPD curve points to PAC
+/// values via [`compute_pac_from_fpd_curve_point`]; methods must match the forward computation.
+pub const DEFAULT_PAC_TO_FPD_METHOD: PacToFpdMethod = PacToFpdMethod::Interpolation;
+
+/// The default [`FpdCurvesMethod`], used by [`FPD::compute_from_composition`].
+///
+/// Also used by `balancing::translate::translate_target_value` to invert FPD curve points to PAC
+/// values via [`compute_pac_from_fpd_curve_point`]; methods must match the forward computation.
+pub const DEFAULT_FPD_CURVES_METHOD: FpdCurvesMethod = FpdCurvesMethod::ModifiedGoffHartelCorvitto;
+
 /// Typical target serving temperature (in °C) for ice cream (Raphaelson, 2016, Hardness)[^7]
 #[doc = include_str!("../../docs/references/index/7.md")]
 pub const TARGET_SERVING_TEMP_14C: f64 = -14.0;

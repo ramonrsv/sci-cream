@@ -23,8 +23,9 @@ use crate::{
     constants::{
         COMPOSITION_EPSILON,
         fpd::{
-            CORVITTO_PAC_TO_SERVING_TEMP_TABLE, FPD_CONST_FOR_MSNF_WS_SALTS, PAC_TO_FPD_POLY_COEFFS, PAC_TO_FPD_TABLE,
-            SERVING_TEMP_X_AXIS, TARGET_SERVING_TEMP_14C,
+            CORVITTO_PAC_TO_SERVING_TEMP_TABLE, DEFAULT_FPD_CURVES_METHOD, DEFAULT_PAC_TO_FPD_METHOD,
+            FPD_CONST_FOR_MSNF_WS_SALTS, PAC_TO_FPD_POLY_COEFFS, PAC_TO_FPD_TABLE, SERVING_TEMP_X_AXIS,
+            TARGET_SERVING_TEMP_14C,
         },
     },
     error::{Error, Result},
@@ -100,11 +101,7 @@ impl FPD {
     ///
     /// Forwards any errors that may arise from [`compute_fpd_curves`].
     pub fn compute_from_composition(composition: Composition) -> Result<Self> {
-        let curves = compute_fpd_curves(
-            composition,
-            PacToFpdMethod::Interpolation,
-            FpdCurvesMethod::ModifiedGoffHartelCorvitto,
-        )?;
+        let curves = compute_fpd_curves(composition, DEFAULT_PAC_TO_FPD_METHOD, DEFAULT_FPD_CURVES_METHOD)?;
 
         let fpd = curves.frozen_water[0].temp;
         let serving_temp = curves.hardness[SERVING_TEMP_X_AXIS].temp;
@@ -221,10 +218,8 @@ pub enum FpdCurvesMethod {
 ///
 /// # Errors
 ///
-/// Forwards any errors that may arise from the underlying functions called based on the specified
-/// `pac_to_fpd_method` and `curves_method` arguments. See [`get_fpd_from_pac_interpolation`],
-/// [`get_fpd_from_pac_polynomial`], [`compute_fpd_curve_step_goff_hartel`], and
-/// [`compute_fpd_curve_step_modified_goff_hartel_corvitto`] for more details on potential errors.
+/// Forwards any errors that may arise from [`compute_fpd_curve_point`], based on the specified
+/// `pac_to_fpd_method` and `curves_method` arguments.
 pub fn compute_fpd_curves(
     composition: Composition,
     pac_to_fpd_method: PacToFpdMethod,
@@ -237,28 +232,98 @@ pub fn compute_fpd_curves(
 
     for x_axis in 0..100 {
         let frozen_water = f64::from(x_axis);
-
-        let get_fpd_from_pac = match pac_to_fpd_method {
-            PacToFpdMethod::Interpolation => get_fpd_from_pac_interpolation,
-            PacToFpdMethod::Polynomial => |pac| get_fpd_from_pac_polynomial(pac, None),
-        };
-
-        let (fpd_fw, fpd_hardness) = match curves_method {
-            FpdCurvesMethod::GoffHartel => {
-                compute_fpd_curve_step_goff_hartel(composition, frozen_water, &get_fpd_from_pac)
-                    .map(|step| (step.fpd_total, f64::NAN))?
-            }
-            FpdCurvesMethod::ModifiedGoffHartelCorvitto => {
-                compute_fpd_curve_step_modified_goff_hartel_corvitto(composition, frozen_water, &get_fpd_from_pac)
-                    .map(|step| (step.fpd_exc_hf, step.fpd_inc_hf))?
-            }
-        };
+        let (fpd_fw, fpd_hardness) =
+            compute_fpd_curve_point(composition, frozen_water, pac_to_fpd_method, curves_method)?;
 
         curves.frozen_water.push(CurvePoint::new(frozen_water, fpd_fw));
         curves.hardness.push(CurvePoint::new(frozen_water, fpd_hardness));
     }
 
     Ok(curves)
+}
+
+/// Compute a single point of the FPD curves at `frozen_water` percent, using the specified methods.
+///
+/// Returns an `(fpd_frozen_water, hardness_fpd)` pair for the respective FPD curves, using the
+/// specified `pac_to_fpd_method` and `curves_method` calculations (the hardness FPD is [`f64::NAN`]
+/// for methods without a hardness curve).
+///
+/// # Errors
+///
+/// Returns an [`Error::FrozenWaterNotWithin100Percent`] if `frozen_water` is outside `[0, 100]`,
+/// and forwards any errors from the underlying step functions. See
+/// [`get_fpd_from_pac_interpolation`], [`get_fpd_from_pac_polynomial`],
+/// [`compute_fpd_curve_step_goff_hartel`], and
+/// [`compute_fpd_curve_step_modified_goff_hartel_corvitto`] for more details on potential errors.
+pub fn compute_fpd_curve_point(
+    composition: Composition,
+    frozen_water: f64,
+    pac_to_fpd_method: PacToFpdMethod,
+    curves_method: FpdCurvesMethod,
+) -> Result<(f64, f64)> {
+    if !(0.0..=100.0).contains(&frozen_water) {
+        return Err(Error::FrozenWaterNotWithin100Percent(frozen_water));
+    }
+
+    let get_fpd_from_pac = match pac_to_fpd_method {
+        PacToFpdMethod::Interpolation => get_fpd_from_pac_interpolation,
+        PacToFpdMethod::Polynomial => |pac| get_fpd_from_pac_polynomial(pac, None),
+    };
+
+    match curves_method {
+        FpdCurvesMethod::GoffHartel => compute_fpd_curve_step_goff_hartel(composition, frozen_water, &get_fpd_from_pac)
+            .map(|step| (step.fpd_total, f64::NAN)),
+        FpdCurvesMethod::ModifiedGoffHartelCorvitto => {
+            compute_fpd_curve_step_modified_goff_hartel_corvitto(composition, frozen_water, &get_fpd_from_pac)
+                .map(|step| (step.fpd_exc_hf, step.fpd_inc_hf))
+        }
+    }
+}
+
+/// Compute the PAC at which an FPD curve passes through the given `(frozen_water, fpd)` point,
+/// using the specified methods — the inverse of [`compute_fpd_curve_point`].
+///
+/// The returned PAC is per 100 g of the mix's total water: the
+/// [`ModifiedGoffHartelCorvitto`](FpdCurvesMethod::ModifiedGoffHartelCorvitto) curves read
+/// `pac2fpd(pac_per_water · 100 / (100 − x))` at `x` percent frozen water (the solutes concentrate
+/// into the unfrozen fraction; see [`compute_fpd_curve_step_modified_goff_hartel_corvitto`]), so
+/// pinning the point solves to `pac_per_water = pac2fpd⁻¹(fpd) · (100 − x) / 100`. Read against
+/// the hardness curve, the result is the mix's PAC net of the hardness factor; against the
+/// frozen-water curve, its total PAC. Each `pac_to_fpd_method` pairs with its own exact inverse
+/// conversion: [`get_pac_from_fpd_interpolation`] or [`get_pac_from_fpd_polynomial`] — matching
+/// the forward method makes the point inversion exact.
+///
+/// **Note**: [`FPD::compute_from_composition`]'s hardness reading linearly interpolates the
+/// integer-`x` sampled curve (see [`get_x_axis_at_fpd`]), so round-tripping a fractional hardness
+/// reading through this inverse carries a small linearization residual.
+///
+/// # Errors
+///
+/// Returns an [`Error::FrozenWaterNotWithin100Percent`] if `frozen_water` is outside `[0, 100]`,
+/// and an [`Error::UnsupportedFpdCurvesMethod`] for the [`GoffHartel`](FpdCurvesMethod::GoffHartel)
+/// curves method: it sums per-component FPDs, which a single PAC value cannot invert. Also forwards
+/// any errors from the PAC-from-FPD conversions, e.g. [`Error::PositiveFpdValue`].
+pub fn compute_pac_from_fpd_curve_point(
+    frozen_water: f64,
+    fpd: f64,
+    pac_to_fpd_method: PacToFpdMethod,
+    curves_method: FpdCurvesMethod,
+) -> Result<f64> {
+    if !(0.0..=100.0).contains(&frozen_water) {
+        return Err(Error::FrozenWaterNotWithin100Percent(frozen_water));
+    }
+
+    match curves_method {
+        FpdCurvesMethod::GoffHartel => Err(Error::UnsupportedFpdCurvesMethod(curves_method)),
+        FpdCurvesMethod::ModifiedGoffHartelCorvitto => {
+            let pac_in_unfrozen_water = match pac_to_fpd_method {
+                PacToFpdMethod::Interpolation => get_pac_from_fpd_interpolation(fpd)?,
+                PacToFpdMethod::Polynomial => get_pac_from_fpd_polynomial(fpd, None)?,
+            };
+
+            Ok(pac_in_unfrozen_water * (100.0 - frozen_water) / 100.0)
+        }
+    }
 }
 
 /// Compute FPD from PAC via interpolation of [`PAC_TO_FPD_TABLE`]
@@ -733,6 +798,160 @@ mod tests {
         assert_true!(matches!(
             super::get_pac_from_fpd_interpolation(0.1),
             Err(Error::PositiveFpdValue(fpd)) if fpd == 0.1
+        ));
+    }
+
+    /// [`compute_pac_from_fpd_curve_point`] with default `pac_to_fpd_method` and `curves_method`.
+    ///
+    /// The default methods are the same used in [`FPD::compute_from_composition`].
+    fn pac_from_curve_point_default(frozen_water: f64, fpd: f64) -> Result<f64> {
+        compute_pac_from_fpd_curve_point(frozen_water, fpd, DEFAULT_PAC_TO_FPD_METHOD, DEFAULT_FPD_CURVES_METHOD)
+    }
+
+    /// The mix's `(total, total - hardness_factor)` PAC per 100 g of water.
+    ///
+    /// These are the concentrations driving its frozen-water and hardness curves respectively.
+    fn pac_per_water(comp: &Composition) -> (f64, f64) {
+        let water = comp.get(CompKey::Water);
+        let total = comp.get(CompKey::TotalPAC) / water * 100.0;
+        (total, total - comp.get(CompKey::HF) / water * 100.0)
+    }
+
+    /// A 30% sucrose solution (70 g water) with its sugar PAC overridden so that the composition's
+    /// PAC per 100 g of water is exactly `pac_per_water` (no hardness factor, so net = total).
+    fn comp_with_sugars_pac(pac_per_water: f64) -> Composition {
+        let comp =
+            Composition::new()
+                .solids(Solids::new().other(
+                    SolidsBreakdown::new().carbohydrates(Carbohydrates::new().sugars(Sugars::new().sucrose(30.0))),
+                ))
+                .pac(PAC::new().sugars(pac_per_water * 70.0 / 100.0));
+
+        assert_eq_flt_test!(comp.get(CompKey::TotalPAC) / comp.get(CompKey::Water) * 100.0, pac_per_water);
+        comp
+    }
+
+    #[test]
+    fn compute_fpd_curve_point_matches_curves() {
+        for pac_to_fpd in [PacToFpdMethod::Interpolation, PacToFpdMethod::Polynomial] {
+            for curves_method in [FpdCurvesMethod::GoffHartel, FpdCurvesMethod::ModifiedGoffHartelCorvitto] {
+                let curves = compute_fpd_curves(*REF_COMP_WITH_HF, pac_to_fpd, curves_method).unwrap();
+
+                for x in [0_usize, 50, 75, 99] {
+                    let frozen_water = curves.frozen_water[x].x_axis;
+                    let (fpd_fw, fpd_hardness) =
+                        compute_fpd_curve_point(*REF_COMP_WITH_HF, frozen_water, pac_to_fpd, curves_method).unwrap();
+
+                    assert_eq_flt_test!(fpd_fw, curves.frozen_water[x].temp);
+                    if matches!(curves_method, FpdCurvesMethod::GoffHartel) {
+                        assert_true!(fpd_hardness.is_nan()); // No hardness curve for this method
+                    } else {
+                        assert_eq_flt_test!(fpd_hardness, curves.hardness[x].temp);
+                    }
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn compute_pac_from_fpd_curve_point_inverts_forward_points() {
+        for pac_to_fpd in [PacToFpdMethod::Interpolation, PacToFpdMethod::Polynomial] {
+            for comp in [*REF_COMP, *REF_COMP_WITH_ALCOHOL, *REF_COMP_WITH_HF] {
+                let (total, net) = pac_per_water(&comp);
+
+                // 100 is excluded: the forward point divides by the unfrozen water, which is 0.
+                for frozen_water in [0.0, 25.0, 75.0, 99.0] {
+                    let curves_method = FpdCurvesMethod::ModifiedGoffHartelCorvitto;
+                    let (fpd_fw, fpd_hardness) =
+                        compute_fpd_curve_point(comp, frozen_water, pac_to_fpd, curves_method).unwrap();
+
+                    let pac_total =
+                        compute_pac_from_fpd_curve_point(frozen_water, fpd_fw, pac_to_fpd, curves_method).unwrap();
+                    let pac_net =
+                        compute_pac_from_fpd_curve_point(frozen_water, fpd_hardness, pac_to_fpd, curves_method)
+                            .unwrap();
+
+                    assert_eq_flt_test!(pac_total, total);
+                    assert_eq_flt_test!(pac_net, net);
+                }
+            }
+        }
+    }
+
+    #[test]
+    fn compute_pac_from_fpd_curve_point_inverts_fpd_reading() {
+        for comp in [*REF_COMP, *REF_COMP_WITH_ALCOHOL, *REF_COMP_WITH_HF] {
+            let fpd = FPD::compute_from_composition(comp).unwrap().get(FpdKey::FPD);
+            assert_eq_flt_test!(pac_from_curve_point_default(0.0, fpd).unwrap(), pac_per_water(&comp).0);
+        }
+    }
+
+    #[test]
+    fn compute_pac_from_fpd_curve_point_inverts_serving_temp_reading() {
+        #[expect(clippy::cast_precision_loss, reason = "SERVING_TEMP_X_AXIS is a small constant")]
+        const SERVING_TEMP_X: f64 = SERVING_TEMP_X_AXIS as f64;
+
+        for comp in [*REF_COMP, *REF_COMP_WITH_ALCOHOL, *REF_COMP_WITH_HF] {
+            let serving_temp = FPD::compute_from_composition(comp).unwrap().get(FpdKey::ServingTemp);
+            assert_eq_flt_test!(
+                pac_from_curve_point_default(SERVING_TEMP_X, serving_temp).unwrap(),
+                pac_per_water(&comp).1
+            );
+        }
+    }
+
+    #[test]
+    fn compute_pac_from_fpd_curve_point_inverts_hardness_reading() {
+        for comp in [*REF_COMP, *REF_COMP_WITH_ALCOHOL, *REF_COMP_WITH_HF] {
+            let hardness = FPD::compute_from_composition(comp).unwrap().get(FpdKey::HardnessAt14C);
+            assert_abs_diff_eq!(
+                pac_from_curve_point_default(hardness, TARGET_SERVING_TEMP_14C).unwrap(),
+                pac_per_water(&comp).1,
+                epsilon = 0.012 // `get_x_axis_at_fpd` residual; measured max ≈0.0113 (with alcohol)
+            );
+        }
+    }
+
+    /// Integer hardness targets round-trip exactly: the curve crosses −14°C at an integer-`x`
+    /// node, where `get_x_axis_at_fpd`'s linearization is exact. 99 and 100 read back `NaN` —
+    /// past the last sampled segment (float noise at 99, outright at 100).
+    #[test]
+    fn compute_pac_from_fpd_curve_point_integer_hardness_round_trip() {
+        for hardness in 0..=98 {
+            let pac = pac_from_curve_point_default(f64::from(hardness), TARGET_SERVING_TEMP_14C).unwrap();
+            let comp = comp_with_sugars_pac(pac);
+            assert_eq_flt_test!(
+                FPD::compute_from_composition(comp).unwrap().get(FpdKey::HardnessAt14C),
+                f64::from(hardness)
+            );
+        }
+    }
+
+    #[test]
+    fn compute_pac_from_fpd_curve_point_domain() {
+        for frozen_water in [-0.1, 100.1, f64::NAN] {
+            assert_true!(matches!(
+                pac_from_curve_point_default(frozen_water, -1.0),
+                Err(Error::FrozenWaterNotWithin100Percent(value)) if value == frozen_water || value.is_nan()
+            ));
+        }
+
+        for pac_to_fpd in [PacToFpdMethod::Interpolation, PacToFpdMethod::Polynomial] {
+            assert_true!(matches!(
+                compute_pac_from_fpd_curve_point(50.0, 0.1, pac_to_fpd, FpdCurvesMethod::ModifiedGoffHartelCorvitto),
+                Err(Error::PositiveFpdValue(fpd)) if fpd == 0.1
+            ));
+        }
+
+        // All water frozen validly degenerates: any FPD is reached with no PAC at all.
+        assert_eq!(pac_from_curve_point_default(100.0, -14.0).unwrap(), 0.0);
+    }
+
+    #[test]
+    fn compute_pac_from_fpd_curve_point_goff_hartel_unsupported() {
+        assert_true!(matches!(
+            compute_pac_from_fpd_curve_point(0.0, -2.5, PacToFpdMethod::Interpolation, FpdCurvesMethod::GoffHartel),
+            Err(Error::UnsupportedFpdCurvesMethod(FpdCurvesMethod::GoffHartel))
         ));
     }
 

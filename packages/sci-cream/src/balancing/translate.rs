@@ -4,20 +4,19 @@
 //! rows). Targets on other intensive keys — [`CompKey::ABV`] and the [`FpdKey`]s — are translated
 //! here to equivalent targets on their [`proxy`](BalanceKey::proxy) key:
 //!
-//! | Original target            | Proxy target        | Value formula                            |
-//! |----------------------------|---------------------|------------------------------------------|
-//! | `ABV` = v                  | `Alcohol`           | `abv_to_abw(v)`                          |
-//! | `FPD` = T                  | `AbsPAC`            | `pac(T)`                                 |
-//! | `ServingTemp` = T          | `AbsNetPAC`         | `pac(T) · (100 − x_serve) / 100`         |
-//! | `HardnessAt14C` = h        | `AbsNetPAC`         | `pac(−14) · (100 − h) / 100`             |
+//! | Original target     | Proxy target | Value translation                                    |
+//! |---------------------|--------------|------------------------------------------------------|
+//! | `ABV`               | `Alcohol`    | [`abv_to_abw`]                                       |
+//! | `FPD` = T           | `AbsPAC`     | [`compute_pac_from_fpd_curve_point`] at `(0, T)`     |
+//! | `ServingTemp` = T   | `AbsNetPAC`  | [`compute_pac_from_fpd_curve_point`] at `(x_s, T)`   |
+//! | `HardnessAt14C` = h | `AbsNetPAC`  | [`compute_pac_from_fpd_curve_point`] at `(h, −14°C)` |
 //!
-//! where `pac` is [`get_pac_from_fpd_interpolation`] (the exact inverse of the forward FPD
-//! computation, see [`FPD::compute_from_composition`] and [`PacToFpdMethod::Interpolation`]) and
-//! `x_serve` is [`SERVING_TEMP_X_AXIS`], the frozen-water percentage whose hardness-curve
-//! temperature defines the serving temperature. Each formula inverts the forward curve step (see
-//! [`compute_fpd_curve_step_modified_goff_hartel_corvitto`]): at frozen-water percentage `x` the
-//! curve reads `pac2fpd(NetPAC / Water · 100 · 100 / (100 − x))`, so a temperature target pins the
-//! `AbsNetPAC` ratio (or `AbsPAC`, for the hardness-factor-free `FPD` at `x = 0`).
+//! The FPD keys all invert the same forward curve relation, pinned at each key's defining
+//! `(frozen water, fpd)` point — with `x_s` = [`SERVING_TEMP_X_AXIS`] and −14°C =
+//! [`TARGET_SERVING_TEMP_14C`] — under the fixed methods of [`FPD::compute_from_composition`],
+//! whose readings the translations exactly invert. The resulting PAC per 100 g of mix water is
+//! precisely the proxy's ratio value: the total PAC for `AbsPAC` (frozen-water curve), and the
+//! PAC net of the hardness factor for `AbsNetPAC` (hardness curve).
 
 use std::collections::HashSet;
 
@@ -30,13 +29,13 @@ use crate::{
     composition::CompKey,
     constants::{
         density::abv_to_abw,
-        fpd::{SERVING_TEMP_X_AXIS, TARGET_SERVING_TEMP_14C},
+        fpd::{DEFAULT_FPD_CURVES_METHOD, DEFAULT_PAC_TO_FPD_METHOD, SERVING_TEMP_X_AXIS, TARGET_SERVING_TEMP_14C},
     },
-    fpd::{FpdKey, get_pac_from_fpd_interpolation},
+    fpd::{FpdKey, compute_pac_from_fpd_curve_point},
 };
 
 #[cfg(doc)]
-use crate::fpd::{FPD, PacToFpdMethod, compute_fpd_curve_step_modified_goff_hartel_corvitto};
+use crate::fpd::FPD;
 
 /// The result of [`translate_balancing_targets`]: solver-ready targets plus the error issues
 /// detected while translating.
@@ -144,20 +143,22 @@ const fn is_untranslatable(key: BalanceKey, value: f64) -> bool {
 
 /// The proxy target value for a `key` with a [`proxy`](BalanceKey::proxy), per the module table.
 ///
-/// The value must already be domain-checked (see [`is_untranslatable`] and the input checks);
-/// within the domain every translation is total.
+/// The value must already be domain-checked (see [`is_untranslatable`] and the input checks).
 fn translate_target_value(key: BalanceKey, value: f64) -> f64 {
-    // Fraction of the mix's water still liquid at the serving-temperature frozen-water percentage.
     #[expect(clippy::cast_precision_loss, reason = "SERVING_TEMP_X_AXIS is a small constant")]
-    const SERVING_TEMP_WATER_FRACTION: f64 = (100 - SERVING_TEMP_X_AXIS) as f64 / 100.0;
+    const SERVING_TEMP_X: f64 = SERVING_TEMP_X_AXIS as f64;
 
-    let pac = |fpd: f64| get_pac_from_fpd_interpolation(fpd).expect("translation domain checks admit only fpd <= 0");
+    // Matching the forward computation's methods keeps the point inversion exact.
+    let pac_at = |frozen_water: f64, fpd: f64| {
+        compute_pac_from_fpd_curve_point(frozen_water, fpd, DEFAULT_PAC_TO_FPD_METHOD, DEFAULT_FPD_CURVES_METHOD)
+            .expect("translation domain checks admit only in-domain values")
+    };
 
     match key {
         BalanceKey::Comp(CompKey::ABV) => abv_to_abw(value),
-        BalanceKey::Fpd(FpdKey::FPD) => pac(value),
-        BalanceKey::Fpd(FpdKey::ServingTemp) => pac(value) * SERVING_TEMP_WATER_FRACTION,
-        BalanceKey::Fpd(FpdKey::HardnessAt14C) => pac(TARGET_SERVING_TEMP_14C) * (100.0 - value) / 100.0,
+        BalanceKey::Fpd(FpdKey::FPD) => pac_at(0.0, value),
+        BalanceKey::Fpd(FpdKey::ServingTemp) => pac_at(SERVING_TEMP_X, value),
+        BalanceKey::Fpd(FpdKey::HardnessAt14C) => pac_at(value, TARGET_SERVING_TEMP_14C),
         BalanceKey::Comp(_) | BalanceKey::Ratio(_) => {
             unreachable!("only keys with a proxy have a translated target value")
         }

@@ -5,7 +5,7 @@ use thiserror::Error;
 #[cfg(feature = "wasm")]
 use wasm_bindgen::JsValue;
 
-use crate::specs::Unit;
+use crate::{fpd::FpdCurvesMethod, specs::Unit};
 
 #[cfg(doc)]
 use crate::{
@@ -44,6 +44,12 @@ pub enum Error {
     /// [FPD](crate::docs#pac-afp-fpdf-se) value is positive.
     #[error("FPD value cannot be positive: {0}")]
     PositiveFpdValue(f64),
+    /// Frozen water (or hardness) percentage is not within [0, 100]%.
+    #[error("Frozen water percentage is not within [0, 100]%: {0}")]
+    FrozenWaterNotWithin100Percent(f64),
+    /// FPD curves method is not supported for this operation.
+    #[error("FPD curves method is not supported for this operation: {0:?}")]
+    UnsupportedFpdCurvesMethod(FpdCurvesMethod),
     /// Composition unit is not supported for this operation.
     #[error("Composition unit is not supported for this operation: {0}")]
     UnsupportedCompositionUnit(Unit),
