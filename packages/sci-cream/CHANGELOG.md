@@ -11,6 +11,65 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- Water evaporation as a `Recipe.evaporation` attribute, with `evaporate`/`deevaporate` support.
+- `Flavouring` ingredient category, with a new `data/ingredients/flavourings.json` and ingredients.
+- Many new ingredients: vanilla extracts, bitters, essential oils, chocolate & cocoa, creams, milks.
+- USDA chocolate reference ingredients, along with `compare_specs` tests to compare against model.
+- Underbelly cocoa/booze and Ice Cream Science reference recipes, under new `data/recipes/*`.
+- `DairySimpleSpec::sucrose` field, for dairy with added sugar such as 'sweetened condensed milk'.
+- `EggSpec::egg_source` (`WholeEgg`/`EggWhite`/`EggYolk`) split, plus 12 USDA and reference specs.
+- Tracking of per-source protein subtypes: `MilkProteins`, `EggProteins`, and `SimpleProteins`.
+- New `Casein`, `Whey`, `WhiteProteins`, `YolkProteins`, `MilkSugars`, and `EggProteins` `CompKey`s.
+- New `CompKey::NetPAC` (`TotalPAC - HF`, may go negative) and `RatioKey::AbsNetPAC` keys.
+- `CompKey` part/whole hierarchy module, with separate structural and display hierarchies.
+- `getStructuralHierarchy`, `getDisplayHierarchy`, and `groupEnabledKeys` TypeScript helpers.
+- `FastComposition` and a `CompositionValues` trait, for ~240x faster repeat `CompKey` reads.
+- Mix density via `mixture_density`, plus a `dairy_density` model and `dairy_ml_to_g` conversion.
+- Concentration-dependent model for ABV/ABW conversions derived from an ethanol-density table.
+- FPD curve-point API `compute_fpd_curve_point` and its inverse `compute_pac_from_fpd_curve_point`.
+- `interpolate_pairs` and `fast_interpolate_pairs` lookup-table interpolation utilities.
+- Embedded-data integrity test, with `SpecEntry::from_json_value` for field-level parse errors.
+- TS helpers `isBalanceableKey`, PropKey predicates, `get_ratio_key_parts`, `LightRecipe` aliases.
+- Further significant expansion of automatic recipe balancing functionality and usability:
+  - Direct targeting of ABV and the FPD keys, translated to `Alcohol`/`AbsPAC`/`AbsNetPAC` proxies.
+  - Ingredient locking via `Lock` of `Fraction` (of mix) or `Amount` (grams), incl. locked-at-zero.
+  - `Priority::Low` (weight 0.2), completing the Low/Normal/High/Critical balancing priorities.
+  - `get_typical_balancing_keys` (curated subset) and `get_all_native_balancing_keys` (native set).
+  - Structural feasibility checks and a `Severity::Info` advisory tier (`OverDetermined`).
+  - `total_amount` on `Bridge::balance_recipe`, to set the balanced recipe's total mass.
+- `field_update_methods!` macro used to programmatically generate struct field-update methods.
+- Balancing issue reports snapshot tests, verifying the quality and usability of issue reports.
+- Benchmarks, for `Dairy*Spec::to_comp*`, `compute_fpd_curves`, `validate_balancing_targets`, etc.
+
+### Changed
+
+- `CacaoSolids`, `NutSolids`, `EggSolids`, and their SNF keys now include intrinsic sugar content.
+- `Alcohol::from_abv`/`to_abv` use concentration-dependent conversions instead of a flat ratio.
+- `DairyLabelSpec` converts mL servings to grams via a fixed point on the modeled dairy density.
+- Replace per-fat dairy density consts with a `FRESH_DAIRY_DENSITIES` table and quadratic fit.
+- Unify the seeding API onto an `OnConflict` policy, adding `seed_from_embedded_data` and `clear`.
+- Fold balancing `targets`/`priorities` into one `(BalanceKey, f64, Option<Priority>)` list.
+- Unify feasibility checks on a `ratio_band` primitive; emit all issues, dedup, `OutOfDomainTarget`.
+- Add an optional relative tolerance to `validate_balancing_targets` for app-rounded targets.
+- Increase balancing group-size thresholds; move `MAX_NUM_GROUP_*` into `constants::balancing`.
+- Rename `get_balanceable_keys` -> `get_all_balanceable_keys`, alongside the new key subsets.
+- Reconcile the Nielsen-Massey flavourings with their labels; add `constants::density::oils`.
+- Change the 'Bourbon Whiskey' ingredient from 40% to 43% ABV, which is more common in products.
+- Upgrade Cargo and pnpm dependencies to latest compatible versions; except `ndarray`, `getrandom`.
+- Skip warnings-severity balancing target validation in `balance_compositions`, check errors only.
+
+### Fixed
+
+- The 'Fresh Spearmint' alias resolved to peppermint; point it at 'USDA Fresh Spearmint'.
+- A grams-labeled dairy fat was passed to the mL-to-g conversion as a fat percentage.
+
+### Removed
+
+- `EggSpec::lecithin` field; lecithin is now derived from the yolk-solids fraction and constant.
+- The flat `ABV_TO_ABW_RATIO` constant, replaced by the new concentration-dependent conversions.
+
 ## [0.0.6] - 2026-06-10
 
 ### Added
