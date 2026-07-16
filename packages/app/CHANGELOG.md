@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+## [0.0.5] - 2026-07-16
+
 ### Added
 
 - Water evaporation throughout the calculator, modeling cooking water loss as grams of lost water:
@@ -206,7 +208,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 <!-- next-url -->
 
-[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.4...HEAD
+[Unreleased]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.5...HEAD
+[0.0.5]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.4...app-v0.0.5
 [0.0.4]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.3...app-v0.0.4
 [0.0.3]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.2...app-v0.0.3
 [0.0.2]: https://github.com/ramonrsv/sci-cream/compare/app-v0.0.1...app-v0.0.2
