@@ -12,14 +12,12 @@ import {
 import { makeRecipeId, type Recipe } from "@/lib/recipe";
 import { useResetOnChange } from "@/lib/use-reset-on-change";
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
-import { ToolbarSpacer } from "@/app/_elements/selects/toolbar-spacer";
-import { RecipeTable } from "@/app/_elements/tables/recipe";
-import { PropertiesView } from "@/app/_elements/tables/properties";
-import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
+import { RecipeComments, RecipeDetailBody } from "@/app/_elements/recipe-detail-body";
+import { ShareRecipeAction } from "@/app/_elements/recipe-share-dialog";
+import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { useFreeOnReplace, useSeededWasmResources } from "@/lib/wasm-resources";
 import { STATE_VAL } from "@/lib/util";
-import { autoLink } from "@/lib/text";
 import {
   EntitySearch,
   EntitySource,
@@ -259,6 +257,15 @@ function RecipeDetailPanel({
             label="Delete saved recipe"
           />
         )}
+        {selectedVersion && (
+          <ShareRecipeAction
+            name={entry.name}
+            rows={selectedVersion.recipe}
+            evaporation={selectedVersion.evaporation}
+            comments={selectedVersion.comments}
+            iconSize={DETAIL_PANEL_ACTION_ICON_SIZE}
+          />
+        )}
         {onLoadRecipe && selectedVersion && (
           <LoadAction
             onLoad={(slot) => onLoadRecipe(entry, selectedVersion, slot)}
@@ -291,60 +298,27 @@ function RecipeDetailPanel({
         </div>
       )}
 
-      {/* Body: ingredient table + mix properties */}
-      <div className="@container flex flex-wrap items-start gap-6">
-        <div className="min-w-50 flex-1 basis-65">
-          {/* A spacer reserves the properties view's toolbar height so the tables line up side by
-              side. When there's evaporation it stays at every width, overlaid by the readout. */}
-          <div className="relative">
-            <div className={recipe.evaporation ? "" : "hidden @[484px]:block"}>
-              <ToolbarSpacer />
-            </div>
-            {recipe.evaporation ? (
-              <div
-                className="absolute inset-0 flex items-center justify-end"
-                title="Grams of water evaporated during preparation"
-              >
-                <div className="bg-surface flex items-center rounded-t px-4 py-1.25">
-                  <span className="text-secondary text-xs font-medium tracking-wide whitespace-nowrap uppercase">
-                    Evap (g)
-                  </span>
-                  <span className="comp-val ml-2 text-sm">{recipe.evaporation.toFixed(0)}</span>
-                </div>
-              </div>
-            ) : null}
-          </div>
-          <RecipeTable
-            recipe={recipe}
-            isValidIngredient={(name) => wasmBridge.has_ingredient(name)}
-          />
-        </div>
-        <div
-          className="max-w-65 min-w-50 flex-1 basis-35"
-          style={{ height: `${STD_COMPONENT_H_PX}px` }}
-        >
-          <PropertiesView recipes={[recipe]} persistKey={STORAGE_KEYS.recipeSearchPropertiesView} />
-        </div>
-      </div>
-
-      {/* Comments — editable per-version for saved, read-only paragraph for embedded */}
-      {commentsEnabled ? (
-        <EditableComments
-          // Remount on version change so the textarea re-seeds from the new version's comments
-          key={`${entry.id}-v${selectedVersion.version}`}
-          initialValue={selectedVersion.comments ?? ""}
-          onSave={(comments) =>
-            onUpdateSavedRecipeVersionComments(entry, selectedVersion, comments)
-          }
-          ariaLabel="Recipe comments"
-        />
-      ) : (
-        selectedVersion?.comments && (
-          <p className="text-secondary text-sm leading-relaxed">
-            {autoLink(selectedVersion.comments)}
-          </p>
-        )
-      )}
+      {/* Body: ingredient table + mix properties, with per-version comments below */}
+      <RecipeDetailBody
+        recipe={recipe}
+        isValidIngredient={(name) => wasmBridge.has_ingredient(name)}
+        persistKey={STORAGE_KEYS.recipeSearchPropertiesView}
+        comments={
+          commentsEnabled ? (
+            <EditableComments
+              // Remount on version change so the textarea re-seeds from the new version's comments
+              key={`${entry.id}-v${selectedVersion.version}`}
+              initialValue={selectedVersion.comments ?? ""}
+              onSave={(comments) =>
+                onUpdateSavedRecipeVersionComments(entry, selectedVersion, comments)
+              }
+              ariaLabel="Recipe comments"
+            />
+          ) : (
+            selectedVersion?.comments && <RecipeComments text={selectedVersion.comments} />
+          )
+        }
+      />
     </>
   );
 }

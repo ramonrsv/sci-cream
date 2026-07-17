@@ -28,10 +28,6 @@
 
 ## Up Next
 
-- [ ] Write a design doc for recipe share links (openable by anyone, embeddable); cover URL
-      encoding and user-defined ingredients. Implementation is tracked in Up Next.
-- [ ] Add recipe share functionality. Should be a link that anyone can open, and that can be
-      embedded into other websites. How to handle user-defined ingredients?
 - [ ] Add shareable make-recipe link, to click off ingredients that have been measured out for one
       or more recipes. Each recipe should be letter and color coded.
 - [ ] Add support for showing recipe diffs (ingredient, quantities) between versions of a recipe
@@ -122,6 +118,10 @@
 
 ## Completed
 
+- [x] Write a design doc for recipe share links (openable by anyone, embeddable); cover URL
+      encoding and user-defined ingredients. Implementation is tracked in Up Next.
+- [x] Add recipe share functionality. Should be a link that anyone can open, and that can be
+      embedded into other websites. How to handle user-defined ingredients?
 - [x] Recipe validation errors/warnings do not show unless a recipe has some non-zero qty value.
 - [x] "Serving Temp." in `Watchers` sometimes shows a target, but it's not balanceable. Needs fix?
 - [x] Make it so that only ingredient quantity - not names - updates un-toggle auto-balancing.

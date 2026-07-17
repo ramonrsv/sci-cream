@@ -11,6 +11,20 @@ const nextConfig: NextConfig = {
   async redirects() {
     return [{ source: "/", destination: "/calculator", permanent: true }];
   },
+  // Framing: 'self' everywhere except /share/embed, which is designed for third-party iframes and
+  // renders no session-scoped controls. Last same-key match wins, so the embed rule must stay last.
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [{ key: "Content-Security-Policy", value: "frame-ancestors 'self'" }],
+      },
+      {
+        source: "/share/embed",
+        headers: [{ key: "Content-Security-Policy", value: "frame-ancestors *" }],
+      },
+    ];
+  },
 };
 
 // Treemap of bundle contents via `pnpm build:analyze` (webpack-only, hence `--webpack`). Chunk

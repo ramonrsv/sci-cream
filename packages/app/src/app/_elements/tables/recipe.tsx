@@ -1,6 +1,6 @@
 "use client";
 
-import { ChangeEvent, ReactNode, useState, useEffect, useRef } from "react";
+import { ChangeEvent, Fragment, ReactNode, useState, useEffect, useRef } from "react";
 import { useSession } from "next-auth/react";
 import {
   ClipboardCopy,
@@ -47,8 +47,10 @@ import {
   updateUserRecipeVersion,
 } from "@/lib/data";
 
+import { makeShareRows } from "@/lib/recipe-share";
 import { useSessionResources } from "@/lib/session-resources";
 import { RecipeSelect, useRecipeIdxState } from "@/app/_elements/selects/recipe-select";
+import { ShareRecipeAction } from "@/app/_elements/recipe-share-dialog";
 import { formatCompositionValue } from "@/lib/comp-value-format";
 import { COMPONENT_ACTION_ICON_SIZE, RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import { standardInputStepByPercent, verify } from "@/lib/util";
@@ -749,7 +751,7 @@ export function RecipeEditor({
               data-testid="recipe-evaporation-grams"
             />
           </div>
-          {/* Action buttons: de-evaporate, copy, paste, clear, save, save as new version */}
+          {/* Action buttons: de-evaporate, copy, share, paste, clear, save, save as new version */}
           <div className="flex shrink-0">
             {[
               {
@@ -762,6 +764,17 @@ export function RecipeEditor({
                 action: deevaporateCurrentRecipe,
                 title: deevaporateTitle,
                 disabled: !canDeevaporate,
+              },
+              {
+                node: (
+                  <ShareRecipeAction
+                    name={currentRecipe.name}
+                    rows={makeShareRows(currentRecipe)}
+                    evaporation={currentRecipe.evaporation}
+                    buttonClassName="action-button px-1 py-0.75"
+                    iconSize={iconSize}
+                  />
+                ),
               },
               {
                 label: <ClipboardCopy size={iconSize} />,
@@ -793,17 +806,21 @@ export function RecipeEditor({
                 title: saveAsNewVersionTitle,
                 disabled: !canSaveAsNewVersion || saveStatus === SaveStatus.Saving,
               },
-            ].map(({ label, action, title, disabled }, idx) => (
-              <button
-                key={idx}
-                onClick={action}
-                title={title}
-                disabled={disabled}
-                className="action-button px-1 py-0.75"
-              >
-                {label}
-              </button>
-            ))}
+            ].map((entry, idx) =>
+              "node" in entry ? (
+                <Fragment key={idx}>{entry.node}</Fragment>
+              ) : (
+                <button
+                  key={idx}
+                  onClick={entry.action}
+                  title={entry.title}
+                  disabled={entry.disabled}
+                  className="action-button px-1 py-0.75"
+                >
+                  {entry.label}
+                </button>
+              ),
+            )}
           </div>
         </div>
       </div>

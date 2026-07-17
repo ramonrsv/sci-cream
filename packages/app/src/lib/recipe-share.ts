@@ -1,0 +1,296 @@
+import type { LightRecipe, LightRecipeLine } from "@workspace/sci-cream";
+
+import type { Recipe } from "@/lib/recipe";
+import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
+
+/**
+ * Recipe share links: a versioned payload (recipe name, `[name, qty]` rows, optional evaporation
+ * and inlined user-ingredient specs) is compressed and base64url-encoded into the URL fragment of
+ * `/share#<payload>`, which is never sent to the server. Viewer routes live in `app/share/`.
+ */
+
+/** Current share payload format version; bump when the payload shape changes incompatibly. */
+export const SHARE_PAYLOAD_VERSION = 1;
+
+/** Maximum accepted length of the encoded payload string, checked before any decoding work. */
+export const MAX_ENCODED_CHARS = 32 * 1024;
+
+/** Maximum accepted size of the decompressed payload JSON, enforced during decompression. */
+export const MAX_DECODED_BYTES = 64 * 1024;
+
+/** Maximum accepted length of the recipe name and of each ingredient name. */
+export const MAX_SHARE_NAME_CHARS = 200;
+
+/** Maximum accepted number of inlined ingredient specs. */
+export const MAX_SHARE_SPECS = 20;
+
+/** Maximum accepted length of the recipe comments. */
+export const MAX_SHARE_COMMENT_CHARS = 2000;
+
+/** Path of the share viewer route; the payload rides in the URL fragment. */
+export const SHARE_PATH = "/share";
+
+/** Path of the embeddable (iframe-friendly) share viewer route. */
+export const SHARE_EMBED_PATH = "/share/embed";
+
+/** Wire shape of a share link's payload. Field names are single letters to keep URLs short. */
+export interface SharePayload {
+  /** Format version; see {@link SHARE_PAYLOAD_VERSION}. */
+  v: typeof SHARE_PAYLOAD_VERSION;
+  /** Recipe display name. */
+  n: string;
+  /** `[name, quantity]` rows in editor order; may include names the recipient cannot resolve. */
+  r: LightRecipe;
+  /** Grams of water evaporated during preparation; omitted when zero. */
+  e?: number;
+  /** Recipe comments (from the shared saved version), rendered read-only by the viewer. */
+  c?: string;
+  /** Inlined user-ingredient spec JSONs (opt-in at share time; embeds full composition data). */
+  s?: unknown[];
+}
+
+/** Failure modes of decoding/consuming a share link, each with a user-facing message. */
+export enum ShareErrorKind {
+  Invalid = "invalid",
+  TooLarge = "too-large",
+  UnknownVersion = "unknown-version",
+  InvalidSpec = "invalid-spec",
+}
+
+/** User-facing message for each {@link ShareErrorKind}. */
+export const SHARE_ERROR_MESSAGES: Record<ShareErrorKind, string> = {
+  [ShareErrorKind.Invalid]: "This share link is invalid or corrupted.",
+  [ShareErrorKind.TooLarge]: "This share link exceeds the maximum supported size.",
+  [ShareErrorKind.UnknownVersion]:
+    "This share link was created by a newer version of the app. Reload the page and try again.",
+  [ShareErrorKind.InvalidSpec]: "This share link contains an invalid ingredient spec.",
+};
+
+/** Error thrown while decoding or consuming a share link; `message` is safe to show the user. */
+export class ShareError extends Error {
+  /** The failure mode, for programmatic handling; the message already reflects it. */
+  readonly kind: ShareErrorKind;
+
+  /** Create a share error of the given kind, optionally chaining the underlying `cause`. */
+  constructor(kind: ShareErrorKind, cause?: unknown) {
+    super(SHARE_ERROR_MESSAGES[kind], cause === undefined ? undefined : { cause });
+    this.name = "ShareError";
+    this.kind = kind;
+  }
+}
+
+/**
+ * Encode bytes as base64url (RFC 4648 §5, unpadded).
+ *
+ * TODO: replace with `bytes.toBase64({ alphabet: "base64url", omitPadding: true })` once baseline
+ * support for `Uint8Array.prototype.toBase64` covers the app's supported browsers.
+ */
+function bytesToBase64Url(bytes: Uint8Array): string {
+  let binary = "";
+  const chunkSize = 0x8000; // Stay well below engine argument-count limits for `fromCharCode`
+  for (let i = 0; i < bytes.length; i += chunkSize) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
+  }
+  return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/, "");
+}
+
+/**
+ * Decode a base64url string to bytes; throws on characters outside the base64 alphabet.
+ *
+ * TODO: replace with `Uint8Array.fromBase64(encoded, { alphabet: "base64url" })` once baseline
+ * support for `Uint8Array.fromBase64` covers the app's supported browsers.
+ */
+function base64UrlToBytes(encoded: string): Uint8Array<ArrayBuffer> {
+  const binary = atob(encoded.replaceAll("-", "+").replaceAll("_", "/"));
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+/**
+ * Push `bytes` through a `CompressionStream`/`DecompressionStream` and collect the output;
+ * exceeding `maxBytes` throws {@link ShareErrorKind.TooLarge} *during* inflation, so a small
+ * compressed input can't balloon into an unbounded allocation.
+ */
+async function transformBytes(
+  bytes: Uint8Array<ArrayBuffer>,
+  transform: { readable: ReadableStream<Uint8Array>; writable: WritableStream<BufferSource> },
+  maxBytes?: number,
+): Promise<Uint8Array> {
+  const writer = transform.writable.getWriter();
+  const writePromise = writer.write(bytes).then(() => writer.close());
+  // Malformed input errors both sides; the read-side error is reported, so just observe this one.
+  writePromise.catch(() => {});
+
+  const reader = transform.readable.getReader();
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  for (;;) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.byteLength;
+    if (maxBytes !== undefined && total > maxBytes) {
+      await reader.cancel();
+      throw new ShareError(ShareErrorKind.TooLarge);
+    }
+    chunks.push(value);
+  }
+
+  const out = new Uint8Array(total);
+  let offset = 0;
+  for (const chunk of chunks) {
+    out.set(chunk, offset);
+    offset += chunk.byteLength;
+  }
+  return out;
+}
+
+/** Encode a share payload for the URL fragment: JSON → raw deflate → base64url. */
+export async function encodeSharePayload(payload: SharePayload): Promise<string> {
+  const json = new TextEncoder().encode(JSON.stringify(payload));
+  return bytesToBase64Url(await transformBytes(json, new CompressionStream("deflate-raw")));
+}
+
+/**
+ * Decode and strictly validate an encoded share payload (the reverse of
+ * {@link encodeSharePayload}). The input is untrusted; anything that fails size caps, decoding,
+ * or shape validation throws a {@link ShareError} — no partial results.
+ */
+export async function decodeSharePayload(encoded: string): Promise<SharePayload> {
+  if (encoded.length > MAX_ENCODED_CHARS) throw new ShareError(ShareErrorKind.TooLarge);
+
+  let json: Uint8Array;
+  try {
+    json = await transformBytes(
+      base64UrlToBytes(encoded),
+      new DecompressionStream("deflate-raw"),
+      MAX_DECODED_BYTES,
+    );
+  } catch (err) {
+    if (err instanceof ShareError) throw err;
+    throw new ShareError(ShareErrorKind.Invalid, err);
+  }
+
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(new TextDecoder().decode(json));
+  } catch (err) {
+    throw new ShareError(ShareErrorKind.Invalid, err);
+  }
+
+  return validateSharePayload(parsed);
+}
+
+/** Narrow untrusted parsed JSON to a {@link SharePayload}; throws {@link ShareError} otherwise. */
+function validateSharePayload(parsed: unknown): SharePayload {
+  if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+    throw new ShareError(ShareErrorKind.Invalid);
+  }
+  const obj = parsed as Record<string, unknown>;
+
+  if (obj.v !== SHARE_PAYLOAD_VERSION) {
+    // A greater integer version means the link comes from a newer app; anything else is garbage.
+    if (typeof obj.v === "number" && Number.isInteger(obj.v) && obj.v > SHARE_PAYLOAD_VERSION) {
+      throw new ShareError(ShareErrorKind.UnknownVersion);
+    }
+    throw new ShareError(ShareErrorKind.Invalid);
+  }
+
+  const { n: name, r: rows, e: evaporation, c: comments, s: specs } = obj;
+
+  if (typeof name !== "string" || name.length > MAX_SHARE_NAME_CHARS) {
+    throw new ShareError(ShareErrorKind.Invalid);
+  }
+
+  if (!Array.isArray(rows) || rows.length === 0 || rows.length > RECIPE_TOTAL_ROWS) {
+    throw new ShareError(ShareErrorKind.Invalid);
+  }
+  for (const row of rows) {
+    if (!Array.isArray(row) || row.length !== 2) throw new ShareError(ShareErrorKind.Invalid);
+    const [rowName, quantity] = row as unknown[];
+    const nameOk =
+      typeof rowName === "string" && rowName !== "" && rowName.length <= MAX_SHARE_NAME_CHARS;
+    const quantityOk = typeof quantity === "number" && Number.isFinite(quantity) && quantity >= 0;
+    if (!nameOk || !quantityOk) throw new ShareError(ShareErrorKind.Invalid);
+  }
+
+  if (
+    evaporation !== undefined &&
+    (typeof evaporation !== "number" || !Number.isFinite(evaporation) || evaporation < 0)
+  ) {
+    throw new ShareError(ShareErrorKind.Invalid);
+  }
+
+  if (
+    comments !== undefined &&
+    (typeof comments !== "string" || comments.length > MAX_SHARE_COMMENT_CHARS)
+  ) {
+    throw new ShareError(ShareErrorKind.Invalid);
+  }
+
+  if (specs !== undefined && (!Array.isArray(specs) || specs.length > MAX_SHARE_SPECS)) {
+    throw new ShareError(ShareErrorKind.Invalid);
+  }
+
+  // Rebuild the object so unknown extra fields are dropped rather than carried along.
+  return makeSharePayload(name, rows as LightRecipe, evaporation, comments, specs);
+}
+
+/** Assemble a {@link SharePayload}, omitting zero evaporation, empty comments, and empty specs. */
+export function makeSharePayload(
+  name: string,
+  rows: LightRecipe,
+  evaporation?: number,
+  comments?: string,
+  specs?: unknown[],
+): SharePayload {
+  return {
+    v: SHARE_PAYLOAD_VERSION,
+    n: name,
+    r: rows,
+    ...(evaporation ? { e: evaporation } : {}),
+    ...(comments ? { c: comments } : {}),
+    ...(specs !== undefined && specs.length > 0 ? { s: specs } : {}),
+  };
+}
+
+/**
+ * Extract the shareable `[name, quantity]` rows from a recipe: every row with a non-empty name, in
+ * editor order. Unlike `makeLightRecipe` this keeps rows whose names don't resolve — the viewer
+ * shows them as unresolved rather than silently dropping them. An unset quantity shares as 0.
+ */
+export function makeShareRows(recipe: Recipe): LightRecipe {
+  return recipe.ingredientRows
+    .filter((row) => row.name !== "")
+    .map((row) => [row.name, row.quantity ?? 0] as LightRecipeLine);
+}
+
+/**
+ * Names among `rows` defined by the sharer's own ingredient specs (including specs that shadow
+ * built-ins), deduplicated in first-appearance order. A recipient cannot resolve these rows
+ * unless the matching spec is inlined into the payload with the sharer's consent.
+ */
+export function findUserDefinedShareNames(
+  rows: LightRecipe,
+  userSpecNames: Iterable<string>,
+): string[] {
+  const specNames = new Set(userSpecNames);
+  const seen = new Set<string>();
+  for (const [name] of rows) {
+    if (specNames.has(name)) seen.add(name);
+  }
+  return [...seen];
+}
+
+/** Build the shareable URL for an encoded payload; `origin` is e.g. `window.location.origin`. */
+export function makeShareUrl(encoded: string, origin: string, embed = false): string {
+  return `${origin}${embed ? SHARE_EMBED_PATH : SHARE_PATH}#${encoded}`;
+}
+
+/**
+ * Copyable `<iframe>` snippet for embedding an embed-mode share URL in third-party pages. The
+ * URL needs no escaping: base64url payloads contain no characters that terminate the attribute.
+ */
+export function makeEmbedSnippet(embedUrl: string): string {
+  return `<iframe src="${embedUrl}" width="600" height="675"></iframe>`;
+}

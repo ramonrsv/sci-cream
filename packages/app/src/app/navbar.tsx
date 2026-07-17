@@ -61,8 +61,13 @@ export function useNavbarContext() {
   return useContext(NavbarContext);
 }
 
+/** Routes rendered without the header/sidebar shell (embeddable views inside third-party frames) */
+const CHROMELESS_ROUTES = ["/share/embed"];
+
 /** Root layout shell with the `NavbarContext`, top header, collapsible sidebar, and main area */
 export function Navbar({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
+
   const [collapsed, setCollapsed] = usePersistedState<boolean>(
     STORAGE_KEYS.sidebarCollapsed,
     DEFAULT_COLLAPSED_NAVBAR,
@@ -73,6 +78,10 @@ export function Navbar({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
   }, []);
+
+  if (CHROMELESS_ROUTES.some((route) => pathname.startsWith(route))) {
+    return <>{children}</>;
+  }
 
   return (
     <NavbarContext value={{ collapsed, setCollapsed, mounted }}>
