@@ -181,5 +181,18 @@
     },
     "comments": "USDA FoodData Central - SR Legacy - Beverages, coffee, instant, regular, powder (https://fdc.nal.usda.gov/food-details/171893/nutrients)."
   },
-  { "alias": "Instant Coffee", "for": "USDA Instant Coffee Powder" }
+  { "alias": "Instant Coffee", "for": "USDA Instant Coffee Powder" },
+  {
+    "name": "Vanilla Bean Pod (5g/pod)",
+    "category": "Flavouring",
+    "FruitSpec": {
+      "water": 40,
+      "protein": 3,
+      "fat": 12,
+      "carbohydrate": 45,
+      "sugars": { "sucrose": 10 },
+      "fiber": 25
+    },
+    "comments": "The composition is a rough estimate consolidated from various sources, including: https://vanillaetc.com/products/madagascan-gourmet-vanilla-pods-1kg-vanilla-etc, (Ramachandra, et al., 2000)[^71]. How much of the pod actually contributes to the mix composition depends on the preparation, but is largely negligible. The weight of a single vanilla bean pod varies significantly, but is typically ~5g for Bourbon vanilla beans (https://en.norohy.com/how-much-does-a-vanilla-pod-weigh/, https://www.nielsen-massey.nl/consumer/products-madagascar-bourbon-vanilla-beans.php). @todo Change the name and specify a per-unit weight once supported by the library."
+  }
 ]

@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 262  (non-alias: 222, independent: 215)
+total: 263  (non-alias: 223, independent: 216)
 
             0% Milk
             1% Milk
@@ -254,6 +254,7 @@ total: 262  (non-alias: 222, independent: 215)
 [composite] Underbelly General Purpose Stabilizer Blend
 [composite] Underbelly Sorbet Stabilizer Blend
 [alias]     Vanilla Bean Paste
+            Vanilla Bean Pod (5g/pod)
             Vanilla Extract
 [alias]     Vanilla Powder
             Vegetable Oil

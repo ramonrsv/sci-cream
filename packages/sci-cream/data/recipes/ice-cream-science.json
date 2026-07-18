@@ -15,7 +15,107 @@
       ["Instant Coffee", 1]
     ],
     "evaporation": 150,
-    "comments": "Source: https://www.icecreamscience.com/blog/chocolate-ice-cream-recipe, visited 2026-07-07. The amounts listed are the starting (pre-evaporation) ingredients, totalling 1089g. The preparation instructions ask for 15% of the dairy, sugar, and egg yolk mix to be evaporated out, which works out to 150g of water being subtracted from the mix, for a final yield of 939g; this is captured by the recipe's evaporation of 150g. For a preparation that limits evaporation, such as sous vide, de-evaporate this recipe to get an equivalent no-evaporation formulation (Skim Milk drops to ~153g and Skimmed Milk Powder rises to ~62g). The recipe states '1 tsp vanilla extract', which is ~5g. The recipe asks for '3g whole coffee beans' to be heated with the mix and then strained out. This has a negligible effect on the mix composition; I suspect that it's equivalent to a tiny amount of instant coffee, so I have modeled it as 1g of instant coffee. The recipe does not specify a fat content for the cocoa powder; 17% fat is a common mid-range value."
+    "comments": "Source: https://www.icecreamscience.com/blog/chocolate-ice-cream-recipe, visited 2026-07-07. The preparation instructions ask for the dairy, sugar, and egg yolk mix to be reduced by 15%, which works out to 150g of water evaporated. The recipe states '1 tsp vanilla extract', which is ~5g. The recipe asks for '3g whole coffee beans' to be heated with the mix and then strained out. This has a negligible effect on the mix composition; I suspect that it's equivalent to a tiny amount of instant coffee, so I have modeled it as 1g of instant coffee. The recipe does not specify a fat content for the cocoa powder; 17% fat is a common mid-range value."
+  },
+  {
+    "name": "Sweet Cream Ice Cream",
+    "author": "Ice Cream Science",
+    "recipe": [
+      ["36% Cream", 474],
+      ["2% Milk", 413],
+      ["Sucrose", 141],
+      ["Egg Yolk", 72]
+    ],
+    "evaporation": 352,
+    "comments": "Source: https://www.icecreamscience.com/blog/homemade-sweet-cream-ice-cream-recipe, visited 2026-07-10. The recipe uses 'semi-skimmed milk', which I assume is ~2% partly skimmed milk. The preparation instructions ask for the mix to be concentrated by \"about 32%\", which works out to 352g of water evaporated, for a final yield of ~750g."
+  },
+  {
+    "name": "Pistachio Ice Cream",
+    "author": "Ice Cream Science",
+    "recipe": [
+      ["Double Cream", 417],
+      ["Skim Milk", 319],
+      ["Skimmed Milk Powder", 46],
+      ["Sucrose", 140],
+      ["Egg Yolk", 78],
+      ["Pistachio", 110]
+    ],
+    "evaporation": 150,
+    "comments": "Source: https://www.icecreamscience.com/blog/roasted-pistachio-ice-cream-recipe, visited 2026-07-10. The preparation instructions ask for 15% weight reduction of the pre-pistachio mixture, which works out to 150g of water evaporated."
+  },
+  {
+    "name": "Roasted Hazelnut Ice Cream",
+    "author": "Ice Cream Science",
+    "recipe": [
+      ["Double Cream", 417],
+      ["Skim Milk", 319],
+      ["Skimmed Milk Powder", 46],
+      ["Sucrose", 140],
+      ["Egg Yolk", 78],
+      ["Hazelnut", 110]
+    ],
+    "evaporation": 150,
+    "comments": "Source: https://www.icecreamscience.com/blog/roasted-hazelnut-ice-cream-recipe, visited 2026-07-17. The preparation instructions ask for 15% weight reduction of the pre-hazelnut mixture, which works out to 150g of water evaporated."
+  },
+  {
+    "name": "Roasted Almond Ice Cream",
+    "author": "Ice Cream Science",
+    "recipe": [
+      ["Double Cream", 417],
+      ["Skim Milk", 319],
+      ["Skimmed Milk Powder", 46],
+      ["Sucrose", 140],
+      ["Egg Yolk", 78],
+      ["Almond", 110]
+    ],
+    "evaporation": 150,
+    "comments": "Source: https://www.icecreamscience.com/blog/roasted-almond-ice-cream-recipe, visited 2026-07-17. The preparation instructions ask for 15% weight reduction of the pre-almond mixture, which works out to 150g of water evaporated."
+  },
+  {
+    "name": "Vanilla Bean Ice Cream",
+    "author": "Ice Cream Science",
+    "recipe": [
+      ["Double Cream", 370],
+      ["Whole Milk", 418],
+      ["Skimmed Milk Powder", 53],
+      ["Sucrose", 139],
+      ["Egg Yolk", 70],
+      ["Vanilla Extract", 10],
+      ["Vanilla Bean Pod (5g/pod)", 5]
+    ],
+    "evaporation": 180,
+    "comments": "Source: https://www.icecreamscience.com/blog/vanilla-bean-ice-cream-recipe, visited 2026-07-17. The preparation instructions ask for a post-evaporation weight of 871g, which works out to ~180g of water evaporated. The recipe states '2 tsp vanilla extract', which is ~10g, and one vanilla bean pod."
+  },
+  {
+    "name": "Vanilla Bean Gelato",
+    "author": "Ice Cream Science",
+    "recipe": [
+      ["Double Cream", 96],
+      ["Whole Milk", 647],
+      ["Skimmed Milk Powder", 45],
+      ["Inulin Powder", 44],
+      ["Sucrose", 148],
+      ["Egg Yolk", 70],
+      ["Vanilla Extract", 10],
+      ["Vanilla Bean Pod (5g/pod)", 5]
+    ],
+    "evaporation": 180,
+    "comments": "Source: https://www.icecreamscience.com/blog/vanilla-bean-gelato-recipe, visited 2026-07-17. The preparation instructions ask for a post-evaporation weight of 871g, which works out to ~180g of water evaporated. The recipe states '2 tsp vanilla extract', which is ~10g, and one vanilla bean pod."
+  },
+  {
+    "name": "Egg-free Vanilla Bean Ice Cream",
+    "author": "Ice Cream Science",
+    "recipe": [
+      ["Double Cream", 288],
+      ["Whole Milk", 543],
+      ["Skimmed Milk Powder", 45],
+      ["Inulin Powder", 35],
+      ["Sucrose", 139],
+      ["Vanilla Extract", 10],
+      ["Vanilla Bean Pod (5g/pod)", 5]
+    ],
+    "evaporation": 180,
+    "comments": "Source: https://www.icecreamscience.com/blog/egg-free-vanilla-bean-ice-cream-recipe, visited 2026-07-17. The preparation instructions ask for a post-evaporation weight of 871g, which works out to ~180g of water evaporated. The recipe states '2 tsp vanilla extract', which is ~10g, and one vanilla bean pod."
   },
   {
     "name": "Ninja Creami NC301 Easy No-Cook Tres Leches (US)",

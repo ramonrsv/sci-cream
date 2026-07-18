@@ -142,3 +142,5 @@ and microscopical attributes of sweetened condensed milk_. Food Science and Tech
 [^69]: Zhao, F. & Li, R. & Liu, Y. & Chen, H. (2023) _Perspectives on lecithin from egg yolk: Extraction, physicochemical properties, modification, and applications_. <https://pmc.ncbi.nlm.nih.gov/articles/PMC9853391/#B3>
 
 [^70]: Palacios, L. E. & Wang, T. (2005) _Egg-Yolk Lipid Fractionation and Lecithin Characterization_. Department of Food Science and Human Nutrition, Center for Crops Utilization Research, Iowa State University.
+
+[^71]: Ramachandra, R. & Ravishankar, G. (2000). _Review - Vanilla flavour: production by conventional and biotechnological routes_. <https://www.researchgate.net/publication/230047388_Vanilla_flavour_Production_by_conventional_and_biotechnological_routes>
