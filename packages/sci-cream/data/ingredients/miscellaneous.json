@@ -1,4 +1,9 @@
 [
   { "name": "Water", "category": "Miscellaneous", "FullSpec": {} },
-  { "name": "Salt", "category": "Miscellaneous", "MicroSpec": "Salt" }
+  { "name": "Salt", "category": "Miscellaneous", "MicroSpec": "Salt" },
+  {
+    "name": "Vegetable Oil",
+    "category": "Miscellaneous",
+    "FruitSpec": { "water": 0, "fat": 100, "sugars": {} }
+  }
 ]

@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 260  (non-alias: 220, independent: 214)
+"total: 262  (non-alias: 222, independent: 215)
 
             0% Milk
             1% Milk
@@ -192,6 +192,7 @@ exports[`Embedded spec entries 1`] = `
             Sealtest Light Cream 5%
             Sealtest Table Cream 18%
             Sealtest Whipping Cream 35%
+[composite] Shoei Pistachio Paste
 [alias]     Skim Milk
             Skimmed Milk Powder
             Sodium Alginate
@@ -254,6 +255,7 @@ exports[`Embedded spec entries 1`] = `
 [alias]     Vanilla Bean Paste
             Vanilla Extract
 [alias]     Vanilla Powder
+            Vegetable Oil
             Vodka
             Water
 [alias]     Whey Isolate

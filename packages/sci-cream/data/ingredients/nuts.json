@@ -40,5 +40,17 @@
       "sugars": 4.34
     },
     "comments": "USDA FoodData Central - SR Legacy Foods - Nuts, hazelnuts or filberts (https://fdc.nal.usda.gov/food-details/170581/nutrients)."
+  },
+  {
+    "name": "Shoei Pistachio Paste",
+    "category": "Nut",
+    "CompositeSpec": {
+      "ByPercentage": [
+        ["Pistachio", 66],
+        ["Sucrose", 26],
+        ["Vegetable Oil", 8]
+      ]
+    },
+    "comments": "From ingredients list and nutrition facts table: https://www.bakemart.com.hk/item/%E6%97%A5%E6%9C%AC%E6%AD%A3%E6%A6%AE%E9%96%8B%E5%BF%83%E6%9E%9C%E9%86%AC-Shoei-Pistachio-Paste%2CJapan/5899160460591104?srsltid=AfmBOordWXRqDwgvc_In2rr-n7ESlHgt68YB2-5c9XNFkPmvbsz2nLMw. \"Ingredients: Pistachio nuts (USA), sugar, vegetable oil, corn syrup/emulsifier, coloring (Yellow 4, Blue 1, REd 2)\", \"Per 100g: energy 559kcal, protein 13.3g, lipid 38.0g, carbohydrates 44.2g\" The components and their percentages are balanced to produce a similar composition to the nutrition facts table."
   }
 ]
