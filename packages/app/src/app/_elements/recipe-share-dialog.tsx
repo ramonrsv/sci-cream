@@ -1,10 +1,11 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Share2 } from "lucide-react";
 
 import type { LightRecipe } from "@workspace/sci-cream";
 
+import { CopyableField } from "@/app/_elements/copyable-field";
 import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";
 import { useSessionResources } from "@/lib/session-resources";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
@@ -15,62 +16,6 @@ import {
   makeSharePayload,
   makeShareUrl,
 } from "@/lib/recipe-share";
-
-/** Copy-to-clipboard button with a transient "Copied" confirmation. */
-function CopyButton({ text, label, testId }: { text: string; label: string; testId: string }) {
-  const [copied, setCopied] = useState(false);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
-
-  useEffect(() => () => clearTimeout(timerRef.current), []);
-
-  const handleCopy = async () => {
-    await navigator.clipboard.writeText(text);
-    setCopied(true);
-    clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => setCopied(false), 1500);
-  };
-
-  return (
-    <button
-      onClick={handleCopy}
-      className="action-button shrink-0 px-2 py-0.5 text-sm"
-      data-testid={testId}
-    >
-      {copied ? "Copied!" : label}
-    </button>
-  );
-}
-
-/** A labelled readonly text field with a copy button, used for the link and the iframe snippet. */
-function CopyableField({
-  label,
-  value,
-  copyLabel,
-  testId,
-}: {
-  label: string;
-  value: string;
-  copyLabel: string;
-  testId: string;
-}) {
-  return (
-    <div className="flex flex-col gap-1">
-      <span className="text-secondary text-xs font-medium tracking-wide uppercase">{label}</span>
-      <div className="flex items-center gap-1">
-        <input
-          type="text"
-          readOnly
-          value={value}
-          onFocus={(e) => e.target.select()}
-          aria-label={label}
-          className="boxed-input comp-val my-0 min-w-0 flex-1 px-1 py-0.5 text-xs"
-          data-testid={testId}
-        />
-        <CopyButton text={value} label={copyLabel} testId={`${testId}-copy`} />
-      </div>
-    </div>
-  );
-}
 
 /**
  * Share dialog body: builds the share/embed links for the given recipe and re-encodes them as the

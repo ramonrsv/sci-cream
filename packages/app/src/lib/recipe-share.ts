@@ -2,6 +2,12 @@ import type { LightRecipe, LightRecipeLine } from "@workspace/sci-cream";
 
 import type { Recipe } from "@/lib/recipe";
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
+import {
+  PayloadErrorKind,
+  comparePayloadVersion,
+  decodeUrlPayload,
+  encodeUrlPayload,
+} from "@/lib/url-payload";
 
 /**
  * Recipe share links: a versioned payload (recipe name, `[name, qty]` rows, optional evaporation
@@ -79,76 +85,20 @@ export class ShareError extends Error {
   }
 }
 
-/**
- * Encode bytes as base64url (RFC 4648 §5, unpadded).
- *
- * TODO: replace with `bytes.toBase64({ alphabet: "base64url", omitPadding: true })` once baseline
- * support for `Uint8Array.prototype.toBase64` covers the app's supported browsers.
- */
-function bytesToBase64Url(bytes: Uint8Array): string {
-  let binary = "";
-  const chunkSize = 0x8000; // Stay well below engine argument-count limits for `fromCharCode`
-  for (let i = 0; i < bytes.length; i += chunkSize) {
-    binary += String.fromCharCode(...bytes.subarray(i, i + chunkSize));
-  }
-  return btoa(binary).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/, "");
-}
+/** Transport failures mapped onto share-branded kinds, so user-facing copy stays share-specific. */
+const SHARE_KIND_BY_PAYLOAD_KIND: Record<PayloadErrorKind, ShareErrorKind> = {
+  [PayloadErrorKind.Invalid]: ShareErrorKind.Invalid,
+  [PayloadErrorKind.TooLarge]: ShareErrorKind.TooLarge,
+};
 
-/**
- * Decode a base64url string to bytes; throws on characters outside the base64 alphabet.
- *
- * TODO: replace with `Uint8Array.fromBase64(encoded, { alphabet: "base64url" })` once baseline
- * support for `Uint8Array.fromBase64` covers the app's supported browsers.
- */
-function base64UrlToBytes(encoded: string): Uint8Array<ArrayBuffer> {
-  const binary = atob(encoded.replaceAll("-", "+").replaceAll("_", "/"));
-  const bytes = new Uint8Array(binary.length);
-  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
-  return bytes;
-}
-
-/**
- * Push `bytes` through a `CompressionStream`/`DecompressionStream` and collect the output;
- * exceeding `maxBytes` throws {@link ShareErrorKind.TooLarge} *during* inflation, so a small
- * compressed input can't balloon into an unbounded allocation.
- */
-async function transformBytes(
-  bytes: Uint8Array<ArrayBuffer>,
-  transform: { readable: ReadableStream<Uint8Array>; writable: WritableStream<BufferSource> },
-  maxBytes?: number,
-): Promise<Uint8Array> {
-  const writer = transform.writable.getWriter();
-  const writePromise = writer.write(bytes).then(() => writer.close());
-  // Malformed input errors both sides; the read-side error is reported, so just observe this one.
-  writePromise.catch(() => {});
-
-  const reader = transform.readable.getReader();
-  const chunks: Uint8Array[] = [];
-  let total = 0;
-  for (;;) {
-    const { done, value } = await reader.read();
-    if (done) break;
-    total += value.byteLength;
-    if (maxBytes !== undefined && total > maxBytes) {
-      await reader.cancel();
-      throw new ShareError(ShareErrorKind.TooLarge);
-    }
-    chunks.push(value);
-  }
-
-  const out = new Uint8Array(total);
-  let offset = 0;
-  for (const chunk of chunks) {
-    out.set(chunk, offset);
-    offset += chunk.byteLength;
-  }
-  return out;
+/** Build a {@link ShareError} for a transport failure from {@link decodeUrlPayload}. */
+function makeShareCodecError(kind: PayloadErrorKind, cause?: unknown): ShareError {
+  return new ShareError(SHARE_KIND_BY_PAYLOAD_KIND[kind], cause);
 }
 
 /** Encode a share payload for the URL fragment: JSON → raw deflate → base64url. */
 export async function encodeSharePayload(payload: SharePayload): Promise<string> {
-  const json = new TextEncoder().encode(JSON.stringify(payload));
-  return bytesToBase64Url(await transformBytes(json, new CompressionStream("deflate-raw")));
+  return encodeUrlPayload(payload);
 }
 
 /**
@@ -157,28 +107,12 @@ export async function encodeSharePayload(payload: SharePayload): Promise<string>
  * or shape validation throws a {@link ShareError} — no partial results.
  */
 export async function decodeSharePayload(encoded: string): Promise<SharePayload> {
-  if (encoded.length > MAX_ENCODED_CHARS) throw new ShareError(ShareErrorKind.TooLarge);
-
-  let json: Uint8Array;
-  try {
-    json = await transformBytes(
-      base64UrlToBytes(encoded),
-      new DecompressionStream("deflate-raw"),
-      MAX_DECODED_BYTES,
-    );
-  } catch (err) {
-    if (err instanceof ShareError) throw err;
-    throw new ShareError(ShareErrorKind.Invalid, err);
-  }
-
-  let parsed: unknown;
-  try {
-    parsed = JSON.parse(new TextDecoder().decode(json));
-  } catch (err) {
-    throw new ShareError(ShareErrorKind.Invalid, err);
-  }
-
-  return validateSharePayload(parsed);
+  return decodeUrlPayload(encoded, {
+    maxEncodedChars: MAX_ENCODED_CHARS,
+    maxDecodedBytes: MAX_DECODED_BYTES,
+    validate: validateSharePayload,
+    makeError: makeShareCodecError,
+  });
 }
 
 /** Narrow untrusted parsed JSON to a {@link SharePayload}; throws {@link ShareError} otherwise. */
@@ -188,12 +122,14 @@ function validateSharePayload(parsed: unknown): SharePayload {
   }
   const obj = parsed as Record<string, unknown>;
 
-  if (obj.v !== SHARE_PAYLOAD_VERSION) {
-    // A greater integer version means the link comes from a newer app; anything else is garbage.
-    if (typeof obj.v === "number" && Number.isInteger(obj.v) && obj.v > SHARE_PAYLOAD_VERSION) {
+  // A greater integer version means the link comes from a newer app; anything else is garbage.
+  switch (comparePayloadVersion(obj.v, SHARE_PAYLOAD_VERSION)) {
+    case "newer":
       throw new ShareError(ShareErrorKind.UnknownVersion);
-    }
-    throw new ShareError(ShareErrorKind.Invalid);
+    case "invalid":
+      throw new ShareError(ShareErrorKind.Invalid);
+    case "match":
+      break;
   }
 
   const { n: name, r: rows, e: evaporation, c: comments, s: specs } = obj;
