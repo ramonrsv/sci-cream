@@ -1,6 +1,18 @@
 import { expect, test } from "vitest";
 
-import { Color, addOrUpdateAlpha, worseStatusColor, getTargetColor, getRangeColor } from "./colors";
+import {
+  CATEGORY_COLORS,
+  CategoryColor,
+  Color,
+  addOrUpdateAlpha,
+  categoryColorFromName,
+  categoryColorInk,
+  categoryColorName,
+  getRangeColor,
+  getTargetColor,
+  isSolidCategoryColor,
+  worseStatusColor,
+} from "./colors";
 
 test("addOrUpdateAlpha correctly replaces alpha value", () => {
   expect(addOrUpdateAlpha("rgba(100, 150, 200, 0.8)", 0.5)).toBe("rgba(100, 150, 200, 0.5)");
@@ -88,4 +100,34 @@ test("getRangeColor with custom stepPercent", () => {
   expect(getRangeColor(120, range, 0.2)).toBe(Color.GraphOrange);
   expect(getRangeColor(-40, range, 0.2)).toBe(Color.GraphRedDull);
   expect(getRangeColor(140, range, 0.2)).toBe(Color.GraphRedDull);
+});
+
+test("every category color has a distinct name", () => {
+  const names = CATEGORY_COLORS.map(categoryColorName);
+  expect(new Set(names).size).toBe(CATEGORY_COLORS.length);
+});
+
+test("category color names round-trip back to their color", () => {
+  for (const color of CATEGORY_COLORS) {
+    expect(categoryColorFromName(categoryColorName(color))).toBe(color);
+  }
+});
+
+test("categoryColorFromName rejects anything that is not a name", () => {
+  // The CSS token is the enum's value, not its name; a link must not be able to carry it.
+  expect(categoryColorFromName(CategoryColor.Blue)).toBeUndefined();
+  expect(categoryColorFromName("blue")).toBeUndefined();
+  expect(categoryColorFromName("Chartreuse")).toBeUndefined();
+  expect(categoryColorFromName(undefined)).toBeUndefined();
+  expect(categoryColorFromName(7)).toBeUndefined();
+});
+
+test("exactly the achromatic colors are solid, and only they carry ink", () => {
+  const solid = CATEGORY_COLORS.filter(isSolidCategoryColor);
+  expect(solid).toEqual([CategoryColor.White, CategoryColor.Black]);
+
+  for (const color of CATEGORY_COLORS) {
+    // The ink is a token name, not a `var()` call: the caller wraps it.
+    expect(categoryColorInk(color)).toBe(isSolidCategoryColor(color) ? `${color}-ink` : undefined);
+  }
 });

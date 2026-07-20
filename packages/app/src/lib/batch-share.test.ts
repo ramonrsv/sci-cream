@@ -5,6 +5,7 @@ import type { LightRecipe } from "@workspace/sci-cream";
 import type { Batch } from "@/lib/batch";
 import { MAX_BATCH_RECIPES } from "@/lib/batch";
 import { MAX_SHARE_COMMENT_CHARS, MAX_SHARE_NAME_CHARS } from "@/lib/recipe-share";
+import { CategoryColor } from "@/lib/styles/colors";
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import {
   BATCH_PAYLOAD_VERSION,
@@ -207,6 +208,51 @@ describe("encodeBatchPayload / decodeBatchPayload", () => {
     }));
     const payload = makeBatchPayload(makeBatch({ recipes }));
     await expect(decodeBatchPayload(await encodeBatchPayload(payload))).resolves.toEqual(payload);
+  });
+});
+
+describe("container colors on the wire", () => {
+  it("carries a chosen color by name, so a link is not tied to a palette slot", async () => {
+    const batch = makeBatch({
+      recipes: [{ name: "Base", rows: ROWS, color: CategoryColor.White }],
+    });
+    expect(makeBatchPayload(batch)).toMatchObject({ b: [{ c: "White" }] });
+
+    const encoded = await encodeBatchPayload(makeBatchPayload(batch));
+    const decoded = makeBatchFromPayload(await decodeBatchPayload(encoded));
+    expect(decoded.recipes[0]?.color).toBe(CategoryColor.White);
+  });
+
+  it("leaves an unpicked color off the wire, so the recipient falls back positionally", async () => {
+    expect(makeBatchPayload(makeBatch())).toEqual({
+      v: 1,
+      d: "2026-07-18",
+      b: [{ n: "Base", r: ROWS }],
+    });
+
+    const encoded = await encodeBatchPayload(makeBatchPayload(makeBatch()));
+    const decoded = makeBatchFromPayload(await decodeBatchPayload(encoded));
+    expect(decoded.recipes[0]).not.toHaveProperty("color");
+  });
+
+  it("drops a color it cannot name rather than rejecting an otherwise weighable batch", async () => {
+    const encoded = await encodeRaw({
+      v: 1,
+      d: "2026-07-18",
+      b: [{ n: "Base", r: ROWS, c: "Chartreuse" }],
+    });
+
+    const payload = await decodeBatchPayload(encoded);
+    expect(payload.b[0]).not.toHaveProperty("c");
+    expect(payload.b[0]?.r).toEqual(ROWS);
+  });
+
+  it("accepts a link written before colors existed, which is why the version did not move", async () => {
+    // Byte-for-byte what the shipped v1 encoder produced: no `c` anywhere.
+    const encoded = await encodeRaw({ v: 1, d: "2026-07-18", b: [{ n: "Base", r: ROWS }] });
+
+    const decoded = makeBatchFromPayload(await decodeBatchPayload(encoded));
+    expect(decoded.recipes).toEqual([{ name: "Base", rows: ROWS }]);
   });
 });
 

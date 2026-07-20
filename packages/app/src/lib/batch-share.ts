@@ -3,6 +3,7 @@ import type { LightRecipe, LightRecipeLine } from "@workspace/sci-cream";
 import type { Batch, BatchRecipe } from "@/lib/batch";
 import { MAX_BATCH_RECIPES } from "@/lib/batch";
 import { MAX_SHARE_COMMENT_CHARS, MAX_SHARE_NAME_CHARS } from "@/lib/recipe-share";
+import { categoryColorFromName, categoryColorName } from "@/lib/styles/colors";
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import {
   PayloadErrorKind,
@@ -61,6 +62,8 @@ export interface BatchPayloadRecipe {
   n: string;
   /** `[name, quantity]` rows carrying the amounts to weigh. */
   r: LightRecipe;
+  /** Container color by name (e.g. `"Blue"`); absent when unpicked, so both sides go positional. */
+  c?: string;
 }
 
 /** Failure modes of decoding a handoff link, each with a user-facing message. */
@@ -119,13 +122,20 @@ export function makeBatchPayload(batch: Batch): BatchPayload {
     ...(batch.title ? { t: batch.title } : {}),
     d: batch.date,
     ...(batch.notes ? { o: batch.notes } : {}),
-    b: batch.recipes.map(({ name, rows }) => ({ n: name, r: rows })),
+    b: batch.recipes.map(({ name, rows, color }) => ({
+      n: name,
+      r: rows,
+      ...(color === undefined ? {} : { c: categoryColorName(color) }),
+    })),
   };
 }
 
 /** Rebuild a {@link Batch} from a decoded payload; `ref` is absent by design. */
 export function makeBatchFromPayload(payload: BatchPayload): Batch {
-  const recipes: BatchRecipe[] = payload.b.map(({ n, r }) => ({ name: n, rows: r }));
+  const recipes: BatchRecipe[] = payload.b.map(({ n, r, c }) => {
+    const color = categoryColorFromName(c);
+    return { name: n, rows: r, ...(color === undefined ? {} : { color }) };
+  });
   return {
     ...(payload.t === undefined ? {} : { title: payload.t }),
     date: payload.d,
@@ -199,7 +209,7 @@ function validateBatchPayloadRecipe(parsed: unknown): BatchPayloadRecipe {
   if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
     throw new BatchError(BatchErrorKind.Invalid);
   }
-  const { n: name, r: rows } = parsed as Record<string, unknown>;
+  const { n: name, r: rows, c: color } = parsed as Record<string, unknown>;
 
   if (typeof name !== "string" || name.length > MAX_SHARE_NAME_CHARS) {
     throw new BatchError(BatchErrorKind.Invalid);
@@ -221,7 +231,14 @@ function validateBatchPayloadRecipe(parsed: unknown): BatchPayloadRecipe {
     if (!nameOk || !quantityOk) throw new BatchError(BatchErrorKind.Invalid);
   }
 
-  return { n: name, r: rows as LightRecipe };
+  // An unknown color is dropped, not rejected: only the amounts are worth failing a link over.
+  const known = categoryColorFromName(color);
+
+  return {
+    n: name,
+    r: rows as LightRecipe,
+    ...(known === undefined ? {} : { c: categoryColorName(known) }),
+  };
 }
 
 /** Whether `value` is absent, or a string no longer than `maxChars`. */

@@ -49,6 +49,17 @@ async function seedCalculatorSlots(page: Page) {
   );
 }
 
+/**
+ * Assert the first recipe's cell is painted white, not merely marked solid. Both values need a
+ * browser: a dropped fill or a missing ink token fails nothing, it just renders wrong.
+ */
+async function expectWhiteFill(page: Page) {
+  const cell = page.getByTestId("checklist-cell-0-Sucrose");
+  await expect(cell).toHaveClass(/cat-solid/);
+  await expect(cell).toHaveCSS("background-color", "rgb(255, 255, 255)");
+  await expect(cell).toHaveCSS("color", "rgb(25, 25, 23)");
+}
+
 test.describe("Make-Recipe Checklist", () => {
   test("owner builds a merged checklist from two calculator slots", async ({ page }) => {
     await seedCalculatorSlots(page);
@@ -70,6 +81,25 @@ test.describe("Make-Recipe Checklist", () => {
 
     await expect(page.getByTestId("batch-progress")).toContainText("0 of 4 weighed");
     await expect(page.getByTestId("share-batch-button")).toBeEnabled();
+  });
+
+  test("a container color the owner picks rides the link to the recipient", async ({ page }) => {
+    await seedCalculatorSlots(page);
+    await goToPageAndWaitFor(page, "/make-recipe");
+    await page.getByTestId("batch-add-recipe").selectOption("slot:0");
+
+    // White is the case that proves color is data: it is never assigned by position, and it is
+    // painted solid rather than tinted, so both facts have to survive the round trip.
+    await page.getByTestId("builder-color-button").click();
+    await page.getByTestId("builder-color-White").click();
+    await expectWhiteFill(page);
+
+    await page.getByTestId("share-batch-button").click();
+    const link = page.getByTestId("batch-share-link");
+    await expect(link).toHaveValue(/\/make-recipe#.+/);
+
+    await goToPageAndWaitFor(page, await link.inputValue());
+    await expectWhiteFill(page);
   });
 
   test("the shared link shows the same checklist to a recipient with no account", async ({

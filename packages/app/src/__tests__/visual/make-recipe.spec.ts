@@ -10,6 +10,7 @@ import {
 } from "@/__tests__/visual/assets";
 import { encodeBatchPayload, makeBatchPayload } from "@/lib/batch-share";
 import { STORAGE_KEYS } from "@/lib/local-storage";
+import { CategoryColor } from "@/lib/styles/colors";
 
 /** The handheld layouts a recipient is most likely weighing from. */
 const PORTRAIT_VIEWPORTS = [
@@ -118,11 +119,35 @@ const SHARED_BATCH_WIDE: Batch = {
   ],
 };
 
+/**
+ * The same four recipes wearing picked container colors, including the achromatic pair. Those two
+ * are painted solid rather than tinted, so they are the only colors with their own rendering path.
+ */
+const SHARED_BATCH_COLORED: Batch = {
+  ...SHARED_BATCH_WIDE,
+  recipes: [
+    { ...SHARED_BATCH_WIDE.recipes[0]!, color: CategoryColor.White },
+    { ...SHARED_BATCH_WIDE.recipes[1]!, color: CategoryColor.Black },
+    { ...SHARED_BATCH_WIDE.recipes[2]!, color: CategoryColor.Purple },
+    SHARED_BATCH_WIDE.recipes[3]!,
+  ],
+};
+
 /** Open a batch through a real share link, as a recipient would. */
 async function goToSharedLink(page: Page, batch: Batch = SHARED_BATCH) {
   const encoded = await encodeBatchPayload(makeBatchPayload(batch));
   await goToPageAndWaitFor(page, `/make-recipe#${encoded}`);
   await expect(page.getByTestId("batch-checklist")).toBeVisible();
+}
+
+/** Weigh off a cell of each solid fill and one tint, leaving Sucrose short of dimming its row. */
+async function weighOffColoredCells(page: Page) {
+  await page.getByTestId("checklist-cell-0-Sucrose").click();
+  await page.getByTestId("checklist-cell-1-Sucrose").click();
+  await page.getByTestId("checklist-cell-2-Whole Milk").click();
+
+  // Assert the clicks landed, or a miss would quietly bake an unchecked page into the snapshot.
+  await expect(page.getByTestId("batch-progress")).toContainText("3 of 13 weighed");
 }
 
 /** Screenshot the whole checklist page, grown to fit its content. */
@@ -250,6 +275,21 @@ test.describe("Visual Regression: Make Recipe", () => {
     await goToSharedLink(page, SHARED_BATCH_WIDE);
 
     await shootScrolledToLastColumn(page, "make-recipe-wide-scrolled-mobile-small-portrait.png");
+  });
+
+  // The fourth is left unpicked: a partly colored batch is the normal state.
+  test("make recipe - picked container colors", async ({ page }) => {
+    await goToSharedLink(page, SHARED_BATCH_COLORED);
+    await weighOffColoredCells(page);
+    await shootPage(page, "make-recipe-colored.png");
+  });
+
+  // Dark mode is where the solid pair earns its keep, black especially: it must not vanish.
+  test("make recipe - picked container colors - dark", async ({ page }) => {
+    await page.emulateMedia({ colorScheme: "dark" });
+    await goToSharedLink(page, SHARED_BATCH_COLORED);
+    await weighOffColoredCells(page);
+    await shootPage(page, "make-recipe-colored-dark.png");
   });
 
   test("make recipe - invalid link error", async ({ page }) => {

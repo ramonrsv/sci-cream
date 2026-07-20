@@ -67,8 +67,6 @@
 - [ ] Give make-recipe a single total-amount input that rescales every recipe to hit total amount.
 - [ ] Sort out `iconSize`/`buttonClassName` defaults on the share actions: no production call site
       uses them. Make the defaults the common case, or drop them and require both at call sites.
-- [ ] Let make-recipe badge colors match physical containers. The color is data, not styling: it
-      rides in the link, per batch. Costs a payload version bump; white/black need solid fills.
 - [ ] Implement scroll restoration, so that pages return to the last point when navigating back.
 - [ ] Look into usability on vertical mobile screens; the shrinking sidebar may not be enough.
 - [ ] Make navbar width adjustments more maintainable in `navbar.tsx`. At the moment there are a
@@ -123,6 +121,8 @@
 
 ## Completed
 
+- [x] Let make-recipe badge colors match physical containers. The color is data, not styling: it
+      rides in the link, per batch. Costs a payload version bump; white/black need solid fills.
 - [x] Add shareable make-recipe link, to click off ingredients that have been measured out for one
       or more recipes. Each recipe should be letter and color coded.
 - [x] Write a design doc for recipe share links (openable by anyone, embeddable); cover URL

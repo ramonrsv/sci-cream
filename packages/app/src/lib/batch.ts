@@ -1,6 +1,7 @@
 import type { LightRecipe } from "@workspace/sci-cream";
 
 import type { SavedRecipeRef } from "@/lib/recipe";
+import { type CategoryColor, categoryColor } from "@/lib/styles/colors";
 import {
   STORAGE_KEYS,
   getLocalStorage,
@@ -31,6 +32,19 @@ export interface BatchRecipe {
   rows: LightRecipe;
   /** Source saved version, when the recipe came from one. Provenance only — never amounts. */
   ref?: SavedRecipeRef;
+  /**
+   * Color matching the physical container this recipe is mixed in. Absent when unpicked, since
+   * the fallback is positional and needs an index only the caller has — {@link batchRecipeColor}.
+   */
+  color?: CategoryColor;
+}
+
+/**
+ * Color identifying the `index`-th recipe: the owner's pick, else the hue its position earns. A
+ * pick duplicating another's default stands, since the badge letter is what identifies a recipe.
+ */
+export function batchRecipeColor(recipe: BatchRecipe, index: number): CategoryColor {
+  return recipe.color ?? categoryColor(index);
 }
 
 /** The version every saved recipe starts at. It distinguishes nothing, so it is never shown. */
@@ -47,7 +61,7 @@ export function displayVersion(ref: BatchRecipe["ref"]): number | undefined {
   return ref.versionNumber;
 }
 
-/** Maximum recipes in one batch; matches the palette size so every recipe gets its own hue. */
+/** Maximum recipes in one batch; matches the hue count so every recipe defaults to its own hue. */
 export const MAX_BATCH_RECIPES = 8;
 
 /** Maximum stored per-batch checklists before the least recently used are evicted. */
@@ -116,7 +130,7 @@ export function todayIsoDate(): string {
 
 /**
  * Canonical weighing content of a batch: the fields whose change invalidates weighing progress.
- * Deliberately excludes title, date, notes and refs — editing those must not discard
+ * Deliberately excludes title, date, notes, colors and refs — editing those must not discard
  * checkmarks — and excludes the payload version so a future bump preserves progress.
  *
  * Separators are control characters, untypeable in a name, so no name can forge a boundary.

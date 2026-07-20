@@ -31,36 +31,97 @@ export enum ThemeColor {
 }
 
 /**
- * Categorical hues telling batch recipes apart. Kept out of {@link Color} because they carry no
- * semantics: admitting them would make {@link statusColorRank} throw at runtime. Assigned by
- * position via {@link categoryColor}; the slot order is CVD-validated, so do not rearrange it.
+ * Colors telling batch recipes apart. Kept out of {@link Color} because they carry no semantics:
+ * admitting them would make {@link statusColorRank} throw at runtime. Named after the color a
+ * person sees, since the owner picks one to match the physical container a recipe is mixed in.
+ *
+ * The eight hues are CVD-validated in this order — do not rearrange. White and Black come last,
+ * being achromatic: they render as solid fills (see {@link isSolidCategoryColor}), not tints.
  */
 export enum CategoryColor {
-  Cat1 = "--color-cat-1",
-  Cat2 = "--color-cat-2",
-  Cat3 = "--color-cat-3",
-  Cat4 = "--color-cat-4",
-  Cat5 = "--color-cat-5",
-  Cat6 = "--color-cat-6",
-  Cat7 = "--color-cat-7",
-  Cat8 = "--color-cat-8",
+  Blue = "--color-cat-blue",
+  Green = "--color-cat-green",
+  Pink = "--color-cat-pink",
+  Yellow = "--color-cat-yellow",
+  Teal = "--color-cat-teal",
+  Orange = "--color-cat-orange",
+  Purple = "--color-cat-purple",
+  Red = "--color-cat-red",
+  White = "--color-cat-white",
+  Black = "--color-cat-black",
 }
 
-/** Every categorical hue, in assignment order. */
+/** Every color, in both picker order and positional-assignment order. */
 export const CATEGORY_COLORS: readonly CategoryColor[] = Object.freeze([
-  CategoryColor.Cat1,
-  CategoryColor.Cat2,
-  CategoryColor.Cat3,
-  CategoryColor.Cat4,
-  CategoryColor.Cat5,
-  CategoryColor.Cat6,
-  CategoryColor.Cat7,
-  CategoryColor.Cat8,
+  CategoryColor.Blue,
+  CategoryColor.Green,
+  CategoryColor.Pink,
+  CategoryColor.Yellow,
+  CategoryColor.Teal,
+  CategoryColor.Orange,
+  CategoryColor.Purple,
+  CategoryColor.Red,
+  CategoryColor.White,
+  CategoryColor.Black,
 ]);
 
-/** Hue for the `index`-th item in a categorical set; wraps when items outnumber hues. */
+/** Color for the `index`-th item in a categorical set; wraps when items outnumber colors. */
 export function categoryColor(index: number): CategoryColor {
-  return CATEGORY_COLORS[index % CATEGORY_COLORS.length] ?? CategoryColor.Cat1;
+  return CATEGORY_COLORS[index % CATEGORY_COLORS.length] ?? CategoryColor.Blue;
+}
+
+/**
+ * Ink for the solid fills, which cannot inherit the page's text color. Spelled out, not derived
+ * from the color token: a missing one is then a type error, not silently inherited text.
+ */
+const CATEGORY_COLOR_INKS: Partial<Record<CategoryColor, string>> = {
+  [CategoryColor.White]: "--color-cat-white-ink",
+  [CategoryColor.Black]: "--color-cat-black-ink",
+};
+
+/** The ink a color's solid fill wears, or `undefined` for the hues, which are tinted. */
+export function categoryColorInk(color: CategoryColor): string | undefined {
+  return CATEGORY_COLOR_INKS[color];
+}
+
+/**
+ * Whether a color is painted solid rather than tinted: having no hue, white and black are
+ * identified by a lightness a tint washes away. Keyed off the ink, so the two cannot drift apart.
+ */
+export function isSolidCategoryColor(color: CategoryColor): boolean {
+  return categoryColorInk(color) !== undefined;
+}
+
+/**
+ * Name of each color: the label shown to the owner, and the identifier on the wire, so a link
+ * names a color rather than a slot. Exhaustive by type, so a new color cannot ship without one.
+ */
+const CATEGORY_COLOR_NAMES: Record<CategoryColor, string> = {
+  [CategoryColor.Blue]: "Blue",
+  [CategoryColor.Green]: "Green",
+  [CategoryColor.Pink]: "Pink",
+  [CategoryColor.Yellow]: "Yellow",
+  [CategoryColor.Teal]: "Teal",
+  [CategoryColor.Orange]: "Orange",
+  [CategoryColor.Purple]: "Purple",
+  [CategoryColor.Red]: "Red",
+  [CategoryColor.White]: "White",
+  [CategoryColor.Black]: "Black",
+};
+
+/** The reverse of {@link CATEGORY_COLOR_NAMES}, for reading a color off the wire. */
+const CATEGORY_COLORS_BY_NAME = new Map<string, CategoryColor>(
+  Object.entries(CATEGORY_COLOR_NAMES).map(([color, name]) => [name, color as CategoryColor]),
+);
+
+/** Display and wire name of `color`, e.g. `"Blue"`. */
+export function categoryColorName(color: CategoryColor): string {
+  return CATEGORY_COLOR_NAMES[color];
+}
+
+/** The color `name` identifies, or `undefined` if it names none. Inverse of the above. */
+export function categoryColorFromName(name: unknown): CategoryColor | undefined {
+  return typeof name === "string" ? CATEGORY_COLORS_BY_NAME.get(name) : undefined;
 }
 
 /** Any color token readable by {@link getColor} / {@link getCssColor}. */

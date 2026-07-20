@@ -60,14 +60,21 @@
    slots fall below 3:1 on white, so the letter wears text ink and the hue only tints the chip.
    Plain `:root`, not `@theme`: read only via `var()`, and Tailwind drops unreferenced tokens. */
 :root {
-  --color-cat-1: #2a78d6;
-  --color-cat-2: #008300;
-  --color-cat-3: #e87ba4;
-  --color-cat-4: #eda100;
-  --color-cat-5: #1baf7a;
-  --color-cat-6: #eb6834;
-  --color-cat-7: #4a3aa7;
-  --color-cat-8: #e34948;
+  --color-cat-blue: #2a78d6;
+  --color-cat-green: #008300;
+  --color-cat-pink: #e87ba4;
+  --color-cat-yellow: #eda100;
+  --color-cat-teal: #1baf7a;
+  --color-cat-orange: #eb6834;
+  --color-cat-purple: #4a3aa7;
+  --color-cat-red: #e34948;
+
+  /* Achromatic container colors, re-stepped per theme like the hues. Painted solid with their own
+     ink: having no hue, a tint would wash away the lightness they are identified by. */
+  --color-cat-white: #ffffff;
+  --color-cat-white-ink: #191917;
+  --color-cat-black: #2a2a27;
+  --color-cat-black-ink: #ffffff;
 }
 
 .dark {
@@ -88,15 +95,19 @@
   --color-warn-brd: var(--color-amber-500);
   --color-info-brd: var(--color-blue-600);
 
-  /* The same eight hues re-stepped for the dark surface, not a separate palette. */
-  --color-cat-1: #3987e5;
-  --color-cat-2: #008300;
-  --color-cat-3: #d55181;
-  --color-cat-4: #c98500;
-  --color-cat-5: #199e70;
-  --color-cat-6: #d95926;
-  --color-cat-7: #9085e9;
-  --color-cat-8: #e66767;
+  /* The same ten colors re-stepped for the dark surface, not a separate palette. */
+  --color-cat-blue: #3987e5;
+  --color-cat-green: #008300;
+  --color-cat-pink: #d55181;
+  --color-cat-yellow: #c98500;
+  --color-cat-teal: #199e70;
+  --color-cat-orange: #d95926;
+  --color-cat-purple: #9085e9;
+  --color-cat-red: #e66767;
+
+  /* Black drops below page and surface, or it coincides with them; pure white glares here. */
+  --color-cat-white: #f4f4f2;
+  --color-cat-black: #0d0d0c;
 }
 
 body {
@@ -460,6 +471,25 @@ tbody tr:hover > .table-emphasis {
   @apply text-txt-sec line-through;
   background-color: color-mix(in oklab, var(--cat) 8%, transparent);
   border-color: color-mix(in oklab, var(--cat) 22%, transparent);
+}
+
+/* Solid fill for the achromatic colors, which a tint would erase. The fill is too strong for the
+   text token, so the chip wears its own ink, and the border leans on it to stay visible. */
+.cat-solid {
+  background-color: var(--cat);
+  border-color: color-mix(in oklab, var(--cat) 72%, var(--cat-ink));
+  color: var(--cat-ink);
+}
+
+.checklist-cell.cat-solid:hover {
+  background-color: color-mix(in oklab, var(--cat) 88%, var(--cat-ink));
+}
+
+/* Weighed: drains to a tint like every other cell, so the ink returns to the text token. */
+.checklist-cell.cat-solid[aria-checked="true"] {
+  @apply text-txt-sec;
+  background-color: color-mix(in oklab, var(--cat) 30%, transparent);
+  border-color: color-mix(in oklab, var(--cat) 45%, transparent);
 }
 
 /* Code Display */

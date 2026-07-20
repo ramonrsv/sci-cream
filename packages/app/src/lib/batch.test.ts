@@ -1,9 +1,11 @@
 import { describe, it, expect, beforeEach } from "vitest";
 
 import {
+  MAX_BATCH_RECIPES,
   MAX_STORED_CHECKLISTS,
   type Batch,
   batchChecklistKey,
+  batchRecipeColor,
   batchRecipeLetter,
   canonicalBatchContent,
   cellKey,
@@ -13,6 +15,7 @@ import {
   touchChecklist,
 } from "./batch";
 import { STORAGE_KEYS, getLocalStorage, setLocalStorage } from "./local-storage";
+import { CATEGORY_COLORS, CategoryColor } from "./styles/colors";
 
 /** A two-recipe batch sharing one ingredient, so merging and totals are exercised by default. */
 function makeBatch(overrides: Partial<Batch> = {}): Batch {
@@ -94,6 +97,36 @@ describe("mergeBatchRows", () => {
   });
 });
 
+describe("batchRecipeColor", () => {
+  const rows: Batch["recipes"][number]["rows"] = [["Sucrose", 100]];
+
+  it("gives an unpicked recipe the hue its position earns", () => {
+    expect(batchRecipeColor({ name: "A", rows }, 0)).toBe(CATEGORY_COLORS[0]);
+    expect(batchRecipeColor({ name: "B", rows }, 1)).toBe(CATEGORY_COLORS[1]);
+  });
+
+  it("prefers the owner's pick over the positional hue", () => {
+    const picked = { name: "A", rows, color: CategoryColor.Black };
+    expect(batchRecipeColor(picked, 0)).toBe(CategoryColor.Black);
+  });
+
+  // The achromatic pair sits past the cap rather than in a list of its own, so a full batch is
+  // what proves a default never reaches it.
+  it("keeps every default in a full batch chromatic", () => {
+    const defaults = Array.from({ length: MAX_BATCH_RECIPES }, (_, i) =>
+      batchRecipeColor({ name: "A", rows }, i),
+    );
+    expect(defaults).not.toContain(CategoryColor.White);
+    expect(defaults).not.toContain(CategoryColor.Black);
+    expect(new Set(defaults).size).toBe(MAX_BATCH_RECIPES);
+  });
+
+  it("wraps past the palette, since the batch cap and the palette can drift apart", () => {
+    const wrapped = batchRecipeColor({ name: "A", rows }, CATEGORY_COLORS.length);
+    expect(wrapped).toBe(CATEGORY_COLORS[0]);
+  });
+});
+
 describe("batchRecipeLetter / cellKey", () => {
   it("labels recipes A, B, C by position", () => {
     expect([0, 1, 2, 7].map(batchRecipeLetter)).toEqual(["A", "B", "C", "H"]);
@@ -126,6 +159,12 @@ describe("canonicalBatchContent", () => {
     expect(canonicalBatchContent(makeBatch({ title: "Renamed" }))).toBe(base);
     expect(canonicalBatchContent(makeBatch({ notes: "Churn at -6 °C" }))).toBe(base);
     expect(canonicalBatchContent(makeBatch({ date: "2030-01-01" }))).toBe(base);
+  });
+
+  it("ignores color, so recoloring a recipe never discards weighing progress", () => {
+    const recolored = makeBatch();
+    recolored.recipes[0]!.color = CategoryColor.White;
+    expect(canonicalBatchContent(recolored)).toBe(canonicalBatchContent(makeBatch()));
   });
 
   it("ignores provenance, so owner and recipient agree on the same weighing content", () => {

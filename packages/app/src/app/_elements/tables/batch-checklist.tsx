@@ -5,13 +5,14 @@ import { Check } from "lucide-react";
 import {
   type Batch,
   type MergedRow,
+  batchRecipeColor,
   batchRecipeLetter,
   cellKey,
   displayVersion,
   mergeBatchRows,
 } from "@/lib/batch";
 import { VersionBadge } from "@/app/_elements/version-badge";
-import { categoryColor } from "@/lib/styles/colors";
+import { type CategoryColor, categoryColorInk } from "@/lib/styles/colors";
 
 /** An amount as weighed: trailing zeros trimmed, so "300" not "300.000". Unitless — see header. */
 function formatAmount(quantity: number): string {
@@ -23,12 +24,39 @@ function formatGrams(quantity: number): string {
   return `${formatAmount(quantity)} g`;
 }
 
-/** Letter chip identifying one recipe, tinted with that recipe's categorical hue. */
-export function RecipeBadge({ index, title }: { index: number; title?: string }) {
+/**
+ * Paint one recipe's color onto a chip: the hue as a custom property, plus the ink and the solid
+ * class the achromatic colors need. Returned together so the badge and the cell stay in step.
+ */
+export function categoryChipStyle(color: CategoryColor): {
+  className: string;
+  style: React.CSSProperties;
+} {
+  const ink = categoryColorInk(color);
+  return {
+    className: ink === undefined ? "" : "cat-solid",
+    style: {
+      "--cat": `var(${color})`,
+      ...(ink === undefined ? {} : { "--cat-ink": `var(${ink})` }),
+    } as React.CSSProperties,
+  };
+}
+
+/** Letter chip identifying one recipe, wearing that recipe's color. */
+export function RecipeBadge({
+  index,
+  color,
+  title,
+}: {
+  index: number;
+  color: CategoryColor;
+  title?: string;
+}) {
+  const chip = categoryChipStyle(color);
   return (
     <span
-      className="recipe-badge"
-      style={{ "--cat": `var(${categoryColor(index)})` } as React.CSSProperties}
+      className={`recipe-badge ${chip.className}`}
+      style={chip.style}
       title={title}
       data-testid={`recipe-badge-${String(index)}`}
     >
@@ -46,7 +74,7 @@ export function BatchLegend({ recipes }: { recipes: Batch["recipes"] }) {
         const version = displayVersion(recipe.ref);
         return (
           <li key={`${String(index)}:${recipe.name}`} className="flex items-center gap-1.5">
-            <RecipeBadge index={index} />
+            <RecipeBadge index={index} color={batchRecipeColor(recipe, index)} />
             <span className="text-primary text-sm">{recipe.name || "Untitled recipe"}</span>
             {version !== undefined && <VersionBadge version={version} />}
           </li>
@@ -60,18 +88,21 @@ export function BatchLegend({ recipes }: { recipes: Batch["recipes"] }) {
 function ChecklistCell({
   rowName,
   recipeIndex,
+  color,
   quantity,
   checked,
   onToggle,
 }: {
   rowName: string;
   recipeIndex: number;
+  color: CategoryColor;
   quantity: number;
   checked: boolean;
   onToggle: () => void;
 }) {
   // The label carries the unit the cell drops: a button is named by itself, not by its headers.
   const label = `${rowName}, recipe ${batchRecipeLetter(recipeIndex)}: ${formatGrams(quantity)}`;
+  const chip = categoryChipStyle(color);
 
   return (
     <button
@@ -81,8 +112,8 @@ function ChecklistCell({
       aria-label={label}
       onClick={onToggle}
       title={label}
-      style={{ "--cat": `var(${categoryColor(recipeIndex)})` } as React.CSSProperties}
-      className="checklist-cell px-1.5 py-0.5"
+      style={chip.style}
+      className={`checklist-cell px-1.5 py-0.5 ${chip.className}`}
       data-testid={`checklist-cell-${String(recipeIndex)}-${rowName}`}
     >
       <span className="comp-val flex-1">{formatAmount(quantity)}</span>
@@ -100,12 +131,13 @@ function ChecklistCell({
 /** One merged ingredient: its name, the batch total, and one cell per recipe in the batch. */
 function ChecklistRow({
   row,
-  recipeCount,
+  recipes,
   isChecked,
   onToggle,
 }: {
   row: MergedRow;
-  recipeCount: number;
+  /** The whole batch: a row spans every recipe, not just the ones using this ingredient. */
+  recipes: Batch["recipes"];
   isChecked: (key: string) => boolean;
   onToggle: (key: string) => void;
 }) {
@@ -124,12 +156,12 @@ function ChecklistRow({
       >
         {row.name}
       </td>
-      {recipeCount > 1 && (
+      {recipes.length > 1 && (
         <td className="table-inner-cell comp-val px-2" data-testid={`checklist-total-${row.name}`}>
           {formatAmount(row.total)}
         </td>
       )}
-      {Array.from({ length: recipeCount }, (_, recipeIndex) => {
+      {recipes.map((recipe, recipeIndex) => {
         const cell = cellByRecipe.get(recipeIndex);
         const key = cellKey(row.name, recipeIndex);
         return (
@@ -138,6 +170,7 @@ function ChecklistRow({
               <ChecklistCell
                 rowName={row.name}
                 recipeIndex={recipeIndex}
+                color={batchRecipeColor(recipe, recipeIndex)}
                 quantity={cell.quantity}
                 checked={isChecked(key)}
                 onToggle={() => onToggle(key)}
@@ -177,7 +210,11 @@ function ChecklistHeader({ recipes }: { recipes: Batch["recipes"] }) {
               "g"
             ) : (
               <span className="flex justify-center">
-                <RecipeBadge index={index} title={recipe.name || "Untitled recipe"} />
+                <RecipeBadge
+                  index={index}
+                  color={batchRecipeColor(recipe, index)}
+                  title={recipe.name || "Untitled recipe"}
+                />
               </span>
             )}
           </th>
@@ -219,7 +256,7 @@ export function BatchChecklist({
           <ChecklistRow
             key={row.name}
             row={row}
-            recipeCount={batch.recipes.length}
+            recipes={batch.recipes}
             isChecked={isChecked}
             onToggle={onToggle}
           />

@@ -1,12 +1,21 @@
 "use client";
 
-import { Plus, Trash2 } from "lucide-react";
+import { Check, Plus, Trash2 } from "lucide-react";
 
 import type { LightRecipe } from "@workspace/sci-cream";
 
-import { RecipeBadge } from "@/app/_elements/tables/batch-checklist";
+import { RecipeBadge, categoryChipStyle } from "@/app/_elements/tables/batch-checklist";
+import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";
 import { VersionBadge } from "@/app/_elements/version-badge";
-import { MAX_BATCH_RECIPES, type Batch, type BatchRecipe, displayVersion } from "@/lib/batch";
+import {
+  MAX_BATCH_RECIPES,
+  type Batch,
+  type BatchRecipe,
+  batchRecipeColor,
+  batchRecipeLetter,
+  displayVersion,
+} from "@/lib/batch";
+import { CATEGORY_COLORS, type CategoryColor, categoryColorName } from "@/lib/styles/colors";
 import { makeBatchRows } from "@/lib/batch-share";
 import type { SavedRecipeJson } from "@/lib/data";
 import { getRecipeStoresFromStorage, makeRecipeId, parseRecipeString } from "@/lib/recipe";
@@ -33,7 +42,8 @@ export interface BatchSelection {
   title?: string;
   date: string;
   notes?: string;
-  items: { sourceId: string }[];
+  /** Chosen sources in batch order; `color` is set only where the owner picked one. */
+  items: { sourceId: string; color?: CategoryColor }[];
 }
 
 /** Calculator slots holding at least one named row, as batch sources. */
@@ -80,10 +90,17 @@ export function makeBatchFromSelection(
   selection: BatchSelection,
   sources: readonly BatchSource[],
 ): Batch {
-  const recipes: BatchRecipe[] = selection.items.flatMap(({ sourceId }) => {
+  const recipes: BatchRecipe[] = selection.items.flatMap(({ sourceId, color }) => {
     const source = sources.find((s) => s.id === sourceId);
     if (source === undefined) return [];
-    return [{ name: source.name, rows: source.rows, ...(source.ref ? { ref: source.ref } : {}) }];
+    return [
+      {
+        name: source.name,
+        rows: source.rows,
+        ...(source.ref ? { ref: source.ref } : {}),
+        ...(color === undefined ? {} : { color }),
+      },
+    ];
   });
   return {
     ...(selection.title ? { title: selection.title } : {}),
@@ -93,18 +110,88 @@ export function makeBatchFromSelection(
   };
 }
 
+/** Color picker worn by the recipe's own badge, which already shows the color. */
+function ColorPicker({
+  index,
+  color,
+  onPick,
+}: {
+  index: number;
+  color: CategoryColor;
+  onPick: (color: CategoryColor) => void;
+}) {
+  const label = `Recipe ${batchRecipeLetter(index)} container color: ${categoryColorName(color)}`;
+
+  return (
+    <Popover className="flex">
+      {/* Flex, or the badge sits on the text baseline with the descender space beneath it. */}
+      <PopoverButton
+        className="flex cursor-pointer items-center rounded"
+        title={label}
+        aria-label={label}
+        data-testid="builder-color-button"
+      >
+        <RecipeBadge index={index} color={color} />
+      </PopoverButton>
+      {/* Opens rightward: the badge is the row's left edge, with no room to align the panel end */}
+      <PopupPanel anchor={{ to: "bottom start", gap: 4, padding: 8 }} className="p-2">
+        {({ close }) => (
+          <div className="grid grid-cols-5 gap-1" data-testid="builder-color-choices">
+            {CATEGORY_COLORS.map((choice) => (
+              <button
+                key={choice}
+                type="button"
+                onClick={() => {
+                  onPick(choice);
+                  close();
+                }}
+                aria-pressed={choice === color}
+                className="action-button flex items-center justify-center p-1"
+                title={categoryColorName(choice)}
+                aria-label={categoryColorName(choice)}
+                data-testid={`builder-color-${categoryColorName(choice)}`}
+              >
+                <ColorSwatch color={choice} selected={choice === color} />
+              </button>
+            ))}
+          </div>
+        )}
+      </PopupPanel>
+    </Popover>
+  );
+}
+
+/** A square of one color, checked when it is the current choice. */
+function ColorSwatch({ color, selected = false }: { color: CategoryColor; selected?: boolean }) {
+  const chip = categoryChipStyle(color);
+  return (
+    <span
+      className={`recipe-badge ${chip.className}`}
+      style={chip.style}
+      aria-hidden
+      data-testid={`color-swatch-${categoryColorName(color)}`}
+    >
+      {selected && <Check size={12} strokeWidth={3} />}
+    </span>
+  );
+}
+
 /** One row of the builder: the chosen recipe, its total, and a remove control. */
 function BuilderRow({
   name,
   version,
   total,
   index,
+  color,
+  onPickColor,
   onRemove,
 }: {
   name: string;
   version?: number;
   total: number;
   index: number;
+  color: CategoryColor;
+  onPickColor: (color: CategoryColor) => void;
   onRemove: () => void;
 }) {
   return (
@@ -112,7 +199,7 @@ function BuilderRow({
       className="border-brd flex items-center gap-2 border-b py-1.5 last:border-b-0"
       data-testid={`builder-row-${String(index)}`}
     >
-      <RecipeBadge index={index} />
+      <ColorPicker index={index} color={color} onPick={onPickColor} />
       <span className="text-primary min-w-0 flex-1 truncate text-sm">{name}</span>
       {version !== undefined && (
         <VersionBadge version={version} title={`Weighing version ${String(version)}`} />
@@ -160,6 +247,13 @@ export function BatchBuilder({
     onChange({ ...selection, items: selection.items.filter((_, i) => i !== index) });
   };
 
+  const colorAt = (index: number, color: CategoryColor) => {
+    onChange({
+      ...selection,
+      items: selection.items.map((item, i) => (i === index ? { ...item, color } : item)),
+    });
+  };
+
   return (
     <div className="flex flex-col gap-3" data-testid="batch-builder">
       <div className="flex flex-wrap items-end gap-2">
@@ -197,6 +291,8 @@ export function BatchBuilder({
                 version={displayVersion(recipe.ref)}
                 total={recipe.rows.reduce((sum, [, quantity]) => sum + quantity, 0)}
                 index={index}
+                color={batchRecipeColor(recipe, index)}
+                onPickColor={(color) => colorAt(index, color)}
                 onRemove={() => removeAt(index)}
               />
             ))}
