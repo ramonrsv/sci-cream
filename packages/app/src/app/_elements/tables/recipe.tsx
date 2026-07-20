@@ -51,6 +51,7 @@ import { makeShareRows } from "@/lib/recipe-share";
 import { useSessionResources } from "@/lib/session-resources";
 import { RecipeSelect, useRecipeIdxState } from "@/app/_elements/selects/recipe-select";
 import { ShareRecipeAction } from "@/app/_elements/recipe-share-dialog";
+import { VersionBadge } from "@/app/_elements/version-badge";
 import { formatCompositionValue } from "@/lib/comp-value-format";
 import { COMPONENT_ACTION_ICON_SIZE, RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import { standardInputStepByPercent, verify } from "@/lib/util";
@@ -843,12 +844,10 @@ export function RecipeEditor({
           className="text-secondary table-fillable-input min-w-0 flex-1 truncate px-1 py-0 text-sm font-medium"
         />
         {currentRecipe.savedRef !== undefined && (
-          <span
-            className="text-secondary shrink-0 rounded-md border border-current/20 px-1 text-xs"
+          <VersionBadge
+            version={currentRecipe.savedRef.versionNumber}
             title={`Editing version ${currentRecipe.savedRef.versionNumber}`}
-          >
-            v{currentRecipe.savedRef.versionNumber}
-          </span>
+          />
         )}
       </div>
       <div data-testid="recipe-editor-table-pane" className="min-h-0 flex-1 overflow-auto">

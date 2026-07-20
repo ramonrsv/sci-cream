@@ -30,8 +30,41 @@ export enum ThemeColor {
   Border = "--color-border",
 }
 
+/**
+ * Categorical hues telling batch recipes apart. Kept out of {@link Color} because they carry no
+ * semantics: admitting them would make {@link statusColorRank} throw at runtime. Assigned by
+ * position via {@link categoryColor}; the slot order is CVD-validated, so do not rearrange it.
+ */
+export enum CategoryColor {
+  Cat1 = "--color-cat-1",
+  Cat2 = "--color-cat-2",
+  Cat3 = "--color-cat-3",
+  Cat4 = "--color-cat-4",
+  Cat5 = "--color-cat-5",
+  Cat6 = "--color-cat-6",
+  Cat7 = "--color-cat-7",
+  Cat8 = "--color-cat-8",
+}
+
+/** Every categorical hue, in assignment order. */
+export const CATEGORY_COLORS: readonly CategoryColor[] = Object.freeze([
+  CategoryColor.Cat1,
+  CategoryColor.Cat2,
+  CategoryColor.Cat3,
+  CategoryColor.Cat4,
+  CategoryColor.Cat5,
+  CategoryColor.Cat6,
+  CategoryColor.Cat7,
+  CategoryColor.Cat8,
+]);
+
+/** Hue for the `index`-th item in a categorical set; wraps when items outnumber hues. */
+export function categoryColor(index: number): CategoryColor {
+  return CATEGORY_COLORS[index % CATEGORY_COLORS.length] ?? CategoryColor.Cat1;
+}
+
 /** Any color token readable by {@link getColor} / {@link getCssColor}. */
-export type ColorToken = Color | ThemeColor;
+export type ColorToken = Color | ThemeColor | CategoryColor;
 
 /** Fallback color returned when running server-side (no `window.getComputedStyle` available) */
 const SSR_DEFAULT_COLOR = "rgba(0, 0, 0, 1)";

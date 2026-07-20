@@ -29,6 +29,10 @@ export const STORAGE_KEYS = {
   recipeShareLoadAction: "share-load-action",
   recipeSharePropertiesView: "share-properties-view",
   ingredientSearchCompositionView: "ingredient-search-composition-view",
+  // Make-recipe: the owner's working batch, and per-batch checkoff state (leaf keys:
+  // `${root}:h<hash>` per batch, plus `${root}:index` holding the MRU list for eviction)
+  makeRecipeBatch: "make-recipe-batch",
+  makeRecipeChecklist: "make-recipe-checklist",
 } as const;
 
 // Touching `window.localStorage` at all throws a `SecurityError` when storage is denied — e.g.

@@ -9,6 +9,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 import {
   Calculator,
   BookOpen,
+  ListChecks,
   Wheat,
   Library,
   Newspaper,
@@ -36,6 +37,7 @@ import { clearStoredLayouts, dispatchLayoutReset } from "@/lib/calculator-layout
 const navItems = [
   { href: "/calculator", label: "Calculator", icon: Calculator },
   { href: "/recipes", label: "Recipes", icon: BookOpen },
+  { href: "/make-recipe", label: "Make", icon: ListChecks },
   { href: "/ingredients", label: "Ingredients", icon: Wheat },
   { href: "/docs", label: "Docs", icon: Library },
   { href: "/blog", label: "Blog", icon: Newspaper },

@@ -54,6 +54,22 @@
   --color-info-brd: var(--color-blue-400);
 }
 
+/* Categorical badge hues for make-recipe — positional, never semantic, theme-dependent since they
+   tint small chips. Values and slot order are the `dataviz` skill's validated palette, ordered to
+   maximize the minimum adjacent CVD ΔE (worst 9.1 light / 8.4 dark) — do not rearrange. Some light
+   slots fall below 3:1 on white, so the letter wears text ink and the hue only tints the chip.
+   Plain `:root`, not `@theme`: read only via `var()`, and Tailwind drops unreferenced tokens. */
+:root {
+  --color-cat-1: #2a78d6;
+  --color-cat-2: #008300;
+  --color-cat-3: #e87ba4;
+  --color-cat-4: #eda100;
+  --color-cat-5: #1baf7a;
+  --color-cat-6: #eb6834;
+  --color-cat-7: #4a3aa7;
+  --color-cat-8: #e34948;
+}
+
 .dark {
   --color-bg-page: rgb(25, 25, 23);
   --color-surface: rgb(34, 34, 32);
@@ -71,6 +87,16 @@
   --color-err-brd: var(--color-red-600);
   --color-warn-brd: var(--color-amber-500);
   --color-info-brd: var(--color-blue-600);
+
+  /* The same eight hues re-stepped for the dark surface, not a separate palette. */
+  --color-cat-1: #3987e5;
+  --color-cat-2: #008300;
+  --color-cat-3: #d55181;
+  --color-cat-4: #c98500;
+  --color-cat-5: #199e70;
+  --color-cat-6: #d95926;
+  --color-cat-7: #9085e9;
+  --color-cat-8: #e66767;
 }
 
 body {
@@ -408,6 +434,32 @@ tbody tr:hover > .table-emphasis {
 .meta-tag {
   @apply rounded px-1.5 py-0.5 text-xs;
   @apply bg-hov text-txt-sec;
+}
+
+/* Recipe badge: letter chip tinted with `--cat`; the letter wears ink, weak hues stay legible. */
+.recipe-badge {
+  @apply text-txt-prim inline-flex items-center justify-center rounded border;
+  @apply h-4.5 w-4.5 text-xs leading-none font-semibold;
+  background-color: color-mix(in oklab, var(--cat) 22%, transparent);
+  border-color: color-mix(in oklab, var(--cat) 55%, transparent);
+}
+
+/* Checklist cell: the badge's tint on the whole chip, since the column already names the recipe. */
+.checklist-cell {
+  @apply text-txt-prim flex w-full items-center rounded border text-sm;
+  background-color: color-mix(in oklab, var(--cat) 22%, transparent);
+  border-color: color-mix(in oklab, var(--cat) 55%, transparent);
+}
+
+.checklist-cell:hover {
+  background-color: color-mix(in oklab, var(--cat) 34%, transparent);
+}
+
+/* Weighed: tint drained and struck through, kept above zero so the column still identifies it. */
+.checklist-cell[aria-checked="true"] {
+  @apply text-txt-sec line-through;
+  background-color: color-mix(in oklab, var(--cat) 8%, transparent);
+  border-color: color-mix(in oklab, var(--cat) 22%, transparent);
 }
 
 /* Code Display */
