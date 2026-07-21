@@ -151,13 +151,18 @@ function ChecklistRow({
       data-done={done}
     >
       <td
-        className={`table-inner-cell max-w-0 truncate px-2 ${done ? "line-through" : ""}`}
+        className={`table-inner-cell table-pin-cell left-0 max-w-56 min-w-32 truncate px-2 ${
+          done ? "line-through" : ""
+        }`}
         title={row.name}
       >
         {row.name}
       </td>
       {recipes.length > 1 && (
-        <td className="table-inner-cell comp-val px-2" data-testid={`checklist-total-${row.name}`}>
+        <td
+          className="table-inner-cell comp-val hidden px-2 sm:table-cell"
+          data-testid={`checklist-total-${row.name}`}
+        >
           {formatAmount(row.total)}
         </td>
       )}
@@ -191,12 +196,19 @@ function ChecklistHeader({ recipes }: { recipes: Batch["recipes"] }) {
   return (
     <thead className="table-sticky-head" data-testid="checklist-header">
       <tr className="h-6.5">
-        <th scope="col" className="table-col-header w-full px-2">
+        {/* Frozen on both axes; z-30 to cover header and first column scrolling beneath */}
+        <th
+          scope="col"
+          className="table-col-header border-brd sticky left-0 z-30 min-w-32 border-r px-2"
+        >
           Ingredient
         </th>
         {!single && (
-          // Without `whitespace-nowrap` the header wraps instead of widening the column.
-          <th scope="col" className="table-col-header w-15 px-2 whitespace-nowrap">
+          // Hidden where space is tight; `whitespace-nowrap`, or the header wraps the column narrow
+          <th
+            scope="col"
+            className="table-col-header hidden w-15 px-2 whitespace-nowrap sm:table-cell"
+          >
             Total (g)
           </th>
         )}
@@ -249,20 +261,23 @@ export function BatchChecklist({
   }
 
   return (
-    <table className="border-separate border-spacing-0" data-testid="batch-checklist">
-      <ChecklistHeader recipes={batch.recipes} />
-      <tbody>
-        {rows.map((row) => (
-          <ChecklistRow
-            key={row.name}
-            row={row}
-            recipes={batch.recipes}
-            isChecked={isChecked}
-            onToggle={onToggle}
-          />
-        ))}
-      </tbody>
-    </table>
+    // Height-bounded scroll region freezing header and first column; a lone `overflow-x` unsticks.
+    <div className="max-h-[70vh] overflow-auto" data-testid="checklist-scroll">
+      <table className="border-separate border-spacing-0" data-testid="batch-checklist">
+        <ChecklistHeader recipes={batch.recipes} />
+        <tbody>
+          {rows.map((row) => (
+            <ChecklistRow
+              key={row.name}
+              row={row}
+              recipes={batch.recipes}
+              isChecked={isChecked}
+              onToggle={onToggle}
+            />
+          ))}
+        </tbody>
+      </table>
+    </div>
   );
 }
 

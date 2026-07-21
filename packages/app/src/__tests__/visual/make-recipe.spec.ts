@@ -159,11 +159,11 @@ async function shootPage(page: Page, name: string) {
 }
 
 /**
- * Screenshot the scroll container at its right-hand end, showing the columns a narrow viewport
- * hides. Shooting the scroller keeps the offset; the checklist's own box is the whole table.
+ * Screenshot the checklist scrolled to its right-hand end, revealing the columns a narrow viewport
+ * hides. The scroll lives in the frozen-panes box, not the page, so that box is scrolled and shot.
  */
 async function shootScrolledToLastColumn(page: Page, name: string) {
-  const scroller = page.getByTestId("app-content");
+  const scroller = page.getByTestId("checklist-scroll");
   await setViewportHeightForAllAppContentScreenshot(page);
 
   // Guard: with no overflow this would silently duplicate the unscrolled snapshot.
