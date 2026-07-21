@@ -447,3 +447,113 @@ describe("deleteUserRecipeVersion", () => {
     }
   });
 });
+
+describe("version names", () => {
+  test("round-trips an explicit version name through create and fetch", async () => {
+    const name = "Version Name Round-trip Test Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]], {
+      versionName: "3.1",
+    });
+    expect(created).toBeDefined();
+    expect(created!.version.versionName).toBe("3.1");
+
+    try {
+      const all = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+      const entry = all!.find((r) => r.name === name);
+      expect(entry?.versions[0].versionName).toBe("3.1");
+      // The internal integer is still 1 regardless of the display name
+      expect(entry?.versions[0].version).toBe(1);
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+
+  test("auto-materializes the next name once a recipe has opted in", async () => {
+    const name = "Version Name Auto-materialize Test Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]], {
+      versionName: "2",
+    });
+    expect(created).toBeDefined();
+
+    try {
+      // Plain save (no meta): opted in, so the name continues the visible sequence
+      const second = await createUserRecipeVersion(TEST_USER_B.email, created!.recipeId, [
+        ["Whole Milk", 110],
+      ]);
+      expect(second?.versionName).toBe("3");
+      expect(second?.version).toBe(2); // internal integer keeps counting
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+
+  test("does not materialize a name for a recipe that never opted in", async () => {
+    const name = "Version Name No-optin Test Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]]);
+    expect(created).toBeDefined();
+    expect(created!.version.versionName).toBeUndefined();
+
+    try {
+      const second = await createUserRecipeVersion(TEST_USER_B.email, created!.recipeId, [
+        ["Whole Milk", 110],
+      ]);
+      expect(second?.versionName).toBeUndefined();
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+
+  test("rejects an invalid version name and writes no recipe row", async () => {
+    const name = "Version Name Invalid Test Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]], {
+      versionName: "not a version",
+    });
+    expect(created).toBeUndefined();
+
+    // The compensating delete must have left no orphaned recipes row behind
+    const all = await fetchAllUserSavedRecipes(TEST_USER_B.email);
+    expect(all!.find((r) => r.name === name)).toBeUndefined();
+  });
+
+  test("rejects a duplicate version name within a recipe", async () => {
+    const name = "Version Name Duplicate Test Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]], {
+      versionName: "3.1",
+    });
+    expect(created).toBeDefined();
+
+    try {
+      const dup = await createUserRecipeVersion(
+        TEST_USER_B.email,
+        created!.recipeId,
+        [["Whole Milk", 110]],
+        { versionName: "3.1" },
+      );
+      expect(dup).toBeUndefined();
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+
+  test("sets and clears a version name via update without touching the integer", async () => {
+    const name = "Version Name Update Test Recipe";
+    const created = await createUserRecipe(TEST_USER_B.email, name, [["Whole Milk", 100]]);
+    expect(created).toBeDefined();
+
+    try {
+      const named = await updateUserRecipeVersion(TEST_USER_B.email, created!.recipeId, 1, {
+        versionName: "4.2-b",
+      });
+      expect(named?.versionName).toBe("4.2-b");
+      expect(named?.version).toBe(1);
+
+      const cleared = await updateUserRecipeVersion(TEST_USER_B.email, created!.recipeId, 1, {
+        versionName: null,
+      });
+      expect(cleared?.versionName).toBeUndefined();
+      expect(cleared?.version).toBe(1);
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+});

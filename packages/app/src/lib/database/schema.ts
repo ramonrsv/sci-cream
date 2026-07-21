@@ -1,7 +1,9 @@
+import { sql } from "drizzle-orm";
 import {
   pgTable,
   primaryKey,
   unique,
+  uniqueIndex,
   integer,
   text,
   pgEnum,
@@ -74,9 +76,10 @@ export type RecipeSelect = typeof recipesTable.$inferSelect;
 /**
  * Drizzle ORM table definition for snapshots of a recipe.
  *
- * One row per `(recipe_id, version)` pair; `version` is monotonically increasing per recipe and is
- * assigned by the server action that creates the snapshot. Comments and an optional short `label`
- * are scoped to the individual version, not the recipe identity.
+ * One row per `(recipe_id, version)` pair; `version` is a monotonically-increasing internal key
+ * assigned by the server action that creates the snapshot. When a user opts into named versions,
+ * `versionName` (e.g. `3.1`, `4.2-b`) holds the displayed value, unique per recipe. Comments and an
+ * optional short `label` are scoped to the individual version, not the recipe identity.
  */
 export const recipeVersionsTable = pgTable(
   "recipe_versions",
@@ -89,9 +92,15 @@ export const recipeVersionsTable = pgTable(
     recipe: json().notNull(),
     comments: text(),
     label: text(),
+    versionName: text("version_name"),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
-  (table) => [unique("recipe_versions_recipe_version_uq").on(table.recipeId, table.version)],
+  (table) => [
+    unique("recipe_versions_recipe_version_uq").on(table.recipeId, table.version),
+    uniqueIndex("recipe_versions_recipe_version_name_uq")
+      .on(table.recipeId, table.versionName)
+      .where(sql`${table.versionName} IS NOT NULL`),
+  ],
 );
 
 export type RecipeVersionInsert = typeof recipeVersionsTable.$inferInsert;

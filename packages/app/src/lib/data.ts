@@ -7,6 +7,8 @@ import { eq, and, sql } from "drizzle-orm";
 import type { LightRecipe } from "@workspace/sci-cream";
 
 import { getDatabaseUrl } from "@/lib/database/util";
+import { hasVersionNames, isValidVersionName, nextVersionName } from "@/lib/recipe/version";
+import { verifyDefined } from "@/lib/util";
 import {
   UserSelect,
   UserInsert,
@@ -31,6 +33,8 @@ export type SavedRecipeVersionJson = {
   recipe: LightRecipe;
   comments?: string;
   label?: string;
+  /** Opt-in display name (e.g. `3.1`, `4.2-b`); absent when the version shows its integer */
+  versionName?: string;
   /** Grams of water evaporated; set only by adapted embedded entries — the DB never stores it */
   evaporation?: number;
   /** ISO 8601 timestamp; created server-side and surfaced as a string for client serialization */
@@ -41,7 +45,11 @@ export type SavedRecipeVersionJson = {
 export type SavedRecipeJson = { id: number; name: string; versions: SavedRecipeVersionJson[] };
 
 /** Optional metadata captured per snapshot when creating or amending a version */
-export type RecipeVersionMeta = { comments?: string | null; label?: string | null };
+export type RecipeVersionMeta = {
+  comments?: string | null;
+  label?: string | null;
+  versionName?: string | null;
+};
 
 /** Convert a `recipe_versions` row (or a join row with the same fields) to its JSON wire shape */
 function toSavedRecipeVersionJson(row: {
@@ -49,6 +57,7 @@ function toSavedRecipeVersionJson(row: {
   recipe: unknown;
   comments: string | null;
   label: string | null;
+  versionName: string | null;
   createdAt: Date;
 }): SavedRecipeVersionJson {
   return {
@@ -56,8 +65,14 @@ function toSavedRecipeVersionJson(row: {
     recipe: row.recipe as LightRecipe,
     ...(row.comments != null && { comments: row.comments }),
     ...(row.label != null && { label: row.label }),
+    ...(row.versionName != null && { versionName: row.versionName }),
     createdAt: row.createdAt.toISOString(),
   };
+}
+
+/** True when `meta` carries no version name, or a grammatically valid one. */
+function isValidVersionNameMeta(meta: RecipeVersionMeta): boolean {
+  return meta.versionName == null || isValidVersionName(meta.versionName);
 }
 
 /**
@@ -191,6 +206,7 @@ export async function fetchAllUserSavedRecipes(
       recipe: recipeVersionsTable.recipe,
       comments: recipeVersionsTable.comments,
       label: recipeVersionsTable.label,
+      versionName: recipeVersionsTable.versionName,
       createdAt: recipeVersionsTable.createdAt,
     })
     .from(recipesTable)
@@ -214,19 +230,36 @@ export async function fetchAllUserSavedRecipes(
   return result;
 }
 
-/** Internal: insert a new version row for the given recipe with `version = max(version) + 1` */
+/**
+ * Internal: insert a new version row for the given recipe with `version = max(version) + 1`.
+ *
+ * `version` is an internal key; the displayed `versionName` follows the opt-in rule: an explicit
+ * `meta.versionName` (trimmed) wins, otherwise a name is auto-materialized only once the recipe has
+ * opted in (`nextVersionName`), else it stays null. Returns `undefined` on a unique-name collision.
+ */
 async function insertNextVersion(
   recipeId: number,
   recipe: LightRecipe,
   meta: RecipeVersionMeta = {},
-): Promise<SavedRecipeVersionJson> {
-  // Compute next version number from existing rows; defaults to 1 when none exist yet
-  const [{ next }] = await db
-    .select({ next: sql<number>`COALESCE(MAX(${recipeVersionsTable.version}), 0) + 1` })
+): Promise<SavedRecipeVersionJson | undefined> {
+  const rows = await db
+    .select({ version: recipeVersionsTable.version, versionName: recipeVersionsTable.versionName })
     .from(recipeVersionsTable)
     .where(eq(recipeVersionsTable.recipeId, recipeId));
 
-  const nextVersion = Number(next);
+  const nextVersion = Math.max(0, ...rows.map((r) => r.version)) + 1;
+
+  const versionName =
+    meta.versionName !== undefined
+      ? (meta.versionName?.trim() ?? null)
+      : hasVersionNames(rows)
+        ? nextVersionName(rows)
+        : null;
+
+  if (versionName != null && rows.some((r) => r.versionName === versionName)) {
+    console.warn(`insertNextVersion: version name "${versionName}" already exists`);
+    return undefined;
+  }
 
   const [inserted] = await db
     .insert(recipeVersionsTable)
@@ -236,6 +269,7 @@ async function insertNextVersion(
       recipe,
       comments: meta.comments ?? null,
       label: meta.label ?? null,
+      versionName,
     })
     .returning();
 
@@ -262,9 +296,17 @@ export async function createUserRecipe(
     return undefined;
   }
 
-  const [recipeRow] = await db.insert(recipesTable).values({ name, user: user.id }).returning();
+  if (!isValidVersionNameMeta(meta)) {
+    console.warn(`createUserRecipe: invalid version name "${meta.versionName}"`);
+    return undefined;
+  }
 
+  const [recipeRow] = await db.insert(recipesTable).values({ name, user: user.id }).returning();
   const version = await insertNextVersion(recipeRow.id, recipe, meta);
+
+  // A fresh recipe has no prior versions, so the name pre-check can never fire; undefined is a bug
+  verifyDefined(version, "createUserRecipe: insertNextVersion returned undefined for a new recipe");
+
   return { recipeId: recipeRow.id, version };
 }
 
@@ -284,6 +326,11 @@ export async function createUserRecipeVersion(
   const user = await findUserByEmail(userEmail);
   if (!user) {
     console.warn(`createUserRecipeVersion: user not found`);
+    return undefined;
+  }
+
+  if (!isValidVersionNameMeta(meta)) {
+    console.warn(`createUserRecipeVersion: invalid version name "${meta.versionName}"`);
     return undefined;
   }
 
@@ -315,6 +362,11 @@ export async function updateUserRecipeVersion(
     return undefined;
   }
 
+  if (!isValidVersionNameMeta(updates)) {
+    console.warn(`updateUserRecipeVersion: invalid version name "${updates.versionName}"`);
+    return undefined;
+  }
+
   const owned = await findUserRecipe(user.id, recipeId);
   if (!owned) {
     console.warn(`updateUserRecipeVersion: recipeId=${recipeId} not owned by userId=${user.id}`);
@@ -325,6 +377,8 @@ export async function updateUserRecipeVersion(
   if (updates.recipe !== undefined) setClause.recipe = updates.recipe;
   if (updates.comments !== undefined) setClause.comments = updates.comments;
   if (updates.label !== undefined) setClause.label = updates.label;
+  if (updates.versionName !== undefined)
+    setClause.versionName = updates.versionName?.trim() ?? null;
 
   const where = and(
     eq(recipeVersionsTable.recipeId, recipeId),
