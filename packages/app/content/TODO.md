@@ -4,7 +4,6 @@
 
 - [ ] Update blog/2026-04-27-welcome.md date and content to reflect latest release before publish.
 - [ ] Update images for blog/2026-04-27-welcome, to reflect latest release, including fixes.
-- [ ] Update blog/2026-04-27-welcome.md with links for Patreon and Buy Me Coffee accounts.
 
 ## Backlog
 
@@ -17,3 +16,5 @@
 - [ ] Nut butter ice creams: making nut butter - don't burn your Vitamix, stabilizing, etc.
 
 ## Completed
+
+- [x] Update blog/2026-04-27-welcome.md with links for Patreon and Buy Me Coffee accounts.
