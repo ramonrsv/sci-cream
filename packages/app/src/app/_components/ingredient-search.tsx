@@ -19,7 +19,7 @@ import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { useFreeOnReplace, useSeededWasmResources } from "@/lib/wasm-resources";
 import { STATE_VAL } from "@/lib/util";
-import { autoLink } from "@/lib/text";
+import { autoLink } from "@/app/_elements/text";
 
 /** Props for {@link IngredientSearch} */
 export interface IngredientSearchProps {

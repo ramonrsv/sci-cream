@@ -3,7 +3,7 @@
 import { useReportWebVitals } from "next/web-vitals";
 import { useEffect } from "react";
 
-import { HYDRATION_MARK } from "@/app/_elements/web-vitals-mark";
+import { HYDRATION_MARK } from "@/lib/web-vitals-mark";
 
 /** Callback signature accepted by `useReportWebVitals` */
 type ReportWebVitalsCallback = Parameters<typeof useReportWebVitals>[0];

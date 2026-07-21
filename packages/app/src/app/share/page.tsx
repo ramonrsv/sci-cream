@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { ShareViewer } from "./recipe-share-viewer";
+import { ShareViewer } from "@/app/_components/recipe-share-viewer";
 
 /**
  * Static Open Graph card for shared recipes. The payload lives in the URL fragment, which is

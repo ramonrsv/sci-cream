@@ -22,14 +22,14 @@ import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { useSessionResources } from "@/lib/session-resources";
 import { useChecklistState } from "@/lib/use-checklist-state";
 import { usePersistedState } from "@/lib/use-persisted-state";
+import { BatchBuilder } from "@/app/_elements/tables/batch-builder";
 import {
-  BatchBuilder,
   type BatchSelection,
   type BatchSource,
   makeBatchFromSelection,
   readCalculatorSources,
   readSavedSources,
-} from "./batch-builder";
+} from "@/lib/batch-builder";
 
 /** Decode progress of the URL-fragment payload; absent fragment means owner mode. */
 type ViewState =

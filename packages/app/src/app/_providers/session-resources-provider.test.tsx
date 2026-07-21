@@ -10,7 +10,8 @@ import {
   type SavedRecipeJson,
 } from "@/lib/data";
 
-import { SessionResourcesProvider, useSessionResources } from "./session-resources";
+import { SessionResourcesProvider } from "./session-resources-provider";
+import { useSessionResources } from "@/lib/session-resources";
 
 // ---------------------------------------------------------------------------
 // Mocks — the real WASM module is used so the provider builds a genuine bridge.

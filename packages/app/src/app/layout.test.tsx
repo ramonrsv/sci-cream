@@ -33,7 +33,7 @@ vi.mock("next-auth/react", () => ({
   SessionProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 
-vi.mock("@/lib/session-resources", () => ({
+vi.mock("@/app/_providers/session-resources-provider", () => ({
   SessionResourcesProvider: ({ children }: { children: React.ReactNode }) => <>{children}</>,
 }));
 

@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { ShareViewer } from "../recipe-share-viewer";
+import { ShareViewer } from "@/app/_components/recipe-share-viewer";
 
 /** Embed variants exist to live inside third-party iframes; keep them out of search indexes. */
 export const metadata: Metadata = {

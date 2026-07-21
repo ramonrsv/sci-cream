@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 
-import { MakeRecipeView } from "./make-recipe-view";
+import { MakeRecipeView } from "@/app/_components/make-recipe-view";
 
 /** Route metadata: the batch never reaches the server, so this describes the feature instead. */
 export const metadata: Metadata = {

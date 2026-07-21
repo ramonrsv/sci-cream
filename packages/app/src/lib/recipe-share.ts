@@ -1,4 +1,10 @@
 import type { LightRecipe, LightRecipeLine } from "@workspace/sci-cream";
+import {
+  MixProperties,
+  OnConflict,
+  Bridge as WasmBridge,
+  new_ingredient_database_seeded_from_embedded_data,
+} from "@workspace/sci-cream";
 
 import type { Recipe } from "@/lib/recipe";
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
@@ -229,4 +235,63 @@ export function makeShareUrl(encoded: string, origin: string, embed = false): st
  */
 export function makeEmbedSnippet(embedUrl: string): string {
   return `<iframe src="${embedUrl}" width="600" height="675"></iframe>`;
+}
+
+/**
+ * Everything derived from a decoded payload via the viewer's own ephemeral WASM bridge. Any
+ * failure (e.g. an invalid inlined spec) fails the whole link (no partial loads).
+ */
+export type SharedRecipe =
+  | { status: "error"; message: string }
+  | { status: "ready"; bridge: WasmBridge; recipe: Recipe; allResolved: boolean };
+
+/**
+ * Build a viewer's {@link SharedRecipe} from a decoded {@link SharePayload}.
+ *
+ * The ephemeral bridge keeps payload specs from leaking into or shadowing the recipient's session
+ * ingredients. Like the editor, mix properties are calculated from the rows that resolve
+ * (unresolved rows are flagged in the table), and a throwing calculation (e.g. evaporation
+ * exceeding the mix's water) degrades to empty properties via {@link Recipe.mixError}.
+ */
+export function makeSharedRecipe(payload: SharePayload): SharedRecipe {
+  const bridge = new WasmBridge(new_ingredient_database_seeded_from_embedded_data());
+
+  if (payload.s !== undefined) {
+    try {
+      bridge.seed_from_specs(payload.s, OnConflict.Overwrite);
+    } catch (err) {
+      bridge.free();
+      console.error("share: seeding inlined specs failed:", err);
+      return { status: "error", message: new ShareError(ShareErrorKind.InvalidSpec, err).message };
+    }
+  }
+
+  const allResolved = payload.r.every(([name]) => bridge.has_ingredient(name));
+  const mixTotal = payload.r.reduce((sum, [, quantity]) => sum + quantity, 0);
+  const resolvedRows = payload.r.filter(([name]) => bridge.has_ingredient(name));
+  const resolvedTotal = resolvedRows.reduce((sum, [, quantity]) => sum + quantity, 0);
+
+  let mixProperties = new MixProperties();
+  let mixError: string | undefined;
+  try {
+    if (resolvedTotal > 0) {
+      mixProperties = bridge.calculate_recipe_mix_properties(resolvedRows, payload.e);
+    }
+  } catch (err) {
+    console.error("share: mix-property calculation failed:", err);
+    mixError = String(err);
+  }
+
+  const recipe: Recipe = {
+    index: 0,
+    id: "Recipe",
+    name: payload.n,
+    ingredientRows: payload.r.map(([name, quantity], index) => ({ index, name, quantity })),
+    mixTotal,
+    ...(payload.e ? { evaporation: payload.e } : {}),
+    mixProperties,
+    mixError,
+  };
+
+  return { status: "ready", bridge, recipe, allResolved };
 }

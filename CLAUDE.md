@@ -164,12 +164,36 @@ and `dist/`. Notable helpers:
 
 ### Next.js app (`packages/app/src/`)
 
+#### Directory organization
+
+Each kind of file has a consistent home:
+
+- **`src/lib/`** — JSX-free `.ts` only: pure logic, types, data helpers, and React hooks/contexts
+  with no JSX (e.g. `use-*.ts`, and the `group-by` / `session-resources` context + hooks). No
+  `.tsx` files belong here.
+- **`src/app/`** — `.tsx` components and pages, plus route-special files.
+- **`src/app/_components/`** — major/composite components a page renders (calculator panels, the
+  `*-search` composites, `detail-panel`, `make-recipe-view`, `recipe-share-viewer`).
+- **`src/app/_elements/`** — smaller reusable JSX widgets and helpers, grouped in `charts/`,
+  `tables/`, `selects/`, and `watchers/`, with cross-cutting misc (`popup`, `version-badge`,
+  `web-vitals`, `text`, …) at the top level.
+- **`src/app/_providers/`** — app-wide React context providers mounted in the root layout
+  (`GroupByProvider`, `SessionResourcesProvider`); their context + hooks stay JSX-free in `src/lib/`
+- **Route directories** (`calculator/`, `recipes/`, `make-recipe/`, `share/`, …) hold only
+  `page.tsx` and route-special files (`layout.tsx`, `route.ts`) — no ad-hoc component files. The
+  `layout.tsx`, `navbar.tsx`, `globals.css`, and `favicon.ico` at the `src/app` root are the app
+  shell, the one allowed exception.
+
+Pure logic is split out of a `.tsx` when it can stand alone: e.g. `batch-builder`'s reducers live
+in `lib/batch-builder.ts` while its widget lives in `_elements/tables/batch-builder.tsx`.
+
 - **`app/calculator/page.tsx`** — main page; root path redirects here. Renders a responsive
   drag-and-drop grid (`react-grid-layout`) of five `*Panel` composites: `RecipeEditorPanel`,
   `PropertiesPanel`, `CompositionBreakdownPanel`, `PropertiesChartPanel`, `FpdGraphPanel`.
-- **`app/_components/`** — only the calculator's panel composites. Each panel adds grid-layout
-  chrome (drag handle, `grid-component` wrapper, slot filter) around a reusable view from
-  `_elements/`.
+- **`app/_components/`** — major/composite components a page renders. The calculator's `*Panel`
+  composites each add grid-layout chrome (drag handle, `grid-component` wrapper, slot filter)
+  around a reusable view from `_elements/`; the `*-search` composites, `detail-panel`,
+  `make-recipe-view`, and `recipe-share-viewer` sit here too.
 - **`app/_elements/tables/`** and **`app/_elements/charts/`** — reusable widgets. Each component
   file consolidates two layers: a bare presentational element (`PropertiesTable`,
   `CompositionBreakdown`, `PropertiesBarChart`, `RecipeTable`, `RecipeEditorTable`, etc.) and a

@@ -6,14 +6,8 @@ import { render, screen, cleanup, waitFor } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import { useEffect } from "react";
 
-import {
-  GroupBy,
-  GROUP_BY_LABELS,
-  GroupByProvider,
-  isGrouped,
-  groupsWithDuplicates,
-  useGroupBy,
-} from "@/lib/group-by";
+import { GroupBy, GROUP_BY_LABELS, useGroupBy } from "@/lib/group-by";
+import { GroupByProvider } from "@/app/_providers/group-by-provider";
 
 import { GroupBySelect } from "./group-by-select";
 
@@ -89,19 +83,5 @@ describe("GroupBySelect", () => {
     localStorage.setItem("group-by", JSON.stringify(GroupBy.GroupedRepeat));
     render(<TestWrapper />);
     await waitFor(() => expect(currentGroupBy).toBe(GroupBy.GroupedRepeat));
-  });
-});
-
-describe("GroupBy helpers", () => {
-  it("isGrouped is false only for Ungrouped", () => {
-    expect(isGrouped(GroupBy.Ungrouped)).toBe(false);
-    expect(isGrouped(GroupBy.GroupedOnce)).toBe(true);
-    expect(isGrouped(GroupBy.GroupedRepeat)).toBe(true);
-  });
-
-  it("groupsWithDuplicates is true only for GroupedRepeat", () => {
-    expect(groupsWithDuplicates(GroupBy.Ungrouped)).toBe(false);
-    expect(groupsWithDuplicates(GroupBy.GroupedOnce)).toBe(false);
-    expect(groupsWithDuplicates(GroupBy.GroupedRepeat)).toBe(true);
   });
 });

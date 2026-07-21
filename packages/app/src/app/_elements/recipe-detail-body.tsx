@@ -5,7 +5,7 @@ import type { ReactNode } from "react";
 import { RecipeTable } from "@/app/_elements/tables/recipe";
 import { PropertiesView } from "@/app/_elements/tables/properties";
 import { ToolbarSpacer } from "@/app/_elements/selects/toolbar-spacer";
-import { autoLink } from "@/lib/text";
+import { autoLink } from "@/app/_elements/text";
 import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
 import type { Recipe } from "@/lib/recipe";
 

@@ -4,9 +4,6 @@ import { createContext, useContext } from "react";
 
 import type { GroupOptions } from "@workspace/sci-cream";
 
-import { STORAGE_KEYS } from "@/lib/local-storage";
-import { usePersistedState } from "@/lib/use-persisted-state";
-
 /**
  * How a property/composition list is grouped under its roll-up headings.
  *
@@ -66,33 +63,17 @@ export function useOrderKeys<Key>(
 }
 
 /** Returns `true` when `value` is a valid {@link GroupBy} enum value. */
-function isGroupBy(value: unknown): value is GroupBy {
+export function isGroupBy(value: unknown): value is GroupBy {
   return (Object.values(GroupBy) as unknown[]).includes(value);
 }
 
 /** Context carrying the global grouping preference and its setter. */
-const GroupByContext = createContext<{ groupBy: GroupBy; setGroupBy: (groupBy: GroupBy) => void }>({
-  groupBy: GroupBy.Ungrouped,
-  setGroupBy: () => {},
-});
+export const GroupByContext = createContext<{
+  groupBy: GroupBy;
+  setGroupBy: (groupBy: GroupBy) => void;
+}>({ groupBy: GroupBy.Ungrouped, setGroupBy: () => {} });
 
 /** Hook to read the global grouping preference and its setter from any descendant component. */
 export function useGroupBy() {
   return useContext(GroupByContext);
-}
-
-/**
- * Provider for the global {@link GroupBy} preference, persisted to `localStorage`.
- *
- * Starts at {@link GroupBy.Ungrouped} so the first client render matches the server, then restores
- * the persisted choice in mount effect; applying it during render would risk a hydration mismatch.
- */
-export function GroupByProvider({ children }: { children: React.ReactNode }) {
-  const [groupBy, setGroupBy] = usePersistedState<GroupBy>(
-    STORAGE_KEYS.groupBy,
-    GroupBy.Ungrouped,
-    { isValid: isGroupBy },
-  );
-
-  return <GroupByContext value={{ groupBy, setGroupBy }}>{children}</GroupByContext>;
 }
