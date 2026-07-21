@@ -118,6 +118,13 @@ describe("ShareViewer", () => {
   });
 
   describe("mixError degradation", () => {
+    // The WASM calc throws by design here, logging an expected `share:` error; swallow it.
+    let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+    beforeEach(() => {
+      consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    });
+    afterEach(() => consoleErrorSpy.mockRestore());
+
     it("flags the evaporation readout red instead of failing the link", async () => {
       // Evaporation far exceeding the mix's water: the WASM calculation throws
       const payload = makeSharePayload("Evap Overflow", [["Sucrose", 100]], 500);
@@ -133,6 +140,13 @@ describe("ShareViewer", () => {
   });
 
   describe("error states", () => {
+    // Every case drives a failure path that logs an expected `share:` error; swallow it.
+    let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+    beforeEach(() => {
+      consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+    });
+    afterEach(() => consoleErrorSpy.mockRestore());
+
     it("shows the Invalid message for a corrupted fragment", async () => {
       await renderWithHash("not-a-valid-payload");
       expect(await screen.findByTestId("share-error")).toHaveTextContent(/invalid or corrupted/);

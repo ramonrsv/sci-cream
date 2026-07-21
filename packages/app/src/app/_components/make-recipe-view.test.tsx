@@ -1,6 +1,6 @@
 import "@testing-library/jest-dom/vitest";
 
-import { describe, it, expect, beforeEach, afterEach } from "vitest";
+import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
 
 import { MakeRecipeView } from "./make-recipe-view";
@@ -163,6 +163,13 @@ describe("MakeRecipeView — link mode", () => {
 });
 
 describe("MakeRecipeView — invalid links", () => {
+  // Every case drives a decode failure that logs an expected `make-recipe:` error; swallow it.
+  let consoleErrorSpy: ReturnType<typeof vi.spyOn>;
+  beforeEach(() => {
+    consoleErrorSpy = vi.spyOn(console, "error").mockImplementation(() => {});
+  });
+  afterEach(() => consoleErrorSpy.mockRestore());
+
   it("shows a checklist-specific error and no partial checklist", async () => {
     await renderWithHash("not-a-payload");
 
