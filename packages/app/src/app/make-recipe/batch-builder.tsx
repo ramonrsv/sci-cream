@@ -16,6 +16,7 @@ import {
   displayVersion,
 } from "@/lib/batch";
 import { CATEGORY_COLORS, type CategoryColor, categoryColorName } from "@/lib/styles/colors";
+import { colorForPosition, recordColorPick } from "@/lib/batch-colors";
 import { makeBatchRows } from "@/lib/batch-share";
 import type { SavedRecipeJson } from "@/lib/data";
 import { getRecipeStoresFromStorage, makeRecipeId, parseRecipeString } from "@/lib/recipe";
@@ -42,7 +43,7 @@ export interface BatchSelection {
   title?: string;
   date: string;
   notes?: string;
-  /** Chosen sources in batch order; `color` is set only where the owner picked one. */
+  /** Chosen sources in batch order; `color` is absent only in a selection stored before colors. */
   items: { sourceId: string; color?: CategoryColor }[];
 }
 
@@ -240,7 +241,8 @@ export function BatchBuilder({
 
   const addSource = (sourceId: string) => {
     if (full || !sources.some((s) => s.id === sourceId)) return;
-    onChange({ ...selection, items: [...selection.items, { sourceId }] });
+    const color = colorForPosition(selection.items.length);
+    onChange({ ...selection, items: [...selection.items, { sourceId, color }] });
   };
 
   const removeAt = (index: number) => {
@@ -248,6 +250,7 @@ export function BatchBuilder({
   };
 
   const colorAt = (index: number, color: CategoryColor) => {
+    recordColorPick(index, color);
     onChange({
       ...selection,
       items: selection.items.map((item, i) => (i === index ? { ...item, color } : item)),

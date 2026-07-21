@@ -12,7 +12,8 @@ import {
   makeBatchPayload,
   type BatchPayload,
 } from "@/lib/batch-share";
-import { STORAGE_KEYS, setLocalStorage } from "@/lib/local-storage";
+import { STORAGE_KEYS, getLocalStorage, setLocalStorage } from "@/lib/local-storage";
+import { CategoryColor } from "@/lib/styles/colors";
 
 /** A two-recipe batch sharing "Sucrose", so merging is exercised by default. */
 const BATCH: Batch = {
@@ -265,6 +266,42 @@ describe("MakeRecipeView — owner mode", () => {
     fireEvent.change(screen.getByTestId("batch-add-recipe"), { target: { value: "slot:1" } });
     expect(screen.getByTestId("checklist-cell-0-Whole Milk")).toHaveTextContent(/^1000$/);
     expect(screen.getByTestId("batch-progress")).toHaveTextContent("0 of 1 weighed");
+  });
+
+  // Resolved when the recipe joins the batch, not when it is drawn: only then does the color the
+  // owner sees ride the link, instead of the recipient recomputing one from their own sequence.
+  it("writes a concrete color into the selection as a recipe is added", async () => {
+    setLocalStorage(STORAGE_KEYS.recipeStores, [
+      { name: "My Gelato", serializedRows: "Whole Milk\t500" },
+    ]);
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-builder");
+
+    fireEvent.change(screen.getByTestId("batch-add-recipe"), { target: { value: "slot:0" } });
+
+    expect(getLocalStorage(STORAGE_KEYS.makeRecipeBatch)).toMatchObject({
+      items: [{ sourceId: "slot:0", color: CategoryColor.Blue }],
+    });
+  });
+
+  it("makes a picked color the default for that position in the next batch", async () => {
+    setLocalStorage(STORAGE_KEYS.recipeStores, [
+      { name: "My Gelato", serializedRows: "Whole Milk\t500" },
+    ]);
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-builder");
+
+    fireEvent.change(screen.getByTestId("batch-add-recipe"), { target: { value: "slot:0" } });
+    expect(screen.getByTestId("builder-color-button").getAttribute("aria-label")).toContain("Blue");
+
+    fireEvent.click(screen.getByTestId("builder-color-button"));
+    fireEvent.click(await screen.findByTestId("builder-color-White"));
+
+    // Build the batch afresh: position 0 now starts on the color the owner moved there
+    fireEvent.click(screen.getByTestId("builder-remove-0"));
+    fireEvent.change(screen.getByTestId("batch-add-recipe"), { target: { value: "slot:0" } });
+    const relabelled = screen.getByTestId("builder-color-button").getAttribute("aria-label");
+    expect(relabelled).toContain("White");
   });
 
   it("drops a selected slot that no longer exists rather than failing", async () => {

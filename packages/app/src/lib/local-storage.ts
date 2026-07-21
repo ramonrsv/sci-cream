@@ -33,6 +33,8 @@ export const STORAGE_KEYS = {
   // `${root}:h<hash>` per batch, plus `${root}:index` holding the MRU list for eviction)
   makeRecipeBatch: "make-recipe-batch",
   makeRecipeChecklist: "make-recipe-checklist",
+  // The owner's container colors, in the order recipes take them (see `batch-colors.ts`)
+  makeRecipeColors: "make-recipe-colors",
 } as const;
 
 // Touching `window.localStorage` at all throws a `SecurityError` when storage is denied — e.g.
