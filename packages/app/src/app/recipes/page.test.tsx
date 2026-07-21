@@ -17,8 +17,8 @@ import {
   type SavedRecipeJson,
   type SavedRecipeVersionJson,
 } from "@/lib/data";
-import { useSessionResources, type SessionResources } from "@/lib/session-resources";
-import type { WasmResourcesState } from "@/lib/wasm-resources";
+import { useSessionResources, type SessionResources } from "@/lib/resources/session-resources";
+import type { WasmResourcesState } from "@/lib/resources/wasm-resources";
 
 import RecipesPage from "./page";
 import { STORAGE_KEYS } from "@/lib/local-storage";
@@ -38,7 +38,7 @@ vi.mock("@/lib/data", () => ({
   deleteUserRecipeVersion: vi.fn().mockResolvedValue(undefined),
   updateUserRecipeVersion: vi.fn().mockResolvedValue(undefined),
 }));
-vi.mock("@/lib/session-resources", () => ({ useSessionResources: vi.fn() }));
+vi.mock("@/lib/resources/session-resources", () => ({ useSessionResources: vi.fn() }));
 vi.mock("@/app/_components/recipe-search", async (importOriginal) => {
   const actual = await importOriginal<typeof import("@/app/_components/recipe-search")>();
   return { ...actual, RecipeSearch: vi.fn(() => null) };

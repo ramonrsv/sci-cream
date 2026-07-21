@@ -1,6 +1,6 @@
 "use client";
 
-import { Select } from "./select";
+import { Select } from "@/app/_elements/selects/select";
 
 /**
  * An invisible, single-row stand-in that occupies the same height as a selects toolbar.

@@ -34,7 +34,7 @@ import {
   makeBalanceLocks,
   makeLightRecipe,
   recipeHasIngredients,
-} from "@/lib/recipe";
+} from "@/lib/recipe/recipe";
 import {
   KeyFilter,
   KeyFilterSelect,
@@ -60,7 +60,7 @@ import {
   useColorModeState,
 } from "@/app/_elements/selects/color-toggle-select";
 import { STORAGE_KEYS } from "@/lib/local-storage";
-import { leafKey, usePersistedState } from "@/lib/use-persisted-state";
+import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { STATE_VAL, STATE_SET, verify } from "@/lib/util";
 
@@ -86,7 +86,7 @@ import {
   DeltaToggle,
   DeltaToggleSelect,
   useDeltaToggleState,
-} from "../selects/delta-toggle-select";
+} from "@/app/_elements/selects/delta-toggle-select";
 
 /** Map of `PropKey` to user-entered target value; sparse, only set entries are tracked */
 export type TargetsMap = Partial<Record<PropKey, number>>;

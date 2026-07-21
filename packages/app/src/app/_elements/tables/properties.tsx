@@ -2,7 +2,7 @@
 
 import { Fragment, ReactNode } from "react";
 
-import { RecipeSummary, effectiveMixTotal, isRecipeEmpty } from "@/lib/recipe";
+import { RecipeSummary, effectiveMixTotal, isRecipeEmpty } from "@/lib/recipe/recipe";
 import {
   KeyFilterSelect,
   getEnabledKeys,

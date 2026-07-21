@@ -11,7 +11,7 @@ import {
 
 import { makeMockRecipe } from "@/__tests__/unit/util";
 import { RecipeID } from "@/__tests__/assets";
-import { makeEmptyRecipe } from "@/lib/recipe";
+import { makeEmptyRecipe } from "@/lib/recipe/recipe";
 
 // ---------------------------------------------------------------------------
 // groupEnabledCompKeys

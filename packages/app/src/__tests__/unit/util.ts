@@ -3,7 +3,7 @@ import "@testing-library/jest-dom/vitest";
 import { expect } from "vitest";
 import { screen, fireEvent, waitFor, within } from "@testing-library/react";
 
-import { makeEmptyRecipe, makeEmptyRecipeContext } from "@/lib/recipe";
+import { makeEmptyRecipe, makeEmptyRecipeContext } from "@/lib/recipe/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle, QTY_TOGGLE_SHORT_LABELS } from "@/app/_elements/selects/qty-toggle-select";
 import { NormMode, NORM_MODE_SHORT_LABELS } from "@/app/_elements/selects/normalize-toggle-select";

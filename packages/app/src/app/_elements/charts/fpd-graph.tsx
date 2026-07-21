@@ -16,7 +16,7 @@ import {
   type ScriptableScaleContext,
 } from "chart.js";
 
-import { RecipeSummary } from "@/lib/recipe";
+import { RecipeSummary } from "@/lib/recipe/recipe";
 import { useThemeRepaint } from "@/lib/theme";
 import {
   TOOLTIP_CORNER_RADIUS,

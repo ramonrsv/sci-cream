@@ -1,6 +1,6 @@
 import { test, expect, type Page } from "@playwright/test";
 
-import type { Batch } from "@/lib/batch";
+import type { Batch } from "@/lib/batch/batch";
 import { goToPageAndWaitFor } from "@/__tests__/e2e/util";
 import { setViewportHeightForAllAppContentScreenshot } from "@/__tests__/visual/util";
 import {
@@ -8,7 +8,7 @@ import {
   VIEWPORT_MOBILE_SMALL_PORTRAIT,
   VIEWPORT_TABLET_PORTRAIT,
 } from "@/__tests__/visual/assets";
-import { encodeBatchPayload, makeBatchPayload } from "@/lib/batch-share";
+import { encodeBatchPayload, makeBatchPayload } from "@/lib/batch/batch-share";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { CategoryColor } from "@/lib/styles/colors";
 

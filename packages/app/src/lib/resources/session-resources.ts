@@ -3,7 +3,10 @@
 import { createContext, useContext } from "react";
 
 import type { IngredientTransfer, SavedRecipeJson } from "@/lib/data";
-import { makeWasmResourcesFromEmbeddedData, type WasmResourcesState } from "@/lib/wasm-resources";
+import {
+  makeWasmResourcesFromEmbeddedData,
+  type WasmResourcesState,
+} from "@/lib/resources/wasm-resources";
 
 /**
  * Session-scoped resources shared across every route.

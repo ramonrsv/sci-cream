@@ -2,9 +2,9 @@ import { describe, it, expect } from "vitest";
 
 import type { LightRecipe } from "@workspace/sci-cream";
 
-import type { Batch } from "@/lib/batch";
-import { MAX_BATCH_RECIPES } from "@/lib/batch";
-import { MAX_SHARE_COMMENT_CHARS, MAX_SHARE_NAME_CHARS } from "@/lib/recipe-share";
+import type { Batch } from "@/lib/batch/batch";
+import { MAX_BATCH_RECIPES } from "@/lib/batch/batch";
+import { MAX_SHARE_COMMENT_CHARS, MAX_SHARE_NAME_CHARS } from "@/lib/recipe/recipe-share";
 import { CategoryColor } from "@/lib/styles/colors";
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import {

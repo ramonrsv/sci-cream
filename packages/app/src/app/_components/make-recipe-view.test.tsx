@@ -4,14 +4,14 @@ import { describe, it, expect, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
 
 import { MakeRecipeView } from "./make-recipe-view";
-import { type Batch, batchChecklistKey, cellKey } from "@/lib/batch";
+import { type Batch, batchChecklistKey, cellKey } from "@/lib/batch/batch";
 import {
   MAX_BATCH_ENCODED_CHARS,
   BATCH_PAYLOAD_VERSION,
   encodeBatchPayload,
   makeBatchPayload,
   type BatchPayload,
-} from "@/lib/batch-share";
+} from "@/lib/batch/batch-share";
 import { STORAGE_KEYS, getLocalStorage, setLocalStorage } from "@/lib/local-storage";
 import { CategoryColor } from "@/lib/styles/colors";
 

@@ -13,7 +13,7 @@ import {
   recipeVersionsTable,
 } from "@/lib/database/schema";
 import { verifyDefined } from "@/lib/util";
-import * as schema from "./schema";
+import * as schema from "@/lib/database/schema";
 
 import {
   IngredientSpecJson,

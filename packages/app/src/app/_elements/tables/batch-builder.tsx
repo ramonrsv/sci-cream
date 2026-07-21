@@ -11,10 +11,10 @@ import {
   batchRecipeColor,
   batchRecipeLetter,
   displayVersion,
-} from "@/lib/batch";
+} from "@/lib/batch/batch";
 import { CATEGORY_COLORS, type CategoryColor, categoryColorName } from "@/lib/styles/colors";
-import { colorForPosition, recordColorPick } from "@/lib/batch-colors";
-import { type BatchSelection, type BatchSource } from "@/lib/batch-builder";
+import { colorForPosition, recordColorPick } from "@/lib/batch/batch-colors";
+import { type BatchSelection, type BatchSource } from "@/lib/batch/batch-builder";
 
 /** Color picker worn by the recipe's own badge, which already shows the color. */
 function ColorPicker({

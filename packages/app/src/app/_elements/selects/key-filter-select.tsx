@@ -3,7 +3,7 @@
 import { useState, type Dispatch, type SetStateAction } from "react";
 import { X, Settings } from "lucide-react";
 
-import { leafKey, usePersistedState } from "@/lib/use-persisted-state";
+import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
 
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";

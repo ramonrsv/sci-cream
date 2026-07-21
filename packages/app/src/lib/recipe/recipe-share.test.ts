@@ -4,7 +4,7 @@ import { deflateRawSync } from "node:zlib";
 import type { LightRecipe } from "@workspace/sci-cream";
 
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
-import { makeEmptyRecipe } from "@/lib/recipe";
+import { makeEmptyRecipe } from "@/lib/recipe/recipe";
 import {
   MAX_DECODED_BYTES,
   MAX_ENCODED_CHARS,

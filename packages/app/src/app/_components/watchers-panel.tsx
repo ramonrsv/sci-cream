@@ -3,7 +3,7 @@
 import type { Dispatch, SetStateAction } from "react";
 import { GripVertical } from "lucide-react";
 
-import { Recipe } from "@/lib/recipe";
+import { Recipe } from "@/lib/recipe/recipe";
 import { WatchersView, type TargetsMap } from "@/app/_elements/watchers/watchers";
 import { DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
 

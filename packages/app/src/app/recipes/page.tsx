@@ -4,14 +4,14 @@ import { useRouter } from "next/navigation";
 import { useSession } from "next-auth/react";
 
 import { RecipeSearch, type GroupedRecipe } from "@/app/_components/recipe-search";
-import { useSessionResources } from "@/lib/session-resources";
+import { useSessionResources } from "@/lib/resources/session-resources";
 import { MAX_RECIPES } from "@/lib/styles/sizes";
 
 import {
   getRecipeStoresFromStorage,
   setRecipeStoresToStorage,
   type RecipeStore,
-} from "@/lib/recipe";
+} from "@/lib/recipe/recipe";
 import { verify } from "@/lib/util";
 
 import {

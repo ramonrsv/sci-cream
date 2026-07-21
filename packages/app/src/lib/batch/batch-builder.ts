@@ -1,9 +1,9 @@
 import type { LightRecipe } from "@workspace/sci-cream";
 
-import { type Batch, type BatchRecipe } from "@/lib/batch";
-import { makeBatchRows } from "@/lib/batch-share";
+import { type Batch, type BatchRecipe } from "@/lib/batch/batch";
+import { makeBatchRows } from "@/lib/batch/batch-share";
 import type { SavedRecipeJson } from "@/lib/data";
-import { getRecipeStoresFromStorage, makeRecipeId, parseRecipeString } from "@/lib/recipe";
+import { getRecipeStoresFromStorage, makeRecipeId, parseRecipeString } from "@/lib/recipe/recipe";
 import type { CategoryColor } from "@/lib/styles/colors";
 
 /** A recipe the user can add to the batch, from either a calculator slot or a saved version. */

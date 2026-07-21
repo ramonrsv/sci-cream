@@ -10,7 +10,7 @@ import {
 } from "@/__tests__/e2e/util";
 import { setViewportHeightForAllAppContentScreenshot } from "@/__tests__/visual/util";
 import { TEST_USER_B } from "@/lib/database/assets";
-import { encodeSharePayload, makeSharePayload } from "@/lib/recipe-share";
+import { encodeSharePayload, makeSharePayload } from "@/lib/recipe/recipe-share";
 
 /** Encode the given recipe into a share link and open it, waiting for the viewer to render. */
 async function goToShareLink(

@@ -5,13 +5,13 @@ import { Share2 } from "lucide-react";
 
 import { CopyableField } from "@/app/_elements/copyable-field";
 import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";
-import type { Batch } from "@/lib/batch";
+import type { Batch } from "@/lib/batch/batch";
 import {
   BATCH_URL_WARN_CHARS,
   encodeBatchPayload,
   makeBatchPayload,
   makeBatchUrl,
-} from "@/lib/batch-share";
+} from "@/lib/batch/batch-share";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 
 /** Dialog body: builds the handoff link for the current batch and offers it for copying. */

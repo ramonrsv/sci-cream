@@ -38,7 +38,7 @@ import {
   setRecipeStoresToStorage,
   getRecipeStoresFromStorage,
   withRecipeIdentity,
-} from "@/lib/recipe";
+} from "@/lib/recipe/recipe";
 
 import {
   createUserRecipe,
@@ -47,8 +47,8 @@ import {
   updateUserRecipeVersion,
 } from "@/lib/data";
 
-import { makeShareRows } from "@/lib/recipe-share";
-import { useSessionResources } from "@/lib/session-resources";
+import { makeShareRows } from "@/lib/recipe/recipe-share";
+import { useSessionResources } from "@/lib/resources/session-resources";
 import { RecipeSelect, useRecipeIdxState } from "@/app/_elements/selects/recipe-select";
 import { ShareRecipeAction } from "@/app/_elements/recipe-share-dialog";
 import { VersionBadge } from "@/app/_elements/version-badge";

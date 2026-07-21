@@ -8,7 +8,7 @@ import {
   effectiveMixTotal,
   isRecipeEmpty,
   getRecipeIndices,
-} from "@/lib/recipe";
+} from "@/lib/recipe/recipe";
 import {
   KeyFilterSelect,
   getEnabledKeys,

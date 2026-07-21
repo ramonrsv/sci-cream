@@ -10,7 +10,7 @@ import {
   loginAsTestUserWithCredentials,
 } from "@/__tests__/e2e/util";
 import { TEST_USER_B } from "@/lib/database/assets";
-import { encodeSharePayload, makeSharePayload, type SharePayload } from "@/lib/recipe-share";
+import { encodeSharePayload, makeSharePayload, type SharePayload } from "@/lib/recipe/recipe-share";
 
 // Filling recipes involves many UI updates; generous timeout for parallel/underpowered runs.
 const EXPECT_TIMEOUT_MS = 12000;

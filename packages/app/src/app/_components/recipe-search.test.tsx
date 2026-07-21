@@ -6,7 +6,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, fireEvent, cleanup, within, act } from "@testing-library/react";
 
 import { type RecipeEntryJson } from "@workspace/sci-cream";
-import { makeWasmResources, useSeededWasmResources } from "@/lib/wasm-resources";
+import { makeWasmResources, useSeededWasmResources } from "@/lib/resources/wasm-resources";
 import {
   RecipeSearch,
   adaptEmbeddedToGrouped,
@@ -59,8 +59,8 @@ vi.mock("@workspace/sci-cream", async (importOriginal) => {
   return { ...actual, allRecipeEntries: MOCK_EMBEDDED_ENTRIES };
 });
 
-vi.mock("@/lib/wasm-resources", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/lib/wasm-resources")>();
+vi.mock("@/lib/resources/wasm-resources", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/resources/wasm-resources")>();
   return { ...actual, useSeededWasmResources: vi.fn() };
 });
 

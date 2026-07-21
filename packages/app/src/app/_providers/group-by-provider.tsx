@@ -2,7 +2,7 @@
 
 import { GroupBy, GroupByContext, isGroupBy } from "@/lib/group-by";
 import { STORAGE_KEYS } from "@/lib/local-storage";
-import { usePersistedState } from "@/lib/use-persisted-state";
+import { usePersistedState } from "@/lib/hooks/use-persisted-state";
 
 /**
  * Provider for the global {@link GroupBy} preference, persisted to `localStorage`.

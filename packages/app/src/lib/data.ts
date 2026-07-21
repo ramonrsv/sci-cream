@@ -6,7 +6,7 @@ import { eq, and, sql } from "drizzle-orm";
 
 import type { LightRecipe } from "@workspace/sci-cream";
 
-import { getDatabaseUrl } from "./database/util";
+import { getDatabaseUrl } from "@/lib/database/util";
 import {
   UserSelect,
   UserInsert,
@@ -16,8 +16,8 @@ import {
   recipesTable,
   recipeVersionsTable,
   RecipeSelect,
-} from "./database/schema";
-import * as schema from "./database/schema";
+} from "@/lib/database/schema";
+import * as schema from "@/lib/database/schema";
 
 /** Drizzle database client used by all server actions in this module */
 const db = drizzle(getDatabaseUrl(), { schema });

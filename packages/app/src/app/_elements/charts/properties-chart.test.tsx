@@ -17,7 +17,7 @@ import { computeMeterDomain, valueToMeterPct } from "@/app/_elements/range-meter
 import { NormMode, NORM_MODE_SHORT_LABELS } from "@/app/_elements/selects/normalize-toggle-select";
 import { ColorMode } from "@/app/_elements/selects/color-toggle-select";
 import type { TargetsMap } from "@/app/_elements/watchers/watchers";
-import { filterActiveSlots } from "@/lib/recipe";
+import { filterActiveSlots } from "@/lib/recipe/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
 import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
@@ -150,7 +150,7 @@ vi.mock("react-chartjs-2", () => ({
 // leaves the chart at its unmeasured vertical orientation, matching production's first paint.
 let mockSize: { width: number; height: number } | null = null;
 
-vi.mock("@/lib/use-element-size", () => ({
+vi.mock("@/lib/hooks/use-element-size", () => ({
   useElementSize: () => ({ ref: { current: null }, size: mockSize }),
 }));
 

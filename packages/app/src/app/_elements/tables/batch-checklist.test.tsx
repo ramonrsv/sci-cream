@@ -3,7 +3,7 @@ import "@testing-library/jest-dom/vitest";
 import { describe, it, expect, afterEach } from "vitest";
 import { render, screen, cleanup } from "@testing-library/react";
 
-import type { Batch } from "@/lib/batch";
+import type { Batch } from "@/lib/batch/batch";
 import { BatchChecklist } from "@/app/_elements/tables/batch-checklist";
 import { CATEGORY_COLORS, CategoryColor } from "@/lib/styles/colors";
 

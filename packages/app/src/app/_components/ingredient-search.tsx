@@ -17,7 +17,7 @@ import { CompositionView } from "@/app/_elements/tables/composition";
 import { ToolbarSpacer } from "@/app/_elements/selects/toolbar-spacer";
 import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
 import { STORAGE_KEYS } from "@/lib/local-storage";
-import { useFreeOnReplace, useSeededWasmResources } from "@/lib/wasm-resources";
+import { useFreeOnReplace, useSeededWasmResources } from "@/lib/resources/wasm-resources";
 import { STATE_VAL } from "@/lib/util";
 import { autoLink } from "@/app/_elements/text";
 

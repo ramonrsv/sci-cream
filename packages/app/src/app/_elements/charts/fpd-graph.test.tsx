@@ -14,7 +14,7 @@ import {
   REFERENCE_TICK_ALPHA,
 } from "@/lib/styles/colors";
 import { FpdGraph } from "@/app/_elements/charts/fpd-graph";
-import { filterActiveSlots } from "@/lib/recipe";
+import { filterActiveSlots } from "@/lib/recipe/recipe";
 
 import { RecipeID } from "@/__tests__/assets";
 import { makeMockRecipe, makeMockRecipeContext } from "@/__tests__/unit/util";

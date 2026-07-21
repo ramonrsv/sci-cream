@@ -8,9 +8,13 @@ import { type SetStateAction, useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
-import { makeEmptyRecipeContext, type RecipeContext, RecipeContextState } from "@/lib/recipe";
-import { makeWasmResources, WasmResources } from "@/lib/wasm-resources";
-import { useSessionResources, type SessionResources } from "@/lib/session-resources";
+import {
+  makeEmptyRecipeContext,
+  type RecipeContext,
+  RecipeContextState,
+} from "@/lib/recipe/recipe";
+import { makeWasmResources, WasmResources } from "@/lib/resources/wasm-resources";
+import { useSessionResources, type SessionResources } from "@/lib/resources/session-resources";
 import {
   createUserRecipe,
   createUserRecipeVersion,
@@ -47,7 +51,7 @@ vi.mock("next-auth/react", () => ({
   useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
 }));
 
-vi.mock("@/lib/session-resources", () => ({ useSessionResources: vi.fn() }));
+vi.mock("@/lib/resources/session-resources", () => ({ useSessionResources: vi.fn() }));
 
 vi.mock("@/lib/data", () => ({
   createUserRecipe: vi

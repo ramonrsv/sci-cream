@@ -4,9 +4,13 @@ import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
 
-import { makeEmptyRecipeContext, type RecipeContext, RecipeContextState } from "@/lib/recipe";
-import { makeWasmResources, WasmResources } from "@/lib/wasm-resources";
-import { useSessionResources, type SessionResources } from "@/lib/session-resources";
+import {
+  makeEmptyRecipeContext,
+  type RecipeContext,
+  RecipeContextState,
+} from "@/lib/recipe/recipe";
+import { makeWasmResources, WasmResources } from "@/lib/resources/wasm-resources";
+import { useSessionResources, type SessionResources } from "@/lib/resources/session-resources";
 import { RecipeEditorPanel } from "./recipe-editor-panel";
 
 import {
@@ -20,7 +24,7 @@ vi.mock("next-auth/react", () => ({
 
 vi.mock("@/lib/data", () => ({ upsertUserRecipe: vi.fn() }));
 
-vi.mock("@/lib/session-resources", () => ({ useSessionResources: vi.fn() }));
+vi.mock("@/lib/resources/session-resources", () => ({ useSessionResources: vi.fn() }));
 
 describe("RecipeEditorPanel", () => {
   let recipeContext: RecipeContext;

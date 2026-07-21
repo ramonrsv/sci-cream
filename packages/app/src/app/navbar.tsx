@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext, useState, useEffect } from "react";
-import { usePersistedState } from "@/lib/use-persisted-state";
+import { usePersistedState } from "@/lib/hooks/use-persisted-state";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";

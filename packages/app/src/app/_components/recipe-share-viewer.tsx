@@ -6,7 +6,11 @@ import { useRouter } from "next/navigation";
 import { LoadAction } from "@/app/_components/detail-panel";
 import { RecipeComments, RecipeDetailBody } from "@/app/_elements/recipe-detail-body";
 import { STORAGE_KEYS } from "@/lib/local-storage";
-import { getRecipeStoresFromStorage, makeRecipeId, setRecipeStoresToStorage } from "@/lib/recipe";
+import {
+  getRecipeStoresFromStorage,
+  makeRecipeId,
+  setRecipeStoresToStorage,
+} from "@/lib/recipe/recipe";
 import {
   SHARE_ERROR_MESSAGES,
   ShareError,
@@ -15,8 +19,8 @@ import {
   makeSharedRecipe,
   decodeSharePayload,
   type SharePayload,
-} from "@/lib/recipe-share";
-import { useFreeOnReplace } from "@/lib/wasm-resources";
+} from "@/lib/recipe/recipe-share";
+import { useFreeOnReplace } from "@/lib/resources/wasm-resources";
 import { MAX_RECIPES } from "@/lib/styles/sizes";
 
 /** Decode progress of the URL-fragment payload; `ready` carries the raw encoding for re-linking */

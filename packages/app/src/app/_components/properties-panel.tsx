@@ -2,7 +2,7 @@
 
 import { GripVertical } from "lucide-react";
 
-import { Recipe, filterActiveSlots } from "@/lib/recipe";
+import { Recipe, filterActiveSlots } from "@/lib/recipe/recipe";
 import { PropertiesView } from "@/app/_elements/tables/properties";
 import { DRAG_HANDLE_ICON_SIZE } from "@/lib/styles/sizes";
 import { STORAGE_KEYS } from "@/lib/local-storage";

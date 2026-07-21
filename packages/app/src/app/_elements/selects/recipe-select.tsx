@@ -1,10 +1,10 @@
 "use client";
 
-import { Recipe } from "@/lib/recipe";
-import { leafKey, usePersistedState } from "@/lib/use-persisted-state";
+import { Recipe } from "@/lib/recipe/recipe";
+import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
 import { MAX_RECIPES } from "@/lib/styles/sizes";
 
-import { Select, type SelectOption } from "./select";
+import { Select, type SelectOption } from "@/app/_elements/selects/select";
 
 /** Returns `slot` if it is a valid recipe index, otherwise 0 */
 export function recipeSlotOrDefault(slot: number): number {

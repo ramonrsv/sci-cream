@@ -6,16 +6,16 @@ import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/re
 import type { LightRecipe } from "@workspace/sci-cream";
 
 import { ShareRecipeAction } from "./recipe-share-dialog";
-import { useSessionResources, type SessionResources } from "@/lib/session-resources";
+import { useSessionResources, type SessionResources } from "@/lib/resources/session-resources";
 import { USER_DEFINED_FRUCTOSE_SPEC } from "@/lib/database/assets";
-import { decodeSharePayload, type SharePayload } from "@/lib/recipe-share";
+import { decodeSharePayload, type SharePayload } from "@/lib/recipe/recipe-share";
 
 // ---------------------------------------------------------------------------
 // Mocks
 // ---------------------------------------------------------------------------
 
-vi.mock("@/lib/session-resources", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/lib/session-resources")>();
+vi.mock("@/lib/resources/session-resources", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/resources/session-resources")>();
   return { ...actual, useSessionResources: vi.fn() };
 });
 

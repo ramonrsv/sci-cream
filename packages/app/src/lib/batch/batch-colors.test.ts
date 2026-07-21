@@ -1,8 +1,8 @@
 import { describe, it, expect, beforeEach } from "vitest";
 
 import { colorForPosition, loadColorSequence, recordColorPick } from "./batch-colors";
-import { STORAGE_KEYS, setLocalStorage } from "./local-storage";
-import { CATEGORY_COLORS, CategoryColor } from "./styles/colors";
+import { STORAGE_KEYS, setLocalStorage } from "@/lib/local-storage";
+import { CATEGORY_COLORS, CategoryColor } from "@/lib/styles/colors";
 
 /** The stored form: names, as another browser session would find them. */
 function storedNames(): unknown {

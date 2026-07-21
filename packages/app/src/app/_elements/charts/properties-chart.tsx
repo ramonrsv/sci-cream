@@ -18,7 +18,7 @@ import {
   type TooltipItem,
 } from "chart.js";
 
-import { Recipe, RecipeSummary, isRecipeEmpty } from "@/lib/recipe";
+import { Recipe, RecipeSummary, isRecipeEmpty } from "@/lib/recipe/recipe";
 import type { TargetsMap } from "@/app/_elements/watchers/watchers";
 import { useThemeRepaint } from "@/lib/theme";
 import {
@@ -42,7 +42,7 @@ import {
 import { useOrderKeys } from "@/lib/group-by";
 import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
 import { prefersReducedMotion } from "@/lib/styles/motion";
-import { useElementSize } from "@/lib/use-element-size";
+import { useElementSize } from "@/lib/hooks/use-element-size";
 import {
   TOOLTIP_CORNER_RADIUS,
   TOOLTIP_PADDING,

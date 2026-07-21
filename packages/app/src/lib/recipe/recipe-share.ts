@@ -6,7 +6,7 @@ import {
   new_ingredient_database_seeded_from_embedded_data,
 } from "@workspace/sci-cream";
 
-import type { Recipe } from "@/lib/recipe";
+import type { Recipe } from "@/lib/recipe/recipe";
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import {
   PayloadErrorKind,

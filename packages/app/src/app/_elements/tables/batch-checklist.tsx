@@ -10,7 +10,7 @@ import {
   cellKey,
   displayVersion,
   mergeBatchRows,
-} from "@/lib/batch";
+} from "@/lib/batch/batch";
 import { VersionBadge } from "@/app/_elements/version-badge";
 import { type CategoryColor, categoryColorInk } from "@/lib/styles/colors";
 

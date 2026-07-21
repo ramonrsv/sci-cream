@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 
 import { type BatchSelection, makeBatchFromSelection, readSavedSources } from "./batch-builder";
-import { displayVersion } from "@/lib/batch";
+import { displayVersion } from "@/lib/batch/batch";
 import type { SavedRecipeJson, SavedRecipeVersionJson } from "@/lib/data";
 
 /** A saved version carrying one row, enough to be a usable batch source. */

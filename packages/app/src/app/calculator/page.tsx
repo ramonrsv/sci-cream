@@ -22,15 +22,15 @@ import {
   makeEmptyRecipeContext,
   makeUpdatedRecipe,
   makeUpdatedRecipeContext,
-} from "@/lib/recipe";
+} from "@/lib/recipe/recipe";
 import { RecipeEditorPanel } from "@/app/_components/recipe-editor-panel";
 import type { TargetsMap } from "@/app/_elements/watchers/watchers";
-import { useSeededWasmResources } from "@/lib/wasm-resources";
+import { useSeededWasmResources } from "@/lib/resources/wasm-resources";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
 import { slotFromParam } from "@/app/_elements/selects/recipe-select";
 import { loadStoredLayouts, onLayoutReset, saveLayouts } from "@/lib/calculator-layout";
 import { STORAGE_KEYS } from "@/lib/local-storage";
-import { usePersistedState } from "@/lib/use-persisted-state";
+import { usePersistedState } from "@/lib/hooks/use-persisted-state";
 import { STATE_VAL, STATE_SET } from "@/lib/util";
 
 /**

@@ -15,7 +15,7 @@ import {
   encodeSharePayload,
   makeSharePayload,
   type SharePayload,
-} from "@/lib/recipe-share";
+} from "@/lib/recipe/recipe-share";
 
 // ---------------------------------------------------------------------------
 // Mocks

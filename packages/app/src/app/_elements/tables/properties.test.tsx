@@ -14,7 +14,7 @@ import {
   PropertiesView,
   DEFAULT_SELECTED_PROPERTIES,
 } from "@/app/_elements/tables/properties";
-import { RecipeSummary, filterActiveSlots } from "@/lib/recipe";
+import { RecipeSummary, filterActiveSlots } from "@/lib/recipe/recipe";
 import { QtyToggle, QTY_TOGGLE_SHORT_LABELS } from "@/app/_elements/selects/qty-toggle-select";
 import {
   DeltaToggle,

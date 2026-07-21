@@ -3,7 +3,7 @@
 import { ReactNode, useMemo, useState } from "react";
 import { Search } from "lucide-react";
 
-import { leafKey, usePersistedState } from "@/lib/use-persisted-state";
+import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
 
 /** Sources of entries displayed by an {@link EntitySearch}, including `All` */
 export enum EntitySource {

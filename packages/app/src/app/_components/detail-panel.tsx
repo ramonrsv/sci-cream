@@ -5,7 +5,7 @@ import { Trash } from "lucide-react";
 
 import { EntitySource } from "@/app/_components/entity-search";
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
-import { leafKey, usePersistedState } from "@/lib/use-persisted-state";
+import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
 import { isValidSlotStore } from "@/app/_elements/selects/recipe-select";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 

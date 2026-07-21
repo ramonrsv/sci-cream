@@ -4,9 +4,9 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, cleanup } from "@testing-library/react";
 
 import { IngredientSearch, type IngredientSearchProps } from "@/app/_components/ingredient-search";
-import { useSessionResources, type SessionResources } from "@/lib/session-resources";
+import { useSessionResources, type SessionResources } from "@/lib/resources/session-resources";
 import type { IngredientTransfer } from "@/lib/data";
-import type { WasmResourcesState } from "@/lib/wasm-resources";
+import type { WasmResourcesState } from "@/lib/resources/wasm-resources";
 
 import IngredientsPage from "./page";
 
@@ -15,7 +15,7 @@ import IngredientsPage from "./page";
 // ---------------------------------------------------------------------------
 
 vi.mock("@/app/_components/ingredient-search", () => ({ IngredientSearch: vi.fn(() => null) }));
-vi.mock("@/lib/session-resources", () => ({ useSessionResources: vi.fn() }));
+vi.mock("@/lib/resources/session-resources", () => ({ useSessionResources: vi.fn() }));
 
 /** Drive the page's source of ingredient specs via the (mocked) session-resources context. */
 function mockUserIngredientSpecs(userIngredientSpecs: IngredientTransfer[]) {

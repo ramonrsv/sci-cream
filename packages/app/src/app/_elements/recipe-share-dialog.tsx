@@ -7,7 +7,7 @@ import type { LightRecipe } from "@workspace/sci-cream";
 
 import { CopyableField } from "@/app/_elements/copyable-field";
 import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";
-import { useSessionResources } from "@/lib/session-resources";
+import { useSessionResources } from "@/lib/resources/session-resources";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import {
   encodeSharePayload,
@@ -15,7 +15,7 @@ import {
   makeEmbedSnippet,
   makeSharePayload,
   makeShareUrl,
-} from "@/lib/recipe-share";
+} from "@/lib/recipe/recipe-share";
 
 /**
  * Share dialog body: builds the share/embed links for the given recipe and re-encodes them as the

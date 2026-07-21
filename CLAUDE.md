@@ -169,8 +169,11 @@ and `dist/`. Notable helpers:
 Each kind of file has a consistent home:
 
 - **`src/lib/`** — JSX-free `.ts` only: pure logic, types, data helpers, and React hooks/contexts
-  with no JSX (e.g. `use-*.ts`, and the `group-by` / `session-resources` context + hooks). No
-  `.tsx` files belong here.
+  with no JSX (e.g. the `hooks/use-*.ts`, and the `group-by` / `resources/session-resources`
+  context + hooks). No `.tsx` files belong here. Related modules are grouped into subdirs —
+  `hooks/`, `batch/`, `recipe/`, `resources/`, plus `database/`, `deprecated/`, `sci-cream/`,
+  `styles/` — with generic helpers (`data`, `local-storage`, `url-payload`, `util`, …) at the
+  top level.
 - **`src/app/`** — `.tsx` components and pages, plus route-special files.
 - **`src/app/_components/`** — major/composite components a page renders (calculator panels, the
   `*-search` composites, `detail-panel`, `make-recipe-view`, `recipe-share-viewer`).
@@ -185,7 +188,7 @@ Each kind of file has a consistent home:
   shell, the one allowed exception.
 
 Pure logic is split out of a `.tsx` when it can stand alone: e.g. `batch-builder`'s reducers live
-in `lib/batch-builder.ts` while its widget lives in `_elements/tables/batch-builder.tsx`.
+in `lib/batch/batch-builder.ts` while its widget lives in `_elements/tables/batch-builder.tsx`.
 
 - **`app/calculator/page.tsx`** — main page; root path redirects here. Renders a responsive
   drag-and-drop grid (`react-grid-layout`) of five `*Panel` composites: `RecipeEditorPanel`,
@@ -201,7 +204,7 @@ in `lib/batch-builder.ts` while its widget lives in `_elements/tables/batch-buil
   `PropertiesChartView`, `RecipeEditor`). The view layer is the drop-in widget consumers outside
   the calculator (e.g. recipe search) reuse. `FpdGraph` has no toolbar, so its file holds only
   the bare element.
-- **`lib/recipe.ts`** — recipe data layer: `Recipe`/`RecipeSummary` types, factory helpers
+- **`lib/recipe/recipe.ts`** — recipe data layer: `Recipe`/`RecipeSummary` types, factory helpers
   (`makeEmptyRecipeContext`, `makeRecipeResources*`), update helpers (`makeUpdatedRecipe*`),
   serialization (`stringifyRecipe`, `parseRecipeString`), and localStorage persistence. Pure
   utilities — no JSX, no React. `Recipe extends RecipeSummary` so display components that only

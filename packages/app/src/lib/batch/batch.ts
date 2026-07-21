@@ -1,6 +1,6 @@
 import type { LightRecipe } from "@workspace/sci-cream";
 
-import type { SavedRecipeRef } from "@/lib/recipe";
+import type { SavedRecipeRef } from "@/lib/recipe/recipe";
 import { type CategoryColor, categoryColor } from "@/lib/styles/colors";
 import {
   STORAGE_KEYS,

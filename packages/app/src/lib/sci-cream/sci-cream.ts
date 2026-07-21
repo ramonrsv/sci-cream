@@ -16,7 +16,7 @@ import {
   getRatioKeyParts,
 } from "@workspace/sci-cream";
 
-import { Recipe, RecipeSummary } from "@/lib/recipe";
+import { Recipe, RecipeSummary } from "@/lib/recipe/recipe";
 
 import type { OrderedKeyRow } from "@/lib/group-by";
 

@@ -9,14 +9,14 @@ import {
   type LightRecipe,
 } from "@workspace/sci-cream";
 
-import { makeRecipeId, type Recipe } from "@/lib/recipe";
-import { useResetOnChange } from "@/lib/use-reset-on-change";
+import { makeRecipeId, type Recipe } from "@/lib/recipe/recipe";
+import { useResetOnChange } from "@/lib/hooks/use-reset-on-change";
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
 import { RecipeComments, RecipeDetailBody } from "@/app/_elements/recipe-detail-body";
 import { ShareRecipeAction } from "@/app/_elements/recipe-share-dialog";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { STORAGE_KEYS } from "@/lib/local-storage";
-import { useFreeOnReplace, useSeededWasmResources } from "@/lib/wasm-resources";
+import { useFreeOnReplace, useSeededWasmResources } from "@/lib/resources/wasm-resources";
 import { STATE_VAL } from "@/lib/util";
 import {
   EntitySearch,
