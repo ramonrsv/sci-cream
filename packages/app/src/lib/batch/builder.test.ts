@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { type BatchSelection, makeBatchFromSelection, readSavedSources } from "./batch-builder";
+import { type BatchSelection, makeBatchFromSelection, readSavedSources } from "./builder";
 import { displayVersion } from "@/lib/batch/batch";
 import type { SavedRecipeJson, SavedRecipeVersionJson } from "@/lib/data";
 

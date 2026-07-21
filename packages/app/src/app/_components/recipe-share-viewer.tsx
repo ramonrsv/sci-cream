@@ -19,8 +19,8 @@ import {
   makeSharedRecipe,
   decodeSharePayload,
   type SharePayload,
-} from "@/lib/recipe/recipe-share";
-import { useFreeOnReplace } from "@/lib/resources/wasm-resources";
+} from "@/lib/recipe/share";
+import { useFreeOnReplace } from "@/lib/resources/wasm";
 import { MAX_RECIPES } from "@/lib/styles/sizes";
 
 /** Decode progress of the URL-fragment payload; `ready` carries the raw encoding for re-linking */

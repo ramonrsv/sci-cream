@@ -22,7 +22,7 @@ import {
   makeShareRows,
   makeShareUrl,
   type SharePayload,
-} from "./recipe-share";
+} from "./share";
 
 /** Encode an arbitrary JSON value through the real pipeline, bypassing payload validation. */
 async function encodeRaw(value: unknown): Promise<string> {

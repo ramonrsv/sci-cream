@@ -9,8 +9,8 @@ import {
   type RecipeContext,
   RecipeContextState,
 } from "@/lib/recipe/recipe";
-import { makeWasmResources, WasmResources } from "@/lib/resources/wasm-resources";
-import { useSessionResources, type SessionResources } from "@/lib/resources/session-resources";
+import { makeWasmResources, WasmResources } from "@/lib/resources/wasm";
+import { useSessionResources, type SessionResources } from "@/lib/resources/session";
 import { RecipeEditorPanel } from "./recipe-editor-panel";
 
 import {
@@ -24,7 +24,7 @@ vi.mock("next-auth/react", () => ({
 
 vi.mock("@/lib/data", () => ({ upsertUserRecipe: vi.fn() }));
 
-vi.mock("@/lib/resources/session-resources", () => ({ useSessionResources: vi.fn() }));
+vi.mock("@/lib/resources/session", () => ({ useSessionResources: vi.fn() }));
 
 describe("RecipeEditorPanel", () => {
   let recipeContext: RecipeContext;

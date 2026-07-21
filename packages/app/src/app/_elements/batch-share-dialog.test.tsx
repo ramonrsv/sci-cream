@@ -5,12 +5,12 @@ import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/re
 
 import { ShareBatchAction } from "./batch-share-dialog";
 import type { Batch } from "@/lib/batch/batch";
-import { BATCH_URL_WARN_CHARS, encodeBatchPayload } from "@/lib/batch/batch-share";
+import { BATCH_URL_WARN_CHARS, encodeBatchPayload } from "@/lib/batch/share";
 
 // The payload size is what the budget caps, so the tests drive it directly rather than trying to
 // coax the real encoder onto a boundary that depends on how well a batch happens to compress.
-vi.mock("@/lib/batch/batch-share", async (importOriginal) => {
-  const actual = await importOriginal<typeof import("@/lib/batch/batch-share")>();
+vi.mock("@/lib/batch/share", async (importOriginal) => {
+  const actual = await importOriginal<typeof import("@/lib/batch/share")>();
   return { ...actual, encodeBatchPayload: vi.fn() };
 });
 

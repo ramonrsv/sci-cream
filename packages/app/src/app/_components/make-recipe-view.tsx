@@ -15,11 +15,11 @@ import {
   BatchErrorKind,
   decodeBatchPayload,
   makeBatchFromPayload,
-} from "@/lib/batch/batch-share";
+} from "@/lib/batch/share";
 import { type Batch, batchChecklistKey, todayIsoDate, touchChecklist } from "@/lib/batch/batch";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
-import { useSessionResources } from "@/lib/resources/session-resources";
+import { useSessionResources } from "@/lib/resources/session";
 import { useChecklistState } from "@/lib/hooks/use-checklist-state";
 import { usePersistedState } from "@/lib/hooks/use-persisted-state";
 import { BatchBuilder } from "@/app/_elements/tables/batch-builder";
@@ -29,7 +29,7 @@ import {
   makeBatchFromSelection,
   readCalculatorSources,
   readSavedSources,
-} from "@/lib/batch/batch-builder";
+} from "@/lib/batch/builder";
 
 /** Decode progress of the URL-fragment payload; absent fragment means owner mode. */
 type ViewState =

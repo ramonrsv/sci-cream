@@ -1,7 +1,7 @@
 import type { LightRecipe } from "@workspace/sci-cream";
 
 import { type Batch, type BatchRecipe } from "@/lib/batch/batch";
-import { makeBatchRows } from "@/lib/batch/batch-share";
+import { makeBatchRows } from "@/lib/batch/share";
 import type { SavedRecipeJson } from "@/lib/data";
 import { getRecipeStoresFromStorage, makeRecipeId, parseRecipeString } from "@/lib/recipe/recipe";
 import type { CategoryColor } from "@/lib/styles/colors";

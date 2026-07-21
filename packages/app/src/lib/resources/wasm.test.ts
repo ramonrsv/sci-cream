@@ -1,7 +1,7 @@
 import { describe, it, expect, vi } from "vitest";
 import { renderHook } from "@testing-library/react";
 
-import { makeEmptyWasmResources, useFreeOnReplace } from "./wasm-resources";
+import { makeEmptyWasmResources, useFreeOnReplace } from "./wasm";
 import {
   OnConflict,
   Bridge as WasmBridge,

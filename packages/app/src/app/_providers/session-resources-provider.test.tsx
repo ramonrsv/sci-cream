@@ -11,7 +11,7 @@ import {
 } from "@/lib/data";
 
 import { SessionResourcesProvider } from "./session-resources-provider";
-import { useSessionResources } from "@/lib/resources/session-resources";
+import { useSessionResources } from "@/lib/resources/session";
 
 // ---------------------------------------------------------------------------
 // Mocks — the real WASM module is used so the provider builds a genuine bridge.

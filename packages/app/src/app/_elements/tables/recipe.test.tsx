@@ -13,8 +13,8 @@ import {
   type RecipeContext,
   RecipeContextState,
 } from "@/lib/recipe/recipe";
-import { makeWasmResources, WasmResources } from "@/lib/resources/wasm-resources";
-import { useSessionResources, type SessionResources } from "@/lib/resources/session-resources";
+import { makeWasmResources, WasmResources } from "@/lib/resources/wasm";
+import { useSessionResources, type SessionResources } from "@/lib/resources/session";
 import {
   createUserRecipe,
   createUserRecipeVersion,
@@ -51,7 +51,7 @@ vi.mock("next-auth/react", () => ({
   useSession: vi.fn().mockReturnValue({ data: null, status: "unauthenticated" }),
 }));
 
-vi.mock("@/lib/resources/session-resources", () => ({ useSessionResources: vi.fn() }));
+vi.mock("@/lib/resources/session", () => ({ useSessionResources: vi.fn() }));
 
 vi.mock("@/lib/data", () => ({
   createUserRecipe: vi

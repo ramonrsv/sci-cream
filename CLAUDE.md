@@ -169,7 +169,7 @@ and `dist/`. Notable helpers:
 Each kind of file has a consistent home:
 
 - **`src/lib/`** — JSX-free `.ts` only: pure logic, types, data helpers, and React hooks/contexts
-  with no JSX (e.g. the `hooks/use-*.ts`, and the `group-by` / `resources/session-resources`
+  with no JSX (e.g. the `hooks/use-*.ts`, and the `group-by` / `resources/session`
   context + hooks). No `.tsx` files belong here. Related modules are grouped into subdirs —
   `hooks/`, `batch/`, `recipe/`, `resources/`, plus `database/`, `deprecated/`, `sci-cream/`,
   `styles/` — with generic helpers (`data`, `local-storage`, `url-payload`, `util`, …) at the
@@ -188,7 +188,26 @@ Each kind of file has a consistent home:
   shell, the one allowed exception.
 
 Pure logic is split out of a `.tsx` when it can stand alone: e.g. `batch-builder`'s reducers live
-in `lib/batch/batch-builder.ts` while its widget lives in `_elements/tables/batch-builder.tsx`.
+in `lib/batch/builder.ts` while its widget lives in `_elements/tables/batch-builder.tsx`.
+
+#### Filename redundancy
+
+A filename should not repeat its directory's category word — the directory already gives that
+context, and the exported symbol carries the role (`tables/recipe.tsx` exports `RecipeTable`). Drop
+the category word by default; keep it only when it earns its place:
+
+1. **Base/eponymous module** — a directory's namesake or base abstraction: `selects/select.tsx`,
+   `watchers/watchers.tsx`, `sci-cream/sci-cream.ts`, `batch/batch.ts`, `recipe/recipe.ts`.
+2. **Inseparable from the kind** — the token names a control/wrapper whose kind is essential and a
+   bare noun would underdescribe it: `selects/*-select`, `_providers/*-provider`, the `use-` hook
+   prefix. (Contrast `tables/` / `charts/`, which display data named for its subject.)
+3. **Too generic alone** — dropping leaves a bare common word: `watchers/watcher-issues.tsx`, not
+   `issues.tsx`.
+
+Cross-directory bare-name repeats are fine (the path disambiguates), so avoiding them is not a reason
+to keep the word. Each file drops only its own directory's word: the batch-builder reducers are
+`lib/batch/builder.ts` (batch/ drops "batch"), its widget `_elements/tables/batch-builder.tsx`
+(tables/ drops "table").
 
 - **`app/calculator/page.tsx`** — main page; root path redirects here. Renders a responsive
   drag-and-drop grid (`react-grid-layout`) of five `*Panel` composites: `RecipeEditorPanel`,

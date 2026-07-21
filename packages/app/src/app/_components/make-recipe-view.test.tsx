@@ -11,7 +11,7 @@ import {
   encodeBatchPayload,
   makeBatchPayload,
   type BatchPayload,
-} from "@/lib/batch/batch-share";
+} from "@/lib/batch/share";
 import { STORAGE_KEYS, getLocalStorage, setLocalStorage } from "@/lib/local-storage";
 import { CategoryColor } from "@/lib/styles/colors";
 

@@ -8,7 +8,7 @@ import {
   VIEWPORT_MOBILE_SMALL_PORTRAIT,
   VIEWPORT_TABLET_PORTRAIT,
 } from "@/__tests__/visual/assets";
-import { encodeBatchPayload, makeBatchPayload } from "@/lib/batch/batch-share";
+import { encodeBatchPayload, makeBatchPayload } from "@/lib/batch/share";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { CategoryColor } from "@/lib/styles/colors";
 

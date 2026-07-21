@@ -2,7 +2,7 @@ import { getLocalStorage, setLocalStorage, STORAGE_KEYS } from "@/lib/local-stor
 import { MAX_RECIPES, RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import { roundToStep, standardInputStepByPercent, verify } from "@/lib/util";
 
-import { WasmResources } from "@/lib/resources/wasm-resources";
+import { WasmResources } from "@/lib/resources/wasm";
 import {
   Ingredient,
   MixProperties,

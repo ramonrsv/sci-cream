@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import type { IngredientSpecJson } from "@workspace/sci-cream";
 
 import { IngredientSearch } from "@/app/_components/ingredient-search";
-import { useSessionResources } from "@/lib/resources/session-resources";
+import { useSessionResources } from "@/lib/resources/session";
 
 /**
  * Coerce a DB row's `spec` field (JSON column) into an `IngredientSpecJson`.

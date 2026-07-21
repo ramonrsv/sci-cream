@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach } from "vitest";
 
-import { colorForPosition, loadColorSequence, recordColorPick } from "./batch-colors";
+import { colorForPosition, loadColorSequence, recordColorPick } from "./colors";
 import { STORAGE_KEYS, setLocalStorage } from "@/lib/local-storage";
 import { CATEGORY_COLORS, CategoryColor } from "@/lib/styles/colors";
 

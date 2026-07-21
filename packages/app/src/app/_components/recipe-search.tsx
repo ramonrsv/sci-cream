@@ -16,7 +16,7 @@ import { RecipeComments, RecipeDetailBody } from "@/app/_elements/recipe-detail-
 import { ShareRecipeAction } from "@/app/_elements/recipe-share-dialog";
 import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import { STORAGE_KEYS } from "@/lib/local-storage";
-import { useFreeOnReplace, useSeededWasmResources } from "@/lib/resources/wasm-resources";
+import { useFreeOnReplace, useSeededWasmResources } from "@/lib/resources/wasm";
 import { STATE_VAL } from "@/lib/util";
 import {
   EntitySearch,

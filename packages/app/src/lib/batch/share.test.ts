@@ -4,7 +4,7 @@ import type { LightRecipe } from "@workspace/sci-cream";
 
 import type { Batch } from "@/lib/batch/batch";
 import { MAX_BATCH_RECIPES } from "@/lib/batch/batch";
-import { MAX_SHARE_COMMENT_CHARS, MAX_SHARE_NAME_CHARS } from "@/lib/recipe/recipe-share";
+import { MAX_SHARE_COMMENT_CHARS, MAX_SHARE_NAME_CHARS } from "@/lib/recipe/share";
 import { CategoryColor } from "@/lib/styles/colors";
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import {
@@ -22,7 +22,7 @@ import {
   makeBatchPayload,
   makeBatchRows,
   makeBatchUrl,
-} from "./batch-share";
+} from "./share";
 
 /** Encode an arbitrary JSON value through the real pipeline, bypassing payload validation. */
 async function encodeRaw(value: unknown): Promise<string> {

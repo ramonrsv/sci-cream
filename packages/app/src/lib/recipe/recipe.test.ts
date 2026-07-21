@@ -27,7 +27,7 @@ import {
   type Recipe,
 } from "./recipe";
 
-import type { WasmResources } from "@/lib/resources/wasm-resources";
+import type { WasmResources } from "@/lib/resources/wasm";
 
 import {
   Category,

@@ -11,11 +11,8 @@ import {
   type IngredientTransfer,
   type SavedRecipeJson,
 } from "@/lib/data";
-import {
-  makeWasmResources,
-  makeWasmResourcesFromEmbeddedData,
-} from "@/lib/resources/wasm-resources";
-import { SessionResourcesContext, type SessionResources } from "@/lib/resources/session-resources";
+import { makeWasmResources, makeWasmResourcesFromEmbeddedData } from "@/lib/resources/wasm";
+import { SessionResourcesContext, type SessionResources } from "@/lib/resources/session";
 
 /**
  * Provides the session-scoped {@link SessionResources}: the single WASM bridge (seeded from

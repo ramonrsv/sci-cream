@@ -10,7 +10,7 @@ import {
 
 // `useSeededWasmResources` is defined in session-resources (it reads the shared resources from
 // `SessionResourcesProvider`); re-exported here so it sits alongside the other resource helpers.
-export { useSeededWasmResources } from "@/lib/resources/session-resources";
+export { useSeededWasmResources } from "@/lib/resources/session";
 
 /** Shared WASM resources: the bridge used for ingredient lookups and mix-property calculations */
 export interface WasmResources {

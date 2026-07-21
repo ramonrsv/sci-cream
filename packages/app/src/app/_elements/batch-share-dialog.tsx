@@ -11,7 +11,7 @@ import {
   encodeBatchPayload,
   makeBatchPayload,
   makeBatchUrl,
-} from "@/lib/batch/batch-share";
+} from "@/lib/batch/share";
 import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 
 /** Dialog body: builds the handoff link for the current batch and offers it for copying. */

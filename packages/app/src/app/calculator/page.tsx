@@ -25,7 +25,7 @@ import {
 } from "@/lib/recipe/recipe";
 import { RecipeEditorPanel } from "@/app/_components/recipe-editor-panel";
 import type { TargetsMap } from "@/app/_elements/watchers/watchers";
-import { useSeededWasmResources } from "@/lib/resources/wasm-resources";
+import { useSeededWasmResources } from "@/lib/resources/wasm";
 import { REACT_GRID_COMPONENT_HEIGHT, REACT_GRID_ROW_HEIGHT } from "@/lib/styles/sizes";
 import { slotFromParam } from "@/app/_elements/selects/recipe-select";
 import { loadStoredLayouts, onLayoutReset, saveLayouts } from "@/lib/calculator-layout";
