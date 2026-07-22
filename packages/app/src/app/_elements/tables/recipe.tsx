@@ -86,8 +86,9 @@ export function RecipeTable({
       <thead>
         <tr className="h-6.5 text-center">
           <th className="table-col-header">Ingredient</th>
-          <th className="table-col-header w-15">Qty (g)</th>
-          <th className="table-col-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
+          {/* w- (not min-w-) sizes Qty cols to filled content, avoiding a fill-time shift. */}
+          <th className="table-col-header w-16.5">Qty (g)</th>
+          <th className="table-col-header w-15 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
         </tr>
         <tr className="h-6.25">
           <td className="table-total px-1 text-center">
@@ -178,8 +179,9 @@ export function RecipeEditorTable({
         <thead className="table-sticky-head">
           <tr className="h-6.5 text-center">
             <th className="table-col-header">Ingredient</th>
-            <th className="table-col-header w-15">Qty (g)</th>
-            <th className="table-col-header w-13.75 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
+            {/* w- (not min-w-) sizes Qty cols to filled content, avoiding a fill-time shift. */}
+            <th className="table-col-header w-16.5">Qty (g)</th>
+            <th className="table-col-header w-15 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
           </tr>
           <tr className="h-6.25">
             <td className="table-total px-1">
