@@ -856,79 +856,83 @@ export function RecipeEditor({
             )}
           </div>
         </div>
-      </div>
-      {/*
-        Name row: unsaved dot, name field, then the version controls (loaded-version badge, a
-        main-recipe-only `→ new-version` input, and an always-shown branch button), and the
-        flush-right Save that overwrites this version. The input defaults to the next version.
-      */}
-      <div className="-my-0.5 flex shrink-0 flex-wrap items-center gap-1 pl-2">
-        <span
-          className={`leading-none text-amber-500 ${dirty ? "" : "invisible"}`}
-          {...(dirty
-            ? { "aria-label": "Unsaved changes", title: "Unsaved changes" }
-            : { "aria-hidden": true })}
-        >
-          •
-        </span>
-        <input
-          type="text"
-          value={currentRecipe.name}
-          onChange={(e) => updateCurrentRecipeName(e.target.value)}
-          placeholder="Recipe name"
-          aria-label="Recipe name"
-          className="text-secondary table-fillable-input min-w-0 flex-1 truncate px-1 py-0 text-sm font-medium"
-        />
-        <div className="flex shrink-0 items-center gap-1">
-          {currentRecipe.savedRef !== undefined && (
-            <VersionBadge
-              version={displayedVersion}
-              title={`Editing version ${displayedVersion}`}
-            />
-          )}
-          {currentRecipeIdx === 0 && currentRecipe.savedRef !== undefined && (
-            <>
-              <span aria-hidden className="text-secondary text-xs">
-                →
-              </span>
-              <input
-                type="text"
-                value={newVersionInput}
-                onChange={(e) => setNewVersionInput(e.target.value)}
-                placeholder={defaultNewVersionName}
-                aria-label="New version"
-                title={newVersionError}
-                aria-invalid={newVersionError !== undefined}
-                // `my-0!` beats boxed-input's unlayered `my-1`; else the row grows on version load.
-                className={`boxed-input my-0! w-10 text-center text-sm ${
-                  newVersionError ? "outline-2 -outline-offset-2 outline-red-400 outline-solid" : ""
-                }`}
+        {/* Name row: unsaved dot, name field, version badge/input, Save-new-version, and Save.
+           `basis-full` on the div puts it always on its own wrapped line within the toolbar. */}
+        <div className="-my-0.5 flex shrink-0 basis-full flex-wrap items-center gap-1 pl-2">
+          {/* Unsaved-changes dot; shown only when dirty (differs from its saved baseline) */}
+          <span
+            className={`leading-none text-amber-500 ${dirty ? "" : "invisible"}`}
+            {...(dirty
+              ? { "aria-label": "Unsaved changes", title: "Unsaved changes" }
+              : { "aria-hidden": true })}
+          >
+            •
+          </span>
+          <input
+            type="text"
+            value={currentRecipe.name}
+            onChange={(e) => updateCurrentRecipeName(e.target.value)}
+            placeholder="Recipe name"
+            aria-label="Recipe name"
+            className="text-secondary table-fillable-input min-w-0 flex-1 truncate px-1 py-0 text-sm font-medium"
+          />
+          <div className="flex shrink-0 items-center gap-1">
+            {/* Loaded version */}
+            {currentRecipe.savedRef !== undefined && (
+              <VersionBadge
+                version={displayedVersion}
+                title={`Editing version ${displayedVersion}`}
               />
-            </>
-          )}
+            )}
+            {/* `→ new-version` input: main recipe only; defaults to the next version name */}
+            {currentRecipeIdx === 0 && currentRecipe.savedRef !== undefined && (
+              <>
+                <span aria-hidden className="text-secondary text-xs">
+                  →
+                </span>
+                <input
+                  type="text"
+                  value={newVersionInput}
+                  onChange={(e) => setNewVersionInput(e.target.value)}
+                  placeholder={defaultNewVersionName}
+                  aria-label="New version"
+                  title={newVersionError}
+                  aria-invalid={newVersionError !== undefined}
+                  // `my-0!` beats boxed-input's unlayered `my-1`; else row grows on version load.
+                  className={`boxed-input my-0! w-10 text-center text-sm ${
+                    newVersionError
+                      ? "outline-2 -outline-offset-2 outline-red-400 outline-solid"
+                      : ""
+                  }`}
+                />
+              </>
+            )}
+            {/* Branch: always shown (disabled off main or before first save) */}
+            <button
+              onClick={() =>
+                saveCurrentRecipeAsNewVersion(
+                  newVersionInputName === "" ? undefined : newVersionInputName,
+                )
+              }
+              title={newVersionError ?? saveAsNewVersionTitle}
+              disabled={saveAsNewVersionDisabled}
+              aria-label="Save as new version"
+              className="action-button shrink-0 px-1 py-0.75"
+            >
+              <GitBranchPlus size={iconSize} className={saveIconColorClass} />
+            </button>
+          </div>
+          {/* Save: overwrites the loaded version; sits flush-right */}
           <button
-            onClick={() =>
-              saveCurrentRecipeAsNewVersion(
-                newVersionInputName === "" ? undefined : newVersionInputName,
-              )
-            }
-            title={newVersionError ?? saveAsNewVersionTitle}
-            disabled={saveAsNewVersionDisabled}
-            aria-label="Save as new version"
+            onClick={saveCurrentRecipe}
+            title={saveTitle}
+            disabled={!canSave || saveStatus === SaveStatus.Saving}
+            aria-label="Save recipe"
             className="action-button shrink-0 px-1 py-0.75"
           >
-            <GitBranchPlus size={iconSize} className={saveIconColorClass} />
+            <Save size={iconSize} className={saveIconColorClass} />
           </button>
         </div>
-        <button
-          onClick={saveCurrentRecipe}
-          title={saveTitle}
-          disabled={!canSave || saveStatus === SaveStatus.Saving}
-          aria-label="Save recipe"
-          className="action-button shrink-0 px-1 py-0.75"
-        >
-          <Save size={iconSize} className={saveIconColorClass} />
-        </button>
       </div>
       <div data-testid="recipe-editor-table-pane" className="min-h-0 flex-1 overflow-auto">
         <RecipeEditorTable
