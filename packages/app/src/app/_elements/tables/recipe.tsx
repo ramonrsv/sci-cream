@@ -49,6 +49,8 @@ import {
 
 import { makeShareRows } from "@/lib/recipe/share";
 import { useSessionResources } from "@/lib/resources/session";
+import type { SavedRecipeVersionJson } from "@/lib/data";
+import { displayVersionName, nextVersionName, validateVersionName } from "@/lib/recipe/version";
 import { RecipeSelect, useRecipeIdxState } from "@/app/_elements/selects/recipe-select";
 import { ShareRecipeAction } from "@/app/_elements/recipe-share-dialog";
 import { VersionBadge } from "@/app/_elements/version-badge";
@@ -335,13 +337,16 @@ export function RecipeEditor({
   const {
     wasmResourcesState: [wasmResources],
     refreshUserRecipes,
+    savedRecipes,
   } = useSessionResources();
 
   const { recipes: allRecipes } = recipeContext;
 
   const [currentRecipeIdx, setCurrentRecipeIdx] = useRecipeIdxState(persistKey, 0, { urlSlot });
+  const currentRecipe = allRecipes[currentRecipeIdx];
   const [saveStatus, setSaveStatus] = useState<SaveStatus>(SaveStatus.Idle);
   const [deevaporateError, setDeevaporateError] = useState<string | undefined>(undefined);
+  const [newVersionInput, setNewVersionInput] = useState("");
 
   const { data: session } = useSession();
   const userEmail = session?.user?.email ?? null;
@@ -403,7 +408,8 @@ export function RecipeEditor({
 
   /** De-evaporate: re-balance the ingredients to the post-evaporation mix properties. */
   const deevaporateCurrentRecipe = () => {
-    const recipe = allRecipes[currentRecipeIdx];
+    const recipe = currentRecipe;
+
     verify(
       !!recipe.evaporation && !isRecipeEmpty(recipe),
       "deevaporateCurrentRecipe invoked while the button should be disabled ",
@@ -439,7 +445,7 @@ export function RecipeEditor({
    * unless they are already all locked, in which case it unlocks. Does not disable auto-balance.
    */
   const toggleAllIngredientRowLocks = () => {
-    const lockable = allRecipes[currentRecipeIdx].ingredientRows.filter((row) =>
+    const lockable = currentRecipe.ingredientRows.filter((row) =>
       isLockable(row, wasmResources.hasIngredient),
     );
     const lockNext = !lockable.every((row) => row.locked);
@@ -551,7 +557,7 @@ export function RecipeEditor({
    * - Has `savedRef`: rewrites that version in-place (rename-on-save is honored when it differs)
    */
   const saveCurrentRecipe = async () => {
-    const recipe = allRecipes[currentRecipeIdx];
+    const recipe = currentRecipe;
 
     verify(
       userEmail && currentRecipeIdx === 0 && recipe.name.trim() !== "" && !isRecipeEmpty(recipe),
@@ -580,8 +586,8 @@ export function RecipeEditor({
    * Save the currently selected recipe as a new version of the loaded recipe. Only meaningful when
    * a saved recipe is currently loaded (`savedRef` defined); the button is disabled otherwise.
    */
-  const saveCurrentRecipeAsNewVersion = async () => {
-    const recipe = allRecipes[currentRecipeIdx];
+  const saveCurrentRecipeAsNewVersion = async (versionName?: string) => {
+    const recipe = currentRecipe;
 
     verify(
       userEmail &&
@@ -598,7 +604,12 @@ export function RecipeEditor({
     await performSave(recipe, async () => {
       if (!(await applyRenameIfNeeded(recipe))) return undefined;
       const lightRecipe = makeLightRecipe(recipe, wasmResources.hasIngredient);
-      const created = await createUserRecipeVersion(userEmail, recipeId, lightRecipe);
+      const created = await createUserRecipeVersion(
+        userEmail,
+        recipeId,
+        lightRecipe,
+        versionName !== undefined ? { versionName } : {},
+      );
       return created && { recipeId, versionNumber: created.version };
     });
   };
@@ -652,7 +663,14 @@ export function RecipeEditor({
     setDeevaporateError(undefined);
   }, [currentRecipeIdx]);
 
-  const currentRecipe = allRecipes[currentRecipeIdx];
+  // Clear the custom new-version input whenever the loaded version changes (slot switch or save).
+  const savedRefKey = currentRecipe.savedRef
+    ? `${currentRecipe.savedRef.recipeId}-${currentRecipe.savedRef.versionNumber}`
+    : "";
+  useEffect(() => {
+    setNewVersionInput("");
+  }, [savedRefKey]);
+
   const validIngredients = wasmResources.wasmBridge.get_all_ingredient_names();
 
   const iconSize = COMPONENT_ACTION_ICON_SIZE;
@@ -683,6 +701,21 @@ export function RecipeEditor({
 
   const dirty = isRecipeDirty(currentRecipe);
 
+  // The saved recipe's known versions (empty when unsaved), with a placeholder for the loaded
+  // version until the cache loads. Badge, next-name default, and uniqueness check all read it.
+  const savedVersions: SavedRecipeVersionJson[] = currentRecipe.savedRef
+    ? (savedRecipes.find((r) => r.id === currentRecipe.savedRef!.recipeId)?.versions ?? [
+        { version: currentRecipe.savedRef.versionNumber, recipe: [], createdAt: "" },
+      ])
+    : [];
+  const currentSavedVersion = savedVersions.find(
+    (v) => v.version === currentRecipe.savedRef?.versionNumber,
+  );
+
+  const displayedVersion = currentSavedVersion ? displayVersionName(currentSavedVersion) : "";
+  const defaultNewVersionName = nextVersionName(savedVersions);
+  const newVersionInputName = newVersionInput.trim();
+
   const saveTitle = !userEmail
     ? "Sign in to save recipes"
     : currentRecipeIdx !== 0
@@ -699,8 +732,8 @@ export function RecipeEditor({
                 ? "Save failed — try again"
                 : currentRecipe.savedRef !== undefined
                   ? dirty
-                    ? `Save changes to version ${currentRecipe.savedRef.versionNumber}`
-                    : `Saved — version ${currentRecipe.savedRef.versionNumber}`
+                    ? `Save changes to version ${displayedVersion}`
+                    : `Saved — version ${displayedVersion}`
                   : "Save recipe";
 
   const saveAsNewVersionTitle = !userEmail
@@ -721,6 +754,17 @@ export function RecipeEditor({
         : dirty
           ? "text-amber-500"
           : undefined;
+
+  const newVersionError =
+    newVersionInputName === ""
+      ? undefined
+      : (validateVersionName(newVersionInputName) ??
+        (savedVersions.some((v) => v.versionName === newVersionInputName)
+          ? "That version already exists"
+          : undefined));
+
+  const saveAsNewVersionDisabled =
+    !canSaveAsNewVersion || saveStatus === SaveStatus.Saving || newVersionError !== undefined;
 
   return (
     <div className="flex h-full flex-col">
@@ -795,18 +839,6 @@ export function RecipeEditor({
                 title: "Clear recipe",
                 disabled: false,
               },
-              {
-                label: <Save size={iconSize} className={saveIconColorClass} />,
-                action: saveCurrentRecipe,
-                title: saveTitle,
-                disabled: !canSave || saveStatus === SaveStatus.Saving,
-              },
-              {
-                label: <GitBranchPlus size={iconSize} className={saveIconColorClass} />,
-                action: saveCurrentRecipeAsNewVersion,
-                title: saveAsNewVersionTitle,
-                disabled: !canSaveAsNewVersion || saveStatus === SaveStatus.Saving,
-              },
             ].map((entry, idx) =>
               "node" in entry ? (
                 <Fragment key={idx}>{entry.node}</Fragment>
@@ -825,8 +857,12 @@ export function RecipeEditor({
           </div>
         </div>
       </div>
-      {/* Recipe name row, beneath the toolbar: unsaved-changes dot, name field, version badge */}
-      <div className="flex shrink-0 items-center gap-1 px-2 py-0.5">
+      {/*
+        Name row: unsaved dot, name field, then the version controls (loaded-version badge, a
+        main-recipe-only `→ new-version` input, and an always-shown branch button), and the
+        flush-right Save that overwrites this version. The input defaults to the next version.
+      */}
+      <div className="-my-0.5 flex shrink-0 flex-wrap items-center gap-1 pl-2">
         <span
           className={`leading-none text-amber-500 ${dirty ? "" : "invisible"}`}
           {...(dirty
@@ -843,12 +879,56 @@ export function RecipeEditor({
           aria-label="Recipe name"
           className="text-secondary table-fillable-input min-w-0 flex-1 truncate px-1 py-0 text-sm font-medium"
         />
-        {currentRecipe.savedRef !== undefined && (
-          <VersionBadge
-            version={currentRecipe.savedRef.versionNumber}
-            title={`Editing version ${currentRecipe.savedRef.versionNumber}`}
-          />
-        )}
+        <div className="flex shrink-0 items-center gap-1">
+          {currentRecipe.savedRef !== undefined && (
+            <VersionBadge
+              version={displayedVersion}
+              title={`Editing version ${displayedVersion}`}
+            />
+          )}
+          {currentRecipeIdx === 0 && currentRecipe.savedRef !== undefined && (
+            <>
+              <span aria-hidden className="text-secondary text-xs">
+                →
+              </span>
+              <input
+                type="text"
+                value={newVersionInput}
+                onChange={(e) => setNewVersionInput(e.target.value)}
+                placeholder={defaultNewVersionName}
+                aria-label="New version"
+                title={newVersionError}
+                aria-invalid={newVersionError !== undefined}
+                // `my-0!` beats boxed-input's unlayered `my-1`; else the row grows on version load.
+                className={`boxed-input my-0! w-10 text-center text-sm ${
+                  newVersionError ? "outline-2 -outline-offset-2 outline-red-400 outline-solid" : ""
+                }`}
+              />
+            </>
+          )}
+          <button
+            onClick={() =>
+              saveCurrentRecipeAsNewVersion(
+                newVersionInputName === "" ? undefined : newVersionInputName,
+              )
+            }
+            title={newVersionError ?? saveAsNewVersionTitle}
+            disabled={saveAsNewVersionDisabled}
+            aria-label="Save as new version"
+            className="action-button shrink-0 px-1 py-0.75"
+          >
+            <GitBranchPlus size={iconSize} className={saveIconColorClass} />
+          </button>
+        </div>
+        <button
+          onClick={saveCurrentRecipe}
+          title={saveTitle}
+          disabled={!canSave || saveStatus === SaveStatus.Saving}
+          aria-label="Save recipe"
+          className="action-button shrink-0 px-1 py-0.75"
+        >
+          <Save size={iconSize} className={saveIconColorClass} />
+        </button>
       </div>
       <div data-testid="recipe-editor-table-pane" className="min-h-0 flex-1 overflow-auto">
         <RecipeEditorTable

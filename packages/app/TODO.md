@@ -118,6 +118,8 @@
 - [ ] Investigate why updating pnpm dependencies in 275a906 degraded the performance of `is*Key`.
       275a906: Update /sci-cream & /app pnpm deps to latest
 - [ ] Review the sign-in classes in `globals.css`, used in `/signin/page.tsx` and `/signup/page.tsx`
+- [ ] `.boxed-input`'s `my-1` is unlayered, so utility overrides (`my-0`) silently no-op. Move
+      custom cls into `@layer components`, drop dead `my-0`s and the `my-0!` hack in `recipe.tsx`.
 
 ## Completed
 

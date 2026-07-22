@@ -151,10 +151,10 @@ describe("RecipeEditor", () => {
   let refreshUserRecipes: Mock<() => Promise<void>>;
 
   /** Point the (mocked) session-resources context at the current `wasmResources` and spies. */
-  function mockSessionResources() {
+  function mockSessionResources(savedRecipes: SessionResources["savedRecipes"] = []) {
     vi.mocked(useSessionResources).mockReturnValue({
       wasmResourcesState: [wasmResources, vi.fn()],
-      savedRecipes: [],
+      savedRecipes,
       userIngredientSpecs: [],
       refreshUserRecipes,
       refreshUserIngredients: vi.fn().mockResolvedValue(undefined),
@@ -222,6 +222,23 @@ describe("RecipeEditor", () => {
     recipeCtxState: [recipeContext, setRecipeContext] as RecipeContextState,
     enabledRecipeIndices: indices,
   });
+
+  /** Populate slot 0 of `recipeContext` with the given name and a single valid ingredient row */
+  function populateRecipe(name: string) {
+    recipeContext.recipes[0].name = name;
+    recipeContext.recipes[0].ingredientRows[0].name = "Whole Milk";
+    recipeContext.recipes[0].ingredientRows[0].quantity = 500;
+    recipeContext.recipes[0].mixTotal = 500;
+  }
+
+  /** Mock useSession to return an authenticated session with `a@b.c` */
+  function mockSignedIn() {
+    vi.mocked(useSession).mockReturnValue({
+      data: { user: { email: "a@b.c" }, expires: "" },
+      status: "authenticated",
+      update: vi.fn(),
+    });
+  }
 
   // ---- Rendering --------------------------------------------------------------------------------
 
@@ -856,37 +873,18 @@ describe("RecipeEditor", () => {
   // ---- Save button ------------------------------------------------------------------------------
 
   describe("Save button", () => {
-    /** Populate slot 0 of `recipeContext` with the given name and a single valid ingredient row */
-    function populateRecipe(name: string) {
-      recipeContext.recipes[0].name = name;
-      recipeContext.recipes[0].ingredientRows[0].name = "Whole Milk";
-      recipeContext.recipes[0].ingredientRows[0].quantity = 500;
-      recipeContext.recipes[0].mixTotal = 500;
-    }
-
-    /** Mock useSession to return an authenticated session with `a@b.c` */
-    function mockSignedIn() {
-      vi.mocked(useSession).mockReturnValue({
-        data: { user: { email: "a@b.c" }, expires: "" },
-        status: "authenticated",
-        update: vi.fn(),
-      });
-    }
-
     it("renders the Save button", () => {
       render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
-      // When signed out, both Save and Save-as-new-version share the "Sign in to save recipes"
-      // tooltip, so exactly two buttons match the regex.
-      expect(screen.getAllByTitle(/Sign in to save recipes|Save recipe/)).toHaveLength(2);
+      expect(screen.getByRole("button", { name: "Save recipe" })).toBeInTheDocument();
     });
 
     it("is disabled when the user is not signed in", () => {
       populateRecipe("My Recipe");
       render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
-      // Both Save and Save-as-new-version share this disabled-state tooltip; verify both
-      screen
-        .getAllByTitle("Sign in to save recipes")
-        .forEach((button) => expect(button).toBeDisabled());
+      // Both the Save and the always-shown branch button carry the signed-out title, disabled
+      const controls = screen.getAllByTitle("Sign in to save recipes");
+      expect(controls).toHaveLength(2);
+      controls.forEach((el) => expect(el).toBeDisabled());
     });
 
     it("is disabled when the recipe has no name", () => {
@@ -911,10 +909,10 @@ describe("RecipeEditor", () => {
       recipeContext.recipes[1].ingredientRows[0].quantity = 500;
       recipeContext.recipes[1].mixTotal = 500;
       render(<RecipeEditor {...makeRecipeEditorProps([0, 1])} urlSlot={1} />);
-      // Both Save and Save-as-new-version share this disabled-state tooltip; verify both
-      screen
-        .getAllByTitle("Select main recipe to save")
-        .forEach((button) => expect(button).toBeDisabled());
+      // Off the main recipe, both the Save and branch buttons carry the wrong-slot title, disabled
+      const controls = screen.getAllByTitle("Select main recipe to save");
+      expect(controls).toHaveLength(2);
+      controls.forEach((el) => expect(el).toBeDisabled());
     });
 
     it("calls createUserRecipe with the user email, name, and rows for a new recipe (no recipeId)", async () => {
@@ -965,15 +963,13 @@ describe("RecipeEditor", () => {
       });
     });
 
-    it("renders 'Save as new version' disabled for an anonymous recipe with no savedRef", () => {
+    it("shows a disabled 'Save as new version' button, but no input, for a recipe with no savedRef", () => {
       mockSignedIn();
       populateRecipe("My Recipe");
       render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
-      const button = screen.getByTitle(
-        "Save the recipe at least once before creating a new version",
-      );
-      expect(button).toBeInTheDocument();
-      expect(button).toBeDisabled();
+      // The branch button is always shown; without a savedRef it is disabled and the input is hidden
+      expect(screen.getByRole("button", { name: "Save as new version" })).toBeDisabled();
+      expect(screen.queryByLabelText("New version")).not.toBeInTheDocument();
     });
 
     it("renders 'Save as new version' enabled when a saved recipe is loaded", () => {
@@ -981,7 +977,7 @@ describe("RecipeEditor", () => {
       populateRecipe("My Recipe");
       recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 1 };
       render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
-      const button = screen.getByTitle("Save as new version");
+      const button = screen.getByRole("button", { name: "Save as new version" });
       expect(button).toBeInTheDocument();
       expect(button).not.toBeDisabled();
     });
@@ -995,7 +991,9 @@ describe("RecipeEditor", () => {
       render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       fireEvent.click(screen.getByRole("button", { name: "Save as new version" }));
       await waitFor(() => {
-        expect(createUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, [["Whole Milk", 500]]);
+        // A blank new-version input passes an empty meta so the server auto-materializes only when
+        // the recipe has opted into named versions.
+        expect(createUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, [["Whole Milk", 500]], {});
       });
     });
   });
@@ -1127,6 +1125,92 @@ describe("RecipeEditor", () => {
       recipeContext.recipes[0].name = "Anon Recipe";
       render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       expect(screen.queryByTitle(/Editing version/)).not.toBeInTheDocument();
+    });
+
+    it("shows the version name from the saved-recipes cache when the version is named", () => {
+      recipeContext.recipes[0].name = "Loaded Recipe";
+      recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 3 };
+      mockSessionResources([
+        {
+          id: 7,
+          name: "Loaded Recipe",
+          versions: [{ version: 3, recipe: [], versionName: "3.1", createdAt: "" }],
+        },
+      ]);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
+      expect(screen.getByTitle("Editing version 3.1")).toBeInTheDocument();
+      expect(screen.getByTestId("version-badge-v3.1")).toBeInTheDocument();
+    });
+
+    it("falls back to the integer when the cache has no name for the version", () => {
+      recipeContext.recipes[0].name = "Loaded Recipe";
+      recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 3 };
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
+      expect(screen.getByTitle("Editing version 3")).toBeInTheDocument();
+    });
+  });
+
+  describe("Save as named version", () => {
+    it("shows the next version name as the new-version input's placeholder", () => {
+      mockSignedIn();
+      populateRecipe("My Recipe");
+      recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 2 };
+      mockSessionResources([
+        {
+          id: 7,
+          name: "My Recipe",
+          versions: [
+            { version: 1, recipe: [], versionName: "3.1", createdAt: "" },
+            { version: 2, recipe: [], versionName: "3.2", createdAt: "" },
+          ],
+        },
+      ]);
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
+
+      // Next default continues the visible sequence: max major (3) + 1 = "4"
+      expect(screen.getByLabelText("New version")).toHaveAttribute("placeholder", "4");
+    });
+
+    it("disables the branch button on an invalid version name", () => {
+      mockSignedIn();
+      populateRecipe("My Recipe");
+      recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 1 };
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
+
+      fireEvent.change(screen.getByLabelText("New version"), { target: { value: "not valid" } });
+      expect(screen.getByRole("button", { name: "Save as new version" })).toBeDisabled();
+    });
+
+    it("passes the entered name to createUserRecipeVersion", async () => {
+      mockSignedIn();
+      populateRecipe("My Recipe");
+      recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 1 };
+      recipeContext.recipes[0].baseline = { name: "My Recipe", serializedRows: "" };
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
+
+      fireEvent.change(screen.getByLabelText("New version"), { target: { value: "3.1" } });
+      fireEvent.click(screen.getByRole("button", { name: "Save as new version" }));
+      await waitFor(() => {
+        expect(createUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, [["Whole Milk", 500]], {
+          versionName: "3.1",
+        });
+      });
+    });
+
+    it("on a reference slot, keeps the badge but hides the input and disables the branch button", () => {
+      mockSignedIn();
+      // A saved recipe loaded into Ref A (slot 1): its version still shows, but it can't be
+      // branched, so the new-version input is hidden and the always-shown branch button is disabled.
+      recipeContext.recipes[1].name = "Ref Recipe";
+      recipeContext.recipes[1].ingredientRows[0].name = "Whole Milk";
+      recipeContext.recipes[1].ingredientRows[0].quantity = 500;
+      recipeContext.recipes[1].mixTotal = 500;
+      recipeContext.recipes[1].savedRef = { recipeId: 7, versionNumber: 3 };
+      render(<RecipeEditor {...makeRecipeEditorProps([0, 1])} urlSlot={1} />);
+
+      expect(screen.getByTitle("Editing version 3")).toBeInTheDocument();
+      expect(screen.queryByLabelText("New version")).not.toBeInTheDocument();
+      expect(screen.getByRole("button", { name: "Save as new version" })).toBeDisabled();
     });
   });
 });
