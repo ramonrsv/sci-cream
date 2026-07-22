@@ -185,8 +185,10 @@ export function RecipeEditorTable({
           </tr>
           <tr className="h-6.25">
             <td className="table-total px-1">
-              <div className="flex items-center">
-                <span className="flex-1 text-center">
+              {/* Grid: equal 1fr tracks center "Total"; empty left balances lock-all button. */}
+              <div className="grid grid-cols-[1fr_auto_1fr] items-center">
+                <span aria-hidden />
+                <span className="text-center">
                   Total
                   {/* Yield (final mix mass) shown inline once water is being evaporated */}
                   {mixTotal && recipe.evaporation ? (
@@ -202,7 +204,7 @@ export function RecipeEditorTable({
                 {recipe.index === 0 && lockableRows.length > 0 && (
                   <button
                     type="button"
-                    className={`action-button mr-0.5 flex shrink-0 items-center px-0.5 py-0 ${
+                    className={`action-button mr-0.5 flex items-center justify-self-end px-0.5 py-0 ${
                       allLocked ? "" : "opacity-60"
                     }`}
                     onClick={onLockAllToggle}
