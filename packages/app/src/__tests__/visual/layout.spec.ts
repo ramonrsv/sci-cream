@@ -76,8 +76,9 @@ test.describe("Visual Regression: Responsive Layout, calculator page", () => {
 
           // In addition to providing a better visual representation of the layout, particularly
           // size variable components like Watchers, it also makes chart snapshots deterministic.
-          await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
           await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.RefA);
+          // Main last so that 'Recipe' is left selected in RecipeEditor
+          await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
         },
       );
     });
