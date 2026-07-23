@@ -302,6 +302,11 @@ tbody tr:hover > .table-emphasis {
   @apply transition-[width] duration-200;
 }
 
+/* Lifted edge for the sidebar drawer while it overlays content on peek. */
+.sidebar-drawer-peek {
+  @apply border-brd border-r shadow-lg;
+}
+
 .sidebar-item {
   @apply flex items-center rounded-lg py-2 text-sm font-medium;
   @apply text-txt-sec hover:bg-hov active:text-txt-prim active:bg-hov;

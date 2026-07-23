@@ -24,7 +24,7 @@ import {
   goToPageAndWaitFor,
   goToPageAndPasteRecipes,
   presetWatcherTargets,
-  expandNavbar,
+  showHeaderActionButtons,
 } from "@/__tests__/e2e/util";
 import { selectOption } from "@/__tests__/e2e/select";
 import { captureFullContent } from "@/__tests__/visual/util";
@@ -185,7 +185,7 @@ test.describe("Visual Regression: Panels, Properties Group-by Modes", () => {
       await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main]);
       await locatePanelAndExpectVisible(page, "#properties-panel");
 
-      await expandNavbar(page);
+      await showHeaderActionButtons(page);
 
       await selectOption(page, getPropertiesPanelKeyFilterSelectInput(page), keyFilter);
       await selectOption(page, getGroupBySelectInput(page), GROUP_BY_LABELS[mode]);

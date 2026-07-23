@@ -9,7 +9,7 @@ import {
   expectRecipePasteCompleted,
   loginAsTestUserWithCredentials,
   goToPageAndWaitFor,
-  expandNavbar,
+  showSidebarItems,
   LoadState,
   fillRecipeAndWaitForUpdate,
 } from "@/__tests__/e2e/util";
@@ -170,12 +170,17 @@ test.describe("Recipe Resources", () => {
     expect(serverActionCount).toBeGreaterThan(0);
     serverActionCount = 0;
 
-    await expandNavbar(page);
+    // Make the sidebar nav items reachable (desktop rail; mobile pins the rail).
+    await showSidebarItems(page);
 
     /** Click a sidebar nav link (client-side navigation, not a full reload) and await the route. */
     const navigateTo = async (href: string) => {
       await page.locator(`#sidebar a[href="${href}"]`).click();
       await page.waitForURL(`**${href}`);
+      // Desktop: clicking a rail link hover-opens the peek overlay; move off the sidebar so it
+      // collapses before we click content. No-op on mobile (no hover; rail already pinned).
+      const size = page.viewportSize();
+      if (size) await page.mouse.move(size.width / 2, size.height / 2);
     };
 
     /** Select the first search entry, opening its detail panel (which reads the shared bridge). */

@@ -10,7 +10,7 @@ import {
   getPropertiesPanelKeyFilterSelectInput,
   getGroupBySelectInput,
   getCompositionBreakdownPanelQtyToggleSelectInput,
-  expandNavbar,
+  showHeaderActionButtons,
 } from "@/__tests__/e2e/util";
 import { getSelectControl, getOpenSelectMenu, selectOption } from "@/__tests__/e2e/select";
 import { expandToFullHeight } from "@/__tests__/visual/util";
@@ -123,7 +123,7 @@ test.describe("Visual Regression: KeyFilterSelect", () => {
 
   test("Custom popup grouped by hierarchy", async ({ page }) => {
     await goToPageAndWaitFor(page);
-    await expandNavbar(page);
+    await showHeaderActionButtons(page);
 
     const selector = getPropertiesPanelKeyFilterSelectInput(page);
     await expect(selector).toBeVisible();
@@ -157,7 +157,7 @@ test.describe("Visual Regression: KeyFilterSelect", () => {
 test.describe("Visual Regression: GroupBySelect", () => {
   test("Select Flat, Grouped once, Grouped repeat", async ({ page }) => {
     await goToPageAndWaitFor(page);
-    await expandNavbar(page);
+    await showHeaderActionButtons(page);
 
     const selector = getGroupBySelectInput(page);
     await expect(selector).toBeVisible();
@@ -174,7 +174,7 @@ test.describe("Visual Regression: GroupBySelect", () => {
 
   test("Popup open", async ({ page }) => {
     await goToPageAndWaitFor(page);
-    await expandNavbar(page);
+    await showHeaderActionButtons(page);
 
     const selector = getGroupBySelectInput(page);
     await selector.click();
@@ -186,7 +186,7 @@ test.describe("Visual Regression: GroupBySelect", () => {
 
   test("Clicked, hovered", async ({ page }) => {
     await goToPageAndWaitFor(page);
-    await expandNavbar(page);
+    await showHeaderActionButtons(page);
 
     const selector = getGroupBySelectInput(page);
     await expect(selector).toBeVisible();
@@ -243,7 +243,7 @@ test.describe("Visual Regression: RecipeSelect", () => {
 test.describe("Visual Regression: ThemeSelect", () => {
   test("Select Light, Dark, System", async ({ page }) => {
     await goToPageAndWaitFor(page);
-    await expandNavbar(page);
+    await showHeaderActionButtons(page);
 
     const selector = getSelectControl(page, "#theme-select");
 
@@ -259,7 +259,7 @@ test.describe("Visual Regression: ThemeSelect", () => {
 
   test("Popup open", async ({ page }) => {
     await goToPageAndWaitFor(page);
-    await expandNavbar(page);
+    await showHeaderActionButtons(page);
 
     const selector = getSelectControl(page, "#theme-select");
     await selector.click();
@@ -271,7 +271,7 @@ test.describe("Visual Regression: ThemeSelect", () => {
 
   test("Clicked, hovered", async ({ page }) => {
     await goToPageAndWaitFor(page);
-    await expandNavbar(page);
+    await showHeaderActionButtons(page);
 
     const selector = getSelectControl(page, "#theme-select");
 

@@ -17,9 +17,15 @@ export const NAVBAR_ICON_SIZE = 20;
 
 /** Whether the navbar is collapsed by default. */
 export const DEFAULT_COLLAPSED_NAVBAR = true;
-/** Tailwind width classes for the collapsed sidebar (and matching header section). */
-export const SIDEBAR_W_COLLAPSED = "w-14 sm:w-18";
-/** Tailwind width classes for the expanded sidebar (and matching header section). */
+/** Collapsed sidebar width: hidden on mobile, rail on desktop. */
+export const SIDEBAR_W_COLLAPSED = "w-0 sm:w-18";
+/** In-flow gutter when collapsed: a mobile left inset; drawer stays w-0, rail on desktop. */
+export const SIDEBAR_W_COLLAPSED_SPACER = "w-4 sm:w-18";
+/** Collapsed header-left width: keeps the logo tappable on mobile, rail on desktop. */
+export const HEADER_W_COLLAPSED = "w-14 sm:w-18";
+/** Pinned width (`collapsed = false`): rail on mobile, expanded on desktop. */
+export const SIDEBAR_W_PINNED = "w-14 sm:w-58";
+/** Full drawer width: the peek overlay (both sections, both breakpoints). */
 export const SIDEBAR_W_EXPANDED = "w-54 sm:w-58";
 
 // ----  Fixed sizes for react-grid-layout components ----------------------------------------------

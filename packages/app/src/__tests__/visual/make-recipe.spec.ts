@@ -2,7 +2,7 @@ import { test, expect, type Page } from "@playwright/test";
 
 import type { Batch } from "@/lib/batch/batch";
 import { goToPageAndWaitFor } from "@/__tests__/e2e/util";
-import { setViewportHeightForAllAppContentScreenshot } from "@/__tests__/visual/util";
+import { parkCursor, setViewportHeightForAllAppContentScreenshot } from "@/__tests__/visual/util";
 import {
   VIEWPORT_MOBILE_LARGE_PORTRAIT,
   VIEWPORT_MOBILE_SMALL_PORTRAIT,
@@ -153,7 +153,7 @@ async function weighOffColoredCells(page: Page) {
 /** Screenshot the whole checklist page, grown to fit its content. */
 async function shootPage(page: Page, name: string) {
   // Park the cursor off the checklist, or it hover-tints whichever cell sits beneath it.
-  await page.mouse.move(0, 0);
+  await parkCursor(page);
   await setViewportHeightForAllAppContentScreenshot(page);
   await expect(page.getByTestId("make-recipe-view")).toHaveScreenshot(name);
 }
@@ -173,7 +173,7 @@ async function shootScrolledToLastColumn(page: Page, name: string) {
   await scroller.evaluate((el) => {
     el.scrollTo({ left: el.scrollWidth, behavior: "instant" as ScrollBehavior });
   });
-  await page.mouse.move(0, 0);
+  await parkCursor(page);
   await expect(scroller).toHaveScreenshot(name);
 }
 
@@ -295,7 +295,7 @@ test.describe("Visual Regression: Make Recipe", () => {
   test("make recipe - invalid link error", async ({ page }) => {
     await goToPageAndWaitFor(page, "/make-recipe#not-a-real-payload");
     await expect(page.getByTestId("make-recipe-error")).toBeVisible();
-    await page.mouse.move(0, 0);
+    await parkCursor(page);
     await expect(page.getByTestId("make-recipe-error")).toHaveScreenshot("make-recipe-error.png");
   });
 });

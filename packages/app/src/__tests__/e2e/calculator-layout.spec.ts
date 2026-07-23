@@ -1,7 +1,7 @@
 import { test, expect, type Page } from "@playwright/test";
 
 import { STORAGE_KEYS } from "@/lib/local-storage";
-import { goToPageAndWaitFor } from "@/__tests__/e2e/util";
+import { goToPageAndWaitFor, showHeaderActionButtons } from "@/__tests__/e2e/util";
 
 /** Read the persisted calculator-layouts payload from `localStorage` (raw string or `null`) */
 function readStoredLayout(page: Page) {
@@ -62,7 +62,7 @@ test.describe("Calculator Layout Persistence", () => {
 
     // Expand the sidebar up-front so the header has room for the reset button and the container
     // width stays constant across the entire test (a sidebar toggle would change panel widths)
-    await page.locator("#expand-sidebar-button").click();
+    await showHeaderActionButtons(page);
     await page.waitForTimeout(300);
 
     const panel = page.locator("#recipe-editor-panel");

@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup, waitFor } from "@testing-library/react";
+import { render, screen, cleanup, waitFor, fireEvent } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 
 import { STORAGE_KEYS } from "@/lib/local-storage";
@@ -65,8 +65,9 @@ describe("Header — reset layout button", () => {
       </Navbar>,
     );
 
-    // Wait for the navbar to mount (renders an empty header until `mounted` is set)
-    await screen.findByRole("button", { name: /collapse sidebar/i });
+    // Wait for the navbar to mount (renders an empty header until `mounted` is set).
+    // The default collapsed state titles the toggle "Expand sidebar".
+    await screen.findByRole("button", { name: /expand sidebar/i });
     expect(screen.queryByRole("button", { name: /reset calculator layout/i })).toBeNull();
   });
 
@@ -135,5 +136,165 @@ describe("Header — reset layout button", () => {
 
     unsubscribe();
     confirmSpy.mockRestore();
+  });
+});
+
+// ---------------------------------------------------------------------------
+// Sidebar collapse / expand / peek
+// ---------------------------------------------------------------------------
+
+/** Stub `matchMedia` so `useIsDesktop` resolves to desktop; without it the mobile branch renders. */
+function stubDesktopViewport() {
+  Object.defineProperty(window, "matchMedia", {
+    configurable: true,
+    writable: true,
+    value: vi
+      .fn()
+      .mockReturnValue({
+        matches: true,
+        media: "",
+        addEventListener: vi.fn(),
+        removeEventListener: vi.fn(),
+        addListener: vi.fn(),
+        removeListener: vi.fn(),
+        dispatchEvent: vi.fn(),
+      }),
+  });
+}
+
+describe("Header / Sidebar — collapse and peek", () => {
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorage.clear();
+    mockPathname = "/";
+  });
+
+  afterEach(() => {
+    cleanup();
+    // jsdom has no matchMedia; drop any desktop stub so the next test defaults to mobile.
+    Reflect.deleteProperty(window, "matchMedia");
+  });
+
+  it("starts collapsed with the sidebar hidden and a hamburger on mobile", async () => {
+    render(
+      <Navbar>
+        <div />
+      </Navbar>,
+    );
+
+    expect(await screen.findByRole("button", { name: "Peek sidebar" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Expand sidebar" })).toBeInTheDocument();
+    expect(screen.getByRole("complementary")).toHaveClass("w-0");
+  });
+
+  it("the toggle expands the sidebar to the rail and persists the state", async () => {
+    const user = userEvent.setup();
+    render(
+      <Navbar>
+        <div />
+      </Navbar>,
+    );
+
+    await user.click(await screen.findByRole("button", { name: "Expand sidebar" }));
+
+    expect(screen.getByRole("button", { name: "Collapse sidebar" })).toBeInTheDocument();
+    expect(screen.getByRole("complementary")).toHaveClass("w-14");
+    expect(localStorage.getItem(STORAGE_KEYS.sidebarCollapsed)).toBe("false");
+  });
+
+  it("the hamburger opens the peek drawer", async () => {
+    const user = userEvent.setup();
+    render(
+      <Navbar>
+        <div />
+      </Navbar>,
+    );
+
+    await user.click(await screen.findByRole("button", { name: "Peek sidebar" }));
+
+    expect(screen.getByRole("complementary")).toHaveClass("w-54");
+    expect(screen.getByRole("button", { name: "Un-peek sidebar" })).toBeInTheDocument();
+  });
+
+  it("a pointer down outside the sidebar and header dismisses the peek", async () => {
+    const user = userEvent.setup();
+    render(
+      <Navbar>
+        <div data-testid="content" />
+      </Navbar>,
+    );
+
+    await user.click(await screen.findByRole("button", { name: "Peek sidebar" }));
+    expect(screen.getByRole("complementary")).toHaveClass("w-54");
+
+    fireEvent.pointerDown(screen.getByTestId("content"));
+
+    expect(screen.getByRole("complementary")).toHaveClass("w-0");
+  });
+
+  it("dismisses the peek drawer when navigating on mobile", async () => {
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <Navbar>
+        <div />
+      </Navbar>,
+    );
+
+    await user.click(await screen.findByRole("button", { name: "Peek sidebar" }));
+    expect(screen.getByRole("complementary")).toHaveClass("w-54");
+
+    // Navigating resets the tapped peek so the drawer doesn't linger over the new page.
+    mockPathname = "/recipes";
+    rerender(
+      <Navbar>
+        <div />
+      </Navbar>,
+    );
+
+    expect(screen.getByRole("complementary")).toHaveClass("w-0");
+  });
+
+  it("keeps the peek drawer open when navigating on desktop", async () => {
+    stubDesktopViewport();
+    const { rerender } = render(
+      <Navbar>
+        <div />
+      </Navbar>,
+    );
+
+    // Wait for the desktop layout (logo, not hamburger) to resolve, then hover to peek.
+    await screen.findByAltText("Sci-Cream");
+    const sidebar = screen.getByRole("complementary");
+    fireEvent.mouseEnter(sidebar);
+    expect(sidebar).toHaveClass("w-54");
+
+    // Desktop peek follows hover, so a navigation leaves the drawer open.
+    mockPathname = "/recipes";
+    rerender(
+      <Navbar>
+        <div />
+      </Navbar>,
+    );
+
+    expect(screen.getByRole("complementary")).toHaveClass("w-54");
+  });
+
+  it("renders the logo and hover-opens the drawer on desktop", async () => {
+    stubDesktopViewport();
+    render(
+      <Navbar>
+        <div />
+      </Navbar>,
+    );
+
+    // Desktop shows the logo, not the hamburger.
+    expect(await screen.findByAltText("Sci-Cream")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Peek sidebar" })).toBeNull();
+
+    const sidebar = screen.getByRole("complementary");
+    expect(sidebar).toHaveClass("w-0");
+
+    fireEvent.mouseEnter(sidebar);
+    expect(sidebar).toHaveClass("w-54");
   });
 });

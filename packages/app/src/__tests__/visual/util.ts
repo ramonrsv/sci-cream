@@ -9,6 +9,14 @@ export async function scrollToBottomOfPage(page: Page) {
   await sleep_ms(500); // Wait for any lazy-loaded content to load
 }
 
+/**
+ * Park the cursor top-right, off the content and off the sidebar's hover zone that would open the
+ * peek drawer over it. Top-right stays in the cropped-out header, so it adds no hover artifacts.
+ */
+export async function parkCursor(page: Page) {
+  await page.mouse.move((page.viewportSize()?.width ?? 1) - 1, 0);
+}
+
 /** Vertical overflow (hidden scrollable height, `scrollHeight - clientHeight`) of `locator`. */
 export async function getOverflow(locator: Locator): Promise<number> {
   return locator.evaluate((el) => el.scrollHeight - el.clientHeight);
@@ -107,9 +115,8 @@ export async function captureFullContent(
   }
   const uniquePositions = [...new Set(positions)];
 
-  // Park the cursor at (0,0) — off the scrollable content, at the navbar which is cropped out
-  // — so scrolling content doesn't trigger `:hover` row highlights beneath a stationary cursor
-  await page.mouse.move(0, 0);
+  // Park the cursor off the content so scrolling doesn't trigger `:hover` highlights beneath it.
+  await parkCursor(page);
 
   const pieces: { buf: Buffer; height: number }[] = [];
   let prevBottom = 0;

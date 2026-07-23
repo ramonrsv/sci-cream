@@ -9,10 +9,10 @@ test.describe("Visual Regression: Blog Posts", () => {
     await expect(page).toHaveScreenshot("blog-post.png");
   });
 
-  test("blog post, shrunk", async ({ page }) => {
+  test("blog post, mobile", async ({ page }) => {
     await page.setViewportSize(VIEWPORT_MOBILE_SMALL_PORTRAIT.viewport);
 
     await goToPageAndWaitFor(page, "/blog/2026-04-27-welcome");
-    await expect(page).toHaveScreenshot("blog-post-shrunk.png");
+    await expect(page).toHaveScreenshot("blog-post-mobile.png");
   });
 });

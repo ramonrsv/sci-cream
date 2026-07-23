@@ -39,12 +39,31 @@ declare global {
 }
 
 /**
- * Expand the sidebar navbar so the hidden buttons, e.g. `ThemeSelect`, are visible and not clipped.
- * The navbar is collapsed by default (`DEFAULT_COLLAPSED_NAVBAR = true`), behind `overflow-hidden`.
+ * Reveal the header action buttons (clipped while the sidebar is collapsed). Desktop pins the
+ * sidebar expanded so they stay revealed through popups; mobile taps the hamburger to peek.
  */
-export async function expandNavbar(page: Page) {
-  await page.locator("#expand-sidebar-button").click();
-  await expect(page.locator("#collapse-sidebar-button")).toBeVisible();
+export async function showHeaderActionButtons(page: Page) {
+  const viewport = page.viewportSize();
+  if (viewport !== null && viewport.width < 640) {
+    await page.locator("#peek-sidebar-button").click();
+  } else {
+    await page.locator("#sidebar").hover();
+    await page.locator("#expand-collapse-sidebar-button").click();
+  }
+  await expect(page.locator("#expand-collapse-sidebar-button")).toBeVisible();
+}
+
+/**
+ * Make the sidebar nav items reachable: desktop shows the rail (no-op); mobile pins the collapsed
+ * rail (hamburger, then toggle). Desktop callers must then move off the sidebar (hover peeks it).
+ */
+export async function showSidebarItems(page: Page) {
+  const viewport = page.viewportSize();
+  if (viewport !== null && viewport.width < 640) {
+    await page.locator("#peek-sidebar-button").click();
+    await page.locator("#expand-collapse-sidebar-button").click();
+    await expect(page.locator("#sidebar")).toBeVisible();
+  }
 }
 
 /** Get `RecipeEditorPanel`'s recipe selector element, in `RecipeSelect` */
