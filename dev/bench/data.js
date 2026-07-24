@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784924630263,
+  "lastUpdate": 1784924796822,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -380926,6 +380926,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 523.88,
             "range": "13.73",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "150470e2975d3c7de25a12ba99366c2be7f4369b",
+          "message": "Key sidebar peek on pointer, not viewport width\n\n`useIsDesktop` (>=640px) drove both the sidebar's width layout and\nits peek interaction. A landscape phone is wide but touch, so it got\ndesktop hover-to-peek: tapping a nav link navigated without ever\ndismissing the peek drawer.\n\nSplit the two signals:\n\n- useMediaQuery: shared matchMedia hook, extracted from useIsDesktop\n- useIsNarrow (use-is-desktop.ts -> use-is-narrow.ts): complement of\n  the `sm:` query; drives width-sensitive layout only\n- useCanHover: `(hover: hover)`; drives peek interaction: hover vs\n  tap peek, logo vs hamburger, dismiss on navigate/tap-outside\n- SM_BREAKPOINT_PX moves to styles/sizes.ts, beside the `sm:` widths\n\nTests: port the matchMedia mechanics to use-media-query.test.ts, add\nper-query stubbing to navbar tests, and cover the wide+touch and\nnarrow+mouse quadrants. The e2e reveal helpers now branch on the\nhamburger's presence rather than a hard-coded 640px, and the mobile\nvisual navbar tests emulate touch so the hamburger still renders.\nThe two mobile sidebar baselines need regenerating.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-24T15:22:29-04:00",
+          "tree_id": "cd34c8f0afb5e52947d3e1bbef73ffd2c2a29154",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/150470e2975d3c7de25a12ba99366c2be7f4369b"
+        },
+        "date": 1784924766215,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 41.5,
+            "range": "2.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 51.25,
+            "range": "2.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 61.88,
+            "range": "7.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2326,
+            "range": "20.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 332.13,
+            "range": "4.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 349.88,
+            "range": "4.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 359.5,
+            "range": "5.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17286.38,
+            "range": "60.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 846.25,
+            "range": "34.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 52.38,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 52.38,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 37.38,
+            "range": "0.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 40.88,
+            "range": "2.47",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 121.5,
+            "range": "3.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 80.88,
+            "range": "1.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.99,
+            "range": "0.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 43.35,
+            "range": "0.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 586.75,
+            "range": "7.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 611.13,
+            "range": "5.46",
             "unit": "ms"
           }
         ]
