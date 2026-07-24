@@ -54,9 +54,9 @@ test.describe("Visual Regression: Rail and Expanded Header", () => {
 });
 
 test.describe("Visual Regression: Sidebar States, Mobile", () => {
-  // Emulate touch so the header renders its hamburger: peek now keys on `(hover: hover)`, and the
-  // visual project is Desktop Chrome (a mouse), which would otherwise show the hover-peek logo.
-  test.use({ isMobile: true, hasTouch: true });
+  // Emulate touch so the header renders its hamburger, not the mouse hover-peek logo. `hasTouch`
+  // alone flips `(hover)`/`(pointer)`; the visual project is Desktop Chrome (a mouse) otherwise.
+  test.use({ hasTouch: VIEWPORT_MOBILE_SMALL_PORTRAIT.hasTouch });
 
   test.beforeEach(async ({ page }) => {
     await page.setViewportSize(VIEWPORT_MOBILE_SMALL_PORTRAIT.viewport);

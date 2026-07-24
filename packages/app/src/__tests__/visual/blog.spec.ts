@@ -9,10 +9,14 @@ test.describe("Visual Regression: Blog Posts", () => {
     await expect(page).toHaveScreenshot("blog-post.png");
   });
 
-  test("blog post, mobile", async ({ page }) => {
-    await page.setViewportSize(VIEWPORT_MOBILE_SMALL_PORTRAIT.viewport);
+  test.describe("mobile", () => {
+    test.use({ hasTouch: VIEWPORT_MOBILE_SMALL_PORTRAIT.hasTouch });
 
-    await goToPageAndWaitFor(page, "/blog/2026-04-27-welcome");
-    await expect(page).toHaveScreenshot("blog-post-mobile.png");
+    test("blog post, mobile", async ({ page }) => {
+      await page.setViewportSize(VIEWPORT_MOBILE_SMALL_PORTRAIT.viewport);
+
+      await goToPageAndWaitFor(page, "/blog/2026-04-27-welcome");
+      await expect(page).toHaveScreenshot("blog-post-mobile.png");
+    });
   });
 });

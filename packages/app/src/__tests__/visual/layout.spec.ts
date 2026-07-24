@@ -8,7 +8,7 @@ import {
 } from "@/__tests__/e2e/util";
 
 import { RecipeID } from "@/__tests__/assets";
-import { VIEWPORTS } from "@/__tests__/visual/assets";
+import { VIEWPORTS, type ViewportAsset } from "@/__tests__/visual/assets";
 import {
   captureFullContent,
   getOverflow,
@@ -64,70 +64,81 @@ async function takeViewportAndFullContentScreenshots(
   }
 }
 
-test.describe("Visual Regression: Responsive Layout, calculator page", () => {
-  for (const { name, viewport, screenshot } of VIEWPORTS) {
-    test(name, async ({ page, browserName }) => {
+/**
+ * Register one viewport's layout test, emulating the input modality that device reports so the
+ * navbar shows its real affordance: a tap-peek hamburger on touch, a hover-peek logo on mouse.
+ */
+function testViewportLayout(
+  asset: ViewportAsset,
+  screenshotPrefix: string,
+  pageSetup: (page: Page, browserName: string) => Promise<void>,
+  options?: { fullContent?: "resize" | "stitch" },
+) {
+  const { name, viewport, hasTouch, screenshot } = asset;
+
+  test.describe(name, () => {
+    test.use({ hasTouch });
+
+    test("layout", async ({ page, browserName }) => {
       await takeViewportAndFullContentScreenshots(
         page,
         viewport,
-        `calculator-${screenshot}`,
-        async (page) => {
-          await goToPageAndWaitFor(page, "/calculator");
-
-          // In addition to providing a better visual representation of the layout, particularly
-          // size variable components like Watchers, it also makes chart snapshots deterministic.
-          await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.RefA);
-          // Main last so that 'Recipe' is left selected in RecipeEditor
-          await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
-        },
+        `${screenshotPrefix}-${screenshot}`,
+        (page) => pageSetup(page, browserName),
+        options,
       );
+    });
+  });
+}
+
+test.describe("Visual Regression: Responsive Layout, calculator page", () => {
+  for (const asset of VIEWPORTS) {
+    testViewportLayout(asset, "calculator", async (page, browserName) => {
+      await goToPageAndWaitFor(page, "/calculator");
+
+      // In addition to providing a better visual representation of the layout, particularly
+      // size variable components like Watchers, it also makes chart snapshots deterministic.
+      await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.RefA);
+      // Main last so that 'Recipe' is left selected in RecipeEditor
+      await pasteRecipeAndWaitForUpdate(page, browserName, RecipeID.Main);
     });
   }
 });
 
 test.describe("Visual Regression: Responsive Layout, recipes page", () => {
-  for (const { name, viewport, screenshot } of VIEWPORTS) {
-    test(name, async ({ page }) => {
-      await takeViewportAndFullContentScreenshots(
-        page,
-        viewport,
-        `recipes-${screenshot}`,
-        async (page) => {
-          await goToPageAndWaitFor(page, "/recipes");
-          await selectRecipeByName(page, "Standard Base");
-        },
-        { fullContent: "stitch" },
-      );
-    });
+  for (const asset of VIEWPORTS) {
+    testViewportLayout(
+      asset,
+      "recipes",
+      async (page) => {
+        await goToPageAndWaitFor(page, "/recipes");
+        await selectRecipeByName(page, "Standard Base");
+      },
+      { fullContent: "stitch" },
+    );
   }
 });
 
 test.describe("Visual Regression: Responsive Layout, ingredients page", () => {
-  for (const { name, viewport, screenshot } of VIEWPORTS) {
-    test(name, async ({ page }) => {
-      await takeViewportAndFullContentScreenshots(
-        page,
-        viewport,
-        `ingredients-${screenshot}`,
-        async (page) => {
-          await goToPageAndWaitFor(page, "/ingredients");
-          await selectIngredientByName(page, "Sealtest 3.25% Milk");
-        },
-        { fullContent: "stitch" },
-      );
-    });
+  for (const asset of VIEWPORTS) {
+    testViewportLayout(
+      asset,
+      "ingredients",
+      async (page) => {
+        await goToPageAndWaitFor(page, "/ingredients");
+        await selectIngredientByName(page, "Sealtest 3.25% Milk");
+      },
+      { fullContent: "stitch" },
+    );
   }
 });
 
 test.describe("Visual Regression: Responsive Layout, blog post", () => {
-  for (const { name, viewport, screenshot } of VIEWPORTS) {
-    test(name, async ({ page }) => {
-      await takeViewportAndFullContentScreenshots(
-        page,
-        viewport,
-        `blog-post-${screenshot}`,
-        async (page) => await goToPageAndWaitFor(page, "/blog/2026-04-27-welcome"),
-      );
-    });
+  for (const asset of VIEWPORTS) {
+    testViewportLayout(
+      asset,
+      "blog-post",
+      async (page) => await goToPageAndWaitFor(page, "/blog/2026-04-27-welcome"),
+    );
   }
 });

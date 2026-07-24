@@ -242,12 +242,16 @@ test.describe("Visual Regression: Make Recipe", () => {
 
   // The recipient reads this at the bench, phone or tablet in hand, so the narrow layouts are the
   // ones that matter most: the checklist is a table, and its columns are what run out of width.
-  for (const { name, viewport, screenshot } of PORTRAIT_VIEWPORTS) {
-    test(`make recipe - shared link - ${name}`, async ({ page }) => {
-      await page.setViewportSize(viewport);
-      await goToSharedLink(page);
+  for (const { name, viewport, screenshot, hasTouch } of PORTRAIT_VIEWPORTS) {
+    test.describe(`make recipe - shared link - ${name}`, () => {
+      test.use({ hasTouch });
 
-      await shootPage(page, `make-recipe-shared-${screenshot}.png`);
+      test("shared link", async ({ page }) => {
+        await page.setViewportSize(viewport);
+        await goToSharedLink(page);
+
+        await shootPage(page, `make-recipe-shared-${screenshot}.png`);
+      });
     });
   }
 
@@ -259,22 +263,30 @@ test.describe("Visual Regression: Make Recipe", () => {
   });
 
   // Six columns on a handheld screen: the tightest the checklist gets before it scrolls sideways.
-  for (const { name, viewport, screenshot } of PORTRAIT_VIEWPORTS) {
-    test(`make recipe - four recipes - ${name}`, async ({ page }) => {
-      await page.setViewportSize(viewport);
-      await goToSharedLink(page, SHARED_BATCH_WIDE);
+  for (const { name, viewport, screenshot, hasTouch } of PORTRAIT_VIEWPORTS) {
+    test.describe(`make recipe - four recipes - ${name}`, () => {
+      test.use({ hasTouch });
 
-      await shootPage(page, `make-recipe-wide-${screenshot}.png`);
+      test("four recipes", async ({ page }) => {
+        await page.setViewportSize(viewport);
+        await goToSharedLink(page, SHARED_BATCH_WIDE);
+
+        await shootPage(page, `make-recipe-wide-${screenshot}.png`);
+      });
     });
   }
 
   // Only the small phone hides a whole column, so only it earns a second shot: the large phone
   // overflows by a few pixels with recipe D already visible, and the tablet does not overflow.
-  test("make recipe - four recipes, scrolled to the last column", async ({ page }) => {
-    await page.setViewportSize(VIEWPORT_MOBILE_SMALL_PORTRAIT.viewport);
-    await goToSharedLink(page, SHARED_BATCH_WIDE);
+  test.describe("make recipe - four recipes, scrolled to the last column", () => {
+    test.use({ hasTouch: VIEWPORT_MOBILE_SMALL_PORTRAIT.hasTouch });
 
-    await shootScrolledToLastColumn(page, "make-recipe-wide-scrolled-mobile-small-portrait.png");
+    test("scrolled to the last column", async ({ page }) => {
+      await page.setViewportSize(VIEWPORT_MOBILE_SMALL_PORTRAIT.viewport);
+      await goToSharedLink(page, SHARED_BATCH_WIDE);
+
+      await shootScrolledToLastColumn(page, "make-recipe-wide-scrolled-mobile-small-portrait.png");
+    });
   });
 
   // The fourth is left unpicked: a partly colored batch is the normal state.

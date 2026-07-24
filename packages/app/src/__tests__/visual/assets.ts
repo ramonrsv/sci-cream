@@ -3,23 +3,31 @@ import { devices } from "@playwright/test";
 import { RecipeID } from "@/__tests__/assets";
 
 /** Represents a viewport configuration for visual regression tests. */
-interface ViewportAsset {
+export interface ViewportAsset {
   name: string;
   viewport: { width: number; height: number };
+  /** Touch input: drives `(hover)`/`(pointer)`, so tap-vs-hover peek. Apply via `test.use()`. */
+  hasTouch: boolean;
   screenshot: string;
+}
+
+/** Viewport and input modality of a Playwright device; omits `deviceScaleFactor` to stay at 1x. */
+function fromDevice(device: keyof typeof devices) {
+  const { viewport, hasTouch } = devices[device];
+  return { viewport, hasTouch };
 }
 
 /** Mobile (small) viewport in portrait orientation (e.g. Pixel 5) */
 export const VIEWPORT_MOBILE_SMALL_PORTRAIT: ViewportAsset = {
   name: "small mobile viewport - portrait layout",
-  viewport: devices["Pixel 5"].viewport,
+  ...fromDevice("Pixel 5"),
   screenshot: "mobile-small-portrait",
 };
 
 /** Mobile (small) viewport in landscape orientation (e.g. Pixel 5) */
 export const VIEWPORT_MOBILE_SMALL_LANDSCAPE: ViewportAsset = {
   name: "small mobile viewport - landscape layout",
-  viewport: devices["Pixel 5 landscape"].viewport,
+  ...fromDevice("Pixel 5 landscape"),
   screenshot: "mobile-small-landscape",
 };
 
@@ -31,6 +39,7 @@ export const VIEWPORT_MOBILE_SMALL_LANDSCAPE: ViewportAsset = {
 export const VIEWPORT_MOBILE_LARGE_PORTRAIT: ViewportAsset = {
   name: "large mobile viewport - portrait layout",
   viewport: { width: 448, height: 867 },
+  hasTouch: true,
   screenshot: "mobile-large-portrait",
 };
 
@@ -42,20 +51,21 @@ export const VIEWPORT_MOBILE_LARGE_PORTRAIT: ViewportAsset = {
 export const VIEWPORT_MOBILE_LARGE_LANDSCAPE: ViewportAsset = {
   name: "large mobile viewport - landscape layout",
   viewport: { width: 947, height: 340 },
+  hasTouch: true,
   screenshot: "mobile-large-landscape",
 };
 
 /** Tablet viewport in portrait orientation (e.g. iPad Pro 11) */
 export const VIEWPORT_TABLET_PORTRAIT: ViewportAsset = {
   name: "tablet viewport - portrait layout",
-  viewport: devices["iPad Pro 11"].viewport,
+  ...fromDevice("iPad Pro 11"),
   screenshot: "tablet-portrait",
 };
 
 /** Tablet viewport in landscape orientation (e.g. iPad Pro 11) */
 export const VIEWPORT_TABLET_LANDSCAPE: ViewportAsset = {
   name: "tablet viewport - landscape layout",
-  viewport: devices["iPad Pro 11 landscape"].viewport,
+  ...fromDevice("iPad Pro 11 landscape"),
   screenshot: "tablet-landscape",
 };
 
@@ -69,7 +79,7 @@ export const VIEWPORT_TABLET_LANDSCAPE: ViewportAsset = {
  */
 export const VIEWPORT_DESKTOP_DEFAULT: ViewportAsset = {
   name: "desktop viewport - default",
-  viewport: devices["Desktop Chrome"].viewport,
+  ...fromDevice("Desktop Chrome"),
   screenshot: "desktop-default",
 };
 
@@ -91,6 +101,7 @@ export function adjustDesktopViewportForBrowserUI(viewport: { width: number; hei
 export const VIEWPORT_DESKTOP_1080P_HALF: ViewportAsset = {
   name: "desktop viewport - 1080p, half screen",
   viewport: adjustDesktopViewportForBrowserUI({ width: 960, height: 1080 }),
+  hasTouch: false,
   screenshot: "desktop-1080p-half",
 };
 
@@ -98,6 +109,7 @@ export const VIEWPORT_DESKTOP_1080P_HALF: ViewportAsset = {
 export const VIEWPORT_DESKTOP_1080P_FULL: ViewportAsset = {
   name: "desktop viewport - 1080p, full screen",
   viewport: adjustDesktopViewportForBrowserUI({ width: 1920, height: 1080 }),
+  hasTouch: false,
   screenshot: "desktop-1080p-full",
 };
 
@@ -105,6 +117,7 @@ export const VIEWPORT_DESKTOP_1080P_FULL: ViewportAsset = {
 export const VIEWPORT_DESKTOP_1440P_HALF: ViewportAsset = {
   name: "desktop viewport - 1440p, half screen",
   viewport: adjustDesktopViewportForBrowserUI({ width: 1280, height: 1440 }),
+  hasTouch: false,
   screenshot: "desktop-1440p-half",
 };
 
@@ -112,6 +125,7 @@ export const VIEWPORT_DESKTOP_1440P_HALF: ViewportAsset = {
 export const VIEWPORT_DESKTOP_1440P_FULL: ViewportAsset = {
   name: "desktop viewport - 1440p, full screen",
   viewport: adjustDesktopViewportForBrowserUI({ width: 2560, height: 1440 }),
+  hasTouch: false,
   screenshot: "desktop-1440p-full",
 };
 

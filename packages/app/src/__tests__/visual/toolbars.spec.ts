@@ -16,80 +16,83 @@ import { getSelectControl, selectOption } from "@/__tests__/e2e/select";
 import { CompKey, compToPropKey } from "@workspace/sci-cream";
 
 test.describe("Visual Regression: Toolbars, Space Constraints", () => {
-  for (const { name, viewport, screenshot } of VIEWPORTS) {
-    test(`toolbar overflow - calculator - recipe editor - ${name}`, async ({ page }) => {
-      page.setViewportSize(viewport);
+  for (const { name, viewport, screenshot, hasTouch } of VIEWPORTS) {
+    // A describe per viewport so `test.use` can emulate its touch input (gating `hover:` styles).
+    test.describe(name, () => {
+      test.use({ hasTouch });
 
-      await goToPageAndWaitFor(page);
+      test("toolbar overflow - calculator - recipe editor", async ({ page }) => {
+        page.setViewportSize(viewport);
 
-      const toolbar = page.locator("#recipe-editor-panel .toolbar");
-      await expect(toolbar).toHaveScreenshot(`toolbar-calculator-recipe-editor-${screenshot}.png`);
-    });
+        await goToPageAndWaitFor(page);
 
-    test(`toolbar overflow - calculator - properties view - ${name}`, async ({
-      page,
-      browserName,
-    }) => {
-      page.setViewportSize(viewport);
+        const toolbar = page.locator("#recipe-editor-panel .toolbar");
+        await expect(toolbar).toHaveScreenshot(
+          `toolbar-calculator-recipe-editor-${screenshot}.png`,
+        );
+      });
 
-      // Paste two recipes to ensure that the upcoming delta selects are visible
-      await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main, RecipeID.RefA]);
+      test("toolbar overflow - calculator - properties view", async ({ page, browserName }) => {
+        page.setViewportSize(viewport);
 
-      // Select the "Custom" key filter to reveal the "customize" button
-      const selector = getPropertiesPanelKeyFilterSelectInput(page);
-      await selectOption(page, selector, KeyFilter.Custom);
+        // Paste two recipes to ensure that the upcoming delta selects are visible
+        await goToPageAndPasteRecipes(page, browserName, [RecipeID.Main, RecipeID.RefA]);
 
-      const toolbar = page.locator("#properties-panel .toolbar");
-      await expect(toolbar).toHaveScreenshot(
-        `toolbar-calculator-properties-view-${screenshot}.png`,
-      );
-    });
+        // Select the "Custom" key filter to reveal the "customize" button
+        const selector = getPropertiesPanelKeyFilterSelectInput(page);
+        await selectOption(page, selector, KeyFilter.Custom);
 
-    test(`toolbar overflow - recipes - properties view - ${name}`, async ({ page }) => {
-      page.setViewportSize(viewport);
-      await goToPageAndWaitFor(page, "/recipes");
-      await selectRecipeByName(page, "Standard Base");
+        const toolbar = page.locator("#properties-panel .toolbar");
+        await expect(toolbar).toHaveScreenshot(
+          `toolbar-calculator-properties-view-${screenshot}.png`,
+        );
+      });
 
-      // Select the "Custom" key filter to reveal the "customize" button
-      const selector = getSelectControl(page, "#key-filter-select");
-      await selectOption(page, selector, KeyFilter.Custom);
+      test("toolbar overflow - recipes - properties view", async ({ page }) => {
+        page.setViewportSize(viewport);
+        await goToPageAndWaitFor(page, "/recipes");
+        await selectRecipeByName(page, "Standard Base");
 
-      const toolbar = page.locator(".toolbar");
-      await expect(toolbar).toHaveScreenshot(`toolbar-recipes-properties-view-${screenshot}.png`);
-    });
+        // Select the "Custom" key filter to reveal the "customize" button
+        const selector = getSelectControl(page, "#key-filter-select");
+        await selectOption(page, selector, KeyFilter.Custom);
 
-    test(`toolbar overflow - calculator - watchers view - ${name}`, async ({
-      page,
-      browserName,
-    }) => {
-      page.setViewportSize(viewport);
+        const toolbar = page.locator(".toolbar");
+        await expect(toolbar).toHaveScreenshot(`toolbar-recipes-properties-view-${screenshot}.png`);
+      });
 
-      const TOTAL_SOLIDS = compToPropKey(CompKey.TotalSolids);
-      const SUCRALOSE = compToPropKey(CompKey.Sucralose);
+      test("toolbar overflow - calculator - watchers view", async ({ page, browserName }) => {
+        page.setViewportSize(viewport);
 
-      await presetWatcherSelection(page, [TOTAL_SOLIDS, SUCRALOSE]);
+        const TOTAL_SOLIDS = compToPropKey(CompKey.TotalSolids);
+        const SUCRALOSE = compToPropKey(CompKey.Sucralose);
 
-      // Paste two recipes to ensure that the fill-targets-from-ref buttons are visible
-      await goToPageAndPasteRecipes(page, browserName, [
-        RecipeID.Main,
-        RecipeID.RefA,
-        RecipeID.RefB,
-      ]);
+        await presetWatcherSelection(page, [TOTAL_SOLIDS, SUCRALOSE]);
 
-      // Select the "Custom" key filter to reveal the "customize" button
-      const selector = getSelectControl(page, "#watchers-panel #key-filter-select");
-      await selectOption(page, selector, KeyFilter.Custom);
+        // Paste two recipes to ensure that the fill-targets-from-ref buttons are visible
+        await goToPageAndPasteRecipes(page, browserName, [
+          RecipeID.Main,
+          RecipeID.RefA,
+          RecipeID.RefB,
+        ]);
 
-      // Set targets to cause error and warnings so that the popup buttons are visible
-      let card = await locateWatcherCardByKeyAndExpectVisible(page, TOTAL_SOLIDS);
-      let input = card.getByTestId(`watcher-card-${TOTAL_SOLIDS}-target`);
-      await input.fill("-2");
-      card = await locateWatcherCardByKeyAndExpectVisible(page, SUCRALOSE);
-      input = card.getByTestId(`watcher-card-${SUCRALOSE}-target`);
-      await input.fill("2");
+        // Select the "Custom" key filter to reveal the "customize" button
+        const selector = getSelectControl(page, "#watchers-panel #key-filter-select");
+        await selectOption(page, selector, KeyFilter.Custom);
 
-      const toolbar = page.locator("#watchers-panel .toolbar");
-      await expect(toolbar).toHaveScreenshot(`toolbar-calculator-watchers-view-${screenshot}.png`);
+        // Set targets to cause error and warnings so that the popup buttons are visible
+        let card = await locateWatcherCardByKeyAndExpectVisible(page, TOTAL_SOLIDS);
+        let input = card.getByTestId(`watcher-card-${TOTAL_SOLIDS}-target`);
+        await input.fill("-2");
+        card = await locateWatcherCardByKeyAndExpectVisible(page, SUCRALOSE);
+        input = card.getByTestId(`watcher-card-${SUCRALOSE}-target`);
+        await input.fill("2");
+
+        const toolbar = page.locator("#watchers-panel .toolbar");
+        await expect(toolbar).toHaveScreenshot(
+          `toolbar-calculator-watchers-view-${screenshot}.png`,
+        );
+      });
     });
   }
 });
