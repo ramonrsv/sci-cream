@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 263  (non-alias: 223, independent: 216)
+"total: 265  (non-alias: 225, independent: 217)
 
             0% Milk
             1% Milk
@@ -121,6 +121,7 @@ exports[`Embedded spec entries 1`] = `
             Inulin Powder
             Invert Sugar
             Iota Carrageenan
+[composite] Joyful Nut Pistachio Butter
             Kahlua Coffee Liqueur
             Kappa Carrageenan
             Lactose
@@ -182,6 +183,7 @@ exports[`Embedded spec entries 1`] = `
 [alias]     Peppermint Essential Oil
 [alias]     Peppermint Extract
             Pistachio
+            Roasted Pistachio
 [alias]     Rose Essential Oil
             Salt
             Sealtest 0% Skim Milk

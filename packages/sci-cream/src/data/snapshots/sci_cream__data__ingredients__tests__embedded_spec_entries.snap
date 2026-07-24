@@ -2,7 +2,7 @@
 source: packages/sci-cream/src/data/ingredients.rs
 expression: embedded_spec_entries_report()
 ---
-total: 263  (non-alias: 223, independent: 216)
+total: 265  (non-alias: 225, independent: 217)
 
             0% Milk
             1% Milk
@@ -122,6 +122,7 @@ total: 263  (non-alias: 223, independent: 216)
             Inulin Powder
             Invert Sugar
             Iota Carrageenan
+[composite] Joyful Nut Pistachio Butter
             Kahlua Coffee Liqueur
             Kappa Carrageenan
             Lactose
@@ -183,6 +184,7 @@ total: 263  (non-alias: 223, independent: 216)
 [alias]     Peppermint Essential Oil
 [alias]     Peppermint Extract
             Pistachio
+            Roasted Pistachio
 [alias]     Rose Essential Oil
             Salt
             Sealtest 0% Skim Milk
