@@ -32,6 +32,9 @@ import {
   HEADER_W_REST,
   SIDEBAR_W_PINNED,
   SIDEBAR_W_PEEK,
+  SIDEBAR_W_SPACER_PINNED,
+  HEADER_W_PINNED,
+  HEADER_W_PEEK,
 } from "@/lib/styles/sizes";
 import { ThemeSelect } from "@/app/_elements/selects/theme-select";
 import { GroupBySelect } from "@/app/_elements/selects/group-by-select";
@@ -173,8 +176,8 @@ export function Header() {
   const onCalculator = pathname === "/calculator";
   const showGroupBy = GROUP_BY_ROUTES.some((route) => pathname.startsWith(route));
 
-  const headerBase = pinned ? SIDEBAR_W_PINNED : HEADER_W_REST;
-  const headerWidth = peek ? SIDEBAR_W_PEEK : headerBase;
+  const spacerWidth = pinned ? HEADER_W_PINNED : HEADER_W_REST;
+  const headerWidth = peek ? HEADER_W_PEEK : pinned ? HEADER_W_PINNED : HEADER_W_REST;
   const hoverProps = isDesktop ? { onMouseEnter: openPeek, onMouseLeave: closePeek } : undefined;
 
   const handleResetLayout = () => {
@@ -185,14 +188,14 @@ export function Header() {
 
   return (
     <header id="header" className="navbar flex h-12 shrink-0 items-center justify-between">
-      {/* Logo and header controls: reserves base width in flow, overlays the title when peeking */}
-      <div className={`navbar-trans-width relative h-12 shrink-0 ${headerBase}`} {...hoverProps}>
+      {/* Logo and header controls: reserves spacer width in flow, overlays title when peeking */}
+      <div className={`navbar-trans-width relative h-12 shrink-0 ${spacerWidth}`} {...hoverProps}>
         {/* Clipper: animates the revealed width and overlays the title when peeking. */}
         <div
           className={`navbar navbar-trans-width absolute inset-y-0 left-0 z-40 overflow-hidden ${headerWidth}`}
         >
           {/* Fixed width keeps the controls positioned; the clipper above reveals them. */}
-          <div className={`flex h-full items-center ${SIDEBAR_W_PEEK}`}>
+          <div className={`flex h-full items-center ${HEADER_W_PEEK}`}>
             {isDesktop ? (
               <Image
                 src="/favicon.ico"
@@ -259,19 +262,18 @@ export function Sidebar() {
 
   const iconSize = NAVBAR_ICON_SIZE;
 
-  const sidebarBase = pinned ? SIDEBAR_W_PINNED : SIDEBAR_W_REST;
-  const spacerBase = pinned ? SIDEBAR_W_PINNED : SIDEBAR_W_SPACER_REST;
-  const sidebarWidth = peek ? SIDEBAR_W_PEEK : sidebarBase;
+  const spacerWidth = pinned ? SIDEBAR_W_SPACER_PINNED : SIDEBAR_W_SPACER_REST;
+  const sidebarWidth = peek ? SIDEBAR_W_PEEK : pinned ? SIDEBAR_W_PINNED : SIDEBAR_W_REST;
   const overlaying = peek && (!pinned || !isDesktop);
 
-  if (!mounted) return <div className={`navbar-trans-width shrink-0 ${spacerBase}`} />;
+  if (!mounted) return <div className={`navbar-trans-width shrink-0 ${spacerWidth}`} />;
 
   const hoverProps = isDesktop ? { onMouseEnter: openPeek, onMouseLeave: closePeek } : undefined;
 
   return (
     <>
-      {/* In-flow spacer: a small left gutter on mobile; the drawer overlays it. */}
-      <div className={`navbar-trans-width shrink-0 ${spacerBase}`} aria-hidden />
+      {/* In-flow spacer: small left gutter on mobile at rest, else matches un-peeked sidebar */}
+      <div className={`navbar-trans-width shrink-0 ${spacerWidth}`} aria-hidden />
       <aside
         id="sidebar"
         className={`navbar navbar-trans-width absolute inset-y-0 left-0 z-30 flex flex-col overflow-hidden ${sidebarWidth} ${overlaying ? "sidebar-drawer-peek" : ""}`}

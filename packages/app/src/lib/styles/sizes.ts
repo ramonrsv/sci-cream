@@ -41,10 +41,18 @@ export const SIDEBAR_W_REST = `${SIDEBAR_W_HIDDEN_SM} ${SIDEBAR_W_RAIL_LG}`;
 export const SIDEBAR_W_PINNED = `${SIDEBAR_W_RAIL_SM} ${SIDEBAR_W_EXPANDED_LG}`;
 /** Peek overlay drawer: expanded at both breakpoints. */
 export const SIDEBAR_W_PEEK = `${SIDEBAR_W_EXPANDED_SM} ${SIDEBAR_W_EXPANDED_LG}`;
+
 /** Unpinned in-flow spacer: mobile gutter, rail on desktop. */
 export const SIDEBAR_W_SPACER_REST = `${SIDEBAR_W_SPACER_SM} ${SIDEBAR_W_RAIL_LG}`;
+/** Pinned in-flow spacer: matches the pinned sidebar width. */
+export const SIDEBAR_W_SPACER_PINNED = SIDEBAR_W_PINNED;
+
 /** Unpinned header-left: rail at both breakpoints (logo/hamburger stays tappable on mobile). */
 export const HEADER_W_REST = `${SIDEBAR_W_RAIL_SM} ${SIDEBAR_W_RAIL_LG}`;
+/** Pinned header-left: matches the pinned sidebar width. */
+export const HEADER_W_PINNED = SIDEBAR_W_PINNED;
+/** Peek header-left: matches the peek sidebar width. */
+export const HEADER_W_PEEK = SIDEBAR_W_PEEK;
 
 // ----  Fixed sizes for react-grid-layout components ----------------------------------------------
 
