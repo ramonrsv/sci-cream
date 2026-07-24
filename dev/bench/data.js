@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784924491604,
+  "lastUpdate": 1784924502659,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -412389,6 +412389,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.84%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "85ca795dc8642d556c475ed667563339ea4fe93c",
+          "message": "Emulate device touch input in visual snapshots\n\nThe visual specs rendered every viewport as a mouse device, so the\nwide-but-touch ones (Pixel 5 landscape at 802px, iPad Pro 11 landscape\nat 1194px) showed a hover-peek logo that no real device would display.\n\nCarry each viewport's input modality on the asset and apply it:\n\n- ViewportAsset gains a required `hasTouch`, sourced from the\n  Playwright device where there is one, else declared explicitly\n- fromDevice() omits deviceScaleFactor, keeping snapshots at 1x\n- layout, toolbars, and make-recipe register a describe per viewport,\n  since `test.use` applies per describe rather than per test; blog's\n  mobile shot and the navbar sidebar tests get the same treatment\n\nOnly `hasTouch` is emulated: it alone flips `(hover)`/`(pointer)`,\nwhereas `isMobile` leaves them untouched and would add unrelated\nmeta-viewport and scrollbar changes. This also drops the `isMobile`\nthe navbar mobile tests carried.\n\nThe mobile and tablet baselines across these specs need regenerating;\ndesktop ones are unaffected.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-24T15:59:27-04:00",
+          "tree_id": "8e55aa85be94d03985d6b9415443f436bff161ec",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/85ca795dc8642d556c475ed667563339ea4fe93c"
+        },
+        "date": 1784924480790,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 82815,
+            "range": "±0.84%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 719819,
+            "range": "±1.28%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 60328,
+            "range": "±1.03%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 630586,
+            "range": "±0.91%",
+            "unit": "ops/sec",
+            "extra": "98 samples"
           }
         ]
       }
