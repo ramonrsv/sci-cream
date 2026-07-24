@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784924840755,
+  "lastUpdate": 1784925311452,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -381721,6 +381721,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 611.13,
             "range": "5.46",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "85ca795dc8642d556c475ed667563339ea4fe93c",
+          "message": "Emulate device touch input in visual snapshots\n\nThe visual specs rendered every viewport as a mouse device, so the\nwide-but-touch ones (Pixel 5 landscape at 802px, iPad Pro 11 landscape\nat 1194px) showed a hover-peek logo that no real device would display.\n\nCarry each viewport's input modality on the asset and apply it:\n\n- ViewportAsset gains a required `hasTouch`, sourced from the\n  Playwright device where there is one, else declared explicitly\n- fromDevice() omits deviceScaleFactor, keeping snapshots at 1x\n- layout, toolbars, and make-recipe register a describe per viewport,\n  since `test.use` applies per describe rather than per test; blog's\n  mobile shot and the navbar sidebar tests get the same treatment\n\nOnly `hasTouch` is emulated: it alone flips `(hover)`/`(pointer)`,\nwhereas `isMobile` leaves them untouched and would add unrelated\nmeta-viewport and scrollbar changes. This also drops the `isMobile`\nthe navbar mobile tests carried.\n\nThe mobile and tablet baselines across these specs need regenerating;\ndesktop ones are unaffected.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-24T15:59:27-04:00",
+          "tree_id": "8e55aa85be94d03985d6b9415443f436bff161ec",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/85ca795dc8642d556c475ed667563339ea4fe93c"
+        },
+        "date": 1784925279466,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 49.25,
+            "range": "6.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 56.13,
+            "range": "7.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 66.5,
+            "range": "8.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2359.63,
+            "range": "38.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 320.25,
+            "range": "6.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 329.5,
+            "range": "5.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 353,
+            "range": "6.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16495.25,
+            "range": "60.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 16.31,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 843.75,
+            "range": "31.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 50.63,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 53.63,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.38,
+            "range": "0.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 41.13,
+            "range": "3.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 126.38,
+            "range": "4.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 77.88,
+            "range": "1.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 52.19,
+            "range": "0.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 39.23,
+            "range": "0.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 574.88,
+            "range": "11.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 606.5,
+            "range": "16.71",
             "unit": "ms"
           }
         ]
