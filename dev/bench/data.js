@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784914428645,
+  "lastUpdate": 1784914522240,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -447857,6 +447857,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.35,
             "range": "0.24",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8c914375b4cf6997abfbd1214d437604cc95180f",
+          "message": "Name header/spacer widths by their role\n\nThe header and the sidebar's in-flow spacer borrowed the sidebar's\nwidth constants. Add aliases so each consumer references a name for\nits own role, with no change to the underlying values:\n\n- add SIDEBAR_W_SPACER_PINNED, HEADER_W_PINNED, HEADER_W_PEEK, each\n  aliasing the matching sidebar width\n- Header: rename headerBase to spacerWidth; use the HEADER_W_* names\n- Sidebar: rename spacerBase to spacerWidth\n\nRendered classes and visual snapshots are unchanged.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-24T13:09:54-04:00",
+          "tree_id": "d5b1dd2f88b2f1357524b06d647f32bbe25b40c3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8c914375b4cf6997abfbd1214d437604cc95180f"
+        },
+        "date": 1784914497566,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 47.3,
+            "range": "5.50",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 11.18,
+            "range": "0.43",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 11.11,
+            "range": "0.43",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 131,
+            "range": "7.42",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.32,
+            "range": "0.04",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 131,
+            "range": "7.42",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 45.34,
+            "range": "5.32",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 2.84,
+            "range": "0.26",
             "unit": "ms"
           }
         ]
