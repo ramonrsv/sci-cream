@@ -48,9 +48,9 @@ export async function showHeaderActionButtons(page: Page) {
     await page.locator("#peek-sidebar-button").click();
   } else {
     await page.locator("#sidebar").hover();
-    await page.locator("#expand-collapse-sidebar-button").click();
+    await page.locator("#pin-sidebar-button").click();
   }
-  await expect(page.locator("#expand-collapse-sidebar-button")).toBeVisible();
+  await expect(page.locator("#pin-sidebar-button")).toBeVisible();
 }
 
 /**
@@ -61,7 +61,7 @@ export async function showSidebarItems(page: Page) {
   const viewport = page.viewportSize();
   if (viewport !== null && viewport.width < 640) {
     await page.locator("#peek-sidebar-button").click();
-    await page.locator("#expand-collapse-sidebar-button").click();
+    await page.locator("#pin-sidebar-button").click();
     await expect(page.locator("#sidebar")).toBeVisible();
   }
 }

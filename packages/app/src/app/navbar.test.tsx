@@ -66,8 +66,8 @@ describe("Header — reset layout button", () => {
     );
 
     // Wait for the navbar to mount (renders an empty header until `mounted` is set).
-    // The default collapsed state titles the toggle "Expand sidebar".
-    await screen.findByRole("button", { name: /expand sidebar/i });
+    // The default unpinned state titles the toggle "Pin sidebar".
+    await screen.findByRole("button", { name: /pin sidebar/i });
     expect(screen.queryByRole("button", { name: /reset calculator layout/i })).toBeNull();
   });
 
@@ -140,7 +140,7 @@ describe("Header — reset layout button", () => {
 });
 
 // ---------------------------------------------------------------------------
-// Sidebar collapse / expand / peek
+// Sidebar pin / unpin / peek
 // ---------------------------------------------------------------------------
 
 /** Stub `matchMedia` so `useIsDesktop` resolves to desktop; without it the mobile branch renders. */
@@ -162,7 +162,7 @@ function stubDesktopViewport() {
   });
 }
 
-describe("Header / Sidebar — collapse and peek", () => {
+describe("Header / Sidebar — pin and peek", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     localStorage.clear();
@@ -175,7 +175,7 @@ describe("Header / Sidebar — collapse and peek", () => {
     Reflect.deleteProperty(window, "matchMedia");
   });
 
-  it("starts collapsed with the sidebar hidden and a hamburger on mobile", async () => {
+  it("starts hidden with a hamburger on mobile", async () => {
     render(
       <Navbar>
         <div />
@@ -183,11 +183,11 @@ describe("Header / Sidebar — collapse and peek", () => {
     );
 
     expect(await screen.findByRole("button", { name: "Peek sidebar" })).toBeInTheDocument();
-    expect(screen.getByRole("button", { name: "Expand sidebar" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Pin sidebar" })).toBeInTheDocument();
     expect(screen.getByRole("complementary")).toHaveClass("w-0");
   });
 
-  it("the toggle expands the sidebar to the rail and persists the state", async () => {
+  it("the toggle pins the sidebar to the rail and persists the state", async () => {
     const user = userEvent.setup();
     render(
       <Navbar>
@@ -195,11 +195,11 @@ describe("Header / Sidebar — collapse and peek", () => {
       </Navbar>,
     );
 
-    await user.click(await screen.findByRole("button", { name: "Expand sidebar" }));
+    await user.click(await screen.findByRole("button", { name: "Pin sidebar" }));
 
-    expect(screen.getByRole("button", { name: "Collapse sidebar" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Unpin sidebar" })).toBeInTheDocument();
     expect(screen.getByRole("complementary")).toHaveClass("w-14");
-    expect(localStorage.getItem(STORAGE_KEYS.sidebarCollapsed)).toBe("false");
+    expect(localStorage.getItem(STORAGE_KEYS.sidebarPinned)).toBe("true");
   });
 
   it("the hamburger opens the peek drawer", async () => {

@@ -8,7 +8,7 @@
  */
 export const STORAGE_KEYS = {
   recipeStores: "recipe-stores",
-  sidebarCollapsed: "sidebar-collapsed",
+  sidebarPinned: "sidebar-pinned",
   calculatorLayouts: "calculator-layouts",
   groupBy: "group-by",
   // Watcher state — targets, priorities, total, show toggles, etc.; keys via useKeyFilterState

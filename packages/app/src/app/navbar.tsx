@@ -26,12 +26,12 @@ import {
 import {
   HEADER_ICON_SIZE,
   NAVBAR_ICON_SIZE,
-  DEFAULT_COLLAPSED_NAVBAR,
-  SIDEBAR_W_COLLAPSED,
-  SIDEBAR_W_COLLAPSED_SPACER,
-  HEADER_W_COLLAPSED,
+  DEFAULT_SIDEBAR_PINNED,
+  SIDEBAR_W_REST,
+  SIDEBAR_W_SPACER_REST,
+  HEADER_W_REST,
   SIDEBAR_W_PINNED,
-  SIDEBAR_W_EXPANDED,
+  SIDEBAR_W_PEEK,
 } from "@/lib/styles/sizes";
 import { ThemeSelect } from "@/app/_elements/selects/theme-select";
 import { GroupBySelect } from "@/app/_elements/selects/group-by-select";
@@ -56,10 +56,10 @@ function isNavActive(pathname: string, href: string): boolean {
 /** Routes whose pages render groupable key lists, where the global Group-by control is shown. */
 const GROUP_BY_ROUTES = ["/calculator", "/recipes", "/ingredients"];
 
-/** Sidebar collapsed/peek state, mount status, and viewport class, for descendants */
+/** Sidebar pinned/peek state, mount status, and viewport class, for descendants */
 const NavbarContext = createContext<{
-  collapsed: boolean;
-  setCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
+  pinned: boolean;
+  setPinned: React.Dispatch<React.SetStateAction<boolean>>;
   mounted: boolean;
   /** Transient drawer-open state: hover on desktop, tap on mobile. Not persisted. */
   peek: boolean;
@@ -67,8 +67,8 @@ const NavbarContext = createContext<{
   closePeek: () => void;
   isDesktop: boolean;
 }>({
-  collapsed: false,
-  setCollapsed: () => {},
+  pinned: false,
+  setPinned: () => {},
   mounted: false,
   peek: false,
   openPeek: () => {},
@@ -88,9 +88,9 @@ const CHROMELESS_ROUTES = ["/share/embed"];
 export function Navbar({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
-  const [collapsed, setCollapsed] = usePersistedState<boolean>(
-    STORAGE_KEYS.sidebarCollapsed,
-    DEFAULT_COLLAPSED_NAVBAR,
+  const [pinned, setPinned] = usePersistedState<boolean>(
+    STORAGE_KEYS.sidebarPinned,
+    DEFAULT_SIDEBAR_PINNED,
   );
 
   const [mounted, setMounted] = useState(false);
@@ -140,9 +140,7 @@ export function Navbar({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <NavbarContext
-      value={{ collapsed, setCollapsed, mounted, peek, openPeek, closePeek, isDesktop }}
-    >
+    <NavbarContext value={{ pinned, setPinned, mounted, peek, openPeek, closePeek, isDesktop }}>
       <div className="flex h-screen flex-col">
         <Header />
         {/* `relative` anchors the sidebar drawer, which overlays the content when peeking. */}
@@ -163,7 +161,7 @@ export function Navbar({ children }: { children: React.ReactNode }) {
 /** Logo, collapse/expand button, `ThemeSelect` button, and account button to the right */
 export function Header() {
   const pathname = usePathname();
-  const { collapsed, setCollapsed, mounted, peek, openPeek, closePeek, isDesktop } =
+  const { pinned, setPinned, mounted, peek, openPeek, closePeek, isDesktop } =
     useContext(NavbarContext);
 
   const pageTitle = navItems.find(({ href }) => isNavActive(pathname, href))?.label || "Sci-Cream";
@@ -175,8 +173,8 @@ export function Header() {
   const onCalculator = pathname === "/calculator";
   const showGroupBy = GROUP_BY_ROUTES.some((route) => pathname.startsWith(route));
 
-  const headerBase = collapsed ? HEADER_W_COLLAPSED : SIDEBAR_W_PINNED;
-  const headerWidth = peek ? SIDEBAR_W_EXPANDED : headerBase;
+  const headerBase = pinned ? SIDEBAR_W_PINNED : HEADER_W_REST;
+  const headerWidth = peek ? SIDEBAR_W_PEEK : headerBase;
   const hoverProps = isDesktop ? { onMouseEnter: openPeek, onMouseLeave: closePeek } : undefined;
 
   const handleResetLayout = () => {
@@ -194,7 +192,7 @@ export function Header() {
           className={`navbar navbar-trans-width absolute inset-y-0 left-0 z-40 overflow-hidden ${headerWidth}`}
         >
           {/* Fixed width keeps the controls positioned; the clipper above reveals them. */}
-          <div className={`flex h-full items-center ${SIDEBAR_W_EXPANDED}`}>
+          <div className={`flex h-full items-center ${SIDEBAR_W_PEEK}`}>
             {isDesktop ? (
               <Image
                 src="/favicon.ico"
@@ -228,22 +226,22 @@ export function Header() {
             {showGroupBy && <GroupBySelect />}
             <ThemeSelect />
             <button
-              title={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-              id="expand-collapse-sidebar-button"
+              title={pinned ? "Unpin sidebar" : "Pin sidebar"}
+              id="pin-sidebar-button"
               className={`header-button mr-2 sm:mr-4`}
               onClick={() => {
-                setCollapsed(!collapsed);
+                setPinned(!pinned);
                 if (!isDesktop && peek) closePeek();
               }}
             >
-              {collapsed ? <PanelLeftOpen size={iconSize} /> : <PanelLeftClose size={iconSize} />}
+              {pinned ? <PanelLeftClose size={iconSize} /> : <PanelLeftOpen size={iconSize} />}
             </button>
           </div>
         </div>
       </div>
       {/* Page title and account button */}
       <div className="navbar flex w-full items-center justify-between">
-        <h1 className={`${!isDesktop && collapsed && !peek ? "" : "m-4"} text-lg font-bold`}>
+        <h1 className={`${!isDesktop && !pinned && !peek ? "" : "m-4"} text-lg font-bold`}>
           {pageTitle}
         </h1>
         <div className="flex items-center gap-1">
@@ -257,17 +255,17 @@ export function Header() {
 /** Collapsible sidebar with nav links, rendered as a drawer that overlays content when peeking */
 export function Sidebar() {
   const pathname = usePathname();
-  const { collapsed, mounted, peek, openPeek, closePeek, isDesktop } = useContext(NavbarContext);
-
-  const sidebarBase = collapsed ? SIDEBAR_W_COLLAPSED : SIDEBAR_W_PINNED;
-  const spacerBase = collapsed ? SIDEBAR_W_COLLAPSED_SPACER : SIDEBAR_W_PINNED;
-
-  if (!mounted) return <div className={`navbar-trans-width shrink-0 ${spacerBase}`} />;
+  const { pinned, mounted, peek, openPeek, closePeek, isDesktop } = useContext(NavbarContext);
 
   const iconSize = NAVBAR_ICON_SIZE;
 
-  const sidebarWidth = peek ? SIDEBAR_W_EXPANDED : sidebarBase;
-  const overlaying = peek && (collapsed || !isDesktop);
+  const sidebarBase = pinned ? SIDEBAR_W_PINNED : SIDEBAR_W_REST;
+  const spacerBase = pinned ? SIDEBAR_W_PINNED : SIDEBAR_W_SPACER_REST;
+  const sidebarWidth = peek ? SIDEBAR_W_PEEK : sidebarBase;
+  const overlaying = peek && (!pinned || !isDesktop);
+
+  if (!mounted) return <div className={`navbar-trans-width shrink-0 ${spacerBase}`} />;
+
   const hoverProps = isDesktop ? { onMouseEnter: openPeek, onMouseLeave: closePeek } : undefined;
 
   return (
@@ -287,7 +285,7 @@ export function Sidebar() {
               <Link
                 key={href}
                 href={href}
-                title={collapsed ? label : undefined}
+                title={pinned ? undefined : label}
                 className={`sidebar-item ${active ? "sidebar-item-active" : ""} mx-0.5 gap-2 px-2 sm:mx-2.25`}
               >
                 <Icon size={iconSize} className="shrink-0" />

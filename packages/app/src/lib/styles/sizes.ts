@@ -15,18 +15,36 @@ export const HEADER_ICON_SIZE = 20;
 /** Icon size (px) used in the navbar. */
 export const NAVBAR_ICON_SIZE = 20;
 
-/** Whether the navbar is collapsed by default. */
-export const DEFAULT_COLLAPSED_NAVBAR = true;
-/** Collapsed sidebar width: hidden on mobile, rail on desktop. */
-export const SIDEBAR_W_COLLAPSED = "w-0 sm:w-18";
-/** In-flow gutter when collapsed: a mobile left inset; drawer stays w-0, rail on desktop. */
-export const SIDEBAR_W_COLLAPSED_SPACER = "w-4 sm:w-18";
-/** Collapsed header-left width: keeps the logo tappable on mobile, rail on desktop. */
-export const HEADER_W_COLLAPSED = "w-14 sm:w-18";
-/** Pinned width (`collapsed = false`): rail on mobile, expanded on desktop. */
-export const SIDEBAR_W_PINNED = "w-14 sm:w-58";
-/** Full drawer width: the peek overlay (both sections, both breakpoints). */
-export const SIDEBAR_W_EXPANDED = "w-54 sm:w-58";
+/** Whether the sidebar is pinned open by default. */
+export const DEFAULT_SIDEBAR_PINNED = false;
+
+// ---- Width atoms (per breakpoint), composed into the state widths below ----------------------
+
+/** Mobile: sidebar fully hidden. */
+export const SIDEBAR_W_HIDDEN_SM = "w-0";
+/** Mobile: icon-only rail. */
+export const SIDEBAR_W_RAIL_SM = "w-14";
+/** Desktop: icon-only rail. */
+export const SIDEBAR_W_RAIL_LG = "sm:w-18";
+/** Mobile: full-width drawer. */
+export const SIDEBAR_W_EXPANDED_SM = "w-54";
+/** Desktop: full width. */
+export const SIDEBAR_W_EXPANDED_LG = "sm:w-58";
+/** Mobile: in-flow gutter beside the hidden drawer. */
+export const SIDEBAR_W_SPACER_SM = "w-4";
+
+// ---- Composed state widths (mobile base + desktop `sm:`) -------------------------------------
+
+/** Unpinned sidebar: hidden on mobile, rail on desktop. */
+export const SIDEBAR_W_REST = `${SIDEBAR_W_HIDDEN_SM} ${SIDEBAR_W_RAIL_LG}`;
+/** Pinned sidebar: rail on mobile, expanded on desktop. */
+export const SIDEBAR_W_PINNED = `${SIDEBAR_W_RAIL_SM} ${SIDEBAR_W_EXPANDED_LG}`;
+/** Peek overlay drawer: expanded at both breakpoints. */
+export const SIDEBAR_W_PEEK = `${SIDEBAR_W_EXPANDED_SM} ${SIDEBAR_W_EXPANDED_LG}`;
+/** Unpinned in-flow spacer: mobile gutter, rail on desktop. */
+export const SIDEBAR_W_SPACER_REST = `${SIDEBAR_W_SPACER_SM} ${SIDEBAR_W_RAIL_LG}`;
+/** Unpinned header-left: rail at both breakpoints (logo/hamburger stays tappable on mobile). */
+export const HEADER_W_REST = `${SIDEBAR_W_RAIL_SM} ${SIDEBAR_W_RAIL_LG}`;
 
 // ----  Fixed sizes for react-grid-layout components ----------------------------------------------
 
