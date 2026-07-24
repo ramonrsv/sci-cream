@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784924072666,
+  "lastUpdate": 1784924076258,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -451808,6 +451808,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/8c914375b4cf6997abfbd1214d437604cc95180f"
         },
         "date": 1784914409269,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "150470e2975d3c7de25a12ba99366c2be7f4369b",
+          "message": "Key sidebar peek on pointer, not viewport width\n\n`useIsDesktop` (>=640px) drove both the sidebar's width layout and\nits peek interaction. A landscape phone is wide but touch, so it got\ndesktop hover-to-peek: tapping a nav link navigated without ever\ndismissing the peek drawer.\n\nSplit the two signals:\n\n- useMediaQuery: shared matchMedia hook, extracted from useIsDesktop\n- useIsNarrow (use-is-desktop.ts -> use-is-narrow.ts): complement of\n  the `sm:` query; drives width-sensitive layout only\n- useCanHover: `(hover: hover)`; drives peek interaction: hover vs\n  tap peek, logo vs hamburger, dismiss on navigate/tap-outside\n- SM_BREAKPOINT_PX moves to styles/sizes.ts, beside the `sm:` widths\n\nTests: port the matchMedia mechanics to use-media-query.test.ts, add\nper-query stubbing to navbar tests, and cover the wide+touch and\nnarrow+mouse quadrants. The e2e reveal helpers now branch on the\nhamburger's presence rather than a hard-coded 640px, and the mobile\nvisual navbar tests emulate touch so the hamburger still renders.\nThe two mobile sidebar baselines need regenerating.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-24T15:22:29-04:00",
+          "tree_id": "cd34c8f0afb5e52947d3e1bbef73ffd2c2a29154",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/150470e2975d3c7de25a12ba99366c2be7f4369b"
+        },
+        "date": 1784924075343,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
