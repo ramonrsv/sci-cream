@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784914407072,
+  "lastUpdate": 1784914409976,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -450702,6 +450702,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/9a218d0a571418093cc033039e8cf1dea24a5ba6"
         },
         "date": 1784911425074,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8c914375b4cf6997abfbd1214d437604cc95180f",
+          "message": "Name header/spacer widths by their role\n\nThe header and the sidebar's in-flow spacer borrowed the sidebar's\nwidth constants. Add aliases so each consumer references a name for\nits own role, with no change to the underlying values:\n\n- add SIDEBAR_W_SPACER_PINNED, HEADER_W_PINNED, HEADER_W_PEEK, each\n  aliasing the matching sidebar width\n- Header: rename headerBase to spacerWidth; use the HEADER_W_* names\n- Sidebar: rename spacerBase to spacerWidth\n\nRendered classes and visual snapshots are unchanged.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-24T13:09:54-04:00",
+          "tree_id": "d5b1dd2f88b2f1357524b06d647f32bbe25b40c3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8c914375b4cf6997abfbd1214d437604cc95180f"
+        },
+        "date": 1784914409269,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
