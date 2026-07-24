@@ -18,6 +18,9 @@ export const NAVBAR_ICON_SIZE = 20;
 /** Whether the sidebar is pinned open by default. */
 export const DEFAULT_SIDEBAR_PINNED = false;
 
+/** Tailwind's `sm` breakpoint (px); the width atoms below switch at this viewport width. */
+export const SM_BREAKPOINT_PX = 640;
+
 // ---- Width atoms (per breakpoint), composed into the state widths below ----------------------
 
 /** Mobile: sidebar fully hidden. */

@@ -39,13 +39,15 @@ declare global {
 }
 
 /**
- * Reveal the header action buttons (clipped while the sidebar is collapsed). Desktop pins the
- * sidebar expanded so they stay revealed through popups; mobile taps the hamburger to peek.
+ * Reveal the header action buttons (clipped while the sidebar is unpinned). Touch devices tap the
+ * hamburger to peek; hover devices hover the sidebar, then pin so buttons persist through popups.
  */
 export async function showHeaderActionButtons(page: Page) {
-  const viewport = page.viewportSize();
-  if (viewport !== null && viewport.width < 640) {
-    await page.locator("#peek-sidebar-button").click();
+  const hamburger = page.locator("#peek-sidebar-button");
+  await page.locator("#pin-sidebar-button").waitFor({ state: "attached" });
+
+  if (await hamburger.count()) {
+    await hamburger.click();
   } else {
     await page.locator("#sidebar").hover();
     await page.locator("#pin-sidebar-button").click();
@@ -54,13 +56,15 @@ export async function showHeaderActionButtons(page: Page) {
 }
 
 /**
- * Make the sidebar nav items reachable: desktop shows the rail (no-op); mobile pins the collapsed
- * rail (hamburger, then toggle). Desktop callers must then move off the sidebar (hover peeks it).
+ * Make the sidebar nav items reachable. Hover devices already show the rail (no-op) - may need to
+ * move mouse. Touch devices hide the rail, so tap the menu to peek, then pin so the rail persists.
  */
 export async function showSidebarItems(page: Page) {
-  const viewport = page.viewportSize();
-  if (viewport !== null && viewport.width < 640) {
-    await page.locator("#peek-sidebar-button").click();
+  const hamburger = page.locator("#peek-sidebar-button");
+  await page.locator("#pin-sidebar-button").waitFor({ state: "attached" });
+
+  if (await hamburger.count()) {
+    await hamburger.click();
     await page.locator("#pin-sidebar-button").click();
     await expect(page.locator("#sidebar")).toBeVisible();
   }

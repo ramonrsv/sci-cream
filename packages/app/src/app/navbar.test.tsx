@@ -143,22 +143,26 @@ describe("Header — reset layout button", () => {
 // Sidebar pin / unpin / peek
 // ---------------------------------------------------------------------------
 
-/** Stub `matchMedia` so `useIsDesktop` resolves to desktop; without it the mobile branch renders. */
-function stubDesktopViewport() {
+/**
+ * Stub `matchMedia` per query so a test can place the navbar in any width×pointer quadrant:
+ * `(min-width: …)` reports `wide`, `(hover: …)` reports `hover`. Without a stub jsdom has no
+ * `matchMedia`, so both signals fall back to their mobile-first defaults (narrow + touch).
+ */
+function stubViewport({ wide, hover }: { wide: boolean; hover: boolean }) {
   Object.defineProperty(window, "matchMedia", {
     configurable: true,
     writable: true,
     value: vi
       .fn()
-      .mockReturnValue({
-        matches: true,
-        media: "",
+      .mockImplementation((query: string) => ({
+        matches: query.includes("hover") ? hover : wide,
+        media: query,
         addEventListener: vi.fn(),
         removeEventListener: vi.fn(),
         addListener: vi.fn(),
         removeListener: vi.fn(),
         dispatchEvent: vi.fn(),
-      }),
+      })),
   });
 }
 
@@ -255,7 +259,7 @@ describe("Header / Sidebar — pin and peek", () => {
   });
 
   it("keeps the peek drawer open when navigating on desktop", async () => {
-    stubDesktopViewport();
+    stubViewport({ wide: true, hover: true });
     const { rerender } = render(
       <Navbar>
         <div />
@@ -280,7 +284,7 @@ describe("Header / Sidebar — pin and peek", () => {
   });
 
   it("renders the logo and hover-opens the drawer on desktop", async () => {
-    stubDesktopViewport();
+    stubViewport({ wide: true, hover: true });
     render(
       <Navbar>
         <div />
@@ -294,6 +298,77 @@ describe("Header / Sidebar — pin and peek", () => {
     const sidebar = screen.getByRole("complementary");
     expect(sidebar).toHaveClass("w-0");
 
+    fireEvent.mouseEnter(sidebar);
+    expect(sidebar).toHaveClass("w-54");
+  });
+
+  it("shows the hamburger on a wide touch device (not the desktop logo)", async () => {
+    stubViewport({ wide: true, hover: false });
+    render(
+      <Navbar>
+        <div />
+      </Navbar>,
+    );
+
+    // Wide but touch (landscape phone): the peek affordance is the hamburger, not the logo.
+    expect(await screen.findByRole("button", { name: "Peek sidebar" })).toBeInTheDocument();
+    expect(screen.queryByAltText("Sci-Cream")).toBeNull();
+  });
+
+  it("dismisses the peek drawer when navigating on a wide touch device", async () => {
+    stubViewport({ wide: true, hover: false });
+    const user = userEvent.setup();
+    const { rerender } = render(
+      <Navbar>
+        <div />
+      </Navbar>,
+    );
+
+    await user.click(await screen.findByRole("button", { name: "Peek sidebar" }));
+    expect(screen.getByRole("complementary")).toHaveClass("w-54");
+
+    // A landscape phone is wide yet touch: a tap-navigation must still dismiss the peek.
+    mockPathname = "/recipes";
+    rerender(
+      <Navbar>
+        <div />
+      </Navbar>,
+    );
+
+    expect(screen.getByRole("complementary")).toHaveClass("w-0");
+  });
+
+  it("does not hover-peek on a wide touch device", async () => {
+    stubViewport({ wide: true, hover: false });
+    render(
+      <Navbar>
+        <div />
+      </Navbar>,
+    );
+
+    await screen.findByRole("button", { name: "Peek sidebar" });
+    const sidebar = screen.getByRole("complementary");
+    expect(sidebar).toHaveClass("w-0");
+
+    // Without a hovering pointer there is no hover-to-peek; the drawer stays hidden.
+    fireEvent.mouseEnter(sidebar);
+    expect(sidebar).toHaveClass("w-0");
+  });
+
+  it("uses the logo and hover-peek in a narrow mouse window", async () => {
+    stubViewport({ wide: false, hover: true });
+    render(
+      <Navbar>
+        <div />
+      </Navbar>,
+    );
+
+    // Narrow yet mouse-driven: logo (not hamburger), and hover opens the peek.
+    expect(await screen.findByAltText("Sci-Cream")).toBeInTheDocument();
+    expect(screen.queryByRole("button", { name: "Peek sidebar" })).toBeNull();
+
+    const sidebar = screen.getByRole("complementary");
+    expect(sidebar).toHaveClass("w-0");
     fireEvent.mouseEnter(sidebar);
     expect(sidebar).toHaveClass("w-54");
   });

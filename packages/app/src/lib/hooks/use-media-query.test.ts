@@ -1,7 +1,9 @@
 import { describe, it, expect, afterEach, vi } from "vitest";
 import { renderHook, act } from "@testing-library/react";
 
-import { useIsDesktop } from "./use-is-desktop";
+import { useMediaQuery } from "./use-media-query";
+
+const QUERY = "(min-width: 640px)";
 
 /** A controllable `MediaQueryList` mock that tracks `change` listeners and can emit to them. */
 function mockMatchMedia(initialMatches: boolean) {
@@ -37,27 +39,27 @@ function mockMatchMedia(initialMatches: boolean) {
   };
 }
 
-describe("useIsDesktop", () => {
+describe("useMediaQuery", () => {
   afterEach(() => {
     // jsdom has no matchMedia; drop the stub so each test starts from the real default.
     Reflect.deleteProperty(window, "matchMedia");
   });
 
-  it("is true when the viewport matches the desktop query", () => {
+  it("is true when the query matches", () => {
     mockMatchMedia(true);
-    const { result } = renderHook(() => useIsDesktop());
+    const { result } = renderHook(() => useMediaQuery(QUERY));
     expect(result.current).toBe(true);
   });
 
-  it("is false when the viewport does not match the desktop query", () => {
+  it("is false when the query does not match", () => {
     mockMatchMedia(false);
-    const { result } = renderHook(() => useIsDesktop());
+    const { result } = renderHook(() => useMediaQuery(QUERY));
     expect(result.current).toBe(false);
   });
 
   it("updates when the media query emits a change", () => {
     const media = mockMatchMedia(false);
-    const { result } = renderHook(() => useIsDesktop());
+    const { result } = renderHook(() => useMediaQuery(QUERY));
     expect(result.current).toBe(false);
 
     act(() => media.emit(true));
@@ -68,13 +70,13 @@ describe("useIsDesktop", () => {
   });
 
   it("stays false when matchMedia is unavailable", () => {
-    const { result } = renderHook(() => useIsDesktop());
+    const { result } = renderHook(() => useMediaQuery(QUERY));
     expect(result.current).toBe(false);
   });
 
   it("removes its change listener on unmount", () => {
     const media = mockMatchMedia(true);
-    const { unmount } = renderHook(() => useIsDesktop());
+    const { unmount } = renderHook(() => useMediaQuery(QUERY));
     expect(media.listeners.size).toBe(1);
 
     unmount();

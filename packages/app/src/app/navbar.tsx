@@ -2,7 +2,8 @@
 
 import { createContext, useContext, useState, useEffect, useRef, useCallback } from "react";
 import { usePersistedState } from "@/lib/hooks/use-persisted-state";
-import { useIsDesktop } from "@/lib/hooks/use-is-desktop";
+import { useIsNarrow } from "@/lib/hooks/use-is-narrow";
+import { useCanHover } from "@/lib/hooks/use-can-hover";
 import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -64,11 +65,14 @@ const NavbarContext = createContext<{
   pinned: boolean;
   setPinned: React.Dispatch<React.SetStateAction<boolean>>;
   mounted: boolean;
-  /** Transient drawer-open state: hover on desktop, tap on mobile. Not persisted. */
+  /** Transient drawer-open state: hover-peek on mouse, tap-peek on touch. Not persisted. */
   peek: boolean;
   openPeek: () => void;
   closePeek: () => void;
-  isDesktop: boolean;
+  /** Viewport narrower than `sm`; drives width-sensitive layout, not peek interaction. */
+  isNarrow: boolean;
+  /** Primary pointer can hover (mouse/trackpad); drives hover-vs-tap peek interaction. */
+  canHover: boolean;
 }>({
   pinned: false,
   setPinned: () => {},
@@ -76,7 +80,8 @@ const NavbarContext = createContext<{
   peek: false,
   openPeek: () => {},
   closePeek: () => {},
-  isDesktop: false,
+  isNarrow: true,
+  canHover: false,
 });
 
 /** Hook to access the `NavbarContext` value from any descendant component */
@@ -99,7 +104,8 @@ export function Navbar({ children }: { children: React.ReactNode }) {
   const [mounted, setMounted] = useState(false);
   const [peek, setPeek] = useState(false);
   const [lastPathname, setLastPathname] = useState(pathname);
-  const isDesktop = useIsDesktop();
+  const isNarrow = useIsNarrow();
+  const canHover = useCanHover();
   const closeTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const openPeek = useCallback(() => {
@@ -117,9 +123,9 @@ export function Navbar({ children }: { children: React.ReactNode }) {
     setMounted(true); // eslint-disable-line react-hooks/set-state-in-effect
   }, []);
 
-  // Mobile: a touch outside the sidebar or header dismisses the peeked drawer.
+  // Touch devices: a pointer down outside the sidebar or header dismisses the peeked drawer.
   useEffect(() => {
-    if (!peek || isDesktop) return;
+    if (!peek || canHover) return;
 
     const onPointerDown = (event: PointerEvent) => {
       const target = event.target as Element | null;
@@ -130,12 +136,12 @@ export function Navbar({ children }: { children: React.ReactNode }) {
 
     document.addEventListener("pointerdown", onPointerDown);
     return () => document.removeEventListener("pointerdown", onPointerDown);
-  }, [peek, isDesktop]);
+  }, [peek, canHover]);
 
-  // Mobile: navigating dismisses the peek drawer so it doesn't linger over the new page.
+  // Touch devices: navigating dismisses the peek drawer so it doesn't linger over the new page.
   if (pathname !== lastPathname) {
     setLastPathname(pathname);
-    if (!isDesktop) setPeek(false);
+    if (!canHover) setPeek(false);
   }
 
   if (CHROMELESS_ROUTES.some((route) => pathname.startsWith(route))) {
@@ -143,7 +149,9 @@ export function Navbar({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <NavbarContext value={{ pinned, setPinned, mounted, peek, openPeek, closePeek, isDesktop }}>
+    <NavbarContext
+      value={{ pinned, setPinned, mounted, peek, openPeek, closePeek, isNarrow, canHover }}
+    >
       <div className="flex h-screen flex-col">
         <Header />
         {/* `relative` anchors the sidebar drawer, which overlays the content when peeking. */}
@@ -164,7 +172,7 @@ export function Navbar({ children }: { children: React.ReactNode }) {
 /** Logo, collapse/expand button, `ThemeSelect` button, and account button to the right */
 export function Header() {
   const pathname = usePathname();
-  const { pinned, setPinned, mounted, peek, openPeek, closePeek, isDesktop } =
+  const { pinned, setPinned, mounted, peek, openPeek, closePeek, isNarrow, canHover } =
     useContext(NavbarContext);
 
   const pageTitle = navItems.find(({ href }) => isNavActive(pathname, href))?.label || "Sci-Cream";
@@ -178,7 +186,7 @@ export function Header() {
 
   const spacerWidth = pinned ? HEADER_W_PINNED : HEADER_W_REST;
   const headerWidth = peek ? HEADER_W_PEEK : pinned ? HEADER_W_PINNED : HEADER_W_REST;
-  const hoverProps = isDesktop ? { onMouseEnter: openPeek, onMouseLeave: closePeek } : undefined;
+  const hoverProps = canHover ? { onMouseEnter: openPeek, onMouseLeave: closePeek } : undefined;
 
   const handleResetLayout = () => {
     if (!window.confirm("Reset the calculator layout to its default arrangement?")) return;
@@ -196,7 +204,7 @@ export function Header() {
         >
           {/* Fixed width keeps the controls positioned; the clipper above reveals them. */}
           <div className={`flex h-full items-center ${HEADER_W_PEEK}`}>
-            {isDesktop ? (
+            {canHover ? (
               <Image
                 src="/favicon.ico"
                 alt="Sci-Cream"
@@ -234,7 +242,7 @@ export function Header() {
               className={`header-button mr-2 sm:mr-4`}
               onClick={() => {
                 setPinned(!pinned);
-                if (!isDesktop && peek) closePeek();
+                if (!canHover && peek) closePeek();
               }}
             >
               {pinned ? <PanelLeftClose size={iconSize} /> : <PanelLeftOpen size={iconSize} />}
@@ -244,7 +252,7 @@ export function Header() {
       </div>
       {/* Page title and account button */}
       <div className="navbar flex w-full items-center justify-between">
-        <h1 className={`${!isDesktop && !pinned && !peek ? "" : "m-4"} text-lg font-bold`}>
+        <h1 className={`${isNarrow && !pinned && !peek ? "" : "m-4"} text-lg font-bold`}>
           {pageTitle}
         </h1>
         <div className="flex items-center gap-1">
@@ -258,17 +266,18 @@ export function Header() {
 /** Collapsible sidebar with nav links, rendered as a drawer that overlays content when peeking */
 export function Sidebar() {
   const pathname = usePathname();
-  const { pinned, mounted, peek, openPeek, closePeek, isDesktop } = useContext(NavbarContext);
+  const { pinned, mounted, peek, openPeek, closePeek, isNarrow, canHover } =
+    useContext(NavbarContext);
 
   const iconSize = NAVBAR_ICON_SIZE;
 
   const spacerWidth = pinned ? SIDEBAR_W_SPACER_PINNED : SIDEBAR_W_SPACER_REST;
   const sidebarWidth = peek ? SIDEBAR_W_PEEK : pinned ? SIDEBAR_W_PINNED : SIDEBAR_W_REST;
-  const overlaying = peek && (!pinned || !isDesktop);
+  const overlaying = peek && (!pinned || isNarrow);
 
   if (!mounted) return <div className={`navbar-trans-width shrink-0 ${spacerWidth}`} />;
 
-  const hoverProps = isDesktop ? { onMouseEnter: openPeek, onMouseLeave: closePeek } : undefined;
+  const hoverProps = canHover ? { onMouseEnter: openPeek, onMouseLeave: closePeek } : undefined;
 
   return (
     <>
