@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784924438818,
+  "lastUpdate": 1784924454974,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -57814,6 +57814,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_start)",
             "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "150470e2975d3c7de25a12ba99366c2be7f4369b",
+          "message": "Key sidebar peek on pointer, not viewport width\n\n`useIsDesktop` (>=640px) drove both the sidebar's width layout and\nits peek interaction. A landscape phone is wide but touch, so it got\ndesktop hover-to-peek: tapping a nav link navigated without ever\ndismissing the peek drawer.\n\nSplit the two signals:\n\n- useMediaQuery: shared matchMedia hook, extracted from useIsDesktop\n- useIsNarrow (use-is-desktop.ts -> use-is-narrow.ts): complement of\n  the `sm:` query; drives width-sensitive layout only\n- useCanHover: `(hover: hover)`; drives peek interaction: hover vs\n  tap peek, logo vs hamburger, dismiss on navigate/tap-outside\n- SM_BREAKPOINT_PX moves to styles/sizes.ts, beside the `sm:` widths\n\nTests: port the matchMedia mechanics to use-media-query.test.ts, add\nper-query stubbing to navbar tests, and cover the wide+touch and\nnarrow+mouse quadrants. The e2e reveal helpers now branch on the\nhamburger's presence rather than a hard-coded 640px, and the mobile\nvisual navbar tests emulate touch so the hamburger still renders.\nThe two mobile sidebar baselines need regenerating.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-24T15:22:29-04:00",
+          "tree_id": "cd34c8f0afb5e52947d3e1bbef73ffd2c2a29154",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/150470e2975d3c7de25a12ba99366c2be7f4369b"
+        },
+        "date": 1784924423221,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4182,
+            "range": "± 20",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 157323,
+            "range": "± 1011",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2484,
+            "range": "± 13",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 184246,
+            "range": "± 6288",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4218,
+            "range": "± 24",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4667,
+            "range": "± 166",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4772,
+            "range": "± 88",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4821,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4796,
+            "range": "± 30",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4694,
+            "range": "± 87",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 108443,
+            "range": "± 4281",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 111500,
+            "range": "± 1779",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 182455919,
+            "range": "± 1211159",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 631918,
+            "range": "± 4586",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6534,
+            "range": "± 99",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 53,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6596,
+            "range": "± 203",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 95673,
+            "range": "± 1400",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 94578,
+            "range": "± 8273",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 181123,
+            "range": "± 1261",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 179105,
+            "range": "± 3729",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 331492,
+            "range": "± 3389",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14371,
+            "range": "± 65",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 635,
+            "range": "± 5",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 15,
             "range": "± 0",
             "unit": "ns/iter"
           },
