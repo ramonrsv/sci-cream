@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784914794922,
+  "lastUpdate": 1784915059830,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -380131,6 +380131,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 609.25,
             "range": "12.73",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "8c914375b4cf6997abfbd1214d437604cc95180f",
+          "message": "Name header/spacer widths by their role\n\nThe header and the sidebar's in-flow spacer borrowed the sidebar's\nwidth constants. Add aliases so each consumer references a name for\nits own role, with no change to the underlying values:\n\n- add SIDEBAR_W_SPACER_PINNED, HEADER_W_PINNED, HEADER_W_PEEK, each\n  aliasing the matching sidebar width\n- Header: rename headerBase to spacerWidth; use the HEADER_W_* names\n- Sidebar: rename spacerBase to spacerWidth\n\nRendered classes and visual snapshots are unchanged.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-24T13:09:54-04:00",
+          "tree_id": "d5b1dd2f88b2f1357524b06d647f32bbe25b40c3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/8c914375b4cf6997abfbd1214d437604cc95180f"
+        },
+        "date": 1784915035114,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 35.63,
+            "range": "1.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 44,
+            "range": "2.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 52.25,
+            "range": "4.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1943.38,
+            "range": "46.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 262.38,
+            "range": "3.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 269.25,
+            "range": "3.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 283.63,
+            "range": "4.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 13813.38,
+            "range": "84.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 14.5,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 783.75,
+            "range": "33.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 41,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 43.63,
+            "range": "1.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 31,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 33.38,
+            "range": "0.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 105.75,
+            "range": "5.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 64.13,
+            "range": "1.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 42.65,
+            "range": "0.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 32.25,
+            "range": "0.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 498.13,
+            "range": "7.13",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 523.88,
+            "range": "13.73",
             "unit": "ms"
           }
         ]
