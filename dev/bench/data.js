@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784911730023,
+  "lastUpdate": 1784911794752,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -57442,6 +57442,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_start)",
             "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9a218d0a571418093cc033039e8cf1dea24a5ba6",
+          "message": "Reframe sidebar naming around pinned state\n\nThe toggle tracks whether the user pins the sidebar open, not a\n\"collapsed\" flag whose meaning flipped across breakpoints (on\nmobile, !collapsed was the rail, not expanded). Align the naming\nwith that model:\n\n- collapsed -> pinned (inverted, default false); storage key\n  sidebar-collapsed -> sidebar-pinned\n- width constants split into per-breakpoint atoms (*_SM/*_LG),\n  composed into REST/PINNED/PEEK/SPACER_REST/HEADER_W_REST\n- test and snapshot vocabulary: collapsed -> rail or hidden;\n  the peek drawer -> expanded\n- toggle button: \"Pin/Unpin sidebar\", id #pin-sidebar-button\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-24T11:58:05-04:00",
+          "tree_id": "63833ac93fa8c50e62c399b9f13009f498bcfa8a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9a218d0a571418093cc033039e8cf1dea24a5ba6"
+        },
+        "date": 1784911762705,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4168,
+            "range": "± 151",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 156661,
+            "range": "± 2048",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2473,
+            "range": "± 26",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 154808,
+            "range": "± 1499",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4312,
+            "range": "± 178",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4648,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4750,
+            "range": "± 87",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4797,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4495,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4676,
+            "range": "± 17",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 105908,
+            "range": "± 1030",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 109377,
+            "range": "± 2394",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 183137205,
+            "range": "± 938728",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 626722,
+            "range": "± 3327",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 7092,
+            "range": "± 91",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 53,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6575,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 96361,
+            "range": "± 1801",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 108955,
+            "range": "± 1175",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 152718,
+            "range": "± 11804",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 180639,
+            "range": "± 1880",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 331900,
+            "range": "± 14043",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14392,
+            "range": "± 336",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 635,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 15,
             "range": "± 0",
             "unit": "ns/iter"
           },
