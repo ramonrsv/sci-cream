@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784924502659,
+  "lastUpdate": 1784924630263,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -449763,6 +449763,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 2.74,
             "range": "0.31",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "85ca795dc8642d556c475ed667563339ea4fe93c",
+          "message": "Emulate device touch input in visual snapshots\n\nThe visual specs rendered every viewport as a mouse device, so the\nwide-but-touch ones (Pixel 5 landscape at 802px, iPad Pro 11 landscape\nat 1194px) showed a hover-peek logo that no real device would display.\n\nCarry each viewport's input modality on the asset and apply it:\n\n- ViewportAsset gains a required `hasTouch`, sourced from the\n  Playwright device where there is one, else declared explicitly\n- fromDevice() omits deviceScaleFactor, keeping snapshots at 1x\n- layout, toolbars, and make-recipe register a describe per viewport,\n  since `test.use` applies per describe rather than per test; blog's\n  mobile shot and the navbar sidebar tests get the same treatment\n\nOnly `hasTouch` is emulated: it alone flips `(hover)`/`(pointer)`,\nwhereas `isMobile` leaves them untouched and would add unrelated\nmeta-viewport and scrollbar changes. This also drops the `isMobile`\nthe navbar mobile tests carried.\n\nThe mobile and tablet baselines across these specs need regenerating;\ndesktop ones are unaffected.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-24T15:59:27-04:00",
+          "tree_id": "8e55aa85be94d03985d6b9415443f436bff161ec",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/85ca795dc8642d556c475ed667563339ea4fe93c"
+        },
+        "date": 1784924597875,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.16,
+            "range": "6.24",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.56,
+            "range": "0.88",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.52,
+            "range": "0.88",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 168,
+            "range": "10.20",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.44,
+            "range": "0.09",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 168,
+            "range": "10.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 56.31,
+            "range": "6.08",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.2,
+            "range": "0.40",
             "unit": "ms"
           }
         ]
