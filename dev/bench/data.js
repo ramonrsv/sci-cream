@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784865646905,
+  "lastUpdate": 1784911418387,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -409992,6 +409992,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.97%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9a218d0a571418093cc033039e8cf1dea24a5ba6",
+          "message": "Reframe sidebar naming around pinned state\n\nThe toggle tracks whether the user pins the sidebar open, not a\n\"collapsed\" flag whose meaning flipped across breakpoints (on\nmobile, !collapsed was the rail, not expanded). Align the naming\nwith that model:\n\n- collapsed -> pinned (inverted, default false); storage key\n  sidebar-collapsed -> sidebar-pinned\n- width constants split into per-breakpoint atoms (*_SM/*_LG),\n  composed into REST/PINNED/PEEK/SPACER_REST/HEADER_W_REST\n- test and snapshot vocabulary: collapsed -> rail or hidden;\n  the peek drawer -> expanded\n- toggle button: \"Pin/Unpin sidebar\", id #pin-sidebar-button\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-24T11:58:05-04:00",
+          "tree_id": "63833ac93fa8c50e62c399b9f13009f498bcfa8a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9a218d0a571418093cc033039e8cf1dea24a5ba6"
+        },
+        "date": 1784911386974,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 49661,
+            "range": "±1.05%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 506480,
+            "range": "±0.92%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 32808,
+            "range": "±0.93%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 384773,
+            "range": "±1.11%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
