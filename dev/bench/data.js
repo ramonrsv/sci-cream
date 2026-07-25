@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784955857203,
+  "lastUpdate": 1784955886143,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -414227,6 +414227,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.94%",
             "unit": "ops/sec",
             "extra": "95 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6e16f87d3f92558d26137f984ac8b9117cf45851",
+          "message": "Add Cocoa Butter and USDA Palm Oil ingredients\n\nCocoa Butter models pure cacao fat via ChocolateSpec; Palm Oil sources\nsaturated fat from USDA FoodData Central via NutSpec.",
+          "timestamp": "2026-07-25T00:29:07-04:00",
+          "tree_id": "337dcf7a9ba999d1297379d71136ddba2a4c99c1",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6e16f87d3f92558d26137f984ac8b9117cf45851"
+        },
+        "date": 1784955853186,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 50092,
+            "range": "±1.19%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 511847,
+            "range": "±0.53%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 36160,
+            "range": "±0.91%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 389052,
+            "range": "±1.03%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
