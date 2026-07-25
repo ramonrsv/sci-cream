@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784952122063,
+  "lastUpdate": 1784952194586,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -450932,6 +450932,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.2,
             "range": "0.40",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "27076b299402dbb822b7539cd1b84d8b765a0b29",
+          "message": "Add USDA \"Roasted Pistachio\" and branded pistachio\n\n* Add USDA \"Roasted Pistachio\" ingredient, similar to the raw version.\n* Add branded \"Joyful Nut Pistachio Butter\" ingredient from package.",
+          "timestamp": "2026-07-24T17:01:14-04:00",
+          "tree_id": "cfbbae003d6975f6a04bf31d7634f5e779f9ca42",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/27076b299402dbb822b7539cd1b84d8b765a0b29"
+        },
+        "date": 1784952163885,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 63.85,
+            "range": "13.42",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.08,
+            "range": "0.53",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.04,
+            "range": "0.53",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 172.5,
+            "range": "19.54",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.44,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 172.5,
+            "range": "19.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.5,
+            "range": "12.93",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.61,
+            "range": "0.43",
             "unit": "ms"
           }
         ]
