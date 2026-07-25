@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784955886143,
+  "lastUpdate": 1784955968443,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -451957,6 +451957,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.61,
             "range": "0.43",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "6e16f87d3f92558d26137f984ac8b9117cf45851",
+          "message": "Add Cocoa Butter and USDA Palm Oil ingredients\n\nCocoa Butter models pure cacao fat via ChocolateSpec; Palm Oil sources\nsaturated fat from USDA FoodData Central via NutSpec.",
+          "timestamp": "2026-07-25T00:29:07-04:00",
+          "tree_id": "337dcf7a9ba999d1297379d71136ddba2a4c99c1",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/6e16f87d3f92558d26137f984ac8b9117cf45851"
+        },
+        "date": 1784955937184,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 61.23,
+            "range": "7.10",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.05,
+            "range": "0.74",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.03,
+            "range": "0.73",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 167,
+            "range": "7.94",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.44,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 167,
+            "range": "7.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.15,
+            "range": "6.64",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.43,
+            "range": "0.30",
             "unit": "ms"
           }
         ]
