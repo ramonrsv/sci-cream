@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1784952109923,
+  "lastUpdate": 1784952113217,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -453864,6 +453864,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/85ca795dc8642d556c475ed667563339ea4fe93c"
         },
         "date": 1784924490985,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "27076b299402dbb822b7539cd1b84d8b765a0b29",
+          "message": "Add USDA \"Roasted Pistachio\" and branded pistachio\n\n* Add USDA \"Roasted Pistachio\" ingredient, similar to the raw version.\n* Add branded \"Joyful Nut Pistachio Butter\" ingredient from package.",
+          "timestamp": "2026-07-24T17:01:14-04:00",
+          "tree_id": "cfbbae003d6975f6a04bf31d7634f5e779f9ca42",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/27076b299402dbb822b7539cd1b84d8b765a0b29"
+        },
+        "date": 1784952112333,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
