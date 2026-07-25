@@ -75,6 +75,11 @@
     "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 22 }
   },
   {
+    "name": "Cocoa Butter",
+    "category": "Chocolate",
+    "ChocolateSpec": { "cacao_solids": 100, "cocoa_butter": 100 }
+  },
+  {
     "name": "USDA Dark Chocolate, 45-59% Cacao Solids",
     "category": "Chocolate",
     "ChocolateSpec": { "cacao_solids": 52.1, "cocoa_butter": 31.3, "sugars": 47.9 },

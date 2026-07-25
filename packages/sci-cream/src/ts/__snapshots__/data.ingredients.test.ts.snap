@@ -1,7 +1,7 @@
 // Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
 exports[`Embedded spec entries 1`] = `
-"total: 265  (non-alias: 225, independent: 217)
+"total: 267  (non-alias: 227, independent: 219)
 
             0% Milk
             1% Milk
@@ -50,6 +50,7 @@ exports[`Embedded spec entries 1`] = `
 [alias]     Chocolate Extract
             Clarke Egg Yolk
 [alias]     Clotted Cream
+            Cocoa Butter
             Cocoa Powder, 10% Fat
             Cocoa Powder, 13% Fat
             Cocoa Powder, 15% Fat
@@ -179,6 +180,7 @@ exports[`Embedded spec entries 1`] = `
 [alias]     Orange Essential Oil
 [alias]     Orange Extract
             Organic Valley Organic Whole Milk
+            Palm Oil
             Pectin
 [alias]     Peppermint Essential Oil
 [alias]     Peppermint Extract
