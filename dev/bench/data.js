@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785053132412,
+  "lastUpdate": 1785053142005,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -415074,6 +415074,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.03%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b7d9fb4ca08bf6d60ae13786ba8382f010bbc107",
+          "message": "Persist recipe evaporation on save\n\nSaving a recipe never wrote its evaporation value: the DB column\ndidn't exist, so every create/update path silently dropped it. Adds\na nullable evaporation column and threads it through create, update,\nand read paths alongside comments/label/versionName.",
+          "timestamp": "2026-07-26T03:47:54-04:00",
+          "tree_id": "f55fdb613781ed5c0f8f8d4e9f256afc52599454",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b7d9fb4ca08bf6d60ae13786ba8382f010bbc107"
+        },
+        "date": 1785053108233,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 45099,
+            "range": "±16.12%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 490466,
+            "range": "±2.86%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 35341,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 382331,
+            "range": "±1.18%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
