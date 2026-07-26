@@ -46,10 +46,22 @@ export const RECIPE_LONG_INGREDIENT_NAME: LightRecipe = [
   ["Sucrose", 80],
 ];
 
+/**
+ * Example recipe whose evaporation exceeds the mix's available water, making the mix-property
+ * calculation invalid — used to verify the evaporation readout is flagged instead of crashing.
+ */
+export const RECIPE_EXCESS_EVAPORATION: LightRecipe = [
+  ["Whole Milk", 300],
+  ["Sucrose", 100],
+];
+
+/** Evaporation amount for the recipe with excess evaporation. */
+export const RECIPE_EXCESS_EVAPORATION_EVAP = 500;
+
 /** Shape of a recipe in the seed/test asset set: one identity with one or more versions */
 export type SeedRecipeAsset = {
   name: string;
-  versions: { recipe: LightRecipe; comments?: string; label?: string }[];
+  versions: { recipe: LightRecipe; comments?: string; label?: string; evaporation?: number }[];
 };
 
 /** Example recipes for TEST_USER_B, used in seeding and integration tests. */
@@ -87,4 +99,8 @@ export const TEST_USER_B_RECIPES: SeedRecipeAsset[] = [
   },
   { name: "Recipe with Invalid Ingredients", versions: [{ recipe: RECIPE_INVALID_INGREDIENT }] },
   { name: "Recipe with Long Ingredient Name", versions: [{ recipe: RECIPE_LONG_INGREDIENT_NAME }] },
+  {
+    name: "Recipe with Excess Evaporation",
+    versions: [{ recipe: RECIPE_EXCESS_EVAPORATION, evaporation: RECIPE_EXCESS_EVAPORATION_EVAP }],
+  },
 ];

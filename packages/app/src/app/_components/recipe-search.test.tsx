@@ -3,7 +3,7 @@ import "@testing-library/jest-dom/vitest";
 import { StrictMode } from "react";
 import { setupVitestCanvasMock } from "vitest-canvas-mock";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, cleanup, within, act } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup, within, act, waitFor } from "@testing-library/react";
 
 import { type RecipeEntryJson } from "@workspace/sci-cream";
 import { makeWasmResources, useSeededWasmResources } from "@/lib/resources/wasm";
@@ -267,8 +267,8 @@ describe("RecipeSearch", () => {
       fireEvent.click(screen.getByRole("button", { name: /Chocolate Mix/ }));
       const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
 
-      // Evaporated amount rides in the reserved toolbar band; the yield (450 − 150 = 300 g) shows
-      // inline in the table's Total row.
+      // Both figures show inline in the table's Total row: the evaporated amount and the
+      // resulting yield (450 − 150 = 300 g).
       expect(within(detailPanel).getByTitle(/water evaporated/)).toHaveTextContent("150");
       expect(within(detailPanel).getByTitle(/Yield/)).toHaveTextContent("300");
     });
@@ -279,6 +279,48 @@ describe("RecipeSearch", () => {
       const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
       expect(within(detailPanel).queryByTitle(/water evaporated/)).not.toBeInTheDocument();
       expect(within(detailPanel).queryByTitle(/Yield/)).not.toBeInTheDocument();
+    });
+  });
+
+  describe("evaporation mixError handling", () => {
+    // A saved version whose evaporation far exceeds the mix's available water: the WASM
+    // calculation throws, and makeRecipeFromRows must degrade to an error rather than crash.
+    const overflowEntry: SavedRecipeJson = {
+      id: 7,
+      name: "Evap Overflow",
+      versions: [{ version: 1, recipe: [["Sucrose", 100]], evaporation: 500, createdAt: "" }],
+    };
+
+    it("flags the evaporation readout red with the calc error as its tooltip, not crashing", () => {
+      const { container } = render(<RecipeSearch savedRecipes={[overflowEntry]} />);
+      fireEvent.click(screen.getByRole("button", { name: /Evap Overflow/ }));
+      const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
+
+      // The panel still mounts (heading + mix properties render) despite the thrown calc; the
+      // evaporated-amount cell carries the error as its tooltip and the invalid-value outline.
+      expect(within(detailPanel).getByRole("heading", { name: "Evap Overflow" })).toBeVisible();
+      expect(within(detailPanel).getByTestId("properties-table-pane")).toBeInTheDocument();
+      const readout = within(detailPanel).getByTitle(/Invalid evaporation/);
+      expect(readout).toHaveTextContent("500");
+      expect(readout).toHaveClass("outline-red-400");
+    });
+
+    it("leaves the evaporation readout unflagged when the amount is valid", () => {
+      const validEntry: SavedRecipeJson = {
+        id: 8,
+        name: "Evap Valid",
+        versions: [{ version: 1, recipe: [["Whole Milk", 400]], evaporation: 50, createdAt: "" }],
+      };
+      const { container } = render(<RecipeSearch savedRecipes={[validEntry]} />);
+      fireEvent.click(screen.getByRole("button", { name: /Evap Valid/ }));
+      const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
+
+      // Success path: no mixError, so the cell keeps the neutral tooltip and no invalid outline.
+      const readout = within(detailPanel).getByTitle(
+        "Grams of water evaporated during preparation",
+      );
+      expect(readout).toHaveTextContent("50");
+      expect(readout).not.toHaveClass("outline-red-400");
     });
   });
 
@@ -520,7 +562,7 @@ describe("RecipeSearch", () => {
     });
   });
 
-  describe("editable comments (per-version)", () => {
+  describe("editable version details (per-version)", () => {
     const savedWithVersions: SavedRecipeJson = {
       id: 42,
       name: "Strawberry Gelato",
@@ -535,43 +577,93 @@ describe("RecipeSearch", () => {
           version: 2,
           recipe: [["Whole Milk", 310]],
           comments: "After sweetener tweak.",
+          versionName: "3.1",
+          label: "sweeter",
           createdAt: "2026-05-10T00:00:00.000Z",
         },
       ],
     };
 
-    it("shows the latest version's comments by default", () => {
+    /** Open the version-details popup and wait for its fields to be present. */
+    async function openVersionDetailsPopup() {
+      fireEvent.click(screen.getByLabelText("Edit version details"));
+      await screen.findByLabelText("Version name");
+    }
+
+    it("seeds the comments box from the latest version by default", () => {
       render(
-        <RecipeSearch
-          savedRecipes={[savedWithVersions]}
-          onUpdateSavedRecipeVersionComments={vi.fn()}
-        />,
+        <RecipeSearch savedRecipes={[savedWithVersions]} onUpdateSavedRecipeVersion={vi.fn()} />,
       );
       fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
-      const textarea = screen.getByLabelText("Recipe comments") as HTMLTextAreaElement;
-      expect(textarea.value).toBe("After sweetener tweak.");
+      expect((screen.getByLabelText("Recipe comments") as HTMLTextAreaElement).value).toBe(
+        "After sweetener tweak.",
+      );
     });
 
-    it("re-seeds the textarea when switching versions", async () => {
+    it("seeds the name and label popup from the latest version by default", async () => {
       render(
-        <RecipeSearch
-          savedRecipes={[savedWithVersions]}
-          onUpdateSavedRecipeVersionComments={vi.fn()}
-        />,
+        <RecipeSearch savedRecipes={[savedWithVersions]} onUpdateSavedRecipeVersion={vi.fn()} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      await openVersionDetailsPopup();
+      expect((screen.getByLabelText("Version name") as HTMLInputElement).value).toBe("3.1");
+      expect((screen.getByLabelText("Version label") as HTMLInputElement).value).toBe("sweeter");
+    });
+
+    it("shows the version name (not the integer) in the dropdown option label", async () => {
+      render(
+        <RecipeSearch savedRecipes={[savedWithVersions]} onUpdateSavedRecipeVersion={vi.fn()} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      const labels = await getSelectOptionLabelsByLabel("Recipe version");
+      expect(labels[0]).toContain("v3.1"); // named v2 renders its name
+      expect(labels[1]).toContain("v1"); // unnamed v1 keeps its integer
+    });
+
+    it("re-seeds the comments box when switching versions", async () => {
+      render(
+        <RecipeSearch savedRecipes={[savedWithVersions]} onUpdateSavedRecipeVersion={vi.fn()} />,
       );
       fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
       await selectOptionByLabel("Recipe version", /^v1\b/);
-      const textarea = screen.getByLabelText("Recipe comments") as HTMLTextAreaElement;
-      expect(textarea.value).toBe("Tart but smooth.");
+      expect((screen.getByLabelText("Recipe comments") as HTMLTextAreaElement).value).toBe(
+        "Tart but smooth.",
+      );
     });
 
-    it("calls onUpdateSavedRecipeVersionComments with the entry, version, and edited text", async () => {
+    it("re-seeds the name and label popup when switching versions", async () => {
+      render(
+        <RecipeSearch savedRecipes={[savedWithVersions]} onUpdateSavedRecipeVersion={vi.fn()} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      await selectOptionByLabel("Recipe version", /^v1\b/);
+      await openVersionDetailsPopup();
+      expect((screen.getByLabelText("Version name") as HTMLInputElement).value).toBe("");
+    });
+
+    it("saves the edited name and label as their own meta object, independent of comments", async () => {
       const onUpdate = vi.fn().mockResolvedValue(undefined);
       render(
-        <RecipeSearch
-          savedRecipes={[savedWithVersions]}
-          onUpdateSavedRecipeVersionComments={onUpdate}
-        />,
+        <RecipeSearch savedRecipes={[savedWithVersions]} onUpdateSavedRecipeVersion={onUpdate} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      await openVersionDetailsPopup();
+      fireEvent.change(screen.getByLabelText("Version name"), { target: { value: "3.2" } });
+      fireEvent.change(screen.getByLabelText("Version label"), { target: { value: "final" } });
+      fireEvent.click(screen.getByRole("button", { name: "Save details" }));
+      await waitFor(() =>
+        expect(onUpdate).toHaveBeenCalledWith(
+          expect.objectContaining({ name: "Strawberry Gelato" }),
+          expect.objectContaining({ version: 2 }),
+          { versionName: "3.2", label: "final" },
+        ),
+      );
+    });
+
+    it("saves edited comments as their own meta object, independent of name/label", () => {
+      const onUpdate = vi.fn().mockResolvedValue(undefined);
+      render(
+        <RecipeSearch savedRecipes={[savedWithVersions]} onUpdateSavedRecipeVersion={onUpdate} />,
       );
       fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
       fireEvent.change(screen.getByLabelText("Recipe comments"), {
@@ -581,12 +673,89 @@ describe("RecipeSearch", () => {
       expect(onUpdate).toHaveBeenCalledWith(
         expect.objectContaining({ name: "Strawberry Gelato" }),
         expect.objectContaining({ version: 2 }),
-        "Now with sprinkles.",
+        { comments: "Now with sprinkles." },
       );
     });
 
+    it("maps cleared name/label to null so they opt back out", async () => {
+      const onUpdate = vi.fn().mockResolvedValue(undefined);
+      render(
+        <RecipeSearch savedRecipes={[savedWithVersions]} onUpdateSavedRecipeVersion={onUpdate} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      await openVersionDetailsPopup();
+      fireEvent.change(screen.getByLabelText("Version name"), { target: { value: "  " } });
+      fireEvent.change(screen.getByLabelText("Version label"), { target: { value: "" } });
+      fireEvent.click(screen.getByRole("button", { name: "Save details" }));
+      await waitFor(() =>
+        expect(onUpdate).toHaveBeenCalledWith(
+          expect.anything(),
+          expect.objectContaining({ version: 2 }),
+          { versionName: null, label: null },
+        ),
+      );
+    });
+
+    it("maps cleared comments to null so they opt back out", () => {
+      const onUpdate = vi.fn().mockResolvedValue(undefined);
+      render(
+        <RecipeSearch savedRecipes={[savedWithVersions]} onUpdateSavedRecipeVersion={onUpdate} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      fireEvent.change(screen.getByLabelText("Recipe comments"), { target: { value: "" } });
+      fireEvent.click(screen.getByRole("button", { name: "Save comments" }));
+      expect(onUpdate).toHaveBeenCalledWith(
+        expect.anything(),
+        expect.objectContaining({ version: 2 }),
+        { comments: null },
+      );
+    });
+
+    it("disables Save on an invalid version name", async () => {
+      render(
+        <RecipeSearch savedRecipes={[savedWithVersions]} onUpdateSavedRecipeVersion={vi.fn()} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      await openVersionDetailsPopup();
+      fireEvent.change(screen.getByLabelText("Version name"), { target: { value: "not valid" } });
+      expect(screen.getByRole("button", { name: "Save details" })).toBeDisabled();
+    });
+
+    it("disables Save when the name duplicates another version's name", async () => {
+      render(
+        <RecipeSearch savedRecipes={[savedWithVersions]} onUpdateSavedRecipeVersion={vi.fn()} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      // Switch to the unnamed v1 and try to reuse v2's name "3.1"
+      await selectOptionByLabel("Recipe version", /^v1\b/);
+      await openVersionDetailsPopup();
+      fireEvent.change(screen.getByLabelText("Version name"), { target: { value: "3.1" } });
+      expect(screen.getByRole("button", { name: "Save details" })).toBeDisabled();
+    });
+
+    it("disables the name/label Save until something changes", async () => {
+      render(
+        <RecipeSearch savedRecipes={[savedWithVersions]} onUpdateSavedRecipeVersion={vi.fn()} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: /Strawberry Gelato/ }));
+      await openVersionDetailsPopup();
+      expect(screen.getByRole("button", { name: "Save details" })).toBeDisabled();
+    });
+
+    it("shows the edit-version-details button even for a single-version saved entry", () => {
+      const single: SavedRecipeJson = {
+        id: 99,
+        name: "Single Version Recipe",
+        versions: [{ version: 1, recipe: [["Whole Milk", 100]], createdAt: "" }],
+      };
+      render(<RecipeSearch savedRecipes={[single]} onUpdateSavedRecipeVersion={vi.fn()} />);
+      fireEvent.click(screen.getByRole("button", { name: /Single Version Recipe/ }));
+      expect(screen.getByLabelText("Edit version details")).toBeInTheDocument();
+      expect(screen.queryByLabelText("Recipe version")).not.toBeInTheDocument();
+    });
+
     it("shows a read-only comments paragraph for a built-in entry", () => {
-      render(<RecipeSearch onUpdateSavedRecipeVersionComments={vi.fn()} />);
+      render(<RecipeSearch onUpdateSavedRecipeVersion={vi.fn()} />);
       fireEvent.click(screen.getByRole("button", { name: /Standard Base/ }));
       expect(screen.queryByLabelText("Recipe comments")).not.toBeInTheDocument();
       expect(screen.getByText(/A classic base recipe/)).toBeInTheDocument();

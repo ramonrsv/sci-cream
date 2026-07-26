@@ -18,6 +18,7 @@ import {
   deleteUserRecipe,
   deleteUserRecipeVersion,
   updateUserRecipeVersion,
+  type RecipeVersionMeta,
   type SavedRecipeVersionJson,
 } from "@/lib/data";
 
@@ -82,20 +83,18 @@ export default function RecipesPage() {
     await refreshUserRecipes();
   }
 
-  /** Update the comments on a saved recipe's version and refresh the list */
-  async function handleUpdateSavedRecipeVersionComments(
+  /** Update part of a saved recipe version's editable details, then refresh the list */
+  async function handleUpdateSavedRecipeVersion(
     entry: GroupedRecipe,
     version: SavedRecipeVersionJson,
-    comments: string,
+    meta: RecipeVersionMeta,
   ) {
     verify(
       userEmail && entry.recipeId !== undefined,
-      "handleUpdateSavedRecipeVersionComments invoked while userEmail or entry.recipeId is missing",
+      "handleUpdateSavedRecipeVersion invoked while userEmail or entry.recipeId is missing",
     );
 
-    await updateUserRecipeVersion(userEmail, entry.recipeId, version.version, {
-      comments: comments === "" ? null : comments,
-    });
+    await updateUserRecipeVersion(userEmail, entry.recipeId, version.version, meta);
     await refreshUserRecipes();
   }
 
@@ -109,9 +108,7 @@ export default function RecipesPage() {
         slots={slots}
         onDeleteSavedRecipe={userEmail ? handleDeleteSavedRecipe : undefined}
         onDeleteSavedRecipeVersion={userEmail ? handleDeleteSavedRecipeVersion : undefined}
-        onUpdateSavedRecipeVersionComments={
-          userEmail ? handleUpdateSavedRecipeVersionComments : undefined
-        }
+        onUpdateSavedRecipeVersion={userEmail ? handleUpdateSavedRecipeVersion : undefined}
       />
     </div>
   );

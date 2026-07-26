@@ -252,7 +252,7 @@ export function PropertiesView({
   const rowMeta = orderedProps?.map((row) => ({ depth: row.depth, isRollup: row.isRollup }));
 
   return (
-    <div className="flex h-full flex-col">
+    <div id="properties-view" className="flex h-full flex-col">
       <div className="toolbar">
         {toolbarPrefix}
         <QtyToggleSelect

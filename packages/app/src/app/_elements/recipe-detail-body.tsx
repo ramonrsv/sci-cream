@@ -18,47 +18,34 @@ export function RecipeComments({ text }: { text: string }) {
  * Shared body of a recipe detail view: the ingredient table beside the mix-properties view, with
  * optional comments below. Used by the recipe-search detail panel and the share viewer.
  *
- * `comments` renders beneath the body — {@link RecipeComments} for read-only text, or the
- * caller's editable widget. A {@link Recipe.mixError} flags the evaporation readout red.
+ * `toolbarStart` overlays an always-present invisible spacer in the table's toolbar band,
+ * height-matched to {@link PropertiesView}'s toolbar so the two tables line up. `comments` renders
+ * beneath the body — {@link RecipeComments} for read-only text, or the caller's editable widget.
  */
 export function RecipeDetailBody({
   recipe,
   isValidIngredient,
   persistKey,
+  toolbarStart,
   comments,
 }: {
   recipe: Recipe;
   isValidIngredient: (name: string) => boolean;
   persistKey?: string;
+  toolbarStart?: ReactNode;
   comments?: ReactNode;
 }) {
   return (
     <>
       <div className="@container flex flex-wrap items-start gap-6">
         <div className="min-w-50 flex-1 basis-65">
-          {/* A spacer reserves the properties view's toolbar height so the tables line up side by
-              side. When there's evaporation it stays at every width, overlaid by the readout. */}
-          <div className="relative">
-            <div className={recipe.evaporation ? "" : "hidden @[484px]:block"}>
+          {/* At narrow widths the band collapses when there's nothing to show, to save vertical
+              space; when there's toolbarStart it stays at every width, overlaid on the spacer. */}
+          <div className={`relative ${toolbarStart ? "" : "hidden @[484px]:block"}`}>
+            <div className="toolbar">
               <ToolbarSpacer />
             </div>
-            {recipe.evaporation ? (
-              <div
-                className="absolute inset-0 flex items-center justify-end"
-                title={recipe.mixError ?? "Grams of water evaporated during preparation"}
-              >
-                <div className="bg-surface flex items-center rounded-t px-4 py-1.25">
-                  <span className="text-secondary text-xs font-medium tracking-wide whitespace-nowrap uppercase">
-                    Evap (g)
-                  </span>
-                  <span
-                    className={`comp-val ml-2 text-sm ${recipe.mixError ? "text-red-500" : ""}`}
-                  >
-                    {recipe.evaporation.toFixed(0)}
-                  </span>
-                </div>
-              </div>
-            ) : null}
+            {toolbarStart && <div className="toolbar absolute inset-0">{toolbarStart}</div>}
           </div>
           <RecipeTable recipe={recipe} isValidIngredient={isValidIngredient} />
         </div>

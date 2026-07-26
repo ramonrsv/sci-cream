@@ -69,6 +69,10 @@ function parseEvaporationInput(e: ChangeEvent<HTMLInputElement>): number | undef
  * of the mix total. Empty ingredient rows are filtered out so the table is sized to its content,
  * suitable for embedding in recipe-search results or save dialogs.
  *
+ * When water is evaporated, the header and Totals row gain a real Evap (g) column; ingredient rows
+ * have no figure of their own, so they merge it into Ingredient via `colSpan`. The Total row also
+ * shows the resulting yield inline; {@link Recipe.mixError} flags the evaporated amount red.
+ *
  * Caller is responsible for sizing/scrolling.
  */
 export function RecipeTable({
@@ -79,6 +83,7 @@ export function RecipeTable({
   isValidIngredient?: (name: string) => boolean;
 }) {
   const mixTotal = recipe.mixTotal;
+  const evaporation = recipe.evaporation;
   const rows = recipe.ingredientRows.filter((row) => row.name !== "" || row.quantity !== undefined);
 
   return (
@@ -86,6 +91,8 @@ export function RecipeTable({
       <thead>
         <tr className="h-6.5 text-center">
           <th className="table-col-header">Ingredient</th>
+          {/* Evaporation, if any, in a new column that only spans the header and Totals row */}
+          {evaporation && <th className="table-col-header w-17">Evap (g)</th>}
           {/* w- (not min-w-) sizes Qty cols to filled content, avoiding a fill-time shift. */}
           <th className="table-col-header w-16.5">Qty (g)</th>
           <th className="table-col-header w-15 pr-1 pl-2 whitespace-nowrap">Qty (%)</th>
@@ -93,16 +100,29 @@ export function RecipeTable({
         <tr className="h-6.25">
           <td className="table-total px-1 text-center">
             Total
-            {/* Yield (final mix mass) shown inline when water is evaporated; mirrors the editor */}
-            {mixTotal && recipe.evaporation ? (
+            {mixTotal && evaporation ? (
               <span
                 className="text-secondary ml-1 text-xs font-normal whitespace-nowrap"
                 title="Yield: final mix mass after evaporation"
               >
-                → {(mixTotal - recipe.evaporation).toFixed(0)} g
+                → {(mixTotal - evaporation).toFixed(0)} g
               </span>
             ) : null}
           </td>
+          {evaporation && (
+            <td
+              className={`table-total px-1 text-center text-xs font-normal whitespace-nowrap ${
+                recipe.mixError ? "outline-2 -outline-offset-3 outline-red-400 outline-solid" : ""
+              }`}
+              title={
+                mixTotal && evaporation
+                  ? (recipe.mixError ?? "Grams of water evaporated during preparation")
+                  : undefined
+              }
+            >
+              {mixTotal && evaporation ? evaporation.toFixed(0) : null}
+            </td>
+          )}
           <td className="table-total comp-val px-3.75">{mixTotal ? mixTotal.toFixed(0) : ""}</td>
           <td className="table-total comp-val px-1">{mixTotal ? "100   " : ""}</td>
         </tr>
@@ -113,7 +133,9 @@ export function RecipeTable({
             isValidIngredient !== undefined && row.name !== "" && !isValidIngredient(row.name);
           return (
             <tr key={row.index} className="h-6.25">
+              {/* If evap is present, snap the evap column that does not extend to these rows */}
               <td
+                colSpan={recipe.evaporation ? 2 : 1}
                 title={row.name}
                 className={`table-inner-cell max-w-0 truncate px-2 ${invalid ? "-outline-offset-2 outline-red-400 outline-solid" : ""}`}
               >

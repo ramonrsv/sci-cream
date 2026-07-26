@@ -10,6 +10,7 @@ import {
 } from "@workspace/sci-cream";
 
 import { makeRecipeId, type Recipe } from "@/lib/recipe/recipe";
+import { displayVersionName, validateVersionName } from "@/lib/recipe/version";
 import { useResetOnChange } from "@/lib/hooks/use-reset-on-change";
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
 import { RecipeComments, RecipeDetailBody } from "@/app/_elements/recipe-detail-body";
@@ -29,9 +30,10 @@ import {
   DeleteAction,
   DetailPanelHeader,
   EditableComments,
+  EditVersionDetailsAction,
   LoadAction,
 } from "@/app/_components/detail-panel";
-import type { SavedRecipeJson, SavedRecipeVersionJson } from "@/lib/data";
+import type { RecipeVersionMeta, SavedRecipeJson, SavedRecipeVersionJson } from "@/lib/data";
 
 /** Sources of recipes; re-export of {@link EntitySource} for backwards compatibility */
 export const RecipeSource = EntitySource;
@@ -118,13 +120,13 @@ export interface RecipeSearchProps {
     version: SavedRecipeVersionJson,
   ) => void | Promise<void>;
   /**
-   * Called when the user clicks "Save comments" on a saved recipe version. Parent persists and
-   * refreshes `savedRecipes`. Saved-only.
+   * Called when the user saves part of a version's editable details. A field is `null` to clear,
+   * a value to set, or omitted to leave unchanged. Parent persists and refreshes `savedRecipes`.
    */
-  onUpdateSavedRecipeVersionComments?: (
+  onUpdateSavedRecipeVersion?: (
     entry: GroupedRecipe,
     version: SavedRecipeVersionJson,
-    comments: string,
+    meta: RecipeVersionMeta,
   ) => void | Promise<void>;
 }
 
@@ -135,7 +137,7 @@ interface RecipeDetailPanelProps extends Pick<
   | "onLoadRecipe"
   | "onDeleteSavedRecipe"
   | "onDeleteSavedRecipeVersion"
-  | "onUpdateSavedRecipeVersionComments"
+  | "onUpdateSavedRecipeVersion"
 > {
   entry: TaggedGroupedRecipe;
 }
@@ -150,20 +152,30 @@ function makeRecipeFromRows(
   bridge: WasmBridge,
   evaporation?: number,
 ): Recipe {
-  return {
+  const recipe: Recipe = {
     index: 0,
     id: "Value",
     name,
     ingredientRows: rows?.map(([n, quantity], idx) => ({ index: idx, name: n, quantity })) ?? [],
     mixTotal: rows?.reduce((sum, [, quantity]) => sum + quantity, 0) ?? 0,
     evaporation,
-    mixProperties: rows
-      ? bridge.calculate_recipe_mix_properties(
-          rows.filter(([n]) => bridge.has_ingredient(n)),
-          evaporation,
-        )
-      : new MixProperties(),
+    mixProperties: new MixProperties(),
   };
+
+  if (rows) {
+    try {
+      const computed = bridge.calculate_recipe_mix_properties(
+        rows.filter(([n]) => bridge.has_ingredient(n)),
+        evaporation,
+      );
+      recipe.mixProperties.free();
+      recipe.mixProperties = computed;
+    } catch (err) {
+      recipe.mixError = String(err);
+    }
+  }
+
+  return recipe;
 }
 
 /** Format a version createdAt timestamp for display in the version dropdown */
@@ -178,7 +190,7 @@ function formatVersionDate(iso: string): string {
 function formatVersionOption(v: SavedRecipeVersionJson, isLatest: boolean): string {
   const date = formatVersionDate(v.createdAt);
   const latest = isLatest ? " · latest" : "";
-  const parts = [`v${v.version}`];
+  const parts = [`v${displayVersionName(v)}`];
   if (date) parts.push(date);
   if (v.label) parts.push(v.label);
   return parts.join("  ·  ") + latest;
@@ -195,7 +207,7 @@ function RecipeDetailPanel({
   onLoadRecipe,
   onDeleteSavedRecipe,
   onDeleteSavedRecipeVersion,
-  onUpdateSavedRecipeVersionComments,
+  onUpdateSavedRecipeVersion,
 }: RecipeDetailPanelProps) {
   const { wasmBridge, updateIdx: wasmUpdateIdx } = useSeededWasmResources()[STATE_VAL];
 
@@ -230,11 +242,21 @@ function RecipeDetailPanel({
   useFreeOnReplace(recipe.mixProperties);
 
   const deleteRecipeEnabled = isSaved && !!onDeleteSavedRecipe;
+  const modVerEnabled = isSaved && !!selectedVersion;
+  const deleteVersionEnabled = modVerEnabled && hasMultipleVersions && !!onDeleteSavedRecipeVersion;
+  const editVersionEnabled = modVerEnabled && !!onUpdateSavedRecipeVersion;
 
-  const deleteVersionEnabled =
-    isSaved && hasMultipleVersions && !!onDeleteSavedRecipeVersion && !!selectedVersion;
-
-  const commentsEnabled = isSaved && !!onUpdateSavedRecipeVersionComments && !!selectedVersion;
+  /** Validate a typed version name: empty clears it; else grammar, then per-recipe uniqueness. */
+  const validateVersionNameField = (value: string): string | undefined => {
+    const trimmed = value.trim();
+    if (trimmed === "") return undefined;
+    return (
+      validateVersionName(trimmed) ??
+      (entry.versions.some((v) => v !== selectedVersion && v.versionName === trimmed)
+        ? "That version already exists"
+        : undefined)
+    );
+  };
 
   return (
     <>
@@ -276,43 +298,66 @@ function RecipeDetailPanel({
         )}
       </DetailPanelHeader>
 
-      {/* Version selector (only when there's more than one version) */}
-      {hasMultipleVersions && (
-        <div className="flex items-center gap-2">
-          <span className="text-secondary text-xs">Version</span>
-          <Select
-            value={selectedVersionIdx}
-            onChange={setSelectedVersionIdx}
-            options={versionOptions}
-            ariaLabel="Recipe version"
-            className="max-w-70 truncate"
-          />
-          {deleteVersionEnabled && (
-            <DeleteAction
-              onDelete={() => onDeleteSavedRecipeVersion(entry, selectedVersion)}
-              confirmText={`Delete version ${selectedVersion.version} of "${entry.name}"?`}
-              label="Delete this version"
-              iconSize={12}
-            />
-          )}
-        </div>
-      )}
-
-      {/* Body: ingredient table + mix properties, with per-version comments below */}
+      {/* Version select (2+ versions), edit action (any saved version), delete (2+ versions) */}
       <RecipeDetailBody
         recipe={recipe}
         isValidIngredient={(name) => wasmBridge.has_ingredient(name)}
         persistKey={STORAGE_KEYS.recipeSearchPropertiesView}
+        toolbarStart={
+          hasMultipleVersions || editVersionEnabled ? (
+            <>
+              {hasMultipleVersions && (
+                <Select
+                  value={selectedVersionIdx}
+                  onChange={setSelectedVersionIdx}
+                  options={versionOptions}
+                  ariaLabel="Recipe version"
+                  className="max-w-70 truncate"
+                />
+              )}
+              {/* Action buttons sit flush-right regardless of whether a select precedes them */}
+              <div className="ml-auto flex items-center gap-1">
+                {editVersionEnabled && (
+                  <EditVersionDetailsAction
+                    // Remount on version change so a still-open popup can't save over the wrong one
+                    key={`${entry.id}-v${selectedVersion.version}`}
+                    initialName={selectedVersion.versionName ?? ""}
+                    initialLabel={selectedVersion.label ?? ""}
+                    namePlaceholder={String(selectedVersion.version)}
+                    validateName={validateVersionNameField}
+                    onSave={({ name, label }) =>
+                      onUpdateSavedRecipeVersion(entry, selectedVersion, {
+                        versionName: name.trim() === "" ? null : name.trim(),
+                        label: label.trim() === "" ? null : label.trim(),
+                      })
+                    }
+                  />
+                )}
+                {deleteVersionEnabled && (
+                  <DeleteAction
+                    onDelete={() => onDeleteSavedRecipeVersion(entry, selectedVersion)}
+                    confirmText={`Delete version ${selectedVersion.version} of "${entry.name}"?`}
+                    label="Delete this version"
+                    iconSize={DETAIL_PANEL_ACTION_ICON_SIZE}
+                  />
+                )}
+              </div>
+            </>
+          ) : undefined
+        }
         comments={
-          commentsEnabled ? (
+          editVersionEnabled ? (
             <EditableComments
-              // Remount on version change so the textarea re-seeds from the new version's comments
+              // Remount on version change so the textarea re-seeds from the newly selected version
               key={`${entry.id}-v${selectedVersion.version}`}
               initialValue={selectedVersion.comments ?? ""}
-              onSave={(comments) =>
-                onUpdateSavedRecipeVersionComments(entry, selectedVersion, comments)
-              }
               ariaLabel="Recipe comments"
+              textareaClassName="min-h-58"
+              onSave={(value) =>
+                onUpdateSavedRecipeVersion(entry, selectedVersion, {
+                  comments: value === "" ? null : value,
+                })
+              }
             />
           ) : (
             selectedVersion?.comments && <RecipeComments text={selectedVersion.comments} />
@@ -326,8 +371,8 @@ function RecipeDetailPanel({
 /**
  * Searchable list of recipes from both the embedded sci-cream dataset and an optional collection of
  * user-saved recipes. Each recipe appears as a single list item regardless of how many versions it
- * has; the detail panel exposes a version selector when more than one version exists. Per-version
- * comments are editable for saved versions; embedded entries display their `comments` read-only.
+ * has; the detail panel exposes a version selector when more than one version exists. A saved
+ * version's name, label, and comments are editable; embedded entries display `comments` read-only.
  */
 export function RecipeSearch({
   onLoadRecipe,
@@ -335,7 +380,7 @@ export function RecipeSearch({
   slots,
   onDeleteSavedRecipe,
   onDeleteSavedRecipeVersion,
-  onUpdateSavedRecipeVersionComments,
+  onUpdateSavedRecipeVersion,
 }: RecipeSearchProps) {
   const embeddedGrouped = useMemo(() => allRecipeEntries.map(adaptEmbeddedToGrouped), []);
   const savedGrouped = useMemo(() => savedRecipes.map(adaptSavedToGrouped), [savedRecipes]);
@@ -363,7 +408,7 @@ export function RecipeSearch({
           onLoadRecipe={onLoadRecipe}
           onDeleteSavedRecipe={onDeleteSavedRecipe}
           onDeleteSavedRecipeVersion={onDeleteSavedRecipeVersion}
-          onUpdateSavedRecipeVersionComments={onUpdateSavedRecipeVersionComments}
+          onUpdateSavedRecipeVersion={onUpdateSavedRecipeVersion}
         />
       )}
     />

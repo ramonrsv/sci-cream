@@ -160,23 +160,23 @@ describe("RecipesPage", () => {
     });
   });
 
-  describe("onUpdateSavedRecipeVersionComments wiring", () => {
-    it("does not pass an onUpdateSavedRecipeVersionComments when the user is not signed in", () => {
+  describe("onUpdateSavedRecipeVersion wiring", () => {
+    it("does not pass an onUpdateSavedRecipeVersion when the user is not signed in", () => {
       render(<RecipesPage />);
-      expect(capturedProps().onUpdateSavedRecipeVersionComments).toBeUndefined();
+      expect(capturedProps().onUpdateSavedRecipeVersion).toBeUndefined();
     });
 
-    it("passes an onUpdateSavedRecipeVersionComments when the user is signed in", () => {
+    it("passes an onUpdateSavedRecipeVersion when the user is signed in", () => {
       vi.mocked(useSession).mockReturnValueOnce({
         data: { user: { email: "a@b.c" }, expires: "" },
         status: "authenticated",
         update: vi.fn(),
       });
       render(<RecipesPage />);
-      expect(capturedProps().onUpdateSavedRecipeVersionComments).toBeDefined();
+      expect(capturedProps().onUpdateSavedRecipeVersion).toBeDefined();
     });
 
-    it("invoking onUpdateSavedRecipeVersionComments calls updateUserRecipeVersion with the comments", async () => {
+    it("forwards the meta to updateUserRecipeVersion, then refreshes the shared cache", async () => {
       vi.mocked(useSession).mockReturnValue({
         data: { user: { email: "a@b.c" }, expires: "" },
         status: "authenticated",
@@ -184,13 +184,21 @@ describe("RecipesPage", () => {
       });
 
       render(<RecipesPage />);
-      await capturedProps().onUpdateSavedRecipeVersionComments!(entry, version, "Tasty.");
+      await capturedProps().onUpdateSavedRecipeVersion!(entry, version, {
+        versionName: "3.1",
+        label: "first cut",
+        comments: "Tasty.",
+      });
 
-      expect(updateUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 42, 1, { comments: "Tasty." });
+      expect(updateUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 42, 1, {
+        versionName: "3.1",
+        label: "first cut",
+        comments: "Tasty.",
+      });
       expect(refreshUserRecipes).toHaveBeenCalled();
     });
 
-    it("passes null for empty-string comments so the field is cleared in the DB", async () => {
+    it("forwards nulls unchanged (the editor already maps cleared fields to null)", async () => {
       vi.mocked(useSession).mockReturnValue({
         data: { user: { email: "a@b.c" }, expires: "" },
         status: "authenticated",
@@ -198,9 +206,17 @@ describe("RecipesPage", () => {
       });
 
       render(<RecipesPage />);
-      await capturedProps().onUpdateSavedRecipeVersionComments!(entry, version, "");
+      await capturedProps().onUpdateSavedRecipeVersion!(entry, version, {
+        versionName: null,
+        label: null,
+        comments: null,
+      });
 
-      expect(updateUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 42, 1, { comments: null });
+      expect(updateUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 42, 1, {
+        versionName: null,
+        label: null,
+        comments: null,
+      });
     });
   });
 

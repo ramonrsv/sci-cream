@@ -196,4 +196,56 @@ test.describe("Visual Regression: Recipe Search", () => {
       "recipe-search-saved-comments-edited.png",
     );
   });
+
+  test("saved recipe with excess evaporation - readout flagged, panel intact", async ({ page }) => {
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
+    await goToRecipesPage(page);
+    await page.getByRole("button", { name: "Saved" }).click();
+    await selectRecipeByName(page, "Recipe with Excess Evaporation");
+
+    // Invalid evaporation, so calculation fails: evap amount cell is fagged, error is in tooltip
+    const readout = page.getByTitle(/Invalid evaporation/);
+    await expect(readout).toContainText("500");
+    await expect(readout).toHaveClass(/outline-red-400/);
+
+    await expect(page.locator(".search-detail-panel")).toBeVisible();
+    await expect(page.locator(".search-detail-panel")).toHaveScreenshot(
+      "recipe-search-excess-evaporation.png",
+    );
+  });
+
+  test("saved recipe with multiple versions - version selector in toolbar band", async ({
+    page,
+  }) => {
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
+    await goToRecipesPage(page);
+    await page.getByRole("button", { name: "Saved" }).click();
+    await selectRecipeByName(page, "Chocolate Ice Cream");
+
+    // Two seeded versions surface the version select in the table's toolbar, default latest v2
+    const versionSelect = page.getByLabel("Recipe version");
+    await expect(versionSelect).toBeVisible();
+
+    await expect(page.locator(".search-detail-panel")).toHaveScreenshot(
+      "recipe-search-multiple-versions.png",
+    );
+  });
+
+  test("saved recipe - version details popup pre-filled from the selected version", async ({
+    page,
+  }) => {
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
+    await goToRecipesPage(page);
+    await page.getByRole("button", { name: "Saved" }).click();
+    await selectRecipeByName(page, "Chocolate Ice Cream");
+
+    await page.getByLabel("Edit version details").click();
+
+    // The popup (portaled, so captured on its own) seeds from the latest version
+    const popup = page.locator(".popup");
+    await expect(popup.getByLabel("Version label")).toHaveValue("sweeter tweak");
+    await expect(popup.getByRole("button", { name: "Save details" })).toBeVisible();
+
+    await expect(popup).toHaveScreenshot("recipe-search-version-details-popup.png");
+  });
 });

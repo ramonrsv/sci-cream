@@ -46,7 +46,7 @@ test.describe("Recipe Share Links", () => {
       await expect(page.getByRole("cell", { name: String(name), exact: true })).toBeVisible();
     }
 
-    // Evaporation surfaces in the readout above the table, mix properties are computable (all
+    // Evaporation surfaces inline in the table's Total row, mix properties are computable (all
     // rows resolve), and the shared comments render read-only below the body.
     await expect(page.getByTitle("Grams of water evaporated during preparation")).toContainText(
       "50",

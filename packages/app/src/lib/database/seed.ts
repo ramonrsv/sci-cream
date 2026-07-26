@@ -162,6 +162,7 @@ async function seedUserRecipes(userEmail: string, recipes: SeedRecipeAsset[]) {
           recipe: JSON.stringify(v.recipe),
           comments: v.comments ?? null,
           label: v.label ?? null,
+          evaporation: v.evaporation ?? null,
         });
     }
   }

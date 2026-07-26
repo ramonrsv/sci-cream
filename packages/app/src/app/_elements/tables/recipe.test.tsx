@@ -137,6 +137,48 @@ describe("RecipeTable", () => {
       expect(yieldReadout.closest("td")).toHaveTextContent("Total");
       expect(yieldReadout).toHaveTextContent((recipe.mixTotal! - recipe.evaporation).toFixed(0));
     });
+
+    it("shows the evaporated amount in its own cell, adjacent to the Total label", () => {
+      const recipe = makeMockRecipe(RecipeID.Main);
+      recipe.evaporation = recipe.mixTotal! * 0.1;
+      render(<RecipeTable recipe={recipe} />);
+
+      const evapCell = screen.getByTitle("Grams of water evaporated during preparation");
+      expect(evapCell.tagName).toBe("TD");
+      expect(evapCell).toHaveTextContent(recipe.evaporation.toFixed(0));
+      expect(evapCell.previousElementSibling).toHaveTextContent("Total");
+    });
+
+    it("flags the evaporated amount red with the mix error as its tooltip when invalid", () => {
+      const recipe = makeMockRecipe(RecipeID.Main);
+      recipe.evaporation = recipe.mixTotal! * 0.1;
+      recipe.mixError = "Evaporation exceeds available water";
+      render(<RecipeTable recipe={recipe} />);
+
+      const evapReadout = screen.getByTitle("Evaporation exceeds available water");
+      expect(evapReadout).toHaveClass("outline-red-400");
+    });
+
+    it("adds a header cell for the fake evap column", () => {
+      const recipe = makeMockRecipe(RecipeID.Main);
+      recipe.evaporation = recipe.mixTotal! * 0.1;
+      const { container } = render(<RecipeTable recipe={recipe} />);
+
+      const headerCells = container.querySelectorAll("thead > tr:first-child > th");
+      expect(headerCells).toHaveLength(4);
+      expect(headerCells[1]).toHaveTextContent("Evap (g)");
+    });
+
+    it("does not add a per-row cell for the fake evap column", () => {
+      const recipe = makeMockRecipe(RecipeID.Main);
+      recipe.evaporation = recipe.mixTotal! * 0.1;
+      const { container } = render(<RecipeTable recipe={recipe} />);
+
+      // Ingredient cells span the fake column via colspan, so rows stay at 3 real cells
+      const bodyRow = container.querySelector("tbody tr");
+      expect(bodyRow?.children).toHaveLength(3);
+      expect(bodyRow?.children[0]).toHaveAttribute("colspan", "2");
+    });
   });
 });
 

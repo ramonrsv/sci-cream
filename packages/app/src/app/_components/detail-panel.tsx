@@ -1,9 +1,10 @@
 "use client";
 
 import { ReactNode, useState } from "react";
-import { Trash } from "lucide-react";
+import { Pencil, Trash } from "lucide-react";
 
 import { EntitySource } from "@/app/_components/entity-search";
+import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
 import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
 import { isValidSlotStore } from "@/app/_elements/selects/recipe-select";
@@ -127,11 +128,14 @@ export function EditableComments({
   onSave,
   ariaLabel = "Comments",
   placeholder = "Add comments…",
+  textareaClassName = "min-h-20",
 }: {
   initialValue: string;
   onSave: (value: string) => void | Promise<void>;
   ariaLabel?: string;
   placeholder?: string;
+  /** Extra classes merged onto the textarea; callers use this to tune its height. */
+  textareaClassName?: string;
 }) {
   const [edited, setEdited] = useState<string>(initialValue);
   return (
@@ -141,11 +145,121 @@ export function EditableComments({
         onChange={(e) => setEdited(e.target.value)}
         placeholder={placeholder}
         aria-label={ariaLabel}
-        className="table-fillable-input text-secondary min-h-20 rounded-lg px-2 py-1 text-sm leading-relaxed"
+        className={`table-fillable-input text-secondary rounded-lg px-2 py-1 text-sm leading-relaxed ${textareaClassName}`}
       />
       <button onClick={() => onSave(edited)} className="action-button self-end px-2 py-0.5 text-sm">
         Save comments
       </button>
     </div>
+  );
+}
+
+/**
+ * Popup form for a version's name and label; reseeds fresh on every open, no `key` needed.
+ * Save is disabled while `validateName` flags the name, or nothing has changed.
+ */
+function EditVersionDetailsForm({
+  initialName,
+  initialLabel,
+  namePlaceholder,
+  validateName,
+  onSave,
+  close,
+}: {
+  initialName: string;
+  initialLabel: string;
+  namePlaceholder?: string;
+  validateName?: (value: string) => string | undefined;
+  onSave: (details: { name: string; label: string }) => void | Promise<void>;
+  close: () => void;
+}) {
+  const [name, setName] = useState<string>(initialName);
+  const [label, setLabel] = useState<string>(initialLabel);
+
+  const nameError = validateName?.(name);
+  const unchanged = name.trim() === initialName.trim() && label.trim() === initialLabel.trim();
+
+  const handleSave = async () => {
+    await onSave({ name, label });
+    close();
+  };
+
+  return (
+    <div className="flex w-64 flex-col gap-0 p-3">
+      <span className="text-primary mb-2 text-sm font-semibold">Version details</span>
+      <div className="flex items-center gap-1.5">
+        <span className="text-secondary text-xs">Name</span>
+        <input
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+          placeholder={namePlaceholder}
+          aria-label="Version name"
+          aria-invalid={nameError !== undefined}
+          title={nameError}
+          className={`boxed-input w-11 px-1.5 py-0.5 text-center text-sm ${
+            nameError ? "outline-2 -outline-offset-2 outline-red-400 outline-solid" : ""
+          }`}
+        />
+      </div>
+      <div className="flex items-center gap-1.5">
+        <span className="text-secondary text-xs">Label</span>
+        <input
+          value={label}
+          onChange={(e) => setLabel(e.target.value)}
+          placeholder="e.g. first cut"
+          aria-label="Version label"
+          className="boxed-input min-w-0 flex-1 px-1.5 py-0.5 text-sm"
+        />
+      </div>
+      <button
+        onClick={handleSave}
+        disabled={nameError !== undefined || unchanged}
+        title={nameError}
+        className="action-button self-end px-2 py-0.5 text-sm"
+      >
+        Save details
+      </button>
+    </div>
+  );
+}
+
+/** Edit-version-details action: a button opening a popup to rename/relabel the current version. */
+export function EditVersionDetailsAction({
+  initialName,
+  initialLabel,
+  namePlaceholder,
+  validateName,
+  onSave,
+  iconSize = DETAIL_PANEL_ACTION_ICON_SIZE,
+}: {
+  initialName: string;
+  initialLabel: string;
+  namePlaceholder?: string;
+  validateName?: (value: string) => string | undefined;
+  onSave: (details: { name: string; label: string }) => void | Promise<void>;
+  iconSize?: number;
+}) {
+  return (
+    <Popover className="flex">
+      <PopoverButton
+        className="action-button px-2 py-0.5 text-sm"
+        title="Edit version name and label"
+        aria-label="Edit version details"
+      >
+        <Pencil size={iconSize} />
+      </PopoverButton>
+      <PopupPanel>
+        {({ close }) => (
+          <EditVersionDetailsForm
+            initialName={initialName}
+            initialLabel={initialLabel}
+            namePlaceholder={namePlaceholder}
+            validateName={validateName}
+            onSave={onSave}
+            close={close}
+          />
+        )}
+      </PopupPanel>
+    </Popover>
   );
 }

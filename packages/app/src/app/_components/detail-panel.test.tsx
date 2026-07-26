@@ -1,12 +1,14 @@
 import "@testing-library/jest-dom/vitest";
 
+import type { ComponentProps } from "react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, fireEvent, cleanup } from "@testing-library/react";
+import { render, screen, fireEvent, cleanup, waitFor } from "@testing-library/react";
 
 import {
   DeleteAction,
   DetailPanelHeader,
   EditableComments,
+  EditVersionDetailsAction,
   LoadAction,
 } from "@/app/_components/detail-panel";
 import { EntitySource } from "@/app/_components/entity-search";
@@ -205,5 +207,102 @@ describe("EditableComments", () => {
     rerender(<EditableComments key="b" initialValue="second" onSave={vi.fn()} />);
     const textarea = screen.getByLabelText("Comments") as HTMLTextAreaElement;
     expect(textarea.value).toBe("second");
+  });
+
+  it("defaults the textarea to min-h-20", () => {
+    render(<EditableComments initialValue="" onSave={vi.fn()} />);
+    expect(screen.getByLabelText("Comments")).toHaveClass("min-h-20");
+  });
+
+  it("applies a custom textareaClassName in place of the default", () => {
+    render(<EditableComments initialValue="" onSave={vi.fn()} textareaClassName="min-h-37" />);
+    const textarea = screen.getByLabelText("Comments");
+    expect(textarea).toHaveClass("min-h-37");
+    expect(textarea).not.toHaveClass("min-h-20");
+  });
+});
+
+// ---------------------------------------------------------------------------
+// EditVersionDetailsAction
+// ---------------------------------------------------------------------------
+
+describe("EditVersionDetailsAction", () => {
+  beforeEach(() => vi.clearAllMocks());
+
+  /** Render with name/label seeded, then open the popup; overridable per test. */
+  async function openPopup(props: Partial<ComponentProps<typeof EditVersionDetailsAction>> = {}) {
+    const utils = render(
+      <EditVersionDetailsAction
+        initialName="3.1"
+        initialLabel="first cut"
+        onSave={vi.fn()}
+        {...props}
+      />,
+    );
+    fireEvent.click(screen.getByLabelText("Edit version details"));
+    await screen.findByLabelText("Version name");
+    return utils;
+  }
+
+  it("seeds the name and label fields from their initial values", async () => {
+    await openPopup();
+    expect((screen.getByLabelText("Version name") as HTMLInputElement).value).toBe("3.1");
+    expect((screen.getByLabelText("Version label") as HTMLInputElement).value).toBe("first cut");
+  });
+
+  it("disables Save until a field changes, then calls onSave with just name and label", async () => {
+    const onSave = vi.fn().mockResolvedValue(undefined);
+    await openPopup({ onSave });
+    const save = screen.getByRole("button", { name: "Save details" });
+    expect(save).toBeDisabled();
+
+    fireEvent.change(screen.getByLabelText("Version label"), { target: { value: "final" } });
+    expect(save).not.toBeDisabled();
+    fireEvent.click(save);
+
+    await waitFor(() => expect(onSave).toHaveBeenCalledWith({ name: "3.1", label: "final" }));
+  });
+
+  it("closes the popup after a successful save", async () => {
+    const onSave = vi.fn().mockResolvedValue(undefined);
+    await openPopup({ onSave });
+    fireEvent.change(screen.getByLabelText("Version label"), { target: { value: "final" } });
+    fireEvent.click(screen.getByRole("button", { name: "Save details" }));
+    await waitFor(() => expect(screen.queryByLabelText("Version name")).not.toBeInTheDocument());
+  });
+
+  it("uses the injected validateName to flag the name and disable Save", async () => {
+    await openPopup({ validateName: (v) => (v === "bad" ? "nope" : undefined) });
+    const nameInput = screen.getByLabelText("Version name");
+    fireEvent.change(nameInput, { target: { value: "bad" } });
+    expect(nameInput).toHaveAttribute("aria-invalid", "true");
+    expect(nameInput).toHaveAttribute("title", "nope");
+    expect(screen.getByRole("button", { name: "Save details" })).toBeDisabled();
+  });
+
+  it("shows the version number as the name placeholder", async () => {
+    await openPopup({ initialName: "", namePlaceholder: "7" });
+    expect(screen.getByLabelText("Version name")).toHaveAttribute("placeholder", "7");
+  });
+
+  it("reseeds from the latest props each time the popup is reopened", async () => {
+    const { rerender } = render(
+      <EditVersionDetailsAction initialName="3.1" initialLabel="first cut" onSave={vi.fn()} />,
+    );
+    const trigger = screen.getByLabelText("Edit version details");
+    fireEvent.click(trigger);
+    await screen.findByLabelText("Version name");
+    fireEvent.change(screen.getByLabelText("Version label"), { target: { value: "edited" } });
+
+    // Close by clicking the trigger again (Headless UI toggles), then rerender with new version
+    // data and reopen — the freshly mounted form should reflect the new props, not the edit.
+    fireEvent.click(trigger);
+    await waitFor(() => expect(screen.queryByLabelText("Version name")).not.toBeInTheDocument());
+
+    rerender(
+      <EditVersionDetailsAction initialName="4" initialLabel="second cut" onSave={vi.fn()} />,
+    );
+    fireEvent.click(screen.getByLabelText("Edit version details"));
+    expect(await screen.findByLabelText("Version label")).toHaveValue("second cut");
   });
 });

@@ -133,7 +133,8 @@ describe("ShareViewer", () => {
       await screen.findByRole("heading", { name: "Evap Overflow" });
       const readout = screen.getByTitle(/Invalid evaporation/);
       expect(readout).toBeInTheDocument();
-      expect(readout.querySelector(".text-red-500")).toHaveTextContent("500");
+      expect(readout).toHaveClass("outline-red-400");
+      expect(readout).toHaveTextContent("500");
       expect(screen.getByTestId("properties-table-pane")).toBeInTheDocument();
       expect(screen.queryByTestId("share-error")).not.toBeInTheDocument();
     });

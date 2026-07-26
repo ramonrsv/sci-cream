@@ -57,7 +57,7 @@ test.describe("Visual Regression: Toolbars, Space Constraints", () => {
         const selector = getSelectControl(page, "#key-filter-select");
         await selectOption(page, selector, KeyFilter.Custom);
 
-        const toolbar = page.locator(".toolbar");
+        const toolbar = page.locator("#properties-view .toolbar");
         await expect(toolbar).toHaveScreenshot(`toolbar-recipes-properties-view-${screenshot}.png`);
       });
 
