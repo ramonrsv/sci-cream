@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785053129405,
+  "lastUpdate": 1785053132412,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -455972,6 +455972,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/6e16f87d3f92558d26137f984ac8b9117cf45851"
         },
         "date": 1784955856561,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b7d9fb4ca08bf6d60ae13786ba8382f010bbc107",
+          "message": "Persist recipe evaporation on save\n\nSaving a recipe never wrote its evaporation value: the DB column\ndidn't exist, so every create/update path silently dropped it. Adds\na nullable evaporation column and threads it through create, update,\nand read paths alongside comments/label/versionName.",
+          "timestamp": "2026-07-26T03:47:54-04:00",
+          "tree_id": "f55fdb613781ed5c0f8f8d4e9f256afc52599454",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b7d9fb4ca08bf6d60ae13786ba8382f010bbc107"
+        },
+        "date": 1785053131701,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
