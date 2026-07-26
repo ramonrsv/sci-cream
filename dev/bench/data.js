@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785053142005,
+  "lastUpdate": 1785053252183,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -452982,6 +452982,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.43,
             "range": "0.30",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b7d9fb4ca08bf6d60ae13786ba8382f010bbc107",
+          "message": "Persist recipe evaporation on save\n\nSaving a recipe never wrote its evaporation value: the DB column\ndidn't exist, so every create/update path silently dropped it. Adds\na nullable evaporation column and threads it through create, update,\nand read paths alongside comments/label/versionName.",
+          "timestamp": "2026-07-26T03:47:54-04:00",
+          "tree_id": "f55fdb613781ed5c0f8f8d4e9f256afc52599454",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b7d9fb4ca08bf6d60ae13786ba8382f010bbc107"
+        },
+        "date": 1785053219083,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.15,
+            "range": "6.30",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.3,
+            "range": "0.49",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.26,
+            "range": "0.47",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 174,
+            "range": "15.36",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.43,
+            "range": "0.04",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 174,
+            "range": "15.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 56.04,
+            "range": "6.30",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.13,
+            "range": "0.33",
             "unit": "ms"
           }
         ]
