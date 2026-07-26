@@ -5,6 +5,7 @@ import {
   unique,
   uniqueIndex,
   integer,
+  real,
   text,
   pgEnum,
   json,
@@ -93,6 +94,8 @@ export const recipeVersionsTable = pgTable(
     comments: text(),
     label: text(),
     versionName: text("version_name"),
+    /** Grams of water evaporated during preparation; null when no evaporation was recorded */
+    evaporation: real(),
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [

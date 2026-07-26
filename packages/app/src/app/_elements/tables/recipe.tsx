@@ -572,7 +572,9 @@ export function RecipeEditor({
       const lightRecipe = makeLightRecipe(recipe, wasmResources.hasIngredient);
 
       if (recipe.savedRef === undefined) {
-        const created = await createUserRecipe(userEmail, recipe.name.trim(), lightRecipe);
+        const created = await createUserRecipe(userEmail, recipe.name.trim(), lightRecipe, {
+          evaporation: recipe.evaporation || null,
+        });
         return created && { recipeId: created.recipeId, versionNumber: created.version.version };
       }
 
@@ -581,6 +583,7 @@ export function RecipeEditor({
       const { recipeId, versionNumber } = recipe.savedRef;
       const updated = await updateUserRecipeVersion(userEmail, recipeId, versionNumber, {
         recipe: lightRecipe,
+        evaporation: recipe.evaporation || null,
       });
       return updated && { recipeId, versionNumber };
     });
@@ -608,12 +611,10 @@ export function RecipeEditor({
     await performSave(recipe, async () => {
       if (!(await applyRenameIfNeeded(recipe))) return undefined;
       const lightRecipe = makeLightRecipe(recipe, wasmResources.hasIngredient);
-      const created = await createUserRecipeVersion(
-        userEmail,
-        recipeId,
-        lightRecipe,
-        versionName !== undefined ? { versionName } : {},
-      );
+      const created = await createUserRecipeVersion(userEmail, recipeId, lightRecipe, {
+        ...(versionName !== undefined ? { versionName } : {}),
+        evaporation: recipe.evaporation || null,
+      });
       return created && { recipeId, versionNumber: created.version };
     });
   };

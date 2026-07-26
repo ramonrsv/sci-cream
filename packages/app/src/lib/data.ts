@@ -35,7 +35,7 @@ export type SavedRecipeVersionJson = {
   label?: string;
   /** Opt-in display name (e.g. `3.1`, `4.2-b`); absent when the version shows its integer */
   versionName?: string;
-  /** Grams of water evaporated; set only by adapted embedded entries — the DB never stores it */
+  /** Grams of water evaporated during preparation; absent when none was recorded */
   evaporation?: number;
   /** ISO 8601 timestamp; created server-side and surfaced as a string for client serialization */
   createdAt: string;
@@ -49,6 +49,7 @@ export type RecipeVersionMeta = {
   comments?: string | null;
   label?: string | null;
   versionName?: string | null;
+  evaporation?: number | null;
 };
 
 /** Convert a `recipe_versions` row (or a join row with the same fields) to its JSON wire shape */
@@ -58,6 +59,7 @@ function toSavedRecipeVersionJson(row: {
   comments: string | null;
   label: string | null;
   versionName: string | null;
+  evaporation: number | null;
   createdAt: Date;
 }): SavedRecipeVersionJson {
   return {
@@ -66,6 +68,7 @@ function toSavedRecipeVersionJson(row: {
     ...(row.comments != null && { comments: row.comments }),
     ...(row.label != null && { label: row.label }),
     ...(row.versionName != null && { versionName: row.versionName }),
+    ...(row.evaporation != null && { evaporation: row.evaporation }),
     createdAt: row.createdAt.toISOString(),
   };
 }
@@ -207,6 +210,7 @@ export async function fetchAllUserSavedRecipes(
       comments: recipeVersionsTable.comments,
       label: recipeVersionsTable.label,
       versionName: recipeVersionsTable.versionName,
+      evaporation: recipeVersionsTable.evaporation,
       createdAt: recipeVersionsTable.createdAt,
     })
     .from(recipesTable)
@@ -270,6 +274,7 @@ async function insertNextVersion(
       comments: meta.comments ?? null,
       label: meta.label ?? null,
       versionName,
+      evaporation: meta.evaporation ?? null,
     })
     .returning();
 
@@ -379,6 +384,7 @@ export async function updateUserRecipeVersion(
   if (updates.label !== undefined) setClause.label = updates.label;
   if (updates.versionName !== undefined)
     setClause.versionName = updates.versionName?.trim() ?? null;
+  if (updates.evaporation !== undefined) setClause.evaporation = updates.evaporation;
 
   const where = and(
     eq(recipeVersionsTable.recipeId, recipeId),

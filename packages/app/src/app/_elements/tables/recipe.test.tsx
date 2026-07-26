@@ -922,7 +922,23 @@ describe("RecipeEditor", () => {
 
       fireEvent.click(screen.getByTitle("Save recipe"));
       await waitFor(() => {
-        expect(createUserRecipe).toHaveBeenCalledWith("a@b.c", "My Recipe", [["Whole Milk", 500]]);
+        expect(createUserRecipe).toHaveBeenCalledWith("a@b.c", "My Recipe", [["Whole Milk", 500]], {
+          evaporation: null,
+        });
+      });
+    });
+
+    it("passes the recipe's evaporation to createUserRecipe", async () => {
+      mockSignedIn();
+      populateRecipe("My Recipe");
+      recipeContext.recipes[0].evaporation = 25;
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
+
+      fireEvent.click(screen.getByTitle("Save recipe"));
+      await waitFor(() => {
+        expect(createUserRecipe).toHaveBeenCalledWith("a@b.c", "My Recipe", [["Whole Milk", 500]], {
+          evaporation: 25,
+        });
       });
     });
 
@@ -940,6 +956,26 @@ describe("RecipeEditor", () => {
       await waitFor(() => {
         expect(updateUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, 3, {
           recipe: [["Whole Milk", 500]],
+          evaporation: null,
+        });
+      });
+    });
+
+    it("passes the recipe's evaporation when updating an existing version", async () => {
+      mockSignedIn();
+      populateRecipe("My Recipe");
+      recipeContext.recipes[0].evaporation = 25;
+      recipeContext.recipes[0].savedRef = { recipeId: 7, versionNumber: 3 };
+      recipeContext.recipes[0].baseline = { name: "My Recipe", serializedRows: "" };
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
+
+      fireEvent.click(
+        screen.getByTitle((value) => /Save changes to version 3|Saved — version 3/.test(value)),
+      );
+      await waitFor(() => {
+        expect(updateUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, 3, {
+          recipe: [["Whole Milk", 500]],
+          evaporation: 25,
         });
       });
     });
@@ -959,6 +995,7 @@ describe("RecipeEditor", () => {
         expect(renameUserRecipe).toHaveBeenCalledWith("a@b.c", 7, "My Recipe Renamed");
         expect(updateUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, 1, {
           recipe: [["Whole Milk", 500]],
+          evaporation: null,
         });
       });
     });
@@ -991,9 +1028,11 @@ describe("RecipeEditor", () => {
       render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
       fireEvent.click(screen.getByRole("button", { name: "Save as new version" }));
       await waitFor(() => {
-        // A blank new-version input passes an empty meta so the server auto-materializes only when
+        // A blank new-version input omits versionName so the server auto-materializes only when
         // the recipe has opted into named versions.
-        expect(createUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, [["Whole Milk", 500]], {});
+        expect(createUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, [["Whole Milk", 500]], {
+          evaporation: null,
+        });
       });
     });
   });
@@ -1193,6 +1232,7 @@ describe("RecipeEditor", () => {
       await waitFor(() => {
         expect(createUserRecipeVersion).toHaveBeenCalledWith("a@b.c", 7, [["Whole Milk", 500]], {
           versionName: "3.1",
+          evaporation: null,
         });
       });
     });

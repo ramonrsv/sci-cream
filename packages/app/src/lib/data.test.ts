@@ -233,12 +233,14 @@ describe("createUserRecipe", () => {
     const created = await createUserRecipe(TEST_USER_B.email, name, rows, {
       comments: "first",
       label: "initial",
+      evaporation: 25,
     });
     expect(created).toBeDefined();
     expect(created!.version.version).toBe(1);
     expect(created!.version.recipe).toEqual(rows);
     expect(created!.version.comments).toBe("first");
     expect(created!.version.label).toBe("initial");
+    expect(created!.version.evaporation).toBe(25);
 
     try {
       const all = await fetchAllUserSavedRecipes(TEST_USER_B.email);
@@ -246,6 +248,7 @@ describe("createUserRecipe", () => {
       expect(found).toBeDefined();
       expect(found!.id).toBe(created!.recipeId);
       expect(found!.versions[0].recipe).toEqual(rows);
+      expect(found!.versions[0].evaporation).toBe(25);
     } finally {
       await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
     }
@@ -346,6 +349,40 @@ describe("updateUserRecipeVersion", () => {
       });
       expect(cleared?.comments).toBeUndefined();
       expect(cleared?.label).toBeUndefined();
+    } finally {
+      await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
+    }
+  });
+
+  test("partially updates evaporation independent of other fields; clears with null", async () => {
+    const name = "Evaporation Update Test Recipe";
+    const initial: LightRecipe = [["Whole Milk", 100]];
+
+    const created = await createUserRecipe(TEST_USER_B.email, name, initial, {
+      comments: "before",
+      evaporation: 10,
+    });
+    expect(created).toBeDefined();
+    expect(created!.version.evaporation).toBe(10);
+
+    try {
+      // Omitting evaporation leaves it unchanged while another field updates
+      const untouched = await updateUserRecipeVersion(TEST_USER_B.email, created!.recipeId, 1, {
+        comments: "after",
+      });
+      expect(untouched?.comments).toBe("after");
+      expect(untouched?.evaporation).toBe(10);
+
+      const updated = await updateUserRecipeVersion(TEST_USER_B.email, created!.recipeId, 1, {
+        evaporation: 42,
+      });
+      expect(updated?.evaporation).toBe(42);
+      expect(updated?.comments).toBe("after"); // unchanged
+
+      const cleared = await updateUserRecipeVersion(TEST_USER_B.email, created!.recipeId, 1, {
+        evaporation: null,
+      });
+      expect(cleared?.evaporation).toBeUndefined();
     } finally {
       await deleteUserRecipe(TEST_USER_B.email, created!.recipeId);
     }
