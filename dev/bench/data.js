@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785135560255,
+  "lastUpdate": 1785172918358,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -445164,6 +445164,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 988.78,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 11.96,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 137.71,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "63ca790981f8d34201ef570d12a6e042a9a410b6",
+          "message": "Add version-label display and opt-in share support\n\nbatch-builder and make-recipe only ever showed a recipe's raw\nversion number. displayVersion() now prefers the saved version's\nopt-in name (lib/recipe/version.ts's versionName), and shows the\nnumber for an unnamed default version once its recipe has sibling\nversions to be confused with.\n\nConsolidates BatchRecipe's ref/versionName/versioned fields into a\nsingle opt-in BatchRecipeVersion (ref, name, hasSiblings); every\nbuilder site now needs one conditional spread instead of three, and\ndisplayVersion() takes just that value.\n\nRecipe share links (single-recipe and make-recipe checklist) can\nnow optionally carry the resolved version label on the wire, off\nby default:\n- BatchPayloadRecipe.vn / SharePayload.vn carry the pre-resolved\n  label only — never recipeId/versionNumber — so opting in cannot\n  leak identity, and the checkoff hash (which already excludes\n  ref) is unaffected.\n- New \"Include version labels\"/\"Include version\" checkboxes in\n  the batch and recipe share dialogs, mirroring the existing\n  comments/spec opt-ins.\n- ShareViewer renders the recipient's version badge when present.\n\nAdds unit/component test coverage for the new precedence rules,\nopt-in gating, wire round-tripping, and cap validation.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-27T13:19:22-04:00",
+          "tree_id": "f1dcc8fdef6f2d783715cc3ccdffd44ec84b9e90",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/63ca790981f8d34201ef570d12a6e042a9a410b6"
+        },
+        "date": 1785172884847,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.44,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 718.24,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 886.68,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 611.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 780.15,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 622.11,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 790.55,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 595.9,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 764.33,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] route-only JS (gzip)",
+            "value": 595.9,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] first-load JS (gzip)",
+            "value": 764.33,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 989.5,
             "unit": "KB"
           },
           {
