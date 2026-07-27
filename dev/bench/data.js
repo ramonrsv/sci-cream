@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785120520468,
+  "lastUpdate": 1785120523435,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -458080,6 +458080,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/e5ae6de5bd7d9b47228f42694934cd5c576118c5"
         },
         "date": 1785115418370,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d6004cafdec07ef78147adb52472b696790c8657",
+          "message": "Make a recipe dirty from evaporation input changes",
+          "timestamp": "2026-07-26T22:15:41-04:00",
+          "tree_id": "f020e1d9346b265c413030b0b677d16499ff8aa5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d6004cafdec07ef78147adb52472b696790c8657"
+        },
+        "date": 1785120522809,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
