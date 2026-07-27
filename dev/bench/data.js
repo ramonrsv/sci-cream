@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785134792258,
+  "lastUpdate": 1785134795273,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -459186,6 +459186,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/d6004cafdec07ef78147adb52472b696790c8657"
         },
         "date": 1785120522809,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "29c0bc67aba531d349b97381d0fc6e0e4f211ff4",
+          "message": "recipe-search: fix version date and overflow\n\nRemove the version-dropdown date (formatVersionDate/createdAt),\nwhich made visual regression snapshots non-deterministic.\n\nConstrain the version Select so it shrinks and truncates instead\nof overflowing the action buttons, which now stay fixed-size and\nflush-right.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-27T02:25:10-04:00",
+          "tree_id": "0e7c94cb503fe4cb679e847b5525f16c39c44bf4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/29c0bc67aba531d349b97381d0fc6e0e4f211ff4"
+        },
+        "date": 1785134794635,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
