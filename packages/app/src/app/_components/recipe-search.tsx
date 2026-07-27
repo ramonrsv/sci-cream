@@ -178,20 +178,10 @@ function makeRecipeFromRows(
   return recipe;
 }
 
-/** Format a version createdAt timestamp for display in the version dropdown */
-function formatVersionDate(iso: string): string {
-  if (!iso) return "";
-  const d = new Date(iso);
-  if (Number.isNaN(d.getTime())) return "";
-  return d.toISOString().slice(0, 10);
-}
-
 /** Build the display label for a version in the dropdown */
 function formatVersionOption(v: SavedRecipeVersionJson, isLatest: boolean): string {
-  const date = formatVersionDate(v.createdAt);
   const latest = isLatest ? " · latest" : "";
   const parts = [`v${displayVersionName(v)}`];
-  if (date) parts.push(date);
   if (v.label) parts.push(v.label);
   return parts.join("  ·  ") + latest;
 }
@@ -305,18 +295,19 @@ function RecipeDetailPanel({
         persistKey={STORAGE_KEYS.recipeSearchPropertiesView}
         toolbarStart={
           hasMultipleVersions || editVersionEnabled ? (
-            <>
+            <div className="flex w-full min-w-0 items-center gap-1">
               {hasMultipleVersions && (
                 <Select
                   value={selectedVersionIdx}
                   onChange={setSelectedVersionIdx}
                   options={versionOptions}
                   ariaLabel="Recipe version"
-                  className="max-w-70 truncate"
+                  className="min-w-0 shrink truncate"
                 />
               )}
-              {/* Action buttons sit flush-right regardless of whether a select precedes them */}
-              <div className="ml-auto flex items-center gap-1">
+              {/* Action buttons sit flush-right, fixed-size (`shrink-0`); only the select (which
+                  can truncate) gives up space when the two don't both fit; no overflow occurs. */}
+              <div className="ml-auto flex shrink-0 items-center gap-1">
                 {editVersionEnabled && (
                   <EditVersionDetailsAction
                     // Remount on version change so a still-open popup can't save over the wrong one
@@ -342,7 +333,7 @@ function RecipeDetailPanel({
                   />
                 )}
               </div>
-            </>
+            </div>
           ) : undefined
         }
         comments={
