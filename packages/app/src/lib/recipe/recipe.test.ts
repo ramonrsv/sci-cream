@@ -726,15 +726,17 @@ describe("Recipe Helper Functions", () => {
   // ---- Baseline + dirty + identity helpers --------------------------------------------------------
 
   describe("makeRecipeBaseline", () => {
-    it("captures the current name and serialized rows", () => {
+    it("captures the current name, serialized rows, and evaporation", () => {
       const recipe = makeEmptyRecipeContext().recipes[0];
       recipe.name = "My Recipe";
       recipe.ingredientRows[0].name = "Whole Milk";
       recipe.ingredientRows[0].quantity = 100;
+      recipe.evaporation = 10;
 
       const baseline = makeRecipeBaseline(recipe);
       expect(baseline.name).toBe("My Recipe");
       expect(baseline.serializedRows).toContain("Whole Milk\t100");
+      expect(baseline.evaporation).toBe(recipe.evaporation);
     });
   });
 
@@ -746,6 +748,7 @@ describe("Recipe Helper Functions", () => {
       recipe.name = "Loaded Recipe";
       recipe.ingredientRows[0].name = "Whole Milk";
       recipe.ingredientRows[0].quantity = 500;
+      recipe.evaporation = 10;
     });
 
     it("returns false when baseline is undefined (anonymous recipe)", () => {
@@ -770,11 +773,37 @@ describe("Recipe Helper Functions", () => {
       expect(isRecipeDirty(recipe)).toBe(true);
     });
 
+    it("returns true when evaporation differs from baseline", () => {
+      recipe.baseline = makeRecipeBaseline(recipe);
+      recipe.evaporation = 15;
+      expect(isRecipeDirty(recipe)).toBe(true);
+    });
+
     it("returns true when a row is added beyond baseline", () => {
       recipe.baseline = makeRecipeBaseline(recipe);
       recipe.ingredientRows[1].name = "Sucrose";
       recipe.ingredientRows[1].quantity = 100;
       expect(isRecipeDirty(recipe)).toBe(true);
+    });
+
+    it("returns true for undefined evaporation from non-zero baseline", () => {
+      recipe.baseline = makeRecipeBaseline(recipe);
+      recipe.evaporation = undefined;
+      expect(isRecipeDirty(recipe)).toBe(true);
+    });
+
+    it("returns true for non-zero evaporation from undefined baseline", () => {
+      recipe.evaporation = undefined;
+      recipe.baseline = makeRecipeBaseline(recipe);
+      recipe.evaporation = 5;
+      expect(isRecipeDirty(recipe)).toBe(true);
+    });
+
+    it("returns false for zero evaporation from undefined baseline", () => {
+      recipe.evaporation = undefined;
+      recipe.baseline = makeRecipeBaseline(recipe);
+      recipe.evaporation = 0;
+      expect(isRecipeDirty(recipe)).toBe(false);
     });
   });
 

@@ -46,13 +46,14 @@ export interface RecipeSummary {
 }
 
 /**
- * Snapshot of a recipe's name and serialized rows taken at load time (or after a successful save).
- * Used by {@link isRecipeDirty} to detect unsaved edits; the `name` half is split out so callers
- * can also detect rename-at-save without re-parsing.
+ * Snapshot of a recipe's name, serialized rows, and evaporation taken at load time (or after a
+ * successful save). Used by {@link isRecipeDirty} to detect unsaved edits; the `name` half is split
+ * out so callers can also detect rename-at-save without re-parsing.
  */
 export interface RecipeBaseline {
   name: string;
   serializedRows: string;
+  evaporation?: number;
 }
 
 /**
@@ -312,7 +313,11 @@ export function stringifyRecipe(recipe: Recipe) {
 
 /** Capture a fresh {@link RecipeBaseline} for the current state of `recipe` */
 export function makeRecipeBaseline(recipe: Recipe): RecipeBaseline {
-  return { name: recipe.name, serializedRows: stringifyRecipe(recipe) };
+  return {
+    name: recipe.name,
+    serializedRows: stringifyRecipe(recipe),
+    evaporation: recipe.evaporation,
+  };
 }
 
 /** Returns `true` when `recipe` was loaded from a saved version and has unsaved edits */
@@ -320,7 +325,8 @@ export function isRecipeDirty(recipe: Recipe): boolean {
   if (recipe.baseline === undefined) return false;
   return (
     recipe.name !== recipe.baseline.name ||
-    stringifyRecipe(recipe) !== recipe.baseline.serializedRows
+    stringifyRecipe(recipe) !== recipe.baseline.serializedRows ||
+    (recipe.evaporation ?? 0) !== (recipe.baseline.evaporation ?? 0)
   );
 }
 
