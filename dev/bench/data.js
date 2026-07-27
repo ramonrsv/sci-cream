@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785172926566,
+  "lastUpdate": 1785173019901,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -457082,6 +457082,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.43,
             "range": "0.23",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "63ca790981f8d34201ef570d12a6e042a9a410b6",
+          "message": "Add version-label display and opt-in share support\n\nbatch-builder and make-recipe only ever showed a recipe's raw\nversion number. displayVersion() now prefers the saved version's\nopt-in name (lib/recipe/version.ts's versionName), and shows the\nnumber for an unnamed default version once its recipe has sibling\nversions to be confused with.\n\nConsolidates BatchRecipe's ref/versionName/versioned fields into a\nsingle opt-in BatchRecipeVersion (ref, name, hasSiblings); every\nbuilder site now needs one conditional spread instead of three, and\ndisplayVersion() takes just that value.\n\nRecipe share links (single-recipe and make-recipe checklist) can\nnow optionally carry the resolved version label on the wire, off\nby default:\n- BatchPayloadRecipe.vn / SharePayload.vn carry the pre-resolved\n  label only — never recipeId/versionNumber — so opting in cannot\n  leak identity, and the checkoff hash (which already excludes\n  ref) is unaffected.\n- New \"Include version labels\"/\"Include version\" checkboxes in\n  the batch and recipe share dialogs, mirroring the existing\n  comments/spec opt-ins.\n- ShareViewer renders the recipient's version badge when present.\n\nAdds unit/component test coverage for the new precedence rules,\nopt-in gating, wire round-tripping, and cap validation.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-27T13:19:22-04:00",
+          "tree_id": "f1dcc8fdef6f2d783715cc3ccdffd44ec84b9e90",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/63ca790981f8d34201ef570d12a6e042a9a410b6"
+        },
+        "date": 1785172988094,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.99,
+            "range": "7.25",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.47,
+            "range": "0.46",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.45,
+            "range": "0.47",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 172.5,
+            "range": "12.87",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.5,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 172.5,
+            "range": "12.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 56.85,
+            "range": "7.09",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.3,
+            "range": "0.36",
             "unit": "ms"
           }
         ]
