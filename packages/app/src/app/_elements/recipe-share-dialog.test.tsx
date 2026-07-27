@@ -148,4 +148,31 @@ describe("ShareRecipeAction", () => {
       await expect(decodeLink(link)).resolves.not.toHaveProperty("c");
     });
   });
+
+  describe("include-version checkbox", () => {
+    it("is absent when no version label is offered", async () => {
+      render(<ShareRecipeAction name="Base" rows={ROWS} />);
+      await openDialog();
+      expect(screen.queryByTestId("share-include-version")).not.toBeInTheDocument();
+    });
+
+    it("defaults to unchecked and omits the version from the payload", async () => {
+      render(<ShareRecipeAction name="Base" rows={ROWS} versionName="3.1" />);
+      const link = await openDialog();
+
+      expect(screen.getByTestId("share-include-version")).not.toBeChecked();
+      await expect(decodeLink(link)).resolves.not.toHaveProperty("vn");
+    });
+
+    it("includes the version after the checkbox is checked", async () => {
+      render(<ShareRecipeAction name="Base" rows={ROWS} versionName="3.1" />);
+      const link = await openDialog();
+      const before = link.value;
+
+      fireEvent.click(screen.getByTestId("share-include-version"));
+      await waitFor(() => expect(link.value).not.toBe(before));
+
+      await expect(decodeLink(link)).resolves.toMatchObject({ vn: "3.1" });
+    });
+  });
 });

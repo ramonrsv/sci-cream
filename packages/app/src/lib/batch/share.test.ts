@@ -4,7 +4,11 @@ import type { LightRecipe } from "@workspace/sci-cream";
 
 import type { Batch } from "@/lib/batch/batch";
 import { MAX_BATCH_RECIPES } from "@/lib/batch/batch";
-import { MAX_SHARE_COMMENT_CHARS, MAX_SHARE_NAME_CHARS } from "@/lib/recipe/share";
+import {
+  MAX_SHARE_COMMENT_CHARS,
+  MAX_SHARE_NAME_CHARS,
+  MAX_SHARE_VERSION_CHARS,
+} from "@/lib/recipe/share";
 import { CategoryColor } from "@/lib/styles/colors";
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import {
@@ -61,7 +65,7 @@ describe("makeBatchPayload", () => {
 
   it("drops provenance, so refs never reach the wire", () => {
     const batch = makeBatch();
-    batch.recipes[0]!.ref = { recipeId: 7, versionNumber: 3 };
+    batch.recipes[0]!.version = { ref: { recipeId: 7, versionNumber: 3 } };
     const payload = makeBatchPayload(batch);
     expect(JSON.stringify(payload)).not.toContain("recipeId");
     expect(payload.b[0]).toEqual({ n: "Base", r: ROWS });
@@ -91,7 +95,7 @@ describe("encodeBatchPayload / decodeBatchPayload", () => {
 
   it("survives a full round trip back into a Batch, without provenance", async () => {
     const batch = makeBatch({ title: "T", notes: "N" });
-    batch.recipes[0]!.ref = { recipeId: 7, versionNumber: 3 };
+    batch.recipes[0]!.version = { ref: { recipeId: 7, versionNumber: 3 } };
     const decoded = await decodeBatchPayload(await encodeBatchPayload(makeBatchPayload(batch)));
     expect(makeBatchFromPayload(decoded)).toEqual({
       title: "T",
@@ -253,6 +257,58 @@ describe("container colors on the wire", () => {
 
     const decoded = makeBatchFromPayload(await decodeBatchPayload(encoded));
     expect(decoded.recipes).toEqual([{ name: "Base", rows: ROWS }]);
+  });
+});
+
+describe("opt-in version labels on the wire", () => {
+  it("omits the version label by default, even when the recipe has one", async () => {
+    const batch = makeBatch();
+    batch.recipes[0]!.version = { name: "2.1" };
+    expect(makeBatchPayload(batch)).toEqual({ v: 1, d: "2026-07-18", b: [{ n: "Base", r: ROWS }] });
+  });
+
+  it("includes the resolved label once opted in", () => {
+    const batch = makeBatch();
+    batch.recipes[0]!.version = { name: "2.1" };
+    expect(makeBatchPayload(batch, { includeVersions: true })).toMatchObject({
+      b: [{ vn: "2.1" }],
+    });
+  });
+
+  it("falls back to the plain version number when there is no name", () => {
+    const batch = makeBatch();
+    batch.recipes[0]!.version = { ref: { recipeId: 7, versionNumber: 3 } };
+    const payload = makeBatchPayload(batch, { includeVersions: true });
+
+    expect(payload.b[0]).toMatchObject({ vn: "3" });
+    expect(JSON.stringify(payload)).not.toContain("recipeId");
+  });
+
+  it("still says nothing for the default version, even opted in", () => {
+    const batch = makeBatch();
+    batch.recipes[0]!.version = { ref: { recipeId: 7, versionNumber: 1 } };
+    expect(makeBatchPayload(batch, { includeVersions: true }).b[0]).not.toHaveProperty("vn");
+  });
+
+  it("round-trips the label into the recipient's Batch, still without a ref", async () => {
+    const batch = makeBatch();
+    batch.recipes[0]!.version = { name: "2.1", ref: { recipeId: 7, versionNumber: 2 } };
+
+    const encoded = await encodeBatchPayload(makeBatchPayload(batch, { includeVersions: true }));
+    const decoded = makeBatchFromPayload(await decodeBatchPayload(encoded));
+
+    expect(decoded.recipes[0]).toEqual({ name: "Base", rows: ROWS, version: { name: "2.1" } });
+  });
+
+  it("rejects a version label over the per-field cap", async () => {
+    const encoded = await encodeRaw({
+      v: 1,
+      d: "2026-07-18",
+      b: [{ n: "Base", r: ROWS, vn: "x".repeat(MAX_SHARE_VERSION_CHARS + 1) }],
+    });
+    await expect(decodeBatchPayload(encoded)).rejects.toMatchObject({
+      kind: BatchErrorKind.Invalid,
+    });
   });
 });
 

@@ -5,7 +5,7 @@ import { Share2 } from "lucide-react";
 
 import { CopyableField } from "@/app/_elements/copyable-field";
 import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";
-import type { Batch } from "@/lib/batch/batch";
+import { type Batch, displayVersion } from "@/lib/batch/batch";
 import {
   BATCH_URL_WARN_CHARS,
   encodeBatchPayload,
@@ -18,19 +18,22 @@ import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 function BatchShareDialogBody({ batch }: { batch: Batch }) {
   // The encoded payload is kept beside the link: it, not the link, is what the size budget caps.
   const [link, setLink] = useState<{ url: string; encoded: string } | undefined>(undefined);
+  // Version labels are opt-in: only the recipe name and rows are shared until this is checked.
+  const [includeVersions, setIncludeVersions] = useState(false);
+  const hasVersions = batch.recipes.some((recipe) => displayVersion(recipe.version) !== undefined);
 
   // Encoding is async (native CompressionStream), so build the link in an effect
   useEffect(() => {
     let cancelled = false;
     const build = async () => {
-      const encoded = await encodeBatchPayload(makeBatchPayload(batch));
+      const encoded = await encodeBatchPayload(makeBatchPayload(batch, { includeVersions }));
       if (!cancelled) setLink({ url: makeBatchUrl(encoded, window.location.origin), encoded });
     };
     void build();
     return () => {
       cancelled = true;
     };
-  }, [batch]);
+  }, [batch, includeVersions]);
 
   return (
     <div className="flex w-80 flex-col gap-3 p-3">
@@ -39,6 +42,19 @@ function BatchShareDialogBody({ batch }: { batch: Batch }) {
         Anyone with this link sees the same checklist and can check items off on their own device.
         Progress is tracked per device, not shared back.
       </p>
+
+      {hasVersions && (
+        <label className="flex items-center gap-1 text-sm">
+          <input
+            type="checkbox"
+            checked={includeVersions}
+            onChange={() => setIncludeVersions((prev) => !prev)}
+            data-testid="batch-share-include-versions"
+          />
+          Include version labels
+        </label>
+      )}
+
       {/* The blurb stays put while the link builds, so the panel does not resize in place */}
       {link === undefined ? (
         <p className="text-secondary text-sm">Building link…</p>

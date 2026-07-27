@@ -275,6 +275,11 @@ function RecipeDetailPanel({
             rows={selectedVersion.recipe}
             evaporation={selectedVersion.evaporation}
             comments={selectedVersion.comments}
+            versionName={
+              hasMultipleVersions || selectedVersion.versionName
+                ? displayVersionName(selectedVersion)
+                : undefined
+            }
             iconSize={DETAIL_PANEL_ACTION_ICON_SIZE}
           />
         )}

@@ -739,7 +739,8 @@ export function RecipeEditor({
     (v) => v.version === currentRecipe.savedRef?.versionNumber,
   );
 
-  const displayedVersion = currentSavedVersion ? displayVersionName(currentSavedVersion) : "";
+  const displayedVersionName = currentSavedVersion ? displayVersionName(currentSavedVersion) : "";
+  const shareableVersionName = displayedVersionName !== "" ? displayedVersionName : undefined;
   const defaultNewVersionName = nextVersionName(savedVersions);
   const newVersionInputName = newVersionInput.trim();
 
@@ -759,8 +760,8 @@ export function RecipeEditor({
                 ? "Save failed — try again"
                 : currentRecipe.savedRef !== undefined
                   ? dirty
-                    ? `Save changes to version ${displayedVersion}`
-                    : `Saved — version ${displayedVersion}`
+                    ? `Save changes to version ${displayedVersionName}`
+                    : `Saved — version ${displayedVersionName}`
                   : "Save recipe";
 
   const saveAsNewVersionTitle = !userEmail
@@ -843,6 +844,7 @@ export function RecipeEditor({
                     name={currentRecipe.name}
                     rows={makeShareRows(currentRecipe)}
                     evaporation={currentRecipe.evaporation}
+                    versionName={shareableVersionName}
                     buttonClassName="action-button px-1 py-0.75"
                     iconSize={iconSize}
                   />
@@ -907,8 +909,8 @@ export function RecipeEditor({
             {/* Loaded version */}
             {currentRecipe.savedRef !== undefined && (
               <VersionBadge
-                version={displayedVersion}
-                title={`Editing version ${displayedVersion}`}
+                version={displayedVersionName}
+                title={`Editing version ${displayedVersionName}`}
               />
             )}
             {/* `→ new-version` input: main recipe only; defaults to the next version name */}

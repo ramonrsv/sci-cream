@@ -24,14 +24,27 @@ export interface Batch {
   recipes: BatchRecipe[];
 }
 
+/**
+ * A saved recipe's version info for {@link displayVersion}. `ref` is local provenance, never
+ * sent on a handoff link; `name`/`hasSiblings` resolve what a recipient should see instead.
+ */
+export interface BatchRecipeVersion {
+  /** The specific saved version this recipe came from. Absent once decoded from a link. */
+  ref?: SavedRecipeRef;
+  /** The version's opt-in name, when it has one. */
+  name?: string;
+  /** True when the recipe currently has more than one saved version. */
+  hasSiblings?: boolean;
+}
+
 /** One recipe within a {@link Batch}. */
 export interface BatchRecipe {
   /** Display name, shown in the legend and on badges. */
   name: string;
   /** `[name, grams]` rows, exactly as they are to be weighed. */
   rows: LightRecipe;
-  /** Source saved version, when the recipe came from one. Provenance only — never amounts. */
-  ref?: SavedRecipeRef;
+  /** The saved version this recipe came from, when it did. */
+  version?: BatchRecipeVersion;
   /**
    * Color matching the physical container this recipe is mixed in. Absent when unpicked, since
    * the fallback is positional and needs an index only the caller has — {@link batchRecipeColor}.
@@ -51,13 +64,15 @@ export function batchRecipeColor(recipe: BatchRecipe, index: number): CategoryCo
 export const DEFAULT_RECIPE_VERSION = 1;
 
 /**
- * The version worth showing beside a recipe name: absent for a calculator slot, which has none, and
- * for the default, which distinguishes nothing.
- *
- * Owner-side only — `ref` is deliberately kept off the wire, so a recipient sees no version.
+ * The version worth showing: an opted-in `name` always wins; otherwise the number shows unless
+ * it's the default with no `hasSiblings`; absent when there's no version info at all.
  */
-export function displayVersion(ref: BatchRecipe["ref"]): number | undefined {
-  if (ref === undefined || ref.versionNumber === DEFAULT_RECIPE_VERSION) return undefined;
+export function displayVersion(version?: BatchRecipeVersion): string | number | undefined {
+  if (version === undefined) return undefined;
+  if (version.name != null) return version.name;
+  const { ref } = version;
+  if (ref === undefined) return undefined;
+  if (ref.versionNumber === DEFAULT_RECIPE_VERSION && !version.hasSiblings) return undefined;
   return ref.versionNumber;
 }
 

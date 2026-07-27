@@ -47,3 +47,45 @@ describe("ShareBatchAction length warning", () => {
     expect(warning).toHaveTextContent(`${String(input.value.length)} characters`);
   });
 });
+
+describe("include-version-labels checkbox", () => {
+  afterEach(cleanup);
+
+  const VERSIONED: Batch = {
+    date: "2026-07-18",
+    recipes: [{ name: "Base", rows: [["Whole Milk", 500]], version: { name: "2.1" } }],
+  };
+
+  it("is absent when no recipe in the batch has a displayable version", async () => {
+    vi.mocked(encodeBatchPayload).mockResolvedValue("A");
+    render(<ShareBatchAction batch={BATCH} />);
+    fireEvent.click(screen.getByTestId("share-batch-button"));
+    await screen.findByTestId("batch-share-link");
+
+    expect(screen.queryByTestId("batch-share-include-versions")).not.toBeInTheDocument();
+  });
+
+  it("defaults to unchecked and omits the version label from the payload", async () => {
+    vi.mocked(encodeBatchPayload).mockResolvedValue("A");
+    render(<ShareBatchAction batch={VERSIONED} />);
+    fireEvent.click(screen.getByTestId("share-batch-button"));
+    await screen.findByTestId("batch-share-link");
+
+    expect(screen.getByTestId("batch-share-include-versions")).not.toBeChecked();
+    const [payload] = vi.mocked(encodeBatchPayload).mock.calls.at(-1)!;
+    expect(payload.b[0]).not.toHaveProperty("vn");
+  });
+
+  it("includes the version label once the checkbox is checked", async () => {
+    vi.mocked(encodeBatchPayload).mockResolvedValue("A");
+    render(<ShareBatchAction batch={VERSIONED} />);
+    fireEvent.click(screen.getByTestId("share-batch-button"));
+    await screen.findByTestId("batch-share-link");
+
+    fireEvent.click(screen.getByTestId("batch-share-include-versions"));
+    await waitFor(() => {
+      const [payload] = vi.mocked(encodeBatchPayload).mock.calls.at(-1)!;
+      expect(payload.b[0]).toMatchObject({ vn: "2.1" });
+    });
+  });
+});

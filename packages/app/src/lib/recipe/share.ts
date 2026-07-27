@@ -39,6 +39,9 @@ export const MAX_SHARE_SPECS = 20;
 /** Maximum accepted length of the recipe comments. */
 export const MAX_SHARE_COMMENT_CHARS = 2000;
 
+/** Maximum accepted length of the (already-resolved) version display label. */
+export const MAX_SHARE_VERSION_CHARS = 32;
+
 /** Path of the share viewer route; the payload rides in the URL fragment. */
 export const SHARE_PATH = "/share";
 
@@ -59,6 +62,8 @@ export interface SharePayload {
   c?: string;
   /** Inlined user-ingredient spec JSONs (opt-in at share time; embeds full composition data). */
   s?: unknown[];
+  /** Opt-in resolved version label (e.g. `"3.1"`) from the shared version; reveals no id. */
+  vn?: string;
 }
 
 /** Failure modes of decoding/consuming a share link, each with a user-facing message. */
@@ -138,7 +143,7 @@ function validateSharePayload(parsed: unknown): SharePayload {
       break;
   }
 
-  const { n: name, r: rows, e: evaporation, c: comments, s: specs } = obj;
+  const { n: name, r: rows, e: evaporation, c: comments, s: specs, vn: versionName } = obj;
 
   if (typeof name !== "string" || name.length > MAX_SHARE_NAME_CHARS) {
     throw new ShareError(ShareErrorKind.Invalid);
@@ -174,17 +179,28 @@ function validateSharePayload(parsed: unknown): SharePayload {
     throw new ShareError(ShareErrorKind.Invalid);
   }
 
+  if (
+    versionName !== undefined &&
+    (typeof versionName !== "string" || versionName.length > MAX_SHARE_VERSION_CHARS)
+  ) {
+    throw new ShareError(ShareErrorKind.Invalid);
+  }
+
   // Rebuild the object so unknown extra fields are dropped rather than carried along.
-  return makeSharePayload(name, rows as LightRecipe, evaporation, comments, specs);
+  return makeSharePayload(name, rows as LightRecipe, evaporation, comments, specs, versionName);
 }
 
-/** Assemble a {@link SharePayload}, omitting zero evaporation, empty comments, and empty specs. */
+/**
+ * Assemble a {@link SharePayload}, omitting zero evaporation, empty comments, specs, and version.
+ * `versionName` is an already-resolved display label, not a raw DB field; pass it only if opted in.
+ */
 export function makeSharePayload(
   name: string,
   rows: LightRecipe,
   evaporation?: number,
   comments?: string,
   specs?: unknown[],
+  versionName?: string,
 ): SharePayload {
   return {
     v: SHARE_PAYLOAD_VERSION,
@@ -193,6 +209,7 @@ export function makeSharePayload(
     ...(evaporation ? { e: evaporation } : {}),
     ...(comments ? { c: comments } : {}),
     ...(specs !== undefined && specs.length > 0 ? { s: specs } : {}),
+    ...(versionName ? { vn: versionName } : {}),
   };
 }
 

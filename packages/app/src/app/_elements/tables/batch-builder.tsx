@@ -93,7 +93,7 @@ function BuilderRow({
   onRemove,
 }: {
   name: string;
-  version?: number;
+  version?: string | number;
   total: number;
   index: number;
   color: CategoryColor;
@@ -196,7 +196,7 @@ export function BatchBuilder({
               <BuilderRow
                 key={`${String(index)}:${recipe.name}`}
                 name={recipe.name}
-                version={displayVersion(recipe.ref)}
+                version={displayVersion(recipe.version)}
                 total={recipe.rows.reduce((sum, [, quantity]) => sum + quantity, 0)}
                 index={index}
                 color={batchRecipeColor(recipe, index)}

@@ -11,6 +11,7 @@ import {
   MAX_SHARE_COMMENT_CHARS,
   MAX_SHARE_NAME_CHARS,
   MAX_SHARE_SPECS,
+  MAX_SHARE_VERSION_CHARS,
   SHARE_PAYLOAD_VERSION,
   ShareError,
   ShareErrorKind,
@@ -51,6 +52,23 @@ describe("makeSharePayload", () => {
       s: [spec],
     });
   });
+
+  it("omits the version label unless explicitly passed", () => {
+    expect(makeSharePayload("A", ROWS, undefined, undefined, undefined, "")).toEqual({
+      v: 1,
+      n: "A",
+      r: ROWS,
+    });
+  });
+
+  it("keeps the version label when present", () => {
+    expect(makeSharePayload("A", ROWS, undefined, undefined, undefined, "3.1")).toEqual({
+      v: 1,
+      n: "A",
+      r: ROWS,
+      vn: "3.1",
+    });
+  });
 });
 
 describe("encodeSharePayload / decodeSharePayload", () => {
@@ -64,6 +82,11 @@ describe("encodeSharePayload / decodeSharePayload", () => {
   it("round-trips evaporation, comments, and inlined specs", async () => {
     const spec = { DairySimpleSpec: { name: "My Milk", fat: 3.8 } };
     const payload = makeSharePayload("Base", ROWS, 42.5, "Age 12 h at 4 °C.", [spec]);
+    await expect(decodeSharePayload(await encodeSharePayload(payload))).resolves.toEqual(payload);
+  });
+
+  it("round-trips a version label", async () => {
+    const payload = makeSharePayload("Base", ROWS, undefined, undefined, undefined, "3.1");
     await expect(decodeSharePayload(await encodeSharePayload(payload))).resolves.toEqual(payload);
   });
 
@@ -122,6 +145,8 @@ describe("encodeSharePayload / decodeSharePayload", () => {
       { v: 1, n: "A", r: ROWS, c: "x".repeat(MAX_SHARE_COMMENT_CHARS + 1) }, // comments too long
       { v: 1, n: "A", r: ROWS, s: {} }, // specs not an array
       { v: 1, n: "A", r: ROWS, s: Array.from({ length: MAX_SHARE_SPECS + 1 }, () => ({})) },
+      { v: 1, n: "A", r: ROWS, vn: 42 }, // version label not a string
+      { v: 1, n: "A", r: ROWS, vn: "x".repeat(MAX_SHARE_VERSION_CHARS + 1) }, // too long
     ];
     for (const value of cases) {
       await expect(decodeSharePayload(await encodeRaw(value))).rejects.toMatchObject({

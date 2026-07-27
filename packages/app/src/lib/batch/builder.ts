@@ -1,9 +1,10 @@
 import type { LightRecipe } from "@workspace/sci-cream";
 
-import { type Batch, type BatchRecipe } from "@/lib/batch/batch";
+import { type Batch, type BatchRecipe, type BatchRecipeVersion } from "@/lib/batch/batch";
 import { makeBatchRows } from "@/lib/batch/share";
-import type { SavedRecipeJson } from "@/lib/data";
+import type { SavedRecipeJson, SavedRecipeVersionJson } from "@/lib/data";
 import { getRecipeStoresFromStorage, makeRecipeId, parseRecipeString } from "@/lib/recipe/recipe";
+import { displayVersionName } from "@/lib/recipe/version";
 import type { CategoryColor } from "@/lib/styles/colors";
 
 /** A recipe the user can add to the batch, from either a calculator slot or a saved version. */
@@ -16,8 +17,8 @@ export interface BatchSource {
   detail?: string;
   /** The `[name, grams]` rows to weigh. */
   rows: LightRecipe;
-  /** Provenance, set only for saved-recipe versions. */
-  ref?: BatchRecipe["ref"];
+  /** The saved version this source came from, when it did. */
+  version?: BatchRecipeVersion;
 }
 
 /**
@@ -53,18 +54,24 @@ export function readCalculatorSources(): BatchSource[] {
 /** Every saved recipe version the user can add, newest version first within each recipe. */
 export function readSavedSources(savedRecipes: readonly SavedRecipeJson[]): BatchSource[] {
   return savedRecipes.flatMap((recipe) => {
-    // A recipe with only its first version has nothing to tell apart, so it carries no version.
-    // Once there are several, every one is labelled — v1 included, now that it can be confused.
-    const versioned = recipe.versions.length > 1;
-    return [...recipe.versions]
-      .reverse()
-      .map((version) => ({
-        id: `saved:${String(recipe.id)}:${String(version.version)}`,
-        name: recipe.name,
-        ...(versioned ? { detail: `v${String(version.version)}` } : {}),
-        rows: makeBatchRows(version.recipe),
+    const hasVersionName = (version: SavedRecipeVersionJson) => version.versionName !== undefined;
+    const hasSiblings = recipe.versions.length > 1;
+
+    return [...recipe.versions].reverse().map((version) => ({
+      id: `saved:${String(recipe.id)}:${String(version.version)}`,
+      name: recipe.name,
+      // Include a version detail if the recipe has a named version or if it has siblings (so v1
+      // is worth naming). The detail is only used in the picker; only `version` rides the link.
+      ...(hasSiblings || hasVersionName(version)
+        ? { detail: `v${displayVersionName(version)}` }
+        : {}),
+      rows: makeBatchRows(version.recipe),
+      version: {
         ref: { recipeId: recipe.id, versionNumber: version.version },
-      }));
+        ...(hasVersionName(version) ? { name: version.versionName } : {}),
+        hasSiblings: recipe.versions.length > 1,
+      },
+    }));
   });
 }
 
@@ -83,7 +90,7 @@ export function makeBatchFromSelection(
       {
         name: source.name,
         rows: source.rows,
-        ...(source.ref ? { ref: source.ref } : {}),
+        ...(source.version ? { version: source.version } : {}),
         ...(color === undefined ? {} : { color }),
       },
     ];

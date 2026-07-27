@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 
 import { LoadAction } from "@/app/_components/detail-panel";
 import { RecipeComments, RecipeDetailBody } from "@/app/_elements/recipe-detail-body";
+import { VersionBadge } from "@/app/_elements/version-badge";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import {
   getRecipeStoresFromStorage,
@@ -122,6 +123,7 @@ export function ShareViewer({ embed = false }: { embed?: boolean }) {
           <h2 className="text-primary text-base font-semibold">{payload.n || "Shared recipe"}</h2>
           <div className="flex flex-wrap items-center gap-2">
             <span className="meta-tag">shared recipe</span>
+            {payload.vn !== undefined && <VersionBadge version={payload.vn} />}
           </div>
         </div>
         <div className="flex shrink-0 items-center gap-1">

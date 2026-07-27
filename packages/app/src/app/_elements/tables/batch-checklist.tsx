@@ -70,8 +70,8 @@ export function BatchLegend({ recipes }: { recipes: Batch["recipes"] }) {
   return (
     <ul className="flex flex-wrap items-center gap-x-3 gap-y-1" data-testid="batch-legend">
       {recipes.map((recipe, index) => {
-        // Owner-side only: `ref` never rides the link, so a recipient sees no version here
-        const version = displayVersion(recipe.ref);
+        // `ref` never rides the link; a resolved version label does, opt-in — see `displayVersion`.
+        const version = displayVersion(recipe.version);
         return (
           <li key={`${String(index)}:${recipe.name}`} className="flex items-center gap-1.5">
             <RecipeBadge index={index} color={batchRecipeColor(recipe, index)} />

@@ -1,8 +1,12 @@
 import type { LightRecipe, LightRecipeLine } from "@workspace/sci-cream";
 
 import type { Batch, BatchRecipe } from "@/lib/batch/batch";
-import { MAX_BATCH_RECIPES } from "@/lib/batch/batch";
-import { MAX_SHARE_COMMENT_CHARS, MAX_SHARE_NAME_CHARS } from "@/lib/recipe/share";
+import { MAX_BATCH_RECIPES, displayVersion } from "@/lib/batch/batch";
+import {
+  MAX_SHARE_COMMENT_CHARS,
+  MAX_SHARE_NAME_CHARS,
+  MAX_SHARE_VERSION_CHARS,
+} from "@/lib/recipe/share";
 import { categoryColorFromName, categoryColorName } from "@/lib/styles/colors";
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import {
@@ -17,8 +21,9 @@ import {
  * rows), compressed and base64url-encoded into the fragment of `/make-recipe#<payload>`, which
  * never reaches the server.
  *
- * The wire shape is a projection of `Batch`, not a serialization: `ref` stays behind, since it
- * would leak recipe ids and dropping it keeps the checkoff hash reproducible on both sides.
+ * The wire shape is a projection of `Batch`, not a serialization: `ref` never rides along, to
+ * avoid leaking recipe ids and keep the checkoff hash reproducible. A resolved version label may,
+ * opt-in, since it carries no id — see {@link BatchPayloadRecipe.vn}.
  */
 
 /** Current batch payload format version; independent of the recipe share payload's version. */
@@ -64,6 +69,8 @@ export interface BatchPayloadRecipe {
   r: LightRecipe;
   /** Container color by name (e.g. `"Blue"`); absent when unpicked, so both sides go positional. */
   c?: string;
+  /** Opt-in resolved version label (e.g. `"3.1"`); never `recipeId`, so it can't leak one. */
+  vn?: string;
 }
 
 /** Failure modes of decoding a handoff link, each with a user-facing message. */
@@ -115,26 +122,41 @@ export function isIsoDate(value: unknown): value is string {
   return !Number.isNaN(parsed.getTime()) && parsed.toISOString().slice(0, 10) === value;
 }
 
-/** Assemble a {@link BatchPayload} from a batch, dropping empty optional fields and provenance. */
-export function makeBatchPayload(batch: Batch): BatchPayload {
+/**
+ * Assemble a {@link BatchPayload} from a batch, dropping empty optional fields and provenance.
+ * `includeVersions` adds each recipe's version (see {@link displayVersion}); off by default.
+ */
+export function makeBatchPayload(
+  batch: Batch,
+  { includeVersions = false }: { includeVersions?: boolean } = {},
+): BatchPayload {
   return {
     v: BATCH_PAYLOAD_VERSION,
     ...(batch.title ? { t: batch.title } : {}),
     d: batch.date,
     ...(batch.notes ? { o: batch.notes } : {}),
-    b: batch.recipes.map(({ name, rows, color }) => ({
-      n: name,
-      r: rows,
-      ...(color === undefined ? {} : { c: categoryColorName(color) }),
-    })),
+    b: batch.recipes.map((recipe) => {
+      const version = includeVersions ? displayVersion(recipe.version) : undefined;
+      return {
+        n: recipe.name,
+        r: recipe.rows,
+        ...(recipe.color === undefined ? {} : { c: categoryColorName(recipe.color) }),
+        ...(version === undefined ? {} : { vn: String(version) }),
+      };
+    }),
   };
 }
 
 /** Rebuild a {@link Batch} from a decoded payload; `ref` is absent by design. */
 export function makeBatchFromPayload(payload: BatchPayload): Batch {
-  const recipes: BatchRecipe[] = payload.b.map(({ n, r, c }) => {
+  const recipes: BatchRecipe[] = payload.b.map(({ n, r, c, vn }) => {
     const color = categoryColorFromName(c);
-    return { name: n, rows: r, ...(color === undefined ? {} : { color }) };
+    return {
+      name: n,
+      rows: r,
+      ...(color === undefined ? {} : { color }),
+      ...(vn === undefined ? {} : { version: { name: vn } }),
+    };
   });
   return {
     ...(payload.t === undefined ? {} : { title: payload.t }),
@@ -209,7 +231,7 @@ function validateBatchPayloadRecipe(parsed: unknown): BatchPayloadRecipe {
   if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
     throw new BatchError(BatchErrorKind.Invalid);
   }
-  const { n: name, r: rows, c: color } = parsed as Record<string, unknown>;
+  const { n: name, r: rows, c: color, vn: versionName } = parsed as Record<string, unknown>;
 
   if (typeof name !== "string" || name.length > MAX_SHARE_NAME_CHARS) {
     throw new BatchError(BatchErrorKind.Invalid);
@@ -231,6 +253,13 @@ function validateBatchPayloadRecipe(parsed: unknown): BatchPayloadRecipe {
     if (!nameOk || !quantityOk) throw new BatchError(BatchErrorKind.Invalid);
   }
 
+  if (
+    versionName !== undefined &&
+    (typeof versionName !== "string" || versionName.length > MAX_SHARE_VERSION_CHARS)
+  ) {
+    throw new BatchError(BatchErrorKind.Invalid);
+  }
+
   // An unknown color is dropped, not rejected: only the amounts are worth failing a link over.
   const known = categoryColorFromName(color);
 
@@ -238,6 +267,7 @@ function validateBatchPayloadRecipe(parsed: unknown): BatchPayloadRecipe {
     n: name,
     r: rows as LightRecipe,
     ...(known === undefined ? {} : { c: categoryColorName(known) }),
+    ...(versionName === undefined ? {} : { vn: versionName }),
   };
 }
 

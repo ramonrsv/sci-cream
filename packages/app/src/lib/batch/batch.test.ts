@@ -169,7 +169,7 @@ describe("canonicalBatchContent", () => {
 
   it("ignores provenance, so owner and recipient agree on the same weighing content", () => {
     const owner = makeBatch();
-    owner.recipes[0]!.ref = { recipeId: 7, versionNumber: 3 };
+    owner.recipes[0]!.version = { ref: { recipeId: 7, versionNumber: 3 } };
     expect(canonicalBatchContent(owner)).toBe(canonicalBatchContent(makeBatch()));
   });
 

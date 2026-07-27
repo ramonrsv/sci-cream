@@ -27,11 +27,13 @@ function ShareDialogBody({
   rows,
   evaporation,
   comments,
+  versionName,
 }: {
   name: string;
   rows: LightRecipe;
   evaporation?: number;
   comments?: string;
+  versionName?: string;
 }) {
   const { userIngredientSpecs } = useSessionResources();
 
@@ -48,6 +50,8 @@ function ShareDialogBody({
   const [includedNames, setIncludedNames] = useState<ReadonlySet<string>>(new Set());
   // Comments default to included — they're less sensitive than compositions, but still opt-out.
   const [includeComments, setIncludeComments] = useState(true);
+  // Version labels are opt-in: only the recipe name and rows are shared until this is checked.
+  const [includeVersion, setIncludeVersion] = useState(false);
   const [urls, setUrls] = useState<{ share: string; embed: string } | undefined>(undefined);
 
   /** Toggle whether the named ingredient's spec is inlined into the link. */
@@ -69,7 +73,14 @@ function ShareDialogBody({
         .filter((spec) => includedNames.has(spec.name))
         .map((spec) => spec.spec);
       const encoded = await encodeSharePayload(
-        makeSharePayload(name, rows, evaporation, includeComments ? comments : undefined, specs),
+        makeSharePayload(
+          name,
+          rows,
+          evaporation,
+          includeComments ? comments : undefined,
+          specs,
+          includeVersion ? versionName : undefined,
+        ),
       );
       if (cancelled) return;
       setUrls({
@@ -82,7 +93,17 @@ function ShareDialogBody({
     return () => {
       cancelled = true;
     };
-  }, [name, rows, evaporation, comments, includeComments, includedNames, userIngredientSpecs]);
+  }, [
+    name,
+    rows,
+    evaporation,
+    comments,
+    includeComments,
+    versionName,
+    includeVersion,
+    includedNames,
+    userIngredientSpecs,
+  ]);
 
   return (
     <div className="flex w-80 flex-col gap-3 p-3">
@@ -132,6 +153,18 @@ function ShareDialogBody({
         </label>
       )}
 
+      {versionName !== undefined && (
+        <label className="flex items-center gap-1 text-sm">
+          <input
+            type="checkbox"
+            checked={includeVersion}
+            onChange={() => setIncludeVersion((prev) => !prev)}
+            data-testid="share-include-version"
+          />
+          Include version ({versionName})
+        </label>
+      )}
+
       {urls && (
         <>
           <CopyableField
@@ -162,6 +195,7 @@ export function ShareRecipeAction({
   rows,
   evaporation,
   comments,
+  versionName,
   buttonClassName = "action-button px-2 py-0.5 text-sm",
   iconSize = COMPONENT_ACTION_ICON_SIZE,
 }: {
@@ -169,6 +203,7 @@ export function ShareRecipeAction({
   rows: LightRecipe;
   evaporation?: number;
   comments?: string;
+  versionName?: string;
   buttonClassName?: string;
   iconSize?: number;
 }) {
@@ -188,7 +223,13 @@ export function ShareRecipeAction({
         <Share2 size={iconSize} />
       </PopoverButton>
       <PopupPanel data-testid="share-dialog">
-        <ShareDialogBody name={name} rows={rows} evaporation={evaporation} comments={comments} />
+        <ShareDialogBody
+          name={name}
+          rows={rows}
+          evaporation={evaporation}
+          comments={comments}
+          versionName={versionName}
+        />
       </PopupPanel>
     </Popover>
   );
