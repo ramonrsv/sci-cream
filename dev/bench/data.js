@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785121272965,
+  "lastUpdate": 1785134788462,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -417615,6 +417615,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.04%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "29c0bc67aba531d349b97381d0fc6e0e4f211ff4",
+          "message": "recipe-search: fix version date and overflow\n\nRemove the version-dropdown date (formatVersionDate/createdAt),\nwhich made visual regression snapshots non-deterministic.\n\nConstrain the version Select so it shrinks and truncates instead\nof overflowing the action buttons, which now stay fixed-size and\nflush-right.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-27T02:25:10-04:00",
+          "tree_id": "0e7c94cb503fe4cb679e847b5525f16c39c44bf4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/29c0bc67aba531d349b97381d0fc6e0e4f211ff4"
+        },
+        "date": 1785134755746,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 51833,
+            "range": "±1.42%",
+            "unit": "ops/sec",
+            "extra": "85 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 510347,
+            "range": "±0.65%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 33804,
+            "range": "±1.52%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 391221,
+            "range": "±0.99%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
           }
         ]
       }
