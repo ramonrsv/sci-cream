@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785173252465,
+  "lastUpdate": 1785173323208,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -59297,6 +59297,192 @@ window.BENCHMARK_DATA = {
             "name": "interpolate_pairs(near_end)",
             "value": 726,
             "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "63ca790981f8d34201ef570d12a6e042a9a410b6",
+          "message": "Add version-label display and opt-in share support\n\nbatch-builder and make-recipe only ever showed a recipe's raw\nversion number. displayVersion() now prefers the saved version's\nopt-in name (lib/recipe/version.ts's versionName), and shows the\nnumber for an unnamed default version once its recipe has sibling\nversions to be confused with.\n\nConsolidates BatchRecipe's ref/versionName/versioned fields into a\nsingle opt-in BatchRecipeVersion (ref, name, hasSiblings); every\nbuilder site now needs one conditional spread instead of three, and\ndisplayVersion() takes just that value.\n\nRecipe share links (single-recipe and make-recipe checklist) can\nnow optionally carry the resolved version label on the wire, off\nby default:\n- BatchPayloadRecipe.vn / SharePayload.vn carry the pre-resolved\n  label only — never recipeId/versionNumber — so opting in cannot\n  leak identity, and the checkoff hash (which already excludes\n  ref) is unaffected.\n- New \"Include version labels\"/\"Include version\" checkboxes in\n  the batch and recipe share dialogs, mirroring the existing\n  comments/spec opt-ins.\n- ShareViewer renders the recipient's version badge when present.\n\nAdds unit/component test coverage for the new precedence rules,\nopt-in gating, wire round-tripping, and cap validation.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-27T13:19:22-04:00",
+          "tree_id": "f1dcc8fdef6f2d783715cc3ccdffd44ec84b9e90",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/63ca790981f8d34201ef570d12a6e042a9a410b6"
+        },
+        "date": 1785173292039,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4523,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 180398,
+            "range": "± 1540",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2778,
+            "range": "± 11",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 178894,
+            "range": "± 1913",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 5135,
+            "range": "± 57",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 5263,
+            "range": "± 40",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 5415,
+            "range": "± 35",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 5425,
+            "range": "± 67",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 5379,
+            "range": "± 58",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 5585,
+            "range": "± 29",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 120034,
+            "range": "± 1086",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 123290,
+            "range": "± 750",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 199689436,
+            "range": "± 302626",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 656498,
+            "range": "± 5733",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 7619,
+            "range": "± 132",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 54,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 7068,
+            "range": "± 40",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 107981,
+            "range": "± 1011",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 104243,
+            "range": "± 772",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 173198,
+            "range": "± 1710",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 172845,
+            "range": "± 1502",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 375837,
+            "range": "± 1686",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14821,
+            "range": "± 50",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 5,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 726,
+            "range": "± 3",
             "unit": "ns/iter"
           },
           {
