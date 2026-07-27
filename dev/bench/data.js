@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785115419035,
+  "lastUpdate": 1785115430399,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -415921,6 +415921,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.18%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e5ae6de5bd7d9b47228f42694934cd5c576118c5",
+          "message": "Rework recipe version controls and editing\n\nMove the version select, edit, and delete controls into the ingredient\ntable's reserved toolbar band (a new `toolbarStart` slot on\nRecipeDetailBody, overlaid on the height-reserving spacer). Surfacing a\nversion selector no longer pushes the rest of the panel down.\n\nPer-version name and label editing becomes an always-available popup\n(EditVersionDetailsAction), split from comments editing so each\npersists on its own; it no longer requires a second saved version to\nreach. The comments-only onUpdateSavedRecipeVersionComments callback is\ngeneralized to onUpdateSavedRecipeVersion, taking a partial\nRecipeVersionMeta: a field is null to clear, a value to set, or omitted\nto leave unchanged.\n\nMove evaporation out of the toolbar-band overlay it used to occupy into\nits own Evap (g) column in RecipeTable, real in the header and Totals\nrow and merged into Ingredient via colSpan on the ingredient rows; the\nTotal row still shows the resulting yield inline.\n\nGuard makeRecipeFromRows against a throwing mix-property calculation\n(an invalid evaporation value), recording it as mixError, matching the\neditor and share viewer.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-26T21:21:02-04:00",
+          "tree_id": "a2efcc24ce4f4752b668b192aa785e22b1624bab",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e5ae6de5bd7d9b47228f42694934cd5c576118c5"
+        },
+        "date": 1785115396266,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 50422,
+            "range": "±1.14%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 498622,
+            "range": "±2.89%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 33793,
+            "range": "±1.03%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 387519,
+            "range": "±1.07%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
