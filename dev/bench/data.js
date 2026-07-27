@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785120523435,
+  "lastUpdate": 1785120530441,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -416768,6 +416768,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.07%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d6004cafdec07ef78147adb52472b696790c8657",
+          "message": "Make a recipe dirty from evaporation input changes",
+          "timestamp": "2026-07-26T22:15:41-04:00",
+          "tree_id": "f020e1d9346b265c413030b0b677d16499ff8aa5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d6004cafdec07ef78147adb52472b696790c8657"
+        },
+        "date": 1785120497094,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 49543,
+            "range": "±0.87%",
+            "unit": "ops/sec",
+            "extra": "89 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 497641,
+            "range": "±3.13%",
+            "unit": "ops/sec",
+            "extra": "86 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 34542,
+            "range": "±0.91%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 388241,
+            "range": "±1.04%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
