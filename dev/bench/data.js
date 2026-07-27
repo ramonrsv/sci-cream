@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785115754805,
+  "lastUpdate": 1785115817388,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -58739,6 +58739,192 @@ window.BENCHMARK_DATA = {
             "name": "interpolate_pairs(near_end)",
             "value": 635,
             "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e5ae6de5bd7d9b47228f42694934cd5c576118c5",
+          "message": "Rework recipe version controls and editing\n\nMove the version select, edit, and delete controls into the ingredient\ntable's reserved toolbar band (a new `toolbarStart` slot on\nRecipeDetailBody, overlaid on the height-reserving spacer). Surfacing a\nversion selector no longer pushes the rest of the panel down.\n\nPer-version name and label editing becomes an always-available popup\n(EditVersionDetailsAction), split from comments editing so each\npersists on its own; it no longer requires a second saved version to\nreach. The comments-only onUpdateSavedRecipeVersionComments callback is\ngeneralized to onUpdateSavedRecipeVersion, taking a partial\nRecipeVersionMeta: a field is null to clear, a value to set, or omitted\nto leave unchanged.\n\nMove evaporation out of the toolbar-band overlay it used to occupy into\nits own Evap (g) column in RecipeTable, real in the header and Totals\nrow and merged into Ingredient via colSpan on the ingredient rows; the\nTotal row still shows the resulting yield inline.\n\nGuard makeRecipeFromRows against a throwing mix-property calculation\n(an invalid evaporation value), recording it as mixError, matching the\neditor and share viewer.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-26T21:21:02-04:00",
+          "tree_id": "a2efcc24ce4f4752b668b192aa785e22b1624bab",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e5ae6de5bd7d9b47228f42694934cd5c576118c5"
+        },
+        "date": 1785115783041,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4194,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 158343,
+            "range": "± 1452",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2413,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 184392,
+            "range": "± 11165",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4288,
+            "range": "± 25",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4712,
+            "range": "± 91",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4600,
+            "range": "± 82",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4868,
+            "range": "± 133",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4851,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 5022,
+            "range": "± 74",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 105389,
+            "range": "± 823",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 116212,
+            "range": "± 3792",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 180501322,
+            "range": "± 1042781",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 636640,
+            "range": "± 11206",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6515,
+            "range": "± 103",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 53,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6752,
+            "range": "± 432",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 95657,
+            "range": "± 556",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 92081,
+            "range": "± 319",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 152001,
+            "range": "± 3866",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 179579,
+            "range": "± 1108",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 331761,
+            "range": "± 13660",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14389,
+            "range": "± 174",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 636,
+            "range": "± 3",
             "unit": "ns/iter"
           },
           {
