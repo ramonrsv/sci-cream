@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785173323208,
+  "lastUpdate": 1785173538354,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -387286,6 +387286,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 619.13,
             "range": "13.22",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "63ca790981f8d34201ef570d12a6e042a9a410b6",
+          "message": "Add version-label display and opt-in share support\n\nbatch-builder and make-recipe only ever showed a recipe's raw\nversion number. displayVersion() now prefers the saved version's\nopt-in name (lib/recipe/version.ts's versionName), and shows the\nnumber for an unnamed default version once its recipe has sibling\nversions to be confused with.\n\nConsolidates BatchRecipe's ref/versionName/versioned fields into a\nsingle opt-in BatchRecipeVersion (ref, name, hasSiblings); every\nbuilder site now needs one conditional spread instead of three, and\ndisplayVersion() takes just that value.\n\nRecipe share links (single-recipe and make-recipe checklist) can\nnow optionally carry the resolved version label on the wire, off\nby default:\n- BatchPayloadRecipe.vn / SharePayload.vn carry the pre-resolved\n  label only — never recipeId/versionNumber — so opting in cannot\n  leak identity, and the checkoff hash (which already excludes\n  ref) is unaffected.\n- New \"Include version labels\"/\"Include version\" checkboxes in\n  the batch and recipe share dialogs, mirroring the existing\n  comments/spec opt-ins.\n- ShareViewer renders the recipient's version badge when present.\n\nAdds unit/component test coverage for the new precedence rules,\nopt-in gating, wire round-tripping, and cap validation.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-27T13:19:22-04:00",
+          "tree_id": "f1dcc8fdef6f2d783715cc3ccdffd44ec84b9e90",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/63ca790981f8d34201ef570d12a6e042a9a410b6"
+        },
+        "date": 1785173511590,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 35.88,
+            "range": "4.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 38.88,
+            "range": "2.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 47.88,
+            "range": "3.85",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1757.75,
+            "range": "44.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 243.88,
+            "range": "2.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 255.5,
+            "range": "3.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 270.88,
+            "range": "3.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 12728.5,
+            "range": "48.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 15.35,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 784.25,
+            "range": "28.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 42.75,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 45.38,
+            "range": "1.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 33.75,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 34.38,
+            "range": "2.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 108,
+            "range": "3.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 64.63,
+            "range": "2.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 40.64,
+            "range": "0.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 30.82,
+            "range": "1.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 497,
+            "range": "16.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 516.75,
+            "range": "13.51",
             "unit": "ms"
           }
         ]
