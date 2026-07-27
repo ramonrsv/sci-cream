@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785053894124,
+  "lastUpdate": 1785115415941,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -442346,6 +442346,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static CSS (gzip)",
             "value": 11.95,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 137.71,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "e5ae6de5bd7d9b47228f42694934cd5c576118c5",
+          "message": "Rework recipe version controls and editing\n\nMove the version select, edit, and delete controls into the ingredient\ntable's reserved toolbar band (a new `toolbarStart` slot on\nRecipeDetailBody, overlaid on the height-reserving spacer). Surfacing a\nversion selector no longer pushes the rest of the panel down.\n\nPer-version name and label editing becomes an always-available popup\n(EditVersionDetailsAction), split from comments editing so each\npersists on its own; it no longer requires a second saved version to\nreach. The comments-only onUpdateSavedRecipeVersionComments callback is\ngeneralized to onUpdateSavedRecipeVersion, taking a partial\nRecipeVersionMeta: a field is null to clear, a value to set, or omitted\nto leave unchanged.\n\nMove evaporation out of the toolbar-band overlay it used to occupy into\nits own Evap (g) column in RecipeTable, real in the header and Totals\nrow and merged into Ingredient via colSpan on the ingredient rows; the\nTotal row still shows the resulting yield inline.\n\nGuard makeRecipeFromRows against a throwing mix-property calculation\n(an invalid evaporation value), recording it as mixError, matching the\neditor and share viewer.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-26T21:21:02-04:00",
+          "tree_id": "a2efcc24ce4f4752b668b192aa785e22b1624bab",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/e5ae6de5bd7d9b47228f42694934cd5c576118c5"
+        },
+        "date": 1785115384857,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.44,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 718.12,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 886.56,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 611.69,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 780.13,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 622.04,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 790.47,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 595.89,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 764.33,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] route-only JS (gzip)",
+            "value": 595.89,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] first-load JS (gzip)",
+            "value": 764.33,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 988.76,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 11.96,
             "unit": "KB"
           },
           {
