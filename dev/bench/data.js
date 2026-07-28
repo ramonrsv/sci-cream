@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785212926215,
+  "lastUpdate": 1785213055368,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -458107,6 +458107,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.3,
             "range": "0.36",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c555c6c9f435ed3fd6d4ec1fe98be663951e6889",
+          "message": "Add batches schema and CRUD server actions\n\nAdd `batches` + `batch_recipes` tables and the userEmail-scoped\ncreate/fetch/update/delete actions, mirroring the saved-recipe layer.\n`batch_recipes` holds a composite FK to `recipe_versions(recipe_id,\nversion)` with ON DELETE SET NULL and a both-or-neither CHECK, so a\ndeleted source recipe nulls the provenance ref without corrupting the\nrecord.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-27T23:50:33-04:00",
+          "tree_id": "102251a294346a357bc9beef4c14a5b06c526bfe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c555c6c9f435ed3fd6d4ec1fe98be663951e6889"
+        },
+        "date": 1785213021956,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 64.99,
+            "range": "11.48",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.19,
+            "range": "0.48",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.12,
+            "range": "0.45",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 182,
+            "range": "19.70",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.46,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 182,
+            "range": "19.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 60.9,
+            "range": "11.42",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.29,
+            "range": "0.34",
             "unit": "ms"
           }
         ]
