@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785280264916,
+  "lastUpdate": 1785280268178,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -463350,6 +463350,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/99bf07bf167fcff3df3c9b129201945bf7654e1e"
         },
         "date": 1785215661153,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "91d0a8c4f26e495c1d4def3914a216d5db6eb61f",
+          "message": "Extract ListDetailShell from EntitySearch\n\nFactor the search-bar + two-column list/detail layout out of\nEntitySearch into a presentational ListDetailShell, so the\nmake-recipe batch page can reuse the same shell. EntitySearch\nrenders through it with identical DOM; /recipes and /ingredients\nare unchanged.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-28T17:29:46-04:00",
+          "tree_id": "10a99c5cd6d893c8688f08d5555c242f3226b131",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/91d0a8c4f26e495c1d4def3914a216d5db6eb61f"
+        },
+        "date": 1785280267331,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
