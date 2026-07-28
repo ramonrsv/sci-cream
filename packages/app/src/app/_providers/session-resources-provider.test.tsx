@@ -7,6 +7,7 @@ import { useSession } from "next-auth/react";
 import {
   fetchAllUserSavedRecipes,
   fetchAllUserIngredientSpecs,
+  fetchAllUserBatches,
   type SavedRecipeJson,
 } from "@/lib/data";
 
@@ -21,6 +22,7 @@ vi.mock("next-auth/react", () => ({ useSession: vi.fn() }));
 vi.mock("@/lib/data", () => ({
   fetchAllUserSavedRecipes: vi.fn().mockResolvedValue([]),
   fetchAllUserIngredientSpecs: vi.fn().mockResolvedValue([]),
+  fetchAllUserBatches: vi.fn().mockResolvedValue([]),
 }));
 
 // Spy on the embedded-data seeder (wrapping the real one) so we can assert the provider seeds the
@@ -88,6 +90,7 @@ describe("SessionResourcesProvider", () => {
     vi.clearAllMocks();
     vi.mocked(fetchAllUserSavedRecipes).mockResolvedValue([]);
     vi.mocked(fetchAllUserIngredientSpecs).mockResolvedValue([]);
+    vi.mocked(fetchAllUserBatches).mockResolvedValue([]);
     mockSignedOut();
   });
 
@@ -106,6 +109,7 @@ describe("SessionResourcesProvider", () => {
     await waitFor(() => expect(screen.getByRole("button")).toBeInTheDocument());
     expect(fetchAllUserSavedRecipes).not.toHaveBeenCalled();
     expect(fetchAllUserIngredientSpecs).not.toHaveBeenCalled();
+    expect(fetchAllUserBatches).not.toHaveBeenCalled();
   });
 
   it("fetches saved recipes and ingredient specs once on mount when signed in", async () => {
@@ -115,6 +119,7 @@ describe("SessionResourcesProvider", () => {
     await waitFor(() => {
       expect(fetchAllUserSavedRecipes).toHaveBeenCalledWith("a@b.c");
       expect(fetchAllUserIngredientSpecs).toHaveBeenCalledWith("a@b.c");
+      expect(fetchAllUserBatches).toHaveBeenCalledWith("a@b.c");
     });
   });
 

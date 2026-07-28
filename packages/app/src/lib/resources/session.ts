@@ -2,7 +2,7 @@
 
 import { createContext, useContext } from "react";
 
-import type { IngredientTransfer, SavedRecipeJson } from "@/lib/data";
+import type { IngredientTransfer, SavedBatchJson, SavedRecipeJson } from "@/lib/data";
 import { makeWasmResourcesFromEmbeddedData, type WasmResourcesState } from "@/lib/resources/wasm";
 
 /**
@@ -20,10 +20,14 @@ export interface SessionResources {
   userIngredientSpecs: IngredientTransfer[];
   /** The user's saved recipes, fetched once per session and refreshed after mutations. */
   savedRecipes: SavedRecipeJson[];
+  /** The user's saved batches, fetched once per session and refreshed after mutations. */
+  savedBatches: SavedBatchJson[];
   /** Re-fetch and reseed the user's ingredient specs (call after an ingredient mutation). */
   refreshUserIngredients: () => Promise<void>;
   /** Re-fetch the user's saved recipes into the shared cache (call after a recipe mutation). */
   refreshUserRecipes: () => Promise<void>;
+  /** Re-fetch the user's saved batches into the shared cache (call after a batch mutation). */
+  refreshUserBatches: () => Promise<void>;
 }
 
 /**
@@ -46,8 +50,10 @@ export const SessionResourcesContext = createContext<SessionResources>({
   },
   userIngredientSpecs: [],
   savedRecipes: [],
+  savedBatches: [],
   refreshUserIngredients: () => Promise.resolve(),
   refreshUserRecipes: () => Promise.resolve(),
+  refreshUserBatches: () => Promise.resolve(),
 });
 
 /** Reads the session-scoped shared resources from any child of {@link SessionResourcesProvider}. */

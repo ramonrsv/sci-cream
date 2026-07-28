@@ -6,9 +6,11 @@ import { useSession } from "next-auth/react";
 import { OnConflict } from "@workspace/sci-cream";
 
 import {
+  fetchAllUserBatches,
   fetchAllUserIngredientSpecs,
   fetchAllUserSavedRecipes,
   type IngredientTransfer,
+  type SavedBatchJson,
   type SavedRecipeJson,
 } from "@/lib/data";
 import { makeWasmResources, makeWasmResourcesFromEmbeddedData } from "@/lib/resources/wasm";
@@ -36,6 +38,7 @@ export function SessionResourcesProvider({ children }: { children: ReactNode }) 
 
   const [userIngredientSpecs, setUserIngredientSpecs] = useState<IngredientTransfer[]>([]);
   const [savedRecipes, setSavedRecipes] = useState<SavedRecipeJson[]>([]);
+  const [savedBatches, setSavedBatches] = useState<SavedBatchJson[]>([]);
 
   const refreshUserIngredients = useCallback(async () => {
     if (!email) return;
@@ -62,6 +65,13 @@ export function SessionResourcesProvider({ children }: { children: ReactNode }) 
     setSavedRecipes(recipes ?? []);
   }, [email]);
 
+  const refreshUserBatches = useCallback(async () => {
+    if (!email) return;
+
+    const batches = await fetchAllUserBatches(email);
+    setSavedBatches(batches ?? []);
+  }, [email]);
+
   // Fetch once per session, keyed on email so a flickering `useSession` can't re-fire the effect.
   // Ingredients go first: the bridge depends on them, and server actions run serially.
   const loadedForEmailRef = useRef<string | undefined>(undefined);
@@ -73,14 +83,17 @@ export function SessionResourcesProvider({ children }: { children: ReactNode }) 
     loadedForEmailRef.current = email;
     void refreshUserIngredients();
     void refreshUserRecipes();
-  }, [email, refreshUserIngredients, refreshUserRecipes]);
+    void refreshUserBatches();
+  }, [email, refreshUserIngredients, refreshUserRecipes, refreshUserBatches]);
   /* eslint-enable react-hooks/set-state-in-effect */
 
   const value: SessionResources = {
     wasmResourcesState,
     savedRecipes,
+    savedBatches,
     userIngredientSpecs,
     refreshUserRecipes,
+    refreshUserBatches,
     refreshUserIngredients,
   };
 

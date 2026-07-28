@@ -56,6 +56,8 @@ function mockSessionResources(savedRecipes: SavedRecipeJson[] = []) {
     userIngredientSpecs: [],
     refreshUserRecipes,
     refreshUserIngredients: vi.fn().mockResolvedValue(undefined),
+    savedBatches: [],
+    refreshUserBatches: vi.fn().mockResolvedValue(undefined),
   } satisfies SessionResources);
 }
 

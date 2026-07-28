@@ -45,6 +45,8 @@ describe("RecipeEditorPanel", () => {
       userIngredientSpecs: [],
       refreshUserRecipes: vi.fn().mockResolvedValue(undefined),
       refreshUserIngredients: vi.fn().mockResolvedValue(undefined),
+      savedBatches: [],
+      refreshUserBatches: vi.fn().mockResolvedValue(undefined),
     } satisfies SessionResources);
   });
 

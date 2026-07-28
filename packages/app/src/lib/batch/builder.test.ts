@@ -1,8 +1,16 @@
 import { describe, it, expect } from "vitest";
 
-import { type BatchSelection, makeBatchFromSelection, readSavedSources } from "./builder";
-import { displayVersion } from "@/lib/batch/batch";
-import type { SavedRecipeJson, SavedRecipeVersionJson } from "@/lib/data";
+import {
+  type BatchSelection,
+  batchToInput,
+  makeBatchFromSelection,
+  readSavedSources,
+  savedBatchToBatch,
+  selectionFromSavedBatch,
+} from "./builder";
+import { type Batch, displayVersion } from "@/lib/batch/batch";
+import type { SavedBatchJson, SavedRecipeJson, SavedRecipeVersionJson } from "@/lib/data";
+import { CategoryColor } from "@/lib/styles/colors";
 
 /** A saved version carrying one row, enough to be a usable batch source. */
 function version(versionNumber: number, versionName?: string): SavedRecipeVersionJson {
@@ -130,5 +138,117 @@ describe("makeBatchFromSelection — name and version stay separate", () => {
 
     expect(batch.recipes[0]?.version?.name).toBe("2.1");
     expect(displayVersion(batch.recipes[0]?.version)).toBe("2.1");
+  });
+});
+
+describe("makeBatchFromSelection — inline recipes vs. live sources", () => {
+  it("uses an inline recipe as-is, with no live source to resolve against", () => {
+    const selection: BatchSelection = {
+      date: "2026-07-20",
+      items: [
+        { color: CategoryColor.Blue, recipe: { name: "Loaded", rows: [["Whole Milk", 300]] } },
+      ],
+    };
+
+    const batch = makeBatchFromSelection(selection, []);
+    expect(batch.recipes).toEqual([
+      { name: "Loaded", rows: [["Whole Milk", 300]], color: CategoryColor.Blue },
+    ]);
+  });
+
+  it("prefers the inline recipe even when the item also names a source id", () => {
+    const sources = readSavedSources([savedRecipe(1, "My Gelato", [1])]);
+    const selection: BatchSelection = {
+      date: "2026-07-20",
+      items: [{ sourceId: sources[0].id, recipe: { name: "Inline wins", rows: [["Sugar", 10]] } }],
+    };
+
+    expect(makeBatchFromSelection(selection, sources).recipes[0].name).toBe("Inline wins");
+  });
+
+  it("still drops a source-ref item whose source has since disappeared", () => {
+    const selection: BatchSelection = { date: "2026-07-20", items: [{ sourceId: "slot:9" }] };
+
+    expect(makeBatchFromSelection(selection, []).recipes).toEqual([]);
+  });
+});
+
+describe("batchToInput / selectionFromSavedBatch — database round-trip", () => {
+  const batch: Batch = {
+    title: "Test batch",
+    date: "2026-07-20",
+    notes: "age overnight",
+    recipes: [
+      {
+        name: "Vanilla",
+        rows: [["Whole Milk", 600]],
+        color: CategoryColor.Blue,
+        version: { ref: { recipeId: 5, versionNumber: 2 } },
+      },
+      { name: "Sorbet", rows: [["Sugar", 100]] },
+    ],
+  };
+
+  it("projects a batch onto the wire shape, storing colors by name and only the ref", () => {
+    expect(batchToInput(batch)).toEqual({
+      title: "Test batch",
+      date: "2026-07-20",
+      notes: "age overnight",
+      recipes: [
+        {
+          name: "Vanilla",
+          rows: [["Whole Milk", 600]],
+          color: "Blue",
+          ref: { recipeId: 5, versionNumber: 2 },
+        },
+        { name: "Sorbet", rows: [["Sugar", 100]] },
+      ],
+    });
+  });
+
+  it("seeds an inline selection from a saved batch, marking it for update in place", () => {
+    const saved: SavedBatchJson = {
+      id: 42,
+      title: "Test batch",
+      date: "2026-07-20",
+      recipes: [{ name: "Vanilla", rows: [["Whole Milk", 600]], color: "Blue" }],
+      createdAt: "2026-07-20T00:00:00.000Z",
+      updatedAt: "2026-07-20T00:00:00.000Z",
+    };
+
+    expect(selectionFromSavedBatch(saved)).toEqual({
+      savedBatchId: 42,
+      title: "Test batch",
+      date: "2026-07-20",
+      items: [
+        { color: CategoryColor.Blue, recipe: { name: "Vanilla", rows: [["Whole Milk", 600]] } },
+      ],
+    });
+  });
+
+  it("round-trips a saved batch back into a derived Batch for display", () => {
+    const saved: SavedBatchJson = {
+      id: 7,
+      date: "2026-07-20",
+      recipes: [
+        {
+          name: "Vanilla",
+          rows: [["Whole Milk", 600]],
+          color: "Green",
+          ref: { recipeId: 5, versionNumber: 2 },
+        },
+      ],
+      createdAt: "2026-07-20T00:00:00.000Z",
+      updatedAt: "2026-07-20T00:00:00.000Z",
+    };
+
+    expect(savedBatchToBatch(saved).recipes).toEqual([
+      {
+        name: "Vanilla",
+        rows: [["Whole Milk", 600]],
+        color: CategoryColor.Green,
+        version: { ref: { recipeId: 5, versionNumber: 2 } },
+      },
+    ]);
   });
 });
