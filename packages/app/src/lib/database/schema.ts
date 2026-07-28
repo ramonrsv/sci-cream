@@ -4,6 +4,8 @@ import {
   primaryKey,
   unique,
   uniqueIndex,
+  check,
+  foreignKey,
   integer,
   real,
   text,
@@ -108,3 +110,64 @@ export const recipeVersionsTable = pgTable(
 
 export type RecipeVersionInsert = typeof recipeVersionsTable.$inferInsert;
 export type RecipeVersionSelect = typeof recipeVersionsTable.$inferSelect;
+
+/**
+ * Drizzle ORM table definition for the identity of a user's saved batch: one weighing session over
+ * one or more recipes, made on a calendar day. Weighted recipes live in {@link batchRecipesTable}.
+ */
+export const batchesTable = pgTable("batches", {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  user: integer()
+    .notNull()
+    .references(() => usersTable.id),
+  title: text(),
+  // Calendar day the batch was made, `YYYY-MM-DD` local — text, so it never shifts timezone.
+  date: text().notNull(),
+  notes: text(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export type BatchInsert = typeof batchesTable.$inferInsert;
+export type BatchSelect = typeof batchesTable.$inferSelect;
+
+/**
+ * Drizzle ORM table definition for one recipe within a saved batch.
+ *
+ * `rows` holds the `[name, grams]` amounts exactly as weighed and is authoritative — `recipeId` /
+ * `versionNumber` are provenance only and are never consulted for amounts. They form a composite
+ * foreign key to {@link recipeVersionsTable} with `onDelete: "set null"`, so deleting a source
+ * recipe (which cascades to its versions) nulls *both* provenance columns together rather than
+ * corrupting the batch — and the `check` that keeps them set-or-clear together stays satisfied.
+ */
+export const batchRecipesTable = pgTable(
+  "batch_recipes",
+  {
+    id: integer().primaryKey().generatedAlwaysAsIdentity(),
+    batchId: integer("batch_id")
+      .notNull()
+      .references(() => batchesTable.id, { onDelete: "cascade" }),
+    position: integer().notNull(),
+    name: text().notNull(),
+    rows: json().notNull(),
+    // Container color as its display name (e.g. `"Blue"`); null when the recipe carries no pick.
+    color: text(),
+    recipeId: integer("recipe_id"),
+    versionNumber: integer("version_number"),
+  },
+  (table) => [
+    unique("batch_recipes_batch_position_uq").on(table.batchId, table.position),
+    foreignKey({
+      name: "batch_recipes_version_fk",
+      columns: [table.recipeId, table.versionNumber],
+      foreignColumns: [recipeVersionsTable.recipeId, recipeVersionsTable.version],
+    }).onDelete("set null"),
+    check(
+      "batch_recipes_ref_both_or_neither",
+      sql`(${table.recipeId} IS NULL) = (${table.versionNumber} IS NULL)`,
+    ),
+  ],
+);
+
+export type BatchRecipeInsert = typeof batchRecipesTable.$inferInsert;
+export type BatchRecipeSelect = typeof batchRecipesTable.$inferSelect;

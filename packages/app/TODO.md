@@ -103,6 +103,11 @@
 - [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
 - [ ] Add support for sharing of user-defined ingredients, similarly to sharing of recipes.
 - [ ] Look into setting up and how to do database migrations for the production database.
+- [ ] First real migration: rework `batch_recipes` provenance keying — drop the unused
+      `recipe_versions.id` surrogate, or switch to a single `version_id` FK. Needs a backfill and
+      column drops (unsafe via `push`), so do it as the first `drizzle-kit generate`/`migrate`.
+- [ ] Look into splitting `data.ts` and/or `data.test.ts` by domain (users, ingredients, recipes,
+      batches); both are growing large and mix several concerns in a single file.
 - [ ] Find a proper fix for the placeholder `POSTGRES_URL` in the `bundle_benchmark` workflow.
 - [ ] Refine performance benchmarks; some of them may not be measuring what they claim to measure.
 - [ ] Figure out how to do visual regression tests of animations, e.g. navbar expand/collapse.
