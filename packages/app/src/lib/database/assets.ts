@@ -1,5 +1,6 @@
 import type { LightRecipe } from "@workspace/sci-cream";
 
+import type { BatchInput } from "@/lib/data";
 import { getLightRecipe, RecipeID } from "@/__tests__/assets";
 
 /** Credentials for test user A, used in seeding and integration tests. */
@@ -102,5 +103,52 @@ export const TEST_USER_B_RECIPES: SeedRecipeAsset[] = [
   {
     name: "Recipe with Excess Evaporation",
     versions: [{ recipe: RECIPE_EXCESS_EVAPORATION, evaporation: RECIPE_EXCESS_EVAPORATION_EVAP }],
+  },
+];
+
+/**
+ * Example saved batches for TEST_USER_B, used in seeding and the make-recipe whole-page test.
+ * Fixed dates (not today) keep the snapshot stable. Seeded newest-last, so "Friday tasting batch"
+ * sits at the top of the list. Colors are stored as display names, as the data layer expects.
+ */
+export const TEST_USER_B_BATCHES: BatchInput[] = [
+  {
+    title: "Chocolate trial",
+    date: "2026-07-11",
+    recipes: [
+      {
+        name: "Chocolate Base",
+        rows: [
+          ["Whole Milk", 400],
+          ["Sucrose", 90],
+          ["Cocoa Powder", 60],
+        ],
+      },
+    ],
+  },
+  {
+    title: "Friday tasting batch",
+    date: "2026-07-18",
+    notes: "Age 12 h at 4 °C, then churn cold.",
+    recipes: [
+      {
+        name: "Strawberry Sorbet",
+        rows: [
+          ["Strawberry", 300],
+          ["Sucrose", 100],
+          ["Water", 250],
+        ],
+        color: "Red",
+      },
+      {
+        name: "Vanilla Base",
+        rows: [
+          ["Whole Milk", 500],
+          ["Sucrose", 120],
+          ["35% Cream", 150],
+        ],
+        color: "Blue",
+      },
+    ],
   },
 ];

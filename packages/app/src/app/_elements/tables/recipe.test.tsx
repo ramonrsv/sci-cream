@@ -1101,6 +1101,12 @@ describe("RecipeEditor", () => {
       expect(screen.queryByLabelText("Unsaved changes")).not.toBeInTheDocument();
     });
 
+    it("shows a gray saved dot when a loaded recipe matches its baseline", () => {
+      populateLoadedRecipeClean();
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
+      expect(screen.getByLabelText("Saved")).toHaveClass("text-secondary");
+    });
+
     it("does not show the unsaved-changes dot for a brand-new recipe with no baseline", () => {
       recipeContext.recipes[0].name = "Anon Recipe";
       recipeContext.recipes[0].ingredientRows[0].name = "Whole Milk";

@@ -145,6 +145,58 @@ export function savedBatchToBatch(saved: SavedBatchJson): Batch {
   return makeBatchFromSelection(selectionFromSavedBatch(saved), []);
 }
 
+/** Case-insensitive match of a saved batch: title, date, notes, and recipe/ingredient names. */
+export function batchMatchesQuery(batch: SavedBatchJson, q: string): boolean {
+  if ((batch.title ?? "").toLowerCase().includes(q)) return true;
+  if (batch.date.includes(q)) return true;
+  if ((batch.notes ?? "").toLowerCase().includes(q)) return true;
+  return batch.recipes.some(
+    (recipe) =>
+      recipe.name.toLowerCase().includes(q) ||
+      recipe.rows.some(([name]) => name.toLowerCase().includes(q)),
+  );
+}
+
+/** Any recipe, title, or notes the user has put into the batch — the "worth keeping" test. */
+function batchHasContent(batch: Batch): boolean {
+  return (
+    batch.recipes.length > 0 ||
+    (batch.title ?? "").trim() !== "" ||
+    (batch.notes ?? "").trim() !== ""
+  );
+}
+
+/** Stable content fingerprint of a batch, for detecting edits against a saved baseline. */
+function batchFingerprint(batch: Batch): string {
+  return JSON.stringify({
+    title: batch.title ?? "",
+    date: batch.date,
+    notes: batch.notes ?? "",
+    recipes: batch.recipes.map((recipe) => ({
+      name: recipe.name,
+      rows: recipe.rows,
+      color: recipe.color ?? null,
+      ref: recipe.version?.ref ?? null,
+    })),
+  });
+}
+
+/**
+ * Whether discarding the derived {@link Batch} (e.g. via "New batch") would lose work: an unbound
+ * draft once it has any recipe, title, or notes; a bound one only where it diverges from its saved
+ * batch. Compares resolved batches, so a source ref and a loaded inline recipe read alike.
+ */
+export function batchHasUnsavedChanges(
+  batch: Batch,
+  savedBatchId: number | undefined,
+  savedBatches: readonly SavedBatchJson[],
+): boolean {
+  if (savedBatchId === undefined) return batchHasContent(batch);
+  const saved = savedBatches.find((b) => b.id === savedBatchId);
+  if (saved === undefined) return batchHasContent(batch);
+  return batchFingerprint(batch) !== batchFingerprint(savedBatchToBatch(saved));
+}
+
 /**
  * Seed an owner-mode selection from a saved batch: every recipe is carried inline (no live source
  * to resolve against), and `savedBatchId` marks it for update in place on the next save.

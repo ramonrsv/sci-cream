@@ -2,6 +2,7 @@ import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
+import { useSession } from "next-auth/react";
 
 import { MakeRecipeView } from "./make-recipe-view";
 import { type Batch, batchChecklistKey, cellKey } from "@/lib/batch/batch";
@@ -12,8 +13,40 @@ import {
   makeBatchPayload,
   type BatchPayload,
 } from "@/lib/batch/share";
+import { createUserBatch, updateUserBatch, deleteUserBatch, type SavedBatchJson } from "@/lib/data";
+import { useSessionResources, type SessionResources } from "@/lib/resources/session";
 import { STORAGE_KEYS, getLocalStorage, setLocalStorage } from "@/lib/local-storage";
 import { CategoryColor } from "@/lib/styles/colors";
+
+vi.mock("next-auth/react", () => ({ useSession: vi.fn() }));
+vi.mock("@/lib/resources/session", () => ({ useSessionResources: vi.fn() }));
+vi.mock("@/lib/data", () => ({
+  createUserBatch: vi.fn(),
+  updateUserBatch: vi.fn(),
+  deleteUserBatch: vi.fn(),
+}));
+
+/** Point `useSession` at a signed-in user, or `null` for signed-out (the default). */
+function setSessionEmail(email: string | null) {
+  vi.mocked(useSession).mockReturnValue({
+    data: email === null ? null : { user: { email }, expires: "" },
+    status: email === null ? "unauthenticated" : "authenticated",
+    update: vi.fn(),
+  } as unknown as ReturnType<typeof useSession>);
+}
+
+/** Point `useSessionResources` at the given saved batches; other fields are unused stubs. */
+function setSavedBatches(savedBatches: SavedBatchJson[]) {
+  vi.mocked(useSessionResources).mockReturnValue({
+    wasmResourcesState: [] as unknown as SessionResources["wasmResourcesState"],
+    userIngredientSpecs: [],
+    savedRecipes: [],
+    savedBatches,
+    refreshUserIngredients: vi.fn().mockResolvedValue(undefined),
+    refreshUserRecipes: vi.fn().mockResolvedValue(undefined),
+    refreshUserBatches: vi.fn().mockResolvedValue(undefined),
+  });
+}
 
 /** A two-recipe batch sharing "Sucrose", so merging is exercised by default. */
 const BATCH: Batch = {
@@ -51,9 +84,16 @@ async function encodeRaw(value: unknown): Promise<string> {
 beforeEach(() => {
   localStorage.clear();
   window.location.hash = "";
+  window.history.replaceState(null, "", "/");
+  vi.clearAllMocks();
+  setSessionEmail(null);
+  setSavedBatches([]);
 });
 
-afterEach(cleanup);
+afterEach(() => {
+  cleanup();
+  vi.restoreAllMocks();
+});
 
 describe("MakeRecipeView — link mode", () => {
   it("renders the shared batch: title, date, legend, and merged checklist", async () => {
@@ -319,5 +359,275 @@ describe("MakeRecipeView — owner mode", () => {
     render(<MakeRecipeView />);
 
     expect(await screen.findByTestId("checklist-empty")).toBeInTheDocument();
+  });
+});
+
+describe("MakeRecipeView — saving a batch", () => {
+  beforeEach(() => {
+    setLocalStorage(STORAGE_KEYS.recipeStores, [
+      { name: "My Gelato", serializedRows: "Whole Milk\t500" },
+    ]);
+  });
+
+  it("disables save with a sign-in prompt while signed out", async () => {
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-builder");
+    fireEvent.change(screen.getByTestId("batch-add-recipe"), { target: { value: "slot:0" } });
+
+    const save = screen.getByTestId("save-batch-button");
+    expect(save).toBeDisabled();
+    expect(save).toHaveAttribute("title", expect.stringContaining("Sign in"));
+  });
+
+  it("creates the batch on the first save and updates it on the next", async () => {
+    setSessionEmail("owner@example.com");
+    vi.mocked(createUserBatch).mockResolvedValue({
+      id: 7,
+      date: "2026-07-18",
+      recipes: [],
+      createdAt: "",
+      updatedAt: "",
+    });
+    vi.mocked(updateUserBatch).mockResolvedValue(undefined);
+
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-builder");
+    fireEvent.change(screen.getByTestId("batch-add-recipe"), { target: { value: "slot:0" } });
+
+    fireEvent.click(screen.getByTestId("save-batch-button"));
+    await waitFor(() => expect(createUserBatch).toHaveBeenCalledTimes(1));
+    expect(createUserBatch).toHaveBeenCalledWith("owner@example.com", {
+      date: expect.any(String),
+      recipes: [{ name: "My Gelato", rows: [["Whole Milk", 500]], color: "Blue" }],
+    });
+
+    // The returned id is remembered, so the second save updates that row rather than creating anew.
+    fireEvent.click(screen.getByTestId("save-batch-button"));
+    await waitFor(() => expect(updateUserBatch).toHaveBeenCalledTimes(1));
+    expect(updateUserBatch).toHaveBeenCalledWith("owner@example.com", 7, expect.anything());
+    expect(createUserBatch).toHaveBeenCalledTimes(1);
+  });
+
+  it("confirms before New batch discards an unsaved draft, keeping it on dismiss", async () => {
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-builder");
+    fireEvent.change(screen.getByTestId("batch-add-recipe"), { target: { value: "slot:0" } });
+    expect(screen.getByTestId("checklist-cell-0-Whole Milk")).toBeInTheDocument();
+
+    // Dismissed: the unsaved draft survives.
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
+    fireEvent.click(screen.getByTestId("new-batch-button"));
+    expect(confirmSpy).toHaveBeenCalled();
+    expect(screen.getByTestId("checklist-cell-0-Whole Milk")).toBeInTheDocument();
+
+    // Confirmed: the draft is cleared.
+    confirmSpy.mockReturnValue(true);
+    fireEvent.click(screen.getByTestId("new-batch-button"));
+    expect(screen.getByTestId("checklist-empty")).toBeInTheDocument();
+  });
+
+  it("confirms before New batch even when only a title was entered, with no recipes", async () => {
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-builder");
+    fireEvent.change(screen.getByTestId("batch-title"), { target: { value: "Draft name" } });
+
+    // Dismissed: the typed title survives, since it is unsaved work with nothing on the checklist.
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
+    fireEvent.click(screen.getByTestId("new-batch-button"));
+    expect(confirmSpy).toHaveBeenCalled();
+    expect(screen.getByTestId("batch-title")).toHaveValue("Draft name");
+  });
+
+  it("New batch clears the selection and unbinds, so the next save creates again", async () => {
+    setSessionEmail("owner@example.com");
+    vi.mocked(createUserBatch).mockResolvedValue({
+      id: 7,
+      date: "2026-07-18",
+      recipes: [],
+      createdAt: "",
+      updatedAt: "",
+    });
+
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-builder");
+    fireEvent.change(screen.getByTestId("batch-add-recipe"), { target: { value: "slot:0" } });
+
+    fireEvent.click(screen.getByTestId("save-batch-button"));
+    await waitFor(() =>
+      expect(screen.getByTestId("batch-status-dot")).not.toHaveAttribute("aria-hidden"),
+    );
+
+    // The bound batch is not in the mocked cache, so New treats the draft as unsaved and confirms.
+    vi.spyOn(window, "confirm").mockReturnValue(true);
+    fireEvent.click(screen.getByTestId("new-batch-button"));
+
+    // The draft is empty again and no longer bound to the saved batch.
+    expect(screen.getByTestId("checklist-empty")).toBeInTheDocument();
+    expect(screen.getByTestId("batch-status-dot")).toHaveAttribute("aria-hidden", "true");
+
+    // A fresh recipe now saves as a new batch, not an update of the old one.
+    fireEvent.change(screen.getByTestId("batch-add-recipe"), { target: { value: "slot:0" } });
+    fireEvent.click(screen.getByTestId("save-batch-button"));
+    await waitFor(() => expect(createUserBatch).toHaveBeenCalledTimes(2));
+    expect(updateUserBatch).not.toHaveBeenCalled();
+  });
+
+  it("Save as new forks the bound batch into a fresh copy and rebinds to it", async () => {
+    setSessionEmail("owner@example.com");
+    vi.mocked(createUserBatch)
+      .mockResolvedValueOnce({
+        id: 7,
+        date: "2026-07-18",
+        recipes: [],
+        createdAt: "",
+        updatedAt: "",
+      })
+      .mockResolvedValueOnce({
+        id: 99,
+        date: "2026-07-18",
+        recipes: [],
+        createdAt: "",
+        updatedAt: "",
+      });
+
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-builder");
+    fireEvent.change(screen.getByTestId("batch-add-recipe"), { target: { value: "slot:0" } });
+
+    // First save binds to id 7; only then does the "Save as new" control appear.
+    expect(screen.queryByTestId("save-batch-as-new-button")).not.toBeInTheDocument();
+    fireEvent.click(screen.getByTestId("save-batch-button"));
+    await waitFor(() => expect(screen.getByTestId("save-batch-as-new-button")).toBeInTheDocument());
+
+    fireEvent.click(screen.getByTestId("save-batch-as-new-button"));
+    await waitFor(() => expect(createUserBatch).toHaveBeenCalledTimes(2));
+    expect(updateUserBatch).not.toHaveBeenCalled();
+
+    // Rebound to the new copy (id 99): the primary button now updates that one.
+    fireEvent.click(screen.getByTestId("save-batch-button"));
+    await waitFor(() =>
+      expect(updateUserBatch).toHaveBeenCalledWith("owner@example.com", 99, expect.anything()),
+    );
+  });
+});
+
+describe("MakeRecipeView — loading a saved batch", () => {
+  const SAVED: SavedBatchJson = {
+    id: 7,
+    title: "Loaded batch",
+    date: "2026-07-01",
+    recipes: [{ name: "Loaded", rows: [["Whole Milk", 500]], color: "Blue" }],
+    createdAt: "",
+    updatedAt: "",
+  };
+
+  /** Render signed-in with SAVED available, then load it into the editor via the list. */
+  async function renderAndLoad() {
+    setSessionEmail("owner@example.com");
+    setSavedBatches([SAVED]);
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-editor");
+    fireEvent.click(screen.getByTestId("batch-open-7"));
+    // Loaded and in sync with the saved batch: the status dot reads "Saved".
+    await waitFor(() =>
+      expect(screen.getByTestId("batch-status-dot")).toHaveAttribute("aria-label", "Saved"),
+    );
+  }
+
+  it("loads a batch picked from the list into the editor, in place", async () => {
+    setSessionEmail("owner@example.com");
+    setSavedBatches([SAVED]);
+
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-editor");
+
+    // Nothing is bound until a batch is picked: the status dot is a hidden placeholder.
+    expect(screen.getByTestId("batch-status-dot")).toHaveAttribute("aria-hidden", "true");
+
+    fireEvent.click(screen.getByTestId("batch-open-7"));
+
+    // The editor now shows the loaded batch, bound for update-in-place, and its row is highlighted.
+    await waitFor(() =>
+      expect(screen.getByTestId("batch-status-dot")).toHaveAttribute("aria-label", "Saved"),
+    );
+    expect(screen.getByTestId("checklist-cell-0-Whole Milk")).toHaveTextContent(/^500$/);
+    expect(screen.getByTestId("batch-list-item-7")).toHaveAttribute("aria-current", "true");
+    expect(screen.getByRole("heading", { name: "Loaded batch" })).toBeInTheDocument();
+  });
+
+  it("tints the Save control amber once a loaded batch has unsaved edits", async () => {
+    await renderAndLoad();
+
+    // Freshly loaded and unchanged: the Save control is not flagged dirty.
+    const save = screen.getByTestId("save-batch-button");
+    expect(save.querySelector(".text-amber-500")).toBeNull();
+
+    fireEvent.change(screen.getByTestId("batch-title"), {
+      target: { value: "Loaded batch (edited)" },
+    });
+    expect(save.querySelector(".text-amber-500")).not.toBeNull();
+  });
+
+  it("resets without a prompt when a loaded batch is left unchanged", async () => {
+    await renderAndLoad();
+
+    // Unchanged from the saved batch, so nothing is lost: no prompt, and the draft resets.
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
+    fireEvent.click(screen.getByTestId("new-batch-button"));
+    expect(confirmSpy).not.toHaveBeenCalled();
+    expect(screen.getByTestId("checklist-empty")).toBeInTheDocument();
+  });
+
+  it("confirms before New batch when a loaded batch has unsaved edits", async () => {
+    await renderAndLoad();
+
+    // Edit the title so the draft diverges from the saved batch.
+    fireEvent.change(screen.getByTestId("batch-title"), {
+      target: { value: "Loaded batch (edited)" },
+    });
+
+    // Dismissed: the edited draft survives.
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
+    fireEvent.click(screen.getByTestId("new-batch-button"));
+    expect(confirmSpy).toHaveBeenCalled();
+    expect(screen.getByTestId("checklist-cell-0-Whole Milk")).toBeInTheDocument();
+  });
+
+  it("offers delete only once a batch is loaded", async () => {
+    setSessionEmail("owner@example.com");
+    setSavedBatches([SAVED]);
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-editor");
+
+    // Nothing is bound yet, so there is no batch to delete.
+    expect(screen.queryByTestId("delete-batch-button")).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("batch-open-7"));
+    await waitFor(() => expect(screen.getByTestId("delete-batch-button")).toBeInTheDocument());
+  });
+
+  it("deletes the loaded batch after confirming, then unbinds the draft", async () => {
+    await renderAndLoad();
+
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(true);
+    fireEvent.click(screen.getByTestId("delete-batch-button"));
+
+    expect(confirmSpy).toHaveBeenCalledWith(expect.stringContaining("Loaded batch"));
+    await waitFor(() => expect(deleteUserBatch).toHaveBeenCalledWith("owner@example.com", 7));
+
+    // Unbound after delete: the status dot returns to its hidden placeholder.
+    await waitFor(() =>
+      expect(screen.getByTestId("batch-status-dot")).toHaveAttribute("aria-hidden", "true"),
+    );
+  });
+
+  it("does not delete when the confirm is dismissed", async () => {
+    await renderAndLoad();
+
+    const confirmSpy = vi.spyOn(window, "confirm").mockReturnValue(false);
+    fireEvent.click(screen.getByTestId("delete-batch-button"));
+
+    expect(confirmSpy).toHaveBeenCalled();
+    expect(deleteUserBatch).not.toHaveBeenCalled();
   });
 });

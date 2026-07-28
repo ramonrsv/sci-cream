@@ -30,6 +30,9 @@
 
 - [ ] Add support for storing experiments: a set of recipes made on a given date, with procedure
       notes. `/make-recipe` already builds the shape (`Batch`); blocked on the DB migration item.
+- [ ] Make the batch page (`/make-recipe`) list+editor responsive: list beside the editor on
+      desktop, a `Saved batches` / `Editor` toggle on mobile. Shared components, one render tree,
+      CSS-driven so nothing remounts on resize; opening a batch on mobile switches to the editor.
 - [ ] Add support for showing recipe diffs (ingredient, quantities) between versions of a recipe
       in `/recipes`. Comparing ingredient lines may be tricky, similar to a git diff.
 - [ ] Add support for `RecipeEditor` to display fewer lines than the internal fixed number of lines,

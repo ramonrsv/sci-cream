@@ -1,7 +1,8 @@
 import { test, expect, type Page } from "@playwright/test";
 
 import type { Batch } from "@/lib/batch/batch";
-import { goToPageAndWaitFor } from "@/__tests__/e2e/util";
+import { goToPageAndWaitFor, loginAsTestUserWithCredentials } from "@/__tests__/e2e/util";
+import { TEST_USER_B } from "@/lib/database/assets";
 import { parkCursor, setViewportHeightForAllAppContentScreenshot } from "@/__tests__/visual/util";
 import {
   VIEWPORT_MOBILE_LARGE_PORTRAIT,
@@ -158,6 +159,12 @@ async function shootPage(page: Page, name: string) {
   await expect(page.getByTestId("make-recipe-view")).toHaveScreenshot(name);
 }
 
+/** Screenshot just the batch editor (the detail panel), as it sits in a real viewport. */
+async function shootEditor(page: Page, name: string) {
+  await parkCursor(page);
+  await expect(page.getByTestId("batch-editor")).toHaveScreenshot(name);
+}
+
 /**
  * Screenshot the checklist scrolled to its right-hand end, revealing the columns a narrow viewport
  * hides. The scroll lives in the frozen-panes box, not the page, so that box is scrolled and shot.
@@ -181,31 +188,31 @@ test.describe("Visual Regression: Make Recipe", () => {
   test("make recipe - empty", async ({ page }) => {
     await openOwnerPage(page);
     await expect(page.getByTestId("checklist-empty")).toBeVisible();
-    await shootPage(page, "make-recipe-empty.png");
+    await shootEditor(page, "make-recipe-empty.png");
   });
 
   test("make recipe - empty - dark", async ({ page }) => {
     await page.emulateMedia({ colorScheme: "dark" });
     await openOwnerPage(page);
     await expect(page.getByTestId("checklist-empty")).toBeVisible();
-    await shootPage(page, "make-recipe-empty-dark.png");
+    await shootEditor(page, "make-recipe-empty-dark.png");
   });
 
   test("make recipe - one recipe carries the unit in its own column", async ({ page }) => {
     // The lone-recipe header drops the batch total and the letter badges, so it is its own layout.
     await openOwnerPage(page, { recipes: 1 });
-    await shootPage(page, "make-recipe-single.png");
+    await shootEditor(page, "make-recipe-single.png");
   });
 
   test("make recipe - two recipes merged", async ({ page }) => {
     await openOwnerPage(page, { recipes: 2 });
-    await shootPage(page, "make-recipe-recipes.png");
+    await shootEditor(page, "make-recipe-recipes.png");
   });
 
   test("make recipe - two recipes merged - dark", async ({ page }) => {
     await page.emulateMedia({ colorScheme: "dark" });
     await openOwnerPage(page, { recipes: 2 });
-    await shootPage(page, "make-recipe-recipes-dark.png");
+    await shootEditor(page, "make-recipe-recipes-dark.png");
   });
 
   test("make recipe - some amounts checked off", async ({ page }) => {
@@ -217,7 +224,7 @@ test.describe("Visual Regression: Make Recipe", () => {
     await page.getByTestId("checklist-cell-0-Strawberry").click();
     await expect(page.getByTestId("batch-progress")).toContainText("2 of 6 weighed");
 
-    await shootPage(page, "make-recipe-cells-checked.png");
+    await shootEditor(page, "make-recipe-cells-checked.png");
   });
 
   test("make recipe - whole rows checked off", async ({ page }) => {
@@ -230,7 +237,35 @@ test.describe("Visual Regression: Make Recipe", () => {
     await expect(page.getByTestId("checklist-row-Sucrose")).toHaveAttribute("data-done", "true");
     await expect(page.getByTestId("checklist-row-Strawberry")).toHaveAttribute("data-done", "true");
 
-    await shootPage(page, "make-recipe-rows-done.png");
+    await shootEditor(page, "make-recipe-rows-done.png");
+  });
+
+  test("make recipe - whole page, signed out", async ({ page }) => {
+    // Owner mode's full layout: search bar, the sign-in list prompt, and the empty editor.
+    await openOwnerPage(page);
+    await expect(page.getByTestId("batch-list-empty")).toBeVisible();
+    await shootPage(page, "make-recipe-page.png");
+  });
+
+  test("make recipe - whole page, signed out - dark", async ({ page }) => {
+    await page.emulateMedia({ colorScheme: "dark" });
+    await openOwnerPage(page);
+    await expect(page.getByTestId("batch-list-empty")).toBeVisible();
+    await shootPage(page, "make-recipe-page-dark.png");
+  });
+
+  test("make recipe - whole page, a saved batch loaded from the list", async ({ page }) => {
+    await loginAsTestUserWithCredentials(page, TEST_USER_B);
+    await goToPageAndWaitFor(page, "/make-recipe");
+    await expect(page.getByTestId("make-recipe-view")).toBeVisible();
+
+    // Seeded batches populate the list; load the newest so it binds and its row highlights.
+    // Click the title within the list; the whole card is one button, so its name isn't the title.
+    await page.getByTestId("batch-list").getByText("Friday tasting batch", { exact: true }).click();
+    await expect(page.getByTestId("batch-status-dot")).toHaveAttribute("aria-label", "Saved");
+    await expect(page.locator('li[aria-current="true"]')).toContainText("Friday tasting batch");
+
+    await shootPage(page, "make-recipe-page-loaded.png");
   });
 
   test("make recipe - shared link, as the recipient sees it", async ({ page }) => {

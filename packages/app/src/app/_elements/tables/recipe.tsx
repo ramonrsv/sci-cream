@@ -54,6 +54,7 @@ import { displayVersionName, nextVersionName, validateVersionName } from "@/lib/
 import { RecipeSelect, useRecipeIdxState } from "@/app/_elements/selects/recipe-select";
 import { ShareRecipeAction } from "@/app/_elements/recipe-share-dialog";
 import { VersionBadge } from "@/app/_elements/version-badge";
+import { SaveStatusDot } from "@/app/_elements/save-status-dot";
 import { formatCompositionValue } from "@/lib/comp-value-format";
 import { COMPONENT_ACTION_ICON_SIZE, RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
 import { standardInputStepByPercent, verify } from "@/lib/util";
@@ -888,15 +889,8 @@ export function RecipeEditor({
         {/* Name row: unsaved dot, name field, version badge/input, Save-new-version, and Save.
            `basis-full` on the div puts it always on its own wrapped line within the toolbar. */}
         <div className="-my-0.5 flex shrink-0 basis-full flex-wrap items-center gap-1 pl-2">
-          {/* Unsaved-changes dot; shown only when dirty (differs from its saved baseline) */}
-          <span
-            className={`leading-none text-amber-500 ${dirty ? "" : "invisible"}`}
-            {...(dirty
-              ? { "aria-label": "Unsaved changes", title: "Unsaved changes" }
-              : { "aria-hidden": true })}
-          >
-            •
-          </span>
+          {/* Save-state dot: gray once bound to a saved version, amber when it has edits. */}
+          <SaveStatusDot bound={currentRecipe.savedRef !== undefined} dirty={dirty} />
           <input
             type="text"
             value={currentRecipe.name}

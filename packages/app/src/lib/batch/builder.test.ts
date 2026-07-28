@@ -2,6 +2,8 @@ import { describe, it, expect } from "vitest";
 
 import {
   type BatchSelection,
+  batchHasUnsavedChanges,
+  batchMatchesQuery,
   batchToInput,
   makeBatchFromSelection,
   readSavedSources,
@@ -250,5 +252,92 @@ describe("batchToInput / selectionFromSavedBatch — database round-trip", () =>
         version: { ref: { recipeId: 5, versionNumber: 2 } },
       },
     ]);
+  });
+});
+
+describe("batchHasUnsavedChanges — what discarding the draft would lose", () => {
+  const saved: SavedBatchJson = {
+    id: 7,
+    title: "Test batch",
+    date: "2026-07-20",
+    recipes: [{ name: "Vanilla", rows: [["Whole Milk", 600]], color: "Blue" }],
+    createdAt: "2026-07-20T00:00:00.000Z",
+    updatedAt: "2026-07-20T00:00:00.000Z",
+  };
+
+  it("is false for an empty, unbound draft", () => {
+    expect(batchHasUnsavedChanges({ date: "2026-07-20", recipes: [] }, undefined, [])).toBe(false);
+  });
+
+  it("is true for an unbound draft carrying only a title or only notes", () => {
+    const titled: Batch = { date: "2026-07-20", title: "Draft", recipes: [] };
+    const noted: Batch = { date: "2026-07-20", notes: "Age 12 h", recipes: [] };
+    expect(batchHasUnsavedChanges(titled, undefined, [])).toBe(true);
+    expect(batchHasUnsavedChanges(noted, undefined, [])).toBe(true);
+  });
+
+  it("is true for an unbound draft with a recipe", () => {
+    const batch: Batch = { date: "2026-07-20", recipes: [{ name: "V", rows: [["Milk", 600]] }] };
+    expect(batchHasUnsavedChanges(batch, undefined, [])).toBe(true);
+  });
+
+  it("is false when a bound draft still matches its saved batch", () => {
+    expect(batchHasUnsavedChanges(savedBatchToBatch(saved), 7, [saved])).toBe(false);
+  });
+
+  it("is true when a bound draft diverges from its saved batch", () => {
+    const editedTitle: Batch = { ...savedBatchToBatch(saved), title: "Test batch (edited)" };
+    const editedRows: Batch = {
+      ...savedBatchToBatch(saved),
+      recipes: [{ name: "Vanilla", rows: [["Whole Milk", 700]], color: CategoryColor.Blue }],
+    };
+    expect(batchHasUnsavedChanges(editedTitle, 7, [saved])).toBe(true);
+    expect(batchHasUnsavedChanges(editedRows, 7, [saved])).toBe(true);
+  });
+
+  it("treats a draft bound to a now-missing batch as unsaved when it holds content", () => {
+    expect(batchHasUnsavedChanges(savedBatchToBatch(saved), 7, [])).toBe(true);
+  });
+});
+
+describe("batchMatchesQuery — what a saved-batch search matches", () => {
+  const saved: SavedBatchJson = {
+    id: 1,
+    title: "Sunday gelato",
+    date: "2026-07-19",
+    notes: "Age overnight, churn cold",
+    recipes: [
+      { name: "Fior di latte", rows: [["Whole Milk", 600]] },
+      { name: "Pistachio", rows: [["Pistachio paste", 120]] },
+    ],
+    createdAt: "",
+    updatedAt: "",
+  };
+
+  // `q` arrives already lowercased from the caller, so cases only pass lowercase queries.
+  it.each([
+    ["title", "gelato"],
+    ["date", "2026-07"],
+    ["notes", "churn"],
+    ["recipe name", "fior"],
+    ["ingredient name", "pistachio paste"],
+  ])("matches on %s", (_field, q) => {
+    expect(batchMatchesQuery(saved, q)).toBe(true);
+  });
+
+  it("does not match text absent from every searched field", () => {
+    expect(batchMatchesQuery(saved, "strawberry")).toBe(false);
+  });
+
+  it("treats absent title and notes as empty rather than throwing", () => {
+    const bare: SavedBatchJson = {
+      id: 2,
+      date: "2026-07-19",
+      recipes: [{ name: "Base", rows: [["Sugar", 100]] }],
+      createdAt: "",
+      updatedAt: "",
+    };
+    expect(batchMatchesQuery(bare, "base")).toBe(true);
+    expect(batchMatchesQuery(bare, "gelato")).toBe(false);
   });
 });
