@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785215661943,
+  "lastUpdate": 1785215766545,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -459131,6 +459131,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "TTFB",
             "value": 3.29,
+            "range": "0.34",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "99bf07bf167fcff3df3c9b129201945bf7654e1e",
+          "message": "Add batch session cache and selection helpers\n\nExtend SessionResources with `savedBatches` + `refreshUserBatches`,\nfetched once per session and refreshed after mutations. Extend\n`BatchSelection` to carry a recipe inline or by source id, and add\n`batchToInput` / `selectionFromSavedBatch` / `savedBatchToBatch` to\nconvert between the selection, the wire shape, and a derived batch.\nUpdate the SessionResources test mocks for the new required fields.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-28T00:58:47-04:00",
+          "tree_id": "6cf3d1ec1233d54cac48f307bc6847931d800824",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/99bf07bf167fcff3df3c9b129201945bf7654e1e"
+        },
+        "date": 1785215732293,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 61.08,
+            "range": "6.85",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.46,
+            "range": "0.80",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.37,
+            "range": "0.78",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 176.5,
+            "range": "12.07",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.51,
+            "range": "0.06",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 176.5,
+            "range": "12.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 56.7,
+            "range": "6.78",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.34,
             "range": "0.34",
             "unit": "ms"
           }
