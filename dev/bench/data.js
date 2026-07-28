@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785212923145,
+  "lastUpdate": 1785212926215,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -461294,6 +461294,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/63ca790981f8d34201ef570d12a6e042a9a410b6"
         },
         "date": 1785172921240,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c555c6c9f435ed3fd6d4ec1fe98be663951e6889",
+          "message": "Add batches schema and CRUD server actions\n\nAdd `batches` + `batch_recipes` tables and the userEmail-scoped\ncreate/fetch/update/delete actions, mirroring the saved-recipe layer.\n`batch_recipes` holds a composite FK to `recipe_versions(recipe_id,\nversion)` with ON DELETE SET NULL and a both-or-neither CHECK, so a\ndeleted source recipe nulls the provenance ref without corrupting the\nrecord.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-27T23:50:33-04:00",
+          "tree_id": "102251a294346a357bc9beef4c14a5b06c526bfe",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c555c6c9f435ed3fd6d4ec1fe98be663951e6889"
+        },
+        "date": 1785212925532,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
