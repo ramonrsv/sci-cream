@@ -1,9 +1,9 @@
 "use client";
 
 import { ReactNode, useMemo, useState } from "react";
-import { Search } from "lucide-react";
 
 import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
+import { ListDetailShell } from "@/app/_elements/list-detail-shell";
 
 /** Sources of entries displayed by an {@link EntitySearch}, including `All` */
 export enum EntitySource {
@@ -126,69 +126,58 @@ export function EntitySearch<E>({
   const isSelected = (entry: Tagged<E>) =>
     selectedEntry !== null && getEntryKey(entry) === getEntryKey(selectedEntry);
 
-  return (
-    <div id={id} className="flex flex-col gap-3">
-      {/* Search bar + source filter */}
-      <div className="flex items-center gap-2">
-        <div className="relative flex-1">
-          <Search
-            size={14}
-            className="text-secondary pointer-events-none absolute top-1/2 left-2 -translate-y-1/2"
-          />
-          <input
-            type="search"
-            value={query}
-            onChange={(e) => setQuery(e.target.value)}
-            placeholder={searchPlaceholder}
-            className="table-fillable-input w-full rounded-lg py-1 pr-2 pl-7"
-          />
-        </div>
-        <div className="flex">
-          {sourceOptions.map(({ value, label }) => (
-            <button
-              key={value}
-              onClick={() => setSource(value)}
-              className={`action-button px-2 py-0.5 text-sm ${
-                source === value ? "border-brd font-medium" : ""
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Two-column layout */}
-      <div className="flex flex-col gap-4 md:h-[75vh] md:flex-row">
-        {/* Left: list */}
-        <div className="flex h-[20vh] shrink-0 scrollbar-gutter-stable flex-col gap-1.5 overflow-y-auto pr-1 md:h-auto md:w-60">
-          {filtered.length === 0 ? (
-            <p className="text-secondary text-sm">{emptyResultsText}</p>
-          ) : (
-            filtered.map((entry) => (
-              <button
-                key={getEntryKey(entry)}
-                onClick={() => setSelectedEntryKey(getEntryKey(entry))}
-                className={`search-list-item ${isSelected(entry) ? "search-list-item-active" : ""}`}
-              >
-                <span className="text-primary block truncate text-sm font-medium">
-                  {getDisplayName(entry)}
-                </span>
-                {renderListItemSubtitle?.(entry)}
-              </button>
-            ))
-          )}
-        </div>
-
-        {/* Right: detail panel */}
-        {selectedEntry === null ? (
-          <div className="search-empty">{emptyDetailText}</div>
-        ) : (
-          <div className="search-detail-panel" data-testid="search-detail-panel">
-            {renderDetailPanel(selectedEntry)}
-          </div>
-        )}
-      </div>
+  const sourceFilter = (
+    <div className="flex">
+      {sourceOptions.map(({ value, label }) => (
+        <button
+          key={value}
+          onClick={() => setSource(value)}
+          className={`action-button px-2 py-0.5 text-sm ${
+            source === value ? "border-brd font-medium" : ""
+          }`}
+        >
+          {label}
+        </button>
+      ))}
     </div>
+  );
+
+  const list =
+    filtered.length === 0 ? (
+      <p className="text-secondary text-sm">{emptyResultsText}</p>
+    ) : (
+      filtered.map((entry) => (
+        <button
+          key={getEntryKey(entry)}
+          onClick={() => setSelectedEntryKey(getEntryKey(entry))}
+          className={`search-list-item ${isSelected(entry) ? "search-list-item-active" : ""}`}
+        >
+          <span className="text-primary block truncate text-sm font-medium">
+            {getDisplayName(entry)}
+          </span>
+          {renderListItemSubtitle?.(entry)}
+        </button>
+      ))
+    );
+
+  const detail =
+    selectedEntry === null ? (
+      <div className="search-empty">{emptyDetailText}</div>
+    ) : (
+      <div className="search-detail-panel" data-testid="search-detail-panel">
+        {renderDetailPanel(selectedEntry)}
+      </div>
+    );
+
+  return (
+    <ListDetailShell
+      id={id}
+      query={query}
+      onQueryChange={setQuery}
+      searchPlaceholder={searchPlaceholder}
+      toolbarRight={sourceFilter}
+      list={list}
+      detail={detail}
+    />
   );
 }
