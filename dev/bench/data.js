@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785280272942,
+  "lastUpdate": 1785280347068,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -460157,6 +460157,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.34,
             "range": "0.34",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "91d0a8c4f26e495c1d4def3914a216d5db6eb61f",
+          "message": "Extract ListDetailShell from EntitySearch\n\nFactor the search-bar + two-column list/detail layout out of\nEntitySearch into a presentational ListDetailShell, so the\nmake-recipe batch page can reuse the same shell. EntitySearch\nrenders through it with identical DOM; /recipes and /ingredients\nare unchanged.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-28T17:29:46-04:00",
+          "tree_id": "10a99c5cd6d893c8688f08d5555c242f3226b131",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/91d0a8c4f26e495c1d4def3914a216d5db6eb61f"
+        },
+        "date": 1785280314987,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.37,
+            "range": "8.35",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.74,
+            "range": "0.60",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.72,
+            "range": "0.58",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 164,
+            "range": "12.96",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.48,
+            "range": "0.04",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 164,
+            "range": "12.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 55.99,
+            "range": "7.92",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.41,
+            "range": "0.28",
             "unit": "ms"
           }
         ]
