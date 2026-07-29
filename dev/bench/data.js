@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785300727123,
+  "lastUpdate": 1785301064565,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -390466,6 +390466,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 620.38,
             "range": "10.10",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9605fb1c501d636a0e93da4d6a3fe9fefe070b9a",
+          "message": "Consolidate saved batches onto the Make page\n\nRender make-recipe owner mode through ListDetailShell: a saved-batch\nlist on the left, the batch editor (builder + checklist) on the right.\nSelecting a batch loads it in place for weighing, re-saving, or forking;\nlink mode stays a plain read-only checklist. Drop the standalone\n/batches route and its navbar entry so Make is the one batch page.\n\nGuard both destructive actions with a confirm: deleting a batch, and\nNew batch when it would discard unsaved work. Search saved batches by\ntitle, date, notes, and recipe/ingredient names. Signal save state with\na shared dot — gray once bound to a saved batch, amber when edited —\nreplacing the \"Editing saved batch\" tag and matching the recipe editor,\nwhich gains the gray bound state it lacked.\n\nRetarget the owner-mode checklist visual snapshots to the editor panel\nalone, add whole-page snapshots for the list+editor layout, and seed\nexample batches for the test user.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-29T00:17:59-04:00",
+          "tree_id": "641efada87192f6c7e1d224491c644b2e8f15acc",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9605fb1c501d636a0e93da4d6a3fe9fefe070b9a"
+        },
+        "date": 1785301031072,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 48.63,
+            "range": "4.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 56.5,
+            "range": "4.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 61.38,
+            "range": "3.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2326.63,
+            "range": "43.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 317.25,
+            "range": "2.68",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 329.75,
+            "range": "2.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 355.13,
+            "range": "10.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17104.88,
+            "range": "198.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 844.13,
+            "range": "27.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 50.88,
+            "range": "0.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54,
+            "range": "2.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.88,
+            "range": "1.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42.5,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 129.25,
+            "range": "5.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 87,
+            "range": "3.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 56.43,
+            "range": "0.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.77,
+            "range": "0.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 601.63,
+            "range": "10.75",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 644.13,
+            "range": "13.41",
             "unit": "ms"
           }
         ]
