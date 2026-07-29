@@ -1,2 +1,7 @@
 packages/app/src/__tests__/visual/**/*.png filter=lfs diff=lfs merge=lfs -text
 packages/app/public/images/** filter=lfs diff=lfs merge=lfs -text
+
+# generated/min/ (comment-free, embedded in the WASM binary) is the one generated artifact we track,
+# built from the data/**/*.md sources by scripts/gen-data.ts. Diff-suppressed since the markdown is
+# the source of truth — review and edit the data there. generated/full/ is gitignored (.gitignore).
+packages/sci-cream/data/**/generated/min/** linguist-generated=true -diff

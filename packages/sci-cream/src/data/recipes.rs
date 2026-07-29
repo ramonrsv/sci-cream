@@ -1,7 +1,7 @@
 //! Inclusion and access of embedded recipe data
 //!
-//! If feature `data` is enabled, this module embeds the recipes from `data/recipes/*.json` at
-//! compile time and provides functions to retrieve them.
+//! If feature `data` is enabled, this module embeds the recipes from
+//! `data/recipes/generated/min/*.json` at compile time and provides functions to retrieve them.
 
 use std::collections::HashMap;
 use std::sync::LazyLock;
@@ -14,9 +14,13 @@ use crate::recipe::OwnedLightRecipe;
 use crate::recipe::Recipe;
 
 /// (filename, file content) tuples for all embedded recipes JSON data files
+///
+/// The content is the comment-stripped `generated/min/*.json` that `scripts/gen-data.ts` produces
+/// from the `data/recipes/*.md` sources; comments live only in the markdown and the full
+/// `generated/full/*.json` (which the app consumes), never in this embedded binary copy.
 const EMBEDDED_RECIPES_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
-    ("underbelly.json", include_str!("../../data/recipes/underbelly.json")),
-    ("ice-cream-science.json", include_str!("../../data/recipes/ice-cream-science.json")),
+    ("underbelly.json", include_str!("../../data/recipes/generated/min/underbelly.json")),
+    ("ice-cream-science.json", include_str!("../../data/recipes/generated/min/ice-cream-science.json")),
 ];
 
 /// Struct representing a recipe entry, deserialized from JSON.

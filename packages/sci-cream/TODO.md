@@ -56,9 +56,7 @@
 - [ ] Rename 'HFCS 42' to 'High Fructose Corn Syrup 42 DE' and add 'HFCS 42' alias; same for others.
 - [ ] Explore ways to reduce WASM binary size, e.g. strip comments from embedded ingredient/recipes.
 - [ ] Add wine ingredients, and considered adding evaporated wine - how to handle, parametric?
-- [ ] Add support for parametric ingredients, e.g. 'Strawberry [Brix 9]', '* [Evap 15]', etc.
-- [ ] Investigate how to support markdown for the data recipe and ingredient comments. It's
-      difficult to do in JSON, but doing it in separate `.md` files would be a maintenance issues.
+- [ ] Add support for parametric ingredients, e.g. 'Strawberry [Brix 9]', '\* [Evap 15]', etc.
 
 ## Backlog
 
@@ -120,6 +118,8 @@
 
 ## Completed
 
+- [x] Investigate how to support markdown for the data recipe and ingredient comments. It's
+      difficult to do in JSON, but doing it in separate `.md` files would be a maintenance issues.
 - [x] Remove `FPD` as a typical balancing key, since it's redundant and competes with `ServingTemp`.
 - [x] Add benchmarks for WASM binary size, which is relevant in the App for initial loading.
 - [x] Fold per-target priority into the balancing targets tuple

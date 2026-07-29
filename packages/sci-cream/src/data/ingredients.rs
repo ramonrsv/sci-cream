@@ -1,7 +1,7 @@
 //! Inclusion and access of embedded ingredient specification data
 //!
 //! If feature `data` is enabled, this module embeds the ingredient specifications from
-//! `data/ingredients/*.json` at compile time and provides functions to retrieve them.
+//! `data/ingredients/generated/min/*.json` at compile time and provides functions to retrieve them.
 //!
 //! Note the distinction and differing handling of "independent" and "dependent" specs. Independent
 //! specs are those that can be directly converted into [`Composition`]s or [`Ingredient`]s without
@@ -31,18 +31,22 @@ use crate::{
 };
 
 /// (filename, file content) pairs for all embedded ingredient specs JSON data files
+///
+/// The content is the comment-stripped `generated/min/*.json` that `scripts/gen-data.ts` produces
+/// from the `data/ingredients/*.md` sources; comments live only in the markdown and the full
+/// `generated/full/*.json` (which the app consumes), never in this embedded binary copy.
 const EMBEDDED_INGREDIENTS_JSON_DATA_FILES_CONTENT: &[(&str, &str)] = &[
-    ("alcohol.json", include_str!("../../data/ingredients/alcohol.json")),
-    ("chocolates.json", include_str!("../../data/ingredients/chocolates.json")),
-    ("dairy.json", include_str!("../../data/ingredients/dairy.json")),
-    ("eggs.json", include_str!("../../data/ingredients/eggs.json")),
-    ("emulsifiers.json", include_str!("../../data/ingredients/emulsifiers.json")),
-    ("flavourings.json", include_str!("../../data/ingredients/flavourings.json")),
-    ("fruits.json", include_str!("../../data/ingredients/fruits.json")),
-    ("miscellaneous.json", include_str!("../../data/ingredients/miscellaneous.json")),
-    ("nuts.json", include_str!("../../data/ingredients/nuts.json")),
-    ("stabilizers.json", include_str!("../../data/ingredients/stabilizers.json")),
-    ("sweeteners.json", include_str!("../../data/ingredients/sweeteners.json")),
+    ("alcohol.json", include_str!("../../data/ingredients/generated/min/alcohol.json")),
+    ("chocolates.json", include_str!("../../data/ingredients/generated/min/chocolates.json")),
+    ("dairy.json", include_str!("../../data/ingredients/generated/min/dairy.json")),
+    ("eggs.json", include_str!("../../data/ingredients/generated/min/eggs.json")),
+    ("emulsifiers.json", include_str!("../../data/ingredients/generated/min/emulsifiers.json")),
+    ("flavourings.json", include_str!("../../data/ingredients/generated/min/flavourings.json")),
+    ("fruits.json", include_str!("../../data/ingredients/generated/min/fruits.json")),
+    ("miscellaneous.json", include_str!("../../data/ingredients/generated/min/miscellaneous.json")),
+    ("nuts.json", include_str!("../../data/ingredients/generated/min/nuts.json")),
+    ("stabilizers.json", include_str!("../../data/ingredients/generated/min/stabilizers.json")),
+    ("sweeteners.json", include_str!("../../data/ingredients/generated/min/sweeteners.json")),
 ];
 
 /// Parses a JSON string of spec entries into a map of ingredient names or aliases to their spec

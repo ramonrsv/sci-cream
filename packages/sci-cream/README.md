@@ -281,9 +281,10 @@ assert_eq_float!(comp.get(MilkProteins), 3.087);
 Specs can also be deserialized from JSON format - they are actually designed to be most
 user-friendly when defined in JSON. This allows them to be easily defined in external files, stored
 in databases, sent over APIs, etc. See the documentation of each spec for more details and examples
-of how to define them in JSON. More expansively, the ingredient definitions in the embedded data are
-all defined as JSON strings of `IngredientSpec`s and serve as good examples, located at
-[`data/ingredients`][data/ingredients].
+of how to define them in JSON. More expansively, the built-in ingredient definitions in
+[`data/ingredients`][data/ingredients] serve as good examples. Each is authored as markdown with a
+JSON spec block plus a comment body, codegen'd to JSON `SpecEntry`s in
+[`data/ingredients/generated`][data/ingredients/generated] and embedded in the crate.
 
 <a id="ingredient-spec-dairy-json-example"></a>
 For example, `"DairySimpleSpec": { "fat": 2 }` is the JSON representation of the `DairySimpleSpec`
@@ -307,8 +308,8 @@ Below is an example of a more complex `SweetenerSpec` for _'Splenda (Sucralose)'
 has several more fields, including `sweeteners` holding a `Sweeteners` struct which itself is
 relatively complex, as well as `basis` for `CompositionBasis` specification, and `Scaling` and
 `Unit` specifiers for some fields like `pod` and `pac`. See the `specs::units` module for more
-details about composition basis, units, and scaling. The embedded ingredient definition JSON files
-include comments that detail how the values in the spec were determined.
+details about composition basis, units, and scaling. The markdown ingredient definitions include
+comments that detail how the values in the spec were determined.
 
 <!-- prettier-ignore -->
 ```json
@@ -516,10 +517,7 @@ NEW_RECIPE[8][0] = "Locust Bean Gum";
 
 const recipeLines = NEW_RECIPE.map(
   ([name, quantity]) =>
-    new RecipeLine(
-      into_ingredient_from_spec(getIndependentIngredientSpecByName(name)!),
-      quantity,
-    ),
+    new RecipeLine(into_ingredient_from_spec(getIndependentIngredientSpecByName(name)!), quantity),
 );
 
 const recipe = new Recipe("Chocolate Ice Cream", recipeLines);

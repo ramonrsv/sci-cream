@@ -1,14 +1,16 @@
-import alcoholJson from "../../data/ingredients/alcohol.json";
-import chocolatesJson from "../../data/ingredients/chocolates.json";
-import dairyJson from "../../data/ingredients/dairy.json";
-import eggsJson from "../../data/ingredients/eggs.json";
-import emulsifiersJson from "../../data/ingredients/emulsifiers.json";
-import flavouringsJson from "../../data/ingredients/flavourings.json";
-import fruitsJson from "../../data/ingredients/fruits.json";
-import miscellaneousJson from "../../data/ingredients/miscellaneous.json";
-import nutsJson from "../../data/ingredients/nuts.json";
-import stabilizersJson from "../../data/ingredients/stabilizers.json";
-import sweetenersJson from "../../data/ingredients/sweeteners.json";
+// Generated from the `data/ingredients/*.md` sources by `scripts/gen-data.ts` (`pnpm gen:data`).
+// These carry `comments` (with footnote definitions resolved inline); do not edit by hand.
+import alcoholJson from "../../data/ingredients/generated/full/alcohol.json";
+import chocolatesJson from "../../data/ingredients/generated/full/chocolates.json";
+import dairyJson from "../../data/ingredients/generated/full/dairy.json";
+import eggsJson from "../../data/ingredients/generated/full/eggs.json";
+import emulsifiersJson from "../../data/ingredients/generated/full/emulsifiers.json";
+import flavouringsJson from "../../data/ingredients/generated/full/flavourings.json";
+import fruitsJson from "../../data/ingredients/generated/full/fruits.json";
+import miscellaneousJson from "../../data/ingredients/generated/full/miscellaneous.json";
+import nutsJson from "../../data/ingredients/generated/full/nuts.json";
+import stabilizersJson from "../../data/ingredients/generated/full/stabilizers.json";
+import sweetenersJson from "../../data/ingredients/generated/full/sweeteners.json";
 
 export type IngredientSpecJson = { name: string; category: string; [key: string]: unknown };
 export type AliasSpecJson = { alias: string; for: string };

@@ -6,7 +6,7 @@
 # AI-generated (GitHub Copilot, Claude Sonnet/Opus 4.6).
 #
 # Usage:
-#   ./scripts/release.sh changes                       Show commits since last app-v* tag
+#   ./scripts/release.sh changes                        Show commits since last app-v* tag
 #   ./scripts/release.sh release patch|minor|major      Bump version & update files
 #   ./scripts/release.sh release patch --execute        Actually apply changes
 #   ./scripts/release.sh push                           Push commit & tag to remote

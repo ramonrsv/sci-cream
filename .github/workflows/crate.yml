@@ -96,6 +96,15 @@ jobs:
       - name: Run `vitest` tests
         run: pnpm run test:js
 
+  gen_data_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-pnpm
+
+      - name: Run data generation check
+        run: pnpm run gen:data:check
+
   eslint:
     runs-on: ubuntu-latest
     steps:

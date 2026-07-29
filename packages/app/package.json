@@ -6,6 +6,7 @@
   "scripts": {
     "install:deps": "pnpm --dir ../sci-cream install:wasm",
     "build:deps": "pnpm --dir ../sci-cream build:package",
+    "gen:data": "pnpm --dir ../sci-cream gen:data",
     "build:analyze": "ANALYZE=true next build --webpack",
     "build": "next build",
     "test": "pnpm test:unit && pnpm test:e2e && pnpm test:visual",

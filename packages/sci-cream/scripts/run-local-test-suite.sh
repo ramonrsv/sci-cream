@@ -38,6 +38,9 @@ function execute() {
 export RUSTFLAGS="-D warnings"
 export RUSTDOCFLAGS="-D warnings"
 
+execute pnpm split-ref-footnotes
+execute pnpm gen:data:check
+
 execute pnpm build:package
 execute pnpm fmt:check
 execute pnpm lint

@@ -28,6 +28,10 @@
 /packages/sci-cream/dist
 /packages/sci-cream/wasm
 
+# Generated data (from data/**/*.md via scripts/gen-data.ts). generated/full/ (with comments) is a
+# transient build product; only generated/min/ (comment-free, embedded in the WASM binary) is tracked.
+/packages/sci-cream/data/*/generated/full/
+
 # misc
 .DS_Store
 *.pem

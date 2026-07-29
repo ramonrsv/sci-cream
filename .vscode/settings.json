@@ -3,6 +3,7 @@
   "[javascript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[typescript]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "[rust]": { "editor.defaultFormatter": "rust-lang.rust-analyzer" },
+  "[markdown]": { "editor.defaultFormatter": "esbenp.prettier-vscode" },
   "files.associations": {
     "*.js": "javascriptreact",
     "*.css": "tailwindcss",
@@ -21,6 +22,7 @@
   "eslint.validate": ["javascript", "javascriptreact", "typescript", "typescriptreact"],
   "editor.codeActionsOnSave": { "source.fixAll.eslint": "never" },
   "prettier.printWidth": 100,
+  "rewrap.wrappingColumn": 100,
   "cSpell.words": [
     "Affectability",
     "affectable",
@@ -159,6 +161,5 @@
     "wheying",
     "WSNF",
     "xanthan"
-  ],
-  "rewrap.wrappingColumn": 100
+  ]
 }

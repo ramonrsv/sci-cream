@@ -1,0 +1,1 @@
+[{"name":"Water","category":"Miscellaneous","FullSpec":{}},{"name":"Salt","category":"Miscellaneous","MicroSpec":"Salt"},{"name":"Vegetable Oil","category":"Miscellaneous","FruitSpec":{"water":0,"fat":100,"sugars":{}}},{"name":"Palm Oil","category":"Miscellaneous","NutSpec":{"water":0,"protein":0,"fat":100,"saturated_fat":49.3,"carbohydrate":0,"fiber":0,"sugars":0}}]

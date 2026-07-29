@@ -8,8 +8,9 @@
     "esModuleInterop": true,
     "skipLibCheck": true,
     "declaration": true,
-    "emitDeclarationOnly": true
+    "emitDeclarationOnly": true,
+    "types": ["node"]
   },
-  "include": ["src/ts", "wasm"],
+  "include": ["src/ts", "wasm", "scripts"],
   "exclude": ["**/*.test.ts", "benches/ts"]
 }
