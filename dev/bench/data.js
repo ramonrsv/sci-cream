@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785336324356,
+  "lastUpdate": 1785336424947,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -462207,6 +462207,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.04,
             "range": "0.21",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c07720b4baeb081dcfa26361f2287a239c02d783",
+          "message": "Snapshot recipes into the batch selection on add\n\nAdding a recipe to a batch now freezes it inline rather than holding a\nlive source reference, so a batch is a stable record — later edits to\nthe calculator slot or saved version it came from no longer change it.\nmakeBatchFromSelection drops its sources argument and maps items\ndirectly; an isValid guard resets any pre-snapshot persisted draft\n(which referenced a source by id and carried no rows) to empty.\n\nName the two selection types by role instead of contents, since their\nshapes overlap: BatchSource -> AddableRecipe (picker candidate),\nBatchSelectionRecipe -> SelectedRecipe (the inline snapshot). The\nhelper is snapshotRecipe and the widget handler addRecipeToSelection.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-29T10:09:55-04:00",
+          "tree_id": "af3ce7334cf38a0fa3f002f2a5913aca1ad33196",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c07720b4baeb081dcfa26361f2287a239c02d783"
+        },
+        "date": 1785336390144,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 62.46,
+            "range": "10.07",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.7,
+            "range": "0.61",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.65,
+            "range": "0.65",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 170,
+            "range": "11.31",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.46,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 170,
+            "range": "11.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.21,
+            "range": "9.99",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.28,
+            "range": "0.34",
             "unit": "ms"
           }
         ]
