@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785340551565,
+  "lastUpdate": 1785342975755,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -451751,6 +451751,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 993.63,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 11.97,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 137.71,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "191d735672933b46c048a2539a869a5ac4354acc",
+          "message": "Add tests for checklist-state and element-size hooks\n\nCover the two remaining untested hooks in lib/hooks: batch\ncheckoff persistence and re-read on key change, and the\nResizeObserver round/dedupe path via a controllable mock.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-29T12:15:01-04:00",
+          "tree_id": "b25bd7f0b2b5f4e6a60a0864b44ca3e895542ea3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/191d735672933b46c048a2539a869a5ac4354acc"
+        },
+        "date": 1785342941186,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.44,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 718.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 886.89,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 611.98,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 780.42,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 622.49,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 790.93,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 596,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 764.43,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] route-only JS (gzip)",
+            "value": 596,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] first-load JS (gzip)",
+            "value": 764.43,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 993.62,
             "unit": "KB"
           },
           {
