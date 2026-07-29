@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785336312227,
+  "lastUpdate": 1785336315814,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -465458,6 +465458,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/9605fb1c501d636a0e93da4d6a3fe9fefe070b9a"
         },
         "date": 1785300343691,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "c07720b4baeb081dcfa26361f2287a239c02d783",
+          "message": "Snapshot recipes into the batch selection on add\n\nAdding a recipe to a batch now freezes it inline rather than holding a\nlive source reference, so a batch is a stable record — later edits to\nthe calculator slot or saved version it came from no longer change it.\nmakeBatchFromSelection drops its sources argument and maps items\ndirectly; an isValid guard resets any pre-snapshot persisted draft\n(which referenced a source by id and carried no rows) to empty.\n\nName the two selection types by role instead of contents, since their\nshapes overlap: BatchSource -> AddableRecipe (picker candidate),\nBatchSelectionRecipe -> SelectedRecipe (the inline snapshot). The\nhelper is snapshotRecipe and the widget handler addRecipeToSelection.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-29T10:09:55-04:00",
+          "tree_id": "af3ce7334cf38a0fa3f002f2a5913aca1ad33196",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/c07720b4baeb081dcfa26361f2287a239c02d783"
+        },
+        "date": 1785336314879,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
