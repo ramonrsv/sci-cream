@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785342983848,
+  "lastUpdate": 1785343088413,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -464257,6 +464257,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.41,
             "range": "0.34",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "191d735672933b46c048a2539a869a5ac4354acc",
+          "message": "Add tests for checklist-state and element-size hooks\n\nCover the two remaining untested hooks in lib/hooks: batch\ncheckoff persistence and re-read on key change, and the\nResizeObserver round/dedupe path via a controllable mock.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-29T12:15:01-04:00",
+          "tree_id": "b25bd7f0b2b5f4e6a60a0864b44ca3e895542ea3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/191d735672933b46c048a2539a869a5ac4354acc"
+        },
+        "date": 1785343054091,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 67.94,
+            "range": "12.52",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.63,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.61,
+            "range": "0.69",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 185.5,
+            "range": "19.28",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.51,
+            "range": "0.09",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 185.5,
+            "range": "19.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 63.26,
+            "range": "11.62",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.7,
+            "range": "0.41",
             "unit": "ms"
           }
         ]
