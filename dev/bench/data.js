@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785339733501,
+  "lastUpdate": 1785339736726,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -466512,6 +466512,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/c07720b4baeb081dcfa26361f2287a239c02d783"
         },
         "date": 1785336314879,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "006b71d6bc4b20812d694d96b21f83d3187d298d",
+          "message": "Default share/save actions to common icon size\n\nShareRecipeAction, ShareBatchAction and SaveBatchAction defaulted\niconSize to COMPONENT_ACTION_ICON_SIZE (20), which no production call\nsite relied on. The common case is DETAIL_PANEL_ACTION_ICON_SIZE (14),\nso default to that and drop the now-redundant explicit passes at the\ndetail-panel call sites; the recipe-table toolbar keeps its explicit\n20 + tight-padding override. buttonClassName's default is unchanged,\nand rendered output is identical everywhere.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-29T11:14:18-04:00",
+          "tree_id": "b3ebeccafa506d5565467c2bd12dd1c90464cce4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/006b71d6bc4b20812d694d96b21f83d3187d298d"
+        },
+        "date": 1785339736070,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
