@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785342979618,
+  "lastUpdate": 1785342983848,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -424391,6 +424391,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.08%",
             "unit": "ops/sec",
             "extra": "90 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "191d735672933b46c048a2539a869a5ac4354acc",
+          "message": "Add tests for checklist-state and element-size hooks\n\nCover the two remaining untested hooks in lib/hooks: batch\ncheckoff persistence and re-read on key change, and the\nResizeObserver round/dedupe path via a controllable mock.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-29T12:15:01-04:00",
+          "tree_id": "b25bd7f0b2b5f4e6a60a0864b44ca3e895542ea3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/191d735672933b46c048a2539a869a5ac4354acc"
+        },
+        "date": 1785342945237,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 48962,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 510295,
+            "range": "±0.65%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 34457,
+            "range": "±1.02%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 388230,
+            "range": "±1.04%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
           }
         ]
       }
