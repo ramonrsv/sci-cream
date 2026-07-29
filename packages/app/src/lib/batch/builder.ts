@@ -13,7 +13,7 @@ import { displayVersionName } from "@/lib/recipe/version";
 import { type CategoryColor, categoryColorFromName, categoryColorName } from "@/lib/styles/colors";
 
 /** A recipe the user can add to the batch, from either a calculator slot or a saved version. */
-export interface BatchSource {
+export interface AddableRecipe {
   /** Stable identifier, unique across both source kinds. */
   id: string;
   /** Display name shown in the picker. */
@@ -22,12 +22,12 @@ export interface BatchSource {
   detail?: string;
   /** The `[name, grams]` rows to weigh. */
   rows: LightRecipe;
-  /** The saved version this source came from, when it did. */
+  /** The saved version this recipe came from, when it did. */
   version?: BatchRecipeVersion;
 }
 
-/** One recipe carried inline in a {@link BatchSelection}, for a loaded saved batch. */
-export interface BatchSelectionRecipe {
+/** A recipe selected into a {@link BatchSelection}: a snapshot frozen when added or loaded. */
+export interface SelectedRecipe {
   name: string;
   rows: LightRecipe;
   version?: BatchRecipeVersion;
@@ -44,15 +44,14 @@ export interface BatchSelection {
   date: string;
   notes?: string;
   /**
-   * Chosen recipes in batch order. An item either references a live source by `sourceId` (the build
-   * flow, resolved against `sources`) or carries the recipe inline via `recipe` (a loaded saved
-   * batch, which has no live source). `color` is absent only in a selection stored before colors.
+   * Chosen recipes in batch order, each snapshotting its recipe inline so later edits to the source
+   * it came from never change it. `color` is absent only in a selection stored before colors.
    */
-  items: { sourceId?: string; color?: CategoryColor; recipe?: BatchSelectionRecipe }[];
+  items: { color?: CategoryColor; recipe: SelectedRecipe }[];
 }
 
 /** Calculator slots holding at least one named row, as batch sources. */
-export function readCalculatorSources(): BatchSource[] {
+export function readCalculatorSources(): AddableRecipe[] {
   return getRecipeStoresFromStorage().flatMap((store, slot) => {
     const rows: LightRecipe = parseRecipeString(store.serializedRows)
       .filter(([name]) => name !== "")
@@ -70,7 +69,7 @@ export function readCalculatorSources(): BatchSource[] {
 }
 
 /** Every saved recipe version the user can add, newest version first within each recipe. */
-export function readSavedSources(savedRecipes: readonly SavedRecipeJson[]): BatchSource[] {
+export function readSavedSources(savedRecipes: readonly SavedRecipeJson[]): AddableRecipe[] {
   return savedRecipes.flatMap((recipe) => {
     const hasVersionName = (version: SavedRecipeVersionJson) => version.versionName !== undefined;
     const hasSiblings = recipe.versions.length > 1;
@@ -94,26 +93,36 @@ export function readSavedSources(savedRecipes: readonly SavedRecipeJson[]): Batc
 }
 
 /**
- * Derive the batch from a selection. An inline `recipe` is used as-is (a loaded saved batch);
- * otherwise the item's `sourceId` is resolved against `sources`, dropping any that has since
- * disappeared (a cleared slot, deleted version) — so a stale stored selection degrades gracefully.
+ * Snapshot an {@link AddableRecipe} into a {@link SelectedRecipe}, capturing its rows at add time
+ * so the batch stops tracking later edits to the calculator slot or saved version it came from.
  */
-export function makeBatchFromSelection(
-  selection: BatchSelection,
-  sources: readonly BatchSource[],
-): Batch {
-  const recipes: BatchRecipe[] = selection.items.flatMap(({ sourceId, color, recipe }) => {
-    const resolved = recipe ?? sources.find((s) => s.id === sourceId);
-    if (resolved === undefined) return [];
-    return [
-      {
-        name: resolved.name,
-        rows: resolved.rows,
-        ...(resolved.version ? { version: resolved.version } : {}),
-        ...(color === undefined ? {} : { color }),
-      },
-    ];
-  });
+export function snapshotRecipe(source: AddableRecipe): SelectedRecipe {
+  return {
+    name: source.name,
+    rows: source.rows,
+    ...(source.version ? { version: source.version } : {}),
+  };
+}
+
+/**
+ * Whether a persisted selection predates inline snapshots. Older drafts referenced a live source by
+ * id and carry no rows; rejecting one falls the hook back to an empty batch, not a broken one.
+ */
+export function isInlineSelection(selection: BatchSelection): boolean {
+  return selection.items.every((item) => item.recipe !== undefined);
+}
+
+/**
+ * Derive the batch from a selection. Every item carries its recipe inline, so the batch is a stable
+ * record — unaffected by later edits to the calculator slot or saved version a recipe came from.
+ */
+export function makeBatchFromSelection(selection: BatchSelection): Batch {
+  const recipes: BatchRecipe[] = selection.items.map(({ color, recipe }) => ({
+    name: recipe.name,
+    rows: recipe.rows,
+    ...(recipe.version ? { version: recipe.version } : {}),
+    ...(color === undefined ? {} : { color }),
+  }));
   return {
     ...(selection.title ? { title: selection.title } : {}),
     date: selection.date,
@@ -142,7 +151,7 @@ export function batchToInput(batch: Batch): BatchInput {
 
 /** A saved batch as a derived {@link Batch}, for read-only display (e.g. the saved-batch list). */
 export function savedBatchToBatch(saved: SavedBatchJson): Batch {
-  return makeBatchFromSelection(selectionFromSavedBatch(saved), []);
+  return makeBatchFromSelection(selectionFromSavedBatch(saved));
 }
 
 /** Case-insensitive match of a saved batch: title, date, notes, and recipe/ingredient names. */

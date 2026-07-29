@@ -33,9 +33,10 @@ import { verify } from "@/lib/util";
 import { BatchBuilder } from "@/app/_elements/tables/batch-builder";
 import {
   type BatchSelection,
-  type BatchSource,
+  type AddableRecipe,
   batchHasUnsavedChanges,
   batchMatchesQuery,
+  isInlineSelection,
   makeBatchFromSelection,
   readCalculatorSources,
   readSavedSources,
@@ -81,6 +82,7 @@ export function MakeRecipeView() {
   const [selection, setSelection] = usePersistedState<BatchSelection>(
     STORAGE_KEYS.makeRecipeBatch,
     makeEmptySelection(),
+    { isValid: isInlineSelection },
   );
   const [batchQuery, setBatchQuery] = useState("");
 
@@ -116,15 +118,12 @@ export function MakeRecipeView() {
     };
   }, []);
 
-  const sources: BatchSource[] = useMemo(
+  const sources: AddableRecipe[] = useMemo(
     () => [...readCalculatorSources(), ...readSavedSources(savedRecipes)],
     [savedRecipes],
   );
 
-  const ownerBatch = useMemo(
-    () => makeBatchFromSelection(selection, sources),
-    [selection, sources],
-  );
+  const ownerBatch = useMemo(() => makeBatchFromSelection(selection), [selection]);
 
   const batch = state.status === "link" ? state.batch : ownerBatch;
 

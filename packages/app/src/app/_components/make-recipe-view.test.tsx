@@ -317,7 +317,7 @@ describe("MakeRecipeView — owner mode", () => {
 
   // Resolved when the recipe joins the batch, not when it is drawn: only then does the color the
   // owner sees ride the link, instead of the recipient recomputing one from their own sequence.
-  it("writes a concrete color into the selection as a recipe is added", async () => {
+  it("snapshots the recipe with a concrete color into the selection as it is added", async () => {
     setLocalStorage(STORAGE_KEYS.recipeStores, [
       { name: "My Gelato", serializedRows: "Whole Milk\t500" },
     ]);
@@ -327,7 +327,9 @@ describe("MakeRecipeView — owner mode", () => {
     fireEvent.change(screen.getByTestId("batch-add-recipe"), { target: { value: "slot:0" } });
 
     expect(getLocalStorage(STORAGE_KEYS.makeRecipeBatch)).toMatchObject({
-      items: [{ sourceId: "slot:0", color: CategoryColor.Blue }],
+      items: [
+        { color: CategoryColor.Blue, recipe: { name: "My Gelato", rows: [["Whole Milk", 500]] } },
+      ],
     });
   });
 
@@ -351,7 +353,9 @@ describe("MakeRecipeView — owner mode", () => {
     expect(relabelled).toContain("White");
   });
 
-  it("drops a selected slot that no longer exists rather than failing", async () => {
+  it("falls back to an empty batch for a draft stored before inline snapshots", async () => {
+    // A pre-snapshot draft referenced a source by id and carries no rows; the isValid guard rejects
+    // it so the page starts empty rather than rendering a batch with nothing to weigh.
     setLocalStorage(STORAGE_KEYS.makeRecipeBatch, {
       date: "2026-07-18",
       items: [{ sourceId: "slot:0" }],

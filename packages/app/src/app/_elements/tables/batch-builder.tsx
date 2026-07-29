@@ -14,7 +14,7 @@ import {
 } from "@/lib/batch/batch";
 import { CATEGORY_COLORS, type CategoryColor, categoryColorName } from "@/lib/styles/colors";
 import { colorForPosition, recordColorPick } from "@/lib/batch/colors";
-import { type BatchSelection, type BatchSource } from "@/lib/batch/builder";
+import { type BatchSelection, type AddableRecipe, snapshotRecipe } from "@/lib/batch/builder";
 
 /** Color picker worn by the recipe's own badge, which already shows the color. */
 function ColorPicker({
@@ -139,15 +139,19 @@ export function BatchBuilder({
 }: {
   selection: BatchSelection;
   batch: Batch;
-  sources: BatchSource[];
+  sources: AddableRecipe[];
   onChange: (selection: BatchSelection) => void;
 }) {
   const full = selection.items.length >= MAX_BATCH_RECIPES;
 
-  const addSource = (sourceId: string) => {
-    if (full || !sources.some((s) => s.id === sourceId)) return;
+  const addRecipeToSelection = (sourceId: string) => {
+    const source = sources.find((s) => s.id === sourceId);
+    if (full || source === undefined) return;
     const color = colorForPosition(selection.items.length);
-    onChange({ ...selection, items: [...selection.items, { sourceId, color }] });
+    onChange({
+      ...selection,
+      items: [...selection.items, { color, recipe: snapshotRecipe(source) }],
+    });
   };
 
   const removeAt = (index: number) => {
@@ -213,7 +217,7 @@ export function BatchBuilder({
             <select
               value=""
               disabled={full || sources.length === 0}
-              onChange={(e) => addSource(e.target.value)}
+              onChange={(e) => addRecipeToSelection(e.target.value)}
               className="boxed-input my-0 w-full px-1 py-0.5 text-sm"
               data-testid="batch-add-recipe"
             >

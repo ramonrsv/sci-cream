@@ -2,9 +2,12 @@ import { describe, it, expect } from "vitest";
 
 import {
   type BatchSelection,
+  type AddableRecipe,
   batchHasUnsavedChanges,
   batchMatchesQuery,
+  snapshotRecipe,
   batchToInput,
+  isInlineSelection,
   makeBatchFromSelection,
   readSavedSources,
   savedBatchToBatch,
@@ -29,9 +32,16 @@ function savedRecipe(id: number, name: string, versionNumbers: number[]): SavedR
   return { id, name, versions: versionNumbers.map((v) => version(v)) };
 }
 
-/** The one-item selection used by most cases. */
-function selectOnly(sourceId: string): BatchSelection {
-  return { date: "2026-07-18", items: [{ sourceId }] };
+/** The one-item selection used by most cases, snapshotting the given source inline. */
+function selectOnly(source: AddableRecipe): BatchSelection {
+  return { date: "2026-07-18", items: [{ recipe: snapshotRecipe(source) }] };
+}
+
+/** Find a source by picker detail, failing loudly when the test's fixture is wrong. */
+function sourceByDetail(sources: AddableRecipe[], detail: string): AddableRecipe {
+  const source = sources.find((s) => s.detail === detail);
+  if (source === undefined) throw new Error(`no source with detail ${detail}`);
+  return source;
 }
 
 describe("readSavedSources — version labelling in the picker", () => {
@@ -108,8 +118,7 @@ describe("makeBatchFromSelection — name and version stay separate", () => {
   /** The batch built from the single version of "My Gelato" matching `detail`. */
   const batchFromVersion = (detail: string) => {
     const sources = readSavedSources([savedRecipe(1, "My Gelato", [1, 2])]);
-    const source = sources.find((s) => s.detail === detail);
-    return makeBatchFromSelection(selectOnly(source?.id ?? ""), sources);
+    return makeBatchFromSelection(selectOnly(sourceByDetail(sources, detail)));
   };
 
   it("leaves the version out of the name, which the badge carries instead", () => {
@@ -135,16 +144,15 @@ describe("makeBatchFromSelection — name and version stay separate", () => {
       versions: [version(1), version(2, "2.1")],
     };
     const sources = readSavedSources([recipe]);
-    const source = sources.find((s) => s.detail === "v2.1");
-    const batch = makeBatchFromSelection(selectOnly(source?.id ?? ""), sources);
+    const batch = makeBatchFromSelection(selectOnly(sourceByDetail(sources, "v2.1")));
 
     expect(batch.recipes[0]?.version?.name).toBe("2.1");
     expect(displayVersion(batch.recipes[0]?.version)).toBe("2.1");
   });
 });
 
-describe("makeBatchFromSelection — inline recipes vs. live sources", () => {
-  it("uses an inline recipe as-is, with no live source to resolve against", () => {
+describe("makeBatchFromSelection — inline recipes", () => {
+  it("uses each item's inline recipe as-is", () => {
     const selection: BatchSelection = {
       date: "2026-07-20",
       items: [
@@ -152,26 +160,48 @@ describe("makeBatchFromSelection — inline recipes vs. live sources", () => {
       ],
     };
 
-    const batch = makeBatchFromSelection(selection, []);
-    expect(batch.recipes).toEqual([
+    expect(makeBatchFromSelection(selection).recipes).toEqual([
       { name: "Loaded", rows: [["Whole Milk", 300]], color: CategoryColor.Blue },
     ]);
   });
+});
 
-  it("prefers the inline recipe even when the item also names a source id", () => {
-    const sources = readSavedSources([savedRecipe(1, "My Gelato", [1])]);
-    const selection: BatchSelection = {
-      date: "2026-07-20",
-      items: [{ sourceId: sources[0].id, recipe: { name: "Inline wins", rows: [["Sugar", 10]] } }],
-    };
+describe("snapshotRecipe — snapshotting a live source at add time", () => {
+  it("captures the source's name, rows, and version inline", () => {
+    const [newest] = readSavedSources([savedRecipe(1, "My Gelato", [1, 2])]);
 
-    expect(makeBatchFromSelection(selection, sources).recipes[0].name).toBe("Inline wins");
+    expect(snapshotRecipe(newest)).toEqual({
+      name: "My Gelato",
+      rows: [["Whole Milk", 200]],
+      version: { ref: { recipeId: 1, versionNumber: 2 }, hasSiblings: true },
+    });
   });
 
-  it("still drops a source-ref item whose source has since disappeared", () => {
-    const selection: BatchSelection = { date: "2026-07-20", items: [{ sourceId: "slot:9" }] };
+  it("omits the version for a calculator slot, which has none", () => {
+    const slot: AddableRecipe = { id: "slot:0", name: "R1", rows: [["Sugar", 50]] };
 
-    expect(makeBatchFromSelection(selection, []).recipes).toEqual([]);
+    expect(snapshotRecipe(slot)).toEqual({ name: "R1", rows: [["Sugar", 50]] });
+  });
+});
+
+describe("isInlineSelection — rejecting drafts stored before inline snapshots", () => {
+  it("accepts a selection whose items all carry an inline recipe", () => {
+    const selection: BatchSelection = {
+      date: "2026-07-20",
+      items: [{ recipe: { name: "V", rows: [["Milk", 100]] } }],
+    };
+
+    expect(isInlineSelection(selection)).toBe(true);
+  });
+
+  it("rejects a legacy selection whose items only reference a source by id", () => {
+    // A pre-snapshot draft stored `{ sourceId }` and no rows; it arrives untyped from storage.
+    const legacy = {
+      date: "2026-07-20",
+      items: [{ sourceId: "slot:0" }],
+    } as unknown as BatchSelection;
+
+    expect(isInlineSelection(legacy)).toBe(false);
   });
 });
 
