@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785300343984,
+  "lastUpdate": 1785300347836,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -464456,6 +464456,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/91d0a8c4f26e495c1d4def3914a216d5db6eb61f"
         },
         "date": 1785280267331,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9605fb1c501d636a0e93da4d6a3fe9fefe070b9a",
+          "message": "Consolidate saved batches onto the Make page\n\nRender make-recipe owner mode through ListDetailShell: a saved-batch\nlist on the left, the batch editor (builder + checklist) on the right.\nSelecting a batch loads it in place for weighing, re-saving, or forking;\nlink mode stays a plain read-only checklist. Drop the standalone\n/batches route and its navbar entry so Make is the one batch page.\n\nGuard both destructive actions with a confirm: deleting a batch, and\nNew batch when it would discard unsaved work. Search saved batches by\ntitle, date, notes, and recipe/ingredient names. Signal save state with\na shared dot — gray once bound to a saved batch, amber when edited —\nreplacing the \"Editing saved batch\" tag and matching the recipe editor,\nwhich gains the gray bound state it lacked.\n\nRetarget the owner-mode checklist visual snapshots to the editor panel\nalone, add whole-page snapshots for the list+editor layout, and seed\nexample batches for the test user.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-29T00:17:59-04:00",
+          "tree_id": "641efada87192f6c7e1d224491c644b2e8f15acc",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9605fb1c501d636a0e93da4d6a3fe9fefe070b9a"
+        },
+        "date": 1785300343691,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
