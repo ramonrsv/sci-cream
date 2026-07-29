@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785339739719,
+  "lastUpdate": 1785339841378,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -463231,6 +463231,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "TTFB",
             "value": 3.28,
+            "range": "0.34",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "006b71d6bc4b20812d694d96b21f83d3187d298d",
+          "message": "Default share/save actions to common icon size\n\nShareRecipeAction, ShareBatchAction and SaveBatchAction defaulted\niconSize to COMPONENT_ACTION_ICON_SIZE (20), which no production call\nsite relied on. The common case is DETAIL_PANEL_ACTION_ICON_SIZE (14),\nso default to that and drop the now-redundant explicit passes at the\ndetail-panel call sites; the recipe-table toolbar keeps its explicit\n20 + tight-padding override. buttonClassName's default is unchanged,\nand rendered output is identical everywhere.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-29T11:14:18-04:00",
+          "tree_id": "b3ebeccafa506d5565467c2bd12dd1c90464cce4",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/006b71d6bc4b20812d694d96b21f83d3187d298d"
+        },
+        "date": 1785339807336,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 63.78,
+            "range": "10.44",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.25,
+            "range": "0.67",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.23,
+            "range": "0.69",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 171,
+            "range": "11.62",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.51,
+            "range": "0.06",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 171,
+            "range": "11.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.47,
+            "range": "8.49",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.41,
             "range": "0.34",
             "unit": "ms"
           }
