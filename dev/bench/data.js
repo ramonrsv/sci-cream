@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785300347836,
+  "lastUpdate": 1785300413442,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -461182,6 +461182,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.41,
             "range": "0.28",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9605fb1c501d636a0e93da4d6a3fe9fefe070b9a",
+          "message": "Consolidate saved batches onto the Make page\n\nRender make-recipe owner mode through ListDetailShell: a saved-batch\nlist on the left, the batch editor (builder + checklist) on the right.\nSelecting a batch loads it in place for weighing, re-saving, or forking;\nlink mode stays a plain read-only checklist. Drop the standalone\n/batches route and its navbar entry so Make is the one batch page.\n\nGuard both destructive actions with a confirm: deleting a batch, and\nNew batch when it would discard unsaved work. Search saved batches by\ntitle, date, notes, and recipe/ingredient names. Signal save state with\na shared dot — gray once bound to a saved batch, amber when edited —\nreplacing the \"Editing saved batch\" tag and matching the recipe editor,\nwhich gains the gray bound state it lacked.\n\nRetarget the owner-mode checklist visual snapshots to the editor panel\nalone, add whole-page snapshots for the list+editor layout, and seed\nexample batches for the test user.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-29T00:17:59-04:00",
+          "tree_id": "641efada87192f6c7e1d224491c644b2e8f15acc",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9605fb1c501d636a0e93da4d6a3fe9fefe070b9a"
+        },
+        "date": 1785300381425,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.14,
+            "range": "8.25",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 12.8,
+            "range": "0.36",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 12.79,
+            "range": "0.36",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 161,
+            "range": "10.91",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.45,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 161,
+            "range": "10.91",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 56.18,
+            "range": "7.99",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.04,
+            "range": "0.21",
             "unit": "ms"
           }
         ]
