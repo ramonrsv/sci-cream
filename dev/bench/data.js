@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785342975755,
+  "lastUpdate": 1785342979618,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -467566,6 +467566,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/006b71d6bc4b20812d694d96b21f83d3187d298d"
         },
         "date": 1785339736070,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "191d735672933b46c048a2539a869a5ac4354acc",
+          "message": "Add tests for checklist-state and element-size hooks\n\nCover the two remaining untested hooks in lib/hooks: batch\ncheckoff persistence and re-read on key change, and the\nResizeObserver round/dedupe path via a controllable mock.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-29T12:15:01-04:00",
+          "tree_id": "b25bd7f0b2b5f4e6a60a0864b44ca3e895542ea3",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/191d735672933b46c048a2539a869a5ac4354acc"
+        },
+        "date": 1785342978547,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
