@@ -253,9 +253,8 @@ export function MakeRecipeView() {
               setSelection((prev) => ({ ...prev, savedBatchId: batchId }));
               void refreshUserBatches();
             }}
-            iconSize={iconSize}
           />
-          <ShareBatchAction batch={batch} iconSize={iconSize} />
+          <ShareBatchAction batch={batch} />
           {selection.savedBatchId !== undefined && userEmail && (
             <button
               type="button"

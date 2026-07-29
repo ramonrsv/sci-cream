@@ -6,7 +6,7 @@ import { CopyPlus, Save } from "lucide-react";
 import type { Batch } from "@/lib/batch/batch";
 import { batchToInput } from "@/lib/batch/builder";
 import { createUserBatch, updateUserBatch } from "@/lib/data";
-import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
+import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 
 /**
  * Save controls for a batch. The primary button creates it, or updates it in place once bound to a
@@ -20,7 +20,7 @@ export function SaveBatchAction({
   onSaved,
   dirty = false,
   buttonClassName = "action-button px-2 py-0.5 text-sm",
-  iconSize = COMPONENT_ACTION_ICON_SIZE,
+  iconSize = DETAIL_PANEL_ACTION_ICON_SIZE,
 }: {
   batch: Batch;
   userEmail: string | null | undefined;

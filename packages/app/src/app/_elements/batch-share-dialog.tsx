@@ -12,7 +12,7 @@ import {
   makeBatchPayload,
   makeBatchUrl,
 } from "@/lib/batch/share";
-import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
+import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 
 /** Dialog body: builds the handoff link for the current batch and offers it for copying. */
 function BatchShareDialogBody({ batch }: { batch: Batch }) {
@@ -85,7 +85,7 @@ function BatchShareDialogBody({ batch }: { batch: Batch }) {
 export function ShareBatchAction({
   batch,
   buttonClassName = "action-button px-2 py-0.5 text-sm",
-  iconSize = COMPONENT_ACTION_ICON_SIZE,
+  iconSize = DETAIL_PANEL_ACTION_ICON_SIZE,
 }: {
   batch: Batch;
   buttonClassName?: string;

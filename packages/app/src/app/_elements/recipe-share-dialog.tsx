@@ -8,7 +8,7 @@ import type { LightRecipe } from "@workspace/sci-cream";
 import { CopyableField } from "@/app/_elements/copyable-field";
 import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";
 import { useSessionResources } from "@/lib/resources/session";
-import { COMPONENT_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
+import { DETAIL_PANEL_ACTION_ICON_SIZE } from "@/lib/styles/sizes";
 import {
   encodeSharePayload,
   findUserDefinedShareNames,
@@ -197,7 +197,7 @@ export function ShareRecipeAction({
   comments,
   versionName,
   buttonClassName = "action-button px-2 py-0.5 text-sm",
-  iconSize = COMPONENT_ACTION_ICON_SIZE,
+  iconSize = DETAIL_PANEL_ACTION_ICON_SIZE,
 }: {
   name: string;
   rows: LightRecipe;

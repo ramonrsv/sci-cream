@@ -280,7 +280,6 @@ function RecipeDetailPanel({
                 ? displayVersionName(selectedVersion)
                 : undefined
             }
-            iconSize={DETAIL_PANEL_ACTION_ICON_SIZE}
           />
         )}
         {onLoadRecipe && selectedVersion && (
