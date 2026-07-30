@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785448797460,
+  "lastUpdate": 1785448808169,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -476462,6 +476462,70 @@ window.BENCHMARK_DATA = {
           {
             "name": "npm bundle dist/index.js (gzip)",
             "value": 517.56,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 564.26,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1866.82,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "82c3849bb2842c03aadef080c5963e57e82339ef",
+          "message": "Render comments as markdown, with edit preview\n\nIngredient and recipe comment fields were shown as plain text.\nRender them as GFM markdown so authored formatting, links, and\nfootnotes display properly, and give the editable fields a\nWrite/Preview tab.\n\nAdd a Markdown component (react-markdown + remark-gfm; raw HTML\nis not rendered) for read-only display and a MarkdownField with\nWrite/Preview tabs for editing, and wire them into the comment\nviews and inputs.\n\nAlso drop a stray slash from a nielsenmassey.com link label in\nflavourings.md, and check off the corresponding TODO item.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-30T17:52:20-04:00",
+          "tree_id": "7edb06b026ebfd058879ccd8e7fb4f618452173d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/82c3849bb2842c03aadef080c5963e57e82339ef"
+        },
+        "date": 1785448770820,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1082.89,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.29,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1665.71,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 517.55,
             "unit": "KB"
           },
           {
