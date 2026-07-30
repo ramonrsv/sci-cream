@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785448808169,
+  "lastUpdate": 1785448812359,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -431167,6 +431167,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.20%",
             "unit": "ops/sec",
             "extra": "91 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "82c3849bb2842c03aadef080c5963e57e82339ef",
+          "message": "Render comments as markdown, with edit preview\n\nIngredient and recipe comment fields were shown as plain text.\nRender them as GFM markdown so authored formatting, links, and\nfootnotes display properly, and give the editable fields a\nWrite/Preview tab.\n\nAdd a Markdown component (react-markdown + remark-gfm; raw HTML\nis not rendered) for read-only display and a MarkdownField with\nWrite/Preview tabs for editing, and wire them into the comment\nviews and inputs.\n\nAlso drop a stray slash from a nielsenmassey.com link label in\nflavourings.md, and check off the corresponding TODO item.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-30T17:52:20-04:00",
+          "tree_id": "7edb06b026ebfd058879ccd8e7fb4f618452173d",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/82c3849bb2842c03aadef080c5963e57e82339ef"
+        },
+        "date": 1785448776154,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 53177,
+            "range": "±0.82%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 507022,
+            "range": "±0.85%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 34984,
+            "range": "±1.11%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 395226,
+            "range": "±1.01%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
