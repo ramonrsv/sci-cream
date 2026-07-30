@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785431807896,
+  "lastUpdate": 1785431860923,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -61912,6 +61912,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b992e34cf5e33dd1d4c63756c386e0983d802e85",
+          "message": "Author built-in specs in markdown, codegen JSON\n\nBuilt-in ingredient and recipe specs were defined as JSON with the\ncomments field as an inline, escaped string: impossible to author or\nreview as markdown, and embedded verbatim into the WASM binary even\nthough the crate's typed structs drop comments entirely — dead weight.\n\nMake per-category markdown the source of truth. Each entry is a level-2\nsection: heading = name, a fenced JSON spec block, then the comment\nbody. scripts/gen-data.ts codegens two JSON variants beside the source:\n\n  generated/full/  entries with comments (footnotes resolved inline),\n                   imported by the TS bindings and the app.\n  generated/min/   the same entries, comment-free and minified,\n                   embedded into the WASM binary via include_str!.\n\nComment [^N] citations are resolved inline from docs/references so each\nstring renders self-contained; an undefined citation is an error.\n\nTrack only generated/min/: it is embedded in the binary, so keeping it\nin git keeps cargo hermetic — no build.rs near the crate-type switch —\nand it is marked linguist-generated -diff. generated/full/ is the bulky\ncopy, gitignored and rebuilt by the build. New gen:data scripts (:full,\n:min, :check) wire into build, test and coverage, which regenerate what\nthey consume.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-30T12:11:59-04:00",
+          "tree_id": "98620d0079db7bb4983e1311debfc52ec015b277",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b992e34cf5e33dd1d4c63756c386e0983d802e85"
+        },
+        "date": 1785431825755,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4069,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 157059,
+            "range": "± 848",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2453,
+            "range": "± 15",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 184355,
+            "range": "± 2188",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4172,
+            "range": "± 18",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4655,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4755,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4548,
+            "range": "± 32",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4507,
+            "range": "± 34",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4931,
+            "range": "± 183",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 105547,
+            "range": "± 1386",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 108623,
+            "range": "± 645",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 180973237,
+            "range": "± 1357229",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 619353,
+            "range": "± 3006",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6998,
+            "range": "± 163",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 53,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6329,
+            "range": "± 117",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 111572,
+            "range": "± 8093",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 92246,
+            "range": "± 642",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 181184,
+            "range": "± 791",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 150232,
+            "range": "± 913",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 331528,
+            "range": "± 1487",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14382,
+            "range": "± 69",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 635,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
             "range": "± 0",
             "unit": "ns/iter"
           }
