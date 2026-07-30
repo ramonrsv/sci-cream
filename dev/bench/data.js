@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785422399543,
+  "lastUpdate": 1785422403085,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -468620,6 +468620,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/191d735672933b46c048a2539a869a5ac4354acc"
         },
         "date": 1785342978547,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3e438c7db7a7e48e56be00fe9766712323c98a50",
+          "message": "Add artifact size benchmarks for the crate\n\nTrack WASM binary, npm bundle, wasm-bindgen glue, and npm tarball sizes\n(raw + gzip) via a bench:size script emitting the customSmallerIsBetter\nformat, plus a track-only size_benchmarks CI job mirroring the app's\nbundle_benchmarks.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-30T10:20:01-04:00",
+          "tree_id": "e9ce85853eec60a73dfc3ca8e162b0ccd16d0736",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3e438c7db7a7e48e56be00fe9766712323c98a50"
+        },
+        "date": 1785422402117,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
