@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785426868529,
+  "lastUpdate": 1785426944015,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -427831,6 +427831,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.04%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "cab46d16f726e6bb948ec3e40706600da94646ea",
+          "message": "Update `app/CHANGELOG.md` for 0.0.6 release\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-30T11:23:31-04:00",
+          "tree_id": "c2b8aae50b1e6ea34a8ead392937716022ba00ef",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/cab46d16f726e6bb948ec3e40706600da94646ea"
+        },
+        "date": 1785426910745,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 61012,
+            "range": "±1.13%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 485133,
+            "range": "±1.04%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 40871,
+            "range": "±1.10%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 385990,
+            "range": "±0.93%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
           }
         ]
       }
