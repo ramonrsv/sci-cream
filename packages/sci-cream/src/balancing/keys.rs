@@ -258,7 +258,6 @@ pub fn get_typical_balancing_keys() -> Vec<BalanceKey> {
         RatioKey::StabilizersPerWater.into(),
         RatioKey::EmulsifiersPerFat.into(),
         CompKey::ABV.into(),
-        FpdKey::FPD.into(),
         FpdKey::ServingTemp.into(),
     ]
 }

@@ -14,7 +14,6 @@
       Consider tightening to `COMPOSITION_EPSILON` and/or adding a tighter/loser assert variant.
 - [ ] Add `CompKey`s and ingredient for the known emulsifiers, e.g. `gum_arabic`/"Gum Arabic".
 - [ ] Switch the hard-coded FPD calculation `PacToFpdMethod` from `Interpolation` to `Polynomial`.
-- [ ] Remove `FPD` as a typical balancing key, since it's redundant and competes with `ServingTemp`.
 
 ## Up Next
 
@@ -121,6 +120,7 @@
 
 ## Completed
 
+- [x] Remove `FPD` as a typical balancing key, since it's redundant and competes with `ServingTemp`.
 - [x] Add benchmarks for WASM binary size, which is relevant in the App for initial loading.
 - [x] Fold per-target priority into the balancing targets tuple
       (`targets: &[(BalanceKey, f64, Option<Priority>)]`), dropping the parallel `priorities` list.

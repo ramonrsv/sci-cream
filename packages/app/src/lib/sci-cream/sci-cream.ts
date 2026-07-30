@@ -59,7 +59,6 @@ export const DEFAULT_SELECTED_PROPERTIES: Set<PropKey> = new Set(getTypicalBalan
 export const UNCONDITIONAL_AUTO_PROPERTIES: Set<PropKey> = new Set([
   compToPropKey(CompKey.TotalSolids),
   compToPropKey(CompKey.POD),
-  fpdToPropKey(FpdKey.FPD),
   fpdToPropKey(FpdKey.ServingTemp),
 ]);
 

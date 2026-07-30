@@ -16,7 +16,6 @@ targets:
   StabilizersPerWater     0.25
   EmulsifiersPerFat       2.20
   ABV                     0.00
-  FPD                    -2.63
   ServingTemp           -13.02
 
 [warning] No ingredient contributes to 'Nut SNF', so its target cannot be affected
