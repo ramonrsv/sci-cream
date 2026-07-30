@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785422411559,
+  "lastUpdate": 1785422458705,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -468706,6 +468706,72 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static media (raw)",
             "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      }
+    ],
+    "sci-cream Artifact Sizes": [
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3e438c7db7a7e48e56be00fe9766712323c98a50",
+          "message": "Add artifact size benchmarks for the crate\n\nTrack WASM binary, npm bundle, wasm-bindgen glue, and npm tarball sizes\n(raw + gzip) via a bench:size script emitting the customSmallerIsBetter\nformat, plus a track-only size_benchmarks CI job mirroring the app's\nbundle_benchmarks.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-30T10:20:01-04:00",
+          "tree_id": "e9ce85853eec60a73dfc3ca8e162b0ccd16d0736",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3e438c7db7a7e48e56be00fe9766712323c98a50"
+        },
+        "date": 1785422424376,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1142.39,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 340.54,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1736.92,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 535.47,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 582.15,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1937.16,
             "unit": "KB"
           }
         ]
