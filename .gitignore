@@ -67,6 +67,7 @@ next-env.d.ts
 
 # Benchmark results
 /packages/app/bench-results
+/packages/sci-cream/bench-results
 
 # App jsdoc output
 /packages/app/dist

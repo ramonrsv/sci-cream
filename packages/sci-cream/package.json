@@ -48,9 +48,10 @@
     "coverage:rust:codecov": "cargo llvm-cov report --codecov --output-path ../../target/codecov_code_coverage.json",
     "coverage:rust:html": "cargo llvm-cov report --html",
     "coverage:js": "vitest run --coverage",
-    "bench": "pnpm bench:rust && pnpm bench:js",
+    "bench": "pnpm bench:rust && pnpm bench:js && pnpm bench:size",
     "bench:rust": "cargo criterion --all-features",
     "bench:js": "node --import tsx benches/ts/run-all.ts",
+    "bench:size": "node --import tsx benches/sizes/measure.ts",
     "doc": "cargo doc --all-features --no-deps --document-private-items",
     "doc:examples": "cargo doc --all-features --no-deps --document-private-items --examples"
   },

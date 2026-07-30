@@ -198,3 +198,34 @@ jobs:
           fail-on-alert: true
           comment-on-alert: true
           alert-comment-cc-users: "@ramonrsv"
+
+  size_benchmarks:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-rust
+        with:
+          cargo-installs: wasm-pack
+      - uses: ./.github/actions/setup-node
+        with:
+          working-directory: "./packages/sci-cream"
+      - uses: ./.github/actions/sci-cream-package
+
+      - name: Run artifact size benchmarks
+        run: pnpm run bench:size
+
+      - if: vars.ACT != 'true'
+        name: Store benchmark result
+        uses: benchmark-action/github-action-benchmark@v1.22.1
+        with:
+          name: "sci-cream Artifact Sizes"
+          tool: "customSmallerIsBetter"
+          output-file-path: packages/sci-cream/bench-results/bench_output_sizes.json
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          auto-push: true
+          # Track-only: size changes should be visible but not gate the build.
+          fail-on-alert: false
+          comment-on-alert: true
+          alert-comment-cc-users: "@ramonrsv"
