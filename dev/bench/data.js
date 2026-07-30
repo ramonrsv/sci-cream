@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785422403085,
+  "lastUpdate": 1785422411559,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -425238,6 +425238,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.04%",
             "unit": "ops/sec",
             "extra": "94 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3e438c7db7a7e48e56be00fe9766712323c98a50",
+          "message": "Add artifact size benchmarks for the crate\n\nTrack WASM binary, npm bundle, wasm-bindgen glue, and npm tarball sizes\n(raw + gzip) via a bench:size script emitting the customSmallerIsBetter\nformat, plus a track-only size_benchmarks CI job mirroring the app's\nbundle_benchmarks.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-30T10:20:01-04:00",
+          "tree_id": "e9ce85853eec60a73dfc3ca8e162b0ccd16d0736",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3e438c7db7a7e48e56be00fe9766712323c98a50"
+        },
+        "date": 1785422377298,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 55872,
+            "range": "±1.04%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 465856,
+            "range": "±2.31%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 40532,
+            "range": "±0.85%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 370930,
+            "range": "±0.92%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
