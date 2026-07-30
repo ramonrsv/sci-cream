@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785431460672,
+  "lastUpdate": 1785431464040,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -474944,6 +474944,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/3f0dbd13b8c2a6f97988b169580f2417bc42aff6"
         },
         "date": 1785427284859,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b992e34cf5e33dd1d4c63756c386e0983d802e85",
+          "message": "Author built-in specs in markdown, codegen JSON\n\nBuilt-in ingredient and recipe specs were defined as JSON with the\ncomments field as an inline, escaped string: impossible to author or\nreview as markdown, and embedded verbatim into the WASM binary even\nthough the crate's typed structs drop comments entirely — dead weight.\n\nMake per-category markdown the source of truth. Each entry is a level-2\nsection: heading = name, a fenced JSON spec block, then the comment\nbody. scripts/gen-data.ts codegens two JSON variants beside the source:\n\n  generated/full/  entries with comments (footnotes resolved inline),\n                   imported by the TS bindings and the app.\n  generated/min/   the same entries, comment-free and minified,\n                   embedded into the WASM binary via include_str!.\n\nComment [^N] citations are resolved inline from docs/references so each\nstring renders self-contained; an undefined citation is an error.\n\nTrack only generated/min/: it is embedded in the binary, so keeping it\nin git keeps cargo hermetic — no build.rs near the crate-type switch —\nand it is marked linguist-generated -diff. generated/full/ is the bulky\ncopy, gitignored and rebuilt by the build. New gen:data scripts (:full,\n:min, :check) wire into build, test and coverage, which regenerate what\nthey consume.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-30T12:11:59-04:00",
+          "tree_id": "98620d0079db7bb4983e1311debfc52ec015b277",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b992e34cf5e33dd1d4c63756c386e0983d802e85"
+        },
+        "date": 1785431463097,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
