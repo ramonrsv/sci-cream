@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785426772504,
+  "lastUpdate": 1785426841782,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -468357,6 +468357,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.31,
             "range": "0.35",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "59b53684c927f891972fc3d76597633ad757b0c6",
+          "message": "Remove `FpdKey::FPD` as a typical balancing key\n\n* Remove `FpdKey::FPD` from `get_typical_balancing_keys` as a typical\n  balancing key, since it's redundant and competes with `ServingTemp`.",
+          "timestamp": "2026-07-30T11:23:23-04:00",
+          "tree_id": "600ef03dddf5993ba9bdd6c70bdfd030e6918537",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/59b53684c927f891972fc3d76597633ad757b0c6"
+        },
+        "date": 1785426808590,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 56.44,
+            "range": "1.36",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.71,
+            "range": "1.08",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.7,
+            "range": "1.06",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 159,
+            "range": "5.57",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.43,
+            "range": "0.10",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 159,
+            "range": "5.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 52.6,
+            "range": "1.25",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.36,
+            "range": "0.43",
             "unit": "ms"
           }
         ]
