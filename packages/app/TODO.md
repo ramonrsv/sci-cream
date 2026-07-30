@@ -9,12 +9,10 @@
 - [ ] Add visual regression tests for dark mode; not everything, just routes & some key elements.
 - [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
 - [ ] Add a leading emoji to some selects to make their purpose clearer; also add title/labels.
-- [ ] Add a way to edit saved recipe version labels; should be easier now that there is more space.
 - [ ] Add a recipe version quality signal and/or favorites; one/two thumbs up, thumb down, star?
 - [ ] Invalid ingredient names are not saved when saving a recipe. They should be, so need a fix.
 - [ ] `RecipeEditor` does not update the ingredient name/version if the original is deleted.
 - [ ] Increase the height of comments in `/recipes`; it's difficult to edit in such a short slot.
-- [ ] Add support for storing evaporation in the database; saved recipes currently don't support it.
 - [ ] Add `height` prop to `PropertiesTable` so that it can adapt the number of properties shown.
 - [ ] Add support for `RecipeEditor` and `CompositionBreakdown` to render the maximum of the number
       of rows needed to fill the current height, and the current number of filled in rows + 1.
@@ -22,14 +20,11 @@
 - [ ] Targets not selected for balancing in `Watchers` can show in `PropertiesChart`; investigate.
 - [ ] Investigate relative delta behavior in `Watchers`, they seem to not be changing gradually.
 - [ ] In the `PropertiesChart` tooltip, move the numeric value to the left so it does not overflow.
-- [ ] Add support for semver-like versions in `/recipes`, e.g. 3.1, 3-a, etc. Should be opt-in.
 - [ ] Add a reset option to the key selection when `KeySelect.Custom`, to reset to default custom.
 - [ ] Make the reference and target ticks in `PropertiesBarChart` more visible. Also in watchers?
 
 ## Up Next
 
-- [ ] Add support for storing experiments: a set of recipes made on a given date, with procedure
-      notes. `/make-recipe` already builds the shape (`Batch`); blocked on the DB migration item.
 - [ ] Make the batch page (`/make-recipe`) list+editor responsive: list beside the editor on
       desktop, a `Saved batches` / `Editor` toggle on mobile. Shared components, one render tree,
       CSS-driven so nothing remounts on resize; opening a batch on mobile switches to the editor.
@@ -60,10 +55,8 @@
 - [ ] Some layouts cause some toolbars to overflow. See if the look of overflowing can be improved.
 - [ ] Investigate the use of a settings popover to declutter the toolbars with multiple selects.
 - [ ] Make the 'information' icon show in visual regression tests for toolbar space constraints.
-- [ ] Should `group-by.tsx`, `session-resources.tsx`, and other `*.tsx` go in `app`, not `lib`?
 - [ ] Explore decoupling balancing from the synchronous re-validation it triggers: each balance
       cycle waits for the solve and a costlier re-validation before the UI updates. Defer it?
-- [ ] Try to make the `RecipeEditor` toolbar fit in one row in large mobile portrait layouts.
 
 ## Backlog
 
@@ -129,6 +122,13 @@
 
 ## Completed
 
+- [x] Try to make the `RecipeEditor` toolbar fit in one row in large mobile portrait layouts.
+- [x] Add support for semver-like versions in `/recipes`, e.g. 3.1, 3-a, etc. Should be opt-in.
+- [x] Add support for storing experiments: a set of recipes made on a given date, with procedure
+      notes. `/make-recipe` already builds the shape (`Batch`); blocked on the DB migration item.
+- [x] Add support for storing evaporation in the database; saved recipes currently don't support it.
+- [x] Add a way to edit saved recipe version labels; should be easier now that there is more space.
+- [x] Should `group-by.tsx`, `session-resources.tsx`, and other `*.tsx` go in `app`, not `lib`?
 - [x] Sort out `iconSize`/`buttonClassName` defaults on the share actions: no production call site
       uses them. Make the defaults the common case, or drop them and require both at call sites.
 - [x] Let make-recipe badge colors match physical containers. The color is data, not styling: it
