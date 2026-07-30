@@ -11,6 +11,42 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased] - ReleaseDate
 
+### Added
+
+- Stateless recipe sharing via `/share` and `/share/embed`, with the recipe in the URL fragment:
+  - Read-only viewer (table, properties, comments) with "Open in calculator"; embed is iframe-safe.
+  - Share dialog with a copyable link and snippet, and opt-in consent before inlining user specs.
+- `/make-recipe` weighing checklist, merging recipes into one per-ingredient list, a column each:
+  - Checkoff keyed by a hash of the weighing content, and shareable by URL fragment like recipes.
+  - Recipes told apart by a letter and a container color, learned as the default color sequence.
+- Saved batches on the Make page, as a searchable list beside the batch builder and checklist:
+  - Load a batch in place to weigh, re-save, or fork; recipes are snapshotted as they are added.
+- Opt-in version names for saved recipes (e.g. `3.1`, `4.2-b`), beside the internal integer:
+  - Inline badge, `→ new-version` input, and branch button in the editor name row, validated inline.
+  - Shown in the batch builder and checklist, and optionally on share links, off by default.
+- Patreon and Buy Me a Coffee support links to the welcome blog post, replacing placeholders.
+
+### Changed
+
+- Rework the sidebar as an overlay drawer that hides on mobile; hover or a hamburger peeks it open.
+- Replace the sidebar collapse toggle with pin/unpin, and key peek on pointer type, not viewport.
+- Move version controls into the table's reserved toolbar band; they no longer push the panel down.
+- Move evaporation from the toolbar overlay into its own `Evap (g)` column in the recipe tables.
+- Nest the recipe name row inside the editor toolbar, where it wraps onto its own line.
+
+### Fixed
+
+- Recipe evaporation silently dropped by every save path; it now persists with the saved version.
+- Editing the evaporation input not marking the recipe dirty, so an unsaved change could be lost.
+- Target-proximity delta coloring always green for negative targets like `FPD`, whatever the delta.
+- "Total" shifting in the recipe editor as the lock-all button appears with the first lockable row.
+- Qty columns shifting sideways as a recipe goes from empty to filled and its numbers widen them.
+- Version select overflowing the `/recipes` detail panel actions; it now shrinks and truncates.
+
+### Removed
+
+- Creation date from the version dropdown in the `/recipes` detail panel.
+
 ## [0.0.5] - 2026-07-16
 
 ### Added
