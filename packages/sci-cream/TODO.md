@@ -42,9 +42,6 @@
 - [ ] If all children of a key have a target, we can infer the parent's target and use it in checks.
 - [ ] Add a Nutella Sweetened Hazelnut Cocoa Spread ingredient; not very useful, but it's common.
 - [ ] Add a Lindt Hazelnut Cocoa Spread ingredient; similar to Nutella, but less sugar, more useful.
-- [ ] Fold per-target priority into the balancing targets tuple
-      (`targets: &[(BalanceKey, f64, Option<Priority>)]`), dropping the parallel `priorities` list.
-      Removes `PriorityWithoutTarget` and `DuplicatePriority` (subsumed by `DuplicateTarget`).
 - [ ] Make the palette-derived balancing feasibility warnings (reachability, dominance, ratio-band,
       over-determination) lock- and evaporation-aware; `validate_balancing_targets` currently skips
       them when any comp is locked or mix evaporates, as they assume fully free, non-evaporated.
@@ -58,7 +55,6 @@
 - [ ] Consider adding an a `RatioKey::StabilizersPerEmulsifiers`; I saw Underbelly mention it.
 - [ ] Add milk solids support to `ChocolateSpec` and add milk chocolate Callebaut ingredients.
 - [ ] Rename 'HFCS 42' to 'High Fructose Corn Syrup 42 DE' and add 'HFCS 42' alias; same for others.
-- [ ] Add benchmarks for WASM binary size, which is relevant in the App for initial loading.
 - [ ] Explore ways to reduce WASM binary size, e.g. strip comments from embedded ingredient/recipes.
 - [ ] Add wine ingredients, and considered adding evaporated wine - how to handle, parametric?
 - [ ] Add support for parametric ingredients, e.g. 'Strawberry [Brix 9]', '* [Evap 15]', etc.
@@ -100,12 +96,9 @@
 - [ ] Codegen TypeScript types for serde WASM payloads from Rust (`ts-rs` / `tsify` / `typeshare`)
       instead of hand-mirroring in `ts/balancing.ts` — would let the flattened `BalancingIssue` be
       re-expanded to the rich union maintenance-free. Needs `build:package` wiring `any` override.
-- [ ] Revisit a curated `CompKey` hierarchy check for balancing target validation (prototyped then
-      dropped as redundant with the `DominanceViolation` check) if palette-independent validation is
-      ever wanted, e.g. flagging `Sucrose > TotalSugars` before any ingredients are chosen.
-- [ ] When per-key target priority lands, make balancing-issue severity priority-aware by carrying
-      the priority on the issue and deriving `severity()` from it (not a stored tag); also split
-      advisory severity from the hard solve-gate so a strict-but-unreachable target flags an error.
+- [ ] Make balancing-issue severity priority-aware by carrying the priority on the issue and
+      deriving `severity()` from it (not a stored tag); also split advisory severity from the hard
+      solve-gate so a strict-but-unreachable target flags an error.
 - [ ] Reject degenerate inputs in `validate_balancing_targets` / `balance_compositions`: empty
       palette or empty targets makes the solve meaningless; flag as an error before solving.
 - [ ] Return balancing internals (`row_weights`, `ratio_key_parts`, `estimate_ratio_denominator`,
@@ -128,6 +121,13 @@
 
 ## Completed
 
+- [x] Add benchmarks for WASM binary size, which is relevant in the App for initial loading.
+- [x] Fold per-target priority into the balancing targets tuple
+      (`targets: &[(BalanceKey, f64, Option<Priority>)]`), dropping the parallel `priorities` list.
+      Removes `PriorityWithoutTarget` and `DuplicatePriority` (subsumed by `DuplicateTarget`).
+- [x] Revisit a curated `CompKey` hierarchy check for balancing target validation (prototyped then
+      dropped as redundant with the `DominanceViolation` check) if palette-independent validation is
+      ever wanted, e.g. flagging `Sucrose > TotalSugars` before any ingredients are chosen.
 - [x] Tighten `target_domain` to `[0, 100]` for `ABV` and every mass-fraction `CompKey`; `Energy`,
       `POD`, the PAC family (incl. `HF`), and ratio keys stay `[0, inf)`. Classify on `CompKey`,
       delegating from `BalanceKey`; impossible targets then error instead of warning unreachable.
