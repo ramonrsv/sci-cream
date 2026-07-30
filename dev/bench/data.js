@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785422936199,
+  "lastUpdate": 1785422939527,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -469530,6 +469530,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/3e438c7db7a7e48e56be00fe9766712323c98a50"
         },
         "date": 1785422402117,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "5419a8f8c6de0ae9ee2bc4b0ebb20044c6682454",
+          "message": "Check off some completed `sci-cream/TODO.md` items",
+          "timestamp": "2026-07-30T10:28:58-04:00",
+          "tree_id": "824ba562bbea662705e2363ca6505869abfac7fc",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/5419a8f8c6de0ae9ee2bc4b0ebb20044c6682454"
+        },
+        "date": 1785422938857,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
