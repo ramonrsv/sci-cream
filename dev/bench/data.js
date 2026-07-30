@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785431860923,
+  "lastUpdate": 1785432209081,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -398416,6 +398416,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 639.5,
             "range": "13.19",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b992e34cf5e33dd1d4c63756c386e0983d802e85",
+          "message": "Author built-in specs in markdown, codegen JSON\n\nBuilt-in ingredient and recipe specs were defined as JSON with the\ncomments field as an inline, escaped string: impossible to author or\nreview as markdown, and embedded verbatim into the WASM binary even\nthough the crate's typed structs drop comments entirely — dead weight.\n\nMake per-category markdown the source of truth. Each entry is a level-2\nsection: heading = name, a fenced JSON spec block, then the comment\nbody. scripts/gen-data.ts codegens two JSON variants beside the source:\n\n  generated/full/  entries with comments (footnotes resolved inline),\n                   imported by the TS bindings and the app.\n  generated/min/   the same entries, comment-free and minified,\n                   embedded into the WASM binary via include_str!.\n\nComment [^N] citations are resolved inline from docs/references so each\nstring renders self-contained; an undefined citation is an error.\n\nTrack only generated/min/: it is embedded in the binary, so keeping it\nin git keeps cargo hermetic — no build.rs near the crate-type switch —\nand it is marked linguist-generated -diff. generated/full/ is the bulky\ncopy, gitignored and rebuilt by the build. New gen:data scripts (:full,\n:min, :check) wire into build, test and coverage, which regenerate what\nthey consume.\n\nCo-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>",
+          "timestamp": "2026-07-30T12:11:59-04:00",
+          "tree_id": "98620d0079db7bb4983e1311debfc52ec015b277",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b992e34cf5e33dd1d4c63756c386e0983d802e85"
+        },
+        "date": 1785432169151,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 51.63,
+            "range": "3.04",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 48.5,
+            "range": "1.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 57.13,
+            "range": "3.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2487.75,
+            "range": "52.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 310.5,
+            "range": "4.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 316.13,
+            "range": "2.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 341,
+            "range": "12.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 15796.13,
+            "range": "28.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 16.31,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 839.88,
+            "range": "16.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 51.88,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 55.25,
+            "range": "1.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.88,
+            "range": "1.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42.25,
+            "range": "1.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 130,
+            "range": "5.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 87.38,
+            "range": "2.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 56.03,
+            "range": "0.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.68,
+            "range": "0.25",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 580.13,
+            "range": "6.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 636.88,
+            "range": "12.93",
             "unit": "ms"
           }
         ]
