@@ -19,7 +19,7 @@ import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { useFreeOnReplace, useSeededWasmResources } from "@/lib/resources/wasm";
 import { STATE_VAL } from "@/lib/util";
-import { autoLink } from "@/app/_elements/text";
+import { Markdown } from "@/app/_elements/markdown";
 
 /** Props for {@link IngredientSearch} */
 export interface IngredientSearchProps {
@@ -50,7 +50,7 @@ function getEntryComments(entry: SpecEntryJson): string | undefined {
 
 /**
  * Pretty-print an entry as JSON, omitting the EntitySearch `_source` tag and the `comments` field
- * from the spec — the full text is rendered separately under the spec via {@link autoLink}.
+ * from the spec — the full text is rendered separately under the spec via {@link Markdown}.
  */
 function stringifyEntry(entry: Tagged<SpecEntryJson>): string {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -116,7 +116,7 @@ function IngredientDetailPanel({ entry }: { entry: Tagged<SpecEntryJson> }) {
         }
       />
       <IngredientDetailBody entry={entry} />
-      {comments && <p className="text-secondary text-sm leading-relaxed">{autoLink(comments)}</p>}
+      {comments && <Markdown text={comments} />}
     </>
   );
 }

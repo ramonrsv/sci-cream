@@ -5,13 +5,13 @@ import type { ReactNode } from "react";
 import { RecipeTable } from "@/app/_elements/tables/recipe";
 import { PropertiesView } from "@/app/_elements/tables/properties";
 import { ToolbarSpacer } from "@/app/_elements/selects/toolbar-spacer";
-import { autoLink } from "@/app/_elements/text";
+import { Markdown } from "@/app/_elements/markdown";
 import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
 import type { Recipe } from "@/lib/recipe/recipe";
 
-/** Read-only recipe comments paragraph with URLs auto-linked. */
+/** Read-only recipe comments rendered as markdown (GFM, with reference footnotes). */
 export function RecipeComments({ text }: { text: string }) {
-  return <p className="text-secondary text-sm leading-relaxed">{autoLink(text)}</p>;
+  return <Markdown text={text} />;
 }
 
 /**

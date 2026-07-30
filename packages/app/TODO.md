@@ -36,7 +36,6 @@
       currently relies on a fixed number of rows, and won't be easy to make vertically scrollable.
 - [ ] Add richer syntax highlighting of JSON ingredient specs in `/ingredients` details panel.
 - [ ] Add automatic links to specs, docs, etc. in `/ingredients`, based on the loaded spec.
-- [ ] Add support for markdown with a preview tab in comments for `/recipes` and `/ingredients`.
 - [ ] Add support for comments in blog posts, maybe also in documentation posts.
 - [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
 - [ ] Add a home page with a quick intro and overview, pointing to user guide, docs, etc.
@@ -122,6 +121,7 @@
 
 ## Completed
 
+- [x] Add support for markdown with a preview tab in comments for `/recipes` and `/ingredients`.
 - [x] Try to make the `RecipeEditor` toolbar fit in one row in large mobile portrait layouts.
 - [x] Add support for semver-like versions in `/recipes`, e.g. 3.1, 3-a, etc. Should be opt-in.
 - [x] Add support for storing experiments: a set of recipes made on a given date, with procedure

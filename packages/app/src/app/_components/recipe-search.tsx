@@ -347,7 +347,7 @@ function RecipeDetailPanel({
               key={`${entry.id}-v${selectedVersion.version}`}
               initialValue={selectedVersion.comments ?? ""}
               ariaLabel="Recipe comments"
-              textareaClassName="min-h-58"
+              textareaClassName="min-h-52"
               onSave={(value) =>
                 onUpdateSavedRecipeVersion(entry, selectedVersion, {
                   comments: value === "" ? null : value,

@@ -211,6 +211,13 @@ tbody tr:hover > .table-emphasis {
   @apply border-brd bg-surface text-txt-prim hover:border-brd-hov;
 }
 
+/* Bordered box for the markdown comment field's textarea and preview; padded, focus-ringed. */
+.markdown-field {
+  @apply rounded-lg border px-2 py-1;
+  @apply border-brd bg-surface hover:border-brd-hov;
+  @apply focus:ring-foc focus:ring-2 focus:outline-none focus:ring-inset;
+}
+
 /* A single option row in the Headless UI `ThemeSelect` popup, highlighted on focus/selection. */
 .select-option {
   @apply flex cursor-pointer items-center gap-1 px-2 py-1.5;

@@ -131,7 +131,7 @@ fresh](https://fdc.nal.usda.gov/food-details/173475/nutrients).
 
 Sources:
 [nielsen-massey.nl](https://www.nielsen-massey.nl/consumer/products-pure-vanilla-extract.php),
-[nielsenmassey.com/](https://nielsenmassey.com/products/pure-vanilla-extract/).
+[nielsenmassey.com](https://nielsenmassey.com/products/pure-vanilla-extract/).
 
 Ingredients: _Water, Alcohol (35%), Sugar, Vanilla Bean Extractives_. \
 Nutrition facts table: _15kcal, 0g fat, 0g sugar per 1 tsp (5ml)_.

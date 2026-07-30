@@ -3,6 +3,7 @@
 import { Check, Plus, Trash2 } from "lucide-react";
 
 import { RecipeBadge, categoryChipStyle } from "@/app/_elements/tables/batch-checklist";
+import { MarkdownField } from "@/app/_elements/markdown";
 import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";
 import { VersionBadge } from "@/app/_elements/version-badge";
 import {
@@ -238,17 +239,19 @@ export function BatchBuilder({
         </div>
       </div>
 
-      <label className="flex flex-col gap-1">
-        <span className="text-secondary text-xs font-medium tracking-wide uppercase">Notes</span>
-        <textarea
+      <div className="flex flex-col gap-1">
+        <span className="text-secondary mb-1 text-xs font-medium tracking-wide uppercase">
+          Notes
+        </span>
+        <MarkdownField
           value={selection.notes ?? ""}
-          onChange={(e) => onChange({ ...selection, notes: e.target.value })}
+          onChange={(notes) => onChange({ ...selection, notes })}
+          ariaLabel="Notes"
           placeholder="Procedure notes — ageing, churn temperature, observations…"
-          rows={3}
-          className="boxed-input my-0 px-1 py-0.5 text-sm"
-          data-testid="batch-notes"
+          textareaClassName="min-h-20"
+          textareaTestId="batch-notes"
         />
-      </label>
+      </div>
     </div>
   );
 }

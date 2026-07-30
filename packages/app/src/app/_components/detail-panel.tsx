@@ -4,6 +4,7 @@ import { ReactNode, useState } from "react";
 import { Pencil, Trash } from "lucide-react";
 
 import { EntitySource } from "@/app/_components/entity-search";
+import { MarkdownField } from "@/app/_elements/markdown";
 import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
 import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
@@ -119,9 +120,9 @@ export function DeleteAction({
 }
 
 /**
- * Per-comments editor: textarea seeded from `initialValue` plus a Save button. Internal state is
- * owned by the component, which is intentional — parents typically remount it (via a `key` prop
- * tied to the active entry/version) to reseed the textarea when the underlying record changes.
+ * Per-comments editor: a {@link MarkdownField} (Write/Preview tabs) seeded from `initialValue`,
+ * plus a Save button. State is component-owned by design; parents remount it via a `key` tied to
+ * the active entry/version to reseed the field when the underlying record changes.
  */
 export function EditableComments({
   initialValue,
@@ -140,12 +141,12 @@ export function EditableComments({
   const [edited, setEdited] = useState<string>(initialValue);
   return (
     <div className="flex flex-col gap-2">
-      <textarea
+      <MarkdownField
         value={edited}
-        onChange={(e) => setEdited(e.target.value)}
+        onChange={setEdited}
+        ariaLabel={ariaLabel}
         placeholder={placeholder}
-        aria-label={ariaLabel}
-        className={`table-fillable-input text-secondary rounded-lg px-2 py-1 text-sm leading-relaxed ${textareaClassName}`}
+        textareaClassName={textareaClassName}
       />
       <button onClick={() => onSave(edited)} className="action-button self-end px-2 py-0.5 text-sm">
         Save comments
