@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785476264001,
+  "lastUpdate": 1785476295926,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -462010,6 +462010,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1103.73,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 13.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 137.71,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ab85035365f93a67dd12438a83c19e1e59588919",
+          "message": "Move version badge next to name in builder\n\nWrap name and badge in a flex-1 container so the badge rides\nalongside the name instead of being pushed to the row's right edge.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-31T01:25:23-04:00",
+          "tree_id": "a6d59b3b1108b907bb2e3ea981a2e15240244d0a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ab85035365f93a67dd12438a83c19e1e59588919"
+        },
+        "date": 1785476259647,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 700.69,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 869.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 639.04,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 807.49,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 646.59,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 815.04,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 578.25,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 746.7,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] route-only JS (gzip)",
+            "value": 578.25,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] first-load JS (gzip)",
+            "value": 746.7,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1103.72,
             "unit": "KB"
           },
           {
