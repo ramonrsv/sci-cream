@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785475503423,
+  "lastUpdate": 1785475539545,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -432861,6 +432861,58 @@ window.BENCHMARK_DATA = {
             "range": "±0.82%",
             "unit": "ops/sec",
             "extra": "96 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d650f452c4ff6bd60725704ea1fd031dc4d6ccc6",
+          "message": "Link ingredient specs to the crate docs\n\nUnder the JSON spec in the ingredient detail panel, link the spec type's\nrustdoc page plus the guide chapters the entry involves.\n\nThree data tables in `lib/sci-cream/spec-docs.ts` drive it, each extended\non its own: spec type to rustdoc path, guide anchor to label, and a rule\nlist mapping entries to chapters. Rules are independent and additive, so\na new heuristic is one more list entry. Matchers cover spec type, a\ndotted path into the spec body, and the entry name.\n\nThe spec type paths cannot be templated: `MicroSpec` is an enum and the\n`dairy` module hosts two types.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-31T01:00:58-04:00",
+          "tree_id": "1e2966d7b0bb221f61abfe6a14a287665ab3e122",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d650f452c4ff6bd60725704ea1fd031dc4d6ccc6"
+        },
+        "date": 1785475502540,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 47084,
+            "range": "±1.14%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 518396,
+            "range": "±0.37%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 32138,
+            "range": "±1.29%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 391451,
+            "range": "±1.02%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
