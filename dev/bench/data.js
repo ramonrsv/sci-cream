@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785480911028,
+  "lastUpdate": 1785480914650,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -480266,6 +480266,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/ab85035365f93a67dd12438a83c19e1e59588919"
         },
         "date": 1785476298176,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0e4bd9fac58a4ff19a14550b06dc430d658702df",
+          "message": "Remove '[updated ...]` from heading in ing. spec",
+          "timestamp": "2026-07-31T01:38:14-04:00",
+          "tree_id": "f0b1b66d582c889cc54df045b49148a041fee738",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0e4bd9fac58a4ff19a14550b06dc430d658702df"
+        },
+        "date": 1785480913670,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
