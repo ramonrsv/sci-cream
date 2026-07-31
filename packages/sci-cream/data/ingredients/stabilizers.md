@@ -161,7 +161,9 @@ as 0.1%. For a lighter ice cream, or one that needs a long shelf life, you could
 }
 ```
 
-### [Blend 3: Eggless Ice Cream \[edited 10-2018\]](https://under-belly.org/ice-cream-stabilizers/)
+### [Blend 3: Eggless Ice Cream](https://under-belly.org/ice-cream-stabilizers/)
+
+_[edited 10-2018]_
 
 **Soy Lecithin: Locust Bean Gum : Guar Gum : Lambda Carrageenan** \
 **4 : 4 : 2 : 1** \
@@ -192,7 +194,9 @@ impede the whipping of the ice cream."_
 }
 ```
 
-### [Blend 4: Sorbet \[Updated 7-24-2019\]](https://under-belly.org/ice-cream-stabilizers/)
+### [Blend 4: Sorbet](https://under-belly.org/ice-cream-stabilizers/)
+
+_[updated 7-24-2019]_
 
 **Carboxymethyl Cellulose : Guar Gum : Lambda Carrageenan** \
 **2 : 1 : 1** \
