@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785473348338,
+  "lastUpdate": 1785473458808,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -473482,6 +473482,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.83,
             "range": "1.45",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "deff19c5fe055d9c8ebccbc2cbe6046a83ce898c",
+          "message": "Syntax-highlight the ingredient spec JSON\n\nReplace the plain `<pre>` in the ingredient detail panel with\n`react-json-view-lite`, so the spec renders as a highlighted tree\ninstead of a flat blob of text.\n\nThe library ships light and dark style objects, but choosing between\nthem is a JS-level decision. Every color and weight is overridden\ninstead, which makes the two objects identical and lets light/dark\nride on the app's CSS variables like the rest of the app. Colors are\nVS Code's Light+/Dark+ JSON palette.\n\nThe viewer is pinned open via `beforeExpandChange`, with the now-inert\ndisclosure triangles hidden — `display: none` also drops them from the\ntab order rather than leaving dead buttons behind. A CompositeSpec's\n`[ingredient, amount]` tuples are kept on one line by a rule matching\nunlabelled nodes that still nest a group.\n\nThe class map and props preset live in `lib/styles/json-view.ts` so\nfuture JSON viewers read alike; they travel together because the\nhidden triangles and the pinned expansion are two halves of one\ndecision.\n\n`.code-block` is retired, having had exactly one consumer. Unit tests\nmove from the `<pre>` to the viewer's tree role; the visual snapshots\nstill need regenerating.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-31T00:30:12-04:00",
+          "tree_id": "a96cb90dab35b79c98fb165e0b8f9cbdc8854db5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/deff19c5fe055d9c8ebccbc2cbe6046a83ce898c"
+        },
+        "date": 1785473421920,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 63.95,
+            "range": "13.99",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.45,
+            "range": "0.93",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.38,
+            "range": "0.95",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 179.5,
+            "range": "20.54",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.48,
+            "range": "0.04",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 179.5,
+            "range": "20.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 59.57,
+            "range": "13.45",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.6,
+            "range": "0.59",
             "unit": "ms"
           }
         ]
