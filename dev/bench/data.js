@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785473322528,
+  "lastUpdate": 1785473342182,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -460225,6 +460225,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static CSS (gzip)",
             "value": 12.61,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 137.71,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "deff19c5fe055d9c8ebccbc2cbe6046a83ce898c",
+          "message": "Syntax-highlight the ingredient spec JSON\n\nReplace the plain `<pre>` in the ingredient detail panel with\n`react-json-view-lite`, so the spec renders as a highlighted tree\ninstead of a flat blob of text.\n\nThe library ships light and dark style objects, but choosing between\nthem is a JS-level decision. Every color and weight is overridden\ninstead, which makes the two objects identical and lets light/dark\nride on the app's CSS variables like the rest of the app. Colors are\nVS Code's Light+/Dark+ JSON palette.\n\nThe viewer is pinned open via `beforeExpandChange`, with the now-inert\ndisclosure triangles hidden — `display: none` also drops them from the\ntab order rather than leaving dead buttons behind. A CompositeSpec's\n`[ingredient, amount]` tuples are kept on one line by a rule matching\nunlabelled nodes that still nest a group.\n\nThe class map and props preset live in `lib/styles/json-view.ts` so\nfuture JSON viewers read alike; they travel together because the\nhidden triangles and the pinned expansion are two halves of one\ndecision.\n\n`.code-block` is retired, having had exactly one consumer. Unit tests\nmove from the `<pre>` to the viewer's tree role; the visual snapshots\nstill need regenerating.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-31T00:30:12-04:00",
+          "tree_id": "a96cb90dab35b79c98fb165e0b8f9cbdc8854db5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/deff19c5fe055d9c8ebccbc2cbe6046a83ce898c"
+        },
+        "date": 1785473306196,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 700.7,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 869.14,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 638.05,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 806.5,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 646.59,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 815.04,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 578.25,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 746.7,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] route-only JS (gzip)",
+            "value": 578.25,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] first-load JS (gzip)",
+            "value": 746.7,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1102.74,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 13.28,
             "unit": "KB"
           },
           {
