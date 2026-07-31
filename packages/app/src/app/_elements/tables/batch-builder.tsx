@@ -107,10 +107,12 @@ function BuilderRow({
       data-testid={`builder-row-${String(index)}`}
     >
       <ColorPicker index={index} color={color} onPick={onPickColor} />
-      <span className="text-primary min-w-0 flex-1 truncate text-sm">{name}</span>
-      {version !== undefined && (
-        <VersionBadge version={version} title={`Weighing version ${String(version)}`} />
-      )}
+      <span className="flex min-w-0 flex-1 items-center gap-1">
+        <span className="text-primary min-w-0 truncate text-sm">{name}</span>
+        {version !== undefined && (
+          <VersionBadge version={version} title={`Weighing version ${String(version)}`} />
+        )}
+      </span>
       <span className="text-secondary comp-val text-xs tabular-nums">
         {Number(total.toFixed(1))} g
       </span>
