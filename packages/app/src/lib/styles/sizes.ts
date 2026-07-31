@@ -1,6 +1,9 @@
 /** Maximum number of supported recipe slots; main recipe and two reference recipes */
 export const MAX_RECIPES = 3;
-/** Number of ingredient rows per recipe. */
+/**
+ * Number of ingredient row slots a recipe holds in the data model, and so the upper bound on the
+ * rows any recipe table renders. The rendered count is derived per-pane by `useVisibleRows`.
+ */
 export const RECIPE_TOTAL_ROWS = 20;
 
 /** Icon size (px) for grid drag handles. */
@@ -74,6 +77,17 @@ export const REACT_GRID_COMPONENT_HEIGHT = 11;
 export const REACT_GRID_ROW_HEIGHT = 36;
 /** Standard fixed height (px) for full-height grid components such as `RecipeGrid` */
 export const STD_COMPONENT_H_PX = 596;
+
+// ----  Recipe/breakdown table row metrics --------------------------------------------------------
+
+// Derived from the Tailwind classes on the rows themselves, not measured at runtime, so they must
+// be updated alongside those classes. Callers compose their own `<thead>` height from these;
+// `useVisibleRows` divides by them, so being a few px out only ever gains or loses a single row.
+
+/** Rendered height (px) of a table's column-header `<tr>` (its `h-6.5`). */
+export const TABLE_COL_HEADER_H_PX = 26;
+/** Rendered height (px) of a table's body or totals `<tr>` (their `h-6.25`). */
+export const TABLE_BODY_ROW_H_PX = 25;
 
 // ----  Shared chart chrome (tooltip + layout) ----------------------------------------------------
 

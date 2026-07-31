@@ -14,8 +14,6 @@
 - [ ] `RecipeEditor` does not update the ingredient name/version if the original is deleted.
 - [ ] Increase the height of comments in `/recipes`; it's difficult to edit in such a short slot.
 - [ ] Add `height` prop to `PropertiesTable` so that it can adapt the number of properties shown.
-- [ ] Add support for `RecipeEditor` and `CompositionBreakdown` to render the maximum of the number
-      of rows needed to fill the current height, and the current number of filled in rows + 1.
 - [ ] `autoLink` has a bug where it includes closing `),` in the produced links; fix or replace.
 - [ ] Targets not selected for balancing in `Watchers` can show in `PropertiesChart`; investigate.
 - [ ] Investigate relative delta behavior in `Watchers`, they seem to not be changing gradually.
@@ -30,10 +28,6 @@
       CSS-driven so nothing remounts on resize; opening a batch on mobile switches to the editor.
 - [ ] Add support for showing recipe diffs (ingredient, quantities) between versions of a recipe
       in `/recipes`. Comparing ingredient lines may be tricky, similar to a git diff.
-- [ ] Add support for `RecipeEditor` to display fewer lines than the internal fixed number of lines,
-      and to dynamically adjust the number based on the panel size, only showing a scrollbar if the
-      any filled lines would be hidden. This may cause issues with `CompositionBreakdown`, which
-      currently relies on a fixed number of rows, and won't be easy to make vertically scrollable.
 - [ ] Add support for comments in blog posts, maybe also in documentation posts.
 - [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
 - [ ] Add a home page with a quick intro and overview, pointing to user guide, docs, etc.
@@ -119,6 +113,12 @@
 
 ## Completed
 
+- [x] Add support for `RecipeEditor` and `CompositionBreakdown` to render the maximum of the number
+      of rows needed to fill the current height, and the current number of filled in rows + 1.
+- [x] Add support for `RecipeEditor` to display fewer lines than the internal fixed number of lines,
+      and to dynamically adjust the number based on the panel size, only showing a scrollbar if the
+      any filled lines would be hidden. This may cause issues with `CompositionBreakdown`, which
+      currently relies on a fixed number of rows, and won't be easy to make vertically scrollable.
 - [x] Add automatic links to specs, docs, etc. in `/ingredients`, based on the loaded spec.
 - [x] Add richer syntax highlighting of JSON ingredient specs in `/ingredients` details panel.
 - [x] Add support for markdown with a preview tab in comments for `/recipes` and `/ingredients`.

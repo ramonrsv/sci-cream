@@ -7,6 +7,8 @@ import {
   makeRecipeId,
   makeEmptyRecipeContext,
   isRecipeEmpty,
+  isRowFilled,
+  lastFilledRowIndex,
   recipeHasIngredients,
   calculateMixTotal,
   effectiveMixTotal,
@@ -135,6 +137,58 @@ describe("Recipe Helper Functions", () => {
     it("should return false when mixTotal is negative (edge case)", () => {
       recipe.mixTotal = -1;
       expect(isRecipeEmpty(recipe)).toBe(false);
+    });
+  });
+
+  // ---- isRowFilled / lastFilledRowIndex ---------------------------------------------------------
+
+  describe("isRowFilled", () => {
+    it("should treat a row with a name, a quantity, or both as filled", () => {
+      expect(isRowFilled({ index: 0, name: "Whole Milk", quantity: 100 })).toBe(true);
+      expect(isRowFilled({ index: 0, name: "Whole Milk", quantity: undefined })).toBe(true);
+      expect(isRowFilled({ index: 0, name: "", quantity: 100 })).toBe(true);
+    });
+
+    it("should treat a row with neither a name nor a quantity as empty", () => {
+      expect(isRowFilled({ index: 0, name: "", quantity: undefined })).toBe(false);
+    });
+
+    it("should treat a zero quantity as filled, since the user typed it", () => {
+      expect(isRowFilled({ index: 0, name: "", quantity: 0 })).toBe(true);
+    });
+  });
+
+  describe("lastFilledRowIndex", () => {
+    let recipe: Recipe;
+
+    beforeEach(() => {
+      recipe = makeEmptyRecipe(0);
+    });
+
+    it("should return -1 for a recipe with no filled rows", () => {
+      expect(lastFilledRowIndex(recipe)).toBe(-1);
+    });
+
+    it("should return the index of the only filled row", () => {
+      recipe.ingredientRows[0].name = "Whole Milk";
+      expect(lastFilledRowIndex(recipe)).toBe(0);
+    });
+
+    it("should return the last filled index when filled rows are contiguous", () => {
+      [0, 1, 2].forEach((idx) => (recipe.ingredientRows[idx].name = "Whole Milk"));
+      expect(lastFilledRowIndex(recipe)).toBe(2);
+    });
+
+    it("should look past empty rows to the last filled one when rows are not contiguous", () => {
+      recipe.ingredientRows[0].name = "Whole Milk";
+      recipe.ingredientRows[1].quantity = 50;
+      recipe.ingredientRows[5].name = "Sucrose";
+      expect(lastFilledRowIndex(recipe)).toBe(5);
+    });
+
+    it("should return the final index when the last slot is filled", () => {
+      recipe.ingredientRows[RECIPE_TOTAL_ROWS - 1].name = "Salt";
+      expect(lastFilledRowIndex(recipe)).toBe(RECIPE_TOTAL_ROWS - 1);
     });
   });
 

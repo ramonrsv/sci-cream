@@ -7,7 +7,7 @@ import userEvent from "@testing-library/user-event";
 import { type SetStateAction, useState, useEffect } from "react";
 import { useSession } from "next-auth/react";
 
-import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
+import { RECIPE_TOTAL_ROWS, TABLE_BODY_ROW_H_PX, TABLE_COL_HEADER_H_PX } from "@/lib/styles/sizes";
 import {
   makeEmptyRecipeContext,
   type RecipeContext,
@@ -52,6 +52,19 @@ vi.mock("next-auth/react", () => ({
 }));
 
 vi.mock("@/lib/resources/session", () => ({ useSessionResources: vi.fn() }));
+
+// Drive how many rows the editor renders by controlling the measured pane size. `null` (default)
+// leaves it unmeasured, matching production's first paint and jsdom's missing `ResizeObserver`.
+let mockSize: { width: number; height: number } | null = null;
+
+vi.mock("@/lib/hooks/use-element-size", () => ({
+  useElementSize: () => ({ ref: { current: null }, size: mockSize }),
+}));
+
+/** Pane height (px) that exactly fits `rows` body rows beneath the editor's head + totals row. */
+function paneFitting(rows: number): number {
+  return TABLE_COL_HEADER_H_PX + TABLE_BODY_ROW_H_PX + rows * TABLE_BODY_ROW_H_PX;
+}
 
 vi.mock("@/lib/data", () => ({
   createUserRecipe: vi
@@ -245,6 +258,7 @@ describe("RecipeEditor", () => {
   beforeEach(() => {
     vi.clearAllMocks();
     setupVitestCanvasMock();
+    mockSize = null;
 
     recipeContext = makeEmptyRecipeContext();
     wasmResources = makeWasmResources(
@@ -273,6 +287,15 @@ describe("RecipeEditor", () => {
     recipeContext.recipes[0].ingredientRows[0].name = "Whole Milk";
     recipeContext.recipes[0].ingredientRows[0].quantity = 500;
     recipeContext.recipes[0].mixTotal = 500;
+  }
+
+  /** Fill the first `count` rows of slot 0 with a valid ingredient, for row-count sizing tests */
+  function populateRows(count: number) {
+    for (let rowIdx = 0; rowIdx < count; rowIdx++) {
+      recipeContext.recipes[0].ingredientRows[rowIdx].name = "Whole Milk";
+      recipeContext.recipes[0].ingredientRows[rowIdx].quantity = 100;
+    }
+    recipeContext.recipes[0].mixTotal = 100 * count;
   }
 
   /** Mock useSession to return an authenticated session with `a@b.c` */
@@ -307,13 +330,45 @@ describe("RecipeEditor", () => {
     expect(screen.getByRole("button", { name: /clear/i })).toBeInTheDocument();
   });
 
-  it("should render table with correct number of ingredient rows", () => {
+  it("should render every ingredient row while the pane is unmeasured", () => {
     const { container } = render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
 
     const tbody = container.querySelector("tbody");
     const rows = tbody?.querySelectorAll("tr");
-    // @todo Temporarily filter out last row to avoid a scrollbar on default panel height
-    expect(rows).toHaveLength(RECIPE_TOTAL_ROWS - 1);
+    expect(rows).toHaveLength(RECIPE_TOTAL_ROWS);
+  });
+
+  it("should render only the rows that fit once the pane is measured", () => {
+    mockSize = { width: 400, height: paneFitting(8) };
+    const { container } = render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
+
+    expect(container.querySelectorAll("tbody tr")).toHaveLength(8);
+  });
+
+  it("should keep every filled row plus a blank one reachable in a too-short pane", () => {
+    // Only 4 rows fit, but 10 are filled, so the pane scrolls rather than hiding row 9.
+    populateRows(10);
+    mockSize = { width: 400, height: paneFitting(4) };
+    const { container } = render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
+
+    expect(container.querySelectorAll("tbody tr")).toHaveLength(11);
+  });
+
+  it("should look past gaps to the last filled row when sizing to content", () => {
+    // Rows 0 and 7 filled with 6 empty between: rows 0-7 plus a blank must stay reachable.
+    recipeContext.recipes[0].ingredientRows[0].name = "Whole Milk";
+    recipeContext.recipes[0].ingredientRows[7].name = "Sucrose";
+    mockSize = { width: 400, height: paneFitting(3) };
+    const { container } = render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
+
+    expect(container.querySelectorAll("tbody tr")).toHaveLength(9);
+  });
+
+  it("should never render more rows than the recipe has slots", () => {
+    mockSize = { width: 400, height: paneFitting(RECIPE_TOTAL_ROWS + 6) };
+    const { container } = render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
+
+    expect(container.querySelectorAll("tbody tr")).toHaveLength(RECIPE_TOTAL_ROWS);
   });
 
   it("should render table headers", () => {

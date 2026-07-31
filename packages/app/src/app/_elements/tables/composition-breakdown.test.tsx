@@ -12,7 +12,7 @@ import { QtyToggle, QTY_TOGGLE_SHORT_LABELS } from "@/app/_elements/selects/qty-
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { getSelectedOptionLabel, getSelectOptionLabels } from "@/__tests__/unit/select";
 import { applyQtyToggleAndFormat } from "@/lib/comp-value-format";
-import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
+import { RECIPE_TOTAL_ROWS, TABLE_BODY_ROW_H_PX, TABLE_COL_HEADER_H_PX } from "@/lib/styles/sizes";
 
 import { CompKey, comp_key_as_med_str } from "@workspace/sci-cream";
 
@@ -27,7 +27,25 @@ import {
   setQtyToggle,
 } from "@/__tests__/unit/util";
 
+// Drive how many rows the breakdown renders by controlling the measured pane size. `null` (the
+// default) leaves it unmeasured, matching production's first paint and jsdom's missing
+// `ResizeObserver`.
+let mockSize: { width: number; height: number } | null = null;
+
+vi.mock("@/lib/hooks/use-element-size", () => ({
+  useElementSize: () => ({ ref: { current: null }, size: mockSize }),
+}));
+
+/** Pane height (px) that exactly fits `rows` body rows beneath the head + totals row. */
+function paneFitting(rows: number): number {
+  return TABLE_COL_HEADER_H_PX + TABLE_BODY_ROW_H_PX + rows * TABLE_BODY_ROW_H_PX;
+}
+
 describe("CompositionBreakdown", () => {
+  beforeEach(() => {
+    mockSize = null;
+  });
+
   afterEach(() => {
     cleanup();
   });
@@ -163,7 +181,7 @@ describe("CompositionBreakdown", () => {
       expect(totalQtyCell.textContent?.trim()).toBe("100");
     });
 
-    it(`should render one row per ingredientRow in the tbody`, () => {
+    it(`should render one row per ingredientRow in the tbody while the pane is unmeasured`, () => {
       const recipeCtx = makeMockRecipeContext([]);
       const { container } = render(
         <CompositionBreakdown
@@ -174,6 +192,36 @@ describe("CompositionBreakdown", () => {
       );
       const tbody = container.querySelector("#composition-breakdown-table tbody")!;
       expect(tbody.querySelectorAll("tr")).toHaveLength(RECIPE_TOTAL_ROWS);
+    });
+
+    it("should render only the rows that fit once the pane is measured", () => {
+      mockSize = { width: 600, height: paneFitting(6) };
+      const recipeCtx = makeMockRecipeContext([]);
+      const { container } = render(
+        <CompositionBreakdown
+          recipe={recipeCtx.recipes[0]}
+          compKeys={[]}
+          qtyToggle={QtyToggle.Quantity}
+        />,
+      );
+      const tbody = container.querySelector("#composition-breakdown-table tbody")!;
+      expect(tbody.querySelectorAll("tr")).toHaveLength(6);
+    });
+
+    it("should keep every filled row reachable in a pane too short to fit them", () => {
+      // Main fills 10 rows; only 4 fit, so the pane scrolls rather than hiding the rest. Unlike the
+      // editor there's no trailing blank row, since the breakdown isn't edited in place.
+      mockSize = { width: 600, height: paneFitting(4) };
+      const recipeCtx = makeMockRecipeContext([RecipeID.Main]);
+      const { container } = render(
+        <CompositionBreakdown
+          recipe={recipeCtx.recipes[0]}
+          compKeys={[]}
+          qtyToggle={QtyToggle.Quantity}
+        />,
+      );
+      const tbody = container.querySelector("#composition-breakdown-table tbody")!;
+      expect(tbody.querySelectorAll("tr")).toHaveLength(getLightRecipe(RecipeID.Main).length);
     });
 
     it("should display ingredient names in the ingredient rows", () => {

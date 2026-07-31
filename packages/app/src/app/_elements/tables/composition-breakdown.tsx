@@ -8,6 +8,7 @@ import {
   effectiveMixTotal,
   isRecipeEmpty,
   getRecipeIndices,
+  lastFilledRowIndex,
 } from "@/lib/recipe/recipe";
 import {
   KeyFilterSelect,
@@ -23,6 +24,8 @@ import { RecipeSelect, useRecipeIdxState } from "@/app/_elements/selects/recipe-
 import { useOrderKeys } from "@/lib/group-by";
 import { applyQtyToggleAndFormat, formatCompositionValue } from "@/lib/comp-value-format";
 import { groupEnabledCompKeys } from "@/lib/sci-cream/sci-cream";
+import { useVisibleRows } from "@/lib/hooks/use-visible-rows";
+import { RECIPE_TOTAL_ROWS, TABLE_BODY_ROW_H_PX, TABLE_COL_HEADER_H_PX } from "@/lib/styles/sizes";
 import { STATE_VAL } from "@/lib/util";
 
 import { CompKey, comp_key_as_med_str, getWasmEnums } from "@workspace/sci-cream";
@@ -58,6 +61,12 @@ export function CompositionBreakdown({
   qtyToggle: QtyToggle;
 }) {
   const mixMass = effectiveMixTotal(recipe);
+
+  const { paneRef, visibleRows } = useVisibleRows({
+    totalRows: RECIPE_TOTAL_ROWS,
+    minRows: lastFilledRowIndex(recipe) + 1,
+    headHeight: TABLE_COL_HEADER_H_PX + TABLE_BODY_ROW_H_PX,
+  });
 
   /** Formats a totals-row cell value for the given comp key, applying the current qtyToggle */
   const formattedTotalCell = (compKey: CompKey) => {
@@ -96,6 +105,7 @@ export function CompositionBreakdown({
 
   return (
     <div
+      ref={paneRef}
       id="composition-breakdown-table"
       className="min-h-0 flex-1 overflow-auto whitespace-nowrap"
     >
@@ -142,7 +152,7 @@ export function CompositionBreakdown({
         </thead>
         {/* Ingredients, quantities, and composition values */}
         <tbody>
-          {recipe.ingredientRows.map((row) => (
+          {recipe.ingredientRows.slice(0, visibleRows).map((row) => (
             <tr key={row.index} className="h-6.25">
               <td className={`table-inner-cell ${ingPinCell} p-0`}>
                 <div className="w-48 truncate px-2" title={row.name}>

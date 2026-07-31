@@ -143,6 +143,19 @@ export function isRecipeEmpty(recipe: RecipeSummary): boolean {
   return recipe.mixTotal === undefined || recipe.mixTotal === 0;
 }
 
+/** Returns `true` when a row carries user input, whether or not its name resolves to a real one */
+export function isRowFilled(row: IngredientRow): boolean {
+  return row.name !== "" || row.quantity !== undefined;
+}
+
+/**
+ * Index of the last filled row, or `-1` when every row is empty. Rows can be filled with gaps, so
+ * content-sized tables must render through this index rather than count filled rows.
+ */
+export function lastFilledRowIndex(recipe: Recipe): number {
+  return recipe.ingredientRows.reduce((last, row) => (isRowFilled(row) ? row.index : last), -1);
+}
+
 /**
  * Returns `true` when a recipe has at least one row resolved to a valid WASM `Ingredient`,
  * regardless of quantity. Use this — not {@link isRecipeEmpty} — to gate balancing and target

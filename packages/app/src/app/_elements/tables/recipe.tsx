@@ -27,6 +27,8 @@ import {
   isLockable,
   isRecipeEmpty,
   isRecipeRenamed,
+  isRowFilled,
+  lastFilledRowIndex,
   makeBalancedRecipeUpdates,
   makeLightRecipe,
   makeUpdatedRecipe,
@@ -56,7 +58,13 @@ import { ShareRecipeAction } from "@/app/_elements/recipe-share-dialog";
 import { VersionBadge } from "@/app/_elements/version-badge";
 import { SaveStatusDot } from "@/app/_elements/save-status-dot";
 import { formatCompositionValue } from "@/lib/comp-value-format";
-import { COMPONENT_ACTION_ICON_SIZE, RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
+import { useVisibleRows } from "@/lib/hooks/use-visible-rows";
+import {
+  COMPONENT_ACTION_ICON_SIZE,
+  RECIPE_TOTAL_ROWS,
+  TABLE_BODY_ROW_H_PX,
+  TABLE_COL_HEADER_H_PX,
+} from "@/lib/styles/sizes";
 import { standardInputStepByPercent, verify } from "@/lib/util";
 
 /** Parse a user-entered evaporation grams value from an input event (empty → undefined). */
@@ -85,7 +93,7 @@ export function RecipeTable({
 }) {
   const mixTotal = recipe.mixTotal;
   const evaporation = recipe.evaporation;
-  const rows = recipe.ingredientRows.filter((row) => row.name !== "" || row.quantity !== undefined);
+  const rows = recipe.ingredientRows.filter(isRowFilled);
 
   return (
     <table className="w-full border-separate border-spacing-0">
@@ -169,6 +177,7 @@ export function RecipeTable({
  */
 export function RecipeEditorTable({
   recipe,
+  visibleRows,
   validIngredients,
   hasIngredient,
   onNameChange,
@@ -177,6 +186,8 @@ export function RecipeEditorTable({
   onLockAllToggle,
 }: {
   recipe: Recipe;
+  /** Leading ingredient rows to render, sized to the pane by `useVisibleRows` */
+  visibleRows: number;
   validIngredients: string[];
   hasIngredient: (name: string) => boolean;
   onNameChange: (rowIdx: number, name: string) => void;
@@ -254,75 +265,72 @@ export function RecipeEditorTable({
         </thead>
         <tbody>
           {/* @todo The ingredient/input rows are not respecting < h-6/[25px]; not sure why yet */}
-          {/* @todo Temporarily filter out last row to avoid a scrollbar on default panel height */}
-          {recipe.ingredientRows
-            .filter((row) => row.index < RECIPE_TOTAL_ROWS - 1)
-            .map((row) => (
-              <tr key={row.index} className="group h-6.25">
-                <td className="table-inner-cell max-w-0">
-                  <div className="flex items-center">
-                    <input
-                      type="search"
-                      value={row.name}
-                      onChange={(e) => onNameChange(row.index, e.target.value)}
-                      className={`table-fillable-input whitespace-nowrap ${
-                        row.name === "" || hasIngredient(row.name)
-                          ? "focus:ring-blue-400"
-                          : "-outline-offset-2 outline-red-400 outline-solid focus:ring-red-400"
-                      } min-w-0 flex-1 px-2`}
-                      placeholder=""
-                      list="valid-ingredients"
-                    />
-                    {/* Lock toggle, shown only for a resolved ingredient with an amount to hold.
-                        Unlocked, it reveals on row hover/focus; locked, it always shows. */}
-                    {recipe.index === 0 && isLockable(row, hasIngredient) && (
-                      <button
-                        type="button"
-                        className={`action-button mr-0.5 flex shrink-0 items-center px-0.5 py-0 ${
-                          row.locked
-                            ? ""
-                            : "opacity-0 group-hover:opacity-60 focus-visible:opacity-60"
-                        }`}
-                        onClick={() => onLockToggle(row.index)}
-                        aria-pressed={!!row.locked}
-                        title={
-                          row.locked
-                            ? "Locked — held at this amount while balancing (click to unlock)"
-                            : "Unlocked — the balancer may change this amount (click to lock)"
-                        }
-                        data-testid={`recipe-row-${row.index}-lock`}
-                      >
-                        {row.locked ? (
-                          <Lock size={COMPONENT_ACTION_ICON_SIZE - 4} />
-                        ) : (
-                          <LockOpen size={COMPONENT_ACTION_ICON_SIZE - 4} />
-                        )}
-                      </button>
-                    )}
-                  </div>
-                </td>
-                <td className="table-inner-cell">
+          {recipe.ingredientRows.slice(0, visibleRows).map((row) => (
+            <tr key={row.index} className="group h-6.25">
+              <td className="table-inner-cell max-w-0">
+                <div className="flex items-center">
                   <input
-                    type="number"
-                    value={row.quantity?.toString() || ""}
-                    onChange={(e) => onQuantityChange(row.index, e.target.value)}
+                    type="search"
+                    value={row.name}
+                    onChange={(e) => onNameChange(row.index, e.target.value)}
+                    className={`table-fillable-input whitespace-nowrap ${
+                      row.name === "" || hasIngredient(row.name)
+                        ? "focus:ring-blue-400"
+                        : "-outline-offset-2 outline-red-400 outline-solid focus:ring-red-400"
+                    } min-w-0 flex-1 px-2`}
                     placeholder=""
-                    step={standardInputStepByPercent(row.quantity, 2.5, 10)}
-                    min={0}
-                    className={`table-fillable-input w-full text-right font-mono ${
-                      row.quantity !== undefined && !(row.name !== "" && hasIngredient(row.name))
-                        ? "-outline-offset-2 outline-red-400 outline-solid focus:ring-red-400"
-                        : ""
-                    }`}
+                    list="valid-ingredients"
                   />
-                </td>
-                <td className="table-inner-cell comp-val px-1">
-                  {row.name !== "" && hasIngredient(row.name) && row.quantity && mixTotal
-                    ? formatCompositionValue((row.quantity / mixTotal) * 100)
-                    : ""}
-                </td>
-              </tr>
-            ))}
+                  {/* Lock toggle, shown only for a resolved ingredient with an amount to hold.
+                      Unlocked, it reveals on row hover/focus; locked, it always shows. */}
+                  {recipe.index === 0 && isLockable(row, hasIngredient) && (
+                    <button
+                      type="button"
+                      className={`action-button mr-0.5 flex shrink-0 items-center px-0.5 py-0 ${
+                        row.locked
+                          ? ""
+                          : "opacity-0 group-hover:opacity-60 focus-visible:opacity-60"
+                      }`}
+                      onClick={() => onLockToggle(row.index)}
+                      aria-pressed={!!row.locked}
+                      title={
+                        row.locked
+                          ? "Locked — held at this amount while balancing (click to unlock)"
+                          : "Unlocked — the balancer may change this amount (click to lock)"
+                      }
+                      data-testid={`recipe-row-${row.index}-lock`}
+                    >
+                      {row.locked ? (
+                        <Lock size={COMPONENT_ACTION_ICON_SIZE - 4} />
+                      ) : (
+                        <LockOpen size={COMPONENT_ACTION_ICON_SIZE - 4} />
+                      )}
+                    </button>
+                  )}
+                </div>
+              </td>
+              <td className="table-inner-cell">
+                <input
+                  type="number"
+                  value={row.quantity?.toString() || ""}
+                  onChange={(e) => onQuantityChange(row.index, e.target.value)}
+                  placeholder=""
+                  step={standardInputStepByPercent(row.quantity, 2.5, 10)}
+                  min={0}
+                  className={`table-fillable-input w-full text-right font-mono ${
+                    row.quantity !== undefined && !(row.name !== "" && hasIngredient(row.name))
+                      ? "-outline-offset-2 outline-red-400 outline-solid focus:ring-red-400"
+                      : ""
+                  }`}
+                />
+              </td>
+              <td className="table-inner-cell comp-val px-1">
+                {row.name !== "" && hasIngredient(row.name) && row.quantity && mixTotal
+                  ? formatCompositionValue((row.quantity / mixTotal) * 100)
+                  : ""}
+              </td>
+            </tr>
+          ))}
         </tbody>
       </table>
     </>
@@ -371,6 +379,14 @@ export function RecipeEditor({
 
   const [currentRecipeIdx, setCurrentRecipeIdx] = useRecipeIdxState(persistKey, 0, { urlSlot });
   const currentRecipe = allRecipes[currentRecipeIdx];
+
+  // Keep every filled row reachable, plus one blank row to type the next ingredient into.
+  const { paneRef, visibleRows } = useVisibleRows({
+    totalRows: RECIPE_TOTAL_ROWS,
+    minRows: lastFilledRowIndex(currentRecipe) + 2,
+    headHeight: TABLE_COL_HEADER_H_PX + TABLE_BODY_ROW_H_PX,
+  });
+
   const [saveStatus, setSaveStatus] = useState<SaveStatus>(SaveStatus.Idle);
   const [deevaporateError, setDeevaporateError] = useState<string | undefined>(undefined);
   const [newVersionInput, setNewVersionInput] = useState("");
@@ -957,9 +973,14 @@ export function RecipeEditor({
           </button>
         </div>
       </div>
-      <div data-testid="recipe-editor-table-pane" className="min-h-0 flex-1 overflow-auto">
+      <div
+        ref={paneRef}
+        data-testid="recipe-editor-table-pane"
+        className="min-h-0 flex-1 overflow-auto"
+      >
         <RecipeEditorTable
           recipe={currentRecipe}
+          visibleRows={visibleRows}
           validIngredients={validIngredients}
           hasIngredient={wasmResources.hasIngredient}
           onNameChange={updateCurrentIngredientRowName}
