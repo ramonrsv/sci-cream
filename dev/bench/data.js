@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785476315278,
+  "lastUpdate": 1785476459152,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -475532,6 +475532,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.51,
             "range": "0.36",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ab85035365f93a67dd12438a83c19e1e59588919",
+          "message": "Move version badge next to name in builder\n\nWrap name and badge in a flex-1 container so the badge rides\nalongside the name instead of being pushed to the row's right edge.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-31T01:25:23-04:00",
+          "tree_id": "a6d59b3b1108b907bb2e3ea981a2e15240244d0a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ab85035365f93a67dd12438a83c19e1e59588919"
+        },
+        "date": 1785476422725,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 62.64,
+            "range": "9.99",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.4,
+            "range": "0.90",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.38,
+            "range": "0.91",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 177,
+            "range": "13.96",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.5,
+            "range": "0.09",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 177,
+            "range": "13.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.14,
+            "range": "9.73",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.4,
+            "range": "0.32",
             "unit": "ms"
           }
         ]
