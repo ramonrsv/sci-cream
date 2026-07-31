@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785473732051,
+  "lastUpdate": 1785474137732,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -400006,6 +400006,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 638.25,
             "range": "17.94",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "deff19c5fe055d9c8ebccbc2cbe6046a83ce898c",
+          "message": "Syntax-highlight the ingredient spec JSON\n\nReplace the plain `<pre>` in the ingredient detail panel with\n`react-json-view-lite`, so the spec renders as a highlighted tree\ninstead of a flat blob of text.\n\nThe library ships light and dark style objects, but choosing between\nthem is a JS-level decision. Every color and weight is overridden\ninstead, which makes the two objects identical and lets light/dark\nride on the app's CSS variables like the rest of the app. Colors are\nVS Code's Light+/Dark+ JSON palette.\n\nThe viewer is pinned open via `beforeExpandChange`, with the now-inert\ndisclosure triangles hidden — `display: none` also drops them from the\ntab order rather than leaving dead buttons behind. A CompositeSpec's\n`[ingredient, amount]` tuples are kept on one line by a rule matching\nunlabelled nodes that still nest a group.\n\nThe class map and props preset live in `lib/styles/json-view.ts` so\nfuture JSON viewers read alike; they travel together because the\nhidden triangles and the pinned expansion are two halves of one\ndecision.\n\n`.code-block` is retired, having had exactly one consumer. Unit tests\nmove from the `<pre>` to the viewer's tree role; the visual snapshots\nstill need regenerating.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-31T00:30:12-04:00",
+          "tree_id": "a96cb90dab35b79c98fb165e0b8f9cbdc8854db5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/deff19c5fe055d9c8ebccbc2cbe6046a83ce898c"
+        },
+        "date": 1785474101150,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 51.25,
+            "range": "5.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 52.38,
+            "range": "4.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 58.63,
+            "range": "3.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2326.63,
+            "range": "21.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 321.38,
+            "range": "5.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 329.75,
+            "range": "4.21",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 349,
+            "range": "4.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16620.5,
+            "range": "58.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 15.35,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 890.63,
+            "range": "25.48",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53.38,
+            "range": "1.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54.88,
+            "range": "1.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.13,
+            "range": "1.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42.25,
+            "range": "1.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 123.63,
+            "range": "3.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 85,
+            "range": "4.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.67,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 39.81,
+            "range": "0.16",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 616.88,
+            "range": "16.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 657.75,
+            "range": "6.28",
             "unit": "ms"
           }
         ]
