@@ -49,7 +49,7 @@ test.describe("Visual Regression: Ingredient Search", () => {
 
     const detailPanel = page.locator(".search-detail-panel");
     // The 'comments' field is removed; the full text renders as a paragraph below
-    await expect(detailPanel.locator("pre")).not.toContainText('"comments"');
+    await expect(detailPanel.getByRole("tree")).not.toContainText("comments");
     // The URL in the comments should be auto-linked
     await expect(detailPanel.getByRole("link")).toBeVisible();
 
@@ -63,7 +63,7 @@ test.describe("Visual Regression: Ingredient Search", () => {
     await selectIngredientByName(page, "Whole Milk");
 
     const detailPanel = page.locator(".search-detail-panel");
-    // Use { exact: true } so the substring match doesn't also hit the JSON pre's
+    // Use { exact: true } so the substring match doesn't also hit the JSON viewer's
     // "alias": / "for": keys (Playwright's getByText is case-insensitive substring by default).
     await expect(detailPanel.getByText("Alias", { exact: true })).toBeVisible();
     await expect(detailPanel.getByText("Dairy", { exact: true })).toBeVisible();

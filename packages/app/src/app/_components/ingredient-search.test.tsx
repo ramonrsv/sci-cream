@@ -56,6 +56,14 @@ const savedFructose: IngredientSpecJson = {
   SweetenerSpec: { sweetness: 1.7 },
 };
 
+/**
+ * The detail panel's JSON spec viewer. Its `textContent` runs the tokens together;
+ * `"name":"x"`with no space — since the viewer spaces them with margins rather than text.
+ */
+function specTree(container: HTMLElement): HTMLElement {
+  return container.querySelector(".search-detail-panel [role='tree']") as HTMLElement;
+}
+
 // ---------------------------------------------------------------------------
 // ingredientMatchesQuery
 // ---------------------------------------------------------------------------
@@ -203,14 +211,14 @@ describe("IngredientSearch", () => {
       expect(within(detailPanel).getByText("Sweetener")).toBeInTheDocument();
     });
 
-    it("pretty-prints the JSON spec in a <pre> block (without _source)", () => {
+    it("renders the JSON spec in the viewer tree (without _source)", () => {
       const { container } = render(<IngredientSearch />);
       fireEvent.click(screen.getByRole("button", { name: /1% Milk/ }));
-      const pre = container.querySelector(".search-detail-panel pre") as HTMLElement;
-      expect(pre).toBeInTheDocument();
-      expect(pre.textContent).toContain('"name": "1% Milk"');
-      expect(pre.textContent).toContain('"DairySimpleSpec"');
-      expect(pre.textContent).not.toContain("_source");
+      const tree = specTree(container);
+      expect(tree).toBeInTheDocument();
+      expect(tree.textContent).toContain('"name":"1% Milk"');
+      expect(tree.textContent).toContain('"DairySimpleSpec"');
+      expect(tree.textContent).not.toContain("_source");
     });
 
     it("renders the CompositionView alongside the JSON spec", () => {
@@ -223,12 +231,12 @@ describe("IngredientSearch", () => {
   });
 
   describe("comments rendering", () => {
-    it("does not render the comments field inside the JSON pre block", () => {
+    it("does not render the comments field inside the JSON spec viewer", () => {
       const { container } = render(<IngredientSearch />);
       fireEvent.click(screen.getByRole("button", { name: /Sealtest 3.25% Milk/ }));
-      const pre = container.querySelector(".search-detail-panel pre") as HTMLElement;
-      expect(pre.textContent).not.toContain('"comments"');
-      expect(pre.textContent).not.toContain("https://example.com/sealtest");
+      const tree = specTree(container);
+      expect(tree.textContent).not.toContain("comments");
+      expect(tree.textContent).not.toContain("https://example.com/sealtest");
     });
 
     it("renders the raw comments text as a paragraph below the body", () => {
@@ -249,10 +257,8 @@ describe("IngredientSearch", () => {
     it("does not render a comments paragraph for entries with no comments field", () => {
       const { container } = render(<IngredientSearch />);
       fireEvent.click(screen.getByRole("button", { name: /1% Milk/ }));
-      const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
-      // The pre block keeps no `comments` key at all when the source entry has none
-      const pre = detailPanel.querySelector("pre") as HTMLElement;
-      expect(pre.textContent).not.toContain('"comments"');
+      // The viewer keeps no `comments` key at all when the source entry has none
+      expect(specTree(container).textContent).not.toContain("comments");
     });
 
     it("does not render an editable comments textarea (read-only)", () => {
@@ -291,13 +297,13 @@ describe("IngredientSearch", () => {
       expect(within(detailPanel).queryByText(/alias for/i)).not.toBeInTheDocument();
     });
 
-    it("pretty-prints the alias JSON ({ alias, for }) without _source", () => {
+    it("renders the alias JSON ({ alias, for }) without _source", () => {
       const { container } = render(<IngredientSearch />);
       fireEvent.click(screen.getByRole("button", { name: /Whole Milk/ }));
-      const pre = container.querySelector(".search-detail-panel pre") as HTMLElement;
-      expect(pre.textContent).toContain('"alias": "Whole Milk"');
-      expect(pre.textContent).toContain('"for": "3.25% Milk"');
-      expect(pre.textContent).not.toContain("_source");
+      const tree = specTree(container);
+      expect(tree.textContent).toContain('"alias":"Whole Milk"');
+      expect(tree.textContent).toContain('"for":"3.25% Milk"');
+      expect(tree.textContent).not.toContain("_source");
     });
   });
 

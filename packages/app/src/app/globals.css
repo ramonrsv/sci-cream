@@ -3,6 +3,7 @@
 
 @import "react-grid-layout/css/styles.css";
 @import "react-resizable/css/styles.css";
+@import "react-json-view-lite/dist/index.css";
 
 @custom-variant dark (&:where(.dark, .dark *));
 
@@ -52,6 +53,14 @@
   --color-err-brd: var(--color-red-400);
   --color-warn-brd: var(--color-amber-400);
   --color-info-brd: var(--color-blue-400);
+
+  /* JSON viewer syntax colors from VS Code's Light+ / Dark+ JSON palette, which the Modern themes
+     also inherit (dark in `.dark` below). `kw` covers booleans, null, and undefined. */
+  --color-json-key: #0451a5;
+  --color-json-str: #a31515;
+  --color-json-num: #098658;
+  --color-json-kw: #0000ff;
+  --color-json-punc: #000000;
 }
 
 /* Categorical badge hues for make-recipe — positional, never semantic, theme-dependent since they
@@ -94,6 +103,13 @@
   --color-err-brd: var(--color-red-600);
   --color-warn-brd: var(--color-amber-500);
   --color-info-brd: var(--color-blue-600);
+
+  /* The Dark+ counterparts of the Light+ JSON syntax colors above. */
+  --color-json-key: #9cdcfe;
+  --color-json-str: #ce9178;
+  --color-json-num: #b5cea8;
+  --color-json-kw: #569cd6;
+  --color-json-punc: #d4d4d4;
 
   /* The same ten colors re-stepped for the dark surface, not a separate palette. */
   --color-cat-blue: #3987e5;
@@ -504,10 +520,58 @@ tbody tr:hover > .table-emphasis {
   border-color: color-mix(in oklab, var(--cat) 45%, transparent);
 }
 
-/* Code Display */
-.code-block {
+/* JSON Viewer (react-json-view-lite)
+   The library supplies the structure and spacing; every color and weight is overridden here. These
+   rules are unlayered like the imported stylesheet, so source order settles the ties. */
+.json-view {
   @apply overflow-auto rounded-lg border p-2 font-mono text-sm leading-snug;
-  @apply border-brd text-txt-sec bg-surface;
+  @apply border-brd bg-surface;
+}
+
+/* One step per level; `ch` is one monospace character, so 2ch matches `JSON.stringify(…, 2)`. */
+.json-view [role="treeitem"] {
+  padding: 0 0 0 2ch;
+}
+
+/* The root carries no step of its own, so the outer braces sit against the container padding. */
+.json-view > [role="treeitem"] {
+  padding-left: 0;
+}
+
+/* The library bolds keys and punctuation; this palette distinguishes them by hue instead. */
+.json-view-key {
+  color: var(--color-json-key);
+  font-weight: normal;
+}
+
+.json-view-punc {
+  color: var(--color-json-punc);
+  font-weight: normal;
+}
+
+.json-view-str {
+  color: var(--color-json-str);
+}
+
+.json-view-num {
+  color: var(--color-json-num);
+}
+
+.json-view-kw {
+  color: var(--color-json-kw);
+}
+
+/* Pinned open, so the triangles are inert; `display: none` drops them from the tab order too. */
+.json-view-no-toggle {
+  @apply hidden;
+}
+
+/* Keep a CompositeSpec's `[ingredient, amount]` tuples inline: array elements are the unlabelled
+   nodes that still nest a group; sitting inside one excludes the root, also unlabelled. */
+.json-view ul > [role="treeitem"]:not(:has(> .json-view-key)):has(> ul) > ul,
+.json-view ul > [role="treeitem"]:not(:has(> .json-view-key)):has(> ul) > ul > [role="treeitem"] {
+  display: inline;
+  padding: 0;
 }
 
 /* Scrollbar Styles */

@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import { JsonView } from "react-json-view-lite";
 
 import {
   allSpecEntries,
@@ -19,6 +20,7 @@ import { STD_COMPONENT_H_PX } from "@/lib/styles/sizes";
 import { STORAGE_KEYS } from "@/lib/local-storage";
 import { useFreeOnReplace, useSeededWasmResources } from "@/lib/resources/wasm";
 import { STATE_VAL } from "@/lib/util";
+import { JSON_VIEW_PROPS } from "@/lib/styles/json-view";
 import { Markdown } from "@/app/_elements/markdown";
 
 /** Props for {@link IngredientSearch} */
@@ -49,13 +51,13 @@ function getEntryComments(entry: SpecEntryJson): string | undefined {
 }
 
 /**
- * Pretty-print an entry as JSON, omitting the EntitySearch `_source` tag and the `comments` field
- * from the spec — the full text is rendered separately under the spec via {@link Markdown}.
+ * Strip an entry down to what the spec view shows: the EntitySearch `_source` tag is internal, and
+ * the `comments` field renders separately under the spec via {@link Markdown}.
  */
-function stringifyEntry(entry: Tagged<SpecEntryJson>): string {
+function displayEntry(entry: Tagged<SpecEntryJson>): object {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { _source, comments, ...display } = entry as Tagged<SpecEntryJson> & { comments?: unknown };
-  return JSON.stringify(display, null, 2);
+  return display;
 }
 
 /** Detail-panel body for an ingredient: JSON spec + resolved composition side-by-side */
@@ -78,7 +80,7 @@ function IngredientDetailBody({ entry }: { entry: Tagged<SpecEntryJson> }) {
         <div className="hidden @[484px]:block">
           <ToolbarSpacer />
         </div>
-        <pre className="code-block">{stringifyEntry(entry)}</pre>
+        <JsonView data={displayEntry(entry)} {...JSON_VIEW_PROPS} />
       </div>
       <div
         className="max-w-65 min-w-50 flex-1 basis-35"
