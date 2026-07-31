@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785475547401,
+  "lastUpdate": 1785475619146,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -474507,6 +474507,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.6,
             "range": "0.59",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d650f452c4ff6bd60725704ea1fd031dc4d6ccc6",
+          "message": "Link ingredient specs to the crate docs\n\nUnder the JSON spec in the ingredient detail panel, link the spec type's\nrustdoc page plus the guide chapters the entry involves.\n\nThree data tables in `lib/sci-cream/spec-docs.ts` drive it, each extended\non its own: spec type to rustdoc path, guide anchor to label, and a rule\nlist mapping entries to chapters. Rules are independent and additive, so\na new heuristic is one more list entry. Matchers cover spec type, a\ndotted path into the spec body, and the entry name.\n\nThe spec type paths cannot be templated: `MicroSpec` is an enum and the\n`dairy` module hosts two types.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-31T01:00:58-04:00",
+          "tree_id": "1e2966d7b0bb221f61abfe6a14a287665ab3e122",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d650f452c4ff6bd60725704ea1fd031dc4d6ccc6"
+        },
+        "date": 1785475583292,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 65.59,
+            "range": "10.06",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.36,
+            "range": "0.85",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.3,
+            "range": "0.84",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 180.5,
+            "range": "18.38",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.48,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 180.5,
+            "range": "18.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 60.45,
+            "range": "9.28",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.51,
+            "range": "0.36",
             "unit": "ms"
           }
         ]
