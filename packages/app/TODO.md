@@ -34,7 +34,6 @@
       and to dynamically adjust the number based on the panel size, only showing a scrollbar if the
       any filled lines would be hidden. This may cause issues with `CompositionBreakdown`, which
       currently relies on a fixed number of rows, and won't be easy to make vertically scrollable.
-- [ ] Add automatic links to specs, docs, etc. in `/ingredients`, based on the loaded spec.
 - [ ] Add support for comments in blog posts, maybe also in documentation posts.
 - [ ] Add a 'User Guide' navbar item to contain documentation about how to use the app.
 - [ ] Add a home page with a quick intro and overview, pointing to user guide, docs, etc.
@@ -120,6 +119,7 @@
 
 ## Completed
 
+- [x] Add automatic links to specs, docs, etc. in `/ingredients`, based on the loaded spec.
 - [x] Add richer syntax highlighting of JSON ingredient specs in `/ingredients` details panel.
 - [x] Add support for markdown with a preview tab in comments for `/recipes` and `/ingredients`.
 - [x] Try to make the `RecipeEditor` toolbar fit in one row in large mobile portrait layouts.

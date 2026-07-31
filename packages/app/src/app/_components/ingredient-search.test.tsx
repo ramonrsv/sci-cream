@@ -221,6 +221,25 @@ describe("IngredientSearch", () => {
       expect(tree.textContent).not.toContain("_source");
     });
 
+    it("links the spec type and its guide chapters to the crate docs", () => {
+      const { container } = render(<IngredientSearch savedSpecs={[savedFructose]} />);
+      fireEvent.click(screen.getByRole("button", { name: /Fructose/ }));
+      const detailPanel = container.querySelector(".search-detail-panel") as HTMLElement;
+
+      const typeLink = within(detailPanel).getByRole("link", { name: "SweetenerSpec" });
+      expect(typeLink).toHaveAttribute(
+        "href",
+        "https://docs.rs/sci-cream/latest/sci_cream/specs/sweetener/struct.SweetenerSpec.html",
+      );
+      expect(typeLink).toHaveAttribute("target", "_blank");
+      expect(typeLink).toHaveAttribute("rel", "noopener noreferrer");
+
+      expect(within(detailPanel).getByRole("link", { name: "Sweeteners" })).toHaveAttribute(
+        "href",
+        "https://docs.rs/sci-cream/latest/sci_cream/docs/index.html#sweeteners",
+      );
+    });
+
     it("renders the CompositionView alongside the JSON spec", () => {
       const { container } = render(<IngredientSearch />);
       fireEvent.click(screen.getByRole("button", { name: /1% Milk/ }));

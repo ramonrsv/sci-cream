@@ -21,6 +21,7 @@ import { STORAGE_KEYS } from "@/lib/local-storage";
 import { useFreeOnReplace, useSeededWasmResources } from "@/lib/resources/wasm";
 import { STATE_VAL } from "@/lib/util";
 import { JSON_VIEW_PROPS } from "@/lib/styles/json-view";
+import { specDocLinks } from "@/lib/sci-cream/spec-docs";
 import { Markdown } from "@/app/_elements/markdown";
 
 /** Props for {@link IngredientSearch} */
@@ -60,6 +61,28 @@ function displayEntry(entry: Tagged<SpecEntryJson>): object {
   return display;
 }
 
+/** Crate documentation for the entry's spec type and the topics it involves; empty if unmapped */
+function SpecDocLinks({ entry }: { entry: SpecEntryJson }) {
+  const links = specDocLinks(entry);
+  if (links.length === 0) return null;
+
+  return (
+    <p className="text-secondary mt-2 flex flex-wrap gap-x-3 gap-y-1 text-sm">
+      {links.map(({ label, href }) => (
+        <a
+          key={href}
+          href={href}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-blue-500 hover:underline dark:text-blue-400"
+        >
+          {label}
+        </a>
+      ))}
+    </p>
+  );
+}
+
 /** Detail-panel body for an ingredient: JSON spec + resolved composition side-by-side */
 function IngredientDetailBody({ entry }: { entry: Tagged<SpecEntryJson> }) {
   const { wasmBridge, updateIdx: wasmUpdateIdx } = useSeededWasmResources()[STATE_VAL];
@@ -81,6 +104,7 @@ function IngredientDetailBody({ entry }: { entry: Tagged<SpecEntryJson> }) {
           <ToolbarSpacer />
         </div>
         <JsonView data={displayEntry(entry)} {...JSON_VIEW_PROPS} />
+        <SpecDocLinks entry={entry} />
       </div>
       <div
         className="max-w-65 min-w-50 flex-1 basis-35"

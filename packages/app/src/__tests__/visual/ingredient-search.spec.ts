@@ -50,8 +50,14 @@ test.describe("Visual Regression: Ingredient Search", () => {
     const detailPanel = page.locator(".search-detail-panel");
     // The 'comments' field is removed; the full text renders as a paragraph below
     await expect(detailPanel.getByRole("tree")).not.toContainText("comments");
-    // The URL in the comments should be auto-linked
-    await expect(detailPanel.getByRole("link")).toBeVisible();
+    // The URL in the comments should be auto-linked. Scoped to the comments prose because the
+    // spec's docs.rs links sit in the same panel.
+    await expect(detailPanel.locator(".prose").getByRole("link")).toBeVisible();
+    // The spec type links to its rustdoc page
+    await expect(detailPanel.getByRole("link", { name: "DairyLabelSpec" })).toHaveAttribute(
+      "href",
+      "https://docs.rs/sci-cream/latest/sci_cream/specs/dairy/struct.DairyLabelSpec.html",
+    );
 
     expect(await captureFullContent(page, "search-detail-panel")).toMatchSnapshot(
       `ingredient-search-detail-panel.png`,
