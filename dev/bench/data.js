@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785480914650,
+  "lastUpdate": 1785480985061,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -476557,6 +476557,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.4,
             "range": "0.32",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "0e4bd9fac58a4ff19a14550b06dc430d658702df",
+          "message": "Remove '[updated ...]` from heading in ing. spec",
+          "timestamp": "2026-07-31T01:38:14-04:00",
+          "tree_id": "f0b1b66d582c889cc54df045b49148a041fee738",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/0e4bd9fac58a4ff19a14550b06dc430d658702df"
+        },
+        "date": 1785480949381,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.1,
+            "range": "9.13",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.93,
+            "range": "0.73",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.86,
+            "range": "0.74",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 169,
+            "range": "13.67",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.51,
+            "range": "0.06",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 169,
+            "range": "13.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 56,
+            "range": "9.04",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.31,
+            "range": "0.43",
             "unit": "ms"
           }
         ]
