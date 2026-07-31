@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785473679002,
+  "lastUpdate": 1785473732051,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -62273,6 +62273,192 @@ window.BENCHMARK_DATA = {
             "name": "interpolate_pairs(near_end)",
             "value": 725,
             "range": "± 1",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "deff19c5fe055d9c8ebccbc2cbe6046a83ce898c",
+          "message": "Syntax-highlight the ingredient spec JSON\n\nReplace the plain `<pre>` in the ingredient detail panel with\n`react-json-view-lite`, so the spec renders as a highlighted tree\ninstead of a flat blob of text.\n\nThe library ships light and dark style objects, but choosing between\nthem is a JS-level decision. Every color and weight is overridden\ninstead, which makes the two objects identical and lets light/dark\nride on the app's CSS variables like the rest of the app. Colors are\nVS Code's Light+/Dark+ JSON palette.\n\nThe viewer is pinned open via `beforeExpandChange`, with the now-inert\ndisclosure triangles hidden — `display: none` also drops them from the\ntab order rather than leaving dead buttons behind. A CompositeSpec's\n`[ingredient, amount]` tuples are kept on one line by a rule matching\nunlabelled nodes that still nest a group.\n\nThe class map and props preset live in `lib/styles/json-view.ts` so\nfuture JSON viewers read alike; they travel together because the\nhidden triangles and the pinned expansion are two halves of one\ndecision.\n\n`.code-block` is retired, having had exactly one consumer. Unit tests\nmove from the `<pre>` to the viewer's tree role; the visual snapshots\nstill need regenerating.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-31T00:30:12-04:00",
+          "tree_id": "a96cb90dab35b79c98fb165e0b8f9cbdc8854db5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/deff19c5fe055d9c8ebccbc2cbe6046a83ce898c"
+        },
+        "date": 1785473696347,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4040,
+            "range": "± 76",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 157152,
+            "range": "± 3334",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2458,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 184458,
+            "range": "± 998",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4165,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4647,
+            "range": "± 27",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4763,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4813,
+            "range": "± 19",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4757,
+            "range": "± 21",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4669,
+            "range": "± 114",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 105469,
+            "range": "± 1730",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 109125,
+            "range": "± 1144",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 181440656,
+            "range": "± 806806",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 627703,
+            "range": "± 5100",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6868,
+            "range": "± 164",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 53,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6361,
+            "range": "± 117",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 95746,
+            "range": "± 1245",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 92218,
+            "range": "± 391",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 152231,
+            "range": "± 704",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 178399,
+            "range": "± 1972",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 332018,
+            "range": "± 5134",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14572,
+            "range": "± 63",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 640,
+            "range": "± 2",
             "unit": "ns/iter"
           },
           {
