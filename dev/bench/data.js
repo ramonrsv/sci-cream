@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785481731082,
+  "lastUpdate": 1785557147709,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -463984,6 +463984,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1103.73,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 13.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 137.71,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2db6064971783339c8d5db61d98c8d999df7ea1c",
+          "message": "Size recipe tables to their panel height\n\n`RecipeEditor` rendered a fixed 19 rows (`RECIPE_TOTAL_ROWS - 1`, a\nhand-tuned fudge marked `@todo Temporarily`) and `CompositionBreakdown`\nall 20, so neither reacted to its panel's south-handle resize: a short\npanel scrolled through mostly-empty rows, a tall one wasted space, and\nthe two were silently off by one.\n\nBoth now measure their own scroll pane and render\n`max(rows that fit, rows that must stay reachable)`, capped at\n`RECIPE_TOTAL_ROWS`, so a scrollbar appears only when a filled row would\notherwise be hidden. The floor uses the last filled index, not a count,\nsince rows can be filled with gaps; the editor adds a trailing blank row\nto type into, the read-only breakdown does not.\n\n`useVisibleRows` takes `headHeight` from the caller rather than assuming\na shape, so `PropertiesTable` (one header row, no totals) can adopt it.\n\nAt the default panel height this reproduces the previous counts exactly,\n19 and 20, both verified in-browser with zero vertical overflow.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-31T23:50:16-04:00",
+          "tree_id": "19342085c24e03fe3d97ce5d4a0960ee6298ac10",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2db6064971783339c8d5db61d98c8d999df7ea1c"
+        },
+        "date": 1785557119056,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 701.76,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 870.21,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 639.58,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 808.03,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 647.04,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 815.49,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 578.26,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 746.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] route-only JS (gzip)",
+            "value": 578.26,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] first-load JS (gzip)",
+            "value": 746.71,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1106.82,
             "unit": "KB"
           },
           {
