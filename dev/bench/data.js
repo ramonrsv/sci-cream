@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785557150924,
+  "lastUpdate": 1785557183531,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -482032,6 +482032,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/0e4bd9fac58a4ff19a14550b06dc430d658702df"
         },
         "date": 1785480852347,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1082.89,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.29,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1665.71,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 517.55,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 564.25,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1866.83,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2db6064971783339c8d5db61d98c8d999df7ea1c",
+          "message": "Size recipe tables to their panel height\n\n`RecipeEditor` rendered a fixed 19 rows (`RECIPE_TOTAL_ROWS - 1`, a\nhand-tuned fudge marked `@todo Temporarily`) and `CompositionBreakdown`\nall 20, so neither reacted to its panel's south-handle resize: a short\npanel scrolled through mostly-empty rows, a tall one wasted space, and\nthe two were silently off by one.\n\nBoth now measure their own scroll pane and render\n`max(rows that fit, rows that must stay reachable)`, capped at\n`RECIPE_TOTAL_ROWS`, so a scrollbar appears only when a filled row would\notherwise be hidden. The floor uses the last filled index, not a count,\nsince rows can be filled with gaps; the editor adds a trailing blank row\nto type into, the read-only breakdown does not.\n\n`useVisibleRows` takes `headHeight` from the caller rather than assuming\na shape, so `PropertiesTable` (one header row, no totals) can adopt it.\n\nAt the default panel height this reproduces the previous counts exactly,\n19 and 20, both verified in-browser with zero vertical overflow.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-31T23:50:16-04:00",
+          "tree_id": "19342085c24e03fe3d97ce5d4a0960ee6298ac10",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2db6064971783339c8d5db61d98c8d999df7ea1c"
+        },
+        "date": 1785557146372,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
