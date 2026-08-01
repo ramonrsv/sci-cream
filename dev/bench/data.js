@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785557657621,
+  "lastUpdate": 1785557672855,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -436103,6 +436103,58 @@ window.BENCHMARK_DATA = {
             "name": "propKeyAsMedStr",
             "value": 385034,
             "range": "±1.86%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "67ba75b31e1d24b8db38a5e11ab9d739f6c1c01b",
+          "message": "Save recipes with unresolved ingredient names\n\nRecipe saves used makeLightRecipe, which silently dropped rows\nwhose ingredient name didn't resolve. Moved the row-preserving\nbuilder from share.ts to recipe.ts as makeLightRecipeAllRows and\nuse it for saves too, so an invalid recipe still saves faithfully.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-01T00:09:36-04:00",
+          "tree_id": "29901a8006892c1d23163cadf0ca68fb6d14fcc2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/67ba75b31e1d24b8db38a5e11ab9d739f6c1c01b"
+        },
+        "date": 1785557635765,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 50222,
+            "range": "±0.94%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 491900,
+            "range": "±0.97%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 35330,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 381387,
+            "range": "±1.10%",
             "unit": "ops/sec",
             "extra": "92 samples"
           }
