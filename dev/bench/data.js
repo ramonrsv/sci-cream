@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785557505124,
+  "lastUpdate": 1785557554987,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -63028,6 +63028,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 11,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2db6064971783339c8d5db61d98c8d999df7ea1c",
+          "message": "Size recipe tables to their panel height\n\n`RecipeEditor` rendered a fixed 19 rows (`RECIPE_TOTAL_ROWS - 1`, a\nhand-tuned fudge marked `@todo Temporarily`) and `CompositionBreakdown`\nall 20, so neither reacted to its panel's south-handle resize: a short\npanel scrolled through mostly-empty rows, a tall one wasted space, and\nthe two were silently off by one.\n\nBoth now measure their own scroll pane and render\n`max(rows that fit, rows that must stay reachable)`, capped at\n`RECIPE_TOTAL_ROWS`, so a scrollbar appears only when a filled row would\notherwise be hidden. The floor uses the last filled index, not a count,\nsince rows can be filled with gaps; the editor adds a trailing blank row\nto type into, the read-only breakdown does not.\n\n`useVisibleRows` takes `headHeight` from the caller rather than assuming\na shape, so `PropertiesTable` (one header row, no totals) can adopt it.\n\nAt the default panel height this reproduces the previous counts exactly,\n19 and 20, both verified in-browser with zero vertical overflow.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-07-31T23:50:16-04:00",
+          "tree_id": "19342085c24e03fe3d97ce5d4a0960ee6298ac10",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2db6064971783339c8d5db61d98c8d999df7ea1c"
+        },
+        "date": 1785557518718,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4079,
+            "range": "± 73",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 157113,
+            "range": "± 857",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2414,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 155551,
+            "range": "± 677",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4257,
+            "range": "± 102",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4359,
+            "range": "± 48",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4780,
+            "range": "± 84",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 4549,
+            "range": "± 22",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4516,
+            "range": "± 117",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 4956,
+            "range": "± 80",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 110006,
+            "range": "± 1771",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 113053,
+            "range": "± 2919",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 185775599,
+            "range": "± 2063134",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 620096,
+            "range": "± 4337",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6843,
+            "range": "± 138",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 53,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6833,
+            "range": "± 62",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 97776,
+            "range": "± 2530",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 94072,
+            "range": "± 299",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 156009,
+            "range": "± 584",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 153939,
+            "range": "± 634",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 331708,
+            "range": "± 3211",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14402,
+            "range": "± 44",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 635,
+            "range": "± 4",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
             "range": "± 0",
             "unit": "ns/iter"
           }
