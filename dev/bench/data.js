@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785625695719,
+  "lastUpdate": 1785626108486,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -404776,6 +404776,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 511,
             "range": "7.79",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "24f8d4f10b6e087f0e71d33f1fef8ffd36ba6474",
+          "message": "Resize comment box to not scroll on 1440p chrome\n\n* Resize the recipe-search comment box from `min-h-52` to `min-h-47` so\n  that on a 1440p screen, on Chrome, with toolbars, there is no vertical\n  scroll. This is a hotfix, there is an upcoming change that will add\n  smarter comment box sizing and user-editable size via a drag handle.",
+          "timestamp": "2026-08-01T18:59:11-04:00",
+          "tree_id": "e6dee39c020e88d5e128df4e778c17752d9cf02a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/24f8d4f10b6e087f0e71d33f1fef8ffd36ba6474"
+        },
+        "date": 1785626073643,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 54,
+            "range": "5.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 59.38,
+            "range": "5.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 65.5,
+            "range": "8.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2585.13,
+            "range": "30.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 335,
+            "range": "5.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 345.75,
+            "range": "4.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 366.25,
+            "range": "3.70",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17627.5,
+            "range": "118.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 14.5,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 935.38,
+            "range": "16.81",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 55.25,
+            "range": "1.64",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 59.38,
+            "range": "2.23",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.38,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 44.88,
+            "range": "1.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 132.13,
+            "range": "2.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 93.63,
+            "range": "4.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 60.01,
+            "range": "0.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 44.57,
+            "range": "0.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 640.88,
+            "range": "9.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 684.25,
+            "range": "21.41",
             "unit": "ms"
           }
         ]
