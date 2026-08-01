@@ -10,7 +10,6 @@
 - [ ] Add visual tests for the save-recipe and save-as-new-version interfaces, inc. color changes.
 - [ ] Add a leading emoji to some selects to make their purpose clearer; also add title/labels.
 - [ ] Add a recipe version quality signal and/or favorites; one/two thumbs up, thumb down, star?
-- [ ] Invalid ingredient names are not saved when saving a recipe. They should be, so need a fix.
 - [ ] `RecipeEditor` does not update the ingredient name/version if the original is deleted.
 - [ ] Increase the height of comments in `/recipes`; it's difficult to edit in such a short slot.
 - [ ] Add `height` prop to `PropertiesTable` so that it can adapt the number of properties shown.
@@ -113,6 +112,7 @@
 
 ## Completed
 
+- [x] Invalid ingredient names are not saved when saving a recipe. They should be, so need a fix.
 - [x] Add support for `RecipeEditor` and `CompositionBreakdown` to render the maximum of the number
       of rows needed to fill the current height, and the current number of filled in rows + 1.
 - [x] Add support for `RecipeEditor` to display fewer lines than the internal fixed number of lines,

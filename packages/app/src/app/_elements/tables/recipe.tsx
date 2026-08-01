@@ -31,6 +31,7 @@ import {
   lastFilledRowIndex,
   makeBalancedRecipeUpdates,
   makeLightRecipe,
+  makeLightRecipeAllRows,
   makeUpdatedRecipe,
   makeUpdatedRecipeContext,
   makeUpdatedRow,
@@ -49,7 +50,6 @@ import {
   updateUserRecipeVersion,
 } from "@/lib/data";
 
-import { makeShareRows } from "@/lib/recipe/share";
 import { useSessionResources } from "@/lib/resources/session";
 import type { SavedRecipeVersionJson } from "@/lib/data";
 import { displayVersionName, nextVersionName, validateVersionName } from "@/lib/recipe/version";
@@ -608,7 +608,7 @@ export function RecipeEditor({
     );
 
     await performSave(recipe, async () => {
-      const lightRecipe = makeLightRecipe(recipe, wasmResources.hasIngredient);
+      const lightRecipe = makeLightRecipeAllRows(recipe);
 
       if (recipe.savedRef === undefined) {
         const created = await createUserRecipe(userEmail, recipe.name.trim(), lightRecipe, {
@@ -649,7 +649,7 @@ export function RecipeEditor({
 
     await performSave(recipe, async () => {
       if (!(await applyRenameIfNeeded(recipe))) return undefined;
-      const lightRecipe = makeLightRecipe(recipe, wasmResources.hasIngredient);
+      const lightRecipe = makeLightRecipeAllRows(recipe);
       const created = await createUserRecipeVersion(userEmail, recipeId, lightRecipe, {
         ...(versionName !== undefined ? { versionName } : {}),
         evaporation: recipe.evaporation || null,
@@ -859,7 +859,7 @@ export function RecipeEditor({
                 node: (
                   <ShareRecipeAction
                     name={currentRecipe.name}
-                    rows={makeShareRows(currentRecipe)}
+                    rows={makeLightRecipeAllRows(currentRecipe)}
                     evaporation={currentRecipe.evaporation}
                     versionName={shareableVersionName}
                     buttonClassName="action-button px-1 py-0.75"

@@ -4,7 +4,6 @@ import { deflateRawSync } from "node:zlib";
 import type { LightRecipe } from "@workspace/sci-cream";
 
 import { RECIPE_TOTAL_ROWS } from "@/lib/styles/sizes";
-import { makeEmptyRecipe } from "@/lib/recipe/recipe";
 import {
   MAX_DECODED_BYTES,
   MAX_ENCODED_CHARS,
@@ -20,7 +19,6 @@ import {
   findUserDefinedShareNames,
   makeEmbedSnippet,
   makeSharePayload,
-  makeShareRows,
   makeShareUrl,
   type SharePayload,
 } from "./share";
@@ -189,22 +187,6 @@ describe("ShareError", () => {
     expect(new ShareError(ShareErrorKind.TooLarge).message).toMatch(/maximum supported size/);
     expect(new ShareError(ShareErrorKind.UnknownVersion).message).toMatch(/newer version/);
     expect(new ShareError(ShareErrorKind.InvalidSpec).message).toMatch(/invalid ingredient spec/);
-  });
-});
-
-describe("makeShareRows", () => {
-  it("keeps named rows in editor order, including unresolved names, and zeroes unset qty", () => {
-    const recipe = makeEmptyRecipe(0);
-    recipe.ingredientRows[1] = { index: 1, name: "3.25% Milk", quantity: 500 };
-    recipe.ingredientRows[3] = { index: 3, name: "Totally Unknown", quantity: undefined };
-    recipe.ingredientRows[5] = { index: 5, name: "", quantity: 12 }; // nameless: dropped
-    recipe.ingredientRows[7] = { index: 7, name: "Sucrose", quantity: 0 };
-
-    expect(makeShareRows(recipe)).toEqual([
-      ["3.25% Milk", 500],
-      ["Totally Unknown", 0],
-      ["Sucrose", 0],
-    ]);
   });
 });
 

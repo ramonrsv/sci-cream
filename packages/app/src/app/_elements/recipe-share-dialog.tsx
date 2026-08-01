@@ -187,8 +187,8 @@ function ShareDialogBody({
 
 /**
  * Share action: an icon button opening a popup with a copyable share link and `<iframe>` embed
- * snippet, plus an opt-in consent list when the recipe uses the sharer's own ingredient specs.
- * `rows` come from `makeShareRows` (editor) or a saved version; disabled when there are none.
+ * snippet, plus an opt-in consent list when user-saved ingredient specs are used. `rows` come from
+ * {@link makeLightRecipeAllRows} (editor) or a saved version; disabled when there are none.
  */
 export function ShareRecipeAction({
   name,

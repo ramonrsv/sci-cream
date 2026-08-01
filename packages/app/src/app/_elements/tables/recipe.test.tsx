@@ -1027,6 +1027,27 @@ describe("RecipeEditor", () => {
       });
     });
 
+    it("saves rows with an unresolved ingredient name rather than dropping them", async () => {
+      mockSignedIn();
+      populateRecipe("My Recipe");
+      recipeContext.recipes[0].ingredientRows[1].name = "Totally Unknown";
+      recipeContext.recipes[0].ingredientRows[1].quantity = 50;
+      render(<RecipeEditor {...makeRecipeEditorProps([0])} />);
+
+      fireEvent.click(screen.getByTitle("Save recipe"));
+      await waitFor(() => {
+        expect(createUserRecipe).toHaveBeenCalledWith(
+          "a@b.c",
+          "My Recipe",
+          [
+            ["Whole Milk", 500],
+            ["Totally Unknown", 50],
+          ],
+          { evaporation: null },
+        );
+      });
+    });
+
     it("passes the recipe's evaporation to createUserRecipe", async () => {
       mockSignedIn();
       populateRecipe("My Recipe");

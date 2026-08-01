@@ -14,6 +14,7 @@ import {
   effectiveMixTotal,
   makeSciCreamRecipe,
   makeLightRecipe,
+  makeLightRecipeAllRows,
   makeBalanceLocks,
   makeBalancedRecipeUpdates,
   makeUpdatedRecipe,
@@ -394,6 +395,24 @@ describe("Recipe Helper Functions", () => {
       expect(lines).toHaveLength(2);
       expect(lines[0]).toEqual(["Whole Milk", 50]);
       expect(lines[1]).toEqual(["Sucrose", 30]);
+    });
+  });
+
+  // ---- makeLightRecipeAllRows --------------------------------------------------------------------
+
+  describe("makeLightRecipeAllRows", () => {
+    it("keeps named rows in editor order, including unresolved names, and zeroes unset qty", () => {
+      const recipe = makeEmptyRecipe(0);
+      recipe.ingredientRows[1] = { index: 1, name: "3.25% Milk", quantity: 500 };
+      recipe.ingredientRows[3] = { index: 3, name: "Totally Unknown", quantity: undefined };
+      recipe.ingredientRows[5] = { index: 5, name: "", quantity: 12 }; // nameless: dropped
+      recipe.ingredientRows[7] = { index: 7, name: "Sucrose", quantity: 0 };
+
+      expect(makeLightRecipeAllRows(recipe)).toEqual([
+        ["3.25% Milk", 500],
+        ["Totally Unknown", 0],
+        ["Sucrose", 0],
+      ]);
     });
   });
 

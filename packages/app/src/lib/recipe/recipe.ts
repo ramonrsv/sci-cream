@@ -264,6 +264,17 @@ export function makeLightRecipe(
 }
 
 /**
+ * Build a `[name, quantity]` array from every row with a non-empty name, in editor order. Unlike
+ * {@link makeLightRecipe} this keeps rows whose names don't resolve to a known ingredient, so
+ * saving or sharing a recipe never silently drops an unresolved row. An unset quantity is 0.
+ */
+export function makeLightRecipeAllRows(recipe: Recipe): LightRecipe {
+  return recipe.ingredientRows
+    .filter((row) => row.name !== "")
+    .map((row) => [row.name, row.quantity ?? 0] as LightRecipeLine);
+}
+
+/**
  * Build the {@link BalanceLocks} list for `Bridge.balance_recipe` / `validate_recipe_targets`: one
  * `[lightRecipeIndex, { Amount }]` entry per locked, {@link isLockable} row. Indices are positions
  * within {@link makeLightRecipe}, so this applies the same {@link isLightRecipeEligible} filter

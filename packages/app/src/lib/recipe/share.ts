@@ -1,4 +1,4 @@
-import type { LightRecipe, LightRecipeLine } from "@workspace/sci-cream";
+import type { LightRecipe } from "@workspace/sci-cream";
 import {
   MixProperties,
   OnConflict,
@@ -211,17 +211,6 @@ export function makeSharePayload(
     ...(specs !== undefined && specs.length > 0 ? { s: specs } : {}),
     ...(versionName ? { vn: versionName } : {}),
   };
-}
-
-/**
- * Extract the shareable `[name, quantity]` rows from a recipe: every row with a non-empty name, in
- * editor order. Unlike `makeLightRecipe` this keeps rows whose names don't resolve — the viewer
- * shows them as unresolved rather than silently dropping them. An unset quantity shares as 0.
- */
-export function makeShareRows(recipe: Recipe): LightRecipe {
-  return recipe.ingredientRows
-    .filter((row) => row.name !== "")
-    .map((row) => [row.name, row.quantity ?? 0] as LightRecipeLine);
 }
 
 /**
