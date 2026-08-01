@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785625293978,
+  "lastUpdate": 1785625306546,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -437096,6 +437096,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.10%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "24f8d4f10b6e087f0e71d33f1fef8ffd36ba6474",
+          "message": "Resize comment box to not scroll on 1440p chrome\n\n* Resize the recipe-search comment box from `min-h-52` to `min-h-47` so\n  that on a 1440p screen, on Chrome, with toolbars, there is no vertical\n  scroll. This is a hotfix, there is an upcoming change that will add\n  smarter comment box sizing and user-editable size via a drag handle.",
+          "timestamp": "2026-08-01T18:59:11-04:00",
+          "tree_id": "e6dee39c020e88d5e128df4e778c17752d9cf02a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/24f8d4f10b6e087f0e71d33f1fef8ffd36ba6474"
+        },
+        "date": 1785625281899,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 82438,
+            "range": "±0.61%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 728890,
+            "range": "±0.66%",
+            "unit": "ops/sec",
+            "extra": "98 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 60966,
+            "range": "±0.76%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 591917,
+            "range": "±1.53%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
           }
         ]
       }
