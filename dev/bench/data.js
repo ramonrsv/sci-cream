@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785557683074,
+  "lastUpdate": 1785557686311,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -482230,6 +482230,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/2db6064971783339c8d5db61d98c8d999df7ea1c"
         },
         "date": 1785557150232,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "67ba75b31e1d24b8db38a5e11ab9d739f6c1c01b",
+          "message": "Save recipes with unresolved ingredient names\n\nRecipe saves used makeLightRecipe, which silently dropped rows\nwhose ingredient name didn't resolve. Moved the row-preserving\nbuilder from share.ts to recipe.ts as makeLightRecipeAllRows and\nuse it for saves too, so an invalid recipe still saves faithfully.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-01T00:09:36-04:00",
+          "tree_id": "29901a8006892c1d23163cadf0ca68fb6d14fcc2",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/67ba75b31e1d24b8db38a5e11ab9d739f6c1c01b"
+        },
+        "date": 1785557685529,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
