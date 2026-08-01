@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785625329219,
+  "lastUpdate": 1785625459083,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -479632,6 +479632,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.61,
             "range": "0.83",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "24f8d4f10b6e087f0e71d33f1fef8ffd36ba6474",
+          "message": "Resize comment box to not scroll on 1440p chrome\n\n* Resize the recipe-search comment box from `min-h-52` to `min-h-47` so\n  that on a 1440p screen, on Chrome, with toolbars, there is no vertical\n  scroll. This is a hotfix, there is an upcoming change that will add\n  smarter comment box sizing and user-editable size via a drag handle.",
+          "timestamp": "2026-08-01T18:59:11-04:00",
+          "tree_id": "e6dee39c020e88d5e128df4e778c17752d9cf02a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/24f8d4f10b6e087f0e71d33f1fef8ffd36ba6474"
+        },
+        "date": 1785625422239,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 66.72,
+            "range": "7.68",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 15.46,
+            "range": "1.47",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 15.44,
+            "range": "1.47",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 188.5,
+            "range": "12.07",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.54,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 188.5,
+            "range": "12.07",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 61.2,
+            "range": "7.93",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.82,
+            "range": "0.66",
             "unit": "ms"
           }
         ]
