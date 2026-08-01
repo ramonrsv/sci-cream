@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785558268170,
+  "lastUpdate": 1785625293978,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -484145,6 +484145,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/67ba75b31e1d24b8db38a5e11ab9d739f6c1c01b"
         },
         "date": 1785557629983,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1082.89,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.29,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1665.71,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 517.55,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 564.25,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1866.83,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "24f8d4f10b6e087f0e71d33f1fef8ffd36ba6474",
+          "message": "Resize comment box to not scroll on 1440p chrome\n\n* Resize the recipe-search comment box from `min-h-52` to `min-h-47` so\n  that on a 1440p screen, on Chrome, with toolbars, there is no vertical\n  scroll. This is a hotfix, there is an upcoming change that will add\n  smarter comment box sizing and user-editable size via a drag handle.",
+          "timestamp": "2026-08-01T18:59:11-04:00",
+          "tree_id": "e6dee39c020e88d5e128df4e778c17752d9cf02a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/24f8d4f10b6e087f0e71d33f1fef8ffd36ba6474"
+        },
+        "date": 1785625258752,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
