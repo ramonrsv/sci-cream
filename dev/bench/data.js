@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785702438864,
+  "lastUpdate": 1785702584243,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -481682,6 +481682,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.28,
             "range": "0.46",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "d1469ac05ea82d603b2934bd884d012ca7bdd0f3",
+          "message": "Remove `autoLink`, it was buggy and is now unused\n\n* Remove `autoLink` and the whole of `text.tsx`. The function had bugs\n  and it's no longer used as it  has now been superseded by `Markdown`.",
+          "timestamp": "2026-08-02T16:09:56-04:00",
+          "tree_id": "77b540e2fc6391db25950f457edca43f91e28274",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/d1469ac05ea82d603b2934bd884d012ca7bdd0f3"
+        },
+        "date": 1785702546762,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 63.01,
+            "range": "10.81",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 15.63,
+            "range": "3.83",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 15.56,
+            "range": "3.81",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 173.5,
+            "range": "13.56",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.48,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 173.5,
+            "range": "13.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.8,
+            "range": "10.66",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.81,
+            "range": "1.56",
             "unit": "ms"
           }
         ]
