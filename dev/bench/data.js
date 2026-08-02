@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785650963675,
+  "lastUpdate": 1785651428064,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -405571,6 +405571,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 684.25,
             "range": "21.41",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f15dbb430c6dd58f710e7793ceab68a654ef650d",
+          "message": "Snapshot batch version name in DB\n\nPersist a saved batch recipe's opted-in version name and\nsibling hint as independent columns on batch_recipes,\ninstead of resolving them from the live saved recipes.\n\nBatches snapshot recipes at save time, so their version\nlabel should survive edits or deletion of the source\nversion too - the versionName/hasSiblings columns are\ndeliberately outside the recipeId/versionNumber FK, which\nnulls on delete, so the label outlives its provenance.\n\nSavedBatchRecipeJson.version now reuses BatchRecipeVersion\ndirectly (ref + name + hasSiblings) instead of a flattened\nad-hoc shape, mirroring the in-memory Batch type.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com",
+          "timestamp": "2026-08-02T01:40:27-04:00",
+          "tree_id": "f44037db21b8a80afd2f3cd2bbe85c0a20e02cfd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f15dbb430c6dd58f710e7793ceab68a654ef650d"
+        },
+        "date": 1785651392483,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 51.5,
+            "range": "4.72",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 57.38,
+            "range": "3.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 59.25,
+            "range": "3.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2444.88,
+            "range": "40.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 297.5,
+            "range": "8.35",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 301.25,
+            "range": "5.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 318.38,
+            "range": "3.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 15267,
+            "range": "73.94",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 19.55,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 909.63,
+            "range": "17.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 51.88,
+            "range": "1.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54.13,
+            "range": "1.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.75,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42.13,
+            "range": "2.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 127.63,
+            "range": "3.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 82.13,
+            "range": "2.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.36,
+            "range": "0.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 40.67,
+            "range": "0.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 614.88,
+            "range": "8.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 657.5,
+            "range": "10.74",
             "unit": "ms"
           }
         ]
