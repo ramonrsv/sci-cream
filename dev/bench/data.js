@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785650622919,
+  "lastUpdate": 1785650626374,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -484482,6 +484482,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/24f8d4f10b6e087f0e71d33f1fef8ffd36ba6474"
         },
         "date": 1785625328167,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f15dbb430c6dd58f710e7793ceab68a654ef650d",
+          "message": "Snapshot batch version name in DB\n\nPersist a saved batch recipe's opted-in version name and\nsibling hint as independent columns on batch_recipes,\ninstead of resolving them from the live saved recipes.\n\nBatches snapshot recipes at save time, so their version\nlabel should survive edits or deletion of the source\nversion too - the versionName/hasSiblings columns are\ndeliberately outside the recipeId/versionNumber FK, which\nnulls on delete, so the label outlives its provenance.\n\nSavedBatchRecipeJson.version now reuses BatchRecipeVersion\ndirectly (ref + name + hasSiblings) instead of a flattened\nad-hoc shape, mirroring the in-memory Batch type.\n\nCo-Authored-By: Claude Sonnet 5 <noreply@anthropic.com",
+          "timestamp": "2026-08-02T01:40:27-04:00",
+          "tree_id": "f44037db21b8a80afd2f3cd2bbe85c0a20e02cfd",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f15dbb430c6dd58f710e7793ceab68a654ef650d"
+        },
+        "date": 1785650625405,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
