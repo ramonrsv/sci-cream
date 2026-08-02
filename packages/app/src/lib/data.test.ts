@@ -763,21 +763,51 @@ describe("batch recipe provenance", () => {
 
     const created = await createUserBatch(TEST_USER_B.email, {
       date: "2026-07-20",
-      recipes: [{ name: "From saved", rows: [["Whole Milk", 100]], ref }],
+      recipes: [{ name: "From saved", rows: [["Whole Milk", 100]], version: { ref } }],
     });
     expect(created).toBeDefined();
 
     try {
       // The provenance ref survives the round-trip while the source still exists.
-      expect((await fetchBatchById(created!.id))!.recipes[0].ref).toEqual(ref);
+      expect((await fetchBatchById(created!.id))!.recipes[0].version).toEqual({ ref });
 
       // Deleting the source recipe cascades to its versions; the composite FK nulls both provenance
       // columns together, so the ref disappears but the weighed rows are untouched.
       await deleteUserRecipe(TEST_USER_B.email, recipe!.recipeId);
 
       const afterDelete = await fetchBatchById(created!.id);
-      expect(afterDelete!.recipes[0].ref).toBeUndefined();
+      expect(afterDelete!.recipes[0].version).toBeUndefined();
       expect(afterDelete!.recipes[0].rows).toEqual([["Whole Milk", 100]]);
+    } finally {
+      await deleteUserBatch(TEST_USER_B.email, created!.id);
+    }
+  });
+
+  test("keeps the opted-in version name and sibling hint once the source version is deleted", async () => {
+    const recipe = await createUserRecipe(TEST_USER_B.email, "Batch Provenance Named Source", [
+      ["Whole Milk", 100],
+    ]);
+    expect(recipe).toBeDefined();
+    const ref = { recipeId: recipe!.recipeId, versionNumber: recipe!.version.version };
+
+    const created = await createUserBatch(TEST_USER_B.email, {
+      date: "2026-07-20",
+      recipes: [
+        {
+          name: "From saved",
+          rows: [["Whole Milk", 100]],
+          version: { ref, name: "2.1", hasSiblings: true },
+        },
+      ],
+    });
+    expect(created).toBeDefined();
+
+    try {
+      await deleteUserRecipe(TEST_USER_B.email, recipe!.recipeId);
+
+      // `name`/`hasSiblings` are separate columns from the ref, so they outlive its "set null".
+      const afterDelete = await fetchBatchById(created!.id);
+      expect(afterDelete!.recipes[0].version).toEqual({ name: "2.1", hasSiblings: true });
     } finally {
       await deleteUserBatch(TEST_USER_B.email, created!.id);
     }

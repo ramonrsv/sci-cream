@@ -1,7 +1,7 @@
 import "@testing-library/jest-dom/vitest";
 
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { render, screen, cleanup, fireEvent, waitFor } from "@testing-library/react";
+import { render, screen, cleanup, fireEvent, waitFor, within } from "@testing-library/react";
 import { useSession } from "next-auth/react";
 
 import { MakeRecipeView } from "./make-recipe-view";
@@ -557,6 +557,64 @@ describe("MakeRecipeView — loading a saved batch", () => {
     expect(screen.getByTestId("checklist-cell-0-Whole Milk")).toHaveTextContent(/^500$/);
     expect(screen.getByTestId("batch-list-item-7")).toHaveAttribute("aria-current", "true");
     expect(screen.getByRole("heading", { name: "Loaded batch" })).toBeInTheDocument();
+  });
+
+  it("shows a recipe's opted-in version label, in the list and once loaded", async () => {
+    const versioned: SavedBatchJson = {
+      id: 9,
+      title: "Versioned batch",
+      date: "2026-07-01",
+      recipes: [
+        {
+          name: "Vanilla",
+          rows: [["Whole Milk", 500]],
+          version: { ref: { recipeId: 5, versionNumber: 2 }, name: "2.1", hasSiblings: true },
+        },
+      ],
+      createdAt: "",
+      updatedAt: "",
+    };
+    setSessionEmail("owner@example.com");
+    setSavedBatches([versioned]);
+
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-editor");
+
+    // The label is already resolved in the list preview, from the persisted snapshot...
+    expect(
+      within(screen.getByTestId("batch-list-item-9")).getByTestId("version-badge-v2.1"),
+    ).toBeInTheDocument();
+
+    fireEvent.click(screen.getByTestId("batch-open-9"));
+
+    // ...and stays resolved once loaded into the editor, rather than reverting to the raw number.
+    await waitFor(() =>
+      expect(
+        within(screen.getByTestId("batch-editor")).getByTestId("version-badge-v2.1"),
+      ).toBeInTheDocument(),
+    );
+  });
+
+  it("keeps showing the version label once its source has since been deleted", async () => {
+    // No `ref`: this simulates the FK's `set null` after the source version is gone. Only the
+    // snapshotted `name` is left, and it should still resolve to a badge.
+    const versioned: SavedBatchJson = {
+      id: 9,
+      title: "Versioned batch",
+      date: "2026-07-01",
+      recipes: [{ name: "Vanilla", rows: [["Whole Milk", 500]], version: { name: "2.1" } }],
+      createdAt: "",
+      updatedAt: "",
+    };
+    setSessionEmail("owner@example.com");
+    setSavedBatches([versioned]);
+
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-editor");
+
+    expect(
+      within(screen.getByTestId("batch-list-item-9")).getByTestId("version-badge-v2.1"),
+    ).toBeInTheDocument();
   });
 
   it("tints the Save control amber once a loaded batch has unsaved edits", async () => {

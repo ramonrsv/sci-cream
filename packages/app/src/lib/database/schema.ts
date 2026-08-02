@@ -6,6 +6,7 @@ import {
   uniqueIndex,
   check,
   foreignKey,
+  boolean,
   integer,
   real,
   text,
@@ -139,6 +140,10 @@ export type BatchSelect = typeof batchesTable.$inferSelect;
  * foreign key to {@link recipeVersionsTable} with `onDelete: "set null"`, so deleting a source
  * recipe (which cascades to its versions) nulls *both* provenance columns together rather than
  * corrupting the batch — and the `check` that keeps them set-or-clear together stays satisfied.
+ *
+ * `versionName` / `hasSiblings` are a snapshot of the version's display hints taken when the batch
+ * was saved — deliberately *not* part of that foreign key, so they survive even once the source
+ * version is deleted and `recipeId/versionNumber` are nulled out from under them.
  */
 export const batchRecipesTable = pgTable(
   "batch_recipes",
@@ -154,6 +159,8 @@ export const batchRecipesTable = pgTable(
     color: text(),
     recipeId: integer("recipe_id"),
     versionNumber: integer("version_number"),
+    versionName: text("version_name"),
+    hasSiblings: boolean("has_siblings"),
   },
   (table) => [
     unique("batch_recipes_batch_position_uq").on(table.batchId, table.position),

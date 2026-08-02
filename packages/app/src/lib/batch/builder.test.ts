@@ -215,13 +215,13 @@ describe("batchToInput / selectionFromSavedBatch — database round-trip", () =>
         name: "Vanilla",
         rows: [["Whole Milk", 600]],
         color: CategoryColor.Blue,
-        version: { ref: { recipeId: 5, versionNumber: 2 } },
+        version: { ref: { recipeId: 5, versionNumber: 2 }, name: "2.1", hasSiblings: true },
       },
       { name: "Sorbet", rows: [["Sugar", 100]] },
     ],
   };
 
-  it("projects a batch onto the wire shape, storing colors by name and only the ref", () => {
+  it("projects a batch onto the wire shape, snapshotting version as-is", () => {
     expect(batchToInput(batch)).toEqual({
       title: "Test batch",
       date: "2026-07-20",
@@ -231,7 +231,7 @@ describe("batchToInput / selectionFromSavedBatch — database round-trip", () =>
           name: "Vanilla",
           rows: [["Whole Milk", 600]],
           color: "Blue",
-          ref: { recipeId: 5, versionNumber: 2 },
+          version: { ref: { recipeId: 5, versionNumber: 2 }, name: "2.1", hasSiblings: true },
         },
         { name: "Sorbet", rows: [["Sugar", 100]] },
       ],
@@ -258,7 +258,7 @@ describe("batchToInput / selectionFromSavedBatch — database round-trip", () =>
     });
   });
 
-  it("round-trips a saved batch back into a derived Batch for display", () => {
+  it("round-trips a saved batch's version hints back into a derived Batch for display", () => {
     const saved: SavedBatchJson = {
       id: 7,
       date: "2026-07-20",
@@ -267,7 +267,7 @@ describe("batchToInput / selectionFromSavedBatch — database round-trip", () =>
           name: "Vanilla",
           rows: [["Whole Milk", 600]],
           color: "Green",
-          ref: { recipeId: 5, versionNumber: 2 },
+          version: { ref: { recipeId: 5, versionNumber: 2 }, name: "2.1", hasSiblings: true },
         },
       ],
       createdAt: "2026-07-20T00:00:00.000Z",
@@ -279,9 +279,45 @@ describe("batchToInput / selectionFromSavedBatch — database round-trip", () =>
         name: "Vanilla",
         rows: [["Whole Milk", 600]],
         color: CategoryColor.Green,
-        version: { ref: { recipeId: 5, versionNumber: 2 } },
+        version: { ref: { recipeId: 5, versionNumber: 2 }, name: "2.1", hasSiblings: true },
       },
     ]);
+  });
+
+  it("keeps the opted-in name once the ref is gone, as when the source version is deleted", () => {
+    // No `ref`: the FK's `set null` already cleared it, but versionName/hasSiblings are separate
+    // columns and outlive it — see the schema comment on `batchRecipesTable`.
+    const saved: SavedBatchJson = {
+      id: 7,
+      date: "2026-07-20",
+      recipes: [
+        {
+          name: "Vanilla",
+          rows: [["Whole Milk", 600]],
+          version: { name: "2.1", hasSiblings: true },
+        },
+      ],
+      createdAt: "2026-07-20T00:00:00.000Z",
+      updatedAt: "2026-07-20T00:00:00.000Z",
+    };
+
+    expect(savedBatchToBatch(saved).recipes[0]?.version).toEqual({
+      name: "2.1",
+      hasSiblings: true,
+    });
+    expect(displayVersion(savedBatchToBatch(saved).recipes[0]?.version)).toBe("2.1");
+  });
+
+  it("carries no version at all for a recipe that never had one", () => {
+    const saved: SavedBatchJson = {
+      id: 7,
+      date: "2026-07-20",
+      recipes: [{ name: "Vanilla", rows: [["Whole Milk", 600]] }],
+      createdAt: "2026-07-20T00:00:00.000Z",
+      updatedAt: "2026-07-20T00:00:00.000Z",
+    };
+
+    expect(savedBatchToBatch(saved).recipes[0]?.version).toBeUndefined();
   });
 });
 

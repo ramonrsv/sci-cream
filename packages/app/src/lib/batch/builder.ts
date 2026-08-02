@@ -133,7 +133,7 @@ export function makeBatchFromSelection(selection: BatchSelection): Batch {
 
 /**
  * Project a derived {@link Batch} onto the wire shape stored in the database. Colors are stored by
- * name, and only the version `ref` rides along as provenance — hints are recomputed on load.
+ * name; `version` (ref plus its display hints) rides along as-is, snapshotted for storage.
  */
 export function batchToInput(batch: Batch): BatchInput {
   return {
@@ -144,7 +144,7 @@ export function batchToInput(batch: Batch): BatchInput {
       name: recipe.name,
       rows: recipe.rows,
       ...(recipe.color === undefined ? {} : { color: categoryColorName(recipe.color) }),
-      ...(recipe.version?.ref ? { ref: recipe.version.ref } : {}),
+      ...(recipe.version ? { version: recipe.version } : {}),
     })),
   };
 }
@@ -208,7 +208,8 @@ export function batchHasUnsavedChanges(
 
 /**
  * Seed an owner-mode selection from a saved batch: every recipe is carried inline (no live source
- * to resolve against), and `savedBatchId` marks it for update in place on the next save.
+ * to resolve against), and `savedBatchId` marks it for update in place on the next save. `version`
+ * is already snapshotted, so it survives even once the source has since been edited or deleted.
  */
 export function selectionFromSavedBatch(saved: SavedBatchJson): BatchSelection {
   return {
@@ -223,7 +224,7 @@ export function selectionFromSavedBatch(saved: SavedBatchJson): BatchSelection {
         recipe: {
           name: recipe.name,
           rows: recipe.rows,
-          ...(recipe.ref ? { version: { ref: recipe.ref } } : {}),
+          ...(recipe.version ? { version: recipe.version } : {}),
         },
       };
     }),

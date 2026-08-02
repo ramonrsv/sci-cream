@@ -63,4 +63,21 @@ describe("BatchList", () => {
     expect(screen.getByTestId("batch-list-item-3")).toHaveAttribute("aria-current", "true");
     expect(screen.getByTestId("batch-list-item-4")).not.toHaveAttribute("aria-current");
   });
+
+  it("shows a recipe's opted-in version label, not its raw number, from the persisted snapshot", () => {
+    const withVersion: SavedBatchJson = {
+      ...SAVED,
+      recipes: [
+        {
+          name: "Vanilla",
+          rows: [["Whole Milk", 600]],
+          version: { ref: { recipeId: 5, versionNumber: 2 }, name: "2.1", hasSiblings: true },
+        },
+      ],
+    };
+
+    render(<BatchList batches={[withVersion]} onLoad={() => undefined} />);
+
+    expect(screen.getByTestId("version-badge-v2.1")).toBeInTheDocument();
+  });
 });

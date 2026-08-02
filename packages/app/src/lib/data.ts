@@ -6,6 +6,7 @@ import { eq, and, sql } from "drizzle-orm";
 
 import type { LightRecipe } from "@workspace/sci-cream";
 
+import type { BatchRecipeVersion } from "@/lib/batch/batch";
 import { getDatabaseUrl } from "@/lib/database/util";
 import { hasVersionNames, isValidVersionName, nextVersionName } from "@/lib/recipe/version";
 import { verifyDefined } from "@/lib/util";
@@ -506,14 +507,19 @@ export async function deleteUserRecipeVersion(
   return row ? toSavedRecipeVersionJson(row) : undefined;
 }
 
-/** One recipe within a saved batch; `rows` are the `[name, grams]` amounts exactly as weighed */
+/**
+ * One recipe within a saved batch; `rows` are the `[name, grams]` amounts exactly as weighed
+ *
+ * This is virtually a clone of {@link BatchRecipe}, with minor differences for database
+ * compatibility e.g. `color` is a string (the display name) rather than a `CategoryColor`.
+ */
 export type SavedBatchRecipeJson = {
   name: string;
   rows: LightRecipe;
+  /** The saved version this recipe came from, and its snapshotted display hints, if any. */
+  version?: BatchRecipeVersion;
   /** Container color as its display name (e.g. `"Blue"`); absent when the recipe carries no pick */
   color?: string;
-  /** Source saved version this recipe came from — provenance only, never consulted for amounts */
-  ref?: { recipeId: number; versionNumber: number };
 };
 
 /** A saved batch with its recipes in weighing order */
@@ -544,9 +550,29 @@ function toBatchRecipeInserts(batchId: number, recipes: readonly SavedBatchRecip
     name: recipe.name,
     rows: recipe.rows,
     color: recipe.color ?? null,
-    recipeId: recipe.ref?.recipeId ?? null,
-    versionNumber: recipe.ref?.versionNumber ?? null,
+    recipeId: recipe.version?.ref?.recipeId ?? null,
+    versionNumber: recipe.version?.ref?.versionNumber ?? null,
+    versionName: recipe.version?.name ?? null,
+    hasSiblings: recipe.version?.hasSiblings ?? null,
   }));
+}
+
+/** Reassemble one row's flat version columns into the nested {@link BatchRecipeVersion} shape. */
+function toBatchRecipeVersion(row: {
+  recipeId: number | null;
+  versionNumber: number | null;
+  versionName: string | null;
+  hasSiblings: boolean | null;
+}): BatchRecipeVersion | undefined {
+  if (row.recipeId == null && row.versionName == null) return undefined;
+  return {
+    ...(row.recipeId != null &&
+      row.versionNumber != null && {
+        ref: { recipeId: row.recipeId, versionNumber: row.versionNumber },
+      }),
+    ...(row.versionName != null && { name: row.versionName }),
+    ...(row.hasSiblings != null && { hasSiblings: row.hasSiblings }),
+  };
 }
 
 /** Convert a joined `batches` + `batch_recipes` result into the grouped {@link SavedBatchJson} */
@@ -559,6 +585,8 @@ function toSavedBatchJson(
     color: string | null;
     recipeId: number | null;
     versionNumber: number | null;
+    versionName: string | null;
+    hasSiblings: boolean | null;
   }[],
 ): SavedBatchJson {
   return {
@@ -568,15 +596,15 @@ function toSavedBatchJson(
     ...(batch.notes != null && { notes: batch.notes }),
     recipes: recipeRows
       .sort((a, b) => a.position - b.position)
-      .map((row) => ({
-        name: row.name,
-        rows: row.rows as LightRecipe,
-        ...(row.color != null && { color: row.color }),
-        ...(row.recipeId != null &&
-          row.versionNumber != null && {
-            ref: { recipeId: row.recipeId, versionNumber: row.versionNumber },
-          }),
-      })),
+      .map((row) => {
+        const version = toBatchRecipeVersion(row);
+        return {
+          name: row.name,
+          rows: row.rows as LightRecipe,
+          ...(row.color != null && { color: row.color }),
+          ...(version && { version }),
+        };
+      }),
     createdAt: batch.createdAt.toISOString(),
     updatedAt: batch.updatedAt.toISOString(),
   };
@@ -623,6 +651,8 @@ export async function fetchAllUserBatches(
       color: batchRecipesTable.color,
       recipeId: batchRecipesTable.recipeId,
       versionNumber: batchRecipesTable.versionNumber,
+      versionName: batchRecipesTable.versionName,
+      hasSiblings: batchRecipesTable.hasSiblings,
     })
     .from(batchesTable)
     .leftJoin(batchRecipesTable, eq(batchRecipesTable.batchId, batchesTable.id))
@@ -662,6 +692,8 @@ export async function fetchAllUserBatches(
         color: row.color,
         recipeId: row.recipeId,
         versionNumber: row.versionNumber,
+        versionName: row.versionName,
+        hasSiblings: row.hasSiblings,
       });
     }
   }
