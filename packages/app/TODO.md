@@ -13,7 +13,6 @@
 - [ ] `RecipeEditor` does not update the ingredient name/version if the original is deleted.
 - [ ] Increase the height of comments in `/recipes`; it's difficult to edit in such a short slot.
 - [ ] Add `height` prop to `PropertiesTable` so that it can adapt the number of properties shown.
-- [ ] `autoLink` has a bug where it includes closing `),` in the produced links; fix or replace.
 - [ ] Targets not selected for balancing in `Watchers` can show in `PropertiesChart`; investigate.
 - [ ] Investigate relative delta behavior in `Watchers`, they seem to not be changing gradually.
 - [ ] In the `PropertiesChart` tooltip, move the numeric value to the left so it does not overflow.
@@ -112,6 +111,7 @@
 
 ## Completed
 
+- [x] `autoLink` has a bug where it includes closing `),` in the produced links; fix or replace.
 - [x] Invalid ingredient names are not saved when saving a recipe. They should be, so need a fix.
 - [x] Add support for `RecipeEditor` and `CompositionBreakdown` to render the maximum of the number
       of rows needed to fill the current height, and the current number of filled in rows + 1.
