@@ -167,19 +167,17 @@ type DeltaDisplay = { arrow: string; magnitude: string };
 
 /** Compute the delta to a target value and format it for display */
 function computeTargetDeltaAndFormat(
-  mainValue: number | undefined,
+  main: number | undefined,
   target: number | undefined,
   isRelative: boolean,
 ): DeltaDisplay | undefined {
-  if (!isUsableNumber(mainValue) || !isUsableNumber(target)) return undefined;
+  if (!isUsableNumber(main) || !isUsableNumber(target)) return undefined;
 
-  const roundedMain = roundToCompositionValueFormat(mainValue);
-  const roundedTarget = roundToCompositionValueFormat(target);
   const delta = isRelative
-    ? roundedTarget === 0
+    ? target === 0
       ? NaN
-      : ((roundedTarget - roundedMain) / roundedTarget) * 100
-    : roundedTarget - roundedMain;
+      : ((target - main) / target) * 100
+    : target - main;
 
   return {
     arrow: Number.isNaN(delta) ? "" : delta < 0 ? "▲" : "▼",
@@ -306,27 +304,26 @@ export function WatcherCard({
   onRemove: () => void;
 }) {
   const range = getAcceptablePropertyRange(propKey);
+  const mainVal = getDisplayValue(propKey, main);
 
-  const mainValue = getDisplayValue(propKey, main);
+  // Compare against the rounded value, so the card grades what the user reads off it.
+  const mainRound = roundToCompositionValueFormat(mainVal);
 
+  const colorInputVals = { range, value: mainRound, target };
   // The rail follows the chosen `colorMode`; the meter marker always tracks range position.
-  const railColor: Color = resolveStatusColor(colorMode, { range, value: mainValue, target });
-  const markerColor: Color = resolveStatusColor(ColorMode.Range, {
-    range,
-    value: mainValue,
-    target,
-  });
+  const railColor: Color = resolveStatusColor(colorMode, colorInputVals);
+  const markerColor: Color = resolveStatusColor(ColorMode.Range, colorInputVals);
 
   // The delta always grades by target proximity (the check's continuous extension).
   const deltaColor: Color | undefined =
-    isUsableNumber(mainValue) && isUsableNumber(target) && target !== 0
-      ? getTargetColor(mainValue, target)
+    isUsableNumber(mainRound) && isUsableNumber(target) && target !== 0
+      ? getTargetColor(mainRound, target)
       : undefined;
 
-  const targetStep = getTargetStep(target, mainValue);
+  const targetStep = getTargetStep(target, mainRound);
 
   const targetDelta = computeTargetDeltaAndFormat(
-    mainValue,
+    mainRound,
     target,
     deltaToggle === DeltaToggle.Relative,
   );
@@ -420,7 +417,7 @@ export function WatcherCard({
         <div className="flex items-center justify-evenly">
           <span className="comp-val -ml-2 w-14 text-lg leading-none" title="Current value">
             {/* Placeholder whitespace keeps empty cards the same height. */}
-            {formatCompositionValue(mainValue).trim() || "\u00A0"}
+            {formatCompositionValue(mainVal).trim() || "\u00A0"}
           </span>
           {showTarget && (
             <div className="flex items-center gap-0.5" title="Target value">
@@ -485,14 +482,15 @@ export function WatcherCard({
             <span className="text-secondary text-[10px] leading-none">
               {formatCompositionValue(meterRange.min).trim()}
             </span>
+            {/* Marker and ref ticks share one scale, so both take the rounded display value. */}
             <RangeMeter
               range={meterRange}
-              value={mainValue}
+              value={mainRound}
               valueColor={getCssColor(markerColor)}
               refs={
                 showRefs
                   ? nonEmptyRefs.flatMap((ref) => {
-                      const refValue = getDisplayValue(propKey, ref);
+                      const refValue = roundToCompositionValueFormat(getDisplayValue(propKey, ref));
                       return isUsableNumber(refValue) ? [{ key: ref.id, value: refValue }] : [];
                     })
                   : []

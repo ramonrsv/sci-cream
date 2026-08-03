@@ -40,7 +40,11 @@ import {
   useColorModeState,
 } from "@/app/_elements/selects/color-toggle-select";
 import { useOrderKeys } from "@/lib/group-by";
-import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
+import {
+  applyQtyToggle,
+  formatCompositionValue,
+  roundToCompositionValueFormat,
+} from "@/lib/comp-value-format";
 import { prefersReducedMotion } from "@/lib/styles/motion";
 import { useElementSize } from "@/lib/hooks/use-element-size";
 import {
@@ -340,18 +344,23 @@ export function PropertiesBarChart({
    * property is absent or zero — an empty recipe, or a genuinely-zero property. `applyQtyToggle`
    * returns `undefined` for an exact-zero composition, and `getMixProperty` yields `NaN` for an
    * absent one; both draw no bar, matching {@link WatcherCard}'s range meter.
+   *
+   * The value is rounded via {@link roundToCompositionValueFormat}, so the bar geometry, the
+   * coloring and the tooltip all read the number the user sees, as {@link WatcherCard} does.
    */
   const getPropertyValue = (
     propKey: PropKey,
     mixProperties: MixProperties,
     mixTotal: number,
   ): number | undefined => {
-    return applyQtyToggle(
-      getMixProperty(mixProperties, propKey),
-      mixTotal,
-      mixTotal,
-      qtyToggle,
-      isPropKeyQuantity(propKey),
+    return roundToCompositionValueFormat(
+      applyQtyToggle(
+        getMixProperty(mixProperties, propKey),
+        mixTotal,
+        mixTotal,
+        qtyToggle,
+        isPropKeyQuantity(propKey),
+      ),
     );
   };
 
@@ -361,11 +370,13 @@ export function PropertiesBarChart({
   const noRangeBarColor = addOrUpdateAlpha(getColor(Color.GraphGray), NO_RANGE_GRAY_ALPHA);
 
   /**
-   * Per-property normalization bundle. The `{ domain, padFrac }` come from
-   * {@link resolveMeterDomain} for the active {@link NormMode}; every value, band edge, and tick is
-   * then mapped through `valueToMeterPct(v, domain, padFrac)`, so they share one framing per
-   * property. `mainValue`/`refValues`/`target` stay true (unnormalized) for tooltips; `color`
-   * is the `colorMode` status color, or a lighter gray when that mode has nothing to score.
+   * Per-property normalization bundle.
+   *
+   * The `{ domain, padFrac }` come from {@link resolveMeterDomain} for the active {@link NormMode};
+   * every value, band edge, and tick is then mapped through `valueToMeterPct(v, domain, padFrac)`,
+   * so they share one framing per property. `mainValue`/`refValues`/`target` stay unnormalized for
+   * tooltips — recipe values rounded to the displayed precision, the target as the user entered it;
+   * `color` is the `colorMode` status color, or a lighter gray when that mode has nothing to score.
    */
   const meters = propKeys.map((propKey) => {
     const range = getAcceptablePropertyRange(propKey) ?? undefined;
@@ -374,7 +385,7 @@ export function PropertiesBarChart({
       getPropertyValue(propKey, ref.mixProperties, ref.mixTotal!),
     );
     const rawTarget = targets[propKey];
-    const target = rawTarget === undefined || Number.isNaN(rawTarget) ? undefined : rawTarget;
+    const target = isUsableNumber(rawTarget) ? rawTarget : undefined;
     const { domain, padFrac } = resolveMeterDomain(normMode, {
       range,
       mainValue,

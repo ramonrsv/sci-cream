@@ -20,7 +20,11 @@ import type { TargetsMap } from "@/app/_elements/watchers/watchers";
 import { filterActiveSlots } from "@/lib/recipe/recipe";
 import { KeyFilter } from "@/app/_elements/selects/key-filter-select";
 import { QtyToggle } from "@/app/_elements/selects/qty-toggle-select";
-import { applyQtyToggle, formatCompositionValue } from "@/lib/comp-value-format";
+import {
+  applyQtyToggle,
+  formatCompositionValue,
+  roundToCompositionValueFormat,
+} from "@/lib/comp-value-format";
 import { getSelectedOptionLabel } from "@/__tests__/unit/select";
 import { UNCONDITIONAL_AUTO_PROPERTIES } from "@/lib/sci-cream/sci-cream";
 
@@ -157,18 +161,23 @@ vi.mock("@/lib/hooks/use-element-size", () => ({
 /**
  * The qty-toggled true (unnormalized) value the chart uses before normalizing, or `undefined` when
  * the property is absent or zero (`applyQtyToggle` returns `undefined` for an exact-zero value).
+ *
+ * Mirrors the chart's own rounding to the displayed precision, so it is only a geometry mirror —
+ * the precision itself is pinned independently by the tooltip and TargetCentered tests below.
  */
 function truePropValue(
   mixProps: MixProperties,
   mixTotal: number,
   propKey: PropKey,
 ): number | undefined {
-  return applyQtyToggle(
-    getMixProperty(mixProps, propKey),
-    mixTotal,
-    mixTotal,
-    QtyToggle.Percentage,
-    isPropKeyQuantity(propKey),
+  return roundToCompositionValueFormat(
+    applyQtyToggle(
+      getMixProperty(mixProps, propKey),
+      mixTotal,
+      mixTotal,
+      QtyToggle.Percentage,
+      isPropKeyQuantity(propKey),
+    ),
   );
 }
 
@@ -430,6 +439,17 @@ describe("PropertiesBarChart", () => {
       expect(afterBody.some((line) => line.startsWith("Target:"))).toBe(false);
     });
 
+    it("labels the target rounded, but draws it at the precision it was entered with", () => {
+      renderFromContext([RecipeID.Main], [MSNF], { [MSNF]: 10.6 });
+      const coarseTick = capturedBarProps!.data.datasets[1].data[0];
+
+      renderFromContext([RecipeID.Main], [MSNF], { [MSNF]: 10.567 });
+      const { callbacks } = capturedBarProps!.options.plugins.tooltip;
+      expect(callbacks.label({ datasetIndex: 1, dataIndex: 0 })).toBe("Target: 10.6");
+      // A hand-entered target is what the balancer aims for, so its tick is not snapped to 10.6.
+      expect(capturedBarProps!.data.datasets[1].data[0]).not.toBe(coarseTick);
+    });
+
     it("filters out the empty target item for a key without a target", () => {
       renderFromContext([RecipeID.Main], [MSNF], { [MSNF]: 10 });
       const { filter } = capturedBarProps!.options.plugins.tooltip;
@@ -463,6 +483,20 @@ describe("PropertiesBarChart", () => {
     it("ValueCentered maps the main value to the middle of the track (50%)", () => {
       renderFromContext([RecipeID.Main], [MSNF], undefined, NormMode.ValueCentered);
       expect(capturedBarProps!.data.datasets[0].data[0]).toBeCloseTo(50);
+    });
+
+    it("lands the bar on the target when the target is the value the tooltip shows", () => {
+      // The number a user would type into the target box after reading it off the chart.
+      renderFromContext([RecipeID.Main], [MSNF]);
+      const shown = capturedBarProps!.options.plugins.tooltip.callbacks.label({
+        datasetIndex: 0,
+        dataIndex: 0,
+      });
+      const typed = parseFloat(shown.slice(shown.indexOf(":") + 1));
+
+      // TargetCentered pins the target to 50%, so the bar must sit on the tick, not merely near it.
+      renderFromContext([RecipeID.Main], [MSNF], { [MSNF]: typed }, NormMode.TargetCentered);
+      expect(capturedBarProps!.data.datasets[0].data[0]).toBeCloseTo(50, 12);
     });
 
     it("FillRange frames the acceptable range with symmetric padding on the track", () => {

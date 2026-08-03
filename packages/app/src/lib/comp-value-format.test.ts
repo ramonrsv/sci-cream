@@ -193,6 +193,25 @@ describe("roundToCompositionValueFormat", () => {
   test("snaps negative tens values to one decimal place", () => {
     expect(roundToCompositionValueFormat(-10.56)).toBe(-10.6);
   });
+
+  test("snaps thousands values to the hundred shown by the `k` form", () => {
+    expect(roundToCompositionValueFormat(1234)).toBe(1200);
+    expect(roundToCompositionValueFormat(2549)).toBe(2500);
+    expect(roundToCompositionValueFormat(-2549)).toBe(-2500);
+  });
+
+  test("snaps thousands values that show as a whole `k`", () => {
+    expect(roundToCompositionValueFormat(2000)).toBe(2000);
+    expect(roundToCompositionValueFormat(-2000)).toBe(-2000);
+  });
+
+  test("snaps across the hundreds to thousands boundary", () => {
+    expect(roundToCompositionValueFormat(999.6)).toBe(1000);
+  });
+
+  test("returns undefined for undefined", () => {
+    expect(roundToCompositionValueFormat(undefined)).toBeUndefined();
+  });
 });
 
 describe("applyQtyToggle", () => {

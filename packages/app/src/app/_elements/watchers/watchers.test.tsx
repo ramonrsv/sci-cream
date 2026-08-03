@@ -106,6 +106,56 @@ describe("WatcherCard", () => {
     ).toBeNull();
   });
 
+  it("keeps a hand-entered target's precision in its input and on the meter tick", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const renderWithTarget = (target: number) => {
+      const { container } = render(
+        <WatcherCard
+          propKey={MSNF}
+          main={main}
+          deltaToggle={DeltaToggle.Off}
+          target={target}
+          onTargetChange={vi.fn()}
+          onPriorityChange={vi.fn()}
+          onRemove={vi.fn()}
+        />,
+      );
+      const input = container.querySelector<HTMLInputElement>(
+        `[data-testid="watcher-card-${String(MSNF)}-target"]`,
+      )!;
+      // Without refs the only tick is the target's.
+      return {
+        shown: input.value,
+        tick: container.querySelector<HTMLElement>(".range-meter-tick")!,
+      };
+    };
+
+    // The balancer aims at what the input shows, so a finer target is not snapped to display.
+    const fine = renderWithTarget(10.567);
+    expect(fine.shown).toBe("10.567");
+    expect(fine.tick.style.left).not.toBe(renderWithTarget(10.6).tick.style.left);
+  });
+
+  it("puts a reference tick on the marker when the reference matches the current value", () => {
+    const main = makeMockRecipe(RecipeID.Main);
+    const { container } = render(
+      <WatcherCard
+        propKey={MSNF}
+        main={main}
+        refs={[{ ...main, id: "Ref A" }]}
+        deltaToggle={DeltaToggle.Off}
+        target={undefined}
+        onTargetChange={vi.fn()}
+        onPriorityChange={vi.fn()}
+        onRemove={vi.fn()}
+      />,
+    );
+    // The ref shows the same value as the card, so its tick must sit on the current marker.
+    const tick = container.querySelector<HTMLElement>(".range-meter-tick")!;
+    const marker = container.querySelector<HTMLElement>(".range-meter-marker")!;
+    expect(tick.style.left).toBe(marker.style.left);
+  });
+
   it("renders one ref row per reference, omitting empty ones via caller filter", () => {
     const main = makeMockRecipe(RecipeID.Main);
     const refA = makeMockRecipe(RecipeID.RefA);

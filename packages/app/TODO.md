@@ -14,7 +14,6 @@
 - [ ] Increase the height of comments in `/recipes`; it's difficult to edit in such a short slot.
 - [ ] Add `height` prop to `PropertiesTable` so that it can adapt the number of properties shown.
 - [ ] Targets not selected for balancing in `Watchers` can show in `PropertiesChart`; investigate.
-- [ ] Investigate relative delta behavior in `Watchers`, they seem to not be changing gradually.
 - [ ] In the `PropertiesChart` tooltip, move the numeric value to the left so it does not overflow.
 - [ ] Add a reset option to the key selection when `KeySelect.Custom`, to reset to default custom.
 - [ ] Make the reference and target ticks in `PropertiesBarChart` more visible. Also in watchers?
@@ -111,6 +110,7 @@
 
 ## Completed
 
+- [x] Investigate relative delta behavior in `Watchers`, they seem to not be changing gradually.
 - [x] `autoLink` has a bug where it includes closing `),` in the produced links; fix or replace.
 - [x] Invalid ingredient names are not saved when saving a recipe. They should be, so need a fix.
 - [x] Add support for `RecipeEditor` and `CompositionBreakdown` to render the maximum of the number

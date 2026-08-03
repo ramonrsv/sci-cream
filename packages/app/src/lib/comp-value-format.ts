@@ -115,10 +115,16 @@ export function formatCompositionValue(
  * Snaps a number (e.g. one carrying floating-point noise) to its displayed precision, for example
  * so a {@link WatcherCard} target matches the value shown and balancing can hit it exactly.
  *
- * @param num - The number to round.
+ * @param num - The number to round - `undefined` is returned unchanged.
  */
-export function roundToCompositionValueFormat(num: number) {
-  return parseFloat(formatCompositionValue(num));
+export function roundToCompositionValueFormat(num: number | undefined): number | undefined {
+  if (num === undefined) return undefined;
+
+  // The compact `k` form (≥ 1000) carries a factor of 1000 that `parseFloat` does not see.
+  const formatted = formatCompositionValue(num).trim();
+  const rounded = parseFloat(formatted);
+
+  return formatted.endsWith("k") ? rounded * 1000 : rounded;
 }
 
 /**
