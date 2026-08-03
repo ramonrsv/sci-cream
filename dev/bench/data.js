@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785703243844,
+  "lastUpdate": 1785742196066,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -439637,6 +439637,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.07%",
             "unit": "ops/sec",
             "extra": "90 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "122ac20b49d2cb565db2f05ee9e128d6b24a4f00",
+          "message": "Round displayed values for range and color calc\n\n* Use rounded, via `roundToCompositionValueFormat`, recipe and reference\n  values for range, meter and bar/rail/marker color calculations, in\n  order to align with what the user sees, in both `WatcherCard` and\n  `PropertiesBarChart`.\n* This solves the issue where there is a visible difference between the\n  current and target values in `PropertiesBarChart` for same recipe.\n* Targets are not rounded on read: a target is exactly what its input\n  shows, and what the balancer aims for. The rounding stays at the input\n  step, where the fill-from-reference and fill-from-current buttons snap\n  the value they import.\n* Fix `roundToCompositionValueFormat` for values >= 1000, where the\n  compact `k` form made `parseFloat` drop a factor of 1000.\n* This does not solve the issue where there is a spurious warning that\n  \"'Salt' : 'PACslt' (0.18) is outside the range [0.17, 0.17]\", which\n  happens because rounding loses too much precision for small values\n  like 'Salt' at ~0.08 - this will be fixed in an upcoming change to\n  increase the precision allowed by `roundToCompositionValueFormat`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-03T03:06:36-04:00",
+          "tree_id": "d1dd8dd81e036954bd4ac871040b4800bf9cc766",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/122ac20b49d2cb565db2f05ee9e128d6b24a4f00"
+        },
+        "date": 1785742122593,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 49545,
+            "range": "±1.18%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 513508,
+            "range": "±2.38%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 33578,
+            "range": "±1.14%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 389698,
+            "range": "±1.03%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
           }
         ]
       }
