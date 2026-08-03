@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785742203689,
+  "lastUpdate": 1785742221505,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -468741,6 +468741,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1106.78,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 13.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 137.71,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "122ac20b49d2cb565db2f05ee9e128d6b24a4f00",
+          "message": "Round displayed values for range and color calc\n\n* Use rounded, via `roundToCompositionValueFormat`, recipe and reference\n  values for range, meter and bar/rail/marker color calculations, in\n  order to align with what the user sees, in both `WatcherCard` and\n  `PropertiesBarChart`.\n* This solves the issue where there is a visible difference between the\n  current and target values in `PropertiesBarChart` for same recipe.\n* Targets are not rounded on read: a target is exactly what its input\n  shows, and what the balancer aims for. The rounding stays at the input\n  step, where the fill-from-reference and fill-from-current buttons snap\n  the value they import.\n* Fix `roundToCompositionValueFormat` for values >= 1000, where the\n  compact `k` form made `parseFloat` drop a factor of 1000.\n* This does not solve the issue where there is a spurious warning that\n  \"'Salt' : 'PACslt' (0.18) is outside the range [0.17, 0.17]\", which\n  happens because rounding loses too much precision for small values\n  like 'Salt' at ~0.08 - this will be fixed in an upcoming change to\n  increase the precision allowed by `roundToCompositionValueFormat`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-03T03:06:36-04:00",
+          "tree_id": "d1dd8dd81e036954bd4ac871040b4800bf9cc766",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/122ac20b49d2cb565db2f05ee9e128d6b24a4f00"
+        },
+        "date": 1785742159853,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 701.78,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 870.23,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 639.62,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 808.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 647.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 815.52,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 578.27,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 746.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] route-only JS (gzip)",
+            "value": 578.27,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] first-load JS (gzip)",
+            "value": 746.71,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1106.91,
             "unit": "KB"
           },
           {
