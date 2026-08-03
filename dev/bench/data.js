@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785742543425,
+  "lastUpdate": 1785742599111,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -63947,6 +63947,192 @@ window.BENCHMARK_DATA = {
             "name": "interpolate_pairs(near_end)",
             "value": 725,
             "range": "± 7",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "122ac20b49d2cb565db2f05ee9e128d6b24a4f00",
+          "message": "Round displayed values for range and color calc\n\n* Use rounded, via `roundToCompositionValueFormat`, recipe and reference\n  values for range, meter and bar/rail/marker color calculations, in\n  order to align with what the user sees, in both `WatcherCard` and\n  `PropertiesBarChart`.\n* This solves the issue where there is a visible difference between the\n  current and target values in `PropertiesBarChart` for same recipe.\n* Targets are not rounded on read: a target is exactly what its input\n  shows, and what the balancer aims for. The rounding stays at the input\n  step, where the fill-from-reference and fill-from-current buttons snap\n  the value they import.\n* Fix `roundToCompositionValueFormat` for values >= 1000, where the\n  compact `k` form made `parseFloat` drop a factor of 1000.\n* This does not solve the issue where there is a spurious warning that\n  \"'Salt' : 'PACslt' (0.18) is outside the range [0.17, 0.17]\", which\n  happens because rounding loses too much precision for small values\n  like 'Salt' at ~0.08 - this will be fixed in an upcoming change to\n  increase the precision allowed by `roundToCompositionValueFormat`.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-03T03:06:36-04:00",
+          "tree_id": "d1dd8dd81e036954bd4ac871040b4800bf9cc766",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/122ac20b49d2cb565db2f05ee9e128d6b24a4f00"
+        },
+        "date": 1785742538120,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4451,
+            "range": "± 31",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 187070,
+            "range": "± 1826",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2835,
+            "range": "± 23",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 182567,
+            "range": "± 3900",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 5126,
+            "range": "± 76",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 5309,
+            "range": "± 61",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 5395,
+            "range": "± 48",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 5394,
+            "range": "± 47",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 5391,
+            "range": "± 45",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 5587,
+            "range": "± 61",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 123874,
+            "range": "± 1032",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 127085,
+            "range": "± 1266",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 199341319,
+            "range": "± 778670",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 670598,
+            "range": "± 6028",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 7758,
+            "range": "± 252",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 54,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 7142,
+            "range": "± 60",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 112590,
+            "range": "± 1988",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 109348,
+            "range": "± 1992",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 182751,
+            "range": "± 4893",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 178571,
+            "range": "± 3412",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 375180,
+            "range": "± 1514",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14833,
+            "range": "± 57",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 5,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 726,
+            "range": "± 3",
             "unit": "ns/iter"
           },
           {
