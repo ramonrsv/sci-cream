@@ -1,26 +1,28 @@
+# Development
+
 There are two projects in this workspace, a Rust crate at `packages/sci-cream`, and a Next.js app
 at `packages/app`. The crate is a dependency for the app and must be built first.
 
 To install `pnpm` and all `npm` dependency packages, required for both the crate and the app:
 
 ```bash
-$ sudo npm install -g pnpm
-$ pnpm install
+sudo npm install -g pnpm
+pnpm install
 ```
 
-# `sci-cream` crate at `packages/sci-cream`
+## `sci-cream` crate at `packages/sci-cream`
 
 [Rust](https://rust-lang.org/tools/install/) must be installed to build the crate. Some features
 also require additional installs:
 
-The `diesel` feature requires `$ sudo apt install libpq-dev`.
+The `diesel` feature requires `sudo apt install libpq-dev`.
 
 The `wasm` feature requires [`wasm-pack`](https://drager.github.io/wasm-pack/) and the
 `wasm32-unknown-unknown` target to be installed:
 
 ```bash
-$ cargo install wasm-pack
-$ rustup target add wasm32-unknown-unknown
+cargo install wasm-pack
+rustup target add wasm32-unknown-unknown
 ```
 
 Building and running tests can be done normally with `cargo build` and `cargo test`, with
@@ -29,60 +31,60 @@ are enabled by default. Using the `wasm` feature and `wasm-pack` to prepare an `
 can be done as below, or simply by running `pnpm build:package`:
 
 ```bash
-$ # To validate build, not necessary when running wasm-pack
-$ cargo rustc --crate-type cdylib --target wasm32-unknown-unknown --features wasm,data,database
-$
-$ # To prepare the npm package, a dependency for the app
-$ ./scripts/set-crate-type.sh ./Cargo.toml cdylib
-$ wasm-pack build --out-dir wasm --out-name index -- --features "wasm,data,database"
+# To validate build, not necessary when running wasm-pack
+cargo rustc --crate-type cdylib --target wasm32-unknown-unknown --features wasm,data,database
+
+# To prepare the npm package, a dependency for the app
+./scripts/set-crate-type.sh ./Cargo.toml cdylib
+wasm-pack build --out-dir wasm --out-name index -- --features "wasm,data,database"
 ```
 
 To run code coverage:
 
 ```bash
-$ cargo install cargo-llvm-cov
-$ cargo llvm-cov test --all-features
-$ # Generate report to upload or visualize locally
-$ cargo llvm-cov report --codecov OR --html
+cargo install cargo-llvm-cov
+cargo llvm-cov test --all-features
+# Generate report to upload or visualize locally
+cargo llvm-cov report --codecov OR --html
 ```
 
 To upgrade Rust dependencies:
 
 ```bash
-$ cargo install cargo-edit
-$ cd ./packages/sci-cream
-$ cargo upgrade --incompatible
+cargo install cargo-edit
+cd ./packages/sci-cream
+cargo upgrade --incompatible
 ```
 
 To perform a release execute the steps below, followed by doing a GitHub release:
 
 ```bash
-$ cargo install cargo-release
-$
-$ # Login to crates.io, needs token from https://crates.io/settings/tokens
-$ cargo login
-$
-$ # Review changes and update CHANGELOG.md
-$ cargo release changes
-$
-$ # Review release before executing
-$ cargo release patch # OR minor, major
-$
-$ # Execute release, will also push tag
-$ cargo release patch --execute
+cargo install cargo-release
+
+# Login to crates.io, needs token from https://crates.io/settings/tokens
+cargo login
+
+# Review changes and update CHANGELOG.md
+cargo release changes
+
+# Review release before executing
+cargo release patch # OR minor, major
+
+# Execute release, will also push tag
+cargo release patch --execute
 ```
 
-# `sci-cream` app at `packages/app`
+## `sci-cream` app at `packages/app`
 
 Building and running the app requires Node.js, often a newer version than is provided by `apt`:
 
 ```bash
-$ sudo apt update
-$ sudo apt install nodejs
-$
-$ # To upgrade to the latest
-$ sudo npm install -g n
-$ sudo n stable
+sudo apt update
+sudo apt install nodejs
+
+# To upgrade to the latest
+sudo npm install -g n
+sudo n stable
 ```
 
 Testing and running the app requires a PostgreSQL database to be running and seeded, and certain
@@ -91,13 +93,13 @@ environment variables to be set. The requirements are detailed below:
 Install `postgresql`:
 
 ```bash
-$ sudo apt install postgresql postgresql-contrib
+sudo apt install postgresql postgresql-contrib
 ```
 
 Create database:
 
 ```bash
-$ sudo -u postgres psql
+sudo -u postgres psql
 # \password postgres
 # create database sci_cream;
 # grant all privileges on database sci_cream to postgres;
@@ -124,14 +126,14 @@ If developing on WSL and using DBeaver on Windows, then port `5432` may need to 
 To list and start/stop running database servers:
 
 ```bash
-$ pg_lscluster
-$ pg_ctlcluster 16 main stop
-$ pg_ctlcluster 16 main start
+pg_lscluster
+pg_ctlcluster 16 main stop
+pg_ctlcluster 16 main start
 ```
 
 Push schema to database and seed by running the following commands:
 
-```
+```env
 APP_USER_NAME="SciCream App"
 APP_USER_EMAIL="app@scicream.ca"
 TEST_USER_NAME="SciCream Test"
@@ -139,9 +141,9 @@ TEST_USER_EMAIL="test@scicream.ca"
 ```
 
 ```bash
-$ cd ./packages/app
-$ npx drizzle-kit push
-$ pnpm tsx ./src/lib/database/seed.ts
+cd ./packages/app
+npx drizzle-kit push
+pnpm tsx ./src/lib/database/seed.ts
 ```
 
 In order to set up OAuth authentication do the following steps. `<base_url>` can be either
@@ -172,46 +174,46 @@ Building, testing, and running the app can be done with `pnpm build`, `test`, `d
 To set up and run end-to-end and visual regression tests with Playwright (also run by `pnpm test`):
 
 ```bash
-$ # Set up dependencies
-$ pnpm playwright install --with-deps # default browsers
-$ pnpm playwright install chrome --with-deps # Chrome browser
-$
-$ # Run e2e and visual tests
-$ pnpm test:e2e # run end-to-end tests
-$ pnpm test:e2e:ui # run end-to-end tests with --ui
-$ pnpm test:visual # run visual regression tests
-$ pnpm test:visual:update # run visual with --update-snapshots
+# Set up dependencies
+pnpm playwright install --with-deps # default browsers
+pnpm playwright install chrome --with-deps # Chrome browser
+
+# Run e2e and visual tests
+pnpm test:e2e # run end-to-end tests
+pnpm test:e2e:ui # run end-to-end tests with --ui
+pnpm test:visual # run visual regression tests
+pnpm test:visual:update # run visual with --update-snapshots
 ```
 
 To run code coverage `npx vitest run --coverage`.
 To upgrade `pnpm` dependencies `pnpm update --latest`.
 
 ```bash
-$ pnpm update --latest --dir ./packages/app
-$ pnpm update --latest --dir ./packages/sci-cream
+pnpm update --latest --dir ./packages/app
+pnpm update --latest --dir ./packages/sci-cream
 ```
 
 To perform a release execute the steps below, followed by doing a GitHub release:
 
 ```bash
-$ # Review changes and update CHANGELOG.md
-$ ./scripts/release.sh changes
-$
-$ # Review release before executing
-$ ./scripts/release.sh release patch # OR minor, major
-$
-$ # Execute: will make changes and create commit/tag
-$ ./scripts/release.sh release patch --execute
-$
-$ # Push: will push the commit and tag to upstream
-$ ./scripts/release.sh push
+# Review changes and update CHANGELOG.md
+./scripts/release.sh changes
+
+# Review release before executing
+./scripts/release.sh release patch # OR minor, major
+
+# Execute: will make changes and create commit/tag
+./scripts/release.sh release patch --execute
+
+# Push: will push the commit and tag to upstream
+./scripts/release.sh push
 ```
 
-# Running CI workflows locally
+## Running CI workflows locally
 
 GitHub Actions workflows that are running as part of CI jobs can also be run locally with
 [`act`](https://github.com/nektos/act). Ensure that it is installed and available in `PATH`, and
-then simply run `$ act` from the repository root.
+then simply run `act` from the repository root.
 
 When running CI workflows locally via `act`, any services (e.g. postgres) or web servers (e.g. from
 Playwright, `pnpm dev|start`, etc.) running either locally or as part of jobs in CI workflows must
