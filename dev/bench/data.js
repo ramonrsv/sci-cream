@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785966126583,
+  "lastUpdate": 1785966248325,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -485782,6 +485782,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.45,
             "range": "0.49",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ab15bc5eb087da220ed96e155b176b5684413421",
+          "message": "Stop Vercel deploying on push\n\n`packages/app/vercel.json` sets `git.deploymentEnabled` false, so no\npush produces a Vercel deployment and the `Deploy` workflow is the\nonly thing that ships the app. Production Branch stays `main` —\ndisabling its deployments is what stops the automatic promotion.\n\nVercel reads the setting from the `vercel.json` in the branch being\npushed, so `gh-pages` carries its own copy, committed on that branch.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T17:36:59-04:00",
+          "tree_id": "37c4df7faaef961024df2a64f017492a09a14349",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ab15bc5eb087da220ed96e155b176b5684413421"
+        },
+        "date": 1785966212685,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.11,
+            "range": "8.64",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 15.31,
+            "range": "3.07",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 15.25,
+            "range": "3.10",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 158,
+            "range": "11.14",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.46,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 158,
+            "range": "11.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.11,
+            "range": "8.52",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.89,
+            "range": "1.08",
             "unit": "ms"
           }
         ]
