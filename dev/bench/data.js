@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785951222717,
+  "lastUpdate": 1785951325638,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -484756,6 +484756,90 @@ window.BENCHMARK_DATA = {
           {
             "name": "TTFB",
             "value": 3.49,
+            "range": "0.49",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "59b3dc255d73b4ea1eeebc5cf1c4318e1eb9d66e",
+          "message": "Add migration pipeline, drop surrogate keys\n\n`recipe_versions.id` and `batch_recipes.id` were never read; both\ntables now key on their natural pairs. Dropping a column from a\npopulated table is not something `drizzle-kit push` can do safely,\nso migrations replace push everywhere.\n\n`drizzle/` is the schema source of truth: 0000 baselines the existing\nschema, 0001 drops the surrogates. 0001 is hand-ordered — drizzle-kit\ndiffs the schema rather than the database, so it emitted statements\nPostgres rejects. `baseline.ts` records migrations as applied without\nrunning their SQL, which is what lets CI build a database one\nmigration behind.\n\nNew scripts, shared by CI and run-local-test-suite.sh:\n\n  build-migration-test-db.sh     the state a migration lands on\n  check-migrations-unchanged.sh  applied migrations are immutable\n  verify-migration-on-clone.sh   rehearse on a copy of production\n  backup-db.sh                   encrypted local dumps\n\nThe last two share their preconditions through `lib/postgres.sh`: the\nproduction URL checks, and the guards that keep pg_dump and the\nrestore target from being older than the server they act on.\n\nApplying a migration to an empty database proves little, since a new\nkey validates against nothing, so each migration carries a fixture of\nrows dumped at the previous one.\n\nMigrations reach production only through the `Database Migrate`\nworkflow, gated on the `production` environment and rehearsed on a\nclone first. `Deploy` orders a Vercel deploy against a migration\ninstead of racing it. Every job in both is gated on `vars.ACT`, so\n`act` cannot reach production or Vercel from a laptop.\n\nService containers move to postgres:17 to match production, and the\njobs that shell out to `psql` now install a matching client rather\nthan relying on the runner image happening to ship one.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T12:59:02-04:00",
+          "tree_id": "5f11df3f4cffe5227c76c4456f1e34cdbc827798",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/59b3dc255d73b4ea1eeebc5cf1c4318e1eb9d66e"
+        },
+        "date": 1785951287411,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 64.54,
+            "range": "11.24",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.11,
+            "range": "0.67",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.06,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 176.5,
+            "range": "16.67",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.42,
+            "range": "0.04",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 36,
+            "range": "6.93",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 176.5,
+            "range": "16.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 60.6,
+            "range": "11.07",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.45,
             "range": "0.49",
             "unit": "ms"
           }
