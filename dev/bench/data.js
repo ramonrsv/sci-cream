@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785966119758,
+  "lastUpdate": 1785966123318,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -442175,6 +442175,58 @@ window.BENCHMARK_DATA = {
           {
             "name": "propKeyAsMedStr",
             "value": 390458,
+            "range": "±1.03%",
+            "unit": "ops/sec",
+            "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ab15bc5eb087da220ed96e155b176b5684413421",
+          "message": "Stop Vercel deploying on push\n\n`packages/app/vercel.json` sets `git.deploymentEnabled` false, so no\npush produces a Vercel deployment and the `Deploy` workflow is the\nonly thing that ships the app. Production Branch stays `main` —\ndisabling its deployments is what stops the automatic promotion.\n\nVercel reads the setting from the `vercel.json` in the branch being\npushed, so `gh-pages` carries its own copy, committed on that branch.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T17:36:59-04:00",
+          "tree_id": "37c4df7faaef961024df2a64f017492a09a14349",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ab15bc5eb087da220ed96e155b176b5684413421"
+        },
+        "date": 1785966084841,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 52479,
+            "range": "±0.95%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 514607,
+            "range": "±0.62%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 35855,
+            "range": "±1.15%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 390538,
             "range": "±1.03%",
             "unit": "ops/sec",
             "extra": "92 samples"
