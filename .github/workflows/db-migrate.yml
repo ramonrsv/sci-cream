@@ -1,0 +1,86 @@
+# Applies pending Drizzle migrations to the production database.
+#
+# This is the only path that runs DDL against production. It is never triggered by a push: either a
+# maintainer dispatches it manually, or `deploy.yml` calls it as part of a deploy.
+#
+# `PROD_MIGRATION_POSTGRES_URL` must be Supabase's *session* pooler
+# (`aws-<n>-<region>.pooler.supabase.com:5432`), not the transaction pooler on 6543 used by the app.
+#
+# Ordering is the caller's responsibility and depends on the change. An additive migration goes out
+# before the code that needs it; a destructive one goes out *after* the code that stopped using what
+# it drops, since Drizzle names every column explicitly in its queries. See DEVELOPMENT.md.
+name: Database Migrate
+
+on:
+  workflow_dispatch:
+    inputs:
+      confirm:
+        description: "Latest migration tag to apply, e.g. 0001_drop_surrogate_keys"
+        required: true
+        type: string
+  workflow_call:
+    secrets:
+      PROD_MIGRATION_POSTGRES_URL:
+        required: true
+
+defaults:
+  run:
+    working-directory: ./packages/app
+
+jobs:
+  # Rehearsing and applying share a job, so approval is asked once. The production URL is not bound
+  # to `POSTGRES_URL` here: each step names the database it means, so none inherits it by accident.
+  migrate:
+    runs-on: ubuntu-latest
+    # `act` honours neither the approval gate nor the environment, so it never runs this locally.
+    if: vars.ACT != 'true'
+    # A required reviewer on this Environment gates the run, and its secret is scoped to it alone.
+    environment: production
+    services:
+      postgres:
+        image: postgres:17
+        env:
+          POSTGRES_DB: sci_cream_clone
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: password
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+        ports:
+          - 5441:5432
+    env:
+      PROD_MIGRATION_POSTGRES_URL: ${{ secrets.PROD_MIGRATION_POSTGRES_URL }}
+      MIGRATION_CLONE_POSTGRES_URL: postgres://postgres:password@localhost:5441/sci_cream_clone
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/setup-postgres-client
+        with:
+          version: "17"
+
+      - name: Verify the confirmation matches the latest migration
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          CONFIRM: ${{ inputs.confirm }}
+        run: |
+          latest=$(jq -r '.entries[-1].tag' drizzle/meta/_journal.json)
+          if [ "$CONFIRM" != "$latest" ]; then
+            echo "::error::confirm was '$CONFIRM', latest migration here is '$latest'"
+            exit 1
+          fi
+
+      - name: Rehearse the migration on a copy of production
+        run: ./scripts/verify-migration-on-clone.sh
+
+      - name: Apply pending migrations to production
+        env:
+          POSTGRES_URL: ${{ env.PROD_MIGRATION_POSTGRES_URL }}
+        run: npx drizzle-kit migrate
+
+      - name: Report the applied migrations
+        run: |
+          psql "$PROD_MIGRATION_POSTGRES_URL" -c \
+            "SELECT id, left(hash, 12) AS hash, to_timestamp(created_at / 1000) AS recorded
+             FROM drizzle.__drizzle_migrations ORDER BY id;"

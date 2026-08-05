@@ -1,0 +1,21 @@
+name: "Setup PostgreSQL Client"
+description: "Install a postgresql-client major version from the PGDG apt repository"
+inputs:
+  version:
+    description: "PostgreSQL major version, e.g. 17. Match the server being dumped."
+    required: true
+runs:
+  using: "composite"
+  steps:
+    # Runners ship the client for the Ubuntu release's own Postgres, which trails production's, and
+    # pg_dump cannot read a server newer than itself. PGDG carries every supported version.
+    - name: Install postgresql-client-${{ inputs.version }}
+      shell: bash
+      run: |
+        key=/usr/share/postgresql-common/pgdg/apt.postgresql.org.asc
+        repo="https://apt.postgresql.org/pub/repos/apt $(lsb_release -cs)-pgdg main"
+        sudo install -d "$(dirname "$key")"
+        sudo curl -fsSL -o "$key" https://www.postgresql.org/media/keys/ACCC4CF8.asc
+        echo "deb [signed-by=$key] $repo" | sudo tee /etc/apt/sources.list.d/pgdg.list
+        sudo apt-get update -qq
+        sudo apt-get install -y "postgresql-client-${{ inputs.version }}"

@@ -45,6 +45,13 @@
 - [ ] Make the 'information' icon show in visual regression tests for toolbar space constraints.
 - [ ] Explore decoupling balancing from the synchronous re-validation it triggers: each balance
       cycle waits for the solve and a costlier re-validation before the UI updates. Defer it?
+- [ ] Pin third-party GitHub Actions to commit SHAs, with a grouped monthly `dependabot.yml`, before
+      the `production` secrets go live — `codecov-action@v6` already resolves to v7.0.0, tag moved.
+- [ ] Finish the deploy-from-CI cutover in two stages, so a bad config can't leave the app unable to
+      ship. Dispatch `Deploy` with `target: preview` to prove the WASM build reproduces on a runner;
+      then add `vercel.json` `{ "git": { "deploymentEnabled": { "main": false } } }` and production.
+- [ ] Lint the shell scripts with `shellcheck`, as a `lint:sh` script and a CI job beside
+      `lint:sql`; they drop and recreate databases now, so its `set -e` and quoting checks pay off.
 
 ## Backlog
 
@@ -84,10 +91,6 @@
 - [ ] Add a "Tools" navbar item with tools like sweeteners lookup, ingredient replacement, etc.
 - [ ] Add functionality for user-defined ingredients. This may be tricky with recipe share links.
 - [ ] Add support for sharing of user-defined ingredients, similarly to sharing of recipes.
-- [ ] Look into setting up and how to do database migrations for the production database.
-- [ ] First real migration: rework `batch_recipes` provenance keying — drop the unused
-      `recipe_versions.id` surrogate, or switch to a single `version_id` FK. Needs a backfill and
-      column drops (unsafe via `push`), so do it as the first `drizzle-kit generate`/`migrate`.
 - [ ] Look into splitting `data.ts` and/or `data.test.ts` by domain (users, ingredients, recipes,
       batches); both are growing large and mix several concerns in a single file.
 - [ ] Find a proper fix for the placeholder `POSTGRES_URL` in the `bundle_benchmark` workflow.
@@ -110,6 +113,10 @@
 
 ## Completed
 
+- [x] Look into setting up and how to do database migrations for the production database.
+- [x] First real migration: rework `batch_recipes` provenance keying — drop the unused
+      `recipe_versions.id` surrogate, or switch to a single `version_id` FK. Needs a backfill and
+      column drops (unsafe via `push`), so do it as the first `drizzle-kit generate`/`migrate`.
 - [x] Investigate relative delta behavior in `Watchers`, they seem to not be changing gradually.
 - [x] `autoLink` has a bug where it includes closing `),` in the produced links; fix or replace.
 - [x] Invalid ingredient names are not saved when saving a recipe. They should be, so need a fix.

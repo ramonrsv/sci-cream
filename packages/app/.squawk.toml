@@ -1,0 +1,29 @@
+# Squawk lints migrations for hazards Postgres will not warn about. Rules are excluded only where
+# the hazard genuinely does not apply here — not to silence output.
+
+# A snapshot of the schema production already had, applied only to fresh databases and recorded on
+# production by `pnpm db:baseline` rather than run there. It is history, not a proposed change.
+excluded_paths = ["drizzle/0000_baseline.sql"]
+
+excluded_rules = [
+  # Lock contention. The largest table holds a few hundred rows, so the table scans and ACCESS
+  # EXCLUSIVE locks these rules warn about complete in microseconds. Revisit if that stops holding.
+  "adding-foreign-key-constraint",
+  "adding-serial-primary-key-field",
+  "constraint-missing-not-valid",
+  "require-concurrent-index-creation",
+  "require-lock-timeout",
+  "require-statement-timeout",
+  "require-timeout-settings",
+
+  # Drizzle applies each migration inside a single transaction, so a partial failure already rolls
+  # back whole and the `IF NOT EXISTS` guards this rule asks for would be redundant.
+  "prefer-robust-stmts",
+
+  # `integer` identity columns are deliberate; this app will not approach 2.1 billion rows.
+  "prefer-bigint-over-int",
+
+  # The schema stores timestamps without a zone. Changing that is its own migration and data
+  # decision, not something a migration linter should block.
+  "prefer-timestamptz",
+]

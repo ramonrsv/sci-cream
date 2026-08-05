@@ -17,6 +17,7 @@
     "test:visual": "playwright test --project visual",
     "test:visual:update": "pnpm test:visual --update-snapshots",
     "lint": "eslint ./src --max-warnings=0",
+    "lint:sql": "squawk drizzle/*.sql",
     "prettier": "prettier --check ./src",
     "coverage": "vitest run --coverage",
     "bench": "pnpm bench:unit && pnpm bench:bundle && pnpm bench:e2e && pnpm bench:web-vitals",
@@ -28,7 +29,10 @@
     "dev:turbopack": "next dev --turbopack",
     "dev:webpack": "next dev --webpack",
     "start": "next start",
-    "seed-db": "npx drizzle-kit push && pnpm tsx ./src/lib/database/seed.ts",
+    "db:generate": "npx drizzle-kit generate",
+    "db:migrate": "npx drizzle-kit migrate",
+    "db:baseline": "pnpm tsx ./src/lib/database/baseline.ts",
+    "seed-db": "pnpm db:migrate && pnpm tsx ./src/lib/database/seed.ts",
     "doc": "tsc --noEmit false --outDir ./dist && npx jsdoc -c ./jsdoc.config.json"
   },
   "dependencies": {
@@ -90,6 +94,7 @@
     "jsdoc-plugin-typescript": "^3.2.1",
     "jsdom": "^29.1.1",
     "sharp": "^0.35.1",
+    "squawk-cli": "^2.61.0",
     "tailwindcss": "^4.3.1",
     "tsx": "^4.22.4",
     "typescript": "^6.0.3",

@@ -88,7 +88,6 @@ export type RecipeSelect = typeof recipesTable.$inferSelect;
 export const recipeVersionsTable = pgTable(
   "recipe_versions",
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
     recipeId: integer("recipe_id")
       .notNull()
       .references(() => recipesTable.id, { onDelete: "cascade" }),
@@ -102,7 +101,7 @@ export const recipeVersionsTable = pgTable(
     createdAt: timestamp("created_at").defaultNow().notNull(),
   },
   (table) => [
-    unique("recipe_versions_recipe_version_uq").on(table.recipeId, table.version),
+    primaryKey({ columns: [table.recipeId, table.version] }),
     uniqueIndex("recipe_versions_recipe_version_name_uq")
       .on(table.recipeId, table.versionName)
       .where(sql`${table.versionName} IS NOT NULL`),
@@ -148,7 +147,6 @@ export type BatchSelect = typeof batchesTable.$inferSelect;
 export const batchRecipesTable = pgTable(
   "batch_recipes",
   {
-    id: integer().primaryKey().generatedAlwaysAsIdentity(),
     batchId: integer("batch_id")
       .notNull()
       .references(() => batchesTable.id, { onDelete: "cascade" }),
@@ -163,7 +161,7 @@ export const batchRecipesTable = pgTable(
     hasSiblings: boolean("has_siblings"),
   },
   (table) => [
-    unique("batch_recipes_batch_position_uq").on(table.batchId, table.position),
+    primaryKey({ columns: [table.batchId, table.position] }),
     foreignKey({
       name: "batch_recipes_version_fk",
       columns: [table.recipeId, table.versionNumber],

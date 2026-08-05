@@ -62,11 +62,20 @@ pnpm test:e2e:chromium   # Playwright chromium only (faster iteration)
 pnpm test:visual         # Visual regression tests
 pnpm test:visual:update  # Update visual snapshots
 pnpm lint                # ESLint, --max-warnings=0
-pnpm seed-db             # drizzle-kit push + run src/lib/database/seed.ts
+pnpm lint:sql            # Squawk migration linter; config + rationale in .squawk.toml
+pnpm seed-db             # db:migrate + run src/lib/database/seed.ts
+pnpm db:generate         # Write a migration from the current schema.ts
+pnpm db:migrate          # Apply pending migrations
+pnpm db:baseline         # Record migrations as applied without executing their SQL
 ```
 
 The app requires a running PostgreSQL and `.env` with `POSTGRES_URL`, `AUTH_SECRET`, GitHub + Google
 OAuth credentials. See `DEVELOPMENT.md` for full DB and OAuth setup.
+
+`drizzle-kit push` is retired — `packages/app/drizzle/` is the schema source of truth. Generated SQL
+routinely needs hand-editing, since drizzle-kit diffs the schema rather than the database and cannot
+see constraint dependencies. Destructive migrations deploy _after_ the code that stops using the
+dropped columns; additive ones go before. See `DEVELOPMENT.md` § "Database migrations".
 
 ### Local CI
 
@@ -230,9 +239,12 @@ to keep the word. Each file drops only its own directory's word: the batch-build
   need `id`/`name`/`mixProperties` can take the slim shape.
 - **`lib/sci-cream/sci-cream.ts`** — small helpers around `@workspace/sci-cream` types
   (`isCompKeyQuantity`, `isPropKeyQuantity`, `getAcceptablePropertyRange`).
-- **`lib/database/`** — Drizzle ORM schema (`schema.ts`) + seed (`seed.ts`). Two tables: `users` and
-  `ingredients` (user-defined specs stored as JSON). The `categoryEnum` is sourced from the
-  Rust-defined `SchemaCategory` via `@workspace/sci-cream/schema-category`.
+- **`lib/database/`** — Drizzle ORM schema (`schema.ts`), seed (`seed.ts`), and migration baselining
+  (`baseline.ts`). Six tables: `users`, `ingredients` (user-defined specs stored as JSON),
+  `recipes` with `recipe_versions` (keyed `(recipe_id, version)`), and `batches` with
+  `batch_recipes` (keyed `(batch_id, position)`, holding a composite FK to `recipe_versions` for
+  provenance only). The `categoryEnum` is sourced from the Rust-defined `SchemaCategory` via
+  `@workspace/sci-cream/schema-category`.
 - **`lib/data.ts`** — `"use server"` actions for ingredient lookups; converts stored JSON to Rust
   types via `into_ingredient_from_spec_js()`.
 - **`lib/auth.ts`** — NextAuth v5 (beta) with GitHub + Google OAuth providers.

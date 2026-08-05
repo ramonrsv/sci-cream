@@ -13,8 +13,11 @@ inputs:
 runs:
   using: "composite"
   steps:
+    # This action defaults its toolchain to the branch it is referenced by, so passing it explicitly
+    # keeps the choice independent of the ref — a SHA, once pinned, names no branch.
     - uses: dtolnay/rust-toolchain@stable
       with:
+        toolchain: stable
         components: ${{ inputs.components }}
         targets: ${{ inputs.targets }}
 

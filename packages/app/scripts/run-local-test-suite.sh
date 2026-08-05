@@ -38,10 +38,21 @@ function execute() {
 execute pnpm build:deps
 execute pnpm prettier
 execute pnpm lint
+execute pnpm lint:sql
+execute ./scripts/check-migrations-unchanged.sh
 
 execute pnpm build
 execute pnpm seed-db
 execute pnpm test:unit
+
+# Mirrors the `db_migration` CI job: applies the newest migration to a database one behind, holding
+# rows, then tests the data layer against it. Uses its own database, not the development one.
+: "${POSTGRES_URL:?set POSTGRES_URL; the migration test database is derived from it}"
+MIGRATION_URL="${POSTGRES_URL%/*}/sci_cream_migration_test"
+execute env POSTGRES_URL="$MIGRATION_URL" ./scripts/build-migration-test-db.sh
+execute env POSTGRES_URL="$MIGRATION_URL" npx drizzle-kit migrate
+execute env POSTGRES_URL="$MIGRATION_URL" pnpm test:unit src/lib/data.test.ts
+
 execute env CI=true pnpm test:e2e
 execute pnpm test:visual
 execute pnpm doc

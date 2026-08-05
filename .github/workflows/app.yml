@@ -23,6 +23,9 @@ env:
   # Prevents `github-action-benchmark`'s internal `git checkout -` from smudging unneeded LFS files
   GIT_LFS_SKIP_SMUDGE: "1"
 
+  # Disposable CI fixture, deliberately committed: NextAuth refuses to start without a secret, and
+  # this one only signs sessions for throwaway CI databases. Never reuse it in Vercel or a local
+  # `.env` — sessions are JWTs with no adapter, so the secret alone forges any user's session.
   AUTH_SECRET: 66ab177cbeb0cb863edc40b69fcfbf4081c5bb37dd89bca026b30ef4393dace1
 
 defaults:
@@ -34,7 +37,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16
+        image: postgres:17
         env: &postgres-env
           POSTGRES_DB: sci_cream
           POSTGRES_USER: postgres
@@ -65,7 +68,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16
+        image: postgres:17
         env: *postgres-env
         options: *postgres-options
         ports:
@@ -89,7 +92,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16
+        image: postgres:17
         env: *postgres-env
         options: *postgres-options
         ports:
@@ -149,7 +152,7 @@ jobs:
     runs-on: ubuntu-latest
     services:
       postgres:
-        image: postgres:16
+        image: postgres:17
         env: *postgres-env
         options: *postgres-options
         ports:
@@ -260,7 +263,7 @@ jobs:
       contents: write
     services:
       postgres:
-        image: postgres:16
+        image: postgres:17
         env: *postgres-env
         options: *postgres-options
         ports:
@@ -299,7 +302,7 @@ jobs:
       contents: write
     services:
       postgres:
-        image: postgres:16
+        image: postgres:17
         env: *postgres-env
         options: *postgres-options
         ports:
@@ -332,3 +335,48 @@ jobs:
           fail-on-alert: false
           comment-on-alert: true
           alert-comment-cc-users: "@ramonrsv"
+
+  migration_lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-pnpm
+
+      - name: Lint migrations with Squawk
+        run: pnpm lint:sql
+
+      - name: Verify already-committed migrations are unchanged
+        run: ./scripts/check-migrations-unchanged.sh
+          "${{ github.event.pull_request.base.sha || github.event.before }}"
+
+  db_migration:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17
+        env: *postgres-env
+        options: *postgres-options
+        ports:
+          - 5439:5432
+    env:
+      POSTGRES_URL: postgres://postgres:password@localhost:5439/sci_cream
+      PGPASSWORD: password
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-rust
+        with:
+          cargo-installs: wasm-pack
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/sci-cream-package
+      - uses: ./.github/actions/setup-postgres-client
+        with:
+          version: "17"
+
+      - name: Build the state the newest migration will land on
+        run: ./scripts/build-migration-test-db.sh
+
+      - name: Apply the newest migration
+        run: npx drizzle-kit migrate
+
+      - name: Run database integration tests against the migrated schema
+        run: pnpm test:unit src/lib/data.test.ts

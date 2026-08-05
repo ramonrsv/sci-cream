@@ -6,9 +6,9 @@ runs:
     - name: Build app
       shell: bash
       run: pnpm --dir ./packages/app build
-    - name: Seed database
+    - name: Migrate and seed database
       shell: bash
       run: |
         cd ./packages/app
-        npx drizzle-kit push
+        npx drizzle-kit migrate
         pnpm tsx ./src/lib/database/seed.ts

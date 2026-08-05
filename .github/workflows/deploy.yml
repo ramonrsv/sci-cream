@@ -1,0 +1,116 @@
+# Builds, verifies, and deploys the app to Vercel from CI, so a deploy can be ordered against a
+# database migration instead of racing it.
+#
+# Vercel's own Git integration deploys on push and cannot wait for a migration, so this workflow
+# takes over production deploys once `packages/app/vercel.json` sets `git.deploymentEnabled` false.
+#
+# `migrate` picks the phase:
+#   before — additive migration the new code depends on (expand)
+#   after  — destructive migration that removes what the old code used (contract)
+#   none   — no schema change in this deploy
+#
+# Required secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID on both the `Preview` and
+# `Production` environments, and — when migrating — PROD_MIGRATION_POSTGRES_URL on `Production`.
+name: Deploy
+
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Deployment target"
+        required: true
+        default: preview
+        type: choice
+        options: [preview, production]
+      migrate:
+        description: "When to run pending migrations, relative to the deploy"
+        required: true
+        default: none
+        type: choice
+        options: [none, before, after]
+
+defaults:
+  run:
+    working-directory: ./packages/app
+
+jobs:
+  # Gates on App CI and Crate CI's existing results — re-running them would double-push benchmarks.
+  verify:
+    runs-on: ubuntu-latest
+    # Every job repeats this: a skipped `needs` is not a failure, so the rest would deploy anyway.
+    if: vars.ACT != 'true'
+    permissions:
+      actions: read
+    steps:
+      # No checkout, so the workflow-level working directory does not exist in this job.
+      - name: Require App CI and Crate CI to have passed for this commit
+        working-directory: .
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          for wf in app.yml crate.yml; do
+            read -r status conclusion <<<"$(gh run list --repo "$GITHUB_REPOSITORY" \
+              --workflow "$wf" --commit "$GITHUB_SHA" --limit 1 --json status,conclusion \
+              --jq '.[0] | "\(.status // "missing") \(.conclusion // "none")"')"
+            if [ "$conclusion" != "success" ]; then
+              echo "::error::$wf for $GITHUB_SHA: status=$status conclusion=$conclusion"
+              exit 1
+            fi
+            echo "$wf: success"
+          done
+
+  migrate_before:
+    needs: verify
+    if: ${{ inputs.migrate == 'before' && vars.ACT != 'true' }}
+    uses: ./.github/workflows/db-migrate.yml
+    secrets: inherit
+
+  deploy:
+    needs: [verify, migrate_before]
+    # Runs when `migrate_before` was skipped, but not when anything actually failed
+    if: ${{ !failure() && !cancelled() && vars.ACT != 'true' }}
+    runs-on: ubuntu-latest
+    # Follows the target, so previews are not held behind Production's reviewer or its secrets.
+    environment: ${{ inputs.target == 'production' && 'Production' || 'Preview' }}
+    env:
+      VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
+      VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
+    steps:
+      - uses: actions/checkout@v5
+      - uses: ./.github/actions/setup-rust
+        with:
+          cargo-installs: wasm-pack
+      - uses: ./.github/actions/setup-node
+      - uses: ./.github/actions/sci-cream-package
+
+      # The Vercel CLI runs from the repository root and honors the project's own Root Directory
+      # setting, so the build reproduces what Vercel's Git integration would have run.
+      - name: Pull Vercel project settings
+        working-directory: .
+        run: |
+          npx vercel pull --yes --token="$VERCEL_TOKEN" \
+            --environment=${{ inputs.target == 'production' && 'production' || 'preview' }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Build
+        working-directory: .
+        run: |
+          npx vercel build --token="$VERCEL_TOKEN" \
+            ${{ inputs.target == 'production' && '--prod' || '' }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+      - name: Deploy
+        working-directory: .
+        run: |
+          npx vercel deploy --prebuilt --token="$VERCEL_TOKEN" \
+            ${{ inputs.target == 'production' && '--prod' || '' }}
+        env:
+          VERCEL_TOKEN: ${{ secrets.VERCEL_TOKEN }}
+
+  migrate_after:
+    needs: deploy
+    if: ${{ inputs.migrate == 'after' && !failure() && !cancelled() && vars.ACT != 'true' }}
+    uses: ./.github/workflows/db-migrate.yml
+    secrets: inherit

@@ -126,24 +126,25 @@ If developing on WSL and using DBeaver on Windows, then port `5432` may need to 
 To list and start/stop running database servers:
 
 ```bash
-pg_lscluster
-pg_ctlcluster 16 main stop
-pg_ctlcluster 16 main start
+pg_lsclusters
+pg_ctlcluster 17 main stop
+pg_ctlcluster 17 main start
+
+pg_dropcluster 17 main --stop
+pg_createcluster 17 main --start
 ```
 
-Push schema to database and seed by running the following commands:
-
-```env
-APP_USER_NAME="SciCream App"
-APP_USER_EMAIL="app@scicream.ca"
-TEST_USER_NAME="SciCream Test"
-TEST_USER_EMAIL="test@scicream.ca"
-```
+Apply the schema and seed it by running the following commands:
 
 ```bash
 cd ./packages/app
-npx drizzle-kit push
+
+# Individual steps
+npx drizzle-kit migrate
 pnpm tsx ./src/lib/database/seed.ts
+
+# Or the equivalent
+pnpm seed-db
 ```
 
 In order to set up OAuth authentication do the following steps. `<base_url>` can be either
@@ -208,6 +209,137 @@ To perform a release execute the steps below, followed by doing a GitHub release
 # Push: will push the commit and tag to upstream
 ./scripts/release.sh push
 ```
+
+## Database migrations
+
+`packages/app/drizzle/` is the source of truth for the database schema.
+
+```bash
+cd ./packages/app
+pnpm db:generate --name <short_description>  # write a migration from the current schema.ts
+pnpm lint:sql                                # Squawk checks it for hazards Postgres will not
+pnpm db:migrate                              # apply pending migrations
+```
+
+**Read the generated SQL.** `drizzle-kit` diffs the schema, not the database, so it misses
+dependencies between constraints and routinely emits statements Postgres rejects; hand-editing is
+expected. `meta/*_snapshot.json` describes the end state, not the statements, so it stays valid.
+Rules Squawk should not apply at this scale are excluded in `.squawk.toml`; suppress a single
+finding with a `-- squawk-ignore <rule>` comment saying why it is safe.
+
+A committed migration is immutable, which the `migration_immutability` CI job enforces — drizzle's
+migrator compares bookmarks by timestamp rather than hash, so an edited one would test green here
+while production kept the original schema.
+
+Each migration also needs a data-only fixture at `drizzle/fixtures/<tag>.sql`, giving the
+`db_migration` CI job a populated database to apply it to. Dump one from a database at the
+_previous_ migration, holding whatever rows the new migration's constraints must validate against.
+Only the newest fixture is read, so delete the previous one:
+
+```bash
+createdb sci_cream_fixture
+export POSTGRES_URL="postgres://postgres:password@localhost:5432/sci_cream_fixture"
+
+# Every migration except the new one, in journal order
+psql "$POSTGRES_URL" -q -v ON_ERROR_STOP=1 -f drizzle/0000_baseline.sql
+
+pnpm tsx ./src/lib/database/seed.ts
+pg_dump "$POSTGRES_URL" --data-only --schema=public --no-owner --no-privileges \
+  > drizzle/fixtures/<new_tag>.sql
+dropdb sci_cream_fixture
+```
+
+### Ordering a migration against a deploy
+
+Drizzle names every column explicitly, so running code breaks the moment a column it still names
+disappears:
+
+- **Expand** (new tables, new nullable columns) — migrate **before** deploying.
+- **Contract** (dropped columns or constraints) — deploy **first**, then migrate.
+
+A migration runs in a single transaction, so a failure rolls back whole.
+
+### Applying to production
+
+Production is Supabase, reached over its **session pooler**
+(`aws-<n>-<region>.pooler.supabase.com:5432`) — the transaction pooler on `6543` cannot hold a
+migration's transaction. It is the `PROD_MIGRATION_POSTGRES_URL` secret on the `production` GitHub
+Environment, whose required reviewer gates every run.
+
+Migrations are applied by the `Database Migrate` workflow — never from a laptop, and never from a
+push. Dispatch it manually, or let `Deploy` call it via its `migrate: before | after` input. It
+rehearses on a throwaway copy of production first, and aborts before touching production if that
+fails.
+
+Rehearse by hand before dispatching, with the script the workflow itself runs. It only ever reads
+production, and drops the local copy afterwards unless `--keep-clone` is given. The copy needs a
+server at production's major version — Postgres does not restore into an older one — so run one if
+the development server is behind:
+
+```bash
+docker run -d --rm -e POSTGRES_PASSWORD=password -p 127.0.0.1:5442:5432 postgres:17
+export MIGRATION_CLONE_POSTGRES_URL="postgres://postgres:password@localhost:5442/sci_cream_clone"
+
+set -a; . ~/.config/sci-cream/prod.env; set +a
+./packages/app/scripts/verify-migration-on-clone.sh
+```
+
+Take a backup first, and smoke-test `/recipes` and `/make-recipe` afterwards.
+
+### Rolling back
+
+Drizzle has no down migrations. Reversals live in `drizzle/rollback/*.down.sql`, outside
+`meta/_journal.json` so they are never applied as a forward step. Apply with `psql`, delete the
+migration's row from `drizzle.__drizzle_migrations`, and redeploy the matching app build.
+
+## Deploying
+
+Production deploys run from the `Deploy` workflow rather than Vercel's Git integration, so a deploy
+can be ordered against a migration instead of racing it. `packages/app/vercel.json` turns off
+push-triggered deploys. The deploy job binds the GitHub Environment named by its `target`, so
+`VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` are needed on both `Preview` and
+`Production`, and a reviewer on `Production` gates production deploys without holding up previews.
+
+Dispatch it with `target: preview | production`, and `migrate: none | before | after` to pick which
+side of the deploy a migration runs on — see
+[Ordering a migration against a deploy](#ordering-a-migration-against-a-deploy). It gates on App CI
+and Crate CI having already passed for the commit.
+
+## Database Backups
+
+`packages/app/scripts/backup-db.sh` writes an encrypted dump of production to this machine.
+
+One-time setup. The **private** key is the only thing that can read the backups, so keep it
+somewhere that survives this machine dying — a password manager, another device, paper:
+
+```bash
+sudo apt install age
+age-keygen -o ./backup-key.txt   # prints the public key; store the file elsewhere, then delete it
+```
+
+Put the production URLs and the age **public** key in a file the app never loads:
+
+```bash
+install -m 600 /dev/null ~/.config/sci-cream/prod.env
+# PROD_DUMP_POSTGRES_URL="postgres://...pooler.supabase.com:5432/postgres?sslmode=require"
+# PROD_MIGRATION_POSTGRES_URL="postgres://...pooler.supabase.com:5432/postgres?sslmode=require"
+# BACKUP_AGE_RECIPIENT="age1..."
+```
+
+Never put a production URL in `packages/app/.env` — the dev server, `drizzle.config.ts`, and the
+tests all read it, and `pnpm seed-db` deletes each seeded user's recipes and batches.
+
+```bash
+set -a; . ~/.config/sci-cream/prod.env; set +a
+./packages/app/scripts/backup-db.sh --verify
+```
+
+Dumps land in `~/backups/sci-cream` as `sci-cream-<timestamp>.sql.gz.age` and are never deleted
+unless `--keep N` asks for it (`--out DIR` moves them). They cover the `public` and `drizzle`
+schemas, so a restore carries its own migration bookmark. `--verify` restores into a scratch
+database and reports row counts _before_ encrypting; it needs `BACKUP_VERIFY_POSTGRES_URL`
+pointing at a server on production's major version, the same constraint as the migration rehearsal
+above. Restore instructions are in the script's header.
 
 ## Running CI workflows locally
 
