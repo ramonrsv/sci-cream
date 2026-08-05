@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785968639347,
+  "lastUpdate": 1785969004946,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -410341,6 +410341,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 649.25,
             "range": "11.90",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3339ef0fb28f774f9047c055d3d44e7e1ac6f3f2",
+          "message": "Deploy a preview from CI on every push to main\n\nWith Vercel's Git integration off, nothing built `main` on its own.\n`Deploy` now also runs on push, where an empty `inputs` context takes\nthe existing conditionals down the preview path; production stays a\ndispatch.\n\n`verify` read App CI and Crate CI mid-flight, which on a push is\nalways `in_progress`. It now polls until both conclude, under one\n45-minute deadline. That holds a runner idle for as long as App CI\ntakes; TODO.md tracks moving to a `workflow_run` trigger instead.\n\nConcurrency queues deploys per target so a slow push cannot land over\na newer one, without cancelling a run that is already going.\n\n`db-migrate.yml` declared a `workflow_call` secret its caller could\nnever supply — `on.workflow_call` cannot carry environment secrets —\nso it now relies on the `migrate` job's own `environment`, which took\nprecedence anyway.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T18:13:06-04:00",
+          "tree_id": "cb7a7a75011cc56b16e0bb29b93b9338bf00c653",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3339ef0fb28f774f9047c055d3d44e7e1ac6f3f2"
+        },
+        "date": 1785968967446,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 46.63,
+            "range": "4.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 51.75,
+            "range": "4.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 62.63,
+            "range": "6.08",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2464,
+            "range": "76.19",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 336.13,
+            "range": "7.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 342.75,
+            "range": "5.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 364.5,
+            "range": "3.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17296.75,
+            "range": "41.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 16.31,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 900.5,
+            "range": "20.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 53,
+            "range": "3.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54.63,
+            "range": "2.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 40.13,
+            "range": "1.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 41.38,
+            "range": "1.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 126.5,
+            "range": "2.74",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 83.5,
+            "range": "2.60",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 53.97,
+            "range": "0.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 42.64,
+            "range": "0.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 625.63,
+            "range": "7.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 666.13,
+            "range": "12.55",
             "unit": "ms"
           }
         ]
