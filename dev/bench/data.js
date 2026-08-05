@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785968259949,
+  "lastUpdate": 1785968322366,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -486807,6 +486807,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.89,
             "range": "1.08",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3339ef0fb28f774f9047c055d3d44e7e1ac6f3f2",
+          "message": "Deploy a preview from CI on every push to main\n\nWith Vercel's Git integration off, nothing built `main` on its own.\n`Deploy` now also runs on push, where an empty `inputs` context takes\nthe existing conditionals down the preview path; production stays a\ndispatch.\n\n`verify` read App CI and Crate CI mid-flight, which on a push is\nalways `in_progress`. It now polls until both conclude, under one\n45-minute deadline. That holds a runner idle for as long as App CI\ntakes; TODO.md tracks moving to a `workflow_run` trigger instead.\n\nConcurrency queues deploys per target so a slow push cannot land over\na newer one, without cancelling a run that is already going.\n\n`db-migrate.yml` declared a `workflow_call` secret its caller could\nnever supply — `on.workflow_call` cannot carry environment secrets —\nso it now relies on the `migrate` job's own `environment`, which took\nprecedence anyway.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T18:13:06-04:00",
+          "tree_id": "cb7a7a75011cc56b16e0bb29b93b9338bf00c653",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3339ef0fb28f774f9047c055d3d44e7e1ac6f3f2"
+        },
+        "date": 1785968284876,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 63.19,
+            "range": "10.24",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.9,
+            "range": "1.42",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.86,
+            "range": "1.39",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 172.5,
+            "range": "18.38",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.44,
+            "range": "0.05",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 172.5,
+            "range": "18.38",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 58.11,
+            "range": "9.53",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.55,
+            "range": "0.43",
             "unit": "ms"
           }
         ]
