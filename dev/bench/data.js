@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785966908900,
+  "lastUpdate": 1785968242009,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -472453,6 +472453,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1106.93,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 13.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 137.71,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3339ef0fb28f774f9047c055d3d44e7e1ac6f3f2",
+          "message": "Deploy a preview from CI on every push to main\n\nWith Vercel's Git integration off, nothing built `main` on its own.\n`Deploy` now also runs on push, where an empty `inputs` context takes\nthe existing conditionals down the preview path; production stays a\ndispatch.\n\n`verify` read App CI and Crate CI mid-flight, which on a push is\nalways `in_progress`. It now polls until both conclude, under one\n45-minute deadline. That holds a runner idle for as long as App CI\ntakes; TODO.md tracks moving to a `workflow_run` trigger instead.\n\nConcurrency queues deploys per target so a slow push cannot land over\na newer one, without cancelling a run that is already going.\n\n`db-migrate.yml` declared a `workflow_call` secret its caller could\nnever supply — `on.workflow_call` cannot carry environment secrets —\nso it now relies on the `migrate` job's own `environment`, which took\nprecedence anyway.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T18:13:06-04:00",
+          "tree_id": "cb7a7a75011cc56b16e0bb29b93b9338bf00c653",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3339ef0fb28f774f9047c055d3d44e7e1ac6f3f2"
+        },
+        "date": 1785968204457,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 701.78,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 870.23,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 639.62,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 808.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 647.08,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 815.53,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 578.27,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 746.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] route-only JS (gzip)",
+            "value": 578.27,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] first-load JS (gzip)",
+            "value": 746.71,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1106.94,
             "unit": "KB"
           },
           {
