@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785951558573,
+  "lastUpdate": 1785951613750,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -64330,6 +64330,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "fast_interpolate_pairs(near_end)",
             "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "59b3dc255d73b4ea1eeebc5cf1c4318e1eb9d66e",
+          "message": "Add migration pipeline, drop surrogate keys\n\n`recipe_versions.id` and `batch_recipes.id` were never read; both\ntables now key on their natural pairs. Dropping a column from a\npopulated table is not something `drizzle-kit push` can do safely,\nso migrations replace push everywhere.\n\n`drizzle/` is the schema source of truth: 0000 baselines the existing\nschema, 0001 drops the surrogates. 0001 is hand-ordered — drizzle-kit\ndiffs the schema rather than the database, so it emitted statements\nPostgres rejects. `baseline.ts` records migrations as applied without\nrunning their SQL, which is what lets CI build a database one\nmigration behind.\n\nNew scripts, shared by CI and run-local-test-suite.sh:\n\n  build-migration-test-db.sh     the state a migration lands on\n  check-migrations-unchanged.sh  applied migrations are immutable\n  verify-migration-on-clone.sh   rehearse on a copy of production\n  backup-db.sh                   encrypted local dumps\n\nThe last two share their preconditions through `lib/postgres.sh`: the\nproduction URL checks, and the guards that keep pg_dump and the\nrestore target from being older than the server they act on.\n\nApplying a migration to an empty database proves little, since a new\nkey validates against nothing, so each migration carries a fixture of\nrows dumped at the previous one.\n\nMigrations reach production only through the `Database Migrate`\nworkflow, gated on the `production` environment and rehearsed on a\nclone first. `Deploy` orders a Vercel deploy against a migration\ninstead of racing it. Every job in both is gated on `vars.ACT`, so\n`act` cannot reach production or Vercel from a laptop.\n\nService containers move to postgres:17 to match production, and the\njobs that shell out to `psql` now install a matching client rather\nthan relying on the runner image happening to ship one.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T12:59:02-04:00",
+          "tree_id": "5f11df3f4cffe5227c76c4456f1e34cdbc827798",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/59b3dc255d73b4ea1eeebc5cf1c4318e1eb9d66e"
+        },
+        "date": 1785951575938,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4118,
+            "range": "± 176",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 160608,
+            "range": "± 2318",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2405,
+            "range": "± 12",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 160943,
+            "range": "± 17382",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 4570,
+            "range": "± 46",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 4751,
+            "range": "± 108",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 4951,
+            "range": "± 55",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 5011,
+            "range": "± 66",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 4972,
+            "range": "± 54",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 5157,
+            "range": "± 133",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 112049,
+            "range": "± 1759",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 115393,
+            "range": "± 2028",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 180709600,
+            "range": "± 2228972",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 620502,
+            "range": "± 3291",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 6789,
+            "range": "± 244",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 53,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 6778,
+            "range": "± 116",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 98926,
+            "range": "± 2362",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 94591,
+            "range": "± 1084",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 203860,
+            "range": "± 5352",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 154340,
+            "range": "± 1189",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 331664,
+            "range": "± 2704",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14382,
+            "range": "± 57",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 4,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 635,
+            "range": "± 3",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 15,
             "range": "± 0",
             "unit": "ns/iter"
           }
