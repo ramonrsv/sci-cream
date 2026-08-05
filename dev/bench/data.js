@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785951986533,
+  "lastUpdate": 1785966104141,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -490853,6 +490853,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/59b3dc255d73b4ea1eeebc5cf1c4318e1eb9d66e"
         },
         "date": 1785951166371,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1082.89,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.29,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1665.71,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 517.55,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 564.25,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1866.83,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "ab15bc5eb087da220ed96e155b176b5684413421",
+          "message": "Stop Vercel deploying on push\n\n`packages/app/vercel.json` sets `git.deploymentEnabled` false, so no\npush produces a Vercel deployment and the `Deploy` workflow is the\nonly thing that ships the app. Production Branch stays `main` —\ndisabling its deployments is what stops the automatic promotion.\n\nVercel reads the setting from the `vercel.json` in the branch being\npushed, so `gh-pages` carries its own copy, committed on that branch.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T17:36:59-04:00",
+          "tree_id": "37c4df7faaef961024df2a64f017492a09a14349",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/ab15bc5eb087da220ed96e155b176b5684413421"
+        },
+        "date": 1785966065683,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
