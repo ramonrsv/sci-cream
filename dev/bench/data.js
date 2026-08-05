@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785968600093,
+  "lastUpdate": 1785968639347,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -64690,6 +64690,192 @@ window.BENCHMARK_DATA = {
           {
             "name": "interpolate_pairs(near_end)",
             "value": 635,
+            "range": "± 2",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_start)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(near_end)",
+            "value": 14,
+            "range": "± 0",
+            "unit": "ns/iter"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "3339ef0fb28f774f9047c055d3d44e7e1ac6f3f2",
+          "message": "Deploy a preview from CI on every push to main\n\nWith Vercel's Git integration off, nothing built `main` on its own.\n`Deploy` now also runs on push, where an empty `inputs` context takes\nthe existing conditionals down the preview path; production stays a\ndispatch.\n\n`verify` read App CI and Crate CI mid-flight, which on a push is\nalways `in_progress`. It now polls until both conclude, under one\n45-minute deadline. That holds a runner idle for as long as App CI\ntakes; TODO.md tracks moving to a `workflow_run` trigger instead.\n\nConcurrency queues deploys per target so a slow push cannot land over\na newer one, without cancelling a run that is already going.\n\n`db-migrate.yml` declared a `workflow_call` secret its caller could\nnever supply — `on.workflow_call` cannot carry environment secrets —\nso it now relies on the `migrate` job's own `environment`, which took\nprecedence anyway.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T18:13:06-04:00",
+          "tree_id": "cb7a7a75011cc56b16e0bb29b93b9338bf00c653",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/3339ef0fb28f774f9047c055d3d44e7e1ac6f3f2"
+        },
+        "date": 1785968602947,
+        "tool": "cargo",
+        "benches": [
+          {
+            "name": "bridge.calculate_recipe_composition",
+            "value": 4575,
+            "range": "± 78",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "bridge.calculate_recipe_mix_properties",
+            "value": 179534,
+            "range": "± 1912",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_composition",
+            "value": 2916,
+            "range": "± 16",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "recipe.calculate_mix_properties",
+            "value": 180247,
+            "range": "± 1440",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "sweetener_spec_to_composition",
+            "value": 5026,
+            "range": "± 95",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_simple_spec_to_composition(milk)",
+            "value": 5251,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_g)",
+            "value": 5239,
+            "range": "± 77",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(milk_ml)",
+            "value": 5207,
+            "range": "± 53",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_g)",
+            "value": 5185,
+            "range": "± 59",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "dairy_label_spec_to_composition(sweet_ml)",
+            "value": 5407,
+            "range": "± 143",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nalgebra(recipe...)",
+            "value": 124900,
+            "range": "± 4011",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "balance_compositions_nnls(recipe...)",
+            "value": 130004,
+            "range": "± 4711",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(native_keys)",
+            "value": 199263298,
+            "range": "± 1042523",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "validate_balancing_targets(typical_keys)",
+            "value": 671060,
+            "range": "± 6453",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/get_sweep",
+            "value": 7740,
+            "range": "± 257",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/fast_get_sweep",
+            "value": 54,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_composition/build",
+            "value": 7169,
+            "range": "± 36",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Goff & Hartel)",
+            "value": 109556,
+            "range": "± 4452",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Goff & Hartel)",
+            "value": 105565,
+            "range": "± 2367",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Interpolation, Modified Goff & Hartel & Corvitto)",
+            "value": 175408,
+            "range": "± 1996",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "compute_fpd_curves(Polynomial, Modified Goff & Hartel & Corvitto)",
+            "value": 170042,
+            "range": "± 1910",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(sweep)",
+            "value": 375112,
+            "range": "± 1259",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "fast_interpolate_pairs(sweep)",
+            "value": 14825,
+            "range": "± 103",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_start)",
+            "value": 5,
+            "range": "± 0",
+            "unit": "ns/iter"
+          },
+          {
+            "name": "interpolate_pairs(near_end)",
+            "value": 725,
             "range": "± 2",
             "unit": "ns/iter"
           },
