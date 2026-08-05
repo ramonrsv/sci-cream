@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785908901158,
+  "lastUpdate": 1785951204657,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -489735,6 +489735,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/ccf5f079a1c822838a6d646ac95c6f28f567f3df"
         },
         "date": 1785908061824,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1082.89,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.29,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1665.71,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 517.55,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 564.25,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1866.83,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "59b3dc255d73b4ea1eeebc5cf1c4318e1eb9d66e",
+          "message": "Add migration pipeline, drop surrogate keys\n\n`recipe_versions.id` and `batch_recipes.id` were never read; both\ntables now key on their natural pairs. Dropping a column from a\npopulated table is not something `drizzle-kit push` can do safely,\nso migrations replace push everywhere.\n\n`drizzle/` is the schema source of truth: 0000 baselines the existing\nschema, 0001 drops the surrogates. 0001 is hand-ordered — drizzle-kit\ndiffs the schema rather than the database, so it emitted statements\nPostgres rejects. `baseline.ts` records migrations as applied without\nrunning their SQL, which is what lets CI build a database one\nmigration behind.\n\nNew scripts, shared by CI and run-local-test-suite.sh:\n\n  build-migration-test-db.sh     the state a migration lands on\n  check-migrations-unchanged.sh  applied migrations are immutable\n  verify-migration-on-clone.sh   rehearse on a copy of production\n  backup-db.sh                   encrypted local dumps\n\nThe last two share their preconditions through `lib/postgres.sh`: the\nproduction URL checks, and the guards that keep pg_dump and the\nrestore target from being older than the server they act on.\n\nApplying a migration to an empty database proves little, since a new\nkey validates against nothing, so each migration carries a fixture of\nrows dumped at the previous one.\n\nMigrations reach production only through the `Database Migrate`\nworkflow, gated on the `production` environment and rehearsed on a\nclone first. `Deploy` orders a Vercel deploy against a migration\ninstead of racing it. Every job in both is gated on `vars.ACT`, so\n`act` cannot reach production or Vercel from a laptop.\n\nService containers move to postgres:17 to match production, and the\njobs that shell out to `psql` now install a matching client rather\nthan relying on the runner image happening to ship one.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T12:59:02-04:00",
+          "tree_id": "5f11df3f4cffe5227c76c4456f1e34cdbc827798",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/59b3dc255d73b4ea1eeebc5cf1c4318e1eb9d66e"
+        },
+        "date": 1785951166371,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
