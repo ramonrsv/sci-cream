@@ -296,8 +296,9 @@ migration's row from `drizzle.__drizzle_migrations`, and redeploy the matching a
 
 Production deploys run from the `Deploy` workflow rather than Vercel's Git integration, so a deploy
 can be ordered against a migration instead of racing it. `packages/app/vercel.json` switches
-Vercel's own deployments off entirely, leaving the workflow as the only thing that ships the app.
-Production Branch stays `main` — disabling its deployments is what stops the automatic promotion.
+Vercel's own deployments off entirely, leaving the workflow as the only thing that ships the app: a
+push to `main` previews, a dispatch with `target: production` promotes. Production Branch stays
+`main` — disabling its deployments is what stops the automatic promotion.
 
 Vercel reads `git.deploymentEnabled` from the branch being pushed, so `gh-pages` carries its own
 copy; it holds benchmark data rather than an app.
@@ -308,8 +309,8 @@ secrets. A reviewer on `Production` gates production deploys without holding up 
 
 Dispatch it with `target: preview | production`, and `migrate: none | before | after` to pick which
 side of the deploy a migration runs on — see
-[Ordering a migration against a deploy](#ordering-a-migration-against-a-deploy). It gates on App CI
-and Crate CI having already passed for the commit.
+[Ordering a migration against a deploy](#ordering-a-migration-against-a-deploy). Either way, it
+first waits for App CI and Crate CI to pass for the commit.
 
 ## Database Backups
 

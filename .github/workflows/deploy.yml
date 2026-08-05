@@ -1,19 +1,22 @@
 # Builds, verifies, and deploys the app to Vercel from CI, so a deploy can be ordered against a
 # database migration instead of racing it.
 #
-# Vercel's own Git integration deploys on push and cannot wait for a migration, so this workflow
-# takes over production deploys once `packages/app/vercel.json` sets `git.deploymentEnabled` false.
+# `packages/app/vercel.json` switches Vercel's own deployments off, leaving this workflow as the
+# only thing that ships the app: a push previews, a dispatch with `target: production` promotes.
 #
 # `migrate` picks the phase:
 #   before — additive migration the new code depends on (expand)
 #   after  — destructive migration that removes what the old code used (contract)
 #   none   — no schema change in this deploy
 #
-# Required secrets: VERCEL_TOKEN, VERCEL_ORG_ID, VERCEL_PROJECT_ID on both the `Preview` and
-# `Production` environments, and — when migrating — PROD_MIGRATION_POSTGRES_URL on `Production`.
+# Required secrets: VERCEL_TOKEN on both the `Preview` and `Production` environments,
+# VERCEL_ORG_ID/VERCEL_PROJECT_ID on the repository, and — when migrating —
+# PROD_MIGRATION_POSTGRES_URL on `Production`.
 name: Deploy
 
 on:
+  push:
+    branches: ["main"]
   workflow_dispatch:
     inputs:
       target:
@@ -33,8 +36,13 @@ defaults:
   run:
     working-directory: ./packages/app
 
+# Queues deploys per target, so a slow push cannot land over a newer one.
+concurrency:
+  group: deploy-${{ inputs.target || 'preview' }}
+  cancel-in-progress: false
+
 jobs:
-  # Gates on App CI and Crate CI's existing results — re-running them would double-push benchmarks.
+  # Gates on App CI and Crate CI's own runs — re-running them here would double-push benchmarks.
   verify:
     runs-on: ubuntu-latest
     # Every job repeats this: a skipped `needs` is not a failure, so the rest would deploy anyway.
@@ -48,10 +56,21 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          # A push starts both alongside this run, so wait them out; a dispatch finds them done.
+          # `missing` covers the webhook lag before the run exists, and waits the same way.
+          deadline=$((SECONDS + 2700))
           for wf in app.yml crate.yml; do
-            read -r status conclusion <<<"$(gh run list --repo "$GITHUB_REPOSITORY" \
-              --workflow "$wf" --commit "$GITHUB_SHA" --limit 1 --json status,conclusion \
-              --jq '.[0] | "\(.status // "missing") \(.conclusion // "none")"')"
+            while :; do
+              read -r status conclusion <<<"$(gh run list --repo "$GITHUB_REPOSITORY" \
+                --workflow "$wf" --commit "$GITHUB_SHA" --limit 1 --json status,conclusion \
+                --jq '.[0] | "\(.status // "missing") \(.conclusion // "none")"')"
+              if [ "$status" = completed ]; then break; fi
+              if [ "$SECONDS" -gt "$deadline" ]; then
+                echo "::error::$wf for $GITHUB_SHA still $status after 45m"
+                exit 1
+              fi
+              sleep 30
+            done
             if [ "$conclusion" != "success" ]; then
               echo "::error::$wf for $GITHUB_SHA: status=$status conclusion=$conclusion"
               exit 1
@@ -61,9 +80,9 @@ jobs:
 
   migrate_before:
     needs: verify
+    # Inherits no secrets: db-migrate.yml reads its URL from the `production` Environment instead.
     if: ${{ inputs.migrate == 'before' && vars.ACT != 'true' }}
     uses: ./.github/workflows/db-migrate.yml
-    secrets: inherit
 
   deploy:
     needs: [verify, migrate_before]
@@ -113,4 +132,3 @@ jobs:
     needs: deploy
     if: ${{ inputs.migrate == 'after' && !failure() && !cancelled() && vars.ACT != 'true' }}
     uses: ./.github/workflows/db-migrate.yml
-    secrets: inherit

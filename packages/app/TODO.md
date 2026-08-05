@@ -47,9 +47,9 @@
       cycle waits for the solve and a costlier re-validation before the UI updates. Defer it?
 - [ ] Pin third-party GitHub Actions to commit SHAs, with a grouped monthly `dependabot.yml`, before
       the `production` secrets go live — `codecov-action@v6` already resolves to v7.0.0, tag moved.
-- [ ] Finish the deploy-from-CI cutover in two stages, so a bad config can't leave the app unable to
-      ship. Dispatch `Deploy` with `target: preview` to prove the WASM build reproduces on a runner;
-      then add `vercel.json` `{ "git": { "deploymentEnabled": { "main": false } } }` and production.
+- [ ] Trigger `Deploy` from `workflow_run` on App CI rather than `push`, so `verify` stops holding a
+      runner idle for the ~15 min it takes App CI to finish. Needs `event.workflow_run.head_sha`
+      threaded through the checkout and the CI lookup, as `github.sha` is then the branch head.
 - [ ] Lint the shell scripts with `shellcheck`, as a `lint:sh` script and a CI job beside
       `lint:sql`; they drop and recreate databases now, so its `set -e` and quoting checks pay off.
 
@@ -113,6 +113,9 @@
 
 ## Completed
 
+- [x] Finish the deploy-from-CI cutover in two stages, so a bad config can't leave the app unable to
+      ship. Dispatch `Deploy` with `target: preview` to prove the WASM build reproduces on a runner;
+      then add `vercel.json` `{ "git": { "deploymentEnabled": { "main": false } } }` and production.
 - [x] Look into setting up and how to do database migrations for the production database.
 - [x] First real migration: rework `batch_recipes` provenance keying — drop the unused
       `recipe_versions.id` surrogate, or switch to a single `version_id` FK. Needs a backfill and

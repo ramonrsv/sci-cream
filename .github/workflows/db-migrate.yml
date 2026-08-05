@@ -18,10 +18,8 @@ on:
         description: "Latest migration tag to apply, e.g. 0001_drop_surrogate_keys"
         required: true
         type: string
+  # Declares no secrets: only the `migrate` job's own `environment` can supply the production URL.
   workflow_call:
-    secrets:
-      PROD_MIGRATION_POSTGRES_URL:
-        required: true
 
 defaults:
   run:
