@@ -295,10 +295,16 @@ migration's row from `drizzle.__drizzle_migrations`, and redeploy the matching a
 ## Deploying
 
 Production deploys run from the `Deploy` workflow rather than Vercel's Git integration, so a deploy
-can be ordered against a migration instead of racing it. `packages/app/vercel.json` turns off
-push-triggered deploys. The deploy job binds the GitHub Environment named by its `target`, so
-`VERCEL_TOKEN`, `VERCEL_ORG_ID`, and `VERCEL_PROJECT_ID` are needed on both `Preview` and
-`Production`, and a reviewer on `Production` gates production deploys without holding up previews.
+can be ordered against a migration instead of racing it. `packages/app/vercel.json` switches
+Vercel's own deployments off entirely, leaving the workflow as the only thing that ships the app.
+Production Branch stays `main` — disabling its deployments is what stops the automatic promotion.
+
+Vercel reads `git.deploymentEnabled` from the branch being pushed, so `gh-pages` carries its own
+copy; it holds benchmark data rather than an app.
+
+The deploy job binds the GitHub Environment named by its `target`, so `VERCEL_TOKEN` is needed on
+both `Preview` and `Production`, while `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` are repository
+secrets. A reviewer on `Production` gates production deploys without holding up previews.
 
 Dispatch it with `target: preview | production`, and `migrate: none | before | after` to pick which
 side of the deploy a migration runs on — see
