@@ -14,6 +14,7 @@ import {
   batchRecipeLetter,
   displayVersion,
 } from "@/lib/batch/batch";
+import { STORAGE_KEYS } from "@/lib/local-storage";
 import { formatVersionOption } from "@/lib/recipe/version";
 import { CATEGORY_COLORS, type CategoryColor, categoryColorName } from "@/lib/styles/colors";
 import { colorForPosition, recordColorPick } from "@/lib/batch/colors";
@@ -294,6 +295,7 @@ export function BatchBuilder({
           placeholder="Procedure notes — ageing, churn temperature, observations…"
           textareaClassName="min-h-20"
           textareaTestId="batch-notes"
+          persistKey={STORAGE_KEYS.makeRecipeNotes}
         />
       </div>
     </div>

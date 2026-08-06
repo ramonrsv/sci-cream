@@ -346,6 +346,7 @@ function RecipeDetailPanel({
               initialValue={selectedVersion.comments ?? ""}
               ariaLabel="Recipe comments"
               textareaClassName="min-h-47"
+              persistKey={STORAGE_KEYS.recipeSearchComments}
               onSave={(value) =>
                 onUpdateSavedRecipeVersion(entry, selectedVersion, {
                   comments: value === "" ? null : value,

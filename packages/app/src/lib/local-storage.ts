@@ -26,6 +26,9 @@ export const STORAGE_KEYS = {
   recipeEditorPanel: "recipe-editor-panel",
   recipeSearchLoadAction: "recipe-search-load-action",
   recipeSearchPropertiesView: "recipe-search-properties-view",
+  // Markdown-field roots, one per render site (leaf key: ${root}:tab)
+  recipeSearchComments: "recipe-search-comments",
+  makeRecipeNotes: "make-recipe-notes",
   recipeShareLoadAction: "share-load-action",
   recipeSharePropertiesView: "share-properties-view",
   ingredientSearchCompositionView: "ingredient-search-composition-view",

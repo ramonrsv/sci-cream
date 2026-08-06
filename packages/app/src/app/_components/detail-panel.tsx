@@ -130,6 +130,7 @@ export function EditableComments({
   ariaLabel = "Comments",
   placeholder = "Add comments…",
   textareaClassName = "min-h-20",
+  persistKey,
 }: {
   initialValue: string;
   onSave: (value: string) => void | Promise<void>;
@@ -137,6 +138,8 @@ export function EditableComments({
   placeholder?: string;
   /** Extra classes merged onto the textarea; callers use this to tune its height. */
   textareaClassName?: string;
+  /** Persistence root for the field's Write/Preview tab; see {@link MarkdownField}. */
+  persistKey?: string;
 }) {
   const [edited, setEdited] = useState<string>(initialValue);
   return (
@@ -147,6 +150,7 @@ export function EditableComments({
         ariaLabel={ariaLabel}
         placeholder={placeholder}
         textareaClassName={textareaClassName}
+        persistKey={persistKey}
       />
       <button onClick={() => onSave(edited)} className="action-button self-end px-2 py-0.5 text-sm">
         Save comments
