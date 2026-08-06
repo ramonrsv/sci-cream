@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785985515567,
+  "lastUpdate": 1785986312243,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -496299,6 +496299,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/27c69efc978f188b1139d7411cbfbdade90e55c0"
         },
         "date": 1785984729473,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1082.89,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.29,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1665.71,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 517.55,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 564.25,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1866.84,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f69fbd6a73e818e2c089c069abd7a130ff9db4f5",
+          "message": "Name Deploy runs for their target and commit\n\nTriggering on `workflow_run` left every run titled just `Deploy`, with\nnothing to tell a preview from a promotion or say which commit it\ncarried. `run-name` now reads \"Deploy to preview — <commit subject>\",\ntaking the subject from `workflow_run.display_title`; a dispatch falls\nback to the ref, since it is already a deliberate choice.\n\nExpressions have no substring function, so a short SHA cannot appear\nthere. `verify` writes one to the job summary instead, ahead of the CI\ncheck so a rejected commit is still named.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T22:49:50-04:00",
+          "tree_id": "e5badfc159b658308a7ec475cf88914b487334ae",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f69fbd6a73e818e2c089c069abd7a130ff9db4f5"
+        },
+        "date": 1785986274191,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
