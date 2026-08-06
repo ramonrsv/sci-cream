@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785989415221,
+  "lastUpdate": 1786026839789,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -498535,6 +498535,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/fa793fa1200d24361bdb2fec101d2eb34f982a56"
         },
         "date": 1785988582882,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1082.89,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.29,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1665.71,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 517.55,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 564.25,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1866.84,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "76a23eadce070f89cb0518df9bc3f6cb70f97853",
+          "message": "Add a reset to the Custom key selection\n\nThe custom key set could only be edited one key at a time or wiped by\nthe All Properties toggle, with no way back to a sensible baseline.\n\nAdd a reset button to the customize popup that restores the keys the\nAuto filter would show, or the view's default selection where Auto is\nnot a supported filter. KeyFilterSelect takes defaultSelected and\nautoHeuristic to compute that target, and disables the button when the\nselection already matches.\n\nDerive the All Properties checkbox from the selection rather than a\nlocal flag, so it is correct at mount and after a reset.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-06T10:12:11-04:00",
+          "tree_id": "347a05b7f0d5a012f9dc583f821a5dc958decbcb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/76a23eadce070f89cb0518df9bc3f6cb70f97853"
+        },
+        "date": 1786026801564,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
