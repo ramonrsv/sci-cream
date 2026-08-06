@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785969004946,
+  "lastUpdate": 1785982261664,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -493089,6 +493089,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/3339ef0fb28f774f9047c055d3d44e7e1ac6f3f2"
         },
         "date": 1785968203672,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1082.89,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.29,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1665.71,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 517.55,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 564.25,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1866.83,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9ad5fd2870b5698405aee49fe62600e763d7e992",
+          "message": "Start Deploy when App CI finishes, not on push\n\n`verify` polled App CI and Crate CI from a push-triggered run, holding\na runner idle for the ~15 minutes App CI takes. A `workflow_run`\ntrigger starts the workflow after App CI concludes, so the lookup\nfinds a settled result and the loop is left guarding webhook lag and\ndispatches that race their own CI.\n\n`workflow_run` reports the default branch in `github.sha`, so\n`DEPLOY_SHA` takes the commit from the event payload, and both the CI\nlookup and the checkout use it. Without an explicit `ref`, `deploy`\nwould build the branch head rather than the commit that passed.\n\nThe `deploy` job is now named for its target, so the environment reads\nfrom the job list well before `environment` is evaluated.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T22:03:19-04:00",
+          "tree_id": "44ee427e0357a433d8d6338e72fcd596ee413114",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9ad5fd2870b5698405aee49fe62600e763d7e992"
+        },
+        "date": 1785982225743,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
