@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785983083558,
+  "lastUpdate": 1785983291357,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -474335,6 +474335,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "Total static JS (gzip)",
             "value": 1106.91,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 13.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 137.71,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2ce5563e98ca3248801041ed6906d7aa05f607b8",
+          "message": "Fix db-migrate when called from a deploy\n\nTwo bugs kept `migrate_after` from ever running.\n\nThe confirm check gated on `github.event_name`, which inside a called\nworkflow reports the caller's event. A deploy dispatched with\n`migrate: after` therefore ran the check with no `confirm` input and\nfailed on the empty string. It now gates on the input itself.\n\n`secrets.PROD_MIGRATION_POSTGRES_URL` came through empty because a\nreusable workflow only resolves secrets its `workflow_call` block\ndeclares; the job's `environment` alone is not enough, though it does\nstill gate the run behind its reviewer. Declaring it restores the\nlookup — as `required: false`, since a `uses:` job cannot declare an\nenvironment and so cannot pass one — and both callers inherit again.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T22:19:15-04:00",
+          "tree_id": "8f720c69ab9947054d1cb4b976d1725a52ee427b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2ce5563e98ca3248801041ed6906d7aa05f607b8"
+        },
+        "date": 1785983259417,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 701.77,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 870.22,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 639.62,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 808.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 647.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 815.51,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 578.26,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 746.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] route-only JS (gzip)",
+            "value": 578.26,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] first-load JS (gzip)",
+            "value": 746.71,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1106.92,
             "unit": "KB"
           },
           {
