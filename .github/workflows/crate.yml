@@ -135,6 +135,13 @@ jobs:
           working-directory: "./packages/sci-cream"
       - uses: ./.github/actions/sci-cream-package
 
+      # Coverage runs on nightly for the `coverage(off)` exclusions. Installing it explicitly, not
+      # via rustup's on-demand resolve, keeps `llvm-tools-preview` on the profraw-writing toolchain.
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          toolchain: nightly
+          components: llvm-tools-preview
+
       - name: Run Rust code coverage
         run: RUSTFLAGS="-A unstable_features" pnpm coverage:rust
 

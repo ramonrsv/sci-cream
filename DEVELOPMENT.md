@@ -43,10 +43,17 @@ To run code coverage:
 
 ```bash
 cargo install cargo-llvm-cov
-cargo llvm-cov test --all-features
+rustup toolchain install nightly --component llvm-tools-preview
+
+# Run code coverage tests
+cargo +nightly llvm-cov test --all-features
 # Generate report to upload or visualize locally
-cargo llvm-cov report --codecov OR --html
+cargo +nightly llvm-cov report --codecov OR --html
 ```
+
+Coverage needs nightly for the `#[cfg_attr(coverage, coverage(off))]` exclusions. Run every step on
+it: stable and nightly can ship different LLVM majors, and a stable `report` cannot read profraw
+files a nightly `test` wrote.
 
 To upgrade Rust dependencies:
 
