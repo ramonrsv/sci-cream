@@ -39,6 +39,8 @@ cargo rustc --crate-type cdylib --target wasm32-unknown-unknown --features wasm,
 wasm-pack build --out-dir wasm --out-name index -- --features "wasm,data,database"
 ```
 
+### Code Coverage
+
 To run code coverage:
 
 ```bash
@@ -54,6 +56,8 @@ cargo +nightly llvm-cov report --codecov OR --html
 Coverage needs nightly for the `#[cfg_attr(coverage, coverage(off))]` exclusions. Run every step on
 it: stable and nightly can ship different LLVM majors, and a stable `report` cannot read profraw
 files a nightly `test` wrote.
+
+### Upgrading Dependencies
 
 To upgrade Rust dependencies:
 
@@ -93,6 +97,8 @@ sudo apt install nodejs
 sudo npm install -g n
 sudo n stable
 ```
+
+### Database
 
 Testing and running the app requires a PostgreSQL database to be running and seeded, and certain
 environment variables to be set. The requirements are detailed below:
@@ -177,6 +183,8 @@ for local development environments.
    - Copy the Client Secret -> `AUTH_GOOGLE_SECRET`
 4. Populate environment variables
    - Add all five values to `.env` for local or to Vercel project environment for production.
+
+### Building and Testing
 
 Building, testing, and running the app can be done with `pnpm build`, `test`, `dev`, or `start`.
 To set up and run end-to-end and visual regression tests with Playwright (also run by `pnpm test`):
@@ -354,6 +362,21 @@ schemas, so a restore carries its own migration bookmark. `--verify` restores in
 database and reports row counts _before_ encrypting; it needs `BACKUP_VERIFY_POSTGRES_URL`
 pointing at a server on production's major version, the same constraint as the migration rehearsal
 above. Restore instructions are in the script's header.
+
+### OAuth on preview deployments
+
+Previews get a fresh host each deploy and neither provider accepts a wildcard redirect URI, so they
+proxy instead: a preview sends production's callback as the `redirect_uri` with its own origin in
+the signed `state`, and production hands the code back for the preview to redeem. Nothing extra is
+registered with GitHub or Google.
+
+`AUTH_REDIRECT_PROXY_URL` = `https://www.sci-cream.ca/api/auth` in **both** Production and Preview —
+production only forwards when its own origin matches the value. Unset it locally. Preview shares
+Production's `AUTH_SECRET` (to decrypt the `state`) and OAuth credentials.
+
+Preview sign-in therefore needs production reachable, and — with Deployment Protection on — a
+browser already holding a Vercel session, or the hand-off lands on Vercel's login wall. Values are
+baked in at `vercel build` time, so changing one needs a fresh deploy.
 
 ## Running CI workflows locally
 

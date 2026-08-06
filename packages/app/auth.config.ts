@@ -6,4 +6,7 @@ export default {
   providers: [Google, GitHub],
   pages: { signIn: "/signin" },
   trustHost: true,
+  // Previews get a fresh host each deploy, so they proxy OAuth through production, the only host
+  // registered with the providers. Production sets it too, to know when to forward. Unset locally.
+  redirectProxyUrl: process.env.AUTH_REDIRECT_PROXY_URL,
 } satisfies NextAuthConfig;
