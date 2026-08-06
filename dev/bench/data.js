@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785983740794,
+  "lastUpdate": 1785984707933,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -475122,6 +475122,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "/docs/[slug] route-only JS (gzip)",
             "value": 578.26,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] first-load JS (gzip)",
+            "value": 746.71,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1106.92,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 13.28,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 137.71,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "27c69efc978f188b1139d7411cbfbdade90e55c0",
+          "message": "Run every coverage step on nightly\n\nThe coverage pipeline was split across two toolchains: `generate` ran\non nightly, both `report` steps on stable. Once nightly moved to LLVM\n23 and stable stayed on 22, stable's `llvm-profdata` could no longer\nread nightly's profraw files, failing with a raw profile version\nmismatch (11 vs 10).\n\nNightly is required regardless, for the `coverage(off)` exclusions, so\nput the report steps on it too. CI now installs nightly with\n`llvm-tools-preview` explicitly rather than letting rustup resolve\n`cargo +nightly` on demand, which had put the component on stable.\n\nDEVELOPMENT.md documented the same stable/nightly split.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T22:49:50-04:00",
+          "tree_id": "66710d864a63e1627f0706061a06f2729800e81a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/27c69efc978f188b1139d7411cbfbdade90e55c0"
+        },
+        "date": 1785984686668,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 701.78,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 870.23,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 639.62,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 808.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 647.07,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 815.52,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 578.27,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 746.71,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] route-only JS (gzip)",
+            "value": 578.27,
             "unit": "KB"
           },
           {
