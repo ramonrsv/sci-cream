@@ -86,9 +86,9 @@ jobs:
 
   migrate_before:
     needs: verify
-    # Inherits no secrets: db-migrate.yml reads its URL from the `production` Environment instead.
     if: ${{ inputs.migrate == 'before' && vars.ACT != 'true' }}
     uses: ./.github/workflows/db-migrate.yml
+    secrets: inherit
 
   deploy:
     # Names the target in the job list, which is readable long before `environment` is evaluated.
@@ -143,3 +143,4 @@ jobs:
     needs: deploy
     if: ${{ inputs.migrate == 'after' && !failure() && !cancelled() && vars.ACT != 'true' }}
     uses: ./.github/workflows/db-migrate.yml
+    secrets: inherit

@@ -18,8 +18,11 @@ on:
         description: "Latest migration tag to apply, e.g. 0001_drop_surrogate_keys"
         required: true
         type: string
-  # Declares no secrets: only the `migrate` job's own `environment` can supply the production URL.
   workflow_call:
+    secrets:
+      # Declared so `secrets.` resolves when called; the Environment fills it, not the caller.
+      PROD_MIGRATION_POSTGRES_URL:
+        required: false
 
 defaults:
   run:
@@ -58,8 +61,9 @@ jobs:
         with:
           version: "17"
 
+      # Gates on the input, not the event: a called run reports the caller's `workflow_dispatch`.
       - name: Verify the confirmation matches the latest migration
-        if: github.event_name == 'workflow_dispatch'
+        if: inputs.confirm != ''
         env:
           CONFIRM: ${{ inputs.confirm }}
         run: |
