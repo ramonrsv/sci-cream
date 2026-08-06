@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785984711070,
+  "lastUpdate": 1785984747605,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -445422,6 +445422,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.13%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "27c69efc978f188b1139d7411cbfbdade90e55c0",
+          "message": "Run every coverage step on nightly\n\nThe coverage pipeline was split across two toolchains: `generate` ran\non nightly, both `report` steps on stable. Once nightly moved to LLVM\n23 and stable stayed on 22, stable's `llvm-profdata` could no longer\nread nightly's profraw files, failing with a raw profile version\nmismatch (11 vs 10).\n\nNightly is required regardless, for the `coverage(off)` exclusions, so\nput the report steps on it too. CI now installs nightly with\n`llvm-tools-preview` explicitly rather than letting rustup resolve\n`cargo +nightly` on demand, which had put the component on stable.\n\nDEVELOPMENT.md documented the same stable/nightly split.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T22:49:50-04:00",
+          "tree_id": "66710d864a63e1627f0706061a06f2729800e81a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/27c69efc978f188b1139d7411cbfbdade90e55c0"
+        },
+        "date": 1785984717984,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 75542,
+            "range": "±1.92%",
+            "unit": "ops/sec",
+            "extra": "87 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 660154,
+            "range": "±0.45%",
+            "unit": "ops/sec",
+            "extra": "98 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 57065,
+            "range": "±1.08%",
+            "unit": "ops/sec",
+            "extra": "96 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 520190,
+            "range": "±0.75%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
