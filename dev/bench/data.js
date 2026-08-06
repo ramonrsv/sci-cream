@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785988692425,
+  "lastUpdate": 1785988732393,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -491788,6 +491788,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.7,
             "range": "0.91",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fa793fa1200d24361bdb2fec101d2eb34f982a56",
+          "message": "Proxy preview OAuth through production\n\nEvery preview deploy gets a fresh *.vercel.app host, and neither GitHub\nnor Google accepts a wildcard redirect URI, so preview sign-in failed\nwith redirect_uri_mismatch. Wire up Auth.js's redirect proxy: a preview\nsends production's callback as the redirect_uri with its own origin in\nthe signed state, and production hands the code back for the preview to\nredeem. No new redirect URI is registered with either provider.\n\nAUTH_REDIRECT_PROXY_URL is set on the Vercel project for Production and\nPreview alike — production only forwards a callback when its own origin\nmatches the value — and left unset locally.\n\nAlso add the section headings DEVELOPMENT.md was missing.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T23:43:05-04:00",
+          "tree_id": "ba3a16d4e8c4e27cb3c41b2666ea57c72369e6f7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fa793fa1200d24361bdb2fec101d2eb34f982a56"
+        },
+        "date": 1785988695210,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 63.26,
+            "range": "8.00",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.43,
+            "range": "0.57",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.39,
+            "range": "0.58",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 177.5,
+            "range": "10.76",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.5,
+            "range": "0.07",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 177.5,
+            "range": "10.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 57.99,
+            "range": "6.61",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.54,
+            "range": "0.35",
             "unit": "ms"
           }
         ]
