@@ -716,6 +716,8 @@ export function PropertiesChartView({
           keyFilterState={propsFilterState}
           selectedKeysState={selectedPropsState}
           getKeys={getMixScopePropKeys}
+          defaultSelected={defaultSelected}
+          autoHeuristic={autoHeuristic}
           key_as_med_str={prop_key_as_med_str}
           orderKeys={orderKeys}
         />

@@ -15,7 +15,6 @@
 - [ ] Add `height` prop to `PropertiesTable` so that it can adapt the number of properties shown.
 - [ ] Targets not selected for balancing in `Watchers` can show in `PropertiesChart`; investigate.
 - [ ] In the `PropertiesChart` tooltip, move the numeric value to the left so it does not overflow.
-- [ ] Add a reset option to the key selection when `KeySelect.Custom`, to reset to default custom.
 - [ ] Make the reference and target ticks in `PropertiesBarChart` more visible. Also in watchers?
 
 ## Up Next
@@ -110,6 +109,7 @@
 
 ## Completed
 
+- [x] Add a reset option to the key selection when `KeySelect.Custom`, to reset to default custom.
 - [x] Trigger `Deploy` from `workflow_run` on App CI rather than `push`, so `verify` stops holding a
       runner idle for the ~15 min it takes App CI to finish. Needs `event.workflow_run.head_sha`
       threaded through the checkout and the CI lookup, as `github.sha` is then the branch head.

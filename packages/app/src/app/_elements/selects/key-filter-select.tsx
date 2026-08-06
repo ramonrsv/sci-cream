@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, type Dispatch, type SetStateAction } from "react";
-import { X, Settings } from "lucide-react";
+import { type Dispatch, type SetStateAction } from "react";
+import { X, Settings, RotateCcw } from "lucide-react";
 
 import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
 
@@ -114,6 +114,8 @@ export function KeyFilterSelect<Key>({
   keyFilterState,
   selectedKeysState,
   getKeys,
+  defaultSelected,
+  autoHeuristic,
   key_as_med_str,
   orderKeys,
 }: {
@@ -121,6 +123,10 @@ export function KeyFilterSelect<Key>({
   keyFilterState: [KeyFilter, React.Dispatch<React.SetStateAction<KeyFilter>>];
   selectedKeysState: [Set<Key>, React.Dispatch<React.SetStateAction<Set<Key>>>];
   getKeys: () => Key[];
+  /** Selection the reset falls back to where `Auto` is not a supported filter */
+  defaultSelected: Set<Key>;
+  /** Same heuristic the `Auto` filter uses; the reset target wherever `Auto` is supported */
+  autoHeuristic: (key: Key) => boolean;
   key_as_med_str: (key: Key) => string;
   /**
    * Optional reordering of the customize list into hierarchy order, indenting members by `depth`
@@ -130,19 +136,18 @@ export function KeyFilterSelect<Key>({
 }) {
   const [keyFilter, setKeyFilter] = keyFilterState;
   const [selectedKeys, setSelectedKeys] = selectedKeysState;
-  const [allKeysSelected, setAllKeysSelected] = useState<boolean>(false);
+  const allKeysSelected = getKeys().every((key) => selectedKeys.has(key));
 
   /** Returns `true` when the given key is in the current custom selection */
   const isKeySelected = (key: Key) => {
     return selectedKeys.has(key);
   };
 
-  /** Toggle a single key in/out of the custom selection; clears "all selected" flag on removal */
+  /** Toggle a single key in/out of the custom selection */
   const updateSelectedKey = (key: Key) => {
     const newSet = new Set(selectedKeys);
     if (newSet.has(key)) {
       newSet.delete(key);
-      setAllKeysSelected(false);
     } else {
       newSet.add(key);
     }
@@ -151,15 +156,18 @@ export function KeyFilterSelect<Key>({
 
   /** Toggle "All Properties" checkbox: selects all keys when enabling, clears all when disabling */
   const updateAllKeysSelected = () => {
-    const newAllKeysSelected = !allKeysSelected;
-    setAllKeysSelected(newAllKeysSelected);
-
-    if (newAllKeysSelected) {
-      setSelectedKeys(new Set(getKeys()));
-    } else {
-      setSelectedKeys(new Set());
-    }
+    setSelectedKeys(allKeysSelected ? new Set() : new Set(getKeys()));
   };
+
+  /** Keys the `Auto` filter would show, or `defaultSelected` where `Auto` is unsupported */
+  const getResetKeys = () => {
+    return supportedKeyFilters.includes(KeyFilter.Auto)
+      ? new Set(getKeys().filter((key) => autoHeuristic(key)))
+      : new Set(defaultSelected);
+  };
+
+  const resetKeys = getResetKeys();
+  const isReset = resetKeys.size === selectedKeys.size && [...resetKeys].every(isKeySelected);
 
   const options: SelectOption<KeyFilter>[] = supportedKeyFilters.map((kf) => ({
     value: kf,
@@ -186,10 +194,20 @@ export function KeyFilterSelect<Key>({
               {({ close }) => (
                 <>
                   <button
-                    className="action-button sticky top-0 z-10 float-right -mr-1 pt-px"
+                    data-testid="key-filter-close"
+                    className="action-button sticky top-0 z-10 float-right -mr-1 p-px"
                     onClick={() => close()}
                   >
                     <X size={COMPONENT_ACTION_ICON_SIZE} />
+                  </button>
+                  <button
+                    data-testid="key-filter-reset"
+                    className="action-button sticky top-0 z-10 float-right mr-0.5 p-0.75"
+                    title="Reset to default properties"
+                    disabled={isReset}
+                    onClick={() => setSelectedKeys(resetKeys)}
+                  >
+                    <RotateCcw size={COMPONENT_ACTION_ICON_SIZE - 3} />
                   </button>
                   <ul className="bg-inherit">
                     <li

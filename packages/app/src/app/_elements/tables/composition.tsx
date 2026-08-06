@@ -122,6 +122,9 @@ export function CompositionView({
     return v === 0 || Number.isNaN(v);
   };
 
+  /** `Auto` is not a supported filter here, so the heuristic is never consulted */
+  const autoHeuristic = () => false;
+
   /** Returns the list of composition keys to display, based on the current filter and selection */
   const getEnabledComps = () => {
     return getEnabledKeys(
@@ -129,7 +132,7 @@ export function CompositionView({
       selectedCompsState[STATE_VAL],
       getCompKeys,
       isPropEmpty,
-      () => false,
+      autoHeuristic,
     );
   };
 
@@ -147,6 +150,8 @@ export function CompositionView({
           keyFilterState={compsFilterState}
           selectedKeysState={selectedCompsState}
           getKeys={getCompKeys}
+          defaultSelected={defaultSelected}
+          autoHeuristic={autoHeuristic}
           key_as_med_str={comp_key_as_med_str}
           orderKeys={orderKeys}
         />

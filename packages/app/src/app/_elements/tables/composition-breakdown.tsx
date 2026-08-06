@@ -262,6 +262,8 @@ export function CompositionBreakdownView({
           keyFilterState={compsFilterState}
           selectedKeysState={selectedCompsState}
           getKeys={getCompKeys}
+          defaultSelected={defaultSelected}
+          autoHeuristic={autoHeuristic}
           key_as_med_str={comp_key_as_med_str}
           orderKeys={orderKeys}
         />

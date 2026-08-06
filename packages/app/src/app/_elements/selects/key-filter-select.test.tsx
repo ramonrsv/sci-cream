@@ -116,11 +116,13 @@ describe("KeyFilterSelect", () => {
     supportedKeyFilters,
     initialFilter = KeyFilter.Auto,
     initialSelected = new Set<TestKey>(),
+    defaultSelected = new Set<TestKey>([TestKey.Water]),
     orderKeys,
   }: {
     supportedKeyFilters?: KeyFilter[];
     initialFilter?: KeyFilter;
     initialSelected?: Set<TestKey>;
+    defaultSelected?: Set<TestKey>;
     orderKeys?: (keys: TestKey[]) => { key: TestKey; depth: number; isRollup: boolean }[];
   }) {
     const [filter, setFilter] = useState<KeyFilter>(initialFilter ?? KeyFilter.Auto);
@@ -141,6 +143,8 @@ describe("KeyFilterSelect", () => {
         keyFilterState={[filter, setFilter]}
         selectedKeysState={[selectedKeys, setSelectedKeys]}
         getKeys={getAllKeys}
+        defaultSelected={defaultSelected}
+        autoHeuristic={autoHeuristic}
         key_as_med_str={key_as_med_str}
         orderKeys={orderKeys}
       />
@@ -230,8 +234,7 @@ describe("KeyFilterSelect", () => {
     await openCustomKeyFilters(container);
 
     const popup = document.querySelector(".popup") as HTMLElement;
-    const closeBtn = within(popup).getByRole("button");
-    fireEvent.click(closeBtn);
+    fireEvent.click(within(popup).getByTestId("key-filter-close"));
 
     await waitFor(() => expect(screen.queryByText("All Properties")).not.toBeInTheDocument());
   });
@@ -379,5 +382,70 @@ describe("KeyFilterSelect", () => {
     const keyCbs = within(popup).getAllByRole("checkbox").slice(1);
     keyCbs.forEach((cb) => expect(cb).not.toBeChecked());
     expect(currentSelectedKeys).toEqual(new Set());
+  });
+
+  it("'All Properties' is checked at mount when every key is already selected", async () => {
+    const { container } = render(
+      <TestWrapper initialFilter={KeyFilter.Custom} initialSelected={new Set(ALL_KEYS)} />,
+    );
+    await openCustomKeyFilters(container);
+
+    expect(document.querySelector("#all-properties-checkbox")).toBeChecked();
+  });
+
+  // ---- Reset ------------------------------------------------------------------------------------
+
+  it("reset restores the Auto selection when Auto is a supported filter", async () => {
+    const { container } = render(
+      <TestWrapper initialFilter={KeyFilter.Custom} initialSelected={new Set([TestKey.Protein])} />,
+    );
+    await openCustomKeyFilters(container);
+
+    const popup = document.querySelector(".popup") as HTMLElement;
+    fireEvent.click(within(popup).getByTestId("key-filter-reset"));
+
+    // autoHeuristic passes Fat and Sugar; defaultSelected (Water) is not used here
+    expect(currentSelectedKeys).toEqual(new Set([TestKey.Fat, TestKey.Sugar]));
+    const [, fatCb, sugarCb, waterCb, proteinCb] = within(popup).getAllByRole("checkbox");
+    expect(fatCb).toBeChecked();
+    expect(sugarCb).toBeChecked();
+    expect(waterCb).not.toBeChecked();
+    expect(proteinCb).not.toBeChecked();
+  });
+
+  it("reset restores defaultSelected when Auto is not a supported filter", async () => {
+    const { container } = render(
+      <TestWrapper
+        supportedKeyFilters={[KeyFilter.Active, KeyFilter.All, KeyFilter.Custom]}
+        initialFilter={KeyFilter.Custom}
+        initialSelected={new Set([TestKey.Protein])}
+        defaultSelected={new Set([TestKey.Water])}
+      />,
+    );
+    await openCustomKeyFilters(container);
+
+    const popup = document.querySelector(".popup") as HTMLElement;
+    fireEvent.click(within(popup).getByTestId("key-filter-reset"));
+
+    expect(currentSelectedKeys).toEqual(new Set([TestKey.Water]));
+  });
+
+  it("reset is disabled when the selection already matches the reset target", async () => {
+    const { container } = render(
+      <TestWrapper
+        initialFilter={KeyFilter.Custom}
+        initialSelected={new Set([TestKey.Sugar, TestKey.Fat])}
+      />,
+    );
+    await openCustomKeyFilters(container);
+
+    const popup = document.querySelector(".popup") as HTMLElement;
+    const resetBtn = within(popup).getByTestId("key-filter-reset");
+    expect(resetBtn).toBeDisabled();
+
+    // Dropping a key makes the selection differ from the Auto set, re-enabling reset
+    const fatLabel = screen.getByText("Fat");
+    fireEvent.click(within(fatLabel.closest("li") as HTMLElement).getByRole("checkbox"));
+    expect(resetBtn).toBeEnabled();
   });
 });
