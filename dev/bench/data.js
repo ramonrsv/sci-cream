@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785986716946,
+  "lastUpdate": 1785987069700,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -413377,6 +413377,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 660.38,
             "range": "11.24",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "f69fbd6a73e818e2c089c069abd7a130ff9db4f5",
+          "message": "Name Deploy runs for their target and commit\n\nTriggering on `workflow_run` left every run titled just `Deploy`, with\nnothing to tell a preview from a promotion or say which commit it\ncarried. `run-name` now reads \"Deploy to preview — <commit subject>\",\ntaking the subject from `workflow_run.display_title`; a dispatch falls\nback to the ref, since it is already a deliberate choice.\n\nExpressions have no substring function, so a short SHA cannot appear\nthere. `verify` writes one to the job summary instead, ahead of the CI\ncheck so a rejected commit is still named.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T22:49:50-04:00",
+          "tree_id": "e5badfc159b658308a7ec475cf88914b487334ae",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/f69fbd6a73e818e2c089c069abd7a130ff9db4f5"
+        },
+        "date": 1785987033842,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 49.63,
+            "range": "7.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 52.75,
+            "range": "2.77",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 53.5,
+            "range": "4.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2191.75,
+            "range": "22.73",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 279.88,
+            "range": "4.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 287.13,
+            "range": "2.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 308,
+            "range": "5.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 14692.5,
+            "range": "47.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 823.88,
+            "range": "15.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 48.88,
+            "range": "1.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 50.88,
+            "range": "1.36",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 38.38,
+            "range": "1.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 38.38,
+            "range": "0.99",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 122.13,
+            "range": "4.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 78.13,
+            "range": "4.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 52.27,
+            "range": "0.19",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 38.62,
+            "range": "0.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 594.88,
+            "range": "8.84",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 627.38,
+            "range": "13.55",
             "unit": "ms"
           }
         ]
