@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786027204280,
+  "lastUpdate": 1786027436665,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -414967,6 +414967,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 645.75,
             "range": "14.51",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "76a23eadce070f89cb0518df9bc3f6cb70f97853",
+          "message": "Add a reset to the Custom key selection\n\nThe custom key set could only be edited one key at a time or wiped by\nthe All Properties toggle, with no way back to a sensible baseline.\n\nAdd a reset button to the customize popup that restores the keys the\nAuto filter would show, or the view's default selection where Auto is\nnot a supported filter. KeyFilterSelect takes defaultSelected and\nautoHeuristic to compute that target, and disables the button when the\nselection already matches.\n\nDerive the All Properties checkbox from the selection rather than a\nlocal flag, so it is correct at mount and after a reset.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-06T10:12:11-04:00",
+          "tree_id": "347a05b7f0d5a012f9dc583f821a5dc958decbcb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/76a23eadce070f89cb0518df9bc3f6cb70f97853"
+        },
+        "date": 1786027413596,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 36.88,
+            "range": "2.37",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 38.75,
+            "range": "3.03",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 47,
+            "range": "5.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 1641.38,
+            "range": "46.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 195.75,
+            "range": "4.79",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 205.38,
+            "range": "1.93",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 215.88,
+            "range": "2.89",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 10401,
+            "range": "39.76",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 20.69,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 810.75,
+            "range": "38.46",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 37.75,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 36.38,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 26.25,
+            "range": "1.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 30.5,
+            "range": "0.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 98.75,
+            "range": "5.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 52.75,
+            "range": "2.05",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 37.23,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 27.45,
+            "range": "1.39",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 484.25,
+            "range": "14.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 520.75,
+            "range": "14.62",
             "unit": "ms"
           }
         ]
