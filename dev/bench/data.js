@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785983320181,
+  "lastUpdate": 1785983398368,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -488857,6 +488857,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.15,
             "range": "0.47",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2ce5563e98ca3248801041ed6906d7aa05f607b8",
+          "message": "Fix db-migrate when called from a deploy\n\nTwo bugs kept `migrate_after` from ever running.\n\nThe confirm check gated on `github.event_name`, which inside a called\nworkflow reports the caller's event. A deploy dispatched with\n`migrate: after` therefore ran the check with no `confirm` input and\nfailed on the empty string. It now gates on the input itself.\n\n`secrets.PROD_MIGRATION_POSTGRES_URL` came through empty because a\nreusable workflow only resolves secrets its `workflow_call` block\ndeclares; the job's `environment` alone is not enough, though it does\nstill gate the run behind its reviewer. Declaring it restores the\nlookup — as `required: false`, since a `uses:` job cannot declare an\nenvironment and so cannot pass one — and both callers inherit again.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T22:19:15-04:00",
+          "tree_id": "8f720c69ab9947054d1cb4b976d1725a52ee427b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2ce5563e98ca3248801041ed6906d7aa05f607b8"
+        },
+        "date": 1785983364869,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 56.9,
+            "range": "9.31",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.66,
+            "range": "2.15",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.61,
+            "range": "2.13",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 154.5,
+            "range": "11.30",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.49,
+            "range": "0.03",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 32,
+            "range": "0.00",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 154.5,
+            "range": "11.30",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 53.72,
+            "range": "9.12",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.64,
+            "range": "0.63",
             "unit": "ms"
           }
         ]
