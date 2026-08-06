@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785984760238,
+  "lastUpdate": 1785984904028,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -489738,6 +489738,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.64,
             "range": "0.63",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "27c69efc978f188b1139d7411cbfbdade90e55c0",
+          "message": "Run every coverage step on nightly\n\nThe coverage pipeline was split across two toolchains: `generate` ran\non nightly, both `report` steps on stable. Once nightly moved to LLVM\n23 and stable stayed on 22, stable's `llvm-profdata` could no longer\nread nightly's profraw files, failing with a raw profile version\nmismatch (11 vs 10).\n\nNightly is required regardless, for the `coverage(off)` exclusions, so\nput the report steps on it too. CI now installs nightly with\n`llvm-tools-preview` explicitly rather than letting rustup resolve\n`cargo +nightly` on demand, which had put the component on stable.\n\nDEVELOPMENT.md documented the same stable/nightly split.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T22:49:50-04:00",
+          "tree_id": "66710d864a63e1627f0706061a06f2729800e81a",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/27c69efc978f188b1139d7411cbfbdade90e55c0"
+        },
+        "date": 1785984865119,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.06,
+            "range": "9.54",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 14.21,
+            "range": "1.90",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 14.16,
+            "range": "1.88",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 167,
+            "range": "10.15",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.41,
+            "range": "0.08",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 167,
+            "range": "10.15",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 56.39,
+            "range": "9.48",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.29,
+            "range": "0.45",
             "unit": "ms"
           }
         ]
