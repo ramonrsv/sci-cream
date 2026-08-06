@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785989027549,
+  "lastUpdate": 1785989415221,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -414172,6 +414172,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 627.38,
             "range": "13.55",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fa793fa1200d24361bdb2fec101d2eb34f982a56",
+          "message": "Proxy preview OAuth through production\n\nEvery preview deploy gets a fresh *.vercel.app host, and neither GitHub\nnor Google accepts a wildcard redirect URI, so preview sign-in failed\nwith redirect_uri_mismatch. Wire up Auth.js's redirect proxy: a preview\nsends production's callback as the redirect_uri with its own origin in\nthe signed state, and production hands the code back for the preview to\nredeem. No new redirect URI is registered with either provider.\n\nAUTH_REDIRECT_PROXY_URL is set on the Vercel project for Production and\nPreview alike — production only forwards a callback when its own origin\nmatches the value — and left unset locally.\n\nAlso add the section headings DEVELOPMENT.md was missing.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T23:43:05-04:00",
+          "tree_id": "ba3a16d4e8c4e27cb3c41b2666ea57c72369e6f7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fa793fa1200d24361bdb2fec101d2eb34f982a56"
+        },
+        "date": 1785989375957,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 45.63,
+            "range": "4.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 50.5,
+            "range": "3.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 56.38,
+            "range": "4.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2313.88,
+            "range": "36.14",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 319.13,
+            "range": "5.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 331.38,
+            "range": "4.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 347,
+            "range": "8.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16529.88,
+            "range": "49.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 17.36,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 918.38,
+            "range": "26.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 50,
+            "range": "2.18",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 54.38,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.5,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42.25,
+            "range": "0.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 130.25,
+            "range": "2.17",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 82.88,
+            "range": "1.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 54.47,
+            "range": "0.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 40.48,
+            "range": "0.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 616.25,
+            "range": "4.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 645.75,
+            "range": "14.51",
             "unit": "ms"
           }
         ]
