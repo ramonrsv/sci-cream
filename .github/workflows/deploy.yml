@@ -14,6 +14,12 @@
 # PROD_MIGRATION_POSTGRES_URL on `Production`.
 name: Deploy
 
+# `workflow_run` leaves the title as just the workflow name, so name the target and the commit.
+# `display_title` is the triggering commit's subject; expressions cannot shorten a SHA.
+run-name: >-
+  Deploy to ${{ inputs.target || 'preview' }} —
+  ${{ github.event.workflow_run.display_title || github.ref_name }}
+
 on:
   # Starts when App CI finishes rather than on the push, so `verify` reads a settled result.
   workflow_run:
@@ -58,6 +64,13 @@ jobs:
       actions: read
     steps:
       # No checkout, so the workflow-level working directory does not exist in this job.
+      # Before the check, so a rejected commit is still named; only the shell can shorten a SHA.
+      - name: Summarize the deploy target
+        working-directory: .
+        env:
+          TARGET: ${{ inputs.target || 'preview' }}
+        run: echo "Deploying \`${DEPLOY_SHA:0:7}\` to **$TARGET**" >> "$GITHUB_STEP_SUMMARY"
+
       - name: Require App CI and Crate CI to have passed for this commit
         working-directory: .
         env:
