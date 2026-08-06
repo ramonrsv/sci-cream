@@ -15,7 +15,10 @@
 name: Deploy
 
 on:
-  push:
+  # Starts when App CI finishes rather than on the push, so `verify` reads a settled result.
+  workflow_run:
+    workflows: ["App CI"]
+    types: [completed]
     branches: ["main"]
   workflow_dispatch:
     inputs:
@@ -35,6 +38,10 @@ on:
 defaults:
   run:
     working-directory: ./packages/app
+
+env:
+  # `github.sha` is the default branch head on `workflow_run`, so the commit comes from the event.
+  DEPLOY_SHA: ${{ github.event.workflow_run.head_sha || github.sha }}
 
 # Queues deploys per target, so a slow push cannot land over a newer one.
 concurrency:
@@ -56,23 +63,22 @@ jobs:
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          # A push starts both alongside this run, so wait them out; a dispatch finds them done.
-          # `missing` covers the webhook lag before the run exists, and waits the same way.
+          # Usually already settled; the loop covers webhook lag (`missing`) and racing dispatches.
           deadline=$((SECONDS + 2700))
           for wf in app.yml crate.yml; do
             while :; do
               read -r status conclusion <<<"$(gh run list --repo "$GITHUB_REPOSITORY" \
-                --workflow "$wf" --commit "$GITHUB_SHA" --limit 1 --json status,conclusion \
+                --workflow "$wf" --commit "$DEPLOY_SHA" --limit 1 --json status,conclusion \
                 --jq '.[0] | "\(.status // "missing") \(.conclusion // "none")"')"
               if [ "$status" = completed ]; then break; fi
               if [ "$SECONDS" -gt "$deadline" ]; then
-                echo "::error::$wf for $GITHUB_SHA still $status after 45m"
+                echo "::error::$wf for $DEPLOY_SHA still $status after 45m"
                 exit 1
               fi
               sleep 30
             done
             if [ "$conclusion" != "success" ]; then
-              echo "::error::$wf for $GITHUB_SHA: status=$status conclusion=$conclusion"
+              echo "::error::$wf for $DEPLOY_SHA: status=$status conclusion=$conclusion"
               exit 1
             fi
             echo "$wf: success"
@@ -85,6 +91,8 @@ jobs:
     uses: ./.github/workflows/db-migrate.yml
 
   deploy:
+    # Names the target in the job list, which is readable long before `environment` is evaluated.
+    name: deploy (${{ inputs.target == 'production' && 'Production' || 'Preview' }})
     needs: [verify, migrate_before]
     # Runs when `migrate_before` was skipped, but not when anything actually failed
     if: ${{ !failure() && !cancelled() && vars.ACT != 'true' }}
@@ -95,7 +103,10 @@ jobs:
       VERCEL_ORG_ID: ${{ secrets.VERCEL_ORG_ID }}
       VERCEL_PROJECT_ID: ${{ secrets.VERCEL_PROJECT_ID }}
     steps:
+      # Explicit ref: on `workflow_run` the default would be the branch head, not this commit.
       - uses: actions/checkout@v5
+        with:
+          ref: ${{ env.DEPLOY_SHA }}
       - uses: ./.github/actions/setup-rust
         with:
           cargo-installs: wasm-pack
