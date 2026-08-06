@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785983301480,
+  "lastUpdate": 1785983320181,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -494382,6 +494382,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/9ad5fd2870b5698405aee49fe62600e763d7e992"
         },
         "date": 1785982225743,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1082.89,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.29,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1665.71,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 517.55,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 564.25,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1866.83,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "2ce5563e98ca3248801041ed6906d7aa05f607b8",
+          "message": "Fix db-migrate when called from a deploy\n\nTwo bugs kept `migrate_after` from ever running.\n\nThe confirm check gated on `github.event_name`, which inside a called\nworkflow reports the caller's event. A deploy dispatched with\n`migrate: after` therefore ran the check with no `confirm` input and\nfailed on the empty string. It now gates on the input itself.\n\n`secrets.PROD_MIGRATION_POSTGRES_URL` came through empty because a\nreusable workflow only resolves secrets its `workflow_call` block\ndeclares; the job's `environment` alone is not enough, though it does\nstill gate the run behind its reviewer. Declaring it restores the\nlookup — as `required: false`, since a `uses:` job cannot declare an\nenvironment and so cannot pass one — and both callers inherit again.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T22:19:15-04:00",
+          "tree_id": "8f720c69ab9947054d1cb4b976d1725a52ee427b",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/2ce5563e98ca3248801041ed6906d7aa05f607b8"
+        },
+        "date": 1785983280845,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
