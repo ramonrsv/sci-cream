@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786026850530,
+  "lastUpdate": 1786026855453,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -447963,6 +447963,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.02%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "76a23eadce070f89cb0518df9bc3f6cb70f97853",
+          "message": "Add a reset to the Custom key selection\n\nThe custom key set could only be edited one key at a time or wiped by\nthe All Properties toggle, with no way back to a sensible baseline.\n\nAdd a reset button to the customize popup that restores the keys the\nAuto filter would show, or the view's default selection where Auto is\nnot a supported filter. KeyFilterSelect takes defaultSelected and\nautoHeuristic to compute that target, and disables the button when the\nselection already matches.\n\nDerive the All Properties checkbox from the selection rather than a\nlocal flag, so it is correct at mount and after a reset.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-06T10:12:11-04:00",
+          "tree_id": "347a05b7f0d5a012f9dc583f821a5dc958decbcb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/76a23eadce070f89cb0518df9bc3f6cb70f97853"
+        },
+        "date": 1786026811579,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 49847,
+            "range": "±0.88%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 506503,
+            "range": "±0.59%",
+            "unit": "ops/sec",
+            "extra": "88 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 33812,
+            "range": "±1.02%",
+            "unit": "ops/sec",
+            "extra": "94 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 389044,
+            "range": "±1.07%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
           }
         ]
       }
