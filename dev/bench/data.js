@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1785988680114,
+  "lastUpdate": 1785988683668,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -495880,6 +495880,35 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/f69fbd6a73e818e2c089c069abd7a130ff9db4f5"
         },
         "date": 1785986353982,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Total static media (raw)",
+            "value": 152.76,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fa793fa1200d24361bdb2fec101d2eb34f982a56",
+          "message": "Proxy preview OAuth through production\n\nEvery preview deploy gets a fresh *.vercel.app host, and neither GitHub\nnor Google accepts a wildcard redirect URI, so preview sign-in failed\nwith redirect_uri_mismatch. Wire up Auth.js's redirect proxy: a preview\nsends production's callback as the redirect_uri with its own origin in\nthe signed state, and production hands the code back for the preview to\nredeem. No new redirect URI is registered with either provider.\n\nAUTH_REDIRECT_PROXY_URL is set on the Vercel project for Production and\nPreview alike — production only forwards a callback when its own origin\nmatches the value — and left unset locally.\n\nAlso add the section headings DEVELOPMENT.md was missing.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-05T23:43:05-04:00",
+          "tree_id": "ba3a16d4e8c4e27cb3c41b2666ea57c72369e6f7",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fa793fa1200d24361bdb2fec101d2eb34f982a56"
+        },
+        "date": 1785988682682,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
