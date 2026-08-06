@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786026855453,
+  "lastUpdate": 1786026945655,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -492813,6 +492813,90 @@ window.BENCHMARK_DATA = {
             "name": "TTFB",
             "value": 3.54,
             "range": "0.35",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "76a23eadce070f89cb0518df9bc3f6cb70f97853",
+          "message": "Add a reset to the Custom key selection\n\nThe custom key set could only be edited one key at a time or wiped by\nthe All Properties toggle, with no way back to a sensible baseline.\n\nAdd a reset button to the customize popup that restores the keys the\nAuto filter would show, or the view's default selection where Auto is\nnot a supported filter. KeyFilterSelect takes defaultSelected and\nautoHeuristic to compute that target, and disables the button when the\nselection already matches.\n\nDerive the All Properties checkbox from the selection rather than a\nlocal flag, so it is correct at mount and after a reset.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-06T10:12:11-04:00",
+          "tree_id": "347a05b7f0d5a012f9dc583f821a5dc958decbcb",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/76a23eadce070f89cb0518df9bc3f6cb70f97853"
+        },
+        "date": 1786026908740,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "App Hydration (approx)",
+            "value": 60.09,
+            "range": "10.03",
+            "unit": "ms"
+          },
+          {
+            "name": "CLS",
+            "value": 0,
+            "range": "0.000",
+            "unit": "score"
+          },
+          {
+            "name": "DOM Content Loaded",
+            "value": 13.55,
+            "range": "1.02",
+            "unit": "ms"
+          },
+          {
+            "name": "DOM Interactive",
+            "value": 13.52,
+            "range": "1.03",
+            "unit": "ms"
+          },
+          {
+            "name": "FCP",
+            "value": 165,
+            "range": "12.45",
+            "unit": "ms"
+          },
+          {
+            "name": "FID",
+            "value": 0.43,
+            "range": "0.04",
+            "unit": "ms"
+          },
+          {
+            "name": "INP",
+            "value": 34,
+            "range": "5.29",
+            "unit": "ms"
+          },
+          {
+            "name": "LCP",
+            "value": 165,
+            "range": "12.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Load Event End",
+            "value": 56.5,
+            "range": "10.13",
+            "unit": "ms"
+          },
+          {
+            "name": "TTFB",
+            "value": 3.34,
+            "range": "0.40",
             "unit": "ms"
           }
         ]
