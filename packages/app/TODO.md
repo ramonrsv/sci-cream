@@ -106,6 +106,9 @@
 - [ ] Review the sign-in classes in `globals.css`, used in `/signin/page.tsx` and `/signup/page.tsx`
 - [ ] `.boxed-input`'s `my-1` is unlayered, so utility overrides (`my-0`) silently no-op. Move
       custom cls into `@layer components`, drop dead `my-0`s and the `my-0!` hack in `recipe.tsx`.
+- [ ] `BatchBuilder` assumes `batch.recipes[i]` pairs with `selection.items[i]`: the JSX maps the
+      batch while `removeAt`/`colorAt`/`versionAt` index the selection. Nothing enforces it beyond
+      `makeBatchFromSelection` mapping 1:1; look into pairing them explicitly via row view-models.
 
 ## Completed
 

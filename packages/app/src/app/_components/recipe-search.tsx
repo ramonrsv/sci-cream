@@ -10,7 +10,7 @@ import {
 } from "@workspace/sci-cream";
 
 import { makeRecipeId, type Recipe } from "@/lib/recipe/recipe";
-import { displayVersionName, validateVersionName } from "@/lib/recipe/version";
+import { displayVersionName, formatVersionOption, validateVersionName } from "@/lib/recipe/version";
 import { useResetOnChange } from "@/lib/hooks/use-reset-on-change";
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
 import { RecipeComments, RecipeDetailBody } from "@/app/_elements/recipe-detail-body";
@@ -178,14 +178,6 @@ function makeRecipeFromRows(
   return recipe;
 }
 
-/** Build the display label for a version in the dropdown */
-function formatVersionOption(v: SavedRecipeVersionJson, isLatest: boolean): string {
-  const latest = isLatest ? " · latest" : "";
-  const parts = [`v${displayVersionName(v)}`];
-  if (v.label) parts.push(v.label);
-  return parts.join("  ·  ") + latest;
-}
-
 /**
  * Stateful detail panel for a grouped recipe. On entry change the selection resets to the latest
  * version via {@link useResetOnChange} rather than by remounting, so the persisted selects and rows
@@ -213,7 +205,13 @@ function RecipeDetailPanel({
 
   // Newest first: keep each option's index into `entry.versions`, only reverse display order.
   const versionOptions: SelectOption<number>[] = entry.versions
-    .map((v, idx) => ({ value: idx, label: formatVersionOption(v, idx === latestIdx) }))
+    .map((v, idx) => ({
+      value: idx,
+      label: formatVersionOption(displayVersionName(v), {
+        isLatest: idx === latestIdx,
+        ...(v.label === undefined ? {} : { label: v.label }),
+      }),
+    }))
     .reverse();
 
   const recipe = useMemo<Recipe>(

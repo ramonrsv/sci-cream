@@ -9,27 +9,30 @@ import type {
   SavedRecipeVersionJson,
 } from "@/lib/data";
 import { getRecipeStoresFromStorage, makeRecipeId, parseRecipeString } from "@/lib/recipe/recipe";
-import { displayVersionName } from "@/lib/recipe/version";
 import { type CategoryColor, categoryColorFromName, categoryColorName } from "@/lib/styles/colors";
 
-/** A recipe the user can add to the batch, from either a calculator slot or a saved version. */
+/** A recipe the picker can add: a calculator slot, or a saved recipe with every version it has. */
 export interface AddableRecipe {
-  /** Stable identifier, unique across both source kinds. */
+  /** Stable identifier, unique across both source kinds: `slot:<n>` or `recipe:<id>`. */
   id: string;
   /** Display name shown in the picker. */
   name: string;
-  /** Qualifier shown beside the name, e.g. "R1" or "v3". Absent when it would say nothing. */
+  /** Qualifier beside the name — "R1" for a slot, "3 versions" for a multi-version recipe. */
   detail?: string;
-  /** The `[name, grams]` rows to weigh. */
-  rows: LightRecipe;
-  /** The saved version this recipe came from, when it did. */
-  version?: BatchRecipeVersion;
+  /** The versions behind it, newest first. A slot has exactly one, carrying no `version`. */
+  versions: RecipeSnapshot[];
 }
 
-/** A recipe selected into a {@link BatchSelection}: a snapshot frozen when added or loaded. */
-export interface SelectedRecipe {
+/**
+ * One recipe frozen for weighing: what the picker offers and what a {@link BatchSelection} holds.
+ * {@link BatchRecipeVersion} says which saved version it is; this carries what it weighs.
+ */
+export interface RecipeSnapshot {
+  /** Display name, as the recipe reads in the batch. */
   name: string;
+  /** The `[name, grams]` rows to weigh. */
   rows: LightRecipe;
+  /** The saved version this came from. Absent for a calculator slot, which has none. */
   version?: BatchRecipeVersion;
 }
 
@@ -47,7 +50,7 @@ export interface BatchSelection {
    * Chosen recipes in batch order, each snapshotting its recipe inline so later edits to the source
    * it came from never change it. `color` is absent only in a selection stored before colors.
    */
-  items: { color?: CategoryColor; recipe: SelectedRecipe }[];
+  items: { color?: CategoryColor; recipe: RecipeSnapshot }[];
 }
 
 /** Calculator slots holding at least one named row, as batch sources. */
@@ -57,51 +60,66 @@ export function readCalculatorSources(): AddableRecipe[] {
       .filter(([name]) => name !== "")
       .map(([name, quantityStr]) => [name, Number.parseFloat(quantityStr) || 0]);
     if (rows.length === 0) return [];
+    const name = store.name || makeRecipeId(slot);
     return [
-      {
-        id: `slot:${String(slot)}`,
-        name: store.name || makeRecipeId(slot),
-        detail: makeRecipeId(slot),
-        rows,
-      },
+      { id: `slot:${String(slot)}`, name, detail: makeRecipeId(slot), versions: [{ name, rows }] },
     ];
   });
 }
 
-/** Every saved recipe version the user can add, newest version first within each recipe. */
+/** Every saved recipe the user can add, each holding its own versions newest first. */
 export function readSavedSources(savedRecipes: readonly SavedRecipeJson[]): AddableRecipe[] {
-  return savedRecipes.flatMap((recipe) => {
+  return savedRecipes.map((recipe) => {
     const hasVersionName = (version: SavedRecipeVersionJson) => version.versionName !== undefined;
     const hasSiblings = recipe.versions.length > 1;
 
-    return [...recipe.versions].reverse().map((version) => ({
-      id: `saved:${String(recipe.id)}:${String(version.version)}`,
+    return {
+      id: `recipe:${String(recipe.id)}`,
       name: recipe.name,
-      // Include a version detail if the recipe has a named version or if it has siblings (so v1
-      // is worth naming). The detail is only used in the picker; only `version` rides the link.
-      ...(hasSiblings || hasVersionName(version)
-        ? { detail: `v${displayVersionName(version)}` }
-        : {}),
-      rows: makeBatchRows(version.recipe),
-      version: {
-        ref: { recipeId: recipe.id, versionNumber: version.version },
-        ...(hasVersionName(version) ? { name: version.versionName } : {}),
-        hasSiblings: recipe.versions.length > 1,
-      },
-    }));
+      // Qualified by version count; the version itself is chosen on the row afterwards.
+      ...(hasSiblings ? { detail: `${String(recipe.versions.length)} versions` } : {}),
+      versions: [...recipe.versions]
+        .reverse()
+        .map((version) => ({
+          name: recipe.name,
+          rows: makeBatchRows(version.recipe),
+          version: {
+            ref: { recipeId: recipe.id, versionNumber: version.version },
+            ...(hasVersionName(version) ? { name: version.versionName } : {}),
+            hasSiblings,
+          },
+        })),
+    };
   });
 }
 
+/** The versions a builder row can switch between, and the one it currently holds. */
+export interface VersionChoice {
+  /** The live source's versions, newest first. Always more than one. */
+  versions: RecipeSnapshot[];
+  /** The entry matching the row's snapshot, marked as current in the picker. */
+  current: RecipeSnapshot;
+}
+
 /**
- * Snapshot an {@link AddableRecipe} into a {@link SelectedRecipe}, capturing its rows at add time
- * so the batch stops tracking later edits to the calculator slot or saved version it came from.
+ * The version choice a builder row offers: its live source's versions, when it has more than one
+ * and the row's snapshot is among them. The live source decides, not the snapshot's `hasSiblings`,
+ * which freezes at add time. Absent with nothing to switch to, or no way to place its version.
  */
-export function snapshotRecipe(source: AddableRecipe): SelectedRecipe {
-  return {
-    name: source.name,
-    rows: source.rows,
-    ...(source.version ? { version: source.version } : {}),
-  };
+export function findVersionChoice(
+  sources: readonly AddableRecipe[],
+  recipe: RecipeSnapshot,
+): VersionChoice | undefined {
+  const ref = recipe.version?.ref;
+  if (ref === undefined) return undefined;
+  const source = sources.find((s) =>
+    s.versions.some((entry) => entry.version?.ref?.recipeId === ref.recipeId),
+  );
+  if (source === undefined || source.versions.length < 2) return undefined;
+  const current = source.versions.find(
+    (entry) => entry.version?.ref?.versionNumber === ref.versionNumber,
+  );
+  return current === undefined ? undefined : { versions: source.versions, current };
 }
 
 /**

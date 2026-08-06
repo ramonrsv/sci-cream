@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 
 import {
   displayVersionName,
+  formatVersionOption,
   hasVersionNames,
   isValidVersionName,
   nextVersionName,
@@ -86,5 +87,31 @@ describe("nextVersionName", () => {
 
   it("mixes named and unnamed versions by their displayed major", () => {
     expect(nextVersionName(versions([1], [2], [3, "3.1"]))).toBe("4");
+  });
+});
+
+describe("formatVersionOption", () => {
+  it("prefixes the version name with `v`", () => {
+    expect(formatVersionOption("3", { isLatest: false })).toBe("v3");
+  });
+
+  it("marks the latest version", () => {
+    expect(formatVersionOption("3", { isLatest: true })).toBe("v3 · latest");
+  });
+
+  it("appends the version's label when it has one", () => {
+    expect(formatVersionOption("3", { isLatest: false, label: "Too sweet" })).toBe(
+      "v3  ·  Too sweet",
+    );
+  });
+
+  it("shows a label and the latest marker together", () => {
+    expect(formatVersionOption("2.1", { isLatest: true, label: "Best yet" })).toBe(
+      "v2.1  ·  Best yet · latest",
+    );
+  });
+
+  it("ignores an empty label rather than trailing a separator", () => {
+    expect(formatVersionOption("3", { isLatest: false, label: "" })).toBe("v3");
   });
 });

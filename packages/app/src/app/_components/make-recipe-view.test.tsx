@@ -13,8 +13,19 @@ import {
   makeBatchPayload,
   type BatchPayload,
 } from "@/lib/batch/share";
-import { createUserBatch, updateUserBatch, deleteUserBatch, type SavedBatchJson } from "@/lib/data";
+import {
+  createUserBatch,
+  updateUserBatch,
+  deleteUserBatch,
+  type SavedBatchJson,
+  type SavedRecipeJson,
+} from "@/lib/data";
 import { useSessionResources, type SessionResources } from "@/lib/resources/session";
+import {
+  getSelectOptionLabelsByLabel,
+  getSelectedOptionLabelByLabel,
+  selectOptionByLabel,
+} from "@/__tests__/unit/select";
 import { STORAGE_KEYS, getLocalStorage, setLocalStorage } from "@/lib/local-storage";
 import { CategoryColor } from "@/lib/styles/colors";
 
@@ -35,12 +46,12 @@ function setSessionEmail(email: string | null) {
   } as unknown as ReturnType<typeof useSession>);
 }
 
-/** Point `useSessionResources` at the given saved batches; other fields are unused stubs. */
-function setSavedBatches(savedBatches: SavedBatchJson[]) {
+/** Point `useSessionResources` at the given saved batches and recipes; the rest are stubs. */
+function setSavedBatches(savedBatches: SavedBatchJson[], savedRecipes: SavedRecipeJson[] = []) {
   vi.mocked(useSessionResources).mockReturnValue({
     wasmResourcesState: [] as unknown as SessionResources["wasmResourcesState"],
     userIngredientSpecs: [],
-    savedRecipes: [],
+    savedRecipes,
     savedBatches,
     refreshUserIngredients: vi.fn().mockResolvedValue(undefined),
     refreshUserRecipes: vi.fn().mockResolvedValue(undefined),
@@ -691,5 +702,126 @@ describe("MakeRecipeView — loading a saved batch", () => {
 
     expect(confirmSpy).toHaveBeenCalled();
     expect(deleteUserBatch).not.toHaveBeenCalled();
+  });
+});
+
+describe("MakeRecipeView — adding a saved recipe", () => {
+  /** Accessible name of the version select on the first builder row. */
+  const VERSION_SELECT = "Recipe A version";
+
+  /** A saved recipe whose versions differ in amount, so a version switch shows on the row. */
+  function savedRecipe(id: number, name: string, versionNumbers: number[]): SavedRecipeJson {
+    const versions: SavedRecipeJson["versions"] = versionNumbers.map((v) => ({
+      version: v,
+      recipe: [["Whole Milk", 100 * v]],
+      createdAt: "2026-07-18T00:00:00.000Z",
+    }));
+    return { id, name, versions };
+  }
+
+  beforeEach(() => {
+    setSessionEmail("owner@example.com");
+    setSavedBatches(
+      [],
+      [savedRecipe(1, "My Gelato", [1, 2, 3]), savedRecipe(2, "Lone Sorbet", [1])],
+    );
+  });
+
+  /** Render, then add the recipe behind `sourceId` to the batch. */
+  async function renderAndAdd(sourceId: string) {
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-builder");
+    fireEvent.change(screen.getByTestId("batch-add-recipe"), { target: { value: sourceId } });
+  }
+
+  it("offers one line per recipe, qualified by its version count", async () => {
+    render(<MakeRecipeView />);
+    await screen.findByTestId("batch-builder");
+
+    const options = within(screen.getByTestId("batch-add-recipe")).getAllByRole("option");
+    expect(options.map((option) => option.textContent)).toEqual([
+      "Add a recipe…",
+      "My Gelato (3 versions)",
+      "Lone Sorbet",
+    ]);
+  });
+
+  it("weighs the latest version when a recipe is added", async () => {
+    await renderAndAdd("recipe:1");
+
+    expect(screen.getByTestId("checklist-cell-0-Whole Milk")).toHaveTextContent(/^300$/);
+    expect(getSelectedOptionLabelByLabel(VERSION_SELECT)).toContain("v3");
+  });
+
+  it("offers the recipe's other versions on the row, newest first and latest marked", async () => {
+    await renderAndAdd("recipe:1");
+
+    expect(await getSelectOptionLabelsByLabel(VERSION_SELECT)).toEqual(["v3 · latest", "v2", "v1"]);
+  });
+
+  it("labels a version by its opted-in name rather than its number", async () => {
+    setSavedBatches(
+      [],
+      [
+        {
+          id: 3,
+          name: "Named Gelato",
+          versions: [
+            { version: 1, recipe: [["Whole Milk", 100]], createdAt: "2026-07-18T00:00:00.000Z" },
+            {
+              version: 2,
+              recipe: [["Whole Milk", 200]],
+              versionName: "2.1",
+              createdAt: "2026-07-18T00:00:00.000Z",
+            },
+          ],
+        },
+      ],
+    );
+    await renderAndAdd("recipe:3");
+
+    expect(getSelectedOptionLabelByLabel(VERSION_SELECT)).toContain("v2.1");
+    expect(await getSelectOptionLabelsByLabel(VERSION_SELECT)).toEqual(["v2.1 · latest", "v1"]);
+  });
+
+  it("re-snapshots the row from the version picked, amounts and all", async () => {
+    await renderAndAdd("recipe:1");
+
+    await selectOptionByLabel(VERSION_SELECT, /^v2$/);
+
+    expect(screen.getByTestId("checklist-cell-0-Whole Milk")).toHaveTextContent(/^200$/);
+    expect(getSelectedOptionLabelByLabel(VERSION_SELECT)).toContain("v2");
+    expect(getLocalStorage(STORAGE_KEYS.makeRecipeBatch)).toMatchObject({
+      items: [
+        {
+          color: CategoryColor.Blue,
+          recipe: {
+            name: "My Gelato",
+            rows: [["Whole Milk", 200]],
+            version: { ref: { recipeId: 1, versionNumber: 2 } },
+          },
+        },
+      ],
+    });
+  });
+
+  it("keeps the row's container color across a version change", async () => {
+    await renderAndAdd("recipe:1");
+
+    fireEvent.click(screen.getByTestId("builder-color-button"));
+    fireEvent.click(await screen.findByTestId("builder-color-White"));
+
+    await selectOptionByLabel(VERSION_SELECT, /^v1$/);
+
+    expect(screen.getByTestId("builder-color-button").getAttribute("aria-label")).toContain(
+      "White",
+    );
+  });
+
+  it("offers no version picker for a recipe holding a single version", async () => {
+    await renderAndAdd("recipe:2");
+
+    expect(screen.queryByRole("combobox", { name: VERSION_SELECT })).not.toBeInTheDocument();
+    expect(screen.getByTestId("checklist-cell-0-Whole Milk")).toHaveTextContent(/^100$/);
   });
 });

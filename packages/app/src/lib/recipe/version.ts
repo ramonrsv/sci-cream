@@ -32,6 +32,19 @@ export function displayVersionName(v: VersionNameSource): string {
   return v.versionName ?? String(v.version);
 }
 
+/**
+ * One option's text in a version dropdown: `v3.1`, plus the version's free-text `label` and a
+ * `latest` marker where they apply. Shared so every version picker reads alike.
+ */
+export function formatVersionOption(
+  versionName: string,
+  { isLatest, label }: { isLatest: boolean; label?: string },
+): string {
+  const parts = [`v${versionName}`];
+  if (label) parts.push(label);
+  return parts.join("  ·  ") + (isLatest ? " · latest" : "");
+}
+
 /** True when any version carries a name — i.e. the recipe has opted into named versions. */
 export function hasVersionNames(versions: readonly VersionNameSource[]): boolean {
   return versions.some((v) => v.versionName != null);

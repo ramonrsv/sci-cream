@@ -5,6 +5,7 @@ import { Check, Plus, Trash2 } from "lucide-react";
 import { RecipeBadge, categoryChipStyle } from "@/app/_elements/tables/batch-checklist";
 import { MarkdownField } from "@/app/_elements/markdown";
 import { Popover, PopoverButton, PopupPanel } from "@/app/_elements/popup";
+import { Select, type SelectOption } from "@/app/_elements/selects/select";
 import { VersionBadge } from "@/app/_elements/version-badge";
 import {
   MAX_BATCH_RECIPES,
@@ -13,9 +14,17 @@ import {
   batchRecipeLetter,
   displayVersion,
 } from "@/lib/batch/batch";
+import { formatVersionOption } from "@/lib/recipe/version";
 import { CATEGORY_COLORS, type CategoryColor, categoryColorName } from "@/lib/styles/colors";
 import { colorForPosition, recordColorPick } from "@/lib/batch/colors";
-import { type BatchSelection, type AddableRecipe, snapshotRecipe } from "@/lib/batch/builder";
+import {
+  type BatchSelection,
+  type RecipeSnapshot,
+  type AddableRecipe,
+  type VersionChoice,
+  findVersionChoice,
+} from "@/lib/batch/builder";
+import { verifyDefined } from "@/lib/util";
 
 /** Color picker worn by the recipe's own badge, which already shows the color. */
 function ColorPicker({
@@ -83,22 +92,39 @@ function ColorSwatch({ color, selected = false }: { color: CategoryColor; select
   );
 }
 
+/** The row's versions as {@link Select} options, keyed by position; 0 is the latest. */
+function versionOptions(versions: RecipeSnapshot[]): SelectOption<number>[] {
+  return versions.map((entry, order) => {
+    const versionName = displayVersion(entry.version);
+    verifyDefined(versionName, "a version choice must offer identifiable versions");
+    return {
+      value: order,
+      label: formatVersionOption(String(versionName), { isLatest: order === 0 }),
+    };
+  });
+}
+
 /** One row of the builder: the chosen recipe, its total, and a remove control. */
 function BuilderRow({
   name,
   version,
+  versionChoice,
   total,
   index,
   color,
   onPickColor,
+  onPickVersion,
   onRemove,
 }: {
   name: string;
   version?: string | number;
+  /** The versions this row can switch between, when its live source offers a choice. */
+  versionChoice?: VersionChoice;
   total: number;
   index: number;
   color: CategoryColor;
   onPickColor: (color: CategoryColor) => void;
+  onPickVersion: (entry: RecipeSnapshot) => void;
   onRemove: () => void;
 }) {
   return (
@@ -109,8 +135,18 @@ function BuilderRow({
       <ColorPicker index={index} color={color} onPick={onPickColor} />
       <span className="flex min-w-0 flex-1 items-center gap-1">
         <span className="text-primary min-w-0 truncate text-sm">{name}</span>
-        {version !== undefined && (
-          <VersionBadge version={version} title={`Weighing version ${String(version)}`} />
+        {versionChoice ? (
+          <Select
+            value={versionChoice.versions.indexOf(versionChoice.current)}
+            onChange={(order) => onPickVersion(versionChoice.versions[order])}
+            options={versionOptions(versionChoice.versions)}
+            ariaLabel={`Recipe ${batchRecipeLetter(index)} version`}
+            className="min-w-0 shrink truncate"
+          />
+        ) : (
+          version !== undefined && (
+            <VersionBadge version={version} title={`Weighing version ${String(version)}`} />
+          )
         )}
       </span>
       <span className="text-secondary comp-val text-xs tabular-nums">
@@ -151,14 +187,18 @@ export function BatchBuilder({
     const source = sources.find((s) => s.id === sourceId);
     if (full || source === undefined) return;
     const color = colorForPosition(selection.items.length);
-    onChange({
-      ...selection,
-      items: [...selection.items, { color, recipe: snapshotRecipe(source) }],
-    });
+    onChange({ ...selection, items: [...selection.items, { color, recipe: source.versions[0] }] });
   };
 
   const removeAt = (index: number) => {
     onChange({ ...selection, items: selection.items.filter((_, i) => i !== index) });
+  };
+
+  const versionAt = (index: number, entry: RecipeSnapshot) => {
+    onChange({
+      ...selection,
+      items: selection.items.map((item, i) => (i === index ? { ...item, recipe: entry } : item)),
+    });
   };
 
   const colorAt = (index: number, color: CategoryColor) => {
@@ -204,10 +244,12 @@ export function BatchBuilder({
                 key={`${String(index)}:${recipe.name}`}
                 name={recipe.name}
                 version={displayVersion(recipe.version)}
+                versionChoice={findVersionChoice(sources, recipe)}
                 total={recipe.rows.reduce((sum, [, quantity]) => sum + quantity, 0)}
                 index={index}
                 color={batchRecipeColor(recipe, index)}
                 onPickColor={(color) => colorAt(index, color)}
+                onPickVersion={(entry) => versionAt(index, entry)}
                 onRemove={() => removeAt(index)}
               />
             ))}

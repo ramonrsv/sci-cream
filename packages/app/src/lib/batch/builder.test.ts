@@ -2,10 +2,11 @@ import { describe, it, expect } from "vitest";
 
 import {
   type BatchSelection,
+  type RecipeSnapshot,
   type AddableRecipe,
   batchHasUnsavedChanges,
   batchMatchesQuery,
-  snapshotRecipe,
+  findVersionChoice,
   batchToInput,
   isInlineSelection,
   makeBatchFromSelection,
@@ -32,32 +33,42 @@ function savedRecipe(id: number, name: string, versionNumbers: number[]): SavedR
   return { id, name, versions: versionNumbers.map((v) => version(v)) };
 }
 
-/** The one-item selection used by most cases, snapshotting the given source inline. */
-function selectOnly(source: AddableRecipe): BatchSelection {
-  return { date: "2026-07-18", items: [{ recipe: snapshotRecipe(source) }] };
+/** The one-item selection used by most cases, carrying the given version inline. */
+function selectOnly(source: RecipeSnapshot): BatchSelection {
+  return { date: "2026-07-18", items: [{ recipe: source }] };
 }
 
-/** Find a source by picker detail, failing loudly when the test's fixture is wrong. */
-function sourceByDetail(sources: AddableRecipe[], detail: string): AddableRecipe {
-  const source = sources.find((s) => s.detail === detail);
-  if (source === undefined) throw new Error(`no source with detail ${detail}`);
-  return source;
+/** Find one saved version by its number, failing loudly when the test's fixture is wrong. */
+function versionByNumber(sources: AddableRecipe[], number: number): RecipeSnapshot {
+  const entry = sources
+    .flatMap((s) => s.versions)
+    .find((v) => v.version?.ref?.versionNumber === number);
+  if (entry === undefined) throw new Error(`no version numbered ${String(number)}`);
+  return entry;
 }
 
-describe("readSavedSources — version labelling in the picker", () => {
-  it("omits the version for a recipe that only has the default", () => {
+/** The saved version numbers of some picker entries, in the order they are offered. */
+function versionNumbers(entries: readonly RecipeSnapshot[]) {
+  return entries.map((v) => v.version?.ref?.versionNumber);
+}
+
+describe("readSavedSources — one picker line per recipe", () => {
+  it("leaves a recipe holding a single version unqualified", () => {
     const sources = readSavedSources([savedRecipe(1, "My Gelato", [1])]);
 
     expect(sources).toHaveLength(1);
     expect(sources[0]?.detail).toBeUndefined();
+    expect(sources[0]?.versions).toHaveLength(1);
   });
 
-  it("labels every version once a recipe has more than the default, including v1", () => {
+  it("qualifies a multi-version recipe by its count, still on one line", () => {
     const sources = readSavedSources([savedRecipe(1, "My Gelato", [1, 2, 3])]);
 
-    // Newest first, and v1 is now worth naming because later versions exist to confuse it with
-    expect(sources.map((s) => s.detail)).toEqual(["v3", "v2", "v1"]);
-    expect(sources.every((s) => s.version?.hasSiblings)).toBe(true);
+    expect(sources).toHaveLength(1);
+    expect(sources[0]?.detail).toBe("3 versions");
+    // Newest first, so adding the recipe takes the latest version
+    expect(versionNumbers(sources[0].versions)).toEqual([3, 2, 1]);
+    expect(sources[0]?.versions.every((v) => v.version?.hasSiblings)).toBe(true);
   });
 
   it("decides per recipe, not across the whole list", () => {
@@ -66,11 +77,23 @@ describe("readSavedSources — version labelling in the picker", () => {
       savedRecipe(2, "Multi", [1, 2]),
     ]);
 
-    expect(sources.filter((s) => s.name === "Single").map((s) => s.detail)).toEqual([undefined]);
-    expect(sources.filter((s) => s.name === "Multi").map((s) => s.detail)).toEqual(["v2", "v1"]);
+    expect(sources.map((s) => [s.name, s.detail])).toEqual([
+      ["Single", undefined],
+      ["Multi", "2 versions"],
+    ]);
   });
 
-  it("labels with the opted-in name instead of the raw number, and carries it along", () => {
+  it("builds each version ready to weigh: name, rows, and where it came from", () => {
+    const [source] = readSavedSources([savedRecipe(1, "My Gelato", [1, 2])]);
+
+    expect(source.versions[0]).toEqual({
+      name: "My Gelato",
+      rows: [["Whole Milk", 200]],
+      version: { ref: { recipeId: 1, versionNumber: 2 }, hasSiblings: true },
+    });
+  });
+
+  it("carries a version's opted-in name along, for the picker to label it with", () => {
     const recipe: SavedRecipeJson = {
       id: 1,
       name: "My Gelato",
@@ -78,8 +101,59 @@ describe("readSavedSources — version labelling in the picker", () => {
     };
     const sources = readSavedSources([recipe]);
 
-    expect(sources.map((s) => s.detail)).toEqual(["v2.1", "v1"]);
-    expect(sources.map((s) => s.version?.name)).toEqual(["2.1", undefined]);
+    expect(versionNumbers(sources[0].versions)).toEqual([2, 1]);
+    expect(sources[0]?.versions.map((v) => v.version?.name)).toEqual(["2.1", undefined]);
+  });
+});
+
+describe("findVersionChoice — when a builder row offers a version switch", () => {
+  const sources = readSavedSources([
+    savedRecipe(1, "Multi", [1, 2, 3]),
+    savedRecipe(2, "Single", [1]),
+  ]);
+
+  it("offers the live source's versions, marking the one the row holds", () => {
+    const choice = findVersionChoice(sources, versionByNumber(sources, 2));
+
+    expect(versionNumbers(choice?.versions ?? [])).toEqual([3, 2, 1]);
+    expect(choice?.current.version?.ref?.versionNumber).toBe(2);
+  });
+
+  it("offers nothing for a recipe whose source has only one version", () => {
+    expect(findVersionChoice(sources, versionByNumber(sources, 1))).toBeDefined();
+    const single = sources[1].versions[0];
+
+    expect(findVersionChoice(sources, single)).toBeUndefined();
+  });
+
+  it("offers nothing for a calculator slot or a link-decoded recipe, which carry no ref", () => {
+    expect(findVersionChoice(sources, { name: "R1", rows: [["Sugar", 50]] })).toBeUndefined();
+    expect(
+      findVersionChoice(sources, { name: "Multi", rows: [], version: { name: "2.1" } }),
+    ).toBeUndefined();
+  });
+
+  it("offers nothing once the source recipe is gone", () => {
+    const orphan = versionByNumber(sources, 2);
+
+    expect(findVersionChoice([], orphan)).toBeUndefined();
+  });
+
+  it("offers nothing once the row's own version is deleted, leaving it unplaceable", () => {
+    // The row still reports what was weighed; it just can no longer say which of the survivors
+    // it sits on, so there is nothing to switch away from.
+    const stale = versionByNumber(sources, 2);
+    const trimmed = readSavedSources([savedRecipe(1, "Multi", [1, 3])]);
+
+    expect(findVersionChoice(trimmed, stale)).toBeUndefined();
+  });
+
+  it("offers a switch to a row snapshotted before its recipe gained a second version", () => {
+    // `hasSiblings` froze as false at add time; the live source is what decides.
+    const lone = readSavedSources([savedRecipe(1, "Multi", [1])])[0].versions[0];
+
+    expect(lone.version?.hasSiblings).toBe(false);
+    expect(findVersionChoice(sources, lone)?.current.version?.ref?.versionNumber).toBe(1);
   });
 });
 
@@ -101,8 +175,8 @@ describe("displayVersion — which version earns a badge beside the name", () =>
     // it apart from — but the badge must stay, or the batch misrepresents what was weighed.
     const [only] = readSavedSources([savedRecipe(1, "My Gelato", [3])]);
 
-    expect(only?.detail).toBeUndefined();
-    expect(displayVersion(only?.version)).toBe(3);
+    expect(only.detail).toBeUndefined();
+    expect(displayVersion(only.versions[0]?.version)).toBe(3);
   });
 
   it("prefers an opted-in name over the number, even for the default version", () => {
@@ -115,18 +189,18 @@ describe("displayVersion — which version earns a badge beside the name", () =>
 });
 
 describe("makeBatchFromSelection — name and version stay separate", () => {
-  /** The batch built from the single version of "My Gelato" matching `detail`. */
-  const batchFromVersion = (detail: string) => {
+  /** The batch built from the numbered version of "My Gelato". */
+  const batchFromVersion = (number: number) => {
     const sources = readSavedSources([savedRecipe(1, "My Gelato", [1, 2])]);
-    return makeBatchFromSelection(selectOnly(sourceByDetail(sources, detail)));
+    return makeBatchFromSelection(selectOnly(versionByNumber(sources, number)));
   };
 
   it("leaves the version out of the name, which the badge carries instead", () => {
-    expect(batchFromVersion("v2").recipes.map((r) => r.name)).toEqual(["My Gelato"]);
+    expect(batchFromVersion(2).recipes.map((r) => r.name)).toEqual(["My Gelato"]);
   });
 
   it("records the version in `ref`, where the badge reads it from", () => {
-    const batch = batchFromVersion("v2");
+    const batch = batchFromVersion(2);
 
     expect(batch.recipes[0]?.version?.ref).toEqual({ recipeId: 1, versionNumber: 2 });
     expect(displayVersion(batch.recipes[0]?.version)).toBe(2);
@@ -134,7 +208,7 @@ describe("makeBatchFromSelection — name and version stay separate", () => {
 
   it("badges the default version too, once its recipe has other versions", () => {
     // "My Gelato" has a v2 alongside this v1, so v1 is no longer the unambiguous common case.
-    expect(displayVersion(batchFromVersion("v1").recipes[0]?.version)).toBe(1);
+    expect(displayVersion(batchFromVersion(1).recipes[0]?.version)).toBe(1);
   });
 
   it("carries an opted-in version name from the source onto the batch recipe", () => {
@@ -144,7 +218,7 @@ describe("makeBatchFromSelection — name and version stay separate", () => {
       versions: [version(1), version(2, "2.1")],
     };
     const sources = readSavedSources([recipe]);
-    const batch = makeBatchFromSelection(selectOnly(sourceByDetail(sources, "v2.1")));
+    const batch = makeBatchFromSelection(selectOnly(versionByNumber(sources, 2)));
 
     expect(batch.recipes[0]?.version?.name).toBe("2.1");
     expect(displayVersion(batch.recipes[0]?.version)).toBe("2.1");
@@ -163,24 +237,6 @@ describe("makeBatchFromSelection — inline recipes", () => {
     expect(makeBatchFromSelection(selection).recipes).toEqual([
       { name: "Loaded", rows: [["Whole Milk", 300]], color: CategoryColor.Blue },
     ]);
-  });
-});
-
-describe("snapshotRecipe — snapshotting a live source at add time", () => {
-  it("captures the source's name, rows, and version inline", () => {
-    const [newest] = readSavedSources([savedRecipe(1, "My Gelato", [1, 2])]);
-
-    expect(snapshotRecipe(newest)).toEqual({
-      name: "My Gelato",
-      rows: [["Whole Milk", 200]],
-      version: { ref: { recipeId: 1, versionNumber: 2 }, hasSiblings: true },
-    });
-  });
-
-  it("omits the version for a calculator slot, which has none", () => {
-    const slot: AddableRecipe = { id: "slot:0", name: "R1", rows: [["Sugar", 50]] };
-
-    expect(snapshotRecipe(slot)).toEqual({ name: "R1", rows: [["Sugar", 50]] });
   });
 });
 
