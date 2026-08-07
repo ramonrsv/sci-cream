@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786129201827,
+  "lastUpdate": 1786129231586,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -451351,6 +451351,58 @@ window.BENCHMARK_DATA = {
             "range": "±1.03%",
             "unit": "ops/sec",
             "extra": "92 samples"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "621d9c19e53be747b24202b1e28bc71e7cda9943",
+          "message": "Refine the recipe quality signal markers\n\nRating glyphs now carry U+FE0E, the text presentation selector, so the\nversion dropdown and the rating filter render them monochrome rather\nthan as colour emoji shouting over the text they annotate. Platforms\nwith no monochrome glyph for the codepoint ignore the request and keep\nthe colour form, so this degrades to today's look, never to tofu.\n\n`monoRatingGlyph` sits beside the glyph map in lib/rating: both\nconsumers want it, and a rating filter has no business importing from\nrecipe versioning to reach it. Its composition is pinned once, in\nrating.test.ts, so the two consumer suites can call the helper without\ntheir assertions going tautological.\n\nRecipe search list items gain an \"N versions\" badge for recipes\ncarrying more than one. Embedded entries are adapted to a single\nversion, so the count alone marks a saved recipe and no source check\nis needed.\n\nThe quality-signals e2e spec now reads its filter labels from\nRATING_FILTER_SHORT_LABELS instead of rebuilding the strings. Both\nPlaywright's selectOption and the spec's own expectations match\nexactly, so changing a label broke three assertions that had no reason\nto know how the label was assembled.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T14:34:29-04:00",
+          "tree_id": "ca9960ac56d15f1fba66f92d3b1c268008d661c5",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/621d9c19e53be747b24202b1e28bc71e7cda9943"
+        },
+        "date": 1786129191183,
+        "tool": "benchmarkjs",
+        "benches": [
+          {
+            "name": "comp_key_as_med_str",
+            "value": 50280,
+            "range": "±0.87%",
+            "unit": "ops/sec",
+            "extra": "90 samples"
+          },
+          {
+            "name": "compKeyAsMedStr",
+            "value": 513233,
+            "range": "±0.57%",
+            "unit": "ops/sec",
+            "extra": "93 samples"
+          },
+          {
+            "name": "prop_key_as_med_str",
+            "value": 33841,
+            "range": "±1.09%",
+            "unit": "ops/sec",
+            "extra": "91 samples"
+          },
+          {
+            "name": "propKeyAsMedStr",
+            "value": 389733,
+            "range": "±0.98%",
+            "unit": "ops/sec",
+            "extra": "95 samples"
           }
         ]
       }
