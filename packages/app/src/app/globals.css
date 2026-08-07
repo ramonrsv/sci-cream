@@ -5,6 +5,10 @@
 @import "react-resizable/css/styles.css";
 @import "react-json-view-lite/dist/index.css";
 
+/* Geist has no pictographs, so the rating glyphs in `lib/rating.ts` would vary with the system
+   font. The subsets sit behind a `unicode-range`, so only the ranges actually drawn are fetched. */
+@import "@fontsource/noto-emoji/400.css";
+
 @custom-variant dark (&:where(.dark, .dark *));
 
 @theme inline {
@@ -129,6 +133,7 @@
 body {
   font-family:
     var(--font-geist-sans),
+    "Noto Emoji",
     -apple-system,
     BlinkMacSystemFont,
     "Segoe UI",
