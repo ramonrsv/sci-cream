@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786077427783,
+  "lastUpdate": 1786077443426,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -479832,6 +479832,100 @@ window.BENCHMARK_DATA = {
           {
             "name": "/docs/[slug] first-load JS (gzip)",
             "value": 746.82,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static JS (gzip)",
+            "value": 1108.59,
+            "unit": "KB"
+          },
+          {
+            "name": "Total static CSS (gzip)",
+            "value": 13.29,
+            "unit": "KB"
+          },
+          {
+            "name": "Total fonts (raw)",
+            "value": 137.71,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b09321b440be430daef83a0dde6bf56ff968defd",
+          "message": "Add storage for recipe and batch quality signals\n\nRecipes and batches gain a `favourite` star, and recipe versions a\nthree-point `rating` (thumbs down / up / two up), stored as a new\ndomain-neutral `rating` enum type so other tables can reuse it.\n\nThe star moves only through `setUserRecipeFavourite` and\n`setUserBatchFavourite`. Keeping it out of `BatchInput` matters:\n`updateUserBatch` replaces a batch wholesale, so a star carried\nthere would be cleared by any save made from a pre-star copy.\n\nThe rating rides the existing `RecipeVersionMeta` contract, where\n`null` clears and an omitted key leaves alone, so it needed no new\naction. `isValidVersionMeta`, widened from the old version-name\nguard, rejects an off-scale value with `undefined` rather than\nletting Postgres throw.\n\nMigration 0002 is expand-only, so it applies before the deploy.\nThe UI that surfaces and filters these signals follows separately.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T00:21:04-04:00",
+          "tree_id": "bcb67633720ce7c0144943cc0bb1fc6e096e2fb8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b09321b440be430daef83a0dde6bf56ff968defd"
+        },
+        "date": 1786077402803,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Shared framework JS (gzip)",
+            "value": 168.45,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator route-only JS (gzip)",
+            "value": 702.11,
+            "unit": "KB"
+          },
+          {
+            "name": "/calculator first-load JS (gzip)",
+            "value": 870.56,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients route-only JS (gzip)",
+            "value": 639.95,
+            "unit": "KB"
+          },
+          {
+            "name": "/ingredients first-load JS (gzip)",
+            "value": 808.4,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes route-only JS (gzip)",
+            "value": 647.46,
+            "unit": "KB"
+          },
+          {
+            "name": "/recipes first-load JS (gzip)",
+            "value": 815.91,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] route-only JS (gzip)",
+            "value": 578.36,
+            "unit": "KB"
+          },
+          {
+            "name": "/blog/[slug] first-load JS (gzip)",
+            "value": 746.81,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] route-only JS (gzip)",
+            "value": 578.36,
+            "unit": "KB"
+          },
+          {
+            "name": "/docs/[slug] first-load JS (gzip)",
+            "value": 746.81,
             "unit": "KB"
           },
           {
