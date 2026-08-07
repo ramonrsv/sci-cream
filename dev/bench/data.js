@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786136928161,
+  "lastUpdate": 1786137023097,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -419737,6 +419737,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 687.38,
             "range": "8.96",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fbb91ee264c8a59cefd9daf0d0f778ca58e9c6a9",
+          "message": "Pin rating glyphs to a shipped emoji font\n\nGeist covers no pictographs, so the rating glyphs fell through to\nwhatever the machine had: Noto Sans Symbols 2 locally, Unifont on\nthe CI runner, which failed the recipe-search visual snapshot.\n\nAdd @fontsource/noto-emoji, pinned exactly, imported through its\naggregate stylesheet so every subset sits behind a unicode-range\nand only the two chunks holding the trophy and the thumbs load.\n\nVisual baselines showing a rating glyph need regenerating.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T16:39:44-04:00",
+          "tree_id": "cf4aaea6ee1f830c6a6c0c3efb5183646a4a3e38",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fbb91ee264c8a59cefd9daf0d0f778ca58e9c6a9"
+        },
+        "date": 1786136984894,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 46.88,
+            "range": "3.59",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 51,
+            "range": "3.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 57.5,
+            "range": "2.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2444.5,
+            "range": "64.63",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 331.5,
+            "range": "5.43",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 341.13,
+            "range": "3.66",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 360.38,
+            "range": "6.80",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17115.38,
+            "range": "63.31",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 22.03,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 887.75,
+            "range": "17.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 50.5,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 50.75,
+            "range": "0.83",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 37.5,
+            "range": "1.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 39.63,
+            "range": "2.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 125.38,
+            "range": "3.28",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 77.75,
+            "range": "1.71",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 52.84,
+            "range": "0.44",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 40.06,
+            "range": "0.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 600.5,
+            "range": "10.45",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 658.63,
+            "range": "9.84",
             "unit": "ms"
           }
         ]
