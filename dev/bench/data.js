@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786130541925,
+  "lastUpdate": 1786136212416,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -505243,6 +505243,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/5d4cf4b8543cf3c1f42009ece2b8bc950b1f68a3"
         },
         "date": 1786129687108,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1082.89,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.29,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1665.71,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 517.55,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 564.25,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1866.84,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "fbb91ee264c8a59cefd9daf0d0f778ca58e9c6a9",
+          "message": "Pin rating glyphs to a shipped emoji font\n\nGeist covers no pictographs, so the rating glyphs fell through to\nwhatever the machine had: Noto Sans Symbols 2 locally, Unifont on\nthe CI runner, which failed the recipe-search visual snapshot.\n\nAdd @fontsource/noto-emoji, pinned exactly, imported through its\naggregate stylesheet so every subset sits behind a unicode-range\nand only the two chunks holding the trophy and the thumbs load.\n\nVisual baselines showing a rating glyph need regenerating.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T16:39:44-04:00",
+          "tree_id": "cf4aaea6ee1f830c6a6c0c3efb5183646a4a3e38",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/fbb91ee264c8a59cefd9daf0d0f778ca58e9c6a9"
+        },
+        "date": 1786136174318,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
