@@ -42,6 +42,14 @@ export const RATING_GLYPHS: Record<Rating, string> = {
   [Rating.Great]: "🏆",
 };
 
+/** U+FE0E, asking for a glyph's monochrome text form; ignored where no font supplies one. */
+export const TEXT_PRESENTATION_SELECTOR = "\uFE0E";
+
+/** The rating's glyph asked for in its monochrome text form, to sit with adjacent text. */
+export function monoRatingGlyph(rating: Rating): string {
+  return RATING_GLYPHS[rating] + TEXT_PRESENTATION_SELECTOR;
+}
+
 /** Human-readable name for tooltips and accessible labels. Names the verdict, not the mark. */
 export const RATING_LABELS: Record<Rating, string> = {
   [Rating.Bad]: "Bad",

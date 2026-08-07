@@ -1,6 +1,15 @@
 import { describe, it, expect } from "vitest";
 
-import { isRating, ratingRank, RATING_GLYPHS, RATING_LABELS, RATINGS, Rating } from "./rating";
+import {
+  isRating,
+  monoRatingGlyph,
+  ratingRank,
+  RATING_GLYPHS,
+  RATING_LABELS,
+  RATINGS,
+  Rating,
+  TEXT_PRESENTATION_SELECTOR,
+} from "./rating";
 
 describe("Rating", () => {
   it("stores each rating as its own name, so the value reads as itself in the database", () => {
@@ -27,8 +36,24 @@ describe("Rating", () => {
   });
 });
 
+describe("monoRatingGlyph", () => {
+  // Composed from the primitives rather than calling the helper, so this pins what it must produce.
+  it.each(RATINGS)("appends the text presentation selector to %s", (rating) => {
+    expect(monoRatingGlyph(rating)).toBe(RATING_GLYPHS[rating] + TEXT_PRESENTATION_SELECTOR);
+  });
+
+  it("selects text rather than emoji presentation, which is the opposite request", () => {
+    expect(TEXT_PRESENTATION_SELECTOR).toBe("\uFE0E");
+    expect(monoRatingGlyph(Rating.Great)).not.toContain("\uFE0F");
+  });
+
+  it("leaves the glyph itself untouched, so the colour form remains the fallback", () => {
+    expect(monoRatingGlyph(Rating.Great).startsWith(RATING_GLYPHS[Rating.Great])).toBe(true);
+  });
+});
+
 describe("isRating", () => {
-  it.each(RATINGS)("accepts the rating %d", (rating) => {
+  it.each(RATINGS)("accepts the rating %s", (rating) => {
     expect(isRating(rating)).toBe(true);
   });
 

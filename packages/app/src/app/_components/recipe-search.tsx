@@ -463,26 +463,34 @@ export function RecipeSearch({
       emptyResultsText="No recipes found."
       renderListItemSubtitle={(entry) => {
         const best = bestRating(entry.versions.map((v) => v.rating));
-        if (!entry.favourite && best === undefined && !entry.author) return null;
+        const versionCount = entry.versions.length;
+        const hasMarker = entry.favourite === true || best !== undefined || versionCount > 1;
+
+        if (!hasMarker && !entry.author) return null;
         return (
           <span className="flex items-center gap-1">
             {entry.favourite && (
               <Star
                 size={LIST_ITEM_MARKER_ICON_SIZE}
                 fill="currentColor"
-                className="text-secondary shrink-0"
+                className="text-secondary mx-p my-0.5 shrink-0"
                 aria-label="Favourite"
                 data-testid="favourite-marker"
               />
             )}
             {best !== undefined && (
               <span
-                className="text-secondary flex shrink-0"
+                className="text-secondary mx-px my-0.5 flex shrink-0"
                 aria-label={`Best rating: ${RATING_LABELS[best]}`}
                 data-rating={best}
                 data-testid="rating-marker"
               >
                 <RatingIcon rating={best} size={LIST_ITEM_MARKER_ICON_SIZE} filled />
+              </span>
+            )}
+            {versionCount > 1 && (
+              <span className="meta-tag shrink-0" data-testid="version-count-marker">
+                {versionCount} versions
               </span>
             )}
             {entry.author && (

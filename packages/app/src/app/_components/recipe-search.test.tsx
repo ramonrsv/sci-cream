@@ -995,4 +995,47 @@ describe("RecipeSearch", () => {
       });
     });
   });
+
+  // -------------------------------------------------------------------------
+  // Version count marker
+  // -------------------------------------------------------------------------
+
+  describe("version count marker", () => {
+    const multi: SavedRecipeJson = {
+      id: 3,
+      name: "Revised Custard",
+      versions: [
+        { version: 1, recipe: [["Whole Milk", 300]], createdAt: "" },
+        { version: 2, recipe: [["Whole Milk", 310]], createdAt: "" },
+        { version: 3, recipe: [["Whole Milk", 320]], createdAt: "" },
+      ],
+    };
+
+    const single: SavedRecipeJson = {
+      id: 4,
+      name: "One Shot Sorbet",
+      versions: [{ version: 1, recipe: [["Water", 300]], createdAt: "" }],
+    };
+
+    it("counts every version, not just the rated or latest ones", () => {
+      render(<RecipeSearch savedRecipes={[multi]} />);
+      expect(screen.getByTestId("version-count-marker")).toHaveTextContent("3 versions");
+    });
+
+    it("stays off a recipe with a single version, where the count says nothing", () => {
+      render(<RecipeSearch savedRecipes={[single]} />);
+      expect(screen.queryByTestId("version-count-marker")).not.toBeInTheDocument();
+    });
+
+    // Built-ins are adapted to exactly one version, so the marker must never appear on them.
+    it("stays off built-in entries", () => {
+      render(<RecipeSearch savedRecipes={[]} />);
+      expect(screen.queryByTestId("version-count-marker")).not.toBeInTheDocument();
+    });
+
+    it("marks only the multi-version recipe when both are listed", () => {
+      render(<RecipeSearch savedRecipes={[multi, single]} />);
+      expect(screen.getAllByTestId("version-count-marker")).toHaveLength(1);
+    });
+  });
 });

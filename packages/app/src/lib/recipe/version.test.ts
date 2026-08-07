@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 
-import { RATING_GLYPHS, Rating } from "@/lib/rating";
+import { monoRatingGlyph, Rating, TEXT_PRESENTATION_SELECTOR } from "@/lib/rating";
 import {
   displayVersionName,
   formatVersionOption,
@@ -118,8 +118,14 @@ describe("formatVersionOption", () => {
 
   it("appends the rating glyph when the version is rated", () => {
     expect(formatVersionOption("3", { isLatest: false, rating: Rating.Great })).toBe(
-      `v3  ·  ${RATING_GLYPHS[Rating.Great]}`,
+      `v3  ·  ${monoRatingGlyph(Rating.Great)}`,
     );
+  });
+
+  // The colour emoji would otherwise shout over the version name it is annotating.
+  it("asks for the glyph's monochrome form", () => {
+    const option = formatVersionOption("3", { isLatest: false, rating: Rating.Great });
+    expect(option.endsWith(TEXT_PRESENTATION_SELECTOR)).toBe(true);
   });
 
   it("omits the rating entirely when the version is unrated", () => {
@@ -129,13 +135,13 @@ describe("formatVersionOption", () => {
   it("orders label, rating, then the latest marker", () => {
     expect(
       formatVersionOption("2.1", { isLatest: true, label: "Best yet", rating: Rating.Good }),
-    ).toBe(`v2.1  ·  Best yet  ·  ${RATING_GLYPHS[Rating.Good]} · latest`);
+    ).toBe(`v2.1  ·  Best yet  ·  ${monoRatingGlyph(Rating.Good)} · latest`);
   });
 
-  // Bad is -1; a falsy-vs-undefined slip here would silently drop the one rating worth acting on.
-  it("shows a thumbs-down rating rather than treating it as absent", () => {
+  // The one rating worth acting on, so a slip that dropped it would be the costliest.
+  it("shows a Bad rating rather than treating it as absent", () => {
     expect(formatVersionOption("1", { isLatest: false, rating: Rating.Bad })).toBe(
-      `v1  ·  ${RATING_GLYPHS[Rating.Bad]}`,
+      `v1  ·  ${monoRatingGlyph(Rating.Bad)}`,
     );
   });
 });

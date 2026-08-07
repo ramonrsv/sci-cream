@@ -1,7 +1,7 @@
 "use client";
 
 import { leafKey, usePersistedState } from "@/lib/hooks/use-persisted-state";
-import { RATING_GLYPHS, ratingRank, Rating } from "@/lib/rating";
+import { monoRatingGlyph, ratingRank, Rating } from "@/lib/rating";
 
 import { Select, type SelectOption } from "@/app/_elements/selects/select";
 
@@ -26,9 +26,9 @@ export enum RatingFilter {
 export const RATING_FILTER_SHORT_LABELS: Record<RatingFilter, string> = {
   [RatingFilter.Any]: "Any",
   [RatingFilter.Rated]: "Rated",
-  [RatingFilter.GoodOrBetter]: `${RATING_GLYPHS[Rating.Good]} Good+`,
-  [RatingFilter.Great]: `${RATING_GLYPHS[Rating.Great]} Great`,
-  [RatingFilter.Bad]: `${RATING_GLYPHS[Rating.Bad]} Bad`,
+  [RatingFilter.GoodOrBetter]: `${monoRatingGlyph(Rating.Good)} Good+`,
+  [RatingFilter.Great]: `${monoRatingGlyph(Rating.Great)} Great`,
+  [RatingFilter.Bad]: `${monoRatingGlyph(Rating.Bad)} Bad`,
 };
 
 /** True when a single rating satisfies `filter`; `undefined` is unrated. */

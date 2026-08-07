@@ -8,7 +8,7 @@
  * No WASM or server dependencies, so both the `"use server"` data layer and client can import it.
  */
 
-import { RATING_GLYPHS, type Rating } from "@/lib/rating";
+import { monoRatingGlyph, type Rating } from "@/lib/rating";
 
 /** Minimal shape shared by DB rows and wire JSON for version-name resolution. */
 export type VersionNameSource = { version: number; versionName?: string | null };
@@ -38,7 +38,8 @@ export function displayVersionName(v: VersionNameSource): string {
  * One option's text in a version dropdown: `v3.1`, plus the version's free-text `label`, its
  * rating, and a `latest` marker where they apply. Shared so every version picker reads alike.
  *
- * A native `<option>` renders text only, hence the glyph rather than the icons the toggle uses.
+ * A native `<option>` renders text only, hence the glyph rather than the icons the toggle uses,
+ * asked for in its monochrome form so it reads as part of the line rather than a coloured sticker.
  */
 export function formatVersionOption(
   versionName: string,
@@ -46,7 +47,7 @@ export function formatVersionOption(
 ): string {
   const parts = [`v${versionName}`];
   if (label) parts.push(label);
-  if (rating !== undefined) parts.push(RATING_GLYPHS[rating]);
+  if (rating !== undefined) parts.push(monoRatingGlyph(rating));
   return parts.join("  ·  ") + (isLatest ? " · latest" : "");
 }
 

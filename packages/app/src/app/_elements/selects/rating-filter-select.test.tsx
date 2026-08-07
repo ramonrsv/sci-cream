@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 import { render, cleanup, renderHook, act } from "@testing-library/react";
 
 import { getSelectControl, getSelectedOptionLabel } from "@/__tests__/unit/select";
-import { Rating } from "@/lib/rating";
+import { monoRatingGlyph, Rating, RATING_GLYPHS, RATINGS } from "@/lib/rating";
 import {
   RatingFilter,
   RatingFilterSelect,
@@ -23,14 +23,24 @@ afterEach(() => {
 // ---------------------------------------------------------------------------
 
 describe("RATING_FILTER_SHORT_LABELS", () => {
+  // Composed rather than written out: the monochrome selector is invisible in a string literal.
   it.each([
     [RatingFilter.Any, "Any"],
     [RatingFilter.Rated, "Rated"],
-    [RatingFilter.GoodOrBetter, "👍 Good+"],
-    [RatingFilter.Great, "🏆 Great"],
-    [RatingFilter.Bad, "👎 Bad"],
+    [RatingFilter.GoodOrBetter, `${monoRatingGlyph(Rating.Good)} Good+`],
+    [RatingFilter.Great, `${monoRatingGlyph(Rating.Great)} Great`],
+    [RatingFilter.Bad, `${monoRatingGlyph(Rating.Bad)} Bad`],
   ])("maps %s to its short label", (filter, label) => {
     expect(RATING_FILTER_SHORT_LABELS[filter]).toBe(label);
+  });
+
+  it("asks for the monochrome glyph on every label that carries one", () => {
+    for (const rating of RATINGS) {
+      const label = Object.values(RATING_FILTER_SHORT_LABELS).find((l) =>
+        l.startsWith(RATING_GLYPHS[rating]),
+      );
+      expect(label).toContain(monoRatingGlyph(rating));
+    }
   });
 });
 
@@ -134,6 +144,8 @@ describe("RatingFilterSelect", () => {
     const { container } = render(
       <RatingFilterSelect ratingFilterState={[RatingFilter.GoodOrBetter, vi.fn()]} />,
     );
-    expect(getSelectedOptionLabel(container, "#rating-filter-select")).toBe("👍 Good+");
+    expect(getSelectedOptionLabel(container, "#rating-filter-select")).toBe(
+      RATING_FILTER_SHORT_LABELS[RatingFilter.GoodOrBetter],
+    );
   });
 });

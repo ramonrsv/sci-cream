@@ -4,13 +4,17 @@ import { goToPageAndWaitFor, loginAsTestUserWithCredentials } from "@/__tests__/
 
 import { TEST_USER_B } from "@/lib/database/assets";
 import { RATING_GLYPHS, Rating } from "@/lib/rating";
+import {
+  RatingFilter,
+  RATING_FILTER_SHORT_LABELS,
+} from "@/app/_elements/selects/rating-filter-select";
 
 /**
  * Quality signals end to end: the star on a recipe and the rating on one of its versions, both
  * persisted server-side, so the assertions here are after a reload rather than in-memory state.
  *
- * Leans on the seeded fixtures: "Chocolate Ice Cream" is starred and holds a thumbs-down v1 and a
- * two-thumbs-up v2; "Standard Base" is unstarred with a single thumbs-up version.
+ * Leans on the seeded fixtures: "Chocolate Ice Cream" is starred and holds a Bad v1 and a Great v2;
+ * "Standard Base" carries no star and a single Good version.
  */
 test.describe("Recipe quality signals", () => {
   // Each test mutates TEST_USER_B's seeded rows and restores them, so they must not interleave.
@@ -114,20 +118,22 @@ test.describe("Recipe quality signals", () => {
     const ratingFilter = page.locator("#rating-filter-select select");
 
     // Chocolate's v2 is Great; Standard Base's only version is merely Good.
-    await ratingFilter.selectOption({ label: `${RATING_GLYPHS[Rating.Great]} Great` });
+    await ratingFilter.selectOption({ label: RATING_FILTER_SHORT_LABELS[RatingFilter.Great] });
     await expect(listItem(page, STARRED)).toBeVisible();
     await expect(listItem(page, UNSTARRED)).toHaveCount(0);
 
     // Chocolate's v1 is Bad, so it matches here too — on a different version than above.
-    await ratingFilter.selectOption({ label: `${RATING_GLYPHS[Rating.Bad]} Bad` });
+    await ratingFilter.selectOption({ label: RATING_FILTER_SHORT_LABELS[RatingFilter.Bad] });
     await expect(listItem(page, STARRED)).toBeVisible();
     await expect(listItem(page, UNSTARRED)).toHaveCount(0);
 
-    await ratingFilter.selectOption({ label: `${RATING_GLYPHS[Rating.Good]} Good+` });
+    await ratingFilter.selectOption({
+      label: RATING_FILTER_SHORT_LABELS[RatingFilter.GoodOrBetter],
+    });
     await expect(listItem(page, STARRED)).toBeVisible();
     await expect(listItem(page, UNSTARRED)).toBeVisible();
 
-    await ratingFilter.selectOption({ label: "Any" });
+    await ratingFilter.selectOption({ label: RATING_FILTER_SHORT_LABELS[RatingFilter.Any] });
     await expect(page.locator(".search-list-item").count()).resolves.toBeGreaterThan(2);
   });
 
