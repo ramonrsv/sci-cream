@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786124997296,
+  "lastUpdate": 1786125402187,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -417352,6 +417352,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 675,
             "range": "16.07",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "9b6a914a8371eb98ab95aa2666ad875256daff03",
+          "message": "Add UI for recipe and batch quality signals\n\nThe star and the version rating are now visible and filterable:\ntoggles in the detail panels, a favourites chip and rating select in\nthe search toolbars, and markers on the list items themselves.\n\nA recipe's list marker shows the best rating across its versions,\nmatching the filter's rule that any qualifying version admits the\nrecipe, so a filtered list never shows a row whose marker disagrees.\n\n`RatingToggle` collapses to one button that opens the three choices\nin a popup; the toolbar it shares with the version select is tight.\nGreat is drawn as a trophy rather than doubled thumbs, since a native\n`<option>` renders text only and no CSS reaches the gap between two\nemoji. Every rating now has a lucide twin, so icon and text agree.\n\n`EntitySearch` gains `matchesFilters` and `toolbarExtra`, keeping the\nshell entity-agnostic while the consumer owns its filter state.\n`FavouritesFilter` is shared by the recipe and batch lists, ready for\nthe ingredient list to reuse.\n\nThe shared list/detail toolbar wraps rather than squeezing the search\ninput, which the added controls had been collapsing on narrow\nviewports. The input holds a minimum width and the controls drop to\ntheir own row, still pinned right, so each page wraps at whatever\nwidth its own toolbar needs.\n\nBatch picker ratings are read live rather than persisted:\n`RecipeSnapshot.rating` sits outside `version`, so it is dropped from\n`batchToInput` and from unsaved-changes detection for free.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T13:24:34-04:00",
+          "tree_id": "6c5a7eb052953737e92cae2b48c1f64a7697bdf0",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/9b6a914a8371eb98ab95aa2666ad875256daff03"
+        },
+        "date": 1786125361504,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 55.38,
+            "range": "7.55",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 56.88,
+            "range": "3.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 59.38,
+            "range": "4.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2459.25,
+            "range": "30.67",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 321.5,
+            "range": "6.34",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 333,
+            "range": "6.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 347.88,
+            "range": "3.98",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16724.38,
+            "range": "120.20",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 935.13,
+            "range": "16.25",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 52.38,
+            "range": "1.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 57,
+            "range": "2.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.38,
+            "range": "0.86",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 42.63,
+            "range": "1.65",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 129.5,
+            "range": "2.69",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 82.25,
+            "range": "2.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 54.32,
+            "range": "0.54",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.95,
+            "range": "0.51",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 623.75,
+            "range": "7.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 661.13,
+            "range": "9.51",
             "unit": "ms"
           }
         ]
