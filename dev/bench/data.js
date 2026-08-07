@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786139269208,
+  "lastUpdate": 1786139749587,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -422122,6 +422122,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 653.75,
             "range": "12.27",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "461c0a295e7c614cfec776927f27eff0b7b55df7",
+          "message": "Declare only the emoji faces the glyphs use\n\nImporting @fontsource/noto-emoji/400.css emitted all ten subsets in\nboth woff2 and woff, growing deployed fonts from 137KiB to 1260KiB\neven though only two chunks are ever fetched.\n\nDeclare those two faces directly, woff2 only, scoped to the three\nrating codepoints. Deployed fonts drop to 252KiB.\n\nHand-written faces also allow font-display: block, replacing the\nswap Fontsource hardcodes, so the mark no longer repaints from a\nsystem glyph.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T17:17:14-04:00",
+          "tree_id": "0e18e6c68f891dd9cdee9a9859802ded9277643e",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/461c0a295e7c614cfec776927f27eff0b7b55df7"
+        },
+        "date": 1786139707922,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 51,
+            "range": "4.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 58.88,
+            "range": "2.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 67,
+            "range": "3.50",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2484.13,
+            "range": "42.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 319.75,
+            "range": "4.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 336.75,
+            "range": "7.41",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 353.38,
+            "range": "3.53",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 16783.25,
+            "range": "40.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 18.41,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 949.88,
+            "range": "13.09",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 54.63,
+            "range": "1.32",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 58.63,
+            "range": "1.22",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 41.5,
+            "range": "1.00",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 46.75,
+            "range": "2.33",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 134.5,
+            "range": "1.58",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 93.63,
+            "range": "4.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 59.27,
+            "range": "0.95",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 44.08,
+            "range": "0.24",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 652.63,
+            "range": "10.97",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 691.13,
+            "range": "13.13",
             "unit": "ms"
           }
         ]
