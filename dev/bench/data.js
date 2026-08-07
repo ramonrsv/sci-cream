@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786069196153,
+  "lastUpdate": 1786077427783,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -500771,6 +500771,70 @@ window.BENCHMARK_DATA = {
           "url": "https://github.com/ramonrsv/sci-cream/commit/386ad4af183a7bb044404b3049f16e4a60d76948"
         },
         "date": 1786068346604,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "WASM binary (raw)",
+            "value": 1082.89,
+            "unit": "KB"
+          },
+          {
+            "name": "WASM binary (gzip)",
+            "value": 328.29,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (raw)",
+            "value": 1665.71,
+            "unit": "KB"
+          },
+          {
+            "name": "npm bundle dist/index.js (gzip)",
+            "value": 517.55,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (raw)",
+            "value": 96.43,
+            "unit": "KB"
+          },
+          {
+            "name": "wasm-bindgen JS glue (gzip)",
+            "value": 18.32,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (packed)",
+            "value": 564.25,
+            "unit": "KB"
+          },
+          {
+            "name": "npm package tarball (unpacked)",
+            "value": 1866.84,
+            "unit": "KB"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "b09321b440be430daef83a0dde6bf56ff968defd",
+          "message": "Add storage for recipe and batch quality signals\n\nRecipes and batches gain a `favourite` star, and recipe versions a\nthree-point `rating` (thumbs down / up / two up), stored as a new\ndomain-neutral `rating` enum type so other tables can reuse it.\n\nThe star moves only through `setUserRecipeFavourite` and\n`setUserBatchFavourite`. Keeping it out of `BatchInput` matters:\n`updateUserBatch` replaces a batch wholesale, so a star carried\nthere would be cleared by any save made from a pre-star copy.\n\nThe rating rides the existing `RecipeVersionMeta` contract, where\n`null` clears and an omitted key leaves alone, so it needed no new\naction. `isValidVersionMeta`, widened from the old version-name\nguard, rejects an off-scale value with `undefined` rather than\nletting Postgres throw.\n\nMigration 0002 is expand-only, so it applies before the deploy.\nThe UI that surfaces and filters these signals follows separately.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-07T00:21:04-04:00",
+          "tree_id": "bcb67633720ce7c0144943cc0bb1fc6e096e2fb8",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/b09321b440be430daef83a0dde6bf56ff968defd"
+        },
+        "date": 1786077383928,
         "tool": "customSmallerIsBetter",
         "benches": [
           {
