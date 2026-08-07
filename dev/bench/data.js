@@ -1,5 +1,5 @@
 window.BENCHMARK_DATA = {
-  "lastUpdate": 1786068777845,
+  "lastUpdate": 1786069196153,
   "repoUrl": "https://github.com/ramonrsv/sci-cream",
   "entries": {
     "sci-cream Rust benchmarks": [
@@ -415762,6 +415762,150 @@ window.BENCHMARK_DATA = {
             "name": "Refresh to paste, with user-defined ings",
             "value": 520.75,
             "range": "14.62",
+            "unit": "ms"
+          }
+        ]
+      },
+      {
+        "commit": {
+          "author": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "committer": {
+            "email": "ramon@sibello.ca",
+            "name": "Ramon Sibello",
+            "username": "ramonrsv"
+          },
+          "distinct": true,
+          "id": "386ad4af183a7bb044404b3049f16e4a60d76948",
+          "message": "Persist the Write/Preview tab per markdown field\n\nMarkdownField takes a persistKey and stores its tab under\n`${persistKey}:tab` via usePersistedState, so each render site\nremembers its own choice. Left undefined, the tab stays plain\nstate and no storage is touched.\n\nPersistence is keyed per widget rather than per record: the tab\nis a display preference, so the recipe-search field keeps it\nacross the version remount that reseeds its text.\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>",
+          "timestamp": "2026-08-06T18:46:08-04:00",
+          "tree_id": "84246290b90faaa4fef14d1e79db6064310bbede",
+          "url": "https://github.com/ramonrsv/sci-cream/commit/386ad4af183a7bb044404b3049f16e4a60d76948"
+        },
+        "date": 1786069158350,
+        "tool": "customSmallerIsBetter",
+        "benches": [
+          {
+            "name": "Target validation (auto)",
+            "value": 50.38,
+            "range": "1.49",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (auto)",
+            "value": 57.5,
+            "range": "5.52",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (auto)",
+            "value": 58.38,
+            "range": "2.78",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (auto)",
+            "value": 2378.75,
+            "range": "67.62",
+            "unit": "ms"
+          },
+          {
+            "name": "Target validation (worst-case)",
+            "value": 333.63,
+            "range": "4.06",
+            "unit": "ms"
+          },
+          {
+            "name": "Balance operation (worst-case)",
+            "value": 349.13,
+            "range": "6.01",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance re-balance (worst-case)",
+            "value": 364.25,
+            "range": "4.92",
+            "unit": "ms"
+          },
+          {
+            "name": "Auto-balance rapid updates (worst-case)",
+            "value": 17307.75,
+            "range": "115.61",
+            "unit": "ms"
+          },
+          {
+            "name": "Peak memory usage during typical ops",
+            "value": 15.35,
+            "range": "0.00",
+            "unit": "MB"
+          },
+          {
+            "name": "Initial page load",
+            "value": 923.25,
+            "range": "12.57",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input",
+            "value": 54,
+            "range": "0.87",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient name input to composition",
+            "value": 56.25,
+            "range": "2.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input",
+            "value": 39.5,
+            "range": "1.12",
+            "unit": "ms"
+          },
+          {
+            "name": "Ingredient quantity input to mix property",
+            "value": 43,
+            "range": "2.40",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe paste",
+            "value": 131.25,
+            "range": "3.27",
+            "unit": "ms"
+          },
+          {
+            "name": "Recipe switch",
+            "value": 86.88,
+            "range": "3.26",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, each",
+            "value": 57.25,
+            "range": "2.56",
+            "unit": "ms"
+          },
+          {
+            "name": "Rapid ingredient quantity updates, final",
+            "value": 41.68,
+            "range": "0.96",
+            "unit": "ms"
+          },
+          {
+            "name": "Page refresh to paste from storage",
+            "value": 634.88,
+            "range": "13.11",
+            "unit": "ms"
+          },
+          {
+            "name": "Refresh to paste, with user-defined ings",
+            "value": 681,
+            "range": "7.63",
             "unit": "ms"
           }
         ]
